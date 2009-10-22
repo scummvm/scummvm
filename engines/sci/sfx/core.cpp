@@ -133,6 +133,10 @@ public:
 	 * @param argv	the buffer itself
 	 */
 	void tell_synth(int buf_nr, byte *buf);
+
+	void setVolume(int vol);
+
+	int getVolume(void);
 };
 
 SfxPlayer::SfxPlayer() {
@@ -316,6 +320,13 @@ Common::Error SfxPlayer::resume() {
 	return Common::kNoError;
 }
 
+void SfxPlayer::setVolume(int vol) {
+	_mididrv->setVolume(vol);
+}
+
+int SfxPlayer::getVolume(void) {
+	return _mididrv->getVolume();
+}
 
 #pragma mark -
 
@@ -985,13 +996,12 @@ Common::Error SfxState::sfx_send_midi(SongHandle handle, int channel,
 	return Common::kNoError;
 }
 
-int SfxState::sfx_get_volume() {
-	warning("FIXME: Implement volume");
-	return 0;
+int SfxState::sfx_getVolume() {
+	return _player->getVolume();
 }
 
-void SfxState::sfx_set_volume(int volume) {
-	warning("FIXME: Implement volume");
+void SfxState::sfx_setVolume(int volume) {
+	_player->setVolume(volume);
 }
 
 void SfxState::sfx_all_stop() {

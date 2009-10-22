@@ -36,7 +36,7 @@ public:
 	};
 
 	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0) { }
-	~MidiDriver_Adlib() { }
+	virtual ~MidiDriver_Adlib() { }
 
 	// MidiDriver
 	int open(bool isSCI0);
@@ -55,6 +55,7 @@ public:
 	void setVolume(byte volume);
 	void playSwitch(bool play);
 	bool loadResource(const byte *data, uint size);
+	virtual int32 property(int prop, int32 param);
 
 private:
 	enum ChannelID {

@@ -352,9 +352,9 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 		int vol = (argc > 1) ? argv[1].toSint16() : -1;
 
 		if (vol != -1)
-			s->_sound.sfx_set_volume(vol << 0xf);
+			s->_sound.sfx_setVolume(vol);
 		else
-			s->r_acc = make_reg(0, s->_sound.sfx_get_volume() >> 0xf);
+			s->r_acc = make_reg(0, s->_sound.sfx_getVolume());
 	}
 	break;
 
@@ -474,9 +474,9 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		int vol = (argc > 1) ? argv[1].toSint16() : -1;
 
 		if (vol != -1)
-			s->_sound.sfx_set_volume(vol << 0xf);
+			s->_sound.sfx_setVolume(vol);
 		else
-			s->r_acc = make_reg(0, s->_sound.sfx_get_volume() >> 0xf);
+			s->r_acc = make_reg(0, s->_sound.sfx_getVolume());
 		break;
 	}
 	case _K_SCI01_SOUND_MUTE_SOUND : {
@@ -781,13 +781,13 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 
 	switch (command) {
 	case _K_SCI1_SOUND_MASTER_VOLME : {
-		/*int vol = UPARAM_OR_ALT (1, -1);
+		int vol = (argc > 1 ? argv[1].offset : -1);
 
-		 if (vol != -1)
-		         s->acc = s->sound_server->command(s, SOUND_COMMAND_SET_VOLUME, 0, vol);
-		 else
-		         s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_VOLUME, 0, 0);
-			break;*/
+		if (vol != -1)
+			s->_sound.sfx_setVolume(vol);
+
+		s->r_acc = make_reg(0, s->_sound.sfx_getVolume());
+		break;
 	}
 	case _K_SCI1_SOUND_MUTE_SOUND : {
 		/* if there's a parameter, we're setting it.  Otherwise,

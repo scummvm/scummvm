@@ -35,7 +35,8 @@ namespace Sci {
 class ResourceManager;
 
 enum {
-	MIDI_CHANNELS = 16
+	MIDI_CHANNELS = 16,
+	MIDI_PROP_MASTER_VOLUME = 0
 };
 
 
@@ -80,11 +81,13 @@ public:
 	virtual int getPolyphony() const = 0;
 
 	virtual void setVolume(byte volume) {
-		// Master Volume SysEx message
-		const byte message[] = {0x7f, 0x7f, 0x04, 0x01, (volume * 127 / 15) & 0x7f, (volume * 127 / 15) & 0x7f};
-
-		_driver->sysEx(message, 6);
+		if(_driver)
+			_driver->property(MIDI_PROP_MASTER_VOLUME, volume);
 	}
+
+	virtual int getVolume() {
+		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, -1) : 0;
+ 	}
 
 	virtual void playSwitch(bool play) {
 		if (!play) {

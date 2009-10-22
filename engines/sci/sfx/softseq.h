@@ -65,7 +65,7 @@ struct sfx_softseq_t {
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	*/
 
-	void (*set_volume)(sfx_softseq_t *self, int new_volume);
+	void (*setVolume)(sfx_softseq_t *self, int new_volume);
 	/* Sets the sequencer volume
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (int) new_volume: A volume, between 0 (quiet) and 127 (max)

@@ -97,12 +97,12 @@ public:
 	/* Determines the current global volume settings
 	** Returns   : (int) The global volume, between 0 (silent) and 127 (max. volume)
 	*/
-	int sfx_get_volume();
+	int sfx_getVolume();
 
 	/* Determines the current global volume settings
 	** Parameters: (int) volume: The new global volume, between 0 and 127 (see above)
 	*/
-	void sfx_set_volume(int volume);
+	void sfx_setVolume(int volume);
 
 	/* Stops all songs currently playing, purges song library
 	*/
