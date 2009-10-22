@@ -376,6 +376,7 @@ Graphics::Surface *OSystem_PSP::lockScreen() {
 
 void OSystem_PSP::unlockScreen() {
 	// The screen is always completely update anyway, so we don't have to force a full update here.
+	sceKernelDcacheWritebackAll();
 }
 
 void OSystem_PSP::updateScreen() {
