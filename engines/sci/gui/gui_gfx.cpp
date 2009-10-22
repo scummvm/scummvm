@@ -835,6 +835,7 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 	Common::String text;
 	uint16 textSize, eventType, eventKey;
 	bool textChanged = false;
+	Common::Rect rect;
 
 	if (textReference.isNull())
 		error("kEditControl called on object that doesnt have a text reference");
@@ -871,6 +872,7 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 				if (cursorPos > 0) {
 					cursorPos--; textChanged = true;
 				}
+				break;
 			case SCI_K_RIGHT: // RIGHT
 				if (cursorPos + 1 <= textSize) {
 					cursorPos++; textChanged = true;
@@ -879,6 +881,8 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 			default:
 				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character
+					// we check, if there is space left for this character
+					
 					text.insertChar(eventKey, cursorPos++);
 					textChanged = true;
 				}
@@ -891,7 +895,6 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 	if (textChanged) {
 		GuiResourceId oldFontId = GetFontId();
 		GuiResourceId fontId = GET_SEL32V(segMan, controlObject, font);
-		Common::Rect rect;
 		rect = Common::Rect(GET_SEL32V(segMan, controlObject, nsLeft), GET_SEL32V(segMan, controlObject, nsTop),
 							  GET_SEL32V(segMan, controlObject, nsRight), GET_SEL32V(segMan, controlObject, nsBottom));
 		TexteditCursorErase();
