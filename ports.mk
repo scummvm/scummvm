@@ -97,7 +97,7 @@ OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
 ifdef USE_ZLIB
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libz.a
+OSX_ZLIB ?= -lz
 endif
 
 # Special target to create a static linked binary for Mac OS X.
@@ -107,6 +107,7 @@ scummvm-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
+		$(OSX_ZLIB) \
 		-lSystemStubs
 
 # Special target to create a static linked binary for the iPhone
