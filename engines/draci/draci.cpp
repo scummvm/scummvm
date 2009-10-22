@@ -366,7 +366,7 @@ void DraciEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	_sound->setVolume();
-	_music->setVolume(ConfMan.getInt("music_volume"));
+	_music->syncVolume();
 }
 
 const char *DraciEngine::getSavegameFile(int saveGameIdx) {

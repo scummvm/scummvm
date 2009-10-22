@@ -23,8 +23,6 @@
  *
  */
 
-// FIXME: This code is taken from SAGA and needs more work (e.g. setVolume).
-
 // MIDI and digital music class
 
 #include "sound/audiostream.h"
@@ -38,7 +36,7 @@
 
 namespace Draci {
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
+MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(0) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	this->open();
@@ -67,7 +65,10 @@ void MusicPlayer::setVolume(int volume) {
 
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
-			_channel[i]->volume(_channelVolume[i] * _masterVolume / 255);
+			int newVolume = _channelVolume[i] * _masterVolume / 255;
+			debugC(3, kDraciSoundDebugLevel, "Music channel %d: volume %d->%d",
+				i, _channelVolume[i], newVolume);
+			_channel[i]->volume(newVolume);
 		}
 	}
 }
@@ -146,20 +147,25 @@ void MusicPlayer::onTimer(void *refCon) {
 }
 
 void MusicPlayer::playSMF(int track, bool loop) {
-	if (_isPlaying && track == _track)
+	if (_isPlaying && track == _track) {
+		debugC(2, kDraciSoundDebugLevel, "Already plaing track %d", track);
 		return;
+	}
 
 	stop();
 
 	_isGM = true;
 
-	debugC(2, kDraciSoundDebugLevel, "Playing track %d", track);
 
 	// Load MIDI resource data
 	Common::File musicFile;
 	char musicFileName[40];
 	sprintf(musicFileName, _pathMask.c_str(), track);
 	musicFile.open(musicFileName);
+	if (!musicFile.isOpen()) {
+		debugC(2, kDraciSoundDebugLevel, "Cannot open track %d", track);
+		return;
+	}
 	int midiMusicSize = musicFile.size();
 	delete _midiMusicData;
 	_midiMusicData = new byte[midiMusicSize];
@@ -175,17 +181,25 @@ void MusicPlayer::playSMF(int track, bool loop) {
 
 		_parser = parser;
 
-		setVolume(127);
+		syncVolume();
 
 		_looping = loop;
 		_isPlaying = true;
 		_track = track;
+		debugC(2, kDraciSoundDebugLevel, "Playing track %d", track);
+	} else {
+		debugC(2, kDraciSoundDebugLevel, "Cannot play track %d", track);
 	}
 }
 
 void MusicPlayer::stop() {
 	Common::StackLock lock(_mutex);
 
+	if (!_isPlaying)
+		return;
+
+	debugC(2, kDraciSoundDebugLevel, "Stopping track %d", _track);
+	_track = 0;
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
@@ -194,20 +208,29 @@ void MusicPlayer::stop() {
 }
 
 void MusicPlayer::pause() {
+	debugC(2, kDraciSoundDebugLevel, "Pausing track %d", _track);
 	setVolume(-1);
 	_isPlaying = false;
 }
 
 void MusicPlayer::resume() {
-	setVolume(127);
+	debugC(2, kDraciSoundDebugLevel, "Resuming track %d", _track);
+	syncVolume();
 	_isPlaying = true;
 }
 
+void MusicPlayer::syncVolume() {
+	int volume = ConfMan.getInt("music_volume");
+	debugC(2, kDraciSoundDebugLevel, "Syncing music volume to %d", volume);
+	setVolume(volume);
+}
+
 // TODO:
-// - volume support
+// + volume support
 // - bindings to GPL2 scripting
 // - load cmf.ins
 // - enable Adlib
-// - resuming after load
+// - resuming after configuration
+// + error handling
 
 } // End of namespace Draci

@@ -46,6 +46,7 @@ public:
 
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
+	void syncVolume();
 
 	void setNativeMT32(bool b) { _nativeMT32 = b; }
 	bool hasNativeMT32() { return _nativeMT32; }
