@@ -776,7 +776,7 @@ GfxText::~GfxText() {
 		if (!state) {
 			error("Attempt to free text without supplying mode to free it from!\n");
 		} else {
-			gfxop_free_text(state, _textHandle);
+			delete _textHandle;
 			_textHandle = NULL;
 		}
 	}

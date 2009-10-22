@@ -1316,13 +1316,6 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
 	return view->loops[real_loop].cels_nr;
 }
 
-void gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
-	gfxr_view_t *testView = state->gfxResMan->getView(nr, loop, cel, 0);
-
-	if (!testView)
-		error("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
-}
-
 void gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *width, int *height, Common::Point *offset) {
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;
@@ -1409,10 +1402,6 @@ static void _gfxop_set_pic(GfxState *state) {
 	state->driver->setStaticBuffer(state->pic->visual_map, state->pic->priority_map);
 }
 
-int *gfxop_get_pic_metainfo(GfxState *state) {
-	return (state->pic) ? state->pic->priorityTable : NULL;
-}
-
 void gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
 	state->gfxResMan->tagResources();
 	state->tag_mode = 1;
@@ -1459,17 +1448,6 @@ void gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette) {
 }
 
 // Text operations
-
-// FIXME: only the resstate member of state is used -- inline the reference by:
-// replacing GfxState* state parameter with gfx_resstate_t* gfxResourceState and adjust callers accordingly
-int gfxop_get_font_height(GfxState *state, int font_nr) {
-	gfx_bitmap_font_t *font = state->gfxResMan->getFont(font_nr);
-
-	if (!font)
-		error("gfxop_get_font_height(): Font number %d not found", font_nr);
-
-	return font->line_height;
-}
 
 void gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int maxwidth, int *width, int *height, int text_flags,
 						  int *lines_nr, int *lineheight, int *lastline_width) {
@@ -1564,10 +1542,6 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 	handle->control = (color1.mask & GFX_MASK_CONTROL) ? color1.control : -1;
 
 	return handle;
-}
-
-void gfxop_free_text(GfxState *state, TextHandle *handle) {
-	delete handle;
 }
 
 TextHandle::TextHandle() {
@@ -1684,10 +1658,6 @@ void gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone, Common::
 
 	return _gfxop_draw_pixmap(state->driver, pxm, -1, -1, zone, target, gfx_rect(0, 0, 320*state->driver->getMode()->scaleFactor,
 	                                   200*state->driver->getMode()->scaleFactor), 0, NULL, NULL);
-}
-
-void gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm) {
-	gfx_free_pixmap(pxm);
 }
 
 } // End of namespace Sci

@@ -896,7 +896,7 @@ void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool anim
 	gfxop_disable_dirty_frames(_s->gfx_state);
 
 	if (NULL != _s->old_screen) {
-		gfxop_free_pixmap(_s->gfx_state, _s->old_screen);
+		gfx_free_pixmap(_s->old_screen);
 	}
 
 	_s->old_screen = gfxop_grab_pixmap(_s->gfx_state, gfx_rect(0, 10, 320, 190));
@@ -924,7 +924,7 @@ void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool anim
 
 	_s->port = _s->picture_port;
 
-	_s->pic_priority_table = gfxop_get_pic_metainfo(_s->gfx_state);
+	_s->pic_priority_table = (_s->gfx_state->pic) ? _s->gfx_state->pic->priorityTable : NULL;
 
 	_s->pic_animate = animationNr; // The animation used during kAnimate() later on
 
@@ -947,8 +947,7 @@ void SciGui32::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo 
 	int cel = celNo;
 	GfxView *new_view;
 
-	gfxop_check_cel(_s->gfx_state, viewId, &loop, &cel);
-
+	_s->gfx_state->gfxResMan->getView(viewId, &loop, &cel, 0);
 	debugC(2, kDebugLevelGraphics, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", leftPos, topPos, viewId, loop, cel, priority);
 
 	new_view = gfxw_new_view(_s->gfx_state, Common::Point(leftPos, topPos), viewId, loop, cel, 0, priority, -1,
@@ -1416,7 +1415,7 @@ void SciGui32::shakeScreen(uint16 shakeCount, uint16 directions) {
 		gfxop_sleep(_s->gfx_state, 50);
 	}
 
-	gfxop_free_pixmap(_s->gfx_state, screen);
+	gfx_free_pixmap(screen);
 	gfxop_update(_s->gfx_state);
 }
 
@@ -1485,7 +1484,7 @@ GfxDynView *SciGui32::_k_make_dynview_obj(reg_t obj, int options, int nr, int ar
 		palette = 0;
 
 	// Clip loop and cel, write back if neccessary
-	gfxop_check_cel(_s->gfx_state, view_nr, &loop, &cel);
+	_s->gfx_state->gfxResMan->getView(view_nr, &loop, &cel, 0);
 
 	if (loop != oldloop)
 		loop = 0;
@@ -2449,8 +2448,8 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 
 	}
 
-	gfxop_free_pixmap(_s->gfx_state, _s->old_screen);
-	gfxop_free_pixmap(_s->gfx_state, newscreen);
+	gfx_free_pixmap(_s->old_screen);
+	gfx_free_pixmap(newscreen);
 	_s->old_screen = NULL;
 }
 

@@ -345,7 +345,7 @@ GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, const char 
 	GfxText *text_handle;
 
 	GfxList *list;
-	int cursor_height = gfxop_get_font_height(port->_visual->_gfxState, font);
+	int cursor_height = port->_visual->_gfxState->gfxResMan->getFont(font)->line_height;
 
 	zone.x--;
 	zone.y--;
@@ -453,7 +453,7 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 
 	list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 1), 0);
 
-	font_height = gfxop_get_font_height(port->_visual->_gfxState, font_nr);
+	font_height = port->_visual->_gfxState->gfxResMan->getFont(font_nr)->line_height;
 	columns = (zone.height - 20);
 
 	columns /= font_height;

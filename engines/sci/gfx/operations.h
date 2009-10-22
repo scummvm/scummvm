@@ -371,19 +371,6 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask);
 int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop);
 
 /**
- * Clips the view/loop/cel position of a cel.
- *
- * *loop is clipped first, then *cel. The resulting setup will be a valid view
- * configuration.
- *
- * @param[in] state	The state to use
- * @param[in] nr	Number of the view to use
- * @param[in] loop	Pointer to the variable storing the loop number to verify
- * @param[in] cel	Pointer to the variable storing the cel number to check
- */
-void gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel);
-
-/**
  * Retrieves the width and height of a cel.
  *
  * @param[in] state		The state to use
@@ -465,16 +452,6 @@ void gfxop_draw_cel_static_clipped(GfxState *state, int nr, int loop, int cel,
 void gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette);
 
 /**
- * Retrieves all meta-information assigned to the current pic.
- *
- * @param[in] state	The state affected
- * @return			NULL if the pic doesn't exist or has no meta-information,
- * 					the meta-info otherwise. This meta-information is referred
- * 					to as 'internal data' in the pic code
- */
-int *gfxop_get_pic_metainfo(GfxState *state);
-
-/**
  * Adds a pic to the static buffer.
  *
  * @param[in] state				The state affected
@@ -487,16 +464,6 @@ void gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette);
 
 
 /** @name Text operations */
-/** @{ */
-
-/**
- * Returns the fixed line height for one specified font.
- *
- * @param[in] state		The state to work on
- * @param[in] font_nr	Number of the font to inspect
- * @return				The font line height
- */
-int gfxop_get_font_height(GfxState *state, int font_nr);
 
 /**
  * Calculates the width and height of a specified text in a specified
@@ -546,14 +513,6 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr,
 	gfx_color_t bg_color, int flags);
 
 /**
- * Frees a previously allocated text handle and all related resources.
- *
- * @param[in] state		The state to use
- * @param[in] handle	The handle to free
- */
-void gfxop_free_text(GfxState *state, TextHandle *handle);
-
-/**
  * Draws text stored in a text handle.
  *
  * @param[in] state		The target state
@@ -591,13 +550,6 @@ gfx_pixmap_t *gfxop_grab_pixmap(GfxState *state, rect_t area);
 void gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone,
 	Common::Point pos);
 
-/**
- * Frees a pixmap returned by gfxop_grab_pixmap().
- *
- * @param[in] state	The affected state
- * @param[in] pxm	The pixmap to free
- */
-void gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm);
 /** @} */
 
 

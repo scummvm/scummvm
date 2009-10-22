@@ -781,7 +781,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->bp_list = s->bp_list;
 
 	retval->successor = NULL;
-	retval->pic_priority_table = (int *)gfxop_get_pic_metainfo(retval->gfx_state);
+	retval->pic_priority_table = (int *)(retval->gfx_state->pic) ? retval->gfx_state->pic->priorityTable : NULL;
 	retval->_gameName = s->_gameName;
 
 	retval->_sound._it = NULL;

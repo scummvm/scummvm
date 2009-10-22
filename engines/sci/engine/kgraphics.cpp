@@ -432,7 +432,7 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int view = GET_SEL32V(segMan, obj, view);
 	int cel = 0xffff;
 
-	gfxop_check_cel(s->gfx_state, view, &loop, &cel);
+	s->gfx_state->gfxResMan->getView(view, &loop, &cel, 0);
 
 	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", view, loop, cel + 1);
 
