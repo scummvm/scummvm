@@ -55,6 +55,27 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
+	if (getSciVersion() <= SCI_VERSION_01) {
+		// Do speed throttling for SCI0/SCI01 games in here, actually just a test if lsl3 pushups get fixed that way
+		uint32 curTime = g_system->getMillis();
+		uint32 duration = curTime - s->_lastAnimateTime;
+		uint32 neededSleep = 40;
+
+		// We are doing this, so that games like sq3 dont think we are running too slow and will remove details (like
+		//  animated sierra logo at the beginning). Hopefully this wont cause regressions with pullups in lsl3 (FIXME?)
+		if (s->_lastAnimateCounter < 10) {
+			s->_lastAnimateCounter++;
+			neededSleep = 8;
+		}
+
+		if (duration < neededSleep) {
+			g_system->delayMillis(neededSleep - duration);
+			s->_lastAnimateTime = g_system->getMillis();
+		} else {
+			s->_lastAnimateTime = curTime;
+		}
+	}
+
 	return s->r_acc;
 }
 
