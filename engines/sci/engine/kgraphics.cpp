@@ -841,6 +841,8 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	case 0:
 		break;
 	case 1:
+		if (argv[0].isNull())
+			return s->r_acc;
 		s->_gui->addToPicList(argv[0], argc, argv);
 		break;
 	case 7:
