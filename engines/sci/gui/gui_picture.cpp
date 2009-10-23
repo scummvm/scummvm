@@ -304,7 +304,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_color = 0, pic_priority = 255, pic_control = 255;
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
-	byte *EGApalette = &EGApalettes[_EGApaletteNo];
+	byte *EGApalette = &EGApalettes[_EGApaletteNo * PIC_EGAPALETTE_SIZE];
 	byte EGApriority[PIC_EGAPRIORITY_SIZE] = {0};
 	bool isEGA = false;
 	int curPos = 0;
