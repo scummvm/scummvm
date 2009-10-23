@@ -32,8 +32,10 @@ namespace Scumm {
 void ScummEngine_v3::setupOpcodes() {
 	ScummEngine_v4::setupOpcodes();
 
-	OPCODE(0x30, o3_setBoxFlags);
-	OPCODE(0xb0, o3_setBoxFlags);
+	if (!(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
+		OPCODE(0x30, o3_setBoxFlags);
+		OPCODE(0xb0, o3_setBoxFlags);
+	}
 }
 
 void ScummEngine_v3::o3_setBoxFlags() {
