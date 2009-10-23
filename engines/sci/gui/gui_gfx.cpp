@@ -968,6 +968,14 @@ void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	memset(_priorityBands, 0, sizeof(byte) * _priorityTop);
 	for (y = _priorityTop; y < _priorityBottom; y++)
 		_priorityBands[y] = 1 + (((y - _priorityTop) * 2000) / bandSize);
+	if (_priorityBandCount == 15) {
+		// When having 15 priority bands, we actually replace band 15 with band 14, cause the original sci interpreter also
+		//  does it that way as well
+		y = _priorityBottom;
+		while (_priorityBands[--y] == _priorityBandCount)
+			_priorityBands[y]--;
+	}
+	// We fill space that is left over with the highest band
 	for (y = _priorityBottom; y < _screen->_height; y++)
 		_priorityBands[y] = _priorityBandCount;
 }
