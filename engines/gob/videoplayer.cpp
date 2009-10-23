@@ -168,7 +168,7 @@ VideoPlayer::~VideoPlayer() {
 bool VideoPlayer::findFile(char *fileName, Type &which) {
 	char *extStart = strrchr(fileName, '.');
 	// There's no empty extension, Or the filename with its current extension is not found
-	if ((extStart == (fileName + strlen(fileName) - 1)) || (!_vm->_dataIO->existData(fileName))) {
+	if ((extStart) && ((extStart == (fileName + strlen(fileName) - 1)) || (!_vm->_dataIO->existData(fileName)))) {
 		*extStart = 0;
 		extStart = 0;
 	}
