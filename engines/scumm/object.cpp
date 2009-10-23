@@ -1176,6 +1176,8 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 			offset = *(objptr + 14);
 		else if (_game.features & GF_OLD_BUNDLE)
 			offset = *(objptr + 16);
+		else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)
+			offset = *(objptr + 16) + 17;
 		else
 			offset = *(objptr + 18);
 
