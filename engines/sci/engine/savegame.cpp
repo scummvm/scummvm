@@ -758,7 +758,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
 
-	_reset_graphics_input(retval);
 	reconstruct_stack(retval);
 	retval->_segMan->reconstructScripts(retval);
 	retval->_segMan->reconstructClones();
@@ -767,6 +766,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->_segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
+	_reset_graphics_input(retval);
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
