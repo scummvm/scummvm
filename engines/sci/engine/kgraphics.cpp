@@ -949,43 +949,6 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 
 	s->_gui->animate(castListReference, cycle, argc, argv);
 
-	// FIXME? currenty this speed throttling causes flickering in kq6 (when looking at the box)
-	//  this will get possibly fixed when reanimate and real cel updates within kAnimate are implemented
-
-	// At least kq1 gets broken by the throttler (actually "just" some animations are missing cause the game thinks we are
-	//  too slow, so also disable us for SCI0 and SCI01 games
-	if (getSciVersion() <= SCI_VERSION_01)
-		return s->r_acc;
-
-	// FIXME: qfg3 gets broken by this, BUT even changing neededSleep to 2 still makes it somewhat broken (palette animation
-	//  isnt working)
-
-	if (s->_gameName == "qfg3" && s->currentRoomNumber() == 130) {
-		// Disable the speed throttler for QFG3, room 130 (the Sierra logo).
-		// kAnimate is called loads of times in that room, and adding any delay here
-		// will make that scene seem like it's stuck (the player needs to wait 5 mins or so)
-		return s->r_acc;
-	}
-
-	// Do some speed throttling to calm down games that rely on counting cycles
-	uint32 curTime = g_system->getMillis();
-	uint32 duration = curTime - s->_lastAnimateTime;
-	uint32 neededSleep = 40;
-
-	// We are doing this, so that games like sq3 dont think we are running too slow and will remove details (like
-	//  animated sierra logo at the beginning). Hopefully this wont cause regressions with pullups in lsl3 (FIXME?)
-	if (s->_lastAnimateCounter < 10) {
-		s->_lastAnimateCounter++;
-		neededSleep = 8;
-	}
-
-	if (duration < neededSleep) {
-		gfxop_sleep(s->gfx_state, neededSleep - duration);
-		s->_lastAnimateTime = g_system->getMillis();
-	} else {
-		s->_lastAnimateTime = curTime;
-	}
-
 	return s->r_acc;
 }
 
