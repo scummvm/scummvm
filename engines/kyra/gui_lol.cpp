@@ -1049,7 +1049,7 @@ int LoLEngine::clickedRightArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, _flags.isTalkie ? 82 : 82);
+	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, _flags.isTalkie ? 84 : 82);
 
 	return 1;
 }

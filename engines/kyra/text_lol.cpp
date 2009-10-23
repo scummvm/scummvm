@@ -573,11 +573,13 @@ void TextDisplayer_LoL::printLine(char *str) {
 
 		if ((lw + _textDimData[sdx].column) > w) {
 			if ((lines - 1) <= _lineCount)
+				// cut off line to leave space for "MORE" button
 				w -= 80;
 		} else {
 			if (!_sjisLineBreakFlag || (_lineCount + 1 < lines - 1))
 				ct = false;
 			else
+				// cut off line to leave space for "MORE" button
 				w -= 80;
 		}
 
@@ -599,6 +601,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 	} else {
 		if ((lw + _textDimData[sdx].column) > w) {
 			if ((lines - 1) <= _lineCount)
+				// cut off line to leave space for "MORE" button
 				w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
 
 			w -= _textDimData[sdx].column;
