@@ -1,6 +1,6 @@
 MODULE := engines/made
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	database.o \
 	detection.o \
 	graphics.o \

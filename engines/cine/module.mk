@@ -1,6 +1,6 @@
 MODULE := engines/cine
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	anim.o \
 	bg.o \
 	bg_list.o \

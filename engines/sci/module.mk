@@ -1,6 +1,6 @@
 MODULE := engines/sci
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	console.o \
 	decompressor.o \
 	detection.o \

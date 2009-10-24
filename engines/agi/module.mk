@@ -1,6 +1,6 @@
 MODULE := engines/agi
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	agi.o \
 	checks.o \
 	console.o \

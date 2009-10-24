@@ -1,6 +1,6 @@
 MODULE := engines/tinsel
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	actors.o \
 	anim.o \
 	background.o \

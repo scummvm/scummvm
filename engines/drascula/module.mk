@@ -1,6 +1,6 @@
 MODULE := engines/drascula
 
-MODULE_OBJS = \
+MODULE_OBJS := \
 	actors.o \
 	animation.o \
 	converse.o \
