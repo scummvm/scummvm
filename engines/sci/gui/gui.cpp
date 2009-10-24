@@ -457,6 +457,9 @@ int16 SciGui::picNotValid(int16 newPicNotValid) {
 
 
 void SciGui::paletteSet(GuiResourceId resourceId, uint16 flags) {
+	// we are also called on EGA games as well, this doesnt make sense. doing this would actually break the system EGA palette
+	if (!_s->resMan->isVGA())
+		return;
    _palette->setFromResource(resourceId, flags);
 }
 
