@@ -2327,27 +2327,22 @@ bool Console::cmdSend(int argc, const char **argv) {
 	                       stackframe + 2 + send_argc,
 	                       2 + send_argc, stackframe);
 
+	bool restore_acc = old_xstack != xstack || argc == 3;
+
 	if (old_xstack != xstack) {
 		_vm->_gamestate->_executionStackPosChanged = true;
 		DebugPrintf("Message scheduled for execution\n");
 
-		// TODO (maybe): Executing this function will leave most of the
-		// state of the current function intact, but will likely destroy
-		// r_acc. We may want to save/restore this to avoid disturbing
-		// the current function as much as possible.
-		//
-		// To do this, we may want to call run_vm() here to run until
-		// returning from this function, and restore r_acc afterwards.
-	} else {
-		if (argc == 3) {
-			// varselector read
+		// We call run_vm explictly so we can restore the value of r_acc
+		// after execution.
+		run_vm(_vm->_gamestate, 0);
 
-			DebugPrintf("Value returned: %04x:%04x\n", PRINT_REG(_vm->_gamestate->r_acc));
-			DebugPrintf("(Previous value of acc was: %04x:%04x )\n", PRINT_REG(old_acc));
+	}
 
-			// Maybe we want to leave the value of r_acc unchanged instead,
-			// and only report the read value?
-		}
+	if (restore_acc) {
+		// varselector read or message executed
+		DebugPrintf("Message completed. Value returned: %04x:%04x\n", PRINT_REG(_vm->_gamestate->r_acc));
+		_vm->_gamestate->r_acc = old_acc;
 	}
 
 	return true;
