@@ -164,9 +164,18 @@ void Sound::playSound(int soundID) {
 	int rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 
-	// FIXME: Sound resources are currently missing
-	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine)
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+		if (soundID >= 13 && soundID <= 32) {
+			static const char tracks[20] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 19, 20, 21};
+
+			_currentCDSound = soundID;
+			playCDTrack(tracks[soundID - 13], 1, 0, 0);
+		} else {
+			// FIXME: Sound effect resources are currently missing
+			printf("Sound %d unsupported\n", soundID);
+		}
 		return;
+	}
 
 	debugC(DEBUG_SOUND, "playSound #%d (room %d)", soundID,
 		_vm->getResourceRoomNr(rtSound, soundID));
