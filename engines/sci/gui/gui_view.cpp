@@ -71,8 +71,9 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	byte seekEntry;
 	bool IsEGA = false;
 
-	_embeddedPal = false;
 	_loopCount = 0;
+	_embeddedPal = false;
+	_EGAmapping = NULL;
 
 	switch (_resMan->getViewType()) {
 	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
@@ -87,11 +88,17 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
 		if (palOffset && palOffset != 0x100) {
-			// Some games also have an offset set. It seems that it points to a 16-byte mapping table
-			//  cels also work by not using it, so we dont.
+			// Some SCI0/SCI01 games also have an offset set. It seems that it points to a 16-byte mapping table
+			//  but on those games using that mapping will actually screw things up.
+			// On the other side: vga sci1 games have this pointing to a VGA palette
+			//  and ega sci1 games have this pointing to a 8x16 byte mapping table that needs to get applied then
 			if (!IsEGA) {
 				_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
 				_embeddedPal = true;
+			} else {
+				// Only use the EGA-mapping, when being SCI1
+				if (getSciVersion() >= SCI_VERSION_1_EGA)
+					_EGAmapping = &_resourceData[palOffset];
 			}
 		}
 
@@ -425,7 +432,7 @@ void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte
 	}
 }
 
-void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo) {
+void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr) {
 	GuiPalette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -446,11 +453,22 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 
-	for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
-		for (x = 0; x < width; x++) {
-			color = bitmap[x];
-			if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y))
-				_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
+	if (!_EGAmapping) {
+		for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
+			for (x = 0; x < width; x++) {
+				color = bitmap[x];
+				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y))
+					_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
+			}
+		}
+	} else {
+		byte *EGAmapping = _EGAmapping + (EGAmappingNr * 16);
+		for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
+			for (x = 0; x < width; x++) {
+				color = EGAmapping[bitmap[x]];
+				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y))
+					_screen->putPixel(clipRectTranslated.left + x, y, drawMask, color, priority, 0);
+			}
 		}
 	}
 }

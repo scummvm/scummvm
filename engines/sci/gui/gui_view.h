@@ -57,7 +57,7 @@ public:
 	sciViewLoopInfo *getLoopInfo(GuiViewLoopNo loopNo);
 	void getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
 	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
+	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr);
 	uint16 getLoopCount() const { return _loopCount; }
 	uint16 getCelCount(GuiViewLoopNo loopNo) { return _loop[loopNo].celCount; }
 	GuiPalette *getPalette();
@@ -79,6 +79,8 @@ private:
 	sciViewLoopInfo *_loop;
 	bool _embeddedPal;
 	GuiPalette _viewPalette;
+
+	byte *_EGAmapping;
 };
 
 } // End of namespace Sci
