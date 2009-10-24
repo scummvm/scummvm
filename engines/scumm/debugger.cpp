@@ -786,7 +786,13 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	// Possibly they store information on where and/or how the draft can
 	// be used. They appear to remain constant throughout the game.
 
-	base = (_vm->_game.version == 3) ? 50 : 100;
+	if (_vm->_game.version == 4 || _vm->_game.platform == Common::kPlatformPCEngine) {
+		// DOS CD version / PC-Engine version
+		base = 100;
+	} else {
+		// All (?) other versions
+		base = 50;
+	}
 
 	if (argc == 2) {
 		// We had to debug a problem at the end of the game that only
