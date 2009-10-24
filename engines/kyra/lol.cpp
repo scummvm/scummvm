@@ -1989,7 +1989,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 			return 0;
 
 		setCharacterMagicOrHitPoints(charNum, 1, -_activeSpell.p->mpRequired[spellLevel], 1);
-		setCharacterMagicOrHitPoints(charNum, 0, -_activeSpell.p[1].hpRequired[spellLevel], 1);
+		setCharacterMagicOrHitPoints(charNum, 0, -_activeSpell.p->hpRequired[spellLevel], 1);
 		gui_drawCharPortraitWithStats(charNum);
 
 		if (_spellProcs[spellType]->isValid())
