@@ -180,15 +180,6 @@ void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 	byte *priority_dest, int priority_line_width, int priority_skip);
 
 
-/**
- * Scales the index data associated with a pixmap
- *
- * @param[in] pixmap	The pixmap whose index data should be scaled
- * @param[in] mode		The mode to scale it to
- * @return				The pixmap
- */
-gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
-
 /** @} */
 } // End of namespace Sci
 

@@ -99,13 +99,8 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 		}
 	}
 
-	if (pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX) {
-		pxm->width = pxm->index_width;
-		pxm->height = pxm->index_height;
-	} else {
-		pxm->width = pxm->index_width * mode->scaleFactor;
-		pxm->height = pxm->index_height * mode->scaleFactor;
-	}
+	pxm->width = pxm->index_width;
+	pxm->height = pxm->index_height;
 }
 
 
@@ -123,7 +118,7 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 			pxm->alpha_map = (byte*)malloc(mode->scaleFactor * mode->scaleFactor * pxm->index_width * pxm->index_height + 1);
 	}
 
-	_gfx_xlate_pixmap_unfiltered(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+	_gfx_xlate_pixmap_unfiltered(mode, pxm, false);
 
 	if (pxm->palette)
 		pxm->palette_revision = pxm->palette->getRevision();

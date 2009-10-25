@@ -64,7 +64,6 @@ enum gfx_resource_type_t {
 struct gfx_resource_t {
 	int ID; 				/**< Resource ID */
 	int lock_sequence_nr;	/**< See description of lock_counter in GfxResManager */
-	int mode;				/**< A mode type hash */
 
 	/** Scaled pic */
 	union {
@@ -92,27 +91,8 @@ typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
 /** Graphics resource manager */
 class GfxResManager {
 public:
-	GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette);
+	GfxResManager(GfxDriver *driver, ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette);
 	~GfxResManager();
-
-	/**
-	 * Calculates a unique hash value for the specified options/type
-	 * setup.
-	 *
-	 * Covering more entries than relevant may slow down the system when
-	 * options are changed, while covering less may result in invalid
-	 * cached data being used.
-	 * Only positive values may be returned, as negative values are used
-	 * internally by the generic resource manager code.
-	 * Also, only the lower 20 bits are available to the interpreter.
-	 * (Yes, this isn't really a "hash" in the traditional sense...)
-	 *
-	 * @param[in] type	The type the hash is to be generated for
-	 * @return			A hash over the values of the options entries,
-	 * 					covering entries iff they are relevant for the
-	 * 					specified type.
-	 */
-	int getOptionsHash(gfx_resource_type_t type);
 
 
 	/**
@@ -284,7 +264,6 @@ public:
 	}
 
 private:
-	gfx_options_t *_options;
 	GfxDriver *_driver;
 	Palette *_staticPalette;
 	int _lockCounter;	/**< Global lock counter; increased for each new

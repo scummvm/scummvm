@@ -44,16 +44,13 @@
 
 namespace Sci {
 
-// Invalid hash mode: Used to invalidate modified pics
-#define MODE_INVALID -1
-
 struct param_struct {
 	int args[4];
 	GfxDriver *driver;
 };
 
-GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette) :
-				_options(options), _driver(driver), _resMan(resMan), _screen(screen), _palette(palette),
+GfxResManager::GfxResManager(GfxDriver *driver, ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette) :
+				_driver(driver), _resMan(resMan), _screen(screen), _palette(palette),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
@@ -86,14 +83,8 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 
 	basic_style.line_mode = GFX_LINE_MODE_CORRECT;
 	basic_style.brush_mode = GFX_BRUSH_MODE_SCALED;
-
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	style.line_mode = _options->pic0_line_mode;
-	style.brush_mode = _options->pic0_brush_mode;
-#else
 	style.line_mode = GFX_LINE_MODE_CORRECT;
 	style.brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
-#endif
 
 	if (!res || !res->data)
 		error("calculatePic(): pic number %d not found", nr);
@@ -122,11 +113,7 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 
 		memcpy(scaled_pic->undithered_buffer, scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer_size);
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-		gfxr_dither_pic0(scaled_pic, _options->pic0_dither_mode);
-#else
 		gfxr_dither_pic0(scaled_pic, kDitherNone);
-#endif
 	}
 
 	// Mark default palettes
@@ -135,41 +122,6 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 
 	if (unscaled_pic)
 		unscaled_pic->visual_map->loop = default_palette;
-}
-
-int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
-	switch (type) {
-	case GFX_RESOURCE_TYPE_VIEW:
-		// This should never happen
-		error("getOptionsHash called on a VIEW resource");
-
-	case GFX_RESOURCE_TYPE_PIC:
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-		if (_resMan->isVGA())
-			// NOTE: here, it is assumed that the upper port bound is always 10, but this doesn't seem to matter for the
-			// generated options hash anyway
-			return 10;
-		else
-			return (_options->pic0_unscaled) ? 0x10000 : 
-					 (_options->pic0_dither_mode << 12) |
-					 (_options->pic0_brush_mode << 4) |
-				     (_options->pic0_line_mode);
-#else
-		if (_resMan->isVGA())
-			return 10;
-		else
-			return 0x10000 | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
-#endif
-
-	case GFX_RESOURCE_TYPE_FONT:
-	case GFX_RESOURCE_TYPE_CURSOR:
-		return 0;
-
-	case GFX_RESOURCE_TYPES_NR:
-	default:
-		error("Invalid resource type: %d", type);
-		return -1;
-	}
 }
 
 #define FREEALL(freecmd, type) \
@@ -299,8 +251,7 @@ void GfxResManager::setStaticPalette(Palette *newPalette)
 		} \
 	}
 
-static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scaled, int force, gfx_mode_t *mode,
-										 gfx_options_t *options) {
+static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scaled, int force, gfx_mode_t *mode) {
 
 	XLATE_AS_APPROPRIATE(GFX_MASK_VISUAL, visual_map);
 	XLATE_AS_APPROPRIATE(GFX_MASK_PRIORITY, priority_map);
@@ -324,27 +275,16 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 	gfxr_pic_t *npic = NULL;
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfx_resource_t *res = NULL;
-	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
 	int need_unscaled = (_driver->getMode()->scaleFactor != 1);
-
-	hash |= (flags << 20) | ((default_palette & 0x7) << 28);
 
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
-	if (!res || res->mode != hash) {
+	if (!res) {
 		gfxr_pic_t *pic = NULL;
 		gfxr_pic_t *unscaled_pic = NULL;
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-		if (_options->pic0_unscaled) {
-			need_unscaled = 0;
-			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resMan->isVGA());
-		} else
-			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resMan->isVGA());
-#else
 		need_unscaled = 0;
 		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resMan->isVGA());
-#endif
 
 		if (!pic) {
 			error("Failed to allocate scaled pic");
@@ -375,21 +315,13 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 				gfxr_free_pic(res->unscaled_data.pic);
 		}
 
-		res->mode = hash;
 		res->scaled_data.pic = pic;
 		res->unscaled_data.pic = unscaled_pic;
 	} else {
 		res->lock_sequence_nr = 0;
 	}
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	npic = gfxr_pic_xlate_common(res, maps, scaled || _options->pic0_unscaled, 0, _driver->getMode(),
-	                             _options);
-#else
-	npic = gfxr_pic_xlate_common(res, maps, 1, 0, _driver->getMode(),
-	                             _options);
-#endif
-
+	npic = gfxr_pic_xlate_common(res, maps, 1, 0, _driver->getMode());
 
 	return npic;
 }
@@ -417,44 +349,15 @@ static int get_pic_id(gfx_resource_t *res) {
 		return res->unscaled_data.pic->visual_map->ID;
 }
 
-static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
-	int xmod = mode->scaleFactor; // Step size horizontally
-	int ymod = pxm->index_width * mode->scaleFactor; // Vertical step size
-	int maxpos = pxm->index_width * pxm->index_height;
-	int pos;
-	byte *dest = pxm->index_data;
-
-	if (!(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX))
-		return; // It's not scaled!
-
-	for (pos = 0; pos < maxpos; pos += ymod) {
-		int c;
-
-		for (c = 0; c < pxm->index_width; c += xmod)
-			*dest++ = pxm->index_data[pos + c];
-			// No overwrite since line and offset readers move much faster (proof by in-duction, trivial
-			// and left to the reader)
-	}
-
-	pxm->index_width /= mode->scaleFactor;
-	pxm->index_height /= mode->scaleFactor;
-	pxm->flags &= ~GFX_PIXMAP_FLAG_SCALED_INDEX;
-}
-
 gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_default_palette, int default_palette) {
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfxr_pic_t *pic = NULL;
 	gfx_resource_t *res = NULL;
-	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	int need_unscaled = !(_options->pic0_unscaled) && (_driver->getMode()->scaleFactor != 1 || _driver->getMode()->scaleFactor != 1);
-#else
 	int need_unscaled = 1;
-#endif
 
 	res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
 
-	if (!res || (res->mode != MODE_INVALID && res->mode != hash)) {
+	if (!res) {
 		getPic(old_nr, 0, flags, old_default_palette, 1);
 
 		res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
@@ -465,31 +368,15 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 		}
 	}
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	if (_options->pic0_unscaled) // Unscale priority map, if we scaled it earlier
-#endif
-		_gfxr_unscale_pixmap_index_data(res->scaled_data.pic->priority_map, _driver->getMode());
-
 	// The following two operations are needed when returning scaled maps (which is always the case here)
 	res->lock_sequence_nr = 0;
 	calculatePic(res->scaled_data.pic, need_unscaled ? res->unscaled_data.pic : NULL,
 		                               flags | DRAWPIC01_FLAG_OVERLAID_PIC, default_palette, new_nr);
 
-	res->mode = MODE_INVALID; // Invalidate
-
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	if (_options->pic0_unscaled) // Scale priority map again, if needed
-#endif
-		res->scaled_data.pic->priority_map = gfx_pixmap_scale_index_data(res->scaled_data.pic->priority_map, _driver->getMode());
-
 	{
 		int old_ID = get_pic_id(res);
 		set_pic_id(res, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, new_nr)); // To ensure that our graphical translation options work properly
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->getMode(), _options);
-#else
-		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->getMode(), _options);
-#endif
+		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->getMode());
 		set_pic_id(res, old_ID);
 	}
 
@@ -506,7 +393,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	gfxr_loop_t *loop_data = NULL;
 	gfx_pixmap_t *cel_data = NULL;
 
-	if (!res || res->mode != hash) {
+	if (!res) {
 		// Wrapper code for the new view decoder
 		view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
 
@@ -575,13 +462,11 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			res->scaled_data.view = NULL;
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 			res->lock_sequence_nr = _tagLockCounter;
-			res->mode = hash;
 			resMap[nr] = res;
 		} else {
 			gfxr_free_view(res->unscaled_data.view);
 		}
 
-		res->mode = hash;
 		res->unscaled_data.view = view;
 
 	} else {
@@ -595,7 +480,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	cel_data = loop_data->cels[*cel];
 
 	if (!cel_data->data) {
-		gfx_get_res_config(_options->res_conf, cel_data);
 		gfx_xlate_pixmap(cel_data, _driver->getMode());
 	}
 
@@ -605,7 +489,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_FONT];
 	gfx_resource_t *res = NULL;
-	int hash = getOptionsHash(GFX_RESOURCE_TYPE_FONT);
 
 	// Workaround: lsl1sci mixes its own internal fonts with the global
 	// SCI ones, so we translate them here, by removing their extra bits
@@ -614,7 +497,7 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
-	if (!res || res->mode != hash) {
+	if (!res) {
 		Resource *fontRes = _resMan->findResource(ResourceId(kResourceTypeFont, num), 0);
 		if (!fontRes || !fontRes->data)
 			return NULL;
@@ -626,7 +509,6 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 			res->scaled_data.font = NULL;
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_FONT, num);
 			res->lock_sequence_nr = _tagLockCounter;
-			res->mode = hash;
 			resMap[num] = res;
 		} else {
 			gfxr_free_font(res->unscaled_data.font);

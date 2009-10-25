@@ -130,9 +130,6 @@ extern rect_t gfx_rect_fullscreen;
 
 #define GFX_PIC_COLORS 256
 
-#define GFX_PIXMAP_FLAG_SCALED_INDEX	(1<<0) /* Index data is scaled already */
-#define GFX_PIXMAP_FLAG_INSTALLED		(1<<2) /* Pixmap has been registered */
-
 #define GFX_PIXMAP_COLOR_KEY_NONE -1 /* No transpacency colour key */
 #define GFX_CURSOR_TRANSPARENT 255 // Cursor colour key
 

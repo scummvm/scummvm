@@ -167,11 +167,6 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, bool sci1) {
 	pic->visual_map->flags = 0;
 	pic->priority_map->flags = 0;
 	pic->control_map->flags = 0;
-	if (mode->scaleFactor > 1) {
-		pic->visual_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
-		pic->priority_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
-	}
-
 	pic->priority_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 	pic->control_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 
@@ -313,28 +308,6 @@ static void _gfxr_auxbuf_line_clear(gfxr_pic_t *pic, rect_t line, int color, int
 }
 
 #undef LINEMACRO
-
-#ifdef WITH_PIC_SCALING
-static void _gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask) {
-	// Propagates all filled bits into the planes described by bitmask
-	unsigned long *data = (unsigned long *)pic->aux_map;
-	unsigned long clearmask = 0x07070707;
-	unsigned long andmask = (bitmask << 3) | (bitmask << (3 + 8)) | (bitmask << (3 + 16)) | (bitmask << (3 + 24));
-
-	if (sizeof(unsigned long) == 8) { // UltraSparc, Alpha, newer MIPSens, etc
-		andmask |= (andmask << 32);
-		clearmask |= (clearmask << 32);
-	}
-
-	for (int i = 0; i < GFXR_AUX_MAP_SIZE / sizeof(unsigned long); i++) {
-		unsigned long temp = *data & andmask;
-		temp >>= 3;
-		*data = (temp | *data) & clearmask;
-		++data;
-	}
-}
-#endif
-
 
 /*** Regular drawing operations ***/
 
@@ -878,111 +851,6 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 }
 
 
-#define IS_FILL_BOUNDARY(x) (((x) & legalmask) != legalcolor)
-
-#ifdef WITH_PIC_SCALING
-
-#define TEST_POINT(xx, yy) \
-	if (pic->aux_map[(yy) * 320 + (xx)] & FRESH_PAINT) { \
-		mpos = (((yy) * 320 * pic->mode->scaleFactor) + (xx)) * pic->mode->scaleFactor; \
-		for (iy = 0; iy < pic->mode->scaleFactor; iy++) { \
-			for (ix = 0; ix < pic->mode->scaleFactor; ix++) { \
-				if (!IS_FILL_BOUNDARY(test_map[mpos + ix])) { \
-					*x = ix + (xx) * pic->mode->scaleFactor; \
-					*y = iy + (yy) * pic->mode->scaleFactor; \
-					return 0; \
-				} \
-				mpos += linewidth; \
-			} \
-		} \
-	}
-
-static int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_y, int x_320,
-	int y_200, int color, int drawenable, int *x, int *y) {
-	// returns -1 on failure, 0 on success
-	int linewidth = pic->mode->scaleFactor * 320;
-	int mpos, ix, iy;
-	int size_x = (max_x - min_x + 1) >> 1;
-	int size_y = (max_y - min_y + 1) >> 1;
-	int mid_x = min_x + size_x;
-	int mid_y = min_y + size_y;
-	int max_size = (size_x > size_y) ? size_x : size_y;
-	int size;
-	int legalcolor;
-	int legalmask;
-	byte *test_map;
-	*x = x_320 * pic->mode->scaleFactor;
-	*y = y_200 * pic->mode->scaleFactor;
-
-	if (size_x < 0 || size_y < 0)
-		return 0;
-
-	if (drawenable & GFX_MASK_VISUAL) {
-		test_map = pic->visual_map->index_data;
-
-		if ((color & 0xf) == 0xf // When dithering with white, do more
-								// conservative checks
-		        || (color & 0xf0) == 0xf0)
-			legalcolor = 0xff;
-		else
-			legalcolor = 0xf0; // Only check the second color
-
-		legalmask = legalcolor;
-	} else if (drawenable & GFX_MASK_PRIORITY) {
-		test_map = pic->priority_map->index_data;
-		legalcolor = 0;
-		legalmask = 0xf;
-	} else return -3;
-
-	TEST_POINT(x_320, y_200); // Most likely candidate
-	TEST_POINT(mid_x, mid_y); // Second most likely candidate
-
-	for (size = 1; size <= max_size; size++) {
-		int i;
-
-		if (size <= size_y) {
-			int limited_size = (size > size_x) ? size_x : size;
-
-			for (i = mid_x - limited_size; i <= mid_x + limited_size; i++) {
-				TEST_POINT(i, mid_y - size);
-				TEST_POINT(i, mid_y + size);
-			}
-		}
-
-		if (size <= size_x) {
-			int limited_size = (size - 1 > size_y) ? size_y : size - 1;
-
-			for (i = mid_y - limited_size; i <= mid_y + limited_size; i++) {
-				TEST_POINT(mid_x - size, i);
-				TEST_POINT(mid_x + size, i);
-			}
-		}
-	}
-
-	return -1;
-}
-
-#undef TEST_POINT
-
-} // End of namespace Sci
-
-// Now include the actual filling code (with scaling support)
-#define FILL_FUNCTION _gfxr_fill_any
-#define FILL_FUNCTION_RECURSIVE _gfxr_fill_any_recursive
-#define AUXBUF_FILL_HELPER _gfxr_auxbuf_fill_any_recursive
-#define AUXBUF_FILL _gfxr_auxbuf_fill_any
-#define DRAW_SCALED
-# include "picfill.cpp"
-#undef DRAW_SCALED
-#undef AUXBUF_FILL
-#undef AUXBUF_FILL_HELPER
-#undef FILL_FUNCTION_RECURSIVE
-#undef FILL_FUNCTION
-
-namespace Sci {
-
-#endif // defined(WITH_PIC_SCALING)
-
 } // End of namespace Sci
 
 // Include again, but this time without support for scaling
@@ -1280,19 +1148,10 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		case PIC_OP_FILL:
 			debugC(2, kDebugLevelSci0Pic, "Fill @%d\n", pos);
 			while (*(resource + pos) < PIC_OP_FIRST) {
-				//fprintf(stderr,"####################\n");
 				GET_ABS_COORDS(x, y);
 				debugC(2, kDebugLevelSci0Pic, "Abs coords %d,%d\n", x, y);
-				//fprintf(stderr,"C=(%d,%d)\n", x, y + titlebar_size);
-#ifdef WITH_PIC_SCALING
-				if (pic->mode->scaleFactor > 1)
-					_gfxr_fill_any(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
-					               color : 0, priority, control, drawenable, titlebar_size);
-
-				else
-#endif
-					_gfxr_fill_1(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
-					             color : 0, priority, control, drawenable, titlebar_size);
+				_gfxr_fill_1(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
+				             color : 0, priority, control, drawenable, titlebar_size);
 			}
 			goto end_op_loop;
 

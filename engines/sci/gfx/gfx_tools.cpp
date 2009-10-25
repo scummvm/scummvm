@@ -144,80 +144,14 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		return pixmap;
 	}
 
-	if (pixmap->flags & GFX_PIXMAP_FLAG_SCALED_INDEX) {
-		pixmap->width = pixmap->index_width;
-		pixmap->height = pixmap->index_height;
-	} else {
-		pixmap->width = pixmap->index_width * mode->scaleFactor;
-		pixmap->height = pixmap->index_height * mode->scaleFactor;
-	}
+	pixmap->width = pixmap->index_width;
+	pixmap->height = pixmap->index_height;
 
 	size = pixmap->width * pixmap->height;
 	if (!size)
 		size = 1;
 
 	pixmap->data = (byte*)malloc(pixmap->data_size = size);
-	return pixmap;
-}
-
-gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
-	byte *old_data, *new_data, *initial_new_data;
-	byte *linestart;
-	int linewidth;
-	int xl, yl;
-	int i, yc;
-	int xfact = mode->scaleFactor;
-	int yfact = mode->scaleFactor;
-
-	if (xfact == 1 && yfact == 1)
-		return pixmap;
-
-	if (!pixmap)
-		return NULL;
-
-	if (pixmap->flags & GFX_PIXMAP_FLAG_SCALED_INDEX)
-		return pixmap; // Already done
-
-	old_data = pixmap->index_data;
-
-	if (!old_data) {
-		error("Attempt to scale index data without index data!\n");
-		return pixmap;
-	}
-
-	xl = pixmap->index_width;
-	yl = pixmap->index_height;
-	linewidth = xfact * xl;
-	initial_new_data = new_data = (byte *)malloc(linewidth * yfact * yl);
-
-	for (yc = 0; yc < yl; yc++) {
-
-		linestart = new_data;
-
-		if (xfact == 1) {
-			memcpy(new_data, old_data, linewidth);
-			new_data += linewidth;
-			old_data += linewidth;
-		} else for (i = 0; i < xl; i++) {
-				byte fillc = *old_data++;
-				memset(new_data, fillc, xfact);
-				new_data += xfact;
-			}
-
-		for (i = 1; i < yfact; i++) {
-			memcpy(new_data, linestart, linewidth);
-			new_data += linewidth;
-		}
-	}
-
-	free(pixmap->index_data);
-	pixmap->index_data = initial_new_data;
-
-	pixmap->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
-
-	pixmap->index_width = linewidth;
-	pixmap->index_height *= yfact;
-
 	return pixmap;
 }
 

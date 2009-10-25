@@ -354,12 +354,9 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-void gfxop_init(GfxState *state,
-				gfx_options_t *options, ResourceManager *resMan,
+void gfxop_init(GfxState *state, ResourceManager *resMan,
 				SciGuiScreen *screen, SciGuiPalette *palette, int scaleFactor) {
-	state->options = options;
 	state->visible_map = GFX_MASK_VISUAL;
-	state->options = options;
 	state->disable_dirty = 0;
 	state->_events.clear();
 	state->pic = state->pic_unscaled = NULL;
@@ -370,7 +367,7 @@ void gfxop_init(GfxState *state,
 
 	state->driver = new GfxDriver(screen, scaleFactor);
 
-	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan, screen, palette);
+	state->gfxResMan = new GfxResManager(state->driver, resMan, screen, palette);
 
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 
@@ -1382,10 +1379,6 @@ static void _gfxop_set_pic(GfxState *state) {
 		_gfxop_install_pixmap(state->driver, state->pic->visual_map);
 	}
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	if (state->options->pic0_unscaled)
-#endif
-		state->pic->priority_map = gfx_pixmap_scale_index_data(state->pic->priority_map, state->driver->getMode());
 	state->driver->setStaticBuffer(state->pic->visual_map, state->pic->priority_map);
 }
 

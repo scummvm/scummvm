@@ -60,10 +60,7 @@
 			<File RelativePath="..\..\engines\sci\gfx\gfx_driver.h" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_gui.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_gui.h" />
-			<File RelativePath="..\..\engines\sci\gfx\gfx_options.h" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_pixmap_scale.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\gfx_res_options.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\gfx_res_options.h" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_resmgr.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_resmgr.h" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_resource.cpp" />

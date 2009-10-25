@@ -30,7 +30,6 @@
 
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_tools.h"
-#include "sci/gfx/gfx_options.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/uinput.h"
 
@@ -89,8 +88,6 @@ typedef Common::List<rect_t> DirtyRectList;
 
 
 struct GfxState {
-	gfx_options_t *options;
-
 	rect_t clip_zone_unscaled; /**< The current UNSCALED clipping zone */
 	rect_t clip_zone; /**< The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
 
@@ -131,11 +128,9 @@ struct GfxState {
  * @param[in] state			The state to initialize
  * @param[in] scaleFactor	Scale factor
  * @param[in] mode			Graphics mode to use
- * @param[in] options		Rendering options
  * @param[in] resMan		Resource manager to use
  */
-void gfxop_init(GfxState *state, 
-		gfx_options_t *options, ResourceManager *resMan,
+void gfxop_init(GfxState *state, ResourceManager *resMan,
 		SciGuiScreen *screen, SciGuiPalette *palette, int scaleFactor = 1);
 
 /**

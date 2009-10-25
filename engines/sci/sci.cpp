@@ -138,24 +138,10 @@ Common::Error SciEngine::run() {
 	_gamestate->gfx_state = &gfx_state;
 
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("dither_mode", "0");
+	ConfMan.registerDefault("undither", "true");
+	screen->unditherSetState(ConfMan.getBool("undither"));
 
-	// Default config:
-	gfx_options_t gfx_options;
-
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	gfx_options.pic0_unscaled = 1;
-	gfx_options.pic0_dither_mode = (DitherMode)ConfMan.getInt("dither_mode");
-	gfx_options.pic0_brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
-	gfx_options.pic0_line_mode = GFX_LINE_MODE_CORRECT;
-	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
-		gfx_options.res_conf.assign[i] = NULL;
-		gfx_options.res_conf.mod[i] = NULL;
-	}
-	// Default config ends
-#endif
-
-	gfxop_init(&gfx_state, &gfx_options, _resMan, screen, palette, 1);
+	gfxop_init(&gfx_state, _resMan, screen, palette, 1);
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
