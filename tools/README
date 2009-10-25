@@ -61,6 +61,14 @@ create_lure (dreammaster)
     animations, game scripts, and other static data. This tool creates
     the lure.dat file.
 
+create_msvc (LordHoto)
+-----------
+    Creates project files for Visual Studio 2005 and 2008 out of the
+    configure / Makefile based build system. It also offers a way to
+    enable or disable certain engines and the use of external libraries
+    similar to configure. Run the tool without any arguments for further
+    help.
+
 
 credits.pl
 ----------
