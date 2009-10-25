@@ -735,11 +735,11 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Jones in the Fast Lane - English DOS CD
-	{"jones", "", {
+	{"jones", "CD", {
 		{"resource.map", 0, "459f5b04467bc2107aec02f5c4b71b37", 4878},
 		{"resource.001", 0, "3876da2ce16fb7dea2f5d943d946fa84", 1652150},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO_NONE	},
 
 	// King's Quest 1 SCI Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.003.007"
