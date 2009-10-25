@@ -97,18 +97,6 @@ Common::Error SciEngine::run() {
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 
-	/* bool end = false;
-	Common::EventManager *em = _system->getEventManager();
-	while (!end) {
-		Common::Event ev;
-		if (em->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_KEYDOWN) {
-				end = true;
-			}
-		}
-		_system->delayMillis(10);
-	} */
-
 	// FIXME/TODO: Move some of the stuff below to init()
 
 	_resMan = new ResourceManager();
