@@ -143,6 +143,7 @@ protected:
 private:
 	virtual void initPriorityBands();
 	virtual void animateShowPic();
+	virtual void addToPicSetPicNotValid();
 
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;

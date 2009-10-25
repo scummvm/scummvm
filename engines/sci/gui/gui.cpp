@@ -563,6 +563,13 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	_gfx->SetPort(oldPort);
 }
 
+void SciGui::addToPicSetPicNotValid() {
+	if (getSciVersion() <= SCI_VERSION_1_EARLY)
+		_screen->_picNotValid = 1;
+	else
+		_screen->_picNotValid = 2;
+}
+
 void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
 
@@ -575,12 +582,13 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	_animate->makeSortedList(list);
 	_animate->addToPicDrawCels();
 
-	_screen->_picNotValid = 2;
+	addToPicSetPicNotValid();
 }
 
 void SciGui::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	_gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	_animate->addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+	addToPicSetPicNotValid();
 }
 
 void SciGui::setNowSeen(reg_t objectReference) {
