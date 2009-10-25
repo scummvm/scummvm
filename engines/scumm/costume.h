@@ -71,22 +71,6 @@ protected:
 	byte increaseAnim(Actor *a, int slot);
 };
 
-class PCEngineCostumeLoader : public BaseCostumeLoader {
-public:
-	int _id;
-	const byte *_baseptr;
-	const byte *_dataOffsets;
-	byte _numAnim;
-
-	PCEngineCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
-	void loadCostume(int id);
-	void costumeDecodeData(Actor *a, int frame, uint usemask);
-	byte increaseAnims(Actor *a);
-
-protected:
-	byte increaseAnim(Actor *a, int slot);
-};
-
 class C64CostumeLoader : public ClassicCostumeLoader {
 public:
 	C64CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
@@ -126,6 +110,8 @@ protected:
 
 	void procC64(Codec1 &v1, int actor);
 
+	void procPCEngine(Codec1 &v1);
+
 	byte mainRoutine(int xmoveCur, int ymoveCur);
 };
 
@@ -144,16 +130,11 @@ protected:
 	byte drawLimb(const Actor *a, int limb);
 };
 
-class PCEngineCostumeRenderer : public BaseCostumeRenderer {
-protected:
-	PCEngineCostumeLoader _loaded;
-
+class PCEngineCostumeRenderer : public ClassicCostumeRenderer {
 public:
-	PCEngineCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
+	PCEngineCostumeRenderer(ScummEngine *vm) : ClassicCostumeRenderer(vm) {}
 
 	void setPalette(uint16 *palette);
-	void setFacing(const Actor *a);
-	void setCostume(int costume, int shadow);
 
 protected:
 	byte drawLimb(const Actor *a, int limb);

@@ -103,6 +103,8 @@ protected:
 	// whether to draw the actor mirrored
 	bool _mirror;
 
+	int _numBlocks;
+
 	// width and height of cel to decode
 	int _width, _height;
 

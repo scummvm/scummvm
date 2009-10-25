@@ -1284,7 +1284,7 @@ void ScummEngine::setupCostumeRenderer() {
 		_costumeLoader = new NESCostumeLoader(this);
 	} else if (_game.platform == Common::kPlatformPCEngine) {
 		_costumeRenderer = new PCEngineCostumeRenderer(this);
-		_costumeLoader = new PCEngineCostumeLoader(this);
+		_costumeLoader = new ClassicCostumeLoader(this);
 	} else {
 		_costumeRenderer = new ClassicCostumeRenderer(this);
 		_costumeLoader = new ClassicCostumeLoader(this);
