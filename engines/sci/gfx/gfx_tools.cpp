@@ -83,24 +83,6 @@ void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
 	}
 }
 
-gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
-	gfx_pixmap_t *clone = (gfx_pixmap_t *)malloc(sizeof(gfx_pixmap_t));
-	*clone = *pxm;
-	clone->index_data = NULL;
-	clone->palette = NULL;
-	clone->data = NULL;
-	clone->palette_revision = -1;
-	gfx_pixmap_alloc_data(clone, mode);
-
-	memcpy(clone->data, pxm->data, clone->data_size);
-	if (clone->alpha_map) {
-		clone->alpha_map = (byte *) malloc(clone->width * clone->height);
-		memcpy(clone->alpha_map, pxm->alpha_map, clone->width * clone->height);
-	}
-
-	return clone;
-}
-
 gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 	gfx_pixmap_t *pxm = (gfx_pixmap_t *)malloc(sizeof(gfx_pixmap_t));
 
@@ -154,17 +136,6 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	return pixmap;
 }
 
-gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
-	if (!pixmap->index_data) {
-		warning("[GFX] Attempt to free pixmap index data twice");
-		return pixmap;
-	}
-
-	free(pixmap->index_data);
-	pixmap->index_data = NULL;
-	return pixmap;
-}
-
 gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	int size;
 
@@ -186,18 +157,6 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		size = 1;
 
 	pixmap->data = (byte*)malloc(pixmap->data_size = size);
-	return pixmap;
-}
-
-gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
-	if (!pixmap->data) {
-		warning("[GFX] Attempt to free pixmap data twice");
-		return pixmap;
-	}
-
-	free(pixmap->data);
-	pixmap->data = NULL;
-
 	return pixmap;
 }
 

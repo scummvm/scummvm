@@ -114,8 +114,7 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap
 				fragments.push_back(TextFragment(text));
 
 				localmaxwidth = localmaxwidth - last_breakpoint;
-				if (!(flags & kFontCountWhitespace))
-					localmaxwidth -= last_break_width;
+				localmaxwidth -= last_break_width;
 				last_breakpoint = localmaxwidth = 0;
 
 			} else if (*text == ' ') {

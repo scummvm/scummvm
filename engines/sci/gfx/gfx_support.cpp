@@ -152,7 +152,7 @@ void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_l
 }
 
 void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect_t src_coords, rect_t dest_coords,
-						 byte *dest, int dest_line_width, byte *priority_dest, int priority_line_width, int priority_skip, int flags) {
+						 byte *dest, int dest_line_width, byte *priority_dest, int priority_line_width, int priority_skip) {
 	int maxx = 320 * mode->scaleFactor;
 	int maxy = 200 * mode->scaleFactor;
 	byte *src = pxm->data;
@@ -193,13 +193,11 @@ void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rec
 	// Set destination offsets
 
 	// Set x offsets
-	if (!(flags & GFX_CROSSBLIT_FLAG_DATA_IS_HOMED))
-		dest += dest_coords.x;
+	dest += dest_coords.x;
 	priority_pos += dest_coords.x * priority_skip;
 
 	// Set y offsets
-	if (!(flags & GFX_CROSSBLIT_FLAG_DATA_IS_HOMED))
-		dest += dest_coords.y * dest_line_width;
+	dest += dest_coords.y * dest_line_width;
 	priority_pos += dest_coords.y * priority_line_width;
 
 	// Set source offsets

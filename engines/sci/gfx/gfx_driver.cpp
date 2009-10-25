@@ -115,7 +115,7 @@ void GfxDriver::drawPixmap(gfx_pixmap_t *pxm, int priority, rect_t src, rect_t d
 	gfx_crossblit_pixmap(_mode, pxm, priority, src, dest, destBuffer,
 	                     _mode->xsize,
 	                     destPriority,
-	                     _screen->_width, 1, 0);
+	                     _screen->_width, 1);
 }
 
 void GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {

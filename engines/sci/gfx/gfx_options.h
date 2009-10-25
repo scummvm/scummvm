@@ -55,15 +55,8 @@ struct gfx_options_t {
 	gfx_line_mode_t pic0_line_mode;
 
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
-
-	int workarounds;	// Workaround flags - see below
 #endif
 };
-
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-/* SQ3 counts whitespaces towards the total text size, as does gfxop_get_text_params() if this is set: */
-#define GFX_WORKAROUND_WHITESPACE_COUNT (1 << 0)
-#endif
 
 } // End of namespace Sci
 

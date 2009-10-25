@@ -182,12 +182,12 @@ int _reset_graphics_input(EngineState *s) {
 		for (int i = 0; i < 16; i++) {
 			gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
 					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1);
-			gfxop_set_system_color(s->gfx_state, i, &(s->ega_colors[i]));
+			s->gfx_state->driver->getMode()->palette->makeSystemColor(i, s->ega_colors[i].visual);
 		}
 	} else {
 		// Allocate SCI1 system colors
 		gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
-		gfxop_set_system_color(s->gfx_state, 0, &black);
+		s->gfx_state->driver->getMode()->palette->makeSystemColor(0, black.visual);
 
 		// Check for Amiga palette file.
 		Common::File file;

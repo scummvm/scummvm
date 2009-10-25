@@ -164,7 +164,6 @@ Common::Error SciEngine::run() {
 		gfx_options.res_conf.assign[i] = NULL;
 		gfx_options.res_conf.mod[i] = NULL;
 	}
-	gfx_options.workarounds = 0;
 	// Default config ends
 #endif
 

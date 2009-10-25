@@ -131,7 +131,7 @@ static void _gfxop_grab_pixmap(GfxState *state, gfx_pixmap_t **pxmp, int x, int 
 		*pxmp = gfx_new_pixmap(unscaled_xl, unscaled_yl, GFX_RESID_NONE, 0, 0);
 	else
 		if (xl * yl > (*pxmp)->width * (*pxmp)->height) {
-			gfx_pixmap_free_data(*pxmp);
+			free((*pxmp)->data);
 			(*pxmp)->data = NULL;
 		}
 
@@ -513,19 +513,6 @@ void gfxop_set_color(GfxState *state, gfx_color_t *colorOut, gfx_color_t &colorI
 	              (colorIn.mask & GFX_MASK_PRIORITY) ? colorIn.priority : -1,
 	              (colorIn.mask & GFX_MASK_CONTROL) ? colorIn.control : -1);
 }
-
-void gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color) {
-	if (index >= SCREEN_PALETTE->size()) {
-		error("Attempt to set invalid color index %02x as system color", color->visual.getParentIndex());
-	}
-
-	SCREEN_PALETTE->makeSystemColor(index, color->visual);
-}
-
-void gfxop_free_color(GfxState *state, gfx_color_t *color) {
-	// FIXME: implement. (And call in the appropriate places!)
-}
-
 
 // Generic drawing operations
 
@@ -1460,12 +1447,7 @@ void gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int m
 	if (!font)
 		error("Attempt to calculate text size with invalid font #%d", font_nr);
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	textsplits = gfxr_font_calculate_size(fragments, font, maxwidth, text, width, height, lineheight, lastline_width,
-	                                      (state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) | text_flags);
-#else
 	textsplits = gfxr_font_calculate_size(fragments, font, maxwidth, text, width, height, lineheight, lastline_width, text_flags);
-#endif
 
 	if (!textsplits)
 		error("Could not calculate text size");
@@ -1498,15 +1480,8 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 	handle->valign = valign;
 	handle->line_height = font->line_height;
 
-	bool result;
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	result = gfxr_font_calculate_size(handle->lines, font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height),
-	                             NULL, NULL, ((state->options->workarounds & GFX_WORKAROUND_WHITESPACE_COUNT) ?
-	                              kFontCountWhitespace : 0) | flags);
-#else
-	result = gfxr_font_calculate_size(handle->lines, font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height),
+	bool result = gfxr_font_calculate_size(handle->lines, font, maxwidth, handle->_text.c_str(), &(handle->width), &(handle->height),
 	                             NULL, NULL, flags);
-#endif
 
 	if (!result) {
 		error("Could not calculate text parameters in font #%d", font_nr);

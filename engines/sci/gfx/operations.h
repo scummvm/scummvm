@@ -285,9 +285,9 @@ void gfxop_disable_dirty_frames(GfxState *state);
 /**
  * Maps an r/g/b value to a color and sets a gfx_color_t structure.
  *
- * In palette mode, this may allocate a new color. Use gfxop_free_color() to
- * free that color. If any of the r/g/b values are less than zero, the resulting
- * color will not affect the visual map when used for drawing
+ * In palette mode, this may allocate a new color. If any of the r/g/b values
+ * are less than zero, the resulting color will not affect the visual map when
+ * used for drawing
  *
  * @param[in] state		The current state
  * @param[in] color		Pointer to the structure to write to
@@ -309,26 +309,6 @@ void gfxop_disable_dirty_frames(GfxState *state);
 void gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b,
 	int a, int priority, int control);
 
-/**
- * Designates a color as a 'system color'.
- *
- * system colors are permanent colors that cannot be deallocated. as such, they must be used with caution.
- *
- * @param[in] state	The affected state
- * @param[in] index	The index for the new system color
- * @param[in] color	The color to designate as a system color
- */
-void gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color);
-
-/**
- * Frees a color allocated by gfxop_set_color().
- *
- * This function is a no-op in non-index mode, or if color is a system color.
- *
- * @param[in] state	The state affected
- * @param[in] color	The color to de-allocate
- */
-void gfxop_free_color(GfxState *state, gfx_color_t *color);
 /** @} */
 
 /** @name Pointer and IO ops */

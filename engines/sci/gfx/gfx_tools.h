@@ -79,30 +79,12 @@ void gfx_free_mode(gfx_mode_t *mode);
 gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel);
 
 /**
- * Clones a pixmap, minus its index data, palette and driver-specific
- * handles
- *
- * @param[in] pixmap	The pixmap to clone
- * @param[in] mode		The mode to be applied to the pixmap
- * @return				The clone
- */
-gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
-
-/**
  * Allocates the index_data field of a pixmap
  *
  * @param[in] pixmap	The pixmap to allocate for
  * @return				The pixmap
  */
 gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap);
-
-/**
- * Frees the index_data field of a pixmap
- *
- * @param[in] pixmap	The pixmap to modify
- * @return				The pixmap
- */
-gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap);
 
 /**
  * Allocates the data field of a pixmap
@@ -112,14 +94,6 @@ gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap);
  * @return				The pixmap
  */
 gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
-
-/**
- * Frees the memory allocated for a pixmap's data field
- *
- * @param[in] pixmap	The pixmap to modify
- * @return				The pixmap
- */
-gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap);
 
 /**
  * Frees all memory associated with a pixmap
@@ -176,8 +150,6 @@ void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box);
  */
 void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode);
 
-#define GFX_CROSSBLIT_FLAG_DATA_IS_HOMED (1<<0) /**< Means that the first byte in the visual data refers to the point corresponding to (dest.x, dest.y) */
-
 /**
  * Transfers the non-transparent part of a pixmap to a linear pixel
  * buffer.
@@ -202,11 +174,10 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode);
  * 									line of the priority buffer
  * @param[in] priority_skip			Amount of bytes allocated by each priority
  * 									value
- * @param[in] flags					Any crossblit flags
  */
 void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 	rect_t src_coords, rect_t dest_coords, byte *dest, int dest_line_width,
-	byte *priority_dest, int priority_line_width, int priority_skip, int flags);
+	byte *priority_dest, int priority_line_width, int priority_skip);
 
 
 /**
