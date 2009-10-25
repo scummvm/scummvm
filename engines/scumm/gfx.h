@@ -306,7 +306,6 @@ protected:
 	struct {
 		uint16 nametable[4096], nametableObj[512];
 		byte colortable[4096], colortableObj[512];
-		byte attributes[64], attributesObj[64];
 		uint16 masktable[4096], masktableObj[512];
 		int  objX;
 		bool hasmask;
