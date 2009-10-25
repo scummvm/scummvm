@@ -171,13 +171,14 @@ StringList getFeatureLibraries(const FeatureList &features);
  * It also contains the path to the ScummVM souce root.
  */
 struct BuildSetup {
-	std::string srcDir;     ///< Path to the ScummVM sources
+	std::string srcDir;     ///< Path to the ScummVM sources.
+	std::string filePrefix; ///< Prefix for the relativ path arugments in the project files.
 
-	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!)
-	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!)
+	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!).
+	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
 
-	StringList defines;   ///< List of all defines for the build
-	StringList libraries; ///< List of all external libraries required for the build
+	StringList defines;   ///< List of all defines for the build.
+	StringList libraries; ///< List of all external libraries required for the build.
 };
 
 /**

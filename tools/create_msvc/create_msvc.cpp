@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 	const std::string srcDir = argv[1];
 
 	BuildSetup setup;
-	setup.srcDir = unifyPath(srcDir);
+	setup.filePrefix = setup.srcDir = unifyPath(srcDir);
 	setup.engines = parseConfigure(setup.srcDir);
 	setup.features = getAllFeatures();
 
@@ -159,6 +159,13 @@ int main(int argc, char *argv[]) {
 
 				feature->enable = false;
 			}
+		} else if (!strcmp(argv[i], "--file-prefix")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"prefix\" parameter for \"--file-prefix\"!\n";
+				return -1;
+			}
+
+			setup.filePrefix = argv[++i];
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -237,31 +244,34 @@ void displayHelp(const char *exe) {
 	     << exe << " path\\to\\source [optional options]\n"
 	     << "\n"
 	     << " Creates MSVC project files for the ScummVM source locatd at \"path\\to\\source\".\n"
-		    " The project files will be created in the directory where tool is run from and\n"
-			" will include \"path\\to\\source\" for relative file paths, thus be sure that you\n"
-			" pass a relative file path like \"..\\..\\trunk\".\n"
-			"\n"
-			" Additionally there are the following switches for changing various settings:\n"
-			"\n"
-			"MSVC specifc settings:\n"
-			" --msvc-version version   sets the targeted MSVC version. Possible values:\n"
-			"                          8 stands for \"Visual Studio 2005\"\n"
-			"                          9 stands for \"Visual Studio 2008\"\n"
-			"                         The default is \"9\", thus \"Visual Studio 2008\"\n"
-			"\n"
-			"ScummVM engine settings:\n"
-			" --list-engines           lists all available engines and their default state\n"
-			" --enable-engine          enables building of the engine with the name \"engine\"\n"
-			" --disable-engine         disables building of the engine with the name \"engine\"\n"
-			" --enable-all-engines     enables building of all engines\n"
-			" --disable-all-engines    disables building of all engines\n"
-			"\n"
-			"ScummVM optional feature settings:\n"
-			" --enable-name            enables inclusion of the feature \"name\"\n"
-			" --disable-name           disables inclusion of the feature \"name\"\n"
-			"\n"
-			" There are the following features available:\n"
-			"\n";
+	        " The project files will be created in the directory where tool is run from and\n"
+	        " will include \"path\\to\\source\" for relative file paths, thus be sure that you\n"
+	        " pass a relative file path like \"..\\..\\trunk\".\n"
+	        "\n"
+	        " Additionally there are the following switches for changing various settings:\n"
+	        "\n"
+	        "MSVC specifc settings:\n"
+	        " --msvc-version version   sets the targeted MSVC version. Possible values:\n"
+	        "                           8 stands for \"Visual Studio 2005\"\n"
+	        "                           9 stands for \"Visual Studio 2008\"\n"
+	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
+	        " --file-prefix prefix     allows overwriting of relative file prefix in the\n"
+	        "                          MSVC project files. By default the prefix is the\n"
+	        "                          \"path\\to\\source\" argument\n"
+	        "\n"
+	        "ScummVM engine settings:\n"
+	        " --list-engines           lists all available engines and their default state\n"
+	        " --enable-engine          enables building of the engine with the name \"engine\"\n"
+	        " --disable-engine         disables building of the engine with the name \"engine\"\n"
+	        " --enable-all-engines     enables building of all engines\n"
+	        " --disable-all-engines    disables building of all engines\n"
+	        "\n"
+	        "ScummVM optional feature settings:\n"
+	        " --enable-name            enables inclusion of the feature \"name\"\n"
+	        " --disable-name           disables inclusion of the feature \"name\"\n"
+	        "\n"
+	        " There are the following features available:\n"
+	        "\n";
 
 	cout << "   state  |       name      |     description\n\n";
 	const FeatureList features = getAllFeatures();
@@ -555,9 +565,11 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
  * @param projectFile Output stream object, where all data should be written to.
  * @param includeList Files to include (must have a relative directory as prefix).
  * @param excludeList Files to exclude (must have a relative directory as prefix).
+ * @param filePrefix Prefix to use for relativ path arguments.
  */
 void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
-                       const StringList &includeList, const StringList &excludeList);
+                       const StringList &includeList, const StringList &excludeList,
+					   const std::string &filePrefix);
 
 /**
  * Create the global project properties.
@@ -793,7 +805,7 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 	project << "\t</Configurations>\n"
 	           "\t<Files>\n";
 
-	addFilesToProject(moduleDir, project, includeList, excludeList);
+	addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 	project << "\t</Files>\n"
 	           "</VisualStudioProject>\n";
@@ -1189,7 +1201,8 @@ void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, con
 }
 
 void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
-					   const StringList &includeList, const StringList &excludeList) {
+					   const StringList &includeList, const StringList &excludeList,
+					   const std::string &filePrefix) {
 	// Check for duplicate object file names
 	StringList duplicate;
 
@@ -1216,7 +1229,7 @@ void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
 
 	FileNode *files = scanFiles(dir, includeList, excludeList);
 
-	writeFileListToProject(*files, projectFile, 0, duplicate, std::string(), dir + '/');
+	writeFileListToProject(*files, projectFile, 0, duplicate, std::string(), filePrefix + '/');
 
 	delete files;
 }
