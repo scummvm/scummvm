@@ -479,7 +479,7 @@ void SciGuiAnimate::reAnimate(Common::Rect rect) {
 	_gfx->BitsShow(rect);
 }
 
-void SciGuiAnimate::addToPicDrawCels(List *list) {
+void SciGuiAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	GuiAnimateEntry *listEntry;
 	SciGuiView *view = NULL;

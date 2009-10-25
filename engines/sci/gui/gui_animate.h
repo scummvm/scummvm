@@ -73,7 +73,7 @@ public:
 	void updateScreen(byte oldPicNotValid);
 	void restoreAndDelete(int argc, reg_t *argv);
 	void reAnimate(Common::Rect rect);
-	void addToPicDrawCels(List *list);
+	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 
 private:

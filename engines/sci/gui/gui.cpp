@@ -573,7 +573,7 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 		error("kAddToPic called with non-list as parameter");
 
 	_animate->makeSortedList(list);
-	_animate->addToPicDrawCels(list);
+	_animate->addToPicDrawCels();
 
 	_screen->_picNotValid = 2;
 }
