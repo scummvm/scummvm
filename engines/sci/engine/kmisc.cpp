@@ -57,9 +57,10 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
+	
 	uint32 curTime = g_system->getMillis();
 	uint32 duration = curTime - s->_lastAnimateTime;
-	uint32 neededSleep = 30;
+	uint32 neededSleep = 10;
 
 	if (duration < neededSleep) {
 		gfxop_sleep(s->gfx_state, neededSleep - duration);
