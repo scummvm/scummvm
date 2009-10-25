@@ -84,8 +84,20 @@ int main(int argc, char *argv[]) {
 	const std::string srcDir = argv[1];
 
 	BuildSetup setup;
-	setup.filePrefix = setup.srcDir = unifyPath(srcDir);
+	setup.srcDir = unifyPath(srcDir);
+
+	if (setup.srcDir.at(setup.srcDir.size() - 1) == '/')
+		setup.srcDir.erase(setup.srcDir.size() - 1);
+
+	setup.filePrefix = setup.srcDir;
+
 	setup.engines = parseConfigure(setup.srcDir);
+
+	if (setup.engines.empty()) {
+		std::cout << "WARNING: No engines found in configure file or configure file missing in \"" << setup.srcDir << "\"\n";
+		return 0;
+	}
+
 	setup.features = getAllFeatures();
 
 	int msvcVersion = 9;
