@@ -31,6 +31,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
 
+#include "sound/audiocd.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -112,7 +113,8 @@ enum AudioCommands {
 	kSciAudioPosition = 6, /* Return current position in audio stream */
 	kSciAudioRate = 7, /* Return audio rate */
 	kSciAudioVolume = 8, /* Return audio volume */
-	kSciAudioLanguage = 9 /* Return audio language */
+	kSciAudioLanguage = 9, /* Return audio language */
+	kSciAudioCD = 10 /* Plays SCI1.1 CD audio */
 };
 
 enum AudioSyncCommands {
@@ -1023,10 +1025,107 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case kSciAudioWPlay:
+	case kSciAudioPlay: {
+		if (getSciVersion() == SCI_VERSION_1_1) {
+			// King's Quest VI CD Audio format
+			if (argc < 2)
+				return NULL_REG;
+
+			uint16 track = argv[1].toUint16() - 1;
+			uint32 startFrame = 0;
+			uint32 totalFrames = 0;
+
+			if (argc > 2)
+				startFrame = argv[2].toUint16() * 75;
+
+			if (argc > 3)
+				totalFrames = argv[3].toUint16() * 75;
+
+			AudioCD.play(track, 1, startFrame, totalFrames);
+			return make_reg(0, 1);
+		} else {
+			// Jones in the Fast Lane CD Audio format
+			if (argc != 2)
+				error("kDoCdAudio(%d) called with %d args", argv[0].toUint16(), argc);
+		
+			AudioCD.stop();
+		
+			Common::File audioMap;
+			if(!audioMap.open("cdaudio.map"))
+				error("Could not open cdaudio.map");
+		
+			uint16 sample = argv[1].toUint16();
+			uint32 length = 0;
+		
+			while (audioMap.pos() < audioMap.size()) {
+				uint16 res = audioMap.readUint16LE();
+				uint32 startFrame = audioMap.readUint16LE();
+				startFrame += audioMap.readByte() << 16;
+				audioMap.readByte(); // Unknown, always 0x20
+				length = audioMap.readUint16LE();
+				length += audioMap.readByte() << 16;
+				audioMap.readByte(); // Unknown, always 0x00
+			
+				if (res == sample) {
+					AudioCD.play(1, 1, startFrame, length);
+					s->_audioCdStart = g_system->getMillis();
+					break;
+				}
+			}
+		
+			audioMap.close();
+
+			return make_reg(0, length * 60 / 75); // return sample length in ticks
+		}
+	}
+	case kSciAudioStop:
+		AudioCD.stop();
+		
+		if (getSciVersion() == SCI_VERSION_1_1)
+			return make_reg(0, 1);
+			
+		break;
+	case kSciAudioPause:
+		warning("Can't pause CD Audio");
+		break;
+	case kSciAudioResume:
+		// This seems to be hacked up to update the CD instead of resuming
+		// audio like kDoAudio does.
+		AudioCD.updateCD();
+		break;
+	case kSciAudioPosition:
+		// Return -1 if the sample is done playing. Converting to frames to compare.
+		if (((g_system->getMillis() - s->_audioCdStart) * 75 / 1000) >= (uint32)AudioCD.getStatus().duration)
+			return SIGNAL_REG;
+		
+		// Return the position otherwise (in ticks).
+		return make_reg(0, (g_system->getMillis() - s->_audioCdStart) * 60 / 1000);
+	case kSciAudioRate: // No need to set the audio rate
+	case kSciAudioVolume: // The speech setting isn't used by CD Audio
+	case kSciAudioLanguage: // No need to set the language
+		break;
+	case kSciAudioCD:
+		// Init
+		return make_reg(0, 1);
+	default:
+		warning("kCdDoAudio: Unhandled case %d", argv[0].toUint16());
+	}
+
+	return s->r_acc;
+}
+
 /**
  * Used for speech playback and digital soundtracks in CD games
  */
 reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
+	// JonesCD uses different functions based on the cdaudio.map file
+	// to use red book tracks.
+	if (s->usesCdTrack())
+		return kDoCdAudio(s, argc, argv);
+
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	switch (argv[0].toUint16()) {
@@ -1076,6 +1175,8 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			s->resMan->setAudioLanguage(argv[1].toSint16());
 		}
 		break;
+	case kSciAudioCD:
+		return kDoCdAudio(s, argc - 1, argv + 1);
 	default:
 		warning("kDoAudio: Unhandled case %d", argv[0].toUint16());
 	}

@@ -264,6 +264,8 @@ public:
 	MoveCountType detectMoveCountType();
 
 	bool handleMoveCount() { return detectMoveCountType() == kIncrementMoveCount; }
+	
+	bool usesCdTrack() { return _usesCdTrack; }
 
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
@@ -283,12 +285,15 @@ public:
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
+	
+	uint32 _audioCdStart;
 private:
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	MoveCountType _moveCountType;
 	kLanguage charToLanguage(const char c) const;
 	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
 	uint16 firstRetOffset(reg_t objectAddress) const;
+	bool _usesCdTrack;
 };
 
 /**
