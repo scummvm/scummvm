@@ -47,6 +47,19 @@ namespace {
 std::string convertPathToWin(const std::string &path);
 
 /**
+ * Converts the given path to only use slashes as
+ * delimiters.
+ * This means that for example the path:
+ *  foo/bar\test.txt
+ * will be converted to:
+ *  foo/bar/test.txt
+ *
+ * @param path Path string.
+ * @return Converted path.
+ */
+std::string unifyPath(const std::string &path);
+
+/**
  * Returns the last path component.
  *
  * @param path Path string.
@@ -71,7 +84,7 @@ int main(int argc, char *argv[]) {
 	const std::string srcDir = argv[1];
 
 	BuildSetup setup;
-	setup.srcDir = convertPathToWin(srcDir);
+	setup.srcDir = unifyPath(srcDir);
 	setup.engines = parseConfigure(setup.srcDir);
 	setup.features = getAllFeatures();
 
@@ -198,20 +211,19 @@ int main(int argc, char *argv[]) {
 
 namespace {
 std::string convertPathToWin(const std::string &path) {
-	std::string result;
+	std::string result = path;
+	std::replace(result.begin(), result.end(), '/', '\\');
+	return result;
+}
 
-	for (std::string::const_iterator i = path.begin(); i != path.end(); ++i) {
-		if (*i == '/')
-			result += '\\';
-		else
-			result += *i;
-	}
-
+std::string unifyPath(const std::string &path) {
+	std::string result = path;
+	std::replace(result.begin(), result.end(), '\\', '/');
 	return result;
 }
 
 std::string getLastPathComponent(const std::string &path) {
-	std::string::size_type pos = path.find_last_of('\\');
+	std::string::size_type pos = path.find_last_of('/');
 	if (pos == std::string::npos)
 		return path;
 	else
@@ -303,7 +315,7 @@ bool parseEngine(const std::string &line, EngineDesc &engine);
 } // End of anonymous namespace
 
 EngineDescList parseConfigure(const std::string &srcDir) {
-	std::string configureFile = srcDir + "\\configure";
+	std::string configureFile = srcDir + "/configure";
 
 	std::ifstream configure(configureFile.c_str());
 	if (!configure)
@@ -592,7 +604,7 @@ void createMSVCProject(const BuildSetup &setup, const int version) {
 			continue;
 
 		in.clear(); ex.clear();
-		const std::string moduleDir = setup.srcDir + "\\engines\\" + i->first;
+		const std::string moduleDir = setup.srcDir + "/engines/" + i->first;
 
 		createModuleList(moduleDir, setup.defines, in, ex);
 		createProjectFile(i->first, i->second, setup, moduleDir, in, ex, version);
@@ -602,28 +614,28 @@ void createMSVCProject(const BuildSetup &setup, const int version) {
 	in.clear(); ex.clear();
 
 	// File list for the ScummVM project file
-	createModuleList(setup.srcDir + "\\backends", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\backends\\platform\\sdl", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\base", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\common", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\engines", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\graphics", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\gui", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\sound", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "\\sound\\softsynth\\mt32", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/common", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/graphics", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/sound", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/sound/softsynth/mt32", setup.defines, in, ex);
 
 	// Resource files
-	in.push_back(setup.srcDir + "\\icons\\scummvm.ico");
-	in.push_back(setup.srcDir + "\\dists\\scummvm.rc");
+	in.push_back(setup.srcDir + "/icons/scummvm.ico");
+	in.push_back(setup.srcDir + "/dists/scummvm.rc");
 
 	// Various text files
-	in.push_back(setup.srcDir + "\\AUTHORS");
-	in.push_back(setup.srcDir + "\\COPYING");
-	in.push_back(setup.srcDir + "\\COPYING.LGPL");
-	in.push_back(setup.srcDir + "\\COPYRIGHT");
-	in.push_back(setup.srcDir + "\\NEWS");
-	in.push_back(setup.srcDir + "\\README");
-	in.push_back(setup.srcDir + "\\TODO");
+	in.push_back(setup.srcDir + "/AUTHORS");
+	in.push_back(setup.srcDir + "/COPYING");
+	in.push_back(setup.srcDir + "/COPYING.LGPL");
+	in.push_back(setup.srcDir + "/COPYRIGHT");
+	in.push_back(setup.srcDir + "/NEWS");
+	in.push_back(setup.srcDir + "/README");
+	in.push_back(setup.srcDir + "/TODO");
 
 	// Create the "scummvm.vcproj" file.
 	createProjectFile("scummvm", svmUUID, setup, setup.srcDir, in, ex, version);
@@ -977,7 +989,7 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 		// the first character after the substring, having the same size as dir, must
 		// be a path delimiter.
 		if (compareName.empty()) {
-			if (i->size() >= dir.size() + 1 && i->at(dir.size()) == '\\')
+			if (i->size() >= dir.size() + 1 && i->at(dir.size()) == '/')
 				return true;
 			else 
 				continue;
@@ -1054,7 +1066,7 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
  */
 FileNode *scanFiles(const std::string &dir, const StringList &includeList, const StringList &excludeList) {
 	WIN32_FIND_DATA fileInformation;
-	HANDLE fileHandle = FindFirstFile((dir + "\\*").c_str(), &fileInformation);
+	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
 	if (fileHandle == INVALID_HANDLE_VALUE)
 		return 0;
@@ -1066,7 +1078,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 			continue;
 
 		if ((fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
-			const std::string subDirName = dir + '\\' + fileInformation.cFileName;
+			const std::string subDirName = dir + '/' + fileInformation.cFileName;
 			if (!isInList(subDirName, std::string(), includeList))
 				continue;
 
@@ -1127,7 +1139,7 @@ void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, con
 		const FileNode *node = *i;
 
 		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '\\');
+			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
 		} else {
 			if (producesObjectFile(node->name)) {
 				std::string name, ext;
@@ -1142,7 +1154,7 @@ void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, con
 
 					const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCustomBuildTool\" CommandLine=\"nasm.exe -f win32 -g -o &quot;" + objFileName + "&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;\" Outputs=\"" + objFileName + "\" />\n";
 
-					projectFile << indentString << "<File RelativePath=\"" << filePrefix << node->name << "\">\n"
+					projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
 					            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
 					            << toolLine
 					            << indentString << "\t</FileConfiguration>\n"
@@ -1154,7 +1166,7 @@ void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, con
 					if (isDuplicate) {
 						const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCLCompilerTool\" ObjectFile=\"$(IntDir)\\" + objPrefix + "$(InputName).obj\" XMLDocumentationFileName=\"$(IntDir)\\" + objPrefix + "$(InputName).xdc\" />\n";
 
-						projectFile << indentString << "<File RelativePath=\"" << filePrefix << node->name << "\">\n"
+						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
 						            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
 						            << toolLine
 						            << indentString << "\t</FileConfiguration>\n"
@@ -1163,11 +1175,11 @@ void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, con
 						            << indentString << "\t</FileConfiguration>\n"
 						            << indentString << "</File>\n";
 					} else {
-						projectFile << indentString << "<File RelativePath=\"" << filePrefix << node->name << "\" />\n";
+						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
 					}
 				}
 			} else {
-				projectFile << indentString << "<File RelativePath=\"" << filePrefix << node->name << "\" />\n";
+				projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
 			}
 		}
 	}
@@ -1204,13 +1216,13 @@ void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
 
 	FileNode *files = scanFiles(dir, includeList, excludeList);
 
-	writeFileListToProject(*files, projectFile, 0, duplicate, std::string(), dir + '\\');
+	writeFileListToProject(*files, projectFile, 0, duplicate, std::string(), dir + '/');
 
 	delete files;
 }
 
 void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &includeList, StringList &excludeList) {
-	const std::string moduleMkFile = moduleDir + "\\module.mk";
+	const std::string moduleMkFile = moduleDir + "/module.mk";
 	std::ifstream moduleMk(moduleMkFile.c_str());
 	if (!moduleMk)
 		throw std::string(moduleMkFile + " is not present");
@@ -1247,7 +1259,7 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 				throw std::string("Malformed MODULE definition in " + moduleMkFile);
 			++i;
 
-			std::string moduleRoot = convertPathToWin(*i);
+			std::string moduleRoot = unifyPath(*i);
 			if (moduleDir.compare(moduleDir.size() - moduleRoot.size(), moduleRoot.size(), moduleRoot))
 				throw std::string("MODULE root " + moduleRoot + " does not match base dir " + moduleDir);
 
@@ -1275,9 +1287,9 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 					i = tokens.begin();
 				} else {
 					if (shouldInclude.top())
-						includeList.push_back(moduleDir + "\\" + convertPathToWin(*i));
+						includeList.push_back(moduleDir + "/" + unifyPath(*i));
 					else
-						excludeList.push_back(moduleDir + "\\" + convertPathToWin(*i));
+						excludeList.push_back(moduleDir + "/" + unifyPath(*i));
 					++i;
 				}
 			}
