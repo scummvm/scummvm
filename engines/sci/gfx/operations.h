@@ -334,18 +334,6 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask);
 /** @{ */
 
 /**
- * Determines the number of cels associated stored in a loop.
- *
- * @param[in] state	The state to look up in
- * @param[in] nr	Number of the view to look up in
- * @param[in] loop	Number of the loop the number of cels of are to be
- * 					investigated
- * @return			The number of cels in that loop, or GFX_ERROR if either the
- * 					view or the loop didn't exist
- */
-int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop);
-
-/**
  * Retrieves the width and height of a cel.
  *
  * @param[in] state		The state to use

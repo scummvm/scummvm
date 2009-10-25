@@ -413,30 +413,23 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(segMan, obj, view);
-	int loops_nr = s->_gui->getLoopCount(view);
+	int loopCount = s->_gui->getLoopCount(view);
 
-	if (loops_nr < 0) {
-		error("view.%d (0x%x) not found", view, view);
-		return NULL_REG;
-	}
+	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", view, loopCount);
 
-	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", view, loops_nr);
-
-	return make_reg(0, loops_nr);
+	return make_reg(0, loopCount);
 }
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
-	int loop = GET_SEL32V(segMan, obj, loop);
 	int view = GET_SEL32V(segMan, obj, view);
-	int cel = 0xffff;
+	int loop = GET_SEL32V(segMan, obj, loop);
+	int celCount = s->_gui->getCelCount(view, loop);
 
-	s->gfx_state->gfxResMan->getView(view, &loop, &cel, 0);
+	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", view, loop, celCount);
 
-	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", view, loop, cel + 1);
-
-	return make_reg(0, cel + 1);
+	return make_reg(0, celCount);
 }
 
 reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {

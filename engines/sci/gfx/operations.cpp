@@ -1284,22 +1284,6 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask) {
 
 // View operations
 
-int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
-	int real_loop = loop, cel = 0;
-	gfxr_view_t *view = NULL;
-
-	view = state->gfxResMan->getView(nr, &real_loop, &cel, 0);
-
-	if (!view) {
-		warning("[GFX] Attempt to retrieve number of cels from invalid/broken view %d", nr);
-		return 0;
-	} else if (real_loop != loop) {
-		warning("[GFX] Loop number was corrected from %d to %d in view %d", loop, real_loop, nr);
-	}
-
-	return view->loops[real_loop].cels_nr;
-}
-
 void gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *width, int *height, Common::Point *offset) {
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;

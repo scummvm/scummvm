@@ -690,6 +690,17 @@ int16 SciGui::getLoopCount(int view) {
 	return loopCount;
 }
 
+int16 SciGui::getCelCount(int view, int loop) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
+	if (!tmpView)
+		return -1;
+
+	uint16 celCount = tmpView->getLoopInfo(loop)->celCount;
+	delete tmpView;
+
+	return celCount;
+}
+
 bool SciGui::debugUndither(bool flag) {
 	_screen->unditherSetState(flag);
 	return false;

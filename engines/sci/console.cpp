@@ -1077,9 +1077,9 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 		DebugPrintf("has %d loops:\n", loops);
 
 		for (i = 0; i < loops; i++) {
-			int j, cels;
+			int j, cels = _vm->_gamestate->_gui->getCelCount(view, i);
 
-			DebugPrintf("Loop %d: %d cels.\n", i, cels = gfxop_lookup_view_get_cels(_vm->_gamestate->gfx_state, view, i));
+			DebugPrintf("Loop %d: %d cels.\n", i, cels);
 			for (j = 0; j < cels; j++) {
 				int width;
 				int height;
