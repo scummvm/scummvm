@@ -57,10 +57,16 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
+	// Some games seem to get the duration of main loop initially and then switch of animations for the whole game
+	//  based on that (qfg2, iceman). We are now running full speed initially to avoid that.
+	if (s->_lastAnimateCounter < 50) {
+		s->_lastAnimateCounter++;
+		return s->r_acc;
+	}
 	
 	uint32 curTime = g_system->getMillis();
 	uint32 duration = curTime - s->_lastAnimateTime;
-	uint32 neededSleep = 10;
+	uint32 neededSleep = 30;
 
 	if (duration < neededSleep) {
 		gfxop_sleep(s->gfx_state, neededSleep - duration);
