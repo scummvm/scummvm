@@ -373,6 +373,10 @@ void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte
 	// Makes no sense to process bitmaps that are 3 pixels wide or less
 	if (width <= 3) return;
 
+	// TODO: Implement ability to undither bitmaps when EGAmappings are set (qfg2)
+	if (_EGAmapping)
+		return;
+
 	// Walk through the bitmap and remember all combinations of colors
 	int16 bitmapMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 	byte *curPtr;
@@ -384,7 +388,7 @@ void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte
 	// Count all seemingly dithered pixel-combinations as soon as at least 4 pixels are adjacent
 	curPtr = bitmapPtr;
 	for (y = 0; y < height; y++) {
-		color1 = (curPtr[0] << 8) | (curPtr[1] << 4); color2 = curPtr[2];
+		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
 		curPtr += 3;
 		for (x = 3; x < width; x++) {
 			color1 = (color1 << 4) | (color2 >> 4);
