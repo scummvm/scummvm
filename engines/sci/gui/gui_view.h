@@ -45,6 +45,9 @@ struct sciViewLoopInfo {
 	sciViewCelInfo *cel;
 };
 
+#define SCI_VIEW_EGAMAPPING_SIZE 16
+#define SCI_VIEW_EGAMAPPING_COUNT 8
+
 class SciGuiView {
 public:
 	SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);

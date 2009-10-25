@@ -52,6 +52,10 @@ SciGuiView::~SciGuiView() {
 	_resMan->unlockResource(_resource);
 }
 
+static const byte EGAmappingStraight[SCI_VIEW_EGAMAPPING_SIZE] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+};
+
 void SciGuiView::initData(GuiResourceId resourceId) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), true);
 	if (!_resource) {
@@ -67,7 +71,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	uint16 palOffset = 0;
 	uint16 headerSize = 0;
 	uint16 loopSize = 0, celSize = 0;
-	int loopNo, celNo;
+	int loopNo, celNo, EGAmapNr;
 	byte seekEntry;
 	bool IsEGA = false;
 
@@ -97,8 +101,19 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 				_embeddedPal = true;
 			} else {
 				// Only use the EGA-mapping, when being SCI1
-				if (getSciVersion() >= SCI_VERSION_1_EGA)
+				if (getSciVersion() >= SCI_VERSION_1_EGA) {
 					_EGAmapping = &_resourceData[palOffset];
+					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
+						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE)!=0)
+							break;
+						_EGAmapping += SCI_VIEW_EGAMAPPING_SIZE;
+					}
+					// If all mappings are "straight", then we actually ignore the mapping
+					if (EGAmapNr == SCI_VIEW_EGAMAPPING_COUNT)
+						_EGAmapping = NULL;
+					else
+						_EGAmapping = &_resourceData[palOffset];
+				}
 			}
 		}
 
@@ -373,7 +388,7 @@ void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte
 	// Makes no sense to process bitmaps that are 3 pixels wide or less
 	if (width <= 3) return;
 
-	// TODO: Implement ability to undither bitmaps when EGAmappings are set (qfg2)
+	// If EGA mapping is used for this view, dont do undithering as well
 	if (_EGAmapping)
 		return;
 
@@ -466,7 +481,7 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 			}
 		}
 	} else {
-		byte *EGAmapping = _EGAmapping + (EGAmappingNr * 16);
+		byte *EGAmapping = _EGAmapping + (EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE);
 		for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
 				color = EGAmapping[bitmap[x]];
