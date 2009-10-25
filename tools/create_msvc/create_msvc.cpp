@@ -90,6 +90,7 @@ int main(int argc, char *argv[]) {
 		setup.srcDir.erase(setup.srcDir.size() - 1);
 
 	setup.filePrefix = setup.srcDir;
+	setup.outputDir = '.';
 
 	setup.engines = parseConfigure(setup.srcDir);
 
@@ -177,7 +178,18 @@ int main(int argc, char *argv[]) {
 				return -1;
 			}
 
-			setup.filePrefix = argv[++i];
+			setup.filePrefix = unifyPath(argv[++i]);
+			if (setup.filePrefix.at(setup.filePrefix.size() - 1) == '/')
+				setup.filePrefix.erase(setup.filePrefix.size() - 1);
+		} else if (!strcmp(argv[i], "--output-dir")) {
+			if (i + 1 >= argc) {
+				std::cerr << "ERROR: Missing \"path\" parameter for \"--output-dirx\"!\n";
+				return -1;
+			}
+
+			setup.outputDir = unifyPath(argv[++i]);
+			if (setup.outputDir.at(setup.outputDir.size() - 1) == '/')
+				setup.outputDir.erase(setup.outputDir.size() - 1);
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -270,6 +282,9 @@ void displayHelp(const char *exe) {
 	        " --file-prefix prefix     allows overwriting of relative file prefix in the\n"
 	        "                          MSVC project files. By default the prefix is the\n"
 	        "                          \"path\\to\\source\" argument\n"
+	        " --output-dir path        overwrite the path, where the project files are placed.\n"
+	        "                          By default this is \".\", i.e. the current working\n"
+	        "                          directory\n"
 	        "\n"
 	        "ScummVM engine settings:\n"
 	        " --list-engines           lists all available engines and their default state\n"
@@ -700,7 +715,7 @@ std::string createUUID() {
 	return result;
 }
 
-void createScummVMSolution(const BuildSetup &/*setup*/, const UUIDMap &uuids, const int version) {
+void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const int version) {
 	UUIDMap::const_iterator svmUUID = uuids.find("scummvm");
 	if (svmUUID == uuids.end())
 		throw std::string("No UUID for \"scummvm\" project created");
@@ -710,9 +725,9 @@ void createScummVMSolution(const BuildSetup &/*setup*/, const UUIDMap &uuids, co
 
 	std::string solutionUUID = createUUID();
 
-	std::ofstream solution("scummvm.sln");
+	std::ofstream solution((setup.outputDir + '/' + "scummvm.sln").c_str());
 	if (!solution)
-		throw std::string("Could not open \"scummvm.sln\" for writing");
+		throw std::string("Could not open \"" + setup.outputDir + '/' + "scummvm.sln\" for writing");
 
 	solution << "Microsoft Visual Studio Solution File, Format Version " << version + 1 << ".00\n";
 	if (version == 9)
@@ -766,7 +781,7 @@ void createScummVMSolution(const BuildSetup &/*setup*/, const UUIDMap &uuids, co
 
 void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 					   const StringList &includeList, const StringList &excludeList, const int version) {
-	const std::string projectFile = name + ".vcproj";
+	const std::string projectFile = setup.outputDir + '/' + name + ".vcproj";
 	std::ofstream project(projectFile.c_str());
 	if (!project)
 		throw std::string("Could not open \"" + projectFile + "\" for writing");
@@ -824,9 +839,9 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 }
 
 void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
-	std::ofstream properties("ScummVM_Global.vsprops");
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Global.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"ScummVM_Global.vsprops\" for writing");
+		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global.vsprops\" for writing");
 
 	std::string defines;
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
@@ -872,10 +887,10 @@ void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
 	              "</VisualStudioPropertySheet>\n";
 }
 
-void createBuildProp(const BuildSetup &/*setup*/, const int /*version*/) {
-	std::ofstream properties("ScummVM_Debug.vsprops");
+void createBuildProp(const BuildSetup &setup, const int /*version*/) {
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Debug.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"ScummVM_Debug.vsprops\" for writing");
+		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug.vsprops\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
@@ -906,9 +921,9 @@ void createBuildProp(const BuildSetup &/*setup*/, const int /*version*/) {
 	properties.flush();
 	properties.close();
 
-	properties.open("ScummVM_Release.vsprops");
+	properties.open((setup.outputDir + '/' + "ScummVM_Release.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"ScummVM_Release.vsprops\" for writing");
+		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release.vsprops\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"

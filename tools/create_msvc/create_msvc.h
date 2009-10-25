@@ -173,6 +173,7 @@ StringList getFeatureLibraries(const FeatureList &features);
 struct BuildSetup {
 	std::string srcDir;     ///< Path to the ScummVM sources.
 	std::string filePrefix; ///< Prefix for the relativ path arugments in the project files.
+	std::string outputDir;  ///< Path where to put the MSVC project files.
 
 	EngineDescList engines; ///< Engine list for the build (this may contain engines, which are *not* enabled!).
 	FeatureList features;   ///< Feature list for the build (this may contain features, which are *not* enabled!).
