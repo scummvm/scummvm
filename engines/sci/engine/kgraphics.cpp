@@ -838,8 +838,9 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	int16 leftPos, topPos, priority, control;
 
 	switch (argc) {
-	case 0:
-		break;
+	// Is this ever really gets called with 0 parameters, we need to set _picNotValid!!
+	//case 0:
+	//	break;
 	case 1:
 		if (argv[0].isNull())
 			return s->r_acc;
