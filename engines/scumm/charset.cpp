@@ -622,10 +622,10 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	}
 	if ((ignoreCharsetMask || !vs->hasTwoBuffers) && !(_vm->_useCJKMode && _vm->_textSurfaceMultiplier == 2)) {
 		dst = vs->getPixels(_left, drawTop);
-		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
 	} else {
 		dst = (byte *)_vm->_textSurface.getBasePtr(_left * _vm->_textSurfaceMultiplier, _top * _vm->_textSurfaceMultiplier);
-		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel);
 	}
 
 	if (_str.left > _left)
@@ -659,7 +659,7 @@ void CharsetRendererV3::drawChar(int chr, const Graphics::Surface &s, int x, int
 		height = 8;
 	}
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dst, charPtr, y, width, height);
+	drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
 }
 
 void CharsetRenderer::translateColor() {
@@ -857,7 +857,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		if (is2byte) {
-			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight);
+			drawBits1(dstSurface, dstPtr, charPtr, drawTop, origWidth, origHeight, dstSurface.bytesPerPixel);
 		} else {
 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 		}
@@ -926,7 +926,7 @@ void CharsetRendererClassic::drawChar(int chr, const Graphics::Surface &s, int x
 	dst = (byte *)s.pixels + y * s.pitch + x;
 
 	if (is2byte) {
-		drawBits1(s, dst, charPtr, y, width, height);
+		drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
 	} else {
 		drawBitsN(s, dst, charPtr, *_fontPtr, y, width, height);
 	}
@@ -960,7 +960,7 @@ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, co
 	}
 }
 
-void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height) {
+void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth) {
 	int y, x;
 	byte bits = 0;
 
@@ -969,18 +969,28 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 			if ((x % 8) == 0)
 				bits = *src++;
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
-				if (_shadowMode != kNoShadowMode) {
-					*(dst + 1) = _shadowColor;
-					*(dst + s.pitch) = _shadowColor;
-					if (_shadowMode != kFMTOWNSShadowMode)
-						*(dst + s.pitch + 1) = _shadowColor;
+				if (bitDepth == 2) {
+					if (_shadowMode != kNoShadowMode) {
+						WRITE_UINT16(dst + 2, _shadowColor);
+						WRITE_UINT16(dst + s.pitch, _shadowColor);
+						if (_shadowMode != kFMTOWNSShadowMode)
+							WRITE_UINT16(dst + s.pitch + 2, _shadowColor);
+					}
+					WRITE_UINT16(dst, _color);
+				} else {
+					if (_shadowMode != kNoShadowMode) {
+						*(dst + 1) = _shadowColor;
+						*(dst + s.pitch) = _shadowColor;
+						if (_shadowMode != kFMTOWNSShadowMode)
+							*(dst + s.pitch + 1) = _shadowColor;
+					}
+					*dst = _color;
 				}
-				*dst = _color;
 			}
-			dst++;
+			dst += bitDepth;
 		}
 
-		dst += s.pitch - width;
+		dst += s.pitch - width * bitDepth;
 	}
 }
 
@@ -1143,10 +1153,10 @@ void CharsetRendererNES::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 		dst = vs->getPixels(_left, drawTop);
-		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(*vs, dst, charPtr, drawTop, origWidth, origHeight, vs->bytesPerPixel);
 	} else {
 		dst = (byte *)_vm->_textSurface.pixels + _top * _vm->_textSurface.pitch + _left;
-		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight);
+		drawBits1(_vm->_textSurface, dst, charPtr, drawTop, origWidth, origHeight, _vm->_textSurface.bytesPerPixel);
 	}
 
 	if (_str.left > _left)
@@ -1176,10 +1186,10 @@ void CharsetRendererNES::drawChar(int chr, const Graphics::Surface &s, int x, in
 	height = 8;
 
 	dst = (byte *)s.pixels + y * s.pitch + x;
-	drawBits1(s, dst, charPtr, y, width, height);
+	drawBits1(s, dst, charPtr, y, width, height, s.bytesPerPixel);
 }
 
-void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height) {
+void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth) {
 	for (int i = 0; i < 8; i++) {
 		byte c0 = src[i];
 		byte c1 = src[i + 8];
