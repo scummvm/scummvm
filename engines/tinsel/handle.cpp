@@ -171,7 +171,7 @@ void SetupHandleTable(void) {
 		else {
 			// allocate a discarded memory node for other files
 			pH->_node = MemoryAlloc(
-				DWM_MOVEABLE | DWM_DISCARDABLE | DWM_NOALLOC,
+				DWM_DISCARDABLE | DWM_NOALLOC,
 				pH->filesize & FSIZE_MASK);
 			pH->_ptr = NULL;
 
@@ -383,8 +383,7 @@ byte *LockMem(SCNHANDLE offset) {
 
 		if (pH->_node->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->_node, cdTopHandle-cdBaseHandle,
-				DWM_MOVEABLE | DWM_DISCARDABLE);
+			MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle, DWM_DISCARDABLE);
 
 		if (pH->_node->pBaseAddr == NULL)
 			error("Out of memory");
@@ -406,8 +405,7 @@ byte *LockMem(SCNHANDLE offset) {
 
 		if (pH->_node->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK,
-				DWM_MOVEABLE | DWM_DISCARDABLE);
+			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_DISCARDABLE);
 
 		if (pH->_node->pBaseAddr == NULL)
 			error("Out of memory");
@@ -451,7 +449,7 @@ void LockScene(SCNHANDLE offset) {
 		// WORKAROUND: The original didn't include the DWM_LOCKED flag. It's being
 		// included because the method is 'LockScene' so it's presumed that the
 		// point of this was that the scene's memory block be locked
-		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_MOVEABLE | DWM_LOCKED);
+		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_LOCKED);
 #ifdef DEBUG
 		bLockedScene = true;
 #endif
@@ -474,7 +472,7 @@ void UnlockScene(SCNHANDLE offset) {
 
 	if ((pH->filesize & fPreload) == 0) {
 		// change the flags for the node
-		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_MOVEABLE | DWM_DISCARDABLE);
+		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_DISCARDABLE);
 #ifdef DEBUG
 		bLockedScene = false;
 #endif

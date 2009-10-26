@@ -109,17 +109,6 @@ void MemoryInit(void) {
 	heapSentinel.flags = DWM_LOCKED | DWM_SENTINEL;
 }
 
-
-#ifdef DEBUG
-/**
- * Shows the maximum number of mnodes used at once.
- */
-
-void MemoryStats(void) {
-	printf("%i mnodes of %i used.\n", maxNodes, NUM_MNODES);
-}
-#endif
-
 /**
  * Allocate a mnode from the free list.
  */
@@ -202,7 +191,7 @@ bool HeapCompact(long size, bool bDiscard) {
 
 					// leave the loop
 					break;
-				} else if ((pPrev->flags & (DWM_MOVEABLE | DWM_LOCKED | DWM_DISCARDED)) == DWM_MOVEABLE
+				} else if ((pPrev->flags & (DWM_LOCKED | DWM_DISCARDED)) == 0
 						&& pCur->flags == 0) {
 					// a free block after a moveable block - swap them
 
@@ -297,12 +286,6 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 
 				if (pNode->size == size) {
 					// an exact fit
-
-					// check for zeroing the block
-					if (flags & DWM_ZEROINIT)
-						memset(pNode->pBaseAddr, 0, size);
-
-					// return the node
 					return pNode;
 				} else {
 					// allocate a node for the remainder of the free block
@@ -325,16 +308,12 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 					pNode->pPrev->pNext = pTemp;
 					pNode->pPrev = pTemp;
 
-					// check for zeroing the block
-					if (flags & DWM_ZEROINIT)
-						memset(pNode->pBaseAddr, 0, size);
-
 					return pNode;
 				}
 			}
 		}
 		// compact the heap if we get to here
-		bCompacted = HeapCompact(size, (flags & DWM_NOCOMPACT) ? false : true);
+		bCompacted = HeapCompact(size, true);
 	}
 
 	// not allocated a block if we get to here
@@ -423,51 +402,6 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
 }
 
 /**
- * Frees the specified memory object and invalidates its node.
- * @param pMemNode			Node of the memory object
- */
-void MemoryFree(MEM_NODE *pMemNode) {
-	MEM_NODE *pPrev, *pNext;
-
-	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
-
-	// get pointer to the next mnode
-	pNext = pMemNode->pNext;
-
-	// get pointer to the previous mnode
-	pPrev = pMemNode->pPrev;
-
-	if (pPrev->flags == 0) {
-		// there is a previous free mnode
-		pPrev->size += pMemNode->size;
-
-		// unlink this mnode
-		pPrev->pNext = pNext;	// previous to next
-		pNext->pPrev = pPrev;	// next to previous
-
-		// free this mnode
-		FreeMemNode(pMemNode);
-
-		pMemNode = pPrev;
-	}
-	if (pNext->flags == 0) {
-		// the next mnode is free
-		pMemNode->size += pNext->size;
-
-		// flag as a free block
-		pMemNode->flags = 0;
-
-		// unlink the next mnode
-		pMemNode->pNext = pNext->pNext;
-		pNext->pNext->pPrev = pMemNode;
-
-		// free the next mnode
-		FreeMemNode(pNext);
-	}
-}
-
-/**
  * Locks a memory object and returns a pointer to the first byte
  * of the objects memory block.
  * @param pMemNode			Node of the memory object
@@ -502,18 +436,11 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
-	// validate the flags
-	// must be moveable
-	assert(flags & DWM_MOVEABLE);
-
 	// align the size to machine boundary requirements
 	size = (size + sizeof(void *) - 1) & ~(sizeof(void *) - 1);
 
 	// validate the size
 	assert(size);
-
-	// make sure we want the node on the same heap
-	assert((flags & (DWM_SOUND | DWM_GRAPHIC)) == (pMemNode->flags & (DWM_SOUND | DWM_GRAPHIC)));
 
 	if (size == pMemNode->size) {
 		// must be just a change in flags
@@ -526,7 +453,7 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 		pMemNode->pPrev->pNext = pMemNode->pNext;
 
 		// allocate a new node
-		pNew = MemoryAlloc(flags | DWM_MOVEABLE, size);
+		pNew = MemoryAlloc(flags, size);
 
 		// make sure memory allocated
 		assert(pNew != NULL);

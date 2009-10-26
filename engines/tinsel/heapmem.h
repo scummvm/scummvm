@@ -43,20 +43,13 @@ struct MEM_NODE {
 };
 
 // allocation flags for the MemoryAlloc function
-#define	DWM_MOVEABLE	0x0002	///< allocates movable memory
 #define	DWM_DISCARDABLE	0x0004	///< allocates discardable memory
 #define	DWM_NOALLOC		0x0008	///< when used with discardable memory - allocates a discarded block
-#define	DWM_NOCOMPACT	0x0010	///< does not discard memory to satisfy the allocation request
-#define	DWM_ZEROINIT	0x0020	///< initialises memory contents to zero
-#define	DWM_SOUND		0x0040	///< allocate from the sound pool
-#define	DWM_GRAPHIC		0x0080	///< allocate from the graphics pool
-
-// return value from the MemoryFlags function
-#define	DWM_DISCARDED	0x0100	// the objects memory block has been discarded
 
 // internal allocation flags
-#define	DWM_LOCKED	0x0200	// the objects memory block is locked
-#define	DWM_SENTINEL	0x0400	// the objects memory block is a sentinel
+#define	DWM_DISCARDED	0x0100	///< the objects memory block has been discarded
+#define	DWM_LOCKED		0x0200	///< the objects memory block is locked
+#define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
 
 
 /*----------------------------------------------------------------------*\
@@ -65,11 +58,7 @@ struct MEM_NODE {
 
 void MemoryInit(void);		// initialises the memory manager
 
-#ifdef	DEBUG
-void MemoryStats(void);		// Shows the maximum number of mnodes used at once
-#endif
-
-// allocates a non-fixed block with the specified number of bytes from the heap
+// allocates a movable block with the specified number of bytes from the heap
 MEM_NODE *MemoryAlloc(
 	int flags,		// allocation attributes
 	long size);		// number of bytes to allocate
@@ -78,12 +67,6 @@ MEM_NODE *MemoryAlloc(
 void *MemoryAllocFixed(long size);
 
 void MemoryDiscard(		// discards the specified memory object
-	MEM_NODE *pMemNode);	// node of the memory object
-
-int MemoryFlags(		// returns information about the specified memory object
-	MEM_NODE *pMemNode);	// node of the memory object
-
-void MemoryFree(		// frees the specified memory object and invalidates its node
 	MEM_NODE *pMemNode);	// node of the memory object
 
 MEM_NODE *MemoryHandle(		// Retrieves the mnode associated with the specified pointer to a memory object
@@ -96,9 +79,6 @@ MEM_NODE *MemoryReAlloc(	// changes the size or attributes of a specified memory
 	MEM_NODE *pMemNode,	// node of the memory object
 	long size,		// new size of block
 	int flags);		// how to reallocate the object
-
-long MemorySize(		// returns the size, in bytes, of the specified memory object
-	MEM_NODE *pMemNode);	// node of the memory object
 
 void MemoryUnlock(		// unlocks a memory object
 	MEM_NODE *pMemNode);	// node of the memory object
