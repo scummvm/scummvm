@@ -91,7 +91,7 @@ bool SeqDecoder::loadFile(const char *fileName, int frameDelay) {
 
 	g_system->setPalette(palette, 0, 256);
 
-	delete paletteData;
+	delete[] paletteData;
 
 	_videoInfo.firstframeOffset = _fileStream->pos();
 
@@ -144,7 +144,7 @@ bool SeqDecoder::decodeNextFrame() {
 		byte *buf = new byte[frameSize];
 		_fileStream->read(buf, frameSize);
 		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, _videoFrameBuffer + 320 * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
-		delete buf;
+		delete[] buf;
 	}
 
 	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
