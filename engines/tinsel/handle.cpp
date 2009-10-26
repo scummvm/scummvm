@@ -256,8 +256,7 @@ void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
 
 	OpenCDGraphFile();
 
-	if ((handleTable + cdPlayHandle)->_node->pBaseAddr != NULL)
-		MemoryDiscard((handleTable + cdPlayHandle)->_node); // Free it
+	MemoryDiscard((handleTable + cdPlayHandle)->_node); // Free it
 
 	// It must always be the same
 	assert(cdPlayHandle == (start >> SCNHANDLE_SHIFT));
@@ -348,12 +347,6 @@ byte *LockMem(SCNHANDLE offset) {
 	pH = handleTable + handle;
 
 	if (pH->filesize & fPreload) {
-#if 0
-		if (TinselV2)
-			// update the LRU time (new in this file)
-			pH->pNode->lruTime = DwGetCurrentTime();
-#endif
-
 		// permanent files are already loaded
 		return pH->_ptr + (offset & OFFSETMASK);
 	} else if (handle == cdPlayHandle) {
@@ -361,28 +354,22 @@ byte *LockMem(SCNHANDLE offset) {
 		if (offset < cdBaseHandle || offset >= cdTopHandle)
 			error("Overlapping (in time) CD-plays");
 
-		if (pH->_node->pBaseAddr == NULL) {
-			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle);
-			assert(pH->_node->pBaseAddr);
-		}
+		// may have been discarded, make sure memory is allocated
+		MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle);
 
 		if (!(pH->filesize & fLoaded)) {
 
 			LoadCDGraphData(pH);
 
 			// update the LRU time (new in this file)
-			pH->_node->lruTime = DwGetCurrentTime();
+			MemoryTouch(pH->_node);
 		}
 
-		return pH->_node->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
+		return MemoryDeref(pH->_node) + ((offset - cdBaseHandle) & OFFSETMASK);
 
 	} else {
-		if (pH->_node->pBaseAddr == NULL) {
-			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
-			assert(pH->_node->pBaseAddr);
-		}
+		// may have been discarded, make sure memory is allocated
+		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
 
 		if (!(pH->filesize & fLoaded)) {
 
@@ -396,7 +383,7 @@ byte *LockMem(SCNHANDLE offset) {
 			assert(pH->filesize & fLoaded);
 		}
 
-		return pH->_node->pBaseAddr + (offset & OFFSETMASK);
+		return MemoryDeref(pH->_node) + (offset & OFFSETMASK);
 	}
 }
 
@@ -492,7 +479,7 @@ void TouchMem(SCNHANDLE offset) {
 
 		// update the LRU time whether its loaded or not!
 		if (pH->_node)
-			pH->_node->lruTime = DwGetCurrentTime();
+			MemoryTouch(pH->_node);
 	}
 }
 

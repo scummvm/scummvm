@@ -41,6 +41,16 @@ namespace Tinsel {
 #define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
 
 
+struct MEM_NODE {
+	MEM_NODE *pNext;	// link to the next node in the list
+	MEM_NODE *pPrev;	// link to the previous node in the list
+	uint8 *pBaseAddr;	// base address of the memory object
+	long size;		// size of the memory object
+	uint32 lruTime;		// time when memory object was last accessed
+	int flags;		// allocation attributes
+};
+
+
 // Specifies the total amount of memory required for DW1 demo, DW1, or DW2 respectively.
 // Currently this is set at 5MB for the DW1 demo and DW1 and 10MB for DW2
 // This could probably be reduced somewhat
@@ -478,6 +488,8 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 		// free the new node
 		FreeMemNode(pNew);
 	}
+
+	assert(pMemNode->pBaseAddr);
 }
 
 /**
@@ -497,5 +509,25 @@ void MemoryUnlock(MEM_NODE *pMemNode) {
 	// update the LRU time
 	pMemNode->lruTime = DwGetCurrentTime();
 }
+
+/**
+ * Touch a memory object by updating its LRU time.
+ * @param pMemNode		Node of the memory object
+ */
+void MemoryTouch(MEM_NODE *pMemNode) {
+	// validate mnode pointer
+	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
+
+	// update the LRU time
+	pMemNode->lruTime = DwGetCurrentTime();
+}
+
+uint8 *MemoryDeref(MEM_NODE *pMemNode) {
+	// validate mnode pointer
+	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
+
+	return pMemNode->pBaseAddr;
+}
+
 
 } // End of namespace Tinsel

@@ -31,14 +31,7 @@
 
 namespace Tinsel {
 
-struct MEM_NODE {
-	MEM_NODE *pNext;	// link to the next node in the list
-	MEM_NODE *pPrev;	// link to the previous node in the list
-	uint8 *pBaseAddr;	// base address of the memory object
-	long size;		// size of the memory object
-	uint32 lruTime;		// time when memory object was last accessed
-	int flags;		// allocation attributes
-};
+struct MEM_NODE;
 
 
 /*----------------------------------------------------------------------*\
@@ -65,6 +58,12 @@ void MemoryReAlloc(	// changes the size or attributes of a specified memory obje
 
 void MemoryUnlock(		// unlocks a memory object
 	MEM_NODE *pMemNode);	// node of the memory object
+
+// 'touch' the memory object, i.e., update its "least recently used" counter.
+void MemoryTouch(MEM_NODE *pMemNode);
+
+// Dereference a given memory node
+uint8 *MemoryDeref(MEM_NODE *pMemNode);
 
 bool HeapCompact(		// Allocates the specified number of bytes from the specified heap
 	long size,		// number of bytes to free up
