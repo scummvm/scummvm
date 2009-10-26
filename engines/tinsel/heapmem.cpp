@@ -32,6 +32,7 @@ namespace Tinsel {
 
 
 // internal allocation flags
+#define	DWM_USED		0x0001	///< the objects memory block is in use
 #define	DWM_DISCARDED	0x0100	///< the objects memory block has been discarded
 #define	DWM_LOCKED		0x0200	///< the objects memory block is locked
 #define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
@@ -185,9 +186,6 @@ bool HeapCompact(long size, bool bDiscard) {
 			for (pPrev = pHeap->pNext, pCur = pPrev->pNext;
 				pCur != pHeap; pPrev = pCur, pCur = pCur->pNext) {
 				if (pPrev->flags == 0 && pCur->flags == 0) {
-					// set the changed flag
-					bChanged = true;
-
 					// both blocks are free - merge them
 					pPrev->size += pCur->size;
 
@@ -198,18 +196,19 @@ bool HeapCompact(long size, bool bDiscard) {
 					// free the current mnode
 					FreeMemNode(pCur);
 
+					// set the changed flag
+					bChanged = true;
+
 					// leave the loop
 					break;
-				} else if ((pPrev->flags & (DWM_LOCKED | DWM_DISCARDED)) == 0
-						&& pCur->flags == 0) {
-					// a free block after a moveable block - swap them
+				} else if (pPrev->flags == DWM_USED && pCur->flags == 0) {
+					// a free block after a moveable, non-discarded, not locked block - swap them
 
 					// set the changed flag
 					bChanged = true;
 
 					// move the unlocked blocks data up (can overlap)
-					memmove(pPrev->pBaseAddr + pCur->size,
-						pPrev->pBaseAddr, pPrev->size);
+					memmove(pPrev->pBaseAddr + pCur->size, pPrev->pBaseAddr, pPrev->size);
 
 					// swap the order in the linked list
 					pPrev->pPrev->pNext = pCur;
@@ -248,7 +247,7 @@ bool HeapCompact(long size, bool bDiscard) {
 		oldest = DwGetCurrentTime();
 		pOldest = NULL;
 		for (pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
-			if ((pCur->flags & (DWM_DISCARDED | DWM_LOCKED)) == 0) {
+			if (pCur->flags == DWM_USED) {
 				// found a non-discarded discardable block
 				if (pCur->lruTime < oldest) {
 					oldest = pCur->lruTime;
@@ -271,7 +270,7 @@ bool HeapCompact(long size, bool bDiscard) {
  * @param flags			Allocation attributes
  * @param size			Number of bytes to allocate
  */
-static MEM_NODE *MemoryAlloc(int flags, long size) {
+static MEM_NODE *MemoryAlloc(long size) {
 	const MEM_NODE *pHeap = &heapSentinel;
 	MEM_NODE *pNode;
 
@@ -286,7 +285,7 @@ static MEM_NODE *MemoryAlloc(int flags, long size) {
 		for (pNode = pHeap->pNext; pNode != pHeap; pNode = pNode->pNext) {
 			if (pNode->flags == 0 && pNode->size >= size) {
 				// a free block of the required size
-				pNode->flags = flags;
+				pNode->flags = DWM_USED;
 
 				// update the LRU time
 				pNode->lruTime = DwGetCurrentTime() + 1;
@@ -335,7 +334,7 @@ MEM_NODE *MemoryNoAlloc() {
 
 	// chain a discarded node onto the end of the heap
 	MEM_NODE *pNode = AllocMemNode();
-	pNode->flags = DWM_DISCARDED;
+	pNode->flags = DWM_USED | DWM_DISCARDED;
 
 	// set mnode at the end of the list
 	pNode->pPrev = pHeap->pPrev;
@@ -374,9 +373,10 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
-	// object cannot be locked
-	assert((pMemNode->flags & DWM_LOCKED) == 0);
+	// object must be in use and locked
+	assert((pMemNode->flags & (DWM_USED | DWM_LOCKED)) == DWM_USED);
 
+	// discard it if it isn't already
 	if ((pMemNode->flags & DWM_DISCARDED) == 0) {
 		// allocate a free node to replace this node
 		MEM_NODE *pTemp = AllocMemNode();
@@ -452,8 +452,8 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 	assert(size);
 
 	if (size != pMemNode->size) {
-		// make sure memory object is not locked and discarded
-		assert(!(pMemNode->flags & DWM_LOCKED) && (pMemNode->flags & DWM_DISCARDED));
+		// make sure memory object is discarded and not locked
+		assert(pMemNode->flags == DWM_USED | DWM_DISCARDED);
 		assert(pMemNode->size == 0);
 
 		// unlink the mnode from the current heap
@@ -461,7 +461,7 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 		pMemNode->pPrev->pNext = pMemNode->pNext;
 
 		// allocate a new node
-		pNew = MemoryAlloc(pMemNode->flags & ~DWM_DISCARDED, size);
+		pNew = MemoryAlloc(size);
 
 		// make sure memory allocated
 		assert(pNew != NULL);
