@@ -55,7 +55,7 @@ MusicPlayer::~MusicPlayer() {
 	this->close();
 	_smfParser->setMidiDriver(NULL);
 	delete _smfParser;
-	delete _midiMusicData;
+	delete[] _midiMusicData;
 }
 
 void MusicPlayer::setChannelVolume(int channel) {
@@ -176,7 +176,7 @@ void MusicPlayer::playSMF(int track, bool loop) {
 		return;
 	}
 	int midiMusicSize = musicFile.size();
-	delete _midiMusicData;
+	delete[] _midiMusicData;
 	_midiMusicData = new byte[midiMusicSize];
 	musicFile.read(_midiMusicData, midiMusicSize);
 	musicFile.close();
