@@ -261,9 +261,8 @@ void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
 	}
 
 	if (_game.features & GF_16BIT_COLOR) {
-		for (int i = firstIndex; i < firstIndex + numcolor - 1; ++i) {
+		for (int i = firstIndex; i < firstIndex + numcolor; ++i)
 			_16BitPalette[i] = get16BitColor(_currentPalette[i * 3 + 0], _currentPalette[i * 3 + 1], _currentPalette[i * 3 + 2]);
-		}
 	}
 	setDirtyColors(firstIndex, firstIndex + numcolor - 1);
 }

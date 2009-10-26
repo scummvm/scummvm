@@ -971,12 +971,12 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 			if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
 				if (bitDepth == 2) {
 					if (_shadowMode != kNoShadowMode) {
-						WRITE_UINT16(dst + 2, _shadowColor);
-						WRITE_UINT16(dst + s.pitch, _shadowColor);
+						WRITE_UINT16(dst + 2, _vm->_16BitPalette[_shadowColor]);
+						WRITE_UINT16(dst + s.pitch, _vm->_16BitPalette[_shadowColor]);
 						if (_shadowMode != kFMTOWNSShadowMode)
-							WRITE_UINT16(dst + s.pitch + 2, _shadowColor);
+							WRITE_UINT16(dst + s.pitch + 2, _vm->_16BitPalette[_shadowColor]);
 					}
-					WRITE_UINT16(dst, _color);
+					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
 				} else {
 					if (_shadowMode != kNoShadowMode) {
 						*(dst + 1) = _shadowColor;
