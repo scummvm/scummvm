@@ -249,28 +249,11 @@ static void _gfxop_draw_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm, int priorit
 	driver->drawPixmap(pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 }
 
-static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer);
+static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer) {
+	if (_gfxop_clip(&box, gfx_rect(0, 0, 320 * state->driver->getMode()->scaleFactor, 200 * state->driver->getMode()->scaleFactor)))
+		return;
 
-gfx_pixmap_t *_gfxr_get_cel(GfxState *state, int nr, int *loop, int *cel, int palette) {
-	gfxr_view_t *view = state->gfxResMan->getView(nr, loop, cel, palette);
-
-	gfxr_loop_t *indexed_loop;
-
-	if (!view)
-		return NULL;
-
-	if (*loop >= view->loops_nr || *loop < 0) {
-		warning("[GFX] Attempt to get cel from loop %d/%d inside view %d", *loop, view->loops_nr, nr);
-		return NULL;
-	}
-	indexed_loop = view->loops + *loop;
-
-	if (*cel >= indexed_loop->cels_nr || *cel < 0) {
-		warning("[GFX] Attempt to get cel %d/%d from view %d/%d", *cel, indexed_loop->cels_nr, nr, *loop);
-		return NULL;
-	}
-
-	return indexed_loop->cels[*cel]; // Yes, view->cels uses a malloced pointer list.
+	state->driver->update(box, Common::Point(box.x, box.y), buffer);
 }
 
 //** Dirty rectangle operations **
@@ -837,13 +820,6 @@ void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t
 
 void gfxop_fill_box(GfxState *state, rect_t box, gfx_color_t color) {
 	gfxop_draw_box(state, box, color, color, GFX_BOX_SHADE_FLAT);
-}
-
-static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer) {
-	if (_gfxop_clip(&box, gfx_rect(0, 0, 320 * state->driver->getMode()->scaleFactor, 200 * state->driver->getMode()->scaleFactor)))
-		return;
-
-	state->driver->update(box, Common::Point(box.x, box.y), buffer);
 }
 
 extern int sci0_palette;
