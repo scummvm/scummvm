@@ -378,8 +378,9 @@ int16 SciGuiGfx::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			if (getSciVersion() >= SCI_VERSION_1_1) {
 				curCharCount++;
 				curCharCount += TextCodeProcessing(text, orgFontId, oldPenColor);
+				continue;
 			}
-			continue;
+			break;
 
 		case 0xD:
 			curCharCount++;
