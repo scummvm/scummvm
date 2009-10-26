@@ -170,9 +170,7 @@ void SetupHandleTable(void) {
 #endif
 		else {
 			// allocate a discarded memory node for other files
-			pH->_node = MemoryAlloc(
-				DWM_DISCARDABLE | DWM_NOALLOC,
-				pH->filesize & FSIZE_MASK);
+			pH->_node = MemoryAlloc(DWM_DISCARDABLE | DWM_NOALLOC, pH->filesize & FSIZE_MASK);
 			pH->_ptr = NULL;
 
 			// make sure memory allocated

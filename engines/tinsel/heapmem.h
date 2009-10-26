@@ -69,13 +69,10 @@ void *MemoryAllocFixed(long size);
 void MemoryDiscard(		// discards the specified memory object
 	MEM_NODE *pMemNode);	// node of the memory object
 
-MEM_NODE *MemoryHandle(		// Retrieves the mnode associated with the specified pointer to a memory object
-	void *pMem);		// address of memory object
-
 void *MemoryLock(		// locks a memory object and returns a pointer to the first byte of the objects memory block
 	MEM_NODE *pMemNode);	// node of the memory object
 
-MEM_NODE *MemoryReAlloc(	// changes the size or attributes of a specified memory object
+void MemoryReAlloc(	// changes the size or attributes of a specified memory object
 	MEM_NODE *pMemNode,	// node of the memory object
 	long size,		// new size of block
 	int flags);		// how to reallocate the object

@@ -34,7 +34,6 @@
 #include "tinsel/font.h"
 #include "tinsel/graphics.h"
 #include "tinsel/handle.h"
-#include "tinsel/heapmem.h"
 #include "tinsel/multiobj.h"
 #include "tinsel/sched.h"
 #include "tinsel/strres.h"

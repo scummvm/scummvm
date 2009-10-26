@@ -33,7 +33,6 @@
 #include "tinsel/faders.h"		// FadeOutFast()
 #include "tinsel/graphics.h"		// ClearScreen()
 #include "tinsel/handle.h"
-#include "tinsel/heapmem.h"
 #include "tinsel/dialogs.h"
 #include "tinsel/music.h"
 #include "tinsel/pid.h"

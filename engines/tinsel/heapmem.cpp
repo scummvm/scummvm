@@ -430,7 +430,7 @@ void *MemoryLock(MEM_NODE *pMemNode) {
  * @param size			New size of block
  * @param flags			How to reallocate the object
  */
-MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
+void MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 	MEM_NODE *pNew;
 
 	// validate mnode pointer
@@ -471,9 +471,6 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 		// free the new node
 		FreeMemNode(pNew);
 	}
-
-	// return the node
-	return pMemNode;
 }
 
 /**
@@ -492,23 +489,6 @@ void MemoryUnlock(MEM_NODE *pMemNode) {
 
 	// update the LRU time
 	pMemNode->lruTime = DwGetCurrentTime();
-}
-
-/**
- * Retrieves the mnode associated with the specified pointer to a memory object.
- * @param pMem			Address of memory object
- */
-MEM_NODE *MemoryHandle(void *pMem) {
-	MEM_NODE *pNode;
-	// search the DOS heap
-	for (pNode = heapSentinel.pNext; pNode != &heapSentinel; pNode = pNode->pNext) {
-		if (pNode->pBaseAddr == pMem)
-			// found it
-			return pNode;
-	}
-
-	// not found if we get to here
-	return NULL;
 }
 
 } // End of namespace Tinsel
