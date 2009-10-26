@@ -279,11 +279,6 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 	MEM_NODE *pNode;
 	bool bCompacted = true;	// set when heap has been compacted
 
-	// compact the heap if we are allocating fixed memory
-	if (flags & DWM_FIXED) {
-		HeapCompact(MAX_INT, false);
-	}
-
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void*) - 1;
 	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
@@ -307,12 +302,8 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 					if (flags & DWM_ZEROINIT)
 						memset(pNode->pBaseAddr, 0, size);
 
-					if (flags & DWM_FIXED)
-						// lock the memory
-						return (MEM_NODE *)MemoryLock(pNode);
-					else
-						// just return the node
-						return pNode;
+					// return the node
+					return pNode;
 				} else {
 					// allocate a node for the remainder of the free block
 					MEM_NODE *pTemp = AllocMemNode();
@@ -326,34 +317,19 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 					// set size of node
 					pNode->size = size;
 
-					if (flags & DWM_FIXED) {
-						// place the free node after pNode
-						pTemp->pBaseAddr = pNode->pBaseAddr + size;
-						pTemp->pNext = pNode->pNext;
-						pTemp->pPrev = pNode;
-						pNode->pNext->pPrev = pTemp;
-						pNode->pNext = pTemp;
+					// place the free node before pNode
+					pTemp->pBaseAddr = pNode->pBaseAddr;
+					pNode->pBaseAddr += freeSize;
+					pTemp->pNext = pNode;
+					pTemp->pPrev = pNode->pPrev;
+					pNode->pPrev->pNext = pTemp;
+					pNode->pPrev = pTemp;
 
-						// check for zeroing the block
-						if (flags & DWM_ZEROINIT)
-							memset(pNode->pBaseAddr, 0, size);
+					// check for zeroing the block
+					if (flags & DWM_ZEROINIT)
+						memset(pNode->pBaseAddr, 0, size);
 
-						return (MEM_NODE *)MemoryLock(pNode);
-					} else {
-						// place the free node before pNode
-						pTemp->pBaseAddr = pNode->pBaseAddr;
-						pNode->pBaseAddr += freeSize;
-						pTemp->pNext = pNode;
-						pTemp->pPrev = pNode->pPrev;
-						pNode->pPrev->pNext = pTemp;
-						pNode->pPrev = pTemp;
-
-						// check for zeroing the block
-						if (flags & DWM_ZEROINIT)
-							memset(pNode->pBaseAddr, 0, size);
-
-						return pNode;
-					}
+					return pNode;
 				}
 			}
 		}
@@ -382,6 +358,21 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 	// could not allocate a block
 	return NULL;
 }
+
+
+void *MemoryAllocFixed(long size) {
+	// Allocate a fixed block of data. For now, we simply malloc it!
+	// TODO: We really should keep a list of the allocated pointers,
+	// so that we can discard them later on, when the engine quits.
+
+#ifdef SCUMM_NEED_ALIGNMENT
+	const int alignPadding = sizeof(void*) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
+#endif
+
+	return malloc(size);
+}
+
 
 /**
  * Discards the specified memory object.
@@ -512,14 +503,8 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
 	// validate the flags
-	// cannot be fixed and moveable
-	assert((flags & (DWM_FIXED | DWM_MOVEABLE)) != (DWM_FIXED | DWM_MOVEABLE));
-
-	// cannot be fixed and discardable
-	assert((flags & (DWM_FIXED | DWM_DISCARDABLE)) != (DWM_FIXED | DWM_DISCARDABLE));
-
-	// must be fixed or moveable
-	assert(flags & (DWM_FIXED | DWM_MOVEABLE));
+	// must be moveable
+	assert(flags & DWM_MOVEABLE);
 
 	// align the size to machine boundary requirements
 	size = (size + sizeof(void *) - 1) & ~(sizeof(void *) - 1);
@@ -541,7 +526,7 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 		pMemNode->pPrev->pNext = pMemNode->pNext;
 
 		// allocate a new node
-		pNew = MemoryAlloc((flags & ~DWM_FIXED) | DWM_MOVEABLE, size);
+		pNew = MemoryAlloc(flags | DWM_MOVEABLE, size);
 
 		// make sure memory allocated
 		assert(pNew != NULL);
@@ -560,12 +545,8 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 		FreeMemNode(pNew);
 	}
 
-	if (flags & DWM_FIXED)
-		// lock the memory
-		return (MEM_NODE *)MemoryLock(pMemNode);
-	else
-		// just return the node
-		return pMemNode;
+	// return the node
+	return pMemNode;
 }
 
 /**

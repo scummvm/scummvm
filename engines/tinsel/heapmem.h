@@ -43,14 +43,13 @@ struct MEM_NODE {
 };
 
 // allocation flags for the MemoryAlloc function
-#define	DWM_FIXED	0x0001	// allocates fixed memory
-#define	DWM_MOVEABLE	0x0002	// allocates movable memory
-#define	DWM_DISCARDABLE	0x0004	// allocates discardable memory
-#define	DWM_NOALLOC	0x0008	// when used with discardable memory - allocates a discarded block
-#define	DWM_NOCOMPACT	0x0010	// does not discard memory to satisfy the allocation request
-#define	DWM_ZEROINIT	0x0020	// initialises memory contents to zero
-#define	DWM_SOUND	0x0040	// allocate from the sound pool
-#define	DWM_GRAPHIC	0x0080	// allocate from the graphics pool
+#define	DWM_MOVEABLE	0x0002	///< allocates movable memory
+#define	DWM_DISCARDABLE	0x0004	///< allocates discardable memory
+#define	DWM_NOALLOC		0x0008	///< when used with discardable memory - allocates a discarded block
+#define	DWM_NOCOMPACT	0x0010	///< does not discard memory to satisfy the allocation request
+#define	DWM_ZEROINIT	0x0020	///< initialises memory contents to zero
+#define	DWM_SOUND		0x0040	///< allocate from the sound pool
+#define	DWM_GRAPHIC		0x0080	///< allocate from the graphics pool
 
 // return value from the MemoryFlags function
 #define	DWM_DISCARDED	0x0100	// the objects memory block has been discarded
@@ -70,9 +69,13 @@ void MemoryInit(void);		// initialises the memory manager
 void MemoryStats(void);		// Shows the maximum number of mnodes used at once
 #endif
 
-MEM_NODE *MemoryAlloc(		// allocates the specified number of bytes from the heap
+// allocates a non-fixed block with the specified number of bytes from the heap
+MEM_NODE *MemoryAlloc(
 	int flags,		// allocation attributes
 	long size);		// number of bytes to allocate
+
+// allocates a fixed block with the specified number of bytes
+void *MemoryAllocFixed(long size);
 
 void MemoryDiscard(		// discards the specified memory object
 	MEM_NODE *pMemNode);	// node of the memory object

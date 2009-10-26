@@ -48,9 +48,10 @@ bool bLockedScene = 0;
 //----------------- LOCAL DEFINES --------------------
 
 struct MEMHANDLE {
-	char szName[12];	///< 00 - file name of graphics file
-	int32 filesize;		///< 12 - file size and flags
-	MEM_NODE *pNode;	///< 16 - memory node for the graphics
+	char szName[12];	///< file name of graphics file
+	int32 filesize;		///< file size and flags
+	MEM_NODE *_node;	///< memory node for the graphics
+	uint8 *_ptr;		///< start of data for fixed blocks (i.e., preloaded data)
 	uint32 flags2;
 };
 
@@ -127,7 +128,8 @@ void SetupHandleTable(void) {
 				handleTable[i].filesize = f.readUint32LE();
 				// The pointer should always be NULL. We don't
 				// need to read that from the file.
-				handleTable[i].pNode = NULL;
+				handleTable[i]._node = NULL;
+				handleTable[i]._ptr = NULL;
 				f.seek(4, SEEK_CUR);
 				// For Discworld 2, read in the flags2 field
 				handleTable[i].flags2 = t2Flag ? f.readUint32LE() : 0;
@@ -151,30 +153,30 @@ void SetupHandleTable(void) {
 	for (i = 0, pH = handleTable; i < numHandles; i++, pH++) {
 		if (pH->filesize & fPreload) {
 			// allocate a fixed memory node for permanent files
-			pH->pNode = MemoryAlloc(DWM_FIXED, sizeof(MEM_NODE) + (pH->filesize & FSIZE_MASK));
+			pH->_ptr = (uint8 *)MemoryAllocFixed((pH->filesize & FSIZE_MASK));
+			pH->_node = NULL;
 
 			// make sure memory allocated
-			assert(pH->pNode);
-
-			// Initialise the MEM_NODE structure
-			memset(pH->pNode, 0, sizeof(MEM_NODE));
+			assert(pH->_ptr);
 
 			// load the data
 			LoadFile(pH, true);
 		}
 #ifdef BODGE
 		else if ((pH->filesize & FSIZE_MASK) == 8) {
-			pH->pNode = NULL;
+			pH->_node = NULL;
+			pH->_ptr = NULL;
 		}
 #endif
 		else {
 			// allocate a discarded memory node for other files
-			pH->pNode = MemoryAlloc(
+			pH->_node = MemoryAlloc(
 				DWM_MOVEABLE | DWM_DISCARDABLE | DWM_NOALLOC,
 				pH->filesize & FSIZE_MASK);
+			pH->_ptr = NULL;
 
 			// make sure memory allocated
-			assert(pH->pNode);
+			assert(pH->_node || pH->_ptr);
 		}
 	}
 }
@@ -213,7 +215,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	assert(!(pH->filesize & fPreload));
 
 	// discardable - lock the memory
-	addr = (byte *)MemoryLock(pH->pNode);
+	addr = (byte *)MemoryLock(pH->_node);
 
 	// make sure address is valid
 	assert(addr);
@@ -230,7 +232,7 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	}
 
 	// discardable - unlock the memory
-	MemoryUnlock(pH->pNode);
+	MemoryUnlock(pH->_node);
 
 	// set the loaded flag
 	pH->filesize |= fLoaded;
@@ -256,8 +258,8 @@ void LoadExtraGraphData(SCNHANDLE start, SCNHANDLE next) {
 
 	OpenCDGraphFile();
 
-	if ((handleTable + cdPlayHandle)->pNode->pBaseAddr != NULL)
-		MemoryDiscard((handleTable + cdPlayHandle)->pNode); // Free it
+	if ((handleTable + cdPlayHandle)->_node->pBaseAddr != NULL)
+		MemoryDiscard((handleTable + cdPlayHandle)->_node); // Free it
 
 	// It must always be the same
 	assert(cdPlayHandle == (start >> SCNHANDLE_SHIFT));
@@ -301,19 +303,19 @@ void LoadFile(MEMHANDLE *pH, bool bWarn) {
 
 		if (pH->filesize & fPreload)
 			// preload - no need to lock the memory
-			addr = (uint8 *)pH->pNode + sizeof(MEM_NODE);
+			addr = pH->_ptr;
 		else {
 			// discardable - lock the memory
-			addr = (uint8 *)MemoryLock(pH->pNode);
+			addr = (uint8 *)MemoryLock(pH->_node);
 		}
 #ifdef DEBUG
 		if (addr == NULL) {
 			if (pH->filesize & fPreload)
 				// preload - no need to lock the memory
-				addr = (uint8 *)pH->pNode;
+				addr = pH->_ptr;
 			else {
 				// discardable - lock the memory
-				addr = (uint8 *)MemoryLock(pH->pNode);
+				addr = (uint8 *)MemoryLock(pH->_node);
 			}
 		}
 #endif
@@ -328,7 +330,7 @@ void LoadFile(MEMHANDLE *pH, bool bWarn) {
 
 		if ((pH->filesize & fPreload) == 0) {
 			// discardable - unlock the memory
-			MemoryUnlock(pH->pNode);
+			MemoryUnlock(pH->_node);
 		}
 
 		// set the loaded flag
@@ -362,50 +364,52 @@ byte *LockMem(SCNHANDLE offset) {
 	pH = handleTable + handle;
 
 	if (pH->filesize & fPreload) {
+#if 0
 		if (TinselV2)
 			// update the LRU time (new in this file)
 			pH->pNode->lruTime = DwGetCurrentTime();
+#endif
 
 		// permanent files are already loaded
-		return (uint8 *)pH->pNode + sizeof(MEM_NODE) + (offset & OFFSETMASK);
+		return pH->_ptr + (offset & OFFSETMASK);
 	} else if (handle == cdPlayHandle) {
 		// Must be in currently loaded/loadable range
 		if (offset < cdBaseHandle || offset >= cdTopHandle)
 			error("Overlapping (in time) CD-plays");
 
-		if (pH->pNode->pBaseAddr && (pH->filesize & fLoaded))
+		if (pH->_node->pBaseAddr && (pH->filesize & fLoaded))
 			// already allocated and loaded
-			return pH->pNode->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
+			return pH->_node->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
 
-		if (pH->pNode->pBaseAddr == NULL)
+		if (pH->_node->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->pNode, cdTopHandle-cdBaseHandle,
+			MemoryReAlloc(pH->_node, cdTopHandle-cdBaseHandle,
 				DWM_MOVEABLE | DWM_DISCARDABLE);
 
-		if (pH->pNode->pBaseAddr == NULL)
+		if (pH->_node->pBaseAddr == NULL)
 			error("Out of memory");
 
 		LoadCDGraphData(pH);
 
 		// make sure address is valid
-		assert(pH->pNode->pBaseAddr);
+		assert(pH->_node->pBaseAddr);
 
 		// update the LRU time (new in this file)
-		pH->pNode->lruTime = DwGetCurrentTime();
+		pH->_node->lruTime = DwGetCurrentTime();
 
-		return pH->pNode->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
+		return pH->_node->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
 
 	} else {
-		if (pH->pNode->pBaseAddr && (pH->filesize & fLoaded))
+		if (pH->_node->pBaseAddr && (pH->filesize & fLoaded))
 			// already allocated and loaded
-			return pH->pNode->pBaseAddr + (offset & OFFSETMASK);
+			return pH->_node->pBaseAddr + (offset & OFFSETMASK);
 
-		if (pH->pNode->pBaseAddr == NULL)
+		if (pH->_node->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->pNode, pH->filesize & FSIZE_MASK,
+			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK,
 				DWM_MOVEABLE | DWM_DISCARDABLE);
 
-		if (pH->pNode->pBaseAddr == NULL)
+		if (pH->_node->pBaseAddr == NULL)
 			error("Out of memory");
 
 		if (TinselV2) {
@@ -415,9 +419,9 @@ byte *LockMem(SCNHANDLE offset) {
 		LoadFile(pH, true);
 
 		// make sure address is valid
-		assert(pH->pNode->pBaseAddr);
+		assert(pH->_node->pBaseAddr);
 
-		return pH->pNode->pBaseAddr + (offset & OFFSETMASK);
+		return pH->_node->pBaseAddr + (offset & OFFSETMASK);
 	}
 }
 
@@ -447,7 +451,7 @@ void LockScene(SCNHANDLE offset) {
 		// WORKAROUND: The original didn't include the DWM_LOCKED flag. It's being
 		// included because the method is 'LockScene' so it's presumed that the
 		// point of this was that the scene's memory block be locked
-		MemoryReAlloc(pH->pNode, pH->filesize & FSIZE_MASK, DWM_MOVEABLE | DWM_LOCKED);
+		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_MOVEABLE | DWM_LOCKED);
 #ifdef DEBUG
 		bLockedScene = true;
 #endif
@@ -470,7 +474,7 @@ void UnlockScene(SCNHANDLE offset) {
 
 	if ((pH->filesize & fPreload) == 0) {
 		// change the flags for the node
-		MemoryReAlloc(pH->pNode, pH->filesize & FSIZE_MASK, DWM_MOVEABLE | DWM_DISCARDABLE);
+		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_MOVEABLE | DWM_DISCARDABLE);
 #ifdef DEBUG
 		bLockedScene = false;
 #endif
@@ -510,7 +514,8 @@ void TouchMem(SCNHANDLE offset) {
 		pH = handleTable + handle;
 
 		// update the LRU time whether its loaded or not!
-		pH->pNode->lruTime = DwGetCurrentTime();
+		if (pH->_node)
+			pH->_node->lruTime = DwGetCurrentTime();
 	}
 }
 

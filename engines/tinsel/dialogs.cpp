@@ -5526,7 +5526,7 @@ void RegisterIcons(void *cptr, int num) {
 	if (TinselV0) {
 		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
 		// need to 'unpack' the source structures into the standard Tinsel v1/v2 format
-		invObjects = (INV_OBJECT *)MemoryAlloc(DWM_FIXED, numObjects * sizeof(INV_OBJECT));
+		invObjects = (INV_OBJECT *)MemoryAllocFixed(numObjects * sizeof(INV_OBJECT));
 		byte *srcP = (byte *)cptr;
 		INV_OBJECT *destP = (INV_OBJECT *)invObjects;
 
@@ -5535,9 +5535,11 @@ void RegisterIcons(void *cptr, int num) {
 			destP->attribute = 0;
 		}
 	} else if (TinselV2) {
-		if (invFilms == NULL)
+		if (invFilms == NULL) {
 			// First time - allocate memory
-			invFilms = (SCNHANDLE *)MemoryAlloc(DWM_FIXED | DWM_ZEROINIT, numObjects * sizeof(SCNHANDLE));
+			invFilms = (SCNHANDLE *)MemoryAllocFixed(numObjects * sizeof(SCNHANDLE));
+			memset(invFilms, 0, numObjects * sizeof(SCNHANDLE));
+		}
 
 		if (invFilms == NULL)
 			error(NO_MEM, "inventory scripts");
