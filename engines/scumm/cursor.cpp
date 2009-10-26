@@ -364,10 +364,10 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 	s.pixels = buf;
 	s.w = _charset->getCharWidth(chr);
 	s.h = _charset->getFontHeight();
-	s.pitch = s.w;
+	s.pitch = s.w * _bytesPerPixel;
 	// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
 	assert(s.w <= 16 && s.h <= 17);
-	s.bytesPerPixel = 1;
+	s.bytesPerPixel = _bytesPerPixel;
 
 	_charset->drawChar(chr, s, 0, 0);
 
@@ -378,7 +378,7 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 			if (buf[s.pitch * h + w] != 123)
 				*ptr |= 1 << (15 - w);
 		}
-		ptr++;
+		ptr += _bytesPerPixel;
 	}
 
 //	_charset->setCurID(oldID);
@@ -536,7 +536,12 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 	byte color = default_cursor_colors[idx];
 	const uint16 *src = _cursorImages[_currentCursor];
 
-	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+	if (_bytesPerPixel == 2) {
+		for (i = 0; i < 1024; i++)
+			WRITE_UINT16(_grabbedCursor + i * 2, 0xFF);
+	} else {
+		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
+	}
 
 	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor];
 	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1];
@@ -545,8 +550,12 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
-			if (src[i] & (1 << j))
-				_grabbedCursor[16 * i + 15 - j] = color;
+			if (src[i] & (1 << j)) {
+				if (_bytesPerPixel == 2)
+					WRITE_UINT16(_grabbedCursor + 16 * i + (15 - j) * 2, _16BitPalette[color]);
+				else
+					_grabbedCursor[16 * i + 15 - j] = color;
+			}
 		}
 	}
 

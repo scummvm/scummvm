@@ -1023,7 +1023,10 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height, _textSurface.bytesPerPixel);
 		}
 	} else {
-		fill(screenBuf, vs->pitch, backColor, width, height, vs->bytesPerPixel);
+		if (_game.features & GF_16BIT_COLOR)
+			fill(screenBuf, vs->pitch, _16BitPalette[backColor], width, height, vs->bytesPerPixel);
+		else
+			fill(screenBuf, vs->pitch, backColor, width, height, vs->bytesPerPixel);
 	}
 }
 
@@ -1262,7 +1265,10 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 			fill(backbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
 		}
 	} else {
-		fill(backbuff, vs->pitch, color, width, height, vs->bytesPerPixel);
+		if (_game.features & GF_16BIT_COLOR)
+			fill(backbuff, vs->pitch, _16BitPalette[color], width, height, vs->bytesPerPixel);
+		else
+			fill(backbuff, vs->pitch, color, width, height, vs->bytesPerPixel);
 	}
 }
 
@@ -2882,7 +2888,7 @@ void GdiPCEngine::drawStripPCEngine(byte *dst, byte *mask, int dstPitch, int str
 		for (int row = 0; row < 8; row++) {
 			for (int col = 0; col < 8; col++) {
 				paletteEntry = tile[row * 8 + col];
-				dst[col] = paletteOffset + paletteEntry;
+				WRITE_UINT16(dst + col * 2, _vm->_16BitPalette[paletteOffset + paletteEntry]);
 			}
 			dst += dstPitch;
 		}

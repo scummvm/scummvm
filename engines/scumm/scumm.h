@@ -1124,6 +1124,7 @@ public:
 	byte _HEV7ActorPalette[256];
 	uint8 *_hePalettes;
 	uint16 _hePaletteSlot;
+	uint16 *_16BitPalette;
 
 protected:
 	int _shadowPaletteSize;

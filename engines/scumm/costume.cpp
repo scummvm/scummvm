@@ -297,7 +297,7 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		return 2;
 	}
 
-	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x;
+	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x * _vm->_bytesPerPixel;
 
 	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
 
@@ -647,7 +647,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 			for (int row = 0; row < 16; ++row) {
 				xPos = xStep * x * 16;
 				for (int col = 0; col < 16; ++col) {
-					dst = v1.destptr + yPos * _out.pitch + xPos;
+					dst = v1.destptr + yPos * _out.pitch + xPos * _vm->_bytesPerPixel;
 					mask = v1.mask_ptr + yPos * _numStrips + (v1.x + xPos) / 8;
 					maskbit = revBitMask((v1.x + xPos) % 8);
 
@@ -657,7 +657,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 							 (v1.mask_ptr && (mask[0] & maskbit));
 
 					if (color && !masked) {
-						*dst = color;
+						WRITE_UINT16(dst, _vm->_16BitPalette[color]);
 					}
 
 					xPos += xStep;
