@@ -257,18 +257,7 @@ void SciGuiGfx::OffsetLine(Common::Point &start, Common::Point &end) {
 	end.y += _curPort->top;
 }
 
-byte SciGuiGfx::CharHeight(int16 ch) {
-#if 0
-	CResFont *res = getResFont();
-	return res ? res->getCharH(ch) : 0;
-#endif
-	return 0;
-}
 //-----------------------------
-byte SciGuiGfx::CharWidth(int16 ch) {
-	SciGuiFont *font = GetFont();
-	return font ? font->getCharWidth(ch) : 0;
-}
 
 void SciGuiGfx::ClearChar(int16 chr) {
 	if (_curPort->penMode != 1)
@@ -277,7 +266,7 @@ void SciGuiGfx::ClearChar(int16 chr) {
 	rect.top = _curPort->curTop;
 	rect.bottom = rect.top + _curPort->fontHeight;
 	rect.left = _curPort->curLeft;
-	rect.right = rect.left + CharWidth(chr);
+	rect.right = rect.left + GetFont()->getCharWidth(chr);
 	EraseRect(rect);
 }
 
@@ -285,7 +274,7 @@ void SciGuiGfx::DrawChar(int16 chr) {
 	chr = chr & 0xFF;
 	ClearChar(chr);
 	StdChar(chr);
-	_curPort->curLeft += CharWidth(chr);
+	_curPort->curLeft += GetFont()->getCharWidth(chr);
 }
 
 void SciGuiGfx::StdChar(int16 chr) {
@@ -806,7 +795,7 @@ void SciGuiGfx::TexteditCursorDraw (Common::Rect rect, const char *text, uint16 
 		_texteditCursorRect.left = rect.left + textWidth;
 		_texteditCursorRect.top = rect.top;
 		_texteditCursorRect.bottom = _texteditCursorRect.top + _font->getHeight();
-		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : CharWidth(text[curPos]));
+		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _font->getCharWidth(text[curPos]));
 		InvertRect(_texteditCursorRect);
 		BitsShow(_texteditCursorRect);
 		_texteditCursorVisible = true;

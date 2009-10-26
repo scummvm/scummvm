@@ -76,8 +76,6 @@ public:
 	void OffsetRect(Common::Rect &r);
 	void OffsetLine(Common::Point &start, Common::Point &end);
 
-	byte CharHeight(int16 ch);
-	byte CharWidth(int16 ch);
 	void ClearChar(int16 chr);
 	void DrawChar(int16 chr);
 	void StdChar(int16 chr);
