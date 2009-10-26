@@ -128,45 +128,44 @@ static const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 
 #define SCREEN_HIGH 429
 #define SAM_P_BLOB (32 * 2)
 
-#define ROR(x,v) x = ((x >> (v%32)) | (x << (32 - (v%32))));
-#define ROL(x,v) x = ((x << (v%32)) | (x >> (32 - (v%32))));
-#define NEXT_BYTE(v) v = forwardDirection ? v + 1 : v - 1;
+#define ROR(x,v) x = ((x >> (v%32)) | (x << (32 - (v%32))))
+#define ROL(x,v) x = ((x << (v%32)) | (x >> (32 - (v%32))))
+#define NEXT_BYTE(v) v = (forwardDirection ? v + 1 : v - 1)
 
 static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short deltaFetchDisp) {
 	uint8 NibbleHi = 0;
-	const byte *saved_esi;
-	uint32 eax = 0;
 	uint32 edx = length;
 	int32 ebx = deltaFetchDisp;
-	uint32 ecx = 0;
-	const byte *esi;
-	byte *edi, *ebp;
+	const byte *src;
+	byte *dst, *endDst;
 
-	bool forwardDirection = (deltaFetchDisp <= -SCREEN_WIDE) || (deltaFetchDisp >= 0);
+	const bool forwardDirection = (deltaFetchDisp <= -SCREEN_WIDE) || (deltaFetchDisp >= 0);
 	if (forwardDirection) {
 		// Forward decompression
-		esi = sourceData;
-		edi = ScreenBeg;
-		ebp = ScreenBeg + SCREEN_WIDE * SCREEN_HIGH;
+		src = sourceData;
+		dst = ScreenBeg;
+		endDst = ScreenBeg + SCREEN_WIDE * SCREEN_HIGH;
 	} else {
-		esi = sourceData + length - 1;
-		edi = ScreenBeg + SCREEN_WIDE * SCREEN_HIGH - 1;
-		ebp = ScreenBeg - 1;
+		src = sourceData + length - 1;
+		dst = ScreenBeg + SCREEN_WIDE * SCREEN_HIGH - 1;
+		endDst = ScreenBeg - 1;
 	}
 
 	bool firstLoop, flag;
 
 	int loopCtr = 0;
-	for (;;) {
+	do {
+		uint32 eax = 0;
+		uint32 bitshift = 0;
 		flag = false;
 
 		if ((loopCtr == 0) || (edx == 4)) {
 			// Get the next hi,lo nibble
-			eax = (eax & 0xffffff00) | *esi;
+			eax = (eax & 0xffffff00) | *src;
 			firstLoop = true;
 		} else {
 			// Get the high nibble
-			eax = (eax & 0xffffff00) | (NibbleHi >> 4);
+			eax = (eax & 0xffffff00) | NibbleHi;
 			firstLoop = false;
 		}
 
@@ -177,8 +176,8 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 				// Only execute this bit first the first time into the loop
 				if (!firstLoop) {
 					ROR(eax, 2);
-					ecx += 2;
-					eax = (eax & 0xffffff00) | *esi;
+					bitshift += 2;
+					eax = (eax & 0xffffff00) | *src;
 
 					if ((eax & 0xC) != 0)
 						break;
@@ -187,14 +186,14 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 
 //@_rD2nd_1:
 				ROR(eax, 2);		// Save bi-bit into hi 2 bits
-				ecx += 2;			//   and increase bit-shifter
+				bitshift += 2;			//   and increase bit-shifter
 				// Shift another 2 bits to get hi nibble
 				eax = (eax & 0xffffff00) | ((eax & 0xff) >> 2);
-				NEXT_BYTE(esi);
+				NEXT_BYTE(src);
 
 				if ((eax & 0xC) != 0) {
 					flag = true;
-					ROL(eax, ecx);
+					ROL(eax, bitshift);
 					break;
 				}
 			}
@@ -207,20 +206,22 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 			edx = 4;			// offset rDNum_Lo ; Next nibble is a 'lo'
 		} else {
 // @_rDNum_1
-			NibbleHi = (uint8)eax;
+			NibbleHi = ((uint8)eax) >> 4;
 			edx = 0;			// offset rDNum_Hi ; Next nibble is a 'hi' (reserved)
 			eax &= 0xffffff0f;
-			NEXT_BYTE(esi);
-			ROL(eax, ecx);
+			NEXT_BYTE(src);
+			ROL(eax, bitshift);
 		}
 //rDN_1:
 //@_rD_or_R:
 		bool actionFlag = (eax & 1) != 0;
 		eax >>= 1;
-		ecx = eax - 1;
+		int byteLen = eax - 1;
 
 		// Move to next loop index
-		if (++loopCtr == 4) loopCtr = 1;
+		++loopCtr;
+		if (loopCtr == 4)
+			loopCtr = 1;
 
 		if (actionFlag) {
 			// Adjust loopCtr to fall into the correct processing case
@@ -230,50 +231,78 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 		switch (loopCtr) {
 		case 1:
 			// @_rDelta:
-			saved_esi = esi;			// Save the source pointer
-			esi = edi + ebx;			// Point it to existing data
+#if 1
+			if (forwardDirection) {
+				memcpy(dst, dst + ebx, byteLen);
+				dst += byteLen;
+			} else {
+				dst -= byteLen;
+				memcpy(dst + 1, dst + ebx + 1, byteLen);
+			}
+#else
+			const byte *saved_src = src;			// Save the source pointer
+			src = dst + ebx;			// Point it to existing data
 
-			while (ecx > 0) {
-				*edi = *esi;
-				NEXT_BYTE(esi);
-				NEXT_BYTE(edi);
-				--ecx;
+			while (byteLen > 0) {
+				*dst = *src;
+				NEXT_BYTE(src);
+				NEXT_BYTE(dst);
+				--byteLen;
 			}
 
-			esi = saved_esi;
+			src = saved_src;
+#endif
 			break;
 
 		case 2:
 			// @_rRaw
 			// Copy data from source to dest
-			while (ecx > 0) {
-				*edi = *esi;
-				NEXT_BYTE(esi);
-				NEXT_BYTE(edi);
-				--ecx;
+#if 1
+			if (forwardDirection) {
+				memcpy(dst, src, byteLen);
+				dst += byteLen;
+				src += byteLen;
+			} else {
+				dst -= byteLen;
+				src -= byteLen;
+				memcpy(dst + 1, src + 1, byteLen);
 			}
+#else
+			while (byteLen > 0) {
+				*dst = *src;
+				NEXT_BYTE(src);
+				NEXT_BYTE(dst);
+				--byteLen;
+			}
+#endif
 			break;
 
 		case 3:
 			// @_rRun
 			// Repeating run of data
-			eax = forwardDirection ? *(edi - 1) : *(edi + 1);
-
-			while (ecx > 0) {
-				*edi = (uint8)eax;
-				NEXT_BYTE(edi);
-				--ecx;
+#if 1
+			if (forwardDirection) {
+				memset(dst, *(dst - 1), byteLen);
+				dst += byteLen;
+			} else {
+				eax = *(dst + 1);
+				dst -= byteLen;
+				memset(dst + 1, eax, byteLen);
 			}
+#else
+			eax = forwardDirection ? *(dst - 1) : *(dst + 1);
+
+			while (byteLen > 0) {
+				*dst = (uint8)eax;
+				NEXT_BYTE(dst);
+				--byteLen;
+			}
+#endif
 			break;
 		default:
 			break;
 		}
-
-		if (edi == ebp)
-			break;		// Exit if complete
-
-		eax = 0;
-	}
+	} while (dst != endDst);
 }
 
 void BMVPlayer::InitBMV(byte *memoryBuffer) {
