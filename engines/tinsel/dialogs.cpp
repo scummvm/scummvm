@@ -1263,31 +1263,29 @@ static void DumpObjArray(void) {
  * Convert item ID number to pointer to item's compiled data
  * i.e. Image data and Glitter code.
  */
-INV_OBJECT *GetInvObject(int num) {
-	INV_OBJECT *retval = invObjects;
+INV_OBJECT *GetInvObject(int id) {
+	INV_OBJECT *pObject = invObjects;
 
-	for (int i = 0; i < numObjects; i++, retval++) {
-		if (retval->id == num)
-			return retval;
+	for (int i = 0; i < numObjects; i++, pObject++) {
+		if (pObject->id == id)
+			return pObject;
 	}
 
-	error("Trying to manipulate undefined inventory icon");
+	error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
 }
 
 /**
  * Convert item ID number to index.
  */
 int GetObjectIndex(int id) {
-	int i;				// Loop counter
-	INV_OBJECT *pObject;
+	INV_OBJECT *pObject = invObjects;
 
-	for (i = 0, pObject = invObjects; i < numObjects; i++, pObject++) {
+	for (int i = 0; i < numObjects; i++, pObject++) {
 		if (pObject->id == id)
-			break;
+			return i;
 	}
 
-	assert(i < numObjects);
-	return i;
+	error("GetObjectIndex(%d): Trying to manipulate undefined inventory icon", id);
 }
 
 /**
