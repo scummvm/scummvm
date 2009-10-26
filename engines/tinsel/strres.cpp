@@ -28,6 +28,7 @@
 #include "tinsel/drives.h"
 #include "tinsel/sound.h"
 #include "tinsel/strres.h"
+#include "tinsel/scn.h"
 #include "common/file.h"
 #include "common/endian.h"
 

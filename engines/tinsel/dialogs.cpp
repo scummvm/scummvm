@@ -50,6 +50,7 @@
 #include "tinsel/polygons.h"
 #include "tinsel/savescn.h"
 #include "tinsel/sched.h"
+#include "tinsel/scn.h"
 #include "common/serializer.h"
 #include "tinsel/sound.h"
 #include "tinsel/strres.h"
@@ -82,6 +83,8 @@ extern void DisablePointing(CORO_PARAM);
 extern void EnablePointing(void);
 
 //----------------- LOCAL DEFINES --------------------
+
+#define HOPPER_FILENAME		"hopper"
 
 #define INV_PICKUP	PLR_SLEFT		// Local names
 #define INV_LOOK	PLR_SRIGHT		//	for button events

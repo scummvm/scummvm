@@ -30,19 +30,9 @@
 
 #include "tinsel/drives.h"
 #include "tinsel/dw.h"
-#include "tinsel/scn.h"			// name of "index" file
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
-
-
-// these are included only so the relevant structs can be used in convertLEStructToNative()
-#include "tinsel/anim.h"
-#include "tinsel/multiobj.h"
-#include "tinsel/film.h"
-#include "tinsel/object.h"
-#include "tinsel/palette.h"
-#include "tinsel/text.h"
-#include "tinsel/timers.h"
+#include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
 

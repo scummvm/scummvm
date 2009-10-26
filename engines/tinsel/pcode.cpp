@@ -46,6 +46,8 @@ extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONT
 
 //----------------- LOCAL DEFINES --------------------
 
+#define	GLOBALS_FILENAME	"gdata"		// name of globals file
+
 /** list of all opcodes */
 enum OPCODE {
 	OP_HALT = 0,	///< end of program

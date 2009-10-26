@@ -47,6 +47,8 @@ namespace Tinsel {
 
 //----------------- LOCAL DEFINES ----------------------------
 
+#define BMOVIE_EXTENSION	".bmv"
+
 #define SZ_C_BLOB	65
 #define SZ_U_BLOB	128
 

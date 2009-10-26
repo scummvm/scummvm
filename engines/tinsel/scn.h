@@ -30,16 +30,6 @@
 
 namespace Tinsel {
 
-#define	INDEX_FILENAME		"index"		// name of scene index file
-#define PSX_INDEX_FILENAME	"index.dat" // name of scene index in psx version
-#define	INDEXFILE_LENGTH	12			// length of filenames in the MEMHANDLE structure
-
-#define	GLOBALS_FILENAME	"gdata"		// name of globals file
-#define HOPPER_FILENAME		"hopper"
-#define CD_ID_FILENAME		"volume"
-
-#define BMOVIE_EXTENSION	".bmv"
-
 // chunk identifier numbers
 
 // V2 chunks
@@ -88,8 +78,6 @@ namespace Tinsel {
 
 // This is a base, subsequent numbers may also get used
 #define CHUNK_GRAB_NAME			0x33340100L
-
-#define	INDEX_FILENAME		"index"	// name of index file
 
 byte *FindChunk(SCNHANDLE handle, uint32 chunk);
 int ExtractActor(SCNHANDLE hFilm);

@@ -28,7 +28,7 @@
 #define TINSEL_STRRES_H
 
 #include "common/scummsys.h"
-#include "tinsel/scn.h"
+#include "tinsel/dw.h"
 
 namespace Tinsel {
 
