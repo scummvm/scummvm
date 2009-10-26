@@ -93,7 +93,7 @@ protected:
 
 	byte _scaleIndexX;						/* must wrap at 256 */
 	byte _scaleIndexY;
-	byte _palette[32];
+	uint16 _palette[32];
 
 public:
 	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
