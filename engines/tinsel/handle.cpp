@@ -87,7 +87,7 @@ static char szCdPlayFile[100];
 
 //----------------- FORWARD REFERENCES --------------------
 
-static void LoadFile(MEMHANDLE *pH, bool bWarn);	// load a memory block as a file
+static void LoadFile(MEMHANDLE *pH);	// load a memory block as a file
 
 
 /**
@@ -160,7 +160,7 @@ void SetupHandleTable(void) {
 			assert(pH->_ptr);
 
 			// load the data
-			LoadFile(pH, true);
+			LoadFile(pH);
 		}
 #ifdef BODGE
 		else if ((pH->filesize & FSIZE_MASK) == 8) {
@@ -280,9 +280,8 @@ void SetCdPlayHandle(int fileNum) {
 /**
  * Loads a memory block as a file.
  * @param pH			Memory block pointer
- * @param bWarn			If set, treat warnings as errors
  */
-void LoadFile(MEMHANDLE *pH, bool bWarn) {
+void LoadFile(MEMHANDLE *pH) {
 	Common::File f;
 	char szFilename[sizeof(pH->szName) + 1];
 
@@ -327,14 +326,12 @@ void LoadFile(MEMHANDLE *pH, bool bWarn) {
 			return;
 		}
 
-		if (bWarn)
-			// file is corrupt
-			error(FILE_IS_CORRUPT, szFilename);
+		// file is corrupt
+		error(FILE_IS_CORRUPT, szFilename);
 	}
 
-	if (bWarn)
-		// cannot find file
-		error(CANNOT_FIND_FILE, szFilename);
+	// cannot find file
+	error(CANNOT_FIND_FILE, szFilename);
 }
 
 /**
@@ -364,47 +361,40 @@ byte *LockMem(SCNHANDLE offset) {
 		if (offset < cdBaseHandle || offset >= cdTopHandle)
 			error("Overlapping (in time) CD-plays");
 
-		if (pH->_node->pBaseAddr && (pH->filesize & fLoaded))
-			// already allocated and loaded
-			return pH->_node->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
-
-		if (pH->_node->pBaseAddr == NULL)
+		if (pH->_node->pBaseAddr == NULL) {
 			// must have been discarded - reallocate the memory
 			MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle);
+			assert(pH->_node->pBaseAddr);
+		}
 
-		if (pH->_node->pBaseAddr == NULL)
-			error("Out of memory");
+		if (!(pH->filesize & fLoaded)) {
 
-		LoadCDGraphData(pH);
+			LoadCDGraphData(pH);
 
-		// make sure address is valid
-		assert(pH->_node->pBaseAddr);
-
-		// update the LRU time (new in this file)
-		pH->_node->lruTime = DwGetCurrentTime();
+			// update the LRU time (new in this file)
+			pH->_node->lruTime = DwGetCurrentTime();
+		}
 
 		return pH->_node->pBaseAddr + ((offset - cdBaseHandle) & OFFSETMASK);
 
 	} else {
-		if (pH->_node->pBaseAddr && (pH->filesize & fLoaded))
-			// already allocated and loaded
-			return pH->_node->pBaseAddr + (offset & OFFSETMASK);
-
-		if (pH->_node->pBaseAddr == NULL)
+		if (pH->_node->pBaseAddr == NULL) {
 			// must have been discarded - reallocate the memory
 			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
-
-		if (pH->_node->pBaseAddr == NULL)
-			error("Out of memory");
-
-		if (TinselV2) {
-			SetCD(pH->flags2 & fAllCds);
-			CdCD(nullContext);
+			assert(pH->_node->pBaseAddr);
 		}
-		LoadFile(pH, true);
 
-		// make sure address is valid
-		assert(pH->_node->pBaseAddr);
+		if (!(pH->filesize & fLoaded)) {
+
+			if (TinselV2) {
+				SetCD(pH->flags2 & fAllCds);
+				CdCD(nullContext);
+			}
+			LoadFile(pH);
+
+			// make sure address is valid
+			assert(pH->filesize & fLoaded);
+		}
 
 		return pH->_node->pBaseAddr + (offset & OFFSETMASK);
 	}

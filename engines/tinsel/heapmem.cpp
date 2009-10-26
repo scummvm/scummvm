@@ -31,12 +31,14 @@
 namespace Tinsel {
 
 
+#define	NUM_MNODES	192	// the number of memory management nodes (was 128, then 192)
+
+
 // internal allocation flags
 #define	DWM_USED		0x0001	///< the objects memory block is in use
 #define	DWM_DISCARDED	0x0100	///< the objects memory block has been discarded
 #define	DWM_LOCKED		0x0200	///< the objects memory block is locked
 #define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
-
 
 
 // Specifies the total amount of memory required for DW1 demo, DW1, or DW2 respectively.

@@ -31,8 +31,6 @@
 
 namespace Tinsel {
 
-#define	NUM_MNODES	192	// the number of memory management nodes (was 128, then 192)
-
 struct MEM_NODE {
 	MEM_NODE *pNext;	// link to the next node in the list
 	MEM_NODE *pPrev;	// link to the previous node in the list
@@ -41,8 +39,6 @@ struct MEM_NODE {
 	uint32 lruTime;		// time when memory object was last accessed
 	int flags;		// allocation attributes
 };
-
-// allocation flags for the MemoryAlloc function
 
 
 /*----------------------------------------------------------------------*\
