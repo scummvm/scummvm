@@ -231,6 +231,12 @@ void DraciEngine::handleEvents() {
 				_game->scheduleEnteringRoomUsingGate(_game->prevRoomNum(), 0);
 				break;
 			case Common::KEYCODE_ESCAPE: {
+				if (_game->getLoopStatus() == kStatusInventory &&
+				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
+					_game->inventoryDone();
+					break;
+				}
+
 				const int escRoom = _game->getRoomNum() != _game->getMapRoom()
 					? _game->getEscRoom() : _game->getPreviousRoomNum();
 
@@ -243,7 +249,7 @@ void DraciEngine::handleEvents() {
 					_game->setExitLoop(true);
 
 					// End any currently running GPL programs
-					_script->endCurrentProgram();
+					_script->endCurrentProgram(true);
 				}
 				break;
 			}
@@ -259,6 +265,9 @@ void DraciEngine::handleEvents() {
 				_showWalkingMap = !_showWalkingMap;
 				break;
 			case Common::KEYCODE_i:
+				if (_game->getRoomNum() == _game->getMapRoom()) {
+					break;
+				}
 				if (_game->getLoopStatus() == kStatusInventory &&
 				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
 					_game->inventoryDone();

@@ -89,11 +89,12 @@ struct GameObject;
 class Script {
 
 public:
-	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };
+	Script(DraciEngine *vm) : _vm(vm), _jump(0), _endProgram(false) { setupCommandList(); };
 
-	int run(const GPL2Program &program, uint16 offset);
+	void run(const GPL2Program &program, uint16 offset);
 	bool testExpression(const GPL2Program &program, uint16 offset) const;
-	void endCurrentProgram();
+	void endCurrentProgram(bool value) { _endProgram = value; }
+	bool shouldEndProgram() const { return _endProgram; }
 
 private:
 	int _jump;

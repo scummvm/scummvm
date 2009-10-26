@@ -144,13 +144,19 @@ void Game::start() {
 	while (!shouldQuit()) {
 		debugC(1, kDraciGeneralDebugLevel, "Game::start()");
 
-		const bool force_reload = shouldExitLoop() > 1;
-
 		// Whenever the top-level loop is entered, it should not finish unless
 		// the exit is triggered by a script
 		_shouldExitLoop = false;
+		_vm->_script->endCurrentProgram(false);
 
+		const bool force_reload = shouldExitLoop() > 1;
 		enterNewRoom(force_reload);
+
+		if (_vm->_script->shouldEndProgram()) {
+			// Room changed during the initialization (intro or Escape pressed).
+			continue;
+		}
+
 		loop();
 	}
 }

@@ -850,10 +850,6 @@ void Script::setPalette(Common::Queue<int> &params) {
 	}
 }
 
-void Script::endCurrentProgram() {
-	_endProgram = true;
-}
-
 void Script::quitGame(Common::Queue<int> &params) {
 	_vm->_game->setQuit(true);
 }
@@ -1057,7 +1053,14 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) const {
  *  value comes from.
  */
 
-int Script::run(const GPL2Program &program, uint16 offset) {
+void Script::run(const GPL2Program &program, uint16 offset) {
+	if (shouldEndProgram()) {
+		// This might get set by some GPL commands via Script::endCurrentProgram()
+		// if they need a program to stop midway.  This flag is sticky until cleared
+		// at the top level.
+		return;
+	}
+
 	int oldJump = _jump;
 
 	// Mark the last animation index before we do anything so a Release command
@@ -1108,10 +1111,6 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 		// extract low byte, i.e. the command subnumber
 		byte subnum = cmdpair & 0xFF;
 
-		// This might get set by some GPL commands via Script::endCurrentProgram()
-		// if they need a program to stop midway
-		_endProgram = false;
-
 		if ((cmd = findCommand(num, subnum))) {
 			int tmp;
 
@@ -1142,12 +1141,9 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_number != 0 && !_endProgram);    // 0 = gplend and exit
+	} while (cmd->_number != 0 && !shouldEndProgram());    // 0 = gplend and exit
 
-	_endProgram = false;
 	_jump = oldJump;
-
-	return 0;
 }
 
 } // End of namespace Draci
