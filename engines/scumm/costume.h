@@ -135,9 +135,6 @@ public:
 	PCEngineCostumeRenderer(ScummEngine *vm) : ClassicCostumeRenderer(vm) {}
 
 	void setPalette(uint16 *palette);
-
-protected:
-	byte drawLimb(const Actor *a, int limb);
 };
 
 class C64CostumeRenderer : public BaseCostumeRenderer {

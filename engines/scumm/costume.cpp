@@ -595,10 +595,11 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 	const byte *mask, *src;
 	byte *dst;
 	byte maskbit;
-	uint width, height;
-	byte scaleIndexY;
+	int xPos, yPos;
+	uint color, width, height; //, pcolor;
+	bool masked;
 	int vertShift;
-
+	int xStep;
 	byte block[16][16];
 
 	src = _srcptr;
@@ -608,19 +609,17 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 	if (_numBlocks == 0)
 		return;
 
-	scaleIndexY = _scaleIndexY;
-	maskbit = revBitMask(v1.x & 7);
-	mask = v1.mask_ptr + v1.x / 8;
+	xStep = _mirror ? +1 : -1;
 
 	for (uint x = 0; x < width; ++x) {
-		dst = v1.destptr + 16 * x * _out.bytesPerPixel;
+		yPos = 0;
 		for (uint y = 0; y < height; ++y) {
 			vertShift = *src++;
 			if (vertShift == 0xFF) {
-				dst += 16 * _out.pitch;
+				yPos += 16;
 				continue;
 			} else {
-				dst += vertShift * _out.pitch;
+				yPos += vertShift;
 			}
 
 			memset(block, 0, sizeof(block));
@@ -646,18 +645,24 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 			}
 
 			for (int row = 0; row < 16; ++row) {
+				xPos = xStep * x * 16;
 				for (int col = 0; col < 16; ++col) {
-					int color = block[row][col];
-					if (color != 0) {
-						if (dst < v1.destptr + _out.w * _out.h * _out.bytesPerPixel) {
-							if (_mirror)
-								dst[col] = color;
-							else
-								dst[-col] = color;
-						}
+					dst = v1.destptr + yPos * _out.pitch + xPos;
+					mask = v1.mask_ptr + yPos * _numStrips + (v1.x + xPos) / 8;
+					maskbit = revBitMask((v1.x + xPos) % 8);
+
+					color = block[row][col];
+					masked = (v1.y + yPos < 0 || v1.y + yPos >= _out.h) || 
+					         (v1.x + xPos < 0 || v1.x + xPos >= _out.w) || 
+							 (v1.mask_ptr && (mask[0] & maskbit));
+
+					if (color && !masked) {
+						*dst = color;
 					}
+
+					xPos += xStep;
 				}
-				dst += _out.pitch;
+				yPos++;
 			}
 		}
 	}
@@ -825,54 +830,10 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 #define PCE_SIGNED(a) (((a) & 0x80) ? -((a) & 0x7F) : (a))
 
-byte PCEngineCostumeRenderer::drawLimb(const Actor *a, int limb) {
-	int i;
-	int code;
-	const byte *frameptr, *offset;
-	const CostumeData &cost = a->_cost;
-
-	// If the specified limb is stopped or not existing, do nothing.
-	if (cost.curpos[limb] == 0xFFFF || cost.stopped & (1 << limb))
-		return 0;
-
-	// Determine the position the limb is at
-	i = cost.curpos[limb] & 0x7FFF;
-
-	// Get the frame pointer for that limb
-	offset = _loaded._frameOffsets + limb * 2;
-	frameptr = READ_LE_UINT16(offset) + offset + 2;
-
-	// Determine the offset to the costume data for the limb at position i
-	code = _loaded._animCmds[i] & 0x7F;
-
-	// Code 0x7B indicates a limb for which there is nothing to draw
-	if (code != 0x7B) {
-		offset = frameptr + code * 2;
-		_srcptr = READ_LE_UINT16(offset) + offset + 2;
-
-		if (code < 0x79) {
-			int xmoveCur, ymoveCur;
-
-			_numBlocks = _srcptr[0];
-			_width = _srcptr[1] * 16;
-			_height = _srcptr[2] * 16;
-			xmoveCur = _xmove + PCE_SIGNED(_srcptr[3]);
-			ymoveCur = _ymove + PCE_SIGNED(_srcptr[4]);
-			_xmove += PCE_SIGNED(_srcptr[5]);
-			_ymove += PCE_SIGNED(_srcptr[6]);
-			_srcptr += 7;
-
-			return mainRoutine(xmoveCur, ymoveCur);
-		}
-	}
-
-	return 0;
-}
-
 byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
 	int code;
-	const byte *frameptr;
+	const byte *baseptr, *frameptr;
 	const CostumeData &cost = a->_cost;
 
 	// If the specified limb is stopped or not existing, do nothing.
@@ -882,21 +843,36 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	// Determine the position the limb is at
 	i = cost.curpos[limb] & 0x7FFF;
 
+	baseptr = _loaded._baseptr;
+
 	// Get the frame pointer for that limb
-	frameptr = _loaded._baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
+	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine)
+		baseptr = _loaded._frameOffsets + limb * 2 + 2;
+	frameptr = baseptr + READ_LE_UINT16(_loaded._frameOffsets + limb * 2);
 
 	// Determine the offset to the costume data for the limb at position i
 	code = _loaded._animCmds[i] & 0x7F;
 
 	// Code 0x7B indicates a limb for which there is nothing to draw
 	if (code != 0x7B) {
-		_srcptr = _loaded._baseptr + READ_LE_UINT16(frameptr + code * 2);
+		if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine)
+			baseptr = frameptr + code * 2 + 2;
+		_srcptr = baseptr + READ_LE_UINT16(frameptr + code * 2);
 
 		if (!(_vm->_game.features & GF_OLD256) || code < 0x79) {
 			const CostumeInfo *costumeInfo;
 			int xmoveCur, ymoveCur;
 
-			if (_loaded._format == 0x57) {
+			if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+				_numBlocks = _srcptr[0];
+				_width = _srcptr[1] * 16;
+				_height = _srcptr[2] * 16;
+				xmoveCur = _xmove + PCE_SIGNED(_srcptr[3]);
+				ymoveCur = _ymove + PCE_SIGNED(_srcptr[4]);
+				_xmove += PCE_SIGNED(_srcptr[5]);
+				_ymove += PCE_SIGNED(_srcptr[6]);
+				_srcptr += 7;
+			} else if (_loaded._format == 0x57) {
 				_width = _srcptr[0] * 8;
 				_height = _srcptr[1];
 				xmoveCur = _xmove + (int8)_srcptr[2] * 8;

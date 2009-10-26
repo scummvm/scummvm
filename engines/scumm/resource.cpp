@@ -1474,6 +1474,8 @@ uint16 newTag2Old(uint32 newTag) {
 		return (0x5053);	// SP
 	case (MKID_BE('TILE')):
 		return (0x4C54);	// TL
+	case (MKID_BE('ZP00')):
+		return (0x505A);	// ZP
 	default:
 		return (0);
 	}

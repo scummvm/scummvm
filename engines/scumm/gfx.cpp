@@ -225,6 +225,7 @@ GdiPCEngine::GdiPCEngine(ScummEngine *vm) : Gdi(vm) {
 
 GdiPCEngine::~GdiPCEngine() {
 	free(_PCE.tiles);
+	free(_PCE.masks);
 }
 
 GdiV1::GdiV1(ScummEngine *vm) : Gdi(vm) {
@@ -1570,7 +1571,9 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= 9);
 
-		if (_vm->_game.features & GF_SMALL_HEADER) {
+		if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
+			zplane_list[1] = 0;
+		} else if (_vm->_game.features & GF_SMALL_HEADER) {
 			if (_vm->_game.features & GF_16COLOR)
 				zplane_list[1] = ptr + READ_LE_UINT16(ptr);
 			else {
@@ -1646,11 +1649,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		assert(smap_ptr);
 	}
 
-	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
-		numzbuf = 0;
-	} else {
-		numzbuf = getZPlanes(ptr, zplane_list, false);
-	}
+	numzbuf = getZPlanes(ptr, zplane_list, false);
 
 	const byte *tmsk_ptr = NULL;
 	if (_vm->_game.heversion >= 72) {
@@ -2611,6 +2610,10 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 	int loopCnt;
 	uint16 lastTileData;
 	
+	/*
+	 * read tiles indices
+	 */
+
 	int rowIndex = 0;
 	if (isObject) {
 		loopCnt = numRows;
@@ -2687,7 +2690,7 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 	}
 	
 	/*
-	 * read z-order or mask??? 
+	 * read mask indices
 	 */
 	
 	if (dataWidth == 0 || numRows < 18) {
@@ -2728,6 +2731,7 @@ void GdiPCEngine::decodePCEngineGfx(const byte *room) {
 	uint16* stripOffsets;
 
 	decodePCEngineTileData(_vm->findResourceData(MKID_BE('TILE'), room));
+	decodePCEngineMaskData(_vm->findResourceData(MKID_BE('ZP00'), room));
 
 	const byte* smap_ptr = _vm->findResourceData(MKID_BE('IM00'), room);
 	*smap_ptr++; // roomID
@@ -2795,9 +2799,11 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 	
 	free(_PCE.tiles);
 	_PCE.tiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+
 	for (int i = 0; i < _PCE.numTiles; ++i) {
 		tile = &_PCE.tiles[i * 64];
 		tilePtr = ptr + tileOffsets[i];
+
 		int index = 0;
 		while (index < 16) {
 			byte cmd = *tilePtr++;
@@ -2821,21 +2827,61 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 	free(tileOffsets);
 }
 
+void GdiPCEngine::decodePCEngineMaskData(const byte *ptr) {
+	const byte *maskPtr;
+	byte* mask;
+	uint16* maskOffsets;
+
+	if (!ptr) {
+		_PCE.numMasks = 0;
+		return;
+	}
+
+	readOffsetTable(ptr, &maskOffsets, &_PCE.numMasks);
+
+	free(_PCE.masks);
+	_PCE.masks = (byte*)malloc(_PCE.numMasks * 8 * sizeof(byte));
+
+	for (int i = 0; i < _PCE.numMasks; ++i) {
+		mask = &_PCE.masks[i * 8];
+		maskPtr = ptr + maskOffsets[i];
+
+		int index = 0;
+		while (index < 8) {
+			byte cmd = *maskPtr++;
+			int cnt = cmd & 0x1F;
+			if (cmd & 0x80) {
+				byte value;
+				if (cmd & 0x60)
+					value = (cmd & 0x40) ? 0x00 : 0xFF;
+				else
+					value = *maskPtr++;
+				for (int j = 0; j < cnt; ++j)
+					mask[index++] = ~value;
+			} else {
+				for (int j = 0; j < cnt; ++j)
+					mask[index++] = ~*maskPtr++;
+			}
+		}
+	}
+
+	free(maskOffsets);
+}
+
 void GdiPCEngine::drawStripPCEngine(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
 	uint16 tileIdx;
 	byte *tile;
 	int paletteIdx, paletteOffset, paletteEntry;
 	height /= 8;
 
-	for (int i = 0; i < height; i++) {
-		tileIdx = (_objectMode ? _PCE.nametableObj : _PCE.nametable)[stripnr * height + i];
+	for (int y = 0; y < height; y++) {
+		tileIdx = (_objectMode ? _PCE.nametableObj : _PCE.nametable)[stripnr * height + y];
 		tile = &_PCE.tiles[tileIdx * 64];
-		paletteIdx = (_objectMode ? _PCE.colortableObj : _PCE.colortable)[stripnr * height + i];
+		paletteIdx = (_objectMode ? _PCE.colortableObj : _PCE.colortable)[stripnr * height + y];
 		paletteOffset = paletteIdx * 16;
 		for (int row = 0; row < 8; row++) {
 			for (int col = 0; col < 8; col++) {
 				paletteEntry = tile[row * 8 + col];
-				// TODO: handle transparency (paletteEntry == 0)
 				dst[col] = paletteOffset + paletteEntry;
 			}
 			dst += dstPitch;
@@ -2844,7 +2890,19 @@ void GdiPCEngine::drawStripPCEngine(byte *dst, byte *mask, int dstPitch, int str
 }
 
 void GdiPCEngine::drawStripPCEngineMask(byte *dst, int stripnr, int top, int height) const {
-	// TODO
+	uint16 maskIdx;
+	height /= 8;
+
+	for (int y = 0; y < height; y++) {
+		maskIdx = (_objectMode ? _PCE.masktableObj : _PCE.masktable)[stripnr * height + y];
+		for (int row = 0; row < 8; row++) {
+			if (_PCE.numMasks > 0)
+				*dst = _PCE.masks[maskIdx * 8 + row];
+			else
+				*dst = 0;
+			dst += _numStrips;
+		}
+	}
 }
 
 void GdiV1::drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height) {
