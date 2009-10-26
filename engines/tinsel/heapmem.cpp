@@ -452,9 +452,8 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 	assert(size);
 
 	if (size != pMemNode->size) {
-
 		// make sure memory object is not locked and discarded
-		assert(pMemNode->flags == (DWM_LOCKED | DWM_DISCARDED));
+		assert(!(pMemNode->flags & DWM_LOCKED) && (pMemNode->flags & DWM_DISCARDED));
 		assert(pMemNode->size == 0);
 
 		// unlink the mnode from the current heap
