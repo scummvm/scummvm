@@ -2612,7 +2612,7 @@ void decodeTileColor(byte cmd, byte *colors, int *rowIndex, int numRows) {
 		colors[(*rowIndex)++] = (cmd) & 0xF;
 }
 
-void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint16 *masks, int dataWidth, int numRows, bool isObject) {
+void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint16 *masks, int numRows, bool isObject) {
 	int loopCnt;
 	uint16 lastTileData;
 	
@@ -2699,7 +2699,7 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 	 * read mask indices
 	 */
 	
-	if (dataWidth == 0 || numRows < 18) {
+	if (_PCE.maskIDSize == 0 || numRows > 18) {
 		return;
 	}
 	
@@ -2711,7 +2711,7 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 			uint16 value;
 			if (cmd & 0x60) {
 				value = (cmd & 0x40) ? 0 : 0xFF;
-			} else if (dataWidth == 1) {
+			} else if (_PCE.maskIDSize == 1) {
 				value = *ptr++;
 			} else {
 				value = READ_LE_UINT16(ptr);
@@ -2722,7 +2722,7 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 			}
 		} else {
 			for (int i = 0; i < cnt; ++i) {
-				if (dataWidth == 1) {
+				if (_PCE.maskIDSize == 1) {
 					masks[rowIndex++] = *ptr++;
 				} else {
 					masks[rowIndex++] = READ_LE_UINT16(ptr);
@@ -2743,7 +2743,7 @@ void GdiPCEngine::decodePCEngineGfx(const byte *room) {
 	*smap_ptr++; // roomID
 	int numStrips = *smap_ptr++;
 	int numRows = *smap_ptr++;
-	int dataWidth = *smap_ptr++;
+	_PCE.maskIDSize = *smap_ptr++;
 	*smap_ptr++; // unknown
 	
 	memset(_PCE.nametable, 0, sizeof(_PCE.nametable));
@@ -2755,7 +2755,6 @@ void GdiPCEngine::decodePCEngineGfx(const byte *room) {
 			&_PCE.nametable[i * numRows], 
 			&_PCE.colortable[i * numRows],
 			&_PCE.masktable[i * numRows],
-			dataWidth,
 			numRows,
 			false);
 	}
@@ -2776,7 +2775,6 @@ void GdiPCEngine::decodePCEngineObject(const byte *ptr, int xpos, int ypos, int 
 			&_PCE.nametableObj[i * numRows], 
 			&_PCE.colortableObj[i * numRows], 
 			&_PCE.masktableObj[i * numRows], 
-			0, // is this true?
 			numRows,
 			true);
 	}
