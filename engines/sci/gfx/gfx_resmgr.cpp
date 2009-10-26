@@ -90,7 +90,7 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 		error("calculatePic(): pic number %d not found", nr);
 
 	if (need_unscaled) {
-		if (getSciVersion() == SCI_VERSION_1_1)
+		if (_resMan->getViewType() == kViewVga11)
 			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
 			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resMan->getViewType(), _staticPalette, _portBounds);
@@ -99,7 +99,7 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 	if (scaled_pic && scaled_pic->undithered_buffer)
 		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
 
-	if (getSciVersion() == SCI_VERSION_1_1)
+	if (_resMan->getViewType() == kViewVga11)
 		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
 		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resMan->getViewType(), _staticPalette, _portBounds);

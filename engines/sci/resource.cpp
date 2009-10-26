@@ -1629,6 +1629,14 @@ void ResourceManager::detectSciVersion() {
 		}
 	}
 
+	// Check for transitive SCI1/SCI1.1 games, like PQ1 here
+	// If the game has any heap file (here we check for heap file 0), then
+	// it definitely uses a SCI1.1 kernel
+	if (testResource(ResourceId(kResourceTypeHeap, 0))) {
+		s_sciVersion = SCI_VERSION_1_1;
+		return;
+	}
+
 	switch (_mapVersion) {
 	case kResVersionSci0Sci1Early:
 		if (_viewType == kViewVga) {

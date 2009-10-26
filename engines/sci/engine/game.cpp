@@ -197,7 +197,7 @@ int _reset_graphics_input(EngineState *s) {
 		} else {
 			resource = s->resMan->findResource(ResourceId(kResourceTypePalette, 999), 1);
 			if (resource) {
-				if (getSciVersion() < SCI_VERSION_1_1)
+				if (s->resMan->getViewType() != kViewVga11)
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
