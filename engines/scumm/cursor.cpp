@@ -552,7 +552,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
 				if (_bytesPerPixel == 2)
-					WRITE_UINT16(_grabbedCursor + 16 * i + (15 - j) * 2, _16BitPalette[color]);
+					WRITE_UINT16(_grabbedCursor + 32 * i + (15 - j) * 2, _16BitPalette[color]);
 				else
 					_grabbedCursor[16 * i + 15 - j] = color;
 			}
