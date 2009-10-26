@@ -209,7 +209,7 @@ void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b) {
 	*g = ((color >> 6) & 0x7) << 5;
 }
 
-void readPalette(const byte **ptr, byte **dest, int numEntries) {
+void ScummEngine::readPCEPalette(const byte **ptr, byte **dest, int numEntries) {
 	byte r, g, b;
 	byte msbs = 0;
 
@@ -252,7 +252,7 @@ void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
 		*dest++ = bgSpriteB;
 
 		// entry 1 - 14
-		readPalette(&ptr, &dest, 14);
+		readPCEPalette(&ptr, &dest, 14);
 
 		// entry 15: DEFAULT_PALETTE[var3AE3];
 		*dest++ = 6 << 5;

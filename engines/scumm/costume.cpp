@@ -596,7 +596,7 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 	byte *dst;
 	byte maskbit;
 	int xPos, yPos;
-	uint color, width, height; //, pcolor;
+	uint pcolor, width, height;
 	bool masked;
 	int vertShift;
 	int xStep;
@@ -651,13 +651,13 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 					mask = v1.mask_ptr + yPos * _numStrips + (v1.x + xPos) / 8;
 					maskbit = revBitMask((v1.x + xPos) % 8);
 
-					color = block[row][col];
+					pcolor = block[row][col];
 					masked = (v1.y + yPos < 0 || v1.y + yPos >= _out.h) || 
 					         (v1.x + xPos < 0 || v1.x + xPos >= _out.w) || 
 							 (v1.mask_ptr && (mask[0] & maskbit));
 
-					if (color && !masked) {
-						WRITE_UINT16(dst, _vm->_16BitPalette[color]);
+					if (pcolor && !masked) {
+						WRITE_UINT16(dst, ((uint16*)_palette)[pcolor]);
 					}
 
 					xPos += xStep;
@@ -913,7 +913,14 @@ void NESCostumeRenderer::setCostume(int costume, int shadow) {
 }
 
 void PCEngineCostumeRenderer::setPalette(uint16 *palette) {
-	// TODO
+	const byte* ptr = _loaded._palette;
+	byte rgb[45];
+	byte *rgbPtr = rgb;
+	_vm->readPCEPalette(&ptr, &rgbPtr, 15);
+
+	_palette[0] = 0;
+	for (int i = 0; i < 15; ++i)
+		_palette[i + 1] = _vm->get16BitColor(rgb[i * 3 + 0], rgb[i * 3 + 1], rgb[i * 3 + 2]);
 }
 
 void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {

@@ -1031,7 +1031,7 @@ protected:
 
 	void setPaletteFromTable(const byte *ptr, int numcolor, int firstIndex = 0);
 	void resetPalette();
-
+	
 	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);
 	void setPCEPaletteFromPtr(const byte *ptr);
@@ -1049,6 +1049,7 @@ public:
 	uint8 *getHEPaletteSlot(uint16 palSlot);
 	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
+	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
 	void setShadowPalette(int slot, int redScale, int greenScale, int blueScale, int startColor, int endColor);
