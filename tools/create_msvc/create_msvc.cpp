@@ -144,13 +144,11 @@ int main(int argc, char *argv[]) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = true;
 			} else if (!setEngineBuildState(name, setup.engines, true)) {
-				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), name);
-				if (feature == setup.features.end()) {
+				// If none found, we'll try the features list
+				if (!setFeatureBuildState(name, setup.features, true)) {
 					std::cerr << "ERROR: \"" << name << "\" is neither an engine nor a feature!\n";
 					return -1;
 				}
-
-				feature->enable = true;
 			}
 		} else if (!strncmp(argv[i], "--disable-", 10)) {
 			const char *name = &argv[i][10];
@@ -164,13 +162,10 @@ int main(int argc, char *argv[]) {
 					j->enable = false;
 			} else if (!setEngineBuildState(name, setup.engines, false)) {
 				// If none found, we'll try the features list
-				FeatureList::iterator feature = std::find(setup.features.begin(), setup.features.end(), name);
-				if (feature == setup.features.end()) {
+				if (!setFeatureBuildState(name, setup.features, false)) {
 					std::cerr << "ERROR: \"" << name << "\" is neither an engine nor a feature!\n";
 					return -1;
 				}
-
-				feature->enable = false;
 			}
 		} else if (!strcmp(argv[i], "--file-prefix")) {
 			if (i + 1 >= argc) {
@@ -540,6 +535,16 @@ StringList getFeatureLibraries(const FeatureList &features) {
 	}
 
 	return libraries;
+}
+
+bool setFeatureBuildState(const std::string &name, FeatureList &features, bool enable) {
+	FeatureList::iterator i = std::find(features.begin(), features.end(), name);
+	if (i != features.end()) {
+		i->enable = enable;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 namespace {

@@ -164,6 +164,17 @@ StringList getFeatureDefines(const FeatureList &features);
 StringList getFeatureLibraries(const FeatureList &features);
 
 /**
+ * Sets the state of a given feature. This can be used to
+ * either include or exclude an feature.
+ *
+ * @param name Name of the feature.
+ * @param features List of features to operate on.
+ * @param enable Whether the feature should be enabled or disabled.
+ * @return "true", when it succeeded, "false" otherwise.
+ */
+bool setFeatureBuildState(const std::string &name, FeatureList &features, bool enable);
+
+/**
  * Structure to describe a MSVC build setup.
  *
  * This includes various information about which engines to
