@@ -386,7 +386,6 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_VIEW];
 	gfx_resource_t *res = resMap.contains(nr) ? resMap[nr] : NULL;
-	int hash = palette;
 	ViewType viewType = _resMan->getViewType();
 
 	gfxr_view_t *view = NULL;
