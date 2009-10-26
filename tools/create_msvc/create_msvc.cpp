@@ -883,30 +883,32 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 	           "</VisualStudioProject>\n";
 }
 
-void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
-	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Global.vsprops").c_str());
-	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global.vsprops\" for writing");
-
-	std::string defines;
-	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (i != setup.defines.begin())
-			defines += ';';
-		defines += *i;
-	}
-
+/**
+ * Outputs a property file based on the input parameters.
+ *
+ * It can be easily used to create different global properties files
+ * for a 64 bit and a 32 bit version. It will also take care that the
+ * two platform configurations will output their files into different
+ * directories.
+ *
+ * @param properties File stream in which to write the property settings.
+ * @param bits Number of bits the platform supports.
+ * @param defines Defines the platform needs to have set.
+ * @param prefix File prefix, used to add additional include paths.
+ */
+void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
 	              "\tName=\"ScummVM_Global\"\n"
-	              "\tOutputDirectory=\"$(ConfigurationName)32\"\n"
-	              "\tIntermediateDirectory=\"$(ConfigurationName)32/$(ProjectName)\"\n"
+	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
+	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableSpecificWarnings=\"4068;4100;4103;4121;4127;4189;4201;4221;4244;4250;4310;4351;4355;4510;4511;4512;4610;4701;4702;4706;4800;4996\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << convertPathToWin(setup.filePrefix) << ";" << convertPathToWin(setup.filePrefix) << "\\engines\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
 	              "\t\tExceptionHandling=\"0\"\n"
 	              "\t\tRuntimeTypeInfo=\"false\"\n"
@@ -927,11 +929,26 @@ void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
 	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << convertPathToWin(setup.filePrefix) << "\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
 	              "\t/>\n"
 	              "</VisualStudioPropertySheet>\n";
 
 	properties.flush();
+}
+
+void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Global.vsprops").c_str());
+	if (!properties)
+		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global.vsprops\" for writing");
+
+	std::string defines;
+	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
+		if (i != setup.defines.begin())
+			defines += ';';
+		defines += *i;
+	}
+
+	outputGlobalPropFile(properties, 32, defines, convertPathToWin(setup.filePrefix));
 	properties.close();
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Global64.vsprops").c_str());
@@ -953,41 +970,7 @@ void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
 		defines += *i;
 	}
 
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Global\"\n"
-	              "\tOutputDirectory=\"$(ConfigurationName)64\"\n"
-	              "\tIntermediateDirectory=\"$(ConfigurationName)64/$(ProjectName)\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tDisableSpecificWarnings=\"4068;4100;4103;4121;4127;4189;4201;4221;4244;4250;4310;4351;4355;4510;4511;4512;4610;4701;4702;4706;4800;4996\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << convertPathToWin(setup.filePrefix) << ";" << convertPathToWin(setup.filePrefix) << "\\engines\"\n"
-	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
-	              "\t\tExceptionHandling=\"0\"\n"
-	              "\t\tRuntimeTypeInfo=\"false\"\n"
-	              "\t\tWarningLevel=\"4\"\n"
-	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tCompileAs=\"0\"\n"
-	              "\t\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLibrarianTool\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSubSystem=\"1\"\n"
-	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << convertPathToWin(setup.filePrefix) << "\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
+	outputGlobalPropFile(properties, 64, defines, convertPathToWin(setup.filePrefix));
 }
 
 void createBuildProp(const BuildSetup &setup, const int /*version*/) {
