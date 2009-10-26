@@ -2485,7 +2485,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 		numFireballs = fbCnt - 3;
 
 	FireballState *fireballState[3];
-	memset(fireballState, 0, sizeof(fireballState));
+	memset(&fireballState, 0, sizeof(fireballState));
 	for (i = 0; i < numFireballs; i++)
 		fireballState[i] = new FireballState(i);
 

@@ -50,6 +50,15 @@ VQAMovie::VQAMovie(KyraEngine_v1 *vm, OSystem *system) {
 	_screen = _vm->screen();
 	_opened = false;
 	_x = _y = _drawPage = -1;
+	_frame = 0;
+	_vectorPointers = 0;
+	_numPartialCodeBooks = 0;
+	_partialCodeBookSize = 0;
+	_compressedCodeBook = 0;
+	_partialCodeBook = 0;
+	_codeBook = 0;
+	_frameInfo = 0;
+	memset(_buffers, 0, sizeof(_buffers));
 }
 
 VQAMovie::~VQAMovie() {

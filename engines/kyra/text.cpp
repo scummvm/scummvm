@@ -42,6 +42,8 @@ TextDisplayer::TextDisplayer(KyraEngine_v1 *vm, Screen *screen) {
 	_talkMessageY = 0xC;
 	_talkMessageH = 0;
 	_talkMessagePrinted = false;
+	memset(_talkSubstrings, 0, sizeof(_talkSubstrings));
+	memset(_talkBuffer, 0, sizeof(_talkBuffer));
 }
 
 void TextDisplayer::setTalkCoords(uint16 y) {

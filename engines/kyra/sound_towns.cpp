@@ -33,7 +33,7 @@
 
 #include "common/util.h"
 
-#define		EUPHONY_FADEOUT_TICKS		600
+#define EUPHONY_FADEOUT_TICKS 600
 
 namespace Kyra {
 
@@ -987,7 +987,7 @@ Towns_EuphonyTrackQueue::Towns_EuphonyTrackQueue(Towns_EuphonyDriver * driver, T
 }
 
 void Towns_EuphonyTrackQueue::setPlayBackStatus(bool playing) {
-	Towns_EuphonyTrackQueue * i = this;
+	Towns_EuphonyTrackQueue *i = this;
 	do {
 		i->_playing = playing;
 		i = i->_next;
@@ -1013,7 +1013,7 @@ void Towns_EuphonyTrackQueue::loadDataToEndOfQueue(uint8 * trackdata, uint32 siz
 		return;
 	}
 
-	Towns_EuphonyTrackQueue * i = this;
+	Towns_EuphonyTrackQueue *i = this;
 	while (i->_next)
 		i = i->_next;
 

@@ -1233,7 +1233,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 
 	int curShapeFile = 0;
 	uint8 *shapes[12];
-	memset(shapes, 0, sizeof(shapes));
+	memset(&shapes, 0, sizeof(shapes));
 
 	loadOutroShapes(curShapeFile++, shapes);
 	uint8 *monsterPal = 0;

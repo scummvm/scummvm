@@ -33,6 +33,8 @@ namespace Kyra {
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	: Screen(vm, system) {
 	_vm = vm;
+	_unkPtr1 = _unkPtr2 = 0;
+	_bitBlitNum = 0;
 }
 
 Screen_LoK::~Screen_LoK() {

@@ -34,7 +34,7 @@
 #include "kyra/script.h"
 
 namespace Kyra {
-EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
+EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(0), _filename(0) {
 #define OPCODE(x) { &EMCInterpreter::x, #x }
 	static const OpcodeEntry opcodes[] = {
 		// 0x00
@@ -106,7 +106,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream) {
 		error("Couldn't open script file '%s'", filename);
-		return false;	// for compilers that don't support NORETURN
+		return false;  // for compilers that don't support NORETURN
 	}
 
 	memset(scriptData, 0, sizeof(EMCData));
@@ -133,6 +133,9 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	strncpy(_scriptData->filename, filename, 13);
 	_scriptData->filename[12] = 0;
+
+	_scriptData = 0;
+	_filename = 0;
 
 	return true;
 }

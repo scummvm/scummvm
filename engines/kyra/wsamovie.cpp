@@ -35,7 +35,10 @@
 #include "kyra/resource.h"
 
 namespace Kyra {
-WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm) {}
+WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm)
+    : Movie(vm), _frameData(0), _frameOffsTable(0), _offscreenBuffer(0), _deltaBuffer(0) {
+}
+
 WSAMovie_v1::~WSAMovie_v1() { close(); }
 
 int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf) {

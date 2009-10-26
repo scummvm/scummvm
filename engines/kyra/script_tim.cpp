@@ -105,6 +105,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
+	_tim = 0;
 }
 
 TIMInterpreter::~TIMInterpreter() {
@@ -185,6 +186,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	_tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
 	_tim->lolCharacter = 0;
+	_tim = 0;
 
 	return _tim;
 }
