@@ -59,6 +59,8 @@ void NoSoundReels(void);
 void SaveSoundReels(PSOUNDREELS psr);
 void RestoreSoundReels(PSOUNDREELS psr);
 
+int ExtractActor(SCNHANDLE hFilm);
+
 } // End of namespace Tinsel
 
 #endif

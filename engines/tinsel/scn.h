@@ -80,7 +80,6 @@ namespace Tinsel {
 #define CHUNK_GRAB_NAME			0x33340100L
 
 byte *FindChunk(SCNHANDLE handle, uint32 chunk);
-int ExtractActor(SCNHANDLE hFilm);
 
 } // End of namespace Tinsel
 

@@ -1169,4 +1169,14 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 	}
 }
 
+/**
+ * Get the actor id from a film (column 0)
+ */
+int ExtractActor(SCNHANDLE hFilm) {
+	const FILM *pFilm = (const FILM *)LockMem(hFilm);
+	const FREEL *pReel = &pFilm->reels[0];
+	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
+	return (int)FROM_LE_32(pmi->mulID);
+}
+
 } // End of namespace Tinsel
