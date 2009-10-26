@@ -525,17 +525,15 @@ int CellGame::getBoardWeight(int8 color1, int8 color2) {
 
 void CellGame::chooseBestMove(int8 color) {
 	int moveIndex = 0;
-	int curWeight;
-	int bestWeight;
 
 	if (_flag2) {
-		bestWeight = 32767;
+		int bestWeight = 32767;
 		for (int i = 0; i < _stack_index; ++i) {
 			_board[53] = _stack_startXY[i];
 			_board[54] = _stack_endXY[i];
 			_board[55] = _stack_pass[i];
 			makeMove(color);
-			curWeight = countCellsOnTempBoard(color);
+			int curWeight = countCellsOnTempBoard(color);
 			if (curWeight <= bestWeight) {
 				if (curWeight < bestWeight)
 					moveIndex = 0;
@@ -669,9 +667,6 @@ int8 CellGame::calcBestWeight(int8 color1, int8 color2, uint16 depth, int bestWe
 int16 CellGame::doGame(int8 color, int depth) {
 	bool canMove;
 	int type;
-	int8 currBoardWeight;
-	int8 w1;
-	int8 w2;
 
 	countAllCells();
 	if (_board[color + 48] >= 49 - _board[49] - _board[50] - _board[51] - _board[52]) {
@@ -685,6 +680,7 @@ int16 CellGame::doGame(int8 color, int depth) {
 	}
 
 	if (canMove) {
+		int8 w1, w2;
 		if (_board[color + 48] - _board[49] - _board[50] - _board[51] - _board[52] == 0)
 			depth = 0;
 		_coeff3 = 0;
@@ -704,7 +700,7 @@ int16 CellGame::doGame(int8 color, int depth) {
 		} else {
 			w2 = getBoardWeight(color, color);
 		}
-		currBoardWeight = 2 * (2 * _board[color + 48] - _board[49] - _board[50] - _board[51] - _board[52]);
+		int8 currBoardWeight = 2 * (2 * _board[color + 48] - _board[49] - _board[50] - _board[51] - _board[52]);
 		while (1) {
 			if (type)
 				canMove = canMoveFunc2(color);

@@ -827,13 +827,12 @@ void Script::o_sleep() {
 
 void Script::o_strcmpnejmp() {			// 0x1A
 	uint16 varnum = readScript8or16bits();
-	uint8 val;
 	uint8 result = 1;
 
 	debugScript(1, false, "STRCMP-NEJMP: var[0x%04X..],", varnum);
 
 	do {
-		val = readScriptChar(true, true, true);
+		uint8 val = readScriptChar(true, true, true);
 
 		if (_variables[varnum] != val) {
 			result = 0;
@@ -949,12 +948,11 @@ void Script::o_copybgtofg() {			// 0x22
 
 void Script::o_strcmpeqjmp() {			// 0x23
 	uint16 varnum = readScript8or16bits();
-	uint8 val;
 	uint8 result = 1;
 
 	debugScript(1, false, "STRCMP-EQJMP: var[0x%04X..],", varnum);
 	do {
-		val = readScriptChar(true, true, true);
+		uint8 val = readScriptChar(true, true, true);
 
 		if (_variables[varnum] != val) {
 			result = 0;
@@ -1125,12 +1123,11 @@ void Script::o_loadstringvar() {
 
 void Script::o_chargreatjmp() {
 	uint16 varnum = readScript8or16bits();
-	uint8 val;
 	uint8 result = 0;
 
 	debugScript(1, false, "CHARGREAT-JMP: var[0x%04X..],", varnum);
 	do {
-		val = readScriptChar(true, true, true);
+		uint8 val = readScriptChar(true, true, true);
 
 		if (val < _variables[varnum]) {
 			result = 1;
@@ -1155,12 +1152,11 @@ void Script::o_bf7off() {
 
 void Script::o_charlessjmp() {
 	uint16 varnum = readScript8or16bits();
-	uint8 val;
 	uint8 result = 0;
 
 	debugScript(1, false, "CHARLESS-JMP: var[0x%04X..],", varnum);
 	do {
-		val = readScriptChar(true, true, true);
+		uint8 val = readScriptChar(true, true, true);
 
 		if (val > _variables[varnum]) {
 			result = 1;
@@ -1223,14 +1219,14 @@ void Script::o_obscureswap() {
 }
 
 void Script::o_printstring() {
-	char stringstorage[15], newchar;
+	char stringstorage[15];
 	uint8 counter = 0;
 
 	debugScript(1, true, "PRINTSTRING");
 
 	memset(stringstorage, 0, 15);
 	do {
-		newchar = readScriptChar(true, true, true) + 0x30;
+		char newchar = readScriptChar(true, true, true) + 0x30;
 		if (newchar < 0x30 || newchar > 0x39) {		// If character is invalid, chuck a space in
 			if (newchar < 0x41 || newchar > 0x7A) {
 				newchar = 0x20;

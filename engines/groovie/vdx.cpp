@@ -168,8 +168,7 @@ bool VDXPlayer::playFrameInternal() {
 			default:
 				error("Groovie::VDX: Invalid resource type: %d", currRes);
 		}
-		if (vdxData)
-			delete vdxData;
+		delete vdxData;
 		vdxData = 0;
 	}
 
