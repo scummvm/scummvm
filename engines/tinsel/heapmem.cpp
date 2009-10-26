@@ -30,6 +30,14 @@
 
 namespace Tinsel {
 
+
+// internal allocation flags
+#define	DWM_DISCARDED	0x0100	///< the objects memory block has been discarded
+#define	DWM_LOCKED		0x0200	///< the objects memory block is locked
+#define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
+
+
+
 // Specifies the total amount of memory required for DW1 demo, DW1, or DW2 respectively.
 // Currently this is set at 5MB for the DW1 demo and DW1 and 10MB for DW2
 // This could probably be reduced somewhat
@@ -161,6 +169,7 @@ void FreeMemNode(MEM_NODE *pMemNode) {
  * Tries to make space for the specified number of bytes on the specified heap.
  * @param size			Number of bytes to free up
  * @param bDiscard		When set - will discard blocks to fullfill the request
+ * @return true if any blocks were discarded, false otherwise
  */
 bool HeapCompact(long size, bool bDiscard) {
 	MEM_NODE *pHeap = &heapSentinel;
@@ -239,8 +248,7 @@ bool HeapCompact(long size, bool bDiscard) {
 		oldest = DwGetCurrentTime();
 		pOldest = NULL;
 		for (pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
-			if ((pCur->flags & (DWM_DISCARDABLE | DWM_DISCARDED | DWM_LOCKED))
-				== DWM_DISCARDABLE) {
+			if ((pCur->flags & (DWM_DISCARDED | DWM_LOCKED)) == 0) {
 				// found a non-discarded discardable block
 				if (pCur->lruTime < oldest) {
 					oldest = pCur->lruTime;
@@ -263,17 +271,16 @@ bool HeapCompact(long size, bool bDiscard) {
  * @param flags			Allocation attributes
  * @param size			Number of bytes to allocate
  */
-MEM_NODE *MemoryAlloc(int flags, long size) {
-	MEM_NODE *pHeap = &heapSentinel;
+static MEM_NODE *MemoryAlloc(int flags, long size) {
+	const MEM_NODE *pHeap = &heapSentinel;
 	MEM_NODE *pNode;
-	bool bCompacted = true;	// set when heap has been compacted
 
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void*) - 1;
 	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
 #endif
 
-	while ((flags & DWM_NOALLOC) == 0 && bCompacted) {
+	do {
 		// search the heap for a free block
 
 		for (pNode = pHeap->pNext; pNode != pHeap; pNode = pNode->pNext) {
@@ -313,36 +320,42 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 			}
 		}
 		// compact the heap if we get to here
-		bCompacted = HeapCompact(size, true);
-	}
-
-	// not allocated a block if we get to here
-	if (flags & DWM_DISCARDABLE) {
-		// chain a discarded node onto the end of the heap
-		pNode = AllocMemNode();
-		pNode->flags = flags | DWM_DISCARDED;
-
-		// set mnode at the end of the list
-		pNode->pPrev = pHeap->pPrev;
-		pNode->pNext = pHeap;
-
-		// fix links to this mnode
-		pHeap->pPrev->pNext = pNode;
-		pHeap->pPrev = pNode;
-
-		// return the discarded node
-		return pNode;
-	}
+	} while (HeapCompact(size, true));
 
 	// could not allocate a block
-	return NULL;
+	return 0;
 }
 
+/**
+ * Allocate a discarded MEM_NODE. Actual memory can be assigned to it
+ * by using MemoryReAlloc().
+ */
+MEM_NODE *MemoryNoAlloc() {
+	MEM_NODE *pHeap = &heapSentinel;
 
+	// chain a discarded node onto the end of the heap
+	MEM_NODE *pNode = AllocMemNode();
+	pNode->flags = DWM_DISCARDED;
+
+	// set mnode at the end of the list
+	pNode->pPrev = pHeap->pPrev;
+	pNode->pNext = pHeap;
+
+	// fix links to this mnode
+	pHeap->pPrev->pNext = pNode;
+	pHeap->pPrev = pNode;
+
+	// return the discarded node
+	return pNode;
+}
+
+/**
+ * Allocate a fixed block of data.
+ * @note For now, we simply malloc it!
+ * @todo We really should keep a list of the allocated pointers,
+ *       so that we can discard them later on, when the engine quits.
+ */
 void *MemoryAllocFixed(long size) {
-	// Allocate a fixed block of data. For now, we simply malloc it!
-	// TODO: We really should keep a list of the allocated pointers,
-	// so that we can discard them later on, when the engine quits.
 
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void*) - 1;
@@ -360,9 +373,6 @@ void *MemoryAllocFixed(long size) {
 void MemoryDiscard(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
-
-	// object must be discardable
-	assert(pMemNode->flags & DWM_DISCARDABLE);
 
 	// object cannot be locked
 	assert((pMemNode->flags & DWM_LOCKED) == 0);
@@ -425,12 +435,11 @@ void *MemoryLock(MEM_NODE *pMemNode) {
 }
 
 /**
- * Changes the size or attributes of a specified memory object.
+ * Changes the size of a specified memory object and re-allocate it if necessary.
  * @param pMemNode		Node of the memory object
  * @param size			New size of block
- * @param flags			How to reallocate the object
  */
-void MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
+void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 	MEM_NODE *pNew;
 
 	// validate mnode pointer
@@ -442,24 +451,21 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 	// validate the size
 	assert(size);
 
-	if (size == pMemNode->size) {
-		// must be just a change in flags
+	if (size != pMemNode->size) {
 
-		// update the nodes flags
-		pMemNode->flags = flags;
-	} else {
+		// make sure memory object is not locked and discarded
+		assert(pMemNode->flags == DWM_LOCKED | DWM_DISCARDED);
+		assert(pMemNode->size == 0);
+
 		// unlink the mnode from the current heap
 		pMemNode->pNext->pPrev = pMemNode->pPrev;
 		pMemNode->pPrev->pNext = pMemNode->pNext;
 
 		// allocate a new node
-		pNew = MemoryAlloc(flags, size);
+		pNew = MemoryAlloc(pMemNode->flags & ~DWM_DISCARDED, size);
 
 		// make sure memory allocated
 		assert(pNew != NULL);
-
-		// update the nodes flags
-		pNew->flags = flags;
 
 		// copy the node to the current node
 		memcpy(pMemNode, pNew, sizeof(MEM_NODE));

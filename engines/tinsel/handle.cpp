@@ -170,7 +170,7 @@ void SetupHandleTable(void) {
 #endif
 		else {
 			// allocate a discarded memory node for other files
-			pH->_node = MemoryAlloc(DWM_DISCARDABLE | DWM_NOALLOC, pH->filesize & FSIZE_MASK);
+			pH->_node = MemoryNoAlloc();
 			pH->_ptr = NULL;
 
 			// make sure memory allocated
@@ -306,17 +306,6 @@ void LoadFile(MEMHANDLE *pH, bool bWarn) {
 			// discardable - lock the memory
 			addr = (uint8 *)MemoryLock(pH->_node);
 		}
-#ifdef DEBUG
-		if (addr == NULL) {
-			if (pH->filesize & fPreload)
-				// preload - no need to lock the memory
-				addr = pH->_ptr;
-			else {
-				// discardable - lock the memory
-				addr = (uint8 *)MemoryLock(pH->_node);
-			}
-		}
-#endif
 
 		// make sure address is valid
 		assert(addr);
@@ -381,7 +370,7 @@ byte *LockMem(SCNHANDLE offset) {
 
 		if (pH->_node->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle, DWM_DISCARDABLE);
+			MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle);
 
 		if (pH->_node->pBaseAddr == NULL)
 			error("Out of memory");
@@ -403,7 +392,7 @@ byte *LockMem(SCNHANDLE offset) {
 
 		if (pH->_node->pBaseAddr == NULL)
 			// must have been discarded - reallocate the memory
-			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_DISCARDABLE);
+			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
 
 		if (pH->_node->pBaseAddr == NULL)
 			error("Out of memory");
@@ -422,7 +411,7 @@ byte *LockMem(SCNHANDLE offset) {
 }
 
 /**
- * Called to make the current scene non-discardable.
+ * Called to lock the current scene and make it non-discardable.
  * @param offset			Handle and offset to data
  */
 void LockScene(SCNHANDLE offset) {
@@ -443,11 +432,12 @@ void LockScene(SCNHANDLE offset) {
 	HeapCompact(MAX_INT, false);
 
 	if ((pH->filesize & fPreload) == 0) {
-		// change the flags for the node
-		// WORKAROUND: The original didn't include the DWM_LOCKED flag. It's being
-		// included because the method is 'LockScene' so it's presumed that the
-		// point of this was that the scene's memory block be locked
-		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_LOCKED);
+		// Ensure the scene handle is allocated.
+		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
+
+		// Now lock it to make sure it stays allocated and in a fixed position.
+		MemoryLock(pH->_node);
+
 #ifdef DEBUG
 		bLockedScene = true;
 #endif
@@ -469,8 +459,9 @@ void UnlockScene(SCNHANDLE offset) {
 	pH = handleTable + handle;
 
 	if ((pH->filesize & fPreload) == 0) {
-		// change the flags for the node
-		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK, DWM_DISCARDABLE);
+		// unlock the scene data
+		MemoryUnlock(pH->_node);
+
 #ifdef DEBUG
 		bLockedScene = false;
 #endif

@@ -43,13 +43,6 @@ struct MEM_NODE {
 };
 
 // allocation flags for the MemoryAlloc function
-#define	DWM_DISCARDABLE	0x0004	///< allocates discardable memory
-#define	DWM_NOALLOC		0x0008	///< when used with discardable memory - allocates a discarded block
-
-// internal allocation flags
-#define	DWM_DISCARDED	0x0100	///< the objects memory block has been discarded
-#define	DWM_LOCKED		0x0200	///< the objects memory block is locked
-#define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
 
 
 /*----------------------------------------------------------------------*\
@@ -58,10 +51,8 @@ struct MEM_NODE {
 
 void MemoryInit(void);		// initialises the memory manager
 
-// allocates a movable block with the specified number of bytes from the heap
-MEM_NODE *MemoryAlloc(
-	int flags,		// allocation attributes
-	long size);		// number of bytes to allocate
+// reserves a memory node for a movable & discardable block
+MEM_NODE *MemoryNoAlloc();
 
 // allocates a fixed block with the specified number of bytes
 void *MemoryAllocFixed(long size);
@@ -74,8 +65,7 @@ void *MemoryLock(		// locks a memory object and returns a pointer to the first b
 
 void MemoryReAlloc(	// changes the size or attributes of a specified memory object
 	MEM_NODE *pMemNode,	// node of the memory object
-	long size,		// new size of block
-	int flags);		// how to reallocate the object
+	long size);		// new size of block
 
 void MemoryUnlock(		// unlocks a memory object
 	MEM_NODE *pMemNode);	// node of the memory object
