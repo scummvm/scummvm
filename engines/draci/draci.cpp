@@ -265,14 +265,13 @@ void DraciEngine::handleEvents() {
 				_showWalkingMap = !_showWalkingMap;
 				break;
 			case Common::KEYCODE_i:
-				if (_game->getRoomNum() == _game->getMapRoom()) {
+				if (_game->getRoomNum() == _game->getMapRoom() ||
+				    _game->getLoopSubstatus() != kSubstatusOrdinary) {
 					break;
 				}
-				if (_game->getLoopStatus() == kStatusInventory &&
-				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
+				if (_game->getLoopStatus() == kStatusInventory) {
 					_game->inventoryDone();
-				} else if (_game->getLoopStatus() == kStatusOrdinary &&
-				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
+				} else if (_game->getLoopStatus() == kStatusOrdinary) {
 					_game->inventoryInit();
 				}
 				break;

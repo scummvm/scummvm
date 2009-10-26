@@ -58,22 +58,24 @@ MusicPlayer::~MusicPlayer() {
 	delete _midiMusicData;
 }
 
-void MusicPlayer::setVolume(int volume) {
-	volume = CLIP(volume, 0, 255);
+void MusicPlayer::setChannelVolume(int channel) {
+	int newVolume = _channelVolume[channel] * _masterVolume / 255;
+	debugC(3, kDraciSoundDebugLevel, "Music channel %d: volume %d->%d",
+		channel, _channelVolume[channel], newVolume);
+	_channel[channel]->volume(newVolume);
+}
 
+void MusicPlayer::setVolume(int volume) {
+	Common::StackLock lock(_mutex);
+
+	volume = CLIP(volume, 0, 255);
 	if (_masterVolume == volume)
 		return;
-
 	_masterVolume = volume;
-
-	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < 16; ++i) {
 		if (_channel[i]) {
-			int newVolume = _channelVolume[i] * _masterVolume / 255;
-			debugC(3, kDraciSoundDebugLevel, "Music channel %d: volume %d->%d",
-				i, _channelVolume[i], newVolume);
-			_channel[i]->volume(newVolume);
+			setChannelVolume(i);
 		}
 	}
 }
@@ -121,8 +123,10 @@ void MusicPlayer::send(uint32 b) {
 			return;
 	}
 
-	if (!_channel[channel])
+	if (!_channel[channel]) {
 		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		setChannelVolume(channel);
+	}
 
 	if (_channel[channel])
 		_channel[channel]->send(b);
@@ -147,7 +151,7 @@ void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
 	Common::StackLock lock(music->_mutex);
 
-	if (music->_isPlaying)
+	if (music->_parser)
 		music->_parser->onTimer();
 }
 

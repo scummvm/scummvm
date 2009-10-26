@@ -79,6 +79,7 @@ public:
 protected:
 
 	static void onTimer(void *data);
+	void setChannelVolume(int channel);
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;
