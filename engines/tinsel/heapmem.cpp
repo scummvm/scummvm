@@ -36,9 +36,9 @@ namespace Tinsel {
 
 // internal allocation flags
 #define	DWM_USED		0x0001	///< the objects memory block is in use
-#define	DWM_DISCARDED	0x0100	///< the objects memory block has been discarded
-#define	DWM_LOCKED		0x0200	///< the objects memory block is locked
-#define	DWM_SENTINEL	0x0400	///< the objects memory block is a sentinel
+#define	DWM_DISCARDED	0x0002	///< the objects memory block has been discarded
+#define	DWM_LOCKED		0x0004	///< the objects memory block is locked
+#define	DWM_SENTINEL	0x0008	///< the objects memory block is a sentinel
 
 
 struct MEM_NODE {
@@ -83,8 +83,6 @@ static MEM_NODE *AllocMemNode(void);
  * Initialises the memory manager.
  */
 void MemoryInit() {
-	MEM_NODE *pNode;
-
 #ifdef DEBUG
 	// clear number of nodes in use
 	numNodes = 0;
@@ -94,6 +92,7 @@ void MemoryInit() {
 	pFreeMemNodes = mnodeList;
 
 	// link all other objects after first
+	memset(mnodeList, 0, sizeof(mnodeList));
 	for (int i = 1; i < NUM_MNODES; i++) {
 		mnodeList[i - 1].pNext = mnodeList + i;
 	}
@@ -104,53 +103,37 @@ void MemoryInit() {
 	// clear list of fixed memory nodes
 	memset(s_fixedMnodesList, 0, sizeof(s_fixedMnodesList));
 
-	// allocates a big chunk of memory
-	uint32 size = MemoryPoolSize[0];
-	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
-	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
-	uint8 *mem = (uint8 *)malloc(size);
-	assert(mem);
-
-	// allocate a mnode for this memory
-	pNode = AllocMemNode();
-
-	// make sure mnode was allocated
-	assert(pNode);
-
-	// convert segment to memory address
-	pNode->pBaseAddr = mem;
-
-	// set size of the memory heap
-	pNode->size = size;
-
-	// clear the memory
-	memset(pNode->pBaseAddr, 0, size);
-
 	// set cyclic links to the sentinel
-	heapSentinel.pPrev = pNode;
-	heapSentinel.pNext = pNode;
-	pNode->pPrev = &heapSentinel;
-	pNode->pNext = &heapSentinel;
+	heapSentinel.pPrev = &heapSentinel;
+	heapSentinel.pNext = &heapSentinel;
 
 	// flag sentinel as locked
 	heapSentinel.flags = DWM_LOCKED | DWM_SENTINEL;
 
-	// store the start of the master data block in the sentinel
-	heapSentinel.pBaseAddr = mem;
+	// store the current heap size in the sentinel
+	uint32 size = MemoryPoolSize[0];
+	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
+	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
+	heapSentinel.size = size;
 }
 
 /**
  * Deinitialises the memory manager.
  */
 void MemoryDeinit() {
-	MEM_NODE *pNode = s_fixedMnodesList;
-	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pNode) {
-		free(pNode->pBaseAddr);
-		pNode->pBaseAddr = 0;
+	const MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pCur;
+
+	pCur = s_fixedMnodesList;
+	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pCur) {
+		free(pCur->pBaseAddr);
+		pCur->pBaseAddr = 0;
 	}
 
-	// free memory used for the memory pool
-	free(heapSentinel.pBaseAddr);
+	for (pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
+		free(pCur->pBaseAddr);
+		pCur->pBaseAddr = 0;
+	}
 }
 
 
@@ -209,71 +192,11 @@ void FreeMemNode(MEM_NODE *pMemNode) {
  * @return true if any blocks were discarded, false otherwise
  */
 bool HeapCompact(long size, bool bDiscard) {
-	MEM_NODE *pHeap = &heapSentinel;
-	MEM_NODE *pPrev, *pCur, *pOldest;
-	long largest;		// size of largest free block
+	const MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pCur, *pOldest;
 	uint32 oldest;		// time of the oldest discardable block
 
-	while (true) {
-		bool bChanged;
-
-		do {
-			bChanged = false;
-			for (pPrev = pHeap->pNext, pCur = pPrev->pNext;
-				pCur != pHeap; pPrev = pCur, pCur = pCur->pNext) {
-				if (pPrev->flags == 0 && pCur->flags == 0) {
-					// both blocks are free - merge them
-					pPrev->size += pCur->size;
-
-					// unlink the current mnode
-					pPrev->pNext = pCur->pNext;
-					pCur->pNext->pPrev = pPrev;
-
-					// free the current mnode
-					FreeMemNode(pCur);
-
-					// set the changed flag
-					bChanged = true;
-
-					// leave the loop
-					break;
-				} else if (pPrev->flags == DWM_USED && pCur->flags == 0) {
-					// a free block after a moveable, non-discarded, not locked block - swap them
-
-					// set the changed flag
-					bChanged = true;
-
-					// move the unlocked blocks data up (can overlap)
-					memmove(pPrev->pBaseAddr + pCur->size, pPrev->pBaseAddr, pPrev->size);
-
-					// swap the order in the linked list
-					pPrev->pPrev->pNext = pCur;
-					pCur->pNext->pPrev = pPrev;
-
-					pCur->pPrev = pPrev->pPrev;
-					pPrev->pPrev = pCur;
-
-					pPrev->pNext = pCur->pNext;
-					pCur->pNext = pPrev;
-
-					pCur->pBaseAddr = pPrev->pBaseAddr;
-					pPrev->pBaseAddr += pCur->size;
-
-					// leave the loop
-					break;
-				}
-			}
-		} while (bChanged);
-
-		// find the largest free block
-		for (largest = 0, pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
-			if (pCur->flags == 0 && pCur->size > largest)
-				largest = pCur->size;
-		}
-
-		if (largest >= size)
-			// we have freed enough memory
-			return true;
+	while (heapSentinel.size < size) {
 
 		if (!bDiscard)
 			// we cannot free enough without discarding blocks
@@ -299,6 +222,9 @@ bool HeapCompact(long size, bool bDiscard) {
 			// cannot discard any blocks
 			return false;
 	}
+
+	// we have freed enough memory
+	return true;
 }
 
 /**
@@ -307,58 +233,46 @@ bool HeapCompact(long size, bool bDiscard) {
  * @param size			Number of bytes to allocate
  */
 static MEM_NODE *MemoryAlloc(long size) {
-	const MEM_NODE *pHeap = &heapSentinel;
-	MEM_NODE *pNode;
+	MEM_NODE *pHeap = &heapSentinel;
 
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void*) - 1;
 	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
 #endif
 
-	do {
-		// search the heap for a free block
+	// compact the heap to make up room for 'size' bytes, if necessary
+	if (!HeapCompact(size, true))
+		return 0;
 
-		for (pNode = pHeap->pNext; pNode != pHeap; pNode = pNode->pNext) {
-			if (pNode->flags == 0 && pNode->size >= size) {
-				// a free block of the required size
-				pNode->flags = DWM_USED;
+	// success! we may allocate a new node of the right size
 
-				// update the LRU time
-				pNode->lruTime = DwGetCurrentTime() + 1;
+	// Allocate a node.
+	MEM_NODE *pNode = AllocMemNode();
 
-				if (pNode->size == size) {
-					// an exact fit
-					return pNode;
-				} else {
-					// allocate a node for the remainder of the free block
-					MEM_NODE *pTemp = AllocMemNode();
+	// Allocate memory for the node.
+	pNode->pBaseAddr = (byte *)malloc(size);
 
-					// calc size of the free block
-					long freeSize = pNode->size - size;
+	// Verify that we got the memory.
+	// TODO: If this fails, we should first try to compact the heap some further.
+	assert(pNode->pBaseAddr);
 
-					// set size of free block
-					pTemp->size = freeSize;
+	// Subtract size of new block from total
+	heapSentinel.size -= size;
 
-					// set size of node
-					pNode->size = size;
+	// Set flags, LRU time and size
+	pNode->flags = DWM_USED;
+	pNode->lruTime = DwGetCurrentTime();
+	pNode->size = size;
 
-					// place the free node before pNode
-					pTemp->pBaseAddr = pNode->pBaseAddr;
-					pNode->pBaseAddr += freeSize;
-					pTemp->pNext = pNode;
-					pTemp->pPrev = pNode->pPrev;
-					pNode->pPrev->pNext = pTemp;
-					pNode->pPrev = pTemp;
+	// set mnode at the end of the list
+	pNode->pPrev = pHeap->pPrev;
+	pNode->pNext = pHeap;
 
-					return pNode;
-				}
-			}
-		}
-		// compact the heap if we get to here
-	} while (HeapCompact(size, true));
+	// fix links to this mnode
+	pHeap->pPrev->pNext = pNode;
+	pHeap->pPrev = pNode;
 
-	// could not allocate a block
-	return 0;
+	return pNode;
 }
 
 /**
@@ -371,6 +285,8 @@ MEM_NODE *MemoryNoAlloc() {
 	// chain a discarded node onto the end of the heap
 	MEM_NODE *pNode = AllocMemNode();
 	pNode->flags = DWM_USED | DWM_DISCARDED;
+	pNode->lruTime = DwGetCurrentTime();
+	pNode->size = 0;
 
 	// set mnode at the end of the list
 	pNode->pPrev = pHeap->pPrev;
@@ -406,6 +322,10 @@ MEM_NODE *MemoryAllocFixed(long size) {
 			pNode->size = size;
 			pNode->lruTime = DwGetCurrentTime();
 			pNode->flags = DWM_USED;
+
+			// Subtract size of new block from total
+			heapSentinel.size -= size;
+
 			return pNode;
 		}
 	}
@@ -427,36 +347,14 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
 
 	// discard it if it isn't already
 	if ((pMemNode->flags & DWM_DISCARDED) == 0) {
-		// allocate a free node to replace this node
-		MEM_NODE *pTemp = AllocMemNode();
+		// free memory
+		free(pMemNode->pBaseAddr);
+		heapSentinel.size += pMemNode->size;
 
-		// copy node data
-		memcpy(pTemp, pMemNode, sizeof(MEM_NODE));
-
-		// flag as a free block
-		pTemp->flags = 0;
-
-		// link in the free node
-		pTemp->pPrev->pNext = pTemp;
-		pTemp->pNext->pPrev = pTemp;
-
-		// discard the node
+		// mark the node as discarded
 		pMemNode->flags |= DWM_DISCARDED;
 		pMemNode->pBaseAddr = NULL;
 		pMemNode->size = 0;
-
-		// and place it at the end of the heap
-		while ((pTemp->flags & DWM_SENTINEL) != DWM_SENTINEL)
-			pTemp = pTemp->pNext;
-
-		// pTemp now points to the heap sentinel
-		// set mnode at the end of the list
-		pMemNode->pPrev = pTemp->pPrev;
-		pMemNode->pNext = pTemp;
-
-		// fix links to this mnode
-		pTemp->pPrev->pNext = pMemNode;
-		pTemp->pPrev = pMemNode;
 	}
 }
 
