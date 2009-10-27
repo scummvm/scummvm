@@ -38,13 +38,14 @@ struct MEM_NODE;
 |*			Memory Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void MemoryInit(void);		// initialises the memory manager
+void MemoryInit();			// initialises the memory manager
+void MemoryDeinit();		// deinitialises the memory manager
 
 // reserves a memory node for a movable & discardable block
 MEM_NODE *MemoryNoAlloc();
 
 // allocates a fixed block with the specified number of bytes
-void *MemoryAllocFixed(long size);
+MEM_NODE *MemoryAllocFixed(long size);
 
 void MemoryDiscard(		// discards the specified memory object
 	MEM_NODE *pMemNode);	// node of the memory object

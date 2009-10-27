@@ -51,7 +51,6 @@ struct MEMHANDLE {
 	char szName[12];	///< file name of graphics file
 	int32 filesize;		///< file size and flags
 	MEM_NODE *_node;	///< memory node for the graphics
-	uint8 *_ptr;		///< start of data for fixed blocks (i.e., preloaded data)
 	uint32 flags2;
 };
 
@@ -129,7 +128,6 @@ void SetupHandleTable(void) {
 				// The pointer should always be NULL. We don't
 				// need to read that from the file.
 				handleTable[i]._node = NULL;
-				handleTable[i]._ptr = NULL;
 				f.seek(4, SEEK_CUR);
 				// For Discworld 2, read in the flags2 field
 				handleTable[i].flags2 = t2Flag ? f.readUint32LE() : 0;
@@ -153,11 +151,10 @@ void SetupHandleTable(void) {
 	for (i = 0, pH = handleTable; i < numHandles; i++, pH++) {
 		if (pH->filesize & fPreload) {
 			// allocate a fixed memory node for permanent files
-			pH->_ptr = (uint8 *)MemoryAllocFixed((pH->filesize & FSIZE_MASK));
-			pH->_node = NULL;
+			pH->_node = MemoryAllocFixed((pH->filesize & FSIZE_MASK));
 
 			// make sure memory allocated
-			assert(pH->_ptr);
+			assert(pH->_node);
 
 			// load the data
 			LoadFile(pH);
@@ -165,16 +162,14 @@ void SetupHandleTable(void) {
 #ifdef BODGE
 		else if ((pH->filesize & FSIZE_MASK) == 8) {
 			pH->_node = NULL;
-			pH->_ptr = NULL;
 		}
 #endif
 		else {
 			// allocate a discarded memory node for other files
 			pH->_node = MemoryNoAlloc();
-			pH->_ptr = NULL;
 
 			// make sure memory allocated
-			assert(pH->_node || pH->_ptr);
+			assert(pH->_node);
 		}
 	}
 }
@@ -297,13 +292,8 @@ void LoadFile(MEMHANDLE *pH) {
 		int bytes;
 		uint8 *addr;
 
-		if (pH->filesize & fPreload)
-			// preload - no need to lock the memory
-			addr = pH->_ptr;
-		else {
-			// discardable - lock the memory
-			addr = (uint8 *)MemoryLock(pH->_node);
-		}
+		// lock the memory
+		addr = (uint8 *)MemoryLock(pH->_node);
 
 		// make sure address is valid
 		assert(addr);
@@ -313,10 +303,8 @@ void LoadFile(MEMHANDLE *pH) {
 		// close the file
 		f.close();
 
-		if ((pH->filesize & fPreload) == 0) {
-			// discardable - unlock the memory
-			MemoryUnlock(pH->_node);
-		}
+		// discardable - unlock the memory
+		MemoryUnlock(pH->_node);
 
 		// set the loaded flag
 		pH->filesize |= fLoaded;
@@ -347,8 +335,7 @@ byte *LockMem(SCNHANDLE offset) {
 	pH = handleTable + handle;
 
 	if (pH->filesize & fPreload) {
-		// permanent files are already loaded
-		return pH->_ptr + (offset & OFFSETMASK);
+		// permanent files are already loaded, nothing to be done
 	} else if (handle == cdPlayHandle) {
 		// Must be in currently loaded/loadable range
 		if (offset < cdBaseHandle || offset >= cdTopHandle)
@@ -365,8 +352,7 @@ byte *LockMem(SCNHANDLE offset) {
 			MemoryTouch(pH->_node);
 		}
 
-		return MemoryDeref(pH->_node) + ((offset - cdBaseHandle) & OFFSETMASK);
-
+		offset -= cdBaseHandle;
 	} else {
 		// may have been discarded, make sure memory is allocated
 		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
@@ -382,9 +368,9 @@ byte *LockMem(SCNHANDLE offset) {
 			// make sure address is valid
 			assert(pH->filesize & fLoaded);
 		}
-
-		return MemoryDeref(pH->_node) + (offset & OFFSETMASK);
 	}
+
+	return MemoryDeref(pH->_node) + (offset & OFFSETMASK);
 }
 
 /**

@@ -5526,7 +5526,10 @@ void RegisterIcons(void *cptr, int num) {
 	if (TinselV0) {
 		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
 		// need to 'unpack' the source structures into the standard Tinsel v1/v2 format
-		invObjects = (INV_OBJECT *)MemoryAllocFixed(numObjects * sizeof(INV_OBJECT));
+		MEM_NODE *node = MemoryAllocFixed(numObjects * sizeof(INV_OBJECT));
+		assert(node);
+		invObjects = (INV_OBJECT *)MemoryDeref(node);
+		assert(invObjects);
 		byte *srcP = (byte *)cptr;
 		INV_OBJECT *destP = (INV_OBJECT *)invObjects;
 
@@ -5537,12 +5540,14 @@ void RegisterIcons(void *cptr, int num) {
 	} else if (TinselV2) {
 		if (invFilms == NULL) {
 			// First time - allocate memory
-			invFilms = (SCNHANDLE *)MemoryAllocFixed(numObjects * sizeof(SCNHANDLE));
+			MEM_NODE *node = MemoryAllocFixed(numObjects * sizeof(SCNHANDLE));
+			assert(node);
+			invFilms = (SCNHANDLE *)MemoryDeref(node);
+			if (invFilms == NULL)
+				error(NO_MEM, "inventory scripts");
 			memset(invFilms, 0, numObjects * sizeof(SCNHANDLE));
 		}
 
-		if (invFilms == NULL)
-			error(NO_MEM, "inventory scripts");
 
 		// Add defined permanent conversation icons
 		// and store all the films separately

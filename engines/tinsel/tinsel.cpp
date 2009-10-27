@@ -893,6 +893,8 @@ TinselEngine::~TinselEngine() {
 	FreeGlobalProcesses();
 	FreeGlobals();
 	delete _scheduler;
+
+	MemoryDeinit();
 }
 
 void TinselEngine::syncSoundSettings() {

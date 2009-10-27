@@ -69,6 +69,9 @@ static int numNodes;
 static int maxNodes;
 #endif
 
+// list of all fixed memory nodes
+MEM_NODE s_fixedMnodesList[5];
+
 // the mnode heap sentinel
 static MEM_NODE heapSentinel;
 
@@ -79,7 +82,7 @@ static MEM_NODE *AllocMemNode(void);
 /**
  * Initialises the memory manager.
  */
-void MemoryInit(void) {
+void MemoryInit() {
 	MEM_NODE *pNode;
 
 #ifdef DEBUG
@@ -97,6 +100,9 @@ void MemoryInit(void) {
 
 	// null the last mnode
 	mnodeList[NUM_MNODES - 1].pNext = NULL;
+
+	// clear list of fixed memory nodes
+	memset(s_fixedMnodesList, 0, sizeof(s_fixedMnodesList));
 
 	// allocates a big chunk of memory
 	uint32 size = MemoryPoolSize[0];
@@ -128,7 +134,25 @@ void MemoryInit(void) {
 
 	// flag sentinel as locked
 	heapSentinel.flags = DWM_LOCKED | DWM_SENTINEL;
+
+	// store the start of the master data block in the sentinel
+	heapSentinel.pBaseAddr = mem;
 }
+
+/**
+ * Deinitialises the memory manager.
+ */
+void MemoryDeinit() {
+	MEM_NODE *pNode = s_fixedMnodesList;
+	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pNode) {
+		free(pNode->pBaseAddr);
+		pNode->pBaseAddr = 0;
+	}
+
+	// free memory used for the memory pool
+	free(heapSentinel.pBaseAddr);
+}
+
 
 /**
  * Allocate a mnode from the free list.
@@ -362,18 +386,31 @@ MEM_NODE *MemoryNoAlloc() {
 
 /**
  * Allocate a fixed block of data.
- * @note For now, we simply malloc it!
- * @todo We really should keep a list of the allocated pointers,
+ * @todo We really should keep track of the allocated pointers,
  *       so that we can discard them later on, when the engine quits.
  */
-void *MemoryAllocFixed(long size) {
+MEM_NODE *MemoryAllocFixed(long size) {
 
 #ifdef SCUMM_NEED_ALIGNMENT
 	const int alignPadding = sizeof(void*) - 1;
 	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
 #endif
 
-	return malloc(size);
+	// Search for a free entry in s_fixedMnodesList
+	MEM_NODE *pNode = s_fixedMnodesList;
+	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pNode) {
+		if (!pNode->pBaseAddr) {
+			pNode->pNext = 0;
+			pNode->pPrev = 0;
+			pNode->pBaseAddr = (byte *)malloc(size);
+			pNode->size = size;
+			pNode->lruTime = DwGetCurrentTime();
+			pNode->flags = DWM_USED;
+			return pNode;
+		}
+	}
+
+	return 0;
 }
 
 
@@ -429,9 +466,6 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
  * @param pMemNode			Node of the memory object
  */
 void *MemoryLock(MEM_NODE *pMemNode) {
-	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
-
 	// make sure memory object is not already locked
 	assert((pMemNode->flags & DWM_LOCKED) == 0);
 
@@ -497,9 +531,6 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
  * @param pMemNode		Node of the memory object
  */
 void MemoryUnlock(MEM_NODE *pMemNode) {
-	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
-
 	// make sure memory object is already locked
 	assert(pMemNode->flags & DWM_LOCKED);
 
@@ -515,17 +546,11 @@ void MemoryUnlock(MEM_NODE *pMemNode) {
  * @param pMemNode		Node of the memory object
  */
 void MemoryTouch(MEM_NODE *pMemNode) {
-	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
-
 	// update the LRU time
 	pMemNode->lruTime = DwGetCurrentTime();
 }
 
 uint8 *MemoryDeref(MEM_NODE *pMemNode) {
-	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
-
 	return pMemNode->pBaseAddr;
 }
 
