@@ -504,7 +504,7 @@ FeatureList getAllFeatures() {
 	FeatureList features;
 	for (size_t i = 0; i < featureCount; ++i)
 		features.push_back(s_features[i]);
-	
+
 	return features;
 }
 
@@ -596,7 +596,7 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
  */
 void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
                        const StringList &includeList, const StringList &excludeList,
-					   const std::string &filePrefix);
+                       const std::string &filePrefix);
 
 /**
  * Create the global project properties.
@@ -786,7 +786,7 @@ void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const 
 }
 
 void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-					   const StringList &includeList, const StringList &excludeList, const int version) {
+                       const StringList &includeList, const StringList &excludeList, const int version) {
 	const std::string projectFile = setup.outputDir + '/' + name + ".vcproj";
 	std::ofstream project(projectFile.c_str());
 	if (!project)
@@ -808,7 +808,7 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 	           "\t<Platforms>\n"
 	           "\t\t<Platform Name=\"Win32\" />\n"
                "\t\t<Platform Name=\"x64\" />\n"
-			   "\t</Platforms>\n"
+	           "\t</Platforms>\n"
 	           "\t<Configurations>\n";
 
 	if (name == "scummvm") {
@@ -820,10 +820,10 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 		// Win32
 		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
 		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
-				   "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-				   "\t\t\t/>\n"
-				   "\t\t</Configuration>\n"
-				   "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
+		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
 		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
 		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 		           "\t\t\t/>\n"
@@ -835,10 +835,10 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
 		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
 		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
-				   "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-				   "\t\t\t/>\n"
-				   "\t\t</Configuration>\n"
-				   "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
+		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
 		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
 		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 		           "\t\t\t/>\n"
@@ -847,13 +847,13 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 		// Win32
 		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
 		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DebugInformationFormat=\"3\" />\n"
-				   "\t\t</Configuration>\n"
-	               "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
 		// x64
 		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
 		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DebugInformationFormat=\"3\" />\n"
-				   "\t\t</Configuration>\n"
-	               "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
 	} else {
 		// Win32
 		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\" />\n"
@@ -1319,7 +1319,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
  * @param filePrefix Generic prefix to all files of the node.
  */
 void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-							const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
 	const std::string indentString = getIndent(indentation + 2);
 
 	if (indentation)
@@ -1386,8 +1386,8 @@ void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, con
 }
 
 void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
-					   const StringList &includeList, const StringList &excludeList,
-					   const std::string &filePrefix) {
+                       const StringList &includeList, const StringList &excludeList,
+                       const std::string &filePrefix) {
 	// Check for duplicate object file names
 	StringList duplicate;
 
