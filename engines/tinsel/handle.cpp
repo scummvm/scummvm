@@ -41,7 +41,7 @@ namespace Tinsel {
 //----------------- EXTERNAL GLOBAL DATA --------------------
 
 #ifdef DEBUG
-static bool bLockedScene = 0;
+static uint32 s_lockedScene = 0;
 #endif
 
 
@@ -322,7 +322,7 @@ void LoadFile(MEMHANDLE *pH) {
 }
 
 /**
- * Returns the address of a image, given its memory handle.
+ * Compute and return the address specified by a SCNHANDLE.
  * @param offset			Handle and offset to data
  */
 byte *LockMem(SCNHANDLE offset) {
@@ -331,6 +331,11 @@ byte *LockMem(SCNHANDLE offset) {
 
 	// range check the memory handle
 	assert(handle < numHandles);
+
+#ifdef DEBUG
+	if (handle != s_lockedScene)
+		warning("  Calling LockMem(0x%x), handle %d differs from active scene %d", offset, handle, s_lockedScene);
+#endif
 
 	pH = handleTable + handle;
 
@@ -341,10 +346,10 @@ byte *LockMem(SCNHANDLE offset) {
 		if (offset < cdBaseHandle || offset >= cdTopHandle)
 			error("Overlapping (in time) CD-plays");
 
-		// may have been discarded, make sure memory is allocated
-		MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle);
-
-		if (!(pH->filesize & fLoaded)) {
+		// May have been discarded, if so, we have to reload
+		if (!MemoryDeref(pH->_node)) {
+			// Data was discarded, we have to reload
+			MemoryReAlloc(pH->_node, cdTopHandle - cdBaseHandle);
 
 			LoadCDGraphData(pH);
 
@@ -352,22 +357,24 @@ byte *LockMem(SCNHANDLE offset) {
 			MemoryTouch(pH->_node);
 		}
 
+		// make sure address is valid
+		assert(pH->filesize & fLoaded);
+
 		offset -= cdBaseHandle;
 	} else {
-		// may have been discarded, make sure memory is allocated
-		MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
-
-		if (!(pH->filesize & fLoaded)) {
+		if (!MemoryDeref(pH->_node)) {
+			// Data was discarded, we have to reload
+			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
 
 			if (TinselV2) {
 				SetCD(pH->flags2 & fAllCds);
 				CdCD(nullContext);
 			}
 			LoadFile(pH);
-
-			// make sure address is valid
-			assert(pH->filesize & fLoaded);
 		}
+
+		// make sure address is valid
+		assert(pH->filesize & fLoaded);
 	}
 
 	return MemoryDeref(pH->_node) + (offset & OFFSETMASK);
@@ -383,7 +390,7 @@ void LockScene(SCNHANDLE offset) {
 	MEMHANDLE *pH;					// points to table entry
 
 #ifdef DEBUG
-	assert(!bLockedScene); // Trying to lock more than one scene
+	assert(0 == s_lockedScene); // Trying to lock more than one scene
 #endif
 
 	// range check the memory handle
@@ -399,7 +406,7 @@ void LockScene(SCNHANDLE offset) {
 		MemoryLock(pH->_node);
 
 #ifdef DEBUG
-		bLockedScene = true;
+		s_lockedScene = handle;
 #endif
 	}
 }
@@ -423,7 +430,7 @@ void UnlockScene(SCNHANDLE offset) {
 		MemoryUnlock(pH->_node);
 
 #ifdef DEBUG
-		bLockedScene = false;
+		s_lockedScene = 0;
 #endif
 	}
 }
