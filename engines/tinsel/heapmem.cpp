@@ -63,12 +63,6 @@ MEM_NODE mnodeList[NUM_MNODES];
 // pointer to the linked list of free mnodes
 static MEM_NODE *pFreeMemNodes;
 
-#ifdef DEBUG
-// diagnostic mnode counters
-static int numNodes;
-static int maxNodes;
-#endif
-
 // list of all fixed memory nodes
 MEM_NODE s_fixedMnodesList[5];
 
@@ -78,16 +72,37 @@ static MEM_NODE heapSentinel;
 //
 static MEM_NODE *AllocMemNode(void);
 
+#ifdef DEBUG
+static void MemoryStats() {
+	int usedNodes = 0;
+	int allocedNodes = 0;
+	int lockedNodes = 0;
+	int lockedSize = 0;
+	int totalSize = 0;
+
+	const MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pCur;
+
+	for (pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
+		usedNodes++;
+		totalSize += pCur->size;
+		if (pCur->flags)
+			allocedNodes++;
+		if (pCur->flags & DWM_LOCKED) {
+			lockedNodes++;
+			lockedSize += pCur->size;
+		}
+	}
+
+	printf("%d nodes used, %d alloced, %d locked; %d bytes locked, %d used\n",
+			usedNodes, allocedNodes, lockedNodes, lockedSize, totalSize);
+}
+#endif
 
 /**
  * Initialises the memory manager.
  */
 void MemoryInit() {
-#ifdef DEBUG
-	// clear number of nodes in use
-	numNodes = 0;
-#endif
-
 	// place first node on free list
 	pFreeMemNodes = mnodeList;
 
@@ -153,12 +168,6 @@ static MEM_NODE *AllocMemNode(void) {
 	// wipe out the mnode
 	memset(pMemNode, 0, sizeof(MEM_NODE));
 
-#ifdef DEBUG
-	// one more mnode in use
-	if (++numNodes > maxNodes)
-		maxNodes = numNodes;
-#endif
-
 	// return new mnode
 	return pMemNode;
 }
@@ -171,12 +180,6 @@ void FreeMemNode(MEM_NODE *pMemNode) {
 	// validate mnode pointer
 	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
 
-#ifdef DEBUG
-	// one less mnode in use
-	--numNodes;
-	assert(numNodes >= 0);
-#endif
-
 	// place free list in mnode next
 	pMemNode->pNext = pFreeMemNodes;
 
@@ -188,19 +191,14 @@ void FreeMemNode(MEM_NODE *pMemNode) {
 /**
  * Tries to make space for the specified number of bytes on the specified heap.
  * @param size			Number of bytes to free up
- * @param bDiscard		When set - will discard blocks to fullfill the request
  * @return true if any blocks were discarded, false otherwise
  */
-bool HeapCompact(long size, bool bDiscard) {
+static bool HeapCompact(long size) {
 	const MEM_NODE *pHeap = &heapSentinel;
 	MEM_NODE *pCur, *pOldest;
 	uint32 oldest;		// time of the oldest discardable block
 
 	while (heapSentinel.size < size) {
-
-		if (!bDiscard)
-			// we cannot free enough without discarding blocks
-			return false;
 
 		// find the oldest discardable block
 		oldest = DwGetCurrentTime();
@@ -241,7 +239,7 @@ static MEM_NODE *MemoryAlloc(long size) {
 #endif
 
 	// compact the heap to make up room for 'size' bytes, if necessary
-	if (!HeapCompact(size, true))
+	if (!HeapCompact(size))
 		return 0;
 
 	// success! we may allocate a new node of the right size
@@ -259,9 +257,13 @@ static MEM_NODE *MemoryAlloc(long size) {
 	// Subtract size of new block from total
 	heapSentinel.size -= size;
 
+#ifdef DEBUG
+	MemoryStats();
+#endif
+
 	// Set flags, LRU time and size
 	pNode->flags = DWM_USED;
-	pNode->lruTime = DwGetCurrentTime();
+	pNode->lruTime = DwGetCurrentTime() + 1;
 	pNode->size = size;
 
 	// set mnode at the end of the list
@@ -320,7 +322,7 @@ MEM_NODE *MemoryAllocFixed(long size) {
 			pNode->pPrev = 0;
 			pNode->pBaseAddr = (byte *)malloc(size);
 			pNode->size = size;
-			pNode->lruTime = DwGetCurrentTime();
+			pNode->lruTime = DwGetCurrentTime() + 1;
 			pNode->flags = DWM_USED;
 
 			// Subtract size of new block from total
@@ -351,6 +353,10 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
 		free(pMemNode->pBaseAddr);
 		heapSentinel.size += pMemNode->size;
 
+#ifdef DEBUG
+		MemoryStats();
+#endif
+
 		// mark the node as discarded
 		pMemNode->flags |= DWM_DISCARDED;
 		pMemNode->pBaseAddr = NULL;
@@ -374,8 +380,31 @@ void *MemoryLock(MEM_NODE *pMemNode) {
 	// set the lock flag
 	pMemNode->flags |= DWM_LOCKED;
 
+#ifdef DEBUG
+	MemoryStats();
+#endif
+
 	// return memory objects base address
 	return pMemNode->pBaseAddr;
+}
+
+/**
+ * Unlocks a memory object.
+ * @param pMemNode		Node of the memory object
+ */
+void MemoryUnlock(MEM_NODE *pMemNode) {
+	// make sure memory object is already locked
+	assert(pMemNode->flags & DWM_LOCKED);
+
+	// clear the lock flag
+	pMemNode->flags &= ~DWM_LOCKED;
+
+#ifdef DEBUG
+	MemoryStats();
+#endif
+
+	// update the LRU time
+	pMemNode->lruTime = DwGetCurrentTime();
 }
 
 /**
@@ -422,21 +451,6 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 	}
 
 	assert(pMemNode->pBaseAddr);
-}
-
-/**
- * Unlocks a memory object.
- * @param pMemNode		Node of the memory object
- */
-void MemoryUnlock(MEM_NODE *pMemNode) {
-	// make sure memory object is already locked
-	assert(pMemNode->flags & DWM_LOCKED);
-
-	// clear the lock flag
-	pMemNode->flags &= ~DWM_LOCKED;
-
-	// update the LRU time
-	pMemNode->lruTime = DwGetCurrentTime();
 }
 
 /**

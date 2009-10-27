@@ -66,10 +66,6 @@ void MemoryTouch(MEM_NODE *pMemNode);
 // Dereference a given memory node
 uint8 *MemoryDeref(MEM_NODE *pMemNode);
 
-bool HeapCompact(		// Allocates the specified number of bytes from the specified heap
-	long size,		// number of bytes to free up
-	bool bDiscard);		// when set - will discard blocks to fullfill the request
-
 } // End of namespace Tinsel
 
 #endif

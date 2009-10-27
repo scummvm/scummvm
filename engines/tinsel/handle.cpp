@@ -41,7 +41,7 @@ namespace Tinsel {
 //----------------- EXTERNAL GLOBAL DATA --------------------
 
 #ifdef DEBUG
-bool bLockedScene = 0;
+static bool bLockedScene = 0;
 #endif
 
 
@@ -390,9 +390,6 @@ void LockScene(SCNHANDLE offset) {
 	assert(handle < numHandles);
 
 	pH = handleTable + handle;
-
-	// compact the heap to avoid fragmentation while scene is non-discardable
-	HeapCompact(MAX_INT, false);
 
 	if ((pH->filesize & fPreload) == 0) {
 		// Ensure the scene handle is allocated.
