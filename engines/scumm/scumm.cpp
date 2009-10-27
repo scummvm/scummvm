@@ -1486,8 +1486,20 @@ void ScummEngine_v2::resetScumm() {
 void ScummEngine_v3::resetScumm() {
 	ScummEngine_v4::resetScumm();
 
-	_16BitPalette = (uint16 *)malloc(512);
-	memset(_16BitPalette, 0, 512);
+
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
+
+		// Load tile set and palette for the distaff
+		byte *roomptr = getResourceAddress(rtRoom, 90);
+		assert(roomptr);
+		const byte *palPtr = findResourceData(MKID_BE('CLUT'), roomptr);
+		assert(palPtr - 4);
+		setPCEPaletteFromPtr(palPtr);
+		_gdi->_distaff = true;
+		_gdi->loadTiles(roomptr);
+		_gdi->_distaff = false;
+	}
 
 	delete _savePreparedSavegame;
 	_savePreparedSavegame = NULL;

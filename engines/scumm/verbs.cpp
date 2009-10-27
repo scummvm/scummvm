@@ -1331,8 +1331,8 @@ void ScummEngine::restoreVerbBG(int verb) {
 }
 
 void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
+	VerbSlot *vst = &_verbs[verb];
 	VirtScreen *vs;
-	VerbSlot *vst;
 	bool twobufs;
 	const byte *imptr = 0;
 	int ydiff, xstrip;
@@ -1381,12 +1381,16 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 		imptr = getObjectImage(obim, 1);
 	}
 	assert(imptr);
+
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+		_gdi->_distaff = (vst->verbid != 54);
+	}
+
 	for (i = 0; i < imgw; i++) {
 		tmp = xstrip + i;
 		_gdi->drawBitmap(imptr, vs, tmp, ydiff, imgw * 8, imgh * 8, i, 1, Gdi::dbAllowMaskOr | Gdi::dbObjectMode);
 	}
 
-	vst = &_verbs[verb];
 	vst->curRect.right = vst->curRect.left + imgw * 8;
 	vst->curRect.bottom = vst->curRect.top + imgh * 8;
 	vst->oldRect = vst->curRect;

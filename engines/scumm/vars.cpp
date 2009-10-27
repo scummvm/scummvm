@@ -82,6 +82,10 @@ void ScummEngine::setupScummVars() {
 	VAR_SOUNDCARD = 48;
 	VAR_VIDEOMODE = 49;
 
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+		VAR_MAINMENU_KEY = 50;
+	}
+
 	if (_game.version >= 4) {
 		VAR_SCROLL_SCRIPT = 27;
 		VAR_DEBUGMODE = 39;

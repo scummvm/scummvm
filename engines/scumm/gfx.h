@@ -193,6 +193,9 @@ protected:
 	bool _objectMode;
 
 public:
+	/** Flag which is true when loading objects or titles for distaff, in PCEngine version of Loom. */
+	bool _distaff;
+
 	int _numZBuffer;
 	int _imgBufOffs[8];
 	int32 _numStrips;
@@ -243,6 +246,7 @@ public:
 
 	virtual void init();
 	virtual void roomChanged(byte *roomptr);
+	virtual void loadTiles(byte *roomptr);
 	void setTransparentColor(byte transparentColor) { _transparentColor = transparentColor; }
 
 	void drawBitmap(const byte *ptr, VirtScreen *vs, int x, int y, const int width, const int height,
@@ -310,8 +314,8 @@ protected:
 		int maskIDSize;
 		int numTiles;
 		int numMasks;
-		byte* tiles;
-		byte* masks;
+		byte *roomTiles, *staffTiles;
+		byte *masks;
 	} _PCE;
 
 protected:
@@ -340,6 +344,7 @@ public:
 	GdiPCEngine(ScummEngine *vm);
 	~GdiPCEngine();
 
+	virtual void loadTiles(byte *roomptr);
 	virtual void roomChanged(byte *roomptr);
 };
 

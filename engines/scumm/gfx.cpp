@@ -210,6 +210,7 @@ Gdi::Gdi(ScummEngine *vm) : _vm(vm) {
 	_vertStripNextInc = 0;
 	_zbufferDisabled = false;
 	_objectMode = false;
+	_distaff = false;
 }
 
 Gdi::~Gdi() {
@@ -224,7 +225,8 @@ GdiPCEngine::GdiPCEngine(ScummEngine *vm) : Gdi(vm) {
 }
 
 GdiPCEngine::~GdiPCEngine() {
-	free(_PCE.tiles);
+	free(_PCE.roomTiles);
+	free(_PCE.staffTiles);
 	free(_PCE.masks);
 }
 
@@ -269,6 +271,13 @@ void GdiNES::roomChanged(byte *roomptr) {
 
 void GdiPCEngine::roomChanged(byte *roomptr) {
 	decodePCEngineGfx(roomptr);
+}
+
+void Gdi::loadTiles(byte *roomptr) {
+}
+
+void GdiPCEngine::loadTiles(byte *roomptr) {
+	decodePCEngineTileData(_vm->findResourceData(MKID_BE('TILE'), roomptr));
 }
 
 void GdiV1::roomChanged(byte *roomptr) {
@@ -2801,11 +2810,16 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 
 	readOffsetTable(ptr, &tileOffsets, &_PCE.numTiles);
 	
-	free(_PCE.tiles);
-	_PCE.tiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+	if (_distaff) {
+		free(_PCE.staffTiles);
+		_PCE.staffTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+	} else {
+		free(_PCE.roomTiles);
+		_PCE.roomTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));
+	}
 
 	for (int i = 0; i < _PCE.numTiles; ++i) {
-		tile = &_PCE.tiles[i * 64];
+		tile = (_distaff) ? &_PCE.staffTiles[i * 64] : &_PCE.roomTiles[i * 64];
 		tilePtr = ptr + tileOffsets[i];
 
 		int index = 0;
@@ -2880,7 +2894,7 @@ void GdiPCEngine::drawStripPCEngine(byte *dst, byte *mask, int dstPitch, int str
 
 	for (int y = 0; y < height; y++) {
 		tileIdx = (_objectMode ? _PCE.nametableObj : _PCE.nametable)[stripnr * height + y];
-		tile = &_PCE.tiles[tileIdx * 64];
+		tile = (_distaff) ? &_PCE.staffTiles[tileIdx * 64] : &_PCE.roomTiles[tileIdx * 64];
 		paletteIdx = (_objectMode ? _PCE.colortableObj : _PCE.colortable)[stripnr * height + y];
 		paletteOffset = paletteIdx * 16;
 		for (int row = 0; row < 8; row++) {
