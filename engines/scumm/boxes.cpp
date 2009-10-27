@@ -26,6 +26,7 @@
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
+#include "scumm/scumm_v0.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/util.h"
 
@@ -712,20 +713,19 @@ int ScummEngine::getNextBox(byte from, byte to) {
 	boxm = getBoxMatrixBaseAddr();
 
 	if (_game.version == 0) {
-		// Skip up to the matrix data for box 'from'
-		for (i = 0; i < from; i++) {
-			while (*boxm != 0xFF)
-				boxm++;
-			boxm++;
-		}
+		// calculate shortest paths
+		byte *itineraryMatrix = (byte *)malloc(numOfBoxes * numOfBoxes);
+		calcItineraryMatrix(itineraryMatrix, numOfBoxes);
 
-		// Now search for the entry for box 'to'
-		while (boxm[0] != 0xFF) {
-			if (boxm[0] == to)
-				dest = (int8)boxm[0];
-			boxm++;
-		}
+		dest = to;
+		do {
+			dest = itineraryMatrix[numOfBoxes * from + dest];
+		} while (dest != Actor::kInvalidBox && !areBoxesNeighbours(from, dest));
 
+		if (dest == Actor::kInvalidBox)
+			dest = -1;
+
+		free(itineraryMatrix);
 		return dest;
 	} else if (_game.version <= 2) {
 		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
@@ -932,7 +932,7 @@ static void printMatrix2(byte *matrix, int num) {
 	for (i = 0; i < num; i++) {
 		printf("%2d: ", i);
 		for (j = 0; j < num; j++) {
-			int val = matrix[i * 64 + j];
+			int val = matrix[i * num + j];
 			if (val == Actor::kInvalidBox)
 				printf(" ? ");
 			else
@@ -943,17 +943,18 @@ static void printMatrix2(byte *matrix, int num) {
 }
 #endif
 
-void ScummEngine::createBoxMatrix() {
-	int num, i, j, k;
-	byte *adjacentMatrix, *itineraryMatrix;
+/**
+ * Computes shortest paths and stores them in the itinerary matrix.
+ * Parameter "num" holds the number of rows (= number of columns).
+ */
+void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
+	int i, j, k;
+	byte *adjacentMatrix;
 
-	// The total number of boxes
-	num = getNumBoxes();
-	assert(num <= 64);
+	const uint8 boxSize = (_game.version == 0) ? num : 64;
 
 	// Allocate the adjacent & itinerary matrices
-	adjacentMatrix = (byte *)malloc(64 * 64);
-	itineraryMatrix = (byte *)malloc(64 * 64);
+	adjacentMatrix = (byte *)malloc(boxSize * boxSize);
 
 	// Initialise the adjacent matrix: each box has distance 0 to itself,
 	// and distance 1 to its direct neighbors. Initially, it has distance
@@ -961,14 +962,14 @@ void ScummEngine::createBoxMatrix() {
 	for (i = 0; i < num; i++) {
 		for (j = 0; j < num; j++) {
 			if (i == j) {
-				adjacentMatrix[i * 64 + j] = 0;
-				itineraryMatrix[i * 64 + j] = j;
+				adjacentMatrix[i * boxSize + j] = 0;
+				itineraryMatrix[i * boxSize + j] = j;
 			} else if (areBoxesNeighbours(i, j)) {
-				adjacentMatrix[i * 64 + j] = 1;
-				itineraryMatrix[i * 64 + j] = j;
+				adjacentMatrix[i * boxSize + j] = 1;
+				itineraryMatrix[i * boxSize + j] = j;
 			} else {
-				adjacentMatrix[i * 64 + j] = 255;
-				itineraryMatrix[i * 64 + j] = Actor::kInvalidBox;
+				adjacentMatrix[i * boxSize + j] = 255;
+				itineraryMatrix[i * boxSize + j] = Actor::kInvalidBox;
 			}
 		}
 	}
@@ -984,16 +985,31 @@ void ScummEngine::createBoxMatrix() {
 			for (j = 0; j < num; j++) {
 				if (i == j)
 					continue;
-				byte distIK = adjacentMatrix[64 * i + k];
-				byte distKJ = adjacentMatrix[64 * k + j];
-				if (adjacentMatrix[64 * i + j] > distIK + distKJ) {
-					adjacentMatrix[64 * i + j] = distIK + distKJ;
-					itineraryMatrix[64 * i + j] = itineraryMatrix[64 * i + k];
+				byte distIK = adjacentMatrix[boxSize * i + k];
+				byte distKJ = adjacentMatrix[boxSize * k + j];
+				if (adjacentMatrix[boxSize * i + j] > distIK + distKJ) {
+					adjacentMatrix[boxSize * i + j] = distIK + distKJ;
+					itineraryMatrix[boxSize * i + j] = itineraryMatrix[boxSize * i + k];
 				}
 			}
 		}
 
 	}
+
+	free(adjacentMatrix);
+}
+
+void ScummEngine::createBoxMatrix() {
+	int num, i, j;
+
+	// The total number of boxes
+	num = getNumBoxes();
+
+	const uint8 boxSize = (_game.version == 0) ? num : 64;
+
+	// calculate shortest paths
+	byte *itineraryMatrix = (byte *)malloc(boxSize * boxSize);
+	calcItineraryMatrix(itineraryMatrix, num);
 
 	// "Compress" the distance matrix into the box matrix format used
 	// by the engine. The format is like this:
@@ -1015,10 +1031,10 @@ void ScummEngine::createBoxMatrix() {
 	for (i = 0; i < num; i++) {
 		addToMatrix(0xFF);
 		for (j = 0; j < num; j++) {
-			byte itinerary = itineraryMatrix[64 * i + j];
+			byte itinerary = itineraryMatrix[boxSize * i + j];
 			if (itinerary != Actor::kInvalidBox) {
 				addToMatrix(j);
-				while (j < num - 1 && itinerary == itineraryMatrix[64 * i + (j + 1)])
+				while (j < num - 1 && itinerary == itineraryMatrix[boxSize * i + (j + 1)])
 					j++;
 				addToMatrix(j);
 				addToMatrix(itinerary);
@@ -1035,7 +1051,6 @@ void ScummEngine::createBoxMatrix() {
 	printMatrix(getBoxMatrixBaseAddr(), num);
 #endif
 
-	free(adjacentMatrix);
 	free(itineraryMatrix);
 }
 
@@ -1132,6 +1147,41 @@ bool ScummEngine::areBoxesNeighbours(int box1nr, int box2nr) {
 		box.ur = box.lr;
 		box.lr = box.ll;
 		box.ll = tmp;
+	}
+
+	return false;
+}
+
+bool ScummEngine_v0::areBoxesNeighbours(int box1nr, int box2nr) {
+	int i;
+	const int numOfBoxes = getNumBoxes();
+	const byte *boxm;
+
+	assert(box1nr < numOfBoxes);
+	assert(box2nr < numOfBoxes);
+
+	boxm = getBoxMatrixBaseAddr();
+	// TODO: what are the first bytes for (mostly 0)?
+	boxm += 4;
+
+	// For each box, the matrix contains an arbitrary number
+	// of box indices that are linked with the box (neighbors).
+	// Each list is separated by 0xFF (|).
+	// E.g. "1 | 0 3 | 3 | 1 2" means:
+	//   0 -> 1, 1 -> 0/3, 2 -> 3, 3 -> 1/2
+
+	// Skip up to the matrix data for box 'box1nr'
+	for (i = 0; i < box1nr; i++) {
+		while (*boxm != 0xFF)
+			boxm++;
+		boxm++;
+	}
+
+	// Now search for the entry for box 'box2nr'
+	while (boxm[0] != 0xFF) {
+		if (boxm[0] == box2nr)
+			return true;
+		boxm++;
 	}
 
 	return false;

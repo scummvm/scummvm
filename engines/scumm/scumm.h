@@ -1181,8 +1181,9 @@ protected:
 	void setBoxScaleSlot(int box, int slot);
 	void convertScaleTableToScaleSlot(int slot);
 
+	void calcItineraryMatrix(byte *itineraryMatrix, int num);
 	void createBoxMatrix();
-	bool areBoxesNeighbours(int i, int j);
+	virtual bool areBoxesNeighbours(int i, int j);
 
 	/* String class */
 public:
