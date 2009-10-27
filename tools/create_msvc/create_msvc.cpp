@@ -42,6 +42,10 @@
 
 #ifdef WIN32
 #include <windows.h>
+#else
+#include <sys/param.h>
+#include <sys/stat.h>
+#include <dirent.h>
 #endif
 
 namespace {
@@ -1265,6 +1269,67 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 }
 
 /**
+ * Structure for describing an FSNode. This is a very minimalistic
+ * description, which includes everything we need.
+ * It only contains the name of the node and whether it is a directory
+ * or not.
+ */ 
+struct FSNode {
+	FSNode() : name(), isDirectory(false) {}
+	FSNode(const std::string &n, bool iD) : name(n), isDirectory(iD) {}
+
+	std::string name; ///< Name of the file system node
+	bool isDirectory; ///< Whether it is a directory or not
+};
+
+typedef std::list<FSNode> FileList;
+
+/**
+ * Returns a list of all files and directories in the specified
+ * path.
+ *
+ * @param dir Directory which should be listed.
+ * @return List of all children.
+ */
+FileList listDirectory(const std::string &dir) {
+	FileList result;
+#ifdef WIN32
+	WIN32_FIND_DATA fileInformation;
+	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
+
+	if (fileHandle == INVALID_HANDLE_VALUE)
+		return result;
+
+	do {
+		if (fileInformation.cFileName[0] == '.')
+			continue;
+
+		result.push_back(FSNode(fileInformation.cFileName, (fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0));
+	} while (FindNextFile(fileHandle, &fileInformation) == TRUE);
+
+	CloseHandle(fileHandle);
+#else
+	DIR *dirp = opendir(dir.c_str());
+	struct dirent *dp = NULL;
+
+	if (dirp == NULL)
+		return result;
+
+	while ((dp = readdir(dirp)) != NULL) {
+		if (dp->d_name[0] == '.')
+			continue;
+
+		struct stat st;
+		if (stat((dir + '/' + dp->d_name).c_str(), &st))
+			continue;
+
+		result.push_back(FSNode(dp->d_name, S_ISDIR(st.st_mode)));
+	}
+#endif
+	return result;
+}
+
+/**
  * Scans the specified directory against files, which should be included
  * in the project files. It will not include files present in the exclude list.
  *
@@ -1274,50 +1339,44 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
  * @return Returns a file node for the specific directory.
  */
 FileNode *scanFiles(const std::string &dir, const StringList &includeList, const StringList &excludeList) {
-	WIN32_FIND_DATA fileInformation;
-	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
+	FileList files = listDirectory(dir);
 
-	if (fileHandle == INVALID_HANDLE_VALUE)
+	if (files.empty())
 		return 0;
 
 	FileNode *result = new FileNode(dir);
 	assert(result);
 
-	do {
-		if (fileInformation.cFileName[0] == '.')
-			continue;
-
-		if ((fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
-			const std::string subDirName = dir + '/' + fileInformation.cFileName;
+	for (FileList::const_iterator i = files.begin(); i != files.end(); ++i) {
+		if (i->isDirectory) {
+			const std::string subDirName = dir + '/' + i->name;
 			if (!isInList(subDirName, std::string(), includeList))
 				continue;
 
 			FileNode *subDir = scanFiles(subDirName, includeList, excludeList);
 
 			if (subDir) {
-				subDir->name = fileInformation.cFileName;
+				subDir->name = i->name;
 				result->children.push_back(subDir);
 			}
 			continue;
 		}
 
-		if (isInList(dir, fileInformation.cFileName, excludeList))
+		if (isInList(dir, i->name, excludeList))
 			continue;
 
 		std::string name, ext;
-		splitFilename(fileInformation.cFileName, name, ext);
+		splitFilename(i->name, name, ext);
 
 		if (ext != "h") {
-			if (!isInList(dir, fileInformation.cFileName, includeList))
+			if (!isInList(dir, i->name, includeList))
 				continue;
 		}
 
-		FileNode *child = new FileNode(fileInformation.cFileName);
+		FileNode *child = new FileNode(i->name);
 		assert(child);
 		result->children.push_back(child);
-	} while (FindNextFile(fileHandle, &fileInformation) == TRUE);
-
-	CloseHandle(fileHandle);
+	}
 
 	if (result->children.empty()) {
 		delete result;
