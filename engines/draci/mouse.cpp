@@ -34,7 +34,7 @@ Mouse::Mouse(DraciEngine *vm) {
 	_y = 0;
 	_lButton = false;
 	_rButton = false;
-	_cursorType = kNormalCursor;
+	_cursorType = kUninitializedCursor;
 	_vm = vm;
 }
 
@@ -90,10 +90,13 @@ void Mouse::setPosition(uint16 x, uint16 y) {
 }
 
 void Mouse::setCursorType(CursorType cur) {
+	if (cur == getCursorType()) {
+		return;
+	}
 	_cursorType = cur;
 
 	const BAFile *f;
-	f = _vm->_iconsArchive->getFile(_cursorType);
+	f = _vm->_iconsArchive->getFile(cur);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
@@ -102,8 +105,15 @@ void Mouse::setCursorType(CursorType cur) {
 }
 
 void Mouse::loadItemCursor(int itemID, bool highlighted) {
+	int archiveIndex = 2 * itemID + highlighted;
+	CursorType newCursor = static_cast<CursorType> (kItemCursor + archiveIndex);
+	if (newCursor == getCursorType()) {
+		return;
+	}
+	_cursorType = newCursor;
+
 	const BAFile *f;
-	f = _vm->_itemImagesArchive->getFile(2 * itemID + highlighted);
+	f = _vm->_itemImagesArchive->getFile(archiveIndex);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);

@@ -463,16 +463,11 @@ void Game::updateCursor() {
 	if (_loopStatus == kStatusDialogue)
 		return;
 
+	bool mouseChanged = false;
+
 	// If we are in inventory mode, we do a different kind of updating that handles
 	// inventory items and return early
 	if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
-
-		if (_currentItem == kNoItem) {
-			_vm->_mouse->setCursorType(kNormalCursor);
-		} else {
-			_vm->_mouse->loadItemCursor(_currentItem);
-		}
-
 		if (_itemUnderCursor != kNoItem) {
 			const GameItem *item = &_items[_itemUnderCursor];
 
@@ -482,6 +477,14 @@ void Game::updateCursor() {
 				} else {
 					_vm->_mouse->loadItemCursor(_currentItem, true);
 				}
+				mouseChanged = true;
+			}
+		}
+		if (!mouseChanged) {
+			if (_currentItem == kNoItem) {
+				_vm->_mouse->setCursorType(kNormalCursor);
+			} else {
+				_vm->_mouse->loadItemCursor(_currentItem);
 			}
 		}
 
@@ -498,14 +501,6 @@ void Game::updateCursor() {
 		_oldObjUnderCursor = _objUnderCursor;
 	}
 
-	// Load the appropriate cursor (item image if an item is held or ordinary cursor
-	// if not)
-	if (_currentItem == kNoItem) {
-		_vm->_mouse->setCursorType(kNormalCursor);
-	} else {
-		_vm->_mouse->loadItemCursor(_currentItem);
-	}
-
 	// TODO: Handle main menu
 
 	// If there is no game object under the cursor, try using the room itself
@@ -516,6 +511,7 @@ void Game::updateCursor() {
 			} else {
 				_vm->_mouse->loadItemCursor(_currentItem, true);
 			}
+			mouseChanged = true;
 		}
 	// If there *is* a game object under the cursor, update the cursor image
 	} else {
@@ -531,11 +527,22 @@ void Game::updateCursor() {
 				} else {
 					_vm->_mouse->loadItemCursor(_currentItem, true);
 				}
+				mouseChanged = true;
 			}
 		// If the walking direction *is* set, the game object is a gate, so update
 		// the cursor image to the appropriate arrow.
 		} else {
 			_vm->_mouse->setCursorType((CursorType)obj->_walkDir);
+			mouseChanged = true;
+		}
+	}
+	// Load the appropriate cursor (item image if an item is held or ordinary cursor
+	// if not)
+	if (!mouseChanged) {
+		if (_currentItem == kNoItem) {
+			_vm->_mouse->setCursorType(kNormalCursor);
+		} else {
+			_vm->_mouse->loadItemCursor(_currentItem);
 		}
 	}
 }
