@@ -91,6 +91,11 @@ void displayHelp(const char *exe);
 } // End of anonymous namespace
 
 int main(int argc, char *argv[]) {
+#if !(defined(_WIN32) || defined(WIN32))
+	// Initialize random number generator for UUID creation
+	std::srand(std::time(0));
+#endif
+
 	if (argc < 2) {
 		displayHelp(argv[0]);
 		return -1;
@@ -720,7 +725,6 @@ std::string createUUID() {
 	return result;
 #else
 	unsigned char uuid[16];
-	std::srand(std::time(0));
 
 	for (int i = 0; i < 16; ++i)
 		uuid[i] = (std::rand() / (double)(RAND_MAX)) * 0xFF;
