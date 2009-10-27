@@ -1290,7 +1290,9 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 				continue;
 		}
 
-		result->children.push_back(new FileNode(fileInformation.cFileName));
+		FileNode *child = new FileNode(fileInformation.cFileName);
+		assert(child);
+		result->children.push_back(child);
 	} while (FindNextFile(fileHandle, &fileInformation) == TRUE);
 
 	CloseHandle(fileHandle);
