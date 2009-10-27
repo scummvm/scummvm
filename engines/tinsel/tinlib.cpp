@@ -371,8 +371,7 @@ static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 			break;
 
 		// If ESCAPE is pressed...
-		if (psm->myEscape != GetEscEvents())
-		{
+		if (psm->myEscape != GetEscEvents()) {
 			// Instant completion!
 			Offset(EX_USEXY, psm->x, psm->y);
 			break;
@@ -974,8 +973,7 @@ static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 static void DecScale(int actor, int scale,
 		SCNHANDLE wkl, SCNHANDLE wkr, SCNHANDLE wkf, SCNHANDLE wka,
 		SCNHANDLE stl, SCNHANDLE str, SCNHANDLE stf, SCNHANDLE sta,
-		SCNHANDLE tal, SCNHANDLE tar, SCNHANDLE taf, SCNHANDLE taa)
-{
+		SCNHANDLE tal, SCNHANDLE tar, SCNHANDLE taf, SCNHANDLE taa) {
 	PMOVER pMover = GetMover(actor);
 	assert(pMover);
 

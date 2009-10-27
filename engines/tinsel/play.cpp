@@ -152,8 +152,7 @@ static int RegisterSoundReel(SCNHANDLE hFilm, int column, int actorCol) {
 		if (soundReels[i].hFilm == hFilm && soundReels[i].column == column)
 			break;
 
-		if (!soundReels[i].hFilm)
-		{
+		if (!soundReels[i].hFilm) {
 			soundReels[i].hFilm = hFilm;
 			soundReels[i].column = column;
 			soundReels[i].actorCol = actorCol;
@@ -181,8 +180,7 @@ static void DeRegisterSoundReel(SCNHANDLE hFilm, int column) {
 }
 
 void SaveSoundReels(PSOUNDREELS psr) {
-	for (int i = 0; i < MAX_SOUNDREELS; i++)
-	{
+	for (int i = 0; i < MAX_SOUNDREELS; i++) {
 		if (IsCdPlayHandle(soundReels[i].hFilm))
 			soundReels[i].hFilm = 0;
 	}

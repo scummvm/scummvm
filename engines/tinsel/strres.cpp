@@ -288,13 +288,11 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 		}
 	}
 
-	if (len)
-	{
+	if (len) {
 		// the string exists
 
 		// copy the string to the buffer
-		if (len < bufferMax)
-		{
+		if (len < bufferMax) {
 			memcpy(pBuffer, pText + 1, len);
 
 			// null terminate

@@ -266,10 +266,9 @@ void UpdateClipRect(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pClip) 
 		if (currentObj.leftClip < 0) {
 			// negative - object is not clipped
 			currentObj.leftClip = 0;
-		}
-		else
-		// NOTE: This else statement is disabled in tinsel v1
-		{	// clipped - adjust start position to left of clip rect
+		} else {
+			// NOTE: This else statement is disabled in tinsel v1
+			// clipped - adjust start position to left of clip rect
 			x = pClip->left;
 		}
 

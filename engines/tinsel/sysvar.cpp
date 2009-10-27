@@ -38,9 +38,6 @@ typedef enum { DOS_PC, WIN_PC, APPLE_MAC, SONY_PSX, SEGA_SATURN } platform;
 
 //----------------- GLOBAL GLOBAL DATA --------------------
 
-// To prevent assembler from needing to call SysVar()
-uint8 ghostColour;
-
 extern int NewestSavedGame(void);
 
 //----------------- LOCAL GLOBAL DATA --------------------
@@ -141,10 +138,6 @@ void SetSysVar(int varId, int newValue) {
 
 	default:
 		systemVars[varId] = newValue;
-
-		if (varId == ISV_GHOST_COLOUR) {
-			ghostColour = (uint8)newValue;
-		}
 	}
 }
 
@@ -183,8 +176,6 @@ void SaveSysVars(int *pSv) {
 
 void RestoreSysVars(int *pSv) {
 	memcpy(systemVars, pSv, sizeof(systemVars));
-
-	ghostColour = (uint8)SysVar(ISV_GHOST_COLOUR);
 }
 
 void SetSysString(int number, SCNHANDLE hString) {
@@ -200,16 +191,16 @@ SCNHANDLE SysString(int number) {
 }
 
 /**
- * Gets the no blocking flag. Note that for convenience, the systemVars arrray entry is
- * used even for Tinsel 1, which used a separate boolean variable
+ * Gets the no blocking flag. Note that for convenience, the systemVars array
+ * entry is used even for Tinsel 1, which originally used a separate variable.
  */
 bool GetNoBlocking(void) {
 	return SysVar(ISV_NO_BLOCKING);
 }
 
 /**
- * Sets the no blocking flag. Note that for convenience, the systemVars arrray entry is
- * used even for Tinsel 1, which used a separate boolean variable
+ * Sets the no blocking flag. Note that for convenience, the systemVars array
+ * entry is used even for Tinsel 1, which originally used a separate variable.
  */
 void SetNoBlocking(bool flag) {
 	SetSysVar(ISV_NO_BLOCKING, flag);

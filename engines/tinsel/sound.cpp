@@ -56,8 +56,7 @@ extern LANGUAGE sampleLanguage;
 SoundManager::SoundManager(TinselEngine *vm) :
 	//_vm(vm),	// TODO: Enable this once global _vm var is gone
 	_sampleIndex(0), _sampleIndexLen(0),
-	_soundMode(kVOCMode)
-	{
+	_soundMode(kVOCMode) {
 
 	for (int i = 0; i < kNumChannels; i++)
 		_channels[i].sampleNum = _channels[i].subSample = -1;
@@ -339,8 +338,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 /**
  * Returns FALSE if sample doesn't need playing
  */
-bool SoundManager::offscreenChecks(int x, int &y)
-{
+bool SoundManager::offscreenChecks(int x, int &y) {
 	// No action if no x specification
 	if (x == -1)
 		return true;
