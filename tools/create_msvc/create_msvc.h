@@ -26,7 +26,9 @@
 #ifndef TOOLS_CREATE_MSVC_H
 #define TOOLS_CREATE_MSVC_H
 
+#ifdef WIN32
 #include <windows.h>
+#endif
 
 #include <string>
 #include <list>

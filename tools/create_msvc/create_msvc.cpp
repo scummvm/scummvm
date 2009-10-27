@@ -32,6 +32,7 @@
 #include <stack>
 #include <cctype>
 #include <sstream>
+#include <cstring>
 
 namespace {
 /**
@@ -105,7 +106,7 @@ int main(int argc, char *argv[]) {
 	// Parse command line arguments
 	using std::cout;
 	for (int i = 2; i < argc; ++i) {
-		if (!strcmp(argv[i], "--list-engines")) {
+		if (!std::strcmp(argv[i], "--list-engines")) {
 			cout << " The following enables are available in the ScummVM source destribution\n"
 			        " located at \"" << srcDir << "\":\n";
 
@@ -121,7 +122,7 @@ int main(int argc, char *argv[]) {
 			cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 
 			return 0;
-		} else if (!strcmp(argv[i], "--msvc-version")) {
+		} else if (!std::strcmp(argv[i], "--msvc-version")) {
 			if (i + 1 >= argc) {
 				std::cerr << "ERROR: Missing \"version\" parameter for \"--msvc-version\"!\n";
 				return -1;
@@ -140,7 +141,7 @@ int main(int argc, char *argv[]) {
 				return -1;
 			}
 
-			if (!strcmp(name, "all-engines")) {
+			if (!std::strcmp(name, "all-engines")) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = true;
 			} else if (!setEngineBuildState(name, setup.engines, true)) {
@@ -157,7 +158,7 @@ int main(int argc, char *argv[]) {
 				return -1;
 			}
 
-			if (!strcmp(name, "all-engines")) {
+			if (!std::strcmp(name, "all-engines")) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = false;
 			} else if (!setEngineBuildState(name, setup.engines, false)) {
@@ -167,7 +168,7 @@ int main(int argc, char *argv[]) {
 					return -1;
 				}
 			}
-		} else if (!strcmp(argv[i], "--file-prefix")) {
+		} else if (!std::strcmp(argv[i], "--file-prefix")) {
 			if (i + 1 >= argc) {
 				std::cerr << "ERROR: Missing \"prefix\" parameter for \"--file-prefix\"!\n";
 				return -1;
@@ -176,7 +177,7 @@ int main(int argc, char *argv[]) {
 			setup.filePrefix = unifyPath(argv[++i]);
 			if (setup.filePrefix.at(setup.filePrefix.size() - 1) == '/')
 				setup.filePrefix.erase(setup.filePrefix.size() - 1);
-		} else if (!strcmp(argv[i], "--output-dir")) {
+		} else if (!std::strcmp(argv[i], "--output-dir")) {
 			if (i + 1 >= argc) {
 				std::cerr << "ERROR: Missing \"path\" parameter for \"--output-dirx\"!\n";
 				return -1;
