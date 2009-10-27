@@ -345,12 +345,17 @@ void gfxop_init(GfxState *state, ResourceManager *resMan,
 	state->pic = state->pic_unscaled = NULL;
 	state->pic_nr = -1; // Set background pic number to an invalid value
 	state->tag_mode = 0;
-	state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	state->_dirtyRects.clear();
+	
+	// Jones in the Fast Lane uses up the whole window
+	if (!scumm_stricmp(((SciEngine *)g_engine)->getGameID(), "jones"))
+		state->pic_port_bounds = gfx_rect(0, 0, 320, 200);
+	else
+		state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
 
 	state->driver = new GfxDriver(screen, scaleFactor);
 
-	state->gfxResMan = new GfxResManager(state->driver, resMan, screen, palette);
+	state->gfxResMan = new GfxResManager(state->driver, resMan, screen, palette, toCommonRect(state->pic_port_bounds));
 
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 

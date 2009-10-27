@@ -50,7 +50,8 @@ SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAni
 	_windowsById.resize(1);
 	_windowsById[0] = _wmgrPort;
 
-	int16 offTop = 10;
+	// Jones in the Fast Lane uses up the whole window
+	int16 offTop = !scumm_stricmp(((SciEngine *)g_engine)->getGameID(), "jones") ? 0 : 10;
 
 	_gfx->OpenPort(_wmgrPort);
 	_gfx->SetPort(_wmgrPort);
