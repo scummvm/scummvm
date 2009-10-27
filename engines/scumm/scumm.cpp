@@ -275,6 +275,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
 	_hePalettes = NULL;
 	_hePaletteSlot = 0;
+	_16BitPalette = NULL;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));

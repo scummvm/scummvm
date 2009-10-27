@@ -1275,6 +1275,9 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	//
 	// Save/load palette data
 	//
+	if (_16BitPalette) {
+		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
+	}
 	if (_shadowPaletteSize) {
 		s->saveLoadArrayOf(_shadowPalette, _shadowPaletteSize, 1, sleByte);
 		// _roomPalette didn't show up until V21 save games
