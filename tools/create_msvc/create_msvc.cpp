@@ -40,7 +40,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 #include <windows.h>
 #else
 #include <sys/param.h>
@@ -705,7 +705,7 @@ UUIDMap createUUIDMap(const BuildSetup &setup) {
 }
 
 std::string createUUID() {
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 	UUID uuid;
 	if (UuidCreate(&uuid) != RPC_S_OK)
 		error("UuidCreate failed");
@@ -1293,7 +1293,7 @@ typedef std::list<FSNode> FileList;
  */
 FileList listDirectory(const std::string &dir) {
 	FileList result;
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 	WIN32_FIND_DATA fileInformation;
 	HANDLE fileHandle = FindFirstFile((dir + "/*").c_str(), &fileInformation);
 
