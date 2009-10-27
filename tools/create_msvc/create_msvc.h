@@ -205,4 +205,11 @@ struct BuildSetup {
  */
 void createMSVCProject(const BuildSetup &setup, const int version);
 
+/**
+ * Quits the program with the specified error message.
+ *
+ * @param message The error message to print to stderr.
+ */
+void error(const std::string &message);
+
 #endif

@@ -227,13 +227,7 @@ int main(int argc, char *argv[]) {
 	setup.libraries.push_back("winmm.lib");
 	setup.libraries.push_back("sdl.lib");
 
-	try {
-		createMSVCProject(setup, msvcVersion);
-	} catch (const std::string &error) {
-		std::cerr << "ERROR: " << error << "!" << std::endl;
-	} catch (const std::exception &exp) {
-		std::cerr << "ERROR: " << exp.what() << "!" << std::endl;
-	}
+	createMSVCProject(setup, msvcVersion);
 }
 
 namespace {
@@ -363,7 +357,7 @@ EngineDescList parseConfigure(const std::string &srcDir) {
 			break;
 
 		if (configure.fail())
-			throw std::string("Failed while reading from " + configureFile);
+			error("Failed while reading from " + configureFile);
 
 		EngineDesc desc;
 		if (parseEngine(line, desc))
@@ -709,11 +703,11 @@ UUIDMap createUUIDMap(const BuildSetup &setup) {
 std::string createUUID() {
 	UUID uuid;
 	if (UuidCreate(&uuid) != RPC_S_OK)
-		throw std::string("UuidCreate failed");
+		error("UuidCreate failed");
 
 	unsigned char *string = 0;
 	if (UuidToStringA(&uuid, &string) != RPC_S_OK)
-		throw std::string("UuidToStringA failed");
+		error("UuidToStringA failed");
 
 	std::string result = std::string((char *)string);
 	std::transform(result.begin(), result.end(), result.begin(), toupper);
@@ -724,7 +718,7 @@ std::string createUUID() {
 void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const int version) {
 	UUIDMap::const_iterator svmUUID = uuids.find("scummvm");
 	if (svmUUID == uuids.end())
-		throw std::string("No UUID for \"scummvm\" project created");
+		error("No UUID for \"scummvm\" project created");
 
 	const std::string svmProjectUUID = svmUUID->second;
 	assert(!svmProjectUUID.empty());
@@ -733,7 +727,7 @@ void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const 
 
 	std::ofstream solution((setup.outputDir + '/' + "scummvm.sln").c_str());
 	if (!solution)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "scummvm.sln\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "scummvm.sln\" for writing");
 
 	solution << "Microsoft Visual Studio Solution File, Format Version " << version + 1 << ".00\n";
 	if (version == 9)
@@ -741,7 +735,7 @@ void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const 
 	else if (version == 8)
 		solution << "# Visual Studio 2005\n";
 	else
-		throw std::string("Unsupported version passed to createScummVMSolution");
+		error("Unsupported version passed to createScummVMSolution");
 
 	solution << "Project(\"{" << solutionUUID << "}\") = \"scummvm\", \"scummvm.vcproj\", \"{" << svmProjectUUID << "}\"\n"
 	         << "\tProjectSection(ProjectDependencies) = postProject\n";
@@ -796,7 +790,7 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 	const std::string projectFile = setup.outputDir + '/' + name + ".vcproj";
 	std::ofstream project(projectFile.c_str());
 	if (!project)
-		throw std::string("Could not open \"" + projectFile + "\" for writing");
+		error("Could not open \"" + projectFile + "\" for writing");
 
 	project << "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n"
 	           "<VisualStudioProject\n"
@@ -940,7 +934,7 @@ void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string
 void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
 	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Global.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global.vsprops\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global.vsprops\" for writing");
 
 	std::string defines;
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
@@ -954,7 +948,7 @@ void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Global64.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global64.vsprops\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global64.vsprops\" for writing");
 
 	// HACK: We must disable the "nasm" feature for x64. To achieve that we must duplicate the feature list and
 	// recreate a define list.
@@ -977,7 +971,7 @@ void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
 void createBuildProp(const BuildSetup &setup, const int /*version*/) {
 	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Debug.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug.vsprops\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug.vsprops\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
@@ -1010,7 +1004,7 @@ void createBuildProp(const BuildSetup &setup, const int /*version*/) {
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Debug64.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug64.vsprops\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug64.vsprops\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
@@ -1043,7 +1037,7 @@ void createBuildProp(const BuildSetup &setup, const int /*version*/) {
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Release.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release.vsprops\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release.vsprops\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
@@ -1074,7 +1068,7 @@ void createBuildProp(const BuildSetup &setup, const int /*version*/) {
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Release64.vsprops").c_str());
 	if (!properties)
-		throw std::string("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release64.vsprops\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release64.vsprops\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
@@ -1265,6 +1259,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 		return 0;
 
 	FileNode *result = new FileNode(dir);
+	assert(result);
 
 	do {
 		if (fileInformation.cFileName[0] == '.')
@@ -1426,7 +1421,7 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 	const std::string moduleMkFile = moduleDir + "/module.mk";
 	std::ifstream moduleMk(moduleMkFile.c_str());
 	if (!moduleMk)
-		throw std::string(moduleMkFile + " is not present");
+		error(moduleMkFile + " is not present");
 
 	includeList.push_back(moduleMkFile);
 
@@ -1442,7 +1437,7 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 			break;
 
 		if (moduleMk.fail())
-			throw std::string("Failed while reading from " + moduleMkFile);
+			error("Failed while reading from " + moduleMkFile);
 
 		TokenList tokens = tokenize(line);
 		if (tokens.empty())
@@ -1451,23 +1446,23 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 		TokenList::const_iterator i = tokens.begin();
 		if (*i == "MODULE") {
 			if (hadModule)
-				throw std::string("More than one MODULE definition in " + moduleMkFile);
+				error("More than one MODULE definition in " + moduleMkFile);
 			// Format: "MODULE := path/to/module"
 			if (tokens.size() < 3)
-				throw std::string("Malformed MODULE definition in " + moduleMkFile);
+				error("Malformed MODULE definition in " + moduleMkFile);
 			++i;
 			if (*i != ":=")
-				throw std::string("Malformed MODULE definition in " + moduleMkFile);
+				error("Malformed MODULE definition in " + moduleMkFile);
 			++i;
 
 			std::string moduleRoot = unifyPath(*i);
 			if (moduleDir.compare(moduleDir.size() - moduleRoot.size(), moduleRoot.size(), moduleRoot))
-				throw std::string("MODULE root " + moduleRoot + " does not match base dir " + moduleDir);
+				error("MODULE root " + moduleRoot + " does not match base dir " + moduleDir);
 
 			hadModule = true;
 		} else if (*i == "MODULE_OBJS") {
 			if (tokens.size() < 3)
-				throw std::string("Malformed MODULE_OBJS definition in " + moduleMkFile);
+				error("Malformed MODULE_OBJS definition in " + moduleMkFile);
 			++i;
 
 			// This is not exactly correct, for example an ":=" would usually overwrite
@@ -1477,7 +1472,7 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 			// by this function, thus we can't just clear them on ":=" or "=").
 			// But hopefully our module.mk files will never do such things anyway.
 			if (*i != ":=" && *i != "+=" && *i != "=")
-				throw std::string("Malformed MODULE_OBJS definition in " + moduleMkFile);
+				error("Malformed MODULE_OBJS definition in " + moduleMkFile);
 
 			++i;
 
@@ -1496,7 +1491,7 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 			}
 		} else if (*i == "ifdef") {
 			if (tokens.size() < 2)
-				throw std::string("Malformed ifdef in " + moduleMkFile);
+				error("Malformed ifdef in " + moduleMkFile);
 			++i;
 
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
@@ -1505,7 +1500,7 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 				shouldInclude.push(true);
 		} else if (*i == "ifndef") {
 			if (tokens.size() < 2)
-				throw std::string("Malformed ifndef in " + moduleMkFile);
+				error("Malformed ifndef in " + moduleMkFile);
 			++i;
 
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
@@ -1516,10 +1511,10 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 			shouldInclude.top() = !shouldInclude.top();
 		} else if (*i == "endif") {
 			if (shouldInclude.size() <= 1)
-				throw std::string("endif without ifdef found in " + moduleMkFile);
+				error("endif without ifdef found in " + moduleMkFile);
 			shouldInclude.pop();
 		} else if (*i == "elif") {
-			throw std::string("Unsupported operation 'elif' in " + moduleMkFile);
+			error("Unsupported operation 'elif' in " + moduleMkFile);
 		} else if (*i == "ifeq") {
 			//XXX
 			shouldInclude.push(false);
@@ -1527,6 +1522,12 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 	}
 
 	if (shouldInclude.size() != 1)
-		throw std::string("Malformed file " + moduleMkFile);
+		error("Malformed file " + moduleMkFile);
 }
 } // End of anonymous namespace
+
+void error(const std::string &message) {
+	std::cerr << "ERROR: " << message << "!" << std::endl;
+	std::exit(-1);
+}
+
