@@ -27,12 +27,22 @@
 
 #include <fstream>
 #include <iostream>
-#include <cassert>
 #include <map>
 #include <stack>
+#include <algorithm>
+#include <sstream>
+#include <iomanip>
+
+#include <cassert>
 #include <cctype>
 #include <sstream>
 #include <cstring>
+#include <cstdlib>
+#include <ctime>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 namespace {
 /**
@@ -112,13 +122,8 @@ int main(int argc, char *argv[]) {
 
 			cout << "   state  |       name      |     description\n\n";
 			cout.setf(std::ios_base::left, std::ios_base::adjustfield);
-			for (EngineDescList::const_iterator j = setup.engines.begin(); j != setup.engines.end(); ++j) {
-				cout << ' ' << (j->enable ? " enabled" : "disabled") << " | ";
-				cout.width(15);
-				cout << j->name;
-				cout.width(0);
-				cout << " | " << j->desc << "\n";
-			}
+			for (EngineDescList::const_iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
+				cout << ' ' << (j->enable ? " enabled" : "disabled") << " | " << std::setw(15) << j->name << std::setw(0) << " | " << j->desc << "\n";
 			cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 
 			return 0;
@@ -293,13 +298,8 @@ void displayHelp(const char *exe) {
 	cout << "   state  |       name      |     description\n\n";
 	const FeatureList features = getAllFeatures();
 	cout.setf(std::ios_base::left, std::ios_base::adjustfield);
-	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i) {
-		cout << ' ' << (i->enable ? " enabled" : "disabled") << " | ";
-		cout.width(15);
-		cout << i->name;
-		cout.width(0);
-		cout << " | " << i->description << '\n';
-	}
+	for (FeatureList::const_iterator i = features.begin(); i != features.end(); ++i)
+		cout << ' ' << (i->enable ? " enabled" : "disabled") << " | " << std::setw(15) << i->name << std::setw(0) << " | " << i->description << '\n';
 	cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 }
 
@@ -701,6 +701,7 @@ UUIDMap createUUIDMap(const BuildSetup &setup) {
 }
 
 std::string createUUID() {
+#ifdef WIN32
 	UUID uuid;
 	if (UuidCreate(&uuid) != RPC_S_OK)
 		error("UuidCreate failed");
@@ -713,6 +714,27 @@ std::string createUUID() {
 	std::transform(result.begin(), result.end(), result.begin(), toupper);
 	RpcStringFreeA(&string);
 	return result;
+#else
+	unsigned char uuid[16];
+	std::srand(std::time(0));
+
+	for (int i = 0; i < 16; ++i)
+		uuid[i] = (std::rand() / (double)(RAND_MAX)) * 0xFF;
+
+	uuid[8] &= 0xBF; uuid[8] |= 0x80;
+	uuid[6] &= 0x4F; uuid[6] |= 0x40;
+
+	std::stringstream uuidString;
+	uuidString << std::hex << std::uppercase << std::setw(2) << std::setfill('0');
+	for (int i = 0; i < 16; ++i) {
+		uuidString << (int)uuid[i];
+		if (i == 3 || i == 5 || i == 7 || i == 9) {
+			uuidString << std::setw(0) << '-' << std::setw(2);
+		}
+	}
+
+	return uuidString.str();
+#endif
 }
 
 void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const int version) {
