@@ -1950,7 +1950,8 @@ load_game:
 
 			if (_game.platform == Common::kPlatformMacintosh)
 				var = 105;
-			else if (_game.version == 4)	// 256 color CD version
+			// 256 color CD version and PC engine version
+			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
 				var = 150;
 			else
 				var = 100;
