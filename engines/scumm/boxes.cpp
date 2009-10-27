@@ -613,6 +613,16 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 		box->ll.y = bp->c64.y2;
 		box->lr.x = bp->c64.x2;
 		box->lr.y = bp->c64.y2;
+
+		if (bp->c64.mask & 0x88) {
+			// walkbox for (right/left) corner
+			// TODO: ladders (incl. man-eating plant) have mask 0x8A,
+			// must those walkboxes be adjusted?
+			if (bp->c64.mask & 0x04)
+				box->ur = box->ul;
+			else
+				box->ul = box->ur;
+		}
 	} else if (_game.version <= 2) {
 		box->ul.x = bp->v2.ulx;
 		box->ul.y = bp->v2.uy;

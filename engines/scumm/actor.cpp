@@ -1536,6 +1536,8 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 			bcr->_zbuf = 0;
 		else {
 			bcr->_zbuf = _vm->getMaskFromBox(_walkbox);
+			if (_vm->_game.version == 0)
+				bcr->_zbuf &= 0x03;
 			if (bcr->_zbuf > _vm->_gdi->_numZBuffer-1)
 				bcr->_zbuf = _vm->_gdi->_numZBuffer-1;
 		}
