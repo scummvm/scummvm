@@ -1969,6 +1969,34 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4219382),
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4219382),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
 			"fascination",
 			"CD Version (Censored)",
 			AD_ENTRY1s("disk0.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
