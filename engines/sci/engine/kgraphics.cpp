@@ -497,8 +497,6 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 		int y = (int16)GET_SEL32V(segMan, object, y);
 		int z = (s->_kernel->_selectorCache.z > -1) ? (int16)GET_SEL32V(segMan, object, z) : 0;
 
-		y -= z; // Subtract z offset
-
 		int ystep = (int16)GET_SEL32V(segMan, object, yStep);
 
 		int view = (int16)GET_SEL32V(segMan, object, view);
