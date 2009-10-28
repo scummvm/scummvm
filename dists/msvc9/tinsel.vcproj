@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="tinsel"
-	ProjectGUID="{22AA7760-2C91-11DD-BD0B-0800200C9A66}"
+	ProjectGUID="{914AE00F-53BD-42B3-8C04-A88267553C80}"
 	RootNamespace="tinsel"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
 			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
 		</Configuration>
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\tinsel\actors.cpp" />
@@ -58,6 +63,7 @@
 		<File RelativePath="..\..\engines\tinsel\heapmem.h" />
 		<File RelativePath="..\..\engines\tinsel\mareels.cpp" />
 		<File RelativePath="..\..\engines\tinsel\mareels.h" />
+		<File RelativePath="..\..\engines\tinsel\module.mk" />
 		<File RelativePath="..\..\engines\tinsel\move.cpp" />
 		<File RelativePath="..\..\engines\tinsel\move.h" />
 		<File RelativePath="..\..\engines\tinsel\multiobj.cpp" />

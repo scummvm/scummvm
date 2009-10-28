@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="groovie"
-	ProjectGUID="{2C1EA540-0B09-11DD-BD00-000000000000}"
+	ProjectGUID="{CD5C2698-C165-49C3-8AB4-7BC15254A6AB}"
 	RootNamespace="groovie"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\groovie\cell.cpp" />
@@ -30,6 +33,7 @@
 		<File RelativePath="..\..\engines\groovie\groovie.h" />
 		<File RelativePath="..\..\engines\groovie\lzss.cpp" />
 		<File RelativePath="..\..\engines\groovie\lzss.h" />
+		<File RelativePath="..\..\engines\groovie\module.mk" />
 		<File RelativePath="..\..\engines\groovie\music.cpp" />
 		<File RelativePath="..\..\engines\groovie\music.h" />
 		<File RelativePath="..\..\engines\groovie\player.cpp" />
@@ -39,7 +43,7 @@
 		<File RelativePath="..\..\engines\groovie\roq.cpp" />
 		<File RelativePath="..\..\engines\groovie\roq.h" />
 		<File RelativePath="..\..\engines\groovie\saveload.cpp" />
-		<File RelativePath="..\..\engines\groovie\saveload.h" />		
+		<File RelativePath="..\..\engines\groovie\saveload.h" />
 		<File RelativePath="..\..\engines\groovie\script.cpp" />
 		<File RelativePath="..\..\engines\groovie\script.h" />
 		<File RelativePath="..\..\engines\groovie\vdx.cpp" />

@@ -1,19 +1,22 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="cruise"
-	ProjectGUID="{8863B00B-059A-471E-876D-A955ECEFD0D2}"
+	ProjectGUID="{B47BB568-D15B-46E6-9175-9980CEEAAC5A}"
 	RootNamespace="cruise"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\cruise\actor.cpp" />
@@ -34,6 +37,7 @@
 		<File RelativePath="..\..\engines\cruise\dataLoader.h" />
 		<File RelativePath="..\..\engines\cruise\debugger.cpp" />
 		<File RelativePath="..\..\engines\cruise\debugger.h" />
+		<File RelativePath="..\..\engines\cruise\decompiler.cpp" />
 		<File RelativePath="..\..\engines\cruise\delphine-unpack.cpp" />
 		<File RelativePath="..\..\engines\cruise\detection.cpp" />
 		<File RelativePath="..\..\engines\cruise\font.cpp" />
@@ -48,6 +52,7 @@
 		<File RelativePath="..\..\engines\cruise\mainDraw.h" />
 		<File RelativePath="..\..\engines\cruise\menu.cpp" />
 		<File RelativePath="..\..\engines\cruise\menu.h" />
+		<File RelativePath="..\..\engines\cruise\module.mk" />
 		<File RelativePath="..\..\engines\cruise\mouse.cpp" />
 		<File RelativePath="..\..\engines\cruise\mouse.h" />
 		<File RelativePath="..\..\engines\cruise\object.cpp" />

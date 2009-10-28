@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="agos"
-	ProjectGUID="{E0EC9C72-A33E-49DA-B1DC-BB44B9799BFA}"
+	ProjectGUID="{D75F2EB8-9DAB-4862-9A64-D3CC6FC58592}"
 	RootNamespace="agos"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\agos\agos.cpp" />
@@ -42,6 +45,7 @@
 		<File RelativePath="..\..\engines\agos\midi.cpp" />
 		<File RelativePath="..\..\engines\agos\midi.h" />
 		<File RelativePath="..\..\engines\agos\midiparser_s1d.cpp" />
+		<File RelativePath="..\..\engines\agos\module.mk" />
 		<File RelativePath="..\..\engines\agos\oracle.cpp" />
 		<File RelativePath="..\..\engines\agos\pn.cpp" />
 		<File RelativePath="..\..\engines\agos\res.cpp" />

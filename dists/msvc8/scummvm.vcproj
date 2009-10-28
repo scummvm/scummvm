@@ -3,38 +3,229 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="scummvm"
-	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
+	ProjectGUID="{79F64294-75FE-4DDD-9CCB-16D69692E04E}"
 	RootNamespace="scummvm"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
 			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm.exe"
-				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib $(OutDir)/*.lib"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib winmm.lib sdl.lib"
 			/>
 		</Configuration>
 		<Configuration Name="Release|Win32" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Release.vsprops">
-			<Tool Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm.exe"
-				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib $(OutDir)/*.lib"
+			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm.exe"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib winmm.lib sdl.lib"
+			/>
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm.exe"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib winmm.lib sdl.lib"
+			/>
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="1" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool	Name="VCLinkerTool" OutputFile="$(OutDir)/scummvm.exe"
+				AdditionalDependencies=" zlib.lib libmad.lib libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib winmm.lib sdl.lib"
 			/>
 		</Configuration>
 	</Configurations>
 	<Files>
+		<Filter	Name="backends">
+			<Filter	Name="events">
+				<Filter	Name="default">
+					<File RelativePath="..\..\backends\events\default\default-events.cpp" />
+					<File RelativePath="..\..\backends\events\default\default-events.h" />
+				</Filter>
+			</Filter>
+			<Filter	Name="fs">
+				<Filter	Name="amigaos4">
+					<File RelativePath="..\..\backends\fs\amigaos4\amigaos4-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\amigaos4\amigaos4-fs-factory.h" />
+				</Filter>
+				<Filter	Name="ds">
+					<File RelativePath="..\..\backends\fs\ds\ds-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\ds\ds-fs-factory.h" />
+					<File RelativePath="..\..\backends\fs\ds\ds-fs.h" />
+				</Filter>
+				<Filter	Name="palmos">
+					<File RelativePath="..\..\backends\fs\palmos\palmos-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\palmos\palmos-fs-factory.h" />
+				</Filter>
+				<Filter	Name="posix">
+					<File RelativePath="..\..\backends\fs\posix\posix-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\posix\posix-fs-factory.h" />
+					<File RelativePath="..\..\backends\fs\posix\posix-fs.h" />
+				</Filter>
+				<Filter	Name="ps2">
+					<File RelativePath="..\..\backends\fs\ps2\ps2-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\ps2\ps2-fs-factory.h" />
+				</Filter>
+				<Filter	Name="psp">
+					<File RelativePath="..\..\backends\fs\psp\psp-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\psp\psp-fs-factory.h" />
+					<File RelativePath="..\..\backends\fs\psp\psp-stream.cpp" />
+					<File RelativePath="..\..\backends\fs\psp\psp-stream.h" />
+				</Filter>
+				<Filter	Name="symbian">
+					<File RelativePath="..\..\backends\fs\symbian\symbian-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\symbian\symbian-fs-factory.h" />
+					<File RelativePath="..\..\backends\fs\symbian\symbianstream.h" />
+				</Filter>
+				<Filter	Name="wii">
+					<File RelativePath="..\..\backends\fs\wii\wii-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\wii\wii-fs-factory.h" />
+				</Filter>
+				<Filter	Name="windows">
+					<File RelativePath="..\..\backends\fs\windows\windows-fs-factory.cpp" />
+					<File RelativePath="..\..\backends\fs\windows\windows-fs-factory.h" />
+				</Filter>
+				<File RelativePath="..\..\backends\fs\abstract-fs.cpp" />
+				<File RelativePath="..\..\backends\fs\abstract-fs.h" />
+				<File RelativePath="..\..\backends\fs\fs-factory.h" />
+				<File RelativePath="..\..\backends\fs\stdiostream.cpp" />
+				<File RelativePath="..\..\backends\fs\stdiostream.h" />
+			</Filter>
+			<Filter	Name="keymapper">
+				<File RelativePath="..\..\backends\keymapper\action.cpp" />
+				<File RelativePath="..\..\backends\keymapper\action.h" />
+				<File RelativePath="..\..\backends\keymapper\hardware-key.h" />
+				<File RelativePath="..\..\backends\keymapper\keymap.cpp" />
+				<File RelativePath="..\..\backends\keymapper\keymap.h" />
+				<File RelativePath="..\..\backends\keymapper\keymapper.cpp" />
+				<File RelativePath="..\..\backends\keymapper\keymapper.h" />
+				<File RelativePath="..\..\backends\keymapper\remap-dialog.cpp" />
+				<File RelativePath="..\..\backends\keymapper\remap-dialog.h" />
+				<File RelativePath="..\..\backends\keymapper\types.h" />
+			</Filter>
+			<Filter	Name="midi">
+				<File RelativePath="..\..\backends\midi\alsa.cpp" />
+				<File RelativePath="..\..\backends\midi\camd.cpp" />
+				<File RelativePath="..\..\backends\midi\coreaudio.cpp" />
+				<File RelativePath="..\..\backends\midi\coremidi.cpp" />
+				<File RelativePath="..\..\backends\midi\dmedia.cpp" />
+				<File RelativePath="..\..\backends\midi\seq.cpp" />
+				<File RelativePath="..\..\backends\midi\stmidi.cpp" />
+				<File RelativePath="..\..\backends\midi\timidity.cpp" />
+				<File RelativePath="..\..\backends\midi\windows.cpp" />
+			</Filter>
+			<Filter	Name="platform">
+				<Filter	Name="sdl">
+					<File RelativePath="..\..\backends\platform\sdl\events.cpp" />
+					<File RelativePath="..\..\backends\platform\sdl\graphics.cpp" />
+					<File RelativePath="..\..\backends\platform\sdl\hardwarekeys.cpp" />
+					<File RelativePath="..\..\backends\platform\sdl\main.cpp">
+						<FileConfiguration Name="Debug|Win32">
+							<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\backends_platform_sdl_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\backends_platform_sdl_$(InputName).xdc" />
+						</FileConfiguration>
+						<FileConfiguration Name="Release|Win32">
+							<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\backends_platform_sdl_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\backends_platform_sdl_$(InputName).xdc" />
+						</FileConfiguration>
+						<FileConfiguration Name="Debug|x64">
+							<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\backends_platform_sdl_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\backends_platform_sdl_$(InputName).xdc" />
+						</FileConfiguration>
+						<FileConfiguration Name="Release|x64">
+							<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\backends_platform_sdl_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\backends_platform_sdl_$(InputName).xdc" />
+						</FileConfiguration>
+					</File>
+					<File RelativePath="..\..\backends\platform\sdl\module.mk" />
+					<File RelativePath="..\..\backends\platform\sdl\sdl.cpp" />
+					<File RelativePath="..\..\backends\platform\sdl\sdl.h" />
+				</Filter>
+			</Filter>
+			<Filter	Name="plugins">
+				<Filter	Name="dc">
+					<File RelativePath="..\..\backends\plugins\dc\dc-provider.cpp" />
+					<File RelativePath="..\..\backends\plugins\dc\dc-provider.h" />
+				</Filter>
+				<Filter	Name="posix">
+					<File RelativePath="..\..\backends\plugins\posix\posix-provider.cpp" />
+					<File RelativePath="..\..\backends\plugins\posix\posix-provider.h" />
+				</Filter>
+				<Filter	Name="psp">
+					<File RelativePath="..\..\backends\plugins\psp\psp-provider.cpp" />
+					<File RelativePath="..\..\backends\plugins\psp\psp-provider.h" />
+				</Filter>
+				<Filter	Name="sdl">
+					<File RelativePath="..\..\backends\plugins\sdl\sdl-provider.cpp" />
+					<File RelativePath="..\..\backends\plugins\sdl\sdl-provider.h" />
+				</Filter>
+				<Filter	Name="win32">
+					<File RelativePath="..\..\backends\plugins\win32\win32-provider.cpp" />
+					<File RelativePath="..\..\backends\plugins\win32\win32-provider.h" />
+				</Filter>
+				<File RelativePath="..\..\backends\plugins\dynamic-plugin.h" />
+			</Filter>
+			<Filter	Name="saves">
+				<Filter	Name="default">
+					<File RelativePath="..\..\backends\saves\default\default-saves.cpp" />
+					<File RelativePath="..\..\backends\saves\default\default-saves.h" />
+				</Filter>
+				<Filter	Name="posix">
+					<File RelativePath="..\..\backends\saves\posix\posix-saves.cpp" />
+					<File RelativePath="..\..\backends\saves\posix\posix-saves.h" />
+				</Filter>
+				<Filter	Name="psp">
+					<File RelativePath="..\..\backends\saves\psp\psp-saves.cpp" />
+					<File RelativePath="..\..\backends\saves\psp\psp-saves.h" />
+				</Filter>
+				<File RelativePath="..\..\backends\saves\savefile.cpp" />
+			</Filter>
+			<Filter	Name="timer">
+				<Filter	Name="default">
+					<File RelativePath="..\..\backends\timer\default\default-timer.cpp" />
+					<File RelativePath="..\..\backends\timer\default\default-timer.h" />
+				</Filter>
+			</Filter>
+			<Filter	Name="vkeybd">
+				<File RelativePath="..\..\backends\vkeybd\image-map.cpp" />
+				<File RelativePath="..\..\backends\vkeybd\image-map.h" />
+				<File RelativePath="..\..\backends\vkeybd\keycode-descriptions.h" />
+				<File RelativePath="..\..\backends\vkeybd\polygon.cpp" />
+				<File RelativePath="..\..\backends\vkeybd\polygon.h" />
+				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.cpp" />
+				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.h" />
+				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.cpp" />
+				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.h" />
+				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard.cpp" />
+				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard.h" />
+			</Filter>
+			<File RelativePath="..\..\backends\base-backend.cpp" />
+			<File RelativePath="..\..\backends\base-backend.h" />
+			<File RelativePath="..\..\backends\module.mk" />
+		</Filter>
 		<Filter	Name="base">
 			<File RelativePath="..\..\base\commandLine.cpp" />
 			<File RelativePath="..\..\base\commandLine.h" />
 			<File RelativePath="..\..\base\internal_version.h" />
-			<File RelativePath="..\..\base\main.cpp" />
+			<File RelativePath="..\..\base\main.cpp">
+				<FileConfiguration Name="Debug|Win32">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\base_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\base_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\base_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\base_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Debug|x64">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\base_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\base_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Release|x64">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\base_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\base_$(InputName).xdc" />
+				</FileConfiguration>
+			</File>
 			<File RelativePath="..\..\base\main.h" />
+			<File RelativePath="..\..\base\module.mk" />
 			<File RelativePath="..\..\base\plugins.cpp" />
 			<File RelativePath="..\..\base\plugins.h" />
 			<File RelativePath="..\..\base\version.cpp" />
 			<File RelativePath="..\..\base\version.h" />
 		</Filter>
 		<Filter	Name="common">
+			<File RelativePath="..\..\common\EventDispatcher.cpp" />
+			<File RelativePath="..\..\common\EventRecorder.cpp" />
+			<File RelativePath="..\..\common\EventRecorder.h" />
 			<File RelativePath="..\..\common\algorithm.h" />
 			<File RelativePath="..\..\common\archive.cpp" />
 			<File RelativePath="..\..\common\archive.h" />
@@ -47,9 +238,6 @@
 			<File RelativePath="..\..\common\debug.h" />
 			<File RelativePath="..\..\common\endian.h" />
 			<File RelativePath="..\..\common\error.h" />
-			<File RelativePath="..\..\common\EventDispatcher.cpp" />
-			<File RelativePath="..\..\common\EventRecorder.cpp" />
-			<File RelativePath="..\..\common\EventRecorder.h" />
 			<File RelativePath="..\..\common\events.h" />
 			<File RelativePath="..\..\common\file.cpp" />
 			<File RelativePath="..\..\common\file.h" />
@@ -68,6 +256,7 @@
 			<File RelativePath="..\..\common\md5.h" />
 			<File RelativePath="..\..\common\memorypool.cpp" />
 			<File RelativePath="..\..\common\memorypool.h" />
+			<File RelativePath="..\..\common\module.mk" />
 			<File RelativePath="..\..\common\mutex.cpp" />
 			<File RelativePath="..\..\common\mutex.h" />
 			<File RelativePath="..\..\common\noncopyable.h" />
@@ -99,7 +288,237 @@
 			<File RelativePath="..\..\common\zlib.cpp" />
 			<File RelativePath="..\..\common\zlib.h" />
 		</Filter>
+		<Filter	Name="dists">
+			<File RelativePath="..\..\dists\scummvm.rc" />
+		</Filter>
+		<Filter	Name="engines">
+			<File RelativePath="..\..\engines\advancedDetector.cpp" />
+			<File RelativePath="..\..\engines\advancedDetector.h" />
+			<File RelativePath="..\..\engines\dialogs.cpp" />
+			<File RelativePath="..\..\engines\dialogs.h" />
+			<File RelativePath="..\..\engines\engine.cpp" />
+			<File RelativePath="..\..\engines\engine.h" />
+			<File RelativePath="..\..\engines\game.cpp" />
+			<File RelativePath="..\..\engines\game.h" />
+			<File RelativePath="..\..\engines\metaengine.h" />
+			<File RelativePath="..\..\engines\module.mk" />
+		</Filter>
+		<Filter	Name="graphics">
+			<Filter	Name="fonts">
+				<File RelativePath="..\..\graphics\fonts\consolefont.cpp" />
+				<File RelativePath="..\..\graphics\fonts\newfont.cpp" />
+				<File RelativePath="..\..\graphics\fonts\newfont_big.cpp" />
+				<File RelativePath="..\..\graphics\fonts\scummfont.cpp" />
+			</Filter>
+			<Filter	Name="scaler">
+				<File RelativePath="..\..\graphics\scaler\2xsai.cpp" />
+				<File RelativePath="..\..\graphics\scaler\aspect.cpp" />
+				<File RelativePath="..\..\graphics\scaler\hq2x.cpp" />
+				<File RelativePath="..\..\graphics\scaler\hq2x.h" />
+				<File RelativePath="..\..\graphics\scaler\hq2x_i386.asm">
+					<FileConfiguration Name="Debug|Win32">
+						<Tool Name="VCCustomBuildTool" CommandLine="nasm.exe -f win32 -g -o &quot;$(IntDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;" Outputs="$(IntDir)\$(InputName).obj" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|Win32">
+						<Tool Name="VCCustomBuildTool" CommandLine="nasm.exe -f win32 -g -o &quot;$(IntDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;" Outputs="$(IntDir)\$(InputName).obj" />
+					</FileConfiguration>
+				</File>
+				<File RelativePath="..\..\graphics\scaler\hq3x.cpp" />
+				<File RelativePath="..\..\graphics\scaler\hq3x.h" />
+				<File RelativePath="..\..\graphics\scaler\hq3x_i386.asm">
+					<FileConfiguration Name="Debug|Win32">
+						<Tool Name="VCCustomBuildTool" CommandLine="nasm.exe -f win32 -g -o &quot;$(IntDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;" Outputs="$(IntDir)\$(InputName).obj" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|Win32">
+						<Tool Name="VCCustomBuildTool" CommandLine="nasm.exe -f win32 -g -o &quot;$(IntDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;" Outputs="$(IntDir)\$(InputName).obj" />
+					</FileConfiguration>
+				</File>
+				<File RelativePath="..\..\graphics\scaler\intern.h" />
+				<File RelativePath="..\..\graphics\scaler\scale2x.cpp" />
+				<File RelativePath="..\..\graphics\scaler\scale2x.h" />
+				<File RelativePath="..\..\graphics\scaler\scale3x.cpp" />
+				<File RelativePath="..\..\graphics\scaler\scale3x.h" />
+				<File RelativePath="..\..\graphics\scaler\scalebit.cpp" />
+				<File RelativePath="..\..\graphics\scaler\scalebit.h" />
+				<File RelativePath="..\..\graphics\scaler\thumbnail_intern.cpp" />
+			</Filter>
+			<Filter	Name="video">
+				<Filter	Name="codecs">
+					<File RelativePath="..\..\graphics\video\codecs\codec.h" />
+					<File RelativePath="..\..\graphics\video\codecs\msvideo1.cpp" />
+					<File RelativePath="..\..\graphics\video\codecs\msvideo1.h" />
+				</Filter>
+				<Filter	Name="coktelvideo">
+					<File RelativePath="..\..\graphics\video\coktelvideo\coktelvideo.cpp" />
+					<File RelativePath="..\..\graphics\video\coktelvideo\coktelvideo.h" />
+					<File RelativePath="..\..\graphics\video\coktelvideo\indeo3.cpp" />
+					<File RelativePath="..\..\graphics\video\coktelvideo\indeo3.h" />
+				</Filter>
+				<File RelativePath="..\..\graphics\video\avi_decoder.cpp" />
+				<File RelativePath="..\..\graphics\video\avi_decoder.h" />
+				<File RelativePath="..\..\graphics\video\dxa_decoder.cpp" />
+				<File RelativePath="..\..\graphics\video\dxa_decoder.h" />
+				<File RelativePath="..\..\graphics\video\flic_decoder.cpp" />
+				<File RelativePath="..\..\graphics\video\flic_decoder.h" />
+				<File RelativePath="..\..\graphics\video\mpeg_player.cpp" />
+				<File RelativePath="..\..\graphics\video\mpeg_player.h" />
+				<File RelativePath="..\..\graphics\video\smk_decoder.cpp" />
+				<File RelativePath="..\..\graphics\video\smk_decoder.h" />
+				<File RelativePath="..\..\graphics\video\video_player.cpp" />
+				<File RelativePath="..\..\graphics\video\video_player.h" />
+			</Filter>
+			<File RelativePath="..\..\graphics\VectorRenderer.cpp" />
+			<File RelativePath="..\..\graphics\VectorRenderer.h" />
+			<File RelativePath="..\..\graphics\VectorRendererSpec.cpp" />
+			<File RelativePath="..\..\graphics\VectorRendererSpec.h" />
+			<File RelativePath="..\..\graphics\colormasks.h" />
+			<File RelativePath="..\..\graphics\conversion.cpp" />
+			<File RelativePath="..\..\graphics\conversion.h" />
+			<File RelativePath="..\..\graphics\cursorman.cpp" />
+			<File RelativePath="..\..\graphics\cursorman.h" />
+			<File RelativePath="..\..\graphics\dither.cpp" />
+			<File RelativePath="..\..\graphics\dither.h" />
+			<File RelativePath="..\..\graphics\font.cpp" />
+			<File RelativePath="..\..\graphics\font.h" />
+			<File RelativePath="..\..\graphics\fontman.cpp" />
+			<File RelativePath="..\..\graphics\fontman.h" />
+			<File RelativePath="..\..\graphics\iff.cpp" />
+			<File RelativePath="..\..\graphics\iff.h" />
+			<File RelativePath="..\..\graphics\imagedec.cpp" />
+			<File RelativePath="..\..\graphics\imagedec.h" />
+			<File RelativePath="..\..\graphics\jpeg.cpp" />
+			<File RelativePath="..\..\graphics\jpeg.h" />
+			<File RelativePath="..\..\graphics\module.mk" />
+			<File RelativePath="..\..\graphics\pixelformat.h" />
+			<File RelativePath="..\..\graphics\primitives.cpp" />
+			<File RelativePath="..\..\graphics\primitives.h" />
+			<File RelativePath="..\..\graphics\scaler.cpp" />
+			<File RelativePath="..\..\graphics\scaler.h" />
+			<File RelativePath="..\..\graphics\sjis.cpp" />
+			<File RelativePath="..\..\graphics\sjis.h" />
+			<File RelativePath="..\..\graphics\surface.cpp" />
+			<File RelativePath="..\..\graphics\surface.h" />
+			<File RelativePath="..\..\graphics\thumbnail.cpp" />
+			<File RelativePath="..\..\graphics\thumbnail.h" />
+		</Filter>
+		<Filter	Name="gui">
+			<File RelativePath="..\..\gui\Actions.h" />
+			<File RelativePath="..\..\gui\EditTextWidget.cpp" />
+			<File RelativePath="..\..\gui\EditTextWidget.h" />
+			<File RelativePath="..\..\gui\GuiManager.cpp" />
+			<File RelativePath="..\..\gui\GuiManager.h" />
+			<File RelativePath="..\..\gui\Key.h" />
+			<File RelativePath="..\..\gui\KeysDialog.h" />
+			<File RelativePath="..\..\gui\ListWidget.cpp" />
+			<File RelativePath="..\..\gui\ListWidget.h" />
+			<File RelativePath="..\..\gui\PopUpWidget.cpp" />
+			<File RelativePath="..\..\gui\PopUpWidget.h" />
+			<File RelativePath="..\..\gui\ScrollBarWidget.cpp" />
+			<File RelativePath="..\..\gui\ScrollBarWidget.h" />
+			<File RelativePath="..\..\gui\TabWidget.cpp" />
+			<File RelativePath="..\..\gui\TabWidget.h" />
+			<File RelativePath="..\..\gui\ThemeEngine.cpp" />
+			<File RelativePath="..\..\gui\ThemeEngine.h" />
+			<File RelativePath="..\..\gui\ThemeEval.cpp" />
+			<File RelativePath="..\..\gui\ThemeEval.h" />
+			<File RelativePath="..\..\gui\ThemeLayout.cpp" />
+			<File RelativePath="..\..\gui\ThemeLayout.h" />
+			<File RelativePath="..\..\gui\ThemeParser.cpp" />
+			<File RelativePath="..\..\gui\ThemeParser.h" />
+			<File RelativePath="..\..\gui\about.cpp" />
+			<File RelativePath="..\..\gui\about.h" />
+			<File RelativePath="..\..\gui\browser.cpp" />
+			<File RelativePath="..\..\gui\browser.h" />
+			<File RelativePath="..\..\gui\chooser.cpp" />
+			<File RelativePath="..\..\gui\chooser.h" />
+			<File RelativePath="..\..\gui\console.cpp" />
+			<File RelativePath="..\..\gui\console.h" />
+			<File RelativePath="..\..\gui\credits.h" />
+			<File RelativePath="..\..\gui\debugger.cpp" />
+			<File RelativePath="..\..\gui\debugger.h" />
+			<File RelativePath="..\..\gui\dialog.cpp" />
+			<File RelativePath="..\..\gui\dialog.h" />
+			<File RelativePath="..\..\gui\editable.cpp" />
+			<File RelativePath="..\..\gui\editable.h" />
+			<File RelativePath="..\..\gui\launcher.cpp" />
+			<File RelativePath="..\..\gui\launcher.h" />
+			<File RelativePath="..\..\gui\massadd.cpp" />
+			<File RelativePath="..\..\gui\massadd.h" />
+			<File RelativePath="..\..\gui\message.cpp" />
+			<File RelativePath="..\..\gui\message.h" />
+			<File RelativePath="..\..\gui\module.mk" />
+			<File RelativePath="..\..\gui\object.cpp" />
+			<File RelativePath="..\..\gui\object.h" />
+			<File RelativePath="..\..\gui\options.cpp" />
+			<File RelativePath="..\..\gui\options.h" />
+			<File RelativePath="..\..\gui\saveload.cpp" />
+			<File RelativePath="..\..\gui\saveload.h" />
+			<File RelativePath="..\..\gui\themebrowser.cpp" />
+			<File RelativePath="..\..\gui\themebrowser.h" />
+			<File RelativePath="..\..\gui\widget.cpp" />
+			<File RelativePath="..\..\gui\widget.h" />
+		</Filter>
+		<Filter	Name="icons">
+			<File RelativePath="..\..\icons\scummvm.ico" />
+		</Filter>
 		<Filter	Name="sound">
+			<Filter	Name="mods">
+				<File RelativePath="..\..\sound\mods\infogrames.cpp" />
+				<File RelativePath="..\..\sound\mods\infogrames.h" />
+				<File RelativePath="..\..\sound\mods\maxtrax.cpp" />
+				<File RelativePath="..\..\sound\mods\maxtrax.h" />
+				<File RelativePath="..\..\sound\mods\module.cpp" />
+				<File RelativePath="..\..\sound\mods\module.h" />
+				<File RelativePath="..\..\sound\mods\paula.cpp" />
+				<File RelativePath="..\..\sound\mods\paula.h" />
+				<File RelativePath="..\..\sound\mods\protracker.cpp" />
+				<File RelativePath="..\..\sound\mods\protracker.h" />
+				<File RelativePath="..\..\sound\mods\rjp1.cpp" />
+				<File RelativePath="..\..\sound\mods\rjp1.h" />
+				<File RelativePath="..\..\sound\mods\soundfx.cpp" />
+				<File RelativePath="..\..\sound\mods\soundfx.h" />
+				<File RelativePath="..\..\sound\mods\tfmx.cpp" />
+				<File RelativePath="..\..\sound\mods\tfmx.h" />
+			</Filter>
+			<Filter	Name="softsynth">
+				<Filter	Name="mt32">
+					<File RelativePath="..\..\sound\softsynth\mt32\freeverb.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\freeverb.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\i386.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\i386.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\module.mk" />
+					<File RelativePath="..\..\sound\softsynth\mt32\mt32_file.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\mt32_file.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\mt32emu.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\part.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\part.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\partial.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\partial.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\partialManager.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\partialManager.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\structures.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\synth.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\synth.h" />
+					<File RelativePath="..\..\sound\softsynth\mt32\tables.cpp" />
+					<File RelativePath="..\..\sound\softsynth\mt32\tables.h" />
+				</Filter>
+				<Filter	Name="opl">
+					<File RelativePath="..\..\sound\softsynth\opl\dosbox.cpp" />
+					<File RelativePath="..\..\sound\softsynth\opl\dosbox.h" />
+					<File RelativePath="..\..\sound\softsynth\opl\mame.cpp" />
+					<File RelativePath="..\..\sound\softsynth\opl\mame.h" />
+					<File RelativePath="..\..\sound\softsynth\opl\opl_impl.h" />
+					<File RelativePath="..\..\sound\softsynth\opl\opl_inc.h" />
+				</Filter>
+				<File RelativePath="..\..\sound\softsynth\adlib.cpp" />
+				<File RelativePath="..\..\sound\softsynth\emumidi.h" />
+				<File RelativePath="..\..\sound\softsynth\fluidsynth.cpp" />
+				<File RelativePath="..\..\sound\softsynth\mt32.cpp" />
+				<File RelativePath="..\..\sound\softsynth\pcspk.cpp" />
+				<File RelativePath="..\..\sound\softsynth\pcspk.h" />
+				<File RelativePath="..\..\sound\softsynth\ym2612.cpp" />
+				<File RelativePath="..\..\sound\softsynth\ym2612.h" />
+			</Filter>
 			<File RelativePath="..\..\sound\adpcm.cpp" />
 			<File RelativePath="..\..\sound\adpcm.h" />
 			<File RelativePath="..\..\sound\aiff.cpp" />
@@ -123,6 +542,7 @@
 			<File RelativePath="..\..\sound\mixer.cpp" />
 			<File RelativePath="..\..\sound\mixer.h" />
 			<File RelativePath="..\..\sound\mixer_intern.h" />
+			<File RelativePath="..\..\sound\module.mk" />
 			<File RelativePath="..\..\sound\mp3.cpp" />
 			<File RelativePath="..\..\sound\mp3.h" />
 			<File RelativePath="..\..\sound\mpu401.cpp" />
@@ -144,350 +564,13 @@
 			<File RelativePath="..\..\sound\vorbis.h" />
 			<File RelativePath="..\..\sound\wave.cpp" />
 			<File RelativePath="..\..\sound\wave.h" />
-			<Filter Name="softhsynth">
-				<File	RelativePath="..\..\sound\softsynth\adlib.cpp" />
-				<File RelativePath="..\..\sound\softsynth\emumidi.h" />
-				<File RelativePath="..\..\sound\softsynth\fluidsynth.cpp" />
-				<File RelativePath="..\..\sound\softsynth\mt32.cpp" />
-				<File RelativePath="..\..\sound\softsynth\pcspk.cpp" />
-				<File RelativePath="..\..\sound\softsynth\pcspk.h" />
-				<File RelativePath="..\..\sound\softsynth\ym2612.cpp" />
-				<File RelativePath="..\..\sound\softsynth\ym2612.h" />
-				<Filter	Name="mt32">
-					<File RelativePath="..\..\sound\softsynth\mt32\freeverb.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\freeverb.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\i386.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\i386.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\mt32_file.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\mt32_file.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\mt32emu.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\part.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\part.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\partial.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\partial.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\partialManager.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\partialManager.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\structures.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\synth.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\synth.h" />
-					<File RelativePath="..\..\sound\softsynth\mt32\tables.cpp" />
-					<File RelativePath="..\..\sound\softsynth\mt32\tables.h" />
-				</Filter>
-				<Filter Name="opl">
-					<File RelativePath="..\..\sound\softsynth\opl\dosbox.cpp" />
-					<File RelativePath="..\..\sound\softsynth\opl\dosbox.h" />
-					<File RelativePath="..\..\sound\softsynth\opl\mame.cpp" />
-					<File RelativePath="..\..\sound\softsynth\opl\mame.h" />
-					<File RelativePath="..\..\sound\softsynth\opl\opl_impl.h" />
-					<File RelativePath="..\..\sound\softsynth\opl\opl_inc.h" />
-				</Filter>
-			</Filter>
-			<Filter Name="mods">
-				<File RelativePath="..\..\sound\mods\infogrames.cpp" />
-				<File RelativePath="..\..\sound\mods\infogrames.h" />
-				<File RelativePath="..\..\sound\mods\maxtrax.cpp" />
-				<File RelativePath="..\..\sound\mods\maxtrax.h" />
-				<File RelativePath="..\..\sound\mods\module.cpp" />
-				<File RelativePath="..\..\sound\mods\module.h" />
-				<File RelativePath="..\..\sound\mods\paula.cpp" />
-				<File RelativePath="..\..\sound\mods\paula.h" />
-				<File RelativePath="..\..\sound\mods\protracker.cpp" />
-				<File RelativePath="..\..\sound\mods\protracker.h" />
-				<File RelativePath="..\..\sound\mods\rjp1.cpp" />
-				<File RelativePath="..\..\sound\mods\rjp1.h" />
-				<File RelativePath="..\..\sound\mods\soundfx.cpp" />
-				<File RelativePath="..\..\sound\mods\soundfx.h" />
-				<File RelativePath="..\..\sound\mods\tfmx.cpp" />
-				<File RelativePath="..\..\sound\mods\tfmx.h" />
-			</Filter>
 		</Filter>
-		<Filter Name="txt">
-			<File RelativePath="..\..\COPYING" />
-			<File RelativePath="..\..\NEWS" />
-			<File RelativePath="..\..\README" />
-			<File RelativePath="..\..\TODO" />
-		</Filter>
-		<Filter Name="rsc">
-			<File RelativePath="..\..\icons\scummvm.ico" />
-			<File RelativePath="..\..\dists\scummvm.rc" />
-		</Filter>
-		<Filter Name="backends">
-			<File RelativePath="..\..\backends\base-backend.cpp" />
-			<File RelativePath="..\..\backends\base-backend.h" />
-			<Filter Name="sdl">
-				<File RelativePath="..\..\backends\platform\sdl\events.cpp" />
-				<File RelativePath="..\..\backends\platform\sdl\graphics.cpp" />
-				<File RelativePath="..\..\backends\platform\sdl\hardwarekeys.cpp" />
-				<File
-					RelativePath="..\..\backends\platform\sdl\main.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-				</File>
-				<File RelativePath="..\..\backends\platform\sdl\sdl.cpp" />
-				<File RelativePath="..\..\backends\platform\sdl\sdl.h" />
-			</Filter>
-			<Filter Name="fs">
-				<File RelativePath="..\..\backends\fs\abstract-fs.cpp" />
-				<File RelativePath="..\..\backends\fs\abstract-fs.h" />
-				<File RelativePath="..\..\backends\fs\fs-factory.h" />
-				<File RelativePath="..\..\backends\fs\stdiostream.cpp" />
-				<File RelativePath="..\..\backends\fs\stdiostream.h" />
-				<Filter Name="windows">
-					<File RelativePath="..\..\backends\fs\windows\windows-fs-factory.cpp" />
-					<File RelativePath="..\..\backends\fs\windows\windows-fs-factory.h" />
-				</Filter>
-			</Filter>
-			<Filter Name="midi">
-				<File RelativePath="..\..\backends\midi\windows.cpp" />
-			</Filter>
-			<Filter Name="timer">
-				<File RelativePath="..\..\backends\timer\default\default-timer.cpp" />
-				<File RelativePath="..\..\backends\timer\default\default-timer.h" />
-			</Filter>
-			<Filter Name="saves">
-				<File RelativePath="..\..\backends\saves\default\default-saves.cpp" />
-				<File RelativePath="..\..\backends\saves\default\default-saves.h" />
-				<File RelativePath="..\..\backends\saves\savefile.cpp" />
-			</Filter>
-			<Filter Name="events">
-				<Filter Name="default">
-					<File RelativePath="..\..\backends\events\default\default-events.cpp" />
-					<File RelativePath="..\..\backends\events\default\default-events.h" />
-				</Filter>
-			</Filter>
-			<Filter Name="keymapper">
-				<File RelativePath="..\..\backends\keymapper\action.cpp" />
-				<File RelativePath="..\..\backends\keymapper\action.h" />
-				<File RelativePath="..\..\backends\keymapper\hardware-key.h" />
-				<File RelativePath="..\..\backends\keymapper\keymap.cpp" />
-				<File RelativePath="..\..\backends\keymapper\keymap.h" />
-				<File RelativePath="..\..\backends\keymapper\keymapper.cpp" />
-				<File RelativePath="..\..\backends\keymapper\keymapper.h" />
-				<File RelativePath="..\..\backends\keymapper\remap-dialog.cpp" />
-				<File RelativePath="..\..\backends\keymapper\remap-dialog.h" />
-				<File RelativePath="..\..\backends\keymapper\types.h" />
-			</Filter>
-			<Filter Name="vkeybd">
-				<File RelativePath="..\..\backends\vkeybd\image-map.cpp" />
-				<File RelativePath="..\..\backends\vkeybd\image-map.h" />
-				<File RelativePath="..\..\backends\vkeybd\keycode-descriptions.h" />
-				<File RelativePath="..\..\backends\vkeybd\polygon.cpp" />
-				<File RelativePath="..\..\backends\vkeybd\polygon.h" />
-				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.cpp" />
-				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.h" />
-				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.cpp" />
-				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.h" />
-				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard.cpp" />
-				<File RelativePath="..\..\backends\vkeybd\virtual-keyboard.h" />
-			</Filter>
-		</Filter>
-		<Filter Name="gui">
-			<File RelativePath="..\..\gui\about.cpp" />
-			<File RelativePath="..\..\gui\about.h" />
-			<File RelativePath="..\..\gui\browser.cpp" />
-			<File RelativePath="..\..\gui\browser.h" />
-			<File RelativePath="..\..\gui\chooser.cpp" />
-			<File RelativePath="..\..\gui\chooser.h" />
-			<File RelativePath="..\..\gui\console.cpp" />
-			<File RelativePath="..\..\gui\console.h" />
-			<File RelativePath="..\..\gui\credits.h" />
-			<File RelativePath="..\..\gui\debugger.cpp" />
-			<File RelativePath="..\..\gui\debugger.h" />
-			<File RelativePath="..\..\gui\dialog.cpp" />
-			<File RelativePath="..\..\gui\dialog.h" />
-			<File RelativePath="..\..\gui\editable.cpp" />
-			<File RelativePath="..\..\gui\editable.h" />
-			<File RelativePath="..\..\gui\EditTextWidget.cpp" />
-			<File RelativePath="..\..\gui\EditTextWidget.h" />
-			<File RelativePath="..\..\gui\GuiManager.cpp" />
-			<File RelativePath="..\..\gui\GuiManager.h" />
-			<File RelativePath="..\..\gui\Key.cpp" />
-			<File RelativePath="..\..\gui\Key.h" />
-			<File RelativePath="..\..\gui\launcher.cpp" />
-			<File RelativePath="..\..\gui\launcher.h" />
-			<File RelativePath="..\..\gui\ListWidget.cpp" />
-			<File RelativePath="..\..\gui\ListWidget.h" />
-			<File RelativePath="..\..\gui\massadd.cpp" />
-			<File RelativePath="..\..\gui\massadd.h" />
-			<File RelativePath="..\..\gui\message.cpp" />
-			<File RelativePath="..\..\gui\message.h" />
-			<File RelativePath="..\..\gui\object.cpp" />
-			<File RelativePath="..\..\gui\object.h" />
-			<File RelativePath="..\..\gui\options.cpp" />
-			<File RelativePath="..\..\gui\options.h" />
-			<File RelativePath="..\..\gui\PopUpWidget.cpp" />
-			<File RelativePath="..\..\gui\PopUpWidget.h" />
-			<File RelativePath="..\..\gui\saveload.cpp" />
-			<File RelativePath="..\..\gui\saveload.h" />
-			<File RelativePath="..\..\gui\ScrollBarWidget.cpp" />
-			<File RelativePath="..\..\gui\ScrollBarWidget.h" />
-			<File RelativePath="..\..\gui\TabWidget.cpp" />
-			<File RelativePath="..\..\gui\TabWidget.h" />
-			<File RelativePath="..\..\gui\themebrowser.cpp" />
-			<File RelativePath="..\..\gui\themebrowser.h" />
-			<File RelativePath="..\..\gui\ThemeEngine.cpp" />
-			<File RelativePath="..\..\gui\ThemeEngine.h" />
-			<File RelativePath="..\..\gui\ThemeEval.cpp" />
-			<File RelativePath="..\..\gui\ThemeLayout.cpp" />
-			<File RelativePath="..\..\gui\ThemeLayout.h" />
-			<File RelativePath="..\..\gui\ThemeParser.cpp" />
-			<File RelativePath="..\..\gui\ThemeParser.h" />
-			<File RelativePath="..\..\gui\widget.cpp" />
-			<File RelativePath="..\..\gui\widget.h" />
-		</Filter>
-		<Filter Name="graphics">
-			<File RelativePath="..\..\graphics\colormasks.h" />
-			<File RelativePath="..\..\graphics\conversion.cpp" />
-			<File RelativePath="..\..\graphics\conversion.h" />
-			<File RelativePath="..\..\graphics\cursorman.cpp" />
-			<File RelativePath="..\..\graphics\cursorman.h" />
-			<File RelativePath="..\..\graphics\dither.cpp" />
-			<File RelativePath="..\..\graphics\dither.h" />
-			<File RelativePath="..\..\graphics\font.cpp" />
-			<File RelativePath="..\..\graphics\font.h" />
-			<File RelativePath="..\..\graphics\fontman.cpp" />
-			<File RelativePath="..\..\graphics\fontman.h" />
-			<File RelativePath="..\..\graphics\iff.cpp" />
-			<File RelativePath="..\..\graphics\iff.h" />
-			<File RelativePath="..\..\graphics\imagedec.cpp" />
-			<File RelativePath="..\..\graphics\imagedec.h" />
-			<File RelativePath="..\..\graphics\jpeg.cpp" />
-			<File RelativePath="..\..\graphics\jpeg.h" />
-			<File RelativePath="..\..\graphics\pixelformat.h" />
-			<File RelativePath="..\..\graphics\primitives.cpp" />
-			<File RelativePath="..\..\graphics\primitives.h" />
-			<File RelativePath="..\..\graphics\scaler.cpp" />
-			<File RelativePath="..\..\graphics\scaler.h" />
-			<File RelativePath="..\..\graphics\sjis.cpp" />
-			<File RelativePath="..\..\graphics\sjis.h" />
-			<File RelativePath="..\..\graphics\surface.cpp" />
-			<File RelativePath="..\..\graphics\surface.h" />
-			<File RelativePath="..\..\graphics\thumbnail.cpp" />
-			<File RelativePath="..\..\graphics\thumbnail.h" />
-			<File RelativePath="..\..\graphics\VectorRenderer.cpp" />
-			<File RelativePath="..\..\graphics\VectorRenderer.h" />
-			<File RelativePath="..\..\graphics\VectorRendererSpec.cpp" />
-			<File RelativePath="..\..\graphics\VectorRendererSpec.h" />
-			<Filter Name="scaler">
-				<File RelativePath="..\..\graphics\scaler\2xsai.cpp" />
-				<File RelativePath="..\..\graphics\scaler\aspect.cpp" />
-				<File RelativePath="..\..\graphics\scaler\hq2x.cpp" />
-				<File RelativePath="..\..\graphics\scaler\hq2x.h" />
-				<File
-					RelativePath="..\..\graphics\scaler\hq2x_i386.asm"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-							Outputs="$(OutDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe  -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-							Outputs="$(OutDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File RelativePath="..\..\graphics\scaler\hq3x.cpp" />
-				<File RelativePath="..\..\graphics\scaler\hq3x.h" />
-				<File
-					RelativePath="..\..\graphics\scaler\hq3x_i386.asm"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-							Outputs="$(OutDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-							Outputs="$(OutDir)\$(InputName).obj"
-						/>
-					</FileConfiguration>
-				</File>
-				<File RelativePath="..\..\graphics\scaler\intern.h" />
-				<File RelativePath="..\..\graphics\scaler\scale2x.cpp" />
-				<File RelativePath="..\..\graphics\scaler\scale2x.h" />
-				<File RelativePath="..\..\graphics\scaler\scale3x.cpp" />
-				<File RelativePath="..\..\graphics\scaler\scale3x.h" />
-				<File RelativePath="..\..\graphics\scaler\scalebit.cpp" />
-				<File RelativePath="..\..\graphics\scaler\scalebit.h" />
-				<File RelativePath="..\..\graphics\scaler\thumbnail_intern.cpp" />
-			</Filter>
-			<Filter Name="fonts">
-				<File RelativePath="..\..\graphics\fonts\consolefont.cpp" />
-				<File RelativePath="..\..\graphics\fonts\newfont.cpp" />
-				<File RelativePath="..\..\graphics\fonts\newfont_big.cpp" />
-				<File RelativePath="..\..\graphics\fonts\scummfont.cpp" />
-			</Filter>
-			<Filter Name="video">
-				<File RelativePath="..\..\graphics\video\avi_decoder.cpp" />
-				<File RelativePath="..\..\graphics\video\avi_decoder.h" />			
-				<File RelativePath="..\..\graphics\video\dxa_decoder.cpp" />
-				<File RelativePath="..\..\graphics\video\dxa_decoder.h" />
-				<File RelativePath="..\..\graphics\video\flic_decoder.cpp" />
-				<File RelativePath="..\..\graphics\video\flic_decoder.h" />
-				<File RelativePath="..\..\graphics\video\mpeg_player.cpp" />
-				<File RelativePath="..\..\graphics\video\mpeg_player.h" />
-				<File RelativePath="..\..\graphics\video\smk_decoder.cpp" />
-				<File RelativePath="..\..\graphics\video\smk_decoder.h" />
-				<File RelativePath="..\..\graphics\video\video_player.cpp" />
-				<File RelativePath="..\..\graphics\video\video_player.h" />
-				<Filter Name="codecs">
-				<File RelativePath="..\..\graphics\video\codecs\codec.h" />
-				<File RelativePath="..\..\graphics\video\codecs\msvideo1.cpp" />
-				<File RelativePath="..\..\graphics\video\codecs\msvideo1.h" />
-				</Filter>
-				<Filter Name="coktelvideo">
-					<File RelativePath="..\..\graphics\video\coktelvideo\coktelvideo.cpp" />
-					<File RelativePath="..\..\graphics\video\coktelvideo\coktelvideo.h" />
-					<File RelativePath="..\..\graphics\video\coktelvideo\indeo3.cpp" />
-					<File RelativePath="..\..\graphics\video\coktelvideo\indeo3.h" />
-					<File RelativePath="..\..\graphics\video\coktelvideo\indeo3data.h" />
-				</Filter>
-			</Filter>
-		</Filter>
-		<Filter Name="engines">
-			<File RelativePath="..\..\engines\advancedDetector.cpp" />
-			<File RelativePath="..\..\engines\advancedDetector.h" />
-			<File RelativePath="..\..\engines\dialogs.cpp" />
-			<File RelativePath="..\..\engines\dialogs.h" />
-			<File RelativePath="..\..\engines\engine.cpp" />
-			<File RelativePath="..\..\engines\engine.h" />
-			<File RelativePath="..\..\engines\game.cpp" />
-			<File RelativePath="..\..\engines\game.h" />
-			<File RelativePath="..\..\engines\metaengine.h" />
-		</Filter>
+		<File RelativePath="..\..\AUTHORS" />
+		<File RelativePath="..\..\COPYING" />
+		<File RelativePath="..\..\COPYING.LGPL" />
+		<File RelativePath="..\..\COPYRIGHT" />
+		<File RelativePath="..\..\NEWS" />
+		<File RelativePath="..\..\README" />
+		<File RelativePath="..\..\TODO" />
 	</Files>
 </VisualStudioProject>

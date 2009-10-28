@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="sword1"
-	ProjectGUID="{C8AAE83E-198B-4ECA-A877-166827953979}"
+	ProjectGUID="{617CC004-E2AD-4F38-A18F-5547A2FD667D}"
 	RootNamespace="sword1"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\sword1\animation.cpp" />
@@ -32,6 +35,7 @@
 		<File RelativePath="..\..\engines\sword1\memman.h" />
 		<File RelativePath="..\..\engines\sword1\menu.cpp" />
 		<File RelativePath="..\..\engines\sword1\menu.h" />
+		<File RelativePath="..\..\engines\sword1\module.mk" />
 		<File RelativePath="..\..\engines\sword1\mouse.cpp" />
 		<File RelativePath="..\..\engines\sword1\mouse.h" />
 		<File RelativePath="..\..\engines\sword1\music.cpp" />

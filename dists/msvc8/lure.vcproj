@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="lure"
-	ProjectGUID="{1A1CA028-61B5-4A6C-A918-F5D8721AB1AC}"
+	ProjectGUID="{5FF6B8C3-7C0B-4950-A247-8FCF128BB478}"
 	RootNamespace="lure"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\lure\animseq.cpp" />
@@ -41,6 +44,7 @@
 		<File RelativePath="..\..\engines\lure\memory.h" />
 		<File RelativePath="..\..\engines\lure\menu.cpp" />
 		<File RelativePath="..\..\engines\lure\menu.h" />
+		<File RelativePath="..\..\engines\lure\module.mk" />
 		<File RelativePath="..\..\engines\lure\palette.cpp" />
 		<File RelativePath="..\..\engines\lure\palette.h" />
 		<File RelativePath="..\..\engines\lure\res.cpp" />

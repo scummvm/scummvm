@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="saga"
-	ProjectGUID="{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}"
+	ProjectGUID="{B2A5A0E8-FEFE-4FE6-9E1C-69B46743EAE2}"
 	RootNamespace="saga"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\saga\actor.cpp" />
@@ -44,6 +47,7 @@
 		<File RelativePath="..\..\engines\saga\isomap.h" />
 		<File RelativePath="..\..\engines\saga\itedata.cpp" />
 		<File RelativePath="..\..\engines\saga\itedata.h" />
+		<File RelativePath="..\..\engines\saga\module.mk" />
 		<File RelativePath="..\..\engines\saga\music.cpp" />
 		<File RelativePath="..\..\engines\saga\music.h" />
 		<File RelativePath="..\..\engines\saga\objectmap.cpp" />

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="made"
-	ProjectGUID="{E29B5D40-08F7-11DD-BD0B-0800200C9A66}"
+	ProjectGUID="{4016ABF6-7DA7-4D29-A130-477B31CE293F}"
 	RootNamespace="made"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\made\database.cpp" />
@@ -22,6 +25,7 @@
 		<File RelativePath="..\..\engines\made\graphics.h" />
 		<File RelativePath="..\..\engines\made\made.cpp" />
 		<File RelativePath="..\..\engines\made\made.h" />
+		<File RelativePath="..\..\engines\made\module.mk" />
 		<File RelativePath="..\..\engines\made\music.cpp" />
 		<File RelativePath="..\..\engines\made\music.h" />
 		<File RelativePath="..\..\engines\made\pmvplayer.cpp" />

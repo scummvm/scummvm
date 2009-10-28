@@ -3,62 +3,23 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="scumm"
-	ProjectGUID="{B6AFD548-63D2-40CD-A652-E87095AFCBAF}"
+	ProjectGUID="{D222F352-BF3B-4F41-A403-9D8AFCA75266}"
 	RootNamespace="scumm"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
-
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
-		<Filter Name="smush">
-			<File RelativePath="..\..\engines\scumm\smush\channel.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\channel.h" />
-			<File RelativePath="..\..\engines\scumm\smush\chunk_type.h" />
-			<File RelativePath="..\..\engines\scumm\smush\codec1.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\codec37.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\codec37.h" />
-			<File RelativePath="..\..\engines\scumm\smush\codec47.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\codec47.h" />
-			<File RelativePath="..\..\engines\scumm\smush\imuse_channel.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\saud_channel.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\smush_font.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\smush_font.h" />
-			<File RelativePath="..\..\engines\scumm\smush\smush_mixer.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\smush_mixer.h" />
-			<File RelativePath="..\..\engines\scumm\smush\smush_player.cpp" />
-			<File RelativePath="..\..\engines\scumm\smush\smush_player.h" />
-		</Filter>
-		<Filter Name="imuse_digi">
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse.h" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.h" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_codecs.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_music.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_script.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.h" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp" />
-			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h" />
-		</Filter>
-		<Filter Name="insane">
-			<File RelativePath="..\..\engines\scumm\insane\insane.cpp" />
-			<File RelativePath="..\..\engines\scumm\insane\insane.h" />
-			<File RelativePath="..\..\engines\scumm\insane\insane_ben.cpp" />
-			<File RelativePath="..\..\engines\scumm\insane\insane_enemy.cpp" />
-			<File RelativePath="..\..\engines\scumm\insane\insane_iact.cpp" />
-			<File RelativePath="..\..\engines\scumm\insane\insane_scenes.cpp" />
-		</Filter>
-		<Filter Name="he">
+		<Filter	Name="he">
 			<File RelativePath="..\..\engines\scumm\he\animation_he.cpp" />
 			<File RelativePath="..\..\engines\scumm\he\animation_he.h" />
 			<File RelativePath="..\..\engines\scumm\he\cup_player_he.cpp" />
@@ -85,7 +46,7 @@
 			<File RelativePath="..\..\engines\scumm\he\wiz_he.cpp" />
 			<File RelativePath="..\..\engines\scumm\he\wiz_he.h" />
 		</Filter>
-		<Filter Name="imuse">
+		<Filter	Name="imuse">
 			<File RelativePath="..\..\engines\scumm\imuse\imuse.cpp" />
 			<File RelativePath="..\..\engines\scumm\imuse\imuse.h" />
 			<File RelativePath="..\..\engines\scumm\imuse\imuse_internal.h" />
@@ -96,6 +57,46 @@
 			<File RelativePath="..\..\engines\scumm\imuse\sysex.h" />
 			<File RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp" />
 			<File RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp" />
+		</Filter>
+		<Filter	Name="imuse_digi">
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_codecs.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_music.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_script.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h" />
+		</Filter>
+		<Filter	Name="insane">
+			<File RelativePath="..\..\engines\scumm\insane\insane.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane.h" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_ben.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_enemy.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_iact.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_scenes.cpp" />
+		</Filter>
+		<Filter	Name="smush">
+			<File RelativePath="..\..\engines\scumm\smush\channel.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\channel.h" />
+			<File RelativePath="..\..\engines\scumm\smush\codec1.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\codec37.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\codec37.h" />
+			<File RelativePath="..\..\engines\scumm\smush\codec47.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\codec47.h" />
+			<File RelativePath="..\..\engines\scumm\smush\imuse_channel.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\saud_channel.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_font.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_font.h" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_mixer.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_mixer.h" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_player.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_player.h" />
 		</Filter>
 		<File RelativePath="..\..\engines\scumm\actor.cpp" />
 		<File RelativePath="..\..\engines\scumm\actor.h" />
@@ -130,9 +131,9 @@
 		<File RelativePath="..\..\engines\scumm\help.cpp" />
 		<File RelativePath="..\..\engines\scumm\help.h" />
 		<File RelativePath="..\..\engines\scumm\input.cpp" />
-		<File RelativePath="..\..\engines\scumm\intern.h" />
 		<File RelativePath="..\..\engines\scumm\midiparser_eup.cpp" />
 		<File RelativePath="..\..\engines\scumm\midiparser_ro.cpp" />
+		<File RelativePath="..\..\engines\scumm\module.mk" />
 		<File RelativePath="..\..\engines\scumm\music.h" />
 		<File RelativePath="..\..\engines\scumm\nut_renderer.cpp" />
 		<File RelativePath="..\..\engines\scumm\nut_renderer.h" />

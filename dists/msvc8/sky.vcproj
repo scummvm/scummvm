@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="sky"
-	ProjectGUID="{B5527758-2F51-4CCD-AAE1-B0E28654BD6A}"
+	ProjectGUID="{032ED553-EAAD-4009-9D61-A748EFCC5A3A}"
 	RootNamespace="sky"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<Filter	Name="music">
@@ -47,6 +50,7 @@
 		<File RelativePath="..\..\engines\sky\intro.h" />
 		<File RelativePath="..\..\engines\sky\logic.cpp" />
 		<File RelativePath="..\..\engines\sky\logic.h" />
+		<File RelativePath="..\..\engines\sky\module.mk" />
 		<File RelativePath="..\..\engines\sky\mouse.cpp" />
 		<File RelativePath="..\..\engines\sky\mouse.h" />
 		<File RelativePath="..\..\engines\sky\rnc_deco.cpp" />

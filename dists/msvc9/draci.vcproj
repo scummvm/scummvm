@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="draci"
-	ProjectGUID="{185A2D4E-217E-402A-BECC-497D9FE58411}"
+	ProjectGUID="{C033CED3-A290-4826-841E-A045E30993F7}"
 	RootNamespace="draci"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\draci\animation.cpp" />
@@ -27,14 +30,19 @@
 		<File RelativePath="..\..\engines\draci\font.h" />
 		<File RelativePath="..\..\engines\draci\game.cpp" />
 		<File RelativePath="..\..\engines\draci\game.h" />
+		<File RelativePath="..\..\engines\draci\module.mk" />
 		<File RelativePath="..\..\engines\draci\mouse.cpp" />
 		<File RelativePath="..\..\engines\draci\mouse.h" />
 		<File RelativePath="..\..\engines\draci\music.cpp" />
 		<File RelativePath="..\..\engines\draci\music.h" />
+		<File RelativePath="..\..\engines\draci\saveload.cpp" />
+		<File RelativePath="..\..\engines\draci\saveload.h" />
 		<File RelativePath="..\..\engines\draci\screen.cpp" />
 		<File RelativePath="..\..\engines\draci\screen.h" />
 		<File RelativePath="..\..\engines\draci\script.cpp" />
 		<File RelativePath="..\..\engines\draci\script.h" />
+		<File RelativePath="..\..\engines\draci\sound.cpp" />
+		<File RelativePath="..\..\engines\draci\sound.h" />
 		<File RelativePath="..\..\engines\draci\sprite.cpp" />
 		<File RelativePath="..\..\engines\draci\sprite.h" />
 		<File RelativePath="..\..\engines\draci\surface.cpp" />

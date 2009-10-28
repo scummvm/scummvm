@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="agi"
-	ProjectGUID="{F5F57066-CDF4-4F80-B9E7-7F4D21850D6E}"
+	ProjectGUID="{CA26465D-2CAE-4E23-87E0-E1A1B7B1813E}"
 	RootNamespace="agi"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\agi\agi.cpp" />
@@ -39,6 +42,7 @@
 		<File RelativePath="..\..\engines\agi\lzw.h" />
 		<File RelativePath="..\..\engines\agi\menu.cpp" />
 		<File RelativePath="..\..\engines\agi\menu.h" />
+		<File RelativePath="..\..\engines\agi\module.mk" />
 		<File RelativePath="..\..\engines\agi\motion.cpp" />
 		<File RelativePath="..\..\engines\agi\objects.cpp" />
 		<File RelativePath="..\..\engines\agi\op_cmd.cpp" />

@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="tucker"
-	ProjectGUID="{FF064FD0-AF6E-11DD-AD8B-0800200C9A66}"
+	ProjectGUID="{F3534FC6-5F79-4AE9-BAA9-53EE47753830}"
 	RootNamespace="tucker"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\tucker\detection.cpp" />
 		<File RelativePath="..\..\engines\tucker\graphics.cpp" />
 		<File RelativePath="..\..\engines\tucker\graphics.h" />
 		<File RelativePath="..\..\engines\tucker\locations.cpp" />
+		<File RelativePath="..\..\engines\tucker\module.mk" />
 		<File RelativePath="..\..\engines\tucker\resource.cpp" />
 		<File RelativePath="..\..\engines\tucker\saveload.cpp" />
 		<File RelativePath="..\..\engines\tucker\sequences.cpp" />

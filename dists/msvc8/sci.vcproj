@@ -3,19 +3,22 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="sci"
-	ProjectGUID="{53F17B2B-0412-4EC3-A999-ED0537BB5223}"
+	ProjectGUID="{8B427E0E-A83F-4641-A81B-F9AADBB8B9FD}"
 	RootNamespace="sci"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
-		<Filter Name="engine">
+		<Filter	Name="engine">
 			<File RelativePath="..\..\engines\sci\engine\game.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\gc.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\gc.h" />
@@ -36,17 +39,18 @@
 			<File RelativePath="..\..\engines\sci\engine\kscripts.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\ksound.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kstring.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\segment.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\segment.h" />
 			<File RelativePath="..\..\engines\sci\engine\message.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\message.h" />
 			<File RelativePath="..\..\engines\sci\engine\said.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\savegame.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\savegame.h" />
+			<File RelativePath="..\..\engines\sci\engine\script.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\script.h" />
 			<File RelativePath="..\..\engines\sci\engine\scriptdebug.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\seg_manager.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\seg_manager.h" />
+			<File RelativePath="..\..\engines\sci\engine\segment.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\segment.h" />
 			<File RelativePath="..\..\engines\sci\engine\selector.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\state.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\state.h" />
@@ -94,7 +98,7 @@
 			<File RelativePath="..\..\engines\sci\gui\gui_gfx.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_helpers.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_palette.cpp" />
-			<File RelativePath="..\..\engines\sci\gui\gui_palette.h" />	
+			<File RelativePath="..\..\engines\sci\gui\gui_palette.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_picture.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_picture.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_screen.cpp" />
@@ -108,38 +112,17 @@
 			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.h" />
 		</Filter>
-		<Filter Name="gui32">
-			<File RelativePath="..\..\engines\sci\gui32\gui32.cpp" />
-			<File RelativePath="..\..\engines\sci\gui32\gui32.h" />
+		<Filter	Name="gui32">
 			<File RelativePath="..\..\engines\sci\gui32\font.cpp" />
 			<File RelativePath="..\..\engines\sci\gui32\font.h" />
+			<File RelativePath="..\..\engines\sci\gui32\gui32.cpp" />
+			<File RelativePath="..\..\engines\sci\gui32\gui32.h" />
 			<File RelativePath="..\..\engines\sci\gui32\res_font.cpp" />
 			<File RelativePath="..\..\engines\sci\gui32\res_pal.cpp" />
 			<File RelativePath="..\..\engines\sci\gui32\res_pic.cpp" />
 			<File RelativePath="..\..\engines\sci\gui32\res_view.cpp" />
 		</Filter>
 		<Filter	Name="sfx">
-			<File RelativePath="..\..\engines\sci\sfx\core.cpp" />
-			<File RelativePath="..\..\engines\sci\sfx\core.h" />
-			<File RelativePath="..\..\engines\sci\sfx\device.h" />
-			<File RelativePath="..\..\engines\sci\sfx\iterator.cpp" />
-			<File RelativePath="..\..\engines\sci\sfx\iterator.h" />
-			<File RelativePath="..\..\engines\sci\sfx\iterator_internal.h" />
-			<File RelativePath="..\..\engines\sci\sfx\misc.h" />
-			<File RelativePath="..\..\engines\sci\sfx\player.h" />
-			<File RelativePath="..\..\engines\sci\sfx\sci_midi.h" />
-			<File RelativePath="..\..\engines\sci\sfx\sequencer.h" />
-			<File RelativePath="..\..\engines\sci\sfx\sfx_pcm.h" />
-			<File RelativePath="..\..\engines\sci\sfx\softseq.h" />
-			<File RelativePath="..\..\engines\sci\sfx\songlib.cpp" />
-			<File RelativePath="..\..\engines\sci\sfx\songlib.h" />
-			<Filter	Name="softseq">
-				<File RelativePath="..\..\engines\sci\sfx\softseq\adlib.cpp" />
-				<File RelativePath="..\..\engines\sci\sfx\softseq\adlib.h" />
-				<File RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp" />
-				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.cpp" />
-				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h" />
-			</Filter>
 			<Filter	Name="seq">
 				<File RelativePath="..\..\engines\sci\sfx\seq\gm.cpp" />
 				<File RelativePath="..\..\engines\sci\sfx\seq\instrument-map.cpp" />
@@ -147,6 +130,26 @@
 				<File RelativePath="..\..\engines\sci\sfx\seq\map-mt32-to-gm.cpp" />
 				<File RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp" />
 			</Filter>
+			<Filter	Name="softseq">
+				<File RelativePath="..\..\engines\sci\sfx\softseq\adlib.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\adlib.h" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\sci\sfx\core.cpp" />
+			<File RelativePath="..\..\engines\sci\sfx\core.h" />
+			<File RelativePath="..\..\engines\sci\sfx\device.h" />
+			<File RelativePath="..\..\engines\sci\sfx\iterator.cpp" />
+			<File RelativePath="..\..\engines\sci\sfx\iterator.h" />
+			<File RelativePath="..\..\engines\sci\sfx\iterator_internal.h" />
+			<File RelativePath="..\..\engines\sci\sfx\misc.h" />
+			<File RelativePath="..\..\engines\sci\sfx\sci_midi.h" />
+			<File RelativePath="..\..\engines\sci\sfx\sequencer.h" />
+			<File RelativePath="..\..\engines\sci\sfx\sfx_pcm.h" />
+			<File RelativePath="..\..\engines\sci\sfx\softseq.h" />
+			<File RelativePath="..\..\engines\sci\sfx\songlib.cpp" />
+			<File RelativePath="..\..\engines\sci\sfx\songlib.h" />
 		</Filter>
 		<File RelativePath="..\..\engines\sci\console.cpp" />
 		<File RelativePath="..\..\engines\sci\console.h" />
@@ -155,13 +158,13 @@
 		<File RelativePath="..\..\engines\sci\decompressor.h" />
 		<File RelativePath="..\..\engines\sci\detection.cpp" />
 		<File RelativePath="..\..\engines\sci\detection_tables.h" />
+		<File RelativePath="..\..\engines\sci\module.mk" />
 		<File RelativePath="..\..\engines\sci\resource.cpp" />
 		<File RelativePath="..\..\engines\sci\resource.h" />
 		<File RelativePath="..\..\engines\sci\sci.cpp" />
 		<File RelativePath="..\..\engines\sci\sci.h" />
 		<File RelativePath="..\..\engines\sci\seq_decoder.cpp" />
 		<File RelativePath="..\..\engines\sci\seq_decoder.h" />
-		<File RelativePath="..\..\engines\sci\engine\script.cpp" />
 		<File RelativePath="..\..\engines\sci\uinput.h" />
 		<File RelativePath="..\..\engines\sci\vocabulary.cpp" />
 		<File RelativePath="..\..\engines\sci\vocabulary.h" />

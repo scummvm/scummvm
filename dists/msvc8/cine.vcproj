@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="cine"
-	ProjectGUID="{1CA4AC50-5426-433A-8B5E-FFE39568098E}"
+	ProjectGUID="{1D2CFEDE-BF78-4C5B-AC8F-2226B10B885C}"
 	RootNamespace="cine"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\cine\anim.cpp" />
@@ -28,6 +31,7 @@
 		<File RelativePath="..\..\engines\cine\gfx.h" />
 		<File RelativePath="..\..\engines\cine\main_loop.cpp" />
 		<File RelativePath="..\..\engines\cine\main_loop.h" />
+		<File RelativePath="..\..\engines\cine\module.mk" />
 		<File RelativePath="..\..\engines\cine\msg.cpp" />
 		<File RelativePath="..\..\engines\cine\msg.h" />
 		<File RelativePath="..\..\engines\cine\object.cpp" />

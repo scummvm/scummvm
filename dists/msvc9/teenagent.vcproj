@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="teenagent"
-	ProjectGUID="{F88313A3-8D3A-4146-B38C-84CF62D84F5D}"
+	ProjectGUID="{D0F620CC-2420-4827-A883-7BD6E140FC04}"
 	RootNamespace="teenagent"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\teenagent\actor.cpp" />
@@ -28,6 +31,7 @@
 		<File RelativePath="..\..\engines\teenagent\font.h" />
 		<File RelativePath="..\..\engines\teenagent\inventory.cpp" />
 		<File RelativePath="..\..\engines\teenagent\inventory.h" />
+		<File RelativePath="..\..\engines\teenagent\module.mk" />
 		<File RelativePath="..\..\engines\teenagent\music.cpp" />
 		<File RelativePath="..\..\engines\teenagent\music.h" />
 		<File RelativePath="..\..\engines\teenagent\objects.cpp" />

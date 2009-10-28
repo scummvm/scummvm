@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="kyra"
-	ProjectGUID="{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
+	ProjectGUID="{862D40C6-8774-42DF-B89D-B35202B97DCB}"
 	RootNamespace="kyra"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\kyra\animator_hof.cpp" />
@@ -53,6 +56,7 @@
 		<File RelativePath="..\..\engines\kyra\kyra_v2.h" />
 		<File RelativePath="..\..\engines\kyra\lol.cpp" />
 		<File RelativePath="..\..\engines\kyra\lol.h" />
+		<File RelativePath="..\..\engines\kyra\module.mk" />
 		<File RelativePath="..\..\engines\kyra\resource.cpp" />
 		<File RelativePath="..\..\engines\kyra\resource.h" />
 		<File RelativePath="..\..\engines\kyra\resource_intern.cpp" />
@@ -100,6 +104,7 @@
 		<File RelativePath="..\..\engines\kyra\sound.cpp" />
 		<File RelativePath="..\..\engines\kyra\sound.h" />
 		<File RelativePath="..\..\engines\kyra\sound_adlib.cpp" />
+		<File RelativePath="..\..\engines\kyra\sound_adlib.h" />
 		<File RelativePath="..\..\engines\kyra\sound_amiga.cpp" />
 		<File RelativePath="..\..\engines\kyra\sound_digital.cpp" />
 		<File RelativePath="..\..\engines\kyra\sound_intern.h" />

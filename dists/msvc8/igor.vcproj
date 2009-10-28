@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="igor"
-	ProjectGUID="{83945CAF-87A0-4202-8BA4-87A0CB15D78A}"
+	ProjectGUID="{7B04C341-FB5F-41D5-8F56-2F32729CA75C}"
 	RootNamespace="igor"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
 		<Platform Name="Win32" />
+		<Platform Name="x64" />
 	</Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
 	</Configurations>
 	<Files>
-		<Filter Name="parts">
+		<Filter	Name="parts">
 			<File RelativePath="..\..\engines\igor\parts\part_04.cpp" />
 			<File RelativePath="..\..\engines\igor\parts\part_05.cpp" />
 			<File RelativePath="..\..\engines\igor\parts\part_06.cpp" />
@@ -52,6 +55,7 @@
 		<File RelativePath="..\..\engines\igor\menu.cpp" />
 		<File RelativePath="..\..\engines\igor\midi.cpp" />
 		<File RelativePath="..\..\engines\igor\midi.h" />
+		<File RelativePath="..\..\engines\igor\module.mk" />
 		<File RelativePath="..\..\engines\igor\resource_ids.h" />
 		<File RelativePath="..\..\engines\igor\saveload.cpp" />
 		<File RelativePath="..\..\engines\igor\staticres.cpp" />
