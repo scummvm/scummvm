@@ -371,22 +371,13 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, !canBeHere);
 }
 
-// TODO: This should go into SciGui
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = argv[2].toSint16();
-	int16 y = argv[3].toUint16();
-	int16 x = argv[4].toUint16();
+	Common::Point position(argv[4].toUint16(), argv[3].toUint16());
 
-	SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, viewId);
-	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
-	x = CLIP<int>(x, 0, celInfo->width - 1);
-	y = CLIP<int>(y, 0, celInfo->height - 1);
-	byte *celData = tmpView->getBitmap(loopNo, celNo);
-	int result = (celData[y * celInfo->width + x] == celInfo->clearKey);
-	delete tmpView;
-
+	bool result = s->_gui->isItSkip(viewId, loopNo, celNo, position);
 	return make_reg(0, result);
 }
 

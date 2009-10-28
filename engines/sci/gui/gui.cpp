@@ -626,6 +626,17 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	return result;
 }
 
+bool SciGui::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, NULL, NULL, viewId);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
+	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
+	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
+	byte *celData = tmpView->getBitmap(loopNo, celNo);
+	bool result = (celData[position.y * celInfo->width + position.x] == celInfo->clearKey);
+	delete tmpView;
+	return result;
+}
+
 void SciGui::hideCursor() {
 	_cursor->hide();
 }

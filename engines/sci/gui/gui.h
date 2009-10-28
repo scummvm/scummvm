@@ -116,6 +116,7 @@ public:
 	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 	virtual bool canBeHere(reg_t curObject, reg_t listReference);
+	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 
 	virtual void hideCursor();
 	virtual void showCursor();
