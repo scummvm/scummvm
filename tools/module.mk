@@ -18,6 +18,8 @@ TOOLS := \
 
 include $(srcdir)/tools/*/module.mk
 
+.PHONY: $(srcdir)/tools/*/module.mk
+
 # Make sure the 'all' / 'clean' targets build/clean the tools, too
 #all:
 clean: clean-tools

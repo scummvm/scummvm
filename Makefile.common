@@ -134,6 +134,8 @@ endif
 # Include the dependency tracking files.
 -include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
+.PHONY: $(wildcard $(addsuffix /*.d,$(DEPDIRS))) $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES))) \
+	$(srcdir)/$(port_mk) $(srcdir)/rules.mk $(srcdir)/engines/engines.mk
 
 ######################################################################
 # Get the current version information
