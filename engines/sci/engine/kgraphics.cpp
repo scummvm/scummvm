@@ -494,7 +494,7 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 		int x = (int16)GET_SEL32V(s->_segMan, object, x);
 		int y = (int16)GET_SEL32V(s->_segMan, object, y);
 		int z = (s->_kernel->_selectorCache.z > -1) ? (int16)GET_SEL32V(s->_segMan, object, z) : 0;
-		//int ystep = (int16)GET_SEL32V(s->_segMan, object, yStep);
+		int ystep = (int16)GET_SEL32V(s->_segMan, object, yStep);
 		int view = GET_SEL32V(s->_segMan, object, view);
 		int loop = GET_SEL32V(s->_segMan, object, loop);
 		int cel = GET_SEL32V(s->_segMan, object, cel);
@@ -504,7 +504,7 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 		int left = x + celInfo->displaceX - (celInfo->width >> 1);
 		int right = left + celInfo->width;
 		int bottom = y + celInfo->displaceY - z + 1;
-		int top = bottom - celInfo->height;
+		int top = bottom - ystep;
 
 		debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
 				  x, y, celInfo->displaceX, celInfo->displaceY, celInfo->width, celInfo->height, left, top, bottom, right);
