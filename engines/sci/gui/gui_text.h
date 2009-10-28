@@ -32,16 +32,44 @@ namespace Sci {
 #define SCI_TEXT_ALIGNMENT_CENTER 1
 #define SCI_TEXT_ALIGNMENT_LEFT	0
 
+class SciGuiGfx;
 class SciGuiScreen;
 class SciGuiFont;
 class SciGuiText {
 public:
-	SciGuiText(SciGuiScreen *screen);
+	SciGuiText(ResourceManager *_resMan, SciGuiGfx *gfx, SciGuiScreen *screen);
 	~SciGuiText();
+
+	GuiResourceId GetFontId();
+	SciGuiFont *GetFont();
+	void SetFont(GuiResourceId fontId);
+
+	void CodeSetFonts(int argc, reg_t *argv);
+	void CodeSetColors(int argc, reg_t *argv);
+	int16 CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor);
+
+	void ClearChar(int16 chr);
+	void DrawChar(int16 chr);
+	void StdChar(int16 chr);
+
+	int16 GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId);
+	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
+	void DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
+	int16 Size(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth);
+	void Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
+	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
+	void Box(const char *text, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId);
+	void Draw_String(const char *text);
+
+	SciGuiFont *_font;
 
 private:
 	void init(void);
 
+	ResourceManager *_resMan;
+	SciGuiGfx *_gfx;
 	SciGuiScreen *_screen;
 
 	int _codeFontsCount;

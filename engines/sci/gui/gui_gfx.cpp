@@ -36,12 +36,12 @@
 #include "sci/gui/gui_view.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_palette.h"
+#include "sci/gui/gui_text.h"
 
 namespace Sci {
 
 SciGuiGfx::SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
 	: _s(state), _screen(screen), _palette(palette) {
-	init();
 }
 
 SciGuiGfx::~SciGuiGfx() {
@@ -49,12 +49,8 @@ SciGuiGfx::~SciGuiGfx() {
 	delete _menuPort;
 }
 
-void SciGuiGfx::init() {
-	_font = NULL;
-	_textFonts = NULL; _textFontsCount = 0;
-	_textColors = NULL; _textColorsCount = 0;
-
-	_texteditCursorVisible = false;
+void SciGuiGfx::init(SciGuiText *text) {
+	_text = text;
 
 	// _mainPort is not known to windowmanager, that's okay according to sierra sci
 	//  its not even used currently in our engine
@@ -65,7 +61,7 @@ void SciGuiGfx::init() {
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
 	_menuPort = new GuiPort(0xFFFF);
 	OpenPort(_menuPort);
-	SetFont(0);
+	_text->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
 }
@@ -95,32 +91,13 @@ void SciGuiGfx::Move(int16 left, int16 top) {
 	_curPort->curLeft += left;
 }
 
-GuiResourceId SciGuiGfx::GetFontId() {
-	return _curPort->fontId;
-}
-
-SciGuiFont *SciGuiGfx::GetFont() {
-	if ((_font == NULL) || (_font->getResourceId() != _curPort->fontId))
-		_font = new SciGuiFont(_s->resMan, _curPort->fontId);
-
-	return _font;
-}
-
-void SciGuiGfx::SetFont(GuiResourceId fontId) {
-	if ((_font == NULL) || (_font->getResourceId() != fontId))
-		_font = new SciGuiFont(_s->resMan, fontId);
-
-	_curPort->fontId = _font->getResourceId();
-	_curPort->fontHeight = _font->getHeight();
-}
-
 void SciGuiGfx::OpenPort(GuiPort *port) {
 	port->fontId = 0;
 	port->fontHeight = 8;
 
 	GuiPort *tmp = _curPort;
 	_curPort = port;
-	SetFont(port->fontId);
+	_text->SetFont(port->fontId);
 	_curPort = tmp;
 
 	port->top = 0;
@@ -257,331 +234,6 @@ void SciGuiGfx::OffsetLine(Common::Point &start, Common::Point &end) {
 	end.y += _curPort->top;
 }
 
-//-----------------------------
-
-void SciGuiGfx::ClearChar(int16 chr) {
-	if (_curPort->penMode != 1)
-		return;
-	Common::Rect rect;
-	rect.top = _curPort->curTop;
-	rect.bottom = rect.top + _curPort->fontHeight;
-	rect.left = _curPort->curLeft;
-	rect.right = rect.left + GetFont()->getCharWidth(chr);
-	EraseRect(rect);
-}
-
-void SciGuiGfx::DrawChar(int16 chr) {
-	chr = chr & 0xFF;
-	ClearChar(chr);
-	StdChar(chr);
-	_curPort->curLeft += GetFont()->getCharWidth(chr);
-}
-
-void SciGuiGfx::StdChar(int16 chr) {
-#if 0
-	CResFont*res = getResFont();
-	if (res)
-		res->Draw(chr, _curPort->top + _curPort->curTop, _curPort->left
-				+ _curPort->curLeft, _vSeg, 320, _curPort->penClr,
-				_curPort->textFace);
-#endif
-}
-
-void SciGuiGfx::SetTextFonts(int argc, reg_t *argv) {
-	int i;
-
-	if (_textFonts) {
-		delete _textFonts;
-	}
-	_textFontsCount = argc;
-	_textFonts = new GuiResourceId[argc];
-	for (i = 0; i < argc; i++) {
-		_textFonts[i] = (GuiResourceId)argv[i].toUint16();
-	}
-}
-
-void SciGuiGfx::SetTextColors(int argc, reg_t *argv) {
-	int i;
-
-	if (_textColors) {
-		delete _textColors;
-	}
-	_textColorsCount = argc;
-	_textColors = new uint16[argc];
-	for (i = 0; i < argc; i++) {
-		_textColors[i] = argv[i].toUint16();
-	}
-}
-
-// This internal function gets called as soon as a '|' is found in a text
-//  It will process the encountered code and set new font/set color
-//  We only support one-digit codes currently, don't know if multi-digit codes are possible
-//  Returns textcode character count
-int16 SciGuiGfx::TextCodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor) {
-	const char *textCode = text;
-	int16 textCodeSize = 0;
-	char curCode;
-	unsigned char curCodeParm;
-
-	// Find the end of the textcode
-	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) { }
-
-	// possible TextCodes:
-	//  c -> sets textColor to current port pen color
-	//  cX -> sets textColor to _textColors[X-1]
-	curCode = textCode[0];
-	curCodeParm = textCode[1];
-	if (isdigit(curCodeParm)) {
-		curCodeParm -= '0';
-	} else {
-		curCodeParm = 0;
-	}
-	switch (curCode) {
-	case 'c': // set text color
-		if (curCodeParm == 0) {
-			_curPort->penClr = orgPenColor;
-		} else {
-			if (curCodeParm < _textColorsCount) {
-				_curPort->penClr = _textColors[curCodeParm];
-			}
-		}
-		break;
-	case 'f':
-		if (curCodeParm == 0) {
-			SetFont(orgFontId);
-		} else {
-			if (curCodeParm < _textFontsCount) {
-				SetFont(_textFonts[curCodeParm]);
-			}
-		}
-		break;
-	}
-	return textCodeSize;
-}
-
-// return max # of chars to fit maxwidth with full words
-int16 SciGuiGfx::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
-	char curChar;
-	int16 maxChars = 0, curCharCount = 0;
-	uint16 width = 0;
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _curPort->penClr;
-
-	GetFont();
-	if (!_font)
-		return 0;
-
-	while (width <= maxWidth) {
-		curChar = *text++;
-		switch (curChar) {
-		case 0x7C:
-			if (getSciVersion() >= SCI_VERSION_1_1) {
-				curCharCount++;
-				curCharCount += TextCodeProcessing(text, orgFontId, oldPenColor);
-				continue;
-			}
-			break;
-
-		case 0xD:
-			curCharCount++;
-			continue;
-
-		case 0xA:
-			curCharCount++;
-		case 0:
-			SetFont(oldFontId);
-			PenColor(oldPenColor);
-			return curCharCount;
-
-		case ' ':
-			maxChars = curCharCount + 1;
-			break;
-		}
-		width += _font->getCharWidth(curChar);
-		curCharCount++;
-	}
-	SetFont(oldFontId);
-	PenColor(oldPenColor);
-	return maxChars;
-}
-
-void SciGuiGfx::TextWidth(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
-	unsigned char curChar;
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _curPort->penClr;
-
-	textWidth = 0; textHeight = 0;
-
-	GetFont();
-	if (_font) {
-		text += from;
-		while (len--) {
-			curChar = *text++;
-			switch (curChar) {
-			case 0x0A:
-			case 0x0D:
-				textHeight = MAX<int16> (textHeight, _curPort->fontHeight);
-				break;
-			case 0x7C:
-				if (getSciVersion() >= SCI_VERSION_1_1) {
-					len -= TextCodeProcessing(text, orgFontId, 0);
-					break;
-				}
-			default:
-				textHeight = MAX<int16> (textHeight, _curPort->fontHeight);
-				textWidth += _font->getCharWidth(curChar);
-			}
-		}
-	}
-	SetFont(oldFontId);
-	PenColor(oldPenColor);
-	return;
-}
-
-void SciGuiGfx::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
-	TextWidth(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight);
-}
-
-int16 SciGuiGfx::TextSize(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth) {
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _curPort->penClr;
-	int16 charCount;
-	int16 maxTextWidth = 0, textWidth;
-	int16 totalHeight = 0, textHeight;
-
-	if (fontId != -1)
-		SetFont(fontId);
-	rect.top = rect.left = 0;
-
-	if (maxWidth < 0) { // force output as single line
-		StringWidth(str, oldFontId, textWidth, textHeight);
-		rect.bottom = textHeight;
-		rect.right = textWidth;
-	} else {
-		// rect.right=found widest line with RTextWidth and GetLongest
-		// rect.bottom=num. lines * GetPointSize
-		rect.right = (maxWidth ? maxWidth : 192);
-		const char*p = str;
-		while (*p) {
-			//if (*p == 0xD || *p == 0xA) {
-			//	p++;
-			//	continue;
-			//}
-			charCount = GetLongest(p, rect.right, oldFontId);
-			if (charCount == 0)
-				break;
-			TextWidth(p, 0, charCount, oldFontId, textWidth, textHeight);
-			maxTextWidth = MAX(textWidth, maxTextWidth);
-			totalHeight += textHeight;
-			p += charCount;
-		}
-		rect.bottom = totalHeight;
-		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
-	}
-	SetFont(oldFontId);
-	PenColor(oldPenColor);
-	return rect.right;
-}
-
-// returns maximum font height used
-void SciGuiGfx::DrawText(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
-	int16 curChar, charWidth;
-	Common::Rect rect;
-
-	GetFont();
-	if (!_font)
-		return;
-
-	rect.top = _curPort->curTop;
-	rect.bottom = rect.top + _curPort->fontHeight;
-	text += from;
-	while (len--) {
-		curChar = (*text++);
-		switch (curChar) {
-		case 0x0A:
-		case 0x0D:
-		case 0:
-			break;
-		case 0x7C:
-			if (getSciVersion() >= SCI_VERSION_1_1) {
-				len -= TextCodeProcessing(text, orgFontId, orgPenColor);
-				break;
-			}
-		default:
-			charWidth = _font->getCharWidth(curChar);
-			// clear char
-			if (_curPort->penMode == 1) {
-				rect.left = _curPort->curLeft;
-				rect.right = rect.left + charWidth;
-				EraseRect(rect);
-			}
-			// CharStd
-			_font->draw(_screen, curChar, _curPort->top + _curPort->curTop, _curPort->left + _curPort->curLeft, _curPort->penClr, _curPort->textFace);
-			_curPort->curLeft += charWidth;
-		}
-	}
-}
-
-// returns maximum font height used
-void SciGuiGfx::ShowText(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
-	Common::Rect rect;
-
-	rect.top = _curPort->curTop;
-	rect.bottom = rect.top + GetPointSize();
-	rect.left = _curPort->curLeft;
-	DrawText(text, from, len, orgFontId, orgPenColor);
-	rect.right = _curPort->curLeft;
-	BitsShow(rect);
-}
-
-// Draws a text in rect.
-void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId) {
-	int16 textWidth, textHeight, charCount, offset;
-	int16 hline = 0;
-	GuiResourceId orgFontId = GetFontId();
-	int16 orgPenColor = _curPort->penClr;
-
-	if (fontId != -1)
-		SetFont(fontId);
-
-	while (*text) {
-//		if (*text == 0xD || *text == 0xA) {
-//			text++;
-//			continue;
-//		}
-		charCount = GetLongest(text, rect.width(), orgFontId);
-		if (charCount == 0)
-			break;
-		TextWidth(text, 0, charCount, orgFontId, textWidth, textHeight);
-		switch (alignment) {
-		case SCI_TEXT_ALIGNMENT_RIGHT:
-			offset = rect.width() - textWidth;
-			break;
-		case SCI_TEXT_ALIGNMENT_CENTER:
-			offset = (rect.width() - textWidth) / 2;
-			break;
-		case SCI_TEXT_ALIGNMENT_LEFT:
-			offset = 0;
-			break;
-
-		default: // left-aligned
-			warning("Invalid alignment %d used in TextBox()", alignment);
-		}
-		MoveTo(rect.left + offset, rect.top + hline);
-
-		if (bshow) {
-			ShowText(text, 0, charCount, orgFontId, orgPenColor);
-		} else {
-			DrawText(text, 0, charCount, orgFontId, orgPenColor);
-		}
-
-		hline += textHeight;
-		text += charCount;
-	}
-	SetFont(orgFontId);
-	PenColor(orgPenColor);
-}
-
 void SciGuiGfx::BitsShow(const Common::Rect &rect) {
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
 	workerRect.clip(_curPort->rect);
@@ -642,15 +294,6 @@ void SciGuiGfx::BitsFree(GuiMemoryHandle memoryHandle) {
 	if (!memoryHandle.isNull()) {
 		kfree(_s->_segMan, memoryHandle);
 	}
-}
-
-void SciGuiGfx::Draw_String(const char *text) {
-	GuiResourceId orgFontId = GetFontId();
-	int16 orgPenColor = _curPort->penClr;
-
-	DrawText(text, 0, strlen(text), orgFontId, orgPenColor);
-	SetFont(orgFontId);
-	PenColor(orgPenColor);
 }
 
 void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
@@ -725,187 +368,6 @@ void SciGuiGfx::drawCel(SciGuiView *view, GuiViewLoopNo loopNo, GuiViewCelNo cel
 	Common::Rect clipRectTranslated = clipRect;
 	OffsetRect(clipRectTranslated);
 	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
-}
-
-const char controlListUpArrow[2]	= { 0x18, 0 };
-const char controlListDownArrow[2]	= { 0x19, 0 };
-
-void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
-	//SegManager *segMan = _s->_segMan;
-	Common::Rect workerRect = rect;
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _curPort->penClr;
-	uint16 fontSize = 0;
-	int16 i;
-	const char *listEntry;
-	int16 listEntryLen;
-	int16 lastYpos;
-
-	// draw basic window
-	EraseRect(workerRect);
-	workerRect.grow(1);
-	FrameRect(workerRect);
-
-	// draw UP/DOWN arrows
-	//  we draw UP arrow one pixel lower than sierra did, because it looks nicer. Also the DOWN arrow has one pixel
-	//  line inbetween as well
-	workerRect.top++;
-	TextBox(controlListUpArrow, 0, workerRect, SCI_TEXT_ALIGNMENT_CENTER, 0);
-	workerRect.top = workerRect.bottom - 10;
-	TextBox(controlListDownArrow, 0, workerRect, SCI_TEXT_ALIGNMENT_CENTER, 0);
-
-	// Draw inner lines
-	workerRect.top = rect.top + 9;
-	workerRect.bottom -= 10;
-	FrameRect(workerRect);
-	workerRect.grow(-1);
-
-	SetFont(fontId);
-	fontSize = _curPort->fontHeight;
-	PenColor(_curPort->penClr); BackColor(_curPort->backClr);
-	workerRect.bottom = workerRect.top + 9;
-	lastYpos = rect.bottom - fontSize;
-
-	// Write actual text
-	for (i = upperPos; i < count; i++) {
-		EraseRect(workerRect);
-		listEntry = entries[i];
-		if (listEntry[0]) {
-			MoveTo(workerRect.left, workerRect.top);
-			listEntryLen = strlen(listEntry);
-			DrawText(listEntry, 0, MIN(maxChars, listEntryLen), oldFontId, oldPenColor);
-			if ((!isAlias) && (i == cursorPos)) {
-				InvertRect(workerRect);
-			}
-		}
-		workerRect.translate(0, fontSize);
-		if (workerRect.bottom > lastYpos)
-			break;
-	}
-
-	SetFont(oldFontId);
-}
-
-void SciGuiGfx::TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos) {
-	int16 textWidth, i;
-	if (!_texteditCursorVisible) {
-		textWidth = 0;
-		for (i = 0; i < curPos; i++) {
-			textWidth += _font->getCharWidth(text[i]);
-		}
-		_texteditCursorRect.left = rect.left + textWidth;
-		_texteditCursorRect.top = rect.top;
-		_texteditCursorRect.bottom = _texteditCursorRect.top + _font->getHeight();
-		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _font->getCharWidth(text[curPos]));
-		InvertRect(_texteditCursorRect);
-		BitsShow(_texteditCursorRect);
-		_texteditCursorVisible = true;
-		TexteditSetBlinkTime();
-	}
-}
-
-void SciGuiGfx::TexteditCursorErase() {
-	if (_texteditCursorVisible) {
-		InvertRect(_texteditCursorRect);
-		BitsShow(_texteditCursorRect);
-		_texteditCursorVisible = false;
-	}
-	TexteditSetBlinkTime();
-}
-
-void SciGuiGfx::TexteditSetBlinkTime() {
-	_texteditBlinkTime = g_system->getMillis() + (30 * 1000 / 60);
-}
-
-void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
-	SegManager *segMan = _s->_segMan;
-	uint16 cursorPos = GET_SEL32V(segMan, controlObject, cursor);
-	uint16 maxChars = GET_SEL32V(segMan, controlObject, max);
-	reg_t textReference = GET_SEL32(segMan, controlObject, text);
-	Common::String text;
-	uint16 textSize, eventType, eventKey;
-	bool textChanged = false;
-	Common::Rect rect;
-
-	if (textReference.isNull())
-		error("kEditControl called on object that doesnt have a text reference");
-	text = segMan->getString(textReference);
-
-	if (!eventObject.isNull()) {
-		textSize = text.size();
-		eventType = GET_SEL32V(segMan, eventObject, type);
-
-		switch (eventType) {
-		case SCI_EVT_MOUSE_PRESS:
-			// TODO: Implement mouse support for cursor change
-			break;
-		case SCI_EVT_KEYBOARD:
-			eventKey = GET_SEL32V(segMan, eventObject, message);
-			switch (eventKey) {
-			case SCI_K_BACKSPACE:
-				if (cursorPos > 0) {
-					cursorPos--; text.deleteChar(cursorPos);
-					textChanged = true;
-				}
-				break;
-			case SCI_K_DELETE:
-				text.deleteChar(cursorPos);
-				textChanged = true;
-				break;
-			case SCI_K_HOME: // HOME
-				cursorPos = 0; textChanged = true;
-				break;
-			case SCI_K_END: // END
-				cursorPos = textSize; textChanged = true;
-				break;
-			case SCI_K_LEFT: // LEFT
-				if (cursorPos > 0) {
-					cursorPos--; textChanged = true;
-				}
-				break;
-			case SCI_K_RIGHT: // RIGHT
-				if (cursorPos + 1 <= textSize) {
-					cursorPos++; textChanged = true;
-				}
-				break;
-			default:
-				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
-					// insert pressed character
-					// we check, if there is space left for this character
-					
-					text.insertChar(eventKey, cursorPos++);
-					textChanged = true;
-				}
-				break;
-			}
-			break;
-		}
-	}
-
-	if (textChanged) {
-		GuiResourceId oldFontId = GetFontId();
-		GuiResourceId fontId = GET_SEL32V(segMan, controlObject, font);
-		rect = Common::Rect(GET_SEL32V(segMan, controlObject, nsLeft), GET_SEL32V(segMan, controlObject, nsTop),
-							  GET_SEL32V(segMan, controlObject, nsRight), GET_SEL32V(segMan, controlObject, nsBottom));
-		TexteditCursorErase();
-		EraseRect(rect);
-		TextBox(text.c_str(), 0, rect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
-		BitsShow(rect);
-		SetFont(fontId);
-		TexteditCursorDraw(rect, text.c_str(), cursorPos);
-		SetFont(oldFontId);
-		// Write back string
-		segMan->strcpy(textReference, text.c_str());
-	} else {
-		if (g_system->getMillis() >= _texteditBlinkTime) {
-			InvertRect(_texteditCursorRect);
-			BitsShow(_texteditCursorRect);
-			_texteditCursorVisible = !_texteditCursorVisible;
-			TexteditSetBlinkTime();
-		}
-	}
-
-	PUT_SEL32V(segMan, controlObject, cursor, cursorPos);
 }
 
 uint16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {

@@ -84,6 +84,8 @@
 			<File RelativePath="..\..\engines\sci\gui\gui.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_animate.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_animate.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_controls.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_controls.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_cursor.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_cursor.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_font.cpp" />

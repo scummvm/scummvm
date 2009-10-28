@@ -45,10 +45,11 @@ class SciGuiScreen;
 class SciGuiPalette;
 class SciGuiCursor;
 class SciGuiGfx;
-class SciGuiresources;
 class SciGuiWindowMgr;
-class SciGuiTransitions;
 class SciGuiAnimate;
+class SciGuiControls;
+class SciGuiText;
+class SciGuiTransitions;
 class SciGui32; // for debug purposes
 
 class SciGui {
@@ -147,10 +148,12 @@ private:
 	virtual void addToPicSetPicNotValid();
 
 	SciGuiGfx *_gfx;
-	SciGuiresources *_resources;
+//	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
-	SciGuiTransitions *_transitions;
 	SciGuiAnimate *_animate;
+	SciGuiControls *_controls;
+	SciGuiText *_text;
+	SciGuiTransitions *_transitions;
 // 	SciGui32 *_gui32; // for debug purposes
 
 	bool _usesOldGfxFunctions;

@@ -36,6 +36,8 @@
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
 #include "sci/gui/gui_animate.h"
+#include "sci/gui/gui_controls.h"
+#include "sci/gui/gui_text.h"
 #include "sci/gui/gui_transitions.h"
 #include "sci/gui/gui_view.h"
 
@@ -56,7 +58,11 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
 	_transitions = new SciGuiTransitions(this, _screen, _palette, _s->resMan->isVGA());
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
-	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate);
+	_text = new SciGuiText(_s->resMan, _gfx, _screen);
+	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate, _text);
+	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
+	_gfx->init(_text);
+	_windowMgr->init();
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
@@ -212,7 +218,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETFONT:
-			_gfx->SetFont(argv[0].toUint16());
+			_text->SetFont(argv[0].toUint16());
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_WIDTH:
@@ -240,7 +246,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	}
 
 	// now drawing the text
-	_gfx->TextSize(rect, text, -1, width);
+	_text->Size(rect, text, -1, width);
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 	_gfx->Move(rect.right <= _screen->_width ? 0 : _screen->_width - rect.right, rect.bottom <= _screen->_height ? 0 : _screen->_width - rect.bottom);
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
@@ -249,7 +255,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 		_s->r_acc = _gfx->BitsSave(rect, SCI_SCREEN_MASK_VISUAL);
 	if (bgcolor != -1)
 		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, bgcolor, 0, 0);
-	_gfx->TextBox(text, 0, rect, alignment, -1);
+	_text->Box(text, 0, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		_gfx->BitsShow(rect);
 	// restoring port and cursor pos
@@ -263,18 +269,18 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 
 void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
 	Common::Rect rect(0, 0, *textWidth, *textHeight);
-	_gfx->TextSize(rect, text, font, maxWidth);
+	_text->Size(rect, text, font, maxWidth);
 	*textWidth = rect.width(); *textHeight = rect.height();
 }
 
 // Used SCI1+ for text codes
 void SciGui::textFonts(int argc, reg_t *argv) {
-	_gfx->SetTextFonts(argc, argv);
+	_text->CodeSetFonts(argc, argv);
 }
 
 // Used SCI1+ for text codes
 void SciGui::textColors(int argc, reg_t *argv) {
-	_gfx->SetTextColors(argc, argv);
+	_text->CodeSetColors(argc, argv);
 }
 
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
@@ -283,7 +289,7 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_gfx->FillRect(_gfx->_menuRect, 1, colorBack);
 	_gfx->PenColor(colorPen);
 	_gfx->MoveTo(0, 1);
-	_gfx->Draw_String(text);
+	_text->Draw_String(text);
 	_gfx->BitsShow(_gfx->_menuRect);
 	_gfx->SetPort(oldPort);
 }
@@ -323,7 +329,7 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		_gfx->FrameRect(rect);
 		rect.grow(-2);
 		_gfx->TextFace(style & 1 ? 0 : 1);
-		_gfx->TextBox(text, 0, rect, SCI_TEXT_ALIGNMENT_CENTER, fontId);
+		_text->Box(text, 0, rect, SCI_TEXT_ALIGNMENT_CENTER, fontId);
 		_gfx->TextFace(0);
 		rect.grow(1);
 		if (style & 8) // selected
@@ -343,7 +349,7 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 		rect.grow(1);
 		_gfx->EraseRect(rect);
 		rect.grow(-1);
-		_gfx->TextBox(text, 0, rect, alignment, fontId);
+		_text->Box(text, 0, rect, alignment, fontId);
 		if (style & 8) { // selected
 			_gfx->FrameRect(rect);
 		}
@@ -358,18 +364,18 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 
 void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
 	Common::Rect textRect = rect;
-	uint16 oldFontId = _gfx->GetFontId();
+	uint16 oldFontId = _text->GetFontId();
 
 	rect.grow(1);
-	_gfx->TexteditCursorErase();
+	_controls->TexteditCursorErase();
 	_gfx->EraseRect(rect);
-	_gfx->TextBox(text, 0, textRect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
+	_text->Box(text, 0, textRect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
 	_gfx->FrameRect(rect);
 	if (style & 8) {
-		_gfx->SetFont(fontId);
+		_text->SetFont(fontId);
 		rect.grow(-1);
-		_gfx->TexteditCursorDraw(rect, text, cursorPos);
-		_gfx->SetFont(oldFontId);
+		_controls->TexteditCursorDraw(rect, text, cursorPos);
+		_text->SetFont(oldFontId);
 		rect.grow(1);
 	}
 	if (_screen->_picNotValid == 0)
@@ -392,7 +398,7 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 
 void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
 	if (!hilite) {
-		_gfx->drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
+		_controls->drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
 		rect.grow(1);
 		if (isAlias && (style & 8)) {
 			_gfx->FrameRect(rect);
@@ -408,7 +414,7 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 	switch (controlType) {
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
 		// Only process textedit controls in here
-		_gfx->TexteditChange(controlObject, eventObject);
+		_controls->TexteditChange(controlObject, eventObject);
 		return;
 	}
 }

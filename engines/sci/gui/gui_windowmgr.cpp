@@ -30,6 +30,7 @@
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_animate.h"
+#include "sci/gui/gui_text.h"
 #include "sci/gui/gui_windowmgr.h"
 
 namespace Sci {
@@ -43,9 +44,15 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
-SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate)
-	: _screen(screen), _gfx(gfx), _animate(animate) {
+SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate, SciGuiText *text)
+	: _screen(screen), _gfx(gfx), _animate(animate), _text(text) {
+}
 
+SciGuiWindowMgr::~SciGuiWindowMgr() {
+	// TODO: Clear _windowList and delete all stuff in it?
+}
+
+void SciGuiWindowMgr::init() {
 	_wmgrPort = new GuiPort(0);
 	_windowsById.resize(1);
 	_windowsById[0] = _wmgrPort;
@@ -64,10 +71,6 @@ SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAni
 	_windowList.push_front(_wmgrPort);
 
 	_picWind = NewWindow(Common::Rect(0, offTop, _screen->_width, _screen->_height), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
-}
-
-SciGuiWindowMgr::~SciGuiWindowMgr() {
-	// TODO: Clear _windowList and delete all stuff in it?
 }
 
 int16 SciGuiWindowMgr::isFrontWindow(GuiWindow *pWnd) {
@@ -224,7 +227,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = _gfx->GetPort()->penClr;
 					_gfx->PenColor(255);
-					_gfx->TextBox(pWnd->title.c_str(), 1, r, SCI_TEXT_ALIGNMENT_CENTER, 0);
+					_text->Box(pWnd->title.c_str(), 1, r, SCI_TEXT_ALIGNMENT_CENTER, 0);
 					_gfx->PenColor(oldcolor);
 				}
 				

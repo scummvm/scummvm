@@ -23,47 +23,36 @@
  *
  */
 
-#ifndef SCI_GUI_WINDOWMGR_H
-#define SCI_GUI_WINDOWMGR_H
-
-#include "common/list.h"
-#include "common/array.h"
+#ifndef SCI_GUI_CONTROLS_H
+#define SCI_GUI_CONTROLS_H
 
 namespace Sci {
 
-class SciGuiWindowMgr {
+class SciGuiGfx;
+class SciGuiFont;
+class SciGuiText;
+class SciGuiControls {
 public:
-	SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate, SciGuiText *text);
-	~SciGuiWindowMgr();
+	SciGuiControls(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text);
+	~SciGuiControls();
 
-	void init();
-
-	int16 isFrontWindow(GuiWindow *wnd);
-	void BeginUpdate(GuiWindow *wnd);
-	void EndUpdate(GuiWindow *wnd);
-	GuiWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
-	void DrawWindow(GuiWindow *wnd);
-	void DisposeWindow(GuiWindow *pWnd, int16 arg2);
-	void UpdateWindow(GuiWindow *wnd);
-
-	GuiPort *getPortById(uint16 id) const { return _windowsById[id]; }
-
-	GuiPort *_wmgrPort;
-	GuiWindow *_picWind;
+	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
+	void TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos);
+	void TexteditCursorErase();
+	void TexteditChange(reg_t controlObject, reg_t eventObject);
 
 private:
-	typedef Common::List<GuiPort *> PortList;
+	void init(void);
+	void TexteditSetBlinkTime();
 
-	SciGuiScreen *_screen;
+	SegManager *_segMan;
 	SciGuiGfx *_gfx;
-	SciGuiAnimate *_animate;
 	SciGuiText *_text;
 
-	/** The list of open 'windows' (and ports), in visual order. */
-	PortList _windowList;
-
-	/** The list of all open 'windows' (and ports), ordered by their id. */
-	Common::Array<GuiPort *> _windowsById;
+	// Textedit-Control related
+	Common::Rect _texteditCursorRect;
+	bool _texteditCursorVisible;
+	uint32 _texteditBlinkTime;
 };
 
 } // End of namespace Sci
