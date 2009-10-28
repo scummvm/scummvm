@@ -31,6 +31,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/gfx/menubar.h"
+#include "sci/gui/gui.h"
 #include "sci/engine/kernel.h"
 
 namespace Sci {
@@ -77,15 +78,14 @@ MenuItem::MenuItem() {
 	_tag = 0;
 }
 
-#ifdef INCLUDE_OLDGFX
-
 int Menu::addMenuItem(GfxState *state, MenuType type, const char *left, const char *right,
 						   int font, int key, int modifiers, int tag, reg_t text_pos) {
 // Returns the total text size, plus MENU_BOX_CENTER_PADDING if (right != NULL)
 	MenuItem newItem;
 	MenuItem *item;
 	int total_left_size = 0;
-	int width, height;
+	int16 width = 10, height = 10;
+	EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK
 
 	item = &newItem;
 	item->_type = type;
@@ -108,18 +108,14 @@ int Menu::addMenuItem(GfxState *state, MenuType type, const char *left, const ch
 	}
 
 	if (right) {
-#ifdef INCLUDE_OLDGFX
-		gfxop_get_text_params(state, font, item->_keytext.c_str(), SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
-#endif
+		s->_gui->textSize(item->_keytext.c_str(), font, -1, &width, &height);
 		total_left_size = MENU_BOX_CENTER_PADDING + width;
 	}
 
 	item->_enabled = 1;
 	item->_tag = tag;
 	item->_textPos = text_pos;
-#ifdef INCLUDE_OLDGFX
-	gfxop_get_text_params(state, font, left, SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
-#endif
+	s->_gui->textSize(left, font, -1, &width, &height);
 
 	_items.push_back(newItem);
 
@@ -132,15 +128,15 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 	reg_t left_origin = entries_base;
 	int string_len = 0;
 	int tag = 0, c_width, max_width = 0;
-	int height;
+	int16 height = 10;
+	EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK
 
 	Menu menu;
 
 	menu._title = title;
+	menu._titleWidth = 10;
 
-#ifdef INCLUDE_OLDGFX
-	gfxop_get_text_params(state, font, title.c_str(), SIZE_INF, &(menu._titleWidth), &height, 0, NULL, NULL, NULL);
-#endif
+	s->_gui->textSize(title.c_str(), font, -1, &(menu._titleWidth), &height);
 
 	const char *entries_p = entries.c_str();
 
@@ -277,8 +273,6 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 
 	_menus.push_back(menu);
 }
-
-#endif
 
 bool MenuItem::matchKey(int message, int modifiers) {
 	if ((_key == message) && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == _modifiers))

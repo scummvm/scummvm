@@ -39,13 +39,16 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	Common::String contents = s->_segMan->getString(argv[1]);
 
+	int titlebarFont = 0;
+
 #ifdef INCLUDE_OLDGFX
-	s->_menubar->addMenu(s->gfx_state, name,
-	                 contents, s->titlebar_port->_font, argv[1]);
+	titlebarFont = s->titlebar_port->_font;
 #else
-	// TODO
-	warning("TODO: kAddMenu()");
+	// TODO: titlebar port font
 #endif
+
+	s->_menubar->addMenu(s->gfx_state, name,
+	                 contents, titlebarFont, argv[1]);
 
 	return s->r_acc;
 

@@ -121,10 +121,10 @@ public:
 	Common::String _title;
 
 	/** Width of the title in pixels */
-	int _titleWidth;
+	int16 _titleWidth;
 
 	/** Pixel width of the menu window */
-	int _width;
+	int16 _width;
 
 	/**
 	 * Actual entries into the menu.
@@ -139,10 +139,8 @@ public:
 
 //protected:
 	// FIXME: This should be (partially) turned into a MenuItem constructor
-#ifdef INCLUDE_OLDGFX
 	int addMenuItem(GfxState *state, MenuType type, const char *left, const char *right,
 	                int font, int key, int modifiers, int tag, reg_t text_pos);
-#endif
 };
 
 
@@ -174,9 +172,7 @@ public:
 	 * @param[in] font			The font which is to be used for drawing
 	 * @param[in] entries_base	Segmented VM address of the entries string
 	 */
-#ifdef INCLUDE_OLDGFX
 	void addMenu(GfxState *state, const Common::String &title, const Common::String &entries, int font, reg_t entries_base);
-#endif
 
 	/**
 	 * Sets the attributes for a menu item.

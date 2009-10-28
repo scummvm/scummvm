@@ -270,7 +270,8 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
 	Common::Rect rect(0, 0, *textWidth, *textHeight);
 	_text->Size(rect, text, font, maxWidth);
-	*textWidth = rect.width(); *textHeight = rect.height();
+	*textWidth = rect.width();
+	*textHeight = rect.height();
 }
 
 // Used SCI1+ for text codes
