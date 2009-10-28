@@ -482,35 +482,10 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
-	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
-		int x = (int16)GET_SEL32V(s->_segMan, object, x);
-		int y = (int16)GET_SEL32V(s->_segMan, object, y);
-		int z = (s->_kernel->_selectorCache.z > -1) ? (int16)GET_SEL32V(s->_segMan, object, z) : 0;
-		int ystep = (int16)GET_SEL32V(s->_segMan, object, yStep);
-		int view = GET_SEL32V(s->_segMan, object, view);
-		int loop = GET_SEL32V(s->_segMan, object, loop);
-		int cel = GET_SEL32V(s->_segMan, object, cel);
-
-		SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, view);
-		sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
-		int left = x + celInfo->displaceX - (celInfo->width >> 1);
-		int right = left + celInfo->width;
-		int bottom = y + celInfo->displaceY - z + 1;
-		int top = bottom - ystep;
-
-		debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
-				  x, y, celInfo->displaceX, celInfo->displaceY, celInfo->width, celInfo->height, left, top, bottom, right);
-
-		delete tmpView;
-
-		PUT_SEL32V(s->_segMan, object, brLeft, left);
-		PUT_SEL32V(s->_segMan, object, brRight, right);
-		PUT_SEL32V(s->_segMan, object, brTop, top);
-		PUT_SEL32V(s->_segMan, object, brBottom, bottom);
-	}
+	s->_gui->baseSetter(object);
 
 	return s->r_acc;
-} // kBaseSetter
+}
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	s->_gui->setNowSeen(argv[0]);

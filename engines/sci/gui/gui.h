@@ -117,6 +117,7 @@ public:
 	virtual void setNowSeen(reg_t objectReference);
 	virtual bool canBeHere(reg_t curObject, reg_t listReference);
 	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
+	virtual void baseSetter(reg_t object);
 
 	virtual void hideCursor();
 	virtual void showCursor();

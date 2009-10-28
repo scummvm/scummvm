@@ -637,6 +637,35 @@ bool SciGui::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::P
 	return result;
 }
 
+void SciGui::baseSetter(reg_t object) {
+	if (lookup_selector(_s->_segMan, object, _s->_kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
+		int16 x = GET_SEL32V(_s->_segMan, object, x);
+		int16 y = GET_SEL32V(_s->_segMan, object, y);
+		int16 z = (_s->_kernel->_selectorCache.z > -1) ? GET_SEL32V(_s->_segMan, object, z) : 0;
+		int16 yStep = GET_SEL32V(_s->_segMan, object, yStep);
+		GuiResourceId viewId = GET_SEL32V(_s->_segMan, object, view);
+		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
+		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
+
+		SciGuiView *tmpView = new SciGuiView(_s->resMan, NULL, NULL, viewId);
+		sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
+		int16 left = x + celInfo->displaceX - (celInfo->width >> 1);
+		int16 right = left + celInfo->width;
+		int16 bottom = y + celInfo->displaceY - z + 1;
+		int16 top = bottom - yStep;
+
+		debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
+				x, y, celInfo->displaceX, celInfo->displaceY, celInfo->width, celInfo->height, left, top, bottom, right);
+
+		delete tmpView;
+
+		PUT_SEL32V(_s->_segMan, object, brLeft, left);
+		PUT_SEL32V(_s->_segMan, object, brRight, right);
+		PUT_SEL32V(_s->_segMan, object, brTop, top);
+		PUT_SEL32V(_s->_segMan, object, brBottom, bottom);
+	}
+}
+
 void SciGui::hideCursor() {
 	_cursor->hide();
 }
