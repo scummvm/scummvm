@@ -3151,7 +3151,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 
 	nsrect = get_nsrect(s, pos, 0);
 	nsrect_clipped = get_nsrect(s, pos, 1);
-	brrect = set_base(s, pos);
+	//brrect = set_base(s, pos);
 	printf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
 	printf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
 	printf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);

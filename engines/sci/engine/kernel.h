@@ -236,13 +236,6 @@ int _find_view_priority(EngineState *s, int y);
 
 
 /******************** Dynamic view list functions ********************/
-/**
- * Determines the base rectangle of the specified view object
- * @param s The state to use
- * @param object The object to set
- * @return The absolute base rectangle
- */
-Common::Rect set_base(EngineState *s, reg_t object);
 
 /**
  * Determines the now-seen rectangle of a view object

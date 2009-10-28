@@ -491,21 +491,38 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
-		// Note: there was a check here for a very old version of SCI, which supposedly needed
-		// to subtract 1 from absrect.top. The original check was for version 0.000.256, which
-		// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
-		// for reference only
-#if 0
-		if (getSciVersion() <= SCI_VERSION_0)
-			--absrect.top; // Compensate for early SCI OB1 'bug'
-#endif
-
-		Common::Rect absrect = set_base(s, object);
 		SegManager *segMan = s->_segMan;
-		PUT_SEL32V(segMan, object, brLeft, absrect.left);
-		PUT_SEL32V(segMan, object, brRight, absrect.right);
-		PUT_SEL32V(segMan, object, brTop, absrect.top);
-		PUT_SEL32V(segMan, object, brBottom, absrect.bottom);
+
+		int x = (int16)GET_SEL32V(segMan, object, x);
+		int y = (int16)GET_SEL32V(segMan, object, y);
+		int z = (s->_kernel->_selectorCache.z > -1) ? (int16)GET_SEL32V(segMan, object, z) : 0;
+
+		y -= z; // Subtract z offset
+
+		int ystep = (int16)GET_SEL32V(segMan, object, yStep);
+
+		int view = (int16)GET_SEL32V(segMan, object, view);
+		int loop = GET_SEL32V(segMan, object, loop);
+		int cel = GET_SEL32V(segMan, object, cel);
+
+		Common::Point offset;
+
+		SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, view);
+		sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
+		int left = x + celInfo->displaceX - (celInfo->width >> 1);
+		int right = left + celInfo->width;
+		int bottom = y + celInfo->displaceY - z + 1;
+		int top = bottom - celInfo->height;
+
+		debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
+				  x, y, celInfo->displaceX, celInfo->displaceY, celInfo->width, celInfo->height, left, top, bottom, right);
+
+		delete tmpView;
+
+		PUT_SEL32V(segMan, object, brLeft, left);
+		PUT_SEL32V(segMan, object, brRight, right);
+		PUT_SEL32V(segMan, object, brTop, top);
+		PUT_SEL32V(segMan, object, brBottom, bottom);
 	}
 
 	return s->r_acc;
