@@ -303,7 +303,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 	// do we add to a picture? if not -> clear screen
 	if (!addToFlag) {
 		if (_s->resMan->isVGA())
-			ClearScreen(0);
+			ClearScreen(255);
 		else
 			ClearScreen(15);
 	}
