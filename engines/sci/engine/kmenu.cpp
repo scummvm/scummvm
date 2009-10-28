@@ -44,6 +44,7 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	                 contents, s->titlebar_port->_font, argv[1]);
 #else
 	// TODO
+	warning("TODO: kAddMenu()");
 #endif
 
 	return s->r_acc;

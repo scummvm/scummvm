@@ -296,10 +296,12 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 
 void SciGui::drawMenuBar() {
 	// TODO: Implement menubar
+	warning("TODO: drawMenuBar()");
 }
 
 void SciGui::clearMenuBar() {
 	// TODO: Implement menubar
+	warning("TODO: clearMenuBar()");
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

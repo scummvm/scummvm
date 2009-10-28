@@ -42,7 +42,7 @@ struct OldNewIdTableEntry {
 	Common::String oldId;
 	Common::String newId;
 	bool demo;
-	Common::String demoCheckFile;	// if non-zero and it doesn't exist, the demo flag is set
+	Common::String demoCheckFile;	// if not empty and it doesn't exist, the demo flag is set
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
