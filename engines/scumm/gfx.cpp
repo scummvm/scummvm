@@ -635,23 +635,29 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 #ifdef USE_ARM_GFX_ASM
 		asmDrawStripToScreen(height, width, text, src, _compositeBuf, vs->pitch, width, _textSurface.pitch);
 #else
-		// We blit four pixels at a time, for improved performance.
-		const uint32 *src32 = (const uint32 *)src;
-		uint32 *dst32 = (uint32 *)_compositeBuf;
-
-		vsPitch >>= 2;
-
 		if (_bytesPerPixel == 2) {
-			// Sprites always seem to be used for subtitles in 16Bit color HE games, and not
-			// the charset renderer, so charset masking isn't required.
-			for (int h = height * m; h > 0; --h) {
-				for (int w = width * m; w > 0; w -= 4) {
-					*dst32++ = *src32++;
-					*dst32++ = *src32++;
+			const byte *srcPtr = (const byte *)src;
+			const byte *textPtr = (byte *)_textSurface.getBasePtr(x * m, y * m);
+			byte *dstPtr = _compositeBuf;
+
+			for (int h = 0; h < height * m; ++h) {
+				for (int w = 0; w < width * m; ++w) {
+					uint16 tmp = *textPtr++;
+					if (tmp == CHARSET_MASK_TRANSPARENCY)
+						tmp = READ_UINT16(srcPtr);
+					WRITE_UINT16(dstPtr, tmp); dstPtr += 2;
+					srcPtr += vs->bytesPerPixel;
 				}
-				src32 += vsPitch;
+				srcPtr += vsPitch;
+				textPtr += _textSurface.pitch - width * m;
 			}
 		} else {
+			// We blit four pixels at a time, for improved performance.
+			const uint32 *src32 = (const uint32 *)src;
+			uint32 *dst32 = (uint32 *)_compositeBuf;
+
+			vsPitch >>= 2;
+
 			const uint32 *text32 = (const uint32 *)text;
 			const int textPitch = (_textSurface.pitch - width * m) >> 2;
 			for (int h = height * m; h > 0; --h) {
