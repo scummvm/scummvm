@@ -26,6 +26,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/console.h"

@@ -651,8 +651,10 @@ bool Console::cmdSci0Palette(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	sci0_palette = atoi(argv[1]);
 	cmdRedrawScreen(argc, argv);
+#endif
 
 	return false;
 }
@@ -775,16 +777,20 @@ bool Console::cmdList(int argc, const char **argv) {
 }
 
 bool Console::cmdClearScreen(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
+#endif
 	return false;
 }
 
 bool Console::cmdRedrawScreen(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	_vm->_gamestate->visual->draw(Common::Point(0, 0));
 	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(_vm->_gamestate->gfx_state);
 	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
+#endif
 	return false;
 }
 
@@ -1008,10 +1014,12 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 	if (argc == 4)
 		flags = atoi(argv[3]);
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_new_pic(_vm->_gamestate->gfx_state, atoi(argv[1]), flags, default_palette);
 	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(_vm->_gamestate->gfx_state);
 	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
+#endif
 
 	return false;
 }
@@ -1026,10 +1034,12 @@ bool Console::cmdDrawRect(int argc, const char **argv) {
 
 	int col = CLIP<int>(atoi(argv[5]), 0, 15);
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]),
 										atoi(argv[3]), atoi(argv[4])), _vm->_gamestate->ega_colors[col]);
 	gfxop_update(_vm->_gamestate->gfx_state);
+#endif
 
 	return false;
 }
@@ -1046,9 +1056,12 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	int cel = atoi(argv[3]);
 	int palette = atoi(argv[4]);
 
+
+#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 	gfxop_draw_cel(_vm->_gamestate->gfx_state, view, loop, cel, Common::Point(160, 100), _vm->_gamestate->ega_colors[0], palette);
 	gfxop_update(_vm->_gamestate->gfx_state);
+#endif
 
 	return false;
 }
@@ -1061,6 +1074,7 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	int view = atoi(argv[1]);
 	int palette = atoi(argv[2]);
 	int loops, i;
@@ -1095,6 +1109,7 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 			}
 		}
 	}
+#endif
 
 	return true;
 }
@@ -1145,7 +1160,9 @@ bool Console::cmdUpdateZone(int argc, const char **argv) {
 	int width = atoi(argv[3]);
 	int height = atoi(argv[4]);
 
+#ifdef INCLUDE_OLDGFX
 	_vm->_gamestate->gfx_state->driver->update(gfx_rect(x, y, width, height), Common::Point(x, y), GFX_BUFFER_FRONT);
+#endif
 
 	return false;
 }
@@ -1158,6 +1175,7 @@ bool Console::cmdPropagateZone(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	int x = atoi(argv[1]);
 	int y = atoi(argv[2]);
 	int width = atoi(argv[3]);
@@ -1173,6 +1191,7 @@ bool Console::cmdPropagateZone(int argc, const char **argv) {
 		gfxop_update_box(_vm->_gamestate->gfx_state, rect);
 	gfxop_update(_vm->_gamestate->gfx_state);
 	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
+#endif
 
 	return false;
 }
@@ -1187,18 +1206,22 @@ bool Console::cmdFillScreen(int argc, const char **argv) {
 
 	int col = CLIP<int>(atoi(argv[1]), 0, 15);
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect_fullscreen, _vm->_gamestate->ega_colors[col]);
 	gfxop_update(_vm->_gamestate->gfx_state);
+#endif
 
 	return false;
 }
 
 bool Console::cmdCurrentPort(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	if (!_vm->_gamestate->port)
 		DebugPrintf("There is no port active currently.\n");
 	else
 		DebugPrintf("Current port ID: %d\n", _vm->_gamestate->port->_ID);
+#endif
 
 	return true;
 }
@@ -1211,6 +1234,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	GfxPort *port;
 	
 	if (!scumm_stricmp(argv[1], "current")) {
@@ -1230,6 +1254,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 				port->print(0);
 		}
 	}
+#endif
 
 	return true;
 }
@@ -1245,42 +1270,50 @@ bool Console::cmdParseGrammar(int argc, const char **argv) {
 bool Console::cmdVisualState(int argc, const char **argv) {
 	DebugPrintf("State of the current visual widget:\n");
 
+#ifdef INCLUDE_OLDGFX
 	if (_vm->_gamestate->visual)
 		_vm->_gamestate->visual->print(0);
 	else
 		DebugPrintf("The visual widget is uninitialized.\n");
+#endif
 
 	return true;
 }
 
 bool Console::cmdFlushPorts(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	_vm->_gamestate->_gui->hideCursor();
 	DebugPrintf("Flushing dynamically allocated ports (for memory profiling)...\n");
 	delete _vm->_gamestate->visual;
 	_vm->_gamestate->gfx_state->gfxResMan->freeAllResources();
 	_vm->_gamestate->visual = NULL;
+#endif
 
 	return true;
 }
 
 bool Console::cmdDynamicViews(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	DebugPrintf("List of active dynamic views:\n");
 
 	if (_vm->_gamestate->dyn_views)
 		_vm->_gamestate->dyn_views->print(0);
 	else
 		DebugPrintf("The list is empty.\n");
+#endif
 
 	return true;
 }
 
 bool Console::cmdDroppedViews(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	DebugPrintf("List of dropped dynamic views:\n");
 
 	if (_vm->_gamestate->drop_views)
 		_vm->_gamestate->drop_views->print(0);
 	else
 		DebugPrintf("The list is empty.\n");
+#endif
 
 	return true;
 }
@@ -1293,7 +1326,9 @@ bool Console::cmdPriorityBands(int argc, const char **argv) {
 	}
 
 	int zone = CLIP<int>(atoi(argv[1]), 0, 15);
+#ifdef INCLUDE_OLDGFX
 	DebugPrintf("Zone %x starts at y=%d\n", zone, _find_priority_band(_vm->_gamestate, zone));
+#endif
 
 	return true;
 }
@@ -1305,6 +1340,7 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	_vm->_gamestate->titlebar_port->_color = _vm->_gamestate->ega_colors[atoi(argv[1])];
 	_vm->_gamestate->titlebar_port->_bgcolor = _vm->_gamestate->ega_colors[atoi(argv[2])];
 
@@ -1314,6 +1350,7 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 	sciw_set_status_bar(_vm->_gamestate, _vm->_gamestate->titlebar_port, _vm->_gamestate->_statusBarText,
 							_vm->_gamestate->status_bar_foreground, _vm->_gamestate->status_bar_background);
 	gfxop_update(_vm->_gamestate->gfx_state);
+#endif
 
 	return false;
 }

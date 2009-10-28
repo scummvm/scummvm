@@ -77,6 +77,7 @@ MenuItem::MenuItem() {
 	_tag = 0;
 }
 
+#ifdef INCLUDE_OLDGFX
 
 int Menu::addMenuItem(GfxState *state, MenuType type, const char *left, const char *right,
 						   int font, int key, int modifiers, int tag, reg_t text_pos) {
@@ -107,14 +108,18 @@ int Menu::addMenuItem(GfxState *state, MenuType type, const char *left, const ch
 	}
 
 	if (right) {
+#ifdef INCLUDE_OLDGFX
 		gfxop_get_text_params(state, font, item->_keytext.c_str(), SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
+#endif
 		total_left_size = MENU_BOX_CENTER_PADDING + width;
 	}
 
 	item->_enabled = 1;
 	item->_tag = tag;
 	item->_textPos = text_pos;
+#ifdef INCLUDE_OLDGFX
 	gfxop_get_text_params(state, font, left, SIZE_INF, &width, &height, 0, NULL, NULL, NULL);
+#endif
 
 	_items.push_back(newItem);
 
@@ -133,7 +138,9 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 
 	menu._title = title;
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_get_text_params(state, font, title.c_str(), SIZE_INF, &(menu._titleWidth), &height, 0, NULL, NULL, NULL);
+#endif
 
 	const char *entries_p = entries.c_str();
 
@@ -169,7 +176,9 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 
 				beginning = entries_base;
 				beginning.offset -= string_len + 1;
+#ifdef INCLUDE_OLDGFX
 				c_width = menu.addMenuItem(state, entrytype, left, NULL, font, 0, 0, tag, beginning);
+#endif
 				if (c_width > max_width)
 					max_width = c_width;
 
@@ -268,6 +277,8 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 
 	_menus.push_back(menu);
 }
+
+#endif
 
 bool MenuItem::matchKey(int message, int modifiers) {
 	if ((_key == message) && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == _modifiers))

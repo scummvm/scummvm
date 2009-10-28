@@ -124,6 +124,14 @@ enum controlStateFlags {
 	kControlStateDitherFramed = 0x1000   ///< 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
 };
 
+enum ViewType {
+	kViewUnknown,
+	kViewEga,
+	kViewVga,
+	kViewVga11,
+	kViewAmiga
+};
+
 } // End of namespace Sci
 
 #endif

@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 /* SCI1 palette resource defrobnicator */
 
 #include "common/file.h"
@@ -133,3 +136,5 @@ Palette *gfxr_read_pal1_amiga(Common::File &file) {
 }
 
 } // End of namespace Sci
+
+#endif

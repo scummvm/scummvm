@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 /* Graphics support functions for drivers and replacements for driver functions
 ** for use with the graphical state manager
 */
@@ -274,3 +277,5 @@ void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rec
 }
 
 } // End of namespace Sci
+
+#endif

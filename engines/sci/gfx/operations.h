@@ -28,14 +28,19 @@
 #ifndef SCI_GFX_GFX_OPERATIONS_H
 #define SCI_GFX_GFX_OPERATIONS_H
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_system.h"
+#endif
 #include "sci/uinput.h"
 
 #include "common/list.h"
 
 namespace Sci {
+
+#ifdef INCLUDE_OLDGFX
 
 struct TextFragment;
 
@@ -86,8 +91,10 @@ enum gfx_box_shade_t {
 
 typedef Common::List<rect_t> DirtyRectList;
 
+#endif	// INCLUDE_OLDGFX
 
 struct GfxState {
+#ifdef INCLUDE_OLDGFX
 	rect_t clip_zone_unscaled; /**< The current UNSCALED clipping zone */
 	rect_t clip_zone; /**< The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
 
@@ -109,14 +116,17 @@ struct GfxState {
 	int pic_nr; /**< Number of the current pic */
 	int palette_nr; /**< Palette number of the current pic */
 
-	Common::List<sci_event_t> _events;
-
 	gfxr_pic_t *pic, *pic_unscaled; /**< The background picture and its unscaled equivalent */
 	rect_t pic_port_bounds;  /**< Picture port bounds */
 
 	DirtyRectList _dirtyRects; /**< Dirty rectangles */
+#endif
+
+	Common::List<sci_event_t> _events;
 };
 
+
+#ifdef INCLUDE_OLDGFX
 
 
 /** @name Fundamental operations */
@@ -304,30 +314,6 @@ void gfxop_disable_dirty_frames(GfxState *state);
 void gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b,
 	int a, int priority, int control);
 
-/** @} */
-
-/** @name Pointer and IO ops */
-/** @{ */
-
-/**
- * Suspends program execution for the specified amount of milliseconds.
- *
- * The mouse pointer will be redrawn continually, if applicable
- *
- * @param[in] state	The state affected
- * @param[in] msecs	The amount of milliseconds to wait
- */
-void gfxop_sleep(GfxState *state, uint32 msecs);
-
-/**
- * Retrieves the next input event from the driver.
- *
- * @param[in] state	The affected state
- * @param[in] mask	The event mask to poll from (see uinput.h)
- * @return			The next event in the driver's event queue, or a NONE event
- * 					if no event matching the mask was found.
- */
-sci_event_t gfxop_get_event(GfxState *state, unsigned int mask);
 /** @} */
 
 /** @name View operations */
@@ -536,6 +522,33 @@ void gfxdr_add_dirty(DirtyRectList &list, rect_t box);
  */
 int _gfxop_clip(rect_t *rect, rect_t clipzone);
 /** @} */
+
+#endif // INCLUDE_OLDGFX
+
+/** @name Pointer and IO ops */
+/** @{ */
+
+/**
+ * Suspends program execution for the specified amount of milliseconds.
+ *
+ * The mouse pointer will be redrawn continually, if applicable
+ *
+ * @param[in] state	The state affected
+ * @param[in] msecs	The amount of milliseconds to wait
+ */
+void gfxop_sleep(GfxState *state, uint32 msecs);
+
+/**
+ * Retrieves the next input event from the driver.
+ *
+ * @param[in] state	The affected state
+ * @param[in] mask	The event mask to poll from (see uinput.h)
+ * @return			The next event in the driver's event queue, or a NONE event
+ * 					if no event matching the mask was found.
+ */
+sci_event_t gfxop_get_event(GfxState *state, unsigned int mask);
+/** @} */
+
 
 } // End of namespace Sci
 

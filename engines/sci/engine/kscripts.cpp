@@ -168,7 +168,9 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 
 	victim_obj->markAsFreed();
 	
+#ifdef INCLUDE_OLDGFX
 	_k_view_list_mark_free(s, victim_addr); // Free on view list, if neccessary
+#endif
 
 	return s->r_acc;
 }

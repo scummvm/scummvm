@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 /** @file gfx_resource.h
  * SCI Resource library.
  */
@@ -32,6 +35,7 @@
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_driver.h"
+#include "sci/gui/gui_helpers.h"
 
 #include "common/rect.h"
 
@@ -74,15 +78,6 @@ extern PaletteEntry gfx_sci0_image_colors[][16];
  * for the first time, or when gfxr_init_static_palette() is called)
  */
 extern Palette* gfx_sci0_pic_colors;
-
-
-enum ViewType {
-	kViewUnknown,
-	kViewEga,
-	kViewVga,
-	kViewVga11,
-	kViewAmiga
-};
 
 struct gfxr_pic0_params_t {
 	gfx_line_mode_t line_mode; /* one of GFX_LINE_MODE_* */
@@ -290,3 +285,5 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_RESOURCE_H
+
+#endif

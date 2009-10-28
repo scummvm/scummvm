@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "sci/gfx/gfx_tools.h"
 
 namespace Sci {
@@ -156,3 +159,5 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 }
 
 } // End of namespace Sci
+
+#endif

@@ -23,6 +23,8 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
@@ -241,3 +243,5 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 }
 
 } // End of namespace Sci
+
+#endif

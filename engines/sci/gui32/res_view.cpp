@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 // SCI 1 view resource defrobnicator
 
 #include "common/endian.h"
@@ -301,3 +304,5 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 }
 
 } // End of namespace Sci
+
+#endif

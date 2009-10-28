@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GFX_PALETTE_H
 #define SCI_GFX_PALETTE_H
 
@@ -122,3 +125,5 @@ private:
 } // End of namespace Sci
 
 #endif // SCI_GFX_PALETTE_H
+
+#endif

@@ -23,7 +23,9 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "sci/engine/state.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_widgets.h"
@@ -660,3 +662,5 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 }
 
 } // End of namespace Sci
+
+#endif

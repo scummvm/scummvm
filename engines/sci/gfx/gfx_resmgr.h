@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GFX_GFX_RESMAN_H
 #define SCI_GFX_GFX_RESMAN_H
 
@@ -282,3 +285,5 @@ private:
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_RESMAN_H
+
+#endif

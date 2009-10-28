@@ -274,7 +274,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
 	}
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_update(s->gfx_state);
+#endif
 	return s->r_acc;
 }
 
@@ -374,6 +376,8 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 	int cel = argv[2].toSint16();
 	int y = argv[3].toUint16();
 	int x = argv[4].toUint16();
+
+#ifdef INCLUDE_OLDGFX
 	gfxr_view_t *res = NULL;
 	gfx_pixmap_t *pxm = NULL;
 
@@ -391,6 +395,10 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 		y = pxm->index_height - 1;
 
 	return make_reg(0, pxm->index_data[y * pxm->index_width + x] == pxm->color_key);
+#else
+	// TODO
+	return NULL_REG;
+#endif
 }
 
 reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
@@ -438,7 +446,7 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 	int argBase = 0;
 
 	if ((argc == 2) || (argc == 4)) {
-		screenMask = GFX_MASK_CONTROL;
+		screenMask = SCI_SCREEN_MASK_CONTROL;
 	} else {
 		screenMask = argv[0].toUint16();
 		argBase = 1;

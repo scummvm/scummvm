@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GFX_GFX_STATE_INTERNAL_H
 #define SCI_GFX_GFX_STATE_INTERNAL_H
 
@@ -410,3 +413,5 @@ public:
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_STATE_INTERNAL_H
+
+#endif

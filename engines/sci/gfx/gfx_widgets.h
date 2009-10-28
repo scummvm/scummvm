@@ -23,6 +23,8 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
 
 #ifndef SCI_GFX_GFX_WIDGETS_H
 #define SCI_GFX_GFX_WIDGETS_H
@@ -471,3 +473,5 @@ void gfxw_port_auto_restore_background(GfxVisual *visual, GfxPort *window,
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_WIDGETS_H
+
+#endif

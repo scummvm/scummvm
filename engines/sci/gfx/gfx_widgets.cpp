@@ -23,7 +23,9 @@
  *
  */
 
-#include "sci/sci.h"
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "sci/gfx/gfx_gui.h"		// for kWindowAutoRestore
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"
@@ -1769,3 +1771,5 @@ GfxDynView *gfxw_picviewize_dynview(GfxDynView *dynview) {
 }
 
 } // End of namespace Sci
+
+#endif

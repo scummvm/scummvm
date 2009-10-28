@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 /* Required defines:
 ** FUNCNAME: Function name
 ** SIZETYPE: Type used for each pixel
@@ -126,3 +129,5 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 
 
 } // End of namespace Sci
+
+#endif

@@ -748,9 +748,10 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->execution_stack_base = 0;
 
 	// Now copy all current state information
+#ifdef INCLUDE_OLDGFX
 	// Graphics and input state:
-	retval->gfx_state = s->gfx_state;
 	retval->old_screen = 0;
+#endif
 
 	temp = retval->_sound._songlib;
 	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags);
@@ -781,7 +782,9 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->bp_list = s->bp_list;
 
 	retval->successor = NULL;
+#ifdef INCLUDE_OLDGFX
 	retval->pic_priority_table = (int *)(retval->gfx_state->pic) ? retval->gfx_state->pic->priorityTable : NULL;
+#endif
 	retval->_gameName = s->_gameName;
 
 	retval->_sound._it = NULL;

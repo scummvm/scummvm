@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "sci/gfx/palette.h"
 #include "sci/gfx/gfx_system.h"
 
@@ -323,3 +326,5 @@ Palette *Palette::copy() {
 
 
 } // End of namespace Sci
+
+#endif

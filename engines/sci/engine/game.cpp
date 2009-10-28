@@ -173,6 +173,7 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 }
 
 int _reset_graphics_input(EngineState *s) {
+#ifdef INCLUDE_OLDGFX
 	Resource *resource;
 	int font_nr;
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
@@ -215,13 +216,6 @@ int _reset_graphics_input(EngineState *s) {
 	s->pic_visible_map = GFX_MASK_NONE; // Other values only make sense for debugging
 	s->dyn_views = NULL; // no DynViews
 	s->drop_views = NULL; // And, consequently, no list for dropped views
-
-	s->priority_first = 42; // Priority zone 0 ends here
-
-	if (s->usesOldGfxFunctions())
-		s->priority_last = 200;
-	else
-		s->priority_last = 190;
 
 	font_nr = -1;
 	do {
@@ -279,6 +273,15 @@ int _reset_graphics_input(EngineState *s) {
 	s->titlebar_port->_bgcolor.priority = 11; // Standard priority for the titlebar port
 #endif
 
+#endif
+
+	s->priority_first = 42; // Priority zone 0 ends here
+
+	if (s->usesOldGfxFunctions())
+		s->priority_last = 200;
+	else
+		s->priority_last = 190;
+
 	return 0;
 }
 
@@ -289,12 +292,14 @@ int game_init_graphics(EngineState *s) {
 static void _free_graphics_input(EngineState *s) {
 	debug(2, "Freeing graphics");
 
+#ifdef INCLUDE_OLDGFX
 	delete s->visual;
 
 	s->wm_port = s->titlebar_port = s->picture_port = NULL;
 	s->visual = NULL;
 	s->dyn_views = NULL;
 	s->port = NULL;
+#endif
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
@@ -406,8 +411,14 @@ int game_init(EngineState *s) {
 
 	s->parserIsValid = false; // Invalidate parser
 	s->parser_event = NULL_REG; // Invalidate parser event
+
+#ifdef INCLUDE_OLDGFX
 	if (s->gfx_state && _reset_graphics_input(s))
 		return 1;
+#else
+	if (_reset_graphics_input(s))
+		return 1;
+#endif
 
 	s->successor = NULL; // No successor
 	s->_statusBarText.clear(); // Status bar is blank

@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "common/endian.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
@@ -133,3 +136,5 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 }
 
 } // End of namespace Sci
+
+#endif

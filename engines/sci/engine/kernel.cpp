@@ -28,6 +28,7 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel_types.h"
+#include "sci/gfx/operations.h"	// for gfxop_get_cel_parameters
 
 namespace Sci {
 
@@ -726,6 +727,71 @@ bool Kernel::loadKernelNames() {
 #endif
 		setDefaultKernelNames();
 	return true;
+}
+
+Common::Rect set_base(EngineState *s, reg_t object) {
+	SegManager *segMan = s->_segMan;
+	int x, y, original_y, z, ystep, xsize = 0, ysize = 0;
+	int xbase, ybase, xend, yend;
+	int view, loop, cel;
+	int oldloop, oldcel;
+	int xmod = 0, ymod = 0;
+	Common::Rect retval;
+
+	x = (int16)GET_SEL32V(segMan, object, x);
+	original_y = y = (int16)GET_SEL32V(segMan, object, y);
+
+	if (s->_kernel->_selectorCache.z > -1)
+		z = (int16)GET_SEL32V(segMan, object, z);
+	else
+		z = 0;
+
+	y -= z; // Subtract z offset
+
+	ystep = (int16)GET_SEL32V(segMan, object, yStep);
+
+	view = (int16)GET_SEL32V(segMan, object, view);
+	int l = GET_SEL32V(segMan, object, loop);
+	oldloop = loop = (l & 0x80) ? l - 256 : l;
+	int c = GET_SEL32V(segMan, object, cel);
+	oldcel = cel = (c & 0x80) ? c - 256 : c;
+
+	Common::Point offset = Common::Point(0, 0);
+
+	if (loop != oldloop) {
+		loop = 0;
+		PUT_SEL32V(segMan, object, loop, 0);
+		debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
+	}
+
+	if (cel != oldcel) {
+		cel = 0;
+		PUT_SEL32V(segMan, object, cel, 0);
+	}
+
+#ifdef INCLUDE_OLDGFX
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
+#else
+	// TODO
+#endif
+
+	xmod = offset.x;
+	ymod = offset.y;
+
+	xbase = x - xmod - (xsize >> 1);
+	xend = xbase + xsize;
+	yend = y /* - ymod */ + 1;
+	ybase = yend - ystep;
+
+	debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
+	          x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
+
+	retval.left = xbase;
+	retval.top = ybase;
+	retval.right = xend;
+	retval.bottom = yend;
+
+	return retval;
 }
 
 } // End of namespace Sci

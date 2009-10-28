@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GUI32_GUI32_H
 #define SCI_GUI32_GUI32_H
 
@@ -133,5 +136,7 @@ private:
 };
 
 } // End of namespace Sci
+
+#endif
 
 #endif

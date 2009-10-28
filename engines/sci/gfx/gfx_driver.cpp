@@ -23,13 +23,15 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 
-#include "sci/sci.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_tools.h"
@@ -199,3 +201,5 @@ void GfxDriver::animatePalette(int fromColor, int toColor, int stepCount) {
 }
 
 } // End of namespace Sci
+
+#endif

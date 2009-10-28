@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GFX_GFX_TOOLS_H
 #define SCI_GFX_GFX_TOOLS_H
 
@@ -184,3 +187,5 @@ void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_TOOLS_H
+
+#endif

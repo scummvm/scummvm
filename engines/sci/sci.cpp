@@ -35,8 +35,10 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
+#include "sci/gfx/operations.h"	// fog GfxState
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
+#include "sci/gui/gui.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_screen.h"
@@ -141,7 +143,9 @@ Common::Error SciEngine::run() {
 	ConfMan.registerDefault("undither", "true");
 	screen->unditherSetState(ConfMan.getBool("undither"));
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_init(&gfx_state, _resMan, screen, palette, 1);
+#endif
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
@@ -168,7 +172,9 @@ Common::Error SciEngine::run() {
 	delete screen;
 	delete _gamestate;
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_exit(&gfx_state);
+#endif
 
 	return Common::kNoError;
 }

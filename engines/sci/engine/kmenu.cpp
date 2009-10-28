@@ -39,8 +39,12 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	Common::String contents = s->_segMan->getString(argv[1]);
 
+#ifdef INCLUDE_OLDGFX
 	s->_menubar->addMenu(s->gfx_state, name,
 	                 contents, s->titlebar_port->_font, argv[1]);
+#else
+	// TODO
+#endif
 
 	return s->r_acc;
 
@@ -104,10 +108,13 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 		return item_nr;
 }
 
+#ifdef INCLUDE_OLDGFX
 #define FULL_REDRAW \
 	s->visual->draw(Common::Point(0, 0)); \
 	gfxop_update(s->gfx_state);
-
+#else
+#define FULL_REDRAW
+#endif
 
 reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
@@ -128,7 +135,9 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	const int debug_parser = 0;
 #endif
 
+#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
+#endif
 
 	/* Check whether we can claim the event directly as a keyboard or said event */
 	if (type & (SCI_EVT_KEYBOARD | SCI_EVT_SAID)) {
@@ -181,6 +190,8 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	if (menu_mode) {
 		int old_item;
 		int old_menu;
+
+#ifdef INCLUDE_OLDGFX
 		GfxPort *port = sciw_new_menu(s, s->titlebar_port, s->_menubar, 0);
 
 		item_nr = -1;
@@ -193,6 +204,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
 		FULL_REDRAW;
+#endif
 
 		old_item = -1;
 		old_menu = -1;
@@ -211,8 +223,10 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 				switch (ev.data) {
 
 				case '`':
+#ifdef INCLUDE_OLDGFX
 					if (ev.buckybits & SCI_EVM_CTRL)
 						s->visual->print(0);
+#endif
 					break;
 
 				case SCI_K_ESC:
@@ -263,7 +277,9 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 				{
 				Common::Point curMousePos = s->_cursor->getPosition();
 				menu_mode = (curMousePos.y < 10);
+#ifdef INCLUDE_OLDGFX
 				claimed = !menu_mode && !s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, toCommonRect(port->_bounds));
+#endif
 				mouse_down = 0;
 				}
 				break;
@@ -278,6 +294,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			if (mouse_down)
+#ifdef INCLUDE_OLDGFX
 				s->_menubar->mapPointer(s->_cursor->getPosition(), menu_nr, item_nr, toCommonRect(port->_bounds));
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
@@ -294,13 +311,15 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 				else {
 					FULL_REDRAW;
 				}
-
 			} /* ...if the menu changed. */
+#endif
 
 			/* Remove the active menu item, if neccessary */
 			if (item_nr != old_item) {
+#ifdef INCLUDE_OLDGFX
 				port = sciw_toggle_item(port, &(s->_menubar->_menus[menu_nr]), old_item, false);
 				port = sciw_toggle_item(port, &(s->_menubar->_menus[menu_nr]), item_nr, true);
+#endif
 				FULL_REDRAW;
 			}
 
@@ -309,6 +328,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 		} /* while (menu_mode) */
 
+#ifdef INCLUDE_OLDGFX
 		if (port) {
 			delete port;
 			port = NULL;
@@ -316,6 +336,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 			sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
 			gfxop_update(s->gfx_state);
 		}
+#endif
 		FULL_REDRAW;
 	}
 

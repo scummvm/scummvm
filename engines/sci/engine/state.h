@@ -134,7 +134,6 @@ public:
 	SciGuiCursor *_cursor;	/* Cursor functions */
 
 	GfxState *gfx_state; /**< Graphics state and driver */
-	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */
 
 	SfxState _sound; /**< sound subsystem */
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
@@ -153,6 +152,9 @@ public:
 
 	int status_bar_foreground, status_bar_background;
 
+#ifdef INCLUDE_OLDGFX
+	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */
+
 	GfxPort *port; /**< The currently active port */
 
 	gfx_color_t ega_colors[16]; /**< The 16 EGA colors- for SCI0(1) */
@@ -169,6 +171,7 @@ public:
 
 	GfxList *dyn_views; /**< Pointers to pic and dynamic view lists */
 	GfxList *drop_views; /**< A list Animate() can dump dropped dynviews into */
+#endif
 
 	Menubar *_menubar; /**< The menu bar */
 
@@ -296,6 +299,8 @@ private:
 	bool _usesCdTrack;
 };
 
+#ifdef INCLUDE_OLDGFX
+
 /**
  * Retrieves the gfx_pixmap_color_t associated with a game color index.
  * @param s			game state
@@ -309,6 +314,8 @@ reg_t graph_save_box(EngineState *s, rect_t area);
 void graph_restore_box(EngineState *s, reg_t handle);
 void assert_primary_widget_lists(EngineState *s);
 void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport);
+
+#endif
 
 } // End of namespace Sci
 

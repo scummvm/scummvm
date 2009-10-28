@@ -23,6 +23,8 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/script.h"
@@ -34,7 +36,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 : resMan(res), _kernel(kernel), _voc(voc), _gui(gui), _cursor(cursor), _dirseeker(this) {
 
 	gfx_state = 0;
-	old_screen = 0;
 
 	sfx_init_flags = 0;
 	sound_volume = 0;
@@ -50,12 +51,11 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	status_bar_foreground = 0;
 	status_bar_background = 0;
 
+#ifdef INCLUDE_OLDGFX
+	old_screen = 0;
 	port = 0;
-
 	memset(ega_colors, 0, sizeof(ega_colors));
-
 	visual = 0;
-
 	titlebar_port = 0;
 	wm_port = 0;
 	picture_port = 0;
@@ -65,8 +65,8 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	pic_animate = 0;
 
 	dyn_views = 0;
-
 	drop_views = 0;
+#endif
 
 	_menubar = 0;
 

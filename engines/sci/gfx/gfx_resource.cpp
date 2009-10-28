@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -73,3 +76,5 @@ void gfxr_free_pic(gfxr_pic_t *pic) {
 }
 
 } // End of namespace Sci
+
+#endif

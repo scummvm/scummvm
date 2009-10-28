@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_INCLUDE_SCI_WIDGETS_H
 #define SCI_INCLUDE_SCI_WIDGETS_H
 
@@ -218,3 +221,5 @@ GfxPort *sciw_toggle_item(GfxPort *menu_port, Menu *menu, int selection,
 } // End of namespace Sci
 
 #endif // SCI_INCLUDE_SCI_WIDGETS_H
+
+#endif

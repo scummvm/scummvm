@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GFX_GFX_SYSTEM
 #define SCI_GFX_GFX_SYSTEM
 
@@ -279,3 +282,5 @@ struct gfx_color_t {
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_SYSTEM
+
+#endif

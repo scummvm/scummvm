@@ -23,13 +23,15 @@
  *
  */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 // Resource manager core part
 
 // FIXME/TODO: The name "(Graphics) resource manager", and the associated
 // filenames, are misleading. This should be renamed to "Graphics manager"
 // or something like that.
 
-#include "sci/sci.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_resmgr.h"
@@ -526,3 +528,5 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 }
 
 } // End of namespace Sci
+
+#endif
