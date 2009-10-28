@@ -38,6 +38,7 @@
 #include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_view.h"
 
 namespace Sci {
 
@@ -377,28 +378,15 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 	int y = argv[3].toUint16();
 	int x = argv[4].toUint16();
 
-#ifdef INCLUDE_OLDGFX
-	gfxr_view_t *res = NULL;
-	gfx_pixmap_t *pxm = NULL;
+	SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, view);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
+	x = CLIP<int>(x, 0, celInfo->width - 1);
+	y = CLIP<int>(y, 0, celInfo->height - 1);
+	byte *celData = tmpView->getBitmap(loop, cel);
+	int result = (celData[y * celInfo->width + x] == celInfo->clearKey);
+	delete tmpView;
 
-	res = s->gfx_state->gfxResMan->getView(view, &loop, &cel, 0);
-
-	if (!res) {
-		warning("[GFX] Attempt to get cel parameters for invalid view %d", view);
-		return SIGNAL_REG;
-	}
-
-	pxm = res->loops[loop].cels[cel];
-	if (x > pxm->index_width)
-		x = pxm->index_width - 1;
-	if (y > pxm->index_height)
-		y = pxm->index_height - 1;
-
-	return make_reg(0, pxm->index_data[y * pxm->index_width + x] == pxm->color_key);
-#else
-	// TODO
-	return NULL_REG;
-#endif
+	return make_reg(0, result);
 }
 
 reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
