@@ -365,7 +365,7 @@ void DraciEngine::pauseEngineIntern(bool pause) {
 		// Adjust engine start time
 		const int delta = _system->getMillis() - _pauseStartTime;
 		_engineStartTime += delta / 1000;
-		_game->shiftSpeechTick(delta);
+		_game->shiftSpeechAndFadeTick(delta);
 		_pauseStartTime = 0;
 	}
 }

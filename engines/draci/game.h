@@ -87,6 +87,11 @@ enum SpeechConstants {
 	kSpeechTimeUnit = 2640
 };
 
+// One fading phase is 50ms.
+enum FadeConstants {
+	kFadingTimeUnit = 50
+};
+
 /** Inventory related magical constants */
 enum InventoryConstants {
   kInventoryItemWidth = 25,
@@ -330,7 +335,7 @@ public:
 	void setExitLoop(int exit) { _shouldExitLoop = exit; }
 
 	void setSpeechTiming(uint tick, uint duration);
-	void shiftSpeechTick(int delta);
+	void shiftSpeechAndFadeTick(int delta);
 
 	void updateTitle();
 	void updateCursor();
@@ -360,6 +365,7 @@ public:
 
 	void schedulePalette(int paletteID);
 	int getScheduledPalette() const;
+	void initializeFading(int phases);
 
 	void DoSync(Common::Serializer &s);
 
@@ -423,6 +429,9 @@ private:
 	int _markedAnimationIndex; ///< Used by the Mark GPL command
 
 	int _scheduledPalette;
+	int _fadePhases;
+	int _fadePhase;
+	uint _fadeTick;
 };
 
 } // End of namespace Draci

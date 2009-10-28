@@ -138,6 +138,8 @@ private:
 	void resetBlock(Common::Queue<int> &params);
 	void setPalette(Common::Queue<int> &params);
 	void blackPalette(Common::Queue<int> &params);
+	void fadePalette(Common::Queue<int> &params);
+	void fadePalettePlay(Common::Queue<int> &params);
 	void loadPalette(Common::Queue<int> &params);
 	void quitGame(Common::Queue<int> &params);
 	void pushNewRoom(Common::Queue<int> &params);

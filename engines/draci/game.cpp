@@ -165,6 +165,7 @@ void Game::init() {
 	setQuit(false);
 	setExitLoop(false);
 	_scheduledPalette = 0;
+	_fadePhases = _fadePhase = 0;
 	setLoopStatus(kStatusGate);
 	setLoopSubstatus(kSubstatusOrdinary);
 
@@ -238,6 +239,22 @@ void Game::loop() {
 		_vm->handleEvents();
 		if (shouldExitLoop() > 1)	// after loading
 			break;
+
+		if (_fadePhase > 0 && (_vm->_system->getMillis() - _fadeTick) >= kFadingTimeUnit) {
+			_fadeTick = _vm->_system->getMillis();
+			--_fadePhase;
+			const BAFile *startPal = _vm->_paletteArchive->getFile(_currentRoom._palette);
+			const BAFile *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette()) : NULL;
+			_vm->_screen->interpolatePalettes(startPal->_data, endPal->_data, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
+			if (_loopSubstatus == kSubstatusFade && _fadePhase == 0) {
+				setExitLoop(true);
+				// Rewrite the palette index of the current
+				// room.  This is necessary when two fadings
+				// are called after each other, such as in the
+				// intro.  We rely on that getScheduledPalette() >= 0.
+				_currentRoom._palette = getScheduledPalette();
+			}
+		}
 
 		// Fetch mouse coordinates
 		int x = _vm->_mouse->getPosX();
@@ -1530,8 +1547,9 @@ void Game::setSpeechTiming(uint tick, uint duration) {
 	_speechDuration = duration;
 }
 
-void Game::shiftSpeechTick(int delta) {
+void Game::shiftSpeechAndFadeTick(int delta) {
 	_speechTick += delta;
+	_fadeTick += delta;
 }
 
 int Game::getEscRoom() const {
@@ -1548,6 +1566,11 @@ void Game::schedulePalette(int paletteID) {
 
 int Game::getScheduledPalette() const {
 	return _scheduledPalette;
+}
+
+void Game::initializeFading(int phases) {
+	_fadePhases = _fadePhase = phases;
+	_fadeTick = _vm->_system->getMillis();
 }
 
 /**

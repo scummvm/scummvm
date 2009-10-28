@@ -64,8 +64,8 @@ void Script::setupCommandList() {
 		{ 11, 1, "LoadPalette", 		1, { 2 }, &Script::loadPalette },
 		{ 12, 1, "SetPalette", 			0, { 0 }, &Script::setPalette },
 		{ 12, 2, "BlackPalette", 		0, { 0 }, &Script::blackPalette },
-		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, NULL },
-		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, NULL },
+		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, &Script::fadePalette },
+		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, &Script::fadePalettePlay },
 		{ 14, 1, "NewRoom", 			2, { 3, 1 }, &Script::newRoom },
 		{ 15, 1, "ExecInit", 			1, { 3 }, &Script::execInit },
 		{ 15, 2, "ExecLook", 			1, { 3 }, &Script::execLook },
@@ -840,14 +840,36 @@ void Script::blackPalette(Common::Queue<int> &params) {
 	_vm->_game->schedulePalette(kBlackPalette);
 }
 
+void Script::fadePalette(Common::Queue<int> &params) {
+	params.pop();	// unused first and last
+	params.pop();
+	int phases = params.pop();
+	_vm->_game->initializeFading(phases);
+}
+
+void Script::fadePalettePlay(Common::Queue<int> &params) {
+	params.pop();	// unused first and last
+	params.pop();
+	int phases = params.pop();
+	_vm->_game->initializeFading(phases);
+
+	_vm->_game->setLoopSubstatus(kSubstatusFade);
+	_vm->_game->loop();
+	_vm->_game->setExitLoop(false);
+	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
+}
+
 void Script::setPalette(Common::Queue<int> &params) {
 	if (_vm->_game->getScheduledPalette() == -1) {
-		_vm->_screen->setPaletteEmpty();
+		_vm->_screen->setPalette(NULL, 0, kNumColours);
 	} else {
 		const BAFile *f;
 		f = _vm->_paletteArchive->getFile(_vm->_game->getScheduledPalette());
 		_vm->_screen->setPalette(f->_data, 0, kNumColours);
 	}
+	// Immediately update the palette
+	_vm->_screen->copyToScreen();
+	_vm->_system->delayMillis(100);
 }
 
 void Script::quitGame(Common::Queue<int> &params) {

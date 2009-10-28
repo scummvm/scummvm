@@ -33,25 +33,18 @@ namespace Draci {
 Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	_surface = new Surface(kScreenWidth, kScreenHeight);
 	_palette = new byte[4 * kNumColours];
-	setPaletteEmpty();
+	_blackPalette = new byte[3 * kNumColours];
+	for (int i = 0; i < 3 * kNumColours; ++i) {
+		_blackPalette[i] = 0;
+	}
+	setPalette(NULL, 0, kNumColours);
 	this->clearScreen();
 }
 
 Screen::~Screen() {
 	delete _surface;
 	delete[] _palette;
-}
-
-/**
- * @brief Sets the first numEntries of palette to zero
- * @param numEntries The number of entries to set to zero (from start)
- */
-void Screen::setPaletteEmpty(uint numEntries) {
-	for (uint i = 0; i < 4 * numEntries; ++i) {
-		_palette[i] = 0;
-	}
-
-	_vm->_system->setPalette(_palette, 0, numEntries);
+	delete[] _blackPalette;
 }
 
 /**
@@ -61,7 +54,7 @@ void Screen::setPaletteEmpty(uint numEntries) {
  *        num Number of colours to replace
  */
 void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
-	Common::MemoryReadStream pal(data, 3 * kNumColours);
+	Common::MemoryReadStream pal(data ? data : _blackPalette, 3 * kNumColours);
 	pal.seek(start * 4);
 
 	// Copy the palette
@@ -74,11 +67,38 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 
 	// TODO: Investigate why this is needed
 	// Shift the palette two bits to the left to make it brighter
-	for (uint i = 0; i < 4 * kNumColours; ++i) {
+	for (int i = start * 4; i < (start + num) * 4; ++i) {
 		_palette[i] <<= 2;
 	}
 
 	_vm->_system->setPalette(_palette, start, num);
+}
+
+void Screen::interpolatePalettes(const byte *first, const byte *second, uint16 start, uint16 num, int index, int number) {
+	Common::MemoryReadStream firstPal(first ? first : _blackPalette, 3 * kNumColours);
+	Common::MemoryReadStream secondPal(second ? second : _blackPalette, 3 * kNumColours);
+	firstPal.seek(start * 4);
+	secondPal.seek(start * 4);
+
+	// Interpolate the palettes
+	for (uint16 i = start; i < start + num; ++i) {
+		_palette[i * 4] = interpolate(firstPal.readByte(), secondPal.readByte(), index, number);
+		_palette[i * 4 + 1] = interpolate(firstPal.readByte(), secondPal.readByte(), index, number);
+		_palette[i * 4 + 2] = interpolate(firstPal.readByte(), secondPal.readByte(), index, number);
+		_palette[i * 4 + 3] = 0;
+	}
+
+	// TODO: Investigate why this is needed
+	// Shift the palette two bits to the left to make it brighter
+	for (int i = start * 4; i < (start + num) * 4; ++i) {
+		_palette[i] <<= 2;
+	}
+
+	_vm->_system->setPalette(_palette, start, num);
+}
+
+int Screen::interpolate(int first, int second, int index, int number) {
+	return (second * index + first * (number - index)) / number;
 }
 
 /**
