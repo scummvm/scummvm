@@ -173,7 +173,7 @@ void Game::init() {
 	_currentItem = kNoItem;
 	_itemUnderCursor = kNoItem;
 
-	_vm->_mouse->setCursorType(kNormalCursor);
+	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
 
 	_oldObjUnderCursor = _objUnderCursor = kOverlayImage;
         
@@ -1374,6 +1374,8 @@ void Game::enterNewRoom(bool force_reload) {
 
 	// Reset the loop status.
 	setLoopStatus(kStatusOrdinary);
+
+	_vm->_mouse->setCursorType(kNormalCursor);
 }
 
 void Game::runGateProgram(int gate) {
