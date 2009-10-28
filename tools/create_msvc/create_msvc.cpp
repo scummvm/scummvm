@@ -896,8 +896,11 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 	           "\t<Files>\n";
 
 	std::string modulePath;
-	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir))
+	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
 		modulePath = moduleDir.substr(setup.srcDir.size());
+		if (!modulePath.empty() && modulePath.at(0) == '/')
+			modulePath.erase(0, 1);
+	}
 
 	if (modulePath.size())
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
