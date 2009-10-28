@@ -491,19 +491,13 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
-		SegManager *segMan = s->_segMan;
-
-		int x = (int16)GET_SEL32V(segMan, object, x);
-		int y = (int16)GET_SEL32V(segMan, object, y);
-		int z = (s->_kernel->_selectorCache.z > -1) ? (int16)GET_SEL32V(segMan, object, z) : 0;
-
-		int ystep = (int16)GET_SEL32V(segMan, object, yStep);
-
-		int view = (int16)GET_SEL32V(segMan, object, view);
-		int loop = GET_SEL32V(segMan, object, loop);
-		int cel = GET_SEL32V(segMan, object, cel);
-
-		Common::Point offset;
+		int x = (int16)GET_SEL32V(s->_segMan, object, x);
+		int y = (int16)GET_SEL32V(s->_segMan, object, y);
+		int z = (s->_kernel->_selectorCache.z > -1) ? (int16)GET_SEL32V(s->_segMan, object, z) : 0;
+		//int ystep = (int16)GET_SEL32V(s->_segMan, object, yStep);
+		int view = GET_SEL32V(s->_segMan, object, view);
+		int loop = GET_SEL32V(s->_segMan, object, loop);
+		int cel = GET_SEL32V(s->_segMan, object, cel);
 
 		SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, view);
 		sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
@@ -517,10 +511,10 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 		delete tmpView;
 
-		PUT_SEL32V(segMan, object, brLeft, left);
-		PUT_SEL32V(segMan, object, brRight, right);
-		PUT_SEL32V(segMan, object, brTop, top);
-		PUT_SEL32V(segMan, object, brBottom, bottom);
+		PUT_SEL32V(s->_segMan, object, brLeft, left);
+		PUT_SEL32V(s->_segMan, object, brRight, right);
+		PUT_SEL32V(s->_segMan, object, brTop, top);
+		PUT_SEL32V(s->_segMan, object, brBottom, bottom);
 	}
 
 	return s->r_acc;
