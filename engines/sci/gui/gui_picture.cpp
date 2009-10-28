@@ -522,6 +522,11 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		default:
 			error("Unsupported pic-operation %X", pic_op);
 		}
+		//printf("picop %X\n", pic_op);
+		// for debug purposes
+		//_screen->copyToScreen();
+		//g_system->updateScreen();
+		//g_system->delayMillis(500);
 	}
 	error("picture vector data without terminator");
 }
@@ -586,7 +591,7 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 	byte screenMask = _screen->getDrawingMask(color, priority, control);
-	byte matchedMask;
+	byte matchedMask, matchMask;
 	int16 w, e, a_set, b_set;
 
 	p.x = x + curPort->left;
@@ -597,6 +602,18 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	byte searchPriority = _screen->getPriority(p.x, p.y);
 	byte searchControl = _screen->getControl(p.x, p.y);
 
+	// Now remove screens, that already got the right color/priority/control
+	if ((screenMask & SCI_SCREEN_MASK_VISUAL) && (searchColor == color))
+		screenMask ^= SCI_SCREEN_MASK_VISUAL;
+	if ((screenMask & SCI_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
+		screenMask ^= SCI_SCREEN_MASK_PRIORITY;
+	if ((screenMask & SCI_SCREEN_MASK_CONTROL) && (searchControl == control))
+		screenMask ^= SCI_SCREEN_MASK_CONTROL;
+
+	// Exit, if no screens left
+	if (!screenMask)
+		return;
+
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
 		if (_resMan->isVGA()) {
@@ -606,21 +623,16 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 			if ((color == 15) || (searchColor != 15))
 				return;
 		}
+		matchMask = SCI_SCREEN_MASK_VISUAL;
 	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
 		if ((priority == 0) || (searchPriority != 0))
 			return;
+		matchMask = SCI_SCREEN_MASK_PRIORITY;
 	} else if (screenMask & SCI_SCREEN_MASK_CONTROL) {
 		if ((control == 0) || (searchControl != 0))
 			return;
+		matchMask = SCI_SCREEN_MASK_CONTROL;
 	}
-
-	// Now remove screens, that already got the right color/priority/control
-	if ((screenMask & SCI_SCREEN_MASK_VISUAL) && (searchColor == color))
-		screenMask ^= SCI_SCREEN_MASK_VISUAL;
-	if ((screenMask & SCI_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
-		screenMask ^= SCI_SCREEN_MASK_PRIORITY;
-	if ((screenMask & SCI_SCREEN_MASK_CONTROL) && (searchControl == control))
-		screenMask ^= SCI_SCREEN_MASK_CONTROL;
 
 	// hard borders for filling
 	int l = curPort->rect.left + curPort->left;
@@ -629,20 +641,20 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	int b = curPort->rect.bottom + curPort->top - 1;
 	while (stack.size()) {
 		p = stack.pop();
-		if ((matchedMask = _screen->isFillMatch(p.x, p.y, screenMask, searchColor, searchPriority, searchControl)) == 0) // already filled
+		if ((matchedMask = _screen->isFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl)) == 0) // already filled
 			continue;
 		_screen->putPixel(p.x, p.y, screenMask, color, priority, control);
 		w = p.x;
 		e = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (w > l && (matchedMask == _screen->isFillMatch(w - 1, p.y, screenMask, searchColor, searchPriority, searchControl)))
+		while (w > l && (matchedMask = _screen->isFillMatch(w - 1, p.y, matchMask, searchColor, searchPriority, searchControl)))
 			_screen->putPixel(--w, p.y, screenMask, color, priority, control);
-		while (e < r && (matchedMask == _screen->isFillMatch(e + 1, p.y, screenMask, searchColor, searchPriority, searchControl)))
+		while (e < r && (matchedMask = _screen->isFillMatch(e + 1, p.y, matchMask, searchColor, searchPriority, searchControl)))
 			_screen->putPixel(++e, p.y, screenMask, color, priority, control);
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {
-			if (p.y > t && (matchedMask == _screen->isFillMatch(w, p.y - 1, screenMask, searchColor, searchPriority, searchControl))) { // one line above
+			if (p.y > t && (matchedMask = _screen->isFillMatch(w, p.y - 1, matchMask, searchColor, searchPriority, searchControl))) { // one line above
 				if (a_set == 0) {
 					p1.x = w;
 					p1.y = p.y - 1;
@@ -652,7 +664,7 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 			} else
 				a_set = 0;
 
-			if (p.y < b && (matchedMask == _screen->isFillMatch(w, p.y + 1, screenMask, searchColor, searchPriority, searchControl))) { // one line below
+			if (p.y < b && (matchedMask = _screen->isFillMatch(w, p.y + 1, matchMask, searchColor, searchPriority, searchControl))) { // one line below
 				if (b_set == 0) {
 					p1.x = w;
 					p1.y = p.y + 1;
