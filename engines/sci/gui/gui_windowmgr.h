@@ -36,7 +36,7 @@ public:
 	SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate, SciGuiText *text);
 	~SciGuiWindowMgr();
 
-	void init();
+	void init(Common::String gameName);
 
 	int16 isFrontWindow(GuiWindow *wnd);
 	void BeginUpdate(GuiWindow *wnd);

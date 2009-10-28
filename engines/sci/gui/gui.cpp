@@ -61,8 +61,6 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
 	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate, _text);
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
-	_gfx->init(_text);
-	_windowMgr->init();
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
@@ -81,6 +79,8 @@ void SciGui::resetEngineState(EngineState *s) {
 void SciGui::init(bool usesOldGfxFunctions) {
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 
+	_gfx->init(_text);
+	_windowMgr->init(_s->_gameName);
 	initPriorityBands();
 }
 

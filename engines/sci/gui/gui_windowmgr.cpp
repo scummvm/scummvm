@@ -52,14 +52,17 @@ SciGuiWindowMgr::~SciGuiWindowMgr() {
 	// TODO: Clear _windowList and delete all stuff in it?
 }
 
-void SciGuiWindowMgr::init() {
+void SciGuiWindowMgr::init(Common::String gameName) {
+	int16 offTop = 10;
+
 	_wmgrPort = new GuiPort(0);
 	_windowsById.resize(1);
 	_windowsById[0] = _wmgrPort;
 
-	// Jones in the Fast Lane uses up the whole window
-	int16 offTop = !scumm_stricmp(((SciEngine *)g_engine)->getGameID(), "jones") ? 0 : 10;
-	// TODO: Check how original interpreter works and fix this code if the jones interpreter doesnt do it this way
+	// Jones sierra sci was called with parameter -Nw 0 0 200 320
+	//  this actually meant not skipping the first 10 pixellines in windowMgrPort
+	if (gameName == "jones")
+		offTop = 0;
 
 	_gfx->OpenPort(_wmgrPort);
 	_gfx->SetPort(_wmgrPort);
