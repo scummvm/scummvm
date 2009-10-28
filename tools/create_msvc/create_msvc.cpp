@@ -727,17 +727,17 @@ std::string createUUID() {
 	unsigned char uuid[16];
 
 	for (int i = 0; i < 16; ++i)
-		uuid[i] = (std::rand() / (double)(RAND_MAX)) * 0xFF;
+		uuid[i] = (unsigned char)((std::rand() / (double)(RAND_MAX)) * 0xFF);
 
 	uuid[8] &= 0xBF; uuid[8] |= 0x80;
 	uuid[6] &= 0x4F; uuid[6] |= 0x40;
 
 	std::stringstream uuidString;
-	uuidString << std::hex << std::uppercase << std::setw(2) << std::setfill('0');
+	uuidString << std::hex << std::uppercase << std::setfill('0');
 	for (int i = 0; i < 16; ++i) {
-		uuidString << (int)uuid[i];
+		uuidString << std::setw(2) << (int)uuid[i];
 		if (i == 3 || i == 5 || i == 7 || i == 9) {
-			uuidString << std::setw(0) << '-' << std::setw(2);
+			uuidString << std::setw(0) << '-';
 		}
 	}
 
