@@ -42,29 +42,12 @@
 
 namespace Sci {
 
-// Graph subfunctions
-enum {
-	K_GRAPH_GET_COLORS_NR = 2,
-	// 3 - SET PALETTE VIA RESOURCE
-	K_GRAPH_DRAW_LINE = 4,
-	// 5 - NOP
-	// 6 - DRAW PATTERN
-	K_GRAPH_SAVE_BOX = 7,
-	K_GRAPH_RESTORE_BOX = 8,
-	K_GRAPH_FILL_BOX_BACKGROUND = 9,
-	K_GRAPH_FILL_BOX_FOREGROUND = 10,
-	K_GRAPH_FILL_BOX_ANY = 11,
-	K_GRAPH_UPDATE_BOX = 12,
-	K_GRAPH_REDRAW_BOX = 13,
-	K_GRAPH_ADJUST_PRIORITY = 14
-};
-
-void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) {
+void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
-	int view = GET_SEL32V(segMan, obj, view);
-	int signal = GET_SEL32V(segMan, obj, signal);
-	int loop;
-	int maxloops;
+	GuiResourceId viewId = GET_SEL32V(segMan, object, view);
+	uint16 signal = GET_SEL32V(segMan, object, signal);
+	int16 loopNo;
+	int16 maxLoops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (signal & kSignalDoesntTurn)
@@ -74,33 +57,33 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) 
 
 	if (!oldScriptHeader) {
 		if (angle < 45)
-			loop = 3;
+			loopNo = 3;
 		else if (angle < 136)
-			loop = 0;
+			loopNo = 0;
 		else if (angle < 225)
-			loop = 2;
+			loopNo = 2;
 		else if (angle < 316)
-			loop = 1;
+			loopNo = 1;
 		else
-			loop = 3;
+			loopNo = 3;
 	} else {
 		if (angle >= 330 || angle <= 30)
-			loop = 3;
+			loopNo = 3;
 		else if (angle <= 150)
-			loop = 0;
+			loopNo = 0;
 		else if (angle <= 210)
-			loop = 2;
+			loopNo = 2;
 		else if (angle < 330)
-			loop = 1;
-		else loop = 0xffff;
+			loopNo = 1;
+		else loopNo = -1;
 	}
 
-	maxloops = s->_gui->getLoopCount(view);
+	maxLoops = s->_gui->getLoopCount(viewId);
 
-	if ((loop > 1) && (maxloops < 4))
+	if ((loopNo > 1) && (maxLoops < 4))
 		return;
 
-	PUT_SEL32V(segMan, obj, loop, loop);
+	PUT_SEL32V(segMan, object, loop, loopNo);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -199,6 +182,23 @@ void kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1, Common::Rect *destRe
 	if (y > y1) SWAP(y, y1);
 	*destRect = Common::Rect(x, y, x1, y1);
 }
+
+// Graph subfunctions
+enum {
+	K_GRAPH_GET_COLORS_NR = 2,
+	// 3 - SET PALETTE VIA RESOURCE
+	K_GRAPH_DRAW_LINE = 4,
+	// 5 - NOP
+	// 6 - DRAW PATTERN
+	K_GRAPH_SAVE_BOX = 7,
+	K_GRAPH_RESTORE_BOX = 8,
+	K_GRAPH_FILL_BOX_BACKGROUND = 9,
+	K_GRAPH_FILL_BOX_FOREGROUND = 10,
+	K_GRAPH_FILL_BOX_ANY = 11,
+	K_GRAPH_UPDATE_BOX = 12,
+	K_GRAPH_REDRAW_BOX = 13,
+	K_GRAPH_ADJUST_PRIORITY = 14
+};
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	int16 x = 0, y = 0, x1 = 0, y1 = 0;
@@ -371,18 +371,19 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, !canBeHere);
 }
 
+// TODO: This should go into SciGui
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
-	int view = argv[0].toSint16();
-	int loop = argv[1].toSint16();
-	int cel = argv[2].toSint16();
-	int y = argv[3].toUint16();
-	int x = argv[4].toUint16();
+	GuiResourceId viewId = argv[0].toSint16();
+	int16 loopNo = argv[1].toSint16();
+	int16 celNo = argv[2].toSint16();
+	int16 y = argv[3].toUint16();
+	int16 x = argv[4].toUint16();
 
-	SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, view);
-	sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
+	SciGuiView *tmpView = new SciGuiView(s->resMan, NULL, NULL, viewId);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	x = CLIP<int>(x, 0, celInfo->width - 1);
 	y = CLIP<int>(y, 0, celInfo->height - 1);
-	byte *celData = tmpView->getBitmap(loop, cel);
+	byte *celData = tmpView->getBitmap(loopNo, celNo);
 	int result = (celData[y * celInfo->width + x] == celInfo->clearKey);
 	delete tmpView;
 
@@ -390,40 +391,40 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
-	int view = argv[0].toSint16();
-	int loop = argv[1].toSint16();
-	int cel = (argc >= 3) ? argv[2].toSint16() : 0;
+	GuiResourceId viewId = argv[0].toSint16();
+	int16 loopNo = argv[1].toSint16();
+	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 
-	return make_reg(0, s->_gui->getCelHeight(view, loop, cel));
+	return make_reg(0, s->_gui->getCelHeight(viewId, loopNo, celNo));
 }
 
 reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
-	int view = argv[0].toSint16();
-	int loop = argv[1].toSint16();
-	int cel = (argc >= 3) ? argv[2].toSint16() : 0;
+	GuiResourceId viewId = argv[0].toSint16();
+	int16 loopNo = argv[1].toSint16();
+	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 
-	return make_reg(0, s->_gui->getCelWidth(view, loop, cel));
+	return make_reg(0, s->_gui->getCelWidth(viewId, loopNo, celNo));
 }
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
-	reg_t obj = argv[0];
-	int view = GET_SEL32V(segMan, obj, view);
-	int loopCount = s->_gui->getLoopCount(view);
+	reg_t object = argv[0];
+	GuiResourceId viewId = GET_SEL32V(segMan, object, view);
+	int16 loopCount = s->_gui->getLoopCount(viewId);
 
-	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", view, loopCount);
+	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", viewId, loopCount);
 
 	return make_reg(0, loopCount);
 }
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
-	reg_t obj = argv[0];
-	int view = GET_SEL32V(segMan, obj, view);
-	int loop = GET_SEL32V(segMan, obj, loop);
-	int celCount = s->_gui->getCelCount(view, loop);
+	reg_t object = argv[0];
+	GuiResourceId viewId = GET_SEL32V(segMan, object, view);
+	int16 loopNo = GET_SEL32V(segMan, object, loop);
+	int16 celCount = s->_gui->getCelCount(viewId, loopNo);
 
-	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", view, loop, celCount);
+	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", viewId, loopNo, celCount);
 
 	return make_reg(0, celCount);
 }
@@ -453,7 +454,7 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 
 void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
 
-#define K_DRAWPIC_FLAGS_MIRRORED				(1 << 14)
+#define K_DRAWPIC_FLAGS_MIRRORED			(1 << 14)
 #define K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT	(1 << 15)
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
@@ -1034,8 +1035,7 @@ reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 	// (320x240 resolution, although the intro in KQ6 is 320x200).
 	// Refer to http://en.wikipedia.org/wiki/Mode_X
 
-	warning("STUB: SetVideoMode %d", argv[0].toUint16());
-
+	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
 	return s->r_acc;
 }
 

@@ -667,26 +667,26 @@ void SciGui::moveCursor(Common::Point pos) {
 	// FIXME!
 }
 
-int16 SciGui::getCelWidth(int view, int loop, int cel) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
-	sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
-	int16 width = celInfo->width;
+int16 SciGui::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
+	int16 celWidth = celInfo->width;
 	delete tmpView;
 
-	return width;
+	return celWidth;
 }
 
-int16 SciGui::getCelHeight(int view, int loop, int cel) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
-	sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
-	int16 height = celInfo->height;
+int16 SciGui::getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
+	int16 celHeight = celInfo->height;
 	delete tmpView;
 
-	return height;
+	return celHeight;
 }
 
-int16 SciGui::getLoopCount(int view) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
+int16 SciGui::getLoopCount(GuiResourceId viewId) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
 	if (!tmpView)
 		return -1;
 
@@ -696,12 +696,12 @@ int16 SciGui::getLoopCount(int view) {
 	return loopCount;
 }
 
-int16 SciGui::getCelCount(int view, int loop) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
+int16 SciGui::getCelCount(GuiResourceId viewId, int16 loopNo) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
 	if (!tmpView)
 		return -1;
 
-	uint16 celCount = tmpView->getLoopInfo(loop)->celCount;
+	uint16 celCount = tmpView->getLoopInfo(loopNo)->celCount;
 	delete tmpView;
 
 	return celCount;

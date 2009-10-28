@@ -124,11 +124,11 @@ public:
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);
 
-	int16 getCelWidth(int view, int loop, int cel);
-	int16 getCelHeight(int view, int loop, int cel);
+	virtual int16 getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);
+	virtual int16 getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo);
 
-	int16 getLoopCount(int view);
-	int16 getCelCount(int view, int loop);
+	virtual int16 getLoopCount(GuiResourceId viewId);
+	virtual int16 getCelCount(GuiResourceId viewId, int16 loopNo);
 
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
@@ -148,7 +148,6 @@ private:
 	virtual void addToPicSetPicNotValid();
 
 	SciGuiGfx *_gfx;
-//	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
 	SciGuiControls *_controls;
