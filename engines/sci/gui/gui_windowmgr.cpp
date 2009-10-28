@@ -59,6 +59,7 @@ void SciGuiWindowMgr::init() {
 
 	// Jones in the Fast Lane uses up the whole window
 	int16 offTop = !scumm_stricmp(((SciEngine *)g_engine)->getGameID(), "jones") ? 0 : 10;
+	// TODO: Check how original interpreter works and fix this code if the jones interpreter doesnt do it this way
 
 	_gfx->OpenPort(_wmgrPort);
 	_gfx->SetPort(_wmgrPort);
