@@ -39,49 +39,55 @@
 namespace Sci {
 
 struct OldNewIdTableEntry {
-	const char *oldId;
-	const char *newId;
+	Common::String oldId;
+	Common::String newId;
 	bool demo;
+	Common::String demoCheckFile;	// if non-zero and it doesn't exist, the demo flag is set
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
-	{ "demo",		"christmas1988",	false },
+	{ "arthur",		"camelot",			false,	"resource.002" },
+	{ "demo",		"christmas1988",	false,	"" },
+	{ "RH Budget",	"cnick-longbow",	false,	"" },
 	// iceman is the same
-	{ "icedemo",	"iceman",			true },
+	{ "icedemo",	"iceman",			true,	"" },
 	// longbow is the same
-	{ "rh",			"longbow",			true },
-	{ "eco2",		"ecoquest2",		true },		// EcoQuest 2 demo
-	{ "rain",		"ecoquest2",		false },	// EcoQuest 2 full
-	{ "fp",			"freddypharkas",	false },
-	{ "emc",		"funseeker",		false },
-	{ "gk",			"gk1",				false },
-	{ "hoyledemo",	"hoyle1",			true },
-	{ "cardgames",	"hoyle1",			false },
-	{ "solitare",	"hoyle2",			false },
+	{ "eco",		"ecoquest",			false,	"resource.000" },
+	{ "eco2",		"ecoquest2",		true,	"" },		// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		false,	"" },		// EcoQuest 2 full
+	{ "fp",			"freddypharkas",	false,	"" },
+	{ "emc",		"funseeker",		false,	"" },
+	{ "gk",			"gk1",				false,	"" },
+	{ "hoyledemo",	"hoyle1",			true,	"" },
+	{ "cardgames",	"hoyle1",			false,	"" },
+	{ "solitare",	"hoyle2",			false,	"" },
 	// hoyle3 is the same
 	// hoyle4 is the same
-	{ "demo000",	"kq1sci",			true },
-	{ "kq1",		"kq1sci",			false },
-	{ "kq4",		"kq4sci",			false },
-	{ "ll1",		"lsl1sci",			true },
-	{ "lsl1",		"lsl1sci",			false },
+	{ "demo000",	"kq1sci",			true,	"" },
+	{ "kq1",		"kq1sci",			false,	"" },
+	{ "kq4",		"kq4sci",			false,	"" },
+	{ "cb1",		"laurabow",			false,	"" },
+	{ "lb2",		"laurabow2",		false,	"resource.aud" },
+	{ "rh",			"longbow",			true,	"" },
+	{ "ll1",		"lsl1sci",			true,	"" },
 	// lsl2 is the same
-	{ "ll5",		"lsl5",				true },
+	{ "lsl3",		"lsl3",				false,	"resource.003" },
+	{ "ll5",		"lsl5",				true,	"" },
 	// lsl5 is the same
 	// lsl6 is the same
-	{ "mg",			"mothergoose",		false },
-	{ "cb1",		"laurabow",			false },
-	{ "lb2",		"laurabow2",		false },
-	{ "twisty",		"pepper",			false },
-	{ "pq",			"pq2",				false },
-	{ "trial",		"qfg2",				false },
-	{ "hq2demo",	"qfg2",				true },
-	{ "thegame",	"slater",			false },
-	{ "sq1demo",	"sq1sci",			true },
-	{ "sq1",		"sq1sci",			false },
+	{ "mg",			"mothergoose",		false,	"" },
+	{ "twisty",		"pepper",			false,	"" },
+	{ "pq1",		"pq1sci",			false,	"" },
+	{ "pq",			"pq2",				false,	"" },
+	{ "tales",		"fairytales",		false,	"resource.002" },
+	{ "trial",		"qfg2",				false,	"" },
+	{ "hq2demo",	"qfg2",				true,	"" },
+	{ "thegame",	"slater",			false,	"" },
+	{ "sq1demo",	"sq1sci",			true,	"" },
+	{ "sq1",		"sq1sci",			false,	"" },
 	// sq5 is the same
 
-	{ 0, 0, 0 }
+	{ "", "", false, "" }
 };
 
 const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
@@ -91,11 +97,14 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 
 	// TODO: SCI32 IDs
 
-	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId != 0; ++cur) {
+	for (const OldNewIdTableEntry *cur = s_oldNewTable; !cur->oldId.empty(); ++cur) {
 		if (sierraId == cur->oldId) {
 			if (cur->demo)
 				*gameFlags |= ADGF_DEMO;
-			return cur->newId;
+			if (!cur->demoCheckFile.empty())
+				if (!Common::File::exists(cur->demoCheckFile.c_str()))
+					*gameFlags |= ADGF_DEMO;
+			return cur->newId.c_str();
 		}
 	}
 
@@ -105,34 +114,18 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 		// christmas1992 has a "resource.000" file
 		return (Common::File::exists("resource.001")) ? "christmas1990" : "christmas1992";
 	}
-	if (sierraId == "arthur") {
-		if (!Common::File::exists("resource.002"))
-			*gameFlags |= ADGF_DEMO;
-		return "camelot";
-	}
 	if (sierraId == "brain") {
 		// This could either be The Castle of Dr. Brain, or The Island of Dr. Brain
 		// castlebrain has resource.001, whereas islandbrain doesn't
 		return (Common::File::exists("resource.001")) ? "castlebrain" : "islandbrain";
 	}
-	if (sierraId == "eco") {
-		if (!Common::File::exists("resource.000"))
-			*gameFlags |= ADGF_DEMO;
-		return "ecoquest";
+	if (sierraId == "lsl1") {
+		// This could either be LSL1 full version, or LSL casino
+		// LSL1 full has resource.000, whereas LSL casino doesn't
+		return (Common::File::exists("resource.000")) ? "lsl1sci" : "cnick-lsl";
 	}
-	if (sierraId == "lsl3") {
-		if (!Common::File::exists("resource.003"))
-			*gameFlags |= ADGF_DEMO;
-		return "lsl3";
-	}
-	// TODO: cnick-lsl, cnick-kq, cnick-laurabow, cnick-longbow and cnick-sq
-	// (their resources can't be read)
-	if (sierraId == "tales") {
-		if (!Common::File::exists("resource.002"))
-			*gameFlags |= ADGF_DEMO;
-		return "fairytales";
-	}
-	// TODO: pq1sci (its resources can't be read)
+	// TODO: cnick-kq and cnick-longbow (their resources can't be read)
+	// TODO: cnick-sq (same files as Ms. Astro Chicken)
 	if (sierraId == "pq3") {
 		// The pq3 demo comes with resource.000 and resource.001
 		// The full version was released with several resource.* files,
@@ -153,18 +146,13 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 			return "qfg1";
 	}
 	if (sierraId == "sq3") {
-		// Both SQ3 and the separately released subgame, Astro Chicken,
-		// have internal ID "sq3", but Astro Chicken only has "resource.map"
-		// and "resource.001". Detect if it's SQ3 by the existence of
-		// "resource.002"
+		// This could either be SQ3 full version, or Astro Chicken
+		// SQ3 full has resource.002, whereas Astro Chicken doesn't
 		return (Common::File::exists("resource.002")) ? "sq3" : "astrochicken";
 	}
 	if (sierraId == "sq4") {
-		// Both SQ4 and the separately released subgame, Ms. Astro Chicken,
-		// have internal ID "sq4", but Astro Chicken only has "resource.map"
-		// and "resource.001". Detect if it's SQ4 by the existence of
-		// "resource.000" (which exists in both SQ4 floppy and CD, but not in
-		// the subgame)
+		// This could either be SQ4 full version, or Ms. Astro Chicken
+		// SQ4 full (floppy and CD) has resource.000, whereas Ms. Astro Chicken doesn't
 		return (Common::File::exists("resource.000")) ? "sq4" : "msastrochicken";
 	}
 
