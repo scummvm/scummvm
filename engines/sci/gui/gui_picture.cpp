@@ -602,6 +602,23 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	byte searchPriority = _screen->getPriority(p.x, p.y);
 	byte searchControl = _screen->getControl(p.x, p.y);
 
+	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
+	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
+		if (_resMan->isVGA()) {
+			if ((color == 255) || (searchColor != 0))
+				return;
+		} else {
+			if ((color == 15) || (searchColor != 15))
+				return;
+		}
+	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
+		if ((priority == 0) || (searchPriority != 0))
+			return;
+	} else if (screenMask & SCI_SCREEN_MASK_CONTROL) {
+		if ((control == 0) || (searchControl != 0))
+			return;
+	}
+
 	// Now remove screens, that already got the right color/priority/control
 	if ((screenMask & SCI_SCREEN_MASK_VISUAL) && (searchColor == color))
 		screenMask ^= SCI_SCREEN_MASK_VISUAL;
@@ -614,23 +631,11 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	if (!screenMask)
 		return;
 
-	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
-		if (_resMan->isVGA()) {
-			if ((color == 255) || (searchColor != 0))
-				return;
-		} else {
-			if ((color == 15) || (searchColor != 15))
-				return;
-		}
 		matchMask = SCI_SCREEN_MASK_VISUAL;
 	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
-		if ((priority == 0) || (searchPriority != 0))
-			return;
 		matchMask = SCI_SCREEN_MASK_PRIORITY;
-	} else if (screenMask & SCI_SCREEN_MASK_CONTROL) {
-		if ((control == 0) || (searchControl != 0))
-			return;
+	} else {
 		matchMask = SCI_SCREEN_MASK_CONTROL;
 	}
 
