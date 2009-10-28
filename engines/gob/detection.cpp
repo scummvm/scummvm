@@ -1177,6 +1177,42 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "6efac0a14c0de4d57dde8592456c8acf", 845172},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{0, 0, 0, 0}
+			},
+			EN_USA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "6efac0a14c0de4d57dde8592456c8acf", 845172},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
 			"ween",
@@ -2637,6 +2673,42 @@ static const GOBGameDescription gameDescriptions[] = {
 				{0, 0, 0, 0}
 			},
 			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "428e2de130cf3b303c938924539dc50d", 324420},
+				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "428e2de130cf3b303c938924539dc50d", 324420},
+				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
