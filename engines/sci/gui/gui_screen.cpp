@@ -367,6 +367,7 @@ void SciGuiScreen::debugShowMap(int mapNo) {
 		_activeScreen = _displayScreen;
 		break;
 	}
+	copyToScreen();
 }
 
 } // End of namespace Sci
