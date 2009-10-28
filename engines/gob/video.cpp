@@ -265,7 +265,7 @@ void Video::retrace(bool mouse) {
 		int screenX = _screenDeltaX;
 		int screenY = _screenDeltaY;
 		int screenWidth = MIN<int>(_surfWidth - _scrollOffsetX, _vm->_width);
-		int screenHeight = MIN<int>(_surfHeight - _splitHeight2 - _scrollOffsetY, _vm->_height);
+		int screenHeight = MIN<int>(_surfHeight - _splitHeight2 - _scrollOffsetY, _vm->_height - _splitHeight2);
 
 		dirtyRectsApply(_scrollOffsetX, _scrollOffsetY, screenWidth, screenHeight,
 				screenX, screenY);
