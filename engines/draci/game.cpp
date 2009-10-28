@@ -146,10 +146,10 @@ void Game::start() {
 
 		// Whenever the top-level loop is entered, it should not finish unless
 		// the exit is triggered by a script
-		_shouldExitLoop = false;
+		const bool force_reload = shouldExitLoop() > 1;
+		setExitLoop(false);
 		_vm->_script->endCurrentProgram(false);
 
-		const bool force_reload = shouldExitLoop() > 1;
 		enterNewRoom(force_reload);
 
 		if (_vm->_script->shouldEndProgram()) {
@@ -162,8 +162,8 @@ void Game::start() {
 }
 
 void Game::init() {
-	_shouldQuit = false;
-	_shouldExitLoop = false;
+	setQuit(false);
+	setExitLoop(false);
 	_scheduledPalette = 0;
 	setLoopStatus(kStatusGate);
 	setLoopSubstatus(kSubstatusOrdinary);
@@ -256,7 +256,7 @@ void Game::loop() {
 			}
 
 			if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
-				_shouldExitLoop = true;
+				setExitLoop(true);
 				_vm->_mouse->lButtonSet(false);
 				_vm->_mouse->rButtonSet(false);
 			}
@@ -426,7 +426,7 @@ void Game::loop() {
 				_vm->_mouse->rButtonPressed() ||
 				(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
 
-				_shouldExitLoop = true;
+				setExitLoop(true);
 				_vm->_mouse->lButtonSet(false);
 				_vm->_mouse->rButtonSet(false);
 			}
@@ -442,8 +442,8 @@ void Game::loop() {
 		_vm->_system->delayMillis(20);
 
 		// HACK: Won't be needed once the game loop is implemented properly
-		_shouldExitLoop = _shouldExitLoop || (_newRoom != getRoomNum() &&
-		                  (_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate));
+		setExitLoop(shouldExitLoop() || (_newRoom != getRoomNum() &&
+		                  (_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate)));
 
 	} while (!shouldExitLoop());
 }
@@ -812,7 +812,7 @@ int Game::dialogueDraw() {
 
 	if (_dialogueLinesNum > 1) {
 		_vm->_mouse->cursorOn();
-		_shouldExitLoop = false;
+		setExitLoop(false);
 		loop();
 		_vm->_mouse->cursorOff();
 
