@@ -286,7 +286,7 @@ void displayHelp(const char *exe) {
 	        " --file-prefix prefix     allows overwriting of relative file prefix in the\n"
 	        "                          MSVC project files. By default the prefix is the\n"
 	        "                          \"path\\to\\source\" argument\n"
-	        " --output-dir path        overwrite the path, where the project files are placed.\n"
+	        " --output-dir path        overwrite path, where the project files are placed\n"
 	        "                          By default this is \".\", i.e. the current working\n"
 	        "                          directory\n"
 	        "\n"
