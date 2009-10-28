@@ -323,7 +323,6 @@ int script_init_engine(EngineState *s) {
 	str->_maxSize = MAX_SAVE_DIR_SIZE;
 	str->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
 
-
 	s->r_acc = s->r_prev = NULL_REG;
 	s->restAdjust = 0;
 
@@ -342,7 +341,9 @@ int script_init_engine(EngineState *s) {
 
 	debug(2, "Engine initialized");
 
+#ifdef INCLUDE_OLDGFX
 	s->pic_priority_table = NULL;
+#endif
 
 	return 0;
 }

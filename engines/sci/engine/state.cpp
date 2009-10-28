@@ -43,15 +43,13 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	restarting_flags = 0;
 
-	pic_not_valid = 0;
-	pic_is_new = 0;
-	
-	pic_priority_table = 0;
-
 	status_bar_foreground = 0;
 	status_bar_background = 0;
 
 #ifdef INCLUDE_OLDGFX
+	pic_priority_table = 0;
+	pic_not_valid = 0;
+	pic_is_new = 0;
 	old_screen = 0;
 	port = 0;
 	memset(ega_colors, 0, sizeof(ega_colors));

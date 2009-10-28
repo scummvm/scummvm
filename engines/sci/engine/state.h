@@ -142,17 +142,15 @@ public:
 
 	byte restarting_flags; /**< Flags used for restarting */
 
-	byte pic_not_valid; /**< Is 0 if the background picture is "valid" */
-	byte pic_is_new; /**< New pic was loaded or port was opened */
-
-	int *pic_priority_table; /**< 16 entries with priorities or NULL if not present */
-
 	/** Text on the status bar, or NULL if the title bar is blank */
 	Common::String _statusBarText;
 
 	int status_bar_foreground, status_bar_background;
 
 #ifdef INCLUDE_OLDGFX
+	int *pic_priority_table; /**< 16 entries with priorities or NULL if not present */
+	byte pic_not_valid; /**< Is 0 if the background picture is "valid" */
+	byte pic_is_new; /**< New pic was loaded or port was opened */
 	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */
 
 	GfxPort *port; /**< The currently active port */
