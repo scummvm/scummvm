@@ -761,6 +761,21 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		Common::String name = s->_segMan->getString(argv[1]);
 		int mode = argv[2].toUint16();
 
+		// SQ4 floppy prepends /\ to the filenames
+		if (name.hasPrefix("/\\")) {
+			name.deleteChar(0);
+			name.deleteChar(0);
+		}
+
+		// SQ4 floppy attempts to update the savegame index file sq4sg.dir
+		// when deleting saved games. We don't use an index file for saving
+		// or loading, so just stop the game from modifying the file here
+		// in order to avoid having it saved in the ScummVM save directory
+		if (name == "sq4sg.dir") {
+			debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
+			return SIGNAL_REG;
+		}
+
 		if (name.empty()) {
 			warning("Attempted to open a file with an empty filename");
 			return SIGNAL_REG;
