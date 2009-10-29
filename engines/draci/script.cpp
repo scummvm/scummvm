@@ -869,7 +869,7 @@ void Script::setPalette(Common::Queue<int> &params) {
 	}
 	// Immediately update the palette
 	_vm->_screen->copyToScreen();
-	_vm->_system->delayMillis(100);
+	_vm->_system->delayMillis(20);
 }
 
 void Script::quitGame(Common::Queue<int> &params) {

@@ -55,7 +55,7 @@ Screen::~Screen() {
  */
 void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 	Common::MemoryReadStream pal(data ? data : _blackPalette, 3 * kNumColours);
-	pal.seek(start * 4);
+	pal.seek(start * 3);
 
 	// Copy the palette
 	for (uint16 i = start; i < start + num; ++i) {
@@ -77,8 +77,8 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 void Screen::interpolatePalettes(const byte *first, const byte *second, uint16 start, uint16 num, int index, int number) {
 	Common::MemoryReadStream firstPal(first ? first : _blackPalette, 3 * kNumColours);
 	Common::MemoryReadStream secondPal(second ? second : _blackPalette, 3 * kNumColours);
-	firstPal.seek(start * 4);
-	secondPal.seek(start * 4);
+	firstPal.seek(start * 3);
+	secondPal.seek(start * 3);
 
 	// Interpolate the palettes
 	for (uint16 i = start; i < start + num; ++i) {

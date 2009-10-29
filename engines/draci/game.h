@@ -200,7 +200,7 @@ struct Room {
 	int _roomNum;
 	byte _music;
 	WalkingMap _walkingMap;
-	byte _palette;
+	int _palette;
 	int _numOverlays;
 	int _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;

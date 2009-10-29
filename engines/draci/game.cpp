@@ -243,15 +243,15 @@ void Game::loop() {
 		if (_fadePhase > 0 && (_vm->_system->getMillis() - _fadeTick) >= kFadingTimeUnit) {
 			_fadeTick = _vm->_system->getMillis();
 			--_fadePhase;
-			const BAFile *startPal = _vm->_paletteArchive->getFile(_currentRoom._palette);
-			const BAFile *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette()) : NULL;
-			_vm->_screen->interpolatePalettes(startPal->_data, endPal->_data, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
+			const byte *startPal = _currentRoom._palette >= 0 ? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data : NULL;
+			const byte *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette())->_data : NULL;
+			_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
 			if (_loopSubstatus == kSubstatusFade && _fadePhase == 0) {
 				setExitLoop(true);
 				// Rewrite the palette index of the current
 				// room.  This is necessary when two fadings
 				// are called after each other, such as in the
-				// intro.  We rely on that getScheduledPalette() >= 0.
+				// intro.
 				_currentRoom._palette = getScheduledPalette();
 			}
 		}
