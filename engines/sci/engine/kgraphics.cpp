@@ -621,13 +621,15 @@ reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
-	reg_t text_pos = GET_SEL32(segMan, obj, text);
+static void disableCertainButtons(EngineState *s, Common::String gameName, reg_t obj) {
+	reg_t text_pos = GET_SEL32(s->_segMan, obj, text);
 	Common::String text;
 	if (!text_pos.isNull())
-		text = segMan->getString(text_pos);
-	int type = GET_SEL32V(segMan, obj, type);
-	int state = GET_SEL32V(segMan, obj, state);
+		text = s->_segMan->getString(text_pos);
+	Common::String englishText = s->getLanguageString(text.c_str(), K_LANG_ENGLISH);
+	englishText.trim();
+	int type = GET_SEL32V(s->_segMan, obj, type);
+	int state = GET_SEL32V(s->_segMan, obj, state);
 
 	/*
 	 * WORKAROUND: The function is a "prevent the user from doing something
@@ -648,17 +650,15 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	 * effort (see above), and to simply disable the delete functionality for
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
-	// NOTE: This _only_ works with the English version
 	if (type == SCI_CONTROLS_TYPE_BUTTON && (gameName == "sq4") &&
-			getSciVersion() < SCI_VERSION_1_1 && text == " Delete ") {
-		PUT_SEL32V(segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
+			getSciVersion() < SCI_VERSION_1_1 && englishText == "Delete") {
+		PUT_SEL32V(s->_segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
-	// NOTE: This _only_ works with the English version
-	if (type == SCI_CONTROLS_TYPE_BUTTON && text == "Change\r\nDirectory") {
-		PUT_SEL32V(segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
+	if (type == SCI_CONTROLS_TYPE_BUTTON && englishText == "Change\r\nDirectory") {
+		PUT_SEL32V(s->_segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
 
@@ -783,7 +783,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t controlObject = argv[0];
 
-	disableCertainButtons(s->_segMan, s->_gameName, controlObject);
+	disableCertainButtons(s, s->_gameName, controlObject);
 	_k_GenericDrawControl(s, controlObject, false);
 	return NULL_REG;
 }

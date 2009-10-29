@@ -454,7 +454,6 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		listSavegames(saves);
 		int savedir_nr = saves[savegame_id].id;
 		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
-		//printf("Deleting savegame '%s'\n", filename.c_str());
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 		saveFileMan->removeSavefile(filename);
 		}
