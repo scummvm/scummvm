@@ -186,9 +186,10 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	_tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
 	_tim->lolCharacter = 0;
-	_tim = 0;
 
-	return _tim;
+	TIM *r = _tim;
+	_tim = 0;
+	return r;
 }
 
 void TIMInterpreter::unload(TIM *&tim) const {
