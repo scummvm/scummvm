@@ -56,18 +56,12 @@ SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, i
 
 	if (_resMan->isVGA()) {
 		_colorWhite = 255;
-		// TODO: Find out whats really different between SCI11 and SCI1, because actually the clearScreen in SCI11
-		//  really uses 255 as well
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			_colorClearScreen = 0;
+		if (getSciVersion() >= SCI_VERSION_1_1)
 			_colorDefaultVectorData = 255;
-		} else {
-			_colorClearScreen = 255;
+		else
 			_colorDefaultVectorData = 0;
-		}
 	} else {
 		_colorWhite = 15;
-		_colorClearScreen = 15;
 		_colorDefaultVectorData = 0;
 	}
 }

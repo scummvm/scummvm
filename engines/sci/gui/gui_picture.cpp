@@ -209,6 +209,13 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	leftX = callerX + _gfx->GetPort()->left;
 	rightX = MIN<int16>(width + leftX, _gfx->GetPort()->rect.right + _gfx->GetPort()->left);
 
+	// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
+	//  but white and that wont matter because the screen is supposed to be already white. It seems that most (if not all)
+	//  SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
+	//  the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra
+	if (!_addToFlag)
+		clearColor = _screen->_colorWhite;
+
 	ptr = celBitmap;
 	if (!_mirroredFlag) {
 		// Draw bitmap to screen
@@ -605,7 +612,7 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
-		if ((color == _screen->_colorWhite) || (searchColor != _screen->_colorClearScreen))
+		if ((color == _screen->_colorWhite) || (searchColor != _screen->_colorWhite))
 			return;
 	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
 		if ((priority == 0) || (searchPriority != 0))

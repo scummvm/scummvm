@@ -300,9 +300,9 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 	SciGuiPicture *picture;
 
 	picture = new SciGuiPicture(_s->resMan, this, _screen, _palette, pictureId);
-	// do we add to a picture? if not -> clear screen
+	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag) {
-		ClearScreen(_screen->_colorClearScreen);
+		ClearScreen(_screen->_colorWhite);
 	}
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 }

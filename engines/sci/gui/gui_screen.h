@@ -86,7 +86,6 @@ public:
 	int _picNotValid; // possible values 0, 1 and 2
 
 	byte _colorWhite;
-	byte _colorClearScreen;
 	byte _colorDefaultVectorData;
 
 private:
