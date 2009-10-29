@@ -621,44 +621,14 @@ reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void disableCertainButtons(EngineState *s, Common::String gameName, reg_t obj) {
-	reg_t text_pos = GET_SEL32(s->_segMan, obj, text);
-	Common::String text;
-	if (!text_pos.isNull())
-		text = s->_segMan->getString(text_pos);
-	Common::String englishText = s->getLanguageString(text.c_str(), K_LANG_ENGLISH);
-	englishText.trim();
-	int type = GET_SEL32V(s->_segMan, obj, type);
-	int state = GET_SEL32V(s->_segMan, obj, state);
-
-	/*
-	 * WORKAROUND: The function is a "prevent the user from doing something
-	 * nasty" type of thing, and goes back to the ugly way in which savegame
-	 * deletion is implemented in SCI (and even worse in SQ4/Floppy, for
-	 * which the workaround is intended). The result is basically that you
-	 * can't implement savegame deletion for SQ4/Floppy unless you duplicate
-	 * the exact naming scheme of savefiles (i.e. savefiles must be named
-	 * SQ4SG.<number>) and the exact file format of the savegame index
-	 * (SQ4SG.DIR). From the earlier discussions on file I/O handling -
-	 * before as well as after the merge - I gather that this is not an
-	 * option.
-	 *
-	 * SQ4/Floppy is special, being the first game to implement savegame
-	 * deletion at all. For later games, we manage to implement deletion by
-	 * using gross hacks in kDeviceInfo() (essentially repurposing a few
-	 * subfunctions). I decided at the time that SQ4/Floppy was not worth the
-	 * effort (see above), and to simply disable the delete functionality for
-	 * that game - bringing the save/load dialog on a par with SCI0.
-	 */
-	if (type == SCI_CONTROLS_TYPE_BUTTON && (gameName == "sq4") &&
-			getSciVersion() < SCI_VERSION_1_1 && englishText == "Delete") {
-		PUT_SEL32V(s->_segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
-	}
+static void disableCertainButtons(SegManager *segMan, reg_t obj) {
+	Common::String objName = segMan->getObjectName(obj);
 
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
-	if (type == SCI_CONTROLS_TYPE_BUTTON && englishText == "Change\r\nDirectory") {
-		PUT_SEL32V(s->_segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
+	if (objName == "changeDirI") {
+		int state = GET_SEL32V(segMan, obj, state);
+		PUT_SEL32V(segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
 
@@ -783,7 +753,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t controlObject = argv[0];
 
-	disableCertainButtons(s, s->_gameName, controlObject);
+	disableCertainButtons(s->_segMan, controlObject);
 	_k_GenericDrawControl(s, controlObject, false);
 	return NULL_REG;
 }

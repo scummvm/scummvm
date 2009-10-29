@@ -800,11 +800,31 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	}
 	case K_FILEIO_UNLINK : {
 		Common::String name = s->_segMan->getString(argv[1]);
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		// SQ4 floppy prepends /\ to the filenames
+		if (name.hasPrefix("/\\")) {
+			name.deleteChar(0);
+			name.deleteChar(0);
+		}
+
+		// Special case for SQ4 floppy: This game has hardcoded names for all of its
+		// savegames, and they are all named "sq4sg.xxx", where xxx is the slot. We just
+		// take the slot number here, and delete the appropriate save game
+		if (name.hasPrefix("sq4sg.")) {
+			// Special handling for SQ4... get the slot number and construct the save game name
+			int slotNum = atoi(name.c_str() + name.size() - 3);
+			Common::Array<SavegameDesc> saves;
+			listSavegames(saves);
+			int savedir_nr = saves[slotNum].id;
+			name = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+			saveFileMan->removeSavefile(name);
+		} else {
+			const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
+			saveFileMan->removeSavefile(wrappedName);
+		}
+
 		debug(3, "K_FILEIO_UNLINK(%s)", name.c_str());
 
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
-		saveFileMan->removeSavefile(wrappedName);
 		// TODO/FIXME: Should we return something (like, a bool indicating
 		// whether deleting the save succeeded or failed)?
 		break;
