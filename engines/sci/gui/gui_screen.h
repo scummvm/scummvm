@@ -42,7 +42,7 @@ namespace Sci {
 
 class SciGuiScreen {
 public:
-	SciGuiScreen(int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
+	SciGuiScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
 	~SciGuiScreen();
 
 	void copyToScreen();
@@ -85,6 +85,10 @@ public:
 
 	int _picNotValid; // possible values 0, 1 and 2
 
+	byte _colorWhite;
+	byte _colorClearScreen;
+	byte _colorDefaultVectorData;
+
 private:
 	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
 	void bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
@@ -103,6 +107,8 @@ public:	// HACK. TODO: make private
 	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
 private:
+
+	ResourceManager *_resMan;
 
 	// this is a pointer to the currently active screen (changing it only required for debug purposes)
 	byte *_activeScreen;

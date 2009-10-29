@@ -440,7 +440,8 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 		rect.right = rect.left + 1;
 		rect.bottom = rect.top + 1;
 	}
-	return make_reg(0, s->_gui->onControl(screenMask, rect));
+	uint16 result = s->_gui->onControl(screenMask, rect);
+	return make_reg(0, result);
 }
 
 void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);

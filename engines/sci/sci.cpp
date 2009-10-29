@@ -110,9 +110,9 @@ Common::Error SciEngine::run() {
 
 	_kernel = new Kernel(_resMan);
 	_vocabulary = new Vocabulary(_resMan);
-	SciGuiScreen *screen = new SciGuiScreen();
+	SciGuiScreen *screen = new SciGuiScreen(_resMan);
 	SciGuiPalette *palette = new SciGuiPalette(_resMan, screen);
-	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette);
+	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette, screen);
 
 	// We'll set the GUI below
 	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor);

@@ -30,13 +30,14 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/gui/gui_palette.h"
+#include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_view.h"
 #include "sci/gui/gui_cursor.h"
 
 namespace Sci {
 
-SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette)
-	: _resMan(resMan), _palette(palette) {
+SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciGuiScreen *screen)
+	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	setPosition(Common::Point(160, 150));		// TODO: how is that different in 640x400 games?
 	setMoveZone(Common::Rect(0, 0, 320, 200));	// TODO: hires games
@@ -88,7 +89,7 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 
 	// Now find out what colors we are supposed to use
 	colorMapping[0] = 0; // Black is hardcoded
-	colorMapping[1] = _resMan->isVGA() ? 255 : 15; // White is also hardcoded
+	colorMapping[1] = _screen->_colorWhite; // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
 	colorMapping[3] = _palette->matchColor(&_palette->_sysPalette, 170, 170, 170); // Grey
 	

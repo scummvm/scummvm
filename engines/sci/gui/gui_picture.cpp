@@ -301,7 +301,8 @@ static const byte vector_defaultEGApriority[PIC_EGAPRIORITY_SIZE] = {
 
 void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
-	byte pic_color = 0, pic_priority = 255, pic_control = 255;
+	byte pic_color = _screen->_colorDefaultVectorData;
+	byte pic_priority = 255, pic_control = 255;
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
 	byte *EGApalette = &EGApalettes[_EGApaletteNo * PIC_EGAPALETTE_SIZE];
@@ -604,13 +605,8 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
-		if (_resMan->isVGA()) {
-			if ((color == 255) || (searchColor != 255))
-				return;
-		} else {
-			if ((color == 15) || (searchColor != 15))
-				return;
-		}
+		if ((color == _screen->_colorWhite) || (searchColor != _screen->_colorClearScreen))
+			return;
 	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
 		if ((priority == 0) || (searchPriority != 0))
 			return;

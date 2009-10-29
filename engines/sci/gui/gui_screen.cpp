@@ -33,8 +33,8 @@
 
 namespace Sci {
 
-SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) : 
-	_width(width), _height(height) {
+SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, int16 scaleFactor) : 
+	_resMan(resMan), _width(width), _height(height) {
 
 	_pixels = _width * _height;
 
@@ -53,6 +53,23 @@ SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) :
 
 	_picNotValid = false;
 	_unditherState = true;
+
+	if (_resMan->isVGA()) {
+		_colorWhite = 255;
+		// TODO: Find out whats really different between SCI11 and SCI1, because actually the clearScreen in SCI11
+		//  really uses 255 as well
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			_colorClearScreen = 0;
+			_colorDefaultVectorData = 255;
+		} else {
+			_colorClearScreen = 255;
+			_colorDefaultVectorData = 0;
+		}
+	} else {
+		_colorWhite = 15;
+		_colorClearScreen = 15;
+		_colorDefaultVectorData = 0;
+	}
 }
 
 SciGuiScreen::~SciGuiScreen() {

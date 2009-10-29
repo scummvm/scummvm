@@ -302,10 +302,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 	picture = new SciGuiPicture(_s->resMan, this, _screen, _palette, pictureId);
 	// do we add to a picture? if not -> clear screen
 	if (!addToFlag) {
-		if (_s->resMan->isVGA())
-			ClearScreen(255);
-		else
-			ClearScreen(15);
+		ClearScreen(_screen->_colorClearScreen);
 	}
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 }

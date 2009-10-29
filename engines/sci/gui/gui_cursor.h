@@ -37,7 +37,7 @@ class SciGuiView;
 class SciGuiPalette;
 class SciGuiCursor {
 public:
-	SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette);
+	SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciGuiScreen *screen);
 	~SciGuiCursor();
 
 	void show();
