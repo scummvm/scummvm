@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/util.h"
 #include "common/stack.h"
 #include "graphics/surface.h"
@@ -118,6 +119,13 @@ void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
 		_number = number;
 		_blackoutFlag = blackoutFlag;
 	}
+}
+
+void SciGuiTransitions::updateScreenAndWait(int msec) {
+	Common::Event ev;
+	g_system->updateScreen();
+	g_system->delayMillis(msec);
+	while (g_system->getEventManager()->pollEvent(ev)) {}	// discard all events
 }
 
 // will translate a number and return corresponding translationEntry
@@ -303,8 +311,7 @@ void SciGuiTransitions::pixelation (bool blackoutFlag) {
 		pixelRect.top = mask / 320;	pixelRect.bottom = pixelRect.top + 1;
 		copyRectToScreen(pixelRect, blackoutFlag);
 		if ((stepNr & 0x3FF) == 0) {
-			g_system->updateScreen();
-			g_system->delayMillis(5);
+			updateScreenAndWait(5);
 		}
 		stepNr++;
 	} while (mask != 0x40);
@@ -324,8 +331,7 @@ void SciGuiTransitions::blocks(bool blackoutFlag) {
 		blockRect.top = (mask / 40) << 3; blockRect.bottom = blockRect.top + 8;
 		copyRectToScreen(blockRect, blackoutFlag);
 		if ((stepNr & 7) == 0) {
-			g_system->updateScreen();
-			g_system->delayMillis(4);
+			updateScreenAndWait(4);
 		}
 		stepNr++;
 	} while (mask != 0x40);
@@ -342,8 +348,7 @@ void SciGuiTransitions::straight(int16 number, bool blackoutFlag) {
 		while (newScreenRect.left >= _picRect.left) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
 			if ((stepNr & 1) == 0) {
-				g_system->updateScreen();
-				g_system->delayMillis(1);
+				updateScreenAndWait(1);
 			}
 			stepNr++;
 			newScreenRect.translate(-1, 0);
@@ -355,8 +360,7 @@ void SciGuiTransitions::straight(int16 number, bool blackoutFlag) {
 		while (newScreenRect.right <= _picRect.right) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
 			if ((stepNr & 1) == 0) {
-				g_system->updateScreen();
-				g_system->delayMillis(1);
+				updateScreenAndWait(1);
 			}
 			stepNr++;
 			newScreenRect.translate(1, 0);
@@ -367,8 +371,7 @@ void SciGuiTransitions::straight(int16 number, bool blackoutFlag) {
 		newScreenRect.top = newScreenRect.bottom - 1;
 		while (newScreenRect.top >= _picRect.top) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
-			g_system->updateScreen();
-			g_system->delayMillis(3);
+			updateScreenAndWait(3);
 			stepNr++;
 			newScreenRect.translate(0, -1);
 		}
@@ -378,8 +381,7 @@ void SciGuiTransitions::straight(int16 number, bool blackoutFlag) {
 		newScreenRect.bottom = newScreenRect.top + 1;
 		while (newScreenRect.bottom <= _picRect.bottom) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
-			g_system->updateScreen();
-			g_system->delayMillis(3);
+			updateScreenAndWait(3);
 			stepNr++;
 			newScreenRect.translate(0, 1);
 		}
@@ -412,8 +414,7 @@ void SciGuiTransitions::scroll(int16 number) {
 			newScreenRect.right++; newMoveRect.left--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
-				g_system->updateScreen();
-				g_system->delayMillis(1);
+				updateScreenAndWait(1);
 			}
 			stepNr++;
 		}
@@ -430,8 +431,7 @@ void SciGuiTransitions::scroll(int16 number) {
 			newScreenRect.left--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
-				g_system->updateScreen();
-				g_system->delayMillis(1);
+				updateScreenAndWait(1);
 			}
 			stepNr++;
 		}
@@ -448,8 +448,7 @@ void SciGuiTransitions::scroll(int16 number) {
 				g_system->copyRectToScreen(oldScreenPtr, screenWidth, _picRect.left, _picRect.top, oldMoveRect.width(), oldMoveRect.height());
 			newScreenRect.bottom++;	newMoveRect.top--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
-			g_system->updateScreen();
-			g_system->delayMillis(3);
+			updateScreenAndWait(3);
 		}
 		break;
 
@@ -461,8 +460,7 @@ void SciGuiTransitions::scroll(int16 number) {
 				g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
 			newScreenRect.top--;
 			_screen->copyRectToScreen(newScreenRect, _picRect.left, _picRect.top);
-			g_system->updateScreen();
-			g_system->delayMillis(3);
+			updateScreenAndWait(3);
 		}
 		break;
 	}
@@ -480,8 +478,7 @@ void SciGuiTransitions::verticalRollFromCenter(bool blackoutFlag) {
 			rightRect.translate(-1, 0);
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0);
-		g_system->updateScreen();
-		g_system->delayMillis(2);
+		updateScreenAndWait(2);
 	}
 }
 
@@ -493,8 +490,7 @@ void SciGuiTransitions::verticalRollToCenter(bool blackoutFlag) {
 	while (leftRect.left < rightRect.right) {
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
-		g_system->updateScreen();
-		g_system->delayMillis(2);
+		updateScreenAndWait(2);
 	}
 }
 
@@ -510,8 +506,7 @@ void SciGuiTransitions::horizontalRollFromCenter(bool blackoutFlag) {
 			lowerRect.translate(0, -1);
 		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, -1);
 		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1);
-		g_system->updateScreen();
-		g_system->delayMillis(3);
+		updateScreenAndWait(3);
 	}
 }
 
@@ -523,8 +518,7 @@ void SciGuiTransitions::horizontalRollToCenter(bool blackoutFlag) {
 	while (upperRect.top < lowerRect.bottom) {
 		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, 1);
 		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1);
-		g_system->updateScreen();
-		g_system->delayMillis(3);
+		updateScreenAndWait(3);
 	}
 }
 
@@ -554,8 +548,7 @@ void SciGuiTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1); lowerRect.left--; lowerRect.right++;
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);	leftRect.top--; leftRect.bottom++;
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0); rightRect.top--; rightRect.bottom++;
-		g_system->updateScreen();
-		g_system->delayMillis(3);
+		updateScreenAndWait(3);
 	}
 }
 
@@ -572,8 +565,7 @@ void SciGuiTransitions::diagonalRollToCenter(bool blackoutFlag) {
 		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1); lowerRect.left++; lowerRect.right--;
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
-		g_system->updateScreen();
-		g_system->delayMillis(3);
+		updateScreenAndWait(3);
 	}
 }
 

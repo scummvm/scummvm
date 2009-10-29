@@ -87,6 +87,7 @@ private:
 	void horizontalRollToCenter(bool blackoutFlag);
 	void diagonalRollFromCenter(bool blackoutFlag);
 	void diagonalRollToCenter(bool blackoutFlag);
+	void updateScreenAndWait(int msec);
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
