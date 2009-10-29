@@ -194,18 +194,22 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	if (menu_mode) {
 		int old_item;
 		int old_menu;
+		Common::Rect portBounds = Common::Rect(4, 9, 200, 50);
 
 #ifdef INCLUDE_OLDGFX
 		GfxPort *port = sciw_new_menu(s, s->titlebar_port, s->_menubar, 0);
+		portBounds = toCommonRect(port->_bounds);
+#endif
 
 		item_nr = -1;
 
 		/* Default to menu 0, unless the mouse was used to generate this effect */
 		if (mouse_down)
-			s->_menubar->mapPointer(cursorPos, menu_nr, item_nr, toCommonRect(port->_bounds));
+			s->_menubar->mapPointer(cursorPos, menu_nr, item_nr, portBounds);
 		else
 			menu_nr = 0;
 
+#ifdef INCLUDE_OLDGFX
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
 		FULL_REDRAW;
 #endif
@@ -281,9 +285,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 				{
 				Common::Point curMousePos = s->_cursor->getPosition();
 				menu_mode = (curMousePos.y < 10);
-#ifdef INCLUDE_OLDGFX
-				claimed = !menu_mode && !s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, toCommonRect(port->_bounds));
-#endif
+				claimed = !menu_mode && !s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, portBounds);
 				mouse_down = 0;
 				}
 				break;
@@ -298,17 +300,18 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			if (mouse_down)
-#ifdef INCLUDE_OLDGFX
-				s->_menubar->mapPointer(s->_cursor->getPosition(), menu_nr, item_nr, toCommonRect(port->_bounds));
+				s->_menubar->mapPointer(s->_cursor->getPosition(), menu_nr, item_nr, portBounds);
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
 
+#ifdef INCLUDE_OLDGFX
 				sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
 
 				delete port;
 
 				port = sciw_new_menu(s, s->titlebar_port, s->_menubar, menu_nr);
 				s->wm_port->add((GfxContainer *)s->wm_port, port);
+#endif
 
 				if (item_nr > -1)
 					old_item = -42; /* Enforce redraw in next step */
@@ -316,7 +319,6 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 					FULL_REDRAW;
 				}
 			} /* ...if the menu changed. */
-#endif
 
 			/* Remove the active menu item, if neccessary */
 			if (item_nr != old_item) {
