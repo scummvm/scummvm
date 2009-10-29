@@ -621,17 +621,6 @@ reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void disableCertainButtons(SegManager *segMan, reg_t obj) {
-	Common::String objName = segMan->getObjectName(obj);
-
-	// Disable the "Change Directory" button, as we don't allow the game engine to
-	// change the directory where saved games are placed
-	if (objName == "changeDirI") {
-		int state = GET_SEL32V(segMan, obj, state);
-		PUT_SEL32V(segMan, obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
-	}
-}
-
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	SegManager *segMan = s->_segMan;
 	int16 type = GET_SEL32V(segMan, controlObject, type);
@@ -752,8 +741,15 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 
 reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t controlObject = argv[0];
+	Common::String objName = s->_segMan->getObjectName(controlObject);
 
-	disableCertainButtons(s->_segMan, controlObject);
+	// Disable the "Change Directory" button, as we don't allow the game engine to
+	// change the directory where saved games are placed
+	if (objName == "changeDirI") {
+		int state = GET_SEL32V(s->_segMan, controlObject, state);
+		PUT_SEL32V(s->_segMan, controlObject, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
+	}
+
 	_k_GenericDrawControl(s, controlObject, false);
 	return NULL_REG;
 }
