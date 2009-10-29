@@ -131,6 +131,10 @@ private:
 	void talk(Common::Queue<int> &params);
 	void loadMap(Common::Queue<int> &params);
 	void roomMap(Common::Queue<int> &params);
+	void disableQuickHero(Common::Queue<int> &params);
+	void enableQuickHero(Common::Queue<int> &params);
+	void disableSpeedText(Common::Queue<int> &params);
+	void enableSpeedText(Common::Queue<int> &params);
 	void dialogue(Common::Queue<int> &params);
 	void exitDialogue(Common::Queue<int> &params);
 	void resetDialogue(Common::Queue<int> &params);

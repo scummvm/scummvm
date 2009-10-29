@@ -166,6 +166,9 @@ void Game::init() {
 	setExitLoop(false);
 	_scheduledPalette = 0;
 	_fadePhases = _fadePhase = 0;
+	setEnableQuickHero(true);
+	setWantQuickHero(false);
+	setEnableSpeedText(true);
 	setLoopStatus(kStatusGate);
 	setLoopSubstatus(kSubstatusOrdinary);
 
@@ -439,14 +442,13 @@ void Game::loop() {
 		if (_loopSubstatus == kSubstatusTalk) {
 			// If the current speech text has expired or the user clicked a mouse button,
 			// advance to the next line of text
-			if (_vm->_mouse->lButtonPressed() ||
-				_vm->_mouse->rButtonPressed() ||
+			if (getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) ||
 				(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
 
 				setExitLoop(true);
-				_vm->_mouse->lButtonSet(false);
-				_vm->_mouse->rButtonSet(false);
 			}
+			_vm->_mouse->lButtonSet(false);
+			_vm->_mouse->rButtonSet(false);
 		}
 
 		// This returns true if we got a signal to quit the game
@@ -1571,6 +1573,19 @@ int Game::getScheduledPalette() const {
 void Game::initializeFading(int phases) {
 	_fadePhases = _fadePhase = phases;
 	_fadeTick = _vm->_system->getMillis();
+}
+
+void Game::setEnableQuickHero(bool value) {
+	_enableQuickHero = value;
+}
+
+void Game::setWantQuickHero(bool value) {
+	_wantQuickHero = value;
+	// TODO: after proper walking is implemented, do super-fast animation when walking
+}
+
+void Game::setEnableSpeedText(bool value) {
+	_enableSpeedText = value;
 }
 
 /**

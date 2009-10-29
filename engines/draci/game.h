@@ -79,12 +79,13 @@ enum {
 	kBlackPalette = -1
 };
 
-// Constants tuned such that with ScummVM's default talkspeed 60, the speed
+// Constants tuned such that with ScummVM's default talkspeed kStandardSpeed, the speed
 // computed by equation (kBaseSpeechDuration + kSpeechTimeUnit * #characters) /
 // talkspeed is equal to the original game.
 enum SpeechConstants {
 	kBaseSpeechDuration = 12000,
-	kSpeechTimeUnit = 2640
+	kSpeechTimeUnit = 2640,
+	kStandardSpeed = 60
 };
 
 // One fading phase is 50ms.
@@ -366,6 +367,12 @@ public:
 	void schedulePalette(int paletteID);
 	int getScheduledPalette() const;
 	void initializeFading(int phases);
+	void setEnableQuickHero(bool value);
+	bool getEnableQuickHero() const { return _enableQuickHero; }
+	void setWantQuickHero(bool value);
+	bool getWantQuickHero() const { return _wantQuickHero; }
+	void setEnableSpeedText(bool value);
+	bool getEnableSpeedText() const { return _enableSpeedText; }
 
 	void DoSync(Common::Serializer &s);
 
@@ -432,6 +439,10 @@ private:
 	int _fadePhases;
 	int _fadePhase;
 	uint _fadeTick;
+
+	bool _enableQuickHero;
+	bool _wantQuickHero;
+	bool _enableSpeedText;
 };
 
 } // End of namespace Draci

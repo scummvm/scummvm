@@ -70,26 +70,27 @@ void Script::setupCommandList() {
 		{ 15, 1, "ExecInit", 			1, { 3 }, &Script::execInit },
 		{ 15, 2, "ExecLook", 			1, { 3 }, &Script::execLook },
 		{ 15, 3, "ExecUse", 			1, { 3 }, &Script::execUse },
-		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },	// not used in the original game files
-		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },	// not used in the original game files
-		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },	// not used in the original game files
 		{ 18, 1, "LoadMusic", 			1, { 2 }, &Script::loadMusic },
 		{ 18, 2, "StartMusic", 			0, { 0 }, &Script::startMusic },
 		{ 18, 3, "StopMusic", 			0, { 0 }, &Script::stopMusic },
-		{ 18, 4, "FadeOutMusic",		1, { 1 }, NULL },
-		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
 		{ 19, 1, "Mark", 				0, { 0 }, &Script::mark },
 		{ 19, 2, "Release", 			0, { 0 }, &Script::release },
 		{ 20, 1, "Play", 				0, { 0 }, &Script::play },
 		{ 21, 1, "LoadMap", 			1, { 2 }, &Script::loadMap },
 		{ 21, 2, "RoomMap", 			0, { 0 }, &Script::roomMap },
-		{ 22, 1, "DisableQuickHero", 	0, { 0 }, NULL },
-		{ 22, 2, "EnableQuickHero", 	0, { 0 }, NULL },
-		{ 23, 1, "DisableSpeedText", 	0, { 0 }, NULL },
-		{ 23, 2, "EnableSpeedText", 	0, { 0 }, NULL },
+		{ 22, 1, "DisableQuickHero", 	0, { 0 }, &Script::disableQuickHero },
+		{ 22, 2, "EnableQuickHero", 	0, { 0 }, &Script::enableQuickHero },
+		{ 23, 1, "DisableSpeedText", 	0, { 0 }, &Script::disableSpeedText },
+		{ 23, 2, "EnableSpeedText", 	0, { 0 }, &Script::enableSpeedText },
 		{ 24, 1, "QuitGame", 			0, { 0 }, &Script::quitGame },
 		{ 25, 1, "PushNewRoom", 		0, { 0 }, &Script::pushNewRoom },
 		{ 25, 2, "PopNewRoom", 			0, { 0 }, &Script::popNewRoom },
+		// The following commands are not used in the original game files.
+		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },
+		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },
+		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },
+		{ 18, 4, "FadeOutMusic",		1, { 1 }, NULL },
+		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
 		// The following commands are not even defined in the game
 		// sources, but their numbers are allocated for internal
 		// purposes of the old player.
@@ -746,8 +747,19 @@ void Script::talk(Common::Queue<int> &params) {
 	}
 
 	// Record time
-	uint subtitleDuration = (kBaseSpeechDuration + speechFrame->getLength() * kSpeechTimeUnit)
-		/ _vm->_sound->talkSpeed();
+	int talkSpeed = _vm->_sound->talkSpeed();
+	if (!_vm->_game->getEnableSpeedText() && talkSpeed > kStandardSpeed) {
+		talkSpeed = kStandardSpeed;
+	}
+	if (talkSpeed <= 0) {
+		talkSpeed = 1;
+	}
+	uint subtitleDuration;
+	if (talkSpeed >= 255) {
+		subtitleDuration = 0;
+	} else {
+		subtitleDuration = (kBaseSpeechDuration + speechFrame->getLength() * kSpeechTimeUnit) / talkSpeed;
+	}
 	const uint duration = MAX(subtitleDuration, dubbingDuration);
 	_vm->_game->setSpeechTiming(_vm->_system->getMillis(), duration);
 
@@ -827,6 +839,22 @@ void Script::exitDialogue(Common::Queue<int> &params) {
 void Script::roomMap(Common::Queue<int> &params) {
 	// Load the default walking map for the room
 	_vm->_game->loadWalkingMap();
+}
+
+void Script::disableQuickHero(Common::Queue<int> &params) {
+	_vm->_game->setEnableQuickHero(false);
+}
+
+void Script::enableQuickHero(Common::Queue<int> &params) {
+	_vm->_game->setEnableQuickHero(true);
+}
+
+void Script::disableSpeedText(Common::Queue<int> &params) {
+	_vm->_game->setEnableSpeedText(false);
+}
+
+void Script::enableSpeedText(Common::Queue<int> &params) {
+	_vm->_game->setEnableSpeedText(true);
 }
 
 void Script::loadPalette(Common::Queue<int> &params) {
@@ -1166,6 +1194,10 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 	} while (cmd->_number != 0 && !shouldEndProgram());    // 0 = gplend and exit
 
 	_jump = oldJump;
+
+	// Reset the flags which may have temporarily been altered inside the script.
+	_vm->_game->setEnableQuickHero(true);
+	_vm->_game->setEnableSpeedText(true);
 }
 
 } // End of namespace Draci

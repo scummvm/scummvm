@@ -31,6 +31,7 @@
 
 #include "draci/sound.h"
 #include "draci/draci.h"
+#include "draci/game.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -162,7 +163,7 @@ SoundSample *SoundArchive::getSample(int i, uint freq) {
 }
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _muteSound(false), _muteVoice(false),
-	_showSubtitles(true), _talkSpeed(60) {
+	_showSubtitles(true), _talkSpeed(kStandardSpeed) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;

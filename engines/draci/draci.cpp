@@ -264,6 +264,9 @@ void DraciEngine::handleEvents() {
 				// Show walking map toggle
 				_showWalkingMap = !_showWalkingMap;
 				break;
+			case Common::KEYCODE_q:
+				_game->setWantQuickHero(!_game->getWantQuickHero());
+				break;
 			case Common::KEYCODE_i:
 				if (_game->getRoomNum() == _game->getMapRoom() ||
 				    _game->getLoopSubstatus() != kSubstatusOrdinary) {
@@ -394,8 +397,7 @@ Common::Error DraciEngine::loadGameState(int slot) {
 	// to our constraint in canLoadGameStateCurrently() and to having
 	// enterNewRoom() called right after we exit from here.
 	//
-	// TODO: Handle saving in the map room.  Verify inventory and fix
-	// dialogs.
+	// TODO: Handle saving in the map room
 	return loadSavegameData(slot, this);
 }
 
