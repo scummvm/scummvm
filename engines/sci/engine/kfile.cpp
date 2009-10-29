@@ -870,12 +870,34 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 
 		// Check for regular file
 		bool exists = Common::File::exists(name);
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
+
+		if (!exists)
+			exists = !saveFileMan->listSavefiles(name).empty();
 
 		if (!exists) {
-			// TODO: Transform the name given by the scripts to us, e.g. by
-			// prepending TARGET-
-			Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-			exists = !saveFileMan->listSavefiles(name).empty();
+			// Try searching for the file prepending target-
+			Common::SeekableReadStream *inFile = saveFileMan->openForLoading(wrappedName);
+			exists = (inFile != 0);
+			delete inFile;
+		}
+
+		// Special case for non-English versions of LSL5: The English version of LSL5 calls
+		// kFileIO(), case K_FILEIO_OPEN for reading to check if memory.drv exists (which is
+		// where the game's password is stored). If it's not found, it calls kFileIO() again,
+		// case K_FILEIO_OPEN for writing and creates a new file. Non-English versions call
+		// kFileIO(), case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be found.
+		// We create a default memory.drv file with no password, so that the game can continue
+		if (!exists && name == "memory.drv") {
+			// Create a new file, and write the bytes for the empty password string inside
+			byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
+			Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
+			for (int i = 0; i < 10; i++)
+				outFile->writeByte(defaultContent[i]);
+			outFile->finalize();
+			delete outFile;
+			exists = true;
 		}
 
 		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name.c_str(), exists);
