@@ -442,7 +442,7 @@ void Game::loop() {
 		if (_loopSubstatus == kSubstatusTalk) {
 			// If the current speech text has expired or the user clicked a mouse button,
 			// advance to the next line of text
-			if (getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) ||
+			if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
 				(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
 
 				setExitLoop(true);
