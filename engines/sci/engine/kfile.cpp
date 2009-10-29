@@ -39,7 +39,11 @@ enum {
 	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
-
+struct SavegameDesc {
+	int id;
+	int date;
+	int time;
+};
 
 /*
  * Note on how file I/O is implemented: In ScummVM, one can not create/write
@@ -325,6 +329,47 @@ static void fseek_wrapper(EngineState *s, int handle, int offset, int whence) {
 	s->r_acc = make_reg(0, f->_in->seek(offset, whence));
 }
 
+static int _savegame_index_struct_compare(const void *a, const void *b) {
+	const SavegameDesc *A = (const SavegameDesc *)a;
+	const SavegameDesc *B = (const SavegameDesc *)b;
+
+	if (B->date != A->date)
+		return B->date - A->date;
+	return B->time - A->time;
+}
+
+void listSavegames(Common::Array<SavegameDesc> &saves) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
+	// Load all saves
+	Common::StringList saveNames = saveFileMan->listSavefiles(((SciEngine *)g_engine)->getSavegamePattern());
+
+	for (Common::StringList::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
+		Common::String filename = *iter;
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename))) {
+			SavegameMetadata meta;
+			if (!get_savegame_metadata(in, &meta)) {
+				// invalid
+				delete in;
+				continue;
+			}
+			delete in;
+
+			SavegameDesc desc;
+			desc.id = strtol(filename.end() - 3, NULL, 10);
+			desc.date = meta.savegame_date;
+			desc.time = meta.savegame_time;
+			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
+
+			saves.push_back(desc);
+		}
+	}
+
+	// Sort the list by creation date of the saves
+	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
+}
+
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	int maxsize = argv[1].toUint16();
 	char *buf = new char[maxsize];
@@ -348,15 +393,6 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 	debug(3, "kGetCWD() -> %s", "/");
 
 	return argv[0];
-}
-
-void delete_savegame(EngineState *s, int savedir_nr) {
-	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
-
-	//printf("Deleting savegame '%s'\n", filename.c_str());
-
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	saveFileMan->removeSavefile(filename);
 }
 
 enum {
@@ -414,7 +450,13 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		int savegame_id = argv[3].toUint16();
 		s->_segMan->strcpy(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), savegame_id, "__throwaway");
-		delete_savegame(s, savegame_id);
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+		int savedir_nr = saves[savegame_id].id;
+		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+		//printf("Deleting savegame '%s'\n", filename.c_str());
+		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		saveFileMan->removeSavefile(filename);
 		}
 		break;
 
@@ -445,54 +487,6 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	// The alternative would be to write a big test file, which is not nice
 	// on systems where doing so is very slow.
 	return make_reg(0, 1);
-}
-
-
-struct SavegameDesc {
-	int id;
-	int date;
-	int time;
-};
-
-static int _savegame_index_struct_compare(const void *a, const void *b) {
-	const SavegameDesc *A = (const SavegameDesc *)a;
-	const SavegameDesc *B = (const SavegameDesc *)b;
-
-	if (B->date != A->date)
-		return B->date - A->date;
-	return B->time - A->time;
-}
-
-void listSavegames(Common::Array<SavegameDesc> &saves) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-
-	// Load all saves
-	Common::StringList saveNames = saveFileMan->listSavefiles(((SciEngine *)g_engine)->getSavegamePattern());
-
-	for (Common::StringList::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
-		Common::String filename = *iter;
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
-				// invalid
-				delete in;
-				continue;
-			}
-			delete in;
-
-			SavegameDesc desc;
-			desc.id = strtol(filename.end() - 3, NULL, 10);
-			desc.date = meta.savegame_date;
-			desc.time = meta.savegame_time;
-			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
-
-			saves.push_back(desc);
-		}
-	}
-
-	// Sort the list by creation date of the saves
-	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
 }
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
