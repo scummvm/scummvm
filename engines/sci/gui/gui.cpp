@@ -434,6 +434,11 @@ void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int1
 	_gfx->FillRect(rect, colorMask, color, priority, control);
 }
 
+void SciGui::graphFrameBox(Common::Rect rect, int16 color) {
+	_gfx->PenColor(color);
+	_gfx->FrameRect(rect);
+}
+
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
 	_gfx->OffsetLine(startPoint, endPoint);
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);

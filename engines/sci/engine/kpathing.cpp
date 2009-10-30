@@ -26,8 +26,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/gfx/gfx_widgets.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
+#include "sci/gui/gui.h"
 
 #include "common/list.h"
 
@@ -307,41 +306,42 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Red : Barred access
 	// Blue: Near-point access
 	// Yellow: Contained access
-	int poly_colors[][3] = {{0, 255, 0}, {0, 0, 255}, {255, 0, 0}, {255, 255, 0}};
-	gfx_color_t col;
-	GfxList *decorations = s->picture_port->_decorations;
-	GfxPrimitive *line;
+	int poly_colors[4] = {
+		s->_gui->paletteFind(0, 255, 0),	// green
+		s->_gui->paletteFind(255, 0, 0),	// red
+		s->_gui->paletteFind(0, 0, 255),	// blue
+		s->_gui->paletteFind(255, 255, 0)	// yellow
+	};
 
-	col.visual = PaletteEntry(poly_colors[type][0], poly_colors[type][1], poly_colors[type][2]);
-	col.alpha = 0;
-	col.priority = -1;
-	col.control = 0;
-	col.mask = GFX_MASK_VISUAL | GFX_MASK_PRIORITY;
+	// Clip
+	p1.x = CLIP<int16>(p1.x, 0, 319);
+	p1.y = CLIP<int16>(p1.y, 0, 199);
+	p2.x = CLIP<int16>(p2.x, 0, 319);
+	p2.y = CLIP<int16>(p2.y, 0, 199);
 
-	p1.y += 10;
-	p2.y += 10;
-
-	line = gfxw_new_line(p1, p2, col, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL);
-	decorations->add((GfxContainer *)decorations, (GfxWidget *)line);
+	assert(type >= 0 && type <= 3);
+	s->_gui->graphDrawLine(p1, p2, poly_colors[type], 255, 255);
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start) {
 	// Colors for starting and end point
 	// Green: End point
 	// Blue: Starting point
-	int point_colors[][3] = {{0, 255, 0}, {0, 0, 255}};
-	gfx_color_t col;
-	GfxList *decorations = s->picture_port->_decorations;
-	GfxBox *box;
+	int point_colors[2] = {
+		s->_gui->paletteFind(0, 255, 0),	// green
+		s->_gui->paletteFind(0, 0, 255)		// blue
+	};
 
-	col.visual = PaletteEntry(point_colors[start][0], point_colors[start][1], point_colors[start][2]);
-	col.alpha = 0;
-	col.priority = -1;
-	col.control = 0;
-	col.mask = GFX_MASK_VISUAL | GFX_MASK_PRIORITY;
+	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);
 
-	box = gfxw_new_box(s->gfx_state, gfx_rect(p.x - 1, p.y - 1 + 10, 3, 3), col, col, GFX_BOX_SHADE_FLAT);
-	decorations->add((GfxContainer *)decorations, (GfxWidget *)box);
+	// Clip
+	rect.top = CLIP<int16>(rect.top, 0, 199);
+	rect.bottom = CLIP<int16>(rect.bottom, 0, 199);
+	rect.left = CLIP<int16>(rect.left, 0, 319);
+	rect.right = CLIP<int16>(rect.right, 0, 319);
+
+	assert(start >= 0 && start <= 1);
+	s->_gui->graphFrameBox(rect, point_colors[start]);
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
@@ -1685,17 +1685,6 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 	Common::Point start = Common::Point(argv[0].toSint16(), argv[1].toSint16());
 
-#ifdef DEBUG_AVOIDPATH
-	GfxPort *port = s->picture_port;
-
-	if (!port->_decorations) {
-		port->_decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
-		port->_decorations->setVisual(port->_visual);
-	} else {
-		port->_decorations->free_contents(port->_decorations);
-	}
-#endif
-
 	switch (argc) {
 
 	case 3 : {
@@ -1730,6 +1719,9 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			print_input(s, poly_list, start, end, opt);
 			draw_input(s, poly_list, start, end, opt);
 		}
+
+		// Update the whole screen
+		s->_gui->graphUpdateBox(Common::Rect(0, 0, 319, 219));
 #endif
 
 		p = convert_polygon_set(s, poly_list, start, end, opt);
