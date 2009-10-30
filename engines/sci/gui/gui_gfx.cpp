@@ -45,6 +45,8 @@ SciGuiGfx::SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *pa
 }
 
 SciGuiGfx::~SciGuiGfx() {
+	purgeCache();
+
 	delete _mainPort;
 	delete _menuPort;
 }
@@ -64,6 +66,25 @@ void SciGuiGfx::init(SciGuiText *text) {
 	_text->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
+}
+
+void SciGuiGfx::purgeCache() {
+	for (ViewCache::iterator iter = _cachedViews.begin(); iter != _cachedViews.end(); ++iter) {
+		delete iter->_value;
+		iter->_value = 0;
+	}
+
+	_cachedViews.clear();
+}
+
+SciGuiView *SciGuiGfx::getView(GuiResourceId viewNum) {
+	if (_cachedViews.size() >= MAX_CACHED_VIEWS)
+		purgeCache();
+
+	if (!_cachedViews.contains(viewNum))
+		_cachedViews[viewNum] = new SciGuiView(_s->resMan, _screen, _palette, viewNum);
+
+	return _cachedViews[viewNum];
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
@@ -309,7 +330,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 
 // This one is the only one that updates screen!
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
-	SciGuiView *view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+	SciGuiView *view = getView(viewId);
 	Common::Rect rect;
 	Common::Rect clipRect;
 	if (view) {
@@ -320,7 +341,6 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		clipRect = rect;
 		clipRect.clip(_curPort->rect);
 		if (clipRect.isEmpty()) {	// nothing to draw
-			delete view;
 			return;
 		}
 
@@ -330,19 +350,16 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		if (!_screen->_picNotValid)
 			BitsShow(rect);
 	}
-
-	delete view;
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
-	SciGuiView *view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+	SciGuiView *view = getView(viewId);
 	Common::Rect clipRect;
 	if (view) {
 		clipRect = celRect;
 		clipRect.clip(_curPort->rect);
 		if (clipRect.isEmpty()) { // nothing to draw
-			delete view;
 			return;
 		}
 
@@ -350,8 +367,6 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		OffsetRect(clipRectTranslated);
 		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
 	}
-
-	delete view;
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
@@ -504,7 +519,7 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	}
 
 	// now get cel rectangle
-	view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+	view = getView(viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
 	// TODO: sometimes loop is negative. Check what it means
@@ -514,8 +529,6 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 		PUT_SEL32V(segMan, objectReference, nsTop, celRect.top);
 		PUT_SEL32V(segMan, objectReference, nsBottom, celRect.bottom);
 	}
-
-	delete view;
 }
 
 } // End of namespace Sci

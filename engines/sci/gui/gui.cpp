@@ -644,13 +644,12 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 }
 
 bool SciGui::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, NULL, NULL, viewId);
+	SciGuiView *tmpView = _gfx->getView(viewId);
 	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
 	byte *celData = tmpView->getBitmap(loopNo, celNo);
 	bool result = (celData[position.y * celInfo->width + position.x] == celInfo->clearKey);
-	delete tmpView;
 	return result;
 }
 
@@ -664,7 +663,7 @@ void SciGui::baseSetter(reg_t object) {
 		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
 		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
 
-		SciGuiView *tmpView = new SciGuiView(_s->resMan, NULL, NULL, viewId);
+		SciGuiView *tmpView = _gfx->getView(viewId);
 		sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 		int16 left = x + celInfo->displaceX - (celInfo->width >> 1);
 		int16 right = left + celInfo->width;
@@ -673,8 +672,6 @@ void SciGui::baseSetter(reg_t object) {
 
 		debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
 				x, y, celInfo->displaceX, celInfo->displaceY, celInfo->width, celInfo->height, left, top, bottom, right);
-
-		delete tmpView;
 
 		PUT_SEL32V(_s->_segMan, object, brLeft, left);
 		PUT_SEL32V(_s->_segMan, object, brRight, right);
@@ -725,43 +722,19 @@ void SciGui::moveCursor(Common::Point pos) {
 }
 
 int16 SciGui::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
-	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
-	int16 celWidth = celInfo->width;
-	delete tmpView;
-
-	return celWidth;
+	return _gfx->getView(viewId)->getCelInfo(loopNo, celNo)->width;
 }
 
 int16 SciGui::getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
-	sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
-	int16 celHeight = celInfo->height;
-	delete tmpView;
-
-	return celHeight;
+	return _gfx->getView(viewId)->getCelInfo(loopNo, celNo)->height;
 }
 
 int16 SciGui::getLoopCount(GuiResourceId viewId) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
-	if (!tmpView)
-		return -1;
-
-	uint16 loopCount = tmpView->getLoopCount();
-	delete tmpView;
-
-	return loopCount;
+	return _gfx->getView(viewId)->getLoopCount();
 }
 
 int16 SciGui::getCelCount(GuiResourceId viewId, int16 loopNo) {
-	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, viewId);
-	if (!tmpView)
-		return -1;
-
-	uint16 celCount = tmpView->getLoopInfo(loopNo)->celCount;
-	delete tmpView;
-
-	return celCount;
+	return _gfx->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
 bool SciGui::debugUndither(bool flag) {

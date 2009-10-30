@@ -196,7 +196,7 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 		curObject = listEntry->object;
 
 		// Get the corresponding view
-		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
+		view = _gfx->getView(listEntry->viewId);
 		
 		// adjust loop and cel, if any of those is invalid
 		if (listEntry->loopNo >= view->getLoopCount()) {
@@ -238,8 +238,6 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 		listEntry->signal = signal;
 
 		listIterator++;
-
-		delete view;
 	}
 }
 
@@ -544,7 +542,7 @@ void SciGuiAnimate::addToPicDrawCels() {
 			listEntry->priority = _gfx->CoordinateToPriority(listEntry->y);
 
 		// Get the corresponding view
-		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
+		view = _gfx->getView(listEntry->viewId);
 
 		// Create rect according to coordinates and given cel
 		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
@@ -557,22 +555,16 @@ void SciGuiAnimate::addToPicDrawCels() {
 		}
 
 		listIterator++;
-
-		delete view;
 	}
 }
 
 void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
-	SciGuiView *view = NULL;
+	SciGuiView *view = _gfx->getView(viewId);
 	Common::Rect celRect;
-
-	view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
 
 	// Create rect according to coordinates and given cel
 	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
 	_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0);
-
-	delete view;
 }
 
 } // End of namespace Sci

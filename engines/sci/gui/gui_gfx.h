@@ -28,17 +28,24 @@
 
 #include "sci/gui/gui.h"
 
+#include "common/hashmap.h"
+
 namespace Sci {
 
 #define SCI_TEXT_ALIGNMENT_RIGHT -1
 #define SCI_TEXT_ALIGNMENT_CENTER 1
 #define SCI_TEXT_ALIGNMENT_LEFT	0
 
+#define MAX_CACHED_VIEWS 50
+
 class SciGuiScreen;
 class SciGuiPalette;
 class SciGuiFont;
 class SciGuiPicture;
 class SciGuiView;
+
+typedef Common::HashMap<int, SciGuiView *> ViewCache;
+
 class SciGuiGfx {
 public:
 	SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette);
@@ -99,7 +106,11 @@ public:
 	Common::Rect _menuRect;
 	GuiPort *_curPort;
 
+	SciGuiView *getView(GuiResourceId viewNum);
+
 private:
+	void purgeCache();
+
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
@@ -111,6 +122,8 @@ private:
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;
 	byte _priorityBands[200];
+
+	ViewCache _cachedViews;
 };
 
 } // End of namespace Sci
