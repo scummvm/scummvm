@@ -32,7 +32,8 @@ namespace Draci {
 
 class WalkingMap {
 public:
-	WalkingMap() : _realWidth(0), _realHeight(0), _mapWidth(0), _mapHeight(0), _byteWidth(0), _data(NULL) { }
+	WalkingMap() : _realWidth(0), _realHeight(0), _deltaX(1), _deltaY(1),
+		_mapWidth(0), _mapHeight(0), _byteWidth(0), _data(NULL) { }
 
 	void load(const byte *data, uint length);
 	bool isWalkable(int x, int y) const;
@@ -43,6 +44,8 @@ private:
 	int _deltaX, _deltaY;
 	int _mapWidth, _mapHeight;
 	int _byteWidth;
+
+	// We don't own the pointer.  It points to the BArchive cache for this room.
 	const byte *_data;
 };
 

@@ -168,7 +168,7 @@ uint Surface::putAboveY(int y, int height) const {
 /**
  * @brief Returns a Common::Rect corresponding to the surface.
  */
-Common::Rect Surface::getRect() const {
+Common::Rect Surface::getDimensions() const {
 	return Common::Rect(w, h);
 }
 

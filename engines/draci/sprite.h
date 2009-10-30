@@ -44,8 +44,8 @@ extern const Displacement kNoDisplacement;
 
 class Drawable {
 public:
-	virtual void draw(Surface *surface, bool markDirty, int relX=0, int relY=0) const = 0;
-	virtual void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const = 0;
+	virtual void draw(Surface *surface, bool markDirty, int relX, int relY) const = 0;
+	virtual void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const = 0;
 
 	virtual ~Drawable() {};
 
@@ -69,7 +69,7 @@ public:
 	void setDelay(int delay) { _delay = delay; }
 	int getDelay() const { return _delay; }
 
-	virtual Common::Rect getRect(const Displacement &displacement = kNoDisplacement) const = 0;
+	virtual Common::Rect getRect(const Displacement &displacement) const = 0;
 
 	virtual DrawableType getType() const = 0;
 
@@ -106,16 +106,16 @@ public:
 
 	~Sprite();
 
-	void draw(Surface *surface, bool markDirty, int relX=0, int relY=0) const;
-	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const;
+	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
+	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const;
 
 	void setMirrorOn();
 	void setMirrorOff();
 
-	Common::Rect getRect(const Displacement &displacement = kNoDisplacement) const;
+	Common::Rect getRect(const Displacement &displacement) const;
 
 	const byte *getBuffer() const { return _data; }
-	int getPixel(int x, int y, const Displacement &displacement = kNoDisplacement) const;
+	int getPixel(int x, int y, const Displacement &displacement) const;
 
 	DrawableType getType() const { return kDrawableSprite; }
 
@@ -128,7 +128,7 @@ class Text : public Drawable {
 
 public:
 	Text(const Common::String &str, const Font *font, byte fontColour,
-	    int x, int y, uint spacing = 0);
+	    int x, int y, uint spacing);
 	~Text() {};
 
 	void setText(const Common::String &str);
@@ -138,13 +138,13 @@ public:
 
 	uint getLength() const;
 
-	void draw(Surface *surface, bool markDirty, int relX=0, int relY=0) const;
+	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
 
 	// TODO: drawReScaled just calls draw so Text can be accessed through a Drawable pointer.
 	// Handle scaling text sometimes (not essential).
 
-	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const { draw(surface, markDirty, displacement.relX, displacement.relY); }
-	Common::Rect getRect(const Displacement &displacement = kNoDisplacement) const;
+	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const { draw(surface, markDirty, displacement.relX, displacement.relY); }
+	Common::Rect getRect(const Displacement &displacement) const;
 
 	DrawableType getType() const { return kDrawableText; }
 private:

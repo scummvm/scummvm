@@ -220,7 +220,7 @@ public:
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
-	void loadWalkingMap(int mapID);
+	void loadWalkingMap(int mapID);		// <0 means the room's default walking map
 	void loadItem(int itemID);
 
 	uint getNumObjects() const;

@@ -66,13 +66,13 @@ public:
 	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const;
 
 	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_colour,
-	                int spacing, bool markDirty = true) const;
+	                int spacing, bool markDirty) const;
 	void drawString(Surface *dst, const Common::String &str,
-	                int x, int y, int with_colour, int spacing, bool markDirty = true) const;
+	                int x, int y, int with_colour, int spacing, bool markDirty) const;
 
-	uint getStringWidth(const Common::String &str, int spacing = 0) const;
+	uint getStringWidth(const Common::String &str, int spacing) const;
 	uint getStringHeight(const Common::String &str) const;
-	uint getLineWidth(const Common::String &str, uint startIndex, int spacing = 0) const;
+	uint getLineWidth(const Common::String &str, uint startIndex, int spacing) const;
 
 private:
 	uint8 _fontHeight;

@@ -160,9 +160,9 @@ public:
 	AnimationManager(DraciEngine *vm) : _vm(vm), _lastIndex(-1) {}
 	~AnimationManager() { deleteAll(); }
 
-	Animation *addAnimation(int id, uint z, bool playing = false);
-	Animation *addText(int id, bool playing = false);
-	Animation *addItem(int id, bool playing = false);
+	Animation *addAnimation(int id, uint z, bool playing);
+	Animation *addText(int id, bool playing);
+	Animation *addItem(int id, bool playing);
 	void addOverlay(Drawable *overlay, uint z);
 
 	void play(int id);

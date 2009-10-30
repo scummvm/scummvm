@@ -47,7 +47,7 @@ public:
 	void fill(uint colour);
 	uint putAboveY(int y, int height) const;
 	uint centerOnX(int x, int width) const;
-	Common::Rect getRect() const;
+	Common::Rect getDimensions() const;
 
 private:
 	/** The current transparent colour of the surface. See getTransparentColour() and

@@ -573,7 +573,7 @@ void Script::icoStat(Common::Queue<int> &params) {
 
 	if (_vm->_game->getItemStatus(itemID) == 1) {
 		if (itemID != kNoItem) {
-			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID);
+			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID, false);
 			const BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
 			Sprite *sp = new Sprite(f->_data, f->_length, 0, 0, true);
 			itemAnim->addFrame(sp, NULL);
@@ -581,7 +581,7 @@ void Script::icoStat(Common::Queue<int> &params) {
 
 		_vm->_game->setCurrentItem(itemID);
 
-		_vm->_mouse->loadItemCursor(itemID);
+		_vm->_mouse->loadItemCursor(itemID, false);
 
 		// TODO: This is probably not needed but I'm leaving it to be sure for now
 		// The original engine needed to turn off the mouse temporarily when changing
@@ -718,7 +718,7 @@ void Script::talk(Common::Queue<int> &params) {
 		? NULL : _vm->_dubbingArchive->getSample(sentenceID, 0);
 
 	// Set the string and text colour
-	surface->markDirtyRect(speechFrame->getRect());
+	surface->markDirtyRect(speechFrame->getRect(kNoDisplacement));
 	if (_vm->_sound->showSubtitles() || !sample) {
 		speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
 	} else {
@@ -780,7 +780,7 @@ void Script::talk(Common::Queue<int> &params) {
 	_vm->_game->loop();
 
 	// Delete the text
-	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect());
+	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect(kNoDisplacement));
 	speechFrame->setText("");
 
 	// Stop the playing sample and deallocate it.  Stopping should only be

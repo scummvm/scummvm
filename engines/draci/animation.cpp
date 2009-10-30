@@ -127,7 +127,7 @@ void Animation::drawFrame(Surface *surface) {
 	const Drawable *frame = _frames[_currentFrame];
 
 	if (_id == kOverlayImage) {
-		frame->draw(surface, false);
+		frame->draw(surface, false, 0, 0);
 	} else {
 		// Draw frame
 		frame->drawReScaled(surface, false, _displacement);

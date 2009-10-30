@@ -186,12 +186,12 @@ void Game::init() {
 
 	// Initialize animation for object / room titles
 	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
-	Text *title = new Text("", _vm->_smallFont, kTitleColour, 0, 0);
+	Text *title = new Text("", _vm->_smallFont, kTitleColour, 0, 0, 0);
 	titleAnim->addFrame(title, NULL);
 
 	// Initialize animation for speech text
 	Animation *speechAnim = _vm->_anims->addText(kSpeechText, true);
-	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0);
+	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0, 0);
 	speechAnim->addFrame(speech, NULL);
 
 	// Initialize inventory animation
@@ -204,7 +204,7 @@ void Game::init() {
 
 	for (uint i = 0; i < kDialogueLines; ++i) {
 		_dialogueAnims[i] = _vm->_anims->addText(kDialogueLinesID - i, true);
-		Text *dialogueLine = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0);
+		Text *dialogueLine = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0, 0);
 		_dialogueAnims[i]->addFrame(dialogueLine, NULL);
 
 		_dialogueAnims[i]->setZ(254);
@@ -503,7 +503,7 @@ void Game::updateCursor() {
 			if (_currentItem == kNoItem) {
 				_vm->_mouse->setCursorType(kNormalCursor);
 			} else {
-				_vm->_mouse->loadItemCursor(_currentItem);
+				_vm->_mouse->loadItemCursor(_currentItem, false);
 			}
 		}
 
@@ -561,7 +561,7 @@ void Game::updateCursor() {
 		if (_currentItem == kNoItem) {
 			_vm->_mouse->setCursorType(kNormalCursor);
 		} else {
-			_vm->_mouse->loadItemCursor(_currentItem);
+			_vm->_mouse->loadItemCursor(_currentItem, false);
 		}
 	}
 }
@@ -667,7 +667,7 @@ void Game::putItem(int itemID, int position) {
 	const int anim_id = kInventoryItemsID - itemID;
 	Animation *anim = _vm->_anims->getAnimation(anim_id);
 	if (!anim) {
-		anim = _vm->_anims->addItem(anim_id);
+		anim = _vm->_anims->addItem(anim_id, false);
 		const BAFile *img = _vm->_itemImagesArchive->getFile(2 * itemID);
 		Sprite *sp = new Sprite(img->_data, img->_length, 0, 0, true);
 		anim->addFrame(sp, NULL);
@@ -982,7 +982,7 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		return;
 
 	Surface *surface = _vm->_screen->getSurface();
-	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
+	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getDimensions());
 	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
 

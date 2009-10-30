@@ -332,7 +332,7 @@ uint Text::getLength() const {
 }
 
 void Text::draw(Surface *surface, bool markDirty, int relX, int relY) const {
-	_font->drawString(surface, _text, _x + relX, _y + relY, _colour, _spacing);
+	_font->drawString(surface, _text, _x + relX, _y + relY, _colour, _spacing, true);
 }
 
 // TODO: Handle scaled parameter properly by implementing Text scaling
