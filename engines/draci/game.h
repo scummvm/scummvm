@@ -32,6 +32,7 @@
 #include "draci/script.h"
 #include "draci/animation.h"
 #include "draci/sprite.h"
+#include "draci/walking.h"
 
 namespace Draci {
 
@@ -62,12 +63,6 @@ enum {
 // and a "real" cursor image is used
 enum {
 	kNoItem = -1
-};
-
-// Used as a default parameter in Game::loadWalkingMap() to specify that the default
-// walking map to the room is to be loaded.
-enum {
-	kDefaultRoomMap = -1
 };
 
 enum {
@@ -102,51 +97,6 @@ enum InventoryConstants {
   kInventoryX = 70, ///< Used for positioning of the inventory sprite on the X axis
   kInventoryY = 30, ///< Used for positioning of the inventory sprite on the Y axis
   kInventorySlots = kInventoryLines * kInventoryColumns
-};
-
-class WalkingMap {
-public:
-	WalkingMap() {
-		_realWidth = 0;
-		_realHeight = 0;
-		_mapWidth = 0;
-		_mapHeight = 0;
-		_byteWidth = 0;
-		_data = NULL;
-	}
-
-	void load(const byte *data, uint length) {
-		Common::MemoryReadStream mapReader(data, length);
-
-		_realWidth = mapReader.readUint16LE();
-		_realHeight = mapReader.readUint16LE();
-		_deltaX = mapReader.readUint16LE();
-		_deltaY = mapReader.readUint16LE();
-		_mapWidth = mapReader.readUint16LE();
-		_mapHeight = mapReader.readUint16LE();
-		_byteWidth = mapReader.readUint16LE();
-
-		// Set the data pointer to raw map data
-		_data = data + mapReader.pos();
-	}
-
-	bool isWalkable(int x, int y) const;
-	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
-
-private:
-	int _realWidth, _realHeight;
-	int _deltaX, _deltaY;
-	int _mapWidth, _mapHeight;
-	int _byteWidth;
-	const byte *_data;
-};
-
-/*
- * Enumerates the directions the dragon can look into when arrived.
- */
-enum SightDirection {
-	kDirectionLast, kDirectionMouse, kDirectionUnknown,
-	kDirectionRight, kDirectionLeft, kDirectionIntelligent
 };
 
 struct GameObject {
@@ -201,6 +151,7 @@ struct Room {
 	int _roomNum;
 	byte _music;
 	WalkingMap _walkingMap;
+	int _mapID;
 	int _palette;
 	int _numOverlays;
 	int _init, _look, _use, _canUse;
@@ -225,18 +176,6 @@ enum LoopSubstatus {
 	kSubstatusTalk,
 	kSubstatusFade,
 	kSubstatusStrange
-};
-
-/**
-  * Enumerates the animations for the dragon's movement.
-  */
-enum Movement {
-	kMoveUndefined = -1,
-	kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
-	kMoveRightDown, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
-	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
-	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
-	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft
 };
 
 class Game {
@@ -281,7 +220,7 @@ public:
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
-	void loadWalkingMap(int mapID = kDefaultRoomMap);
+	void loadWalkingMap(int mapID);
 	void loadItem(int itemID);
 
 	uint getNumObjects() const;

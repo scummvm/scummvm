@@ -1044,9 +1044,7 @@ void Game::loadRoom(int roomNum) {
 	// Music will be played by the GPL2 command startMusic when needed.
 	setMusicTrack(roomReader.readByte());
 
-	int mapID = roomReader.readByte() - 1;
-	loadWalkingMap(mapID);
-
+	_currentRoom._mapID = roomReader.readByte() - 1;
 	_currentRoom._palette = roomReader.readByte() - 1;
 	_currentRoom._numOverlays = roomReader.readSint16LE();
 	_currentRoom._init = roomReader.readSint16LE();
@@ -1078,7 +1076,7 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._numGates = roomReader.readByte();
 
 	debugC(4, kDraciLogicDebugLevel, "Music: %d", getMusicTrack());
-	debugC(4, kDraciLogicDebugLevel, "Map: %d", mapID);
+	debugC(4, kDraciLogicDebugLevel, "Map: %d", _currentRoom._mapID);
 	debugC(4, kDraciLogicDebugLevel, "Palette: %d", _currentRoom._palette);
 	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numOverlays);
 	debugC(4, kDraciLogicDebugLevel, "Init: %d", _currentRoom._init);
@@ -1096,12 +1094,13 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "Gates: %d", _currentRoom._numGates);
 
 	// Read in the gates' numbers
-
 	_currentRoom._gates.clear();
-
 	for (uint i = 0; i < _currentRoom._numGates; ++i) {
 		_currentRoom._gates.push_back(roomReader.readSint16LE());
 	}
+
+	// Load the walking map
+	loadWalkingMap(_currentRoom._mapID);
 
 	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
@@ -1258,6 +1257,9 @@ void Game::loadObject(uint objNum) {
 }
 
 void Game::loadWalkingMap(int mapID) {
+	if (mapID < 0) {
+		mapID = _currentRoom._mapID;
+	}
 	const BAFile *f;
 	f = _vm->_walkingMapsArchive->getFile(mapID);
 	_currentRoom._walkingMap.load(f->_data, f->_length);
@@ -1663,124 +1665,6 @@ void Game::DoSync(Common::Serializer &s) {
 		s.syncAsSint16LE(_dialogueVars[i]);
 	}
 
-}
-
-bool WalkingMap::isWalkable(int x, int y) const {
-	// Convert to map pixels
-	x = x / _deltaX;
-	y = y / _deltaY;
-
-	int pixelIndex = _mapWidth * y + x;
-	int byteIndex = pixelIndex / 8;
-	int mapByte = _data[byteIndex];
-
-	return mapByte & (1 << pixelIndex % 8);
-}
-
-/**
- * @brief For a given point, find a nearest walkable point on the walking map
- *
- * @param startX    x coordinate of the point
- * @param startY    y coordinate of the point
- *
- * @return A Common::Point representing the nearest walkable point
- *
- *  The algorithm was copied from the original engine for exactness.
- *  TODO: Study this algorithm in more detail so it can be documented properly and
- *  possibly improved / simplified.
- */
-Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Rect searchRect) const {
-	// If the starting point is walkable, just return that
-	if (searchRect.contains(startX, startY) && isWalkable(startX, startY)) {
-		return Common::Point(startX, startY);
-	}
-
-	int signs[] = { 1, -1 };
-	const uint kSignsNum = 2;
-
-	int radius = 0;
-	int x, y;
-	int dx, dy;
-	int prediction;
-
-	// The place where, eventually, the result coordinates will be stored
-	int finalX, finalY;
-
-	// The algorithm appears to start off with an ellipse with the minor radius equal to
-	// zero and the major radius equal to the walking map delta (the number of pixels
-	// one map pixel represents). It then uses a heuristic to gradually reshape it into
-	// a circle (by shortening the major radius and lengthening the minor one). At each
-	// such resizing step, it checks some select points on the ellipse for walkability.
-	// It also does the same check for the ellipse perpendicular to it (rotated by 90 degrees).
-
-	while (1) {
-		// The default major radius
-		radius += _deltaX;
-
-		// The ellipse radii (minor, major) that get resized
-		x = 0;
-		y = radius;
-
-		// Heuristic variables
-		prediction = 1 - radius;
-		dx = 3;
-		dy = 2 * radius - 2;
-
-		do {
-			// The following two loops serve the purpose of checking the points on the two
-			// ellipses for walkability. The signs[] array is there to obliterate the need
-			// of writing out all combinations manually.
-
-			for (uint i = 0; i < kSignsNum; ++i) {
-				finalY = startY + y * signs[i];
-
-				for (uint j = 0; j < kSignsNum; ++j) {
-					finalX = startX + x * signs[j];
-
-					// If the current point is walkable, return it
-					if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
-						return Common::Point(finalX, finalY);
-					}
-				}
-			}
-
-			if (x == y) {
-				// If the starting point is walkable, just return that
-				if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
-					return Common::Point(finalX, finalY);
-				}
-			}
-
-			for (uint i = 0; i < kSignsNum; ++i) {
-				finalY = startY + x * signs[i];
-
-				for (uint j = 0; j < kSignsNum; ++j) {
-					finalX = startX + y * signs[j];
-
-					// If the current point is walkable, return it
-					if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
-						return Common::Point(finalX, finalY);
-					}
-				}
-			}
-
-			// If prediction is non-negative, we need to decrease the major radius of the
-			// ellipse
-			if (prediction >= 0) {
-				prediction -= dy;
-				dy -= 2 * _deltaX;
-				y -= _deltaX;
-			}
-
-			// Increase the minor radius of the ellipse and update heuristic variables
-			prediction += dx;
-			dx += 2 * _deltaX;
-			x += _deltaX;
-
-		// If the current ellipse has been reshaped into a circle,
-		// end this loop and enlarge the radius
-		} while (x <= y);
-	}
 }
 
 static double real_to_double(byte real[6]) {

@@ -728,10 +728,9 @@ void Script::talk(Common::Queue<int> &params) {
 
 	// HACK: Some strings in the English data files are too long to fit the screen
 	// This is a temporary resolution.
+	speechFrame->setFont(_vm->_bigFont);
 	if (speechFrame->getWidth() >= kScreenWidth) {
 		speechFrame->setFont(_vm->_smallFont);
-	} else {
-		speechFrame->setFont(_vm->_bigFont);
 	}
 
 	// Set the loop substatus to an appropriate value
@@ -838,7 +837,7 @@ void Script::exitDialogue(Common::Queue<int> &params) {
 
 void Script::roomMap(Common::Queue<int> &params) {
 	// Load the default walking map for the room
-	_vm->_game->loadWalkingMap();
+	_vm->_game->loadWalkingMap(-1);
 }
 
 void Script::disableQuickHero(Common::Queue<int> &params) {

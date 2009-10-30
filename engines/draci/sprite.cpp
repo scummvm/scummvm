@@ -341,6 +341,9 @@ Common::Rect Text::getRect(const Displacement &displacement) const {
 }
 
 void Text::setFont(const Font *font) {
+	if (font == _font) {
+		return;
+	}
 	_font = font;
 
 	_width = _font->getStringWidth(_text, _spacing);

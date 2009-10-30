@@ -14,7 +14,8 @@ MODULE_OBJS := \
 	surface.o \
 	mouse.o \
 	game.o \
-	animation.o
+	animation.o \
+	walking.o
  
 MODULE_DIRS += \
 	engines/draci
