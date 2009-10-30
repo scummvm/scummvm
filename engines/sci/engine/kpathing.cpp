@@ -1470,6 +1470,14 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			return NULL;
 		}
 
+		// WORKAROUND LSL5 room 660. Priority glitch due to us choosing a different path
+		// than SSCI. Happens when Patti walks to the control room.
+		if ((s->_gameName == "lsl5") && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
+			debug(1, "[avoidpath] Applying fix for priority problem in LSL5, room 660");
+			pf_s->_prependPoint = new_start;
+			new_start = new Common::Point(77, 107);
+		}
+
 		if (s->_gameName == "longbow" && s->currentRoomNumber() == 210)
 				fixLongbowRoom210(pf_s, *new_start, *new_end);
 
