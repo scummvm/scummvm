@@ -520,7 +520,7 @@ static const char *credits[] = {
 "C0""",
 "C0""Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of some of their games with us.",
 "C0""",
-"C0""John Young, Colin Smythe and especially Terry Pratchett himself for sharing the source code of Discworld I & II with us.",
+"C0""John Young, Colin Smythe and especially Terry Pratchett himself for sharing the source code of Discworld I &amp; II with us.",
 "C0""",
 "",
 };

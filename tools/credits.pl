@@ -962,7 +962,7 @@ begin_credits("Credits");
 
   add_paragraph(
   "John Young, Colin Smythe and especially Terry Pratchett himself for ".
-  "sharing the source code of Discworld I & II with us.");
+  "sharing the source code of Discworld I &amp; II with us.");
 
   end_section();
 
