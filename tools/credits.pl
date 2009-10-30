@@ -433,10 +433,12 @@ sub add_paragraph {
 		print wrap($tab, $tab, html_entities_to_ascii($text))."\n";
 		print "\n";
 	} elsif ($mode eq "TEX") {
+		$text = html_entities_to_tex($text);
 		print '\item' . "\n";
 		print $text;
 		print "\n";
 	} elsif ($mode eq "RTF") {
+		$text = html_entities_to_rtf($text);
 		# Center text
 		print '\pard\qc' . "\n";
 		print "\\\n";
