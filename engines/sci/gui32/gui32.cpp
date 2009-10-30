@@ -805,8 +805,6 @@ void SciGui32::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_s->titlebar_port->_bgcolor.visual = get_pic_color(_s, colorBack);
 	_s->titlebar_port->_bgcolor.mask = GFX_MASK_VISUAL;
 
-	_s->status_bar_foreground = colorPen;
-	_s->status_bar_background = colorBack;
 	_s->_statusBarText = text;
 
 	sciw_set_status_bar(_s, _s->titlebar_port, _s->_statusBarText, colorPen, colorBack);

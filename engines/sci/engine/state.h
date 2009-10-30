@@ -145,8 +145,6 @@ public:
 	/** Text on the status bar, or NULL if the title bar is blank */
 	Common::String _statusBarText;
 
-	int status_bar_foreground, status_bar_background;
-
 #ifdef INCLUDE_OLDGFX
 	int *pic_priority_table; /**< 16 entries with priorities or NULL if not present */
 	byte pic_not_valid; /**< Is 0 if the background picture is "valid" */

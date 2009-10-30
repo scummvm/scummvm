@@ -413,8 +413,6 @@ int game_init(EngineState *s) {
 
 	s->successor = NULL; // No successor
 	s->_statusBarText.clear(); // Status bar is blank
-	s->status_bar_foreground = 0;
-	s->status_bar_background = !s->resMan->isVGA() ? 15 : 255;
 
 	SystemString *str = &s->sys_strings->_strings[SYS_STRING_PARSER_BASE];
 	str->_name = "parser-base";

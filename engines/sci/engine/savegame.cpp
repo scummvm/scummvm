@@ -305,8 +305,8 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		assert(_menubar);
 	_menubar->saveLoadWithSerializer(s);
 
-	s.syncAsSint32LE(status_bar_foreground);
-	s.syncAsSint32LE(status_bar_background);
+	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
+	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
 
 	sync_SegManagerPtr(s, resMan, _segMan);
 

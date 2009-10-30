@@ -301,8 +301,7 @@ void SciGui::drawMenuBar() {
 }
 
 void SciGui::clearMenuBar() {
-	// TODO: Implement menubar
-	warning("TODO: clearMenuBar()");
+	drawStatus("", 0, 0);
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

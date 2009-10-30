@@ -124,7 +124,6 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("flush_visual",		WRAP_METHOD(Console, cmdFlushPorts));
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
-	DCmd_Register("status_bar",			WRAP_METHOD(Console, cmdStatusBarColors));
 #ifdef GFXW_DEBUG_WIDGETS
 	DCmd_Register("print_widget",		WRAP_METHOD(Console, cmdPrintWidget));
 #endif
@@ -329,7 +328,6 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" flush_visual - Flushes dynamically allocated ports (for memory profiling)\n");
 	DebugPrintf(" dynamic_views - Lists active dynamic views\n");
 	DebugPrintf(" dropped_views - Lists dropped dynamic views\n");
-	DebugPrintf(" status_bar - Sets the colors of the status bar\n");
 #ifdef GFXW_DEBUG_WIDGETS
 	DebugPrintf(" print_widget - Shows active widgets (no params) or information on the specified widget indices\n");
 #endif
@@ -1333,28 +1331,6 @@ bool Console::cmdPriorityBands(int argc, const char **argv) {
 #endif
 
 	return true;
-}
-
-bool Console::cmdStatusBarColors(int argc, const char **argv) {
-	if (argc != 3) {
-		DebugPrintf("Sets the colors of the status bar\n");
-		DebugPrintf("Usage: %s <foreground color> <background color>\n", argv[0]);
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	_vm->_gamestate->titlebar_port->_color = _vm->_gamestate->ega_colors[atoi(argv[1])];
-	_vm->_gamestate->titlebar_port->_bgcolor = _vm->_gamestate->ega_colors[atoi(argv[2])];
-
-	_vm->_gamestate->status_bar_foreground = atoi(argv[1]);
-	_vm->_gamestate->status_bar_background = atoi(argv[2]);
-
-	sciw_set_status_bar(_vm->_gamestate, _vm->_gamestate->titlebar_port, _vm->_gamestate->_statusBarText,
-							_vm->_gamestate->status_bar_foreground, _vm->_gamestate->status_bar_background);
-	gfxop_update(_vm->_gamestate->gfx_state);
-#endif
-
-	return false;
 }
 
 bool Console::cmdPrintSegmentTable(int argc, const char **argv) {

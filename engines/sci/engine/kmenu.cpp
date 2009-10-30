@@ -79,8 +79,8 @@ reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	reg_t textReference = argv[0];
 	Common::String text;
-	int16 colorPen = (argc > 1) ? argv[1].toSint16() : 0; // old code was: s->status_bar_foreground;
-	int16 colorBack = (argc > 2) ? argv[2].toSint16() : s->resMan->isVGA() ? 255 : 15; // s->status_bar_background;
+	int16 colorPen = (argc > 1) ? argv[1].toSint16() : 0;
+	int16 colorBack = (argc > 2) ? argv[2].toSint16() : s->resMan->isVGA() ? 255 : 15;
 
 	if (!textReference.isNull()) {
 		// Sometimes this is called without giving text, if thats the case dont process it
@@ -215,8 +215,9 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef INCLUDE_OLDGFX
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, menu_nr);
-		FULL_REDRAW;
 #endif
+
+		FULL_REDRAW;
 
 		old_item = -1;
 		old_menu = -1;
@@ -233,13 +234,6 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 			case SCI_EVT_KEYBOARD:
 				switch (ev.data) {
-
-				case '`':
-#ifdef INCLUDE_OLDGFX
-					if (ev.buckybits & SCI_EVM_CTRL)
-						s->visual->print(0);
-#endif
-					break;
 
 				case SCI_K_ESC:
 					menu_mode = 0;
@@ -338,15 +332,16 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 		} /* while (menu_mode) */
 
+		// Clear the menu
 #ifdef INCLUDE_OLDGFX
 		if (port) {
 			delete port;
 			port = NULL;
-
-			sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
-			gfxop_update(s->gfx_state);
 		}
 #endif
+
+		s->_gui->clearMenuBar();
+
 		FULL_REDRAW;
 	}
 

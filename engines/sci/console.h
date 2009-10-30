@@ -102,7 +102,6 @@ private:
 	bool cmdFlushPorts(int argc, const char **argv);
 	bool cmdDynamicViews(int argc, const char **argv);
 	bool cmdDroppedViews(int argc, const char **argv);
-	bool cmdStatusBarColors(int argc, const char **argv);
 	bool cmdPrintWidget(int argc, const char **argv);
 	// Segments
 	bool cmdPrintSegmentTable(int argc, const char **argv);

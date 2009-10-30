@@ -43,9 +43,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	restarting_flags = 0;
 
-	status_bar_foreground = 0;
-	status_bar_background = 0;
-
 #ifdef INCLUDE_OLDGFX
 	pic_priority_table = 0;
 	pic_not_valid = 0;
