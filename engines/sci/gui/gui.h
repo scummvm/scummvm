@@ -144,13 +144,13 @@ protected:
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
+	SciGuiGfx *_gfx;
 
 private:
 	virtual void initPriorityBands();
 	virtual void animateShowPic();
 	virtual void addToPicSetPicNotValid();
 
-	SciGuiGfx *_gfx;
 	SciGuiWindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
 	SciGuiControls *_controls;

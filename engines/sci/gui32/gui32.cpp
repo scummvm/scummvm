@@ -40,6 +40,7 @@
 #include "sci/gui32/gui32.h"
 #include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
+#include "sci/gui/gui_gfx.h"
 
 // This is the real width of a text with a specified width of 0
 #define MAX_TEXT_WIDTH_MAGIC_VALUE 192
@@ -380,6 +381,7 @@ SciGui32::SciGui32( EngineState *state, SciGuiScreen *screen, SciGuiPalette *pal
 	_screen = screen;
 	_palette = palette;
 	_cursor = cursor;
+	_gfx = new SciGuiGfx(_s, _screen, _palette);
 }
 
 SciGui32::~SciGui32() {
