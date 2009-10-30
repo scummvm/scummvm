@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/made/music.h $
- * $Id: music.h 31873 2008-05-05 12:51:50Z john_doe $
+ * $URL$
+ * $Id$
  *
  */
 

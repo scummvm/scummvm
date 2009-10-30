@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/draci/barchive.cpp $
- * $Id: barchive.cpp 44493 2009-09-30 16:04:21Z fingolfin $
+ * $URL$
+ * $Id$
  *
  */
 

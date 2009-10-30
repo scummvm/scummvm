@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/cruise/saveload.cpp $
- * $Id: saveload.cpp 42047 2009-07-03 06:19:20Z dreammaster $
+ * $URL$
+ * $Id$
  *
  */
 

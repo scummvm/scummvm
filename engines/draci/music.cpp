@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/made/music.cpp $
- * $Id: music.cpp 35843 2009-01-13 10:11:52Z thebluegr $
+ * $URL$
+ * $Id$
  *
  */
 

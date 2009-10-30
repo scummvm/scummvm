@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/draci/game.h $
- * $Id: game.h 45501 2009-10-29 15:26:48Z spalek $
+ * $URL$
+ * $Id$
  *
  */
 
