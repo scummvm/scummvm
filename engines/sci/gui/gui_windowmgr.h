@@ -33,7 +33,7 @@ namespace Sci {
 
 class SciGuiWindowMgr {
 public:
-	SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate, SciGuiText *text);
+	SciGuiWindowMgr(SciGui *gui, SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiText *text);
 	~SciGuiWindowMgr();
 
 	void init(Common::String gameName);
@@ -54,9 +54,9 @@ public:
 private:
 	typedef Common::List<GuiPort *> PortList;
 
+	SciGui *_gui;
 	SciGuiScreen *_screen;
 	SciGuiGfx *_gfx;
-	SciGuiAnimate *_animate;
 	SciGuiText *_text;
 
 	/** The list of open 'windows' (and ports), in visual order. */

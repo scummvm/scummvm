@@ -44,11 +44,17 @@ SciGuiAnimate::SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *s
 }
 
 SciGuiAnimate::~SciGuiAnimate() {
+	if (_listData)
+		free(_listData);
+	if (_lastCastData)
+		free(_lastCastData);
 }
 
 void SciGuiAnimate::init() {
 	_listData = NULL;
-	_listSize = 0;
+	_listCount = 0;
+	_lastCastData = NULL;
+	_lastCastCount = 0;
 
 	_ignoreFastCast = false;
 	// fastCast object is not found in any SCI games prior SCI1
@@ -61,9 +67,7 @@ void SciGuiAnimate::init() {
 }
 
 void SciGuiAnimate::disposeLastCast() {
-	// FIXME
-	//if (!_lastCast->first.isNull())
-		//_lastCast->DeleteList();
+	_lastCastCount = 0;
 }
 
 bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
@@ -126,13 +130,20 @@ void SciGuiAnimate::makeSortedList(List *list) {
 		return;
 
 	// Adjust list size, if needed
-	if ((_listData == NULL) || (_listSize < listCount)) {
+	if ((_listData == NULL) || (_listCount < listCount)) {
 		if (_listData)
 			free(_listData);
 		_listData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
 		if (!_listData)
-			error("Could not allocate memory for _animateList");
-		_listSize = listCount;
+			error("Could not allocate memory for _listData");
+		_listCount = listCount;
+
+		if (_lastCastData)
+			free(_lastCastData);
+		_lastCastData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
+		if (!_lastCastData)
+			error("Could not allocate memory for _lastCastData");
+		_lastCastCount = 0;
 	}
 
 	// Fill the list
@@ -342,10 +353,13 @@ void SciGuiAnimate::drawCels() {
 	SegManager *segMan = _s->_segMan;
 	reg_t curObject;
 	GuiAnimateEntry *listEntry;
+	GuiAnimateEntry *lastCastEntry = _lastCastData;
 	uint16 signal;
 	reg_t bitsHandle;
 	GuiAnimateList::iterator listIterator;
 	GuiAnimateList::iterator listEnd = _list.end();
+
+	_lastCastCount = 0;
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
@@ -366,17 +380,10 @@ void SciGuiAnimate::drawCels() {
 				signal &= 0xFFFF ^ kSignalRemoveView;
 			}
 			listEntry->signal = signal;
-			
-//			HEAPHANDLE hNewCast = heapNewPtr(sizeof(sciCast), kDataCast);
-//			sciCast *pNewCast = (sciCast *)heap2Ptr(hNewCast);
-//			pNewCast->view = view;
-//			pNewCast->loop = loop;
-//			pNewCast->cel = cel;
-//			pNewCast->z = z;
-//			pNewCast->pal = pal;
-//			pNewCast->hSaved = 0;
-//			pNewCast->rect = *rect;
-//			_lastCast->AddToEnd(hNewCast);
+
+			// Remember that entry in lastCast
+			memcpy(lastCastEntry, listEntry, sizeof(GuiAnimateEntry));
+			lastCastEntry++; _lastCastCount++;
 		}
 		listIterator++;
 	}
@@ -475,16 +482,30 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 }
 
 void SciGuiAnimate::reAnimate(Common::Rect rect) {
-	// TODO: implement ReAnimate
-	_gfx->BitsShow(rect);
+	GuiAnimateEntry *lastCastEntry;
+	uint16 lastCastCount;
+
+	if (_lastCastCount > 0) {
+		lastCastEntry = _lastCastData;
+		lastCastCount = _lastCastCount;
+		while (lastCastCount > 0) {
+			lastCastEntry->castHandle = _gfx->BitsSave(lastCastEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
+			_gfx->drawCel(lastCastEntry->viewId, lastCastEntry->loopNo, lastCastEntry->celNo, lastCastEntry->celRect, lastCastEntry->priority, lastCastEntry->paletteNo);
+			lastCastEntry++; lastCastCount--;
+		}
+		_gfx->BitsShow(rect);
+		// restoring
+		lastCastCount = _lastCastCount;
+		while (lastCastCount > 0) {
+			lastCastEntry--;
+			_gfx->BitsRestore(lastCastEntry->castHandle);
+			lastCastCount--;
+		}
+	} else {
+		_gfx->BitsShow(rect);
+	}
 
 	/*
-	_s->_gui->localToGlobal(rect.left, rect.top);
-	_s->_gui->localToGlobal(rect.right, rect.bottom);
-	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_picWind);
-	_s->_gui->globalToLocal(rect.left, rect.top);
-	_s->_gui->globalToLocal(rect.right, rect.bottom);
-
 	if (!_lastCast->isEmpty()) {
 		HEAPHANDLE hnode = _lastCast->getFirst();
 		sciCast *pCast;
@@ -504,10 +525,6 @@ void SciGuiAnimate::reAnimate(Common::Rect rect) {
 			_gfx->BitsShow(pCast->hSaved);
 			hnode = pCast->node.prev;
 		}
-	} else
-		_gfx->BitsShow(rect);
-
-	_gfx->SetPort(oldPort);
 	*/
 }
 

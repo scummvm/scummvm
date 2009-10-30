@@ -59,7 +59,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_transitions = new SciGuiTransitions(this, _screen, _palette, _s->resMan->isVGA());
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
-	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate, _text);
+	_windowMgr = new SciGuiWindowMgr(this, _screen, _gfx, _text);
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
@@ -232,7 +232,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			_gfx->BitsGetRect(argv[0], &rect);
 			rect.translate(-_gfx->GetPort()->left, -_gfx->GetPort()->top);
 			_gfx->BitsRestore(argv[0]);
-			_animate->reAnimate(rect);
+			graphRedrawBox(rect);
 			// finishing loop
 			argc = 0;
 			break;
@@ -452,7 +452,15 @@ void SciGui::graphUpdateBox(Common::Rect rect) {
 }
 
 void SciGui::graphRedrawBox(Common::Rect rect) {
+	localToGlobal(&rect.left, &rect.top);
+	localToGlobal(&rect.right, &rect.bottom);
+	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
+	globalToLocal(&rect.left, &rect.top);
+	globalToLocal(&rect.right, &rect.bottom);
+
 	_animate->reAnimate(rect);
+
+	_gfx->SetPort(oldPort);
 }
 
 int16 SciGui::picNotValid(int16 newPicNotValid) {

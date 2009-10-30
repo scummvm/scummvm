@@ -87,6 +87,7 @@ struct GuiAnimateEntry {
 	uint16 signal;
 	Common::Rect celRect;
 	bool showBitsFlag;
+	GuiMemoryHandle castHandle;
 };
 typedef Common::List<GuiAnimateEntry *> GuiAnimateList;
 

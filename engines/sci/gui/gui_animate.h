@@ -84,10 +84,12 @@ private:
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
-	uint16 _listSize;
+	uint16 _listCount;
 	GuiAnimateEntry *_listData;
 	GuiAnimateList _list;
-	//List *_lastCast;
+
+	uint16 _lastCastCount;
+	GuiAnimateEntry *_lastCastData;
 
 	bool _ignoreFastCast;
 };

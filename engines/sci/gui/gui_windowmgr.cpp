@@ -44,8 +44,8 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
-SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate, SciGuiText *text)
-	: _screen(screen), _gfx(gfx), _animate(animate), _text(text) {
+SciGuiWindowMgr::SciGuiWindowMgr(SciGui *gui, SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiText *text)
+	: _gui(gui), _screen(screen), _gfx(gfx), _text(text) {
 }
 
 SciGuiWindowMgr::~SciGuiWindowMgr() {
@@ -257,7 +257,7 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 	if (arg2)
 		_gfx->BitsShow(pWnd->restoreRect);
 	else
-		_animate->reAnimate(pWnd->restoreRect);
+		_gui->graphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	_gfx->SetPort(_windowList.back());
 	_windowsById[pWnd->id] = 0;
