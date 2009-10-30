@@ -36,8 +36,10 @@
 #include "sci/engine/kernel.h"
 
 #include "sci/gfx/operations.h"	// fog GfxState
+#ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
+#endif
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
@@ -120,9 +122,13 @@ Common::Error SciEngine::run() {
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
+#ifdef INCLUDE_OLDGFX
 	// Gui change
 	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
 	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
+#else
+	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
+#endif
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");

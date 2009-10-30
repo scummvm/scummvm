@@ -27,9 +27,11 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_gui.h"
-#include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
+#endif
+#include "sci/gfx/menubar.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"
 
@@ -112,12 +114,14 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 		return item_nr;
 }
 
+// TODO/FIXME: avoid full screen updates
 #ifdef INCLUDE_OLDGFX
 #define FULL_REDRAW \
 	s->visual->draw(Common::Point(0, 0)); \
 	gfxop_update(s->gfx_state);
 #else
-#define FULL_REDRAW
+#define FULL_REDRAW \
+	s->_gui->graphRedrawBox(Common::Rect(0, 0, 319, 219));
 #endif
 
 reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {

@@ -33,7 +33,9 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/gui/gui.h"
 #include "sci/engine/message.h"
+#ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
+#endif
 #include "sci/gfx/menubar.h"
 
 namespace Sci {

@@ -34,9 +34,11 @@
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel_types.h"	// for determine_reg_type
+#ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for getPort
+#endif
 #include "sci/sfx/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #include "sci/sfx/sci_midi.h"

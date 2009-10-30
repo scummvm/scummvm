@@ -31,7 +31,9 @@
 
 #include "sci/sci.h"
 #include "sci/gfx/menubar.h"
+#ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
+#endif
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
