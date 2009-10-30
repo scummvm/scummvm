@@ -951,7 +951,7 @@ begin_credits("Credits");
   "sharing the source code of some of their games with us.");
 
   add_paragraph(
-  "John Young, Colin Smythe and especially Terry Patchet himself for ".
+  "John Young, Colin Smythe and especially Terry Patchett himself for ".
   "sharing the source code of Discworld I & II with us.");
 
   end_section();
