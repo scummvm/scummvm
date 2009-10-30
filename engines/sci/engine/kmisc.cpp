@@ -253,17 +253,17 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-		case kPlatformGetPlatform:
-			return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
-		case kPlatformUnk5:
-			// This case needs to return the opposite of case 6 to get hires graphics
-			return make_reg(0, !isWindows);
-		case kPlatformIsHiRes:
-			return make_reg(0, isWindows);
-		case kPlatformIsItWindows:
-			return make_reg(0, isWindows);
-		default:
-			warning("Unsupported kPlatform operation %d", operation);
+	case kPlatformGetPlatform:
+		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
+	case kPlatformUnk5:
+		// This case needs to return the opposite of case 6 to get hires graphics
+		return make_reg(0, !isWindows);
+	case kPlatformIsHiRes:
+		return make_reg(0, isWindows);
+	case kPlatformIsItWindows:
+		return make_reg(0, isWindows);
+	default:
+		warning("Unsupported kPlatform operation %d", operation);
 	}
 	
 	return NULL_REG;

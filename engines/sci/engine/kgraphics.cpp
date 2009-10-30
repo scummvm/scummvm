@@ -632,41 +632,35 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-		case 0:	// load resource (the corresponding .BIN file from the ACTORS directory)
-			{
-			Common::String resName = s->_segMan->getString(argv[1]);
-			warning("kPortrait, load portrait %s", resName.c_str());
-			// TODO
-			}
-			break;
-		case 1:	// show portrait
-			{
-			Common::String resName = s->_segMan->getString(argv[1]);
+	case 0: { // load resource (the corresponding .BIN file from the ACTORS directory)
+		Common::String resName = s->_segMan->getString(argv[1]);
+		warning("kPortrait, load portrait %s", resName.c_str());
+		// TODO
+		} break;
+	case 1: { // show portrait
+		Common::String resName = s->_segMan->getString(argv[1]);
 
-			// Show the portrait and sync the sound resource (like kDoSync)
-			/*
-			Common::Point portraitPos = Common::Point(argv[2].toUint16(), argv[3].toUint16());
-			uint resourceNum = argv[4].toUint16() & 0xff;
-			uint noun = argv[5].toUint16() & 0xff;
-			uint verb = argv[6].toUint16() & 0xff;
-			uint cond = argv[7].toUint16() & 0xff;
-			uint seq = argv[8].toUint16() & 0xff;
-			// argv[9] is usually 0
-			*/
+		// Show the portrait and sync the sound resource (like kDoSync)
+		/*
+		Common::Point portraitPos = Common::Point(argv[2].toUint16(), argv[3].toUint16());
+		uint resourceNum = argv[4].toUint16() & 0xff;
+		uint noun = argv[5].toUint16() & 0xff;
+		uint verb = argv[6].toUint16() & 0xff;
+		uint cond = argv[7].toUint16() & 0xff;
+		uint seq = argv[8].toUint16() & 0xff;
+		// argv[9] is usually 0
+		*/
 
-			warning("kPortrait, show portrait %s", resName.c_str());
-			// TODO
-			}
-			break;
-		case 2:	// unload resource
-			{
-			uint16 portraitId = argv[1].toUint16();
-			warning("kPortrait, unload portrait ID %d", portraitId);
-			// TODO
-			}
-			break;
-		default:
-			warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
+		warning("kPortrait, show portrait %s", resName.c_str());
+		// TODO
+		} break;
+	case 2: { // unload resource
+		uint16 portraitId = argv[1].toUint16();
+		warning("kPortrait, unload portrait ID %d", portraitId);
+		// TODO
+		} break;
+	default:
+		warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
 	}
 
 	return NULL_REG;
