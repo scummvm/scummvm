@@ -236,19 +236,34 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+enum kSciPlatforms {
+	kSciPlatformDOS = 1,
+	kSciPlatformWindows = 2
+};
+
+enum kPlatformOps {
+	kPlatformGetPlatform = 4,
+	kPlatformUnk5 = 5,
+	kPlatformIsHiRes = 6,
+	kPlatformIsItWindows = 7
+};
+
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
-	if (argc == 1) {
-		if (argv[0].toUint16() == 4)
-			if (((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows)
-				return make_reg(0, 2);
-			else
-				return make_reg(0, 1);
-		else if (argv[0].toUint16() == 5)
-			warning("kPlatform(5)"); // TODO: return 1 based on some variable
-		else if (argv[0].toUint16() == 6)
-			warning("kPlatform(6)"); // TODO: return some variable
-		else if (argv[0].toUint16() == 7 && ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows)
-			return make_reg(0, 1);
+	bool isWindows = ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows;
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+		case kPlatformGetPlatform:
+			return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
+		case kPlatformUnk5:
+			// This case needs to return the opposite of case 6 to get hires graphics
+			return make_reg(0, !isWindows);
+		case kPlatformIsHiRes:
+			return make_reg(0, isWindows);
+		case kPlatformIsItWindows:
+			return make_reg(0, isWindows);
+		default:
+			warning("Unsupported kPlatform operation %d", operation);
 	}
 	
 	return NULL_REG;
