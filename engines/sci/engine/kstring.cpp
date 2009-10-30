@@ -308,12 +308,14 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 	if (argc > 2)
 		newvalue = argv[2].toSint16();
 
+	// in kq5 this here gets called with offset 0xFFFF
+	//  (in the desert wheng getting the staff)
+	if ((int)offset >= dest_r.maxSize) {
+		warning("kStrAt offset %X exceeds maxSize", offset);
+		return s->r_acc;
+	}
+
 	if (dest_r.isRaw) {
-		// in kq5 this here gets called with offset 0xFFFF
-		if ((int)offset > dest_r.maxSize) {
-			warning("kStrAt offset %X exceeds maxSize", offset);
-			return s->r_acc;
-		}
 		value = dest_r.raw[offset];
 		if (argc > 2) /* Request to modify this char */
 			dest_r.raw[offset] = newvalue;
