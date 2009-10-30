@@ -112,8 +112,10 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 
 	unsigned int *lastTarget = 0;	// For processing hi16 when lo16 arrives
 	unsigned int relocation = 0;
-	int debugRelocs[10] = {0};	// For debugging
+	int debugRelocs[10] = {0};		// For debugging
 	int extendedHi16 = 0;			// Count extended hi16 treatments
+	Elf32_Addr lastHiSymVal = 0;
+	bool hi16InShorts = false;
 
 #define DEBUG_NUM 2
 
@@ -132,11 +134,13 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 
 		case R_MIPS_HI16:						// Absolute addressing.
 			if (sym->st_shndx < SHN_LOPROC &&		// Only shift for plugin section (ie. has a real section index)
-			        firstHi16 < 0) {			// Only process first in block of HI16s
+					firstHi16 < 0 ) {				// Only process first in block of HI16s
 				firstHi16 = i;						// Keep the first Hi16 we saw
 				seenHi16 = true;
 				ahl = (*target & 0xffff) << 16;		// Take lower 16 bits shifted up
-
+				
+				lastHiSymVal = sym->st_value;
+				hi16InShorts = (ShortsMan.inGeneralSegment((char *)sym->st_value)); // Fix for problem with switching btw segments
 				if (debugRelocs[0]++ < DEBUG_NUM)	// Print only a set number
 					DBG("R_MIPS_HI16: i=%d, offset=%x, ahl = %x, target = %x\n",
 					    i, rel[i].r_offset, ahl, *target);
@@ -145,17 +149,34 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 
 		case R_MIPS_LO16:						// Absolute addressing. Needs a HI16 to come before it
 			if (sym->st_shndx < SHN_LOPROC) {		// Only shift for plugin section. (ie. has a real section index)
-				if (!seenHi16) {				// We MUST have seen HI16 first
+				if (!seenHi16) {					// We MUST have seen HI16 first
 					seterror("R_MIPS_LO16 w/o preceding R_MIPS_HI16 at relocation %d!\n", i);
 					free(rel);
 					return false;
 				}
+				
+				// Fix: bug in gcc makes LO16s connect to wrong HI16s sometimes (shorts and regular segment)
+				// Note that we can check the entire shorts segment because the executable's shorts don't belong to this plugin section
+				//	and will be screened out above
+				bool lo16InShorts = ShortsMan.inGeneralSegment((char *)sym->st_value);
 
+				// Correct the bug by getting the proper value in ahl (taken from the current symbol)
+				if ((hi16InShorts && !lo16InShorts) || (!hi16InShorts && lo16InShorts)) {
+					ahl -= (lastHiSymVal & 0xffff0000);		// We assume gcc meant the same offset
+					ahl += (sym->st_value & 0xffff0000);
+				}
+				
 				ahl &= 0xffff0000;				// Clean lower 16 bits for repeated LO16s
 				a = *target & 0xffff;			// Take lower 16 bits of the target
-				a = (a << 16) >> 16;				// Sign extend them
+				a = (a << 16) >> 16;			// Sign extend them
 				ahl += a;						// Add lower 16 bits. AHL is now complete
-				relocation = ahl + (Elf32_Addr)_segment;	// Add in the new offset for the segment
+				
+				// Fix: we can have LO16 access to the short segment sometimes
+				if (lo16InShorts) {
+					relocation = ahl + _shortsSegment->getOffset();		// Add in the short segment offset
+				}
+				else	// It's in the regular segment
+					relocation = ahl + (Elf32_Addr)_segment;			// Add in the new offset for the segment
 
 				if (firstHi16 >= 0) {					// We haven't treated the HI16s yet so do it now
 					for (int j = firstHi16; j < i; j++) {
@@ -177,13 +198,13 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 				if (debugRelocs[1]++ < DEBUG_NUM)
 					DBG("R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
 					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
-				if (ahl & 0x8000 && debugRelocs[2]++ < DEBUG_NUM)
-					DBG("R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
+				if (lo16InShorts && debugRelocs[2]++ < DEBUG_NUM)
+					DBG("R_MIPS_LO16s: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
 					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
 			}
 			break;
 
-		case R_MIPS_26:									// Absolute addressing
+		case R_MIPS_26:									// Absolute addressing (for jumps and branches only)
 			if (sym->st_shndx < SHN_LOPROC) {			// Only relocate for main segment
 				a = *target & 0x03ffffff;				// Get 26 bits' worth of the addend
 				a = (a << 6) >> 6; 							// Sign extend a
@@ -222,7 +243,11 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 		case R_MIPS_32:									// Absolute addressing
 			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
 				a = *target;							// Get full 32 bits of addend
-				relocation = a + (Elf32_Addr)_segment;	// Shift
+				
+				if (ShortsMan.inGeneralSegment((char *)sym->st_value)) // Check if we're in the shorts segment
+					relocation = a + _shortsSegment->getOffset();	   // Shift by shorts offset
+				else												   // We're in the main section
+					relocation = a + (Elf32_Addr)_segment;			   // Shift by main offset
 				*target = relocation;
 
 				if (debugRelocs[6]++ < DEBUG_NUM)
