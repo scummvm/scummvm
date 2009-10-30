@@ -274,6 +274,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv);
 reg_t kPalette(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv);
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv);
+reg_t kPortrait(EngineState *s, int argc, reg_t *argv);
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv);
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv);
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv);

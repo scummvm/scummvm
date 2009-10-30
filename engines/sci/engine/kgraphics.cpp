@@ -197,7 +197,8 @@ enum {
 	K_GRAPH_FILL_BOX_ANY = 11,
 	K_GRAPH_UPDATE_BOX = 12,
 	K_GRAPH_REDRAW_BOX = 13,
-	K_GRAPH_ADJUST_PRIORITY = 14
+	K_GRAPH_ADJUST_PRIORITY = 14,
+	K_GRAPH_SAVE_UNSCALED_BOX = 15	// KQ6CD Windows version
 };
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
@@ -269,6 +270,11 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toSint16(), argv[2].toSint16());
 		s->priority_first = argv[1].toSint16() - 10;
 		s->priority_last = argv[2].toSint16() - 10;
+		break;
+
+	case K_GRAPH_SAVE_UNSCALED_BOX:
+		// Save an area given in unscaled coordinates, so that a hires control will be drawn over it
+		// TODO
 		break;
 
 	default:
@@ -619,6 +625,51 @@ reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[1].toUint16();
 	warning("kAssertPalette() called with viewId = %d", viewId);
 	return s->r_acc;
+}
+
+// Used to show hires character portraits in the Windows CD version of KQ6
+reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+		case 0:	// load resource (the corresponding .BIN file from the ACTORS directory)
+			{
+			Common::String resName = s->_segMan->getString(argv[1]);
+			warning("kPortrait, load portrait %s", resName.c_str());
+			// TODO
+			}
+			break;
+		case 1:	// show portrait
+			{
+			Common::String resName = s->_segMan->getString(argv[1]);
+
+			// Show the portrait and sync the sound resource (like kDoSync)
+			/*
+			Common::Point portraitPos = Common::Point(argv[2].toUint16(), argv[3].toUint16());
+			uint resourceNum = argv[4].toUint16() & 0xff;
+			uint noun = argv[5].toUint16() & 0xff;
+			uint verb = argv[6].toUint16() & 0xff;
+			uint cond = argv[7].toUint16() & 0xff;
+			uint seq = argv[8].toUint16() & 0xff;
+			// argv[9] is usually 0
+			*/
+
+			warning("kPortrait, show portrait %s", resName.c_str());
+			// TODO
+			}
+			break;
+		case 2:	// unload resource
+			{
+			uint16 portraitId = argv[1].toUint16();
+			warning("kPortrait, unload portrait ID %d", portraitId);
+			// TODO
+			}
+			break;
+		default:
+			warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
+	}
+
+	return NULL_REG;
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {

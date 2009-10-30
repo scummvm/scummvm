@@ -334,6 +334,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Platform", kPlatform, "i*"),
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
+	DEFUN("Portrait", kPortrait, ".*"),
 
 	// its a stub, but its needed for Pharkas to work
 	DEFUN("PalVary", kPalVary, "ii*"),
@@ -702,8 +703,7 @@ void Kernel::setDefaultKernelNames() {
 		break;
 
 	case SCI_VERSION_1_1:
-		// KQ6CD calls unimplemented function 0x26
-		_kernelNames[0x26] = "Dummy";
+		_kernelNames[0x26] = "Portrait";
 		_kernelNames[0x71] = "PalVary";
 		_kernelNames[0x7c] = "Message";
 		break;
