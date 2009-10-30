@@ -610,6 +610,7 @@ begin_credits("Credits");
 		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Jordi Vilalta Prat", "jvprat", "");
 		  add_person("Lars Skovlund", "lskovlun", "");
+		  add_person("Martin Kiewitz", "m_kiewitz", "");
 	  end_section();
 
 	  begin_section("Tinsel");
@@ -826,6 +827,7 @@ begin_credits("Credits");
 	  begin_persons();
 		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
 		  add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
+		  add_person("Tobias Gunkel", "hennymcc", "Graphic support for PCE version of Loom");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
 		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");
 		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
@@ -947,6 +949,10 @@ begin_credits("Credits");
   add_paragraph(
   "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
   "sharing the source code of some of their games with us.");
+
+  add_paragraph(
+  "John Young, Colin Smythe and especially Terry Patchett himself for ".
+  "sharing the source code of Discworld I & II with us.");
 
   end_section();
 

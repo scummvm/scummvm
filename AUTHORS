@@ -132,6 +132,7 @@ ScummVM Team
        Willem Jan Palenstijn
        Jordi Vilalta Prat   
        Lars Skovlund        
+       Martin Kiewitz       
 
     Tinsel:
        Torbjorn Andersson   
@@ -307,6 +308,7 @@ Other contributions
                              fixes
      Stuart Caie           - Decoders for Amiga and AtariST data files (AGOS
                              engine)
+     Tobias Gunkel         - Graphic support for PCE version of Loom
      Paolo Costabel        - PSP port contributions
      Thierry Crozat        - Support for Broken Sword 1 Macintosh version
      Martin Doucha         - CinE engine objectification
@@ -425,4 +427,7 @@ Special thanks to
 
    Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing
    the source code of some of their games with us.
+
+   John Young, Colin Smythe and especially Terry Patchett himself for sharing
+   the source code of Discworld I & II with us.
 
