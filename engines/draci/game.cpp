@@ -211,7 +211,7 @@ void Game::init() {
 		_dialogueAnims[i]->setRelative(1,
 		                      kScreenHeight - (i + 1) * _vm->_smallFont->getFontHeight());
 
-		Text *text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
+		Text *text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
 		text->setText("");
 	}
 
@@ -266,7 +266,7 @@ void Game::loop() {
 		if (_loopStatus == kStatusDialogue && _loopSubstatus == kSubstatusOrdinary) {
 			Text *text;
 			for (int i = 0; i < kDialogueLines; ++i) {
-				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
+				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
 
 				if (_animUnderCursor == _dialogueAnims[i]->getID()) {
 					text->setColour(kLineActiveColour);
@@ -285,7 +285,7 @@ void Game::loop() {
 		if (_vm->_mouse->isCursorOn()) {
 			// Fetch the dedicated objects' title animation / current frame
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
-			Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
+			Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
 
 			updateCursor();
 			updateTitle();
@@ -581,7 +581,7 @@ void Game::updateTitle() {
 
 	// Fetch the dedicated objects' title animation / current frame
 	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
-	Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
+	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
 
 	// Mark dirty rectangle to delete the previous text
 	titleAnim->markDirtyRect(surface);
@@ -672,7 +672,7 @@ void Game::putItem(int itemID, int position) {
 		Sprite *sp = new Sprite(img->_data, img->_length, 0, 0, true);
 		anim->addFrame(sp, NULL);
 	}
-	Drawable *frame = anim->getFrame();
+	Drawable *frame = anim->getCurrentFrame();
 
 	const int x = kInventoryX +
 	              (column * kInventoryItemWidth) -
@@ -810,7 +810,7 @@ int Game::dialogueDraw() {
 		debugC(3, kDraciLogicDebugLevel, "Testing dialogue block %d", i);
 		if (_vm->_script->testExpression(blockTest, 1)) {
 			anim = _dialogueAnims[_dialogueLinesNum];
-			dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
+			dialogueLine = reinterpret_cast<Text *>(anim->getCurrentFrame());
 			dialogueLine->setText(_dialogueBlocks[i]._title);
 
 			dialogueLine->setColour(kLineInactiveColour);
@@ -823,7 +823,7 @@ int Game::dialogueDraw() {
 	for (i = _dialogueLinesNum; i < kDialogueLines; ++i) {
 		_lines[i] = -1;
 		anim = _dialogueAnims[i];
-		dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
+		dialogueLine = reinterpret_cast<Text *>(anim->getCurrentFrame());
 		dialogueLine->setText("");
 	}
 
@@ -853,7 +853,7 @@ int Game::dialogueDraw() {
 	}
 
 	for (i = 0; i < kDialogueLines; ++i) {
-		dialogueLine = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
+		dialogueLine = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
 		_dialogueAnims[i]->markDirtyRect(_vm->_screen->getSurface());
 		dialogueLine->setText("");
 	}
@@ -1421,7 +1421,7 @@ void Game::positionAnimAsHero(Animation *anim) {
 	anim->setZ(_hero.y + 1);
 
 	// Fetch current frame
-	Drawable *frame = anim->getFrame();
+	Drawable *frame = anim->getCurrentFrame();
 
 	// Fetch base dimensions of the frame
 	uint height = frame->getHeight();

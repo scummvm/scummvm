@@ -708,7 +708,7 @@ void Script::talk(Common::Queue<int> &params) {
 
 	// Fetch frame for the speech text
 	Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText);
-	Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
+	Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getCurrentFrame());
 
 	// Fetch person info
 	const Person *person = _vm->_game->getPerson(personID);

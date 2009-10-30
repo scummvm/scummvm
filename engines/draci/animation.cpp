@@ -219,18 +219,14 @@ void Animation::setIndex(int index) {
 	_index = index;
 }
 
+Drawable *Animation::getCurrentFrame() {
+	// If there are no frames stored, return NULL
+	return _frames.size() > 0 ? _frames[_currentFrame] : NULL;
+}
+
 Drawable *Animation::getFrame(int frameNum) {
 	// If there are no frames stored, return NULL
-	if (_frames.size() == 0) {
-		return NULL;
-	}
-
-	// If no argument is passed, return the current frame
-	if (frameNum == kCurrentFrame) {
-		return _frames[_currentFrame];
-	} else {
-		return _frames[frameNum];
-	}
+	return _frames.size() > 0 ? _frames[frameNum] : NULL;
 }
 
 uint Animation::getFrameCount() const {
@@ -417,7 +413,7 @@ void AnimationManager::drawScene(Surface *surf) {
 			continue;
 		}
 
-		(*it)->nextFrame();
+		(*it)->nextFrame(false);
 		(*it)->drawFrame(surf);
 	}
 }
@@ -559,7 +555,7 @@ int AnimationManager::getTopAnimationID(int x, int y) const {
 			continue;
 		}
 
-		const Drawable *frame = anim->getFrame();
+		const Drawable *frame = anim->getCurrentFrame();
 
 		if (frame == NULL) {
 			continue;

@@ -47,12 +47,6 @@ enum {
 };
 
 /**
-  * Default argument to Animation::getFrame() that makes it return
-  * the current frame instead of the user specifying it.
-  */
-enum { kCurrentFrame = -1 };
-
-/**
   * Used by overlays as a neutral index that won't get
   * released with the GPL Release command.
   */
@@ -74,11 +68,12 @@ public:
 	void setID(int id);
 	int getID() const;
 
-	void nextFrame(bool force = false);
+	void nextFrame(bool force);
 	void drawFrame(Surface *surface);
 
 	void addFrame(Drawable *frame, const SoundSample *sample);
-	Drawable *getFrame(int frameNum = kCurrentFrame);
+	Drawable *getCurrentFrame();
+	Drawable *getFrame(int frameNum);
 	void setCurrentFrame(uint frame);
 	uint currentFrameNum() const;
 	uint getFrameCount() const;
