@@ -106,7 +106,7 @@ static int signed_validate_arithmetic(reg_t reg) {
 		return reg.offset;
 }
 
-static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
+static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
@@ -124,26 +124,27 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 			int total_offset = r - stack_base;
 			if (total_offset < 0 || total_offset >= VM_STACK_SIZE) {
 				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
-				return 1;
+				return false;
 			} else {
 				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.\n");
-				return 0;
+				return true;
 			}
 		}
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
-	if (!validate_variable(r, stack_base, type, max, index, line))
+	if (validate_variable(r, stack_base, type, max, index, line))
 		return r[index];
 	else
 		return default_value;
 }
 
 static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value, SegManager *segMan, Kernel *kernel) {
-	if (!validate_variable(r, stack_base, type, max, index, line)) {
+	if (validate_variable(r, stack_base, type, max, index, line)) {
 
 		// WORKAROUND: This code is needed to work around a probable script bug, or a
 		// limitation of the original SCI engine, which can be observed in LSL5.
