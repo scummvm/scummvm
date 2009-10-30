@@ -477,6 +477,38 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 void SciGuiAnimate::reAnimate(Common::Rect rect) {
 	// TODO: implement ReAnimate
 	_gfx->BitsShow(rect);
+
+	/*
+	_s->_gui->localToGlobal(rect.left, rect.top);
+	_s->_gui->localToGlobal(rect.right, rect.bottom);
+	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_picWind);
+	_s->_gui->globalToLocal(rect.left, rect.top);
+	_s->_gui->globalToLocal(rect.right, rect.bottom);
+
+	if (!_lastCast->isEmpty()) {
+		HEAPHANDLE hnode = _lastCast->getFirst();
+		sciCast *pCast;
+		CResView *res;
+		while (hnode) {
+			pCast = (sciCast *)heap2Ptr(hnode);
+			res = (CResView *)ResMgr.ResLoad(SCI_RES_VIEW, pCast->view);
+			pCast->hSaved = _gfx->SaveBits(pCast->rect, 3);
+			res->drawCel(pCast->loop, pCast->cel, &pCast->rect, pCast->z, pCast->pal);
+			hnode = pCast->node.next;
+		}
+		_gfx->BitsShow(rect);
+		// restoring
+		hnode = _lastCast->getLast();
+		while (hnode) {
+			pCast = (sciCast *)heap2Ptr(hnode);
+			_gfx->BitsShow(pCast->hSaved);
+			hnode = pCast->node.prev;
+		}
+	} else
+		_gfx->BitsShow(rect);
+
+	_gfx->SetPort(oldPort);
+	*/
 }
 
 void SciGuiAnimate::addToPicDrawCels() {
