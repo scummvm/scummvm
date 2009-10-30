@@ -26,6 +26,8 @@
 #ifndef SCI_GUI_CURSOR_H
 #define SCI_GUI_CURSOR_H
 
+#include "common/hashmap.h"
+
 namespace Sci {
 
 #define SCI_CURSOR_SCI0_HEIGHTWIDTH 16
@@ -33,8 +35,13 @@ namespace Sci {
 
 #define SCI_CURSOR_SCI0_TRANSPARENCYCOLOR 1
 
+#define MAX_CACHED_CURSORS 10
+
 class SciGuiView;
 class SciGuiPalette;
+
+typedef Common::HashMap<int, SciGuiView *> CursorCache;
+
 class SciGuiCursor {
 public:
 	SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciGuiScreen *screen);
@@ -56,11 +63,15 @@ public:
 	void setMoveZone(Common::Rect zone) { _moveZone = zone; }
 
 private:
+	void purgeCache();
+
 	ResourceManager *_resMan;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
+
+	CursorCache _cachedCursors;
 };
 
 } // End of namespace Sci

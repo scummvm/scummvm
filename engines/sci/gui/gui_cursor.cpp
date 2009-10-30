@@ -44,6 +44,7 @@ SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciG
 }
 
 SciGuiCursor::~SciGuiCursor() {
+	purgeCache();
 }
 
 void SciGuiCursor::show() {
@@ -52,6 +53,15 @@ void SciGuiCursor::show() {
 
 void SciGuiCursor::hide() {
 	CursorMan.showMouse(false);
+}
+
+void SciGuiCursor::purgeCache() {
+	for (CursorCache::iterator iter = _cachedCursors.begin(); iter != _cachedCursors.end(); ++iter) {
+		delete iter->_value;
+		iter->_value = 0;
+	}
+
+	_cachedCursors.clear();
 }
 
 void SciGuiCursor::setShape(GuiResourceId resourceId) {
@@ -114,7 +124,13 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 }
 
 void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
-	SciGuiView *cursorView = new SciGuiView(_resMan, _screen, _palette, viewNum);
+	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
+		purgeCache();
+
+	if (!_cachedCursors.contains(viewNum))
+		_cachedCursors[viewNum] = new SciGuiView(_resMan, _screen, _palette, viewNum);
+
+	SciGuiView *cursorView = _cachedCursors[viewNum];
 
 	sciViewCelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
 	int16 width = celInfo->width;
@@ -129,7 +145,6 @@ void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Commo
 	if (width < 2 || height < 2) {
 		hide();
 		delete cursorHotspot;
-		delete cursorView;
 		return;
 	}
 
@@ -139,7 +154,6 @@ void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Commo
 	show();
 
 	delete cursorHotspot;
-	delete cursorView;
 }
 
 void SciGuiCursor::setPosition(Common::Point pos) {
