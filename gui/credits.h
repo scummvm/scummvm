@@ -350,6 +350,8 @@ static const char *credits[] = {
 "C2""Subtitle control options in the GUI; BASS GUI fixes",
 "C0""Stuart Caie",
 "C2""Decoders for Amiga and AtariST data files (AGOS engine)",
+"C0""Tobias Gunkel",
+"C2""Graphic support for PCE version of Loom",
 "C0""Paolo Costabel",
 "C2""PSP port contributions",
 "C0""Thierry Crozat",
@@ -513,6 +515,8 @@ static const char *credits[] = {
 "C0""Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it is today. Feel free to drop us a line and tell us what you think, guys!",
 "C0""",
 "C0""Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of some of their games with us.",
+"C0""",
+"C0""John Young, Colin Smythe and especially Terry Patchet himself for sharing the source code of Discworld I & II with us.",
 "C0""",
 "",
 };
