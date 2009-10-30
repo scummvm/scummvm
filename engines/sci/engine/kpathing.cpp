@@ -1050,6 +1050,21 @@ static int nearest_intersection(PathfindingState *s, const Common::Point &p, con
 }
 
 /**
+ * Checks whether a point is nearby a contained-access polygon (distance 1 pixel)
+ * @param point			the point
+ * @param polygon		the contained-access polygon
+ * @return true when point is nearby polygon, false otherwise
+ */
+static bool nearbyPolygon(const Common::Point &point, Polygon *polygon) {
+	assert(polygon->type == POLY_CONTAINED_ACCESS);
+
+	return ((contained(Common::Point(point.x, point.y + 1), polygon) != CONT_INSIDE)
+			|| (contained(Common::Point(point.x, point.y - 1), polygon) != CONT_INSIDE)
+			|| (contained(Common::Point(point.x + 1, point.y), polygon) != CONT_INSIDE)
+			|| (contained(Common::Point(point.x - 1, point.y), polygon) != CONT_INSIDE));
+}
+
+/**
  * Checks that the start point is in a valid position, and takes appropriate action if it's not.
  * @param s				the pathfinding state
  * @param start			the start point
@@ -1075,12 +1090,14 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 		case POLY_CONTAINED_ACCESS:
 			// Remove contained access polygons that do not contain
 			// the start point (containment test is inverted here).
-			if (cont == CONT_INSIDE) {
+			// SSCI appears to be using a small margin of error here,
+			// so we do the same.
+			if ((cont == CONT_INSIDE) && !nearbyPolygon(start, *it)) {
 				delete *it;
 				it = s->polygons.erase(it);
 				continue;
 			}
-			break;
+			// Fall through
 		case POLY_BARRED_ACCESS:
 		case POLY_NEAREST_ACCESS:
 			if (cont == CONT_INSIDE) {
@@ -1095,7 +1112,7 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 					return NULL;
 				}
 
-				if (type == POLY_BARRED_ACCESS)
+				if ((type == POLY_BARRED_ACCESS) || (type == POLY_CONTAINED_ACCESS))
 					warning("AvoidPath: start position at unreachable location");
 
 				// The original start position is in an invalid location, so we
