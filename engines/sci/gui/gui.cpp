@@ -68,6 +68,12 @@ SciGui::SciGui() {
 }
 
 SciGui::~SciGui() {
+	delete _controls;
+	delete _windowMgr;
+	delete _text;
+	delete _animate;
+	delete _transitions;
+	delete _gfx;
 }
 
 void SciGui::resetEngineState(EngineState *s) {

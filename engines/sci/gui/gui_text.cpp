@@ -41,12 +41,15 @@ SciGuiText::SciGuiText(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *sc
 }
 
 SciGuiText::~SciGuiText() {
+	delete _font;
 }
 
 void SciGuiText::init() {
 	_font = NULL;
-	_codeFonts = NULL; _codeFontsCount = 0;
-	_codeColors = NULL; _codeColorsCount = 0;
+	_codeFonts = NULL;
+	_codeFontsCount = 0;
+	_codeColors = NULL;
+	_codeColorsCount = 0;
 }
 
 GuiResourceId SciGuiText::GetFontId() {

@@ -57,6 +57,7 @@ SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 }
 
 SciGuiFont::~SciGuiFont() {
+	delete _chars;
 	_resMan->unlockResource(_resource);
 }
 
