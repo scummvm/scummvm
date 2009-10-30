@@ -837,7 +837,7 @@ void Script::exitDialogue(Common::Queue<int> &params) {
 
 void Script::roomMap(Common::Queue<int> &params) {
 	// Load the default walking map for the room
-	_vm->_game->loadWalkingMap(-1);
+	_vm->_game->loadWalkingMap(_vm->_game->getMapID());
 }
 
 void Script::disableQuickHero(Common::Queue<int> &params) {

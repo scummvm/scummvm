@@ -150,7 +150,6 @@ struct Dialogue {
 struct Room {
 	int _roomNum;
 	byte _music;
-	WalkingMap _walkingMap;
 	int _mapID;
 	int _palette;
 	int _numOverlays;
@@ -220,7 +219,7 @@ public:
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
-	void loadWalkingMap(int mapID);		// <0 means the room's default walking map
+	void loadWalkingMap(int mapID);		// but leaves _currentRoom._mapID untouched
 	void loadItem(int itemID);
 
 	uint getNumObjects() const;
@@ -259,6 +258,7 @@ public:
 
 	int getEscRoom() const;
 	int getMapRoom() const;
+	int getMapID() const;
 
 	int getMarkedAnimationIndex() const;
 	void setMarkedAnimationIndex(int index);
@@ -339,6 +339,7 @@ private:
 	bool _inventoryExit;
 
 	Room _currentRoom;
+	WalkingMap _walkingMap;
 	int _newRoom;
 	int _newGate;
 	int _previousRoom;

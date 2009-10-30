@@ -982,7 +982,7 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		return;
 
 	Surface *surface = _vm->_screen->getSurface();
-	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getDimensions());
+	_hero = _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
 	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
 
@@ -1076,7 +1076,7 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._numGates = roomReader.readByte();
 
 	debugC(4, kDraciLogicDebugLevel, "Music: %d", getMusicTrack());
-	debugC(4, kDraciLogicDebugLevel, "Map: %d", _currentRoom._mapID);
+	debugC(4, kDraciLogicDebugLevel, "Map: %d", getMapID());
 	debugC(4, kDraciLogicDebugLevel, "Palette: %d", _currentRoom._palette);
 	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numOverlays);
 	debugC(4, kDraciLogicDebugLevel, "Init: %d", _currentRoom._init);
@@ -1100,7 +1100,7 @@ void Game::loadRoom(int roomNum) {
 	}
 
 	// Load the walking map
-	loadWalkingMap(_currentRoom._mapID);
+	loadWalkingMap(getMapID());
 
 	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
@@ -1144,7 +1144,7 @@ void Game::loadRoom(int roomNum) {
 
 	for (uint i = 0; i < kScreenWidth; ++i) {
 		for (uint j = 0; j < kScreenHeight; ++j) {
-			if (_currentRoom._walkingMap.isWalkable(i, j)) {
+			if (_walkingMap.isWalkable(i, j)) {
 				wlk[j * kScreenWidth + i] = 2;
 			}
 		}
@@ -1257,12 +1257,9 @@ void Game::loadObject(uint objNum) {
 }
 
 void Game::loadWalkingMap(int mapID) {
-	if (mapID < 0) {
-		mapID = _currentRoom._mapID;
-	}
 	const BAFile *f;
 	f = _vm->_walkingMapsArchive->getFile(mapID);
-	_currentRoom._walkingMap.load(f->_data, f->_length);
+	_walkingMap.load(f->_data, f->_length);
 }
 
 GameObject *Game::getObject(uint objNum) {
@@ -1562,6 +1559,10 @@ int Game::getEscRoom() const {
 
 int Game::getMapRoom() const {
 	return _info._mapRoom;
+}
+
+int Game::getMapID() const {
+	return _currentRoom._mapID;
 }
 
 void Game::schedulePalette(int paletteID) {
