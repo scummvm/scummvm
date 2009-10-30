@@ -69,11 +69,13 @@ sub html_entities_to_ascii {
 	# &uuml;    -> ue
 	# &amp;     -> &
 	# &#322;    -> l
+	# &Scaron;  -> S
 	$text =~ s/&aacute;/a/g;
 	$text =~ s/&eacute;/e/g;
 	$text =~ s/&oacute;/o/g;
 	$text =~ s/&oslash;/o/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&Scaron;/S/g;
 
 	$text =~ s/&auml;/a/g;
 	$text =~ s/&uuml;/ue/g;
@@ -95,6 +97,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&oacute;/\\363/g;
 	$text =~ s/&oslash;/\\370/g;
 	$text =~ s/&#322;/l/g;
+	$text =~ s/&Scaron;/\\352/g;
 
 	$text =~ s/&auml;/\\344/g;
 	$text =~ s/&ouml;/\\366/g;
@@ -114,6 +117,7 @@ sub html_entities_to_rtf {
 	$text =~ s/&oacute;/\\'97/g;
 	$text =~ s/&oslash;/\\'bf/g;
 	$text =~ s/&#322;/\\uc0\\u322 /g;
+	$text =~ s/&Scaron;/\\uc0\\u352 /g;
 
 	$text =~ s/&auml;/\\'8a/g;
 	$text =~ s/&ouml;/\\'9a/g;
@@ -133,6 +137,7 @@ sub html_entities_to_tex {
 	$text =~ s/&oacute;/\\'o/g;
 	$text =~ s/&oslash;/{\\o}/g;
 	$text =~ s/&#322;/{\\l}/g;
+	$text =~ s/&Scaron;/{\\v S}/g;
 
 	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
@@ -540,6 +545,11 @@ begin_credits("Credits");
 	  begin_section("Cinematique evo 2");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Vincent Hamm", "yaz0r", "(retired)");
+	  end_section();
+
+	  begin_section("Draci");
+		  add_person("Denis Kasak", "dkasak13", "");
+		  add_person("Robert &Scaron;palek", "spalek", "");
 	  end_section();
 
 	  begin_section("Drascula");
