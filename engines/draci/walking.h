@@ -30,6 +30,8 @@
 
 namespace Draci {
 
+class Sprite;
+
 class WalkingMap {
 public:
 	WalkingMap() : _realWidth(0), _realHeight(0), _deltaX(1), _deltaY(1),
@@ -37,6 +39,7 @@ public:
 
 	void load(const byte *data, uint length);
 	bool isWalkable(int x, int y) const;
+	Sprite *constructDrawableOverlay();
 	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
 
 private:

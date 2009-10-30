@@ -26,6 +26,8 @@
 #include "common/stream.h"
 
 #include "draci/walking.h"
+#include "draci/screen.h"
+#include "draci/sprite.h"
 
 namespace Draci {
 
@@ -54,6 +56,25 @@ bool WalkingMap::isWalkable(int x, int y) const {
 	int mapByte = _data[byteIndex];
 
 	return mapByte & (1 << pixelIndex % 8);
+}
+
+Sprite *WalkingMap::constructDrawableOverlay() {
+	// HACK: Create a visible overlay from the walking map so we can test it
+	byte *wlk = new byte[kScreenWidth * kScreenHeight];
+	memset(wlk, 255, kScreenWidth * kScreenHeight);
+
+	for (uint i = 0; i < kScreenWidth; ++i) {
+		for (uint j = 0; j < kScreenHeight; ++j) {
+			if (isWalkable(i, j)) {
+				wlk[j * kScreenWidth + i] = 2;
+			}
+		}
+	}
+
+	Sprite *ov = new Sprite(wlk, kScreenWidth, kScreenHeight, 0, 0, false);
+        delete[] wlk;
+
+	return ov;
 }
 
 /**

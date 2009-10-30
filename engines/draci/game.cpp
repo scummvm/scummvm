@@ -1095,22 +1095,8 @@ void Game::loadRoom(int roomNum) {
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
 
-	// HACK: Create a visible overlay from the walking map so we can test it
-	byte *wlk = new byte[kScreenWidth * kScreenHeight];
-	memset(wlk, 255, kScreenWidth * kScreenHeight);
-
-	for (uint i = 0; i < kScreenWidth; ++i) {
-		for (uint j = 0; j < kScreenHeight; ++j) {
-			if (_walkingMap.isWalkable(i, j)) {
-				wlk[j * kScreenWidth + i] = 2;
-			}
-		}
-	}
-
-	Sprite *ov = new Sprite(wlk, kScreenWidth, kScreenHeight, 0, 0, false);
-        delete[] wlk;
-
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
+	Sprite *ov = _walkingMap.constructDrawableOverlay();
 	map->addFrame(ov, NULL);
 }
 
