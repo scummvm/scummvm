@@ -108,9 +108,6 @@ enum {
 	kDraciSoundDebugLevel     = 1 << 5
 };
 
-// Macro to simulate lround() for non-C99 compilers
-static inline long scummvm_lround(double val) { return (long)floor(val + 0.5); }
-
 } // End of namespace Draci
 
 #endif // DRACI_H

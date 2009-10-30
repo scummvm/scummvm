@@ -59,7 +59,7 @@ public:
 
 	void setGM(bool isGM) { _isGM = isGM; }
 
-	//MidiDriver interface implementation
+	// MidiDriver interface implementation
 	int open();
 	void close();
 	void send(uint32 b);
@@ -67,11 +67,11 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo(void)	{ return _driver ? _driver->getBaseTempo() : 0; }
+	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
 
 	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
+	MidiChannel *allocateChannel() { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
 
 	MidiParser *_parser;
 	Common::Mutex _mutex;

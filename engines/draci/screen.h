@@ -48,12 +48,10 @@ public:
 
 	void setPalette(const byte *data, uint16 start, uint16 num);
 	void interpolatePalettes(const byte *first, const byte *second, uint16 start, uint16 num, int index, int number);
-	const byte *getPalette() const;
+	const byte *getPalette() const { return _palette; }
 	void copyToScreen();
 	void clearScreen();
-	void fillScreen(uint8 colour);
-	Surface *getSurface();
-	void drawRect(Common::Rect r, uint8 colour);
+	Surface *getSurface() { return _surface; }
 
 private:
 	int interpolate(int first, int second, int index, int number);

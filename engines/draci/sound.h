@@ -112,7 +112,7 @@ public:
 	void stopVoice();
 	bool isMutedVoice() const { return _muteVoice; }
 
-	void stopAll();
+	void stopAll() { stopVoice(); stopSound(); }
 
 	void setVolume();
 
@@ -120,7 +120,6 @@ public:
 	int talkSpeed() const { return _talkSpeed; }
 
  private:
-
 	void playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
 				sndHandleType handleType, bool loop);
 

@@ -62,11 +62,11 @@ public:
 	Animation(DraciEngine *v, int index);
 	~Animation();
 
-	uint getZ() const;
-	void setZ(uint z);
+	uint getZ() const { return _z; }
+	void setZ(uint z) { _z = z; }
 
-	void setID(int id);
-	int getID() const;
+	void setID(int id) { _id = id; }
+	int getID() const { return _id; }
 
 	void nextFrame(bool force);
 	void drawFrame(Surface *surface);
@@ -75,29 +75,29 @@ public:
 	Drawable *getCurrentFrame();
 	Drawable *getFrame(int frameNum);
 	void setCurrentFrame(uint frame);
-	uint currentFrameNum() const;
-	uint getFrameCount() const;
+	uint currentFrameNum() const { return _currentFrame; }
+	uint getFrameCount() const { return _frames.size(); }
 
-	bool isPlaying() const;
+	bool isPlaying() const { return _playing; }
 	void setPlaying(bool playing);
 
-	bool isPaused() const;
-	void setPaused(bool paused);
+	bool isPaused() const { return _paused; }
+	void setPaused(bool paused) { _paused = paused; }
 
-	bool isLooping() const;
+	bool isLooping() const { return _looping; }
 	void setLooping(bool looping);
 
 	void setRelative(int relx, int rely);
-	int getRelativeX() const;
-	int getRelativeY() const;
+	int getRelativeX() const { return _displacement.relX; }
+	int getRelativeY() const { return _displacement.relY; }
 	const Displacement &getDisplacement() const { return _displacement; }
 
-	int getIndex() const;
-	void setIndex(int index);
+	int getIndex() const { return _index; }
+	void setIndex(int index) { _index = index; }
 
 	void setScaleFactors(double scaleX, double scaleY);
-	double getScaleX() const;
-	double getScaleY() const;
+	double getScaleX() const { return _displacement.extraScaleX; }
+	double getScaleY() const { return _displacement.extraScaleY; }
 
 	void markDirtyRect(Surface *surface) const;
 
@@ -173,7 +173,7 @@ public:
 
 	Animation *getAnimation(int id);
 
-	int getLastIndex() const;
+	int getLastIndex() const { return _lastIndex; }
 	void deleteAfterIndex(int index);
 
 	int getTopAnimationID(int x, int y) const;

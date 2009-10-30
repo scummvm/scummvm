@@ -263,11 +263,6 @@ void Sound::stopVoice() {
 		}
 }
 
-void Sound::stopAll() {
-	stopVoice();
-	stopSound();
-}
-
 void Sound::setVolume() {
 	// TODO: how to retrieve "Mute All" ?
         if (_mixer->isReady()) {

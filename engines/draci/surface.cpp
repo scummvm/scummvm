@@ -65,14 +65,6 @@ void Surface::markDirtyRect(Common::Rect r) {
 }
 
 /**
- * @brief Clears all dirty rectangles
- *
- */
-void Surface::clearDirtyRects() {
-	_dirtyRects.clear();
-}
-
-/**
  * @brief Marks the whole surface dirty
  */
 void Surface::markDirty() {
@@ -85,35 +77,6 @@ void Surface::markDirty() {
 void Surface::markClean() {
 	_fullUpdate = false;
 	_dirtyRects.clear();
-}
-
-/**
- * @brief Checks whether the surface needs a full update
- */
-bool Surface::needsFullUpdate() const {
-	return _fullUpdate;
-}
-
-/**
- * @brief Fetches the surface's dirty rectangles
- * @return A pointer a list of dirty rectangles
- */
-const Common::List<Common::Rect> *Surface::getDirtyRects() const {
-	return &_dirtyRects;
-}
-
-/**
- * @brief Returns the current transparent colour of the surface
- */
-uint Surface::getTransparentColour() const {
-	return _transparentColour;
-}
-
-/**
- * @brief Sets the surface's transparent colour
- */
-void Surface::setTransparentColour(uint colour) {
-	_transparentColour = colour;
 }
 
 /**
@@ -163,13 +126,6 @@ uint Surface::putAboveY(int y, int height) const {
 		newY = 0;
 
 	return newY;
-}
-
-/**
- * @brief Returns a Common::Rect corresponding to the surface.
- */
-Common::Rect Surface::getDimensions() const {
-	return Common::Rect(w, h);
 }
 
 } // End of namespace Draci

@@ -122,13 +122,9 @@ Sprite::~Sprite() {
 	delete[] _data;
 }
 
-void Sprite::setMirrorOn() {
-	_mirror = true;
-}
-
-void Sprite::setMirrorOff() {
-	_mirror = false;
-}
+// Macro to simulate lround() for non-C99 compilers
+// TODO: get rid of it
+static inline long scummvm_lround(double val) { return (long)floor(val + 0.5); }
 
 int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 	Common::Rect rect = getRect(displacement);
@@ -317,18 +313,6 @@ void Text::setText(const Common::String &str) {
 			++_length;
 		}
 	}
-}
-
-void Text::setColour(byte fontColour) {
-	_colour = fontColour;
-}
-
-void Text::setSpacing(uint spacing) {
-	_spacing = spacing;
-}
-
-uint Text::getLength() const {
-	return _length;
 }
 
 void Text::draw(Surface *surface, bool markDirty, int relX, int relY) const {

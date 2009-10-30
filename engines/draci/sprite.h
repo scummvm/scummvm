@@ -109,8 +109,8 @@ public:
 	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
 	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const;
 
-	void setMirrorOn();
-	void setMirrorOff();
+	void setMirrorOn() { _mirror = true; }
+	void setMirrorOff() { _mirror = false; }
 
 	Common::Rect getRect(const Displacement &displacement) const;
 
@@ -132,11 +132,11 @@ public:
 	~Text() {};
 
 	void setText(const Common::String &str);
-	void setColour(byte fontColour);
-	void setSpacing(uint spacing);
+	void setColour(byte fontColour) { _colour = fontColour; }
+	void setSpacing(uint spacing) { _spacing = spacing; }
 	void setFont(const Font *font);
 
-	uint getLength() const;
+	uint getLength() const { return _length; }
 
 	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
 

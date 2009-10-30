@@ -47,10 +47,6 @@ Animation::~Animation() {
 	deleteFrames();
 }
 
-bool Animation::isLooping() const {
-	return _looping;
-}
-
 void Animation::setRelative(int relx, int rely) {
 	// Delete the previous frame if there is one
 	if (_frames.size() > 0)
@@ -143,48 +139,12 @@ void Animation::drawFrame(Surface *surface) {
 	_hasChangedFrame = false;
 }
 
-void Animation::setID(int id) {
-	_id = id;
-}
-
-int Animation::getID() const {
-	return _id;
-}
-
-void Animation::setZ(uint z) {
-	_z = z;
-}
-
-uint Animation::getZ() const {
-	return _z;
-}
-
-int Animation::getRelativeX() const {
-	return _displacement.relX;
-}
-
-int Animation::getRelativeY() const {
-	return _displacement.relY;
-}
-
-bool Animation::isPlaying() const {
-	return _playing;
-}
-
 void Animation::setPlaying(bool playing) {
 	_tick = _vm->_system->getMillis();
 	_playing = playing;
 
 	// When restarting an animation, allow playing sounds.
 	_hasChangedFrame |= playing;
-}
-
-bool Animation::isPaused() const {
-	return _paused;
-}
-
-void Animation::setPaused(bool paused) {
-	_paused = paused;
 }
 
 void Animation::setScaleFactors(double scaleX, double scaleY) {
@@ -198,25 +158,9 @@ void Animation::setScaleFactors(double scaleX, double scaleY) {
 	_displacement.extraScaleY = scaleY;
 }
 
-double Animation::getScaleX() const {
-	return _displacement.extraScaleX;
-}
-
-double Animation::getScaleY() const {
-	return _displacement.extraScaleY;
-}
-
 void Animation::addFrame(Drawable *frame, const SoundSample *sample) {
 	_frames.push_back(frame);
 	_samples.push_back(sample);
-}
-
-int Animation::getIndex() const {
-	return _index;
-}
-
-void Animation::setIndex(int index) {
-	_index = index;
 }
 
 Drawable *Animation::getCurrentFrame() {
@@ -227,14 +171,6 @@ Drawable *Animation::getCurrentFrame() {
 Drawable *Animation::getFrame(int frameNum) {
 	// If there are no frames stored, return NULL
 	return _frames.size() > 0 ? _frames[frameNum] : NULL;
-}
-
-uint Animation::getFrameCount() const {
-	return _frames.size();
-}
-
-uint Animation::currentFrameNum() const {
-	return _currentFrame;
 }
 
 void Animation::setCurrentFrame(uint frame) {
@@ -514,10 +450,6 @@ void AnimationManager::deleteAll() {
 	_animations.clear();
 
 	_lastIndex = -1;
-}
-
-int AnimationManager::getLastIndex() const {
-	return _lastIndex;
 }
 
 void AnimationManager::deleteAfterIndex(int index) {

@@ -145,57 +145,6 @@ void Screen::clearScreen() {
 	memset(ptr, 0, kScreenWidth * kScreenHeight);
 }
 
-/**
- * @brief Fills the screen with the specified colour
- * @param colour The colour the screen should be filled with
- *
- * Fills the screen with the specified colour and marks the whole screen dirty.
- */
-void Screen::fillScreen(uint8 colour) {
-	_surface->fill(colour);
-	_surface->markDirty();
-}
-
-/**
- * @brief Draws a rectangle on the screen
- * @param r Which rectangle to draw
- *        colour The colour of the rectangle
- */
-void Screen::drawRect(Common::Rect r, uint8 colour) {
-	// Clip the rectangle to screen size
-	r.clip(_surface->w, _surface->h);
-
-	// If the whole rectangle is outside the screen, return
-	if (r.isEmpty())
-		return;
-
-	byte *ptr = (byte *)_surface->getBasePtr(r.left, r.top);
-
-	for (uint16 i = 0; i < r.width(); ++i) {
-		for (uint16 j = 0; j < r.height(); ++j) {
-			ptr[j * kScreenWidth + i] = colour;
-		}
-	}
-
-	_surface->markDirtyRect(r);
-}
-
-/**
- * @brief Fetches the current palette
- * @return A byte pointer to the current palette
- */
-const byte *Screen::getPalette() const {
-	return _palette;
-}
-
-/**
- * @brief Fetches the current surface
- * @return A pointer to the current surface
- */
-Draci::Surface *Screen::getSurface() {
-	return _surface;
-}
-
 } // End of namespace Draci
 
 

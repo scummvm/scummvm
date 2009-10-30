@@ -49,6 +49,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	file = initArchive->getFile(5);
 	Common::MemoryReadStream personData(file->_data, file->_length);
 
+	const int personSize = sizeof(uint16) * 2 + sizeof(byte);
 	uint numPersons = file->_length / personSize;
 	_persons = new Person[numPersons];
 
@@ -921,50 +922,6 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 	deleteAnimationsAfterIndex(lastAnimIndex);
 }
 
-bool Game::isDialogueBegin() const {
-	return _dialogueBegin;
-}
-
-bool Game::shouldExitDialogue() const {
-	return _dialogueExit;
-}
-
-void Game::setDialogueExit(bool exit) {
-	_dialogueExit = exit;
-}
-
-int Game::getDialogueBlockNum() const {
-	return _blockNum;
-}
-
-int Game::getDialogueVar(int dialogueID) const {
-	return _dialogueVars[dialogueID];
-}
-
-void Game::setDialogueVar(int dialogueID, int value) {
-	_dialogueVars[dialogueID] = value;
-}
-
-int Game::getCurrentDialogue() const {
-	return _currentDialogue;
-}
-
-int Game::getDialogueLastBlock() const {
-	return _lastBlock;
-}
-
-int Game::getDialogueLinesNum() const {
-	return _dialogueLinesNum;
-}
-
-int Game::getDialogueCurrentBlock() const {
-	return _currentBlock;
-}
-
-int Game::getCurrentDialogueOffset() const {
-	return _dialogueOffsets[_currentDialogue];
-}
-
 void Game::playHeroAnimation(int anim_index) {
 	const GameObject *dragon = getObject(kDragonObject);
 	const int animID = dragon->_anim[anim_index];
@@ -1262,14 +1219,6 @@ void Game::loadWalkingMap(int mapID) {
 	_walkingMap.load(f->_data, f->_length);
 }
 
-GameObject *Game::getObject(uint objNum) {
-	return _objects + objNum;
-}
-
-uint Game::getNumObjects() const {
-	return _info._numObjects;
-}
-
 void Game::loadOverlays() {
 	uint x, y, z, num;
 
@@ -1442,51 +1391,6 @@ void Game::positionAnimAsHero(Animation *anim) {
 	anim->setRelative(p.x, p.y);
 }
 
-int Game::getHeroX() const {
-	return _hero.x;
-}
-
-int Game::getHeroY() const {
-	return _hero.y;
-}
-
-double Game::getPers0() const {
-	return _currentRoom._pers0;
-}
-
-double Game::getPersStep() const {
-	return _currentRoom._persStep;
-}
-
-int Game::getMusicTrack() const {
-	return _currentRoom._music;
-}
-
-void Game::setMusicTrack(int num) {
-	_currentRoom._music = num;
-}
-
-int Game::getRoomNum() const {
-	return _currentRoom._roomNum;
-}
-
-void Game::setRoomNum(int num) {
-	_currentRoom._roomNum = num;
-}
-
-int Game::getPreviousRoomNum() const {
-	return _previousRoom;
-}
-
-void Game::rememberRoomNumAsPrevious() {
-	_previousRoom = getRoomNum();
-}
-
-void Game::scheduleEnteringRoomUsingGate(int room, int gate) {
-	_newRoom = room;
-	_newGate = gate;
-}
-
 void Game::pushNewRoom() {
 	_pushedNewRoom = _newRoom;
 	_pushedNewGate = _newGate;
@@ -1499,50 +1403,6 @@ void Game::popNewRoom() {
 	}
 }
 
-void Game::setLoopStatus(LoopStatus status) {
-	_loopStatus = status;
-}
-
-void Game::setLoopSubstatus(LoopSubstatus status) {
-	_loopSubstatus = status;
-}
-
-LoopStatus Game::getLoopStatus() const {
-	return _loopStatus;
-}
-
-LoopSubstatus Game::getLoopSubstatus() const {
-	return _loopSubstatus;
-}
-
-int Game::getVariable(int numVar) const {
-	return _variables[numVar];
-}
-
-void Game::setVariable(int numVar, int value) {
-	_variables[numVar] = value;
-}
-
-int Game::getItemStatus(int itemID) const {
-	return _itemStatus[itemID];
-}
-
-void Game::setItemStatus(int itemID, int status) {
-	_itemStatus[itemID] = status;
-}
-
-int Game::getCurrentItem() const {
-	return _currentItem;
-}
-
-void Game::setCurrentItem(int itemID) {
-	_currentItem = itemID;
-}
-
-const Person *Game::getPerson(int personID) const {
-	return &_persons[personID];
-}
-
 void Game::setSpeechTiming(uint tick, uint duration) {
 	_speechTick = tick;
 	_speechDuration = duration;
@@ -1553,51 +1413,9 @@ void Game::shiftSpeechAndFadeTick(int delta) {
 	_fadeTick += delta;
 }
 
-int Game::getEscRoom() const {
-	return _currentRoom._escRoom;
-}
-
-int Game::getMapRoom() const {
-	return _info._mapRoom;
-}
-
-int Game::getMapID() const {
-	return _currentRoom._mapID;
-}
-
-void Game::schedulePalette(int paletteID) {
-	_scheduledPalette = paletteID;
-}
-
-int Game::getScheduledPalette() const {
-	return _scheduledPalette;
-}
-
 void Game::initializeFading(int phases) {
 	_fadePhases = _fadePhase = phases;
 	_fadeTick = _vm->_system->getMillis();
-}
-
-void Game::setEnableQuickHero(bool value) {
-	_enableQuickHero = value;
-}
-
-void Game::setWantQuickHero(bool value) {
-	_wantQuickHero = value;
-	// TODO: after proper walking is implemented, do super-fast animation when walking
-}
-
-void Game::setEnableSpeedText(bool value) {
-	_enableSpeedText = value;
-}
-
-/**
- * The GPL command Mark sets the animation index (which specifies the order in which
- * animations were loaded in) which is then used by the Release command to delete
- * all animations that have an index greater than the one marked.
- */
-int Game::getMarkedAnimationIndex() const {
-	return _markedAnimationIndex;
 }
 
 void Game::deleteAnimationsAfterIndex(int lastAnimIndex) {
@@ -1622,14 +1440,6 @@ void Game::stopObjectAnimations(const GameObject *obj) {
 	for (uint i = 0; i < obj->_anim.size(); ++i) {
 		_vm->_anims->stop(obj->_anim[i]);
 	}
-}
-
-/**
- * See Game::getMarkedAnimationIndex().
- */
-
-void Game::setMarkedAnimationIndex(int index) {
-	_markedAnimationIndex = index;
 }
 
 Game::~Game() {

@@ -42,11 +42,6 @@ enum {
 	kDragonObject = 0
 };
 
-enum StructSizes {
-	personSize = sizeof(uint16) * 2 + sizeof(byte)
-};
-
-
 // Used as a return value for Game::getObjectWithAnimation() if no object
 // owns the animation in question
 enum {
@@ -211,8 +206,8 @@ public:
 	}
 
 	void walkHero(int x, int y, SightDirection dir);
-	int getHeroX() const;
-	int getHeroY() const;
+	int getHeroX() const { return _hero.x; }
+	int getHeroY() const { return _hero.y; }
 	void positionAnimAsHero(Animation *anim);
 	void playHeroAnimation(int anim_index);
 
@@ -222,51 +217,57 @@ public:
 	void loadWalkingMap(int mapID);		// but leaves _currentRoom._mapID untouched
 	void loadItem(int itemID);
 
-	uint getNumObjects() const;
-	GameObject *getObject(uint objNum);
+	uint getNumObjects() const { return _info._numObjects; }
+	GameObject *getObject(uint objNum) { return _objects + objNum; }
 	int getObjectWithAnimation(int animID) const;
 	void deleteObjectAnimations();
 	void deleteAnimationsAfterIndex(int lastAnimIndex);
 	void stopObjectAnimations(const GameObject *obj);
 	int playingObjectAnimation(const GameObject *obj) const;
 
-	int getVariable(int varNum) const;
-	void setVariable(int varNum, int value);
+	int getVariable(int varNum) const { return _variables[varNum]; }
+	void setVariable(int varNum, int value) { _variables[varNum] = value; }
 
-	const Person *getPerson(int personID) const;
+	const Person *getPerson(int personID) const { return &_persons[personID]; }
 
-	int getRoomNum() const;
-	void setRoomNum(int num);
-	int getPreviousRoomNum() const;
-	void rememberRoomNumAsPrevious();
-	void scheduleEnteringRoomUsingGate(int room, int gate);
+	int getRoomNum() const { return _currentRoom._roomNum; }
+	void setRoomNum(int num) { _currentRoom._roomNum = num; }
+	int getPreviousRoomNum() const { return _previousRoom; }
+	void rememberRoomNumAsPrevious() { _previousRoom = getRoomNum(); }
+	void scheduleEnteringRoomUsingGate(int room, int gate) { _newRoom = room; _newGate = gate; }
 	void pushNewRoom();
 	void popNewRoom();
 
-	double getPers0() const;
-	double getPersStep() const;
-	int getMusicTrack() const;
-	void setMusicTrack(int num);
+	double getPers0() const { return _currentRoom._pers0; }
+	double getPersStep() const { return _currentRoom._persStep; }
+	int getMusicTrack() const { return _currentRoom._music; }
+	void setMusicTrack(int num) { _currentRoom._music = num; }
 
-	int getItemStatus(int itemID) const;
-	void setItemStatus(int itemID, int status);
-	int getCurrentItem() const;
-	void setCurrentItem(int itemID);
+	int getItemStatus(int itemID) const { return _itemStatus[itemID]; }
+	void setItemStatus(int itemID, int status) { _itemStatus[itemID] = status; }
+	int getCurrentItem() const { return _currentItem; }
+	void setCurrentItem(int itemID) { _currentItem = itemID; }
 	void removeItem(int itemID);
 	void putItem(int itemID, int position);
 	void addItem(int itemID);
 
-	int getEscRoom() const;
-	int getMapRoom() const;
-	int getMapID() const;
+	int getEscRoom() const { return _currentRoom._escRoom; }
+	int getMapRoom() const { return _info._mapRoom; }
+	int getMapID() const { return _currentRoom._mapID; }
 
-	int getMarkedAnimationIndex() const;
-	void setMarkedAnimationIndex(int index);
+	/**
+	 * The GPL command Mark sets the animation index (which specifies the
+	 * order in which animations were loaded in) which is then used by the
+	 * Release command to delete all animations that have an index greater
+	 * than the one marked.
+	 */
+	int getMarkedAnimationIndex() const { return _markedAnimationIndex; }
+	void setMarkedAnimationIndex(int index) { _markedAnimationIndex = index; }
 
-	void setLoopStatus(LoopStatus status);
-	void setLoopSubstatus(LoopSubstatus status);
-	LoopStatus getLoopStatus() const;
-	LoopSubstatus getLoopSubstatus() const;
+	void setLoopStatus(LoopStatus status) { _loopStatus = status; }
+	void setLoopSubstatus(LoopSubstatus status) { _loopSubstatus = status; }
+	LoopStatus getLoopStatus() const { return _loopStatus; }
+	LoopSubstatus getLoopSubstatus() const { return _loopSubstatus; }
 
 	bool shouldQuit() const { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
@@ -291,26 +292,27 @@ public:
 	void dialogueDone();
 	void runDialogueProg(GPL2Program, int offset);
 
-	bool isDialogueBegin() const;
-	bool shouldExitDialogue() const;
-	void setDialogueExit(bool exit);
-	int getDialogueBlockNum() const;
-	int getDialogueVar(int dialogueID) const;
-	void setDialogueVar(int dialogueID, int value);
-	int getCurrentDialogue() const;
-	int getDialogueCurrentBlock() const;
-	int getDialogueLastBlock() const;
-	int getDialogueLinesNum() const;
-	int getCurrentDialogueOffset() const;
+	bool isDialogueBegin() const { return _dialogueBegin; }
+	bool shouldExitDialogue() const { return _dialogueExit; }
+	void setDialogueExit(bool exit) { _dialogueExit = exit; }
+	int getDialogueBlockNum() const { return _blockNum; }
+	int getDialogueVar(int dialogueID) const { return _dialogueVars[dialogueID]; }
+	void setDialogueVar(int dialogueID, int value) { _dialogueVars[dialogueID] = value; }
+	int getCurrentDialogue() const { return _currentDialogue; }
+	int getDialogueCurrentBlock() const { return _currentBlock; }
+	int getDialogueLastBlock() const { return _lastBlock; }
+	int getDialogueLinesNum() const { return _dialogueLinesNum; }
+	int getCurrentDialogueOffset() const { return _dialogueOffsets[_currentDialogue]; }
 
-	void schedulePalette(int paletteID);
-	int getScheduledPalette() const;
+	void schedulePalette(int paletteID) { _scheduledPalette = paletteID; }
+	int getScheduledPalette() const { return _scheduledPalette; }
 	void initializeFading(int phases);
-	void setEnableQuickHero(bool value);
+	void setEnableQuickHero(bool value) { _enableQuickHero = value; }
 	bool getEnableQuickHero() const { return _enableQuickHero; }
-	void setWantQuickHero(bool value);
+	void setWantQuickHero(bool value) { _wantQuickHero = value; }
 	bool getWantQuickHero() const { return _wantQuickHero; }
-	void setEnableSpeedText(bool value);
+	// TODO: after proper walking is implemented, do super-fast animation when walking
+	void setEnableSpeedText(bool value) { _enableSpeedText = value; }
 	bool getEnableSpeedText() const { return _enableSpeedText; }
 
 	void DoSync(Common::Serializer &s);
