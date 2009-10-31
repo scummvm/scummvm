@@ -2714,10 +2714,10 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 	 * read mask indices
 	 */
 	
-	if (_PCE.maskIDSize == 0 || numRows > 18) {
+	if (_distaff || _PCE.maskIDSize == 0 || numRows > 18) {
 		return;
 	}
-	
+
 	rowIndex = 0;
 	while (rowIndex < numRows) {
 		cmd = *ptr++;
