@@ -100,20 +100,30 @@ struct Vertex {
 	Vertex *_next;	// next element
 	Vertex *_prev;	// previous element
 
-	// Distance from starting vertex
-	uint32 dist;
+	// A* cost variables
+	uint32 costF;
+	uint32 costG;
 
 	// Previous vertex in shortest path
 	Vertex *path_prev;
 
 public:
 	Vertex(const Common::Point &p) : v(p) {
-		dist = HUGE_DISTANCE;
+		costG = HUGE_DISTANCE;
 		path_prev = NULL;
 	}
 };
 
-typedef Common::List<Vertex *> VertexList;
+class VertexList: public Common::List<Vertex *> {
+public:
+	bool contains(Vertex *v) {
+		for (iterator it = begin(); it != end(); ++it) {
+			if (v == *it)
+				return true;
+		}
+		return false;
+	}
+};
 
 /* Circular list definitions. */
 
@@ -1544,54 +1554,39 @@ static int intersecting_polygons(PathfindingState *s) {
  * Parameters: (PathfindingState *) s: The pathfinding state
  *             (bool) avoidScreenEdge: Avoid screen edges (default behavior)
  */
-static void dijkstra(PathfindingState *s, bool avoidScreenEdge) {
-	Polygon *polygon;
-
+static void AStar(PathfindingState *s, bool avoidScreenEdge) {
 	// Vertices of which the shortest path is known
-	VertexList done;
+	VertexList closedSet;
 
 	// The remaining vertices
-	VertexList remain;
+	VertexList openSet;
 
-	// Start out with all vertices in set remain
-	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
-		polygon = *it;
-		Vertex *vertex;
+	openSet.push_front(s->vertex_start);
+	s->vertex_start->costG = 0;
+	s->vertex_start->costF = (uint32)sqrt((float)s->vertex_start->v.sqrDist(s->vertex_end->v));
 
-		CLIST_FOREACH(vertex, &polygon->vertices) {
-			remain.push_front(vertex);
-		}
-	}
-
-	s->vertex_start->dist = 0;
-
-	// Loop until we find vertex_end
-	while (1) {
-		// Find vertex at shortest distance from set done
-		VertexList::iterator vertex_min_it = remain.end();
+	while (!openSet.empty()) {
+		// Find vertex in open set with lowest F cost
+		VertexList::iterator vertex_min_it = openSet.end();
 		Vertex *vertex_min = 0;
 		uint32 min = HUGE_DISTANCE;
-		for (VertexList::iterator it = remain.begin(); it != remain.end(); ++it) {
+
+		for (VertexList::iterator it = openSet.begin(); it != openSet.end(); ++it) {
 			Vertex *vertex = *it;
-			if (vertex->dist < min) {
+			if (vertex->costF < min) {
 				vertex_min_it = it;
 				vertex_min = *vertex_min_it;
-				min = vertex->dist;
+				min = vertex->costF;
 			}
 		}
 
-		if (min == HUGE_DISTANCE) {
-			warning("[avoidpath] End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
-			return;
-		}
-
-		// If vertex_end is at shortest distance we can stop
+		// Check if we are done
 		if (vertex_min == s->vertex_end)
-			return;
+			break;
 
-		// Move vertex from set remain to set done
-		done.push_front(vertex_min);
-		remain.erase(vertex_min_it);
+		// Move vertex from set open to set closed
+		closedSet.push_front(vertex_min);
+		openSet.erase(vertex_min_it);
 
 		VertexList *visVerts = visible_vertices(s, vertex_min);
 
@@ -1599,21 +1594,31 @@ static void dijkstra(PathfindingState *s, bool avoidScreenEdge) {
 			uint32 new_dist;
 			Vertex *vertex = *it;
 
+			if (closedSet.contains(vertex))
+				continue;
+
 			if (avoidScreenEdge) {
 				// Avoid plotting path along screen edge
 				if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
 					continue;
 			}
 
-			new_dist = vertex_min->dist + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
-			if (new_dist < vertex->dist) {
-				vertex->dist = new_dist;
+			if (!openSet.contains(vertex))
+				openSet.push_front(vertex);
+
+			new_dist = vertex_min->costG + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
+			if (new_dist < vertex->costG) {
+				vertex->costG = new_dist;
+				vertex->costF = vertex->costG + (uint32)sqrt((float)vertex->v.sqrDist(s->vertex_end->v));
 				vertex->path_prev = vertex_min;
 			}
 		}
 
 		delete visVerts;
 	}
+
+	if (openSet.empty())
+		warning("[avoidpath] End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
 }
 
 static reg_t output_path(PathfindingState *p, EngineState *s) {
@@ -1748,7 +1753,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		// Apply Dijkstra, avoiding screen edges
-		dijkstra(p, true);
+		AStar(p, true);
 
 		output = output_path(p, s);
 		delete p;
