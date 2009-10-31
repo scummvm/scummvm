@@ -325,8 +325,8 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 	_gfx->SetPort(oldPort);
 }
 
-void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
-	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
+	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, origHeight);
 	_palette->setOnScreen();
 }
 
@@ -456,6 +456,8 @@ reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 screenMask) {
 }
 
 reg_t SciGui::graphSaveUpscaledHiresBox(Common::Rect rect) {
+	rect.right *= 2;
+	rect.bottom *= 2;
 	return _gfx->BitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
 }
 

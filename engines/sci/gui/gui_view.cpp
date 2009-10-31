@@ -451,7 +451,7 @@ void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte
 	}
 }
 
-void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr) {
+void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight) {
 	GuiPalette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -477,7 +477,10 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 			for (x = 0; x < width; x++) {
 				color = bitmap[x];
 				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y))
-					_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
+					if (origHeight == -1)
+						_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
+					else
+						_screen->putPixelOnDisplay(clipRectTranslated.left + x, y, palette->mapping[color]);
 			}
 		}
 	} else {

@@ -329,7 +329,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 }
 
 // This one is the only one that updates screen!
-void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
+void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight) {
 	SciGuiView *view = getView(viewId);
 	Common::Rect rect;
 	Common::Rect clipRect;
@@ -346,7 +346,7 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 
 		Common::Rect clipRectTranslated = clipRect;
 		OffsetRect(clipRectTranslated);
-		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
+		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, origHeight);
 		if (!_screen->_picNotValid)
 			BitsShow(rect);
 	}

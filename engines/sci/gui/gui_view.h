@@ -60,7 +60,7 @@ public:
 	sciViewLoopInfo *getLoopInfo(GuiViewLoopNo loopNo);
 	void getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
 	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr);
+	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1);
 	uint16 getLoopCount() const { return _loopCount; }
 	uint16 getCelCount(GuiViewLoopNo loopNo) { return _loop[loopNo].celCount; }
 	GuiPalette *getPalette();

@@ -883,7 +883,7 @@ void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool anim
 	_s->pic_is_new = 1;
 }
 
-void SciGui32::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
+void SciGui32::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
 	int loop = loopNo;
 	int cel = celNo;
 	GfxView *new_view;

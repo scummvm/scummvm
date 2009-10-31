@@ -274,9 +274,14 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
+		warning("kGraph case 15 (%d, %d, %d, %d)", x, y, x1, y1);
+
+		// TODO: implement this properly. The code below crashes KQ6
+
 		// Save an area given in upscaled-hires coordinates, so that a hires control will be drawn over it
-		kGraphCreateRect(x, y, x1, y1, &rect);
-		return s->_gui->graphSaveUpscaledHiresBox(rect);
+		//kGraphCreateRect(x, y, x1, y1, &rect);
+		//return s->_gui->graphSaveUpscaledHiresBox(rect);
+		break;
 
 	default:
 		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
@@ -624,6 +629,8 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[1].toUint16();
+	// TODO: implement this
+
 	warning("kAssertPalette() called with viewId = %d", viewId);
 	return s->r_acc;
 }
@@ -636,6 +643,9 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // load resource (the corresponding .BIN file from the ACTORS directory)
 		if (argc == 2) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
+
+			// TODO: implement this
+
 		} else {
 			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}
@@ -651,6 +661,9 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			uint cond = argv[7].toUint16() & 0xff;
 			uint seq = argv[8].toUint16() & 0xff;
 			// argv[9] is usually 0??!!
+
+			// TODO: implement this. Looks to be a modified version of kDoSync
+
 			warning("kPortrait(show) %s at %d, %d", resourceName.c_str(), portraitPos.x, portraitPos.y);
 		} else {
 			warning("kPortrait(show) called with unsupported argc %d", argc);
@@ -660,6 +673,9 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 2: { // unload resource
 		if (argc == 2) {
 			uint16 portraitId = argv[1].toUint16();
+
+			// TODO: implement this
+
 		} else {
 			warning("kPortrait(unload) called with unsupported argc %d", argc);
 		}
@@ -669,7 +685,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 		warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
 	}
 
-	return NULL_REG;
+	return s->r_acc;
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
@@ -896,10 +912,9 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	// Unknown seems to be scaling related?!?
-	int16 unknown = (argc > 7) ? argv[7].toSint16() : -1;
+	int16 origHeight = (argc > 7) ? argv[7].toSint16() : -1;
 
-	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
+	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, origHeight);
 
 	return s->r_acc;
 }
