@@ -640,21 +640,19 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
 	switch (operation) {
-	case 0: { // load resource (the corresponding .BIN file from the ACTORS directory)
+	case 0: { // load
 		if (argc == 2) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
-
-			// TODO: implement this
-
+			return s->_gui->portraitLoad(resourceName);
 		} else {
 			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}
 		break;
 	}
-	case 1: { // show portrait
+	case 1: { // show
 		if (argc == 10) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
-			Common::Point portraitPos = Common::Point(argv[2].toUint16(), argv[3].toUint16());
+			Common::Point position = Common::Point(argv[2].toUint16(), argv[3].toUint16());
 			/*uint resourceNum = argv[4].toUint16() & 0xff;
 			uint noun = argv[5].toUint16() & 0xff;
 			uint verb = argv[6].toUint16() & 0xff;
@@ -662,20 +660,18 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			uint seq = argv[8].toUint16() & 0xff;*/
 			// argv[9] is usually 0??!!
 
+			s->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
+			return SIGNAL_REG;
 			// TODO: implement this. Looks to be a modified version of kDoSync
-
-			warning("kPortrait(show) %s at %d, %d", resourceName.c_str(), portraitPos.x, portraitPos.y);
 		} else {
 			warning("kPortrait(show) called with unsupported argc %d", argc);
 		}
 		break;
 	}
-	case 2: { // unload resource
+	case 2: { // unload
 		if (argc == 2) {
 			//uint16 portraitId = argv[1].toUint16();
-
-			// TODO: implement this
-
+			s->_gui->portraitUnload(portraitId);
 		} else {
 			warning("kPortrait(unload) called with unsupported argc %d", argc);
 		}

@@ -102,6 +102,8 @@
 			<File RelativePath="..\..\engines\sci\gui\gui_palette.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_picture.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_picture.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_portrait.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_portrait.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_screen.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_screen.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_text.cpp" />

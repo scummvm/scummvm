@@ -747,6 +747,16 @@ int16 SciGui::getCelCount(GuiResourceId viewId, int16 loopNo) {
 	return _gfx->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
+reg_t SciGui::portraitLoad(Common::String resourceName) {
+	return NULL_REG;
+}
+
+void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+}
+
+void SciGui::portraitUnload(uint16 portraitId) {
+}
+
 bool SciGui::debugUndither(bool flag) {
 	_screen->unditherSetState(flag);
 	return false;
