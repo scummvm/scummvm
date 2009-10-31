@@ -82,7 +82,12 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 
 	_gamestate = 0;
 
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "seq");	// KQ6 SEQ directory
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "actors");	// KQ6 hi-res portraits
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "aud");	// resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "avi");	// AVI movie files for Windows versions
+	//SearchMan.addSubDirectoryMatching(_gameDataDir, "patches");	// resource patches
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "seq");	// SEQ movie files for DOS versions
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "wav");	// speech files in WAV format
 }
 
 SciEngine::~SciEngine() {
