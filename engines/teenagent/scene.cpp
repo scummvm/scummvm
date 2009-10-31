@@ -316,12 +316,13 @@ bool Scene::processEvent(const Common::Event &event) {
 			sounds.clear();
 			current_event.clear();
 			message_color = 0xd1;
+			Resources::instance()->font7.color = 0xd1;
 			for (int i = 0; i < 4; ++i)
 				custom_animation[i].free();
 			_engine->playMusic(4);
 			init(10, Common::Point(136, 153));
 		}
-		return false;
+		return true;
 
 	default:
 		return false;
@@ -331,22 +332,28 @@ bool Scene::processEvent(const Common::Event &event) {
 bool Scene::render(OSystem *system) {
 	//render background
 	Resources *res = Resources::instance();
-	if (current_event.type == SceneEvent::kCreditsMessage) {
-		system->fillScreen(0);
-		Graphics::Surface *surface = system->lockScreen();
-		res->font8.color = current_event.color;
-		res->font8.shadow_color = current_event.orientation;
-		res->font8.render(surface, current_event.dst.x, current_event.dst.y, message);
-		system->unlockScreen();
-		return true;
-	}
-
 	bool busy;
 	bool restart;
 
 	do {
 		restart = false;
 		busy = processEventQueue();
+
+		if (current_event.type == SceneEvent::kCreditsMessage) {
+			system->fillScreen(0);
+			Graphics::Surface *surface = system->lockScreen();
+			if (current_event.lan == 8) {
+				res->font8.color = current_event.color;
+				res->font8.shadow_color = current_event.orientation;
+				res->font8.render(surface, current_event.dst.x, current_event.dst.y, message);
+			} else {
+				res->font7.color = 0xd1;
+				res->font7.render(surface, current_event.dst.x, current_event.dst.y, message);
+			} 
+			system->unlockScreen();
+			return true;
+		}
+
 		system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
 
 		Graphics::Surface *surface = system->lockScreen();

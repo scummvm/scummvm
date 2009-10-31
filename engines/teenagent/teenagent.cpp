@@ -377,6 +377,7 @@ void TeenAgentEngine::displayCredits(uint16 addr) {
 	const byte *src = Resources::instance()->dseg.ptr(addr);
 	event.orientation = *src++;
 	event.color = *src++;
+	event.lan = 8;
 
 	event.dst.y = *src;
 	while (true) {
@@ -392,6 +393,18 @@ void TeenAgentEngine::displayCredits(uint16 addr) {
 	event.dst.x = (320 - w) / 2;
 	scene->push(event);
 }
+
+void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 position) {
+	SceneEvent event(SceneEvent::kCreditsMessage);
+
+	event.message = parseMessage(addr);
+	event.dst.x = position % 320;
+	event.dst.y = position / 320;
+	event.lan = 7;
+	
+	scene->push(event);
+}
+
 
 void TeenAgentEngine::moveTo(const Common::Point &dst, byte o, bool warp) {
 	moveTo(dst.x, dst.y, o, warp);

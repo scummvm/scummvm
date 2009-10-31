@@ -38,23 +38,23 @@ class Dialog;
 
 struct SceneEvent {
 	enum Type {
-		kNone,
+		kNone,					//0
 		kMessage,
 		kWalk,
 		kPlayAnimation,
-		kPlayActorAnimation,
+		kPlayActorAnimation,	//4
 		kPauseAnimation,
 		kClearAnimations,
 		kLoadScene,
-		kSetOn,
+		kSetOn,					//8
 		kSetLan,
 		kPlayMusic,
 		kPlaySound,
-		kEnableObject,
+		kEnableObject,			//12
 		kHideActor,
 		kWaitForAnimation,
 		kCreditsMessage,
-		kQuit
+		kQuit					//16
 	} type;
 
 	Common::String message;

@@ -68,6 +68,7 @@ public:
 	void displayMessage(uint16 addr, byte color = 0xd1);
 	void displayMessage(const Common::String &str, byte color = 0xd1);
 	void displayCredits(uint16 addr);
+	void displayCutsceneMessage(uint16 addr, uint16 position);
 	void moveTo(const Common::Point &dst, byte o, bool warp = false);
 	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);
 	void moveTo(Object *obj);

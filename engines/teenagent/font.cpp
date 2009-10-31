@@ -63,12 +63,16 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 		for (uint j = 0; j < w; ++j) {
 			byte v = *glyph++;
 			switch (v) {
+			case 0:
+				break;
 			case 1:
 				dst[j] = shadow_color;
 				break;
 			case 2:
 				dst[j] = color;
 				break;
+			default:
+				dst[j] = v;
 			}
 		}
 		dst += surface->pitch;
