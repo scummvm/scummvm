@@ -495,15 +495,16 @@ void SciGuiScreen::debugShowMap(int mapNo) {
 
 void SciGuiScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
 	int newWidth = srcWidth * 2;
+	byte *srcPtr = src;
 
 	for (int y = 0; y < srcHeight; y++) {
 		for (int x = 0; x < srcWidth; x++) {
 			int destOffset = y * 2 * newWidth + x * 2;
-			int color = src[y * srcWidth + x];
-			dst[destOffset] = color;
-			dst[destOffset + 1] = color;
-			dst[destOffset + newWidth] = color;
-			dst[destOffset + newWidth + 1] = color;
+			dst[destOffset] = *srcPtr;
+			dst[destOffset + 1] = *srcPtr;
+			dst[destOffset + newWidth] = *srcPtr;
+			dst[destOffset + newWidth + 1] = *srcPtr;
+			srcPtr++;
 		}
 	}
 }
