@@ -1543,7 +1543,6 @@ void OSystem_SDL::blitCursor() {
 	const byte *srcPtr = _mouseData;
 #ifdef USE_RGB_COLOR
 	uint32 color;
-	uint32 colormask = (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
 	byte color;
 #endif
@@ -1582,10 +1581,13 @@ void OSystem_SDL::blitCursor() {
 		for (j = 0; j < w; j++) {
 #ifdef USE_RGB_COLOR
 			if (_cursorFormat.bytesPerPixel > 1) {
-				color = (*(uint32 *) srcPtr) & colormask;
+				if (_cursorFormat.bytesPerPixel == 2)
+					color = *(uint16 *)srcPtr;
+				else
+					color = *(uint32 *)srcPtr;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
-					uint8 r,g,b;
-					_cursorFormat.colorToRGB(color,r,g,b);
+					uint8 r, g, b;
+					_cursorFormat.colorToRGB(color, r, g, b);
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 						r, g, b);
 				}
