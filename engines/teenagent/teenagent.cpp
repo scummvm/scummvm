@@ -185,6 +185,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	memcpy(res->dseg.ptr(0x6478), data, sizeof(data));
 
 	scene->clear();
+	inventory->activate(false);
 
 	setMusic(Resources::instance()->dseg.get_byte(0xDB90));
 
