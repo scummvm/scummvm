@@ -670,8 +670,13 @@ void Scene::displayMessage(const Common::String &str, byte color) {
 }
 
 void Scene::clear() {
+	message.clear();
 	events.clear();
 	current_event.clear();
+	for(int i = 0; i < 4; ++i) {
+		animation[i].free();
+		custom_animation[i].free();
+	}
 }
 
 } // End of namespace TeenAgent
