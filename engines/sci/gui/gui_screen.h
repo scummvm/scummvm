@@ -76,6 +76,8 @@ public:
 
 	void debugShowMap(int mapNo);
 
+	int getScaleFactor() { return _scaleFactor; }
+
 	uint16 _width;
 	uint16 _height;
 	uint _pixels;

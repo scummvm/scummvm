@@ -117,17 +117,18 @@ Common::Rect SciGuiScreen::getScaledRect(Common::Rect rect) {
 
 void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
-	int displayOffset = y * _displayWidth * _scaleFactor + x * _scaleFactor;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
-		_displayScreen[displayOffset] = color;
 
-		// If we need to scale, update the display screen appropriately
-		if (_scaleFactor != 1)
-			_displayScreen[(y + 1) * _displayWidth + x] = color;		// one pixel down
-			_displayScreen[y * _displayWidth + x + 1] = color;			// one pixel right
-			_displayScreen[(y + 1) * _displayWidth + x + 1] = color;	// one pixel down and right
+		if (_scaleFactor == 1) {
+			_displayScreen[offset] = color;
+		} else {
+			_displayScreen[y * _displayWidth * 2 + x * 2] = color;				// the actual pixel
+			_displayScreen[(y + 1) * _displayWidth * 2 + x * 2] = color;		// one pixel down
+			_displayScreen[y * _displayWidth * 2 + (x * 2) + 1] = color;		// one pixel right
+			_displayScreen[(y + 1) * _displayWidth * 2 + (x * 2) + 1] = color;	// one pixel down and right
+		}
 	}
 	if (drawMask & SCI_SCREEN_MASK_PRIORITY)
 		_priorityScreen[offset] = priority;
