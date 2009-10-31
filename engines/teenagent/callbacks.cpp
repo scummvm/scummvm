@@ -3009,9 +3009,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(72);
 		return true;
 
-	case 0x6cc4:
+	case 0x6cc4: //secret diary
 		playActorAnimation(754);
-		displayMessage(0x517b); //position 30430
+		displayCutsceneMessage(0x517b, 30430);
 
 		playMusic(3);
 		loadScene(11, scene->getPosition());
