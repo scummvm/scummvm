@@ -1374,14 +1374,14 @@ void ScummEngine_v5::drawFlashlight() {
 	// rounded corners.
 	static const int corner_data[] = { 8, 6, 4, 3, 2, 2, 1, 1 };
 	int minrow = 0;
-	int maxcol = (_flashlight.w - 1) * _bytesPerPixel;
+	int maxcol = (_flashlight.w - 1) * vs->bytesPerPixel;
 	int maxrow = (_flashlight.h - 1) * vs->pitch;
 
 	for (i = 0; i < 8; i++, minrow += vs->pitch, maxrow -= vs->pitch) {
 		int d = corner_data[i];
 
 		for (j = 0; j < d; j++) {
-			if (_bytesPerPixel == 2) {
+			if (vs->bytesPerPixel == 2) {
 				WRITE_UINT16(&_flashlight.buffer[minrow + 2 * j], 0);
 				WRITE_UINT16(&_flashlight.buffer[minrow + maxcol - 2 * j], 0);
 				WRITE_UINT16(&_flashlight.buffer[maxrow + 2 * j], 0);
