@@ -40,8 +40,9 @@ SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciG
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	_upscaledHires = _screen->getUpscaledHires();
-	setPosition(Common::Point(160, 150));		// TODO: how is that different in 640x400 games?
-	setMoveZone(Common::Rect(0, 0, 320, 200));	// TODO: hires games
+	// center mouse cursor
+	setPosition(Common::Point(_screen->_displayWidth / 2, _screen->_displayHeight / 2));
+	setMoveZone(Common::Rect(0, 0, _screen->_displayWidth, _screen->_displayHeight));
 }
 
 SciGuiCursor::~SciGuiCursor() {
@@ -149,9 +150,23 @@ void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Commo
 		return;
 	}
 
-	cursorView->getBitmap(loopNum, celNum);
+	byte *cursorBitmap = cursorView->getBitmap(loopNum, celNum);
 
-	CursorMan.replaceCursor(celInfo->rawBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+	if (_upscaledHires) {
+		// Scale cursor by 2x
+		width *= 2;
+		height *= 2;
+		cursorHotspot->x *= 2;
+		cursorHotspot->y *= 2;
+		cursorBitmap = new byte[width * height];
+		_screen->scale2x(celInfo->rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
+	}
+
+	CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+
+	if (_upscaledHires)
+		delete cursorBitmap;
+
 	show();
 
 	delete cursorHotspot;
@@ -166,13 +181,14 @@ void SciGuiCursor::setPosition(Common::Point pos) {
 }
 
 Common::Point SciGuiCursor::getPosition() {
-	if (!_upscaledHires) {
-		return g_system->getEventManager()->getMousePos();
-	} else {
-		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-		mousePos.x /= 2; mousePos.y /= 2;
-		return mousePos;
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	
+	if (_upscaledHires) {
+		mousePos.x /= 2;
+		mousePos.y /= 2;
 	}
+
+	return mousePos;
 }
 
 void SciGuiCursor::refreshPosition() {
@@ -197,7 +213,7 @@ void SciGuiCursor::refreshPosition() {
 
 	// FIXME: Do this only when mouse is grabbed?
 	if (clipped)
-		g_system->warpMouse(mousePoint.x, mousePoint.y);
+		setPosition(mousePoint);
 }
 
 } // End of namespace Sci

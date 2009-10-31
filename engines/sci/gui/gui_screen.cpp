@@ -119,14 +119,13 @@ byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 
 void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
-	int displayOffset;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
 		if (!_upscaledHires) {
 			_displayScreen[offset] = color;
 		} else {
-			displayOffset = y * 2 * _displayWidth + x * 2;
+			int displayOffset = y * 2 * _displayWidth + x * 2;
 			_displayScreen[displayOffset] = color;
 			_displayScreen[displayOffset + 1] = color;
 			_displayScreen[displayOffset + _displayWidth] = color;
@@ -492,6 +491,21 @@ void SciGuiScreen::debugShowMap(int mapNo) {
 		break;
 	}
 	copyToScreen();
+}
+
+void SciGuiScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
+	int newWidth = srcWidth * 2;
+
+	for (int y = 0; y < srcHeight; y++) {
+		for (int x = 0; x < srcWidth; x++) {
+			int destOffset = y * 2 * newWidth + x * 2;
+			int color = src[y * srcWidth + x];
+			dst[destOffset] = color;
+			dst[destOffset + 1] = color;
+			dst[destOffset + newWidth] = color;
+			dst[destOffset + newWidth + 1] = color;
+		}
+	}
 }
 
 } // End of namespace Sci
