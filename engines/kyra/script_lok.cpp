@@ -1166,9 +1166,14 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 	if (_currentCharacter->sceneId >= 187 && _currentCharacter->sceneId <= 198)
 		return 29;
 
-	if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
-		_currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
-		return 29;
+	// The following rooms are only a "A fireberry bush" scene in the CD version
+	// of Kyrandia 1. In all other versions they are a usual dark cave, thus we do only
+	// return a glow value of "29" over here, when we are running a CD version.
+	if (_flags.isTalkie) {
+		if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
+			_currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
+			return 29;
+	}
 
 	if (_itemInHand == 28)
 		return 28;

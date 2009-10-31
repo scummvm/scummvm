@@ -253,6 +253,7 @@ void Screen_LoK_16::setScreenPalette(const Palette &pal) {
 		paletteMap(i, pal[i * 3 + 0] << 2, pal[i * 3 + 1] << 2, pal[i * 3 + 2] << 2);
 
 	set16ColorPalette(_palette16);
+	_forceFullUpdate = true;
 }
 
 void Screen_LoK_16::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
