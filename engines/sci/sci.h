@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-#define INCLUDE_OLDGFX
+//#define INCLUDE_OLDGFX
 
 class Console;
 struct EngineState;

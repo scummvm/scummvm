@@ -42,7 +42,7 @@ namespace Sci {
 
 class SciGuiScreen {
 public:
-	SciGuiScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
+	SciGuiScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
 	~SciGuiScreen();
 
 	void copyToScreen();
@@ -52,9 +52,13 @@ public:
 
 	byte getDrawingMask(byte color, byte prio, byte control);
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
+	void putPixelOnDisplay(int x, int y, byte color);
 	void drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte prio, byte control);
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 		drawLine(Common::Point(left, top), Common::Point(right, bottom), color, prio, control);
+	}
+	bool getUpscaledHires() {
+		return _upscaledHires;
 	}
 	byte getVisual(int x, int y);
 	byte getPriority(int x, int y);
@@ -76,8 +80,6 @@ public:
 
 	void debugShowMap(int mapNo);
 
-	int getScaleFactor() { return _scaleFactor; }
-
 	uint16 _width;
 	uint16 _height;
 	uint _pixels;
@@ -92,7 +94,9 @@ public:
 
 private:
 	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
+	void bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr);
 	void bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
+	void bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr);
 
 	bool _unditherState;
 	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
@@ -114,7 +118,7 @@ private:
 
 	// this is a pointer to the currently active screen (changing it only required for debug purposes)
 	byte *_activeScreen;
-	int _scaleFactor;
+	bool _upscaledHires;
 };
 
 } // End of namespace Sci

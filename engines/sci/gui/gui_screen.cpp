@@ -33,16 +33,17 @@
 
 namespace Sci {
 
-SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, int16 scaleFactor) : 
-	_resMan(resMan), _width(width), _height(height), _scaleFactor(scaleFactor) {
+SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) : 
+	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
 
 	_pixels = _width * _height;
 
-	if (scaleFactor != 1 && scaleFactor != 2)
-		error("Only scaling factors of 1 or 2 are supported");
-
-	_displayWidth = _width * scaleFactor;
-	_displayHeight = _height * scaleFactor;
+	_displayWidth = _width;
+	_displayHeight = _height;
+	if (_upscaledHires) {
+		_displayWidth *= 2;
+		_displayHeight *= 2;
+	}
 	_displayPixels = _displayWidth * _displayHeight;
 
 	_visualScreen = (byte *)calloc(_pixels, 1);
@@ -90,11 +91,19 @@ void SciGuiScreen::copyFromScreen(byte *buffer) {
 }
 
 void SciGuiScreen::copyRectToScreen(const Common::Rect &rect) {
-	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+	if (!_upscaledHires)  {
+		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+	} else {
+		g_system->copyRectToScreen(_activeScreen + rect.top * 2 * _displayWidth + rect.left * 2, _displayWidth, rect.left * 2, rect.top * 2, rect.width() * 2, rect.height() * 2);
+	}
 }
 
 void SciGuiScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
-	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
+	if (!_upscaledHires)  {
+		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
+	} else {
+		g_system->copyRectToScreen(_activeScreen + rect.top * 2 * _displayWidth + rect.left * 2, _displayWidth, x * 2, y * 2, rect.width() * 2, rect.height() * 2);
+	}
 }
 
 byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
@@ -108,32 +117,33 @@ byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 	return flag;
 }
 
-Common::Rect SciGuiScreen::getScaledRect(Common::Rect rect) {
-	return Common::Rect(
-		rect.left * _scaleFactor, rect.top * _scaleFactor, 
-		rect.left * _scaleFactor + rect.width() * _scaleFactor,
-		rect.top * _scaleFactor + rect.height() * _scaleFactor);
-}
-
 void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
+	int displayOffset;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
-
-		if (_scaleFactor == 1) {
+		if (!_upscaledHires) {
 			_displayScreen[offset] = color;
 		} else {
-			_displayScreen[y * _displayWidth * 2 + x * 2] = color;				// the actual pixel
-			_displayScreen[(y + 1) * _displayWidth * 2 + x * 2] = color;		// one pixel down
-			_displayScreen[y * _displayWidth * 2 + (x * 2) + 1] = color;		// one pixel right
-			_displayScreen[(y + 1) * _displayWidth * 2 + (x * 2) + 1] = color;	// one pixel down and right
+			displayOffset = y * 2 * _displayWidth + x * 2;
+			_displayScreen[displayOffset] = color;
+			_displayScreen[displayOffset + 1] = color;
+			_displayScreen[displayOffset + _displayWidth] = color;
+			_displayScreen[displayOffset + _displayWidth + 1] = color;
 		}
 	}
 	if (drawMask & SCI_SCREEN_MASK_PRIORITY)
 		_priorityScreen[offset] = priority;
 	if (drawMask & SCI_SCREEN_MASK_CONTROL)
 		_controlScreen[offset] = control;
+}
+
+// This will just change a pixel directly on displayscreen. Its supposed to get only used on upscaled-Hires games where
+//  hires content needs to get drawn ONTO the upscaled display screen (like japanese fonts, hires portraits, etc.)
+void SciGuiScreen::putPixelOnDisplay(int x, int y, byte color) {
+	int offset = y * _width + x;
+	_displayScreen[offset] = color;
 }
 
 // Sierra's Bresenham line drawing
@@ -228,11 +238,13 @@ byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, 
 int SciGuiScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
-	Common::Rect scaledRect = getScaledRect(rect);
-	int scaledPixels = scaledRect.width() * scaledRect.height();
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
 		byteCount += pixels; // _visualScreen
-		byteCount += scaledPixels; // _displayScreen
+		if (!_upscaledHires) {
+			byteCount += pixels; // _displayScreen
+		} else {
+			byteCount += pixels * 4; // _displayScreen (upscaled hires)
+		}
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
 		byteCount += pixels; // _priorityScreen
@@ -250,7 +262,7 @@ void SciGuiScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
 		bitsSaveScreen(rect, _visualScreen, memoryPtr);
-		bitsSaveScreen(getScaledRect(rect), _displayScreen, memoryPtr);
+		bitsSaveDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
 		bitsSaveScreen(rect, _priorityScreen, memoryPtr);
@@ -272,6 +284,25 @@ void SciGuiScreen::bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memory
 	}
 }
 
+void SciGuiScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
+	byte *screen = _displayScreen;
+	int width = rect.width();
+	int y;
+
+	if (!_upscaledHires) {
+		screen += (rect.top * _displayWidth) + rect.left;
+	} else {
+		screen += (rect.top * 2 * _displayWidth) + rect.left * 2;
+		width *= 2;
+		rect.top *= 2; rect.bottom *= 2;
+	}
+
+	for (y = rect.top; y < rect.bottom; y++) {
+		memcpy(memoryPtr, (void*)screen, width); memoryPtr += width;
+		screen += _displayWidth;
+	}
+}
+
 void SciGuiScreen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
 	memcpy((void *)destRect, memoryPtr, sizeof(Common::Rect));
 }
@@ -285,7 +316,7 @@ void SciGuiScreen::bitsRestore(byte *memoryPtr) {
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
 		bitsRestoreScreen(rect, memoryPtr, _visualScreen);
-		bitsRestoreScreen(getScaledRect(rect), memoryPtr, _displayScreen);
+		bitsRestoreDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
 		bitsRestoreScreen(rect, memoryPtr, _priorityScreen);
@@ -307,6 +338,25 @@ void SciGuiScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *
 	}
 }
 
+void SciGuiScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
+	byte *screen = _displayScreen;
+	int width = rect.width();
+	int y;
+
+	if (!_upscaledHires) {
+		screen += (rect.top * _displayWidth) + rect.left;
+	} else {
+		screen += (rect.top * 2 * _displayWidth) + rect.left * 2;
+		width *= 2;
+		rect.top *= 2; rect.bottom *= 2;
+	}
+
+	for (y = rect.top; y < rect.bottom; y++) {
+		memcpy((void*) screen, memoryPtr, width); memoryPtr += width;
+		screen += _displayWidth;
+	}
+}
+
 void SciGuiScreen::setPalette(GuiPalette*pal) {
 	// just copy palette to system
 	byte bpal[4 * 256];
@@ -324,28 +374,40 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 }
 
 void SciGuiScreen::setVerticalShakePos(uint16 shakePos) {
-	g_system->setShakePos(shakePos);
+	if (!_upscaledHires)
+		g_system->setShakePos(shakePos);
+	else
+		g_system->setShakePos(shakePos * 2);
 }
 
-// Currently not really done, its supposed to be possible to only dither _visualScreen
 void SciGuiScreen::dither(bool addToFlag) {
 	int y, x;
-	byte color;
-	byte *screenPtr = _visualScreen;
+	byte color, ditheredColor;
+	byte *visualPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 
 	if (!_unditherState) {
 		// Do dithering on visual and display-screen
 		for (y = 0; y < _height; y++) {
 			for (x = 0; x < _width; x++) {
-				color = *screenPtr;
+				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
 					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-					*screenPtr = color; *displayPtr = color;
+					*displayPtr = color;
+					if (_upscaledHires) {
+						*(displayPtr + 1) = color;
+						*(displayPtr + _displayWidth) = color;
+						*(displayPtr + _displayWidth + 1) = color;
+					}
+					*visualPtr = color;
 				}
-				screenPtr++; displayPtr++;
+				visualPtr++; displayPtr++;
+				if (_upscaledHires)
+					displayPtr++;
 			}
+			if (_upscaledHires)
+				displayPtr += _displayWidth;
 		}
 	} else {
 		if (!addToFlag)
@@ -353,7 +415,7 @@ void SciGuiScreen::dither(bool addToFlag) {
 		// Do dithering on visual screen and put decoded but undithered byte onto display-screen
 		for (y = 0; y < _height; y++) {
 			for (x = 0; x < _width; x++) {
-				color = *screenPtr;
+				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
 					// remember dither combination for cel-undithering
@@ -361,15 +423,25 @@ void SciGuiScreen::dither(bool addToFlag) {
 					// if decoded color wants do dither with black on left side, we turn it around
 					//  otherwise the normal ega color would get used for display
 					if (color & 0xF0) {
-						*displayPtr = color;
+						ditheredColor = color;
 					}	else {
-						*displayPtr = color << 4;
+						ditheredColor = color << 4;
+					}
+					*displayPtr = ditheredColor;
+					if (_upscaledHires) {
+						*(displayPtr + 1) = ditheredColor;
+						*(displayPtr + _displayWidth) = ditheredColor;
+						*(displayPtr + _displayWidth + 1) = ditheredColor;
 					}
 					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-					*screenPtr = color;
+					*visualPtr = color;
 				}
-				screenPtr++; displayPtr++;
+				visualPtr++; displayPtr++;
+				if (_upscaledHires)
+					displayPtr++;
 			}
+			if (_upscaledHires)
+				displayPtr += _displayWidth;
 		}
 	}
 }
@@ -386,6 +458,10 @@ int16 *SciGuiScreen::unditherGetMemorial() {
 }
 
 void SciGuiScreen::debugShowMap(int mapNo) {
+	// We cannot really support changing maps when in upscaledHires mode
+	if (_upscaledHires)
+		return;
+
 	switch (mapNo) {
 	case 0:
 		_activeScreen = _visualScreen;

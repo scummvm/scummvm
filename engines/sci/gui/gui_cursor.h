@@ -69,6 +69,8 @@ private:
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
+	bool _upscaledHires;
+
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
 
 	CursorCache _cachedCursors;

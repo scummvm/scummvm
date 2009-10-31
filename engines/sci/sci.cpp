@@ -105,14 +105,17 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	int scaleFactor = 1;
+	bool upscaledHires = false;
 
 	// Scale the screen, if needed
 	if (!strcmp(getGameID(), "kq6") && getPlatform() == Common::kPlatformWindows)
-		scaleFactor = 2;
+		upscaledHires = true;
+
+	// TODO: Detect japanese editions and set upscaledHires on those as well
+	// TODO: Possibly look at first picture resource and determine if its hires or not
 
 	// Initialize graphics-related parts
-	SciGuiScreen *screen = new SciGuiScreen(_resMan, 320, 200, scaleFactor);	// invokes initGraphics()
+	SciGuiScreen *screen = new SciGuiScreen(_resMan, 320, 200, upscaledHires);	// invokes initGraphics()
 	SciGuiPalette *palette = new SciGuiPalette(_resMan, screen);
 	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette, screen);
 
@@ -130,8 +133,8 @@ Common::Error SciEngine::run() {
 
 #ifdef INCLUDE_OLDGFX
 	// Gui change
-	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
-	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
+	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
+	//_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 #else
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
 #endif
