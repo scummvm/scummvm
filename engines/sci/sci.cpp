@@ -133,8 +133,8 @@ Common::Error SciEngine::run() {
 
 #ifdef INCLUDE_OLDGFX
 	// Gui change
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
-	//_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
+	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
+	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 #else
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
 #endif
