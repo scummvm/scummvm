@@ -456,8 +456,6 @@ reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 screenMask) {
 }
 
 reg_t SciGui::graphSaveUpscaledHiresBox(Common::Rect rect) {
-	rect.right *= 2;
-	rect.bottom *= 2;
 	return _gfx->BitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
 }
 
