@@ -655,6 +655,11 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	}
 	delete[] _specialBuffer;
 	_specialBuffer = 0;
+	
+	for (uint i = 0; i < ARRAYSIZE(_seqMovies); ++i) {
+		delete _seqMovies[i].movie;
+		_seqMovies[i].movie = 0;
+	}
 	return seqSkippedFlag;
 }
 
