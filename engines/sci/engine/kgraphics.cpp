@@ -198,12 +198,12 @@ enum {
 	K_GRAPH_UPDATE_BOX = 12,
 	K_GRAPH_REDRAW_BOX = 13,
 	K_GRAPH_ADJUST_PRIORITY = 14,
-	K_GRAPH_SAVE_UNSCALED_BOX = 15	// KQ6CD Windows version
+	K_GRAPH_SAVE_UPSCALEDHIRES_BOX = 15	// KQ6CD Windows version
 };
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	int16 x = 0, y = 0, x1 = 0, y1 = 0;
-	uint16 flags;
+	uint16 screenMask;
 	int16 priority, control, color, colorMask;
 	Common::Rect rect;
 
@@ -229,10 +229,11 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	case K_GRAPH_SAVE_BOX:
 		kGraphCreateRect(x, y, x1, y1, &rect);
-		flags = (argc > 5) ? argv[5].toUint16() : 0;
-		return s->_gui->graphSaveBox(rect, flags);
+		screenMask = (argc > 5) ? argv[5].toUint16() : 0;
+		return s->_gui->graphSaveBox(rect, screenMask);
 
 	case K_GRAPH_RESTORE_BOX:
+		// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
 		s->_gui->graphRestoreBox(argv[1]);
 		break;
 
@@ -272,10 +273,10 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		s->priority_last = argv[2].toSint16() - 10;
 		break;
 
-	case K_GRAPH_SAVE_UNSCALED_BOX:
-		// Save an area given in unscaled coordinates, so that a hires control will be drawn over it
-		// TODO
-		break;
+	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
+		// Save an area given in upscaled-hires coordinates, so that a hires control will be drawn over it
+		kGraphCreateRect(x, y, x1, y1, &rect);
+		return s->_gui->graphSaveUpscaledHiresBox(rect);
 
 	default:
 		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
@@ -633,32 +634,37 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case 0: { // load resource (the corresponding .BIN file from the ACTORS directory)
-		Common::String resName = s->_segMan->getString(argv[1]);
-		warning("kPortrait, load portrait %s", resName.c_str());
-		// TODO
-		} break;
+		if (argc == 2) {
+			Common::String resourceName = s->_segMan->getString(argv[1]);
+		} else {
+			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
+		}
+		break;
+	}
 	case 1: { // show portrait
-		Common::String resName = s->_segMan->getString(argv[1]);
-
-		// Show the portrait and sync the sound resource (like kDoSync)
-		/*
-		Common::Point portraitPos = Common::Point(argv[2].toUint16(), argv[3].toUint16());
-		uint resourceNum = argv[4].toUint16() & 0xff;
-		uint noun = argv[5].toUint16() & 0xff;
-		uint verb = argv[6].toUint16() & 0xff;
-		uint cond = argv[7].toUint16() & 0xff;
-		uint seq = argv[8].toUint16() & 0xff;
-		// argv[9] is usually 0
-		*/
-
-		warning("kPortrait, show portrait %s", resName.c_str());
-		// TODO
-		} break;
+		if (argc == 10) {
+			Common::String resourceName = s->_segMan->getString(argv[1]);
+			Common::Point portraitPos = Common::Point(argv[2].toUint16(), argv[3].toUint16());
+			uint resourceNum = argv[4].toUint16() & 0xff;
+			uint noun = argv[5].toUint16() & 0xff;
+			uint verb = argv[6].toUint16() & 0xff;
+			uint cond = argv[7].toUint16() & 0xff;
+			uint seq = argv[8].toUint16() & 0xff;
+			// argv[9] is usually 0??!!
+			warning("kPortrait(show) %s at %d, %d", resourceName.c_str(), portraitPos.x, portraitPos.y);
+		} else {
+			warning("kPortrait(show) called with unsupported argc %d", argc);
+		}
+		break;
+	}
 	case 2: { // unload resource
-		uint16 portraitId = argv[1].toUint16();
-		warning("kPortrait, unload portrait ID %d", portraitId);
-		// TODO
-		} break;
+		if (argc == 2) {
+			uint16 portraitId = argv[1].toUint16();
+		} else {
+			warning("kPortrait(unload) called with unsupported argc %d", argc);
+		}
+		break;
+	}
 	default:
 		warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
 	}
@@ -886,10 +892,12 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
 	GuiViewLoopNo loopNo = argv[1].toSint16();
 	GuiViewCelNo celNo = argv[2].toSint16();
-	int x = argv[3].toSint16();
-	int y = argv[4].toSint16();
-	int priority = (argc > 5) ? argv[5].toSint16()  : -1;
-	int paletteNo = (argc > 6) ? argv[6].toSint16() : 0;
+	uint16 x = argv[3].toUint16();
+	uint16 y = argv[4].toUint16();
+	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;
+	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
+	// Unknown seems to be scaling related?!?
+	int16 unknown = (argc > 7) ? argv[7].toSint16() : -1;
 
 	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
 

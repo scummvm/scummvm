@@ -1239,7 +1239,7 @@ void SciGui32::graphDrawLine(Common::Point startPoint, Common::Point endPoint, i
 	FULL_REDRAW();
 }
 
-reg_t SciGui32::graphSaveBox(Common::Rect rect, uint16 flags) {
+reg_t SciGui32::graphSaveBox(Common::Rect rect, uint16 screenMask) {
 	rect_t area;
 	area.x = rect.left + _s->port->zone.x + port_origin_x;
 	area.y = rect.top + _s->port->zone.y + port_origin_y;
@@ -1247,6 +1247,11 @@ reg_t SciGui32::graphSaveBox(Common::Rect rect, uint16 flags) {
 	area.height = rect.height() - port_origin_y;
 
 	return graph_save_box(_s, area);
+}
+
+reg_t SciGui32::graphSaveUpscaledHiresBox(Common::Rect rect) {
+	// STUB
+	return NULL_REG;
 }
 
 void SciGui32::graphRestoreBox(reg_t handle) {

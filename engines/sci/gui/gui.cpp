@@ -451,8 +451,12 @@ void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
 
-reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 flags) {
-	return _gfx->BitsSave(rect, flags);
+reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 screenMask) {
+	return _gfx->BitsSave(rect, screenMask);
+}
+
+reg_t SciGui::graphSaveUpscaledHiresBox(Common::Rect rect) {
+	return _gfx->BitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
 }
 
 void SciGui::graphRestoreBox(reg_t handle) {

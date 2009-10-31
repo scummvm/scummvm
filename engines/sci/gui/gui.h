@@ -96,6 +96,7 @@ public:
 	virtual void graphFrameBox(Common::Rect rect, int16 color);
 	virtual void graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
 	virtual reg_t graphSaveBox(Common::Rect rect, uint16 flags);
+	virtual reg_t graphSaveUpscaledHiresBox(Common::Rect rect);
 	virtual void graphRestoreBox(reg_t handle);
 	virtual void graphUpdateBox(Common::Rect rect);
 	virtual void graphRedrawBox(Common::Rect rect);

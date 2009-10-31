@@ -252,6 +252,11 @@ int SciGuiScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
 		byteCount += pixels; // _controlScreen
 	}
+	if (mask & SCI_SCREEN_MASK_DISPLAY) {
+		if (!_upscaledHires)
+			error("bitsGetDataSize() called w/o being in upscaled hires mode");
+		byteCount += pixels; // _displayScreen (coordinates actually are given to us for hires displayScreen)
+	}
 
 	return byteCount;
 }
@@ -269,6 +274,11 @@ void SciGuiScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	}
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
 		bitsSaveScreen(rect, _controlScreen, memoryPtr);
+	}
+	if (mask & SCI_SCREEN_MASK_DISPLAY) {
+		if (!_upscaledHires)
+			error("bitsSave() called w/o being in upscaled hires mode");
+		bitsSaveScreen(rect, _displayScreen, memoryPtr);
 	}
 }
 
@@ -323,6 +333,11 @@ void SciGuiScreen::bitsRestore(byte *memoryPtr) {
 	}
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
 		bitsRestoreScreen(rect, memoryPtr, _controlScreen);
+	}
+	if (mask & SCI_SCREEN_MASK_DISPLAY) {
+		if (!_upscaledHires)
+			error("bitsRestore() called w/o being in upscaled hires mode");
+		bitsRestoreScreen(rect, memoryPtr, _displayScreen);
 	}
 }
 
