@@ -39,8 +39,8 @@ namespace Sci {
 SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciGuiScreen *screen)
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
-	setPosition(Common::Point(160, 150));		// TODO: how is that different in 640x400 games?
-	setMoveZone(Common::Rect(0, 0, 320, 200));	// TODO: hires games
+	setPosition(Common::Point(160, 150));
+	setMoveZone(Common::Rect(0, 0, _screen->_displayWidth, _screen->_displayHeight));
 }
 
 SciGuiCursor::~SciGuiCursor() {
@@ -157,11 +157,24 @@ void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Commo
 }
 
 void SciGuiCursor::setPosition(Common::Point pos) {
-	g_system->warpMouse(pos.x, pos.y);
+	int scaleFactor = _screen->getScaleFactor();
+
+	if (scaleFactor == 1)
+		g_system->warpMouse(pos.x, pos.y);
+	else
+		g_system->warpMouse(pos.x * scaleFactor, pos.y * scaleFactor);
 }
 
 Common::Point SciGuiCursor::getPosition() {
-	return g_system->getEventManager()->getMousePos();
+	int scaleFactor = _screen->getScaleFactor();
+	Common::Point pos = g_system->getEventManager()->getMousePos();
+
+	if (scaleFactor != 1) {
+		pos.x /= scaleFactor;
+		pos.y /= scaleFactor;
+	}
+
+	return pos;
 }
 
 void SciGuiCursor::refreshPosition() {
@@ -186,7 +199,7 @@ void SciGuiCursor::refreshPosition() {
 
 	// FIXME: Do this only when mouse is grabbed?
 	if (clipped)
-		g_system->warpMouse(mousePoint.x, mousePoint.y);
+		setPosition(mousePoint);
 }
 
 } // End of namespace Sci
