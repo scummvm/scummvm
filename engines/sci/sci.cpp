@@ -96,11 +96,6 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::run() {
-	initGraphics(320, 200, false);
-
-	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
-
 	// FIXME/TODO: Move some of the stuff below to init()
 
 	_resMan = new ResourceManager();
@@ -110,11 +105,22 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	_kernel = new Kernel(_resMan);
-	_vocabulary = new Vocabulary(_resMan);
-	SciGuiScreen *screen = new SciGuiScreen(_resMan);
+	int scaleFactor = 1;
+
+	// Scale the screen, if needed
+	if (!strcmp(getGameID(), "kq6") && getPlatform() == Common::kPlatformWindows)
+		scaleFactor = 2;
+
+	// Initialize graphics-related parts
+	SciGuiScreen *screen = new SciGuiScreen(_resMan, 320, 200, scaleFactor);	// invokes initGraphics()
 	SciGuiPalette *palette = new SciGuiPalette(_resMan, screen);
 	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette, screen);
+
+	// Create debugger console. It requires GFX to be initialized
+	_console = new Console(this);
+
+	_kernel = new Kernel(_resMan);
+	_vocabulary = new Vocabulary(_resMan);
 
 	// We'll set the GUI below
 	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor);

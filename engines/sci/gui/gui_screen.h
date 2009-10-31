@@ -106,11 +106,13 @@ public:	// HACK. TODO: make private
 	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
 private:
+	Common::Rect getScaledRect(Common::Rect rect);
 
 	ResourceManager *_resMan;
 
 	// this is a pointer to the currently active screen (changing it only required for debug purposes)
 	byte *_activeScreen;
+	int _scaleFactor;
 };
 
 } // End of namespace Sci

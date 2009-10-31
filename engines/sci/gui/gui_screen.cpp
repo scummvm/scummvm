@@ -34,11 +34,13 @@
 namespace Sci {
 
 SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, int16 scaleFactor) : 
-	_resMan(resMan), _width(width), _height(height) {
+	_resMan(resMan), _width(width), _height(height), _scaleFactor(scaleFactor) {
 
 	_pixels = _width * _height;
 
-	// if you want to do scaling, adjust putPixel() accordingly
+	if (scaleFactor != 1 && scaleFactor != 2)
+		error("Only scaling factors of 1 or 2 are supported");
+
 	_displayWidth = _width * scaleFactor;
 	_displayHeight = _height * scaleFactor;
 	_displayPixels = _displayWidth * _displayHeight;
@@ -64,6 +66,9 @@ SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, i
 		_colorWhite = 15;
 		_colorDefaultVectorData = 0;
 	}
+
+	// Initialize the actual screen
+	initGraphics(_displayWidth, _displayHeight, _displayWidth > 320);
 }
 
 SciGuiScreen::~SciGuiScreen() {
@@ -103,12 +108,26 @@ byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 	return flag;
 }
 
+Common::Rect SciGuiScreen::getScaledRect(Common::Rect rect) {
+	return Common::Rect(
+		rect.left * _scaleFactor, rect.top * _scaleFactor, 
+		rect.left * _scaleFactor + rect.width() * _scaleFactor,
+		rect.top * _scaleFactor + rect.height() * _scaleFactor);
+}
+
 void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
+	int displayOffset = y * _displayWidth * _scaleFactor + x * _scaleFactor;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
-		_displayScreen[offset] = color;
+		_displayScreen[displayOffset] = color;
+
+		// If we need to scale, update the display screen appropriately
+		if (_scaleFactor != 1)
+			_displayScreen[(y + 1) * _displayWidth + x] = color;		// one pixel down
+			_displayScreen[y * _displayWidth + x + 1] = color;			// one pixel right
+			_displayScreen[(y + 1) * _displayWidth + x + 1] = color;	// one pixel down and right
 	}
 	if (drawMask & SCI_SCREEN_MASK_PRIORITY)
 		_priorityScreen[offset] = priority;
@@ -208,9 +227,11 @@ byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, 
 int SciGuiScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
+	Common::Rect scaledRect = getScaledRect(rect);
+	int scaledPixels = scaledRect.width() * scaledRect.height();
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
 		byteCount += pixels; // _visualScreen
-		byteCount += pixels; // _displayScreen
+		byteCount += scaledPixels; // _displayScreen
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
 		byteCount += pixels; // _priorityScreen
@@ -228,7 +249,7 @@ void SciGuiScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
 		bitsSaveScreen(rect, _visualScreen, memoryPtr);
-		bitsSaveScreen(rect, _displayScreen, memoryPtr);
+		bitsSaveScreen(getScaledRect(rect), _displayScreen, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
 		bitsSaveScreen(rect, _priorityScreen, memoryPtr);
@@ -263,7 +284,7 @@ void SciGuiScreen::bitsRestore(byte *memoryPtr) {
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
 		bitsRestoreScreen(rect, memoryPtr, _visualScreen);
-		bitsRestoreScreen(rect, memoryPtr, _displayScreen);
+		bitsRestoreScreen(getScaledRect(rect), memoryPtr, _displayScreen);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
 		bitsRestoreScreen(rect, memoryPtr, _priorityScreen);
