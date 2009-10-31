@@ -653,11 +653,11 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 10) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
 			Common::Point position = Common::Point(argv[2].toUint16(), argv[3].toUint16());
-			/*uint resourceNum = argv[4].toUint16() & 0xff;
+			uint resourceNum = argv[4].toUint16() & 0xff;
 			uint noun = argv[5].toUint16() & 0xff;
 			uint verb = argv[6].toUint16() & 0xff;
 			uint cond = argv[7].toUint16() & 0xff;
-			uint seq = argv[8].toUint16() & 0xff;*/
+			uint seq = argv[8].toUint16() & 0xff;
 			// argv[9] is usually 0??!!
 
 			s->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
@@ -670,7 +670,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 2: { // unload
 		if (argc == 2) {
-			//uint16 portraitId = argv[1].toUint16();
+			uint16 portraitId = argv[1].toUint16();
 			s->_gui->portraitUnload(portraitId);
 		} else {
 			warning("kPortrait(unload) called with unsupported argc %d", argc);
