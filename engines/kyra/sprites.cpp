@@ -63,10 +63,8 @@ void Sprites::setupSceneAnims() {
 	uint8 *data;
 
 	for (int i = 0; i < MAX_NUM_ANIMS; i++) {
-		if (_anims[i].background) {
-			delete[] _anims[i].background;
-			_anims[i].background = 0;
-		}
+		delete[] _anims[i].background;
+		_anims[i].background = 0;
 
 		if (_anims[i].script != 0) {
 			data = _anims[i].script;
@@ -404,6 +402,9 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 
 	_res->exists(filename, true);
 	_dat = _res->fileData(filename, &fileSize);
+
+	for (uint i = 0; i < MAX_NUM_ANIMS; ++i)
+		delete[] _anims[i].background;
 
 	memset(_anims, 0, sizeof(_anims));
 	uint8 nextAnim = 0;
