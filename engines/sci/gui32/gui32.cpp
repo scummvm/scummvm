@@ -555,7 +555,7 @@ reg_t SciGui32::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 st
 	return make_reg(0, window->_ID);
 }
 
-void SciGui32::disposeWindow(uint16 windowPtr, int16 arg2) {
+void SciGui32::disposeWindow(uint16 windowPtr, bool reanimate) {
 	GfxPort *goner;
 	GfxPort *pred;
 

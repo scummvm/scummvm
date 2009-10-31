@@ -50,7 +50,7 @@ public:
 	int16 priorityToCoordinate(int16 priority);
 
 	reg_t newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
-	void disposeWindow(uint16 windowPtr, int16 arg2);
+	void disposeWindow(uint16 windowPtr, bool reanimate);
 
 	void display(const char *text, int argc, reg_t *argv);
 

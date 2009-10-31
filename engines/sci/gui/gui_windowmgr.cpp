@@ -250,11 +250,11 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	_gfx->SetPort(oldport);
 }
 
-void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
+void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, bool reanimate) {
 	_gfx->SetPort(_wmgrPort);
 	_gfx->BitsRestore(pWnd->hSaved1);
 	_gfx->BitsRestore(pWnd->hSaved2);
-	if (arg2)
+	if (!reanimate)
 		_gfx->BitsShow(pWnd->restoreRect);
 	else
 		_gui->graphRedrawBox(pWnd->restoreRect);

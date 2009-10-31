@@ -43,7 +43,7 @@ public:
 	void EndUpdate(GuiWindow *wnd);
 	GuiWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
 	void DrawWindow(GuiWindow *wnd);
-	void DisposeWindow(GuiWindow *pWnd, int16 arg2);
+	void DisposeWindow(GuiWindow *pWnd, bool reanimate);
 	void UpdateWindow(GuiWindow *wnd);
 
 	GuiPort *getPortById(uint16 id) const { return _windowsById[id]; }

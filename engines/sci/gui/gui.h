@@ -70,7 +70,7 @@ public:
 	virtual int16 priorityToCoordinate(int16 priority);
 
 	virtual reg_t newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
-	virtual void disposeWindow(uint16 windowPtr, int16 arg2);
+	virtual void disposeWindow(uint16 windowPtr, bool reanimate);
 
 	virtual void display(const char *text, int argc, reg_t *argv);
 

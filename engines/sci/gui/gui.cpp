@@ -168,9 +168,9 @@ reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 styl
 	return make_reg(0, wnd->id);
 }
 
-void SciGui::disposeWindow(uint16 windowPtr, int16 arg2) {
+void SciGui::disposeWindow(uint16 windowPtr, bool reanimate) {
 	GuiWindow *wnd = (GuiWindow *)_windowMgr->getPortById(windowPtr);
-	_windowMgr->DisposeWindow(wnd, arg2);
+	_windowMgr->DisposeWindow(wnd, reanimate);
 }
 
 #define SCI_DISPLAY_MOVEPEN				100
