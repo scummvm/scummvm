@@ -45,7 +45,22 @@ SciGuiPortrait::~SciGuiPortrait() {
 
 void SciGuiPortrait::init() {
 	// .BIN files are loaded from actors directory and from .\ directory
-	// seem to have 98 byte header
+	// header:
+	// 3 bytes "WIN"
+	// 2 bytes main height (should be the same as first bitmap header height)
+	// 2 bytes main width (should be the same as first bitmap header width)
+	// 2 bytes animation count
+	// 2 bytes unknown
+	// 2 bytes unknown
+	// 4 bytes paletteSize (base 1)
+	// paletteSize bytes paletteData
+	// 14 bytes bitmap header
+	//  -> 4 bytes unknown
+	//  -> 2 bytes height
+	//  -> 2 bytes width
+	//  -> 6 bytes unknown
+	// height * width bitmap data
+	// another animation count times bitmap header and data
 }
 
 } // End of namespace Sci
