@@ -477,7 +477,7 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 			for (x = 0; x < width; x++) {
 				color = bitmap[x];
 				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y)) {
-					if (origHeight == -1)
+					if (origHeight == -1)	// HACK: this parameter is passed for already scaled views, but we're not actually using it
 						_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
 					else
 						_screen->putPixelOnDisplay(clipRectTranslated.left + x, y, palette->mapping[color]);
