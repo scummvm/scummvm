@@ -324,11 +324,11 @@ DraciEngine::~DraciEngine() {
 	delete _itemImagesArchive;
 	delete _stringsArchive;
 
-	delete _soundsArchive;
-	delete _dubbingArchive;
 	delete _sound;
 	delete _music;
 	delete _midiDriver;
+	delete _soundsArchive;
+	delete _dubbingArchive;
 
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
