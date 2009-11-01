@@ -182,33 +182,34 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 	}
 }
 
+// We don't use Common::Point due to using static initialization.
 int WalkingMap::kDirections[][2] = { {0, -1}, {0, +1}, {-1, 0}, {+1, 0} };
 
-bool WalkingMap::findShortestPath(int x1, int y1, int x2, int y2, WalkingMap::Path *path) const {
+bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path) const {
 	// Round the positions to map squares.
-	x1 /= _deltaX;
-	x2 /= _deltaX;
-	y1 /= _deltaY;
-	y2 /= _deltaY;
+	p1.x /= _deltaX;
+	p2.x /= _deltaX;
+	p1.y /= _deltaY;
+	p2.y /= _deltaY;
 
 	// Allocate buffers for breadth-first search.  The buffer of points for
 	// exploration should be large enough.
 	int8 *cameFrom = new int8[_mapWidth * _mapHeight];
 	const int bufSize = 4 * _realHeight;
-	PathVertex *toSearch = new PathVertex[bufSize];
+	Common::Point *toSearch = new Common::Point[bufSize];
 
 	// Insert the starting point as a single seed.
 	int toRead = 0, toWrite = 0;
 	memset(cameFrom, -1, _mapWidth * _mapHeight);	// -1 = not found yet
-	cameFrom[y1 * _mapWidth + x1] = 0;
-	toSearch[toWrite++] = PathVertex(x1, y1);
+	cameFrom[p1.y * _mapWidth + p1.x] = 0;
+	toSearch[toWrite++] = p1;
 
 	// Search until we empty the whole buffer (not found) or find the
 	// destination point.
 	while (toRead != toWrite) {
-		const PathVertex &here = toSearch[toRead];
+		const Common::Point &here = toSearch[toRead];
 		const int from = cameFrom[here.y * _mapWidth + here.x];
-		if (here.x == x2 && here.y == y2) {
+		if (here == p2) {
 			break;
 		}
 		// Look into all 4 directions in a particular order depending
@@ -217,17 +218,16 @@ bool WalkingMap::findShortestPath(int x1, int y1, int x2, int y2, WalkingMap::Pa
 		// with the smallest number of turns is preferred.
 		for (int addDir = 0; addDir < 4; ++addDir) {
 			const int probeDirection = (from + addDir) % 4;
-			const int x = here.x + kDirections[probeDirection][0];
-			const int y = here.y + kDirections[probeDirection][1];
-			if (x < 0 || x >= _mapWidth || y < 0 || y >= _mapHeight) {
+			const Common::Point p(here.x + kDirections[probeDirection][0], here.y + kDirections[probeDirection][1]);
+			if (p.x < 0 || p.x >= _mapWidth || p.y < 0 || p.y >= _mapHeight) {
 				continue;
 			}
 			// If this point is walkable and we haven't seen it
 			// yet, record how we have reached it and insert it
 			// into the round buffer for exploration.
-			if (getPixel(x, y) && cameFrom[y * _mapWidth + x] == -1) {
-				cameFrom[y * _mapWidth + x] = probeDirection;
-				toSearch[toWrite++] = PathVertex(x, y);
+			if (getPixel(p.x, p.y) && cameFrom[p.y * _mapWidth + p.x] == -1) {
+				cameFrom[p.y * _mapWidth + p.x] = probeDirection;
+				toSearch[toWrite++] = p;
 				toWrite %= bufSize;
 			}
 		}
@@ -245,19 +245,19 @@ bool WalkingMap::findShortestPath(int x1, int y1, int x2, int y2, WalkingMap::Pa
 	path->clear();
 	int length = 0;
 	for (int pass = 0; pass < 2; ++pass) {
-		int x = x2, y = y2;
+		Common::Point p = p2;
 		int index = 0;
 		while (1) {
 			++index;
 			if (pass == 1) {
-				(*path)[length - index] = PathVertex(x, y);
+				(*path)[length - index] = p;
 			}
-			if (x == x1 && y == y1) {
+			if (p == p1) {
 				break;
 			}
-			const int from = cameFrom[y * _mapWidth + x];
-			x -= kDirections[from][0];
-			y -= kDirections[from][1];
+			const int from = cameFrom[p.y * _mapWidth + p.x];
+			p.x -= kDirections[from][0];
+			p.y -= kDirections[from][1];
 		}
 		if (pass == 0) {
 			length = index;
@@ -312,8 +312,8 @@ void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obl
 	// first edge (going from the 1st vertex to the 2nd one) as is, move
 	// the index to the 2nd vertex, and continue.
 	for (uint head = 2; head < obliquedPath->size(); ++head) {
-		const PathVertex &v1 = (*obliquedPath)[head-2];
-		const PathVertex &v3 = (*obliquedPath)[head];
+		const Common::Point &v1 = (*obliquedPath)[head-2];
+		const Common::Point &v3 = (*obliquedPath)[head];
 		const int steps = MAX(abs(v3.x - v1.x), abs(v3.y - v1.y));
 		bool allPointsOk = true;
 		// Testing only points between (i.e., without the end-points) is OK.
@@ -337,8 +337,8 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour
 	memset(wlk, 255, _realWidth * _realHeight);
 
 	for (uint segment = 1; segment < path.size(); ++segment) {
-		const PathVertex &v1 = path[segment-1];
-		const PathVertex &v2 = path[segment];
+		const Common::Point &v1 = path[segment-1];
+		const Common::Point &v2 = path[segment];
 		const int steps = MAX(abs(v2.x - v1.x), abs(v2.y - v1.y));
 		// Draw only points in the interval [v1, v2).  These half-open
 		// half-closed intervals connect all the way to the last point.
@@ -351,7 +351,7 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour
 	// Draw the last point.  This works also when the path has no segment,
 	// but just one point.
 	if (path.size() > 0) {
-		const PathVertex &vLast = path[path.size()-1];
+		const Common::Point &vLast = path[path.size()-1];
 		drawOverlayRectangle(vLast.x, vLast.y, colour, wlk);
 	}
 

@@ -33,12 +33,6 @@ namespace Draci {
 
 class Sprite;
 
-struct PathVertex {
-	PathVertex() {}
-	PathVertex(int xx, int yy) : x(xx), y(yy) {}
-	int x, y;
-};
-
 class WalkingMap {
 public:
 	WalkingMap() : _realWidth(0), _realHeight(0), _deltaX(1), _deltaY(1),
@@ -52,8 +46,8 @@ public:
 	Sprite *newOverlayFromMap(byte colour) const;
 	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
 
-	typedef Common::Array<PathVertex> Path;
-	bool findShortestPath(int x1, int y1, int x2, int y2, Path *path) const;
+	typedef Common::Array<Common::Point> Path;
+	bool findShortestPath(Common::Point p1, Common::Point p2, Path *path) const;
 	void obliquePath(const Path& path, Path *obliquedPath) const;
 	Sprite *newOverlayFromPath(const Path &path, byte colour) const;
 

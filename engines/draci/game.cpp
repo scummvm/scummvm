@@ -961,11 +961,12 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 
 	// Compute the shortest and obliqued path.
 	WalkingMap::Path shortestPath, obliquePath;
-	_walkingMap.findShortestPath(oldHero.x, oldHero.y, _hero.x, _hero.y, &shortestPath);
+	_walkingMap.findShortestPath(oldHero, _hero, &shortestPath);
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
-
-	redrawWalkingPath(kWalkingShortestPathOverlay, kWalkingShortestPathOverlayColour, shortestPath);
-	redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
+	if (_vm->_showWalkingMap) {
+		redrawWalkingPath(kWalkingShortestPathOverlay, kWalkingShortestPathOverlayColour, shortestPath);
+		redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
+	}
 
 	Movement movement = kStopRight;
 	switch (dir) {
