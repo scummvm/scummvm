@@ -163,6 +163,11 @@ void Animation::addFrame(Drawable *frame, const SoundSample *sample) {
 	_samples.push_back(sample);
 }
 
+void Animation::replaceFrame(int i, Drawable *frame, const SoundSample *sample) {
+	_frames[i] = frame;
+	_samples[i] = sample;
+}
+
 Drawable *Animation::getCurrentFrame() {
 	// If there are no frames stored, return NULL
 	return _frames.size() > 0 ? _frames[_currentFrame] : NULL;

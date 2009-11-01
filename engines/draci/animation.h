@@ -38,12 +38,14 @@ namespace Draci {
 enum {
 	kOverlayImage = -1,
 	kWalkingMapOverlay = -2,
-	kTitleText = -3,
-	kSpeechText = -4,
-	kInventorySprite = -5,
-	kDialogueLinesID = -6,
-	kUnused = -10,
-	kInventoryItemsID = -11
+	kWalkingShortestPathOverlay = -3,
+	kWalkingObliquePathOverlay = -4,
+	kTitleText = -5,
+	kSpeechText = -6,
+	kInventorySprite = -7,
+	kDialogueLinesID = -8,
+	kUnused = -12,
+	kInventoryItemsID = -13
 };
 
 /**
@@ -72,6 +74,7 @@ public:
 	void drawFrame(Surface *surface);
 
 	void addFrame(Drawable *frame, const SoundSample *sample);
+	void replaceFrame(int i, Drawable *frame, const SoundSample *sample);
 	Drawable *getCurrentFrame();
 	Drawable *getFrame(int frameNum);
 	void setCurrentFrame(uint frame);

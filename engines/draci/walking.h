@@ -49,7 +49,7 @@ public:
 	bool getPixel(int x, int y) const;
 	bool isWalkable(int x, int y) const;
 
-	Sprite *newOverlayFromMap() const;
+	Sprite *newOverlayFromMap(byte colour) const;
 	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
 
 	typedef Common::Array<PathVertex> Path;

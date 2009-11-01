@@ -321,6 +321,7 @@ private:
 	void enterNewRoom(bool force_reload);
 	void loadRoom(int roomNum);
 	void runGateProgram(int gate);
+	void redrawWalkingPath(int id, byte colour, const WalkingMap::Path &path);
 
 	DraciEngine *_vm;
 

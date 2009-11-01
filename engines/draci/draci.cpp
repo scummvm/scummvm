@@ -263,6 +263,15 @@ void DraciEngine::handleEvents() {
 			case Common::KEYCODE_w:
 				// Show walking map toggle
 				_showWalkingMap = !_showWalkingMap;
+				if (_showWalkingMap) {
+					_anims->play(kWalkingMapOverlay);
+					_anims->play(kWalkingShortestPathOverlay);
+					_anims->play(kWalkingObliquePathOverlay);
+				} else {
+					_anims->stop(kWalkingMapOverlay);
+					_anims->stop(kWalkingShortestPathOverlay);
+					_anims->stop(kWalkingObliquePathOverlay);
+				}
 				break;
 			case Common::KEYCODE_q:
 				_game->setWantQuickHero(!_game->getWantQuickHero());
@@ -285,15 +294,6 @@ void DraciEngine::handleEvents() {
 		default:
 			_mouse->handleEvent(event);
 		}
-	}
-
-	// Show walking map overlay
-	// If the walking map overlay is already in the wanted state don't
-	// start / stop it constantly
-	if (_showWalkingMap && !_anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
-		_anims->play(kWalkingMapOverlay);
-	} else if (!_showWalkingMap && _anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
-		_anims->stop(kWalkingMapOverlay);
 	}
 }
 

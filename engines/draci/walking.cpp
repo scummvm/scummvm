@@ -57,7 +57,7 @@ bool WalkingMap::isWalkable(int x, int y) const {
 	return getPixel(x / _deltaX, y / _deltaY);
 }
 
-Sprite *WalkingMap::newOverlayFromMap() const {
+Sprite *WalkingMap::newOverlayFromMap(byte colour) const {
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[_realWidth * _realHeight];
 	memset(wlk, 255, _realWidth * _realHeight);
@@ -65,7 +65,7 @@ Sprite *WalkingMap::newOverlayFromMap() const {
 	for (int i = 0; i < _mapWidth; ++i) {
 		for (int j = 0; j < _mapHeight; ++j) {
 			if (getPixel(i, j)) {
-				drawOverlayRectangle(i, j, 2, wlk);
+				drawOverlayRectangle(i, j, colour, wlk);
 			}
 		}
 	}
@@ -274,6 +274,9 @@ bool WalkingMap::findShortestPath(int x1, int y1, int x2, int y2, WalkingMap::Pa
 void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obliquedPath) const {
 	// Prune the path to only contain vertices where the direction is changing.
 	obliquedPath->clear();
+	if (path.empty()) {
+		return;
+	}
 	obliquedPath->push_back(path[0]);
 	uint index = 1;
 	while (index < path.size()) {
@@ -315,8 +318,8 @@ void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obl
 		bool allPointsOk = true;
 		// Testing only points between (i.e., without the end-points) is OK.
 		for (int step = 1; step < steps; ++step) {
-			const int x = (v1.x * (steps-step) + v3.x * step) / steps;
-			const int y = (v1.y * (steps-step) + v3.y * step) / steps;
+			const int x = (v1.x * (steps-step) + v3.x * step + steps/2) / steps;
+			const int y = (v1.y * (steps-step) + v3.y * step + steps/2) / steps;
 			if (!getPixel(x, y)) {
 				allPointsOk = false;
 				break;
@@ -340,15 +343,17 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour
 		// Draw only points in the interval [v1, v2).  These half-open
 		// half-closed intervals connect all the way to the last point.
 		for (int step = 0; step < steps; ++step) {
-			const int x = (v1.x * (steps-step) + v2.x * step) / steps;
-			const int y = (v1.y * (steps-step) + v2.y * step) / steps;
+			const int x = (v1.x * (steps-step) + v2.x * step + steps/2) / steps;
+			const int y = (v1.y * (steps-step) + v2.y * step + steps/2) / steps;
 			drawOverlayRectangle(x, y, colour, wlk);
 		}
 	}
 	// Draw the last point.  This works also when the path has no segment,
 	// but just one point.
-	const PathVertex &vLast = path[path.size()-1];
-	drawOverlayRectangle(vLast.x, vLast.y, colour, wlk);
+	if (path.size() > 0) {
+		const PathVertex &vLast = path[path.size()-1];
+		drawOverlayRectangle(vLast.x, vLast.y, colour, wlk);
+	}
 
 	Sprite *ov = new Sprite(_realWidth, _realHeight, wlk, 0, 0, false);
 	// ov has taken the ownership of wlk.

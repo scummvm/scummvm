@@ -39,6 +39,12 @@ static const Common::String dialoguePath("ROZH");
 
 static double real_to_double(byte real[6]);
 
+enum {
+	kWalkingMapOverlayColour = 2,
+	kWalkingShortestPathOverlayColour = 120,
+	kWalkingObliquePathOverlayColour = 73
+};
+
 Game::Game(DraciEngine *vm) : _vm(vm) {
 	uint i;
 
@@ -932,6 +938,14 @@ void Game::playHeroAnimation(int anim_index) {
 	_vm->_anims->play(animID);
 }
 
+void Game::redrawWalkingPath(int id, byte colour, const WalkingMap::Path &path) {
+	Animation *anim = _vm->_anims->getAnimation(id);
+	Sprite *ov = _walkingMap.newOverlayFromPath(path, colour);
+	delete anim->getFrame(0);
+	anim->replaceFrame(0, ov, NULL);
+	anim->markDirtyRect(_vm->_screen->getSurface());
+}
+
 void Game::walkHero(int x, int y, SightDirection dir) {
 	// Needed for the map room with empty walking map.  For some reason,
 	// findNearestWalkable() takes several seconds with 100% CPU to finish
@@ -939,10 +953,19 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	if (!_currentRoom._heroOn)
 		return;
 
+	Common::Point oldHero = _hero;
 	Surface *surface = _vm->_screen->getSurface();
 	_hero = _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
 	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
+
+	// Compute the shortest and obliqued path.
+	WalkingMap::Path shortestPath, obliquePath;
+	_walkingMap.findShortestPath(oldHero.x, oldHero.y, _hero.x, _hero.y, &shortestPath);
+	_walkingMap.obliquePath(shortestPath, &obliquePath);
+
+	redrawWalkingPath(kWalkingShortestPathOverlay, kWalkingShortestPathOverlayColour, shortestPath);
+	redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
 
 	Movement movement = kStopRight;
 	switch (dir) {
@@ -1060,6 +1083,19 @@ void Game::loadRoom(int roomNum) {
 	// Load the walking map
 	loadWalkingMap(getMapID());
 
+	// Add overlays for the walking map and shortest/obliqued paths.
+	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 256, _vm->_showWalkingMap);
+	Sprite *ov = _walkingMap.newOverlayFromMap(kWalkingMapOverlayColour);
+	map->addFrame(ov, NULL);
+
+	Animation *sPath = _vm->_anims->addAnimation(kWalkingShortestPathOverlay, 257, _vm->_showWalkingMap);
+	Animation *oPath = _vm->_anims->addAnimation(kWalkingObliquePathOverlay, 258, _vm->_showWalkingMap);
+	WalkingMap::Path emptyPath;
+	ov = _walkingMap.newOverlayFromPath(emptyPath, 0);
+	sPath->addFrame(ov, NULL);
+	ov = _walkingMap.newOverlayFromPath(emptyPath, 0);
+	oPath->addFrame(ov, NULL);
+
 	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		debugC(7, kDraciLogicDebugLevel,
@@ -1095,10 +1131,6 @@ void Game::loadRoom(int roomNum) {
 	// Set room palette
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
-
-	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
-	Sprite *ov = _walkingMap.newOverlayFromMap();
-	map->addFrame(ov, NULL);
 }
 
 int Game::loadAnimation(uint animNum, uint z) {
@@ -1284,6 +1316,8 @@ void Game::enterNewRoom(bool force_reload) {
 
 	// Delete walking map testing overlay
 	_vm->_anims->deleteAnimation(kWalkingMapOverlay);
+	_vm->_anims->deleteAnimation(kWalkingShortestPathOverlay);
+	_vm->_anims->deleteAnimation(kWalkingObliquePathOverlay);
 
 	// TODO: Make objects capable of stopping their own animations
 	const GameObject *dragon = getObject(kDragonObject);
