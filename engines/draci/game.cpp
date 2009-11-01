@@ -962,6 +962,7 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	// Compute the shortest and obliqued path.
 	WalkingMap::Path shortestPath, obliquePath;
 	_walkingMap.findShortestPath(oldHero, _hero, &shortestPath);
+	// TODO: test reachability and react
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
 	if (_vm->_showWalkingMap) {
 		redrawWalkingPath(kWalkingShortestPathOverlay, kWalkingShortestPathOverlayColour, shortestPath);

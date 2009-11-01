@@ -194,8 +194,8 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path
 
 	// Allocate buffers for breadth-first search.  The buffer of points for
 	// exploration should be large enough.
-	int8 *cameFrom = new int8[_mapWidth * _mapHeight];
 	const int bufSize = 4 * _realHeight;
+	int8 *cameFrom = new int8[_mapWidth * _mapHeight];
 	Common::Point *toSearch = new Common::Point[bufSize];
 
 	// Insert the starting point as a single seed.
@@ -238,20 +238,21 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path
 
 	// The path doesn't exist.
 	if (toRead == toWrite) {
+		delete[] cameFrom;
+		delete[] toSearch;
 		return false;
 	}
 
 	// Trace the path back and store it.  Count the path length, resize the
 	// output array, and then track the pack from the end.
 	path->clear();
-	int length = 0;
 	for (int pass = 0; pass < 2; ++pass) {
 		Common::Point p = p2;
 		int index = 0;
 		while (1) {
 			++index;
 			if (pass == 1) {
-				(*path)[length - index] = p;
+				(*path)[path->size() - index] = p;
 			}
 			if (p == p1) {
 				break;
@@ -261,14 +262,12 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path
 			p.y -= kDirections[from][1];
 		}
 		if (pass == 0) {
-			length = index;
-			path->resize(length);
+			path->resize(index);
 		}
 	}
 
 	delete[] cameFrom;
 	delete[] toSearch;
-
 	return true;
 }
 
