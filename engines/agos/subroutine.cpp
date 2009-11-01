@@ -376,12 +376,12 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 				if (getGameType() == GType_SIMON2) {
 					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename.c_str() + 6) - 1 + _soundIndexBase]);
 				} else if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) {
-					filename.setChar(0, 'S');
-					filename.setChar(1, 'F');
-					filename.setChar(2, 'X');
-					filename.setChar(3, 'X');
-					filename.setChar(4, 'X');
-					filename.setChar(5, 'X');
+					filename.setChar('S', 0);
+					filename.setChar('F', 1);
+					filename.setChar('X', 2);
+					filename.setChar('X', 3);
+					filename.setChar('X', 4);
+					filename.setChar('X', 5);
 					if (atoi(filename.c_str() + 6) != 1 && atoi(filename.c_str() + 6) != 30)
 						_sound->readSfxFile(filename.c_str());
 				}
