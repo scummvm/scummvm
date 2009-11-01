@@ -4137,6 +4137,8 @@ bool SoundTownsPC98_v2::init() {
 		if (_musicEnabled &&
 			(res->exists("track1.mp3") || res->exists("track1.ogg") || res->exists("track1.flac") || res->exists("track1.fla")))
 				_musicEnabled = 2;
+		else
+			_musicEnabled = 1;
 		_useFmSfx = false;
 
 	} else {
