@@ -218,16 +218,17 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path
 		// with the smallest number of turns is preferred.
 		for (int addDir = 0; addDir < 4; ++addDir) {
 			const int probeDirection = (from + addDir) % 4;
-			const Common::Point p(here.x + kDirections[probeDirection][0], here.y + kDirections[probeDirection][1]);
-			if (p.x < 0 || p.x >= _mapWidth || p.y < 0 || p.y >= _mapHeight) {
+			const int x = here.x + kDirections[probeDirection][0];
+			const int y = here.y + kDirections[probeDirection][1];
+			if (x < 0 || x >= _mapWidth || y < 0 || y >= _mapHeight) {
 				continue;
 			}
 			// If this point is walkable and we haven't seen it
 			// yet, record how we have reached it and insert it
 			// into the round buffer for exploration.
-			if (getPixel(p.x, p.y) && cameFrom[p.y * _mapWidth + p.x] == -1) {
-				cameFrom[p.y * _mapWidth + p.x] = probeDirection;
-				toSearch[toWrite++] = p;
+			if (getPixel(x, y) && cameFrom[y * _mapWidth + x] == -1) {
+				cameFrom[y * _mapWidth + x] = probeDirection;
+				toSearch[toWrite++] = Common::Point(x, y);
 				toWrite %= bufSize;
 			}
 		}
