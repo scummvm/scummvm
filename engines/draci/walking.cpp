@@ -71,8 +71,8 @@ Sprite *WalkingMap::constructDrawableOverlay() const {
 		}
 	}
 
-	Sprite *ov = new Sprite(wlk, kScreenWidth, kScreenHeight, 0, 0, false);
-        delete[] wlk;
+	Sprite *ov = new Sprite(kScreenWidth, kScreenHeight, wlk, 0, 0, false);
+	// ov has taken the ownership of wlk.
 
 	return ov;
 }

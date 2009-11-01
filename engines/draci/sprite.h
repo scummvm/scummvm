@@ -101,7 +101,14 @@ protected:
 
 class Sprite : public Drawable {
 public:
-	Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
+	// Takes ownership of raw_data.
+	Sprite(uint16 width, uint16 height, byte *raw_data, int x, int y, bool columnwise);
+
+	// It doesn't take ownership of sprite_data.  If columnwise is false,
+	// it internally points to the original buffer (which has lifetime at
+	// least as long as this sprite, assumming that it comes from a cached
+	// BArchive file), otherwise it allocates its own buffer with the
+	// transposed image.
 	Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise);
 
 	~Sprite();
@@ -120,6 +127,7 @@ public:
 	DrawableType getType() const { return kDrawableSprite; }
 
 private:
+	bool _ownsData;
 	const byte *_data;  ///< Pointer to a buffer containing raw sprite data (row-wise)
 	bool _mirror;
 };

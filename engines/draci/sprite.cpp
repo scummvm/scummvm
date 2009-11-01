@@ -58,8 +58,8 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
 /**
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
-Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
-    bool columnwise) : _data(NULL) {
+Sprite::Sprite(uint16 width, uint16 height, byte *raw_data, int x, int y, bool columnwise)
+    : _ownsData(true), _data(raw_data), _mirror(false) {
 
 	 _width = width;
 	 _height = height;
@@ -72,17 +72,9 @@ Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
 
 	_delay = 0;
 
-	_mirror = false;
-
-	byte *data = new byte[width * height];
-
-	memcpy(data, raw_data, width * height);
-
-	// If the sprite is stored column-wise, transform it to row-wise
 	if (columnwise) {
-		transformToRows(data, width, height);
+		transformToRows(raw_data, _width, _height);
 	}
-	_data = data;
 }
 
 /**
@@ -90,36 +82,36 @@ Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
  *  pixel.
  */
 Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise)
-    : _data(NULL) {
-
-	 _x = x;
-	 _y = y;
-
-	_delay = 0;
-
-	_mirror = false;
+    : _ownsData(false), _data(NULL), _mirror(false) {
 
 	Common::MemoryReadStream reader(sprite_data, length);
-
 	_width = reader.readSint16LE();
 	_height = reader.readSint16LE();
 
 	_scaledWidth = _width;
 	_scaledHeight = _height;
 
-	byte *data = new byte[_width * _height];
+	 _x = x;
+	 _y = y;
 
-	reader.read(data, _width * _height);
+	_delay = 0;
 
-	// If the sprite is stored column-wise, transform it to row-wise
-	if (columnwise) {
+	if (!columnwise) {
+		_ownsData = false;
+		_data = sprite_data + 4;
+	} else {
+		_ownsData = true;
+		byte *data = new byte[_width * _height];
+		memcpy(data, sprite_data + 4, _width * _height);
 		transformToRows(data, _width, _height);
+		_data = data;
 	}
-	_data = data;
 }
 
 Sprite::~Sprite() {
-	delete[] _data;
+	if (_ownsData) {
+		delete[] _data;
+	}
 }
 
 // Macro to simulate lround() for non-C99 compilers
