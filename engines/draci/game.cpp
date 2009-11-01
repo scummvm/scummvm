@@ -164,6 +164,7 @@ void Game::start() {
 			continue;
 		}
 
+		// Call the outer loop doing all the hard job.
 		loop();
 	}
 }
@@ -240,6 +241,11 @@ void Game::init() {
 }
 
 void Game::loop() {
+	// Can run both as an outer and inner loop.  In both mode it updates
+	// the screen according to the timer.  It the outer mode it also reacts
+	// to user events.  In the inner mode, the loop runs until its stopping
+	// condition, possibly stopping earlier if the user interrupts it,
+	// however no other user intervention is allowed.
 	Surface *surface = _vm->_screen->getSurface();
 
 	do {
@@ -838,6 +844,8 @@ int Game::dialogueDraw() {
 	_oldObjUnderCursor = kObjectNotFound;
 
 	if (_dialogueLinesNum > 1) {
+		// Call the game loop to enable interactivity until the user
+		// selects his choice.
 		_vm->_mouse->cursorOn();
 		setExitLoop(false);
 		loop();

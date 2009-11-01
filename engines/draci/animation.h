@@ -104,8 +104,11 @@ public:
 
 	void markDirtyRect(Surface *surface) const;
 
-	// Animation callbacks
-
+	// Animation callbacks.  They can only do simple things, such as
+	// setting the value of some variable or stopping an animation.  In
+	// particular, they cannot run sub-loops or anything like that, because
+	// the callback is called at an arbitrary time without much control
+	// over what the state of the rest of the program is.
 	void registerCallback(AnimationCallback callback) { _callback = callback; }
 
 	void doNothing() {}

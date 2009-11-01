@@ -357,6 +357,8 @@ void Script::play(Common::Queue<int> &params) {
 		return;
 	}
 
+	// Runs just one phase of the loop and exits.  Used when waiting for a
+	// particular animation phase to come.
 	_vm->_game->setLoopSubstatus(kSubstatusStrange);
 	_vm->_game->setExitLoop(true);
 	_vm->_game->loop();
@@ -469,6 +471,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 		_vm->_anims->play(animID);
 	}
 
+	// Runs an inner loop until the animation ends.
 	_vm->_game->loop();
 	_vm->_game->setExitLoop(false);
 	_vm->_anims->stop(animID);
@@ -675,6 +678,7 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 	SightDirection dir = static_cast<SightDirection> (params.pop());
 
 	// HACK: This should be an onDest action when hero walking is properly implemented
+	// For now, we just go throught the loop-body once to redraw the screen.
 	_vm->_game->setExitLoop(true);
 
 	_vm->_game->walkHero(x, y, dir);
@@ -776,7 +780,7 @@ void Script::talk(Common::Queue<int> &params) {
 	// "exit immediately" state
 	_vm->_game->setExitLoop(false);
 
-	// Call the game loop to enable interactivity until the text expires
+	// Call the game loop to enable interactivity until the text expires.
 	_vm->_game->loop();
 
 	// Delete the text
@@ -871,6 +875,10 @@ void Script::fadePalette(Common::Queue<int> &params) {
 	params.pop();	// unused first and last
 	params.pop();
 	int phases = params.pop();
+
+	// Let the palette fade in the background while the game continues.
+	// Since we don't set substatus to kSubstatusFade, the outer loop will
+	// just continue rather than exit.
 	_vm->_game->initializeFading(phases);
 }
 
@@ -880,6 +888,7 @@ void Script::fadePalettePlay(Common::Queue<int> &params) {
 	int phases = params.pop();
 	_vm->_game->initializeFading(phases);
 
+	// Call the game loop to enable interactivity until the fading is done.
 	_vm->_game->setLoopSubstatus(kSubstatusFade);
 	_vm->_game->loop();
 	_vm->_game->setExitLoop(false);
