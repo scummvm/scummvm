@@ -38,6 +38,7 @@ namespace Sci {
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 //#define DEBUG_AVOIDPATH	//enable for avoidpath debugging
+#define OLD_PATHFINDING
 
 static void POLY_GET_POINT(const byte *p, int i, Common::Point &pt) {
 	pt.x = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE);
@@ -282,32 +283,6 @@ static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	return point;
 }
 
-/**
- * Checks whether two polygons are equal
- */
-static bool polygons_equal(SegManager *segMan, reg_t p1, reg_t p2) {
-	// Check for same type
-	if (GET_SEL32(segMan, p1, type).toUint16() != GET_SEL32(segMan, p2, type).toUint16())
-		return false;
-
-	int size = GET_SEL32(segMan, p1, size).toUint16();
-
-	// Check for same number of points
-	if (size != GET_SEL32(segMan, p2, size).toUint16())
-		return false;
-
-	reg_t p1_points = GET_SEL32(segMan, p1, points);
-	reg_t p2_points = GET_SEL32(segMan, p2, points);
-
-	// Check for the same points
-	for (int i = 0; i < size; i++) {
-		if (read_point(segMan, p1_points, i) != read_point(segMan, p2_points, i))
-			return false;
-	}
-
-	return true;
-}
-
 #ifdef DEBUG_AVOIDPATH
 
 static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type) {
@@ -460,16 +435,6 @@ static bool left(const Common::Point &a, const Common::Point &b, const Common::P
 	return area(a, b, c) > 0;
 }
 
-static bool left_on(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
-	// Determines whether or not a point is to the left of or collinear with a
-	// directed line
-	// Parameters: (const Common::Point &) a, b: The directed line (a, b)
-	//             (const Common::Point &) c: The query point
-	// Returns   : (int) true if c is to the left of or collinear with (a, b), false
-	//                   otherwise
-	return area(a, b, c) >= 0;
-}
-
 static bool collinear(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
 	// Determines whether or not three points are collinear
 	// Parameters: (const Common::Point &) a, b, c: The three points
@@ -501,17 +466,6 @@ static bool intersect_proper(const Common::Point &a, const Common::Point &b, con
 	int cd = (left(c, d, a) && left(d, c, b)) || (left(c, d, b) && left(d, c, a));
 
 	return ab && cd;
-}
-
-static bool intersect(const Common::Point &a, const Common::Point &b, const Common::Point &c, const Common::Point &d) {
-	// Determines whether or not two line segments intersect
-	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
-	//             (const Common::Point &) c, d: The line segment (c, d)
-	// Returns   : (int) true if (a, b) intersects (c, d), false otherwise
-	if (intersect_proper(a, b, c, d))
-		return true;
-
-	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
 }
 
 static int contained(const Common::Point &p, Polygon *polygon) {
@@ -614,6 +568,73 @@ static void fix_vertex_order(Polygon *polygon) {
 	}
 }
 
+static int inside(const Common::Point &p, Vertex *vertex) {
+	// Determines whether or not a line from a point to a vertex intersects the
+	// interior of the polygon, locally at that vertex
+	// Parameters: (Common::Point) p: The point
+	//             (Vertex *) vertex: The vertex
+	// Returns   : (int) 1 if the line (p, vertex->v) intersects the interior of
+	//                   the polygon, locally at the vertex. 0 otherwise
+	// Check that it's not a single-vertex polygon
+	if (VERTEX_HAS_EDGES(vertex)) {
+		const Common::Point &prev = CLIST_PREV(vertex)->v;
+		const Common::Point &next = CLIST_NEXT(vertex)->v;
+		const Common::Point &cur = vertex->v;
+
+		if (left(prev, cur, next)) {
+			// Convex vertex, line (p, cur) intersects the inside
+			// if p is located left of both edges
+			if (left(cur, next, p) && left(prev, cur, p))
+				return 1;
+		} else {
+			// Non-convex vertex, line (p, cur) intersects the
+			// inside if p is located left of either edge
+			if (left(cur, next, p) || left(prev, cur, p))
+				return 1;
+		}
+	}
+
+	return 0;
+}
+
+#ifdef OLD_PATHFINDING
+
+/**
+ * Checks whether two polygons are equal
+ */
+static bool polygons_equal(SegManager *segMan, reg_t p1, reg_t p2) {
+	// Check for same type
+	if (GET_SEL32(segMan, p1, type).toUint16() != GET_SEL32(segMan, p2, type).toUint16())
+		return false;
+
+	int size = GET_SEL32(segMan, p1, size).toUint16();
+
+	// Check for same number of points
+	if (size != GET_SEL32(segMan, p2, size).toUint16())
+		return false;
+
+	reg_t p1_points = GET_SEL32(segMan, p1, points);
+	reg_t p2_points = GET_SEL32(segMan, p2, points);
+
+	// Check for the same points
+	for (int i = 0; i < size; i++) {
+		if (read_point(segMan, p1_points, i) != read_point(segMan, p2_points, i))
+			return false;
+	}
+
+	return true;
+}
+
+static bool left_on(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
+	// Determines whether or not a point is to the left of or collinear with a
+	// directed line
+	// Parameters: (const Common::Point &) a, b: The directed line (a, b)
+	//             (const Common::Point &) c: The query point
+	// Returns   : (int) true if c is to the left of or collinear with (a, b), false
+	//                   otherwise
+	return area(a, b, c) >= 0;
+}
+
 static Vertex *s_vertex_cur = 0;	// FIXME: Avoid non-const global vars
 
 static int vertex_compare(const void *a, const void *b) {
@@ -708,35 +729,6 @@ static bool edgeIsCloser(const Vertex *vertex_cur, const Vertex *a, const Vertex
 	// other than possibly sharing a vertex.
 
 	return ((left_on(*v1, *v2, *w1) && left_on(*v1, *v2, *w2)) || (left_on(*w2, *w1, *v1) && left_on(*w2, *w1, *v2)));
-}
-
-static int inside(const Common::Point &p, Vertex *vertex) {
-	// Determines whether or not a line from a point to a vertex intersects the
-	// interior of the polygon, locally at that vertex
-	// Parameters: (Common::Point) p: The point
-	//             (Vertex *) vertex: The vertex
-	// Returns   : (int) 1 if the line (p, vertex->v) intersects the interior of
-	//                   the polygon, locally at the vertex. 0 otherwise
-	// Check that it's not a single-vertex polygon
-	if (VERTEX_HAS_EDGES(vertex)) {
-		const Common::Point &prev = CLIST_PREV(vertex)->v;
-		const Common::Point &next = CLIST_NEXT(vertex)->v;
-		const Common::Point &cur = vertex->v;
-
-		if (left(prev, cur, next)) {
-			// Convex vertex, line (p, cur) intersects the inside
-			// if p is located left of both edges
-			if (left(cur, next, p) && left(prev, cur, p))
-				return 1;
-		} else {
-			// Non-convex vertex, line (p, cur) intersects the
-			// inside if p is located left of either edge
-			if (left(cur, next, p) || left(prev, cur, p))
-				return 1;
-		}
-	}
-
-	return 0;
 }
 
 /**
@@ -863,6 +855,52 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 
 	return visVerts;
 }
+
+#else
+
+/**
+ * Returns a list of all vertices that are visible from a particular vertex.
+ * @param s				the pathfinding state
+ * @param vertex_cur	the vertex
+ * @return list of vertices that are visible from vert
+ */
+static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
+	VertexList *visVerts = new VertexList();
+
+	for (int i = 0; i < s->vertices; i++) {
+		Vertex *vertex = s->vertex_index[i];
+
+		// Make sure we don't intersect a polygon locally at the vertices
+		if ((vertex == vertex_cur) || (inside(vertex->v, vertex_cur)) || (inside(vertex_cur->v, vertex)))
+			continue;
+
+		// Check for intersecting edges
+		int j;
+		for (j = 0; j < s->vertices; j++) {
+			Vertex *edge = s->vertex_index[j];
+			if (VERTEX_HAS_EDGES(edge)) {
+				if (between(vertex_cur->v, vertex->v, edge->v)) {
+					// If we hit a vertex, make sure we can pass through it without intersecting its polygon
+					if ((inside(vertex_cur->v, edge)) || (inside(vertex->v, edge)))
+						break;
+
+					// This edge won't properly intersect, so we continue
+					continue;
+				}
+
+				if (intersect_proper(vertex_cur->v, vertex->v, edge->v, CLIST_NEXT(edge)->v))
+					break;
+			}
+		}
+
+		if (j == s->vertices)
+			visVerts->push_front(vertex);
+	}
+
+	return visVerts;
+}
+
+#endif // OLD_PATHFINDING
 
 static bool point_on_screen_border(const Common::Point &p) {
 	// Determines if a point lies on the screen border
@@ -1267,6 +1305,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		}
 	}
 
+#ifdef OLD_PATHFINDING
 	// WORKAROUND: self-intersecting polygons in ECO, rooms 221, 280 and 300
 	if ((size == 11) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 300)
@@ -1292,8 +1331,10 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 			skip = 2;
 		}
 	}
+#endif
 
 	for (i = skip; i < size; i++) {
+#ifdef OLD_PATHFINDING
 		if (size == 35 && (i == 20 || i == 21) && s->_gameName == "sq1sci" &&
 			s->currentRoomNumber() == 66) {
 			if (i == 20 && read_point(segMan, points, 20) == Common::Point(0, 104)) {
@@ -1308,7 +1349,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 				continue;
 			}
 		}
-
+#endif
 		Vertex *vertex = new Vertex(read_point(segMan, points, i));
 		poly->vertices.insertHead(vertex);
 	}
@@ -1318,6 +1359,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	return poly;
 }
 
+#ifdef OLD_PATHFINDING
 // WORKAROUND: intersecting polygons in Longbow, room 210.
 static void fixLongbowRoom210(PathfindingState *s, const Common::Point &start, const Common::Point &end) {
 	Polygon *barred = NULL;
@@ -1367,6 +1409,7 @@ static void fixLongbowRoom210(PathfindingState *s, const Common::Point &start, c
 		s->polygons.push_front(barred);
 	}
 }
+#endif
 
 static void change_polygons_opt_0(PathfindingState *s) {
 	// Changes the polygon list for optimization level 0 (used for keyboard
@@ -1415,10 +1458,12 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 			// Workaround for game bugs that put a polygon in the list more than once
 			while (dup != node) {
+#ifdef OLD_PATHFINDING
 				if (polygons_equal(s->_segMan, node->value, dup->value)) {
 					warning("[avoidpath] Ignoring duplicate polygon");
 					break;
 				}
+#endif
 				dup = s->_segMan->lookupNode(dup->succ);
 			}
 
@@ -1488,8 +1533,10 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			new_start = new Common::Point(77, 107);
 		}
 
+#ifdef OLD_PATHFINDING
 		if (s->_gameName == "longbow" && s->currentRoomNumber() == 210)
 				fixLongbowRoom210(pf_s, *new_start, *new_end);
+#endif
 
 		// Merge start and end points into polygon set
 		pf_s->vertex_start = merge_point(pf_s, *new_start);
@@ -1516,6 +1563,18 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	pf_s->vertices = count;
 
 	return pf_s;
+}
+
+#ifdef OLD_PATHFINDING
+static bool intersect(const Common::Point &a, const Common::Point &b, const Common::Point &c, const Common::Point &d) {
+	// Determines whether or not two line segments intersect
+	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
+	//             (const Common::Point &) c, d: The line segment (c, d)
+	// Returns   : (int) true if (a, b) intersects (c, d), false otherwise
+	if (intersect_proper(a, b, c, d))
+		return true;
+
+	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
 }
 
 static int intersecting_polygons(PathfindingState *s) {
@@ -1545,6 +1604,7 @@ static int intersecting_polygons(PathfindingState *s) {
 
 	return 0;
 }
+#endif
 
 /**
  * Computes a shortest path from vertex_start to vertex_end. The caller can
@@ -1731,11 +1791,13 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 
 		p = convert_polygon_set(s, poly_list, start, end, opt);
 
+#ifdef OLD_PATHFINDING
 		if (p && intersecting_polygons(p)) {
 			warning("[avoidpath] input set contains (self-)intersecting polygons");
 			delete p;
 			p = NULL;
 		}
+#endif
 
 		if (!p) {
 			byte *oref;
