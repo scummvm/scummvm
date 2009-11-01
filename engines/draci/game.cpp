@@ -195,7 +195,7 @@ void Game::init() {
 	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0, 0);
 	speechAnim->addFrame(speech, NULL);
 
-	// Initialize inventory animation
+	// Initialize inventory animation.  _iconsArchive is never flushed.
 	const BAFile *f = _vm->_iconsArchive->getFile(13);
 	Animation *inventoryAnim = _vm->_anims->addAnimation(kInventorySprite, 255, false);
 	Sprite *inventorySprite = new Sprite(f->_data, f->_length, 0, 0, true);
@@ -669,6 +669,7 @@ void Game::putItem(int itemID, int position) {
 	Animation *anim = _vm->_anims->getAnimation(anim_id);
 	if (!anim) {
 		anim = _vm->_anims->addItem(anim_id, false);
+		// _itemImagesArchive is never flushed.
 		const BAFile *img = _vm->_itemImagesArchive->getFile(2 * itemID);
 		Sprite *sp = new Sprite(img->_data, img->_length, 0, 0, true);
 		anim->addFrame(sp, NULL);
@@ -1129,8 +1130,9 @@ int Game::loadAnimation(uint animNum, uint z) {
 		uint freq = animationReader.readUint16LE();
 		uint delay = animationReader.readUint16LE();
 
+		// _spritesArchive is flushed when entering a room.  All
+		// scripts in a room are responsible for loading their animations.
 		const BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
-
 		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, true);
 
 		// Some frames set the scaled dimensions to 0 even though other frames
@@ -1219,14 +1221,14 @@ void Game::loadOverlays() {
 		y = overlayReader.readUint16LE();
 		z = overlayReader.readByte();
 
+		// _overlaysArchive is flushed when entering a room and this
+		// code is called after the flushing has been done.
 		const BAFile *overlayFile;
 		overlayFile = _vm->_overlaysArchive->getFile(num);
 		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, true);
 
 		_vm->_anims->addOverlay(sp, z);
 	}
-
-	_vm->_overlaysArchive->clearCache();
 
 	_vm->_screen->getSurface()->markDirty();
 }
@@ -1274,6 +1276,7 @@ void Game::enterNewRoom(bool force_reload) {
 	_vm->_walkingMapsArchive->clearCache();
 	_vm->_soundsArchive->clearCache();
 	_vm->_dubbingArchive->clearCache();
+	_vm->_overlaysArchive->clearCache();
 
 	_vm->_screen->clearScreen();
 
