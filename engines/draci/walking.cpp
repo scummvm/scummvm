@@ -23,6 +23,8 @@
  *
  */
 
+#include <stdlib.h>
+
 #include "common/stream.h"
 
 #include "draci/walking.h"
@@ -46,19 +48,17 @@ void WalkingMap::load(const byte *data, uint length) {
 	_data = data + mapReader.pos();
 }
 
-bool WalkingMap::isWalkable(int x, int y) const {
-	// Convert to map pixels
-	x = x / _deltaX;
-	y = y / _deltaY;
-
-	int pixelIndex = _mapWidth * y + x;
-	int byteIndex = pixelIndex / 8;
-	int mapByte = _data[byteIndex];
-
-	return mapByte & (1 << pixelIndex % 8);
+bool WalkingMap::getPixel(int x, int y) const {
+	const byte *pMapByte = _data + _byteWidth * y + x / 8;
+	return *pMapByte & (1 << x % 8);
 }
 
-Sprite *WalkingMap::constructDrawableOverlay() {
+bool WalkingMap::isWalkable(int x, int y) const {
+	// Convert to map pixels
+	return getPixel(x / _deltaX, y / _deltaY);
+}
+
+Sprite *WalkingMap::constructDrawableOverlay() const {
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[kScreenWidth * kScreenHeight];
 	memset(wlk, 255, kScreenWidth * kScreenHeight);
@@ -180,6 +180,151 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 		// If the current ellipse has been reshaped into a circle,
 		// end this loop and enlarge the radius
 		} while (x <= y);
+	}
+}
+
+int WalkingMap::kDirections[][2] = { {0, -1}, {0, +1}, {-1, 0}, {+1, 0} };
+
+bool WalkingMap::findShortestPath(int x1, int y1, int x2, int y2, WalkingMap::Path *path) const {
+	// Round the positions to map squares.
+	x1 /= _deltaX;
+	x2 /= _deltaX;
+	y1 /= _deltaY;
+	y2 /= _deltaY;
+
+	// Allocate buffers for breadth-first search.  The buffer of points for
+	// exploration should be large enough.
+	int8 *cameFrom = new int8[_mapWidth * _mapHeight];
+	const int bufSize = 4 * _realHeight;
+	PathVertex *toSearch = new PathVertex[bufSize];
+
+	// Insert the starting point as a single seed.
+	int toRead = 0, toWrite = 0;
+	memset(cameFrom, -1, _mapWidth * _mapHeight);	// -1 = not found yet
+	cameFrom[y1 * _mapWidth + x1] = 0;
+	toSearch[toWrite++] = PathVertex(x1, y1);
+
+	// Search until we empty the whole buffer (not found) or find the
+	// destination point.
+	while (toRead != toWrite) {
+		const PathVertex &here = toSearch[toRead];
+		const int from = cameFrom[here.y * _mapWidth + here.x];
+		if (here.x == x2 && here.y == y2) {
+			break;
+		}
+		// Look into all 4 directions in a particular order depending
+		// on the direction we came to this point from.  This is to
+		// ensure that among many paths of the same length, the one
+		// with the smallest number of turns is preferred.
+		for (int addDir = 0; addDir < 4; ++addDir) {
+			const int probeDirection = (from + addDir) % 4;
+			const int x = here.x + kDirections[probeDirection][0];
+			const int y = here.y + kDirections[probeDirection][1];
+			if (x < 0 || x >= _mapWidth || y < 0 || y >= _mapHeight) {
+				continue;
+			}
+			// If this point is walkable and we haven't seen it
+			// yet, record how we have reached it and insert it
+			// into the round buffer for exploration.
+			if (getPixel(x, y) && cameFrom[y * _mapWidth + x] == -1) {
+				cameFrom[y * _mapWidth + x] = probeDirection;
+				toSearch[toWrite++] = PathVertex(x, y);
+				toWrite %= bufSize;
+			}
+		}
+		++toRead;
+		toRead %= bufSize;
+	}
+
+	// The path doesn't exist.
+	if (toRead == toWrite) {
+		return false;
+	}
+
+	// Trace the path back and store it.  Count the path length, resize the
+	// output array, and then track the pack from the end.
+	path->clear();
+	int length = 0;
+	for (int pass = 0; pass < 2; ++pass) {
+		int x = x2, y = y2;
+		int index = 0;
+		while (1) {
+			++index;
+			if (pass == 1) {
+				(*path)[length - index] = PathVertex(x, y);
+			}
+			if (x == x1 && y == y1) {
+				break;
+			}
+			const int from = cameFrom[y * _mapWidth + x];
+			x -= kDirections[from][0];
+			y -= kDirections[from][1];
+		}
+		if (pass == 0) {
+			length = index;
+			path->resize(length);
+		}
+	}
+
+	delete[] cameFrom;
+	delete[] toSearch;
+
+	return true;
+}
+
+void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obliquedPath) const {
+	// Prune the path to only contain vertices where the direction is changing.
+	obliquedPath->clear();
+	obliquedPath->push_back(path[0]);
+	uint index = 1;
+	while (index < path.size()) {
+		// index1 points to the last vertex inserted into the
+		// simplified path.
+		uint index1 = index - 1;
+		// Probe the vertical direction.  Notice that the shortest path
+		// never turns by 180 degrees and therefore it is sufficient to
+		// test that the X coordinates are equal.
+		while (index < path.size() && path[index].x == path[index1].x) {
+			++index;
+		}
+		if (index - 1 > index1) {
+			index1 = index - 1;
+			obliquedPath->push_back(path[index1]);
+		}
+		// Probe the horizontal direction.
+		while (index < path.size() && path[index].y == path[index1].y) {
+			++index;
+		}
+		if (index - 1 > index1) {
+			index1 = index - 1;
+			obliquedPath->push_back(path[index1]);
+		}
+	}
+
+	// Making the path oblique works as follows.  If the path has at least
+	// 3 remaining vertices, we try to oblique the L-shaped path between
+	// them.  If this can be done (i.e., all points on the line between the
+	// 1st and 3rd point are walkable), we remove the 2nd vertex (now the
+	// path will go directly from the 1st vertex to the 3rd one), and
+	// continue obliqueing from the same index, otherwise we leave the
+	// first edge (going from the 1st vertex to the 2nd one) as is, move
+	// the index to the 2nd vertex, and continue.
+	for (uint head = 2; head < obliquedPath->size(); ++head) {
+		const PathVertex &v1 = (*obliquedPath)[head-2];
+		const PathVertex &v3 = (*obliquedPath)[head];
+		const int steps = MAX(abs(v3.x - v1.x), abs(v3.y - v1.y));
+		bool allPointsOk = true;
+		for (int step = 1; step < steps; ++step) {
+			const int x = (v1.x * step + v3.x * (steps-step)) / steps;
+			const int y = (v1.y * step + v3.y * (steps-step)) / steps;
+			if (!getPixel(x, y)) {
+				allPointsOk = false;
+				break;
+			}
+		}
+		if (allPointsOk) {
+			obliquedPath->remove_at(--head);
+		}
 	}
 }
 

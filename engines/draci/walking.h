@@ -26,11 +26,18 @@
 #ifndef DRACI_WALKING_H
 #define DRACI_WALKING_H
 
+#include "common/array.h"
 #include "common/rect.h"
 
 namespace Draci {
 
 class Sprite;
+
+struct PathVertex {
+	PathVertex() {}
+	PathVertex(int xx, int yy) : x(xx), y(yy) {}
+	int x, y;
+};
 
 class WalkingMap {
 public:
@@ -38,9 +45,17 @@ public:
 		_mapWidth(0), _mapHeight(0), _byteWidth(0), _data(NULL) { }
 
 	void load(const byte *data, uint length);
+
+	bool getPixel(int x, int y) const;
 	bool isWalkable(int x, int y) const;
-	Sprite *constructDrawableOverlay();
+
+	Sprite *constructDrawableOverlay() const;
 	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
+
+	typedef Common::Array<PathVertex> Path;
+	bool findShortestPath(int x1, int y1, int x2, int y2, Path *path) const;
+
+	void obliquePath(const Path& path, Path *obliquedPath) const;
 
 private:
 	int _realWidth, _realHeight;
@@ -50,6 +65,9 @@ private:
 
 	// We don't own the pointer.  It points to the BArchive cache for this room.
 	const byte *_data;
+
+	// 4 possible directions to walk from a pixel.
+	static int kDirections[][2];
 };
 
 /*
