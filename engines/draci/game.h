@@ -159,17 +159,17 @@ struct Room {
 };
 
 enum LoopStatus {
-	kStatusOrdinary,
-	kStatusGate,
-	kStatusInventory,
-	kStatusDialogue
+	kStatusOrdinary,	// normal game-play: everything allowed
+	kStatusGate,		// during running init-scripts when entering a room: disable interactivity
+	kStatusInventory,	// inventory is open: cannot change the room or go to map
+	kStatusDialogue		// during a dialogue: cannot change the room, go to inventory
 };
 
 enum LoopSubstatus {
-	kSubstatusOrdinary,
-	kSubstatusTalk,
-	kSubstatusFade,
-	kSubstatusStrange
+	kSubstatusOrdinary,	// outer loop: everything is allowed
+	kSubstatusTalk,		// playing a voice: inner loop will exit afterwards
+	kSubstatusFade,		// fading a palette: inner loop will exit when done
+	kSubstatusStrange	// other inner loop: either immediately exiting or waiting for an animation to end (whose callback ends the loop)
 };
 
 class Game {

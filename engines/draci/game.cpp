@@ -242,8 +242,9 @@ void Game::init() {
 
 void Game::loop() {
 	// Can run both as an outer and inner loop.  In both mode it updates
-	// the screen according to the timer.  It the outer mode it also reacts
-	// to user events.  In the inner mode, the loop runs until its stopping
+	// the screen according to the timer.  It the outer mode
+	// (kSubstatusOrdinary) it also reacts to user events.  In the inner
+	// mode (all other kSubstatus* enums), the loop runs until its stopping
 	// condition, possibly stopping earlier if the user interrupts it,
 	// however no other user intervention is allowed.
 	Surface *surface = _vm->_screen->getSurface();
@@ -303,6 +304,8 @@ void Game::loop() {
 			updateCursor();
 			updateTitle();
 
+			// During the normal game-play, in particular not when
+			// running the init-scripts, enable interactivity.
 			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kSubstatusOrdinary) {
 				if (_vm->_mouse->lButtonPressed()) {
 					_vm->_mouse->lButtonSet(false);
