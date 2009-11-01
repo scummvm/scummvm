@@ -670,23 +670,20 @@ void SciGui::baseSetter(reg_t object) {
 		int16 z = (_s->_kernel->_selectorCache.z > -1) ? GET_SEL32V(_s->_segMan, object, z) : 0;
 		int16 yStep = GET_SEL32V(_s->_segMan, object, yStep);
 		GuiResourceId viewId = GET_SEL32V(_s->_segMan, object, view);
-		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
-		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
+		GuiViewLoopNo loopNo = GET_SEL32V(_s->_segMan, object, loop);
+		GuiViewCelNo celNo = GET_SEL32V(_s->_segMan, object, cel);
 
 		SciGuiView *tmpView = _gfx->getView(viewId);
-		sciViewCelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
-		int16 left = x + celInfo->displaceX - (celInfo->width >> 1);
-		int16 right = left + celInfo->width;
-		int16 bottom = y + celInfo->displaceY - z + 1;
-		int16 top = bottom - yStep;
+		Common::Rect celRect;
 
-		debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
-				x, y, celInfo->displaceX, celInfo->displaceY, celInfo->width, celInfo->height, left, top, bottom, right);
+		tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
+		celRect.bottom = y + 1;
+		celRect.top = celRect.bottom - yStep;
 
-		PUT_SEL32V(_s->_segMan, object, brLeft, left);
-		PUT_SEL32V(_s->_segMan, object, brRight, right);
-		PUT_SEL32V(_s->_segMan, object, brTop, top);
-		PUT_SEL32V(_s->_segMan, object, brBottom, bottom);
+		PUT_SEL32V(_s->_segMan, object, brLeft, celRect.left);
+		PUT_SEL32V(_s->_segMan, object, brRight, celRect.right);
+		PUT_SEL32V(_s->_segMan, object, brTop, celRect.top);
+		PUT_SEL32V(_s->_segMan, object, brBottom, celRect.bottom);
 	}
 }
 
