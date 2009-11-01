@@ -478,6 +478,47 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
+	// Special case for developer mode of this tool:
+	// With "--create filename offset size" the tool will output
+	// a search entry for the specifed data in the specified file.
+	if (!strcmp(argv[1], "--create")) {
+		if (argc < 5) {
+			printf("Developer usage: %s --create input_file hex_offset hex_size\n", argv[0]);
+			return -1;
+		}
+
+		uint offset, size;
+		sscanf(argv[3], "%x", &offset);
+		sscanf(argv[4], "%x", &size);
+
+		FILE *input = fopen(argv[2], "rb");
+		if (!input)
+			error("Couldn't open file '%s'", argv[2]);
+
+		byte *buffer = new byte[size];
+		fseek(input, offset, SEEK_SET);
+		if (fread(buffer, 1, size, input) != size) {
+			delete[] buffer;
+			error("Couldn't read from file '%s'", argv[2]);
+		}
+
+		fclose(input);
+
+		SearchData d = SearchCreator::create(buffer, size);
+		delete[] buffer;
+
+		printf("{ 0x%.08X, 0x%.08X, { {", d.size, d.byteSum);
+		for (int j = 0; j < 16; ++j) {
+			printf(" 0x%.2X", d.hash.digest[j]);
+			if (j != 15)
+				printf(",");
+			else
+				printf(" } } }\n");
+		}
+
+		return 0;
+	}
+
 	PAKFile out;
 	out.loadFile(argv[1], false);
 
