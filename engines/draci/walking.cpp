@@ -28,7 +28,6 @@
 #include "common/stream.h"
 
 #include "draci/walking.h"
-#include "draci/screen.h"
 #include "draci/sprite.h"
 
 namespace Draci {
@@ -58,20 +57,20 @@ bool WalkingMap::isWalkable(int x, int y) const {
 	return getPixel(x / _deltaX, y / _deltaY);
 }
 
-Sprite *WalkingMap::constructDrawableOverlay() const {
+Sprite *WalkingMap::newOverlayFromMap() const {
 	// HACK: Create a visible overlay from the walking map so we can test it
-	byte *wlk = new byte[kScreenWidth * kScreenHeight];
-	memset(wlk, 255, kScreenWidth * kScreenHeight);
+	byte *wlk = new byte[_realWidth * _realHeight];
+	memset(wlk, 255, _realWidth * _realHeight);
 
-	for (uint i = 0; i < kScreenWidth; ++i) {
-		for (uint j = 0; j < kScreenHeight; ++j) {
-			if (isWalkable(i, j)) {
-				wlk[j * kScreenWidth + i] = 2;
+	for (int i = 0; i < _mapWidth; ++i) {
+		for (int j = 0; j < _mapHeight; ++j) {
+			if (getPixel(i, j)) {
+				drawOverlayRectangle(i, j, 2, wlk);
 			}
 		}
 	}
 
-	Sprite *ov = new Sprite(kScreenWidth, kScreenHeight, wlk, 0, 0, false);
+	Sprite *ov = new Sprite(_realWidth, _realHeight, wlk, 0, 0, false);
 	// ov has taken the ownership of wlk.
 
 	return ov;
@@ -314,9 +313,10 @@ void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obl
 		const PathVertex &v3 = (*obliquedPath)[head];
 		const int steps = MAX(abs(v3.x - v1.x), abs(v3.y - v1.y));
 		bool allPointsOk = true;
+		// Testing only points between (i.e., without the end-points) is OK.
 		for (int step = 1; step < steps; ++step) {
-			const int x = (v1.x * step + v3.x * (steps-step)) / steps;
-			const int y = (v1.y * step + v3.y * (steps-step)) / steps;
+			const int x = (v1.x * (steps-step) + v3.x * step) / steps;
+			const int y = (v1.y * (steps-step) + v3.y * step) / steps;
 			if (!getPixel(x, y)) {
 				allPointsOk = false;
 				break;
@@ -324,6 +324,42 @@ void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obl
 		}
 		if (allPointsOk) {
 			obliquedPath->remove_at(--head);
+		}
+	}
+}
+
+Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour) const {
+	// HACK: Create a visible overlay from the walking map so we can test it
+	byte *wlk = new byte[_realWidth * _realHeight];
+	memset(wlk, 255, _realWidth * _realHeight);
+
+	for (uint segment = 1; segment < path.size(); ++segment) {
+		const PathVertex &v1 = path[segment-1];
+		const PathVertex &v2 = path[segment];
+		const int steps = MAX(abs(v2.x - v1.x), abs(v2.y - v1.y));
+		// Draw only points in the interval [v1, v2).  These half-open
+		// half-closed intervals connect all the way to the last point.
+		for (int step = 0; step < steps; ++step) {
+			const int x = (v1.x * (steps-step) + v2.x * step) / steps;
+			const int y = (v1.y * (steps-step) + v2.y * step) / steps;
+			drawOverlayRectangle(x, y, colour, wlk);
+		}
+	}
+	// Draw the last point.  This works also when the path has no segment,
+	// but just one point.
+	const PathVertex &vLast = path[path.size()-1];
+	drawOverlayRectangle(vLast.x, vLast.y, colour, wlk);
+
+	Sprite *ov = new Sprite(_realWidth, _realHeight, wlk, 0, 0, false);
+	// ov has taken the ownership of wlk.
+
+	return ov;
+}
+
+void WalkingMap::drawOverlayRectangle(int x, int y, byte colour, byte *buf) const {
+	for (int i = 0; i < _deltaX; ++i) {
+		for (int j = 0; j < _deltaY; ++j) {
+			buf[(y * _deltaY + j) * _realWidth + (x * _deltaX + i)] = colour;
 		}
 	}
 }

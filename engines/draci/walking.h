@@ -49,13 +49,13 @@ public:
 	bool getPixel(int x, int y) const;
 	bool isWalkable(int x, int y) const;
 
-	Sprite *constructDrawableOverlay() const;
+	Sprite *newOverlayFromMap() const;
 	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
 
 	typedef Common::Array<PathVertex> Path;
 	bool findShortestPath(int x1, int y1, int x2, int y2, Path *path) const;
-
 	void obliquePath(const Path& path, Path *obliquedPath) const;
+	Sprite *newOverlayFromPath(const Path &path, byte colour) const;
 
 private:
 	int _realWidth, _realHeight;
@@ -68,6 +68,8 @@ private:
 
 	// 4 possible directions to walk from a pixel.
 	static int kDirections[][2];
+
+	void drawOverlayRectangle(int x, int y, byte colour, byte *buf) const;
 };
 
 /*

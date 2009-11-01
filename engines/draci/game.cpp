@@ -1097,7 +1097,7 @@ void Game::loadRoom(int roomNum) {
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
 
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
-	Sprite *ov = _walkingMap.constructDrawableOverlay();
+	Sprite *ov = _walkingMap.newOverlayFromMap();
 	map->addFrame(ov, NULL);
 }
 
