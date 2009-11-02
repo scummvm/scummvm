@@ -155,7 +155,7 @@ int SysVar(int varId) {
 	case SV_SUBTITLES:
 		// FIXME: This isn't currently defined
 		return false;
-		//return bSubtitles;
+		//return _vm->_config->_useSubtitles;
 
 	case SV_SAVED_GAME_EXISTS:
 		return NewestSavedGame() != -1;

@@ -577,7 +577,7 @@ int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 
 		return sz_CMD_PRINT_pkt;
 	} else {
-		if (bSubtitles) {
+		if (_vm->_config->_useSubtitles) {
 			TALK_CMD *pCmd = (TALK_CMD *)(bigBuffer + commandOffset);
 			talkColour = TINSEL_RGB(pCmd->r, pCmd->g, pCmd->b);
 

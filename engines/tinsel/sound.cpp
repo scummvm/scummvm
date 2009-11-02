@@ -111,9 +111,9 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		Audio::AudioStream *vagStream = new Audio::VagStream(_sampleStream.readStream(sampleLen), false, 44100);
 
 		// FIXME: Should set this in a different place ;)
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volSound);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volVoice);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		// Play the audio stream
 		_vm->_mixer->playInputStream(type, &curChan.handle, vagStream);
@@ -127,9 +127,9 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 		// FIXME: Should set this in a different place ;)
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volSound);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volVoice);
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		Common::MemoryReadStream *compressedStream =
 			new Common::MemoryReadStream(sampleBuf, sampleLen, Common::DisposeAfterUse::YES);
@@ -308,9 +308,9 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	}
 
 	// FIXME: Should set this in a different place ;)
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volSound);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
 	//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volVoice);
+	_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 	curChan->sampleNum = id;
 	curChan->subSample = sub;

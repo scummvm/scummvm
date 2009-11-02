@@ -152,12 +152,12 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 		case Common::KEYCODE_LALT:
 		case Common::KEYCODE_RALT:
 			if (evt.type == Common::EVENT_KEYDOWN) {
-				if (!bSwapButtons)
+				if (!_vm->_config->_swapButtons)
 					ProcessButEvent(PLR_DRAG2_START);
 				else
 					ProcessButEvent(PLR_DRAG1_START);
 			} else {
-				if (!bSwapButtons)
+				if (!_vm->_config->_swapButtons)
 					ProcessButEvent(PLR_DRAG1_END);
 				else
 					ProcessButEvent(PLR_DRAG2_END);
@@ -273,7 +273,7 @@ static void SingleLeftProcess(CORO_PARAM, const void *) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// Work out when to wait until
-	_ctx->endTicks = DwGetCurrentTime() + (uint32)dclickSpeed;
+	_ctx->endTicks = DwGetCurrentTime() + (uint32)_vm->_config->_dclickSpeed;
 
 	// Timeout a double click (may not work once every 49 days!)
 	do {
@@ -323,7 +323,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 		switch (type) {
 		case Common::EVENT_LBUTTONDOWN:
 			// left button press
-			if (DwGetCurrentTime() - _ctx->lastLeftClick < (uint32)dclickSpeed) {
+			if (DwGetCurrentTime() - _ctx->lastLeftClick < (uint32)_vm->_config->_dclickSpeed) {
 				// Left button double-click
 
 				if (TinselV2) {
@@ -375,7 +375,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 					g_scheduler->createProcess(PID_BTN_CLICK, SingleLeftProcess, NULL, 0);
 				}
 			} else
-				_ctx->lastLeftClick -= dclickSpeed;
+				_ctx->lastLeftClick -= _vm->_config->_dclickSpeed;
 
 			if (TinselV2)
 				// Signal left drag end
@@ -388,7 +388,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 		case Common::EVENT_RBUTTONDOWN:
 			// right button press
 
-			if (DwGetCurrentTime() - _ctx->lastRightClick < (uint32)dclickSpeed) {
+			if (DwGetCurrentTime() - _ctx->lastRightClick < (uint32)_vm->_config->_dclickSpeed) {
 				// Right button double-click
 				if (TinselV2) {
 					PlayerEvent(PLR_NOEVENT, clickPos);
@@ -424,7 +424,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 			if (_ctx->lastRWasDouble == false)
 				_ctx->lastRightClick = DwGetCurrentTime();
 			else
-				_ctx->lastRightClick -= dclickSpeed;
+				_ctx->lastRightClick -= _vm->_config->_dclickSpeed;
 
 			if (TinselV2)
 				// Signal left drag end
@@ -820,6 +820,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 		Engine(syst), _gameDescription(gameDesc) {
 	_vm = this;
 
+	_config = new Config(this);
+
 	// Register debug flags
 	Common::addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
 	Common::addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
@@ -894,6 +896,8 @@ TinselEngine::~TinselEngine() {
 	FreeGlobals();
 	delete _scheduler;
 
+	delete _config;
+
 	MemoryDeinit();
 }
 
@@ -940,7 +944,7 @@ Common::Error TinselEngine::run() {
 	MemoryInit();
 
 	// load user configuration
-	ReadConfig();
+	_vm->_config->readFromDisk();
 
 #if 1
 	// FIXME: The following is taken from RestartGame().
@@ -958,7 +962,7 @@ Common::Error TinselEngine::run() {
 #endif
 
 	// Load in text strings
-	ChangeLanguage(g_language);
+	ChangeLanguage(_vm->_config->_language);
 
 	// Init palette and object managers, scheduler, keyboard and mouse
 	RestartDrivers();
@@ -1030,7 +1034,7 @@ Common::Error TinselEngine::run() {
 	}
 
 	// Write configuration
-	WriteConfig();
+	_vm->_config->writeToDisk();
 
 	return Common::kNoError;
 }
@@ -1172,7 +1176,7 @@ void TinselEngine::RestartDrivers() {
 	}
 
 	// Set midi volume
-	SetMidiVolume(volMusic);
+	SetMidiVolume(_vm->_config->_musicVolume);
 }
 
 /**

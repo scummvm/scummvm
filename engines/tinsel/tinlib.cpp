@@ -402,10 +402,10 @@ void SetTextPal(COLORREF col) {
 static int TextTime(char *pTstring) {
 	if (isJapanMode())
 		return JAP_TEXT_TIME;
-	else if (!speedText)
+	else if (!_vm->_config->_textSpeed)
 		return strlen(pTstring) + ONE_SECOND;
 	else
-		return strlen(pTstring) + ONE_SECOND + (speedText * 5 * ONE_SECOND) / 100;
+		return strlen(pTstring) + ONE_SECOND + (_vm->_config->_textSpeed * 5 * ONE_SECOND) / 100;
 }
 
 /**
@@ -1680,7 +1680,7 @@ static void PlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, int m
 		return;
 	}
 
-	if (volSound != 0 && _vm->_sound->sampleExists(sample)) {
+	if (_vm->_config->_soundVolume != 0 && _vm->_sound->sampleExists(sample)) {
 		_vm->_sound->playSample(sample, Audio::Mixer::kSFXSoundType, &_ctx->handle);
 
 		if (bComplete) {
@@ -1728,7 +1728,7 @@ static void PlaySample(CORO_PARAM, int sample, int x, int y, int flags, int myEs
 	if (_ctx->myEscape && _ctx->myEscape != GetEscEvents())
 		return;
 
-	if (volSound != 0 && _vm->_sound->sampleExists(sample)) {
+	if (_vm->_config->_soundVolume != 0 && _vm->_sound->sampleExists(sample)) {
 		if (x == 0)
 			x = -1;
 
@@ -1884,7 +1884,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 	if (!TinselV2) {
 		// Kick off the voice sample
-		if (volVoice != 0 && _vm->_sound->sampleExists(text)) {
+		if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(text)) {
 			_vm->_sound->playSample(text, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
 			_ctx->bSample = _vm->_mixer->isSoundHandleActive(_ctx->handle);
 		}
@@ -1922,7 +1922,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		if (IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
-	} else if (bJapDoPrintText || (!isJapanMode() && (bSubtitles || !_ctx->bSample))) {
+	} else if (bJapDoPrintText || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
 		PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(coroParam, GetPlayfieldList(FIELD_STATUS), TextBufferAddr(),
@@ -1980,7 +1980,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 			if (_ctx->bSample) {
 				// Wait for sample to end whether or not
 				if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-					if (_ctx->pText == NULL || speedText == DEFTEXTSPEED)				{
+					if (_ctx->pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED)				{
 						// No text or speed modification - just depends on sample
 						break;
 					} else {
@@ -2080,7 +2080,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		}
 
 		// Display the text and set it's Z position
-		if (event == POINTED || (!isJapanMode() && (bSubtitles || !_ctx->bSample))) {
+		if (event == POINTED || (!isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 			int	xshift;
 
 			// Get the text string
@@ -2182,7 +2182,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					if (_ctx->bSample) {
 						// Wait for sample to end whether or not
 						if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-							if (_ctx->pText == NULL || speedText == DEFTEXTSPEED) {
+							if (_ctx->pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED) {
 								// No text or speed modification - just depends on sample
 								break;
 							} else {
@@ -2286,7 +2286,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 
 	CORO_BEGIN_CODE(_ctx);
 		// Kick off the voice sample
-		if (volVoice != 0 && _vm->_sound->sampleExists(text)) {
+		if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(text)) {
 			_vm->_sound->playSample(text, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
 			_ctx->bSample = _vm->_mixer->isSoundHandleActive(_ctx->handle);
 		} else
@@ -2317,7 +2317,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 			if (_ctx->bSample) {
 				// Wait for sample to end whether or not
 				if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-					if (pText == NULL || speedText == DEFTEXTSPEED) {
+					if (pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED) {
 						// No text or speed modification - just depends on sample
 						break;
 					} else {
@@ -3013,10 +3013,7 @@ static void Subtitles(int onoff) {
 	if (isJapanMode())
 		return;	// Subtitles are always off in JAPAN version (?)
 
-	if (onoff == ST_ON)
-		bSubtitles = true;
-	else
-		bSubtitles = false;
+	_vm->_config->_useSubtitles = (onoff == ST_ON);
 }
 
 /**
@@ -3249,7 +3246,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	/*
 	 * Kick off the voice sample
 	 */
-	if (volVoice != 0 && _vm->_sound->sampleExists(hText)) {
+	if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(hText)) {
 		if (!TinselV2) {
 			_vm->_sound->playSample(hText, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
 			_ctx->bSamples = _vm->_mixer->isSoundHandleActive(_ctx->handle);
@@ -3310,7 +3307,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 
 		if (isJapanMode()) {
 			_ctx->ticks = JAP_TEXT_TIME;
-		} else if (bSubtitles || !_ctx->bSample) {
+		} else if (_vm->_config->_useSubtitles || !_ctx->bSample) {
 			/*
 			 * Work out where to display the text
 			 */
@@ -3427,7 +3424,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if (_ctx->bSample) {
 				// Wait for sample to end whether or not
 				if (!_vm->_mixer->isSoundHandleActive(_ctx->handle)) {
-					if (_ctx->pText == NULL || speedText == DEFTEXTSPEED) {
+					if (_ctx->pText == NULL || _vm->_config->_textSpeed == DEFTEXTSPEED) {
 						// No text or speed modification - just depends on sample
 						break;
 					} else {
@@ -3505,7 +3502,7 @@ static void TalkAt(CORO_PARAM, int actor, int x, int y, SCNHANDLE text, bool esc
 		if (escOn && myEscape != GetEscEvents())
 			return;
 
-		if (!isJapanMode() && (bSubtitles || !_vm->_sound->sampleExists(text)))
+		if (!isJapanMode() && (_vm->_config->_useSubtitles || !_vm->_sound->sampleExists(text)))
 			SetTextPal(GetActorRGB(actor));
 	}
 

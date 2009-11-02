@@ -101,7 +101,7 @@ void AllowDclick(CORO_PARAM, PLR_EVENT be) {
 	CORO_BEGIN_CODE(_ctx);
 	if (be == PLR_SLEFT) {
 		GetToken(TOKEN_LEFT_BUT);
-		CORO_SLEEP(dclickSpeed+1);
+		CORO_SLEEP(_vm->_config->_dclickSpeed+1);
 		FreeToken(TOKEN_LEFT_BUT);
 
 		// Prevent activation of 2 events on the same tick
@@ -329,7 +329,7 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
  * ProcessButEvent
  */
 void ProcessButEvent(PLR_EVENT be) {
-	if (bSwapButtons) {
+	if (_vm->_config->_swapButtons) {
 		switch (be) {
 		case PLR_SLEFT:
 			be = PLR_SRIGHT;

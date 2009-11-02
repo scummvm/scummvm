@@ -184,8 +184,8 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	// TODO: Maybe this should be moved to a better place...
 	if (TinselV1PSX) return false;
 
-	if (volMusic != 0) {
-		SetMidiVolume(volMusic);
+	if (_vm->_config->_musicVolume != 0) {
+		SetMidiVolume(_vm->_config->_musicVolume);
 	}
 
 	// the index and length of the last tune loaded
@@ -317,7 +317,7 @@ bool StopMidi() {
  * Gets the volume of the MIDI music.
  */
 int GetMidiVolume() {
-	return volMusic;
+	return _vm->_config->_musicVolume;
 }
 
 static int priorVolMusic = 0;
@@ -963,9 +963,9 @@ void RestoreMidiFacts(SCNHANDLE	Midi, bool Loop) {
 	currentMidi = Midi;
 	currentLoop = Loop;
 
-	if (volMusic != 0 && Loop) {
+	if (_vm->_config->_musicVolume != 0 && Loop) {
 		PlayMidiSequence(currentMidi, true);
-		SetMidiVolume(volMusic);
+		SetMidiVolume(_vm->_config->_musicVolume);
 	}
 }
 

@@ -36,18 +36,30 @@ enum {
 	DEFTEXTSPEED		= 0
 };
 
-extern int dclickSpeed;
-extern int volMusic;
-extern int volSound;
-extern int volVoice;
-extern int speedText;
-extern int bSubtitles;
-extern int bSwapButtons;
-extern LANGUAGE g_language;
-extern int bAmerica;
+class TinselEngine;
 
-void WriteConfig();
-void ReadConfig();
+class Config {
+private:
+	TinselEngine *_vm;
+
+public:
+	int _dclickSpeed;
+	int _musicVolume;
+	int _soundVolume;
+	int _voiceVolume;
+	int _textSpeed;
+	int _useSubtitles;
+	int _swapButtons;
+	LANGUAGE _language;
+	int _isAmericanEnglishVersion;
+
+public:
+	Config(TinselEngine *vm);
+
+	void writeToDisk();
+	void readFromDisk();
+};
+
 
 extern bool isJapanMode();
 
