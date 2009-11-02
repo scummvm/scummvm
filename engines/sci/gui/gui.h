@@ -48,6 +48,7 @@ class SciGuiGfx;
 class SciGuiWindowMgr;
 class SciGuiAnimate;
 class SciGuiControls;
+class SciGuiMenu;
 class SciGuiText;
 class SciGuiTransitions;
 class SciGui32; // for debug purposes
@@ -79,8 +80,12 @@ public:
 	virtual void textColors(int argc, reg_t *argv);
 
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
-	virtual void drawMenuBar();
-	virtual void clearMenuBar();
+	virtual void drawMenuBar(bool clear);
+	virtual void menuAdd(Common::String title, Common::String content, reg_t entriesBase);
+	virtual void menuSet(int argc, reg_t *argv);
+	virtual reg_t menuGet(uint16 menuId, uint16 itemId, uint16 attributeId);
+	virtual reg_t menuSelect(reg_t eventObject);
+
 	virtual void drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	virtual void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight = -1);
 	virtual void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
@@ -159,6 +164,7 @@ private:
 	SciGuiWindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
 	SciGuiControls *_controls;
+	SciGuiMenu *_menu;
 	SciGuiText *_text;
 	SciGuiTransitions *_transitions;
 // 	SciGui32 *_gui32; // for debug purposes

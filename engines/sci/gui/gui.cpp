@@ -37,6 +37,7 @@
 #include "sci/gui/gui_windowmgr.h"
 #include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_controls.h"
+#include "sci/gui/gui_menu.h"
 #include "sci/gui/gui_text.h"
 #include "sci/gui/gui_transitions.h"
 #include "sci/gui/gui_view.h"
@@ -61,6 +62,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
 	_windowMgr = new SciGuiWindowMgr(this, _screen, _gfx, _text);
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
+	_menu = new SciGuiMenu(_gfx, _text, _screen);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
@@ -301,13 +303,27 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_gfx->SetPort(oldPort);
 }
 
-void SciGui::drawMenuBar() {
-	// TODO: Implement menubar
-	warning("TODO: drawMenuBar()");
+void SciGui::drawMenuBar(bool clear) {
+	if (!clear) {
+		warning("TODO: drawMenuBar()");
+	} else {
+		drawStatus("", 0, 0);
+	}
 }
 
-void SciGui::clearMenuBar() {
-	drawStatus("", 0, 0);
+void SciGui::menuAdd(Common::String title, Common::String content, reg_t entriesBase) {
+	warning("menuAdd");
+}
+
+void SciGui::menuSet(int argc, reg_t *argv) {
+}
+
+reg_t SciGui::menuGet(uint16 menuId, uint16 itemId, uint16 attributeId) {
+	return NULL_REG;
+}
+
+reg_t SciGui::menuSelect(reg_t eventObject) {
+	return NULL_REG;
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

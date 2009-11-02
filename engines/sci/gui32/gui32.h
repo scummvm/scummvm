@@ -59,8 +59,12 @@ public:
 	void textColors(int argc, reg_t *argv);
 
 	void drawStatus(const char *text, int16 colorPen, int16 colorBack);
-	void drawMenuBar();
-	void clearMenuBar();
+	void drawMenuBar(bool clear);
+	void menuAdd(Common::String title, Common::String content, reg_t entriesBase);
+	void menuSet(int argc, reg_t *argv);
+	reg_t menuGet(uint16 menuId, uint16 itemId, uint16 attributeId);
+	reg_t menuSelect(reg_t eventObject);
+
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight = -1);
 	void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);

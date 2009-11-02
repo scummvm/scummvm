@@ -37,6 +37,7 @@
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
+#include "sci/gfx/menubar.h"
 #include "sci/gui32/gui32.h"
 #include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
@@ -814,16 +815,287 @@ void SciGui32::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	gfxop_update(_s->gfx_state);
 }
 
-void SciGui32::drawMenuBar() {
-	sciw_set_menubar(_s, _s->titlebar_port, _s->_menubar, -1);
+void SciGui32::drawMenuBar(bool clear) {
+	if (!clear) {
+		sciw_set_menubar(_s, _s->titlebar_port, _s->_menubar, -1);
+	} else {
+		sciw_set_status_bar(_s, _s->titlebar_port, "", 0, 0);
+	}
 	_s->titlebar_port->draw(Common::Point(0, 0));
 	gfxop_update(_s->gfx_state);
 }
 
-void SciGui32::clearMenuBar() {
-	sciw_set_status_bar(_s, _s->titlebar_port, "", 0, 0);
-	_s->titlebar_port->draw(Common::Point(0, 0));
+void SciGui32::menuAdd(Common::String title, Common::String content, reg_t entriesBase) {
+	int titlebarFont = _s->titlebar_port->_font;
+
+	_s->_menubar->addMenu(_s->gfx_state, title, content, titlebarFont, entriesBase);
+}
+
+void SciGui32::menuSet(int argc, reg_t *argv) {
+	int index = argv[0].toUint16();
+	int i = 2;
+
+	while (i < argc) {
+		_s->_menubar->setAttribute(_s, (index >> 8) - 1, (index & 0xff) - 1, argv[i - 1].toUint16(), argv[i]);
+		i += 2;
+	}
+}
+
+reg_t SciGui32::menuGet(uint16 menuId, uint16 itemId, uint16 attributeId) {
+	return _s->_menubar->getAttribute(menuId - 1, itemId - 1, attributeId);
+}
+
+int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
+	int seeker;
+	const int max = menubar->_menus[menu_nr]._items.size();
+	seeker = item_nr + 1;
+
+	while ((seeker < max) && !menubar->itemValid(menu_nr, seeker))
+		++seeker;
+
+	if (seeker != max)
+		return seeker;
+	else
+		return item_nr;
+}
+
+#define MENU_FULL_REDRAW \
+	_s->visual->draw(Common::Point(0, 0)); \
 	gfxop_update(_s->gfx_state);
+
+reg_t SciGui32::menuSelect(reg_t eventObject) {
+	SegManager *segMan = _s->_segMan;
+	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */
+	bool claimed = false;
+	int type = GET_SEL32V(segMan, eventObject, type);
+	int message = GET_SEL32V(segMan, eventObject, message);
+	int modifiers = GET_SEL32V(segMan, eventObject, modifiers);
+	int menu_nr = -1, item_nr = 0;
+	MenuItem *item;
+	int menu_mode = 0; /* Menu is active */
+	int mouse_down = 0;
+
+#ifdef DEBUG_PARSER
+	const int debug_parser = 1;
+#else
+	const int debug_parser = 0;
+#endif
+
+#ifdef INCLUDE_OLDGFX
+	gfxop_set_clip_zone(_s->gfx_state, gfx_rect_fullscreen);
+#endif
+
+	/* Check whether we can claim the event directly as a keyboard or said event */
+	if (type & (SCI_EVT_KEYBOARD | SCI_EVT_SAID)) {
+		int menuc, itemc;
+
+		if ((type == SCI_EVT_KEYBOARD)
+		        && (message == SCI_K_ESC))
+			menu_mode = 1;
+
+		else if ((type == SCI_EVT_SAID) || message) { /* Don't claim 0 keyboard event */
+			debugC(2, kDebugLevelMenu, "Menu: Got %s event: %04x/%04x\n",
+			          ((type == SCI_EVT_SAID) ? "SAID" : "KBD"), message, modifiers);
+
+			for (menuc = 0; menuc < (int)_s->_menubar->_menus.size(); menuc++)
+				for (itemc = 0; itemc < (int)_s->_menubar->_menus[menuc]._items.size(); itemc++) {
+					item = &_s->_menubar->_menus[menuc]._items[itemc];
+
+					debugC(2, kDebugLevelMenu, "Menu: Checking against %s: %04x/%04x (type %d, %s)\n",
+					          !item->_text.empty() ? item->_text.c_str() : "--bar--", item->_key, item->_modifiers,
+					          item->_type, item->_enabled ? "enabled" : "disabled");
+
+					if ((item->_type == MENU_TYPE_NORMAL && item->_enabled)
+					    && ((type == SCI_EVT_KEYBOARD
+					           && item->matchKey(message, modifiers)
+					        )
+					      ||
+					        (type == SCI_EVT_SAID
+					           && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
+					           && said(_s, item->_said, debug_parser) != SAID_NO_MATCH
+					        )
+					       )
+					   ) {
+						/* Claim the event */
+						debugC(2, kDebugLevelMenu, "Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
+						claimed = true;
+						menu_nr = menuc;
+						item_nr = itemc;
+					}
+				}
+		}
+	}
+
+	Common::Point cursorPos = _s->_cursor->getPosition();
+
+	if ((type == SCI_EVT_MOUSE_PRESS) && (cursorPos.y < 10)) {
+		menu_mode = 1;
+		mouse_down = 1;
+	}
+
+	if (menu_mode) {
+		int old_item;
+		int old_menu;
+		Common::Rect portBounds = Common::Rect(4, 9, 200, 50);
+
+#ifdef INCLUDE_OLDGFX
+		GfxPort *port = sciw_new_menu(_s, _s->titlebar_port, _s->_menubar, 0);
+		portBounds = toCommonRect(port->_bounds);
+#endif
+
+		item_nr = -1;
+
+		/* Default to menu 0, unless the mouse was used to generate this effect */
+		if (mouse_down)
+			_s->_menubar->mapPointer(cursorPos, menu_nr, item_nr, portBounds);
+		else
+			menu_nr = 0;
+
+#ifdef INCLUDE_OLDGFX
+		sciw_set_menubar(_s, _s->titlebar_port, _s->_menubar, menu_nr);
+#endif
+
+		MENU_FULL_REDRAW;
+
+		old_item = -1;
+		old_menu = -1;
+
+		while (menu_mode) {
+			sci_event_t ev = gfxop_get_event(_s->gfx_state, SCI_EVT_ANY);
+
+			claimed = false;
+
+			switch (ev.type) {
+			case SCI_EVT_QUIT:
+				quit_vm();
+				return NULL_REG;
+
+			case SCI_EVT_KEYBOARD:
+				switch (ev.data) {
+
+				case SCI_K_ESC:
+					menu_mode = 0;
+					break;
+
+				case SCI_K_ENTER:
+					menu_mode = 0;
+					if ((item_nr >= 0) && (menu_nr >= 0))
+						claimed = true;
+					break;
+
+				case SCI_K_LEFT:
+					if (menu_nr > 0)
+						--menu_nr;
+					else
+						menu_nr = _s->_menubar->_menus.size() - 1;
+
+					item_nr = _menu_go_down(_s->_menubar, menu_nr, -1);
+					break;
+
+				case SCI_K_RIGHT:
+					if (menu_nr < ((int)_s->_menubar->_menus.size() - 1))
+						++menu_nr;
+					else
+						menu_nr = 0;
+
+					item_nr = _menu_go_down(_s->_menubar, menu_nr, -1);
+					break;
+
+				case SCI_K_UP:
+					if (item_nr > -1) {
+
+						do { --item_nr; }
+						while ((item_nr > -1) && !_s->_menubar->itemValid(menu_nr, item_nr));
+					}
+					break;
+
+				case SCI_K_DOWN: {
+					item_nr = _menu_go_down(_s->_menubar, menu_nr, item_nr);
+				}
+				break;
+
+				}
+				break;
+
+			case SCI_EVT_MOUSE_RELEASE:
+				{
+				Common::Point curMousePos = _s->_cursor->getPosition();
+				menu_mode = (curMousePos.y < 10);
+				claimed = !menu_mode && !_s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, portBounds);
+				mouse_down = 0;
+				}
+				break;
+
+			case SCI_EVT_MOUSE_PRESS:
+				mouse_down = 1;
+				break;
+
+			case SCI_EVT_NONE:
+				gfxop_sleep(_s->gfx_state, 2500 / 1000);
+				break;
+			}
+
+			if (mouse_down)
+				_s->_menubar->mapPointer(_s->_cursor->getPosition(), menu_nr, item_nr, portBounds);
+
+			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
+
+#ifdef INCLUDE_OLDGFX
+				sciw_set_menubar(_s, _s->titlebar_port, _s->_menubar, menu_nr);
+
+				delete port;
+
+				port = sciw_new_menu(_s, _s->titlebar_port, _s->_menubar, menu_nr);
+				_s->wm_port->add((GfxContainer *)_s->wm_port, port);
+#endif
+
+				if (item_nr > -1)
+					old_item = -42; /* Enforce redraw in next step */
+				else {
+					MENU_FULL_REDRAW;
+				}
+			} /* ...if the menu changed. */
+
+			/* Remove the active menu item, if neccessary */
+			if (item_nr != old_item) {
+#ifdef INCLUDE_OLDGFX
+				port = sciw_toggle_item(port, &(_s->_menubar->_menus[menu_nr]), old_item, false);
+				port = sciw_toggle_item(port, &(_s->_menubar->_menus[menu_nr]), item_nr, true);
+#endif
+				MENU_FULL_REDRAW;
+			}
+
+			old_item = item_nr;
+			old_menu = menu_nr;
+
+		} /* while (menu_mode) */
+
+		// Clear the menu
+#ifdef INCLUDE_OLDGFX
+		if (port) {
+			delete port;
+			port = NULL;
+		}
+#endif
+
+		_s->_gui->drawMenuBar(true);
+
+		MENU_FULL_REDRAW;
+	}
+
+	if (claimed) {
+		PUT_SEL32(segMan, eventObject, claimed, make_reg(0, 1));
+
+		if (menu_nr > -1) {
+			_s->r_acc = make_reg(0, ((menu_nr + 1) << 8) | (item_nr + 1));
+		} else
+			_s->r_acc = NULL_REG;
+
+		debugC(2, kDebugLevelMenu, "Menu: Claim -> %04x\n", _s->r_acc.offset);
+	} else
+		_s->r_acc = NULL_REG; /* Not claimed */
+
+	return _s->r_acc;
 }
 
 void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
