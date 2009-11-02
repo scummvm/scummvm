@@ -91,15 +91,6 @@ struct GuiAnimateEntry {
 };
 typedef Common::List<GuiAnimateEntry *> GuiAnimateList;
 
-struct GuiCast {
-	uint16 view;
-	uint16 loop;
-	uint16 cel;
-	uint16 z;
-	uint16 pal;
-	Common::Rect rect;
-};
-
 struct GuiColor {
 	byte used;
 	byte r, g, b;
