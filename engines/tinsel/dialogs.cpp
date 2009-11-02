@@ -793,18 +793,18 @@ static CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2Res
 \*-------------------------------------------------------------*/
 
 static CONFBOX t1SoundBox[] = {
-	{ SLIDER, MUSICVOL, TM_NONE, NULL, SIX_MVOL_SLIDER,	142, 25,	Audio::Mixer::kMaxChannelVolume, 2, &_vm->_config->_musicVolume, 0 },
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_SVOL_SLIDER,	142, 25+40,	Audio::Mixer::kMaxChannelVolume, 2, &_vm->_config->_soundVolume, 0 },
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	Audio::Mixer::kMaxChannelVolume, 2, &_vm->_config->_voiceVolume, 0 }
+	{ SLIDER, MUSICVOL, TM_NONE, NULL, SIX_MVOL_SLIDER,	142, 25,	Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_musicVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_SVOL_SLIDER,	142, 25+40,	Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_soundVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_voiceVolume*/, 0 }
 };
 
 static CONFBOX t2SoundBox[] = {
-	{ SLIDER, MUSICVOL, TM_INDEX, NULL, SS_MVOL_SLIDER, 280, 50,      Audio::Mixer::kMaxChannelVolume, 2, &_vm->_config->_musicVolume, 0 },
-	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_SVOL_SLIDER,   280, 50+30,   Audio::Mixer::kMaxChannelVolume, 2, &_vm->_config->_soundVolume, 0 },
-	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_VVOL_SLIDER,   280, 50+2*30, Audio::Mixer::kMaxChannelVolume, 2, &_vm->_config->_voiceVolume, 0 },
+	{ SLIDER, MUSICVOL, TM_INDEX, NULL, SS_MVOL_SLIDER, 280, 50,      Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_musicVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_SVOL_SLIDER,   280, 50+30,   Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_soundVolume*/, 0 },
+	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_VVOL_SLIDER,   280, 50+2*30, Audio::Mixer::kMaxChannelVolume, 2, 0 /*&_vm->_config->_voiceVolume*/, 0 },
 
-	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_TSPEED_SLIDER, 280, 160, 100, 2, &_vm->_config->_textSpeed, 0 },
-	{ TOGGLE2, NOFUNC, TM_INDEX, NULL, SS_STITLE_TOGGLE, 100, 220, BW, BH, &_vm->_config->_useSubtitles, 0 },
+	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_TSPEED_SLIDER, 280, 160, 100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE2, NOFUNC, TM_INDEX, NULL, SS_STITLE_TOGGLE, 100, 220, BW, BH, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 	{ ROTATE, NOFUNC, TM_INDEX, NULL, SS_LANGUAGE_SELECT, 320,220, BW, BH, NULL, 0 }
 };
 
@@ -812,7 +812,6 @@ static CONFINIT t1ciSound	= { 10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1Soun
 static CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox)/sizeof(CONFBOX), SS_SOUND_HEADING };
 
 #define ciSound (TinselV2 ? t2ciSound : t1ciSound)
-#define soundBox (TinselV2 ? t2SoundBox : t1SoundBox)
 
 /*-------------------------------------------------------------*\
 | This is the (mouse) control 'menu'.				|
@@ -821,12 +820,12 @@ static CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBo
 static int bFlipped;	// looks like this is just so the code has something to alter!
 
 static CONFBOX controlBox[] = {
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_DCLICK_SLIDER,	142, 25,	3*DOUBLE_CLICK_TIME, 1, &_vm->_config->_dclickSpeed, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_DCLICK_SLIDER,	142, 25,	3*DOUBLE_CLICK_TIME, 1, 0 /*&_vm->_config->_dclickSpeed*/, 0 },
 	{ FLIP, NOFUNC, TM_NONE, NULL, SIX_DCLICK_TEST,		142, 25+30,	23, 19, &bFlipped, IX1_CIRCLE1 },
 #ifdef JAPAN
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE,	205, 25+70,	23, 19, &_vm->_config->_swapButtons, 0 }
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE,	205, 25+70,	23, 19, 0 /*&_vm->_config->_swapButtons*/, 0 }
 #else
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE,	155, 25+70,	23, 19, &_vm->_config->_swapButtons, 0 }
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_SWAP_TOGGLE,	155, 25+70,	23, 19, 0 /*&_vm->_config->_swapButtons*/, 0 }
 #endif
 };
 
@@ -837,8 +836,8 @@ static CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	ARRAYSIZE(contro
 \*-------------------------------------------------------------*/
 
 static CONFBOX subtitlesBox[] = {
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &_vm->_config->_textSpeed, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &_vm->_config->_useSubtitles, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 };
 
 static CONFBOX subtitlesBox3Flags[] = {
@@ -846,8 +845,8 @@ static CONFBOX subtitlesBox3Flags[] = {
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	85, 118,	56, 32, NULL, FIX_GR },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	155, 118,	56, 32, NULL, FIX_SP },
 
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &_vm->_config->_textSpeed, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &_vm->_config->_useSubtitles, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 
 	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX1_TICK1 },
 	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
@@ -859,8 +858,8 @@ static CONFBOX subtitlesBox4Flags[] = {
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	64, 137,	56, 32, NULL, FIX_IT },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	152, 137,	56, 32, NULL, FIX_SP },
 
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &_vm->_config->_textSpeed, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &_vm->_config->_useSubtitles, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 
 	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX1_TICK1 },
 	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
@@ -874,8 +873,8 @@ static CONFBOX subtitlesBox5Flags[] =	{
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	50, 137,	56, 32, NULL, FIX_IT },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	120, 137,	56, 32, NULL, FIX_SP },
 
-	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &_vm->_config->_textSpeed, 0 },
-	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &_vm->_config->_useSubtitles, 0 },
+	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, 0 /*&_vm->_config->_textSpeed*/, 0 },
+	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, 0 /*&_vm->_config->_useSubtitles*/, 0 },
 
 	{ ARSGBUT, CLANG, TM_NONE, NULL, USE_POINTER,	230, 110,	23, 19, NULL, IX1_TICK1 },
 	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
@@ -3929,10 +3928,29 @@ void OpenMenu(CONFTYPE menuType) {
 	case SOUND_MENU:
 		if (TinselV2)
 			displayedLanguage = TextLanguage();
+#if 1
+		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
+		if (TinselV2) {
+			t2SoundBox[0].ival = &_vm->_config->_musicVolume;
+			t2SoundBox[1].ival = &_vm->_config->_soundVolume;
+			t2SoundBox[2].ival = &_vm->_config->_voiceVolume;
+			t2SoundBox[3].ival = &_vm->_config->_textSpeed;
+			t2SoundBox[4].ival = &_vm->_config->_useSubtitles;
+		} else {
+			t1SoundBox[0].ival = &_vm->_config->_musicVolume;
+			t1SoundBox[1].ival = &_vm->_config->_soundVolume;
+			t1SoundBox[2].ival = &_vm->_config->_voiceVolume;
+		}
+#endif
 		SetMenuGlobals(&ciSound);
 		break;
 
 	case CONTROLS_MENU:
+#if 1
+		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
+		controlBox[0].ival = &_vm->_config->_dclickSpeed;
+		controlBox[2].ival = &_vm->_config->_swapButtons;
+#endif
 		SetMenuGlobals(&ciControl);
 		break;
 
@@ -3962,26 +3980,37 @@ void OpenMenu(CONFTYPE menuType) {
 		FirstEntry(0);
 		break;
 
-	case SUBTITLES_MENU:
+	case SUBTITLES_MENU: {
+		int hackOffset = 0;
 		if (_vm->getFeatures() & GF_USE_3FLAGS) {
+			hackOffset = 3;
 			ciSubtitles.v = 6;
 			ciSubtitles.Box = subtitlesBox3Flags;
 			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox3Flags);
 		} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
+			hackOffset = 4;
 			ciSubtitles.v = 6;
 			ciSubtitles.Box = subtitlesBox4Flags;
 			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox4Flags);
 		} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
+			hackOffset = 5;
 			ciSubtitles.v = 6;
 			ciSubtitles.Box = subtitlesBox5Flags;
 			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox5Flags);
 		} else {
+			hackOffset = 0;
 			ciSubtitles.v = 3;
 			ciSubtitles.Box = subtitlesBox;
 			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox);
 		}
+#if 1
+		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
+		controlBox[hackOffset].ival = &_vm->_config->_textSpeed;
+		controlBox[hackOffset+1].ival = &_vm->_config->_useSubtitles;
+#endif
 
 		SetMenuGlobals(&ciSubtitles);
+		}
 		break;
 
 	case TOP_WINDOW:
