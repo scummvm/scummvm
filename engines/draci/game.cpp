@@ -149,36 +149,24 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 void Game::start() {
 	while (!shouldQuit()) {
-		debugC(1, kDraciGeneralDebugLevel, "Game::start()");
-
-		// Whenever the top-level loop is entered, it should not finish unless
-		// the exit is triggered by a script
-		const bool force_reload = shouldExitLoop() > 1;
-		setExitLoop(false);
-		_vm->_script->endCurrentProgram(false);
-
-		enterNewRoom(force_reload);
-
-		if (_vm->_script->shouldEndProgram()) {
-			// Room changed during the initialization (intro or Escape pressed).
-			continue;
+		if (enterNewRoom()) {
+			// Call the outer loop doing all the hard job.
+			loop(kOuterLoop, false);
 		}
-
-		// Call the outer loop doing all the hard job.
-		loop();
 	}
 }
 
 void Game::init() {
 	setQuit(false);
 	setExitLoop(false);
+	setIsReloaded(false);
 	_scheduledPalette = 0;
 	_fadePhases = _fadePhase = 0;
 	setEnableQuickHero(true);
 	setWantQuickHero(false);
 	setEnableSpeedText(true);
 	setLoopStatus(kStatusGate);
-	setLoopSubstatus(kSubstatusOrdinary);
+	setLoopSubstatus(kOuterLoop);
 
 	_animUnderCursor = kOverlayImage;
 
@@ -240,22 +228,32 @@ void Game::init() {
 	_pushedNewRoom = _pushedNewGate = -1;
 }
 
-void Game::loop() {
+void Game::loop(LoopSubstatus substatus, bool shouldExit) {
+	assert(getLoopSubstatus() == kOuterLoop);
+	setLoopSubstatus(substatus);
+	setExitLoop(shouldExit);
+
 	// Can run both as an outer and inner loop.  In both mode it updates
-	// the screen according to the timer.  It the outer mode
-	// (kSubstatusOrdinary) it also reacts to user events.  In the inner
-	// mode (all other kSubstatus* enums), the loop runs until its stopping
-	// condition, possibly stopping earlier if the user interrupts it,
-	// however no other user intervention is allowed.
+	// the screen according to the timer.  It the outer mode (kOuterLoop)
+	// it also reacts to user events.  In the inner mode (all kInner*
+	// enums), the loop runs until its stopping condition, possibly
+	// stopping earlier if the user interrupts it, however no other user
+	// intervention is allowed.
 	Surface *surface = _vm->_screen->getSurface();
 
+	// Always enter the first pass of the loop, even if shouldExitLoop() is
+	// true, exactly to ensure to make at least one pass.
 	do {
 	debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d",
 		_loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
-		if (shouldExitLoop() > 1)	// after loading
+		if (isReloaded()) {
+			// Cannot continue with the same animation objects,
+			// because the real data structures of the game have
+			// completely been changed.
 			break;
+		}
 
 		if (_fadePhase > 0 && (_vm->_system->getMillis() - _fadeTick) >= kFadingTimeUnit) {
 			_fadeTick = _vm->_system->getMillis();
@@ -263,7 +261,7 @@ void Game::loop() {
 			const byte *startPal = _currentRoom._palette >= 0 ? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data : NULL;
 			const byte *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette())->_data : NULL;
 			_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
-			if (_loopSubstatus == kSubstatusFade && _fadePhase == 0) {
+			if (_loopSubstatus == kInnerWhileFade && _fadePhase == 0) {
 				setExitLoop(true);
 				// Rewrite the palette index of the current
 				// room.  This is necessary when two fadings
@@ -277,7 +275,7 @@ void Game::loop() {
 		int x = _vm->_mouse->getPosX();
 		int y = _vm->_mouse->getPosY();
 
-		if (_loopStatus == kStatusDialogue && _loopSubstatus == kSubstatusOrdinary) {
+		if (_loopStatus == kStatusDialogue && _loopSubstatus == kInnerDuringDialogue) {
 			Text *text;
 			for (int i = 0; i < kDialogueLines; ++i) {
 				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
@@ -306,7 +304,7 @@ void Game::loop() {
 
 			// During the normal game-play, in particular not when
 			// running the init-scripts, enable interactivity.
-			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kSubstatusOrdinary) {
+			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kOuterLoop) {
 				if (_vm->_mouse->lButtonPressed()) {
 					_vm->_mouse->lButtonSet(false);
 
@@ -380,7 +378,7 @@ void Game::loop() {
 				}
 			}
 
-			if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
+			if (_loopStatus == kStatusInventory && _loopSubstatus == kOuterLoop) {
 				if (_inventoryExit) {
 					inventoryDone();
 				}
@@ -455,7 +453,7 @@ void Game::loop() {
 		debugC(5, kDraciLogicDebugLevel, "Anim under cursor: %d", _animUnderCursor);
 
 		// Handle character talking (if there is any)
-		if (_loopSubstatus == kSubstatusTalk) {
+		if (_loopSubstatus == kInnerWhileTalk) {
 			// If the current speech text has expired or the user clicked a mouse button,
 			// advance to the next line of text
 			if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
@@ -467,20 +465,27 @@ void Game::loop() {
 			_vm->_mouse->rButtonSet(false);
 		}
 
+		// A script has scheduled changing the room (either triggered
+		// by the user clicking on something or run at the end of a
+		// gate script in the intro).
+		if ((_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate) && _newRoom != getRoomNum()) {
+			setExitLoop(true);
+		}
+
 		// This returns true if we got a signal to quit the game
-		if (shouldQuit())
-			return;
+		if (shouldQuit()) {
+			setExitLoop(true);
+		}
 
 		// Advance animations and redraw screen
 		_vm->_anims->drawScene(surface);
 		_vm->_screen->copyToScreen();
 		_vm->_system->delayMillis(20);
 
-		// HACK: Won't be needed once the game loop is implemented properly
-		setExitLoop(shouldExitLoop() || (_newRoom != getRoomNum() &&
-		                  (_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate)));
-
 	} while (!shouldExitLoop());
+
+	setLoopSubstatus(kOuterLoop);
+	setExitLoop(false);
 }
 
 void Game::updateCursor() {
@@ -502,7 +507,7 @@ void Game::updateCursor() {
 
 	// If we are in inventory mode, we do a different kind of updating that handles
 	// inventory items and return early
-	if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
+	if (_loopStatus == kStatusInventory && _loopSubstatus == kOuterLoop) {
 		if (_itemUnderCursor != kNoItem) {
 			const GameItem *item = &_items[_itemUnderCursor];
 
@@ -708,7 +713,7 @@ void Game::putItem(int itemID, int position) {
 	// If we are in inventory mode, we need to play the item animation, immediately
 	// upon returning it to its slot but *not* in other modes because it should be
 	// invisible then (along with the inventory)
-	if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
+	if (_loopStatus == kStatusInventory && _loopSubstatus == kOuterLoop) {
 		_vm->_anims->play(anim_id);
 	}
 }
@@ -850,8 +855,7 @@ int Game::dialogueDraw() {
 		// Call the game loop to enable interactivity until the user
 		// selects his choice.
 		_vm->_mouse->cursorOn();
-		setExitLoop(false);
-		loop();
+		loop(kInnerDuringDialogue, false);
 		_vm->_mouse->cursorOff();
 
 		bool notDialogueAnim = true;
@@ -1302,9 +1306,10 @@ int Game::playingObjectAnimation(const GameObject *obj) const {
 	return -1;
 }
 
-void Game::enterNewRoom(bool force_reload) {
-	if (_newRoom == getRoomNum() && !force_reload) {
-		return;
+bool Game::enterNewRoom() {
+	if (_newRoom == getRoomNum() && !isReloaded()) {
+		// If the game has been reloaded, force reloading all animations.
+		return true;
 	}
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
 
@@ -1357,7 +1362,9 @@ void Game::enterNewRoom(bool force_reload) {
 
 	// Set the appropriate loop statu before loading the room
 	setLoopStatus(kStatusGate);
-	setLoopSubstatus(kSubstatusOrdinary);
+	// Reset the flag allowing to run the scripts.  It may have been turned
+	// on by pressing Escape in the intro or in the map room.
+	_vm->_script->endCurrentProgram(false);
 
 	loadRoom(_newRoom);
 	loadOverlays();
@@ -1379,6 +1386,16 @@ void Game::enterNewRoom(bool force_reload) {
 	setLoopStatus(kStatusOrdinary);
 
 	_vm->_mouse->setCursorType(kNormalCursor);
+
+	setIsReloaded(false);
+	if (_vm->_script->shouldEndProgram()) {
+		// Escape pressed during the intro or map animations run in the
+		// init scripts.  This flag was turned on to skip the rest of
+		// those programs.  Return false to make start() rerun us from
+		// the beginning, because the room number has changed.
+		return false;
+	}
+	return true;
 }
 
 void Game::runGateProgram(int gate) {

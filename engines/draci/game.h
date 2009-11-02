@@ -166,10 +166,11 @@ enum LoopStatus {
 };
 
 enum LoopSubstatus {
-	kSubstatusOrdinary,	// outer loop: everything is allowed
-	kSubstatusTalk,		// playing a voice: inner loop will exit afterwards
-	kSubstatusFade,		// fading a palette: inner loop will exit when done
-	kSubstatusStrange	// other inner loop: either immediately exiting or waiting for an animation to end (whose callback ends the loop)
+	kOuterLoop,		// outer loop: everything is allowed
+	kInnerWhileTalk,	// playing a voice: inner loop will exit afterwards
+	kInnerWhileFade,	// fading a palette: inner loop will exit when done
+	kInnerDuringDialogue,	// selecting continuation block: inner block will exit afterwards
+	kInnerUntilExit		// other inner loop: either immediately exiting or waiting for an animation to end (whose callback ends the loop)
 };
 
 class Game {
@@ -179,7 +180,7 @@ public:
 
 	void init();
 	void start();
-	void loop();
+	void loop(LoopSubstatus substatus, bool shouldExit);
 
 	// HACK: this is only for testing
 	int nextRoomNum() const {
@@ -271,9 +272,10 @@ public:
 
 	bool shouldQuit() const { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
-
-	int shouldExitLoop() const { return _shouldExitLoop; }
-	void setExitLoop(int exit) { _shouldExitLoop = exit; }
+	bool shouldExitLoop() const { return _shouldExitLoop; }
+	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
+	bool isReloaded() const { return _isReloaded; }
+	void setIsReloaded(bool value) { _isReloaded = value; }
 
 	void setSpeechTiming(uint tick, uint duration);
 	void shiftSpeechAndFadeTick(int delta);
@@ -318,7 +320,7 @@ public:
 	void DoSync(Common::Serializer &s);
 
 private:
-	void enterNewRoom(bool force_reload);
+	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
 	void loadRoom(int roomNum);
 	void runGateProgram(int gate);
 	void redrawWalkingPath(int id, byte colour, const WalkingMap::Path &path);
@@ -367,7 +369,8 @@ private:
 	LoopSubstatus _loopSubstatus;
 
 	bool _shouldQuit;
-	int _shouldExitLoop;	// 0=false and 1=true are normal, 2=immediate exit after loading
+	bool _shouldExitLoop;
+	bool _isReloaded;
 
 	uint _speechTick;
 	uint _speechDuration;

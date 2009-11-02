@@ -232,7 +232,7 @@ void DraciEngine::handleEvents() {
 				break;
 			case Common::KEYCODE_ESCAPE: {
 				if (_game->getLoopStatus() == kStatusInventory &&
-				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
+				   _game->getLoopSubstatus() == kOuterLoop) {
 					_game->inventoryDone();
 					break;
 				}
@@ -246,6 +246,8 @@ void DraciEngine::handleEvents() {
 					// Schedule room change
 					// TODO: gate 0 is not always the best one for returning from the map
 					_game->scheduleEnteringRoomUsingGate(escRoom, 0);
+
+					// Immediately cancel any running animation or dubbing.
 					_game->setExitLoop(true);
 
 					// End any currently running GPL programs
@@ -278,7 +280,7 @@ void DraciEngine::handleEvents() {
 				break;
 			case Common::KEYCODE_i:
 				if (_game->getRoomNum() == _game->getMapRoom() ||
-				    _game->getLoopSubstatus() != kSubstatusOrdinary) {
+				    _game->getLoopSubstatus() != kOuterLoop) {
 					break;
 				}
 				if (_game->getLoopStatus() == kStatusInventory) {
@@ -403,7 +405,7 @@ Common::Error DraciEngine::loadGameState(int slot) {
 
 bool DraciEngine::canLoadGameStateCurrently() {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
-		(_game->getLoopSubstatus() == kSubstatusOrdinary);
+		(_game->getLoopSubstatus() == kOuterLoop);
 }
 
 Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
@@ -412,7 +414,7 @@ Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
 
 bool DraciEngine::canSaveGameStateCurrently() {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
-		(_game->getLoopSubstatus() == kSubstatusOrdinary);
+		(_game->getLoopSubstatus() == kOuterLoop);
 }
 
 } // End of namespace Draci
