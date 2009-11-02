@@ -84,7 +84,7 @@ reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[0];
-	bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : false;
+	//bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : false;
 
 	// TODO: pauseSound implementation
 	return s->_gui->menuSelect(eventObject);
