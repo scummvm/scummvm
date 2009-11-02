@@ -280,9 +280,6 @@ public:
 	void setSpeechTiming(uint tick, uint duration);
 	void shiftSpeechAndFadeTick(int delta);
 
-	void updateTitle(int x, int y);
-	void updateCursor();
-
 	void inventoryInit();
 	void inventoryDraw();
 	void inventoryDone();
@@ -322,9 +319,11 @@ public:
 private:
 	void updateOrdinaryCursor();
 	void updateInventoryCursor();
-	void handleOrdinaryLoop();
+	void handleOrdinaryLoop(int x, int y);
 	void handleInventoryLoop();
 	void handleDialogueLoop();
+	void updateTitle(int x, int y);
+	void updateCursor();
 	void advanceAnimationsAndTestLoopExit();
 
 	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.

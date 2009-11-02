@@ -228,16 +228,12 @@ void Game::init() {
 	_pushedNewRoom = _pushedNewGate = -1;
 }
 
-void Game::handleOrdinaryLoop() {
+void Game::handleOrdinaryLoop(int x, int y) {
 	// During the normal game-play, in particular not when
 	// running the init-scripts, enable interactivity.
 	if (_loopSubstatus != kOuterLoop) {
 		return;
 	}
-
-	// Fetch mouse coordinates
-	int x = _vm->_mouse->getPosX();
-	int y = _vm->_mouse->getPosY();
 
 	// Fetch the dedicated objects' title animation / current frame
 	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
@@ -502,7 +498,7 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 			case kStatusOrdinary:
 				updateOrdinaryCursor();
 				updateTitle(x, y);
-				handleOrdinaryLoop();
+				handleOrdinaryLoop(x, y);
 				break;
 			case kStatusInventory:
 				updateInventoryCursor();
