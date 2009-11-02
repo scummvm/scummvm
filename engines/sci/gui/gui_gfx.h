@@ -69,7 +69,7 @@ public:
 	void BackColor(int16 color);
 	void PenMode(int16 mode);
 	void TextFace(int16 textFace);
-	int16 GetPointSize(void);
+	int16 GetPointSize();
 
 	void ClearScreen(byte color = 255);
 	void InvertRect(const Common::Rect &rect);

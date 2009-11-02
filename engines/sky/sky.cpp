@@ -108,7 +108,7 @@ void SkyEngine::initVirgin() {
 	_skyScreen->showScreen(60110);
 }
 
-void SkyEngine::handleKey(void) {
+void SkyEngine::handleKey() {
 	if (_keyPressed.keycode && _systemVars.paused) {
 		_skySound->fnUnPauseFx();
 		_systemVars.paused = false;
@@ -361,7 +361,7 @@ void SkyEngine::initItemList() {
 		_itemList[i] = NULL;
 }
 
-void SkyEngine::loadFixedItems(void) {
+void SkyEngine::loadFixedItems() {
 	_itemList[49] = _skyDisk->loadFile(49);
 	_itemList[50] = _skyDisk->loadFile(50);
 	_itemList[73] = _skyDisk->loadFile(73);
@@ -388,7 +388,7 @@ void SkyEngine::timerHandler(void *refCon) {
 	((SkyEngine *)refCon)->gotTimerTick();
 }
 
-void SkyEngine::gotTimerTick(void) {
+void SkyEngine::gotTimerTick() {
 	_skyScreen->handleTimer();
 }
 
@@ -434,7 +434,7 @@ void SkyEngine::delay(int32 amount) {
 	} while (_system->getMillis() < start + amount);
 }
 
-bool SkyEngine::isDemo(void) {
+bool SkyEngine::isDemo() {
 	switch (_systemVars.gameVersion) {
 	case 109: // PC Gamer demo
 	case 267: // English floppy demo
@@ -453,7 +453,7 @@ bool SkyEngine::isDemo(void) {
 	}
 }
 
-bool SkyEngine::isCDVersion(void) {
+bool SkyEngine::isCDVersion() {
 	switch (_systemVars.gameVersion) {
 	case 109:
 	case 267:

@@ -270,7 +270,7 @@ int updateScriptImport(int ovlIdx) {
 }
 
 // check that the newly loaded isn't used by the already loaded overlays
-void updateAllScriptsImports(void) {
+void updateAllScriptsImports() {
 	int i;
 
 	for (i = 0; i < 90; i++) {

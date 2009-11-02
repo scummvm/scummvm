@@ -77,10 +77,10 @@ extern int volMaster;
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
 // Tag functions in PDISPLAY.C
-extern void EnableTags(void);
-extern void DisableTags(void);
+extern void EnableTags();
+extern void DisableTags();
 extern void DisablePointing(CORO_PARAM);
-extern void EnablePointing(void);
+extern void EnablePointing();
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -1054,7 +1054,7 @@ static void ConfActionSpecial(int i);
 /*-------------------------------------------------------------------------*/
 
 
-bool LanguageChange(void) {
+bool LanguageChange() {
 	LANGUAGE nLang = g_language;
 
 	if (_vm->getFeatures() & GF_USE_3FLAGS) {
@@ -1088,7 +1088,7 @@ bool LanguageChange(void) {
  * Read in the scene hopper data file and set the
  *  pointers to the data and scene count.
  */
-static void PrimeSceneHopper(void) {
+static void PrimeSceneHopper() {
 	Common::File f;
 	char *pBuffer;
 	uint32 vSize;
@@ -1166,11 +1166,11 @@ static void FirstScene(int first) {
 	cd.extraBase = first;
 }
 
-static void RememberChosenScene(void) {
+static void RememberChosenScene() {
 	bRemember = true;
 }
 
-static void SetChosenScene(void) {
+static void SetChosenScene() {
 	lastChosenScene = cd.selBox + cd.extraBase;
 	pChosenScene = &pHopper[cd.selBox + cd.extraBase];
 }
@@ -1202,7 +1202,7 @@ static void FirstEntry(int first) {
 	cd.extraBase = first;
 }
 
-void HopAction(void) {
+void HopAction() {
 	PHOPENTRY pEntry = pEntries + FROM_LE_32(pChosenScene->entryIndex) + cd.selBox + cd.extraBase;
 
 	uint32 hScene = FROM_LE_32(pChosenScene->hScene);
@@ -1226,7 +1226,7 @@ void HopAction(void) {
 /**
  * Delete all the objects in iconArray[]
  */
-static void DumpIconArray(void) {
+static void DumpIconArray() {
 	for (int i = 0; i < MAX_ICONS; i++) {
 		if (iconArray[i] != NULL) {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), iconArray[i]);
@@ -1238,7 +1238,7 @@ static void DumpIconArray(void) {
 /**
  * Delete all the objects in DobjArray[]
  */
-static void DumpDobjArray(void) {
+static void DumpDobjArray() {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (DobjArray[i] != NULL) {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), DobjArray[i]);
@@ -1250,7 +1250,7 @@ static void DumpDobjArray(void) {
 /**
  * Delete all the objects in objArray[]
  */
-static void DumpObjArray(void) {
+static void DumpObjArray() {
 	for (int i = 0; i < MAX_WCOMP; i++) {
 		if (objArray[i] != NULL) {
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), objArray[i]);
@@ -1322,7 +1322,7 @@ bool IsInInventory(int object, int invnum) {
 /**
  * Returns which item is held (INV_NOICON (-1) if none)
  */
-int WhichItemHeld(void) {
+int WhichItemHeld() {
 	return HeldItem;
 }
 
@@ -1349,11 +1349,11 @@ void InventoryIconCursor(bool bNewItem) {
 /**
  * Returns true if the inventory is active.
  */
-bool InventoryActive(void) {
+bool InventoryActive() {
 	return (InventoryState == ACTIVE_INV);
 }
 
-int WhichInventoryOpen(void) {
+int WhichInventoryOpen() {
 	if (InventoryState != ACTIVE_INV)
 		return 0;
 	else
@@ -1496,7 +1496,7 @@ void FirstFile(int first) {
  * Save the game using filename from selected slot & current description.
  */
 
-void InvSaveGame(void) {
+void InvSaveGame() {
 	if (cd.selBox != NOBOX) {
 #ifndef JAPAN
 		sedit[strlen(sedit)-1] = 0;	// Don't include the cursor!
@@ -1508,7 +1508,7 @@ void InvSaveGame(void) {
 /**
  * Load the selected saved game.
  */
-void InvLoadGame(void) {
+void InvLoadGame() {
 	int	rGame;
 
 	if (cd.selBox != NOBOX && (cd.selBox+cd.extraBase < cd.numSaved)) {
@@ -2494,7 +2494,7 @@ void InvLabels(bool InBody, int aniX, int aniY) {
  * It seems to set up slideStuff[], an array of possible first-displayed
  * icons set against the matching y-positions of the slider.
  */
-void AdjustTop(void) {
+void AdjustTop() {
 	int tMissing, bMissing, nMissing;
 	int nsliderYpos;
 	int rowsWanted;
@@ -2580,7 +2580,7 @@ OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
 /**
  * Create display objects for the displayed icons in an inventory window.
  */
-void FillInInventory(void) {
+void FillInInventory() {
 	int	Index;		// Index into contents[]
 	int	n = 0;		// index into iconArray[]
 	int	xpos, ypos;
@@ -3115,7 +3115,7 @@ void ConstructInventory(InventoryType filling) {
 	OBJECT **retObj;
 	const FILM *pfilm;
 
-	extern bool RePosition(void);	// Forward reference
+	extern bool RePosition();	// Forward reference
 	// Select the object array to use
 	if (filling == FULL || filling == CONF) {
 		retObj = objArray;		// Standard window
@@ -3357,7 +3357,7 @@ void ConstructInventory(InventoryType filling) {
  * position of the Translucent object is within limits. If it isn't,
  * adjusts the x/y position of the current inventory and returns true.
  */
-bool RePosition(void) {
+bool RePosition() {
 	int	p;
 	bool	bMoveitMoveit = false;
 
@@ -3641,11 +3641,11 @@ void ConvPoly(HPOLYGON hPoly) {
 	thisConvPoly = hPoly;
 }
 
-int GetIcon(void) {
+int GetIcon() {
 	return thisIcon;
 }
 
-void CloseDownConv(void) {
+void CloseDownConv() {
 	if (InventoryState == ACTIVE_INV && ino == INV_CONV) {
 		KillInventory();
 	}
@@ -3805,7 +3805,7 @@ void HideConversation(bool bHide) {
 	}
 }
 
-bool ConvIsHidden(void) {
+bool ConvIsHidden() {
 	return InventoryHidden;
 }
 
@@ -4028,7 +4028,7 @@ void OpenMenu(CONFTYPE menuType) {
  * Close down an inventory window.
  */
 
-void KillInventory(void) {
+void KillInventory() {
 	if (objArray[0] != NULL) {
 		DumpObjArray();
 		DumpDobjArray();
@@ -4066,7 +4066,7 @@ void KillInventory(void) {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);	// Hide VK after save dialog closes
 }
 
-void CloseInventory(void) {
+void CloseInventory() {
 	// If not active, ignore this
 	if (InventoryState != ACTIVE_INV)
 		return;
@@ -4464,7 +4464,7 @@ static void SlideMSlider(int x, SSFN fn) {
 /**
  * Called from ChangeingSize() during re-sizing.
  */
-void GettingTaller(void) {
+void GettingTaller() {
 	if (SuppV) {
 		Ychange += SuppV;
 		if (Ycompensate == 'T')
@@ -4488,7 +4488,7 @@ void GettingTaller(void) {
 /**
  * Called from ChangeingSize() during re-sizing.
  */
-void GettingShorter(void) {
+void GettingShorter() {
 	int StartNvi = InvD[ino].NoofVicons;
 	int StartUv = SuppV;
 
@@ -4513,7 +4513,7 @@ void GettingShorter(void) {
 /**
  * Called from ChangeingSize() during re-sizing.
  */
-void GettingWider(void) {
+void GettingWider() {
 	int StartNhi = InvD[ino].NoofHicons;
 	int StartUh = SuppH;
 
@@ -4536,7 +4536,7 @@ void GettingWider(void) {
 /**
  * Called from ChangeingSize() during re-sizing.
  */
-void GettingNarrower(void) {
+void GettingNarrower() {
 	int StartNhi = InvD[ino].NoofHicons;
 	int StartUh = SuppH;
 
@@ -4562,7 +4562,7 @@ void GettingNarrower(void) {
 /**
  * Called from Xmovement()/Ymovement() during re-sizing.
  */
-void ChangeingSize(void) {
+void ChangeingSize() {
 	/* Make it taller or shorter if necessary. */
 	if (Ychange > 0)
 		GettingTaller();
@@ -4681,7 +4681,7 @@ void Ymovement(int y) {
 /**
  * Called when a drag is commencing.
  */
-void InvDragStart(void) {
+void InvDragStart() {
 	int curX, curY;		// cursor's animation position
 
 	GetCursorXY(&curX, &curY, false);
@@ -4797,7 +4797,7 @@ void InvDragStart(void) {
 /**
  * Called when a drag is over.
  */
-void InvDragEnd(void) {
+void InvDragEnd() {
 	int curX, curY;		// cursor's animation position
 
 	GetCursorXY(&curX, &curY, false);
@@ -4835,7 +4835,7 @@ void InvDragEnd(void) {
 	Xchange = Ychange = 0;		// Probably no need, but does no harm!
 }
 
-static void MenuPageDown(void) {
+static void MenuPageDown() {
 	if (cd.box == loadBox || cd.box == saveBox) {
 		if (cd.extraBase < MAX_SAVED_FILES-NUM_RGROUP_BOXES) {
 			FirstFile(cd.extraBase+(NUM_RGROUP_BOXES - 1));
@@ -4864,7 +4864,7 @@ static void MenuPageDown(void) {
 	}
 }
 
-static void MenuPageUp(void) {
+static void MenuPageUp() {
 	if (cd.extraBase > 0) {
 		if (cd.box == loadBox || cd.box == saveBox)
 			FirstFile(cd.extraBase-(NUM_RGROUP_BOXES - 1));
@@ -5214,7 +5214,7 @@ static void InvWalkTo(const Common::Point &coOrds) {
 	}
 }
 
-void InvAction(void) {
+void InvAction() {
 	int index;
 	INV_OBJECT *invObj;
 	int aniX, aniY;
@@ -5735,15 +5735,15 @@ void InvSetSize(int invno, int MinWidth, int MinHeight,
 
 /**************************************************************************/
 
-bool IsTopWindow(void) {
+bool IsTopWindow() {
 	return (InventoryState == BOGUS_INV);
 }
 
-bool MenuActive(void) {
+bool MenuActive() {
 	return (InventoryState == ACTIVE_INV && ino == INV_CONF);
 }
 
-bool IsConvWindow(void) {
+bool IsConvWindow() {
 	return (InventoryState == ACTIVE_INV && ino == INV_CONV);
 }
 

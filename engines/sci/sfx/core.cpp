@@ -136,7 +136,7 @@ public:
 
 	void setVolume(int vol);
 
-	int getVolume(void);
+	int getVolume();
 };
 
 SfxPlayer::SfxPlayer() {
@@ -324,7 +324,7 @@ void SfxPlayer::setVolume(int vol) {
 	_mididrv->setVolume(vol);
 }
 
-int SfxPlayer::getVolume(void) {
+int SfxPlayer::getVolume() {
 	return _mididrv->getVolume();
 }
 

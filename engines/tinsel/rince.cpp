@@ -116,7 +116,7 @@ void MoverBrightness(PMOVER pMover, int brightness) {
 /**
  * RebootMovers
  */
-void RebootMovers(void) {
+void RebootMovers() {
 	memset(Movers, 0, sizeof(Movers));
 }
 
@@ -392,7 +392,7 @@ static void InitMover(PMOVER pMover) {
  * Get it into our heads that there's nothing doing.
  * Called at the end of a scene.
  */
-void DropMovers(void) {
+void DropMovers() {
 	for (int i = 0; i < MAX_MOVERS; i++)
 		InitMover(&Movers[i]);
 }

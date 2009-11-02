@@ -37,7 +37,7 @@ int upscaleValue(int value, int scale);
 
 void pixel(int x, int y, char color);
 void mainDraw(int16 param);
-void flipScreen(void);
+void flipScreen();
 void buildPolyModel(int X, int Y, int scale, char *ptr2, char *destBuffer, char *dataPtr);
 void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *dataIn, int ys, int xs, uint8 *output, const uint8 *dataBuf);
 void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int Y, int *outX, int *outY, int *outScale);

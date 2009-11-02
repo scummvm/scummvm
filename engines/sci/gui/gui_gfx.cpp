@@ -93,7 +93,7 @@ GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
 	return oldPort;
 }
 
-GuiPort *SciGuiGfx::GetPort(void) {
+GuiPort *SciGuiGfx::GetPort() {
 	return _curPort;
 }
 
@@ -146,7 +146,7 @@ void SciGuiGfx::TextFace(int16 textFace) {
 	_curPort->textFace = textFace;
 }
 
-int16 SciGuiGfx::GetPointSize(void) {
+int16 SciGuiGfx::GetPointSize() {
 	return _curPort->fontHeight;
 }
 

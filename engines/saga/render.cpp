@@ -63,7 +63,7 @@ Render::Render(SagaEngine *vm, OSystem *system) {
 	_initialized = true;
 }
 
-Render::~Render(void) {
+Render::~Render() {
 #ifdef SAGA_DEBUG
 	_vm->getTimerManager()->removeTimerProc(&fpsTimerCallback);
 #endif
@@ -272,7 +272,7 @@ void Render::fpsTimerCallback(void *refCon) {
 	((Render *)refCon)->fpsTimer();
 }
 
-void Render::fpsTimer(void) {
+void Render::fpsTimer() {
 	_fps = _renderedFrameCount;
 	_renderedFrameCount = 0;
 }

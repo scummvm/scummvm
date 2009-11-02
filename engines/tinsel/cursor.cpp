@@ -104,7 +104,7 @@ static int lastCursorX = 0, lastCursorY = 0;
 
 //----------------- FORWARD REFERENCES --------------------
 
-static void DoCursorMove(void);
+static void DoCursorMove();
 
 /**
  * Initialise and insert a cursor trail object, set its Z-pos, and hide
@@ -232,7 +232,7 @@ void GetCursorXY(int *x, int *y, bool absolute) {
  * Called from TINLIB.C to restore cursor after hiding it.
  * Called from INVENTRY.C to restore cursor after customising it.
  */
-void RestoreMainCursor(void) {
+void RestoreMainCursor() {
 	const FILM *pfilm;
 
 	if (McurObj != NULL) {
@@ -256,7 +256,7 @@ void SetTempCursor(SCNHANDLE pScript) {
 /**
  * Hide the cursor.
  */
-void DwHideCursor(void) {
+void DwHideCursor() {
 	int i;
 
 	bHiddenCursor = true;
@@ -277,14 +277,14 @@ void DwHideCursor(void) {
 /**
  * Unhide the cursor.
  */
-void UnHideCursor(void) {
+void UnHideCursor() {
 	bHiddenCursor = false;
 }
 
 /**
  * Freeze the cursor.
  */
-void FreezeCursor(void) {
+void FreezeCursor() {
 	bFrozenCursor = true;
 }
 
@@ -298,7 +298,7 @@ void DoFreezeCursor(bool bFreeze) {
 /**
  * HideCursorTrails
  */
-void HideCursorTrails(void) {
+void HideCursorTrails() {
 	int i;
 
 	bTempNoTrailers = true;
@@ -314,7 +314,7 @@ void HideCursorTrails(void) {
 /**
  * UnHideCursorTrails
  */
-void UnHideCursorTrails(void) {
+void UnHideCursorTrails() {
 	bTempNoTrailers = false;
 }
 
@@ -356,7 +356,7 @@ IMAGE *GetImageFromFilm(SCNHANDLE hFilm, int reel, const FREEL **ppfr, const MUL
 /**
  * Delete auxillary cursor. Restore animation offsets in the image.
  */
-void DelAuxCursor(void) {
+void DelAuxCursor() {
 	if (AcurObj != NULL) {
 		MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), AcurObj);
 		AcurObj = NULL;
@@ -402,7 +402,7 @@ void SetAuxCursor(SCNHANDLE hFilm) {
 /**
  * MoveCursor
  */
-static void DoCursorMove(void) {
+static void DoCursorMove() {
 	int	startX, startY;
 	Common::Point ptMouse;
 	frac_t newX, newY;
@@ -473,7 +473,7 @@ static void DoCursorMove(void) {
 /**
  * Initialise cursor object.
  */
-static void InitCurObj(void) {
+static void InitCurObj() {
 	const FILM *pFilm;
 	const FREEL *pfr;
 	const MULTI_INIT *pmi;
@@ -503,7 +503,7 @@ static void InitCurObj(void) {
 /**
  * Initialise the cursor position.
  */
-static void InitCurPos(void) {
+static void InitCurPos() {
 	Common::Point ptMouse = _vm->getMousePosition();
 	lastCursorX = ptMouse.x;
 	lastCursorY = ptMouse.y;
@@ -629,7 +629,7 @@ void DwInitCursor(SCNHANDLE bfilm) {
 /**
  * DropCursor is called when a scene is closing down.
  */
-void DropCursor(void) {
+void DropCursor() {
 	if (TinselV2) {
 		if (AcurObj)
 			MultiDeleteObject(GetPlayfieldList(FIELD_STATUS), AcurObj);
@@ -656,7 +656,7 @@ void DropCursor(void) {
 /**
  * RestartCursor is called when a new scene is starting up.
  */
-void RestartCursor(void) {
+void RestartCursor() {
 	restart = 0x8000;	// Get the main cursor to re-initialise
 }
 
@@ -664,7 +664,7 @@ void RestartCursor(void) {
  * Called when restarting the game, ensures correct re-start with NULL
  * pointers etc.
  */
-void RebootCursor(void) {
+void RebootCursor() {
 	McurObj = AcurObj = NULL;
 	for (int i = 0; i < MAX_TRAILERS; i++)
 		ntrailData[i].trailObj = NULL;
@@ -677,14 +677,14 @@ void RebootCursor(void) {
 	restart = 0;
 }
 
-void StartCursorFollowed(void) {
+void StartCursorFollowed() {
 	DelAuxCursor();
 
 	if (!SysVar(SV_ENABLEPRINTCURSOR))
 		bTempHide = true;
 }
 
-void EndCursorFollowed(void) {
+void EndCursorFollowed() {
 	InventoryIconCursor(false);	// May be holding something
 	bTempHide = false;
 }

@@ -241,7 +241,7 @@ public:
 	Common::Platform getPlatform() const;
 
 protected:		// members
-	bool detectGame(void);
+	bool detectGame();
 
 private:
 	const PARALLACTIONGameDescription *_gameDescription;

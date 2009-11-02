@@ -47,7 +47,7 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 	_startFrameTime = 0;
 }
 
-uint32 Util::getTimeKey(void) {
+uint32 Util::getTimeKey() {
 	return g_system->getMillis() * _vm->_global->_speedFactor;
 }
 
@@ -83,7 +83,7 @@ void Util::longDelay(uint16 msecs) {
 	         ((g_system->getMillis() * _vm->_global->_speedFactor) < time));
 }
 
-void Util::initInput(void) {
+void Util::initInput() {
 	_mouseButtons  = kMouseButtonsNone;
 	_keyBufferHead = _keyBufferTail = 0;
 }
@@ -151,7 +151,7 @@ void Util::processInput(bool scroll) {
 	}
 }
 
-void Util::clearKeyBuf(void) {
+void Util::clearKeyBuf() {
 	processInput();
 	_keyBufferHead = _keyBufferTail = 0;
 }
@@ -220,7 +220,7 @@ int16 Util::translateKey(const Common::KeyState &key) {
 	return 0;
 }
 
-int16 Util::getKey(void) {
+int16 Util::getKey() {
 	Common::KeyState key;
 
 	while (!getKeyFromBuffer(key)) {
@@ -232,7 +232,7 @@ int16 Util::getKey(void) {
 	return translateKey(key);
 }
 
-int16 Util::checkKey(void) {
+int16 Util::checkKey() {
 	Common::KeyState key;
 
 	getKeyFromBuffer(key);
@@ -266,7 +266,7 @@ void Util::setMousePos(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
 
-void Util::waitMouseUp(void) {
+void Util::waitMouseUp() {
 	do {
 		processInput();
 		if (_mouseButtons != kMouseButtonsNone)
@@ -274,7 +274,7 @@ void Util::waitMouseUp(void) {
 	} while (_mouseButtons != kMouseButtonsNone);
 }
 
-void Util::waitMouseDown(void) {
+void Util::waitMouseDown() {
 	int16 x;
 	int16 y;
 	MouseButtons buttons;
@@ -309,7 +309,7 @@ void Util::forceMouseUp(bool onlyWhenSynced) {
 	_mouseButtons             = kMouseButtonsNone;
 }
 
-void Util::clearPalette(void) {
+void Util::clearPalette() {
 	int16 i;
 	byte colors[1024];
 

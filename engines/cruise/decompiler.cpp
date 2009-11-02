@@ -234,7 +234,7 @@ void getByteFromDecompScript(char *buffer) {
 	sprintf(buffer, "%d", var);
 }
 
-char getByteFromDecompScriptReal(void) {
+char getByteFromDecompScriptReal() {
 	short int var = currentDecompScript[currentDecompScriptPtr->var4];
 
 	currentDecompScriptPtr->var4 = currentDecompScriptPtr->var4 + 1;
@@ -257,7 +257,7 @@ void getShortFromDecompScript(char *buffer) {
 	sprintf(buffer, "%d", var);
 }
 
-int16 getShortFromDecompScriptReal(void) {
+int16 getShortFromDecompScriptReal() {
 	int16 var = (int16)READ_BE_UINT16(currentDecompScript + currentDecompScriptPtr->var4);
 
 	currentDecompScriptPtr->var4 = currentDecompScriptPtr->var4 + 2;
@@ -345,7 +345,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	}
 }
 
-int decompLoadVar(void) {
+int decompLoadVar() {
 	switch (currentScriptOpcodeType) {
 	case 0: {
 		char buffer[256];
@@ -416,7 +416,7 @@ int decompLoadVar(void) {
 	}
 }
 
-int decompSaveVar(void) {
+int decompSaveVar() {
 //      int var = popVar();
 
 	switch (currentScriptOpcodeType) {
@@ -492,7 +492,7 @@ int decompSaveVar(void) {
 	return (0);
 }
 
-int decompOpcodeType2(void) {
+int decompOpcodeType2() {
 	switch (currentScriptOpcodeType) {
 	case 1: {
 		char buffer3[256];
@@ -536,7 +536,7 @@ int decompOpcodeType2(void) {
 	return (0);
 }
 
-int decompMath(void) {
+int decompMath() {
 	char *param1 = popDecomp();
 	char *param2 = popDecomp();
 
@@ -588,7 +588,7 @@ int decompMath(void) {
 	return (0);
 }
 
-int decompBoolCompare(void) {
+int decompBoolCompare() {
 	char *param1;
 	char *param2;
 
@@ -601,7 +601,7 @@ int decompBoolCompare(void) {
 	return 0;
 }
 
-int decompTest(void) {
+int decompTest() {
 	unsigned long int oldOffset = currentDecompScriptPtr->var4;
 	short int offset = getShortFromDecompScriptReal();
 
@@ -659,7 +659,7 @@ int decompTest(void) {
 	return 0;
 }
 
-int decompCompare(void) {
+int decompCompare() {
 	char *param;
 
 	param = popDecomp();
@@ -684,7 +684,7 @@ int decompCompare(void) {
 	return 0;
 }
 
-int decompSwapStack(void) {
+int decompSwapStack() {
 	char *stack1;
 	char *stack2;
 	char buffer1[4000];
@@ -702,7 +702,7 @@ int decompSwapStack(void) {
 	return 0;
 }
 
-int decompFunction(void) {
+int decompFunction() {
 	currentScriptOpcodeType = getByteFromDecompScriptReal();
 //    addDecomp("OP_%X", currentScriptOpcodeType);
 	switch (currentScriptOpcodeType) {
@@ -1279,18 +1279,18 @@ int decompFunction(void) {
 
 uint8 stop = 0;
 
-int decompStop(void) {
+int decompStop() {
 	stop = 1;
 	addDecomp("stop\n");
 	return 0;
 }
 
-int decompBreak(void) {
+int decompBreak() {
 	addDecomp("break");
 	return 0;
 }
 
-void generateIndentation(void) {
+void generateIndentation() {
 	int i, j;
 
 	for (i = 0; i < positionInDecompileLineTable; i++) {

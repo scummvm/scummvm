@@ -87,8 +87,8 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 
-	bool loadSaveDirectory(void);
-	void makeSystemMenu(void);
+	bool loadSaveDirectory();
+	void makeSystemMenu();
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
 	Common::Error loadGameState(int slot);
@@ -106,7 +106,7 @@ public:
 	TextHandler _textHandler;
 
 private:
-	void initialize(void);
+	void initialize();
 	void resetEngine();
 	bool loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat);
 	bool loadTempSaveOS(Common::SeekableReadStream &in);

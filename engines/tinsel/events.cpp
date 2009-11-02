@@ -52,8 +52,8 @@ namespace Tinsel {
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
 // in PDISPLAY.C
-extern int GetTaggedActor(void);
-extern HPOLYGON GetTaggedPoly(void);
+extern int GetTaggedActor();
+extern HPOLYGON GetTaggedPoly();
 
 //----------------- EXTERNAL GLOBAL DATA ---------------------
 
@@ -78,12 +78,12 @@ static bool bProvNotProcessed = false;
  * Gets called before each schedule, only 1 user action per schedule
  * is allowed.
  */
-void ResetEcount(void) {
+void ResetEcount() {
 	eCount = 0;
 }
 
 
-void IncUserEvents(void) {
+void IncUserEvents() {
 	userEvents++;
 	lastUserEvent = DwGetCurrentTime();
 }
@@ -120,7 +120,7 @@ void AllowDclick(CORO_PARAM, PLR_EVENT be) {
 /**
  * Re-enables user control
  */
-void ControlOn(void) {
+void ControlOn() {
 	if (!TinselV2) {
 		Control(CONTROL_ON);
 		return;
@@ -150,7 +150,7 @@ void ControlOn(void) {
 /**
  * Takes control from the user
  */
-void ControlOff(void) {
+void ControlOff() {
 	if (!TinselV2) {
 		Control(CONTROL_ON);
 		return;
@@ -176,7 +176,7 @@ void ControlOff(void) {
 /**
  * Prevent tags and cursor re-appearing
  */
-void ControlStartOff(void) {
+void ControlStartOff() {
 	if (!TinselV2) {
 		Control(CONTROL_STARTOFF);
 		return;
@@ -211,7 +211,7 @@ bool GetControl(int param) {
 		return false;
 }
 
-bool GetControl(void) {
+bool GetControl() {
 	if (controlState == CONTROL_ON) {
 		ControlOff();
 		return true;
@@ -219,7 +219,7 @@ bool GetControl(void) {
 		return false;
 }
 
-bool ControlIsOn(void) {
+bool ControlIsOn() {
 	if (TinselV2)
 		return (controlState == CONTROL_ON);
 
@@ -484,14 +484,14 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 /**
  * For ESCapable Glitter sequences
  */
-int GetEscEvents(void) {
+int GetEscEvents() {
 	return escEvents;
 }
 
 /**
  * For cutting short talk()s etc.
  */
-int GetLeftEvents(void) {
+int GetLeftEvents() {
 	return leftEvents;
 }
 
@@ -506,15 +506,15 @@ bool LeftEventChange(int myleftEvent) {
 /**
  * For waitkey() Glitter function
  */
-int getUserEvents(void) {
+int getUserEvents() {
 	return userEvents;
 }
 
-uint32 getUserEventTime(void) {
+uint32 getUserEventTime() {
 	return DwGetCurrentTime() - lastUserEvent;
 }
 
-void resetUserEventTime(void) {
+void resetUserEventTime() {
 	lastUserEvent = DwGetCurrentTime();
 }
 
@@ -653,14 +653,14 @@ void effRunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, int actor) {
  *  If provisional event was processed, calling this prevents the
  * subsequent 'real' event.
  */
-void ProcessedProvisional(void) {
+void ProcessedProvisional() {
 	bProvNotProcessed = false;
 }
 
 /**
  * Resets the bProvNotProcessed flag
  */
-void ProvNotProcessed(void) {
+void ProvNotProcessed() {
 	bProvNotProcessed = true;
 }
 

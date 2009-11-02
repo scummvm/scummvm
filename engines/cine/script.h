@@ -63,7 +63,7 @@ public:
 	explicit ScriptVars(unsigned int len = 50);
 	ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len = 50);
 	ScriptVars(const ScriptVars &src);
-	~ScriptVars(void);
+	~ScriptVars();
 
 	ScriptVars &operator=(const ScriptVars &src);
 	int16 &operator[](unsigned int idx);
@@ -73,7 +73,7 @@ public:
 	void save(Common::OutSaveFile &fHandle, unsigned int len) const;
 	void load(Common::SeekableReadStream &fHandle);
 	void load(Common::SeekableReadStream &fHandle, unsigned int len);
-	void reset(void);
+	void reset();
 };
 
 class FWScriptInfo;
@@ -98,7 +98,7 @@ public:
 	explicit RawScript(uint16 size);
 	RawScript(const FWScriptInfo &info, const byte *data, uint16 size);
 	RawScript(const RawScript &src);
-	~RawScript(void);
+	~RawScript();
 
 	RawScript &operator=(const RawScript &src);
 
@@ -106,7 +106,7 @@ public:
 	/*! \brief Size of script
 	 * \return Size of script
 	 */
-	const ScriptVars &labels(void) const;
+	const ScriptVars &labels() const;
 	byte getByte(unsigned int pos) const;
 	uint16 getWord(unsigned int pos) const;
 	const char *getString(unsigned int pos) const;
@@ -130,7 +130,7 @@ public:
 
 	/// \brief Run the script one more time
 	/// \return Run count before incrementation
-	int16 run(void) { return _runCount++; }
+	int16 run() { return _runCount++; }
 };
 
 /*! \brief Future Wars script, prcLinkedListStruct replacement
@@ -283,7 +283,7 @@ public:
 	FWScript(const RawScript &script, int16 index);
 //	FWScript(const RawObjectScript &script, int16 index);
 	FWScript(const FWScript &src);
-	~FWScript(void);
+	~FWScript();
 
 	int execute();
 	void save(Common::OutSaveFile &fHandle) const;
@@ -380,11 +380,11 @@ int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneI
 
 void runObjectScript(int16 entryIdx);
 
-void executeObjectScripts(void);
-void executeGlobalScripts(void);
+void executeObjectScripts();
+void executeGlobalScripts();
 
-void purgeObjectScripts(void);
-void purgeGlobalScripts(void);
+void purgeObjectScripts();
+void purgeGlobalScripts();
 
 } // End of namespace Cine
 

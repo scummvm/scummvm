@@ -69,7 +69,7 @@ public:
 	void doit(Common::Rect picRect);
 
 private:
-	void init(void);
+	void init();
 	const GuiTransitionTranslateEntry *translateNumber(int16 number, const GuiTransitionTranslateEntry *tablePtr);
 	void doTransition(int16 number, bool blackout);
 	void setNewPalette(bool blackoutFlag);

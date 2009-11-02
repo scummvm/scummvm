@@ -53,7 +53,7 @@ namespace Tinsel {
 //----------------- EXTERN FUNCTIONS --------------------
 
 // in BG.C
-extern SCNHANDLE GetBgroundHandle(void);
+extern SCNHANDLE GetBgroundHandle();
 extern void SetDoFadeIn(bool tf);
 
 // In DOS_DW.C
@@ -63,7 +63,7 @@ void RestoreMasterProcess(INT_CONTEXT *pic);
 void RestoreProcess(INT_CONTEXT *pic);
 
 // in SCENE.C
-extern SCNHANDLE GetSceneHandle(void);
+extern SCNHANDLE GetSceneHandle();
 
 
 //----------------- LOCAL DEFINES --------------------
@@ -149,7 +149,7 @@ void DoRestoreScene(SAVED_DATA *sd, bool bFadeOut) {
 		RestoreSceneCount = RS_COUNT;	// Set restore scene count
 }
 
-void InitialiseSaveScenes(void) {
+void InitialiseSaveScenes() {
 	if (ssData == NULL) {
 		ssData = (SAVED_DATA *)calloc(MAX_NEST, sizeof(SAVED_DATA));
 		if (ssData == NULL) {
@@ -161,7 +161,7 @@ void InitialiseSaveScenes(void) {
 	}
 }
 
-void FreeSaveScenes(void) {
+void FreeSaveScenes() {
 	if (ssData) {
 		free(ssData);
 		ssData = NULL;
@@ -243,7 +243,7 @@ static void SortMAProcess(CORO_PARAM, const void *) {
 
 //---------------------------------------------------------------------------
 
-void ResumeInterprets(void) {
+void ResumeInterprets() {
 	// Master script only affected on restore game, not restore scene
 	if (!TinselV2 && (rsd == &sgData)) {
 		g_scheduler->killMatchingProcess(PID_MASTER_SCR, -1);

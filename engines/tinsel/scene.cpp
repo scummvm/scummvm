@@ -57,7 +57,7 @@ namespace Tinsel {
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
 // in BG.C
-extern void DropBackground(void);
+extern void DropBackground();
 
 // in EFFECT.C
 extern void EffectPolyProcess(CORO_PARAM, const void *);
@@ -68,7 +68,7 @@ extern void CursorPositionProcess(CORO_PARAM, const void *);
 #endif
 extern void TagProcess(CORO_PARAM, const void *);
 extern void PointProcess(CORO_PARAM, const void *);
-extern void EnableTags(void);
+extern void EnableTags();
 
 
 //----------------- LOCAL DEFINES --------------------
@@ -322,7 +322,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 /**
  * Wrap up the last scene.
  */
-void EndScene(void) {
+void EndScene() {
 	if (SceneHandle != 0) {
 		UnlockScene(SceneHandle);
 		SceneHandle = 0;
@@ -366,7 +366,7 @@ void EndScene(void) {
 /**
  *
  */
-void PrimeBackground(void) {
+void PrimeBackground() {
 	// structure for playfields
 	static PLAYFIELD playfield[] = {
 		{	// FIELD WORLD
@@ -409,7 +409,7 @@ void PrimeBackground(void) {
  * Start up the standard stuff for the next scene.
  */
 
-void PrimeScene(void) {
+void PrimeScene() {
 	SetNoBlocking(false);
 	SetSysVar(SYS_SceneFxDimFactor, SysVar(SYS_DefaultFxDimFactor));
 
@@ -456,7 +456,7 @@ void StartNewScene(SCNHANDLE scene, int entry) {
  * created in each scene.
  */
 
-void setshowpos(void) {
+void setshowpos() {
 	ShowPosition = true;
 }
 #endif
@@ -465,7 +465,7 @@ void setshowpos(void) {
  * Return the current scene handle.
  */
 
-SCNHANDLE GetSceneHandle(void) {
+SCNHANDLE GetSceneHandle() {
 	return SceneHandle;
 }
 
@@ -490,7 +490,7 @@ void DoHailScene(SCNHANDLE scene) {
 /**
  * WrapScene
  */
-void WrapScene(void) {
+void WrapScene() {
 	SendSceneTinselProcess(CLOSEDOWN);
 }
 

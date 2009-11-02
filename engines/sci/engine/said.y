@@ -100,7 +100,7 @@ static tree_t said_paren(tree_t, tree_t);
 static tree_t said_value(int, tree_t);
 static tree_t said_terminal(int);
 
-static int yylex(void);
+static int yylex();
 
 static int yyerror(const char *s) {
 	said_parse_error = strdup(s);
@@ -237,7 +237,7 @@ recref :	YY_LT wordset recref
 
 int parse_yy_token_lookup[] = {YY_COMMA, YY_AMP, YY_SLASH, YY_PARENO, YY_PARENC, YY_BRACKETSO, YY_BRACKETSC, YY_HASH, YY_LT, YY_GT};
 
-static int yylex(void) {
+static int yylex() {
 	int retval = said_tokens[said_token++];
 
 	if (retval < SAID_LONG(SAID_FIRST)) {

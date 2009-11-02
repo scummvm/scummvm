@@ -79,11 +79,11 @@ AdlibChannel::AdlibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_instruments = (InstrumentStruct*)(_instrumentMap+0x80);
 }
 
-AdlibChannel::~AdlibChannel(void) {
+AdlibChannel::~AdlibChannel() {
 	stopNote();
 }
 
-bool AdlibChannel::isActive(void) {
+bool AdlibChannel::isActive() {
 	return _channelData.channelActive;
 }
 
@@ -102,14 +102,14 @@ void AdlibChannel::setRegister(uint8 regNum, uint8 value) {
 	}
 }
 
-void AdlibChannel::stopNote(void) {
+void AdlibChannel::stopNote() {
 	if (_channelData.note & 0x20) {
 		_channelData.note &= ~0x20;
 		setRegister(0xB0 | _channelData.adlibChannelNumber, _channelData.note);
 	}
 }
 
-int32 AdlibChannel::getNextEventTime(void) {
+int32 AdlibChannel::getNextEventTime() {
 	int32 retV = 0;
 	uint8 cnt, lVal = 0;
 	for (cnt = 0; cnt < 4; cnt++) {
@@ -226,7 +226,7 @@ void AdlibChannel::setupChannelVolume(uint8 volume) {
 	setRegister(0x40 | _channelData.adlibReg1, resultOp);
 }
 
-void AdlibChannel::adlibSetupInstrument(void) {
+void AdlibChannel::adlibSetupInstrument() {
 	setRegister(0x60 | _channelData.adlibReg1, _channelData.instrumentData->ad_Op1);
 	setRegister(0x60 | _channelData.adlibReg2, _channelData.instrumentData->ad_Op2);
 	setRegister(0x80 | _channelData.adlibReg1, _channelData.instrumentData->sr_Op1);
@@ -255,18 +255,18 @@ uint16 AdlibChannel::getNextNote(uint8 param) {
 
 //- command 90h routines
 
-void AdlibChannel::com90_caseNoteOff(void) {
+void AdlibChannel::com90_caseNoteOff() {
 	if (_musicData[_channelData.eventDataPtr] == _channelData.lastCommand)
 		stopNote();
 	_channelData.eventDataPtr++;
 }
 
-void AdlibChannel::com90_stopChannel(void) {
+void AdlibChannel::com90_stopChannel() {
 	stopNote();
 	_channelData.channelActive = false;
 }
 
-void AdlibChannel::com90_setupInstrument(void) {
+void AdlibChannel::com90_setupInstrument() {
 	_channelData.channelVolume = 0x7F;
 	_channelData.freqOffset = 0x40;
 	_channelData.assignedInstrument = _musicData[_channelData.eventDataPtr];
@@ -275,11 +275,11 @@ void AdlibChannel::com90_setupInstrument(void) {
 	adlibSetupInstrument();
 }
 
-uint8 AdlibChannel::com90_updateTempo(void) {
+uint8 AdlibChannel::com90_updateTempo() {
 	return _musicData[_channelData.eventDataPtr++];
 }
 
-void AdlibChannel::com90_getFreqOffset(void) {
+void AdlibChannel::com90_getFreqOffset() {
 	_channelData.freqOffset = _musicData[_channelData.eventDataPtr++];
 	if (_channelData.note & 0x20) {
 		uint16 nextNote = getNextNote(
@@ -290,23 +290,23 @@ void AdlibChannel::com90_getFreqOffset(void) {
 	}
 }
 
-void AdlibChannel::com90_getChannelVolume(void) {
+void AdlibChannel::com90_getChannelVolume() {
 	_channelData.channelVolume = _musicData[_channelData.eventDataPtr++];
 }
 
-void AdlibChannel::com90_getTremoVibro(void) {
+void AdlibChannel::com90_getTremoVibro() {
 	_channelData.tremoVibro = _musicData[_channelData.eventDataPtr++];
 }
 
-void AdlibChannel::com90_loopMusic(void) {
+void AdlibChannel::com90_loopMusic() {
 	_channelData.eventDataPtr = _channelData.loopPoint;
 }
 
-void AdlibChannel::com90_keyOff(void) {
+void AdlibChannel::com90_keyOff() {
 	stopNote();
 }
 
-void AdlibChannel::com90_setLoopPoint(void) {
+void AdlibChannel::com90_setLoopPoint() {
 	_channelData.loopPoint = _channelData.eventDataPtr;
 }
 

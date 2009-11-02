@@ -238,7 +238,7 @@ void BArchive::openArchive(const Common::String &path) {
  * Closes the currently opened archive. It can be called explicitly to
  * free up memory.
  */
-void BArchive::closeArchive(void) {
+void BArchive::closeArchive() {
 	if (!_opened) {
 		return;
 	}

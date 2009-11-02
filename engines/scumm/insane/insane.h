@@ -60,14 +60,14 @@ class Insane {
 	void setSmushParams(int speed);
 	void runScene(int arraynum);
 
-	void procPreRendering(void);
+	void procPreRendering();
 	void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
 				  int16 par2, int16 par3, int16 par4);
 	void procSKIP(int32 subSize, Common::SeekableReadStream &b);
-	void escapeKeyHandler(void);
+	void escapeKeyHandler();
 
  private:
 
@@ -262,20 +262,20 @@ class Insane {
 
 	struct actor _actor[2];
 
-	void initvars(void);
+	void initvars();
 	void readFileToMem(const char *name, byte **buf);
 	void startVideo(const char *filename, int num, int argC, int frameRate,
 					 int doMainLoop, byte *fluPtr = 0, int32 startFrame = 0);
 	void smush_warpMouse(int x, int y, int buttons);
-	void putActors(void);
-	void readState(void);
+	void putActors();
+	void readState();
 	int initScene(int sceneId);
 	void stopSceneSounds(int sceneId);
-	void shutCurrentScene(void);
+	void shutCurrentScene();
 	int loadSceneData(int scene, int flag, int phase);
 	void setSceneCostumes(int sceneId);
-	void setupValues(void);
-	void setEnemyCostumes (void);
+	void setupValues();
+	void setEnemyCostumes ();
 	void smlayer_stopSound (int idx);
 	int smlayer_loadSound(int id, int flag, int phase);
 	int smlayer_loadCostume(int id, int phase);
@@ -287,11 +287,11 @@ class Insane {
 	int32 readArray(int item);
 	void writeArray(int item, int value);
 
-	bool idx1Compare(void);
-	bool idx2Compare(void);
-	int32 idx1Tweak(void);
-	int32 idx2Tweak(void);
-	void smush_setToFinish(void);
+	bool idx1Compare();
+	bool idx2Compare();
+	int32 idx1Tweak();
+	int32 idx2Tweak();
+	void smush_setToFinish();
 	void postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCase0(byte *renderBitmap, int32 codecparam, int32 setupsan12,
@@ -328,7 +328,7 @@ class Insane {
 					 int32 setupsan13, int32 curFrame, int32 maxFrame);
 	void postCaseMore(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, int32 curFrame, int32 maxFrame);
-	void switchSceneIfNeeded(void);
+	void switchSceneIfNeeded();
 	int smush_changeState(int state);
 	void init_actStruct(int actornum, int actnum, int32 actorval, byte state,
 						  int32 room, int32 animtilt, int32 tilt, int32 frame);
@@ -383,20 +383,20 @@ class Insane {
 	void actor01Reaction(int32 buttons);
 	void actor03Reaction(int32 buttons);
 	void turnEnemy(bool battle);
-	int32 actionBen(void);
+	int32 actionBen();
 	void chooseBenWeaponAnim(int buttons);
 	void setBenAnimation(int32 actornum, int anim);
 	int calcTilt(int speed);
-	bool smush_eitherNotStartNewFrame(void);
+	bool smush_eitherNotStartNewFrame();
 	void smlayer_setActorFacing(int actornum, int actnum, int frame, int direction);
 	int32 weaponMaxRange(int32 actornum);
 	int32 weaponMinRange(int32 actornum);
-	void switchBenWeapon(void);
+	void switchBenWeapon();
 	void prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8);
 	int32 calcBenDamage(bool arg_0, bool arg_4);
 	int32 weaponDamage(int32 actornum);
 	void proc47(int32 actornum, int32 val);
-	bool weaponBenIsEffective(void);
+	bool weaponBenIsEffective();
 	bool actor1StateFlags(int state);
 	bool actor0StateFlags1(int state);
 	bool actor0StateFlags2(int state);
@@ -404,11 +404,11 @@ class Insane {
 	void init_scenePropStruct(int32 n, int32 n1, int32 actornum, int32 sound, int32 trsId,
 							  byte r, byte g, byte b, int32 counter, int32 maxCounter,
 							  int32 index);
-	int32 setBenState(void);
+	int32 setBenState();
 	bool smlayer_actorNeedRedraw(int actornum, int actnum);
-	void reinitActors(void);
+	void reinitActors();
 	const char *handleTrsTag(int32 trsId);
-	void ouchSoundBen(void);
+	void ouchSoundBen();
 	int32 smush_setupSanWithFlu(const char *filename, int32 setupsan2, int32 step1,
 							   int32 step2, int32 setupsan1, byte *fluPtr, int32 numFrames);
 	void smush_setupSanFromStart(const char *filename, int32 setupsan2, int32 step1,
@@ -420,16 +420,16 @@ class Insane {
 	void actor12Reaction(int32 buttons);
 	void actor13Reaction(int32 buttons);
 	void actor10Reaction(int32 buttons);
-	int32 actionEnemy(void);
-	int32 processKeyboard(void);
-	int32 processMouse(void);
+	int32 actionEnemy();
+	int32 processKeyboard();
+	int32 processMouse();
 	void setEnemyAnimation(int32 actornum, int anim);
 	void chooseEnemyWeaponAnim(int32 buttons);
-	void switchEnemyWeapon(void);
-	void setEnemyState(void);
+	void switchEnemyWeapon();
+	void setEnemyState();
 	int32 calcEnemyDamage(bool arg_0, bool arg_4);
-	void ouchSoundEnemy(void);
-	bool weaponEnemyIsEffective(void);
+	void ouchSoundEnemy();
+	bool weaponEnemyIsEffective();
 	void iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
@@ -451,8 +451,8 @@ class Insane {
 	bool isBitSet(int n);
 	void setBit(int n);
 	void clearBit(int n);
-	void chooseEnemy(void);
-	void removeEmptyEnemies(void);
+	void chooseEnemy();
+	void removeEmptyEnemies();
 	void removeEnemyFromMetList(int32);
 };
 } // End of namespace Insane

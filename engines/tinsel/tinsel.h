@@ -194,11 +194,11 @@ private:
 	//MidiMusicPlayer *_midiMusic;
 	int _musicVolume;
 
-	void NextGameCycle(void);
-	void CreateConstProcesses(void);
-	void RestartGame(void);
-	void RestartDrivers(void);
-	void ChopDrivers(void);
+	void NextGameCycle();
+	void CreateConstProcesses();
+	void RestartGame();
+	void RestartDrivers();
+	void ChopDrivers();
 	void ProcessKeyEvent(const Common::Event &event);
 	bool pollEvent();
 
@@ -222,7 +222,7 @@ public:
 // Externally available methods
 void CuttingScene(bool bCutting);
 void CDChangeForRestore(int cdNumber);
-void CdHasChanged(void);
+void CdHasChanged();
 
 } // End of namespace Tinsel
 

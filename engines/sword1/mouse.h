@@ -72,22 +72,22 @@ class ObjectMan;
 class Mouse {
 public:
 	Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan);
-	~Mouse(void);
-	void initialize(void);
+	~Mouse();
+	void initialize();
 	void addToList(int id, Object *compact);
 	void useLogicAndMenu(Logic *pLogic, Menu *pMenu);
 	void setLuggage(uint32 resID, uint32 rate);
 	void setPointer(uint32 resID, uint32 rate);
-	void animate(void);
+	void animate();
 	void engine(uint16 x, uint16 y, uint16 eventFlags);
-	uint16 testEvent(void);
+	uint16 testEvent();
 	void giveCoords(uint16 *x, uint16 *y);
-	void fnNoHuman(void);
-	void fnAddHuman(void);
-	void fnBlankMouse(void);
-	void fnNormalMouse(void);
-	void fnLockMouse(void);
-	void fnUnlockMouse(void);
+	void fnNoHuman();
+	void fnAddHuman();
+	void fnBlankMouse();
+	void fnNormalMouse();
+	void fnLockMouse();
+	void fnUnlockMouse();
 	void controlPanel(bool on);
 private:
 	void createPointer(uint32 ptrId, uint32 luggageId);

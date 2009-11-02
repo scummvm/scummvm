@@ -43,7 +43,7 @@ struct BAFile {
 	byte _stopper;    ///< Not used in BAR files, needed for DFW
 
 	/** Releases the file data (for memory considerations) */
-	void close(void) {
+	void close() {
 		delete[] _data;
 		_data = NULL;
 	}
@@ -61,7 +61,7 @@ public:
 	~BArchive() { closeArchive(); }
 
 	void openArchive(const Common::String &path);
-	void closeArchive(void);
+	void closeArchive();
 	uint size() const { return _fileCount; }
 
 	/**

@@ -49,9 +49,9 @@ extern gfxModuleDataStruct gfxModuleData;
 void gfxModuleData_gfxClearFrameBuffer(uint8 *ptr);
 void gfxModuleData_setDirtyColors(int min, int max);
 void gfxModuleData_setPalColor(int idx, int r, int g, int b);
-void gfxModuleData_field_90(void);
-void gfxModuleData_gfxWaitVSync(void);
-void gfxModuleData_flip(void);
+void gfxModuleData_field_90();
+void gfxModuleData_gfxWaitVSync();
+void gfxModuleData_flip();
 void gfxModuleData_updatePalette();
 void gfxModuleData_updateScreen();
 
@@ -59,14 +59,14 @@ void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, i
 void gfxModuleData_gfxCopyScreen(const uint8 *sourcePtr, uint8 *destPtr);
 void convertGfxFromMode4(const uint8 *sourcePtr, int width, int height, uint8 *destPtr);
 void convertGfxFromMode5(const uint8 *sourcePtr, int width, int height, uint8 *destPtr);
-void gfxModuleData_Init(void);
-void gfxModuleData_flipScreen(void);
+void gfxModuleData_Init();
+void gfxModuleData_flipScreen();
 //void gfxModuleData_setPal(uint8 * ptr);
 void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8 *pOutput);
 void gfxModuleData_setPalEntries(const byte *ptr, int start, int num);
 void gfxModuleData_setPal256(const byte *ptr);
 void gfxModuleData_addDirtyRect(const Common::Rect &r);
-void flip(void);
+void flip();
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour);
 void resetBitmap(uint8 *dataPtr, int32 dataSize);
 

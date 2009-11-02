@@ -84,11 +84,11 @@ typedef enum { TRANS_DEF, TRANS_CUT, TRANS_FADE } TRANSITS;
 
 void DoHailScene(SCNHANDLE scene);
 
-void WrapScene(void);
+void WrapScene();
 
 void StartNewScene(SCNHANDLE scene, int entry);
 
-void EndScene(void);
+void EndScene();
 
 void SendSceneTinselProcess(TINSEL_EVENT event);
 

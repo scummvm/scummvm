@@ -421,12 +421,12 @@ int AgiEngine::waitAnyKey() {
 	return key;
 }
 
-bool AgiEngine::isKeypress(void) {
+bool AgiEngine::isKeypress() {
 	processEvents();
 	return _keyQueueStart != _keyQueueEnd;
 }
 
-int AgiEngine::getKeypress(void) {
+int AgiEngine::getKeypress() {
 	int k;
 
 	while (_keyQueueStart == _keyQueueEnd)	// block
@@ -437,7 +437,7 @@ int AgiEngine::getKeypress(void) {
 	return k;
 }
 
-void AgiEngine::clearKeyQueue(void) {
+void AgiEngine::clearKeyQueue() {
 	while (isKeypress()) {
 		getKeypress();
 	}

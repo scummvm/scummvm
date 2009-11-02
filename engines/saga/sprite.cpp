@@ -76,7 +76,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 	}
 }
 
-Sprite::~Sprite(void) {
+Sprite::~Sprite() {
 	debug(8, "Shutting down sprite subsystem...");
 	_mainSprites.freeMem();
 	if (_vm->getGameId() == GID_IHNM) {

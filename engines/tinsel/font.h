@@ -35,11 +35,11 @@ namespace Tinsel {
 #define TBUFSZ	512
 
 
-char *TextBufferAddr(void);
+char *TextBufferAddr();
 
-SCNHANDLE GetTagFontHandle(void);
+SCNHANDLE GetTagFontHandle();
 
-SCNHANDLE GetTalkFontHandle(void);
+SCNHANDLE GetTalkFontHandle();
 
 void SetTagFontHandle(SCNHANDLE hFont);
 
@@ -49,7 +49,7 @@ void SetTempTagFontHandle(SCNHANDLE hFont);
 
 void SetTempTalkFontHandle(SCNHANDLE hFont);
 
-void ResetFontHandles(void);
+void ResetFontHandles();
 
 void FettleFontPal(SCNHANDLE fontPal);
 

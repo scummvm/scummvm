@@ -55,7 +55,7 @@ int bAmerica = 0;
 /**
  * Write settings to config manager and flush the config file to disk.
  */
-void WriteConfig(void) {
+void WriteConfig() {
 	ConfMan.setInt("dclick_speed", dclickSpeed);
 	ConfMan.setInt("music_volume", volMusic);
 	ConfMan.setInt("sfx_volume", volSound);
@@ -94,7 +94,7 @@ void WriteConfig(void) {
 /**
  * Read configuration settings from the config file into memory
  */
-void ReadConfig(void) {
+void ReadConfig() {
 	if (ConfMan.hasKey("dclick_speed"))
 		dclickSpeed = ConfMan.getInt("dclick_speed");
 

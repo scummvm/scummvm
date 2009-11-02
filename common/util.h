@@ -139,7 +139,7 @@ public:
 	 * Identical to getRandomNumber(1), but faster, hopefully.
 	 * @return	a random bit, either 0 or 1
 	 */
-	uint getRandomBit(void);
+	uint getRandomBit();
 	/**
 	 * Generates a random unsigned integer in the interval [min, max].
 	 * @param min	the lower bound

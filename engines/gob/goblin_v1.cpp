@@ -42,7 +42,7 @@ Goblin_v1::Goblin_v1(GobEngine *vm) : Goblin(vm) {
 	_rotStates[3][0] = 27; _rotStates[3][1] = 25; _rotStates[3][2] = 26; _rotStates[3][3] = 6;
 }
 
-void Goblin_v1::freeObjects(void) {
+void Goblin_v1::freeObjects() {
 	int16 state;
 	int16 col;
 

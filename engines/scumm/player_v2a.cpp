@@ -34,7 +34,7 @@ namespace Scumm {
 static uint32 CRCtable[256];
 
 
-static void	InitCRC (void) {
+static void	InitCRC () {
 	const uint32 poly = 0xEDB88320;
 	int i, j;
 	uint32 n;

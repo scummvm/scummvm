@@ -461,7 +461,7 @@ int16 Map::checkLongPath(int16 x0, int16 y0,
 	}
 }
 
-void Map::loadMapsInitGobs(void) {
+void Map::loadMapsInitGobs() {
 	int16 layer;
 
 	if (!_loadFromAvo)

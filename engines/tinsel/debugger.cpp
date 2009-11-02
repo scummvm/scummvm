@@ -38,11 +38,11 @@ namespace Tinsel {
 //----------------- EXTERNAL FUNCTIONS ---------------------
 
 // In PDISPLAY.CPP
-extern void TogglePathDisplay(void);
+extern void TogglePathDisplay();
 // In tinsel.cpp
 extern void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 // In scene.cpp
-extern SCNHANDLE GetSceneHandle(void);
+extern SCNHANDLE GetSceneHandle();
 
 //----------------- SUPPORT FUNCTIONS ---------------------
 

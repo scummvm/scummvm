@@ -41,7 +41,7 @@ struct SoundSample {
 	uint _frequency;
 	byte* _data;
 
-	void close(void) {
+	void close() {
 		delete[] _data;
 		_data = NULL;
 	}

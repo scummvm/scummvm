@@ -117,15 +117,15 @@ struct OBJ_INIT {
 |*			Object Function Prototypes			*|
 \*----------------------------------------------------------------------*/
 
-void KillAllObjects(void);	// kill all objects and place them on free list
+void KillAllObjects();	// kill all objects and place them on free list
 
-void FreeObjectList(void);	// free the object list
+void FreeObjectList();	// free the object list
 
 #ifdef	DEBUG
-void ObjectStats(void);		// Shows the maximum number of objects used at once
+void ObjectStats();		// Shows the maximum number of objects used at once
 #endif
 
-OBJECT *AllocObject(void);	// allocate a object from the free list
+OBJECT *AllocObject();	// allocate a object from the free list
 
 void FreeObject(		// place a object back on the free list
 	OBJECT *pFreeObj);	// object to free

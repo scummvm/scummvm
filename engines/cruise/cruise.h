@@ -63,12 +63,12 @@ private:
 	int _gameSpeed;
 	bool _speedFlag;
 
-	void initialize(void);
-	void deinitialise(void);
+	void initialize();
+	void deinitialise();
 	bool loadLanguageStrings();
 	bool makeLoad(char *saveName);
 	void mainLoop();
-	int processInput(void);
+	int processInput();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -100,7 +100,7 @@ public:
 	virtual void syncSoundSettings();
 
 	const CRUISEGameDescription *_gameDescription;
-	void initAllData(void);
+	void initAllData();
 
 	Common::RandomSource _rnd;
 };

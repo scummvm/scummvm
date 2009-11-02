@@ -39,7 +39,7 @@ void freePerso(int persoIdx) {
 	}
 }
 
-void freeCTP(void) {
+void freeCTP() {
 
 	for (unsigned long int i = 0; i < NUM_PERSONS; i++) {
 		freePerso(i);

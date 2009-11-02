@@ -121,7 +121,7 @@ public:
 
 	// Timing functions - MidiDriver now operates timers
 	void setTimerCallback(void *timer_param, void (*timer_proc) (void *)) { }
-	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
+	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
 
 	// Channel allocation functions
 	MidiChannel *allocateChannel() { return 0; }

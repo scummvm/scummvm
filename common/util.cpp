@@ -32,7 +32,7 @@
 
 #ifdef _WIN32_WCE
 // This is required for the debugger attachment
-extern bool isSmartphone(void);
+extern bool isSmartphone();
 #endif
 
 #ifdef __PLAYSTATION2__
@@ -178,7 +178,7 @@ uint RandomSource::getRandomNumber(uint max) {
 	return _randSeed % (max + 1);
 }
 
-uint RandomSource::getRandomBit(void) {
+uint RandomSource::getRandomBit() {
 	_randSeed = 0xDEADBF03 * (_randSeed + 1);
 	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
 	return _randSeed & 1;

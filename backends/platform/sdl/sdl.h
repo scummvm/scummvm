@@ -90,8 +90,8 @@ public:
 
 	virtual void initBackend();
 
-	void beginGFXTransaction(void);
-	TransactionError endGFXTransaction(void);
+	void beginGFXTransaction();
+	TransactionError endGFXTransaction();
 
 #ifdef USE_RGB_COLOR
 	// Game screen

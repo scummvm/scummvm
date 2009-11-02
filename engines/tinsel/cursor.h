@@ -38,22 +38,22 @@ void GetCursorXY(int *x, int *y, bool absolute);
 bool GetCursorXYNoWait(int *x, int *y, bool absolute);
 bool isCursorShown();
 
-void RestoreMainCursor(void);
+void RestoreMainCursor();
 void SetTempCursor(SCNHANDLE pScript);
-void DwHideCursor(void);
-void UnHideCursor(void);
-void FreezeCursor(void);
+void DwHideCursor();
+void UnHideCursor();
+void FreezeCursor();
 void DoFreezeCursor(bool bFreeze);
-void HideCursorTrails(void);
-void UnHideCursorTrails(void);
-void DelAuxCursor(void);
+void HideCursorTrails();
+void UnHideCursorTrails();
+void DelAuxCursor();
 void SetAuxCursor(SCNHANDLE hFilm);
 void DwInitCursor(SCNHANDLE bfilm);
-void DropCursor(void);
-void RestartCursor(void);
-void RebootCursor(void);
-void StartCursorFollowed(void);
-void EndCursorFollowed(void);
+void DropCursor();
+void RestartCursor();
+void RebootCursor();
+void StartCursorFollowed();
+void EndCursorFollowed();
 
 } // End of namespace Tinsel
 

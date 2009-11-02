@@ -130,7 +130,7 @@ struct FontData {
 class Font {
  public:
 	Font(SagaEngine *vm);
-	~Font(void);
+	~Font();
 	int getStringWidth(KnownFont font, const char *text, size_t count, FontEffectFlags flags) {
 		return getStringWidth(knownFont2FontIdx(font), text, count, flags);
 	}

@@ -100,7 +100,7 @@ public:
 	int16 checkLongPath(int16 x0, int16 y0,
 			int16 x1, int16 y1, int16 i0, int16 i1);
 
-	void loadMapsInitGobs(void);
+	void loadMapsInitGobs();
 
 	virtual int16 getItem(int x, int y) = 0;
 	virtual void setItem(int x, int y, int16 item) = 0;
@@ -166,7 +166,7 @@ public:
 	virtual ~Map_v1();
 
 protected:
-	void init(void);
+	void init();
 	void loadSounds(Common::SeekableReadStream &data);
 	void loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos);
 	void loadObjects(Common::SeekableReadStream &data, uint32 objsPos);

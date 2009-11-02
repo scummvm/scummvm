@@ -59,7 +59,7 @@ ResMan::ResMan(const char *fileName, bool isMacFile) {
 	loadCluDescript(fileName);
 }
 
-ResMan::~ResMan(void) {
+ResMan::~ResMan() {
 #if 0
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
 		Clu *cluster = _prj.clu[clusCnt];
@@ -150,7 +150,7 @@ void ResMan::loadCluDescript(const char *fileName) {
 			_srIdList[cnt] = 0x04050000 | cnt;
 }
 
-void ResMan::freeCluDescript(void) {
+void ResMan::freeCluDescript() {
 
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
 		Clu *cluster = _prj.clu + clusCnt;
@@ -173,7 +173,7 @@ void ResMan::freeCluDescript(void) {
 	delete[] _prj.clu;
 }
 
-void ResMan::flush(void) {
+void ResMan::flush() {
 	for (uint32 clusCnt = 0; clusCnt < _prj.noClu; clusCnt++) {
 		Clu *cluster = _prj.clu + clusCnt;
 		for (uint32 grpCnt = 0; grpCnt < cluster->noGrp; grpCnt++) {

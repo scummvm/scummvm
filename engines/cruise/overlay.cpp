@@ -33,7 +33,7 @@ namespace Cruise {
 overlayStruct overlayTable[90];
 int numOfLoadedOverlay;
 
-void initOverlayTable(void) {
+void initOverlayTable() {
 	int i;
 
 	for (i = 0; i < 90; i++) {

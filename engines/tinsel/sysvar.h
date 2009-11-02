@@ -140,7 +140,7 @@ void SetSysString(int number, SCNHANDLE hString);
 
 SCNHANDLE SysString(int number);
 
-bool GetNoBlocking(void);
+bool GetNoBlocking();
 
 void SetNoBlocking(bool flag);
 

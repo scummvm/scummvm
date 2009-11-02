@@ -98,11 +98,11 @@ public:
 		_hitZoneListCount = 0;
 
 	}
-	~ObjectMap(void) {
+	~ObjectMap() {
 		freeMem();
 	}
 	void load(const byte *resourcePointer, size_t resourceLength);
-	void freeMem(void);
+	void freeMem();
 	void draw(const Point& testPoint, int color, int color2);	// for debugging
 	int hitTest(const Point& testPoint);
 	HitZone *getHitZone(int16 index) {
@@ -112,7 +112,7 @@ public:
 		return _hitZoneList[index];
 	}
 
-	void cmdInfo(void);
+	void cmdInfo();
 
 private:
 	SagaEngine *_vm;

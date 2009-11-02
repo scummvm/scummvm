@@ -40,7 +40,7 @@ PalAnim::PalAnim(SagaEngine *vm) : _vm(vm) {
 	_entries = NULL;
 }
 
-PalAnim::~PalAnim(void) {
+PalAnim::~PalAnim() {
 }
 
 int PalAnim::loadPalAnim(const byte *resdata, size_t resdata_len) {

@@ -92,7 +92,7 @@ void bringWordtoTop(char *str, int wordnum) {
 	memcpy(str, tmp.c_str(), strlen(str));
 }
 
-bool AgiEngine::predictiveDialog(void) {
+bool AgiEngine::predictiveDialog() {
 	int key = 0, active = -1, lastactive = 0;
 	bool rc = false;
 	uint8 x;
@@ -483,7 +483,7 @@ bool AgiEngine::predictiveDialog(void) {
 	return rc;
 }
 
-void AgiEngine::loadDict(void) {
+void AgiEngine::loadDict() {
 	Common::File inFile;
 	int lines = 0;
 
@@ -550,7 +550,7 @@ void AgiEngine::loadDict(void) {
 	printf("Time to parse pred.dic: %d, total: %d\n", time3-time2, time3-time1);
 }
 
-bool AgiEngine::matchWord(void) {
+bool AgiEngine::matchWord() {
 	if (_currentCode.empty()) {
 		return false;
 	}

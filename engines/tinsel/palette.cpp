@@ -130,7 +130,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 /**
  * Transfer palettes in the palette Q to Video DAC.
  */
-void PalettesToVideoDAC(void) {
+void PalettesToVideoDAC() {
 	PALQ *pPalQ;				// palette Q iterator
 	VIDEO_DAC_Q *pDACtail = vidDACdata;	// set tail pointer
 
@@ -180,7 +180,7 @@ void PalettesToVideoDAC(void) {
 /**
  * Commpletely reset the palette allocator.
  */
-void ResetPalAllocator(void) {
+void ResetPalAllocator() {
 #ifdef DEBUG
 	// clear number of palettes in use
 	numPals = 0;
@@ -197,7 +197,7 @@ void ResetPalAllocator(void) {
 /**
  * Shows the maximum number of palettes used at once.
  */
-void PaletteStats(void) {
+void PaletteStats() {
 	printf("%i palettes of %i used.\n", maxPals, NUM_PALETTES);
 	printf("%i DAC queue entries of %i used.\n", maxDACQ, VDACQLENGTH);
 }
@@ -494,7 +494,7 @@ void FadingPalette(PPALQ pPalQ, bool bFading) {
  * All fading processes have just been killed, so none of the
  * palettes are fading.
  */
-void NoFadingPalettes(void) {
+void NoFadingPalettes() {
 	PPALQ pPalQ;
 
 	for (pPalQ = palAllocData; pPalQ <= palAllocData + NUM_PALETTES - 1; pPalQ++) {
@@ -614,11 +614,11 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColour, int length, int brightne
 	}
 }
 
-int TranslucentColour(void) {
+int TranslucentColour() {
 	return translucentIndex;
 }
 
-int HighlightColour(void) {
+int HighlightColour() {
 	static COLORREF cRef;
 
 	cRef = (COLORREF)SysVar(SYS_HighlightRGB);
@@ -627,7 +627,7 @@ int HighlightColour(void) {
 	return talkIndex;
 }
 
-int TalkColour(void) {
+int TalkColour() {
 	return TinselV2 ? talkIndex : TALKFONT_COL;
 }
 
@@ -635,7 +635,7 @@ void SetTalkColourRef(COLORREF colRef) {
 	talkColRef = colRef;
 }
 
-COLORREF GetTalkColourRef(void) {
+COLORREF GetTalkColourRef() {
 	return talkColRef;
 }
 
@@ -643,7 +643,7 @@ void SetTagColorRef(COLORREF colRef) {
 	tagColRef = colRef;
 }
 
-COLORREF GetTagColorRef(void) {
+COLORREF GetTagColorRef() {
 	return tagColRef;
 }
 

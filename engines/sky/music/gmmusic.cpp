@@ -46,7 +46,7 @@ GmMusic::GmMusic(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
 	_midiDrv->setTimerCallback(this, passTimerFunc);
 }
 
-GmMusic::~GmMusic(void) {
+GmMusic::~GmMusic() {
 	_midiDrv->setTimerCallback(NULL, NULL);
 	if (_currentMusic)
 		stopMusic();
@@ -65,7 +65,7 @@ void GmMusic::setVolume(uint16 param) {
 		_channels[cnt]->updateVolume(_musicVolume);
 }
 
-void GmMusic::timerCall(void) {
+void GmMusic::timerCall() {
 	_timerCount += _midiDrv->getBaseTempo();
 	if (_timerCount > (1000 * 1000 / 50)) {
 		// call pollMusic() 50 times per second
@@ -75,7 +75,7 @@ void GmMusic::timerCall(void) {
 	}
 }
 
-void GmMusic::setupPointers(void) {
+void GmMusic::setupPointers() {
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x79B);
 		_sysExSequence = _musicData + 0x1EF2;
@@ -95,7 +95,7 @@ void GmMusic::setupChannels(uint8 *channelData) {
 	}
 }
 
-void GmMusic::startDriver(void) {
+void GmMusic::startDriver() {
 	// Send GM System On to reset channel parameters etc.
 	uint8 sysEx[] = { 0x7e, 0x7f, 0x09, 0x01 };
 	_midiDrv->sysEx(sysEx, sizeof(sysEx));

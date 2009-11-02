@@ -73,7 +73,7 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSys
 	_decoderType = decoderType;
 }
 
-MoviePlayer::~MoviePlayer(void) {
+MoviePlayer::~MoviePlayer() {
 	delete _decoder;
 	delete _bgSoundHandle;
 }
@@ -145,7 +145,7 @@ bool MoviePlayer::load(uint32 id) {
 	return _decoder->loadFile(filename);
 }
 
-void MoviePlayer::play(void) {
+void MoviePlayer::play() {
 	if (_bgSoundStream) {
 		_snd->playInputStream(Audio::Mixer::kSFXSoundType, _bgSoundHandle, _bgSoundStream);
 	}

@@ -56,7 +56,7 @@ int16 canUseOnObject = 0;
 void drawString(const char *string, byte param) {
 }
 
-void waitPlayerInput(void) {
+void waitPlayerInput() {
 }
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
@@ -151,7 +151,7 @@ void moveUsingKeyboard(int x, int y) {
 	egoMovedWithKeyboard = x || y;
 }
 
-void stopMusicAfterFadeOut(void) {
+void stopMusicAfterFadeOut() {
 //	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
 //		g_sfxPlayer->stop();
 //	}
@@ -324,7 +324,7 @@ void CineEngine::resetEngine() {
 	}
 }
 
-void CineEngine::makeSystemMenu(void) {
+void CineEngine::makeSystemMenu() {
 	int16 numEntry, systemCommand;
 	int16 mouseX, mouseY, mouseButton;
 	int16 selectedSave;
@@ -558,7 +558,7 @@ int16 selectSubObject(int16 x, int16 y, int16 param) {
 
 // TODO: Make separate functions for Future Wars's and Operation Stealth's version of this function, this is getting too messy
 // TODO: Add support for using the different prepositions for different verbs (Doesn't work currently)
-void makeCommandLine(void) {
+void makeCommandLine() {
 	uint16 x, y;
 
 	commandVar1 = 0;
@@ -799,7 +799,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	return currentSelection;
 }
 
-void makeActionMenu(void) {
+void makeActionMenu() {
 	uint16 mouseButton;
 	uint16 mouseX;
 	uint16 mouseY;
@@ -822,7 +822,7 @@ void makeActionMenu(void) {
 	inMenu = false;
 }
 
-uint16 executePlayerInput(void) {
+uint16 executePlayerInput() {
 	uint16 var_5E;
 	uint16 var_2;
 	uint16 mouseX, mouseY, mouseButton;
@@ -1181,10 +1181,10 @@ uint16 processKeyboard(uint16 param) {
 	return 0;
 }
 
-void mainLoopSub6(void) {
+void mainLoopSub6() {
 }
 
-void checkForPendingDataLoad(void) {
+void checkForPendingDataLoad() {
 	if (newPrcName[0] != 0) {
 		bool loadPrcOk = loadPrc(newPrcName);
 
@@ -1228,7 +1228,7 @@ void checkForPendingDataLoad(void) {
 	}
 }
 
-void hideMouse(void) {
+void hideMouse() {
 }
 
 void removeExtention(char *dest, const char *source) {
@@ -1587,7 +1587,7 @@ void processSeqListElement(SeqListElement &element) {
 	}
 }
 
-void processSeqList(void) {
+void processSeqList() {
 	Common::List<SeqListElement>::iterator it;
 
 	for (it = seqList.begin(); it != seqList.end(); ++it) {

@@ -68,28 +68,28 @@ private:
 class Menu {
 public:
 	Menu(Screen *pScreen, Mouse *pMouse);
-	~Menu(void);
+	~Menu();
 	void fnChooser(Object *compact);
-	void fnEndChooser(void);
+	void fnEndChooser();
 	void fnAddSubject(int32 sub);
-	void cfnReleaseMenu(void);
+	void cfnReleaseMenu();
 	int logicChooser(Object *compact);
-	void engine(void);
+	void engine();
 	void refresh(uint8 menuType);
-	void fnStartMenu(void);
-	void fnEndMenu(void);
-	void checkTopMenu(void);
+	void fnStartMenu();
+	void fnEndMenu();
+	void checkTopMenu();
 	static const MenuObject _objectDefs[TOTAL_pockets + 1];
 
 private:
-	void buildSubjects(void);
-	void buildMenu(void);
+	void buildSubjects();
+	void buildMenu();
 	void showMenu(uint8 menuType);
 	byte _subjectBarStatus;
 	byte _objectBarStatus;
 	int8 _fadeSubject;
 	int8 _fadeObject;
-	void refreshMenus(void);
+	void refreshMenus();
 	uint8 checkMenuClick(uint8 menuType);
 	//- lower menu, speech subjects:
 	MenuIcon *_subjects[16];

@@ -47,7 +47,7 @@ Mouse::Mouse(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_currentPtr = NULL;
 }
 
-Mouse::~Mouse(void) {
+Mouse::~Mouse() {
 	setLuggage(0, 0);
 	setPointer(0, 0);
 
@@ -55,7 +55,7 @@ Mouse::~Mouse(void) {
 		_resMan->resClose(MSE_POINTER + cnt);
 }
 
-void Mouse::initialize(void) {
+void Mouse::initialize() {
 	_numObjs = 0;
 	Logic::_scriptVars[MOUSE_STATUS] = 0; // mouse off and unlocked
 	_getOff = 0;
@@ -189,7 +189,7 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 	_numObjs = 0;
 }
 
-uint16 Mouse::testEvent(void) {
+uint16 Mouse::testEvent() {
 	return _state;
 }
 
@@ -302,7 +302,7 @@ void Mouse::setLuggage(uint32 resId, uint32 rate) {
 	createPointer(_currentPtrId, resId);
 }
 
-void Mouse::animate(void) {
+void Mouse::animate() {
 	if ((Logic::_scriptVars[MOUSE_STATUS] == 1) || (_mouseOverride && _currentPtr)) {
 		_frame = (_frame + 1) % _currentPtr->numFrames;
 		uint8 *ptrData = (uint8*)_currentPtr + sizeof(MousePtr);
@@ -311,7 +311,7 @@ void Mouse::animate(void) {
 	}
 }
 
-void Mouse::fnNoHuman(void) {
+void Mouse::fnNoHuman() {
 	if (Logic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
 	Logic::_scriptVars[MOUSE_STATUS] = 0; // off & unlocked
@@ -319,7 +319,7 @@ void Mouse::fnNoHuman(void) {
 	setPointer(0, 0);
 }
 
-void Mouse::fnAddHuman(void) {
+void Mouse::fnAddHuman() {
 	if (Logic::_scriptVars[MOUSE_STATUS] & 2) // locked, can't do anything
 		return ;
 	Logic::_scriptVars[MOUSE_STATUS] = 1;
@@ -328,19 +328,19 @@ void Mouse::fnAddHuman(void) {
 	setPointer(MSE_POINTER, 0);
 }
 
-void Mouse::fnBlankMouse(void) {
+void Mouse::fnBlankMouse() {
 	setPointer(0, 0);
 }
 
-void Mouse::fnNormalMouse(void) {
+void Mouse::fnNormalMouse() {
 	setPointer(MSE_POINTER, 0);
 }
 
-void Mouse::fnLockMouse(void) {
+void Mouse::fnLockMouse() {
 	Logic::_scriptVars[MOUSE_STATUS] |= 2;
 }
 
-void Mouse::fnUnlockMouse(void) {
+void Mouse::fnUnlockMouse() {
 	Logic::_scriptVars[MOUSE_STATUS] &= 1;
 }
 

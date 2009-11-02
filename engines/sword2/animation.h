@@ -72,7 +72,7 @@ private:
 class MoviePlayer : public Graphics::VideoPlayer {
 public:
 	MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType);
-	virtual ~MoviePlayer(void);
+	virtual ~MoviePlayer();
 
 	bool load(const char *name);
 	void play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut);

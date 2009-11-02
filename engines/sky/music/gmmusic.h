@@ -35,20 +35,20 @@ namespace Sky {
 class GmMusic : public MusicBase {
 public:
 	GmMusic(MidiDriver *pMidiDrv, Disk *pDisk);
-	~GmMusic(void);
+	~GmMusic();
 	virtual void setVolume(uint16 param);
 private:
 	static void passTimerFunc(void *param);
-	void timerCall(void);
+	void timerCall();
 
 	uint32 _timerCount;
 	uint8 *_sysExSequence;
 	MidiDriver *_midiDrv;
 	static const byte _veloTab[128];
 
-	virtual void setupPointers(void);
+	virtual void setupPointers();
 	virtual void setupChannels(uint8 *channelData);
-	virtual void startDriver(void);
+	virtual void startDriver();
 };
 
 } // End of namespace Sky

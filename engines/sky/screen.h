@@ -60,7 +60,7 @@ typedef struct {
 class Screen {
 public:
 	Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact);
-	~Screen(void);
+	~Screen();
 	void setPalette(uint8 *pal);
 	void setPaletteEndian(uint8 *pal);
 	void setPalette(uint16 fileNum);
@@ -70,28 +70,28 @@ public:
 	void showScreen(uint16 fileNum);
 	void showScreen(uint8 *pScreen);
 
-	void handleTimer(void);
+	void handleTimer();
 	void startSequence(uint16 fileNum);
 	void startSequenceItem(uint16 itemNum);
-	void stopSequence(void);
-	bool sequenceRunning(void) { return _seqInfo.running; }
-	void waitForSequence(void);
-	uint32 seqFramesLeft(void) { return _seqInfo.framesLeft; }
-	uint8 *giveCurrent(void) { return _currentScreen; }
-	void halvePalette(void);
+	void stopSequence();
+	bool sequenceRunning() { return _seqInfo.running; }
+	void waitForSequence();
+	uint32 seqFramesLeft() { return _seqInfo.framesLeft; }
+	uint8 *giveCurrent() { return _currentScreen; }
+	void halvePalette();
 
 	//- regular screen.asm routines
-	void forceRefresh(void) { memset(_gameGrid, 0x80, GRID_X * GRID_Y); }
+	void forceRefresh() { memset(_gameGrid, 0x80, GRID_X * GRID_Y); }
 	void fnFadeUp(uint32 palNum, uint32 scroll);
 	void fnFadeDown(uint32 scroll);
 	void fnDrawScreen(uint32 palette, uint32 scroll);
-	void clearScreen(void);
+	void clearScreen();
 	void setFocusRectangle(const Common::Rect& rect);
 
-	void recreate(void);
+	void recreate();
 	void flip(bool doUpdate = true);
 
-	void spriteEngine(void);
+	void spriteEngine();
 
 	void paintBox(uint16 x, uint16 y);
 	void showGrid(uint8 *gridBuf);
@@ -106,8 +106,8 @@ private:
 	uint8 _seqGrid[20 * 12];
 
 	bool volatile _gotTick;
-	void waitForTimer(void);
-	void processSequence(void);
+	void waitForTimer();
+	void processSequence();
 
 	uint8 *_gameGrid;
 	uint8 *_currentScreen;
@@ -129,9 +129,9 @@ private:
 	// fixme: get rid of these globals
 	uint32 _sprWidth, _sprHeight, _sprX, _sprY, _maskX1, _maskX2;
 	void doSprites(uint8 layer);
-	void sortSprites(void);
+	void sortSprites();
 	void drawSprite(uint8 *spriteData, Compact *sprCompact);
-	void verticalMask(void);
+	void verticalMask();
 	void vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 layerId);
 	void vectorToGame(uint8 gridVal);
 };

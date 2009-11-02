@@ -46,13 +46,13 @@ MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
 	_midiDrv->setTimerCallback(this, passTimerFunc);
 }
 
-MT32Music::~MT32Music(void) {
+MT32Music::~MT32Music() {
 	_midiDrv->close();
 	_midiDrv->setTimerCallback(NULL, NULL);
 	delete _midiDrv;
 }
 
-void MT32Music::timerCall(void) {
+void MT32Music::timerCall() {
 	_timerCount += _midiDrv->getBaseTempo();
 	if (_timerCount > (1000000 / 50)) {
 		// call pollMusic() 50 times per second
@@ -73,7 +73,7 @@ void MT32Music::setVolume(uint16 volume) {
 	_midiDrv->sysEx(sysEx, 9);
 }
 
-void MT32Music::setupPointers(void) {
+void MT32Music::setupPointers() {
 	_musicDataLoc = READ_LE_UINT16(_musicData + 0x7DC);
 	_sysExSequence = READ_LE_UINT16(_musicData + 0x7E0) + _musicData;
 }
@@ -117,7 +117,7 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 	return true;
 }
 
-void MT32Music::startDriver(void) {
+void MT32Music::startDriver() {
 	// setup timbres and patches using SysEx data
 	uint8* sysExData = _sysExSequence;
 	uint8 timbreNum = sysExData[0];

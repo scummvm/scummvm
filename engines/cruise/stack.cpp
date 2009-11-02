@@ -40,7 +40,7 @@ void pushVar(int16 var) {
 	}
 }
 
-int16 popVar(void) {
+int16 popVar() {
 	if (positionInStack <= 0) {
 		return (0);
 	}

@@ -152,7 +152,7 @@ Common::Error SwordEngine::init() {
 	return Common::kNoError;
 }
 
-void SwordEngine::reinitialize(void) {
+void SwordEngine::reinitialize() {
 	_sound->quitScreen();
 	_resMan->flush(); // free everything that's currently alloced and opened. (*evil*)
 
@@ -414,7 +414,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		error("%s", msg);
 }
 
-void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or what...
+void SwordEngine::checkCdFiles() { // check if we're running from cd, hdd or what...
 	bool fileExists[30];
 	bool isFullVersion = false; // default to demo version
 	bool missingTypes[8] = { false, false, false, false, false, false, false, false };
@@ -595,7 +595,7 @@ Common::Error SwordEngine::go() {
 	return Common::kNoError;
 }
 
-void SwordEngine::checkCd(void) {
+void SwordEngine::checkCd() {
 	uint8 needCd = _cdList[Logic::_scriptVars[NEW_SCREEN]];
 	if (_systemVars.runningFromCd) { // are we running from cd?
 		if (needCd == 0) { // needCd == 0 means we can use either CD1 or CD2.
@@ -617,7 +617,7 @@ void SwordEngine::checkCd(void) {
 	}
 }
 
-uint8 SwordEngine::mainLoop(void) {
+uint8 SwordEngine::mainLoop() {
 	uint8 retCode = 0;
 	_keyPressed.reset();
 
@@ -736,7 +736,7 @@ bool SwordEngine::mouseIsActive() {
 }
 
 // The following function is needed to restore proper status after GMM load game
-void SwordEngine::reinitRes(void) {
+void SwordEngine::reinitRes() {
 	checkCd(); // Reset currentCD var to correct value
 	_screen->newScreen(Logic::_scriptVars[NEW_SCREEN]);
 	_logic->newScreen(Logic::_scriptVars[NEW_SCREEN]);

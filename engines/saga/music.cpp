@@ -443,17 +443,17 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_midiMusicData = resourceData;
 }
 
-void Music::pause(void) {
+void Music::pause() {
 	_player->setVolume(-1);
 	_player->setPlaying(false);
 }
 
-void Music::resume(void) {
+void Music::resume() {
 	_player->setVolume(_vm->_musicVolume);
 	_player->setPlaying(true);
 }
 
-void Music::stop(void) {
+void Music::stop() {
 	_player->stopMusic();
 }
 

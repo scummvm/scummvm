@@ -75,13 +75,13 @@ Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScree
 	setupMcodeTable();
 }
 
-Logic::~Logic(void) {
+Logic::~Logic() {
 	delete _textMan;
 	delete _router;
 	delete _eventMan;
 }
 
-void Logic::initialize(void) {
+void Logic::initialize() {
 	memset(_scriptVars, 0, NUM_SCRIPT_VARS * sizeof(uint32));
 	for (uint8 cnt = 0; cnt < NON_ZERO_SCRIPT_VARS; cnt++)
 		_scriptVars[_scriptVarInit[cnt][0]] = _scriptVarInit[cnt][1];
@@ -132,7 +132,7 @@ void Logic::newScreen(uint32 screen) {
 	}
 }
 
-void Logic::engine(void) {
+void Logic::engine() {
 	debug(8, "\n\nNext logic cycle");
 	_eventMan->serviceGlobalEventList();
 
@@ -429,7 +429,7 @@ int Logic::animDriver(Object *compact) {
 	return 0;
 }
 
-void Logic::updateScreenParams(void) {
+void Logic::updateScreenParams() {
 	Object *compact = (Object*)_objMan->fetchObject(PLAYER);
 	_screen->setScrolling((int16)(compact->o_xcoord - _scriptVars[FEET_X]),
 						  (int16)(compact->o_ycoord - _scriptVars[FEET_Y]));

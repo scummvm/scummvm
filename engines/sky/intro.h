@@ -41,7 +41,7 @@ class Text;
 class Intro {
 public:
 	Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *text, Audio::Mixer *mixer, OSystem *system);
-	~Intro(void);
+	~Intro();
 	bool doIntro(bool floppyIntro);
 private:
 	static uint16 _mainIntroSeq[];
@@ -65,10 +65,10 @@ private:
 
 	bool escDelay(uint32 msecs);
 	bool nextPart(uint16 *&data);
-	bool floppyScrollFlirt(void);
+	bool floppyScrollFlirt();
 	bool commandFlirt(uint16 *&data);
-	void showTextBuf(void);
-	void restoreScreen(void);
+	void showTextBuf();
+	void restoreScreen();
 };
 
 } // End of namespace Sky

@@ -38,7 +38,7 @@ MusicBase::MusicBase(Disk *pDisk) {
 	_numberOfChannels = _currentMusic = 0;
 }
 
-MusicBase::~MusicBase(void) {
+MusicBase::~MusicBase() {
 	stopMusic();
 	if (_musicData)
 		free(_musicData);
@@ -63,33 +63,33 @@ void MusicBase::loadSection(uint8 pSection) {
 	_mutex.unlock();
 }
 
-bool MusicBase::musicIsPlaying(void) {
+bool MusicBase::musicIsPlaying() {
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		if (_channels[cnt]->isActive())
 			return true;
 	return false;
 }
 
-void MusicBase::stopMusic(void) {
+void MusicBase::stopMusic() {
 	_mutex.lock();
 	stopMusicInternal();
 	_mutex.unlock();
 }
 
-void MusicBase::stopMusicInternal(void) {
+void MusicBase::stopMusicInternal() {
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		delete _channels[cnt];
 	_numberOfChannels = 0;
 }
 
-void MusicBase::updateTempo(void) {
+void MusicBase::updateTempo() {
 	uint16 tempoMul = _musicTempo0 * _musicTempo1;
 	uint16 divisor = 0x4446390/ 23864;
 	_tempo = (tempoMul / divisor) << 16;
 	_tempo |= (((tempoMul % divisor) << 16) | (tempoMul / divisor)) / divisor;
 }
 
-void MusicBase::loadNewMusic(void) {
+void MusicBase::loadNewMusic() {
 	uint16 musicPos;
 	if (_onNextPoll.musicToProcess > _musicData[_musicDataLoc]) {
 		error("Music %d requested but doesn't exist in file.", _onNextPoll.musicToProcess);
@@ -114,7 +114,7 @@ void MusicBase::loadNewMusic(void) {
 	}
 }
 
-void MusicBase::pollMusic(void) {
+void MusicBase::pollMusic() {
 	_mutex.lock();
 	uint8 newTempo;
 	if (_onNextPoll.musicToProcess != _currentMusic)
@@ -137,11 +137,11 @@ void MusicBase::startMusic(uint16 param) {
 	_onNextPoll.musicToProcess = param & 0xF;
 }
 
-uint8 MusicBase::giveVolume(void) {
+uint8 MusicBase::giveVolume() {
 	return (uint8)_musicVolume;
 }
 
-uint8 MusicBase::giveCurrentMusic(void) {
+uint8 MusicBase::giveCurrentMusic() {
 	return _currentMusic;
 }
 

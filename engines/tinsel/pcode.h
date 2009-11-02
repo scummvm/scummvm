@@ -118,13 +118,13 @@ INT_CONTEXT *InitInterpretContext(
 
 INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric);
 
-void FreeMostInterpretContexts(void);
-void FreeMasterInterpretContext(void);
+void FreeMostInterpretContexts();
+void FreeMasterInterpretContext();
 
 void SaveInterpretContexts(INT_CONTEXT *sICInfo);
 
 void RegisterGlobals(int num);
-void FreeGlobals(void);
+void FreeGlobals();
 
 void AttachInterpret(INT_CONTEXT *pic, PROCESS *pProc);
 

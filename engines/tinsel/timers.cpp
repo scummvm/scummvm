@@ -74,7 +74,7 @@ uint32 DwGetCurrentTime() {
  * Resets all of the timer slots
  */
 
-void RebootTimers(void) {
+void RebootTimers() {
 	memset(timers, 0, sizeof(timers));
 }
 
@@ -124,7 +124,7 @@ static TIMER *allocateTimer(int num) {
 /**
  * Update all timers, as appropriate.
  */
-void FettleTimers(void) {
+void FettleTimers() {
 	for (int i = 0; i < MAX_TIMERS; i++) {
 		if (!timers[i].tno)
 			continue;

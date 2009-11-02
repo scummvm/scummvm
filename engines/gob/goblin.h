@@ -198,20 +198,20 @@ public:
 	// Functions
 	char rotateState(int16 from, int16 to);
 	void playSound(SoundDesc &snd, int16 repCount, int16 freq);
-	void drawObjects(void);
-	void animateObjects(void);
+	void drawObjects();
+	void animateObjects();
 	int16 getObjMaxFrame(Gob_Object * obj);
 	bool objIntersected(Gob_Object * obj1, Gob_Object * obj2);
 	void setMultStates(Gob_Object * gobDesc);
 	int16 nextLayer(Gob_Object * gobDesc);
 	void showBoredom(int16 gobIndex);
 	void switchGoblin(int16 index);
-	void zeroObjects(void);
-	void freeAllObjects(void);
+	void zeroObjects();
+	void freeAllObjects();
 	void loadObjects(const char *source);
-	void initVarPointers(void);
+	void initVarPointers();
 	void saveGobDataToVars(int16 xPos, int16 yPos, int16 someVal);
-	void loadGobDataFromVars(void);
+	void loadGobDataFromVars();
 	void pickItem(int16 indexToPocket, int16 idToPocket);
 	void placeItem(int16 indexInPocket, int16 idInPocket);
 	void swapItems(int16 indexToPick, int16 idToPick);
@@ -225,10 +225,10 @@ public:
 	void move(int16 destX, int16 destY, int16 objIndex);
 	void animate(Mult::Mult_Object *obj);
 
-	virtual void handleGoblins(void) = 0;
+	virtual void handleGoblins() = 0;
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state) = 0;
-	virtual void freeObjects(void) = 0;
+	virtual void freeObjects() = 0;
 	virtual void initiateMove(Mult::Mult_Object *obj) = 0;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			int16 nextAct, int16 framesCount) = 0;
@@ -243,12 +243,12 @@ protected:
 	GobEngine *_vm;
 
 	int16 peekGoblin(Gob_Object *curGob);
-	void initList(void);
+	void initList();
 	void sortByOrder(Util::List *list);
 	void adjustDest(int16 posX, int16 posY);
-	void adjustTarget(void);
+	void adjustTarget();
 	void targetDummyItem(Gob_Object *gobDesc);
-	void targetItem(void);
+	void targetItem();
 	void moveFindItem(int16 posX, int16 posY);
 	void moveCheckSelect(int16 framesCount, Gob_Object * gobDesc,
 			int16 *pGobIndex, int16 *nextAct);
@@ -265,10 +265,10 @@ protected:
 
 class Goblin_v1 : public Goblin {
 public:
-	virtual void handleGoblins(void) {}
+	virtual void handleGoblins() {}
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
-	virtual void freeObjects(void);
+	virtual void freeObjects();
 	virtual void initiateMove(Mult::Mult_Object *obj);
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			int16 nextAct, int16 framesCount);
@@ -285,10 +285,10 @@ protected:
 
 class Goblin_v2 : public Goblin_v1 {
 public:
-	virtual void handleGoblins(void);
+	virtual void handleGoblins();
 	virtual void placeObject(Gob_Object * objDesc, char animated,
 			int16 index, int16 x, int16 y, int16 state);
-	virtual void freeObjects(void);
+	virtual void freeObjects();
 	virtual void initiateMove(Mult::Mult_Object *obj);
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			int16 nextAct, int16 framesCount);

@@ -140,7 +140,7 @@ void xCallGlobalProcess(uint32 procID);
 void xKillGlobalProcess(uint32 procID);
 bool GlobalProcessEvent(CORO_PARAM, uint32 procID, TINSEL_EVENT event, bool bWait, int myEscape);
 void RestoreGlobalProcess(INT_CONTEXT *pic);
-void KillGlobalProcesses(void);
+void KillGlobalProcesses();
 void FreeGlobalProcesses();
 
 } // End of namespace Tinsel

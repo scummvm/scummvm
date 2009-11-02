@@ -281,7 +281,7 @@ void MusicPlayerMidi::setTimerCallback(void *timer_param, Common::TimerManager::
 		_driver->setTimerCallback(timer_param, timer_proc);
 }
 
-uint32 MusicPlayerMidi::getBaseTempo(void) {
+uint32 MusicPlayerMidi::getBaseTempo() {
 	if (_driver)
 		return _driver->getBaseTempo();
 	else

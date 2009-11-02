@@ -78,7 +78,7 @@ SRSTATE SRstate = SR_IDLE;
 extern void syncSCdata(Common::Serializer &s);
 
 // in DOS_MAIN.C
-//char HardDriveLetter(void);
+//char HardDriveLetter();
 
 // in PCODE.C
 extern void syncGlobInfo(Common::Serializer &s);
@@ -273,7 +273,7 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd) {
  * Called when saving a game to a new file.
  * Generates a new, unique, filename.
  */
-static char *NewName(void) {
+static char *NewName() {
 	static char result[FNAMELEN];
 	int	i;
 	int	ano = 1;	// Allocated number
@@ -379,7 +379,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 	return numSfiles;
 }
 
-int getList(void) {
+int getList() {
 	// No change since last call?
 	// TODO/FIXME: Just always reload this data? Be careful about slow downs!!!
 	if (!NeedLoad)
@@ -482,7 +482,7 @@ static bool DoRestore() {
 /**
  * DoSave
  */
-static void DoSave(void) {
+static void DoSave() {
 	Common::OutSaveFile *f;
 	const char *fname;
 
@@ -537,7 +537,7 @@ save_failure:
 /**
  * ProcessSRQueue
  */
-void ProcessSRQueue(void) {
+void ProcessSRQueue() {
 	switch (SRstate) {
 	case SR_DORESTORE:
 		// If a load has been done directly from title screens, set a larger value for scene ctr so the
@@ -594,7 +594,7 @@ void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsD
  * Returns the index of the most recently saved savegame. This will always be
  * the file at the first index, since the list is sorted by date/time
  */
-int NewestSavedGame(void) {
+int NewestSavedGame() {
 	int numFiles = getList();
 
 	return (numFiles == 0) ? -1 : 0;

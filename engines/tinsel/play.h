@@ -55,7 +55,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y);
 
 void PokeInPalette(const MULTI_INIT *pmi);
 
-void NoSoundReels(void);
+void NoSoundReels();
 void SaveSoundReels(PSOUNDREELS psr);
 void RestoreSoundReels(PSOUNDREELS psr);
 

@@ -575,7 +575,7 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-OSystem::MutexRef OSystem_SDL::createMutex(void) {
+OSystem::MutexRef OSystem_SDL::createMutex() {
 	return (MutexRef) SDL_CreateMutex();
 }
 

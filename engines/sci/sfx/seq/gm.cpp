@@ -52,7 +52,7 @@ static Common::Error midi_gm_open(int patch_len, byte *data, int patch2_len, byt
 	return Common::kNoError;
 }
 
-static Common::Error midi_gm_close(void) {
+static Common::Error midi_gm_close() {
 	return Common::kNoError;
 }
 
@@ -101,7 +101,7 @@ static Common::Error midi_gm_volume(uint8 volume) {
 	return Common::kNoError;
 }
 
-static Common::Error midi_gm_allstop(void) {
+static Common::Error midi_gm_allstop() {
 	byte data[3] = { 0xb0,
 	                 0x78, /* all sound off */
 	                 0

@@ -318,7 +318,7 @@ class Scene {
 
 	void getSlopes(int &beginSlope, int &endSlope);
 
-	void clearSceneQueue(void) {
+	void clearSceneQueue() {
 		_sceneQueue.clear();
 	}
 	void changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionType transitionType, int chapter = NO_CHAPTER_CHANGE);

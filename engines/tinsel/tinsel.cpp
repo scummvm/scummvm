@@ -75,7 +75,7 @@ namespace Tinsel {
 
 // In BG.CPP
 extern void SetDoFadeIn(bool tf);
-extern void DropBackground(void);
+extern void DropBackground();
 
 // In CURSOR.CPP
 extern void CursorProcess(CORO_PARAM, const void *);
@@ -85,7 +85,7 @@ extern void InventoryProcess(CORO_PARAM, const void *);
 
 // In SCENE.CPP
 extern void PrimeBackground();
-extern SCNHANDLE GetSceneHandle(void);
+extern SCNHANDLE GetSceneHandle();
 
 //----------------- FORWARD DECLARATIONS  ---------------------
 void SetNewScene(SCNHANDLE scene, int entrance, int transition);
@@ -534,7 +534,7 @@ void SetHookScene(SCNHANDLE scene, int entrance, int transition) {
 /**
  * Hooked scene is over, trigger a change to the delayed scene
  */
-void UnHookScene(void) {
+void UnHookScene() {
 	assert(DelayedScene.scene != 0); // no scene delayed
 
 	// The delayed scene can go now
@@ -545,11 +545,11 @@ void UnHookScene(void) {
 	DelayedScene.scene = 0;
 }
 
-void SuspendHook(void) {
+void SuspendHook() {
 	bCuttingScene = true;
 }
 
-void CdHasChanged(void) {
+void CdHasChanged() {
 	if (bChangingForRestore) {
 		bChangingForRestore = false;
 		RestoreGame(-2);
@@ -578,7 +578,7 @@ void CDChangeForRestore(int cdNumber) {
 	bChangingForRestore = true;
 }
 
-void UnSuspendHook(void) {
+void UnSuspendHook() {
 	bCuttingScene = false;
 }
 
@@ -703,7 +703,7 @@ void CuttingScene(bool bCutting) {
 /**
  * LoadBasicChunks
  */
-void LoadBasicChunks(void) {
+void LoadBasicChunks() {
 	byte *cptr;
 	int numObjects;
 
@@ -1036,7 +1036,7 @@ Common::Error TinselEngine::run() {
 }
 
 
-void TinselEngine::NextGameCycle(void) {
+void TinselEngine::NextGameCycle() {
 	// Dim Music
 	_pcmMusic->dimIteration();
 
@@ -1101,7 +1101,7 @@ bool TinselEngine::pollEvent() {
 /**
  * Start the processes that continue between scenes.
  */
-void TinselEngine::CreateConstProcesses(void) {
+void TinselEngine::CreateConstProcesses() {
 	// Process to run the master script
 	_scheduler->createProcess(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
 
@@ -1113,7 +1113,7 @@ void TinselEngine::CreateConstProcesses(void) {
 /**
  * Restart the game
  */
-void TinselEngine::RestartGame(void) {
+void TinselEngine::RestartGame() {
 	HoldItem(INV_NOICON);	// Holding nothing
 
 	DropBackground();	// No background
@@ -1149,7 +1149,7 @@ void TinselEngine::RestartGame(void) {
 /**
  * Init palette and object managers, scheduler, keyboard and mouse.
  */
-void TinselEngine::RestartDrivers(void) {
+void TinselEngine::RestartDrivers() {
 	// init the palette manager
 	ResetPalAllocator();
 
@@ -1178,7 +1178,7 @@ void TinselEngine::RestartDrivers(void) {
 /**
  * Remove keyboard, mouse and joystick drivers.
  */
-void TinselEngine::ChopDrivers(void) {
+void TinselEngine::ChopDrivers() {
 	// remove sound driver
 	StopMidi();
 	_sound->stopAllSamples();

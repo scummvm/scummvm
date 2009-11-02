@@ -375,18 +375,18 @@ void LanguageFacts(int language, SCNHANDLE hDescription, SCNHANDLE hFlagFilm) {
 /**
  * Gets the current subtitles language
  */
-LANGUAGE TextLanguage(void) {
+LANGUAGE TextLanguage() {
 	return textLanguage;
 }
 
 /**
  * Gets the current voice language
  */
-LANGUAGE SampleLanguage(void) {
+LANGUAGE SampleLanguage() {
 	return sampleLanguage;
 }
 
-int NumberOfLanguages(void) {
+int NumberOfLanguages() {
 	int i, count;
 
 	for (i = 0, count = 0; i < NUM_LANGUAGES; i++) {

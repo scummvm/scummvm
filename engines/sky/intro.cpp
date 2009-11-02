@@ -638,7 +638,7 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 	_relDelay = 0;
 }
 
-Intro::~Intro(void) {
+Intro::~Intro() {
 	if (_skyScreen->sequenceRunning())
 		_skyScreen->stopSequence();
 	free(_textBuf);
@@ -767,7 +767,7 @@ bool Intro::nextPart(uint16 *&data) {
 	return true;
 }
 
-bool Intro::floppyScrollFlirt(void) {
+bool Intro::floppyScrollFlirt() {
 	uint8 *scrollScreen = (uint8*)malloc(FRAME_SIZE * 2);
 	memset(scrollScreen, 0, FRAME_SIZE);
 	memcpy(scrollScreen + FRAME_SIZE, _skyScreen->giveCurrent(), FRAME_SIZE);
@@ -848,7 +848,7 @@ bool Intro::commandFlirt(uint16 *&data) {
 	return true;
 }
 
-void Intro::showTextBuf(void) {
+void Intro::showTextBuf() {
 	uint16 x = ((DataFileHeader*)_textBuf)->s_x;
 	uint16 y = ((DataFileHeader*)_textBuf)->s_y;
 	uint16 width = ((DataFileHeader*)_textBuf)->s_width;
@@ -870,7 +870,7 @@ void Intro::showTextBuf(void) {
 	_system->copyRectToScreen(screenBuf, GAME_SCREEN_WIDTH, x, y, width, height);
 }
 
-void Intro::restoreScreen(void) {
+void Intro::restoreScreen() {
 	uint16 x = ((DataFileHeader*)_saveBuf)->s_x;
 	uint16 y = ((DataFileHeader*)_saveBuf)->s_y;
 	uint16 width = ((DataFileHeader*)_saveBuf)->s_width;

@@ -97,7 +97,7 @@ public:
 	void send(uint32 b);
 	void metaEvent(byte type, byte *data, uint16 length);
 	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo(void);
+	uint32 getBaseTempo();
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel();
 

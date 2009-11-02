@@ -39,10 +39,10 @@ class SkyCompact;
 class Grid {
 public:
 	Grid(Disk *pDisk, SkyCompact *skyCompact);
-	~Grid(void);
+	~Grid();
 
 	// grid.asm routines
-	void loadGrids(void);
+	void loadGrids();
 	void removeObjectFromWalk(Compact *cpt);
 	void objectToWalk(Compact *cpt);
 

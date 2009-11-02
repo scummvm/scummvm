@@ -72,11 +72,11 @@ private:
 public:
 	Puzzle(SagaEngine *vm);
 
-	void execute(void);
-	void exitPuzzle(void);
+	void execute();
+	void exitPuzzle();
 
-	bool isSolved(void) { return _solved; }
-	bool isActive(void) { return _active; }
+	bool isSolved() { return _solved; }
+	bool isActive() { return _active; }
 
 	void handleReply(int reply);
 	void handleClick(Point mousePt);
@@ -90,17 +90,17 @@ private:
 
 	static void hintTimerCallback(void *refCon);
 
-	void solicitHint(void);
+	void solicitHint();
 
-	void initPieces(void);
-	void showPieces(void);
+	void initPieces();
+	void showPieces();
 	void slidePiece(int x1, int y1, int x2, int y2);
 	void dropPiece(Point mousePt);
-	void alterPiecePriority(void);
-	void drawCurrentPiece(void);
+	void alterPiecePriority();
+	void drawCurrentPiece();
 
-	void giveHint(void);
-	void clearHint(void);
+	void giveHint();
+	void clearHint();
 
 private:
 	struct PieceInfo {

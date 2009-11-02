@@ -168,7 +168,7 @@ int16 Goblin::peekGoblin(Gob_Object *_curGob) {
 	return index;
 }
 
-void Goblin::initList(void) {
+void Goblin::initList() {
 	_objList = new Util::List;
 	_objList->pHead = 0;
 	_objList->pTail = 0;
@@ -210,7 +210,7 @@ void Goblin::playSound(SoundDesc &snd, int16 repCount, int16 freq) {
 	}
 }
 
-void Goblin::drawObjects(void) {
+void Goblin::drawObjects() {
 	Util::ListNode *ptr;
 	Util::ListNode *ptr2;
 
@@ -410,7 +410,7 @@ void Goblin::drawObjects(void) {
 	}
 }
 
-void Goblin::animateObjects(void) {
+void Goblin::animateObjects() {
 	Util::ListNode *node;
 	Gob_Object *objDesc;
 	Scenery::AnimLayer *pLayer;
@@ -730,7 +730,7 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 	_pressedMapY = CLIP((int) _pressedMapY, 0, _vm->_map->_mapHeight - 1);
 }
 
-void Goblin::adjustTarget(void) {
+void Goblin::adjustTarget() {
 	if ((_gobAction == 4) &&
 	    (_vm->_map->getItem(_pressedMapX, _pressedMapY) == 0)) {
 
@@ -766,7 +766,7 @@ void Goblin::targetDummyItem(Gob_Object *gobDesc) {
 	}
 }
 
-void Goblin::targetItem(void) {
+void Goblin::targetItem() {
 	int16 tmpX;
 	int16 tmpY;
 	int16 items;
@@ -1162,7 +1162,7 @@ int16 Goblin::doMove(Gob_Object *gobDesc, int16 cont, int16 action) {
 	return gobIndex;
 }
 
-void Goblin::zeroObjects(void) {
+void Goblin::zeroObjects() {
 	for (int i = 0; i < 4; i++)
 		_goblins[i] = 0;
 
@@ -1173,7 +1173,7 @@ void Goblin::zeroObjects(void) {
 		_vm->_sound->sampleFree(&_soundData[i]);
 }
 
-void Goblin::freeAllObjects(void) {
+void Goblin::freeAllObjects() {
 	_vm->_util->deleteList(_objList);
 	_objList = 0;
 	freeObjects();
@@ -1262,7 +1262,7 @@ void Goblin::saveGobDataToVars(int16 xPos, int16 yPos, int16 someVal) {
 	_destItemType = obj->type;
 }
 
-void Goblin::initVarPointers(void) {
+void Goblin::initVarPointers() {
 	_gobRetVarPtr.set(*_vm->_inter->_variables, 236);
 	_curGobStateVarPtr.set(*_vm->_inter->_variables, 240);
 	_curGobFrameVarPtr.set(*_vm->_inter->_variables, 244);
@@ -1316,7 +1316,7 @@ void Goblin::initVarPointers(void) {
 	_itemInPocketVarPtr = (uint32) -2;
 }
 
-void Goblin::loadGobDataFromVars(void) {
+void Goblin::loadGobDataFromVars() {
 	Gob_Object *obj;
 
 	_itemIndInPocket = (int32) _itemInPocketVarPtr;

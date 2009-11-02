@@ -294,7 +294,7 @@ void Insane::stopSceneSounds(int sceneId) {
 	return;
 }
 
-void Insane::shutCurrentScene(void) {
+void Insane::shutCurrentScene() {
 	debugC(DEBUG_INSANE, "shutCurrentScene()");
 
 	_currScenePropIdx = 0;
@@ -670,7 +670,7 @@ void Insane::setSceneCostumes(int sceneId) {
 	}
 }
 
-void Insane::setEnemyCostumes(void) {
+void Insane::setEnemyCostumes() {
 	int i;
 
 	debugC(DEBUG_INSANE, "setEnemyCostumes(%d)", _currEnemy);
@@ -807,7 +807,7 @@ void Insane::setEnemyCostumes(void) {
 	smush_warpMouse(160, 100, -1);
 }
 
-void Insane::procPreRendering(void) {
+void Insane::procPreRendering() {
 	_smush_isSanFileSetup = 0; // FIXME: This shouldn't be here
 
 	switchSceneIfNeeded();

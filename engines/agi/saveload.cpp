@@ -974,11 +974,11 @@ void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	}
 }
 
-void AgiEngine::clearImageStack(void) {
+void AgiEngine::clearImageStack() {
 	_imageStack.clear();
 }
 
-void AgiEngine::releaseImageStack(void) {
+void AgiEngine::releaseImageStack() {
 	_imageStack.clear();
 }
 

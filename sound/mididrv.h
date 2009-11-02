@@ -231,7 +231,7 @@ public:
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) = 0;
 
 	/** The time in microseconds between invocations of the timer callback. */
-	virtual uint32 getBaseTempo(void) = 0;
+	virtual uint32 getBaseTempo() = 0;
 
 	// Channel allocation functions
 	virtual MidiChannel *allocateChannel() = 0;

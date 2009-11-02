@@ -83,14 +83,14 @@ void LanguageFacts(int language, SCNHANDLE hDescription, SCNHANDLE hFlagFilm);
 /**
  * Gets the current subtitles language
  */
-LANGUAGE TextLanguage(void);
+LANGUAGE TextLanguage();
 
 /**
  * Gets the current voice language
  */
-LANGUAGE SampleLanguage(void);
+LANGUAGE SampleLanguage();
 
-int NumberOfLanguages(void);
+int NumberOfLanguages();
 LANGUAGE NextLanguage(LANGUAGE thisOne);
 LANGUAGE PrevLanguage(LANGUAGE thisOne);
 SCNHANDLE LanguageDesc(LANGUAGE thisOne);

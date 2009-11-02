@@ -41,7 +41,7 @@ public:
 	int getFromArray(int arg0, int idx2, int idx1);
 	void putInArray(int arg0, int idx2, int idx1, int val);
 
-	void beforeBootScript(void) {}
+	void beforeBootScript() {}
 	void initOnce() {}
 	void startOfFrame() {}
 	void endOfFrame() {}

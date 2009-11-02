@@ -56,7 +56,7 @@ void addAutoCell(int overlayIdx, int idx, int type, int newVal, cellStruct *pObj
 	pNewEntry->pCell = pObject;
 }
 
-void freeAutoCell(void) {
+void freeAutoCell() {
 	autoCellStruct *pCurrent = autoCellHead.next;
 
 	while (pCurrent) {
@@ -126,7 +126,7 @@ void fadeIn() {
 	PCFadeFlag = 0;
 }
 
-void flipScreen(void) {
+void flipScreen() {
 	if (switchPal) {
 		for (unsigned long int i = 0; i < 256*3; i++) {
 			workpal[i] = palScreen[masterScreen][i];
@@ -341,7 +341,7 @@ int16 *A2ptr;
 
 
 
-void buildSegment(void) {
+void buildSegment() {
 	int16* pOut = XMIN_XMAX;
 
 	if ((polyXMin >= 320) || (polyXMax < 0) || (polyYMax < 0) || (polyYMin >= 200)) {
@@ -1265,7 +1265,7 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 }
 
 #ifdef _DEBUG
-void drawCtp(void) {
+void drawCtp() {
 	/*	int i;
 
 		if (ctp_walkboxTable) {

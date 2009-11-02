@@ -711,7 +711,7 @@ void set_anim(int ovl, int obj, int start, int x, int y, int mat, int state) {
 /**
  * Handles the processing of any active actors to allow for handling movement
  */
-void processAnimation(void) {
+void processAnimation() {
 	objectParamsQuery params;
 	MovementEntry moveInfo;
 	actorStruct *currentActor = actorHead.next;

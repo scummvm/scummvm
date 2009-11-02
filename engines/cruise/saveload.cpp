@@ -659,7 +659,7 @@ void unloadOverlay(const char*name, int overlayNumber) {
 	overlayTable[overlayNumber].alreadyLoaded = 0;
 }
 
-void initVars(void) {
+void initVars() {
 	closeAllMenu();
 	resetFileEntryRange(0, NUM_FILE_ENTRIES);
 

@@ -72,7 +72,7 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo(void)	{ return _driver ? _driver->getBaseTempo() : 0; }
+	uint32 getBaseTempo()	{ return _driver ? _driver->getBaseTempo() : 0; }
 
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }
@@ -106,19 +106,19 @@ class Music {
 public:
 
 	Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
-	~Music(void);
+	~Music();
 	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
 	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
 	void setAdlib(bool b)		{ _adlib = b; }
 	bool hasAdlib()			{ return _adlib; }
 	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
-	bool isPlaying(void);
+	bool isPlaying();
 	bool hasDigitalMusic() { return _digitalMusic; }
 
 	void play(uint32 resourceId, MusicFlags flags = MUSIC_DEFAULT);
-	void pause(void);
-	void resume(void);
-	void stop(void);
+	void pause();
+	void resume();
+	void stop();
 
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
@@ -148,7 +148,7 @@ private:
 	byte *_midiMusicData;
 
 	static void musicVolumeGaugeCallback(void *refCon);
-	void musicVolumeGauge(void);
+	void musicVolumeGauge();
 };
 
 } // End of namespace Saga

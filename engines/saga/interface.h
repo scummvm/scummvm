@@ -183,7 +183,7 @@ enum StatusTextInputState {
 class Interface {
 public:
 	Interface(SagaEngine *vm);
-	~Interface(void);
+	~Interface();
 
 	int activate();
 	int deactivate();
@@ -196,7 +196,7 @@ public:
 	}
 	bool isActive() { return _active; }
 	void setMode(int mode);
-	int getMode(void) const { return _panelMode; }
+	int getMode() const { return _panelMode; }
 	void setFadeMode(int fadeMode) {
 		_fadeMode = fadeMode;
 		draw();
@@ -356,8 +356,8 @@ private:
 	void processStatusTextInput(Common::KeyState keystate);
 
 public:
-	void converseInit(void);
-	void converseClear(void);
+	void converseInit();
+	void converseClear();
 	bool converseAddText(const char *text, int strId, int replyId, byte replyFlags, int replyBit);
 	void converseDisplayText();
 	void converseSetTextLines(int row);

@@ -59,7 +59,7 @@ Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
 	_speechVolL = _speechVolR = _sfxVolL = _sfxVolR = 192;
 }
 
-Sound::~Sound(void) {
+Sound::~Sound() {
 	// clean up fx queue
 	_mixer->stopAll();
 	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++)
@@ -168,7 +168,7 @@ int Sound::addToQueue(int32 fxNo) {
 	return 0;
 }
 
-void Sound::engine(void) {
+void Sound::engine() {
 	// first of all, add any random sfx to the queue...
 	for (uint16 cnt = 0; cnt < TOTAL_FX_PER_ROOM; cnt++) {
 		uint16 fxNo = _roomsFixedFx[Logic::_scriptVars[SCREEN]][cnt];
@@ -211,12 +211,12 @@ void Sound::fnStopFx(int32 fxNo) {
 	debug(8, "fnStopFx: id not found in queue");
 }
 
-bool Sound::amISpeaking(void) {
+bool Sound::amISpeaking() {
 	_waveVolPos++;
 	return _waveVolume[_waveVolPos - 1];
 }
 
-bool Sound::speechFinished(void) {
+bool Sound::speechFinished() {
 	return !_mixer->isSoundHandleActive(_speechHandle);
 }
 
@@ -238,7 +238,7 @@ void Sound::newScreen(uint32 screen) {
 	}
 }
 
-void Sound::quitScreen(void) {
+void Sound::quitScreen() {
 	// stop all running SFX
 	while (_endOfQueue)
 		fnStopFx(_fxQueue[0].id);
@@ -540,11 +540,11 @@ void Sound::calcWaveVolume(int16 *data, uint32 length) {
 	}
 }
 
-void Sound::stopSpeech(void) {
+void Sound::stopSpeech() {
 	_mixer->stopID(SOUND_SPEECH_ID);
 }
 
-void Sound::initCowSystem(void) {
+void Sound::initCowSystem() {
 	char cowName[25];
 	/* look for speech1/2.clu in the data dir
 	   and speech/speech.clu (running from cd or using cd layout)
@@ -633,7 +633,7 @@ void Sound::initCowSystem(void) {
 		warning("Sound::initCowSystem: Can't open SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 }
 
-void Sound::closeCowSystem(void) {
+void Sound::closeCowSystem() {
 	_cowFile.close();
 	free(_cowHeader);
 	_cowHeader = NULL;

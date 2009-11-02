@@ -66,7 +66,7 @@ OBJECT *GetBgObject() {
 /**
  * BackPal
  */
-SCNHANDLE BgPal(void) {
+SCNHANDLE BgPal() {
 	return hBgPal;
 }
 
@@ -80,7 +80,7 @@ void SetDoFadeIn(bool tf) {
 /**
  * Called before scene change.
  */
-void DropBackground(void) {
+void DropBackground() {
 	pBG[0] = NULL;	// No background
 
 	if (!TinselV2)
@@ -90,7 +90,7 @@ void DropBackground(void) {
 /**
  * Return the width of the current background.
  */
-int BgWidth(void) {
+int BgWidth() {
 	assert(pBG[0]);
 	return MultiRightmost(pBG[0]) + 1;
 }
@@ -98,7 +98,7 @@ int BgWidth(void) {
 /**
  * Return the height of the current background.
  */
-int BgHeight(void) {
+int BgHeight() {
 	assert(pBG[0]);
 	return MultiLowest(pBG[0]) + 1;
 }
@@ -275,7 +275,7 @@ void StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 /**
  * Return the current scene handle.
  */
-SCNHANDLE GetBgroundHandle(void) {
+SCNHANDLE GetBgroundHandle() {
 	return hBackground;
 }
 

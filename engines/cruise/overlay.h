@@ -179,7 +179,7 @@ struct overlayStruct {
 extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;
 
-void initOverlayTable(void);
+void initOverlayTable();
 int loadOverlay(const char * scriptName);
 int32 findOverlayByName2(const char * name);
 int findOverlayByName(const char *overlayName);

@@ -98,7 +98,7 @@ SCNHANDLE GetPolyScript(HPOLYGON p);
 REEL GetPolyReelType(HPOLYGON p);
 int32 GetPolyZfactor(HPOLYGON p);
 int numNodes(HPOLYGON pp);
-void RebootDeadTags(void);
+void RebootDeadTags();
 void DisableBlock(int block);
 void EnableBlock(int block);
 void DisableEffect(int effect);
@@ -112,10 +112,10 @@ void DisableTag(CORO_PARAM, int tag);
 void EnableTag(CORO_PARAM, int tag);
 void DisableExit(int exitno);
 void EnableExit(int exitno);
-HPOLYGON FirstPathPoly(void);
+HPOLYGON FirstPathPoly();
 HPOLYGON GetPolyHandle(int i);
 void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart);
-void DropPolygons(void);
+void DropPolygons();
 
 
 void SaveDeadPolys(bool *sdp);
@@ -150,7 +150,7 @@ bool PolyTagFollowsCursor(HPOLYGON hp);
 SCNHANDLE GetPolyTagHandle(HPOLYGON hp);
 bool IsTagPolygon(int tagno);
 void GetPolyMidBottom(HPOLYGON hp, int *pX, int *pY);
-int PathCount(void);
+int PathCount();
 void MovePolygon(PTYPE ptype, int id, int x, int y);
 void MovePolygonTo(PTYPE ptype, int id, int x, int y);
 

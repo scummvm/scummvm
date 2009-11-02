@@ -63,7 +63,7 @@ extern int16 numPoly;
 
 int cor_droite(int x1, int y1, int x2, int y2, point* outputTable);
 void freePerso(int persoIdx);
-void freeCTP(void);
+void freeCTP();
 void affiche_chemin(int16 persoIdx, MovementEntry &data);
 int direction(int x1, int y1, int x2, int y2, int inc_jo1, int inc_jo2);
 

@@ -51,7 +51,7 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 	_fontMapping = 0;
 }
 
-Font::~Font(void) {
+Font::~Font() {
 	debug(8, "Font::~Font(): Freeing fonts.");
 	int i;
 

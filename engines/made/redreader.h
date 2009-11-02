@@ -86,11 +86,11 @@ private:
 
 	void fillbuf(int count);
 	uint getbits(int count);
-	void init_getbits(void);
-	void decode_start(void);
+	void init_getbits();
+	void decode_start();
 	void decode(uint count, byte text[]);
-	void huf_decode_start(void);
-	unsigned int decode_c(void);
+	void huf_decode_start();
+	unsigned int decode_c();
 	unsigned int decode_p();
 	void read_pt_len(int nn, int nbit, int i_special);
 	void read_c_len();

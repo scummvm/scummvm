@@ -721,10 +721,10 @@ public:
 
 	bool _noSaveLoadAllowed;
 
-	virtual void pollTimer(void) = 0;
-	virtual int getKeypress(void) = 0;
-	virtual bool isKeypress(void) = 0;
-	virtual void clearKeyQueue(void) = 0;
+	virtual void pollTimer() = 0;
+	virtual int getKeypress() = 0;
+	virtual bool isKeypress() = 0;
+	virtual void clearKeyQueue() = 0;
 
 	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
 
@@ -755,9 +755,9 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	const char *getGameMD5() const;
-	void initFeatures(void);
+	void initFeatures();
 	void setFeature(uint32 feature);
-	void initVersion(void);
+	void initVersion();
 	void setVersion(uint16 version);
 
 	bool canLoadGameStateCurrently();
@@ -800,7 +800,7 @@ private:
 	int checkCollision(VtEntry *v);
 	int checkPosition(VtEntry *v);
 
-	void parseFeatures(void);
+	void parseFeatures();
 
 	int _firstSlot;
 
@@ -854,10 +854,10 @@ public:
 	int agiUnloadResource(int, int);
 	void agiUnloadResources();
 
-	virtual void pollTimer(void);
-	virtual int getKeypress(void);
-	virtual bool isKeypress(void);
-	virtual void clearKeyQueue(void);
+	virtual void pollTimer();
+	virtual int getKeypress();
+	virtual bool isKeypress();
+	virtual void clearKeyQueue();
 
 	static void agiTimerFunctionLow(void *refCon);
 	void initPriTable();
@@ -981,27 +981,27 @@ public:
 
 	int messageBox(const char *);
 	int selectionBox(const char *, const char **);
-	void closeWindow(void);
+	void closeWindow();
 	void drawWindow(int, int, int, int);
 	void printText(const char *, int, int, int, int, int, int, bool checkerboard = false);
 	void printTextConsole(const char *, int, int, int, int, int);
 	int print(const char *, int, int, int);
 	char *wordWrapString(const char *, int *);
 	char *agiSprintf(const char *);
-	void writeStatus(void);
-	void writePrompt(void);
-	void clearPrompt(void);
+	void writeStatus();
+	void writePrompt();
+	void clearPrompt();
 	void clearLines(int, int, int);
 	void flushLines(int, int);
-	bool predictiveDialog(void);
+	bool predictiveDialog();
 
 private:
 	void printStatus(const char *message, ...) GCC_PRINTF(2, 3);
 	void printText2(int l, const char *msg, int foff, int xoff, int yoff, int len, int fg, int bg, bool checkerboard = false);
 	void blitTextbox(const char *p, int y, int x, int len);
 	void eraseTextbox();
-	void loadDict(void);
-	bool matchWord(void);
+	void loadDict();
+	bool matchWord();
 
 	// Predictive dialog
 	// TODO: Move this to a separate class

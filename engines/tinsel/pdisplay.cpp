@@ -288,7 +288,7 @@ void DisablePointing(CORO_PARAM) {
 /**
  * EnablePointing()
  */
-void EnablePointing(void) {
+void EnablePointing() {
 	bPointingActive = true;
 }
 
@@ -304,7 +304,7 @@ static void SaveTaggedActor(int ano) {
  * Tag process keeps us updated as to which tagged actor is currently tagged
  * (if one is). Tag process asks us for this information, as does ProcessUserEvent().
  */
-int GetTaggedActor(void) {
+int GetTaggedActor() {
 	return TaggedActor;
 }
 
@@ -316,7 +316,7 @@ static void SaveTaggedPoly(HPOLYGON hp) {
 	hTaggedPolygon = hp;
 }
 
-HPOLYGON GetTaggedPoly(void) {
+HPOLYGON GetTaggedPoly() {
 	return hTaggedPolygon;
 }
 
@@ -817,15 +817,15 @@ void PointProcess(CORO_PARAM, const void *) {
 	CORO_END_CODE;
 }
 
-void DisableTags(void) {
+void DisableTags() {
 	bTagsActive = false;
 }
 
-void EnableTags(void) {
+void EnableTags() {
 	bTagsActive = true;
 }
 
-bool DisableTagsIfEnabled(void) {
+bool DisableTagsIfEnabled() {
 	if (bTagsActive) {
 		DisableTags();
 		return true;
@@ -838,12 +838,12 @@ bool DisableTagsIfEnabled(void) {
  * Causes CursorPositionProcess() to display, or not, the path that the
  * cursor is in.
  */
-void TogglePathDisplay(void) {
+void TogglePathDisplay() {
 	DispPath ^= 1;	// Toggle path display (XOR with true)
 }
 
 
-void setshowstring(void) {
+void setshowstring() {
 	bShowString = true;
 }
 

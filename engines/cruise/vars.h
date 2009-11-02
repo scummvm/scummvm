@@ -51,8 +51,8 @@ struct menuElementStruct {
 	menuElementSubStruct *ptrSub;
 };
 
-typedef int32(*opcodeTypeFunction)(void);
-typedef int16(*opcodeFunction)(void);
+typedef int32(*opcodeTypeFunction)();
+typedef int16(*opcodeFunction)();
 
 extern uint8 *_systemFNT;
 extern int16 fontFileIndex;

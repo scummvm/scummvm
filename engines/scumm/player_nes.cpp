@@ -112,14 +112,14 @@ protected:
 	bool Enabled, ValidFreq, Active;
 	bool EnvClk, SwpClk;
 
-	void CheckActive(void);
+	void CheckActive();
 
 public:
-	void Reset(void);
+	void Reset();
 	void Write(int Reg, byte Val);
-	void Run(void);
-	void QuarterFrame(void);
-	void HalfFrame(void);
+	void Run();
+	void QuarterFrame();
+	void HalfFrame();
 };
 
 static const int8 Duties[4][8] = {
@@ -129,14 +129,14 @@ static const int8 Duties[4][8] = {
 	{+4,-4,-4,+4,+4,+4,+4,+4}
 };
 
-void Square::Reset(void) {
+void Square::Reset() {
 	memset(this, 0, sizeof(*this));
 	Cycles = 1;
 	EnvCtr = 1;
 	BendCtr = 1;
 }
 
-void Square::CheckActive(void) {
+void Square::CheckActive() {
 	ValidFreq = (freq >= 0x8) && ((swpdir) || !((freq + (freq >> swpstep)) & 0x800));
 	Active = Timer && ValidFreq;
 	Pos = Active ? (Duties[duty][CurD] * Vol) : 0;
@@ -185,7 +185,7 @@ void Square::Write(int Reg, byte Val) {
 	CheckActive();
 }
 
-void Square::Run(void) {
+void Square::Run() {
 	Cycles = (freq + 1) << 1;
 	CurD = (CurD + 1) & 0x7;
 
@@ -193,7 +193,7 @@ void Square::Run(void) {
 		Pos = Duties[duty][CurD] * Vol;
 }
 
-void Square::QuarterFrame(void) {
+void Square::QuarterFrame() {
 	if (EnvClk) {
 		EnvClk = false;
 		Envelope = 0xF;
@@ -211,7 +211,7 @@ void Square::QuarterFrame(void) {
 	CheckActive();
 }
 
-void Square::HalfFrame(void) {
+void Square::HalfFrame() {
 	if (!--BendCtr) {
 		BendCtr = swpspeed + 1;
 
@@ -241,14 +241,14 @@ protected:
 	bool Enabled, Active;
 	bool LinClk;
 
-	void CheckActive(void);
+	void CheckActive();
 
 public:
-	void Reset(void);
+	void Reset();
 	void Write(int Reg, byte Val);
-	void Run(void);
-	void QuarterFrame(void);
-	void HalfFrame(void);
+	void Run();
+	void QuarterFrame();
+	void HalfFrame();
 };
 
 static const int8 TriDuty[32] = {
@@ -258,12 +258,12 @@ static const int8 TriDuty[32] = {
 	-1,-2,-3,-4,-5,-6,-7,-8
 };
 
-void Triangle::Reset(void) {
+void Triangle::Reset() {
 	memset(this, 0, sizeof(*this));
 	Cycles = 1;
 }
 
-void Triangle::CheckActive(void) {
+void Triangle::CheckActive() {
 	Active = Timer && LinCtr;
 
 	if (freq < 4)
@@ -303,7 +303,7 @@ void Triangle::Write(int Reg, byte Val) {
 	CheckActive();
 }
 
-void Triangle::Run(void) {
+void Triangle::Run() {
 	Cycles = freq + 1;
 
 	if (Active) {
@@ -317,7 +317,7 @@ void Triangle::Run(void) {
 	}
 }
 
-void Triangle::QuarterFrame(void) {
+void Triangle::QuarterFrame() {
 	if (LinClk)
 		LinCtr = linear;
 	else if (LinCtr)
@@ -329,7 +329,7 @@ void Triangle::QuarterFrame(void) {
 	CheckActive();
 }
 
-void Triangle::HalfFrame(void) {
+void Triangle::HalfFrame() {
 	if (Timer && !wavehold)
 		Timer--;
 
@@ -344,14 +344,14 @@ protected:
 	bool Enabled;
 	bool EnvClk;
 
-	void CheckActive(void);
+	void CheckActive();
 
 public:
-	void Reset(void);
+	void Reset();
 	void Write(int Reg, byte Val);
-	void Run(void);
-	void QuarterFrame(void);
-	void HalfFrame(void);
+	void Run();
+	void QuarterFrame();
+	void HalfFrame();
 };
 
 static const uint32 NoiseFreq[16] = {
@@ -359,7 +359,7 @@ static const uint32 NoiseFreq[16] = {
 	0x0CA,0x0FE,0x17C,0x1FC,0x2FA,0x3F8,0x7F2,0xFE4
 };
 
-void Noise::Reset(void) {
+void Noise::Reset() {
 	memset(this, 0, sizeof(*this));
 	CurD = 1;
 	Cycles = 1;
@@ -399,7 +399,7 @@ void Noise::Write(int Reg, byte Val) {
 	}
 }
 
-void Noise::Run(void) {
+void Noise::Run() {
 	Cycles = NoiseFreq[freq];	/* no + 1 here */
 
 	if (datatype)
@@ -411,7 +411,7 @@ void Noise::Run(void) {
 		Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
 }
 
-void Noise::QuarterFrame(void) {
+void Noise::QuarterFrame() {
 	if (EnvClk) {
 		EnvClk = false;
 		Envelope = 0xF;
@@ -431,7 +431,7 @@ void Noise::QuarterFrame(void) {
 		Pos = ((CurD & 0x4000) ? -2 : 2) * Vol;
 }
 
-void Noise::HalfFrame(void) {
+void Noise::HalfFrame() {
 	if (Timer && !wavehold)
 		Timer--;
 }
@@ -457,9 +457,9 @@ public:
 	}
 
 	void WriteReg(int Addr, byte Val);
-	byte Read4015(void);
-	void Reset (void);
-	int16 GetSample(void);
+	byte Read4015();
+	void Reset ();
+	int16 GetSample();
 };
 
 void APU::WriteReg(int Addr, byte Val) {
@@ -488,7 +488,7 @@ void APU::WriteReg(int Addr, byte Val) {
 	}
 }
 
-byte APU::Read4015(void) {
+byte APU::Read4015() {
 	byte result =
 		(( _square0.GetTimer()) ? 0x01 : 0) |
 		(( _square1.GetTimer()) ? 0x02 : 0) |
@@ -497,7 +497,7 @@ byte APU::Read4015(void) {
 	return result;
 }
 
-void APU::Reset (void) {
+void APU::Reset () {
 	BufPos = 0;
 
 	_square0.Reset();
@@ -556,7 +556,7 @@ int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
 	return samppos;
 }
 
-int16 APU::GetSample(void) {
+int16 APU::GetSample() {
 	int samppos = 0;
 
 	const int sampcycles = 1+(1789773-BufPos-1)/SampleRate;

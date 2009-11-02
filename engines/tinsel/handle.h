@@ -38,8 +38,8 @@ namespace Tinsel {
 /**
  * Loads the graphics handle table index file and preloads all the permanent graphics etc.
  */
-void SetupHandleTable(void);
-void FreeHandleTable(void);
+void SetupHandleTable();
+void FreeHandleTable();
 
 byte *LockMem(SCNHANDLE offset);
 

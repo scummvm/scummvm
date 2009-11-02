@@ -129,15 +129,15 @@ ControlButton::ControlButton(uint16 x, uint16 y, uint32 resId, uint8 id, uint8 f
 	_system = system;
 }
 
-ControlButton::~ControlButton(void) {
+ControlButton::~ControlButton() {
 	_resMan->resClose(_resId);
 }
 
-bool ControlButton::isSaveslot(void) {
+bool ControlButton::isSaveslot() {
 	return ((_resId >= SR_SLAB1) && (_resId <= SR_SLAB4));
 }
 
-void ControlButton::draw(void) {
+void ControlButton::draw() {
 	FrameHeader *fHead = _resMan->fetchFrame(_resMan->fetchRes(_resId), _frameIdx);
 	uint8 *src = (uint8*)fHead + sizeof(FrameHeader);
 	uint8 *dst = _dstBuf;
@@ -241,7 +241,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_panelShown = false;
 }
 
-void Control::askForCd(void) {
+void Control::askForCd() {
 	_screenBuf = (uint8*)malloc(640 * 480);
 	uint32 fontId = SR_FONT;
 	if (SwordEngine::_systemVars.language == BS1_CZECH)
@@ -298,7 +298,7 @@ static int volToBalance(int volL, int volR) {
 	}
 }
 
-uint8 Control::runPanel(void) {
+uint8 Control::runPanel() {
 	_panelShown = true;
 	_mouseDown = false;
 	_restoreBuf = NULL;
@@ -530,12 +530,12 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 	return 0;
 }
 
-void Control::deselectSaveslots(void) {
+void Control::deselectSaveslots() {
 	for (uint8 cnt = 0; cnt < 8; cnt++)
 		_buttons[cnt]->setSelected(0);
 }
 
-void Control::setupMainPanel(void) {
+void Control::setupMainPanel() {
 	uint32 panelId;
 
 	if (SwordEngine::_systemVars.controlPanelMode == CP_DEATHSCREEN)
@@ -602,7 +602,7 @@ void Control::setupSaveRestorePanel(bool saving) {
 	showSavegameNames();
 }
 
-void Control::setupVolumePanel(void) {
+void Control::setupVolumePanel() {
 	ControlButton *panel = new ControlButton(0, 0, SR_VOLUME, 0, 0, _resMan, _screenBuf, _system);
 	panel->draw();
 	delete panel;
@@ -623,7 +623,7 @@ void Control::setupVolumePanel(void) {
 	renderVolumeBar(3, volL, volR);
 }
 
-void Control::handleVolumeClicks(void) {
+void Control::handleVolumeClicks() {
 	if (_mouseDown) {
 		uint8 clickedId = 0;
 		for (uint8 cnt = 1; cnt < 4; cnt++)
@@ -774,21 +774,21 @@ void Control::handleSaveKey(Common::KeyState kbd) {
 	}
 }
 
-bool Control::saveToFile(void) {
+bool Control::saveToFile() {
 	if ((_selectedSavegame == 255) || _saveNames[_selectedSavegame].size() == 0)
 		return false; // no saveslot selected or no name entered
 	saveGameToFile(_selectedSavegame);
 	return true;
 }
 
-bool Control::restoreFromFile(void) {
+bool Control::restoreFromFile() {
 	if (_selectedSavegame < 255) {
 		return restoreGameFromFile(_selectedSavegame);
 	} else
 		return false;
 }
 
-void Control::readSavegameDescriptions(void) {
+void Control::readSavegameDescriptions() {
 	char saveName[40];
 	Common::String pattern = "sword1.???";
 	Common::StringList filenames = _saveFileMan->listSavefiles(pattern);
@@ -827,7 +827,7 @@ void Control::readSavegameDescriptions(void) {
 	_saveFiles = _numSaves = _saveNames.size();
 }
 
-bool Control::isPanelShown(void) {
+bool Control::isPanelShown() {
 	return _panelShown;
 }
 
@@ -845,7 +845,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	return result;
 }
 
-bool Control::savegamesExist(void) {
+bool Control::savegamesExist() {
 	Common::String pattern = "sword1.???";
 	Common::StringList saveNames = _saveFileMan->listSavefiles(pattern);
 	return saveNames.size() > 0;
@@ -900,7 +900,7 @@ void Control::checkForOldSaveGames() {
 	_saveFileMan->removeSavefile("SAVEGAME.INF");
 }
 
-void Control::showSavegameNames(void) {
+void Control::showSavegameNames() {
 	for (uint8 cnt = 0; cnt < 8; cnt++) {
 		_buttons[cnt]->draw();
 		uint8 textMode = TEXT_LEFT_ALIGN;
@@ -981,7 +981,7 @@ void Control::createButtons(const ButtonInfo *buttons, uint8 num) {
 	_numButtons = num;
 }
 
-void Control::destroyButtons(void) {
+void Control::destroyButtons() {
 	for (uint8 cnt = 0; cnt < _numButtons; cnt++)
 		delete _buttons[cnt];
 	_numButtons = 0;
@@ -1301,7 +1301,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	return true;
 }
 
-void Control::doRestore(void) {
+void Control::doRestore() {
 	uint8 *bufPos = _restoreBuf;
 	_objMan->loadLiveList((uint16*)bufPos);
 	bufPos += TOTAL_SECTIONS * 2;

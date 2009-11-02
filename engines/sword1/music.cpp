@@ -287,15 +287,15 @@ bool MusicHandle::endOfData() const {
 }
 
 // if we don't have an audiosource, return some dummy values.
-bool MusicHandle::streaming(void) const {
+bool MusicHandle::streaming() const {
 	return (_audioSource) ? (!_audioSource->endOfStream()) : false;
 }
 
-bool MusicHandle::isStereo(void) const {
+bool MusicHandle::isStereo() const {
 	return (_audioSource) ? _audioSource->isStereo() : false;
 }
 
-int MusicHandle::getRate(void) const {
+int MusicHandle::getRate() const {
 	return (_audioSource) ? _audioSource->getRate() : 11025;
 }
 

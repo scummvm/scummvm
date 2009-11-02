@@ -70,7 +70,7 @@ MEM_NODE s_fixedMnodesList[5];
 static MEM_NODE heapSentinel;
 
 //
-static MEM_NODE *AllocMemNode(void);
+static MEM_NODE *AllocMemNode();
 
 #ifdef DEBUG
 static void MemoryStats() {
@@ -155,7 +155,7 @@ void MemoryDeinit() {
 /**
  * Allocate a mnode from the free list.
  */
-static MEM_NODE *AllocMemNode(void) {
+static MEM_NODE *AllocMemNode() {
 	// get the first free mnode
 	MEM_NODE *pMemNode = pFreeMemNodes;
 

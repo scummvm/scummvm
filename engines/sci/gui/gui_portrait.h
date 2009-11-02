@@ -34,7 +34,7 @@ public:
 	~SciGuiPortrait();
 
 private:
-	void init(void);
+	void init();
 
 	ResourceManager *_resMan;
 	SciGuiScreen *_screen;

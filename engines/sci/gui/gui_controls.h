@@ -42,7 +42,7 @@ public:
 	void TexteditChange(reg_t controlObject, reg_t eventObject);
 
 private:
-	void init(void);
+	void init();
 	void TexteditSetBlinkTime();
 
 	SegManager *_segMan;

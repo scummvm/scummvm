@@ -101,11 +101,11 @@ TextResource::TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, u
 		_oldX = GAME_SCREEN_WIDTH;
 }
 
-TextResource::~TextResource(void) {
+TextResource::~TextResource() {
 	free(_oldScreen);
 }
 
-void TextResource::flushForRedraw(void) {
+void TextResource::flushForRedraw() {
 	if (_oldX < GAME_SCREEN_WIDTH) {
 		uint16 cpWidth = (PAN_LINE_WIDTH > (GAME_SCREEN_WIDTH - _oldX))?(GAME_SCREEN_WIDTH - _oldX):(PAN_LINE_WIDTH);
 		for (uint8 cnty = 0; cnty < PAN_CHAR_HEIGHT; cnty++)
@@ -164,7 +164,7 @@ ControlStatus::ControlStatus(Text *skyText, OSystem *system, uint8 *scrBuf) {
 	_statusText = new TextResource(NULL, 2, 1, 64, 163, 0, DO_NOTHING, _system, _screenBuf);
 }
 
-ControlStatus::~ControlStatus(void) {
+ControlStatus::~ControlStatus() {
 	if (_textData)
 		free(_textData);
 	delete _statusText;
@@ -192,7 +192,7 @@ void ControlStatus::setToText(uint16 textNum) {
 	_statusText->drawToScreen(WITH_MASK);
 }
 
-void ControlStatus::drawToScreen(void) {
+void ControlStatus::drawToScreen() {
 	_statusText->flushForRedraw();
 	_statusText->drawToScreen(WITH_MASK);
 }
@@ -223,7 +223,7 @@ ConResource *Control::createResource(void *pSpData, uint32 pNSprites, uint32 pCu
 	return new ConResource(pSpData, pNSprites, pCurSprite, pX, pY, pText, pOnClick, _system, _screenBuf);
 }
 
-void Control::removePanel(void) {
+void Control::removePanel() {
 	free(_screenBuf);
 	free(_sprites.controlPanel);	free(_sprites.button);
 	free(_sprites.buttonDown);		free(_sprites.savePanel);
@@ -249,7 +249,7 @@ void Control::removePanel(void) {
 	}
 }
 
-void Control::initPanel(void) {
+void Control::initPanel() {
 	_screenBuf = (uint8 *)malloc(GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 
@@ -399,7 +399,7 @@ void Control::animClick(ConResource *pButton) {
 	}
 }
 
-void Control::drawMainPanel(void) {
+void Control::drawMainPanel() {
 	memset(_screenBuf, 0, GAME_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_screenBuf, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_controlPanel->drawToScreen(NO_MASK);
@@ -419,7 +419,7 @@ void Control::drawMainPanel(void) {
 	_statusBar->drawToScreen();
 }
 
-void Control::doLoadSavePanel(void) {
+void Control::doLoadSavePanel() {
 	if (SkyEngine::isDemo())
 		return; // I don't think this can even happen
 	initPanel();
@@ -448,7 +448,7 @@ void Control::doLoadSavePanel(void) {
 	_skyText->fnSetFont(_savedCharSet);
 }
 
-void Control::doControlPanel(void) {
+void Control::doControlPanel() {
 	if (SkyEngine::isDemo()) {
 		return;
 	}
@@ -653,7 +653,7 @@ bool Control::getYesNo(char *text) {
 	return retVal;
 }
 
-uint16 Control::doMusicSlide(void) {
+uint16 Control::doMusicSlide() {
 	Common::Point mouse = _system->getEventManager()->getMousePos();
 	int ofsY = _slide2->_y - mouse.y;
 	uint8 volume;
@@ -680,7 +680,7 @@ uint16 Control::doMusicSlide(void) {
 	return 0;
 }
 
-uint16 Control::doSpeedSlide(void) {
+uint16 Control::doSpeedSlide() {
 	Common::Point mouse = _system->getEventManager()->getMousePos();
 	int ofsY = _slide->_y - mouse.y;
 	uint16 speedDelay = _slide->_y - (MPNL_Y + 93);
@@ -726,7 +726,7 @@ void Control::toggleFx(ConResource *pButton) {
 	_system->updateScreen();
 }
 
-uint16 Control::toggleText(void) {
+uint16 Control::toggleText() {
 	uint32 flags = SkyEngine::_systemVars.systemFlags & TEXT_FLAG_MASK;
 	SkyEngine::_systemVars.systemFlags &= ~TEXT_FLAG_MASK;
 
@@ -804,7 +804,7 @@ uint16 Control::shiftUp(uint8 speed) {
 	return SHIFTED;
 }
 
-bool Control::autoSaveExists(void) {
+bool Control::autoSaveExists() {
 	bool test = false;
 	Common::InSaveFile *f;
 	char fName[20];
@@ -1050,7 +1050,7 @@ void Control::loadDescriptions(Common::StringList &savenames) {
 	}
 }
 
-bool Control::loadSaveAllowed(void) {
+bool Control::loadSaveAllowed() {
 	if (SkyEngine::_systemVars.systemFlags & SF_CHOOSING)
 		return false; // texts get lost during load/save, so don't allow it during choosing
 	if (Logic::_scriptVariables[SCREEN] >= 101)
@@ -1095,7 +1095,7 @@ void Control::saveDescriptions(const Common::StringList &list) {
 		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
 }
 
-void Control::doAutoSave(void) {
+void Control::doAutoSave() {
 	char fName[20];
 	if (SkyEngine::isCDVersion())
 		strcpy(fName, "SKY-VM-CD.ASD");
@@ -1121,7 +1121,7 @@ void Control::doAutoSave(void) {
 	free(saveData);
 }
 
-uint16 Control::saveGameToFile(void) {
+uint16 Control::saveGameToFile() {
 	char fName[20];
 	sprintf(fName,"SKY-VM.%03d", _selectedGame);
 
@@ -1471,7 +1471,7 @@ uint16 Control::quickXRestore(uint16 slot) {
 	return result;
 }
 
-void Control::restartGame(void) {
+void Control::restartGame() {
 	if (SkyEngine::_systemVars.gameVersion <= 267)
 		return; // no restart for floppy demo
 
@@ -1537,7 +1537,7 @@ void Control::delay(unsigned int amount) {
 	} while (cur < start + amount);
 }
 
-void Control::showGameQuitMsg(void) {
+void Control::showGameQuitMsg() {
 	_skyText->fnSetFont(0);
 	uint8 *textBuf1 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(DataFileHeader));
 	uint8 *textBuf2 = (uint8 *)malloc(GAME_SCREEN_WIDTH * 14 + sizeof(DataFileHeader));

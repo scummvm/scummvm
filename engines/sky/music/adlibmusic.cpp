@@ -43,7 +43,7 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pDisk) {
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 }
 
-AdlibMusic::~AdlibMusic(void) {
+AdlibMusic::~AdlibMusic() {
 	OPLDestroy(_opl);
 	_mixer->stopHandle(_soundHandle);
 }
@@ -76,7 +76,7 @@ int AdlibMusic::readBuffer(int16 *data, const int numSamples) {
 	return numSamples;
 }
 
-void AdlibMusic::setupPointers(void) {
+void AdlibMusic::setupPointers() {
 	if (SkyEngine::_systemVars.gameVersion == 109) {
 		// disk demo uses a different adlib driver version, some offsets have changed
 		//_musicDataLoc = (_musicData[0x11CC] << 8) | _musicData[0x11CB];
@@ -103,7 +103,7 @@ void AdlibMusic::setupChannels(uint8 *channelData) {
 	}
 }
 
-void AdlibMusic::startDriver(void) {
+void AdlibMusic::startDriver() {
 	uint16 cnt = 0;
 	while (_initSequence[cnt] || _initSequence[cnt + 1]) {
 		OPLWriteReg (_opl, _initSequence[cnt], _initSequence[cnt + 1]);
@@ -116,15 +116,15 @@ void AdlibMusic::setVolume(uint16 param) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 2 * param);
 }
 
-bool AdlibMusic::isStereo(void) const {
+bool AdlibMusic::isStereo() const {
 	return false;
 }
 
-bool AdlibMusic::endOfData(void) const {
+bool AdlibMusic::endOfData() const {
 	return false;
 }
 
-int AdlibMusic::getRate(void) const {
+int AdlibMusic::getRate() const {
 	return _sampleRate;
 }
 

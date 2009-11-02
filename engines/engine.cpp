@@ -43,7 +43,7 @@
 #include "engines/metaengine.h"
 
 #ifdef _WIN32_WCE
-extern bool isSmartphone(void);
+extern bool isSmartphone();
 #endif
 
 // FIXME: HACK for MidiEmu & error()

@@ -38,7 +38,7 @@ typedef enum { DOS_PC, WIN_PC, APPLE_MAC, SONY_PSX, SEGA_SATURN } platform;
 
 //----------------- GLOBAL GLOBAL DATA --------------------
 
-extern int NewestSavedGame(void);
+extern int NewestSavedGame();
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
@@ -194,7 +194,7 @@ SCNHANDLE SysString(int number) {
  * Gets the no blocking flag. Note that for convenience, the systemVars array
  * entry is used even for Tinsel 1, which originally used a separate variable.
  */
-bool GetNoBlocking(void) {
+bool GetNoBlocking() {
 	return SysVar(ISV_NO_BLOCKING);
 }
 

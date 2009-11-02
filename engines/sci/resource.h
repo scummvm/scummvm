@@ -246,7 +246,7 @@ public:
 
 	/* Unlocks a previously locked resource
 	**             (Resource *) res: The resource to free
-	** Returns   : (void)
+	** Returns   : ()
 	*/
 	void unlockResource(Resource *res);
 

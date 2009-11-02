@@ -288,7 +288,7 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 	return 0;
 }
 
-void objectReset(void) {
+void objectReset() {
 	for (int i = 1; i < numOfLoadedOverlay; i++)	{
 		if (overlayTable[i].alreadyLoaded && overlayTable[i].ovlData) {
 			if (overlayTable[i].ovlData->arrayObject) {

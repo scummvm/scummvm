@@ -112,7 +112,7 @@ public:
 	bool playSample(int id, int sub, bool bLooped, int x, int y, int priority,
 			Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
 
-	void stopAllSamples(void);                // Stops any currently playing sample
+	void stopAllSamples();                // Stops any currently playing sample
 	void stopSpecSample(int id, int sub = 0); // Stops a specific sample
 
 	void setSFXVolumes(uint8 volume);
@@ -121,8 +121,8 @@ public:
 	bool sampleIsPlaying(int id = -1);
 
 	// TODO: Internal method, make this protected?
-	void openSampleFiles(void);
-	void closeSampleStream(void);
+	void openSampleFiles();
+	void closeSampleStream();
 };
 
 } // End of namespace Tinsel

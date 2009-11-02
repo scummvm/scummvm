@@ -141,7 +141,7 @@ void Puzzle::initPieceInfo(int i, int16 curX, int16 curY, byte offX, byte offY, 
 }
 
 
-void Puzzle::execute(void) {
+void Puzzle::execute() {
 	_active = true;
 	_vm->getTimerManager()->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
 
@@ -155,7 +155,7 @@ void Puzzle::execute(void) {
 	//exitPuzzle();
 }
 
-void Puzzle::exitPuzzle(void) {
+void Puzzle::exitPuzzle() {
 	_active = false;
 
 	_vm->getTimerManager()->removeTimerProc(&hintTimerCallback);
@@ -164,7 +164,7 @@ void Puzzle::exitPuzzle(void) {
 	_vm->_interface->setMode(kPanelMain);
 }
 
-void Puzzle::initPieces(void) {
+void Puzzle::initPieces() {
 	SpriteInfo *spI;
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	int frameNumber;
@@ -185,7 +185,7 @@ void Puzzle::initPieces(void) {
 	_newPuzzle = false;
 }
 
-void Puzzle::showPieces(void) {
+void Puzzle::showPieces() {
 	ActorData *puzzle = _vm->_actor->getActor(_vm->_actor->actorIndexToId(ITE_ACTOR_PUZZLE));
 	int frameNumber;
 	SpriteList *spriteList;
@@ -282,7 +282,7 @@ void Puzzle::handleClick(Point mousePt) {
 	_vm->_interface->setStatusText(pieceNames[_lang][_puzzlePiece]);
 }
 
-void Puzzle::alterPiecePriority(void) {
+void Puzzle::alterPiecePriority() {
 	for (int i = 1; i < PUZZLE_PIECES; i++) {
 		if (_puzzlePiece == _piecePriority[i]) {
 			for (int j = i - 1; j >= 0; j--)
@@ -401,7 +401,7 @@ void Puzzle::hintTimerCallback(void *refCon) {
 	((Puzzle *)refCon)->solicitHint();
 }
 
-void Puzzle::solicitHint(void) {
+void Puzzle::solicitHint() {
 	int i;
 
 	_vm->_actor->setSpeechColor(1, kITEColorBlack);
@@ -513,7 +513,7 @@ void Puzzle::handleReply(int reply) {
 	}
 }
 
-void Puzzle::giveHint(void) {
+void Puzzle::giveHint() {
 	int i, total = 0;
 
 	_vm->_interface->converseClear();
@@ -573,7 +573,7 @@ void Puzzle::giveHint(void) {
 	_vm->getTimerManager()->installTimerProc(&hintTimerCallback, kPuzzleHintTime, this);
 }
 
-void Puzzle::clearHint(void) {
+void Puzzle::clearHint() {
 	_vm->_interface->converseClear();
 	_vm->_interface->converseAddText(optionsStr[_lang][kROLater], 0, 0, 0, 0);
 	_vm->_interface->converseDisplayText();

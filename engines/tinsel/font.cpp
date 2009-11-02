@@ -85,7 +85,7 @@ void SetTempTalkFontHandle(SCNHANDLE hFont) {
 	hTalkFont = hFont;
 }
 
-void ResetFontHandles(void) {
+void ResetFontHandles() {
 	hTagFont = hRegularTagFont;
 	hTalkFont = hRegularTalkFont;
 }

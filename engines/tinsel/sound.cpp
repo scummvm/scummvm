@@ -422,7 +422,7 @@ bool SoundManager::sampleIsPlaying(int id) {
 /**
  * Stops any currently playing sample.
  */
-void SoundManager::stopAllSamples(void) {
+void SoundManager::stopAllSamples() {
 	// stop currently playing sample
 
 	if (!TinselV2) {
@@ -460,7 +460,7 @@ void SoundManager::setSFXVolumes(uint8 volume) {
 /**
  * Opens and inits all sound sample files.
  */
-void SoundManager::openSampleFiles(void) {
+void SoundManager::openSampleFiles() {
 	// Floppy and demo versions have no sample files
 	if (_vm->getFeatures() & GF_FLOPPY || _vm->getFeatures() & GF_DEMO)
 		return;
@@ -558,7 +558,7 @@ void SoundManager::openSampleFiles(void) {
 */
 }
 
-void SoundManager::closeSampleStream(void) {
+void SoundManager::closeSampleStream() {
 	_sampleStream.close();
 	free(_sampleIndex);
 	_sampleIndex = 0;

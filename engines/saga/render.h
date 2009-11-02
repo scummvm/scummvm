@@ -55,9 +55,9 @@ enum RENDER_DEBUG_FLAGS {
 class Render {
 public:
 	Render(SagaEngine *vm, OSystem *system);
-	~Render(void);
+	~Render();
 	bool initialized();
-	void drawScene(void);
+	void drawScene();
 
 	unsigned int getFlags() const {
 		return _flags;
@@ -99,7 +99,7 @@ public:
 private:
 #ifdef SAGA_DEBUG
 	static void fpsTimerCallback(void *refCon);
-	void fpsTimer(void);
+	void fpsTimer();
 	unsigned int _fps;
 	unsigned int _renderedFrameCount;
 #endif

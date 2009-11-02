@@ -30,12 +30,12 @@
 
 namespace Sword1 {
 
-EventManager::EventManager(void) {
+EventManager::EventManager() {
 	for (uint8 cnt = 0; cnt < TOTAL_EVENT_SLOTS; cnt++)
 		_eventPendingList[cnt].delay = _eventPendingList[cnt].eventNumber = 0;
 }
 
-void EventManager::serviceGlobalEventList(void) {
+void EventManager::serviceGlobalEventList() {
 	for (uint8 slot = 0; slot < TOTAL_EVENT_SLOTS; slot++)
 		if (_eventPendingList[slot].delay)
 			_eventPendingList[slot].delay--;

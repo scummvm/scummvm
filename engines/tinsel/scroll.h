@@ -65,19 +65,19 @@ struct SCROLLDATA{
 };
 
 
-void DontScrollCursor(void);
-void DoScrollCursor(void);
+void DontScrollCursor();
+void DoScrollCursor();
 
 void SetNoScroll(int x1, int y1, int x2, int y2);
-void DropScroll(void);
+void DropScroll();
 
 void ScrollProcess(CORO_PARAM, const void *);
 
 void ScrollFocus(int actor);
-int GetScrollFocus(void);
+int GetScrollFocus();
 void ScrollTo(int x, int y, int xIter, int yIter);
 
-void KillScroll(void);
+void KillScroll();
 
 void GetNoScrollData(SCROLLDATA *ssd);
 void RestoreNoScrollData(SCROLLDATA *ssd);
@@ -85,7 +85,7 @@ void RestoreNoScrollData(SCROLLDATA *ssd);
 void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTop,
 		int yTriggerBottom, int yDistance, int ySpeed);
 
-bool IsScrolling(void);
+bool IsScrolling();
 
 } // End of namespace Tinsel
 

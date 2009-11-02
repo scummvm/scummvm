@@ -533,7 +533,7 @@ public:
 
 	const char *getObjectName(uint16 objectId);
 public:
-	int processInput(void);
+	int processInput();
 	Point mousePos() const;
 
 	int getMouseClickCount() {
@@ -586,7 +586,7 @@ public:
 	int32 _frameCount;
 
 public:
-	bool initGame(void);
+	bool initGame();
 
 	bool isBigEndian() const;
 	bool isMacResources() const;

@@ -49,7 +49,7 @@ struct AgiDebug {
 class Console : public GUI::Debugger {
 public:
 	Console(AgiEngine *vm);
-	virtual ~Console(void);
+	virtual ~Console();
 
 protected:
 	virtual void preEnter();
@@ -81,7 +81,7 @@ private:
 class PreAGI_Console : public GUI::Debugger {
 public:
 	PreAGI_Console(PreAgiEngine *vm);
-	virtual ~PreAGI_Console(void) {}
+	virtual ~PreAGI_Console() {}
 
 protected:
 	virtual void preEnter() {}
@@ -95,7 +95,7 @@ private:
 class Mickey_Console : public PreAGI_Console {
 public:
 	Mickey_Console(PreAgiEngine *vm, Mickey *mickey);
-	virtual ~Mickey_Console(void) {}
+	virtual ~Mickey_Console() {}
 
 protected:
 	virtual void preEnter() {}
@@ -113,7 +113,7 @@ private:
 class Winnie_Console : public PreAGI_Console {
 public:
 	Winnie_Console(PreAgiEngine *vm, Winnie *winnie);
-	virtual ~Winnie_Console(void) {}
+	virtual ~Winnie_Console() {}
 
 protected:
 	virtual void preEnter() {}

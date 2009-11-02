@@ -258,10 +258,10 @@ void Script::setupScriptOpcodeList() {
 		// Function calling
 		OPCODE(opCall),			// 23: Call function
 		OPCODE(opCcall),		// 24: Call C function
-		OPCODE(opCcallV),		// 25: Call C function (void)
+		OPCODE(opCcallV),		// 25: Call C function ()
 		OPCODE(opEnter),		// 26: Enter a function
 		OPCODE(opReturn),		// 27: Return from a function
-		OPCODE(opReturnV),		// 28: Return from a function (void)
+		OPCODE(opReturnV),		// 28: Return from a function ()
 		// Branching
 		OPCODE(opJmp),			// 29
 		OPCODE(opJmpTrueV),		// 30: Test argument and consume it
@@ -374,12 +374,12 @@ void Script::setupScriptOpcodeList() {
 		OPCODE(opCallNear),		// 29: Call function in the same segment
 		OPCODE(opCallFar),		// 30: Call function in other segment
 		OPCODE(opCcall),		// 31: Call C function
-		OPCODE(opCcallV),		// 32: Call C function (void)
+		OPCODE(opCcallV),		// 32: Call C function ()
 		OPCODE(opCallMember),	// 33: Call member function
-		OPCODE(opCallMemberV),	// 34: Call member function (void)
+		OPCODE(opCallMemberV),	// 34: Call member function ()
 		OPCODE(opEnter),		// 35: Enter a function
 		OPCODE(opReturn),		// 36: Return from a function
-		OPCODE(opReturnV),		// 37: Return from a function (void)
+		OPCODE(opReturnV),		// 37: Return from a function ()
 		// Branching
 		OPCODE(opJmp),			// 38
 		OPCODE(opJmpTrueV),		// 39: Test argument and consume it

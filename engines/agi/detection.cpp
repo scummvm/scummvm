@@ -74,7 +74,7 @@ const char *AgiBase::getGameMD5() const {
 	return _gameDescription->desc.filesDescriptions[0].md5;
 }
 
-void AgiBase::initFeatures(void) {
+void AgiBase::initFeatures() {
 	_gameFeatures = _gameDescription->features;
 }
 
@@ -86,7 +86,7 @@ void AgiBase::setVersion(uint16 version) {
 	_gameVersion = version;
 }
 
-void AgiBase::initVersion(void) {
+void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
 }
 

@@ -47,7 +47,7 @@ Events::Events(SagaEngine *vm) : _vm(vm) {
 	debug(8, "Initializing event subsystem...");
 }
 
-Events::~Events(void) {
+Events::~Events() {
 	debug(8, "Shutting down event subsystem...");
 	freeList();
 }

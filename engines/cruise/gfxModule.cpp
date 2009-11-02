@@ -201,10 +201,10 @@ void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8 *pOutput) {
 	*(pOutput++) = B;
 }
 
-void gfxModuleData_gfxWaitVSync(void) {
+void gfxModuleData_gfxWaitVSync() {
 }
 
-void gfxModuleData_flip(void) {
+void gfxModuleData_flip() {
 }
 
 void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, int x, int y, int colour) {
@@ -225,13 +225,13 @@ void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, i
 	}
 }
 
-void gfxModuleData_Init(void) {
+void gfxModuleData_Init() {
 	memset(globalScreen, 0, 320 * 200);
 	memset(page00, 0, 320 * 200);
 	memset(page10, 0, 320 * 200);
 }
 
-void gfxModuleData_flipScreen(void) {
+void gfxModuleData_flipScreen() {
 	memcpy(globalScreen, gfxModuleData.pPage00, 320 * 200);
 
 	flip();

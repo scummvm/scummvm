@@ -48,12 +48,12 @@ struct OBJECT;
 /*----------------------------------------------------------------------*/
 
 void RegisterActors(int num);
-void FreeActors(void);
+void FreeActors();
 void SetLeadId(int rid);
-int GetLeadId(void);
+int GetLeadId();
 bool ActorIsGhost(int actor);
 void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript);
-void DropActors(void);		// No actor reels running
+void DropActors();		// No actor reels running
 void DisableActor(int actor);
 void EnableActor(int actor);
 void Tag_Actor(int ano, SCNHANDLE tagtext, int tp);
@@ -100,8 +100,8 @@ int GetActorZpos(int ano, int column);
 void IncLoopCount(int ano);
 int GetLoopCount(int ano);
 SCNHANDLE GetActorTag(int ano);
-void FirstTaggedActor(void);
-int NextTaggedActor(void);
+void FirstTaggedActor();
+int NextTaggedActor();
 int NextTaggedActor(int previous);
 int AsetZPos(OBJECT *pObj, int y, int32 zFactor);
 void SetMoverZ(MOVER *pMover, int y, int32 zFactor);
@@ -113,7 +113,7 @@ void SetActorRGB(int ano, COLORREF colour);
 void SetActorZfactor(int ano, uint32 zFactor);
 uint32 GetActorZfactor(int ano);
 
-void setactorson(void);
+void setactorson();
 
 void ActorsLife(int id, bool bAlive);
 
@@ -128,7 +128,7 @@ bool ActorIsPointedTo(int actor);
 void SetActorTagWanted(int actor, bool bTagWanted, bool bCursor, SCNHANDLE hOverrideTag);
 bool ActorTagIsWanted(int actor);
 bool InHotSpot(int ano, int curX, int curY);
-int FrontTaggedActor(void);
+int FrontTaggedActor();
 void GetActorTagPos(int actor, int *pTagX, int *pTagY, bool bAbsolute);
 bool IsTaggedActor(int actor);
 void StoreActorPresFilm(int ano, SCNHANDLE hFilm, int x, int y);

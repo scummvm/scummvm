@@ -70,9 +70,9 @@ private:
 class MoviePlayer : public Graphics::VideoPlayer {
 public:
 	MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType);
-	virtual ~MoviePlayer(void);
+	virtual ~MoviePlayer();
 	bool load(uint32 id);
-	void play(void);
+	void play();
 protected:
 	SwordEngine *_vm;
 	Text *_textMan;

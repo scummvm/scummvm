@@ -46,11 +46,11 @@ struct stackElementStruct {
 	} data;
 };
 
-int16 popVar(void);
+int16 popVar();
 void pushVar(int16 var);
 
 void pushPtr(void *ptr);
-void *popPtr(void);
+void *popPtr();
 
 } // End of namespace Cruise
 

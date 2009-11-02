@@ -92,32 +92,32 @@ int clRunMode = 0;
 extern void ChangePalette(SCNHANDLE hPal);
 
 // in PDISPLAY.CPP
-extern void EnableTags(void);
-extern void DisableTags(void);
-bool DisableTagsIfEnabled(void);
-extern void setshowstring(void);
+extern void EnableTags();
+extern void DisableTags();
+bool DisableTagsIfEnabled();
+extern void setshowstring();
 
 // in SAVELOAD.CPP
-extern int NewestSavedGame(void);
+extern int NewestSavedGame();
 
 // in SCENE.CPP
-extern void setshowpos(void);
+extern void setshowpos();
 extern int sceneCtr;
 
 // in TINSEL.CPP
 extern void SetCdChangeScene(SCNHANDLE hScene);
 extern void SetHookScene(SCNHANDLE scene, int entrance, int transition);
 extern void SetNewScene(SCNHANDLE scene, int entrance, int transition);
-extern void UnHookScene(void);
-extern void SuspendHook(void);
-extern void UnSuspendHook(void);
+extern void UnHookScene();
+extern void SuspendHook();
+extern void UnSuspendHook();
 
 #ifdef BODGE
 // In HANDLE.CPP
 bool ValidHandle(SCNHANDLE offset);
 
 // In SCENE.CPP
-SCNHANDLE GetSceneHandle(void);
+SCNHANDLE GetSceneHandle();
 #endif
 
 //----------------- GLOBAL GLOBAL DATA --------------------
@@ -271,12 +271,12 @@ static COLORREF s_talkfontColor = 0;
 
 //----------------- FORWARD REFERENCES --------------------
 
-static int HeldObject(void);
+static int HeldObject();
 static void PostTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int myEscape);
-void ResetIdleTime(void);
+void ResetIdleTime();
 static void SendTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int myEscape, bool *result);
 static void StandTag(int actor, HPOLYGON hp);
-void StopMidiFn(void);
+void StopMidiFn();
 void StopSample(int sample = -1);
 static void StopWalk(int actor);
 static void WaitScroll(CORO_PARAM, int myescEvent);
@@ -559,7 +559,7 @@ static int ActorPos(int xory, int actor) {
 /**
  * Make all actors alive at the start of each scene.
  */
-static void ActorsOn(void) {
+static void ActorsOn() {
 	setactorson();
 }
 
@@ -688,7 +688,7 @@ static void ClearHookScene() {
 /**
  * Guess what.
  */
-static void CloseInventory(void) {
+static void CloseInventory() {
 	KillInventory();
 }
 
@@ -1025,7 +1025,7 @@ static void DelTopic(int icon) {
 /**
  * DimMusic
  */
-static void DimMusic(void) {
+static void DimMusic() {
 	_vm->_pcmMusic->dim(true);
 }
 
@@ -1045,7 +1045,7 @@ static void Drop(int object) {
 /**
  * Delete all objects from inventory 1 and 2.
  */
-static void DropEverything(void) {
+static void DropEverything() {
 	HoldItem(NOOBJECT, false);
 
 	ClearInventory(INV_1);
@@ -1055,7 +1055,7 @@ static void DropEverything(void) {
 /**
  * EnableMenu
  */
-static void EnableMenu(void) {
+static void EnableMenu() {
 	bEnableMenu = true;
 }
 
@@ -1114,14 +1114,14 @@ static void FaceTag(int actor, HPOLYGON hp) {
 /**
  * FadeIn
  */
-static void FadeIn(void) {
+static void FadeIn() {
 	FadeInMedium(NULL);
 }
 
 /**
  * FadeOut
  */
-static void FadeOut(void) {
+static void FadeOut() {
 	FadeOutMedium(NULL);
 }
 
@@ -1175,7 +1175,7 @@ static void HailScene(SCNHANDLE scene) {
 /**
  * Returns TRUE if the game has been restarted, FALSE if not.
  */
-static bool HasRestarted(void) {
+static bool HasRestarted() {
 	return bHasRestarted;
 }
 
@@ -1189,7 +1189,7 @@ int Have(int object) {
 /**
  * Returns which object is currently held.
  */
-static int HeldObject(void) {
+static int HeldObject() {
 	return WhichItemHeld();
 }
 
@@ -1253,7 +1253,7 @@ void HookScene(SCNHANDLE scene, int entrance, int transition) {
 /**
  * IdleTime
  */
-static int IdleTime(void) {
+static int IdleTime() {
 	// If control is off, system is not idle
 	if (!ControlIsOn()) {
 		// Player doesn't currently have control
@@ -1440,7 +1440,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 /**
  * Disable dynamic blocking for current scene.
  */
-static void NoBlocking(void) {
+static void NoBlocking() {
 	SetNoBlocking(true);
 }
 
@@ -2371,7 +2371,7 @@ static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = 
 /**
  * Quits the game
  */
-static void QuitGame(void) {
+static void QuitGame() {
 	StopMidi();
 	StopSample();
 	_vm->quitGame();
@@ -2398,14 +2398,14 @@ static int RandomFn(int n1, int n2, int norpt) {
 /**
  * ResetIdleTime
  */
-void ResetIdleTime(void) {
+void ResetIdleTime() {
 	resetUserEventTime();
 }
 
 /**
  * FnRestartGame
  */
-void FnRestartGame(void) {
+void FnRestartGame() {
 	// TODO: Tinsel 2 comments out the 2 calls, but I'm not sure that this should be done
 	StopMidi();
 	StopSample();
@@ -2444,14 +2444,14 @@ static void RestoreScene(CORO_PARAM, TRANSITS transition) {
 /**
  * Resumes the last game
  */
-void ResumeLastGame(void) {
+void ResumeLastGame() {
 	RestoreGame(NewestSavedGame());
 }
 
 /**
  * Returns the current run mode
  */
-static int RunMode(void) {
+static int RunMode() {
 	return clRunMode;
 }
 
@@ -2503,7 +2503,7 @@ static void ScalingReels(int actor, int scale, int direction,
 /**
  * Return the icon that caused the CONVERSE event.
  */
-static int ScanIcon(void) {
+static int ScanIcon() {
 	return GetIcon();
 }
 
@@ -2752,14 +2752,14 @@ void ShowEffect(int effect) {
 /**
  * Enable display of diagnostic co-ordinates.
  */
-static void showpos(void) {
+static void showpos() {
 	setshowpos();
 }
 
 /**
  * Enable display of diagnostic co-ordinates.
  */
-static void showstring(void) {
+static void showstring() {
 	setshowstring();
 }
 #endif
@@ -2767,7 +2767,7 @@ static void showstring(void) {
 /**
  * Shows the main menu
  */
-static void ShowMenu(void) {
+static void ShowMenu() {
 	OpenMenu(MAIN_MENU);
 }
 
@@ -2969,7 +2969,7 @@ static void StartTimerFn(int timerno, int start, bool up, int fs) {
 	StartTimer(timerno, start, up, fs);
 }
 
-void StopMidiFn(void) {
+void StopMidiFn() {
 	StopMidi();		// Stop any currently playing midi
 }
 
@@ -3624,7 +3624,7 @@ static int TimerFn(int timerno) {
 /**
  * Return the icon that caused the CONVERSE event.
  */
-int Topic(void) {
+int Topic() {
 	return GetIcon();
 }
 
@@ -3681,14 +3681,14 @@ static void TryPlaySample(CORO_PARAM, int sample, bool bComplete, bool escOn, in
 /**
  * UnDimMusic
  */
-static void UnDimMusic(void) {
+static void UnDimMusic() {
 	_vm->_pcmMusic->unDim(true);
 }
 
 /**
  * unhookscene
  */
-static void UnHookSceneFn(void) {
+static void UnHookSceneFn() {
 	UnHookScene();
 }
 
@@ -3702,7 +3702,7 @@ static void UnTagActorFn(int actor) {
 /**
  * vibrate
  */
-static void Vibrate(void) {
+static void Vibrate() {
 }
 
 /**
@@ -4168,28 +4168,28 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 /**
  * Returns the X co-ordinateof lead actor's last walk.
  */
-int WalkXPos(void) {
+int WalkXPos() {
 	return GetLastLeadXdest();
 }
 
 /**
  * Returns the Y co-ordinateof lead actor's last walk.
  */
-int WalkYPos(void) {
+int WalkYPos() {
 	return GetLastLeadYdest();
 }
 
 /**
  * Return which is the current CD, counting from 1.
  */
-int WhichCd(void) {
+int WhichCd() {
 	return GetCurrentCD();
 }
 
 /**
  * whichinventory
  */
-int WhichInventory(void) {
+int WhichInventory() {
 	return WhichInventoryOpen();
 }
 

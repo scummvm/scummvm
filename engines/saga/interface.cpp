@@ -344,7 +344,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_vm->getTimerManager()->installTimerProc(&saveReminderCallback, TIMETOSAVE, this);
 }
 
-Interface::~Interface(void) {
+Interface::~Interface() {
 	free(_inventory);
 
 	free(_mainPanel.image);
@@ -2414,13 +2414,13 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 
 
 // Converse stuff
-void Interface::converseInit(void) {
+void Interface::converseInit() {
 	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++)
 		_converseText[i].text = NULL;
 	converseClear();
 }
 
-void Interface::converseClear(void) {
+void Interface::converseClear() {
 	for (int i = 0; i < CONVERSE_MAX_TEXTS; i++) {
 		if (_converseText[i].text != NULL) {
 			free(_converseText[i].text);

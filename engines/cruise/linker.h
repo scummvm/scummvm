@@ -28,7 +28,7 @@
 
 namespace Cruise {
 
-void updateAllScriptsImports(void);
+void updateAllScriptsImports();
 
 }				// End of namespace Cruise
 #endif

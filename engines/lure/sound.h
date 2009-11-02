@@ -89,7 +89,7 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
+	uint32 getBaseTempo() { return _driver ? _driver->getBaseTempo() : 0; }
 
 	//Channel allocation functions
 	MidiChannel *allocateChannel() { return 0; }

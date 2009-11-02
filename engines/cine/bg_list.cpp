@@ -76,7 +76,7 @@ void createBgIncrustListElement(int16 objIdx, int16 param) {
 
 /*! \brief Reset var8 (probably something related to bgIncrustList)
  */
-void resetBgIncrustList(void) {
+void resetBgIncrustList() {
 	var8 = 0;
 }
 

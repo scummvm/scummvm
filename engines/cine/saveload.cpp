@@ -457,7 +457,7 @@ void saveSeqList(Common::OutSaveFile &out) {
 	}
 }
 
-bool CineEngine::loadSaveDirectory(void) {
+bool CineEngine::loadSaveDirectory() {
 	Common::InSaveFile *fHandle;
 	char tmp[80];
 

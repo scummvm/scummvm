@@ -441,7 +441,7 @@ uint8 *mainProc14(uint16 overlay, uint16 idx) {
 	return NULL;
 }
 
-void CruiseEngine::initAllData(void) {
+void CruiseEngine::initAllData() {
 	int i;
 
 	setupFuncArray();
@@ -779,7 +779,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 
 Common::KeyCode keyboardCode = Common::KEYCODE_INVALID;
 
-void freeStuff2(void) {
+void freeStuff2() {
 	warning("implement freeStuff2");
 }
 
@@ -1070,7 +1070,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 	return found;
 }
 
-int processInventory(void) {
+int processInventory() {
 	if (menuTable[1]) {
 		menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[1]);
 
@@ -1380,7 +1380,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 	}
 }
 
-void closeAllMenu(void) {
+void closeAllMenu() {
 	if (menuTable[0]) {
 		freeMenu(menuTable[0]);
 		menuTable[0] = NULL;
@@ -1417,7 +1417,7 @@ bool checkInput(int16 *buttonPtr) {
 
 extern bool manageEvents();
 
-int CruiseEngine::processInput(void) {
+int CruiseEngine::processInput() {
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
@@ -1788,7 +1788,7 @@ void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16
 }
 
 
-void CruiseEngine::mainLoop(void) {
+void CruiseEngine::mainLoop() {
 	//int32 t_start,t_left;
 	//uint32 t_end;
 	//int32 q=0;                     /* Dummy */

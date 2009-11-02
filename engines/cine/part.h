@@ -40,7 +40,7 @@ struct PartBuffer {
 extern Common::Array<PartBuffer> partBuffer;
 
 void loadPart(const char *partName);
-void closePart(void);
+void closePart();
 
 int16 findFileInBundle(const char *fileName);
 

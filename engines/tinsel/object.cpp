@@ -48,7 +48,7 @@ static int numObj = 0;
 static int maxObj = 0;
 #endif
 
-void FreeObjectList(void) {
+void FreeObjectList() {
 	if (objectList) {
 		free(objectList);
 		objectList = NULL;
@@ -59,7 +59,7 @@ void FreeObjectList(void) {
  * Kills all objects and places them on the free list.
  */
 
-void KillAllObjects(void) {
+void KillAllObjects() {
 	int i;
 
 #ifdef DEBUG
@@ -95,7 +95,7 @@ void KillAllObjects(void) {
  * Shows the maximum number of objects used at once.
  */
 
-void ObjectStats(void) {
+void ObjectStats() {
 	printf("%i objects of %i used.\n", maxObj, NUM_OBJECTS);
 }
 #endif
@@ -103,7 +103,7 @@ void ObjectStats(void) {
 /**
  * Allocate a object from the free list.
  */
-OBJECT *AllocObject(void) {
+OBJECT *AllocObject() {
 	OBJECT *pObj = pFreeObjects;	// get a free object
 
 	// check for no free objects

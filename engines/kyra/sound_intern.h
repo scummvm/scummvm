@@ -129,7 +129,7 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length) {}
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo(void);
+	uint32 getBaseTempo();
 
 	//Channel allocation functions
 	MidiChannel *allocateChannel()      { return 0; }

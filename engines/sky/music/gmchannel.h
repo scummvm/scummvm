@@ -44,11 +44,11 @@ typedef struct {
 class GmChannel : public ChannelBase {
 public:
 	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab);
-	~GmChannel(void);
-	virtual void stopNote(void);
+	~GmChannel();
+	virtual void stopNote();
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
-	virtual bool isActive(void);
+	virtual bool isActive();
 private:
 	const byte *_instMap;
 	const byte *_veloTab;
@@ -59,26 +59,26 @@ private:
 	uint8 _currentChannelVolume;
 	//-                          normal subs
 	void setRegister(uint8 regNum, uint8 value);
-	int32 getNextEventTime(void);
+	int32 getNextEventTime();
 	uint16 getNextNote(uint8 param);
-	void adlibSetupInstrument(void);
+	void adlibSetupInstrument();
 	void setupInstrument(uint8 opcode);
 	void setupChannelVolume(uint8 volume);
 	//-                          Streamfunctions from Command90hTable
-	void com90_caseNoteOff(void);        // 0
-	void com90_stopChannel(void);        // 1
-	void com90_setupInstrument(void);    // 2
-	uint8 com90_updateTempo(void);       // 3
-	//void com90_dummy(void);            // 4
-	void com90_getPitch(void);           // 5
-	void com90_getChannelVolume(void);   // 6
-	//void com90_skipTremoVibro(void);   // 7
-	void com90_loopMusic(void);        // 8
-	void com90_keyOff(void);             // 9
-	//void com90_error(void);            // 10
-	void com90_getChannelPanValue(void); // 11
-	void com90_setLoopPoint(void);     // 12
-	void com90_getChannelControl(void);     // 13
+	void com90_caseNoteOff();        // 0
+	void com90_stopChannel();        // 1
+	void com90_setupInstrument();    // 2
+	uint8 com90_updateTempo();       // 3
+	//void com90_dummy();            // 4
+	void com90_getPitch();           // 5
+	void com90_getChannelVolume();   // 6
+	//void com90_skipTremoVibro();   // 7
+	void com90_loopMusic();        // 8
+	void com90_keyOff();             // 9
+	//void com90_error();            // 10
+	void com90_getChannelPanValue(); // 11
+	void com90_setLoopPoint();     // 12
+	void com90_getChannelControl();     // 13
 };
 
 } // End of namespace Sky

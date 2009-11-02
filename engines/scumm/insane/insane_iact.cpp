@@ -173,7 +173,7 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		}
 }
 
-void Insane::chooseEnemy(void) {
+void Insane::chooseEnemy() {
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		_currEnemy = EN_ROTT1;
 		return;
@@ -265,7 +265,7 @@ void Insane::chooseEnemy(void) {
 	_currEnemy = en2;
 }
 
-void Insane::removeEmptyEnemies(void) {
+void Insane::removeEmptyEnemies() {
 	if (_metEnemiesListTail > 0) {
 		for (int i = 0; i < _metEnemiesListTail; i++)
 			if (_enemy[i].isEmpty == 1)

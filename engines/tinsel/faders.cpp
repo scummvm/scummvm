@@ -234,7 +234,7 @@ void FadeInFast(SCNHANDLE noFadeTable[]) {
 	Fader(fadein, noFadeTable);
 }
 
-void PokeInTagColour(void) {
+void PokeInTagColour() {
 	if (SysVar(SV_TAGCOLOUR)) {
 		static COLORREF c = GetActorRGB(-1);
 		UpdateDACqueue(SysVar(SV_TAGCOLOUR), 1, &c);

@@ -47,9 +47,9 @@ void SetScalingReels(int actor, int scale, int direction,
 
 SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel);
 
-void RebootScalingReels(void);
+void RebootScalingReels();
 
-void TouchMoverReels(void);
+void TouchMoverReels();
 
 } // End of namespace Tinsel
 

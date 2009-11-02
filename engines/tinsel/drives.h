@@ -47,11 +47,11 @@ namespace Tinsel {
 
 extern char currentCD;
 
-void DoCdChange(void);
+void DoCdChange();
 
 void CdCD(CORO_PARAM);
 
-int GetCurrentCD(void);
+int GetCurrentCD();
 
 void SetCD(int flags);
 
@@ -59,7 +59,7 @@ int GetCD(int flags);
 
 void SetNextCD(int cdNumber);
 
-bool GotoCD(void);
+bool GotoCD();
 
 class TinselFile: public Common::File {
 private:

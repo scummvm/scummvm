@@ -86,7 +86,7 @@ void ButtonToInventory(PLR_EVENT be);
 void KeyToInventory(PLR_EVENT ke);
 
 
-int WhichItemHeld(void);
+int WhichItemHeld();
 
 void HoldItem(int item, bool bKeepFilm = false);
 void DropItem(int item);
@@ -104,16 +104,16 @@ void idec_inv1(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
 void idec_inv2(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
 			int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
-bool InventoryActive(void);
+bool InventoryActive();
 
 void PermaConvIcon(int icon, bool bEnd = false);
 
 void convPos(int bpos);
 void ConvPoly(HPOLYGON hp);
-int GetIcon(void);
-void CloseDownConv(void);
+int GetIcon();
+void CloseDownConv();
 void HideConversation(bool hide);
-bool ConvIsHidden(void);
+bool ConvIsHidden();
 
 enum {
 	NOOBJECT		= -1,
@@ -146,7 +146,7 @@ int InventoryPos(int num);
 
 bool IsInInventory(int object, int invnum);
 
-void KillInventory(void);
+void KillInventory();
 
 void syncInvInfo(Common::Serializer &s);
 
@@ -155,11 +155,11 @@ void InvSetLimit(int invno, int n);
 void InvSetSize(int invno, int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
-int WhichInventoryOpen(void);
+int WhichInventoryOpen();
 
-bool IsTopWindow(void);
-bool MenuActive(void);
-bool IsConvWindow(void);
+bool IsTopWindow();
+bool MenuActive();
+bool IsConvWindow();
 
 void SetObjectFilm(int object, SCNHANDLE hFilm);
 

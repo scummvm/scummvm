@@ -68,7 +68,7 @@ struct actorStruct {
 
 bool isAnimFinished(int overlayIdx, int idx, actorStruct *pStartEntry, int objType);
 actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int type);
-void processAnimation(void);
+void processAnimation();
 void getPixel(int x, int y);
 
 } // End of namespace Cruise

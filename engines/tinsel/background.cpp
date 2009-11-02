@@ -175,7 +175,7 @@ OBJECT *GetPlayfieldList(int which) {
  * to scroll each playfield before it is drawn.
  */
 
-void DrawBackgnd(void) {
+void DrawBackgnd() {
 	int i;			// playfield counter
 	PLAYFIELD *pPlay;	// playfield pointer
 	int prevX, prevY;	// save interger part of position
@@ -255,7 +255,7 @@ void DrawBackgnd(void) {
 	ResetClipRect();
 }
 
-void ForceEntireRedraw(void) {
+void ForceEntireRedraw() {
 	bEntireRedraw = true;
 }
 

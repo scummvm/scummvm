@@ -101,7 +101,7 @@ public:
 
 extern Common::Array<AnimData> animDataTable;
 
-void freeAnimDataTable(void);
+void freeAnimDataTable();
 void freeAnimDataRange(byte startIdx, byte numIdx);
 int loadResource(const char *resourceName, int16 idx = -1);
 void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat);

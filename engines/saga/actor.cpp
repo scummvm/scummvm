@@ -1210,7 +1210,7 @@ void Actor::drawActors() {
 	drawSpeech();
 }
 
-void Actor::drawSpeech(void) {
+void Actor::drawSpeech() {
 	if (!isSpeaking() || !_activeSpeech.playing || _vm->_script->_skipSpeeches
 		|| (!_vm->_subtitlesEnabled && _vm->getGameId() == GID_ITE && !(_vm->getFeatures() & GF_ITE_FLOPPY))
 		|| (!_vm->_subtitlesEnabled && (_vm->getGameId() == GID_IHNM)))

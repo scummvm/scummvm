@@ -239,7 +239,7 @@ void LzhDecompressor::read_c_len() {
 	}
 }
 
-unsigned int LzhDecompressor::decode_c(void) {
+unsigned int LzhDecompressor::decode_c() {
 	uint j, mask;
 	if (_blocksize == 0) {
 		_blocksize = getbits(16);

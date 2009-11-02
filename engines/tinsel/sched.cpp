@@ -125,7 +125,7 @@ void Scheduler::reset() {
 /**
  * Shows the maximum number of process used at once.
  */
-void Scheduler::printStats(void) {
+void Scheduler::printStats() {
 	printf("%i process of %i used.\n", maxProcs, NUM_PROCESS);
 }
 #endif
@@ -172,7 +172,7 @@ void Scheduler::CheckStack() {
 /**
  * Give all active processes a chance to run
  */
-void Scheduler::schedule(void) {
+void Scheduler::schedule() {
 	// start dispatching active process list
 	PROCESS *pNext;
 	PROCESS *pProc = active->pNext;
@@ -413,7 +413,7 @@ void Scheduler::killProcess(PROCESS *pKillProc) {
 /**
  * Returns a pointer to the currently running process.
  */
-PROCESS *Scheduler::getCurrentProcess(void) {
+PROCESS *Scheduler::getCurrentProcess() {
 	return pCurrent;
 }
 
@@ -669,7 +669,7 @@ void RestoreGlobalProcess(INT_CONTEXT *pic) {
 /**
  * Kill them all (restore game).
  */
-void KillGlobalProcesses(void) {
+void KillGlobalProcesses() {
 
 	for (uint32 i = 0; i < numGlobalProcess; ++i)	{
 		g_scheduler->killMatchingProcess(PID_GPROCESS + i, -1);

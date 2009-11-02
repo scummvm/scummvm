@@ -44,11 +44,11 @@ GmChannel::GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv
 	_currentChannelVolume = 0x7F;
 }
 
-GmChannel::~GmChannel(void) {
+GmChannel::~GmChannel() {
 	stopNote();
 }
 
-bool GmChannel::isActive(void) {
+bool GmChannel::isActive() {
 	return _channelData.channelActive;
 }
 
@@ -61,14 +61,14 @@ void GmChannel::updateVolume(uint16 pVolume) {
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
-void GmChannel::stopNote(void) {
+void GmChannel::stopNote() {
 	// All Notes Off
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x7B00 | 0 | 0x79000000);
 	// Reset the Pitch Wheel. See bug #1016556.
 	_midiDrv->send((0xE0 | _channelData.midiChannelNumber) | 0x400000);
 }
 
-int32 GmChannel::getNextEventTime(void) {
+int32 GmChannel::getNextEventTime() {
 	int32 retV = 0;
 	uint8 cnt, lVal = 0;
 	for (cnt = 0; cnt < 4; cnt++) {
@@ -139,17 +139,17 @@ uint8 GmChannel::process(uint16 aktTime) {
 
 //- command 90h routines
 
-void GmChannel::com90_caseNoteOff(void) {
+void GmChannel::com90_caseNoteOff() {
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_musicData[_channelData.eventDataPtr] << 8));
 	_channelData.eventDataPtr++;
 }
 
-void GmChannel::com90_stopChannel(void) {
+void GmChannel::com90_stopChannel() {
 	stopNote();
 	_channelData.channelActive = false;
 }
 
-void GmChannel::com90_setupInstrument(void) {
+void GmChannel::com90_setupInstrument() {
 	byte instrument = _musicData[_channelData.eventDataPtr];
 	if (_instMap)
 		instrument = _instMap[instrument];
@@ -157,39 +157,39 @@ void GmChannel::com90_setupInstrument(void) {
 	_channelData.eventDataPtr++;
 }
 
-uint8 GmChannel::com90_updateTempo(void) {
+uint8 GmChannel::com90_updateTempo() {
 	return _musicData[_channelData.eventDataPtr++];
 }
 
-void GmChannel::com90_getPitch(void) {
+void GmChannel::com90_getPitch() {
 	_midiDrv->send((0xE0 | _channelData.midiChannelNumber) | 0 | (_musicData[_channelData.eventDataPtr] << 16));
 	_channelData.eventDataPtr++;
 }
 
-void GmChannel::com90_getChannelVolume(void) {
+void GmChannel::com90_getChannelVolume() {
 	_currentChannelVolume = _musicData[_channelData.eventDataPtr++];
 	uint8 newVol = (uint8)((_currentChannelVolume * _musicVolume) >> 7);
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x700 | (newVol << 16));
 }
 
-void GmChannel::com90_loopMusic(void) {
+void GmChannel::com90_loopMusic() {
 	_channelData.eventDataPtr = _channelData.loopPoint;
 }
 
-void GmChannel::com90_keyOff(void) {
+void GmChannel::com90_keyOff() {
 	_midiDrv->send((0x90 | _channelData.midiChannelNumber) | (_channelData.note << 8) | 0);
 }
 
-void GmChannel::com90_setLoopPoint(void) {
+void GmChannel::com90_setLoopPoint() {
 	_channelData.loopPoint = _channelData.eventDataPtr;
 }
 
-void GmChannel::com90_getChannelPanValue(void) {
+void GmChannel::com90_getChannelPanValue() {
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | 0x0A00 | (_musicData[_channelData.eventDataPtr] << 16));
 	_channelData.eventDataPtr++;
 }
 
-void GmChannel::com90_getChannelControl(void) {
+void GmChannel::com90_getChannelControl() {
 	uint8 conNum = _musicData[_channelData.eventDataPtr++];
 	uint8 conDat = _musicData[_channelData.eventDataPtr++];
 	_midiDrv->send((0xB0 | _channelData.midiChannelNumber) | (conNum << 8) | (conDat << 16));

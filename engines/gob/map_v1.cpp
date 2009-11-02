@@ -40,7 +40,7 @@ Map_v1::Map_v1(GobEngine *vm) : Map(vm) {
 Map_v1::~Map_v1() {
 }
 
-void Map_v1::init(void) {
+void Map_v1::init() {
 	if (_passMap || _itemsMap)
 		return;
 

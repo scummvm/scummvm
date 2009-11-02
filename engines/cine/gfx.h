@@ -264,7 +264,7 @@ void setMouseCursor(int cursor);
 void gfxCopyPage(byte *source, byte *dest);
 
 void transformPaletteRange(byte startColor, byte numColor, int8 r, int8 g, int8 b);
-void gfxFlipPage(void);
+void gfxFlipPage();
 
 void gfxDrawMaskedSprite(const byte *ptr, const byte *msk, uint16 width, uint16 height, byte *page, int16 x, int16 y);
 void gfxFillSprite(const byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy, uint8 fillColor = 0);
@@ -288,17 +288,17 @@ void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte
 void drawSpriteRaw2(const byte *spritePtr, byte transColor, int16 width, int16 height, byte *page, int16 x, int16 y);
 void maskBgOverlay(const byte *spritePtr, const byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
 
-void fadeFromBlack(void);
-void fadeToBlack(void);
+void fadeFromBlack();
+void fadeToBlack();
 
 // wtf?!
 //void gfxDrawMaskedSprite(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
-void gfxWaitVBL(void);
-void gfxRedrawMouseCursor(void);
+void gfxWaitVBL();
+void gfxRedrawMouseCursor();
 
 void blitScreen(byte *frontBuffer, byte *backbuffer);
 void blitRawScreen(byte *frontBuffer);
-void flip(void);
+void flip();
 
 } // End of namespace Cine
 

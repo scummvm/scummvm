@@ -43,7 +43,7 @@ struct PalanimEntry {
 class PalAnim {
  public:
 	PalAnim(SagaEngine *vm);
-	~PalAnim(void);
+	~PalAnim();
 
 	int loadPalAnim(const byte *, size_t);
 	int cycleStart();

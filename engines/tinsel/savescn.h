@@ -98,19 +98,19 @@ enum letype{
 };
 
 char *ListEntry(int i, letype which);
-int getList(void);
-void setNeedLoad(void);
+int getList();
+void setNeedLoad();
 
 void RestoreGame(int num);
 void SaveGame(char *name, char *desc);
 
-void ProcessSRQueue(void);
+void ProcessSRQueue();
 
 void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssData);
 
-void InitialiseSaveScenes(void);
-void FreeSaveScenes(void);
+void InitialiseSaveScenes();
+void FreeSaveScenes();
 
 } // End of namespace Tinsel
 

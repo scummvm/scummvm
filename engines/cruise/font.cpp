@@ -137,7 +137,7 @@ void loadFNT(const char *fileName) {
 	fontFileHandle.close();
 }
 
-void initSystem(void) {
+void initSystem() {
 	int32 i;
 
 	itemColor = 15;
@@ -168,7 +168,7 @@ void initSystem(void) {
 	loadFNT("system.fnt");
 }
 
-void freeSystem(void) {
+void freeSystem() {
 	MemFree(_systemFNT);
 }
 

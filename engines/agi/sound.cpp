@@ -931,7 +931,7 @@ void SoundMgr::playSound() {
 	}
 }
 
-uint32 SoundMgr::mixSound(void) {
+uint32 SoundMgr::mixSound() {
 	register int i, p;
 	const int16 *src;
 	int c, b, m;

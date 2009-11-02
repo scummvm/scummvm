@@ -1709,11 +1709,11 @@ void SetDefaultRefer(int32 defRefer) {
 	DefaultRefer = defRefer;
 }
 
-int GetLastLeadXdest(void) {
+int GetLastLeadXdest() {
 	return lastLeadXdest;
 }
 
-int GetLastLeadYdest(void) {
+int GetLastLeadYdest() {
 	return lastLeadYdest;
 }
 

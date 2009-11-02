@@ -138,7 +138,7 @@ private:
 	bool		_slidyWalkAnimatorState;
 
 	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 dir);
-	int32 getRoute(void);
+	int32 getRoute();
 	int32 checkTarget(int32 x, int32 y);
 
 	bool scan(int32 level);

@@ -103,7 +103,7 @@ bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 	return true;
 }
 
-void Infogrames::Instruments::unload(void) {
+void Infogrames::Instruments::unload() {
 	if (_sampleData)
 		delete[] _sampleData;
 	init();
@@ -252,7 +252,7 @@ bool Infogrames::load(Common::SeekableReadStream &dum) {
 	return true;
 }
 
-void Infogrames::unload(void) {
+void Infogrames::unload() {
 	stopPlay();
 
 	delete[] _data;

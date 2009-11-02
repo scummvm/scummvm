@@ -66,7 +66,7 @@ public:
 	SciGuiFont *_font;
 
 private:
-	void init(void);
+	void init();
 
 	ResourceManager *_resMan;
 	SciGuiGfx *_gfx;

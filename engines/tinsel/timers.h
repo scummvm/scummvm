@@ -38,13 +38,13 @@ namespace Tinsel {
 
 #define ONE_SECOND 24
 
-uint32 DwGetCurrentTime(void);
+uint32 DwGetCurrentTime();
 
-void RebootTimers(void);
+void RebootTimers();
 
 void syncTimerInfo(Common::Serializer &s);
 
-void FettleTimers(void);
+void FettleTimers();
 
 void StartTimer(int num, int sval, bool up, bool frame);
 

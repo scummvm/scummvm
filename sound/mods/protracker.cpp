@@ -398,7 +398,7 @@ void ProtrackerStream::updateEffects() {
 	}
 }
 
-void ProtrackerStream::interrupt(void) {
+void ProtrackerStream::interrupt() {
 	int track;
 
 	for (track = 0; track < 4; track++) {

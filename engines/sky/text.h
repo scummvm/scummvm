@@ -51,7 +51,7 @@ struct PatchMessage {
 class Text {
 public:
 	Text(Disk *skyDisk, SkyCompact *skyCompact);
-	~Text(void);
+	~Text();
 	struct DisplayedText displayText(uint32 textNum, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	struct DisplayedText displayText(char *textPtr, uint8 *dest, bool centre, uint16 pixelWidth, uint8 color);
 	struct DisplayedText lowTextManager(uint32 textNum, uint16 width, uint16 logicNum, uint8 color, bool centre);
@@ -60,7 +60,7 @@ public:
 	void fnPointerText(uint32 pointedId, uint16 mouseX, uint16 mouseY);
 	void logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY);
 	void changeTextSpriteColour(uint8 *sprData, uint8 newCol);
-	uint32 giveCurrentCharSet(void);
+	uint32 giveCurrentCharSet();
 
 	uint32 _numLetters;	//no of chars in message
 

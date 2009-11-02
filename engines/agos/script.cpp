@@ -33,7 +33,7 @@
 #include "agos/agos.h"
 
 #ifdef _WIN32_WCE
-extern bool isSmartphone(void);
+extern bool isSmartphone();
 #endif
 
 namespace AGOS {

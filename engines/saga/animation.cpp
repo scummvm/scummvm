@@ -53,7 +53,7 @@ Anim::Anim(SagaEngine *vm) : _vm(vm) {
 		_cutawayAnimations[i] = NULL;
 }
 
-Anim::~Anim(void) {
+Anim::~Anim() {
 	reset();
 #ifdef ENABLE_IHNM
 	freeCutawayList();
@@ -77,7 +77,7 @@ void Anim::loadCutawayList(const byte *resourcePointer, size_t resourceLength) {
 	}
 }
 
-void Anim::freeCutawayList(void) {
+void Anim::freeCutawayList() {
 	free(_cutawayList);
 	_cutawayList = NULL;
 	_cutawayListLength = 0;
@@ -206,14 +206,14 @@ int Anim::playCutaway(int cut, bool fade) {
 	return MAX_ANIMATIONS + cutawaySlot;
 }
 
-void Anim::endCutaway(void) {
+void Anim::endCutaway() {
 	// This is called by scripts after a cutaway is finished. At this time,
 	// nothing needs to be done here.
 
 	debug(0, "endCutaway()");
 }
 
-void Anim::returnFromCutaway(void) {
+void Anim::returnFromCutaway() {
 	// This is called by scripts after a cutaway is finished, to return back
 	// to the scene that the cutaway was called from. It's not called by the
 	// IHNM intro, as there is no old scene to return to.
@@ -308,7 +308,7 @@ void Anim::returnFromCutaway(void) {
 	}
 }
 
-void Anim::clearCutaway(void) {
+void Anim::clearCutaway() {
 	PalEntry *pal;
 
 	debug(1, "clearCutaway()");
@@ -383,13 +383,13 @@ void Anim::startVideo(int vid, bool fade) {
 	playCutaway(vid, fade);
 }
 
-void Anim::endVideo(void) {
+void Anim::endVideo() {
 	debug(0, "endVideo()");
 
 	clearCutaway();
 }
 
-void Anim::returnFromVideo(void) {
+void Anim::returnFromVideo() {
 	debug(0, "returnFromVideo()");
 
 	returnFromCutaway();

@@ -70,7 +70,7 @@ public:
 	SpriteList _inventorySprites;
 
 	Sprite(SagaEngine *vm);
-	~Sprite(void);
+	~Sprite();
 
 	// draw scaled sprite using background scene mask
 	void drawOccluded(SpriteList &spriteList, int spriteNumber, const Point &screenCoord, int scale, int depth);

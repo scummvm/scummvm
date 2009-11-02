@@ -40,9 +40,9 @@ bool PlayMidiSequence(		// Plays the specified MIDI sequence through the sound d
 	uint32 dwFileOffset,		// handle of MIDI sequence data
 	bool bLoop);			// Whether to loop the sequence
 
-bool MidiPlaying(void);		// Returns TRUE if a Midi tune is currently playing
+bool MidiPlaying();		// Returns TRUE if a Midi tune is currently playing
 
-bool StopMidi(void);		// Stops any currently playing midi
+bool StopMidi();		// Stops any currently playing midi
 
 void SetMidiVolume(		// Sets the volume of the MIDI music. Returns the old volume
 	int vol);		// new volume - 0..MAXMIDIVOL
@@ -90,7 +90,7 @@ public:
 	// The original sets the "sequence timing" to 109 Hz, whatever that
 	// means. The default is 120.
 
-	uint32 getBaseTempo(void)	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
+	uint32 getBaseTempo()	{ return _driver ? (109 * _driver->getBaseTempo()) / 120 : 0; }
 
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }

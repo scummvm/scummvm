@@ -89,7 +89,7 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 	return GFX_DOUBLESIZE;
 }
 
-void OSystem_SDL::beginGFXTransaction(void) {
+void OSystem_SDL::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
 
 	_transactionMode = kTransactionActive;
@@ -107,7 +107,7 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_oldVideoMode = _videoMode;
 }
 
-OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
+OSystem::TransactionError OSystem_SDL::endGFXTransaction() {
 	int errors = kTransactionSuccess;
 
 	assert(_transactionMode != kTransactionNone);

@@ -91,7 +91,7 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 	_seqInfo.running = false;
 }
 
-Screen::~Screen(void) {
+Screen::~Screen() {
 	free(_gameGrid);
 	if (_currentScreen)
 		free(_currentScreen);
@@ -99,7 +99,7 @@ Screen::~Screen(void) {
 		free(_scrollScreen);
 }
 
-void Screen::clearScreen(void) {
+void Screen::clearScreen() {
 	memset(_currentScreen, 0, FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT);
 	_system->copyRectToScreen(_currentScreen, GAME_SCREEN_WIDTH, 0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 	_system->updateScreen();
@@ -129,7 +129,7 @@ void Screen::setPaletteEndian(uint8 *pal) {
 	_system->updateScreen();
 }
 
-void Screen::halvePalette(void) {
+void Screen::halvePalette() {
 	uint8 halfPalette[1024];
 	for (uint8 cnt = 0; cnt < GAME_COLOURS; cnt++) {
 		halfPalette[(cnt << 2) | 0] = _palette[(cnt << 2) | 0] >> 1;
@@ -179,7 +179,7 @@ void Screen::convertPalette(uint8 *inPal, uint8* outPal) { //convert 3 byte 0..6
 	}
 }
 
-void Screen::recreate(void) {
+void Screen::recreate() {
 	// check the game grid for changed blocks
 	if (!Logic::_scriptVariables[LAYER_0_ID])
 		return;
@@ -377,7 +377,7 @@ void Screen::fnFadeUp(uint32 palNum, uint32 scroll) {
 	}
 }
 
-void Screen::waitForTimer(void) {
+void Screen::waitForTimer() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	_gotTick = false;
 	while (!_gotTick) {
@@ -389,7 +389,7 @@ void Screen::waitForTimer(void) {
 	}
 }
 
-void Screen::waitForSequence(void) {
+void Screen::waitForSequence() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (_seqInfo.running) {
 		Common::Event event;
@@ -400,7 +400,7 @@ void Screen::waitForSequence(void) {
 	}
 }
 
-void Screen::handleTimer(void) {
+void Screen::handleTimer() {
 	_gotTick = true;
 	if (_seqInfo.running)
 		processSequence();
@@ -433,7 +433,7 @@ void Screen::stopSequence() {
 	_seqInfo.seqData = _seqInfo.seqDataPos = NULL;
 }
 
-void Screen::processSequence(void) {
+void Screen::processSequence() {
 	uint32 screenPos = 0;
 
 	_seqInfo.delay--;
@@ -510,13 +510,13 @@ void Screen::processSequence(void) {
 
 //- sprites.asm routines
 
-void Screen::spriteEngine(void) {
+void Screen::spriteEngine() {
 	doSprites(BACK);
 	sortSprites();
 	doSprites(FORE);
 }
 
-void Screen::sortSprites(void) {
+void Screen::sortSprites() {
 	StSortList sortList[30];
 	uint32 currDrawList = DRAW_LIST_NO;
 	uint32 loadDrawList;
@@ -746,7 +746,7 @@ void Screen::vertMaskSub(uint16 *grid, uint32 gridOfs, uint8 *screenPtr, uint32 
 	} // next_x
 }
 
-void Screen::verticalMask(void) {
+void Screen::verticalMask() {
 	if (_sprWidth == 0)
 		return;
 	uint32 startGridOfs = (_sprY + _sprHeight - 1) * GRID_X + _sprX;

@@ -74,7 +74,7 @@ Insane::Insane(ScummEngine_v7 *scumm) {
 	_smush_icons2Nut = new NutRenderer(_vm, "icons2.nut");
 }
 
-Insane::~Insane(void) {
+Insane::~Insane() {
 	free(_smush_roadrashRip);
 	free(_smush_roadrsh2Rip);
 	free(_smush_roadrsh3Rip);
@@ -95,7 +95,7 @@ void Insane::setSmushParams(int speed) {
 	_speed = speed;
 }
 
-void Insane::initvars(void) {
+void Insane::initvars() {
 	int i, j;
 
 	_speed = 12;
@@ -517,7 +517,7 @@ void Insane::setEnemyAnimation(int32 actornum, int anim) {
 			  actorAnimationData[_actor[actornum].weaponClass * 7 + anim - 6] + d, 180);
 }
 
-int32 Insane::processMouse(void) {
+int32 Insane::processMouse() {
 	int32 buttons = 0;
 
 	_enemyState[EN_BEN][0] = _vm->_mouse.x;
@@ -529,7 +529,7 @@ int32 Insane::processMouse(void) {
 	return buttons;
 }
 
-int32 Insane::processKeyboard(void) {
+int32 Insane::processKeyboard() {
 	int32 retval = 0;
 	int dx = 0, dy = 0;
 	int tmpx, tmpy;
@@ -623,7 +623,7 @@ void Insane::smush_warpMouse(int x, int y, int buttons) {
 	_player->warpMouse(x, y, buttons);
 }
 
-void Insane::putActors(void) {
+void Insane::putActors() {
 	smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1, _smlayer_room);
 	smlayer_putActor(0, 0, _actor[0].x, _actor[0].y1, _smlayer_room);
 	smlayer_putActor(0, 1, _actor[0].x, _actor[0].y1, _smlayer_room);
@@ -632,7 +632,7 @@ void Insane::putActors(void) {
 	smlayer_putActor(1, 1, _actor[0].x, _actor[0].y1, _smlayer_room);
 }
 
-void Insane::readState(void) { // PATCH
+void Insane::readState() { // PATCH
 
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		_actor[0].inventory[INV_CHAIN] = 0;
@@ -708,7 +708,7 @@ void Insane::readState(void) { // PATCH
 	}
 }
 
-void Insane::setupValues(void) {
+void Insane::setupValues() {
 	_actor[0].x = 160;
 	_actor[0].y = 200;
 	_actor[0].tilt = 0;
@@ -727,15 +727,15 @@ void Insane::setupValues(void) {
 	smush_warpMouse(160, 100, -1);
 }
 
-bool Insane::idx1Compare(void) {
+bool Insane::idx1Compare() {
 	return _objArray1Idx == _objArray1Idx2;
 }
 
-bool Insane::idx2Compare(void) {
+bool Insane::idx2Compare() {
 	return _objArray2Idx == _objArray2Idx2;
 }
 
-int32 Insane::idx1Tweak(void) {
+int32 Insane::idx1Tweak() {
 	_objArray1Idx++;
 	if (_objArray1Idx >= 100)
 		_objArray1Idx = 0;
@@ -743,7 +743,7 @@ int32 Insane::idx1Tweak(void) {
 	return _objArray1[_objArray1Idx];
 }
 
-int32 Insane::idx2Tweak(void) {
+int32 Insane::idx2Tweak() {
 	if (!_idx2Exceeded)
 		if (_objArray2Idx >= _objArray2Idx2)
 			return false;
@@ -756,7 +756,7 @@ int32 Insane::idx2Tweak(void) {
 	return _objArray2[_objArray2Idx];
 }
 
-void Insane::smush_setToFinish(void) {
+void Insane::smush_setToFinish() {
 	debugC(DEBUG_INSANE, "Video is set to finish");
 	_vm->_smushVideoShouldFinish = true;
 }
@@ -766,7 +766,7 @@ void Insane::smlayer_stopSound(int idx) {
 	_vm->_imuseDigital->stopSound(readArray(idx));
 }
 
-void Insane::switchSceneIfNeeded(void) {
+void Insane::switchSceneIfNeeded() {
 	if (_needSceneSwitch && !_smush_isSanFileSetup) {
 		putActors();
 		stopSceneSounds(_currSceneId);
@@ -899,7 +899,7 @@ int32 Insane::weaponDamage(int32 actornum) {
 	return map[_actor[actornum].weapon];
 }
 
-void Insane::reinitActors(void) {
+void Insane::reinitActors() {
 	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
 		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_setActorCostume(0, 0, readArray(13));
@@ -952,7 +952,7 @@ bool Insane::actor1StateFlags(int state) {
 	return retvalue;
 }
 
-void Insane::escapeKeyHandler(void) {
+void Insane::escapeKeyHandler() {
 	struct fluConf *flu;
 
 	// The Macintosh demo has just one scene
@@ -1363,7 +1363,7 @@ const char *Insane::handleTrsTag(int32 trsId) {
 	return _player->getString(trsId);
 }
 
-bool Insane::smush_eitherNotStartNewFrame(void) {
+bool Insane::smush_eitherNotStartNewFrame() {
 	if (_smush_setupsan17)
 		return false;
 

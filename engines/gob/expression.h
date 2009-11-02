@@ -116,7 +116,7 @@ public:
 
 	void skipExpr(char stopToken);
 	void printExpr(char stopToken);
-	void printVarIndex(void);
+	void printVarIndex();
 
 	int16 parseVarIndex(uint16 *size = 0, uint16 *type = 0);
 	int16 parseValExpr(byte stopToken = 99);

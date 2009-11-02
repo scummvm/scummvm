@@ -41,7 +41,7 @@ protected:
 	bool cmd_string(int argc, const char **argv);
 public:
 	Console();
-	virtual ~Console(void);
+	virtual ~Console();
 };
 
 } // End of namespace Tinsel

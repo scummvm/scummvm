@@ -93,7 +93,7 @@ static void LoadFile(MEMHANDLE *pH);	// load a memory block as a file
  * Loads the graphics handle table index file and preloads all the
  * permanent graphics etc.
  */
-void SetupHandleTable(void) {
+void SetupHandleTable() {
 	bool t2Flag = (TinselVersion == TINSEL_V2);
 	int RECORD_SIZE = t2Flag ? 24 : 20;
 
@@ -174,7 +174,7 @@ void SetupHandleTable(void) {
 	}
 }
 
-void FreeHandleTable(void) {
+void FreeHandleTable() {
 	if (handleTable) {
 		free(handleTable);
 		handleTable = NULL;
@@ -186,7 +186,7 @@ void FreeHandleTable(void) {
 /**
  * Loads a memory block as a file.
  */
-void OpenCDGraphFile(void) {
+void OpenCDGraphFile() {
 	if (cdGraphStream.isOpen())
 		cdGraphStream.close();
 

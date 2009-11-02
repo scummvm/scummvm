@@ -75,7 +75,7 @@ public:
 	SwordEngine(OSystem *syst);
 	virtual ~SwordEngine();
 	static SystemVars _systemVars;
-	void reinitialize(void);
+	void reinitialize();
 
 	uint32 _features;
 
@@ -107,14 +107,14 @@ protected:
 private:
 	void delay(int32 amount);
 
-	void checkCdFiles(void);
-	void checkCd(void);
+	void checkCdFiles();
+	void checkCd();
 	void showFileErrorMsg(uint8 type, bool *fileExists);
 	void flagsToBool(bool *dest, uint8 flags);
 
-	void reinitRes(void); //Reinits the resources after a GMM load
+	void reinitRes(); //Reinits the resources after a GMM load
 
-	uint8 mainLoop(void);
+	uint8 mainLoop();
 
 	Common::Point _mouseCoord;
 	uint16 _mouseState;

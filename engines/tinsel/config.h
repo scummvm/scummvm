@@ -46,8 +46,8 @@ extern int bSwapButtons;
 extern LANGUAGE g_language;
 extern int bAmerica;
 
-void WriteConfig(void);
-void ReadConfig(void);
+void WriteConfig();
+void ReadConfig();
 
 extern bool isJapanMode();
 

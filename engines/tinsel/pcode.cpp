@@ -279,7 +279,7 @@ void FreeInterpretContextPr(PROCESS *pProc) {
 /**
  * Free all interpret contexts except for the master script's
  */
-void FreeMostInterpretContexts(void) {
+void FreeMostInterpretContexts() {
 	INT_CONTEXT *pic;
 	int	i;
 
@@ -294,7 +294,7 @@ void FreeMostInterpretContexts(void) {
 /**
  * Free the master script's interpret context.
  */
-void FreeMasterInterpretContext(void) {
+void FreeMasterInterpretContext() {
 	INT_CONTEXT *pic;
 	int	i;
 
@@ -413,7 +413,7 @@ void RegisterGlobals(int num) {
 	}
 }
 
-void FreeGlobals(void) {
+void FreeGlobals() {
 	free(pGlobals);
 	pGlobals = NULL;
 
@@ -807,7 +807,7 @@ void AttachInterpret(INT_CONTEXT *pic, PROCESS *pProc) {
 /**
  * Generate a number that isn't being used.
  */
-static uint32 UniqueWaitNumber(void) {
+static uint32 UniqueWaitNumber() {
 	uint32 retval;
 	int i;
 
@@ -885,7 +885,7 @@ void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result) {
 /**
  * CheckOutWaiters
  */
-void CheckOutWaiters(void) {
+void CheckOutWaiters() {
 	int i, j;
 
 	// Check all waited for have someone waiting

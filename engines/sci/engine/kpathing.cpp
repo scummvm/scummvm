@@ -689,7 +689,7 @@ static void clockwise(const Vertex *vertex_cur, const Vertex *v, const Common::P
 	// Orders the points of an edge clockwise around vertex_cur. If all three
 	// points are collinear the original order is used
 	// Parameters: (const Vertex *) v: The first vertex of the edge
-	// Returns   : (void)
+	// Returns   : ()
 	//             (const Common::Point *&) p1: The first point in clockwise order
 	//             (const Common::Point *&) p2: The second point in clockwise order
 	Vertex *w = CLIST_NEXT(v);

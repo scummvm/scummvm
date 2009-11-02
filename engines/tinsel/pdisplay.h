@@ -29,8 +29,8 @@
 
 namespace Tinsel {
 
-void EnableTags(void);
-void DisableTags(void);
+void EnableTags();
+void DisableTags();
 
 } // End of namespace Tinsel
 

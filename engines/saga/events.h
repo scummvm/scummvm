@@ -162,7 +162,7 @@ enum EventStatusCode {
 class Events {
  public:
 	Events(SagaEngine *vm);
-	~Events(void);
+	~Events();
 	int handleEvents(long msec);
 	int clearList(bool playQueuedMusic = true);
 	int freeList();

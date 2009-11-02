@@ -63,7 +63,7 @@ void CdCD(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-int GetCurrentCD(void) {
+int GetCurrentCD() {
 	// count from 1
 	return (currentCD - '1' + 1);
 }
@@ -97,7 +97,7 @@ int GetCD(int flags) {
 static uint32 lastTime = 0;
 extern LANGUAGE sampleLanguage;
 
-void DoCdChange(void) {
+void DoCdChange() {
 	if (bChangingCD && (g_system->getMillis() > (lastTime + 1000))) {
 		lastTime = g_system->getMillis();
 		_vm->_sound->closeSampleStream();
@@ -129,7 +129,7 @@ void SetNextCD(int cdNumber) {
 	nextCD = (char)(cdNumber + '1' - 1);
 }
 
-bool GotoCD(void) {
+bool GotoCD() {
 	// WORKAROUND: Somehow, CdDoChange() is called twice... Hopefully, this guard helps
 	if (currentCD == nextCD)
 		return false;

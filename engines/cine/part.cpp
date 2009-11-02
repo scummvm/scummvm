@@ -65,7 +65,7 @@ void loadPart(const char *partName) {
 		loadPal(partName);
 }
 
-void closePart(void) {
+void closePart() {
 	// TODO
 }
 

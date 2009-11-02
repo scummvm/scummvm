@@ -38,7 +38,7 @@ class SkyCompact;
 class AutoRoute {
 public:
 	AutoRoute(Grid *pGrid, SkyCompact *compact);
-	~AutoRoute(void);
+	~AutoRoute();
 	uint16 autoRoute(Compact *cpt);
 private:
 	uint16 checkBlock(uint16 *blockPos);

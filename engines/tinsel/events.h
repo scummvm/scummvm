@@ -105,11 +105,11 @@ const TINSEL1_EVENT TINSEL1_EVENT_MAP[] = {
 
 void AllowDclick(CORO_PARAM, PLR_EVENT be);
 bool GetControl(int param);
-bool GetControl(void);
-bool ControlIsOn(void);
-void ControlOn(void);
-void ControlOff(void);
-void ControlStartOff(void);
+bool GetControl();
+bool ControlIsOn();
+void ControlOn();
+void ControlOff();
+void ControlStartOff();
 
 void RunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, PLR_EVENT be, bool tc);
 void effRunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, int actor);
@@ -118,16 +118,16 @@ void ProcessButEvent(PLR_EVENT be);
 void ProcessKeyEvent(PLR_EVENT ke);
 
 
-int GetEscEvents(void);
-int GetLeftEvents(void);
+int GetEscEvents();
+int GetLeftEvents();
 bool LeftEventChange(int myleftEvent);
 
-int getUserEvents(void);
+int getUserEvents();
 
-uint32 getUserEventTime(void);
-void resetUserEventTime(void);
+uint32 getUserEventTime();
+void resetUserEventTime();
 
-void ResetEcount(void);
+void ResetEcount();
 
 void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait,
 				int myEscape, bool *result = NULL);
@@ -135,8 +135,8 @@ void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bo
 
 void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
 
-void ProcessedProvisional(void);
-void ProvNotProcessed(void);
+void ProcessedProvisional();
+void ProvNotProcessed();
 bool GetProvNotProcessed();
 
 } // End of namespace Tinsel

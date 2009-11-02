@@ -51,7 +51,7 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _output->setTimerCallback(timerParam, timerProc); }
-	uint32 getBaseTempo(void) { return _output->getBaseTempo(); }
+	uint32 getBaseTempo() { return _output->getBaseTempo(); }
 
 	// DUMMY
 	int open() { return 0; }

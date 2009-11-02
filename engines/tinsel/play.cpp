@@ -164,7 +164,7 @@ static int RegisterSoundReel(SCNHANDLE hFilm, int column, int actorCol) {
 	return i;
 }
 
-void NoSoundReels(void) {
+void NoSoundReels() {
 	memset(soundReels, 0, sizeof(soundReels));
 	soundReelWait = 0;
 }
@@ -393,7 +393,7 @@ static void ResSoundReel(CORO_PARAM, const void *) {
 	CORO_END_CODE;
 }
 
-static void SoundReelWaitCheck(void) {
+static void SoundReelWaitCheck() {
 	if (--soundReelWait == 0) {
 		for (int i = 0; i < MAX_SOUNDREELS; i++) {
 			if (soundReels[i].hFilm) {

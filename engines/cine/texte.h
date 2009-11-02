@@ -63,7 +63,7 @@ extern const char **commandPrepositionTable;
 
 void loadTextData(const char *filename);
 void loadErrmessDat(const char *fname);
-void freeErrmessDat(void);
+void freeErrmessDat();
 void loadPoldatDat(const char *fname);
 
 int fitLine(const char *ptr, int maxWidth, int &words, int &width);

@@ -45,7 +45,7 @@ Goblin_v2::Goblin_v2(GobEngine *vm) : Goblin_v1(vm) {
 	_rotStates[3][0] = 23; _rotStates[3][1] = 21; _rotStates[3][2] = 22; _rotStates[3][3] = 6;
 }
 
-void Goblin_v2::freeObjects(void) {
+void Goblin_v2::freeObjects() {
 	if (_gobsCount < 0)
 		return;
 
@@ -463,7 +463,7 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	}
 }
 
-void Goblin_v2::handleGoblins(void) {
+void Goblin_v2::handleGoblins() {
 	Mult::Mult_Object *obj0, *obj1;
 	Mult::Mult_AnimData *anim0, *anim1;
 	int16 pass;

@@ -1609,7 +1609,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	return cursor;
 }
 
-void Hotspots::oPlaytoons_F_1B(void) {
+void Hotspots::oPlaytoons_F_1B() {
 	int16 shortId;
 	int16 longId;
 	int16 var2;

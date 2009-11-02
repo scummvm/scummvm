@@ -1028,7 +1028,7 @@ Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
 	_isPaused = false;
 }
 
-Sound::~Sound(void) {
+Sound::~Sound() {
 	_mixer->stopAll();
 	if (_soundData)
 		free(_soundData);
@@ -1175,7 +1175,7 @@ void Sound::fnStartFx(uint32 sound, uint8 channel) {
 	playSound(sfx->soundNo, volume, channel);
 }
 
-void Sound::checkFxQueue(void) {
+void Sound::checkFxQueue() {
 	for (uint8 cnt = 0; cnt < MAX_QUEUED_FX; cnt++) {
 		if (_sfxQueue[cnt].count) {
 			_sfxQueue[cnt].count--;
@@ -1185,7 +1185,7 @@ void Sound::checkFxQueue(void) {
 	}
 }
 
-void Sound::restoreSfx(void) {
+void Sound::restoreSfx() {
 	// queue sfx, so they will be started when the player exits the control panel
 	memset(_sfxQueue, 0, sizeof(_sfxQueue));
 	uint8 queueSlot = 0;
@@ -1204,13 +1204,13 @@ void Sound::restoreSfx(void) {
 	}
 }
 
-void Sound::fnStopFx(void) {
+void Sound::fnStopFx() {
 	_mixer->stopID(SOUND_CH0);
 	_mixer->stopID(SOUND_CH1);
 	_saveSounds[0] = _saveSounds[1] = 0xFFFF;
 }
 
-void Sound::stopSpeech(void) {
+void Sound::stopSpeech() {
 	_mixer->stopID(SOUND_SPEECH);
 }
 
@@ -1246,7 +1246,7 @@ bool Sound::startSpeech(uint16 textNum) {
 	return true;
 }
 
-void Sound::fnPauseFx(void) {
+void Sound::fnPauseFx() {
 	if (!_isPaused) {
 		_isPaused = true;
 		_mixer->pauseID(SOUND_CH0, true);
@@ -1254,7 +1254,7 @@ void Sound::fnPauseFx(void) {
 	}
 }
 
-void Sound::fnUnPauseFx(void) {
+void Sound::fnUnPauseFx() {
 	if (_isPaused) {
 		_isPaused = false;
 		_mixer->pauseID(SOUND_CH0, false);

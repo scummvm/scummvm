@@ -35,7 +35,7 @@ class M4Engine;
 class Console : public GUI::Debugger {
 public:
 	Console(M4Engine *vm);
-	virtual ~Console(void);
+	virtual ~Console();
 
 private:
 	bool cmdLoadScene(int argc, const char **argv);

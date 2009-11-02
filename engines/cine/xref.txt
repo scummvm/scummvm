@@ -128,7 +128,7 @@ o2_unloadMask22() - replaced with FWScript::o2_unloadMask22()
 
 prc.cpp:
 resetGlobalScriptsHead() - removed (obsoleted by Common::List)
-freePrcLinkedList(void) - removed (obsoleted by Common::List::clear())
+freePrcLinkedList() - removed (obsoleted by Common::List::clear())
 
 rel.cpp:
 resetObjectScriptHead() - removed (obsoleted by Common::List)

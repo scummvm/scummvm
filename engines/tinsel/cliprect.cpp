@@ -37,7 +37,7 @@ static RectList s_rectList;
 /**
  * Resets the clipping rectangle allocator.
  */
-void ResetClipRect(void) {
+void ResetClipRect() {
 	s_rectList.clear();
 }
 

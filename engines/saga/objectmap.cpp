@@ -286,7 +286,7 @@ int ObjectMap::hitTest(const Point& testPoint) {
 	return -1;
 }
 
-void ObjectMap::cmdInfo(void) {
+void ObjectMap::cmdInfo() {
 	_vm->_console->DebugPrintf("%d zone(s) loaded.\n\n", _hitZoneListCount);
 }
 

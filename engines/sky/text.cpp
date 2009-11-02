@@ -71,7 +71,7 @@ Text::Text(Disk *skyDisk, SkyCompact *skyCompact) {
 	}
 }
 
-Text::~Text(void) {
+Text::~Text() {
 	for (int i = FIRST_TEXT_BUFFER; i <= LAST_TEXT_BUFFER; i++)
 		if (SkyEngine::_itemList[i]) {
 			free(SkyEngine::_itemList[i]);
@@ -416,7 +416,7 @@ void Text::changeTextSpriteColour(uint8 *sprData, uint8 newCol) {
 			sprData[cnt] = newCol;
 }
 
-uint32 Text::giveCurrentCharSet(void) {
+uint32 Text::giveCurrentCharSet() {
 	return _curCharSet;
 }
 

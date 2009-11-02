@@ -120,7 +120,7 @@ bool TestToken(int which) {
 /**
  * Call at the start of each scene.
  */
-void FreeAllTokens(void) {
+void FreeAllTokens() {
 	for (int i = 0; i < NUMTOKENS; i++) {
 		tokens[i].proc = NULL;
 	}

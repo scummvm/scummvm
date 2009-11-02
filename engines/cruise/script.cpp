@@ -34,14 +34,14 @@ scriptInstanceStruct procHead;
 
 scriptInstanceStruct *currentScriptPtr;
 
-int8 getByteFromScript(void) {
+int8 getByteFromScript() {
 	int8 var = *(int8*)(currentData3DataPtr + currentScriptPtr->scriptOffset);
 	++currentScriptPtr->scriptOffset;
 
 	return (var);
 }
 
-short int getShortFromScript(void) {
+short int getShortFromScript() {
 	short int var = (int16)READ_BE_UINT16(currentData3DataPtr + currentScriptPtr->scriptOffset);
 	currentScriptPtr->scriptOffset += 2;
 
@@ -49,7 +49,7 @@ short int getShortFromScript(void) {
 }
 
 // load opcode
-int32 opcodeType0(void) {
+int32 opcodeType0() {
 	int index = 0;
 
 	switch (currentScriptOpcodeType) {
@@ -128,7 +128,7 @@ int32 opcodeType0(void) {
 }
 
 // save opcode
-int32 opcodeType1(void)	{
+int32 opcodeType1()	{
 	int var = popVar();
 	int offset = 0;
 
@@ -222,7 +222,7 @@ int32 opcodeType1(void)	{
 	return (0);
 }
 
-int32 opcodeType2(void) {
+int32 opcodeType2() {
 	int index = 0;
 	switch (currentScriptOpcodeType) {
 	case 5:
@@ -269,15 +269,15 @@ int32 opcodeType2(void) {
 	return 0;
 }
 
-int32 opcodeType10(void) {	// break
+int32 opcodeType10() {	// break
 	return (0);
 }
 
-int32 opcodeType11(void) {	// break
+int32 opcodeType11() {	// break
 	return (1);
 }
 
-int32 opcodeType4(void) {		// test
+int32 opcodeType4() {		// test
 	int boolVar = 0;
 
 	int var1 = popVar();
@@ -322,7 +322,7 @@ int32 opcodeType4(void) {		// test
 	return (0);
 }
 
-int32 opcodeType6(void) {
+int32 opcodeType6() {
 	int si = 0;
 
 	int pop = popVar();
@@ -343,7 +343,7 @@ int32 opcodeType6(void) {
 	return (0);
 }
 
-int32 opcodeType7(void) {
+int32 opcodeType7() {
 	int var1 = popVar();
 	int var2 = popVar();
 
@@ -353,7 +353,7 @@ int32 opcodeType7(void) {
 	return (0);
 }
 
-int32 opcodeType5(void) {
+int32 opcodeType5() {
 	int offset = currentScriptPtr->scriptOffset;
 	int short1 = getShortFromScript();
 	int newSi = short1 + offset;
@@ -408,7 +408,7 @@ int32 opcodeType5(void) {
 	return (0);
 }
 
-int32 opcodeType3(void)	{	// math
+int32 opcodeType3()	{	// math
 	int pop1 = popVar();
 	int pop2 = popVar();
 
@@ -447,7 +447,7 @@ int32 opcodeType3(void)	{	// math
 	return 0;
 }
 
-int32 opcodeType9(void) {		// stop script
+int32 opcodeType9() {		// stop script
 	//printf("Stop a script of overlay %s\n",overlayTable[currentScriptPtr->overlayNumber].overlayName);
 	currentScriptPtr->scriptNumber = -1;
 	return (1);

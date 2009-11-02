@@ -61,8 +61,8 @@ namespace Sky {
 
 class SkyCompact {
 public:
-	SkyCompact(void);
-	~SkyCompact(void);
+	SkyCompact();
+	~SkyCompact();
 	Compact *fetchCpt(uint16 cptId);
 	Compact *fetchCptInfo(uint16 cptId, uint16 *elems = NULL, uint16 *type = NULL, char *name = NULL);
 	static uint16 *getSub(Compact *cpt, uint16 mode);
@@ -77,7 +77,7 @@ public:
 	// - debugging functions
 	uint16 findCptId(void *cpt);
 	uint16 findCptId(const char *cptName);
-	uint16 giveNumDataLists(void);
+	uint16 giveNumDataLists();
 	uint16 giveDataListLen(uint16 listNum);
 	const char *nameForType(uint16 type);
 private:

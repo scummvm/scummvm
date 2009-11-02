@@ -39,10 +39,10 @@ namespace Cine {
 void initLanguage(Common::Language lang);
 
 int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
-void makeCommandLine(void);
-void makeActionMenu(void);
+void makeCommandLine();
+void makeActionMenu();
 void drawString(const char *string, byte param);
-void waitPlayerInput(void);
+void waitPlayerInput();
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern bool disableSystemMenu;
@@ -111,25 +111,25 @@ extern char newMsgName[20];
 extern char currentCtName[15];
 extern char currentPartName[15];
 
-void stopSample(void);
-void stopMusicAfterFadeOut(void);
-uint16 executePlayerInput(void);
+void stopSample();
+void stopMusicAfterFadeOut();
+uint16 executePlayerInput();
 
-void drawOverlays(void);
+void drawOverlays();
 
 extern uint16 mouseUpdateStatus;
 extern uint16 dummyU16;
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY);
-int getKeyData(void);
+int getKeyData();
 
 uint16 processKeyboard(uint16 param);
 
-void mainLoopSub6(void);
+void mainLoopSub6();
 
-void checkForPendingDataLoad(void);
+void checkForPendingDataLoad();
 
-void hideMouse(void);
+void hideMouse();
 
 void removeExtention(char *dest, const char *source);
 
@@ -150,7 +150,7 @@ void removeSeq(uint16 param1, uint16 param2, uint16 param3);
 bool isSeqRunning(uint16 param1, uint16 param2, uint16 param3);
 void addSeqListElement(uint16 objIdx, int16 param1, int16 param2, int16 frame, int16 param4, int16 param5, int16 param6, int16 param7, int16 param8);
 void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 param2, int16 param3, int16 param4);
-void processSeqList(void);
+void processSeqList();
 
 void resetGfxEntityEntry(uint16 objIdx);
 

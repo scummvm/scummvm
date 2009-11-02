@@ -166,7 +166,7 @@ void Script::executeThreads(uint msec) {
 
 }
 
-void Script::abortAllThreads(void) {
+void Script::abortAllThreads() {
 	ScriptThreadList::iterator threadIterator;
 
 	threadIterator = _threadList.begin();
@@ -179,7 +179,7 @@ void Script::abortAllThreads(void) {
 	executeThreads(0);
 }
 
-void Script::completeThread(void) {
+void Script::completeThread() {
 	int limit = (_vm->getGameId() == GID_IHNM) ? 100 : 40;
 
 	for (int i = 0; i < limit && !_threadList.empty(); i++)

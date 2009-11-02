@@ -55,7 +55,7 @@ Text::Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion) {
 		_textBlocks[i] = NULL;
 }
 
-Text::~Text(void) {
+Text::~Text() {
 	for (int i = 0; i < MAX_TEXT_OBS; i++)
 		free(_textBlocks[i]);
 	//_resMan->resClose(_fontId); => wiped automatically by _resMan->flush();

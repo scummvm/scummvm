@@ -269,7 +269,7 @@ void AgiEngine::processEvents() {
 	}
 }
 
-void AgiEngine::pollTimer(void) {
+void AgiEngine::pollTimer() {
 	static uint32 m = 0;
 	uint32 dm;
 
@@ -715,7 +715,7 @@ void AgiEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
-void AgiEngine::parseFeatures(void) {
+void AgiEngine::parseFeatures() {
 	if (!ConfMan.hasKey("features"))
 		return;
 

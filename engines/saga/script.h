@@ -414,8 +414,8 @@ public:
 	ScriptThread &createThread(uint16 scriptModuleNumber, uint16 scriptEntryPointNumber);
 	int executeThread(ScriptThread *thread, int entrypointNumber);
 	void executeThreads(uint msec);
-	void completeThread(void);
-	void abortAllThreads(void);
+	void completeThread();
+	void abortAllThreads();
 
 	void wakeUpActorThread(int waitType, void *threadObj);
 	void wakeUpThreads(int waitType);

@@ -65,8 +65,8 @@ public:
 	}
 	void clearVoice(byte voice);
 	void clearVoices() { for (int i = 0; i < NUM_VOICES; ++i) clearVoice(i); }
-	void startPlay(void) { _playing = true; }
-	void stopPlay(void) { _playing = false; }
+	void startPlay() { _playing = true; }
+	void stopPlay() { _playing = false; }
 	void pausePlay(bool pause) { _playing = !pause; }
 
 // AudioStream API
@@ -91,7 +91,7 @@ protected:
 	bool _end;
 	Common::Mutex _mutex;
 
-	virtual void interrupt(void) = 0;
+	virtual void interrupt() = 0;
 
 	void startPaula() {
 		_playing = true;

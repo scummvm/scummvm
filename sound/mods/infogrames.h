@@ -51,9 +51,9 @@ public:
 
 		bool load(Common::SeekableReadStream &ins);
 		bool load(const char *ins);
-		void unload(void);
+		void unload();
 
-		uint8 getCount(void) const { return _count; }
+		uint8 getCount() const { return _count; }
 
 	protected:
 		struct Sample {
@@ -75,14 +75,14 @@ public:
 			int interruptFreq = 0);
 	~Infogrames();
 
-	Instruments *getInstruments(void) const { return _instruments; }
-	bool getRepeating(void) const { return _repCount != 0; }
+	Instruments *getInstruments() const { return _instruments; }
+	bool getRepeating() const { return _repCount != 0; }
 	void setRepeating (int32 repCount) { _repCount = repCount; }
 
 	bool load(Common::SeekableReadStream &dum);
 	bool load(const char *dum);
-	void unload(void);
-	void restart(void) {
+	void unload();
+	void restart() {
 		if (_data) {
 			// Use the mutex here to ensure we do not call init()
 			// while data is being read by the mixer thread.
@@ -135,11 +135,11 @@ protected:
 		uint8 flags; // 0: Need init, 5: Loop cmdBlocks, 6: Ignore channel
 	} _chn[4];
 
-	void init(void);
-	void reset(void);
+	void init();
+	void reset();
 	void getNextSample(Channel &chn);
 	int16 tune(Slide &slide, int16 start) const;
-	virtual void interrupt(void);
+	virtual void interrupt();
 };
 
 } // End of namespace Audio

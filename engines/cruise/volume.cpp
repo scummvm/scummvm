@@ -56,7 +56,7 @@ void loadPal(volumeDataStruct *entry) {
 #endif
 }
 
-void closePal(void) {
+void closePal() {
 	if (PAL_file.isOpen()) {
 		PAL_file.close();
 
@@ -68,7 +68,7 @@ void closePal(void) {
 	}
 }
 
-int closeBase(void) {
+int closeBase() {
 	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
 
@@ -177,7 +177,7 @@ int32 findFileInDisksSub1(const char *fileName) {
 	return (foundDisk);
 }
 
-void freeDisk(void) {
+void freeDisk() {
 	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
 		MemFree(volumePtrToFileDescriptor);
@@ -313,7 +313,7 @@ int16 findFileInDisks(const char *name) {
 	}
 }
 
-int closeCnf(void) {
+int closeCnf() {
 	for (long int i = 0; i < numOfDisks; i++) {
 		if (volumeData[i].ptr) {
 			MemFree(volumeData[i].ptr);
@@ -326,7 +326,7 @@ int closeCnf(void) {
 	return 0;
 }
 
-int16 readVolCnf(void) {
+int16 readVolCnf() {
 	int i;
 	Common::File fileHandle;
 	short int sizeHEntry;

@@ -36,7 +36,7 @@ static uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
 static uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
 static uint8 testSaid(uint8, uint8 *);
 static uint8 testController(uint8);
-static uint8 testKeypressed(void);
+static uint8 testKeypressed();
 static uint8 testCompareStrings(uint8, uint8);
 
 static AgiEngine *g_agi;

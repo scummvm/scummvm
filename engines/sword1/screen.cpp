@@ -57,14 +57,14 @@ Screen::Screen(OSystem *system, ResMan *pResMan, ObjectMan *pObjMan) {
 	_psxCache.extPlxCache = NULL;
 }
 
-Screen::~Screen(void) {
+Screen::~Screen() {
 	free(_screenBuf);
 	free(_screenGrid);
 	if (_currentScreen != 0xFFFF)
 		quitScreen();
 }
 
-void Screen::clearScreen(void) {
+void Screen::clearScreen() {
 	if (_screenBuf) {
 		_fullRefresh = true;
 		memset(_screenBuf, 0, _scrnSizeX * _scrnSizeY);
@@ -119,14 +119,14 @@ void Screen::setScrolling(int16 offsetX, int16 offsetY) {
 	}
 }
 
-void Screen::fadeDownPalette(void) {
+void Screen::fadeDownPalette() {
 	if (!_isBlack) { // don't fade down twice
 		_fadingStep = 15;
 		_fadingDirection = FADE_DOWN;
 	}
 }
 
-void Screen::fadeUpPalette(void) {
+void Screen::fadeUpPalette() {
 	_fadingStep = 1;
 	_fadingDirection = FADE_UP;
 }
@@ -157,16 +157,16 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 		_system->setPalette(_targetPalette + 4 * start, start, length);
 }
 
-void Screen::fullRefresh(void) {
+void Screen::fullRefresh() {
 	_fullRefresh = true;
 	_system->setPalette(_targetPalette, 0, 256);
 }
 
-bool Screen::stillFading(void) {
+bool Screen::stillFading() {
 	return (_fadingStep != 0);
 }
 
-bool Screen::showScrollFrame(void) {
+bool Screen::showScrollFrame() {
 	if ((!_fullRefresh) || Logic::_scriptVars[NEW_PALETTE] || _updatePalette)
 		return false; // don't draw an additional frame if we aren't scrolling or have to change the palette
 	if ((_oldScrollX == Logic::_scriptVars[SCROLL_OFFSET_X]) &&
@@ -181,7 +181,7 @@ bool Screen::showScrollFrame(void) {
 	return true;
 }
 
-void Screen::updateScreen(void) {
+void Screen::updateScreen() {
 	if (Logic::_scriptVars[NEW_PALETTE]) {
 		_fadingStep = 1;
 		_fadingDirection = FADE_UP;
@@ -346,7 +346,7 @@ void Screen::newScreen(uint32 screen) {
 	_fullRefresh = true;
 }
 
-void Screen::quitScreen(void) {
+void Screen::quitScreen() {
 	uint8 cnt;
 	if (SwordEngine::isPsx())
 		flushPsxCache();
@@ -361,7 +361,7 @@ void Screen::quitScreen(void) {
 	_currentScreen = 0xFFFF;
 }
 
-void Screen::draw(void) {
+void Screen::draw() {
 	uint8 cnt;
 
 	debug(8, "Screen::draw() -> _currentScreen %u", _currentScreen);
@@ -1114,7 +1114,7 @@ void Screen::decompressHIF(uint8 *src, uint8 *dest) {
 	}
 }
 
-void Screen::flushPsxCache(void) {
+void Screen::flushPsxCache() {
 	if (_psxCache.decodedBackground) {
 		free(_psxCache.decodedBackground);
 		_psxCache.decodedBackground = NULL;
@@ -1126,7 +1126,7 @@ void Screen::flushPsxCache(void) {
 	}
 }
 
-void Screen::fadePalette(void) {
+void Screen::fadePalette() {
 	if (_fadingStep == 16)
 		memcpy(_currentPalette, _targetPalette, 256 * 4);
 	else if ((_fadingStep == 1) && (_fadingDirection == FADE_DOWN)) {

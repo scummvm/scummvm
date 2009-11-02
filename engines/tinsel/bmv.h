@@ -122,16 +122,16 @@ public:
 
 	void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape);
 	void FinishBMV();
-	void CopyMovieToScreen(void);
-	void FettleBMV(void);
+	void CopyMovieToScreen();
+	void FettleBMV();
 
-	bool MoviePlaying(void);
+	bool MoviePlaying();
 
-	int32 MovieAudioLag(void);
+	int32 MovieAudioLag();
 
-	uint32 NextMovieTime(void);
+	uint32 NextMovieTime();
 
-	void AbortMovie(void);
+	void AbortMovie();
 
 private:
 	void InitBMV(byte *memoryBuffer);
@@ -141,17 +141,17 @@ private:
 	void StartMovieSound();
 	void FinishMovieSound();
 	void MovieAudio(int audioOffset, int blobs);
-	void FettleMovieText(void);
+	void FettleMovieText();
 	void BmvDrawText(bool bDraw);
 	void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration);
 	int MovieCommand(char cmd, int commandOffset);
 	int FollowingPacket(int thisPacket, bool bReallyImportant);
 	void LoadSlots(int number);
-	void InitialiseBMV(void);
-	bool MaintainBuffer(void);
-	bool DoBMVFrame(void);
-	bool DoSoundFrame(void);
-	void LookAtBuffers(void);
+	void InitialiseBMV();
+	bool MaintainBuffer();
+	bool DoBMVFrame();
+	bool DoSoundFrame();
+	void LookAtBuffers();
 };
 
 

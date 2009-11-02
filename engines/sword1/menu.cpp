@@ -107,7 +107,7 @@ Menu::Menu(Screen *pScreen, Mouse *pMouse) {
 	_inMenu = 0;
 }
 
-Menu::~Menu(void) {
+Menu::~Menu() {
 	int i;
 	// the menu may be open, so delete the icons
 	for (i = 0; i < TOTAL_pockets; i++) {
@@ -214,7 +214,7 @@ uint8 Menu::checkMenuClick(uint8 menuType) {
 	return 0;
 }
 
-void Menu::buildSubjects(void) {
+void Menu::buildSubjects() {
 	uint8 cnt;
 	for (cnt = 0; cnt < 16; cnt++)
 		if (_subjects[cnt]) {
@@ -288,7 +288,7 @@ void Menu::refresh(uint8 menuType) {
 	}
 }
 
-void Menu::buildMenu(void) {
+void Menu::buildMenu() {
 	uint32 *pockets = Logic::_scriptVars + POCKET_1;
 	for (uint8 cnt = 0; cnt < _inMenu; cnt++)
 		if (_objects[cnt]) {
@@ -336,7 +336,7 @@ void Menu::showMenu(uint8 menuType) {
 	}
 }
 
-void Menu::fnStartMenu(void) {
+void Menu::fnStartMenu() {
 	Logic::_scriptVars[OBJECT_HELD]  = 0; // icon no longer selected
 	Logic::_scriptVars[SECOND_ITEM]  = 0; // second icon no longer selected (after using one on another)
 	Logic::_scriptVars[MENU_LOOKING] = 0; // no longer 'looking at' an icon
@@ -344,7 +344,7 @@ void Menu::fnStartMenu(void) {
 	showMenu(MENU_TOP);
 }
 
-void Menu::fnEndMenu(void) {
+void Menu::fnEndMenu() {
 	if (_objectBarStatus != MENU_CLOSED)
 		_objectBarStatus = MENU_CLOSING;
 }
@@ -358,7 +358,7 @@ void Menu::fnChooser(Object *compact) {
 	_subjectBarStatus = MENU_OPENING;
 }
 
-void Menu::fnEndChooser(void) {
+void Menu::fnEndChooser() {
 	Logic::_scriptVars[OBJECT_HELD] = 0;
 	_subjectBarStatus = MENU_CLOSING;
 	_objectBarStatus = MENU_CLOSING;
@@ -366,7 +366,7 @@ void Menu::fnEndChooser(void) {
 	_mouse->setLuggage(0, 0);
 }
 
-void Menu::checkTopMenu(void) {
+void Menu::checkTopMenu() {
 	if (_objectBarStatus == MENU_OPEN)
 		checkMenuClick(MENU_TOP);
 }
@@ -389,7 +389,7 @@ void Menu::fnAddSubject(int32 sub) {
 	Logic::_scriptVars[IN_SUBJECT]++;
 }
 
-void Menu::cfnReleaseMenu(void) {
+void Menu::cfnReleaseMenu() {
 	_objectBarStatus = MENU_CLOSING;
 }
 

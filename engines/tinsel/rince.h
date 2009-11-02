@@ -161,7 +161,7 @@ bool MoverIsSWalking(PMOVER pMover);
 bool MoverMoving(PMOVER pMover);
 int GetWalkNumber(PMOVER pMover);
 void UnHideMover(PMOVER pMover);
-void DropMovers(void);
+void DropMovers();
 void PositionMover(PMOVER pMover, int x, int y);
 
 void GetMoverPosition(PMOVER pMover, int *aniX, int *aniY);
@@ -181,7 +181,7 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force);
 
 PMOVER InMoverBlock(PMOVER pMover, int x, int y);
 
-void RebootMovers(void);
+void RebootMovers();
 
 bool IsMAinEffectPoly(int index);
 void SetMoverInEffect(int index, bool tf);

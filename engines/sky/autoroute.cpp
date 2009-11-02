@@ -50,7 +50,7 @@ AutoRoute::AutoRoute(Grid *pGrid, SkyCompact *compact) {
 	_routeBuf = (uint16 *)malloc(ROUTE_SPACE);
 }
 
-AutoRoute::~AutoRoute(void) {
+AutoRoute::~AutoRoute() {
 	free(_routeGrid);
 	free(_routeBuf);
 }

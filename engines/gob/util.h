@@ -91,7 +91,7 @@ public:
 		List() : pHead(0), pTail(0) {}
 	};
 
-	uint32 getTimeKey(void);
+	uint32 getTimeKey();
 	int16 getRandom(int16 max);
 	void beep(int16 freq);
 
@@ -100,21 +100,21 @@ public:
 	void delay(uint16 msecs);
 	void longDelay(uint16 msecs);
 
-	void initInput(void);
+	void initInput();
 	void processInput(bool scroll = false);
-	void clearKeyBuf(void);
-	int16 getKey(void);
-	int16 checkKey(void);
+	void clearKeyBuf();
+	int16 getKey();
+	int16 checkKey();
 	bool checkKey(int16 &key);
 
 	void getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons);
 	void setMousePos(int16 x, int16 y);
-	void waitMouseUp(void);
-	void waitMouseDown(void);
+	void waitMouseUp();
+	void waitMouseDown();
 	void waitMouseRelease(char drawMouse);
 	void forceMouseUp(bool onlyWhenSynced = false);
 
-	void clearPalette(void);
+	void clearPalette();
 	int16 getFrameRate();
 	void setFrameRate(int16 rate);
 	void notifyNewAnim();

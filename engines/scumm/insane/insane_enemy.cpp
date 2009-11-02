@@ -1246,7 +1246,7 @@ int32 Insane::enemy8initializer(int32 actor1, int32 actor2, int32 probability) {
 }
 
 
-void Insane::ouchSoundEnemy(void) {
+void Insane::ouchSoundEnemy() {
 	int32 tmp;
 
 	_actor[1].act[3].state = 52;
@@ -1538,7 +1538,7 @@ void Insane::chooseEnemyWeaponAnim(int32 buttons) {
 	}
 }
 
-void Insane::switchEnemyWeapon(void) {
+void Insane::switchEnemyWeapon() {
 	do {
 		_actor[1].weapon++;
 		if (_actor[1].weapon > 7)
@@ -1573,7 +1573,7 @@ void Insane::switchEnemyWeapon(void) {
 	}
 }
 
-void Insane::setEnemyState(void) {
+void Insane::setEnemyState() {
 	if (_actor[1].lost)
 		return;
 
@@ -2589,7 +2589,7 @@ int32 Insane::calcEnemyDamage(bool arg_0, bool arg_4) {
 	return 1;
 }
 
-bool Insane::weaponEnemyIsEffective(void) {
+bool Insane::weaponEnemyIsEffective() {
 	if ((_actor[1].x - _actor[0].x > weaponMaxRange(1)) ||
 		(_actor[1].x - _actor[0].x < weaponMinRange(1)) ||
 		!_actor[0].kicking)
@@ -2739,7 +2739,7 @@ void Insane::actor10Reaction(int32 buttons) {
 		smlayer_putActor(1, 0, tmpx, tmpy, _smlayer_room);
 }
 
-int32 Insane::actionEnemy(void) {
+int32 Insane::actionEnemy() {
 	int32 buttons;
 
 	if (_actor[1].enemyHandler != -1)

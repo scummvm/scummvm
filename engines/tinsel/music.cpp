@@ -289,7 +289,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 /**
  * Returns TRUE if a Midi tune is currently playing.
  */
-bool MidiPlaying(void) {
+bool MidiPlaying() {
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
 		if (AudioCD.isPlaying())
 			return true;
@@ -300,7 +300,7 @@ bool MidiPlaying(void) {
 /**
  * Stops any currently playing midi.
  */
-bool StopMidi(void) {
+bool StopMidi() {
 	currentMidi = 0;
 	currentLoop = false;
 
@@ -352,7 +352,7 @@ void SetMidiVolume(int vol)	{
 /**
  * Opens and inits all MIDI sequence files.
  */
-void OpenMidiFiles(void) {
+void OpenMidiFiles() {
 	Common::File midiStream;
 
 	// Demo version has no midi file

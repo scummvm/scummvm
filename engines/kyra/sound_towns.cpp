@@ -3958,7 +3958,7 @@ void SoundTowns::send(uint32 b) {
 	_driver->send(b);
 }
 
-uint32 SoundTowns::getBaseTempo(void) {
+uint32 SoundTowns::getBaseTempo() {
 	return _driver ? _driver->getBaseTempo() : 0;
 }
 

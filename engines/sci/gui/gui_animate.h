@@ -77,7 +77,7 @@ public:
 	void addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 
 private:
-	void init(void);
+	void init();
 
 	EngineState *_s;
 	SciGuiGfx *_gfx;

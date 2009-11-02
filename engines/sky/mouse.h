@@ -42,34 +42,34 @@ class Mouse {
 public:
 
 	Mouse(OSystem *system, Disk *skyDisk, SkyCompact *skyCompact);
-	~Mouse(void);
+	~Mouse();
 
 	void mouseEngine();
 	void replaceMouseCursors(uint16 fileNo);
-	bool fnAddHuman(void);
-	void fnSaveCoods(void);
+	bool fnAddHuman();
+	void fnSaveCoods();
 	void fnOpenCloseHand(bool open);
 	uint16 findMouseCursor(uint32 itemNum);
-	void lockMouse(void);
-	void unlockMouse(void);
+	void lockMouse();
+	void unlockMouse();
 	void restoreMouseData(uint16 frameNum);
-	void drawNewMouse(void);
+	void drawNewMouse();
 	void spriteMouse(uint16 frameNum, uint8 mouseX, uint8 mouseY);
 	void useLogicInstance(Logic *skyLogic) { _skyLogic = skyLogic; };
 	void buttonPressed(uint8 button);
 	void mouseMoved(uint16 mouseX, uint16 mouseY);
 	void waitMouseNotPressed(int minDelay = 0);
-	uint16 giveMouseX(void) { return _mouseX; };
-	uint16 giveMouseY(void) { return _mouseY; };
-	uint16 giveCurrentMouseType(void) { return _currentCursor; };
-	bool wasClicked(void);
-	void logicClick(void) { _logicClick = true; };
+	uint16 giveMouseX() { return _mouseX; };
+	uint16 giveMouseY() { return _mouseY; };
+	uint16 giveCurrentMouseType() { return _currentCursor; };
+	bool wasClicked();
+	void logicClick() { _logicClick = true; };
 	void resetCursor();
 
 protected:
 
 	void pointerEngine(uint16 xPos, uint16 yPos);
-	void buttonEngine1(void);
+	void buttonEngine1();
 
 	bool _logicClick;
 

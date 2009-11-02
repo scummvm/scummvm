@@ -45,20 +45,20 @@ public:
 	virtual ~ChannelBase() {}
 	virtual uint8 process(uint16 aktTime) = 0;
 	virtual void updateVolume(uint16 pVolume) = 0;
-	virtual bool isActive(void) = 0;
+	virtual bool isActive() = 0;
 private:
 };
 
 class MusicBase {
 public:
 	MusicBase(Disk *pDisk);
-	virtual ~MusicBase(void);
+	virtual ~MusicBase();
 	void loadSection(uint8 pSection);
 	void startMusic(uint16 param);
 	void stopMusic();
-	bool musicIsPlaying(void);
-	uint8 giveVolume(void);
-	uint8 giveCurrentMusic(void);
+	bool musicIsPlaying();
+	uint8 giveVolume();
+	uint8 giveCurrentMusic();
 	virtual void setVolume(uint16 param) = 0;
 
 protected:
@@ -79,15 +79,15 @@ protected:
 	ChannelBase *_channels[10];
 	Common::Mutex _mutex;
 
-	virtual void setupPointers(void) = 0;
+	virtual void setupPointers() = 0;
 	virtual void setupChannels(uint8 *channelData) = 0;
-	virtual void startDriver(void) = 0;
+	virtual void startDriver() = 0;
 
-	void updateTempo(void);
-	void loadNewMusic(void);
-	void pollMusic(void);
+	void updateTempo();
+	void loadNewMusic();
+	void pollMusic();
 
-	void stopMusicInternal(void);
+	void stopMusicInternal();
 };
 
 } // End of namespace Sky

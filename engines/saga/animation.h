@@ -109,19 +109,19 @@ struct AnimationData {
 class Anim {
 public:
 	Anim(SagaEngine *vm);
-	~Anim(void);
+	~Anim();
 
 	void loadCutawayList(const byte *resourcePointer, size_t resourceLength);
-	void freeCutawayList(void);
+	void freeCutawayList();
 	int playCutaway(int cut, bool fade);
-	void endCutaway(void);
-	void returnFromCutaway(void);
-	void clearCutaway(void);
+	void endCutaway();
+	void returnFromCutaway();
+	void clearCutaway();
 	void showCutawayBg(int bg);
 
 	void startVideo(int vid, bool fade);
-	void endVideo(void);
-	void returnFromVideo(void);
+	void endVideo();
+	void returnFromVideo();
 
 	void load(uint16 animId, const byte *animResourceData, size_t animResourceLength);
 	void freeId(uint16 animId);
@@ -130,9 +130,9 @@ public:
 	void setFlag(uint16 animId, uint16 flag);
 	void clearFlag(uint16 animId, uint16 flag);
 	void setFrameTime(uint16 animId, int time);
-	void reset(void);
-	void animInfo(void);
-	void cutawayInfo(void);
+	void reset();
+	void animInfo();
+	void cutawayInfo();
 	void setCycles(uint16 animId, int cycles);
 	void stop(uint16 animId);
 	void finish(uint16 animId);
@@ -152,7 +152,7 @@ public:
 		return (_animations[animId] != NULL);
 	}
 
-	bool hasCutaway(void) { return _cutawayActive; }
+	bool hasCutaway() { return _cutawayActive; }
 	void setCutAwayMode(int mode) { _cutAwayMode = mode; }
 	int cutawayListLength() { return _cutawayListLength; }
 	int cutawayBgResourceID(int cutaway) { return _cutawayList[cutaway].backgroundResourceId; }

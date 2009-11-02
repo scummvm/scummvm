@@ -169,7 +169,7 @@ SCNHANDLE ScalingReel(int ano, int scale1, int scale2, DIRECTION reel) {
 /**
  * RebootScalingReels
  */
-void RebootScalingReels(void) {
+void RebootScalingReels() {
 	scrEntries = 0;
 	memset(SCIdata, 0, sizeof(SCIdata));
 }
@@ -177,7 +177,7 @@ void RebootScalingReels(void) {
 /**
  * Discourage them from being ditched.
  */
-void TouchMoverReels(void) {
+void TouchMoverReels() {
 	PMOVER	pMover;
 	int	scale;
 

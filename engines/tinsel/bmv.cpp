@@ -470,7 +470,7 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-void BMVPlayer::FettleMovieText(void) {
+void BMVPlayer::FettleMovieText() {
 	int i;
 
 	bIsText = false;
@@ -702,7 +702,7 @@ void BMVPlayer::LoadSlots(int number) {
 /**
  * Called from the foreground when starting playback of a movie.
  */
-void BMVPlayer::InitialiseBMV(void) {
+void BMVPlayer::InitialiseBMV() {
 	if (!stream.open(szMovieFile))
 		error(CANNOT_FIND_FILE, szMovieFile);
 
@@ -751,7 +751,7 @@ void BMVPlayer::InitialiseBMV(void) {
 /**
  * Called from the foreground when ending playback of a movie.
  */
-void BMVPlayer::FinishBMV(void) {
+void BMVPlayer::FinishBMV() {
 	int	i;
 
 	// Notify the sound channel
@@ -791,7 +791,7 @@ void BMVPlayer::FinishBMV(void) {
 /**
  * MaintainBuffer()
  */
-bool BMVPlayer::MaintainBuffer(void) {
+bool BMVPlayer::MaintainBuffer() {
 	int nextOffset;
 
 	// No action if the file is all read
@@ -880,7 +880,7 @@ bool BMVPlayer::MaintainBuffer(void) {
 /**
  * DoBMVFrame
  */
-bool BMVPlayer::DoBMVFrame(void) {
+bool BMVPlayer::DoBMVFrame() {
 	unsigned char *data;
 	int	graphOffset, length;
 	signed short	xscr;
@@ -990,7 +990,7 @@ bool BMVPlayer::DoBMVFrame(void) {
 /**
  * DoSoundFrame
  */
-bool BMVPlayer::DoSoundFrame(void) {
+bool BMVPlayer::DoSoundFrame() {
 	unsigned char *data;
 	int	graphOffset;
 
@@ -1064,7 +1064,7 @@ bool BMVPlayer::DoSoundFrame(void) {
 /**
  * CopyMovieToScreen
  */
-void BMVPlayer::CopyMovieToScreen(void) {
+void BMVPlayer::CopyMovieToScreen() {
 	// Not if not up and running yet!
 	if (!screenBuffer || (currentFrame == 0)) {
 		ForceEntireRedraw();
@@ -1090,7 +1090,7 @@ void BMVPlayer::CopyMovieToScreen(void) {
 /**
  * LookAtBuffers
  */
-void BMVPlayer::LookAtBuffers(void) {
+void BMVPlayer::LookAtBuffers() {
 	// FIXME: What's the point of this function???
 	static int junk;
 	int i;
@@ -1104,7 +1104,7 @@ void BMVPlayer::LookAtBuffers(void) {
 /**
  * Handles playback of any active movie. Called from the foreground 24 times a second.
  */
-void BMVPlayer::FettleBMV(void) {
+void BMVPlayer::FettleBMV() {
 
 	int refFrame;
 	// Tick counter needs to be incrementing at a 24Hz rate
@@ -1196,14 +1196,14 @@ void BMVPlayer::FettleBMV(void) {
 /**
  * Returns true if a movie is playing.
  */
-bool BMVPlayer::MoviePlaying(void) {
+bool BMVPlayer::MoviePlaying() {
 	return bMovieOn;
 }
 
 /**
  * Returns the audio lag in ms
  */
-int32 BMVPlayer::MovieAudioLag(void) {
+int32 BMVPlayer::MovieAudioLag() {
 	if (!bMovieOn || !audioStream)
 		return 0;
 
@@ -1212,11 +1212,11 @@ int32 BMVPlayer::MovieAudioLag(void) {
 	return (playLength - (((int32) _vm->_mixer->getSoundElapsedTime(audioHandle)) << 10)) >> 10;
 }
 
-uint32 BMVPlayer::NextMovieTime(void) {
+uint32 BMVPlayer::NextMovieTime() {
 	return nextMovieTime;
 }
 
-void BMVPlayer::AbortMovie(void) {
+void BMVPlayer::AbortMovie() {
 	bAbort = true;
 }
 

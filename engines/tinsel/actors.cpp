@@ -215,7 +215,7 @@ void SetLeadId(int leadID) {
 /**
  * No comment.
  */
-int GetLeadId(void) {
+int GetLeadId() {
 	return LeadActorId;
 }
 
@@ -471,7 +471,7 @@ void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 /**
  * Called between scenes, zeroises all actors.
  */
-void DropActors(void) {
+void DropActors() {
 
 	for (int i = 0; i < NumActors; i++) {
 		if (TinselV2) {
@@ -614,7 +614,7 @@ SCNHANDLE GetActorTag(int ano) {
  * NextTagged Actor is repeatedly called until the caller gets fed up
  * or there are no more tagged actors to look at.
  */
-void FirstTaggedActor(void) {
+void FirstTaggedActor() {
 	ti = 0;
 }
 
@@ -623,7 +623,7 @@ void FirstTaggedActor(void) {
  * NextTagged Actor is repeatedly called until the caller gets fed up
  * or there are no more tagged actors to look at.
  */
-int NextTaggedActor(void) {
+int NextTaggedActor() {
 	PMOVER	pActor;
 	bool	hid;
 
@@ -1406,7 +1406,7 @@ void RestoreActorZ(byte *saveActorZ) {
 	memcpy(zFactors, saveActorZ, NumActors);
 }
 
-void setactorson(void) {
+void setactorson() {
 	bActorsOn = true;
 }
 
@@ -1567,7 +1567,7 @@ bool InHotSpot(int ano, int curX, int curY) {
 /**
  * Front Tagged Actor
  */
-int FrontTaggedActor(void) {
+int FrontTaggedActor() {
 	int i;
 
 	for (i = 0; i < numTaggedActors; i++) {

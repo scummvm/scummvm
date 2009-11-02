@@ -49,7 +49,7 @@ struct LineInfo {
 class Text {
 public:
 	Text(ObjectMan *pObjMan, ResMan *pResMan, bool czechVersion);
-	~Text(void);
+	~Text();
 	FrameHeader *giveSpriteData(uint32 textTarget);
 	uint32 lowTextManager(uint8 *text, int32 width, uint8 pen);
 	void makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen);

@@ -1169,7 +1169,7 @@ static int currentEScene = 0;
 
 bool deadPolys[MAX_POLY];	// Currently just for dead blocks
 
-void RebootDeadTags(void) {
+void RebootDeadTags() {
 	nextfreeT = numScenesT = 0;
 	nextfreeE = numScenesE = 0;
 
@@ -1258,7 +1258,7 @@ static HPOLYGON FindPolygon(PTYPE type, int id) {
 	return NOPOLY;
 }
 
-HPOLYGON FirstPathPoly(void) {
+HPOLYGON FirstPathPoly() {
 	for (int i = 0; i < noofPolys; i++) {
 		if (Polys[i]->polyType == PATH)
 			return i;
@@ -1745,7 +1745,7 @@ static void InitTag(const Poly &ptp, int pno, bool bRestart) {
 /**
  * Called at the restart of a scene, nobbles polygons which are dead.
  */
-static void KillDeadPolygons(void) {
+static void KillDeadPolygons() {
 	int i;
 
 	for (i = 0; i < MAX_POLY; i++) {
@@ -2072,7 +2072,7 @@ void GetPolyMidBottom(	HPOLYGON hp, int *pX, int *pY) {
 	*pX = (Polys[hp]->pleft + Polys[hp]->pright)/2 + volatileStuff[hp].xoff;
 }
 
-int PathCount(void) {
+int PathCount() {
 	int i, count;
 
 	for (i = 0, count = 0; i < noofPolys; i++) {

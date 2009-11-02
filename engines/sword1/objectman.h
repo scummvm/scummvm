@@ -37,8 +37,8 @@ namespace Sword1 {
 class ObjectMan {
 public:
 	ObjectMan(ResMan *pResourceMan);
-	~ObjectMan(void);
-	void initialize(void);
+	~ObjectMan();
+	void initialize();
 
 	Object *fetchObject(uint32 id);
 	uint32 fetchNoObjects(int section);

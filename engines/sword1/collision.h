@@ -35,10 +35,10 @@ class Logic;
 class Collision {
 public:
 	Collision(ObjectMan *pObjMan, Logic *pLogic);
-	~Collision(void);
-	void checkCollisions(void);
-	void fnBumpOff(void);
-	void fnBumpOn(void);
+	~Collision();
+	void checkCollisions();
+	void fnBumpOff();
+	void fnBumpOn();
 private:
 	int32 getIntersect(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3);
 	int noCol;

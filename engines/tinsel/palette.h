@@ -103,15 +103,15 @@ typedef PALQ *PPALQ;
 |*			Palette Manager Function Prototypes		*|
 \*----------------------------------------------------------------------*/
 
-void ResetPalAllocator(void);	// wipe out all palettes
+void ResetPalAllocator();	// wipe out all palettes
 
 #ifdef	DEBUG
-void PaletteStats(void);	// Shows the maximum number of palettes used at once
+void PaletteStats();	// Shows the maximum number of palettes used at once
 #endif
 
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable); // Maps PSX CLUTs to original palette in resource file
 
-void PalettesToVideoDAC(void);	// Update the video DAC with palettes currently the the DAC queue
+void PalettesToVideoDAC();	// Update the video DAC with palettes currently the the DAC queue
 
 void UpdateDACqueueHandle(
 	int posInDAC,		// position in video DAC
@@ -139,7 +139,7 @@ void SwapPalette(		// swaps palettes at the specified palette queue position
 PALQ *GetNextPalette(		// returns the next palette in the queue
 	PALQ *pStrtPal);	// queue position to start from - when NULL will start from beginning of queue
 
-COLORREF GetBgndColour(void);	// returns current background colour
+COLORREF GetBgndColour();	// returns current background colour
 
 void SetBgndColour(		// sets current background colour
 	COLORREF colour);	// colour to set the background to
@@ -150,7 +150,7 @@ void CreateTranslucentPalette(SCNHANDLE BackPal);
 
 void CreateGhostPalette(SCNHANDLE hPalette);
 
-void NoFadingPalettes(void);	// All fading processes have just been killed
+void NoFadingPalettes();	// All fading processes have just been killed
 
 void DimPartPalette(
 	SCNHANDLE hPal,
@@ -159,21 +159,21 @@ void DimPartPalette(
 	int brightness);	// 0 = black, 10 == 100%
 
 
-int TranslucentColour(void);
+int TranslucentColour();
 
 #define BoxColour TranslucentColour
 
-int HighlightColour(void);
+int HighlightColour();
 
-int TalkColour(void);
+int TalkColour();
 
 void SetTalkColourRef(COLORREF colRef);
 
-COLORREF GetTalkColourRef(void);
+COLORREF GetTalkColourRef();
 
 void SetTagColorRef(COLORREF colRef);
 
-COLORREF GetTagColorRef(void);
+COLORREF GetTagColorRef();
 
 void SetTalkTextOffset(int offset);
 

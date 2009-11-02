@@ -39,8 +39,8 @@ struct GlobalEvent {
 
 class EventManager {
 public:
-	EventManager(void);
-	void serviceGlobalEventList(void);
+	EventManager();
+	void serviceGlobalEventList();
 	void checkForEvent(Object *compact);
 	int fnCheckForEvent(Object *cpt, int32 id, int32 pause);
 	void fnIssueEvent(Object *compact, int32 id, int32 event, int32 delay);

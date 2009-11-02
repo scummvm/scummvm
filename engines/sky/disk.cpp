@@ -68,7 +68,7 @@ Disk::Disk() {
 	delete dnrHandle;
 }
 
-Disk::~Disk(void) {
+Disk::~Disk() {
 	if (_dataDiskHandle->isOpen())
 		_dataDiskHandle->close();
 	fnFlushBuffers();
@@ -224,7 +224,7 @@ void Disk::fnCacheFast(uint16 *fList) {
 	}
 }
 
-void Disk::fnCacheFiles(void) {
+void Disk::fnCacheFiles() {
 	uint16 lCnt, bCnt, targCnt;
 	targCnt = lCnt = 0;
 	bool found;
@@ -306,7 +306,7 @@ void Disk::fnMiniLoad(uint16 fileNum) {
 	SkyEngine::_itemList[fileNum & 2047] = (void**)loadFile(fileNum);
 }
 
-void Disk::fnFlushBuffers(void) {
+void Disk::fnFlushBuffers() {
 	// dump all loaded sprites
 	uint8 lCnt = 0;
 	while (_loadedFilesList[lCnt]) {

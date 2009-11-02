@@ -51,8 +51,8 @@ struct FontEntry {
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 void loadFNT(const char *fileName);
-void initSystem(void);
-void freeSystem(void);
+void initSystem();
+void freeSystem();
 
 //////////////////////////////////////////////////
 void bigEndianShortToNative(void *var);

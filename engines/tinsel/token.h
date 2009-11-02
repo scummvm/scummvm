@@ -48,7 +48,7 @@ void FreeControlToken();
 void GetToken(int which);
 void FreeToken(int which);
 
-void FreeAllTokens(void);
+void FreeAllTokens();
 bool TestToken(int which);
 
 

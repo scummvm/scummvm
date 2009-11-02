@@ -98,7 +98,7 @@ Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *sky
 	initScriptVariables();
 }
 
-Logic::~Logic(void) {
+Logic::~Logic() {
 	delete _skyGrid;
 	delete _skyAutoRoute;
 
@@ -107,7 +107,7 @@ Logic::~Logic(void) {
 			free(_moduleList[i]);
 }
 
-void Logic::initScreen0(void) {
+void Logic::initScreen0() {
 	fnEnterSection(0, 0, 0);
 	_skyMusic->startMusic(2);
 	SkyEngine::_systemVars.currentMusic = 2;
@@ -121,7 +121,7 @@ void Logic::parseSaveData(uint32 *data) {
 	fnEnterSection(_scriptVariables[CUR_SECTION], 0, 0);
 }
 
-bool Logic::checkProtection(void) {
+bool Logic::checkProtection() {
 	if (_scriptVariables[ENTER_DIGITS]) {
 		if (_scriptVariables[CONSOLE_TYPE] == 5) // reactor code
 			_scriptVariables[FS_COMMAND] = 240;

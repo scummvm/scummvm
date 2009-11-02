@@ -263,7 +263,7 @@ ScriptVars::ScriptVars(const ScriptVars &src) : _size(src._size), _vars(new int1
 
 /*! \brief Destructor
  */
-ScriptVars::~ScriptVars(void) {
+ScriptVars::~ScriptVars() {
 	delete[] _vars;
 }
 
@@ -340,7 +340,7 @@ void ScriptVars::load(Common::SeekableReadStream &fHandle, unsigned int len) {
 
 /*! \brief Reset all values to 0
  */
-void ScriptVars::reset(void) {
+void ScriptVars::reset() {
 	memset( _vars, 0, _size * sizeof(int16));
 }
 
@@ -374,7 +374,7 @@ RawScript::RawScript(const RawScript &src) : _size(src._size),
 
 /*! \brief Destructor
  */
-RawScript::~RawScript(void) {
+RawScript::~RawScript() {
 	delete[] _data;
 }
 
@@ -511,7 +511,7 @@ void RawScript::setData(const FWScriptInfo &info, const byte *data) {
 /*! \brief Initial script labels
  * \return Precalculated script labels
  */
-const ScriptVars &RawScript::labels(void) const {
+const ScriptVars &RawScript::labels() const {
 	assert(_data);
 	return _labels;
 }
@@ -614,7 +614,7 @@ FWScript::FWScript(const FWScript &src, FWScriptInfo *info) :
 	_compare(src._compare), _index(src._index), _labels(src._labels),
 	_localVars(src._localVars), _globalVars(src._globalVars), _info(info) { }
 
-FWScript::~FWScript(void) {
+FWScript::~FWScript() {
 	delete _info;
 }
 
@@ -1916,7 +1916,7 @@ uint16 compareVars(int16 a, int16 b) {
 	return flag;
 }
 
-void executeObjectScripts(void) {
+void executeObjectScripts() {
 	ScriptList::iterator it = objectScripts.begin();
 	for (; it != objectScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
@@ -1927,7 +1927,7 @@ void executeObjectScripts(void) {
 	}
 }
 
-void executeGlobalScripts(void) {
+void executeGlobalScripts() {
 	ScriptList::iterator it = globalScripts.begin();
 	for (; it != globalScripts.end();) {
 		if ((*it)->_index < 0 || (*it)->execute() < 0) {
@@ -1941,13 +1941,13 @@ void executeGlobalScripts(void) {
 /*! \todo Remove object scripts with script index of -1 (Not script position, but script index!).
  *        This would seem to be valid for both Future Wars and Operation Stealth.
  */
-void purgeObjectScripts(void) {
+void purgeObjectScripts() {
 }
 
 /*! \todo Remove global scripts with script index of -1 (Not script position, but script index!).
  *        This would seem to be valid for both Future Wars and Operation Stealth.
  */
-void purgeGlobalScripts(void) {
+void purgeGlobalScripts() {
 }
 
 ////////////////////////////////////

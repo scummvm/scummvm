@@ -53,7 +53,7 @@ struct objectParamsQuery {
 objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx);
 int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 * returnParam);
 int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery * returnParam);
-void objectReset(void);
+void objectReset();
 const char *getObjectName(int index, const char *string);
 int getObjectClass(int overlayIdx, int objIdx);
 

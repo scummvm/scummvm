@@ -52,7 +52,7 @@ MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, A
 	_decoderType = decoderType;
 }
 
-MoviePlayer:: ~MoviePlayer(void) {
+MoviePlayer:: ~MoviePlayer() {
 	delete _bgSoundHandle;
 	delete _decoder;
 }

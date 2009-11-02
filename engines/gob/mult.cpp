@@ -109,7 +109,7 @@ Mult::~Mult() {
 	delete _multData;
 }
 
-void Mult::initAll(void) {
+void Mult::initAll() {
 	_objects = 0;
 	_animSurf.reset();
 	_renderData = 0;
@@ -117,7 +117,7 @@ void Mult::initAll(void) {
 	_vm->_scenery->init();
 }
 
-void Mult::freeAll(void) {
+void Mult::freeAll() {
 	freeMult();
 
 	for (int i = 0; i < 10; i++) {
@@ -149,12 +149,12 @@ void Mult::freeMult() {
 	_vm->_draw->freeSprite(22);
 }
 
-void Mult::checkFreeMult(void) {
+void Mult::checkFreeMult() {
 	if (_multData)
 		freeMultKeys();
 }
 
-void Mult::zeroMultData(void) {
+void Mult::zeroMultData() {
 	_multData = 0;
 }
 

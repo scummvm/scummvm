@@ -50,17 +50,17 @@ struct MemHandle {
 
 class MemMan {
 public:
-	MemMan(void);
-	~MemMan(void);
+	MemMan();
+	~MemMan();
 	void alloc(MemHandle *bsMem, uint32 pSize, uint16 pCond = MEM_DONT_FREE);
 	void setCondition(MemHandle *bsMem, uint16 pCond);
 	void freeNow(MemHandle *bsMem);
 	void initHandle(MemHandle *bsMem);
-	void flush(void);
+	void flush();
 private:
 	void addToFreeList(MemHandle *bsMem);
 	void removeFromFreeList(MemHandle *bsMem);
-	void checkMemoryUsage(void);
+	void checkMemoryUsage();
 	uint32 _alloced;  //currently allocated memory
 	MemHandle *_memListFree;
 	MemHandle *_memListFreeEnd;
