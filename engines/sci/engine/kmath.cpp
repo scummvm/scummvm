@@ -38,7 +38,7 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
 	// This is a hack, but so is the code in Hoyle1 that needs it.
 	if (argv[0].segment)
-		return make_reg(0, 0x3e8); // Yes people, this is an object
+		return make_reg(0, 0x3e9); // Yes people, this is an object
 	return make_reg(0, abs(argv[0].toSint16()));
 }
 
