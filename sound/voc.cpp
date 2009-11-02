@@ -52,6 +52,8 @@ int getSampleRateFromVOCRate(int vocSR) {
 static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	VocFileHeader fileHeader;
 
+	debug(2, "loadVOCFromStream");
+
 	if (stream.read(&fileHeader, 8) != 8)
 		goto invalid;
 
@@ -91,6 +93,8 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 		len = stream.readByte();
 		len |= stream.readByte() << 8;
 		len |= stream.readByte() << 16;
+
+		debug(2, "Block code %d, len %d", code, len);
 
 		switch (code) {
 		case 1:
@@ -153,7 +157,7 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 			stream.readByte();
 			break;
 		default:
-			warning("Unhandled code in VOC file : %d", code);
+			warning("Unhandled code %d in VOC file (len %d)", code, len);
 			return ret_sound;
 		}
 	}
@@ -173,6 +177,9 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 	VocFileHeader fileHeader;
 	int currentBlock = 0;
 	int size = 0;
+
+	debug(2, "parseVOCFormat");
+
 
 	if (stream.read(&fileHeader, 8) != 8)
 		goto invalid;
@@ -212,6 +219,8 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 		len = stream.readByte();
 		len |= stream.readByte() << 8;
 		len |= stream.readByte() << 16;
+
+		debug(2, "Block code %d, len %d", code, len);
 
 		switch (code) {
 		case 1:
@@ -276,7 +285,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 			stream.readByte();
 			break;
 		default:
-			warning("Unhandled code in VOC file : %d", code);
+			warning("Unhandled code %d in VOC file (len %d)", code, len);
 			return 0;
 		}
 	}
