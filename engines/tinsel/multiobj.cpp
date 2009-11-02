@@ -31,9 +31,6 @@
 
 namespace Tinsel {
 
-// from object.c
-extern OBJECT *objectList;
-
 /**
  * Initialise a multi-part object using a list of images to init
  * each object piece. One object is created for each image in the list.
@@ -98,7 +95,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 
 void MultiInsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
 	// validate object pointer
-	assert(pInsObj >= objectList && pInsObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pInsObj));
 
 	// for all the objects that make up this multi-part
 	do {
@@ -119,7 +116,7 @@ void MultiInsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
 
 void MultiDeleteObject(OBJECT *pObjList, OBJECT *pMultiObj) {
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// for all the objects that make up this multi-part
 	do {
@@ -140,7 +137,7 @@ void MultiDeleteObject(OBJECT *pObjList, OBJECT *pMultiObj) {
 
 void MultiHideObject(OBJECT *pMultiObj) {
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// set master shape to null animation frame
 	pMultiObj->hShape = 0;
@@ -156,7 +153,7 @@ void MultiHideObject(OBJECT *pMultiObj) {
 
 void MultiHorizontalFlip(OBJECT *pFlipObj) {
 	// validate object pointer
-	assert(pFlipObj >= objectList && pFlipObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pFlipObj));
 
 	// for all the objects that make up this multi-part
 	do {
@@ -176,7 +173,7 @@ void MultiHorizontalFlip(OBJECT *pFlipObj) {
 
 void MultiVerticalFlip(OBJECT *pFlipObj) {
 	// validate object pointer
-	assert(pFlipObj >= objectList && pFlipObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pFlipObj));
 
 	// for all the objects that make up this multi-part
 	do {
@@ -200,7 +197,7 @@ void MultiVerticalFlip(OBJECT *pFlipObj) {
 
 void MultiAdjustXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	if (deltaX == 0 && deltaY == 0)
 		return;		// ignore no change
@@ -245,7 +242,7 @@ void MultiAdjustXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 
 void MultiMoveRelXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	if (deltaX == 0 && deltaY == 0)
 		return;		// ignore no change
@@ -278,7 +275,7 @@ void MultiSetAniXY(OBJECT *pMultiObj, int newAniX, int newAniY) {
 	int curAniX, curAniY;	// objects current animation position
 
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// get master objects current animation position
 	GetAniPosition(pMultiObj, &curAniX, &curAniY);
@@ -301,7 +298,7 @@ void MultiSetAniX(OBJECT *pMultiObj, int newAniX) {
 	int curAniX, curAniY;	// objects current animation position
 
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// get master objects current animation position
 	GetAniPosition(pMultiObj, &curAniX, &curAniY);
@@ -324,7 +321,7 @@ void MultiSetAniY(OBJECT *pMultiObj, int newAniY) {
 	int curAniX, curAniY;	// objects current animation position
 
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// get master objects current animation position
 	GetAniPosition(pMultiObj, &curAniX, &curAniY);
@@ -345,7 +342,7 @@ void MultiSetAniY(OBJECT *pMultiObj, int newAniY) {
 
 void MultiSetZPosition(OBJECT *pMultiObj, int newZ) {
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// for all the objects that make up this multi-part
 	do {
@@ -370,7 +367,7 @@ void MultiReshape(OBJECT *pMultiObj) {
 	SCNHANDLE hFrame;
 
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// get objects current anim frame
 	hFrame = pMultiObj->hShape;
@@ -427,7 +424,7 @@ int MultiLeftmost(OBJECT *pMulti) {
 	int left;
 
 	// validate object pointer
-	assert(pMulti >= objectList && pMulti <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMulti));
 
 	// init leftmost point to first object
 	left = fracToInt(pMulti->xPos);
@@ -456,7 +453,7 @@ int MultiRightmost(OBJECT *pMulti) {
 	int right;
 
 	// validate object pointer
-	assert(pMulti >= objectList && pMulti <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMulti));
 
 	// init right-most point to first object
 	right = fracToInt(pMulti->xPos) + pMulti->width;
@@ -485,7 +482,7 @@ int MultiHighest(OBJECT *pMulti) {
 	int highest;
 
 	// validate object pointer
-	assert(pMulti >= objectList && pMulti <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMulti));
 
 	// init highest point to first object
 	highest = fracToInt(pMulti->yPos);
@@ -514,7 +511,7 @@ int MultiLowest(OBJECT *pMulti) {
 	int lowest;
 
 	// validate object pointer
-	assert(pMulti >= objectList && pMulti <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMulti));
 
 	// init lowest point to first object
 	lowest = fracToInt(pMulti->yPos) + pMulti->height;
@@ -550,7 +547,7 @@ bool MultiHasShape(POBJECT pMulti) {
 
 void MultiForceRedraw(POBJECT pMultiObj) {
 	// validate object pointer
-	assert(pMultiObj >= objectList && pMultiObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pMultiObj));
 
 	// for all the objects that make up this multi-part
 	do {

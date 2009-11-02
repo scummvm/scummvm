@@ -311,14 +311,15 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 		_vm->_sound->stopAllSamples();
 		ClearScreen();
 
-		// Master script only affected on restore game, not restore scene
-		if (TinselV2 && (sd == &sgData)) {
-			g_scheduler->killMatchingProcess(PID_MASTER_SCR);
-			KillGlobalProcesses();
-			FreeMasterInterpretContext();
-		}
-
 		if (TinselV2) {
+
+			// Master script only affected on restore game, not restore scene
+			if (sd == &sgData) {
+				g_scheduler->killMatchingProcess(PID_MASTER_SCR);
+				KillGlobalProcesses();
+				FreeMasterInterpretContext();
+			}
+
 			RestorePolygonStuff(sd->SavedPolygonStuff);
 
 			// Abandon temporarily if different CD

@@ -130,6 +130,8 @@ OBJECT *AllocObject();	// allocate a object from the free list
 void FreeObject(		// place a object back on the free list
 	OBJECT *pFreeObj);	// object to free
 
+bool isValidObject(OBJECT *obj);
+
 void CopyObject(		// copy one object to another
 	OBJECT *pDest,		// destination object
 	OBJECT *pSrc);		// source object

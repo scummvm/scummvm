@@ -45,8 +45,6 @@ namespace Tinsel {
 
 #define fAllCds	(fCd1|fCd2|fCd3|fCd4|fCd5|fCd6|fCd7|fCd8)
 
-extern char currentCD;
-
 void DoCdChange();
 
 void CdCD(CORO_PARAM);

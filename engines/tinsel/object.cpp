@@ -37,7 +37,7 @@
 namespace Tinsel {
 
 // list of all objects
-OBJECT *objectList = 0;
+static OBJECT *objectList = 0;
 
 // pointer to free object list
 static OBJECT *pFreeObjects = 0;
@@ -130,6 +130,10 @@ OBJECT *AllocObject() {
 	return pObj;
 }
 
+bool isValidObject(OBJECT *obj) {
+	return (obj >= objectList && obj <= objectList + NUM_OBJECTS - 1);
+}
+
 /**
  * Copy one object to another.
  * @param pDest			Destination object
@@ -163,7 +167,7 @@ void InsertObject(OBJECT *pObjList, OBJECT *pInsObj) {
 	OBJECT *pPrev, *pObj;	// object list traversal pointers
 
 	// validate object pointer
-	assert(pInsObj >= objectList && pInsObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pInsObj));
 
 	for (pPrev = pObjList, pObj = pObjList->pNext; pObj != NULL; pPrev = pObj, pObj = pObj->pNext) {
 		// check Z order
@@ -196,7 +200,7 @@ void DelObject(OBJECT *pObjList, OBJECT *pDelObj) {
 	const Common::Rect rcScreen(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// validate object pointer
-	assert(pDelObj >= objectList && pDelObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pDelObj));
 
 #ifdef DEBUG
 	// one less object in use
@@ -331,7 +335,7 @@ void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
  */
 void GetAniPosition(OBJECT *pObj, int *pPosX, int *pPosY) {
 	// validate object pointer
-	assert(pObj >= objectList && pObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pObj));
 
 	// get the animation offset of the object
 	GetAniOffset(pObj->hImg, pObj->flags, pPosX, pPosY);
@@ -419,7 +423,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
  */
 void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 	// validate object pointer
-	assert(pAniObj >= objectList && pAniObj <= objectList + NUM_OBJECTS - 1);
+	assert(isValidObject(pAniObj));
 
 	if (pAniObj->hImg != hNewImg
 		|| (pAniObj->flags & DMA_HARDFLAGS) != (newflags & DMA_HARDFLAGS)) {
