@@ -280,7 +280,7 @@ public:
 	void setSpeechTiming(uint tick, uint duration);
 	void shiftSpeechAndFadeTick(int delta);
 
-	void updateTitle();
+	void updateTitle(int x, int y);
 	void updateCursor();
 
 	void inventoryInit();
@@ -320,6 +320,13 @@ public:
 	void DoSync(Common::Serializer &s);
 
 private:
+	void updateOrdinaryCursor();
+	void updateInventoryCursor();
+	void handleOrdinaryLoop();
+	void handleInventoryLoop();
+	void handleDialogueLoop();
+	void advanceAnimationsAndTestLoopExit();
+
 	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
 	void loadRoom(int roomNum);
 	void runGateProgram(int gate);
@@ -376,7 +383,6 @@ private:
 	uint _speechDuration;
 
 	int _objUnderCursor;
-	int _oldObjUnderCursor;
 	int _animUnderCursor;
 
 	int _markedAnimationIndex; ///< Used by the Mark GPL command

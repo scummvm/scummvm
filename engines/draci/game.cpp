@@ -175,7 +175,7 @@ void Game::init() {
 
 	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
 
-	_oldObjUnderCursor = _objUnderCursor = kOverlayImage;
+	_objUnderCursor = kOverlayImage;
         
 	// Set the inventory to empty initially
 	memset(_inventory, kNoItem, kInventorySlots * sizeof(int));
@@ -228,24 +228,258 @@ void Game::init() {
 	_pushedNewRoom = _pushedNewGate = -1;
 }
 
-void Game::loop(LoopSubstatus substatus, bool shouldExit) {
-	assert(getLoopSubstatus() == kOuterLoop);
-	setLoopSubstatus(substatus);
-	setExitLoop(shouldExit);
+void Game::handleOrdinaryLoop() {
+	// During the normal game-play, in particular not when
+	// running the init-scripts, enable interactivity.
+	if (_loopSubstatus != kOuterLoop) {
+		return;
+	}
 
+	// Fetch mouse coordinates
+	int x = _vm->_mouse->getPosX();
+	int y = _vm->_mouse->getPosY();
+
+	// Fetch the dedicated objects' title animation / current frame
+	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
+
+	if (_vm->_mouse->lButtonPressed()) {
+		_vm->_mouse->lButtonSet(false);
+
+		if (_currentItem != kNoItem) {
+			putItem(_currentItem, 0);
+			_currentItem = kNoItem;
+			updateOrdinaryCursor();
+		} else {
+			if (_objUnderCursor != kObjectNotFound) {
+				const GameObject *obj = &_objects[_objUnderCursor];
+
+				_vm->_mouse->cursorOff();
+				titleAnim->markDirtyRect(_vm->_screen->getSurface());
+				title->setText("");
+				_objUnderCursor = kObjectNotFound;
+
+				if (!obj->_imLook) {
+					if (obj->_lookDir == kDirectionLast) {
+						walkHero(x, y, obj->_lookDir);
+					} else {
+						walkHero(obj->_lookX, obj->_lookY, obj->_lookDir);
+					}
+				}
+
+				_vm->_script->run(obj->_program, obj->_look);
+				_vm->_mouse->cursorOn();
+			} else {
+				walkHero(x, y, kDirectionLast);
+			}
+		}
+	}
+
+	if (_vm->_mouse->rButtonPressed()) {
+		_vm->_mouse->rButtonSet(false);
+
+		if (_objUnderCursor != kObjectNotFound) {
+			const GameObject *obj = &_objects[_objUnderCursor];
+
+			if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
+				_vm->_mouse->cursorOff();
+				titleAnim->markDirtyRect(_vm->_screen->getSurface());
+				title->setText("");
+				_objUnderCursor = kObjectNotFound;
+
+				if (!obj->_imUse) {
+					if (obj->_useDir == kDirectionLast) {
+						walkHero(x, y, obj->_useDir);
+					} else {
+						walkHero(obj->_useX, obj->_useY, obj->_useDir);
+					}
+				}
+
+				_vm->_script->run(obj->_program, obj->_use);
+				_vm->_mouse->cursorOn();
+			} else {
+				walkHero(x, y, kDirectionLast);
+			}
+		} else {
+			if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
+				_vm->_mouse->cursorOff();
+				titleAnim->markDirtyRect(_vm->_screen->getSurface());
+				title->setText("");
+
+
+				_vm->_script->run(_currentRoom._program, _currentRoom._use);
+				_vm->_mouse->cursorOn();
+			} else {
+				walkHero(x, y, kDirectionLast);
+			}
+		}
+	}
+}
+
+void Game::handleInventoryLoop() {
+	if (_loopSubstatus != kOuterLoop) {
+		return;
+	}
+	if (_inventoryExit) {
+		inventoryDone();
+	}
+
+	// If we are in inventory mode, all the animations except game items'
+	// images will necessarily be paused so we can safely assume that any
+	// animation under the cursor (a value returned by
+	// AnimationManager::getTopAnimationID()) will be an item animation or
+	// an overlay, for which we check. Item animations have their IDs
+	// calculated by offseting their itemID from the ID of the last "special"
+	// animation ID. In this way, we obtain its itemID.
+	if (_animUnderCursor != kOverlayImage && _animUnderCursor != kInventorySprite) {
+		_itemUnderCursor = kInventoryItemsID - _animUnderCursor;
+	} else {
+		_itemUnderCursor = kNoItem;
+	}
+
+	// If the user pressed the left mouse button
+	if (_vm->_mouse->lButtonPressed()) {
+		_vm->_mouse->lButtonSet(false);
+
+		// If there is an inventory item under the cursor and we aren't
+		// holding any item, run its look GPL program
+		if (_itemUnderCursor != kNoItem && _currentItem == kNoItem) {
+			const GameItem *item = &_items[_itemUnderCursor];
+
+			_vm->_script->run(item->_program, item->_look);
+		// Otherwise, if we are holding an item, try to place it inside the
+		// inventory
+		} else if (_currentItem != kNoItem) {
+			// FIXME: This should place the item in the nearest inventory slot,
+			// not the first one available
+			putItem(_currentItem, 0);
+
+			// Remove it from our hands
+			_currentItem = kNoItem;
+		}
+	} else if (_vm->_mouse->rButtonPressed()) {
+		_vm->_mouse->rButtonSet(false);
+
+		// If we right-clicked outside the inventory, close it
+		if (_animUnderCursor != kInventorySprite && _itemUnderCursor == kNoItem) {
+			inventoryDone();
+
+		// If there is an inventory item under our cursor
+		} else if (_itemUnderCursor != kNoItem) {
+			// Again, we have two possibilities:
+
+			// The first is that there is no item in our hands.
+			// In that case, just take the inventory item from the inventory.
+			if (_currentItem == kNoItem) {
+				_currentItem = _itemUnderCursor;
+				removeItem(_itemUnderCursor);
+
+			// The second is that there *is* an item in our hands.
+			// In that case, run the canUse script for the inventory item
+			// which will check if the two items are combinable and, finally,
+			// run the use script for the item.
+			} else {
+				const GameItem *item = &_items[_itemUnderCursor];
+
+				if (_vm->_script->testExpression(item->_program, item->_canUse)) {
+					_vm->_script->run(item->_program, item->_use);
+				}
+			}
+			updateInventoryCursor();
+		}
+	}
+}
+
+void Game::handleDialogueLoop() {
+	if (_loopSubstatus != kInnerDuringDialogue) {
+		return;
+	}
+
+	Text *text;
+	for (int i = 0; i < kDialogueLines; ++i) {
+		text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
+
+		if (_animUnderCursor == _dialogueAnims[i]->getID()) {
+			text->setColour(kLineActiveColour);
+		} else {
+			text->setColour(kLineInactiveColour);
+		}
+	}
+
+	if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
+		setExitLoop(true);
+		_vm->_mouse->lButtonSet(false);
+		_vm->_mouse->rButtonSet(false);
+	}
+}
+
+void Game::advanceAnimationsAndTestLoopExit() {
+	// Fade the palette if requested
+	if (_fadePhase > 0 && (_vm->_system->getMillis() - _fadeTick) >= kFadingTimeUnit) {
+		_fadeTick = _vm->_system->getMillis();
+		--_fadePhase;
+		const byte *startPal = _currentRoom._palette >= 0 ? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data : NULL;
+		const byte *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette())->_data : NULL;
+		_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
+		if (_fadePhase == 0) {
+			if (_loopSubstatus == kInnerWhileFade) {
+				setExitLoop(true);
+			}
+			// Rewrite the palette index of the current room.  This
+			// is necessary when two fadings are called after each
+			// other, such as in the intro.
+			_currentRoom._palette = getScheduledPalette();
+		}
+	}
+
+	// Handle character talking (if there is any)
+	if (_loopSubstatus == kInnerWhileTalk) {
+		// If the current speech text has expired or the user clicked a mouse button,
+		// advance to the next line of text
+		if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
+			(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
+
+			setExitLoop(true);
+		}
+		_vm->_mouse->lButtonSet(false);
+		_vm->_mouse->rButtonSet(false);
+	}
+
+	// A script has scheduled changing the room (either triggered
+	// by the user clicking on something or run at the end of a
+	// gate script in the intro).
+	if ((_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate) && _newRoom != getRoomNum()) {
+		setExitLoop(true);
+	}
+
+	// This returns true if we got a signal to quit the game
+	if (shouldQuit()) {
+		setExitLoop(true);
+	}
+
+	// Advance animations (this may also call setExitLoop(true) in the
+	// callbacks) and redraw screen
+	_vm->_anims->drawScene(_vm->_screen->getSurface());
+	_vm->_screen->copyToScreen();
+	_vm->_system->delayMillis(20);
+}
+
+void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 	// Can run both as an outer and inner loop.  In both mode it updates
 	// the screen according to the timer.  It the outer mode (kOuterLoop)
 	// it also reacts to user events.  In the inner mode (all kInner*
 	// enums), the loop runs until its stopping condition, possibly
 	// stopping earlier if the user interrupts it, however no other user
 	// intervention is allowed.
-	Surface *surface = _vm->_screen->getSurface();
+	assert(getLoopSubstatus() == kOuterLoop);
+	setLoopSubstatus(substatus);
+	setExitLoop(shouldExit);
 
 	// Always enter the first pass of the loop, even if shouldExitLoop() is
 	// true, exactly to ensure to make at least one pass.
 	do {
-	debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d",
-		_loopStatus, _loopSubstatus);
+		debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d",
+			_loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
 		if (isReloaded()) {
@@ -255,232 +489,37 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 			break;
 		}
 
-		if (_fadePhase > 0 && (_vm->_system->getMillis() - _fadeTick) >= kFadingTimeUnit) {
-			_fadeTick = _vm->_system->getMillis();
-			--_fadePhase;
-			const byte *startPal = _currentRoom._palette >= 0 ? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data : NULL;
-			const byte *endPal = getScheduledPalette() >= 0 ? _vm->_paletteArchive->getFile(getScheduledPalette())->_data : NULL;
-			_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, _fadePhases - _fadePhase, _fadePhases);
-			if (_loopSubstatus == kInnerWhileFade && _fadePhase == 0) {
-				setExitLoop(true);
-				// Rewrite the palette index of the current
-				// room.  This is necessary when two fadings
-				// are called after each other, such as in the
-				// intro.
-				_currentRoom._palette = getScheduledPalette();
-			}
-		}
-
-		// Fetch mouse coordinates
-		int x = _vm->_mouse->getPosX();
-		int y = _vm->_mouse->getPosY();
-
-		if (_loopStatus == kStatusDialogue && _loopSubstatus == kInnerDuringDialogue) {
-			Text *text;
-			for (int i = 0; i < kDialogueLines; ++i) {
-				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getCurrentFrame());
-
-				if (_animUnderCursor == _dialogueAnims[i]->getID()) {
-					text->setColour(kLineActiveColour);
-				} else {
-					text->setColour(kLineInactiveColour);
-				}
-			}
-
-			if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
-				setExitLoop(true);
-				_vm->_mouse->lButtonSet(false);
-				_vm->_mouse->rButtonSet(false);
-			}
-		}
-
 		if (_vm->_mouse->isCursorOn()) {
-			// Fetch the dedicated objects' title animation / current frame
-			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
-			Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
+			// Find animation under cursor and the game object
+			// corresponding to it
+			int x = _vm->_mouse->getPosX();
+			int y = _vm->_mouse->getPosY();
+			_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+			_objUnderCursor = getObjectWithAnimation(_animUnderCursor);
+			debugC(5, kDraciLogicDebugLevel, "Anim under cursor: %d", _animUnderCursor);
 
-			updateCursor();
-			updateTitle();
-
-			// During the normal game-play, in particular not when
-			// running the init-scripts, enable interactivity.
-			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kOuterLoop) {
-				if (_vm->_mouse->lButtonPressed()) {
-					_vm->_mouse->lButtonSet(false);
-
-					if (_currentItem != kNoItem) {
-						putItem(_currentItem, 0);
-						_currentItem = kNoItem;
-						updateCursor();
-					} else {
-						if (_objUnderCursor != kObjectNotFound) {
-							const GameObject *obj = &_objects[_objUnderCursor];
-
-							_vm->_mouse->cursorOff();
-							titleAnim->markDirtyRect(surface);
-							title->setText("");
-							_objUnderCursor = kObjectNotFound;
-
-							if (!obj->_imLook) {
-								if (obj->_lookDir == kDirectionLast) {
-									walkHero(x, y, obj->_lookDir);
-								} else {
-									walkHero(obj->_lookX, obj->_lookY, obj->_lookDir);
-								}
-							}
-
-							_vm->_script->run(obj->_program, obj->_look);
-							_vm->_mouse->cursorOn();
-						} else {
-							walkHero(x, y, kDirectionLast);
-						}
-					}
-				}
-
-				if (_vm->_mouse->rButtonPressed()) {
-					_vm->_mouse->rButtonSet(false);
-
-					if (_objUnderCursor != kObjectNotFound) {
-						const GameObject *obj = &_objects[_objUnderCursor];
-
-						if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
-							_vm->_mouse->cursorOff();
-							titleAnim->markDirtyRect(surface);
-							title->setText("");
-							_objUnderCursor = kObjectNotFound;
-
-							if (!obj->_imUse) {
-								if (obj->_useDir == kDirectionLast) {
-									walkHero(x, y, obj->_useDir);
-								} else {
-									walkHero(obj->_useX, obj->_useY, obj->_useDir);
-								}
-							}
-
-							_vm->_script->run(obj->_program, obj->_use);
-							_vm->_mouse->cursorOn();
-						} else {
-							walkHero(x, y, kDirectionLast);
-						}
-					} else {
-						if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
-							_vm->_mouse->cursorOff();
-							titleAnim->markDirtyRect(surface);
-							title->setText("");
-
-
-							_vm->_script->run(_currentRoom._program, _currentRoom._use);
-							_vm->_mouse->cursorOn();
-						} else {
-							walkHero(x, y, kDirectionLast);
-						}
-					}
-				}
+			switch (_loopStatus) {
+			case kStatusOrdinary:
+				updateOrdinaryCursor();
+				updateTitle(x, y);
+				handleOrdinaryLoop();
+				break;
+			case kStatusInventory:
+				updateInventoryCursor();
+				updateTitle(x, y);
+				handleInventoryLoop();
+				break;
+			case kStatusDialogue:
+				handleDialogueLoop();
+				break;
+			case kStatusGate: ;
+				// cannot happen when isCursonOn; added for completeness
 			}
 
-			if (_loopStatus == kStatusInventory && _loopSubstatus == kOuterLoop) {
-				if (_inventoryExit) {
-					inventoryDone();
-				}
-
-				// If we are in inventory mode, all the animations except game items'
-				// images will necessarily be paused so we can safely assume that any
-				// animation under the cursor (a value returned by
-				// AnimationManager::getTopAnimationID()) will be an item animation or
-				// an overlay, for which we check. Item animations have their IDs
-				// calculated by offseting their itemID from the ID of the last "special"
-				// animation ID. In this way, we obtain its itemID.
-				if (_animUnderCursor != kOverlayImage && _animUnderCursor != kInventorySprite) {
-					_itemUnderCursor = kInventoryItemsID - _animUnderCursor;
-				} else {
-					_itemUnderCursor = kNoItem;
-				}
-
-				// If the user pressed the left mouse button
-				if (_vm->_mouse->lButtonPressed()) {
-					_vm->_mouse->lButtonSet(false);
-
-					// If there is an inventory item under the cursor and we aren't
-					// holding any item, run its look GPL program
-					if (_itemUnderCursor != kNoItem && _currentItem == kNoItem) {
-						const GameItem *item = &_items[_itemUnderCursor];
-
-						_vm->_script->run(item->_program, item->_look);
-					// Otherwise, if we are holding an item, try to place it inside the
-					// inventory
-					} else if (_currentItem != kNoItem) {
-						// FIXME: This should place the item in the nearest inventory slot,
-						// not the first one available
-						putItem(_currentItem, 0);
-
-						// Remove it from our hands
-						_currentItem = kNoItem;
-					}
-				} else if (_vm->_mouse->rButtonPressed()) {
-					_vm->_mouse->rButtonSet(false);
-
-					// If we right-clicked outside the inventory, close it
-					if (_animUnderCursor != kInventorySprite && _itemUnderCursor == kNoItem) {
-						inventoryDone();
-
-					// If there is an inventory item under our cursor
-					} else if (_itemUnderCursor != kNoItem) {
-						// Again, we have two possibilities:
-
-						// The first is that there is no item in our hands.
-						// In that case, just take the inventory item from the inventory.
-						if (_currentItem == kNoItem) {
-							_currentItem = _itemUnderCursor;
-							removeItem(_itemUnderCursor);
-
-						// The second is that there *is* an item in our hands.
-						// In that case, run the canUse script for the inventory item
-						// which will check if the two items are combinable and, finally,
-						// run the use script for the item.
-						} else {
-							const GameItem *item = &_items[_itemUnderCursor];
-
-							if (_vm->_script->testExpression(item->_program, item->_canUse)) {
-								_vm->_script->run(item->_program, item->_use);
-							}
-						}
-						updateCursor();
-					}
-				}
-			}
+			// TODO: Handle main menu
 		}
 
-		debugC(5, kDraciLogicDebugLevel, "Anim under cursor: %d", _animUnderCursor);
-
-		// Handle character talking (if there is any)
-		if (_loopSubstatus == kInnerWhileTalk) {
-			// If the current speech text has expired or the user clicked a mouse button,
-			// advance to the next line of text
-			if ((getEnableSpeedText() && (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed())) ||
-				(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
-
-				setExitLoop(true);
-			}
-			_vm->_mouse->lButtonSet(false);
-			_vm->_mouse->rButtonSet(false);
-		}
-
-		// A script has scheduled changing the room (either triggered
-		// by the user clicking on something or run at the end of a
-		// gate script in the intro).
-		if ((_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate) && _newRoom != getRoomNum()) {
-			setExitLoop(true);
-		}
-
-		// This returns true if we got a signal to quit the game
-		if (shouldQuit()) {
-			setExitLoop(true);
-		}
-
-		// Advance animations and redraw screen
-		_vm->_anims->drawScene(surface);
-		_vm->_screen->copyToScreen();
-		_vm->_system->delayMillis(20);
+		advanceAnimationsAndTestLoopExit();
 
 	} while (!shouldExitLoop());
 
@@ -488,60 +527,9 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 	setExitLoop(false);
 }
 
-void Game::updateCursor() {
+void Game::updateOrdinaryCursor() {
 	// Fetch mouse coordinates
-	int x = _vm->_mouse->getPosX();
-	int y = _vm->_mouse->getPosY();
-
-	// Find animation under cursor
-	_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-
-	// If we are inside a dialogue, all we need is to update the ID of the current
-	// animation under the cursor. This enables us to update the currently selected
-	// dialogue line (by recolouring it) but still leave the cursor unupdated when
-	// over background objects.
-	if (_loopStatus == kStatusDialogue)
-		return;
-
 	bool mouseChanged = false;
-
-	// If we are in inventory mode, we do a different kind of updating that handles
-	// inventory items and return early
-	if (_loopStatus == kStatusInventory && _loopSubstatus == kOuterLoop) {
-		if (_itemUnderCursor != kNoItem) {
-			const GameItem *item = &_items[_itemUnderCursor];
-
-			if (_vm->_script->testExpression(item->_program, item->_canUse)) {
-				if (_currentItem == kNoItem) {
-					_vm->_mouse->setCursorType(kHighlightedCursor);
-				} else {
-					_vm->_mouse->loadItemCursor(_currentItem, true);
-				}
-				mouseChanged = true;
-			}
-		}
-		if (!mouseChanged) {
-			if (_currentItem == kNoItem) {
-				_vm->_mouse->setCursorType(kNormalCursor);
-			} else {
-				_vm->_mouse->loadItemCursor(_currentItem, false);
-			}
-		}
-
-		return;
-	}
-
-	// Find the game object under the cursor
-	// (to be more precise, one that corresponds to the animation under the cursor)
-	int curObject = getObjectWithAnimation(_animUnderCursor);
-
-	// Update the game object under the cursor
-	_objUnderCursor = curObject;
-	if (_objUnderCursor != _oldObjUnderCursor) {
-		_oldObjUnderCursor = _objUnderCursor;
-	}
-
-	// TODO: Handle main menu
 
 	// If there is no game object under the cursor, try using the room itself
 	if (_objUnderCursor == kObjectNotFound) {
@@ -587,18 +575,35 @@ void Game::updateCursor() {
 	}
 }
 
-void Game::updateTitle() {
-	// If we are inside a dialogue, don't update titles
-	if (_loopStatus == kStatusDialogue)
-		return;
+void Game::updateInventoryCursor() {
+	// Fetch mouse coordinates
+	bool mouseChanged = false;
 
+	if (_itemUnderCursor != kNoItem) {
+		const GameItem *item = &_items[_itemUnderCursor];
+
+		if (_vm->_script->testExpression(item->_program, item->_canUse)) {
+			if (_currentItem == kNoItem) {
+				_vm->_mouse->setCursorType(kHighlightedCursor);
+			} else {
+				_vm->_mouse->loadItemCursor(_currentItem, true);
+			}
+			mouseChanged = true;
+		}
+	}
+	if (!mouseChanged) {
+		if (_currentItem == kNoItem) {
+			_vm->_mouse->setCursorType(kNormalCursor);
+		} else {
+			_vm->_mouse->loadItemCursor(_currentItem, false);
+		}
+	}
+}
+
+void Game::updateTitle(int x, int y) {
 	// Fetch current surface and height of the small font (used for titles)
 	Surface *surface = _vm->_screen->getSurface();
 	const int smallFontHeight = _vm->_smallFont->getFontHeight();
-
-	// Fetch mouse coordinates
-	int x = _vm->_mouse->getPosX();
-	int y = _vm->_mouse->getPosY();
 
 	// Fetch the dedicated objects' title animation / current frame
 	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
@@ -752,8 +757,6 @@ void Game::inventoryDone() {
 
 	// Reset item under cursor
 	_itemUnderCursor = kNoItem;
-
-	// TODO: Handle main menu
 }
 
 void Game::inventoryDraw() {
@@ -848,8 +851,6 @@ int Game::dialogueDraw() {
 		dialogueLine = reinterpret_cast<Text *>(anim->getCurrentFrame());
 		dialogueLine->setText("");
 	}
-
-	_oldObjUnderCursor = kObjectNotFound;
 
 	if (_dialogueLinesNum > 1) {
 		// Call the game loop to enable interactivity until the user
