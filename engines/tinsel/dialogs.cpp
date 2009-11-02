@@ -4005,8 +4005,8 @@ void OpenMenu(CONFTYPE menuType) {
 		}
 #if 1
 		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
-		controlBox[hackOffset].ival = &_vm->_config->_textSpeed;
-		controlBox[hackOffset+1].ival = &_vm->_config->_useSubtitles;
+		ciSubtitles.Box[hackOffset].ival = &_vm->_config->_textSpeed;
+		ciSubtitles.Box[hackOffset+1].ival = &_vm->_config->_useSubtitles;
 #endif
 
 		SetMenuGlobals(&ciSubtitles);
