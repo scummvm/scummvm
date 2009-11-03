@@ -958,6 +958,30 @@ void Game::redrawWalkingPath(int id, byte colour, const WalkingPath &path) {
 	anim->markDirtyRect(_vm->_screen->getSurface());
 }
 
+void Game::positionHero(const Common::Point &p, SightDirection dir) {
+	debugC(3, kDraciLogicDebugLevel, "Jump to x: %d y: %d", p.x, p.y);
+
+	_hero = p;
+	Movement movement = kStopRight;
+	switch (dir) {
+	case kDirectionLeft:
+		movement = kStopLeft;
+		break;
+	case kDirectionRight:
+		movement = kStopRight;
+		break;
+	default: {
+		const GameObject *dragon = getObject(kDragonObject);
+		const int anim_index = playingObjectAnimation(dragon);
+		if (anim_index >= 0) {
+			movement = static_cast<Movement> (anim_index);
+		}
+		break;
+	}
+	}
+	playHeroAnimation(movement);
+}
+
 void Game::walkHero(int x, int y, SightDirection dir) {
 	// Needed for the map room with empty walking map.  For some reason,
 	// findNearestWalkable() takes several seconds with 100% CPU to finish
@@ -983,25 +1007,7 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	_walkingState.setPath(_hero, target, _walkingMap.getDelta(), obliquePath);
 
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
-	_hero = target;
-	Movement movement = kStopRight;
-	switch (dir) {
-	case kDirectionLeft:
-		movement = kStopLeft;
-		break;
-	case kDirectionRight:
-		movement = kStopRight;
-		break;
-	default: {
-		const GameObject *dragon = getObject(kDragonObject);
-		const int anim_index = playingObjectAnimation(dragon);
-		if (anim_index >= 0) {
-			movement = static_cast<Movement> (anim_index);
-		}
-		break;
-	}
-	}
-	playHeroAnimation(movement);
+	positionHero(target, dir);
 }
 
 void Game::loadItem(int itemID) {

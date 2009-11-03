@@ -59,7 +59,7 @@ void Script::setupCommandList() {
 		{ 9,  4, "ResetDialogueFrom", 	0, { 0 }, &Script::resetDialogueFrom },
 		{ 9,  5, "ResetBlock", 			1, { 3 }, &Script::resetBlock },
 		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, &Script::walkOn },
-		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
+		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::stayOn },
 		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOnPlay },
 		{ 11, 1, "LoadPalette", 		1, { 2 }, &Script::loadPalette },
 		{ 12, 1, "SetPalette", 			0, { 0 }, &Script::setPalette },
@@ -647,6 +647,20 @@ void Script::execUse(Common::Queue<int> &params) {
 	run(obj->_program, obj->_use);
 }
 
+void Script::stayOn(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int x = params.pop();
+	int y = params.pop();
+	SightDirection dir = static_cast<SightDirection> (params.pop());
+
+	// Jumps into the given position regardless of the walking map.
+	_vm->_game->positionHero(Common::Point(x, y), dir);
+	_vm->_game->clearPath();
+}
+
 void Script::walkOn(Common::Queue<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
@@ -656,6 +670,8 @@ void Script::walkOn(Common::Queue<int> &params) {
 	int y = params.pop();
 	SightDirection dir = static_cast<SightDirection> (params.pop());
 
+	// Constructs an optimal path and starts walking there.  No callback
+	// will be called at the end nor will the loop-body exit.
 	_vm->_game->walkHero(x, y, dir);
 }
 

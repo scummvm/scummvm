@@ -99,6 +99,7 @@ public:
 	WalkingState() : _path() {}
 	~WalkingState() {}
 
+	void clearPath() { _path.clear(); }
 	void setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &delta, const WalkingPath& path);
 	const WalkingPath& getPath() const { return _path; }
 

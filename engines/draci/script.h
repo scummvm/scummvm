@@ -121,6 +121,7 @@ private:
 	void execInit(Common::Queue<int> &params);
 	void execLook(Common::Queue<int> &params);
 	void execUse(Common::Queue<int> &params);
+	void stayOn(Common::Queue<int> &params);
 	void walkOn(Common::Queue<int> &params);
 	void walkOnPlay(Common::Queue<int> &params);
 	void play(Common::Queue<int> &params);
