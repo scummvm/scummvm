@@ -43,9 +43,8 @@
 namespace Sci {
 
 void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	GuiResourceId viewId = GET_SEL32V(segMan, object, view);
-	uint16 signal = GET_SEL32V(segMan, object, signal);
+	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
+	uint16 signal = GET_SEL32V(s->_segMan, object, signal);
 	int16 loopNo;
 	int16 maxLoops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
@@ -83,7 +82,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 	if ((loopNo > 1) && (maxLoops < 4))
 		return;
 
-	PUT_SEL32V(segMan, object, loop, loopNo);
+	PUT_SEL32V(s->_segMan, object, loop, loopNo);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -410,9 +409,8 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(segMan, object, view);
+	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
 	int16 loopCount = s->_gui->getLoopCount(viewId);
 
 	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", viewId, loopCount);
@@ -421,10 +419,9 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(segMan, object, view);
-	int16 loopNo = GET_SEL32V(segMan, object, loop);
+	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
+	int16 loopNo = GET_SEL32V(s->_segMan, object, loop);
 	int16 celCount = s->_gui->getCelCount(viewId, loopNo);
 
 	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", viewId, loopNo, celCount);
@@ -685,13 +682,12 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
-	SegManager *segMan = s->_segMan;
-	int16 type = GET_SEL32V(segMan, controlObject, type);
-	int16 style = GET_SEL32V(segMan, controlObject, state);
-	int16 x = GET_SEL32V(segMan, controlObject, nsLeft);
-	int16 y = GET_SEL32V(segMan, controlObject, nsTop);
-	GuiResourceId fontId = GET_SEL32V(segMan, controlObject, font);
-	reg_t textReference = GET_SEL32(segMan, controlObject, text);
+	int16 type = GET_SEL32V(s->_segMan, controlObject, type);
+	int16 style = GET_SEL32V(s->_segMan, controlObject, state);
+	int16 x = GET_SEL32V(s->_segMan, controlObject, nsLeft);
+	int16 y = GET_SEL32V(s->_segMan, controlObject, nsTop);
+	GuiResourceId fontId = GET_SEL32V(s->_segMan, controlObject, font);
+	reg_t textReference = GET_SEL32(s->_segMan, controlObject, text);
 	Common::String text;
 	Common::Rect rect;
 	GuiTextAlignment alignment;
@@ -705,10 +701,10 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	const char **listEntries = NULL;
 	bool isAlias = false;
 
-	kGraphCreateRect(x, y, GET_SEL32V(segMan, controlObject, nsRight), GET_SEL32V(segMan, controlObject, nsBottom), &rect);
+	kGraphCreateRect(x, y, GET_SEL32V(s->_segMan, controlObject, nsRight), GET_SEL32V(s->_segMan, controlObject, nsBottom), &rect);
 
 	if (!textReference.isNull())
-		text = segMan->getString(textReference);
+		text = s->_segMan->getString(textReference);
 
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
@@ -717,25 +713,25 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
-		alignment = GET_SEL32V(segMan, controlObject, mode);
+		alignment = GET_SEL32V(s->_segMan, controlObject, mode);
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
-		mode = GET_SEL32V(segMan, controlObject, mode);
-		maxChars = GET_SEL32V(segMan, controlObject, max);
-		cursorPos = GET_SEL32V(segMan, controlObject, cursor);
+		mode = GET_SEL32V(s->_segMan, controlObject, mode);
+		maxChars = GET_SEL32V(s->_segMan, controlObject, max);
+		cursorPos = GET_SEL32V(s->_segMan, controlObject, cursor);
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d\n", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		s->_gui->drawControlTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
-		viewId = GET_SEL32V(segMan, controlObject, view);
+		viewId = GET_SEL32V(s->_segMan, controlObject, view);
 		{
-			int l = GET_SEL32V(segMan, controlObject, loop);
+			int l = GET_SEL32V(s->_segMan, controlObject, loop);
 			loopNo = (l & 0x80) ? l - 256 : l;
-			int c = GET_SEL32V(segMan, controlObject, cel);
+			int c = GET_SEL32V(s->_segMan, controlObject, cel);
 			celNo = (c & 0x80) ? c - 256 : c;
 		}
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y - 1);
@@ -747,18 +743,18 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		if (type == SCI_CONTROLS_TYPE_LIST_ALIAS)
 			isAlias = true;
 
-		maxChars = GET_SEL32V(segMan, controlObject, x); // max chars per entry
+		maxChars = GET_SEL32V(s->_segMan, controlObject, x); // max chars per entry
 		// NOTE: most types of pointer dereferencing don't like odd offsets
 		if (maxChars & 1) {
 			warning("List control with odd maxChars %d. This is not yet implemented for all types of segments", maxChars);
 		}
-		cursorOffset = GET_SEL32V(segMan, controlObject, cursor);
+		cursorOffset = GET_SEL32V(s->_segMan, controlObject, cursor);
 		if (s->_kernel->_selectorCache.topString != -1) {
 			// Games from early SCI1 onwards use topString
-			upperOffset = GET_SEL32V(segMan, controlObject, topString);
+			upperOffset = GET_SEL32V(s->_segMan, controlObject, topString);
 		} else {
 			// Earlier games use lsTop
-			upperOffset = GET_SEL32V(segMan, controlObject, lsTop);
+			upperOffset = GET_SEL32V(s->_segMan, controlObject, lsTop);
 		}
 
 		// Count string entries in NULL terminated string list
