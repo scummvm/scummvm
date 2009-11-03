@@ -420,4 +420,27 @@ bool WalkingMap::managedToOblique(WalkingPath *path) const {
 	return improved;
 }
 
+void WalkingState::setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &delta, const WalkingPath& path) {
+	_path = path;
+	if (!_path.size()) {
+		return;
+	}
+	if (_path.size() == 1 && p2 != p1) {
+		// Although the first and last point belong to the same
+		// rectangle and therefore the computed path is of length 1,
+		// they are different pixels.
+		_path.push_back(p2);
+	}
+
+	// The first and last point are available with pixel accurracy.
+	_path[0] = p1;
+	_path[_path.size() - 1] = p2;
+	// The intermediate points are given with map granularity; convert them
+	// to pixels.
+	for (uint i = 1; i < _path.size() - 1; ++i) {
+		_path[i].x *= delta.x;
+		_path[i].y *= delta.y;
+	}
+}
+
 }

@@ -51,6 +51,7 @@ public:
 	bool findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const;
 	void obliquePath(const WalkingPath& path, WalkingPath *obliquedPath);
 	Sprite *newOverlayFromPath(const WalkingPath &path, byte colour) const;
+	Common::Point getDelta() const { return Common::Point(_deltaX, _deltaY); }
 
 private:
 	int _realWidth, _realHeight;
@@ -98,7 +99,7 @@ public:
 	WalkingState() : _path() {}
 	~WalkingState() {}
 
-	void setPath(const WalkingPath& path) { _path = path; }
+	void setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &delta, const WalkingPath& path);
 	const WalkingPath& getPath() const { return _path; }
 
 private:

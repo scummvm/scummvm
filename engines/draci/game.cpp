@@ -980,7 +980,7 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
 	}
 
-	_walkingState.setPath(obliquePath);
+	_walkingState.setPath(_hero, target, _walkingMap.getDelta(), obliquePath);
 
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
 	_hero = target;
@@ -1097,21 +1097,20 @@ void Game::loadRoom(int roomNum) {
 		_currentRoom._gates.push_back(roomReader.readSint16LE());
 	}
 
-	// Load the walking map
-	loadWalkingMap(getMapID());
-
 	// Add overlays for the walking map and shortest/obliqued paths.
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 256, _vm->_showWalkingMap);
-	Sprite *ov = _walkingMap.newOverlayFromMap(kWalkingMapOverlayColour);
-	map->addFrame(ov, NULL);
+	map->addFrame(NULL, NULL);	// rewritten below by loadWalkingMap()
 
 	Animation *sPath = _vm->_anims->addAnimation(kWalkingShortestPathOverlay, 257, _vm->_showWalkingMap);
 	Animation *oPath = _vm->_anims->addAnimation(kWalkingObliquePathOverlay, 258, _vm->_showWalkingMap);
 	WalkingPath emptyPath;
-	ov = _walkingMap.newOverlayFromPath(emptyPath, 0);
+	Sprite *ov = _walkingMap.newOverlayFromPath(emptyPath, 0);
 	sPath->addFrame(ov, NULL);
 	ov = _walkingMap.newOverlayFromPath(emptyPath, 0);
 	oPath->addFrame(ov, NULL);
+
+	// Load the walking map
+	loadWalkingMap(getMapID());
 
 	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
@@ -1254,6 +1253,12 @@ void Game::loadWalkingMap(int mapID) {
 	const BAFile *f;
 	f = _vm->_walkingMapsArchive->getFile(mapID);
 	_walkingMap.load(f->_data, f->_length);
+
+	Animation *anim = _vm->_anims->getAnimation(kWalkingMapOverlay);
+	Sprite *ov = _walkingMap.newOverlayFromMap(kWalkingMapOverlayColour);
+	delete anim->getFrame(0);
+	anim->replaceFrame(0, ov, NULL);
+	anim->markDirtyRect(_vm->_screen->getSurface());
 }
 
 void Game::loadOverlays() {
