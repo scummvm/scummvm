@@ -33,19 +33,18 @@ class SciGuiFont;
 class SciGuiText;
 class SciGuiControls {
 public:
-	SciGuiControls(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text);
+	SciGuiControls(SciGuiGfx *gfx, SciGuiText *text);
 	~SciGuiControls();
 
 	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
-	void TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos);
+	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
 	void TexteditCursorErase();
-	void TexteditChange(reg_t controlObject, reg_t eventObject);
+	void TexteditChange(SegManager *segMan, reg_t controlObject, reg_t eventObject);
 
 private:
 	void init();
 	void TexteditSetBlinkTime();
 
-	SegManager *_segMan;
 	SciGuiGfx *_gfx;
 	SciGuiText *_text;
 

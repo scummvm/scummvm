@@ -36,8 +36,8 @@
 
 namespace Sci {
 
-SciGuiControls::SciGuiControls(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text)
-	: _segMan(segMan), _gfx(gfx), _text(text) {
+SciGuiControls::SciGuiControls(SciGuiGfx *gfx, SciGuiText *text)
+	: _gfx(gfx), _text(text) {
 	init();
 }
 
@@ -52,7 +52,6 @@ const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
 void SciGuiControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
-	//SegManager *segMan = _s->_segMan;
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = _text->GetFontId();
 	int16 oldPenColor = _gfx->_curPort->penClr;
@@ -107,7 +106,7 @@ void SciGuiControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChar
 	_text->SetFont(oldFontId);
 }
 
-void SciGuiControls::TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos) {
+void SciGuiControls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
 	int16 textWidth, i;
 	if (!_texteditCursorVisible) {
 		textWidth = 0;
@@ -138,10 +137,10 @@ void SciGuiControls::TexteditSetBlinkTime() {
 	_texteditBlinkTime = g_system->getMillis() + (30 * 1000 / 60);
 }
 
-void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
-	uint16 cursorPos = GET_SEL32V(_segMan, controlObject, cursor);
-	uint16 maxChars = GET_SEL32V(_segMan, controlObject, max);
-	reg_t textReference = GET_SEL32(_segMan, controlObject, text);
+void SciGuiControls::TexteditChange(SegManager *segMan, reg_t controlObject, reg_t eventObject) {
+	uint16 cursorPos = GET_SEL32V(segMan, controlObject, cursor);
+	uint16 maxChars = GET_SEL32V(segMan, controlObject, max);
+	reg_t textReference = GET_SEL32(segMan, controlObject, text);
 	Common::String text;
 	uint16 textSize, eventType, eventKey;
 	bool textChanged = false;
@@ -149,18 +148,18 @@ void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (textReference.isNull())
 		error("kEditControl called on object that doesnt have a text reference");
-	text = _segMan->getString(textReference);
+	text = segMan->getString(textReference);
 
 	if (!eventObject.isNull()) {
 		textSize = text.size();
-		eventType = GET_SEL32V(_segMan, eventObject, type);
+		eventType = GET_SEL32V(segMan, eventObject, type);
 
 		switch (eventType) {
 		case SCI_EVT_MOUSE_PRESS:
 			// TODO: Implement mouse support for cursor change
 			break;
 		case SCI_EVT_KEYBOARD:
-			eventKey = GET_SEL32V(_segMan, eventObject, message);
+			eventKey = GET_SEL32V(segMan, eventObject, message);
 			switch (eventKey) {
 			case SCI_K_BACKSPACE:
 				if (cursorPos > 0) {
@@ -204,9 +203,9 @@ void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (textChanged) {
 		GuiResourceId oldFontId = _text->GetFontId();
-		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, font);
-		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, nsLeft), GET_SEL32V(_segMan, controlObject, nsTop),
-							  GET_SEL32V(_segMan, controlObject, nsRight), GET_SEL32V(_segMan, controlObject, nsBottom));
+		GuiResourceId fontId = GET_SEL32V(segMan, controlObject, font);
+		rect = Common::Rect(GET_SEL32V(segMan, controlObject, nsLeft), GET_SEL32V(segMan, controlObject, nsTop),
+							  GET_SEL32V(segMan, controlObject, nsRight), GET_SEL32V(segMan, controlObject, nsBottom));
 		TexteditCursorErase();
 		_gfx->EraseRect(rect);
 		_text->Box(text.c_str(), 0, rect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
@@ -215,7 +214,7 @@ void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		TexteditCursorDraw(rect, text.c_str(), cursorPos);
 		_text->SetFont(oldFontId);
 		// Write back string
-		_segMan->strcpy(textReference, text.c_str());
+		segMan->strcpy(textReference, text.c_str());
 	} else {
 		if (g_system->getMillis() >= _texteditBlinkTime) {
 			_gfx->InvertRect(_texteditCursorRect);
@@ -225,7 +224,7 @@ void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
-	PUT_SEL32V(_segMan, controlObject, cursor, cursorPos);
+	PUT_SEL32V(segMan, controlObject, cursor, cursorPos);
 }
 
 } // End of namespace Sci

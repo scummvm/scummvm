@@ -61,7 +61,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
 	_windowMgr = new SciGuiWindowMgr(this, _screen, _gfx, _text);
-	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
+	_controls = new SciGuiControls(_gfx, _text);
 	_menu = new SciGuiMenu(_gfx, _text, _screen);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
@@ -438,7 +438,7 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 	switch (controlType) {
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
 		// Only process textedit controls in here
-		_controls->TexteditChange(controlObject, eventObject);
+		_controls->TexteditChange(_s->_segMan, controlObject, eventObject);
 		return;
 	}
 }
