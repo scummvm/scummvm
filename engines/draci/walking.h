@@ -68,6 +68,9 @@ private:
 	int pointsBetween(const Common::Point &p1, const Common::Point &p2) const;
 	Common::Point interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) const;
 	bool lineIsCovered(const Common::Point &p1, const Common::Point &p2) const;
+
+	// Returns true if the number of vertices on the path was decreased.
+	bool managedToOblique(WalkingPath *path) const;
 };
 
 /*

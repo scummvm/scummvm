@@ -303,53 +303,10 @@ void WalkingMap::obliquePath(const WalkingPath& path, WalkingPath *obliquedPath)
 		}
 	}
 
-	// Making the path oblique works as follows.  If the path has at least
-	// 3 remaining vertices, we try to oblique the L-shaped path between
-	// them.  First we try to connect the 1st and 3rd vertex directly (if
-	// all points on the line between them are walkable) and then we try to
-	// walk on both edges towards the 2nd vertex in parallel and try to
-	// find a shortcut (replacing the 2nd vertex by this mid-point).  If
-	// either of those attempts succeeds, we have shortned the path.  We
-	// update the path vertices and continue with the next segment.
-	for (uint head = 2; head < obliquedPath->size(); ++head) {
-		const Common::Point &v1 = (*obliquedPath)[head-2];
-		const Common::Point &v2 = (*obliquedPath)[head-1];
-		const Common::Point &v3 = (*obliquedPath)[head];
-		const int points12 = pointsBetween(v1, v2);
-		const int points32 = pointsBetween(v3, v2);
-		// Find the first point p on each edge [v1, v2] and [v3, v2]
-		// such that the edge [p, the third vertex] is covered.
-		// Ideally we would like p \in {v1, v3} and the closer the
-		// better.  The last point p = v2 should always succeed.
-		int first12, first32;
-		for (first12 = 0; first12 < points12; ++first12) {
-			Common::Point midPoint = interpolate(v1, v2, first12, points12);
-			if (lineIsCovered(midPoint, v3)) {
-				break;
-			}
-		}
-		if (first12 == 0) {
-			// Can completely remove the vertex.  Head stays the
-			// same after -- and ++.
-			obliquedPath->remove_at(--head);
-			continue;
-		}
-		for (first32 = 0; first32 < points32; ++first32) {
-			Common::Point midPoint = interpolate(v3, v2, first32, points32);
-			if (lineIsCovered(midPoint, v1)) {
-				break;
-			}
-		}
-		if (first12 < points12 && first32 >= points32 + MIN(first12 - points12, 0)) {
-			// There is such a point on the first edge and the
-			// second edge has either not succeeded or we gain more
-			// by cutting this edge than the other one.
-			(*obliquedPath)[head-1] = interpolate(v1, v2, first12, points12);
-			// After replacing the 2nd vertex, let head move on.
-		} else if (first32 < points32) {
-			(*obliquedPath)[head-1] = interpolate(v3, v2, first32, points32);
-		}
-	}
+	// Repeatedly oblique the path until it cannot be improved.  This
+	// process is finite, because after each success the number of vertices
+	// goes down.
+	while (managedToOblique(obliquedPath)) {}
 }
 
 Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte colour) const {
@@ -407,6 +364,60 @@ bool WalkingMap::lineIsCovered(const Common::Point &p1, const Common::Point &p2)
 		}
 	}
 	return true;
+}
+
+bool WalkingMap::managedToOblique(WalkingPath *path) const {
+	bool improved = false;
+
+	// Making the path oblique works as follows.  If the path has at least
+	// 3 remaining vertices, we try to oblique the L-shaped path between
+	// them.  First we try to connect the 1st and 3rd vertex directly (if
+	// all points on the line between them are walkable) and then we try to
+	// walk on both edges towards the 2nd vertex in parallel and try to
+	// find a shortcut (replacing the 2nd vertex by this mid-point).  If
+	// either of those attempts succeeds, we have shortned the path.  We
+	// update the path vertices and continue with the next segment.
+	for (uint head = 2; head < path->size(); ++head) {
+		const Common::Point &v1 = (*path)[head-2];
+		const Common::Point &v2 = (*path)[head-1];
+		const Common::Point &v3 = (*path)[head];
+		const int points12 = pointsBetween(v1, v2);
+		const int points32 = pointsBetween(v3, v2);
+		// Find the first point p on each edge [v1, v2] and [v3, v2]
+		// such that the edge [p, the third vertex] is covered.
+		// Ideally we would like p \in {v1, v3} and the closer the
+		// better.  The last point p = v2 should always succeed.
+		int first12, first32;
+		for (first12 = 0; first12 < points12; ++first12) {
+			Common::Point midPoint = interpolate(v1, v2, first12, points12);
+			if (lineIsCovered(midPoint, v3)) {
+				break;
+			}
+		}
+		if (first12 == 0) {
+			// Can completely remove the vertex.  Head stays the
+			// same after -- and ++.
+			path->remove_at(--head);
+			improved = true;
+			continue;
+		}
+		for (first32 = 0; first32 < points32; ++first32) {
+			Common::Point midPoint = interpolate(v3, v2, first32, points32);
+			if (lineIsCovered(midPoint, v1)) {
+				break;
+			}
+		}
+		if (first12 < points12 && first32 >= points32 + MIN(first12 - points12, 0)) {
+			// There is such a point on the first edge and the
+			// second edge has either not succeeded or we gain more
+			// by cutting this edge than the other one.
+			(*path)[head-1] = interpolate(v1, v2, first12, points12);
+			// After replacing the 2nd vertex, let head move on.
+		} else if (first32 < points32) {
+			(*path)[head-1] = interpolate(v3, v2, first32, points32);
+		}
+	}
+	return improved;
 }
 
 }
