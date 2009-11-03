@@ -834,14 +834,8 @@ void SciGui32::menuAdd(Common::String title, Common::String content, reg_t entri
 	_s->_menubar->addMenu(_s->gfx_state, title, content, titlebarFont, entriesBase);
 }
 
-void SciGui32::menuSet(int argc, reg_t *argv) {
-	int index = argv[0].toUint16();
-	int i = 2;
-
-	while (i < argc) {
-		_s->_menubar->setAttribute(_s, (index >> 8) - 1, (index & 0xff) - 1, argv[i - 1].toUint16(), argv[i]);
-		i += 2;
-	}
+void SciGui32::menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
+	_s->_menubar->setAttribute(_s, menuId - 1, itemId - 1, attributeId, value);
 }
 
 reg_t SciGui32::menuGet(uint16 menuId, uint16 itemId, uint16 attributeId) {

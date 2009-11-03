@@ -61,7 +61,7 @@ public:
 	void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	void drawMenuBar(bool clear);
 	void menuAdd(Common::String title, Common::String content, reg_t entriesBase);
-	void menuSet(int argc, reg_t *argv);
+	void menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
 	reg_t menuGet(uint16 menuId, uint16 itemId, uint16 attributeId);
 	reg_t menuSelect(reg_t eventObject);
 

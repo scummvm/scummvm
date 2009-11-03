@@ -306,21 +306,24 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 
 void SciGui::drawMenuBar(bool clear) {
 	if (!clear) {
-		warning("TODO: drawMenuBar()");
+		GuiPort *oldPort = _gfx->SetPort(_gfx->_menuPort);
+		_menu->drawBar();
+		_gfx->SetPort(oldPort);
 	} else {
 		drawStatus("", 0, 0);
 	}
 }
 
 void SciGui::menuAdd(Common::String title, Common::String content, reg_t entriesBase) {
-	warning("menuAdd");
+	_menu->add(title, content);
 }
 
-void SciGui::menuSet(int argc, reg_t *argv) {
+void SciGui::menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
+	_menu->setAttribute(menuId, itemId, attributeId, value);
 }
 
 reg_t SciGui::menuGet(uint16 menuId, uint16 itemId, uint16 attributeId) {
-	return NULL_REG;
+	return _menu->getAttribute(menuId, itemId, attributeId);
 }
 
 reg_t SciGui::menuSelect(reg_t eventObject) {

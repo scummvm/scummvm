@@ -47,7 +47,18 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 
 
 reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
-	s->_gui->menuSet(argc, argv);
+	uint16 menuId = argv[0].toUint16() >> 8;
+	uint16 itemId = argv[0].toUint16() & 0xFF;
+	uint16 attributeId;
+	int argPos = 1;
+
+	while (argPos < argc) {
+		attributeId = argv[argPos].toUint16();
+		if ((argPos + 1) >= argc)
+			error("Too few parameters for kSetMenu");
+		s->_gui->menuSet(menuId, itemId, attributeId, argv[argPos + 1]);
+		argPos += 2;
+	}
 	return s->r_acc;
 }
 
