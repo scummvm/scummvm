@@ -165,7 +165,7 @@ void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Commo
 	CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 
 	if (_upscaledHires)
-		delete cursorBitmap;
+		delete[] cursorBitmap;
 
 	show();
 
