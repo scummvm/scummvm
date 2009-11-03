@@ -113,7 +113,7 @@ public:
 	bool debugShowMap(int mapNo);
 
 	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *newState) { _s = newState; }
+	virtual void resetEngineState(EngineState *newState);
 
 private:
 	bool _usesOldGfxFunctions;

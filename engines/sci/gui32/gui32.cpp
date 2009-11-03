@@ -394,6 +394,11 @@ void SciGui32::init(bool oldGfxFunctions) {
 	port_origin_y = 0;
 }
 
+void SciGui32::resetEngineState(EngineState *s) {
+	_s = s;
+	_gfx->resetEngineState(s);
+}
+
 void SciGui32::wait(int16 ticks) {
 	uint32 time;
 
