@@ -497,7 +497,7 @@ const Feature s_features[] = {
 	{    "libz",      "USE_ZLIB", "zlib.lib", true, "zlib (compression) support" },
 	{     "mad",       "USE_MAD", "libmad.lib", true, "libmad (MP3) support" },
 	{  "vorbis",    "USE_VORBIS", "libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib", true, "Ogg Vorbis support" },
-	{    "flac",      "USE_FLAC", "libFLAC_static.lib", false, "FLAC support" },
+	{    "flac",      "USE_FLAC", "libFLAC_static.lib", true, "FLAC support" },
 	{   "mpeg2",     "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
 
 	// ScummVM feature flags
