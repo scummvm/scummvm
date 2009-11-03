@@ -45,7 +45,7 @@ enum {
 	kWalkingObliquePathOverlayColour = 73
 };
 
-Game::Game(DraciEngine *vm) : _vm(vm) {
+Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 	uint i;
 
 	BArchive *initArchive = _vm->_initArchive;
@@ -235,10 +235,6 @@ void Game::handleOrdinaryLoop(int x, int y) {
 		return;
 	}
 
-	// Fetch the dedicated objects' title animation / current frame
-	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
-	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
-
 	if (_vm->_mouse->lButtonPressed()) {
 		_vm->_mouse->lButtonSet(false);
 
@@ -250,10 +246,7 @@ void Game::handleOrdinaryLoop(int x, int y) {
 			if (_objUnderCursor != kObjectNotFound) {
 				const GameObject *obj = &_objects[_objUnderCursor];
 
-				_vm->_mouse->cursorOff();
-				titleAnim->markDirtyRect(_vm->_screen->getSurface());
-				title->setText("");
-				_objUnderCursor = kObjectNotFound;
+				_walkingState.setCallback(&obj->_program, obj->_look);
 
 				if (!obj->_imLook) {
 					if (obj->_lookDir == kDirectionLast) {
@@ -263,8 +256,7 @@ void Game::handleOrdinaryLoop(int x, int y) {
 					}
 				}
 
-				_vm->_script->run(obj->_program, obj->_look);
-				_vm->_mouse->cursorOn();
+				_walkingState.callback();
 			} else {
 				walkHero(x, y, kDirectionLast);
 			}
@@ -278,10 +270,7 @@ void Game::handleOrdinaryLoop(int x, int y) {
 			const GameObject *obj = &_objects[_objUnderCursor];
 
 			if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
-				_vm->_mouse->cursorOff();
-				titleAnim->markDirtyRect(_vm->_screen->getSurface());
-				title->setText("");
-				_objUnderCursor = kObjectNotFound;
+				_walkingState.setCallback(&obj->_program, obj->_use);
 
 				if (!obj->_imUse) {
 					if (obj->_useDir == kDirectionLast) {
@@ -291,20 +280,14 @@ void Game::handleOrdinaryLoop(int x, int y) {
 					}
 				}
 
-				_vm->_script->run(obj->_program, obj->_use);
-				_vm->_mouse->cursorOn();
+				_walkingState.callback();
 			} else {
 				walkHero(x, y, kDirectionLast);
 			}
 		} else {
 			if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
-				_vm->_mouse->cursorOff();
-				titleAnim->markDirtyRect(_vm->_screen->getSurface());
-				title->setText("");
-
-
-				_vm->_script->run(_currentRoom._program, _currentRoom._use);
-				_vm->_mouse->cursorOn();
+				_walkingState.setCallback(&_currentRoom._program, _currentRoom._use);
+				_walkingState.callback();
 			} else {
 				walkHero(x, y, kDirectionLast);
 			}
@@ -850,7 +833,7 @@ int Game::dialogueDraw() {
 
 	if (_dialogueLinesNum > 1) {
 		// Call the game loop to enable interactivity until the user
-		// selects his choice.
+		// selects his choice.  _animUnderCursor will be set.
 		_vm->_mouse->cursorOn();
 		loop(kInnerDuringDialogue, false);
 		_vm->_mouse->cursorOff();
@@ -1004,7 +987,8 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
 	}
 
-	_walkingState.setPath(_hero, target, _walkingMap.getDelta(), obliquePath);
+	_walkingState.setPath(_hero, target, Common::Point(x, y),
+		_walkingMap.getDelta(), obliquePath);
 
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
 	positionHero(target, dir);

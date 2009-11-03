@@ -27,6 +27,8 @@
 
 #include "common/stream.h"
 
+#include "draci/animation.h"
+#include "draci/draci.h"
 #include "draci/walking.h"
 #include "draci/sprite.h"
 
@@ -420,8 +422,15 @@ bool WalkingMap::managedToOblique(WalkingPath *path) const {
 	return improved;
 }
 
-void WalkingState::setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &delta, const WalkingPath& path) {
+void WalkingState::clearPath() {
+	_path.clear();
+	_callback = NULL;
+}
+
+void WalkingState::setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &mouse, const Common::Point &delta, const WalkingPath& path) {
 	_path = path;
+	_mouse = mouse;
+
 	if (!_path.size()) {
 		return;
 	}
@@ -441,6 +450,28 @@ void WalkingState::setPath(const Common::Point &p1, const Common::Point &p2, con
 		_path[i].x *= delta.x;
 		_path[i].y *= delta.y;
 	}
+}
+
+void WalkingState::setCallback(const GPL2Program *program, uint16 offset) {
+	_callback = program;
+	_callbackOffset = offset;
+}
+
+void WalkingState::callback() {
+	if (!_callback) {
+		return;
+	}
+
+	// Fetch the dedicated objects' title animation / current frame
+	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
+
+	_vm->_mouse->cursorOff();
+	titleAnim->markDirtyRect(_vm->_screen->getSurface());
+	title->setText("");
+
+	_vm->_script->run(*_callback, _callbackOffset);
+	_vm->_mouse->cursorOn();
 }
 
 }
