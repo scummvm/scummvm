@@ -329,7 +329,7 @@ private:
 	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
 	void loadRoom(int roomNum);
 	void runGateProgram(int gate);
-	void redrawWalkingPath(int id, byte colour, const WalkingMap::Path &path);
+	void redrawWalkingPath(int id, byte colour, const WalkingPath &path);
 
 	DraciEngine *_vm;
 
@@ -350,7 +350,6 @@ private:
 	bool _inventoryExit;
 
 	Room _currentRoom;
-	WalkingMap _walkingMap;
 	int _newRoom;
 	int _newGate;
 	int _previousRoom;
@@ -394,6 +393,9 @@ private:
 	bool _enableQuickHero;
 	bool _wantQuickHero;
 	bool _enableSpeedText;
+
+	WalkingMap _walkingMap;
+	WalkingState _walkingState;
 };
 
 } // End of namespace Draci

@@ -950,7 +950,7 @@ void Game::playHeroAnimation(int anim_index) {
 	_vm->_anims->play(animID);
 }
 
-void Game::redrawWalkingPath(int id, byte colour, const WalkingMap::Path &path) {
+void Game::redrawWalkingPath(int id, byte colour, const WalkingPath &path) {
 	Animation *anim = _vm->_anims->getAnimation(id);
 	Sprite *ov = _walkingMap.newOverlayFromPath(path, colour);
 	delete anim->getFrame(0);
@@ -965,15 +965,14 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 	if (!_currentRoom._heroOn)
 		return;
 
-	Common::Point oldHero = _hero;
+	Common::Point target;
 	Surface *surface = _vm->_screen->getSurface();
-	_hero = _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
-	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
-	// FIXME: Need to add proper walking (this only warps the dragon to position)
+	target = _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
+	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", target.x, target.y);
 
 	// Compute the shortest and obliqued path.
-	WalkingMap::Path shortestPath, obliquePath;
-	_walkingMap.findShortestPath(oldHero, _hero, &shortestPath);
+	WalkingPath shortestPath, obliquePath;
+	_walkingMap.findShortestPath(_hero, target, &shortestPath);
 	// TODO: test reachability and react
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
 	if (_vm->_showWalkingMap) {
@@ -981,6 +980,10 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 		redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
 	}
 
+	_walkingState.setPath(obliquePath);
+
+	// FIXME: Need to add proper walking (this only warps the dragon to position)
+	_hero = target;
 	Movement movement = kStopRight;
 	switch (dir) {
 	case kDirectionLeft:
@@ -1104,7 +1107,7 @@ void Game::loadRoom(int roomNum) {
 
 	Animation *sPath = _vm->_anims->addAnimation(kWalkingShortestPathOverlay, 257, _vm->_showWalkingMap);
 	Animation *oPath = _vm->_anims->addAnimation(kWalkingObliquePathOverlay, 258, _vm->_showWalkingMap);
-	WalkingMap::Path emptyPath;
+	WalkingPath emptyPath;
 	ov = _walkingMap.newOverlayFromPath(emptyPath, 0);
 	sPath->addFrame(ov, NULL);
 	ov = _walkingMap.newOverlayFromPath(emptyPath, 0);

@@ -33,6 +33,8 @@ namespace Draci {
 
 class Sprite;
 
+typedef Common::Array<Common::Point> WalkingPath;
+
 class WalkingMap {
 public:
 	WalkingMap() : _realWidth(0), _realHeight(0), _deltaX(1), _deltaY(1),
@@ -46,10 +48,9 @@ public:
 	Sprite *newOverlayFromMap(byte colour) const;
 	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
 
-	typedef Common::Array<Common::Point> Path;
-	bool findShortestPath(Common::Point p1, Common::Point p2, Path *path) const;
-	void obliquePath(const Path& path, Path *obliquedPath) const;
-	Sprite *newOverlayFromPath(const Path &path, byte colour) const;
+	bool findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const;
+	void obliquePath(const WalkingPath& path, WalkingPath *obliquedPath);
+	Sprite *newOverlayFromPath(const WalkingPath &path, byte colour) const;
 
 private:
 	int _realWidth, _realHeight;
@@ -63,7 +64,10 @@ private:
 	// 4 possible directions to walk from a pixel.
 	static int kDirections[][2];
 
-	void drawOverlayRectangle(int x, int y, byte colour, byte *buf) const;
+	void drawOverlayRectangle(const Common::Point &p, byte colour, byte *buf) const;
+	int pointsBetween(const Common::Point &p1, const Common::Point &p2) const;
+	Common::Point interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) const;
+	bool lineIsCovered(const Common::Point &p1, const Common::Point &p2) const;
 };
 
 /*
@@ -84,6 +88,18 @@ enum Movement {
 	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
 	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
 	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft
+};
+
+class WalkingState {
+public:
+	WalkingState() : _path() {}
+	~WalkingState() {}
+
+	void setPath(const WalkingPath& path) { _path = path; }
+	const WalkingPath& getPath() const { return _path; }
+
+private:
+	WalkingPath _path;
 };
 
 } // End of namespace Draci

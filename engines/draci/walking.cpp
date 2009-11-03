@@ -65,7 +65,7 @@ Sprite *WalkingMap::newOverlayFromMap(byte colour) const {
 	for (int i = 0; i < _mapWidth; ++i) {
 		for (int j = 0; j < _mapHeight; ++j) {
 			if (getPixel(i, j)) {
-				drawOverlayRectangle(i, j, colour, wlk);
+				drawOverlayRectangle(Common::Point(i, j), colour, wlk);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 // We don't use Common::Point due to using static initialization.
 int WalkingMap::kDirections[][2] = { {0, -1}, {0, +1}, {-1, 0}, {+1, 0} };
 
-bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path) const {
+bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const {
 	// Round the positions to map squares.
 	p1.x /= _deltaX;
 	p2.x /= _deltaX;
@@ -271,7 +271,7 @@ bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, Path *path
 	return true;
 }
 
-void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obliquedPath) const {
+void WalkingMap::obliquePath(const WalkingPath& path, WalkingPath *obliquedPath) {
 	// Prune the path to only contain vertices where the direction is changing.
 	obliquedPath->clear();
 	if (path.empty()) {
@@ -305,33 +305,54 @@ void WalkingMap::obliquePath(const WalkingMap::Path& path, WalkingMap::Path *obl
 
 	// Making the path oblique works as follows.  If the path has at least
 	// 3 remaining vertices, we try to oblique the L-shaped path between
-	// them.  If this can be done (i.e., all points on the line between the
-	// 1st and 3rd point are walkable), we remove the 2nd vertex (now the
-	// path will go directly from the 1st vertex to the 3rd one), and
-	// continue obliqueing from the same index, otherwise we leave the
-	// first edge (going from the 1st vertex to the 2nd one) as is, move
-	// the index to the 2nd vertex, and continue.
+	// them.  First we try to connect the 1st and 3rd vertex directly (if
+	// all points on the line between them are walkable) and then we try to
+	// walk on both edges towards the 2nd vertex in parallel and try to
+	// find a shortcut (replacing the 2nd vertex by this mid-point).  If
+	// either of those attempts succeeds, we have shortned the path.  We
+	// update the path vertices and continue with the next segment.
 	for (uint head = 2; head < obliquedPath->size(); ++head) {
 		const Common::Point &v1 = (*obliquedPath)[head-2];
+		const Common::Point &v2 = (*obliquedPath)[head-1];
 		const Common::Point &v3 = (*obliquedPath)[head];
-		const int steps = MAX(abs(v3.x - v1.x), abs(v3.y - v1.y));
-		bool allPointsOk = true;
-		// Testing only points between (i.e., without the end-points) is OK.
-		for (int step = 1; step < steps; ++step) {
-			const int x = (v1.x * (steps-step) + v3.x * step + steps/2) / steps;
-			const int y = (v1.y * (steps-step) + v3.y * step + steps/2) / steps;
-			if (!getPixel(x, y)) {
-				allPointsOk = false;
+		const int points12 = pointsBetween(v1, v2);
+		const int points32 = pointsBetween(v3, v2);
+		// Find the first point p on each edge [v1, v2] and [v3, v2]
+		// such that the edge [p, the third vertex] is covered.
+		// Ideally we would like p \in {v1, v3} and the closer the
+		// better.  The last point p = v2 should always succeed.
+		int first12, first32;
+		for (first12 = 0; first12 < points12; ++first12) {
+			Common::Point midPoint = interpolate(v1, v2, first12, points12);
+			if (lineIsCovered(midPoint, v3)) {
 				break;
 			}
 		}
-		if (allPointsOk) {
+		if (first12 == 0) {
+			// Can completely remove the vertex.  Head stays the
+			// same after -- and ++.
 			obliquedPath->remove_at(--head);
+			continue;
+		}
+		for (first32 = 0; first32 < points32; ++first32) {
+			Common::Point midPoint = interpolate(v3, v2, first32, points32);
+			if (lineIsCovered(midPoint, v1)) {
+				break;
+			}
+		}
+		if (first12 < points12 && first32 >= points32 + MIN(first12 - points12, 0)) {
+			// There is such a point on the first edge and the
+			// second edge has either not succeeded or we gain more
+			// by cutting this edge than the other one.
+			(*obliquedPath)[head-1] = interpolate(v1, v2, first12, points12);
+			// After replacing the 2nd vertex, let head move on.
+		} else if (first32 < points32) {
+			(*obliquedPath)[head-1] = interpolate(v3, v2, first32, points32);
 		}
 	}
 }
 
-Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour) const {
+Sprite *WalkingMap::newOverlayFromPath(const WalkingPath &path, byte colour) const {
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[_realWidth * _realHeight];
 	memset(wlk, 255, _realWidth * _realHeight);
@@ -339,20 +360,18 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour
 	for (uint segment = 1; segment < path.size(); ++segment) {
 		const Common::Point &v1 = path[segment-1];
 		const Common::Point &v2 = path[segment];
-		const int steps = MAX(abs(v2.x - v1.x), abs(v2.y - v1.y));
+		const int steps = pointsBetween(v1, v2);
 		// Draw only points in the interval [v1, v2).  These half-open
 		// half-closed intervals connect all the way to the last point.
 		for (int step = 0; step < steps; ++step) {
-			const int x = (v1.x * (steps-step) + v2.x * step + steps/2) / steps;
-			const int y = (v1.y * (steps-step) + v2.y * step + steps/2) / steps;
-			drawOverlayRectangle(x, y, colour, wlk);
+			drawOverlayRectangle(interpolate(v1, v2, step, steps), colour, wlk);
 		}
 	}
 	// Draw the last point.  This works also when the path has no segment,
 	// but just one point.
 	if (path.size() > 0) {
 		const Common::Point &vLast = path[path.size()-1];
-		drawOverlayRectangle(vLast.x, vLast.y, colour, wlk);
+		drawOverlayRectangle(vLast, colour, wlk);
 	}
 
 	Sprite *ov = new Sprite(_realWidth, _realHeight, wlk, 0, 0, false);
@@ -361,12 +380,33 @@ Sprite *WalkingMap::newOverlayFromPath(const WalkingMap::Path &path, byte colour
 	return ov;
 }
 
-void WalkingMap::drawOverlayRectangle(int x, int y, byte colour, byte *buf) const {
+void WalkingMap::drawOverlayRectangle(const Common::Point &p, byte colour, byte *buf) const {
 	for (int i = 0; i < _deltaX; ++i) {
 		for (int j = 0; j < _deltaY; ++j) {
-			buf[(y * _deltaY + j) * _realWidth + (x * _deltaX + i)] = colour;
+			buf[(p.y * _deltaY + j) * _realWidth + (p.x * _deltaX + i)] = colour;
 		}
 	}
+}
+
+int WalkingMap::pointsBetween(const Common::Point &p1, const Common::Point &p2) const {
+	return MAX(abs(p2.x - p1.x), abs(p2.y - p1.y));
+}
+
+Common::Point WalkingMap::interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) const {
+	const int x = (p1.x * (n-i) + p2.x * i + n/2) / n;
+	const int y = (p1.y * (n-i) + p2.y * i + n/2) / n;
+	return Common::Point(x, y);
+}
+
+bool WalkingMap::lineIsCovered(const Common::Point &p1, const Common::Point &p2) const {
+	const int steps = pointsBetween(p1, p2);
+	for (int step = 0; step <= steps; ++step) {
+		Common::Point p = interpolate(p1, p2, step, steps);
+		if (!getPixel(p.x, p.y)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 }
