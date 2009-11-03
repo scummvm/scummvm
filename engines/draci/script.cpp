@@ -136,6 +136,9 @@ void Script::setupCommandList() {
 		{ "HasBeen", 	&Script::funcHasBeen },
 		{ "MaxLine", 	&Script::funcMaxLine },
 		{ "ActPhase", 	&Script::funcActPhase },
+		// The following function is not even defined in the game
+		// sources, but its number is allocated for internal purposes
+		// of the old player.
 		{ "Cheat",  	NULL },
 	};
 
@@ -982,7 +985,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 			if (func._handler == NULL) {
 				stk.pop();
 
-				// FIXME: Pushing dummy value for now, but should push return value
+				// Pushing dummy value
 				stk.push(0);
 
 				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s (not implemented)",
