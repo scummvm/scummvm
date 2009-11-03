@@ -70,6 +70,7 @@ SciGui::SciGui() {
 }
 
 SciGui::~SciGui() {
+	delete _menu;
 	delete _controls;
 	delete _windowMgr;
 	delete _text;
