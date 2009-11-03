@@ -300,7 +300,8 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_gfx->PenColor(colorPen);
 	_gfx->MoveTo(0, 1);
 	_text->Draw_String(text);
-	_gfx->BitsShow(_gfx->_menuRect);
+	if (_screen->_picNotValid == 0)
+		_gfx->BitsShow(_gfx->_menuRect);
 	_gfx->SetPort(oldPort);
 }
 

@@ -309,7 +309,9 @@ void SciGuiTransitions::pixelation (bool blackoutFlag) {
 			continue;
 		pixelRect.left = mask % 320; pixelRect.right = pixelRect.left + 1;
 		pixelRect.top = mask / 320;	pixelRect.bottom = pixelRect.top + 1;
-		copyRectToScreen(pixelRect, blackoutFlag);
+		pixelRect.clip(_picRect);
+		if (!pixelRect.isEmpty())
+			copyRectToScreen(pixelRect, blackoutFlag);
 		if ((stepNr & 0x3FF) == 0) {
 			updateScreenAndWait(5);
 		}
@@ -329,7 +331,9 @@ void SciGuiTransitions::blocks(bool blackoutFlag) {
 			continue;
 		blockRect.left = (mask % 40) << 3; blockRect.right = blockRect.left + 8;
 		blockRect.top = (mask / 40) << 3; blockRect.bottom = blockRect.top + 8;
-		copyRectToScreen(blockRect, blackoutFlag);
+		blockRect.clip(_picRect);
+		if (!blockRect.isEmpty())
+			copyRectToScreen(blockRect, blackoutFlag);
 		if ((stepNr & 7) == 0) {
 			updateScreenAndWait(4);
 		}
