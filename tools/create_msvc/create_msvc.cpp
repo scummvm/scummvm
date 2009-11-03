@@ -935,7 +935,7 @@ void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string
 	              "\t>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tDisableSpecificWarnings=\"4068;4100;4103;4121;4127;4189;4201;4221;4244;4250;4310;4351;4355;4510;4511;4512;4610;4701;4702;4706;4800;4996\"\n"
+	              "\t\tDisableSpecificWarnings=\"4068;4100;4103;4121;4127;4189;4201;4221;4244;4250;4267;4310;4351;4355;4510;4511;4512;4610;4701;4702;4706;4800;4996\"\n"
 	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
 	              "\t\tExceptionHandling=\"0\"\n"
