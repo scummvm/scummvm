@@ -180,7 +180,6 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 
 	debug(2, "parseVOCFormat");
 
-
 	if (stream.read(&fileHeader, 8) != 8)
 		goto invalid;
 
@@ -301,7 +300,12 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, b
 
 	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
 
-	AudioStream *audioStream = makeLinearDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
+	AudioStream *audioStream = 0;
+
+	// Create an audiostream from the data. Note the numBlocks may be 0,
+	// e.g. when invalid data is encountered. See bug #2890038.
+	if (numBlocks)
+		audioStream = makeLinearDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
 
 	delete[] block;
 

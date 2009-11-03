@@ -220,6 +220,8 @@ public:
 		: _rate(rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
 		  _audioBlockCount(numBlocks), _loop(loop) {
 
+		assert(numBlocks > 0);
+
 		// Allocate streaming buffer
 		if (is16Bit) {
 			_buffer = (byte *)malloc(BUFFER_SIZE * sizeof(int16));
