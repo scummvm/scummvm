@@ -646,18 +646,17 @@ void SciGui::setNowSeen(reg_t objectReference) {
 }
 
 bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
-	SegManager *segMan = _s->_segMan;
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	Common::Rect checkRect;
 	uint16 signal, controlMask;
 	bool result;
 
-	checkRect.left = GET_SEL32V(segMan, curObject, brLeft);
-	checkRect.top = GET_SEL32V(segMan, curObject, brTop);
-	checkRect.right = GET_SEL32V(segMan, curObject, brRight);
-	checkRect.bottom = GET_SEL32V(segMan, curObject, brBottom);
-	signal = GET_SEL32V(segMan, curObject, signal);
-	controlMask = GET_SEL32V(segMan, curObject, illegalBits);
+	checkRect.left = GET_SEL32V(_s->_segMan, curObject, brLeft);
+	checkRect.top = GET_SEL32V(_s->_segMan, curObject, brTop);
+	checkRect.right = GET_SEL32V(_s->_segMan, curObject, brRight);
+	checkRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
+	signal = GET_SEL32V(_s->_segMan, curObject, signal);
+	controlMask = GET_SEL32V(_s->_segMan, curObject, illegalBits);
 	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
 	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _s->_segMan->lookupList(listReference);

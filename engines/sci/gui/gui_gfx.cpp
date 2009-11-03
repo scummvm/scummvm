@@ -476,7 +476,6 @@ int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
 }
 
 bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
-	SegManager *segMan = _s->_segMan;
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
@@ -486,12 +485,12 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 	while (curNode) {
 		curObject = curNode->value;
 		if (curObject != checkObject) {
-			signal = GET_SEL32V(segMan, curObject, signal);
+			signal = GET_SEL32V(_s->_segMan, curObject, signal);
 			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
-				curRect.left = GET_SEL32V(segMan, curObject, brLeft);
-				curRect.top = GET_SEL32V(segMan, curObject, brTop);
-				curRect.right = GET_SEL32V(segMan, curObject, brRight);
-				curRect.bottom = GET_SEL32V(segMan, curObject, brBottom);
+				curRect.left = GET_SEL32V(_s->_segMan, curObject, brLeft);
+				curRect.top = GET_SEL32V(_s->_segMan, curObject, brTop);
+				curRect.right = GET_SEL32V(_s->_segMan, curObject, brRight);
+				curRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
 				// Check if curRect is within checkRect
 				if (curRect.right > checkRect.left && curRect.left < checkRect.right && curRect.bottom > checkRect.top && curRect.top < checkRect.bottom) {
 					return false;
@@ -505,17 +504,16 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 }
 
 void SciGuiGfx::SetNowSeen(reg_t objectReference) {
-	SegManager *segMan = _s->_segMan;
 	SciGuiView *view = NULL;
 	Common::Rect celRect(0, 0);
-	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(segMan, objectReference, view);
-	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(segMan, objectReference, loop));
-	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(segMan, objectReference, cel));
-	int16 x = (int16)GET_SEL32V(segMan, objectReference, x);
-	int16 y = (int16)GET_SEL32V(segMan, objectReference, y);
+	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_s->_segMan, objectReference, view);
+	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(_s->_segMan, objectReference, loop));
+	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(_s->_segMan, objectReference, cel));
+	int16 x = (int16)GET_SEL32V(_s->_segMan, objectReference, x);
+	int16 y = (int16)GET_SEL32V(_s->_segMan, objectReference, y);
 	int16 z = 0;
 	if (_s->_kernel->_selectorCache.z > -1) {
-		z = (int16)GET_SEL32V(segMan, objectReference, z);
+		z = (int16)GET_SEL32V(_s->_segMan, objectReference, z);
 	}
 
 	// now get cel rectangle
@@ -524,10 +522,10 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 
 	// TODO: sometimes loop is negative. Check what it means
 	if (lookup_selector(_s->_segMan, objectReference, _s->_kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
-		PUT_SEL32V(segMan, objectReference, nsLeft, celRect.left);
-		PUT_SEL32V(segMan, objectReference, nsRight, celRect.right);
-		PUT_SEL32V(segMan, objectReference, nsTop, celRect.top);
-		PUT_SEL32V(segMan, objectReference, nsBottom, celRect.bottom);
+		PUT_SEL32V(_s->_segMan, objectReference, nsLeft, celRect.left);
+		PUT_SEL32V(_s->_segMan, objectReference, nsRight, celRect.right);
+		PUT_SEL32V(_s->_segMan, objectReference, nsTop, celRect.top);
+		PUT_SEL32V(_s->_segMan, objectReference, nsBottom, celRect.bottom);
 	}
 }
 
