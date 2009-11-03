@@ -46,8 +46,8 @@ struct GuiMenuEntry {
 	uint16 id;
 	Common::String text;
 
-	GuiMenuEntry(uint16 id)
-	 : id(id) { }
+	GuiMenuEntry(uint16 id_)
+	 : id(id_) { }
 };
 typedef Common::List<GuiMenuEntry *> GuiMenuList;
 
@@ -63,8 +63,8 @@ struct GuiMenuItemEntry {
 	Common::String text;
 	Common::String textRightAligned;
 
-	GuiMenuItemEntry(uint16 menuId, uint16 id)
-	 : menuId(menuId), id(id),
+	GuiMenuItemEntry(uint16 menuId_, uint16 id_)
+	 : menuId(menuId_), id(id_),
 		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false) { }
 };
 typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
