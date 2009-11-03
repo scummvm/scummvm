@@ -43,7 +43,6 @@
 "\epoc32\release\gcce\urel\ScummVM.exe"-		"!:\sys\bin\ScummVM.exe"
 "\epoc32\data\z\resource\apps\ScummVM.rsc"-	"!:\resource\apps\ScummVM.rsc"
 "\epoc32\Data\Z\resource\apps\scummvm_loc.rsc"-	"!:\resource\apps\scummvm_loc.rsc"
-"\epoc32\data\Z\resource\APPS\scummvm.MBM"-	"!:\resource\apps\scummvm.MBM"
 "\epoc32\data\Z\resource\APPS\scummvm.MIF"-	"!:\resource\apps\scummvm.MIF"
 "\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
 

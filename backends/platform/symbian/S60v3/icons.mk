@@ -22,7 +22,7 @@ CLEANLIB : do_nothing
 
 RESOURCE :
 	mifconv $(ICONTARGETFILENAME) \
-	/c32 ..\res\scummvm.svg
+	/c32 ..\..\..\..\icons\scummvm.svg
 
 FREEZE : do_nothing
 
