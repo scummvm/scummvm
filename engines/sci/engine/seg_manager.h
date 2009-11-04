@@ -58,6 +58,8 @@ public:
 	 */
 	~SegManager();
 
+	void resetSegMan();
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// 1. Scripts
@@ -456,7 +458,7 @@ private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	int deallocate(SegmentId seg, bool recursive);
-	int createClassTable();
+	void createClassTable();
 
 	SegmentId findFreeSegment() const;
 

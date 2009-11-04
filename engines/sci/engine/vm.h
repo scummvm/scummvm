@@ -420,20 +420,6 @@ void script_debug(EngineState *s, bool bp);
 int script_init_engine(EngineState *);
 
 /**
- * Frees all additional memory associated with a EngineState block
- * @param[in] s	The EngineState whose elements should be cleared
- */
-void script_free_engine(EngineState *s);
-
-/**
- * Frees all script memory (heap, hunk, and class tables).
- * This operation is implicit in script_free_engine(), but is required for
- * restoring the game state.
- * @param[in] s	The EngineState to free
- */
-void script_free_vm_memory(EngineState *s);
-
-/**
  * Looks up a selector and returns its type and value
  * varindex is written to iff it is non-NULL and the selector indicates a property of the object.
  * @param[in] segMan		The Segment Manager

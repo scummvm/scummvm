@@ -304,7 +304,6 @@ int game_init_sound(EngineState *s, int sound_flags) {
 
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
-	s->_segMan = new SegManager(s->resMan);
 	s->_msgState = new MessageState(s->_segMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
@@ -348,23 +347,6 @@ int script_init_engine(EngineState *s) {
 #endif
 
 	return 0;
-}
-
-void script_free_vm_memory(EngineState *s) {
-	debug(2, "Freeing VM memory");
-
-	if (s->_segMan)
-		s->_segMan->_classtable.clear();
-
-	// Close all opened file handles
-	s->_fileHandles.clear();
-	s->_fileHandles.resize(5);
-}
-
-void script_free_engine(EngineState *s) {
-	script_free_vm_memory(s);
-
-	debug(2, "Freeing state-dependant data");
 }
 
 void script_free_breakpoints(EngineState *s) {
@@ -451,11 +433,11 @@ int game_exit(EngineState *s) {
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
 
-	s->_segMan->_classtable.clear();
-	delete s->_segMan;
-	s->_segMan = 0;
-
-	debug(2, "Freeing miscellaneous data...");
+	// Note: It's a bad idea to delete the segment manager here.
+	// This function is called right after a game is loaded, and
+	// the segment manager has already been initialized from the
+	// save game. Deleting or resetting it here will result in
+	// invalidating the loaded save state
 
 	// TODO Free parser segment here
 
@@ -464,6 +446,10 @@ int game_exit(EngineState *s) {
 	delete s->_menubar;
 
 	_free_graphics_input(s);
+
+	// Close all opened file handles
+	s->_fileHandles.clear();
+	s->_fileHandles.resize(5);
 
 	return 0;
 }

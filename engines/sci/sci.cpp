@@ -133,8 +133,10 @@ Common::Error SciEngine::run() {
 	_vocabulary = new Vocabulary(_resMan);
 	_audio = new AudioPlayer(_resMan);
 
+	SegManager *segMan = new SegManager(_resMan);
+
 	// We'll set the GUI below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, _audio);
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, segMan, NULL, _audio);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -181,15 +183,16 @@ Common::Error SciEngine::run() {
 	}
 
 	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
+	_gamestate->_segMan = segMan;
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 
 	game_run(&_gamestate); // Run the game
 
 	game_exit(_gamestate);
-	script_free_engine(_gamestate); // Uninitialize game state
 	script_free_breakpoints(_gamestate);
 
+	delete segMan;
 	delete cursor;
 	delete palette;
 	delete screen;

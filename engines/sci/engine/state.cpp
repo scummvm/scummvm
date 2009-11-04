@@ -32,8 +32,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, AudioPlayer *audio)
-: resMan(res), _kernel(kernel), _voc(voc), _gui(gui), _audio(audio), _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio)
+: resMan(res), _kernel(kernel), _voc(voc), _segMan(segMan), _gui(gui), _audio(audio), _dirseeker(this) {
 
 	gfx_state = 0;
 
@@ -96,7 +96,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	_gameObj = NULL_REG;
 
-	_segMan = 0;
 	gc_countdown = 0;
 
 	successor = 0;

@@ -53,8 +53,6 @@ public:
 
 	void init(SciGuiText *text);
 
-	void resetSegMan(SegManager *segMan) { _segMan = segMan; }
-
 	byte *GetSegment(byte seg);
 	void ResetScreen();
 

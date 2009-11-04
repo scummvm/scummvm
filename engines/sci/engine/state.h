@@ -116,7 +116,7 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, AudioPlayer *audio);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

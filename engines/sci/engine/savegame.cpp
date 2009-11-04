@@ -257,11 +257,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 static void sync_SegManagerPtr(Common::Serializer &s, ResourceManager *&resMan, SegManager *&obj) {
 	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
 
-	if (s.isLoading()) {
-		// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-		delete obj;
-		obj = new SegManager(resMan);
-	}
+	if (s.isLoading())
+		obj->resetSegMan();
 
 	obj->saveLoadWithSerializer(s);
 }
@@ -737,7 +734,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_gui, s->_audio);
+	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_gui, s->_audio);
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;

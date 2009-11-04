@@ -408,7 +408,6 @@ void SciGui32::init(bool oldGfxFunctions) {
 
 void SciGui32::resetEngineState(EngineState *s) {
 	_s = s;
-	_gfx->resetSegMan(s->_segMan);
 }
 
 void SciGui32::wait(int16 ticks) {

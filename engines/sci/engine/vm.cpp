@@ -1796,7 +1796,6 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			s->_executionStackPosChanged = false;
 
 			game_exit(s);
-			script_free_engine(s);
 			script_init_engine(s);
 			game_init(s);
 			s->_sound.sfx_reset_player();
@@ -1811,7 +1810,6 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			successor = s->successor;
 			if (successor) {
 				game_exit(s);
-				script_free_vm_memory(s);
 				delete s;
 				s = successor;
 

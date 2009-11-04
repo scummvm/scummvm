@@ -57,21 +57,34 @@ SegManager::SegManager(ResourceManager *resMan) {
 	_exportsAreWide = false;
 	_resMan = resMan;
 
-	int result = 0;
-
-	result = createClassTable();
-
-	if (result)
-		error("SegManager: Failed to initialize class table");
+	createClassTable();
 }
 
 // Destroy the object, free the memorys if allocated before
 SegManager::~SegManager() {
+	resetSegMan();
+}
+
+void SegManager::resetSegMan() {
 	// Free memory
 	for (uint i = 0; i < _heap.size(); i++) {
 		if (_heap[i])
 			deallocate(i, false);
 	}
+
+	_heap.clear();
+
+	// And reinitialize
+	_heap.push_back(0);
+
+	Clones_seg_id = 0;
+	Lists_seg_id = 0;
+	Nodes_seg_id = 0;
+	Hunks_seg_id = 0;
+
+	// Reinitialize class table
+	_classtable.clear();
+	createClassTable();
 }
 
 SegmentId SegManager::findFreeSegment() const {
@@ -1218,7 +1231,7 @@ int SegManager::freeDynmem(reg_t addr) {
 	return 0; // OK
 }
 
-int SegManager::createClassTable() {
+void SegManager::createClassTable() {
 	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
 	if (!vocab996)
@@ -1235,8 +1248,6 @@ int SegManager::createClassTable() {
 	}
 
 	_resMan->unlockResource(vocab996);
-
-	return 0;
 }
 
 } // End of namespace Sci
