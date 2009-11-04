@@ -496,10 +496,10 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
-	//if (s->_gameName == "lsl1sci" && s->currentRoomNumber() == 300) {
-	//	int top = GET_SEL32V(s->_segMan, object, brTop);
-	//	PUT_SEL32V(s->_segMan, object, brTop, top + 2);
-	//}
+	if (s->_gameName == "lsl1sci" && s->currentRoomNumber() == 300) {
+		int top = GET_SEL32V(s->_segMan, object, brTop);
+		PUT_SEL32V(s->_segMan, object, brTop, top + 2);
+	}
 
 	return s->r_acc;
 }
