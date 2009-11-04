@@ -152,6 +152,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	// Post-processing
 	vm->_game->scheduleEnteringRoomUsingGate(vm->_game->getRoomNum(), 0);
 	vm->_game->setRoomNum(vm->_game->getPreviousRoomNum());
+	vm->_game->setExitLoop(true);
 	vm->_game->setIsReloaded(true);
 
 	vm->_game->inventoryReload();
