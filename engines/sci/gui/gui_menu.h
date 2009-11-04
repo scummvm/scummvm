@@ -84,6 +84,7 @@ public:
 	reg_t getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
 
 	void drawBar();
+	reg_t select(reg_t eventObject);
 
 private:
 	GuiMenuItemEntry *findItem(uint16 menuId, uint16 itemId);

@@ -327,7 +327,7 @@ reg_t SciGui::menuGet(uint16 menuId, uint16 itemId, uint16 attributeId) {
 }
 
 reg_t SciGui::menuSelect(reg_t eventObject) {
-	return NULL_REG;
+	return _menu->select(eventObject);
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

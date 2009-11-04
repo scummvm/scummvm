@@ -249,18 +249,15 @@ reg_t SciGuiMenu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId)
 		break;
 	case SCI_MENU_ATTRIBUTE_SAID:
 		return itemEntry->saidVmPtr;
-		break;
 	case SCI_MENU_ATTRIBUTE_TEXT:
 		return itemEntry->textVmPtr;
-		break;
 	case SCI_MENU_ATTRIBUTE_KEYPRESS:
 		// TODO: Find out how modifier is handled
 		return make_reg(0, itemEntry->keyPress);
-		break;
 	case SCI_MENU_ATTRIBUTE_TAG:
 		return make_reg(0, itemEntry->tag);
 	default:
-		error("setAttribute() called with unsupported attributeId %X", attributeId);
+		error("getAttribute() called with unsupported attributeId %X", attributeId);
 	}
 	return NULL_REG;
 }
@@ -283,6 +280,10 @@ void SciGuiMenu::drawBar() {
 		listIterator++;
 	}
 	_gfx->BitsShow(_gfx->_menuRect);
+}
+
+reg_t SciGuiMenu::select(reg_t eventObject) {
+	return NULL_REG;
 }
 
 } // End of namespace Sci
