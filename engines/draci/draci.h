@@ -105,7 +105,8 @@ enum {
 	kDraciArchiverDebugLevel  = 1 << 2,
 	kDraciLogicDebugLevel     = 1 << 3,
 	kDraciAnimationDebugLevel = 1 << 4,
-	kDraciSoundDebugLevel     = 1 << 5
+	kDraciSoundDebugLevel     = 1 << 5,
+	kDraciWalkingDebugLevel   = 1 << 6
 };
 
 } // End of namespace Draci

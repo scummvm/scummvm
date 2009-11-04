@@ -660,8 +660,8 @@ void Script::stayOn(Common::Queue<int> &params) {
 	SightDirection dir = static_cast<SightDirection> (params.pop());
 
 	// Jumps into the given position regardless of the walking map.
-	_vm->_game->positionHero(Common::Point(x, y), dir);
-	_vm->_game->clearPath();
+	_vm->_game->stopWalking();
+	_vm->_game->positionHero(_vm->_game->findNearestWalkable(x, y), dir);
 }
 
 void Script::walkOn(Common::Queue<int> &params) {
@@ -675,6 +675,7 @@ void Script::walkOn(Common::Queue<int> &params) {
 
 	// Constructs an optimal path and starts walking there.  No callback
 	// will be called at the end nor will the loop-body exit.
+	_vm->_game->stopWalking();
 	_vm->_game->walkHero(x, y, dir);
 }
 
@@ -687,12 +688,12 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 	int y = params.pop();
 	SightDirection dir = static_cast<SightDirection> (params.pop());
 
+	_vm->_game->stopWalking();
 	_vm->_game->walkHero(x, y, dir);
 
-	// HACK: This (shouldExit==true) should be an onDest action when hero
-	// walking is properly implemented For now, we just go throught the
-	// loop-body once to redraw the screen.
-	_vm->_game->loop(kInnerUntilExit, true);
+	// Walk in an inner loop until the hero has arrived at the target
+	// point.  Then the loop-body will exit.
+	_vm->_game->loop(kInnerUntilExit, false);
 }
 
 void Script::newRoom(Common::Queue<int> &params) {

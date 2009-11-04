@@ -99,21 +99,32 @@ struct GPL2Program;
 
 class WalkingState {
 public:
-	explicit WalkingState(DraciEngine *vm) : _vm(vm) { clearPath(); }
+	explicit WalkingState(DraciEngine *vm) : _vm(vm) { stopWalking(); }
 	~WalkingState() {}
 
-	void clearPath();
-	void setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &mouse, const Common::Point &delta, const WalkingPath& path);
+	void stopWalking();
+	void startWalking(const Common::Point &p1, const Common::Point &p2,
+		const Common::Point &mouse, SightDirection dir,
+		const Common::Point &delta, const WalkingPath& path);
 	const WalkingPath& getPath() const { return _path; }
 
 	void setCallback(const GPL2Program *program, uint16 offset);
 	void callback();
+
+	bool isActive() const { return _path.size() > 0; }
+
+	// Advances the hero along the path and changes animation accordingly.
+	// Walking MUST be active when calling this method.  When the hero has
+	// arrived to the target, clears the path and returns false, but leaves
+	// the callback untouched (the caller must call it).
+	bool continueWalking();
 
 private:
 	DraciEngine *_vm;
 
 	WalkingPath _path;
 	Common::Point _mouse;
+	SightDirection _dir;
 
 	const GPL2Program *_callback;
 	uint16 _callbackOffset;

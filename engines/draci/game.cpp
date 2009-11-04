@@ -248,16 +248,17 @@ void Game::handleOrdinaryLoop(int x, int y) {
 
 				_walkingState.setCallback(&obj->_program, obj->_look);
 
-				if (!obj->_imLook) {
+				if (obj->_imLook || !_currentRoom._heroOn) {
+					_walkingState.callback();
+				} else {
 					if (obj->_lookDir == kDirectionLast) {
 						walkHero(x, y, obj->_lookDir);
 					} else {
 						walkHero(obj->_lookX, obj->_lookY, obj->_lookDir);
 					}
 				}
-
-				_walkingState.callback();
 			} else {
+				_walkingState.setCallback(NULL, 0);
 				walkHero(x, y, kDirectionLast);
 			}
 		}
@@ -272,16 +273,17 @@ void Game::handleOrdinaryLoop(int x, int y) {
 			if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
 				_walkingState.setCallback(&obj->_program, obj->_use);
 
-				if (!obj->_imUse) {
+				if (obj->_imUse || !_currentRoom._heroOn) {
+					_walkingState.callback();
+				} else {
 					if (obj->_useDir == kDirectionLast) {
 						walkHero(x, y, obj->_useDir);
 					} else {
 						walkHero(obj->_useX, obj->_useY, obj->_useDir);
 					}
 				}
-
-				_walkingState.callback();
 			} else {
+				_walkingState.setCallback(NULL, 0);
 				walkHero(x, y, kDirectionLast);
 			}
 		} else {
@@ -289,6 +291,7 @@ void Game::handleOrdinaryLoop(int x, int y) {
 				_walkingState.setCallback(&_currentRoom._program, _currentRoom._use);
 				_walkingState.callback();
 			} else {
+				_walkingState.setCallback(NULL, 0);
 				walkHero(x, y, kDirectionLast);
 			}
 		}
@@ -434,6 +437,29 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	// This returns true if we got a signal to quit the game
 	if (shouldQuit()) {
 		setExitLoop(true);
+	}
+
+	// Walk the hero.  The WalkingState class handles everything including
+	// proper timing.
+	if (_walkingState.isActive()) {
+		if (!_walkingState.continueWalking()) {
+			// Walking has finished.
+			bool exitLoop = false;
+			if (_loopSubstatus == kInnerUntilExit) {
+				// The callback may run another inner loop (for
+				// example, a dialogue).  Reset the loop
+				// substatus temporarily to the outer one.
+				exitLoop = true;
+				setLoopSubstatus(kOuterLoop);
+			}
+			debugC(2, kDraciWalkingDebugLevel, "Finished walking");
+			_walkingState.callback();	// clears callback pointer first
+			if (exitLoop) {
+				debugC(3, kDraciWalkingDebugLevel, "Exiting from the inner loop");
+				setExitLoop(true);
+				setLoopSubstatus(kInnerUntilExit);
+			}
+		}
 	}
 
 	// Advance animations (this may also call setExitLoop(true) in the
@@ -942,7 +968,7 @@ void Game::redrawWalkingPath(int id, byte colour, const WalkingPath &path) {
 }
 
 void Game::positionHero(const Common::Point &p, SightDirection dir) {
-	debugC(3, kDraciLogicDebugLevel, "Jump to x: %d y: %d", p.x, p.y);
+	debugC(3, kDraciWalkingDebugLevel, "Jump to x: %d y: %d", p.x, p.y);
 
 	_hero = p;
 	Movement movement = kStopRight;
@@ -965,33 +991,38 @@ void Game::positionHero(const Common::Point &p, SightDirection dir) {
 	playHeroAnimation(movement);
 }
 
-void Game::walkHero(int x, int y, SightDirection dir) {
-	// Needed for the map room with empty walking map.  For some reason,
-	// findNearestWalkable() takes several seconds with 100% CPU to finish
-	// (correctly).
-	if (!_currentRoom._heroOn)
-		return;
-
-	Common::Point target;
+Common::Point Game::findNearestWalkable(int x, int y) const {
 	Surface *surface = _vm->_screen->getSurface();
-	target = _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
-	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", target.x, target.y);
+	return _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
+}
+
+void Game::walkHero(int x, int y, SightDirection dir) {
+	if (!_currentRoom._heroOn) {
+		// Nothing to do.  Happens for example in the map.
+		return;
+	}
+
+	Common::Point target = findNearestWalkable(x, y);
 
 	// Compute the shortest and obliqued path.
 	WalkingPath shortestPath, obliquePath;
 	_walkingMap.findShortestPath(_hero, target, &shortestPath);
 	// TODO: test reachability and react
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
+	debugC(2, kDraciWalkingDebugLevel, "Walking path lengths: shortest=%d oblique=%d", shortestPath.size(), obliquePath.size());
 	if (_vm->_showWalkingMap) {
 		redrawWalkingPath(kWalkingShortestPathOverlay, kWalkingShortestPathOverlayColour, shortestPath);
 		redrawWalkingPath(kWalkingObliquePathOverlay, kWalkingObliquePathOverlayColour, obliquePath);
 	}
 
-	_walkingState.setPath(_hero, target, Common::Point(x, y),
+	// Start walking.  Walking will be gradually advanced by
+	// advanceAnimationsAndTestLoopExit(), which also handles calling the
+	// callback and stopping the walk at the end.  If the hero is already
+	// walking at this point, this command will cancel the previous path
+	// and replace it by the current one (the callback has already been
+	// reset by our caller).
+	_walkingState.startWalking(_hero, target, Common::Point(x, y), dir,
 		_walkingMap.getDelta(), obliquePath);
-
-	// FIXME: Need to add proper walking (this only warps the dragon to position)
-	positionHero(target, dir);
 }
 
 void Game::loadItem(int itemID) {

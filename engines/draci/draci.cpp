@@ -84,6 +84,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	Common::addDebugChannel(kDraciLogicDebugLevel, "logic", "Game logic debug info");
 	Common::addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
 	Common::addDebugChannel(kDraciSoundDebugLevel, "sound", "Sound debug info");
+	Common::addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
 	// Don't forget to register your random source
 	g_eventRec.registerRandomSource(_rnd, "draci");

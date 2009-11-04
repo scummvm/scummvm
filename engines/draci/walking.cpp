@@ -422,14 +422,17 @@ bool WalkingMap::managedToOblique(WalkingPath *path) const {
 	return improved;
 }
 
-void WalkingState::clearPath() {
+void WalkingState::stopWalking() {
 	_path.clear();
 	_callback = NULL;
 }
 
-void WalkingState::setPath(const Common::Point &p1, const Common::Point &p2, const Common::Point &mouse, const Common::Point &delta, const WalkingPath& path) {
+void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2,
+	const Common::Point &mouse, SightDirection dir,
+	const Common::Point &delta, const WalkingPath& path) {
 	_path = path;
 	_mouse = mouse;
+	_dir = dir;
 
 	if (!_path.size()) {
 		return;
@@ -440,6 +443,8 @@ void WalkingState::setPath(const Common::Point &p1, const Common::Point &p2, con
 		// they are different pixels.
 		_path.push_back(p2);
 	}
+	debugC(2, kDraciWalkingDebugLevel, "Starting walking [%d,%d] -> [%d,%d] in %d segments",
+		p1.x, p1.y, p2.x, p2.y, _path.size());
 
 	// The first and last point are available with pixel accurracy.
 	_path[0] = p1;
@@ -461,6 +466,7 @@ void WalkingState::callback() {
 	if (!_callback) {
 		return;
 	}
+	debugC(2, kDraciWalkingDebugLevel, "Calling walking callback");
 
 	// Fetch the dedicated objects' title animation / current frame
 	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
@@ -470,8 +476,21 @@ void WalkingState::callback() {
 	titleAnim->markDirtyRect(_vm->_screen->getSurface());
 	title->setText("");
 
-	_vm->_script->run(*_callback, _callbackOffset);
+	const GPL2Program *originalCallback = _callback;
+	_callback = NULL;
+	_vm->_script->run(*originalCallback, _callbackOffset);
+
 	_vm->_mouse->cursorOn();
+}
+
+bool WalkingState::continueWalking() {
+	// FIXME: do real walking instead of immediately exiting.  Compare the
+	// current dragon's animation phase with the stored one, and if they
+	// differ, walk another step.
+	debugC(2, kDraciWalkingDebugLevel, "Continuing walking");
+	_vm->_game->positionHero(_path[_path.size() - 1], _dir);
+	_path.clear();
+	return false;	// finished
 }
 
 }
