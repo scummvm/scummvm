@@ -32,12 +32,6 @@
 
 namespace Sci {
 
-#define CHECK_OVERFLOW1(pt, size, rv) \
-	if (((pt) - (str_base)) + (size) > maxsize) { \
-		error("String expansion exceeded heap boundaries"); \
-		return rv;\
-	}
-
 /* Returns the string the script intended to address */
 Common::String kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	char *seeker;
@@ -361,6 +355,12 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 #define ALIGN_LEFT -1
 #define ALIGN_CENTRE 2
 
+#define CHECK_OVERFLOW1(pt, size, rv) \
+	if (((pt) - (targetbuf)) + (size) > maxsize) { \
+		error("String expansion exceeded heap boundaries"); \
+		return rv;\
+	}
+
 /*  Format(targ_address, textresnr, index_inside_res, ...)
 ** or
 **  Format(targ_address, heap_text_addr, ...)
@@ -375,7 +375,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	char *target = targetbuf;
 	reg_t position = argv[1]; /* source */
 	int index = argv[2].toUint16();
-	char *str_base = target;
 	int mode = 0;
 	int paramindex = 0; /* Next parameter to evaluate */
 	char xfer;
@@ -584,6 +583,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	return dest; /* Return target addr */
 }
 
+#undef CHECK_OVERFLOW1
 
 reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_segMan->strlen(argv[0]));
