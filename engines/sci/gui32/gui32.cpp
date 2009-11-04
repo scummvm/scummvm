@@ -2992,7 +2992,7 @@ void SciGui32::moveCursor(Common::Point pos) {
 	gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
 }
 
-void SciGui32::modifyPriorityBands(int top, int bottom) {
+void SciGui32::graphAdjustPriority(int top, int bottom) {
 	_s->priority_first = top;
 	_s->priority_last = bottom;
 }
