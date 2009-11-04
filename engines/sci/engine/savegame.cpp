@@ -658,8 +658,9 @@ void SegManager::reconstructScripts(EngineState *s) {
 		}
 	}
 }
-
+#ifdef INCLUDE_OLDGFX
 int _reset_graphics_input(EngineState *s);
+#endif
 
 static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
@@ -770,7 +771,9 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->_segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
+#ifdef INCLUDE_OLDGFX
 	_reset_graphics_input(retval);
+#endif
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();

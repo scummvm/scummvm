@@ -268,8 +268,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	case K_GRAPH_ADJUST_PRIORITY:
 		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toSint16(), argv[2].toSint16());
-		s->priority_first = argv[1].toSint16() - 10;
-		s->priority_last = argv[2].toSint16() - 10;
+		s->_gui->modifyPriorityBands(argv[1].toSint16() - 10, argv[2].toSint16() - 10);
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:

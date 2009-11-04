@@ -1319,6 +1319,7 @@ bool Console::cmdDroppedViews(int argc, const char **argv) {
 }
 
 bool Console::cmdPriorityBands(int argc, const char **argv) {
+#ifdef INCLUDE_OLDGFX
 	if (argc != 2) {
 		DebugPrintf("Priority bands start at y=%d. They end at y=%d\n", _vm->_gamestate->priority_first, _vm->_gamestate->priority_last);
 		DebugPrintf("Use %s <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
@@ -1326,7 +1327,7 @@ bool Console::cmdPriorityBands(int argc, const char **argv) {
 	}
 
 	int zone = CLIP<int>(atoi(argv[1]), 0, 15);
-#ifdef INCLUDE_OLDGFX
+
 	DebugPrintf("Zone %x starts at y=%d\n", zone, _find_priority_band(_vm->_gamestate, zone));
 #endif
 

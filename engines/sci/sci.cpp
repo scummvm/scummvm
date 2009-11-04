@@ -168,12 +168,12 @@ Common::Error SciEngine::run() {
 
 #ifdef INCLUDE_OLDGFX
 	gfxop_init(&gfx_state, _resMan, screen, palette, 1);
-#endif
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
 		return Common::kUnknownError;
 	}
+#endif
 
 	if (game_init_sound(_gamestate, 0)) {
 		warning("Game initialization failed: Error in sound subsystem. Aborting...");

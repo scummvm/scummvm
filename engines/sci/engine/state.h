@@ -169,12 +169,12 @@ public:
 
 	GfxList *dyn_views; /**< Pointers to pic and dynamic view lists */
 	GfxList *drop_views; /**< A list Animate() can dump dropped dynviews into */
-#endif
-
-	Menubar *_menubar; /**< The menu bar */
 
 	int priority_first; /**< The line where priority zone 0 ends */
 	int priority_last; /**< The line where the highest priority zone starts */
+#endif
+
+	Menubar *_menubar; /**< The menu bar */
 
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */

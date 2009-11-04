@@ -61,12 +61,12 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	dyn_views = 0;
 	drop_views = 0;
-#endif
-
-	_menubar = 0;
 
 	priority_first = 0;
 	priority_last = 0;
+#endif
+
+	_menubar = 0;
 
 	last_wait_time = 0;
 

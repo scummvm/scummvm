@@ -221,19 +221,6 @@ int _find_priority_band(EngineState *s, int band);
  */
 int _find_view_priority(EngineState *s, int y);
 
-#define SCI0_VIEW_PRIORITY_14_ZONES(y) (((y) < s->priority_first)? 0 : (((y) >= s->priority_last)? 14 : 1\
-	+ ((((y) - s->priority_first) * 14) / (s->priority_last - s->priority_first))))
-
-#define SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr) ((((nr) == 0)? 0 :  \
-	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 14)))
-
-#define SCI0_VIEW_PRIORITY(y) (((y) < s->priority_first)? 0 : (((y) >= s->priority_last)? 14 : 1\
-	+ ((((y) - s->priority_first) * 15) / (s->priority_last - s->priority_first))))
-
-#define SCI0_PRIORITY_BAND_FIRST(nr) ((((nr) == 0)? 0 :  \
-	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 15)))
-
-
 
 /******************** Dynamic view list functions ********************/
 

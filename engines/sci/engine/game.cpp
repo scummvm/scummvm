@@ -162,8 +162,8 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 	return strdup(sierraId.c_str());
 }
 
-int _reset_graphics_input(EngineState *s) {
 #ifdef INCLUDE_OLDGFX
+int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
@@ -263,8 +263,6 @@ int _reset_graphics_input(EngineState *s) {
 	s->titlebar_port->_bgcolor.priority = 11; // Standard priority for the titlebar port
 #endif
 
-#endif
-
 	s->priority_first = 42; // Priority zone 0 ends here
 
 	if (s->usesOldGfxFunctions())
@@ -278,6 +276,8 @@ int _reset_graphics_input(EngineState *s) {
 int game_init_graphics(EngineState *s) {
 	return _reset_graphics_input(s);
 }
+
+#endif
 
 static void _free_graphics_input(EngineState *s) {
 	debug(2, "Freeing graphics");
@@ -405,9 +405,6 @@ int game_init(EngineState *s) {
 
 #ifdef INCLUDE_OLDGFX
 	if (s->gfx_state && _reset_graphics_input(s))
-		return 1;
-#else
-	if (_reset_graphics_input(s))
 		return 1;
 #endif
 

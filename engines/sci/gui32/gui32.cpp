@@ -75,6 +75,18 @@ namespace Sci {
 		_s->visual->draw(gfxw_point_zero); \
 	gfxop_update(_s->gfx_state);
 
+#define SCI0_VIEW_PRIORITY_14_ZONES(y) (((y) < s->priority_first)? 0 : (((y) >= s->priority_last)? 14 : 1\
+	+ ((((y) - s->priority_first) * 14) / (s->priority_last - s->priority_first))))
+
+#define SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr) ((((nr) == 0)? 0 :  \
+	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 14)))
+
+#define SCI0_VIEW_PRIORITY(y) (((y) < s->priority_first)? 0 : (((y) >= s->priority_last)? 14 : 1\
+	+ ((((y) - s->priority_first) * 15) / (s->priority_last - s->priority_first))))
+
+#define SCI0_PRIORITY_BAND_FIRST(nr) ((((nr) == 0)? 0 :  \
+	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 15)))
+
 #if 0
 // Used for debugging
 #define FULL_INSPECTION()\
@@ -2994,6 +3006,11 @@ void SciGui32::moveCursor(Common::Point pos) {
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
 	gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
+}
+
+void SciGui32::modifyPriorityBands(int top, int bottom) {
+	_s->priority_first = top;
+	_s->priority_last = bottom;
 }
 
 bool SciGui32::debugUndither(bool flag) {

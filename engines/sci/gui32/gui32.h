@@ -109,6 +109,8 @@ public:
 	void setCursorPos(Common::Point pos);
 	void moveCursor(Common::Point pos);
 
+	void modifyPriorityBands(int top, int bottom);
+
 	bool debugUndither(bool flag);
 	bool debugShowMap(int mapNo);
 
