@@ -242,6 +242,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(overlay);
 	FIND_SELECTOR(setCursor);
 	FIND_SELECTOR(topString);
+	FIND_SELECTOR(scaleX);
+	FIND_SELECTOR(scaleY);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

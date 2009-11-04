@@ -82,11 +82,12 @@ static const SelectorRemap sci1SelectorRemap[] = {
 // Taken from KQ6 floppy (Full Game)
 static const SelectorRemap sci11SelectorRemap[] = {
 	{      "nodePtr",  41 }, {   "cantBeHere",  54 }, {     "topString", 98 },
-	{        "flags",  99 }, {         "init", 110 }, {      "dispose", 111 },
-	{       "caller", 143 }, {          "cue", 145 }, {        "owner", 166 },
-	{       "setVol", 172 }, {    "setCursor", 197 }, {    "completed", 242 },
-	{       "cycler", 247 }, {     "distance", 256 }, {    "canBeHere", 264 },
-	{     "syncTime", 279 }, {      "syncCue", 280 }, {              0,   0 }
+	{        "flags",  99 }, {       "scaleX", 104 }, {       "scaleY", 105 },
+	{         "init", 110 }, {      "dispose", 111 }, {       "caller", 143 },
+	{          "cue", 145 }, {        "owner", 166 }, {       "setVol", 172 },
+	{    "setCursor", 197 }, {    "completed", 242 }, {       "cycler", 247 },
+	{     "distance", 256 }, {    "canBeHere", 264 }, {     "syncTime", 279 },
+	{      "syncCue", 280 }, {              0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames() {

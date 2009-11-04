@@ -129,6 +129,7 @@ struct SelectorCache {
 	Selector doit; /**< Called (!) by the Animate() system call */
 	Selector signal; /**< Used by Animate() to control a view's behaviour */
 	Selector underBits; /**< Used by the graphics subroutines to store backupped BG pic data */
+	Selector scaleX, scaleY;	/**< SCI1.1 view scaling */
 
 	/* The following selectors are used by the Bresenham syscalls: */
 	Selector canBeHere; /**< Funcselector: Checks for movement validity */
@@ -496,6 +497,7 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags);
  */
 int game_init(EngineState *s);
 
+#ifdef INCLUDE_OLDGFX
 /**
  * Initializes the graphics part of an SCI game
  * This function may only be called if game_init() did not initialize
@@ -504,6 +506,7 @@ int game_init(EngineState *s);
  * @return		0 on success, 1 if an error occured
  */
 int game_init_graphics(EngineState *s);
+#endif
 
 /**
  * Initializes the sound part of an SCI game
