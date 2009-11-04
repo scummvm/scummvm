@@ -359,7 +359,17 @@ void Globals::loadMadsMessagesInfo() {
 	_vm->res()->toss("messages.dat");
 }
 
-char* Globals::loadMessage(uint index) {
+void Globals::loadMadsObjects() {
+	Common::SeekableReadStream *objList = _vm->res()->get("objects.dat");
+	int numObjects = objList->readUint16LE();
+
+	for (int i = 0; i < numObjects; ++i)
+		_madsObjects.push_back(MadsObjectArray::value_type(new MadsObject(objList)));
+
+	_vm->res()->toss("objects.dat");
+}
+
+const char *Globals::loadMessage(uint index) {
 	if (index > _madsMessages.size() - 1) {
 		warning("Invalid message index: %i", index);
 		return NULL;
@@ -451,5 +461,23 @@ bool Player::saidAny(const char *word1, const char *word2, const char *word3,
 	return false;
 }
 
+/*--------------------------------------------------------------------------*/
+
+MadsObject::MadsObject(Common::SeekableReadStream *stream) {
+	// Get the next data block
+	uint8 obj[0x30];
+	stream->read(obj, 0x30);
+
+	// Extract object data fields
+	descId = READ_LE_UINT16(&obj[0]);
+	roomNumber = READ_LE_UINT16(&obj[2]);
+	vocabCount = obj[5];
+	assert(vocabCount <= 3);
+
+	for (int i = 0; i < vocabCount; ++i) {
+		vocabList[i].unk = READ_LE_UINT16(&obj[6 + i * 4]);
+		vocabList[i].vocabId = READ_LE_UINT16(&obj[8 + i * 4]);
+	}
+}
 
 } // End of namespace M4

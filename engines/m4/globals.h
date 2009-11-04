@@ -30,6 +30,9 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+#include "common/file.h"
+#include "common/ptr.h"
+
 namespace M4 {
 
 class M4Engine;
@@ -146,6 +149,27 @@ public:
 
 #define TOTAL_NUM_VARIABLES 256
 
+#define PLAYER_INVENTORY 2
+
+struct VocabEntry {
+	uint16 unk;
+	uint16 vocabId;
+};
+
+class MadsObject {
+public:
+	MadsObject() {};
+	MadsObject(Common::SeekableReadStream *stream);
+	bool isInInventory() const { return roomNumber == PLAYER_INVENTORY; };
+
+	uint16 descId;
+	uint16 roomNumber;
+	uint8 vocabCount;
+	VocabEntry vocabList[3];
+};
+
+typedef Common::Array<Common::SharedPtr<MadsObject> > MadsObjectArray;
+
 class Globals {
 private:
 	struct MessageItem {
@@ -159,6 +183,7 @@ private:
 	Common::Array<char* > _madsVocab;
 	Common::Array<char* > _madsQuotes;
 	Common::Array<MessageItem* > _madsMessages;
+	MadsObjectArray _madsObjects;
 public:
 	Globals(M4Engine *vm);
 	~Globals();
@@ -169,15 +194,19 @@ public:
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }
-	char* getVocab(uint32 index) { return _madsVocab[index]; }
+	const char *getVocab(uint32 index) { return _madsVocab[index]; }
 
 	void loadMadsQuotes();
 	uint32 getQuotesSize() { return _madsQuotes.size(); }
-	char* getQuote(uint32 index) { return _madsQuotes[index]; }
+	const char *getQuote(uint32 index) { return _madsQuotes[index]; }
 
 	void loadMadsMessagesInfo();
 	uint32 getMessagesSize() { return _madsMessages.size(); }
-	char* loadMessage(uint index);
+	const char *loadMessage(uint index);
+
+	void loadMadsObjects();
+	uint32 getObjectsSize() { return _madsObjects.size(); }
+	const MadsObject *getObject(uint32 index) { return _madsObjects[index].get(); }
 };
 
 #define PLAYER_FIELD_LENGTH 40

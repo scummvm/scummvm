@@ -47,9 +47,24 @@ Console::Console(M4Engine *vm) : GUI::Debugger() {
 	DCmd_Register("textview",		WRAP_METHOD(Console, cmdShowTextview));
 	DCmd_Register("animview",		WRAP_METHOD(Console, cmdShowAnimview));
 	DCmd_Register("anim",			WRAP_METHOD(Console, cmdPlayAnimation));
+	DCmd_Register("object",			WRAP_METHOD(Console, cmdObject));
 }
 
 Console::~Console() {
+}
+
+static int strToInt(const char *s) {
+	if (!*s)
+		// No string at all
+		return 0;
+	else if (toupper(s[strlen(s) - 1]) != 'H')
+		// Standard decimal string
+		return atoi(s);
+
+	// Hexadecimal string
+	uint tmp;
+	sscanf(s, "%xh", &tmp);
+	return (int)tmp;
 }
 
 bool Console::cmdLoadScene(int argc, const char **argv) {
@@ -279,6 +294,51 @@ bool Console::cmdPlayAnimation(int argc, const char **argv) {
 		_vm->_animation->start();
 		view->restore(0, 0, view->width(), view->height());
 		return false;
+	}
+
+	return true;
+}
+
+bool Console::cmdObject(int argc, const char **argv) {
+	if (_vm->isM4()) {
+		DebugPrintf("Command not implemented for M4 games\n");
+	} else if (argc == 1) {
+		DebugPrintf("Usage: object ['list' | '#objnum']\n");
+	} else if (!strcmp(argv[1], "list")) {
+		// List of objects
+		for (uint objStart = 0; objStart < _vm->_globals->getObjectsSize(); objStart += 5) {
+			DebugPrintf("%2d - ", objStart);
+			for (uint objId = objStart; objId < MIN(_vm->_globals->getObjectsSize(), objStart + 5); ++objId) {
+				if (objId != objStart) DebugPrintf(", ");
+				uint16 descId = _vm->_globals->getObject(objId)->descId - 1;
+				DebugPrintf("%s", _vm->_globals->getVocab(descId));
+			}
+
+			DebugPrintf("\n");
+		}
+
+		DebugPrintf("\n");
+	} else {
+		// Print the details of a specific object
+		int id = strToInt(argv[1]);
+
+		if ((id < 0) || (id >= (int)_vm->_globals->getObjectsSize()))
+			DebugPrintf("Invalid object specified\n");
+		else {
+			const MadsObject *obj = _vm->_globals->getObject(id);
+
+			DebugPrintf("Object #%d (%s) room=%d vocabs=%d", id, _vm->_globals->getVocab(obj->descId - 1),
+				obj->roomNumber, obj->vocabCount);
+			if (obj->vocabCount > 0) {
+				DebugPrintf(" - ");
+				for (int i = 0; i < obj->vocabCount; ++i) {
+					if (i != 0) DebugPrintf(", ");
+					DebugPrintf("%s (%d)/%d", _vm->_globals->getVocab(obj->vocabList[i].vocabId - 1),
+						obj->vocabList[i].vocabId, obj->vocabList[i].unk);
+				}
+			}
+			DebugPrintf("\n");
+		}
 	}
 
 	return true;

@@ -282,8 +282,8 @@ Common::Error M4Engine::goMADS() {
 	_globals->loadMadsVocab();			// vocab.dat
 	_globals->loadMadsQuotes();			// quotes.dat
 	_globals->loadMadsMessagesInfo();	// messages.dat
-	// TODO: objects.dat
-	// TODO: hoganus.dat (what is it used for?)
+	_globals->loadMadsObjects();
+	
 
 	// Test code to dump all messages to the console
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)
