@@ -67,6 +67,7 @@ MODULE_OBJS := \
 	gui32/res_pal.o \
 	gui32/res_pic.o \
 	gui32/res_view.o \
+	sfx/audio.o \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/songlib.o \

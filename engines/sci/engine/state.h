@@ -42,6 +42,7 @@ namespace Common {
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
+#include "sci/sfx/audio.h"
 #include "sci/sfx/core.h"
 
 namespace Sci {
@@ -115,7 +116,7 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor, AudioPlayer *audio);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -135,6 +136,7 @@ public:
 
 	GfxState *gfx_state; /**< Graphics state and driver */
 
+	AudioPlayer *_audio;
 	SfxState _sound; /**< sound subsystem */
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 	unsigned int sound_volume; /**< 0x0 -> 0xf Current volume of sound system */

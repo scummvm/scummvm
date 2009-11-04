@@ -833,9 +833,9 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			if (s->resMan->testResource(ResourceId(kResourceTypeAudio, number)) &&
 				getSciVersion() >= SCI_VERSION_1_1) {
 				// Found a relevant audio resource, play it
-				s->_sound.stopAudio();
+				s->_audio->stopAudio();
 				warning("Initializing audio resource instead of requested sound resource %d", number);
-				sampleLen = s->_sound.startAudio(65535, number);
+				sampleLen = s->_audio->startAudio(65535, number);
 				// Also create iterator, that will fire SI_FINISHED event, when the sound is done playing
 				s->_sound.sfx_add_song(build_timeriterator(s, sampleLen), 0, handle, number);
 			} else {
@@ -1133,7 +1133,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		uint16 module;
 		uint32 number;
 
-		s->_sound.stopAudio();
+		s->_audio->stopAudio();
 
 		if (argc == 2) {
 			module = 65535;
@@ -1147,21 +1147,21 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		return make_reg(0, s->_sound.startAudio(module, number)); // return sample length in ticks
+		return make_reg(0, s->_audio->startAudio(module, number)); // return sample length in ticks
 	}
 	case kSciAudioStop:
-		s->_sound.stopAudio();
+		s->_audio->stopAudio();
 		break;
 	case kSciAudioPause:
-		s->_sound.pauseAudio();
+		s->_audio->pauseAudio();
 		break;
 	case kSciAudioResume:
-		s->_sound.resumeAudio();
+		s->_audio->resumeAudio();
 		break;
 	case kSciAudioPosition:
-		return make_reg(0, s->_sound.getAudioPosition());
+		return make_reg(0, s->_audio->getAudioPosition());
 	case kSciAudioRate:
-		s->_sound.setAudioRate(argv[1].toUint16());
+		s->_audio->setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume:
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[1].toUint16());

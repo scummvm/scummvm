@@ -40,6 +40,7 @@
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
 #endif
+#include "sci/sfx/audio.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
@@ -94,6 +95,7 @@ SciEngine::~SciEngine() {
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 
+	delete _audio;
 	delete _kernel;
 	delete _vocabulary;
 	delete _console;
@@ -129,9 +131,10 @@ Common::Error SciEngine::run() {
 
 	_kernel = new Kernel(_resMan);
 	_vocabulary = new Vocabulary(_resMan);
+	_audio = new AudioPlayer(_resMan);
 
 	// We'll set the GUI below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor);
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor, _audio);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;

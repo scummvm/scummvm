@@ -34,6 +34,7 @@
 #ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
 #endif
+#include "sci/sfx/audio.h"
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
@@ -735,7 +736,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_gui, s->_cursor);
+	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_gui, s->_cursor, s->_audio);
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;

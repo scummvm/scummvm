@@ -38,6 +38,7 @@ struct EngineState;
 class Kernel;
 class Vocabulary;
 class ResourceManager;
+class AudioPlayer;
 
 // our engine debug levels
 enum kDebugLevels {
@@ -128,6 +129,7 @@ public:
 
 private:
 	const ADGameDescription *_gameDescription;
+	AudioPlayer *_audio;
 	ResourceManager *_resMan;
 	EngineState *_gamestate;
 	Kernel *_kernel;
