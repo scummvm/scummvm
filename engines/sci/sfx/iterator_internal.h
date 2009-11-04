@@ -256,10 +256,6 @@ public:
 		byte buf[4];
 		int result;
 		int retval;
-
-		/* Remapping for channels */
-		byte channel_remap[MIDI_CHANNELS];
-
 	} _children[2];
 
 public:

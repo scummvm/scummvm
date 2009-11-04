@@ -376,6 +376,18 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 		if ((cmd & 0xf0) == 0x90) /* note on? */
 			channel->notes_played++;
 
+#if 0
+		/* Perform remapping, if neccessary */
+		if (cmd != SCI_MIDI_SET_SIGNAL
+				&& cmd < 0xf0) { /* Not a generic command */
+			int chan = cmd & 0xf;
+			int op = cmd & 0xf0;
+
+			chan = channel_remap[chan];
+			buf[0] = chan | op;
+		}
+#endif
+
 		/* Process as normal MIDI operation */
 		return 0;
 	}
@@ -1364,12 +1376,6 @@ TeeSongIterator::TeeSongIterator(SongIterator *left, SongIterator *right) {
 	_children[TEE_LEFT].it = left;
 	_children[TEE_RIGHT].it = right;
 
-	// By default, don't remap
-	for (i = 0; i < 16; i++) {
-		_children[TEE_LEFT].channel_remap[i] = i;
-		_children[TEE_RIGHT].channel_remap[i] = i;
-	}
-
 	/* Default to lhs channels */
 	channel_mask = left->channel_mask;
 	for (i = 0; i < 16; i++)
@@ -1386,7 +1392,7 @@ TeeSongIterator::TeeSongIterator(SongIterator *left, SongIterator *right) {
 				//warning("[songit-tee <%08lx,%08lx>] Could not remap right channel #%d: Out of channels",
 				//        left->ID, right->ID, i);
 			} else {
-				_children[TEE_RIGHT].channel_remap[i] = firstfree;
+				_children[TEE_RIGHT].it->channel_remap[i] = firstfree;
 
 				channel_mask |= (1 << firstfree);
 			}
@@ -1402,7 +1408,7 @@ TeeSongIterator::TeeSongIterator(SongIterator *left, SongIterator *right) {
 		for (c = 0 ; c < 2; c++)
 			for (i = 0 ; i < 16; i++)
 				fprintf(stderr, "  map [%d][%d] -> %d\n",
-				        c, i, _children[c].channel_remap[i]);
+				        c, i, _children[c].it->channel_remap[i]);
 	}
 #endif
 
@@ -1513,21 +1519,6 @@ int TeeSongIterator::nextCommand(byte *buf, int *result) {
 #ifdef DEBUG_TEE_ITERATOR
 	fprintf(stderr, "\tl:%d / r:%d / chose %d\n",
 	        _children[TEE_LEFT].retval, _children[TEE_RIGHT].retval, retid);
-#endif
-#if 0
-	if (_children[retid].retval == 0) {
-		/* Perform remapping, if neccessary */
-		byte *buf = _children[retid].buf;
-		if (*buf != SCI_MIDI_SET_SIGNAL
-		        && *buf < 0xf0) { /* Not a generic command */
-			int chan = *buf & 0xf;
-			int op = *buf & 0xf0;
-
-			chan = _children[retid].channel_remap[chan];
-
-			*buf = chan | op;
-		}
-	}
 #endif
 
 	/* Adjust delta times */
@@ -1660,6 +1651,8 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 
 			SongIterator *old_it = *it;
 			*it = new CleanupSongIterator(channel_mask);
+			for(uint i = 0; i < MIDI_CHANNELS; i++)
+				(*it)->channel_remap[i] = old_it->channel_remap[i];
 			song_iterator_transfer_death_listeners(*it, old_it);
 			if (mask & IT_READER_MAY_FREE)
 				delete old_it;
@@ -1691,6 +1684,10 @@ SongIterator::SongIterator() {
 	fade.action = FADE_ACTION_NONE;
 	priority = 0;
 	memset(_deathListeners, 0, sizeof(_deathListeners));
+
+	// By default, don't remap
+	for (uint i = 0; i < 16; i++)
+		channel_remap[i] = i;
 }
 
 SongIterator::SongIterator(const SongIterator &si) {
@@ -1699,6 +1696,9 @@ SongIterator::SongIterator(const SongIterator &si) {
 	fade = si.fade;
 	priority = si.priority;
 	memset(_deathListeners, 0, sizeof(_deathListeners));
+
+	for (uint i = 0; i < 16; i++)
+		channel_remap[i] = si.channel_remap[i];
 }
 
 

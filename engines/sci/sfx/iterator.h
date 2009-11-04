@@ -29,6 +29,7 @@
 #define SCI_SFX_SFX_ITERATOR_H
 
 #include "sci/sfx/sfx_pcm.h"
+#include "sci/sfx/sci_midi.h"
 
 namespace Audio {
 	class AudioStream;
@@ -156,6 +157,7 @@ public:
 
 	/* See songit_* for the constructor and non-virtual member functions */
 
+	byte channel_remap[MIDI_CHANNELS]; ///< Remapping for channels
 
 public:
 	SongIterator();
