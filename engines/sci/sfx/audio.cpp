@@ -24,6 +24,8 @@
  */
 
 #include "sci/resource.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/seg_manager.h"
 #include "sci/sfx/audio.h"
 
 #include "common/system.h"
@@ -38,10 +40,8 @@ AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(
 }
 
 AudioPlayer::~AudioPlayer() {
+	stopSoundSync();
 	stopAudio();
-
-	if (_syncResource)
-		_resMan->unlockResource(_syncResource);
 }
 
 int AudioPlayer::startAudio(uint16 module, uint32 number) {
@@ -222,6 +222,43 @@ Audio::AudioStream* AudioPlayer::getAudioStream(uint32 number, uint32 volume, in
 	}
 
 	return NULL;
+}
+
+void AudioPlayer::setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan) {
+	_syncResource = _resMan->findResource(id, 1);
+	_syncOffset = 0;
+
+	if (_syncResource) {
+		PUT_SEL32V(segMan, syncObjAddr, syncCue, 0);
+	} else {
+		warning("setSoundSync: failed to find resource %s", id.toString().c_str());
+		// Notify the scripts to stop sound sync
+		PUT_SEL32V(segMan, syncObjAddr, syncCue, SIGNAL_OFFSET);
+	}
+}
+
+void AudioPlayer::doSoundSync(reg_t syncObjAddr, SegManager *segMan) {
+	if (_syncResource && (_syncOffset < _syncResource->size - 1)) {
+		int16 syncCue = -1;
+		int16 syncTime = (int16)READ_LE_UINT16(_syncResource->data + _syncOffset);
+
+		_syncOffset += 2;
+
+		if ((syncTime != -1) && (_syncOffset < _syncResource->size - 1)) {
+			syncCue = (int16)READ_LE_UINT16(_syncResource->data + _syncOffset);
+			_syncOffset += 2;
+		}
+
+		PUT_SEL32V(segMan, syncObjAddr, syncTime, syncTime);
+		PUT_SEL32V(segMan, syncObjAddr, syncCue, syncCue);
+	}
+}
+
+void AudioPlayer::stopSoundSync() {
+	if (_syncResource) {
+		_resMan->unlockResource(_syncResource);
+		_syncResource = NULL;
+	}
 }
 
 } // End of namespace Sci

@@ -30,6 +30,7 @@
 namespace Sci {
 
 class ResourceManager;
+class SegManager;
 
 class AudioPlayer {
 public:
@@ -44,14 +45,17 @@ public:
 	void pauseAudio() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
 	void resumeAudio() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
 
-	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
-	uint _syncOffset;
+	void setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan);
+	void doSoundSync(reg_t syncObjAddr, SegManager *segMan);
+	void stopSoundSync();
 
 private:
 	ResourceManager *_resMan;
 	uint16 _audioRate;
 	Audio::SoundHandle _audioHandle;
 	Audio::AudioStream* getAudioStream(uint32 number, uint32 volume, int *sampleLen);
+	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
+	uint _syncOffset;
 };
 
 } // End of namespace Sci

@@ -1189,10 +1189,7 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
-		if (s->_audio->_syncResource) {
-			s->resMan->unlockResource(s->_audio->_syncResource);
-			s->_audio->_syncResource = NULL;
-		}
+		s->_audio->stopSoundSync();
 
 		// Load sound sync resource and lock it
 		if (argc == 3) {
@@ -1205,41 +1202,14 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		s->_audio->_syncResource = s->resMan->findResource(id, 1);
-
-		if (s->_audio->_syncResource) {
-			PUT_SEL32V(segMan, argv[1], syncCue, 0);
-			s->_audio->_syncOffset = 0;
-		} else {
-			warning("DoSync: failed to find resource %s", id.toString().c_str());
-			// Notify the scripts to stop sound sync
-			PUT_SEL32V(segMan, argv[1], syncCue, SIGNAL_OFFSET);
-		}
+		s->_audio->setSoundSync(id, argv[1], segMan);
 		break;
 	}
-	case kSciAudioSyncNext: {
-		Resource *res = s->_audio->_syncResource;
-		if (res && (s->_audio->_syncOffset < res->size - 1)) {
-			int16 syncCue = -1;
-			int16 syncTime = (int16)READ_LE_UINT16(res->data + s->_audio->_syncOffset);
-
-			s->_audio->_syncOffset += 2;
-
-			if ((syncTime != -1) && (s->_audio->_syncOffset < res->size - 1)) {
-				syncCue = (int16)READ_LE_UINT16(res->data + s->_audio->_syncOffset);
-				s->_audio->_syncOffset += 2;
-			}
-
-			PUT_SEL32V(segMan, argv[1], syncTime, syncTime);
-			PUT_SEL32V(segMan, argv[1], syncCue, syncCue);
-		}
+	case kSciAudioSyncNext: 
+		s->_audio->doSoundSync(argv[1], segMan);
 		break;
-	}
 	case kSciAudioSyncStop:
-		if (s->_audio->_syncResource) {
-			s->resMan->unlockResource(s->_audio->_syncResource);
-			s->_audio->_syncResource = NULL;
-		}
+		s->_audio->stopSoundSync();
 		break;
 	default:
 		warning("DoSync: Unhandled subfunction %d", argv[0].toUint16());
