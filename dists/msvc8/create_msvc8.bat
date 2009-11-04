@@ -5,9 +5,14 @@ echo.
 
 if not exist create_msvc.exe goto no_tool
 
-choice /m "Do you want to enable all engines? "
-if errorlevel 2 goto normal_build
-if errorlevel 1 goto all_engines
+:question
+echo.
+set /p batchanswer="Enable (S)table engines only, or (A)ll engines? (S/A)"
+if "%batchanswer%"=="s" goto stable
+if "%batchanswer%"=="S" goto stable
+if "%batchanswer%"=="a" goto all
+if "%batchanswer%"=="A" goto all
+goto question
 
 :no_tool
 echo create_msvc.exe not found in the current folder.
@@ -15,14 +20,13 @@ echo You need to build it first and copy it in this
 echo folder
 goto done
 
-:all_engines
-echo Creating project files with all engines enabled
+:all
+echo Creating project files with all engines enabled (stable and unstable)
 create_msvc ..\.. --enable-all-engines --msvc-version 8
 goto done
 
-:normal_build
-echo Creating normal project files, with only the stable
-echo engines enabled
+:stable
+echo Creating normal project files, with only the stable engines enabled
 create_msvc ..\.. --msvc-version 8
 goto done
 
