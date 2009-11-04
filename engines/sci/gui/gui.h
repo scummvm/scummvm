@@ -81,7 +81,7 @@ public:
 
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawMenuBar(bool clear);
-	virtual void menuAdd(Common::String title, Common::String content, reg_t entriesBase);
+	virtual void menuAdd(Common::String title, Common::String content, reg_t contentVmPtr);
 	virtual void menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
 	virtual reg_t menuGet(uint16 menuId, uint16 itemId, uint16 attributeId);
 	virtual reg_t menuSelect(reg_t eventObject);

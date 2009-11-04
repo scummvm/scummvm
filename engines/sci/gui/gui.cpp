@@ -62,7 +62,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
 	_windowMgr = new SciGuiWindowMgr(this, _screen, _gfx, _text);
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
-	_menu = new SciGuiMenu(_gfx, _text, _screen);
+	_menu = new SciGuiMenu(_s->_segMan, _gfx, _text, _screen);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
@@ -314,8 +314,8 @@ void SciGui::drawMenuBar(bool clear) {
 	}
 }
 
-void SciGui::menuAdd(Common::String title, Common::String content, reg_t entriesBase) {
-	_menu->add(title, content);
+void SciGui::menuAdd(Common::String title, Common::String content, reg_t contentVmPtr) {
+	_menu->add(title, content, contentVmPtr);
 }
 
 void SciGui::menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {

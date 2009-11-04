@@ -31,7 +31,7 @@ namespace Sci {
 enum {
 	SCI_MENU_ATTRIBUTE_SAID		= 0x6d,
 	SCI_MENU_ATTRIBUTE_TEXT		= 0x6e,
-	SCI_MENU_ATTRIBUTE_KEY		= 0x6f,
+	SCI_MENU_ATTRIBUTE_KEYPRESS	= 0x6f,
 	SCI_MENU_ATTRIBUTE_ENABLED	= 0x70,
 	SCI_MENU_ATTRIBUTE_TAG		= 0x71
 };
@@ -46,8 +46,8 @@ struct GuiMenuEntry {
 	uint16 id;
 	Common::String text;
 
-	GuiMenuEntry(uint16 id_)
-	 : id(id_) { }
+	GuiMenuEntry(uint16 curId)
+	 : id(curId) { }
 };
 typedef Common::List<GuiMenuEntry *> GuiMenuList;
 
@@ -60,28 +60,35 @@ struct GuiMenuItemEntry {
 	uint16 keyModifier;
 	bool separatorLine;
 	Common::String said;
+	reg_t saidVmPtr;
 	Common::String text;
+	reg_t textVmPtr;
 	Common::String textRightAligned;
 
-	GuiMenuItemEntry(uint16 menuId_, uint16 id_)
-	 : menuId(menuId_), id(id_),
-		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false) { }
+	GuiMenuItemEntry(uint16 curMenuId, uint16 curId)
+	 : menuId(curMenuId), id(curId),
+		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false) {
+		saidVmPtr = NULL_REG;
+		textVmPtr = NULL_REG;
+	}
 };
 typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
 class SciGuiMenu {
 public:
-	SciGuiMenu(SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen);
+	SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen);
 	~SciGuiMenu();
 
-	void add(Common::String title, Common::String content);
+	void add(Common::String title, Common::String content, reg_t contentVmPtr);
 	void setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
 	reg_t getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
 
 	void drawBar();
 
 private:
+	GuiMenuItemEntry *findItem(uint16 menuId, uint16 itemId);
 
+	SegManager *_segMan;
 	SciGuiGfx *_gfx;
 	SciGuiText *_text;
 	SciGuiScreen *_screen;

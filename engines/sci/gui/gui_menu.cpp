@@ -37,14 +37,16 @@
 
 namespace Sci {
 
-SciGuiMenu::SciGuiMenu(SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen)
-	: _gfx(gfx), _text(text), _screen(screen) {
+SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen)
+	: _segMan(segMan), _gfx(gfx), _text(text), _screen(screen) {
+
+	_listCount = 0;
 }
 
 SciGuiMenu::~SciGuiMenu() {
 }
 
-void SciGuiMenu::add(Common::String title, Common::String content) {
+void SciGuiMenu::add(Common::String title, Common::String content, reg_t contentVmPtr) {
 	GuiMenuEntry *menuEntry;
 	uint16 itemCount = 0;
 	GuiMenuItemEntry *itemEntry;
@@ -166,6 +168,8 @@ void SciGuiMenu::add(Common::String title, Common::String content) {
 		} else {
 			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 		}
+		itemEntry->textVmPtr = contentVmPtr;
+		itemEntry->textVmPtr.offset += beginPos;
 
 		if (rightAlignedPos) {
 			rightAlignedPos++;
@@ -188,11 +192,76 @@ void SciGuiMenu::add(Common::String title, Common::String content) {
 	} while (curPos < contentSize);
 }
 
+GuiMenuItemEntry *SciGuiMenu::findItem(uint16 menuId, uint16 itemId) {
+	GuiMenuItemList::iterator listIterator;
+	GuiMenuItemList::iterator listEnd = _itemList.end();
+	GuiMenuItemEntry *listEntry;
+
+	listIterator = _itemList.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		if ((listEntry->menuId == menuId) && (listEntry->id == itemId))
+			return listEntry;
+
+		listIterator++;
+	}
+	return NULL;
+}
+
 void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
-	warning("setAttr: %d %d %d", menuId, itemId, attributeId);
+	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
+	if (!itemEntry)
+		error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+	switch (attributeId) {
+	case SCI_MENU_ATTRIBUTE_ENABLED:
+		itemEntry->enabled = value.isNull() ? false : true;
+		break;
+	case SCI_MENU_ATTRIBUTE_SAID:
+		itemEntry->said = _segMan->getString(value);
+		itemEntry->saidVmPtr = value;
+		break;
+	case SCI_MENU_ATTRIBUTE_TEXT:
+		itemEntry->text = _segMan->getString(value);
+		itemEntry->textVmPtr = value;
+		break;
+	case SCI_MENU_ATTRIBUTE_KEYPRESS:
+		itemEntry->keyPress = value.offset;
+		itemEntry->keyModifier = 0;
+		// TODO: Find out how modifier is handled
+		printf("setAttr keypress %X %X\n", value.segment, value.offset);
+		break;
+	case SCI_MENU_ATTRIBUTE_TAG:
+		itemEntry->tag = value.offset;
+		break;
+	default:
+		error("setAttribute() called with unsupported attributeId %X", attributeId);
+	}
 }
 
 reg_t SciGuiMenu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
+	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
+	if (!itemEntry)
+		error("Tried to getAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+	switch (attributeId) {
+	case SCI_MENU_ATTRIBUTE_ENABLED:
+		if (itemEntry->enabled)
+			return make_reg(0, 1);
+		break;
+	case SCI_MENU_ATTRIBUTE_SAID:
+		return itemEntry->saidVmPtr;
+		break;
+	case SCI_MENU_ATTRIBUTE_TEXT:
+		return itemEntry->textVmPtr;
+		break;
+	case SCI_MENU_ATTRIBUTE_KEYPRESS:
+		// TODO: Find out how modifier is handled
+		return make_reg(0, itemEntry->keyPress);
+		break;
+	case SCI_MENU_ATTRIBUTE_TAG:
+		return make_reg(0, itemEntry->tag);
+	default:
+		error("setAttribute() called with unsupported attributeId %X", attributeId);
+	}
 	return NULL_REG;
 }
 
