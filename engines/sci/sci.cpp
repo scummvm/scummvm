@@ -183,7 +183,6 @@ Common::Error SciEngine::run() {
 	}
 
 	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
-	_gamestate->_segMan = segMan;
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 
