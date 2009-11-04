@@ -116,7 +116,7 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor, AudioPlayer *audio);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, AudioPlayer *audio);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -132,7 +132,6 @@ public:
 	/* Non-VM information */
 
 	SciGui *_gui; /* Currently active Gui */
-	SciGuiCursor *_cursor;	/* Cursor functions */
 
 	GfxState *gfx_state; /**< Graphics state and driver */
 

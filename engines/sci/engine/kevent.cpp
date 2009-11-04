@@ -43,7 +43,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
-	const Common::Point mousePos = s->_cursor->getPosition();
+	const Common::Point mousePos = s->_gui->getCursorPos();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event

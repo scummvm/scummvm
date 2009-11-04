@@ -934,7 +934,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 		}
 	}
 
-	Common::Point cursorPos = _s->_cursor->getPosition();
+	Common::Point cursorPos = _cursor->getPosition();
 
 	if ((type == SCI_EVT_MOUSE_PRESS) && (cursorPos.y < 10)) {
 		menu_mode = 1;
@@ -1027,7 +1027,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 
 			case SCI_EVT_MOUSE_RELEASE:
 				{
-				Common::Point curMousePos = _s->_cursor->getPosition();
+				Common::Point curMousePos = _cursor->getPosition();
 				menu_mode = (curMousePos.y < 10);
 				claimed = !menu_mode && !_s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, portBounds);
 				mouse_down = 0;
@@ -1044,7 +1044,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 			}
 
 			if (mouse_down)
-				_s->_menubar->mapPointer(_s->_cursor->getPosition(), menu_nr, item_nr, portBounds);
+				_s->_menubar->mapPointer(_cursor->getPosition(), menu_nr, item_nr, portBounds);
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
 
@@ -2960,22 +2960,6 @@ bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 		retval = true;
 	debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
 	return retval;
-}
-
-void SciGui32::hideCursor() {
-	_cursor->hide();
-}
-
-void SciGui32::showCursor() {
-	_cursor->show();
-}
-
-void SciGui32::setCursorShape(GuiResourceId cursorId) {
-	_cursor->setShape(cursorId);
-}
-
-void SciGui32::setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot) {
-	_cursor->setView(viewNum, loopNum, cellNum, hotspot);
 }
 
 void SciGui32::setCursorPos(Common::Point pos) {

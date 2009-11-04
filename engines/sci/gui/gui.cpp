@@ -737,6 +737,10 @@ void SciGui::setCursorPos(Common::Point pos) {
 	moveCursor(pos);
 }
 
+Common::Point SciGui::getCursorPos() {
+	return _cursor->getPosition();
+}
+
 void SciGui::moveCursor(Common::Point pos) {
 	pos.y += _windowMgr->_picWind->rect.top;
 	pos.x += _windowMgr->_picWind->rect.left;
@@ -754,6 +758,10 @@ void SciGui::moveCursor(Common::Point pos) {
 	// actually have changed the next time we read them.
 	//gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
 	// FIXME!
+}
+
+void SciGui::setCursorZone(Common::Rect zone) {
+	_cursor->setMoveZone(zone);
 }
 
 int16 SciGui::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {

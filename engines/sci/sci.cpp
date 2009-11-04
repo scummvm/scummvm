@@ -134,7 +134,7 @@ Common::Error SciEngine::run() {
 	_audio = new AudioPlayer(_resMan);
 
 	// We'll set the GUI below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor, _audio);
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, _audio);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;

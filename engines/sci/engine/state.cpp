@@ -32,8 +32,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor, AudioPlayer *audio)
-: resMan(res), _kernel(kernel), _voc(voc), _gui(gui), _cursor(cursor), _audio(audio), _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, AudioPlayer *audio)
+: resMan(res), _kernel(kernel), _voc(voc), _gui(gui), _audio(audio), _dirseeker(this) {
 
 	gfx_state = 0;
 

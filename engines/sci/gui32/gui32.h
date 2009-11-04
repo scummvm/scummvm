@@ -102,10 +102,6 @@ public:
 	void setNowSeen(reg_t objectReference);
 	bool canBeHere(reg_t curObject, reg_t listReference);
 
-	void hideCursor();
-	void showCursor();
-	void setCursorShape(GuiResourceId cursorId);
-	void setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot);
 	void setCursorPos(Common::Point pos);
 	void moveCursor(Common::Point pos);
 

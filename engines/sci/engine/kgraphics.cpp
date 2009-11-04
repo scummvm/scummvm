@@ -128,7 +128,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
-			s->_cursor->setMoveZone(rect);
+			s->_gui->setCursorZone(rect);
 		} else {
 			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
 		}
