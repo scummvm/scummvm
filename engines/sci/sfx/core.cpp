@@ -561,8 +561,15 @@ void SfxState::updateMultiSong() {
 
 	// WORKAROUND: sometimes, newsong can be NULL (e.g. in SQ4).
 	// Handle this here, so that we avoid a crash
-	if (!newsong)
+	if (!newsong) {	
+		// Iterators should get freed when there's only one song left playing
+		if(oldfirst && oldfirst->_status == SOUND_STATUS_STOPPED) {
+			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx\n", oldfirst->_handle);
+			if (_player && oldfirst->_it)
+				_player->iterator_message(SongIterator::Message(oldfirst->_it->ID, SIMSG_STOP));
+		}
 		return;
+	}
 
 	for (newseeker = newsong; newseeker;
 	        newseeker = newseeker->_nextPlaying) {
