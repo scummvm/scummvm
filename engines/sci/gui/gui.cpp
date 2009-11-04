@@ -56,7 +56,7 @@ namespace Sci {
 SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor)
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
-	_gfx = new SciGuiGfx(_s, _screen, _palette);
+	_gfx = new SciGuiGfx(_s->resMan, _s->_segMan, _s->_kernel, _screen, _palette);
 	_transitions = new SciGuiTransitions(this, _screen, _palette, _s->resMan->isVGA());
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
@@ -81,7 +81,7 @@ SciGui::~SciGui() {
 
 void SciGui::resetEngineState(EngineState *s) {
 	_s = s;
-	_gfx->resetEngineState(s);
+	_gfx->resetSegMan(s->_segMan);
 	_animate->resetEngineState(s);
 }
 

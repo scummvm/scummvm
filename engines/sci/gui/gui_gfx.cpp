@@ -40,8 +40,8 @@
 
 namespace Sci {
 
-SciGuiGfx::SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
-	: _s(state), _screen(screen), _palette(palette) {
+SciGuiGfx::SciGuiGfx(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGuiScreen *screen, SciGuiPalette *palette)
+	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _screen(screen), _palette(palette) {
 }
 
 SciGuiGfx::~SciGuiGfx() {
@@ -82,7 +82,7 @@ SciGuiView *SciGuiGfx::getView(GuiResourceId viewNum) {
 		purgeCache();
 
 	if (!_cachedViews.contains(viewNum))
-		_cachedViews[viewNum] = new SciGuiView(_s->resMan, _screen, _palette, viewNum);
+		_cachedViews[viewNum] = new SciGuiView(_resMan, _screen, _palette, viewNum);
 
 	return _cachedViews[viewNum];
 }
@@ -280,8 +280,8 @@ GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	// now actually ask _screen how much space it will need for saving
 	size = _screen->bitsGetDataSize(workerRect, screenMask);
 
-	memoryId = kalloc(_s->_segMan, "SaveBits()", size);
-	memoryPtr = kmem(_s->_segMan, memoryId);
+	memoryId = kalloc(_segMan, "SaveBits()", size);
+	memoryPtr = kmem(_segMan, memoryId);
 	_screen->bitsSave(workerRect, screenMask, memoryPtr);
 	return memoryId;
 }
@@ -290,7 +290,7 @@ void SciGuiGfx::BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
-		memoryPtr = kmem(_s->_segMan, memoryHandle);;
+		memoryPtr = kmem(_segMan, memoryHandle);;
 
 		if (memoryPtr) {
 			_screen->bitsGetRect(memoryPtr, destRect);
@@ -302,25 +302,25 @@ void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
-		memoryPtr = kmem(_s->_segMan, memoryHandle);;
+		memoryPtr = kmem(_segMan, memoryHandle);;
 
 		if (memoryPtr) {
 			_screen->bitsRestore(memoryPtr);
-			kfree(_s->_segMan, memoryHandle);
+			kfree(_segMan, memoryHandle);
 		}
 	}
 }
 
 void SciGuiGfx::BitsFree(GuiMemoryHandle memoryHandle) {
 	if (!memoryHandle.isNull()) {
-		kfree(_s->_segMan, memoryHandle);
+		kfree(_segMan, memoryHandle);
 	}
 }
 
 void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
 	SciGuiPicture *picture;
 
-	picture = new SciGuiPicture(_s->resMan, this, _screen, _palette, pictureId);
+	picture = new SciGuiPicture(_resMan, this, _screen, _palette, pictureId);
 	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag) {
 		ClearScreen(_screen->_colorWhite);
@@ -477,7 +477,7 @@ int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
 
 bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
 	reg_t curAddress = list->first;
-	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	Node *curNode = _segMan->lookupNode(curAddress);
 	reg_t curObject;
 	uint16 signal;
 	Common::Rect curRect;
@@ -485,12 +485,12 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 	while (curNode) {
 		curObject = curNode->value;
 		if (curObject != checkObject) {
-			signal = GET_SEL32V(_s->_segMan, curObject, signal);
+			signal = GET_SEL32V(_segMan, curObject, signal);
 			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
-				curRect.left = GET_SEL32V(_s->_segMan, curObject, brLeft);
-				curRect.top = GET_SEL32V(_s->_segMan, curObject, brTop);
-				curRect.right = GET_SEL32V(_s->_segMan, curObject, brRight);
-				curRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
+				curRect.left = GET_SEL32V(_segMan, curObject, brLeft);
+				curRect.top = GET_SEL32V(_segMan, curObject, brTop);
+				curRect.right = GET_SEL32V(_segMan, curObject, brRight);
+				curRect.bottom = GET_SEL32V(_segMan, curObject, brBottom);
 				// Check if curRect is within checkRect
 				if (curRect.right > checkRect.left && curRect.left < checkRect.right && curRect.bottom > checkRect.top && curRect.top < checkRect.bottom) {
 					return false;
@@ -498,7 +498,7 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 			}
 		}
 		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
+		curNode = _segMan->lookupNode(curAddress);
 	}
 	return true;
 }
@@ -506,26 +506,25 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	SciGuiView *view = NULL;
 	Common::Rect celRect(0, 0);
-	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_s->_segMan, objectReference, view);
-	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(_s->_segMan, objectReference, loop));
-	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(_s->_segMan, objectReference, cel));
-	int16 x = (int16)GET_SEL32V(_s->_segMan, objectReference, x);
-	int16 y = (int16)GET_SEL32V(_s->_segMan, objectReference, y);
+	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, view);
+	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(_segMan, objectReference, loop));
+	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(_segMan, objectReference, cel));
+	int16 x = (int16)GET_SEL32V(_segMan, objectReference, x);
+	int16 y = (int16)GET_SEL32V(_segMan, objectReference, y);
 	int16 z = 0;
-	if (_s->_kernel->_selectorCache.z > -1) {
-		z = (int16)GET_SEL32V(_s->_segMan, objectReference, z);
-	}
+	if (_kernel->_selectorCache.z > -1)
+		z = (int16)GET_SEL32V(_segMan, objectReference, z);
 
 	// now get cel rectangle
 	view = getView(viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
 	// TODO: sometimes loop is negative. Check what it means
-	if (lookup_selector(_s->_segMan, objectReference, _s->_kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
-		PUT_SEL32V(_s->_segMan, objectReference, nsLeft, celRect.left);
-		PUT_SEL32V(_s->_segMan, objectReference, nsRight, celRect.right);
-		PUT_SEL32V(_s->_segMan, objectReference, nsTop, celRect.top);
-		PUT_SEL32V(_s->_segMan, objectReference, nsBottom, celRect.bottom);
+	if (lookup_selector(_segMan, objectReference, _kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
+		PUT_SEL32V(_segMan, objectReference, nsLeft, celRect.left);
+		PUT_SEL32V(_segMan, objectReference, nsRight, celRect.right);
+		PUT_SEL32V(_segMan, objectReference, nsTop, celRect.top);
+		PUT_SEL32V(_segMan, objectReference, nsBottom, celRect.bottom);
 	}
 }
 

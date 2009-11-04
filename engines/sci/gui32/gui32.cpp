@@ -392,7 +392,7 @@ SciGui32::SciGui32( EngineState *state, SciGuiScreen *screen, SciGuiPalette *pal
 	_screen = screen;
 	_palette = palette;
 	_cursor = cursor;
-	_gfx = new SciGuiGfx(_s, _screen, _palette);
+	_gfx = new SciGuiGfx(_s->resMan, _s->_segMan, _s->_kernel, _screen, _palette);
 }
 
 SciGui32::~SciGui32() {
@@ -408,7 +408,7 @@ void SciGui32::init(bool oldGfxFunctions) {
 
 void SciGui32::resetEngineState(EngineState *s) {
 	_s = s;
-	_gfx->resetEngineState(s);
+	_gfx->resetSegMan(s->_segMan);
 }
 
 void SciGui32::wait(int16 ticks) {

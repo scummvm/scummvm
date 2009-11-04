@@ -48,13 +48,12 @@ typedef Common::HashMap<int, SciGuiView *> ViewCache;
 
 class SciGuiGfx {
 public:
-	SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGuiGfx(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGuiScreen *screen, SciGuiPalette *palette);
 	~SciGuiGfx();
 
 	void init(SciGuiText *text);
 
-	// FIXME: Don't store EngineState
-	void resetEngineState(EngineState *newState) { _s = newState; }
+	void resetSegMan(SegManager *segMan) { _segMan = segMan; }
 
 	byte *GetSegment(byte seg);
 	void ResetScreen();
@@ -111,7 +110,9 @@ public:
 private:
 	void purgeCache();
 
-	EngineState *_s;
+	ResourceManager *_resMan;
+	SegManager *_segMan;
+	Kernel *_kernel;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 	SciGuiText *_text;
