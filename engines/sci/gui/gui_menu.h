@@ -45,9 +45,10 @@ enum {
 struct GuiMenuEntry {
 	uint16 id;
 	Common::String text;
+	int16 textWidth;
 
 	GuiMenuEntry(uint16 curId)
-	 : id(curId) { }
+	 : id(curId), textWidth(0) { }
 };
 typedef Common::List<GuiMenuEntry *> GuiMenuList;
 
@@ -63,11 +64,12 @@ struct GuiMenuItemEntry {
 	reg_t saidVmPtr;
 	Common::String text;
 	reg_t textVmPtr;
+	int16 textWidth;
 	Common::String textRightAligned;
 
 	GuiMenuItemEntry(uint16 curMenuId, uint16 curId)
 	 : menuId(curMenuId), id(curId),
-		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false) {
+		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false), textWidth(0) {
 		saidVmPtr = NULL_REG;
 		textVmPtr = NULL_REG;
 	}
@@ -76,7 +78,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
 class SciGuiMenu {
 public:
-	SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen);
+	SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor);
 	~SciGuiMenu();
 
 	void add(Common::String title, Common::String content, reg_t contentVmPtr);
@@ -88,11 +90,15 @@ public:
 
 private:
 	GuiMenuItemEntry *findItem(uint16 menuId, uint16 itemId);
+	void calculateTextWidth();
+	GuiMenuItemEntry *interactiveWithKeyboard();
+	GuiMenuItemEntry *interactiveWithMouse();
 
 	SegManager *_segMan;
 	SciGuiGfx *_gfx;
 	SciGuiText *_text;
 	SciGuiScreen *_screen;
+	SciGuiCursor *_cursor;
 
 	uint16 _listCount;
 	GuiMenuList _list;

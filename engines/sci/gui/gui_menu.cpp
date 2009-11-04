@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/gui/gui_gfx.h"
+#include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_font.h"
 #include "sci/gui/gui_text.h"
 #include "sci/gui/gui_screen.h"
@@ -37,8 +38,8 @@
 
 namespace Sci {
 
-SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen)
-	: _segMan(segMan), _gfx(gfx), _text(text), _screen(screen) {
+SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor)
+	: _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
 }
@@ -225,7 +226,7 @@ void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, 
 		itemEntry->textVmPtr = value;
 		break;
 	case SCI_MENU_ATTRIBUTE_KEYPRESS:
-		itemEntry->keyPress = value.offset;
+		itemEntry->keyPress = tolower(value.offset);
 		itemEntry->keyModifier = 0;
 		// TODO: Find out how modifier is handled
 		printf("setAttr keypress %X %X\n", value.segment, value.offset);
@@ -282,7 +283,86 @@ void SciGuiMenu::drawBar() {
 	_gfx->BitsShow(_gfx->_menuRect);
 }
 
+void SciGuiMenu::calculateTextWidth() {
+	GuiMenuList::iterator menuIterator;
+	GuiMenuList::iterator menuEnd = _list.end();
+	GuiMenuEntry *menuEntry;
+	GuiMenuItemList::iterator itemIterator;
+	GuiMenuItemList::iterator itemEnd = _itemList.end();
+	GuiMenuItemEntry *itemEntry;
+	int16 dummyHeight;
+
+	menuIterator = _list.begin();
+	while (menuIterator != menuEnd) {
+		menuEntry = *menuIterator;
+		_text->StringWidth(menuEntry->text.c_str(), 0, menuEntry->textWidth, dummyHeight);
+
+		menuIterator++;
+	}
+
+	itemIterator = _itemList.begin();
+	while (itemIterator != itemEnd) {
+		itemEntry = *itemIterator;
+		_text->StringWidth(itemEntry->text.c_str(), 0, itemEntry->textWidth, dummyHeight);
+
+		itemIterator++;
+	}
+}
+
+GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
+	calculateTextWidth();
+
+	return NULL;
+}
+
+GuiMenuItemEntry *SciGuiMenu::interactiveWithMouse() {
+	calculateTextWidth();
+
+	return NULL;
+}
+
 reg_t SciGuiMenu::select(reg_t eventObject) {
+	int16 eventType = GET_SEL32V(_segMan, eventObject, type);
+	int16 keyPress = GET_SEL32V(_segMan, eventObject, message);
+	int16 keyModifier = GET_SEL32V(_segMan, eventObject, modifiers);
+	Common::Point mousePosition;
+	GuiMenuItemList::iterator itemIterator = _itemList.begin();
+	GuiMenuItemList::iterator itemEnd = _itemList.end();
+	GuiMenuItemEntry *itemEntry = NULL;
+	bool forceClaimed = false;
+
+	switch (eventType) {
+	case SCI_EVT_KEYBOARD:
+		if (keyPress == SCI_K_ESC) {
+			itemEntry = interactiveWithKeyboard();
+			forceClaimed = true;
+		} else if (keyPress) {
+			while (itemIterator != itemEnd) {
+				itemEntry = *itemIterator;
+				if ((itemEntry->keyPress == keyPress) && (itemEntry->keyModifier == keyModifier))
+					break;
+				itemIterator++;
+			}
+			if (itemIterator == itemEnd)
+				itemEntry = NULL;
+		}
+		break;
+	case SCI_EVT_SAID:
+		break;
+	case SCI_EVT_MOUSE_PRESS:
+		mousePosition = _cursor->getPosition();
+		if (mousePosition.y < 10) {
+			itemEntry = interactiveWithMouse();
+			forceClaimed = true;
+		}
+		break;
+	}
+
+	if ((itemEntry) || (forceClaimed)) {
+		PUT_SEL32(_segMan, eventObject, claimed, make_reg(0, 1));
+	}
+	if (itemEntry)
+		return make_reg(0, (itemEntry->menuId << 8) | (itemEntry->id));
 	return NULL_REG;
 }
 
