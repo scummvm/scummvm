@@ -101,14 +101,6 @@ void SciGui::initPriorityBands() {
 	}
 }
 
-void SciGui::modifyPriorityBands(int top, int bottom) {
-	if (_usesOldGfxFunctions) {
-		_gfx->PriorityBandsInit(15, top, bottom);
-	} else {
-		_gfx->PriorityBandsInit(14, top, bottom);
-	}
-}
-
 void SciGui::wait(int16 ticks) {
 	uint32 time;
 
@@ -506,6 +498,14 @@ void SciGui::graphRedrawBox(Common::Rect rect) {
 	_animate->reAnimate(rect);
 
 	_gfx->SetPort(oldPort);
+}
+
+void SciGui::graphAdjustPriority(int top, int bottom) {
+	if (_usesOldGfxFunctions) {
+		_gfx->PriorityBandsInit(15, top, bottom);
+	} else {
+		_gfx->PriorityBandsInit(14, top, bottom);
+	}
 }
 
 int16 SciGui::picNotValid(int16 newPicNotValid) {

@@ -267,8 +267,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_ADJUST_PRIORITY:
-		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toSint16(), argv[2].toSint16());
-		s->_gui->modifyPriorityBands(argv[1].toSint16() - 10, argv[2].toSint16() - 10);
+		// Seems to be only implemented for SCI0/SCI01 games
+		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toUint16(), argv[2].toUint16());
+		s->_gui->graphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
@@ -495,10 +496,10 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
-	if (s->_gameName == "lsl1sci" && s->currentRoomNumber() == 300) {
-		int top = GET_SEL32V(s->_segMan, object, brTop);
-		PUT_SEL32V(s->_segMan, object, brTop, top + 2);
-	}
+	//if (s->_gameName == "lsl1sci" && s->currentRoomNumber() == 300) {
+	//	int top = GET_SEL32V(s->_segMan, object, brTop);
+	//	PUT_SEL32V(s->_segMan, object, brTop, top + 2);
+	//}
 
 	return s->r_acc;
 }
