@@ -33,8 +33,8 @@ class ResourceManager;
 
 class AudioPlayer {
 public:
-	AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025) { }
-	AudioPlayer::~AudioPlayer() { stopAudio(); }
+	AudioPlayer(ResourceManager *resMan);
+	~AudioPlayer();
 		
 	void setAudioRate(uint16 rate) { _audioRate = rate; }
 	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
@@ -43,6 +43,9 @@ public:
 	void stopAudio() { g_system->getMixer()->stopHandle(_audioHandle); }
 	void pauseAudio() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
 	void resumeAudio() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
+
+	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
+	uint _syncOffset;
 
 private:
 	ResourceManager *_resMan;

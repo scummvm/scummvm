@@ -33,6 +33,17 @@
 
 namespace Sci {
 
+AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025),
+		_syncResource(NULL), _syncOffset(0) {
+}
+
+AudioPlayer::~AudioPlayer() {
+	stopAudio();
+
+	if (_syncResource)
+		_resMan->unlockResource(_syncResource);
+}
+
 int AudioPlayer::startAudio(uint16 module, uint32 number) {
 	int sampleLen;
 	Audio::AudioStream *audioStream = getAudioStream(number, module, &sampleLen);

@@ -357,12 +357,9 @@ SfxState::SfxState() {
 	_flags = 0;
 	_song = NULL;
 	_suspended = 0;
-	_syncResource = NULL;
 }
 
 SfxState::~SfxState() {
-	if (_syncResource)
-		_resMan->unlockResource(_syncResource);
 }
 
 
@@ -653,8 +650,6 @@ void SfxState::sfx_init(ResourceManager *resMan, int flags) {
 	_songlib._lib = 0;
 	_song = NULL;
 	_flags = flags;
-	_syncResource = NULL;
-	_syncOffset = 0;
 
 	_player = NULL;
 

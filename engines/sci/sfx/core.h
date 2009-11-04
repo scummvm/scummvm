@@ -54,8 +54,6 @@ public:	// FIXME, make private
 	SongLibrary _songlib; /**< Song library */
 	Song *_song; /**< Active song, or start of active song chain */
 	bool _suspended; /**< Whether we are suspended */
-	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
-	uint _syncOffset;
 	ResourceManager *_resMan;
 
 public:

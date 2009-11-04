@@ -1189,9 +1189,9 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
-		if (s->_sound._syncResource) {
-			s->resMan->unlockResource(s->_sound._syncResource);
-			s->_sound._syncResource = NULL;
+		if (s->_audio->_syncResource) {
+			s->resMan->unlockResource(s->_audio->_syncResource);
+			s->_audio->_syncResource = NULL;
 		}
 
 		// Load sound sync resource and lock it
@@ -1205,11 +1205,11 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		s->_sound._syncResource = s->resMan->findResource(id, 1);
+		s->_audio->_syncResource = s->resMan->findResource(id, 1);
 
-		if (s->_sound._syncResource) {
+		if (s->_audio->_syncResource) {
 			PUT_SEL32V(segMan, argv[1], syncCue, 0);
-			s->_sound._syncOffset = 0;
+			s->_audio->_syncOffset = 0;
 		} else {
 			warning("DoSync: failed to find resource %s", id.toString().c_str());
 			// Notify the scripts to stop sound sync
@@ -1218,16 +1218,16 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case kSciAudioSyncNext: {
-		Resource *res = s->_sound._syncResource;
-		if (res && (s->_sound._syncOffset < res->size - 1)) {
+		Resource *res = s->_audio->_syncResource;
+		if (res && (s->_audio->_syncOffset < res->size - 1)) {
 			int16 syncCue = -1;
-			int16 syncTime = (int16)READ_LE_UINT16(res->data + s->_sound._syncOffset);
+			int16 syncTime = (int16)READ_LE_UINT16(res->data + s->_audio->_syncOffset);
 
-			s->_sound._syncOffset += 2;
+			s->_audio->_syncOffset += 2;
 
-			if ((syncTime != -1) && (s->_sound._syncOffset < res->size - 1)) {
-				syncCue = (int16)READ_LE_UINT16(res->data + s->_sound._syncOffset);
-				s->_sound._syncOffset += 2;
+			if ((syncTime != -1) && (s->_audio->_syncOffset < res->size - 1)) {
+				syncCue = (int16)READ_LE_UINT16(res->data + s->_audio->_syncOffset);
+				s->_audio->_syncOffset += 2;
 			}
 
 			PUT_SEL32V(segMan, argv[1], syncTime, syncTime);
@@ -1236,9 +1236,9 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case kSciAudioSyncStop:
-		if (s->_sound._syncResource) {
-			s->resMan->unlockResource(s->_sound._syncResource);
-			s->_sound._syncResource = NULL;
+		if (s->_audio->_syncResource) {
+			s->resMan->unlockResource(s->_audio->_syncResource);
+			s->_audio->_syncResource = NULL;
 		}
 		break;
 	default:
