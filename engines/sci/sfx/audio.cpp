@@ -32,7 +32,6 @@
 
 #include "sound/audiostream.h"
 #include "sound/audiocd.h"
-#include "sound/mixer.h"
 
 namespace Sci {
 

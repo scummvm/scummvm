@@ -27,8 +27,12 @@
 #ifndef SCI_AUDIO_H
 #define SCI_AUDIO_H
 
+#include "sound/mixer.h"
+
 namespace Sci {
 
+class Resource;
+class ResourceId;
 class ResourceManager;
 class SegManager;
 
