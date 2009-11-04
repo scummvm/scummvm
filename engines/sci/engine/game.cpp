@@ -277,20 +277,17 @@ int game_init_graphics(EngineState *s) {
 	return _reset_graphics_input(s);
 }
 
-#endif
-
 static void _free_graphics_input(EngineState *s) {
 	debug(2, "Freeing graphics");
 
-#ifdef INCLUDE_OLDGFX
 	delete s->visual;
 
 	s->wm_port = s->titlebar_port = s->picture_port = NULL;
 	s->visual = NULL;
 	s->dyn_views = NULL;
 	s->port = NULL;
-#endif
 }
+#endif
 
 int game_init_sound(EngineState *s, int sound_flags) {
 	if (getSciVersion() > SCI_VERSION_0_LATE)
@@ -391,7 +388,6 @@ int game_init(EngineState *s) {
 #endif
 
 	s->successor = NULL; // No successor
-	s->_statusBarText.clear(); // Status bar is blank
 
 	SystemString *str = &s->sys_strings->_strings[SYS_STRING_PARSER_BASE];
 	str->_name = "parser-base";
@@ -445,7 +441,9 @@ int game_exit(EngineState *s) {
 
 	delete s->_menubar;
 
+#ifdef INCLUDE_OLDGFX
 	_free_graphics_input(s);
+#endif
 
 	// Close all opened file handles
 	s->_fileHandles.clear();

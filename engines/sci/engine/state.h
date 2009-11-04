@@ -138,13 +138,8 @@ public:
 	AudioPlayer *_audio;
 	SfxState _sound; /**< sound subsystem */
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
-	unsigned int sound_volume; /**< 0x0 -> 0xf Current volume of sound system */
-	unsigned int sound_mute; /**< 0 = not, else == saved value */
 
 	byte restarting_flags; /**< Flags used for restarting */
-
-	/** Text on the status bar, or NULL if the title bar is blank */
-	Common::String _statusBarText;
 
 #ifdef INCLUDE_OLDGFX
 	int *pic_priority_table; /**< 16 entries with priorities or NULL if not present */

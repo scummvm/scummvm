@@ -38,8 +38,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	gfx_state = 0;
 
 	sfx_init_flags = 0;
-	sound_volume = 0;
-	sound_mute = 0;
 
 	restarting_flags = 0;
 

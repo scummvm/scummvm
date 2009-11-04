@@ -738,8 +738,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;
-	retval->sound_mute = s->sound_mute;
-	retval->sound_volume = s->sound_volume;
 
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
