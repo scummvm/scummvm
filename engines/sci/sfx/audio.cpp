@@ -285,7 +285,10 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 	if (getSciVersion() == SCI_VERSION_1_1) {
 		// King's Quest VI CD Audio format
 		_audioCdStart = g_system->getMillis();
-		AudioCD.play(track, 1, start, duration);
+		
+		// Subtract one from track. KQ6 starts at track 1, while ScummVM
+		// ignores the data track and considers track 2 to be track 1.
+		AudioCD.play(track - 1, 1, start, duration);
 		return 1;
 	} else {
 		// Jones in the Fast Lane CD Audio format
@@ -305,7 +308,8 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 			length = audioMap.readUint16LE();
 			length += audioMap.readByte() << 16;
 			audioMap.readByte(); // Unknown, always 0x00
-		
+
+			// Jones uses the track as the resource value in the map
 			if (res == track) {
 				AudioCD.play(1, 1, startFrame, length);
 				_audioCdStart = g_system->getMillis();

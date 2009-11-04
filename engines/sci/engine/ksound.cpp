@@ -1029,7 +1029,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		if (argc < 2)
 			return NULL_REG;
 
-		uint16 track = argv[1].toUint16() - 1;
+		uint16 track = argv[1].toUint16();
 		uint32 startFrame = (argc > 2) ? argv[2].toUint16() * 75 : 0;
 		uint32 totalFrames = (argc > 3) ? argv[3].toUint16() * 75 : 0;
 
