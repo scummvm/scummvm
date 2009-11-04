@@ -31,17 +31,26 @@
 #include "common/system.h"
 
 #include "sound/audiostream.h"
+#include "sound/audiocd.h"
 #include "sound/mixer.h"
 
 namespace Sci {
 
 AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(11025),
-		_syncResource(NULL), _syncOffset(0) {
+		_syncResource(NULL), _syncOffset(0), _audioCdStart(0) {
+
+	_mixer = g_system->getMixer();
 }
 
 AudioPlayer::~AudioPlayer() {
+	stopAllAudio();
+}
+
+void AudioPlayer::stopAllAudio() {
 	stopSoundSync();
 	stopAudio();
+	if (_audioCdStart > 0)
+		audioCdStop();
 }
 
 int AudioPlayer::startAudio(uint16 module, uint32 number) {
@@ -49,16 +58,28 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 	Audio::AudioStream *audioStream = getAudioStream(number, module, &sampleLen);
 
 	if (audioStream) {
-		g_system->getMixer()->playInputStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		return sampleLen;
 	}
 
 	return 0;
 }
 
+void AudioPlayer::stopAudio() {
+	_mixer->stopHandle(_audioHandle);
+}
+
+void AudioPlayer::pauseAudio() {
+	_mixer->pauseHandle(_audioHandle, true);
+}
+
+void AudioPlayer::resumeAudio() {
+	_mixer->pauseHandle(_audioHandle, false);
+}
+
 int AudioPlayer::getAudioPosition() {
-	if (g_system->getMixer()->isSoundHandleActive(_audioHandle))
-		return g_system->getMixer()->getSoundElapsedTime(_audioHandle) * 6 / 100; // return elapsed time in ticks
+	if (_mixer->isSoundHandleActive(_audioHandle))
+		return _mixer->getSoundElapsedTime(_audioHandle) * 6 / 100; // return elapsed time in ticks
 	else
 		return -1; // Sound finished
 }
@@ -259,6 +280,62 @@ void AudioPlayer::stopSoundSync() {
 		_resMan->unlockResource(_syncResource);
 		_syncResource = NULL;
 	}
+}
+
+int AudioPlayer::audioCdPlay(int track, int start, int duration) {
+	if (getSciVersion() == SCI_VERSION_1_1) {
+		// King's Quest VI CD Audio format
+		_audioCdStart = g_system->getMillis();
+		AudioCD.play(track, 1, start, duration);
+		return 1;
+	} else {
+		// Jones in the Fast Lane CD Audio format
+		uint32 length = 0;
+
+		audioCdStop();
+	
+		Common::File audioMap;
+		if(!audioMap.open("cdaudio.map"))
+			error("Could not open cdaudio.map");
+	
+		while (audioMap.pos() < audioMap.size()) {
+			uint16 res = audioMap.readUint16LE();
+			uint32 startFrame = audioMap.readUint16LE();
+			startFrame += audioMap.readByte() << 16;
+			audioMap.readByte(); // Unknown, always 0x20
+			length = audioMap.readUint16LE();
+			length += audioMap.readByte() << 16;
+			audioMap.readByte(); // Unknown, always 0x00
+		
+			if (res == track) {
+				AudioCD.play(1, 1, startFrame, length);
+				_audioCdStart = g_system->getMillis();
+				break;
+			}
+		}
+	
+		audioMap.close();
+
+		return length * 60 / 75; // return sample length in ticks
+	}
+}
+
+void AudioPlayer::audioCdStop() {
+	_audioCdStart = 0;
+	AudioCD.stop();
+}
+
+void AudioPlayer::audioCdUpdate() {
+	AudioCD.updateCD();
+}
+
+int AudioPlayer::audioCdPosition() {
+	// Return -1 if the sample is done playing. Converting to frames to compare.
+	if (((g_system->getMillis() - _audioCdStart) * 75 / 1000) >= (uint32)AudioCD.getStatus().duration)
+		return -1;
+		
+	// Return the position otherwise (in ticks).
+	return (g_system->getMillis() - _audioCdStart) * 60 / 1000;
 }
 
 } // End of namespace Sci

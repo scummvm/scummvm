@@ -30,8 +30,6 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
 
-#include "sound/audiocd.h"
-#include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Sci {
@@ -1028,60 +1026,17 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case kSciAudioWPlay:
 	case kSciAudioPlay: {
-		if (getSciVersion() == SCI_VERSION_1_1) {
-			// King's Quest VI CD Audio format
-			if (argc < 2)
-				return NULL_REG;
+		if (argc < 2)
+			return NULL_REG;
 
-			uint16 track = argv[1].toUint16() - 1;
-			uint32 startFrame = 0;
-			uint32 totalFrames = 0;
+		uint16 track = argv[1].toUint16() - 1;
+		uint32 startFrame = (argc > 2) ? argv[2].toUint16() * 75 : 0;
+		uint32 totalFrames = (argc > 3) ? argv[3].toUint16() * 75 : 0;
 
-			if (argc > 2)
-				startFrame = argv[2].toUint16() * 75;
-
-			if (argc > 3)
-				totalFrames = argv[3].toUint16() * 75;
-
-			AudioCD.play(track, 1, startFrame, totalFrames);
-			return make_reg(0, 1);
-		} else {
-			// Jones in the Fast Lane CD Audio format
-			if (argc != 2)
-				error("kDoCdAudio(%d) called with %d args", argv[0].toUint16(), argc);
-		
-			AudioCD.stop();
-		
-			Common::File audioMap;
-			if(!audioMap.open("cdaudio.map"))
-				error("Could not open cdaudio.map");
-		
-			uint16 sample = argv[1].toUint16();
-			uint32 length = 0;
-		
-			while (audioMap.pos() < audioMap.size()) {
-				uint16 res = audioMap.readUint16LE();
-				uint32 startFrame = audioMap.readUint16LE();
-				startFrame += audioMap.readByte() << 16;
-				audioMap.readByte(); // Unknown, always 0x20
-				length = audioMap.readUint16LE();
-				length += audioMap.readByte() << 16;
-				audioMap.readByte(); // Unknown, always 0x00
-			
-				if (res == sample) {
-					AudioCD.play(1, 1, startFrame, length);
-					s->_audioCdStart = g_system->getMillis();
-					break;
-				}
-			}
-		
-			audioMap.close();
-
-			return make_reg(0, length * 60 / 75); // return sample length in ticks
-		}
+		return make_reg(0, s->_audio->audioCdPlay(track, startFrame, totalFrames));
 	}
 	case kSciAudioStop:
-		AudioCD.stop();
+		s->_audio->audioCdStop();
 		
 		if (getSciVersion() == SCI_VERSION_1_1)
 			return make_reg(0, 1);
@@ -1093,15 +1048,10 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioResume:
 		// This seems to be hacked up to update the CD instead of resuming
 		// audio like kDoAudio does.
-		AudioCD.updateCD();
+		s->_audio->audioCdUpdate();
 		break;
 	case kSciAudioPosition:
-		// Return -1 if the sample is done playing. Converting to frames to compare.
-		if (((g_system->getMillis() - s->_audioCdStart) * 75 / 1000) >= (uint32)AudioCD.getStatus().duration)
-			return SIGNAL_REG;
-		
-		// Return the position otherwise (in ticks).
-		return make_reg(0, (g_system->getMillis() - s->_audioCdStart) * 60 / 1000);
+		return make_reg(0, s->_audio->audioCdPosition());
 	case kSciAudioRate: // No need to set the audio rate
 	case kSciAudioVolume: // The speech setting isn't used by CD Audio
 	case kSciAudioLanguage: // No need to set the language

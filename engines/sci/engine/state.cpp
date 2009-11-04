@@ -110,7 +110,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_gfxFunctionsType = SCI_VERSION_AUTODETECT;
 	_moveCountType = kMoveCountUninitialized;
 	
-	_audioCdStart = 0;
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 }
 

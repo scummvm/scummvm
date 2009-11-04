@@ -286,8 +286,7 @@ public:
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
-	
-	uint32 _audioCdStart;
+
 private:
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	MoveCountType _moveCountType;

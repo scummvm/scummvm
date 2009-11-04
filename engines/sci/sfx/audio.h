@@ -41,21 +41,31 @@ public:
 	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
 	int getAudioPosition();
 	int startAudio(uint16 module, uint32 tuple);
-	void stopAudio() { g_system->getMixer()->stopHandle(_audioHandle); }
-	void pauseAudio() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
-	void resumeAudio() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
+	void stopAudio();
+	void pauseAudio();
+	void resumeAudio();
 
 	void setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *segMan);
 	void doSoundSync(reg_t syncObjAddr, SegManager *segMan);
 	void stopSoundSync();
 
+	int audioCdPlay(int track, int start, int duration);
+	void audioCdStop();
+	void audioCdUpdate();
+	int audioCdPosition();
+
+	void stopAllAudio();
+
 private:
 	ResourceManager *_resMan;
 	uint16 _audioRate;
 	Audio::SoundHandle _audioHandle;
-	Audio::AudioStream* getAudioStream(uint32 number, uint32 volume, int *sampleLen);
+	Audio::Mixer* _mixer;
 	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
 	uint _syncOffset;
+	uint32 _audioCdStart;
+
+	Audio::AudioStream* getAudioStream(uint32 number, uint32 volume, int *sampleLen);
 };
 
 } // End of namespace Sci
