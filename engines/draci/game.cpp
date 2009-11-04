@@ -441,25 +441,9 @@ void Game::advanceAnimationsAndTestLoopExit() {
 
 	// Walk the hero.  The WalkingState class handles everything including
 	// proper timing.
+	bool walkingFinished = false;
 	if (_walkingState.isActive()) {
-		if (!_walkingState.continueWalking()) {
-			// Walking has finished.
-			bool exitLoop = false;
-			if (_loopSubstatus == kInnerUntilExit) {
-				// The callback may run another inner loop (for
-				// example, a dialogue).  Reset the loop
-				// substatus temporarily to the outer one.
-				exitLoop = true;
-				setLoopSubstatus(kOuterLoop);
-			}
-			debugC(2, kDraciWalkingDebugLevel, "Finished walking");
-			_walkingState.callback();	// clears callback pointer first
-			if (exitLoop) {
-				debugC(3, kDraciWalkingDebugLevel, "Exiting from the inner loop");
-				setExitLoop(true);
-				setLoopSubstatus(kInnerUntilExit);
-			}
-		}
+		walkingFinished = !_walkingState.continueWalking();
 	}
 
 	// Advance animations (this may also call setExitLoop(true) in the
@@ -467,6 +451,26 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	_vm->_anims->drawScene(_vm->_screen->getSurface());
 	_vm->_screen->copyToScreen();
 	_vm->_system->delayMillis(20);
+
+	// If the hero has arrived at his destination, after even the last
+	// phase was correctly animated, run the callback.
+	if (walkingFinished) {
+		bool exitLoop = false;
+		if (_loopSubstatus == kInnerUntilExit) {
+			// The callback may run another inner loop (for
+			// example, a dialogue).  Reset the loop
+			// substatus temporarily to the outer one.
+			exitLoop = true;
+			setLoopSubstatus(kOuterLoop);
+		}
+		debugC(2, kDraciWalkingDebugLevel, "Finished walking");
+		_walkingState.callback();	// clears callback pointer first
+		if (exitLoop) {
+			debugC(3, kDraciWalkingDebugLevel, "Exiting from the inner loop");
+			setExitLoop(true);
+			setLoopSubstatus(kInnerUntilExit);
+		}
+	}
 }
 
 void Game::loop(LoopSubstatus substatus, bool shouldExit) {
