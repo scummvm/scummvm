@@ -210,6 +210,10 @@ void Animation::exitGameLoop() {
 	_vm->_game->setExitLoop(true);
 }
 
+void Animation::tellWalkingState() {
+	_vm->_game->heroAnimationFinished();
+}
+
 Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	// Increment animation index
 	++_lastIndex;

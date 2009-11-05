@@ -53,6 +53,9 @@ public:
 	Sprite *newOverlayFromPath(const WalkingPath &path, byte colour) const;
 	Common::Point getDelta() const { return Common::Point(_deltaX, _deltaY); }
 
+	static int pointsBetween(const Common::Point &p1, const Common::Point &p2);
+	static Common::Point interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n);
+
 private:
 	int _realWidth, _realHeight;
 	int _deltaX, _deltaY;
@@ -66,8 +69,6 @@ private:
 	static int kDirections[][2];
 
 	void drawOverlayRectangle(const Common::Point &p, byte colour, byte *buf) const;
-	int pointsBetween(const Common::Point &p1, const Common::Point &p2) const;
-	Common::Point interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) const;
 	bool lineIsCovered(const Common::Point &p1, const Common::Point &p2) const;
 
 	// Returns true if the number of vertices on the path was decreased.
@@ -88,9 +89,13 @@ enum SightDirection {
 enum Movement {
 	kMoveUndefined = -1,
 	kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
-	kMoveRightDown, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
+
+	kFirstTurning,
+	kMoveRightDown = kFirstTurning, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
 	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
 	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
+	kLastTurning = kMoveUpStopRight,
+
 	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft
 };
 
@@ -119,6 +124,13 @@ public:
 	// the callback untouched (the caller must call it).
 	bool continueWalking();
 
+	// Called when the hero's turning animation has finished.  Starts
+	// scheduled animation.
+	void heroAnimationFinished();
+
+	// Returns the hero's animation corresponding to looking into given direction.
+	Movement animationForSightDirection(SightDirection dir) const;
+
 private:
 	DraciEngine *_vm;
 
@@ -126,17 +138,33 @@ private:
 	Common::Point _mouse;
 	SightDirection _dir;
 
+	int _segment;
+	int _position, _length;
+	int _lastAnimPhase;
+
 	const GPL2Program *_callback;
 	uint16 _callbackOffset;
+
+	// Initiates turning of the dragon into the direction for the next segment / after walking.
+	void turnForTheNextSegment();
 
 	// Return one of the 4 animations kMove{Down,Up,Right,Left}
 	// corresponding to the walking from here to there.
 	static Movement animationForDirection(const Common::Point &here, const Common::Point &there);
 
+	// Returns the desired facing direction to begin the next phase of the
+	// walk.  It's either a direction for the given edge or the desired
+	// final direction.
+	Movement directionForNextPhase() const;
+
 	// Returns either animation that needs to be played between given two
 	// animations (e.g., kMoveRightDown after kMoveRight and before
 	// kMoveDown), or kMoveUndefined if none animation is to be played.
 	static Movement transitionBetweenAnimations(Movement previous, Movement next);
+
+	static bool isTurningMovement(Movement m) {
+		return m >= kFirstTurning && m <= kLastTurning;
+	}
 };
 
 } // End of namespace Draci

@@ -207,9 +207,11 @@ public:
 	}
 
 	Common::Point findNearestWalkable(int x, int y) const;
+	void heroAnimationFinished() { _walkingState.heroAnimationFinished(); }
 	void stopWalking() { _walkingState.stopWalking(); }	// and clear callback
 	void positionHero(const Common::Point &p, SightDirection dir);	// teleport the dragon
 	void walkHero(int x, int y, SightDirection dir);	// start walking and leave callback as is
+	void setHeroPosition(const Common::Point &p);
 	int getHeroX() const { return _hero.x; }
 	int getHeroY() const { return _hero.y; }
 	void positionAnimAsHero(Animation *anim);

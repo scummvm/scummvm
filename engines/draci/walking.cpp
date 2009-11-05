@@ -347,11 +347,11 @@ void WalkingMap::drawOverlayRectangle(const Common::Point &p, byte colour, byte 
 	}
 }
 
-int WalkingMap::pointsBetween(const Common::Point &p1, const Common::Point &p2) const {
+int WalkingMap::pointsBetween(const Common::Point &p1, const Common::Point &p2) {
 	return MAX(abs(p2.x - p1.x), abs(p2.y - p1.y));
 }
 
-Common::Point WalkingMap::interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) const {
+Common::Point WalkingMap::interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) {
 	const int x = (p1.x * (n-i) + p2.x * i + n/2) / n;
 	const int y = (p1.y * (n-i) + p2.y * i + n/2) / n;
 	return Common::Point(x, y);
@@ -455,6 +455,10 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 		_path[i].x *= delta.x;
 		_path[i].y *= delta.y;
 	}
+
+	// Going to start with the first segment.
+	_segment = _lastAnimPhase = _position = _length = -1;
+	turnForTheNextSegment();
 }
 
 void WalkingState::setCallback(const GPL2Program *program, uint16 offset) {
@@ -484,13 +488,106 @@ void WalkingState::callback() {
 }
 
 bool WalkingState::continueWalking() {
-	// FIXME: do real walking instead of immediately exiting.  Compare the
-	// current dragon's animation phase with the stored one, and if they
-	// differ, walk another step.
-	debugC(2, kDraciWalkingDebugLevel, "Continuing walking");
-	_vm->_game->positionHero(_path[_path.size() - 1], _dir);
-	_path.clear();
-	return false;	// finished
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	const Movement anim_index = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+
+	// If the current animation is a turning animation, wait a bit more.
+	// When this animation has finished, heroAnimationFinished() callback
+	// will be called, which starts a new scheduled one, so the code never
+	// gets here if it hasn't finished yet.
+	if (isTurningMovement(anim_index)) {
+		return true;
+	}
+
+	// If the current segment is the last one, we have reached the
+	// destination and are already facing in the right direction ===>
+	// return false.
+	if (_segment >= (int) (_path.size() - 1)) {
+		_path.clear();
+		return false;
+	}
+
+	// Read the dragon's animation's current phase.  Determine if it has
+	// changed from the last time.  If not, wait until it has.
+	const int animID = dragon->_anim[anim_index];
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	const int animPhase = anim->currentFrameNum();
+	const bool wasUpdated = animPhase != _lastAnimPhase;
+	if (!wasUpdated) {
+		return true;
+	}
+
+	debugC(3, kDraciWalkingDebugLevel, "Continuing walking in segment %d and position %d/%d", _segment, _position, _length);
+
+	// We are walking in the middle of an edge.  The animation phase has
+	// just changed.  Update the position of the hero.
+	Common::Point newPos = WalkingMap::interpolate(
+		_path[_segment], _path[_segment+1], ++_position, _length);
+	_vm->_game->setHeroPosition(newPos);
+	_vm->_game->positionAnimAsHero(anim);
+
+	// If the hero has reached the end of the edge, start transition to the
+	// next phase.  This will increment _segment, either immediately (if no
+	// transition is needed) or in the callback (after the transition is
+	// done).
+	if (_position >= _length) {
+		turnForTheNextSegment();
+	}
+
+	return true;
+}
+
+void WalkingState::turnForTheNextSegment() {
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	const Movement currentAnim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	const Movement wantAnim = directionForNextPhase();
+	Movement transition = transitionBetweenAnimations(currentAnim, wantAnim);
+
+	debugC(2, kDraciWalkingDebugLevel, "Turning for segment %d", _segment+1);
+
+	if (transition == kMoveUndefined) {
+		// Start the next segment right away as if the turning has just finished.
+		heroAnimationFinished();
+	} else {
+		// Otherwise start the transition and wait until the Animation
+		// class calls heroAnimationFinished() as a callback.
+		assert(isTurningMovement(transition));
+		_vm->_game->playHeroAnimation(transition);
+		const int animID = dragon->_anim[transition];
+		Animation *anim = _vm->_anims->getAnimation(animID);
+		anim->registerCallback(&Animation::tellWalkingState);
+
+		debugC(2, kDraciWalkingDebugLevel, "Starting turning animation %d", transition);
+	}
+}
+
+void WalkingState::heroAnimationFinished() {
+	// The hero is turned well for the next line segment or for facing the
+	// target direction.
+
+	// Start the desired next animation.  playHeroAnimation() takes care of
+	// stopping the current animation.
+	// Don't use any callbacks, because continueWalking() will decide the
+	// end on its own and after walking is done callbacks shouldn't be
+	// called either.  It wouldn't make much sense anyway, since the
+	// walking/staying/talking animations are cyclic.
+	Movement nextAnim = directionForNextPhase();
+	_vm->_game->playHeroAnimation(nextAnim);
+	_lastAnimPhase = 0;
+
+	debugC(2, kDraciWalkingDebugLevel, "Turned for segment %d, starting animation %d", _segment+1, nextAnim);
+
+	if (++_segment < (int) (_path.size() - 1)) {
+		// We are on an edge: track where the hero is on this edge.
+		_position = 0;
+		_length = WalkingMap::pointsBetween(_path[_segment], _path[_segment+1]);
+		debugC(2, kDraciWalkingDebugLevel, "Next segment %d has length %d", _segment, _length);
+	} else {
+		// Otherwise we are done.  continueWalking() will return false next time.
+		debugC(2, kDraciWalkingDebugLevel, "We have walked the whole path");
+	}
+
+	// TODO: do we need to clear this callback for the animation?
 }
 
 Movement WalkingState::animationForDirection(const Common::Point &here, const Common::Point &there) {
@@ -500,6 +597,14 @@ Movement WalkingState::animationForDirection(const Common::Point &here, const Co
 		return dx >= 0 ? kMoveRight : kMoveLeft;
 	} else {
 		return dy >= 0 ? kMoveUp : kMoveDown;
+	}
+}
+
+Movement WalkingState::directionForNextPhase() const {
+	if (_segment >= (int) (_path.size() - 2)) {
+		return animationForSightDirection(_dir);
+	} else {
+		return animationForDirection(_path[_segment+1], _path[_segment+2]);
 	}
 }
 
@@ -582,6 +687,26 @@ Movement WalkingState::transitionBetweenAnimations(Movement previous, Movement n
 	default:
 		return kMoveUndefined;
 	}
+}
+
+Movement WalkingState::animationForSightDirection(SightDirection dir) const {
+	switch (dir) {
+	case kDirectionLeft:
+		return kStopLeft;
+	case kDirectionRight:
+		return kStopRight;
+	default: {
+		const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+		const int anim_index = _vm->_game->playingObjectAnimation(dragon);
+		if (anim_index >= 0) {
+			return static_cast<Movement> (anim_index);
+		} else {
+			return kStopRight;	// TODO
+		}
+		break;
+	}
+	}
+	// TODO: implement all needed functionality
 }
 
 }

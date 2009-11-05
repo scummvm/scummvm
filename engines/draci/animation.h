@@ -114,6 +114,7 @@ public:
 	void doNothing() {}
 	void stopAnimation();
 	void exitGameLoop();
+	void tellWalkingState();
 
 private:
 	uint nextFrameNum() const;

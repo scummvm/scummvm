@@ -956,6 +956,11 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 
 void Game::playHeroAnimation(int anim_index) {
 	const GameObject *dragon = getObject(kDragonObject);
+	const int current_anim_index = playingObjectAnimation(dragon);
+	if (anim_index == current_anim_index) {
+		return;
+	}
+
 	const int animID = dragon->_anim[anim_index];
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	stopObjectAnimations(dragon);
@@ -971,28 +976,14 @@ void Game::redrawWalkingPath(int id, byte colour, const WalkingPath &path) {
 	anim->markDirtyRect(_vm->_screen->getSurface());
 }
 
-void Game::positionHero(const Common::Point &p, SightDirection dir) {
+void Game::setHeroPosition(const Common::Point &p) {
 	debugC(3, kDraciWalkingDebugLevel, "Jump to x: %d y: %d", p.x, p.y);
-
 	_hero = p;
-	Movement movement = kStopRight;
-	switch (dir) {
-	case kDirectionLeft:
-		movement = kStopLeft;
-		break;
-	case kDirectionRight:
-		movement = kStopRight;
-		break;
-	default: {
-		const GameObject *dragon = getObject(kDragonObject);
-		const int anim_index = playingObjectAnimation(dragon);
-		if (anim_index >= 0) {
-			movement = static_cast<Movement> (anim_index);
-		}
-		break;
-	}
-	}
-	playHeroAnimation(movement);
+}
+
+void Game::positionHero(const Common::Point &p, SightDirection dir) {
+	setHeroPosition(p);
+	playHeroAnimation(_walkingState.animationForSightDirection(dir));
 }
 
 Common::Point Game::findNearestWalkable(int x, int y) const {
