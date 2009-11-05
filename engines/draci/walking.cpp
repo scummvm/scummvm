@@ -493,4 +493,95 @@ bool WalkingState::continueWalking() {
 	return false;	// finished
 }
 
+Movement WalkingState::animationForDirection(const Common::Point &here, const Common::Point &there) {
+	const int dx = there.x - here.x;
+	const int dy = there.y - here.y;
+	if (abs(dx) >= abs(dy)) {
+		return dx >= 0 ? kMoveRight : kMoveLeft;
+	} else {
+		return dy >= 0 ? kMoveUp : kMoveDown;
+	}
+}
+
+Movement WalkingState::transitionBetweenAnimations(Movement previous, Movement next) {
+	switch (next) {
+	case kMoveUp:
+		switch (previous) {
+		case kMoveLeft:
+		case kStopLeft:
+		case kSpeakLeft:
+			return kMoveLeftUp;
+		case kMoveRight:
+		case kStopRight:
+		case kSpeakRight:
+			return kMoveRightUp;
+		default:
+			return kMoveUndefined;
+		}
+	case kMoveDown:
+		switch (previous) {
+		case kMoveLeft:
+		case kStopLeft:
+		case kSpeakLeft:
+			return kMoveLeftDown;
+		case kMoveRight:
+		case kStopRight:
+		case kSpeakRight:
+			return kMoveRightDown;
+		default:
+			return kMoveUndefined;
+		}
+	case kMoveLeft:
+		switch (previous) {
+		case kMoveDown:
+			return kMoveDownLeft;
+		case kMoveUp:
+			return kMoveUpLeft;
+		case kMoveRight:
+		case kStopRight:
+		case kSpeakRight:
+			return kMoveRightLeft;
+		default:
+			return kMoveUndefined;
+		}
+	case kMoveRight:
+		switch (previous) {
+		case kMoveDown:
+			return kMoveDownRight;
+		case kMoveUp:
+			return kMoveUpRight;
+		case kMoveLeft:
+		case kStopLeft:
+		case kSpeakLeft:
+			return kMoveLeftRight;
+		default:
+			return kMoveUndefined;
+		}
+	case kStopLeft:
+		switch (previous) {
+		case kMoveUp:
+			return kMoveUpStopLeft;
+		case kMoveRight:
+		case kStopRight:
+		case kSpeakRight:
+			return kMoveRightLeft;
+		default:
+			return kMoveUndefined;
+		}
+	case kStopRight:
+		switch (previous) {
+		case kMoveUp:
+			return kMoveUpStopRight;
+		case kMoveLeft:
+		case kStopLeft:
+		case kSpeakLeft:
+			return kMoveLeftRight;
+		default:
+			return kMoveUndefined;
+		}
+	default:
+		return kMoveUndefined;
+	}
+}
+
 }

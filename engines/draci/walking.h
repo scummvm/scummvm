@@ -128,6 +128,15 @@ private:
 
 	const GPL2Program *_callback;
 	uint16 _callbackOffset;
+
+	// Return one of the 4 animations kMove{Down,Up,Right,Left}
+	// corresponding to the walking from here to there.
+	static Movement animationForDirection(const Common::Point &here, const Common::Point &there);
+
+	// Returns either animation that needs to be played between given two
+	// animations (e.g., kMoveRightDown after kMoveRight and before
+	// kMoveDown), or kMoveUndefined if none animation is to be played.
+	static Movement transitionBetweenAnimations(Movement previous, Movement next);
 };
 
 } // End of namespace Draci
