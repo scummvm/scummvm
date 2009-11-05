@@ -1263,6 +1263,7 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM -DDISABLE_DOSBOX_OPL"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS"
 			_endian=little
 			_need_memalign=yes
