@@ -1381,8 +1381,22 @@ bool Game::enterNewRoom() {
 	  	_persons[kDragonObject]._y = 0;
 	}
 
-	// Set the appropriate loop statu before loading the room
+	// Set the appropriate loop status before loading the room
 	setLoopStatus(kStatusGate);
+
+	// Make sure the possible walking path from the previous room is
+	// cleaned up.  Some rooms (e.g., the map) don't support walking.
+	_walkingState.stopWalking();
+
+	// Clean the mouse and animation title.  It gets first updated in
+	// loop(), hence if the hero walks during the initialization scripts,
+	// the old values would remain otherwise.
+	_vm->_mouse->setCursorType(kNormalCursor);
+	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+	titleAnim->markDirtyRect(_vm->_screen->getSurface());
+	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
+	title->setText("");
+
 	// Reset the flag allowing to run the scripts.  It may have been turned
 	// on by pressing Escape in the intro or in the map room.
 	_vm->_script->endCurrentProgram(false);
@@ -1405,8 +1419,6 @@ bool Game::enterNewRoom() {
 
 	// Reset the loop status.
 	setLoopStatus(kStatusOrdinary);
-
-	_vm->_mouse->setCursorType(kNormalCursor);
 
 	setIsReloaded(false);
 	if (_vm->_script->shouldEndProgram()) {

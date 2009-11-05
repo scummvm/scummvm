@@ -516,6 +516,7 @@ bool WalkingState::continueWalking() {
 	if (!wasUpdated) {
 		return true;
 	}
+	_lastAnimPhase = animPhase;
 
 	debugC(3, kDraciWalkingDebugLevel, "Continuing walking in segment %d and position %d/%d", _segment, _position, _length);
 
@@ -573,7 +574,14 @@ void WalkingState::heroAnimationFinished() {
 	// walking/staying/talking animations are cyclic.
 	Movement nextAnim = directionForNextPhase();
 	_vm->_game->playHeroAnimation(nextAnim);
-	_lastAnimPhase = 0;
+
+	// Retrieve the current animation phase.  Don't just use 0, because we
+	// cannot assume that nextAnim has just started.  If it was already
+	// playing before, then playHeroAnimation(nextAnim) does nothing.
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	const int animID = dragon->_anim[nextAnim];
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	_lastAnimPhase = anim->currentFrameNum();
 
 	debugC(2, kDraciWalkingDebugLevel, "Turned for segment %d, starting animation %d", _segment+1, nextAnim);
 
@@ -596,7 +604,7 @@ Movement WalkingState::animationForDirection(const Common::Point &here, const Co
 	if (abs(dx) >= abs(dy)) {
 		return dx >= 0 ? kMoveRight : kMoveLeft;
 	} else {
-		return dy >= 0 ? kMoveUp : kMoveDown;
+		return dy >= 0 ? kMoveDown : kMoveUp;
 	}
 }
 
