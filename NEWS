@@ -44,7 +44,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Groovie:
    - Fixed performance on PSP.
-   - Fixed crash in demo.
+   - Fixed crash in Return to Zork demo.
 
  Kyra:
    - Fix possible corruption of restart game save in Kyrandia 1.
@@ -57,7 +57,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Tinsel:
    - Fixed crash in palace.
-
 
 1.0.0rc1 (2009-08-31)
  New Games:
