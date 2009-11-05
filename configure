@@ -1378,6 +1378,7 @@ if test -n "$_host"; then
 		gp2xwiz)
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
@@ -1388,6 +1389,7 @@ if test -n "$_host"; then
 			_backend="gp2xwiz"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			;;	
 		gp2x)
 			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
@@ -1403,6 +1405,7 @@ if test -n "$_host"; then
 			_backend="gp2x"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			;;
 		neuros)
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
