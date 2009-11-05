@@ -31,6 +31,26 @@
 
 namespace Sci {
 
+enum AudioCommands {
+	// TODO: find the difference between kSci1AudioWPlay and kSci1AudioPlay
+	kSciAudioWPlay = 1, /* Plays an audio stream */
+	kSciAudioPlay = 2, /* Plays an audio stream */
+	kSciAudioStop = 3, /* Stops an audio stream */
+	kSciAudioPause = 4, /* Pauses an audio stream */
+	kSciAudioResume = 5, /* Resumes an audio stream */
+	kSciAudioPosition = 6, /* Return current position in audio stream */
+	kSciAudioRate = 7, /* Return audio rate */
+	kSciAudioVolume = 8, /* Return audio volume */
+	kSciAudioLanguage = 9, /* Return audio language */
+	kSciAudioCD = 10 /* Plays SCI1.1 CD audio */
+};
+
+enum AudioSyncCommands {
+	kSciAudioSyncStart = 0,
+	kSciAudioSyncNext = 1,
+	kSciAudioSyncStop = 2
+};
+
 class Resource;
 class ResourceId;
 class ResourceManager;
