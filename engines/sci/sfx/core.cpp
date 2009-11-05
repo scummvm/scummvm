@@ -32,7 +32,6 @@
 #include "sci/sfx/sci_midi.h"
 
 #include "sci/sfx/softseq/pcjr.h"
-#include "sci/sfx/softseq/adlib.h"
 
 #include "common/system.h"
 #include "common/timer.h"
@@ -229,7 +228,11 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 
 	switch (musicDriver) {
 	case MD_ADLIB:
-		_mididrv = new MidiPlayer_Adlib();
+		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
+		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
+			_mididrv = MidiPlayer_Amiga_create();
+		else
+			_mididrv = MidiPlayer_Adlib_create();
 		break;
 	case MD_PCJR:
 		_mididrv = new MidiPlayer_PCJr();

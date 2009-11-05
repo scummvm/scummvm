@@ -25,93 +25,19 @@
 
 #include "sci/sfx/softseq.h"
 
+#include "sound/softsynth/emumidi.h"
+#include "sci/sfx/sci_midi.h"
+
 #include "common/file.h"
 #include "common/frac.h"
 #include "common/util.h"
 
 namespace Sci {
 
-#define FREQUENCY 44100
-#define CHANNELS_NR 10
-#define HW_CHANNELS_NR 16
-
-/* Samplerate of the instrument bank */
-#define BASE_FREQ 20000
-
-/* Instrument looping flag */
-#define MODE_LOOP 1 << 0
-/* Instrument pitch changes flag */
-#define MODE_PITCH 1 << 1
-
-#define PAN_LEFT 91
-#define PAN_RIGHT 164
-
 /* #define DEBUG */
 
-struct envelope_t {
-	/* Phase period length in samples */
-	int length;
-	/* Velocity delta per period */
-	int delta;
-	/* Target velocity */
-	int target;
-};
-
-/* Fast decay envelope */
-static envelope_t env_decay = {FREQUENCY / (32 * 64), 1, 0};
-
-struct instrument_t {
-	char name[30];
-	int mode;
-	/* Size of non-looping part in bytes */
-	int size;
-	/* Starting offset and size of loop in bytes */
-	int loop_size;
-	/* Transpose value in semitones */
-	int transpose;
-	/* Envelope */
-	envelope_t envelope[4];
-	int8 *samples;
-	int8 *loop;
-};
-
-struct bank_t {
-	char name[30];
-	int size;
-	instrument_t *instruments[256];
-};
-
-struct channel_t {
-	int instrument;
-	int note;
-	int note_velocity;
-	int velocity;
-	int envelope;
-	/* Number of samples till next envelope event */
-	int envelope_samples;
-	int decay;
-	int looping;
-	int hw_channel;
-	frac_t offset;
-	frac_t rate;
-};
-
-struct hw_channel_t {
-	int instrument;
-	int volume;
-	int pan;
-};
-
-/* Instrument bank */
-static bank_t bank;
-/* Internal channels */
-static channel_t channels[CHANNELS_NR];
-/* External channels */
-static hw_channel_t hw_channels[HW_CHANNELS_NR];
-/* Overall volume */
-static int volume = 127;
-
-/* Frequencies for every note */
+// Frequencies for every note
+// FIXME Store only one octave
 static const int freq_table[] = {
 	58, 62, 65, 69, 73, 78, 82, 87,
 	92, 98, 104, 110, 117, 124, 131, 139,
@@ -131,7 +57,110 @@ static const int freq_table[] = {
 	59932, 63496, 67271, 71271, 75509, 80000, 84757, 89796
 };
 
-static void set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
+class MidiDriver_Amiga : public MidiDriver_Emulated {
+public:
+	enum {
+		kVoices = 4
+	};
+
+	MidiDriver_Amiga(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15) { }
+	virtual ~MidiDriver_Amiga() { }
+
+	// MidiDriver
+	int open();
+	void close();
+	void send(uint32 b);
+	MidiChannel *allocateChannel() { return NULL; }
+	MidiChannel *getPercussionChannel() { return NULL; }
+
+	// AudioStream
+	bool isStereo() const { return true; }
+	int getRate() const { return _mixer->getOutputRate(); }
+
+	// MidiDriver_Emulated
+	void generateSamples(int16 *buf, int len);
+
+	void setVolume(byte volume);
+	void playSwitch(bool play);
+	virtual uint32 property(int prop, uint32 param);
+
+private:
+	enum {
+		kModeLoop = 1 << 0, // Instrument looping flag
+		kModePitch = 1 << 1 // Instrument pitch changes flag
+	};
+
+	enum {
+		kChannels = 10,
+		kBaseFreq = 20000, // Samplerate of the instrument bank
+		kPanLeft = 91,
+		kPanRight = 164
+	};
+
+	struct Channel {
+		int instrument;
+		int volume;
+		int pan;
+	};
+
+	struct Envelope {
+		int length; // Phase period length in samples
+		int delta; // Velocity delta per period
+		int target; // Target velocity
+	};
+
+	struct Voice {
+		int instrument;
+		int note;
+		int note_velocity;
+		int velocity;
+		int envelope;
+		int envelope_samples; // Number of samples till next envelope event
+		int decay;
+		int looping;
+		int hw_channel;
+		frac_t offset;
+		frac_t rate;
+	};
+
+	struct Instrument {
+		char name[30];
+		int mode;
+		int size; // Size of non-looping part in bytes
+		int loop_size; // Starting offset and size of loop in bytes
+		int transpose; // Transpose value in semitones
+		Envelope envelope[4]; // Envelope
+		int8 *samples;
+		int8 *loop;
+	};
+
+	struct Bank {
+		char name[30];
+		uint size;
+		Instrument *instruments[256];
+	};
+
+	bool _playSwitch;
+	int _masterVolume;
+	int _frequency;
+	Envelope _envDecay;
+	Bank _bank; // Instrument bank
+
+	Channel _channels[MIDI_CHANNELS];
+	/* Internal channels */
+	Voice _voices[kChannels];
+
+	void setEnvelope(Voice *channel, Envelope *envelope, int phase);
+	int interpolate(int8 *samples, frac_t offset);
+	void playInstrument(int16 *dest, Voice *channel, int count);
+	void changeInstrument(int channel, int instrument);
+	void stopChannel(int ch);
+	void stopNote(int ch, int note);
+	void startNote(int ch, int note, int velocity);
+	Instrument *readInstrument(Common::File &file, int *id);
+};
+
+void MidiDriver_Amiga::setEnvelope(Voice *channel, Envelope *envelope, int phase) {
 	channel->envelope = phase;
 	channel->envelope_samples = envelope[phase].length;
 
@@ -141,17 +170,17 @@ static void set_envelope(channel_t *channel, envelope_t *envelope, int phase) {
 		channel->velocity = envelope[phase - 1].target;
 }
 
-static inline int interpolate(int8 *samples, frac_t offset) {
+int MidiDriver_Amiga::interpolate(int8 *samples, frac_t offset) {
 	int x = fracToInt(offset);
 	int diff = (samples[x + 1] - samples[x]) << 8;
 
 	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
 
-static void play_instrument(int16 *dest, channel_t *channel, int count) {
+void MidiDriver_Amiga::playInstrument(int16 *dest, Voice *channel, int count) {
 	int index = 0;
-	int vol = hw_channels[channel->hw_channel].volume;
-	instrument_t *instrument = bank.instruments[channel->instrument];
+	int vol = _channels[channel->hw_channel].volume;
+	Instrument *instrument = _bank.instruments[channel->instrument];
 
 	while (1) {
 		/* Available source samples until end of segment */
@@ -193,11 +222,11 @@ static void play_instrument(int16 *dest, channel_t *channel, int count) {
 			channel->envelope_samples -= amount;
 
 		if (channel->envelope_samples == 0) {
-			envelope_t *envelope;
+			Envelope *envelope;
 			int delta, target, velocity;
 
 			if (channel->decay)
-				envelope = &env_decay;
+				envelope = &_envDecay;
 			else
 				envelope = &instrument->envelope[channel->envelope];
 
@@ -218,7 +247,7 @@ static void play_instrument(int16 *dest, channel_t *channel, int count) {
 					case 0:
 					case 2:
 						/* Go to next phase */
-						set_envelope(channel, instrument->envelope, channel->envelope + 1);
+						setEnvelope(channel, instrument->envelope, channel->envelope + 1);
 						break;
 					case 1:
 					case 3:
@@ -237,7 +266,7 @@ static void play_instrument(int16 *dest, channel_t *channel, int count) {
 			break;
 
 		if (fracToInt(channel->offset) >= seg_end) {
-			if (instrument->mode & MODE_LOOP) {
+			if (instrument->mode & kModeLoop) {
 				/* Loop the samples */
 				channel->offset -= intToFrac(seg_end);
 				channel->looping = 1;
@@ -250,79 +279,79 @@ static void play_instrument(int16 *dest, channel_t *channel, int count) {
 	}
 }
 
-static void change_instrument(int channel, int instrument) {
+void MidiDriver_Amiga::changeInstrument(int channel, int instrument) {
 #ifdef DEBUG
-	if (bank.instruments[instrument])
-		printf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, bank.instruments[instrument]->name, instrument);
+	if (_bank.instruments[instrument])
+		printf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument]->name, instrument);
 	else
 		warning("[sfx:seq:amiga] instrument %i does not exist (channel %i)", instrument, channel);
 #endif
-	hw_channels[channel].instrument = instrument;
+	_channels[channel].instrument = instrument;
 }
 
-static void stop_channel(int ch) {
+void MidiDriver_Amiga::stopChannel(int ch) {
 	int i;
 
 	/* Start decay phase for note on this hw channel, if any */
-	for (i = 0; i < CHANNELS_NR; i++)
-		if (channels[i].note != -1 && channels[i].hw_channel == ch && !channels[i].decay) {
+	for (i = 0; i < kChannels; i++)
+		if (_voices[i].note != -1 && _voices[i].hw_channel == ch && !_voices[i].decay) {
 			/* Trigger fast decay envelope */
-			channels[i].decay = 1;
-			channels[i].envelope_samples = env_decay.length;
+			_voices[i].decay = 1;
+			_voices[i].envelope_samples = _envDecay.length;
 			break;
 		}
 }
 
-static void stop_note(int ch, int note) {
+void MidiDriver_Amiga::stopNote(int ch, int note) {
 	int channel;
-	instrument_t *instrument;
+	Instrument *instrument;
 
-	for (channel = 0; channel < CHANNELS_NR; channel++)
-		if (channels[channel].note == note && channels[channel].hw_channel == ch && !channels[channel].decay)
+	for (channel = 0; channel < kChannels; channel++)
+		if (_voices[channel].note == note && _voices[channel].hw_channel == ch && !_voices[channel].decay)
 			break;
 
-	if (channel == CHANNELS_NR) {
+	if (channel == kChannels) {
 #ifdef DEBUG
 		warning("[sfx:seq:amiga] cannot stop note %i on channel %i", note, ch);
 #endif
 		return;
 	}
 
-	instrument = bank.instruments[channels[channel].instrument];
+	instrument = _bank.instruments[_voices[channel].instrument];
 
 	/* Start the envelope phases for note-off if looping is on and envelope is enabled */
-	if ((instrument->mode & MODE_LOOP) && (instrument->envelope[0].length != 0))
-		set_envelope(&channels[channel], instrument->envelope, 2);
+	if ((instrument->mode & kModeLoop) && (instrument->envelope[0].length != 0))
+		setEnvelope(&_voices[channel], instrument->envelope, 2);
 }
 
-static void start_note(int ch, int note, int velocity) {
-	instrument_t *instrument;
+void MidiDriver_Amiga::startNote(int ch, int note, int velocity) {
+	Instrument *instrument;
 	int channel;
 
-	if (hw_channels[ch].instrument < 0 || hw_channels[ch].instrument > 255) {
-		warning("[sfx:seq:amiga] invalid instrument %i on channel %i", hw_channels[ch].instrument, ch);
+	if (_channels[ch].instrument < 0 || _channels[ch].instrument > 255) {
+		warning("[sfx:seq:amiga] invalid instrument %i on channel %i", _channels[ch].instrument, ch);
 		return;
 	}
 
-	instrument = bank.instruments[hw_channels[ch].instrument];
+	instrument = _bank.instruments[_channels[ch].instrument];
 
 	if (!instrument) {
-		warning("[sfx:seq:amiga] instrument %i does not exist", hw_channels[ch].instrument);
+		warning("[sfx:seq:amiga] instrument %i does not exist", _channels[ch].instrument);
 		return;
 	}
 
-	for (channel = 0; channel < CHANNELS_NR; channel++)
-		if (channels[channel].note == -1)
+	for (channel = 0; channel < kChannels; channel++)
+		if (_voices[channel].note == -1)
 			break;
 
-	if (channel == CHANNELS_NR) {
+	if (channel == kChannels) {
 		warning("[sfx:seq:amiga] could not find a free channel");
 		return;
 	}
 
-	stop_channel(ch);
+	stopChannel(ch);
 
-	if (instrument->mode & MODE_PITCH) {
+	if (instrument->mode & kModePitch) {
 		int fnote = note + instrument->transpose;
 
 		if (fnote < 0 || fnote > 127) {
@@ -331,40 +360,32 @@ static void start_note(int ch, int note, int velocity) {
 		}
 
 		/* Compute rate for note */
-		channels[channel].rate = doubleToFrac(freq_table[fnote] / (double) FREQUENCY);
+		_voices[channel].rate = doubleToFrac(freq_table[fnote] / (double) _frequency);
 	} else
-		channels[channel].rate = doubleToFrac(BASE_FREQ / (double) FREQUENCY);
+		_voices[channel].rate = doubleToFrac(kBaseFreq / (double) _frequency);
 
-	channels[channel].instrument = hw_channels[ch].instrument;
-	channels[channel].note = note;
-	channels[channel].note_velocity = velocity;
+	_voices[channel].instrument = _channels[ch].instrument;
+	_voices[channel].note = note;
+	_voices[channel].note_velocity = velocity;
 
-	if ((instrument->mode & MODE_LOOP) && (instrument->envelope[0].length != 0))
-		set_envelope(&channels[channel], instrument->envelope, 0);
+	if ((instrument->mode & kModeLoop) && (instrument->envelope[0].length != 0))
+		setEnvelope(&_voices[channel], instrument->envelope, 0);
 	else {
-		channels[channel].velocity = 64;
-		channels[channel].envelope_samples = -1;
+		_voices[channel].velocity = 64;
+		_voices[channel].envelope_samples = -1;
 	}
 
-	channels[channel].offset = 0;
-	channels[channel].hw_channel = ch;
-	channels[channel].decay = 0;
-	channels[channel].looping = 0;
+	_voices[channel].offset = 0;
+	_voices[channel].hw_channel = ch;
+	_voices[channel].decay = 0;
+	_voices[channel].looping = 0;
 }
 
-static int16 read_int16(byte *data) {
-	return (data[0] << 8) | data[1];
-}
-
-static int32 read_int32(byte *data) {
-	return (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-}
-
-static instrument_t *read_instrument(Common::File &file, int *id) {
-	instrument_t *instrument;
+MidiDriver_Amiga::Instrument *MidiDriver_Amiga::readInstrument(Common::File &file, int *id) {
+	Instrument *instrument;
 	byte header[61];
 	int size;
-	int seg_size[3];
+	int16 seg_size[3];
 	int loop_offset;
 	int i;
 
@@ -373,11 +394,11 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 		return NULL;
 	}
 
-	instrument = (instrument_t *) malloc(sizeof(instrument_t));
+	instrument = new Instrument;
 
-	seg_size[0] = read_int16(header + 35) * 2;
-	seg_size[1] = read_int16(header + 41) * 2;
-	seg_size[2] = read_int16(header + 47) * 2;
+	seg_size[0] = READ_BE_UINT16(header + 35) * 2;
+	seg_size[1] = READ_BE_UINT16(header + 41) * 2;
+	seg_size[2] = READ_BE_UINT16(header + 47) * 2;
 
 	instrument->mode = header[33];
 	instrument->transpose = (int8) header[34];
@@ -387,17 +408,17 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 		if (length == 0 && i > 0)
 			length = 256;
 
-		instrument->envelope[i].length = length * FREQUENCY / 60;
-		instrument->envelope[i].delta = (int8) header[53 + i];
+		instrument->envelope[i].length = length * _frequency / 60;
+		instrument->envelope[i].delta = (int8)header[53 + i];
 		instrument->envelope[i].target = header[57 + i];
 	}
 	/* Final target must be 0 */
 	instrument->envelope[3].target = 0;
 
-	loop_offset = read_int32(header + 37) & ~1;
+	loop_offset = READ_BE_UINT32(header + 37) & ~1;
 	size = seg_size[0] + seg_size[1] + seg_size[2];
 
-	*id = read_int16(header);
+	*id = READ_BE_UINT16(header);
 
 	strncpy(instrument->name, (char *) header + 2, 29);
 	instrument->name[29] = 0;
@@ -405,8 +426,8 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 	printf("[sfx:seq:amiga] Reading instrument %i: \"%s\" (%i bytes)\n",
 	          *id, instrument->name, size);
 	printf("                Mode: %02x\n", instrument->mode);
-	printf("                Looping: %s\n", instrument->mode & MODE_LOOP ? "on" : "off");
-	printf("                Pitch changes: %s\n", instrument->mode & MODE_PITCH ? "on" : "off");
+	printf("                Looping: %s\n", instrument->mode & kModeLoop ? "on" : "off");
+	printf("                Pitch changes: %s\n", instrument->mode & kModePitch ? "on" : "off");
 	printf("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
 	printf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
@@ -418,7 +439,7 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 		return NULL;
 	}
 
-	if (instrument->mode & MODE_LOOP) {
+	if (instrument->mode & kModeLoop) {
 		if (loop_offset + seg_size[1] > size) {
 #ifdef DEBUG
 			warning("[sfx:seq:amiga] looping samples extend %i bytes past end of sample block",
@@ -443,6 +464,7 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 		instrument->samples[instrument->size] = instrument->loop[0];
 		instrument->loop[instrument->loop_size] = instrument->loop[0];
 	} else {
+		instrument->loop = NULL;
 		instrument->size = size;
 		instrument->samples[instrument->size] = 0;
 	}
@@ -450,14 +472,26 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 	return instrument;
 }
 
-static Common::Error ami_set_option(sfx_softseq_t *self, const char *name, const char *value) {
-	return Common::kUnknownError;
+uint32 MidiDriver_Amiga::property(int prop, uint32 param) {
+	switch(prop) {
+	case MIDI_PROP_MASTER_VOLUME:
+		if (param != 0xffff)
+			_masterVolume = param;
+		return _masterVolume;
+	default:
+		break;
+	}
+	return 0;
 }
 
-static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patch2_len) {
+int MidiDriver_Amiga::open() {
+	_frequency = _mixer->getOutputRate();
+	_envDecay.length = _frequency / (32 * 64);
+	_envDecay.delta = 1;
+	_envDecay.target = 0;
+
 	Common::File file;
 	byte header[40];
-	int i;
 
 	if (!file.open("bank.001")) {
 		warning("[sfx:seq:amiga] file bank.001 not found");
@@ -469,29 +503,29 @@ static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, b
 		return Common::kUnknownError;
 	}
 
-	for (i = 0; i < 256; i++)
-		bank.instruments[i] = NULL;
+	for (uint i = 0; i < 256; i++)
+		_bank.instruments[i] = NULL;
 
-	for (i = 0; i < CHANNELS_NR; i++) {
-		channels[i].note = -1;
+	for (uint i = 0; i < kChannels; i++) {
+		_voices[i].note = -1;
 	}
 
-	for (i = 0; i < HW_CHANNELS_NR; i++) {
-		hw_channels[i].instrument = -1;
-		hw_channels[i].volume = 127;
-		hw_channels[i].pan = (i % 4 == 0 || i % 4 == 3 ? PAN_LEFT : PAN_RIGHT);
+	for (uint i = 0; i < MIDI_CHANNELS; i++) {
+		_channels[i].instrument = -1;
+		_channels[i].volume = 127;
+		_channels[i].pan = (i % 4 == 0 || i % 4 == 3 ? kPanLeft : kPanRight);
 	}
 
-	bank.size = read_int16(header + 38);
-	strncpy(bank.name, (char *) header + 8, 29);
-	bank.name[29] = 0;
+	_bank.size = READ_BE_UINT16(header + 38);
+	strncpy(_bank.name, (char *) header + 8, 29);
+	_bank.name[29] = 0;
 #ifdef DEBUG
-	printf("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", bank.size, bank.name);
+	printf("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", _bank.size, _bank.name);
 #endif
 
-	for (i = 0; i < bank.size; i++) {
+	for (uint i = 0; i < _bank.size; i++) {
 		int id;
-		instrument_t *instrument = read_instrument(file, &id);
+		Instrument *instrument = readInstrument(file, &id);
 
 		if (!instrument) {
 			warning("[sfx:seq:amiga] failed to read bank.001");
@@ -503,124 +537,131 @@ static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, b
 			return Common::kUnknownError;
 		}
 
-		bank.instruments[id] = instrument;
+		_bank.instruments[id] = instrument;
 	}
+
+	MidiDriver_Emulated::open();
+
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, false);
 
 	return Common::kNoError;
 }
 
-static void ami_exit(sfx_softseq_t *self) {
-	int i;
+void MidiDriver_Amiga::close() {
+	_mixer->stopHandle(_mixerSoundHandle);
 
-	for (i = 0; i < bank.size; i++) {
-		if (bank.instruments[i]) {
-			free(bank.instruments[i]->samples);
-			free(bank.instruments[i]);
+	for (uint i = 0; i < _bank.size; i++) {
+		if (_bank.instruments[i]) {
+			if (_bank.instruments[i]->loop)
+				free(_bank.instruments[i]->loop);
+			free(_bank.instruments[i]->samples);
+			delete _bank.instruments[i];
 		}
 	}
 }
 
-static void ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
-	int channel, oper;
+void MidiDriver_Amiga::playSwitch(bool play) {
+	_playSwitch = play;
+}
 
-	channel = command & 0x0f;
-	oper = command & 0xf0;
+void MidiDriver_Amiga::setVolume(byte volume_) {
+	_masterVolume = volume_;
+}
 
-	if (channel >= HW_CHANNELS_NR) {
-#ifdef DEBUG
-		warning("[sfx:seq:amiga] received event for non-existing channel %i", channel);
-#endif
-		return;
-	}
+void MidiDriver_Amiga::send(uint32 b) {
+	byte command = b & 0xf0;
+	byte channel = b & 0xf;
+	byte op1 = (b >> 8) & 0xff;
+	byte op2 = (b >> 16) & 0xff;
 
-	switch (oper) {
+	switch (command) {
 	case 0x90:
-		if (argv[1] > 0)
-			start_note(channel, argv[0], argv[1]);
+		if (op2 > 0)
+			startNote(channel, op1, op2);
 		else
-			stop_note(channel, argv[0]);
+			stopNote(channel, op1);
 		break;
 	case 0xb0:
-		switch (argv[0]) {
+		switch (op1) {
 		case 0x07:
-			hw_channels[channel].volume = argv[1];
+			_channels[channel].volume = op2;
 			break;
 		case 0x0a:
 #ifdef DEBUG
-			warning("[sfx:seq:amiga] ignoring pan 0x%02x event for channel %i", argv[1], channel);
+			warning("[sfx:seq:amiga] ignoring pan 0x%02x event for channel %i", op2, channel);
 #endif
 			break;
 		case 0x7b:
-			stop_channel(channel);
+			stopChannel(channel);
 			break;
 		default:
-			warning("[sfx:seq:amiga] unknown control event 0x%02x", argv[0]);
+			warning("[sfx:seq:amiga] unknown control event 0x%02x", op1);
 		}
 		break;
 	case 0xc0:
-		change_instrument(channel, argv[0]);
+		changeInstrument(channel, op1);
 		break;
 	default:
 		warning("[sfx:seq:amiga] unknown event %02x", command);
 	}
 }
 
-void ami_poll(sfx_softseq_t *self, byte *dest, int len) {
-	int i, j;
-	int16 *buf = (int16 *) dest;
-	// FIXME: memleak
-	int16 *buffers = (int16*)malloc(len * 2 * CHANNELS_NR);
+void MidiDriver_Amiga::generateSamples(int16 *data, int len) {
+	if (len == 0)
+		return;
 
-	memset(buffers, 0, len * 2 * CHANNELS_NR);
-	memset(dest, 0, len * 4);
+	int16 *buffers = (int16*)malloc(len * 2 * kChannels);
+
+	memset(buffers, 0, len * 2 * kChannels);
 
 	/* Generate samples for all notes */
-	for (i = 0; i < CHANNELS_NR; i++)
-		if (channels[i].note >= 0)
-			play_instrument(buffers + i * len, &channels[i], len);
+	for (int i = 0; i < kChannels; i++)
+		if (_voices[i].note >= 0)
+			playInstrument(buffers + i * len, &_voices[i], len);
 
-	for (j = 0; j < len; j++) {
-		int mixedl = 0, mixedr = 0;
+	if (isStereo()) {
+		for (int j = 0; j < len; j++) {
+			int mixedl = 0, mixedr = 0;
 
-		/* Mix and pan */
-		for (i = 0; i < CHANNELS_NR; i++) {
-			mixedl += buffers[i * len + j] * (256 - hw_channels[channels[i].hw_channel].pan);
-			mixedr += buffers[i * len + j] * hw_channels[channels[i].hw_channel].pan;
+			/* Mix and pan */
+			for (int i = 0; i < kChannels; i++) {
+				mixedl += buffers[i * len + j] * (256 - _channels[_voices[i].hw_channel].pan);
+				mixedr += buffers[i * len + j] * _channels[_voices[i].hw_channel].pan;
+			}
+
+			/* Adjust volume */
+			data[2 * j] = mixedl * _masterVolume >> 13;
+			data[2 * j + 1] = mixedr * _masterVolume >> 13;
 		}
+	} else {
+		for (int j = 0; j < len; j++) {
+			int mixed = 0;
 
-		/* Adjust volume */
-		buf[2 * j] = mixedl * volume >> 16;
-		buf[2 * j + 1] = mixedr * volume >> 16;
+			/* Mix */
+			for (int i = 0; i < kChannels; i++)
+				mixed += buffers[i * len + j];
+
+			/* Adjust volume */
+			data[j] = mixed * _masterVolume >> 6;
+		}
 	}
+
+	free(buffers);
 }
 
-void ami_volume(sfx_softseq_t *self, int new_volume) {
-	volume = new_volume;
-}
-
-void ami_allstop(sfx_softseq_t *self) {
-	int i;
-	for (i = 0; i < HW_CHANNELS_NR; i++)
-		stop_channel(i);
-}
-
-sfx_softseq_t sfx_softseq_amiga = {
-	"amiga",
-	"0.1",
-	ami_set_option,
-	ami_init,
-	ami_exit,
-	ami_volume,
-	ami_event,
-	ami_poll,
-	ami_allstop,
-	NULL,
-	SFX_SEQ_PATCHFILE_NONE,
-	SFX_SEQ_PATCHFILE_NONE,
-	0x40,
-	0, /* No rhythm channel (9) */
-	HW_CHANNELS_NR, /* # of voices */
-	{FREQUENCY, SFX_PCM_STEREO_LR, SFX_PCM_FORMAT_S16_NATIVE}
+class MidiPlayer_Amiga : public MidiPlayer {
+public:
+	MidiPlayer_Amiga() { _driver = new MidiDriver_Amiga(g_system->getMixer()); }
+	int getPlayMask() const { return 0x40; }
+	int getPolyphony() const { return MidiDriver_Amiga::kVoices; }
+	bool hasRhythmChannel() const { return false; }
+	void setVolume(byte volume) { static_cast<MidiDriver_Amiga *>(_driver)->setVolume(volume); }
+	void playSwitch(bool play) { static_cast<MidiDriver_Amiga *>(_driver)->playSwitch(play); }
+	void loadInstrument(int idx, byte *data);
 };
+
+MidiPlayer *MidiPlayer_Amiga_create() {
+	return new MidiPlayer_Amiga();
+}
 
 } // End of namespace Sci

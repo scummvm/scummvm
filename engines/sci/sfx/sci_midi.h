@@ -98,6 +98,9 @@ public:
 	}
 };
 
+extern MidiPlayer *MidiPlayer_Adlib_create();
+extern MidiPlayer *MidiPlayer_Amiga_create();
+
 } // End of namespace Sci
 
 #endif // SCI_SFX_MIDI_H
