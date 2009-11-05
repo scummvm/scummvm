@@ -89,6 +89,7 @@ void SciGui::init(bool usesOldGfxFunctions) {
 
 	_gfx->init(_text);
 	_windowMgr->init(_s->_gameName);
+	_menu->init(_s->gfx_state);
 	initPriorityBands();
 }
 
@@ -308,6 +309,8 @@ void SciGui::drawMenuBar(bool clear) {
 	if (!clear) {
 		GuiPort *oldPort = _gfx->SetPort(_gfx->_menuPort);
 		_menu->drawBar();
+		if (_screen->_picNotValid == 0)
+			_gfx->BitsShow(_gfx->_menuRect);
 		_gfx->SetPort(oldPort);
 	} else {
 		drawStatus("", 0, 0);

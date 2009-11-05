@@ -29,6 +29,8 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/gfx/gfx_state_internal.h"
+#include "sci/gui/gui_helpers.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_font.h"
@@ -42,9 +44,20 @@ SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, Sci
 	: _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
+	// We actually set active item in here and remember last selection of the user
+	//  sierra sci always defaulted to first item every time menu was called via ESC, we dont follow that logic
+	_curMenuId = 1;
+	_curItemId = 1;
+
+	_menuSaveHandle = NULL_REG;
+	_oldPort = NULL;
 }
 
 SciGuiMenu::~SciGuiMenu() {
+}
+
+void SciGuiMenu::init(GfxState *gfxstate) {
+	_gfxstate = gfxstate;
 }
 
 void SciGuiMenu::add(Common::String title, Common::String content, reg_t contentVmPtr) {
@@ -224,6 +237,7 @@ void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, 
 	case SCI_MENU_ATTRIBUTE_TEXT:
 		itemEntry->text = _segMan->getString(value);
 		itemEntry->textVmPtr = value;
+		// We assume here that no script ever creates a separatorLine dynamically
 		break;
 	case SCI_MENU_ATTRIBUTE_KEYPRESS:
 		itemEntry->keyPress = tolower(value.offset);
@@ -280,9 +294,9 @@ void SciGuiMenu::drawBar() {
 
 		listIterator++;
 	}
-	_gfx->BitsShow(_gfx->_menuRect);
 }
 
+// This helper calculates all text widths for all menus/items
 void SciGuiMenu::calculateTextWidth() {
 	GuiMenuList::iterator menuIterator;
 	GuiMenuList::iterator menuEnd = _list.end();
@@ -309,22 +323,9 @@ void SciGuiMenu::calculateTextWidth() {
 	}
 }
 
-GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
-	calculateTextWidth();
-
-	return NULL;
-}
-
-GuiMenuItemEntry *SciGuiMenu::interactiveWithMouse() {
-	calculateTextWidth();
-
-	return NULL;
-}
-
 reg_t SciGuiMenu::select(reg_t eventObject) {
 	int16 eventType = GET_SEL32V(_segMan, eventObject, type);
-	int16 keyPress = GET_SEL32V(_segMan, eventObject, message);
-	int16 keyModifier = GET_SEL32V(_segMan, eventObject, modifiers);
+	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
@@ -333,10 +334,16 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 
 	switch (eventType) {
 	case SCI_EVT_KEYBOARD:
-		if (keyPress == SCI_K_ESC) {
+		keyPress = GET_SEL32V(_segMan, eventObject, message);
+		keyModifier = GET_SEL32V(_segMan, eventObject, modifiers);
+		switch (keyPress) {
+		case 0:
+			break;
+		case SCI_K_ESC:
 			itemEntry = interactiveWithKeyboard();
 			forceClaimed = true;
-		} else if (keyPress) {
+			break;
+		default:
 			while (itemIterator != itemEnd) {
 				itemEntry = *itemIterator;
 				if ((itemEntry->keyPress == keyPress) && (itemEntry->keyModifier == keyModifier))
@@ -347,8 +354,19 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 				itemEntry = NULL;
 		}
 		break;
+
 	case SCI_EVT_SAID:
+		while (itemIterator != itemEnd) {
+			itemEntry = *itemIterator;
+			// TODO: said comparsion
+			//  said(_s, itemEntry->said.c_str(), 0) != SAID_NO_MATCH
+			// Where is this used anyway, so we can test it out?
+			itemIterator++;
+		}
+		if (itemIterator == itemEnd)
+			itemEntry = NULL;
 		break;
+
 	case SCI_EVT_MOUSE_PRESS:
 		mousePosition = _cursor->getPosition();
 		if (mousePosition.y < 10) {
@@ -358,12 +376,107 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 		break;
 	}
 
-	if ((itemEntry) || (forceClaimed)) {
-		PUT_SEL32(_segMan, eventObject, claimed, make_reg(0, 1));
+	if (!_menuSaveHandle.isNull()) {
+		_gfx->BitsRestore(_menuSaveHandle);
+		_gfx->BitsShow(_gfx->_menuRect);
 	}
+	if (_oldPort)
+		_gfx->SetPort(_oldPort);
+
+	if ((itemEntry) || (forceClaimed))
+		PUT_SEL32(_segMan, eventObject, claimed, make_reg(0, 1));
 	if (itemEntry)
 		return make_reg(0, (itemEntry->menuId << 8) | (itemEntry->id));
 	return NULL_REG;
+}
+
+GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
+	GuiMenuItemList::iterator itemIterator = _itemList.begin();
+	GuiMenuItemList::iterator itemEnd = _itemList.end();
+	GuiMenuItemEntry *itemEntry;
+	GuiMenuItemEntry *lastItemEntry = NULL;
+
+	// Fixup menuId if needed
+	menuId = CLIP<uint16>(menuId, 1, _listCount);
+	// Fixup itemId as well
+	if (itemId == 0)
+		itemId = 32678;
+	while (itemIterator != itemEnd) {
+		itemEntry = *itemIterator;
+		if (itemEntry->menuId == menuId) {
+			if (itemEntry->id == itemId)
+				return itemEntry;
+			if ((!lastItemEntry) || (itemEntry->id > lastItemEntry->id))
+				lastItemEntry = itemEntry;
+		}
+		itemIterator++;
+	}
+	return lastItemEntry;
+}
+
+GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
+	sci_event_t curEvent;
+	uint16 newMenuId = _curMenuId;
+	uint16 newItemId = _curItemId;
+	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
+	GuiMenuItemEntry *newItemEntry = curItemEntry;
+
+	calculateTextWidth();
+	_oldPort = _gfx->SetPort(_gfx->_menuPort);
+	_menuSaveHandle = _gfx->BitsSave(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	drawBar();
+
+	_gfx->BitsShow(_gfx->_menuRect);
+
+	while (true) {
+		curEvent = gfxop_get_event(_gfxstate, SCI_EVT_ANY);
+
+		switch (curEvent.type) {
+		case SCI_EVT_KEYBOARD:
+			switch (curEvent.data) {
+			case SCI_K_ESC:
+				_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+				return NULL;
+			case SCI_K_ENTER:
+				_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+				return curItemEntry;
+			case SCI_K_LEFT:
+				newMenuId--;
+				break;
+			case SCI_K_RIGHT:
+				newMenuId++;
+				break;
+			case SCI_K_UP:
+				newItemId--;
+				break;
+			case SCI_K_DOWN:
+				newItemId++;
+				break;
+			}
+			if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
+				// Selection changed, fix up new selection if required and paint old and new
+				newItemEntry = interactiveGetItem(newMenuId, newItemId);
+				newMenuId = newItemEntry->menuId; newItemId = newItemEntry->id;
+
+				if (newMenuId != curItemEntry->menuId) {
+					// Menu changed, remove cur menu and paint new menu
+				}
+
+				curItemEntry = newItemEntry;
+			}
+			break;
+
+		case SCI_EVT_NONE:
+			gfxop_sleep(_gfxstate, 2500 / 1000);
+			break;
+		}
+	}
+}
+
+GuiMenuItemEntry *SciGuiMenu::interactiveWithMouse() {
+	calculateTextWidth();
+
+	return NULL;
 }
 
 } // End of namespace Sci

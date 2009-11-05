@@ -81,6 +81,7 @@ public:
 	SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor);
 	~SciGuiMenu();
 
+	void init(GfxState *gfxstate);
 	void add(Common::String title, Common::String content, reg_t contentVmPtr);
 	void setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
 	reg_t getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
@@ -93,7 +94,9 @@ private:
 	void calculateTextWidth();
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
+	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId);
 
+	GfxState *_gfxstate;
 	SegManager *_segMan;
 	SciGuiGfx *_gfx;
 	SciGuiText *_text;
@@ -103,6 +106,12 @@ private:
 	uint16 _listCount;
 	GuiMenuList _list;
 	GuiMenuItemList _itemList;
+
+	uint16 _curMenuId;
+	uint16 _curItemId;
+
+	GuiPort *_oldPort;
+	GuiMemoryHandle _menuSaveHandle;
 };
 
 } // End of namespace Sci
