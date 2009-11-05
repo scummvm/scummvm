@@ -870,7 +870,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 				xmoveCur = _xmove + PCE_SIGNED(_srcptr[3]);
 				ymoveCur = _ymove + PCE_SIGNED(_srcptr[4]);
 				_xmove += PCE_SIGNED(_srcptr[5]);
-				_ymove += PCE_SIGNED(_srcptr[6]);
+				_ymove -= PCE_SIGNED(_srcptr[6]);
 				_srcptr += 7;
 			} else if (_loaded._format == 0x57) {
 				_width = _srcptr[0] * 8;
