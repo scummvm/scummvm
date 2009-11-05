@@ -42,12 +42,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Cruise:
    - Fix freeze on game pause.
 
- Groovie:
-   - Fixed performance on PSP.
-   - Fixed crash in Return to Zork demo.
-
  Kyra:
    - Fix possible corruption of restart game save in Kyrandia 1.
+
+ MADE:
+   - Fixed performance on PSP.
+   - Fixed crash in Return to Zork demo.
 
  SCUMM:
    - Fixed crash on Macintosh versions of Putt-Putt Joins the Parade and Fatty
