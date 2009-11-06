@@ -5,11 +5,19 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Ports:
    - Added MotoEZX and MotoMAGX ports.
 
+ General:
+   - Fixed several bugs in GUI.
+   - Updated the project logo and icons.
+   - Clarified licenses for several PS2 port files.
+
  AGI:
    - Fixed crash on game exit.
+   - Fixed crash at detection of some games.
 
  AGOS:
    - Fixed load/save code for PC version of Waxworks.
+   - Fixed freeze in NoPatience after undo.
+   - Improved compatibility with DIMP.
 
  Broken Sword 1:
    - Fixed missing background sound effects in some rooms.
@@ -20,21 +28,56 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Cruise:
    - Fix freeze on game pause.
 
+ Gob:
+   - Fixed gfx glitch in Lost in Time.
+   - Fixed hotspot-related regressions in Gob2.
+
+ Groovie:
+   - Fixed video performance on PSP.
+   - Fixed menu blanking in some instances.
+
  Kyra:
    - Fix possible corruption of restart game save in Kyrandia 1.
+   - Fix GFX glitch at the broken bridge.
+   - Fix for brandon tunring invisible in some situations in Kyrandia 1.
 
  MADE:
    - Fixed performance on PSP.
-   - Fixed crash in Return to Zork demo.
+   - Fixed several crashes in Return to Zork demo.
+
+ Parallaction:
+   - Fixed several regressions in Nippon Safes.
+   - Fixed music in sushi bar in Nippon Safes.
 
  SCUMM:
    - Fixed crash on Macintosh versions of Putt-Putt Joins the Parade and Fatty
      Bear's Birthday Surprise.
    - Fixed game save in Macintosh versions of HE games.
    - Fixed default save game path in latter HE games.
+   - Fixed colors in Maniac Mansion NES.
+   - Fixed colors in Secret of Monkey Island Amiga.
+   - Fixed cutscenes not stopping music after pressing ESC in DIG.
+   - Fixed lip-sync in Fatty Bear.
+   - Fixed crash in FT when entering inventory.
 
  Tinsel:
    - Fixed crash in palace.
+   - Fixed crash when talking to the old lady.
+   - Fixed partially off-screen text in DW1.
+
+  NDS port:
+   - Added mouse pad undeneath onscreen keyboard
+   - Added ability to scroll when cursor reaches edge of screen (in mouse pad mode)
+   - Made cd audio read from track01.wav as well as track1.wav
+   - Fixed bug with switching modes with keyboard active
+
+
+  PSP port:
+   - Fixed video flickering and stretching is some situations.
+   - Improved suspend/resume support.
+
+  WinCE port:
+   - Improved compatibility with VGA devices.
 
 1.0.0rc1 (2009-08-31)
  New Games:
