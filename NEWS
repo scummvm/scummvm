@@ -23,7 +23,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      The Secret of Monkey Island.
    - Fixed some other bugs related to game versions for the Amiga.
 
-1.0.0 (2009-10-XX)
+1.0.0 (2009-11-XX)
  New Ports:
    - Added MotoEZX and MotoMAGX ports.
 
@@ -38,8 +38,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  AGOS:
    - Fixed load/save code for PC version of Waxworks.
-   - Fixed freeze in NoPatience after undo.
-   - Improved compatibility with DIMP.
+   - Fixed undo in Puzzle Pack games.
 
  Broken Sword 1:
    - Fixed missing background sound effects in some rooms.
@@ -67,7 +66,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fix for brandon tunring invisible in some situations in Kyrandia 1.
 
  MADE:
-   - Fixed performance on PSP.
+   - Fixed performance on NDS.
    - Fixed crash in Return to Zork demo.
 
  Parallaction:
@@ -79,8 +78,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      Bear's Birthday Surprise.
    - Fixed game save in Macintosh versions of HE games.
    - Fixed default save game path in later HE games.
-   - Fixed colors in Maniac Mansion NES.
-   - Fixed colors in Secret of Monkey Island Amiga.
+   - Fixed palette in NES version of Maniac Mansion.
+   - Fixed palette in Amiga version of Secret of Monkey Island.
    - Fixed cutscenes not stopping music after pressing ESC in DIG.
    - Fixed lip-sync in Fatty Bear.
    - Fixed crash in FT when entering inventory.
