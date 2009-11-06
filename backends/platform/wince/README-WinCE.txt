@@ -1,12 +1,13 @@
 ScummVM Windows CE FAQ
 Last updated: $Date$
-Release version: 1.0.0rc1
+Release version: 1.0.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
 
-1.0.0rc1:
+1.0.0:
+(Note: No changes since 1.0.0rc1)
 This version features optimized ARM assembly versions for the Smartphone,
 Normal2x and Normal2xAspect scalers, courtesy of Robin Watts. There should
 be a speed improvement when using these scalers.
