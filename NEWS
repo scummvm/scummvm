@@ -31,6 +31,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Gob:
    - Fixed gfx glitch in Lost in Time.
    - Fixed hotspot-related regressions in Gob2.
+   - Fixed several regressions in Gob3.
+   - Fixed crash in Bargon Attack intro.
+   - Fixed animations in Win3.1 version of Gob3.
 
  Groovie:
    - Fixed video performance on PSP.
@@ -53,7 +56,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed crash on Macintosh versions of Putt-Putt Joins the Parade and Fatty
      Bear's Birthday Surprise.
    - Fixed game save in Macintosh versions of HE games.
-   - Fixed default save game path in latter HE games.
+   - Fixed default save game path in later HE games.
    - Fixed colors in Maniac Mansion NES.
    - Fixed colors in Secret of Monkey Island Amiga.
    - Fixed cutscenes not stopping music after pressing ESC in DIG.
@@ -70,7 +73,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added ability to scroll when cursor reaches edge of screen (in mouse pad mode)
    - Made cd audio read from track01.wav as well as track1.wav
    - Fixed bug with switching modes with keyboard active
-
 
   PSP port:
    - Fixed video flickering and stretching is some situations.
