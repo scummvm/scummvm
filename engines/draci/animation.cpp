@@ -63,6 +63,9 @@ void Animation::setLooping(bool looping) {
 }
 
 void Animation::markDirtyRect(Surface *surface) const {
+	if (getFrameCount() == 0)
+		return;
+
 	// Fetch the current frame's rectangle
 	Drawable *frame = _frames[_currentFrame];
 	Common::Rect frameRect = frame->getRect(_displacement);

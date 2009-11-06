@@ -1166,6 +1166,13 @@ void Game::loadRoom(int roomNum) {
 }
 
 int Game::loadAnimation(uint animNum, uint z) {
+	// Make double-sure that an animation isn't loaded more than twice,
+	// otherwise horrible things happen in the AnimationManager, because
+	// they use a simple link-list without duplicate checking.  This should
+	// never happen unless there is a bug in the game, because all GPL2
+	// commands are guarded.
+	assert(!_vm->_anims->getAnimation(animNum));
+
 	const BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
 	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);
 
