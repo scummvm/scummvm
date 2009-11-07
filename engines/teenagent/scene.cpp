@@ -41,9 +41,7 @@ Scene::Scene() : intro(false), _engine(NULL),
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
-	destination = position = position0 = point;
-	progress = 0;
-	progress_total = 1;
+	destination = position = point;
 	if (o)
 		orientation = o;
 }
@@ -57,6 +55,7 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 			const Walkbox &w = scene_walkboxes[i];
 			if (w.rect.in(point)) {
 				debug(0, "bumped into walkbox %u", i);
+				w.dump();
 				byte o = w.orientation;
 				switch (o) {
 				case 1:
@@ -85,9 +84,6 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	}
 	destination = point;
 	orientation = orient;
-	position0 = position;
-	progress_total = 1 + (int)(0.5f + sqrt((float)position.sqrDist(destination)) / 10);
-	progress = 0;
 }
 
 
@@ -308,21 +304,29 @@ bool Scene::processEvent(const Common::Event &event) {
 		}
 		return false;
 
-	case Common::EVENT_KEYUP:
-		if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-			intro = false;
-			message.clear();
-			events.clear();
-			sounds.clear();
-			current_event.clear();
-			message_color = 0xd1;
-			Resources::instance()->font7.color = 0xd1;
-			for (int i = 0; i < 4; ++i)
-				custom_animation[i].free();
-			_engine->playMusic(4);
-			init(10, Common::Point(136, 153));
+	case Common::EVENT_KEYDOWN:
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) {
+			if (intro) {
+				intro = false;
+				message.clear();
+				events.clear();
+				sounds.clear();
+				current_event.clear();
+				message_color = 0xd1;
+				Resources::instance()->font7.color = 0xd1;
+				for (int i = 0; i < 4; ++i) 
+					custom_animation[i].free();
+				_engine->playMusic(4);
+				init(10, Common::Point(136, 153));
+				return true;
+			}
+		
+			if (!message.empty()) {
+				message.clear();
+				nextEvent();
+				return true;
+			}
 		}
-		return true;
 
 	default:
 		return false;
@@ -414,19 +418,31 @@ bool Scene::render(OSystem *system) {
 			} else if (!hide_actor) {
 				actor_animation.free();
 
-				if (progress < progress_total) {
-					Common::Point dp(destination.x - position0.x, destination.y - position0.y);
+				if (position != destination) {
+					const int speed_x = 10, speed_y = 5;
+					Common::Point dp(destination.x - position.x, destination.y - position.y);
+					switch(orientation) {
+					case 2: //left or right
+					case 4: 
+						if (dp.y != 0)
+							dp.x = 0; //first, walking up-down
+						break;
+					default:
+						if (dp.x != 0)
+							dp.y = 0; //first, walking left-right
+					}
+					
 					int o;
 					if (ABS(dp.x) > ABS(dp.y))
 						o = dp.x > 0 ? Object::kActorRight : Object::kActorLeft;
 					else
 						o = dp.y > 0 ? Object::kActorDown : Object::kActorUp;
 
-					position.x = position0.x + dp.x * progress / progress_total;
-					position.y = position0.y + dp.y * progress / progress_total;
+					position.x += (ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
+					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
+					
 					actor_animation_position = teenagent.render(surface, position, o, 1);
-					++progress;
-					if (progress >= progress_total) {
+					if (position == destination) {
 						position = destination;
 						if (orientation == 0)
 							orientation = o; //save last orientation

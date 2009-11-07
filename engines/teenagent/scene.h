@@ -161,8 +161,7 @@ private:
 	Common::Rect actor_animation_position, animation_position[4];
 
 	Actor teenagent, teenagent_idle;
-	Common::Point position0, position, destination;
-	int progress, progress_total;
+	Common::Point position, destination;
 	uint8 orientation;
 
 	Common::Array<Common::Array<Object> > objects;

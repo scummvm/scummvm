@@ -66,8 +66,10 @@ void TeenAgentEngine::processObject() {
 			for (uint i = 0; i < hotspots.size(); ++i) {
 				const UseHotspot &spot = hotspots[i];
 				if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
-					debug(0, "combine! pos?: %u,%u", spot.x, spot.y);
-					//moveTo(Common::Point(obj->x, obj->y), NULL, Examine);
+					debug(0, "use object on hotspot!");
+					spot.dump();
+					if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
+						moveTo(spot.actor_x, spot.actor_y, spot.orientation);
 					inventory->resetSelectedObject();
 					if (!processCallback(TO_LE_16(spot.callback)))
 						debug(0, "fixme! display proper description");
@@ -419,6 +421,10 @@ void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {
 	SceneEvent event(SceneEvent::kWalk);
 	event.dst.x = x;
 	event.dst.y = y;
+	if (o > 4) {
+		warning("invalid orientation %d", o);
+		o = 0;
+	}
 	event.orientation = o;
 	event.color = warp ? 1 : 0;
 	scene->push(event);
