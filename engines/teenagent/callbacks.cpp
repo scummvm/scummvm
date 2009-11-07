@@ -804,8 +804,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x55a8: {
 		uint16 d = Dialog::pop(scene, 0xdb08);
 		if (d == 0x2c5d) {
-			setOns(0, 0);
 			waitLanAnimationFrame(1, 0x23);
+			setOns(0, 0);
 			playSound(52, 9);
 			playSound(52, 11);
 			playSound(52, 13);

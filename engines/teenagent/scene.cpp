@@ -391,25 +391,24 @@ bool Scene::render(OSystem *system) {
 			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame();
 			if (s != NULL) {
-				animation_position[i] = s->render(surface);
 				busy = true;
 				if (!a->paused && !a->loop)
 					got_any_animation = true;
-				continue;
+			} else {
+				a = animation + i;
+				s = a->currentFrame();
 			}
-
-			a = animation + i;
-			s = a->currentFrame();
+			
 			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.color == i) {
 				if (s == NULL) {
-					nextEvent();
+					restart |= nextEvent();
 					continue;
 				}
 				int index = a->currentIndex();
 				//debug(0, "index = %d", index);
 				if (index == current_event.animation) {
 					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.color, current_event.animation);
-					nextEvent();
+					restart |= nextEvent();
 				}
 			}
 			
@@ -487,7 +486,7 @@ bool Scene::render(OSystem *system) {
 
 		system->unlockScreen();
 
-		if (current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
+		if (!restart && current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
 			debug(0, "no animations, nextevent");
 			nextEvent();
 			restart = true;
@@ -695,12 +694,19 @@ Object *Scene::getObject(int id, int scene_id) {
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {
 	Resources *res = Resources::instance();
 	uint w = res->font7.render(NULL, 0, 0, str);
+	uint h = res->font7.height + 3;
+
 	position.x -= w / 2;
-	position.y -= res->font7.height + 3;
+	position.y -= h;
+
 	if (position.x + w > 320)
 		position.x = 320 - w;
 	if (position.x < 0)
 		position.x = 0;
+	if (position.y + h > 320)
+		position.y = 200 - h;
+	if (position.y < 0)
+		position.y = 0;
 
 	return position;
 }
