@@ -28,6 +28,7 @@
 #define LINUXMOTO_SDL
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/platform/linuxmoto/linuxmoto-scaler.h"
 
 #include <SDL.h>
 
@@ -35,12 +36,29 @@ class OSystem_LINUXMOTO : public OSystem_SDL {
 private:
 	bool _audioSuspended;
 public:
+	/* Graphics */
+	void initSize(uint w, uint h);
+	void setGraphicsModeIntern();
+	bool setGraphicsMode(int mode);
+	void internUpdateScreen();
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	bool setGraphicsMode(const char *name);
+	int getDefaultGraphicsMode() const;
+	bool loadGFXMode();
+	void drawMouse();
+	void undrawMouse();
+	void showOverlay();
+	void hideOverlay();
+
+	/* Event Stuff */
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 	virtual void preprocessEvents(SDL_Event *event);
 	virtual void setupMixer();
 	virtual Common::HardwareKeySet *getHardwareKeySet();
+	void fillMouseEvent(Common::Event&, int, int);
 	void suspendAudio();
 	int resumeAudio();
+	void warpMouse(int, int);
 };
 
 #endif

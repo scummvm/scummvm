@@ -7,4 +7,4 @@ export HOME=/$DIR
 cd $DIR
 rm /mmc/mmca1/.system/mySDL.cfg
 cp $DIR/mySDL.cfg /mmc/mmca1/.system/mySDL.cfg
-./scummvm --path=$DIR --gfx-mode=1x > $DIR/scummvm.log
+exec $DIR/scummvm --path=$DIR --gfx-mode=1x > $DIR/scummvm.log

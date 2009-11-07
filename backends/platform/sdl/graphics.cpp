@@ -364,7 +364,7 @@ bool OSystem_SDL::loadGFXMode() {
 
 	int hwW, hwH;
 
-#if !defined(__MAEMO__) && !defined(GP2XWIZ)
+#if !defined(__MAEMO__) && !defined(GP2XWIZ) && !defined(LINUXMOTO)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
