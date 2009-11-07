@@ -1184,7 +1184,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 0x6a);
 		reloadLan();
 		playAnimation(878, 0);
-		playAnimation(879, 0);
+		//playAnimation(879, 0); //background bartender animation
 		inventory->remove(0x5c);
 		enableObject(1);
 		SET_FLAG(0xDBE7, 1);
