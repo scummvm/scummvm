@@ -28,6 +28,7 @@
 
 #include "draci/sprite.h"
 #include "draci/sound.h"
+#include "common/rect.h"
 
 namespace Draci {
 
@@ -75,11 +76,14 @@ public:
 
 	void addFrame(Drawable *frame, const SoundSample *sample);
 	void replaceFrame(int i, Drawable *frame, const SoundSample *sample);
+	const Drawable *getConstCurrentFrame() const;
 	Drawable *getCurrentFrame();
 	Drawable *getFrame(int frameNum);
 	void setCurrentFrame(uint frame);
 	uint currentFrameNum() const { return _currentFrame; }
 	uint getFrameCount() const { return _frames.size(); }
+	void makeLastFrameRelative(int x, int y);
+	void clearShift();
 
 	bool isPlaying() const { return _playing; }
 	void setPlaying(bool playing);
@@ -93,7 +97,8 @@ public:
 	void setRelative(int relx, int rely);
 	int getRelativeX() const { return _displacement.relX; }
 	int getRelativeY() const { return _displacement.relY; }
-	const Displacement &getDisplacement() const { return _displacement; }
+	const Displacement &getDisplacement() const { return _displacement; }	// displacement of the whole animation
+	Displacement getCurrentFrameDisplacement() const;	// displacement of the current frame (includes _shift)
 
 	int getIndex() const { return _index; }
 	void setIndex(int index) { _index = index; }
@@ -132,6 +137,7 @@ private:
 
 	uint _currentFrame;
 	uint _z;
+	Common::Point _shift;	// partial sum of _relativeShifts from the beginning of the animation until the current frame
 	bool _hasChangedFrame;
 
 	Displacement _displacement;
@@ -144,6 +150,7 @@ private:
 	/** Array of frames of the animation.  The animation object owns these pointers.
 	 */
 	Common::Array<Drawable *> _frames;
+	Common::Array<Common::Point> _relativeShifts;
 	/** Array of samples played during the animation.  The animation
 	 * object doesn't own these pointers, but they are stored in the
 	 * cache.

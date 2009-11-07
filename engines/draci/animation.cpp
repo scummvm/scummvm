@@ -33,6 +33,7 @@ Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_id = kUnused;
 	_index = index;
 	_z = 0;
+	clearShift();
 	_displacement = kNoDisplacement;
 	_playing = false;
 	_looping = false;
@@ -56,6 +57,13 @@ void Animation::setRelative(int relx, int rely) {
 	_displacement.relY = rely;
 }
 
+Displacement Animation::getCurrentFrameDisplacement() const {
+	Displacement dis = _displacement;
+	dis.relX += (int) (dis.extraScaleX * _shift.x);
+	dis.relY += (int) (dis.extraScaleY * _shift.y);
+	return dis;
+}
+
 void Animation::setLooping(bool looping) {
 	_looping = looping;
 	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d",
@@ -67,8 +75,8 @@ void Animation::markDirtyRect(Surface *surface) const {
 		return;
 
 	// Fetch the current frame's rectangle
-	Drawable *frame = _frames[_currentFrame];
-	Common::Rect frameRect = frame->getRect(_displacement);
+	const Drawable *frame = getConstCurrentFrame();
+	Common::Rect frameRect = frame->getRect(getCurrentFrameDisplacement());
 
 	// Mark the rectangle dirty on the surface
 	surface->markDirtyRect(frameRect);
@@ -79,7 +87,7 @@ void Animation::nextFrame(bool force) {
 	if (getFrameCount() == 0 || !_playing)
 		return;
 
-	Drawable *frame = _frames[_currentFrame];
+	const Drawable *frame = getConstCurrentFrame();
 	Surface *surface = _vm->_screen->getSurface();
 
 	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis())) {
@@ -92,7 +100,12 @@ void Animation::nextFrame(bool force) {
 			// Mark old frame dirty so it gets deleted
 			markDirtyRect(surface);
 
+			_shift.x += _relativeShifts[_currentFrame].x;
+			_shift.y += _relativeShifts[_currentFrame].y;
 			_currentFrame = nextFrameNum();
+			if (!_currentFrame) {
+				clearShift();	// TODO: don't do that, but rather let the animation fly away when needed.
+			}
 			_tick = _vm->_system->getMillis();
 
 			// Fetch new frame and mark it dirty
@@ -123,13 +136,15 @@ void Animation::drawFrame(Surface *surface) {
 	if (_frames.size() == 0 || !_playing)
 		return;
 
-	const Drawable *frame = _frames[_currentFrame];
+	const Drawable *frame = getConstCurrentFrame();
 
 	if (_id == kOverlayImage) {
+		// No displacement or relative animations is supported.
 		frame->draw(surface, false, 0, 0);
 	} else {
-		// Draw frame
-		frame->drawReScaled(surface, false, _displacement);
+		// Draw frame: first shifted by the relative shift and then
+		// scaled/shifted by the given displacement.
+		frame->drawReScaled(surface, false, getCurrentFrameDisplacement());
 	}
 
 	const SoundSample *sample = _samples[_currentFrame];
@@ -164,11 +179,25 @@ void Animation::setScaleFactors(double scaleX, double scaleY) {
 void Animation::addFrame(Drawable *frame, const SoundSample *sample) {
 	_frames.push_back(frame);
 	_samples.push_back(sample);
+	_relativeShifts.push_back(Common::Point(0, 0));
+}
+
+void Animation::makeLastFrameRelative(int x, int y) {
+	_relativeShifts.back() = Common::Point(x, y);
+}
+
+void Animation::clearShift() {
+	_shift = Common::Point(0, 0);
 }
 
 void Animation::replaceFrame(int i, Drawable *frame, const SoundSample *sample) {
 	_frames[i] = frame;
 	_samples[i] = sample;
+}
+
+const Drawable *Animation::getConstCurrentFrame() const {
+	// If there are no frames stored, return NULL
+	return _frames.size() > 0 ? _frames[_currentFrame] : NULL;
 }
 
 Drawable *Animation::getCurrentFrame() {
@@ -202,6 +231,7 @@ void Animation::deleteFrames() {
 		delete _frames[i];
 		_frames.pop_back();
 	}
+	_relativeShifts.clear();
 	_samples.clear();
 }
 
@@ -280,6 +310,7 @@ void AnimationManager::stop(int id) {
 
 		// Reset the animation to the beginning
 		anim->setCurrentFrame(0);
+		anim->clearShift();
 
 		debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
 	}
@@ -499,19 +530,19 @@ int AnimationManager::getTopAnimationID(int x, int y) const {
 			continue;
 		}
 
-		const Drawable *frame = anim->getCurrentFrame();
+		const Drawable *frame = anim->getConstCurrentFrame();
 
 		if (frame == NULL) {
 			continue;
 		}
 
-		if (frame->getRect(anim->getDisplacement()).contains(x, y)) {
+		if (frame->getRect(anim->getCurrentFrameDisplacement()).contains(x, y)) {
 			if (frame->getType() == kDrawableText) {
 
 				retval = anim->getID();
 
 			} else if (frame->getType() == kDrawableSprite &&
-					   reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getDisplacement()) != transparent) {
+					   reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getCurrentFrameDisplacement()) != transparent) {
 
 				retval = anim->getID();
 			}

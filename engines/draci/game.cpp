@@ -1194,9 +1194,7 @@ int Game::loadAnimation(uint animNum, uint z) {
 	// into details.
 	animationReader.readByte();
 	const bool cyclic = animationReader.readByte();
-
-	// FIXME: handle this properly
-	animationReader.readByte(); // Relative field, not used
+	const bool relative = animationReader.readByte();
 
 	Animation *anim = _vm->_anims->addAnimation(animNum, z, false);
 
@@ -1216,7 +1214,8 @@ int Game::loadAnimation(uint animNum, uint z) {
 		// _spritesArchive is flushed when entering a room.  All
 		// scripts in a room are responsible for loading their animations.
 		const BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
-		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, true);
+		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length,
+			relative ? 0 : x, relative ? 0 : y, true);
 
 		// Some frames set the scaled dimensions to 0 even though other frames
 		// from the same animations have them set to normal values
@@ -1239,6 +1238,9 @@ int Game::loadAnimation(uint animNum, uint z) {
 		const SoundSample *sam = _vm->_soundsArchive->getSample(sample, freq);
 
 		anim->addFrame(sp, sam);
+		if (relative) {
+			anim->makeLastFrameRelative(x, y);
+		}
 	}
 
 	return animNum;

@@ -522,8 +522,9 @@ bool WalkingState::continueWalking() {
 
 	// We are walking in the middle of an edge.  The animation phase has
 	// just changed.  Update the position of the hero.
+	_position += 4;		// TODO: compute shifts properly from the animation
 	Common::Point newPos = WalkingMap::interpolate(
-		_path[_segment], _path[_segment+1], ++_position, _length);
+		_path[_segment], _path[_segment+1], _position, _length);
 	_vm->_game->setHeroPosition(newPos);
 	_vm->_game->positionAnimAsHero(anim);
 
