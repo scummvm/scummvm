@@ -223,7 +223,8 @@ protected:
 		operator Common::Event() const { return event; }
 	};
 	Common::List<Event> _eventList;
-	Common::HashMap<int, int16> _keyMap;
+	typedef Common::HashMap<int, int16> KeyMap;
+	KeyMap _keyMap;
 
 	// config specific
 	virtual void registerDefaultSettings();

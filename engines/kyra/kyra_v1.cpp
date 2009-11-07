@@ -282,7 +282,11 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 					quitGame();
 				}
 			} else {
-				keys = _keyMap[event.kbd.keycode];
+				KeyMap::const_iterator keycode = _keyMap.find(event.kbd.keycode);
+				if (keycode != _keyMap.end())
+					keys = keycode->_value;
+				else
+					keys = 0;
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
