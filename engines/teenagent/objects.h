@@ -61,7 +61,15 @@ struct Rect {
 	}
 	
 	void load(byte *src); //8 bytes
-	void save();
+	void save() const;
+	
+	inline bool intersects_hline(int x1, int x2, int y) const {
+		return x1 < right && x2 > left && y >= top && y < bottom;
+	}
+
+	inline bool intersects_vline(int x, int y1, int y2) const {
+		return y1 < bottom && y2 > top && x >= left && x < right;
+	}
 
 protected:
 	byte * _base;
@@ -79,10 +87,10 @@ struct Object {
 	Common::String name, description;
 
 	Object(): _base(NULL) {}
-	void dump();
+	void dump() const;
 	void setName(const Common::String &name);
 	void load(byte *addr);
-	void save();
+	void save() const;
 	
 	static Common::String parse_description(const char *name);
 
@@ -112,7 +120,7 @@ struct UseHotspot {
 };
 
 struct Walkbox {
-	byte unk00;
+	byte type;
 	byte orientation;
 	Rect rect;
 	byte unk0a;
@@ -121,9 +129,9 @@ struct Walkbox {
 	byte unk0d;
 
 	Walkbox() : _base(NULL) {}
-	void dump();
+	void dump() const;
 	void load(byte *src);
-	void save();
+	void save() const;
 
 protected:
 	byte * _base;

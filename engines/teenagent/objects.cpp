@@ -38,7 +38,7 @@ void Rect::load(byte * src) {
 	bottom = ins.readUint16LE();
 }
 
-void Rect::save() {
+void Rect::save() const {
 	assert(_base != NULL);
 	Common::MemoryWriteStream outs(_base, 8);
 	outs.writeUint16LE(left);
@@ -71,7 +71,7 @@ void Object::load(byte * src) {
 	description = parse_description((const char *)src);
 }
 
-void Object::save() {
+void Object::save() const {
 	assert(_base != NULL);
 
 	rect.save();
@@ -86,7 +86,7 @@ void Object::setName(const Common::String &new_name) {
 	name = new_name;
 }
 
-void Object::dump() {
+void Object::dump() const {
 	debug(0, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
 		rect.left, rect.top, rect.right, rect.bottom,
 		actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom,
@@ -140,9 +140,9 @@ void UseHotspot::load(byte *src) {
 	callback = in.readUint16LE();
 }
 
-void Walkbox::dump() {
+void Walkbox::dump() const {
 	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ",
-		unk00, orientation,
+		type, orientation,
 		rect.left, rect.right, rect.top, rect.bottom,
 		unk0a, unk0b, unk0c, unk0d);
 }
@@ -150,7 +150,7 @@ void Walkbox::dump() {
 void Walkbox::load(byte *src) {
 	_base = src;
 
-	unk00 = *src++;
+	type = *src++;
 	orientation = *src++;
 	rect.load(src);
 	src += 8;
@@ -160,8 +160,9 @@ void Walkbox::load(byte *src) {
 	unk0d = *src++;
 }
 
-void Walkbox::save() {
+void Walkbox::save() const {
 	assert(_base != NULL);
+	_base[0] = type;
 	_base[1] = orientation;
 	rect.save();
 }
