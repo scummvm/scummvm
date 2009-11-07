@@ -169,12 +169,10 @@ crosswin32dist: $(EXECUTABLE)
 	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
 	cp $(srcdir)/NEWS ResidualWin32/NEWS.txt
 	cp $(srcdir)/README ResidualWin32/README.txt
-	cp $(srcdir)/dists/residual.ini.example ResidualWin32
 	cp $(srcdir)/dists/residual.iss ResidualWin32
 	cp /usr/i586-mingw32msvc/README-SDL.txt ResidualWin32
 	cp /usr/i586-mingw32msvc/bin/SDL.dll ResidualWin32
 	toms ResidualWin32/*.txt
-	toms ResidualWin32/residual.ini.example
 	toms ResidualWin32/residual.iss
 
 #
