@@ -99,6 +99,7 @@ public:
 	int getRelativeY() const { return _displacement.relY; }
 	const Displacement &getDisplacement() const { return _displacement; }	// displacement of the whole animation
 	Displacement getCurrentFrameDisplacement() const;	// displacement of the current frame (includes _shift)
+	Common::Point getCurrentFramePosition() const;	// with displacement and shift applied
 
 	int getIndex() const { return _index; }
 	void setIndex(int index) { _index = index; }

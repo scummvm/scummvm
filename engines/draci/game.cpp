@@ -984,7 +984,7 @@ void Game::setHeroPosition(const Common::Point &p) {
 void Game::positionHero(const Common::Point &p, SightDirection dir) {
 	setHeroPosition(p);
 	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
-	playHeroAnimation(_walkingState.animationForSightDirection(dir, _hero, mousePos, WalkingPath()));
+	playHeroAnimation(WalkingState::animationForSightDirection(dir, _hero, mousePos, WalkingPath()));
 }
 
 Common::Point Game::findNearestWalkable(int x, int y) const {
@@ -1477,16 +1477,12 @@ void Game::positionAnimAsHero(Animation *anim) {
 	// Fetch current frame
 	Drawable *frame = anim->getCurrentFrame();
 
-	// Fetch base dimensions of the frame
-	uint height = frame->getHeight();
-	uint width = frame->getWidth();
-
 	// We naturally want the dragon to position its feet to the location of the
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
 	Common::Point p = _hero;
-	p.x -= (int)(scale * width) / 2;
-	p.y -= (int)(scale * height);
+	p.x -= (int)(scale * frame->getWidth() / 2);
+	p.y -= (int)(scale * frame->getHeight());
 
 	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
 	// so the text remains centered over the dragon.
@@ -1497,6 +1493,26 @@ void Game::positionAnimAsHero(Animation *anim) {
 	anim->setScaleFactors(scale, scale);
 
 	anim->setRelative(p.x, p.y);
+}
+
+void Game::positionHeroAsAnim(Animation *anim) {
+	// Check out where the hero has moved to by composing the relative
+	// shifts of the sprites.
+	_hero = anim->getCurrentFramePosition();
+
+	// Update our hero coordinates (don't forget that our control point is
+	// elsewhere).
+	Drawable *frame = anim->getCurrentFrame();
+	_hero.x += (int) (anim->getScaleX() * frame->getWidth() / 2);
+	_hero.y += (int) (anim->getScaleY() * frame->getHeight());
+
+	// Clear the animation's shift so that by updating the coordinates the
+	// animation will stay in place.
+	anim->clearShift();
+
+	// Call the inverse procedure to calculate new scaling factors.
+	// TODO: what about rounding errors?
+	positionAnimAsHero(anim);
 }
 
 void Game::pushNewRoom() {

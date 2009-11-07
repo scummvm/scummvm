@@ -215,6 +215,7 @@ public:
 	int getHeroX() const { return _hero.x; }
 	int getHeroY() const { return _hero.y; }
 	void positionAnimAsHero(Animation *anim);
+	void positionHeroAsAnim(Animation *anim);
 	void playHeroAnimation(int anim_index);
 
 	int loadAnimation(uint animNum, uint z);

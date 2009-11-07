@@ -64,6 +64,11 @@ Displacement Animation::getCurrentFrameDisplacement() const {
 	return dis;
 }
 
+Common::Point Animation::getCurrentFramePosition() const {
+	Displacement dis = getCurrentFrameDisplacement();
+	return Common::Point(dis.relX, dis.relY);
+}
+
 void Animation::setLooping(bool looping) {
 	_looping = looping;
 	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d",

@@ -132,7 +132,7 @@ public:
 	// direction.  The direction can be smart and in that case this
 	// function needs to know the whole last path, the current position of
 	// the hero, or the mouse position.
-	Movement animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path) const;
+	static Movement animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path);
 
 private:
 	DraciEngine *_vm;

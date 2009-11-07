@@ -522,11 +522,16 @@ bool WalkingState::continueWalking() {
 
 	// We are walking in the middle of an edge.  The animation phase has
 	// just changed.  Update the position of the hero.
-	_position += 4;		// TODO: compute shifts properly from the animation
-	Common::Point newPos = WalkingMap::interpolate(
-		_path[_segment], _path[_segment+1], _position, _length);
-	_vm->_game->setHeroPosition(newPos);
-	_vm->_game->positionAnimAsHero(anim);
+	_vm->_game->positionHeroAsAnim(anim);
+	// TODO: take the [XY] coordinate determined by the animation, update
+	// the other one so that the hero stays on the edge, remove _position
+	// and _length, and instead test reaching the destination by computing
+	// the scalar product
+	_position += 4;
+	// Common::Point newPos = WalkingMap::interpolate(
+	// 	_path[_segment], _path[_segment+1], _position, _length);
+	// _vm->_game->setHeroPosition(newPos);
+	// _vm->_game->positionAnimAsHero(anim);
 
 	// If the hero has reached the end of the edge, start transition to the
 	// next phase.  This will increment _segment, either immediately (if no
@@ -698,7 +703,7 @@ Movement WalkingState::transitionBetweenAnimations(Movement previous, Movement n
 	}
 }
 
-Movement WalkingState::animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path) const {
+Movement WalkingState::animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path) {
 	switch (dir) {
 	case kDirectionMouse:
 		return mouse.x < hero.x ? kStopLeft : kStopRight;
