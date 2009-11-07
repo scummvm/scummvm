@@ -349,18 +349,18 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 
 void KyraEngine_v1::setupKeyMap() {
 	static const Common::KeyCode keyboardEvents[] = {
-		Common::KEYCODE_SPACE,	Common::KEYCODE_RETURN,	Common::KEYCODE_UP,		Common::KEYCODE_KP8,
-		Common::KEYCODE_RIGHT,	Common::KEYCODE_KP6,	Common::KEYCODE_DOWN,	Common::KEYCODE_KP2,
-		Common::KEYCODE_LEFT,	Common::KEYCODE_KP4,	Common::KEYCODE_HOME,	Common::KEYCODE_KP7,
-		Common::KEYCODE_PAGEUP,	Common::KEYCODE_KP9,	Common::KEYCODE_F1,		Common::KEYCODE_F2,
-		Common::KEYCODE_F3,		Common::KEYCODE_o,		Common::KEYCODE_r,		Common::KEYCODE_SLASH,
+		Common::KEYCODE_SPACE,  Common::KEYCODE_RETURN, Common::KEYCODE_UP,     Common::KEYCODE_KP8,
+		Common::KEYCODE_RIGHT,  Common::KEYCODE_KP6,    Common::KEYCODE_DOWN,   Common::KEYCODE_KP2,
+		Common::KEYCODE_LEFT,   Common::KEYCODE_KP4,    Common::KEYCODE_HOME,   Common::KEYCODE_KP7,
+		Common::KEYCODE_PAGEUP, Common::KEYCODE_KP9,    Common::KEYCODE_F1,     Common::KEYCODE_F2,
+		Common::KEYCODE_F3,     Common::KEYCODE_o,      Common::KEYCODE_r,      Common::KEYCODE_SLASH,
 		Common::KEYCODE_ESCAPE
 	};
 
 	static const int16 keyCodesDOS[] = { 61, 43, 96, 96, 102, 102, 97, 97, 92, 92, 91, 91, 101, 101, 112, 113, 114, 25, 20, 55, 110};
 	static const int16 keyCodesPC98[] = { 53, 29, 68, 68, 73, 73, 72, 72, 71, 71, 67, 67, 69, 69, 99, 100, 101, 25, 20, 55, 1 };
 	
-	const int16 *keyCodes = _flags.platform == Common::kPlatformPC98 ? keyCodesPC98 : keyCodesDOS;	
+	const int16 *keyCodes = _flags.platform == Common::kPlatformPC98 ? keyCodesPC98 : keyCodesDOS;
 	_keyMap.clear();
 
 	for (int i = 0; i < ARRAYSIZE(keyboardEvents); i++)
