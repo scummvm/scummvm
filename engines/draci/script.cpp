@@ -664,8 +664,13 @@ void Script::stayOn(Common::Queue<int> &params) {
 	SightDirection dir = static_cast<SightDirection> (params.pop());
 
 	// Jumps into the given position regardless of the walking map.
+	Common::Point heroPos(_vm->_game->findNearestWalkable(x, y));
+	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
+
 	_vm->_game->stopWalking();
-	_vm->_game->positionHero(_vm->_game->findNearestWalkable(x, y), dir);
+	_vm->_game->setHeroPosition(heroPos);
+	_vm->_game->playHeroAnimation(WalkingState::animationForSightDirection(
+		  dir, heroPos, mousePos, WalkingPath()));
 }
 
 void Script::walkOn(Common::Queue<int> &params) {

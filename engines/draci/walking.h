@@ -142,7 +142,6 @@ private:
 	SightDirection _dir;
 
 	int _segment;
-	int _position, _length;
 	int _lastAnimPhase;
 
 	const GPL2Program *_callback;
@@ -168,6 +167,10 @@ private:
 	static bool isTurningMovement(Movement m) {
 		return m >= kFirstTurning && m <= kLastTurning;
 	}
+
+	// Projects hero to the given edge, but not behind p2.  Returns true
+	// when hero has reached at least p2.
+	static bool alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, Common::Point *hero);
 };
 
 } // End of namespace Draci

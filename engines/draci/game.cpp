@@ -954,18 +954,25 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 	deleteAnimationsAfterIndex(lastAnimIndex);
 }
 
-void Game::playHeroAnimation(int anim_index) {
+int Game::playHeroAnimation(int anim_index) {
 	const GameObject *dragon = getObject(kDragonObject);
 	const int current_anim_index = playingObjectAnimation(dragon);
-	if (anim_index == current_anim_index) {
-		return;
-	}
-
 	const int animID = dragon->_anim[anim_index];
 	Animation *anim = _vm->_anims->getAnimation(animID);
-	stopObjectAnimations(dragon);
+
+	if (anim_index == current_anim_index) {
+		anim->markDirtyRect(_vm->_screen->getSurface());
+	} else {
+		stopObjectAnimations(dragon);
+	}
 	positionAnimAsHero(anim);
-	_vm->_anims->play(animID);
+	if (anim_index == current_anim_index) {
+		anim->markDirtyRect(_vm->_screen->getSurface());
+	} else {
+		_vm->_anims->play(animID);
+	}
+
+	return anim->currentFrameNum();
 }
 
 void Game::redrawWalkingPath(int id, byte colour, const WalkingPath &path) {
@@ -979,12 +986,6 @@ void Game::redrawWalkingPath(int id, byte colour, const WalkingPath &path) {
 void Game::setHeroPosition(const Common::Point &p) {
 	debugC(3, kDraciWalkingDebugLevel, "Jump to x: %d y: %d", p.x, p.y);
 	_hero = p;
-}
-
-void Game::positionHero(const Common::Point &p, SightDirection dir) {
-	setHeroPosition(p);
-	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
-	playHeroAnimation(WalkingState::animationForSightDirection(dir, _hero, mousePos, WalkingPath()));
 }
 
 Common::Point Game::findNearestWalkable(int x, int y) const {
@@ -1493,6 +1494,12 @@ void Game::positionAnimAsHero(Animation *anim) {
 	anim->setScaleFactors(scale, scale);
 
 	anim->setRelative(p.x, p.y);
+
+	// Clear the animation's shift so that the real sprite stays at place
+	// regardless of what the current phase is.  If the animation starts
+	// from the beginning, the shift is already [0,0], but if it is in the
+	// middle, it may be different.
+	anim->clearShift();
 }
 
 void Game::positionHeroAsAnim(Animation *anim) {
@@ -1502,17 +1509,10 @@ void Game::positionHeroAsAnim(Animation *anim) {
 
 	// Update our hero coordinates (don't forget that our control point is
 	// elsewhere).
+	// TODO: what about rounding errors?
 	Drawable *frame = anim->getCurrentFrame();
 	_hero.x += (int) (anim->getScaleX() * frame->getWidth() / 2);
 	_hero.y += (int) (anim->getScaleY() * frame->getHeight());
-
-	// Clear the animation's shift so that by updating the coordinates the
-	// animation will stay in place.
-	anim->clearShift();
-
-	// Call the inverse procedure to calculate new scaling factors.
-	// TODO: what about rounding errors?
-	positionAnimAsHero(anim);
 }
 
 void Game::pushNewRoom() {

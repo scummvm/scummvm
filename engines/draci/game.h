@@ -209,14 +209,19 @@ public:
 	Common::Point findNearestWalkable(int x, int y) const;
 	void heroAnimationFinished() { _walkingState.heroAnimationFinished(); }
 	void stopWalking() { _walkingState.stopWalking(); }	// and clear callback
-	void positionHero(const Common::Point &p, SightDirection dir);	// teleport the dragon
 	void walkHero(int x, int y, SightDirection dir);	// start walking and leave callback as is
 	void setHeroPosition(const Common::Point &p);
-	int getHeroX() const { return _hero.x; }
-	int getHeroY() const { return _hero.y; }
+	const Common::Point &getHeroPosition() const { return _hero; }
 	void positionAnimAsHero(Animation *anim);
 	void positionHeroAsAnim(Animation *anim);
-	void playHeroAnimation(int anim_index);
+
+	// Makes sure animation anim_index plays on the hero.  If the hero's
+	// position has changed, it updates the animation position.  If the new
+	// animation is different, it stops the old one and starts the new one,
+	// otherwise it just marks dirty rectangles for moving the position.
+	// Returns the current animation phase of the new animation (usually 0
+	// unless the animation hasn't changed).
+	int playHeroAnimation(int anim_index);
 
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
