@@ -128,8 +128,11 @@ public:
 	// scheduled animation.
 	void heroAnimationFinished();
 
-	// Returns the hero's animation corresponding to looking into given direction.
-	Movement animationForSightDirection(SightDirection dir) const;
+	// Returns the hero's animation corresponding to looking into given
+	// direction.  The direction can be smart and in that case this
+	// function needs to know the whole last path, the current position of
+	// the hero, or the mouse position.
+	Movement animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path) const;
 
 private:
 	DraciEngine *_vm;

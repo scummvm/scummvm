@@ -435,7 +435,7 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 	_dir = dir;
 
 	if (!_path.size()) {
-		return;
+		_path.push_back(p1);
 	}
 	if (_path.size() == 1 && p2 != p1) {
 		// Although the first and last point belong to the same
@@ -611,7 +611,7 @@ Movement WalkingState::animationForDirection(const Common::Point &here, const Co
 
 Movement WalkingState::directionForNextPhase() const {
 	if (_segment >= (int) (_path.size() - 2)) {
-		return animationForSightDirection(_dir);
+		return animationForSightDirection(_dir, _path[_path.size()-1], _mouse, _path);
 	} else {
 		return animationForDirection(_path[_segment+1], _path[_segment+2]);
 	}
@@ -698,24 +698,23 @@ Movement WalkingState::transitionBetweenAnimations(Movement previous, Movement n
 	}
 }
 
-Movement WalkingState::animationForSightDirection(SightDirection dir) const {
+Movement WalkingState::animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path) const {
 	switch (dir) {
+	case kDirectionMouse:
+		return mouse.x < hero.x ? kStopLeft : kStopRight;
 	case kDirectionLeft:
 		return kStopLeft;
 	case kDirectionRight:
 		return kStopRight;
 	default: {
-		const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-		const int anim_index = _vm->_game->playingObjectAnimation(dragon);
-		if (anim_index >= 0) {
-			return static_cast<Movement> (anim_index);
-		} else {
-			return kStopRight;	// TODO
+		// Find the last horizontal direction on the path.
+		int i = path.size() - 1;
+		while (i >= 0 && path[i].x == hero.x) {
+			--i;
 		}
-		break;
+		return (i >= 0 && path[i].x < hero.x) ? kStopRight : kStopLeft;
 	}
 	}
-	// TODO: implement all needed functionality
 }
 
 }

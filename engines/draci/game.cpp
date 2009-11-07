@@ -983,7 +983,8 @@ void Game::setHeroPosition(const Common::Point &p) {
 
 void Game::positionHero(const Common::Point &p, SightDirection dir) {
 	setHeroPosition(p);
-	playHeroAnimation(_walkingState.animationForSightDirection(dir));
+	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
+	playHeroAnimation(_walkingState.animationForSightDirection(dir, _hero, mousePos, WalkingPath()));
 }
 
 Common::Point Game::findNearestWalkable(int x, int y) const {
