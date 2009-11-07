@@ -509,6 +509,14 @@ bool KyraEngine_LoK::skipFlag() const {
 	return KyraEngine_v1::skipFlag() || shouldQuit();
 }
 
+void KyraEngine_LoK::resetSkipFlag(bool removeEvent) {
+	if (removeEvent) {
+		_eventList.clear();
+	} else {
+		KyraEngine_v1::resetSkipFlag(false);
+	}
+}
+
 void KyraEngine_LoK::delayWithTicks(int ticks) {
 	uint32 nextTime = _system->getMillis() + ticks * _tickLength;
 

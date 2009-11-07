@@ -200,6 +200,7 @@ public:
 	void delayWithTicks(int ticks);
 
 	bool skipFlag() const;
+	void resetSkipFlag(bool removeEvent = true);
 
 	// TODO
 	void registerDefaultSettings();
