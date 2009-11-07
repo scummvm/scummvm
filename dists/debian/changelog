@@ -1,3 +1,9 @@
+scummvm (1.0.0-1) stable; urgency=low
+
+  * Release build.
+
+ -- Pawel Kolodziejski <aquadran@scummvm.org>
+
 scummvm (1.0.0~rc1-1) stable; urgency=low
 
   * Release build.
