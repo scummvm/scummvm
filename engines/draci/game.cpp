@@ -1178,12 +1178,24 @@ int Game::loadAnimation(uint animNum, uint z) {
 
 	uint numFrames = animationReader.readByte();
 
-	// FIXME: handle these properly
-	animationReader.readByte(); // Memory logic field, not used
-	animationReader.readByte(); // Disable erasing field, not used
+	// The following two flags are ignored by the played.  Memory logic was
+	// a hint to the old player whether it should cache the sprites or load
+	// them on demand.  We have 1 memory manager and ignore these hints.
+	animationReader.readByte();
+	// The disable erasing field is just a (poor) optimization flag that
+	// turns of drawing the background underneath the sprite.  By reading
+	// the source code of the old player, I'm not sure if that would ever
+	// have worked.  There are only 6 animations in the game with this flag
+	// true.  All of them have just 1 animation phase and they are used to
+	// patch a part of the original background by a new sprite.  This
+	// should work with the default logic as well---just play this
+	// animation on top of the background.  Since the only meaning of the
+	// flag was optimization, ignoring should be OK even without dipping
+	// into details.
+	animationReader.readByte();
+	const bool cyclic = animationReader.readByte();
 
-	bool cyclic = animationReader.readByte();
-
+	// FIXME: handle this properly
 	animationReader.readByte(); // Relative field, not used
 
 	Animation *anim = _vm->_anims->addAnimation(animNum, z, false);

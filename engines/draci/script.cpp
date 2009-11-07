@@ -389,6 +389,10 @@ void Script::load(Common::Queue<int> &params) {
 		}
 	}
 
+	// We don't test here whether an animation is loaded in the
+	// AnimationManager while not being registered in the object's array of
+	// animations.  This cannot legally happen and an assertion will be
+	// thrown by loadAnimation().
 	loadObjectAnimation(obj, animID);
 }
 
