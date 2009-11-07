@@ -631,6 +631,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		Common::Point p = scene->getPosition();
 		moveTo(159, 189, 0);
+		waitLanAnimationFrame(1, 1);
 
 		playSound(5, 2);
 		playSound(5, 19);
@@ -804,19 +805,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		uint16 d = Dialog::pop(scene, 0xdb08);
 		if (d == 0x2c5d) {
 			setOns(0, 0);
+			waitLanAnimationFrame(1, 0x23);
 			playSound(52, 9);
 			playSound(52, 11);
 			playSound(52, 13);
 			playSound(53, 32);
-			playAnimation(570, 1);
+			playAnimation(570, 0);
 			displayMessage(0x551f);
 			disableObject(5);
 			SET_FLAG(0xDBB0, 1);
 		} else if (d != 0x2c9b) {
+			waitLanAnimationFrame(1, 0x23);
 			playSound(52, 9);
 			playSound(52, 11);
 			playSound(52, 13);
-			playAnimation(569, 1);
+			playAnimation(569, 0);
 		}
 	}
 	return true;
@@ -864,7 +867,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x5d88:
 		if (CHECK_FLAG(0xDBA5, 1)) { //dry laundry
 			SET_FLAG(0xDBA5, 2);
-			Dialog::show(scene, 0x1F4F);
+			Dialog::show(scene, 0x1F4F, 0, 523, 0xd0, 0xe5, 0, 1);
+			waitLanAnimationFrame(1, 1);
 			playAnimation(604, 1);
 
 			loadScene(21, scene->getPosition());
@@ -875,7 +879,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(606, 1);
 			loadScene(23, scene->getPosition());
 			playAnimation(605, 1);
-			Dialog::show(scene, 0x2002);
+			Dialog::show(scene, 0x2002, 0, 523, 0xd0, 0xe5, 0, 1);
 		} else {
 			uint16 d = Dialog::pop(scene, 0xdada);
 			if (d == 0x1913)
@@ -1071,6 +1075,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(873);
 		moveTo(240, 163, 4);
 		displayMessage(0x5837);
+		waitLanAnimationFrame(1, 0x22);
 		playSound(77, 2);
 		playSound(77, 12);
 		playSound(77, 16);
@@ -1311,7 +1316,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5561://Enter lakeside house
 		processCallback(0x557e);
-		loadScene(19, 223, 119, 1);
+		loadScene(19, 223, 199, 1);
 		return true;
 
 	case 0x557e:
@@ -1512,7 +1517,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x3d59);
 		} else {
 			moveTo(245, 198, 1);
-			Dialog::show(scene, 0x21d7);
+			Dialog::show(scene, 0x21d7, 0, 524, 0xd0, 0xe5, 0, 1);
+			waitLanAnimationFrame(2, 1);
 			SET_FLAG(0xDB97, 1);
 			for (byte i = 10; i <= 20; i += 2)
 				playSound(13, i);
@@ -1531,7 +1537,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(54, 1);
 			playSound(55, 5);
 			playActorAnimation(527);
-			Dialog::show(scene, 0x2219);
+			Dialog::show(scene, 0x2219, 0, 524, 0xd0, 0xe5, 0, 1);
 			scene->getObject(2)->setName((const char *)res->dseg.ptr(0x9820));
 		}
 		return true;
@@ -2267,6 +2273,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(22, 102);
 		playSound(26, 114);
 		playSound(24, 124);
+		waitLanAnimationFrame(1, 0x1a);
 		playActorAnimation(562, true);
 		playAnimation(563, 1, true);
 		waitAnimation();
@@ -2372,7 +2379,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x3d40);
 		} else {
 			SET_FLAG(0xDB92, 1);
-			Dialog::show(scene, 0x0fcd);
+			Dialog::show(scene, 0x0fcd, 0, 502, 0xd0, 0xe5, 0, 1);
+			waitLanAnimationFrame(1, 7);
 			playSound(5, 16);
 			playSound(1, 25);
 			playSound(1, 29);
@@ -2663,6 +2671,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x8fc8:
 		displayMessage(0x3b2f);
+		waitLanAnimationFrame(2, 4);
 		playSound(5, 3);
 		playActorAnimation(627, true);
 		playAnimation(629, 1, true);
@@ -3258,6 +3267,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9175:
 		if (CHECK_FLAG(0xDBD2, 0) || CHECK_FLAG(0xDBD3, 0) || CHECK_FLAG(0xDBD4, 0))
 			return true;
+
+		waitLanAnimationFrame(1, 1);
 		playSound(89, 2);
 		playActorAnimation(731);
 		setOns(0, 70);
