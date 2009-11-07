@@ -11,7 +11,7 @@ doc/README.pdf:
 
 scummvm:
 	dh_testdir
-	./configure --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games --mandir=/usr/share/man
+	./configure --enable-release --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games --mandir=/usr/share/man
 	$(MAKE)
 
 clean:
