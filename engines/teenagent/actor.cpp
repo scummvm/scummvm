@@ -51,15 +51,15 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		if (index >= sizeof(frames_up))
 			index = 1;
 		s = frames + frames_up[index];
-		dx = 29;
-		dy = 67;
+		dx = 11;
+		dy = 62;
 		break;
 	case Object::kActorDown:
 		if (index >= sizeof(frames_down))
 			index = 1;
 		s = frames + frames_down[index];
-		dx = 29;
-		dy = 67;
+		dx = 11;
+		dy = 62;
 		break;
 	default:
 		return Common::Rect();
