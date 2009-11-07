@@ -514,6 +514,7 @@ bool WalkingState::continueWalking() {
 	const int animPhase = anim->currentFrameNum();
 	const bool wasUpdated = animPhase != _lastAnimPhase;
 	if (!wasUpdated) {
+		debugC(4, kDraciWalkingDebugLevel, "Waiting for an animation phase change: still %d", animPhase);
 		return true;
 	}
 
@@ -527,8 +528,8 @@ bool WalkingState::continueWalking() {
 	Common::Point newHero = hero;
 	const bool reachedEnd = alignHeroToEdge(_path[_segment], _path[_segment+1], &newHero);
 
-	debugC(3, kDraciWalkingDebugLevel, "Continuing walking in segment %d and position [%d,%d] projected to [%d,%d]",
-		_segment, hero.x, hero.y, newHero.x, newHero.y);
+	debugC(3, kDraciWalkingDebugLevel, "Continuing walking in segment %d: phase %d and position [%d,%d] projected to [%d,%d]",
+		_segment, animPhase, hero.x, hero.y, newHero.x, newHero.y);
 
 	// Update the hero position to the projected one.  The animation number
 	// is not changing, so this will just move the sprite and return the
@@ -549,9 +550,24 @@ bool WalkingState::continueWalking() {
 }
 
 bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, Common::Point *hero) {
-	// TODO
-	*hero = p2;
-	return true;
+	const Common::Point heroDiff(hero->x - p1.x, hero->y - p1.y);
+	const Common::Point p2Diff(p2.x - p1.x, p2.y - p1.y);
+	const int scalarProduct = p2Diff.x * heroDiff.x + p2Diff.y * heroDiff.y;
+	const int p2DiffSqNorm = p2Diff.x * p2Diff.x + p2Diff.y * p2Diff.y;
+	double fraction = ((double) scalarProduct) / p2DiffSqNorm;
+	bool reachedEnd = false;
+	if (fraction >= 1.0) {
+		fraction = 1.0;
+		reachedEnd = true;
+	}
+	hero->x = p1.x + (int) (fraction * p2Diff.x + 0.5);
+	hero->y = p1.y + (int) (fraction * p2Diff.y + 0.5);
+	// TODO: unfortunately, the left-right walking animation jumps up and
+	// down by two pixels instead of going exactly horizontally, which
+	// means that the projection algorithm screws the vertical "shaking" as
+	// well as rounds horizontal positions improperly.  Fix it by better
+	// rounding or different projection.
+	return reachedEnd;
 }
 
 void WalkingState::turnForTheNextSegment() {
