@@ -307,7 +307,7 @@ bool Scene::processEvent(const Common::Event &event) {
 
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) {
-			if (intro) {
+			if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				intro = false;
 				message.clear();
 				message_timer = 0;
