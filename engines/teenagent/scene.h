@@ -142,6 +142,7 @@ private:
 	byte palette[768];
 	void setPalette(OSystem *system, const byte *palette, unsigned mul = 1);
 	static Common::Point messagePosition(const Common::String &str, Common::Point position);
+	static uint messageDuration(const Common::String &str);
 
 	bool processEventQueue();
 	inline bool nextEvent() {
@@ -170,6 +171,7 @@ private:
 	Common::String message;
 	Common::Point message_pos;
 	byte message_color;
+	uint message_timer;
 
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;

@@ -299,6 +299,7 @@ bool Scene::processEvent(const Common::Event &event) {
 	case Common::EVENT_RBUTTONDOWN:
 		if (!message.empty()) {
 			message.clear();
+			message_timer = 0;
 			nextEvent();
 			return true;
 		}
@@ -309,6 +310,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			if (intro) {
 				intro = false;
 				message.clear();
+				message_timer = 0;
 				events.clear();
 				sounds.clear();
 				current_event.clear();
@@ -323,6 +325,7 @@ bool Scene::processEvent(const Common::Event &event) {
 		
 			if (!message.empty()) {
 				message.clear();
+				message_timer = 0;
 				nextEvent();
 				return true;
 			}
@@ -342,6 +345,13 @@ bool Scene::render(OSystem *system) {
 	do {
 		restart = false;
 		busy = processEventQueue();
+		if (!message.empty() && message_timer != 0) {
+			if (--message_timer == 0) {
+				message.clear();
+				nextEvent();
+				continue;
+			}
+		}
 
 		if (current_event.type == SceneEvent::kCreditsMessage) {
 			system->fillScreen(0);
@@ -549,6 +559,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kCreditsMessage:
 		case SceneEvent::kMessage: {
 				message = current_event.message;
+				message_timer = messageDuration(message);
 				Common::Point p(
 					(actor_animation_position.left + actor_animation_position.right) / 2, 
 					actor_animation_position.top 
@@ -677,16 +688,32 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point po
 	return position;
 }
 
+uint Scene::messageDuration(const Common::String &str) {
+	uint words = 1;
+	for(uint i = 0; i < str.size(); ++i) {
+		if (str[i] == ' ' || str[i] == '\n')
+			++words;
+	}
+	words *= 7; //add text speed here
+	if (words < 15)
+		words = 15;
+
+	return words;
+}
+
+
 void Scene::displayMessage(const Common::String &str, byte color) {
 	//assert(!str.empty());
 	//debug(0, "displayMessage: %s", str.c_str());
 	message = str;
 	message_pos = messagePosition(str, position);
 	message_color = color;
+	message_timer = messageDuration(message);
 }
 
 void Scene::clear() {
 	message.clear();
+	message_timer = 0;
 	events.clear();
 	current_event.clear();
 	for(int i = 0; i < 4; ++i) {
