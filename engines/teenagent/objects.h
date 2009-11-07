@@ -113,10 +113,11 @@ protected:
 struct UseHotspot {
 	byte inventory_id;
 	byte object_id;
-	byte unk02;
-	uint16 x, y;
+	byte orientation; //?
+	uint16 actor_x, actor_y;
 	uint16 callback;
 	void load(byte *src);
+	void dump() const;
 };
 
 struct Walkbox {
@@ -136,6 +137,9 @@ struct Walkbox {
 protected:
 	byte * _base;
 };
+
+//\todo move it to util.h?
+template<typename T> inline T SIGN (T x) { return (x > 0)? 1: ((x < 0)? -1: 0); }
 
 } // End of namespace TeenAgent
 

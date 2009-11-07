@@ -134,10 +134,17 @@ void UseHotspot::load(byte *src) {
 	Common::MemoryReadStream in(src, 9);
 	inventory_id = in.readByte();
 	object_id = in.readByte();
-	unk02 = in.readByte();
-	x = in.readUint16LE();
-	y = in.readUint16LE();
+	orientation = in.readByte();
+	actor_x = in.readUint16LE();
+	actor_y = in.readUint16LE();
 	callback = in.readUint16LE();
+}
+
+void UseHotspot::dump() const {
+	debug(0, 
+		"hotspot: inv_id: %02x, obj_id: %02x, orientation?: %02x, actor position: (%d,%d), callback: %04x", 
+		inventory_id, object_id, orientation, actor_x, actor_y, callback
+	);
 }
 
 void Walkbox::dump() const {
