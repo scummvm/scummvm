@@ -380,10 +380,6 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-		//render on
-		if (on.pixels != NULL) {
-			on.render(surface);
-		}
 
 		bool got_any_animation = false;
 
@@ -476,6 +472,11 @@ bool Scene::render(OSystem *system) {
 				} else
 					actor_animation_position = teenagent.render(surface, position, orientation, 0);
 			}
+		}
+
+		//render on
+		if (on.pixels != NULL) {
+			on.render(surface);
 		}
 
 		if (!message.empty()) {
