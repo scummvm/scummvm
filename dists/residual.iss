@@ -21,7 +21,7 @@ Source: "NEWS.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "README.txt"; DestDir: "{app}"; Flags: ignoreversion isreadme
 Source: "README-SDL.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "residual.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "modern.zip"; DestDir: "{app}"
+Source: "modern.zip"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL.dll"; DestDir: "{app}"
 
 [Icons]
