@@ -400,6 +400,19 @@ bool Scene::render(OSystem *system) {
 
 			a = animation + i;
 			s = a->currentFrame();
+			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.color == i) {
+				if (s == NULL) {
+					nextEvent();
+					continue;
+				}
+				int index = a->currentIndex();
+				//debug(0, "index = %d", index);
+				if (index == current_event.animation) {
+					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.color, current_event.animation);
+					nextEvent();
+				}
+			}
+			
 			if (s == NULL)
 				continue;
 
@@ -633,6 +646,10 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kWaitForAnimation:
 			debug(0, "waiting for the animation");
+			break;
+
+		case SceneEvent::kWaitLanAnimationFrame:
+			debug(0, "waiting for the frame %d in slot %d", current_event.animation, current_event.color);
 			break;
 
 		case SceneEvent::kQuit:

@@ -543,6 +543,17 @@ void TeenAgentEngine::waitAnimation() {
 	scene->push(event);
 }
 
+void TeenAgentEngine::waitLanAnimationFrame(byte slot, uint16 frame) {
+	SceneEvent event(SceneEvent::kWaitLanAnimationFrame);
+	if (frame > 0)
+		--frame;
+	
+	event.color = slot - 1;
+	event.animation = frame;
+	scene->push(event);
+}
+
+
 void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *in = res->sam_sam.getStream(id);

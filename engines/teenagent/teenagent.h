@@ -90,6 +90,7 @@ public:
 	void hideActor();
 	void showActor();
 	void waitAnimation();
+	void waitLanAnimationFrame(byte slot, uint16 frame);
 
 	Common::RandomSource random;
 

@@ -53,6 +53,7 @@ struct SceneEvent {
 		kEnableObject,			//12
 		kHideActor,
 		kWaitForAnimation,
+		kWaitLanAnimationFrame,
 		kCreditsMessage,
 		kQuit					//16
 	} type;
