@@ -444,6 +444,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	bool walkingFinished = false;
 	if (_walkingState.isActive()) {
 		walkingFinished = !_walkingState.continueWalkingOrClearPath();
+		// If walking has finished, the path won't be active anymore.
 	}
 
 	// Advance animations (this may also call setExitLoop(true) in the
@@ -1355,6 +1356,7 @@ bool Game::enterNewRoom() {
 		// If the game has been reloaded, force reloading all animations.
 		return true;
 	}
+	setIsReloaded(false);
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
 	_vm->_mouse->cursorOff();
 
@@ -1444,7 +1446,6 @@ bool Game::enterNewRoom() {
 	// Reset the loop status.
 	setLoopStatus(kStatusOrdinary);
 
-	setIsReloaded(false);
 	if (_vm->_script->shouldEndProgram()) {
 		// Escape pressed during the intro or map animations run in the
 		// init scripts.  This flag was turned on to skip the rest of
