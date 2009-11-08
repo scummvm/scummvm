@@ -97,7 +97,7 @@ void Animation::nextFrame(bool force) {
 	Surface *surface = _vm->_screen->getSurface();
 
 	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis()) ||
-	    _canBeQuick && _vm->_game->getEnableQuickHero() && _vm->_game->getWantQuickHero()) {
+	    (_canBeQuick && _vm->_game->getEnableQuickHero() && _vm->_game->getWantQuickHero())) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
 		if ((_currentFrame == getFrameCount() - 1) && !_looping) {
