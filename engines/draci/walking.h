@@ -141,7 +141,7 @@ private:
 	SightDirection _dir;
 	Movement _startingDirection;
 
-	int _segment;
+	uint _segment;		// Index of the path vertex we are currently going to / rotation on
 	int _lastAnimPhase;
 	bool _turningFinished;
 

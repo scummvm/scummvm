@@ -461,7 +461,8 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 	_startingDirection = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 
 	// Going to start with the first segment.
-	_segment = _lastAnimPhase = -1;
+	_segment = 0;
+	_lastAnimPhase = -1;
 	_turningFinished = false;
 	turnForTheNextSegment();
 }
@@ -511,7 +512,7 @@ bool WalkingState::continueWalking() {
 	// return false.  The code should, however, get here only if the path
 	// has just 1 vertex and startWalking() leaves the path open.
 	// Finishing and nontrivial path will get caught earlier.
-	if (_segment >= (int) (_path.size() - 1)) {
+	if (_segment >= _path.size()) {
 		_path.clear();
 		return false;
 	}
@@ -529,7 +530,7 @@ bool WalkingState::continueWalking() {
 
 	if (isTurningMovement(movement)) {
 		// If the current animation is a turning animation, wait a bit more.
-		debugC(3, kDraciWalkingDebugLevel, "Continuing turning for edge %d with phase %d", _segment+1, animPhase);
+		debugC(3, kDraciWalkingDebugLevel, "Continuing turning for edge %d with phase %d", _segment, animPhase);
 		_lastAnimPhase = animPhase;
 		return true;
 	}
@@ -543,16 +544,16 @@ bool WalkingState::continueWalking() {
 	_vm->_game->positionHeroAsAnim(anim);
 	const Common::Point curHero = _vm->_game->getHeroPosition();
 	Common::Point adjustedHero = curHero;
-	const bool reachedEnd = alignHeroToEdge(_path[_segment], _path[_segment+1], prevHero, &adjustedHero);
-	if (reachedEnd && _segment >= (int) (_path.size() - 2)) {
+	const bool reachedEnd = alignHeroToEdge(_path[_segment-1], _path[_segment], prevHero, &adjustedHero);
+	if (reachedEnd && _segment >= _path.size() - 1) {
 		// We don't want the dragon to jump around if we repeatedly
 		// click on the same pixel.  Let him always end where desired.
 		debugC(2, kDraciWalkingDebugLevel, "Adjusting position to the final node");
-		adjustedHero = _path[_segment+1];
+		adjustedHero = _path[_segment];
 	}
 
 	debugC(3, kDraciWalkingDebugLevel, "Continuing walking on edge %d: phase %d and position+=[%d,%d]->[%d,%d] adjusted to [%d,%d]",
-		_segment, animPhase, curHero.x - prevHero.x, curHero.y - prevHero.y, curHero.x, curHero.y, adjustedHero.x, adjustedHero.y);
+		_segment-1, animPhase, curHero.x - prevHero.x, curHero.y - prevHero.y, curHero.x, curHero.y, adjustedHero.x, adjustedHero.y);
 
 	// Update the hero position to the adjusted one.  The animation number
 	// is not changing, so this will just move the sprite and return the
@@ -567,10 +568,10 @@ bool WalkingState::continueWalking() {
 	// animated sprites, adjust the path so that the animation can smoothly
 	// continue.
 	if (reachedEnd) {
-		if (adjustedHero != _path[_segment+1]) {
+		if (adjustedHero != _path[_segment]) {
 			debugC(2, kDraciWalkingDebugLevel, "Adjusting node %d of the path [%d,%d]->[%d,%d]",
-				_segment+1, _path[_segment+1].x, _path[_segment+1].y, adjustedHero.x, adjustedHero.y);
-			_path[_segment+1] = adjustedHero;
+				_segment, _path[_segment].x, _path[_segment].y, adjustedHero.x, adjustedHero.y);
+			_path[_segment] = adjustedHero;
 		}
 		return turnForTheNextSegment();
 	}
@@ -598,7 +599,7 @@ bool WalkingState::turnForTheNextSegment() {
 	const Movement wantAnim = directionForNextPhase();
 	Movement transition = transitionBetweenAnimations(currentAnim, wantAnim);
 
-	debugC(2, kDraciWalkingDebugLevel, "Turning for edge %d", _segment+1);
+	debugC(2, kDraciWalkingDebugLevel, "Turning for edge %d", _segment);
 
 	if (transition == kMoveUndefined) {
 		// Start the next segment right away as if the turning has just finished.
@@ -639,12 +640,12 @@ bool WalkingState::walkOnNextEdge() {
 
 	// TODO: do we need to clear this callback for the animation?
 
-	debugC(2, kDraciWalkingDebugLevel, "Turned for edge %d, starting animation %d with phase %d", _segment+1, nextAnim, _lastAnimPhase);
+	debugC(2, kDraciWalkingDebugLevel, "Turned for edge %d, starting animation %d with phase %d", _segment, nextAnim, _lastAnimPhase);
 
-	if (++_segment < (int) (_path.size() - 1)) {
+	if (++_segment < _path.size()) {
 		// We are on an edge: track where the hero is on this edge.
-		int length = WalkingMap::pointsBetween(_path[_segment], _path[_segment+1]);
-		debugC(2, kDraciWalkingDebugLevel, "Next edge %d has length %d", _segment, length);
+		int length = WalkingMap::pointsBetween(_path[_segment-1], _path[_segment]);
+		debugC(2, kDraciWalkingDebugLevel, "Next edge %d has length %d", _segment-1, length);
 		return true;
 	} else {
 		// Otherwise we are done.  continueWalking() will return false next time.
@@ -664,10 +665,10 @@ Movement WalkingState::animationForDirection(const Common::Point &here, const Co
 }
 
 Movement WalkingState::directionForNextPhase() const {
-	if (_segment >= (int) (_path.size() - 2)) {
+	if (_segment >= _path.size() - 1) {
 		return animationForSightDirection(_dir, _path[_path.size()-1], _mouse, _path, _startingDirection);
 	} else {
-		return animationForDirection(_path[_segment+1], _path[_segment+2]);
+		return animationForDirection(_path[_segment], _path[_segment+1]);
 	}
 }
 
