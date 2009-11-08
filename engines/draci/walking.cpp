@@ -462,6 +462,7 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 
 	// Going to start with the first segment.
 	_segment = _lastAnimPhase = -1;
+	_turningFinished = false;
 	turnForTheNextSegment();
 }
 
@@ -495,6 +496,26 @@ bool WalkingState::continueWalking() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const Movement movement = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 
+	if (_turningFinished) {
+		// When a turning animation has finished, heroAnimationFinished() callback
+		// gets called, which sets this flag to true.  It's important
+		// to not start walking right away in the callback, because
+		// that would disturb the data structures of the animation
+		// manager.
+		_turningFinished = false;
+		return walkOnNextEdge();
+	}
+
+	// If the current segment is the last one, we have reached the
+	// destination and are already facing in the right direction ===>
+	// return false.  The code should, however, get here only if the path
+	// has just 1 vertex and startWalking() leaves the path open.
+	// Finishing and nontrivial path will get caught earlier.
+	if (_segment >= (int) (_path.size() - 1)) {
+		_path.clear();
+		return false;
+	}
+
 	// Read the dragon's animation's current phase.  Determine if it has
 	// changed from the last time.  If not, wait until it has.
 	const int animID = dragon->_anim[movement];
@@ -506,22 +527,11 @@ bool WalkingState::continueWalking() {
 		return true;
 	}
 
-	// If the current animation is a turning animation, wait a bit more.
-	// When this animation has finished, heroAnimationFinished() callback
-	// will be called, which starts a new scheduled one, so the code never
-	// gets here if it hasn't finished yet.
 	if (isTurningMovement(movement)) {
+		// If the current animation is a turning animation, wait a bit more.
 		debugC(3, kDraciWalkingDebugLevel, "Continuing turning for edge %d with phase %d", _segment+1, animPhase);
 		_lastAnimPhase = animPhase;
 		return true;
-	}
-
-	// If the current segment is the last one, we have reached the
-	// destination and are already facing in the right direction ===>
-	// return false.
-	if (_segment >= (int) (_path.size() - 1)) {
-		_path.clear();
-		return false;
 	}
 
 	// We are walking in the middle of an edge.  The animation phase has
@@ -562,7 +572,7 @@ bool WalkingState::continueWalking() {
 				_segment+1, _path[_segment+1].x, _path[_segment+1].y, adjustedHero.x, adjustedHero.y);
 			_path[_segment+1] = adjustedHero;
 		}
-		turnForTheNextSegment();
+		return turnForTheNextSegment();
 	}
 
 	return true;
@@ -582,7 +592,7 @@ bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point 
 	return reachedEnd;
 }
 
-void WalkingState::turnForTheNextSegment() {
+bool WalkingState::turnForTheNextSegment() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const Movement currentAnim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 	const Movement wantAnim = directionForNextPhase();
@@ -592,10 +602,11 @@ void WalkingState::turnForTheNextSegment() {
 
 	if (transition == kMoveUndefined) {
 		// Start the next segment right away as if the turning has just finished.
-		heroAnimationFinished();
+		return walkOnNextEdge();
 	} else {
 		// Otherwise start the transition and wait until the Animation
-		// class calls heroAnimationFinished() as a callback.
+		// class calls heroAnimationFinished() as a callback, leading
+		// to calling walkOnNextEdge() in the next phase.
 		assert(isTurningMovement(transition));
 		_lastAnimPhase = _vm->_game->playHeroAnimation(transition);
 		const int animID = dragon->_anim[transition];
@@ -603,10 +614,16 @@ void WalkingState::turnForTheNextSegment() {
 		anim->registerCallback(&Animation::tellWalkingState);
 
 		debugC(2, kDraciWalkingDebugLevel, "Starting turning animation %d with phase %d", transition, _lastAnimPhase);
+		return true;
 	}
 }
 
 void WalkingState::heroAnimationFinished() {
+	debugC(2, kDraciWalkingDebugLevel, "Turning callback called");
+	_turningFinished = true;
+}
+
+bool WalkingState::walkOnNextEdge() {
 	// The hero is turned well for the next line segment or for facing the
 	// target direction.  It is also standing on the right spot thanks to
 	// the entry condition for turnForTheNextSegment().
@@ -620,18 +637,20 @@ void WalkingState::heroAnimationFinished() {
 	Movement nextAnim = directionForNextPhase();
 	_lastAnimPhase = _vm->_game->playHeroAnimation(nextAnim);
 
+	// TODO: do we need to clear this callback for the animation?
+
 	debugC(2, kDraciWalkingDebugLevel, "Turned for edge %d, starting animation %d with phase %d", _segment+1, nextAnim, _lastAnimPhase);
 
 	if (++_segment < (int) (_path.size() - 1)) {
 		// We are on an edge: track where the hero is on this edge.
 		int length = WalkingMap::pointsBetween(_path[_segment], _path[_segment+1]);
 		debugC(2, kDraciWalkingDebugLevel, "Next edge %d has length %d", _segment, length);
+		return true;
 	} else {
 		// Otherwise we are done.  continueWalking() will return false next time.
 		debugC(2, kDraciWalkingDebugLevel, "We have walked the whole path");
+		return false;
 	}
-
-	// TODO: do we need to clear this callback for the animation?
 }
 
 Movement WalkingState::animationForDirection(const Common::Point &here, const Common::Point &there) {

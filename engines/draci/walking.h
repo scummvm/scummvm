@@ -124,8 +124,7 @@ public:
 	// the callback untouched (the caller must call it).
 	bool continueWalking();
 
-	// Called when the hero's turning animation has finished.  Starts
-	// scheduled animation.
+	// Called when the hero's turning animation has finished.
 	void heroAnimationFinished();
 
 	// Returns the hero's animation corresponding to looking into given
@@ -144,15 +143,22 @@ private:
 
 	int _segment;
 	int _lastAnimPhase;
+	bool _turningFinished;
 
 	const GPL2Program *_callback;
 	uint16 _callbackOffset;
 
-	// Initiates turning of the dragon into the direction for the next segment / after walking.
-	void turnForTheNextSegment();
+	// Initiates turning of the dragon into the direction for the next
+	// segment / after walking.  Returns false when there is nothing left
+	// to do and walking is done.
+	bool turnForTheNextSegment();
+
+	// Starts walking on the next edge.  Returns false if we are already at
+	// the final vertex and walking is done.
+	bool walkOnNextEdge();
 
 	// Return one of the 4 animations kMove{Down,Up,Right,Left}
-	// corresponding to the walking from here to there.
+	// corresponding to walking from here to there.
 	static Movement animationForDirection(const Common::Point &here, const Common::Point &there);
 
 	// Returns the desired facing direction to begin the next phase of the
