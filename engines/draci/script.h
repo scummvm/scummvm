@@ -189,7 +189,7 @@ private:
 	DraciEngine *_vm;
 
 	// Auxilliary functions
-	Animation *loadObjectAnimation(GameObject *obj, int animID);
+	Animation *loadObjectAnimation(int objID, GameObject *obj, int animID);
 };
 
 } // End of namespace Draci

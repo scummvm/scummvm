@@ -365,10 +365,16 @@ void Script::play(Common::Queue<int> &params) {
 	_vm->_game->loop(kInnerUntilExit, true);
 }
 
-Animation *Script::loadObjectAnimation(GameObject *obj, int animID) {
+Animation *Script::loadObjectAnimation(int objID, GameObject *obj, int animID) {
 	_vm->_game->loadAnimation(animID, obj->_z);
 	obj->_anim.push_back(animID);
-	return _vm->_anims->getAnimation(animID);
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	if (objID == kDragonObject && obj->_anim.size() - 1 <= kLastTurning) {
+		// obj->_anim.size() is the Movement type.  All walking and
+		// turning movements can be accelerated.
+		anim->supportsQuickAnimation(true);
+	}
+	return anim;
 }
 
 void Script::load(Common::Queue<int> &params) {
@@ -393,7 +399,7 @@ void Script::load(Common::Queue<int> &params) {
 	// AnimationManager while not being registered in the object's array of
 	// animations.  This cannot legally happen and an assertion will be
 	// thrown by loadAnimation().
-	loadObjectAnimation(obj, animID);
+	loadObjectAnimation(objID, obj, animID);
 }
 
 void Script::start(Common::Queue<int> &params) {
@@ -426,7 +432,7 @@ void Script::start(Common::Queue<int> &params) {
 		// to apply the hedgehog, but there is no way that the game
 		// player would load the requested animation by itself.
 		// See objekty:5077 and parezy.txt:27.
-		anim = loadObjectAnimation(obj, animID);
+		anim = loadObjectAnimation(objID, obj, animID);
 		debugC(1, kDraciBytecodeDebugLevel, "start(%d=%s) cannot find animation %d.  Loading.",
 			objID, obj->_title.c_str(), animID);
 	}
@@ -456,7 +462,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	if (!anim) {
-		anim = loadObjectAnimation(obj, animID);
+		anim = loadObjectAnimation(objID, obj, animID);
 		debugC(1, kDraciBytecodeDebugLevel, "startPlay(%d=%s) cannot find animation %d.  Loading.",
 			objID, obj->_title.c_str(), animID);
 	}

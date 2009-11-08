@@ -101,6 +101,8 @@ public:
 	Displacement getCurrentFrameDisplacement() const;	// displacement of the current frame (includes _shift)
 	Common::Point getCurrentFramePosition() const;	// with displacement and shift applied
 
+	void supportsQuickAnimation(bool val) { _canBeQuick = val; }
+
 	int getIndex() const { return _index; }
 	void setIndex(int index) { _index = index; }
 
@@ -147,6 +149,8 @@ private:
 	bool _playing;
 	bool _looping;
 	bool _paused;
+
+	bool _canBeQuick;
 
 	/** Array of frames of the animation.  The animation object owns these pointers.
 	 */
