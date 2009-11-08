@@ -66,8 +66,9 @@ public:
 	static Common::String parseMessage(uint16 addr);
 
 	//event driven:
-	void displayMessage(uint16 addr, byte color = 0xd1);
-	void displayMessage(const Common::String &str, byte color = 0xd1);
+	void displayMessage(uint16 addr, byte color = 0xd1, uint16 position = 0);
+	void displayMessage(const Common::String &str, byte color = 0xd1, uint16 position = 0);
+	void displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
 	void displayCredits(uint16 addr);
 	void displayCutsceneMessage(uint16 addr, uint16 position);
 	void moveTo(const Common::Point &dst, byte o, bool warp = false);

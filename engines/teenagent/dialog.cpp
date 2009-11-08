@@ -40,14 +40,14 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	if (animation1 != 0) {
 		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = animation1;
-		e.lan = 0xc0 | slot1; //looped, paused
+		e.slot = 0xc0 | slot1; //looped, paused
 		scene->push(e);
 	}
 
 	if (animation2 != 0) {
 		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = animation2;
-		e.lan = 0xc0 | slot2; //looped, paused
+		e.slot = 0xc0 | slot2; //looped, paused
 		scene->push(e);
 	}
 
@@ -70,26 +70,26 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 					//pause animation in other slot
 					if (animation1 != 0) {
 						SceneEvent e(SceneEvent::kPauseAnimation);
-						e.lan = 0x80 | slot1;
+						e.slot = 0x80 | slot1;
 						scene->push(e);
 					}
 					if (animation2 != 0) {
 						SceneEvent e(SceneEvent::kPlayAnimation);
 						e.animation = animation2;
-						e.lan = 0x80 | slot2;
+						e.slot = 0x80 | slot2;
 						scene->push(e);
 					}
 				} else if (color == color1) {
 					//pause animation in other slot
 					if (animation2 != 0) {
 						SceneEvent e(SceneEvent::kPauseAnimation);
-						e.lan = 0x80 | slot2;
+						e.slot = 0x80 | slot2;
 						scene->push(e);
 					}
 					if (animation1 != 0) {
 						SceneEvent e(SceneEvent::kPlayAnimation);
 						e.animation = animation1;
-						e.lan = 0x80 | slot1;
+						e.slot = 0x80 | slot1;
 						scene->push(e);
 					}
 				}
@@ -102,9 +102,9 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 					e.message = message;
 					e.color = color;
 					if (animation1 != 0 && color == color1)
-						e.lan = slot1;
+						e.slot = slot1;
 					if (animation2 != 0 && color == color2)
-						e.lan = slot2;
+						e.slot = slot2;
 					scene->push(e);
 					message.clear();
 				}

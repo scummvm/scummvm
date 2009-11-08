@@ -38,7 +38,7 @@ void TeenAgentEngine::rejectMessage() {
 	//random reject message:
 	uint i = random.getRandomNumber(3);
 	//debug(0, "reject message: %s", (const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
-	scene->displayMessage((const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
+	displayMessage(res->dseg.get_word(0x339e + 2 * i));
 }
 
 
@@ -141,7 +141,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		moveTo(319, 150, 1, true);
 		moveTo(63, 150, 1);
-		displayMessage(0x5da8); //fixme: with delay!
+		displayAsyncMessage(0x5da8, 19844, 18, 36);
 		playAnimation(851, 0);
 		playSound(24, 11);
 		playActorAnimation(931);
@@ -316,7 +316,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x44cb:
 		if (CHECK_FLAG(0xDBE5, 1)) {
-			scene->displayMessage((const char *)res->dseg.ptr(0x57c0));
+			displayMessage(0x57c0);
 		} else {
 			playSound(49, 14);
 			playSound(5, 21);
@@ -726,9 +726,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(56, 8);
 			playSound(56, 12);
 			playSound(49, 10);
-			//there's some black magic here! investigate!
+			displayAsyncMessage(0x4652, 31579, 16, 24);
 			playActorAnimation(587);
-			displayMessage(0x4652);
 			displayMessage(0x3668);
 		}
 		return true;
@@ -1712,14 +1711,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			return false;
 
 	case 0x62d0://Get bone from under rock
+		displayAsyncMessage(0x463c, 30938, 16, 24);
 		playSound(26, 6);
+		playSound(26, 10);
+		playSound(24, 13);
+		playSound(46, 37);
 		setOns(0, 0);
 		playActorAnimation(594);
 		setOns(0, 29);
-		displayMessage(0x463c);
 		disableObject(1);
 		inventory->add(36);
-		playSound(5, 3);
+		playSound(5, 2);
 		playActorAnimation(595);
 		displayMessage(0x3790);
 		return true;
@@ -1883,8 +1885,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(89, 4);
 			playSound(89, 4);
 			playSound(87, 45);
+			displayAsyncMessage(0x4fcb, 34672, 11, 35, 0xe5);
 			playActorAnimation(718);
-			displayMessage(0x4fcb); //fixme: move it to animation
 			displayMessage(0x4fe2);
 			SET_FLAG(0xDBCF, 1);
 		}
@@ -1929,7 +1931,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7336:
 		setOns(1, 0);
 		playSound(5, 42);
-		displayMessage(0x4d02);
+		displayAsyncMessage(0x4d02, 32642, 20, 38);
 		playActorAnimation(697);
 		inventory->add(56);
 		disableObject(1);
@@ -2270,13 +2272,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(620);
 		for (byte i = 3; i <= 18; i += 3)
 			playSound(56, i);
+
+		displayAsyncMessage(0x3ace, 3878, 20, 37, 0xd9);
 		playActorAnimation(621, true);
 		playAnimation(623, 1, true);
 		waitAnimation();
+
+		displayAsyncMessage(0x3ae6, 3870, 1, 9, 0xd9);
 		playSound(35);
 		playActorAnimation(622, true);
 		playAnimation(624, 1, true);
 		displayMessage(0x3afd);
+
 		inventory->remove(43);
 		processCallback(0x9d45);
 		return true;
@@ -2418,9 +2425,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 43);
 			playSound(61, 70);
 			playSound(61, 91);
-			playActorAnimation(505);
-			displayMessage(0x3cfb);
-			playAnimation(507, 1);
+			displayAsyncMessage(0x3cfb, 28877, 6, 17);
+			playActorAnimation(505, true);
+			playAnimation(507, 0, true);
+			waitAnimation();
+			
 			setOns(0, 4);
 			{
 				Object *obj = scene->getObject(3);
@@ -2440,8 +2449,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			disableObject(15);
 			disableObject(16);
 			moveTo(162, 164, 2);
-			displayMessage(0x3d01, 0xe5);
-			displayMessage(0x3d20, 0xd8);
+			displayMessage(0x3d01, 0xe5, 24390);
+			displayMessage(0x3d20, 0xd8, 24410);
 			moveTo(162, 191, 2);
 			setOns(1, 0);
 			setOns(2, 0);

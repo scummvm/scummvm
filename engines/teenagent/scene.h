@@ -60,24 +60,32 @@ struct SceneEvent {
 
 	Common::String message;
 	byte color;
+	byte slot;
 	uint16 animation;
 	byte orientation;
 	Common::Point dst;
 	byte scene; //fixme: put some of these to the union?
 	byte ons;
 	byte lan;
-	byte music;
-	byte sound;
+	union {
+		byte music;
+		byte first_frame;
+	};
+	union {
+		byte sound;
+		byte last_frame;
+	};
 	byte object;
 
 	SceneEvent(Type type_) :
-			type(type_), message(), color(0xd1), animation(0), orientation(0), dst(),
+			type(type_), message(), color(0xd1), slot(0), animation(0), orientation(0), dst(),
 			scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
 
 	void clear() {
 		type = kNone;
 		message.clear();
 		color = 0xd1;
+		slot = 0;
 		orientation = 0;
 		animation = 0;
 		dst.x = dst.y = 0;
@@ -94,8 +102,8 @@ struct SceneEvent {
 	}
 
 	void dump() const {
-		debug(0, "event[%d]: \"%s\"[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
-			(int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
+		debug(0, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
+			(int)type, message.c_str(), color, slot, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
 		);
 	}
 };
@@ -176,6 +184,8 @@ private:
 	Common::Point message_pos;
 	byte message_color;
 	uint message_timer;
+	byte message_first_frame;
+	byte message_last_frame;
 
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;

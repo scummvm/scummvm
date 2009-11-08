@@ -355,18 +355,6 @@ Common::Error TeenAgentEngine::run() {
 	return Common::kNoError;
 }
 
-void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
-	if (str.empty()) {
-		return;
-	}
-	SceneEvent event(SceneEvent::kMessage);
-	event.message = str;
-	event.color = color;
-	event.lan = 4;
-	scene->push(event);
-}
-
-
 Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
@@ -382,9 +370,35 @@ Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	return message;
 }
 
+void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint16 position) {
+	if (str.empty()) {
+		return;
+	}
+	SceneEvent event(SceneEvent::kMessage);
+	event.message = str;
+	event.color = color;
+	event.slot = 4;
+	event.dst.x = position % 320;
+	event.dst.y = position / 320;
 
-void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
-	displayMessage(parseMessage(addr), color);
+	scene->push(event);
+}
+
+void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 position) {
+	displayMessage(parseMessage(addr), color, position);
+}
+
+void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color) {
+	SceneEvent event(SceneEvent::kMessage);
+	event.message = parseMessage(addr);
+	event.slot = 4;
+	event.color = color;
+	event.dst.x = position % 320;
+	event.dst.y = position / 320;
+	event.first_frame = first_frame;
+	event.last_frame = last_frame;
+
+	scene->push(event);
 }
 
 void TeenAgentEngine::displayCredits(uint16 addr) {
@@ -455,7 +469,7 @@ void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
 void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
 	SceneEvent event(SceneEvent::kPlayAnimation);
 	event.animation = id;
-	event.lan = slot;
+	event.slot = slot;
 	scene->push(event);
 	if (!async)
 		waitAnimation();
@@ -561,7 +575,7 @@ void TeenAgentEngine::waitLanAnimationFrame(byte slot, uint16 frame) {
 	if (frame > 0)
 		--frame;
 	
-	event.color = slot - 1;
+	event.slot = slot - 1;
 	event.animation = frame;
 	scene->push(event);
 }

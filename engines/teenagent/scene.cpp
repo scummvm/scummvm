@@ -36,7 +36,8 @@ namespace TeenAgent {
 Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
 		_id(0), ons(0),
-		orientation(Object::kActorRight),
+		orientation(Object::kActorRight), 
+		message_timer(0), message_first_frame(0), message_last_frame(0),
 		current_event(SceneEvent::kNone), hide_actor(false) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
@@ -303,7 +304,7 @@ bool Scene::processEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
-		if (!message.empty()) {
+		if (!message.empty() && message_first_frame == 0) {
 			clearMessage();
 			nextEvent();
 			return true;
@@ -326,7 +327,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				return true;
 			}
 		
-			if (!message.empty()) {
+			if (!message.empty() && message_first_frame == 0) {
 				clearMessage();
 				nextEvent();
 				return true;
@@ -399,7 +400,7 @@ bool Scene::render(OSystem *system) {
 				s = a->currentFrame();
 			}
 			
-			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.color == i) {
+			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.slot == i) {
 				if (s == NULL) {
 					restart |= nextEvent();
 					continue;
@@ -407,7 +408,7 @@ bool Scene::render(OSystem *system) {
 				int index = a->currentIndex();
 				debug(0, "current index = %d", index);
 				if (index == current_event.animation) {
-					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.color, current_event.animation);
+					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.slot, current_event.animation);
 					restart |= nextEvent();
 				}
 			}
@@ -484,8 +485,19 @@ bool Scene::render(OSystem *system) {
 		}
 
 		if (!message.empty()) {
-			res->font7.render(surface, message_pos.x, message_pos.y, message, message_color);
-			busy = true;
+			bool visible = true;
+			if (message_first_frame != 0) {
+				int index = actor_animation.currentIndex() + 1;
+				if (index < message_first_frame)
+					visible = false;
+				if (index > message_last_frame) 
+					clearMessage();
+			}
+			
+			if (visible) {
+				res->font7.render(surface, message_pos.x, message_pos.y, message, message_color);
+				busy = true;
+			}
 		}
 
 		system->unlockScreen();
@@ -575,36 +587,47 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kCreditsMessage:
 		case SceneEvent::kMessage: {
 				message = current_event.message;
-				message_timer = messageDuration(message);
-				Common::Point p(
-					(actor_animation_position.left + actor_animation_position.right) / 2, 
-					actor_animation_position.top 
-				);
+				if (current_event.first_frame) {
+					message_timer = 0;
+					message_first_frame = current_event.first_frame;
+					message_last_frame = current_event.last_frame;
+				} else {
+					message_timer = messageDuration(message);
+					message_first_frame = message_last_frame = 0;
+				}
+				Common::Point p;
+				if (current_event.dst.x == 0 && current_event.dst.y == 0) {
+					p = Common::Point((actor_animation_position.left + actor_animation_position.right) / 2, 
+					actor_animation_position.top);
+				} else {
+					p = current_event.dst;
+				}
 				//FIXME: rewrite it:
-				if (current_event.lan < 4) {
-					const Surface *s = custom_animation[current_event.lan].currentFrame(0);
+				if (current_event.slot < 4) {
+					const Surface *s = custom_animation[current_event.slot].currentFrame(0);
 					if (s == NULL)
-						s = animation[current_event.lan].currentFrame(0);
+						s = animation[current_event.slot].currentFrame(0);
 					if (s != NULL) {
 						p.x = s->x + s->w / 2;
 						p.y = s->y;
 					} else 
-						warning("no animation in slot %u", current_event.lan);
+						warning("no animation in slot %u", current_event.slot);
 				}
 				message_pos = messagePosition(message, p);
 				message_color = current_event.color;
+				current_event.clear();
 			}
 			break;
 
 		case SceneEvent::kPlayAnimation:
-			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.lan & 3);
-			playAnimation(current_event.lan & 3, current_event.animation, (current_event.lan & 0x80) != 0, (current_event.lan & 0x40) != 0);
+			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.slot & 3);
+			playAnimation(current_event.slot & 3, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0);
 			current_event.clear();
 			break;
 
 		case SceneEvent::kPauseAnimation:
-			debug(0, "pause animation in slot %u", current_event.lan & 3);
-			custom_animation[current_event.lan & 3].paused = (current_event.lan & 0x80) != 0;
+			debug(0, "pause animation in slot %u", current_event.slot & 3);
+			custom_animation[current_event.slot & 3].paused = (current_event.slot & 0x80) != 0;
 			current_event.clear();
 			break;
 
@@ -616,7 +639,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kPlayActorAnimation:
 			debug(0, "playing actor animation %u", current_event.animation);
-			playActorAnimation(current_event.animation, (current_event.lan & 0x80) != 0);
+			playActorAnimation(current_event.animation, (current_event.slot & 0x80) != 0);
 			current_event.clear();
 			break;
 
@@ -652,7 +675,7 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kWaitLanAnimationFrame:
-			debug(0, "waiting for the frame %d in slot %d", current_event.animation, current_event.color);
+			debug(0, "waiting for the frame %d in slot %d", current_event.animation, current_event.slot);
 			break;
 
 		case SceneEvent::kQuit:
@@ -752,6 +775,8 @@ void Scene::clearMessage() {
 	message.clear();
 	message_timer = 0;
 	message_color = 0xd1;
+	message_first_frame = 0;
+	message_last_frame = 0;
 }
 
 } // End of namespace TeenAgent
