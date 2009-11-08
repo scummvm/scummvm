@@ -31,7 +31,7 @@ namespace TeenAgent {
 void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	--slot1;
 	--slot2;
-	debug(0, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
+	debug(0, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	Resources *res = Resources::instance();
 	int n = 0;
 	Common::String message;
@@ -98,6 +98,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 					message.trim();
 					if (message.empty())
 						break;
+
 					SceneEvent e(SceneEvent::kMessage);
 					e.message = message;
 					e.color = color;
