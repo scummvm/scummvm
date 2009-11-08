@@ -63,6 +63,19 @@ void TeenAgentEngine::processObject() {
 	case kActionUse: {
 		InventoryObject *inv = inventory->selectedObject();
 		if (inv != NULL) {
+			debug(0, "checking active object %u on %u", inv->id, dst_object->id);
+			
+			//mouse time challenge hack:
+			if (
+				(res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
+				(res->dseg.get_byte(0) == 2 && inv->id == 29 && dst_object->id == 5)
+			) {
+				//putting rock into hole or superglue on rock
+				processCallback(0x8d57);
+				return;
+			}
+			
+			
 			const Common::Array<UseHotspot> &hotspots = use_hotspots[scene->getId() - 1];
 			for (uint i = 0; i < hotspots.size(); ++i) {
 				const UseHotspot &spot = hotspots[i];

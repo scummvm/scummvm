@@ -2710,35 +2710,62 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		scene->getObject(3)->save();
 		return true;
 
+	case 0x8d79: //mouse falls back from the hole (cave)
+		if (CHECK_FLAG(0, 1)) {
+			inventory->add(48);
+			playSound(24, 26);
+			playActorAnimation(650, true);
+			playAnimation(651, 2, true);
+			waitAnimation();
+		} else {
+			playSound(27, 5);
+			setOns(1, 0);
+			playActorAnimation(652);
+			playSound(24, 4);
+			playSound(5, 12);
+			moveTo(186, 179, 1, true);
+			playActorAnimation(653);
+			playActorAnimation(654, true);
+			playAnimation(655, 2, true);
+			waitAnimation();
+			displayMessage(0x3bf6);
+			inventory->add(49);
+			setLan(2, 4, 27);
+			enableObject(4, 27);
+			SET_FLAG(0xdba9, 0);
+		} 
+		SET_FLAG(0, 0);
+		return true;
+
 	case 0x8d57:
-		playSound(5, 2);
-		playSound(15, 12);
-		playActorAnimation(638);
-		inventory->remove(48);
-		//fixme: add time challenge here!
-
-		/*
-		inventory->add(48);
-		playSound(24, 26);
-		playActorAnimation(650, true);
-		playAnimation(651, 2, true);
-		waitAnimation();
-		*/
-		playSound(5, 2);
-		playSound(52, 13);
-		setOns(1, 46);
-		inventory->remove(49);
-
-		//third part
-		playActorAnimation(649);
-		setOns(1, 47);
-		for (byte i = 1; i <= 37; i += 4)
-			playSound(68, i);
-		playAnimation(639, 2);
-		setOns(0, 42);
-		enableObject(6);
-		disableObject(5);
-		SET_FLAG(0xDBAB, 1);
+		if (CHECK_FLAG(0, 0)) {
+			playSound(5, 2);
+			playSound(15, 12);
+			playActorAnimation(638);
+			inventory->remove(48);
+			setTimerCallback(0x8d79, 100);
+			SET_FLAG(0, 1);
+		} else if (CHECK_FLAG(0, 1)) {
+			playSound(5, 2);
+			playSound(52, 13);
+			playActorAnimation(648);
+			setOns(1, 46);
+			inventory->remove(49);
+			setTimerCallback(0x8d79, 100);
+			SET_FLAG(0, 2);
+		} else if (CHECK_FLAG(0, 2)) {
+			playActorAnimation(649);
+			setOns(1, 47);
+			for (byte i = 1; i <= 37; i += 4)
+				playSound(68, i);
+			playAnimation(639, 2);
+			setOns(0, 42);
+			enableObject(6);
+			disableObject(5);
+			SET_FLAG(0xDBAB, 1);
+			SET_FLAG(0, 0);
+			setTimerCallback(0, 0);
+		}
 		return true;
 
 	case 0x8f1d:

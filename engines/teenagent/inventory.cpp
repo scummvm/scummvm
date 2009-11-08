@@ -164,7 +164,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 		int id1 = selected_obj->id;
 		int id2 = hovered_obj->id;
 
-		debug(0, "combine(0x%02x, 0x%02x)!", id1, id2);
+		debug(0, "combine(%u, %u)!", id1, id2);
 		byte *table = res->dseg.ptr(0xC335);
 		while (table[0] != 0 && table[1] != 0) {
 			if (
@@ -173,10 +173,11 @@ bool Inventory::processEvent(const Common::Event &event) {
 			) {
 				remove(id1);
 				remove(id2);
+				debug(0, "adding object %u", table[2]);
 				add(table[2]);
 				uint16 msg = READ_LE_UINT16(table + 3);
-				_engine->displayMessage(msg);
 				_engine->playSoundNow(69);
+				_engine->displayMessage(msg);
 				activate(false);
 				resetSelectedObject();
 				return true;

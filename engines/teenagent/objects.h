@@ -113,7 +113,7 @@ protected:
 struct UseHotspot {
 	byte inventory_id;
 	byte object_id;
-	byte orientation; //?
+	byte orientation;
 	uint16 actor_x, actor_y;
 	uint16 callback;
 	void load(byte *src);

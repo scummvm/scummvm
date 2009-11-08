@@ -38,7 +38,7 @@ Scene::Scene() : intro(false), _engine(NULL),
 		_id(0), ons(0),
 		orientation(Object::kActorRight), 
 		message_timer(0), message_first_frame(0), message_last_frame(0),
-		current_event(SceneEvent::kNone), hide_actor(false) {}
+		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
@@ -500,6 +500,15 @@ bool Scene::render(OSystem *system) {
 				busy = true;
 			}
 		}
+		
+		if (!busy && callback_timer) {
+			if (--callback_timer == 0) {
+				if (_engine->inventory->active())
+					_engine->inventory->activate(false);
+				_engine->processCallback(callback);
+				callback = 0;
+			}
+		}
 
 		system->unlockScreen();
 
@@ -680,6 +689,13 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kWaitLanAnimationFrame:
 			debug(0, "waiting for the frame %d in slot %d", current_event.animation, current_event.slot);
 			break;
+			
+		case SceneEvent::kTimer:
+			callback = current_event.callback;
+			callback_timer = current_event.timer;
+			debug(0, "triggering callback %04x in %u frames", callback, callback_timer);
+			current_event.clear();
+			break;
 
 		case SceneEvent::kQuit:
 			debug(0, "quit!");
@@ -772,6 +788,8 @@ void Scene::clear() {
 		animation[i].free();
 		custom_animation[i].free();
 	}
+	callback = 0;
+	callback_timer = 0;
 }
 
 void Scene::clearMessage() {

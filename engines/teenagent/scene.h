@@ -197,6 +197,8 @@ private:
 	EventList events;
 	SceneEvent current_event;
 	bool hide_actor;
+	
+	uint16 callback, callback_timer;
 
 	struct Sound {
 		byte id, delay;
