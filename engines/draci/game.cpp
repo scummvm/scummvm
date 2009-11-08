@@ -1356,6 +1356,7 @@ bool Game::enterNewRoom() {
 		return true;
 	}
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
+	_vm->_mouse->cursorOff();
 
 	// TODO: maybe wait till all sounds end instead of stopping them.
 	// In any case, make sure all sounds are stopped before we deallocate
@@ -1411,6 +1412,13 @@ bool Game::enterNewRoom() {
 	// cleaned up.  Some rooms (e.g., the map) don't support walking.
 	_walkingState.stopWalking();
 
+	// Reset the flag allowing to run the scripts.  It may have been turned
+	// on by pressing Escape in the intro or in the map room.
+	_vm->_script->endCurrentProgram(false);
+
+	loadRoom(_newRoom);
+	loadOverlays();
+
 	// Clean the mouse and animation title.  It gets first updated in
 	// loop(), hence if the hero walks during the initialization scripts,
 	// the old values would remain otherwise.
@@ -1419,13 +1427,6 @@ bool Game::enterNewRoom() {
 	titleAnim->markDirtyRect(_vm->_screen->getSurface());
 	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
 	title->setText("");
-
-	// Reset the flag allowing to run the scripts.  It may have been turned
-	// on by pressing Escape in the intro or in the map room.
-	_vm->_script->endCurrentProgram(false);
-
-	loadRoom(_newRoom);
-	loadOverlays();
 
 	// Run the program for the gate the dragon came through
 	runGateProgram(_newGate);
