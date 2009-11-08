@@ -1473,7 +1473,7 @@ void Game::positionAnimAsHero(Animation *anim) {
 	const double scale = getPers0() + getPersStep() * _hero.y;
 
 	// Set the Z coordinate for the dragon's animation
-	anim->setZ(_hero.y + 1);
+	anim->setZ(_hero.y);
 
 	// Fetch current frame
 	Drawable *frame = anim->getCurrentFrame();
