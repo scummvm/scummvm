@@ -617,7 +617,9 @@ bool Scene::processEventQueue() {
 				}
 				message_pos = messagePosition(message, p);
 				message_color = current_event.color;
-				current_event.clear();
+	
+				if (message_first_frame)
+					current_event.clear(); //async message, clearing event
 			}
 			break;
 
