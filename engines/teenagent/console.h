@@ -37,6 +37,7 @@ public:
 
 private:
 	bool enableObject(int argc, const char **argv);
+	bool setOns(int argc, const char **argv);
 
 	TeenAgentEngine *_engine;
 };

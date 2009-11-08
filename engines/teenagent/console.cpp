@@ -30,6 +30,7 @@ namespace TeenAgent {
 Console::Console(TeenAgentEngine *engine) : _engine(engine) {
 	DCmd_Register("enable_object",	WRAP_METHOD(Console, enableObject));
 	DCmd_Register("disable_object",	WRAP_METHOD(Console, enableObject));
+	DCmd_Register("set_ons",	WRAP_METHOD(Console, setOns));
 }
 
 bool Console::enableObject(int argc, const char **argv) {
@@ -57,6 +58,39 @@ bool Console::enableObject(int argc, const char **argv) {
 		_engine->disableObject(id, scene_id);
 	else
 		_engine->enableObject(id, scene_id);
+	
+	return true;
+}
+
+bool Console::setOns(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("usage: %s index(0-3) value [scene_id]\n", argv[0]);
+		return true;
+	}
+	
+	int index = atoi(argv[1]);
+	if (index < 0 || index > 3) {
+		DebugPrintf("index %d is invalid\n", index);
+		return true;
+	}
+	
+	int value = 0;
+	value = atoi(argv[2]);
+	if (value < 0) {
+		DebugPrintf("invalid value\n");
+		return true;
+	}
+
+	int scene_id = 0;
+	if (argc > 3) {
+		scene_id = atoi(argv[3]);
+		if (scene_id < 0) {
+			DebugPrintf("scene id %d is invalid\n", scene_id);
+			return true;
+		}
+	}
+	
+	_engine->setOns(index, value, scene_id);
 	
 	return true;
 }
