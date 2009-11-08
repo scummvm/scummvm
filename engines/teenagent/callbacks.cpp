@@ -1577,8 +1577,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x607f:
-		processCallback(0x60b5);
-		return true;
+		return processCallback(0x60b5);
 
 	case 0x6083:
 		if (CHECK_FLAG(0xDBA4, 1)) {
@@ -2101,6 +2100,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x783d:
 		Dialog::pop(scene, 0xdb36, 797);
 		return true;
+		
+	case 0x7966:
+		if (CHECK_FLAG(0xDBA4, 1))
+			return false;
+		return processCallback(0x60b5);
 
 	case 0x7ad0:
 	case 0x7ad7:
@@ -2414,8 +2418,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(1, 25);
 			playSound(1, 29);
 			playSound(1, 34);
-			playAnimation(506, 1);
-			playActorAnimation(504);
+			playAnimation(506, 0, true);
+			playActorAnimation(504, true);
+			waitAnimation();
+			
 			setOns(0, 0);
 			playSound(24, 2);
 			playSound(22, 24);
@@ -2438,7 +2444,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				obj->rect.save();
 			}
 			playSound(10);
-			playAnimation(503, 1);
+			playAnimation(503, 0);
 			setLan(1, 0, 22);
 			disableObject(1, 22);
 			disableObject(13, 20);
@@ -2456,21 +2462,30 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(2, 0);
 			setOns(3, 0);
 			setOns(4, 0);
-			scene->getWalkbox(0)->rect.clear();
-			scene->getWalkbox(0)->save();
-			playSound(62);
-			//patch lan, 1
+
+			{
+				Walkbox * w = scene->getWalkbox(0);
+				w->rect.clear();
+				w->save();
+			}
+
+			playSound(62, 1);
+			playSound(9, 8);
+			setLan(1, 0);
+			playAnimation(512, 0);
+			
+			warning("FIXME: fadeout not implemented");
 			displayMessage(0x3d3a);
 			{
 				Object *obj = scene->getObject(7);
-				obj->actor_rect.left = 228;
-				obj->actor_rect.top = 171;
+				obj->actor_rect.left = obj->actor_rect.right = 228;
+				obj->actor_rect.top = obj->actor_rect.bottom = 171;
 				obj->actor_rect.save();
 			}
 			{
 				Object *obj = scene->getObject(8);
-				obj->actor_rect.left = 290;
-				obj->actor_rect.top = 171;
+				obj->actor_rect.left = obj->actor_rect.right = 290;
+				obj->actor_rect.top = obj->actor_rect.bottom = 171;
 				obj->actor_rect.save();
 			}
 		}
@@ -2608,16 +2623,36 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x8bfc://Give bone to dog
 		displayMessage(0x3c31);
 		playSound(5, 3);
+		playSound(26, 13);
 		playActorAnimation(657, true);
-		playAnimation(658, 1, true);
+		playAnimation(658, 0, true);
 		waitAnimation();
 
-		playAnimation(659, 1);
+		playAnimation(659, 0);
 
-		displayMessage(0x3c3d);
 		inventory->remove(36);
 		SET_FLAG(0xDBAD, 1);
-		//TODO:Adjust Walkboxes
+		{
+			Object * o = scene->getObject(7);
+			o->actor_rect.left = o->actor_rect.right = 297;
+			o->actor_rect.top = o->actor_rect.bottom = 181;
+			o->actor_orientation = 1;
+			o->save();
+		}
+		{
+			Object * o = scene->getObject(9);
+			o->actor_rect.left = o->actor_rect.right = 297;
+			o->actor_rect.top = o->actor_rect.bottom = 181;
+			o->actor_orientation = 1;
+			o->save();
+		}
+		{
+			Walkbox * w = scene->getWalkbox(0);
+			w->rect.right = 266;
+			w->rect.bottom = 193;
+			w->save();
+		}
+		displayMessage(0x3c3d);
 		return true;
 
 	case 0x8c6e://Use car jack on rock
@@ -2652,6 +2687,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0xdaca, 1);
 		inventory->remove(0x2e);
 		disableObject(2);
+		scene->getObject(3)->actor_rect.right = 156;
+		scene->getObject(3)->save();
 		return true;
 
 	case 0x8d57:

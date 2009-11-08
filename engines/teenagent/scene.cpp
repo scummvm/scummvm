@@ -406,7 +406,6 @@ bool Scene::render(OSystem *system) {
 					continue;
 				}
 				int index = a->currentIndex();
-				debug(0, "current index = %d", index);
 				if (index == current_event.animation) {
 					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.slot, current_event.animation);
 					restart |= nextEvent();
