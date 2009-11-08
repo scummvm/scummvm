@@ -490,8 +490,10 @@ bool Scene::render(OSystem *system) {
 				int index = actor_animation.currentIndex() + 1;
 				if (index < message_first_frame)
 					visible = false;
-				if (index > message_last_frame) 
+				if (index > message_last_frame) {
 					clearMessage();
+					visible = false;
+				}
 			}
 			
 			if (visible) {
