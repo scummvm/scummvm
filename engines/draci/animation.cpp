@@ -294,7 +294,7 @@ Animation *AnimationManager::addText(int id, bool playing) {
 void AnimationManager::play(int id) {
 	Animation *anim = getAnimation(id);
 
-	if (anim) {
+	if (anim && !anim->isPlaying()) {
 		// Mark the first frame dirty so it gets displayed
 		anim->markDirtyRect(_vm->_screen->getSurface());
 
@@ -307,7 +307,7 @@ void AnimationManager::play(int id) {
 void AnimationManager::stop(int id) {
 	Animation *anim = getAnimation(id);
 
-	if (anim) {
+	if (anim && anim->isPlaying()) {
 		// Clean up the last frame that was drawn before stopping
 		anim->markDirtyRect(_vm->_screen->getSurface());
 

@@ -650,6 +650,7 @@ bool WalkingState::walkOnNextEdge() {
 	} else {
 		// Otherwise we are done.  continueWalking() will return false next time.
 		debugC(2, kDraciWalkingDebugLevel, "We have walked the whole path");
+		_path.clear();
 		return false;
 	}
 }
