@@ -88,7 +88,6 @@ void Screen::interpolatePalettes(const byte *first, const byte *second, uint16 s
 		_palette[i * 4 + 3] = 0;
 	}
 
-	// TODO: Investigate why this is needed
 	// Shift the palette two bits to the left to make it brighter
 	for (int i = start * 4; i < (start + num) * 4; ++i) {
 		_palette[i] <<= 2;

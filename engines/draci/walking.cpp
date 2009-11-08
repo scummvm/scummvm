@@ -645,7 +645,7 @@ bool WalkingState::walkOnNextEdge() {
 	Movement nextAnim = directionForNextPhase();
 	_lastAnimPhase = _vm->_game->playHeroAnimation(nextAnim);
 
-	// TODO: do we need to clear this callback for the animation?
+	// TODO: do we need to clear the callback for the turning animation?
 
 	debugC(2, kDraciWalkingDebugLevel, "Turned for edge %d, starting animation %d with phase %d", _segment, nextAnim, _lastAnimPhase);
 

@@ -572,6 +572,7 @@ void Script::icoStat(Common::Queue<int> &params) {
 		}
 
 		if (_vm->_mouse->getCursorType() == kNormalCursor) {
+			// TODO: is this correct?
 			if (_vm->_game->getLoopStatus() == kStatusInventory) {
 				_vm->_mouse->cursorOff();
 			}

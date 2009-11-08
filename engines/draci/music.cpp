@@ -125,6 +125,8 @@ void MusicPlayer::send(uint32 b) {
 
 	if (!_channel[channel]) {
 		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		// If a new channel is allocated during the playback, make sure
+		// its volume is correctly initialized.
 		setChannelVolume(channel);
 	}
 
@@ -232,12 +234,6 @@ void MusicPlayer::syncVolume() {
 	int volume = ConfMan.getInt("music_volume");
 	debugC(2, kDraciSoundDebugLevel, "Syncing music volume to %d", volume);
 	setVolume(volume);
-
-	// TODO: doesn't work in the beginning when no music is playing yet.
-	// It goes through all active channels (= none) and stops.  Only after
-	// actual instruments have played in the channels, this has an effect.
-	// As a consequence, music is very loud in the beginning until Ctrl-F5
-	// is pressed for the first time.
 }
 
 } // End of namespace Draci
