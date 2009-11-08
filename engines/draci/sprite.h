@@ -148,9 +148,8 @@ public:
 
 	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
 
-	// TODO: drawReScaled just calls draw so Text can be accessed through a Drawable pointer.
-	// Handle scaling text sometimes (not essential).
-
+	// drawReScaled just calls draw so that Text can be accessed through a Drawable pointer.
+	// Text scaling does not need to be handled.
 	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const { draw(surface, markDirty, displacement.relX, displacement.relY); }
 	Common::Rect getRect(const Displacement &displacement) const;
 

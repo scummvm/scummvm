@@ -321,7 +321,6 @@ public:
 	bool getEnableQuickHero() const { return _enableQuickHero; }
 	void setWantQuickHero(bool value) { _wantQuickHero = value; }
 	bool getWantQuickHero() const { return _wantQuickHero; }
-	// TODO: after proper walking is implemented, do super-fast animation when walking
 	void setEnableSpeedText(bool value) { _enableSpeedText = value; }
 	bool getEnableSpeedText() const { return _enableSpeedText; }
 
