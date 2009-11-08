@@ -69,6 +69,7 @@ public:
 	void displayMessage(uint16 addr, byte color = 0xd1, uint16 position = 0);
 	void displayMessage(const Common::String &str, byte color = 0xd1, uint16 position = 0);
 	void displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
+	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
 	void displayCredits(uint16 addr);
 	void displayCutsceneMessage(uint16 addr, uint16 position);
 	void moveTo(const Common::Point &dst, byte o, bool warp = false);
@@ -85,7 +86,7 @@ public:
 	void rejectMessage();
 
 	void playMusic(byte id); //schedules play
-	void playSound(byte id, byte skip_frames = 1);
+	void playSound(byte id, byte skip_frames);
 	void playSoundNow(byte id);
 	void enableObject(byte id, byte scene_id = 0);
 	void disableObject(byte id, byte scene_id = 0);
@@ -93,6 +94,7 @@ public:
 	void showActor();
 	void waitAnimation();
 	void waitLanAnimationFrame(byte slot, uint16 frame);
+	void setTimerCallback(uint16 addr, uint16 frames);
 
 	Common::RandomSource random;
 

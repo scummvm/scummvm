@@ -401,6 +401,18 @@ void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 position, uint16 f
 	scene->push(event);
 }
 
+void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color) {
+	SceneEvent event(SceneEvent::kMessage);
+	event.message = parseMessage(addr);
+	event.slot = slot;
+	event.color = color;
+	event.first_frame = first_frame;
+	event.last_frame = last_frame;
+
+	scene->push(event);
+}
+
+
 void TeenAgentEngine::displayCredits(uint16 addr) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
@@ -580,6 +592,12 @@ void TeenAgentEngine::waitLanAnimationFrame(byte slot, uint16 frame) {
 	scene->push(event);
 }
 
+void TeenAgentEngine::setTimerCallback(uint16 addr, uint16 frames) {
+	SceneEvent event(SceneEvent::kTimer);
+	event.callback = addr;
+	event.timer = frames;
+	scene->push(event);
+}
 
 void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();

@@ -54,14 +54,19 @@ struct SceneEvent {
 		kHideActor,
 		kWaitForAnimation,
 		kWaitLanAnimationFrame,
-		kCreditsMessage,
-		kQuit					//16
+		kCreditsMessage,		//16
+		kTimer,
+		kQuit
 	} type;
 
 	Common::String message;
 	byte color;
 	byte slot;
-	uint16 animation;
+	union {
+		uint16 animation;
+		uint16 callback;
+	};
+	uint16 timer;
 	byte orientation;
 	Common::Point dst;
 	byte scene; //fixme: put some of these to the union?
@@ -78,7 +83,7 @@ struct SceneEvent {
 	byte object;
 
 	SceneEvent(Type type_) :
-			type(type_), message(), color(0xd1), slot(0), animation(0), orientation(0), dst(),
+			type(type_), message(), color(0xd1), slot(0), animation(0), timer(0), orientation(0), dst(),
 			scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
 
 	void clear() {
@@ -88,6 +93,7 @@ struct SceneEvent {
 		slot = 0;
 		orientation = 0;
 		animation = 0;
+		timer = 0;
 		dst.x = dst.y = 0;
 		scene = 0;
 		ons = 0;
@@ -102,8 +108,8 @@ struct SceneEvent {
 	}
 
 	void dump() const {
-		debug(0, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
-			(int)type, message.c_str(), color, slot, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
+		debug(0, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, timer: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
+			(int)type, message.c_str(), color, slot, animation, timer, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
 		);
 	}
 };
