@@ -443,7 +443,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	// proper timing.
 	bool walkingFinished = false;
 	if (_walkingState.isActive()) {
-		walkingFinished = !_walkingState.continueWalking();
+		walkingFinished = !_walkingState.continueWalkingOrClearPath();
 	}
 
 	// Advance animations (this may also call setExitLoop(true) in the

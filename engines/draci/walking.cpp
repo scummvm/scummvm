@@ -493,6 +493,14 @@ void WalkingState::callback() {
 	_vm->_mouse->cursorOn();
 }
 
+bool WalkingState::continueWalkingOrClearPath() {
+	const bool stillWalking = continueWalking();
+	if (!stillWalking) {
+		_path.clear();
+	}
+	return stillWalking;
+}
+
 bool WalkingState::continueWalking() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const Movement movement = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
@@ -513,7 +521,6 @@ bool WalkingState::continueWalking() {
 	// has just 1 vertex and startWalking() leaves the path open.
 	// Finishing and nontrivial path will get caught earlier.
 	if (_segment >= _path.size()) {
-		_path.clear();
 		return false;
 	}
 
@@ -650,7 +657,6 @@ bool WalkingState::walkOnNextEdge() {
 	} else {
 		// Otherwise we are done.  continueWalking() will return false next time.
 		debugC(2, kDraciWalkingDebugLevel, "We have walked the whole path");
-		_path.clear();
 		return false;
 	}
 }

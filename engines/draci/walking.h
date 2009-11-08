@@ -120,9 +120,11 @@ public:
 
 	// Advances the hero along the path and changes animation accordingly.
 	// Walking MUST be active when calling this method.  When the hero has
-	// arrived to the target, clears the path and returns false, but leaves
-	// the callback untouched (the caller must call it).
+	// arrived to the target, returns false, but leaves the callback
+	// untouched (the caller must call it).
+	// The second variant also clears the path when returning false.
 	bool continueWalking();
+	bool continueWalkingOrClearPath();
 
 	// Called when the hero's turning animation has finished.
 	void heroAnimationFinished();
