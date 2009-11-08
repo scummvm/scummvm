@@ -392,6 +392,11 @@ bool Scene::render(OSystem *system) {
 					got_any_animation = true;
 			} else {
 				a = animation + i;
+				if (!custom_animation[i].empty()) {
+					debug(0, "custom animation ended, restart animation in the same slot.");
+					custom_animation[i].free();
+					a->restart();
+				}
 				s = a->currentFrame();
 			}
 			

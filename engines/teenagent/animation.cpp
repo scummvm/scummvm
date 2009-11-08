@@ -84,6 +84,10 @@ Surface *Animation::currentFrame(int dt) {
 	return r;
 }
 
+void Animation::restart() {
+	paused = false;
+	index = 0;
+}
 
 void Animation::free() {
 	id = 0;

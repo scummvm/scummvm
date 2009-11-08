@@ -48,6 +48,7 @@ public:
 	~Animation();
 
 	bool empty() const { return frames == NULL; }
+	void restart();
 
 	//uint16 width() const { return frames? frames[0].w: 0; }
 	//uint16 height() const { return frames? frames[0].h: 0; }
