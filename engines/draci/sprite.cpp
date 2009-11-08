@@ -114,10 +114,6 @@ Sprite::~Sprite() {
 	}
 }
 
-// Macro to simulate lround() for non-C99 compilers
-// TODO: get rid of it
-static inline long scummvm_lround(double val) { return (long)floor(val + 0.5); }
-
 int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 	Common::Rect rect = getRect(displacement);
 
@@ -262,8 +258,8 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 
 Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	return Common::Rect(_x + displacement.relX, _y + displacement.relY,
-	    _x + displacement.relX + (int) (_scaledWidth * displacement.extraScaleX),
-	    _y + displacement.relY + (int) (_scaledHeight * displacement.extraScaleY));
+	    _x + displacement.relX + scummvm_lround(_scaledWidth * displacement.extraScaleX),
+	    _y + displacement.relY + scummvm_lround(_scaledHeight * displacement.extraScaleY));
 }
 
 Text::Text(const Common::String &str, const Font *font, byte fontColour,

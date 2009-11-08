@@ -443,7 +443,7 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 		// they are different pixels.
 		_path.push_back(p2);
 	}
-	debugC(2, kDraciWalkingDebugLevel, "Starting walking [%d,%d] -> [%d,%d] in %d segments",
+	debugC(2, kDraciWalkingDebugLevel, "Starting walking [%d,%d] -> [%d,%d] with %d vertices",
 		p1.x, p1.y, p2.x, p2.y, _path.size());
 
 	// The first and last point are available with pixel accurracy.
@@ -455,6 +455,10 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 		_path[i].x *= delta.x;
 		_path[i].y *= delta.y;
 	}
+
+	// Remember the initial dragon's direction.
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	_startingDirection = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 
 	// Going to start with the first segment.
 	_segment = _lastAnimPhase = -1;
@@ -491,22 +495,6 @@ bool WalkingState::continueWalking() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const Movement movement = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 
-	// If the current animation is a turning animation, wait a bit more.
-	// When this animation has finished, heroAnimationFinished() callback
-	// will be called, which starts a new scheduled one, so the code never
-	// gets here if it hasn't finished yet.
-	if (isTurningMovement(movement)) {
-		return true;
-	}
-
-	// If the current segment is the last one, we have reached the
-	// destination and are already facing in the right direction ===>
-	// return false.
-	if (_segment >= (int) (_path.size() - 1)) {
-		_path.clear();
-		return false;
-	}
-
 	// Read the dragon's animation's current phase.  Determine if it has
 	// changed from the last time.  If not, wait until it has.
 	const int animID = dragon->_anim[movement];
@@ -518,55 +506,79 @@ bool WalkingState::continueWalking() {
 		return true;
 	}
 
+	// If the current animation is a turning animation, wait a bit more.
+	// When this animation has finished, heroAnimationFinished() callback
+	// will be called, which starts a new scheduled one, so the code never
+	// gets here if it hasn't finished yet.
+	if (isTurningMovement(movement)) {
+		debugC(3, kDraciWalkingDebugLevel, "Continuing turning for edge %d with phase %d", _segment+1, animPhase);
+		_lastAnimPhase = animPhase;
+		return true;
+	}
+
+	// If the current segment is the last one, we have reached the
+	// destination and are already facing in the right direction ===>
+	// return false.
+	if (_segment >= (int) (_path.size() - 1)) {
+		_path.clear();
+		return false;
+	}
+
 	// We are walking in the middle of an edge.  The animation phase has
 	// just changed.
 
-	// Read the position of the hero from the animation object, and project
+	// Read the position of the hero from the animation object, and adjust
 	// it to the current edge.
+	const Common::Point prevHero = _vm->_game->getHeroPosition();
 	_vm->_game->positionHeroAsAnim(anim);
-	const Common::Point &hero = _vm->_game->getHeroPosition();
-	Common::Point newHero = hero;
-	const bool reachedEnd = alignHeroToEdge(_path[_segment], _path[_segment+1], &newHero);
+	const Common::Point curHero = _vm->_game->getHeroPosition();
+	Common::Point adjustedHero = curHero;
+	const bool reachedEnd = alignHeroToEdge(_path[_segment], _path[_segment+1], prevHero, &adjustedHero);
+	if (reachedEnd && _segment >= (int) (_path.size() - 2)) {
+		// We don't want the dragon to jump around if we repeatedly
+		// click on the same pixel.  Let him always end where desired.
+		debugC(2, kDraciWalkingDebugLevel, "Adjusting position to the final node");
+		adjustedHero = _path[_segment+1];
+	}
 
-	debugC(3, kDraciWalkingDebugLevel, "Continuing walking in segment %d: phase %d and position [%d,%d] projected to [%d,%d]",
-		_segment, animPhase, hero.x, hero.y, newHero.x, newHero.y);
+	debugC(3, kDraciWalkingDebugLevel, "Continuing walking on edge %d: phase %d and position+=[%d,%d]->[%d,%d] adjusted to [%d,%d]",
+		_segment, animPhase, curHero.x - prevHero.x, curHero.y - prevHero.y, curHero.x, curHero.y, adjustedHero.x, adjustedHero.y);
 
-	// Update the hero position to the projected one.  The animation number
+	// Update the hero position to the adjusted one.  The animation number
 	// is not changing, so this will just move the sprite and return the
 	// current frame number.
-	_vm->_game->setHeroPosition(newHero);
+	_vm->_game->setHeroPosition(adjustedHero);
 	_lastAnimPhase = _vm->_game->playHeroAnimation(movement);
 
 	// If the hero has reached the end of the edge, start transition to the
 	// next phase.  This will increment _segment, either immediately (if no
 	// transition is needed) or in the callback (after the transition is
-	// done).  The position is equal to the end-point of the edge thanks to
-	// alignHeroToEdge().
+	// done).  If the hero has arrived at a slightly different point due to
+	// animated sprites, adjust the path so that the animation can smoothly
+	// continue.
 	if (reachedEnd) {
+		if (adjustedHero != _path[_segment+1]) {
+			debugC(2, kDraciWalkingDebugLevel, "Adjusting node %d of the path [%d,%d]->[%d,%d]",
+				_segment+1, _path[_segment+1].x, _path[_segment+1].y, adjustedHero.x, adjustedHero.y);
+			_path[_segment+1] = adjustedHero;
+		}
 		turnForTheNextSegment();
 	}
 
 	return true;
 }
 
-bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, Common::Point *hero) {
-	const Common::Point heroDiff(hero->x - p1.x, hero->y - p1.y);
+bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, const Common::Point &prevHero, Common::Point *hero) {
+	const Movement movement = animationForDirection(p1, p2);
 	const Common::Point p2Diff(p2.x - p1.x, p2.y - p1.y);
-	const int scalarProduct = p2Diff.x * heroDiff.x + p2Diff.y * heroDiff.y;
-	const int p2DiffSqNorm = p2Diff.x * p2Diff.x + p2Diff.y * p2Diff.y;
-	double fraction = ((double) scalarProduct) / p2DiffSqNorm;
-	bool reachedEnd = false;
-	if (fraction >= 1.0) {
-		fraction = 1.0;
-		reachedEnd = true;
+	bool reachedEnd;
+	if (movement == kMoveLeft || movement == kMoveRight) {
+		reachedEnd = movement == kMoveLeft ? hero->x <= p2.x : hero->x >= p2.x;
+		hero->y += hero->x * p2Diff.y / p2Diff.x - prevHero.x * p2Diff.y / p2Diff.x;
+	} else {
+		reachedEnd = movement == kMoveUp ? hero->y <= p2.y : hero->y >= p2.y;
+		hero->x += hero->y * p2Diff.x / p2Diff.y - prevHero.y * p2Diff.x / p2Diff.y;
 	}
-	hero->x = p1.x + (int) (fraction * p2Diff.x + 0.5);
-	hero->y = p1.y + (int) (fraction * p2Diff.y + 0.5);
-	// TODO: unfortunately, the left-right walking animation jumps up and
-	// down by two pixels instead of going exactly horizontally, which
-	// means that the projection algorithm screws the vertical "shaking" as
-	// well as rounds horizontal positions improperly.  Fix it by better
-	// rounding or different projection.
 	return reachedEnd;
 }
 
@@ -576,7 +588,7 @@ void WalkingState::turnForTheNextSegment() {
 	const Movement wantAnim = directionForNextPhase();
 	Movement transition = transitionBetweenAnimations(currentAnim, wantAnim);
 
-	debugC(2, kDraciWalkingDebugLevel, "Turning for segment %d", _segment+1);
+	debugC(2, kDraciWalkingDebugLevel, "Turning for edge %d", _segment+1);
 
 	if (transition == kMoveUndefined) {
 		// Start the next segment right away as if the turning has just finished.
@@ -585,13 +597,12 @@ void WalkingState::turnForTheNextSegment() {
 		// Otherwise start the transition and wait until the Animation
 		// class calls heroAnimationFinished() as a callback.
 		assert(isTurningMovement(transition));
-		_vm->_game->playHeroAnimation(transition);
+		_lastAnimPhase = _vm->_game->playHeroAnimation(transition);
 		const int animID = dragon->_anim[transition];
 		Animation *anim = _vm->_anims->getAnimation(animID);
 		anim->registerCallback(&Animation::tellWalkingState);
 
-		debugC(2, kDraciWalkingDebugLevel, "Starting turning animation %d", transition);
-		_lastAnimPhase = -1;
+		debugC(2, kDraciWalkingDebugLevel, "Starting turning animation %d with phase %d", transition, _lastAnimPhase);
 	}
 }
 
@@ -609,12 +620,12 @@ void WalkingState::heroAnimationFinished() {
 	Movement nextAnim = directionForNextPhase();
 	_lastAnimPhase = _vm->_game->playHeroAnimation(nextAnim);
 
-	debugC(2, kDraciWalkingDebugLevel, "Turned for segment %d, starting animation %d", _segment+1, nextAnim);
+	debugC(2, kDraciWalkingDebugLevel, "Turned for edge %d, starting animation %d with phase %d", _segment+1, nextAnim, _lastAnimPhase);
 
 	if (++_segment < (int) (_path.size() - 1)) {
 		// We are on an edge: track where the hero is on this edge.
 		int length = WalkingMap::pointsBetween(_path[_segment], _path[_segment+1]);
-		debugC(2, kDraciWalkingDebugLevel, "Next segment %d has length %d", _segment, length);
+		debugC(2, kDraciWalkingDebugLevel, "Next edge %d has length %d", _segment, length);
 	} else {
 		// Otherwise we are done.  continueWalking() will return false next time.
 		debugC(2, kDraciWalkingDebugLevel, "We have walked the whole path");
@@ -635,7 +646,7 @@ Movement WalkingState::animationForDirection(const Common::Point &here, const Co
 
 Movement WalkingState::directionForNextPhase() const {
 	if (_segment >= (int) (_path.size() - 2)) {
-		return animationForSightDirection(_dir, _path[_path.size()-1], _mouse, _path);
+		return animationForSightDirection(_dir, _path[_path.size()-1], _mouse, _path, _startingDirection);
 	} else {
 		return animationForDirection(_path[_segment+1], _path[_segment+2]);
 	}
@@ -722,21 +733,35 @@ Movement WalkingState::transitionBetweenAnimations(Movement previous, Movement n
 	}
 }
 
-Movement WalkingState::animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path) {
+Movement WalkingState::animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path, Movement startingDirection) {
 	switch (dir) {
 	case kDirectionMouse:
-		return mouse.x < hero.x ? kStopLeft : kStopRight;
+		if (mouse.x < hero.x) {
+			return kStopLeft;
+		} else if (mouse.x > hero.x) {
+			return kStopRight;
+		} else {
+			goto defaultCase;
+		}
 	case kDirectionLeft:
 		return kStopLeft;
 	case kDirectionRight:
 		return kStopRight;
 	default: {
+defaultCase:
 		// Find the last horizontal direction on the path.
 		int i = path.size() - 1;
 		while (i >= 0 && path[i].x == hero.x) {
 			--i;
 		}
-		return (i >= 0 && path[i].x < hero.x) ? kStopRight : kStopLeft;
+		if (i >= 0) {
+			return path[i].x < hero.x ? kStopRight : kStopLeft;
+		} else {
+			// Avoid changing the direction when no walking has
+			// been done.  Preserve the original direction.
+			return (startingDirection == kMoveLeft || startingDirection == kStopLeft || startingDirection == kSpeakLeft)
+				? kStopLeft : kStopRight;
+		}
 	}
 	}
 }

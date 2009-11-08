@@ -1482,8 +1482,8 @@ void Game::positionAnimAsHero(Animation *anim) {
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
 	Common::Point p = _hero;
-	p.x -= (int)(scale * frame->getWidth() / 2);
-	p.y -= (int)(scale * frame->getHeight());
+	p.x -= scummvm_lround(scale * frame->getWidth() / 2);
+	p.y -= scummvm_lround(scale * frame->getHeight());
 
 	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
 	// so the text remains centered over the dragon.
@@ -1511,8 +1511,8 @@ void Game::positionHeroAsAnim(Animation *anim) {
 	// elsewhere).
 	// TODO: what about rounding errors?
 	Drawable *frame = anim->getCurrentFrame();
-	_hero.x += (int) (anim->getScaleX() * frame->getWidth() / 2);
-	_hero.y += (int) (anim->getScaleY() * frame->getHeight());
+	_hero.x += scummvm_lround(anim->getScaleX() * frame->getWidth() / 2);
+	_hero.y += scummvm_lround(anim->getScaleY() * frame->getHeight());
 }
 
 void Game::pushNewRoom() {

@@ -59,8 +59,8 @@ void Animation::setRelative(int relx, int rely) {
 
 Displacement Animation::getCurrentFrameDisplacement() const {
 	Displacement dis = _displacement;
-	dis.relX += (int) (dis.extraScaleX * _shift.x);
-	dis.relY += (int) (dis.extraScaleY * _shift.y);
+	dis.relX += scummvm_lround(dis.extraScaleX * _shift.x);
+	dis.relY += scummvm_lround(dis.extraScaleY * _shift.y);
 	return dis;
 }
 

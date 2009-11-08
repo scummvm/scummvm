@@ -132,7 +132,7 @@ public:
 	// direction.  The direction can be smart and in that case this
 	// function needs to know the whole last path, the current position of
 	// the hero, or the mouse position.
-	static Movement animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path);
+	static Movement animationForSightDirection(SightDirection dir, const Common::Point &hero, const Common::Point &mouse, const WalkingPath &path, Movement startingDirection);
 
 private:
 	DraciEngine *_vm;
@@ -140,6 +140,7 @@ private:
 	WalkingPath _path;
 	Common::Point _mouse;
 	SightDirection _dir;
+	Movement _startingDirection;
 
 	int _segment;
 	int _lastAnimPhase;
@@ -168,9 +169,10 @@ private:
 		return m >= kFirstTurning && m <= kLastTurning;
 	}
 
-	// Projects hero to the given edge, but not behind p2.  Returns true
-	// when hero has reached at least p2.
-	static bool alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, Common::Point *hero);
+	// Projects hero to the given edge.  Returns true when hero has reached
+	// at least p2.  prevHero is passed so that we can compute how much to
+	// adjust in the other-than-walking direction.
+	static bool alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, const Common::Point &prevHero, Common::Point *hero);
 };
 
 } // End of namespace Draci

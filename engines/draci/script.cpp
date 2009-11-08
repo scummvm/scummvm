@@ -666,11 +666,13 @@ void Script::stayOn(Common::Queue<int> &params) {
 	// Jumps into the given position regardless of the walking map.
 	Common::Point heroPos(_vm->_game->findNearestWalkable(x, y));
 	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	Movement startingDirection = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 
 	_vm->_game->stopWalking();
 	_vm->_game->setHeroPosition(heroPos);
 	_vm->_game->playHeroAnimation(WalkingState::animationForSightDirection(
-		  dir, heroPos, mousePos, WalkingPath()));
+		  dir, heroPos, mousePos, WalkingPath(), startingDirection));
 }
 
 void Script::walkOn(Common::Queue<int> &params) {
