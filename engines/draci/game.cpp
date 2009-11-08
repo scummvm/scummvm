@@ -690,13 +690,15 @@ void Game::putItem(int itemID, int position) {
 		return;
 
 	if (position >= 0 &&
-		position < kInventoryLines * kInventoryColumns &&
+		position < kInventorySlots &&
 		(_inventory[position] == kNoItem || _inventory[position] == itemID)) {
 		_inventory[position] = itemID;
 	} else {
-		for (position = 0; position < kInventorySlots; ++position) {
-			if (_inventory[position] == kNoItem) {
-				_inventory[position] = itemID;
+		for (int i = 0; i < kInventorySlots; ++i) {
+			int pos = (position + i) % kInventorySlots;
+			if (_inventory[pos] == kNoItem) {
+				_inventory[pos] = itemID;
+				position = pos;
 				break;
 			}
 		}
