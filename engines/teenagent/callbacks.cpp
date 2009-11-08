@@ -1326,9 +1326,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(10);
 		disableObject(2);
 		setOns(1, 10);
-
-		byte * scene_15_ons = scene->getOns(15); //patch ons for the scene 15
-		scene_15_ons[1] = 0;
+		setOns(1, 0, 15);
 		byte f = GET_FLAG(0xDB98) + 1;
 		SET_FLAG(0xDB98, f);
 		if (f >= 2) {
@@ -2373,11 +2371,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(20, 9);
 		playActorAnimation(530);
 		loadScene(16, 236, 95, 1);
-		setOns(0, 9);
 		playActorAnimation(531);
 		playSound(36, 4);
 		playActorAnimation(532);
 		playActorAnimation(533);
+		setOns(0, 9);
 		moveTo(236, 95, 1, true);
 		playMusic(9);
 		return true;
