@@ -133,6 +133,8 @@ public:
 	Object *getObject(int id, int scene_id = 0);
 	Object *findObject(const Common::Point &point);
 
+	void loadObjectData();
+
 private:
 	void loadOns();
 	void loadLans();
@@ -150,6 +152,7 @@ private:
 		current_event.clear();
 		return processEventQueue();
 	}
+	void clearMessage();
 
 	TeenAgentEngine *_engine;
 	OSystem *_system;

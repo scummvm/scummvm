@@ -30,10 +30,11 @@
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
 #include "sound/mixer.h"
+#include "graphics/thumbnail.h"
 #include "teenagent/scene.h"
 #include "teenagent/objects.h"
 #include "teenagent/music.h"
-#include "graphics/thumbnail.h"
+#include "teenagent/console.h"
 
 namespace TeenAgent {
 
@@ -193,6 +194,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	int id = res->dseg.get_byte(0xB4F3);
 	uint16 x = res->dseg.get_word(0x64AF), y = res->dseg.get_word(0x64B1);
+	scene->loadObjectData();
 	scene->init(id, Common::Point(x, y));
 	return Common::kNoError;
 }
@@ -230,6 +232,7 @@ Common::Error TeenAgentEngine::run() {
 
 	scene = new Scene;
 	inventory = new Inventory;
+	console = new Console(this);
 
 	scene->init(this, _system);
 	inventory->init(this);
@@ -277,6 +280,12 @@ Common::Error TeenAgentEngine::run() {
 
 			//debug(0, "event");
 			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+				if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
+					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+					console->attach();
+				}
+				break;
 			case Common::EVENT_LBUTTONDOWN:
 				examine(event.mouse, current_object);
 				break;
@@ -316,8 +325,8 @@ Common::Error TeenAgentEngine::run() {
 				if (current_object)
 					name += current_object->name;
 
-				uint w = res->font7.render(NULL, 0, 0, name);
-				res->font7.render(surface, (320 - w) / 2, 180, name, true);
+				uint w = res->font7.render(NULL, 0, 0, name, 0xd1);
+				res->font7.render(surface, (320 - w) / 2, 180, name, 0xd1, true);
 				if (current_object) {
 					//current_object->rect.render(surface, 0x80);
 					//current_object->actor_rect.render(surface, 0x81);
@@ -330,6 +339,10 @@ Common::Error TeenAgentEngine::run() {
 		_system->unlockScreen();
 
 		_system->updateScreen();
+
+		if (console->isAttached()) {
+			console->onFrame();
+		}
 
 		uint32 dt = _system->getMillis() - t0;
 		if (dt < 40)
@@ -392,7 +405,7 @@ void TeenAgentEngine::displayCredits(uint16 addr) {
 			break;
 		event.message += "\n";
 	}
-	int w = Resources::instance()->font8.render(NULL, 0, 0, event.message);
+	int w = Resources::instance()->font8.render(NULL, 0, 0, event.message, 0xd1);
 	event.dst.x = (320 - w) / 2;
 	scene->push(event);
 }

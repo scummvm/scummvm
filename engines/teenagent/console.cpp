@@ -22,30 +22,43 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_FONT_H
-#define TEENAGENT_FONT_H
-
-#include "graphics/surface.h"
+#include "teenagent/console.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
-class Font {
-public:
-	byte grid_color, shadow_color;
-	byte height, width_pack;
+Console::Console(TeenAgentEngine *engine) : _engine(engine) {
+	DCmd_Register("enable_object",	WRAP_METHOD(Console, enableObject));
+	DCmd_Register("disable_object",	WRAP_METHOD(Console, enableObject));
+}
 
-	Font();
-	void load(int id);
-	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool grid = false);
-	uint render(Graphics::Surface *surface, int x, int y, char c, byte color);
-	static void grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
+bool Console::enableObject(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("usage: %s object_id [scene_id]\n", argv[0]);
+		return true;
+	}
+	
+	int id = atoi(argv[1]);
+	if (id < 0) {
+		DebugPrintf("object id %d is invalid\n", id);
+		return true;
+	}
+	
+	int scene_id = 0;
+	if (argc > 2) {
+		scene_id = atoi(argv[2]);
+		if (scene_id < 0) {
+			DebugPrintf("scene id %d is invalid\n", scene_id);
+			return true;
+		}
+	}
+	
+	if (strcmp(argv[0], "disable_object") == 0)
+		_engine->disableObject(id, scene_id);
+	else
+		_engine->enableObject(id, scene_id);
+	
+	return true;
+}
 
-	~Font();
-private:
-	byte *data;
-};
-
-} // End of namespace TeenAgent
-
-#endif
-
+}

@@ -22,30 +22,25 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_FONT_H
-#define TEENAGENT_FONT_H
+#ifndef TEENAGENT_DIALOG_H
+#define TEENAGENT_DIALOG_H
 
-#include "graphics/surface.h"
+#include "gui/debugger.h"
 
 namespace TeenAgent {
 
-class Font {
+class TeenAgentEngine;
+
+class Console : public GUI::Debugger {
 public:
-	byte grid_color, shadow_color;
-	byte height, width_pack;
+	Console(TeenAgentEngine *engine);
 
-	Font();
-	void load(int id);
-	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool grid = false);
-	uint render(Graphics::Surface *surface, int x, int y, char c, byte color);
-	static void grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
-
-	~Font();
 private:
-	byte *data;
+	bool enableObject(int argc, const char **argv);
+
+	TeenAgentEngine *_engine;
 };
 
 } // End of namespace TeenAgent
 
 #endif
-

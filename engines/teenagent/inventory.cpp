@@ -273,8 +273,8 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 	name += obj->name;
 
 	if (hovered) {
-		int w = res->font7.render(NULL, 0, 0, name, true);
-		res->font7.render(dst, (320 - w) / 2, 180, name, true);
+		int w = res->font7.render(NULL, 0, 0, name, 0xd1, true);
+		res->font7.render(dst, (320 - w) / 2, 180, name, 0xd1, true);
 	}
 }
 

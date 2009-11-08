@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	inventory.o \
 	objects.o \
 	music.o \
+	console.o \
 	dialog.o 
 
 # This module can be built as a plugin

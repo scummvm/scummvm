@@ -27,7 +27,7 @@
 
 namespace TeenAgent {
 
-Font::Font() : grid_color(0xd0), color(0xd1), shadow_color(0), height(0), width_pack(0), data(0) {
+Font::Font() : grid_color(0xd0), shadow_color(0), height(0), width_pack(0), data(0) {
 }
 
 void Font::load(int id) {
@@ -43,7 +43,7 @@ void Font::load(int id) {
 	debug(0, "font size: %d", s->size());
 }
 
-uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
+uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) {
 	unsigned idx = (unsigned char)c;
 	if (idx < 0x20 || idx >= 0x81) {
 		debug(0, "unhandled char 0x%02x", idx);
@@ -85,7 +85,7 @@ static uint find_in_str(const Common::String &str, char c, uint pos = 0) {
 	return pos;
 }
 
-uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, bool show_grid) {
+uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool show_grid) {
 	if (surface != NULL) {
 		uint max_w = render(NULL, 0, 0, str, false);
 		if (show_grid)
@@ -100,7 +100,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 			uint w = render(NULL, 0, 0, line, false);
 			int xp = x + (max_w - w) / 2;
 			for (uint k = 0; k < line.size(); ++k) {
-				xp += render(surface, xp, y, line[k]);
+				xp += render(surface, xp, y, line[k], color);
 			}
 
 			y += height;
@@ -119,7 +119,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 				w = 0;
 				continue;
 			}
-			w += render(NULL, 0, 0, c);
+			w += render(NULL, 0, 0, c, color);
 		}
 		if (w > max_w)
 			max_w = w;

@@ -107,7 +107,13 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	teenagent_idle.load(s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
-		
+	
+	loadObjectData();
+}
+
+void Scene::loadObjectData() {
+	Resources *res = Resources::instance();
+
 	//loading objects & walkboxes
 	objects.resize(42);
 	walkboxes.resize(42);
@@ -298,8 +304,7 @@ bool Scene::processEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 		if (!message.empty()) {
-			message.clear();
-			message_timer = 0;
+			clearMessage();
 			nextEvent();
 			return true;
 		}
@@ -309,13 +314,11 @@ bool Scene::processEvent(const Common::Event &event) {
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) {
 			if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				intro = false;
-				message.clear();
-				message_timer = 0;
+				clearMessage();
 				events.clear();
 				sounds.clear();
 				current_event.clear();
 				message_color = 0xd1;
-				Resources::instance()->font7.color = 0xd1;
 				for (int i = 0; i < 4; ++i) 
 					custom_animation[i].free();
 				_engine->playMusic(4);
@@ -324,8 +327,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			}
 		
 			if (!message.empty()) {
-				message.clear();
-				message_timer = 0;
+				clearMessage();
 				nextEvent();
 				return true;
 			}
@@ -347,7 +349,7 @@ bool Scene::render(OSystem *system) {
 		busy = processEventQueue();
 		if (!message.empty() && message_timer != 0) {
 			if (--message_timer == 0) {
-				message.clear();
+				clearMessage();
 				nextEvent();
 				continue;
 			}
@@ -357,12 +359,10 @@ bool Scene::render(OSystem *system) {
 			system->fillScreen(0);
 			Graphics::Surface *surface = system->lockScreen();
 			if (current_event.lan == 8) {
-				res->font8.color = current_event.color;
 				res->font8.shadow_color = current_event.orientation;
-				res->font8.render(surface, current_event.dst.x, current_event.dst.y, message);
+				res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
-				res->font7.color = 0xd1;
-				res->font7.render(surface, current_event.dst.x, current_event.dst.y, message);
+				res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
 			} 
 			system->unlockScreen();
 			return true;
@@ -379,7 +379,6 @@ bool Scene::render(OSystem *system) {
 					s->render(surface);
 			}
 		}
-
 
 		bool got_any_animation = false;
 
@@ -406,7 +405,7 @@ bool Scene::render(OSystem *system) {
 					continue;
 				}
 				int index = a->currentIndex();
-				//debug(0, "index = %d", index);
+				debug(0, "current index = %d", index);
 				if (index == current_event.animation) {
 					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.color, current_event.animation);
 					restart |= nextEvent();
@@ -485,8 +484,7 @@ bool Scene::render(OSystem *system) {
 		}
 
 		if (!message.empty()) {
-			res->font7.color = message_color;
-			res->font7.render(surface, message_pos.x, message_pos.y, message);
+			res->font7.render(surface, message_pos.x, message_pos.y, message, message_color);
 			busy = true;
 		}
 
@@ -699,7 +697,7 @@ Object *Scene::getObject(int id, int scene_id) {
 
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {
 	Resources *res = Resources::instance();
-	uint w = res->font7.render(NULL, 0, 0, str);
+	uint w = res->font7.render(NULL, 0, 0, str, 0);
 	uint h = res->font7.height + 3;
 
 	position.x -= w / 2;
@@ -741,14 +739,19 @@ void Scene::displayMessage(const Common::String &str, byte color) {
 }
 
 void Scene::clear() {
-	message.clear();
-	message_timer = 0;
+	clearMessage();
 	events.clear();
 	current_event.clear();
 	for(int i = 0; i < 4; ++i) {
 		animation[i].free();
 		custom_animation[i].free();
 	}
+}
+
+void Scene::clearMessage() {
+	message.clear();
+	message_timer = 0;
+	message_color = 0xd1;
 }
 
 } // End of namespace TeenAgent

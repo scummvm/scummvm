@@ -39,6 +39,7 @@ namespace TeenAgent {
 struct Object;
 class Scene;
 class MusicPlayer;
+class Console;
 
 class TeenAgentEngine: public Engine {
 public:
@@ -97,6 +98,7 @@ public:
 	Scene *scene;
 	Inventory *inventory;
 	MusicPlayer *music;
+	Console * console;
 
 	void setMusic(byte id);
 
@@ -106,7 +108,6 @@ private:
 	bool scene_busy;
 	Action action;
 	Object *dst_object;
-
 
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle _musicHandle, _soundHandle;
