@@ -754,20 +754,29 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xDB9C, 1))
 			return true;
 
-		SET_FLAG(0xDB9C, 1); //guard's drinking, boo!
+		SET_FLAG(0, 3);
+		setTimerCallback(0x516d, 40); //fail
 		playAnimation(544, 0);
+		return true;
 		
+	case 0x516d:
+		SET_FLAG(0, 0);
+		return true;
+
+	case 0x5189:
+		SET_FLAG(0, 0);
+		setTimerCallback(0, 0);
+		scene->cancelAnimation(0);
+		SET_FLAG(0xDB9C, 1); //guard's drinking, boo!
 		
+		displayAsyncMessage(0x3563, 320 * 130 + 300, 1, 5);
 		setOns(0, 16);
-		
 		enableObject(2);
 
 		playSound(17, 5);
-		displayAsyncMessageInSlot(0x3563, 1, 60, 70);
 		playAnimation(545, 0);
 
 		Dialog::show(scene, 0x0917, 0, 546, 0xd1, 0xd9, 0, 1);
-		playActorAnimation(546);
 		SET_FLAG(0xDA96, 1);
 		SET_FLAG(0xDA97, 0);
 		return true;
@@ -2235,16 +2244,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return false;
 
 	case 0x8117:
-		Dialog::show(scene, 0x0a41, 529);
+		Dialog::show(scene, 0x0a41, 0, 529, 0xd1, 0xd9, 0, 1);
 		playSound(5, 2);
 		playSound(5, 44);
-		playAnimation(642, 1, true);
+		playAnimation(642, 0, true);
 		playActorAnimation(641, true);
 		waitAnimation();
-		Dialog::show(scene, 0x0aff, 529);
-		Dialog::show(scene, 0x0ba0, 529);
+		Dialog::show(scene, 0x0aff, 0, 529, 0xd1, 0xd9, 0, 1);
+		Dialog::show(scene, 0x0ba0, 0, 529, 0xd1, 0xd9, 0, 1);
 		moveRel(0, 1, 0);
-		Dialog::show(scene, 0x0c10, 529);
+		Dialog::show(scene, 0x0c10, 0, 529, 0xd1, 0xd9, 0, 1);
 		inventory->remove(50);
 		processCallback(0x9d45);
 		return true;
@@ -3857,16 +3866,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x9de5:
+		hideActor();
 		loadScene(30, scene->getPosition());
 		playAnimation(887, 1, true);
 		playAnimation(888, 2, true);
 		waitAnimation();
-		Dialog::show(scene, 0x6fb8);
+		Dialog::show(scene, 0x6fb8, 889, 890, 0xd9, 0xd0, 2, 3);
 		playSound(26, 3);
 		playAnimation(891, 1, true);
 		playAnimation(892, 2, true);
 		waitAnimation();
-		Dialog::show(scene, 0x6ff0);
+		Dialog::show(scene, 0x6ff0, 890, 889, 0xd0, 0xd9, 3, 2);
+		showActor();
 		return true;
 
 	case 0x9e54:

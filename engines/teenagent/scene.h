@@ -148,6 +148,7 @@ public:
 	Object *findObject(const Common::Point &point);
 
 	void loadObjectData();
+	bool cancelAnimation(byte slot);
 
 private:
 	void loadOns();
@@ -192,6 +193,7 @@ private:
 	uint message_timer;
 	byte message_first_frame;
 	byte message_last_frame;
+	Animation * message_animation;
 
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;

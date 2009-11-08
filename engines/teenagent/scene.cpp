@@ -37,7 +37,7 @@ Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
 		_id(0), ons(0),
 		orientation(Object::kActorRight), 
-		message_timer(0), message_first_frame(0), message_last_frame(0),
+		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL), 
 		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
@@ -294,6 +294,16 @@ void Scene::playActorAnimation(uint id, bool loop) {
 	actor_animation.loop = loop;
 }
 
+bool Scene::cancelAnimation(byte slot) {
+	assert(slot < 4);
+	if (custom_animation[slot].empty())
+		return false;
+	else {
+		custom_animation[slot].free();
+		return true;
+	}
+}
+
 void Scene::push(const SceneEvent &event) {
 	//debug(0, "push");
 	//event.dump();
@@ -485,8 +495,9 @@ bool Scene::render(OSystem *system) {
 
 		if (!message.empty()) {
 			bool visible = true;
-			if (message_first_frame != 0) {
-				int index = actor_animation.currentIndex() + 1;
+			if (message_first_frame != 0 && message_animation != NULL) {
+				int index = message_animation->currentIndex() + 1;
+				debug(0, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
 				if (index < message_first_frame)
 					visible = false;
 				if (index > message_last_frame) {
@@ -501,7 +512,7 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 		
-		if (!busy && callback_timer) {
+		if (callback_timer) {
 			if (--callback_timer == 0) {
 				if (_engine->inventory->active())
 					_engine->inventory->activate(false);
@@ -597,10 +608,18 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kCreditsMessage:
 		case SceneEvent::kMessage: {
 				message = current_event.message;
+				message_animation = NULL;
 				if (current_event.first_frame) {
 					message_timer = 0;
 					message_first_frame = current_event.first_frame;
 					message_last_frame = current_event.last_frame;
+					if (current_event.slot < 4) {
+						message_animation = custom_animation + current_event.slot;
+						//else if (!animation[current_event.slot].empty())
+						//	message_animation = animation + current_event.slot;
+					} else 
+						message_animation = &actor_animation;
+					debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
 				} else {
 					message_timer = messageDuration(message);
 					message_first_frame = message_last_frame = 0;
@@ -798,6 +817,7 @@ void Scene::clearMessage() {
 	message_color = 0xd1;
 	message_first_frame = 0;
 	message_last_frame = 0;
+	message_animation = NULL;
 }
 
 } // End of namespace TeenAgent

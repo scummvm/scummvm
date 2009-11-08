@@ -300,10 +300,15 @@ Common::Error TeenAgentEngine::run() {
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				examine(event.mouse, current_object);
-				break;
 			case Common::EVENT_RBUTTONDOWN:
-				use(current_object);
+				if (res->dseg.get_byte(0) == 3) {
+					processCallback(0x5189); //boo!
+					break;
+				}
+				if (event.type == Common::EVENT_LBUTTONDOWN)
+					examine(event.mouse, current_object);
+				else
+					use(current_object);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				mouse = event.mouse;
