@@ -77,7 +77,7 @@ uint32 Pack::read(uint32 id, byte *dst, uint32 size) const {
 Common::SeekableReadStream *Pack::getStream(uint32 id) const {
 	if (id < 1 || id > count)
 		return 0;
-	debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
+	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
 	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id], Common::DisposeAfterUse::NO);
 }
 
