@@ -110,9 +110,6 @@ void Animation::nextFrame(bool force) {
 			_shift.x += _relativeShifts[_currentFrame].x;
 			_shift.y += _relativeShifts[_currentFrame].y;
 			_currentFrame = nextFrameNum();
-			if (!_currentFrame) {
-				clearShift();	// TODO: don't do that, but rather let the animation fly away when needed.
-			}
 			_tick = _vm->_system->getMillis();
 
 			// Fetch new frame and mark it dirty

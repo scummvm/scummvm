@@ -413,6 +413,8 @@ void Script::start(Common::Queue<int> &params) {
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	if (!anim) {
+		// WORKAROUND:
+		//
 		// The original game files seem to contain errors, which I have
 		// verified by inspecting their source code.  They try to load
 		// each animation before starting it, but fail to anticipate
