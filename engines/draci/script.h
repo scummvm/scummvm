@@ -53,12 +53,19 @@ typedef int  (Script::*GPLFunctionHandler)(int) const;
  *  subnumber.
  */
 
+enum GPL2ParameterType {
+	kGPL2Num = 1,
+	kGPL2Str = 2,
+	kGPL2Ident = 3,
+	kGPL2Math = 4
+};
+
 struct GPL2Command {
 	byte _number;
 	byte _subNumber;
 	const char *_name;
 	uint16 _numParams;
-	int _paramTypes[kMaxParams];
+	GPL2ParameterType _paramTypes[kMaxParams];
 	GPLHandler _handler;
 };
 

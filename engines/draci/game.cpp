@@ -332,9 +332,14 @@ void Game::handleInventoryLoop() {
 		// Otherwise, if we are holding an item, try to place it inside the
 		// inventory
 		} else if (_currentItem != kNoItem) {
-			// FIXME: This should place the item in the nearest inventory slot,
-			// not the first one available
-			putItem(_currentItem, 0);
+			const int column = scummvm_lround(
+				(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
+				kInventoryItemWidth) - 1;
+			const int line = scummvm_lround(
+				(_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) /
+				kInventoryItemHeight) - 1;
+			const int index = line * kInventoryColumns + column;
+			putItem(_currentItem, index);
 
 			// Remove it from our hands
 			_currentItem = kNoItem;

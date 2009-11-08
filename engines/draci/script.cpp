@@ -34,88 +34,86 @@
 
 namespace Draci {
 
-// FIXME: Change parameter types to names once I figure out what they are exactly
-
 void Script::setupCommandList() {
 	/** A table of all the commands the game player uses */
 	static const GPL2Command gplCommands[] = {
-		{ 0,  0, "gplend",				0, { 0 }, NULL },
-		{ 0,  1, "exit",				0, { 0 }, NULL },
-		{ 1,  1, "goto", 				1, { 3 }, &Script::c_Goto },
-		{ 2,  1, "Let", 				2, { 3, 4 }, &Script::c_Let },
-		{ 3,  1, "if", 					2, { 4, 3 }, &Script::c_If },
-		{ 4,  1, "Start", 				2, { 3, 2 }, &Script::start },
-		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::load },
-		{ 5,  2, "StartPlay", 			2, { 3, 2 }, &Script::startPlay },
-		{ 5,  3, "JustTalk", 			0, { 0 }, &Script::justTalk },
-		{ 5,  4, "JustStay", 			0, { 0 }, &Script::justStay },
-		{ 6,  1, "Talk", 				2, { 3, 2 }, &Script::talk },
-		{ 7,  1, "ObjStat", 			2, { 3, 3 }, &Script::objStat },
-		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, &Script::objStatOn },
-		{ 8,  1, "IcoStat", 			2, { 3, 3 }, &Script::icoStat },
-		{ 9,  1, "Dialogue", 			1, { 2 }, &Script::dialogue },
-		{ 9,  2, "ExitDialogue", 		0, { 0 }, &Script::exitDialogue },
-		{ 9,  3, "ResetDialogue", 		0, { 0 }, &Script::resetDialogue },
-		{ 9,  4, "ResetDialogueFrom", 	0, { 0 }, &Script::resetDialogueFrom },
-		{ 9,  5, "ResetBlock", 			1, { 3 }, &Script::resetBlock },
-		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, &Script::walkOn },
-		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::stayOn },
-		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOnPlay },
-		{ 11, 1, "LoadPalette", 		1, { 2 }, &Script::loadPalette },
-		{ 12, 1, "SetPalette", 			0, { 0 }, &Script::setPalette },
-		{ 12, 2, "BlackPalette", 		0, { 0 }, &Script::blackPalette },
-		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, &Script::fadePalette },
-		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, &Script::fadePalettePlay },
-		{ 14, 1, "NewRoom", 			2, { 3, 1 }, &Script::newRoom },
-		{ 15, 1, "ExecInit", 			1, { 3 }, &Script::execInit },
-		{ 15, 2, "ExecLook", 			1, { 3 }, &Script::execLook },
-		{ 15, 3, "ExecUse", 			1, { 3 }, &Script::execUse },
-		{ 18, 1, "LoadMusic", 			1, { 2 }, &Script::loadMusic },
-		{ 18, 2, "StartMusic", 			0, { 0 }, &Script::startMusic },
-		{ 18, 3, "StopMusic", 			0, { 0 }, &Script::stopMusic },
-		{ 19, 1, "Mark", 				0, { 0 }, &Script::mark },
-		{ 19, 2, "Release", 			0, { 0 }, &Script::release },
-		{ 20, 1, "Play", 				0, { 0 }, &Script::play },
-		{ 21, 1, "LoadMap", 			1, { 2 }, &Script::loadMap },
-		{ 21, 2, "RoomMap", 			0, { 0 }, &Script::roomMap },
-		{ 22, 1, "DisableQuickHero", 	0, { 0 }, &Script::disableQuickHero },
-		{ 22, 2, "EnableQuickHero", 	0, { 0 }, &Script::enableQuickHero },
-		{ 23, 1, "DisableSpeedText", 	0, { 0 }, &Script::disableSpeedText },
-		{ 23, 2, "EnableSpeedText", 	0, { 0 }, &Script::enableSpeedText },
-		{ 24, 1, "QuitGame", 			0, { 0 }, &Script::quitGame },
-		{ 25, 1, "PushNewRoom", 		0, { 0 }, &Script::pushNewRoom },
-		{ 25, 2, "PopNewRoom", 			0, { 0 }, &Script::popNewRoom },
+		{ 0,  0, "gplend",		0, { },					NULL },
+		{ 0,  1, "exit",		0, { },					NULL },
+		{ 1,  1, "goto", 		1, { kGPL2Ident }, 			&Script::c_Goto },
+		{ 2,  1, "Let", 		2, { kGPL2Ident, kGPL2Math }, 		&Script::c_Let },
+		{ 3,  1, "if", 			2, { kGPL2Math, kGPL2Ident }, 		&Script::c_If },
+		{ 4,  1, "Start", 		2, { kGPL2Ident, kGPL2Str }, 		&Script::start },
+		{ 5,  1, "Load", 		2, { kGPL2Ident, kGPL2Str }, 		&Script::load },
+		{ 5,  2, "StartPlay", 		2, { kGPL2Ident, kGPL2Str }, 		&Script::startPlay },
+		{ 5,  3, "JustTalk", 		0, { }, 				&Script::justTalk },
+		{ 5,  4, "JustStay", 		0, { }, 				&Script::justStay },
+		{ 6,  1, "Talk", 		2, { kGPL2Ident, kGPL2Str }, 		&Script::talk },
+		{ 7,  1, "ObjStat", 		2, { kGPL2Ident, kGPL2Ident }, 		&Script::objStat },
+		{ 7,  2, "ObjStat_On", 		2, { kGPL2Ident, kGPL2Ident }, 		&Script::objStatOn },
+		{ 8,  1, "IcoStat", 		2, { kGPL2Ident, kGPL2Ident }, 		&Script::icoStat },
+		{ 9,  1, "Dialogue", 		1, { kGPL2Str }, 			&Script::dialogue },
+		{ 9,  2, "ExitDialogue", 	0, { }, 				&Script::exitDialogue },
+		{ 9,  3, "ResetDialogue", 	0, { }, 				&Script::resetDialogue },
+		{ 9,  4, "ResetDialogueFrom", 	0, { }, 				&Script::resetDialogueFrom },
+		{ 9,  5, "ResetBlock", 		1, { kGPL2Ident }, 			&Script::resetBlock },
+		{ 10, 1, "WalkOn", 		3, { kGPL2Num, kGPL2Num, kGPL2Ident }, 	&Script::walkOn },
+		{ 10, 2, "StayOn", 		3, { kGPL2Num, kGPL2Num, kGPL2Ident }, 	&Script::stayOn },
+		{ 10, 3, "WalkOnPlay", 		3, { kGPL2Num, kGPL2Num, kGPL2Ident }, 	&Script::walkOnPlay },
+		{ 11, 1, "LoadPalette", 	1, { kGPL2Str }, 			&Script::loadPalette },
+		{ 12, 1, "SetPalette", 		0, { }, 				&Script::setPalette },
+		{ 12, 2, "BlackPalette", 	0, { }, 				&Script::blackPalette },
+		{ 13, 1, "FadePalette", 	3, { kGPL2Num, kGPL2Num, kGPL2Num }, 	&Script::fadePalette },
+		{ 13, 2, "FadePalettePlay", 	3, { kGPL2Num, kGPL2Num, kGPL2Num }, 	&Script::fadePalettePlay },
+		{ 14, 1, "NewRoom", 		2, { kGPL2Ident, kGPL2Num }, 		&Script::newRoom },
+		{ 15, 1, "ExecInit", 		1, { kGPL2Ident }, 			&Script::execInit },
+		{ 15, 2, "ExecLook", 		1, { kGPL2Ident }, 			&Script::execLook },
+		{ 15, 3, "ExecUse", 		1, { kGPL2Ident }, 			&Script::execUse },
+		{ 18, 1, "LoadMusic", 		1, { kGPL2Str }, 			&Script::loadMusic },
+		{ 18, 2, "StartMusic", 		0, { }, 				&Script::startMusic },
+		{ 18, 3, "StopMusic", 		0, { }, 				&Script::stopMusic },
+		{ 19, 1, "Mark", 		0, { }, 				&Script::mark },
+		{ 19, 2, "Release", 		0, { }, 				&Script::release },
+		{ 20, 1, "Play", 		0, { }, 				&Script::play },
+		{ 21, 1, "LoadMap", 		1, { kGPL2Str }, 			&Script::loadMap },
+		{ 21, 2, "RoomMap", 		0, { }, 				&Script::roomMap },
+		{ 22, 1, "DisableQuickHero", 	0, { }, 				&Script::disableQuickHero },
+		{ 22, 2, "EnableQuickHero", 	0, { }, 				&Script::enableQuickHero },
+		{ 23, 1, "DisableSpeedText", 	0, { }, 				&Script::disableSpeedText },
+		{ 23, 2, "EnableSpeedText", 	0, { }, 				&Script::enableSpeedText },
+		{ 24, 1, "QuitGame", 		0, { }, 				&Script::quitGame },
+		{ 25, 1, "PushNewRoom", 	0, { }, 				&Script::pushNewRoom },
+		{ 25, 2, "PopNewRoom", 		0, { }, 				&Script::popNewRoom },
 		// The following commands are not used in the original game files.
-		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },
-		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },
-		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },
-		{ 18, 4, "FadeOutMusic",		1, { 1 }, NULL },
-		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
+		{ 16, 1, "RepaintInventory", 	0, { },					NULL },
+		{ 16, 2, "ExitInventory", 	0, { },					NULL },
+		{ 17, 1, "ExitMap", 		0, { },					NULL },
+		{ 18, 4, "FadeOutMusic",	1, { kGPL2Num },			NULL },
+		{ 18, 5, "FadeInMusic", 	1, { kGPL2Num },			NULL },
 		// The following commands are not even defined in the game
 		// sources, but their numbers are allocated for internal
 		// purposes of the old player.
-		{ 26, 1, "ShowCheat", 			0, { 0 }, NULL },
-		{ 26, 2, "HideCheat", 			0, { 0 }, NULL },
-		{ 26, 3, "ClearCheat", 			1, { 1 }, NULL },
-		{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 }, NULL }
+		{ 26, 1, "ShowCheat", 		0, { },					NULL },
+		{ 26, 2, "HideCheat", 		0, { },					NULL },
+		{ 26, 3, "ClearCheat", 		1, { kGPL2Num },			NULL },
+		{ 27, 1, "FeedPassword", 	3, { kGPL2Num, kGPL2Num, kGPL2Num },	NULL }
 	};
 
 	/** Operators used by the mathematical evaluator */
 	static const GPL2Operator gplOperators[] = {
-		{"&", 	&Script::operAnd 			},
-		{"|",	&Script::operOr 			},
-		{"^", 	&Script::operXor 			},
-		{"==",	&Script::operEqual 			},
+		{"&", 	&Script::operAnd 		},
+		{"|",	&Script::operOr 		},
+		{"^", 	&Script::operXor 		},
+		{"==",	&Script::operEqual 		},
 		{"!=", 	&Script::operNotEqual		},
-		{"<", 	&Script::operLess			},
+		{"<", 	&Script::operLess		},
 		{">", 	&Script::operGreater		},
 		{"<=",	&Script::operLessOrEqual	},
 		{">=",	&Script::operGreaterOrEqual	},
-		{"*",	&Script::operMul			},
-		{"/", 	&Script::operDiv			},
-		{"%",	&Script::operMod			},
-		{"+", 	&Script::operAdd			},
-		{"-",	&Script::operSub			}
+		{"*",	&Script::operMul		},
+		{"/", 	&Script::operDiv		},
+		{"%",	&Script::operMod		},
+		{"+", 	&Script::operAdd		},
+		{"-",	&Script::operSub		}
 	};
 
 	/** Functions used by the mathematical evaluator */
@@ -1185,7 +1183,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 			debugC(1, kDraciBytecodeDebugLevel, "%s", cmd->_name);
 
 			for (int i = 0; i < cmd->_numParams; ++i) {
-				if (cmd->_paramTypes[i] == 4) {
+				if (cmd->_paramTypes[i] == kGPL2Math) {
 					debugC(3, kDraciBytecodeDebugLevel,
 					    "Evaluating (in-script) GPL expression at offset %d: ", offset);
 					params.push(handleMathExpression(&reader));
