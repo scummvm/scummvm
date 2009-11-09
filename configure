@@ -834,6 +834,11 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+samsungtv)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-SamyGO-linux-gnueabi
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -1337,6 +1342,24 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
+		samsungtv)
+			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DENABLE_32BIT"
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			HOSTEXEEXT=".so"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="samsungtv"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			_build_hq_scalers="no"
+			_build_scalers="yes"
+			_vkeybd="yes"
+			_keymapper="yes"
+			;;
 		motoezx)
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
@@ -1607,7 +1630,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	sdl | wii | dreamcast)
+	sdl | wii | dreamcast | samsungtv)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2229,6 +2252,14 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
+		;;
+	samsungtv)
+		_sdlconfig="arm-SamyGO-linux-gnueabi-sdl-config"
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
+		LIBS="$LIBS `$_sdlconfig --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
+		LDFLAGS="$LDFLAGS -shared -fpic -Wl,-whole-archive"
 		;;
 	gp2x)
 		find_sdlconfig

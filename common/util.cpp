@@ -531,5 +531,10 @@ void NORETURN error(const char *s, ...) {
 	if (g_system)
 		g_system->quit();
 
+#if defined(SAMSUNGTV)
+	// FIXME
+	for (;;) {}
+#else
 	exit(1);
+#endif
 }
