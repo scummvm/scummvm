@@ -251,7 +251,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(Clones_seg_id);
 	s.syncAsSint32LE(Lists_seg_id);
 	s.syncAsSint32LE(Nodes_seg_id);
-// FIXME: Hunks_seg_id ?
 }
 
 static void sync_SegManagerPtr(Common::Serializer &s, ResourceManager *&resMan, SegManager *&obj) {
@@ -295,7 +294,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncString(tmp);			// OBSOLETE: Used to be game_version
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
 
-	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	if (s.isLoading()) {
 		//free(menubar);
 		_menubar = new Menubar();
@@ -552,8 +550,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 	return NULL;
 }
 
-// FIXME: This should probably be turned into an EngineState method
-// FIXME: Or maybe into a DataStack method...
+// TODO: This should probably be turned into an EngineState or DataStack method.
 static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	DataStack *stack = (DataStack *)(retval->_segMan->_heap[stack_seg]);
@@ -733,7 +730,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		thumbnail = 0;
 	}
 
-	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
+	// Create a new EngineState object
 	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_gui, s->_audio);
 
 	// Copy some old data
