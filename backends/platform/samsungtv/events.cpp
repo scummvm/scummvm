@@ -351,7 +351,7 @@ bool OSystem_SDL_SamsungTV::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL_SamsungTV::remapKey(const SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 

@@ -65,7 +65,7 @@ void OSystem_LINUXMOTO::fillMouseEvent(Common::Event &event, int x, int y) {
 	}
 }
 
-bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
+bool OSystem_LINUXMOTO::remapKey(const SDL_Event &ev, Common::Event &event) {
 	//  Motorol A1200/E6/A1600 remapkey by Lubomyr
 #ifdef MOTOEZX
 	// Quit on MOD+Camera Key on A1200

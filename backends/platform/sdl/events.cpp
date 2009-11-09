@@ -459,7 +459,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::remapKey(const SDL_Event &ev, Common::Event &event) {
 #ifdef LINUPY
 	// On Yopy map the End button to quit
 	if ((ev.key.keysym.sym == 293)) {

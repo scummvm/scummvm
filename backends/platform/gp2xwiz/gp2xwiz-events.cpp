@@ -494,6 +494,6 @@ bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_GP2XWIZ::remapKey(SDL_Event &ev,Common::Event &event) {
+bool OSystem_GP2XWIZ::remapKey(const SDL_Event &ev,Common::Event &event) {
 	return false;
 }

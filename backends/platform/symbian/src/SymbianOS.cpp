@@ -318,7 +318,7 @@ void OSystem_SDL_Symbian::symbianMixCallback(void *sys, byte *samples, int len) 
  * @param ScumVM event to modify if special result is requested
  * @return true if Common::Event has a valid return status
  */
-bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL_Symbian::remapKey(const SDL_Event &ev, Common::Event &event) {
 	if (GUI::Actions::Instance()->mappingActive() || ev.key.keysym.sym <= SDLK_UNKNOWN)
 		return false;
 

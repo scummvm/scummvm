@@ -61,7 +61,7 @@ public:
 	void moveStick();
 	void fillMouseEvent(Common::Event&, int, int);
 	void warpMouse(int, int);
-	bool remapKey(SDL_Event&, Common::Event&);
+	bool remapKey(const SDL_Event&, Common::Event&);
 
 	/* Platform Setup Stuff */
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);

@@ -572,7 +572,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_GP2X::remapKey(SDL_Event &ev,Common::Event &event) {
+bool OSystem_GP2X::remapKey(const SDL_Event &ev,Common::Event &event) {
 	return false;
 }
 

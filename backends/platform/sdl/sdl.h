@@ -467,7 +467,7 @@ protected:
 	void setupIcon();
 	void handleKbdMouse();
 
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual bool remapKey(const SDL_Event &ev, Common::Event &event);
 
 	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
 };
