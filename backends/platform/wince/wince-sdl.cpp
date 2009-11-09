@@ -168,13 +168,13 @@ int SDL_main(int argc, char **argv) {
 	// Due to incomplete crt0.o implementation, we go through the constructor function
 	// list provided by the linker and init all of them
 	// thanks to joostp and DJWillis
-	extern void (*__CTOR_LIST__)() ;
-	void (**constructor)() = &__CTOR_LIST__ ;
-	constructor++ ;
+	extern void (*__CTOR_LIST__)();
+	void (**constructor)() = &__CTOR_LIST__;
+	constructor++;	// First item in list of constructors has special meaning (platform dependent), ignore it.
 	while (*constructor) {
-            (*constructor)() ;
-            constructor++ ;
-        }
+		(*constructor)();
+		constructor++;
+	}
 #endif
 
 	CEDevice::init();
@@ -251,8 +251,7 @@ int SDL_main(int argc, char **argv) {
  * Take a look at the comments in stub.cpp as well.
  */
 
-int console_main(int argc, char *argv[])
-{
+int console_main(int argc, char *argv[]) {
 	int n;
 	char *bufp, *appname;
 
@@ -285,8 +284,7 @@ int console_main(int argc, char *argv[])
 	return(0);
 }
 
-static int ParseCommandLine(char *cmdline, char **argv)
-{
+static int ParseCommandLine(char *cmdline, char **argv) {
 	char *bufp;
 	int argc;
 
@@ -400,8 +398,7 @@ static Uint32 timer_handler_wrapper(Uint32 interval) {
 	return interval;
 }
 
-void OSystem_WINCE3::initBackend()
-{
+void OSystem_WINCE3::initBackend() {
 	// Instantiate our own sound mixer
 	// mixer init is rerun when a game engine is selected.
 	setupMixer();
@@ -421,7 +418,8 @@ void OSystem_WINCE3::initBackend()
 	_isSmartphone = CEDevice::isSmartphone();
 	create_toolbar();
 	_hasSmartphoneResolution = CEDevice::hasSmartphoneResolution() || CEDevice::isSmartphone();
-	if (_hasSmartphoneResolution) _panelVisible = false;	// init correctly in smartphones
+	if (_hasSmartphoneResolution)
+		_panelVisible = false;	// init correctly in smartphones
 
 	// Initialize global key mapping
 	GUI::Actions::init();
@@ -503,8 +501,7 @@ void OSystem_WINCE3::swap_panel_visibility() {
 				_panelVisible = !_panelVisible;
 			else
 				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-		}
-		else {
+		} else {
 			_toolbarHandler.setActive(NAME_MAIN_PANEL);
 			_panelVisible = !_panelVisible;
 		}
@@ -596,9 +593,7 @@ void OSystem_WINCE3::swap_zoom_up() {
 		_scalerProc = PocketPCHalf;
 		_zoomUp = false;
 		_zoomDown = false;
-	}
-	else
-	{
+	} else {
 		// only active if running on a PocketPC
 		if (_scalerProc != PocketPCHalf && _scalerProc != PocketPCHalfZoom)
 			return;
@@ -627,9 +622,7 @@ void OSystem_WINCE3::swap_zoom_down() {
 		_scalerProc = PocketPCHalf;
 		_zoomDown = false;
 		_zoomUp = false;
-	}
-	else
-	{
+	} else {
 		// only active if running on a PocketPC
 		if (_scalerProc != PocketPCHalf && _scalerProc != PocketPCHalfZoom)
 			return;
@@ -651,13 +644,13 @@ void OSystem_WINCE3::swap_zoom_down() {
 
 // Smartphone actions
 void OSystem_WINCE3::initZones() {
-        int i;
+	int i;
 
-		_currentZone = 0;
-        for (i=0; i<TOTAL_ZONES; i++) {
-                _mouseXZone[i] = (_zones[i].x + (_zones[i].width / 2)) * _scaleFactorXm / _scaleFactorXd;
-                _mouseYZone[i] = (_zones[i].y + (_zones[i].height / 2)) * _scaleFactorYm / _scaleFactorYd;
-        }
+	_currentZone = 0;
+	for (i = 0; i < TOTAL_ZONES; i++) {
+		_mouseXZone[i] = (_zones[i].x + (_zones[i].width / 2)) * _scaleFactorXm / _scaleFactorXd;
+		_mouseYZone[i] = (_zones[i].y + (_zones[i].height / 2)) * _scaleFactorYm / _scaleFactorYd;
+	}
 }
 
 void OSystem_WINCE3::loadDeviceConfigurationElement(String element, int &value, int defaultValue) {
@@ -688,13 +681,12 @@ void OSystem_WINCE3::add_left_click(bool pushed) {
 }
 
 void OSystem_WINCE3::move_cursor_up() {
-	int x,y;
+	int x, y;
 	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatY)
 		y -= _stepY3;
-	else
-	if (_keyRepeat)
+	else if (_keyRepeat)
 		y -= _stepY2;
 	else
 		y -= _stepY1;
@@ -706,31 +698,29 @@ void OSystem_WINCE3::move_cursor_up() {
 }
 
 void OSystem_WINCE3::move_cursor_down() {
-	int x,y;
+	int x, y;
 	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatY)
 		y += _stepY3;
-	else
-	if (_keyRepeat)
+	else if (_keyRepeat)
 		y += _stepY2;
 	else
 		y += _stepY1;
 
-	if (y > _videoMode.screenHeight*_scaleFactorYm/_scaleFactorYd)
-		y = _videoMode.screenHeight*_scaleFactorYm/_scaleFactorYd;
+	if (y > _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd)
+		y = _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd;
 
 	EventsBuffer::simulateMouseMove(x, y);
 }
 
 void OSystem_WINCE3::move_cursor_left() {
-	int x,y;
+	int x, y;
 	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatX)
 		x -= _stepX3;
-	else
-	if (_keyRepeat)
+	else if (_keyRepeat)
 		x -= _stepX2;
 	else
 		x -= _stepX1;
@@ -742,29 +732,28 @@ void OSystem_WINCE3::move_cursor_left() {
 }
 
 void OSystem_WINCE3::move_cursor_right() {
-	int x,y;
+	int x, y;
 	_usesEmulatedMouse = true;
 	retrieve_mouse_location(x, y);
 	if (_keyRepeat > _repeatX)
 		x += _stepX3;
-	else
-	if (_keyRepeat)
+	else if (_keyRepeat)
 		x += _stepX2;
 	else
 		x += _stepX1;
 
-	if (x > _videoMode.screenWidth*_scaleFactorXm/_scaleFactorXd)
-		x = _videoMode.screenWidth*_scaleFactorXm/_scaleFactorXd;
+	if (x > _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd)
+		x = _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd;
 
 	EventsBuffer::simulateMouseMove(x, y);
 }
 
 void OSystem_WINCE3::switch_zone() {
-	int x,y;
+	int x, y;
 	int i;
 	retrieve_mouse_location(x, y);
 
-    for (i=0; i<TOTAL_ZONES; i++)
+	for (i = 0; i < TOTAL_ZONES; i++)
 		if (x >= _zones[i].x && y >= _zones[i].y &&
 			x <= _zones[i].x + _zones[i].width && y <= _zones[i].y + _zones[i].height) {
 				_mouseXZone[i] = x;
@@ -793,7 +782,7 @@ void OSystem_WINCE3::setupMixer() {
 
 	compute_sample_rate();
 	if (_sampleRate == 0)
-		warning("setSoundCallback called with 0 _sampleRate. Audio will not work.");
+		warning("setSoundCallback called with 0 _sampleRate - audio will not work");
 	else if (_mixer && _mixer->getOutputRate() == _sampleRate) {
 		debug(1, "Skipping sound mixer re-init: samplerate is good");
 		return;
@@ -832,7 +821,7 @@ void OSystem_WINCE3::setupMixer() {
 		int vol2 = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 		int vol3 = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 		int vol4 = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-		delete(_mixer);
+		delete _mixer;
 		_mixer = new Audio::MixerImpl(this);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol1);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol2);
@@ -856,26 +845,30 @@ void OSystem_WINCE3::private_sound_proc(void *param, byte *buf, int len) {
 
 #ifdef USE_VORBIS
 bool OSystem_WINCE3::checkOggHighSampleRate() {
-        char trackFile[255];
-        FILE *testFile;
-        OggVorbis_File *test_ov_file = new OggVorbis_File;
+	char trackFile[255];
+	FILE *testFile;
+	OggVorbis_File *test_ov_file = new OggVorbis_File;
 
-        sprintf(trackFile,"%sTrack1.ogg", ConfMan.get("path").c_str());
-        // Check if we have an OGG audio track
-        testFile = fopen(trackFile, "rb");
-        if (testFile) {
-                if (!ov_open(testFile, test_ov_file, NULL, 0)) {
-                        bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
-                        ov_clear(test_ov_file);
+	// FIXME: The following sprintf assumes that "path" is always
+	// terminated by a path separator. This is *not* true in general.
+	// This code really should check for the path separator, or even
+	// better, use the FSNode API.
+	sprintf(trackFile, "%sTrack1.ogg", ConfMan.get("path").c_str());
+	// Check if we have an OGG audio track
+	testFile = fopen(trackFile, "rb");
+	if (testFile) {
+		if (!ov_open(testFile, test_ov_file, NULL, 0)) {
+			bool highSampleRate = (ov_info(test_ov_file, -1)->rate == 22050);
+			ov_clear(test_ov_file);
 			delete test_ov_file;
-                        return highSampleRate;
-                }
-        }
+			return highSampleRate;
+		}
+	}
 
-        // Do not test for OGG samples - too big and too slow anyway :)
+	// Do not test for OGG samples - too big and too slow anyway :)
 
 	delete test_ov_file;
-        return false;
+	return false;
 }
 #endif
 
@@ -950,8 +943,7 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 			_saveActiveToolbar = _toolbarHandler.activeName();
 			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 			_toolbarHandler.setVisible(true);
-		}
-		else
+		} else
 			if (_panelStateForced) {
 				_panelStateForced = false;
 				_toolbarHandler.setActive(_saveActiveToolbar);
@@ -1055,15 +1047,16 @@ void OSystem_WINCE3::update_game_settings() {
 		panel->add(NAME_ITEM_BINDKEYS, new ItemAction(ITEM_BINDKEYS, POCKET_ACTION_BINDKEYS));
 		// portrait/landscape - screen dependent
 		// FIXME : will still display the portrait/landscape icon when using a scaler (but will be disabled)
-		if (ConfMan.hasKey("landscape"))
+		if (ConfMan.hasKey("landscape")) {
 			if (ConfMan.get("landscape")[0] > 57) {
 				_newOrientation = _orientationLandscape = ConfMan.getBool("landscape");
 				//ConfMan.removeKey("landscape", "");
 				ConfMan.setInt("landscape", _orientationLandscape);
 			} else
 				_newOrientation = _orientationLandscape = ConfMan.getInt("landscape");
-		else
+		} else {
 			_newOrientation = _orientationLandscape = 0;
+		}
 		panel->add(NAME_ITEM_ORIENTATION, new ItemSwitch(ITEM_VIEW_LANDSCAPE, ITEM_VIEW_PORTRAIT, &_newOrientation, 2));
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
@@ -1088,8 +1081,7 @@ void OSystem_WINCE3::initSize(uint w, uint h, const Graphics::PixelFormat *forma
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
 
-	if (_isSmartphone && !ConfMan.hasKey("landscape"))
-	{
+	if (_isSmartphone && !ConfMan.hasKey("landscape")) {
 		ConfMan.setInt("landscape", 1);
 		ConfMan.flushToDisk();
 	}
@@ -1103,16 +1095,17 @@ void OSystem_WINCE3::initSize(uint w, uint h, const Graphics::PixelFormat *forma
 	if (h == 400)	// touche engine fixup
 		h += 80;
 
-	if (!_hasSmartphoneResolution)
+	if (!_hasSmartphoneResolution) {
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
 		else
 			_toolbarHandler.setOffset(400);
-	else
+	} else {
 		if (h == 240)
 			_toolbarHandler.setOffset(200);
 		else	// 176x220
 			_toolbarHandler.setOffset(0);
+	}
 
 	if (w != (uint) _videoMode.screenWidth || h != (uint) _videoMode.screenHeight)
 		_scalersChanged = false;
@@ -1133,7 +1126,7 @@ void OSystem_WINCE3::initSize(uint w, uint h, const Graphics::PixelFormat *forma
 
 
 int OSystem_WINCE3::getDefaultGraphicsMode() const {
-    return GFX_NORMAL;
+	return GFX_NORMAL;
 }
 
 void OSystem_WINCE3::setGraphicsModeIntern() {
@@ -1182,14 +1175,14 @@ bool OSystem_WINCE3::update_scalers() {
 				_scalerProc = Normal1x;
 				_modeFlags = 0;
 			}
-		} else	if (_videoMode.screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+		} else if (_videoMode.screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 2;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
 			_scalerProc = PocketPCHalf;
 			_modeFlags = 0;
-		} else	if (_videoMode.screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+		} else if (_videoMode.screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 1;
 			_scaleFactorYm = 1;
@@ -2117,7 +2110,8 @@ bool OSystem_WINCE3::showMouse(bool visible) {
 
 void OSystem_WINCE3::drawToolbarMouse(SDL_Surface *surf, bool draw) {
 
-	if (!_mouseData || !_usesEmulatedMouse) return;
+	if (!_mouseData || !_usesEmulatedMouse)
+		return;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
 	int y = _mouseCurState.y - _mouseHotspotY - _toolbarHandler.getOffset();
@@ -2252,13 +2246,13 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 
 void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 
-	if (_forceFull || _paletteDirtyEnd) return;
+	if (_forceFull || _paletteDirtyEnd)
+		return;
 
 	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
 
-static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter)
-{
+static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter) {
 	if (GUI::Actions::Instance()->mappingActive())
 		return key;
 
@@ -2539,7 +2533,7 @@ int OSystem_WINCE3::_platformScreenWidth;
 int OSystem_WINCE3::_platformScreenHeight;
 bool OSystem_WINCE3::_isOzone;
 OSystem_WINCE3::zoneDesc OSystem_WINCE3::_zones[TOTAL_ZONES] = {
-        { 0, 0, 320, 145 },
-        { 0, 145, 150, 55 },
-        { 150, 145, 170, 55 }
+	{ 0, 0, 320, 145 },
+	{ 0, 145, 150, 55 },
+	{ 150, 145, 170, 55 }
 };
