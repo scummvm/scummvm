@@ -274,7 +274,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		_engine->music->load(res->dseg.get_byte(0xDB90));
 }
 
-void Scene::playAnimation(byte idx, uint id, bool loop, bool paused) {
+void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
 	assert(idx < 4);
 	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
@@ -283,25 +283,22 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused) {
 	custom_animation[idx].load(s);
 	custom_animation[idx].loop = loop;
 	custom_animation[idx].paused = paused;
+	custom_animation[idx].ignore = ignore;
 }
 
-void Scene::playActorAnimation(uint id, bool loop) {
+void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
 		error("playing animation %u failed", id);
 
 	actor_animation.load(s);
 	actor_animation.loop = loop;
+	actor_animation.ignore = ignore;
 }
 
-bool Scene::cancelAnimation(byte slot) {
+Animation * Scene::getAnimation(byte slot) {
 	assert(slot < 4);
-	if (custom_animation[slot].empty())
-		return false;
-	else {
-		custom_animation[slot].free();
-		return true;
-	}
+	return custom_animation + slot;
 }
 
 void Scene::push(const SceneEvent &event) {
@@ -404,7 +401,10 @@ bool Scene::render(OSystem *system) {
 			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame();
 			if (s != NULL) {
-				busy = true;
+				if (!a->ignore) 
+					busy = true;
+				else 
+					busy = false;
 				if (!a->paused && !a->loop)
 					got_any_animation = true;
 			} else {
@@ -452,7 +452,10 @@ bool Scene::render(OSystem *system) {
 			Surface *mark = actor_animation.currentFrame();
 			if (mark != NULL) {
 				actor_animation_position = mark->render(surface);
-				busy = true;
+				if (!actor_animation.ignore) 
+					busy = true;
+				else 
+					busy = false;
 				got_any_animation = true;
 			} else if (!hide_actor) {
 				actor_animation.free();
@@ -500,7 +503,7 @@ bool Scene::render(OSystem *system) {
 			bool visible = true;
 			if (message_first_frame != 0 && message_animation != NULL) {
 				int index = message_animation->currentIndex() + 1;
-				debug(0, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
+				//debug(0, "message: %s first: %u index: %u", message.c_str(), message_first_frame, index);
 				if (index < message_first_frame)
 					visible = false;
 				if (index > message_last_frame) {
@@ -520,7 +523,6 @@ bool Scene::render(OSystem *system) {
 				if (_engine->inventory->active())
 					_engine->inventory->activate(false);
 				_engine->processCallback(callback);
-				callback = 0;
 			}
 		}
 
@@ -655,7 +657,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kPlayAnimation:
 			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.slot & 3);
-			playAnimation(current_event.slot & 3, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0);
+			playAnimation(current_event.slot & 3, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
 			current_event.clear();
 			break;
 
@@ -673,7 +675,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kPlayActorAnimation:
 			debug(0, "playing actor animation %u", current_event.animation);
-			playActorAnimation(current_event.animation, (current_event.slot & 0x80) != 0);
+			playActorAnimation(current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x20) != 0);
 			current_event.clear();
 			break;
 

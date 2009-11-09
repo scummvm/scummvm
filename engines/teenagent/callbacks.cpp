@@ -32,6 +32,7 @@ namespace TeenAgent {
 #define CHECK_FLAG(addr, v) (res->dseg.get_byte(addr) == (v))
 #define SET_FLAG(addr, v) (res->dseg.set_byte((addr), (v)))
 #define GET_FLAG(addr) (res->dseg.get_byte(addr))
+#define INC_FLAG(addr) (++*res->dseg.ptr(addr))
 
 void TeenAgentEngine::rejectMessage() {
 	Resources * res = Resources::instance();
@@ -750,24 +751,25 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x5104:
-		loadScene(11, 319, 198, 4); //orientation: left
+		loadScene(11, 319, 198, 4);
 		if (CHECK_FLAG(0xDB9C, 1))
 			return true;
 
+		//guard's drinking
 		SET_FLAG(0, 3);
-		setTimerCallback(0x516d, 40); //fail
-		playAnimation(544, 0);
+		setTimerCallback(0x516d, 40);
+		playAnimation(544, 0, true, true); //ignore busy flag for this animation
 		return true;
 		
-	case 0x516d:
+	case 0x516d: //too late to scare guard, resetting
 		SET_FLAG(0, 0);
 		return true;
 
-	case 0x5189:
+	case 0x5189: //guard's drinking, boo!
 		SET_FLAG(0, 0);
 		setTimerCallback(0, 0);
-		scene->cancelAnimation(0);
-		SET_FLAG(0xDB9C, 1); //guard's drinking, boo!
+		scene->getAnimation(0)->free();
+		SET_FLAG(0xDB9C, 1); 
 		
 		displayAsyncMessage(0x3563, 320 * 130 + 300, 1, 5);
 		setOns(0, 16);
@@ -1584,8 +1586,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x5f73: //exiting ann's house
 		if (CHECK_FLAG(0xDBEE, 1))
 			playMusic(6);
-		loadScene(21, 161, 165);
-
+		loadScene(21, 99, 180, 3);
 		return true;
 
 	case 0x5fba:
@@ -1699,10 +1700,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6480: //dive mask
 		if (CHECK_FLAG(0xDB96, 1)) {
-			setOns(3, 36);
 			playSound(56, 7);
 			playSound(5, 15);
 			playActorAnimation(613);
+			setOns(3, 36);
 			inventory->add(39);
 			disableObject(5);
 			displayMessage(0x387c);
@@ -2523,8 +2524,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x88de:
 		playSound(5, 2);
 		Dialog::show(scene, 0x1B5F, 0, 523, 0xd1, 0xe5, 0, 1);
-		playActorAnimation(537);
-		playAnimation(538, 0);
+		playActorAnimation(537, true);
+		playAnimation(538, 0, true);
+		waitAnimation();
 		Dialog::show(scene, 0x1BE0, 0, 523, 0xd1, 0xe5, 0, 1);
 		return true;
 
@@ -2551,16 +2553,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x8942:
-		Dialog::show(scene, 0x2293);
+		Dialog::show(scene, 0x2293, 0, 524, 0xd1, 0xe5, 0, 2);
 		playSound(5, 10);
 		playActorAnimation(540, true);
 		playAnimation(539, 1, true);
 		waitAnimation();
-		Dialog::show(scene, 0x24b1);
-		Dialog::show(scene, 0x24d7);
-		Dialog::show(scene, 0x2514);
+		Dialog::show(scene, 0x24b1, 0, 524, 0xd1, 0xe5, 0, 2);
+		Dialog::show(scene, 0x24d7, 0, 524, 0xd1, 0xe5, 0, 2);
+		Dialog::show(scene, 0x2514, 0, 524, 0xd1, 0xe5, 0, 2);
 		moveTo(scene->getPosition().x, scene->getPosition().y + 1, 0);
-		Dialog::show(scene, 0x2570);
+		Dialog::show(scene, 0x2570, 0, 524, 0xd1, 0xe5, 0, 2);
 		return true;
 
 	case 0x89aa:
@@ -3716,11 +3718,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x9921: {
 		int id = scene->getId();
-		Common::Point p = scene->getPosition();
 		if (id != 15) {
 			displayMessage(id == 16 ? 0x38ce : 0x38a7);
 		} else {
-			moveTo(156, 180, 3);
 			playSound(5, 3);
 			playSound(38, 16);
 			playSound(38, 22);
@@ -3729,28 +3729,68 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(44, 10);
 			playSound(20, 26);
 			playActorAnimation(615);
-			loadScene(17, p);
+			loadScene(17, 156, 180, 3);
+			SET_FLAG(0, 4);
 			playSound(64, 7);
 			playSound(64, 21);
 			playSound(64, 42);
 			playSound(64, 63);
-			playActorAnimation(617);
+			setTimerCallback(0x9a1d, 40);
+			playActorAnimation(617, false, true);
 			//another time challenge!
-			if (true) {
-				playSound(64, 7);
-				playActorAnimation(618);
-				disableObject(5);
-				setOns(0, 0);
-				playSound(31, 1);
-				playActorAnimation(619);
-				inventory->add(42);
-				displayMessage(0x3989);
-			}
-			loadScene(id, p);
 		}
 	}
 	return true;
-
+	
+	case 0x9a1d: //no anchor, timeout
+		SET_FLAG(0, 0);
+		processCallback(0x9a7a);
+		INC_FLAG(0xDBA6);
+		switch(GET_FLAG(0xDBA6)) {
+		case 1:
+			displayMessage(0x39ae);
+			break;
+		case 2:
+			displayMessage(0x39f6);
+			break;
+		case 3:
+			displayMessage(0x3a28);
+			break;
+		case 4:
+			displayMessage(0x3a85);
+			break;
+		case 5:
+			displayMessage(0x39ae);
+			break;
+		default: 
+			displayMessage(0x39b7);
+		}
+		return true;
+	
+	case 0x99e0: //success getting an anchor
+		SET_FLAG(0, 0);
+		setTimerCallback(0, 0);
+		scene->getActorAnimation()->free();
+		playSound(64, 7);
+		playActorAnimation(618);
+		disableObject(5);
+		setOns(0, 0);
+		playSound(31, 1);
+		playActorAnimation(619);
+		processCallback(0x9a7a);
+		inventory->add(42);
+		displayMessage(0x3989);
+		return true;
+		
+	case 0x9a7a:
+		loadScene(15, 156, 180, 3);
+		playSound(5, 5);
+		playSound(38, 14);
+		playSound(38, 20);
+		playSound(5, 25);
+		playActorAnimation(616);
+		return true;
+		
 	case 0x9aca:
 		if (scene->getId() == 13) {
 			moveTo(172, 181, 1);

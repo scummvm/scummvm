@@ -27,7 +27,7 @@
 
 namespace TeenAgent {
 
-Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), data(0), data_size(0), frames_count(0), frames(0), index(0) {
+Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), ignore(false), data(0), data_size(0), frames_count(0), frames(0), index(0) {
 }
 
 Surface *Animation::firstFrame() {
@@ -86,6 +86,7 @@ Surface *Animation::currentFrame(int dt) {
 
 void Animation::restart() {
 	paused = false;
+	ignore = false;
 	index = 0;
 }
 
@@ -94,6 +95,7 @@ void Animation::free() {
 	x = y = 0;
 	loop = true;
 	paused = false;
+	ignore = false;
 
 	delete[] data;
 	data = NULL;

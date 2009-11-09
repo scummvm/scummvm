@@ -148,14 +148,15 @@ public:
 	Object *findObject(const Common::Point &point);
 
 	void loadObjectData();
-	bool cancelAnimation(byte slot);
+	Animation * getAnimation(byte slot);
+	inline Animation * getActorAnimation() { return &actor_animation; }
 
 private:
 	void loadOns();
 	void loadLans();
 
-	void playAnimation(byte idx, uint id, bool loop, bool paused);
-	void playActorAnimation(uint id, bool loop);
+	void playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore);
+	void playActorAnimation(uint id, bool loop, bool ignore);
 
 	byte palette[768];
 	void setPalette(OSystem *system, const byte *palette, unsigned mul = 1);

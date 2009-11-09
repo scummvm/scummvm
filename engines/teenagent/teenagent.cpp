@@ -300,15 +300,20 @@ Common::Error TeenAgentEngine::run() {
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				examine(event.mouse, current_object);
+				break;
 			case Common::EVENT_RBUTTONDOWN:
-				if (res->dseg.get_byte(0) == 3) {
+				//if (current_object)
+				//	debug(0, "%d, %s", current_object->id, current_object->name.c_str());
+				if (res->dseg.get_byte(0) == 3 && current_object->id == 1) {
 					processCallback(0x5189); //boo!
 					break;
 				}
-				if (event.type == Common::EVENT_LBUTTONDOWN)
-					examine(event.mouse, current_object);
-				else
-					use(current_object);
+				if (res->dseg.get_byte(0) == 4 && current_object->id == 5) {
+					processCallback(0x99e0); //getting an anchor
+					break;
+				}
+				use(current_object);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				mouse = event.mouse;
@@ -496,18 +501,19 @@ void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
+void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async, bool ignore) {
 	SceneEvent event(SceneEvent::kPlayAnimation);
 	event.animation = id;
-	event.slot = slot;
+	event.slot = slot | (ignore? 0x20: 0);
 	scene->push(event);
 	if (!async)
 		waitAnimation();
 }
 
-void TeenAgentEngine::playActorAnimation(uint16 id, bool async) {
+void TeenAgentEngine::playActorAnimation(uint16 id, bool async, bool ignore) {
 	SceneEvent event(SceneEvent::kPlayActorAnimation);
 	event.animation = id;
+	event.slot = ignore? 0x20: 0;
 	scene->push(event);
 	if (!async)
 		waitAnimation();

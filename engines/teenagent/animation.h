@@ -33,7 +33,7 @@ namespace TeenAgent {
 class Animation  {
 public:
 	uint16 id, x, y;
-	bool loop, paused;
+	bool loop, paused, ignore;
 
 	enum Type {kTypeLan, kTypeVaria, kTypeInventory};
 
