@@ -605,25 +605,27 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait,
 				  int myEscape, bool *result) {
 	CORO_BEGIN_CONTEXT;
-		PTP_INIT to;
 		PPROCESS pProc;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (result) *result = false;
-	_ctx->to.hPoly = -1;
-	_ctx->to.event = tEvent;
-	_ctx->to.pic = InitInterpretContext(GS_POLYGON,
+	PTP_INIT to;
+
+	if (result)
+		*result = false;
+	to.hPoly = -1;
+	to.event = tEvent;
+	to.pic = InitInterpretContext(GS_POLYGON,
 			GetPolyScript(hPoly),
 			tEvent,
 			hPoly,			// Polygon
 			actor,			// Actor
 			NULL,			// No Object
 			myEscape);
-	if (_ctx->to.pic != NULL) {
-		_ctx->pProc = g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &_ctx->to, sizeof(_ctx->to));
-		AttachInterpret(_ctx->to.pic, _ctx->pProc);
+	if (to.pic != NULL) {
+		_ctx->pProc = g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+		AttachInterpret(to.pic, _ctx->pProc);
 
 		if (bWait)
 			CORO_INVOKE_2(WaitInterpret, _ctx->pProc, result);
