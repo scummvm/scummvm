@@ -46,6 +46,7 @@
 #include "tinsel/music.h"
 #include "tinsel/palette.h"
 #include "tinsel/pcode.h"
+#include "tinsel/pdisplay.h"
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
 #include "tinsel/savescn.h"
@@ -73,14 +74,6 @@ extern bool bRestart;		// restart flag - set to restart the game
 extern int volMaster;
 #endif
 
-
-//----------------- EXTERNAL FUNCTIONS ---------------------
-
-// Tag functions in PDISPLAY.C
-extern void EnableTags();
-extern void DisableTags();
-extern void DisablePointing(CORO_PARAM);
-extern void EnablePointing();
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -3825,7 +3818,7 @@ void PopUpInventory(int invno) {
 
 		DisableTags();		// Tags disabled during inventory
 		if (TinselV2)
-			DisablePointing(nullContext);	// Pointing disabled during inventory
+			DisablePointing();	// Pointing disabled during inventory
 
 		if (invno == INV_CONV) {	// Conversation window?
 			if (TinselV2)

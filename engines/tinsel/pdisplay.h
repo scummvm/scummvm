@@ -32,6 +32,9 @@ namespace Tinsel {
 void EnableTags();
 void DisableTags();
 
+void DisablePointing();
+void EnablePointing();
+
 } // End of namespace Tinsel
 
 #endif		/* TINSEL_PDISPLAY_H */

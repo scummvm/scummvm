@@ -626,7 +626,7 @@ void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bo
 		AttachInterpret(_ctx->to.pic, _ctx->pProc);
 
 		if (bWait)
-			CORO_INVOKE_2(WaitInterpret,_ctx->pProc, result);
+			CORO_INVOKE_2(WaitInterpret, _ctx->pProc, result);
 	}
 
 	CORO_END_CODE;

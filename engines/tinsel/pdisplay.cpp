@@ -252,37 +252,31 @@ void CursorPositionProcess(CORO_PARAM, const void *) {
 /**
  * While inventory/menu is open.
  */
-void DisablePointing(CORO_PARAM) {
-	CORO_BEGIN_CONTEXT;
-		int	i;
-		HPOLYGON hPoly;		// Polygon handle
-	CORO_END_CONTEXT(_ctx);
-
-	CORO_BEGIN_CODE(_ctx);
+void DisablePointing() {
+	int	i;
+	HPOLYGON hPoly;		// Polygon handle
 
 	bPointingActive = false;
 
-	for (_ctx->i = 0; _ctx->i < MAX_POLY; _ctx->i++)	{
-		_ctx->hPoly = GetPolyHandle(_ctx->i);
+	for (i = 0; i < MAX_POLY; i++)	{
+		hPoly = GetPolyHandle(i);
 
-		if (_ctx->hPoly != NOPOLY && PolyType(_ctx->hPoly) == TAG && PolyIsPointedTo(_ctx->hPoly)) {
-			SetPolyPointedTo(_ctx->hPoly, false);
-			SetPolyTagWanted(_ctx->hPoly, false, false, 0);
-			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->hPoly, UNPOINT, 0, false, 0));
+		if (hPoly != NOPOLY && PolyType(hPoly) == TAG && PolyIsPointedTo(hPoly)) {
+			SetPolyPointedTo(hPoly, false);
+			SetPolyTagWanted(hPoly, false, false, 0);
+			PolygonEvent(nullContext, hPoly, UNPOINT, 0, false, 0);
 		}
 	}
 
 	// For each tagged actor
-	for (_ctx->i = 0; (_ctx->i = NextTaggedActor(_ctx->i)) != 0; ) {
-		if (ActorIsPointedTo(_ctx->i)) {
-			SetActorPointedTo(_ctx->i, false);
-			SetActorTagWanted(_ctx->i, false, false, 0);
+	for (i = 0; (i = NextTaggedActor(i)) != 0; ) {
+		if (ActorIsPointedTo(i)) {
+			SetActorPointedTo(i, false);
+			SetActorTagWanted(i, false, false, 0);
 
-			CORO_INVOKE_ARGS(ActorEvent, (CORO_SUBCTX, _ctx->i, UNPOINT, false, 0));
+			ActorEvent(nullContext, i, UNPOINT, false, 0);
 		}
 	}
-
-	CORO_END_CODE;
 }
 
 /**
