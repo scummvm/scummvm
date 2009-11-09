@@ -23,10 +23,10 @@
  *
  */
 
+#include "common/array.h"
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/stack.h"
-#include "common/queue.h"
 
 #include "draci/draci.h"
 #include "draci/script.h"
@@ -353,7 +353,7 @@ int Script::funcActPhase(int objID) const {
 
 /* GPL commands */
 
-void Script::play(Common::Queue<int> &params) {
+void Script::play(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
@@ -375,13 +375,13 @@ Animation *Script::loadObjectAnimation(int objID, GameObject *obj, int animID) {
 	return anim;
 }
 
-void Script::load(Common::Queue<int> &params) {
+void Script::load(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
-	int animID = params.pop() - 1;
+	int objID = params[0] - 1;
+	int animID = params[1] - 1;
 
 	uint i;
 	GameObject *obj = _vm->_game->getObject(objID);
@@ -400,13 +400,13 @@ void Script::load(Common::Queue<int> &params) {
 	loadObjectAnimation(objID, obj, animID);
 }
 
-void Script::start(Common::Queue<int> &params) {
+void Script::start(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
-	int animID = params.pop() - 1;
+	int objID = params[0] - 1;
+	int animID = params[1] - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
 	_vm->_game->stopObjectAnimations(obj);
@@ -449,13 +449,13 @@ void Script::start(Common::Queue<int> &params) {
 	}
 }
 
-void Script::startPlay(Common::Queue<int> &params) {
+void Script::startPlay(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
-	int animID = params.pop() - 1;
+	int objID = params[0] - 1;
+	int animID = params[1] - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
 	_vm->_game->stopObjectAnimations(obj);
@@ -484,7 +484,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	anim->registerCallback(&Animation::doNothing);
 }
 
-void Script::justTalk(Common::Queue<int> &params) {
+void Script::justTalk(const Common::Array<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 	int new_anim;
@@ -496,7 +496,7 @@ void Script::justTalk(Common::Queue<int> &params) {
 	_vm->_game->playHeroAnimation(new_anim);
 }
 
-void Script::justStay(Common::Queue<int> &params) {
+void Script::justStay(const Common::Array<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
 	int new_anim;
@@ -508,55 +508,55 @@ void Script::justStay(Common::Queue<int> &params) {
 	_vm->_game->playHeroAnimation(new_anim);
 }
 
-void Script::c_If(Common::Queue<int> &params) {
-	int expression = params.pop();
-	int jump = params.pop();
+void Script::c_If(const Common::Array<int> &params) {
+	int expression = params[0];
+	int jump = params[1];
 
 	if (expression)
 		_jump = jump;
 }
 
-void Script::c_Goto(Common::Queue<int> &params) {
-	int jump = params.pop();
+void Script::c_Goto(const Common::Array<int> &params) {
+	int jump = params[0];
 
 	_jump = jump;
 }
 
-void Script::c_Let(Common::Queue<int> &params) {
-	int var = params.pop() - 1;
-	int value = params.pop();
+void Script::c_Let(const Common::Array<int> &params) {
+	int var = params[0] - 1;
+	int value = params[1];
 
 	_vm->_game->setVariable(var, value);
 }
 
-void Script::loadMusic(Common::Queue<int> &params) {
-	int track = params.pop();
+void Script::loadMusic(const Common::Array<int> &params) {
+	int track = params[0];
 	_vm->_game->setMusicTrack(track);
 }
 
-void Script::startMusic(Common::Queue<int> &params) {
+void Script::startMusic(const Common::Array<int> &params) {
 	// If already playing this track, nothing happens.
 	_vm->_music->playSMF(_vm->_game->getMusicTrack(), true);
 }
 
-void Script::stopMusic(Common::Queue<int> &params) {
+void Script::stopMusic(const Common::Array<int> &params) {
 	_vm->_music->stop();
 	_vm->_game->setMusicTrack(0);
 }
 
-void Script::mark(Common::Queue<int> &params) {
+void Script::mark(const Common::Array<int> &params) {
 	_vm->_game->setMarkedAnimationIndex(_vm->_anims->getLastIndex());
 }
 
-void Script::release(Common::Queue<int> &params) {
+void Script::release(const Common::Array<int> &params) {
 	int markedIndex = _vm->_game->getMarkedAnimationIndex();
 
 	_vm->_game->deleteAnimationsAfterIndex(markedIndex);
 }
 
-void Script::icoStat(Common::Queue<int> &params) {
-	int status = params.pop();
-	int itemID = params.pop() - 1;
+void Script::icoStat(const Common::Array<int> &params) {
+	int status = params[0];
+	int itemID = params[1] - 1;
 
 	_vm->_game->setItemStatus(itemID, status == 1);
 
@@ -600,9 +600,9 @@ void Script::icoStat(Common::Queue<int> &params) {
 	}
 }
 
-void Script::objStatOn(Common::Queue<int> &params) {
-	int objID = params.pop() - 1;
-	int roomID = params.pop() - 1;
+void Script::objStatOn(const Common::Array<int> &params) {
+	int objID = params[0] - 1;
+	int roomID = params[1] - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
@@ -610,9 +610,9 @@ void Script::objStatOn(Common::Queue<int> &params) {
 	obj->_visible = true;
 }
 
-void Script::objStat(Common::Queue<int> &params) {
-	int status = params.pop();
-	int objID = params.pop() - 1;
+void Script::objStat(const Common::Array<int> &params) {
+	int status = params[0];
+	int objID = params[1] - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
@@ -628,47 +628,47 @@ void Script::objStat(Common::Queue<int> &params) {
 	_vm->_game->stopObjectAnimations(obj);
 }
 
-void Script::execInit(Common::Queue<int> &params) {
+void Script::execInit(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
+	int objID = params[0] - 1;
 
 	const GameObject *obj = _vm->_game->getObject(objID);
 	run(obj->_program, obj->_init);
 }
 
-void Script::execLook(Common::Queue<int> &params) {
+void Script::execLook(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
+	int objID = params[0] - 1;
 
 	const GameObject *obj = _vm->_game->getObject(objID);
 	run(obj->_program, obj->_look);
 }
 
-void Script::execUse(Common::Queue<int> &params) {
+void Script::execUse(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
+	int objID = params[0] - 1;
 
 	const GameObject *obj = _vm->_game->getObject(objID);
 	run(obj->_program, obj->_use);
 }
 
-void Script::stayOn(Common::Queue<int> &params) {
+void Script::stayOn(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int x = params.pop();
-	int y = params.pop();
-	SightDirection dir = static_cast<SightDirection> (params.pop());
+	int x = params[0];
+	int y = params[1];
+	SightDirection dir = static_cast<SightDirection> (params[2]);
 
 	// Jumps into the given position regardless of the walking map.
 	Common::Point heroPos(_vm->_game->findNearestWalkable(x, y));
@@ -682,14 +682,14 @@ void Script::stayOn(Common::Queue<int> &params) {
 		  dir, heroPos, mousePos, WalkingPath(), startingDirection));
 }
 
-void Script::walkOn(Common::Queue<int> &params) {
+void Script::walkOn(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int x = params.pop();
-	int y = params.pop();
-	SightDirection dir = static_cast<SightDirection> (params.pop());
+	int x = params[0];
+	int y = params[1];
+	SightDirection dir = static_cast<SightDirection> (params[2]);
 
 	// Constructs an optimal path and starts walking there.  No callback
 	// will be called at the end nor will the loop-body exit.
@@ -697,14 +697,14 @@ void Script::walkOn(Common::Queue<int> &params) {
 	_vm->_game->walkHero(x, y, dir);
 }
 
-void Script::walkOnPlay(Common::Queue<int> &params) {
+void Script::walkOnPlay(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int x = params.pop();
-	int y = params.pop();
-	SightDirection dir = static_cast<SightDirection> (params.pop());
+	int x = params[0];
+	int y = params[1];
+	SightDirection dir = static_cast<SightDirection> (params[2]);
 
 	_vm->_game->stopWalking();
 	_vm->_game->walkHero(x, y, dir);
@@ -714,20 +714,20 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 	_vm->_game->loop(kInnerUntilExit, false);
 }
 
-void Script::newRoom(Common::Queue<int> &params) {
+void Script::newRoom(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
 
-	int room = params.pop() - 1;
-	int gate = params.pop() - 1;
+	int room = params[0] - 1;
+	int gate = params[1] - 1;
 
 	_vm->_game->scheduleEnteringRoomUsingGate(room, gate);
 }
 
-void Script::talk(Common::Queue<int> &params) {
-	int personID = params.pop() - 1;
-	int sentenceID = params.pop() - 1;
+void Script::talk(const Common::Array<int> &params) {
+	int personID = params[0] - 1;
+	int sentenceID = params[1] - 1;
 
 	Surface *surface = _vm->_screen->getSurface();
 
@@ -812,19 +812,19 @@ void Script::talk(Common::Queue<int> &params) {
 	}
 }
 
-void Script::dialogue(Common::Queue<int> &params) {
-	int dialogueID = params.pop() - 1;
+void Script::dialogue(const Common::Array<int> &params) {
+	int dialogueID = params[0] - 1;
 
 	_vm->_game->dialogueMenu(dialogueID);
 }
 
-void Script::loadMap(Common::Queue<int> &params) {
-	int mapID = params.pop() - 1;
+void Script::loadMap(const Common::Array<int> &params) {
+	int mapID = params[0] - 1;
 
 	_vm->_game->loadWalkingMap(mapID);
 }
 
-void Script::resetDialogue(Common::Queue<int> &params) {
+void Script::resetDialogue(const Common::Array<int> &params) {
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 
 	for (int i = 0; i < _vm->_game->getDialogueBlockNum(); ++i) {
@@ -832,7 +832,7 @@ void Script::resetDialogue(Common::Queue<int> &params) {
 	}
 }
 
-void Script::resetDialogueFrom(Common::Queue<int> &params) {
+void Script::resetDialogueFrom(const Common::Array<int> &params) {
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 
 	for (int i = _vm->_game->getDialogueCurrentBlock(); i < _vm->_game->getDialogueBlockNum(); ++i) {
@@ -840,54 +840,53 @@ void Script::resetDialogueFrom(Common::Queue<int> &params) {
 	}
 }
 
-void Script::resetBlock(Common::Queue<int> &params) {
-	int blockID = params.pop() - 1;
+void Script::resetBlock(const Common::Array<int> &params) {
+	int blockID = params[0] - 1;
 
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 
 	_vm->_game->setDialogueVar(currentOffset + blockID, 0);
 }
 
-void Script::exitDialogue(Common::Queue<int> &params) {
+void Script::exitDialogue(const Common::Array<int> &params) {
 	_vm->_game->setDialogueExit(true);
 }
 
-void Script::roomMap(Common::Queue<int> &params) {
+void Script::roomMap(const Common::Array<int> &params) {
 	// Load the default walking map for the room
 	_vm->_game->loadWalkingMap(_vm->_game->getMapID());
 }
 
-void Script::disableQuickHero(Common::Queue<int> &params) {
+void Script::disableQuickHero(const Common::Array<int> &params) {
 	_vm->_game->setEnableQuickHero(false);
 }
 
-void Script::enableQuickHero(Common::Queue<int> &params) {
+void Script::enableQuickHero(const Common::Array<int> &params) {
 	_vm->_game->setEnableQuickHero(true);
 }
 
-void Script::disableSpeedText(Common::Queue<int> &params) {
+void Script::disableSpeedText(const Common::Array<int> &params) {
 	_vm->_game->setEnableSpeedText(false);
 }
 
-void Script::enableSpeedText(Common::Queue<int> &params) {
+void Script::enableSpeedText(const Common::Array<int> &params) {
 	_vm->_game->setEnableSpeedText(true);
 }
 
-void Script::loadPalette(Common::Queue<int> &params) {
-	int palette = params.pop() - 1;
+void Script::loadPalette(const Common::Array<int> &params) {
+	int palette = params[0] - 1;
 
 	_vm->_game->schedulePalette(palette);
 }
 
-void Script::blackPalette(Common::Queue<int> &params) {
+void Script::blackPalette(const Common::Array<int> &params) {
 
 	_vm->_game->schedulePalette(kBlackPalette);
 }
 
-void Script::fadePalette(Common::Queue<int> &params) {
-	params.pop();	// unused first and last
-	params.pop();
-	int phases = params.pop();
+void Script::fadePalette(const Common::Array<int> &params) {
+	// Unused first and last
+	int phases = params[2];
 
 	// Let the palette fade in the background while the game continues.
 	// Since we don't set substatus to kInnerWhileFade, the outer loop will
@@ -895,17 +894,16 @@ void Script::fadePalette(Common::Queue<int> &params) {
 	_vm->_game->initializeFading(phases);
 }
 
-void Script::fadePalettePlay(Common::Queue<int> &params) {
-	params.pop();	// unused first and last
-	params.pop();
-	int phases = params.pop();
+void Script::fadePalettePlay(const Common::Array<int> &params) {
+	// Unused first and last
+	int phases = params[2];
 	_vm->_game->initializeFading(phases);
 
 	// Call the game loop to enable interactivity until the fading is done.
 	_vm->_game->loop(kInnerWhileFade, false);
 }
 
-void Script::setPalette(Common::Queue<int> &params) {
+void Script::setPalette(const Common::Array<int> &params) {
 	if (_vm->_game->getScheduledPalette() == -1) {
 		_vm->_screen->setPalette(NULL, 0, kNumColours);
 	} else {
@@ -918,15 +916,15 @@ void Script::setPalette(Common::Queue<int> &params) {
 	_vm->_system->delayMillis(20);
 }
 
-void Script::quitGame(Common::Queue<int> &params) {
+void Script::quitGame(const Common::Array<int> &params) {
 	_vm->_game->setQuit(true);
 }
 
-void Script::pushNewRoom(Common::Queue<int> &params) {
+void Script::pushNewRoom(const Common::Array<int> &params) {
 	_vm->_game->pushNewRoom();
 }
 
-void Script::popNewRoom(Common::Queue<int> &params) {
+void Script::popNewRoom(const Common::Array<int> &params) {
 	_vm->_game->popNewRoom();
 }
 
@@ -1139,7 +1137,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 	Common::MemoryReadStream reader(program._bytecode, program._length);
 
 	// Parameter queue that is passed to each command
-	Common::Queue<int> params;
+	Common::Array<int> params;
 
 	// Offset is given as number of 16-bit integers so we need to convert
 	// it to a number of bytes
@@ -1189,10 +1187,10 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 				if (cmd->_paramTypes[i] == kGPL2Math) {
 					debugC(3, kDraciBytecodeDebugLevel,
 					    "Evaluating (in-script) GPL expression at offset %d: ", offset);
-					params.push(handleMathExpression(&reader));
+					params.push_back(handleMathExpression(&reader));
 				} else {
 					tmp = reader.readSint16LE();
-					params.push(tmp);
+					params.push_back(tmp);
 					debugC(2, kDraciBytecodeDebugLevel, "\t%d", tmp);
 				}
 			}

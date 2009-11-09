@@ -26,9 +26,9 @@
 #ifndef DRACI_SCRIPT_H
 #define DRACI_SCRIPT_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "common/queue.h"
 
 namespace Draci {
 
@@ -42,8 +42,7 @@ enum {
 	kNumCommands = 55
 };
 
-// TODO(spalek): shouldn't modify params passed by reference.  Either make it const or copy the parameter.
-typedef void (Script::*GPLHandler)(Common::Queue<int> &);
+typedef void (Script::*GPLHandler)(const Common::Array<int> &);
 typedef int  (Script::*GPLOperatorHandler)(int, int) const;
 typedef int  (Script::*GPLFunctionHandler)(int) const;
 
@@ -112,50 +111,50 @@ private:
 	const GPL2Operator *_operatorList;
 	const GPL2Function *_functionList;
 
-	void c_If(Common::Queue<int> &params);
-	void c_Goto(Common::Queue<int> &params);
-	void c_Let(Common::Queue<int> &params);
-	void load(Common::Queue<int> &params);
-	void start(Common::Queue<int> &params);
-	void loadMusic(Common::Queue<int> &params);
-	void startMusic(Common::Queue<int> &params);
-	void stopMusic(Common::Queue<int> &params);
-	void mark(Common::Queue<int> &params);
-	void release(Common::Queue<int> &params);
-	void icoStat(Common::Queue<int> &params);
-	void objStat(Common::Queue<int> &params);
-	void objStatOn(Common::Queue<int> &params);
-	void execInit(Common::Queue<int> &params);
-	void execLook(Common::Queue<int> &params);
-	void execUse(Common::Queue<int> &params);
-	void stayOn(Common::Queue<int> &params);
-	void walkOn(Common::Queue<int> &params);
-	void walkOnPlay(Common::Queue<int> &params);
-	void play(Common::Queue<int> &params);
-	void startPlay(Common::Queue<int> &params);
-	void justTalk(Common::Queue<int> &params);
-	void justStay(Common::Queue<int> &params);
-	void newRoom(Common::Queue<int> &params);
-	void talk(Common::Queue<int> &params);
-	void loadMap(Common::Queue<int> &params);
-	void roomMap(Common::Queue<int> &params);
-	void disableQuickHero(Common::Queue<int> &params);
-	void enableQuickHero(Common::Queue<int> &params);
-	void disableSpeedText(Common::Queue<int> &params);
-	void enableSpeedText(Common::Queue<int> &params);
-	void dialogue(Common::Queue<int> &params);
-	void exitDialogue(Common::Queue<int> &params);
-	void resetDialogue(Common::Queue<int> &params);
-	void resetDialogueFrom(Common::Queue<int> &params);
-	void resetBlock(Common::Queue<int> &params);
-	void setPalette(Common::Queue<int> &params);
-	void blackPalette(Common::Queue<int> &params);
-	void fadePalette(Common::Queue<int> &params);
-	void fadePalettePlay(Common::Queue<int> &params);
-	void loadPalette(Common::Queue<int> &params);
-	void quitGame(Common::Queue<int> &params);
-	void pushNewRoom(Common::Queue<int> &params);
-	void popNewRoom(Common::Queue<int> &params);
+	void c_If(const Common::Array<int> &params);
+	void c_Goto(const Common::Array<int> &params);
+	void c_Let(const Common::Array<int> &params);
+	void load(const Common::Array<int> &params);
+	void start(const Common::Array<int> &params);
+	void loadMusic(const Common::Array<int> &params);
+	void startMusic(const Common::Array<int> &params);
+	void stopMusic(const Common::Array<int> &params);
+	void mark(const Common::Array<int> &params);
+	void release(const Common::Array<int> &params);
+	void icoStat(const Common::Array<int> &params);
+	void objStat(const Common::Array<int> &params);
+	void objStatOn(const Common::Array<int> &params);
+	void execInit(const Common::Array<int> &params);
+	void execLook(const Common::Array<int> &params);
+	void execUse(const Common::Array<int> &params);
+	void stayOn(const Common::Array<int> &params);
+	void walkOn(const Common::Array<int> &params);
+	void walkOnPlay(const Common::Array<int> &params);
+	void play(const Common::Array<int> &params);
+	void startPlay(const Common::Array<int> &params);
+	void justTalk(const Common::Array<int> &params);
+	void justStay(const Common::Array<int> &params);
+	void newRoom(const Common::Array<int> &params);
+	void talk(const Common::Array<int> &params);
+	void loadMap(const Common::Array<int> &params);
+	void roomMap(const Common::Array<int> &params);
+	void disableQuickHero(const Common::Array<int> &params);
+	void enableQuickHero(const Common::Array<int> &params);
+	void disableSpeedText(const Common::Array<int> &params);
+	void enableSpeedText(const Common::Array<int> &params);
+	void dialogue(const Common::Array<int> &params);
+	void exitDialogue(const Common::Array<int> &params);
+	void resetDialogue(const Common::Array<int> &params);
+	void resetDialogueFrom(const Common::Array<int> &params);
+	void resetBlock(const Common::Array<int> &params);
+	void setPalette(const Common::Array<int> &params);
+	void blackPalette(const Common::Array<int> &params);
+	void fadePalette(const Common::Array<int> &params);
+	void fadePalettePlay(const Common::Array<int> &params);
+	void loadPalette(const Common::Array<int> &params);
+	void quitGame(const Common::Array<int> &params);
+	void pushNewRoom(const Common::Array<int> &params);
+	void popNewRoom(const Common::Array<int> &params);
 
 	int operAnd(int op1, int op2) const;
 	int operOr(int op1, int op2) const;
