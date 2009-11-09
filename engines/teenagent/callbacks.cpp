@@ -650,19 +650,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	return true;
 
 	case 0x4d94: //talking with fatso
-		Dialog::show(scene, 0x33bd);
-		displayMessage(0x49ae);
+		Dialog::show(scene, 0x33bd, 0, 666, 0xd1, 0xd0, 0, 2);
+		displayMessage(0x49ae, 0xd0, 25060);
 		playSound(5, 3);
 		playAnimation(667, 1);
 		playAnimation(668, 1);
 		setOns(2, 50);
-		Dialog::show(scene, 0x36c7);
+		Dialog::show(scene, 0x36c7, 0, 666, 0xd1, 0xd0, 0, 2);
 		setOns(3, 0);
 		SET_FLAG(0xDBEC, 0);
 		reloadLan();
 		playSound(82, 19);
-		playAnimation(668, 1);
-		Dialog::show(scene, 0x3779);
+		playAnimation(669, 1);
+		Dialog::show(scene, 0x3779, 0, 0, 0xd1, 0xd1, 0, 0);
 		enableObject(15);
 		disableObject(8);
 		return true;
@@ -806,7 +806,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(583);
 			playActorAnimation(584);
 
-			debug(0, "FIXME: darken whole screen");
+			loadScene(0, 0, 0, 0); //clear background
 
 			playSound(72, 18);
 			playSound(73, 39);
@@ -814,6 +814,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			loadScene(11, 194, 160, 2);
 			playSound(28, 2);
+			playActorAnimation(586);
 			moveTo(138, 163, 3);
 			displayMessage(0x3650);
 			SET_FLAG(0xDBA0, 1);
@@ -2606,23 +2607,25 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x8a6f: //banknote + ann
 		if (CHECK_FLAG(0xDBB5, 1)) {
-			Dialog::show(scene, 0x2992);
+			Dialog::show(scene, 0x2992, 0, 524, 0xd1, 0xe5, 0, 2);
 			playSound(5, 3);
 			playSound(5, 20);
 			playActorAnimation(671, true);
 			playAnimation(670, 1, true);
 			waitAnimation();
 			playAnimation(672, 1);
-			Dialog::show(scene, 0x2a00, 672);
-			//fixme: skipped some text
+			Dialog::show(scene, 0x2a00, 0, 672, 0xd1, 0xe5, 0, 2);
+			playAnimation(672, 1);
+
 			playSound(83, 12);
+			displayAsyncMessage(0x4a5b, 36684, 23, 38, 0xe5);
 			playActorAnimation(673);
 			loadScene(11, scene->getPosition());
 			playSound(24, 31);
 			playSound(24, 48);
 			playSound(79, 50);
 			playActorAnimation(674, true);
-			playAnimation(675, 1, true);
+			playAnimation(675, 0, true);
 			waitAnimation();
 			loadScene(28, 0, 167, 2);
 			moveTo(66, 167, 2);
@@ -3951,14 +3954,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x9f3e:
+		hideActor();
 		loadScene(35, scene->getPosition());
-		playAnimation(907, 1, true);
-		playAnimation(906, 2, true);
+		playAnimation(907, 2, true);
+		playAnimation(906, 3, true);
 		waitAnimation();
-		//Dialog::show(scene, 0x7243, 908, 909);
-		Dialog::show(scene, 0x7243);
-		//Dialog::show(scene, 0x7318, 908, 910); //fixme: implement better synchronization
-		Dialog::show(scene, 0x7318);
+		Dialog::show(scene, 0x7243, 908, 909, 0xd9, 0xd0, 2, 3);
+		Dialog::show(scene, 0x7318, 910, 908, 0xd0, 0xd9, 3, 2);
 		loadScene(11, scene->getPosition());
 		setOns(3, 51);
 		playAnimation(911, 1);
