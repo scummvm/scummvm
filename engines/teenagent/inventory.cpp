@@ -152,8 +152,11 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 	case Common::EVENT_LBUTTONDOWN: {
 		//check combine
+		if (!_active)
+			return false;
+			
 		if (hovered_obj == NULL)
-			return _active;
+			return true;
 
 		if (selected_obj == NULL) {
 			activate(false);
