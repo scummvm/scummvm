@@ -70,7 +70,7 @@ static SOUND_BUFFER midiBuffer = { 0, 0 };
 static SCNHANDLE	currentMidi = 0;
 static bool		currentLoop = false;
 
-const SCNHANDLE midiOffsetsGRAVersion[] = {
+static const SCNHANDLE midiOffsetsGRAVersion[] = {
 		 4,	  4534,	 14298,	 18828,	 23358,	 38888,	 54418,	 57172,	 59926,	 62450,
 	 62952,	 67482,	 72258,	 74538,	 79314,	 87722,	103252,	115176,	127100,	127898,
 	130256,	132614,	134972,	137330,	139688,	150196,	152554,	154912,	167422,	174762,
@@ -88,7 +88,7 @@ const SCNHANDLE midiOffsetsGRAVersion[] = {
 	794630,	796422,	798998
 };
 
-const SCNHANDLE midiOffsetsSCNVersion[] = {
+static const SCNHANDLE midiOffsetsSCNVersion[] = {
 		 4,	  4504,	 11762,	 21532,	 26070,	 28754,	 33254,	 40512,	 56310,	 72108,
 	 74864,	 77620,	 80152,	 80662,	 85200,	 89982,	 92268,	 97050,	105466,	121264,
 	133194,	145124,	145928,	148294,	150660,	153026,	155392,	157758,	168272,	170638,
@@ -107,7 +107,7 @@ const SCNHANDLE midiOffsetsSCNVersion[] = {
 	869822,	875436,	877234,	879818
 };
 
-const int enhancedAudioGRAVersion[] = {
+static const int enhancedAudioGRAVersion[] = {
 	 1,   2,   1,   1,   3,   3,   4,   4,   5,   6, //   1-10
 	 1,   7,   8,   9,  10,   3,  11,  11,  12,  13, //  11-20
 	13,  13,  13,  13,  14,  13,  13,  15,  16,  17, //  21-30
@@ -125,7 +125,7 @@ const int enhancedAudioGRAVersion[] = {
 	98,  99,  99                                     // 141-143
 };
 
-const int enhancedAudioSCNVersion[] = {
+static const int enhancedAudioSCNVersion[] = {
 	 301, 302,   2,    1,   1, 301, 302,   3,   3,   4,	//   1-10
 	   4,   5,   6,    1,   7,   8,   9,  10,   8,  11,	//  11-20
 	  11,  12,  13,   13,  13,  13,  13,  14,  13,  13,	//  21-30
@@ -320,14 +320,14 @@ int GetMidiVolume() {
 	return _vm->_config->_musicVolume;
 }
 
-static int priorVolMusic = 0;
-
 /**
  * Sets the volume of the MIDI music.
  * @param vol			New volume - 0..MAXMIDIVOL
  */
-void SetMidiVolume(int vol)	{
+void SetMidiVolume(int vol) {
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
+
+	static int priorVolMusic = 0;
 
 	if (vol == 0 && priorVolMusic == 0)	{
 		// Nothing to do
