@@ -501,10 +501,10 @@ void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async, bool ignore) {
+void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async, bool ignore, bool loop) {
 	SceneEvent event(SceneEvent::kPlayAnimation);
 	event.animation = id;
-	event.slot = slot | (ignore? 0x20: 0);
+	event.slot = slot | (ignore? 0x20: 0) | (loop? 0x80: 0);
 	scene->push(event);
 	if (!async)
 		waitAnimation();
