@@ -151,7 +151,7 @@ void OSystem_SDL_Symbian::initBackend() {
 	Common::String savePath;
 	savePath = Symbian::GetExecutablePath();
 	savePath += DEFAULT_SAVE_PATH "\\";
-   _savefile = new DefaultSaveFileManager(savePath);
+	_savefile = new DefaultSaveFileManager(savePath);
 
 	// If savepath has not already been set then set it
 	if (!ConfMan.hasKey("savepath")) {
