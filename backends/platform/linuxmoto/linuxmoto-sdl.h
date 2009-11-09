@@ -50,7 +50,7 @@ public:
 	void hideOverlay();
 
 	/* Event Stuff */
-	virtual bool remapKey(const SDL_Event &ev, Common::Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 	virtual void preprocessEvents(SDL_Event *event);
 	virtual void setupMixer();
 	virtual Common::HardwareKeySet *getHardwareKeySet();

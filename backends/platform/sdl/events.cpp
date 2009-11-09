@@ -315,7 +315,7 @@ bool OSystem_SDL::handleKeyDown(const SDL_Event &ev, Common::Event &event) {
 
 bool OSystem_SDL::handleKeyUp(const SDL_Event &ev, Common::Event &event) {
 	byte b = 0;
-	const bool event_complete = remapKey(ev,event);
+	const bool event_complete = remapKey(ev, event);
 
 	if (event_complete)
 		return true;
@@ -491,7 +491,7 @@ bool OSystem_SDL::handleJoyAxisMotion(const SDL_Event &ev, Common::Event &event)
 	return true;
 }
 
-bool OSystem_SDL::remapKey(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 #ifdef LINUPY
 	// On Yopy map the End button to quit
 	if ((ev.key.keysym.sym == 293)) {
