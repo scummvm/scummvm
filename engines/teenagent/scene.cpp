@@ -383,12 +383,6 @@ bool Scene::render(OSystem *system) {
 
 		Graphics::Surface *surface = system->lockScreen();
 
-		//render on
-		if (on.pixels != NULL) {
-			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
-			}
-		}
 
 		if (ons != NULL) {
 			for (uint32 i = 0; i < ons_count; ++i) {
@@ -498,6 +492,13 @@ bool Scene::render(OSystem *system) {
 						busy = true;
 				} else
 					actor_animation_position = teenagent.render(surface, position, orientation, 0);
+			}
+		}
+
+		//render on
+		if (on.pixels != NULL) {
+			if (_id != 16 || getOns(16)[0] != 0) {
+				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
 			}
 		}
 
