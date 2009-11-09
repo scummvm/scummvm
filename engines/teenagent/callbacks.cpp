@@ -719,8 +719,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				moveTo(204, 178, 3, true);
 				playSound(59, 1);
 				playSound(60, 16);
-				displayMessage(0x372e);
 				playActorAnimation(591);
+				displayMessage(0x372e);
 				SET_FLAG(0xDBA2, 1);
 				processCallback(0x9d45);
 			}
@@ -2307,6 +2307,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(35, 1);
 		playActorAnimation(622, true);
 		playAnimation(624, 0, true);
+		waitAnimation();
+		
 		displayMessage(0x3afd);
 
 		inventory->remove(43);
@@ -2581,14 +2583,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x89cc:
 		inventory->remove(23);
 		playSound(5, 6);
-		Dialog::show(scene, 0x2634);
+		Dialog::show(scene, 0x2634, 0, 524, 0xd1, 0xe5, 0, 2);
 		playActorAnimation(555, true);
 		playAnimation(556, 1, true);
 		waitAnimation();
 		playActorAnimation(557, true);
 		playAnimation(558, 1, true);
 		waitAnimation();
-		Dialog::show(scene, 0x2971);
+		Dialog::show(scene, 0x2971, 0, 524, 0xd1, 0xe5, 0, 2);
 		inventory->add(24);
 		return true;
 
@@ -2597,8 +2599,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(560);
 		inventory->remove(26);
 		inventory->add(27);
-		Dialog::show(scene, 0x1ecd);
-		Dialog::show(scene, 0x1f09);
+		Dialog::show(scene, 0x1ecd, 0, 523, 0xd1, 0xe5, 0, 1);
+		Dialog::show(scene, 0x1f09, 0, 523, 0xd1, 0xe5, 0, 1);
 		SET_FLAG(0xDBB1, 1);
 		return true;
 
@@ -3919,29 +3921,33 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x9e54:
+		hideActor();
 		loadScene(32, scene->getPosition());
 		playAnimation(894, 1, true);
 		playAnimation(893, 2, true);
 		waitAnimation();
-		Dialog::show(scene, 0x706e);
+		Dialog::show(scene, 0x706e, 894, 893, 0xd9, 0xd1, 3, 2);
 		playSound(75, 9);
 		playAnimation(898, 1, true);
 		playAnimation(897, 2, true);
-		Dialog::show(scene, 0x7096);
+		Dialog::show(scene, 0x7096, 896, 895, 0xd0, 0xd9, 2, 3);
+		showActor();
 		return true;
 
 	case 0x9ec3:
+		hideActor();
 		loadScene(29, scene->getPosition());
 		playActorAnimation(901, true);
 		playAnimation(900, 1, true);
 		waitAnimation();
-		Dialog::show(scene, 0x7161, 902, 903);
+		Dialog::show(scene, 0x7161, 903, 902, 0xd0, 0xd9, 2, 3);
 		for (byte i = 3; i <= 9; i += 2)
 			playSound(56, i);
 
 		playActorAnimation(905, true);
 		playAnimation(904, 1, true);
-		Dialog::show(scene, 0x71c6, 902, 903);
+		Dialog::show(scene, 0x71c6, 903, 902, 0xd0, 0xd9, 2, 3);
+		showActor();
 		return true;
 
 	case 0x9f3e:
