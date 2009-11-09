@@ -23,11 +23,12 @@
  *
  */
 
-#if defined(WIN32) && !defined(__SYMBIAN32__)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
+#include "common/scummsys.h"
+
+// Several SDL based ports use a custom main, and hence do not want to compile
+// of this file. The following "#if" ensures that.
+#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO)
+
 
 #include "backends/platform/sdl/sdl.h"
 #include "backends/plugins/sdl/sdl-provider.h"
@@ -35,20 +36,25 @@
 
 #if defined(__SYMBIAN32__)
 #include "SymbianOs.h"
-#endif
 
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO)
+#elif defined(WIN32)
 
-#if defined (WIN32)
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 	return main(__argc, __argv);
 }
 #endif
 
-int main(int argc, char *argv[]) {
 
 #if defined(__SYMBIAN32__)
+
+// TODO: Move this symbian specific code to a separate source file in the "symbian" directory tree.
+
+int main(int argc, char *argv[]) {
 	//
 	// Set up redirects for stdout/stderr under Windows and Symbian.
 	// Code copied from SDL_main.
@@ -90,14 +96,9 @@ int main(int argc, char *argv[]) {
 	}
 	setbuf(stderr, NULL);			/* No buffering */
 
-#endif // defined(__SYMBIAN32__)
 
 	// Create our OSystem instance
-#if defined(__SYMBIAN32__)
 	g_system = new OSystem_SDL_Symbian();
-#else
-	g_system = new OSystem_SDL();
-#endif
 	assert(g_system);
 
 #ifdef DYNAMIC_MODULES
@@ -109,5 +110,26 @@ int main(int argc, char *argv[]) {
 	g_system->quit();	// TODO: Consider removing / replacing this!
 	return res;
 }
+
+#else // defined(__SYMBIAN32__)
+
+int main(int argc, char *argv[]) {
+
+	// Create our OSystem instance
+	g_system = new OSystem_SDL();
+	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+#endif
+
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
+}
+
+
+#endif // defined(__SYMBIAN32__)
 
 #endif
