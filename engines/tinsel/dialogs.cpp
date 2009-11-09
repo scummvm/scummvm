@@ -2213,7 +2213,7 @@ static int WhichMenuBox(int curX, int curY, bool bSlides) {
 
 	// Slider on extra window
 	if (cd.bExtraWin) {
-		const Common::Rect &r = TinselV2 ?
+		const Common::Rect r = TinselV2 ?
 			Common::Rect(411, 46, 425, 339) :
 			Common::Rect(20 + 181, 24 + 2, 20 + 181 + 8, 24 + 139 + 5);
 
@@ -5394,7 +5394,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			// Only act if load or save screen
 			MenuPageDown();
 		} else {
-			// This code is a copy of SLClick on IB_SLIDE_DOWN
+			// This code is a copy of the IB_SLIDE_DOWN case in InvWalkTo
 			// TODO: So share this duplicate code
 			if (InvD[ino].NoofVicons == 1)
 				if (InvD[ino].FirstDisp + InvD[ino].NoofHicons*InvD[ino].NoofVicons < InvD[ino].NoofItems)
@@ -5412,7 +5412,7 @@ extern void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			// Only act if load or save screen
 			MenuPageUp();
 		} else {
-			// This code is a copy of SLClick on I_SLIDE_UP
+			// This code is a copy of the I_SLIDE_UP case in InvWalkTo
 			// TODO: So share this duplicate code
 			if (InvD[ino].NoofVicons == 1)
 				InvD[ino].FirstDisp -= InvD[ino].NoofHicons;
