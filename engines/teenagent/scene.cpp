@@ -376,7 +376,10 @@ bool Scene::render(OSystem *system) {
 			return true;
 		}
 
-		system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+		if (background.pixels)
+			system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+		else
+			system->fillScreen(0);
 
 		Graphics::Surface *surface = system->lockScreen();
 
@@ -590,8 +593,20 @@ bool Scene::processEventQueue() {
 		break;
 
 		case SceneEvent::kLoadScene: {
-			init(current_event.scene, current_event.dst);
-			sounds.clear();
+			if (current_event.scene != 0) {
+				init(current_event.scene, current_event.dst);
+				sounds.clear();
+			} else {
+				//special case, empty scene
+				background.free();
+				on.free();
+				delete[] ons;
+				ons = NULL;
+				for (byte i = 0; i < 4; ++i) {
+					animation[i].free();
+					custom_animation[i].free();
+				}
+			}
 			current_event.clear();
 		}
 		break;
