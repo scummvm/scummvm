@@ -173,8 +173,6 @@ static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 
 bool OSystem_SDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
-	int axis;
-	byte b = 0;
 
 	handleKbdMouse();
 
@@ -187,9 +185,47 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
+		if (dispatchSDLEvent(ev, event))
+			return true;
+	}
+	return false;
+}
 
+bool OSystem_SDL::dispatchSDLEvent(const SDL_Event &ev, Common::Event &event) {
 		switch (ev.type) {
-		case SDL_KEYDOWN:{
+		case SDL_KEYDOWN:
+			return handleKeyDown(ev, event);
+		case SDL_KEYUP:
+			return handleKeyUp(ev, event);
+		case SDL_MOUSEMOTION:
+			return handleMouseMotion(ev, event);
+		case SDL_MOUSEBUTTONDOWN:
+			return handleMouseButtonDown(ev, event);
+		case SDL_MOUSEBUTTONUP:
+			return handleMouseButtonUp(ev, event);
+		case SDL_JOYBUTTONDOWN:
+			return handleJoyButtonDown(ev, event);
+		case SDL_JOYBUTTONUP:
+			return handleJoyButtonUp(ev, event);
+		case SDL_JOYAXISMOTION:
+			return handleJoyAxisMotion(ev, event);
+
+		case SDL_VIDEOEXPOSE:
+			_forceFull = true;
+			break;
+
+		case SDL_QUIT:
+			event.type = Common::EVENT_QUIT;
+			return true;
+
+		}
+		
+		return false;
+}
+
+
+bool OSystem_SDL::handleKeyDown(const SDL_Event &ev, Common::Event &event) {
+	byte b = 0;
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 			// Alt-Return and Alt-Enter toggle full screen mode
@@ -205,7 +241,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 					displayMessageOnOSD("Windowed mode");
 #endif
 
-				break;
+				return false;
 			}
 
 			// Alt-S: Create a screenshot
@@ -218,20 +254,20 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 					sprintf(filename, "scummvm%05d.bmp", n);
 					file = SDL_RWFromFile(filename, "r");
 					if (!file)
-						break;
+						return false;
 					SDL_RWclose(file);
 				}
 				if (saveScreenshot(filename))
 					printf("Saved '%s'\n", filename);
 				else
 					printf("Could not save screenshot!\n");
-				break;
+				return false;
 			}
 
 			// Ctrl-m toggles mouse capture
 			if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
 				toggleMouseGrab();
-				break;
+				return false;
 			}
 
 #if defined(MACOSX)
@@ -263,7 +299,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 
 				handleScalerHotkeys(ev.key);
-				break;
+				return false;
 			}
 			const bool event_complete = remapKey(ev, event);
 
@@ -275,9 +311,10 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 			return true;
-			}
-		case SDL_KEYUP:
-			{
+}
+
+bool OSystem_SDL::handleKeyUp(const SDL_Event &ev, Common::Event &event) {
+	byte b = 0;
 			const bool event_complete = remapKey(ev,event);
 
 			if (event_complete)
@@ -291,19 +328,21 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 				// Swallow these key up events
-				break;
+				return false;
 			}
 
 			return true;
-			}
-		case SDL_MOUSEMOTION:
+}
+
+bool OSystem_SDL::handleMouseMotion(const SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_MOUSEMOVE;
 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
 			setMousePos(event.mouse.x, event.mouse.y);
 			return true;
+}
 
-		case SDL_MOUSEBUTTONDOWN:
+bool OSystem_SDL::handleMouseButtonDown(const SDL_Event &ev, Common::Event &event) {
 			if (ev.button.button == SDL_BUTTON_LEFT)
 				event.type = Common::EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -319,13 +358,14 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_MBUTTONDOWN;
 #endif
 			else
-				break;
+				return false;
 
 			fillMouseEvent(event, ev.button.x, ev.button.y);
 
 			return true;
+}
 
-		case SDL_MOUSEBUTTONUP:
+bool OSystem_SDL::handleMouseButtonUp(const SDL_Event &ev, Common::Event &event) {
 			if (ev.button.button == SDL_BUTTON_LEFT)
 				event.type = Common::EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -335,12 +375,13 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_MBUTTONUP;
 #endif
 			else
-				break;
+				return false;
 			fillMouseEvent(event, ev.button.x, ev.button.y);
 
 			return true;
+}
 
-		case SDL_JOYBUTTONDOWN:
+bool OSystem_SDL::handleJoyButtonDown(const SDL_Event &ev, Common::Event &event) {
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 				event.type = Common::EVENT_LBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
@@ -369,8 +410,9 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				}
 			}
 			return true;
+}
 
-		case SDL_JOYBUTTONUP:
+bool OSystem_SDL::handleJoyButtonUp(const SDL_Event &ev, Common::Event &event) {
 			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 				event.type = Common::EVENT_LBUTTONUP;
 				fillMouseEvent(event, _km.x, _km.y);
@@ -399,8 +441,10 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				}
 			}
 			return true;
+}
 
-		case SDL_JOYAXISMOTION:
+bool OSystem_SDL::handleJoyAxisMotion(const SDL_Event &ev, Common::Event &event) {
+	int axis;
 			axis = ev.jaxis.value;
 			if ( axis > JOY_DEADZONE) {
 				axis -= JOY_DEADZONE;
@@ -446,17 +490,6 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			fillMouseEvent(event, _km.x, _km.y);
 
 			return true;
-
-		case SDL_VIDEOEXPOSE:
-			_forceFull = true;
-			break;
-
-		case SDL_QUIT:
-			event.type = Common::EVENT_QUIT;
-			return true;
-		}
-	}
-	return false;
 }
 
 bool OSystem_SDL::remapKey(const SDL_Event &ev, Common::Event &event) {

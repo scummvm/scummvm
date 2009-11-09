@@ -235,7 +235,7 @@ OSystem_SDL::OSystem_SDL()
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
 	_paletteDirtyStart(0), _paletteDirtyEnd(0),
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
@@ -595,7 +595,7 @@ void OSystem_SDL::deleteMutex(MutexRef mutex) {
 #pragma mark --- Audio ---
 #pragma mark -
 
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 
 void OSystem_SDL::mixerProducerThread() {
 	byte nextSoundBuffer;
@@ -745,7 +745,7 @@ void OSystem_SDL::setupMixer() {
 		_mixer->setOutputRate(_samplesPerSec);
 		_mixer->setReady(true);
 
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 		initThreadedMixer(_mixer, _obtainedRate.samples * 4);
 #endif
 
@@ -763,7 +763,7 @@ void OSystem_SDL::closeMixer() {
 	delete _mixer;
 	_mixer = 0;
 
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 	deinitThreadedMixer();
 #endif
 
