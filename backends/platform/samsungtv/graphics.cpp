@@ -445,7 +445,7 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
-	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32, SDL_FULLSCREEN | SDL_HWSURFACE);
+	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32, SDL_FULLSCREEN | SDL_SWSURFACE);
 
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
