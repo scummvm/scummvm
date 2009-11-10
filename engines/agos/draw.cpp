@@ -523,7 +523,7 @@ void AGOSEngine::displayBoxStars() {
 	uint count;
 	uint y_, x_;
 	byte *dst;
-	uint b, color;
+	uint color;
 
 	o_haltAnimation();
 
@@ -572,38 +572,38 @@ void AGOSEngine::displayBoxStars() {
 
 				dst += (((screen->pitch / 4) * y_) * 4) + x_;
 
-				b = screen->pitch;
 				dst[4] = color;
-				dst[b+1] = color;
-				dst[b+4] = color;
-				dst[b+7] = color;
-				b += screen->pitch;
-				dst[b+2] = color;
-				dst[b+4] = color;
-				dst[b+6] = color;
-				b += screen->pitch;
-				dst[b+3] = color;
-				dst[b+5] = color;
-				b += screen->pitch;
-				dst[b] = color;
-				dst[b+1] = color;
-				dst[b+2] = color;
-				dst[b+6] = color;
-				dst[b+7] = color;
-				dst[b+8] = color;
-				b += screen->pitch;
-				dst[b+3] = color;
-				dst[b+5] = color;
-				b += screen->pitch;
-				dst[b+2] = color;
-				dst[b+4] = color;
-				dst[b+6] = color;
-				b += screen->pitch;
-				dst[b+1] = color;
-				dst[b+4] = color;
-				dst[b+7] = color;
-				b += screen->pitch;
-				dst[b+4] = color;
+				dst += screen->pitch;
+				dst[1] = color;
+				dst[4] = color;
+				dst[7] = color;
+				dst += screen->pitch;
+				dst[2] = color;
+				dst[4] = color;
+				dst[6] = color;
+				dst += screen->pitch;
+				dst[3] = color;
+				dst[5] = color;
+				dst += screen->pitch;
+				dst[0] = color;
+				dst[1] = color;
+				dst[2] = color;
+				dst[6] = color;
+				dst[7] = color;
+				dst[8] = color;
+				dst += screen->pitch;
+				dst[3] = color;
+				dst[5] = color;
+				dst += screen->pitch;
+				dst[2] = color;
+				dst[4] = color;
+				dst[6] = color;
+				dst += screen->pitch;
+				dst[1] = color;
+				dst[4] = color;
+				dst[7] = color;
+				dst += screen->pitch;
+				dst[4] = color;
 			}
 		} while (ha++, --count);
 
