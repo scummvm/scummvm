@@ -2031,6 +2031,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{ // Found in french ADI 2.6 Français-Maths 4e
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "58ee9583a4fb837f02d9a58e5f442656", 3937120),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{
 		{
 			"fascination",
