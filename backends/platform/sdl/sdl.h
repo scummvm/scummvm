@@ -157,20 +157,20 @@ public:
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
 protected:
-	virtual bool dispatchSDLEvent(const SDL_Event &ev, Common::Event &event);
+	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
 
 	// Handlers for specific SDL events, called by pollEvent.
 	// This way, if a backend inherits fromt the SDL backend, it can
 	// change the behavior of only a single event, without having to override all
 	// of pollEvent.
-	virtual bool handleKeyDown(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleKeyUp(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseMotion(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonDown(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonUp(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonDown(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonUp(const SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyAxisMotion(const SDL_Event &ev, Common::Event &event);
+	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 
 public:
 

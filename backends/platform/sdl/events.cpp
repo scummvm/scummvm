@@ -191,7 +191,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_SDL::dispatchSDLEvent(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 	case SDL_KEYDOWN:
 		return handleKeyDown(ev, event);
@@ -224,7 +224,7 @@ bool OSystem_SDL::dispatchSDLEvent(const SDL_Event &ev, Common::Event &event) {
 }
 
 
-bool OSystem_SDL::handleKeyDown(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	byte b = 0;
 	b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
@@ -313,7 +313,7 @@ bool OSystem_SDL::handleKeyDown(const SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleKeyUp(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	byte b = 0;
 	const bool event_complete = remapKey(ev, event);
 
@@ -334,7 +334,7 @@ bool OSystem_SDL::handleKeyUp(const SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleMouseMotion(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
@@ -342,7 +342,7 @@ bool OSystem_SDL::handleMouseMotion(const SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleMouseButtonDown(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONDOWN;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -365,7 +365,7 @@ bool OSystem_SDL::handleMouseButtonDown(const SDL_Event &ev, Common::Event &even
 	return true;
 }
 
-bool OSystem_SDL::handleMouseButtonUp(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONUP;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -381,7 +381,7 @@ bool OSystem_SDL::handleMouseButtonUp(const SDL_Event &ev, Common::Event &event)
 	return true;
 }
 
-bool OSystem_SDL::handleJoyButtonDown(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -412,7 +412,7 @@ bool OSystem_SDL::handleJoyButtonDown(const SDL_Event &ev, Common::Event &event)
 	return true;
 }
 
-bool OSystem_SDL::handleJoyButtonUp(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -443,7 +443,7 @@ bool OSystem_SDL::handleJoyButtonUp(const SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyAxisMotion(const SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
 	if ( axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
