@@ -672,8 +672,13 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kPlayAnimation:
-			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.slot & 3);
-			playAnimation(current_event.slot & 3, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
+			if (current_event.animation != 0) {
+				debug(0, "playing animation %u in slot %u", current_event.animation, current_event.slot & 3);
+				playAnimation(current_event.slot & 3, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
+			} else {
+				debug(0, "cancelling animation in slot %u", current_event.slot & 3);
+				custom_animation[current_event.slot & 3].free();
+			}
 			current_event.clear();
 			break;
 
