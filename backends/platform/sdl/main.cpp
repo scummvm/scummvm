@@ -31,6 +31,11 @@
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
+
+// FIXME/UGLY HACK: We need to include "SDL.h" before "scummsys.h"
+// since "scummsys.h" checks for SDL_COMPILEDVERSION to decide
+// whether it should define uint32_t / int32_t or not.
+#include <SDL.h>
 #endif
 
 #include "common/scummsys.h"
