@@ -23,6 +23,16 @@
  *
  */
 
+// Fix for bug #2895217 "MSVC compilation broken with r47595":
+// We need to keep this on top of the "common/scummsys.h" include,
+// otherwise we will get errors about the windows headers redefining
+// "ARRAYSIZE" for example.
+#if defined(WIN32) && !defined(__SYMBIAN32__)
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+#endif
+
 #include "common/scummsys.h"
 
 // Several SDL based ports use a custom main, and hence do not want to compile
@@ -34,12 +44,7 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
-#if defined(WIN32)
-
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-
+#ifdef WIN32
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
 	SDL_SetModuleHandle(GetModuleHandle(NULL));
 	return main(__argc, __argv);
