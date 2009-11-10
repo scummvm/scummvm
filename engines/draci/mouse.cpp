@@ -24,6 +24,7 @@
  */
 
 #include "draci/draci.h"
+#include "draci/game.h"
 #include "draci/mouse.h"
 #include "draci/barchive.h"
 
@@ -104,8 +105,9 @@ void Mouse::setCursorType(CursorType cur) {
 	        sp.getWidth() / 2, sp.getHeight() / 2);
 }
 
-void Mouse::loadItemCursor(int itemID, bool highlighted) {
-	int archiveIndex = 2 * itemID + highlighted;
+void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
+	const int itemID = item->_absNum;
+	const int archiveIndex = 2 * itemID + highlighted;
 	CursorType newCursor = static_cast<CursorType> (kItemCursor + archiveIndex);
 	if (newCursor == getCursorType()) {
 		return;

@@ -62,7 +62,7 @@ class Animation {
 typedef void (Animation::* AnimationCallback)();
 
 public:
-	Animation(DraciEngine *v, int index);
+	Animation(DraciEngine *v, int id, uint z, bool playing);
 	~Animation();
 
 	uint getZ() const { return _z; }
@@ -120,9 +120,12 @@ public:
 	void registerCallback(AnimationCallback callback) { _callback = callback; }
 
 	void doNothing() {}
-	void stopAnimation();
 	void exitGameLoop();
 	void tellWalkingState();
+
+	void play();
+	void stop();
+	void del();
 
 private:
 	uint nextFrameNum() const;
@@ -174,17 +177,13 @@ public:
 	AnimationManager(DraciEngine *vm) : _vm(vm), _lastIndex(-1) {}
 	~AnimationManager() { deleteAll(); }
 
-	Animation *addAnimation(int id, uint z, bool playing);
-	Animation *addText(int id, bool playing);
-	Animation *addItem(int id, bool playing);
-	void addOverlay(Drawable *overlay, uint z);
+	void insert(Animation *anim, bool allocateIndex);
+	Animation *load(uint animNum);
 
-	void play(int id);
-	void stop(int id);
 	void pauseAnimations();
 	void unpauseAnimations();
 
-	void deleteAnimation(int id);
+	void deleteAnimation(Animation *anim);
 	void deleteOverlays();
 	void deleteAll();
 
@@ -195,11 +194,10 @@ public:
 	int getLastIndex() const { return _lastIndex; }
 	void deleteAfterIndex(int index);
 
-	int getTopAnimationID(int x, int y) const;
+	const Animation *getTopAnimation(int x, int y) const;
 
 private:
 	void sortAnimations();
-	void insertAnimation(Animation *anim);
 
 	DraciEngine *_vm;
 

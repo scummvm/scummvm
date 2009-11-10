@@ -242,7 +242,7 @@ void DraciEngine::handleEvents() {
 					? _game->getEscRoom() : _game->getPreviousRoomNum();
 
 				// Check if there is an escape room defined for the current room
-				if (escRoom != kNoEscRoom) {
+				if (escRoom >= 0) {
 
 					// Schedule room change
 					// TODO: gate 0 is not always the best one for returning from the map
@@ -266,15 +266,7 @@ void DraciEngine::handleEvents() {
 			case Common::KEYCODE_w:
 				// Show walking map toggle
 				_showWalkingMap = !_showWalkingMap;
-				if (_showWalkingMap) {
-					_anims->play(kWalkingMapOverlay);
-					_anims->play(kWalkingShortestPathOverlay);
-					_anims->play(kWalkingObliquePathOverlay);
-				} else {
-					_anims->stop(kWalkingMapOverlay);
-					_anims->stop(kWalkingShortestPathOverlay);
-					_anims->stop(kWalkingObliquePathOverlay);
-				}
+				_game->switchWalkingAnimations(_showWalkingMap);
 				break;
 			case Common::KEYCODE_q:
 				_game->setWantQuickHero(!_game->getWantQuickHero());

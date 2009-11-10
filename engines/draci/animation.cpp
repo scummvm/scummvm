@@ -29,13 +29,13 @@
 
 namespace Draci {
 
-Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
-	_id = kUnused;
-	_index = index;
-	_z = 0;
+Animation::Animation(DraciEngine *vm, int id, uint z, bool playing) : _vm(vm) {
+	_id = id;
+	_index = kIgnoreIndex;
+	_z = z;
 	clearShift();
 	_displacement = kNoDisplacement;
-	_playing = false;
+	_playing = playing;
 	_looping = false;
 	_paused = false;
 	_canBeQuick = false;
@@ -239,10 +239,6 @@ void Animation::deleteFrames() {
 	_samples.clear();
 }
 
-void Animation::stopAnimation() {
-	_vm->_anims->stop(_id);
-}
-
 void Animation::exitGameLoop() {
 	_vm->_game->setExitLoop(true);
 }
@@ -251,73 +247,38 @@ void Animation::tellWalkingState() {
 	_vm->_game->heroAnimationFinished();
 }
 
-Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
-	// Increment animation index
-	++_lastIndex;
-
-	Animation *anim = new Animation(_vm, _lastIndex);
-
-	anim->setID(id);
-	anim->setZ(z);
-	anim->setPlaying(playing);
-
-	insertAnimation(anim);
-
-	return anim;
-}
-
-Animation *AnimationManager::addItem(int id, bool playing) {
-	Animation *anim = new Animation(_vm, kIgnoreIndex);
-
-	anim->setID(id);
-	anim->setZ(256);
-	anim->setPlaying(playing);
-
-	insertAnimation(anim);
-
-	return anim;
-}
-
-Animation *AnimationManager::addText(int id, bool playing) {
-	Animation *anim = new Animation(_vm, kIgnoreIndex);
-
-	anim->setID(id);
-	anim->setZ(257);
-	anim->setPlaying(playing);
-
-	insertAnimation(anim);
-
-	return anim;
-}
-
-void AnimationManager::play(int id) {
-	Animation *anim = getAnimation(id);
-
-	if (anim && !anim->isPlaying()) {
-		// Mark the first frame dirty so it gets displayed
-		anim->markDirtyRect(_vm->_screen->getSurface());
-
-		anim->setPlaying(true);
-
-		debugC(3, kDraciAnimationDebugLevel, "Playing animation %d...", id);
+void Animation::play() {
+	if (isPlaying()) {
+		return;
 	}
+
+	// Mark the first frame dirty so it gets displayed
+	markDirtyRect(_vm->_screen->getSurface());
+
+	setPlaying(true);
+
+	debugC(3, kDraciAnimationDebugLevel, "Playing animation %d...", getID());
 }
 
-void AnimationManager::stop(int id) {
-	Animation *anim = getAnimation(id);
-
-	if (anim && anim->isPlaying()) {
-		// Clean up the last frame that was drawn before stopping
-		anim->markDirtyRect(_vm->_screen->getSurface());
-
-		anim->setPlaying(false);
-
-		// Reset the animation to the beginning
-		anim->setCurrentFrame(0);
-		anim->clearShift();
-
-		debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
+void Animation::stop() {
+	if (!isPlaying()) {
+		return;
 	}
+
+	// Clean up the last frame that was drawn before stopping
+	markDirtyRect(_vm->_screen->getSurface());
+
+	setPlaying(false);
+
+	// Reset the animation to the beginning
+	setCurrentFrame(0);
+	clearShift();
+
+	debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", getID());
+}
+
+void Animation::del() {
+	_vm->_anims->deleteAnimation(this);
 }
 
 void AnimationManager::pauseAnimations() {
@@ -358,7 +319,10 @@ Animation *AnimationManager::getAnimation(int id) {
 	return NULL;
 }
 
-void AnimationManager::insertAnimation(Animation *anim) {
+void AnimationManager::insert(Animation *anim, bool allocateIndex) {
+	if (allocateIndex)
+		anim->setIndex(++_lastIndex);
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -367,20 +331,6 @@ void AnimationManager::insertAnimation(Animation *anim) {
 	}
 
 	_animations.insert(it, anim);
-}
-
-void AnimationManager::addOverlay(Drawable *overlay, uint z) {
-	// Since this is an overlay, we don't need it to be deleted
-	// when the GPL Release command is invoked so we pass the index
-	// as kIgnoreIndex
-	Animation *anim = new Animation(_vm, kIgnoreIndex);
-
-	anim->setID(kOverlayImage);
-	anim->setZ(z);
-	anim->setPlaying(true);
-	anim->addFrame(overlay, NULL);
-
-	insertAnimation(anim);
 }
 
 void AnimationManager::drawScene(Surface *surf) {
@@ -431,7 +381,7 @@ void AnimationManager::sortAnimations() {
 				Animation *anim = *next;
 				next = _animations.reverse_erase(next);
 
-				insertAnimation(anim);
+				insert(anim, false);
 				hasChanged = true;
 			}
 
@@ -441,21 +391,24 @@ void AnimationManager::sortAnimations() {
 	} while (hasChanged);
 }
 
-void AnimationManager::deleteAnimation(int id) {
+void AnimationManager::deleteAnimation(Animation *anim) {
+	if (!anim) {
+		return;
+	}
 	Common::List<Animation *>::iterator it;
 
 	int index = -1;
 
 	// Iterate for the first time to delete the animation
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if ((*it)->getID() == id) {
+		if (*it == anim) {
 			// Remember index of the deleted animation
 			index = (*it)->getIndex();
 
 			delete *it;
 			_animations.erase(it);
 
-			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", id);
+			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", anim->getID());
 
 			break;
 		}
@@ -515,12 +468,10 @@ void AnimationManager::deleteAfterIndex(int index) {
 	_lastIndex = index;
 }
 
-int AnimationManager::getTopAnimationID(int x, int y) const {
+const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 	Common::List<Animation *>::const_iterator it;
 
-	// The default return value if no animations were found on these coordinates (not even overlays)
-	// i.e. the black background shows through so treat it as an overlay
-	int retval = kOverlayImage;
+	Animation *retval = NULL;
 
 	// Get transparent colour for the current screen
 	const int transparent = _vm->_screen->getSurface()->getTransparentColour();
@@ -540,24 +491,112 @@ int AnimationManager::getTopAnimationID(int x, int y) const {
 			continue;
 		}
 
+		bool matches = false;
 		if (frame->getRect(anim->getCurrentFrameDisplacement()).contains(x, y)) {
 			if (frame->getType() == kDrawableText) {
 
-				retval = anim->getID();
+				matches = true;
 
 			} else if (frame->getType() == kDrawableSprite &&
 					   reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getCurrentFrameDisplacement()) != transparent) {
 
-				retval = anim->getID();
+				matches = true;
 			}
 		}
 
-		// Found an animation
-		if (retval != kOverlayImage)
-			break;
+		// Return the top-most animation object, unless it is an
+		// overlay sprite and there is an actual object underneath it.
+		if (matches) {
+			if (anim->getID() != kOverlayImage) {
+				return anim;
+			} else if (retval == NULL) {
+				retval = anim;
+			}
+		}
 	}
 
+	// The default return value if no animations were found on these coordinates (not even overlays)
 	return retval;
+}
+
+Animation *AnimationManager::load(uint animNum) {
+	// Make double-sure that an animation isn't loaded more than twice,
+	// otherwise horrible things happen in the AnimationManager, because
+	// they use a simple link-list without duplicate checking.  This should
+	// never happen unless there is a bug in the game, because all GPL2
+	// commands are guarded.
+	assert(!getAnimation(animNum));
+
+	const BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
+	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);
+
+	uint numFrames = animationReader.readByte();
+
+	// The following two flags are ignored by the played.  Memory logic was
+	// a hint to the old player whether it should cache the sprites or load
+	// them on demand.  We have 1 memory manager and ignore these hints.
+	animationReader.readByte();
+	// The disable erasing field is just a (poor) optimization flag that
+	// turns of drawing the background underneath the sprite.  By reading
+	// the source code of the old player, I'm not sure if that would ever
+	// have worked.  There are only 6 animations in the game with this flag
+	// true.  All of them have just 1 animation phase and they are used to
+	// patch a part of the original background by a new sprite.  This
+	// should work with the default logic as well---just play this
+	// animation on top of the background.  Since the only meaning of the
+	// flag was optimization, ignoring should be OK even without dipping
+	// into details.
+	animationReader.readByte();
+	const bool cyclic = animationReader.readByte();
+	const bool relative = animationReader.readByte();
+
+	Animation *anim = new Animation(_vm, animNum, 0, false);
+	insert(anim, true);
+
+	anim->setLooping(cyclic);
+
+	for (uint i = 0; i < numFrames; ++i) {
+		uint spriteNum = animationReader.readUint16LE() - 1;
+		int x = animationReader.readSint16LE();
+		int y = animationReader.readSint16LE();
+		uint scaledWidth = animationReader.readUint16LE();
+		uint scaledHeight = animationReader.readUint16LE();
+		byte mirror = animationReader.readByte();
+		int sample = animationReader.readUint16LE() - 1;
+		uint freq = animationReader.readUint16LE();
+		uint delay = animationReader.readUint16LE();
+
+		// _spritesArchive is flushed when entering a room.  All
+		// scripts in a room are responsible for loading their animations.
+		const BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
+		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length,
+			relative ? 0 : x, relative ? 0 : y, true);
+
+		// Some frames set the scaled dimensions to 0 even though other frames
+		// from the same animations have them set to normal values
+		// We work around this by assuming it means no scaling is necessary
+		if (scaledWidth == 0) {
+			scaledWidth = sp->getWidth();
+		}
+
+		if (scaledHeight == 0) {
+			scaledHeight = sp->getHeight();
+		}
+
+		sp->setScaled(scaledWidth, scaledHeight);
+
+		if (mirror)
+			sp->setMirrorOn();
+
+		sp->setDelay(delay * 10);
+
+		anim->addFrame(sp, _vm->_soundsArchive->getSample(sample, freq));
+		if (relative) {
+			anim->makeLastFrameRelative(x, y);
+		}
+	}
+
+	return anim;
 }
 
 }

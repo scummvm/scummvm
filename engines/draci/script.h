@@ -90,7 +90,7 @@ struct GPL2Program {
 };
 
 class Animation;
-struct GameObject;
+class GameObject;
 
 class Script {
 
@@ -193,9 +193,6 @@ private:
 	int handleMathExpression(Common::MemoryReadStream *reader) const;
 
 	DraciEngine *_vm;
-
-	// Auxilliary functions
-	Animation *loadObjectAnimation(int objID, GameObject *obj, int animID);
 };
 
 } // End of namespace Draci

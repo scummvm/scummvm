@@ -42,26 +42,7 @@ enum {
 	kDragonObject = 0
 };
 
-// Used as a return value for Game::getObjectWithAnimation() if no object
-// owns the animation in question
 enum {
-	kObjectNotFound = -1
-};
-
-// Used as the value of the _escRoom field of the current room if there is
-// no escape room defined
-enum {
-	kNoEscRoom = -1
-};
-
-// Used as a value to Game::_currentIcon and means there is no item selected
-// and a "real" cursor image is used
-enum {
-	kNoItem = -1
-};
-
-enum {
-	kNoDialogue = -1,
 	kDialogueLines = 4
 };
 
@@ -94,19 +75,30 @@ enum InventoryConstants {
   kInventorySlots = kInventoryLines * kInventoryColumns
 };
 
-struct GameObject {
+class GameObject {
+public:
+	int _absNum;
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	int _walkDir;
 	byte _z;
 	uint _lookX, _lookY, _useX, _useY;
 	SightDirection _lookDir, _useDir;
-	uint _absNum;
-	Common::Array<int> _anim;
 	GPL2Program _program;
 	Common::String _title;
 	int _location;
 	bool _visible;
+
+	Common::Array<Animation *> _anim;
+	int _playingAnim;
+
+	int getAnim(int animID) const;
+	int addAnim(Animation *anim);
+	int playingAnim() const { return _playingAnim; }
+	void playAnim(int i);
+	void stopAnim();
+	void deleteAnims();
+	void load(uint objNum, BArchive *archive);
 };
 
 struct GameInfo {
@@ -123,11 +115,17 @@ struct GameInfo {
 	uint _numDialogueBlocks;
 };
 
-struct GameItem {
+class GameItem {
+public:
+	int _absNum;
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	GPL2Program _program;
 	Common::String _title;
+
+	Animation *_anim;
+
+	void load(int itemID, BArchive *archive);
 };
 
 struct Person {
@@ -142,7 +140,8 @@ struct Dialogue {
 	GPL2Program _program;
 };
 
-struct Room {
+class Room {
+public:
 	int _roomNum;
 	byte _music;
 	int _mapID;
@@ -156,6 +155,8 @@ struct Room {
 	byte _numGates;
 	Common::Array<int> _gates;
 	GPL2Program _program;
+
+	void load(int roomNum, BArchive *archive);
 };
 
 enum LoopStatus {
@@ -223,19 +224,15 @@ public:
 	// unless the animation hasn't changed).
 	int playHeroAnimation(int anim_index);
 
-	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
-	void loadObject(uint numObj);
 	void loadWalkingMap(int mapID);		// but leaves _currentRoom._mapID untouched
-	void loadItem(int itemID);
+	void switchWalkingAnimations(bool enabled);
 
 	uint getNumObjects() const { return _info._numObjects; }
 	GameObject *getObject(uint objNum) { return _objects + objNum; }
-	int getObjectWithAnimation(int animID) const;
+	const GameObject *getObjectWithAnimation(const Animation *anim) const;
 	void deleteObjectAnimations();
 	void deleteAnimationsAfterIndex(int lastAnimIndex);
-	void stopObjectAnimations(const GameObject *obj);
-	int playingObjectAnimation(const GameObject *obj) const;
 
 	int getVariable(int varNum) const { return _variables[varNum]; }
 	void setVariable(int varNum, int value) { _variables[varNum] = value; }
@@ -257,10 +254,12 @@ public:
 
 	int getItemStatus(int itemID) const { return _itemStatus[itemID]; }
 	void setItemStatus(int itemID, int status) { _itemStatus[itemID] = status; }
-	int getCurrentItem() const { return _currentItem; }
-	void setCurrentItem(int itemID) { _currentItem = itemID; }
-	void removeItem(int itemID);
-	void putItem(int itemID, int position);
+	GameItem *getItem(int id) { return id >= 0 ? &_items[id] : NULL; }
+	GameItem *getCurrentItem() const { return _currentItem; }
+	void setCurrentItem(GameItem *item) { _currentItem = item; }
+	void removeItem(GameItem *item);
+	void loadItemAnimation(GameItem *item);
+	void putItem(GameItem *item, int position);
 	void addItem(int itemID);
 
 	int getEscRoom() const { return _currentRoom._escRoom; }
@@ -337,9 +336,10 @@ private:
 	void advanceAnimationsAndTestLoopExit();
 
 	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
-	void loadRoom(int roomNum);
+	void initWalkingOverlays();
+	void loadRoomObjects();
 	void runGateProgram(int gate);
-	void redrawWalkingPath(int id, byte colour, const WalkingPath &path);
+	void redrawWalkingPath(Animation *anim, byte colour, const WalkingPath &path);
 
 	DraciEngine *_vm;
 
@@ -353,10 +353,10 @@ private:
 
 	byte *_itemStatus;
 	GameItem *_items;
-	int _currentItem;
-	int _itemUnderCursor;
+	GameItem *_currentItem;
+	GameItem *_itemUnderCursor;
 
-	int _inventory[kInventorySlots];
+	GameItem *_inventory[kInventorySlots];
 	bool _inventoryExit;
 
 	Room _currentRoom;
@@ -390,8 +390,8 @@ private:
 	uint _speechTick;
 	uint _speechDuration;
 
-	int _objUnderCursor;
-	int _animUnderCursor;
+	const GameObject *_objUnderCursor;
+	const Animation *_animUnderCursor;
 
 	int _markedAnimationIndex; ///< Used by the Mark GPL command
 
@@ -406,6 +406,12 @@ private:
 
 	WalkingMap _walkingMap;
 	WalkingState _walkingState;
+
+	Animation *_titleAnim;
+	Animation *_inventoryAnim;
+	Animation *_walkingMapOverlay;
+	Animation *_walkingShortestPathOverlay;
+	Animation *_walkingObliquePathOverlay;
 };
 
 } // End of namespace Draci

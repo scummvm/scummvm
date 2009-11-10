@@ -45,6 +45,7 @@ enum CursorType {
 };
 
 class DraciEngine;
+class GameItem;
 
 class Mouse {
 public:
@@ -58,7 +59,7 @@ public:
 	void setPosition(uint16 x, uint16 y);
 	CursorType getCursorType() const { return _cursorType; }
 	void setCursorType(CursorType cur);
-	void loadItemCursor(int itemID, bool highlighted);
+	void loadItemCursor(const GameItem *item, bool highlighted);
 	bool lButtonPressed() const { return _lButton; }
 	bool rButtonPressed() const { return _rButton; }
 	void lButtonSet(bool state) { _lButton = state; }

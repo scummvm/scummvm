@@ -458,7 +458,7 @@ void WalkingState::startWalking(const Common::Point &p1, const Common::Point &p2
 
 	// Remember the initial dragon's direction.
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	_startingDirection = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	_startingDirection = static_cast<Movement> (dragon->playingAnim());
 
 	// Going to start with the first segment.
 	_segment = 0;
@@ -503,7 +503,7 @@ bool WalkingState::continueWalkingOrClearPath() {
 
 bool WalkingState::continueWalking() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const Movement movement = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	const Movement movement = static_cast<Movement> (dragon->playingAnim());
 
 	if (_turningFinished) {
 		// When a turning animation has finished, heroAnimationFinished() callback
@@ -526,8 +526,7 @@ bool WalkingState::continueWalking() {
 
 	// Read the dragon's animation's current phase.  Determine if it has
 	// changed from the last time.  If not, wait until it has.
-	const int animID = dragon->_anim[movement];
-	Animation *anim = _vm->_anims->getAnimation(animID);
+	Animation *anim = dragon->_anim[movement];
 	const int animPhase = anim->currentFrameNum();
 	const bool wasUpdated = animPhase != _lastAnimPhase;
 	if (!wasUpdated) {
@@ -589,6 +588,11 @@ bool WalkingState::continueWalking() {
 bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point &p2, const Common::Point &prevHero, Common::Point *hero) {
 	const Movement movement = animationForDirection(p1, p2);
 	const Common::Point p2Diff(p2.x - p1.x, p2.y - p1.y);
+	if (p2Diff.x == 0 && p2Diff.y == 0) {
+		debugC(2, kDraciWalkingDebugLevel, "Adjusted walking edge has zero length");
+		// Due to changing the path vertices on the fly, this can happen.
+		return true;
+	}
 	bool reachedEnd;
 	if (movement == kMoveLeft || movement == kMoveRight) {
 		reachedEnd = movement == kMoveLeft ? hero->x <= p2.x : hero->x >= p2.x;
@@ -602,7 +606,7 @@ bool WalkingState::alignHeroToEdge(const Common::Point &p1, const Common::Point 
 
 bool WalkingState::turnForTheNextSegment() {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const Movement currentAnim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	const Movement currentAnim = static_cast<Movement> (dragon->playingAnim());
 	const Movement wantAnim = directionForNextPhase();
 	Movement transition = transitionBetweenAnimations(currentAnim, wantAnim);
 
@@ -617,8 +621,7 @@ bool WalkingState::turnForTheNextSegment() {
 		// to calling walkOnNextEdge() in the next phase.
 		assert(isTurningMovement(transition));
 		_lastAnimPhase = _vm->_game->playHeroAnimation(transition);
-		const int animID = dragon->_anim[transition];
-		Animation *anim = _vm->_anims->getAnimation(animID);
+		Animation *anim = dragon->_anim[transition];
 		anim->registerCallback(&Animation::tellWalkingState);
 
 		debugC(2, kDraciWalkingDebugLevel, "Starting turning animation %d with phase %d", transition, _lastAnimPhase);

@@ -270,7 +270,9 @@ int Script::funcIcoStat(int itemID) const {
 int Script::funcIsIcoAct(int itemID) const {
 	itemID -= 1;
 
-	return _vm->_game->getCurrentItem() == itemID;
+	const GameItem *item = _vm->_game->getCurrentItem();
+	const int currentID = item ? item->_absNum : -1;
+	return currentID == itemID;
 }
 
 int Script::funcActIco(int itemID) const {
@@ -279,7 +281,8 @@ int Script::funcActIco(int itemID) const {
 	// implemented in such a way that they had to have a single parameter so this is only
 	// passed as a dummy.
 
-	return _vm->_game->getCurrentItem();
+	const GameItem *item = _vm->_game->getCurrentItem();
+	return item ? item->_absNum + 1 : 0;
 }
 
 int Script::funcIsObjOn(int objID) const {
@@ -340,10 +343,9 @@ int Script::funcActPhase(int objID) const {
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
 	if (objID == kDragonObject || visible) {
-		const int i = _vm->_game->playingObjectAnimation(obj);
+		const int i = obj->playingAnim();
 		if (i >= 0) {
-			int animID = obj->_anim[i];
-			Animation *anim = _vm->_anims->getAnimation(animID);
+			Animation *anim = obj->_anim[i];
 			ret = anim->currentFrameNum();
 		}
 	}
@@ -363,18 +365,6 @@ void Script::play(const Common::Array<int> &params) {
 	_vm->_game->loop(kInnerUntilExit, true);
 }
 
-Animation *Script::loadObjectAnimation(int objID, GameObject *obj, int animID) {
-	_vm->_game->loadAnimation(animID, obj->_z);
-	obj->_anim.push_back(animID);
-	Animation *anim = _vm->_anims->getAnimation(animID);
-	if (objID == kDragonObject && obj->_anim.size() - 1 <= kLastTurning) {
-		// obj->_anim.size() is the Movement type.  All walking and
-		// turning movements can be accelerated.
-		anim->supportsQuickAnimation(true);
-	}
-	return anim;
-}
-
 void Script::load(const Common::Array<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
@@ -383,21 +373,17 @@ void Script::load(const Common::Array<int> &params) {
 	int objID = params[0] - 1;
 	int animID = params[1] - 1;
 
-	uint i;
-	GameObject *obj = _vm->_game->getObject(objID);
-
 	// If the animation is already loaded, return
-	for (i = 0; i < obj->_anim.size(); ++i) {
-		if (obj->_anim[i] == animID) {
-			return;
-		}
+	GameObject *obj = _vm->_game->getObject(objID);
+	if (obj->getAnim(animID) >= 0) {
+		return;
 	}
 
 	// We don't test here whether an animation is loaded in the
 	// AnimationManager while not being registered in the object's array of
 	// animations.  This cannot legally happen and an assertion will be
-	// thrown by loadAnimation().
-	loadObjectAnimation(objID, obj, animID);
+	// thrown by AnimationManager::load().
+	obj->addAnim(_vm->_anims->load(animID));
 }
 
 void Script::start(const Common::Array<int> &params) {
@@ -409,10 +395,10 @@ void Script::start(const Common::Array<int> &params) {
 	int animID = params[1] - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
-	_vm->_game->stopObjectAnimations(obj);
+	obj->stopAnim();
 
-	Animation *anim = _vm->_anims->getAnimation(animID);
-	if (!anim) {
+	int index = obj->getAnim(animID);
+	if (index < 0) {
 		// WORKAROUND:
 		//
 		// The original game files seem to contain errors, which I have
@@ -432,20 +418,21 @@ void Script::start(const Common::Array<int> &params) {
 		// to apply the hedgehog, but there is no way that the game
 		// player would load the requested animation by itself.
 		// See objekty:5077 and parezy.txt:27.
-		anim = loadObjectAnimation(objID, obj, animID);
+		index = obj->addAnim(_vm->_anims->load(animID));
 		debugC(1, kDraciBytecodeDebugLevel, "start(%d=%s) cannot find animation %d.  Loading.",
 			objID, obj->_title.c_str(), animID);
 	}
+	Animation *anim = obj->_anim[index];
 
 	if (objID == kDragonObject)
 		_vm->_game->positionAnimAsHero(anim);
 
-	anim->registerCallback(&Animation::stopAnimation);
+	anim->registerCallback(&Animation::stop);
 
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
 	if (objID == kDragonObject || visible) {
-		_vm->_anims->play(animID);
+		obj->playAnim(index);
 	}
 }
 
@@ -458,14 +445,15 @@ void Script::startPlay(const Common::Array<int> &params) {
 	int animID = params[1] - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
-	_vm->_game->stopObjectAnimations(obj);
+	obj->stopAnim();
 
-	Animation *anim = _vm->_anims->getAnimation(animID);
-	if (!anim) {
-		anim = loadObjectAnimation(objID, obj, animID);
+	int index = obj->getAnim(animID);
+	if (index < 0) {
+		index = obj->addAnim(_vm->_anims->load(animID));
 		debugC(1, kDraciBytecodeDebugLevel, "startPlay(%d=%s) cannot find animation %d.  Loading.",
 			objID, obj->_title.c_str(), animID);
 	}
+	Animation *anim = obj->_anim[index];
 
 	if (objID == kDragonObject)
 		_vm->_game->positionAnimAsHero(anim);
@@ -474,37 +462,27 @@ void Script::startPlay(const Common::Array<int> &params) {
 
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 	if (objID == kDragonObject || visible) {
-		_vm->_anims->play(animID);
+		obj->playAnim(index);
 	}
 
 	// Runs an inner loop until the animation ends.
 	_vm->_game->loop(kInnerUntilExit, false);
-	_vm->_anims->stop(animID);
+	obj->stopAnim();
 
 	anim->registerCallback(&Animation::doNothing);
 }
 
 void Script::justTalk(const Common::Array<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
-	int new_anim;
-	if (last_anim == kSpeakRight || last_anim == kStopRight) {
-		new_anim = kSpeakRight;
-	} else {
-		new_anim = kSpeakLeft;
-	}
+	const int last_anim = static_cast<Movement> (dragon->playingAnim());
+	const int new_anim = (last_anim == kSpeakRight || last_anim == kStopRight) ? kSpeakRight : kSpeakLeft;
 	_vm->_game->playHeroAnimation(new_anim);
 }
 
 void Script::justStay(const Common::Array<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
-	int new_anim;
-	if (last_anim == kSpeakRight || last_anim == kStopRight) {
-		new_anim = kStopRight;
-	} else {
-		new_anim = kStopLeft;
-	}
+	const int last_anim = static_cast<Movement> (dragon->playingAnim());
+	const int new_anim = (last_anim == kSpeakRight || last_anim == kStopRight) ? kStopRight : kStopLeft;
 	_vm->_game->playHeroAnimation(new_anim);
 }
 
@@ -557,18 +535,20 @@ void Script::release(const Common::Array<int> &params) {
 void Script::icoStat(const Common::Array<int> &params) {
 	int status = params[0];
 	int itemID = params[1] - 1;
+	GameItem *item = _vm->_game->getItem(itemID);
 
 	_vm->_game->setItemStatus(itemID, status == 1);
 
 	if (_vm->_game->getItemStatus(itemID) == 0) {
-		if (itemID != kNoItem) {
-			_vm->_anims->deleteAnimation(kInventoryItemsID - itemID);
+		if (item) {
+			item->_anim->del();
+			item->_anim = NULL;
 		}
 
-		_vm->_game->removeItem(itemID);
+		_vm->_game->removeItem(item);
 
-		if (_vm->_game->getCurrentItem() == itemID) {
-			_vm->_game->setCurrentItem(kNoItem);
+		if (_vm->_game->getCurrentItem() == item) {
+			_vm->_game->setCurrentItem(NULL);
 		}
 
 		if (_vm->_mouse->getCursorType() == kNormalCursor) {
@@ -580,16 +560,13 @@ void Script::icoStat(const Common::Array<int> &params) {
 	}
 
 	if (_vm->_game->getItemStatus(itemID) == 1) {
-		if (itemID != kNoItem) {
-			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID, false);
-			const BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
-			Sprite *sp = new Sprite(f->_data, f->_length, 0, 0, true);
-			itemAnim->addFrame(sp, NULL);
+		if (item) {
+			_vm->_game->loadItemAnimation(item);
 		}
 
-		_vm->_game->setCurrentItem(itemID);
+		_vm->_game->setCurrentItem(item);
 
-		_vm->_mouse->loadItemCursor(itemID, false);
+		_vm->_mouse->loadItemCursor(item, false);
 
 		// TODO: This is probably not needed but I'm leaving it to be sure for now
 		// The original engine needed to turn off the mouse temporarily when changing
@@ -625,7 +602,7 @@ void Script::objStat(const Common::Array<int> &params) {
 		obj->_location = -1;
 	}
 
-	_vm->_game->stopObjectAnimations(obj);
+	obj->stopAnim();
 }
 
 void Script::execInit(const Common::Array<int> &params) {
@@ -674,7 +651,7 @@ void Script::stayOn(const Common::Array<int> &params) {
 	Common::Point heroPos(_vm->_game->findNearestWalkable(x, y));
 	Common::Point mousePos(_vm->_mouse->getPosX(), _vm->_mouse->getPosY());
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
-	Movement startingDirection = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	Movement startingDirection = static_cast<Movement> (dragon->playingAnim());
 
 	_vm->_game->stopWalking();
 	_vm->_game->setHeroPosition(heroPos);
