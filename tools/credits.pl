@@ -626,6 +626,12 @@ begin_credits("Credits");
 		  add_person("Martin Kiewitz", "m_kiewitz", "");
 	  end_section();
 
+	  begin_section("TeenAgent");
+		  add_person("Vladimir Menshakov", "whoozle", "");
+		  add_person("Robert Megone", "sanguine", "Help with callback rewriting");
+	  end_section();
+
+
 	  begin_section("Tinsel");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Fabio Battaglia", "Hkz", "PSX version support");

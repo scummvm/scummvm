@@ -138,6 +138,10 @@ ScummVM Team
        Lars Skovlund        
        Martin Kiewitz       
 
+    TeenAgent:
+       Vladimir Menshakov   
+       Robert Megone         - Help with callback rewriting
+
     Tinsel:
        Torbjorn Andersson   
        Fabio Battaglia       - PSX version support
