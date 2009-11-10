@@ -198,14 +198,6 @@
 	#define SMALL_SCREEN_DEVICE
 	#endif
 
-	// FIXME: It is not the nicest idea to define these types
-	// on our own, since they should be defined in "stdint.h"
-	// for compilers with a C99 library.
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
-
 #elif defined(_MSC_VER)
 
 	#define scumm_stricmp stricmp
@@ -218,28 +210,6 @@
 	#define NORETURN __declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
-	// FIXME: It is not the nicest idea to define these types
-	// on our own, since they should be defined in "stdint.h"
-	// for compilers with a C99 library. Since MSVC does not
-	// supply any C99 headers, we must define these types
-	// on owr own, sadly SDL seems to do the same, but they
-	// define "uint32_t" as "unsigned __int32" and "int32_t"
-	// as "signed __int32", which leads to compilation errors
-	// when this file is included before SDL.h.
-	// We might either switch to the same definitions SDL.h
-	// uses or clean this up in a different way, it seems
-	// the only code relying on these types is the MPEG2
-	// code, so maybe we can move this a bit more locally
-	// to the MPEG2 code.
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
-
-	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
-	typedef signed long int32_t;
-	typedef unsigned long uint32_t;
-	#endif
 
 #elif defined(__MINGW32__)
 
