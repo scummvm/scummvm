@@ -29,6 +29,15 @@
 
 #if defined(SAMSUNGTV)
 
+void OSystem_SDL_SamsungTV::generateMouseMoveEvent(int x, int y) {
+	SDL_Event event;
+	memset(&event, 0, sizeof(event));
+	event.type = SDL_MOUSEMOTION;
+	event.motion.x = x;
+	event.motion.y = y;
+	SDL_PushEvent(&event);
+}
+
 void OSystem_SDL_SamsungTV::handleKbdMouse() {
 	uint32 curTime = getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
@@ -93,7 +102,7 @@ void OSystem_SDL_SamsungTV::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
-			setMousePos(_km.x, _km.y);
+			generateMouseMoveEvent(_km.x, _km.y);
 		}
 	}
 }

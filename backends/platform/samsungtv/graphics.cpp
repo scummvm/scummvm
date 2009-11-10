@@ -542,8 +542,19 @@ void OSystem_SDL_SamsungTV::setFullscreenMode(bool enable) {
 }
 
 void OSystem_SDL_SamsungTV::warpMouse(int x, int y) {
-	if (_mouseCurState.x != x || _mouseCurState.y != y)
+	int y1 = y;
+
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+		y1 = real2Aspect(y);
+
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
+		if (!_overlayVisible)
+			generateMouseMoveEvent(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
+		else
+			generateMouseMoveEvent(x, y1);
+
 		setMousePos(x, y);
+	}
 }
 
 void OSystem_SDL_SamsungTV::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {

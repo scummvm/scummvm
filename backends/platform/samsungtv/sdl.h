@@ -96,6 +96,7 @@ protected:
 	void setFullscreenMode(bool enable);
 
 	void handleKbdMouse();
+	void generateMouseMoveEvent(int x, int y);
 
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
