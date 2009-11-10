@@ -57,6 +57,7 @@ namespace Audio {
 
 enum {
 	GFX_NORMAL = 0,
+#ifndef DISABLE_SCALERS
 	GFX_DOUBLESIZE = 1,
 	GFX_TRIPLESIZE = 2,
 	GFX_2XSAI = 3,
@@ -68,6 +69,7 @@ enum {
 	GFX_HQ3X = 9,
 	GFX_TV2X = 10,
 	GFX_DOTMATRIX = 11
+#endif
 };
 
 class AspectRatio {

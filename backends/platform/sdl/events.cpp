@@ -301,9 +301,8 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		handleScalerHotkeys(ev.key);
 		return false;
 	}
-	const bool event_complete = remapKey(ev, event);
 
-	if (event_complete)
+	if (remapKey(ev, event))
 		return true;
 
 	event.type = Common::EVENT_KEYDOWN;
@@ -314,18 +313,15 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 }
 
 bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
-	byte b = 0;
-	const bool event_complete = remapKey(ev, event);
-
-	if (event_complete)
+	if (remapKey(ev, event))
 		return true;
 
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-	b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
 	// Ctrl-Alt-<key> will change the GFX mode
+	byte b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 	if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 		// Swallow these key up events
 		return false;

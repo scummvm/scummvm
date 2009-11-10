@@ -36,6 +36,7 @@
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
+#ifndef DISABLE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},
 	{"2xsai", "2xSAI", GFX_2XSAI},
@@ -49,6 +50,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 #endif
 	{"tv2x", "TV2x", GFX_TV2X},
 	{"dotmatrix", "DotMatrix", GFX_DOTMATRIX},
+#endif
 	{0, 0, 0}
 };
 
@@ -452,8 +454,7 @@ void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) 
 
 	assert(newFormat.bytesPerPixel > 0);
 
-	if (newFormat != _videoMode.format)
-	{
+	if (newFormat != _videoMode.format) {
 		_videoMode.format = newFormat;
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
