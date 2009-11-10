@@ -34,47 +34,6 @@
 extern "C" int Game_Main(char *path, char *) {
 	chdir(path);
 
-	//
-	// Set up redirects for stdout/stderr under Windows and Symbian.
-	// Code copied from SDL_main.
-	//
-/*
-	// Symbian does not like any output to the console through any *print* function
-	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
-	strcpy(STDOUT_FILE, "/dtv/usb/sda1/");
-	strcpy(STDERR_FILE, "/dtv/usb/sda1/");
-	strcat(STDOUT_FILE, "scummvm.stdout.txt");
-	strcat(STDERR_FILE, "scummvm.stderr.txt");
-*/
-	/* Flush the output in case anything is queued */
-/*	fclose(stdout);
-	fclose(stderr);
-*/
-	/* Redirect standard input and standard output */
-//	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-//	if (newfp == NULL) {	/* This happens on NT */
-/*#if !defined(stdout)
-		stdout = fopen(STDOUT_FILE, "w");
-#else
-		newfp = fopen(STDOUT_FILE, "w");
-		if (newfp) {
-			*stdout = *newfp;
-		}
-#endif
-	}
-	newfp = freopen(STDERR_FILE, "w", stderr);
-	if (newfp == NULL) {*/	/* This happens on NT */
-/*#if !defined(stderr)
-		stderr = fopen(STDERR_FILE, "w");
-#else
-		newfp = fopen(STDERR_FILE, "w");
-		if (newfp) {
-			*stderr = *newfp;
-		}
-#endif
-	}
-	setbuf(stderr, NULL);*/			/* No buffering */
-
 	g_system = new OSystem_SDL_SamsungTV();
 	assert(g_system);
 

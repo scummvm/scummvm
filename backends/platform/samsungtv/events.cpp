@@ -29,41 +29,7 @@
 
 #if defined(SAMSUNGTV)
 
-static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + Common::ASCII_F1;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
-		return key;
-	} else if (unicode) {
-		return unicode;
-	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
-		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
-		return 0;
-	}
-	return key;
-}
-
-void OSystem_SDL_SamsungTV::fillMouseEvent(Common::Event &event, int x, int y) {
-	event.mouse.x = x;
-	event.mouse.y = y;
-
-	// Update the "keyboard mouse" coords
-	_km.x = x;
-	_km.y = y;
-
-	// Adjust for the screen scaling
-	if (!_overlayVisible) {
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
-	}
-}
-
-void OSystem_SDL_SamsungTV::handleKbdMouse() {
+void OSystem_SDL::handleKbdMouse() {
 	uint32 curTime = getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
@@ -126,28 +92,12 @@ void OSystem_SDL_SamsungTV::handleKbdMouse() {
 				_km.y_vel = 1;
 				_km.y_down_count = 1;
 			}
-
-			setMousePos(_km.x, _km.y);
 		}
 	}
 }
 
-static byte SDLModToOSystemKeyFlags(SDLMod mod) {
-	byte b = 0;
-
-	if (mod & KMOD_SHIFT)
-		b |= Common::KBD_SHIFT;
-	if (mod & KMOD_ALT)
-		b |= Common::KBD_ALT;
-	if (mod & KMOD_CTRL)
-		b |= Common::KBD_CTRL;
-
-	return b;
-}
-
-bool OSystem_SDL_SamsungTV::pollEvent(Common::Event &event) {
+bool OSystem_SDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
-	byte b = 0;
 
 	handleKbdMouse();
 
@@ -160,8 +110,14 @@ bool OSystem_SDL_SamsungTV::pollEvent(Common::Event &event) {
 
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
+		if (dispatchSDLEvent(ev, event))
+			return true;
+	}
+	return false;
+}
 
-		switch (ev.type) {
+bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
+	switch (ev.type) {
 		case SDL_KEYDOWN:{
 			if (ev.key.keysym.sym == SDLK_UP) {
 				_km.y_vel = -1;
@@ -201,59 +157,9 @@ bool OSystem_SDL_SamsungTV::pollEvent(Common::Event &event) {
 				event.kbd.ascii = ' ';
 				return true;
 			}
-
-			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
-
-			// Alt-S: Create a screenshot
-			if (b == Common::KBD_ALT && ev.key.keysym.sym == 's') {
-				char filename[20];
-
-				for (int n = 0;; n++) {
-					SDL_RWops *file;
-
-					sprintf(filename, "scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename, "r");
-					if (!file)
-						break;
-					SDL_RWclose(file);
-				}
-				if (saveScreenshot(filename))
-					printf("Saved '%s'\n", filename);
-				else
-					printf("Could not save screenshot!\n");
-				break;
-			}
-
-			// On other unices, Control-Q quits
-			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-				event.type = Common::EVENT_QUIT;
-				return true;
-			}
-
-			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
-				event.type = Common::EVENT_MUTE;
-				return true;
-			}
-
-			// Ctrl-Alt-<key> will change the GFX mode
-			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-
-				handleScalerHotkeys(ev.key);
-				break;
-			}
-			const bool event_complete = remapKey(ev, event);
-
-			if (event_complete)
-				return true;
-
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
-			return true;
-			}
-		case SDL_KEYUP:
-			{
+			break;
+		}
+		case SDL_KEYUP: {
 			if (ev.key.keysym.sym == SDLK_UP || ev.key.keysym.sym == SDLK_DOWN || ev.key.keysym.sym == SDLK_LEFT || ev.key.keysym.sym == SDLK_RIGHT) {
 				_km.x_vel = 0;
 				_km.x_down_count = 0;
@@ -276,82 +182,10 @@ bool OSystem_SDL_SamsungTV::pollEvent(Common::Event &event) {
 				event.kbd.ascii = ' ';
 				return true;
 			}
-
-			const bool event_complete = remapKey(ev,event);
-
-			if (event_complete)
-				return true;
-
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
-
-			// Ctrl-Alt-<key> will change the GFX mode
-			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-				// Swallow these key up events
-				break;
-			}
-
-			return true;
-			}
-		case SDL_MOUSEMOTION:
-			event.type = Common::EVENT_MOUSEMOVE;
-			fillMouseEvent(event, ev.motion.x, ev.motion.y);
-
-			setMousePos(event.mouse.x, event.mouse.y);
-			return true;
-
-		case SDL_MOUSEBUTTONDOWN:
-			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = Common::EVENT_LBUTTONDOWN;
-			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
-			else if (ev.button.button == SDL_BUTTON_WHEELUP)
-				event.type = Common::EVENT_WHEELUP;
-			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-				event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
-			else if (ev.button.button == SDL_BUTTON_MIDDLE)
-				event.type = Common::EVENT_MBUTTONDOWN;
-#endif
-			else
-				break;
-
-			fillMouseEvent(event, ev.button.x, ev.button.y);
-
-			return true;
-
-		case SDL_MOUSEBUTTONUP:
-			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = Common::EVENT_LBUTTONUP;
-			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = Common::EVENT_RBUTTONUP;
-#if defined(SDL_BUTTON_MIDDLE)
-			else if (ev.button.button == SDL_BUTTON_MIDDLE)
-				event.type = Common::EVENT_MBUTTONUP;
-#endif
-			else
-				break;
-			fillMouseEvent(event, ev.button.x, ev.button.y);
-
-			return true;
-
-		case SDL_VIDEOEXPOSE:
-			_forceFull = true;
 			break;
-
-		case SDL_QUIT:
-			event.type = Common::EVENT_QUIT;
-			return true;
 		}
 	}
-	return false;
-}
 
-bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 

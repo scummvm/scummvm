@@ -36,8 +36,6 @@
 
 #include <time.h>	// for getTimeAndDate()
 
-#define SAMPLES_PER_SEC 22050
-
 /*
  * Include header files needed for the getFilesystemFactory() method.
  */
@@ -141,91 +139,8 @@ void OSystem_SDL_SamsungTV::initBackend() {
 	_inited = true;
 }
 
-OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
-	:
-#ifdef USE_OSD
-	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
-#endif
-	_hwscreen(0), _prehwscreen(0), _screen(0), _tmpscreen(0),
-	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
-	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
-	_overlayVisible(false),
-	_overlayscreen(0), _tmpscreen2(0),
-	_samplesPerSec(0),
-	_scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
-	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
-	_currentShakePos(0), _newShakePos(0),
-	_paletteDirtyStart(0), _paletteDirtyEnd(0),
-	_fsFactory(0),
-	_savefile(0),
-	_mixer(0),
-	_timer(0),
-	_screenIsLocked(false),
-	_graphicsMutex(0), _transactionMode(kTransactionNone) {
-
-	// allocate palette storage
-	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-
-	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
-
-	// reset mouse state
-	memset(&_km, 0, sizeof(_km));
-	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
-
-	_inited = false;
-
-	_fsFactory = new POSIXFilesystemFactory();
-}
-
-OSystem_SDL_SamsungTV::~OSystem_SDL_SamsungTV() {
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-	free(_dirtyChecksums);
-	free(_currentPalette);
-	free(_cursorPalette);
-	free(_mouseData);
-
-	delete _savefile;
-	delete _timer;
-}
-
-uint32 OSystem_SDL_SamsungTV::getMillis() {
-	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
-	return millis;
-}
-
-void OSystem_SDL_SamsungTV::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
-}
-
-void OSystem_SDL_SamsungTV::getTimeAndDate(TimeDate &td) const {
-	time_t curTime = time(0);
-	struct tm t = *localtime(&curTime);
-	td.tm_sec = t.tm_sec;
-	td.tm_min = t.tm_min;
-	td.tm_hour = t.tm_hour;
-	td.tm_mday = t.tm_mday;
-	td.tm_mon = t.tm_mon;
-	td.tm_year = t.tm_year;
-}
-
-Common::TimerManager *OSystem_SDL_SamsungTV::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-Common::SaveFileManager *OSystem_SDL_SamsungTV::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
-FilesystemFactory *OSystem_SDL_SamsungTV::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
+OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV() : OSystem_SDL(),
+	_prehwscreen(0) {
 }
 
 void OSystem_SDL_SamsungTV::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -233,7 +148,7 @@ void OSystem_SDL_SamsungTV::addSysArchivesToSearchSet(Common::SearchSet &s, int 
 	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
 	Common::FSNode dataNode(".");
 	if (dataNode.exists() && dataNode.isDirectory()) {
-		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
+		s.add("", new Common::FSDirectory(dataNode, 4), priority);
 	}
 }
 
@@ -252,9 +167,6 @@ Common::SeekableReadStream *OSystem_SDL_SamsungTV::createConfigReadStream() {
 Common::WriteStream *OSystem_SDL_SamsungTV::createConfigWriteStream() {
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.createWriteStream();
-}
-
-void OSystem_SDL_SamsungTV::setWindowCaption(const char *caption) {
 }
 
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
@@ -312,116 +224,6 @@ void OSystem_SDL_SamsungTV::quit() {
 	// recorded events
 	delete getEventManager();
 	delete _savefile;
-}
-
-void OSystem_SDL_SamsungTV::setupIcon() {
-}
-
-OSystem::MutexRef OSystem_SDL_SamsungTV::createMutex(void) {
-	return (MutexRef)SDL_CreateMutex();
-}
-
-void OSystem_SDL_SamsungTV::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
-}
-
-void OSystem_SDL_SamsungTV::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
-}
-
-void OSystem_SDL_SamsungTV::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
-}
-
-void OSystem_SDL_SamsungTV::mixCallback(void *sys, byte *samples, int len) {
-	OSystem_SDL_SamsungTV *this_ = (OSystem_SDL_SamsungTV *)sys;
-	assert(this_);
-	assert(this_->_mixer);
-
-	this_->_mixer->mixCallback(samples, len);
-}
-
-void OSystem_SDL_SamsungTV::setupMixer() {
-	SDL_AudioSpec desired;
-
-	// Determine the desired output sampling frequency.
-	_samplesPerSec = 0;
-	if (ConfMan.hasKey("output_rate"))
-		_samplesPerSec = ConfMan.getInt("output_rate");
-	if (_samplesPerSec <= 0)
-		_samplesPerSec = SAMPLES_PER_SEC;
-
-	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/16th of a second. Note that it must be a power of two.
-	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
-	int samples = 8192;
-	while (16 * samples >= _samplesPerSec) {
-		samples >>= 1;
-	}
-
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = _samplesPerSec;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = (uint16)samples;
-	desired.callback = mixCallback;
-	desired.userdata = this;
-
-	// Create the mixer instance
-	assert(!_mixer);
-	_mixer = new Audio::MixerImpl(this);
-	assert(_mixer);
-
-	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
-		warning("Could not open audio device: %s", SDL_GetError());
-		_samplesPerSec = 0;
-		_mixer->setReady(false);
-	} else {
-		// Note: This should be the obtained output rate, but it seems that at
-		// least on some platforms SDL will lie and claim it did get the rate
-		// even if it didn't. Probably only happens for "weird" rates, though.
-		_samplesPerSec = _obtainedRate.freq;
-		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
-
-		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(_samplesPerSec);
-		_mixer->setReady(true);
-
-		// start the sound system
-		SDL_PauseAudio(0);
-	}
-}
-
-void OSystem_SDL_SamsungTV::closeMixer() {
-	if (_mixer)
-		_mixer->setReady(false);
-
-	SDL_CloseAudio();
-
-	delete _mixer;
-	_mixer = 0;
-}
-
-Audio::Mixer *OSystem_SDL_SamsungTV::getMixer() {
-	assert(_mixer);
-	return _mixer;
-}
-
-bool OSystem_SDL_SamsungTV::openCD(int drive) {
-	return false;
-}
-
-void OSystem_SDL_SamsungTV::stopCD() {
-}
-
-void OSystem_SDL_SamsungTV::playCD(int track, int num_loops, int start_frame, int duration) {
-}
-
-bool OSystem_SDL_SamsungTV::pollCD() {
-	return false;
-}
-
-void OSystem_SDL_SamsungTV::updateCD() {
 }
 
 #endif
