@@ -50,13 +50,6 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 	return interval;
 }
 
-AspectRatio::AspectRatio(int w, int h) {
-	// TODO : Validation and so on...
-	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
-	_kw = w;
-	_kh = h;
-}
-
 static const size_t AR_COUNT = 4;
 static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
 static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };

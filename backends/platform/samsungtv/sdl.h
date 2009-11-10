@@ -51,10 +51,6 @@ public:
 	// Typically, 320x200 CLUT8
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format);
 
-	// Draw a bitmap to screen.
-	// The screen will not be updated to reflect the new bitmap
-	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
-
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
@@ -88,10 +84,7 @@ protected:
 
 	SDL_Surface *_prehwscreen;
 
-	virtual void setGraphicsModeIntern();
-
 	virtual void drawMouse(); // overloaded by CE backend
-	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
 	virtual void blitCursor(); // overloaded by CE backend (FIXME)
 
 	virtual void internUpdateScreen(); // overloaded by CE backend
@@ -101,7 +94,6 @@ protected:
 	virtual bool hotswapGFXMode(); // overloaded by CE backend
 
 	void setFullscreenMode(bool enable);
-	void setAspectRatioCorrection(bool enable);
 
 	void handleKbdMouse();
 

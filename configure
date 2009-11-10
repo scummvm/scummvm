@@ -2260,6 +2260,7 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
 		LDFLAGS="$LDFLAGS -shared -fpic -Wl,-whole-archive"
+		MODULES="$MODULES backends/platform/sdl"
 		;;
 	gp2x)
 		find_sdlconfig

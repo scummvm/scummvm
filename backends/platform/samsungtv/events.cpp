@@ -29,7 +29,7 @@
 
 #if defined(SAMSUNGTV)
 
-void OSystem_SDL::handleKbdMouse() {
+void OSystem_SDL_SamsungTV::handleKbdMouse() {
 	uint32 curTime = getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
@@ -96,7 +96,7 @@ void OSystem_SDL::handleKbdMouse() {
 	}
 }
 
-bool OSystem_SDL::pollEvent(Common::Event &event) {
+bool OSystem_SDL_SamsungTV::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 
 	handleKbdMouse();
