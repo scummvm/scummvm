@@ -2031,7 +2031,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(11);
 		return true;
 
-	case 0x7513:
+	case 0x7513: //fatso + doctor: pre-final
 		if (CHECK_FLAG(0xDBD7, 1)) {
 			if (CHECK_FLAG(0xDBD8, 1)) {
 				playSound(88, 4);
@@ -2058,11 +2058,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				Dialog::show(scene, 0x5556, 775, 775, 0xd0, 0xd0, 1, 1);
 				playAnimation(771, 1, true, true, true);
 				playAnimation(776, 0);
+				
 				Dialog::show(scene, 0x55f7, 777, 778, 0xd0, 0xe5, 1, 2); //i have to kill you anyway
-				playAnimation(779, 0, true);
-				playAnimation(780, 1, true);
-				waitAnimation();
-
+				
+				playAnimation(779, 0, true, true, true);
+				playAnimation(780, 1, true, true, true);
+				
 				for (byte i = 1; i <= 6; ++i)
 					playSound(58, i);
 				playSound(58, 10);
@@ -2072,6 +2073,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playAnimation(781, 2, true);
 				playAnimation(782, 3, true);
 				waitAnimation();
+				setOns(1, 75);
+				setOns(2, 76);
 				
 				for (byte i = 1; i <= 6; ++i)
 					playSound(58, i);
@@ -2083,40 +2086,44 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playAnimation(783, 2, true);
 				playAnimation(784, 3, true);
 				waitAnimation();
-
-				setOns(1, 75);
-				setOns(2, 76);
+				setOns(1, 77);
+				setOns(2, 78);
 
 				playAnimation(785, 2, true);
 				playAnimation(786, 3, true);
 				waitAnimation();
 
-				setOns(1, 77);
-				setOns(2, 78);
+				moveTo(112, 183, 2, true);
 
-				moveTo(112, 183, 2);
 				setOns(3, 79);
 				setOns(0, 0);
-
+				
+				showActor();
+				playAnimation(0, 0);
 				playAnimation(787, 2, true);
 				playAnimation(788, 3, true);
 				waitAnimation();
 
+				playAnimation(0, 1);
+				
 				playSound(32, 2);
 				playSound(24, 7);
 
 				playAnimation(790, 3, true);
-				playAnimation(789, 2, true);
+				playAnimation(789, 0, true);
 				waitAnimation();
 
 				setOns(0, 80);
+
+				playAnimation(792, 3, true, true, true);
 				Dialog::show(scene, 0x5665, 0, 791, 0xd1, 0xd0, 0, 4);
-				playAnimation(792, 3, true);
+				playAnimation(792, 3, true, true, true);
 
 				moveTo(40, 171, 4);
+				
 				setOns(3, 81, 35);
 				enableObject(12, 35);
-				playAnimation(0, 3, true);
+				playAnimation(0, 3);
 
 				loadScene(31, 298, 177, 4);
 				SET_FLAG(0xDBD9, 1);
@@ -2128,7 +2135,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x783d:
-		Dialog::pop(scene, 0xdb36, 797);
+		Dialog::pop(scene, 0xdb36, 0, 797, 0xd1, 0xd0, 0, 1);
 		return true;
 		
 	case 0x7966:
@@ -3701,75 +3708,75 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(798);
 		playSound(63, 11);
 		playSound(19, 20);
-		playAnimation(799, 1);
+		playAnimation(799, 0);
 		moveTo(50, 170, 1);
-		playAnimation(800, 1);
+		playAnimation(800, 0, true, true, true);
 		playActorAnimation(805);
 		moveTo(50, 170, 3);
 		displayMessage(0x5349);
 		//moveTo(105, 157, 0, true);
 		playMusic(3);
 		loadScene(11, 105, 157, 0);
-		Dialog::show(scene, 0x8409, 938);
+		Dialog::show(scene, 0x8409, 0, 938, 0xd1, 0xec, 0, 1);
 
-		playAnimation(939, 1, true);
+		playAnimation(939, 0, true);
 		playActorAnimation(942, true);
 		waitAnimation();
 
-		playAnimation(939, 1, true);
+		playAnimation(939, 0, true);
 		playAnimation(935, 1, true);
 		playActorAnimation(943, true);
 		waitAnimation();
 
-		playAnimation(940, 1, true);
+		playAnimation(940, 0, true);
 		playAnimation(936, 1, true);
 		playActorAnimation(944, true);
 		waitAnimation();
 
-		playAnimation(941, 1, true);
+		playAnimation(941, 0, true);
 		playAnimation(937, 1, true);
 		playActorAnimation(945, true);
 		waitAnimation();
 
-		playAnimation(945, 1);
-		Dialog::show(scene, 0x844f);
+		playAnimation(945, 0);
+		Dialog::show(scene, 0x844f, 0, 938, 0xd1, 0xec, 0, 2);
 		playAnimation(946, 1);
-		Dialog::show(scene, 0x87c7);
+		Dialog::show(scene, 0x87c7, 0, 938, 0xd1, 0xec, 0, 2);
 
 		playSound(24, 7);
-		playAnimation(948, 1, true);
+		playAnimation(948, 0, true);
 		playActorAnimation(947, true);
 		waitAnimation();
 
 		loadScene(40, 198, 186, 1);
 		Dialog::show(scene, 0x8890);
 		Dialog::show(scene, 0x8a2f);
-		playAnimation(923, 1);
+		playAnimation(923, 0);
 		Dialog::show(scene, 0x8aa7);
 
 		moveTo(237, 186, 0);
 		moveTo(237, 177, 0);
 		moveTo(192, 177, 0);
 		playAnimation(949, 1);
-		Dialog::show(scene, 0x8af6, 950);
+		Dialog::show(scene, 0x8af6, 950, 950, 0xe7, 0xe7, 1, 1);
 
 		playSound(32, 5);
 		playSound(40, 14);
 
-		playAnimation(951, 1, true);
+		playAnimation(951, 0, true);
 		playActorAnimation(952, true);
 		waitAnimation();
 
 		playMusic(11);
 		loadScene(39, 192, 177, 0);
+		hideActor();
 		Dialog::show(scene, 0x8b4d, 953);
 		playSound(5, 15);
-		playAnimation(954, 1);
+		playAnimation(954, 0);
 		Dialog::show(scene, 0x8b7a, 955);
 		playMusic(2);
 
-		displayMessage("THE END");
-		debug(0, "FIXME: THE END + CREDITS");
+		displayCredits(0xe47c);
 		scene->push(SceneEvent(SceneEvent::kQuit));
 
 		return true;
