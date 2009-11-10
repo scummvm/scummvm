@@ -132,15 +132,15 @@ ScummVM Team
        Paul Gilbert         
        Max Horn             
        Filippos Karapetis   
+       Martin Kiewitz       
        Walter van Niftrik   
        Willem Jan Palenstijn
        Jordi Vilalta Prat   
        Lars Skovlund        
-       Martin Kiewitz       
 
     TeenAgent:
-       Vladimir Menshakov   
        Robert Megone         - Help with callback rewriting
+       Vladimir Menshakov   
 
     Tinsel:
        Torbjorn Andersson   
@@ -316,11 +316,11 @@ Other contributions
                              fixes
      Stuart Caie           - Decoders for Amiga and AtariST data files (AGOS
                              engine)
-     Tobias Gunkel         - Graphic support for PCE version of Loom
      Paolo Costabel        - PSP port contributions
      Thierry Crozat        - Support for Broken Sword 1 Macintosh version
      Martin Doucha         - CinE engine objectification
      Thomas Fach-Pedersen  - ProTracker module player
+     Tobias Gunkel         - Graphic support for PCE version of Loom
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
      Kovacs Endre Janos    - Several fixes for Simon1
      Jeroen Janssen        - Numerous readability and bugfix patches

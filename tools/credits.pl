@@ -619,16 +619,16 @@ begin_credits("Credits");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Martin Kiewitz", "m_kiewitz", "");
 		  add_person("Walter van Niftrik", "waltervn", "");
 		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Jordi Vilalta Prat", "jvprat", "");
 		  add_person("Lars Skovlund", "lskovlun", "");
-		  add_person("Martin Kiewitz", "m_kiewitz", "");
 	  end_section();
 
 	  begin_section("TeenAgent");
-		  add_person("Vladimir Menshakov", "whoozle", "");
 		  add_person("Robert Megone", "sanguine", "Help with callback rewriting");
+		  add_person("Vladimir Menshakov", "whoozle", "");
 	  end_section();
 
 
@@ -846,11 +846,11 @@ begin_credits("Credits");
 	  begin_persons();
 		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
 		  add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
-		  add_person("Tobias Gunkel", "hennymcc", "Graphic support for PCE version of Loom");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
 		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");
 		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
 		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player");
+		  add_person("Tobias Gunkel", "hennymcc", "Graphic support for PCE version of Loom");
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 		  add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
