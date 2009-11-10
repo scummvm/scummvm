@@ -487,7 +487,7 @@ int main(int argc, char *argv[]) {
 			return -1;
 		}
 
-		uint offset, size;
+		uint32 offset, size;
 		sscanf(argv[3], "%x", &offset);
 		sscanf(argv[4], "%x", &size);
 
