@@ -30,14 +30,15 @@
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "backends/saves/default/default-saves.h"
+
+#include "base/main.h"
+
 #include "common/config-manager.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "gui/Actions.h"
-#include "gui/Key.h"
+#include "common/scummsys.h"
+
 #include "gui/message.h"
+
 #include "sound/mixer_intern.h"
-#include "..\..\sdl\main.cpp"
 
 #ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
   #define SAMPLES_PER_SEC 8000
@@ -45,16 +46,11 @@
   #define SAMPLES_PER_SEC 16000
 #endif
 
-
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #define DEFAULT_SAVE_PATH "Savegames"
 
-#define FILE void
-
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
-
-
 
 // Show a simple Symbian Info win with Msg & exit
 void FatalError(const char *msg) {
@@ -531,31 +527,60 @@ extern "C"
 #include "vsnprintf.h"
 }
 
-/** Vibration support */
-#ifdef  USE_VIBRA_SE_PXXX
-void OSystem_SDL_Symbian::initializeVibration() {
-#ifdef UIQ3
+// Symbian SDL_Main implementation
+// Redirects standard io, creates Symbian specific SDL backend (inherited from main SDL)
+int main(int argc, char *argv[]) {
+	//
+	// Set up redirects for stdout/stderr under Symbian.
+	// Code copied from SDL_main.
+	//
+
+	// Symbian does not like any output to the console through any *print* function
+	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
+	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
+	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
+	strcat(STDOUT_FILE, "scummvm.stdout.txt");
+	strcat(STDERR_FILE, "scummvm.stderr.txt");
+
+	/* Flush the output in case anything is queued */
+	fclose(stdout);
+	fclose(stderr);
+
+	/* Redirect standard input and standard output */
+	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
+	if (newfp == NULL) {	/* This happens on NT */
+#if !defined(stdout)
+		stdout = fopen(STDOUT_FILE, "w");
 #else
+		newfp = fopen(STDOUT_FILE, "w");
+		if (newfp) {
+			*stdout = *newfp;
+		}
 #endif
-}
-
-void OSystem_SDL_Symbian::vibrationOn(int vibraLength) {
-#ifdef UIQ3
-		// initialize?
-	if (!_vibrationApi) _vibrationApi = SonyEricsson::CVibration::NewL();
-	// do it!
-	_vibrationApi->VibrationOn(1, 1, vibraLength);
+	}
+	newfp = freopen(STDERR_FILE, "w", stderr);
+	if (newfp == NULL) {	/* This happens on NT */
+#if !defined(stderr)
+		stderr = fopen(STDERR_FILE, "w");
 #else
-
+		newfp = fopen(STDERR_FILE, "w");
+		if (newfp) {
+			*stderr = *newfp;
+		}
 #endif
-}
+	}
+	setbuf(stderr, NULL);			/* No buffering */
 
-void OSystem_SDL_Symbian::vibrationOff() {
-#ifdef UIQ3
-#else
-	_vibrationApi->VibrationOff();
+	// Create our OSystem instance
+	g_system = new OSystem_SDL_Symbian();
+	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
+
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+	g_system->quit();	// TODO: Consider removing / replacing this!
+	return res;
 }
-
-#endif //  USE_SE_PXX_VIBRA
-
