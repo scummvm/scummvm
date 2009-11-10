@@ -988,8 +988,10 @@ void Game::walkHero(int x, int y, SightDirection dir) {
 
 	// Compute the shortest and obliqued path.
 	WalkingPath shortestPath, obliquePath;
-	_walkingMap.findShortestPath(_hero, target, &shortestPath);
-	// TODO: test reachability and react
+	if (!_walkingMap.findShortestPath(_hero, target, &shortestPath)) {
+		debug(1, "Unreachable point [%d,%d]", target.x, target.y);
+		return;
+	}
 	_walkingMap.obliquePath(shortestPath, &obliquePath);
 	debugC(2, kDraciWalkingDebugLevel, "Walking path lengths: shortest=%d oblique=%d", shortestPath.size(), obliquePath.size());
 	if (_vm->_showWalkingMap) {
