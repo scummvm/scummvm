@@ -541,6 +541,11 @@ void OSystem_SDL_SamsungTV::setFullscreenMode(bool enable) {
 	}
 }
 
+void OSystem_SDL_SamsungTV::warpMouse(int x, int y) {
+	if (_mouseCurState.x != x || _mouseCurState.y != y)
+		setMousePos(x, y);
+}
+
 void OSystem_SDL_SamsungTV::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	if (!format)
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -835,10 +840,6 @@ void OSystem_SDL_SamsungTV::drawMouse() {
 	// they will not be scaled or aspect-ratio corrected.
 
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
-}
-
-void OSystem_SDL_SamsungTV::warpMouse(int x, int y) {
-	setMousePos(x, y);
 }
 
 #endif
