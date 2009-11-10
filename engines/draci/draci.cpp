@@ -222,6 +222,7 @@ void DraciEngine::handleEvents() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			_game->setQuit(true);
+			_script->endCurrentProgram(true);
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {

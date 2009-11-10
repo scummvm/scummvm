@@ -24,6 +24,7 @@
  */
 
 #include "common/stream.h"
+#include "common/util.h"
 
 #include "draci/draci.h"
 #include "draci/game.h"
@@ -332,12 +333,12 @@ void Game::handleInventoryLoop() {
 		// Otherwise, if we are holding an item, try to place it inside the
 		// inventory
 		} else if (_currentItem) {
-			const int column = scummvm_lround(
+			const int column = CLIP(scummvm_lround(
 				(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
-				kInventoryItemWidth) - 1;
-			const int line = scummvm_lround(
+				kInventoryItemWidth) - 1, 0L, (long) kInventoryColumns - 1);
+			const int line = CLIP(scummvm_lround(
 				(_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) /
-				kInventoryItemHeight) - 1;
+				kInventoryItemHeight) - 1, 0L, (long) kInventoryLines - 1);
 			const int index = line * kInventoryColumns + column;
 			putItem(_currentItem, index);
 
