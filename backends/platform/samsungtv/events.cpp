@@ -92,6 +92,8 @@ void OSystem_SDL_SamsungTV::handleKbdMouse() {
 				_km.y_vel = 1;
 				_km.y_down_count = 1;
 			}
+
+			setMousePos(_km.x, _km.y);
 		}
 	}
 }
