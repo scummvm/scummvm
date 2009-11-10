@@ -308,7 +308,7 @@ bool Console::cmdObject(int argc, const char **argv) {
 		// List of objects
 		for (uint objStart = 0; objStart < _vm->_globals->getObjectsSize(); objStart += 5) {
 			DebugPrintf("%2d - ", objStart);
-			for (uint objId = objStart; objId < MIN(_vm->_globals->getObjectsSize(), objStart + 5); ++objId) {
+			for (uint objId = objStart; objId < MIN<uint>(_vm->_globals->getObjectsSize(), objStart + 5); ++objId) {
 				if (objId != objStart) DebugPrintf(", ");
 				uint16 descId = _vm->_globals->getObject(objId)->descId - 1;
 				DebugPrintf("%s", _vm->_globals->getVocab(descId));
