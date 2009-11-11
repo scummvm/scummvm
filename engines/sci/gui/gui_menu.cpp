@@ -400,6 +400,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry;
+	GuiMenuItemEntry *firstItemEntry = NULL;
 	GuiMenuItemEntry *lastItemEntry = NULL;
 
 	// Fixup menuId if needed
@@ -407,20 +408,21 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
 		menuId = 1;
 	if (menuId == 0)
 		menuId = _listCount;
-	// Fixup itemId as well
-	if (itemId == 0)
-		itemId = 32678;
 	while (itemIterator != itemEnd) {
 		itemEntry = *itemIterator;
 		if (itemEntry->menuId == menuId) {
 			if (itemEntry->id == itemId)
 				return itemEntry;
+			if (!firstItemEntry)
+				firstItemEntry = itemEntry;
 			if ((!lastItemEntry) || (itemEntry->id > lastItemEntry->id))
 				lastItemEntry = itemEntry;
 		}
 		itemIterator++;
 	}
-	return lastItemEntry;
+	if (itemId == 0)
+		return lastItemEntry;
+	return firstItemEntry;
 }
 
 void SciGuiMenu::drawMenu(uint16 menuId) {
@@ -496,6 +498,17 @@ void SciGuiMenu::drawMenu(uint16 menuId) {
 	_gfx->BitsShow(_menuRect);
 }
 
+void SciGuiMenu::invertMenuSelection(uint16 itemId) {
+	Common::Rect itemRect = _menuRect;
+
+	itemRect.top += (itemId - 1) * _gfx->_curPort->fontHeight;
+	itemRect.bottom = itemRect.top + _gfx->_curPort->fontHeight + 1;
+	itemRect.left++; itemRect.right--;
+
+	_gfx->InvertRect(itemRect);
+	_gfx->BitsShow(itemRect);
+}
+
 GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	sci_event_t curEvent;
 	uint16 newMenuId = _curMenuId;
@@ -506,8 +519,13 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
 	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
+
+	_gfx->PenColor(0);
+	_gfx->BackColor(_screen->_colorWhite);
+
 	drawBar();
 	drawMenu(curItemEntry->menuId);
+	invertMenuSelection(curItemEntry->id);
 	_gfx->BitsShow(_gfx->_menuBarRect);
 	_gfx->BitsShow(_menuRect);
 
@@ -544,7 +562,10 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 				if (newMenuId != curItemEntry->menuId) {
 					// Menu changed, remove cur menu and paint new menu
 					drawMenu(newMenuId);
+				} else {
+					invertMenuSelection(curItemEntry->id);
 				}
+				invertMenuSelection(newItemId);
 
 				curItemEntry = newItemEntry;
 			}
