@@ -330,16 +330,16 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 			memset(&command, 0, sizeof(ActionCommand));
 
 			command.numLines = stream->readUint32LE();
-			command.opcode   = stream->readUint32LE(); // command type
-			command.param1   = stream->readUint32LE(); // command parameters
-			command.param2   = stream->readUint32LE();
-			command.param3   = stream->readUint32LE();
-			command.param4   = stream->readUint32LE();
-			command.param5   = stream->readUint32LE();
-			command.param6   = stream->readUint32LE();
-			command.param7   = stream->readUint32LE();
-			command.param8   = stream->readUint32LE();
-			command.param9   = stream->readUint32LE();
+			command.opcode   = stream->readUint32LE();
+			command.param1   = stream->readSint32LE();
+			command.param2   = stream->readSint32LE();
+			command.param3   = stream->readSint32LE();
+			command.param4   = stream->readSint32LE();
+			command.param5   = stream->readSint32LE();
+			command.param6   = stream->readSint32LE();
+			command.param7   = stream->readSint32LE();
+			command.param8   = stream->readSint32LE();
+			command.param9   = stream->readSint32LE();
 
 			action.commands[c] = command;
 		}
