@@ -425,13 +425,14 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId, b
 	return firstItemEntry;
 }
 
-void SciGuiMenu::drawMenu(uint16 menuId) {
+void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
 	GuiMenuItemEntry *listItemEntry;
 	GuiMenuItemList::iterator listItemIterator;
 	GuiMenuItemList::iterator listItemEnd = _itemList.end();
+	Common::Rect menuTextRect;
 	uint16 listNr = 0;
 	int16 maxTextWidth = 0, maxTextRightAlignedWidth = 0;
 	int16 topPos;
@@ -443,25 +444,35 @@ void SciGuiMenu::drawMenu(uint16 menuId) {
 		_gfx->BitsShow(_menuRect);
 	}
 
-	// First calculate rect of menu
+	// First calculate rect of menu and also invert old and new menu text
 	_menuRect.top = _gfx->_menuBarRect.bottom;
-	_menuRect.left = 7;
+	menuTextRect.top = _gfx->_menuBarRect.top;
+	menuTextRect.bottom = _gfx->_menuBarRect.bottom;
+	menuTextRect.left = menuTextRect.right = 7;
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
 		listNr++;
-		if (listNr == menuId)
-			break;
-		_menuRect.left += listEntry->textWidth;
+		menuTextRect.left = menuTextRect.right;
+		menuTextRect.right += listEntry->textWidth;
+		if (listNr == newMenuId)
+			_menuRect.left = menuTextRect.left;
+		if ((listNr == newMenuId) || (listNr == oldMenuId)) {
+			menuTextRect.translate(1, 0);
+			_gfx->InvertRect(menuTextRect);
+			menuTextRect.translate(-1, 0);
+		}
 
 		listIterator++;
 	}
+	if (oldMenuId != 0)
+		_gfx->BitsShow(_gfx->_menuBarRect);
 
 	_menuRect.bottom = _menuRect.top + 2;
 	listItemIterator = _itemList.begin();
 	while (listItemIterator != listItemEnd) {
 		listItemEntry = *listItemIterator;
-		if (listItemEntry->menuId == menuId) {
+		if (listItemEntry->menuId == newMenuId) {
 			_menuRect.bottom += _gfx->_curPort->fontHeight;
 			maxTextWidth = MAX<int16>(maxTextWidth, listItemEntry->textWidth);
 			maxTextRightAlignedWidth = MAX<int16>(maxTextRightAlignedWidth, listItemEntry->textRightAlignedWidth);
@@ -484,15 +495,15 @@ void SciGuiMenu::drawMenu(uint16 menuId) {
 	listItemIterator = _itemList.begin();
 	while (listItemIterator != listItemEnd) {
 		listItemEntry = *listItemIterator;
-		if (listItemEntry->menuId == menuId) {
+		if (listItemEntry->menuId == newMenuId) {
 			if (!listItemEntry->separatorLine) {
 				_gfx->MoveTo(_menuRect.left, topPos);
 				_text->Draw_String(listItemEntry->text.c_str());
-				_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 3, topPos);
+				_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
 				_text->Draw_String(listItemEntry->textRightAligned.c_str());
 			} else {
 				// We dont 100% follow sierra here, we draw the line from left to right. Looks better
-				pixelPos.y = topPos + (_gfx->_curPort->fontHeight >> 1);
+				pixelPos.y = topPos + (_gfx->_curPort->fontHeight >> 1) - 1;
 				pixelPos.x = _menuRect.left - 7;
 				while (pixelPos.x < (_menuRect.right - 1)) {
 					_screen->putPixel(pixelPos.x, pixelPos.y, SCI_SCREEN_MASK_VISUAL, 0, 0, 0);
@@ -535,7 +546,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	_gfx->BackColor(_screen->_colorWhite);
 
 	drawBar();
-	drawMenu(curItemEntry->menuId);
+	drawMenu(0, curItemEntry->menuId);
 	invertMenuSelection(curItemEntry->id);
 	_gfx->BitsShow(_gfx->_menuBarRect);
 	_gfx->BitsShow(_menuRect);
@@ -576,7 +587,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 				// paint old and new
 				if (newMenuId != curItemEntry->menuId) {
 					// Menu changed, remove cur menu and paint new menu
-					drawMenu(newMenuId);
+					drawMenu(curItemEntry->menuId, newMenuId);
 				} else {
 					invertMenuSelection(curItemEntry->id);
 				}
