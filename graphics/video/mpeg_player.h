@@ -34,7 +34,7 @@
 
 #ifdef USE_MPEG2
 
-#if defined(__PLAYSTATION2__
+#if defined(__PLAYSTATION2__)
 	typedef uint8 uint8_t;
 	typedef uint16 uint16_t;
 	typedef uint32 uint32_t;
