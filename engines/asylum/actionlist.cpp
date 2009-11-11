@@ -295,6 +295,12 @@ int ActionList::process() {
 				        _scene->getSceneIndex(),
 				        currentLine);
 
+			if (cmdRet == -3)
+				warning("Flagged (see implemenation comments) opcode %s (0x%02X) in Scene %d Line %d",
+					function_map[opcode].name,
+					currentCommand->opcode,
+					_scene->getSceneIndex(),
+					currentLine);
 			currentLine += lineIncrement;
 			currentLoops++;
 
@@ -519,43 +525,31 @@ int kMoveScenePosition(ActionCommand *cmd, Scene *scn) {
 }
 
 int kHideActor(ActionCommand *cmd, Scene *scn) {
-	uint32 actorIndex = 0;
+	Actor *actor = 0;
 
+	// TODO better default actor handling
 	if (cmd->param1 == -1)
-		;//actorIndex = scn->getWorldStats()->playerActor;
+		actor = scn->getActor();
 	else
-		actorIndex = cmd->param1;
+		actor = &scn->worldstats()->actors[cmd->param1];
 
-	if ((actorIndex >= 0) && (actorIndex < scn->worldstats()->numActors))
-		scn->getActor()->visible(false);
-	else
-		debugC(kDebugLevelScripts,
-		       "Requested invalid actor ID:0x%02X in Scene %d Line %d.",
-		       cmd->param1,
-		       scn->getSceneIndex(),
-		       scn->actions()->currentLine);
+	actor->visible(false);
 
-	return 0;
+	return -3;
 }
 
 int kShowActor(ActionCommand *cmd, Scene *scn) {
-	uint32 actorIndex = 0;
+	Actor *actor = 0;
 
+	// TODO revisit when actor selection is cleaned up
 	if (cmd->param1 == -1)
-		;//actorIndex = scn->getWorldStats()->playerActor;
+		actor = scn->getActor();
 	else
-		actorIndex = cmd->param1;
+		actor = &scn->worldstats()->actors[cmd->param1];
 
-	if ((actorIndex >= 0) && (actorIndex < scn->worldstats()->numActors))
-		scn->getActor()->visible(true);
-	else
-		debugC(kDebugLevelScripts,
-		       "Requested invalid actor ID:0x%02X in Scene %d Line %d.",
-		       cmd->param1,
-		       scn->getSceneIndex(),
-		       scn->actions()->currentLine);
+	actor->visible(true);
 
-	return 0;
+	return -3;
 }
 
 int kSetActorStats(ActionCommand *cmd, Scene *scn) {
@@ -1031,21 +1025,22 @@ int kQuit(ActionCommand *cmd, Scene *scn) {
 
 int kJumpBarrierFrame(ActionCommand *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
+	int idx = (int)barrier->frameIdx;
 
 	if (cmd->param2 == -1)
 		cmd->param2 = barrier->frameCount - 1;
 
-	if (cmd->param3 && cmd->param2 == barrier->frameIdx) {
+	if (cmd->param3 && cmd->param2 == idx) {
 		//break;
-	} else if (cmd->param4 && cmd->param2 < barrier->frameIdx) {
+	} else if (cmd->param4 && cmd->param2 < idx) {
 		//break;
-	} else if (cmd->param5 && cmd->param2 > barrier->frameIdx) {
+	} else if (cmd->param5 && cmd->param2 > idx) {
 		//break;
-	} else if (cmd->param6 && cmd->param2 <= barrier->frameIdx) {
+	} else if (cmd->param6 && cmd->param2 <= idx) {
 		//break;
-	} else if (cmd->param7 && cmd->param2 >= barrier->frameIdx) {
+	} else if (cmd->param7 && cmd->param2 >= idx) {
 		//break;
-	} else if (cmd->param8 && cmd->param2 != barrier->frameIdx) {
+	} else if (cmd->param8 && cmd->param2 != idx) {
 		//break;
 	}
 
