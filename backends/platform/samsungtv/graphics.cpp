@@ -97,7 +97,9 @@ void OSystem_SDL_SamsungTV::initSize(uint w, uint h, const Graphics::PixelFormat
 static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) {
 	assert(&width != &height);
 
-	if (desiredAspectRatio.isAuto())
+	// FIXME: TV SDL return empty list. However TV accept any resolution
+	// Consider list fixed list or make calculation. For now it's disabled.
+//	if (desiredAspectRatio.isAuto())
 		return;
 	
 	int kw = desiredAspectRatio.kw();
