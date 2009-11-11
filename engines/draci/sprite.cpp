@@ -136,9 +136,8 @@ int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 
 void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const {
 	const Common::Rect destRect(getRect(displacement));
-	const Common::Rect surfaceRect(0, 0, surface->w, surface->h);
-	Common::Rect clippedDestRect(destRect);
-	clippedDestRect.clip(surfaceRect);
+	Common::Rect clippedDestRect(0, 0, surface->w, surface->h);
+	clippedDestRect.clip(destRect);
 
 	// Calculate by how much we need to adjust the source rectangle to account for cropping
 	const Common::Point croppedBy(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
@@ -188,7 +187,7 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 
 	// Mark the sprite's rectangle dirty
 	if (markDirty) {
-		surface->markDirtyRect(destRect);
+		surface->markDirtyRect(clippedDestRect);
 	}
 
 	delete[] columnIndices;
@@ -202,56 +201,48 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
  *  It is safe to call it for sprites that would overflow the surface.
  */
 void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
-	// TODO: refactor like drawReScaled()
-
-	Common::Rect sourceRect(0, 0, _width, _height);
-	Common::Rect destRect(_x + relX, _y + relY, _x + relX + _width, _y + relY + _height);
-	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
-	Common::Rect clippedDestRect(destRect);
-
-	clippedDestRect.clip(surfaceRect);
+	const Common::Rect destRect(_x + relX, _y + relY, _x + relX + _width, _y + relY + _height);
+	Common::Rect clippedDestRect(0, 0, surface->w, surface->h);
+	clippedDestRect.clip(destRect);
 
 	// Calculate by how much we need to adjust the source rectangle to account for cropping
-	const int adjustLeft = clippedDestRect.left - destRect.left;
-	const int adjustRight = clippedDestRect.right - destRect.right;
-	const int adjustTop = clippedDestRect.top - destRect.top;
-	const int adjustBottom = clippedDestRect.bottom - destRect.bottom;
-
-	// Resize source rectangle
-	sourceRect.left += adjustLeft;
-	sourceRect.right += adjustRight;
-	sourceRect.top += adjustTop;
-	sourceRect.bottom += adjustBottom;
+	const Common::Point croppedBy(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
 
 	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
-	const byte *src = _data;
+	const byte *src = _data + croppedBy.y * _width +
+		(!_mirror ? croppedBy.x : _width - 1 - croppedBy.x);
 
 	const int transparent = surface->getTransparentColour();
 
+	// Calculate how many rows and columns we need to draw
+	const int rows = clippedDestRect.height();
+	const int columns = clippedDestRect.width();
+
 	// Blit the sprite to the surface
-	for (int i = sourceRect.top; i < sourceRect.bottom; ++i) {
-		for (int j = sourceRect.left; j < sourceRect.right; ++j) {
-
-			// Don't blit if the pixel is transparent on the target surface
-			if (src[i * _width + j] != transparent) {
-
-				// Draw the sprite mirrored if the _mirror flag is set
-				if (_mirror) {
-					dst[sourceRect.right - j - 1] = src[i * _width + j];
-				} else {
-					dst[j] = src[i * _width + j];
+	for (int i = 0; i < rows; ++i) {
+		if (!_mirror) {
+			for (int j = 0; j < columns; ++j) {
+				if (src[j] != transparent) {
+					dst[j] = src[j];
+				}
+			}
+		} else {
+			for (int j = 0; j < columns; ++j) {
+				if (src[-j] != transparent) {
+					dst[j] = src[-j];
 				}
 			}
 		}
 
 		// Advance to next row
 		dst += surface->pitch;
+		src += _width;
 	}
 
 	// Mark the sprite's rectangle dirty
 	if (markDirty) {
-		surface->markDirtyRect(destRect);
+		surface->markDirtyRect(clippedDestRect);
 	}
 }
 
