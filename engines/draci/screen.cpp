@@ -65,8 +65,8 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 		_palette[i * 4 + 3] = 0;
 	}
 
-	// TODO: Investigate why this is needed
-	// Shift the palette two bits to the left to make it brighter
+	// Shift the palette two bits to the left to make it brighter.  The
+	// original game only uses 6-bit colors 0..63.
 	for (int i = start * 4; i < (start + num) * 4; ++i) {
 		_palette[i] <<= 2;
 	}
