@@ -43,93 +43,6 @@
 
 #if defined(SAMSUNGTV)
 
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
-}
-
-static const size_t AR_COUNT = 4;
-static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
-static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
-static AspectRatio getDesiredAspectRatio() {
-	//TODO : We could parse an arbitrary string, if we code enough proper validation
-	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
-
-	for (size_t i = 0; i < AR_COUNT; i++) {
-		assert(desiredAspectRatioAsStrings[i] != NULL);
-
-		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
-			return desiredAspectRatios[i];
-		}
-	}
-	// TODO : Report a warning
-	return AspectRatio(0, 0);
-}
-
-void OSystem_SDL_SamsungTV::initBackend() {
-	assert(!_inited);
-
-	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
-
-	if (ConfMan.hasKey("disable_sdl_parachute"))
-		sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-	if (SDL_Init(sdlFlags) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
-	_graphicsMutex = createMutex();
-
-	// Enable unicode support if possible
-	SDL_EnableUNICODE(1);
-
-	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-	memset(&_videoMode, 0, sizeof(_videoMode));
-	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
-
-	_cksumValid = false;
-	_videoMode.mode = GFX_2XSAI;
-	_videoMode.scaleFactor = 2;
-	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-	_scalerProc = _2xSaI;
-	_scalerType = 0;
-	_modeFlags = 0;
-	_videoMode.fullscreen = true;
-
-
-	// Create the savefile manager, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_savefile == NULL) {
-	    _savefile = new POSIXSaveFileManager();
-	}
-
-	// Create and hook up the mixer, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_mixer == NULL) {
-		setupMixer();
-	}
-
-	// Create and hook up the timer manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_timer == NULL) {
-		// Note: We could implement a custom SDLTimerManager by using
-		// SDL_AddTimer. That might yield better timer resolution, but it would
-		// also change the semantics of a timer: Right now, ScummVM timers
-		// *never* run in parallel, due to the way they are implemented. If we
-		// switched to SDL_AddTimer, each timer might run in a separate thread.
-		// However, not all our code is prepared for that, so we can't just
-		// switch. Still, it's a potential future change to keep in mind.
-		_timer = new DefaultTimerManager();
-		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
-	}
-
-	// Invoke parent implementation of this method
-	OSystem::initBackend();
-
-	_inited = true;
-}
-
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV() : OSystem_SDL(),
 	_prehwscreen(0) {
 }
@@ -176,28 +89,6 @@ bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) {
 	default:
 		return false;
 	}
-}
-
-void OSystem_SDL_SamsungTV::quit() {
-	unloadGFXMode();
-	deleteMutex(_graphicsMutex);
-
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-	free(_dirtyChecksums);
-	free(_currentPalette);
-	free(_cursorPalette);
-	free(_mouseData);
-
-	delete _timer;
-
-	SDL_Quit();
-
-	// Even Manager requires save manager for storing
-	// recorded events
-	delete getEventManager();
-	delete _savefile;
 }
 
 #endif

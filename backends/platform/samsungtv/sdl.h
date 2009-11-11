@@ -42,8 +42,6 @@ class OSystem_SDL_SamsungTV : public OSystem_SDL {
 public:
 	OSystem_SDL_SamsungTV();
 
-	virtual void initBackend();
-
 	// Highest supported
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
 
@@ -62,11 +60,6 @@ public:
 	// Get the next event.
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event);
-
-	// Quit
-	virtual void quit(); // overloaded by CE backend
-
-	virtual int getDefaultGraphicsMode() const;
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);

@@ -52,10 +52,6 @@ static ScalerProc *scalersMagn[3][3] = {
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 #endif
 
-int OSystem_SDL_SamsungTV::getDefaultGraphicsMode() const {
-	return GFX_2XSAI;
-}
-
 Common::List<Graphics::PixelFormat> OSystem_SDL_SamsungTV::getSupportedFormats() {
 	static Common::List<Graphics::PixelFormat>list;
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
