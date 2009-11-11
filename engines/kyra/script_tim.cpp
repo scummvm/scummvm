@@ -1161,7 +1161,7 @@ void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int la
 		uint32 next = _system->getMillis() + delay * _vm->_tickLength;
 		if (anim->wsaCopyParams & 0x4000) {
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, 2);
-			anim->wsa->displayFrame(i - 1, 2, anim->x, anim->y, anim->wsaCopyParams & 0x1000 ? 0x5000 : 0x4000, _vm->_trueLightTable1, _vm->_trueLightTable2);
+			anim->wsa->displayFrame(i - 1, 2, anim->x, anim->y, anim->wsaCopyParams & 0x1000 ? 0x5000 : 0x4000, _vm->_transparencyTable1, _vm->_transparencyTable2);
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
 			_screen->updateScreen();
 		} else {

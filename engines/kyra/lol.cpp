@@ -145,8 +145,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_vcnExpTable = 0;
 	_vmpPtr = 0;
 	_vcfBlocks = 0;
-	_trueLightTable2 = 0;
-	_trueLightTable1 = 0;
+	_transparencyTable2 = 0;
+	_transparencyTable1 = 0;
 	_levelShapeProperties = 0;
 	_levelShapes = 0;
 	_specialGuiShape = 0;
@@ -356,8 +356,8 @@ LoLEngine::~LoLEngine() {
 	delete[] _vcnShift;
 	delete[] _vmpPtr;
 	delete[] _vcfBlocks;
-	delete[] _trueLightTable2;
-	delete[] _trueLightTable1;
+	delete[] _transparencyTable2;
+	delete[] _transparencyTable1;
 	delete[] _levelShapeProperties;
 	delete[] _blockDrawingBuffer;
 	delete[] _sceneWindowBuffer;
@@ -867,8 +867,8 @@ void LoLEngine::startup() {
 	runInitScript("ONETIME.INF", 0);
 	_emc->load("ITEM.INF", &_itemScript, &_opcodes);
 
-	_trueLightTable1 = new uint8[256];
-	_trueLightTable2 = new uint8[5120];
+	_transparencyTable1 = new uint8[256];
+	_transparencyTable2 = new uint8[5120];
 
 	_loadSuppFilesFlag = 1;
 
@@ -1754,33 +1754,31 @@ void LoLEngine::generateFlashPalette(const Palette &src, Palette &dst, int color
 	dst.copy(src, 128);
 }
 
-void LoLEngine::createGfxTables() {
+void LoLEngine::createTransparencyTables() {
 	if (_flags.isTalkie || _loadSuppFilesFlag)
 		return;
 
 	Palette tpal(256);
 	if (_flags.use16ColorMode) {
-		static const uint8 colTbl[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
-		tpal.fill(0, 256, 0xff);
-		uint8 *p = _screen->getPalette(0).getData();
-		uint8 *d = tpal.getData();
-	
-		_res->loadFileToBuf("LOL.NOL", p, 48);		
-		
-		for (int i = 15; i >= 0; i--) {
-			d[colTbl[i] * 3 + 2] = p[i * 3 + 2];
-			d[colTbl[i] * 3 + 1] = p[i * 3 + 1];
-			d[colTbl[i] * 3] = p[i * 3];
+		static const uint8 colTbl[] = { 0x00, 0x00, 0x11, 0x00, 0x22, 0x00, 0x33, 0x00, 0x44, 0x00, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00, 0x88, 0x00, 0x99, 0x00, 0xAA, 0x00, 0xBB, 0x00, 0xCC, 0x00, 0xDD, 0x00, 0xEE, 0x00, 0xFF, 0x00 };
+		memset(tpal.getData(), 0xff, 768);
+
+		_res->loadFileToBuf("LOL.NOL", tpal.getData(), 48);
+		for (int i = 15; i > -1; i--) {
+			int s = colTbl[i << 1] * 3;	
+			tpal[s] = tpal[i * 3];
+			tpal[s + 1] = tpal[i * 3 + 1];
+			tpal[s + 2] = tpal[i * 3 + 2];
+			tpal[i * 3 + 2] = tpal[i * 3 + 1] = tpal[i * 3] = 0xff;
 		}
 
-		_screen->generateTruelightTables(colTbl, 16, tpal, tpal,  _trueLightTable1, _trueLightTable2, 80);
-		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
+		_screen->createTransparencyTablesIntern(colTbl, 16, tpal, tpal,  _transparencyTable1, _transparencyTable2, 80);
 	} else {
 		_screen->loadPalette("fxpal.col", tpal);
 		_screen->loadBitmap("fxpal.shp", 3, 3, 0);
 		const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
 
-		_screen->generateTruelightTables(shpPal, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
+		_screen->createTransparencyTablesIntern(shpPal, 20, tpal, _screen->getPalette(1), _transparencyTable1, _transparencyTable2, 70);
 	}
 
 	_loadSuppFilesFlag = 1;
@@ -2114,7 +2112,7 @@ int LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 			if ((i - wFrames[ii]) == 1)
 				snd_playSoundEffect(162, -1);
 
-			mov->displayFrame(((i - wFrames[ii]) + (dist << 4)) % numFrames, 2, wX[ii], wY[ii], 0x5000, _trueLightTable1, _trueLightTable2);
+			mov->displayFrame(((i - wFrames[ii]) + (dist << 4)) % numFrames, 2, wX[ii], wY[ii], 0x5000, _transparencyTable1, _transparencyTable2);
 			_screen->copyRegion(wX[ii], wY[ii], wX[ii], wY[ii], width, height, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 		}
@@ -2237,7 +2235,7 @@ int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 			increaseCharacterHitpoints(charNum, pts[charNum] / 256, true);
 			gui_drawCharPortraitWithStats(charNum);
 
-			_screen->drawShape(2, _healShapes[healShpFrames[i]], pX[charNum], pY, 0, 0x1000, _trueLightTable1, _trueLightTable2);
+			_screen->drawShape(2, _healShapes[healShpFrames[i]], pX[charNum], pY, 0, 0x1000, _transparencyTable1, _transparencyTable2);
 			_screen->fillRect(0, 0, 31, 31, 0);
 
 			_screen->drawShape(_screen->_curPage, _healiShapes[healiShpFrames[i]], 0, 0, 0, 0);
@@ -2515,7 +2513,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 				if (_flags.use16ColorMode)
 					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 4, sW, sH);
 				else
-					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _transparencyTable1, _transparencyTable2, sW, sH);
 
 				if (finShpIndex2[fb->finProgress] != -1) {
 					shp = _fireballShapes[finShpIndex2[fb->finProgress]];
@@ -2530,7 +2528,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 				if (_flags.use16ColorMode)
 					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 4, sW, sH);
 				else				
-					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _transparencyTable1, _transparencyTable2, sW, sH);
 			}
 
 			if (fb->finalize) {
@@ -2751,7 +2749,7 @@ int LoLEngine::processMagicFog() {
 	for (int curFrame = 0; curFrame < numFrames; curFrame++) {
 		uint32 delayTimer = _system->getMillis() + 3 * _tickLength;
 		_screen->copyPage(12, 2);
-		mov->displayFrame(curFrame % numFrames, 2, 112, 0, 0x5000, _trueLightTable1, _trueLightTable2);
+		mov->displayFrame(curFrame % numFrames, 2, 112, 0, 0x5000, _transparencyTable1, _transparencyTable2);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(delayTimer);
@@ -2775,7 +2773,7 @@ int LoLEngine::processMagicFog() {
 }
 
 int LoLEngine::processMagicSwarm(int charNum, int damage) {
-	createGfxTables();
+	createTransparencyTables();
 
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 12);
@@ -2997,7 +2995,7 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 }
 
 void LoLEngine::drinkBezelCup(int numUses, int charNum) {
-	createGfxTables();
+	createTransparencyTables();
 
 	int cp = _screen->setCurPage(2);
 	snd_playSoundEffect(73, -1);
@@ -3027,7 +3025,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 		uint32 etime = _system->getMillis() + 4 * _tickLength;
 
 		_screen->copyRegion(0, 0, x, y, w, h, 2, 2, Screen::CR_NO_P_CHECK);
-		mov->displayFrame(frm, 2, x, y, _flags.use16ColorMode ? 0x4000 : 0x5000, _trueLightTable1, _trueLightTable2);
+		mov->displayFrame(frm, 2, x, y, _flags.use16ColorMode ? 0x4000 : 0x5000, _transparencyTable1, _transparencyTable2);
 		_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
@@ -3140,7 +3138,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 		int wsaX = vX + (((((cX - vX) << 8) / 16) * i) >> 8) - 16;
 		int wsaY = vY + (((((160 - vY) << 8) / 16) * i) >> 8) - 16;
 
-		mov->displayFrame(51, 2, wsaX, wsaY, 0x5000, _trueLightTable1, _trueLightTable2);
+		mov->displayFrame(51, 2, wsaX, wsaY, 0x5000, _transparencyTable1, _transparencyTable2);
 
 		_screen->copyRegion(wsaX, wsaY, wsaX, wsaY, mov->width() + 48, mov->height() + 48, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -3211,7 +3209,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			(this->*callback)(mov, x, y);
 
 		if (mov)
-			mov->displayFrame(curFrame % mov->frames(), 2, x, y, _flags.use16ColorMode ? 0x4000 : 0x5000, _trueLightTable1, _trueLightTable2);
+			mov->displayFrame(curFrame % mov->frames(), 2, x, y, _flags.use16ColorMode ? 0x4000 : 0x5000, _transparencyTable1, _transparencyTable2);
 
 		if (mov || callback) {
 			_screen->copyRegion(x, y, x, y, w2, h2, 2, 0, Screen::CR_NO_P_CHECK);
@@ -3852,7 +3850,7 @@ void LoLEngine::launchMagicViper() {
 		if (frm == v[2])
 			snd_playSoundEffect(172, -1);
 
-		mov->displayFrame(frm++ % numFrames, 2, 112, 0, 0x5000, _trueLightTable1, _trueLightTable2);
+		mov->displayFrame(frm++ % numFrames, 2, 112, 0, 0x5000, _transparencyTable1, _transparencyTable2);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		delayUntil(etime);

@@ -656,7 +656,7 @@ private:
 	int olol_setGameFlag(EMCState *script);
 	int olol_testGameFlag(EMCState *script);
 	int olol_loadLevelGraphics(EMCState *script);
-	int olol_loadCmzFile(EMCState *script);
+	int olol_loadBlockProperties(EMCState *script);
 	int olol_loadMonsterShapes(EMCState *script);
 	int olol_deleteHandItem(EMCState *script);
 	int olol_allocItemPropertiesBuffer(EMCState *script);
@@ -888,7 +888,7 @@ private:
 	void setPaletteBrightness(const Palette &srcPal, int brightness, int modifier);
 	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
 	void generateFlashPalette(const Palette &src, Palette &dst, int colorFlags);
-	void createGfxTables();
+	void createTransparencyTables();
 	void updateSequenceBackgroundAnimations();
 
 	bool _dialogueField;
@@ -980,12 +980,12 @@ private:
 	void loadLevel(int index);
 	void addLevelItems();
 	void loadLevelWallData(int index, bool mapShapes);
-	void assignBlockObject(uint16 *cmzItemIndex, uint16 item);
+	void assignBlockObject(LevelBlockProperty *l, uint16 item);
 	int assignLevelShapes(int index);
 	uint8 *getLevelShapes(int index);
 	void restoreBlockTempData(int index);
 	void restoreTempDataAdjustMonsterStrength(int index);
-	void loadCmzFile(const char *file);
+	void loadBlockProperties(const char *cmzFile);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
 
@@ -1106,8 +1106,8 @@ private:
 	int _sceneDrawVarLeft;
 	int _wllProcessFlag;
 
-	uint8 *_trueLightTable2;
-	uint8 *_trueLightTable1;
+	uint8 *_transparencyTable2;
+	uint8 *_transparencyTable1;
 
 	int _loadSuppFilesFlag;
 
@@ -1284,9 +1284,9 @@ private:
 	void redrawSceneItem();
 	int calcItemMonsterPosition(ItemInPlay *i, uint16 direction);
 	void calcSpriteRelPosition(uint16 x1, uint16 y1, int &x2, int &y2, uint16 direction);
-	void drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags);
-	void drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl);
-	uint8 *drawItemOrMonster(uint8 *shape, uint8 *ovl, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip);
+	void drawDoor(uint8 *shape, uint8 *doorPalette, int index, int unk2, int w, int h, int flags);
+	void drawDoorOrMonsterEquipment(uint8 *shape, uint8 *objectPalette, int x, int y, int flags, const uint8 *brightnessOverlay);
+	uint8 *drawItemOrMonster(uint8 *shape, uint8 *monsterPalette, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip);
 	int calcDrawingLayerParameters(int srcX, int srcY, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int vflip);
 
 	void updateMonster(MonsterInPlay *monster);

@@ -245,7 +245,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	return ovl;
 }
 
-void Screen_LoL::generateTruelightTables(const uint8 *ovl, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b) {
+void Screen_LoL::createTransparencyTablesIntern(const uint8 *ovl, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b) {
 	memset(outTable1, 0xff, 256);
 
 	for (int i = 0; i < a; i++)
@@ -257,8 +257,8 @@ void Screen_LoL::generateTruelightTables(const uint8 *ovl, int a, const Palette 
 			uint16 fcol[3];
 			uint16 scol[3];
 
-			int t1 = (b << 6) / 100;
-			int t2 = 64 - t1;
+			uint16 t1 = (b << 6) / 100;
+			uint16 t2 = 64 - t1;
 
 			uint8 c = ovl[i];
 			fcol[0] = fxPal[3 * c];
@@ -277,7 +277,7 @@ void Screen_LoL::generateTruelightTables(const uint8 *ovl, int a, const Palette 
 				tcol[2] = CLIP(((fcol[2] * t2) >> 6) + ((scol[2] * t1) >> 6), 0, 63);
 
 				o[ii] = findLeastDifferentColor(tcol, screenPal, 0, 255);
-			}			
+			}
 
 		} else {
 			memset(&outTable2[i << 8], 0, 256);

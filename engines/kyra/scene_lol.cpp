@@ -109,38 +109,39 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].block].assignedObjects, i);
+		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].block], i);
 
 		_levelBlockProperties[_itemsInPlay[i].block].direction = 5;
 		_itemsInPlay[i].nextDrawObject = 0;
 	}
 }
 
-void LoLEngine::assignBlockObject(uint16 *cmzItemIndex, uint16 item) {
+void LoLEngine::assignBlockObject(LevelBlockProperty *l, uint16 item) {
+	uint16 *index = &l->assignedObjects;
 	ItemInPlay *tmp = 0;
 
-	while (*cmzItemIndex & 0x8000) {
-		tmp = findObject(*cmzItemIndex);
-		cmzItemIndex = &tmp->nextAssignedObject;
+	while (*index & 0x8000) {
+		tmp = findObject(*index);
+		index = &tmp->nextAssignedObject;
 	}
 
 	tmp = findObject(item);
 	tmp->level = -1;
 
-	uint16 ix = *cmzItemIndex;
+	uint16 ix = *index;
 
 	if (ix == item)
 		return;
 
-	*cmzItemIndex = item;
-	cmzItemIndex = &tmp->nextAssignedObject;
+	*index = item;
+	index = &tmp->nextAssignedObject;
 
-	while (*cmzItemIndex) {
-		tmp = findObject(*cmzItemIndex);
-		cmzItemIndex = &tmp->nextAssignedObject;
+	while (*index) {
+		tmp = findObject(*index);
+		index = &tmp->nextAssignedObject;
 	}
 
-	*cmzItemIndex = ix;
+	*index = ix;
 }
 
 void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
@@ -291,9 +292,9 @@ void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
 	}
 }
 
-void LoLEngine::loadCmzFile(const char *file) {
+void LoLEngine::loadBlockProperties(const char *cmzFile) {
 	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
-	_screen->loadBitmap(file, 2, 2, 0);
+	_screen->loadBitmap(cmzFile, 2, 2, 0);
 	const uint8 *h = _screen->getCPagePtr(2);
 	uint16 len = READ_LE_UINT16(&h[4]);
 	const uint8 *p = h + 6;
@@ -508,11 +509,11 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		char tname[13];
 		snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
 		Common::SeekableReadStream *s = _res->createReadStream(tname);
-		s->read(_trueLightTable1, 256);
-		s->read(_trueLightTable2, 5120);
+		s->read(_transparencyTable1, 256);
+		s->read(_transparencyTable2, 5120);
 		delete s;
 	} else {
-		createGfxTables();
+		createTransparencyTables();
 	}
 
 	_loadSuppFilesFlag = 1;

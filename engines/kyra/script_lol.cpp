@@ -233,9 +233,9 @@ int LoLEngine::olol_loadLevelGraphics(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_loadCmzFile(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadCmzFile(%p) (%s)", (const void *)script, stackPosString(0));
-	loadCmzFile(stackPosString(0));
+int LoLEngine::olol_loadBlockProperties(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadBlockProperties(%p) (%s)", (const void *)script, stackPosString(0));
+	loadBlockProperties(stackPosString(0));
 	return 1;
 }
 
@@ -2715,7 +2715,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x08
 	Opcode(olol_testGameFlag);
 	Opcode(olol_loadLevelGraphics);
-	Opcode(olol_loadCmzFile);
+	Opcode(olol_loadBlockProperties);
 	Opcode(olol_loadMonsterShapes);
 
 	// 0x0C

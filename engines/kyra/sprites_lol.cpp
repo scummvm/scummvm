@@ -665,8 +665,8 @@ void LoLEngine::drawMonster(uint16 id) {
 		if (m->properties->flags & 0x800)
 			flg |= 0x20;
 
-		uint8 *ovl1 = d ? _monsterPalettes[(m->properties->shapeIndex << 4) + (curFrm & 0x0f)] + (shp[10] * (d - 1)) : 0;
-		uint8 *ovl2 = drawItemOrMonster(shp, ovl1, m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], 0, 0, flg | 1, -1, flip);
+		uint8 *monsterPalette = d ? _monsterPalettes[(m->properties->shapeIndex << 4) + (curFrm & 0x0f)] + (shp[10] * (d - 1)) : 0;
+		uint8 *brightnessOverlay = drawItemOrMonster(shp, monsterPalette, m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], 0, 0, flg | 1, -1, flip);
 
 		for (int i = 0; i <	4; i++) {
 			int v = m->equipmentShapes[i] - 1;
@@ -677,7 +677,7 @@ void LoLEngine::drawMonster(uint16 id) {
 			if (!shp2)
 				continue;
 
-			drawDoorOrMonsterShape(shp2, 0, _shpDmX, _shpDmY, flg | 1, ovl2);
+			drawDoorOrMonsterEquipment(shp2, 0, _shpDmX, _shpDmY, flg | 1, brightnessOverlay);
 		}
 	}
 
@@ -901,7 +901,7 @@ void LoLEngine::calcSpriteRelPosition(uint16 x1, uint16 y1, int &x2, int &y2, ui
 	y2 = b;
 }
 
-void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w, int h, int flags) {
+void LoLEngine::drawDoor(uint8 *shape, uint8 *doorPalette, int index, int unk2, int w, int h, int flags) {
 	uint8 c = _dscDoor1[(_currentDirection << 5) + unk2];
 	int r = (c / 5) + 5 * _dscDimMap[index];
 	uint16 d = _dscShapeOvlIndex[r];
@@ -950,16 +950,16 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w,
 			d = 0;
 	}
 
-	uint8 *ovl = _screen->getLevelOverlay(d);
+	uint8 *brightnessOverlay = _screen->getLevelOverlay(d);
 	int doorScaledWitdh = _screen->getShapeScaledWidth(shape, _dmScaleW);
 
 	_shpDmX -= (doorScaledWitdh >> 1);
 	_shpDmY -= s;
 
-	drawDoorOrMonsterShape(shape, table, _shpDmX, _shpDmY, flags, ovl);
+	drawDoorOrMonsterEquipment(shape, doorPalette, _shpDmX, _shpDmY, flags, brightnessOverlay);
 }
 
-void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y, int flags, const uint8 *ovl) {
+void LoLEngine::drawDoorOrMonsterEquipment(uint8 *shape, uint8 *objectPalette, int x, int y, int flags, const uint8 *brightnessOverlay) {
 	int flg = 0;
 
 	if (flags & 0x10)
@@ -972,27 +972,27 @@ void LoLEngine::drawDoorOrMonsterShape(uint8 *shape, uint8 *table, int x, int y,
 		flg |= 2;
 
 	if (flg & 0x1000) {
-		if (table)
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x9104, table, ovl, 1, _trueLightTable1, _trueLightTable2, _dmScaleW, _dmScaleH);
+		if (objectPalette)
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x9104, objectPalette, brightnessOverlay, 1, _transparencyTable1, _transparencyTable2, _dmScaleW, _dmScaleH);
 		else
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x1104, ovl, 1, _trueLightTable1, _trueLightTable2, _dmScaleW, _dmScaleH);
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x1104, brightnessOverlay, 1, _transparencyTable1, _transparencyTable2, _dmScaleW, _dmScaleH);
 	} else {
-		if (table)
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x8104, table, ovl, 1, _dmScaleW, _dmScaleH);
+		if (objectPalette)
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x8104, objectPalette, brightnessOverlay, 1, _dmScaleW, _dmScaleH);
 		else
-			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x104, ovl, 1, _dmScaleW, _dmScaleH);
+			_screen->drawShape(_sceneDrawPage1, shape, x, y, 13, flg | 0x104, brightnessOverlay, 1, _dmScaleW, _dmScaleH);
 	}
 }
 
-uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip) {
+uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *monsterPalette, int x, int y, int fineX, int fineY, int flags, int tblValue, bool vflip) {
 	uint8 *ovl2 = 0;
-	uint8 *ovl = 0;
+	uint8 *brightnessOverlay = 0;
 	uint8 tmpOvl[16];
 
 	if (flags & 0x80) {
 		flags &= 0xff7f;
-		ovl2 = table;
-		table = 0;
+		ovl2 = monsterPalette;
+		monsterPalette = 0;
 	} else {
 		ovl2 = _screen->getLevelOverlay(_flags.use16ColorMode ? 5 : 4);
 	}
@@ -1009,12 +1009,12 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 			else
 				r = 0;
 		}
-		ovl = _screen->getLevelOverlay(r);
+		brightnessOverlay = _screen->getLevelOverlay(r);
 	} else {
 		memset(tmpOvl + 1, tblValue, 15);
 		tmpOvl[0] = 0;
-		table = tmpOvl;
-		ovl = _screen->getLevelOverlay(7);
+		monsterPalette = tmpOvl;
+		brightnessOverlay = _screen->getLevelOverlay(7);
 	}
 
 	int flg = flags & 0x10 ? 1 : 0;
@@ -1029,8 +1029,8 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		
 	} else {
 		if (_currentLevel == 22) {
-			if (ovl)
-				ovl[255] = 0;
+			if (brightnessOverlay)
+				brightnessOverlay[255] = 0;
 		} else {
 			flg |= 0x2000;
 		}
@@ -1042,21 +1042,21 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 	int dH = _screen->getShapeScaledHeight(shape, _dmScaleH) >> 1;
 
 	if (flg & 0x1000) {
-		if (table)
-			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x8124, table, ovl, 0, _trueLightTable1, _trueLightTable2, _dmScaleW, _dmScaleH, ovl2);
+		if (monsterPalette)
+			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x8124, monsterPalette, brightnessOverlay, 0, _transparencyTable1, _transparencyTable2, _dmScaleW, _dmScaleH, ovl2);
 		else
-			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x124, ovl, 0, _trueLightTable1, _trueLightTable2, _dmScaleW, _dmScaleH, ovl2);
+			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x124, brightnessOverlay, 0, _transparencyTable1, _transparencyTable2, _dmScaleW, _dmScaleH, ovl2);
 	} else {
-		if (table)
-			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x8124, table, ovl, 1, _dmScaleW, _dmScaleH, ovl2);
+		if (monsterPalette)
+			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x8124, monsterPalette, brightnessOverlay, 1, _dmScaleW, _dmScaleH, ovl2);
 		else
-			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x124, ovl, 1, _dmScaleW, _dmScaleH, ovl2);
+			_screen->drawShape(_sceneDrawPage1, shape, _shpDmX, _shpDmY, 13, flg | 0x124, brightnessOverlay, 1, _dmScaleW, _dmScaleH, ovl2);
 	}
 
 	_shpDmX -= (_screen->getShapeScaledWidth(shape, _dmScaleW) >> 1);
 	_shpDmY -= dH;
 
-	return ovl;
+	return brightnessOverlay;
 }
 
 int LoLEngine::calcDrawingLayerParameters(int x1, int y1, int &x2, int &y2, uint16 &w, uint16 &h, uint8 *shape, int vflip) {
