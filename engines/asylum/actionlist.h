@@ -40,15 +40,15 @@ class Scene;
 typedef struct ActionCommand {
 	uint32 numLines;	//	Only set on the first line of each script
 	uint32 opcode;
-	uint32 param1;
-	uint32 param2;
-	uint32 param3;
-	uint32 param4;
-	uint32 param5;
-	uint32 param6;
-	uint32 param7;
-	uint32 param8;
-	uint32 param9;
+	int param1;
+	int param2;
+	int param3;
+	int param4;
+	int param5;
+	int param6;
+	int param7;
+	int param8;
+	int param9;
 
 } ActionCommand;
 

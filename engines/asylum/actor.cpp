@@ -280,7 +280,6 @@ void Actor::update_4072A0(int param) {
 	int newDir = 0;
 
 	switch (param) {
-
 	case 4:
 	case 6:
 	case 14:
@@ -298,7 +297,9 @@ void Actor::update_4072A0(int param) {
 
 		setAction(newDir + 5);
 		break;
-
+	default:
+		warning ("[update_4072A0] unimplemented case: %d", param);
+		break;
 	}
 
 	this->grResId = newGrId;
@@ -308,6 +309,11 @@ void Actor::update_4072A0(int param) {
 	this->frameNum   = 0;
 	delete gra;
 
+	// TODO
+	// The update type can be different than the provided parameter
+	// depending on the switch case. Change this once a case handler
+	// is implemented that requires this ... namely:
+	//    if (!v34) v3 = 4; // so updateType = 4
 	this->updateType = param;
 }
 

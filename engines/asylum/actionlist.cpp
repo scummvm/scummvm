@@ -53,6 +53,9 @@ struct AsylumFunction {
 
 #define MAPFUNC(name, func) {name, func}
 
+// TODO I don't know that we're clearing this out
+// when the engine is disposed. Need to look into this
+// as a possible memory leak.
 static const AsylumFunction function_map[] = {
 	/*0x00*/ MAPFUNC("kReturn0", kReturn0),
 	/*0x01*/ MAPFUNC("kSetGameFlag", kSetGameFlag),
@@ -587,6 +590,7 @@ int kDisableActor(ActionCommand *cmd, Scene *scn) {
 		actorIndex = cmd->param1;
 
 	// TODO Finish implementing this function
+
 	//scn->getActor()->update_4072A0(actorIndex);
 
 	return -1;

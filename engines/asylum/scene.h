@@ -38,6 +38,7 @@
 #include "asylum/cursor.h"
 
 #define SCENE_FILE_MASK "scn.%03d"
+#define MUSIC_FILE_MASK "mus.%03d"
 
 namespace Asylum {
 
@@ -161,7 +162,6 @@ private:
 	void   updateMouse();
 	void   updateActor(uint32 actorIdx);
 	void   updateBarriers();
-	void   updateBarriers2(); // XXX Alexandre's version
 	void   updateAmbientSounds();
 	void   updateMusic();
 	void   updateAdjustScreen();
