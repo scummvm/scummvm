@@ -837,6 +837,9 @@ void SciGui32::drawMenuBar(bool clear) {
 	gfxop_update(_s->gfx_state);
 }
 
+void SciGui32::menuReset() {
+}
+
 void SciGui32::menuAdd(Common::String title, Common::String content, reg_t entriesBase) {
 	int titlebarFont = _s->titlebar_port->_font;
 

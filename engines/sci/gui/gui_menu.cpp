@@ -55,6 +55,7 @@ SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, Sci
 }
 
 SciGuiMenu::~SciGuiMenu() {
+	// TODO: deallocate _list and _itemList
 }
 
 void SciGuiMenu::init(GfxState *gfxstate) {

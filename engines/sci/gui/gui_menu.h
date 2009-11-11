@@ -83,6 +83,7 @@ public:
 	~SciGuiMenu();
 
 	void init(GfxState *gfxstate);
+	void reset();
 	void add(Common::String title, Common::String content, reg_t contentVmPtr);
 	void setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
 	reg_t getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
