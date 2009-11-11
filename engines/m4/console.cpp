@@ -310,7 +310,7 @@ bool Console::cmdObject(int argc, const char **argv) {
 			DebugPrintf("%2d - ", objStart);
 			for (uint objId = objStart; objId < MIN<uint>(_vm->_globals->getObjectsSize(), objStart + 5); ++objId) {
 				if (objId != objStart) DebugPrintf(", ");
-				uint16 descId = _vm->_globals->getObject(objId)->descId - 1;
+				uint16 descId = _vm->_globals->getObject(objId)->descId;
 				DebugPrintf("%s", _vm->_globals->getVocab(descId));
 			}
 
@@ -327,13 +327,13 @@ bool Console::cmdObject(int argc, const char **argv) {
 		else {
 			const MadsObject *obj = _vm->_globals->getObject(id);
 
-			DebugPrintf("Object #%d (%s) room=%d vocabs=%d", id, _vm->_globals->getVocab(obj->descId - 1),
+			DebugPrintf("Object #%d (%s) room=%d vocabs=%d", id, _vm->_globals->getVocab(obj->descId),
 				obj->roomNumber, obj->vocabCount);
 			if (obj->vocabCount > 0) {
 				DebugPrintf(" - ");
 				for (int i = 0; i < obj->vocabCount; ++i) {
 					if (i != 0) DebugPrintf(", ");
-					DebugPrintf("%s (%d)/%d", _vm->_globals->getVocab(obj->vocabList[i].vocabId - 1),
+					DebugPrintf("%s (%d)/%d", _vm->_globals->getVocab(obj->vocabList[i].vocabId),
 						obj->vocabList[i].vocabId, obj->vocabList[i].unk);
 				}
 			}

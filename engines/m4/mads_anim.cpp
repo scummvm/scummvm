@@ -25,6 +25,7 @@
 
 #include "m4/mads_anim.h"
 #include "m4/m4.h"
+#include "m4/compression.h"
 
 namespace M4 {
 
@@ -491,8 +492,6 @@ void AnimviewView::setScript(const char *resourceName, AnimviewCallback callback
 		strcat(_resourceName, ".res");
 
 	_script = _vm->res()->get(_resourceName);
-
-	processLines();
 }
 
 bool AnimviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
@@ -508,37 +507,97 @@ bool AnimviewView::onEvent(M4EventType eventType, int param, int x, int y, bool 
 }
 
 void AnimviewView::updateState() {
-	char bgFile[10];
-	int bgNumber = 0;
+	if (!_script)
+		return;
 
 	// Only update state if wait period has expired
 	if (_previousUpdate > 0) {
-		if (g_system->getMillis() - _previousUpdate < 3000) {
+		if (g_system->getMillis() - _previousUpdate < 100)
 			return;
-		} else {
-			// time for an update
-			_previousUpdate = g_system->getMillis();
-		}
-	} else {
+
 		_previousUpdate = g_system->getMillis();
-		return;
 	}
 
-	strncpy(bgFile, _currentFile, 5);
-	bgFile[0] = bgFile[2];
-	bgFile[1] = bgFile[3];
-	bgFile[2] = bgFile[4];
-	bgFile[3] = '\0';
-	bgNumber = atoi(bgFile);
-	sprintf(bgFile, "rm%i.art", bgNumber);
+	// Check if we're ready for the next command
+	bool animRunning = false;
+	if (!animRunning) {
+		if (_script->eos() ||  _script->err()) {
+			scriptDone();
+			return;
+		}
+		
+		readNextCommand();
+
+		// FIXME: Replace flag with proper animation end check
+		animRunning = true;
+	}
+}
+
+void AnimviewView::readNextCommand() {
+	while (!_script->eos() && !_script->err()) {
+		strncpy(_currentLine, _script->readLine().c_str(), 79);
+
+		// Process any switches on the line
+		char *cStart = strchr(_currentLine, '-');
+		while (cStart) {
+			// Loop for possible multiple commands on one line
+			char *cEnd = strchr(_currentLine, ' ');
+			if (!cEnd)
+				error("Unterminated command '%s' in response file", _currentLine);
+
+			*cEnd = '\0';
+			processCommand();
+
+			// Copy rest of line (if any) to start of buffer
+			// Don't use strcpy() here, because if the
+			// rest of the line is the longer of the two
+			// strings, the memory areas will overlap.
+			memmove(_currentLine, cEnd + 1, strlen(cEnd + 1) + 1);
+
+			cStart = strchr(_currentLine, '-');
+		}
+	
+		// If there's something left, presume it's a resource name to process
+		if (_currentLine[0])
+			break;
+	}
+
+	if (strchr(_currentLine, '.') == NULL)
+		strcat(_currentLine, ".aa");
+
+	AAFile aaFile(_currentLine, _vm);
+
+	// Initial validation
+	if (aaFile.flags & AA_HAS_FONT) {
+		assert(_vm->_resourceManager->resourceExists(aaFile.fontResource.c_str()));
+	}
+
+	for (int seriesCtr = 0; seriesCtr < aaFile.seriesCount; ++seriesCtr)
+		assert(_vm->_resourceManager->resourceExists(aaFile.filenames[seriesCtr].c_str()));
+
+	// Start sound
+	if (aaFile.flags & AA_HAS_SOUND)
+	{
+		char buffer[100];
+		strcpy(buffer, aaFile.soundName.c_str());
+		buffer[0] = 'A';	// A for Adlib resource
+
+		Common::SeekableReadStream *stream = _vm->_resourceManager->get(buffer);
+		
+		_vm->_resourceManager->toss(buffer);
+	}
+	
+
+	char artFile[80];
+	sprintf(artFile, "rm%d.art", aaFile.roomNumber);
 
 	// Not all scenes have a background. If there is one, refresh it
-	if (_vm->_resourceManager->resourceExists(bgFile)) {
+	if (_vm->_resourceManager->resourceExists(artFile)) {
 		if (_palData) {
 			_vm->_palette->deleteRange(_palData);
 			delete _palData;
 		}
-		_bgSurface.loadBackground(bgNumber, &_palData);
+		_bgSurface.loadBackground(aaFile.roomNumber, &_palData);
 		_vm->_palette->addRange(_palData);
 		_bgSurface.translate(_palData);
 	}
@@ -581,9 +640,9 @@ void AnimviewView::updateState() {
 	int yp = (height() - _bgSurface.height()) / 2;
 	_bgSurface.copyTo(this, 0, yp);
 
-	// Read next line
-	processLines();
+	_vm->_resourceManager->toss(_currentLine);
 }
+
 
 void AnimviewView::scriptDone() {
 	AnimviewCallback fn = _callback;
@@ -594,52 +653,6 @@ void AnimviewView::scriptDone() {
 
 	if (fn)
 		fn(vm);
-}
-
-void AnimviewView::processLines() {
-	strncpy(_currentLine, _script->readLine().c_str(), 79);
-	if (_script->eos() || _script->err()) {
-		// end of script, end animation
-		scriptDone();
-		return;
-	}
-
-	while (!_script->eos() && !_script->err()) {
-		// Process the line
-		char *cStart = strchr(_currentLine, '-');
-		if (cStart) {
-			while (cStart) {
-				// Loop for possible multiple commands on one line
-				char *cEnd = strchr(_currentLine, ' ');
-				if (!cEnd)
-					error("Unterminated command '%s' in response file", _currentLine);
-
-				*cEnd = '\0';
-				processCommand();
-
-				// Copy rest of line (if any) to start of buffer
-				// Don't use strcpy() here, because if the
-				// rest of the line is the longer of the two
-				// strings, the memory areas will overlap.
-				memmove(_currentLine, cEnd + 1, strlen(cEnd + 1) + 1);
-
-				cStart = strchr(_currentLine, '-');
-			}
-
-			if (_currentLine[0]) {
-				sprintf(_currentFile, "%s", _currentLine);
-				//printf("File: %s\n", _currentLine);
-				break;
-			}
-
-		} else {
-			sprintf(_currentFile, "%s", _currentLine);
-			//printf("File: %s\n", _currentLine);
-			break;
-		}
-
-		strncpy(_currentLine, _script->readLine().c_str(), 79);
-	}
 }
 
 /*
@@ -703,6 +716,47 @@ void AnimviewView::processCommand() {
 	} else {
 		error("Unknown response command: '%s'", commandStr);
 	}
+}
+
+AAFile::AAFile(const char *resourceName, M4Engine* vm): MadsPack(resourceName, vm) {
+	Common::MemoryReadStream stream1(*getItemStream(1));
+	Common::MemoryReadStream stream2(*getItemStream(2));
+
+	Common::MemoryReadStream stream(*getItemStream(0));
+printf("ss %d %d %d\n", stream.size(), stream1.size(), stream2.size());
+	seriesCount = stream.readUint16LE();
+	frameCount = stream.readUint16LE();
+	frameEntryCount = stream.readUint16LE();
+	stream.skip(3);
+	flags = stream.readByte();
+	stream.skip(4);
+	roomNumber = stream.readUint16LE();
+	stream.skip(10);
+	frameTicks = stream.readUint16LE();
+
+	stream.skip(21);
+	for (int i = 0; i < 10; ++i) {
+		char filename[13];
+		stream.read(filename, 13);
+		filenames.push_back(Common::String(filename, 13));
+	}
+
+	stream.skip(81);
+	char name[100];
+	stream.read(name, 13);
+	lbmFilename = Common::String(name, 13);
+
+	stream.skip(365);
+	stream.read(name, 13);
+	spritesFilename = Common::String(name, 13);
+
+	stream.skip(48);
+	stream.read(name, 13);
+	soundName = Common::String(name, 13);
+
+	stream.skip(26);
+	stream.read(name, 14);
+	fontResource = Common::String(name, 14);
 }
 
 }

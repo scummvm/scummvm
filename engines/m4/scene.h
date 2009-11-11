@@ -44,17 +44,17 @@ namespace M4 {
 #define MADS_SURFACE_HEIGHT 156
 
 enum MADSVerbs {
-	kVerbLook	= 2,
-	kVerbTake	= 3,
-	kVerbPush	= 4,
-	kVerbOpen	= 5,
-	kVerbPut	= 6,
-	kVerbTalkTo	= 7,
-	kVerbGive	= 8,
-	kVerbPull	= 9,
-	kVerbClose	= 10,
-	kVerbThrow	= 11,
-	kVerbWalkTo	= 12
+	kVerbLook	= 3,
+	kVerbTake	= 4,
+	kVerbPush	= 5,
+	kVerbOpen	= 6,
+	kVerbPut	= 7,
+	kVerbTalkTo	= 8,
+	kVerbGive	= 9,
+	kVerbPull	= 10,
+	kVerbClose	= 11,
+	kVerbThrow	= 12,
+	kVerbWalkTo	= 13
 };
 
 struct SceneResources {

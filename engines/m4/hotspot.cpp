@@ -51,6 +51,7 @@ HotSpot::HotSpot(int x1, int y1, int x2, int y2) :
 }
 
 HotSpot::~HotSpot() {
+	free(_vocab);
 }
 
 void HotSpot::setRect(int x1, int y1, int x2, int y2) {
@@ -273,10 +274,10 @@ void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int ho
 			currentHotSpot->setVerb("");
 
 			if (currentHotSpot->getVocabID() > 0)
-				currentHotSpot->setVocab(_vm->_globals->getVocab(currentHotSpot->getVocabID() - 1));
+				currentHotSpot->setVocab(_vm->_globals->getVocab(currentHotSpot->getVocabID()));
 
 			if (currentHotSpot->getVerbID() > 0)
-				currentHotSpot->setVerb(_vm->_globals->getVocab(currentHotSpot->getVerbID() - 1));
+				currentHotSpot->setVerb(_vm->_globals->getVocab(currentHotSpot->getVerbID()));
 		}
 	}
 }

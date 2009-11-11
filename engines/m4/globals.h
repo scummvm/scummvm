@@ -194,7 +194,11 @@ public:
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }
-	const char *getVocab(uint32 index) { return _madsVocab[index]; }
+	const char *getVocab(uint32 index) { 
+		// Vocab list is 1-based, so always subtract one from index provided
+		assert((index > 0) && (index <= _madsVocab.size()));
+		return _madsVocab[index - 1]; 
+	}
 
 	void loadMadsQuotes();
 	uint32 getQuotesSize() { return _madsQuotes.size(); }
