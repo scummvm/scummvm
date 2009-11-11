@@ -54,9 +54,9 @@ bool WalkingMap::getPixel(int x, int y) const {
 	return *pMapByte & (1 << x % 8);
 }
 
-bool WalkingMap::isWalkable(int x, int y) const {
+bool WalkingMap::isWalkable(const Common::Point &p) const {
 	// Convert to map pixels
-	return getPixel(x / _deltaX, y / _deltaY);
+	return getPixel(p.x / _deltaX, p.y / _deltaY);
 }
 
 Sprite *WalkingMap::newOverlayFromMap(byte colour) const {
@@ -85,107 +85,82 @@ Sprite *WalkingMap::newOverlayFromMap(byte colour) const {
  * @param startY    y coordinate of the point
  *
  * @return A Common::Point representing the nearest walkable point
- *
- *  The algorithm was copied from the original engine for exactness.
- *  TODO: Study this algorithm in more detail so it can be documented properly and
- *  possibly improved / simplified.
  */
-Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Rect searchRect) const {
-	// If the starting point is walkable, just return that
-	if (searchRect.contains(startX, startY) && isWalkable(startX, startY)) {
-		return Common::Point(startX, startY);
-	}
+Common::Point WalkingMap::findNearestWalkable(int startX, int startY) const {
+	// The dimension of the screen.
+	const Common::Rect searchRect(0, 0, _realWidth, _realHeight);
 
-	int signs[] = { 1, -1 };
-	const uint kSignsNum = 2;
+	// Consider circles with radii gradually rising from 0 to the length of
+	// the longest edge on the screen.  For each radius, probe all points
+	// on the circle and return the first walkable one.  Go through angles
+	// [0, 45 degrees] and probe all 8 reflections of each point.
+	for (int radius = 0; radius < searchRect.width() + searchRect.height(); radius += _deltaX) {
 
-	int radius = 0;
-	int x, y;
-	int dx, dy;
-	int prediction;
+		// The position of the point on the circle.
+		int x = 0;
+		int y = radius;
 
-	// The place where, eventually, the result coordinates will be stored
-	int finalX, finalY;
+		// Variables for computing the points on the circle
+		int prediction = 1 - radius;
+		int dx = 3;
+		int dy = 2 * radius - 2;
 
-	// The algorithm appears to start off with an ellipse with the minor radius equal to
-	// zero and the major radius equal to the walking map delta (the number of pixels
-	// one map pixel represents). It then uses a heuristic to gradually reshape it into
-	// a circle (by shortening the major radius and lengthening the minor one). At each
-	// such resizing step, it checks some select points on the ellipse for walkability.
-	// It also does the same check for the ellipse perpendicular to it (rotated by 90 degrees).
+		// Walk until we reach the 45-degree angle.
+		while (x <= y) {
 
-	while (1) {
-		// The default major radius
-		radius += _deltaX;
+			// The place where, eventually, the result coordinates will be stored
+			Common::Point final;
 
-		// The ellipse radii (minor, major) that get resized
-		x = 0;
-		y = radius;
+			// Auxilliary array of multiplicative coefficients for reflecting points.
+			static const int kSigns[] = { 1, -1 };
 
-		// Heuristic variables
-		prediction = 1 - radius;
-		dx = 3;
-		dy = 2 * radius - 2;
+			// Check all 8 reflections of the basic point.
+			for (uint i = 0; i < 2; ++i) {
+				final.y = startY + y * kSigns[i];
 
-		do {
-			// The following two loops serve the purpose of checking the points on the two
-			// ellipses for walkability. The signs[] array is there to obliterate the need
-			// of writing out all combinations manually.
-
-			for (uint i = 0; i < kSignsNum; ++i) {
-				finalY = startY + y * signs[i];
-
-				for (uint j = 0; j < kSignsNum; ++j) {
-					finalX = startX + x * signs[j];
+				for (uint j = 0; j < 2; ++j) {
+					final.x = startX + x * kSigns[j];
 
 					// If the current point is walkable, return it
-					if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
-						return Common::Point(finalX, finalY);
+					if (searchRect.contains(final.x, final.y) && isWalkable(final)) {
+						return final;
+					}
+				}
+			}
+			for (uint i = 0; i < 2; ++i) {
+				final.y = startY + x * kSigns[i];
+
+				for (uint j = 0; j < 2; ++j) {
+					final.x = startX + y * kSigns[j];
+
+					// If the current point is walkable, return it
+					if (searchRect.contains(final.x, final.y) && isWalkable(final)) {
+						return final;
 					}
 				}
 			}
 
-			if (x == y) {
-				// If the starting point is walkable, just return that
-				if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
-					return Common::Point(finalX, finalY);
-				}
-			}
-
-			for (uint i = 0; i < kSignsNum; ++i) {
-				finalY = startY + x * signs[i];
-
-				for (uint j = 0; j < kSignsNum; ++j) {
-					finalX = startX + y * signs[j];
-
-					// If the current point is walkable, return it
-					if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
-						return Common::Point(finalX, finalY);
-					}
-				}
-			}
-
-			// If prediction is non-negative, we need to decrease the major radius of the
-			// ellipse
+			// Walk along the circle to the next point: the
+			// X-coordinate moves to the right, and the
+			// Y-coordinate may move to the bottom if the predictor
+			// says so.
 			if (prediction >= 0) {
 				prediction -= dy;
 				dy -= 2 * _deltaX;
 				y -= _deltaX;
 			}
-
-			// Increase the minor radius of the ellipse and update heuristic variables
 			prediction += dx;
 			dx += 2 * _deltaX;
 			x += _deltaX;
-
-		// If the current ellipse has been reshaped into a circle,
-		// end this loop and enlarge the radius
-		} while (x <= y);
+		}
 	}
+
+	// The destination point is unreachable.
+	return Common::Point(-1, -1);
 }
 
 // We don't use Common::Point due to using static initialization.
-int WalkingMap::kDirections[][2] = { {0, -1}, {0, +1}, {-1, 0}, {+1, 0} };
+const int WalkingMap::kDirections[][2] = { {0, -1}, {0, +1}, {-1, 0}, {+1, 0} };
 
 bool WalkingMap::findShortestPath(Common::Point p1, Common::Point p2, WalkingPath *path) const {
 	// Round the positions to map squares.
@@ -632,6 +607,11 @@ bool WalkingState::turnForTheNextSegment() {
 void WalkingState::heroAnimationFinished() {
 	debugC(2, kDraciWalkingDebugLevel, "Turning callback called");
 	_turningFinished = true;
+
+	// We don't need to clear the callback to safer doNothing, because
+	// nobody ever plays this animation directly.  It is only played by
+	// turnForTheNextSegment() and then the same callback needs to be
+	// activated again.
 }
 
 bool WalkingState::walkOnNextEdge() {
@@ -647,8 +627,6 @@ bool WalkingState::walkOnNextEdge() {
 	// walking/staying/talking animations are cyclic.
 	Movement nextAnim = directionForNextPhase();
 	_lastAnimPhase = _vm->_game->playHeroAnimation(nextAnim);
-
-	// TODO: do we need to clear the callback for the turning animation?
 
 	debugC(2, kDraciWalkingDebugLevel, "Turned for edge %d, starting animation %d with phase %d", _segment, nextAnim, _lastAnimPhase);
 

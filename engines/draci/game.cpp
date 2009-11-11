@@ -973,18 +973,18 @@ void Game::setHeroPosition(const Common::Point &p) {
 	_hero = p;
 }
 
-Common::Point Game::findNearestWalkable(int x, int y) const {
-	Surface *surface = _vm->_screen->getSurface();
-	return _walkingMap.findNearestWalkable(x, y, surface->getDimensions());
-}
-
 void Game::walkHero(int x, int y, SightDirection dir) {
 	if (!_currentRoom._heroOn) {
 		// Nothing to do.  Happens for example in the map.
 		return;
 	}
 
+	// Find the closest walkable point.
 	Common::Point target = findNearestWalkable(x, y);
+	if (target.x < 0 || target.y < 0) {
+		debug(1, "The is no walkable point on the map");
+		return;
+	}
 
 	// Compute the shortest and obliqued path.
 	WalkingPath shortestPath, obliquePath;

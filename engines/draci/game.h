@@ -207,7 +207,7 @@ public:
 		return n;
 	}
 
-	Common::Point findNearestWalkable(int x, int y) const;
+	Common::Point findNearestWalkable(int x, int y) const { return _walkingMap.findNearestWalkable(x, y); }
 	void heroAnimationFinished() { _walkingState.heroAnimationFinished(); }
 	void stopWalking() { _walkingState.stopWalking(); }	// and clear callback
 	void walkHero(int x, int y, SightDirection dir);	// start walking and leave callback as is
