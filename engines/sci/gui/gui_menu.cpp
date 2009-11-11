@@ -582,6 +582,13 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 					// Selection changed, fix up new selection if required
 					newItemEntry = interactiveGetItem(newMenuId, newItemId, newMenuId != curItemEntry->menuId);
 					newMenuId = newItemEntry->menuId; newItemId = newItemEntry->id;
+
+					// if we do this step again because of a separator line -> don't repeat left/right, but go down
+					switch (curEvent.data) {
+					case SCI_K_LEFT:
+					case SCI_K_RIGHT:
+						curEvent.data = SCI_K_DOWN;
+					}
 				}
 			} while (newItemEntry->separatorLine);
 			if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
