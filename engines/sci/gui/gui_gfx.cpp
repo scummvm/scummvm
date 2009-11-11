@@ -65,7 +65,7 @@ void SciGuiGfx::init(SciGuiText *text) {
 	OpenPort(_menuPort);
 	_text->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
-	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
+	_menuBarRect = Common::Rect(0, 0, _screen->_width, 9);
 }
 
 void SciGuiGfx::purgeCache() {

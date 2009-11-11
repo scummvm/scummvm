@@ -284,7 +284,7 @@ void SciGuiMenu::drawBar() {
 	GuiMenuList::iterator listEnd = _list.end();
 
 	// Hardcoded black on white
-	_gfx->FillRect(_gfx->_menuRect, 1, _screen->_colorWhite);
+	_gfx->FillRect(_gfx->_menuBarRect, 1, _screen->_colorWhite);
 	_gfx->PenColor(0);
 	_gfx->MoveTo(8, 1);
 
@@ -319,6 +319,7 @@ void SciGuiMenu::calculateTextWidth() {
 	while (itemIterator != itemEnd) {
 		itemEntry = *itemIterator;
 		_text->StringWidth(itemEntry->text.c_str(), 0, itemEntry->textWidth, dummyHeight);
+		_text->StringWidth(itemEntry->textRightAligned.c_str(), 0, itemEntry->textRightAlignedWidth, dummyHeight);
 
 		itemIterator++;
 	}
@@ -379,7 +380,11 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
-		_gfx->BitsShow(_gfx->_menuRect);
+		_gfx->BitsShow(_menuRect);
+	}
+	if (!_barSaveHandle.isNull()) {
+		_gfx->BitsRestore(_barSaveHandle);
+		_gfx->BitsShow(_gfx->_menuBarRect);
 	}
 	if (_oldPort)
 		_gfx->SetPort(_oldPort);
@@ -398,7 +403,10 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
 	GuiMenuItemEntry *lastItemEntry = NULL;
 
 	// Fixup menuId if needed
-	menuId = CLIP<uint16>(menuId, 1, _listCount);
+	if (menuId > _listCount)
+		menuId = 1;
+	if (menuId == 0)
+		menuId = _listCount;
 	// Fixup itemId as well
 	if (itemId == 0)
 		itemId = 32678;
@@ -415,6 +423,79 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
 	return lastItemEntry;
 }
 
+void SciGuiMenu::drawMenu(uint16 menuId) {
+	GuiMenuEntry *listEntry;
+	GuiMenuList::iterator listIterator;
+	GuiMenuList::iterator listEnd = _list.end();
+	GuiMenuItemEntry *listItemEntry;
+	GuiMenuItemList::iterator listItemIterator;
+	GuiMenuItemList::iterator listItemEnd = _itemList.end();
+	uint16 listNr = 0;
+	int16 maxTextWidth = 0, maxTextRightAlignedWidth = 0;
+	int16 topPos;
+
+	// Remove menu, if one is displayed
+	if (!_menuSaveHandle.isNull()) {
+		_gfx->BitsRestore(_menuSaveHandle);
+		_gfx->BitsShow(_menuRect);
+	}
+
+	// First calculate rect of menu
+	_menuRect.top = _gfx->_menuBarRect.bottom;
+	_menuRect.left = 7;
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		listNr++;
+		if (listNr == menuId)
+			break;
+		_menuRect.left += listEntry->textWidth;
+
+		listIterator++;
+	}
+
+	_menuRect.bottom = _menuRect.top + 2;
+	listItemIterator = _itemList.begin();
+	while (listItemIterator != listItemEnd) {
+		listItemEntry = *listItemIterator;
+		if (listItemEntry->menuId == menuId) {
+			_menuRect.bottom += _gfx->_curPort->fontHeight;
+			maxTextWidth = MAX<int16>(maxTextWidth, listItemEntry->textWidth);
+			maxTextRightAlignedWidth = MAX<int16>(maxTextRightAlignedWidth, listItemEntry->textRightAlignedWidth);
+		}
+		listItemIterator++;
+	}
+	_menuRect.right = _menuRect.left + 16 + 4 + 2;
+	_menuRect.right += maxTextWidth + maxTextRightAlignedWidth;
+
+	// Save background
+	_menuSaveHandle = _gfx->BitsSave(_menuRect, SCI_SCREEN_MASK_VISUAL);
+
+	// Do the drawing
+	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, 0);
+	_menuRect.left++; _menuRect.right--; _menuRect.bottom--;
+	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, _screen->_colorWhite);
+
+	_menuRect.left += 8;
+	topPos = _menuRect.top + 1;
+	listItemIterator = _itemList.begin();
+	while (listItemIterator != listItemEnd) {
+		listItemEntry = *listItemIterator;
+		if (listItemEntry->menuId == menuId) {
+			_gfx->MoveTo(_menuRect.left, topPos);
+			_text->Draw_String(listItemEntry->text.c_str());
+			_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 3, topPos);
+			_text->Draw_String(listItemEntry->textRightAligned.c_str());
+			topPos += _gfx->_curPort->fontHeight;
+		}
+		listItemIterator++;
+	}
+
+	_menuRect.left -= 8;
+	_menuRect.left--; _menuRect.right++; _menuRect.bottom++;
+	_gfx->BitsShow(_menuRect);
+}
+
 GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	sci_event_t curEvent;
 	uint16 newMenuId = _curMenuId;
@@ -424,10 +505,11 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
-	_menuSaveHandle = _gfx->BitsSave(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
 	drawBar();
-
-	_gfx->BitsShow(_gfx->_menuRect);
+	drawMenu(curItemEntry->menuId);
+	_gfx->BitsShow(_gfx->_menuBarRect);
+	_gfx->BitsShow(_menuRect);
 
 	while (true) {
 		curEvent = gfxop_get_event(_gfxstate, SCI_EVT_ANY);
@@ -461,6 +543,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 				if (newMenuId != curItemEntry->menuId) {
 					// Menu changed, remove cur menu and paint new menu
+					drawMenu(newMenuId);
 				}
 
 				curItemEntry = newItemEntry;

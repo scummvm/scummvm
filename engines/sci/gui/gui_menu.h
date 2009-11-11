@@ -66,10 +66,11 @@ struct GuiMenuItemEntry {
 	reg_t textVmPtr;
 	int16 textWidth;
 	Common::String textRightAligned;
+	int16 textRightAlignedWidth;
 
 	GuiMenuItemEntry(uint16 curMenuId, uint16 curId)
 	 : menuId(curMenuId), id(curId),
-		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false), textWidth(0) {
+		enabled(true), tag(0), keyPress(0), keyModifier(0), separatorLine(false), textWidth(0), textRightAlignedWidth(0) {
 		saidVmPtr = NULL_REG;
 		textVmPtr = NULL_REG;
 	}
@@ -92,6 +93,7 @@ public:
 private:
 	GuiMenuItemEntry *findItem(uint16 menuId, uint16 itemId);
 	void calculateTextWidth();
+	void drawMenu(uint16 menuId);
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId);
@@ -111,7 +113,9 @@ private:
 	uint16 _curItemId;
 
 	GuiPort *_oldPort;
+	GuiMemoryHandle _barSaveHandle;
 	GuiMemoryHandle _menuSaveHandle;
+	Common::Rect _menuRect;
 };
 
 } // End of namespace Sci

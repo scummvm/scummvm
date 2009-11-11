@@ -296,12 +296,12 @@ void SciGui::textColors(int argc, reg_t *argv) {
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	GuiPort *oldPort = _gfx->SetPort(_gfx->_menuPort);
 
-	_gfx->FillRect(_gfx->_menuRect, 1, colorBack);
+	_gfx->FillRect(_gfx->_menuBarRect, 1, colorBack);
 	_gfx->PenColor(colorPen);
 	_gfx->MoveTo(0, 1);
 	_text->Draw_String(text);
 	if (_screen->_picNotValid == 0)
-		_gfx->BitsShow(_gfx->_menuRect);
+		_gfx->BitsShow(_gfx->_menuBarRect);
 	_gfx->SetPort(oldPort);
 }
 
@@ -310,7 +310,7 @@ void SciGui::drawMenuBar(bool clear) {
 		GuiPort *oldPort = _gfx->SetPort(_gfx->_menuPort);
 		_menu->drawBar();
 		if (_screen->_picNotValid == 0)
-			_gfx->BitsShow(_gfx->_menuRect);
+			_gfx->BitsShow(_gfx->_menuBarRect);
 		_gfx->SetPort(oldPort);
 	} else {
 		drawStatus("", 0, 0);

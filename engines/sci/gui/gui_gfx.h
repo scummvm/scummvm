@@ -100,7 +100,7 @@ public:
 	void SetNowSeen(reg_t objectReference);
 
 	GuiPort *_menuPort;
-	Common::Rect _menuRect;
+	Common::Rect _menuBarRect;
 	GuiPort *_curPort;
 
 	SciGuiView *getView(GuiResourceId viewNum);
