@@ -396,7 +396,7 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 	return NULL_REG;
 }
 
-GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
+GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged) {
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry;
@@ -420,7 +420,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId) {
 		}
 		itemIterator++;
 	}
-	if (itemId == 0)
+	if ((itemId == 0) || (menuChanged))
 		return lastItemEntry;
 	return firstItemEntry;
 }
@@ -435,6 +435,7 @@ void SciGuiMenu::drawMenu(uint16 menuId) {
 	uint16 listNr = 0;
 	int16 maxTextWidth = 0, maxTextRightAlignedWidth = 0;
 	int16 topPos;
+	Common::Point pixelPos;
 
 	// Remove menu, if one is displayed
 	if (!_menuSaveHandle.isNull()) {
@@ -484,10 +485,20 @@ void SciGuiMenu::drawMenu(uint16 menuId) {
 	while (listItemIterator != listItemEnd) {
 		listItemEntry = *listItemIterator;
 		if (listItemEntry->menuId == menuId) {
-			_gfx->MoveTo(_menuRect.left, topPos);
-			_text->Draw_String(listItemEntry->text.c_str());
-			_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 3, topPos);
-			_text->Draw_String(listItemEntry->textRightAligned.c_str());
+			if (!listItemEntry->separatorLine) {
+				_gfx->MoveTo(_menuRect.left, topPos);
+				_text->Draw_String(listItemEntry->text.c_str());
+				_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 3, topPos);
+				_text->Draw_String(listItemEntry->textRightAligned.c_str());
+			} else {
+				// We dont 100% follow sierra here, we draw the line from left to right. Looks better
+				pixelPos.y = topPos + (_gfx->_curPort->fontHeight >> 1);
+				pixelPos.x = _menuRect.left - 7;
+				while (pixelPos.x < (_menuRect.right - 1)) {
+					_screen->putPixel(pixelPos.x, pixelPos.y, SCI_SCREEN_MASK_VISUAL, 0, 0, 0);
+					pixelPos.x += 2;
+				}
+			}
 			topPos += _gfx->_curPort->fontHeight;
 		}
 		listItemIterator++;
@@ -534,31 +545,35 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 		switch (curEvent.type) {
 		case SCI_EVT_KEYBOARD:
-			switch (curEvent.data) {
-			case SCI_K_ESC:
-				_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
-				return NULL;
-			case SCI_K_ENTER:
-				_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
-				return curItemEntry;
-			case SCI_K_LEFT:
-				newMenuId--;
-				break;
-			case SCI_K_RIGHT:
-				newMenuId++;
-				break;
-			case SCI_K_UP:
-				newItemId--;
-				break;
-			case SCI_K_DOWN:
-				newItemId++;
-				break;
-			}
+			do {
+				switch (curEvent.data) {
+				case SCI_K_ESC:
+					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+					return NULL;
+				case SCI_K_ENTER:
+					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+					return curItemEntry;
+				case SCI_K_LEFT:
+					newMenuId--;
+					break;
+				case SCI_K_RIGHT:
+					newMenuId++;
+					break;
+				case SCI_K_UP:
+					newItemId--;
+					break;
+				case SCI_K_DOWN:
+					newItemId++;
+					break;
+				}
+				if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
+					// Selection changed, fix up new selection if required
+					newItemEntry = interactiveGetItem(newMenuId, newItemId, newMenuId != curItemEntry->menuId);
+					newMenuId = newItemEntry->menuId; newItemId = newItemEntry->id;
+				}
+			} while (newItemEntry->separatorLine);
 			if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
-				// Selection changed, fix up new selection if required and paint old and new
-				newItemEntry = interactiveGetItem(newMenuId, newItemId);
-				newMenuId = newItemEntry->menuId; newItemId = newItemEntry->id;
-
+				// paint old and new
 				if (newMenuId != curItemEntry->menuId) {
 					// Menu changed, remove cur menu and paint new menu
 					drawMenu(newMenuId);

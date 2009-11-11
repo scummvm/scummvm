@@ -97,7 +97,7 @@ private:
 	void invertMenuSelection(uint16 itemId);
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
-	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId);
+	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
 	GfxState *_gfxstate;
 	SegManager *_segMan;
