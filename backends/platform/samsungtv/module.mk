@@ -3,7 +3,6 @@ MODULE := backends/platform/samsungtv
 MODULE_OBJS := \
 	events.o \
 	graphics.o \
-	hardwarekeys.o \
 	main.o \
 	sdl.o
 

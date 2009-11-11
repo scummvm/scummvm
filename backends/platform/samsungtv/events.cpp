@@ -162,14 +162,22 @@ bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_LBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_HOME) {
+			} else if (ev.key.keysym.sym == SDLK_F1) {
 				event.type = Common::EVENT_RBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_F4) {
+			} else if (ev.key.keysym.sym == SDLK_HOME) {
+				event.type = Common::EVENT_QUIT;
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_F2) {
 				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_SPACE;
-				event.kbd.ascii = ' ';
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_0) {
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_F7;
+				event.kbd.ascii = Common::ASCII_F7;
 				return true;
 			}
 			break;
@@ -187,14 +195,22 @@ bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_LBUTTONUP;
 				fillMouseEvent(event, _km.x, _km.y);
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_HOME) {
+			} else if (ev.key.keysym.sym == SDLK_F1) {
 				event.type = Common::EVENT_RBUTTONUP;
 				fillMouseEvent(event, _km.x, _km.y);
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_F4) {
+			} else if (ev.key.keysym.sym == SDLK_HOME) {
+				event.type = Common::EVENT_QUIT;
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_F2) {
 				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = Common::KEYCODE_SPACE;
-				event.kbd.ascii = ' ';
+				event.kbd.keycode = Common::KEYCODE_F5;
+				event.kbd.ascii = Common::ASCII_F5;
+				return true;
+			} else if (ev.key.keysym.sym == SDLK_0) {
+				event.type = Common::EVENT_KEYUP;
+				event.kbd.keycode = Common::KEYCODE_F7;
+				event.kbd.ascii = Common::ASCII_F7;
 				return true;
 			}
 			break;

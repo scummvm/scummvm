@@ -1358,7 +1358,6 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_build_scalers="yes"
 			_vkeybd="yes"
-			_keymapper="yes"
 			;;
 		motoezx)
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX"

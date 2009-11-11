@@ -63,9 +63,6 @@ public:
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event);
 
-	// Define all hardware keys for keymapper
-	virtual Common::HardwareKeySet *getHardwareKeySet();
-
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
