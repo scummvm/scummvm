@@ -122,7 +122,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	_ws->boundingRect = Common::Rect(195, 115, 445 - _ws->actors[_playerActorIdx].boundingRect.right, 345 - _ws->actors[_playerActorIdx].boundingRect.bottom);
 
 	_ws->actors[_playerActorIdx].flags |= 1;
-	_ws->actors[_playerActorIdx].update_4072A0(4);
+	_ws->actors[_playerActorIdx].changeOrientation(4);
 
 	_ws->actors[_playerActorIdx].x1 -= _ws->actors[_playerActorIdx].x2;
 	_ws->actors[_playerActorIdx].y1 -= _ws->actors[_playerActorIdx].y2;
@@ -132,7 +132,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 			Actor *actor = &_ws->actors[a];
 			actor->flags |= 1;
 			actor->direction = 1;
-			actor->update_4072A0(4);
+			actor->changeOrientation(4);
 			actor->x1 -= actor->x2;
 			actor->y1 -= actor->y2;
 			actor->boundingRect.bottom = actor->y2;
@@ -318,7 +318,7 @@ int Scene::updateScene() {
 	// Commented out the (incomplete) update screen code because once the
 	// actor's x1/y1 values are properly set, the temp code causes a crash
 	// Have to finish implementing the method I guess :P
-	//updateAdjustScreen();
+	updateAdjustScreen();
 	//debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->_system->getMillis() - startTick);
 
 	if (_actions->process())
@@ -1060,7 +1060,7 @@ int Scene::drawScene() {
 		_vm->screen()->drawGraphicsInQueue();
 
 		// TODO: we must get rid of this
-		OLD_UPDATE();
+		//OLD_UPDATE();
 	}
 
 	return 1;

@@ -143,16 +143,26 @@ public:
 	bool visible() {
 		return flags & 0x01;
 	}
+
 	void visible(bool value);
+
 	void setPosition(uint32 targetX, uint32 targetY);
-	void setDirection(int dir);
 
 	/**
 	 * Initialize the x1/y1 values of the actor, update the active animation frame
 	 * and, if the current direction isn't 8, update the actor's direction
 	 */
 	void setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame);
-	void update_4072A0(int param);
+
+	/**
+	 * Change the direction the actor's facing based
+	 * on the supplied parament.
+	 *
+	 * Note that the parameter doesn't directly update the
+	 * actor's direction, but it used as a lookup
+	 * to determine the value
+	 */
+	void changeOrientation(int param);
 
 	void faceTarget(int targetId, int targetType);
 

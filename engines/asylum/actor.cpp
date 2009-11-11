@@ -27,6 +27,7 @@
 
 #include "asylum/actor.h"
 #include "asylum/screen.h"
+#include "asylum/config.h"
 
 namespace Asylum {
 
@@ -58,10 +59,12 @@ void Actor::visible(bool value) {
 		// TODO object_sound_sub_414c30
 }
 
+/*
 void Actor::setDirection(int dir) {
 	direction = dir;
 	setActionByIndex(dir);
 }
+*/
 
 void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
@@ -275,38 +278,43 @@ void Actor::walkTo(uint32 curX, uint32 curY) {
 	drawActor();
 }
 
-void Actor::update_4072A0(int param) {
+
+void Actor::changeOrientation(int param) {
 	int newGrId = 0;
-	int newDir = 0;
+	int newDir  = 0;
 
 	switch (param) {
 	case 4:
 	case 6:
 	case 14:
-		if (this->direction > 4)
-			newDir = 8 - this->direction;
+		if (direction > 4)
+			newDir = 8 - direction;
 		else
-			newDir = this->direction;
-		newGrId = this->grResTable[newDir + 5];
+			newDir = direction;
+		newGrId = grResTable[newDir + 5];
 		break;
 
 	case 5:
-		newDir = this->direction;
+		newDir = direction;
 		if (newDir > 4)
-			this->direction = 8 - newDir;
+			direction = 8 - newDir;
 
-		setAction(newDir + 5);
+		newGrId = grResTable[newDir + 5];
+
+		// XXX This has something to do with screen updating
+		Config.word_446EE4 = -1;
 		break;
+
 	default:
 		warning ("[update_4072A0] unimplemented case: %d", param);
 		break;
 	}
 
-	this->grResId = newGrId;
+	grResId = newGrId;
 
-	GraphicResource *gra = new GraphicResource(_resPack, this->grResId);
-	this->frameCount = gra->getFrameCount();
-	this->frameNum   = 0;
+	GraphicResource *gra = new GraphicResource(_resPack, grResId);
+	frameCount = gra->getFrameCount();
+	frameNum   = 0;
 	delete gra;
 
 	// TODO
@@ -314,7 +322,7 @@ void Actor::update_4072A0(int param) {
 	// depending on the switch case. Change this once a case handler
 	// is implemented that requires this ... namely:
 	//    if (!v34) v3 = 4; // so updateType = 4
-	this->updateType = param;
+	updateType = param;
 }
 
 void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame) {
@@ -384,7 +392,8 @@ void Actor::faceTarget(int targetId, int targetType) {
 
 	printf("Angle calculated as %d\n", newAngle);
 
-	setDirection(newAngle);
+	// TODO set player direction
+	//setDirection(newAngle);
 }
 
 int Actor::getAngle(int ax1, int ay1, int ax2, int ay2) {

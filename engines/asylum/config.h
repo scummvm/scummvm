@@ -40,6 +40,10 @@ namespace Asylum {
 class ConfigurationManager: public Common::Singleton<ConfigurationManager> {
 public:
 
+	// XXX Throwing some globals in here until
+	// I know how to better handle them
+	int  word_446EE4;
+
 	bool showMovieSubtitles;
 	Common::Array<int>  movieSubtitles;
 	bool showEncounterSubtitles;

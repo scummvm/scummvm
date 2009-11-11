@@ -582,16 +582,15 @@ int kSetSceneMotionStat(ActionCommand *cmd, Scene *scn) {
 }
 
 int kDisableActor(ActionCommand *cmd, Scene *scn) {
-	int actorIndex = 0;
+	int actorIndex = cmd->param1;
+	Actor* actor;
 
-	if (cmd->param1 == -1)
-		;//actorIndex = scn->getWorldStats()->playerActor;
+	if (actorIndex == -1)
+		actor = scn->getActor();
 	else
-		actorIndex = cmd->param1;
+		actor = &scn->worldstats()->actors[actorIndex];
 
-	// TODO Finish implementing this function
-
-	//scn->getActor()->update_4072A0(actorIndex);
+	actor->changeOrientation(5);
 
 	return -1;
 }
