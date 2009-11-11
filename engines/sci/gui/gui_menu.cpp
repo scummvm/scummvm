@@ -557,6 +557,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 		switch (curEvent.type) {
 		case SCI_EVT_KEYBOARD:
+			// We don't 100% follow sierra here, sierra actually changed itemId to 1 on menuId changes
 			do {
 				switch (curEvent.data) {
 				case SCI_K_ESC:
