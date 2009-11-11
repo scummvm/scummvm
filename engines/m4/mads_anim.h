@@ -27,6 +27,7 @@
 #define M4_MADS_ANIM_H
 
 #include "m4/viewmgr.h"
+#include "m4/compression.h"
 
 namespace M4 {
 
@@ -86,13 +87,31 @@ public:
 
 typedef void (*AnimviewCallback)(M4Engine *vm);
 
+class AAFile: public MadsPack {
+public:
+	AAFile(const char *resourceName, M4Engine* vm);
+
+	uint16 seriesCount;
+	uint16 frameCount;
+	uint16 frameEntryCount;
+	uint8 flags;
+	uint16 roomNumber;
+	uint16 frameTicks;
+	Common::StringList filenames;
+	Common::String lbmFilename;
+	Common::String spritesFilename;
+	Common::String soundName;
+	Common::String fontResource;
+};
+
+enum AAFlags {AA_HAS_FONT = 0x20, AA_HAS_SOUND = 0x8000};
+
 class AnimviewView: public View {
 private:
 	char _resourceName[80];
 	Common::SeekableReadStream *_script;
 	uint32 _previousUpdate;
 	char _currentLine[80];
-	char _currentFile[10];
 	M4Surface _bgSurface;
 	AnimviewCallback _callback;
 	bool _soundDriverLoaded;
@@ -100,7 +119,7 @@ private:
 	int _transition;
 
 	void reset();
-	void processLines();
+	void readNextCommand();
 	void processCommand();
 public:
 	AnimviewView(M4Engine *vm);
