@@ -68,6 +68,8 @@
 #if defined(UNIX)
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
+#elif defined(SAMSUNGTV)
+#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"
 #else
 #define DEFAULT_CONFIG_FILE ".scummvmrc"
 #endif

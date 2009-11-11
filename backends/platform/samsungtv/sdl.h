@@ -74,9 +74,6 @@ public:
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
-
 protected:
 
 	SDL_Surface *_prehwscreen;

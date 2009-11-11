@@ -43,8 +43,6 @@
 
 #if defined(SAMSUNGTV)
 
-#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"
-
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;
@@ -143,23 +141,6 @@ void OSystem_SDL_SamsungTV::addSysArchivesToSearchSet(Common::SearchSet &s, int 
 	if (dataNode.exists() && dataNode.isDirectory()) {
 		s.add(".", new Common::FSDirectory(dataNode, 4), priority);
 	}
-}
-
-
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-	return configFile;
-}
-
-Common::SeekableReadStream *OSystem_SDL_SamsungTV::createConfigReadStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_SDL_SamsungTV::createConfigWriteStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
 }
 
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
