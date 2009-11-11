@@ -30,7 +30,6 @@
 
 #include "backends/base-backend.h"
 #include "backends/platform/sdl/sdl.h"
-#include "graphics/scaler.h"
 
 #if defined(SAMSUNGTV)
 

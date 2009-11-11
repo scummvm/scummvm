@@ -24,21 +24,6 @@
  */
 
 #include "backends/platform/samsungtv/sdl.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/EventRecorder.h"
-#include "common/util.h"
-
-#include "backends/saves/posix/posix-saves.h"
-#include "backends/timer/default/default-timer.h"
-#include "sound/mixer_intern.h"
-
-#include <time.h>	// for getTimeAndDate()
-
-/*
- * Include header files needed for the getFilesystemFactory() method.
- */
 #include "backends/fs/posix/posix-fs-factory.h"
 
 #if defined(SAMSUNGTV)
