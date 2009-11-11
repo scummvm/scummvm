@@ -141,7 +141,7 @@ void OSystem_SDL_SamsungTV::addSysArchivesToSearchSet(Common::SearchSet &s, int 
 	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
 	Common::FSNode dataNode(".");
 	if (dataNode.exists() && dataNode.isDirectory()) {
-		s.add("", new Common::FSDirectory(dataNode, 4), priority);
+		s.add(".", new Common::FSDirectory(dataNode, 4), priority);
 	}
 }
 
