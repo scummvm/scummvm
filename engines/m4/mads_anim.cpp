@@ -582,7 +582,7 @@ void AnimviewView::readNextCommand() {
 		strcpy(buffer, aaFile.soundName.c_str());
 		buffer[0] = 'A';	// A for Adlib resource
 
-		Common::SeekableReadStream *stream = _vm->_resourceManager->get(buffer);
+		/*Common::SeekableReadStream *stream = */_vm->_resourceManager->get(buffer);
 		
 		_vm->_resourceManager->toss(buffer);
 	}
