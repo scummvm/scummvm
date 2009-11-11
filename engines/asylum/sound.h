@@ -57,7 +57,7 @@ typedef struct AmbientSoundItem {
 	uint32 field_C;
 	uint32 field_10;
 	uint32 field_14;
-	uint32 flagNum[6];
+	int    flagNum[6];
 	uint32 x;
 	uint32 y;
 

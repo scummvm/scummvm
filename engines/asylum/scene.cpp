@@ -85,7 +85,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	_vm->text()->loadFont(_resPack, _ws->commonRes.font1);
 
 	char musPackFileName[10];
-	sprintf(musPackFileName, "mus.%03d", sceneIdx);
+	sprintf(musPackFileName, MUSIC_FILE_MASK, sceneIdx);
 	_musPack = new ResourcePack(musPackFileName);
 
 	_bgResource    = new GraphicResource(_resPack, _ws->commonRes.backgroundImage);
@@ -299,7 +299,7 @@ int Scene::updateScene() {
 
 	// Barriers
 	startTick = _vm->_system->getMillis();
-	updateBarriers2();
+	updateBarriers();
 	debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->_system->getMillis() - startTick);
 
 	// Ambient Sounds
@@ -560,38 +560,7 @@ void Scene::updateActor(uint32 actorIdx) {
 	}
 }
 
-// XXX WIP
 void Scene::updateBarriers() {
-	int v1, v0, v32, v33, v34, tickVal, tickVal05, tickVal06;
-	v1 = v0 = v32 = v33 = v34 = tickVal = tickVal05 = tickVal06 = 0;
-
-	uint32 start, v2, v31;
-	bool done = false;
-	//if (_ws->barriers.size() > 0);
-
-	v2 = _ws->barriers[0].tickCount2;
-	for (uint32 idx = 0; idx < _ws->numBarriers; idx++) {
-		//Barrier *b = &_ws->barriers[idx];
-		start = _vm->_system->getMillis();
-
-		if (v2 - 32 != 4)
-			done = true;
-
-		if (!done && !_ws->checkBarrierFlagsCondition(idx)) {
-			v31 = _vm->_system->getMillis();
-		}
-
-		/*
-		 * TODO
-		 */
-
-		v2  += 426;
-		v1   = 0;
-		done = false;
-	}
-}
-
-void Scene::updateBarriers2() {
 	//Screen *screen = _vm->screen();
 
 	uint barriersCount  = _ws->barriers.size();
@@ -732,6 +701,7 @@ void Scene::updateBarriers2() {
 }
 
 void Scene::updateAmbientSounds() {
+	// TODO
 	// if (cfgGameQualityValue > 3)
 
 	int v2 = 1;
@@ -742,15 +712,13 @@ void Scene::updateAmbientSounds() {
 	for (uint32 i = 0; i < _ws->numAmbientSound; i++) {
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
 		for (uint32 f = 0; f < 6; f++) {
-			uint gameFlag = snd->flagNum[f];
+			int gameFlag = snd->flagNum[f];
 			if (gameFlag >= 0) {
 				if (_vm->isGameFlagNotSet(gameFlag)) {
 					v2 = 0;
 					break;
 				}
 			} else {
-				// FIXME: Applying the minus operator to an unsigned type results
-				// in an unsigned type again. Casting gameFlag to int for now
 				if (_vm->isGameFlagSet(-(int)gameFlag)) {
 					// XXX Looks like this just jumps back to
 					// the top of the loop, so not sure if this
