@@ -33,8 +33,17 @@ namespace TeenAgent {
 class Scene;
 class Dialog {
 public:
-	static uint16 pop(Scene *scene, uint16 addr, uint16 animation1 = 0, uint16 animation2 = 0, byte color1 = 0xd1, byte color2 = 0xd0, byte slot1 = 1, byte slot2 = 2);
-	static void show(Scene *scene, uint16 addr, uint16 animation1 = 0, uint16 animation2 = 0, byte color1 = 0xd1, byte color2 = 0xd0, byte slot1 = 1, byte slot2 = 2);
+	static uint16 pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+	static uint16 popMark(Scene *scene, uint16 addr) {
+		return pop(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+	}
+	static void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+	static void showMono(Scene *scene, uint16 addr, uint16 animation, byte color, byte slot) {
+		show(scene, addr, animation, animation, color, color, slot, slot);
+	}
+	static void showMark(Scene *scene, uint16 addr) {
+		show(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+	}
 };
 
 } // End of namespace TeenAgent
