@@ -28,7 +28,9 @@
 ** used for any actual actions on behalf of the interpreter.
 */
 
-#include "sci/sci.h"
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #include "sci/engine/state.h"
 #include "sci/gfx/menubar.h"
 #include "sci/gui/gui.h"
@@ -434,3 +436,5 @@ bool Menubar::mapPointer(const Common::Point &pointerPos, int &menu_nr, int &ite
 }
 
 } // End of namespace Sci
+
+#endif

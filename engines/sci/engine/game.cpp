@@ -35,8 +35,8 @@
 #include "sci/engine/message.h"
 #ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
-#endif
 #include "sci/gfx/menubar.h"
+#endif
 
 namespace Sci {
 
@@ -411,7 +411,9 @@ int game_init(EngineState *s) {
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->_gameObj));
 
+#ifdef INCLUDE_OLDGFX
 	s->_menubar = new Menubar(); // Create menu bar
+#endif
 
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
 		game_init_sound(s, 0);
@@ -441,9 +443,9 @@ int game_exit(EngineState *s) {
 
 	// TODO Free scripts here
 
+#ifdef INCLUDE_OLDGFX
 	delete s->_menubar;
 
-#ifdef INCLUDE_OLDGFX
 	_free_graphics_input(s);
 #endif
 

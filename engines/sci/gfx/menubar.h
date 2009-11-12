@@ -25,10 +25,12 @@
 
 /* Header for SCI0 menu bar management */
 
+#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#ifdef INCLUDE_OLDGFX
+
 #ifndef SCI_GFX_SCI_MENUBAR_H
 #define SCI_GFX_SCI_MENUBAR_H
 
-#include "sci/sci.h"	// for INCLUDE_OLDGFX
 #include "sci/engine/vm_types.h"
 #include "sci/gfx/operations.h"
 
@@ -225,3 +227,5 @@ public:
 } // End of namespace Sci
 
 #endif // SCI_GFX_SCI_MENUBAR_H
+
+#endif

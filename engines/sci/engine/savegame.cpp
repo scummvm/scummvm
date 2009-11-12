@@ -30,17 +30,19 @@
 #include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
-#include "sci/gfx/menubar.h"
 #ifdef INCLUDE_OLDGFX
+#include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
 #endif
-#include "sci/sfx/audio.h"
-#include "sci/sfx/core.h"
-#include "sci/sfx/iterator.h"
+
 #include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/vm_types.h"
 #include "sci/gui/gui.h"
+#include "sci/sfx/audio.h"
+#include "sci/sfx/core.h"
+#include "sci/sfx/iterator.h"
 
 namespace Sci {
 
@@ -53,6 +55,7 @@ const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
 
 
 // from ksound.cpp:
+//SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id);
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id);
 
 #pragma mark -
@@ -150,6 +153,7 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 }
 
 
+#ifdef INCLUDE_OLDGFX
 
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_type);
@@ -175,10 +179,11 @@ void Menu::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<MenuItem>(s, _items);
 }
 
-
 void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<Menu>(s, _menus);
 }
+
+#endif
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be reserved_id
@@ -294,12 +299,35 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncString(tmp);			// OBSOLETE: Used to be game_version
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
 
+#ifdef INCLUDE_OLDGFX
 	if (s.isLoading()) {
 		//free(menubar);
 		_menubar = new Menubar();
 	} else
 		assert(_menubar);
 	_menubar->saveLoadWithSerializer(s);
+#else
+	// OBSOLETE: Saved menus. Skip all of the saved data
+	int menuLength = 0;
+	s.syncAsUint32LE(menuLength);
+	s.syncString(tmp);				// OBSOLETE: Used to be _title
+	s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _titleWidth
+	s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _width
+
+	// Now iterate through the obsolete saved menu data
+	for (int i = 0; i < menuLength; i++) {
+		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
+		s.syncString(tmp);					// OBSOLETE: Used to be _keytext
+		s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
+
+		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
+		s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
+		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _saidPos
+		s.syncString(tmp);					// OBSOLETE: Used to be _text
+		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _textPos
+		s.skip(4 * 4, VER(12), VER(12));	// OBSOLETE: Used to be _modifiers, _key, _enabled and _tag
+	}
+#endif
 
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
@@ -672,6 +700,7 @@ static void reconstruct_sounds(EngineState *s) {
 		int oldstatus;
 		SongIterator::Message msg;
 
+		//base = ff = build_iterator(s->resMan, seeker->_resourceNum, it_type, seeker->_handle);
 		base = ff = build_iterator(s, seeker->_resourceNum, it_type, seeker->_handle);
 		if (seeker->_restoreBehavior == RESTORE_BEHAVIOR_CONTINUE)
 			ff = new_fast_forward_iterator(base, seeker->_restoreTime);

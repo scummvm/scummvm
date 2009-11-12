@@ -62,9 +62,9 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	priority_first = 0;
 	priority_last = 0;
-#endif
 
 	_menubar = 0;
+#endif
 
 	last_wait_time = 0;
 
