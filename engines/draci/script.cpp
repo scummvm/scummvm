@@ -624,6 +624,10 @@ void Script::execLook(const Common::Array<int> &params) {
 	int objID = params[0] - 1;
 
 	const GameObject *obj = _vm->_game->getObject(objID);
+
+	// We don't have to use runWrapper(), because the has already been
+	// wrapped due to the fact that these commands are only run from a GPL2
+	// program but never from the core player.
 	run(obj->_program, obj->_look);
 }
 
@@ -1191,6 +1195,31 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 	// Reset the flags which may have temporarily been altered inside the script.
 	_vm->_game->setEnableQuickHero(true);
 	_vm->_game->setEnableSpeedText(true);
+}
+
+void Script::runWrapper(const GPL2Program &program, uint16 offset, bool disableCursor, bool releaseAnims) {
+	if (disableCursor) {
+		// Fetch the dedicated objects' title animation / current frame
+		Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+		titleAnim->markDirtyRect(_vm->_screen->getSurface());
+		Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
+		title->setText("");
+
+		_vm->_mouse->cursorOff();
+	}
+
+	// Mark last animation
+	int lastAnimIndex = _vm->_anims->getLastIndex();
+
+	run(program, offset);
+
+	if (releaseAnims) {
+			_vm->_game->deleteAnimationsAfterIndex(lastAnimIndex);
+	}
+
+	if (disableCursor) {
+		_vm->_mouse->cursorOn();
+	}
 }
 
 } // End of namespace Draci

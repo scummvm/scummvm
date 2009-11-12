@@ -453,19 +453,9 @@ void WalkingState::callback() {
 	}
 	debugC(2, kDraciWalkingDebugLevel, "Calling walking callback");
 
-	// Fetch the dedicated objects' title animation / current frame
-	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
-	Text *title = reinterpret_cast<Text *>(titleAnim->getCurrentFrame());
-
-	_vm->_mouse->cursorOff();
-	titleAnim->markDirtyRect(_vm->_screen->getSurface());
-	title->setText("");
-
-	const GPL2Program *originalCallback = _callback;
+	const GPL2Program &originalCallback = *_callback;
 	_callback = NULL;
-	_vm->_script->run(*originalCallback, _callbackOffset);
-
-	_vm->_mouse->cursorOn();
+	_vm->_script->runWrapper(originalCallback, _callbackOffset, true, false);
 }
 
 bool WalkingState::continueWalkingOrClearPath() {

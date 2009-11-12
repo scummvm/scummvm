@@ -329,7 +329,7 @@ void Game::handleInventoryLoop() {
 		// If there is an inventory item under the cursor and we aren't
 		// holding any item, run its look GPL program
 		if (_itemUnderCursor && !_currentItem) {
-			_vm->_script->run(_itemUnderCursor->_program, _itemUnderCursor->_look);
+			_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_look, true, false);
 		// Otherwise, if we are holding an item, try to place it inside the
 		// inventory
 		} else if (_currentItem) {
@@ -368,7 +368,7 @@ void Game::handleInventoryLoop() {
 			// run the use script for the item.
 			} else {
 				if (_vm->_script->testExpression(_itemUnderCursor->_program, _itemUnderCursor->_canUse)) {
-					_vm->_script->run(_itemUnderCursor->_program, _itemUnderCursor->_use);
+					_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_use, true, false);
 				}
 			}
 			updateInventoryCursor();
@@ -801,7 +801,9 @@ void Game::dialogueMenu(int dialogueID) {
 				break;
 			}
 			_currentBlock = _lines[hit];
-			runDialogueProg(_dialogueBlocks[_lines[hit]]._program, 1);
+
+			// Run the dialogue program
+			_vm->_script->runWrapper(_dialogueBlocks[_lines[hit]]._program, 1, false, true);
 		} else {
 			break;
 		}
@@ -929,16 +931,6 @@ void Game::dialogueDone() {
 
 	setLoopStatus(kStatusOrdinary);
 	_vm->_mouse->setCursorType(kNormalCursor);
-}
-
-void Game::runDialogueProg(GPL2Program prog, int offset) {
-	// Mark last animation
-	int lastAnimIndex = _vm->_anims->getLastIndex();
-
-	// Run the dialogue program
-	_vm->_script->run(prog, offset);
-
-	deleteAnimationsAfterIndex(lastAnimIndex);
 }
 
 int Game::playHeroAnimation(int anim_index) {
@@ -1183,22 +1175,18 @@ bool Game::enterNewRoom() {
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
 
-	// Clean the mouse and animation title.  It gets first updated in
-	// loop(), hence if the hero walks during the initialization scripts,
-	// the old values would remain otherwise.
-	_vm->_mouse->setCursorType(kNormalCursor);
-	_titleAnim->markDirtyRect(_vm->_screen->getSurface());
-	Text *title = reinterpret_cast<Text *>(_titleAnim->getCurrentFrame());
-	title->setText("");
-
 	// Run the program for the gate the dragon came through
-	runGateProgram(_newGate);
+	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", _newGate);
+	_vm->_script->runWrapper(_currentRoom._program, _currentRoom._gates[_newGate], true, true);
+
+	setExitLoop(false);
 
 	// Set cursor state
 	// Need to do this after we set the palette since the cursors use it
 	if (_currentRoom._mouseOn) {
 		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
 		_vm->_mouse->cursorOn();
+		_vm->_mouse->setCursorType(kNormalCursor);
 	} else {
 		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
 		_vm->_mouse->cursorOff();
@@ -1215,20 +1203,6 @@ bool Game::enterNewRoom() {
 		return false;
 	}
 	return true;
-}
-
-void Game::runGateProgram(int gate) {
-	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", gate);
-
-	// Mark last animation
-	int lastAnimIndex = _vm->_anims->getLastIndex();
-
-	// Run gate program
-	_vm->_script->run(_currentRoom._program, _currentRoom._gates[gate]);
-
-	deleteAnimationsAfterIndex(lastAnimIndex);
-
-	setExitLoop(false);
 }
 
 void Game::positionAnimAsHero(Animation *anim) {

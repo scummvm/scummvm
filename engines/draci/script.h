@@ -98,6 +98,7 @@ public:
 	Script(DraciEngine *vm) : _vm(vm), _jump(0), _endProgram(false) { setupCommandList(); };
 
 	void run(const GPL2Program &program, uint16 offset);
+	void runWrapper(const GPL2Program &program, uint16 offset, bool disableCursor, bool releaseAnims);
 	bool testExpression(const GPL2Program &program, uint16 offset) const;
 	void endCurrentProgram(bool value) { _endProgram = value; }
 	bool shouldEndProgram() const { return _endProgram; }

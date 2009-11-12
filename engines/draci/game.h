@@ -299,7 +299,6 @@ public:
 	int dialogueDraw();
 	void dialogueInit(int dialogID);
 	void dialogueDone();
-	void runDialogueProg(GPL2Program, int offset);
 
 	bool isDialogueBegin() const { return _dialogueBegin; }
 	bool shouldExitDialogue() const { return _dialogueExit; }
@@ -338,7 +337,6 @@ private:
 	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
 	void initWalkingOverlays();
 	void loadRoomObjects();
-	void runGateProgram(int gate);
 	void redrawWalkingPath(Animation *anim, byte colour, const WalkingPath &path);
 
 	DraciEngine *_vm;
