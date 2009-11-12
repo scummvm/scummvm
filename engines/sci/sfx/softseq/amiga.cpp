@@ -508,6 +508,7 @@ int MidiDriver_Amiga::open() {
 
 	for (uint i = 0; i < kChannels; i++) {
 		_voices[i].note = -1;
+		_voices[i].hw_channel = 0;
 	}
 
 	for (uint i = 0; i < MIDI_CHANNELS; i++) {
