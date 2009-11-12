@@ -1162,9 +1162,10 @@ void Game::deleteObjectAnimations() {
 
 bool Game::enterNewRoom() {
 	if (_newRoom == getRoomNum() && !isReloaded()) {
-		// If the game has been reloaded, force reloading all animations.
+		_vm->_script->endCurrentProgram(false);
 		return true;
 	}
+	// If the game has been reloaded, force reloading all animations.
 	setIsReloaded(false);
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
 	_vm->_mouse->cursorOff();

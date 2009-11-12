@@ -246,7 +246,13 @@ void DraciEngine::handleEvents() {
 				if (escRoom >= 0) {
 
 					// Schedule room change
-					// TODO: gate 0 is not always the best one for returning from the map
+					// TODO: gate 0 (always present) is not
+					// always best for returning from the
+					// map, e.g. in the starting location.
+					// also, after loading the game, we
+					// shouldn't run any gate program, but
+					// rather restore the state of all
+					// objects.
 					_game->scheduleEnteringRoomUsingGate(escRoom, 0);
 
 					// Immediately cancel any running animation or dubbing.
@@ -394,8 +400,6 @@ Common::Error DraciEngine::loadGameState(int slot) {
 	// here are now, without waiting for any other code to finish, thanks
 	// to our constraint in canLoadGameStateCurrently() and to having
 	// enterNewRoom() called right after we exit from here.
-	//
-	// TODO: Handle saving in the map room
 	return loadSavegameData(slot, this);
 }
 
