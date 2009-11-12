@@ -72,7 +72,8 @@ enum InventoryConstants {
   kInventoryLines = 5,
   kInventoryX = 70, ///< Used for positioning of the inventory sprite on the X axis
   kInventoryY = 30, ///< Used for positioning of the inventory sprite on the Y axis
-  kInventorySlots = kInventoryLines * kInventoryColumns
+  kInventorySlots = kInventoryLines * kInventoryColumns,
+  kStatusChangeTimeout = 500
 };
 
 class GameObject {
@@ -333,6 +334,7 @@ private:
 	void updateTitle(int x, int y);
 	void updateCursor();
 	void advanceAnimationsAndTestLoopExit();
+	void handleStatusChangeByMouse();
 
 	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
 	void initWalkingOverlays();
@@ -355,7 +357,6 @@ private:
 	GameItem *_itemUnderCursor;
 
 	GameItem *_inventory[kInventorySlots];
-	bool _inventoryExit;
 
 	Room _currentRoom;
 	int _newRoom;
@@ -397,6 +398,7 @@ private:
 	int _fadePhases;
 	int _fadePhase;
 	uint _fadeTick;
+	int _mouseChangeTick;
 
 	bool _enableQuickHero;
 	bool _wantQuickHero;

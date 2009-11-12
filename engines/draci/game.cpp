@@ -304,9 +304,6 @@ void Game::handleInventoryLoop() {
 	if (_loopSubstatus != kOuterLoop) {
 		return;
 	}
-	if (_inventoryExit) {
-		inventoryDone();
-	}
 
 	// If we are in inventory mode, all the animations except game items'
 	// images will necessarily be paused so we can safely assume that any
@@ -517,11 +514,13 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 				updateOrdinaryCursor();
 				updateTitle(x, y);
 				handleOrdinaryLoop(x, y);
+				handleStatusChangeByMouse();
 				break;
 			case kStatusInventory:
 				updateInventoryCursor();
 				updateTitle(x, y);
 				handleInventoryLoop();
+				handleStatusChangeByMouse();
 				break;
 			case kStatusDialogue:
 				handleDialogueLoop();
@@ -529,8 +528,6 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 			case kStatusGate: ;
 				// cannot happen when isCursonOn; added for completeness
 			}
-
-			// TODO: Handle main menu
 		}
 
 		advanceAnimationsAndTestLoopExit();
@@ -539,6 +536,48 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 
 	setLoopSubstatus(kOuterLoop);
 	setExitLoop(false);
+}
+
+void Game::handleStatusChangeByMouse() {
+	bool wantsChange = false;
+	if (_loopStatus == kStatusOrdinary) {
+		wantsChange = _vm->_mouse->getPosY() == 0;
+	} else if (_loopStatus == kStatusInventory) {
+		wantsChange = _animUnderCursor != _inventoryAnim && !_itemUnderCursor && _vm->_mouse->getPosY() != 0;
+	}
+
+	if (!wantsChange) {
+		// Disable the timer.
+		_mouseChangeTick = -1;
+	} else {
+		if (_mouseChangeTick == -1) {
+			// If the timer is currently disabled, this is the
+			// first time when the mouse left the region.  Start
+			// counting.
+			_mouseChangeTick = _vm->_system->getMillis();
+		} else if (_mouseChangeTick == -2) {
+			// Do nothing.  This exception is good when the
+			// inventory visibility flag is flipped by the key 'I'
+			// instead of by moving the mouse.  Even if the mouse
+			// starts in the outside region, the timeout won't kick
+			// in until it moves into the inside region for the
+			// first time.
+		} else if (_vm->_system->getMillis() - _mouseChangeTick >= kStatusChangeTimeout) {
+			if (_loopStatus == kStatusOrdinary) {
+				inventoryInit();
+			} else {
+				inventoryDone();
+			}
+		}
+	}
+
+	// We don't implement the original game player's main
+	// menu that pops up when the mouse gets to the bottom
+	// of the screen.  It contains icons for displaying the map,
+	// loading/saving the game, quiting the game, and displaying the
+	// credits.  The essential options are implemented in ScummVM's main
+	// menu, I don't wanna implement the credits, and for map we key the
+	// key 'M'.
 }
 
 void Game::updateOrdinaryCursor() {
@@ -732,9 +771,8 @@ void Game::inventoryInit() {
 	// Set the appropriate loop status
 	setLoopStatus(kStatusInventory);
 
-	// TODO: This will be used for exiting the inventory automatically when the mouse
-	// is outside it for some time
-	_inventoryExit = false;
+	// Don't return from the inventory mode immediately if the mouse is out.
+	_mouseChangeTick = -2;
 }
 
 void Game::inventoryDone() {
@@ -753,6 +791,9 @@ void Game::inventoryDone() {
 
 	// Reset item under cursor
 	_itemUnderCursor = NULL;
+
+	// Don't start the inventory mode again if the mouse is on the top.
+	_mouseChangeTick = -2;
 }
 
 void Game::inventoryDraw() {
