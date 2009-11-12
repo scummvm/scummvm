@@ -64,11 +64,15 @@ struct Rect {
 	void save() const;
 	
 	inline bool intersects_hline(int x1, int x2, int y) const {
-		return x1 < right && x2 > left && y >= top && y < bottom;
+		if (x1 > x2)
+			SWAP(x1, x2);
+		return y >= top && y <= bottom && x1 <= right && x2 >= left;
 	}
 
 	inline bool intersects_vline(int x, int y1, int y2) const {
-		return y1 < bottom && y2 > top && x >= left && x < right;
+		if (y1 > y2)
+			SWAP(y1, y2);
+		return x >= left && x <= right && y1 <= bottom && y2 >= top;
 	}
 
 protected:
