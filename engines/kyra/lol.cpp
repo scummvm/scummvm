@@ -1758,12 +1758,17 @@ void LoLEngine::createTransparencyTables() {
 	if (_flags.isTalkie || _loadSuppFilesFlag)
 		return;
 
-	Palette tpal(256);
-	if (_flags.use16ColorMode) {
-		static const uint8 colTbl[] = { 0x00, 0x00, 0x11, 0x00, 0x22, 0x00, 0x33, 0x00, 0x44, 0x00, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00, 0x88, 0x00, 0x99, 0x00, 0xAA, 0x00, 0xBB, 0x00, 0xCC, 0x00, 0xDD, 0x00, 0xEE, 0x00, 0xFF, 0x00 };
-		memset(tpal.getData(), 0xff, 768);
+	uint8 *tpal = new uint8[768];
 
-		_res->loadFileToBuf("LOL.NOL", tpal.getData(), 48);
+	if (_flags.use16ColorMode) {
+		static const uint8 colTbl[] = {
+			0x00, 0x00, 0x11, 0x00, 0x22, 0x00, 0x33, 0x00, 0x44, 0x00, 0x55, 0x00, 0x66, 0x00, 0x77, 0x00,
+			0x88, 0x00, 0x99, 0x00, 0xAA, 0x00, 0xBB, 0x00, 0xCC, 0x00, 0xDD, 0x00, 0xEE, 0x00, 0xFF, 0x00
+		};
+
+		memset(tpal, 0xff, 768);
+		_res->loadFileToBuf("LOL.NOL", tpal, 48);
+
 		for (int i = 15; i > -1; i--) {
 			int s = colTbl[i << 1] * 3;	
 			tpal[s] = tpal[i * 3];
@@ -1773,14 +1778,16 @@ void LoLEngine::createTransparencyTables() {
 		}
 
 		_screen->createTransparencyTablesIntern(colTbl, 16, tpal, tpal,  _transparencyTable1, _transparencyTable2, 80);
+
 	} else {
-		_screen->loadPalette("fxpal.col", tpal);
+		_res->loadFileToBuf("fxpal.col", tpal, 768);
 		_screen->loadBitmap("fxpal.shp", 3, 3, 0);
 		const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
 
-		_screen->createTransparencyTablesIntern(shpPal, 20, tpal, _screen->getPalette(1), _transparencyTable1, _transparencyTable2, 70);
+		_screen->createTransparencyTablesIntern(shpPal, 20, tpal, _screen->getPalette(1).getData(), _transparencyTable1, _transparencyTable2, 70);
 	}
 
+	delete[] tpal;
 	_loadSuppFilesFlag = 1;
 }
 

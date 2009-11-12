@@ -245,7 +245,10 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	return ovl;
 }
 
-void Screen_LoL::createTransparencyTablesIntern(const uint8 *ovl, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b) {
+void Screen_LoL::createTransparencyTablesIntern(const uint8 *ovl, int a, const uint8 *fxPal1, const uint8 *fxPal2, uint8 *outTable1, uint8 *outTable2, int b) {
+	Palette screenPal(256);
+	screenPal.copy(fxPal2, 0, 256);
+
 	memset(outTable1, 0xff, 256);
 
 	for (int i = 0; i < a; i++)
@@ -261,9 +264,9 @@ void Screen_LoL::createTransparencyTablesIntern(const uint8 *ovl, int a, const P
 			uint16 t2 = 64 - t1;
 
 			uint8 c = ovl[i];
-			fcol[0] = fxPal[3 * c];
-			fcol[1] = fxPal[3 * c + 1];
-			fcol[2] = fxPal[3 * c + 2];
+			fcol[0] = fxPal1[3 * c];
+			fcol[1] = fxPal1[3 * c + 1];
+			fcol[2] = fxPal1[3 * c + 2];
 
 			uint8 *o = &outTable2[i << 8];
 
