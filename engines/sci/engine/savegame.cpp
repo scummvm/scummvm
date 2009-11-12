@@ -307,25 +307,33 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		assert(_menubar);
 	_menubar->saveLoadWithSerializer(s);
 #else
+	// FIXME: This code goes out of sync when loading. Find out why
+
 	// OBSOLETE: Saved menus. Skip all of the saved data
-	int menuLength = 0;
-	s.syncAsUint32LE(menuLength);
-	s.syncString(tmp);				// OBSOLETE: Used to be _title
-	s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _titleWidth
-	s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _width
+	int totalMenus = 0;
+	s.syncAsUint32LE(totalMenus);
 
 	// Now iterate through the obsolete saved menu data
-	for (int i = 0; i < menuLength; i++) {
-		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
-		s.syncString(tmp);					// OBSOLETE: Used to be _keytext
-		s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
+	for (int i = 0; i < totalMenus; i++) {
+		s.syncString(tmp);				// OBSOLETE: Used to be _title
+		s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _titleWidth
+		s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _width
 
-		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
-		s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
-		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _saidPos
-		s.syncString(tmp);					// OBSOLETE: Used to be _text
-		s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _textPos
-		s.skip(4 * 4, VER(12), VER(12));	// OBSOLETE: Used to be _modifiers, _key, _enabled and _tag
+		int menuLength = 0;
+		s.syncAsUint32LE(menuLength);
+
+		for (int j = 0; j < menuLength; j++) {
+			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
+			s.syncString(tmp);					// OBSOLETE: Used to be _keytext
+			s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
+
+			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
+			s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
+			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _saidPos
+			s.syncString(tmp);					// OBSOLETE: Used to be _text
+			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _textPos
+			s.skip(4 * 4, VER(12), VER(12));	// OBSOLETE: Used to be _modifiers, _key, _enabled and _tag
+		}
 	}
 #endif
 
