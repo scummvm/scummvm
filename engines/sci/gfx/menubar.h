@@ -229,3 +229,4 @@ public:
 #endif // SCI_GFX_SCI_MENUBAR_H
 
 #endif
+
