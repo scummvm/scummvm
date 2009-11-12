@@ -42,7 +42,6 @@
 #include "draci/animation.h"
 #include "draci/sound.h"
 #include "draci/music.h"
-#include "draci/walking.h"
 
 namespace Draci {
 

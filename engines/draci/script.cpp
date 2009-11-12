@@ -270,9 +270,7 @@ int Script::funcIcoStat(int itemID) const {
 int Script::funcIsIcoAct(int itemID) const {
 	itemID -= 1;
 
-	const GameItem *item = _vm->_game->getCurrentItem();
-	const int currentID = item ? item->_absNum : -1;
-	return currentID == itemID;
+	return _vm->_game->getCurrentItem() == _vm->_game->getItem(itemID);
 }
 
 int Script::funcActIco(int itemID) const {
@@ -539,41 +537,26 @@ void Script::icoStat(const Common::Array<int> &params) {
 
 	_vm->_game->setItemStatus(itemID, status == 1);
 
-	if (_vm->_game->getItemStatus(itemID) == 0) {
-		if (item) {
-			item->_anim->del();
-			item->_anim = NULL;
-		}
-
+	if (!_vm->_game->getItemStatus(itemID)) {
+		// Remove the item from the inventory and release its animations.
 		_vm->_game->removeItem(item);
+		item->_anim->del();
+		item->_anim = NULL;
 
+		// If the item was in the hand, remove it from the hands and,
+		// if the cursor was set to this item (as opposed to, say, an
+		// arrow leading outside a location), set it to standard.
 		if (_vm->_game->getCurrentItem() == item) {
 			_vm->_game->setCurrentItem(NULL);
-		}
-
-		if (_vm->_mouse->getCursorType() == kNormalCursor) {
-			// TODO: is this correct?
-			if (_vm->_game->getLoopStatus() == kStatusInventory) {
-				_vm->_mouse->cursorOff();
+			if (_vm->_mouse->getCursorType() >= kItemCursor) {
+				_vm->_mouse->setCursorType(kNormalCursor);
 			}
 		}
-	}
 
-	if (_vm->_game->getItemStatus(itemID) == 1) {
-		if (item) {
-			_vm->_game->loadItemAnimation(item);
-		}
-
+	} else {
+		_vm->_game->loadItemAnimation(item);
 		_vm->_game->setCurrentItem(item);
-
 		_vm->_mouse->loadItemCursor(item, false);
-
-		// TODO: This is probably not needed but I'm leaving it to be sure for now
-		// The original engine needed to turn off the mouse temporarily when changing
-		// the cursor image. I'm just setting it to the final state of that transition.
-		if (_vm->_game->getLoopStatus() == kStatusInventory) {
-			_vm->_mouse->cursorOn();
-		}
 	}
 }
 
