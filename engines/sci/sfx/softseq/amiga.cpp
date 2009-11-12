@@ -385,7 +385,7 @@ MidiDriver_Amiga::Instrument *MidiDriver_Amiga::readInstrument(Common::File &fil
 	Instrument *instrument;
 	byte header[61];
 	int size;
-	int16 seg_size[3];
+	int seg_size[3];
 	int loop_offset;
 	int i;
 
