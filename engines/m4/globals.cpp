@@ -471,6 +471,7 @@ MadsObject::MadsObject(Common::SeekableReadStream *stream) {
 	// Extract object data fields
 	descId = READ_LE_UINT16(&obj[0]);
 	roomNumber = READ_LE_UINT16(&obj[2]);
+	article = (MADSArticles)obj[4];
 	vocabCount = obj[5];
 	assert(vocabCount <= 3);
 

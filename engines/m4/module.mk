@@ -27,6 +27,7 @@ MODULE_OBJS = \
 	script.o \
 	sound.o \
 	sprite.o \
+	staticres.o \
 	viewmgr.o \
 	woodscript.o \
 	ws_machine.o \

@@ -26,6 +26,7 @@
 #include "m4/m4.h"
 #include "m4/console.h"
 #include "m4/scene.h"
+#include "m4/staticres.h"
 
 namespace M4 {
 
@@ -327,8 +328,9 @@ bool Console::cmdObject(int argc, const char **argv) {
 		else {
 			const MadsObject *obj = _vm->_globals->getObject(id);
 
-			DebugPrintf("Object #%d (%s) room=%d vocabs=%d", id, _vm->_globals->getVocab(obj->descId),
-				obj->roomNumber, obj->vocabCount);
+			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", id, _vm->_globals->getVocab(obj->descId),
+				obj->roomNumber, (int)obj->article, englishMADSArticleList[obj->article], obj->vocabCount);
+
 			if (obj->vocabCount > 0) {
 				DebugPrintf(" - ");
 				for (int i = 0; i < obj->vocabCount; ++i) {

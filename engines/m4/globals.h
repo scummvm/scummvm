@@ -151,6 +151,18 @@ public:
 
 #define PLAYER_INVENTORY 2
 
+enum MADSArticles {
+	kArticleNone	= 0,
+	kArticleWith	= 1,
+	kArticleTo		= 2,
+	kArticleAt		= 3,
+	kArticleFrom	= 4,
+	kArticleOn		= 5,
+	kArticleIn		= 6,
+	kArticleUnder	= 7,
+	kArticleBehind	= 8
+};
+
 struct VocabEntry {
 	uint16 unk;
 	uint16 vocabId;
@@ -164,6 +176,7 @@ public:
 
 	uint16 descId;
 	uint16 roomNumber;
+	MADSArticles article;
 	uint8 vocabCount;
 	VocabEntry vocabList[3];
 };
