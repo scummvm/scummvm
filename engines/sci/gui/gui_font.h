@@ -40,7 +40,7 @@ public:
 	byte getCharWidth(byte chr);
 	byte getCharHeight(byte chr);
 	byte *getCharData(byte chr);
-	void draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface);
+	void draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 
 private:
 	ResourceManager *_resMan;

@@ -123,7 +123,7 @@ void SciGuiGfx::OpenPort(GuiPort *port) {
 
 	port->top = 0;
 	port->left = 0;
-	port->textFace = 0;
+	port->greyedOutput = false;
 	port->penClr = 0;
 	port->backClr = 255;
 	port->penMode = 0;
@@ -142,8 +142,8 @@ void SciGuiGfx::PenMode(int16 mode) {
 	_curPort->penMode = mode;
 }
 
-void SciGuiGfx::TextFace(int16 textFace) {
-	_curPort->textFace = textFace;
+void SciGuiGfx::TextGreyedOutput(bool state) {
+	_curPort->greyedOutput = state;
 }
 
 int16 SciGuiGfx::GetPointSize() {

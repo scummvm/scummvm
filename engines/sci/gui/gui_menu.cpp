@@ -509,6 +509,7 @@ void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		listItemEntry = *listItemIterator;
 		if (listItemEntry->menuId == newMenuId) {
 			if (!listItemEntry->separatorLine) {
+				_gfx->TextGreyedOutput(listItemEntry->enabled ? false : true);
 				_gfx->MoveTo(_menuRect.left, topPos);
 				_text->Draw_String(listItemEntry->text.c_str());
 				_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
@@ -527,6 +528,8 @@ void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		}
 		listItemIterator++;
 	}
+	_gfx->TextGreyedOutput(false);
+
 
 	_menuRect.left -= 8;
 	_menuRect.left--; _menuRect.right++; _menuRect.bottom++;
@@ -579,8 +582,11 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 					return NULL;
 				case SCI_K_ENTER:
-					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
-					return curItemEntry;
+					if (curItemEntry->enabled)  {
+						_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
+						return curItemEntry;
+					}
+					break;
 				case SCI_K_LEFT:
 					newMenuId--; newItemId = 1;
 					break;

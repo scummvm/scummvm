@@ -78,7 +78,7 @@ byte *SciGuiFont::getCharData(byte chr) {
 	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;
 }
 
-void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface) {
+void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
 	int charWidth = MIN<int>(getCharWidth(chr), screen->_width - left);
 	int charHeight = MIN<int>(getCharHeight(chr), 200 - top);
 	byte b = 0, mask = 0xFF;
@@ -86,7 +86,7 @@ void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, by
 
 	byte *pIn = getCharData(chr);
 	for (int i = 0; i < charHeight; i++, y++) {
-		if (textface & 1) // "grayed" output
+		if (greyedOutput)
 			mask = top++ % 2 ? 0xAA : 0x55;
 		for (int done = 0; done < charWidth; done++) {
 			if ((done & 7) == 0) // fetching next data byte

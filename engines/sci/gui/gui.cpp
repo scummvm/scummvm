@@ -180,7 +180,7 @@ void SciGui::disposeWindow(uint16 windowPtr, bool reanimate) {
 #define SCI_DISPLAY_SETALIGNMENT		101
 #define SCI_DISPLAY_SETPENCOLOR			102
 #define SCI_DISPLAY_SETBACKGROUNDCOLOR	103
-#define SCI_DISPLAY_SETTEXTFACE			104
+#define SCI_DISPLAY_SETGREYEDOUTPUT		104
 #define SCI_DISPLAY_SETFONT				105
 #define SCI_DISPLAY_WIDTH				106
 #define SCI_DISPLAY_SAVEUNDER			107
@@ -200,7 +200,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	// setting defaults
 	_gfx->PenMode(0);
 	_gfx->PenColor(0);
-	_gfx->TextFace(0);
+	_gfx->TextGreyedOutput(false);
 	// processing codes in argv
 	while (argc > 0) {
 		displayArg = argv[0].toUint16();
@@ -222,8 +222,8 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			bgcolor = argv[0].toUint16();
 			argc--; argv++;
 			break;
-		case SCI_DISPLAY_SETTEXTFACE:
-			_gfx->TextFace(argv[0].toUint16());
+		case SCI_DISPLAY_SETGREYEDOUTPUT:
+			_gfx->TextGreyedOutput(argv[0].isNull() ? false : true);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETFONT:
@@ -365,9 +365,9 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		_gfx->EraseRect(rect);
 		_gfx->FrameRect(rect);
 		rect.grow(-2);
-		_gfx->TextFace(style & 1 ? 0 : 1);
+		_gfx->TextGreyedOutput(style & 1 ? false : true);
 		_text->Box(text, 0, rect, SCI_TEXT_ALIGNMENT_CENTER, fontId);
-		_gfx->TextFace(0);
+		_gfx->TextGreyedOutput(false);
 		rect.grow(1);
 		if (style & 8) // selected
 			_gfx->FrameRect(rect);

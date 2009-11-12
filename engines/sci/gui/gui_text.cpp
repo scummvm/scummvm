@@ -335,7 +335,7 @@ void SciGuiText::Draw(const char *text, int16 from, int16 len, GuiResourceId org
 				_gfx->EraseRect(rect);
 			}
 			// CharStd
-			_font->draw(_screen, curChar, _gfx->_curPort->top + _gfx->_curPort->curTop, _gfx->_curPort->left + _gfx->_curPort->curLeft, _gfx->_curPort->penClr, _gfx->_curPort->textFace);
+			_font->draw(_screen, curChar, _gfx->_curPort->top + _gfx->_curPort->curTop, _gfx->_curPort->left + _gfx->_curPort->curLeft, _gfx->_curPort->penClr, _gfx->_curPort->greyedOutput);
 			_gfx->_curPort->curLeft += charWidth;
 		}
 	}

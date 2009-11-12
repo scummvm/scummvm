@@ -65,7 +65,7 @@ public:
 	void PenColor(int16 color);
 	void BackColor(int16 color);
 	void PenMode(int16 mode);
-	void TextFace(int16 textFace);
+	void TextGreyedOutput(bool state);
 	int16 GetPointSize();
 
 	void ClearScreen(byte color = 255);

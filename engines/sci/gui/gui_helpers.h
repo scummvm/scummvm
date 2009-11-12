@@ -49,12 +49,13 @@ struct GuiPort {
 	int16 curTop, curLeft;
 	int16 fontHeight;
 	GuiResourceId fontId;
-	int16 textFace, penClr, backClr;
+	bool greyedOutput;
+	int16 penClr, backClr;
 	int16 penMode;
 
 	GuiPort(uint16 theId) : id(theId), top(0), left(0),
 		curTop(0), curLeft(0),
-		fontHeight(0), fontId(0), textFace(0),
+		fontHeight(0), fontId(0), greyedOutput(false),
 		penClr(0), backClr(0xFF), penMode(0) {
 	}
 };
