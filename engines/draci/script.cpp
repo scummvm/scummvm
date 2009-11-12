@@ -768,12 +768,15 @@ void Script::talk(const Common::Array<int> &params) {
 	const uint duration = MAX(subtitleDuration, dubbingDuration);
 	_vm->_game->setSpeechTiming(_vm->_system->getMillis(), duration);
 
-	// TODO: Implement inventory part
-
 	// Set speech text coordinates
-
-	int x = surface->centerOnX(person->_x, speechFrame->getWidth());
-	int y = surface->putAboveY(person->_y, speechFrame->getHeight());
+	int x, y;
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		x = surface->centerOnX(160, speechFrame->getWidth());
+		y = 4;
+	} else {
+		x = surface->centerOnX(person->_x, speechFrame->getWidth());
+		y = surface->putAboveY(person->_y, speechFrame->getHeight());
+	}
 
 	speechFrame->setX(x);
 	speechFrame->setY(y);
