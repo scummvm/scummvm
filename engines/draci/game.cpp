@@ -232,6 +232,7 @@ void Game::init() {
 	rememberRoomNumAsPrevious();
 	scheduleEnteringRoomUsingGate(_info._startRoom, 0);
 	_pushedNewRoom = _pushedNewGate = -1;
+	_mouseChangeTick = -1;
 }
 
 void Game::handleOrdinaryLoop(int x, int y) {
@@ -539,45 +540,56 @@ void Game::loop(LoopSubstatus substatus, bool shouldExit) {
 }
 
 void Game::handleStatusChangeByMouse() {
+	const int mouseY = _vm->_mouse->getPosY();
 	bool wantsChange = false;
 	if (_loopStatus == kStatusOrdinary) {
-		wantsChange = _vm->_mouse->getPosY() == 0;
+		if (getRoomNum() == getMapRoom()) {
+			wantsChange = mouseY >= kScreenHeight - 1;
+		} else {
+			wantsChange = mouseY == 0 || mouseY >= kScreenHeight - 1;
+		}
 	} else if (_loopStatus == kStatusInventory) {
-		wantsChange = _animUnderCursor != _inventoryAnim && !_itemUnderCursor && _vm->_mouse->getPosY() != 0;
+		wantsChange = _animUnderCursor != _inventoryAnim && !_itemUnderCursor && mouseY != 0;
 	}
 
 	if (!wantsChange) {
 		// Disable the timer.
 		_mouseChangeTick = -1;
-	} else {
-		if (_mouseChangeTick == -1) {
-			// If the timer is currently disabled, this is the
-			// first time when the mouse left the region.  Start
-			// counting.
-			_mouseChangeTick = _vm->_system->getMillis();
-		} else if (_mouseChangeTick == -2) {
-			// Do nothing.  This exception is good when the
-			// inventory visibility flag is flipped by the key 'I'
-			// instead of by moving the mouse.  Even if the mouse
-			// starts in the outside region, the timeout won't kick
-			// in until it moves into the inside region for the
-			// first time.
-		} else if (_vm->_system->getMillis() - _mouseChangeTick >= kStatusChangeTimeout) {
-			if (_loopStatus == kStatusOrdinary) {
+	
+	// Otherwise the mouse signalizes that the mode should be changed.
+	} else if (_mouseChangeTick == -1) {
+		// If the timer is currently disabled, this is the first time
+		// when the mouse left the region.  Start counting.
+		_mouseChangeTick = _vm->_system->getMillis();
+	} else if (_mouseChangeTick == -2) {
+		// Do nothing.  This exception is good when the status has just
+		// changed.  Even if the mouse starts in the outside region
+		// (e.g., due to flipping the change by a key or due to
+		// flipping back being triggered by the same hot area), the
+		// timeout won't kick in until it moves into the inside region
+		// for the first time.
+	} else if (_vm->_system->getMillis() - _mouseChangeTick >= kStatusChangeTimeout) {
+		if (_loopStatus == kStatusOrdinary) {
+			if (getRoomNum() == getMapRoom()) {
+				scheduleEnteringRoomUsingGate(getPreviousRoomNum(), 0);
+				_mouseChangeTick = -2;
+			} else if (mouseY >= kScreenHeight - 1) {
+				scheduleEnteringRoomUsingGate(getMapRoom(), 0);
+				_mouseChangeTick = -2;
+			} else if (mouseY == 0) {
 				inventoryInit();
-			} else {
-				inventoryDone();
 			}
+		} else {
+			inventoryDone();
 		}
 	}
 
-	// We don't implement the original game player's main
-	// menu that pops up when the mouse gets to the bottom
-	// of the screen.  It contains icons for displaying the map,
-	// loading/saving the game, quiting the game, and displaying the
-	// credits.  The essential options are implemented in ScummVM's main
-	// menu, I don't wanna implement the credits, and for map we key the
-	// key 'M'.
+	// We don't implement the original game player's main menu that pops up
+	// when the mouse gets to the bottom of the screen.  It contains icons
+	// for displaying the map, loading/saving the game, quiting the game,
+	// and displaying the credits.  The essential options are implemented
+	// in ScummVM's main menu, I don't wanna implement the credits, and so
+	// I allocate the whole bottom line for switching to/from the map.
 }
 
 void Game::updateOrdinaryCursor() {
