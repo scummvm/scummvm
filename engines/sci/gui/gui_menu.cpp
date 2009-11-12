@@ -491,6 +491,8 @@ void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	}
 	_menuRect.right = _menuRect.left + 16 + 4 + 2;
 	_menuRect.right += maxTextWidth + maxTextRightAlignedWidth;
+	if (!maxTextRightAlignedWidth)
+		_menuRect.right -= 5;
 
 	// Save background
 	_menuSaveHandle = _gfx->BitsSave(_menuRect, SCI_SCREEN_MASK_VISUAL);
@@ -513,6 +515,7 @@ void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 				_text->Draw_String(listItemEntry->textRightAligned.c_str());
 			} else {
 				// We dont 100% follow sierra here, we draw the line from left to right. Looks better
+				// BTW. SCI1.1 seems to put 2 pixels and then skip one, we don't do this at all (lsl6)
 				pixelPos.y = topPos + (_gfx->_curPort->fontHeight >> 1) - 1;
 				pixelPos.x = _menuRect.left - 7;
 				while (pixelPos.x < (_menuRect.right - 1)) {
