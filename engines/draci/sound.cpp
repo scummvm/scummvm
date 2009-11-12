@@ -264,7 +264,6 @@ void Sound::stopVoice() {
 }
 
 void Sound::setVolume() {
-	// TODO: how to retrieve "Mute All" ?
         if (_mixer->isReady()) {
                 _muteSound = ConfMan.getBool("sfx_mute");
                 _muteVoice = ConfMan.getBool("speech_mute");

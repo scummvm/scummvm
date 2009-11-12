@@ -296,8 +296,10 @@ void DraciEngine::handleEvents() {
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
 
- 	// TODO: Investigate possibility of using sharedPtr or similar
-
+	// If the common library supported STL's scoped_ptr<>, then wrapping
+	// all the following pointers and many more would be appropriate.  So
+	// far, there is only SharedPtr, which I feel being an overkill for
+	// easy deallocation.
 	delete _smallFont;
 	delete _bigFont;
 
