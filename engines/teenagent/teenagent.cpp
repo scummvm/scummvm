@@ -400,7 +400,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = str;
 	event.color = color;
-	event.slot = 4;
+	event.slot = 0;
 	event.dst.x = position % 320;
 	event.dst.y = position / 320;
 
@@ -414,7 +414,7 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 position) {
 void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
-	event.slot = 4;
+	event.slot = 0;
 	event.color = color;
 	event.dst.x = position % 320;
 	event.dst.y = position / 320;
@@ -427,7 +427,7 @@ void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 position, uint16 f
 void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
-	event.slot = slot;
+	event.slot = slot + 1;
 	event.color = color;
 	event.first_frame = first_frame;
 	event.last_frame = last_frame;
@@ -504,7 +504,7 @@ void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
 void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async, bool ignore, bool loop) {
 	SceneEvent event(SceneEvent::kPlayAnimation);
 	event.animation = id;
-	event.slot = slot | (ignore? 0x20: 0) | (loop? 0x80: 0);
+	event.slot = (slot + 1) | (ignore? 0x20: 0) | (loop? 0x80: 0);
 	scene->push(event);
 	if (!async)
 		waitAnimation();

@@ -392,7 +392,15 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
+		//render on
+		if (on.pixels != NULL) {
+			if (_id != 16 || getOns(16)[0] != 0) {
+				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
+			}
+		}
+
 		bool got_any_animation = false;
+
 
 		for (byte i = 0; i < 4; ++i) {
 			Animation *a = custom_animation + i;
@@ -494,14 +502,6 @@ bool Scene::render(OSystem *system) {
 					actor_animation_position = teenagent.render(surface, position, orientation, 0);
 			}
 		}
-
-		//render on
-		if (on.pixels != NULL) {
-			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
-			}
-		}
-
 
 		if (!message.empty()) {
 			bool visible = true;
@@ -634,8 +634,8 @@ bool Scene::processEventQueue() {
 					message_timer = 0;
 					message_first_frame = current_event.first_frame;
 					message_last_frame = current_event.last_frame;
-					if (current_event.slot < 4) {
-						message_animation = custom_animation + current_event.slot;
+					if (current_event.slot > 0) {
+						message_animation = custom_animation + (current_event.slot - 1);
 						//else if (!animation[current_event.slot].empty())
 						//	message_animation = animation + current_event.slot;
 					} else 
@@ -652,16 +652,19 @@ bool Scene::processEventQueue() {
 				} else {
 					p = current_event.dst;
 				}
-				//FIXME: rewrite it:
-				if (current_event.slot < 4) {
-					const Surface *s = custom_animation[current_event.slot].currentFrame(0);
+
+				byte message_slot = current_event.slot;
+				if (message_slot != 0) {
+					--message_slot;
+					assert(message_slot < 4);
+					const Surface *s = custom_animation[message_slot].currentFrame(0);
 					if (s == NULL)
-						s = animation[current_event.slot].currentFrame(0);
+						s = animation[message_slot].currentFrame(0);
 					if (s != NULL) {
 						p.x = s->x + s->w / 2;
 						p.y = s->y;
 					} else 
-						warning("no animation in slot %u", current_event.slot);
+						warning("no animation in slot %u", message_slot);
 				}
 				message_pos = messagePosition(message, p);
 				message_color = current_event.color;
@@ -671,20 +674,33 @@ bool Scene::processEventQueue() {
 			}
 			break;
 
-		case SceneEvent::kPlayAnimation:
-			if (current_event.animation != 0) {
-				debug(0, "playing animation %u in slot %u", current_event.animation, current_event.slot & 3);
-				playAnimation(current_event.slot & 3, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
-			} else {
-				debug(0, "cancelling animation in slot %u", current_event.slot & 3);
-				custom_animation[current_event.slot & 3].free();
+		case SceneEvent::kPlayAnimation: {
+				byte slot = current_event.slot & 7; //0 - mark's
+				if (current_event.animation != 0) {
+					if (slot != 0) {
+						--slot;
+						debug(0, "playing animation %u in slot %u", current_event.animation, slot);
+						assert(slot < 4);
+						playAnimation(slot, current_event.animation, (current_event.slot & 0x80) != 0, (slot & 0x40) != 0, (slot & 0x20) != 0);
+					}
+				} else {
+					if (slot != 0) {
+						--slot;
+						debug(0, "cancelling animation in slot %u", slot);
+						assert(slot < 4);
+						custom_animation[slot].free();
+					}
+				}
+				current_event.clear();
 			}
-			current_event.clear();
 			break;
 
 		case SceneEvent::kPauseAnimation:
-			debug(0, "pause animation in slot %u", current_event.slot & 3);
-			custom_animation[current_event.slot & 3].paused = (current_event.slot & 0x80) != 0;
+			if (current_event.slot != 0) {
+				--current_event.slot;
+				debug(0, "pause animation in slot %u", current_event.slot & 3);
+				custom_animation[current_event.slot & 3].paused = (current_event.slot & 0x80) != 0;
+			}
 			current_event.clear();
 			break;
 
