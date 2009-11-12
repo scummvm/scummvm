@@ -206,7 +206,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 		_param = argv[4].toUint16();
 	}
 
-	if (command >= 0 && command < _soundCommands.size()) {
+	if (command < _soundCommands.size()) {
 		debugC(2, kDebugLevelSound, "%s", _soundCommands[command]->desc);
 		(this->*(_soundCommands[command]->sndCmd))(obj, handle, value);
 	} else {
