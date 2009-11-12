@@ -41,6 +41,7 @@
 #include "sci/gui32/gui32.h"
 #endif
 #include "sci/sfx/audio.h"
+#include "sci/sfx/soundcmd.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
@@ -161,6 +162,8 @@ Common::Error SciEngine::run() {
 	// since we cannot let the game control where saves are stored)
 	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "/");
 
+	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, &_gamestate->_sound, _audio, _gamestate->detectDoSoundType());
+
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
 
@@ -191,6 +194,8 @@ Common::Error SciEngine::run() {
 	game_exit(_gamestate);
 	script_free_breakpoints(_gamestate);
 
+	delete _gamestate->_soundCmd;
+	delete _gamestate->_gui;
 	delete segMan;
 	delete cursor;
 	delete palette;

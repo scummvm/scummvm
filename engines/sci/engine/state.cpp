@@ -108,6 +108,8 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_moveCountType = kMoveCountUninitialized;
 	
 	_usesCdTrack = Common::File::exists("cdaudio.map");
+
+	_soundCmd = 0;
 }
 
 EngineState::~EngineState() {

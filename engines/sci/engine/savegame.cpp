@@ -55,8 +55,7 @@ const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
 
 
 // from ksound.cpp:
-//SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id);
-SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id);
+SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id);
 
 #pragma mark -
 
@@ -708,8 +707,7 @@ static void reconstruct_sounds(EngineState *s) {
 		int oldstatus;
 		SongIterator::Message msg;
 
-		//base = ff = build_iterator(s->resMan, seeker->_resourceNum, it_type, seeker->_handle);
-		base = ff = build_iterator(s, seeker->_resourceNum, it_type, seeker->_handle);
+		base = ff = build_iterator(s->resMan, seeker->_resourceNum, it_type, seeker->_handle);
 		if (seeker->_restoreBehavior == RESTORE_BEHAVIOR_CONTINUE)
 			ff = new_fast_forward_iterator(base, seeker->_restoreTime);
 		ff->init();
@@ -772,6 +770,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;
+	retval->_soundCmd = s->_soundCmd;
 
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 

@@ -71,6 +71,7 @@ MODULE_OBJS := \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/songlib.o \
+	sfx/soundcmd.o \
 	sfx/seq/gm.o \
 	sfx/seq/instrument-map.o \
 	sfx/seq/map-mt32-to-gm.o \

@@ -44,6 +44,7 @@ namespace Common {
 #include "sci/gfx/gfx_system.h"
 #include "sci/sfx/audio.h"
 #include "sci/sfx/core.h"
+#include "sci/sfx/soundcmd.h"
 
 namespace Sci {
 
@@ -51,6 +52,7 @@ class Menubar;
 class SciGui;
 class SciGuiCursor;
 class MessageState;
+class SoundCommandParser;
 
 struct GfxState;
 struct GfxPort;
@@ -137,6 +139,7 @@ public:
 
 	AudioPlayer *_audio;
 	SfxState _sound; /**< sound subsystem */
+	SoundCommandParser *_soundCmd;
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 
 	byte restarting_flags; /**< Flags used for restarting */
