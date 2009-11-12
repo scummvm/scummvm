@@ -60,7 +60,6 @@ struct GuiMenuItemEntry {
 	uint16 keyPress;
 	uint16 keyModifier;
 	bool separatorLine;
-	Common::String said;
 	reg_t saidVmPtr;
 	Common::String text;
 	reg_t textVmPtr;

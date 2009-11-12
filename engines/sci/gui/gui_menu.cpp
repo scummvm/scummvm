@@ -233,7 +233,6 @@ void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, 
 		itemEntry->enabled = value.isNull() ? false : true;
 		break;
 	case SCI_MENU_ATTRIBUTE_SAID:
-		itemEntry->said = _segMan->getString(value);
 		itemEntry->saidVmPtr = value;
 		break;
 	case SCI_MENU_ATTRIBUTE_TEXT:
@@ -334,6 +333,8 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry = NULL;
 	bool forceClaimed = false;
+	EngineState *s;
+	byte saidSpec[64];
 
 	switch (eventType) {
 	case SCI_EVT_KEYBOARD:
@@ -359,11 +360,17 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 		break;
 
 	case SCI_EVT_SAID:
+		// HACK: should be removed as soon as said() is cleaned up
+		s = ((SciEngine *)g_engine)->getEngineState();
 		while (itemIterator != itemEnd) {
 			itemEntry = *itemIterator;
-			// TODO: said comparsion
-			//  said(_s, itemEntry->said.c_str(), 0) != SAID_NO_MATCH
-			// Where is this used anyway, so we can test it out?
+
+			if (!itemEntry->saidVmPtr.isNull()) {
+				// TODO: get a pointer to saidVmPtr or make said() work on VmPtrs
+				_segMan->memcpy(saidSpec, itemEntry->saidVmPtr, 64);
+				if (said(s, saidSpec, 0) != SAID_NO_MATCH)
+					break;
+			}
 			itemIterator++;
 		}
 		if (itemIterator == itemEnd)
