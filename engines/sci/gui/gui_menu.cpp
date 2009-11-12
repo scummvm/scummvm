@@ -382,6 +382,7 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
 		_gfx->BitsShow(_menuRect);
+		// TODO: Change to ReAnimate()
 	}
 	if (!_barSaveHandle.isNull()) {
 		_gfx->BitsRestore(_barSaveHandle);
@@ -443,6 +444,7 @@ void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
 		_gfx->BitsShow(_menuRect);
+		// TODO: Change to ReAnimate()
 	}
 
 	// First calculate rect of menu and also invert old and new menu text
@@ -539,6 +541,8 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
 	GuiMenuItemEntry *newItemEntry = curItemEntry;
 
+	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
+
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
 	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
@@ -557,7 +561,8 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 		switch (curEvent.type) {
 		case SCI_EVT_KEYBOARD:
-			// We don't 100% follow sierra here, sierra actually changed itemId to 1 on menuId changes
+			// We don't 100% follow sierra here: - sierra didn't wrap around when changing item id
+			//									 - sierra allowed item id to be 0, which didnt make any sense
 			do {
 				switch (curEvent.data) {
 				case SCI_K_ESC:
@@ -567,10 +572,10 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 					return curItemEntry;
 				case SCI_K_LEFT:
-					newMenuId--;
+					newMenuId--; newItemId = 1;
 					break;
 				case SCI_K_RIGHT:
-					newMenuId++;
+					newMenuId++; newItemId = 1;
 					break;
 				case SCI_K_UP:
 					newItemId--;
@@ -615,6 +620,8 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 GuiMenuItemEntry *SciGuiMenu::interactiveWithMouse() {
 	calculateTextWidth();
+
+	// TODO
 
 	return NULL;
 }
