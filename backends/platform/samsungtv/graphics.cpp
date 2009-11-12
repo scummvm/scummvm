@@ -516,7 +516,8 @@ void OSystem_SDL_SamsungTV::internUpdateScreen() {
 		}
 #endif
 		// Finally, blit all our changes to the screen
-		SDL_UpdateRects(_prehwscreen, _numDirtyRects, _dirtyRectList);
+		// tv sdl port can not take advantage of dirty rects
+		//SDL_UpdateRects(_prehwscreen, _numDirtyRects, _dirtyRectList);
 	}
 
 	SDL_BlitSurface(_prehwscreen, 0, _hwscreen, 0);
