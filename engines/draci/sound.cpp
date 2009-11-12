@@ -271,6 +271,9 @@ void Sound::setVolume() {
         } else {
                 _muteSound = _muteVoice = true;
         }
+	if (ConfMan.getBool("mute")) {
+                _muteSound = _muteVoice = true;
+	}
 	_showSubtitles = ConfMan.getBool("subtitles");
 	_talkSpeed = ConfMan.getInt("talkspeed");
 	const int soundVolume = ConfMan.getInt("sfx_volume");

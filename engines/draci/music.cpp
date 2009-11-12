@@ -36,7 +36,7 @@
 
 namespace Draci {
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(0) {
+MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(-1) {
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 255, sizeof(_channelVolume));
 	_masterVolume = 0;
@@ -210,7 +210,7 @@ void MusicPlayer::stop() {
 		return;
 
 	debugC(2, kDraciSoundDebugLevel, "Stopping track %d", _track);
-	_track = 0;
+	_track = -1;
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
@@ -232,6 +232,9 @@ void MusicPlayer::resume() {
 
 void MusicPlayer::syncVolume() {
 	int volume = ConfMan.getInt("music_volume");
+	if (ConfMan.getBool("mute")) {
+		volume = -1;
+	}
 	debugC(2, kDraciSoundDebugLevel, "Syncing music volume to %d", volume);
 	setVolume(volume);
 }
