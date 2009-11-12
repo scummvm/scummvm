@@ -51,6 +51,7 @@ SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, Sci
 	_curItemId = 1;
 
 	_menuSaveHandle = NULL_REG;
+	_barSaveHandle = NULL_REG;
 	_oldPort = NULL;
 }
 
@@ -389,11 +390,13 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
 		_gfx->BitsShow(_menuRect);
+		_menuSaveHandle = NULL_REG;
 		// TODO: Change to ReAnimate()
 	}
 	if (!_barSaveHandle.isNull()) {
 		_gfx->BitsRestore(_barSaveHandle);
 		_gfx->BitsShow(_gfx->_menuBarRect);
+		_barSaveHandle = NULL_REG;
 	}
 	if (_oldPort)
 		_gfx->SetPort(_oldPort);
