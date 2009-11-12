@@ -1116,9 +1116,11 @@ bool Game::enterNewRoom() {
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
 	_vm->_mouse->cursorOff();
 
-	// TODO: maybe wait till all sounds end instead of stopping them.
-	// In any case, make sure all sounds are stopped before we deallocate
-	// their memory by clearing the cache.
+	// Make sure all sounds are stopped before we deallocate their memory
+	// by clearing the cache.  We don't have to wait for sounds to end,
+	// because the timeout for voice is set exactly according to the length
+	// of the sound.  If the loop ends earlier, e.g. per user's request, we
+	// do wanna end the sounds immediately.
 	_vm->_sound->stopAll();
 
 	// Clear archives
@@ -1245,8 +1247,9 @@ void Game::positionHeroAsAnim(Animation *anim) {
 	_hero = anim->getCurrentFramePosition();
 
 	// Update our hero coordinates (don't forget that our control point is
-	// elsewhere).
-	// TODO: what about rounding errors?
+	// elsewhere).  This is formula is the exact inverse of the formula
+	// used in positionAnimAsHero() and even rounding errors are exactly
+	// the same.
 	Drawable *frame = anim->getCurrentFrame();
 	_hero.x += scummvm_lround(anim->getScaleX() * frame->getWidth() / 2);
 	_hero.y += scummvm_lround(anim->getScaleY() * frame->getHeight());
