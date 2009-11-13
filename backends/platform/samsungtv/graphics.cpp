@@ -104,8 +104,6 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	height = bestMode->h;
 }
 
-void VideoClose();
-
 bool OSystem_SDL_SamsungTV::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
@@ -139,7 +137,6 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
-//	VideoClose();
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
