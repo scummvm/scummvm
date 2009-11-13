@@ -104,6 +104,8 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	height = bestMode->h;
 }
 
+void VideoClose();
+
 bool OSystem_SDL_SamsungTV::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
@@ -137,6 +139,7 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
+//	VideoClose();
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
@@ -512,70 +515,10 @@ static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height
 #endif
 
 void OSystem_SDL_SamsungTV::drawMouse() {
-	if (!_mouseVisible || !_mouseSurface) {
-		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
-		return;
-	}
-
-	SDL_Rect dst;
-	int scale;
-	int width, height;
-	int hotX, hotY;
-
-	dst.x = _mouseCurState.x;
-	dst.y = _mouseCurState.y;
-
-	if (!_overlayVisible) {
-		scale = _videoMode.scaleFactor;
-		width = _videoMode.screenWidth;
-		height = _videoMode.screenHeight;
-		dst.w = _mouseCurState.vW;
-		dst.h = _mouseCurState.vH;
-		hotX = _mouseCurState.vHotX;
-		hotY = _mouseCurState.vHotY;
-	} else {
-		scale = 1;
-		width = _videoMode.overlayWidth;
-		height = _videoMode.overlayHeight;
-		dst.w = _mouseCurState.rW;
-		dst.h = _mouseCurState.rH;
-		hotX = _mouseCurState.rHotX;
-		hotY = _mouseCurState.rHotY;
-	}
-
-	// The mouse is undrawn using virtual coordinates, i.e. they may be
-	// scaled and aspect-ratio corrected.
-
-	_mouseBackup.x = dst.x - hotX;
-	_mouseBackup.y = dst.y - hotY;
-	_mouseBackup.w = dst.w;
-	_mouseBackup.h = dst.h;
-
-	// We draw the pre-scaled cursor image, so now we need to adjust for
-	// scaling, shake position and aspect ratio correction manually.
-
-	if (!_overlayVisible) {
-		dst.y += _currentShakePos;
-	}
-
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		dst.y = real2Aspect(dst.y);
-
-	dst.x = scale * dst.x - _mouseCurState.rHotX;
-	dst.y = scale * dst.y - _mouseCurState.rHotY;
-	dst.w = _mouseCurState.rW;
-	dst.h = _mouseCurState.rH;
-
-	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
-	// clipping necessary
-
-	if (SDL_BlitSurface(_mouseSurface, NULL, _prehwscreen, &dst) != 0)
-		error("SDL_BlitSurface failed: %s", SDL_GetError());
-
-	// The screen will be updated using real surface coordinates, i.e.
-	// they will not be scaled or aspect-ratio corrected.
-
-	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
+	SDL_Surface *bak = _hwscreen;
+	_hwscreen = _prehwscreen;
+	OSystem_SDL::drawMouse();
+	_hwscreen = bak;
 }
 
 #endif
