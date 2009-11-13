@@ -59,41 +59,6 @@ Common::List<Graphics::PixelFormat> OSystem_SDL_SamsungTV::getSupportedFormats()
 	return list;
 }
 
-void OSystem_SDL_SamsungTV::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
-	assert(_transactionMode == kTransactionActive);
-
-	//avoid redundant format changes
-	Graphics::PixelFormat newFormat;
-	if (!format)
-		newFormat = Graphics::PixelFormat::createFormatCLUT8();
-	else
-		newFormat = *format;
-
-	assert(newFormat.bytesPerPixel > 0);
-
-	if (newFormat != _videoMode.format)
-	{
-		_videoMode.format = newFormat;
-		_transactionDetails.formatChanged = true;
-		_screenFormat = newFormat;
-	}
-
-	// Avoid redundant res changes
-	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
-		return;
-
-	_videoMode.screenWidth = w;
-	_videoMode.screenHeight = h;
-
-	_cksumNum = (w * h / (8 * 8));
-
-	_transactionDetails.sizeChanged = true;
-
-	free(_dirtyChecksums);
-	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
-}
-
-
 static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) {
 	assert(&width != &height);
 
@@ -270,276 +235,35 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 }
 
 void OSystem_SDL_SamsungTV::unloadGFXMode() {
-	if (_screen) {
-		SDL_FreeSurface(_screen);
-		_screen = NULL;
-	}
-
-	if (_hwscreen) {
-		SDL_FreeSurface(_hwscreen);
-		_hwscreen = NULL;
-	}
-
 	if (_prehwscreen) {
 		SDL_FreeSurface(_prehwscreen);
 		_prehwscreen = NULL;
 	}
 
-	if (_tmpscreen) {
-		SDL_FreeSurface(_tmpscreen);
-		_tmpscreen = NULL;
-	}
-
-	if (_tmpscreen2) {
-		SDL_FreeSurface(_tmpscreen2);
-		_tmpscreen2 = NULL;
-	}
-
-	if (_overlayscreen) {
-		SDL_FreeSurface(_overlayscreen);
-		_overlayscreen = NULL;
-	}
-
-#ifdef USE_OSD
-	if (_osdSurface) {
-		SDL_FreeSurface(_osdSurface);
-		_osdSurface = NULL;
-	}
-#endif
-	DestroyScalers();
+	OSystem_SDL::unloadGFXMode();
 }
 
 bool OSystem_SDL_SamsungTV::hotswapGFXMode() {
 	if (!_screen)
 		return false;
 
-	// Keep around the old _screen & _overlayscreen so we can restore the screen data
-	// after the mode switch.
-	SDL_Surface *old_screen = _screen;
-	_screen = NULL;
-	SDL_Surface *old_overlayscreen = _overlayscreen;
-	_overlayscreen = NULL;
-
-	// Release the HW screen surface
-	SDL_FreeSurface(_hwscreen); _hwscreen = NULL;
-
 	SDL_FreeSurface(_prehwscreen); _prehwscreen = NULL;
 
-	SDL_FreeSurface(_tmpscreen); _tmpscreen = NULL;
-	SDL_FreeSurface(_tmpscreen2); _tmpscreen2 = NULL;
-
-#ifdef USE_OSD
-	// Release the OSD surface
-	SDL_FreeSurface(_osdSurface); _osdSurface = NULL;
-#endif
-
-	// Setup the new GFX mode
-	if (!loadGFXMode()) {
-		unloadGFXMode();
-
-		_screen = old_screen;
-		_overlayscreen = old_overlayscreen;
-
-		return false;
-	}
-
-	// reset palette
-	SDL_SetColors(_screen, _currentPalette, 0, 256);
-
-	// Restore old screen content
-	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
-	SDL_BlitSurface(old_overlayscreen, NULL, _overlayscreen, NULL);
-
-	// Free the old surfaces
-	SDL_FreeSurface(old_screen);
-	SDL_FreeSurface(old_overlayscreen);
-
-	// Update cursor to new scale
-	blitCursor();
-
-	// Blit everything to the screen
-	internUpdateScreen();
-
-	return true;
+	return OSystem_SDL::hotswapGFXMode();
 }
 
 void OSystem_SDL_SamsungTV::internUpdateScreen() {
-	SDL_Surface *srcSurf, *origSurf;
-	int height, width;
-	ScalerProc *scalerProc;
-	int scale1;
-
-	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
-
-		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
-
-		SDL_FillRect(_prehwscreen, &blackrect, 0);
-
-		_currentShakePos = _newShakePos;
-
-		_forceFull = true;
-	}
-
-	// Check whether the palette was changed in the meantime and update the
-	// screen surface accordingly.
-	if (_screen && _paletteDirtyEnd != 0) {
-		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
-			_paletteDirtyStart,
-			_paletteDirtyEnd - _paletteDirtyStart);
-
-		_paletteDirtyEnd = 0;
-
-		_forceFull = true;
-	}
-
-#ifdef USE_OSD
-	// OSD visible (i.e. non-transparent)?
-	if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-		// Updated alpha value
-		const int diff = SDL_GetTicks() - _osdFadeStartTime;
-		if (diff > 0) {
-			if (diff >= kOSDFadeOutDuration) {
-				// Back to full transparency
-				_osdAlpha = SDL_ALPHA_TRANSPARENT;
-			} else {
-				// Do a linear fade out...
-				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
-				_osdAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
-			}
-			SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
-			_forceFull = true;
-		}
-	}
-#endif
-
-	if (!_overlayVisible) {
-		origSurf = _screen;
-		srcSurf = _tmpscreen;
-		width = _videoMode.screenWidth;
-		height = _videoMode.screenHeight;
-		scalerProc = _scalerProc;
-		scale1 = _videoMode.scaleFactor;
-	} else {
-		origSurf = _overlayscreen;
-		srcSurf = _tmpscreen2;
-		width = _videoMode.overlayWidth;
-		height = _videoMode.overlayHeight;
-		scalerProc = Normal1x;
-
-		scale1 = 1;
-	}
-
-	// Add the area covered by the mouse cursor to the list of dirty rects if
-	// we have to redraw the mouse.
-	if (_mouseNeedsRedraw)
-		undrawMouse();
-
-	// Force a full redraw if requested
-	if (_forceFull) {
-		_numDirtyRects = 1;
-		_dirtyRectList[0].x = 0;
-		_dirtyRectList[0].y = 0;
-		_dirtyRectList[0].w = width;
-		_dirtyRectList[0].h = height;
-	}
-
-	// Only draw anything if necessary
-	if (_numDirtyRects > 0 || _mouseNeedsRedraw) {
-		SDL_Rect *r;
-		SDL_Rect dst;
-		uint32 srcPitch, dstPitch;
-		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
-
-		for (r = _dirtyRectList; r != lastRect; ++r) {
-			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
-			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
-
-			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
-				error("SDL_BlitSurface failed: %s", SDL_GetError());
-		}
-
-		SDL_LockSurface(srcSurf);
-		SDL_LockSurface(_prehwscreen);
-
-		srcPitch = srcSurf->pitch;
-		dstPitch = _prehwscreen->pitch;
-
-		for (r = _dirtyRectList; r != lastRect; ++r) {
-			register int dst_y = r->y + _currentShakePos;
-			register int dst_h = 0;
-			register int orig_dst_y = 0;
-			register int rx1 = r->x * scale1;
-
-			if (dst_y < height) {
-				dst_h = r->h;
-				if (dst_h > height - dst_y)
-					dst_h = height - dst_y;
-
-				orig_dst_y = dst_y;
-				dst_y = dst_y * scale1;
-
-				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-					dst_y = real2Aspect(dst_y);
-
-				assert(scalerProc != NULL);
-				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						   (byte *)_prehwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
-			}
-
-			r->x = rx1;
-			r->y = dst_y;
-			r->w = r->w * scale1;
-			r->h = dst_h * scale1;
-
-#ifndef DISABLE_SCALERS
-			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *)_prehwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
-#endif
-		}
-		SDL_UnlockSurface(srcSurf);
-		SDL_UnlockSurface(_prehwscreen);
-
-		// Readjust the dirty rect list in case we are doing a full update.
-		// This is necessary if shaking is active.
-		if (_forceFull) {
-			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = effectiveScreenHeight();
-		}
-
-		drawMouse();
-
-#ifdef USE_OSD
-		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-			SDL_BlitSurface(_osdSurface, 0, _prehwscreen, 0);
-		}
-#endif
-		// Finally, blit all our changes to the screen
-		// tv sdl port can not take advantage of dirty rects
-		//SDL_UpdateRects(_prehwscreen, _numDirtyRects, _dirtyRectList);
-	}
+	// HACK: Use _prehwscreen instead of _hwscreen for this one.
+	// On the long run, it would be cleaner to use _prehwscreen as _hwscreen,
+	// and keep what is now called _hwscreen in a new variable _realhwscreen.
+	// This way we wouldn't have to overload drawMouse(), too.
+	SDL_Surface *bak = _hwscreen;
+	_hwscreen = _prehwscreen;
+	OSystem_SDL::internUpdateScreen();
+	_hwscreen = bak;
 
 	SDL_BlitSurface(_prehwscreen, 0, _hwscreen, 0);
-	SDL_UpdateRect(_hwscreen, 0, 0, _hwscreen->w, _hwscreen->h);
-
-	_numDirtyRects = 0;
-	_forceFull = false;
-	_mouseNeedsRedraw = false;
-}
-
-void OSystem_SDL_SamsungTV::setFullscreenMode(bool enable) {
-	Common::StackLock lock(_graphicsMutex);
-
-	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
-		return;
-
-	if (_transactionMode == kTransactionActive) {
-		_videoMode.fullscreen = enable;
-		_transactionDetails.needHotswap = true;
-	}
+	SDL_UpdateRect(_hwscreen, 0, 0, 0, 0);
 }
 
 void OSystem_SDL_SamsungTV::warpMouse(int x, int y) {

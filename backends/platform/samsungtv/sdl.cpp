@@ -32,15 +32,6 @@ OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV() : OSystem_SDL(),
 	_prehwscreen(0) {
 }
 
-void OSystem_SDL_SamsungTV::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-	// Add the global DATA_PATH to the directory search list
-	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
-	Common::FSNode dataNode(".");
-	if (dataNode.exists() && dataNode.isDirectory()) {
-		s.add(".", new Common::FSDirectory(dataNode, 4), priority);
-	}
-}
-
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
 		(f == kFeatureAutoComputeDirtyRects) ||

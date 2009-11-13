@@ -44,10 +44,6 @@ public:
 	// Highest supported
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
 
-	// Set the size and format of the video bitmap.
-	// Typically, 320x200 CLUT8
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format);
-
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
@@ -64,8 +60,6 @@ public:
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
 
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
 protected:
 
 	SDL_Surface *_prehwscreen;
@@ -78,8 +72,6 @@ protected:
 	virtual bool loadGFXMode(); // overloaded by CE backend
 	virtual void unloadGFXMode(); // overloaded by CE backend
 	virtual bool hotswapGFXMode(); // overloaded by CE backend
-
-	void setFullscreenMode(bool enable);
 
 	void handleKbdMouse();
 	void generateMouseMoveEvent(int x, int y);
