@@ -33,8 +33,9 @@ OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV() : OSystem_SDL(),
 
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
+		(f == kFeatureAspectRatioCorrection) ||
 		(f == kFeatureAutoComputeDirtyRects) ||
-		(f == kFeatureAspectRatioCorrection);
+		(f == kFeatureCursorHasPalette);
 }
 
 void OSystem_SDL_SamsungTV::setFeatureState(Feature f, bool enable) {
