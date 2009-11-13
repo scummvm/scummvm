@@ -4,7 +4,7 @@ MODULE_OBJS := \
 	events.o \
 	graphics.o \
 	main.o \
-	sdl.o
+	samsungtv.o
 
 MODULE_DIRS += \
 	backends/platform/samsungtv/

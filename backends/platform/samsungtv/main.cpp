@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/samsungtv/sdl.h"
+#include "backends/platform/samsungtv/samsungtv.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 

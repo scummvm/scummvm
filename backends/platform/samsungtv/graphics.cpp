@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/samsungtv/sdl.h"
+#include "backends/platform/samsungtv/samsungtv.h"
 #include "common/mutex.h"
 #include "common/util.h"
 #include "common/list.h"

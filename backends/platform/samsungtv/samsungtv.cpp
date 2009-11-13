@@ -23,8 +23,7 @@
  *
  */
 
-#include "backends/platform/samsungtv/sdl.h"
-#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/platform/samsungtv/samsungtv.h"
 
 #if defined(SAMSUNGTV)
 
