@@ -34,28 +34,12 @@
 
 #if defined(SAMSUNGTV)
 
-// Table of relative scalers magnitudes
-// [definedScale - 1][scaleFactor - 1]
-static ScalerProc *scalersMagn[3][3] = {
-#ifndef DISABLE_SCALERS
-	{ Normal1x, AdvMame2x, AdvMame3x },
-	{ Normal1x, Normal1x, Normal1o5x },
-	{ Normal1x, Normal1x, Normal1x }
-#else // remove dependencies on other scalers
-	{ Normal1x, Normal1x, Normal1x },
-	{ Normal1x, Normal1x, Normal1x },
-	{ Normal1x, Normal1x, Normal1x }
-#endif
-};
-
-#ifndef DISABLE_SCALERS
-static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
-#endif
-
 Common::List<Graphics::PixelFormat> OSystem_SDL_SamsungTV::getSupportedFormats() {
 	static Common::List<Graphics::PixelFormat>list;
-	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
-	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+	SDL_Surface *bak = _hwscreen;
+	_hwscreen = _prehwscreen;
+	list = OSystem_SDL::getSupportedFormats();
+	_hwscreen = bak;
 	return list;
 }
 
@@ -137,6 +121,11 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
+	_prehwscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight,
+						16, 0, 0, 0, 0);
+	if (_prehwscreen == NULL)
+		error("allocating _prehwscreen failed");
+
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
@@ -153,15 +142,6 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 		}
 	}
 
-	_prehwscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight,
-						16,
-						0x0000f800,
-						0x000007e0,
-						0x0000001f,
-						0x00000000);
-	if (_prehwscreen == NULL)
-		error("allocating _prehwscreen failed");
-
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	//
@@ -169,20 +149,20 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 	// Need some extra bytes around when using 2xSaI
 	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + 3, _videoMode.screenHeight + 3,
 						16,
-						0x0000f800,
-						0x000007e0,
-						0x0000001f,
-						0x00000000);
+						_prehwscreen->format->Rmask,
+						_prehwscreen->format->Gmask,
+						_prehwscreen->format->Bmask,
+						_prehwscreen->format->Amask);
 
 	if (_tmpscreen == NULL)
 		error("allocating _tmpscreen failed");
 
 	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth, _videoMode.overlayHeight,
 						16,
-						0x0000f800,
-						0x000007e0,
-						0x0000001f,
-						0x00000000);
+						_prehwscreen->format->Rmask,
+						_prehwscreen->format->Gmask,
+						_prehwscreen->format->Bmask,
+						_prehwscreen->format->Amask);
 
 	if (_overlayscreen == NULL)
 		error("allocating _overlayscreen failed");
@@ -201,10 +181,10 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 
 	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth + 3, _videoMode.overlayHeight + 3,
 						16,
-						0x0000f800,
-						0x000007e0,
-						0x0000001f,
-						0x00000000);
+						_prehwscreen->format->Rmask,
+						_prehwscreen->format->Gmask,
+						_prehwscreen->format->Bmask,
+						_prehwscreen->format->Amask);
 
 	if (_tmpscreen2 == NULL)
 		error("allocating _tmpscreen2 failed");
@@ -229,7 +209,11 @@ bool OSystem_SDL_SamsungTV::loadGFXMode() {
 	_km.delay_time = 25;
 	_km.last_time = 0;
 
-	InitScalers(565);
+	// Distinguish 555 and 565 mode
+	if (_screen->format->Rmask == 0x7C00)
+		InitScalers(555);
+	else
+		InitScalers(565);
 
 	return true;
 }
@@ -283,233 +267,18 @@ void OSystem_SDL_SamsungTV::warpMouse(int x, int y) {
 }
 
 void OSystem_SDL_SamsungTV::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-	if (!format)
-		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
-		_cursorFormat = *format;
-	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
-
-	if (w == 0 || h == 0)
-		return;
-
-	_mouseCurState.hotX = hotspot_x;
-	_mouseCurState.hotY = hotspot_y;
-
-	_mouseKeyColor = keycolor;
-
-	_cursorTargetScale = cursorTargetScale;
-
-	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
-		_mouseCurState.w = w;
-		_mouseCurState.h = h;
-
-		if (_mouseOrigSurface)
-			SDL_FreeSurface(_mouseOrigSurface);
-
-		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
-		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.w + 2,
-						_mouseCurState.h + 2,
-						16,
-						0x0000f800,
-						0x000007e0,
-						0x0000001f,
-						0x00000000);
-
-		if (_mouseOrigSurface == NULL)
-			error("allocating _mouseOrigSurface failed");
-		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
-	}
-
-	free(_mouseData);
-	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
-	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
-
-	blitCursor();
+	SDL_Surface *bak = _hwscreen;
+	_hwscreen = _prehwscreen;
+	OSystem_SDL::setMouseCursor(buf, w, h, hotspot_x, hotspot_y, keycolor, cursorTargetScale, format);
+	_hwscreen = bak;
 }
 
 void OSystem_SDL_SamsungTV::blitCursor() {
-	byte *dstPtr;
-	const byte *srcPtr = _mouseData;
-	uint32 color;
-	int w, h, i, j;
-
-	if (!_mouseOrigSurface || !_mouseData)
-		return;
-
-	_mouseNeedsRedraw = true;
-
-	w = _mouseCurState.w;
-	h = _mouseCurState.h;
-
-	SDL_LockSurface(_mouseOrigSurface);
-
-	// Make whole surface transparent
-	for (i = 0; i < h + 2; i++) {
-		dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * i;
-		for (j = 0; j < w + 2; j++) {
-			*(uint16 *)dstPtr = kMouseColorKey;
-			dstPtr += 2;
-		}
-	}
-
-	// Draw from [1,1] since AdvMame2x adds artefact at 0,0
-	dstPtr = (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2;
-
-	SDL_Color *palette;
-
-	if (_cursorPaletteDisabled)
-		palette = _currentPalette;
-	else
-		palette = _cursorPalette;
-
-	for (i = 0; i < h; i++) {
-		for (j = 0; j < w; j++) {
-			if (_cursorFormat.bytesPerPixel > 1) {
-				if (_cursorFormat.bytesPerPixel == 2)
-					color = *(uint16 *)srcPtr;
-				else
-					color = *(uint32 *)srcPtr;
-				if (color != _mouseKeyColor) {	// transparent, don't draw
-					uint8 r, g, b;
-					_cursorFormat.colorToRGB(color, r, g, b);
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-						r, g, b);
-				}
-				dstPtr += 2;
-				srcPtr += _cursorFormat.bytesPerPixel;
-			} else {
-				color = *srcPtr;
-				if (color != _mouseKeyColor) {	// transparent, don't draw
-					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-						palette[color].r, palette[color].g, palette[color].b);
-				}
-				dstPtr += 2;
-				srcPtr++;
-			}
-		}
-		dstPtr += _mouseOrigSurface->pitch - w * 2;
-	}
-
-	int rW, rH;
-
-	if (_cursorTargetScale >= _videoMode.scaleFactor) {
-		// The cursor target scale is greater or equal to the scale at
-		// which the rest of the screen is drawn. We do not downscale
-		// the cursor image, we draw it at its original size. It will
-		// appear too large on screen.
-
-		rW = w;
-		rH = h;
-		_mouseCurState.rHotX = _mouseCurState.hotX;
-		_mouseCurState.rHotY = _mouseCurState.hotY;
-
-		// The virtual dimensions may be larger than the original.
-
-		_mouseCurState.vW = w * _cursorTargetScale / _videoMode.scaleFactor;
-		_mouseCurState.vH = h * _cursorTargetScale / _videoMode.scaleFactor;
-		_mouseCurState.vHotX = _mouseCurState.hotX * _cursorTargetScale /
-			_videoMode.scaleFactor;
-		_mouseCurState.vHotY = _mouseCurState.hotY * _cursorTargetScale /
-			_videoMode.scaleFactor;
-	} else {
-		// The cursor target scale is smaller than the scale at which
-		// the rest of the screen is drawn. We scale up the cursor
-		// image to make it appear correct.
-
-		rW = w * _videoMode.scaleFactor / _cursorTargetScale;
-		rH = h * _videoMode.scaleFactor / _cursorTargetScale;
-		_mouseCurState.rHotX = _mouseCurState.hotX * _videoMode.scaleFactor /
-			_cursorTargetScale;
-		_mouseCurState.rHotY = _mouseCurState.hotY * _videoMode.scaleFactor /
-			_cursorTargetScale;
-
-		// The virtual dimensions will be the same as the original.
-
-		_mouseCurState.vW = w;
-		_mouseCurState.vH = h;
-		_mouseCurState.vHotX = _mouseCurState.hotX;
-		_mouseCurState.vHotY = _mouseCurState.hotY;
-	}
-
-#ifndef DISABLE_SCALERS
-	int rH1 = rH; // store original to pass to aspect-correction function later
-#endif
-
-	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1) {
-		rH = real2Aspect(rH - 1) + 1;
-		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
-	}
-
-	if (_mouseCurState.rW != rW || _mouseCurState.rH != rH) {
-		_mouseCurState.rW = rW;
-		_mouseCurState.rH = rH;
-
-		if (_mouseSurface)
-			SDL_FreeSurface(_mouseSurface);
-
-		_mouseSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.rW,
-						_mouseCurState.rH,
-						16,
-						0x0000f800,
-						0x000007e0,
-						0x0000001f,
-						0x00000000);
-
-		if (_mouseSurface == NULL)
-			error("allocating _mouseSurface failed");
-
-		SDL_SetColorKey(_mouseSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
-	}
-
-	SDL_LockSurface(_mouseSurface);
-
-	ScalerProc *scalerProc;
-
-	// If possible, use the same scaler for the cursor as for the rest of
-	// the game. This only works well with the non-blurring scalers so we
-	// actually only use the 1x, 1.5x, 2x and AdvMame scalers.
-
-	if (_cursorTargetScale == 1 && (_videoMode.mode == GFX_DOUBLESIZE || _videoMode.mode == GFX_TRIPLESIZE))
-		scalerProc = _scalerProc;
-	else
-		scalerProc = scalersMagn[_cursorTargetScale - 1][_videoMode.scaleFactor - 1];
-
-	scalerProc((byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch + 2,
-		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-		_mouseCurState.w, _mouseCurState.h);
-
-#ifndef DISABLE_SCALERS
-	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1)
-		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
-#endif
-
-	SDL_UnlockSurface(_mouseSurface);
-	SDL_UnlockSurface(_mouseOrigSurface);
+	SDL_Surface *bak = _hwscreen;
+	_hwscreen = _prehwscreen;
+	OSystem_SDL::blitCursor();
+	_hwscreen = bak;
 }
-
-#ifndef DISABLE_SCALERS
-// Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
-// common/scale/aspect.cpp
-static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
-	int maxDstY = real2Aspect(origSrcY + height - 1);
-	int y;
-	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
-	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
-
-	for (y = maxDstY; y >= srcY; y--) {
-		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
-
-		if (srcPtr == dstPtr)
-			break;
-		memcpy(dstPtr, srcPtr, width * 2);
-		dstPtr -= pitch;
-	}
-
-	return 1 + maxDstY - srcY;
-}
-#endif
 
 void OSystem_SDL_SamsungTV::drawMouse() {
 	SDL_Surface *bak = _hwscreen;
