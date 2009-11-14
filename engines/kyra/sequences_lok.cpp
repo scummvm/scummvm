@@ -1189,7 +1189,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	_screen->enableInterfacePalette(false);
 
 	_screen->hideMouse();
-	if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga) {
+	if (!_flags.isTalkie) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
 
@@ -1250,12 +1250,12 @@ void KyraEngine_LoK::seq_playCredits() {
 		if (*currentString == 1) {
 			currentString++;
 
-			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
+			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED6_FNT);
 		} else if (*currentString == 2) {
 			currentString++;
 
-			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
+			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
 
