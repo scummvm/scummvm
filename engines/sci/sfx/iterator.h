@@ -306,7 +306,15 @@ int songit_handle_message(SongIterator **it_reg, SongIterator::Message msg);
 */
 SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 
-
+/* Combines two song iterators into one
+** Parameters: (sfx_iterator_t *) it1: One of the two iterators, or NULL
+**             (sfx_iterator_t *) it2: The other iterator, or NULL
+** Returns   : (sfx_iterator_t *) A combined iterator
+** If a combined iterator is returned, it will be flagged to be allowed to
+** dispose of 'it1' and 'it2', where applicable. This means that this
+** call should be used by song players, but not by the core sound system
+*/
+SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2);
 
 } // End of namespace Sci
 

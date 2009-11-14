@@ -35,7 +35,6 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/gc.h"
-#include "sci/sfx/misc.h"	// for sfx_reset_player
 
 namespace Sci {
 
