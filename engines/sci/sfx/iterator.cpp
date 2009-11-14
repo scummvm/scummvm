@@ -116,7 +116,7 @@ static int _parse_ticks(byte *data, int *offset_p, int size) {
 }
 
 
-static int _sci0_get_pcm_data(Sci0SongIterator *self, sfx_pcm_config_t *format, int *xoffset, uint *xsize);
+static int _sci0_get_pcm_data(Sci0SongIterator *self, int *rate, int *xoffset, uint *xsize);
 
 
 #define PARSE_FLAG_LOOPS_UNLIMITED (1 << 0) /* Unlimited # of loops? */
@@ -410,14 +410,14 @@ int BaseSongIterator::processMidi(byte *buf, int *result,
 	}
 
 	case SI_STATE_PCM_MAGIC_DELTA: {
-		sfx_pcm_config_t format;
+		int rate;
 		int offset;
 		uint size;
 		int delay;
-		if (_sci0_get_pcm_data((Sci0SongIterator *)this, &format, &offset, &size))
+		if (_sci0_get_pcm_data((Sci0SongIterator *)this, &rate, &offset, &size))
 			return SI_FINISHED; /* 'tis broken */
 		channel->state = SI_STATE_FINISHED;
-		delay = (size * 50 + format.rate - 1) / format.rate; /* number of ticks to completion*/
+		delay = (size * 50 + rate - 1) / rate; /* number of ticks to completion*/
 
 		debugC(2, kDebugLevelSound, "delaying %d ticks\n", delay);
 		return delay;
@@ -499,7 +499,7 @@ static int _sci0_header_magic_p(byte *data, int offset, int size) {
 
 
 static int _sci0_get_pcm_data(Sci0SongIterator *self,
-	sfx_pcm_config_t *format, int *xoffset, uint *xsize) {
+	int *rate, int *xoffset, uint *xsize) {
 	int tries = 2;
 	bool found_it = false;
 	byte *pcm_data;
@@ -541,9 +541,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	size = READ_LE_UINT16(pcm_data + SCI0_PCM_SIZE_OFFSET);
 
 	/* Two of the format parameters are fixed by design: */
-	format->format = SFX_PCM_FORMAT_U8;
-	format->stereo = SFX_PCM_MONO;
-	format->rate = READ_LE_UINT16(pcm_data + SCI0_PCM_SAMPLE_RATE_OFFSET);
+	*rate = READ_LE_UINT16(pcm_data + SCI0_PCM_SAMPLE_RATE_OFFSET);
 
 	if (offset + SCI0_PCM_DATA_OFFSET + size != self->_data.size()) {
 		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_data.size();
@@ -562,39 +560,28 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	return 0;
 }
 
-static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t conf) {
-	debugC(2, kDebugLevelSound, "Playing PCM data of size %d, rate %d\n", size, conf.rate);
+static Audio::AudioStream *makeStream(byte *data, int size, int rate) {
+	debugC(2, kDebugLevelSound, "Playing PCM data of size %d, rate %d\n", size, rate);
 
 	// Duplicate the data
 	byte *sound = (byte *)malloc(size);
 	memcpy(sound, data, size);
 
 	// Convert stream format flags
-	int flags = Audio::Mixer::FLAG_AUTOFREE;
-	if (conf.format == SFX_PCM_FORMAT_U8)
-		flags |= Audio::Mixer::FLAG_UNSIGNED;
-	else if (conf.format == SFX_PCM_FORMAT_S16_NATIVE) {
-		flags |= Audio::Mixer::FLAG_16BITS;
-#ifndef SCUMM_BIG_ENDIAN
-		flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
-#endif
-	}
-	if (conf.stereo)
-		flags |= Audio::Mixer::FLAG_STEREO;
-
-	return Audio::makeLinearInputStream(sound, size, conf.rate, flags, 0, 0);
+	int flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
+	return Audio::makeLinearInputStream(sound, size, rate, flags, 0, 0);
 }
 
 Audio::AudioStream *Sci0SongIterator::getAudioStream() {
-	sfx_pcm_config_t conf;
+	int rate;
 	int offset;
 	uint size;
-	if (_sci0_get_pcm_data(this, &conf, &offset, &size))
+	if (_sci0_get_pcm_data(this, &rate, &offset, &size))
 		return NULL;
 
 	_channel.state = SI_STATE_FINISHED; /* Don't play both PCM and music */
 
-	return makeStream(_data.begin() + offset + SCI0_PCM_DATA_OFFSET, size, conf);
+	return makeStream(_data.begin() + offset + SCI0_PCM_DATA_OFFSET, size, rate);
 }
 
 SongIterator *Sci0SongIterator::handleMessage(Message msg) {
@@ -739,9 +726,7 @@ int Sci1SongIterator::initSample(const int offset) {
 	        offset + 10, begin, end, _data.size(), length);
 #endif
 
-	sample.format.format = SFX_PCM_FORMAT_U8;
-	sample.format.stereo = SFX_PCM_MONO;
-	sample.format.rate = rate;
+	sample.rate = rate;
 
 	sample.announced = false;
 
@@ -913,7 +898,7 @@ int Sci1SongIterator::getCommandIndex() const {
 Audio::AudioStream *Sci1SongIterator::getAudioStream() {
 	Common::List<Sci1Sample>::iterator sample = _samples.begin();
 	if (sample != _samples.end() && sample->delta <= 0) {
-		Audio::AudioStream *feed = makeStream(sample->_data, sample->size, sample->format);
+		Audio::AudioStream *feed = makeStream(sample->_data, sample->size, sample->rate);
 		_samples.erase(sample);
 
 		return feed;
@@ -1045,12 +1030,12 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 				_deviceId
 				= sci0_to_sci1_device_map
 				  [sci_ffs(msg._arg.i & 0xff) - 1]
-				  [sfx_pcm_available()]
+				  [g_system->getMixer()->isReady()]
 				  ;
 
 				if (_deviceId == 0xff) {
 					warning("[iterator] Device %d(%d) not supported",
-					          msg._arg.i & 0xff, sfx_pcm_available());
+					          msg._arg.i & 0xff, g_system->getMixer()->isReady());
 				}
 				if (_initialised) {
 					int i;

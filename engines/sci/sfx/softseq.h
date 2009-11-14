@@ -27,7 +27,6 @@
 #define SCI_SFX_SOFTSEQ_H
 
 #include "common/error.h"
-#include "sci/sfx/sfx_pcm.h"
 #include "sci/sfx/sequencer.h"
 
 namespace Sci {
@@ -107,9 +106,6 @@ struct sfx_softseq_t {
 	*/
 	int play_rhythm; /* Whether the rhythm channel (9) should be played */
 	int polyphony; /* Number of voices played */
-
-	sfx_pcm_config_t pcm_conf; /* Setup of the channel the sequencer writes to */
-
 };
 
 

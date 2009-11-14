@@ -28,7 +28,6 @@
 #ifndef SCI_SFX_SFX_ITERATOR_H
 #define SCI_SFX_SFX_ITERATOR_H
 
-#include "sci/sfx/sfx_pcm.h"
 #include "sci/sfx/sci_midi.h"
 
 namespace Audio {

@@ -134,7 +134,7 @@ struct Sci1Sample {
 	int delta;
 	int size;
 	bool announced; /* Announced for download (SI_PCM) */
-	sfx_pcm_config_t format;
+	int rate;
 	byte *_data;
 };
 
