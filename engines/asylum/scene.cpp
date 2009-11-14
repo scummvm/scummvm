@@ -1052,9 +1052,10 @@ int Scene::drawScene() {
 		// Force the screen to scroll if the mouse approaches the edges
 		//debugScreenScrolling(bg);
 
-		// TODO: prepare Actors and Barriers draw
-		drawActors();
-		drawBarriers();
+		//drawActorsAndBarriers();
+		queueActorUpdates();
+		queueBarrierUpdates();
+
 		// TODO: draw main actor stuff
 
 		_vm->screen()->drawGraphicsInQueue();
@@ -1066,12 +1067,144 @@ int Scene::drawScene() {
 	return 1;
 }
 
+void Scene::drawActorsAndBarriers() {
+	// TODO this is supposed to be looping through
+	// a collection of CharacterUpdateItems. Since
+	// we're only on scene 1 atm, and there is only one
+	// character, this will have to do :P
+	for (uint i = 0; i < _ws->numActors; i++) {
+		int actorRegPt = 0;
+		Actor *act = &_ws->actors[i];
+		Common::Point pt;
+
+		// XXX Since we're not using CharacterUpdateItems,
+		// the actor priority is never going to be changed.
+		// Need to investigate if this is an issue
+		/*
+		if (act->priority < 0)
+			act->priority = abs(act->priority);
+			continue;
+		*/
+		act->priority = 3;
+		if (act->field_944 == 1 || act->field_944 == 4)
+			act->priority = 1;
+		else {
+			act->field_938 = 1;
+			act->field_934 = 0;
+			pt.x = act->x1 + act->x2;
+			pt.y = act->y1 + act->y2;
+
+			actorRegPt = act->boundingRect.bottom + act->boundingRect.right + 4;
+
+			// TODO special case for scene 11
+			// Not sure if we're checking the scene index
+			// or the scene number though :P
+			/*
+			if (_sceneIdx == 11) {
+				// FIXME this probably won't work
+				if (act != this->getActor())
+					actorRegPt += 20;
+			}
+			*/
+
+			// XXX from .text:0040a4d1
+			for (uint barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
+				Barrier *bar    = &_ws->barriers[barIdx];
+				bool actInBar   = bar->boundingRect.contains(act->boundingRect);
+				bool intersects = false;
+
+				// TODO verify that my funky LOBYTE macro actually
+				// works the way I assume it should :P
+				if (!actInBar) {
+					if (LOBYTE(bar->flags) & 0x20)
+						if (!LOBYTE(bar->flags) & 0x80)
+							// XXX not sure if this will work, as it's
+							// supposed to set 0x40 to the lobyte...
+							bar->flags |= 0x40;
+					continue;
+				}
+
+				if (bar->flags & 2) {
+					// TODO refactor
+					if (bar->field_74 || bar->field_78 ||
+						bar->field_7C || bar->field_80)
+						intersects = (pt.y > bar->field_78 + (bar->field_80 - bar->field_78) * (pt.x - bar->field_74) / (bar->field_7C - bar->field_74)) == 0;
+					else
+						intersects = true;
+				} else {
+					if (bar->flags & 0x40) {
+						PolyDefinitions *poly = &_polygons->entries[bar->polyIdx];
+						intersects = poly->contains(pt.x, pt.y);
+					}
+					// XXX the original has an else case here that
+					// assigns intersects the value of the
+					// flags & 2 check, which doesn't make any sense since
+					// that path would never have been taken if code
+					// execution had made it's way here.
+				}
+				if (LOBYTE(bar->flags) & 0x80 || intersects) {
+					if (LOBYTE(bar->flags) & 0x20)
+						// XXX not sure if this will work, as it's
+						// supposed to set this value on the lobyte...
+						bar->flags &= 0xBF | 0x80;
+					else
+						// XXX another lobyte assignment...
+						bar->flags |= 0x40;
+						// TODO label jump up a few lines here. Investigate...
+				}
+				if (bar->flags & 4) {
+					if (intersects) {
+						if(act->flags & 2)
+							warning ("Assigning mask to masked character [%s]", bar->name);
+						else {
+							// TODO there's a call to sub_40ac10 that does
+							// a point calculation, but the result doesn't appear to
+							// ever be used, and the object passed in as a parameter
+							// isn't updated
+							act->field_3C = barIdx;
+							act->flags |= 2;
+						}
+					}
+				} else {
+					if (intersects) {
+						// XXX assuming the following:
+						// "if ( *(int *)((char *)&scene.characters[0].priority + v18) < *(v12_barrierPtr + 35) )"
+						// is the same as what I'm comparing :P
+						if (act->priority < bar->priority) {
+							act->field_934 = 1;
+							act->priority = bar->priority + 3;
+							// TODO there's a block of code here that seems
+							// to loop through the CharacterUpdateItems and do some
+							// priority adjustment. Since I'm not using CharacterUpdateItems as of yet,
+							// I'm not sure what to do here
+							// The loop seems to occur if:
+							// (a) there are still character items to process
+							// (b) sceneNumber != 2 && actor->field_944 != 1
+						}
+					} else {
+						if (act->priority > bar->priority || act->priority == 1) {
+							act->field_934 = 1;
+							act->priority = bar->priority - 1;
+							// TODO another character update loop
+							// This time it looks like there's another
+							// intersection test, and more updates
+							// to field_934 and field_944, then
+							// priority updates
+						}
+					}
+				}
+			} // end for (barriers)
+		}
+	} // end for (actors)
+
+}
+
 void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 	pt->x = actor->x1 - _ws->xLeft;
 	pt->y = actor->y1 - _ws->yTop;
 }
 
-int Scene::drawActors() {
+int Scene::queueActorUpdates() {
 
 	if (_ws->numActors > 0) {
 		Common::Point pt;
@@ -1104,7 +1237,7 @@ int Scene::drawActors() {
 	return 1;
 }
 
-int Scene::drawBarriers() {
+int Scene::queueBarrierUpdates() {
 	uint barriersCount = _ws->barriers.size();
 
 	if (barriersCount > 0) {

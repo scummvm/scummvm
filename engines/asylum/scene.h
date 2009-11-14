@@ -166,8 +166,9 @@ private:
 	void   updateMusic();
 	void   updateAdjustScreen();
 	int    drawScene();
-	int    drawActors();
-	int    drawBarriers();
+	void   drawActorsAndBarriers();
+	int    queueActorUpdates();
+	int    queueBarrierUpdates();
 	bool   isBarrierVisible(BarrierItem *barrier);
 	bool   isBarrierOnScreen(BarrierItem *barrier);
 	uint32 getRandomResId(BarrierItem *barrier);
