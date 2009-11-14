@@ -142,6 +142,7 @@ static Common::Error midi_gm_set_option(char *x, char *y) {
 	return Common::kUnknownError;
 }
 
+#if 0
 sfx_sequencer_t sfx_sequencer_gm = {
 	"General MIDI",
 	"0.1",
@@ -162,5 +163,6 @@ sfx_sequencer_t sfx_sequencer_gm = {
 	64,	/* max polyphony */
 	0	/* no write-ahead needed inherently */
 };
+#endif
 
 } // End of namespace Sci

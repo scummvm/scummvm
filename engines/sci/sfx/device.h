@@ -33,11 +33,6 @@
 
 namespace Sci {
 
-/* Various types of resources */
-#define SFX_DEVICE_NONE 0
-#define SFX_DEVICE_MIDI 1 /* midi writer */
-#define SFX_DEVICE_OPL2 2 /* OPL/2 sequencer */
-
 struct _midi_device {
 	const char *name;
 
@@ -105,14 +100,6 @@ struct midi_writer_t {
 	*/
 };
 
-
-void *sfx_find_device(int type, char *name);
-/* Looks up a device by name
-** Parameters: (int) type: Device type to look up
-**             (char *) name: Comma-separated list of devices to choose from
-**                            (in the order specified), or NULL for default
-** Returns   : (void *) The device requested, or NULL if no match was found
-*/
 
 } // End of namespace Sci
 
