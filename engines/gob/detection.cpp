@@ -1213,6 +1213,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{ // Found in french ADI 2 Francais-Maths CM1
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "24489330a1d67ff978211f574822a5a6", 883756),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{ // Supplied by vampir_raziel in bug report #1658373
 		{
 			"ween",
@@ -1691,6 +1705,76 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib | kFeaturesEGA,
 		0, 0, 0
 	},
+	{ // Found in french ADI 2 Francais-Maths CM1
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0, 0, 0
+	},
+	{ // Found in french ADI 2 Francais-Maths CM1
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+			ES_ESP,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0, 0, 0
+	},
+	{ // Found in french ADI 2 Francais-Maths CM1
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0, 0, 0
+	},
+	{ // Found in french ADI 2 Francais-Maths CM1
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+			IT_ITA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0, 0, 0
+	},
+	{ // Found in french ADI 2 Francais-Maths CM1
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "5c15b37ed27ac2470854e9e09374d50e", 1248610),
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0, 0, 0
+	},
 	{
 		{
 			"ajworld",
@@ -2031,7 +2115,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{ // Found in french ADI 2.6 Français-Maths 4e
+	{ // Found in french ADI 2.6 Francais-Maths 4e
 		{
 			"lostintime",
 			"",
@@ -3899,6 +3983,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"adi2.stk", "ediintro.tot", 0
 	},
+	{ // Found in french ADI 2 Francais-Maths CM1. Exact version not specified.
+		{
+			"adi2",
+			"Adi 2",
+			AD_ENTRY1s("adi2.stk", "23f279615c736dc38320f1348e70c36e", 10817668),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
 	{
 		{
 			"adi2",
@@ -3930,7 +4028,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
-			"ADI 2 Spanish",
+			"ADI 2",
 			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
 			ES_ESP,
 			kPlatformPC,
