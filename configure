@@ -1343,7 +1343,7 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		samsungtv)
-			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DENABLE_32BIT -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			HOSTEXEEXT=".so"
 			_need_memalign=yes
