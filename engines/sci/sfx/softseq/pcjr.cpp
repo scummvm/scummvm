@@ -23,7 +23,6 @@
  *
  */
 
-#include "sci/sfx/softseq.h"
 #include "sci/sfx/sci_midi.h"
 #include "sci/sfx/softseq/pcjr.h"
 

@@ -25,7 +25,6 @@
 
 #include "common/util.h"
 
-#include "sci/sfx/sequencer.h"
 #include "sci/sfx/device.h"
 #include "sci/sfx/seq/instrument-map.h"
 

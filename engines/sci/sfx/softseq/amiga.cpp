@@ -23,8 +23,6 @@
  *
  */
 
-#include "sci/sfx/softseq.h"
-
 #include "sound/softsynth/emumidi.h"
 #include "sci/sfx/sci_midi.h"
 
