@@ -4028,6 +4028,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
+			"Adi 2.6",
+			AD_ENTRY1s("adi2.stk", "fde7d98a67dbf859423b6473796e932a", 18044780),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
 			"ADI 2",
 			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
 			ES_ESP,
@@ -4094,7 +4108,22 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeAdibou4,
 		kFeaturesNone,
 		0, 0, 0
-	},	{
+	},	
+	{
+		{
+			"adibou4",
+			"ADI 4.10 English",
+			AD_ENTRY1s("intro.stk", "3e3fa9656e37d802027635ace88c4cc5", 5359144),
+			EN_GRB,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou4,
+		kFeaturesNone,
+		0, 0, 0
+	},	
+	{
 		{
 			"adibouunknown",
 			"",
