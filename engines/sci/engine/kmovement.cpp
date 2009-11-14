@@ -340,7 +340,26 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 }
 
 extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
-extern int get_angle(int xrel, int yrel);
+
+int getAngle(int xrel, int yrel) {
+	if ((xrel == 0) && (yrel == 0))
+		return 0;
+	else {
+		int val = (int)(180.0 / PI * atan2((double)xrel, (double) - yrel));
+		if (val < 0)
+			val += 360;
+
+		// Take care of OB1 differences between SSCI and
+		// FSCI. SCI games sometimes check for equality with
+		// "round" angles
+		if (val % 45 == 44)
+			val++;
+		else if (val % 45 == 1)
+			val--;
+
+		return val;
+	}
+}
 
 reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
@@ -396,7 +415,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	dx = destx - GET_SEL32V(segMan, client, x);
 	dy = desty - GET_SEL32V(segMan, client, y);
-	angle = get_angle(dx, dy);
+	angle = getAngle(dx, dy);
 
 	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked\n", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
