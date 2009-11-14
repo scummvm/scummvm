@@ -42,16 +42,174 @@ Scene::Scene() : intro(false), _engine(NULL),
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
-	destination = position = point;
+	position = point;
+	path.clear();
 	if (o)
 		orientation = o;
+}
+
+struct Splitter {
+	typedef Common::List<int> ListType;
+	ListType values;
+	uint _size;
+	
+	Splitter(): values(), _size(0) {}
+	
+	void insert(int v) {
+		ListType::iterator i;
+		for(i = values.begin(); i != values.end(); ++i) {
+			if (v == *i)
+				return;
+			
+			if (v < *i)
+				break;
+		}
+		values.insert(i, v);
+		++_size;
+	}
+	uint size() const { return _size; }
+};
+
+struct Node {
+	Rect rect;
+	int step;
+	int prev;
+
+	Node(): step(0), prev(0) {}
+};
+
+
+static void search(Node *nodes, int n, int m, int i, int j, int prev_idx, int end, int level) {
+	if (i < 0 || i >= n || j < 0 || j >= m)
+		return;
+	int idx = j + i * m;
+	int v = nodes[idx].step;
+	//debug(1, "search (%d, %d) %d, value = %d", i, j, level, v);
+	if (v != 0 && (v == -1 || v <= level))
+		return;
+	
+	nodes[idx].step = level; //mark as visited
+	nodes[idx].prev = prev_idx;
+
+	++level;
+	
+	search(nodes, n, m, i - 1, j, idx, end, level);
+	search(nodes, n, m, i + 1, j, idx, end, level);
+	search(nodes, n, m, i, j - 1, idx, end, level);
+	search(nodes, n, m, i, j + 1, idx, end, level);
+}
+
+
+bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Point &dst) const {
+	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
+	if (dst.x < 0 || dst.x > 319 || dst.y < 0 || dst.y > 199)
+		return false;
+	
+	debug(1, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
+
+	Splitter hsplit, vsplit;
+	for(byte i = 0; i < scene_walkboxes.size(); ++i) {
+		const Walkbox &w = scene_walkboxes[i];
+		if (w.rect.valid()) {
+			hsplit.insert(w.rect.left);
+			hsplit.insert(w.rect.right);
+			vsplit.insert(w.rect.top);
+			vsplit.insert(w.rect.bottom);
+		}
+	}
+	
+	int n = (int)vsplit.size() - 1, m = (int)hsplit.size() - 1;
+	debug(1, "split: %ux%u", n, m);
+	if (n <= 0 || m <= 0) {
+		p.push_back(Common::Point(src.x, dst.y));
+		p.push_back(dst);
+		return true;
+	}
+	
+	Node *nodes = new Node[n * m];
+	int start = -1, end = -1;
+	{
+		int idx = 0;
+		for(Splitter::ListType::const_iterator i = vsplit.values.begin(); i != vsplit.values.end(); ++i) {
+			Splitter::ListType::const_iterator in = i; ++in;
+			if (in == vsplit.values.end())
+				break;
+		
+			for(Splitter::ListType::const_iterator j = hsplit.values.begin(); j != hsplit.values.end(); ++j) {
+				Splitter::ListType::const_iterator jn = j; ++jn;
+				if (jn == hsplit.values.end())
+					break;
+
+				Rect &r = nodes[idx].rect;
+				r = Rect(*j, *i, *jn, *in);
+				if (r.in(src))
+					start = idx;
+				if (r.in(dst))
+					end = idx;
+
+				byte k = 0;
+				for(k = 0; k < scene_walkboxes.size(); ++k) {
+					const Walkbox &w = scene_walkboxes[k];
+					if (w.rect.contains(r))
+						break;
+				}
+				nodes[idx++].step = k >= scene_walkboxes.size()? 0: -1;
+			}
+		}
+	}
+
+	debug(1, "%d -> %d", start, end);
+	
+	if (start == -1 || end == -1)
+		return false;
+		
+	search(nodes, n, m, start / m, start % m, -1, end, 1);
+	int v = end;
+	do {
+		debug(1, "backtrace %d", v);
+		Common::Point c = nodes[v].rect.center();
+		if (end / m == v / m) { //same y
+			c.y = dst.y;
+		}
+		if (end % m == v % m) {
+			c.x = dst.x;
+		}
+		p.push_front(c);
+		if (v == start)
+			break;
+		
+		v = nodes[v].prev;
+	} while(v >= 0);
+	
+	debug(1, "end vertex = %d", v);
+
+	if (v != start)
+		return false;
+	
+#if 0
+	{
+		int idx = 0;
+		for(int i = 0; i < n; ++i) {
+			Common::String line;
+			for(int j = 0; j < m; ++j) {
+				line += Common::String::printf("%2d.%2d  ", nodes[idx].step, nodes[idx].prev);
+				++idx;
+			}
+			debug(1, "map: %s", line.c_str());
+		}
+	}
+#endif
+	
+	delete[] nodes;
+	return true;
 }
 
 void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	Common::Point point(_point);
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
+	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
+
 	if (validate) {
-		const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
 		for (byte i = 0; i < scene_walkboxes.size(); ++i) {
 			const Walkbox &w = scene_walkboxes[i];
 			if (w.rect.in(point)) {
@@ -83,7 +241,18 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 		nextEvent();
 		return;
 	}
-	destination = point;
+
+	path.clear();
+	if (scene_walkboxes.empty()) {
+		path.push_back(point);
+		return;
+	}
+	
+	if (!findPath(path, position, point)) {
+		_engine->cancel();
+		return;
+	}
+
 	orientation = orient;
 }
 
@@ -465,8 +634,9 @@ bool Scene::render(OSystem *system) {
 			} else if (!hide_actor) {
 				actor_animation.free();
 
-				if (position != destination) {
+				if (!path.empty()) {
 					const int speed_x = 10, speed_y = 5;
+					const Common::Point &destination = path.front();
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
 					switch(orientation) {
 					case 2: //left or right
@@ -490,12 +660,15 @@ bool Scene::render(OSystem *system) {
 					
 					actor_animation_position = teenagent.render(surface, position, o, 1);
 					if (position == destination) {
-						position = destination;
-						if (orientation == 0)
-							orientation = o; //save last orientation
-						nextEvent();
-						got_any_animation = true;
-						restart = true;
+						path.pop_front();
+						if (path.empty()) {
+							if (orientation == 0)
+								orientation = o; //save last orientation
+							nextEvent();
+							got_any_animation = true;
+							restart = true;
+						}
+						busy = true;
 					} else
 						busy = true;
 				} else
@@ -530,6 +703,29 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
+#if 0
+		//if (!current_event.empty())
+		//	current_event.dump();
+
+		{
+			const Common::Array<Walkbox> & scene_walkboxes = walkboxes[_id - 1];
+			for (uint i = 0; i < scene_walkboxes.size(); ++i) {
+				scene_walkboxes[i].rect.render(surface, 0xd0 + i);
+			}
+		
+			Common::Point last_p = position;
+			for(Path::const_iterator p = path.begin(); p != path.end(); ++p) {
+				const Common::Point dp(p->x - last_p.x, p->y - last_p.y);
+				if (dp.x != 0) {
+					surface->hLine(last_p.x, last_p.y, p->x, 0xfe);
+				} else if (dp.y != 0) {
+					surface->vLine(last_p.x, last_p.y, p->y, 0xfe);
+				}
+				last_p = *p;
+			}
+		}
+#endif
+
 		system->unlockScreen();
 
 		if (!restart && current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
@@ -537,24 +733,12 @@ bool Scene::render(OSystem *system) {
 			nextEvent();
 			restart = true;
 		}
-
-		//if (!current_event.empty())
-		//	current_event.dump();
-		/*
-		{
-			const Common::Array<Walkbox> & scene_walkboxes = walkboxes[_id - 1];
-			for (uint i = 0; i < scene_walkboxes.size(); ++i) {
-				scene_walkboxes[i].rect.render(surface, 0xd0 + i);
-			}
-		}
-		*/
-
 	} while (restart);
 
 	for (Sounds::iterator i = sounds.begin(); i != sounds.end();) {
 		Sound &sound = *i;
 		if (sound.delay == 0) {
-			debug(0, "sound %u started", sound.id);
+			debug(1, "sound %u started", sound.id);
 			_engine->playSoundNow(sound.id);
 			i = sounds.erase(i);
 		} else {

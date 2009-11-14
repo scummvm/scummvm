@@ -182,9 +182,14 @@ private:
 	Common::Rect actor_animation_position, animation_position[4];
 
 	Actor teenagent, teenagent_idle;
-	Common::Point position, destination;
+	Common::Point position;
+
+	typedef Common::List<Common::Point> Path;
+	Path path;
 	uint8 orientation;
 
+	bool findPath(Path &p, const Common::Point &src, const Common::Point &dst) const;
+	
 	Common::Array<Common::Array<Object> > objects;
 	Common::Array<Common::Array<Walkbox> > walkboxes;
 
