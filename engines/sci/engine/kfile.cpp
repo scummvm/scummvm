@@ -48,8 +48,11 @@ struct SavegameDesc {
 /*
  * Note on how file I/O is implemented: In ScummVM, one can not create/write
  * arbitrary data files, simply because many of our target platforms do not
- * support this. The only files on can create are savestates. But SCI has an
- * opcode to create and write to seemingly 'arbitrary' files.
+ * support this. The only files one can create are savestates. But SCI has an
+ * opcode to create and write to seemingly 'arbitrary' files. This is mainly
+ * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver) and
+ * in LSL5 for MEMORY.DRV (which is again a game data file and contains the
+ * game's password).
  * To implement that opcode, we combine the SaveFileManager with regular file
  * code, similarly to how the SCUMM HE engine does it.
  *
@@ -62,23 +65,6 @@ struct SavegameDesc {
  * If no such file is present but we were only asked to *read* the file,
  * we fallback to looking for a regular file called "foobar", and open that
  * for reading only.
- *
- * There are some caveats to this: First off, SCI apparently has no way
- * to signal that a file is supposed to be opened for reading only. For now,
- * we hackishly just assume that this is what _K_FILE_MODE_OPEN_OR_FAIL is for.
- *
- * Secondly, at least in theory, a file could be opened for both reading and
- * writing. We currently do not support this. If it turns out that we *have*
- * to support it, we could do it as follows: Initially open the file for
- * reading. If a write is attempted, store the file offset, close the file,
- * if necessary create a mirror clone (i.e., clone it into a suitably named
- * savefile), then open the file (resp. its clone for writing) and seek to the
- * correct position. If later a read is attempted, we again close and re-open.
- *
- * However, before putting any effort into implementing such an error-prone
- * scheme, we are well advised to first determine whether any game needs this
- * at all, and for what. Based on that, we can maybe come up with a better waybill
- * to provide this functionality.
  */
 
 
@@ -153,12 +139,11 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
 
-		// FIXME: I am disabling this for now, as it's not quite clear what
-		// should happen if the given file already exists... open it for appending?
-		// Or (more likely), open it for reading *and* writing? We may have to
-		// clone the file for that, etc., see also the long comment at the start
-		// of this file.
-		// We really need some examples on how this is used.
+		// This has been disabled, as it's not used anywhere. Furthermore, it's not
+		// quite clear what should happen if the given file already exists... open
+		// it for appending? Or (more likely), open it for reading *and* writing?
+		// We may have to clone the file for that, etc., see also the long comment
+		// at the start of this file.
 		error("file_open(_K_FILE_MODE_OPEN_OR_CREATE) File creation currently not supported (filename '%s')", englishName.c_str());
 	} else {
 		error("file_open: unsupported mode %d (filename '%s')", mode, englishName.c_str());
@@ -169,36 +154,6 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		s->r_acc = SIGNAL_REG;
 		return;
 	}
-
-
-#if 0
-	// FIXME: The old FreeSCI code for opening a file. Left as a reference, as apparently
-	// the implementation below used to work well enough.
-
-	debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", englishName.c_str(), mode);
-	if ((mode == _K_FILE_MODE_OPEN_OR_FAIL) || (mode == _K_FILE_MODE_OPEN_OR_CREATE)) {
-		file = sci_fopen(englishName.c_str(), "r" FO_BINARY "+"); // Attempt to open existing file
-		debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", englishName.c_str(), mode);
-		if (!file) {
-			debugC(2, kDebugLevelFile, "Failed. Attempting to copy from resource dir...\n");
-			file = f_open_mirrored(s, englishName.c_str());
-			if (file)
-				debugC(2, kDebugLevelFile, "Success!\n");
-			else
-				debugC(2, kDebugLevelFile, "Not found.\n");
-		}
-	}
-
-	if ((!file) && ((mode == _K_FILE_MODE_OPEN_OR_CREATE) || (mode == _K_FILE_MODE_CREATE))) {
-		file = sci_fopen(englishName.c_str(), "w" FO_BINARY "+"); /* Attempt to create file */
-		debugC(2, kDebugLevelFile, "Creating file %s with mode %d\n", englishName.c_str(), mode);
-	}
-	if (!file) { // Failed
-		debugC(2, kDebugLevelFile, "file_open() failed\n");
-		s->r_acc = make_reg(0, 0xffff);
-		return;
-	}
-#endif
 
 	// Find a free file handle
 	uint handle = 1; // Ignore _fileHandles[0]
@@ -241,41 +196,20 @@ static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 	return &s->_fileHandles[handle];
 }
 
-void file_close(EngineState *s, int handle) {
-	debugC(2, kDebugLevelFile, "Closing file %d\n", handle);
-
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
-		f->close();
-}
-
 reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
 	debug(3, "kFClose(%d)", argv[0].toUint16());
-	if (argv[0] != SIGNAL_REG)
-		file_close(s, argv[0].toUint16());
-	return s->r_acc;
-}
-
-void fwrite_wrapper(EngineState *s, int handle, const char *data, int length) {
-	debugC(2, kDebugLevelFile, "fwrite()'ing \"%s\" to handle %d\n", data, handle);
-
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (!f)
-		return;
-
-	if (!f->_out) {
-		error("fwrite_wrapper: Trying to write to file '%s' opened for reading", f->_name.c_str());
-		return;
+	if (argv[0] != SIGNAL_REG) {
+		FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+		if (f)
+			f->close();
 	}
-
-	f->_out->write(data, length);
+	return s->r_acc;
 }
 
 reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	Common::String data = s->_segMan->getString(argv[1]);
-
-	fwrite_wrapper(s, handle, data.c_str(), data.size());
+	getFileFromHandle(s, handle)->_out->write(data.c_str(), data.size());
 	return s->r_acc;
 }
 
@@ -299,34 +233,6 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	}
 
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"\n", dest);
-}
-
-static void fread_wrapper(EngineState *s, char *dest, int bytes, int handle) {
-	debugC(2, kDebugLevelFile, "fread()'ing %d bytes from handle %d\n", bytes, handle);
-
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (!f)
-		return;
-
-	if (!f->_in) {
-		error("fread_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
-		return;
-	}
-
-	s->r_acc = make_reg(0, f->_in->read(dest, bytes));
-}
-
-static void fseek_wrapper(EngineState *s, int handle, int offset, int whence) {
-	FileHandle *f = getFileFromHandle(s, handle);
-	if (!f)
-		return;
-
-	if (!f->_in) {
-		error("fseek_wrapper: Trying to seek in file '%s' opened for writing", f->_name.c_str());
-		return;
-	}
-
-	s->r_acc = make_reg(0, f->_in->seek(offset, whence));
 }
 
 static int _savegame_index_struct_compare(const void *a, const void *b) {
@@ -785,10 +691,11 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_FILEIO_CLOSE : {
-		int handle = argv[1].toUint16();
-		debug(3, "K_FILEIO_CLOSE(%d)", handle);
+		debug(3, "K_FILEIO_CLOSE(%d)", argv[1].toUint16());
 
-		file_close(s, handle);
+		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
+		if (f)
+			f->close();
 		break;
 	}
 	case K_FILEIO_READ_RAW : {
@@ -797,7 +704,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		char *buf = new char[size];
 		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
 
-		fread_wrapper(s, buf, size, handle);
+		s->r_acc = make_reg(0, getFileFromHandle(s, handle)->_in->read(buf, size));
 		s->_segMan->memcpy(argv[2], (const byte*)buf, size);
 		delete[] buf;
 		break;
@@ -809,7 +716,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->memcpy((byte*)buf, argv[2], size);
 		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
 
-		fwrite_wrapper(s, handle, buf, size);
+		getFileFromHandle(s, handle)->_out->write(buf, size);
 		delete[] buf;
 		break;
 	}
@@ -865,7 +772,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		// In the LSL5 password protection it is zero, and we should
 		// then write a full string. (Not sure if it should write the
 		// terminating zero.)
-		fwrite_wrapper(s, handle, str.c_str(), str.size());
+		getFileFromHandle(s, handle)->_out->write(str.c_str(), str.size());
 		break;
 	}
 	case K_FILEIO_SEEK : {
@@ -874,7 +781,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int whence = argv[3].toUint16();
 		debug(3, "K_FILEIO_SEEK(%d,%d,%d)", handle, offset, whence);
 
-		fseek_wrapper(s, handle, offset, whence);
+		s->r_acc = make_reg(0, getFileFromHandle(s, handle)->_in->seek(offset, whence));
 		break;
 	}
 	case K_FILEIO_FIND_FIRST : {
