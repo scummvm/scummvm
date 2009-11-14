@@ -32,7 +32,7 @@
 namespace TeenAgent {
 
 struct Rect {
-	uint16 left, top, right, bottom;
+	int16 left, top, right, bottom;
 
 	inline Rect() : left(0), top(0), right(0), bottom(0), _base(NULL) {}
 
@@ -47,7 +47,7 @@ struct Rect {
 	}
 
 	inline bool valid() const {
-		return left < 320 && right < 320 && top < 200 && bottom < 200;
+		return left >= 0 && left < 320 && right >= 0 && right < 320 && top >= 0 && top < 200 && bottom >= 0 && bottom < 200;
 	}
 
 	void render(Graphics::Surface *surface, uint8 color) const;
@@ -73,6 +73,10 @@ struct Rect {
 		if (y1 > y2)
 			SWAP(y1, y2);
 		return x >= left && x <= right && y1 <= bottom && y2 >= top;
+	}
+	
+	inline bool contains(const Rect & rect) const {
+		return rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
 	}
 
 protected:
