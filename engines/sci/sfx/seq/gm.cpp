@@ -30,6 +30,7 @@
 
 namespace Sci {
 
+#if 0
 static midi_writer_t *writer = NULL;
 
 static Common::Error midi_gm_open(int patch_len, byte *data, int patch2_len, byte *data2, void *device) {
@@ -141,7 +142,6 @@ static Common::Error midi_gm_set_option(char *x, char *y) {
 	return Common::kUnknownError;
 }
 
-#if 0
 sfx_sequencer_t sfx_sequencer_gm = {
 	"General MIDI",
 	"0.1",
