@@ -78,6 +78,20 @@ struct Rect {
 	inline bool contains(const Rect & rect) const {
 		return rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
 	}
+	
+	inline Common::Point closest_to(const Common::Point & src) const {
+		Common::Point p(src);
+		if (p.x < left)
+			p.x = left;
+		if (p.x > right)
+			p.x = right;
+
+		if (p.y < top)
+			p.y = top;
+		if (p.y > bottom)
+			p.y = bottom;
+		return p;
+	}
 
 protected:
 	byte * _base;

@@ -165,15 +165,11 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		
 	search(nodes, n, m, start / m, start % m, -1, end, 1);
 	int v = end;
+	Common::Point prev(dst);
 	do {
 		debug(1, "backtrace %d", v);
-		Common::Point c = nodes[v].rect.center();
-		if (end / m == v / m) { //same y
-			c.y = dst.y;
-		}
-		if (end % m == v % m) {
-			c.x = dst.x;
-		}
+		Common::Point c = nodes[v].rect.closest_to(prev);
+		prev = c;
 		p.push_front(c);
 		if (v == start)
 			break;
