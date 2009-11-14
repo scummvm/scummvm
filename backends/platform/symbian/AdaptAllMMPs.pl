@@ -15,7 +15,6 @@ chdir("../../../");
 	"mmp/scummvm_drascula.mmp", 
 	"mmp/scummvm_gob.mmp", 
 	"mmp/scummvm_groovie.mmp", 
-	"mmp/scummvm_igor.mmp", 
 	"mmp/scummvm_kyra.mmp", 
 	"mmp/scummvm_lure.mmp", 
 	"mmp/scummvm_m4.mmp",
@@ -124,7 +123,6 @@ ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
 ParseModule("_cruise",	"cruise",	\@section_empty);
 ParseModule("_drascula","drascula",	\@section_empty);
-ParseModule("_igor",	"igor",		\@section_empty);
 ParseModule("_made",	"made",		\@section_empty);
 ParseModule("_m4",	"m4",		\@section_empty);
 ParseModule("_tinsel",	"tinsel",	\@section_empty);

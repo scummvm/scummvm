@@ -27,7 +27,6 @@
  * Sound decoder used in engines:
  *  - agos
  *  - drascula
- *  - igor
  *  - kyra
  *  - made
  *  - saga

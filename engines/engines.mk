@@ -60,11 +60,6 @@ DEFINES += -DENABLE_GROOVIE2
 endif
 endif
 
-ifdef ENABLE_IGOR
-DEFINES += -DENABLE_IGOR=$(ENABLE_IGOR)
-MODULES += engines/igor
-endif
-
 ifdef ENABLE_KYRA
 DEFINES += -DENABLE_KYRA=$(ENABLE_KYRA)
 MODULES += engines/kyra

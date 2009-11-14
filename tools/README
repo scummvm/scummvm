@@ -40,11 +40,6 @@ create_drascula
     and Italian. This tool is used to create the drascula.dat file.
 
 
-create_igortbl (cyx)
---------------
-   This tool generates the "IGOR.TBL" file.
-
-
 create_kyradat (LordHoto, athrxx)
 --------------
     Extracts various static data from the original game executables.

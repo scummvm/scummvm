@@ -57,7 +57,6 @@
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\shared\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\sky.cpt"-"c:\shared\scummvm\sky.cpt"
-"..\..\..\..\dists\engine-data\igor.tbl"-"c:\shared\scummvm\igor.tbl"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\shared\scummvm\drascula.dat"
 "..\..\..\..\dists\engine-data\m4.dat"-"c:\shared\scummvm\m4.dat"
