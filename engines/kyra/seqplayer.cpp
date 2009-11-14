@@ -429,11 +429,14 @@ void SeqPlayer::s1_playEffect() {
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
 
-	if (msg == 1) {
+	if (msg == 0 && _vm->gameFlags().platform == Common::kPlatformPC98) {
+		_sound->haltTrack();
+
+	} else if (msg == 1) {
 		_sound->beginFadeOut();
 	} else {
 		_sound->haltTrack();
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 			msg += 2;
 		_sound->playTrack(msg);
 	}

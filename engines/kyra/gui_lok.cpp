@@ -364,6 +364,7 @@ void GUI_LoK::setGUILabels() {
 	int offsetOptions = 0;
 	int offsetMainMenu = 0;
 	int offsetOn = 0;
+	int offsetPC98 = 0;
 
 	int walkspeedGarbageOffset = 36;
 	int menuLabelGarbageOffset = 0;
@@ -396,11 +397,14 @@ void GUI_LoK::setGUILabels() {
 		offsetOn = offsetMainMenu = offsetOptions = offset = 32;
 	} else if (_vm->gameFlags().lang == Common::DE_DEU) {
 		offset = offsetMainMenu = offsetOn = offsetOptions = 24;
-	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) {
+	} else if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		offset = 1;
 		offsetOptions = 10;
 		offsetOn = 0;
 		walkspeedGarbageOffset = 0;
+	} else if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		offsetMainMenu = offsetOptions = offsetOn = offset = 47;
+		offsetPC98 = 1;
 	}
 
 	assert(offset + (_vm->gameFlags().isTalkie ? 28 : 23) < _vm->_guiStringsSize);
@@ -421,17 +425,17 @@ void GUI_LoK::setGUILabels() {
 	_menu[0].item[4].itemString = _vm->_guiStrings[5];
 
 	// Cancel
-	_menu[2].item[5].itemString = _vm->_guiStrings[10];
+	_menu[2].item[5].itemString = _vm->_guiStrings[10 + offsetPC98];
 
 	// Enter a description of your saved game:
-	_menu[3].menuNameString = _vm->_guiStrings[11];
+	_menu[3].menuNameString = _vm->_guiStrings[11 + offsetPC98];
 	// Save
-	_menu[3].item[0].itemString = _vm->_guiStrings[12];
+	_menu[3].item[0].itemString = _vm->_guiStrings[12 + offsetPC98];
 	// Cancel
-	_menu[3].item[1].itemString = _vm->_guiStrings[10];
+	_menu[3].item[1].itemString = _vm->_guiStrings[10 + offsetPC98];
 
 	// Rest in peace, Brandon
-	_menu[4].menuNameString = _vm->_guiStrings[13];
+	_menu[4].menuNameString = _vm->_guiStrings[13 + offsetPC98];
 	// Load a game
 	_menu[4].item[0].itemString = _vm->_guiStrings[1];
 	// Quit playing
@@ -601,7 +605,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
 	_menu[2].menuNameString = _vm->_guiStrings[8]; // Select a position to save to:
-	_specialSavegameString = _vm->_guiStrings[9]; // [ EMPTY SLOT ]
+	_specialSavegameString = _vm->_guiStrings[_vm->gameFlags().platform == Common::kPlatformPC98 ? 10: 9]; // [ EMPTY SLOT ]
 	for (int i = 0; i < 5; i++)
 		_menu[2].item[i].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGame);
 
@@ -803,7 +807,7 @@ int GUI_LoK::cancelSubMenu(Button *button) {
 int GUI_LoK::quitPlaying(Button *button) {
 	updateMenuButton(button);
 
-	if (quitConfirm(_vm->_guiStrings[14])) { // Are you sure you want to quit playing?
+	if (quitConfirm(_vm->_guiStrings[_vm->gameFlags().platform == Common::kPlatformPC98 ? 15 : 14])) { // Are you sure you want to quit playing?
 		_vm->quitGame();
 	} else {
 		initMenu(_menu[_toplevelMenu]);

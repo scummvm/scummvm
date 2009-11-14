@@ -136,7 +136,7 @@ void KyraEngine_LoK::seq_introLogos() {
 		delay(90 * _tickLength);
 		_screen->fadeToBlack();
 		if (!_abortIntroFlag)
-			snd_playWanderScoreViaMap(57, 0);
+			snd_playWanderScoreViaMap(_flags.platform == Common::kPlatformFMTowns ? 57 : 2, 0);
 	}
 
 	_screen->clearPage(0);
@@ -264,20 +264,34 @@ void KyraEngine_LoK::seq_introStory() {
 	_screen->copyPage(3, 0);
 
 	if (_flags.lang == Common::JA_JPN) {
-		const int x1 = (Screen::SCREEN_W - _screen->getTextWidth(_seq_textsTable[18])) / 2;
-		const int x2 = (Screen::SCREEN_W - _screen->getTextWidth(_seq_textsTable[19])) / 2;
 		const int y1 = 175;
-		const int y2 = 184;
+		int x1, x2, y2, col1;
+		const char *s1, *s2;
 
-		uint8 colorMap[] = { 0, 15, 12, 12 };
-		_screen->setTextColor(colorMap, 0, 3);
+		if (_flags.platform == Common::kPlatformFMTowns) {
+			s1 = _seq_textsTable[18];
+			s2 = _seq_textsTable[19];
+			x1 = (Screen::SCREEN_W - _screen->getTextWidth(s1)) / 2;
+			x2 = (Screen::SCREEN_W - _screen->getTextWidth(s2)) / 2;
+			uint8 colorMap[] = { 0, 15, 12, 12 };
+			_screen->setTextColor(colorMap, 0, 3);
+			y2 = 184;
+			col1 = 5;
 
-		_screen->printText(_seq_textsTable[18], x1, y1, 5, 8);
-		_screen->printText(_seq_textsTable[19], x2, y2, 5, 8);
+		} else {
+			s1 = _storyStrings[0];
+			s2 = _storyStrings[1];
+			x1 = x2 = 54;
+			y2 = 185;
+			col1 = 15;
+		}
+
+		_screen->printText(s1, x1, y1, col1, 8);
+		_screen->printText(s2, x2, y2, col1, 8);		
 	}
 
 	_screen->updateScreen();
-	//debugC(0, kDebugLevelMain, "skipFlag %i, %i", skipFlag(), _tickLength);
+	//debugC(0,, 0xkDebugLevelMain,, 0x"skipFlag, 0x%i,, 0x%i",, 0xskipFlag(),, 0x_tickLength);
 	delay(360 * _tickLength);
 }
 
@@ -1082,7 +1096,7 @@ int KyraEngine_LoK::seq_playEnd() {
 				if (i == 4)
 					snd_playSoundEffect(0x3E);
 				else if (i == 20)
-					snd_playSoundEffect(0x0E);
+					snd_playSoundEffect(_flags.platform == Common::kPlatformPC98 ? 0x13 : 0x0E);
 				nextTime = _system->getMillis() + 8 * _tickLength;
 				_finalA->displayFrame(i, 0, 8, 8, 0, 0, 0);
 				_screen->updateScreen();

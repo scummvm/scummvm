@@ -180,6 +180,9 @@ enum KyraResources {
 	k1TownsSFXbtTable,
 	k1TownsCDATable,
 
+	k1PC98StoryStrings,
+	k1PC98IntroSfx,
+
 	k1AmigaIntroSFXTable,
 	k1AmigaGameSFXTable,
 

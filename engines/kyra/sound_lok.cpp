@@ -36,7 +36,7 @@ void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
 			track -= 16;
 	}
 
-	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
+	if (_flags.platform == Common::kPlatformFMTowns && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;
 	}
@@ -64,7 +64,7 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		if (command == 1) {
 			_sound->beginFadeOut();
-		} else if (command >= 2) {
+		} else if (command >= 2 && command < 53 || command == 55) {
 			if (_lastMusicCommand != command)
 				_sound->playTrack(command);
 		} else {

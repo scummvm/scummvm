@@ -4054,12 +4054,6 @@ void SoundPC98::loadSoundFile(Common::String file) {
 	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 
-void SoundPC98::loadSoundFile(const uint8 *data, int len) {
-	delete[] _sfxTrackData;
-	_sfxTrackData = new uint8[len];
-	memcpy(_sfxTrackData, data, len);
-}
-
 void SoundPC98::playTrack(uint8 track) {
 	track += extraOffset();
 

@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 59,
+	kKyraDatVersion = 60,
 	kIndexSize = 12
 };
 
@@ -156,6 +156,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kKyra1TownsSFXwdTable, kTypeTownsWDSfxTable, "SFXWDTABLE" },
 	{ kKyra1TownsSFXbtTable, kTypeRawData, "SFXBTTABLE" },
 	{ kKyra1TownsCDATable, kTypeRawData, "CDATABLE" },
+
+	// PC98 specific
+	{ kKyra1PC98StoryStrings, kTypeLanguageList, "INTROSTORY" },
+	{ kKyra1PC98IntroSfx, kTypeRawData, "INTROSFX" },
 
 	// AMIGA specific
 	{ kAmigaIntroSFXTable, kTypeAmigaSfxTable, "SFXINTRO" },
@@ -344,7 +348,7 @@ const Language languageTable[] = {
 const PlatformExtension platformTable[] = {
 	{ kPlatformAmiga, "AMG" },
 	{ kPlatformFMTowns, "TNS" },
-	{ kPlatformPC98, "TNS" },		// HACK
+	{ kPlatformPC98, "98" },
 
 	{ -1, 0 }
 };

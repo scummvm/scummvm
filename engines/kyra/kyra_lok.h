@@ -511,9 +511,6 @@ protected:
 	static const int8 _amigaTrackMap[];
 	static const int _amigaTrackMapSize;
 
-	static const uint8 _introSfxDataPC98[];
-	static const int _introSfxDataPC98Size;
-
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions
 	void initStaticResource();
@@ -535,10 +532,14 @@ protected:
 	const char * const *_seq_COLTable;
 	const char * const *_seq_textsTable;
 
+	const char * const *_storyStrings;
+
 	int _seq_WSATable_Size;
 	int _seq_CPSTable_Size;
 	int _seq_COLTable_Size;
 	int _seq_textsTable_Size;
+
+	int _storyStringsSize;
 
 	const char * const *_itemList;
 	const char * const *_takenList;
