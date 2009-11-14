@@ -331,11 +331,6 @@ int SfxPlayer::getVolume() {
 
 #pragma mark -
 
-
-int sfx_pcm_available() {
-	return g_system->getMixer()->isReady();
-}
-
 void SfxState::sfx_reset_player() {
 	if (_player)
 		_player->stop();
