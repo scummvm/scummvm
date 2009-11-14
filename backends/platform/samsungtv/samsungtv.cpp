@@ -28,7 +28,7 @@
 #if defined(SAMSUNGTV)
 
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV() : OSystem_SDL(),
-	_prehwscreen(0) {
+	_realhwscreen(0) {
 }
 
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {

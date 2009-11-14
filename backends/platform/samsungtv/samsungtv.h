@@ -41,19 +41,8 @@ class OSystem_SDL_SamsungTV : public OSystem_SDL {
 public:
 	OSystem_SDL_SamsungTV();
 
-	// Highest supported
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
-
-	// Warp the mouse cursor. Where set_mouse_pos() only informs the
-	// backend of the mouse cursor's current position, this function
-	// actually moves the cursor to the specified position.
 	virtual void warpMouse(int x, int y);
 
-	// Set the bitmap that's used when drawing the cursor.
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format); // overloaded by CE backend (FIXME)
-
-	// Get the next event.
-	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual bool hasFeature(Feature f);
@@ -62,16 +51,13 @@ public:
 
 protected:
 
-	SDL_Surface *_prehwscreen;
+	SDL_Surface *_realhwscreen;
 
-	virtual void drawMouse(); // overloaded by CE backend
-	virtual void blitCursor(); // overloaded by CE backend (FIXME)
+	virtual void internUpdateScreen();
 
-	virtual void internUpdateScreen(); // overloaded by CE backend
-
-	virtual bool loadGFXMode(); // overloaded by CE backend
-	virtual void unloadGFXMode(); // overloaded by CE backend
-	virtual bool hotswapGFXMode(); // overloaded by CE backend
+	virtual bool loadGFXMode();
+	virtual void unloadGFXMode();
+	virtual bool hotswapGFXMode();
 
 	void handleKbdMouse();
 	void generateMouseMoveEvent(int x, int y);

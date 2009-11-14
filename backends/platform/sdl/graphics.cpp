@@ -568,6 +568,11 @@ bool OSystem_SDL::loadGFXMode() {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
+#if defined(SAMSUNGTV)
+	_hwscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 16, 0, 0, 0, 0);
+	if (_hwscreen == NULL)
+		error("allocating _hwscreen failed");
+#else
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
@@ -582,6 +587,7 @@ bool OSystem_SDL::loadGFXMode() {
 			return false;
 		}
 	}
+#endif
 
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
