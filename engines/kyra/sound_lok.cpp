@@ -64,7 +64,7 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 	} else if (_flags.platform == Common::kPlatformPC98) {
 		if (command == 1) {
 			_sound->beginFadeOut();
-		} else if (command >= 2 && command < 53 || command == 55) {
+		} else if ((command >= 2 && command < 53) || command == 55) {
 			if (_lastMusicCommand != command)
 				_sound->playTrack(command);
 		} else {
