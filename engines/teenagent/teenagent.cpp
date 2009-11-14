@@ -121,11 +121,11 @@ void TeenAgentEngine::use(Object *object) {
 	object->rect.dump();
 	object->actor_rect.dump();
 
+	action = kActionUse;
 	if (object->actor_rect.valid())
 		scene->moveTo(Common::Point(object->actor_rect.right, object->actor_rect.bottom), object->actor_orientation);
-	if (object->actor_orientation > 0)
+	else if (object->actor_orientation > 0)
 		scene->setOrientation(object->actor_orientation);
-	action = kActionUse;
 }
 
 void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
@@ -135,15 +135,15 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 	if (object != NULL) {
 		Common::Point dst = object->actor_rect.center();
 		debug(0, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
+		action = kActionExamine;
 		if (object->actor_rect.valid())
 			scene->moveTo(dst, object->actor_orientation);
-		action = kActionExamine;
 		dst_object = object;
 	} else {
 		debug(0, "click %d, %d", point.x, point.y);
+		action = kActionNone;
 		scene->moveTo(point, 0, true);
 		dst_object = NULL;
-		action = kActionNone;
 	}
 }
 

@@ -59,6 +59,7 @@ public:
 
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);
+	inline void cancel() { action = kActionNone; }
 
 	bool processCallback(uint16 addr);
 	inline Scene *getScene() { return scene; }
