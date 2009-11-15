@@ -309,6 +309,9 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 		vm->_mouse->cursorOn();
 		vm->_viewManager->addView(vm->_scene);
 		vm->_scene->loadScene(101);
+
+		// **DEBUG** - set the default object
+		vm->_scene->setSelectedObject(48);
 		return;
 
 	case SHOW_INTRO:

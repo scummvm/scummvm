@@ -46,6 +46,7 @@ Scene::Scene(M4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm
 	_codeSurface = new M4Surface();
 	_madsInterfaceSurface = new M4Surface();
 	_sceneSprites = NULL;
+	_objectSprites = NULL;
 	_palData = NULL;
 	_interfacePal = NULL;
 	_inverseColorTable = NULL;
@@ -68,6 +69,8 @@ Scene::~Scene() {
 
 	if (_sceneSprites)
 		delete _sceneSprites;
+	if (_objectSprites)
+		delete _objectSprites;
 
 	_vm->_palette->deleteAllRanges();
 
@@ -441,12 +444,17 @@ void Scene::playIntro() {
 
 }
 
+static const int FRAME_SPEED = 8;
+static const int INVENTORY_X = 160;
+static const int INVENTORY_Y = 159;
+
 void Scene::update() {
 	// TODO: Needs a proper implementation
 	// NOTE: Don't copy the background when in M4 mode or WoodScript anims won't be shown
 	if (!_vm->isM4()) {
 		_backgroundSurface->copyTo(this);
 
+		// Handle display of any status text
 		if (_statusText[0]) {
 			// Text colors are inverted in Dragonsphere
 			if (_vm->getGameType() == GType_DragonSphere)
@@ -456,6 +464,21 @@ void Scene::update() {
 
 			_vm->_font->setFont(FONT_MAIN_MADS);
 			_vm->_font->writeString(this, _statusText, (width() - _vm->_font->getWidth(_statusText)) / 2, 142, 0);
+		}
+
+		_madsInterfaceSurface->copyTo(this, 0, this->height() - _madsInterfaceSurface->height());
+
+		if (_objectSprites) {
+			// Display object sprite. Note that the frame number isn't used directly, because it would result
+			// in too fast an animation
+			M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / FRAME_SPEED);
+			spr->copyTo(this, INVENTORY_X, INVENTORY_Y, 0);
+
+			if (!_vm->_globals->invObjectsStill) {
+				// If objetcs are to animated, move to the next frame
+				if (++_objectFrameNumber >= (_objectSprites->getCount() * FRAME_SPEED))
+					_objectFrameNumber = 0;
+			}
 		}
 	}
 }
@@ -665,6 +688,33 @@ void Scene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 
 	// Bottom right corner
 	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
+}
+
+/*--------------------------------------------------------------------------*/
+
+void Scene::setSelectedObject(int objectNumber) {
+	VALIDATE_MADS;
+
+	// Load inventory resource
+	if (_objectSprites) {
+		_vm->_palette->deleteRange(_objectPalData);
+		delete _objectSprites;
+	}
+
+	char resName[80];
+	sprintf(resName, "*OB%.3dI.SS", objectNumber);
+
+	Common::SeekableReadStream *data = _vm->res()->get(resName);
+	_objectSprites = new SpriteAsset(_vm, data, data->size(), resName);
+	_vm->res()->toss(resName);
+
+	// Slot it into available palette space
+	_objectPalData = _objectSprites->getRgbList();
+	_vm->_palette->addRange(_objectPalData);
+	_objectSprites->translate(_objectPalData, true);
+
+	_objectFrameNumber = 0;
+	_selectedObject = objectNumber;
 }
 
 } // End of namespace M4

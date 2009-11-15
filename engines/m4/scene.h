@@ -102,6 +102,8 @@ public:
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
 
+	void setSelectedObject(int objectNumber);
+
 private:
 	int _currentScene;
 	M4Surface *_backgroundSurface;
@@ -115,6 +117,12 @@ private:
 	SpriteAsset *_sceneSprites;
 	SpriteAsset *_walkerSprite;
 	char _statusText[100];
+
+	// Inventory related fields
+	int _selectedObject;
+	SpriteAsset *_objectSprites;
+	RGBList *_objectPalData;
+	int _objectFrameNumber;
 
 	void nextCommonCursor();
 };
