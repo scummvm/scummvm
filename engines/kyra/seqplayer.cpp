@@ -431,7 +431,6 @@ void SeqPlayer::s1_playTrack() {
 
 	if (msg == 0 && _vm->gameFlags().platform == Common::kPlatformPC98) {
 		_sound->haltTrack();
-
 	} else if (msg == 1) {
 		_sound->beginFadeOut();
 	} else {
