@@ -401,7 +401,11 @@ protected:
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
+#ifdef USE_RGB_COLOR
+	uint32 _mouseKeyColor;
+#else
 	byte _mouseKeyColor;
+#endif
 	int _cursorTargetScale;
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
