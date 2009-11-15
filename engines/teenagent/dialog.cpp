@@ -66,12 +66,12 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				//debug(0, "displaymessage %s", message.c_str());
 				if (color == color2) {
 					//pause animation in other slot
-					if (animation1 != 0) {
+					{
 						SceneEvent e(SceneEvent::kPauseAnimation);
 						e.slot = 0x80 | slot1;
 						scene->push(e);
 					}
-					if (animation2 != 0) {
+					{
 						SceneEvent e(SceneEvent::kPlayAnimation);
 						e.animation = animation2;
 						e.slot = 0x80 | slot2;
@@ -79,12 +79,12 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 					}
 				} else if (color == color1) {
 					//pause animation in other slot
-					if (animation2 != 0) {
+					{
 						SceneEvent e(SceneEvent::kPauseAnimation);
 						e.slot = 0x80 | slot2;
 						scene->push(e);
 					}
-					if (animation1 != 0) {
+					{
 						SceneEvent e(SceneEvent::kPlayAnimation);
 						e.animation = animation1;
 						e.slot = 0x80 | slot1;

@@ -667,7 +667,7 @@ bool Scene::render(OSystem *system) {
 						busy = true;
 					} else
 						busy = true;
-				} else
+				} else 
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking);
 			}
 		}
@@ -857,36 +857,43 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kPlayAnimation: {
 				byte slot = current_event.slot & 7; //0 - mark's
 				if (current_event.animation != 0) {
+					debug(0, "playing animation %u in slot %u", current_event.animation, slot);
 					if (slot != 0) {
 						--slot;
-						debug(0, "playing animation %u in slot %u", current_event.animation, slot);
 						assert(slot < 4);
 						playAnimation(slot, current_event.animation, (current_event.slot & 0x80) != 0, (slot & 0x40) != 0, (slot & 0x20) != 0);
-					}
+					} else
+						actor_talking = true;
 				} else {
 					if (slot != 0) {
 						--slot;
 						debug(0, "cancelling animation in slot %u", slot);
 						assert(slot < 4);
 						custom_animation[slot].free();
-					}
+					} else
+						actor_talking = true;
 				}
 				current_event.clear();
 			}
 			break;
 
-		case SceneEvent::kPauseAnimation:
-			if (current_event.slot != 0) {
-				--current_event.slot;
-				debug(0, "pause animation in slot %u", current_event.slot & 3);
-				custom_animation[current_event.slot & 3].paused = (current_event.slot & 0x80) != 0;
+		case SceneEvent::kPauseAnimation: {
+				byte slot = current_event.slot & 7; //0 - mark's
+				if (slot != 0) {
+					--slot;
+					debug(0, "pause animation in slot %u", slot);
+					custom_animation[slot].paused = (current_event.slot & 0x80) != 0;
+				} else {
+					actor_talking = false;
+				}
+				current_event.clear();
 			}
-			current_event.clear();
 			break;
 
 		case SceneEvent::kClearAnimations:
 			for (byte i = 0; i < 4; ++i)
 				custom_animation[i].free();
+			actor_talking = false;
 			current_event.clear();
 			break;
 
