@@ -564,68 +564,13 @@ bool Scene::render(OSystem *system) {
 
 		Graphics::Surface *surface = system->lockScreen();
 
+		bool got_any_animation = false;
 
 		if (ons != NULL && debug_features.feature[DebugFeatures::kShowOns]) {
 			for (uint32 i = 0; i < ons_count; ++i) {
 				Surface *s = ons + i;
 				if (s != NULL)
 					s->render(surface);
-			}
-		}
-
-
-		bool got_any_animation = false;
-
-
-		for (byte i = 0; i < 4; ++i) {
-			Animation *a = custom_animation + i;
-			Surface *s = a->currentFrame();
-			if (s != NULL) {
-				if (!a->ignore) 
-					busy = true;
-				else 
-					busy = false;
-				if (!a->paused && !a->loop)
-					got_any_animation = true;
-			} else {
-				a = animation + i;
-				if (!custom_animation[i].empty()) {
-					debug(0, "custom animation ended, restart animation in the same slot.");
-					custom_animation[i].free();
-					a->restart();
-				}
-				s = a->currentFrame();
-			}
-			
-			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.slot == i) {
-				if (s == NULL) {
-					restart |= nextEvent();
-					continue;
-				}
-				int index = a->currentIndex();
-				if (index == current_event.animation) {
-					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.slot, current_event.animation);
-					restart |= nextEvent();
-				}
-			}
-			
-			if (s == NULL)
-				continue;
-
-			if (debug_features.feature[DebugFeatures::kShowLan])
-				animation_position[i] = s->render(surface);
-
-			if (a->id == 0)
-				continue;
-
-			Object *obj = getObject(a->id);
-			if (obj != NULL) {
-				obj->rect.left = s->x;
-				obj->rect.top = s->y;
-				obj->rect.right = s->w + s->x;
-				obj->rect.bottom = s->h + s->y;
-				obj->rect.save();
-				//obj->dump();
 			}
 		}
 
@@ -683,12 +628,67 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
+
 		//render on
 		if (on.pixels != NULL && debug_features.feature[DebugFeatures::kShowOn]) {
 			if (_id != 16 || getOns(16)[0] != 0) {
 				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
 			}
 		}
+
+		for (byte i = 0; i < 4; ++i) {
+			Animation *a = custom_animation + i;
+			Surface *s = a->currentFrame();
+			if (s != NULL) {
+				if (!a->ignore) 
+					busy = true;
+				else 
+					busy = false;
+				if (!a->paused && !a->loop)
+					got_any_animation = true;
+			} else {
+				a = animation + i;
+				if (!custom_animation[i].empty()) {
+					debug(0, "custom animation ended, restart animation in the same slot.");
+					custom_animation[i].free();
+					a->restart();
+				}
+				s = a->currentFrame();
+			}
+			
+			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.slot == i) {
+				if (s == NULL) {
+					restart |= nextEvent();
+					continue;
+				}
+				int index = a->currentIndex();
+				if (index == current_event.animation) {
+					debug(0, "kWaitLanAnimationFrame(%d, %d) complete", current_event.slot, current_event.animation);
+					restart |= nextEvent();
+				}
+			}
+			
+			if (s == NULL)
+				continue;
+
+			if (debug_features.feature[DebugFeatures::kShowLan])
+				animation_position[i] = s->render(surface);
+
+			if (a->id == 0)
+				continue;
+
+			Object *obj = getObject(a->id);
+			if (obj != NULL) {
+				obj->rect.left = s->x;
+				obj->rect.top = s->y;
+				obj->rect.right = s->w + s->x;
+				obj->rect.bottom = s->h + s->y;
+				obj->rect.save();
+				//obj->dump();
+			}
+		}
+
+
 
 		if (!message.empty()) {
 			bool visible = true;
