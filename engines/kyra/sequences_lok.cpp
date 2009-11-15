@@ -173,7 +173,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	}
 
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
-	
+
 	if ((_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) && !seq_skipSequence()) || shouldQuit()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
@@ -287,11 +287,10 @@ void KyraEngine_LoK::seq_introStory() {
 		}
 
 		_screen->printText(s1, x1, y1, col1, 8);
-		_screen->printText(s2, x2, y2, col1, 8);		
+		_screen->printText(s2, x2, y2, col1, 8);
 	}
 
 	_screen->updateScreen();
-	//debugC(0,, 0xkDebugLevelMain,, 0x"skipFlag, 0x%i,, 0x%i",, 0xskipFlag(),, 0x_tickLength);
 	delay(360 * _tickLength);
 }
 
@@ -749,7 +748,7 @@ void KyraEngine_LoK::seq_makeBrandonWisp() {
 	_animator->updateAllObjectShapes();
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		if ((_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) || 
+		if ((_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) ||
 			(_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186))
 			_screen->fadePalette(_screen->getPalette(10), 0x54);
 	} else {
@@ -1027,16 +1026,16 @@ int KyraEngine_LoK::seq_playEnd() {
 		_finalA = createWSAMovie();
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);
-	
+
 		_finalB = createWSAMovie();
 		assert(_finalB);
 		_finalB->open("finalb.wsa", 1, 0);
-	
+
 		_finalC = createWSAMovie();
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
 		_finalC->open("finalc.wsa", 1, 0);
-	
+
 		_screen->_curPage = 0;
 		_beadStateVar = 0;
 		_malcolmFlag = 0;
@@ -1076,7 +1075,7 @@ int KyraEngine_LoK::seq_playEnd() {
 
 			if (_flags.platform != Common::kPlatformAmiga)
 				_screen->fadeSpecialPalette(32, 228, 20, 60);
-	
+
 			delay(60 * _tickLength);
 
 			_screen->loadBitmap("GEMHEAL.CPS", 3, 3, &_screen->getPalette(0));
