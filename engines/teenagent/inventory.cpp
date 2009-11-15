@@ -28,6 +28,7 @@
 #include "teenagent/resources.h"
 #include "teenagent/objects.h"
 #include "teenagent/teenagent.h"
+#include "teenagent/scene.h"
 
 namespace TeenAgent {
 
@@ -157,10 +158,13 @@ bool Inventory::processEvent(const Common::Event &event) {
 			
 		if (hovered_obj == NULL)
 			return true;
+			
+		debug(0, "lclick on %u:%s", hovered_obj->id, hovered_obj->name.c_str());
 
 		if (selected_obj == NULL) {
-			activate(false);
-			_engine->displayMessage(hovered_obj->description);
+			//activate(false);
+			int w = res->font7.render(NULL, 0, 0, hovered_obj->description, 0xd1);
+			_engine->scene->displayMessage(hovered_obj->description, 0xd1, Common::Point((320 - w) / 2, 162));
 			return true;
 		}
 

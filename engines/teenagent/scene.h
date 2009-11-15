@@ -130,7 +130,7 @@ public:
 	void moveTo(const Common::Point &point, byte orientation = 0, bool validate = 0);
 	Common::Point getPosition() const { return position; }
 
-	void displayMessage(const Common::String &str, byte color = 0xd1);
+	void displayMessage(const Common::String &str, byte color = 0xd1, const Common::Point &pos = Common::Point());
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
 

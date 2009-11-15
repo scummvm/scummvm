@@ -1014,11 +1014,11 @@ uint Scene::messageDuration(const Common::String &str) {
 }
 
 
-void Scene::displayMessage(const Common::String &str, byte color) {
+void Scene::displayMessage(const Common::String &str, byte color, const Common::Point &pos) {
 	//assert(!str.empty());
 	//debug(0, "displayMessage: %s", str.c_str());
 	message = str;
-	message_pos = messagePosition(str, position);
+	message_pos = (pos.x | pos.y)? pos: messagePosition(str, position);
 	message_color = color;
 	message_timer = messageDuration(message);
 }
