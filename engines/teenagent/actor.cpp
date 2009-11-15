@@ -27,12 +27,20 @@
 
 namespace TeenAgent {
 
-Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame) {
+Actor::Actor() : head_index(0) {}
+
+//idle animation lists at dseg: 0x6540
+
+Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool render_head) {
 	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
 
-	Surface *s = NULL;
+	const uint8 frames_head_left_right[] = {39, 26, 27, 28, 29, 30, 31, };
+	const uint8 frames_head_up[] = { 41, 37, 38, };
+	const uint8 frames_head_down[] = {40, 32, 33, 34, 35, 36};
+
+	Surface *s = NULL, *head = NULL;
 
 	if (delta_frame == 0) {
 		index = 0; //static animation
@@ -41,6 +49,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	switch (orientation) {
 	case Object::kActorLeft:
 	case Object::kActorRight:
+		if (render_head) {
+			if (head_index >= sizeof(frames_head_left_right))
+				head_index = 0;
+			head = frames + frames_head_left_right[head_index];
+			++head_index;
+		}
+
 		if (index >= sizeof(frames_left_right))
 			index = 1;
 		s = frames + frames_left_right[index];
@@ -48,6 +63,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		dy = 62;
 		break;
 	case Object::kActorUp:
+		if (render_head) {
+			if (head_index >= sizeof(frames_head_up))
+				head_index = 0;
+			head = frames + frames_head_up[head_index];
+			++head_index;
+		}
+
 		if (index >= sizeof(frames_up))
 			index = 1;
 		s = frames + frames_up[index];
@@ -55,6 +77,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		dy = 62;
 		break;
 	case Object::kActorDown:
+		if (render_head) {
+			if (head_index >= sizeof(frames_head_down))
+				head_index = 0;
+			head = frames + frames_head_down[head_index];
+			++head_index;
+		}
+
 		if (index >= sizeof(frames_down))
 			index = 1;
 		s = frames + frames_down[index];
@@ -77,7 +106,15 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (yp + s->h > 200)
 		yp = 200 - s->h;
 	
-	return s != NULL? s->render(surface, xp, yp, orientation == Object::kActorLeft): Common::Rect();
+	Common::Rect dirty;
+	
+	if (s)
+		dirty = s->render(surface, xp, yp, orientation == Object::kActorLeft);
+
+	if (head)
+		dirty.extend(head->render(surface, xp, yp, orientation == Object::kActorLeft));
+
+	return dirty;
 }
 
 } // End of namespace TeenAgent

@@ -654,7 +654,7 @@ bool Scene::render(OSystem *system) {
 					position.x += (ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
 					
-					actor_animation_position = teenagent.render(surface, position, o, 1);
+					actor_animation_position = teenagent.render(surface, position, o, 1, false);
 					if (position == destination) {
 						path.pop_front();
 						if (path.empty()) {
@@ -668,7 +668,7 @@ bool Scene::render(OSystem *system) {
 					} else
 						busy = true;
 				} else
-					actor_animation_position = teenagent.render(surface, position, orientation, 0);
+					actor_animation_position = teenagent.render(surface, position, orientation, 0, false);
 			}
 		}
 
