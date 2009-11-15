@@ -187,6 +187,7 @@ private:
 	typedef Common::List<Common::Point> Path;
 	Path path;
 	uint8 orientation;
+	bool actor_talking;
 
 	bool findPath(Path &p, const Common::Point &src, const Common::Point &dst) const;
 	

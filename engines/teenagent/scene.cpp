@@ -36,7 +36,7 @@ namespace TeenAgent {
 Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
 		_id(0), ons(0),
-		orientation(Object::kActorRight), 
+		orientation(Object::kActorRight), actor_talking(false), 
 		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL), 
 		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0) {}
 
@@ -668,7 +668,7 @@ bool Scene::render(OSystem *system) {
 					} else
 						busy = true;
 				} else
-					actor_animation_position = teenagent.render(surface, position, orientation, 0, true);
+					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking);
 			}
 		}
 
