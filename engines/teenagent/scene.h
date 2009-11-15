@@ -150,6 +150,7 @@ public:
 	void loadObjectData();
 	Animation * getAnimation(byte slot);
 	inline Animation * getActorAnimation() { return &actor_animation; }
+	inline const Common::String& getMessage() const { return message; }
 
 private:
 	void loadOns();

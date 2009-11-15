@@ -278,7 +278,6 @@ Common::Error TeenAgentEngine::run() {
 	Common::Point mouse;
 
 	do {
-		_system->showMouse(true);
 		uint32 t0 = _system->getMillis();
 		Object *current_object = scene->findObject(mouse);
 
@@ -323,6 +322,7 @@ Common::Error TeenAgentEngine::run() {
 			}
 		}
 
+		_system->showMouse(scene->getMessage().empty());
 		uint32 f0 = frame * 10 / 25, f1 = (frame + 1) * 10 / 25;
 		if (f0 != f1) {
 			bool b = scene->render(_system);
