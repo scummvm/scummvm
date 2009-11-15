@@ -75,15 +75,22 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	stream->read(pixels, w_ * h_);
 }
 
-Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror) {
-	assert(x + dx + w <= surface->w);
-	assert(y + dy + h <= surface->h);
+Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect) {
+	if (src_rect.isEmpty()) {
+		src_rect = Common::Rect(0, 0, w, h);
+	} else if (src_rect.right > w)
+		src_rect.right = w;
+	else if (src_rect.bottom < h) 
+		src_rect.bottom = h;
 
-	byte *src = (byte *)pixels;
+	assert(x + dx + src_rect.width() <= surface->w);
+	assert(y + dy + src_rect.height() <= surface->h);
+
+	byte *src = (byte *)getBasePtr(src_rect.left, src_rect.top);
 	byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
 
-	for (int i = 0; i < h; ++i) {
-		for (int j = 0; j < w; ++j) {
+	for (int i = src_rect.top; i < src_rect.bottom; ++i) {
+		for (int j = src_rect.left; j < src_rect.right; ++j) {
 			byte p = src[j];
 			if (p != 0xff)
 				dst[mirror? w - j - 1: j] = p;

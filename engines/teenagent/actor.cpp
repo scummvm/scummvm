@@ -36,9 +36,31 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
 
-	const uint8 frames_head_left_right[] = {39, 26, 27, 28, 29, 30, 31, };
-	const uint8 frames_head_up[] = { 41, 37, 38, };
-	const uint8 frames_head_down[] = {40, 32, 33, 34, 35, 36};
+	const uint8 frames_head_left_right[] = { 
+		0x27, 0x1a, 0x1b, 
+		0x27, 0x1c, 0x1d, 
+		0x27, 0x1a, 
+		0x27, 0x1e, 0x1f, 
+		0x27, 0x1a, 0x1b, 
+		0x27, 0x1c, 
+		0x27, 0x1e, 
+		0x27, 0x1a, 
+	};
+	
+	const uint8 frames_head_up[] = {
+		0x29, 0x25, 0x29, 0x29, 
+		0x26, 0x29, 0x26, 0x29, 
+		0x29, 0x25, 0x29, 0x25, 
+		0x29, 0x29, 0x29, 0x25, 
+		0x25, 0x29, 0x29, 0x26
+	};
+	const uint8 frames_head_down[] = {
+		0x20, 0x21, 0x22, 0x23, 
+		0x28, 0x24, 0x28, 0x28, 
+		0x24, 0x28, 0x20, 0x21, 
+		0x20, 0x23, 0x28, 0x20, 
+		0x28, 0x28, 0x20, 0x28
+	};
 
 	Surface *s = NULL, *head = NULL;
 
@@ -94,6 +116,15 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		return Common::Rect();
 	}
 	index += delta_frame;
+	if (s == NULL) {
+		warning("no surface, skipping");
+		return Common::Rect();
+	}
+
+	Common::Rect dirty;
+	Common::Rect clip(0, 0, s->w, s->h);
+	if (head != NULL) 
+		clip.top = head->h;
 
 	int xp = position.x - dx, yp = position.y - dy;
 	if (xp < 0)
@@ -103,15 +134,12 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 
 	if (yp < 0)
 		yp = 0;
-	if (yp + s->h > 200)
-		yp = 200 - s->h;
+	if (yp + clip.top + clip.height() > 200)
+		yp = 200 - clip.top - clip.height();
 	
-	Common::Rect dirty;
-	
-	if (s)
-		dirty = s->render(surface, xp, yp, orientation == Object::kActorLeft);
+	dirty = s->render(surface, xp, yp + clip.top, orientation == Object::kActorLeft, clip);
 
-	if (head)
+	if (head != NULL)
 		dirty.extend(head->render(surface, xp, yp, orientation == Object::kActorLeft));
 
 	return dirty;

@@ -668,7 +668,7 @@ bool Scene::render(OSystem *system) {
 					} else
 						busy = true;
 				} else
-					actor_animation_position = teenagent.render(surface, position, orientation, 0, false);
+					actor_animation_position = teenagent.render(surface, position, orientation, 0, true);
 			}
 		}
 
