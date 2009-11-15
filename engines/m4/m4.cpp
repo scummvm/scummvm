@@ -283,7 +283,12 @@ Common::Error M4Engine::goMADS() {
 	_globals->loadMadsQuotes();			// quotes.dat
 	_globals->loadMadsMessagesInfo();	// messages.dat
 	_globals->loadMadsObjects();
-	
+
+	// Setup globals
+	_vm->_globals->easyMouse = true;
+	_vm->_globals->invObjectsStill = false;
+	_vm->_globals->textWindowStill = false;
+	_vm->_globals->storyMode = 0;
 
 	// Test code to dump all messages to the console
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)

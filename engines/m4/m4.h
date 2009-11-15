@@ -99,6 +99,8 @@ struct M4GameDescription;
 
 #define GAME_FRAME_DELAY 50
 
+#define VALIDATE_MADS assert(!_vm->isM4())
+
 inline void str_lower(char *s) { while (*s) { *s = tolower(*s); s++; } }
 inline void str_upper(char *s) { while (*s) { *s = toupper(*s); s++; } }
 

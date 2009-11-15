@@ -204,6 +204,11 @@ public:
 
 	// M4 variables
 	bool invSuppressClickSound;
+	// MADS variables
+	bool easyMouse;
+	bool invObjectsStill;
+	bool textWindowStill;
+	int storyMode;
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }
