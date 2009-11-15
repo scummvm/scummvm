@@ -1350,6 +1350,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		processCallback(0x557e);
 		loadScene(19, 223, 199, 1);
 		return true;
+	
+	case 0x55a1:
+		processCallback(0x557e);
+		rejectMessage();
+		return true;
 
 	case 0x557e:
 		//scaled moveTo
