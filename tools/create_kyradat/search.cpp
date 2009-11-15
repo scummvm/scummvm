@@ -139,23 +139,19 @@ Search::Search(const char *filename) : _data(), _search() {
 	fclose(src);
 
 	_data.resize(size);
-	for (uint32 i = 0; i < size; ++i)
-		_data[i] = data[i];
+	std::copy(data, data + size, _data.begin());
 	delete[] data;
 }
 
 Search::Search(const byte *data, uint32 size) : _data(), _search() {
 	_data.resize(size);
-	for (uint32 i = 0; i < size; ++i)
-		_data[i] = data[i];
+	std::copy(data, data + size, _data.begin());
 }
 
 void Search::addData(SearchData data) {
-	for (SearchList::const_iterator i = _search.begin(); i != _search.end(); ++i) {
-		// Do not add any duplicates
-		if (*i == data)
-			return;
-	}
+	// Do not add any duplicates
+	if (std::find(_search.begin(), _search.end(), data) != _search.end())
+		return;
 
 	_search.push_back(data);
 }
