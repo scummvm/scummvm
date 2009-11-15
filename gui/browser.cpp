@@ -98,7 +98,7 @@ int BrowserDialog::runModal() {
 		assert(err == noErr);
 
 		if (reply.validRecord && err == noErr) {
-			SInt32 theCount;
+			long theCount;
 			AECountItems(&reply.selection, &theCount);
 			assert(theCount == 1);
 
