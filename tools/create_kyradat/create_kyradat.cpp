@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 60,
+	kKyraDatVersion = 61,
 	kIndexSize = 12
 };
 

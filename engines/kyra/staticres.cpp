@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 60
+#define RESFILE_VERSION 61
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -1383,7 +1383,7 @@ const char *StaticResource::getFilename(const char *name) {
 		filename += ".CD";
 	else if (_vm->gameFlags().isDemo)
 		filename += ".DEM";
-	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _vm->gameFlags().gameID == GI_KYRA1)
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && (_vm->gameFlags().gameID == GI_KYRA1 || _vm->gameFlags().gameID == GI_LOL))
 		filename += ".98";
 	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 		filename += ".TNS";
