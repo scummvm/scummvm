@@ -137,9 +137,8 @@ void OSystem_SDL::initBackend() {
 
 	_graphicsMutex = createMutex();
 
-#if !defined(SAMSUNGTV)
 	SDL_ShowCursor(SDL_DISABLE);
-#endif
+
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
 
@@ -504,9 +503,9 @@ void OSystem_SDL::quit() {
 
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
-#if !defined(SAMSUNGTV)
+
 	SDL_ShowCursor(SDL_ENABLE);
-#endif
+
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
