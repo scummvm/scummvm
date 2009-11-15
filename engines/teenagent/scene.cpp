@@ -1006,16 +1006,11 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point po
 }
 
 uint Scene::messageDuration(const Common::String &str) {
-	uint words = 1;
-	for(uint i = 0; i < str.size(); ++i) {
-		if (str[i] == ' ' || str[i] == '\n')
-			++words;
-	}
-	words *= 7; //add text speed here
-	if (words < 15)
-		words = 15;
-
-	return words;
+	uint chars = str.size();
+	//to be discovered
+	if (chars < 10)
+		chars = 10;
+	return chars;
 }
 
 
