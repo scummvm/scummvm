@@ -4172,10 +4172,13 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	beginFadeOut();
 
 	char musicfile[13];
-	if (fileListLen() == 1)
+	if (fileListLen() == 1) {
 		sprintf(musicfile, fileListEntry(0), track);
-	else
+	} else {
 		strcpy(musicfile, fileListEntry(track));
+		if (!musicfile[0])
+			return;
+	}
 	delete[] _musicTrackData;
 
 	_musicTrackData = _vm->resource()->fileData(musicfile, 0);

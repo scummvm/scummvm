@@ -734,7 +734,7 @@ int TIMInterpreter::cmd_loadVocFile(const uint16 *param) {
 
 	_vocFiles[index] = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (stringId << 1)));
 
-	if (index == 2 && _currentTim->isLoLOutro) {
+	if (index == 2 && _currentTim->isLoLOutro && _vm->gameFlags().isTalkie) {
 		_vocFiles[index] = "CONGRATA.VOC";
 
 		switch (_currentTim->lolCharacter) {
