@@ -216,6 +216,23 @@ private:
 	};
 	typedef Common::List<Sound> Sounds;
 	Sounds sounds;
+	
+	struct DebugFeatures {
+		enum { 
+			kShowBack,
+			kShowLan,
+			kShowOns,
+			kShowOn, 
+			kMax
+		};
+		bool feature[kMax];
+		
+		DebugFeatures() {
+			for(uint i = 0; i < kMax; ++i) {
+				feature[i] = true;
+			}
+		}
+	} debug_features;
 };
 
 } // End of namespace TeenAgent

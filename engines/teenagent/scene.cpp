@@ -484,7 +484,9 @@ bool Scene::processEvent(const Common::Event &event) {
 		return false;
 
 	case Common::EVENT_KEYDOWN:
-		if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_SPACE) {
+		switch(event.kbd.keycode) {
+		case Common::KEYCODE_ESCAPE:
+		case Common::KEYCODE_SPACE: {
 			if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				intro = false;
 				clearMessage();
@@ -504,6 +506,21 @@ bool Scene::processEvent(const Common::Event &event) {
 				nextEvent();
 				return true;
 			}
+			break;
+		}
+		
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+			if (event.kbd.flags & Common::KBD_CTRL) {
+				uint feature = event.kbd.keycode - '1';
+				debug_features.feature[feature] = !debug_features.feature[feature];
+				debug(0, "switched feature %u %s", feature, debug_features.feature[feature] ? "on": "off");
+			}
+			break;
+		default:
+			break;
 		}
 
 	default:
@@ -512,7 +529,6 @@ bool Scene::processEvent(const Common::Event &event) {
 }
 
 bool Scene::render(OSystem *system) {
-	//render background
 	Resources *res = Resources::instance();
 	bool busy;
 	bool restart;
@@ -541,7 +557,7 @@ bool Scene::render(OSystem *system) {
 			return true;
 		}
 
-		if (background.pixels)
+		if (background.pixels && debug_features.feature[DebugFeatures::kShowBack])
 			system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
 		else
 			system->fillScreen(0);
@@ -549,7 +565,7 @@ bool Scene::render(OSystem *system) {
 		Graphics::Surface *surface = system->lockScreen();
 
 
-		if (ons != NULL) {
+		if (ons != NULL && debug_features.feature[DebugFeatures::kShowOns]) {
 			for (uint32 i = 0; i < ons_count; ++i) {
 				Surface *s = ons + i;
 				if (s != NULL)
@@ -557,12 +573,6 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-		//render on
-		if (on.pixels != NULL) {
-			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
-			}
-		}
 
 		bool got_any_animation = false;
 
@@ -602,7 +612,8 @@ bool Scene::render(OSystem *system) {
 			if (s == NULL)
 				continue;
 
-			animation_position[i] = s->render(surface);
+			if (debug_features.feature[DebugFeatures::kShowLan])
+				animation_position[i] = s->render(surface);
 
 			if (a->id == 0)
 				continue;
@@ -669,6 +680,13 @@ bool Scene::render(OSystem *system) {
 						busy = true;
 				} else 
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking);
+			}
+		}
+
+		//render on
+		if (on.pixels != NULL && debug_features.feature[DebugFeatures::kShowOn]) {
+			if (_id != 16 || getOns(16)[0] != 0) {
+				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
 			}
 		}
 
