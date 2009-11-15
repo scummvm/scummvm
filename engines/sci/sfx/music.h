@@ -34,6 +34,7 @@
 #include "common/savefile.h"
 
 #include "sci/sci.h"
+#include "sci/resource.h"
 
 /*
  Sound drivers info: (from driver cmd0)
@@ -53,7 +54,7 @@ namespace Sci {
 typedef uint16 SCIHANDLE;
 typedef uint16 HEAPHANDLE;
 
-class SoundRes {
+class SoundRes : Resource {
 public:
 	enum kTrackType {
 		kTrackAdlib = 0,

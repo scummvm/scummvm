@@ -60,7 +60,7 @@ private:
 	reg_t _acc;
 	int _midiCmd, _controller, _param;
 
-	Common::List<uint16> _soundList;
+	Common::List<reg_t> _soundList;
 
 	void cmdInitHandle(reg_t obj, SongHandle handle, int value);
 	void cmdPlayHandle(reg_t obj, SongHandle handle, int value);

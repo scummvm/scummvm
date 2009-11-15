@@ -262,22 +262,23 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 
 	if (!GET_SEL32V(_segMan, obj, nodePtr)) {
 		PUT_SEL32(_segMan, obj, nodePtr, obj);
-		_soundList.push_back(obj.toUint16());
+		_soundList.push_back(obj);
 	}
 
-	// TODO
-	/*
-	sciSound *pSnd = (sciSound *)heap2Ptr(hptr);
+	sciSound *pSnd = new sciSound();
 	pSnd->resnum = resnum;
 	pSnd->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
 	pSnd->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF; // priority
 	pSnd->volume = GET_SEL32V(_segMan, obj, vol) & 0xFF; // volume
 	pSnd->signal = pSnd->dataInc = 0;
+	pSnd->pMidiParser = 0;
+	pSnd->pStreamAud = 0;
 
 	_music->soundKill(pSnd);
-	if (res)
-		_music->soundInitSnd(res, pSnd);
-	*/
+	if (res) {
+		SoundRes *sndRes = (SoundRes *)res;
+		_music->soundInitSnd(sndRes, pSnd);
+	}
 #endif
 }
 
