@@ -254,7 +254,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 			sprintf(filename, "scummvm%05d.bmp", n);
 			file = SDL_RWFromFile(filename, "r");
 			if (!file)
-				return false;
+				break;
 			SDL_RWclose(file);
 		}
 		if (saveScreenshot(filename))
