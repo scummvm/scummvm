@@ -26,10 +26,12 @@
 #ifndef SCI_SOUNDCMD_H
 #define SCI_SOUNDCMD_H
 
+#include "common/list.h"
 #include "sci/engine/state.h"
 
 namespace Sci {
 
+class SciMusic;
 class SoundCommandParser;
 typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, SongHandle handle, int value);
 
@@ -47,14 +49,18 @@ public:
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 private:
+	SciMusic *_music;
 	Common::Array<SciSoundCommand*> _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 	SfxState *_state;
 	AudioPlayer *_audio;
+	bool _hasNodePtr;
 	SciVersion _doSoundVersion;
 	reg_t _acc;
 	int _midiCmd, _controller, _param;
+
+	Common::List<uint16> _soundList;
 
 	void cmdInitHandle(reg_t obj, SongHandle handle, int value);
 	void cmdPlayHandle(reg_t obj, SongHandle handle, int value);

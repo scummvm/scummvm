@@ -70,6 +70,7 @@ MODULE_OBJS := \
 	sfx/audio.o \
 	sfx/core.o \
 	sfx/iterator.o \
+	sfx/music.o \
 	sfx/songlib.o \
 	sfx/soundcmd.o \
 	sfx/seq/gm.o \

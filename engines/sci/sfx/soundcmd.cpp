@@ -24,9 +24,12 @@
  */
 
 #include "sci/sfx/iterator.h"	// for SongIteratorStatus
+#include "sci/sfx/music.h"
 #include "sci/sfx/soundcmd.h"
 
 namespace Sci {
+
+#define USE_OLD_MUSIC_FUNCTIONS
 
 #define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
 #define SCI1_SOUND_FLAG_SCRIPTED_PRI     2 /* but does touch this */
@@ -126,6 +129,13 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, SfxState *state, AudioPlayer *audio, SciVersion doSoundVersion) : 
 	_resMan(resMan), _segMan(segMan), _state(state), _audio(audio), _doSoundVersion(doSoundVersion) {
 
+	_hasNodePtr = (_doSoundVersion != SCI_VERSION_0_EARLY);
+
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music = new SciMusic();
+	_music->init();
+#endif
+
 	switch (doSoundVersion) {
 	case SCI_VERSION_0_EARLY:
 		SOUNDCOMMAND(cmdInitHandle);
@@ -220,10 +230,11 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 	if (!obj.segment)
 		return;
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongIteratorType type = (_doSoundVersion == SCI_VERSION_0_EARLY) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
 	int number = GET_SEL32V(_segMan, obj, number);
 
-	if (_doSoundVersion != SCI_VERSION_0_EARLY) {
+	if (_hasNodePtr) {
 		if (GET_SEL32V(_segMan, obj, nodePtr)) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			_state->sfx_remove_song(handle);
@@ -238,13 +249,36 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 
 	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
 
-	if (_doSoundVersion == SCI_VERSION_0_EARLY) {
+	if (!_hasNodePtr)
 		PUT_SEL32V(_segMan, obj, state, _K_SOUND_STATUS_INITIALIZED);
-	} else {
+	else
 		PUT_SEL32(_segMan, obj, nodePtr, obj);
-	}
 
 	PUT_SEL32(_segMan, obj, handle, obj);
+#else
+
+	uint16 resnum = GET_SEL32V(_segMan, obj, number);
+	Resource *res = resnum ? _resMan->findResource(ResourceId(kResourceTypeSound, resnum), true) : NULL;
+
+	if (!GET_SEL32V(_segMan, obj, nodePtr)) {
+		PUT_SEL32(_segMan, obj, nodePtr, obj);
+		_soundList.push_back(obj.toUint16());
+	}
+
+	// TODO
+	/*
+	sciSound *pSnd = (sciSound *)heap2Ptr(hptr);
+	pSnd->resnum = resnum;
+	pSnd->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
+	pSnd->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF; // priority
+	pSnd->volume = GET_SEL32V(_segMan, obj, vol) & 0xFF; // volume
+	pSnd->signal = pSnd->dataInc = 0;
+
+	_music->soundKill(pSnd);
+	if (res)
+		_music->soundInitSnd(res, pSnd);
+	*/
+#endif
 }
 
 void SoundCommandParser::cmdPlayHandle(reg_t obj, SongHandle handle, int value) {
@@ -332,7 +366,7 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, SongHandle handle, int valu
 	if (obj.segment) {
 		_state->sfx_remove_song(handle);
 
-		if (_doSoundVersion == SCI_VERSION_0_EARLY)
+		if (!_hasNodePtr)
 			PUT_SEL32V(_segMan, obj, handle, 0x0000);
 	}
 }
@@ -340,12 +374,12 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, SongHandle handle, int valu
 void SoundCommandParser::cmdStopHandle(reg_t obj, SongHandle handle, int value) {
 	changeHandleStatus(obj, handle, SOUND_STATUS_STOPPED);
 
-	if (_doSoundVersion != SCI_VERSION_0_EARLY)
+	if (_hasNodePtr)
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 }
 
 void SoundCommandParser::cmdSuspendHandle(reg_t obj, SongHandle handle, int value) {
-	if (_doSoundVersion == SCI_VERSION_0_EARLY)
+	if (!_hasNodePtr)
 		changeHandleStatus(obj, handle, SOUND_STATUS_SUSPENDED);
 	else
 		changeHandleStatus(obj, handle, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
@@ -387,7 +421,7 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) 
 	** than fading it! */
 	if (obj.segment) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		if (_doSoundVersion == SCI_VERSION_0_EARLY)
+		if (!_hasNodePtr)
 			PUT_SEL32V(_segMan, obj, state, SOUND_STATUS_STOPPED);
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 	}
