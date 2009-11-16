@@ -41,10 +41,6 @@ class OSystem_SDL_SamsungTV : public OSystem_SDL {
 public:
 	OSystem_SDL_SamsungTV();
 
-	virtual void warpMouse(int x, int y);
-
-	virtual bool pollEvent(Common::Event &event);
-
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
@@ -58,9 +54,6 @@ protected:
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 	virtual bool hotswapGFXMode();
-
-	void handleKbdMouse();
-	void generateMouseMoveEvent(int x, int y);
 
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };

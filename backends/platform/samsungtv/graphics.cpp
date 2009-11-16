@@ -66,20 +66,4 @@ void OSystem_SDL_SamsungTV::internUpdateScreen() {
 	SDL_UpdateRect(_realhwscreen, 0, 0, 0, 0);
 }
 
-void OSystem_SDL_SamsungTV::warpMouse(int x, int y) {
-	int y1 = y;
-
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		y1 = real2Aspect(y);
-
-	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (!_overlayVisible)
-			generateMouseMoveEvent(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
-		else
-			generateMouseMoveEvent(x, y1);
-
-		setMousePos(x, y);
-	}
-}
-
 #endif
