@@ -371,17 +371,17 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	if (!sayLineDefaults.font)
 		return;
 
-	_sayLineText = new TextObject(false);
+	_sayLineText = new TextObject(false, true);
 	_sayLineText->setDefaults(&sayLineDefaults);
 	_sayLineText->setText(msg);
 	_sayLineText->setFGColor(&_talkColor);
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
-		_sayLineText->setY(420);
+		_sayLineText->setY(456);
 	} else {
 		if (_winX1 == 1000 || _winX2 == -1000 || _winY2 == -1000) {
 			_sayLineText->setX(640 / 2);
-			_sayLineText->setY(0);
+			_sayLineText->setY(463);
 		} else {
 			_sayLineText->setX((_winX1 + _winX2) / 2);
 			_sayLineText->setY(_winY1);

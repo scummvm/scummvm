@@ -36,7 +36,7 @@ TextObjectDefaults sayLineDefaults;
 TextObjectDefaults printLineDefaults;
 TextObjectDefaults blastTextDefaults;
 
-TextObject::TextObject(bool blastDraw) :
+TextObject::TextObject(bool blastDraw, bool isSpeech) :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),
 		_numberLines(1), _disabled(false), _font(NULL), _textBitmap(NULL),
 		_bitmapWidthPtr(NULL), _textObjectHandle(NULL) {
@@ -45,6 +45,7 @@ TextObject::TextObject(bool blastDraw) :
 	_fgColor._vals[1] = 0;
 	_fgColor._vals[2] = 0;
 	_blastDraw = blastDraw;
+	_isSpeech = isSpeech;
 }
 
 void TextObject::setText(const char *text) {
@@ -108,12 +109,7 @@ int TextObject::getBitmapWidth() {
 }
 
 int TextObject::getBitmapHeight() {
-	uint height = 0;
-
-	for (int i = 0; i < _numberLines; i++) {
-		height += _font->getHeight();
-	}
-	return height;
+	return _numberLines * _font->getHeight();
 }
 
 int TextObject::getTextCharPosition(int pos) {
@@ -145,58 +141,80 @@ void TextObject::createBitmap() {
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
-	const int left = 10;
-	const int right = 630;
-	const int maxWidth = 620;
-	int stringWidth = 0;
+	const int SCREEN_WIDTH = 640;
+	const int SCREEN_MARGIN = 75;
 
-	for (int i = 0; i < (int)msg.size(); i++)
-		stringWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
-	
-	_numberLines = (stringWidth / maxWidth) + 1;
-	int numberCharsPerLine = (msg.size() / _numberLines) + 1;
+	// If the speaker is too close to the edge of the screen we have to make
+	// some room for the subtitles.
+	if (_isSpeech){
+		if (_x < SCREEN_MARGIN) {
+			_x = SCREEN_MARGIN;
+		} else if (SCREEN_WIDTH - _x < SCREEN_MARGIN) {
+			_x = SCREEN_WIDTH - SCREEN_MARGIN;
+		}
+	}
 
-	int cline = 1;
+	// The maximum width for any line of text is determined by the justification
+	// mode. Note that there are no left/right margins -- this is consistent
+	// with GrimE.
+	int maxWidth;
+	if (_justify == CENTER) {
+		maxWidth = 2 * MIN(_x, SCREEN_WIDTH - _x);
+	} else if (_justify == LJUSTIFY) {
+		maxWidth = SCREEN_WIDTH - _x;
+	} else if (_justify == RJUSTIFY) {
+		maxWidth = _x;
+	}
+
+	// We break the message to lines not longer than maxWidth
+	_numberLines = 1;
 	int lineWidth = 0;
 	int maxLineWidth = 0;
 	for (int i = 0; i < (int)msg.size(); i++) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
-		if (i + 1 == numberCharsPerLine * cline) {
-			if (lineWidth > maxLineWidth)
-				maxLineWidth = lineWidth;
-
-			++cline;
-			lineWidth = 0;
-
+		if (lineWidth > maxWidth) {
 			if (message.contains(' ')) {
 				while (msg[i] != ' ' && i > 0) {
+					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 					message.deleteLastChar();
 					--i;
 				} 
-			} else if (msg[i] != ' ') { // if it is an unique word
-				message.deleteLastChar();
+			} else if (msg[i] != ' ') { // if it is a unique word
+				int dashWidth = MAX(_font->getCharWidth('-'), _font->getCharDataWidth('-'));
+				while (lineWidth + dashWidth > maxWidth) {
+					lineWidth -= MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+					message.deleteLastChar();
+					--i;
+				}
 				message += '-';
-				--i;
  			}
 			message += '\n';
 			_numberLines++;
+
+			if (lineWidth > maxLineWidth) {
+				maxLineWidth = lineWidth;
+			}
+			lineWidth = 0;
 
 			continue; // don't add the space back
 		}
 
 		if (lineWidth > maxLineWidth)
 			maxLineWidth = lineWidth;
-		if (_justify == RJUSTIFY && (_x - maxLineWidth < left))
-			setX(-_x + maxLineWidth + 2 * left);
-		else if (_justify == LJUSTIFY && (_x + maxLineWidth > right))
-			setX((- maxLineWidth / 2) + right);
-		else if (_justify == CENTER) {
-			if (_x - maxLineWidth / 2 < left)
-				setX(-_x + maxLineWidth + 2 * left);
-			else if (_x + maxLineWidth / 2 > right)
-				setX((- maxLineWidth / 2) + right);
-		}
+
 		message += msg[i];
+	}
+
+	// If the text object is a speech subtitle, the y parameter is the
+	// coordinate of the bottom of the text block (instead of the top). It means
+	// that every extra line pushes the previous lines up, instead of being
+	// printed further down the screen.
+	const int SCREEN_TOP_MARGIN = 16;
+	if (_isSpeech) {
+		_y -= _numberLines * _font->getHeight();
+		if (_y < SCREEN_TOP_MARGIN) {
+			_y = SCREEN_TOP_MARGIN;
+		}
 	}
 
 	_textObjectHandle = (GfxBase::TextObjectHandle **)malloc(sizeof(long) * _numberLines);

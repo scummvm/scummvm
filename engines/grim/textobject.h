@@ -50,7 +50,7 @@ extern TextObjectDefaults blastTextDefaults;
 
 class TextObject {
 public:
-	TextObject(bool blastDraw);
+	TextObject(bool blastDraw, bool isSpeech = false);
 	~TextObject();
 	void createBitmap();
 	void destroyBitmap();
@@ -99,6 +99,7 @@ protected:
 	int _justify, _numberLines;
 	bool _disabled;
 	bool _blastDraw;
+	bool _isSpeech;
 	Font *_font;
 	char _textID[256];
 	uint8 *_textBitmap;
