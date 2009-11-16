@@ -4096,11 +4096,39 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"adi2.stk", "ediintro.tot", 0
 	},
+	{ // Found in french ADI 2 Francais-Maths CE2. Exact version not specified.
+		{
+			"adi2",
+			"Adi 2",
+			AD_ENTRY1s("adi2.stk", "d4162c4298f9423ecc1fb04965557e90", 11531214),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
 	{
 		{
 			"adi2",
 			"Adi 2.5",
 			AD_ENTRY1s("adi2.stk", "fcac60e6627f37aee219575b60859de9", 16944268),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
+			"Adi 2.5",
+			AD_ENTRY1s("adi2.stk", "072d5e2d7826a7c055865568ebf918bb", 16934596),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -4168,6 +4196,27 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"adi2",
+			"Non-Interactive Demo",
+			{
+				{"demo.scn", 0, "8b5ba359fd87d586ad39c1754bf6ea35", 168},
+				{"demadi2t.vmd", 0, "08a1b18cfe2015d3b43270da35cc813d", 7250723},
+				{"demarch.vmd", 0, "4c4a4616585d40ef3df209e3c3911062", 5622731},
+				{"demobou.vmd", 0, "2208b9855775564d15c4a5a559da0aec", 3550511},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeAdi2,
+		kFeatures640 | kFeaturesSCNDemo,
+		0, 0, 1
+	},
+
+	{
+		{
 			"adi4",
 			"",
 			AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
@@ -4185,6 +4234,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"adi4",
 			"Adi 4.0",
 			AD_ENTRY1s("intro.stk", "44491d85648810bc6fcf84f9b3aa47d5", 5834944),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
+			"Adi 4.0 Limited Edition",
+			AD_ENTRY1s("intro.stk", "ebbbc5e28a4adb695535ed989c1b8d66", 5929644),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -4239,6 +4302,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi4",
+			"Addy 4.21",
+			AD_ENTRY1s("intro.stk", "534f0b674cd4830df94a9c32c4ea7225", 6878034),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
 			"Addy 4 Sekundarstufe Basis CD",
 			AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 			DE_DEU,
@@ -4248,6 +4325,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeAdi4,
 		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
+			"ADI 4.11",
+			AD_ENTRY1s("intro.stk", "6296e4be4e0c270c24d1330881900c7f", 5921234),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeaturesNone,
 		0, 0, 0
 	},
 	{
@@ -4323,6 +4414,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibou2",
+			"ADIBOU 1",
+			AD_ENTRY1s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
 			"ADIBOU 2",
 			AD_ENTRY1s("intro.stk", "94ae7004348dc8bf99c23a9a6ef81827", 956162),
 			FR_FRA,
@@ -4339,6 +4444,34 @@ static const GOBGameDescription gameDescriptions[] = {
 			"adibou2",
 			"Le Jardin Magique d'Adibou",
 			AD_ENTRY1s("intro.stk", "a8ff86f3cc40dfe5898e0a741217ef27", 956328),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"ADIBOU 2.10 Environnement",
+			AD_ENTRY1s("intro.stk", "f2b797819aeedee557e904b0b5ccd82e", 8736454),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"ADIBOU 2.11 Environnement",
+			AD_ENTRY1s("intro.stk", "7b1f1f6f6477f54401e95d913f75e333", 8736904),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -4382,6 +4515,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"ADIB\xD9 2",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"ADIBOU Version Decouverte",
+			AD_ENTRY1s("intro.stk", "558c14327b79ed39214b49d567a75e33", 8737856),
+			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
