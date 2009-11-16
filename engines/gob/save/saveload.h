@@ -135,6 +135,70 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
+/** Save/Load class for Fascination. */
+class SaveLoad_Fascination : public SaveLoad {
+public:
+	static const uint32 kSlotCount = 15;
+	static const uint32 kSlotNameLength = 40;
+
+	/** The index. kSlotCount * kSlotNameLength bytes. */
+	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
+
+	SaveLoad_Fascination(GobEngine *vm, const char *targetName);
+	virtual ~SaveLoad_Fascination();
+
+	SaveMode getSaveMode(const char *fileName) const;
+
+protected:
+	struct SaveFile {
+		const char *sourceName;
+		SaveMode mode;
+		SaveHandler *handler;
+		const char *description;
+	};
+
+	/** Handles the save slots. */
+	class GameHandler : public SaveHandler {
+	public:
+		GameHandler(GobEngine *vm, const char *target);
+		~GameHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		/** Slot file construction. */
+		class File : public SlotFileIndexed {
+		public:
+			File(GobEngine *vm, const char *base);
+			~File();
+
+			int getSlot(int32 offset) const;
+			int getSlotRemainder(int32 offset) const;
+		};
+
+		byte _index[kIndexSize];
+		bool _hasIndex;
+
+		File *_slotFile;
+
+		void buildIndex(byte *buffer) const;
+	};
+
+	static SaveFile _saveFiles[];
+
+	GameHandler *_gameHandler;
+	NotesHandler *_notesHandler;
+	TempSpriteHandler *_tempSpriteHandler;
+
+	SaveHandler *getHandler(const char *fileName) const;
+	const char *getDescription(const char *fileName) const;
+
+	const SaveFile *getSaveFile(const char *fileName) const;
+	SaveFile *getSaveFile(const char *fileName);
+};
+
 /** Save/Load class for Goblins 3 and Lost in Time. */
 class SaveLoad_v3 : public SaveLoad {
 public:
