@@ -166,7 +166,7 @@ bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_RBUTTONDOWN;
 				fillMouseEvent(event, _km.x, _km.y);
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_HOME) {
+			} else if (ev.key.keysym.sym == SDLK_POWER) {
 				event.type = Common::EVENT_QUIT;
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F2) {
@@ -199,7 +199,7 @@ bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_RBUTTONUP;
 				fillMouseEvent(event, _km.x, _km.y);
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_HOME) {
+			} else if (ev.key.keysym.sym == SDLK_POWER) {
 				event.type = Common::EVENT_QUIT;
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F2) {
