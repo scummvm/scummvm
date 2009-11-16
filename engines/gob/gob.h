@@ -106,7 +106,8 @@ enum GameType {
 	kGameTypeFascination,
 	kGameTypeGeisha,
 	kGameTypeAdi2,
-	kGameTypeAdibou4,
+	kGameTypeAdi4,
+	kGameTypeAdibou2,
 	kGameTypeAdibouUnknown
 };
 

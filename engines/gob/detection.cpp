@@ -72,9 +72,10 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
-	{"adi2", "ADI v2"},
-	{"adibou4", "Adibou v4"},
-	{"adibouunknown", "Adibou (not yet supported)"},
+	{"adi2", "ADI 2"},
+	{"adi4", "ADI 4"},
+	{"adibou2","Adibou 2"},
+	{"adibouunknown", "Adibou unknown"},
 	{0, 0}
 };
 
@@ -663,6 +664,76 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob1",
+			"",
+			AD_ENTRY1s("intro.stk", "f5f028ee39c456fa51fa63b606583918", 313472),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob1",
+			"",
+			AD_ENTRY1s("intro.stk", "f5f028ee39c456fa51fa63b606583918", 313472),
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob1",
+			"",
+			AD_ENTRY1s("intro.stk", "f5f028ee39c456fa51fa63b606583918", 313472),
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob1",
+			"",
+			AD_ENTRY1s("intro.stk", "f5f028ee39c456fa51fa63b606583918", 313472),
+			IT_ITA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob1",
+			"",
+			AD_ENTRY1s("intro.stk", "f5f028ee39c456fa51fa63b606583918", 313472),
+			ES_ESP,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{
 		{
 			"gob1",
@@ -1218,6 +1289,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob2",
 			"",
 			AD_ENTRY1s("intro.stk", "24489330a1d67ff978211f574822a5a6", 883756),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{ // Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "285d7340f98ebad65d465585da12910b", 837286),
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -2815,6 +2900,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{ // Found in Found in french ADI 2.5 Anglais Multimedia 5e
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "edd7403e5dc2a14459d2665a4c17714d", 209534),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{
 		{
 			"inca2",
@@ -4000,8 +4099,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
-			"Adi 2.6",
-			AD_ENTRY1s("adi2.stk", "2fb940eb8105b12871f6b88c8c4d1615", 16780058),
+			"Adi 2.5",
+			AD_ENTRY1s("adi2.stk", "fcac60e6627f37aee219575b60859de9", 16944268),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -4014,8 +4113,8 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
-			"Adi 2.7.1",
-			AD_ENTRY1s("adi2.stk", "6fa5dffebf5c7243c6af6b8c188ee00a", 19278008),
+			"Adi 2.6",
+			AD_ENTRY1s("adi2.stk", "2fb940eb8105b12871f6b88c8c4d1615", 16780058),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -4042,6 +4141,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
+			"Adi 2.7.1",
+			AD_ENTRY1s("adi2.stk", "6fa5dffebf5c7243c6af6b8c188ee00a", 19278008),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
 			"ADI 2",
 			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
 			ES_ESP,
@@ -4055,7 +4168,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"adibou4",
+			"adi4",
 			"",
 			AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
 			FR_FRA,
@@ -4063,13 +4176,55 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi4,
 		kFeatures640,
 		0, 0, 0
 	},
 	{
 		{
-			"adibou4",
+			"adi4",
+			"Adi 4.0",
+			AD_ENTRY1s("intro.stk", "44491d85648810bc6fcf84f9b3aa47d5", 5834944),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
+			"Adi 4.0 Interactive Demo",
+			AD_ENTRY1s("intro.stk", "89ace204dbaac001425c73f394334f6f", 2413102),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
+			"Adi 4.0 / Adibou 2 Demo",
+			AD_ENTRY1s("intro.stk", "d41d8cd98f00b204e9800998ecf8427e", 0),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_DEMO,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
 			"Addy 4 Grundschule Basis CD",
 			AD_ENTRY1s("intro.stk", "d2f0fb8909e396328dc85c0e29131ba8", 5847588),
 			DE_DEU,
@@ -4077,13 +4232,13 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi4,
 		kFeatures640,
 		0, 0, 0
 	},
 	{
 		{
-			"adibou4",
+			"adi4",
 			"Addy 4 Sekundarstufe Basis CD",
 			AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 			DE_DEU,
@@ -4091,38 +4246,52 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi4,
 		kFeatures640,
 		0, 0, 0
 	},
 	{
 		{
-			"adibou4",
-			"ADI 4.21 French",
+			"adi4",
+			"ADI 4.21",
 			AD_ENTRY1s("intro.stk", "c5b9f6222c0b463f51dab47317c5b687", 5950490),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi4,
 		kFeaturesNone,
 		0, 0, 0
-	},	
+	},
 	{
 		{
-			"adibou4",
-			"ADI 4.10 English",
+			"adi4",
+			"ADI 4.10",
 			AD_ENTRY1s("intro.stk", "3e3fa9656e37d802027635ace88c4cc5", 5359144),
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi4,
 		kFeaturesNone,
 		0, 0, 0
-	},	
+	},
+	{
+		{
+			"adi4",
+			"ADI 4.10",
+			AD_ENTRY1s("intro.stk", "6afc2590856433b9f5295b032f2b205d", 5923112),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeaturesNone,
+		0, 0, 0
+	},
 	{
 		{
 			"adibouunknown",
@@ -4153,35 +4322,49 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"adibouunknown",
-			"ADIBOU 2 French",
+			"adibou2",
+			"ADIBOU 2",
 			AD_ENTRY1s("intro.stk", "94ae7004348dc8bf99c23a9a6ef81827", 956162),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibouUnknown,
+		kGameTypeAdibou2,
 		kFeaturesNone,
 		0, 0, 0
 	},
 	{
 		{
-			"adibouunknown",
-			"ADIBOU 2 environnement",
+			"adibou2",
+			"Le Jardin Magique d'Adibou",
+			AD_ENTRY1s("intro.stk", "a8ff86f3cc40dfe5898e0a741217ef27", 956328),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"ADIBOU 2.13s Environnement",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibouUnknown,
+		kGameTypeAdibou2,
 		kFeaturesNone,
 		0, 0, 0
 	},
 	{
 		{
-			"adibouunknown",
+			"adibou2",
 			"ADIBOU 2",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 			DE_DEU,
@@ -4189,21 +4372,21 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibouUnknown,
+		kGameTypeAdibou2,
 		kFeaturesNone,
 		0, 0, 0
 	},
 	{
 		{
-			"adibouunknown",
-			"ADIB\xD9 2 Ambiente",
+			"adibou2",
+			"ADIB\xD9 2",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibouUnknown,
+		kGameTypeAdibou2,
 		kFeaturesNone,
 		0, 0, 0
 	},
@@ -4553,7 +4736,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{ //23
 		{
-			"adibou4",
+			"adi4",
 			"",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -4561,7 +4744,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi4,
 		kFeatures640,
 		"adif41.stk", 0, 0
 	},

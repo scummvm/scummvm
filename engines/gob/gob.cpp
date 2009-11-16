@@ -444,7 +444,7 @@ bool GobEngine::initGameParts() {
 		_saveLoad = new SaveLoad(this);
 		break;
 
-	case kGameTypeAdibou4:
+	case kGameTypeAdi4:
 	case kGameTypeUrban:
 		_init     = new Init_v6(this);
 		_video    = new Video_v6(this);
@@ -470,6 +470,7 @@ bool GobEngine::initGameParts() {
 		_saveLoad = new SaveLoad_Playtoons(this, _targetName.c_str());
 		break;
 
+	case kGameTypeAdibou2:
 	case kGameTypeAdi2:
 		_init     = new Init_v2(this);
 		_video    = new Video_v6(this);
