@@ -430,7 +430,19 @@ void Scene::init(int id, const Common::Point &pos) {
 	setPalette(_system, palette, 4);
 
 	Common::SeekableReadStream *stream = res->on.getStream(id);
-	on.load(stream, Surface::kTypeOn);
+	int sub_hack = 0;
+	if (id == 7) { //something patched in the captains room
+		switch(res->dseg.get_byte(0xdbe6)) {
+			case 2: 
+				break;
+			case 1:
+				sub_hack = 1;
+				break;
+			default:
+				sub_hack = 2;
+		}
+	}
+	on.load(stream, Surface::kTypeOn, sub_hack);
 	delete stream;
 
 	loadOns();

@@ -33,7 +33,7 @@ Surface::Surface() : x(0), y(0) {
 	memset(flags, 0, sizeof(flags));
 }
 
-void Surface::load(Common::SeekableReadStream *stream, Type type) {
+void Surface::load(Common::SeekableReadStream *stream, Type type, int sub_hack) {
 	//debug(0, "load()");
 	free();
 
@@ -47,6 +47,8 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 
 		for (byte i = 0; i < fn; ++i) {
 			flags[i] = stream->readUint16LE();
+			if (i == 0)
+				flags[i] -= sub_hack;
 			debug(0, "flags[%u] = %u (0x%04x)", i, flags[i], flags[i]);
 		}
 	}

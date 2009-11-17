@@ -323,7 +323,7 @@ Common::Error TeenAgentEngine::run() {
 		}
 
 		_system->showMouse(scene->getMessage().empty());
-		uint32 f0 = frame * 10 / 25, f1 = (frame + 1) * 10 / 25;
+		uint32 f0 = frame * 12 / 25, f1 = (frame + 1) * 12 / 25;
 		if (f0 != f1) {
 			bool b = scene->render(_system);
 			scene_busy = b;
