@@ -300,16 +300,16 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		int i;
 		Actor actor;
 
-		actor.x          = stream->readUint32LE();
-		actor.y          = stream->readUint32LE();
+		actor.x          = stream->readSint32LE();
+		actor.y          = stream->readSint32LE();
 		actor.grResId    = stream->readUint32LE();
 		actor.field_C    = stream->readUint32LE();
 		actor.frameNum   = stream->readUint32LE();
 		actor.frameCount = stream->readUint32LE();
-		actor.x1         = stream->readUint32LE();
-		actor.y1         = stream->readUint32LE();
-		actor.x2         = stream->readUint32LE();
-		actor.y2         = stream->readUint32LE();
+		actor.x1         = stream->readSint32LE();
+		actor.y1         = stream->readSint32LE();
+		actor.x2         = stream->readSint32LE();
+		actor.y2         = stream->readSint32LE();
 
 		actor.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
 		actor.boundingRect.top    = stream->readUint32LE() & 0xFFFF;

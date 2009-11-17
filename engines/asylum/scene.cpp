@@ -101,6 +101,8 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	g_debugBarriers = 0;
 
 	// TODO: do all the rest stuffs in sub at address 40E460
+	// XXX The player actor index is only ever changed again using
+	// changeCharacter()
 	_playerActorIdx = 0;
 
 	if (_ws->numBarriers > 0) {
@@ -117,26 +119,28 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	_vm->screen()->clearGraphicsInQueue();
 	_ws->motionStatus = 1;
 
-	_ws->actors[_playerActorIdx].boundingRect.bottom = _ws->actors[_playerActorIdx].y2;
-	_ws->actors[_playerActorIdx].boundingRect.right = 2 * _ws->actors[_playerActorIdx].x2;
-	_ws->boundingRect = Common::Rect(195, 115, 445 - _ws->actors[_playerActorIdx].boundingRect.right, 345 - _ws->actors[_playerActorIdx].boundingRect.bottom);
+	Actor *actor = getActor();
 
-	_ws->actors[_playerActorIdx].flags |= 1;
-	_ws->actors[_playerActorIdx].changeOrientation(4);
+	actor->boundingRect.bottom = actor->y2;
+	actor->boundingRect.right = 2 * actor->x2;
+	_ws->boundingRect = Common::Rect(195, 115, 445 - actor->boundingRect.right, 345 - actor->boundingRect.bottom);
 
-	_ws->actors[_playerActorIdx].x1 -= _ws->actors[_playerActorIdx].x2;
-	_ws->actors[_playerActorIdx].y1 -= _ws->actors[_playerActorIdx].y2;
+	actor->flags |= 1;
+	actor->changeOrientation(4);
+
+	actor->x1 -= actor->x2;
+	actor->y1 -= actor->y2;
 
 	if (_ws->numActors > 1) {
 		for (uint32 a = 1; a < _ws->numActors; a++) {
-			Actor *actor = &_ws->actors[a];
-			actor->flags |= 1;
-			actor->direction = 1;
-			actor->changeOrientation(4);
-			actor->x1 -= actor->x2;
-			actor->y1 -= actor->y2;
-			actor->boundingRect.bottom = actor->y2;
-			actor->boundingRect.right = 2 * actor->x2;
+			Actor *act = &_ws->actors[a];
+			act->flags |= 1;
+			act->direction = 1;
+			act->changeOrientation(4);
+			act->x1 -= act->x2;
+			act->y1 -= act->y2;
+			act->boundingRect.bottom = act->y2;
+			act->boundingRect.right  = 2 * act->x2;
 		}
 	}
 
@@ -215,13 +219,13 @@ void Scene::setScenePosition(int x, int y) {
 
 	if (_ws->targetX < 0)
 		_ws->targetX = 0;
-	if (_ws->targetX > (uint32)(bg->surface.w - 640))
+	if (_ws->targetX > (bg->surface.w - 640))
 		_ws->targetX = bg->surface.w - 640;
 
 
 	if (_ws->targetY < 0)
 		_ws->targetY = 0;
-	if (_ws->targetY > (uint32)(bg->surface.h - 480))
+	if (_ws->targetY > (bg->surface.h - 480))
 		_ws->targetY = bg->surface.h - 480;
 }
 
@@ -266,7 +270,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 void Scene::update() {
 #ifdef SHOW_SCENE_LOADING
 	if (!_titleLoaded) {
-		_title->update(_vm->_system->getMillis());
+		_title->update(_vm->getTick());
 		if (_title->loadingComplete()) {
 			_titleLoaded = true;
 			enterScene();
@@ -287,39 +291,35 @@ int Scene::updateScene() {
 	uint32 startTick   = 0;
 
 	// Mouse
-	startTick = _vm->_system->getMillis();
+	startTick = _vm->getTick();
 	updateMouse();
-	debugC(kDebugLevelScene, "UpdateMouse Time: %d", _vm->_system->getMillis() - startTick);
+	debugC(kDebugLevelScene, "UpdateMouse Time: %d", _vm->getTick() - startTick);
 
 	// Actors
-	startTick = _vm->_system->getMillis();
+	startTick = _vm->getTick();
 	for (uint32 a = 0; a < _ws->numActors; a++)
 		updateActor(a);
-	debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->_system->getMillis() - startTick);
+	debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->getTick() - startTick);
 
 	// Barriers
-	startTick = _vm->_system->getMillis();
+	startTick = _vm->getTick();
 	updateBarriers();
-	debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->_system->getMillis() - startTick);
+	debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->getTick() - startTick);
 
 	// Ambient Sounds
-	startTick = _vm->_system->getMillis();
+	startTick = _vm->getTick();
 	updateAmbientSounds();
-	debugC(kDebugLevelScene, "UpdateAmbientSounds Time: %d", _vm->_system->getMillis() - startTick);
+	debugC(kDebugLevelScene, "UpdateAmbientSounds Time: %d", _vm->getTick() - startTick);
 
 	// Music
-	startTick = _vm->_system->getMillis();
+	startTick = _vm->getTick();
 	updateMusic();
-	debugC(kDebugLevelScene, "UpdateMusic Time: %d", _vm->_system->getMillis() - startTick);
+	debugC(kDebugLevelScene, "UpdateMusic Time: %d", _vm->getTick() - startTick);
 
 	// Adjust Screen
-	//startTick = _vm->_system->getMillis();
-	// FIXME
-	// Commented out the (incomplete) update screen code because once the
-	// actor's x1/y1 values are properly set, the temp code causes a crash
-	// Have to finish implementing the method I guess :P
+	startTick = _vm->getTick();
 	updateAdjustScreen();
-	//debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->_system->getMillis() - startTick);
+	debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->getTick() - startTick);
 
 	if (_actions->process())
 		return 1;
@@ -505,11 +505,11 @@ void Scene::updateActor(uint32 actorIdx) {
 			uint32 frameNum = actor->frameNum + 1;
 			actor->frameNum = frameNum % actor->frameCount;
 
-			if (_vm->_system->getMillis() - actor->tickValue1 > 300) {
+			if (_vm->getTick() - actor->tickValue1 > 300) {
 				if (rand() % 100 < 50) {
 					// TODO: check sound playing
 				}
-				actor->tickValue1 = _vm->_system->getMillis();
+				actor->tickValue1 = _vm->getTick();
 			}
 		}
 		break;
@@ -535,7 +535,7 @@ void Scene::updateActor(uint32 actorIdx) {
 			break;
 		case 0x4:
 			if (actor->field_944 != 5) {
-				// TODO: updateCharacterSub01_sw(1, actorIdx);
+				updateActorSub01(actor);
 			}
 			break;
 		case 0xE:
@@ -560,6 +560,49 @@ void Scene::updateActor(uint32 actorIdx) {
 	}
 }
 
+void Scene::updateActorSub01(Actor *act) {
+	// TODO make sure this is right
+	act->frameNum = act->frameNum + 1 % act->frameCount;
+	if (_vm->getTick() - act->tickValue1 > 300) {
+		// TODO
+		// Check if the actor's name is "Crow"?
+		if (rand() % 100 < 50) {
+			// TODO
+			// Check if soundResId04 is assigned, and if so,
+			// if it's playing
+			// If true, check characterSub407260(10)
+			// and if that's true, do characterDirection(9)
+		}
+	}
+
+	// if act == getActor()
+	if (_vm->tempTick07) {
+		if (_vm->getTick() - _vm->tempTick07 > 500) {
+			if (_vm->isGameFlagNotSet(183)) { // processing action list
+				if (act->visible()) {
+					// if some_encounter_flag
+						// if !soundResId04
+							if (rand() % 100 < 50) {
+								if (_sceneIdx == 13) {
+									; // sub414810(507)
+								} else {
+									; // sub4146d0(4)
+								}
+							}
+				}
+			}
+		}
+		act->tickValue1 = _vm->getTick();
+	}
+	// else
+	// TODO now there's something to do with the
+	// character's name and "Big Crow", or "Crow".
+	// Quite a bit of work to do yet, but it only seems to
+	// take effect when the character index doesn't equal
+	// the currentPlayerIndex (so I'm guessing this is a
+	// one off situation).
+}
+
 void Scene::updateBarriers() {
 	//Screen *screen = _vm->screen();
 
@@ -575,17 +618,17 @@ void Scene::updateBarriers() {
 				if (_ws->isBarrierVisible(b)) {
 					uint32 flag = barrier->flags;
 					if (flag & 0x20) {
-						if (barrier->field_B4 && (_vm->_system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
 							barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
-							barrier->tickCount = _vm->_system->getMillis();
+							barrier->tickCount = _vm->getTick();
 							canPlaySound       = true;
 						}
 					} else if (flag & 0x10) {
-						uint32 frameIdx  = barrier->frameIdx;
-						char   equalZero = frameIdx == 0;
-						char   lessZero  = frameIdx < 0;
+						int frameIdx  = barrier->frameIdx;
+						int equalZero = frameIdx == 0;
+						int lessZero  = frameIdx < 0;
 						if (!frameIdx) {
-							if (_vm->_system->getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
+							if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
 								if (rand() % barrier->field_C0 == 1) {
 									if (barrier->field_68C[0]) {
 										// TODO: fix this, and find a better way to get frame count
@@ -598,7 +641,7 @@ void Scene::updateBarriers() {
 									}
 									barrier->frameIdx++;
 								}
-								barrier->tickCount = _vm->_system->getMillis();
+								barrier->tickCount = _vm->getTick();
 								canPlaySound       = true;
 							}
 							frameIdx  = barrier->frameIdx;
@@ -606,17 +649,17 @@ void Scene::updateBarriers() {
 							lessZero  = frameIdx < 0;
 						}
 
-						if (!(lessZero ^ 0 | equalZero)) {
+						if (!((lessZero ^ 0) | equalZero)) {
 							// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-							if (barrier->field_B4 && (_vm->_system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+							if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
 								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
-								barrier->tickCount = _vm->_system->getMillis();
+								barrier->tickCount = _vm->getTick();
 								canPlaySound = true;
 							}
 						}
 					} else if (flag & 8) {
 						// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-						if (barrier->field_B4 && (_vm->_system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
 							uint32 frameIdx = barrier->frameIdx + 1;
 							if (frameIdx < barrier->frameCount - 1) {
 								if (barrier->field_688 == 1) {
@@ -631,30 +674,30 @@ void Scene::updateBarriers() {
 							barrier->frameIdx = frameIdx;
 						}
 					} else if ((flag & 0xFF) & 8) { // check this
-						if (_vm->_system->getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
+						if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
 							if (rand() % barrier->field_C0 == 1) { // TODO: THIS ISNT WORKING
 								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
-								barrier->tickCount = _vm->_system->getMillis();
+								barrier->tickCount = _vm->getTick();
 								canPlaySound = true;
 							}
 						}
 					} else if (!((flag & 0xFFFF) & 6)) {
 						// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-						if (barrier->field_B4 && (_vm->_system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) && (flag & 0x10000)) {
+						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) && (flag & 0x10000)) {
 							uint32 frameIdx = barrier->frameIdx - 1;
 							if (frameIdx <= 0) {
 								barrier->flags &= 0xFFFEFFFF;
 								if (barrier->field_688 == 1) {
 									// TODO: reset global x, y positions
 								}
-								barrier->tickCount = _vm->_system->getMillis();
+								barrier->tickCount = _vm->getTick();
 								canPlaySound = true;
 							}
 							if (barrier->field_688 == 1) {
 								// TODO: get global x, y positions
 							}
 							barrier->frameIdx = frameIdx;
-						} else if (barrier->field_B4 && (_vm->_system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+						} else if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
 							if ((flag & 0xFF) & 2) {
 								if (barrier->frameIdx == barrier->frameCount - 1) {
 									barrier->frameIdx--;
@@ -1052,7 +1095,7 @@ int Scene::drawScene() {
 		// Force the screen to scroll if the mouse approaches the edges
 		//debugScreenScrolling(bg);
 
-		//drawActorsAndBarriers();
+		drawActorsAndBarriers();
 		queueActorUpdates();
 		queueBarrierUpdates();
 
@@ -1134,7 +1177,10 @@ void Scene::drawActorsAndBarriers() {
 				} else {
 					if (bar->flags & 0x40) {
 						PolyDefinitions *poly = &_polygons->entries[bar->polyIdx];
-						intersects = poly->contains(pt.x, pt.y);
+						if (pt.x > 0 && pt.y > 0 && poly->numPoints > 0)
+							intersects = poly->contains(pt.x, pt.y);
+						else
+							warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
 					}
 					// XXX the original has an else case here that
 					// assigns intersects the value of the
