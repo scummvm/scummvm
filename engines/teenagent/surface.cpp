@@ -45,12 +45,13 @@ void Surface::load(Common::SeekableReadStream *stream, Type type, int sub_hack) 
 		if (stream->eos())
 			return;
 
-		for (byte i = 0; i < fn; ++i) {
+		byte i;
+		for (i = 0; i < fn - sub_hack; ++i) {
 			flags[i] = stream->readUint16LE();
-			if (i == 0)
-				flags[i] -= sub_hack;
 			debug(0, "flags[%u] = %u (0x%04x)", i, flags[i], flags[i]);
 		}
+		for(; i < fn; ++i)
+			debug(0, "*hack* skipping flag %04x", stream->readUint16LE());
 	}
 
 	uint16 w_ = stream->readUint16LE();
