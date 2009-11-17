@@ -667,8 +667,13 @@ bool Scene::render(OSystem *system) {
 			} else if (!hide_actor) {
 				actor_animation.free();
 				uint zoom = 256;
-				if (_id == 18) { //zoom hack
-					zoom = 192;
+				const int zoom_min = 115, zoom_max = 150;
+				if (_id == 18 && position.y < zoom_max) { //zoom hack
+					if (position.y >= zoom_min) 
+						zoom = 128 + 128 * (position.y - zoom_min) / (zoom_max - zoom_min);
+					else 
+						zoom = 128;
+					debug(0, "zoom = %u", zoom);
 				}
 
 				if (!path.empty()) {
