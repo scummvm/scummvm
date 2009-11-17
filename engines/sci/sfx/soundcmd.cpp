@@ -147,7 +147,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdSuspendHandle);
 		SOUNDCOMMAND(cmdResumeHandle);
 		SOUNDCOMMAND(cmdVolume);
-		SOUNDCOMMAND(cmdHandlePriority);
+		SOUNDCOMMAND(cmdUpdateVolumePriority);
 		SOUNDCOMMAND(cmdFadeHandle);
 		SOUNDCOMMAND(cmdGetPolyphony);
 		SOUNDCOMMAND(cmdGetPlayNext);
@@ -219,6 +219,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	if (command < _soundCommands.size()) {
+		printf("%s\n", _soundCommands[command]->desc);
 		debugC(2, kDebugLevelSound, "%s", _soundCommands[command]->desc);
 		(this->*(_soundCommands[command]->sndCmd))(obj, handle, value);
 	} else {
@@ -413,25 +414,23 @@ void SoundCommandParser::cmdVolume(reg_t obj, SongHandle handle, int value) {
 }
 
 void SoundCommandParser::cmdHandlePriority(reg_t obj, SongHandle handle, int value) {
-	if (obj.segment) {
-		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
+	if (obj.segment)
 		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
-	}
 }
 
 void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) {
 	if (!obj.segment)
 		return;
 
-	/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
-	/* FIXME: The next couple of lines actually STOP the handle, rather
-	** than fading it! */
-	_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-	if (!_hasNodePtr)
-		PUT_SEL32V(_segMan, obj, state, SOUND_STATUS_STOPPED);
-	PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
-
-	if (_doSoundVersion == SCI_VERSION_1_LATE) {
+	if (_doSoundVersion != SCI_VERSION_1_LATE) {
+		/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
+		/* FIXME: The next couple of lines actually STOP the handle, rather
+		** than fading it! */
+		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+		if (!_hasNodePtr)
+			PUT_SEL32V(_segMan, obj, state, SOUND_STATUS_STOPPED);
+		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+	} else {
 		fade_params_t fade;
 		fade.final_volume = _argv[2].toUint16();
 		fade.ticks_per_step = _argv[3].toUint16();
@@ -490,14 +489,12 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, SongHandle handle, int value) 
 	int sec = 0;
 	int frame = 0;
 	int result = SI_LOOP; // small hack
-	int cue = 0;
 
 	while (result == SI_LOOP)
-		result = _state->sfx_poll_specific(handle, &cue);
+		result = _state->sfx_poll_specific(handle, &signal);
 
 	switch (result) {
 	case SI_ABSOLUTE_CUE:
-		signal = cue;
 		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 		          PRINT_REG(obj), signal);
 
@@ -505,15 +502,17 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, SongHandle handle, int value) 
 		break;
 
 	case SI_RELATIVE_CUE:
-		signal = cue;
 		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Relative Cue: %d\n",
-		          PRINT_REG(obj), cue);
+		          PRINT_REG(obj), signal);
 
 		/* FIXME to match commented-out semantics
 		 * below, with proper storage of dataInc and
 		 * signal in the iterator code. */
 		PUT_SEL32V(_segMan, obj, dataInc, signal);
-		PUT_SEL32V(_segMan, obj, signal, signal);
+		if (_doSoundVersion == SCI_VERSION_1_EARLY)
+			PUT_SEL32V(_segMan, obj, signal, signal);
+		else
+			PUT_SEL32V(_segMan, obj, signal, signal + 127);
 		break;
 
 	case SI_FINISHED:
@@ -547,9 +546,11 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, SongHandle handle, int value) 
 	//	break;
 	//}
 
-	PUT_SEL32V(_segMan, obj, min, min);
-	PUT_SEL32V(_segMan, obj, sec, sec);
-	PUT_SEL32V(_segMan, obj, frame, frame);
+	if (_doSoundVersion == SCI_VERSION_1_EARLY) {
+		PUT_SEL32V(_segMan, obj, min, min);
+		PUT_SEL32V(_segMan, obj, sec, sec);
+		PUT_SEL32V(_segMan, obj, frame, frame);
+	}
 }
 
 void SoundCommandParser::cmdSendMidi(reg_t obj, SongHandle handle, int value) {
@@ -583,11 +584,7 @@ void SoundCommandParser::cmdSetHandlePriority(reg_t obj, SongHandle handle, int 
 
 void SoundCommandParser::cmdSetHandleLoop(reg_t obj, SongHandle handle, int value) {
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
-		uint16 looping = value;
-
-		if (looping < 65535)
-			looping = 1;
-
+		uint16 looping = (value == -1) ? 1 : 0xFFFF;
 		_state->sfx_song_set_loops(handle, looping);
 		PUT_SEL32V(_segMan, obj, loop, looping);
 	}
@@ -598,7 +595,10 @@ void SoundCommandParser::cmdSuspendSound(reg_t obj, SongHandle handle, int value
 }
 
 void SoundCommandParser::cmdUpdateVolumePriority(reg_t obj, SongHandle handle, int value) {
-	// TODO
+	if (_doSoundVersion == SCI_VERSION_0_EARLY && obj.segment) {
+ 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
+ 		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
+ 	}
 }
 
 } // End of namespace Sci
