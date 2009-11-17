@@ -107,8 +107,8 @@ public:
 	uint32			 field_8C;
 	uint32			 numActions;	 // field_90
 	uint32			 numBarriers;
-	uint32			 targetX;
-	uint32			 targetY;
+	int				 targetX;
+	int				 targetY;
 	uint32			 field_A0;
 	uint32			 field_A4;
 	uint32			 field_A8;

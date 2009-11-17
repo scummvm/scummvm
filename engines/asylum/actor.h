@@ -191,16 +191,16 @@ public:
 
 	int currentAction; // TODO depreciate
 
-	uint32		 x;
-	uint32		 y;
+	int32		 x;
+	int32		 y;
 	uint32		 grResId;
 	uint32		 field_C; // BarrierIndex? Mask index?
 	uint32		 frameNum;
 	uint32		 frameCount;
-	uint32		 x1;
-	uint32		 y1;
-	uint32		 x2;
-	uint32		 y2;
+	int32		 x1;
+	int32		 y1;
+	int32		 x2;
+	int32		 y2;
 	Common::Rect boundingRect;
 	uint32		 direction;
 	uint32		 field_3C;

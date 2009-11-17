@@ -96,6 +96,14 @@ public:
 	bool isGameFlagSet(int flag);
 	bool isGameFlagNotSet(int flag);
 
+	/**
+	 * Wrapper function to the OSystem getMillis() method
+	 */
+	uint32 getTick() { return _system->getMillis(); }
+
+	uint32 tempTick07;
+
+
 	Video*  video()  {
 		return _video;
 	}

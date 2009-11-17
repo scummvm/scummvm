@@ -161,6 +161,10 @@ private:
 	int    updateScene();
 	void   updateMouse();
 	void   updateActor(uint32 actorIdx);
+	/**
+	 * TODO give more meaningful name
+	 */
+	void   updateActorSub01(Actor *act);
 	void   updateBarriers();
 	void   updateAmbientSounds();
 	void   updateMusic();

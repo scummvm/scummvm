@@ -548,8 +548,10 @@ int kShowActor(ActionCommand *cmd, Scene *scn) {
 		actor = &scn->worldstats()->actors[cmd->param1];
 
 	actor->visible(true);
+	// TODO character_sub_401320
+	actor->tickValue1 = scn->vm()->getTick();
 
-	return -3;
+	return -2;
 }
 
 int kSetActorStats(ActionCommand *cmd, Scene *scn) {
