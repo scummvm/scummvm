@@ -36,8 +36,7 @@
 
 bool OSystem_SDL_SamsungTV::loadGFXMode() {
        OSystem_SDL::loadGFXMode();
-       _realhwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
-               _videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE);
+       _realhwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32, 0);
 
        return true;
 }
