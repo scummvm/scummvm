@@ -207,6 +207,8 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int value = (argc > 2) ? argv[2].toSint16() : 0;
 	_acc = acc;
+	_argc = argc;
+	_argv = argv;
 
 	if (argc > 5) {	// for cmdSendMidi
 		_midiCmd = argv[3].toUint16() == 0xff ?
@@ -243,7 +245,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 
 	// Some games try to init non-existing sounds (e.g. KQ6)
 	if (_doSoundVersion == SCI_VERSION_1_LATE) {
-		if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, value)))
+		if (!_resMan->testResource(ResourceId(kResourceTypeSound, value)))
 			return;
 	}
 
@@ -286,12 +288,13 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, SongHandle handle, int value) 
 	if (!obj.segment)
 		return;
 
-	_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-	_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
-
 	if (_doSoundVersion == SCI_VERSION_0_EARLY) {
+		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
+		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
 		PUT_SEL32V(_segMan, obj, state, _K_SOUND_STATUS_PLAYING);
 	} else if (_doSoundVersion == SCI_VERSION_1_EARLY) {
+		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
+		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
 		_state->sfx_song_renice(handle, GET_SEL32V(_segMan, obj, pri));
 		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) value;		/* Too lazy to look up a default value for this */
 		_state->_songlib.setSongRestoreBehavior(handle, rb);
@@ -417,39 +420,38 @@ void SoundCommandParser::cmdHandlePriority(reg_t obj, SongHandle handle, int val
 }
 
 void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) {
+	if (!obj.segment)
+		return;
+
 	/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
 	/* FIXME: The next couple of lines actually STOP the handle, rather
 	** than fading it! */
-	if (obj.segment) {
-		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		if (!_hasNodePtr)
-			PUT_SEL32V(_segMan, obj, state, SOUND_STATUS_STOPPED);
-		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
-	}
+	_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+	if (!_hasNodePtr)
+		PUT_SEL32V(_segMan, obj, state, SOUND_STATUS_STOPPED);
+	PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 
-#if 0
+	if (_doSoundVersion == SCI_VERSION_1_LATE) {
 		fade_params_t fade;
-		if (obj.segment) {
-			fade.final_volume = argv[2].toUint16();
-			fade.ticks_per_step = argv[3].toUint16();
-			fade.step_size = argv[4].toUint16();
-			fade.action = argv[5].toUint16() ?
-			              FADE_ACTION_FADE_AND_STOP :
-			              FADE_ACTION_FADE_AND_CONT;
+		fade.final_volume = _argv[2].toUint16();
+		fade.ticks_per_step = _argv[3].toUint16();
+		fade.step_size = _argv[4].toUint16();
+		fade.action = _argv[5].toUint16() ?
+		              FADE_ACTION_FADE_AND_STOP :
+		              FADE_ACTION_FADE_AND_CONT;
 
-			s->_sound.sfx_song_set_fade(handle,  &fade);
+		_state->sfx_song_set_fade(handle,  &fade);
 
-			/* FIXME: The next couple of lines actually STOP the handle, rather
-			** than fading it! */
-			if (argv[5].toUint16()) {
-				PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
-				s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-			} else {
-				// FIXME: Support fade-and-continue. For now, send signal right away.
-				PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
-			}
+		/* FIXME: The next couple of lines actually STOP the handle, rather
+		** than fading it! */
+		if (_argv[5].toUint16()) {
+			PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+		} else {
+			// FIXME: Support fade-and-continue. For now, send signal right away.
+			PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 		}
-#endif
+	}
 }
 
 void SoundCommandParser::cmdGetPolyphony(reg_t obj, SongHandle handle, int value) {

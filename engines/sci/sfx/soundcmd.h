@@ -57,6 +57,8 @@ private:
 	AudioPlayer *_audio;
 	bool _hasNodePtr;
 	SciVersion _doSoundVersion;
+	int _argc;
+	reg_t *_argv;
 	reg_t _acc;
 	int _midiCmd, _controller, _param;
 
