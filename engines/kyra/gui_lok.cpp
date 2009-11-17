@@ -741,6 +741,8 @@ int GUI_LoK::saveGame(Button *button) {
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
 
+	Screen::FontId cf = _screen->setFont(Screen::FID_8_FNT);
+	
 	if (_savegameOffset == 0 && _vm->_gameToLoad == 0) {
 		_savegameName[0] = 0;
 	} else {
@@ -753,9 +755,13 @@ int GUI_LoK::saveGame(Button *button) {
 	}
 	redrawTextfield();
 
+	_screen->setFont(cf);
+
 	while (_displaySubMenu && !_vm->shouldQuit()) {		
 		checkTextfieldInput();
+		cf = _screen->setFont(Screen::FID_8_FNT);
 		updateSavegameString();
+		_screen->setFont(cf);
 		processHighlights(_menu[3]);
 	}
 
