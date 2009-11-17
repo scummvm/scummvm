@@ -673,7 +673,6 @@ bool Scene::render(OSystem *system) {
 						zoom = 128 + 128 * (position.y - zoom_min) / (zoom_max - zoom_min);
 					else 
 						zoom = 128;
-					debug(0, "zoom = %u", zoom);
 				}
 
 				if (!path.empty()) {
