@@ -484,6 +484,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(75, 10);
 				playSound(24, 15);
 				playAnimation(883, 0);
+				shakeScreen();
 				disableObject(1);
 				disableObject(2);
 				SET_FLAG(0xDBE9, 1);
@@ -551,7 +552,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(89, 5);
 			playActorAnimation(958);
 			loadScene(9, 240, 182, 4);
-		} else if (CHECK_FLAG(0xDBE9, 1)) {
+		} else if (CHECK_FLAG(0xDBE7, 1)) {
 			displayMessage(0x5894);
 		} else {
 			Dialog::pop(scene, 0xDB8A, 0, 857, 0xd1, 0xef, 0, 1);

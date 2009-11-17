@@ -623,6 +623,11 @@ void TeenAgentEngine::setTimerCallback(uint16 addr, uint16 frames) {
 	scene->push(event);
 }
 
+void TeenAgentEngine::shakeScreen() {
+	SceneEvent event(SceneEvent::kEffect);
+	scene->push(event);
+}
+
 void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *in = res->sam_sam.getStream(id);

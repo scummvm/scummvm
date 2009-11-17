@@ -58,6 +58,7 @@ struct SceneEvent {
 		kWaitLanAnimationFrame,
 		kCreditsMessage,		//16
 		kTimer,
+		kEffect,
 		kQuit
 	} type;
 

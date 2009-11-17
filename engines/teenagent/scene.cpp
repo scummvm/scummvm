@@ -580,9 +580,9 @@ bool Scene::render(OSystem *system) {
 			return true;
 		}
 
-		if (background.pixels && debug_features.feature[DebugFeatures::kShowBack])
+		if (background.pixels && debug_features.feature[DebugFeatures::kShowBack]) {
 			system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
-		else
+		} else
 			system->fillScreen(0);
 
 		Graphics::Surface *surface = system->lockScreen();
@@ -995,11 +995,16 @@ bool Scene::processEventQueue() {
 			current_event.clear();
 			break;
 
+		case SceneEvent::kEffect:
+			debug(0, "*stub* shaking the screen");
+			current_event.clear();
+			break;
+
 		case SceneEvent::kQuit:
 			debug(0, "quit!");
 			_engine->quitGame();
 			break;
-
+			
 		default:
 			error("empty/unhandler event[%d]", (int)current_event.type);
 		}
