@@ -223,6 +223,7 @@ private:
 			kShowLan,
 			kShowOns,
 			kShowOn, 
+			kHidePath, 
 			kMax
 		};
 		bool feature[kMax];

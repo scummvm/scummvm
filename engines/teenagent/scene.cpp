@@ -513,10 +513,17 @@ bool Scene::processEvent(const Common::Event &event) {
 		case '2':
 		case '3':
 		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
 			if (event.kbd.flags & Common::KBD_CTRL) {
 				uint feature = event.kbd.keycode - '1';
-				debug_features.feature[feature] = !debug_features.feature[feature];
-				debug(0, "switched feature %u %s", feature, debug_features.feature[feature] ? "on": "off");
+				if (feature < DebugFeatures::kMax) {
+					debug_features.feature[feature] = !debug_features.feature[feature];
+					debug(0, "switched feature %u %s", feature, debug_features.feature[feature] ? "on": "off");
+				}
 			}
 			break;
 		default:
@@ -717,11 +724,10 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-#if 0
 		//if (!current_event.empty())
 		//	current_event.dump();
 
-		{
+		if (!debug_features.feature[DebugFeatures::kHidePath]) {
 			const Common::Array<Walkbox> & scene_walkboxes = walkboxes[_id - 1];
 			for (uint i = 0; i < scene_walkboxes.size(); ++i) {
 				scene_walkboxes[i].rect.render(surface, 0xd0 + i);
@@ -738,7 +744,6 @@ bool Scene::render(OSystem *system) {
 				last_p = *p;
 			}
 		}
-#endif
 
 		system->unlockScreen();
 
