@@ -87,6 +87,7 @@ static void search(Node *nodes, int n, int m, int i, int j, int prev_idx, int en
 	//debug(1, "search (%d, %d) %d, value = %d", i, j, level, v);
 	if (v != 0 && (v == -1 || v <= level))
 		return;
+
 	
 	nodes[idx].step = level; //mark as visited
 	nodes[idx].prev = prev_idx;
@@ -153,7 +154,9 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					if (w.rect.contains(r))
 						break;
 				}
-				nodes[idx++].step = k >= scene_walkboxes.size()? 0: -1;
+				nodes[idx].step = k >= scene_walkboxes.size()? 0: -1;
+				nodes[idx].prev = -1;
+				++idx;
 			}
 		}
 	}
@@ -162,7 +165,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	
 	if (start == -1 || end == -1)
 		return false;
-		
+
 	search(nodes, n, m, start / m, start % m, -1, end, 1);
 	int v = end;
 	Common::Point prev(dst);
@@ -179,9 +182,6 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	
 	debug(1, "end vertex = %d", v);
 
-	if (v != start)
-		return false;
-	
 #if 0
 	{
 		int idx = 0;
@@ -195,6 +195,10 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		}
 	}
 #endif
+
+	if (v != start)
+		return false;
+	
 	
 	delete[] nodes;
 	return true;
