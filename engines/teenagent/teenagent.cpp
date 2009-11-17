@@ -55,7 +55,7 @@ void TeenAgentEngine::processObject() {
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback)) {
 			Common::String desc = dst_object->description;
-			scene->displayMessage(desc);
+			displayMessage(desc);
 			//debug(0, "%s[%u]: description: %s", current_object->name, current_object->id, desc.c_str());
 		}
 	}
@@ -397,14 +397,30 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 	if (str.empty()) {
 		return;
 	}
-	SceneEvent event(SceneEvent::kMessage);
-	event.message = str;
-	event.color = color;
-	event.slot = 0;
-	event.dst.x = position % 320;
-	event.dst.y = position / 320;
 
-	scene->push(event);
+	{
+		SceneEvent e(SceneEvent::kPlayAnimation);
+		e.animation = 0;
+		e.slot = 0x80;
+		scene->push(e);
+	}
+
+	{
+		SceneEvent event(SceneEvent::kMessage);
+		event.message = str;
+		event.color = color;
+		event.slot = 0;
+		event.dst.x = position % 320;
+		event.dst.y = position / 320;
+		scene->push(event);
+	}
+
+	{
+		SceneEvent e(SceneEvent::kPauseAnimation);
+		e.animation = 0;
+		e.slot = 0x80;
+		scene->push(e);
+	}
 }
 
 void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 position) {
