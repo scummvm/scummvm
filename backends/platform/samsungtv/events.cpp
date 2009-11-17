@@ -32,51 +32,15 @@
 bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 		case SDL_KEYDOWN:{
-			if (ev.key.keysym.sym == SDLK_UP) {
-				_km.y_vel = -1;
-				_km.y_down_count = 1;
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
-				setMousePos(event.mouse.x, event.mouse.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_DOWN) {
-				_km.y_vel = 1;
-				_km.y_down_count = 1;
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
-				setMousePos(event.mouse.x, event.mouse.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_LEFT) {
-				_km.x_vel = -1;
-				_km.x_down_count = 1;
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
-				setMousePos(event.mouse.x, event.mouse.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_RIGHT) {
-				_km.x_vel = 1;
-				_km.x_down_count = 1;
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
-				setMousePos(event.mouse.x, event.mouse.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_z) {
-				event.type = Common::EVENT_LBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F1) {
-				event.type = Common::EVENT_RBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_POWER) {
+			if (ev.key.keysym.sym == SDLK_POWER) {
 				event.type = Common::EVENT_QUIT;
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_F2) {
+			} else if (ev.key.keysym.sym == SDLK_F1 && ev.key.keysym.scancode == 20) {
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_0) {
+			} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_F7;
 				event.kbd.ascii = Common::ASCII_F7;
@@ -85,31 +49,15 @@ bool OSystem_SDL_SamsungTV::remapKey(SDL_Event &ev, Common::Event &event) {
 			break;
 		}
 		case SDL_KEYUP: {
-			if (ev.key.keysym.sym == SDLK_UP || ev.key.keysym.sym == SDLK_DOWN || ev.key.keysym.sym == SDLK_LEFT || ev.key.keysym.sym == SDLK_RIGHT) {
-				_km.x_vel = 0;
-				_km.x_down_count = 0;
-				_km.y_vel = 0;
-				_km.y_down_count = 0;
-				event.type = Common::EVENT_MOUSEMOVE;
-				fillMouseEvent(event, _km.x, _km.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_z) {
-				event.type = Common::EVENT_LBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_F1) {
-				event.type = Common::EVENT_RBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-				return true;
-			} else if (ev.key.keysym.sym == SDLK_POWER) {
+			if (ev.key.keysym.sym == SDLK_POWER) {
 				event.type = Common::EVENT_QUIT;
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_F2) {
+			} else if (ev.key.keysym.sym == SDLK_F1 && ev.key.keysym.scancode == 20) {
 				event.type = Common::EVENT_KEYUP;
 				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
 				return true;
-			} else if (ev.key.keysym.sym == SDLK_0) {
+			} else if (ev.key.keysym.sym == SDLK_F2 && ev.key.keysym.scancode == 21) {
 				event.type = Common::EVENT_KEYUP;
 				event.kbd.keycode = Common::KEYCODE_F7;
 				event.kbd.ascii = Common::ASCII_F7;
