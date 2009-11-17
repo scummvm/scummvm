@@ -22,28 +22,29 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_SURFACE_H
-#define TEENAGENT_SURFACE_H
+#ifndef TEENAGENT_SURFACE_LIST_H__
+#define TEENAGENT_SURFACE_LIST_H__
 
-#include "graphics/surface.h"
 #include "common/stream.h"
 
 namespace TeenAgent {
+class Surface;
 
-class Pack;
-class Surface : public Graphics::Surface {
+class SurfaceList {
 public:
-	enum Type {kTypeOns, kTypeLan};
-
-	uint16 x, y;
-
-	Surface();
-	void load(Common::SeekableReadStream *stream, Type type);
-	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect src_rect = Common::Rect()) const;
-
-	bool empty() const { return pixels == NULL; }
+	enum Type { kTypeOn };
+	
+	SurfaceList();
+	void load(Common::SeekableReadStream *stream, Type type, int sub_hack = 0);
+	void free();
+	Common::Rect render(Graphics::Surface *surface, int horizont, bool second_pass) const;
+	
+protected:
+	Surface * surfaces;
+	uint surfaces_n;
 };
 
-} // End of namespace TeenAgent
+}
 
 #endif
+

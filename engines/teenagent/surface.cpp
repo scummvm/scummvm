@@ -30,29 +30,13 @@
 namespace TeenAgent {
 
 Surface::Surface() : x(0), y(0) {
-	memset(flags, 0, sizeof(flags));
 }
 
-void Surface::load(Common::SeekableReadStream *stream, Type type, int sub_hack) {
+void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	//debug(0, "load()");
 	free();
 
 	x = y = 0;
-	memset(flags, 0, sizeof(flags));
-
-	if (type == kTypeOn) {
-		byte fn = stream->readByte();
-		if (stream->eos())
-			return;
-
-		byte i;
-		for (i = 0; i < fn - sub_hack; ++i) {
-			flags[i] = stream->readUint16LE();
-			debug(0, "flags[%u] = %u (0x%04x)", i, flags[i], flags[i]);
-		}
-		for(; i < fn; ++i)
-			debug(0, "*hack* skipping flag %04x", stream->readUint16LE());
-	}
 
 	uint16 w_ = stream->readUint16LE();
 	uint16 h_ = stream->readUint16LE();
@@ -78,7 +62,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type, int sub_hack) 
 	stream->read(pixels, w_ * h_);
 }
 
-Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect) {
+Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect) const {
 	if (src_rect.isEmpty()) {
 		src_rect = Common::Rect(0, 0, w, h);
 	} else if (src_rect.right > w)

@@ -442,7 +442,7 @@ void Scene::init(int id, const Common::Point &pos) {
 				sub_hack = 2;
 		}
 	}
-	on.load(stream, Surface::kTypeOn, sub_hack);
+	on.load(stream, SurfaceList::kTypeOn, sub_hack);
 	delete stream;
 
 	loadOns();
@@ -649,9 +649,9 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-		if (on.pixels != NULL && on.y + on.h < actor_animation_position.bottom && debug_features.feature[DebugFeatures::kShowOn]) {
+		if (debug_features.feature[DebugFeatures::kShowOn]) {
 			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
+				on.render(surface, actor_animation_position.bottom, false); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
 			}
 		}
 
@@ -710,9 +710,9 @@ bool Scene::render(OSystem *system) {
 		}
 
 		//render on
-		if (on.pixels != NULL && on.y + on.h >= actor_animation_position.bottom && debug_features.feature[DebugFeatures::kShowOn]) {
+		if (debug_features.feature[DebugFeatures::kShowOn]) {
 			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
+				on.render(surface, actor_animation_position.bottom, true); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
 			}
 		}
 

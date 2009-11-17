@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	animation.o \
 	font.o \
 	surface.o \
+	surface_list.o \
 	actor.o \
 	callbacks.o \
 	inventory.o \
