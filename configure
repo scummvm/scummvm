@@ -1353,8 +1353,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="samsungtv"
 			_mt32emu="no"
-			_build_hq_scalers="no"
 			_build_scalers="yes"
+			_build_hq_scalers="yes"
 			_vkeybd="yes"
 			;;
 		motoezx)
