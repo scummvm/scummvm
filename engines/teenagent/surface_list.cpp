@@ -33,12 +33,15 @@ void SurfaceList::load(Common::SeekableReadStream *stream, Type type, int sub_ha
 	free();
 	
 	byte fn = stream->readByte();
-	if (stream->eos() || fn == 0)
+	if (stream->eos())
 		return;
 		
 	debug(0, "loading %u surfaces from list (skip %d)", fn, sub_hack);
 
 	surfaces_n = fn - sub_hack;
+	if (surfaces_n == 0)
+		return;
+	
 	surfaces = new Surface[surfaces_n];
 
 	byte i;
