@@ -62,7 +62,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	stream->read(pixels, w_ * h_);
 }
 
-Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect) const {
+Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect, uint zoom) const {
 	if (src_rect.isEmpty()) {
 		src_rect = Common::Rect(0, 0, w, h);
 	} else if (src_rect.right > w)
@@ -70,20 +70,41 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 	else if (src_rect.bottom < h) 
 		src_rect.bottom = h;
 
-	assert(x + dx + src_rect.width() <= surface->w);
-	assert(y + dy + src_rect.height() <= surface->h);
+	if (zoom == 256) {
+		assert(x + dx + src_rect.width() <= surface->w);
+		assert(y + dy + src_rect.height() <= surface->h);
 
-	byte *src = (byte *)getBasePtr(src_rect.left, src_rect.top);
-	byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
+		byte *src = (byte *)getBasePtr(src_rect.left, src_rect.top);
+		byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
 
-	for (int i = src_rect.top; i < src_rect.bottom; ++i) {
-		for (int j = src_rect.left; j < src_rect.right; ++j) {
-			byte p = src[j];
-			if (p != 0xff)
-				dst[mirror? w - j - 1: j] = p;
+		for (int i = src_rect.top; i < src_rect.bottom; ++i) {
+			for (int j = src_rect.left; j < src_rect.right; ++j) {
+				byte p = src[j];
+				if (p != 0xff)
+					dst[mirror? w - j - 1: j] = p;
+			}
+			dst += surface->pitch;
+			src += pitch;
 		}
-		dst += surface->pitch;
-		src += pitch;
+	} else {
+		Common::Rect dst_rect(src_rect);
+		dst_rect.right = (dst_rect.width() * zoom / 256) + dst_rect.left;
+		dst_rect.top = dst_rect.bottom - (dst_rect.height() * zoom / 256);
+
+		assert(x + dx + dst_rect.width() <= surface->w);
+		assert(y + dy + dst_rect.height() <= surface->h);
+
+		byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y + dst_rect.top - src_rect.top);
+		for(int i = 0; i < dst_rect.height(); ++i) {
+			for (int j = 0; j < dst_rect.width(); ++j) {
+				int px = j * 256 / zoom;
+				byte *src = (byte *)getBasePtr(src_rect.left + (mirror? w - px - 1: px), src_rect.top + i * 256 / zoom);
+				byte p = *src;
+				if (p != 0xff)
+					dst[j + dst_rect.left] = p;
+			}
+			dst += surface->pitch;
+		}
 	}
 	return Common::Rect(x + dx, y + dy, x + w + dx, y + h + dy);
 }

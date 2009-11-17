@@ -666,6 +666,10 @@ bool Scene::render(OSystem *system) {
 				got_any_animation = true;
 			} else if (!hide_actor) {
 				actor_animation.free();
+				uint zoom = 256;
+				if (_id == 18) { //zoom hack
+					zoom = 192;
+				}
 
 				if (!path.empty()) {
 					const int speed_x = 10, speed_y = 5;
@@ -691,7 +695,7 @@ bool Scene::render(OSystem *system) {
 					position.x += (ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
 					
-					actor_animation_position = teenagent.render(surface, position, o, 1, false);
+					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
 					if (position == destination) {
 						path.pop_front();
 						if (path.empty()) {
@@ -705,7 +709,7 @@ bool Scene::render(OSystem *system) {
 					} else
 						busy = true;
 				} else 
-					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking);
+					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
 			}
 		}
 

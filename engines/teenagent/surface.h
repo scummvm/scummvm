@@ -39,7 +39,7 @@ public:
 
 	Surface();
 	void load(Common::SeekableReadStream *stream, Type type);
-	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect src_rect = Common::Rect()) const;
+	Common::Rect render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false, Common::Rect src_rect = Common::Rect(), uint zoom = 256) const;
 
 	bool empty() const { return pixels == NULL; }
 };

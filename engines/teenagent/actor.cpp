@@ -31,7 +31,7 @@ Actor::Actor() : head_index(0) {}
 
 //idle animation lists at dseg: 0x6540
 
-Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool render_head) {
+Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool render_head, uint zoom) {
 	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
@@ -137,10 +137,10 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (yp + clip.top + clip.height() > 200)
 		yp = 200 - clip.top - clip.height();
 	
-	dirty = s->render(surface, xp, yp + clip.top, orientation == Object::kActorLeft, clip);
+	dirty = s->render(surface, xp, yp + clip.top, orientation == Object::kActorLeft, clip, zoom);
 
 	if (head != NULL)
-		dirty.extend(head->render(surface, xp, yp, orientation == Object::kActorLeft));
+		dirty.extend(head->render(surface, xp, yp, orientation == Object::kActorLeft, Common::Rect(), zoom));
 
 	return dirty;
 }

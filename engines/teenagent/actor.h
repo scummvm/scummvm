@@ -31,7 +31,7 @@ class Actor : public Animation {
 	uint head_index;
 public:
 	Actor();
-	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head);
+	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head, uint zoom);
 };
 
 } // End of namespace TeenAgent
