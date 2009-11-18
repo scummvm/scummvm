@@ -356,6 +356,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(820, 1);
 			setOns(3, 0x59);
 			//some moving animation is missing here
+			moveTo(scene->getPosition().x, scene->getPosition().y + 1, 3);
+			//wait
+			moveTo(scene->getPosition().x, scene->getPosition().y - 1, 2);
 			displayMessage(0x551f);
 			enableObject(4);
 			SET_FLAG(0xdbdc, 1);

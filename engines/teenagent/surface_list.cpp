@@ -67,7 +67,7 @@ Common::Rect SurfaceList::render(Graphics::Surface *surface, int horizon, bool s
 	for(uint i = 0; i < surfaces_n; ++i) {
 		const Surface &s = surfaces[i];
 		if (second_pass) {
-			debug(0, "%d %d", s.y + s.h, horizon);
+			//debug(0, "%d %d", s.y + s.h, horizon);
 			if (s.y + s.h > horizon)
 				dirty.extend(s.render(surface));
 		} else {

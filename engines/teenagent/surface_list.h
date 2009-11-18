@@ -37,7 +37,7 @@ public:
 	SurfaceList();
 	void load(Common::SeekableReadStream *stream, Type type, int sub_hack = 0);
 	void free();
-	Common::Rect render(Graphics::Surface *surface, int horizont, bool second_pass) const;
+	Common::Rect render(Graphics::Surface *surface, int horizon, bool second_pass) const;
 	
 protected:
 	Surface * surfaces;

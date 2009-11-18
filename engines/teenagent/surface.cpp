@@ -51,7 +51,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	if (stream->eos() || w_ == 0)
 		return;
 
-	if (w_ * h_ > stream->size()) {//rough but working
+	if (w_ * h_ > stream->size()) {
 		debug(0, "invalid surface %ux%u -> %u,%u", w_, h_, x, y);
 		return;
 	}
