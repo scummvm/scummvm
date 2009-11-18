@@ -648,7 +648,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		moveTo(p, 2);
 		inventory->add(0x13);
-		playAnimation(529, 1);
 		Dialog::pop(scene, 0xdaa6, 0, 529, 0xd1, 0xd9, 0, 1);
 	}
 	return true;
@@ -963,10 +962,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playMusic(6);
 		loadScene(25, 151, 156, 2);
 		return true;
+		
+	case 0x63dc:
+		Dialog::showMono(scene, 0x3375, 0, 0xd1, 0);
+		return true;
 
 	case 0x646e:
 	case 0x6475:
 		Dialog::showMono(scene, 0x32C1, 0, 0xd1, 0);
+		return true;
+		
+	case 0x6479:
+		Dialog::showMono(scene, 0x325e, 0, 0xd1, 0);
 		return true;
 
 	case 0x6507:
