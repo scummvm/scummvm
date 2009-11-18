@@ -39,8 +39,6 @@ namespace Audio {
 
 class OSystem_SDL_SamsungTV : public OSystem_SDL {
 public:
-//	OSystem_SDL_SamsungTV() {}
-
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
