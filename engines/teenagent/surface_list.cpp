@@ -36,9 +36,9 @@ void SurfaceList::load(Common::SeekableReadStream *stream, Type type, int sub_ha
 	if (stream->eos())
 		return;
 		
-	debug(0, "loading %u surfaces from list (skip %d)", fn, sub_hack);
-
 	surfaces_n = fn - sub_hack;
+	debug(0, "loading %u surfaces from list (skip %d)", surfaces_n, sub_hack);
+
 	if (surfaces_n == 0)
 		return;
 	
@@ -62,15 +62,16 @@ void SurfaceList::free() {
 	surfaces_n = 0;
 }
 
-Common::Rect SurfaceList::render(Graphics::Surface *surface, int horizont, bool second_pass) const {
+Common::Rect SurfaceList::render(Graphics::Surface *surface, int horizon, bool second_pass) const {
 	Common::Rect dirty;
 	for(uint i = 0; i < surfaces_n; ++i) {
 		const Surface &s = surfaces[i];
 		if (second_pass) {
-			if (s.y + s.h >= horizont)
+			debug(0, "%d %d", s.y + s.h, horizon);
+			if (s.y + s.h > horizon)
 				dirty.extend(s.render(surface));
 		} else {
-			if (s.y + s.h < horizont)
+			if (s.y + s.h <= horizon)
 				dirty.extend(s.render(surface));
 		}
 	}
