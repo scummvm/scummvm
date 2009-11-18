@@ -42,18 +42,6 @@
 #define FORMAT_565 1
 #define FORMAT_555 2
 #define FORMAT_OTHER 3
-#if defined(_WIN32_WCE) && _WIN32_WCE <= 300
-typedef struct _RawFrameBufferInfo
-{
-	WORD wFormat;
-	WORD wBPP;
-	VOID *pFramePointer;
-	int  cxStride;
-	int  cyStride;
-	int  cxPixels;
-	int  cyPixels;
-} RawFrameBufferInfo;
-#endif
 
 class OSystem_WINCE3 : public OSystem_SDL {
 public:
@@ -251,12 +239,12 @@ private:
 	int _mouseYZone[TOTAL_ZONES];
 	int _currentZone;
 
-	typedef struct zoneDesc {
+	struct zoneDesc {
 		int x;
 		int y;
 		int width;
 		int height;
-	} zoneDesc;
+	};
 
 	static zoneDesc _zones[TOTAL_ZONES];
 };

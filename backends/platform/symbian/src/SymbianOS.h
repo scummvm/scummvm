@@ -136,12 +136,12 @@ protected:
 	int _mouseYZone[TOTAL_ZONES];
 	int _currentZone;
 
-	typedef struct zoneDesc {
+	struct zoneDesc {
 		int x;
 		int y;
 		int width;
 		int height;
-	} zoneDesc;
+	};
 
 	static zoneDesc _zones[TOTAL_ZONES];
 	RFs* _RFs;
