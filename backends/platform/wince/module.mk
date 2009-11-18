@@ -26,7 +26,6 @@ MODULE_OBJS := \
 	../sdl/hardwarekeys.o \
 	missing/missing.o \
 	PocketSCUMM.o \
-	ARMscaler.o \
 	smartLandScale.o
 
 MODULE_DIRS += \

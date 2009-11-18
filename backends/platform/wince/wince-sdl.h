@@ -31,12 +31,9 @@
 #include "graphics/scaler.h"
 #include "backends/platform/sdl/sdl.h"
 
-#include "CEGUI.h"
-#include "CEKeys.h"
-#include "CEDevice.h"
-#include "CEScaler.h"
-
-#include <SDL.h>
+#include "backends/platform/wince/CEGUI.h"
+#include "backends/platform/wince/CEKeys.h"
+#include "backends/platform/wince/CEDevice.h"
 
 #define TOTAL_ZONES 3
 

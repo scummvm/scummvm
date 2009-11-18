@@ -1,13 +1,11 @@
 MODULE := backends/platform/linuxmoto
 
 MODULE_OBJS := \
-	linuxmoto-main.o \
 	linuxmoto-events.o \
-	linuxmoto-sdl.o \
-	linuxmoto-scaler.o \
 	linuxmoto-graphics.o \
-	hardwarekeys.o \
-	../wince/ARMscaler.o
+	linuxmoto-main.o \
+	linuxmoto-sdl.o \
+	hardwarekeys.o
 
 MODULE_DIRS += \
 	backends/platform/linuxmoto/

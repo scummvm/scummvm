@@ -31,12 +31,29 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
 
+/**
+ * This filter (down)scales the source image horizontally by a factor of 3/4.
+ * For example, a 320x200 image is scaled to 240x200.
+ */
 DECLARE_SCALER(PocketPCPortrait);
+
+/**
+ * This filter (up)scales the source image vertically by a factor of 6/5.
+ * For example, a 320x200 image is scaled to 320x240.
+ *
+ * The main difference to the code in graphics/scaler/aspect.cpp is the
+ * out-of-place operation, omitting a straight blit step the sdl backend
+ * does. Also, tests show unaligned access errors with the stock aspect scaler.
+ */
 DECLARE_SCALER(PocketPCLandscapeAspect);
-DECLARE_SCALER(PocketPCHalf);
-DECLARE_SCALER(PocketPCHalfZoom);
-//#ifdef WIN32_PLATFORM_WFSP
+
+/**
+ * This filter (down)scales the source image horizontally by a factor of 2/3
+ * and vertically by 7/8. For example, a 320x200 image is scaled to 213x175.
+ *
+ * @note The ARM asm version seems to work differently ?!? It apparently scales
+ * horizontally by 11/16. Thus a 320x200 image is scaled to 220x175.
+ */
 DECLARE_SCALER(SmartphoneLandscape);
-//#endif
 
 #endif

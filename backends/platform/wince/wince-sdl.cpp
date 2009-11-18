@@ -50,8 +50,10 @@
 #include "backends/platform/wince/CEActionsSmartphone.h"
 #include "backends/platform/wince/CEgui/ItemAction.h"
 
+#include "graphics/scaler/downscaler.h"
 
 #include "backends/platform/wince/CEException.h"
+#include "backends/platform/wince/CEScaler.h"
 
 #ifdef USE_VORBIS
 #ifndef USE_TREMOR
@@ -590,19 +592,19 @@ void OSystem_WINCE3::swap_zoom_up() {
 		_toolbarHandler.setVisible(_saveToolbarZoom);
 		// restore scaler
 		_scaleFactorYd = 2;
-		_scalerProc = PocketPCHalf;
+		_scalerProc = DownscaleAllByHalf;
 		_zoomUp = false;
 		_zoomDown = false;
 	} else {
 		// only active if running on a PocketPC
-		if (_scalerProc != PocketPCHalf && _scalerProc != PocketPCHalfZoom)
+		if (_scalerProc != DownscaleAllByHalf && _scalerProc != DownscaleHorizByHalf)
 			return;
-		if (_scalerProc == PocketPCHalf) {
+		if (_scalerProc == DownscaleAllByHalf) {
 			_saveToolbarZoom = _toolbarHandler.visible();
 			_toolbarHandler.setVisible(false);
 			// set zoom scaler
 			_scaleFactorYd = 1;
-			_scalerProc = PocketPCHalfZoom;
+			_scalerProc = DownscaleHorizByHalf;
 		}
 
 		_zoomDown = false;
@@ -619,19 +621,19 @@ void OSystem_WINCE3::swap_zoom_down() {
 		_toolbarHandler.setVisible(_saveToolbarZoom);
 		// restore scaler
 		_scaleFactorYd = 2;
-		_scalerProc = PocketPCHalf;
+		_scalerProc = DownscaleAllByHalf;
 		_zoomDown = false;
 		_zoomUp = false;
 	} else {
 		// only active if running on a PocketPC
-		if (_scalerProc != PocketPCHalf && _scalerProc != PocketPCHalfZoom)
+		if (_scalerProc != DownscaleAllByHalf && _scalerProc != DownscaleHorizByHalf)
 			return;
-		if (_scalerProc == PocketPCHalf) {
+		if (_scalerProc == DownscaleAllByHalf) {
 			_saveToolbarZoom = _toolbarHandler.visible();
 			_toolbarHandler.setVisible(false);
 			// set zoom scaler
 			_scaleFactorYd = 1;
-			_scalerProc = PocketPCHalfZoom;
+			_scalerProc = DownscaleHorizByHalf;
 		}
 
 		_zoomUp = false;
@@ -1180,7 +1182,7 @@ bool OSystem_WINCE3::update_scalers() {
 			_scaleFactorXd = 2;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
-			_scalerProc = PocketPCHalf;
+			_scalerProc = DownscaleAllByHalf;
 			_modeFlags = 0;
 		} else if (_videoMode.screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;

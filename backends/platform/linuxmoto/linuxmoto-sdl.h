@@ -27,9 +27,11 @@
 #define LINUXMOTO_SDL
 
 #include "backends/platform/sdl/sdl.h"
-#include "backends/platform/linuxmoto/linuxmoto-scaler.h"
 
-#include <SDL.h>
+// FIXME: For now keep hacks in this header to save polluting the SDL backend.
+enum {
+	GFX_HALF = 12
+};
 
 class OSystem_LINUXMOTO : public OSystem_SDL {
 private:

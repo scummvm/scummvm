@@ -189,7 +189,6 @@ OBJS += CEkeys/EventsBuffer.o
 OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o
 OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o ../sdl/hardwarekeys.o
 OBJS += missing/missing.o
-OBJS += ARMscaler.o
 OBJS += smartLandScale.o
 ifndef DYNAMIC_MODULES
 OBJS += PocketSCUMM.o
@@ -225,7 +224,7 @@ deploy: deploy-exe
 
 endif
 
-dist: ARMscaler.o PocketSCUMM.o $(EXECUTABLE)
+dist: PocketSCUMM.o $(EXECUTABLE)
 
 dist-plugins: $(EXECUTABLE) plugins PocketSCUMM.o plugins-stub
 
@@ -235,11 +234,8 @@ plugins-stub: stub.o
 PocketSCUMM.o: PocketSCUMM.rc
 	$(WINDRES) $*.rc $@
 
-ARMscaler.o: ARMscaler.s
-	$(AS) $*.s -o $@
-
 all-clean: clean
-	$(RM) ARMscaler.o PocketSCUMM.o stub.o
+	$(RM) PocketSCUMM.o stub.o
 
 deploy-plugins: dist-plugins
 	@echo Deploying DLLs

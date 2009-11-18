@@ -24,13 +24,13 @@
  */
 
 #include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
-#include "backends/platform/gp2xwiz/gp2xwiz-scaler.h" // TODO: Make GFX_HALF/HalfScale generic.
 
 #include "common/mutex.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
+#include "graphics/scaler/downscaler.h"
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -91,7 +91,7 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 		newScalerProc = Normal1x;
 		break;
 	case GFX_HALF:
-		newScalerProc = HalfScale;
+		newScalerProc = DownscaleAllByHalf;
 		break;
 
 	default:
@@ -368,7 +368,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 
-				if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
+				if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf){
 					if (dst_x%2==1){
 						dst_x--;
 						dst_w++;
@@ -386,7 +386,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
 
-			if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
+			if (_videoMode.mode == GFX_HALF && scalerProc == DownscaleAllByHalf){
 				r->w = r->w / 2;
 				r->h = dst_h / 2;
 			} else {
