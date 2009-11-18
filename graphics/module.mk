@@ -35,12 +35,14 @@ ifndef DISABLE_SCALERS
 MODULE_OBJS += \
 	scaler/2xsai.o \
 	scaler/aspect.o \
+	scaler/downscaler.o \
 	scaler/scale2x.o \
 	scaler/scale3x.o \
 	scaler/scalebit.o
 
 ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
+	scaler/downscalerARM.o \
 	scaler/scale2xARM.o \
 	scaler/Normal2xARM.o
 endif
