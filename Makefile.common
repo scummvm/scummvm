@@ -116,16 +116,18 @@ else
 
 endif
 
-
+# Build rule for assembler files
 %.o: %.s
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $*.o
 
+# Build rule for assembler files with preprocessing
 %.o: %.S
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
 	$(QUIET_AS)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(ASFLAGS) -c $(<) -o $*.o
 
 ifdef HAVE_NASM
+# Build rule for NASM assembler filesss
 %.o: %.asm
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_NASM)$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
@@ -134,6 +136,9 @@ endif
 # Include the dependency tracking files.
 -include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
 
+# Mark *.d files and most *.mk files as PHONY. This stops make from trying to
+# recreate them (which it can't), and in particular from looking for potential
+# source files. This can save quite a bit of disk access time.
 .PHONY: $(wildcard $(addsuffix /*.d,$(DEPDIRS))) $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES))) \
 	$(srcdir)/$(port_mk) $(srcdir)/rules.mk $(srcdir)/engines/engines.mk
 
