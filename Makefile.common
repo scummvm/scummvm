@@ -96,16 +96,20 @@ else
 %.o: %.cpp
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+# Build rule for Objective-C files. Strictly speaking, this is for OS X only.
 %.o: %.m
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
 endif
 
+# Build rule for assembler files
 %.o: %.s
 	$(MKDIR) $(*D)
 	$(AS) $(ASFLAGS) $(<) -o $*.o
 
 ifdef HAVE_NASM
+# Build rule for NASM assembler files
 %.o: %.asm
 	$(MKDIR) $(*D)
 	$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
