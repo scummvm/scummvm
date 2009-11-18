@@ -354,7 +354,7 @@ void OSystem_PS2::init(void) {
 	makeConfigPath();
 
 	_screen->wantAnim(false);
-	_screen->clearScreen();
+	fillScreen(0);
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
@@ -681,10 +681,6 @@ Graphics::Surface *OSystem_PS2::lockScreen(void) {
 
 void OSystem_PS2::unlockScreen(void) {
 	_screen->unlockScreen();
-}
-
-void OSystem_PS2::fillScreen(uint32 col) {
-	_screen->fillScreen(col);
 }
 
 const OSystem::GraphicsMode OSystem_PS2::_graphicsMode = { NULL, NULL, 0 };

@@ -391,20 +391,6 @@ void Gs2dScreen::copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w
 	}
 }
 
-void Gs2dScreen::clearScreen(void) {
-	WaitSema(g_DmacSema);
-	memset(_screenBuf, 0, _width * _height);
-	_screenChanged = true;
-	SignalSema(g_DmacSema);
-}
-
-void Gs2dScreen::fillScreen(uint32 col) {
-	WaitSema(g_DmacSema);
-	memset(_screenBuf, col, _width * _height);
-	_screenChanged = true;
-	SignalSema(g_DmacSema);
-}
-
 Graphics::Surface *Gs2dScreen::lockScreen() {
 	WaitSema(g_DmacSema);
 

@@ -72,7 +72,6 @@ public:
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void updateScreen();
-	virtual void fillScreen(uint32);
 	/* TODO : check */
 	virtual void displayMessageOnOSD(const char *msg) { printf("displayMessageOnOSD: %s\n", msg); };
 	/* */

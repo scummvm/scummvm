@@ -60,8 +60,6 @@ public:
 
 	void copyPrintfOverlay(const uint8* buf);
 	void clearPrintfOverlay(void);
-	void clearScreen(void);
-	void fillScreen(uint32 col);
 
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
