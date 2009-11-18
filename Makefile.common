@@ -102,10 +102,12 @@ else
 endif
 
 %.o: %.s
+	$(MKDIR) $(*D)
 	$(AS) $(ASFLAGS) $(<) -o $*.o
 
 ifdef HAVE_NASM
 %.o: %.asm
+	$(MKDIR) $(*D)
 	$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
 endif
 
