@@ -27,10 +27,6 @@
 
 #if defined(SAMSUNGTV)
 
-OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV() : OSystem_SDL(),
-	_realhwscreen(0) {
-}
-
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
 		(f == kFeatureAspectRatioCorrection) ||

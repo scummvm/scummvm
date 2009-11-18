@@ -39,21 +39,13 @@ namespace Audio {
 
 class OSystem_SDL_SamsungTV : public OSystem_SDL {
 public:
-	OSystem_SDL_SamsungTV();
+//	OSystem_SDL_SamsungTV() {}
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
 
 protected:
-
-	SDL_Surface *_realhwscreen;
-
-	virtual void internUpdateScreen();
-
-	virtual bool loadGFXMode();
-	virtual void unloadGFXMode();
-	virtual bool hotswapGFXMode();
 
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };

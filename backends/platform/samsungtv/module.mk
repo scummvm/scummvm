@@ -2,7 +2,6 @@ MODULE := backends/platform/samsungtv
 
 MODULE_OBJS := \
 	events.o \
-	graphics.o \
 	main.o \
 	samsungtv.o
 
