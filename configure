@@ -1314,11 +1314,13 @@ case $_host_os in
 		;;
 	ps2)
 		# TODO ps2
+		CXXFLAGS="$CXXFLAGS -G2"
 		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
-		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__="
+		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
+		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
 	# given this is a shell script assume some type of unix
 	*)
