@@ -127,7 +127,7 @@ endif
 	$(QUIET_AS)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(ASFLAGS) -c $(<) -o $*.o
 
 ifdef HAVE_NASM
-# Build rule for NASM assembler filesss
+# Build rule for NASM assembler files
 %.o: %.asm
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_NASM)$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
