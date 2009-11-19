@@ -53,150 +53,96 @@ FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 }
 
 template<typename Color>
-void FontSJISBase::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
-	uint32 outlineGlyph[18];
-	memset(outlineGlyph, 0, sizeof(outlineGlyph));
-
-	// Create an outline map including the original character
-	const uint16 *src = glyph;
-	for (int i = 0; i < 16; ++i) {
-		uint32 line = *src++;
-		line = (line << 2) | (line << 1) | (line << 0);
-
-		outlineGlyph[i + 0] |= line;
-		outlineGlyph[i + 1] |= line;
-		outlineGlyph[i + 2] |= line;
-	}
-
-	uint8 *dstLine = dst;
-	for (int y = 0; y < 18; ++y) {
-		Color *lineBuf = (Color *)dstLine;
-		uint32 line = outlineGlyph[y];
-
-		for (int x = 0; x < 18; ++x) {
-			if (line & 0x20000)
-				*lineBuf = c2;
-			line <<= 1;
-			++lineBuf;
-		}
-
-		dstLine += pitch;
-	}
-
-	// draw the original char
-	drawCharIntern<Color>(glyph, dst + pitch + 1, pitch, c1);
-}
-
-template<typename Color>
-void FontSJISBase::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const {
-	for (int y = 0; y < 16; ++y) {
-		Color *lineBuf = (Color *)dst;
-		uint16 line = *glyph++;
-
-		for (int x = 0; x < 16; ++x) {
-			if (line & 0x8000)
-				*lineBuf = c1;
-			line <<= 1;
-			++lineBuf;
-		}
-
+void FontSJISBase::blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const {
+	for (int y = 0; y < h; ++y) {
+		Color *d = (Color *)dst;
 		dst += pitch;
+
+		uint8 mask = 0;
+		for (int x = 0; x < w; ++x) {
+			if (!(x % 8))
+				mask = *glyph++;
+
+			if (mask & 0x80)
+				*d = c;
+			++d;
+			mask <<= 1;
+		}
 	}
 }
 
-template<typename Color>
-void FontSJISBase::drawCharInternOutline(const uint8 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
-	uint16 outlineGlyph[18];
-	memset(outlineGlyph, 0, sizeof(outlineGlyph));
+void FontSJISBase::createOutline(uint8 *outline, const uint8 *glyph, const int w, const int h) const {
+	const int glyphPitch = (w + 7) / 8;
+	const int outlinePitch = (w + 9) / 8;
 
-	// Create an outline map including the original character
-	const uint8 *src = glyph;
-	for (int i = 0; i < 16; ++i) {
-		uint16 line = *src++;
-		line = (line << 2) | (line << 1) | (line << 0);
+	uint8 *line1 = outline + 0 * outlinePitch;
+	uint8 *line2 = outline + 1 * outlinePitch;
+	uint8 *line3 = outline + 2 * outlinePitch;
 
-		outlineGlyph[i + 0] |= line;
-		outlineGlyph[i + 1] |= line;
-		outlineGlyph[i + 2] |= line;
-	}
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < glyphPitch; ++x) {
+			const uint8 mask = *glyph++;
 
-	uint8 *dstLine = dst;
-	for (int y = 0; y < 18; ++y) {
-		Color *lineBuf = (Color *)dstLine;
-		uint16 line = outlineGlyph[y];
+			const uint8 b1 = mask | (mask >> 1) | (mask >> 2);
+			const uint8 b2 = (mask << 7) | ((mask << 6) & 0xC0);
 
-		for (int x = 0; x < 10; ++x) {
-			if (line & 0x200)
-				*lineBuf = c2;
-			line <<= 1;
-			++lineBuf;
+			line1[x] |= b1;
+			line2[x] |= b1;
+			line3[x] |= b1;
+
+			if (x + 1 < outlinePitch) {
+				line1[x + 1] |= b2;
+				line2[x + 1] |= b2;
+				line3[x + 1] |= b2;
+			}
 		}
 
-		dstLine += pitch;
-	}
-
-	// draw the original char
-	drawCharIntern<Color>(glyph, dst + pitch + 1, pitch, c1);
-}
-
-template<typename Color>
-void FontSJISBase::drawCharIntern(const uint8 *glyph, uint8 *dst, int pitch, Color c1) const {
-	for (int y = 0; y < 16; ++y) {
-		Color *lineBuf = (Color *)dst;
-		uint8 line = *glyph++;
-
-		for (int x = 0; x < 8; ++x) {
-			if (line & 0x80)
-				*lineBuf = c1;
-			line <<= 1;
-			++lineBuf;
-		}
-
-		dst += pitch;
+		line1 += outlinePitch;
+		line2 += outlinePitch;
+		line3 += outlinePitch;
 	}
 }
 
 void FontSJISBase::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
+	const uint8 *glyphSource = 0;
+	int width = 0, height = 0;
 	if (is8x16(ch)) {
-		const uint8 *glyphSource = getCharData8x16(ch);
-		if (!glyphSource) {
-			warning("FontSJISBase::drawChar: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
-			return;
-		}
+		glyphSource = getCharData8x16(ch);
+		width = 8;
+		height = 16;
+	} else {
+		glyphSource = getCharData(ch);
+		width = 16;
+		height = 16;
+	}
 
-		if (bpp == 1) {
-			if (!_outlineEnabled)
-				drawCharIntern<uint8>(glyphSource, (uint8 *)dst, pitch, c1);
-			else
-				drawCharInternOutline<uint8>(glyphSource, (uint8 *)dst, pitch, c1, c2);
-		} else if (bpp == 2) {
-			if (!_outlineEnabled)
-				drawCharIntern<uint16>(glyphSource, (uint8 *)dst, pitch, c1);
-			else
-				drawCharInternOutline<uint16>(glyphSource, (uint8 *)dst, pitch, c1, c2);
+	if (!glyphSource) {
+		warning("FontSJISBase::drawChar: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
+		return;
+	}
+
+	uint8 outline[18 * 18];
+	if (_outlineEnabled) {
+		memset(outline, 0, sizeof(outline));
+		createOutline(outline, glyphSource, width, height);
+	}
+
+	if (bpp == 1) {
+		if (_outlineEnabled) {
+			blitCharacter<uint8>(outline, width + 2, height + 2, (uint8 *)dst, pitch, c2);
+			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst + pitch + 1, pitch, c1);
 		} else {
-			error("FontSJISBase::drawChar: unsupported bpp: %d", bpp);
+			blitCharacter<uint8>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
+		}
+	} else if (bpp == 2) {
+		if (_outlineEnabled) {
+			blitCharacter<uint16>(outline, width + 2, height + 2, (uint8 *)dst, pitch, c2);
+			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst + pitch + 2, pitch, c1);
+		} else {
+			blitCharacter<uint16>(glyphSource, width, height, (uint8 *)dst, pitch, c1);
 		}
 	} else {
-		const uint16 *glyphSource = getCharData(ch);
-		if (!glyphSource) {
-			warning("FontSJISBase::drawChar: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
-			return;
-		}
-
-		if (bpp == 1) {
-			if (!_outlineEnabled)
-				drawCharIntern<uint8>(glyphSource, (uint8 *)dst, pitch, c1);
-			else
-				drawCharInternOutline<uint8>(glyphSource, (uint8 *)dst, pitch, c1, c2);
-		} else if (bpp == 2) {
-			if (!_outlineEnabled)
-				drawCharIntern<uint16>(glyphSource, (uint8 *)dst, pitch, c1);
-			else
-				drawCharInternOutline<uint16>(glyphSource, (uint8 *)dst, pitch, c1, c2);
-		} else {
-			error("FontSJISBase::drawChar: unsupported bpp: %d", bpp);
-		}
+		error("FontSJISBase::drawChar: unsupported bpp: %d", bpp);
 	}
 }
 
@@ -223,9 +169,7 @@ bool FontTowns::loadData() {
 	if (!data)
 		return false;
 
-	for (uint i = 0; i < kFont16x16Chars * 16; ++i)
-		_fontData16x16[i] = data->readUint16BE();
-
+	data->read(_fontData16x16, kFont16x16Chars * 32);
 	data->seek(251904, SEEK_SET);
 	data->read(_fontData8x16, kFont8x16Chars * 16);
 
@@ -234,7 +178,7 @@ bool FontTowns::loadData() {
 	return retValue;
 }
 
-const uint16 *FontTowns::getCharData(uint16 ch) const {
+const uint8 *FontTowns::getCharData(uint16 ch) const {
 	uint8 f = ch & 0xFF;
 	uint8 s = ch >> 8;
 
@@ -323,7 +267,7 @@ const uint16 *FontTowns::getCharData(uint16 ch) const {
 	if (chunkNum < 0 || chunkNum >= kFont16x16Chars)
 		return 0;
 	else
-		return _fontData16x16 + chunkNum * 16;
+		return _fontData16x16 + chunkNum * 32;
 }
 
 const uint8 *FontTowns::getCharData8x16(uint16 c) const {
@@ -355,12 +299,10 @@ bool FontSjisSVM::loadData() {
 	uint numChars16x16 = data->readUint16BE();
 	uint numChars8x16 = data->readUint16BE();
 
-	_fontData16x16Size = numChars16x16 * 16;
-	_fontData16x16 = new uint16[_fontData16x16Size];
+	_fontData16x16Size = numChars16x16 * 32;
+	_fontData16x16 = new uint8[_fontData16x16Size];
 	assert(_fontData16x16);
-
-	for (uint i = 0; i < _fontData16x16Size; ++i)
-		_fontData16x16[i] = data->readUint16BE();
+	data->read(_fontData16x16, _fontData16x16Size);
 
 	_fontData8x16Size = numChars8x16 * 16;
 	_fontData8x16 = new uint8[numChars8x16 * 16];
@@ -373,7 +315,7 @@ bool FontSjisSVM::loadData() {
 	return retValue;
 }
  
-const uint16 *FontSjisSVM::getCharData(uint16 c) const {
+const uint8 *FontSjisSVM::getCharData(uint16 c) const {
 	const uint8 fB = c & 0xFF;
 	const uint8 sB = c >> 8;
 
@@ -396,7 +338,7 @@ const uint16 *FontSjisSVM::getCharData(uint16 c) const {
 	if (index < 0 || index >= 0xBC || base < 0)
 		return 0;
 
-	const uint offset = (base * 0xBC + index) * 16;
+	const uint offset = (base * 0xBC + index) * 32;
 	assert(offset + 16 <= _fontData16x16Size);
 	return _fontData16x16 + offset;
 }

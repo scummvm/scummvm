@@ -134,22 +134,14 @@ public:
 	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 private:
 	template<typename Color>
-	void drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
-
-	template<typename Color>
-	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
-
-	template<typename Color>
-	void drawCharInternOutline(const uint8 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
-
-	template<typename Color>
-	void drawCharIntern(const uint8 *glyph, uint8 *dst, int pitch, Color c1) const;
+	void blitCharacter(const uint8 *glyph, const int w, const int h, uint8 *dst, int pitch, Color c) const;
+	void createOutline(uint8 *outline, const uint8 *glyph, const int w, const int h) const;
 protected:
 	bool _outlineEnabled;
 
 	bool is8x16(uint16 ch) const;
 
-	virtual const uint16 *getCharData(uint16 c) const = 0;
+	virtual const uint8 *getCharData(uint16 c) const = 0;
 	virtual const uint8 *getCharData8x16(uint16 c) const = 0;
 };
 
@@ -170,10 +162,10 @@ private:
 		kFont8x16Chars = 256
 	};
 
-	uint16 _fontData16x16[kFont16x16Chars * 16];
-	uint8 _fontData8x16[kFont8x16Chars * 16];
+	uint8 _fontData16x16[kFont16x16Chars * 32];
+	uint8 _fontData8x16[kFont8x16Chars * 32];
 
-	const uint16 *getCharData(uint16 c) const;
+	const uint8 *getCharData(uint16 c) const;
 	const uint8 *getCharData8x16(uint16 c) const;
 };
 
@@ -190,13 +182,13 @@ public:
 	 */
 	bool loadData();
 private:
-	uint16 *_fontData16x16;
+	uint8 *_fontData16x16;
 	uint _fontData16x16Size;
 
 	uint8 *_fontData8x16;
 	uint _fontData8x16Size;
 
-	const uint16 *getCharData(uint16 c) const;
+	const uint8 *getCharData(uint16 c) const;
 	const uint8 *getCharData8x16(uint16 c) const;
 };
 
