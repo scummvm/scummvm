@@ -102,6 +102,13 @@ enum kLanguage {
 	K_LANG_PORTUGUESE = 351
 };
 
+enum FeatureDetection {
+	kDetectGfxFunctions = 0,
+	kDetectMoveCountType = 1,
+	kDetectSoundType = 2,
+	kDetectSetCursorType = 3
+};
+
 class FileHandle {
 public:
 	Common::String _name;
@@ -285,11 +292,11 @@ public:
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 
 private:
+	bool dissectSelector(FeatureDetection featureDetection);
+
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	MoveCountType _moveCountType;
 	kLanguage charToLanguage(const char c) const;
-	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
-	uint16 firstRetOffset(reg_t objectAddress) const;
 	bool _usesCdTrack;
 };
 

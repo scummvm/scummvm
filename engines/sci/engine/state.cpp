@@ -233,118 +233,23 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
-int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const {
-	reg_t fptr;
-
-	Object *obj = _segMan->getObject(objAddress);
-	SelectorType selType = lookup_selector(_segMan, objAddress, sel, NULL, &fptr);
-
-	if (!obj || (selType != kSelectorMethod))
-		return -1;
-
-	Script *script = _segMan->getScript(fptr.segment);
-
-	if (!script->_buf || (fptr.offset + offset < 0))
-		return -1;
-
-	fptr.offset += offset;
-
-	if (fptr.offset + size > script->_bufSize)
-		return -1;
-
-	byte *buf = script->_buf + fptr.offset;
-
-	uint sum = 0;
-	for (uint i = 0; i < size; i++)
-		sum += buf[i];
-
-	return sum;
-}
-
-uint16 EngineState::firstRetOffset(reg_t objectAddress) const {
-	Script *script = _segMan->getScript(objectAddress.segment);
-
-	if ((script == NULL) || (script->_buf == NULL))
-		return 0;
-
-	uint16 offset = objectAddress.offset;
-
-	while (offset < script->_bufSize) {
-		byte opcode = script->_buf[offset++];
-		byte opnumber = opcode >> 1;
-
-		if (opnumber == 0x24)	// ret
-			return offset - 1;
-
-		// Skip operands for non-ret opcodes
-		for (int i = 0; g_opcode_formats[opnumber][i]; i++) {
-			switch (g_opcode_formats[opnumber][i]) {
-			case Script_Byte:
-			case Script_SByte:
-				offset++;
-				break;
-			case Script_Word:
-			case Script_SWord:
-				offset += 2;
-				break;
-			case Script_Variable:
-			case Script_Property:
-			case Script_Local:
-			case Script_Temp:
-			case Script_Global:
-			case Script_Param:
-			case Script_SVariable:
-			case Script_SRelative:
-			case Script_Offset:
-				offset++;
-				if (!(opcode & 1))
-					offset++;
-				break;
-			case Script_End:
-				return offset;
-				break;
-			case Script_Invalid:
-			default:
-				warning("opcode %02x: Invalid", opcode);
-			}
-		}	// end for
-	}	// end while
-
-	return 0;
-}
-
 SciVersion EngineState::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_AUTODETECT) {
-		reg_t soundClass = _segMan->findObjectByName("Sound");
+		if (_kernel->_selectorCache.nodePtr == -1) {
+			// No nodePtr selector, so this game is definitely using
+			// SCI0 sound code (i.e. SCI_VERSION_0_EARLY)
+			_doSoundType = SCI_VERSION_0_EARLY;
+		} else {
+			if (!dissectSelector(kDetectSoundType)) {
+				warning("DoSound detection failed, taking an educated guess");
 
-		if (!soundClass.isNull()) {
-			int sum = methodChecksum(soundClass, _kernel->_selectorCache.play, -6, 6);
-
-			switch (sum) {
-			case 0x1B2: // SCI0
-			case 0x1AE: // SCI01
-				_doSoundType = SCI_VERSION_0_EARLY;
-				break;
-			case 0x13D:
-				_doSoundType = SCI_VERSION_1_EARLY;
-				break;
-			case 0x13E:
-#ifdef ENABLE_SCI32
-			case 0x14B:
-#endif
-				_doSoundType = SCI_VERSION_1_LATE;
+				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
+					_doSoundType = SCI_VERSION_1_LATE;
+				else if (getSciVersion() > SCI_VERSION_01)
+					_doSoundType = SCI_VERSION_1_EARLY;
+				else
+					_doSoundType = SCI_VERSION_0_EARLY;
 			}
-		}
-
-		if (_doSoundType == SCI_VERSION_AUTODETECT) {
-			warning("DoSound detection failed, taking an educated guess");
-
-			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
-				_doSoundType = SCI_VERSION_1_LATE;
-			else if (getSciVersion() > SCI_VERSION_01)
-				_doSoundType = SCI_VERSION_1_EARLY;
-			else
-				_doSoundType = SCI_VERSION_0_EARLY;
 		}
 
 		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType).c_str());
@@ -355,21 +260,18 @@ SciVersion EngineState::detectDoSoundType() {
 
 SciVersion EngineState::detectSetCursorType() {
 	if (_setCursorType == SCI_VERSION_AUTODETECT) {
-		int sum = methodChecksum(_gameObj, _kernel->_selectorCache.setCursor, 0, 21);
-
-		if ((sum == 0x4D5) || (sum == 0x552)) {
-			// Standard setCursor
+		if (getSciVersion() <= SCI_VERSION_01) {
+			// SCI0/SCI01 games always have non-colored cursors
 			_setCursorType = SCI_VERSION_0_EARLY;
-		} else if (sum != -1) {
-			// Assume that others use fancy cursors
-			_setCursorType = SCI_VERSION_1_1;
 		} else {
-			warning("SetCursor detection failed, taking an educated guess");
+			if (!dissectSelector(kDetectSetCursorType)) {
+				warning("SetCursor detection failed, taking an educated guess");
 
-			if (getSciVersion() >= SCI_VERSION_1_1)
-				_setCursorType = SCI_VERSION_1_1;
-			else
-				_setCursorType = SCI_VERSION_0_EARLY;
+				if (getSciVersion() >= SCI_VERSION_1_1)
+					_setCursorType = SCI_VERSION_1_1;
+				else
+					_setCursorType = SCI_VERSION_0_EARLY;
+			}
 		}
 
 		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
@@ -499,6 +401,157 @@ SciVersion EngineState::detectLofsType() {
 	return _lofsType;
 }
 
+bool EngineState::dissectSelector(FeatureDetection featureDetection) {
+	Common::String objName;
+	Selector slc;
+
+	// Get address of target script
+	switch (featureDetection) {
+	case kDetectGfxFunctions:
+		objName = "Rm";
+		slc = _kernel->_selectorCache.overlay;
+		break;			
+	case kDetectMoveCountType:
+		objName = "Motion";
+		slc = _kernel->_selectorCache.doit;
+		break;
+	case kDetectSoundType:
+		objName = "Sound";
+		slc = _kernel->_selectorCache.play;
+		break;
+	case kDetectSetCursorType:
+		objName = "Game";
+		slc = _kernel->_selectorCache.setCursor;
+	default:
+		break;
+	}
+
+	reg_t addr;
+	reg_t objAddr = _segMan->findObjectByName(objName);
+	if (objAddr.isNull()) {
+		warning("dissectSelector: %s object couldn't be found", objName.c_str());
+		return false;
+	}
+
+	if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
+		warning("dissectSelector: target selector is not a method of object %s", objName.c_str());
+		return false;
+	}
+
+	bool found = false;
+	uint16 offset = addr.offset;
+	byte *scr = _segMan->getScript(addr.segment)->_buf;
+	do {
+		uint16 kFuncNum;
+		int opsize = scr[offset++];
+		uint opcode = opsize >> 1;
+		int i = 0;
+		byte argc;
+
+		while (g_opcode_formats[opcode][i]) {
+			switch (g_opcode_formats[opcode][i++]) {
+			case Script_Invalid:
+				break;
+			case Script_SByte:
+			case Script_Byte:
+				offset++;
+				break;
+			case Script_Word:
+			case Script_SWord:
+				offset += 2;
+				break;
+			case Script_SVariable:
+			case Script_Variable:
+			case Script_Property:
+			case Script_Global:
+			case Script_Local:
+			case Script_Temp:
+			case Script_Param:
+				if (opsize & 1)
+					kFuncNum = scr[offset++];
+				else {
+					kFuncNum = 0xffff & (scr[offset] | (scr[offset + 1] << 8));
+					offset += 2;
+				}
+
+				if (opcode == op_callk) {
+					argc = scr[offset++];
+
+					switch (featureDetection) {
+					case kDetectGfxFunctions:
+						if (kFuncNum == 8) {	// kDrawPic
+							// If kDrawPic is called with 6 parameters from the
+							// overlay selector, the game is using old graphics functions.
+							// Otherwise, if it's called with 8 parameters, it's using new
+							// graphics functions
+							if (argc == 6) {
+								_gfxFunctionsType = SCI_VERSION_0_EARLY;
+								found = true;
+							} else if (argc == 8) {
+								_gfxFunctionsType = SCI_VERSION_0_LATE;
+								found = true;
+							} else {
+								warning("overlay selector calling kDrawPic with %d parameters", argc);
+							}
+						}
+						break;
+					case kDetectMoveCountType:
+						// Games which ignore move count call kAbs before calling kDoBresen
+						if (kFuncNum == 61) {	// kAbs
+							_moveCountType = kIgnoreMoveCount;
+							found = true;
+						} else if (kFuncNum == 80) {	// kDoBresen
+							// If we reached here, a call to kAbs hasn't been found
+							_moveCountType = kIncrementMoveCount;
+							found = true;
+						}
+						break;
+					case kDetectSoundType:
+						// Late SCI1 games call kIsObject before kDoSound
+						if (kFuncNum == 6) {	// kIsObject
+							_doSoundType = SCI_VERSION_1_LATE;
+							found = true;
+						} else if (kFuncNum == 45) {	// kDoSound
+							// If we reached here, a call to kIsObject hasn't been found
+							_doSoundType = SCI_VERSION_1_EARLY;
+							found = true;
+						}
+						break;
+					case kDetectSetCursorType:
+						// Games with colored mouse cursors call kIsObject before kSetCursor
+						if (kFuncNum == 6) {	// kIsObject
+							_setCursorType = SCI_VERSION_1_1;
+							found = true;
+						} else if (kFuncNum == 40) {	// kSetCursor
+							// If we reached here, a call to kIsObject hasn't been found
+							_setCursorType = SCI_VERSION_0_EARLY;
+							found = true;
+						}
+					default:
+						break;
+					}
+				}
+				break;
+
+			case Script_Offset:
+			case Script_SRelative:
+				offset++;
+				if (!opsize & 1)
+					offset++;
+				break;
+			case Script_End:
+				offset = 0;	// exit loop
+				break;
+			default:
+				warning("opcode %02x: Invalid", opcode);
+
+			}
+		}
+	} while (offset > 0 && !found);
+
+	return found;
+}
+
 SciVersion EngineState::detectGfxFunctionsType() {
 	if (_gfxFunctionsType == SCI_VERSION_AUTODETECT) {
 		// This detection only works (and is only needed) for SCI0 games
@@ -525,89 +578,7 @@ SciVersion EngineState::detectGfxFunctionsType() {
 					// overlay. Therefore, check it to see how it calls kDrawPic to
 					// determine the graphics functions type used
 
-					reg_t roomObjAddr = _segMan->findObjectByName("Rm");
-
-					bool found = false;
-
-					if (!roomObjAddr.isNull()) {
-						reg_t addr;
-
-						if (lookup_selector(_segMan, roomObjAddr, _kernel->_selectorCache.overlay, NULL, &addr) == kSelectorMethod) {
-							uint16 offset = addr.offset;
-							byte *scr = _segMan->getScript(addr.segment)->_buf;
-							do {
-								uint16 kFuncNum;
-								int opsize = scr[offset++];
-								uint opcode = opsize >> 1;
-								int i = 0;
-								byte argc;
-
-								while (g_opcode_formats[opcode][i]) {
-									switch (g_opcode_formats[opcode][i++]) {
-									case Script_Invalid:
-										break;
-									case Script_SByte:
-									case Script_Byte:
-										offset++;
-										break;
-									case Script_Word:
-									case Script_SWord:
-										offset += 2;
-										break;
-									case Script_SVariable:
-									case Script_Variable:
-									case Script_Property:
-									case Script_Global:
-									case Script_Local:
-									case Script_Temp:
-									case Script_Param:
-										if (opsize & 1)
-											kFuncNum = scr[offset++];
-										else {
-											kFuncNum = 0xffff & (scr[offset] | (scr[offset + 1] << 8));
-											offset += 2;
-										}
-
-										if (opcode == op_callk) {
-											argc = scr[offset++];
-
-											if (kFuncNum == 8) {	// kDrawPic
-												// If kDrawPic is called with 6 parameters from the
-												// overlay selector, the game is using old graphics functions.
-												// Otherwise, if it's called with 8 parameters, it's using new
-												// graphics functions
-												if (argc == 6) {
-													_gfxFunctionsType = SCI_VERSION_0_EARLY;
-													found = true;
-												} else if (argc == 8) {
-													_gfxFunctionsType = SCI_VERSION_0_LATE;
-													found = true;
-												} else {
-													warning("overlay selector calling kDrawPic with %d parameters", argc);
-												}
-											}
-										}
-										break;
-
-									case Script_Offset:
-									case Script_SRelative:
-										offset++;
-										if (!opsize & 1)
-											offset++;
-										break;
-									case Script_End:
-										offset = 0;	// exit loop
-										break;
-									default:
-										warning("opcode %02x: Invalid", opcode);
-
-									}
-								}
-							} while (offset > 0 && !found);
-						}
-					}
-
-					if (!found) {
+					if (!dissectSelector(kDetectGfxFunctions)) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
 						// Try detecting the graphics function types from the existence of the motionCue
@@ -635,29 +606,11 @@ MoveCountType EngineState::detectMoveCountType() {
 		// SCI0/SCI01 games always increment move count
 		if (getSciVersion() <= SCI_VERSION_01) {
 			_moveCountType = kIncrementMoveCount;
-			return _moveCountType;
-		}
-
-		reg_t motionClass = _segMan->findObjectByName("Motion");
-		bool found = false;
-
-		if (!motionClass.isNull()) {
-			Object *obj = _segMan->getObject(motionClass);
-			reg_t fptr;
-
-			if (obj && lookup_selector(_segMan, motionClass, _kernel->_selectorCache.doit, NULL, &fptr) == kSelectorMethod) {
-				byte *buf = _segMan->getScript(fptr.segment)->_buf + fptr.offset;
-				int checksum = 0;
-				for (int i = 0; i < 8; i++)
-					checksum += *(buf++);
-				_moveCountType = (checksum == 0x216) ? kIncrementMoveCount : kIgnoreMoveCount;
-				found = true;
+		} else {
+			if (!dissectSelector(kDetectMoveCountType)) {
+				warning("Move count autodetection failed");
+				_moveCountType = kIncrementMoveCount;	// Most games do this, so best guess
 			}
-		}
-
-		if (!found) {
-			warning("Move count autodetection failed");
-			_moveCountType = kIncrementMoveCount;	// Most games do this, so best guess
 		}
 
 		debugC(1, kDebugLevelVM, "Detected move count handling: %s", (_moveCountType == kIncrementMoveCount) ? "increment" : "ignore");
