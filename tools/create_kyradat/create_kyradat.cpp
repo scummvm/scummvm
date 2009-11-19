@@ -1069,6 +1069,12 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	if (breakProcess)
 		return false;
 
+	ExtractInformation extractInfo;
+	extractInfo.game = g->game;
+	extractInfo.lang = g->lang;
+	extractInfo.platform = g->platform;
+	extractInfo.special = g->special;
+
 	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
 		const int id = i->first;
 	
@@ -1096,7 +1102,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		if (list && list->findEntry(filename) != 0)
 			continue;
 
-		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, id, UNK_LANG)) {
+		if (!tDesc->extract(out, &extractInfo, data + i->second.offset, i->second.data.size, filename, id, UNK_LANG)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
 			return false;
 		}

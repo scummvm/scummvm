@@ -52,10 +52,17 @@ enum kExtractType {
 	kLolTypeButtonDef
 };
 
+struct ExtractInformation {
+	int game;
+	int platform;
+	int lang;
+	int special;
+};
+
 struct ExtractType {
 	int type;
-	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-	void (*createFilename)(char *dstFilename, const int gid, const int lang, const int platform, const int special, const char *filename);
+	bool (*extract)(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
+	void (*createFilename)(char *dstFilename, const ExtractInformation *info, const char *filename);
 };
 
 const ExtractType *findExtractType(const int type);
