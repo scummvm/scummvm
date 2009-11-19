@@ -309,14 +309,14 @@ const ExtractFilename *getFilenameDesc(const int id) {
 
 // filename processing
 
-bool getFilename(char *dstFilename, const Game *g, const int id) {
+bool getFilename(char *dstFilename, const ExtractInformation *info, const int id) {
 	const ExtractFilename *i = getFilenameDesc(id);
 
 	if (!i)
 		return false;
 
 	const ExtractType *type = findExtractType(i->type);
-	type->createFilename(dstFilename, g->game, g->lang, g->platform, g->special, i->filename);
+	type->createFilename(dstFilename, info, i->filename);
 	return true;
 }
 
@@ -428,7 +428,13 @@ bool checkIndex(const byte *s, const int srcSize) {
 
 bool updateIndex(PAKFile &out, const Game *g) {
 	char filename[32];
-	createFilename(filename, g->game, -1, g->platform, g->special, "INDEX");
+	ExtractInformation extractInfo;
+	extractInfo.game = g->game;
+	extractInfo.lang = -1;
+	extractInfo.platform = g->platform;
+	extractInfo.special = g->special;
+
+	createFilename(filename, &extractInfo, "INDEX");
 
 	byte *index = new byte[kIndexSize];
 	assert(index);
@@ -456,7 +462,13 @@ bool updateIndex(PAKFile &out, const Game *g) {
 
 bool checkIndex(PAKFile &out, const Game *g) {
 	char filename[32];
-	createFilename(filename, g->game, -1, g->platform, g->special, "INDEX");
+	ExtractInformation extractInfo;
+	extractInfo.game = g->game;
+	extractInfo.lang = -1;
+	extractInfo.platform = g->platform;
+	extractInfo.special = g->special;
+
+	createFilename(filename, &extractInfo, "INDEX");
 
 	uint32 size = 0;
 	const uint8 *data = out.getFileData(filename, &size);
@@ -1027,6 +1039,12 @@ bool getExtractionData(const Game *g, Search &search, IdMap &map);
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	char filename[128];
 
+	ExtractInformation extractInfo;
+	extractInfo.game = g->game;
+	extractInfo.lang = g->lang;
+	extractInfo.platform = g->platform;
+	extractInfo.special = g->special;
+
 	if (!checkIndex(out, g)) {
 		fprintf(stderr, "ERROR: corrupted INDEX file\n");
 		return false;
@@ -1053,7 +1071,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 		// Try whether the data is present in the kyra.dat file already
 		filename[0] = 0;
-		if (!getFilename(filename, g, *entry))
+		if (!getFilename(filename, &extractInfo, *entry))
 			error("couldn't find filename for id %d", *entry);
 
 		PAKFile::cFileList *list = out.getFileList();
@@ -1069,17 +1087,11 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	if (breakProcess)
 		return false;
 
-	ExtractInformation extractInfo;
-	extractInfo.game = g->game;
-	extractInfo.lang = g->lang;
-	extractInfo.platform = g->platform;
-	extractInfo.special = g->special;
-
 	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
 		const int id = i->first;
 	
 		filename[0] = 0;
-		if (!getFilename(filename, g, id)) {
+		if (!getFilename(filename, &extractInfo, id)) {
 			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
 			return false;
 		}

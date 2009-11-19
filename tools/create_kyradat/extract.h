@@ -68,7 +68,7 @@ struct ExtractType {
 const ExtractType *findExtractType(const int type);
 
 // TODO: Do not export this in the future
-void createFilename(char *dstFilename, const int gid, const int lang, const int platform, const int special, const char *filename);
+void createFilename(char *dstFilename, const ExtractInformation *info, const char *filename);
 
 #endif
 

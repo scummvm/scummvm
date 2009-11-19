@@ -87,7 +87,7 @@ void createFilename(char *dstFilename, const ExtractInformation *info, const cha
 	strcpy(dstFilename, filename);
 
 	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
-	strcat(dstFilename, gidExtensions[info->gid]);
+	strcat(dstFilename, gidExtensions[info->game]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
 		if (specialE->special == info->special) {
@@ -119,7 +119,7 @@ void createLangFilename(char *dstFilename, const ExtractInformation *info, const
 	}
 
 	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
-	strcat(dstFilename, gidExtensions[gid]);
+	strcat(dstFilename, gidExtensions[info->game]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
 		if (specialE->special == info->special) {
