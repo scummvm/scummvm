@@ -969,8 +969,6 @@ const GameNeed gameNeedTable[] = {
 
 	{ kKyra2, kPlatformPC, kDemoVersion, kyra2DemoNeed },
 
-	{ kKyra2, kPlatformPC, k2DemoVersionTlk, kyra2TlkDemoNeed },
-
 	{ kLol, kPlatformPC, kDemoVersion, lolDemoNeed },
 
 	{ kKyra3, kPlatformPC, -1, kyra3Need },

@@ -294,7 +294,6 @@ enum kSpecial {
 	kTalkieFile1,
 	kTalkieFile2,
 
-	k2DemoVersionTlk,
 	k2CDDemo,
 
 	// special case for Kyrandia 1 CD demo
