@@ -219,7 +219,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	if (command < _soundCommands.size()) {
-		printf("%s\n", _soundCommands[command]->desc);
+		// printf("%s\n", _soundCommands[command]->desc);	// debug
 		debugC(2, kDebugLevelSound, "%s", _soundCommands[command]->desc);
 		(this->*(_soundCommands[command]->sndCmd))(obj, handle, value);
 	} else {
@@ -230,12 +230,15 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 }
 
 void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) {
-	if (!obj.segment)
-		return;
-
 #ifdef USE_OLD_MUSIC_FUNCTIONS
+
+	if (_doSoundVersion != SCI_VERSION_1_LATE) {
+		if (!obj.segment)
+			return;
+	}
+
 	SongIteratorType type = (_doSoundVersion == SCI_VERSION_0_EARLY) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
-	int number = GET_SEL32V(_segMan, obj, number);
+	int number = obj.segment ? GET_SEL32V(_segMan, obj, number) : -1;
 
 	if (_hasNodePtr) {
 		if (GET_SEL32V(_segMan, obj, nodePtr)) {
@@ -246,7 +249,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 
 	// Some games try to init non-existing sounds (e.g. KQ6)
 	if (_doSoundVersion == SCI_VERSION_1_LATE) {
-		if (!_resMan->testResource(ResourceId(kResourceTypeSound, value)))
+		if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, number)))
 			return;
 	}
 
