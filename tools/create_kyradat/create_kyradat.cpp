@@ -795,6 +795,10 @@ const char *getIdString(const int id) {
 		return "kKyra1TownsSFXbtTable";
 	case kKyra1TownsCDATable:
 		return "kKyra1TownsCDATable";
+	case kKyra1PC98StoryStrings:
+		return "kKyra1PC98StoryStrings";
+	case kKyra1PC98IntroSfx:
+		return "kKyra1PC98IntroSfx";
 	case kCreditsStrings:
 		return "kCreditsStrings";
 	case kAmigaIntroSFXTable:
