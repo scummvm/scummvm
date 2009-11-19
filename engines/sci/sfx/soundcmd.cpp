@@ -129,7 +129,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, SfxState *state, AudioPlayer *audio, SciVersion doSoundVersion) : 
 	_resMan(resMan), _segMan(segMan), _state(state), _audio(audio), _doSoundVersion(doSoundVersion) {
 
-	_hasNodePtr = (_doSoundVersion != SCI_VERSION_0_EARLY);
+	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music = new SciMusic();
@@ -237,7 +237,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 			return;
 	}
 
-	SongIteratorType type = (_doSoundVersion == SCI_VERSION_0_EARLY) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
+	SongIteratorType type = !_hasNodePtr ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
 	int number = obj.segment ? GET_SEL32V(_segMan, obj, number) : -1;
 
 	if (_hasNodePtr) {
@@ -292,7 +292,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, SongHandle handle, int value) 
 	if (!obj.segment)
 		return;
 
-	if (_doSoundVersion == SCI_VERSION_0_EARLY) {
+	if (!_hasNodePtr) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
 		PUT_SEL32V(_segMan, obj, state, _K_SOUND_STATUS_PLAYING);
@@ -363,7 +363,7 @@ void SoundCommandParser::cmdDummy(reg_t obj, SongHandle handle, int value) {
 void SoundCommandParser::changeHandleStatus(reg_t obj, SongHandle handle, int newStatus) {
 	if (obj.segment) {
 		_state->sfx_song_set_status(handle, newStatus);
-		if (_doSoundVersion == SCI_VERSION_0_EARLY)
+		if (!_hasNodePtr)
 			PUT_SEL32V(_segMan, obj, state, newStatus);
 	}
 }
@@ -598,7 +598,7 @@ void SoundCommandParser::cmdSuspendSound(reg_t obj, SongHandle handle, int value
 }
 
 void SoundCommandParser::cmdUpdateVolumePriority(reg_t obj, SongHandle handle, int value) {
-	if (_doSoundVersion == SCI_VERSION_0_EARLY && obj.segment) {
+	if (!_hasNodePtr && obj.segment) {
  		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
  		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
  	}
