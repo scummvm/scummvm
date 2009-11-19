@@ -503,6 +503,8 @@ private:
 	int _ingameGMSoundIndexSize;
 	const uint8 *_ingameMT32SoundIndex;
 	int _ingameMT32SoundIndexSize;
+	const uint8 *_ingamePCSpeakerSoundIndex;
+	int _ingamePCSpeakerSoundIndexSize;
 
 	AudioDataStruct _soundData[3];
 

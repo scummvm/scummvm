@@ -189,6 +189,8 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 			track = (track < _ingameMT32SoundIndexSize) ? (_ingameMT32SoundIndex[track] - 1) : -1;
 		else if (_sound->getSfxType() == Sound::kMidiGM)
 			track = (track < _ingameGMSoundIndexSize) ? (_ingameGMSoundIndex[track] - 1) : -1;
+		else if (_sound->getSfxType() == Sound::kPCSpkr)
+			track = (track < _ingamePCSpeakerSoundIndexSize) ? (_ingamePCSpeakerSoundIndex[track] - 1) : -1;
 
 		if (track == 168)
 			track = 167;

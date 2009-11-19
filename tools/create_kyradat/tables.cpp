@@ -1308,6 +1308,12 @@ const ExtractEntrySearchData kLolMT32SfxIndexProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData kLolPcSpkSfxIndexProvider[] = {
+	{ UNK_LANG, kPlatformPC, { 0x000000FA, 0x00005EFC, { { 0xA3, 0x5C, 0x69, 0xED, 0x13, 0xEC, 0x08, 0x0E, 0xFA, 0x72, 0x83, 0x0D, 0xD7, 0x8D, 0x9C, 0x70 } } } },
+
+	EXTRACT_END_ENTRY
+};
+
 const ExtractEntrySearchData kLolSpellPropertiesProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000118, 0x00000B06, { { 0x27, 0x69, 0x53, 0x01, 0xA0, 0xE3, 0x76, 0xAA, 0x33, 0xA4, 0x52, 0x11, 0x52, 0xB1, 0x0E, 0xDA } } } },
 
@@ -1857,6 +1863,7 @@ const ExtractEntry extractProviders[] = {
 	{ kLolMusicTrackMap, kLolMusicTrackMapProvider },
 	{ kLolGMSfxIndex, kLolGMSfxIndexProvider },
 	{ kLolMT32SfxIndex, kLolMT32SfxIndexProvider },
+	{ kLolPcSpkSfxIndex, kLolPcSpkSfxIndexProvider },
 	{ kLolSpellProperties, kLolSpellPropertiesProvider },
 	{ kLolGameShapeMap, kLolGameShapeMapProvider },
 	{ kLolSceneItemOffs, kLolSceneItemOffsProvider },

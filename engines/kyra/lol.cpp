@@ -106,7 +106,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_healOverlay = 0;
 	_swarmSpellStatus = 0;
 
-	_ingameMT32SoundIndex = _ingameGMSoundIndex = /*_ingameADLSoundIndex =*/ 0;
+	_ingameMT32SoundIndex = _ingameGMSoundIndex = _ingamePCSpeakerSoundIndex = 0;
 
 	_charSelection = -1;
 	_characters = 0;

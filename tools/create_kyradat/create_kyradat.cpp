@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 62,
+	kKyraDatVersion = 63,
 	kIndexSize = 12
 };
 
@@ -218,7 +218,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kLolMusicTrackMap, kTypeRawData, "MUSIC.MAP" },
 	{ kLolGMSfxIndex, kTypeRawData, "SFX_GM.MAP" },
 	{ kLolMT32SfxIndex, kTypeRawData, "SFX_MT32.MAP" },
-	//{ kLolADLSfxIndex, kTypeRawData, "SFX_ADL.MAP" },
+	{ kLolPcSpkSfxIndex, kTypeRawData, "SFX_PCS.MAP" },
 	{ kLolSpellProperties, kTypeRawData, "SPELLS.DEF" },
 	{ kLolGameShapeMap, kTypeRawData, "GAMESHP.MAP" },
 	{ kLolSceneItemOffs, kTypeRawData, "ITEMOFFS.DEF" },
@@ -881,6 +881,8 @@ const char *getIdString(const int id) {
 		return "kLolGMSfxIndex";
 	case kLolMT32SfxIndex:
 		return "kLolMT32SfxIndex";
+	case kLolPcSpkSfxIndex:
+		return "kLolPcSpkSfxIndex";
 	case kLolSpellProperties:
 		return "kLolSpellProperties";
 	case kLolGameShapeMap:

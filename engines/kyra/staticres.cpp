@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 62
+#define RESFILE_VERSION 63
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -397,6 +397,7 @@ bool StaticResource::init() {
 		{ kLolMusicTrackMap, kRawData, "MUSIC.MAP" },
 		{ kLolIngameGMSfxIndex, kRawData, "SFX_GM.MAP" },
 		{ kLolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
+		{ kLolIngamePcSpkSfxIndex, kRawData, "SFX_PCS.MAP" },
 		{ kLolSpellProperties, kLolSpellData, "SPELLS.DEF" },
 		{ kLolGameShapeMap, kRawData, "GAMESHP.MAP" },
 		{ kLolSceneItemOffs, kRawData, "ITEMOFFS.DEF" },
@@ -1867,7 +1868,7 @@ void LoLEngine::initStaticResource() {
 	_musicTrackMap = _staticres->loadRawData(kLolMusicTrackMap, _musicTrackMapSize);
 	_ingameGMSoundIndex = _staticres->loadRawData(kLolIngameGMSfxIndex, _ingameGMSoundIndexSize);
 	_ingameMT32SoundIndex = _staticres->loadRawData(kLolIngameMT32SfxIndex, _ingameMT32SoundIndexSize);
-	//_ingameADLSoundIndex = _staticres->loadRawData(kLolIngameADLSfxIndex, _ingameADLSoundIndexSize);
+	_ingamePCSpeakerSoundIndex = _staticres->loadRawData(kLolIngamePcSpkSfxIndex, _ingamePCSpeakerSoundIndexSize);
 	_spellProperties = _staticres->loadSpellData(kLolSpellProperties, _spellPropertiesSize);
 	_gameShapeMap = (const int8 *)_staticres->loadRawData(kLolGameShapeMap, _gameShapeMapSize);
 	_sceneItemOffs = (const int8 *)_staticres->loadRawData(kLolSceneItemOffs, _sceneItemOffsSize);
