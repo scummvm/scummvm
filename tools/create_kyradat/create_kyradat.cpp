@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 61,
+	kKyraDatVersion = 62,
 	kIndexSize = 12
 };
 
@@ -325,12 +325,13 @@ bool getFilename(char *dstFilename, const ExtractInformation *info, const int id
 const SpecialExtension specialTable[] = {
 	{ kTalkieVersion, "CD" },
 	{ kDemoVersion, "DEM" },
-	{ kDemoCDVersion, "CD.DEM" },
+	{ kTalkieDemoVersion, "CD.DEM" },
 
 	{ kTalkieFile1, "CD" },
 	{ kTalkieFile2, "CD" },
 
-	{ k2CDDemo, "CD" },
+	{ kTalkieDemoFile1, "CD.DEM" },
+	{ kTalkieDemoFile2, "CD.DEM" },
 
 	{ -1, 0 }
 };
@@ -374,12 +375,11 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->special == kTalkieFile1 || g->special == kTalkieFile2
-			|| g->special == k2CDDemo || g->game == kKyra3)
+	if (g->special == kTalkieVersion || g->special == kTalkieFile1 || g->special == kTalkieFile2 || g->game == kKyra3)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion)
 		features |= GF_DEMO;
-	else if (g->special == kDemoCDVersion)
+	else if (g->special == kTalkieDemoVersion || g->special == kTalkieDemoFile1 || g->special == kTalkieDemoFile2)
 		features |= (GF_DEMO | GF_TALKIE);
 	else if (g->platform == kPlatformFMTowns || g->platform == kPlatformPC98)	// HACK
 		features |= GF_FMTOWNS;

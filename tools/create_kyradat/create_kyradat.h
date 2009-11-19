@@ -288,16 +288,15 @@ struct ExtractFilename {
 enum kSpecial {
 	kTalkieVersion = 0,
 	kDemoVersion,
+	kTalkieDemoVersion,
 
 	kFile1,
 	kFile2,
 	kTalkieFile1,
 	kTalkieFile2,
 
-	k2CDDemo,
-
-	// special case for Kyrandia 1 CD demo
-	kDemoCDVersion
+	kTalkieDemoFile1,
+	kTalkieDemoFile2
 };
 
 struct SpecialExtension {

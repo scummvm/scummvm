@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 61
+#define RESFILE_VERSION 62
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -93,10 +93,8 @@ enum {
 #define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_JAPANESE | GF_LNGUNK)
 
 uint32 createFeatures(const GameFlags &flags) {
-	// special case for kyrandia 1 CD demo
-	if (flags.gameID == GI_KYRA1 && flags.isTalkie && flags.isDemo)
+	if (flags.isTalkie && flags.isDemo)
 		return GF_TALKIE | GF_DEMO;
-
 	if (flags.isTalkie)
 		return GF_TALKIE;
 	if (flags.isDemo)
@@ -1373,8 +1371,7 @@ const char *StaticResource::getFilename(const char *name) {
 	else if (_vm->gameFlags().gameID == GI_LOL)
 		filename += ".LOL";
 
-	// Special case for Kyrandia 1 CD demo
-	if (_vm->gameFlags().gameID == GI_KYRA1 && _vm->gameFlags().isTalkie && _vm->gameFlags().isDemo) {
+	if (_vm->gameFlags().isTalkie && _vm->gameFlags().isDemo) {
 		filename += ".CD.DEM";
 		return filename.c_str();
 	}

@@ -29,7 +29,7 @@ namespace {
 const Game kyra1Games[] = {
 	// Demos
 	{ kKyra1, EN_ANY, kPlatformPC, kDemoVersion, "7b7504c8560ffc914d34c44c71b3094c" },
-	{ kKyra1, EN_ANY, kPlatformPC, kDemoCDVersion, "226fdba99cb11ef1047131d9a50e6292" },
+	{ kKyra1, EN_ANY, kPlatformPC, kTalkieDemoVersion, "226fdba99cb11ef1047131d9a50e6292" },
 
 	// Amiga
 	{ kKyra1, EN_ANY, kPlatformAmiga, -1, "b620564b6b7e0787b053ca9e35bd9f52" },
@@ -61,9 +61,13 @@ const Game kyra1Games[] = {
 const Game kyra2Games[] = {
 	// demos
 	{ kKyra2, EN_ANY, kPlatformPC, kDemoVersion, "a620a37579dd44ab0403482285e3897f" },
-	{ kKyra2, EN_ANY, kPlatformPC, k2CDDemo, "fa54d8abfe05f9186c05f7de7eaf1480" },
-	{ kKyra2, FR_FRA, kPlatformPC, k2CDDemo, "fa54d8abfe05f9186c05f7de7eaf1480" },
-	{ kKyra2, DE_DEU, kPlatformPC, k2CDDemo, "fa54d8abfe05f9186c05f7de7eaf1480" },
+
+	{ kKyra2, EN_ANY, kPlatformPC, kTalkieDemoFile1, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
+	{ kKyra2, FR_FRA, kPlatformPC, kTalkieDemoFile1, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
+	{ kKyra2, DE_DEU, kPlatformPC, kTalkieDemoFile1, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
+	{ kKyra2, EN_ANY, kPlatformPC, kTalkieDemoFile2, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, FR_FRA, kPlatformPC, kTalkieDemoFile2, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, DE_DEU, kPlatformPC, kTalkieDemoFile2, "fa54d8abfe05f9186c05f7de7eaf1480" },
 
 	// floppy games
 	{ kKyra2, EN_ANY, kPlatformPC, kFile1, "9b0f5e57b5a2ed88b5b989cbb402b6c7" },
@@ -954,7 +958,7 @@ const GameNeed gameNeedTable[] = {
 
 	{ kKyra1, kPlatformPC, kDemoVersion, kyra1DemoNeed },
 
-	{ kKyra1, kPlatformPC, kDemoCDVersion, kyra1DemoCDNeed },
+	{ kKyra1, kPlatformPC, kTalkieDemoVersion, kyra1DemoCDNeed },
 
 	{ kKyra2, kPlatformPC, kFile1, kyra2FloppyFile1Need },
 	{ kKyra2, kPlatformPC, kFile2, kyra2FloppyFile2Need },
@@ -962,7 +966,8 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, kPlatformPC, kTalkieFile1, kyra2CDFile1Need },
 	{ kKyra2, kPlatformPC, kTalkieFile2, kyra2CDFile2Need },
 
-	{ kKyra2, kPlatformPC, k2CDDemo, kyra2CDDemoNeed },
+	{ kKyra2, kPlatformPC, kTalkieDemoFile1, kyra2CDFile1Need },
+	{ kKyra2, kPlatformPC, kTalkieDemoFile2, kyra2CDDemoNeed },
 
 	{ kKyra2, kPlatformFMTowns, kFile1, kyra2TownsFile1Need },
 	{ kKyra2, kPlatformFMTowns, kFile2, kyra2TownsFile2Need },
