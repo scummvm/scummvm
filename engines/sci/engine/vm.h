@@ -103,8 +103,8 @@ enum SelectorType {
 };
 
 struct Class {
-	int script; /**< number of the script the class is in, -1 for non-existing */
-	reg_t reg; /**< offset; script-relative offset, segment: 0 if not instantiated */
+	int script; // number of the script the class is in, -1 for non-existing */
+	reg_t reg; // offset; script-relative offset, segment: 0 if not instantiated */
 };
 
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
@@ -115,84 +115,85 @@ struct SelectorCache {
 		memset(this, 0, sizeof(*this));
 	}
 
-	Selector init; /**< Init function */
-	Selector play; /**< Play function (first function to be called) */
-	Selector replay; /**< Replay function */
-	Selector x, y, z; /**< Coordinates */
-	Selector priority;
-	Selector view, loop, cel; /**< Description of a specific image */
-	Selector brLeft, brRight, brTop, brBottom; /**< Bounding Rectangle */
-	Selector xStep, yStep; /**< BR adjustments */
-	Selector nsLeft, nsRight, nsTop, nsBottom; /**< View boundaries ('now seen') */
-	Selector text, font; /**< Used by controls */
-	Selector type, state; /**< Used by contols as well */
-	Selector doit; /**< Called (!) by the Animate() system call */
-	Selector signal; /**< Used by Animate() to control a view's behaviour */
-	Selector underBits; /**< Used by the graphics subroutines to store backupped BG pic data */
-	Selector scaleX, scaleY;	/**< SCI1.1 view scaling */
-
-	/* The following selectors are used by the Bresenham syscalls: */
-	Selector canBeHere; /**< Funcselector: Checks for movement validity */
-	Selector client; /**< The object that wants to be moved */
-	Selector cycler; /**< The cycler of the client */
-	Selector dx, dy; /**< Deltas */
-	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; /**< Various Bresenham vars */
-	Selector completed;
-
-	Selector illegalBits; /**< Used by CanBeHere */
-	Selector dispose;
-
-	Selector message, modifiers; /**< Used by GetEvent */
-
-	Selector owner, handle;
-	Selector cue;
+	// Statically defined selectors, (almost the) same in all SCI versions
+	Selector y;
+	Selector x;
+	Selector view, loop, cel; // Description of a specific image
+	Selector underBits; // Used by the graphics subroutines to store backupped BG pic data
+	Selector nsTop, nsLeft, nsBottom, nsRight; // View boundaries ('now seen')
+	Selector lsTop, lsLeft, lsBottom, lsRight; // Used by Animate() subfunctions and scroll list controls
+	Selector signal; // Used by Animate() to control a view's behaviour
+	Selector illegalBits; // Used by CanBeHere
+	Selector brTop, brLeft, brBottom, brRight; // Bounding Rectangle
+	// name, key, time
+	Selector text; // Used by controls
+	Selector elements; // Used by SetSynonyms()
+	// color, back
+	Selector mode; // Used by text controls (-> DrawControl())
+	// style
+	Selector state, font, type;	// Used by controls
+	// window
+	Selector cursor, max; // Used by EditControl
+	// mark, who
+	Selector message; // Used by GetEvent
+	// edit
+	Selector play; // Play function (first function to be called)
 	Selector number;
+	Selector handle;	// Replaced by nodePtr in SCI1+
+	Selector nodePtr;	// Replaces handle in SCI1+
+	Selector client; // The object that wants to be moved
+	Selector dx, dy; // Deltas
+	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; // Various Bresenham vars
+	Selector xStep, yStep; // BR adjustments
+	Selector moveSpeed; // Used for DoBresen
+	Selector canBeHere; // Funcselector: Checks for movement validity
+	Selector heading, mover; // Used in DoAvoider
+	Selector doit; // Called (!) by the Animate() system call
+	Selector isBlocked, looper;	// Used in DoAvoider
+	Selector priority;
+	Selector modifiers; // Used by GetEvent
+	Selector replay; // Replay function
+	// setPri, at, next, done, width
+	Selector wordFail, syntaxFail; // Used by Parse()
+	// semanticFail, pragmaFail
+	// said
+	Selector claimed; // Used generally by the event mechanism
+	// value, save, restore, title, button, icon, draw
+	Selector delete_; // Called by Animate() to dispose a view object
+	Selector z;
 
-	Selector max, cursor; /**< Used by EditControl */
-	Selector mode; /**< Used by text controls (-> DrawControl()) */
-
-	Selector wordFail, syntaxFail; /**< Used by Parse() */
-
-	Selector claimed; /**< Used generally by the event mechanism */
-
-	Selector elements; /**< Used by SetSynonyms() */
-
-	Selector lsTop, lsBottom, lsRight, lsLeft; /**< Used by Animate() subfunctions and scroll list controls */
-	Selector topString; /**< SCI1 scroll lists use this instead of lsTop */
-
-	Selector looper, mover, isBlocked, heading; /**< Used in DoAvoider */
-
-	Selector caller, moveDone, moveSpeed; /**< Used for DoBresen */
-
-	Selector delete_; /**< Called by Animate() to dispose a view object */
-
-	Selector vol;
-	Selector pri;
-
-	Selector min; /**< SMPTE time format */
+	// SCI1+ static selectors
+	Selector parseLang;
+	Selector printLang; // Used for i18n
+	Selector subtitleLang;
+	Selector size;
+	Selector points; // Used by AvoidPath()
+	Selector palette;
+	Selector dataInc;
+	// handle (in SCI1)
+	Selector min; // SMPTE time format
 	Selector sec;
 	Selector frame;
+	Selector vol;
+	Selector pri;
+	// perform
+	Selector moveDone;	// used for DoBresen
 
-	Selector dataInc;
-	Selector size;
-	Selector palette;
+	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
 	Selector cantBeHere;
-	Selector nodePtr;
+	Selector topString; // SCI1 scroll lists use this instead of lsTop
 	Selector flags;
 
-	Selector overlay;		/**< Used to determine if a game is using old gfx functions or not */
-
-	Selector points; /**< Used by AvoidPath() */
-
-	Selector syncCue; /**< Used by DoSync() */
+	// SCI1+ music-related selectors, not static
+	Selector syncCue; // Used by DoSync()
 	Selector syncTime;
 
-	Selector printLang; /**< Used for i18n */
-	Selector subtitleLang;
-	Selector parseLang;
+	// SCI1.1 specific selectors
+	Selector scaleX, scaleY;	// SCI1.1 view scaling
 
+	// Used for auto detection purposes
+	Selector overlay;	/** Used to determine if a game is using old gfx functions or not */
 	Selector newRoom;	/** For SCI1 lofs parameter type autodetection fallback */
-
 	Selector setCursor; /** For autodetection */
 };
 
@@ -292,8 +293,8 @@ enum BreakpointType {
 struct Breakpoint {
 	BreakpointType type;
 	union {
-		uint32 address;  /**< Breakpoints on exports */
-		char *name; /**< Breakpoints on selector names */
+		uint32 address;  // Breakpoints on exports */
+		char *name; // Breakpoints on selector names */
 	} data;
 	Breakpoint *next;
 };

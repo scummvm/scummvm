@@ -214,14 +214,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR2(delete_, "delete");
 	FIND_SELECTOR(z);
 	// -----------------------------
-	FIND_SELECTOR(init);
-	FIND_SELECTOR(dispose);
 	FIND_SELECTOR(size);
-	FIND_SELECTOR(caller);
-	FIND_SELECTOR(cue);
-	FIND_SELECTOR(owner);
-	FIND_SELECTOR(completed);
-	FIND_SELECTOR(cycler);
 	FIND_SELECTOR(moveDone);
 	FIND_SELECTOR(vol);
 	FIND_SELECTOR(pri);

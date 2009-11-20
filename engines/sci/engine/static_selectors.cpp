@@ -63,32 +63,25 @@ static const char * const sci1Selectors[] = {
 
 // Taken from Codename: Iceman (Full Game)
 static const SelectorRemap sci0SelectorRemap[] = {
-    {       "caller", 119 }, {          "cue", 121 }, {        "owner", 130 },
-	{    "completed", 159 }, {       "cycler", 164 }, {     "moveDone", 170 },
-	{     "distance", 173 }, {    "setCursor", 254 }, {      "overlay", 270 },
-	{      "points",  316 }, {        "flags", 368 }, {              0,   0 }
+    {          "cue", 121 }, {     "moveDone", 170 }, {    "setCursor", 254 },
+	{      "overlay", 270 }, {      "points",  316 }, {        "flags", 368 },
+	{              0,   0 }
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
 static const SelectorRemap sci1SelectorRemap[] = {
 	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
-	{        "flags", 102 }, {         "init", 104 }, {      "dispose", 105 },
-	{       "caller", 134 }, {          "cue", 136 }, {        "owner", 150 },
-	{       "setVol", 156 }, {      "newRoom", 173 }, {    "setCursor", 183 },
-	{    "completed", 210 }, {       "cycler", 215 }, {     "distance", 224 },
-	{    "canBeHere", 232 }, {     "syncTime", 247 }, {      "syncCue", 248 },
-	{              0,   0 }
+	{        "flags", 102 }, {      "dispose", 105 }, {      "newRoom", 173 },
+	{    "setCursor", 183 }, {    "canBeHere", 232 }, {     "syncTime", 247 },
+	{      "syncCue", 248 }, {              0,   0 }
 };
 
 // Taken from KQ6 floppy (Full Game)
 static const SelectorRemap sci11SelectorRemap[] = {
 	{      "nodePtr",  41 }, {   "cantBeHere",  54 }, {     "topString", 98 },
 	{        "flags",  99 }, {       "scaleX", 104 }, {       "scaleY", 105 },
-	{         "init", 110 }, {      "dispose", 111 }, {       "caller", 143 },
-	{          "cue", 145 }, {        "owner", 166 }, {       "setVol", 172 },
-	{    "setCursor", 197 }, {    "completed", 242 }, {       "cycler", 247 },
-	{     "distance", 256 }, {    "canBeHere", 264 }, {     "syncTime", 279 },
-	{      "syncCue", 280 }, {              0,   0 }
+	{      "dispose", 111 }, {    "setCursor", 197 }, {    "canBeHere", 264 },
+	{     "syncTime", 279 }, {      "syncCue", 280 }, {              0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames() {
