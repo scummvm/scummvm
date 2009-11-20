@@ -516,6 +516,21 @@ SciVersion EngineState::detectDoSoundType() {
 			}
 		}
 
+		// Jones CD and perhaps others were in the middle of the transition from SCI1 old to SCI1 new
+		// sound code, and had some temporary selector methods in the Sound object. Check for these here,
+		// and set the doSound type to SCI1 new if they're found
+		if (getSciVersion() == SCI_VERSION_1_MIDDLE) {
+			reg_t tmp;
+			Selector slc = _kernel->findSelector("cue");
+			if (slc != -1) {
+				if (lookup_selector(_segMan, _segMan->findObjectByName("Sound"), slc, NULL, &tmp) == kSelectorMethod) {
+					// The Sound object has a temporary cue selector, therefore the game is using late
+					// SCI1 sound functions
+					_doSoundType = SCI_VERSION_1_LATE;
+				}
+			}
+		}
+
 		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType).c_str());
 	}
 
