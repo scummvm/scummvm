@@ -236,34 +236,41 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
 	Selector slc;
+	reg_t objAddr;
 
 	// Get address of target script
 	switch (featureDetection) {
 	case kDetectGfxFunctions:
 		objName = "Rm";
+		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.overlay;
 		break;			
 	case kDetectMoveCountType:
 		objName = "Motion";
+		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.doit;
 		break;
 	case kDetectSoundType:
 		objName = "Sound";
+		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.play;
 		break;
 	case kDetectSetCursorType:
 		objName = "Game";
+		// We need to check the overridden game object here. Fixes KQ5CD setCursor detection,
+		// as KQ5CD overrides the default setCursor selector of the Game object
+		objAddr = _gameObj;
 		slc = _kernel->_selectorCache.setCursor;
 		break;
 	case kDetectLofsType:
 		objName = "Game";
+		objAddr = _segMan->findObjectByName(objName);
 		break;
 	default:
 		break;
 	}
 
 	reg_t addr;
-	reg_t objAddr = _segMan->findObjectByName(objName);
 	if (objAddr.isNull()) {
 		warning("autoDetectFeature: %s object couldn't be found", objName.c_str());
 		return false;
@@ -462,12 +469,6 @@ SciVersion EngineState::detectSetCursorType() {
 				else
 					_setCursorType = SCI_VERSION_0_EARLY;
 			}
-		}
-
-		if (_gameName == "kq5" && Common::File::exists("audio001.002")) {
-			// WORKAROUND for KQ5CD: The code of the setCursor selector has not been yet
-			// rewritten for cursor views, but the game does use cursor views
-			_setCursorType = SCI_VERSION_1_1;
 		}
 
 		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
