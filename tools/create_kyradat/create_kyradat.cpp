@@ -36,6 +36,9 @@
 
 #include "md5.h"
 
+#include <string>
+#include <map>
+
 enum {
 	kKyraDatVersion = 63,
 	kIndexSize = 12
@@ -327,12 +330,6 @@ const SpecialExtension specialTable[] = {
 	{ kDemoVersion, "DEM" },
 	{ kTalkieDemoVersion, "CD.DEM" },
 
-	{ kTalkieFile1, "CD" },
-	{ kTalkieFile2, "CD" },
-
-	{ kTalkieDemoFile1, "CD.DEM" },
-	{ kTalkieDemoFile2, "CD.DEM" },
-
 	{ -1, 0 }
 };
 
@@ -375,11 +372,11 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->special == kTalkieFile1 || g->special == kTalkieFile2 || g->game == kKyra3)
+	if (g->special == kTalkieVersion || g->game == kKyra3)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion)
 		features |= GF_DEMO;
-	else if (g->special == kTalkieDemoVersion || g->special == kTalkieDemoFile1 || g->special == kTalkieDemoFile2)
+	else if (g->special == kTalkieDemoVersion)
 		features |= (GF_DEMO | GF_TALKIE);
 	else if (g->platform == kPlatformFMTowns || g->platform == kPlatformPC98)	// HACK
 		features |= GF_FMTOWNS;
@@ -488,6 +485,19 @@ void printHelp(const char *f) {
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size);
 const Game *findGame(const byte *buffer, const uint32 size);
 
+typedef std::map<std::string, std::string> MD5Map;
+MD5Map createMD5Sums(int files, const char * const *filenames);
+
+struct File {
+	File() : data(0), size(0) {}
+	File(uint8 *d, uint32 s) : data(d), size(s) {}
+
+	uint8 *data;
+	uint32 size;
+};
+typedef std::map<const Game *, File> GameMap;
+GameMap createGameMap(const MD5Map &map);
+
 int main(int argc, char *argv[]) {
 	if (argc < 3) {
 		printHelp(argv[0]);
@@ -538,13 +548,66 @@ int main(int argc, char *argv[]) {
 	PAKFile out;
 	out.loadFile(argv[1], false);
 
-	for (int i = 2; i < argc; ++i) {
-		FILE *input = fopen(argv[i], "rb");
+	MD5Map inputFiles = createMD5Sums(argc - 2, &argv[2]);
 
-		if (!input) {
-			warning("skipping missing file '%s'", argv[i]);
-			continue;
-		}
+	GameMap games = createGameMap(inputFiles);
+
+	// Check for unused input files
+	MD5Map unusedFiles = inputFiles;
+	for (GameMap::const_iterator i = games.begin(); i != games.end(); ++i) {
+		unusedFiles.erase(i->first->md5[0]);
+		if (i->first->md5[1])
+			unusedFiles.erase(i->first->md5[1]);
+	}
+
+	for (MD5Map::const_iterator i = unusedFiles.begin(); i != unusedFiles.end(); ++i)
+		printf("Input file '%s' with md5 sum '%s' is not known.\n", i->second.c_str(), i->first.c_str());
+
+	unusedFiles.clear();
+
+	// Process all games found
+	for (GameMap::const_iterator i = games.begin(); i != games.end(); ++i) {
+		MD5Map::const_iterator f1 = inputFiles.find(i->first->md5[0]);
+		MD5Map::const_iterator f2 = inputFiles.end();
+		if (i->first->md5[1])
+			f2 = inputFiles.find(i->first->md5[1]);
+
+		if (f2 != inputFiles.end())
+			printf("Processing files '%s' and '%s'...\n", f1->second.c_str(), f2->second.c_str());
+		else
+			printf("Processing file '%s'...\n", f1->second.c_str());
+
+		process(out, i->first, i->second.data, i->second.size);
+	}
+
+	// Free up memory
+	for (GameMap::iterator i = games.begin(); i != games.end(); ++i)
+		delete[] i->second.data;
+	games.clear();
+	inputFiles.clear();
+
+	if (!out.saveFile(argv[1]))
+	error("couldn't save changes to '%s'", argv[1]);
+
+	uint8 digest[16];
+	if (!md5_file(argv[1], digest, 0))
+		error("couldn't calc. md5 for file '%s'", argv[1]);
+	FILE *f = fopen(argv[1], "ab");
+	if (!f)
+		error("couldn't open file '%s'", argv[1]);
+	if (fwrite(digest, 1, 16, f) != 16)
+		error("couldn't write md5sum to file '%s'", argv[1]);
+	fclose(f);
+
+	return 0;
+}
+
+MD5Map createMD5Sums(int files, const char * const *filenames) {
+	MD5Map result;
+
+	while (files--) {
+		const char *inputFile = *filenames++;
+		FILE *input = fopen(inputFile, "rb");
 
 		uint32 size = fileSize(input);
 		fseek(input, 0, SEEK_SET);
@@ -553,7 +616,7 @@ int main(int argc, char *argv[]) {
 		assert(buffer);
 
 		if (fread(buffer, 1, size, input) != size) {
-			warning("couldn't read from file '%s', skipping it", argv[i]);
+			warning("couldn't read from file '%s', skipping it", inputFile);
 			delete[] buffer;
 			fclose(input);
 			continue;
@@ -571,46 +634,57 @@ int main(int argc, char *argv[]) {
 		for (int j = 0; j < 16; ++j)
 			sprintf(md5Str + j*2, "%02x", (int)digest[j]);
 
-		printf("Processing file '%s'...\n", argv[i]);
-
-		bool variantProcessed = false;
-
-		for (const Game **game = gameDescs; *game != 0; ++game) {
-			for (const Game *variant = *game; variant->md5 != 0; ++variant) {
-				if (!std::strcmp(variant->md5, md5Str)) {
-					variantProcessed = true;
-
-					if (!process(out, variant, buffer, size))
-						fprintf(stderr, "ERROR: couldn't process file\n");
-
-					// We do not break the loop here, so all registered game
-					// variants will be processed. Like it is for example
-					// required for multi language executables.
-				}
-			}
-		}
-
-		if (!variantProcessed)
-			fprintf(stderr, "ERROR: File '%s' with md5 sum \"%s\" has no variant registered\n", argv[i], md5Str);
-
-		// delete the current entry
 		delete[] buffer;
+
+		result[md5Str] = inputFile;
 	}
 
-	if (!out.saveFile(argv[1]))
-		error("couldn't save changes to '%s'", argv[1]);
+	return result;
+}
 
-	uint8 digest[16];
-	if (!md5_file(argv[1], digest, 0))
-		error("couldn't calc. md5 for file '%s'", argv[1]);
-	FILE *f = fopen(argv[1], "ab");
-	if (!f)
-		error("couldn't open file '%s'", argv[1]);
-	if (fwrite(digest, 1, 16, f) != 16)
-		error("couldn't write md5sum to file '%s'", argv[1]);
-	fclose(f);
+GameMap createGameMap(const MD5Map &map) {
+	GameMap result;
 
-	return 0;
+	for (const Game * const *g = gameDescs; *g != 0; ++g) {
+		for (const Game *sub = *g; sub->game != -1; ++sub) {
+			MD5Map::const_iterator file1 = map.find(sub->md5[0]);
+			if (file1 == map.end())
+				continue;
+
+			MD5Map::const_iterator file2 = map.end();
+			if (sub->md5[1] != 0) {
+				file2 = map.find(sub->md5[1]);
+				if (file2 == map.end())
+					continue;
+			}
+
+			FILE *f1 = fopen(file1->second.c_str(), "rb");
+			FILE *f2 = 0;
+
+			if (file2 != map.end())
+				f2 = fopen(file2->second.c_str(), "rb");
+
+			uint32 file1Size = fileSize(f1);
+			uint32 file2Size = 0;
+			if (f2)
+				file2Size = fileSize(f2);
+
+			uint8 *buffer = new uint8[file1Size + file2Size];
+			assert(buffer);
+
+			fread(buffer, 1, file1Size, f1);
+			if (f2)
+				fread(buffer + file1Size, 1, file2Size, f2);
+
+			fclose(f1);
+			if (f2)
+				fclose(f2);
+
+			result[sub] = File(buffer, file1Size + file2Size);
+		}
+	}
+
+	return result;
 }
 
 const char *getIdString(const int id) {

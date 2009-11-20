@@ -286,15 +286,7 @@ struct ExtractFilename {
 enum kSpecial {
 	kTalkieVersion = 0,
 	kDemoVersion,
-	kTalkieDemoVersion,
-
-	kFile1,
-	kFile2,
-	kTalkieFile1,
-	kTalkieFile2,
-
-	kTalkieDemoFile1,
-	kTalkieDemoFile2
+	kTalkieDemoVersion
 };
 
 struct SpecialExtension {
@@ -317,12 +309,12 @@ struct Game {
 	int platform;
 	int special;
 
-	const char *md5;
+	const char *md5[2];
 };
 
-#define GAME_DUMMY_ENTRY { -1, -1, -1, -1, 0 }
+#define GAME_DUMMY_ENTRY { -1, -1, -1, -1, { 0, 0 } }
 
-extern const Game *gameDescs[];
+extern const Game * const gameDescs[];
 
 const int *getNeedList(const Game *g);
 
