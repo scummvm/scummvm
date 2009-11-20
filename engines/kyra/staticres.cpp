@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 64
+#define RESFILE_VERSION 65
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -68,74 +68,85 @@ bool checkKyraDat(Common::SeekableReadStream *file) {
 			return false;
 	return true;
 }
-} // end of anonymous namespace
-
-// used for the KYRA.DAT file which still uses
-// the old flag system, we just convert it, which
-// is less work than to change KYRA.DAT again
-enum {
-	GF_FLOPPY	= 1 <<  0,
-	GF_TALKIE	= 1 <<  1,
-	GF_FMTOWNS	= 1 <<  2,
-	GF_DEMO		= 1 <<  3,
-	GF_ENGLISH	= 1 <<  4,
-	GF_FRENCH	= 1 <<  5,
-	GF_GERMAN	= 1 <<  6,
-	GF_SPANISH	= 1 <<  7,
-	GF_ITALIAN	= 1 <<  8,
-	GF_JAPANESE = 1 <<  9,
-	// other languages here
-	GF_LNGUNK	= 1 << 16,	// also used for multi language in kyra3
-	GF_AMIGA	= 1 << 17
-};
-
-#define GAME_FLAGS (GF_FLOPPY | GF_TALKIE | GF_DEMO | GF_FMTOWNS | GF_AMIGA)
-#define LANGUAGE_FLAGS (GF_ENGLISH | GF_FRENCH | GF_GERMAN | GF_SPANISH | GF_ITALIAN | GF_JAPANESE | GF_LNGUNK)
-
-uint32 createFeatures(const GameFlags &flags) {
-	if (flags.isTalkie && flags.isDemo)
-		return GF_TALKIE | GF_DEMO;
-	if (flags.isTalkie)
-		return GF_TALKIE;
-	if (flags.isDemo)
-		return GF_DEMO;
-	if (flags.platform == Common::kPlatformFMTowns || flags.platform == Common::kPlatformPC98)
-		return GF_FMTOWNS;
-	if (flags.platform == Common::kPlatformAmiga)
-		return GF_AMIGA;
-	return GF_FLOPPY;
-}
-
-uint32 createLanguage(const GameFlags &flags) {
-	if (flags.lang == Common::EN_ANY)
-		return GF_ENGLISH;
-	if (flags.lang == Common::DE_DEU)
-		return GF_GERMAN;
-	if (flags.lang == Common::FR_FRA)
-		return GF_FRENCH;
-	if (flags.lang == Common::ES_ESP)
-		return GF_SPANISH;
-	if (flags.lang == Common::IT_ITA)
-		return GF_ITALIAN;
-	if (flags.lang == Common::JA_JPN)
-		return GF_JAPANESE;
-	return GF_LNGUNK;
-}
 
 struct LanguageTypes {
-	uint32 flags;
+	Common::Language lang;
 	const char *ext;
 };
 
-static const LanguageTypes languages[] = {
-	{ GF_ENGLISH, "ENG" },	// this is the default language
-	{ GF_FRENCH, "FRE" },
-	{ GF_GERMAN, "GER" },
-	{ GF_SPANISH, "SPA" },
-	{ GF_ITALIAN, "ITA" },
-	{ GF_JAPANESE, "JPN" },
-	{ 0, 0 }
+const LanguageTypes languages[] = {
+	{ Common::EN_ANY, "ENG" },
+	{ Common::FR_FRA, "FRE" },
+	{ Common::DE_DEU, "GER" },
+	{ Common::ES_ESP, "SPA" },
+	{ Common::IT_ITA, "ITA" },
+	{ Common::JA_JPN, "JPN" },
+	{ Common::UNK_LANG, 0 }
 };
+
+struct IndexTable {
+	int type;
+	int value;
+
+	bool operator==(int t) const {
+		return (type == t);
+	}
+};
+
+const IndexTable iGameTable[] = {
+	{ GI_KYRA1, 0 },
+	{ GI_KYRA2, 1 },
+	{ GI_KYRA3, 2 },
+	{ GI_LOL, 3 },
+	{ -1, -1 }
+};
+
+byte getGameID(const GameFlags &flags) {
+	return Common::find(iGameTable, iGameTable + ARRAYSIZE(iGameTable) - 1, flags.gameID)->value;
+}
+
+/*const IndexTable iLanguageTable[] = {
+	{ Common::EN_ANY, 0 },
+	{ Common::FR_FRA, 1 },
+	{ Common::DE_DEU, 2 },
+	{ Common::ES_ESP, 3 },
+	{ Common::IT_ITA, 4 },
+	{ Common::JA_JPN, 5 },
+	{ -1, -1 }
+};
+
+byte getLanguageID(const GameFlags &flags) {
+	return Common::find(iLanguageTable, iLanguageTable + ARRAYSIZE(iLanguageTable) - 1, flags.lang)->value;
+}*/
+
+const IndexTable iPlatformTable[] = {
+	{ Common::kPlatformPC, 0 },
+	{ Common::kPlatformAmiga, 1 },
+	{ Common::kPlatformFMTowns, 2 },
+	{ Common::kPlatformPC98, 3 },
+	{ Common::kPlatformMacintosh, 0 }, // HACK: Should be type "4", but as long as we can't extract Macintosh data, we need to use DOS data.
+	{ -1, -1 }
+};
+
+byte getPlatformID(const GameFlags &flags) {
+	// HACK: Gross hack to support Kyra2 PC98, till there's data for it in kyra.dat
+	if (flags.gameID == GI_KYRA2 && flags.platform == Common::kPlatformPC98)
+		return 3;
+	return Common::find(iPlatformTable, iPlatformTable + ARRAYSIZE(iPlatformTable) - 1, flags.platform)->value;
+}
+
+byte getSpecialID(const GameFlags &flags) {
+	if (flags.isDemo && flags.isTalkie)
+		return 3;
+	else if (flags.isDemo)
+		return 2;
+	else if (flags.isTalkie)
+		return 1;
+	else
+		return 0;
+}
+
+} // end of anonymous namespace
 
 bool StaticResource::loadStaticResourceFile() {
 	Resource *res = _vm->resource();
@@ -178,30 +189,40 @@ bool StaticResource::loadStaticResourceFile() {
 }
 
 bool StaticResource::tryKyraDatLoad() {
-	Common::SeekableReadStream *index = getFile("INDEX");
+	Common::SeekableReadStream *index = _vm->resource()->createReadStream("INDEX");
 	if (!index)
 		return false;
 
-	if (index->size() != 3*4) {
+	const uint32 version = index->readUint32BE();
+
+	if (version != RESFILE_VERSION) {
 		delete index;
 		return false;
 	}
 
-	uint32 version = index->readUint32BE();
-	uint32 gameID = index->readUint32BE();
-	uint32 featuresValue = index->readUint32BE();
+	const uint32 includedGames = index->readUint32BE();
+
+	if (includedGames * 2 + 8 != (uint32)index->size()) {
+		delete index;
+		return false;
+	}
+
+	const uint16 gameDef = ((getGameID(_vm->gameFlags()) & 0xF) << 12) |
+	                       ((getPlatformID(_vm->gameFlags()) & 0xF) << 8) |
+	                       ((getSpecialID(_vm->gameFlags()) & 0xF) << 4);
+
+	bool found = false;
+	for (uint32 i = 0; i < includedGames; ++i) {
+		if (index->readUint16BE() == gameDef) {
+			found = true;
+			break;
+		}
+	}
 
 	delete index;
 	index = 0;
 
-	if (version != RESFILE_VERSION)
-		return false;
-
-	if (gameID != _vm->game())
-		return false;
-
-	uint32 gameFeatures = createFeatures(_vm->gameFlags());
-	if ((featuresValue & GAME_FLAGS) != gameFeatures)
+	if (!found)
 		return false;
 
 	// load all tables for now
@@ -705,24 +726,13 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
 	static Common::String file;
 	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].flags != createLanguage(_vm->gameFlags()))
+		if (languages[i].lang != _vm->gameFlags().lang)
 			continue;
 
 		file = filename;
 		file += languages[i].ext;
 		if (loadStringTable(file.c_str(), ptr, size))
 			return true;
-	}
-
-	file = filename;
-	file += languages[0].ext;
-	if (loadStringTable(file.c_str(), ptr, size)) {
-		static bool warned = false;
-		if (!warned) {
-			warned = true;
-			warning("couldn't find specific language table for your version, using English now");
-		}
-		return true;
 	}
 
 	return false;

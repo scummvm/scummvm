@@ -38,10 +38,10 @@
 
 #include <string>
 #include <map>
+#include <algorithm>
 
 enum {
-	kKyraDatVersion = 64,
-	kIndexSize = 12
+	kKyraDatVersion = 65
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -353,126 +353,160 @@ const PlatformExtension platformTable[] = {
 
 // index generation
 
-enum {
-	GF_FLOPPY	= 1 <<  0,
-	GF_TALKIE	= 1 <<  1,
-	GF_FMTOWNS	= 1 <<  2,
-	GF_DEMO		= 1 <<  3,
-	GF_ENGLISH	= 1 <<  4,
-	GF_FRENCH	= 1 <<  5,
-	GF_GERMAN	= 1 <<  6,
-	GF_SPANISH	= 1 <<  7,
-	GF_ITALIAN	= 1 <<  8,
-	GF_JAPANESE = 1 <<  9,
-	// ...
-	GF_LNGUNK	= 1 << 16,
-	GF_AMIGA	= 1 << 17
+struct IndexTable {
+	int type;
+	int value;
+
+	bool operator==(int t) const {
+		return (type == t);
+	}
 };
 
-uint32 getFeatures(const Game *g) {
-	uint32 features = 0;
+const IndexTable iGameTable[] = {
+	{ kKyra1, 0 },
+	{ kKyra2, 1 },
+	{ kKyra3, 2 },
+	{ kLol, 3 },
+	{ -1, -1 }
+};
 
-	if (g->special == kTalkieVersion)
-		features |= GF_TALKIE;
-	else if (g->special == kDemoVersion)
-		features |= GF_DEMO;
-	else if (g->special == kTalkieDemoVersion)
-		features |= (GF_DEMO | GF_TALKIE);
-	else if (g->platform == kPlatformFMTowns || g->platform == kPlatformPC98)	// HACK
-		features |= GF_FMTOWNS;
-	else if (g->platform == kPlatformAmiga)
-		features |= GF_AMIGA;
-	else
-		features |= GF_FLOPPY;
-
-	if (g->lang == EN_ANY)
-		features |= GF_ENGLISH;
-	else if (g->lang == DE_DEU)
-		features |= GF_GERMAN;
-	else if (g->lang == FR_FRA)
-		features |= GF_FRENCH;
-	else if (g->lang == ES_ESP)
-		features |= GF_SPANISH;
-	else if (g->lang == IT_ITA)
-		features |= GF_ITALIAN;
-	else if (g->lang == JA_JPN)
-		features |= GF_JAPANESE;
-	else
-		features |= GF_LNGUNK;
-
-	return features;
+byte getGameID(int game) {
+	return std::find(iGameTable, iGameTable + ARRAYSIZE(iGameTable) - 1, game)->value;
 }
 
-bool updateIndex(byte *dst, const int dstSize, const Game *g) {
-	if ((size_t)dstSize < kIndexSize)
-		return false;
+/*const IndexTable iLanguageTable[] = {
+	{ EN_ANY, 0 },
+	{ FR_FRA, 1 },
+	{ DE_DEU, 2 },
+	{ ES_ESP, 3 },
+	{ IT_ITA, 4 },
+	{ JA_JPN, 5 },
+	{ -1, -1 }
+};
 
-	WRITE_BE_UINT32(dst, kKyraDatVersion); dst += 4;
-	WRITE_BE_UINT32(dst, g->game); dst += 4;
-	uint32 features = READ_BE_UINT32(dst);
-	features |= getFeatures(g);
-	WRITE_BE_UINT32(dst, features); dst += 4;
+byte getLanguageID(int lang) {
+	return std::find(iLanguageTable, iLanguageTable + ARRAYSIZE(iLanguageTable) - 1, lang)->value;
+}*/
 
-	return true;
+const IndexTable iPlatformTable[] = {
+	{ kPlatformPC, 0 },
+	{ kPlatformAmiga, 1 },
+	{ kPlatformFMTowns, 2 },
+	{ kPlatformPC98, 3 },
+	{ kPlatformMacintosh, 4 },
+	{ -1, -1 }
+};
+
+byte getPlatformID(int platform) {
+	return std::find(iPlatformTable, iPlatformTable + ARRAYSIZE(iPlatformTable) - 1, platform)->value;
 }
 
-bool checkIndex(const byte *s, const int srcSize) {
-	if ((size_t)srcSize < sizeof(uint32))
-		return false;
-	uint32 version = READ_BE_UINT32(s);
-	return (version == kKyraDatVersion);
+const IndexTable iSpecialTable[] = {
+	{ kNoSpecial, 0 },
+	{ kTalkieVersion, 1 },
+	{ kDemoVersion, 2 },
+	{ kTalkieDemoVersion, 3 },
+	{ -1, -1 }
+};
+
+byte getSpecialID(int special) {
+	return std::find(iSpecialTable, iSpecialTable + ARRAYSIZE(iSpecialTable) - 1, special)->value;
+}
+
+typedef uint16 GameDef;
+
+GameDef createGameDef(const Game *g) {
+	return ((getGameID(g->game) & 0xF) << 12) |
+	       ((getPlatformID(g->platform) & 0xF) << 8) |
+	       ((getSpecialID(g->special) & 0xF) << 4);
+}
+
+struct Index {
+	Index() : version(0), includedGames(0), gameList() {}
+
+	uint32 version;
+	uint32 includedGames;
+
+	typedef std::list<GameDef> GameList;
+	GameList gameList;
+};
+
+Index parseIndex(const uint8 *data, uint32 size) {
+	Index result;
+
+	if (size < 8)
+		return result;
+
+	result.version = READ_BE_UINT32(data); data += 4;
+	result.includedGames = READ_BE_UINT32(data); data += 4;
+
+	if (result.includedGames * 2 + 8 != size) {
+		result.version = result.includedGames = 0;
+		return result;
+	}
+
+	for (uint32 i = 0; i < result.includedGames; ++i) {
+		GameDef game = READ_BE_UINT16(data); data += 2;
+		result.gameList.push_back(game);
+	}
+
+	return result;
 }
 
 bool updateIndex(PAKFile &out, const Game *g) {
-	char filename[32];
-	ExtractInformation extractInfo;
-	extractInfo.game = g->game;
-	extractInfo.lang = -1;
-	extractInfo.platform = g->platform;
-	extractInfo.special = g->special;
-
-	createFilename(filename, &extractInfo, "INDEX");
-
-	byte *index = new byte[kIndexSize];
-	assert(index);
-	memset(index, 0, kIndexSize);
-
 	uint32 size = 0;
-	const uint8 *data = out.getFileData(filename, &size);
-	if (data)
-		memcpy(index, data, size);
+	const uint8 *data = out.getFileData("INDEX", &size);
 
-	if (!updateIndex(index, kIndexSize, g)) {
-		delete[] index;
-		return false;
+	Index index;
+	if (data)
+		index = parseIndex(data, size);
+
+	GameDef gameDef = createGameDef(g);
+	if (index.version == kKyraDatVersion) {
+		if (std::find(index.gameList.begin(), index.gameList.end(), gameDef) == index.gameList.end()) {
+			++index.includedGames;
+			index.gameList.push_back(gameDef);
+		}
+	} else {
+		index.version = kKyraDatVersion;
+		index.includedGames = 1;
+		index.gameList.push_back(gameDef);
 	}
 
-	out.removeFile(filename);
-	if (!out.addFile(filename, index, kIndexSize)) {
-		fprintf(stderr, "ERROR: couldn't update %s file\n", filename);
-		delete[] index;
+	const uint32 indexBufferSize = 8 + index.includedGames * 2;
+	uint8 *indexBuffer = new uint8[indexBufferSize];
+	assert(indexBuffer);
+	uint8 *dst = indexBuffer;
+	WRITE_BE_UINT32(dst, index.version); dst += 4;
+	WRITE_BE_UINT32(dst, index.includedGames); dst += 4;
+	for (Index::GameList::const_iterator i = index.gameList.begin(); i != index.gameList.end(); ++i) {
+		WRITE_BE_UINT16(dst, *i); dst += 2;
+	}
+
+	out.removeFile("INDEX");
+	if (!out.addFile("INDEX", indexBuffer, indexBufferSize)) {
+		fprintf(stderr, "ERROR: couldn't update kyra.dat INDEX\n");
+		delete[] indexBuffer;
 		return false;
 	}
 
 	return true;
 }
 
-bool checkIndex(PAKFile &out, const Game *g) {
-	char filename[32];
-	ExtractInformation extractInfo;
-	extractInfo.game = g->game;
-	extractInfo.lang = -1;
-	extractInfo.platform = g->platform;
-	extractInfo.special = g->special;
-
-	createFilename(filename, &extractInfo, "INDEX");
-
+bool checkIndex(PAKFile &file) {
 	uint32 size = 0;
-	const uint8 *data = out.getFileData(filename, &size);
+	const uint8 *data = file.getFileData("INDEX", &size);
 	if (!data)
-		return true;
+		return false;
 
-	return checkIndex(data, size);
+	Index index = parseIndex(data, size);
+
+	if (index.version != kKyraDatVersion)
+		return false;
+	if (index.includedGames * 2 + 8 != size)
+		return false;
+
+	return true;
 }
 
 // main processing
@@ -547,6 +581,11 @@ int main(int argc, char *argv[]) {
 
 	PAKFile out;
 	out.loadFile(argv[1], false);
+
+	// When the output file is no valid kyra.dat file, we will delete
+	// all the output.
+	if (!checkIndex(out))
+		out.clearFile();
 
 	MD5Map inputFiles = createMD5Sums(argc - 2, &argv[2]);
 
@@ -1133,11 +1172,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	extractInfo.lang = g->lang;
 	extractInfo.platform = g->platform;
 	extractInfo.special = g->special;
-
-	if (!checkIndex(out, g)) {
-		fprintf(stderr, "ERROR: corrupted INDEX file\n");
-		return false;
-	}
 
 	Search search(data, size);
 	IdMap ids;
