@@ -501,15 +501,18 @@ SciVersion EngineState::detectDoSoundType() {
 			// SCI0 sound code (i.e. SCI_VERSION_0_EARLY)
 			_doSoundType = SCI_VERSION_0_EARLY;
 		} else {
-			if (!autoDetectFeature(kDetectSoundType)) {
-				warning("DoSound detection failed, taking an educated guess");
+			if (getSciVersion() >= SCI_VERSION_1_LATE) {
+				// All SCI1 late games use the newer doSound semantics
+				_doSoundType = SCI_VERSION_1_LATE;
+			} else {
+				if (!autoDetectFeature(kDetectSoundType)) {
+					warning("DoSound detection failed, taking an educated guess");
 
-				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
-					_doSoundType = SCI_VERSION_1_LATE;
-				else if (getSciVersion() > SCI_VERSION_01)
-					_doSoundType = SCI_VERSION_1_EARLY;
-				else
-					_doSoundType = SCI_VERSION_0_EARLY;
+					if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
+						_doSoundType = SCI_VERSION_1_LATE;
+					else if (getSciVersion() > SCI_VERSION_01)
+						_doSoundType = SCI_VERSION_1_EARLY;
+				}
 			}
 		}
 
