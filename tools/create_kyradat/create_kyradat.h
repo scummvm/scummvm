@@ -144,11 +144,11 @@ enum kExtractID {
 	kGUIStrings,
 	kConfigStrings,
 
-	kKyra1TownsSFXwdTable,
-	kKyra1TownsSFXbtTable,
-	kKyra1TownsCDATable,
-	kKyra1PC98StoryStrings,
-	kKyra1PC98IntroSfx,
+	kTOWNSSfxWDTable,
+	kTOWNSSfxBTTable,
+	kTOWNSCDATable,
+	kPC98StoryStrings,
+	kPC98IntroSfx,
 	kCreditsStrings,
 
 	kAmigaIntroSFXTable,

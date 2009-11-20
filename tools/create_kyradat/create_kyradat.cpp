@@ -153,13 +153,13 @@ const ExtractFilename extractFilenames[] = {
 	{ kCreditsStrings, kTypeRawData, "CREDITS" },
 
 	// FM-TOWNS specific
-	{ kKyra1TownsSFXwdTable, kTypeTownsWDSfxTable, "SFXWDTABLE" },
-	{ kKyra1TownsSFXbtTable, kTypeRawData, "SFXBTTABLE" },
-	{ kKyra1TownsCDATable, kTypeRawData, "CDATABLE" },
+	{ kTOWNSSfxWDTable, kTypeTownsWDSfxTable, "SFXWDTABLE" },
+	{ kTOWNSSfxBTTable, kTypeRawData, "SFXBTTABLE" },
+	{ kTOWNSCDATable, kTypeRawData, "CDATABLE" },
 
 	// PC98 specific
-	{ kKyra1PC98StoryStrings, kTypeLanguageList, "INTROSTORY" },
-	{ kKyra1PC98IntroSfx, kTypeRawData, "INTROSFX" },
+	{ kPC98StoryStrings, kTypeLanguageList, "INTROSTORY" },
+	{ kPC98IntroSfx, kTypeRawData, "INTROSFX" },
 
 	// AMIGA specific
 	{ kAmigaIntroSFXTable, kTypeAmigaSfxTable, "SFXINTRO" },
@@ -789,16 +789,16 @@ const char *getIdString(const int id) {
 		return "kGUIStrings";
 	case kConfigStrings:
 		return "kConfigStrings";
-	case kKyra1TownsSFXwdTable:
-		return "kKyra1TownsSFXwdTable";
-	case kKyra1TownsSFXbtTable:
-		return "kKyra1TownsSFXbtTable";
-	case kKyra1TownsCDATable:
-		return "kKyra1TownsCDATable";
-	case kKyra1PC98StoryStrings:
-		return "kKyra1PC98StoryStrings";
-	case kKyra1PC98IntroSfx:
-		return "kKyra1PC98IntroSfx";
+	case kTOWNSSfxWDTable:
+		return "kTOWNSSfxWDTable";
+	case kTOWNSSfxBTTable:
+		return "kTOWNSSfxBTTable";
+	case kTOWNSCDATable:
+		return "kTOWNSCDATable";
+	case kPC98StoryStrings:
+		return "kPC98StoryStrings";
+	case kPC98IntroSfx:
+		return "kPC98IntroSfx";
 	case kCreditsStrings:
 		return "kCreditsStrings";
 	case kAmigaIntroSFXTable:

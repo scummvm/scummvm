@@ -423,9 +423,9 @@ const int kyra1TownsNeed[] = {
 	kNewGameString,
 	kConfigStrings,
 
-	kKyra1TownsSFXwdTable,
-	kKyra1TownsSFXbtTable,
-	kKyra1TownsCDATable,
+	kTOWNSSfxWDTable,
+	kTOWNSSfxBTTable,
+	kTOWNSCDATable,
 	kAudioTracks,
 	kCreditsStrings,
 	-1
@@ -514,8 +514,8 @@ const int kyra1PC98Need[] = {
 	kNewGameString,
 	kConfigStrings,
 
-	kKyra1PC98StoryStrings,
-	kKyra1PC98IntroSfx,
+	kPC98StoryStrings,
+	kPC98IntroSfx,
 	kCreditsStrings,
 	-1
 };

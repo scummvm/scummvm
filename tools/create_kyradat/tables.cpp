@@ -966,31 +966,31 @@ const ExtractEntrySearchData kConfigStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKyra1TownsSFXwdTableProvider[] = {
+const ExtractEntrySearchData kTOWNSSfxWDTableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00012608, 0x006717A1, { { 0x34, 0xDD, 0x2D, 0xA5, 0x14, 0x05, 0xEE, 0x2F, 0x93, 0x7C, 0x78, 0x4D, 0xCA, 0x13, 0xED, 0x93 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKyra1TownsSFXbtTableProvider[] = {
+const ExtractEntrySearchData kTOWNSSfxBTTableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00000100, 0x00007FFE, { { 0xEF, 0x3D, 0x9F, 0x31, 0xE7, 0x19, 0x1E, 0x4F, 0xF3, 0x66, 0x42, 0xC8, 0x0D, 0x89, 0x96, 0x20 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKyra1TownsCDATableProvider[] = {
+const ExtractEntrySearchData kTOWNSCDATableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x000002C4, 0x0000C5ED, { { 0x76, 0x86, 0x77, 0xF9, 0x85, 0x23, 0x32, 0x56, 0x3C, 0x06, 0x03, 0xCF, 0x0C, 0x49, 0x94, 0xB5 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKyra1PC98StoryStringsProvider[] = {
+const ExtractEntrySearchData kPC98StoryStringsProvider[] = {
 	{ JA_JPN, kPlatformPC98, { 0x00000054, 0x00002FAD, { { 0xCB, 0x25, 0xD1, 0xFA, 0x65, 0xCE, 0xD5, 0xE6, 0xAD, 0xE3, 0x48, 0x25, 0xC8, 0x51, 0xC6, 0x12 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKyra1PC98IntroSfxProvider[] = {
+const ExtractEntrySearchData kPC98IntroSfxProvider[] = {
 	{ UNK_LANG, kPlatformPC98, { 0x00000300, 0x00017445, { { 0xC3, 0x54, 0x4A, 0x58, 0x00, 0x33, 0xEA, 0xF1, 0x20, 0xA8, 0x0C, 0xDE, 0x7A, 0x94, 0xAB, 0x5E } } } },
 
 	EXTRACT_END_ENTRY
@@ -1817,11 +1817,11 @@ const ExtractEntry extractProviders[] = {
 	{ kPaletteList33, kPaletteList33Provider },
 	{ kGUIStrings, kGUIStringsProvider },
 	{ kConfigStrings, kConfigStringsProvider },
-	{ kKyra1TownsSFXwdTable, kKyra1TownsSFXwdTableProvider },
-	{ kKyra1TownsSFXbtTable, kKyra1TownsSFXbtTableProvider },
-	{ kKyra1TownsCDATable, kKyra1TownsCDATableProvider },
-	{ kKyra1PC98StoryStrings, kKyra1PC98StoryStringsProvider },
-	{ kKyra1PC98IntroSfx, kKyra1PC98IntroSfxProvider },
+	{ kTOWNSSfxWDTable, kTOWNSSfxWDTableProvider },
+	{ kTOWNSSfxBTTable, kTOWNSSfxBTTableProvider },
+	{ kTOWNSCDATable, kTOWNSCDATableProvider },
+	{ kPC98StoryStrings, kPC98StoryStringsProvider },
+	{ kPC98IntroSfx, kPC98IntroSfxProvider },
 	{ kCreditsStrings, kCreditsStringsProvider },
 	{ kAmigaIntroSFXTable, kAmigaIntroSFXTableProvider },
 	{ kAmigaGameSFXTable, kAmigaGameSFXTableProvider },
