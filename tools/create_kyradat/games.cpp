@@ -32,15 +32,15 @@ const Game kyra1Games[] = {
 	{ kKyra1, EN_ANY, kPlatformPC, kTalkieDemoVersion, { "226fdba99cb11ef1047131d9a50e6292", 0 } },
 
 	// Amiga
-	{ kKyra1, EN_ANY, kPlatformAmiga, -1, { "b620564b6b7e0787b053ca9e35bd9f52", 0 } },
-	{ kKyra1, DE_DEU, kPlatformAmiga, -1, { "ceddb4bd4df51698e3851e75106d117a", 0 } },
+	{ kKyra1, EN_ANY, kPlatformAmiga, kNoSpecial, { "b620564b6b7e0787b053ca9e35bd9f52", 0 } },
+	{ kKyra1, DE_DEU, kPlatformAmiga, kNoSpecial, { "ceddb4bd4df51698e3851e75106d117a", 0 } },
 
 	// Floppy
-	{ kKyra1, EN_ANY, kPlatformPC, -1, { "76a4fc84e173cadb6369785787e1546e", 0 } },
-	{ kKyra1, DE_DEU, kPlatformPC, -1, { "9442d6f7db6a41f3dd4aa4de5d36e107", 0 } },
-	{ kKyra1, FR_FRA, kPlatformPC, -1, { "aa9d6d78d8b199deaf48efeca6d19af2", 0 } },
-	{ kKyra1, IT_ITA, kPlatformPC, -1, { "5d7550306b369a3492f9f3402702477c", 0 } },
-	{ kKyra1, ES_ESP, kPlatformPC, -1, { "9ff130d2558bcd674d4074849d93c362", 0 } },
+	{ kKyra1, EN_ANY, kPlatformPC, kNoSpecial, { "76a4fc84e173cadb6369785787e1546e", 0 } },
+	{ kKyra1, DE_DEU, kPlatformPC, kNoSpecial, { "9442d6f7db6a41f3dd4aa4de5d36e107", 0 } },
+	{ kKyra1, FR_FRA, kPlatformPC, kNoSpecial, { "aa9d6d78d8b199deaf48efeca6d19af2", 0 } },
+	{ kKyra1, IT_ITA, kPlatformPC, kNoSpecial, { "5d7550306b369a3492f9f3402702477c", 0 } },
+	{ kKyra1, ES_ESP, kPlatformPC, kNoSpecial, { "9ff130d2558bcd674d4074849d93c362", 0 } },
 
 	// Talkie
 	{ kKyra1, EN_ANY, kPlatformPC, kTalkieVersion, { "1ebc18f3e7fbb72474a55cb0fa089ed4", 0 } },
@@ -49,11 +49,11 @@ const Game kyra1Games[] = {
 	{ kKyra1, IT_ITA, kPlatformPC, kTalkieVersion, { "d0f1752098236083d81b9497bd2b6989", 0 } }, // Italian fan translation
 
 	// FM-TOWNS
-	{ kKyra1, EN_ANY, kPlatformFMTowns, -1, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
-	{ kKyra1, JA_JPN, kPlatformFMTowns, -1, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
+	{ kKyra1, EN_ANY, kPlatformFMTowns, kNoSpecial, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
+	{ kKyra1, JA_JPN, kPlatformFMTowns, kNoSpecial, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
 
 	// PC-98
-	{ kKyra1, JA_JPN, kPlatformPC98, -1, { "b9c06ac5177f5bf1f1acc0eea3937f6d", 0 } },
+	{ kKyra1, JA_JPN, kPlatformPC98, kNoSpecial, { "b9c06ac5177f5bf1f1acc0eea3937f6d", 0 } },
 
 	GAME_DUMMY_ENTRY
 };
@@ -67,10 +67,10 @@ const Game kyra2Games[] = {
 	{ kKyra2, DE_DEU, kPlatformPC, kTalkieDemoVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "fa54d8abfe05f9186c05f7de7eaf1480" } },
 
 	// floppy games
-	{ kKyra2, EN_ANY, kPlatformPC, -1, { "9b0f5e57b5a2ed88b5b989cbb402b6c7", "7c3eadbe5122722cf2e5e1611e19dfb9" } },
-	{ kKyra2, FR_FRA, kPlatformPC, -1, { "df31cc9e37e1cf68df2fdc75ddf2d87b", "fc2c6782778e6c6d5a553d1cb73c98ad" } },
-	{ kKyra2, DE_DEU, kPlatformPC, -1, { "0ca4f9a1438264a4c63c3218e064ed3b", "0d9b0eb7b0ad889ec942d74d80dde1bf" } },
-	{ kKyra2, IT_ITA, kPlatformPC, -1, { "178d3ab913f61bfba21d2fb196405e8c", "3a61ed6b7c00ddae383a0361799e2ba6" } },
+	{ kKyra2, EN_ANY, kPlatformPC, kNoSpecial, { "9b0f5e57b5a2ed88b5b989cbb402b6c7", "7c3eadbe5122722cf2e5e1611e19dfb9" } },
+	{ kKyra2, FR_FRA, kPlatformPC, kNoSpecial, { "df31cc9e37e1cf68df2fdc75ddf2d87b", "fc2c6782778e6c6d5a553d1cb73c98ad" } },
+	{ kKyra2, DE_DEU, kPlatformPC, kNoSpecial, { "0ca4f9a1438264a4c63c3218e064ed3b", "0d9b0eb7b0ad889ec942d74d80dde1bf" } },
+	{ kKyra2, IT_ITA, kPlatformPC, kNoSpecial, { "178d3ab913f61bfba21d2fb196405e8c", "3a61ed6b7c00ddae383a0361799e2ba6" } },
 
 	// talkie games
 	{ kKyra2, EN_ANY, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
@@ -79,8 +79,8 @@ const Game kyra2Games[] = {
 	{ kKyra2, IT_ITA, kPlatformPC, kTalkieVersion, { "130795aa8f2333250c895dae9028b9bb", "e20d0d2e500f01e399ec588247a7e213" } }, // Italian Fan Translation (using same offsets as English)
 
 	// FM-TOWNS games
-	{ kKyra2, EN_ANY, kPlatformFMTowns, -1, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
-	{ kKyra2, JA_JPN, kPlatformFMTowns, -1, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
+	{ kKyra2, EN_ANY, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
+	{ kKyra2, JA_JPN, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
 
 	GAME_DUMMY_ENTRY
 };
@@ -97,10 +97,10 @@ const Game lolGames[] = {
 	{ kLol, EN_ANY, kPlatformPC, kDemoVersion, { "30bb5af87d38adb47d3e6ce06b1cb042", 0 } },
 
 	// DOS floppy (no language specifc strings)
-	{ kLol, DE_DEU, kPlatformPC, -1, { "6b843869772c1b779e1386be868c15dd", 0 } },
+	{ kLol, DE_DEU, kPlatformPC, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
 
 	// PC98 (no language specifc strings)
-	{ kLol, JA_JPN, kPlatformPC98, -1, { "6d5bd4a2f5ce433365734ca6b7a8d984", "1b0a457c48ae6908da301b656fe0aab4" } },
+	{ kLol, JA_JPN, kPlatformPC98, kNoSpecial, { "6d5bd4a2f5ce433365734ca6b7a8d984", "1b0a457c48ae6908da301b656fe0aab4" } },
 
 	// DOS CD (multi language version, with no language specific strings)
 	{ kLol, UNK_LANG, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
@@ -918,26 +918,26 @@ struct GameNeed {
 };
 
 const GameNeed gameNeedTable[] = {
-	{ kKyra1, kPlatformPC, -1, kyra1FloppyNeed },
-	{ kKyra1, kPlatformAmiga, -1, kyra1AmigaNeed },
+	{ kKyra1, kPlatformPC, kNoSpecial, kyra1FloppyNeed },
+	{ kKyra1, kPlatformAmiga, kNoSpecial, kyra1AmigaNeed },
 
 	{ kKyra1, kPlatformPC, kTalkieVersion, kyra1CDNeed },
 
-	{ kKyra1, kPlatformFMTowns, -1, kyra1TownsNeed },
+	{ kKyra1, kPlatformFMTowns, kNoSpecial, kyra1TownsNeed },
 
-	{ kKyra1, kPlatformPC98, -1, kyra1PC98Need },
+	{ kKyra1, kPlatformPC98, kNoSpecial, kyra1PC98Need },
 
 	{ kKyra1, kPlatformPC, kDemoVersion, kyra1DemoNeed },
 
 	{ kKyra1, kPlatformPC, kTalkieDemoVersion, kyra1DemoCDNeed },
 
-	{ kKyra2, kPlatformPC, -1, kyra2FloppyNeed },
+	{ kKyra2, kPlatformPC, kNoSpecial, kyra2FloppyNeed },
 
 	{ kKyra2, kPlatformPC, kTalkieVersion, kyra2CDNeed },
 
 	{ kKyra2, kPlatformPC, kTalkieDemoVersion, kyra2CDDemoNeed },
 
-	{ kKyra2, kPlatformFMTowns, -1, kyra2TownsNeed },
+	{ kKyra2, kPlatformFMTowns, kNoSpecial, kyra2TownsNeed },
 
 	{ kKyra2, kPlatformPC, kDemoVersion, kyra2DemoNeed },
 
@@ -945,8 +945,8 @@ const GameNeed gameNeedTable[] = {
 
 	{ kKyra3, kPlatformPC, kTalkieVersion, kyra3Need },
 
-	{ kLol, kPlatformPC, -1, lolFloppyNeed },
-	{ kLol, kPlatformPC98, -1, lolPC98Need },
+	{ kLol, kPlatformPC, kNoSpecial, lolFloppyNeed },
+	{ kLol, kPlatformPC98, kNoSpecial, lolPC98Need },
 
 	{ kLol, kPlatformPC, kTalkieVersion, lolCDNeed },
 

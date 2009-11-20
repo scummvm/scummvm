@@ -457,7 +457,7 @@ bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte 
 			int v = extractHofSeqData_isSequence(ptr, info, endOffs - ptr);
 
 			if (cycle == 0 && v == 1) {
-				if ((info->platform == kPlatformPC && info->special == -1 && *ptr == 5) || (info->special == kDemoVersion && (ptr - data == 312))) {
+				if ((info->platform == kPlatformPC && info->special == kNoSpecial && *ptr == 5) || (info->special == kDemoVersion && (ptr - data == 312))) {
 					// patch for floppy version: skips invalid ferb sequence
 					// patch for demo: skips invalid title sequence
 					ptr += 54;

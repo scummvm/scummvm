@@ -284,7 +284,8 @@ struct ExtractFilename {
 };
 
 enum kSpecial {
-	kTalkieVersion = 0,
+	kNoSpecial = 0,
+	kTalkieVersion,
 	kDemoVersion,
 	kTalkieDemoVersion
 };
