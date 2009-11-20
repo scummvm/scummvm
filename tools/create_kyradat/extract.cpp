@@ -33,25 +33,25 @@ void createLangFilename(char *dstFilename, const ExtractInformation *info, const
 
 // Extraction function prototypes 
 
-bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRooms(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractWdSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractRooms(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractWdSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
-bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractHofShapeAnimDataV1(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractHofShapeAnimDataV2(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractHofShapeAnimDataV1(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractHofShapeAnimDataV2(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
-bool extractStringsWoSuffix(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractStringsWoSuffix(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
 // Extraction type table
 
@@ -153,7 +153,7 @@ const ExtractType *findExtractType(const int type) {
 
 namespace {
 
-bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	uint8 *buffer = new uint8[size];
 	assert(buffer);
 	memcpy(buffer, data, size);
@@ -161,7 +161,7 @@ bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, 
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int fmtPatch = 0;
 	// FM Towns files that need addional patches
 	if (info->platform == kPlatformFMTowns) {
@@ -327,7 +327,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 	return out.addFile(filename, buffer, targetsize);
 }
 
-bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	const int strSize = 10;
 	uint32 entries = (size + (strSize - 1)) / strSize;
 
@@ -347,7 +347,7 @@ bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *
 	return out.addFile(filename, buffer, output - buffer);
 }
 
-bool extractRooms(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractRooms(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	// different entry size for the FM-TOWNS version
 	const int roomEntrySize = (info->platform == kPlatformFMTowns) ? (0x69) : ((info->platform == kPlatformAmiga) ? 0x52 : 0x51);
 	const int countRooms = size / roomEntrySize;
@@ -379,7 +379,7 @@ bool extractRooms(PAKFile &out, const ExtractInformation *info, const byte *data
 	return out.addFile(filename, buffer, countRooms * 9 + 4);
 }
 
-bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	byte *buffer = new byte[size + 1 * 4];
 	assert(buffer);
 	byte *output = buffer;
@@ -391,7 +391,7 @@ bool extractShapes(PAKFile &out, const ExtractInformation *info, const byte *dat
 	return out.addFile(filename, buffer, size + 1 * 4);
 }
 
-bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	const uint32 entries = size / 8;
 	byte *buffer = new byte[entries * 6 + 1 * 4];
 
@@ -410,7 +410,7 @@ bool extractAmigaSfx(PAKFile &out, const ExtractInformation *info, const byte *d
 	return out.addFile(filename, buffer, entries * 6 + 1 * 4);
 }
 
-bool extractWdSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractWdSfx(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	const int bufferSize = 0x12602;
 
 	uint8 *buffer = new uint8[0x12602];
@@ -426,7 +426,7 @@ int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
 int extractHofSeqData_isSequence(const void *ptr, const ExtractInformation *info, uint32 maxCheckSize);
 int extractHofSeqData_isControl(const void *ptr, uint32 size);
 
-bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int numSequences = 0;
 	int numNestedSequences = 0;
 
@@ -712,7 +712,7 @@ int extractHofSeqData_isControl(const void *ptr, uint32 size) {
 	return 1;
 }
 
-bool extractHofShapeAnimDataV1(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractHofShapeAnimDataV1(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int outsize = 1;
 	uint8 *buffer = new uint8[size + 1];
 	const uint8 *src = data;
@@ -741,7 +741,7 @@ bool extractHofShapeAnimDataV1(PAKFile &out, const ExtractInformation *info, con
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractHofShapeAnimDataV2(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractHofShapeAnimDataV2(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int outsize = 1;
 	uint8 *buffer = new uint8[size + 1];
 	const uint8 *src = data;
@@ -780,7 +780,7 @@ bool extractHofShapeAnimDataV2(PAKFile &out, const ExtractInformation *info, con
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractStringsWoSuffix(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractStringsWoSuffix(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int outsize = size + 4;
 	uint8 *buffer = new uint8[outsize];
 	const uint8 *src = data;
@@ -809,7 +809,7 @@ bool extractStringsWoSuffix(PAKFile &out, const ExtractInformation *info, const 
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int outsize = size + 4;
 	uint8 *buffer = new uint8[outsize];
 	const uint8 *src = data;
@@ -833,7 +833,7 @@ bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const by
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int outsize = size >> 1;
 	uint8 *buffer = new uint8[outsize];
 	const uint8 *src = data;
@@ -847,7 +847,7 @@ bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *d
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	uint8 *buffer = new uint8[size];
 	const uint8 *src = data;
 	uint8 *dst = buffer;
@@ -861,7 +861,7 @@ bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	uint8 *buffer = new uint8[size];
 	const uint8 *src = data;
 	uint8 *dst = buffer;
@@ -875,7 +875,7 @@ bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data
 	return out.addFile(filename, buffer, size);
 }
 
-bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int num = size / 22;
 	uint8 *buffer = new uint8[size];
 	uint32 outsize = num * 18;
@@ -906,7 +906,7 @@ bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const by
 	return out.addFile(filename, buffer, outsize);
 }
 
-bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang) {
+bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
 	int outsize = 1;
 	uint8 *buffer = new uint8[size + 1];
 	const uint8 *src2 = data;

@@ -1200,7 +1200,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		if (list && list->findEntry(filename) != 0)
 			continue;
 
-		if (!tDesc->extract(out, &extractInfo, data + i->second.offset, i->second.data.size, filename, id, UNK_LANG)) {
+		if (!tDesc->extract(out, &extractInfo, data + i->second.offset, i->second.data.size, filename, id)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
 			return false;
 		}

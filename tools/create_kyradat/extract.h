@@ -61,7 +61,7 @@ struct ExtractInformation {
 
 struct ExtractType {
 	int type;
-	bool (*extract)(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id, int lang);
+	bool (*extract)(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 	void (*createFilename)(char *dstFilename, const ExtractInformation *info, const char *filename);
 };
 
