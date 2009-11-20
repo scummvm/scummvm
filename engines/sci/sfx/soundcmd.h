@@ -76,7 +76,7 @@ private:
 	void cmdHandlePriority(reg_t obj, SongHandle handle, int value);
 	void cmdFadeHandle(reg_t obj, SongHandle handle, int value);
 	void cmdGetPolyphony(reg_t obj, SongHandle handle, int value);
-	void cmdGetPlayNext(reg_t obj, SongHandle handl, int valuee);
+	void cmdGetPlayNext(reg_t obj, SongHandle handle, int value);
 
 	void initHandle(reg_t obj, SongHandle handle, bool isSci1);
 	void changeHandleStatus(reg_t obj, SongHandle handle, int newStatus);
