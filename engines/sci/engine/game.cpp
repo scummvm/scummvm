@@ -433,11 +433,14 @@ int game_exit(EngineState *s) {
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
 
-	// Note: It's a bad idea to delete the segment manager here.
+	// Note: It's a bad idea to delete the segment manager here
+	// when loading a game.
 	// This function is called right after a game is loaded, and
 	// the segment manager has already been initialized from the
 	// save game. Deleting or resetting it here will result in
 	// invalidating the loaded save state
+	if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW)
+		s->_segMan->resetSegMan();
 
 	// TODO Free parser segment here
 
