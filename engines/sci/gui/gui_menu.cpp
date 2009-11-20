@@ -191,7 +191,8 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 		if (rightAlignedPos) {
 			rightAlignedPos++;
 			tempPos = endPos;
-			if (tagPos)
+			//if (tagPos)
+			if (tagPos && tagPos >= rightAlignedPos)	// FIXME: sanity check for LB1 and KQ4
 				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
 		}
