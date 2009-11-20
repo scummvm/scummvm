@@ -31,6 +31,8 @@
 namespace Sci {
 	
 struct SelectorRemap {
+	SciVersion minVersion;
+	SciVersion maxVersion;
 	const char *name;
 	uint32 slot;
 };
@@ -61,39 +63,24 @@ static const char * const sci1Selectors[] = {
           "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
 };
 
-// Taken from Codename: Iceman (Full Game)
-static const SelectorRemap sci0SelectorRemap[] = {
-    {     "moveDone", 170 }, {      "points",  316 }, {        "flags", 368 },
-	{              0,   0 }
-};
-
-// Taken from Leisure Suit Larry 1 VGA (Full Game)
-static const SelectorRemap sci1SelectorRemap[] = {
-	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
-	{        "flags", 102 },
-	// FIXME: These two selectors differ for each game. We need to find a reliable
-	// way to detect them, or apply them on a per-game basis for games which are
-	// missing them
-	{     "syncTime", 247 }, {      "syncCue", 248 },
-	{              0,   0 }
-};
-
-// Taken from KQ6 floppy (Full Game)
-static const SelectorRemap sci11SelectorRemap[] = {
-	{      "nodePtr",  41 }, {   "cantBeHere",  54 }, {     "topString", 98 },
-	{        "flags",  99 }, {       "scaleX", 104 }, {       "scaleY", 105 },
-	// FIXME: These two selectors differ for each game. We need to find a reliable
-	// way to detect them, or apply them on a per-game basis for games which are
-	// missing them
-	{     "syncTime", 279 }, {      "syncCue", 280 },
-	{              0,   0 }
+static const SelectorRemap sciSelectorRemap[] = {
+    {    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
+	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
+	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,    "nodePtr",  44 },
+	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1, "cantBeHere",  57 },
+	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,  "topString", 101 },
+	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,      "flags", 102 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
+	{ SCI_VERSION_AUTODETECT, SCI_VERSION_AUTODETECT,            0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames() {
 	Common::StringList names;
 	const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
 	const int count = ARRAYSIZE(sci0Selectors) + offset;
-	const SelectorRemap *selectorRemap = sci0SelectorRemap;
+	const SelectorRemap *selectorRemap = sciSelectorRemap;
 	int i;
 
 	// Resize the list of selector names and fill in the SCI 0 names.
@@ -103,26 +90,24 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 	for (i = offset; i < count; i++)
 		names[i] = sci0Selectors[i - offset];
 
-	if (getSciVersion() <= SCI_VERSION_01) {
-		selectorRemap = sci0SelectorRemap;
-	} else {
+	if (getSciVersion() > SCI_VERSION_01) {
 		// Several new selectors were added in SCI 1 and later.
 		int count2 = ARRAYSIZE(sci1Selectors);
 		names.resize(count + count2);
 		for (i = count; i < count + count2; i++)
 			names[i] = sci1Selectors[i - count];
-
-		if (getSciVersion() < SCI_VERSION_1_1) {
-			selectorRemap = sci1SelectorRemap;
-		} else {
-			selectorRemap = sci11SelectorRemap;
-		}
 	}
 
 	for (; selectorRemap->slot; ++selectorRemap) {
+		uint32 slot = selectorRemap->slot;
 		if (selectorRemap->slot >= names.size())
 			names.resize(selectorRemap->slot + 1);
-		names[selectorRemap->slot] = selectorRemap->name;
+		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
+			// The SCI1 selectors we use exist in SCI1.1 too, offset by 3
+			if (selectorRemap->minVersion == SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
+				slot -= 3;
+			names[slot] = selectorRemap->name;
+		}
 	}
 
 	return names;

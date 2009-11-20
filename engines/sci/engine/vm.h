@@ -184,7 +184,8 @@ struct SelectorCache {
 	Selector topString; // SCI1 scroll lists use this instead of lsTop
 	Selector flags;
 
-	// SCI1+ music-related selectors, not static
+	// SCI1+ audio sync related selectors, not static. They're used for lip syncing in
+	// CD talkie games
 	Selector syncCue; // Used by DoSync()
 	Selector syncTime;
 
