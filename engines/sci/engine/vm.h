@@ -103,8 +103,8 @@ enum SelectorType {
 };
 
 struct Class {
-	int script; // number of the script the class is in, -1 for non-existing */
-	reg_t reg; // offset; script-relative offset, segment: 0 if not instantiated */
+	int script; // number of the script the class is in, -1 for non-existing
+	reg_t reg; // offset; script-relative offset, segment: 0 if not instantiated
 };
 
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
