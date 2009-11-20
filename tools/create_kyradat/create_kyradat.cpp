@@ -40,7 +40,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 63,
+	kKyraDatVersion = 64,
 	kIndexSize = 12
 };
 
@@ -372,7 +372,7 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->game == kKyra3)
+	if (g->special == kTalkieVersion)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion)
 		features |= GF_DEMO;

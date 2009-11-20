@@ -87,7 +87,7 @@ const Game kyra2Games[] = {
 
 const Game kyra3Games[] = {
 	// DOS CD (multi language version, with no language specific strings)
-	{ kKyra3, UNK_LANG, kPlatformPC, -1, { "bf68701eb591d0b72219f314c0d32688", 0 } },
+	{ kKyra3, UNK_LANG, kPlatformPC, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } },
 
 	GAME_DUMMY_ENTRY
 };
@@ -943,7 +943,7 @@ const GameNeed gameNeedTable[] = {
 
 	{ kLol, kPlatformPC, kDemoVersion, lolDemoNeed },
 
-	{ kKyra3, kPlatformPC, -1, kyra3Need },
+	{ kKyra3, kPlatformPC, kTalkieVersion, kyra3Need },
 
 	{ kLol, kPlatformPC, -1, lolFloppyNeed },
 	{ kLol, kPlatformPC98, -1, lolPC98Need },
