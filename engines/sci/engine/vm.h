@@ -146,7 +146,7 @@ struct SelectorCache {
 	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; // Various Bresenham vars
 	Selector xStep, yStep; // BR adjustments
 	Selector moveSpeed; // Used for DoBresen
-	Selector canBeHere; // Funcselector: Checks for movement validity
+	Selector canBeHere; // Funcselector: Checks for movement validity in SCI0
 	Selector heading, mover; // Used in DoAvoider
 	Selector doit; // Called (!) by the Animate() system call
 	Selector isBlocked, looper;	// Used in DoAvoider
@@ -180,7 +180,7 @@ struct SelectorCache {
 	Selector moveDone;	// used for DoBresen
 
 	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
-	Selector cantBeHere;
+	Selector cantBeHere; // Checks for movement avoidance in SCI1+. Replaces canBeHere
 	Selector topString; // SCI1 scroll lists use this instead of lsTop
 	Selector flags;
 
