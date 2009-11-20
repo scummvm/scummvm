@@ -583,7 +583,10 @@ int main(int argc, char *argv[]) {
 		else
 			printf("Processing file '%s'...\n", f1->second.c_str());
 
-		process(out, i->first, i->second.data, i->second.size);
+		if (!process(out, i->first, i->second.data, i->second.size))
+			printf("FAILED\n");
+		else
+			printf("OK\n");
 	}
 
 	// Free up memory
