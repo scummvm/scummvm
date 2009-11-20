@@ -70,7 +70,11 @@ static const SelectorRemap sci0SelectorRemap[] = {
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
 static const SelectorRemap sci1SelectorRemap[] = {
 	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
-	{        "flags", 102 }, {     "syncTime", 247 }, {      "syncCue", 248 },
+	{        "flags", 102 },
+	// FIXME: These two selectors differ for each game. We need to find a reliable
+	// way to detect them, or apply them on a per-game basis for games which are
+	// missing them
+	{     "syncTime", 247 }, {      "syncCue", 248 },
 	{              0,   0 }
 };
 
@@ -78,7 +82,11 @@ static const SelectorRemap sci1SelectorRemap[] = {
 static const SelectorRemap sci11SelectorRemap[] = {
 	{      "nodePtr",  41 }, {   "cantBeHere",  54 }, {     "topString", 98 },
 	{        "flags",  99 }, {       "scaleX", 104 }, {       "scaleY", 105 },
-	{     "syncTime", 279 }, {      "syncCue", 280 }, {              0,   0 }
+	// FIXME: These two selectors differ for each game. We need to find a reliable
+	// way to detect them, or apply them on a per-game basis for games which are
+	// missing them
+	{     "syncTime", 279 }, {      "syncCue", 280 },
+	{              0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames() {
