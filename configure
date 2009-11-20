@@ -1245,7 +1245,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
 		# FIXME: Please document why 'long' has to be used instead of int
-		type_4_byte='long'
+		#type_4_byte='long'
 		;;
 	haiku*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1253,7 +1253,7 @@ case $_host_os in
 		LIBS="$LIBS -lnetwork"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		# FIXME: Please document why 'long' has to be used instead of int
-		type_4_byte='long'
+		#type_4_byte='long'
 		;;
 	solaris*)
 		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1288,7 +1288,7 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 		# FIXME: Please document why 'long' has to be used instead of int
-		type_4_byte='long'
+		#type_4_byte='long'
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
@@ -1440,14 +1440,14 @@ if test -n "$_host"; then
 			_endian=big
 			_need_memalign=yes
 			# FIXME: Please document why 'long' has to be used instead of int
-			type_4_byte='long'
+			#type_4_byte='long'
 			;;
 		m68k-atari-mint)
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_endian=big
 			_need_memalign=yes
 			# FIXME: Please document why 'long' has to be used instead of int
-			type_4_byte='long'
+			#type_4_byte='long'
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			;;
