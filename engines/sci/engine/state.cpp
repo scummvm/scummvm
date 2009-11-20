@@ -451,7 +451,7 @@ SciVersion EngineState::detectDoSoundType() {
 SciVersion EngineState::detectSetCursorType() {
 	if (_setCursorType == SCI_VERSION_AUTODETECT) {
 		if (getSciVersion() <= SCI_VERSION_01) {
-			// SCI0/SCI01 games always have non-colored cursors
+			// SCI0/SCI01 games never use cursor views
 			_setCursorType = SCI_VERSION_0_EARLY;
 		} else {
 			if (!autoDetectFeature(kDetectSetCursorType)) {
@@ -462,6 +462,12 @@ SciVersion EngineState::detectSetCursorType() {
 				else
 					_setCursorType = SCI_VERSION_0_EARLY;
 			}
+		}
+
+		if (_gameName == "kq5" && Common::File::exists("audio001.002")) {
+			// WORKAROUND for KQ5CD: The code of the setCursor selector has not been yet
+			// rewritten for cursor views, but the game does use cursor views
+			_setCursorType = SCI_VERSION_1_1;
 		}
 
 		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
