@@ -240,7 +240,7 @@ SciVersion EngineState::detectDoSoundType() {
 			// SCI0 sound code (i.e. SCI_VERSION_0_EARLY)
 			_doSoundType = SCI_VERSION_0_EARLY;
 		} else {
-			if (!dissectSelector(kDetectSoundType)) {
+			if (!autoDetectFeature(kDetectSoundType)) {
 				warning("DoSound detection failed, taking an educated guess");
 
 				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
@@ -264,7 +264,7 @@ SciVersion EngineState::detectSetCursorType() {
 			// SCI0/SCI01 games always have non-colored cursors
 			_setCursorType = SCI_VERSION_0_EARLY;
 		} else {
-			if (!dissectSelector(kDetectSetCursorType)) {
+			if (!autoDetectFeature(kDetectSetCursorType)) {
 				warning("SetCursor detection failed, taking an educated guess");
 
 				if (getSciVersion() >= SCI_VERSION_1_1)
@@ -282,117 +282,24 @@ SciVersion EngineState::detectSetCursorType() {
 
 SciVersion EngineState::detectLofsType() {
 	if (_lofsType == SCI_VERSION_AUTODETECT) {
-		// This detection only works (and is only needed) pre-SCI1.1
+		// This detection only works (and is only needed) for SCI 1
+		if (getSciVersion() <= SCI_VERSION_01) {
+			_lofsType = SCI_VERSION_0_EARLY;
+			return _lofsType;
+		}
+
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			_lofsType = SCI_VERSION_1_1;
 			return _lofsType;
 		}
 
-		Object *obj = NULL;
-		reg_t gameClass = _segMan->findObjectByName("Game");
-
-		if (!gameClass.isNull())
-			obj = _segMan->getObject(gameClass);
-
-		bool couldBeAbs = true;
-		bool couldBeRel = true;
-
-		// Check methods of the Game class for lofs operations
-		if (obj) {
-			for (uint m = 0; m < obj->getMethodCount(); m++) {
-				reg_t fptr = obj->getFunction(m);
-
-				Script *script = _segMan->getScript(fptr.segment);
-
-				if ((script == NULL) || (script->_buf == NULL))
-					continue;
-
-				uint offset = fptr.offset;
-				bool done = false;
-
-				while (!done) {
-					// Read opcode
-					if (offset >= script->_bufSize)
-						break;
-
-					byte opcode = script->_buf[offset++];
-					byte opnumber = opcode >> 1;
-
-					if ((opnumber == 0x39) || (opnumber == 0x3a)) {
-						uint16 lofs;
-
-						// Load lofs operand
-						if (opcode & 1) {
-							if (offset >= script->_bufSize)
-								break;
-							lofs = script->_buf[offset++];
-						} else {
-							if (offset + 1 >= script->_bufSize)
-								break;
-							lofs = READ_LE_UINT16(script->_buf + offset);
-							offset += 2;
-						}
-
-						// Check for going out of bounds when interpreting as abs/rel
-						if (lofs >= script->_bufSize)
-							couldBeAbs = false;
-
-						if ((signed)offset + (int16)lofs < 0)
-							couldBeRel = false;
-
-						if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
-							couldBeRel = false;
-
-						continue;
-					}
-
-					// Skip operands for non-lofs opcodes
-					for (int i = 0; g_opcode_formats[opnumber][i]; i++) {
-						switch (g_opcode_formats[opnumber][i]) {
-						case Script_Byte:
-						case Script_SByte:
-							offset++;
-							break;
-						case Script_Word:
-						case Script_SWord:
-							offset += 2;
-							break;
-						case Script_Variable:
-						case Script_Property:
-						case Script_Local:
-						case Script_Temp:
-						case Script_Global:
-						case Script_Param:
-						case Script_SVariable:
-						case Script_SRelative:
-						case Script_Offset:
-							offset++;
-							if (!(opcode & 1))
-								offset++;
-							break;
-						case Script_End:
-							done = true;
-							break;
-						case Script_Invalid:
-						default:
-							warning("opcode %02x: Invalid", opcode);
-						}
-					}
-				}
-			}
-		}
-
-		if (couldBeRel == couldBeAbs) {
+		if (!autoDetectFeature(kDetectLofsType)) {
 			warning("Lofs detection failed, taking an educated guess");
 
 			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
 				_lofsType = SCI_VERSION_1_MIDDLE;
 			else
 				_lofsType = SCI_VERSION_0_EARLY;
-		} else if (couldBeAbs) {
-			_lofsType = SCI_VERSION_1_MIDDLE;
-		} else {
-			_lofsType = SCI_VERSION_0_EARLY;
 		}
 
 		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", getSciVersionDesc(_lofsType).c_str());
@@ -401,7 +308,7 @@ SciVersion EngineState::detectLofsType() {
 	return _lofsType;
 }
 
-bool EngineState::dissectSelector(FeatureDetection featureDetection) {
+bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 	Common::String objName;
 	Selector slc;
 
@@ -422,6 +329,11 @@ bool EngineState::dissectSelector(FeatureDetection featureDetection) {
 	case kDetectSetCursorType:
 		objName = "Game";
 		slc = _kernel->_selectorCache.setCursor;
+		break;
+	case kDetectLofsType:
+		objName = "Game";
+		slc = _kernel->_selectorCache.play;
+		break;
 	default:
 		break;
 	}
@@ -429,24 +341,52 @@ bool EngineState::dissectSelector(FeatureDetection featureDetection) {
 	reg_t addr;
 	reg_t objAddr = _segMan->findObjectByName(objName);
 	if (objAddr.isNull()) {
-		warning("dissectSelector: %s object couldn't be found", objName.c_str());
+		warning("autoDetectFeature: %s object couldn't be found", objName.c_str());
 		return false;
 	}
 
 	if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
-		warning("dissectSelector: target selector is not a method of object %s", objName.c_str());
+		warning("autoDetectFeature: target selector is not a method of object %s", objName.c_str());
 		return false;
 	}
 
-	bool found = false;
 	uint16 offset = addr.offset;
-	byte *scr = _segMan->getScript(addr.segment)->_buf;
+	Script *script = _segMan->getScript(addr.segment);
+
 	do {
 		uint16 kFuncNum;
-		int opsize = scr[offset++];
+		int opsize = script->_buf[offset++];
 		uint opcode = opsize >> 1;
 		int i = 0;
 		byte argc;
+
+		if (featureDetection == kDetectLofsType && (opcode == op_lofsa || opcode == op_lofss)) {
+			uint16 lofs;
+
+			// Load lofs operand
+			if (opsize & 1) {
+				if (offset >= script->_bufSize)
+					break;
+				lofs = script->_buf[offset++];
+			} else {
+				if ((uint32)offset + 1 >= (uint32)script->_bufSize)
+					break;
+				lofs = READ_LE_UINT16(script->_buf + offset);
+				offset += 2;
+			}
+
+			// Check for going out of bounds when interpreting as abs/rel
+			if (lofs >= script->_bufSize)
+				_lofsType = SCI_VERSION_0_EARLY;
+
+			if ((signed)offset + (int16)lofs < 0)
+				_lofsType = SCI_VERSION_1_MIDDLE;
+
+			if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
+				_lofsType = SCI_VERSION_1_MIDDLE;
+
+			return true;
+		}
 
 		while (g_opcode_formats[opcode][i]) {
 			switch (g_opcode_formats[opcode][i++]) {
@@ -468,28 +408,28 @@ bool EngineState::dissectSelector(FeatureDetection featureDetection) {
 			case Script_Temp:
 			case Script_Param:
 				if (opsize & 1)
-					kFuncNum = scr[offset++];
+					kFuncNum = script->_buf[offset++];
 				else {
-					kFuncNum = 0xffff & (scr[offset] | (scr[offset + 1] << 8));
+					kFuncNum = 0xffff & (script->_buf[offset] | (script->_buf[offset + 1] << 8));
 					offset += 2;
 				}
 
 				if (opcode == op_callk) {
-					argc = scr[offset++];
+					argc = script->_buf[offset++];
 
 					switch (featureDetection) {
 					case kDetectGfxFunctions:
-						if (kFuncNum == 8) {	// kDrawPic
+						if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
 							// If kDrawPic is called with 6 parameters from the
 							// overlay selector, the game is using old graphics functions.
 							// Otherwise, if it's called with 8 parameters, it's using new
 							// graphics functions
 							if (argc == 6) {
 								_gfxFunctionsType = SCI_VERSION_0_EARLY;
-								found = true;
+								return true;
 							} else if (argc == 8) {
 								_gfxFunctionsType = SCI_VERSION_0_LATE;
-								found = true;
+								return true;
 							} else {
 								warning("overlay selector calling kDrawPic with %d parameters", argc);
 							}
@@ -497,35 +437,35 @@ bool EngineState::dissectSelector(FeatureDetection featureDetection) {
 						break;
 					case kDetectMoveCountType:
 						// Games which ignore move count call kAbs before calling kDoBresen
-						if (kFuncNum == 61) {	// kAbs
+						if (kFuncNum == 61) {	// kAbs (SCI1)
 							_moveCountType = kIgnoreMoveCount;
-							found = true;
-						} else if (kFuncNum == 80) {	// kDoBresen
+							return true;
+						} else if (kFuncNum == 80) {	// kDoBresen (SCI1)
 							// If we reached here, a call to kAbs hasn't been found
 							_moveCountType = kIncrementMoveCount;
-							found = true;
+							return true;
 						}
 						break;
 					case kDetectSoundType:
 						// Late SCI1 games call kIsObject before kDoSound
-						if (kFuncNum == 6) {	// kIsObject
+						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
 							_doSoundType = SCI_VERSION_1_LATE;
-							found = true;
-						} else if (kFuncNum == 45) {	// kDoSound
+							return true;
+						} else if (kFuncNum == 45) {	// kDoSound (SCI1)
 							// If we reached here, a call to kIsObject hasn't been found
 							_doSoundType = SCI_VERSION_1_EARLY;
-							found = true;
+							return true;
 						}
 						break;
 					case kDetectSetCursorType:
 						// Games with colored mouse cursors call kIsObject before kSetCursor
-						if (kFuncNum == 6) {	// kIsObject
+						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
 							_setCursorType = SCI_VERSION_1_1;
-							found = true;
-						} else if (kFuncNum == 40) {	// kSetCursor
+							return true;
+						} else if (kFuncNum == 40) {	// kSetCursor (SCI0-SCI11)
 							// If we reached here, a call to kIsObject hasn't been found
 							_setCursorType = SCI_VERSION_0_EARLY;
-							found = true;
+							return true;
 						}
 					default:
 						break;
@@ -547,9 +487,9 @@ bool EngineState::dissectSelector(FeatureDetection featureDetection) {
 
 			}
 		}
-	} while (offset > 0 && !found);
+	} while (offset > 0);
 
-	return found;
+	return false;	// not found
 }
 
 SciVersion EngineState::detectGfxFunctionsType() {
@@ -578,7 +518,7 @@ SciVersion EngineState::detectGfxFunctionsType() {
 					// overlay. Therefore, check it to see how it calls kDrawPic to
 					// determine the graphics functions type used
 
-					if (!dissectSelector(kDetectGfxFunctions)) {
+					if (!autoDetectFeature(kDetectGfxFunctions)) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
 						// Try detecting the graphics function types from the existence of the motionCue
@@ -607,7 +547,7 @@ MoveCountType EngineState::detectMoveCountType() {
 		if (getSciVersion() <= SCI_VERSION_01) {
 			_moveCountType = kIncrementMoveCount;
 		} else {
-			if (!dissectSelector(kDetectMoveCountType)) {
+			if (!autoDetectFeature(kDetectMoveCountType)) {
 				warning("Move count autodetection failed");
 				_moveCountType = kIncrementMoveCount;	// Most games do this, so best guess
 			}
