@@ -184,7 +184,7 @@ const uint8 *PAKFile::getFileData(const char *file, uint32 *size) {
 
 bool PAKFile::addFile(const char *name, const char *file) {
 	if (_fileList && _fileList->findEntry(name)) {
-		error("entry '%s' already exists");
+		error("entry '%s' already exists", name);
 		return false;
 	}
 
@@ -207,7 +207,7 @@ bool PAKFile::addFile(const char *name, const char *file) {
 
 bool PAKFile::addFile(const char *name, uint8 *data, uint32 size) {
 	if (_fileList && _fileList->findEntry(name)) {
-		error("entry '%s' already exists");
+		error("entry '%s' already exists", name);
 		return false;
 	}
 
