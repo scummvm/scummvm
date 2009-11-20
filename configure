@@ -1551,7 +1551,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
-			# The same does not currently for tremor, as the PS2 port the resulting library
+			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
 			_mad="yes"
