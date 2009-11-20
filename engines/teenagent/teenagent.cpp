@@ -299,11 +299,15 @@ Common::Error TeenAgentEngine::run() {
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
+				if (scene->getId() < 0)
+					break;
 				examine(event.mouse, current_object);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				//if (current_object)
 				//	debug(0, "%d, %s", current_object->id, current_object->name.c_str());
+				if (scene->getId() < 0)
+					break;
 				if (res->dseg.get_byte(0) == 3 && current_object->id == 1) {
 					processCallback(0x5189); //boo!
 					break;
