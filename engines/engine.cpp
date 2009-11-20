@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 #include <windows.h>
 #include <direct.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -213,7 +213,7 @@ void GUIErrorMessage(const Common::String msg) {
 }
 
 void Engine::checkCD() {
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.
