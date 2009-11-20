@@ -63,23 +63,22 @@ static const char * const sci1Selectors[] = {
 
 // Taken from Codename: Iceman (Full Game)
 static const SelectorRemap sci0SelectorRemap[] = {
-    {     "moveDone", 170 }, {    "setCursor", 254 }, {      "overlay", 270 },
-	{      "points",  316 }, {        "flags", 368 }, {              0,   0 }
+    {     "moveDone", 170 }, {      "points",  316 }, {        "flags", 368 },
+	{              0,   0 }
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
 static const SelectorRemap sci1SelectorRemap[] = {
 	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
-	{        "flags", 102 }, {    "setCursor", 183 }, {     "syncTime", 247 },
-	{      "syncCue", 248 }, {              0,   0 }
+	{        "flags", 102 }, {     "syncTime", 247 }, {      "syncCue", 248 },
+	{              0,   0 }
 };
 
 // Taken from KQ6 floppy (Full Game)
 static const SelectorRemap sci11SelectorRemap[] = {
 	{      "nodePtr",  41 }, {   "cantBeHere",  54 }, {     "topString", 98 },
 	{        "flags",  99 }, {       "scaleX", 104 }, {       "scaleY", 105 },
-	{    "setCursor", 197 }, {     "syncTime", 279 }, {      "syncCue", 280 },
-	{              0,   0 }
+	{     "syncTime", 279 }, {      "syncCue", 280 }, {              0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames() {

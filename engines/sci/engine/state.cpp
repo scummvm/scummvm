@@ -233,6 +233,70 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
+bool EngineState::callsKernelFunc(reg_t objAddr, int kernelFunc) {
+	Script *script = _segMan->getScript(objAddr.segment);
+	uint16 offset = objAddr.offset;
+
+	do {
+		uint16 kFuncNum;
+		int opsize = script->_buf[offset++];
+		uint opcode = opsize >> 1;
+		int i = 0;
+		byte argc;
+
+		while (g_opcode_formats[opcode][i]) {
+			switch (g_opcode_formats[opcode][i++]) {
+			case Script_Invalid:
+				break;
+			case Script_SByte:
+			case Script_Byte:
+				offset++;
+				break;
+			case Script_Word:
+			case Script_SWord:
+				offset += 2;
+				break;
+			case Script_SVariable:
+			case Script_Variable:
+			case Script_Property:
+			case Script_Global:
+			case Script_Local:
+			case Script_Temp:
+			case Script_Param:
+				if (opsize & 1)
+					kFuncNum = script->_buf[offset++];
+				else {
+					kFuncNum = 0xffff & (script->_buf[offset] | (script->_buf[offset + 1] << 8));
+					offset += 2;
+				}
+
+				if (opcode == op_callk) {
+					argc = script->_buf[offset++];
+
+					if (kFuncNum == kernelFunc)
+						return true;
+				}
+				break;
+
+			case Script_Offset:
+			case Script_SRelative:
+				offset++;
+				if (!opsize & 1)
+					offset++;
+				break;
+			case Script_End:
+				offset = 0;	// exit loop
+				break;
+			default:
+				warning("opcode %02x: Invalid", opcode);
+
+			}
+		}
+	} while (offset > 0);
+
+	return false;	// not found
+}
+
 bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
 	Selector slc;
@@ -276,7 +340,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 		return false;
 	}
 
-	if (featureDetection != kDetectLofsType) {
+	if (methodNum == -1) {
 		if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
 			warning("autoDetectFeature: target selector is not a method of object %s", objName.c_str());
 			return false;
@@ -460,8 +524,34 @@ SciVersion EngineState::detectSetCursorType() {
 		if (getSciVersion() <= SCI_VERSION_01) {
 			// SCI0/SCI01 games never use cursor views
 			_setCursorType = SCI_VERSION_0_EARLY;
+		} else if (getSciVersion() >= SCI_VERSION_1_1) {
+			// SCI1.1 games always use cursor views
+			_setCursorType = SCI_VERSION_1_1;
 		} else {
-			if (!autoDetectFeature(kDetectSetCursorType)) {
+			bool found = false;
+
+			if (_kernel->_selectorCache.setCursor == -1) {
+				// Find which function of the Game object calls setCursor
+				int foundMethod = -1;
+
+				Object *obj = _segMan->getObject(_segMan->findObjectByName("Game"));
+				for (uint m = 0; m < obj->getMethodCount(); m++) {
+					found = callsKernelFunc(obj->getFunction(m), 40);	// kSetCursor (SCI0-SCI11)
+
+					if (found) {
+						foundMethod = m;
+						break;
+					}
+				}
+
+				if (found)
+					found = autoDetectFeature(kDetectSetCursorType, foundMethod);
+			} else {
+				found = autoDetectFeature(kDetectSetCursorType);
+			}
+
+			if (!found) {
+				// Quite normal in several demos which don't have a cursor
 				warning("SetCursor detection failed, taking an educated guess");
 
 				if (getSciVersion() >= SCI_VERSION_1_1)
@@ -533,7 +623,26 @@ SciVersion EngineState::detectGfxFunctionsType() {
 				_gfxFunctionsType = SCI_VERSION_0_LATE;
 			} else {
 				// No shiftparser selector, check if the game is using an overlay
-				if (_kernel->_selectorCache.overlay == -1) {
+				bool hasOverlaySelector = (_kernel->_selectorCache.overlay != -1);
+				int foundMethod = -1;
+
+				if (!hasOverlaySelector) {
+					// No overlay selector found, check if any method of the Rm object
+					// is calling kDrawPic, as the overlay selector might be missing in demos
+
+					Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
+					bool found = false;
+					for (uint m = 0; m < obj->getMethodCount(); m++) {
+						found = callsKernelFunc(obj->getFunction(m), 8);	// kDrawPic	(SCI0 - SCI11)
+
+						if (found) {
+							foundMethod = m;
+							break;
+						}
+					}
+				}
+
+				if (!hasOverlaySelector && foundMethod == -1) {
 					// No overlay selector found, therefore the game is definitely
 					// using old graphics functions
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
@@ -543,7 +652,7 @@ SciVersion EngineState::detectGfxFunctionsType() {
 					// overlay. Therefore, check it to see how it calls kDrawPic to
 					// determine the graphics functions type used
 
-					if (!autoDetectFeature(kDetectGfxFunctions)) {
+					if (!autoDetectFeature(kDetectGfxFunctions, foundMethod)) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
 						// Try detecting the graphics function types from the existence of the motionCue
