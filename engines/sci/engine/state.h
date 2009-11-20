@@ -107,7 +107,8 @@ enum FeatureDetection {
 	kDetectMoveCountType = 1,
 	kDetectSoundType = 2,
 	kDetectSetCursorType = 3,
-	kDetectLofsType = 4
+	kDetectLofsType = 4,
+	kDetectLofsTypeFallback = 5
 };
 
 class FileHandle {

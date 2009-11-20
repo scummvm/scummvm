@@ -74,9 +74,10 @@ static const SelectorRemap sci1SelectorRemap[] = {
 	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
 	{        "flags", 102 }, {         "init", 104 }, {      "dispose", 105 },
 	{       "caller", 134 }, {          "cue", 136 }, {        "owner", 150 },
-	{       "setVol", 156 }, {    "setCursor", 183 }, {    "completed", 210 },
-	{       "cycler", 215 }, {     "distance", 224 }, {    "canBeHere", 232 },
-	{     "syncTime", 247 }, {      "syncCue", 248 }, {              0,   0 }
+	{       "setVol", 156 }, {      "newRoom", 173 }, {    "setCursor", 183 },
+	{    "completed", 210 }, {       "cycler", 215 }, {     "distance", 224 },
+	{    "canBeHere", 232 }, {     "syncTime", 247 }, {      "syncCue", 248 },
+	{              0,   0 }
 };
 
 // Taken from KQ6 floppy (Full Game)

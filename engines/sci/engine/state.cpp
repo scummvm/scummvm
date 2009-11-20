@@ -259,6 +259,10 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 		objName = "Game";
 		slc = _kernel->_selectorCache.play;
 		break;
+	case kDetectLofsTypeFallback:
+		objName = "Game";
+		slc = _kernel->_selectorCache.newRoom;
+		break;
 	default:
 		break;
 	}
@@ -285,32 +289,34 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 		int i = 0;
 		byte argc;
 
-		if (featureDetection == kDetectLofsType && (opcode == op_lofsa || opcode == op_lofss)) {
-			uint16 lofs;
+		if (featureDetection == kDetectLofsType || featureDetection == kDetectLofsTypeFallback) {
+			if (opcode == op_lofsa || opcode == op_lofss) {
+				uint16 lofs;
 
-			// Load lofs operand
-			if (opsize & 1) {
-				if (offset >= script->_bufSize)
-					break;
-				lofs = script->_buf[offset++];
-			} else {
-				if ((uint32)offset + 1 >= (uint32)script->_bufSize)
-					break;
-				lofs = READ_LE_UINT16(script->_buf + offset);
-				offset += 2;
+				// Load lofs operand
+				if (opsize & 1) {
+					if (offset >= script->_bufSize)
+						break;
+					lofs = script->_buf[offset++];
+				} else {
+					if ((uint32)offset + 1 >= (uint32)script->_bufSize)
+						break;
+					lofs = READ_LE_UINT16(script->_buf + offset);
+					offset += 2;
+				}
+
+				// Check for going out of bounds when interpreting as abs/rel
+				if (lofs >= script->_bufSize)
+					_lofsType = SCI_VERSION_0_EARLY;
+
+				if ((signed)offset + (int16)lofs < 0)
+					_lofsType = SCI_VERSION_1_MIDDLE;
+
+				if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
+					_lofsType = SCI_VERSION_1_MIDDLE;
+
+				return true;
 			}
-
-			// Check for going out of bounds when interpreting as abs/rel
-			if (lofs >= script->_bufSize)
-				_lofsType = SCI_VERSION_0_EARLY;
-
-			if ((signed)offset + (int16)lofs < 0)
-				_lofsType = SCI_VERSION_1_MIDDLE;
-
-			if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
-				_lofsType = SCI_VERSION_1_MIDDLE;
-
-			return true;
 		}
 
 		while (g_opcode_formats[opcode][i]) {
@@ -477,7 +483,9 @@ SciVersion EngineState::detectLofsType() {
 			return _lofsType;
 		}
 
-		if (!autoDetectFeature(kDetectLofsType)) {
+		// Either the init or the newRoom selectors of the Game
+		// object make calls to lofsa/lofss
+		if (!autoDetectFeature(kDetectLofsType) && !autoDetectFeature(kDetectLofsTypeFallback)) {
 			warning("Lofs detection failed, taking an educated guess");
 
 			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)

@@ -191,6 +191,8 @@ struct SelectorCache {
 	Selector subtitleLang;
 	Selector parseLang;
 
+	Selector newRoom;	/** For SCI1 lofs parameter type autodetection fallback */
+
 	Selector setCursor; /** For autodetection */
 };
 
