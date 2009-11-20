@@ -233,7 +233,6 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
 	FIND_SELECTOR(overlay);
-	FIND_SELECTOR(newRoom);
 	FIND_SELECTOR(setCursor);
 	FIND_SELECTOR(topString);
 	FIND_SELECTOR(scaleX);

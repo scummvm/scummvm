@@ -107,8 +107,7 @@ enum FeatureDetection {
 	kDetectMoveCountType = 1,
 	kDetectSoundType = 2,
 	kDetectSetCursorType = 3,
-	kDetectLofsType = 4,
-	kDetectLofsTypeFallback = 5
+	kDetectLofsType = 4
 };
 
 class FileHandle {
@@ -294,7 +293,7 @@ public:
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 
 private:
-	bool autoDetectFeature(FeatureDetection featureDetection);
+	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	MoveCountType _moveCountType;

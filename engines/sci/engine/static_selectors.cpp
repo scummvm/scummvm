@@ -63,17 +63,16 @@ static const char * const sci1Selectors[] = {
 
 // Taken from Codename: Iceman (Full Game)
 static const SelectorRemap sci0SelectorRemap[] = {
-    {          "cue", 121 }, {     "moveDone", 170 }, {    "setCursor", 254 },
-	{      "overlay", 270 }, {      "points",  316 }, {        "flags", 368 },
-	{              0,   0 }
+    {     "moveDone", 170 }, {    "setCursor", 254 }, {      "overlay", 270 },
+	{      "points",  316 }, {        "flags", 368 }, {              0,   0 }
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
 static const SelectorRemap sci1SelectorRemap[] = {
 	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
-	{        "flags", 102 }, {      "dispose", 105 }, {      "newRoom", 173 },
-	{    "setCursor", 183 }, {    "canBeHere", 232 }, {     "syncTime", 247 },
-	{      "syncCue", 248 }, {              0,   0 }
+	{        "flags", 102 }, {      "dispose", 105 }, {    "setCursor", 183 },
+	{    "canBeHere", 232 }, {     "syncTime", 247 }, {      "syncCue", 248 },
+	{              0,   0 }
 };
 
 // Taken from KQ6 floppy (Full Game)

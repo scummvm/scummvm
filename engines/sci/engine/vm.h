@@ -192,9 +192,8 @@ struct SelectorCache {
 	Selector scaleX, scaleY;	// SCI1.1 view scaling
 
 	// Used for auto detection purposes
-	Selector overlay;	/** Used to determine if a game is using old gfx functions or not */
-	Selector newRoom;	/** For SCI1 lofs parameter type autodetection fallback */
-	Selector setCursor; /** For autodetection */
+	Selector overlay;	// Used to determine if a game is using old gfx functions or not
+	Selector setCursor; // For autodetection
 };
 
 // A reference to an object's variable.

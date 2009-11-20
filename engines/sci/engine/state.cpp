@@ -233,7 +233,7 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
-bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
+bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
 	Selector slc;
 
@@ -257,11 +257,6 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 		break;
 	case kDetectLofsType:
 		objName = "Game";
-		slc = _kernel->_selectorCache.play;
-		break;
-	case kDetectLofsTypeFallback:
-		objName = "Game";
-		slc = _kernel->_selectorCache.newRoom;
 		break;
 	default:
 		break;
@@ -274,9 +269,13 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 		return false;
 	}
 
-	if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
-		warning("autoDetectFeature: target selector is not a method of object %s", objName.c_str());
-		return false;
+	if (featureDetection != kDetectLofsType) {
+		if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
+			warning("autoDetectFeature: target selector is not a method of object %s", objName.c_str());
+			return false;
+		}
+	} else {
+		addr = _segMan->getObject(objAddr)->getFunction(methodNum);
 	}
 
 	uint16 offset = addr.offset;
@@ -289,7 +288,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 		int i = 0;
 		byte argc;
 
-		if (featureDetection == kDetectLofsType || featureDetection == kDetectLofsTypeFallback) {
+		if (featureDetection == kDetectLofsType) {
 			if (opcode == op_lofsa || opcode == op_lofss) {
 				uint16 lofs;
 
@@ -315,7 +314,8 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 				if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
 					_lofsType = SCI_VERSION_1_MIDDLE;
 
-				return true;
+				if (_lofsType != SCI_VERSION_AUTODETECT)
+					return true;
 			}
 		}
 
@@ -483,9 +483,19 @@ SciVersion EngineState::detectLofsType() {
 			return _lofsType;
 		}
 
-		// Either the init or the newRoom selectors of the Game
-		// object make calls to lofsa/lofss
-		if (!autoDetectFeature(kDetectLofsType) && !autoDetectFeature(kDetectLofsTypeFallback)) {
+		// Find a function of the game object which invokes lofsa/lofss
+		reg_t gameClass = _segMan->findObjectByName("Game");
+		Object *obj = _segMan->getObject(gameClass);
+		bool found = false;
+
+		for (uint m = 0; m < obj->getMethodCount(); m++) {
+			found = autoDetectFeature(kDetectLofsType, m);
+
+			if (found)
+				break;
+		}
+
+		if (!found) {
 			warning("Lofs detection failed, taking an educated guess");
 
 			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
