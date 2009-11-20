@@ -247,11 +247,8 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, SongHandle handle, int value) 
 		}
 	}
 
-	// Some games try to init non-existing sounds (e.g. KQ6)
-	if (_doSoundVersion == SCI_VERSION_1_LATE) {
-		if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, number)))
-			return;
-	}
+	if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, number)))
+		return;
 
 	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
 
@@ -414,11 +411,6 @@ void SoundCommandParser::cmdVolume(reg_t obj, SongHandle handle, int value) {
 		_state->sfx_setVolume(obj.toSint16());
 
 	_acc = make_reg(0, _state->sfx_getVolume());
-}
-
-void SoundCommandParser::cmdHandlePriority(reg_t obj, SongHandle handle, int value) {
-	if (obj.segment)
-		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
 }
 
 void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) {
