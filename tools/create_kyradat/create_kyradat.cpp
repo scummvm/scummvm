@@ -565,6 +565,12 @@ int main(int argc, char *argv[]) {
 
 	unusedFiles.clear();
 
+	// Short circuit, in case no games are found.
+	if (games.empty()) {
+		printf("No games found. Exiting prematurely\n");
+		return -1;
+	}
+
 	// Process all games found
 	for (GameMap::const_iterator i = games.begin(); i != games.end(); ++i) {
 		MD5Map::const_iterator f1 = inputFiles.find(i->first->md5[0]);
