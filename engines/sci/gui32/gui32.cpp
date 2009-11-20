@@ -256,30 +256,6 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 	}
 }
 
-void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
-	warning("_k_redraw_box(): Unimplemented");
-#if 0
-	int i;
-	ViewObject *list = s->dyn_views;
-
-	printf("Reanimating views\n", _s->dyn_views_nr);
-
-	for (i = 0;i < s->dyn_views_nr;i++) {
-		*(list[i].underBitsp) = graph_save_box(_s, list[i].nsLeft, list[i].nsTop, list[i].nsRight - list[i].nsLeft,
-												list[i].nsBottom - list[i].nsTop, SCI_MAP_VISUAL | SCI_MAP_PRIORITY);
-		draw_view0(_s->pic, _s->ports[0], list[i].nsLeft, list[i].nsTop, list[i].priority, list[i].loop,
-		           list[i].cel, 0, list[i].view);
-	}
-
-	graph_update_box(_s, x1, y1, x2 - x1, y2 - y1);
-
-	for (i = 0;i < s->dyn_views_nr;i++)	{
-		graph_restore_box(_s, *(list[i].underBitsp));
-		list[i].underBits = 0;
-	}
-#endif
-}
-
 static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority) {
 	int pri_top;
 
