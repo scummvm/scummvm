@@ -233,81 +233,6 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
-SciVersion EngineState::detectDoSoundType() {
-	if (_doSoundType == SCI_VERSION_AUTODETECT) {
-		if (_kernel->_selectorCache.nodePtr == -1) {
-			// No nodePtr selector, so this game is definitely using
-			// SCI0 sound code (i.e. SCI_VERSION_0_EARLY)
-			_doSoundType = SCI_VERSION_0_EARLY;
-		} else {
-			if (!autoDetectFeature(kDetectSoundType)) {
-				warning("DoSound detection failed, taking an educated guess");
-
-				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
-					_doSoundType = SCI_VERSION_1_LATE;
-				else if (getSciVersion() > SCI_VERSION_01)
-					_doSoundType = SCI_VERSION_1_EARLY;
-				else
-					_doSoundType = SCI_VERSION_0_EARLY;
-			}
-		}
-
-		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType).c_str());
-	}
-
-	return _doSoundType;
-}
-
-SciVersion EngineState::detectSetCursorType() {
-	if (_setCursorType == SCI_VERSION_AUTODETECT) {
-		if (getSciVersion() <= SCI_VERSION_01) {
-			// SCI0/SCI01 games always have non-colored cursors
-			_setCursorType = SCI_VERSION_0_EARLY;
-		} else {
-			if (!autoDetectFeature(kDetectSetCursorType)) {
-				warning("SetCursor detection failed, taking an educated guess");
-
-				if (getSciVersion() >= SCI_VERSION_1_1)
-					_setCursorType = SCI_VERSION_1_1;
-				else
-					_setCursorType = SCI_VERSION_0_EARLY;
-			}
-		}
-
-		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
-	}
-
-	return _setCursorType;
-}
-
-SciVersion EngineState::detectLofsType() {
-	if (_lofsType == SCI_VERSION_AUTODETECT) {
-		// This detection only works (and is only needed) for SCI 1
-		if (getSciVersion() <= SCI_VERSION_01) {
-			_lofsType = SCI_VERSION_0_EARLY;
-			return _lofsType;
-		}
-
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			_lofsType = SCI_VERSION_1_1;
-			return _lofsType;
-		}
-
-		if (!autoDetectFeature(kDetectLofsType)) {
-			warning("Lofs detection failed, taking an educated guess");
-
-			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
-				_lofsType = SCI_VERSION_1_MIDDLE;
-			else
-				_lofsType = SCI_VERSION_0_EARLY;
-		}
-
-		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", getSciVersionDesc(_lofsType).c_str());
-	}
-
-	return _lofsType;
-}
-
 bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 	Common::String objName;
 	Selector slc;
@@ -490,6 +415,81 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection) {
 	} while (offset > 0);
 
 	return false;	// not found
+}
+
+SciVersion EngineState::detectDoSoundType() {
+	if (_doSoundType == SCI_VERSION_AUTODETECT) {
+		if (_kernel->_selectorCache.nodePtr == -1) {
+			// No nodePtr selector, so this game is definitely using
+			// SCI0 sound code (i.e. SCI_VERSION_0_EARLY)
+			_doSoundType = SCI_VERSION_0_EARLY;
+		} else {
+			if (!autoDetectFeature(kDetectSoundType)) {
+				warning("DoSound detection failed, taking an educated guess");
+
+				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
+					_doSoundType = SCI_VERSION_1_LATE;
+				else if (getSciVersion() > SCI_VERSION_01)
+					_doSoundType = SCI_VERSION_1_EARLY;
+				else
+					_doSoundType = SCI_VERSION_0_EARLY;
+			}
+		}
+
+		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType).c_str());
+	}
+
+	return _doSoundType;
+}
+
+SciVersion EngineState::detectSetCursorType() {
+	if (_setCursorType == SCI_VERSION_AUTODETECT) {
+		if (getSciVersion() <= SCI_VERSION_01) {
+			// SCI0/SCI01 games always have non-colored cursors
+			_setCursorType = SCI_VERSION_0_EARLY;
+		} else {
+			if (!autoDetectFeature(kDetectSetCursorType)) {
+				warning("SetCursor detection failed, taking an educated guess");
+
+				if (getSciVersion() >= SCI_VERSION_1_1)
+					_setCursorType = SCI_VERSION_1_1;
+				else
+					_setCursorType = SCI_VERSION_0_EARLY;
+			}
+		}
+
+		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
+	}
+
+	return _setCursorType;
+}
+
+SciVersion EngineState::detectLofsType() {
+	if (_lofsType == SCI_VERSION_AUTODETECT) {
+		// This detection only works (and is only needed) for SCI 1
+		if (getSciVersion() <= SCI_VERSION_01) {
+			_lofsType = SCI_VERSION_0_EARLY;
+			return _lofsType;
+		}
+
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			_lofsType = SCI_VERSION_1_1;
+			return _lofsType;
+		}
+
+		if (!autoDetectFeature(kDetectLofsType)) {
+			warning("Lofs detection failed, taking an educated guess");
+
+			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
+				_lofsType = SCI_VERSION_1_MIDDLE;
+			else
+				_lofsType = SCI_VERSION_0_EARLY;
+		}
+
+		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", getSciVersionDesc(_lofsType).c_str());
+	}
+
+	return _lofsType;
 }
 
 SciVersion EngineState::detectGfxFunctionsType() {
