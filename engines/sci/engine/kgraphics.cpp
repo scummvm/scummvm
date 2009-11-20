@@ -453,8 +453,6 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, result);
 }
 
-void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
-
 #define K_DRAWPIC_FLAGS_MIRRORED			(1 << 14)
 #define K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT	(1 << 15)
 

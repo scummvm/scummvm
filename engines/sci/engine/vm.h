@@ -103,8 +103,8 @@ enum SelectorType {
 };
 
 struct Class {
-	int script; // number of the script the class is in, -1 for non-existing
-	reg_t reg; // offset; script-relative offset, segment: 0 if not instantiated
+	int script; ///< number of the script the class is in, -1 for non-existing
+	reg_t reg; ///< offset; script-relative offset, segment: 0 if not instantiated
 };
 
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
@@ -118,83 +118,83 @@ struct SelectorCache {
 	// Statically defined selectors, (almost the) same in all SCI versions
 	Selector y;
 	Selector x;
-	Selector view, loop, cel; // Description of a specific image
-	Selector underBits; // Used by the graphics subroutines to store backupped BG pic data
-	Selector nsTop, nsLeft, nsBottom, nsRight; // View boundaries ('now seen')
-	Selector lsTop, lsLeft, lsBottom, lsRight; // Used by Animate() subfunctions and scroll list controls
-	Selector signal; // Used by Animate() to control a view's behaviour
-	Selector illegalBits; // Used by CanBeHere
-	Selector brTop, brLeft, brBottom, brRight; // Bounding Rectangle
+	Selector view, loop, cel; ///< Description of a specific image
+	Selector underBits; ///< Used by the graphics subroutines to store backupped BG pic data
+	Selector nsTop, nsLeft, nsBottom, nsRight; ///< View boundaries ('now seen')
+	Selector lsTop, lsLeft, lsBottom, lsRight; ///< Used by Animate() subfunctions and scroll list controls
+	Selector signal; ///< Used by Animate() to control a view's behaviour
+	Selector illegalBits; ///< Used by CanBeHere
+	Selector brTop, brLeft, brBottom, brRight; ///< Bounding Rectangle
 	// name, key, time
-	Selector text; // Used by controls
-	Selector elements; // Used by SetSynonyms()
+	Selector text; ///< Used by controls
+	Selector elements; ///< Used by SetSynonyms()
 	// color, back
-	Selector mode; // Used by text controls (-> DrawControl())
+	Selector mode; ///< Used by text controls (-> DrawControl())
 	// style
-	Selector state, font, type;	// Used by controls
+	Selector state, font, type;///< Used by controls
 	// window
-	Selector cursor, max; // Used by EditControl
+	Selector cursor, max; ///< Used by EditControl
 	// mark, who
-	Selector message; // Used by GetEvent
+	Selector message; ///< Used by GetEvent
 	// edit
-	Selector play; // Play function (first function to be called)
+	Selector play; ///< Play function (first function to be called)
 	Selector number;
-	Selector handle;	// Replaced by nodePtr in SCI1+
-	Selector nodePtr;	// Replaces handle in SCI1+
-	Selector client; // The object that wants to be moved
-	Selector dx, dy; // Deltas
-	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; // Various Bresenham vars
-	Selector xStep, yStep; // BR adjustments
-	Selector moveSpeed; // Used for DoBresen
-	Selector canBeHere; // Funcselector: Checks for movement validity in SCI0
-	Selector heading, mover; // Used in DoAvoider
-	Selector doit; // Called (!) by the Animate() system call
-	Selector isBlocked, looper;	// Used in DoAvoider
+	Selector handle;	///< Replaced by nodePtr in SCI1+
+	Selector nodePtr;	///< Replaces handle in SCI1+
+	Selector client; ///< The object that wants to be moved
+	Selector dx, dy; ///< Deltas
+	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; ///< Various Bresenham vars
+	Selector xStep, yStep; ///< BR adjustments
+	Selector moveSpeed; ///< Used for DoBresen
+	Selector canBeHere; ///< Funcselector: Checks for movement validity in SCI0
+	Selector heading, mover; ///< Used in DoAvoider
+	Selector doit; ///< Called (!) by the Animate() system call
+	Selector isBlocked, looper;	///< Used in DoAvoider
 	Selector priority;
-	Selector modifiers; // Used by GetEvent
-	Selector replay; // Replay function
+	Selector modifiers; ///< Used by GetEvent
+	Selector replay; ///< Replay function
 	// setPri, at, next, done, width
-	Selector wordFail, syntaxFail; // Used by Parse()
+	Selector wordFail, syntaxFail; ///< Used by Parse()
 	// semanticFail, pragmaFail
 	// said
-	Selector claimed; // Used generally by the event mechanism
+	Selector claimed; ///< Used generally by the event mechanism
 	// value, save, restore, title, button, icon, draw
-	Selector delete_; // Called by Animate() to dispose a view object
+	Selector delete_; ///< Called by Animate() to dispose a view object
 	Selector z;
 
 	// SCI1+ static selectors
 	Selector parseLang;
-	Selector printLang; // Used for i18n
+	Selector printLang; ///< Used for i18n
 	Selector subtitleLang;
 	Selector size;
-	Selector points; // Used by AvoidPath()
+	Selector points; ///< Used by AvoidPath()
 	Selector palette;
 	Selector dataInc;
 	// handle (in SCI1)
-	Selector min; // SMPTE time format
+	Selector min; ///< SMPTE time format
 	Selector sec;
 	Selector frame;
 	Selector vol;
 	Selector pri;
 	// perform
-	Selector moveDone;	// used for DoBresen
+	Selector moveDone;	///< used for DoBresen
 
 	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
-	Selector cantBeHere; // Checks for movement avoidance in SCI1+. Replaces canBeHere
-	Selector topString; // SCI1 scroll lists use this instead of lsTop
+	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
+	Selector topString; ///< SCI1 scroll lists use this instead of lsTop
 	Selector flags;
 
 	// SCI1+ audio sync related selectors, not static. They're used for lip syncing in
 	// CD talkie games
-	Selector syncCue; // Used by DoSync()
+	Selector syncCue; ///< Used by DoSync()
 	Selector syncTime;
 
 	// SCI1.1 specific selectors
-	Selector scaleX, scaleY;	// SCI1.1 view scaling
+	Selector scaleX, scaleY;	///< SCI1.1 view scaling
 
 	// Used for auto detection purposes
-	Selector overlay;	// Used to determine if a game is using old gfx functions or not
-	Selector setCursor; // For autodetection
+	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
+	Selector setCursor; ///< For cursor semantics autodetection
 };
 
 // A reference to an object's variable.
@@ -206,21 +206,6 @@ struct ObjVarRef {
 	reg_t* getPointer(SegManager *segMan) const;
 };
 
-
-struct ViewObject {
-	reg_t obj;
-	ObjVarRef signalp;    /* Used only indirectly */
-	ObjVarRef underBitsp; /* The same goes for the handle storage */
-	int underBits; /* Copy of the underbits: Needed for cleanup */
-
-	int x, y;
-	int priority;
-	byte *view;
-	int view_nr, loop, cel; /* view_nr is ised for save/restore */
-	int nsTop, nsLeft, nsRight, nsBottom;
-	int real_y, z, index_nr; /* Used for sorting */
-};
-
 enum ExecStackType {
 	EXEC_STACK_TYPE_CALL = 0,
 	EXEC_STACK_TYPE_KERNEL = 1,
@@ -228,8 +213,8 @@ enum ExecStackType {
 };
 
 struct ExecStack {
-	reg_t objp;  // Pointer to the beginning of the current object
-	reg_t sendp; // Pointer to the object containing the invoked method
+	reg_t objp;  ///< Pointer to the beginning of the current object
+	reg_t sendp; ///< Pointer to the object containing the invoked method
 
 	union {
 		ObjVarRef varp; // Variable pointer for r/w access
@@ -263,10 +248,10 @@ enum {
 struct ScriptState {
 	ExecStack *xs;
 	int16 restAdjust;
-	reg_t *variables[4];		// global, local, temp, param, as immediate pointers
-	reg_t *variables_base[4];	// Used for referencing VM ops
-	SegmentId variables_seg[4];	// Same as above, contains segment IDs
-	int variables_max[4];		// Max. values for all variables
+	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
+	reg_t *variables_base[4];	///< Used for referencing VM ops
+	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
+	int variables_max[4];		///< Max. values for all variables
 };
 
 /**
@@ -293,8 +278,8 @@ enum BreakpointType {
 struct Breakpoint {
 	BreakpointType type;
 	union {
-		uint32 address;  // Breakpoints on exports */
-		char *name; // Breakpoints on selector names */
+		uint32 address;  ///< Breakpoints on exports
+		char *name; ///< Breakpoints on selector names
 	} data;
 	Breakpoint *next;
 };
