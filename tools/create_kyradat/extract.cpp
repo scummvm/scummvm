@@ -99,13 +99,13 @@ const TypeTable typeTable[] = {
 	{ k2TypeSfxList, 0 },
 	{ k3TypeRaw16to8, 1 },
 	{ k3TypeShpData, 7 },
-	{ kLolTypeRaw16, 15 },
-	{ kLolTypeRaw32, 16 },
-	{ kLolTypeButtonDef, 14 },
-	{ kLolTypeCharData, 10 },
-	{ kLolTypeSpellData, 11 },
-	{ kLolTypeCompassData, 12 },
-	{ kLolTypeFlightShpData, 13 },
+	{ kLolTypeRaw16, 13 },
+	{ kLolTypeRaw32, 14 },
+	{ kLolTypeButtonDef, 12 },
+	{ kLolTypeCharData, 8 },
+	{ kLolTypeSpellData, 9 },
+	{ kLolTypeCompassData, 10 },
+	{ kLolTypeFlightShpData, 11 },
 	{ -1, 0 }
 };
 
