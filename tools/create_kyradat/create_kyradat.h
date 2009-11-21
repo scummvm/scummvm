@@ -25,20 +25,7 @@
 
 #include "util.h"
 
-struct Language {
-	int lang;
-	const char *ext;
-};
-
-extern const Language languageTable[];
-
-struct PlatformExtension {
-	int platform;
-	const char *ext;
-};
-
-extern const PlatformExtension platformTable[];
-
+// This list has to match orderwise (and thus value wise) the static data list of "engines/kyra/resource.h"!
 enum kExtractID {
 	k1ForestSeq = 0,
 	k1KallakWritingSeq,
@@ -67,9 +54,6 @@ enum kExtractID {
 	k1RoomList,
 
 	k1CharacterImageFilenames,
-
-	k1AudioTracks,
-	k1AudioTracksIntro,
 
 	k1ItemNames,
 	k1TakenStrings,
@@ -144,23 +128,28 @@ enum kExtractID {
 	k1GUIStrings,
 	k1ConfigStrings,
 
-	k1TOWNSSfxWDTable,
-	k1TOWNSSfxBTTable,
-	k1TOWNSCDATable,
+	k1AudioTracks,
+	k1AudioTracksIntro,
+
+	k1CreditsStrings,
+
+	k1TownsSFXwdTable,
+	k1TownsSFXbtTable,
+	k1TownsCDATable,
+
 	k1PC98StoryStrings,
 	k1PC98IntroSfx,
-	k1CreditsStrings,
 
 	k1AmigaIntroSFXTable,
 	k1AmigaGameSFXTable,
 
 	k2SeqplayPakFiles,
+	k2SeqplayCredits,
+	k2SeqplayCreditsSpecial,
 	k2SeqplayStrings,
 	k2SeqplaySfxFiles,
 	k2SeqplayTlkFiles,
 	k2SeqplaySeqData,
-	k2SeqplayCredits,
-	k2SeqplayCreditsSpecial,
 	k2SeqplayIntroTracks,
 	k2SeqplayFinaleTracks,
 	k2SeqplayIntroCDA,
@@ -169,13 +158,12 @@ enum kExtractID {
 
 	k2IngamePakFiles,
 	k2IngameSfxFiles,
-	k2IngameSfxFilesTns,
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
-	k2IngameItemAnimData,
+	k2IngameShapeAnimData,
 	k2IngameTlkDemoStrings,
 
 	k3MainMenuStrings,
@@ -187,17 +175,14 @@ enum kExtractID {
 	k3ItemMagicTable,
 	k3ItemStringMap,
 
-	kLolSeqplayIntroTracks,
-
 	kLolIngamePakFiles,
-
 	kLolCharacterDefs,
 	kLolIngameSfxFiles,
 	kLolIngameSfxIndex,
 	kLolMusicTrackMap,
-	kLolGMSfxIndex,
-	kLolMT32SfxIndex,
-	kLolPcSpkSfxIndex,
+	kLolIngameGMSfxIndex,
+	kLolIngameMT32SfxIndex,
+	kLolIngamePcSpkSfxIndex,
 	kLolSpellProperties,
 	kLolGameShapeMap,
 	kLolSceneItemOffs,
@@ -209,12 +194,12 @@ enum kExtractID {
 	kLolCharDefsAkshel,
 	kLolExpRequirements,
 	kLolMonsterModifiers,
-	kLolMonsterLevelOffsets,
+	kLolMonsterShiftOffsets,
 	kLolMonsterDirFlags,
 	kLolMonsterScaleY,
 	kLolMonsterScaleX,
 	kLolMonsterScaleWH,
-	kLolFlyingItemShp,
+	kLolFlyingObjectShp,
 	kLolInventoryDesc,
 
 	kLolLevelShpList,
@@ -224,8 +209,8 @@ enum kExtractID {
 	kLolStashSetup,
 
 	kLolDscUnk1,
-	kLolDscShapeIndex1,
-	kLolDscShapeIndex2,
+	kLolDscShapeIndex,
+	kLolDscOvlMap,
 	kLolDscScaleWidthData,
 	kLolDscScaleHeightData,
 	kLolDscX,
@@ -237,13 +222,13 @@ enum kExtractID {
 	kLolDscDimData2,
 	kLolDscBlockMap,
 	kLolDscDimMap,
-	kLolDscShapeOvlIndex,
-	kLolDscBlockIndex,
 	kLolDscDoor1,
 	kLolDscDoorScale,
 	kLolDscDoor4,
 	kLolDscDoorX,
 	kLolDscDoorY,
+	kLolDscOvlIndex,
+	kLolDscBlockIndex,
 
 	kLolScrollXTop,
 	kLolScrollYTop,
@@ -280,7 +265,7 @@ enum kExtractID {
 struct ExtractFilename {
 	int id;
 	int type;
-	const char *filename;
+	bool langSpecific;
 };
 
 enum kSpecial {
@@ -290,18 +275,11 @@ enum kSpecial {
 	kTalkieDemoVersion
 };
 
-struct SpecialExtension {
-	int special;
-	const char *ext;
-};
-
-extern const SpecialExtension specialTable[];
-
 enum kGame {
 	kKyra1 = 0,
-	kKyra2 = 1,
-	kKyra3 = 2,
-	kLol = 4
+	kKyra2,
+	kKyra3,
+	kLol
 };
 
 struct Game {
@@ -318,5 +296,14 @@ struct Game {
 extern const Game * const gameDescs[];
 
 const int *getNeedList(const Game *g);
+
+struct TypeTable {
+	int type;
+	int value;
+
+	bool operator==(int t) const {
+		return (type == t);
+	}
+};
 
 #endif

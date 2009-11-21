@@ -42,261 +42,257 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 65
+	kKyraDatVersion = 66
 };
 
 const ExtractFilename extractFilenames[] = {
 	// INTRO / OUTRO sequences
-	{ k1ForestSeq, kTypeRawData, "FOREST.SEQ" },
-	{ k1KallakWritingSeq, kTypeRawData, "KALLAK-WRITING.SEQ" },
-	{ k1KyrandiaLogoSeq, kTypeRawData, "KYRANDIA-LOGO.SEQ" },
-	{ k1KallakMalcolmSeq, kTypeRawData, "KALLAK-MALCOLM.SEQ" },
-	{ k1MalcolmTreeSeq, kTypeRawData, "MALCOLM-TREE.SEQ" },
-	{ k1WestwoodLogoSeq, kTypeRawData, "WESTWOOD-LOGO.SEQ" },
-	{ k1Demo1Seq, kTypeRawData, "DEMO1.SEQ" },
-	{ k1Demo2Seq, kTypeRawData, "DEMO2.SEQ" },
-	{ k1Demo3Seq, kTypeRawData, "DEMO3.SEQ" },
-	{ k1Demo4Seq, kTypeRawData, "DEMO4.SEQ" },
-	{ k1OutroReunionSeq, kTypeRawData, "REUNION.SEQ" },
+	{ k1ForestSeq, kTypeRawData, false },
+	{ k1KallakWritingSeq, kTypeRawData, false },
+	{ k1KyrandiaLogoSeq, kTypeRawData, false },
+	{ k1KallakMalcolmSeq, kTypeRawData, false },
+	{ k1MalcolmTreeSeq, kTypeRawData, false },
+	{ k1WestwoodLogoSeq, kTypeRawData, false },
+	{ k1Demo1Seq, kTypeRawData, false },
+	{ k1Demo2Seq, kTypeRawData, false },
+	{ k1Demo3Seq, kTypeRawData, false },
+	{ k1Demo4Seq, kTypeRawData, false },
+	{ k1OutroReunionSeq, kTypeRawData, false },
 
 	// INTRO / OUTRO strings
-	{ k1IntroCPSStrings, kTypeStringList, "INTRO-CPS.TXT" },
-	{ k1IntroCOLStrings, kTypeStringList, "INTRO-COL.TXT" },
-	{ k1IntroWSAStrings, kTypeStringList, "INTRO-WSA.TXT" },
-	{ k1IntroStrings, kTypeLanguageList, "INTRO-STRINGS" },
-	{ k1OutroHomeString, kTypeLanguageList, "HOME" },
+	{ k1IntroCPSStrings, kTypeStringList, false },
+	{ k1IntroCOLStrings, kTypeStringList, false },
+	{ k1IntroWSAStrings, kTypeStringList, false },
+	{ k1IntroStrings, kTypeStringList, true },
+	{ k1OutroHomeString, kTypeStringList, true },
 
 	// INGAME strings
-	{ k1ItemNames, kTypeLanguageList, "ITEMLIST" },
-	{ k1TakenStrings, kTypeLanguageList, "TAKEN" },
-	{ k1PlacedStrings, kTypeLanguageList, "PLACED" },
-	{ k1DroppedStrings, kTypeLanguageList, "DROPPED" },
-	{ k1NoDropStrings, kTypeLanguageList, "NODROP" },
-	{ k1PutDownString, kTypeLanguageList, "PUTDOWN" },
-	{ k1WaitAmuletString, kTypeLanguageList, "WAITAMUL" },
-	{ k1BlackJewelString, kTypeLanguageList, "BLACKJEWEL" },
-	{ k1PoisonGoneString, kTypeLanguageList, "POISONGONE" },
-	{ k1HealingTipString, kTypeLanguageList, "HEALINGTIP" },
-	{ k1ThePoisonStrings, kTypeLanguageList, "THEPOISON" },
-	{ k1FluteStrings, kTypeLanguageList, "FLUTE" },
-	{ k1WispJewelStrings, kTypeLanguageList, "WISPJEWEL" },
-	{ k1MagicJewelStrings, kTypeLanguageList, "MAGICJEWEL" },
-	{ k1FlaskFullString, kTypeLanguageList, "FLASKFULL" },
-	{ k1FullFlaskString, kTypeLanguageList, "FULLFLASK" },
-	{ k1VeryCleverString, kTypeLanguageList, "VERYCLEVER" },
-	{ k1NewGameString, kTypeLanguageList, "NEWGAME" },
+	{ k1ItemNames, kTypeStringList, true },
+	{ k1TakenStrings, kTypeStringList, true },
+	{ k1PlacedStrings, kTypeStringList, true },
+	{ k1DroppedStrings, kTypeStringList, true },
+	{ k1NoDropStrings, kTypeStringList, true },
+	{ k1PutDownString, kTypeStringList, true },
+	{ k1WaitAmuletString, kTypeStringList, true },
+	{ k1BlackJewelString, kTypeStringList, true },
+	{ k1PoisonGoneString, kTypeStringList, true },
+	{ k1HealingTipString, kTypeStringList, true },
+	{ k1ThePoisonStrings, kTypeStringList, true },
+	{ k1FluteStrings, kTypeStringList, true },
+	{ k1WispJewelStrings, kTypeStringList, true },
+	{ k1MagicJewelStrings, kTypeStringList, true },
+	{ k1FlaskFullString, kTypeStringList, true },
+	{ k1FullFlaskString, kTypeStringList, true },
+	{ k1VeryCleverString, kTypeStringList, true },
+	{ k1NewGameString, kTypeStringList, true },
 
 	// GUI strings table
-	{ k1GUIStrings, kTypeLanguageList, "GUISTRINGS" },
-	{ k1ConfigStrings, kTypeLanguageList, "CONFIGSTRINGS" },
+	{ k1GUIStrings, kTypeStringList, true },
+	{ k1ConfigStrings, kTypeStringList, true },
 
 	// ROOM table/filenames
-	{ k1RoomList, kTypeRoomList, "ROOM-TABLE.ROOM" },
-	{ k1RoomFilenames, kTypeStringList, "ROOM-FILENAMES.TXT" },
+	{ k1RoomList, kTypeRoomList, false },
+	{ k1RoomFilenames, kTypeStringList, false },
 
 	// SHAPE tables
-	{ k1DefaultShapes, kTypeShapeList, "SHAPES-DEFAULT.SHP" },
-	{ k1Healing1Shapes, kTypeShapeList, "HEALING.SHP" },
-	{ k1Healing2Shapes, kTypeShapeList, "HEALING2.SHP" },
-	{ k1PoisonDeathShapes, kTypeShapeList, "POISONDEATH.SHP" },
-	{ k1FluteShapes, kTypeShapeList, "FLUTE.SHP" },
-	{ k1Winter1Shapes, kTypeShapeList, "WINTER1.SHP" },
-	{ k1Winter2Shapes, kTypeShapeList, "WINTER2.SHP" },
-	{ k1Winter3Shapes, kTypeShapeList, "WINTER3.SHP" },
-	{ k1DrinkShapes, kTypeShapeList, "DRINK.SHP" },
-	{ k1WispShapes, kTypeShapeList, "WISP.SHP" },
-	{ k1MagicAnimShapes, kTypeShapeList, "MAGICANIM.SHP" },
-	{ k1BranStoneShapes, kTypeShapeList, "BRANSTONE.SHP" },
+	{ k1DefaultShapes, kTypeShapeList, false },
+	{ k1Healing1Shapes, kTypeShapeList, false },
+	{ k1Healing2Shapes, kTypeShapeList, false },
+	{ k1PoisonDeathShapes, kTypeShapeList, false },
+	{ k1FluteShapes, kTypeShapeList, false },
+	{ k1Winter1Shapes, kTypeShapeList, false },
+	{ k1Winter2Shapes, kTypeShapeList, false },
+	{ k1Winter3Shapes, kTypeShapeList, false },
+	{ k1DrinkShapes, kTypeShapeList, false },
+	{ k1WispShapes, kTypeShapeList, false },
+	{ k1MagicAnimShapes, kTypeShapeList, false },
+	{ k1BranStoneShapes, kTypeShapeList, false },
 
 	// IMAGE filename table
-	{ k1CharacterImageFilenames, kTypeStringList, "CHAR-IMAGE.TXT" },
+	{ k1CharacterImageFilenames, kTypeStringList, false },
 
 	// AUDIO filename table
-	{ k1AudioTracks, kTypeStringList, "TRACKS.TXT" },
-	{ k1AudioTracksIntro, kTypeStringList, "TRACKSINT.TXT" },
+	{ k1AudioTracks, kTypeStringList, false },
+	{ k1AudioTracksIntro, kTypeStringList, false },
 
 	// AMULET anim
-	{ k1AmuleteAnimSeq, kTypeRawData, "AMULETEANIM.SEQ" },
+	{ k1AmuleteAnimSeq, kTypeRawData, false },
 
 	// PALETTE table
-	{ k1SpecialPalette1, kTypeRawData, "PALTABLE1.PAL" },
-	{ k1SpecialPalette2, kTypeRawData, "PALTABLE2.PAL" },
-	{ k1SpecialPalette3, kTypeRawData, "PALTABLE3.PAL" },
-	{ k1SpecialPalette4, kTypeRawData, "PALTABLE4.PAL" },
-	{ k1SpecialPalette5, kTypeRawData, "PALTABLE5.PAL" },
-	{ k1SpecialPalette6, kTypeRawData, "PALTABLE6.PAL" },
-	{ k1SpecialPalette7, kTypeRawData, "PALTABLE7.PAL" },
-	{ k1SpecialPalette8, kTypeRawData, "PALTABLE8.PAL" },
-	{ k1SpecialPalette9, kTypeRawData, "PALTABLE9.PAL" },
-	{ k1SpecialPalette10, kTypeRawData, "PALTABLE10.PAL" },
-	{ k1SpecialPalette11, kTypeRawData, "PALTABLE11.PAL" },
-	{ k1SpecialPalette12, kTypeRawData, "PALTABLE12.PAL" },
-	{ k1SpecialPalette13, kTypeRawData, "PALTABLE13.PAL" },
-	{ k1SpecialPalette14, kTypeRawData, "PALTABLE14.PAL" },
-	{ k1SpecialPalette15, kTypeRawData, "PALTABLE15.PAL" },
-	{ k1SpecialPalette16, kTypeRawData, "PALTABLE16.PAL" },
-	{ k1SpecialPalette17, kTypeRawData, "PALTABLE17.PAL" },
-	{ k1SpecialPalette18, kTypeRawData, "PALTABLE18.PAL" },
-	{ k1SpecialPalette19, kTypeRawData, "PALTABLE19.PAL" },
-	{ k1SpecialPalette20, kTypeRawData, "PALTABLE20.PAL" },
-	{ k1SpecialPalette21, kTypeRawData, "PALTABLE21.PAL" },
-	{ k1SpecialPalette22, kTypeRawData, "PALTABLE22.PAL" },
-	{ k1SpecialPalette23, kTypeRawData, "PALTABLE23.PAL" },
-	{ k1SpecialPalette24, kTypeRawData, "PALTABLE24.PAL" },
-	{ k1SpecialPalette25, kTypeRawData, "PALTABLE25.PAL" },
-	{ k1SpecialPalette26, kTypeRawData, "PALTABLE26.PAL" },
-	{ k1SpecialPalette27, kTypeRawData, "PALTABLE27.PAL" },
-	{ k1SpecialPalette28, kTypeRawData, "PALTABLE28.PAL" },
-	{ k1SpecialPalette29, kTypeRawData, "PALTABLE29.PAL" },
-	{ k1SpecialPalette30, kTypeRawData, "PALTABLE30.PAL" },
-	{ k1SpecialPalette31, kTypeRawData, "PALTABLE31.PAL" },
-	{ k1SpecialPalette32, kTypeRawData, "PALTABLE32.PAL" },
-	{ k1SpecialPalette33, kTypeRawData, "PALTABLE33.PAL" },
+	{ k1SpecialPalette1, kTypeRawData, false },
+	{ k1SpecialPalette2, kTypeRawData, false },
+	{ k1SpecialPalette3, kTypeRawData, false },
+	{ k1SpecialPalette4, kTypeRawData, false },
+	{ k1SpecialPalette5, kTypeRawData, false },
+	{ k1SpecialPalette6, kTypeRawData, false },
+	{ k1SpecialPalette7, kTypeRawData, false },
+	{ k1SpecialPalette8, kTypeRawData, false },
+	{ k1SpecialPalette9, kTypeRawData, false },
+	{ k1SpecialPalette10, kTypeRawData, false },
+	{ k1SpecialPalette11, kTypeRawData, false },
+	{ k1SpecialPalette12, kTypeRawData, false },
+	{ k1SpecialPalette13, kTypeRawData, false },
+	{ k1SpecialPalette14, kTypeRawData, false },
+	{ k1SpecialPalette15, kTypeRawData, false },
+	{ k1SpecialPalette16, kTypeRawData, false },
+	{ k1SpecialPalette17, kTypeRawData, false },
+	{ k1SpecialPalette18, kTypeRawData, false },
+	{ k1SpecialPalette19, kTypeRawData, false },
+	{ k1SpecialPalette20, kTypeRawData, false },
+	{ k1SpecialPalette21, kTypeRawData, false },
+	{ k1SpecialPalette22, kTypeRawData, false },
+	{ k1SpecialPalette23, kTypeRawData, false },
+	{ k1SpecialPalette24, kTypeRawData, false },
+	{ k1SpecialPalette25, kTypeRawData, false },
+	{ k1SpecialPalette26, kTypeRawData, false },
+	{ k1SpecialPalette27, kTypeRawData, false },
+	{ k1SpecialPalette28, kTypeRawData, false },
+	{ k1SpecialPalette29, kTypeRawData, false },
+	{ k1SpecialPalette30, kTypeRawData, false },
+	{ k1SpecialPalette31, kTypeRawData, false },
+	{ k1SpecialPalette32, kTypeRawData, false },
+	{ k1SpecialPalette33, kTypeRawData, false },
 
 	// CREDITS (used in FM-TOWNS and AMIGA)
-	{ k1CreditsStrings, kTypeRawData, "CREDITS" },
+	{ k1CreditsStrings, kTypeRawData, false },
 
 	// FM-TOWNS specific
-	{ k1TOWNSSfxWDTable, kTypeTownsWDSfxTable, "SFXWDTABLE" },
-	{ k1TOWNSSfxBTTable, kTypeRawData, "SFXBTTABLE" },
-	{ k1TOWNSCDATable, kTypeRawData, "CDATABLE" },
+	{ k1TownsSFXwdTable, kTypeTownsWDSfxTable, false },
+	{ k1TownsSFXbtTable, kTypeRawData, false },
+	{ k1TownsCDATable, kTypeRawData, false },
 
 	// PC98 specific
-	{ k1PC98StoryStrings, kTypeLanguageList, "INTROSTORY" },
-	{ k1PC98IntroSfx, kTypeRawData, "INTROSFX" },
+	{ k1PC98StoryStrings, kTypeStringList, true },
+	{ k1PC98IntroSfx, kTypeRawData, false },
 
 	// AMIGA specific
-	{ k1AmigaIntroSFXTable, kTypeAmigaSfxTable, "SFXINTRO" },
-	{ k1AmigaGameSFXTable, kTypeAmigaSfxTable, "SFXGAME" },
+	{ k1AmigaIntroSFXTable, kTypeAmigaSfxTable, false },
+	{ k1AmigaGameSFXTable, kTypeAmigaSfxTable, false },
 
 	// HAND OF FATE
 
 	// Sequence Player
-	{ k2SeqplayPakFiles, kTypeStringList, "S_PAKFILES.TXT" },
-	{ k2SeqplayCredits, kTypeRawData, "S_CREDITS.TXT" },
-	{ k2SeqplayCreditsSpecial, kTypeStringList, "S_CREDITS2.TXT" },
-	{ k2SeqplayStrings, kTypeLanguageList, "S_STRINGS" },
-	{ k2SeqplaySfxFiles, k2TypeSoundList, "S_SFXFILES.TXT" },
-	{ k2SeqplayTlkFiles, k2TypeLangSoundList, "S_TLKFILES" },
-	{ k2SeqplaySeqData, k2TypeSeqData, "S_DATA.SEQ" },
-	{ k2SeqplayIntroTracks, kTypeStringList, "S_INTRO.TRA" },
-	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },
-	{ k2SeqplayIntroCDA, kTypeRawData, "S_INTRO.CDA" },
-	{ k2SeqplayFinaleCDA, kTypeRawData, "S_FINALE.CDA" },
-	{ k2SeqplayShapeAnimData, k2TypeShpDataV1, "S_DEMO.SHP" },
+	{ k2SeqplayPakFiles, kTypeStringList, false },
+	{ k2SeqplayCredits, kTypeRawData, false },
+	{ k2SeqplayCreditsSpecial, kTypeStringList, false },
+	{ k2SeqplayStrings, kTypeStringList, true },
+	{ k2SeqplaySfxFiles, k2TypeSoundList, false },
+	{ k2SeqplayTlkFiles, k2TypeLangSoundList, true },
+	{ k2SeqplaySeqData, k2TypeSeqData, false },
+	{ k2SeqplayIntroTracks, kTypeStringList, false },
+	{ k2SeqplayFinaleTracks, kTypeStringList, false },
+	{ k2SeqplayIntroCDA, kTypeRawData, false },
+	{ k2SeqplayFinaleCDA, kTypeRawData, false },
+	{ k2SeqplayShapeAnimData, k2TypeShpDataV1, false },
 
 	// Ingame
-	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
-	{ k2IngameSfxFiles, k2TypeSize10StringList, "I_SFXFILES.TRA" },
-	{ k2IngameSfxFilesTns, k2TypeSoundList, "I_SFXFILES.TRA" },
-	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.MAP" },
-	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
-	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
-	{ k2IngameTalkObjIndex, kTypeRawData, "I_TALKOBJECTS.MAP" },
-	{ k2IngameTimJpStrings, kTypeStringList, "I_TIMJPSTR.TXT" },
-	{ k2IngameItemAnimData, k2TypeShpDataV2, "I_INVANIM.SHP" },
-	{ k2IngameTlkDemoStrings, kTypeLanguageList, "I_TLKDEMO.TXT" },
+	{ k2IngamePakFiles, kTypeStringList, false },
+	{ k2IngameSfxFiles, k2TypeSize10StringList, false },
+	{ k2IngameSfxIndex, kTypeRawData, false },
+	{ k2IngameTracks, kTypeStringList, false },
+	{ k2IngameCDA, kTypeRawData, false },
+	{ k2IngameTalkObjIndex, kTypeRawData, false },
+	{ k2IngameTimJpStrings, kTypeStringList, false },
+	{ k2IngameShapeAnimData, k2TypeShpDataV2, false },
+	{ k2IngameTlkDemoStrings, kTypeStringList, true },
 
 
 	// MALCOLM'S REVENGE
-	{ k3MainMenuStrings, kTypeStringList, "MAINMENU.TXT" },
-	{ k3MusicFiles, k2TypeSoundList, "SCORE.TRA" },
-	{ k3ScoreTable, kTypeRawData, "SCORE.MAP" },
-	{ k3SfxFiles, k2TypeSfxList, "SFXFILES.TRA" },
-	{ k3SfxMap, k3TypeRaw16to8, "SFXINDEX.MAP" },
-	{ k3ItemAnimData, k3TypeShpData, "INVANIM.SHP" },
-	{ k3ItemMagicTable, k3TypeRaw16to8, "ITEMMAGIC.MAP" },
-	{ k3ItemStringMap, kTypeRawData, "ITEMSTRINGS.MAP" },
+	{ k3MainMenuStrings, kTypeStringList, false },
+	{ k3MusicFiles, k2TypeSoundList, false },
+	{ k3ScoreTable, kTypeRawData, false },
+	{ k3SfxFiles, k2TypeSfxList, false },
+	{ k3SfxMap, k3TypeRaw16to8, false },
+	{ k3ItemAnimData, k3TypeShpData, false },
+	{ k3ItemMagicTable, k3TypeRaw16to8, false },
+	{ k3ItemStringMap, kTypeRawData, false },
 
 	// LANDS OF LORE
 
-	// Demo Sequence Player
-	{ kLolSeqplayIntroTracks, k2TypeSoundList, "S_INTRO.TRA" },
-
 	// Ingame
-	{ kLolIngamePakFiles, kTypeStringList, "PAKFILES.TXT" },
+	{ kLolIngamePakFiles, kTypeStringList, false },
 
-	{ kLolCharacterDefs, kTypeRawData, "CHARACTER.DEF" },
-	{ kLolIngameSfxFiles, k2TypeSfxList, "SFXFILES.TRA" },
-	{ kLolIngameSfxIndex, kTypeRawData, "SFXINDEX.MAP" },
-	{ kLolMusicTrackMap, kTypeRawData, "MUSIC.MAP" },
-	{ kLolGMSfxIndex, kTypeRawData, "SFX_GM.MAP" },
-	{ kLolMT32SfxIndex, kTypeRawData, "SFX_MT32.MAP" },
-	{ kLolPcSpkSfxIndex, kTypeRawData, "SFX_PCS.MAP" },
-	{ kLolSpellProperties, kTypeRawData, "SPELLS.DEF" },
-	{ kLolGameShapeMap, kTypeRawData, "GAMESHP.MAP" },
-	{ kLolSceneItemOffs, kTypeRawData, "ITEMOFFS.DEF" },
-	{ kLolCharInvIndex, k3TypeRaw16to8, "CHARINV.MAP" },
-	{ kLolCharInvDefs, kTypeRawData, "CHARINV.DEF" },
-	{ kLolCharDefsMan, kLolTypeRaw16, "CHMAN.DEF" },
-	{ kLolCharDefsWoman, kLolTypeRaw16, "CHWOMAN.DEF" },
-	{ kLolCharDefsKieran, kLolTypeRaw16, "CHKIERAN.DEF" },
-	{ kLolCharDefsAkshel, kLolTypeRaw16, "CHAKSHEL.DEF" },
-	{ kLolExpRequirements, kLolTypeRaw32, "EXPERIENCE.DEF" },
-	{ kLolMonsterModifiers, kLolTypeRaw16, "MONSTMOD.DEF" },
-	{ kLolMonsterLevelOffsets, kTypeRawData, "MONSTLVL.DEF" },
-	{ kLolMonsterDirFlags, kTypeRawData, "MONSTDIR.DEF" },
-	{ kLolMonsterScaleY, kTypeRawData, "MONSTZY.DEF" },
-	{ kLolMonsterScaleX, kTypeRawData, "MONSTZX.DEF" },
-	{ kLolMonsterScaleWH, kLolTypeRaw16, "MONSTSCL.DEF" },
-	{ kLolFlyingItemShp, k3TypeRaw16to8, "THRWNSHP.DEF" },
-	{ kLolInventoryDesc, kLolTypeRaw16, "INVDESC.DEF" },
-	{ kLolLevelShpList, kTypeStringList, "SHPFILES.TXT" },
-	{ kLolLevelDatList, kTypeStringList, "DATFILES.TXT" },
-	{ kLolCompassDefs, k3TypeRaw16to8, "COMPASS.DEF" },
-	{ kLolItemPrices, kLolTypeRaw16, "ITEMCOST.DEF" },
-	{ kLolStashSetup, kTypeRawData, "MONEYSTS.DEF" },
+	{ kLolCharacterDefs, kLolTypeCharData, false },
+	{ kLolIngameSfxFiles, k2TypeSfxList, false },
+	{ kLolIngameSfxIndex, kTypeRawData, false },
+	{ kLolMusicTrackMap, kTypeRawData, false },
+	{ kLolIngameGMSfxIndex, kTypeRawData, false },
+	{ kLolIngameMT32SfxIndex, kTypeRawData, false },
+	{ kLolIngamePcSpkSfxIndex, kTypeRawData, false },
+	{ kLolSpellProperties, kLolTypeSpellData, false },
+	{ kLolGameShapeMap, kTypeRawData, false },
+	{ kLolSceneItemOffs, kTypeRawData, false },
+	{ kLolCharInvIndex, k3TypeRaw16to8, false },
+	{ kLolCharInvDefs, kTypeRawData, false },
+	{ kLolCharDefsMan, kLolTypeRaw16, false },
+	{ kLolCharDefsWoman, kLolTypeRaw16, false },
+	{ kLolCharDefsKieran, kLolTypeRaw16, false },
+	{ kLolCharDefsAkshel, kLolTypeRaw16, false },
+	{ kLolExpRequirements, kLolTypeRaw32, false },
+	{ kLolMonsterModifiers, kLolTypeRaw16, false },
+	{ kLolMonsterShiftOffsets, kTypeRawData, false },
+	{ kLolMonsterDirFlags, kTypeRawData, false },
+	{ kLolMonsterScaleY, kTypeRawData, false },
+	{ kLolMonsterScaleX, kTypeRawData, false },
+	{ kLolMonsterScaleWH, kLolTypeRaw16, false },
+	{ kLolFlyingObjectShp, kLolTypeFlightShpData, false },
+	{ kLolInventoryDesc, kLolTypeRaw16, false },
+	{ kLolLevelShpList, kTypeStringList, false },
+	{ kLolLevelDatList, kTypeStringList, false },
+	{ kLolCompassDefs, kLolTypeCompassData, false },
+	{ kLolItemPrices, kLolTypeRaw16, false },
+	{ kLolStashSetup, kTypeRawData, false },
 
-	{ kLolDscUnk1, kTypeRawData, "DSCSHPU1.DEF" },
-	{ kLolDscShapeIndex1, kTypeRawData, "DSCSHPI1.DEF" },
-	{ kLolDscShapeIndex2, kTypeRawData, "DSCSHPI2.DEF" },
-	{ kLolDscScaleWidthData, kLolTypeRaw16, "DSCSHPW.DEF" },
-	{ kLolDscScaleHeightData, kLolTypeRaw16, "DSCSHPH.DEF" },
-	{ kLolDscX, kLolTypeRaw16, "DSCSHPX.DEF" },
-	{ kLolDscY, kTypeRawData, "DSCSHPY.DEF" },
-	{ kLolDscTileIndex, kTypeRawData, "DSCSHPT.DEF" },
-	{ kLolDscUnk2, kTypeRawData, "DSCSHPU2.DEF" },
-	{ kLolDscDoorShapeIndex, kTypeRawData, "DSCDOOR.DEF" },
-	{ kLolDscDimData1, kTypeRawData, "DSCDIM1.DEF" },
-	{ kLolDscDimData2, kTypeRawData, "DSCDIM2.DEF" },
-	{ kLolDscBlockMap, kTypeRawData, "DSCBLOCK1.DEF" },
-	{ kLolDscDimMap, kTypeRawData, "DSCDIM.DEF" },
-	{ kLolDscDoorScale, kLolTypeRaw16, "DSCDOOR3.DEF" },
-	{ kLolDscShapeOvlIndex, k3TypeRaw16to8, "DSCBLOCK2.DEF" },
-	{ kLolDscBlockIndex, kTypeRawData, "DSCBLOCKX.DEF" },
-	{ kLolDscDoor4, kLolTypeRaw16, "DSCDOOR4.DEF" },
-	{ kLolDscDoor1, kTypeRawData, "DSCDOOR1.DEF" },
-	{ kLolDscDoorX, kLolTypeRaw16, "DSCDOORX.DEF" },
-	{ kLolDscDoorY, kLolTypeRaw16, "DSCDOORY.DEF" },
+	{ kLolDscUnk1, kTypeRawData, false },
+	{ kLolDscShapeIndex, kTypeRawData, false },
+	{ kLolDscOvlMap, kTypeRawData, false },
+	{ kLolDscScaleWidthData, kLolTypeRaw16, false },
+	{ kLolDscScaleHeightData, kLolTypeRaw16, false },
+	{ kLolDscX, kLolTypeRaw16, false },
+	{ kLolDscY, kTypeRawData, false },
+	{ kLolDscTileIndex, kTypeRawData, false },
+	{ kLolDscUnk2, kTypeRawData, false },
+	{ kLolDscDoorShapeIndex, kTypeRawData, false },
+	{ kLolDscDimData1, kTypeRawData, false },
+	{ kLolDscDimData2, kTypeRawData, false },
+	{ kLolDscBlockMap, kTypeRawData, false },
+	{ kLolDscDimMap, kTypeRawData, false },
+	{ kLolDscDoorScale, kLolTypeRaw16, false },
+	{ kLolDscOvlIndex, k3TypeRaw16to8, false },
+	{ kLolDscBlockIndex, kTypeRawData, false },
+	{ kLolDscDoor4, kLolTypeRaw16, false },
+	{ kLolDscDoor1, kTypeRawData, false },
+	{ kLolDscDoorX, kLolTypeRaw16, false },
+	{ kLolDscDoorY, kLolTypeRaw16, false },
 
-	{ kLolScrollXTop, k3TypeRaw16to8, "SCROLLXT.DEF" },
-	{ kLolScrollYTop, k3TypeRaw16to8, "SCROLLYT.DEF" },
-	{ kLolScrollXBottom, k3TypeRaw16to8, "SCROLLXB.DEF" },
-	{ kLolScrollYBottom, k3TypeRaw16to8, "SCROLLYB.DEF" },
+	{ kLolScrollXTop, k3TypeRaw16to8, false },
+	{ kLolScrollYTop, k3TypeRaw16to8, false },
+	{ kLolScrollXBottom, k3TypeRaw16to8, false },
+	{ kLolScrollYBottom, k3TypeRaw16to8, false },
 
-	{ kLolButtonDefs, kLolTypeButtonDef, "BUTTONS.DEF" },
-	{ kLolButtonList1, kLolTypeRaw16, "BUTTON1.LST" },
-	{ kLolButtonList2, kLolTypeRaw16, "BUTTON2.LST" },
-	{ kLolButtonList3, kLolTypeRaw16, "BUTTON3.LST" },
-	{ kLolButtonList4, kLolTypeRaw16, "BUTTON4.LST" },
-	{ kLolButtonList5, kLolTypeRaw16, "BUTTON5.LST" },
-	{ kLolButtonList6, kLolTypeRaw16, "BUTTON6.LST" },
-	{ kLolButtonList7, kLolTypeRaw16, "BUTTON7.LST" },
-	{ kLolButtonList8, kLolTypeRaw16, "BUTTON84.LST" },
+	{ kLolButtonDefs, kLolTypeButtonDef, false },
+	{ kLolButtonList1, kLolTypeRaw16, false },
+	{ kLolButtonList2, kLolTypeRaw16, false },
+	{ kLolButtonList3, kLolTypeRaw16, false },
+	{ kLolButtonList4, kLolTypeRaw16, false },
+	{ kLolButtonList5, kLolTypeRaw16, false },
+	{ kLolButtonList6, kLolTypeRaw16, false },
+	{ kLolButtonList7, kLolTypeRaw16, false },
+	{ kLolButtonList8, kLolTypeRaw16, false },
 
-	{ kLolLegendData, kTypeRawData, "MAPLGND.DEF" },
-	{ kLolMapCursorOvl, kTypeRawData, "MAPCURSOR.PAL" },
-	{ kLolMapStringId, kLolTypeRaw16, "MAPSTRID.LST" },
+	{ kLolLegendData, kTypeRawData, false },
+	{ kLolMapCursorOvl, kTypeRawData, false },
+	{ kLolMapStringId, kLolTypeRaw16, false },
 
-	{ kLolSpellbookAnim, k3TypeRaw16to8, "MBOOKA.DEF" },
-	{ kLolSpellbookCoords, k3TypeRaw16to8, "MBOOKC.DEF" },
-	{ kLolHealShapeFrames, kTypeRawData, "MHEAL.SHP" },
-	{ kLolLightningDefs, kTypeRawData, "MLGHTNG.DEF" },
-	{ kLolFireballCoords, kLolTypeRaw16, "MFIREBLL.DEF" },
+	{ kLolSpellbookAnim, k3TypeRaw16to8, false },
+	{ kLolSpellbookCoords, k3TypeRaw16to8, false },
+	{ kLolHealShapeFrames, kTypeRawData, false },
+	{ kLolLightningDefs, kTypeRawData, false },
+	{ kLolFireballCoords, kLolTypeRaw16, false },
 
-	{ kLolCredits, kTypeRawData, "LOLCREDITS" },
+	{ kLolCredits, kTypeRawData, false },
 
-	{ kLolHistory, kTypeRawData, "HISTORY.FLS" },
+	{ kLolHistory, kTypeRawData, false },
 
 	{ -1, 0, 0 }
 };
@@ -309,59 +305,16 @@ const ExtractFilename *getFilenameDesc(const int id) {
 	return 0;
 }
 
-// filename processing
-
-bool getFilename(char *dstFilename, const ExtractInformation *info, const int id) {
-	const ExtractFilename *i = getFilenameDesc(id);
-
-	if (!i)
+bool isLangSpecific(const int id) {
+	const ExtractFilename *desc = getFilenameDesc(id);
+	if (!desc)
 		return false;
-
-	const ExtractType *type = findExtractType(i->type);
-	type->createFilename(dstFilename, info, i->filename);
-	return true;
+	return desc->langSpecific;
 }
 
 // misc tables
 
-const SpecialExtension specialTable[] = {
-	{ kTalkieVersion, "CD" },
-	{ kDemoVersion, "DEM" },
-	{ kTalkieDemoVersion, "CD.DEM" },
-
-	{ -1, 0 }
-};
-
-const Language languageTable[] = {
-	{ EN_ANY, "ENG" },
-	{ DE_DEU, "GER" },
-	{ FR_FRA, "FRE" },
-	{ IT_ITA, "ITA" },
-	{ ES_ESP, "SPA" },
-	{ JA_JPN, "JPN" },
-	{ -1, 0 }
-};
-
-const PlatformExtension platformTable[] = {
-	{ kPlatformAmiga, "AMG" },
-	{ kPlatformFMTowns, "TNS" },
-	{ kPlatformPC98, "98" },
-
-	{ -1, 0 }
-};
-
-// index generation
-
-struct IndexTable {
-	int type;
-	int value;
-
-	bool operator==(int t) const {
-		return (type == t);
-	}
-};
-
-const IndexTable iGameTable[] = {
+const TypeTable gameTable[] = {
 	{ kKyra1, 0 },
 	{ kKyra2, 1 },
 	{ kKyra3, 2 },
@@ -370,10 +323,10 @@ const IndexTable iGameTable[] = {
 };
 
 byte getGameID(int game) {
-	return std::find(iGameTable, iGameTable + ARRAYSIZE(iGameTable) - 1, game)->value;
+	return std::find(gameTable, gameTable + ARRAYSIZE(gameTable), game)->value;
 }
 
-/*const IndexTable iLanguageTable[] = {
+const TypeTable languageTable[] = {
 	{ EN_ANY, 0 },
 	{ FR_FRA, 1 },
 	{ DE_DEU, 2 },
@@ -384,10 +337,10 @@ byte getGameID(int game) {
 };
 
 byte getLanguageID(int lang) {
-	return std::find(iLanguageTable, iLanguageTable + ARRAYSIZE(iLanguageTable) - 1, lang)->value;
-}*/
+	return std::find(languageTable, languageTable + ARRAYSIZE(languageTable), lang)->value;
+}
 
-const IndexTable iPlatformTable[] = {
+const TypeTable platformTable[] = {
 	{ kPlatformPC, 0 },
 	{ kPlatformAmiga, 1 },
 	{ kPlatformFMTowns, 2 },
@@ -397,10 +350,10 @@ const IndexTable iPlatformTable[] = {
 };
 
 byte getPlatformID(int platform) {
-	return std::find(iPlatformTable, iPlatformTable + ARRAYSIZE(iPlatformTable) - 1, platform)->value;
+	return std::find(platformTable, platformTable + ARRAYSIZE(platformTable), platform)->value;
 }
 
-const IndexTable iSpecialTable[] = {
+const TypeTable specialTable[] = {
 	{ kNoSpecial, 0 },
 	{ kTalkieVersion, 1 },
 	{ kDemoVersion, 2 },
@@ -409,8 +362,26 @@ const IndexTable iSpecialTable[] = {
 };
 
 byte getSpecialID(int special) {
-	return std::find(iSpecialTable, iSpecialTable + ARRAYSIZE(iSpecialTable) - 1, special)->value;
+	return std::find(specialTable, specialTable + ARRAYSIZE(specialTable), special)->value;
 }
+
+// filename processing
+
+bool getFilename(char *dstFilename, const ExtractInformation *info, const int id) {
+	const ExtractFilename *i = getFilenameDesc(id);
+
+	if (!i)
+		return false;
+
+	// GAME, PLATFORM, SPECIAL, TYPE, ID[, LANG]
+	if (i->langSpecific)
+		sprintf(dstFilename, "%01X%01X%01X%02X%03X%01X", getGameID(info->game), getPlatformID(info->platform), getSpecialID(info->special), getTypeID(i->type), id, getLanguageID(info->lang));
+	else
+		sprintf(dstFilename, "%01X%01X%01X%02X%03X", getGameID(info->game), getPlatformID(info->platform), getSpecialID(info->special), getTypeID(i->type), id);
+	return true;
+}
+
+// index generation
 
 typedef uint16 GameDef;
 
@@ -910,12 +881,12 @@ const char *getIdString(const int id) {
 		return "k1GUIStrings";
 	case k1ConfigStrings:
 		return "k1ConfigStrings";
-	case k1TOWNSSfxWDTable:
-		return "k1TOWNSSfxWDTable";
-	case k1TOWNSSfxBTTable:
-		return "k1TOWNSSfxBTTable";
-	case k1TOWNSCDATable:
-		return "k1TOWNSCDATable";
+	case k1TownsSFXwdTable:
+		return "k1TownsSFXwdTable";
+	case k1TownsSFXbtTable:
+		return "k1TownsSFXbtTable";
+	case k1TownsCDATable:
+		return "k1TownsCDATable";
 	case k1PC98StoryStrings:
 		return "k1PC98StoryStrings";
 	case k1PC98IntroSfx:
@@ -954,8 +925,6 @@ const char *getIdString(const int id) {
 		return "k2IngamePakFiles";
 	case k2IngameSfxFiles:
 		return "k2IngameSfxFiles";
-	case k2IngameSfxFilesTns:
-		return "k2IngameSfxFilesTns";
 	case k2IngameSfxIndex:
 		return "k2IngameSfxIndex";
 	case k2IngameTracks:
@@ -966,8 +935,8 @@ const char *getIdString(const int id) {
 		return "k2IngameTalkObjIndex";
 	case k2IngameTimJpStrings:
 		return "k2IngameTimJpStrings";
-	case k2IngameItemAnimData:
-		return "k2IngameItemAnimData";
+	case k2IngameShapeAnimData:
+		return "k2IngameShapeAnimData";
 	case k2IngameTlkDemoStrings:
 		return "k2IngameTlkDemoStrings";
 	case k3MainMenuStrings:
@@ -986,8 +955,6 @@ const char *getIdString(const int id) {
 		return "k3ItemMagicTable";
 	case k3ItemStringMap:
 		return "k3ItemStringMap";
-	case kLolSeqplayIntroTracks:
-		return "kLolSeqplayIntroTracks";
 	case kLolIngamePakFiles:
 		return "kLolIngamePakFiles";
 	case kLolCharacterDefs:
@@ -998,12 +965,12 @@ const char *getIdString(const int id) {
 		return "kLolIngameSfxIndex";
 	case kLolMusicTrackMap:
 		return "kLolMusicTrackMap";
-	case kLolGMSfxIndex:
-		return "kLolGMSfxIndex";
-	case kLolMT32SfxIndex:
-		return "kLolMT32SfxIndex";
-	case kLolPcSpkSfxIndex:
-		return "kLolPcSpkSfxIndex";
+	case kLolIngameGMSfxIndex:
+		return "kLolIngameGMSfxIndex";
+	case kLolIngameMT32SfxIndex:
+		return "kLolIngameMT32SfxIndex";
+	case kLolIngamePcSpkSfxIndex:
+		return "kLolIngamePcSpkSfxIndex";
 	case kLolSpellProperties:
 		return "kLolSpellProperties";
 	case kLolGameShapeMap:
@@ -1026,8 +993,8 @@ const char *getIdString(const int id) {
 		return "kLolExpRequirements";
 	case kLolMonsterModifiers:
 		return "kLolMonsterModifiers";
-	case kLolMonsterLevelOffsets:
-		return "kLolMonsterLevelOffsets";
+	case kLolMonsterShiftOffsets:
+		return "kLolMonsterShiftOffsets";
 	case kLolMonsterDirFlags:
 		return "kLolMonsterDirFlags";
 	case kLolMonsterScaleY:
@@ -1036,8 +1003,8 @@ const char *getIdString(const int id) {
 		return "kLolMonsterScaleX";
 	case kLolMonsterScaleWH:
 		return "kLolMonsterScaleWH";
-	case kLolFlyingItemShp:
-		return "kLolFlyingItemShp";
+	case kLolFlyingObjectShp:
+		return "kLolFlyingObjectShp";
 	case kLolInventoryDesc:
 		return "kLolInventoryDesc";
 	case kLolLevelShpList:
@@ -1052,10 +1019,10 @@ const char *getIdString(const int id) {
 		return "kLolStashSetup";
 	case kLolDscUnk1:
 		return "kLolDscUnk1";
-	case kLolDscShapeIndex1:
-		return "kLolDscShapeIndex1";
-	case kLolDscShapeIndex2:
-		return "kLolDscShapeIndex2";
+	case kLolDscShapeIndex:
+		return "kLolDscShapeIndex";
+	case kLolDscOvlMap:
+		return "kLolDscOvlMap";
 	case kLolDscScaleWidthData:
 		return "kLolDscScaleWidthData";
 	case kLolDscScaleHeightData:
@@ -1078,8 +1045,8 @@ const char *getIdString(const int id) {
 		return "kLolDscBlockMap";
 	case kLolDscDimMap:
 		return "kLolDscDimMap";
-	case kLolDscShapeOvlIndex:
-		return "kLolDscShapeOvlIndex";
+	case kLolDscOvlIndex:
+		return "kLolDscOvlIndex";
 	case kLolDscBlockIndex:
 		return "kLolDscBlockIndex";
 	case kLolDscDoor1:
@@ -1183,25 +1150,25 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		const ExtractFilename *fDesc = getFilenameDesc(id);
 
 		if (!fDesc) {
-			fprintf(stderr, "ERROR: couldn't find file description for id %d\n", id);
+			fprintf(stderr, "ERROR: couldn't find file description for id %d/%s\n", id, getIdString(id));
 			return false;
 		}
 
-		if (isLangSpecific(fDesc->type))
+		if (fDesc->langSpecific)
 			extractInfo.lang = i->second.desc.lang;
 		else
 			extractInfo.lang = UNK_LANG;
 
 		filename[0] = 0;
 		if (!getFilename(filename, &extractInfo, id)) {
-			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
+			fprintf(stderr, "ERROR: couldn't get filename for id %d/%s\n", id, getIdString(id));
 			return false;
 		}
 
 		const ExtractType *tDesc = findExtractType(fDesc->type);
 
 		if (!tDesc) {
-			fprintf(stderr, "ERROR: couldn't find type description for id %d\n", id);
+			fprintf(stderr, "ERROR: couldn't find type description for id %d/%s (%d)\n", id, getIdString(id), fDesc->type);
 			return false;
 		}
 
@@ -1210,7 +1177,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			continue;
 
 		if (!tDesc->extract(out, &extractInfo, data + i->second.offset, i->second.desc.hint.size, filename, id)) {
-			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
+			fprintf(stderr, "ERROR: couldn't extract id %d/%s\n", id, getIdString(id));
 			return false;
 		}
 	}
@@ -1368,11 +1335,7 @@ bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
 			continue;
 		}
 
-		const ExtractFilename *fDesc = getFilenameDesc(*entry);
-		if (!fDesc)
-			continue;
-
-		if (isLangSpecific(fDesc->type)) {
+		if (isLangSpecific(*entry)) {
 			for (int i = 0; i < 3; ++i) {
 				if (g->lang[i] == -1)
 					continue;

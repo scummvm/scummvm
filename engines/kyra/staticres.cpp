@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 65
+#define RESFILE_VERSION 66
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -69,21 +69,6 @@ bool checkKyraDat(Common::SeekableReadStream *file) {
 	return true;
 }
 
-struct LanguageTypes {
-	Common::Language lang;
-	const char *ext;
-};
-
-const LanguageTypes languages[] = {
-	{ Common::EN_ANY, "ENG" },
-	{ Common::FR_FRA, "FRE" },
-	{ Common::DE_DEU, "GER" },
-	{ Common::ES_ESP, "SPA" },
-	{ Common::IT_ITA, "ITA" },
-	{ Common::JA_JPN, "JPN" },
-	{ Common::UNK_LANG, 0 }
-};
-
 struct IndexTable {
 	int type;
 	int value;
@@ -105,7 +90,7 @@ byte getGameID(const GameFlags &flags) {
 	return Common::find(iGameTable, iGameTable + ARRAYSIZE(iGameTable) - 1, flags.gameID)->value;
 }
 
-/*const IndexTable iLanguageTable[] = {
+const IndexTable iLanguageTable[] = {
 	{ Common::EN_ANY, 0 },
 	{ Common::FR_FRA, 1 },
 	{ Common::DE_DEU, 2 },
@@ -117,7 +102,7 @@ byte getGameID(const GameFlags &flags) {
 
 byte getLanguageID(const GameFlags &flags) {
 	return Common::find(iLanguageTable, iLanguageTable + ARRAYSIZE(iLanguageTable) - 1, flags.lang)->value;
-}*/
+}
 
 const IndexTable iPlatformTable[] = {
 	{ Common::kPlatformPC, 0 },
@@ -235,7 +220,6 @@ bool StaticResource::tryKyraDatLoad() {
 bool StaticResource::init() {
 #define proc(x) &StaticResource::x
 	static const FileType fileTypeTable[] = {
-		{ kLanguageList, proc(loadLanguageTable), proc(freeStringTable) },
 		{ kStringList, proc(loadStringTable), proc(freeStringTable) },
 		{ StaticResource::kRoomList, proc(loadRoomTable), proc(freeRoomTable) },
 		{ kShapeList, proc(loadShapeTable), proc(freeShapeTable) },
@@ -262,289 +246,287 @@ bool StaticResource::init() {
 	_fileLoader = fileTypeTable;
 
 	// Kyrandia 1 Filenames
-	static const FilenameTable kyra1StaticRes[] = {
+	static const int kyra1StaticRes[] = {
 		// INTRO / OUTRO sequences
-		{ k1ForestSeq, kRawData, "FOREST.SEQ" },
-		{ k1KallakWritingSeq, kRawData, "KALLAK-WRITING.SEQ" },
-		{ k1KyrandiaLogoSeq, kRawData, "KYRANDIA-LOGO.SEQ" },
-		{ k1KallakMalcolmSeq, kRawData, "KALLAK-MALCOLM.SEQ" },
-		{ k1MalcolmTreeSeq, kRawData, "MALCOLM-TREE.SEQ" },
-		{ k1WestwoodLogoSeq, kRawData, "WESTWOOD-LOGO.SEQ" },
-		{ k1Demo1Seq, kRawData, "DEMO1.SEQ" },
-		{ k1Demo2Seq, kRawData, "DEMO2.SEQ" },
-		{ k1Demo3Seq, kRawData, "DEMO3.SEQ" },
-		{ k1Demo4Seq, kRawData, "DEMO4.SEQ" },
-		{ k1OutroReunionSeq, kRawData, "REUNION.SEQ" },
+		k1ForestSeq,
+		k1KallakWritingSeq,
+		k1KyrandiaLogoSeq,
+		k1KallakMalcolmSeq,
+		k1MalcolmTreeSeq,
+		k1WestwoodLogoSeq,
+		k1Demo1Seq,
+		k1Demo2Seq,
+		k1Demo3Seq,
+		k1Demo4Seq,
+		k1OutroReunionSeq,
 
 		// INTRO / OUTRO strings
-		{ k1IntroCPSStrings, kStringList, "INTRO-CPS.TXT" },
-		{ k1IntroCOLStrings, kStringList, "INTRO-COL.TXT" },
-		{ k1IntroWSAStrings, kStringList, "INTRO-WSA.TXT" },
-		{ k1IntroStrings, kLanguageList, "INTRO-STRINGS." },
-		{ k1OutroHomeString, kLanguageList, "HOME." },
+		k1IntroCPSStrings,
+		k1IntroCOLStrings,
+		k1IntroWSAStrings,
+		k1IntroStrings,
+		k1OutroHomeString,
 
 		// INGAME strings
-		{ k1ItemNames, kLanguageList, "ITEMLIST." },
-		{ k1TakenStrings, kLanguageList, "TAKEN." },
-		{ k1PlacedStrings, kLanguageList, "PLACED." },
-		{ k1DroppedStrings, kLanguageList, "DROPPED." },
-		{ k1NoDropStrings, kLanguageList, "NODROP." },
-		{ k1PutDownString, kLanguageList, "PUTDOWN." },
-		{ k1WaitAmuletString, kLanguageList, "WAITAMUL." },
-		{ k1BlackJewelString, kLanguageList, "BLACKJEWEL." },
-		{ k1PoisonGoneString, kLanguageList, "POISONGONE." },
-		{ k1HealingTipString, kLanguageList, "HEALINGTIP." },
-		{ k1ThePoisonStrings, kLanguageList, "THEPOISON." },
-		{ k1FluteStrings, kLanguageList, "FLUTE." },
-		{ k1WispJewelStrings, kLanguageList, "WISPJEWEL." },
-		{ k1MagicJewelStrings, kLanguageList, "MAGICJEWEL." },
-		{ k1FlaskFullString, kLanguageList, "FLASKFULL." },
-		{ k1FullFlaskString, kLanguageList, "FULLFLASK." },
-		{ k1VeryCleverString, kLanguageList, "VERYCLEVER." },
-		{ k1NewGameString, kLanguageList, "NEWGAME." },
+		k1ItemNames,
+		k1TakenStrings,
+		k1PlacedStrings,
+		k1DroppedStrings,
+		k1NoDropStrings,
+		k1PutDownString,
+		k1WaitAmuletString,
+		k1BlackJewelString,
+		k1PoisonGoneString,
+		k1HealingTipString,
+		k1ThePoisonStrings,
+		k1FluteStrings,
+		k1WispJewelStrings,
+		k1MagicJewelStrings,
+		k1FlaskFullString,
+		k1FullFlaskString,
+		k1VeryCleverString,
+		k1NewGameString,
 
 		// GUI strings table
-		{ k1GUIStrings, kLanguageList, "GUISTRINGS." },
-		{ k1ConfigStrings, kLanguageList, "CONFIGSTRINGS." },
+		k1GUIStrings,
+		k1ConfigStrings,
 
 		// ROOM table/filenames
-		{ k1RoomList, kRoomList, "ROOM-TABLE.ROOM" },
-		{ k1RoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
+		k1RoomList,
+		k1RoomFilenames,
 
 		// SHAPE tables
-		{ k1DefaultShapes, kShapeList, "SHAPES-DEFAULT.SHP" },
-		{ k1Healing1Shapes, kShapeList, "HEALING.SHP" },
-		{ k1Healing2Shapes, kShapeList, "HEALING2.SHP" },
-		{ k1PoisonDeathShapes, kShapeList, "POISONDEATH.SHP" },
-		{ k1FluteShapes, kShapeList, "FLUTE.SHP" },
-		{ k1Winter1Shapes, kShapeList, "WINTER1.SHP" },
-		{ k1Winter2Shapes, kShapeList, "WINTER2.SHP" },
-		{ k1Winter3Shapes, kShapeList, "WINTER3.SHP" },
-		{ k1DrinkShapes, kShapeList, "DRINK.SHP" },
-		{ k1WispShapes, kShapeList, "WISP.SHP" },
-		{ k1MagicAnimShapes, kShapeList, "MAGICANIM.SHP" },
-		{ k1BranStoneShapes, kShapeList, "BRANSTONE.SHP" },
+		k1DefaultShapes,
+		k1Healing1Shapes,
+		k1Healing2Shapes,
+		k1PoisonDeathShapes,
+		k1FluteShapes,
+		k1Winter1Shapes,
+		k1Winter2Shapes,
+		k1Winter3Shapes,
+		k1DrinkShapes,
+		k1WispShapes,
+		k1MagicAnimShapes,
+		k1BranStoneShapes,
 
 		// IMAGE filename table
-		{ k1CharacterImageFilenames, kStringList, "CHAR-IMAGE.TXT" },
+		k1CharacterImageFilenames,
 
 		// AMULET anim
-		{ k1AmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
+		k1AmuleteAnimSeq,
 
 		// PALETTE table
-		{ k1SpecialPalette1, kRawData, "PALTABLE1.PAL" },
-		{ k1SpecialPalette2, kRawData, "PALTABLE2.PAL" },
-		{ k1SpecialPalette3, kRawData, "PALTABLE3.PAL" },
-		{ k1SpecialPalette4, kRawData, "PALTABLE4.PAL" },
-		{ k1SpecialPalette5, kRawData, "PALTABLE5.PAL" },
-		{ k1SpecialPalette6, kRawData, "PALTABLE6.PAL" },
-		{ k1SpecialPalette7, kRawData, "PALTABLE7.PAL" },
-		{ k1SpecialPalette8, kRawData, "PALTABLE8.PAL" },
-		{ k1SpecialPalette9, kRawData, "PALTABLE9.PAL" },
-		{ k1SpecialPalette10, kRawData, "PALTABLE10.PAL" },
-		{ k1SpecialPalette11, kRawData, "PALTABLE11.PAL" },
-		{ k1SpecialPalette12, kRawData, "PALTABLE12.PAL" },
-		{ k1SpecialPalette13, kRawData, "PALTABLE13.PAL" },
-		{ k1SpecialPalette14, kRawData, "PALTABLE14.PAL" },
-		{ k1SpecialPalette15, kRawData, "PALTABLE15.PAL" },
-		{ k1SpecialPalette16, kRawData, "PALTABLE16.PAL" },
-		{ k1SpecialPalette17, kRawData, "PALTABLE17.PAL" },
-		{ k1SpecialPalette18, kRawData, "PALTABLE18.PAL" },
-		{ k1SpecialPalette19, kRawData, "PALTABLE19.PAL" },
-		{ k1SpecialPalette20, kRawData, "PALTABLE20.PAL" },
-		{ k1SpecialPalette21, kRawData, "PALTABLE21.PAL" },
-		{ k1SpecialPalette22, kRawData, "PALTABLE22.PAL" },
-		{ k1SpecialPalette23, kRawData, "PALTABLE23.PAL" },
-		{ k1SpecialPalette24, kRawData, "PALTABLE24.PAL" },
-		{ k1SpecialPalette25, kRawData, "PALTABLE25.PAL" },
-		{ k1SpecialPalette26, kRawData, "PALTABLE26.PAL" },
-		{ k1SpecialPalette27, kRawData, "PALTABLE27.PAL" },
-		{ k1SpecialPalette28, kRawData, "PALTABLE28.PAL" },
-		{ k1SpecialPalette29, kRawData, "PALTABLE29.PAL" },
-		{ k1SpecialPalette30, kRawData, "PALTABLE30.PAL" },
-		{ k1SpecialPalette31, kRawData, "PALTABLE31.PAL" },
-		{ k1SpecialPalette32, kRawData, "PALTABLE32.PAL" },
-		{ k1SpecialPalette33, kRawData, "PALTABLE33.PAL" },
+		k1SpecialPalette1,
+		k1SpecialPalette2,
+		k1SpecialPalette3,
+		k1SpecialPalette4,
+		k1SpecialPalette5,
+		k1SpecialPalette6,
+		k1SpecialPalette7,
+		k1SpecialPalette8,
+		k1SpecialPalette9,
+		k1SpecialPalette10,
+		k1SpecialPalette11,
+		k1SpecialPalette12,
+		k1SpecialPalette13,
+		k1SpecialPalette14,
+		k1SpecialPalette15,
+		k1SpecialPalette16,
+		k1SpecialPalette17,
+		k1SpecialPalette18,
+		k1SpecialPalette19,
+		k1SpecialPalette20,
+		k1SpecialPalette21,
+		k1SpecialPalette22,
+		k1SpecialPalette23,
+		k1SpecialPalette24,
+		k1SpecialPalette25,
+		k1SpecialPalette26,
+		k1SpecialPalette27,
+		k1SpecialPalette28,
+		k1SpecialPalette29,
+		k1SpecialPalette30,
+		k1SpecialPalette31,
+		k1SpecialPalette32,
+		k1SpecialPalette33,
 
 		// AUDIO files
-		{ k1AudioTracks, kStringList, "TRACKS.TXT" },
-		{ k1AudioTracksIntro, kStringList, "TRACKSINT.TXT" },
+		k1AudioTracks,
+		k1AudioTracksIntro,
 
 		// FM-TOWNS specific
-		{ k1TownsSFXwdTable, kRawData, "SFXWDTABLE" },
-		{ k1TownsSFXbtTable, kRawData, "SFXBTTABLE" },
-		{ k1TownsCDATable, kRawData, "CDATABLE" },
+		k1TownsSFXwdTable,
+		k1TownsSFXbtTable,
+		k1TownsCDATable,
 
 		// PC98 specific
-		{ k1PC98StoryStrings, kLanguageList, "INTROSTORY." },
-		{ k1PC98IntroSfx, kRawData, "INTROSFX" },
+		k1PC98StoryStrings,
+		k1PC98IntroSfx,
 
 		// CREDITS (used in FM-TOWNS and AMIGA)
-		{ k1CreditsStrings, kRawData, "CREDITS" },
+		k1CreditsStrings,
 
 		// AMIGA specific
-		{ k1AmigaIntroSFXTable, kAmigaSfxTable, "SFXINTRO" },
-		{ k1AmigaGameSFXTable, kAmigaSfxTable, "SFXGAME" },
+		k1AmigaIntroSFXTable,
+		k1AmigaGameSFXTable,
 
-		{ 0, 0, 0 }
+		-1
 	};
 
-	static const FilenameTable kyra2StaticRes[] = {
+	static const int kyra2StaticRes[] = {
 		// Sequence Player
-		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
-		{ k2SeqplayCredits, kRawData, "S_CREDITS.TXT" },
-		{ k2SeqplayCreditsSpecial, kStringList, "S_CREDITS2.TXT" },
-		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
-		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
-		{ k2SeqplayTlkFiles, kLanguageList, "S_TLKFILES." },
-		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
-		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
-		{ k2SeqplayFinaleTracks, kStringList, "S_FINALE.TRA" },
-		{ k2SeqplayIntroCDA, kRawData, "S_INTRO.CDA" },
-		{ k2SeqplayFinaleCDA, kRawData, "S_FINALE.CDA" },
-		{ k2SeqplayShapeAnimData, k2ShpAnimDataV1, "S_DEMO.SHP" },
+		k2SeqplayPakFiles,
+		k2SeqplayCredits,
+		k2SeqplayCreditsSpecial,
+		k2SeqplayStrings,
+		k2SeqplaySfxFiles,
+		k2SeqplayTlkFiles,
+		k2SeqplaySeqData,
+		k2SeqplayIntroTracks,
+		k2SeqplayFinaleTracks,
+		k2SeqplayIntroCDA,
+		k2SeqplayFinaleCDA,
+		k2SeqplayShapeAnimData,
 
 		// Ingame
-		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
-		{ k2IngameSfxFiles, kStringList, "I_SFXFILES.TRA" },
-		{ k2IngameSfxIndex, kRawData, "I_SFXINDEX.MAP" },
-		{ k2IngameTracks, kStringList, "I_TRACKS.TRA" },
-		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
-		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
-		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
-		{ k2IngameShapeAnimData, k2ShpAnimDataV2, "I_INVANIM.SHP" },
-		{ k2IngameTlkDemoStrings, kLanguageList, "I_TLKDEMO.TXT." },
+		k2IngamePakFiles,
+		k2IngameSfxFiles,
+		k2IngameSfxIndex,
+		k2IngameTracks,
+		k2IngameCDA,
+		k2IngameTalkObjIndex,
+		k2IngameTimJpStrings,
+		k2IngameShapeAnimData,
+		k2IngameTlkDemoStrings,
 
-		{ 0, 0, 0 }
+		-1
 	};
 
-	static const FilenameTable kyra3StaticRes[] = {
-		{ k3MainMenuStrings, kStringList, "MAINMENU.TXT" },
-		{ k3MusicFiles, kStringList, "SCORE.TRA" },
-		{ k3ScoreTable, kRawData, "SCORE.MAP" },
-		{ k3SfxFiles, kStringList, "SFXFILES.TRA" },
-		{ k3SfxMap, kRawData, "SFXINDEX.MAP" },
-		{ k3ItemAnimData, k2ShpAnimDataV2, "INVANIM.SHP" },
-		{ k3ItemMagicTable, kRawData, "ITEMMAGIC.MAP" },
-		{ k3ItemStringMap, kRawData, "ITEMSTRINGS.MAP" },
+	static const int kyra3StaticRes[] = {
+		k3MainMenuStrings,
+		k3MusicFiles,
+		k3ScoreTable,
+		k3SfxFiles,
+		k3SfxMap,
+		k3ItemAnimData,
+		k3ItemMagicTable,
+		k3ItemStringMap,
 
-		{ 0, 0, 0 }
+		-1
 	};
 
 #ifdef ENABLE_LOL
-	static const FilenameTable kLolStaticRes[] = {
+	static const int kLolStaticRes[] = {
 		// Demo Sequence Player
-		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
-		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
-		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
-		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
-		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
+		k2SeqplayPakFiles,
+		k2SeqplayStrings,
+		k2SeqplaySfxFiles,
+		k2SeqplaySeqData,
+		k2SeqplayIntroTracks,
 
 		// Ingame
-		{ kLolIngamePakFiles, kStringList, "PAKFILES.TXT" },
+		kLolIngamePakFiles,
 
-		{ kLolCharacterDefs, kLolCharData, "CHARACTER.DEF" },
-		{ kLolIngameSfxFiles, kStringList, "SFXFILES.TRA" },
-		{ kLolIngameSfxIndex, kRawData, "SFXINDEX.MAP" },
-		{ kLolMusicTrackMap, kRawData, "MUSIC.MAP" },
-		{ kLolIngameGMSfxIndex, kRawData, "SFX_GM.MAP" },
-		{ kLolIngameMT32SfxIndex, kRawData, "SFX_MT32.MAP" },
-		{ kLolIngamePcSpkSfxIndex, kRawData, "SFX_PCS.MAP" },
-		{ kLolSpellProperties, kLolSpellData, "SPELLS.DEF" },
-		{ kLolGameShapeMap, kRawData, "GAMESHP.MAP" },
-		{ kLolSceneItemOffs, kRawData, "ITEMOFFS.DEF" },
-		{ kLolCharInvIndex, kRawData, "CHARINV.MAP" },
-		{ kLolCharInvDefs, kRawData, "CHARINV.DEF" },
-		{ kLolCharDefsMan, kLolRawDataBe16, "CHMAN.DEF" },
-		{ kLolCharDefsWoman, kLolRawDataBe16, "CHWOMAN.DEF" },
-		{ kLolCharDefsKieran, kLolRawDataBe16, "CHKIERAN.DEF" },
-		//{ kLolCharDefsUnk, kLolRawDataBe16, "CHUNK.DEF" },
-		{ kLolCharDefsAkshel, kLolRawDataBe16, "CHAKSHEL.DEF" },
-		{ kLolExpRequirements, kLolRawDataBe32, "EXPERIENCE.DEF" },
-		{ kLolMonsterModifiers, kLolRawDataBe16, "MONSTMOD.DEF" },
-		{ kLolMonsterShiftOffsets, kRawData, "MONSTLVL.DEF" },
-		{ kLolMonsterDirFlags, kRawData, "MONSTDIR.DEF" },
-		{ kLolMonsterScaleY, kRawData, "MONSTZY.DEF" },
-		{ kLolMonsterScaleX, kRawData, "MONSTZX.DEF" },
-		{ kLolMonsterScaleWH, kLolRawDataBe16, "MONSTSCL.DEF" },
-		{ kLolFlyingObjectShp, kLolFlightShpData, "THRWNSHP.DEF" },
-		{ kLolInventoryDesc, kLolRawDataBe16, "INVDESC.DEF" },
+		kLolCharacterDefs,
+		kLolIngameSfxFiles,
+		kLolIngameSfxIndex,
+		kLolMusicTrackMap,
+		kLolIngameGMSfxIndex,
+		kLolIngameMT32SfxIndex,
+		kLolIngamePcSpkSfxIndex,
+		kLolSpellProperties,
+		kLolGameShapeMap,
+		kLolSceneItemOffs,
+		kLolCharInvIndex,
+		kLolCharInvDefs,
+		kLolCharDefsMan,
+		kLolCharDefsWoman,
+		kLolCharDefsKieran,
+		kLolCharDefsAkshel,
+		kLolExpRequirements,
+		kLolMonsterModifiers,
+		kLolMonsterShiftOffsets,
+		kLolMonsterDirFlags,
+		kLolMonsterScaleY,
+		kLolMonsterScaleX,
+		kLolMonsterScaleWH,
+		kLolFlyingObjectShp,
+		kLolInventoryDesc,
 
-		{ kLolLevelShpList, kStringList, "SHPFILES.TXT" },
-		{ kLolLevelDatList, kStringList, "DATFILES.TXT" },
-		{ kLolCompassDefs, kLolCompassData, "COMPASS.DEF" },
-		{ kLolItemPrices, kLolRawDataBe16, "ITEMCOST.DEF" },
-		{ kLolStashSetup, kRawData, "MONEYSTS.DEF" },
+		kLolLevelShpList,
+		kLolLevelDatList,
+		kLolCompassDefs,
+		kLolItemPrices,
+		kLolStashSetup,
 
-		{ kLolDscUnk1, kRawData, "DSCSHPU1.DEF" },
-		{ kLolDscShapeIndex, kRawData, "DSCSHPI1.DEF" },
-		{ kLolDscOvlMap, kRawData, "DSCSHPI2.DEF" },
-		{ kLolDscScaleWidthData, kLolRawDataBe16, "DSCSHPW.DEF" },
-		{ kLolDscScaleHeightData, kLolRawDataBe16, "DSCSHPH.DEF" },
-		{ kLolDscX, kLolRawDataBe16, "DSCSHPX.DEF" },
-		{ kLolDscY, kRawData, "DSCSHPY.DEF" },
-		{ kLolDscTileIndex, kRawData, "DSCSHPT.DEF" },
-		{ kLolDscUnk2, kRawData, "DSCSHPU2.DEF" },
-		{ kLolDscDoorShapeIndex, kRawData, "DSCDOOR.DEF" },
-		{ kLolDscDimData1, kRawData, "DSCDIM1.DEF" },
-		{ kLolDscDimData2, kRawData, "DSCDIM2.DEF" },
-		{ kLolDscBlockMap, kRawData, "DSCBLOCK1.DEF" },
-		{ kLolDscDimMap, kRawData, "DSCDIM.DEF" },
-		{ kLolDscDoorScale, kLolRawDataBe16, "DSCDOOR3.DEF" },
-		{ kLolDscDoor4, kLolRawDataBe16, "DSCDOOR4.DEF" },
-		{ kLolDscOvlIndex, kRawData, "DSCBLOCK2.DEF" },
-		{ kLolDscBlockIndex, kRawData, "DSCBLOCKX.DEF" },
-		{ kLolDscDoor1, kRawData, "DSCDOOR1.DEF" },
-		{ kLolDscDoorX, kLolRawDataBe16, "DSCDOORX.DEF" },
-		{ kLolDscDoorY, kLolRawDataBe16, "DSCDOORY.DEF" },
+		kLolDscUnk1,
+		kLolDscShapeIndex,
+		kLolDscOvlMap,
+		kLolDscScaleWidthData,
+		kLolDscScaleHeightData,
+		kLolDscX,
+		kLolDscY,
+		kLolDscTileIndex,
+		kLolDscUnk2,
+		kLolDscDoorShapeIndex,
+		kLolDscDimData1,
+		kLolDscDimData2,
+		kLolDscBlockMap,
+		kLolDscDimMap,
+		kLolDscDoorScale,
+		kLolDscDoor4,
+		kLolDscOvlIndex,
+		kLolDscBlockIndex,
+		kLolDscDoor1,
+		kLolDscDoorX,
+		kLolDscDoorY,
 
-		{ kLolScrollXTop, kRawData, "SCROLLXT.DEF" },
-		{ kLolScrollYTop, kRawData, "SCROLLYT.DEF" },
-		{ kLolScrollXBottom, kRawData, "SCROLLXB.DEF" },
-		{ kLolScrollYBottom, kRawData, "SCROLLYB.DEF" },
+		kLolScrollXTop,
+		kLolScrollYTop,
+		kLolScrollXBottom,
+		kLolScrollYBottom,
 
-		{ kLolButtonDefs, kLolButtonData, "BUTTONS.DEF" },
-		{ kLolButtonList1, kLolRawDataBe16, "BUTTON1.LST" },
-		{ kLolButtonList2, kLolRawDataBe16, "BUTTON2.LST" },
-		{ kLolButtonList3, kLolRawDataBe16, "BUTTON3.LST" },
-		{ kLolButtonList4, kLolRawDataBe16, "BUTTON4.LST" },
-		{ kLolButtonList5, kLolRawDataBe16, "BUTTON5.LST" },
-		{ kLolButtonList6, kLolRawDataBe16, "BUTTON6.LST" },
-		{ kLolButtonList7, kLolRawDataBe16, "BUTTON7.LST" },
-		{ kLolButtonList8, kLolRawDataBe16, "BUTTON84.LST" },
+		kLolButtonDefs,
+		kLolButtonList1,
+		kLolButtonList2,
+		kLolButtonList3,
+		kLolButtonList4,
+		kLolButtonList5,
+		kLolButtonList6,
+		kLolButtonList7,
+		kLolButtonList8,
 
-		{ kLolLegendData, kRawData, "MAPLGND.DEF" },
-		{ kLolMapCursorOvl, kRawData, "MAPCURSOR.PAL" },
-		{ kLolMapStringId, kLolRawDataBe16, "MAPSTRID.LST" },
-		//{ kLolMapPal, kRawData, "MAP.PAL" },
+		kLolLegendData,
+		kLolMapCursorOvl,
+		kLolMapStringId,
 
-		{ kLolSpellbookAnim, kRawData, "MBOOKA.DEF" },
-		{ kLolSpellbookCoords, kRawData, "MBOOKC.DEF" },
-		{ kLolHealShapeFrames, kRawData, "MHEAL.SHP" },
-		{ kLolLightningDefs, kRawData, "MLGHTNG.DEF" },
-		{ kLolFireballCoords, kLolRawDataBe16, "MFIREBLL.DEF" },
+		kLolSpellbookAnim,
+		kLolSpellbookCoords,
+		kLolHealShapeFrames,
+		kLolLightningDefs,
+		kLolFireballCoords,
 
-		{ kLolCredits, kRawData, "LOLCREDITS" },
+		kLolCredits,
 
-		{ kLolHistory, kRawData, "HISTORY.FLS" },
+		kLolHistory,
 
-		{ 0, 0, 0 }
+		-1
 	};
 #endif // ENABLE_LOL
 
 	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
-		_filenameTable = kyra1StaticRes;
+		_dataTable = kyra1StaticRes;
 	} else if (_vm->game() == GI_KYRA2) {
 		_builtIn = 0;
-		_filenameTable = kyra2StaticRes;
+		_dataTable = kyra2StaticRes;
 	} else if (_vm->game() == GI_KYRA3) {
 		_builtIn = 0;
-		_filenameTable = kyra3StaticRes;
+		_dataTable = kyra3StaticRes;
 #ifdef ENABLE_LOL
 	} else if (_vm->game() == GI_LOL) {
 		_builtIn = 0;
-		_filenameTable = kLolStaticRes;
+		_dataTable = kLolStaticRes;
 #endif // ENABLE_LOL
 	} else {
 		error("StaticResource: Unknown game ID");
@@ -558,10 +540,7 @@ void StaticResource::deinit() {
 }
 
 const char * const *StaticResource::loadStrings(int id, int &strings) {
-	const char * const *temp = (const char * const *)getData(id, kStringList, strings);
-	if (temp)
-		return temp;
-	return (const char * const *)getData(id, kLanguageList, strings);
+	return (const char * const *)getData(id, kStringList, strings);
 }
 
 const uint8 *StaticResource::loadRawData(int id, int &size) {
@@ -624,10 +603,11 @@ const ButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
 
 bool StaticResource::prefetchId(int id) {
 	if (id == -1) {
-		for (int i = 0; _filenameTable[i].filename; ++i)
-			prefetchId(_filenameTable[i].id);
+		for (int i = 0; _dataTable[i] != -1; ++i)
+			prefetchId(_dataTable[i]);
 		return true;
 	}
+
 	const void *ptr = 0;
 	int type = -1, size = -1;
 
@@ -637,18 +617,52 @@ bool StaticResource::prefetchId(int id) {
 	if (checkForBuiltin(id, type, size))
 		return true;
 
-	const FilenameTable *filename = searchFile(id);
-	if (!filename)
+	const GameFlags &flags = _vm->gameFlags();
+	byte game = getGameID(flags);
+	byte platform = getPlatformID(flags);
+	byte special = getSpecialID(flags);
+	byte lang = getLanguageID(flags);
+
+	Common::ArchiveMemberList fileCandidates;
+
+	const Common::String filenamePattern = Common::String::printf("%01X%01X%01X??%03X", game, platform, special, id);
+	const Common::String langFilenamePattern = filenamePattern + Common::String::printf("%01X", lang);
+
+	// We assume the order of "fileCandidates" never changes across these calls. This means:
+	// The filenames matching "filenamePattern" will be added after the ones matching
+	// "langFilenamePattern".
+	_vm->resource()->listFiles(langFilenamePattern.c_str(), fileCandidates);
+	_vm->resource()->listFiles(filenamePattern.c_str(), fileCandidates);
+
+	if (fileCandidates.empty())
 		return false;
-	const FileType *filetype = getFiletype(filename->type);
+
+	// First entry in the list should be the one we want
+	Common::ArchiveMemberPtr file = *fileCandidates.begin();
+	fileCandidates.clear();
+
+	unsigned int rType = (unsigned int)-1;
+	if (sscanf(file->getDisplayName().c_str(), "%*01X%*01X%*01X%02X%*03X", &rType) != 1) {
+		warning("Failed to parse filename from kyra.dat: \"%s\"", file->getDisplayName().c_str());
+		return false;
+	}
+
+	const FileType *filetype = getFiletype(rType);
 	if (!filetype)
 		return false;
 
 	ResData data;
 	data.id = id;
-	data.type = filetype->type;
-	if (!(this->*(filetype->load))(filename->filename, data.data, data.size))
+	data.type = rType;
+	Common::SeekableReadStream *fileStream = file->createReadStream();
+	if (!fileStream)
 		return false;
+
+	if (!(this->*(filetype->load))(*fileStream, data.data, data.size)) {
+		delete fileStream;
+		return false;
+	}
+	delete fileStream;
 	_resList.push_back(data);
 
 	return true;
@@ -697,18 +711,6 @@ const void *StaticResource::checkForBuiltin(int id, int &type, int &size) {
 	return 0;
 }
 
-const StaticResource::FilenameTable *StaticResource::searchFile(int id) {
-	if (!_filenameTable)
-		return 0;
-
-	for (int i = 0; _filenameTable[i].filename; ++i) {
-		if (_filenameTable[i].id == id)
-			return &_filenameTable[i];
-	}
-
-	return 0;
-}
-
 const StaticResource::FileType *StaticResource::getFiletype(int type) {
 	if (!_fileLoader)
 		return 0;
@@ -750,125 +752,82 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 	return 0;
 }
 
-bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
-	static Common::String file;
-	for (int i = 0; languages[i].ext; ++i) {
-		if (languages[i].lang != _vm->gameFlags().lang)
-			continue;
-
-		file = filename;
-		file += languages[i].ext;
-		if (loadStringTable(file.c_str(), ptr, size))
-			return true;
-	}
-
-	return false;
-}
-
-bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-	if (!file)
-		return false;
-
-	uint32 count = file->readUint32BE();
+bool StaticResource::loadStringTable(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	uint32 count = stream.readUint32BE();
 	size = count;
-	char **output = new char*[count];
+	char **output = new char *[count];
 	assert(output);
 
 	for (uint32 i = 0; i < count; ++i) {
 		Common::String string;
 		char c = 0;
-		while ((c = (char)file->readByte()) != 0)
+		while ((c = (char)stream.readByte()) != 0)
 			string += c;
 
 		output[i] = new char[string.size()+1];
 		strcpy(output[i], string.c_str());
 	}
 
-	delete file;
 	ptr = output;
-
 	return true;
 }
 
-bool StaticResource::loadRawData(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-	if (!file)
-		return false;
-
-	ptr = new uint8[file->size()];
-	file->read(ptr, file->size());
-	size = file->size();
-	delete file;
-
+bool StaticResource::loadRawData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	ptr = new uint8[stream.size()];
+	stream.read(ptr, stream.size());
+	size = stream.size();
 	return true;
 }
 
-bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-	if (!file)
-		return false;
-
-	uint32 count = file->readUint32BE();
+bool StaticResource::loadShapeTable(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	uint32 count = stream.readUint32BE();
 	size = count;
 	Shape *loadTo = new Shape[count];
 	assert(loadTo);
 
 	for (uint32 i = 0; i < count; ++i) {
-		loadTo[i].imageIndex = file->readByte();
-		loadTo[i].x = file->readByte();
-		loadTo[i].y = file->readByte();
-		loadTo[i].w = file->readByte();
-		loadTo[i].h = file->readByte();
-		loadTo[i].xOffset = file->readSByte();
-		loadTo[i].yOffset = file->readSByte();
+		loadTo[i].imageIndex = stream.readByte();
+		loadTo[i].x = stream.readByte();
+		loadTo[i].y = stream.readByte();
+		loadTo[i].w = stream.readByte();
+		loadTo[i].h = stream.readByte();
+		loadTo[i].xOffset = stream.readSByte();
+		loadTo[i].yOffset = stream.readSByte();
 	}
 
-	delete file;
 	ptr = loadTo;
-
 	return true;
 }
 
-bool StaticResource::loadAmigaSfxTable(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-	if (!file)
-		return false;
-
-	size = file->readUint32BE();
+bool StaticResource::loadAmigaSfxTable(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.readUint32BE();
 	AmigaSfxTable *loadTo = new AmigaSfxTable[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; ++i) {
-		loadTo[i].note = file->readByte();
-		loadTo[i].patch = file->readByte();
-		loadTo[i].duration = file->readUint16BE();
-		loadTo[i].volume = file->readByte();
-		loadTo[i].pan = file->readByte();
+		loadTo[i].note = stream.readByte();
+		loadTo[i].patch = stream.readByte();
+		loadTo[i].duration = stream.readUint16BE();
+		loadTo[i].volume = stream.readByte();
+		loadTo[i].pan = stream.readByte();
 	}
 
-	delete file;
 	ptr = loadTo;
-
 	return true;
 }
 
-bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-	if (!file)
-		return false;
-
-	uint32 count = file->readUint32BE();
+bool StaticResource::loadRoomTable(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	uint32 count = stream.readUint32BE();
 	size = count;
 	Room *loadTo = new Room[count];
 	assert(loadTo);
 
 	for (uint32 i = 0; i < count; ++i) {
-		loadTo[i].nameIndex = file->readByte();
-		loadTo[i].northExit = file->readUint16BE();
-		loadTo[i].eastExit = file->readUint16BE();
-		loadTo[i].southExit = file->readUint16BE();
-		loadTo[i].westExit = file->readUint16BE();
+		loadTo[i].nameIndex = stream.readByte();
+		loadTo[i].northExit = stream.readUint16BE();
+		loadTo[i].eastExit = stream.readUint16BE();
+		loadTo[i].southExit = stream.readUint16BE();
+		loadTo[i].westExit = stream.readUint16BE();
 		memset(&loadTo[i].itemsTable[0], 0xFF, sizeof(byte)*6);
 		memset(&loadTo[i].itemsTable[6], 0, sizeof(byte)*6);
 		memset(loadTo[i].itemsXPos, 0, sizeof(uint16)*12);
@@ -876,74 +835,67 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
 
-	delete file;
 	ptr = loadTo;
-
 	return true;
 }
 
-bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	int numSeq = file->readUint16BE();
+bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	int numSeq = stream.readUint16BE();
 	uint32 offset = 2;
 	Sequence *tmp_s = new Sequence[numSeq];
 
 	size = sizeof(HofSeqData) + numSeq * (sizeof(Sequence) + 28);
 
 	for (int i = 0; i < numSeq; i++) {
-		file->seek(offset, SEEK_SET); offset += 2;
-		file->seek(file->readUint16BE(), SEEK_SET);
+		stream.seek(offset, SEEK_SET); offset += 2;
+		stream.seek(stream.readUint16BE(), SEEK_SET);
 
-		tmp_s[i].flags = file->readUint16BE();
+		tmp_s[i].flags = stream.readUint16BE();
 		tmp_s[i].wsaFile = new char[14];
-		file->read(const_cast<char*>(tmp_s[i].wsaFile), 14);
+		stream.read(const_cast<char*>(tmp_s[i].wsaFile), 14);
 		tmp_s[i].cpsFile = new char[14];
-		file->read(const_cast<char*>(tmp_s[i].cpsFile), 14);
-		tmp_s[i].startupCommand = file->readByte();
-		tmp_s[i].finalCommand = file->readByte();
-		tmp_s[i].stringIndex1 = file->readUint16BE();
-		tmp_s[i].stringIndex2 = file->readUint16BE();
-		tmp_s[i].startFrame = file->readUint16BE();
-		tmp_s[i].numFrames = file->readUint16BE();
-		tmp_s[i].frameDelay = file->readUint16BE();
-		tmp_s[i].xPos = file->readUint16BE();
-		tmp_s[i].yPos = file->readUint16BE();
-		tmp_s[i].duration = file->readUint16BE();
+		stream.read(const_cast<char*>(tmp_s[i].cpsFile), 14);
+		tmp_s[i].startupCommand = stream.readByte();
+		tmp_s[i].finalCommand = stream.readByte();
+		tmp_s[i].stringIndex1 = stream.readUint16BE();
+		tmp_s[i].stringIndex2 = stream.readUint16BE();
+		tmp_s[i].startFrame = stream.readUint16BE();
+		tmp_s[i].numFrames = stream.readUint16BE();
+		tmp_s[i].frameDelay = stream.readUint16BE();
+		tmp_s[i].xPos = stream.readUint16BE();
+		tmp_s[i].yPos = stream.readUint16BE();
+		tmp_s[i].duration = stream.readUint16BE();
 	}
 
-	file->seek(offset, SEEK_SET); offset += 2;
-	int numSeqN = file->readUint16BE();
+	stream.seek(offset, SEEK_SET); offset += 2;
+	int numSeqN = stream.readUint16BE();
 	NestedSequence *tmp_n = new NestedSequence[numSeqN];
 	size += (numSeqN * (sizeof(NestedSequence) + 14));
 
 	for (int i = 0; i < numSeqN; i++) {
-		file->seek(offset, SEEK_SET); offset += 2;
-		file->seek(file->readUint16BE(), SEEK_SET);
+		stream.seek(offset, SEEK_SET); offset += 2;
+		stream.seek(stream.readUint16BE(), SEEK_SET);
 
-		tmp_n[i].flags = file->readUint16BE();
+		tmp_n[i].flags = stream.readUint16BE();
 		tmp_n[i].wsaFile = new char[14];
-		file->read(const_cast<char*>(tmp_n[i].wsaFile), 14);
-		tmp_n[i].startframe = file->readUint16BE();
-		tmp_n[i].endFrame = file->readUint16BE();
-		tmp_n[i].frameDelay = file->readUint16BE();
-		tmp_n[i].x = file->readUint16BE();
-		tmp_n[i].y = file->readUint16BE();
-		uint16 ctrlOffs = file->readUint16BE();
-		tmp_n[i].startupCommand = file->readUint16BE();
-		tmp_n[i].finalCommand = file->readUint16BE();
+		stream.read(const_cast<char*>(tmp_n[i].wsaFile), 14);
+		tmp_n[i].startframe = stream.readUint16BE();
+		tmp_n[i].endFrame = stream.readUint16BE();
+		tmp_n[i].frameDelay = stream.readUint16BE();
+		tmp_n[i].x = stream.readUint16BE();
+		tmp_n[i].y = stream.readUint16BE();
+		uint16 ctrlOffs = stream.readUint16BE();
+		tmp_n[i].startupCommand = stream.readUint16BE();
+		tmp_n[i].finalCommand = stream.readUint16BE();
 
 		if (ctrlOffs) {
-			file->seek(ctrlOffs, SEEK_SET);
-			int num_c = file->readByte();
+			stream.seek(ctrlOffs, SEEK_SET);
+			int num_c = stream.readByte();
 			FrameControl *tmp_f = new FrameControl[num_c];
 
 			for (int ii = 0; ii < num_c; ii++) {
-				tmp_f[ii].index = file->readUint16BE();
-				tmp_f[ii].delay = file->readUint16BE();
+				tmp_f[ii].index = stream.readUint16BE();
+				tmp_f[ii].delay = stream.readUint16BE();
 			}
 
 			tmp_n[i].wsaControl = (const FrameControl *)tmp_f;
@@ -954,8 +906,6 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 		}
 	}
 
-	delete file;
-
 	HofSeqData *loadTo = new HofSeqData;
 	assert(loadTo);
 
@@ -965,252 +915,196 @@ bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &
 	loadTo->numSeqn = numSeqN;
 
 	ptr = loadTo;
-
 	return true;
 }
 
-bool StaticResource::loadShapeAnimData_v1(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->readByte();
+bool StaticResource::loadShapeAnimData_v1(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.readByte();
 	ItemAnimData_v1 *loadTo = new ItemAnimData_v1[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
-		loadTo[i].itemIndex = file->readSint16BE();
-		loadTo[i].y = file->readUint16BE();
+		loadTo[i].itemIndex = stream.readSint16BE();
+		loadTo[i].y = stream.readUint16BE();
 		uint16 *tmp_f = new uint16[20];
 		for (int ii = 0; ii < 20; ii++)
-			tmp_f[ii] = file->readUint16BE();
+			tmp_f[ii] = stream.readUint16BE();
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete file;
 	ptr = loadTo;
-
 	return true;
 }
 
-bool StaticResource::loadShapeAnimData_v2(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->readByte();
+bool StaticResource::loadShapeAnimData_v2(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.readByte();
 	ItemAnimData_v2 *loadTo = new ItemAnimData_v2[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
-		loadTo[i].itemIndex = file->readSint16BE();
-		loadTo[i].numFrames = file->readByte();
+		loadTo[i].itemIndex = stream.readSint16BE();
+		loadTo[i].numFrames = stream.readByte();
 		FrameControl *tmp_f = new FrameControl[loadTo[i].numFrames];
 		for (int ii = 0; ii < loadTo[i].numFrames; ii++) {
-			tmp_f[ii].index = file->readUint16BE();
-			tmp_f[ii].delay = file->readUint16BE();
+			tmp_f[ii].index = stream.readUint16BE();
+			tmp_f[ii].delay = stream.readUint16BE();
 		}
 		loadTo[i].frames = tmp_f;
 	}
 
-	delete file;
 	ptr = loadTo;
 	return true;
 }
 
 #ifdef ENABLE_LOL
-bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() / 130;
+bool StaticResource::loadCharData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() / 130;
 	LoLCharacter *charData = new LoLCharacter[size];
 
 	for (int i = 0; i < size; i++) {
 		LoLCharacter *t = &charData[i];
 
-		t->flags = file->readUint16LE();
-		file->read(t->name, 11);
-		t->raceClassSex = file->readByte();
-		t->id = file->readSint16LE();
-		t->curFaceFrame = file->readByte();
-		t->defaultFaceFrame = file->readByte();
-		t->screamSfx = file->readByte();
-		file->readUint32LE();
+		t->flags = stream.readUint16LE();
+		stream.read(t->name, 11);
+		t->raceClassSex = stream.readByte();
+		t->id = stream.readSint16LE();
+		t->curFaceFrame = stream.readByte();
+		t->defaultFaceFrame = stream.readByte();
+		t->screamSfx = stream.readByte();
+		stream.readUint32LE();
 		for (int ii = 0; ii < 8; ii++)
-			t->itemsMight[ii] = file->readUint16LE();
+			t->itemsMight[ii] = stream.readUint16LE();
 		for (int ii = 0; ii < 8; ii++)
-			t->protectionAgainstItems[ii] = file->readUint16LE();
-		t->itemProtection = file->readUint16LE();
-		t->hitPointsCur = file->readSint16LE();
-		t->hitPointsMax = file->readUint16LE();
-		t->magicPointsCur = file->readSint16LE();
-		t->magicPointsMax = file->readUint16LE();
-		t->field_41 = file->readByte();
-		t->damageSuffered = file->readUint16LE();
-		t->weaponHit = file->readUint16LE();
-		t->totalMightModifier = file->readUint16LE();
-		t->totalProtectionModifier = file->readUint16LE();
-		t->might = file->readUint16LE();
-		t->protection = file->readUint16LE();
-		t->nextAnimUpdateCountdown = file->readSint16LE();
+			t->protectionAgainstItems[ii] = stream.readUint16LE();
+		t->itemProtection = stream.readUint16LE();
+		t->hitPointsCur = stream.readSint16LE();
+		t->hitPointsMax = stream.readUint16LE();
+		t->magicPointsCur = stream.readSint16LE();
+		t->magicPointsMax = stream.readUint16LE();
+		t->field_41 = stream.readByte();
+		t->damageSuffered = stream.readUint16LE();
+		t->weaponHit = stream.readUint16LE();
+		t->totalMightModifier = stream.readUint16LE();
+		t->totalProtectionModifier = stream.readUint16LE();
+		t->might = stream.readUint16LE();
+		t->protection = stream.readUint16LE();
+		t->nextAnimUpdateCountdown = stream.readSint16LE();
 		for (int ii = 0; ii < 11; ii++)
-			t->items[ii] = file->readUint16LE();
+			t->items[ii] = stream.readUint16LE();
 		for (int ii = 0; ii < 3; ii++)
-			t->skillLevels[ii] = file->readByte();
+			t->skillLevels[ii] = stream.readByte();
 		for (int ii = 0; ii < 3; ii++)
-			t->skillModifiers[ii] = file->readByte();
+			t->skillModifiers[ii] = stream.readByte();
 		for (int ii = 0; ii < 3; ii++)
-			t->experiencePts[ii] = file->readUint32LE();
+			t->experiencePts[ii] = stream.readUint32LE();
 		for (int ii = 0; ii < 5; ii++)
-			t->characterUpdateEvents[ii] = file->readByte();
+			t->characterUpdateEvents[ii] = stream.readByte();
 		for (int ii = 0; ii < 5; ii++)
-			t->characterUpdateDelay[ii] = file->readByte();
+			t->characterUpdateDelay[ii] = stream.readByte();
 	};
 
-	delete file;
 	ptr = charData;
 	return true;
 }
 
-bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() / 28;
+bool StaticResource::loadSpellData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() / 28;
 	SpellProperty *spellData = new SpellProperty[size];
 
 	for (int i = 0; i < size; i++) {
 		SpellProperty *t = &spellData[i];
 
-		t->spellNameCode = file->readUint16LE();
+		t->spellNameCode = stream.readUint16LE();
 		for (int ii = 0; ii < 4; ii++)
-			t->mpRequired[ii] = file->readUint16LE();
-		t->field_a = file->readUint16LE();
-		t->field_c = file->readUint16LE();
+			t->mpRequired[ii] = stream.readUint16LE();
+		t->field_a = stream.readUint16LE();
+		t->field_c = stream.readUint16LE();
 		for (int ii = 0; ii < 4; ii++)
-			t->hpRequired[ii] = file->readUint16LE();
-		t->field_16 = file->readUint16LE();
-		t->field_18 = file->readUint16LE();
-		t->flags = file->readUint16LE();
+			t->hpRequired[ii] = stream.readUint16LE();
+		t->field_16 = stream.readUint16LE();
+		t->field_18 = stream.readUint16LE();
+		t->flags = stream.readUint16LE();
 	};
 
-	delete file;
 	ptr = spellData;
 	return true;
 }
 
-bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() / 4;
+bool StaticResource::loadCompassData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() / 4;
 	CompassDef *defs = new CompassDef[size];
 
 	for (int i = 0; i < size; i++) {
 		CompassDef *t = &defs[i];
-		t->shapeIndex = file->readByte();
-		t->x = file->readByte();
-		t->y = file->readByte();
-		t->flags = file->readByte();
+		t->shapeIndex = stream.readByte();
+		t->x = stream.readByte();
+		t->y = stream.readByte();
+		t->flags = stream.readByte();
 	};
 
 
-	delete file;
 	ptr = defs;
 	return true;
 }
 
-bool StaticResource::loadFlyingObjectData(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() / 5;
+bool StaticResource::loadFlyingObjectData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() / 5;
 	FlyingObjectShape *defs = new FlyingObjectShape[size];
 
 	for (int i = 0; i < size; i++) {
 		FlyingObjectShape *t = &defs[i];
-		t->shapeFront = file->readByte();
-		t->shapeBack = file->readByte();
-		t->shapeLeft = file->readByte();
-		t->drawFlags = file->readByte();
-		t->flipFlags = file->readByte();
+		t->shapeFront = stream.readByte();
+		t->shapeBack = stream.readByte();
+		t->shapeLeft = stream.readByte();
+		t->drawFlags = stream.readByte();
+		t->flipFlags = stream.readByte();
 	};
 
-	delete file;
 	ptr = defs;
 	return true;
 }
 
-bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() >> 1;
+bool StaticResource::loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() >> 1;
 
 	uint16 *r = new uint16[size];
 
 	for (int i = 0; i < size; i++)
-		r[i] = file->readUint16BE();
+		r[i] = stream.readUint16BE();
 
-	delete file;
 	ptr = r;
 	return true;
 }
 
-bool StaticResource::loadRawDataBe32(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() >> 2;
+bool StaticResource::loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() >> 2;
 
 	uint32 *r = new uint32[size];
 
 	for (int i = 0; i < size; i++)
-		r[i] = file->readUint32BE();
+		r[i] = stream.readUint32BE();
 
-	delete file;
 	ptr = r;
 	return true;
 }
 
-bool StaticResource::loadButtonDefs(const char *filename, void *&ptr, int &size) {
-	Common::SeekableReadStream *file = getFile(filename);
-
-	if (!file)
-		return false;
-
-	size = file->size() / 18;
+bool StaticResource::loadButtonDefs(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	size = stream.size() / 18;
 
 	ButtonDef *r = new ButtonDef[size];
 
 	for (int i = 0; i < size; i++) {
-		r[i].buttonflags = file->readUint16BE();
-		r[i].keyCode = file->readUint16BE();
-		r[i].keyCode2 = file->readUint16BE();
-		r[i].x = file->readSint16BE();
-		r[i].y = file->readSint16BE();
-		r[i].w = file->readUint16BE();
-		r[i].h = file->readUint16BE();
-		r[i].index = file->readUint16BE();
-		r[i].screenDim = file->readUint16BE();
+		r[i].buttonflags = stream.readUint16BE();
+		r[i].keyCode = stream.readUint16BE();
+		r[i].keyCode2 = stream.readUint16BE();
+		r[i].x = stream.readSint16BE();
+		r[i].y = stream.readSint16BE();
+		r[i].w = stream.readUint16BE();
+		r[i].h = stream.readUint16BE();
+		r[i].index = stream.readUint16BE();
+		r[i].screenDim = stream.readUint16BE();
 	}
 
-	delete file;
 	ptr = r;
 	return true;
 }

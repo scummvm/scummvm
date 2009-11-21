@@ -102,6 +102,239 @@ protected:
 enum KyraResources {
 	kLoadAll = -1,
 
+	// This list has to match orderwise (and thus value wise) the static data list of "tools/create_kyradat/create_kyradat.h"!
+	k1ForestSeq,
+	k1KallakWritingSeq,
+	k1KyrandiaLogoSeq,
+	k1KallakMalcolmSeq,
+	k1MalcolmTreeSeq,
+	k1WestwoodLogoSeq,
+
+	k1Demo1Seq,
+	k1Demo2Seq,
+	k1Demo3Seq,
+	k1Demo4Seq,
+
+	k1AmuleteAnimSeq,
+
+	k1OutroReunionSeq,
+
+	k1IntroCPSStrings,
+	k1IntroCOLStrings,
+	k1IntroWSAStrings,
+	k1IntroStrings,
+
+	k1OutroHomeString,
+
+	k1RoomFilenames,
+	k1RoomList,
+
+	k1CharacterImageFilenames,
+
+	k1ItemNames,
+	k1TakenStrings,
+	k1PlacedStrings,
+	k1DroppedStrings,
+	k1NoDropStrings,
+
+	k1PutDownString,
+	k1WaitAmuletString,
+	k1BlackJewelString,
+	k1PoisonGoneString,
+	k1HealingTipString,
+	k1WispJewelStrings,
+	k1MagicJewelStrings,
+
+	k1ThePoisonStrings,
+	k1FluteStrings,
+
+	k1FlaskFullString,
+	k1FullFlaskString,
+
+	k1VeryCleverString,
+	k1NewGameString,
+
+	k1DefaultShapes,
+	k1Healing1Shapes,
+	k1Healing2Shapes,
+	k1PoisonDeathShapes,
+	k1FluteShapes,
+	k1Winter1Shapes,
+	k1Winter2Shapes,
+	k1Winter3Shapes,
+	k1DrinkShapes,
+	k1WispShapes,
+	k1MagicAnimShapes,
+	k1BranStoneShapes,
+
+	k1SpecialPalette1,
+	k1SpecialPalette2,
+	k1SpecialPalette3,
+	k1SpecialPalette4,
+	k1SpecialPalette5,
+	k1SpecialPalette6,
+	k1SpecialPalette7,
+	k1SpecialPalette8,
+	k1SpecialPalette9,
+	k1SpecialPalette10,
+	k1SpecialPalette11,
+	k1SpecialPalette12,
+	k1SpecialPalette13,
+	k1SpecialPalette14,
+	k1SpecialPalette15,
+	k1SpecialPalette16,
+	k1SpecialPalette17,
+	k1SpecialPalette18,
+	k1SpecialPalette19,
+	k1SpecialPalette20,
+	k1SpecialPalette21,
+	k1SpecialPalette22,
+	k1SpecialPalette23,
+	k1SpecialPalette24,
+	k1SpecialPalette25,
+	k1SpecialPalette26,
+	k1SpecialPalette27,
+	k1SpecialPalette28,
+	k1SpecialPalette29,
+	k1SpecialPalette30,
+	k1SpecialPalette31,
+	k1SpecialPalette32,
+	k1SpecialPalette33,
+
+	k1GUIStrings,
+	k1ConfigStrings,
+
+	k1AudioTracks,
+	k1AudioTracksIntro,
+
+	k1CreditsStrings,
+
+	k1TownsSFXwdTable,
+	k1TownsSFXbtTable,
+	k1TownsCDATable,
+
+	k1PC98StoryStrings,
+	k1PC98IntroSfx,
+
+	k1AmigaIntroSFXTable,
+	k1AmigaGameSFXTable,
+
+	k2SeqplayPakFiles,
+	k2SeqplayCredits,
+	k2SeqplayCreditsSpecial,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplayTlkFiles,
+	k2SeqplaySeqData,
+	k2SeqplayIntroTracks,
+	k2SeqplayFinaleTracks,
+	k2SeqplayIntroCDA,
+	k2SeqplayFinaleCDA,
+	k2SeqplayShapeAnimData,
+
+	k2IngamePakFiles,
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
+	k2IngameTracks,
+	k2IngameCDA,
+	k2IngameTalkObjIndex,
+	k2IngameTimJpStrings,
+	k2IngameShapeAnimData,
+	k2IngameTlkDemoStrings,
+
+	k3MainMenuStrings,
+	k3MusicFiles,
+	k3ScoreTable,
+	k3SfxFiles,
+	k3SfxMap,
+	k3ItemAnimData,
+	k3ItemMagicTable,
+	k3ItemStringMap,
+
+#ifdef ENABLE_LOL
+	kLolIngamePakFiles,
+	kLolCharacterDefs,
+	kLolIngameSfxFiles,
+	kLolIngameSfxIndex,
+	kLolMusicTrackMap,
+	kLolIngameGMSfxIndex,
+	kLolIngameMT32SfxIndex,
+	kLolIngamePcSpkSfxIndex,
+	kLolSpellProperties,
+	kLolGameShapeMap,
+	kLolSceneItemOffs,
+	kLolCharInvIndex,
+	kLolCharInvDefs,
+	kLolCharDefsMan,
+	kLolCharDefsWoman,
+	kLolCharDefsKieran,
+	kLolCharDefsAkshel,
+	kLolExpRequirements,
+	kLolMonsterModifiers,
+	kLolMonsterShiftOffsets,
+	kLolMonsterDirFlags,
+	kLolMonsterScaleY,
+	kLolMonsterScaleX,
+	kLolMonsterScaleWH,
+	kLolFlyingObjectShp,
+	kLolInventoryDesc,
+
+	kLolLevelShpList,
+	kLolLevelDatList,
+	kLolCompassDefs,
+	kLolItemPrices,
+	kLolStashSetup,
+
+	kLolDscUnk1,
+	kLolDscShapeIndex,
+	kLolDscOvlMap,
+	kLolDscScaleWidthData,
+	kLolDscScaleHeightData,
+	kLolDscX,
+	kLolDscY,
+	kLolDscTileIndex,
+	kLolDscUnk2,
+	kLolDscDoorShapeIndex,
+	kLolDscDimData1,
+	kLolDscDimData2,
+	kLolDscBlockMap,
+	kLolDscDimMap,
+	kLolDscDoor1,
+	kLolDscDoorScale,
+	kLolDscDoor4,
+	kLolDscDoorX,
+	kLolDscDoorY,
+	kLolDscOvlIndex,
+	kLolDscBlockIndex,
+
+	kLolScrollXTop,
+	kLolScrollYTop,
+	kLolScrollXBottom,
+	kLolScrollYBottom,
+
+	kLolButtonDefs,
+	kLolButtonList1,
+	kLolButtonList2,
+	kLolButtonList3,
+	kLolButtonList4,
+	kLolButtonList5,
+	kLolButtonList6,
+	kLolButtonList7,
+	kLolButtonList8,
+
+	kLolLegendData,
+	kLolMapCursorOvl,
+	kLolMapStringId,
+
+	kLolSpellbookAnim,
+	kLolSpellbookCoords,
+	kLolHealShapeFrames,
+	kLolLightningDefs,
+	kLolFireballCoords,
+
+	kLolCredits,
+
+	kLolHistory,
 	k1ForestSeq,
 	k1KallakWritingSeq,
 	k1KyrandiaLogoSeq,
@@ -347,7 +580,7 @@ class StaticResource {
 public:
 	static const Common::String staticDataFilename() { return "KYRA.DAT"; }
 
-	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
+	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _dataTable(0) {}
 	~StaticResource() { deinit(); }
 
 	bool loadStaticResourceFile();
@@ -390,27 +623,25 @@ private:
 
 	bool checkResList(int id, int &type, const void *&ptr, int &size);
 	const void *checkForBuiltin(int id, int &type, int &size);
-	const FilenameTable *searchFile(int id);
 	const FileType *getFiletype(int type);
 	const void *getData(int id, int requesttype, int &size);
 
-	bool loadLanguageTable(const char *filename, void *&ptr, int &size);
-	bool loadStringTable(const char *filename, void *&ptr, int &size);
-	bool loadRawData(const char *filename, void *&ptr, int &size);
-	bool loadShapeTable(const char *filename, void *&ptr, int &size);
-	bool loadAmigaSfxTable(const char *filename, void *&ptr, int &size);
-	bool loadRoomTable(const char *filename, void *&ptr, int &size);
-	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
-	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
-	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
+	bool loadStringTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadRawData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadShapeTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadAmigaSfxTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadRoomTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadHofSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadShapeAnimData_v1(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadShapeAnimData_v2(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #ifdef ENABLE_LOL
-	bool loadCharData(const char *filename, void *&ptr, int &size);
-	bool loadSpellData(const char *filename, void *&ptr, int &size);
-	bool loadCompassData(const char *filename, void *&ptr, int &size);
-	bool loadFlyingObjectData(const char *filename, void *&ptr, int &size);
-	bool loadRawDataBe16(const char *filename, void *&ptr, int &size);
-	bool loadRawDataBe32(const char *filename, void *&ptr, int &size);
-	bool loadButtonDefs(const char *filename, void *&ptr, int &size);
+	bool loadCharData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadSpellData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadCompassData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadFlyingObjectData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadRawDataBe32(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadButtonDefs(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #endif // ENABLE_LOL
 
 	void freeRawData(void *&ptr, int &size);
@@ -435,24 +666,23 @@ private:
 	Common::SeekableReadStream *getFile(const char *name);
 
 	enum ResTypes {
-		kLanguageList,
-		kStringList,
-		kRoomList,
-		kShapeList,
-		kRawData,
-		kAmigaSfxTable,
+		kStringList = 0,
+		kRawData = 1,
+		kRoomList = 2,
+		kShapeList = 3,
+		kAmigaSfxTable = 4,
 
-		k2SeqData,
-		k2ShpAnimDataV1,
-		k2ShpAnimDataV2,
+		k2SeqData = 5,
+		k2ShpAnimDataV1 = 6,
+		k2ShpAnimDataV2 = 7,
 
-		kLolCharData,
-		kLolSpellData,
-		kLolCompassData,
-		kLolFlightShpData,
-		kLolRawDataBe16,
-		kLolRawDataBe32,
-		kLolButtonData
+		kLolCharData = 8,
+		kLolSpellData = 9,
+		kLolCompassData = 10,
+		kLolFlightShpData = 11,
+		kLolButtonData = 12,
+		kLolRawDataBe16 = 13,
+		kLolRawDataBe32 = 14
 	};
 
 	struct BuiltinRes {
@@ -462,15 +692,9 @@ private:
 		const void *data;
 	};
 
-	struct FilenameTable {
-		int id;
-		int type;
-		const char *filename;
-	};
-
 	struct FileType {
 		int type;
-		typedef bool (StaticResource::*LoadFunc)(const char *filename, void *&ptr, int &size);
+		typedef bool (StaticResource::*LoadFunc)(Common::SeekableReadStream &stream, void *&ptr, int &size);
 		typedef void (StaticResource::*FreeFunc)(void *&ptr, int &size);
 
 		LoadFunc load;
@@ -488,7 +712,7 @@ private:
 
 	const FileType *_fileLoader;
 	const BuiltinRes *_builtIn;
-	const FilenameTable *_filenameTable;
+	const int *_dataTable;
 };
 
 } // End of namespace Kyra

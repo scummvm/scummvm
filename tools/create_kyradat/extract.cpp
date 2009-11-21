@@ -23,12 +23,9 @@
 
 #include "extract.h"
 
+#include <algorithm>
+
 namespace {
-
-// Filename creation
-
-void createFilename(char *dstFilename, const ExtractInformation *info, const char *filename);
-void createLangFilename(char *dstFilename, const ExtractInformation *info, const char *filename);
 
 // Extraction function prototypes 
 
@@ -55,82 +52,62 @@ bool extractLolButtonDefs(PAKFile &out, const ExtractInformation *info, const by
 // Extraction type table
 
 const ExtractType extractTypeTable[] = {
-	{ kTypeLanguageList, extractStrings, createLangFilename },
-	{ kTypeStringList, extractStrings, createFilename },
-	{ kTypeRoomList, extractRooms, createFilename },
-	{ kTypeShapeList, extractShapes, createFilename },
-	{ kTypeRawData, extractRaw, createFilename },
-	{ kTypeAmigaSfxTable, extractAmigaSfx, createFilename },
-	{ kTypeTownsWDSfxTable, extractWdSfx, createFilename },
+	{ kTypeStringList, extractStrings },
+	{ kTypeRoomList, extractRooms },
+	{ kTypeShapeList, extractShapes },
+	{ kTypeRawData, extractRaw },
+	{ kTypeAmigaSfxTable, extractAmigaSfx },
+	{ kTypeTownsWDSfxTable, extractWdSfx },
 
-	{ k2TypeSeqData, extractHofSeqData, createFilename },
-	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
-	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
-	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
-	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },
-	{ k2TypeSize10StringList, extractStrings10, createFilename },
-	{ k2TypeSfxList, extractPaddedStrings, createFilename },
-	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
-	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
+	{ k2TypeSeqData, extractHofSeqData },
+	{ k2TypeShpDataV1, extractHofShapeAnimDataV1 },
+	{ k2TypeShpDataV2, extractHofShapeAnimDataV2 },
+	{ k2TypeSoundList, extractStringsWoSuffix },
+	{ k2TypeLangSoundList, extractStringsWoSuffix },
+	{ k2TypeSize10StringList, extractStrings10 },
+	{ k2TypeSfxList, extractPaddedStrings },
+	{ k3TypeRaw16to8, extractRaw16to8 },
+	{ k3TypeShpData, extractMrShapeAnimData },
 
-	{ kLolTypeRaw16, extractRaw16, createFilename },
-	{ kLolTypeRaw32, extractRaw32, createFilename },
-	{ kLolTypeButtonDef, extractLolButtonDefs, createFilename },
+	{ kLolTypeCharData, extractRaw },
+	{ kLolTypeSpellData, extractRaw },
+	{ kLolTypeCompassData, extractRaw16to8 },
+	{ kLolTypeFlightShpData, extractRaw16to8 },
+	{ kLolTypeRaw16, extractRaw16 },
+	{ kLolTypeRaw32, extractRaw32 },
+	{ kLolTypeButtonDef, extractLolButtonDefs },
 
-	{ -1, 0, 0}
+	{ -1, 0 }
 };
 
-void createFilename(char *dstFilename, const ExtractInformation *info, const char *filename) {
-	strcpy(dstFilename, filename);
-
-	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
-	strcat(dstFilename, gidExtensions[info->game]);
-
-	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
-		if (specialE->special == info->special) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, specialE->ext);
-			break;
-		}
-	}
-
-	for (const PlatformExtension *platformE = platformTable; platformE->platform != -1; ++platformE) {
-		if (platformE->platform == info->platform) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, platformE->ext);
-		}
-	}
-}
-
-void createLangFilename(char *dstFilename, const ExtractInformation *info, const char *filename) {
-	strcpy(dstFilename, filename);
-
-	for (const Language *langE = languageTable; langE->lang != -1; ++langE) {
-		if (langE->lang == info->lang) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, langE->ext);
-			break;
-		}
-	}
-
-	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
-	strcat(dstFilename, gidExtensions[info->game]);
-
-	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
-		if (specialE->special == info->special) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, specialE->ext);
-			break;
-		}
-	}
-
-	for (const PlatformExtension *platformE = platformTable; platformE->platform != -1; ++platformE) {
-		if (platformE->platform == info->platform) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, platformE->ext);
-		}
-	}
-}
+// TODO: Clean up the mess of data types we have... it seems some special types
+// we have (even in the main KYRA code, is just raw data access, but used specially
+// to have a nice wrapper from inside StaticResource...).
+const TypeTable typeTable[] = {
+	{ kTypeStringList, 0 },
+	{ kTypeRawData, 1 },
+	{ kTypeRoomList, 2 },
+	{ kTypeShapeList, 3 },
+	{ kTypeAmigaSfxTable, 4 },
+	{ kTypeTownsWDSfxTable, 1 },
+	{ k2TypeSeqData, 5 },
+	{ k2TypeShpDataV1, 6 },
+	{ k2TypeShpDataV2, 7 },
+	{ k2TypeSoundList, 0 },
+	{ k2TypeLangSoundList, 0 },
+	{ k2TypeSize10StringList, 0 },
+	{ k2TypeSfxList, 0 },
+	{ k3TypeRaw16to8, 1 },
+	{ k3TypeShpData, 7 },
+	{ kLolTypeRaw16, 15 },
+	{ kLolTypeRaw32, 16 },
+	{ kLolTypeButtonDef, 14 },
+	{ kLolTypeCharData, 10 },
+	{ kLolTypeSpellData, 11 },
+	{ kLolTypeCompassData, 12 },
+	{ kLolTypeFlightShpData, 13 },
+	{ -1, 0 }
+};
 
 } // end of anonymous namespace
 
@@ -144,15 +121,9 @@ const ExtractType *findExtractType(const int type) {
 	return 0;
 }
 
-// TODO: Get rid of this....
-bool isLangSpecific(const int type) {
-	const ExtractType *ext = findExtractType(type);
-	if (!ext)
-		return false;
-
-	return (ext->createFilename == createLangFilename);
+byte getTypeID(int type) {
+	return std::find(typeTable, typeTable + ARRAYSIZE(typeTable), type)->value;
 }
-
 // Extractor implementation
 
 namespace {
@@ -179,6 +150,10 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 	} else if (info->platform == kPlatformPC) {
 		if (id == k2IngamePakFiles)
 			fmtPatch = 4;
+
+		// HACK
+		if (id == k2SeqplayIntroTracks && info->game == kLol)
+			return extractStringsWoSuffix(out, info, data, size, filename, id);
 	}
 
 	uint32 entries = 0;
@@ -332,6 +307,10 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 }
 
 bool extractStrings10(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	// HACK...
+	if (info->platform == kPlatformFMTowns && id == k2IngameSfxFiles)
+		return extractStringsWoSuffix(out, info, data, size, filename, id);
+
 	const int strSize = 10;
 	uint32 entries = (size + (strSize - 1)) / strSize;
 

@@ -28,8 +28,7 @@
 #include "util.h"
 
 enum kExtractType {
-	kTypeLanguageList = 0,
-	kTypeStringList,
+	kTypeStringList = 0,
 	kTypeRoomList,
 	kTypeShapeList,
 	kTypeRawData,
@@ -49,7 +48,11 @@ enum kExtractType {
 
 	kLolTypeRaw16,
 	kLolTypeRaw32,
-	kLolTypeButtonDef
+	kLolTypeButtonDef,
+	kLolTypeCharData,
+	kLolTypeSpellData,
+	kLolTypeCompassData,
+	kLolTypeFlightShpData
 };
 
 struct ExtractInformation {
@@ -62,11 +65,10 @@ struct ExtractInformation {
 struct ExtractType {
 	int type;
 	bool (*extract)(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
-	void (*createFilename)(char *dstFilename, const ExtractInformation *info, const char *filename);
 };
 
 const ExtractType *findExtractType(const int type);
-bool isLangSpecific(const int type);
+byte getTypeID(int type);
 
 #endif
 
