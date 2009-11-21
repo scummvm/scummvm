@@ -715,199 +715,199 @@ const ExtractEntrySearchData kBranStoneShapesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList1Provider[] = {
+const ExtractEntrySearchData kSpecialPalette1Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x0000024B, { { 0x6C, 0x6C, 0xE9, 0xB6, 0xC4, 0xC2, 0x29, 0xA5, 0xB6, 0xB3, 0x82, 0xB6, 0x03, 0x5B, 0x66, 0x7A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList2Provider[] = {
+const ExtractEntrySearchData kSpecialPalette2Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x00000470, { { 0x63, 0x02, 0x97, 0x7D, 0xBE, 0x97, 0x5E, 0x88, 0x2E, 0x50, 0x18, 0x6A, 0x4A, 0x61, 0x09, 0xA6 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList3Provider[] = {
+const ExtractEntrySearchData kSpecialPalette3Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x0000042A, { { 0xF8, 0x32, 0x65, 0x55, 0x1C, 0xC5, 0x6E, 0x71, 0xC6, 0x6A, 0x8E, 0xC5, 0x3C, 0xBC, 0x1F, 0xA8 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList4Provider[] = {
+const ExtractEntrySearchData kSpecialPalette4Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x000003A4, { { 0xA1, 0xA6, 0x6F, 0x53, 0xA2, 0x1E, 0x27, 0x6F, 0x0D, 0xD0, 0x4F, 0xDC, 0x4C, 0xDC, 0xAE, 0x17 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList5Provider[] = {
+const ExtractEntrySearchData kSpecialPalette5Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x0000033D, { { 0x22, 0x02, 0xB3, 0xCD, 0x4E, 0xD5, 0x6E, 0x65, 0x2B, 0x38, 0x7D, 0x3E, 0x27, 0x03, 0x1A, 0x59 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList6Provider[] = {
+const ExtractEntrySearchData kSpecialPalette6Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x000001EA, { { 0xC7, 0xA7, 0x0E, 0xBA, 0x3F, 0x5E, 0xD3, 0x02, 0x99, 0x3B, 0x32, 0x00, 0x39, 0x3C, 0xD2, 0xAC } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList7Provider[] = {
+const ExtractEntrySearchData kSpecialPalette7Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000036, 0x0000040C, { { 0x1A, 0x8E, 0x3E, 0x5F, 0x09, 0xFE, 0x4A, 0xF1, 0x5D, 0x2E, 0x2C, 0xD3, 0xFF, 0x75, 0x7D, 0x1C } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList8Provider[] = {
+const ExtractEntrySearchData kSpecialPalette8Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000036, 0x000008E4, { { 0x55, 0xB4, 0xD3, 0xD1, 0x89, 0x49, 0xA5, 0x7E, 0x40, 0xF9, 0xFE, 0x6E, 0x16, 0xE8, 0xBD, 0xBB } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList9Provider[] = {
+const ExtractEntrySearchData kSpecialPalette9Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x000001DB, { { 0x7A, 0x04, 0x16, 0xDD, 0x6A, 0xBA, 0x51, 0x9E, 0x24, 0x9E, 0xEA, 0x76, 0xD0, 0xFA, 0x92, 0xF4 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList10Provider[] = {
+const ExtractEntrySearchData kSpecialPalette10Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x0000017A, { { 0xD2, 0x20, 0x1F, 0x12, 0xE1, 0x65, 0x68, 0xA7, 0x9C, 0x69, 0x8E, 0x99, 0xDF, 0xC5, 0xD2, 0x8E } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList11Provider[] = {
+const ExtractEntrySearchData kSpecialPalette11Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x00000136, { { 0xBF, 0x38, 0xB1, 0xFE, 0xBF, 0x25, 0xBC, 0xD3, 0xCC, 0x60, 0x40, 0x97, 0xB6, 0x4A, 0xC7, 0xB2 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList12Provider[] = {
+const ExtractEntrySearchData kSpecialPalette12Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x00000102, { { 0x1C, 0x1E, 0x6A, 0x30, 0xE1, 0xD1, 0xF9, 0x3D, 0x9A, 0xF1, 0x84, 0xBD, 0x44, 0x07, 0x51, 0xEA } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList13Provider[] = {
+const ExtractEntrySearchData kSpecialPalette13Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x00000000, { { 0x76, 0x22, 0x21, 0x4B, 0x85, 0x36, 0xAF, 0xE7, 0xB8, 0x9B, 0x1C, 0x66, 0x06, 0x06, 0x9B, 0x0D } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList14Provider[] = {
+const ExtractEntrySearchData kSpecialPalette14Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x000003BF, { { 0x78, 0xE8, 0xA8, 0xF2, 0x4D, 0x54, 0x48, 0x47, 0xC9, 0xC1, 0x5B, 0x6C, 0x69, 0xCB, 0x65, 0xB6 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList15Provider[] = {
+const ExtractEntrySearchData kSpecialPalette15Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x000002DD, { { 0x9F, 0x66, 0x50, 0xAC, 0xED, 0x0C, 0x63, 0x20, 0xE9, 0x4E, 0x4D, 0x3D, 0xC4, 0xBC, 0x94, 0x8A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList16Provider[] = {
+const ExtractEntrySearchData kSpecialPalette16Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x0000036E, { { 0xA9, 0xDB, 0x1C, 0x35, 0xED, 0xED, 0xE4, 0x40, 0x68, 0x29, 0xB1, 0x6E, 0x60, 0xE4, 0xB0, 0xDB } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList17Provider[] = {
+const ExtractEntrySearchData kSpecialPalette17Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x000004D7, { { 0xC0, 0xB5, 0x7B, 0x94, 0xED, 0xD7, 0x48, 0x66, 0x37, 0x54, 0xE8, 0xFC, 0x0F, 0xA5, 0x54, 0x8A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList18Provider[] = {
+const ExtractEntrySearchData kSpecialPalette18Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x000002FD, { { 0x0A, 0xDD, 0x81, 0xA8, 0x89, 0xD2, 0x53, 0x05, 0x25, 0xCC, 0x2B, 0x8B, 0x48, 0x1D, 0xAB, 0x0A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList19Provider[] = {
+const ExtractEntrySearchData kSpecialPalette19Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000134, { { 0xCB, 0x0F, 0xA9, 0xD2, 0xD8, 0xEA, 0x2A, 0x1F, 0x16, 0x7B, 0x90, 0xE5, 0x72, 0xB3, 0x52, 0x50 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList20Provider[] = {
+const ExtractEntrySearchData kSpecialPalette20Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000396, { { 0x3B, 0xD8, 0xA5, 0xC5, 0x66, 0x3E, 0xC7, 0x88, 0xD0, 0x3B, 0x42, 0x29, 0x84, 0x58, 0xA7, 0x00 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList21Provider[] = {
+const ExtractEntrySearchData kSpecialPalette21Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000134, { { 0x96, 0x70, 0x7D, 0x5B, 0xC4, 0xBA, 0x89, 0x89, 0xC9, 0x42, 0xF4, 0x70, 0x33, 0xF5, 0xE8, 0x02 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList22Provider[] = {
+const ExtractEntrySearchData kSpecialPalette22Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000376, { { 0xA2, 0x92, 0x28, 0x65, 0xAB, 0xCC, 0x16, 0xE8, 0xA5, 0x72, 0x2F, 0x00, 0x66, 0x8F, 0x8D, 0x96 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList23Provider[] = {
+const ExtractEntrySearchData kSpecialPalette23Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x000002C2, { { 0x5C, 0x78, 0x74, 0x81, 0x76, 0xB5, 0x26, 0x8E, 0x20, 0xAE, 0x50, 0xCD, 0x2B, 0x9E, 0x81, 0x8B } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList24Provider[] = {
+const ExtractEntrySearchData kSpecialPalette24Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x00000472, { { 0xC6, 0xF0, 0xA6, 0x33, 0x7E, 0xAE, 0xBC, 0xF9, 0xAE, 0xE2, 0xF4, 0x7B, 0x71, 0x44, 0x50, 0xEF } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList25Provider[] = {
+const ExtractEntrySearchData kSpecialPalette25Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x000004CD, { { 0x57, 0x03, 0xB5, 0x27, 0x64, 0x48, 0xBF, 0x6A, 0x0F, 0xC2, 0xC0, 0x4A, 0x73, 0x9A, 0xFE, 0xB3 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList26Provider[] = {
+const ExtractEntrySearchData kSpecialPalette26Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x000004CA, { { 0xF8, 0x39, 0x8D, 0x6F, 0x8D, 0x9C, 0x6E, 0x0A, 0x33, 0xE8, 0xF2, 0xA6, 0xF6, 0x40, 0x70, 0xE5 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList27Provider[] = {
+const ExtractEntrySearchData kSpecialPalette27Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x000004D9, { { 0xF6, 0xD4, 0x88, 0x57, 0x6F, 0x1A, 0xA3, 0x1F, 0x6B, 0x17, 0x4D, 0xA0, 0x9E, 0xD8, 0x09, 0x66 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList28Provider[] = {
+const ExtractEntrySearchData kSpecialPalette28Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x0000051D, { { 0x59, 0x02, 0xE3, 0xC6, 0x28, 0xF6, 0xBC, 0xD4, 0xC8, 0x7E, 0x58, 0x6F, 0xE4, 0xA2, 0x28, 0x4F } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList29Provider[] = {
+const ExtractEntrySearchData kSpecialPalette29Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x00000534, { { 0xC2, 0x26, 0x94, 0x47, 0x28, 0x11, 0xAA, 0xE6, 0x10, 0xA2, 0xD4, 0xD9, 0x61, 0x57, 0x62, 0x22 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList30Provider[] = {
+const ExtractEntrySearchData kSpecialPalette30Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x00000453, { { 0xE1, 0x30, 0xC2, 0xCD, 0x79, 0xD8, 0x36, 0x8D, 0xAC, 0xF7, 0x87, 0x05, 0x49, 0xD7, 0x7A, 0x5F } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList31Provider[] = {
+const ExtractEntrySearchData kSpecialPalette31Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000027, 0x000002FB, { { 0xA6, 0x65, 0xE1, 0xE1, 0xCC, 0x71, 0x83, 0x63, 0x9A, 0x04, 0xE2, 0x00, 0xBF, 0x90, 0xDF, 0x95 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList32Provider[] = {
+const ExtractEntrySearchData kSpecialPalette32Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000027, 0x0000016C, { { 0xAA, 0x88, 0x97, 0xE3, 0xCA, 0x06, 0x11, 0x07, 0x8F, 0xFA, 0x75, 0x26, 0xA8, 0x7A, 0x49, 0x28 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPaletteList33Provider[] = {
+const ExtractEntrySearchData kSpecialPalette33Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x0000094C, { { 0x2E, 0x5E, 0x34, 0x3E, 0x99, 0x61, 0x6F, 0x88, 0x91, 0xA7, 0x75, 0xAA, 0x42, 0x4B, 0x1F, 0x5D } } } },
 
 	EXTRACT_END_ENTRY
@@ -1781,39 +1781,39 @@ const ExtractEntry extractProviders[] = {
 	{ kWispShapes, kWispShapesProvider },
 	{ kMagicAnimShapes, kMagicAnimShapesProvider },
 	{ kBranStoneShapes, kBranStoneShapesProvider },
-	{ kPaletteList1, kPaletteList1Provider },
-	{ kPaletteList2, kPaletteList2Provider },
-	{ kPaletteList3, kPaletteList3Provider },
-	{ kPaletteList4, kPaletteList4Provider },
-	{ kPaletteList5, kPaletteList5Provider },
-	{ kPaletteList6, kPaletteList6Provider },
-	{ kPaletteList7, kPaletteList7Provider },
-	{ kPaletteList8, kPaletteList8Provider },
-	{ kPaletteList9, kPaletteList9Provider },
-	{ kPaletteList10, kPaletteList10Provider },
-	{ kPaletteList11, kPaletteList11Provider },
-	{ kPaletteList12, kPaletteList12Provider },
-	{ kPaletteList13, kPaletteList13Provider },
-	{ kPaletteList14, kPaletteList14Provider },
-	{ kPaletteList15, kPaletteList15Provider },
-	{ kPaletteList16, kPaletteList16Provider },
-	{ kPaletteList17, kPaletteList17Provider },
-	{ kPaletteList18, kPaletteList18Provider },
-	{ kPaletteList19, kPaletteList19Provider },
-	{ kPaletteList20, kPaletteList20Provider },
-	{ kPaletteList21, kPaletteList21Provider },
-	{ kPaletteList22, kPaletteList22Provider },
-	{ kPaletteList23, kPaletteList23Provider },
-	{ kPaletteList24, kPaletteList24Provider },
-	{ kPaletteList25, kPaletteList25Provider },
-	{ kPaletteList26, kPaletteList26Provider },
-	{ kPaletteList27, kPaletteList27Provider },
-	{ kPaletteList28, kPaletteList28Provider },
-	{ kPaletteList29, kPaletteList29Provider },
-	{ kPaletteList30, kPaletteList30Provider },
-	{ kPaletteList31, kPaletteList31Provider },
-	{ kPaletteList32, kPaletteList32Provider },
-	{ kPaletteList33, kPaletteList33Provider },
+	{ kSpecialPalette1, kSpecialPalette1Provider },
+	{ kSpecialPalette2, kSpecialPalette2Provider },
+	{ kSpecialPalette3, kSpecialPalette3Provider },
+	{ kSpecialPalette4, kSpecialPalette4Provider },
+	{ kSpecialPalette5, kSpecialPalette5Provider },
+	{ kSpecialPalette6, kSpecialPalette6Provider },
+	{ kSpecialPalette7, kSpecialPalette7Provider },
+	{ kSpecialPalette8, kSpecialPalette8Provider },
+	{ kSpecialPalette9, kSpecialPalette9Provider },
+	{ kSpecialPalette10, kSpecialPalette10Provider },
+	{ kSpecialPalette11, kSpecialPalette11Provider },
+	{ kSpecialPalette12, kSpecialPalette12Provider },
+	{ kSpecialPalette13, kSpecialPalette13Provider },
+	{ kSpecialPalette14, kSpecialPalette14Provider },
+	{ kSpecialPalette15, kSpecialPalette15Provider },
+	{ kSpecialPalette16, kSpecialPalette16Provider },
+	{ kSpecialPalette17, kSpecialPalette17Provider },
+	{ kSpecialPalette18, kSpecialPalette18Provider },
+	{ kSpecialPalette19, kSpecialPalette19Provider },
+	{ kSpecialPalette20, kSpecialPalette20Provider },
+	{ kSpecialPalette21, kSpecialPalette21Provider },
+	{ kSpecialPalette22, kSpecialPalette22Provider },
+	{ kSpecialPalette23, kSpecialPalette23Provider },
+	{ kSpecialPalette24, kSpecialPalette24Provider },
+	{ kSpecialPalette25, kSpecialPalette25Provider },
+	{ kSpecialPalette26, kSpecialPalette26Provider },
+	{ kSpecialPalette27, kSpecialPalette27Provider },
+	{ kSpecialPalette28, kSpecialPalette28Provider },
+	{ kSpecialPalette29, kSpecialPalette29Provider },
+	{ kSpecialPalette30, kSpecialPalette30Provider },
+	{ kSpecialPalette31, kSpecialPalette31Provider },
+	{ kSpecialPalette32, kSpecialPalette32Provider },
+	{ kSpecialPalette33, kSpecialPalette33Provider },
 	{ kGUIStrings, kGUIStringsProvider },
 	{ kConfigStrings, kConfigStringsProvider },
 	{ kTOWNSSfxWDTable, kTOWNSSfxWDTableProvider },

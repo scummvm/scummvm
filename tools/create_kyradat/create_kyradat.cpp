@@ -119,39 +119,39 @@ const ExtractFilename extractFilenames[] = {
 	{ kAmuleteAnimSeq, kTypeRawData, "AMULETEANIM.SEQ" },
 
 	// PALETTE table
-	{ kPaletteList1, kTypeRawData, "PALTABLE1.PAL" },
-	{ kPaletteList2, kTypeRawData, "PALTABLE2.PAL" },
-	{ kPaletteList3, kTypeRawData, "PALTABLE3.PAL" },
-	{ kPaletteList4, kTypeRawData, "PALTABLE4.PAL" },
-	{ kPaletteList5, kTypeRawData, "PALTABLE5.PAL" },
-	{ kPaletteList6, kTypeRawData, "PALTABLE6.PAL" },
-	{ kPaletteList7, kTypeRawData, "PALTABLE7.PAL" },
-	{ kPaletteList8, kTypeRawData, "PALTABLE8.PAL" },
-	{ kPaletteList9, kTypeRawData, "PALTABLE9.PAL" },
-	{ kPaletteList10, kTypeRawData, "PALTABLE10.PAL" },
-	{ kPaletteList11, kTypeRawData, "PALTABLE11.PAL" },
-	{ kPaletteList12, kTypeRawData, "PALTABLE12.PAL" },
-	{ kPaletteList13, kTypeRawData, "PALTABLE13.PAL" },
-	{ kPaletteList14, kTypeRawData, "PALTABLE14.PAL" },
-	{ kPaletteList15, kTypeRawData, "PALTABLE15.PAL" },
-	{ kPaletteList16, kTypeRawData, "PALTABLE16.PAL" },
-	{ kPaletteList17, kTypeRawData, "PALTABLE17.PAL" },
-	{ kPaletteList18, kTypeRawData, "PALTABLE18.PAL" },
-	{ kPaletteList19, kTypeRawData, "PALTABLE19.PAL" },
-	{ kPaletteList20, kTypeRawData, "PALTABLE20.PAL" },
-	{ kPaletteList21, kTypeRawData, "PALTABLE21.PAL" },
-	{ kPaletteList22, kTypeRawData, "PALTABLE22.PAL" },
-	{ kPaletteList23, kTypeRawData, "PALTABLE23.PAL" },
-	{ kPaletteList24, kTypeRawData, "PALTABLE24.PAL" },
-	{ kPaletteList25, kTypeRawData, "PALTABLE25.PAL" },
-	{ kPaletteList26, kTypeRawData, "PALTABLE26.PAL" },
-	{ kPaletteList27, kTypeRawData, "PALTABLE27.PAL" },
-	{ kPaletteList28, kTypeRawData, "PALTABLE28.PAL" },
-	{ kPaletteList29, kTypeRawData, "PALTABLE29.PAL" },
-	{ kPaletteList30, kTypeRawData, "PALTABLE30.PAL" },
-	{ kPaletteList31, kTypeRawData, "PALTABLE31.PAL" },
-	{ kPaletteList32, kTypeRawData, "PALTABLE32.PAL" },
-	{ kPaletteList33, kTypeRawData, "PALTABLE33.PAL" },
+	{ kSpecialPalette1, kTypeRawData, "PALTABLE1.PAL" },
+	{ kSpecialPalette2, kTypeRawData, "PALTABLE2.PAL" },
+	{ kSpecialPalette3, kTypeRawData, "PALTABLE3.PAL" },
+	{ kSpecialPalette4, kTypeRawData, "PALTABLE4.PAL" },
+	{ kSpecialPalette5, kTypeRawData, "PALTABLE5.PAL" },
+	{ kSpecialPalette6, kTypeRawData, "PALTABLE6.PAL" },
+	{ kSpecialPalette7, kTypeRawData, "PALTABLE7.PAL" },
+	{ kSpecialPalette8, kTypeRawData, "PALTABLE8.PAL" },
+	{ kSpecialPalette9, kTypeRawData, "PALTABLE9.PAL" },
+	{ kSpecialPalette10, kTypeRawData, "PALTABLE10.PAL" },
+	{ kSpecialPalette11, kTypeRawData, "PALTABLE11.PAL" },
+	{ kSpecialPalette12, kTypeRawData, "PALTABLE12.PAL" },
+	{ kSpecialPalette13, kTypeRawData, "PALTABLE13.PAL" },
+	{ kSpecialPalette14, kTypeRawData, "PALTABLE14.PAL" },
+	{ kSpecialPalette15, kTypeRawData, "PALTABLE15.PAL" },
+	{ kSpecialPalette16, kTypeRawData, "PALTABLE16.PAL" },
+	{ kSpecialPalette17, kTypeRawData, "PALTABLE17.PAL" },
+	{ kSpecialPalette18, kTypeRawData, "PALTABLE18.PAL" },
+	{ kSpecialPalette19, kTypeRawData, "PALTABLE19.PAL" },
+	{ kSpecialPalette20, kTypeRawData, "PALTABLE20.PAL" },
+	{ kSpecialPalette21, kTypeRawData, "PALTABLE21.PAL" },
+	{ kSpecialPalette22, kTypeRawData, "PALTABLE22.PAL" },
+	{ kSpecialPalette23, kTypeRawData, "PALTABLE23.PAL" },
+	{ kSpecialPalette24, kTypeRawData, "PALTABLE24.PAL" },
+	{ kSpecialPalette25, kTypeRawData, "PALTABLE25.PAL" },
+	{ kSpecialPalette26, kTypeRawData, "PALTABLE26.PAL" },
+	{ kSpecialPalette27, kTypeRawData, "PALTABLE27.PAL" },
+	{ kSpecialPalette28, kTypeRawData, "PALTABLE28.PAL" },
+	{ kSpecialPalette29, kTypeRawData, "PALTABLE29.PAL" },
+	{ kSpecialPalette30, kTypeRawData, "PALTABLE30.PAL" },
+	{ kSpecialPalette31, kTypeRawData, "PALTABLE31.PAL" },
+	{ kSpecialPalette32, kTypeRawData, "PALTABLE32.PAL" },
+	{ kSpecialPalette33, kTypeRawData, "PALTABLE33.PAL" },
 
 	// CREDITS (used in FM-TOWNS and AMIGA)
 	{ kCreditsStrings, kTypeRawData, "CREDITS" },
@@ -842,72 +842,72 @@ const char *getIdString(const int id) {
 		return "kMagicAnimShapes";
 	case kBranStoneShapes:
 		return "kBranStoneShapes";
-	case kPaletteList1:
-		return "kPaletteList1";
-	case kPaletteList2:
-		return "kPaletteList2";
-	case kPaletteList3:
-		return "kPaletteList3";
-	case kPaletteList4:
-		return "kPaletteList4";
-	case kPaletteList5:
-		return "kPaletteList5";
-	case kPaletteList6:
-		return "kPaletteList6";
-	case kPaletteList7:
-		return "kPaletteList7";
-	case kPaletteList8:
-		return "kPaletteList8";
-	case kPaletteList9:
-		return "kPaletteList9";
-	case kPaletteList10:
-		return "kPaletteList10";
-	case kPaletteList11:
-		return "kPaletteList11";
-	case kPaletteList12:
-		return "kPaletteList12";
-	case kPaletteList13:
-		return "kPaletteList13";
-	case kPaletteList14:
-		return "kPaletteList14";
-	case kPaletteList15:
-		return "kPaletteList15";
-	case kPaletteList16:
-		return "kPaletteList16";
-	case kPaletteList17:
-		return "kPaletteList17";
-	case kPaletteList18:
-		return "kPaletteList18";
-	case kPaletteList19:
-		return "kPaletteList19";
-	case kPaletteList20:
-		return "kPaletteList20";
-	case kPaletteList21:
-		return "kPaletteList21";
-	case kPaletteList22:
-		return "kPaletteList22";
-	case kPaletteList23:
-		return "kPaletteList23";
-	case kPaletteList24:
-		return "kPaletteList24";
-	case kPaletteList25:
-		return "kPaletteList25";
-	case kPaletteList26:
-		return "kPaletteList26";
-	case kPaletteList27:
-		return "kPaletteList27";
-	case kPaletteList28:
-		return "kPaletteList28";
-	case kPaletteList29:
-		return "kPaletteList29";
-	case kPaletteList30:
-		return "kPaletteList30";
-	case kPaletteList31:
-		return "kPaletteList31";
-	case kPaletteList32:
-		return "kPaletteList32";
-	case kPaletteList33:
-		return "kPaletteList33";
+	case kSpecialPalette1:
+		return "kSpecialPalette1";
+	case kSpecialPalette2:
+		return "kSpecialPalette2";
+	case kSpecialPalette3:
+		return "kSpecialPalette3";
+	case kSpecialPalette4:
+		return "kSpecialPalette4";
+	case kSpecialPalette5:
+		return "kSpecialPalette5";
+	case kSpecialPalette6:
+		return "kSpecialPalette6";
+	case kSpecialPalette7:
+		return "kSpecialPalette7";
+	case kSpecialPalette8:
+		return "kSpecialPalette8";
+	case kSpecialPalette9:
+		return "kSpecialPalette9";
+	case kSpecialPalette10:
+		return "kSpecialPalette10";
+	case kSpecialPalette11:
+		return "kSpecialPalette11";
+	case kSpecialPalette12:
+		return "kSpecialPalette12";
+	case kSpecialPalette13:
+		return "kSpecialPalette13";
+	case kSpecialPalette14:
+		return "kSpecialPalette14";
+	case kSpecialPalette15:
+		return "kSpecialPalette15";
+	case kSpecialPalette16:
+		return "kSpecialPalette16";
+	case kSpecialPalette17:
+		return "kSpecialPalette17";
+	case kSpecialPalette18:
+		return "kSpecialPalette18";
+	case kSpecialPalette19:
+		return "kSpecialPalette19";
+	case kSpecialPalette20:
+		return "kSpecialPalette20";
+	case kSpecialPalette21:
+		return "kSpecialPalette21";
+	case kSpecialPalette22:
+		return "kSpecialPalette22";
+	case kSpecialPalette23:
+		return "kSpecialPalette23";
+	case kSpecialPalette24:
+		return "kSpecialPalette24";
+	case kSpecialPalette25:
+		return "kSpecialPalette25";
+	case kSpecialPalette26:
+		return "kSpecialPalette26";
+	case kSpecialPalette27:
+		return "kSpecialPalette27";
+	case kSpecialPalette28:
+		return "kSpecialPalette28";
+	case kSpecialPalette29:
+		return "kSpecialPalette29";
+	case kSpecialPalette30:
+		return "kSpecialPalette30";
+	case kSpecialPalette31:
+		return "kSpecialPalette31";
+	case kSpecialPalette32:
+		return "kSpecialPalette32";
+	case kSpecialPalette33:
+		return "kSpecialPalette33";
 	case kGUIStrings:
 		return "kGUIStrings";
 	case kConfigStrings:
