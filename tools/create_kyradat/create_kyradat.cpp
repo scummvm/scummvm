@@ -1349,13 +1349,16 @@ bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
 	results.clear();
 	searchMap.clear();
 
+	bool result = true;
+
 	for (const int *entry = needList; *entry != -1; ++entry) {
 		MatchList possibleMatches = filterPlatformMatches(g, temporaryExtractMap.equal_range(*entry));
 
-		// This means, no matching entries were found, this is in general not a good sign, we might
-		// think of nicer handling of this in the future. TODO: Error out?
-		if (possibleMatches.empty())
+		if (possibleMatches.empty()) {
+			fprintf(stderr, "ERROR: No entry found for id %d/%s\n", *entry, getIdString(*entry));
+			result = false;
 			continue;
+		}
 
 		const ExtractFilename *fDesc = getFilenameDesc(*entry);
 		if (!fDesc)
@@ -1367,27 +1370,30 @@ bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
 					continue;
 
 				MatchList langMatches = filterLanguageMatches(g->lang[i], possibleMatches);
-				if (langMatches.empty())
-					printf("foo %s %d\n", getIdString(*entry), g->lang[i]);
 				MatchList::const_iterator bestMatch = filterOutBestMatch(langMatches);
 
-				// TODO: Error out. This case means an entry was not found for a required language.
-				if (bestMatch == langMatches.end())
+				if (bestMatch == langMatches.end()) {
+					// TODO: Add nice language name to output message.
+					fprintf(stderr, "ERROR: No entry found for id %d/%s for language %d\n", *entry, getIdString(*entry), g->lang[i]);
+					result = false;
 					continue;
+				}
 
 				map.insert(**bestMatch);
 			}
 		} else {
 			MatchList::const_iterator bestMatch = filterOutBestMatch(possibleMatches);
 
-			// TODO: Error out. This case means an entry was not found.
-			if (bestMatch == possibleMatches.end())
+			if (bestMatch == possibleMatches.end()) {
+				fprintf(stderr, "ERROR: No entry found for id %d/%s\n", *entry, getIdString(*entry));
+				result = false;
 				continue;
+			}
 
 			map.insert(**bestMatch);
 		}
 	}
 
-	return true;
+	return result;
 }
 
