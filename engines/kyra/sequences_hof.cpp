@@ -2794,21 +2794,15 @@ void KyraEngine_HoF::seq_init() {
 			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, numShp), numShp);
 		} while (getShapePtr(numShp));
 	} else {
-		MainMenu::StaticData dataEN = {
+		const MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },
 			{ 0xd8, 0xda, 0xd9, 0xd8 },
-			Screen::FID_8_FNT, 240
+			(_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT, 240
 		};
 		
-		MainMenu::StaticData dataJPN = {
-			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
-			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },
-			{ 0xd8, 0xda, 0xd9, 0xd8 },
-			Screen::FID_SJIS_FNT, 240
-		};
 		_menu = new MainMenu(this);
-		_menu->init(_flags.lang == Common::JA_JPN ? dataJPN : dataEN, MainMenu::Animation());
+		_menu->init(data, MainMenu::Animation());
 	}
 }
 
