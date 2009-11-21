@@ -415,10 +415,10 @@ byte getSpecialID(int special) {
 
 typedef uint16 GameDef;
 
-GameDef createGameDef(const Game *g) {
-	return ((getGameID(g->game) & 0xF) << 12) |
-	       ((getPlatformID(g->platform) & 0xF) << 8) |
-	       ((getSpecialID(g->special) & 0xF) << 4);
+GameDef createGameDef(const ExtractInformation *eI) {
+	return ((getGameID(eI->game) & 0xF) << 12) |
+	       ((getPlatformID(eI->platform) & 0xF) << 8) |
+	       ((getSpecialID(eI->special) & 0xF) << 4);
 }
 
 struct Index {
@@ -453,7 +453,7 @@ Index parseIndex(const uint8 *data, uint32 size) {
 	return result;
 }
 
-bool updateIndex(PAKFile &out, const Game *g) {
+bool updateIndex(PAKFile &out, const ExtractInformation *eI) {
 	uint32 size = 0;
 	const uint8 *data = out.getFileData("INDEX", &size);
 
@@ -461,7 +461,7 @@ bool updateIndex(PAKFile &out, const Game *g) {
 	if (data)
 		index = parseIndex(data, size);
 
-	GameDef gameDef = createGameDef(g);
+	GameDef gameDef = createGameDef(eI);
 	if (index.version == kKyraDatVersion) {
 		if (std::find(index.gameList.begin(), index.gameList.end(), gameDef) == index.gameList.end()) {
 			++index.includedGames;
@@ -1243,7 +1243,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		}
 	}
 
-	if (!updateIndex(out, g)) {
+	if (!updateIndex(out, &extractInfo)) {
 		error("couldn't update INDEX file, stop processing of all files");
 		return false;
 	}
