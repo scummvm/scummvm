@@ -306,14 +306,14 @@ enum kGame {
 
 struct Game {
 	int game;
-	int lang;
+	int lang[3];
 	int platform;
 	int special;
 
 	const char *md5[2];
 };
 
-#define GAME_DUMMY_ENTRY { -1, -1, -1, -1, { 0, 0 } }
+#define GAME_DUMMY_ENTRY { -1, { -1, -1, -1 }, -1, -1, { 0, 0 } }
 
 extern const Game * const gameDescs[];
 

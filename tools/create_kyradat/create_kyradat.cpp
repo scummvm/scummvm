@@ -39,6 +39,7 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <map>
 
 enum {
 	kKyraDatVersion = 65
@@ -1142,39 +1143,27 @@ const char *getIdString(const int id) {
 	}
 }
 
-struct DataIdEntry {
-	DataIdEntry() : extractInfo(), id(-1) {}
-	DataIdEntry(ExtractEntrySearchData e, int i) : extractInfo(e), id(i) {}
-
-	ExtractEntrySearchData extractInfo;
-	int id;
-};
-
 struct ExtractData {
-	ExtractData() : extractInfo(), result() {}
-	ExtractData(ExtractEntrySearchData e, Search::ResultData r) : extractInfo(e), result(r) {}
+	ExtractData() : desc(), offset() {}
+	ExtractData(ExtractEntrySearchData d, uint32 o) : desc(d), offset(o) {}
 
-	ExtractEntrySearchData extractInfo;
-	Search::ResultData result;
+	ExtractEntrySearchData desc;
+	uint32 offset;
 };
 
-typedef std::list<DataIdEntry> DataIdList;
+typedef std::pair<int, ExtractEntrySearchData> SearchMapEntry;
+typedef std::multimap<int, ExtractEntrySearchData> SearchMap;
 
-typedef std::map<int, Search::ResultData> IdMap;
+typedef std::pair<int, ExtractData> ExtractMapEntry;
+typedef std::multimap<int, ExtractData> ExtractMap;
 
-bool getExtractionData(const Game *g, Search &search, IdMap &map);
+bool getExtractionData(const Game *g, Search &search, ExtractMap &map);
 
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	char filename[128];
 
-	ExtractInformation extractInfo;
-	extractInfo.game = g->game;
-	extractInfo.lang = g->lang;
-	extractInfo.platform = g->platform;
-	extractInfo.special = g->special;
-
 	Search search(data, size);
-	IdMap ids;
+	ExtractMap ids;
 
 	if (!getExtractionData(g, search, ids))
 		return false;
@@ -1185,44 +1174,29 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		return false;
 	}
 
-	bool breakProcess = false;
+	ExtractInformation extractInfo;
+	extractInfo.game = g->game;
+	extractInfo.platform = g->platform;
+	extractInfo.special = g->special;
 
-	// Compare against need list
-	for (const int *entry = needList; *entry != -1; ++entry) {
-		if (ids.find(*entry) != ids.end())
-			continue;
-
-		// Try whether the data is present in the kyra.dat file already
-		filename[0] = 0;
-		if (!getFilename(filename, &extractInfo, *entry))
-			error("couldn't find filename for id %d", *entry);
-
-		PAKFile::cFileList *list = out.getFileList();
-		// If the data wasn't found already, we need to break the extraction here
-		if (!list || !list->findEntry(filename)) {
-			fprintf(stderr, "Couldn't find id %d/%s in executable file\n", *entry, getIdString(*entry));
-			breakProcess = true;
-		} else {
-			warning("Id %d/%s is present in kyra.dat but could not be found in the executable", *entry, getIdString(*entry));
-		}
-	}
-
-	if (breakProcess)
-		return false;
-
-	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
+	for (ExtractMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
 		const int id = i->first;
-	
-		filename[0] = 0;
-		if (!getFilename(filename, &extractInfo, id)) {
-			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
-			return false;
-		}
 
 		const ExtractFilename *fDesc = getFilenameDesc(id);
 
 		if (!fDesc) {
 			fprintf(stderr, "ERROR: couldn't find file description for id %d\n", id);
+			return false;
+		}
+
+		if (isLangSpecific(fDesc->type))
+			extractInfo.lang = i->second.desc.lang;
+		else
+			extractInfo.lang = UNK_LANG;
+
+		filename[0] = 0;
+		if (!getFilename(filename, &extractInfo, id)) {
+			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
 			return false;
 		}
 
@@ -1237,21 +1211,27 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		if (list && list->findEntry(filename) != 0)
 			continue;
 
-		if (!tDesc->extract(out, &extractInfo, data + i->second.offset, i->second.data.size, filename, id)) {
+		if (!tDesc->extract(out, &extractInfo, data + i->second.offset, i->second.desc.hint.size, filename, id)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
 			return false;
 		}
 	}
 
-	if (!updateIndex(out, &extractInfo)) {
-		error("couldn't update INDEX file, stop processing of all files");
-		return false;
+	for (int i = 0; i < 3; ++i) {
+		if (g->lang[i] == -1)
+			continue;
+
+		extractInfo.lang = g->lang[i];
+		if (!updateIndex(out, &extractInfo)) {
+			error("couldn't update INDEX file, stop processing of all files");
+			return false;
+		}
 	}
 
 	return true;
 }
 
-bool setupSearch(const int *needList, Search &search, DataIdList &dataIdList) {
+bool setupSearch(const Game *g, const int *needList, Search &search, SearchMap &searchData) {
 	for (const int *entry = needList; *entry != -1; ++entry) {
 		ExtractEntryList providers = getProvidersForId(*entry);
 
@@ -1260,9 +1240,9 @@ bool setupSearch(const int *needList, Search &search, DataIdList &dataIdList) {
 			return false;
 		} else {
 			for (ExtractEntryList::const_iterator i = providers.begin(); i != providers.end(); ++i) {
-				// We will add *all* providers here, regardless of the language and platform!
+				// We'll add all providers here...
 				search.addData(i->hint);
-				dataIdList.push_back(DataIdEntry(*i, *entry));
+				searchData.insert(SearchMapEntry(*entry, *i));
 			}
 		}
 	}
@@ -1270,8 +1250,69 @@ bool setupSearch(const int *needList, Search &search, DataIdList &dataIdList) {
 	return true;
 }
 
-bool getExtractionData(const Game *g, Search &search, IdMap &ids) {
-	DataIdList dataIdList;
+typedef std::list<ExtractMap::const_iterator> MatchList;
+MatchList filterPlatformMatches(const Game *g, std::pair<ExtractMap::const_iterator, ExtractMap::const_iterator> range) {
+	bool hasPlatformMatch = false;
+	for (ExtractMap::const_iterator i = range.first; i != range.second; ++i) {
+		if (i->second.desc.platform == g->platform) {
+			hasPlatformMatch = true;
+			break;
+		}
+	}
+
+	MatchList result;
+	if (hasPlatformMatch) {
+		for (ExtractMap::const_iterator i = range.first; i != range.second; ++i) {
+			if (i->second.desc.platform == g->platform)
+				result.push_back(i);
+		}
+	} else {
+		for (ExtractMap::const_iterator i = range.first; i != range.second; ++i)
+			result.push_back(i);
+	}
+
+	return result;
+}
+
+MatchList filterLanguageMatches(const int lang, const MatchList &input) {
+	std::list<ExtractMap::const_iterator> result;
+
+	for (MatchList::const_iterator i = input.begin(); i != input.end(); ++i) {
+		if ((*i)->second.desc.lang == lang)
+			result.push_back(*i);
+	}
+
+	return result;
+}
+
+MatchList::const_iterator filterOutBestMatch(const MatchList &input) {
+	MatchList::const_iterator result = input.begin();
+
+	if (input.size() > 1)
+		warning("Multiple entries found for id %d/%s", (*result)->first, getIdString((*result)->first));
+
+	for (MatchList::const_iterator i = input.begin(); i != input.end(); ++i) {
+		// Reduce all entries to one single entry.
+		//
+		// We use the following rules for this (in this order):
+		// - Prefer the entry with the higest size
+		// - Prefer the entry, which starts at the smallest offest
+		//
+		// TODO: These rules might not be safe for all games, but hopefully
+		// they will work fine. If there are any problems it should be rather
+		// easy to identify them, since we print out a warning for multiple
+		// entries found.
+		if ((*result)->second.desc.hint.size <= (*i)->second.desc.hint.size) {
+			if ((*result)->second.offset >= (*i)->second.offset)
+				result = i;
+		}
+	}
+
+	return result;
+}
+
+bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
+	SearchMap searchMap;
 
 	const int *needList = getNeedList(g);
 	if (!needList) {
@@ -1279,7 +1320,7 @@ bool getExtractionData(const Game *g, Search &search, IdMap &ids) {
 		return false;
 	}
 
-	if (!setupSearch(needList, search, dataIdList))
+	if (!setupSearch(g, needList, search, searchMap))
 		return false;
 
 	// Process the data search
@@ -1291,78 +1332,61 @@ bool getExtractionData(const Game *g, Search &search, IdMap &ids) {
 		return false;
 	}
 
+	ExtractMap temporaryExtractMap;
 	for (const int *entry = needList; *entry != -1; ++entry) {
-		typedef std::list<ExtractData> ExtractList;
-		ExtractList idResults;
+		typedef std::pair<SearchMap::const_iterator, SearchMap::const_iterator> KeyRange;
+		KeyRange idRange = searchMap.equal_range(*entry);
 
-		// Fill in all id entries found
 		for (Search::ResultList::const_iterator i = results.begin(); i != results.end(); ++i) {
-			for (DataIdList::const_iterator j = dataIdList.begin(); j != dataIdList.end(); ++j) {
-				if (j->id == *entry && i->data == j->extractInfo.hint)
-					idResults.push_back(ExtractData(j->extractInfo, *i));
+			for (SearchMap::const_iterator j = idRange.first; j != idRange.second; ++j) {
+				if (j->second.hint == i->data)
+					temporaryExtractMap.insert(ExtractMapEntry(*entry, ExtractData(j->second, i->offset)));
 			}
 		}
-
-		// Sort out entries with mistmatching language settings
-		for (ExtractList::iterator i = idResults.begin(); i != idResults.end();) {
-			if (i->extractInfo.lang != UNK_LANG && i->extractInfo.lang != g->lang) {
-				i = idResults.erase(i);
-				continue;
-			}
-
-			++i;
-		}
-
-		// Determin whether we have a 100% platform match
-		bool hasPlatformMatch = false;
-		for (ExtractList::const_iterator i = idResults.begin(); i != idResults.end(); ++i) {
-			if (i->extractInfo.platform == g->platform)
-				hasPlatformMatch = true;
-		}
-
-		for (ExtractList::iterator i = idResults.begin(); i != idResults.end();) {
-			// Sort out entries with mistmatching platform settings, when we have a platform match
-			if (hasPlatformMatch && i->extractInfo.platform != g->platform) {
-				i = idResults.erase(i);
-				continue;
-			}
-
-			++i;
-		}
-
-		if (idResults.empty())
-			continue;
-
-		if (idResults.size() > 1)
-			warning("Multiple entries found for id %d/%s", *entry, getIdString(*entry));
-
-		Search::ResultData result;
-		result.data.size = 0;
-		result.offset = 0xFFFFFFFF;
-
-		// Reduce all entries to one single entry.
-		//
-		// We use the following rules for this (in this order):
-		// - Prefer the entry with the higest size
-		// - Prefer the entry, which starts at the smallest offest
-		//
-		// TODO: These rules might not be safe for all games, but hopefully
-		// they will work fine. If there are any problems it should be rather
-		// easy to identify them, since we print out a warning for multiple
-		// entries found.
-		for (ExtractList::iterator i = idResults.begin(); i != idResults.end(); ++i) {
-			if (result.data.size <= i->result.data.size) {
-				if (result.offset >= i->result.offset)
-					result = i->result;
-			}
-		}
-
-		ids[*entry] = result;
 	}
 
 	// Free up some memory
 	results.clear();
-	dataIdList.clear();
+	searchMap.clear();
+
+	for (const int *entry = needList; *entry != -1; ++entry) {
+		MatchList possibleMatches = filterPlatformMatches(g, temporaryExtractMap.equal_range(*entry));
+
+		// This means, no matching entries were found, this is in general not a good sign, we might
+		// think of nicer handling of this in the future. TODO: Error out?
+		if (possibleMatches.empty())
+			continue;
+
+		const ExtractFilename *fDesc = getFilenameDesc(*entry);
+		if (!fDesc)
+			continue;
+
+		if (isLangSpecific(fDesc->type)) {
+			for (int i = 0; i < 3; ++i) {
+				if (g->lang[i] == -1)
+					continue;
+
+				MatchList langMatches = filterLanguageMatches(g->lang[i], possibleMatches);
+				if (langMatches.empty())
+					printf("foo %s %d\n", getIdString(*entry), g->lang[i]);
+				MatchList::const_iterator bestMatch = filterOutBestMatch(langMatches);
+
+				// TODO: Error out. This case means an entry was not found for a required language.
+				if (bestMatch == langMatches.end())
+					continue;
+
+				map.insert(**bestMatch);
+			}
+		} else {
+			MatchList::const_iterator bestMatch = filterOutBestMatch(possibleMatches);
+
+			// TODO: Error out. This case means an entry was not found.
+			if (bestMatch == possibleMatches.end())
+				continue;
+
+			map.insert(**bestMatch);
+		}
+	}
 
 	return true;
 }

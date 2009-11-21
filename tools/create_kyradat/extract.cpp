@@ -149,6 +149,15 @@ const ExtractType *findExtractType(const int type) {
 	return 0;
 }
 
+// TODO: Get rid of this....
+bool isLangSpecific(const int type) {
+	const ExtractType *ext = findExtractType(type);
+	if (!ext)
+		return false;
+
+	return (ext->createFilename == createLangFilename);
+}
+
 // Extractor implementation
 
 namespace {

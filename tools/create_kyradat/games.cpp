@@ -28,82 +28,78 @@ namespace {
 
 const Game kyra1Games[] = {
 	// Demos
-	{ kKyra1, EN_ANY, kPlatformPC, kDemoVersion, { "7b7504c8560ffc914d34c44c71b3094c", 0 } },
-	{ kKyra1, EN_ANY, kPlatformPC, kTalkieDemoVersion, { "226fdba99cb11ef1047131d9a50e6292", 0 } },
+	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformPC, kDemoVersion, { "7b7504c8560ffc914d34c44c71b3094c", 0 } },
+	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformPC, kTalkieDemoVersion, { "226fdba99cb11ef1047131d9a50e6292", 0 } },
 
 	// Amiga
-	{ kKyra1, EN_ANY, kPlatformAmiga, kNoSpecial, { "b620564b6b7e0787b053ca9e35bd9f52", 0 } },
-	{ kKyra1, DE_DEU, kPlatformAmiga, kNoSpecial, { "ceddb4bd4df51698e3851e75106d117a", 0 } },
+	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformAmiga, kNoSpecial, { "b620564b6b7e0787b053ca9e35bd9f52", 0 } },
+	{ kKyra1, { DE_DEU, -1, -1 }, kPlatformAmiga, kNoSpecial, { "ceddb4bd4df51698e3851e75106d117a", 0 } },
 
 	// Floppy
-	{ kKyra1, EN_ANY, kPlatformPC, kNoSpecial, { "76a4fc84e173cadb6369785787e1546e", 0 } },
-	{ kKyra1, DE_DEU, kPlatformPC, kNoSpecial, { "9442d6f7db6a41f3dd4aa4de5d36e107", 0 } },
-	{ kKyra1, FR_FRA, kPlatformPC, kNoSpecial, { "aa9d6d78d8b199deaf48efeca6d19af2", 0 } },
-	{ kKyra1, IT_ITA, kPlatformPC, kNoSpecial, { "5d7550306b369a3492f9f3402702477c", 0 } },
-	{ kKyra1, ES_ESP, kPlatformPC, kNoSpecial, { "9ff130d2558bcd674d4074849d93c362", 0 } },
+	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformPC, kNoSpecial, { "76a4fc84e173cadb6369785787e1546e", 0 } },
+	{ kKyra1, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "9442d6f7db6a41f3dd4aa4de5d36e107", 0 } },
+	{ kKyra1, { FR_FRA, -1, -1 }, kPlatformPC, kNoSpecial, { "aa9d6d78d8b199deaf48efeca6d19af2", 0 } },
+	{ kKyra1, { IT_ITA, -1, -1 }, kPlatformPC, kNoSpecial, { "5d7550306b369a3492f9f3402702477c", 0 } },
+	{ kKyra1, { ES_ESP, -1, -1 }, kPlatformPC, kNoSpecial, { "9ff130d2558bcd674d4074849d93c362", 0 } },
 
 	// Talkie
-	{ kKyra1, EN_ANY, kPlatformPC, kTalkieVersion, { "1ebc18f3e7fbb72474a55cb0fa089ed4", 0 } },
-	{ kKyra1, DE_DEU, kPlatformPC, kTalkieVersion, { "c65d381184f98ac26d9efd2d45baef51", 0 } },
-	{ kKyra1, FR_FRA, kPlatformPC, kTalkieVersion, { "307c5d4a554d9068ac3d326e350ae4a6", 0 } },
-	{ kKyra1, IT_ITA, kPlatformPC, kTalkieVersion, { "d0f1752098236083d81b9497bd2b6989", 0 } }, // Italian fan translation
+	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformPC, kTalkieVersion, { "1ebc18f3e7fbb72474a55cb0fa089ed4", 0 } },
+	{ kKyra1, { DE_DEU, -1, -1 }, kPlatformPC, kTalkieVersion, { "c65d381184f98ac26d9efd2d45baef51", 0 } },
+	{ kKyra1, { FR_FRA, -1, -1 }, kPlatformPC, kTalkieVersion, { "307c5d4a554d9068ac3d326e350ae4a6", 0 } },
+	{ kKyra1, { IT_ITA, -1, -1 }, kPlatformPC, kTalkieVersion, { "d0f1752098236083d81b9497bd2b6989", 0 } }, // Italian fan translation
 
 	// FM-TOWNS
-	{ kKyra1, EN_ANY, kPlatformFMTowns, kNoSpecial, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
-	{ kKyra1, JA_JPN, kPlatformFMTowns, kNoSpecial, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
+	{ kKyra1, { EN_ANY, JA_JPN, -1 }, kPlatformFMTowns, kNoSpecial, { "5a3ad60ccd0f2e29463e0368cd14a60d", 0 } },
 
 	// PC-98
-	{ kKyra1, JA_JPN, kPlatformPC98, kNoSpecial, { "b9c06ac5177f5bf1f1acc0eea3937f6d", 0 } },
+	{ kKyra1, { JA_JPN, -1, -1 }, kPlatformPC98, kNoSpecial, { "b9c06ac5177f5bf1f1acc0eea3937f6d", 0 } },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game kyra2Games[] = {
 	// demos
-	{ kKyra2, EN_ANY, kPlatformPC, kDemoVersion, { "a620a37579dd44ab0403482285e3897f", 0 } },
+	{ kKyra2, { EN_ANY, -1, -1 }, kPlatformPC, kDemoVersion, { "a620a37579dd44ab0403482285e3897f", 0 } },
 
-	{ kKyra2, EN_ANY, kPlatformPC, kTalkieDemoVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "fa54d8abfe05f9186c05f7de7eaf1480" } },
-	{ kKyra2, FR_FRA, kPlatformPC, kTalkieDemoVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "fa54d8abfe05f9186c05f7de7eaf1480" } },
-	{ kKyra2, DE_DEU, kPlatformPC, kTalkieDemoVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "fa54d8abfe05f9186c05f7de7eaf1480" } },
+	{ kKyra2, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieDemoVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "fa54d8abfe05f9186c05f7de7eaf1480" } },
 
 	// floppy games
-	{ kKyra2, EN_ANY, kPlatformPC, kNoSpecial, { "9b0f5e57b5a2ed88b5b989cbb402b6c7", "7c3eadbe5122722cf2e5e1611e19dfb9" } },
-	{ kKyra2, FR_FRA, kPlatformPC, kNoSpecial, { "df31cc9e37e1cf68df2fdc75ddf2d87b", "fc2c6782778e6c6d5a553d1cb73c98ad" } },
-	{ kKyra2, DE_DEU, kPlatformPC, kNoSpecial, { "0ca4f9a1438264a4c63c3218e064ed3b", "0d9b0eb7b0ad889ec942d74d80dde1bf" } },
-	{ kKyra2, IT_ITA, kPlatformPC, kNoSpecial, { "178d3ab913f61bfba21d2fb196405e8c", "3a61ed6b7c00ddae383a0361799e2ba6" } },
+	{ kKyra2, { EN_ANY, -1, -1 }, kPlatformPC, kNoSpecial, { "9b0f5e57b5a2ed88b5b989cbb402b6c7", "7c3eadbe5122722cf2e5e1611e19dfb9" } },
+	{ kKyra2, { FR_FRA, -1, -1 }, kPlatformPC, kNoSpecial, { "df31cc9e37e1cf68df2fdc75ddf2d87b", "fc2c6782778e6c6d5a553d1cb73c98ad" } },
+	{ kKyra2, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "0ca4f9a1438264a4c63c3218e064ed3b", "0d9b0eb7b0ad889ec942d74d80dde1bf" } },
+	{ kKyra2, { IT_ITA, -1, -1 }, kPlatformPC, kNoSpecial, { "178d3ab913f61bfba21d2fb196405e8c", "3a61ed6b7c00ddae383a0361799e2ba6" } },
 
 	// talkie games
-	{ kKyra2, EN_ANY, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
-	{ kKyra2, FR_FRA, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
-	{ kKyra2, DE_DEU, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
-	{ kKyra2, IT_ITA, kPlatformPC, kTalkieVersion, { "130795aa8f2333250c895dae9028b9bb", "e20d0d2e500f01e399ec588247a7e213" } }, // Italian Fan Translation (using same offsets as English)
+	{ kKyra2, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
+	{ kKyra2, { IT_ITA, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "130795aa8f2333250c895dae9028b9bb", "e20d0d2e500f01e399ec588247a7e213" } }, // Italian Fan Translation
 
 	// FM-TOWNS games
-	{ kKyra2, EN_ANY, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
-	{ kKyra2, JA_JPN, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
+	{ kKyra2, { EN_ANY, JA_JPN, -1 }, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game kyra3Games[] = {
 	// DOS CD (multi language version, with no language specific strings)
-	{ kKyra3, UNK_LANG, kPlatformPC, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } },
+	{ kKyra3, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } },
+	{ kKyra3, { EN_ANY, IT_ITA, DE_DEU }, kPlatformPC, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } }, // Fan translation // TODO: Verify md5sum
+	{ kKyra3, { ES_ESP, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "bf68701eb591d0b72219f314c0d32688", 0 } }, // Fan translation // TODO: Verify md5sum
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game lolGames[] = {
 	// DOS demo
-	{ kLol, EN_ANY, kPlatformPC, kDemoVersion, { "30bb5af87d38adb47d3e6ce06b1cb042", 0 } },
+	{ kLol, { EN_ANY, -1, -1 }, kPlatformPC, kDemoVersion, { "30bb5af87d38adb47d3e6ce06b1cb042", 0 } },
 
 	// DOS floppy (no language specifc strings)
-	{ kLol, DE_DEU, kPlatformPC, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
+	{ kLol, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
 
 	// PC98 (no language specifc strings)
-	{ kLol, JA_JPN, kPlatformPC98, kNoSpecial, { "6d5bd4a2f5ce433365734ca6b7a8d984", "1b0a457c48ae6908da301b656fe0aab4" } },
+	{ kLol, { JA_JPN, -1, -1 }, kPlatformPC98, kNoSpecial, { "6d5bd4a2f5ce433365734ca6b7a8d984", "1b0a457c48ae6908da301b656fe0aab4" } },
 
 	// DOS CD (multi language version, with no language specific strings)
-	{ kLol, UNK_LANG, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
+	{ kLol, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
 
 	GAME_DUMMY_ENTRY
 };
