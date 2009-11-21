@@ -432,7 +432,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	// A script has scheduled changing the room (either triggered
 	// by the user clicking on something or run at the end of a
 	// gate script in the intro).
-	if ((_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate) && _newRoom != getRoomNum()) {
+	if ((_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate) && (_newRoom != getRoomNum() || _newGate != _variables[0] - 1)) {
 		setExitLoop(true);
 	}
 
@@ -1161,7 +1161,14 @@ void Game::deleteObjectAnimations() {
 }
 
 bool Game::enterNewRoom() {
-	if (_newRoom == getRoomNum() && !isReloaded()) {
+	if ((_newRoom == getRoomNum() && _newGate == _variables[0] - 1) && !isReloaded()) {
+		// Re-entering the same room via a different gate is correct
+		// and the room needs to be reloaded (used in the ballroom when
+		// propping the chair by the brick).
+		// TODO: 1. don't use _variables but a new named attribute.  2.
+		// investigate whether the optimization with shortcut is
+		// needed; maybe reloading the room always is the right thing
+		// to do.
 		_vm->_script->endCurrentProgram(false);
 		return true;
 	}
