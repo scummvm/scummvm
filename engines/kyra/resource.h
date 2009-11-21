@@ -348,7 +348,7 @@ class StaticResource {
 public:
 	static const Common::String staticDataFilename() { return "KYRA.DAT"; }
 
-	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _dataTable(0) {}
+	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _dataTable(0) {}
 	~StaticResource() { deinit(); }
 
 	bool loadStaticResourceFile();
@@ -388,7 +388,6 @@ private:
 	struct FileType;
 
 	bool checkResList(int id, int &type, const void *&ptr, int &size);
-	const void *checkForBuiltin(int id, int &type, int &size);
 	const FileType *getFiletype(int type);
 	const void *getData(int id, int requesttype, int &size);
 
@@ -451,13 +450,6 @@ private:
 		kLolRawDataBe32 = 14
 	};
 
-	struct BuiltinRes {
-		int id;
-		int type;
-		int size;
-		const void *data;
-	};
-
 	struct FileType {
 		int type;
 		typedef bool (StaticResource::*LoadFunc)(Common::SeekableReadStream &stream, void *&ptr, int &size);
@@ -477,7 +469,6 @@ private:
 	Common::List<ResData> _resList;
 
 	const FileType *_fileLoader;
-	const BuiltinRes *_builtIn;
 	const int *_dataTable;
 };
 

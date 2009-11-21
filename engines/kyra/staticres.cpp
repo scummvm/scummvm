@@ -514,23 +514,18 @@ bool StaticResource::init() {
 	};
 #endif // ENABLE_LOL
 
-	if (_vm->game() == GI_KYRA1) {
-		_builtIn = 0;
+	if (_vm->game() == GI_KYRA1)
 		_dataTable = kyra1StaticRes;
-	} else if (_vm->game() == GI_KYRA2) {
-		_builtIn = 0;
+	else if (_vm->game() == GI_KYRA2)
 		_dataTable = kyra2StaticRes;
-	} else if (_vm->game() == GI_KYRA3) {
-		_builtIn = 0;
+	else if (_vm->game() == GI_KYRA3)
 		_dataTable = kyra3StaticRes;
 #ifdef ENABLE_LOL
-	} else if (_vm->game() == GI_LOL) {
-		_builtIn = 0;
+	else if (_vm->game() == GI_LOL)
 		_dataTable = kLolStaticRes;
 #endif // ENABLE_LOL
-	} else {
+	else
 		error("StaticResource: Unknown game ID");
-	}
 
 	return loadStaticResourceFile();
 }
@@ -614,9 +609,6 @@ bool StaticResource::prefetchId(int id) {
 	if (checkResList(id, type, ptr, size))
 		return true;
 
-	if (checkForBuiltin(id, type, size))
-		return true;
-
 	const GameFlags &flags = _vm->gameFlags();
 	byte game = getGameID(flags);
 	byte platform = getPlatformID(flags);
@@ -696,21 +688,6 @@ bool StaticResource::checkResList(int id, int &type, const void *&ptr, int &size
 	return false;
 }
 
-const void *StaticResource::checkForBuiltin(int id, int &type, int &size) {
-	if (!_builtIn)
-		return 0;
-
-	for (int i = 0; _builtIn[i].data; ++i) {
-		if (_builtIn[i].id == id) {
-			size = _builtIn[i].size;
-			type = _builtIn[i].type;
-			return _builtIn[i].data;
-		}
-	}
-
-	return 0;
-}
-
 const StaticResource::FileType *StaticResource::getFiletype(int type) {
 	if (!_fileLoader)
 		return 0;
@@ -729,13 +706,6 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 	size = 0;
 
 	if (checkResList(id, type, ptr, size)) {
-		if (type == requesttype)
-			return ptr;
-		return 0;
-	}
-
-	ptr = checkForBuiltin(id, type, size);
-	if (ptr) {
 		if (type == requesttype)
 			return ptr;
 		return 0;
