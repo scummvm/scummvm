@@ -231,7 +231,6 @@ const ExtractFilename extractFilenames[] = {
 	{ kLolCharDefsMan, kLolTypeRaw16, "CHMAN.DEF" },
 	{ kLolCharDefsWoman, kLolTypeRaw16, "CHWOMAN.DEF" },
 	{ kLolCharDefsKieran, kLolTypeRaw16, "CHKIERAN.DEF" },
-	//{ kLolCharDefsUnk, kLolTypeRaw16, "CHUNK.DEF" },
 	{ kLolCharDefsAkshel, kLolTypeRaw16, "CHAKSHEL.DEF" },
 	{ kLolExpRequirements, kLolTypeRaw32, "EXPERIENCE.DEF" },
 	{ kLolMonsterModifiers, kLolTypeRaw16, "MONSTMOD.DEF" },
@@ -288,7 +287,6 @@ const ExtractFilename extractFilenames[] = {
 	{ kLolLegendData, kTypeRawData, "MAPLGND.DEF" },
 	{ kLolMapCursorOvl, kTypeRawData, "MAPCURSOR.PAL" },
 	{ kLolMapStringId, kLolTypeRaw16, "MAPSTRID.LST" },
-	//{ kLolMapPal, kTypeRawData, "MAP.PAL" },
 
 	{ kLolSpellbookAnim, k3TypeRaw16to8, "MBOOKA.DEF" },
 	{ kLolSpellbookCoords, k3TypeRaw16to8, "MBOOKC.DEF" },
