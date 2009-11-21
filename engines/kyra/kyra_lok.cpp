@@ -75,7 +75,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_winterScrollTableSize = _winterScroll1TableSize = _winterScroll2TableSize = 0;
 	_drinkAnimationTable = _brandonToWispTable = _magicAnimationTable = _brandonStoneTable = 0;
 	_drinkAnimationTableSize = _brandonToWispTableSize = _magicAnimationTableSize = _brandonStoneTableSize = 0;
-	memset(&_specialPalettes, 0, sizeof(_specialPalettes));
+	_specialPalettes = 0;
 	_sprites = 0;
 	_animator = 0;
 	_seq = 0;
@@ -125,6 +125,8 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 	delete[] _movFacingTable;
 
 	delete[] _defaultShapeTable;
+
+	delete[] _specialPalettes;
 
 	delete[] _gui->_scrollUpButton.data0ShapePtr;
 	delete[] _gui->_scrollUpButton.data1ShapePtr;

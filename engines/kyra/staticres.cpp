@@ -241,7 +241,6 @@ bool StaticResource::init() {
 		{ kShapeList, proc(loadShapeTable), proc(freeShapeTable) },
 		{ kAmigaSfxTable, proc(loadAmigaSfxTable), proc(freeAmigaSfxTable) },
 		{ kRawData, proc(loadRawData), proc(freeRawData) },
-		{ kPaletteTable, proc(loadPaletteTable), proc(freePaletteTable) },
 
 		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
 		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
@@ -333,7 +332,39 @@ bool StaticResource::init() {
 		{ k1AmuleteAnimSeq, kRawData, "AMULETEANIM.SEQ" },
 
 		// PALETTE table
-		{ k1PaletteList, kPaletteTable, "1 33 PALTABLE" },
+		{ k1SpecialPalette1, kRawData, "PALTABLE1.PAL" },
+		{ k1SpecialPalette2, kRawData, "PALTABLE2.PAL" },
+		{ k1SpecialPalette3, kRawData, "PALTABLE3.PAL" },
+		{ k1SpecialPalette4, kRawData, "PALTABLE4.PAL" },
+		{ k1SpecialPalette5, kRawData, "PALTABLE5.PAL" },
+		{ k1SpecialPalette6, kRawData, "PALTABLE6.PAL" },
+		{ k1SpecialPalette7, kRawData, "PALTABLE7.PAL" },
+		{ k1SpecialPalette8, kRawData, "PALTABLE8.PAL" },
+		{ k1SpecialPalette9, kRawData, "PALTABLE9.PAL" },
+		{ k1SpecialPalette10, kRawData, "PALTABLE10.PAL" },
+		{ k1SpecialPalette11, kRawData, "PALTABLE11.PAL" },
+		{ k1SpecialPalette12, kRawData, "PALTABLE12.PAL" },
+		{ k1SpecialPalette13, kRawData, "PALTABLE13.PAL" },
+		{ k1SpecialPalette14, kRawData, "PALTABLE14.PAL" },
+		{ k1SpecialPalette15, kRawData, "PALTABLE15.PAL" },
+		{ k1SpecialPalette16, kRawData, "PALTABLE16.PAL" },
+		{ k1SpecialPalette17, kRawData, "PALTABLE17.PAL" },
+		{ k1SpecialPalette18, kRawData, "PALTABLE18.PAL" },
+		{ k1SpecialPalette19, kRawData, "PALTABLE19.PAL" },
+		{ k1SpecialPalette20, kRawData, "PALTABLE20.PAL" },
+		{ k1SpecialPalette21, kRawData, "PALTABLE21.PAL" },
+		{ k1SpecialPalette22, kRawData, "PALTABLE22.PAL" },
+		{ k1SpecialPalette23, kRawData, "PALTABLE23.PAL" },
+		{ k1SpecialPalette24, kRawData, "PALTABLE24.PAL" },
+		{ k1SpecialPalette25, kRawData, "PALTABLE25.PAL" },
+		{ k1SpecialPalette26, kRawData, "PALTABLE26.PAL" },
+		{ k1SpecialPalette27, kRawData, "PALTABLE27.PAL" },
+		{ k1SpecialPalette28, kRawData, "PALTABLE28.PAL" },
+		{ k1SpecialPalette29, kRawData, "PALTABLE29.PAL" },
+		{ k1SpecialPalette30, kRawData, "PALTABLE30.PAL" },
+		{ k1SpecialPalette31, kRawData, "PALTABLE31.PAL" },
+		{ k1SpecialPalette32, kRawData, "PALTABLE32.PAL" },
+		{ k1SpecialPalette33, kRawData, "PALTABLE33.PAL" },
 
 		// AUDIO files
 		{ k1AudioTracks, kStringList, "TRACKS.TXT" },
@@ -547,10 +578,6 @@ const AmigaSfxTable *StaticResource::loadAmigaSfxTable(int id, int &entries) {
 
 const Room *StaticResource::loadRoomTable(int id, int &entries) {
 	return (const Room *)getData(id, StaticResource::kRoomList, entries);
-}
-
-const uint8 * const *StaticResource::loadPaletteTable(int id, int &entries) {
-	return (const uint8* const *)getData(id, kPaletteTable, entries);
 }
 
 const HofSeqData *StaticResource::loadHofSequenceData(int id, int &entries) {
@@ -852,51 +879,6 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 	delete file;
 	ptr = loadTo;
 
-	return true;
-}
-
-bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &size) {
-	const char *temp = filename;
-	int start = atoi(temp);
-	temp = strstr(temp, " ");
-	if (temp == NULL)
-		return false;
-	++temp;
-	int end = atoi(temp);
-
-	uint8 **table = new uint8*[end-start+1];
-	assert(table);
-
-	char baseFilename[64];
-	temp = filename;
-	temp = strstr(temp, " ");
-	++temp;
-	temp = strstr(temp, " ");
-	if (temp == NULL)
-		return false;
-	++temp;
-	strncpy(baseFilename, temp, 64);
-
-	char name[64];
-	for (int i = start; i <= end; ++i) {
-		snprintf(name, 64, "%s%d.PAL", baseFilename, i);
-
-		Common::SeekableReadStream *file = getFile(name);
-		if (!file) {
-			for (int j = start; j < i; ++i)
-				delete[] table[j-start];
-			delete[] table;
-
-			return false;
-		}
-
-		table[i-start] = new uint8[file->size()];
-		file->read(table[i-start], file->size());
-		delete file;
-	}
-
-	ptr = table;
-	size = end - start + 1;
 	return true;
 }
 
@@ -1361,15 +1343,6 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 }
 #endif // ENABLE_LOL
 
-void StaticResource::freePaletteTable(void *&ptr, int &size) {
-	uint8 **data = (uint8 **)ptr;
-	while (size--)
-		delete[] data[size];
-	delete[] data;
-	ptr = 0;
-	size = 0;
-}
-
 const char *StaticResource::getFilename(const char *name) {
 	static Common::String filename;
 
@@ -1464,7 +1437,10 @@ void KyraEngine_LoK::initStaticResource() {
 
 	_amuleteAnim = _staticres->loadRawData(k1AmuleteAnimSeq, temp);
 
-	_specialPalettes = _staticres->loadPaletteTable(k1PaletteList, temp);
+	const uint8 **palTable = new const uint8 *[k1SpecialPalette33 - k1SpecialPalette1 + 1];
+	for (int i = k1SpecialPalette1; i <= k1SpecialPalette33; ++i)
+		palTable[i - k1SpecialPalette1] = _staticres->loadRawData(i, temp);
+	_specialPalettes = palTable;
 
 	_guiStrings = _staticres->loadStrings(k1GUIStrings, _guiStringsSize);
 	_configStrings = _staticres->loadStrings(k1ConfigStrings, _configStringsSize);

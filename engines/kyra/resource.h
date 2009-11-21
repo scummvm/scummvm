@@ -166,7 +166,39 @@ enum KyraResources {
 	k1MagicAnimShapes,
 	k1BranStoneShapes,
 
-	k1PaletteList,
+	k1SpecialPalette1,
+	k1SpecialPalette2,
+	k1SpecialPalette3,
+	k1SpecialPalette4,
+	k1SpecialPalette5,
+	k1SpecialPalette6,
+	k1SpecialPalette7,
+	k1SpecialPalette8,
+	k1SpecialPalette9,
+	k1SpecialPalette10,
+	k1SpecialPalette11,
+	k1SpecialPalette12,
+	k1SpecialPalette13,
+	k1SpecialPalette14,
+	k1SpecialPalette15,
+	k1SpecialPalette16,
+	k1SpecialPalette17,
+	k1SpecialPalette18,
+	k1SpecialPalette19,
+	k1SpecialPalette20,
+	k1SpecialPalette21,
+	k1SpecialPalette22,
+	k1SpecialPalette23,
+	k1SpecialPalette24,
+	k1SpecialPalette25,
+	k1SpecialPalette26,
+	k1SpecialPalette27,
+	k1SpecialPalette28,
+	k1SpecialPalette29,
+	k1SpecialPalette30,
+	k1SpecialPalette31,
+	k1SpecialPalette32,
+	k1SpecialPalette33,
 
 	k1GUIStrings,
 	k1ConfigStrings,
@@ -328,7 +360,6 @@ public:
 	const Shape *loadShapeTable(int id, int &entries);
 	const AmigaSfxTable *loadAmigaSfxTable(int id, int &entries);
 	const Room *loadRoomTable(int id, int &entries);
-	const uint8 * const *loadPaletteTable(int id, int &entries);
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
 	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
 	const ItemAnimData_v2 *loadShapeAnimData_v2(int id, int &entries);
@@ -369,7 +400,6 @@ private:
 	bool loadShapeTable(const char *filename, void *&ptr, int &size);
 	bool loadAmigaSfxTable(const char *filename, void *&ptr, int &size);
 	bool loadRoomTable(const char *filename, void *&ptr, int &size);
-	bool loadPaletteTable(const char *filename, void *&ptr, int &size);
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v1(const char *filename, void *&ptr, int &size);
 	bool loadShapeAnimData_v2(const char *filename, void *&ptr, int &size);
@@ -388,7 +418,6 @@ private:
 	void freeShapeTable(void *&ptr, int &size);
 	void freeAmigaSfxTable(void *&ptr, int &size);
 	void freeRoomTable(void *&ptr, int &size);
-	void freePaletteTable(void *&ptr, int &size);
 	void freeHofSequenceData(void *&ptr, int &size);
 	void freeHofShapeAnimDataV1(void *&ptr, int &size);
 	void freeHofShapeAnimDataV2(void *&ptr, int &size);
@@ -411,7 +440,6 @@ private:
 		kRoomList,
 		kShapeList,
 		kRawData,
-		kPaletteTable,
 		kAmigaSfxTable,
 
 		k2SeqData,
