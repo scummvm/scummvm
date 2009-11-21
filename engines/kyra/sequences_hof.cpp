@@ -2774,8 +2774,6 @@ void KyraEngine_HoF::seq_init() {
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSoundFile("sound.dat");
 
-	int numShp = -1;
-
 	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 
 	if (_flags.gameID == GI_LOL)
@@ -2789,10 +2787,8 @@ void KyraEngine_HoF::seq_init() {
 		Screen::decodeFrame4(shp + 10, _animShapeFiledata, outsize);
 		delete[] shp;
 
-		do {
-			numShp++;
+		for (int numShp = 0; getShapePtr(numShp); ++numShp)
 			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, numShp), numShp);
-		} while (getShapePtr(numShp));
 	} else {
 		const MainMenu::StaticData data = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
@@ -2821,9 +2817,6 @@ void KyraEngine_HoF::seq_uninit() {
 
 	delete[] _animShapeFiledata;
 	_animShapeFiledata = 0;
-
-	if (_flags.isDemo && !_flags.isTalkie)
-		_staticres->unloadId(k2SeqplayShapeAnimData);
 
 	delete _menu;
 	_menu = 0;
