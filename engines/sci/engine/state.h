@@ -294,7 +294,6 @@ public:
 
 private:
 	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
-	bool callsKernelFunc(reg_t objAddr, int kernelFunc);
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	MoveCountType _moveCountType;

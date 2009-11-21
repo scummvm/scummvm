@@ -233,74 +233,11 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
-bool EngineState::callsKernelFunc(reg_t objAddr, int kernelFunc) {
-	Script *script = _segMan->getScript(objAddr.segment);
-	uint16 offset = objAddr.offset;
-
-	do {
-		uint16 kFuncNum;
-		int opsize = script->_buf[offset++];
-		uint opcode = opsize >> 1;
-		int i = 0;
-		byte argc;
-
-		while (g_opcode_formats[opcode][i]) {
-			switch (g_opcode_formats[opcode][i++]) {
-			case Script_Invalid:
-				break;
-			case Script_SByte:
-			case Script_Byte:
-				offset++;
-				break;
-			case Script_Word:
-			case Script_SWord:
-				offset += 2;
-				break;
-			case Script_SVariable:
-			case Script_Variable:
-			case Script_Property:
-			case Script_Global:
-			case Script_Local:
-			case Script_Temp:
-			case Script_Param:
-				if (opsize & 1)
-					kFuncNum = script->_buf[offset++];
-				else {
-					kFuncNum = 0xffff & (script->_buf[offset] | (script->_buf[offset + 1] << 8));
-					offset += 2;
-				}
-
-				if (opcode == op_callk) {
-					argc = script->_buf[offset++];
-
-					if (kFuncNum == kernelFunc)
-						return true;
-				}
-				break;
-
-			case Script_Offset:
-			case Script_SRelative:
-				offset++;
-				if (!opsize & 1)
-					offset++;
-				break;
-			case Script_End:
-				offset = 0;	// exit loop
-				break;
-			default:
-				warning("opcode %02x: Invalid", opcode);
-
-			}
-		}
-	} while (offset > 0);
-
-	return false;	// not found
-}
-
 bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
 	Selector slc;
 	reg_t objAddr;
+	bool foundTarget = false;
 
 	// Get address of target script
 	switch (featureDetection) {
@@ -426,47 +363,34 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 							// overlay selector, the game is using old graphics functions.
 							// Otherwise, if it's called with 8 parameters, it's using new
 							// graphics functions
-							if (argc == 6) {
-								_gfxFunctionsType = SCI_VERSION_0_EARLY;
-								return true;
-							} else if (argc == 8) {
-								_gfxFunctionsType = SCI_VERSION_0_LATE;
-								return true;
-							} else {
-								warning("overlay selector calling kDrawPic with %d parameters", argc);
-							}
+							_gfxFunctionsType = (argc == 8) ? SCI_VERSION_0_LATE : SCI_VERSION_0_EARLY;
+							return true;
 						}
 						break;
 					case kDetectMoveCountType:
 						// Games which ignore move count call kAbs before calling kDoBresen
 						if (kFuncNum == 61) {	// kAbs (SCI1)
-							_moveCountType = kIgnoreMoveCount;
-							return true;
+							foundTarget = true;
 						} else if (kFuncNum == 80) {	// kDoBresen (SCI1)
-							// If we reached here, a call to kAbs hasn't been found
-							_moveCountType = kIncrementMoveCount;
+							_moveCountType = foundTarget ? kIgnoreMoveCount : kIncrementMoveCount;
 							return true;
 						}
 						break;
 					case kDetectSoundType:
 						// Late SCI1 games call kIsObject before kDoSound
 						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
-							_doSoundType = SCI_VERSION_1_LATE;
-							return true;
+							foundTarget = true;
 						} else if (kFuncNum == 45) {	// kDoSound (SCI1)
-							// If we reached here, a call to kIsObject hasn't been found
-							_doSoundType = SCI_VERSION_1_EARLY;
+							_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
 							return true;
 						}
 						break;
 					case kDetectSetCursorType:
 						// Games with colored mouse cursors call kIsObject before kSetCursor
 						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
-							_setCursorType = SCI_VERSION_1_1;
-							return true;
+							foundTarget = true;
 						} else if (kFuncNum == 40) {	// kSetCursor (SCI0-SCI11)
-							// If we reached here, a call to kIsObject hasn't been found
-							_setCursorType = SCI_VERSION_0_EARLY;
+							_setCursorType = foundTarget ? SCI_VERSION_1_1 : SCI_VERSION_0_EARLY;
 							return true;
 						}
 					default:
@@ -550,20 +474,13 @@ SciVersion EngineState::detectSetCursorType() {
 
 			if (_kernel->_selectorCache.setCursor == -1) {
 				// Find which function of the Game object calls setCursor
-				int foundMethod = -1;
 
-				Object *obj = _segMan->getObject(_segMan->findObjectByName("Game"));
+				Object *obj = _segMan->getObject(_gameObj);
 				for (uint m = 0; m < obj->getMethodCount(); m++) {
-					found = callsKernelFunc(obj->getFunction(m), 40);	// kSetCursor (SCI0-SCI11)
-
-					if (found) {
-						foundMethod = m;
+					found = autoDetectFeature(kDetectSetCursorType, m);
+					if (found)
 						break;
-					}
 				}
-
-				if (found)
-					found = autoDetectFeature(kDetectSetCursorType, foundMethod);
 			} else {
 				found = autoDetectFeature(kDetectSetCursorType);
 			}
@@ -641,36 +558,33 @@ SciVersion EngineState::detectGfxFunctionsType() {
 				_gfxFunctionsType = SCI_VERSION_0_LATE;
 			} else {
 				// No shiftparser selector, check if the game is using an overlay
-				bool hasOverlaySelector = (_kernel->_selectorCache.overlay != -1);
-				int foundMethod = -1;
+				bool found = false;
 
-				if (!hasOverlaySelector) {
+				if (_kernel->_selectorCache.overlay == -1) {
 					// No overlay selector found, check if any method of the Rm object
 					// is calling kDrawPic, as the overlay selector might be missing in demos
-
+					
 					Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
-					bool found = false;
 					for (uint m = 0; m < obj->getMethodCount(); m++) {
-						found = callsKernelFunc(obj->getFunction(m), 8);	// kDrawPic	(SCI0 - SCI11)
-
-						if (found) {
-							foundMethod = m;
+						found = autoDetectFeature(kDetectGfxFunctions, m);
+						if (found)
 							break;
-						}
 					}
 				}
 
-				if (!hasOverlaySelector && foundMethod == -1) {
+				if (_kernel->_selectorCache.overlay == -1 && !found) {
 					// No overlay selector found, therefore the game is definitely
 					// using old graphics functions
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
-				} else {
+				} else if (_kernel->_selectorCache.overlay == -1 && found) {
+					// Detection already done above
+				} else {	// _kernel->_selectorCache.overlay != -1
 					// An in-between case: The game does not have a shiftParser
 					// selector, but it does have an overlay selector, so it uses an
 					// overlay. Therefore, check it to see how it calls kDrawPic to
 					// determine the graphics functions type used
 
-					if (!autoDetectFeature(kDetectGfxFunctions, foundMethod)) {
+					if (!autoDetectFeature(kDetectGfxFunctions)) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
 						// Try detecting the graphics function types from the existence of the motionCue
