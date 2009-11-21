@@ -42,7 +42,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 66
+	kKyraDatVersion = 67
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -154,7 +154,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k1SpecialPalette33, kTypeRawData, false },
 
 	// CREDITS (used in FM-TOWNS and AMIGA)
-	{ k1CreditsStrings, kTypeRawData, false },
+	{ k1CreditsStrings, kTypeRawData, true },
 
 	// FM-TOWNS specific
 	{ k1TownsSFXwdTable, kTypeTownsWDSfxTable, false },
