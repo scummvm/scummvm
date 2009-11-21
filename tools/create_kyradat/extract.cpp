@@ -23,12 +23,11 @@
 
 #include "extract.h"
 
+namespace {
+
 // Filename creation
 
 void createFilename(char *dstFilename, const ExtractInformation *info, const char *filename);
-
-namespace {
-
 void createLangFilename(char *dstFilename, const ExtractInformation *info, const char *filename);
 
 // Extraction function prototypes 
@@ -81,8 +80,6 @@ const ExtractType extractTypeTable[] = {
 	{ -1, 0, 0}
 };
 
-} // end of anonymous namespace
-
 void createFilename(char *dstFilename, const ExtractInformation *info, const char *filename) {
 	strcpy(dstFilename, filename);
 
@@ -104,8 +101,6 @@ void createFilename(char *dstFilename, const ExtractInformation *info, const cha
 		}
 	}
 }
-
-namespace {
 
 void createLangFilename(char *dstFilename, const ExtractInformation *info, const char *filename) {
 	strcpy(dstFilename, filename);

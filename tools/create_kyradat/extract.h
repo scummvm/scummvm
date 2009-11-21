@@ -68,8 +68,5 @@ struct ExtractType {
 const ExtractType *findExtractType(const int type);
 bool isLangSpecific(const int type);
 
-// TODO: Do not export this in the future
-void createFilename(char *dstFilename, const ExtractInformation *info, const char *filename);
-
 #endif
 
