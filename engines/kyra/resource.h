@@ -385,8 +385,6 @@ private:
 
 	KyraEngine_v1 *_vm;
 
-	struct FilenameTable;
-	struct ResData;
 	struct FileType;
 
 	bool checkResList(int id, int &type, const void *&ptr, int &size);
