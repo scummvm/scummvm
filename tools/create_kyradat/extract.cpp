@@ -169,10 +169,10 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 	int fmtPatch = 0;
 	// FM Towns files that need addional patches
 	if (info->platform == kPlatformFMTowns) {
-		if (id == kTakenStrings || id == kNoDropStrings || id == kPoisonGoneString ||
-			id == kThePoisonStrings || id == kFluteStrings || id == kWispJewelStrings)
+		if (id == k1TakenStrings || id == k1NoDropStrings || id == k1PoisonGoneString ||
+			id == k1ThePoisonStrings || id == k1FluteStrings || id == k1WispJewelStrings)
 			fmtPatch = 1;
-		else if (id == kIntroStrings)
+		else if (id == k1IntroStrings)
 			fmtPatch = 2;
 		else if (id == k2SeqplayStrings)
 			fmtPatch = 3;

@@ -29,7 +29,7 @@ namespace {
 
 // Id provider tables
 
-const ExtractEntrySearchData kForestSeqProvider[] = {
+const ExtractEntrySearchData k1ForestSeqProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000195, 0x00001455, { { 0x86, 0xC2, 0x45, 0xEB, 0x16, 0x8A, 0x44, 0x73, 0xB4, 0x59, 0x13, 0x9B, 0x85, 0x40, 0x82, 0x81 } } } }, // floppy
 	{ UNK_LANG, kPlatformUnknown, { 0x000002DE, 0x00003946, { { 0x85, 0x79, 0xDC, 0xB8, 0x62, 0xAD, 0xD6, 0x01, 0xA5, 0x66, 0x6B, 0xC4, 0x61, 0xCA, 0x82, 0xF5 } } } }, // CD + Amiga
 
@@ -42,7 +42,7 @@ const ExtractEntrySearchData kForestSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKallakWritingSeqProvider[] = {
+const ExtractEntrySearchData k1KallakWritingSeqProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x000007F5, 0x00006DCD, { { 0x0E, 0x0A, 0x75, 0xA5, 0x71, 0x5A, 0xC6, 0x32, 0x52, 0x7F, 0xEC, 0x2B, 0x0B, 0xF2, 0x22, 0xE6 } } } }, // floppy
 	{ UNK_LANG, kPlatformPC, { 0x00000805, 0x0000719E, { { 0xA2, 0xFE, 0x0A, 0xAA, 0xD9, 0x43, 0x5A, 0xBE, 0x56, 0x38, 0x73, 0x42, 0xAC, 0xA9, 0x1B, 0x01 } } } }, // CD
 
@@ -55,7 +55,7 @@ const ExtractEntrySearchData kKallakWritingSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKyrandiaLogoSeqProvider[] = {
+const ExtractEntrySearchData k1KyrandiaLogoSeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000005C, 0x000003D3, { { 0x75, 0xC5, 0x55, 0x54, 0x00, 0xD7, 0xE9, 0x26, 0x0F, 0x01, 0xB1, 0xB7, 0xA9, 0x29, 0xF7, 0x69 } } } },
 	{ UNK_LANG, kPlatformPC, { 0x000000A6, 0x00000A09, { { 0x70, 0x6E, 0x74, 0xBB, 0xD7, 0x09, 0x05, 0xDD, 0xA3, 0x09, 0x96, 0x40, 0xBD, 0x01, 0x19, 0x05 } } } }, // CD
 	{ UNK_LANG, kPlatformPC, { 0x00000054, 0x00000300, { { 0x4E, 0xAD, 0xD0, 0x73, 0xD2, 0x3C, 0xF6, 0x6B, 0x65, 0x23, 0xA2, 0x30, 0xD6, 0xEE, 0x1C, 0x13 } } } }, // demo
@@ -63,7 +63,7 @@ const ExtractEntrySearchData kKyrandiaLogoSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kKallakMalcolmSeqProvider[] = {
+const ExtractEntrySearchData k1KallakMalcolmSeqProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000026B, 0x00002132, { { 0x51, 0x07, 0x32, 0xA2, 0x09, 0x47, 0x97, 0x02, 0x85, 0x31, 0x39, 0x93, 0x3A, 0x53, 0x47, 0xA5 } } } }, // floppy
 	{ UNK_LANG, kPlatformUnknown, { 0x0000027B, 0x0000220A, { { 0xB7, 0xC1, 0x57, 0x04, 0x9B, 0x67, 0x82, 0x7B, 0x6E, 0xFD, 0x59, 0xF2, 0x10, 0x93, 0x89, 0x12 } } } }, // CD + Amiga
 
@@ -76,7 +76,7 @@ const ExtractEntrySearchData kKallakMalcolmSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kMalcolmTreeSeqProvider[] = {
+const ExtractEntrySearchData k1MalcolmTreeSeqProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000216, 0x000014FB, { { 0xBA, 0x6F, 0x63, 0xD5, 0x44, 0xCE, 0xE8, 0x20, 0xD4, 0x4C, 0x06, 0x58, 0x21, 0x8E, 0x07, 0x8B } } } }, // floppy
 	{ UNK_LANG, kPlatformPC, { 0x00000230, 0x0000192A, { { 0x28, 0xCC, 0x89, 0x40, 0x8A, 0xF7, 0xCB, 0xC0, 0x11, 0x8F, 0x0F, 0xE5, 0x5F, 0x24, 0x2D, 0x32 } } } }, // CD
 
@@ -89,7 +89,7 @@ const ExtractEntrySearchData kMalcolmTreeSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWestwoodLogoSeqProvider[] = {
+const ExtractEntrySearchData k1WestwoodLogoSeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000004B, 0x000002FE, { { 0x6E, 0xDA, 0x5D, 0x1E, 0xF4, 0x38, 0xAE, 0x7A, 0x9F, 0xBC, 0x00, 0x7C, 0x77, 0x9D, 0x03, 0xAF } } } },
 	{ UNK_LANG, kPlatformPC, { 0x0000004B, 0x0000032A, { { 0x9A, 0x54, 0x6F, 0x6C, 0x70, 0xD1, 0x02, 0x94, 0xD1, 0xA1, 0xA7, 0xBE, 0x1B, 0x10, 0xBD, 0x2F } } } }, // CD
 	{ UNK_LANG, kPlatformPC, { 0x00000044, 0x00000243, { { 0x00, 0x11, 0x10, 0x64, 0x60, 0xE8, 0xB5, 0x59, 0x00, 0x60, 0xF5, 0x10, 0xB5, 0x63, 0x9D, 0x55 } } } }, // demo
@@ -99,37 +99,37 @@ const ExtractEntrySearchData kWestwoodLogoSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDemo1SeqProvider[] = {
+const ExtractEntrySearchData k1Demo1SeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000026, 0x0000016E, { { 0x61, 0xF2, 0x84, 0x42, 0x89, 0x6E, 0xB8, 0x0D, 0x01, 0xB7, 0xE4, 0x49, 0xA1, 0x72, 0xDC, 0x66 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDemo2SeqProvider[] = {
+const ExtractEntrySearchData k1Demo2SeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000023, 0x00000151, { { 0xE7, 0x9F, 0xA7, 0x80, 0xE3, 0xC1, 0x63, 0xF2, 0x3F, 0x7B, 0x64, 0xD9, 0x70, 0x3A, 0xF1, 0x55 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDemo3SeqProvider[] = {
+const ExtractEntrySearchData k1Demo3SeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000059, 0x000001A8, { { 0x9E, 0x90, 0x4F, 0x9E, 0xBC, 0x39, 0x37, 0xD1, 0x10, 0x67, 0x8C, 0xE5, 0x84, 0xFD, 0xD9, 0x7C } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDemo4SeqProvider[] = {
+const ExtractEntrySearchData k1Demo4SeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000020, 0x0000013E, { { 0xB7, 0x67, 0x1D, 0x50, 0x11, 0xD0, 0x16, 0x91, 0x40, 0x40, 0xD1, 0xC0, 0xA0, 0x79, 0x3D, 0xCE } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kAmuleteAnimSeqProvider[] = {
+const ExtractEntrySearchData k1AmuleteAnimSeqProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002A, 0x0000025D, { { 0xB1, 0x59, 0x3C, 0x9A, 0x61, 0xC0, 0x1D, 0x80, 0xB5, 0x0C, 0x2E, 0xF9, 0xF6, 0x36, 0xED, 0x7D } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kOutroReunionSeqProvider[] = {
+const ExtractEntrySearchData k1OutroReunionSeqProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000547, 0x0000781C, { { 0xCF, 0xD6, 0x1D, 0x3D, 0x14, 0x40, 0x88, 0x35, 0x36, 0x4F, 0x0B, 0x1F, 0x9A, 0x1C, 0x3D, 0xAC } } } }, // floppy
 	{ UNK_LANG, kPlatformPC, { 0x000005E5, 0x00008918, { { 0x6A, 0x33, 0x8C, 0xB0, 0x16, 0x57, 0x2D, 0xEB, 0xB2, 0xE1, 0x64, 0x80, 0x98, 0x99, 0x98, 0x19 } } } }, // CD
 
@@ -142,7 +142,7 @@ const ExtractEntrySearchData kOutroReunionSeqProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kIntroCPSStringsProvider[] = {
+const ExtractEntrySearchData k1IntroCPSStringsProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00000015, 0x0000071D, { { 0x59, 0x65, 0x08, 0xF9, 0x4C, 0x81, 0xA1, 0xE3, 0x68, 0xF7, 0xE3, 0xF6, 0x33, 0x5F, 0xF5, 0x36 } } } },
 
 	{ UNK_LANG, kPlatformUnknown, { 0x00000014, 0x0000071D, { { 0xBA, 0xB6, 0x58, 0xB3, 0x28, 0x5E, 0x9F, 0x77, 0x69, 0x9D, 0x77, 0x53, 0x9D, 0x0D, 0xB0, 0x29 } } } }, // floppy + PC98
@@ -154,7 +154,7 @@ const ExtractEntrySearchData kIntroCPSStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kIntroCOLStringsProvider[] = {
+const ExtractEntrySearchData k1IntroCOLStringsProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x00000F09, { { 0x05, 0x7B, 0x69, 0xB7, 0x6A, 0xC3, 0x7F, 0xD9, 0x7E, 0x51, 0x87, 0xA5, 0x31, 0xD8, 0x80, 0xB3 } } } },
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002B, 0x00000F09, { { 0x01, 0x40, 0x65, 0xC1, 0x33, 0xAA, 0x64, 0xA7, 0x44, 0xD5, 0x89, 0x68, 0x17, 0x47, 0xC7, 0x1D } } } }, // floppy(?) + PC98
 	{ UNK_LANG, kPlatformPC, { 0x00000046, 0x0000174F, { { 0xAA, 0x59, 0x01, 0x20, 0x06, 0xB4, 0x80, 0xC0, 0x84, 0x38, 0xFD, 0x97, 0xBF, 0x78, 0xDD, 0x78 } } } }, // demo
@@ -164,7 +164,7 @@ const ExtractEntrySearchData kIntroCOLStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kIntroWSAStringsProvider[] = {
+const ExtractEntrySearchData k1IntroWSAStringsProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000093, 0x00002E5D, { { 0xAB, 0xD1, 0x32, 0x89, 0x2A, 0x8D, 0xC0, 0x2C, 0x87, 0x87, 0xA3, 0x14, 0x2A, 0x2A, 0x22, 0x7F } } } },
 
 	{ UNK_LANG, kPlatformUnknown, { 0x00000086, 0x00002E5D, { { 0xD2, 0x8D, 0x62, 0xEF, 0xEB, 0x75, 0x04, 0x13, 0x64, 0x85, 0x6B, 0x6C, 0xE8, 0x6C, 0xCF, 0x52 } } } },
@@ -175,7 +175,7 @@ const ExtractEntrySearchData kIntroWSAStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kIntroStringsProvider[] = {
+const ExtractEntrySearchData k1IntroStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x000004F5, 0x0001A7B1, { { 0xC7, 0x65, 0x5B, 0x5A, 0x56, 0x43, 0x94, 0x55, 0x5B, 0x00, 0xFD, 0x5D, 0xF4, 0xB5, 0x04, 0x15 } } } }, // floppy
 	{ EN_ANY, kPlatformPC, { 0x000004F6, 0x0001A7B1, { { 0xDE, 0x41, 0xB1, 0x98, 0xD5, 0xAD, 0x6B, 0xBA, 0x33, 0x04, 0x19, 0x5D, 0xCC, 0x07, 0xB5, 0x56 } } } }, // CD
 	{ EN_ANY, kPlatformPC, { 0x000002FA, 0x00010181, { { 0x48, 0xD3, 0x1B, 0x8E, 0x8D, 0xBC, 0x1F, 0x51, 0x35, 0x71, 0xE2, 0xAB, 0xC8, 0xBE, 0xFC, 0x88 } } } }, // demo
@@ -202,7 +202,7 @@ const ExtractEntrySearchData kIntroStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kOutroHomeStringProvider[] = {
+const ExtractEntrySearchData k1OutroHomeStringProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x00000005, 0x00000189, { { 0xA5, 0xF3, 0x03, 0x3F, 0x43, 0x2B, 0x77, 0xCC, 0x5C, 0x96, 0x64, 0xB1, 0x75, 0xB5, 0x3E, 0xF6 } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x00000007, 0x000003E8, { { 0x68, 0x35, 0x87, 0x53, 0xD9, 0x53, 0x1F, 0x13, 0x24, 0x61, 0x0D, 0x8D, 0x33, 0x91, 0xF3, 0x47 } } } },
@@ -219,7 +219,7 @@ const ExtractEntrySearchData kOutroHomeStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kRoomFilenamesProvider[] = {
+const ExtractEntrySearchData k1RoomFilenamesProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x0000034C, 0x0000B7AA, { { 0x7C, 0x1B, 0x89, 0x09, 0xF0, 0x87, 0x3C, 0x64, 0x3D, 0x0E, 0x61, 0xCC, 0x09, 0x8D, 0xC9, 0x95 } } } },
 	{ UNK_LANG, kPlatformUnknown, { 0x000002DC, 0x0000B7AA, { { 0x31, 0x56, 0x41, 0x69, 0x1E, 0x84, 0x54, 0x2C, 0xF7, 0x7B, 0x98, 0x25, 0xF3, 0x91, 0x56, 0xFD } } } }, // DOS + PC98
 
@@ -228,7 +228,7 @@ const ExtractEntrySearchData kRoomFilenamesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kRoomListProvider[] = {
+const ExtractEntrySearchData k1RoomListProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x000064E8, 0x0010312B, { { 0x94, 0x5C, 0x87, 0x35, 0x35, 0x6B, 0x3E, 0xBF, 0x55, 0x3D, 0xDB, 0xD9, 0xFB, 0x97, 0x27, 0x5D } } } },
 
 	{ UNK_LANG, kPlatformUnknown, { 0x00004DD6, 0x0010312B, { { 0xC6, 0xF0, 0xC4, 0x2C, 0x5A, 0xD7, 0x48, 0xE4, 0x41, 0x23, 0x65, 0x6D, 0xC8, 0xC7, 0xCE, 0xF5 } } } }, // DOS + PC98
@@ -238,7 +238,7 @@ const ExtractEntrySearchData kRoomListProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kCharacterImageFilenamesProvider[] = {
+const ExtractEntrySearchData k1CharacterImageFilenamesProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x000000F7, 0x00003A8F, { { 0x1F, 0xAB, 0x8E, 0x5F, 0xAD, 0x76, 0x57, 0x37, 0xD7, 0x9B, 0x3F, 0x35, 0x4B, 0xA0, 0x98, 0x37 } } } },
 
 	{ UNK_LANG, kPlatformUnknown, { 0x000000E4, 0x00003A8F, { { 0x7A, 0x77, 0x6D, 0x26, 0xC8, 0x43, 0xCB, 0x74, 0x46, 0x2E, 0x04, 0x22, 0x89, 0x27, 0x33, 0x06 } } } }, // DOS + PC98
@@ -248,7 +248,7 @@ const ExtractEntrySearchData kCharacterImageFilenamesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kAudioTracksProvider[] = {
+const ExtractEntrySearchData k1AudioTracksProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x00000041, 0x00000FBF, { { 0xB5, 0xA2, 0x90, 0xE9, 0x73, 0x83, 0x47, 0x5A, 0xB3, 0x3E, 0x04, 0xBB, 0xAA, 0xC8, 0x84, 0x53 } } } },
 
 	{ UNK_LANG, kPlatformFMTowns, { 0x0000005D, 0x0000154E, { { 0xA7, 0x7E, 0x03, 0x0A, 0x81, 0x54, 0xD2, 0x5D, 0x7B, 0x33, 0x07, 0xBF, 0x70, 0x01, 0x4B, 0x79 } } } },
@@ -256,14 +256,14 @@ const ExtractEntrySearchData kAudioTracksProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kAudioTracksIntroProvider[] = {
+const ExtractEntrySearchData k1AudioTracksIntroProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000006, 0x0000022C, { { 0x5F, 0xC9, 0xE1, 0x4B, 0x34, 0x52, 0xB9, 0xF8, 0xFF, 0x37, 0x8B, 0xF4, 0xEF, 0x5E, 0xC5, 0xDA } } } }, // floppy + demo
 	{ UNK_LANG, kPlatformUnknown, { 0x0000000C, 0x00000458, { { 0xEB, 0xB3, 0x96, 0xA5, 0x07, 0xE6, 0x11, 0x58, 0xDB, 0x3F, 0x34, 0x30, 0xFB, 0x7B, 0x92, 0xC8 } } } }, // CD
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kItemNamesProvider[] = {
+const ExtractEntrySearchData k1ItemNamesProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000468, 0x00018B13, { { 0xCE, 0xFE, 0x19, 0x5D, 0x3F, 0xD7, 0x2A, 0xF6, 0xD0, 0xC5, 0xBC, 0x17, 0x6A, 0x52, 0xDB, 0xFE } } } },
 
 	{ FR_FRA, kPlatformPC, { 0x00000506, 0x0001C3CC, { { 0x46, 0xD4, 0x19, 0x04, 0x2A, 0x46, 0xCD, 0x63, 0x41, 0x5A, 0x8E, 0xA8, 0x00, 0xDD, 0x02, 0x77 } } } },
@@ -286,7 +286,7 @@ const ExtractEntrySearchData kItemNamesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kTakenStringsProvider[] = {
+const ExtractEntrySearchData k1TakenStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000010, 0x000004C2, { { 0x08, 0xC0, 0x66, 0xB1, 0x45, 0x04, 0x78, 0xF9, 0xAF, 0x0F, 0x52, 0xC8, 0x0E, 0x0C, 0x69, 0x86 } } } },
 
 	{ FR_FRA, kPlatformPC, { 0x0000001E, 0x000008FA, { { 0xC9, 0xCC, 0x2E, 0x0B, 0xE4, 0xE0, 0x44, 0xBD, 0xC2, 0x10, 0x09, 0xA3, 0x36, 0xB1, 0x5D, 0x1C } } } }, // floppy
@@ -310,7 +310,7 @@ const ExtractEntrySearchData kTakenStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPlacedStringsProvider[] = {
+const ExtractEntrySearchData k1PlacedStringsProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x00000009, 0x000002B7, { { 0xE7, 0xCF, 0x8A, 0x19, 0xEF, 0x98, 0xE5, 0x74, 0x46, 0x46, 0x47, 0x65, 0xB6, 0x81, 0x70, 0x0A } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000000D, 0x0000074C, { { 0x0E, 0x1C, 0x1F, 0xD2, 0xCF, 0xBF, 0x40, 0xE1, 0x59, 0x0F, 0x1B, 0x46, 0xED, 0x8B, 0x96, 0x8E } } } },
@@ -327,7 +327,7 @@ const ExtractEntrySearchData kPlacedStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDroppedStringsProvider[] = {
+const ExtractEntrySearchData k1DroppedStringsProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x0000000A, 0x0000033C, { { 0x96, 0x63, 0xFD, 0x73, 0x71, 0xCC, 0x62, 0x59, 0x86, 0x02, 0x47, 0x55, 0x82, 0xF8, 0x5E, 0x1F } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000000B, 0x0000059F, { { 0xDD, 0x5E, 0x51, 0x7E, 0xD9, 0xFC, 0xCD, 0xAD, 0x6B, 0x93, 0x71, 0xBE, 0x83, 0x63, 0x3F, 0x88 } } } },
@@ -344,7 +344,7 @@ const ExtractEntrySearchData kDroppedStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kNoDropStringsProvider[] = {
+const ExtractEntrySearchData k1NoDropStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000047, 0x00001881, { { 0xEF, 0x81, 0x2B, 0x8F, 0x06, 0x0C, 0xA6, 0xBA, 0x50, 0x9C, 0x99, 0x40, 0x53, 0xFD, 0xC1, 0x55 } } } },
 
 	{ FR_FRA, kPlatformPC, { 0x0000004C, 0x00001B39, { { 0xFF, 0xD5, 0x5D, 0x1C, 0xF1, 0x8A, 0xA4, 0x21, 0xB1, 0x56, 0x2B, 0xAC, 0x9F, 0x40, 0x30, 0x53 } } } },
@@ -367,7 +367,7 @@ const ExtractEntrySearchData kNoDropStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPutDownStringProvider[] = {
+const ExtractEntrySearchData k1PutDownStringProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x00000026, 0x00000D27, { { 0x83, 0x09, 0x51, 0xD3, 0x94, 0x2B, 0xB1, 0x8B, 0x8B, 0x16, 0xA9, 0xEB, 0xE8, 0xA2, 0x4F, 0x0C } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x00000029, 0x0000187D, { { 0xDE, 0xEE, 0x66, 0x88, 0x57, 0xF5, 0xF9, 0x2E, 0xD2, 0x14, 0xF5, 0x83, 0xA0, 0x0D, 0x96, 0x86 } } } },
@@ -384,7 +384,7 @@ const ExtractEntrySearchData kPutDownStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWaitAmuletStringProvider[] = {
+const ExtractEntrySearchData k1WaitAmuletStringProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x0000003D, 0x0000150D, { { 0x11, 0xC8, 0x7E, 0x83, 0x7A, 0xC3, 0x5D, 0xD9, 0x72, 0xFC, 0x75, 0xCB, 0x57, 0xE9, 0xF1, 0x36 } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x00000029, 0x000017A7, { { 0xFD, 0xA3, 0xAD, 0x24, 0x16, 0x49, 0x22, 0x6F, 0x52, 0xE9, 0x50, 0x11, 0x51, 0x38, 0xCA, 0xE0 } } } },
@@ -403,7 +403,7 @@ const ExtractEntrySearchData kWaitAmuletStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kBlackJewelStringProvider[] = {
+const ExtractEntrySearchData k1BlackJewelStringProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000023, 0x00000B73, { { 0xBE, 0xE9, 0xBD, 0x65, 0xB9, 0xB1, 0xCD, 0xF0, 0x45, 0x03, 0x01, 0x70, 0xBE, 0xD0, 0x0F, 0x80 } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x00000035, 0x0000205F, { { 0x33, 0xD6, 0x19, 0xEE, 0xEA, 0xDD, 0x9F, 0xB5, 0x77, 0x0C, 0x8E, 0x84, 0x5E, 0x61, 0x22, 0x3E } } } },
@@ -422,7 +422,7 @@ const ExtractEntrySearchData kBlackJewelStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPoisonGoneStringProvider[] = {
+const ExtractEntrySearchData k1PoisonGoneStringProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x0000002D, 0x00000F59, { { 0x9A, 0x88, 0x07, 0x5A, 0x9C, 0xC3, 0x7B, 0xB0, 0x79, 0x69, 0xE0, 0x84, 0x11, 0x9B, 0x82, 0xCD } } } },
 
 	{ FR_FRA, kPlatformPC, { 0x00000059, 0x00001E91, { { 0xDA, 0x9C, 0xC4, 0x7A, 0x79, 0x73, 0x60, 0xBF, 0x31, 0xF8, 0x8F, 0xAF, 0xC1, 0x4D, 0x25, 0xEC } } } }, // floppy
@@ -446,7 +446,7 @@ const ExtractEntrySearchData kPoisonGoneStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kHealingTipStringProvider[] = {
+const ExtractEntrySearchData k1HealingTipStringProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x0000002D, 0x00000F04, { { 0xC0, 0xC7, 0x0C, 0x3D, 0xA7, 0x62, 0x14, 0xFB, 0xE8, 0x52, 0x05, 0x0D, 0xFE, 0xF6, 0xC7, 0x28 } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000002B, 0x00001949, { { 0xC7, 0xE3, 0x0A, 0x6B, 0x8F, 0xCA, 0xBC, 0x3A, 0xDC, 0x76, 0x48, 0xD3, 0x8B, 0xD9, 0x44, 0x2E } } } },
@@ -465,7 +465,7 @@ const ExtractEntrySearchData kHealingTipStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWispJewelStringsProvider[] = {
+const ExtractEntrySearchData k1WispJewelStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000053, 0x00001C62, { { 0x9A, 0xF1, 0xCC, 0xB3, 0x09, 0xF0, 0x9C, 0x33, 0x0E, 0xF0, 0xE3, 0xF8, 0x24, 0x63, 0x40, 0x95 } } } }, // floppy
 	{ EN_ANY, kPlatformPC, { 0x00000052, 0x00001CE8, { { 0x6D, 0x69, 0x6D, 0x15, 0x4F, 0xF1, 0xD8, 0xA6, 0x53, 0x9F, 0xE3, 0x77, 0x75, 0x25, 0xE7, 0x93 } } } }, // CD
 
@@ -491,7 +491,7 @@ const ExtractEntrySearchData kWispJewelStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kMagicJewelStringsProvider[] = {
+const ExtractEntrySearchData k1MagicJewelStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000013, 0x0000069E, { { 0x7C, 0xF2, 0xEE, 0x7C, 0x8A, 0xCE, 0x5B, 0x09, 0x32, 0xDC, 0x31, 0x1F, 0x45, 0x21, 0x84, 0xFF } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000000F, 0x0000087E, { { 0xD8, 0xF1, 0x40, 0x9D, 0x9C, 0x15, 0x9E, 0xBD, 0x69, 0xE5, 0xE1, 0x51, 0x34, 0x22, 0xF3, 0x75 } } } },
@@ -510,7 +510,7 @@ const ExtractEntrySearchData kMagicJewelStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kThePoisonStringsProvider[] = {
+const ExtractEntrySearchData k1ThePoisonStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000057, 0x00001C24, { { 0xBC, 0x31, 0x5C, 0x25, 0x50, 0x36, 0x58, 0x20, 0x55, 0xFC, 0x75, 0x47, 0x2D, 0x43, 0x73, 0x78 } } } },
 
 	{ FR_FRA, kPlatformPC, { 0x00000068, 0x000022D8, { { 0x39, 0xDA, 0xB3, 0xD2, 0xDA, 0x3F, 0xAB, 0x40, 0x1A, 0x4F, 0x9D, 0x02, 0xBA, 0x37, 0xEC, 0x4D } } } },
@@ -533,7 +533,7 @@ const ExtractEntrySearchData kThePoisonStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kFluteStringsProvider[] = {
+const ExtractEntrySearchData k1FluteStringsProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x0000003C, 0x00001599, { { 0x96, 0x72, 0x5A, 0x8A, 0xA0, 0xEE, 0xA2, 0xCE, 0x4D, 0x21, 0x01, 0x6C, 0xC5, 0x1A, 0xEB, 0x21 } } } }, // floppy + AMIGA
 	{ EN_ANY, kPlatformPC, { 0x0000009C, 0x00002334, { { 0xA8, 0xA3, 0x1F, 0x0D, 0x36, 0x25, 0x19, 0x98, 0x50, 0xA0, 0x13, 0x65, 0xF4, 0xE8, 0x27, 0x19 } } } },      // CD
 
@@ -554,7 +554,7 @@ const ExtractEntrySearchData kFluteStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kFlaskFullStringProvider[] = {
+const ExtractEntrySearchData k1FlaskFullStringProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x0000001C, 0x000009C8, { { 0xA5, 0xC7, 0x5E, 0x6E, 0x02, 0xEE, 0x8C, 0xF8, 0xF0, 0xBF, 0x69, 0xB8, 0x05, 0x1E, 0xF5, 0x28 } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000001F, 0x00001135, { { 0x90, 0x52, 0x4A, 0x95, 0xE4, 0x89, 0xD6, 0x0A, 0xE1, 0x2E, 0x98, 0x11, 0x02, 0xF5, 0x79, 0x37 } } } },
@@ -571,7 +571,7 @@ const ExtractEntrySearchData kFlaskFullStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kFullFlaskStringProvider[] = {
+const ExtractEntrySearchData k1FullFlaskStringProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x00000097, 0x00003521, { { 0x9C, 0x30, 0xC7, 0xC9, 0x97, 0xF3, 0x0E, 0xC4, 0x6E, 0xCA, 0x63, 0xC6, 0xD8, 0x06, 0xFF, 0x30 } } } },
 
 	{ FR_FRA, kPlatformPC, { 0x00000086, 0x00002E16, { { 0x94, 0x6C, 0x6D, 0xB6, 0x4C, 0x84, 0xBB, 0xF6, 0xC8, 0x50, 0x4C, 0x00, 0x38, 0xE3, 0x09, 0x5B } } } },
@@ -594,7 +594,7 @@ const ExtractEntrySearchData kFullFlaskStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kVeryCleverStringProvider[] = {
+const ExtractEntrySearchData k1VeryCleverStringProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x00000032, 0x0000118D, { { 0x4B, 0x6D, 0xD4, 0xDC, 0x3E, 0xA2, 0x2D, 0x6D, 0x2C, 0x5A, 0xF7, 0x67, 0x4B, 0x6D, 0x40, 0xEF } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000002F, 0x00001BDF, { { 0x32, 0x2C, 0x60, 0x1E, 0xB7, 0xE0, 0xFE, 0x5F, 0xEA, 0xEF, 0xA4, 0x73, 0xAC, 0xCB, 0xBA, 0xFE } } } },
@@ -611,7 +611,7 @@ const ExtractEntrySearchData kVeryCleverStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kNewGameStringProvider[] = {
+const ExtractEntrySearchData k1NewGameStringProvider[] = {
 	{ EN_ANY, kPlatformUnknown, { 0x00000015, 0x0000052B, { { 0xAB, 0xD2, 0x16, 0x26, 0xC2, 0x86, 0xFA, 0xC8, 0x42, 0xCD, 0x16, 0xCD, 0x25, 0xB7, 0x44, 0xDC } } } },
 
 	{ JA_JPN, kPlatformUnknown, { 0x0000001B, 0x00000EC8, { { 0x13, 0x9A, 0xBC, 0x8F, 0xE2, 0x4B, 0xD7, 0x0B, 0xC0, 0x81, 0x60, 0x10, 0xC2, 0xA6, 0x9C, 0xFA } } } },
@@ -628,7 +628,7 @@ const ExtractEntrySearchData kNewGameStringProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDefaultShapesProvider[] = {
+const ExtractEntrySearchData k1DefaultShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000048A, 0x00012C0A, { { 0x90, 0x9E, 0x21, 0x9F, 0x90, 0x16, 0x1D, 0xA5, 0x57, 0xF8, 0x71, 0xE1, 0x15, 0x44, 0x29, 0x73 } } } },
 
 	// TODO: Where did this come from?
@@ -637,37 +637,37 @@ const ExtractEntrySearchData kDefaultShapesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kHealing1ShapesProvider[] = {
+const ExtractEntrySearchData k1Healing1ShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000009A, 0x00002F17, { { 0x92, 0x2C, 0xF1, 0x5C, 0x8B, 0xCE, 0xEB, 0x0B, 0xE4, 0x07, 0x16, 0xAA, 0x25, 0x4F, 0x83, 0xEB } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kHealing2ShapesProvider[] = {
+const ExtractEntrySearchData k1Healing2ShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000D2, 0x00004257, { { 0xAC, 0x35, 0xAA, 0x72, 0x50, 0x67, 0x58, 0xE4, 0x70, 0xB0, 0xBB, 0xCA, 0xA7, 0x4C, 0x91, 0x82 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPoisonDeathShapesProvider[] = {
+const ExtractEntrySearchData k1PoisonDeathShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000008C, 0x00002E90, { { 0xBC, 0x44, 0xFB, 0x98, 0xE7, 0x42, 0xF6, 0xC8, 0x87, 0xDD, 0x00, 0x42, 0x85, 0xD8, 0x1E, 0x81 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kFluteShapesProvider[] = {
+const ExtractEntrySearchData k1FluteShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000FC, 0x00004F0F, { { 0xB1, 0xF0, 0x56, 0x6E, 0xAB, 0x3C, 0x88, 0x13, 0x97, 0x7C, 0xCC, 0x61, 0x85, 0x8A, 0x28, 0x12 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWinter1ShapesProvider[] = {
+const ExtractEntrySearchData k1Winter1ShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000031, 0x00000E70, { { 0x3A, 0x15, 0x36, 0x51, 0x2F, 0xF8, 0xAF, 0xE6, 0x41, 0x71, 0x8D, 0x44, 0x99, 0x48, 0xB3, 0x4F } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWinter2ShapesProvider[] = {
+const ExtractEntrySearchData k1Winter2ShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000F5, 0x00005192, { { 0xD3, 0x64, 0xAC, 0x64, 0x42, 0x9F, 0xB9, 0xCA, 0x0C, 0xC8, 0x97, 0x67, 0x8C, 0x92, 0xB4, 0x79 } } } },
 
 	{ UNK_LANG, kPlatformUnknown, { 0x000000F5, 0x000029E4, { { 0xF0, 0x7B, 0x05, 0xD8, 0xC1, 0x97, 0x27, 0x17, 0xFA, 0x32, 0xE9, 0x1A, 0x46, 0xA5, 0xEB, 0x84 } } } }, // CD + Amiga
@@ -675,13 +675,13 @@ const ExtractEntrySearchData kWinter2ShapesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWinter3ShapesProvider[] = {
+const ExtractEntrySearchData k1Winter3ShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000001C, 0x00000A5E, { { 0x84, 0xDD, 0xC0, 0xEA, 0xE3, 0xBE, 0x98, 0x66, 0xE0, 0xA3, 0x4D, 0x00, 0x88, 0x31, 0x61, 0x1F } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kDrinkShapesProvider[] = {
+const ExtractEntrySearchData k1DrinkShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000069, 0x00001EDA, { { 0x21, 0xFA, 0x2F, 0x41, 0x8F, 0x70, 0x3B, 0xBB, 0x93, 0x35, 0x49, 0xEC, 0x1C, 0xEE, 0xDD, 0xAC } } } },
 
 	{ UNK_LANG, kPlatformFMTowns, { 0x0000006A, 0x00001EDA, { { 0xE2, 0xDA, 0xEC, 0x87, 0x4A, 0x27, 0xD8, 0xC1, 0x57, 0xE7, 0xD8, 0xD7, 0x87, 0x5F, 0x3A, 0xEB } } } },
@@ -691,19 +691,19 @@ const ExtractEntrySearchData kDrinkShapesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kWispShapesProvider[] = {
+const ExtractEntrySearchData k1WispShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x000000B6, 0x00003A53, { { 0x34, 0x52, 0x9D, 0x06, 0x4F, 0x1B, 0xCD, 0xB7, 0x30, 0xF7, 0xB4, 0x9F, 0x0F, 0x34, 0xDD, 0xF7 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kMagicAnimShapesProvider[] = {
+const ExtractEntrySearchData k1MagicAnimShapesProvider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000023, 0x00000A2D, { { 0x48, 0x8E, 0x2A, 0x61, 0x93, 0xCD, 0x58, 0x3B, 0x45, 0x62, 0xD9, 0x01, 0x8F, 0xBA, 0x2A, 0x1A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kBranStoneShapesProvider[] = {
+const ExtractEntrySearchData k1BranStoneShapesProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x0000006E, 0x00001E41, { { 0x77, 0x99, 0x54, 0xED, 0x4C, 0x31, 0x08, 0x50, 0x41, 0x22, 0x6B, 0xED, 0x34, 0xF4, 0x17, 0xA1 } } } },
 
 	{ UNK_LANG, kPlatformAmiga, { 0x0000006E, 0x00002026, { { 0x5A, 0xAF, 0x28, 0xF3, 0x0F, 0x82, 0x05, 0xB4, 0x33, 0x83, 0xCE, 0x56, 0xDB, 0xE7, 0x5C, 0xB4 } } } },
@@ -715,205 +715,205 @@ const ExtractEntrySearchData kBranStoneShapesProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette1Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette1Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x0000024B, { { 0x6C, 0x6C, 0xE9, 0xB6, 0xC4, 0xC2, 0x29, 0xA5, 0xB6, 0xB3, 0x82, 0xB6, 0x03, 0x5B, 0x66, 0x7A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette2Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette2Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x00000470, { { 0x63, 0x02, 0x97, 0x7D, 0xBE, 0x97, 0x5E, 0x88, 0x2E, 0x50, 0x18, 0x6A, 0x4A, 0x61, 0x09, 0xA6 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette3Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette3Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x0000042A, { { 0xF8, 0x32, 0x65, 0x55, 0x1C, 0xC5, 0x6E, 0x71, 0xC6, 0x6A, 0x8E, 0xC5, 0x3C, 0xBC, 0x1F, 0xA8 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette4Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette4Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x000003A4, { { 0xA1, 0xA6, 0x6F, 0x53, 0xA2, 0x1E, 0x27, 0x6F, 0x0D, 0xD0, 0x4F, 0xDC, 0x4C, 0xDC, 0xAE, 0x17 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette5Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette5Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x0000033D, { { 0x22, 0x02, 0xB3, 0xCD, 0x4E, 0xD5, 0x6E, 0x65, 0x2B, 0x38, 0x7D, 0x3E, 0x27, 0x03, 0x1A, 0x59 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette6Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette6Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000033, 0x000001EA, { { 0xC7, 0xA7, 0x0E, 0xBA, 0x3F, 0x5E, 0xD3, 0x02, 0x99, 0x3B, 0x32, 0x00, 0x39, 0x3C, 0xD2, 0xAC } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette7Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette7Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000036, 0x0000040C, { { 0x1A, 0x8E, 0x3E, 0x5F, 0x09, 0xFE, 0x4A, 0xF1, 0x5D, 0x2E, 0x2C, 0xD3, 0xFF, 0x75, 0x7D, 0x1C } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette8Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette8Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000036, 0x000008E4, { { 0x55, 0xB4, 0xD3, 0xD1, 0x89, 0x49, 0xA5, 0x7E, 0x40, 0xF9, 0xFE, 0x6E, 0x16, 0xE8, 0xBD, 0xBB } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette9Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette9Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x000001DB, { { 0x7A, 0x04, 0x16, 0xDD, 0x6A, 0xBA, 0x51, 0x9E, 0x24, 0x9E, 0xEA, 0x76, 0xD0, 0xFA, 0x92, 0xF4 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette10Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette10Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x0000017A, { { 0xD2, 0x20, 0x1F, 0x12, 0xE1, 0x65, 0x68, 0xA7, 0x9C, 0x69, 0x8E, 0x99, 0xDF, 0xC5, 0xD2, 0x8E } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette11Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette11Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x00000136, { { 0xBF, 0x38, 0xB1, 0xFE, 0xBF, 0x25, 0xBC, 0xD3, 0xCC, 0x60, 0x40, 0x97, 0xB6, 0x4A, 0xC7, 0xB2 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette12Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette12Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x00000102, { { 0x1C, 0x1E, 0x6A, 0x30, 0xE1, 0xD1, 0xF9, 0x3D, 0x9A, 0xF1, 0x84, 0xBD, 0x44, 0x07, 0x51, 0xEA } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette13Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette13Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x00000000, { { 0x76, 0x22, 0x21, 0x4B, 0x85, 0x36, 0xAF, 0xE7, 0xB8, 0x9B, 0x1C, 0x66, 0x06, 0x06, 0x9B, 0x0D } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette14Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette14Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x000003BF, { { 0x78, 0xE8, 0xA8, 0xF2, 0x4D, 0x54, 0x48, 0x47, 0xC9, 0xC1, 0x5B, 0x6C, 0x69, 0xCB, 0x65, 0xB6 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette15Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette15Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000002D, 0x000002DD, { { 0x9F, 0x66, 0x50, 0xAC, 0xED, 0x0C, 0x63, 0x20, 0xE9, 0x4E, 0x4D, 0x3D, 0xC4, 0xBC, 0x94, 0x8A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette16Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette16Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x0000036E, { { 0xA9, 0xDB, 0x1C, 0x35, 0xED, 0xED, 0xE4, 0x40, 0x68, 0x29, 0xB1, 0x6E, 0x60, 0xE4, 0xB0, 0xDB } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette17Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette17Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000021, 0x000004D7, { { 0xC0, 0xB5, 0x7B, 0x94, 0xED, 0xD7, 0x48, 0x66, 0x37, 0x54, 0xE8, 0xFC, 0x0F, 0xA5, 0x54, 0x8A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette18Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette18Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x000002FD, { { 0x0A, 0xDD, 0x81, 0xA8, 0x89, 0xD2, 0x53, 0x05, 0x25, 0xCC, 0x2B, 0x8B, 0x48, 0x1D, 0xAB, 0x0A } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette19Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette19Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000134, { { 0xCB, 0x0F, 0xA9, 0xD2, 0xD8, 0xEA, 0x2A, 0x1F, 0x16, 0x7B, 0x90, 0xE5, 0x72, 0xB3, 0x52, 0x50 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette20Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette20Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000396, { { 0x3B, 0xD8, 0xA5, 0xC5, 0x66, 0x3E, 0xC7, 0x88, 0xD0, 0x3B, 0x42, 0x29, 0x84, 0x58, 0xA7, 0x00 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette21Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette21Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000134, { { 0x96, 0x70, 0x7D, 0x5B, 0xC4, 0xBA, 0x89, 0x89, 0xC9, 0x42, 0xF4, 0x70, 0x33, 0xF5, 0xE8, 0x02 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette22Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette22Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x00000376, { { 0xA2, 0x92, 0x28, 0x65, 0xAB, 0xCC, 0x16, 0xE8, 0xA5, 0x72, 0x2F, 0x00, 0x66, 0x8F, 0x8D, 0x96 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette23Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette23Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000015, 0x000002C2, { { 0x5C, 0x78, 0x74, 0x81, 0x76, 0xB5, 0x26, 0x8E, 0x20, 0xAE, 0x50, 0xCD, 0x2B, 0x9E, 0x81, 0x8B } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette24Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette24Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x00000472, { { 0xC6, 0xF0, 0xA6, 0x33, 0x7E, 0xAE, 0xBC, 0xF9, 0xAE, 0xE2, 0xF4, 0x7B, 0x71, 0x44, 0x50, 0xEF } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette25Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette25Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x000004CD, { { 0x57, 0x03, 0xB5, 0x27, 0x64, 0x48, 0xBF, 0x6A, 0x0F, 0xC2, 0xC0, 0x4A, 0x73, 0x9A, 0xFE, 0xB3 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette26Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette26Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x000004CA, { { 0xF8, 0x39, 0x8D, 0x6F, 0x8D, 0x9C, 0x6E, 0x0A, 0x33, 0xE8, 0xF2, 0xA6, 0xF6, 0x40, 0x70, 0xE5 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette27Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette27Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x000004D9, { { 0xF6, 0xD4, 0x88, 0x57, 0x6F, 0x1A, 0xA3, 0x1F, 0x6B, 0x17, 0x4D, 0xA0, 0x9E, 0xD8, 0x09, 0x66 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette28Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette28Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x0000051D, { { 0x59, 0x02, 0xE3, 0xC6, 0x28, 0xF6, 0xBC, 0xD4, 0xC8, 0x7E, 0x58, 0x6F, 0xE4, 0xA2, 0x28, 0x4F } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette29Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette29Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000030, 0x00000534, { { 0xC2, 0x26, 0x94, 0x47, 0x28, 0x11, 0xAA, 0xE6, 0x10, 0xA2, 0xD4, 0xD9, 0x61, 0x57, 0x62, 0x22 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette30Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette30Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x00000453, { { 0xE1, 0x30, 0xC2, 0xCD, 0x79, 0xD8, 0x36, 0x8D, 0xAC, 0xF7, 0x87, 0x05, 0x49, 0xD7, 0x7A, 0x5F } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette31Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette31Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000027, 0x000002FB, { { 0xA6, 0x65, 0xE1, 0xE1, 0xCC, 0x71, 0x83, 0x63, 0x9A, 0x04, 0xE2, 0x00, 0xBF, 0x90, 0xDF, 0x95 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette32Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette32Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x00000027, 0x0000016C, { { 0xAA, 0x88, 0x97, 0xE3, 0xCA, 0x06, 0x11, 0x07, 0x8F, 0xFA, 0x75, 0x26, 0xA8, 0x7A, 0x49, 0x28 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kSpecialPalette33Provider[] = {
+const ExtractEntrySearchData k1SpecialPalette33Provider[] = {
 	{ UNK_LANG, kPlatformUnknown, { 0x0000003C, 0x0000094C, { { 0x2E, 0x5E, 0x34, 0x3E, 0x99, 0x61, 0x6F, 0x88, 0x91, 0xA7, 0x75, 0xAA, 0x42, 0x4B, 0x1F, 0x5D } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kGUIStringsProvider[] = {
+const ExtractEntrySearchData k1GUIStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x000001B0, 0x00009562, { { 0x78, 0xB0, 0x81, 0x15, 0x96, 0x09, 0x1E, 0x6C, 0x20, 0x7B, 0xF7, 0xB1, 0x29, 0x2A, 0x3D, 0xE4 } } } }, // floppy
 	{ EN_ANY, kPlatformPC, { 0x00000209, 0x00009788, { { 0xDD, 0xA0, 0x5C, 0x30, 0x60, 0x68, 0xDC, 0x24, 0xBE, 0x3F, 0xA2, 0x31, 0xE0, 0x81, 0x6C, 0xCA } } } }, // CD
 
@@ -939,7 +939,7 @@ const ExtractEntrySearchData kGUIStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kConfigStringsProvider[] = {
+const ExtractEntrySearchData k1ConfigStringsProvider[] = {
 	{ EN_ANY, kPlatformPC, { 0x0000003F, 0x000016E9, { { 0x4F, 0x19, 0x60, 0x67, 0xA8, 0x31, 0x0B, 0xD5, 0x3D, 0x06, 0x39, 0xF1, 0x42, 0xB0, 0xFD, 0x5C } } } }, // floppy
 	{ EN_ANY, kPlatformPC, { 0x00000061, 0x00002249, { { 0x5D, 0xE2, 0x05, 0xA7, 0xEC, 0x0A, 0x73, 0xF5, 0x01, 0x5B, 0x64, 0x71, 0x83, 0xEC, 0x56, 0x24 } } } }, // CD
 
@@ -965,37 +965,37 @@ const ExtractEntrySearchData kConfigStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kTOWNSSfxWDTableProvider[] = {
+const ExtractEntrySearchData k1TOWNSSfxWDTableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00012608, 0x006717A1, { { 0x34, 0xDD, 0x2D, 0xA5, 0x14, 0x05, 0xEE, 0x2F, 0x93, 0x7C, 0x78, 0x4D, 0xCA, 0x13, 0xED, 0x93 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kTOWNSSfxBTTableProvider[] = {
+const ExtractEntrySearchData k1TOWNSSfxBTTableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x00000100, 0x00007FFE, { { 0xEF, 0x3D, 0x9F, 0x31, 0xE7, 0x19, 0x1E, 0x4F, 0xF3, 0x66, 0x42, 0xC8, 0x0D, 0x89, 0x96, 0x20 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kTOWNSCDATableProvider[] = {
+const ExtractEntrySearchData k1TOWNSCDATableProvider[] = {
 	{ UNK_LANG, kPlatformFMTowns, { 0x000002C4, 0x0000C5ED, { { 0x76, 0x86, 0x77, 0xF9, 0x85, 0x23, 0x32, 0x56, 0x3C, 0x06, 0x03, 0xCF, 0x0C, 0x49, 0x94, 0xB5 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPC98StoryStringsProvider[] = {
+const ExtractEntrySearchData k1PC98StoryStringsProvider[] = {
 	{ JA_JPN, kPlatformPC98, { 0x00000054, 0x00002FAD, { { 0xCB, 0x25, 0xD1, 0xFA, 0x65, 0xCE, 0xD5, 0xE6, 0xAD, 0xE3, 0x48, 0x25, 0xC8, 0x51, 0xC6, 0x12 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kPC98IntroSfxProvider[] = {
+const ExtractEntrySearchData k1PC98IntroSfxProvider[] = {
 	{ UNK_LANG, kPlatformPC98, { 0x00000300, 0x00017445, { { 0xC3, 0x54, 0x4A, 0x58, 0x00, 0x33, 0xEA, 0xF1, 0x20, 0xA8, 0x0C, 0xDE, 0x7A, 0x94, 0xAB, 0x5E } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kCreditsStringsProvider[] = {
+const ExtractEntrySearchData k1CreditsStringsProvider[] = {
 	{ EN_ANY, kPlatformAmiga, { 0x000004CC, 0x000182F7, { { 0x7D, 0x14, 0xA6, 0xEC, 0x12, 0x67, 0xAC, 0xA7, 0x7B, 0xF8, 0x44, 0x19, 0x52, 0xCC, 0x3A, 0x65 } } } },
 	{ DE_DEU, kPlatformAmiga, { 0x000004FB, 0x00019987, { { 0x8B, 0xF1, 0x61, 0xB9, 0x3E, 0xA4, 0x28, 0x9B, 0x45, 0x86, 0xD1, 0xF0, 0xC3, 0x35, 0x44, 0xA0 } } } },
 
@@ -1006,13 +1006,13 @@ const ExtractEntrySearchData kCreditsStringsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kAmigaIntroSFXTableProvider[] = {
+const ExtractEntrySearchData k1AmigaIntroSFXTableProvider[] = {
 	{ UNK_LANG, kPlatformAmiga, { 0x00000140, 0x00000D82, { { 0x61, 0xF6, 0x8F, 0xE5, 0xCD, 0x15, 0x58, 0x9F, 0xDF, 0x0E, 0x22, 0xAA, 0x9A, 0xCF, 0xC4, 0xA6 } } } },
 
 	EXTRACT_END_ENTRY
 };
 
-const ExtractEntrySearchData kAmigaGameSFXTableProvider[] = {
+const ExtractEntrySearchData k1AmigaGameSFXTableProvider[] = {
 	{ UNK_LANG, kPlatformAmiga, { 0x000003C0, 0x00005505, { { 0x8D, 0x6D, 0x2C, 0x58, 0x50, 0xF7, 0xBF, 0x60, 0xC3, 0x15, 0x20, 0x23, 0x1F, 0x90, 0x3E, 0xD6 } } } },
 
 	EXTRACT_END_ENTRY
@@ -1729,101 +1729,101 @@ struct ExtractEntry {
 };
 
 const ExtractEntry extractProviders[] = {
-	{ kForestSeq, kForestSeqProvider },
-	{ kKallakWritingSeq, kKallakWritingSeqProvider },
-	{ kKyrandiaLogoSeq, kKyrandiaLogoSeqProvider },
-	{ kKallakMalcolmSeq, kKallakMalcolmSeqProvider },
-	{ kMalcolmTreeSeq, kMalcolmTreeSeqProvider },
-	{ kWestwoodLogoSeq, kWestwoodLogoSeqProvider },
-	{ kDemo1Seq, kDemo1SeqProvider },
-	{ kDemo2Seq, kDemo2SeqProvider },
-	{ kDemo3Seq, kDemo3SeqProvider },
-	{ kDemo4Seq, kDemo4SeqProvider },
-	{ kAmuleteAnimSeq, kAmuleteAnimSeqProvider },
-	{ kOutroReunionSeq, kOutroReunionSeqProvider },
-	{ kIntroCPSStrings, kIntroCPSStringsProvider },
-	{ kIntroCOLStrings, kIntroCOLStringsProvider },
-	{ kIntroWSAStrings, kIntroWSAStringsProvider },
-	{ kIntroStrings, kIntroStringsProvider },
-	{ kOutroHomeString, kOutroHomeStringProvider },
-	{ kRoomFilenames, kRoomFilenamesProvider },
-	{ kRoomList, kRoomListProvider },
-	{ kCharacterImageFilenames, kCharacterImageFilenamesProvider },
-	{ kAudioTracks, kAudioTracksProvider },
-	{ kAudioTracksIntro, kAudioTracksIntroProvider },
-	{ kItemNames, kItemNamesProvider },
-	{ kTakenStrings, kTakenStringsProvider },
-	{ kPlacedStrings, kPlacedStringsProvider },
-	{ kDroppedStrings, kDroppedStringsProvider },
-	{ kNoDropStrings, kNoDropStringsProvider },
-	{ kPutDownString, kPutDownStringProvider },
-	{ kWaitAmuletString, kWaitAmuletStringProvider },
-	{ kBlackJewelString, kBlackJewelStringProvider },
-	{ kPoisonGoneString, kPoisonGoneStringProvider },
-	{ kHealingTipString, kHealingTipStringProvider },
-	{ kWispJewelStrings, kWispJewelStringsProvider },
-	{ kMagicJewelStrings, kMagicJewelStringsProvider },
-	{ kThePoisonStrings, kThePoisonStringsProvider },
-	{ kFluteStrings, kFluteStringsProvider },
-	{ kFlaskFullString, kFlaskFullStringProvider },
-	{ kFullFlaskString, kFullFlaskStringProvider },
-	{ kVeryCleverString, kVeryCleverStringProvider },
-	{ kNewGameString, kNewGameStringProvider },
-	{ kDefaultShapes, kDefaultShapesProvider },
-	{ kHealing1Shapes, kHealing1ShapesProvider },
-	{ kHealing2Shapes, kHealing2ShapesProvider },
-	{ kPoisonDeathShapes, kPoisonDeathShapesProvider },
-	{ kFluteShapes, kFluteShapesProvider },
-	{ kWinter1Shapes, kWinter1ShapesProvider },
-	{ kWinter2Shapes, kWinter2ShapesProvider },
-	{ kWinter3Shapes, kWinter3ShapesProvider },
-	{ kDrinkShapes, kDrinkShapesProvider },
-	{ kWispShapes, kWispShapesProvider },
-	{ kMagicAnimShapes, kMagicAnimShapesProvider },
-	{ kBranStoneShapes, kBranStoneShapesProvider },
-	{ kSpecialPalette1, kSpecialPalette1Provider },
-	{ kSpecialPalette2, kSpecialPalette2Provider },
-	{ kSpecialPalette3, kSpecialPalette3Provider },
-	{ kSpecialPalette4, kSpecialPalette4Provider },
-	{ kSpecialPalette5, kSpecialPalette5Provider },
-	{ kSpecialPalette6, kSpecialPalette6Provider },
-	{ kSpecialPalette7, kSpecialPalette7Provider },
-	{ kSpecialPalette8, kSpecialPalette8Provider },
-	{ kSpecialPalette9, kSpecialPalette9Provider },
-	{ kSpecialPalette10, kSpecialPalette10Provider },
-	{ kSpecialPalette11, kSpecialPalette11Provider },
-	{ kSpecialPalette12, kSpecialPalette12Provider },
-	{ kSpecialPalette13, kSpecialPalette13Provider },
-	{ kSpecialPalette14, kSpecialPalette14Provider },
-	{ kSpecialPalette15, kSpecialPalette15Provider },
-	{ kSpecialPalette16, kSpecialPalette16Provider },
-	{ kSpecialPalette17, kSpecialPalette17Provider },
-	{ kSpecialPalette18, kSpecialPalette18Provider },
-	{ kSpecialPalette19, kSpecialPalette19Provider },
-	{ kSpecialPalette20, kSpecialPalette20Provider },
-	{ kSpecialPalette21, kSpecialPalette21Provider },
-	{ kSpecialPalette22, kSpecialPalette22Provider },
-	{ kSpecialPalette23, kSpecialPalette23Provider },
-	{ kSpecialPalette24, kSpecialPalette24Provider },
-	{ kSpecialPalette25, kSpecialPalette25Provider },
-	{ kSpecialPalette26, kSpecialPalette26Provider },
-	{ kSpecialPalette27, kSpecialPalette27Provider },
-	{ kSpecialPalette28, kSpecialPalette28Provider },
-	{ kSpecialPalette29, kSpecialPalette29Provider },
-	{ kSpecialPalette30, kSpecialPalette30Provider },
-	{ kSpecialPalette31, kSpecialPalette31Provider },
-	{ kSpecialPalette32, kSpecialPalette32Provider },
-	{ kSpecialPalette33, kSpecialPalette33Provider },
-	{ kGUIStrings, kGUIStringsProvider },
-	{ kConfigStrings, kConfigStringsProvider },
-	{ kTOWNSSfxWDTable, kTOWNSSfxWDTableProvider },
-	{ kTOWNSSfxBTTable, kTOWNSSfxBTTableProvider },
-	{ kTOWNSCDATable, kTOWNSCDATableProvider },
-	{ kPC98StoryStrings, kPC98StoryStringsProvider },
-	{ kPC98IntroSfx, kPC98IntroSfxProvider },
-	{ kCreditsStrings, kCreditsStringsProvider },
-	{ kAmigaIntroSFXTable, kAmigaIntroSFXTableProvider },
-	{ kAmigaGameSFXTable, kAmigaGameSFXTableProvider },
+	{ k1ForestSeq, k1ForestSeqProvider },
+	{ k1KallakWritingSeq, k1KallakWritingSeqProvider },
+	{ k1KyrandiaLogoSeq, k1KyrandiaLogoSeqProvider },
+	{ k1KallakMalcolmSeq, k1KallakMalcolmSeqProvider },
+	{ k1MalcolmTreeSeq, k1MalcolmTreeSeqProvider },
+	{ k1WestwoodLogoSeq, k1WestwoodLogoSeqProvider },
+	{ k1Demo1Seq, k1Demo1SeqProvider },
+	{ k1Demo2Seq, k1Demo2SeqProvider },
+	{ k1Demo3Seq, k1Demo3SeqProvider },
+	{ k1Demo4Seq, k1Demo4SeqProvider },
+	{ k1AmuleteAnimSeq, k1AmuleteAnimSeqProvider },
+	{ k1OutroReunionSeq, k1OutroReunionSeqProvider },
+	{ k1IntroCPSStrings, k1IntroCPSStringsProvider },
+	{ k1IntroCOLStrings, k1IntroCOLStringsProvider },
+	{ k1IntroWSAStrings, k1IntroWSAStringsProvider },
+	{ k1IntroStrings, k1IntroStringsProvider },
+	{ k1OutroHomeString, k1OutroHomeStringProvider },
+	{ k1RoomFilenames, k1RoomFilenamesProvider },
+	{ k1RoomList, k1RoomListProvider },
+	{ k1CharacterImageFilenames, k1CharacterImageFilenamesProvider },
+	{ k1AudioTracks, k1AudioTracksProvider },
+	{ k1AudioTracksIntro, k1AudioTracksIntroProvider },
+	{ k1ItemNames, k1ItemNamesProvider },
+	{ k1TakenStrings, k1TakenStringsProvider },
+	{ k1PlacedStrings, k1PlacedStringsProvider },
+	{ k1DroppedStrings, k1DroppedStringsProvider },
+	{ k1NoDropStrings, k1NoDropStringsProvider },
+	{ k1PutDownString, k1PutDownStringProvider },
+	{ k1WaitAmuletString, k1WaitAmuletStringProvider },
+	{ k1BlackJewelString, k1BlackJewelStringProvider },
+	{ k1PoisonGoneString, k1PoisonGoneStringProvider },
+	{ k1HealingTipString, k1HealingTipStringProvider },
+	{ k1WispJewelStrings, k1WispJewelStringsProvider },
+	{ k1MagicJewelStrings, k1MagicJewelStringsProvider },
+	{ k1ThePoisonStrings, k1ThePoisonStringsProvider },
+	{ k1FluteStrings, k1FluteStringsProvider },
+	{ k1FlaskFullString, k1FlaskFullStringProvider },
+	{ k1FullFlaskString, k1FullFlaskStringProvider },
+	{ k1VeryCleverString, k1VeryCleverStringProvider },
+	{ k1NewGameString, k1NewGameStringProvider },
+	{ k1DefaultShapes, k1DefaultShapesProvider },
+	{ k1Healing1Shapes, k1Healing1ShapesProvider },
+	{ k1Healing2Shapes, k1Healing2ShapesProvider },
+	{ k1PoisonDeathShapes, k1PoisonDeathShapesProvider },
+	{ k1FluteShapes, k1FluteShapesProvider },
+	{ k1Winter1Shapes, k1Winter1ShapesProvider },
+	{ k1Winter2Shapes, k1Winter2ShapesProvider },
+	{ k1Winter3Shapes, k1Winter3ShapesProvider },
+	{ k1DrinkShapes, k1DrinkShapesProvider },
+	{ k1WispShapes, k1WispShapesProvider },
+	{ k1MagicAnimShapes, k1MagicAnimShapesProvider },
+	{ k1BranStoneShapes, k1BranStoneShapesProvider },
+	{ k1SpecialPalette1, k1SpecialPalette1Provider },
+	{ k1SpecialPalette2, k1SpecialPalette2Provider },
+	{ k1SpecialPalette3, k1SpecialPalette3Provider },
+	{ k1SpecialPalette4, k1SpecialPalette4Provider },
+	{ k1SpecialPalette5, k1SpecialPalette5Provider },
+	{ k1SpecialPalette6, k1SpecialPalette6Provider },
+	{ k1SpecialPalette7, k1SpecialPalette7Provider },
+	{ k1SpecialPalette8, k1SpecialPalette8Provider },
+	{ k1SpecialPalette9, k1SpecialPalette9Provider },
+	{ k1SpecialPalette10, k1SpecialPalette10Provider },
+	{ k1SpecialPalette11, k1SpecialPalette11Provider },
+	{ k1SpecialPalette12, k1SpecialPalette12Provider },
+	{ k1SpecialPalette13, k1SpecialPalette13Provider },
+	{ k1SpecialPalette14, k1SpecialPalette14Provider },
+	{ k1SpecialPalette15, k1SpecialPalette15Provider },
+	{ k1SpecialPalette16, k1SpecialPalette16Provider },
+	{ k1SpecialPalette17, k1SpecialPalette17Provider },
+	{ k1SpecialPalette18, k1SpecialPalette18Provider },
+	{ k1SpecialPalette19, k1SpecialPalette19Provider },
+	{ k1SpecialPalette20, k1SpecialPalette20Provider },
+	{ k1SpecialPalette21, k1SpecialPalette21Provider },
+	{ k1SpecialPalette22, k1SpecialPalette22Provider },
+	{ k1SpecialPalette23, k1SpecialPalette23Provider },
+	{ k1SpecialPalette24, k1SpecialPalette24Provider },
+	{ k1SpecialPalette25, k1SpecialPalette25Provider },
+	{ k1SpecialPalette26, k1SpecialPalette26Provider },
+	{ k1SpecialPalette27, k1SpecialPalette27Provider },
+	{ k1SpecialPalette28, k1SpecialPalette28Provider },
+	{ k1SpecialPalette29, k1SpecialPalette29Provider },
+	{ k1SpecialPalette30, k1SpecialPalette30Provider },
+	{ k1SpecialPalette31, k1SpecialPalette31Provider },
+	{ k1SpecialPalette32, k1SpecialPalette32Provider },
+	{ k1SpecialPalette33, k1SpecialPalette33Provider },
+	{ k1GUIStrings, k1GUIStringsProvider },
+	{ k1ConfigStrings, k1ConfigStringsProvider },
+	{ k1TOWNSSfxWDTable, k1TOWNSSfxWDTableProvider },
+	{ k1TOWNSSfxBTTable, k1TOWNSSfxBTTableProvider },
+	{ k1TOWNSCDATable, k1TOWNSCDATableProvider },
+	{ k1PC98StoryStrings, k1PC98StoryStringsProvider },
+	{ k1PC98IntroSfx, k1PC98IntroSfxProvider },
+	{ k1CreditsStrings, k1CreditsStringsProvider },
+	{ k1AmigaIntroSFXTable, k1AmigaIntroSFXTableProvider },
+	{ k1AmigaGameSFXTable, k1AmigaGameSFXTableProvider },
 	{ k2SeqplayPakFiles, k2SeqplayPakFilesProvider },
 	{ k2SeqplayStrings, k2SeqplayStringsProvider },
 	{ k2SeqplaySfxFiles, k2SeqplaySfxFilesProvider },

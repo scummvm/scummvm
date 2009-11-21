@@ -47,127 +47,127 @@ enum {
 
 const ExtractFilename extractFilenames[] = {
 	// INTRO / OUTRO sequences
-	{ kForestSeq, kTypeRawData, "FOREST.SEQ" },
-	{ kKallakWritingSeq, kTypeRawData, "KALLAK-WRITING.SEQ" },
-	{ kKyrandiaLogoSeq, kTypeRawData, "KYRANDIA-LOGO.SEQ" },
-	{ kKallakMalcolmSeq, kTypeRawData, "KALLAK-MALCOLM.SEQ" },
-	{ kMalcolmTreeSeq, kTypeRawData, "MALCOLM-TREE.SEQ" },
-	{ kWestwoodLogoSeq, kTypeRawData, "WESTWOOD-LOGO.SEQ" },
-	{ kDemo1Seq, kTypeRawData, "DEMO1.SEQ" },
-	{ kDemo2Seq, kTypeRawData, "DEMO2.SEQ" },
-	{ kDemo3Seq, kTypeRawData, "DEMO3.SEQ" },
-	{ kDemo4Seq, kTypeRawData, "DEMO4.SEQ" },
-	{ kOutroReunionSeq, kTypeRawData, "REUNION.SEQ" },
+	{ k1ForestSeq, kTypeRawData, "FOREST.SEQ" },
+	{ k1KallakWritingSeq, kTypeRawData, "KALLAK-WRITING.SEQ" },
+	{ k1KyrandiaLogoSeq, kTypeRawData, "KYRANDIA-LOGO.SEQ" },
+	{ k1KallakMalcolmSeq, kTypeRawData, "KALLAK-MALCOLM.SEQ" },
+	{ k1MalcolmTreeSeq, kTypeRawData, "MALCOLM-TREE.SEQ" },
+	{ k1WestwoodLogoSeq, kTypeRawData, "WESTWOOD-LOGO.SEQ" },
+	{ k1Demo1Seq, kTypeRawData, "DEMO1.SEQ" },
+	{ k1Demo2Seq, kTypeRawData, "DEMO2.SEQ" },
+	{ k1Demo3Seq, kTypeRawData, "DEMO3.SEQ" },
+	{ k1Demo4Seq, kTypeRawData, "DEMO4.SEQ" },
+	{ k1OutroReunionSeq, kTypeRawData, "REUNION.SEQ" },
 
 	// INTRO / OUTRO strings
-	{ kIntroCPSStrings, kTypeStringList, "INTRO-CPS.TXT" },
-	{ kIntroCOLStrings, kTypeStringList, "INTRO-COL.TXT" },
-	{ kIntroWSAStrings, kTypeStringList, "INTRO-WSA.TXT" },
-	{ kIntroStrings, kTypeLanguageList, "INTRO-STRINGS" },
-	{ kOutroHomeString, kTypeLanguageList, "HOME" },
+	{ k1IntroCPSStrings, kTypeStringList, "INTRO-CPS.TXT" },
+	{ k1IntroCOLStrings, kTypeStringList, "INTRO-COL.TXT" },
+	{ k1IntroWSAStrings, kTypeStringList, "INTRO-WSA.TXT" },
+	{ k1IntroStrings, kTypeLanguageList, "INTRO-STRINGS" },
+	{ k1OutroHomeString, kTypeLanguageList, "HOME" },
 
 	// INGAME strings
-	{ kItemNames, kTypeLanguageList, "ITEMLIST" },
-	{ kTakenStrings, kTypeLanguageList, "TAKEN" },
-	{ kPlacedStrings, kTypeLanguageList, "PLACED" },
-	{ kDroppedStrings, kTypeLanguageList, "DROPPED" },
-	{ kNoDropStrings, kTypeLanguageList, "NODROP" },
-	{ kPutDownString, kTypeLanguageList, "PUTDOWN" },
-	{ kWaitAmuletString, kTypeLanguageList, "WAITAMUL" },
-	{ kBlackJewelString, kTypeLanguageList, "BLACKJEWEL" },
-	{ kPoisonGoneString, kTypeLanguageList, "POISONGONE" },
-	{ kHealingTipString, kTypeLanguageList, "HEALINGTIP" },
-	{ kThePoisonStrings, kTypeLanguageList, "THEPOISON" },
-	{ kFluteStrings, kTypeLanguageList, "FLUTE" },
-	{ kWispJewelStrings, kTypeLanguageList, "WISPJEWEL" },
-	{ kMagicJewelStrings, kTypeLanguageList, "MAGICJEWEL" },
-	{ kFlaskFullString, kTypeLanguageList, "FLASKFULL" },
-	{ kFullFlaskString, kTypeLanguageList, "FULLFLASK" },
-	{ kVeryCleverString, kTypeLanguageList, "VERYCLEVER" },
-	{ kNewGameString, kTypeLanguageList, "NEWGAME" },
+	{ k1ItemNames, kTypeLanguageList, "ITEMLIST" },
+	{ k1TakenStrings, kTypeLanguageList, "TAKEN" },
+	{ k1PlacedStrings, kTypeLanguageList, "PLACED" },
+	{ k1DroppedStrings, kTypeLanguageList, "DROPPED" },
+	{ k1NoDropStrings, kTypeLanguageList, "NODROP" },
+	{ k1PutDownString, kTypeLanguageList, "PUTDOWN" },
+	{ k1WaitAmuletString, kTypeLanguageList, "WAITAMUL" },
+	{ k1BlackJewelString, kTypeLanguageList, "BLACKJEWEL" },
+	{ k1PoisonGoneString, kTypeLanguageList, "POISONGONE" },
+	{ k1HealingTipString, kTypeLanguageList, "HEALINGTIP" },
+	{ k1ThePoisonStrings, kTypeLanguageList, "THEPOISON" },
+	{ k1FluteStrings, kTypeLanguageList, "FLUTE" },
+	{ k1WispJewelStrings, kTypeLanguageList, "WISPJEWEL" },
+	{ k1MagicJewelStrings, kTypeLanguageList, "MAGICJEWEL" },
+	{ k1FlaskFullString, kTypeLanguageList, "FLASKFULL" },
+	{ k1FullFlaskString, kTypeLanguageList, "FULLFLASK" },
+	{ k1VeryCleverString, kTypeLanguageList, "VERYCLEVER" },
+	{ k1NewGameString, kTypeLanguageList, "NEWGAME" },
 
 	// GUI strings table
-	{ kGUIStrings, kTypeLanguageList, "GUISTRINGS" },
-	{ kConfigStrings, kTypeLanguageList, "CONFIGSTRINGS" },
+	{ k1GUIStrings, kTypeLanguageList, "GUISTRINGS" },
+	{ k1ConfigStrings, kTypeLanguageList, "CONFIGSTRINGS" },
 
 	// ROOM table/filenames
-	{ kRoomList, kTypeRoomList, "ROOM-TABLE.ROOM" },
-	{ kRoomFilenames, kTypeStringList, "ROOM-FILENAMES.TXT" },
+	{ k1RoomList, kTypeRoomList, "ROOM-TABLE.ROOM" },
+	{ k1RoomFilenames, kTypeStringList, "ROOM-FILENAMES.TXT" },
 
 	// SHAPE tables
-	{ kDefaultShapes, kTypeShapeList, "SHAPES-DEFAULT.SHP" },
-	{ kHealing1Shapes, kTypeShapeList, "HEALING.SHP" },
-	{ kHealing2Shapes, kTypeShapeList, "HEALING2.SHP" },
-	{ kPoisonDeathShapes, kTypeShapeList, "POISONDEATH.SHP" },
-	{ kFluteShapes, kTypeShapeList, "FLUTE.SHP" },
-	{ kWinter1Shapes, kTypeShapeList, "WINTER1.SHP" },
-	{ kWinter2Shapes, kTypeShapeList, "WINTER2.SHP" },
-	{ kWinter3Shapes, kTypeShapeList, "WINTER3.SHP" },
-	{ kDrinkShapes, kTypeShapeList, "DRINK.SHP" },
-	{ kWispShapes, kTypeShapeList, "WISP.SHP" },
-	{ kMagicAnimShapes, kTypeShapeList, "MAGICANIM.SHP" },
-	{ kBranStoneShapes, kTypeShapeList, "BRANSTONE.SHP" },
+	{ k1DefaultShapes, kTypeShapeList, "SHAPES-DEFAULT.SHP" },
+	{ k1Healing1Shapes, kTypeShapeList, "HEALING.SHP" },
+	{ k1Healing2Shapes, kTypeShapeList, "HEALING2.SHP" },
+	{ k1PoisonDeathShapes, kTypeShapeList, "POISONDEATH.SHP" },
+	{ k1FluteShapes, kTypeShapeList, "FLUTE.SHP" },
+	{ k1Winter1Shapes, kTypeShapeList, "WINTER1.SHP" },
+	{ k1Winter2Shapes, kTypeShapeList, "WINTER2.SHP" },
+	{ k1Winter3Shapes, kTypeShapeList, "WINTER3.SHP" },
+	{ k1DrinkShapes, kTypeShapeList, "DRINK.SHP" },
+	{ k1WispShapes, kTypeShapeList, "WISP.SHP" },
+	{ k1MagicAnimShapes, kTypeShapeList, "MAGICANIM.SHP" },
+	{ k1BranStoneShapes, kTypeShapeList, "BRANSTONE.SHP" },
 
 	// IMAGE filename table
-	{ kCharacterImageFilenames, kTypeStringList, "CHAR-IMAGE.TXT" },
+	{ k1CharacterImageFilenames, kTypeStringList, "CHAR-IMAGE.TXT" },
 
 	// AUDIO filename table
-	{ kAudioTracks, kTypeStringList, "TRACKS.TXT" },
-	{ kAudioTracksIntro, kTypeStringList, "TRACKSINT.TXT" },
+	{ k1AudioTracks, kTypeStringList, "TRACKS.TXT" },
+	{ k1AudioTracksIntro, kTypeStringList, "TRACKSINT.TXT" },
 
 	// AMULET anim
-	{ kAmuleteAnimSeq, kTypeRawData, "AMULETEANIM.SEQ" },
+	{ k1AmuleteAnimSeq, kTypeRawData, "AMULETEANIM.SEQ" },
 
 	// PALETTE table
-	{ kSpecialPalette1, kTypeRawData, "PALTABLE1.PAL" },
-	{ kSpecialPalette2, kTypeRawData, "PALTABLE2.PAL" },
-	{ kSpecialPalette3, kTypeRawData, "PALTABLE3.PAL" },
-	{ kSpecialPalette4, kTypeRawData, "PALTABLE4.PAL" },
-	{ kSpecialPalette5, kTypeRawData, "PALTABLE5.PAL" },
-	{ kSpecialPalette6, kTypeRawData, "PALTABLE6.PAL" },
-	{ kSpecialPalette7, kTypeRawData, "PALTABLE7.PAL" },
-	{ kSpecialPalette8, kTypeRawData, "PALTABLE8.PAL" },
-	{ kSpecialPalette9, kTypeRawData, "PALTABLE9.PAL" },
-	{ kSpecialPalette10, kTypeRawData, "PALTABLE10.PAL" },
-	{ kSpecialPalette11, kTypeRawData, "PALTABLE11.PAL" },
-	{ kSpecialPalette12, kTypeRawData, "PALTABLE12.PAL" },
-	{ kSpecialPalette13, kTypeRawData, "PALTABLE13.PAL" },
-	{ kSpecialPalette14, kTypeRawData, "PALTABLE14.PAL" },
-	{ kSpecialPalette15, kTypeRawData, "PALTABLE15.PAL" },
-	{ kSpecialPalette16, kTypeRawData, "PALTABLE16.PAL" },
-	{ kSpecialPalette17, kTypeRawData, "PALTABLE17.PAL" },
-	{ kSpecialPalette18, kTypeRawData, "PALTABLE18.PAL" },
-	{ kSpecialPalette19, kTypeRawData, "PALTABLE19.PAL" },
-	{ kSpecialPalette20, kTypeRawData, "PALTABLE20.PAL" },
-	{ kSpecialPalette21, kTypeRawData, "PALTABLE21.PAL" },
-	{ kSpecialPalette22, kTypeRawData, "PALTABLE22.PAL" },
-	{ kSpecialPalette23, kTypeRawData, "PALTABLE23.PAL" },
-	{ kSpecialPalette24, kTypeRawData, "PALTABLE24.PAL" },
-	{ kSpecialPalette25, kTypeRawData, "PALTABLE25.PAL" },
-	{ kSpecialPalette26, kTypeRawData, "PALTABLE26.PAL" },
-	{ kSpecialPalette27, kTypeRawData, "PALTABLE27.PAL" },
-	{ kSpecialPalette28, kTypeRawData, "PALTABLE28.PAL" },
-	{ kSpecialPalette29, kTypeRawData, "PALTABLE29.PAL" },
-	{ kSpecialPalette30, kTypeRawData, "PALTABLE30.PAL" },
-	{ kSpecialPalette31, kTypeRawData, "PALTABLE31.PAL" },
-	{ kSpecialPalette32, kTypeRawData, "PALTABLE32.PAL" },
-	{ kSpecialPalette33, kTypeRawData, "PALTABLE33.PAL" },
+	{ k1SpecialPalette1, kTypeRawData, "PALTABLE1.PAL" },
+	{ k1SpecialPalette2, kTypeRawData, "PALTABLE2.PAL" },
+	{ k1SpecialPalette3, kTypeRawData, "PALTABLE3.PAL" },
+	{ k1SpecialPalette4, kTypeRawData, "PALTABLE4.PAL" },
+	{ k1SpecialPalette5, kTypeRawData, "PALTABLE5.PAL" },
+	{ k1SpecialPalette6, kTypeRawData, "PALTABLE6.PAL" },
+	{ k1SpecialPalette7, kTypeRawData, "PALTABLE7.PAL" },
+	{ k1SpecialPalette8, kTypeRawData, "PALTABLE8.PAL" },
+	{ k1SpecialPalette9, kTypeRawData, "PALTABLE9.PAL" },
+	{ k1SpecialPalette10, kTypeRawData, "PALTABLE10.PAL" },
+	{ k1SpecialPalette11, kTypeRawData, "PALTABLE11.PAL" },
+	{ k1SpecialPalette12, kTypeRawData, "PALTABLE12.PAL" },
+	{ k1SpecialPalette13, kTypeRawData, "PALTABLE13.PAL" },
+	{ k1SpecialPalette14, kTypeRawData, "PALTABLE14.PAL" },
+	{ k1SpecialPalette15, kTypeRawData, "PALTABLE15.PAL" },
+	{ k1SpecialPalette16, kTypeRawData, "PALTABLE16.PAL" },
+	{ k1SpecialPalette17, kTypeRawData, "PALTABLE17.PAL" },
+	{ k1SpecialPalette18, kTypeRawData, "PALTABLE18.PAL" },
+	{ k1SpecialPalette19, kTypeRawData, "PALTABLE19.PAL" },
+	{ k1SpecialPalette20, kTypeRawData, "PALTABLE20.PAL" },
+	{ k1SpecialPalette21, kTypeRawData, "PALTABLE21.PAL" },
+	{ k1SpecialPalette22, kTypeRawData, "PALTABLE22.PAL" },
+	{ k1SpecialPalette23, kTypeRawData, "PALTABLE23.PAL" },
+	{ k1SpecialPalette24, kTypeRawData, "PALTABLE24.PAL" },
+	{ k1SpecialPalette25, kTypeRawData, "PALTABLE25.PAL" },
+	{ k1SpecialPalette26, kTypeRawData, "PALTABLE26.PAL" },
+	{ k1SpecialPalette27, kTypeRawData, "PALTABLE27.PAL" },
+	{ k1SpecialPalette28, kTypeRawData, "PALTABLE28.PAL" },
+	{ k1SpecialPalette29, kTypeRawData, "PALTABLE29.PAL" },
+	{ k1SpecialPalette30, kTypeRawData, "PALTABLE30.PAL" },
+	{ k1SpecialPalette31, kTypeRawData, "PALTABLE31.PAL" },
+	{ k1SpecialPalette32, kTypeRawData, "PALTABLE32.PAL" },
+	{ k1SpecialPalette33, kTypeRawData, "PALTABLE33.PAL" },
 
 	// CREDITS (used in FM-TOWNS and AMIGA)
-	{ kCreditsStrings, kTypeRawData, "CREDITS" },
+	{ k1CreditsStrings, kTypeRawData, "CREDITS" },
 
 	// FM-TOWNS specific
-	{ kTOWNSSfxWDTable, kTypeTownsWDSfxTable, "SFXWDTABLE" },
-	{ kTOWNSSfxBTTable, kTypeRawData, "SFXBTTABLE" },
-	{ kTOWNSCDATable, kTypeRawData, "CDATABLE" },
+	{ k1TOWNSSfxWDTable, kTypeTownsWDSfxTable, "SFXWDTABLE" },
+	{ k1TOWNSSfxBTTable, kTypeRawData, "SFXBTTABLE" },
+	{ k1TOWNSCDATable, kTypeRawData, "CDATABLE" },
 
 	// PC98 specific
-	{ kPC98StoryStrings, kTypeLanguageList, "INTROSTORY" },
-	{ kPC98IntroSfx, kTypeRawData, "INTROSFX" },
+	{ k1PC98StoryStrings, kTypeLanguageList, "INTROSTORY" },
+	{ k1PC98IntroSfx, kTypeRawData, "INTROSFX" },
 
 	// AMIGA specific
-	{ kAmigaIntroSFXTable, kTypeAmigaSfxTable, "SFXINTRO" },
-	{ kAmigaGameSFXTable, kTypeAmigaSfxTable, "SFXGAME" },
+	{ k1AmigaIntroSFXTable, kTypeAmigaSfxTable, "SFXINTRO" },
+	{ k1AmigaGameSFXTable, kTypeAmigaSfxTable, "SFXGAME" },
 
 	// HAND OF FATE
 
@@ -736,196 +736,196 @@ GameMap createGameMap(const MD5Map &map) {
 
 const char *getIdString(const int id) {
 	switch (id) {
-	case kForestSeq:
-		return "kForestSeq";
-	case kKallakWritingSeq:
-		return "kKallakWritingSeq";
-	case kKyrandiaLogoSeq:
-		return "kKyrandiaLogoSeq";
-	case kKallakMalcolmSeq:
-		return "kKallakMalcolmSeq";
-	case kMalcolmTreeSeq:
-		return "kMalcolmTreeSeq";
-	case kWestwoodLogoSeq:
-		return "kWestwoodLogoSeq";
-	case kDemo1Seq:
-		return "kDemo1Seq";
-	case kDemo2Seq:
-		return "kDemo2Seq";
-	case kDemo3Seq:
-		return "kDemo3Seq";
-	case kDemo4Seq:
-		return "kDemo4Seq";
-	case kAmuleteAnimSeq:
-		return "kAmuleteAnimSeq";
-	case kOutroReunionSeq:
-		return "kOutroReunionSeq";
-	case kIntroCPSStrings:
-		return "kIntroCPSStrings";
-	case kIntroCOLStrings:
-		return "kIntroCOLStrings";
-	case kIntroWSAStrings:
-		return "kIntroWSAStrings";
-	case kIntroStrings:
-		return "kIntroStrings";
-	case kOutroHomeString:
-		return "kOutroHomeString";
-	case kRoomFilenames:
-		return "kRoomFilenames";
-	case kRoomList:
-		return "kRoomList";
-	case kCharacterImageFilenames:
-		return "kCharacterImageFilenames";
-	case kAudioTracks:
-		return "kAudioTracks";
-	case kAudioTracksIntro:
-		return "kAudioTracksIntro";
-	case kItemNames:
-		return "kItemNames";
-	case kTakenStrings:
-		return "kTakenStrings";
-	case kPlacedStrings:
-		return "kPlacedStrings";
-	case kDroppedStrings:
-		return "kDroppedStrings";
-	case kNoDropStrings:
-		return "kNoDropStrings";
-	case kPutDownString:
-		return "kPutDownString";
-	case kWaitAmuletString:
-		return "kWaitAmuletString";
-	case kBlackJewelString:
-		return "kBlackJewelString";
-	case kPoisonGoneString:
-		return "kPoisonGoneString";
-	case kHealingTipString:
-		return "kHealingTipString";
-	case kWispJewelStrings:
-		return "kWispJewelStrings";
-	case kMagicJewelStrings:
-		return "kMagicJewelStrings";
-	case kThePoisonStrings:
-		return "kThePoisonStrings";
-	case kFluteStrings:
-		return "kFluteStrings";
-	case kFlaskFullString:
-		return "kFlaskFullString";
-	case kFullFlaskString:
-		return "kFullFlaskString";
-	case kVeryCleverString:
-		return "kVeryCleverString";
-	case kNewGameString:
-		return "kNewGameString";
-	case kDefaultShapes:
-		return "kDefaultShapes";
-	case kHealing1Shapes:
-		return "kHealing1Shapes";
-	case kHealing2Shapes:
-		return "kHealing2Shapes";
-	case kPoisonDeathShapes:
-		return "kPoisonDeathShapes";
-	case kFluteShapes:
-		return "kFluteShapes";
-	case kWinter1Shapes:
-		return "kWinter1Shapes";
-	case kWinter2Shapes:
-		return "kWinter2Shapes";
-	case kWinter3Shapes:
-		return "kWinter3Shapes";
-	case kDrinkShapes:
-		return "kDrinkShapes";
-	case kWispShapes:
-		return "kWispShapes";
-	case kMagicAnimShapes:
-		return "kMagicAnimShapes";
-	case kBranStoneShapes:
-		return "kBranStoneShapes";
-	case kSpecialPalette1:
-		return "kSpecialPalette1";
-	case kSpecialPalette2:
-		return "kSpecialPalette2";
-	case kSpecialPalette3:
-		return "kSpecialPalette3";
-	case kSpecialPalette4:
-		return "kSpecialPalette4";
-	case kSpecialPalette5:
-		return "kSpecialPalette5";
-	case kSpecialPalette6:
-		return "kSpecialPalette6";
-	case kSpecialPalette7:
-		return "kSpecialPalette7";
-	case kSpecialPalette8:
-		return "kSpecialPalette8";
-	case kSpecialPalette9:
-		return "kSpecialPalette9";
-	case kSpecialPalette10:
-		return "kSpecialPalette10";
-	case kSpecialPalette11:
-		return "kSpecialPalette11";
-	case kSpecialPalette12:
-		return "kSpecialPalette12";
-	case kSpecialPalette13:
-		return "kSpecialPalette13";
-	case kSpecialPalette14:
-		return "kSpecialPalette14";
-	case kSpecialPalette15:
-		return "kSpecialPalette15";
-	case kSpecialPalette16:
-		return "kSpecialPalette16";
-	case kSpecialPalette17:
-		return "kSpecialPalette17";
-	case kSpecialPalette18:
-		return "kSpecialPalette18";
-	case kSpecialPalette19:
-		return "kSpecialPalette19";
-	case kSpecialPalette20:
-		return "kSpecialPalette20";
-	case kSpecialPalette21:
-		return "kSpecialPalette21";
-	case kSpecialPalette22:
-		return "kSpecialPalette22";
-	case kSpecialPalette23:
-		return "kSpecialPalette23";
-	case kSpecialPalette24:
-		return "kSpecialPalette24";
-	case kSpecialPalette25:
-		return "kSpecialPalette25";
-	case kSpecialPalette26:
-		return "kSpecialPalette26";
-	case kSpecialPalette27:
-		return "kSpecialPalette27";
-	case kSpecialPalette28:
-		return "kSpecialPalette28";
-	case kSpecialPalette29:
-		return "kSpecialPalette29";
-	case kSpecialPalette30:
-		return "kSpecialPalette30";
-	case kSpecialPalette31:
-		return "kSpecialPalette31";
-	case kSpecialPalette32:
-		return "kSpecialPalette32";
-	case kSpecialPalette33:
-		return "kSpecialPalette33";
-	case kGUIStrings:
-		return "kGUIStrings";
-	case kConfigStrings:
-		return "kConfigStrings";
-	case kTOWNSSfxWDTable:
-		return "kTOWNSSfxWDTable";
-	case kTOWNSSfxBTTable:
-		return "kTOWNSSfxBTTable";
-	case kTOWNSCDATable:
-		return "kTOWNSCDATable";
-	case kPC98StoryStrings:
-		return "kPC98StoryStrings";
-	case kPC98IntroSfx:
-		return "kPC98IntroSfx";
-	case kCreditsStrings:
-		return "kCreditsStrings";
-	case kAmigaIntroSFXTable:
-		return "kAmigaIntroSFXTable";
-	case kAmigaGameSFXTable:
-		return "kAmigaGameSFXTable";
+	case k1ForestSeq:
+		return "k1ForestSeq";
+	case k1KallakWritingSeq:
+		return "k1KallakWritingSeq";
+	case k1KyrandiaLogoSeq:
+		return "k1KyrandiaLogoSeq";
+	case k1KallakMalcolmSeq:
+		return "k1KallakMalcolmSeq";
+	case k1MalcolmTreeSeq:
+		return "k1MalcolmTreeSeq";
+	case k1WestwoodLogoSeq:
+		return "k1WestwoodLogoSeq";
+	case k1Demo1Seq:
+		return "k1Demo1Seq";
+	case k1Demo2Seq:
+		return "k1Demo2Seq";
+	case k1Demo3Seq:
+		return "k1Demo3Seq";
+	case k1Demo4Seq:
+		return "k1Demo4Seq";
+	case k1AmuleteAnimSeq:
+		return "k1AmuleteAnimSeq";
+	case k1OutroReunionSeq:
+		return "k1OutroReunionSeq";
+	case k1IntroCPSStrings:
+		return "k1IntroCPSStrings";
+	case k1IntroCOLStrings:
+		return "k1IntroCOLStrings";
+	case k1IntroWSAStrings:
+		return "k1IntroWSAStrings";
+	case k1IntroStrings:
+		return "k1IntroStrings";
+	case k1OutroHomeString:
+		return "k1OutroHomeString";
+	case k1RoomFilenames:
+		return "k1RoomFilenames";
+	case k1RoomList:
+		return "k1RoomList";
+	case k1CharacterImageFilenames:
+		return "k1CharacterImageFilenames";
+	case k1AudioTracks:
+		return "k1AudioTracks";
+	case k1AudioTracksIntro:
+		return "k1AudioTracksIntro";
+	case k1ItemNames:
+		return "k1ItemNames";
+	case k1TakenStrings:
+		return "k1TakenStrings";
+	case k1PlacedStrings:
+		return "k1PlacedStrings";
+	case k1DroppedStrings:
+		return "k1DroppedStrings";
+	case k1NoDropStrings:
+		return "k1NoDropStrings";
+	case k1PutDownString:
+		return "k1PutDownString";
+	case k1WaitAmuletString:
+		return "k1WaitAmuletString";
+	case k1BlackJewelString:
+		return "k1BlackJewelString";
+	case k1PoisonGoneString:
+		return "k1PoisonGoneString";
+	case k1HealingTipString:
+		return "k1HealingTipString";
+	case k1WispJewelStrings:
+		return "k1WispJewelStrings";
+	case k1MagicJewelStrings:
+		return "k1MagicJewelStrings";
+	case k1ThePoisonStrings:
+		return "k1ThePoisonStrings";
+	case k1FluteStrings:
+		return "k1FluteStrings";
+	case k1FlaskFullString:
+		return "k1FlaskFullString";
+	case k1FullFlaskString:
+		return "k1FullFlaskString";
+	case k1VeryCleverString:
+		return "k1VeryCleverString";
+	case k1NewGameString:
+		return "k1NewGameString";
+	case k1DefaultShapes:
+		return "k1DefaultShapes";
+	case k1Healing1Shapes:
+		return "k1Healing1Shapes";
+	case k1Healing2Shapes:
+		return "k1Healing2Shapes";
+	case k1PoisonDeathShapes:
+		return "k1PoisonDeathShapes";
+	case k1FluteShapes:
+		return "k1FluteShapes";
+	case k1Winter1Shapes:
+		return "k1Winter1Shapes";
+	case k1Winter2Shapes:
+		return "k1Winter2Shapes";
+	case k1Winter3Shapes:
+		return "k1Winter3Shapes";
+	case k1DrinkShapes:
+		return "k1DrinkShapes";
+	case k1WispShapes:
+		return "k1WispShapes";
+	case k1MagicAnimShapes:
+		return "k1MagicAnimShapes";
+	case k1BranStoneShapes:
+		return "k1BranStoneShapes";
+	case k1SpecialPalette1:
+		return "k1SpecialPalette1";
+	case k1SpecialPalette2:
+		return "k1SpecialPalette2";
+	case k1SpecialPalette3:
+		return "k1SpecialPalette3";
+	case k1SpecialPalette4:
+		return "k1SpecialPalette4";
+	case k1SpecialPalette5:
+		return "k1SpecialPalette5";
+	case k1SpecialPalette6:
+		return "k1SpecialPalette6";
+	case k1SpecialPalette7:
+		return "k1SpecialPalette7";
+	case k1SpecialPalette8:
+		return "k1SpecialPalette8";
+	case k1SpecialPalette9:
+		return "k1SpecialPalette9";
+	case k1SpecialPalette10:
+		return "k1SpecialPalette10";
+	case k1SpecialPalette11:
+		return "k1SpecialPalette11";
+	case k1SpecialPalette12:
+		return "k1SpecialPalette12";
+	case k1SpecialPalette13:
+		return "k1SpecialPalette13";
+	case k1SpecialPalette14:
+		return "k1SpecialPalette14";
+	case k1SpecialPalette15:
+		return "k1SpecialPalette15";
+	case k1SpecialPalette16:
+		return "k1SpecialPalette16";
+	case k1SpecialPalette17:
+		return "k1SpecialPalette17";
+	case k1SpecialPalette18:
+		return "k1SpecialPalette18";
+	case k1SpecialPalette19:
+		return "k1SpecialPalette19";
+	case k1SpecialPalette20:
+		return "k1SpecialPalette20";
+	case k1SpecialPalette21:
+		return "k1SpecialPalette21";
+	case k1SpecialPalette22:
+		return "k1SpecialPalette22";
+	case k1SpecialPalette23:
+		return "k1SpecialPalette23";
+	case k1SpecialPalette24:
+		return "k1SpecialPalette24";
+	case k1SpecialPalette25:
+		return "k1SpecialPalette25";
+	case k1SpecialPalette26:
+		return "k1SpecialPalette26";
+	case k1SpecialPalette27:
+		return "k1SpecialPalette27";
+	case k1SpecialPalette28:
+		return "k1SpecialPalette28";
+	case k1SpecialPalette29:
+		return "k1SpecialPalette29";
+	case k1SpecialPalette30:
+		return "k1SpecialPalette30";
+	case k1SpecialPalette31:
+		return "k1SpecialPalette31";
+	case k1SpecialPalette32:
+		return "k1SpecialPalette32";
+	case k1SpecialPalette33:
+		return "k1SpecialPalette33";
+	case k1GUIStrings:
+		return "k1GUIStrings";
+	case k1ConfigStrings:
+		return "k1ConfigStrings";
+	case k1TOWNSSfxWDTable:
+		return "k1TOWNSSfxWDTable";
+	case k1TOWNSSfxBTTable:
+		return "k1TOWNSSfxBTTable";
+	case k1TOWNSCDATable:
+		return "k1TOWNSCDATable";
+	case k1PC98StoryStrings:
+		return "k1PC98StoryStrings";
+	case k1PC98IntroSfx:
+		return "k1PC98IntroSfx";
+	case k1CreditsStrings:
+		return "k1CreditsStrings";
+	case k1AmigaIntroSFXTable:
+		return "k1AmigaIntroSFXTable";
+	case k1AmigaGameSFXTable:
+		return "k1AmigaGameSFXTable";
 	case k2SeqplayPakFiles:
 		return "k2SeqplayPakFiles";
 	case k2SeqplayStrings:
