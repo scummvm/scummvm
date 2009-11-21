@@ -430,15 +430,12 @@ int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
 	if (cmd->param2 == 2) {
 		if (!barrier->checkFlags()) {
 			cmd->param2 = 1;
-			// FIXME Not sure why this break was here
-			// break;
 		}
 		scn->actions()->lineIncrement = 1;
 	} else {
 		if (cmd->param4) { // RECHECK THIS
-			int newBarriedIndex = 213 * barrierIndex;
 			barrier->flags &= 0xFFFEF1C7;
-			scn->worldstats()->getBarrierByIndex(newBarriedIndex)->flags = barrier->flags | 0x20;
+            barrier->flags |= 0x20;
 		} else if (cmd->param3) {
 			barrier->flags &= 0xFFFEF1C7;
 			barrier->flags |= 0x10000;
