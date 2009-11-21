@@ -50,13 +50,11 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 
 	int matches = 0;
 
-	// need to match lowercase key
-	String lowercasePattern = pattern;
-	lowercasePattern.toLowercase();
-
 	ArchiveMemberList::iterator it = allNames.begin();
 	for ( ; it != allNames.end(); ++it) {
-		if ((*it)->getName().matchString(lowercasePattern, false, true)) {
+		// TODO: We match case-insenstivie for now, our API does not define whether that's ok or not though...
+		// For our use case case-insensitive is probably what we want to have though.
+		if ((*it)->getName().matchString(lowercasePattern, true, true)) {
 			list.push_back(*it);
 			matches++;
 		}
