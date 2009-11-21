@@ -1231,6 +1231,9 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	return true;
 }
 
+// Uncomment this to get various debug information about the detection table entries.
+//#define DEBUG_EXTRACTION_TABLES
+
 bool setupSearch(const Game *g, const int *needList, Search &search, SearchMap &searchData) {
 	for (const int *entry = needList; *entry != -1; ++entry) {
 		ExtractEntryList providers = getProvidersForId(*entry);
@@ -1240,9 +1243,16 @@ bool setupSearch(const Game *g, const int *needList, Search &search, SearchMap &
 			return false;
 		} else {
 			for (ExtractEntryList::const_iterator i = providers.begin(); i != providers.end(); ++i) {
-				// We'll add all providers here...
-				search.addData(i->hint);
-				searchData.insert(SearchMapEntry(*entry, *i));
+				// Only add generic or partly matching providers here.
+#ifndef DEBUG_EXTRACTION_TABLES
+				if ((i->lang == UNK_LANG || i->lang == g->lang[0] || i->lang == g->lang[1] || i->lang == g->lang[2]) &&
+				    (i->platform == kPlatformUnknown || (i->platform == g->platform))) {
+#endif
+					search.addData(i->hint);
+					searchData.insert(SearchMapEntry(*entry, *i));
+#ifndef DEBUG_EXTRACTION_TABLES
+				}
+#endif
 			}
 		}
 	}
@@ -1379,6 +1389,11 @@ bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
 					continue;
 				}
 
+#ifdef DEBUG_EXTRACTION_TABLES
+				if (((*bestMatch)->second.desc.platform != kPlatformUnknown && (*bestMatch)->second.desc.platform != g->platform))
+					printf("%s: %.8X %.8X %d %d\n", getIdString(*entry), (*bestMatch)->second.desc.hint.size, (*bestMatch)->second.desc.hint.byteSum, (*bestMatch)->second.desc.lang, (*bestMatch)->second.desc.platform);
+#endif
+
 				map.insert(**bestMatch);
 			}
 		} else {
@@ -1389,6 +1404,11 @@ bool getExtractionData(const Game *g, Search &search, ExtractMap &map) {
 				result = false;
 				continue;
 			}
+
+#ifdef DEBUG_EXTRACTION_TABLES
+			if (((*bestMatch)->second.desc.platform != kPlatformUnknown && (*bestMatch)->second.desc.platform != g->platform))
+				printf("%s: %.8X %.8X %d %d\n", getIdString(*entry), (*bestMatch)->second.desc.hint.size, (*bestMatch)->second.desc.hint.byteSum, (*bestMatch)->second.desc.lang, (*bestMatch)->second.desc.platform);
+#endif
 
 			map.insert(**bestMatch);
 		}
