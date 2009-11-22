@@ -108,7 +108,7 @@ protected:
 	ShadowMode _shadowMode;
 
 	void enableShadow(bool enable);
-	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+	virtual void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
 
 public:
 	CharsetRendererCommon(ScummEngine *vm);

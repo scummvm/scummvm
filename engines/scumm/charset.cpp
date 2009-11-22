@@ -1098,8 +1098,6 @@ void CharsetRendererPCE::drawBits1(const Graphics::Surface &s, byte *dst, const 
 				} else {
 					if (_shadowMode != kNoShadowMode) {
 						*(dst + 1) = _shadowColor;
-						*(dst + s.pitch) = _shadowColor;
-						*(dst + s.pitch + 1) = _shadowColor;
 					}
 					*dst = _color;
 				}
