@@ -215,7 +215,7 @@ bool StaticResource::tryKyraDatLoad() {
 		return false;
 
 	// load the ID map for our game
-	const Common::String filenamePattern = Common::String::printf("0%01X%01X%01X%03X%01X", game, platform, special, 0, lang);
+	const Common::String filenamePattern = Common::String::printf("0%01X%01X%01X000%01X", game, platform, special, lang);
 	Common::SeekableReadStream *idMap = _vm->resource()->createReadStream(filenamePattern);
 	if (!idMap)
 		return false;
