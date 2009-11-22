@@ -138,6 +138,8 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 		_objects[i]._location = (~(1 << 7) & tmp) - 1;
 
 		_objects[i]._playingAnim = -1;
+		_objects[i]._absNum = i;
+		// _anims have been initialized by the constructor
 	}
 
 	assert(numDialogues == _info._numDialogues);
@@ -1207,12 +1209,12 @@ void Game::deleteObjectAnimations() {
 	// animations instead of listing what to deallocate.  maybe simply
 	// deallocate everything; reloading isn't that expensive.
 	//
-	// URGENT TODO: if a game item's location changes (e.g., due to a GPL2
-	// command), its animations survive and we get assert in
-	// AnimationManager::load() next time.  we must address this before a
-	// proper clean-up to make game playable.  happens when loading game
-	// before getting the fairy tale book, playing a bit, and then doing it
-	// again.  the fairy-tale book's animations raise an assert.
+	// TODO: if a game item's location changes (e.g., due to a GPL2
+	// command), its animations survive in the memory.  I believe this
+	// isn't needed, because only icons need to survive, but it is
+	// dangerous if those animations contain sounds.  maybe delete all
+	// objects regardless of their location.  dump first how often this
+	// happens.
 	//
 	// TODO: completely rewrite the resource management.  maybe implement
 	// usage counters?  maybe completely ignore the GPL2 hints and manage
@@ -1597,7 +1599,7 @@ void GameObject::load(uint objNum, BArchive *archive) {
 	_program._length = file->_length;
 
 	_playingAnim = -1;
-	_anim.clear();
+	deleteAnims();		// If the object has already been loaded, then discard the previous animations
 }
 
 void GameItem::load(int itemID, BArchive *archive) {
