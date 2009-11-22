@@ -465,8 +465,10 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 	} while (offset > 0);
 
 	// Some games, like KQ5CD, never actually call SetCursor inside Game::setCursor
-	// but call isObject
-	if (featureDetection == kDetectSetCursorType && foundTarget) {
+	// but call isObject. Cover this case here, if we're actually reading the selector
+	// itself, and not iterating through the Game object (i.e. when the selector
+	// dictionary is missing)
+	if (featureDetection == kDetectSetCursorType && methodNum == -1 && foundTarget) {
 		_setCursorType = SCI_VERSION_1_1;
 		return true;
 	}
