@@ -1107,8 +1107,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if (!(chr == '@' && _game.heversion <= 71) ||
-			    (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
+			if ((_game.id == GID_CMI && _language == Common::ZH_TWN) ||
 				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN))
 			{
 				*dst++ = chr;
