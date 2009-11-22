@@ -35,6 +35,14 @@ class Scene;
 class Screen;
 struct ActionArea;
 
+enum ActorType {
+	kMax    = 0,
+    // TODO: check if the names match the actor type
+	kSarah    = 1,
+    kCyclops = 2,
+    kAztec   = 3
+};
+
 // TODO investigate other actor resources (from other
 // scenes) to see if the unused blocks in the actor
 // definition are in fact used elsewhere

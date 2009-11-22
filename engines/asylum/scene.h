@@ -36,6 +36,7 @@
 #include "asylum/actionlist.h"
 #include "asylum/text.h"
 #include "asylum/cursor.h"
+#include "asylum/speech.h"
 
 #define SCENE_FILE_MASK "scn.%03d"
 #define MUSIC_FILE_MASK "mus.%03d"
@@ -51,6 +52,7 @@ class Text;
 class BlowUpPuzzle;
 struct BarrierItem;
 class WorldStats;
+class Speech;
 
 class SceneTitle {
 public:
@@ -132,6 +134,10 @@ public:
 		return _actions;
 	}
 
+    Speech*   speech()    {
+		return _speech;
+	}
+
 private:
 	AsylumEngine *_vm;
 	uint8	     _sceneIdx;
@@ -139,10 +145,10 @@ private:
 	Polygons     *_polygons;
 	ActionList   *_actions;
 	SceneTitle   *_title;
+    Speech       *_speech;
 
 	Cursor			*_cursor;
 	ResourcePack	*_resPack;
-	ResourcePack	*_speechPack;
 	ResourcePack	*_musPack;
 	BlowUpPuzzle    *_blowUp;
 	Common::Event   *_ev;

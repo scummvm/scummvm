@@ -83,6 +83,11 @@ uint32 Text::getResTextWidth(uint32 resId) {
 	return getTextWidth((char*)textRes->data);
 }
 
+char* Text::getResText(uint32 resId) {
+	ResourceEntry *textRes = _textPack->getResource(resId);
+	return (char*)textRes->data;
+}
+
 void Text::drawChar(char character) {
 	assert(_fontResource);
 
