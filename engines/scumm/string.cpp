@@ -1031,6 +1031,21 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		chr = src[num++];
 		if (chr == 0)
 			break;
+
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+			// Code for TM character
+			if (chr == 0x0F && src[num] == 0x20) {
+				*dst++ = 0x5D;
+				*dst++ = 0x5E;
+				continue;
+			// Code for (C) character
+			} else if (chr == 0x1C && src[num] == 0x20) {
+				*dst++ = 0x3E;
+				*dst++ = 0x2A;
+				continue;
+			}
+		}
+
 		if (chr == 0xFF) {
 			chr = src[num++];
 
