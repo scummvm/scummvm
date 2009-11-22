@@ -1155,11 +1155,72 @@ void Game::loadOverlays() {
 }
 
 void Game::deleteObjectAnimations() {
-	for (uint i = 0; i < _info._numObjects; ++i) {
+	for (uint i = 1; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
-		if (i != 0 && (obj->_location == getPreviousRoomNum())) {
+		if (obj->_location == getPreviousRoomNum()) {
 			obj->deleteAnims();
 		}
+	}
+	
+	// WORKAROUND
+	//
+	// An absolutely horrible hack follows.  The current memory management
+	// is completely broken and it needs to be seriously hacked to work at
+	// all.  The problem is caching sound samples in BArchive and clearing
+	// all caches when entering a new location.  The animation sequences
+	// store pointers to samples owned by the BArchive cache, which gets
+	// invalidated during the location change.  If an animation sequence
+	// survives location change and refers to any sound sample, we get
+	// SIGSEGV when next played, because this sound sample will have been
+	// deallocated by the cache although still referred to by the animation.
+	//
+	// Caveat: when I tried to perform a deep copy and make the animation
+	// object own the sound samples and deallocate them when the animation
+	// has been deleted, I get an almost immediate SIGSEGV in runWrapper()
+	// on many objects, because often an animation graphically ends and is
+	// stopped, but the last sound sample still plays for a short while
+	// afterwards.  If the sound sample is cached, it's OK, but if it's
+	// deallocated with releaseAnims==true, we get SIGSEGV in the sound
+	// mixer.  This problem doesn't occur when changing locations, because
+	// there we first explicitly stop all playing sounds.
+	//
+	// The loop above deallocates all animations corresponding to non-hero
+	// objects.  Hero is special, because the first ~20 animations are
+	// standard and loaded for the whole game (standing, walking, etc.).
+	// They are loaded by the GPL2 init routine for object hero.  Luckily
+	// the animations don't refer to any sound samples.  The remaining
+	// animations thus must be deallocated manually, otherwise they won't
+	// be re-loaded next time assuming that they are already correctly
+	// loaded.
+	//
+	// mini-TODO: integrate this deletion into deleteAnim() an optional
+	// parameter with starting index for deletion.
+	//
+	// Why this only occurs for sound samples and not sprites?  This bug is
+	// concealed by a complete coincidence, that all sprites are stored
+	// column-wise and our class Sprite detects this and creates a local
+	// copy.  If this wasn't the case, each animation (not just with sound
+	// samples) would fail and preserving the ~20 hero animations wouldn't
+	// work either.
+	//
+	// TODO: maybe simply deallocate everything except for those ~20 hero
+	// animations instead of listing what to deallocate.  maybe simply
+	// deallocate everything; reloading isn't that expensive.
+	//
+	// TODO: completely rewrite the resource management.  maybe implement
+	// usage counters?  maybe completely ignore the GPL2 hints and manage
+	// memory completely on my own?
+	//
+	// URGENT TODO: if a game item is in the hero's hands when changing
+	// locations, its animations survive and we get assert in
+	// AnimationManager::load().
+	GameObject *dragon = &_objects[kDragonObject];
+	for (uint i = dragon->_anim.size() - 1; i >= kFirstTemporaryAnimation; --i) {
+		dragon->_anim.back()->del();
+		dragon->_anim.pop_back();
+	}
+	if (dragon->_playingAnim >= kFirstTemporaryAnimation) {
+		dragon->_playingAnim = 0;
 	}
 }
 

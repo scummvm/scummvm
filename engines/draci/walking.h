@@ -96,7 +96,9 @@ enum Movement {
 	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
 	kLastTurning = kMoveUpStopRight,
 
-	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft
+	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft,
+
+	kFirstTemporaryAnimation
 };
 
 class DraciEngine;
