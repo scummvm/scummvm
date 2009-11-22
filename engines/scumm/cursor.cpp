@@ -45,7 +45,7 @@ static const byte default_v1_cursor_colors[4] = {
 };
 
 static const uint16 default_pce_cursor_colors[4] = {
-	0x01FF, 0x016D, 0x0000, 0x0092
+	0x01FF, 0x01FF, 0x016D, 0x0092
 };
 
 static const byte default_cursor_colors[4] = {
@@ -356,33 +356,46 @@ void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
 
 //	const int oldID = _charset->getCurID();
 
-	if (_game.version == 3) {
-		_charset->setCurID(0);
-	} else if (_game.version >= 4) {
-		_charset->setCurID(1);
-	}
-
-	Graphics::Surface s;
-	byte buf[16*17];
-	memset(buf, 123, 16*17);
-	s.pixels = buf;
-	s.w = _charset->getCharWidth(chr);
-	s.h = _charset->getFontHeight();
-	s.pitch = s.w;
-	// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
-	assert(s.w <= 16 && s.h <= 17);
-	s.bytesPerPixel = 1;
-
-	_charset->drawChar(chr, s, 0, 0);
-
 	uint16 *ptr = _cursorImages[index];
-	memset(ptr, 0, 17 * sizeof(uint16));
-	for (int h = 0; h < s.h; h++) {
-		for (int w = 0; w < s.w; w++) {
-			if (buf[s.pitch * h + w] != 123)
-				*ptr |= 1 << (15 - w);
+	int h;
+
+	if (index == 1 && _game.platform == Common::kPlatformPCEngine) {
+		uint16 cursorPCE[] = {
+			0x8000, 0xC000, 0xE000, 0xF000, 0xF800, 0xFC00, 0xFE00, 0xFF00,
+			0xF180, 0xF800, 0x8C00, 0x0C00, 0x0600, 0x0600, 0x0300
+		};
+
+		for (h = 0; h < ARRAYSIZE(cursorPCE); h++) {
+			*ptr++ = cursorPCE[h];
 		}
-		ptr++;
+	} else {
+		if (_game.version == 3) {
+			_charset->setCurID(0);
+		} else if (_game.version >= 4) {
+			_charset->setCurID(1);
+		}
+
+		Graphics::Surface s;
+		byte buf[16*17];
+		memset(buf, 123, 16*17);
+		s.pixels = buf;
+		s.w = _charset->getCharWidth(chr);
+		s.h = _charset->getFontHeight();
+		s.pitch = s.w;
+		// s.h = 17 for FM-TOWNS Loom Japanese. Fixes bug #1166917
+		assert(s.w <= 16 && s.h <= 17);
+		s.bytesPerPixel = 1;
+
+		_charset->drawChar(chr, s, 0, 0);
+
+		memset(ptr, 0, 17 * sizeof(uint16));
+		for (h = 0; h < s.h; h++) {
+			for (int w = 0; w < s.w; w++) {
+				if (buf[s.pitch * h + w] != 123)
+					*ptr |= 1 << (15 - w);
+			}
+			ptr++;
+		}
 	}
 
 //	_charset->setCurID(oldID);
