@@ -504,10 +504,12 @@ const Animation *AnimationManager::getTopAnimation(int x, int y) const {
 			}
 		}
 
-		// Return the top-most animation object, unless it is an
-		// overlay sprite and there is an actual object underneath it.
+		// Return the top-most animation object, unless it is a
+		// non-clickable sprite (overlay, debugging sprites for
+		// walking, or title/speech text) and there is an actual object
+		// underneath it.
 		if (matches) {
-			if (anim->getID() != kOverlayImage) {
+			if (anim->getID() > kOverlayImage || anim->getID() < kSpeechText) {
 				return anim;
 			} else if (retval == NULL) {
 				retval = anim;
