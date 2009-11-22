@@ -1290,16 +1290,24 @@ void Game::positionAnimAsHero(Animation *anim) {
 	_persons[kDragonObject]._x = _hero.x;
 	_persons[kDragonObject]._y = p.y;
 
-	// Set the per-animation scaling factor
-	anim->setScaleFactors(scale, scale);
+	if (anim->isRelative()) {
+		// Set the per-animation scaling factor and relative position
+		anim->setScaleFactors(scale, scale);
+		anim->setRelative(p.x, p.y);
 
-	anim->setRelative(p.x, p.y);
+		// Clear the animation's shift so that the real sprite stays at place
+		// regardless of what the current phase is.  If the animation starts
+		// from the beginning, the shift is already [0,0], but if it is in the
+		// middle, it may be different.
+		anim->clearShift();
 
-	// Clear the animation's shift so that the real sprite stays at place
-	// regardless of what the current phase is.  If the animation starts
-	// from the beginning, the shift is already [0,0], but if it is in the
-	// middle, it may be different.
-	anim->clearShift();
+		// Otherwise this dragon animation is used at exactly one place
+		// in the game (such as jumping into the secret entrance),
+		// which can is recognized by it using absolute coordinates.
+		// Bypass our animation positioning system, otherwise there two
+		// shifts will get summed and the animation will be placed
+		// outside the screen.
+	}
 }
 
 void Game::positionHeroAsAnim(Animation *anim) {

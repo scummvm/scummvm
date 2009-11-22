@@ -43,6 +43,7 @@ Animation::Animation(DraciEngine *vm, int id, uint z, bool playing) : _vm(vm) {
 	_currentFrame = 0;
 	_hasChangedFrame = true;
 	_callback = &Animation::doNothing;
+	_isRelative = false;
 }
 
 Animation::~Animation() {
@@ -556,6 +557,7 @@ Animation *AnimationManager::load(uint animNum) {
 	insert(anim, true);
 
 	anim->setLooping(cyclic);
+	anim->setIsRelative(relative);
 
 	for (uint i = 0; i < numFrames; ++i) {
 		uint spriteNum = animationReader.readUint16LE() - 1;

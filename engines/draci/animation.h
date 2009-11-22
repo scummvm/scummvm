@@ -94,6 +94,8 @@ public:
 	bool isLooping() const { return _looping; }
 	void setLooping(bool looping);
 
+	void setIsRelative(bool value) { _isRelative = value; }
+	bool isRelative() const { return _isRelative; }
 	void setRelative(int relx, int rely);
 	int getRelativeX() const { return _displacement.relX; }
 	int getRelativeY() const { return _displacement.relY; }
@@ -147,6 +149,7 @@ private:
 	bool _hasChangedFrame;
 
 	Displacement _displacement;
+	bool _isRelative;
 
 	uint _tick;
 	bool _playing;

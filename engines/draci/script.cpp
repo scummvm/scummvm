@@ -338,8 +338,7 @@ int Script::funcActPhase(int objID) const {
 
 	const GameObject *obj = _vm->_game->getObject(objID);
 
-	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
-
+	const bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 	if (objID == kDragonObject || visible) {
 		const int i = obj->playingAnim();
 		if (i >= 0) {
@@ -421,16 +420,15 @@ void Script::start(const Common::Array<int> &params) {
 			objID, obj->_title.c_str(), animID);
 	}
 	Animation *anim = obj->_anim[index];
-
-	if (objID == kDragonObject)
-		_vm->_game->positionAnimAsHero(anim);
-
 	anim->registerCallback(&Animation::stop);
 
-	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
-
-	if (objID == kDragonObject || visible) {
-		obj->playAnim(index);
+	if (objID == kDragonObject) {
+		_vm->_game->playHeroAnimation(index);
+	} else {
+		const bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
+		if (visible) {
+			obj->playAnim(index);
+		}
 	}
 }
 
@@ -452,15 +450,15 @@ void Script::startPlay(const Common::Array<int> &params) {
 			objID, obj->_title.c_str(), animID);
 	}
 	Animation *anim = obj->_anim[index];
-
-	if (objID == kDragonObject)
-		_vm->_game->positionAnimAsHero(anim);
-
 	anim->registerCallback(&Animation::exitGameLoop);
 
-	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
-	if (objID == kDragonObject || visible) {
-		obj->playAnim(index);
+	if (objID == kDragonObject) {
+		_vm->_game->playHeroAnimation(index);
+	} else {
+		const bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
+		if (visible) {
+			obj->playAnim(index);
+		}
 	}
 
 	// Runs an inner loop until the animation ends.
