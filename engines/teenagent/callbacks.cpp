@@ -3979,7 +3979,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9d90:
 		hideActor();
 		loadScene(34, scene->getPosition());
-		Dialog::show(scene, 0x6f60, 986, 987, 0xd9, 0xd0, 1, 2);
+		playAnimation(986, 0, true);
+		playAnimation(987, 1, true);
+		waitAnimation();
+		Dialog::show(scene, 0x6f60, 988, 989, 0xd9, 0xd0, 1, 2);
 		playAnimation(990, 0, true);
 		playAnimation(991, 1, true);
 		waitAnimation();
