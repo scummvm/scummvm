@@ -76,7 +76,10 @@ void ScummEngine::loadCJKFont() {
 		} else {
 			_useCJKMode = true;
 			debug(2, "Loading PC-Engine System Card");
-			fp.seek(0x30000);
+			
+			// A 0x200 byte header can be present at the beginning of the syscard. Seek past it too.
+			fp.seek((fp.size() & 0x200) ? 0x30200 : 0x30000);
+
 			_2byteFontPtr = new byte[_2byteWidth * _2byteHeight * numChar / 8];
 			fp.read(_2byteFontPtr, _2byteWidth * _2byteHeight * numChar / 8);
 			fp.close();
