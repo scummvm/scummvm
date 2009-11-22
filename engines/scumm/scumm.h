@@ -1050,6 +1050,7 @@ public:
 	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 	void readPCEPalette(const byte **ptr, byte **dest, int numEntries);
+	void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b);
 	void setPCETextPalette(uint8 color);
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);

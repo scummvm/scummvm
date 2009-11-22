@@ -44,6 +44,10 @@ static const byte default_v1_cursor_colors[4] = {
 	1, 1, 12, 11
 };
 
+static const uint16 default_pce_cursor_colors[4] = {
+	0x01FF, 0x016D, 0x0000, 0x0092
+};
+
 static const byte default_cursor_colors[4] = {
 	15, 15, 7, 8
 };
@@ -533,13 +537,22 @@ void ScummEngine_v5::resetCursors() {
 
 void ScummEngine_v5::setBuiltinCursor(int idx) {
 	int i, j;
-	byte color = default_cursor_colors[idx];
+	uint16 color;
 	const uint16 *src = _cursorImages[_currentCursor];
 
 	if (_bytesPerPixel == 2) {
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+			byte r, g, b;
+			colorPCEToRGB(default_pce_cursor_colors[idx], &r, &g, &b);
+			color = get16BitColor(r, g, b);
+		} else {
+			color = _16BitPalette[default_cursor_colors[idx]];
+		}
+
 		for (i = 0; i < 1024; i++)
 			WRITE_UINT16(_grabbedCursor + i * 2, 0xFF);
 	} else {
+		color = default_cursor_colors[idx];
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 
@@ -552,7 +565,7 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
 				if (_bytesPerPixel == 2)
-					WRITE_UINT16(_grabbedCursor + 32 * i + (15 - j) * 2, _16BitPalette[color]);
+					WRITE_UINT16(_grabbedCursor + 32 * i + (15 - j) * 2, color);
 				else
 					_grabbedCursor[16 * i + 15 - j] = color;
 			}

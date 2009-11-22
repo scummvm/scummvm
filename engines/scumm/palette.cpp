@@ -202,7 +202,7 @@ void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) 
 		setPalColor( index, ptr[0], ptr[1], ptr[2]);
 }
 
-void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b) {
+void ScummEngine::colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b) {
 	// 3 bits for each color component: 0xgggrrrbbb
 	*b = ((color)      & 0x7) * 0xFF / 0x7;
 	*r = ((color >> 3) & 0x7) * 0xFF / 0x7;
