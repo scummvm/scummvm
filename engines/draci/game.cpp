@@ -249,7 +249,6 @@ void Game::handleOrdinaryLoop(int x, int y) {
 
 		if (_currentItem) {
 			putItem(_currentItem, 0);
-			_currentItem = NULL;
 			updateOrdinaryCursor();
 		} else {
 			if (_objUnderCursor) {
@@ -341,9 +340,7 @@ void Game::handleInventoryLoop() {
 				kInventoryItemHeight) - 1, 0L, (long) kInventoryLines - 1);
 			const int index = line * kInventoryColumns + column;
 			putItem(_currentItem, index);
-
-			// Remove it from our hands
-			_currentItem = NULL;
+			updateInventoryCursor();
 		}
 	} else if (_vm->_mouse->rButtonPressed()) {
 		_vm->_mouse->rButtonSet(false);
@@ -730,6 +727,9 @@ void Game::loadItemAnimation(GameItem *item) {
 }
 
 void Game::putItem(GameItem *item, int position) {
+	// Empty our hands
+	_currentItem = NULL;
+
 	if (!item)
 		return;
 	assert(position >= 0);
