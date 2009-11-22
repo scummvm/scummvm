@@ -1279,6 +1279,7 @@ void Game::enterNewRoom() {
 
 	// Set the appropriate loop status before loading the room
 	setLoopStatus(kStatusGate);
+	setIsReloaded(false);
 
 	// Make sure the possible walking path from the previous room is
 	// cleaned up.  Some rooms (e.g., the map) don't support walking.
@@ -1301,7 +1302,6 @@ void Game::enterNewRoom() {
 	// Reset the loop status.
 	setLoopStatus(kStatusOrdinary);
 	setExitLoop(false);
-	setIsReloaded(false);
 
 	// Set cursor state
 	// Need to do this after we set the palette since the cursors use it
