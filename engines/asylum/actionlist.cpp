@@ -268,7 +268,7 @@ int ActionList::process() {
 
 	if (_currentScript) {
 		while (!done && !waitCycle) {
-			lineIncrement = 1;      //Reset line increment value
+			lineIncrement = 0;      //Reset line increment value
 
 			if (currentLoops > 1000) {
 				//TODO - processActionLists has run too many iterations
@@ -301,8 +301,11 @@ int ActionList::process() {
 					currentCommand->opcode,
 					_scene->getSceneIndex(),
 					currentLine);
-			currentLine += lineIncrement;
-			currentLoops++;
+
+            if (!lineIncrement) {
+			    currentLine ++;
+			    currentLoops++;
+            }
 
 		} // end while
 
@@ -889,14 +892,12 @@ int kWaitUntilFramePlayed(ActionCommand *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
-		uint32 frameNum = 0;
+		uint32 frameNum = cmd->param2;
 		if (cmd->param2 == -1)
 			frameNum = barrier->frameCount - 1;
-		else
-			frameNum = cmd->param2;
 
-		if (barrier->frameIdx < frameNum) {
-			scn->actions()->lineIncrement = 0;
+		if (barrier->frameIdx != frameNum) {
+			scn->actions()->lineIncrement = 1;
 			scn->actions()->waitCycle     = true;
 		}
 	} else

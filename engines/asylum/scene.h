@@ -138,6 +138,8 @@ public:
 		return _speech;
 	}
 
+    void   getActorPosition(Actor *actor, Common::Point *pt);
+
 private:
 	AsylumEngine *_vm;
 	uint8	     _sceneIdx;
@@ -181,8 +183,7 @@ private:
 	int    queueBarrierUpdates();
 	bool   isBarrierVisible(BarrierItem *barrier);
 	bool   isBarrierOnScreen(BarrierItem *barrier);
-	uint32 getRandomResId(BarrierItem *barrier);
-	void   getActorPosition(Actor *actor, Common::Point *pt);
+	uint32 getRandomResId(BarrierItem *barrier);	
 
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 

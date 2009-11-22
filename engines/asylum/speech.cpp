@@ -99,23 +99,34 @@ void Speech::prepareSpeech() {
     uint32 startTick = _scene->vm()->getTick();
 
     if (_soundResIdx) {
-        if (!_scene->vm()->sound()->isPlaying(_soundResIdx) || _tick && startTick >= _tick) {
+        if (!_scene->vm()->sound()->isPlaying(_soundResIdx)/* || _tick && startTick >= _tick*/) {
             processSpeech();
         }
 
         if (Config.showEncounterSubtitles) {
-            // TODO: get actors position and draw text on screen
+            int16 check = 0;
+            /*Common::Point *pt;
+            _scene->getActorPosition(_scene->getActor(), pt);
+            
+            check = pt->y < 240;
+            check = pt->y >= 240;*/
+            uint32 posY = ((check - 1) & 0x118) + 40;
+
+            _scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font3);
+            _scene->vm()->text()->drawText(20, posY, _textDataPos);
+
+            _scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font1);
+            _scene->vm()->text()->drawText(20, posY, _textData);
         }
     }
 }
 
 void Speech::processSpeech() {
     char * txt;
-    Text* text = _scene->vm()->text();
 
     _tick = 0;
 
-    txt = text->getResText(_textResIdx);
+    txt = _scene->vm()->text()->getResText(_textResIdx);
 
     if (*(txt + strlen((const char *)txt) - 2) == 1) {
         _textResIdx = 0;

@@ -36,6 +36,9 @@ public:
     Speech(Scene *scene);
     virtual ~Speech();
 
+    uint32 _soundResIdx;
+    uint32 _textResIdx;
+
     /** .text:00414810
      *  Play player speech
      *  @param speechIdx speech index (used for sound and text resources)
@@ -49,21 +52,19 @@ public:
      *  @param textResIdx text resource id
      */
     void setPlayerSpeech(uint32 soundResIdx, uint32 textResIdx);
-private:
-    Scene *_scene;
-
-    uint32 _tick;
-    uint32 _soundResIdx;
-    uint32 _textResIdx;
-
-    char * _textData;
-    char * _textDataPos;
 
     /** .text:004144C0
      *  Prepare speech to play
      *   - Process sound speech and draws dialogue in screen
      */
     void prepareSpeech();
+private:
+    Scene *_scene;
+
+    uint32 _tick;
+
+    char * _textData;
+    char * _textDataPos;
 
     /** .text:00414580
      */
