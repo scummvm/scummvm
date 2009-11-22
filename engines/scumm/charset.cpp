@@ -1092,12 +1092,12 @@ void CharsetRendererPCE::drawBits1(const Graphics::Surface &s, byte *dst, const 
 			if ((bits & revBitMask(bitCount % 8)) && y + drawTop >= 0) {
 				if (bitDepth == 2) {
 					if (_shadowMode != kNoShadowMode) {
-						WRITE_UINT16(dst + s.pitch + 2, 0);
+						WRITE_UINT16(dst + s.pitch + 2, _vm->_16BitPalette[_shadowColor]);
 					}
 					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
 				} else {
 					if (_shadowMode != kNoShadowMode) {
-						*(dst + 1) = _shadowColor;
+						*(dst + s.pitch + 1) = _shadowColor;
 					}
 					*dst = _color;
 				}
