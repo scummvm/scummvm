@@ -288,6 +288,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
+	uint16 intParam = 0xFFFF;
 
 	do {
 		uint16 kFuncNum;
@@ -324,6 +325,33 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 
 				if (_lofsType != SCI_VERSION_AUTODETECT)
 					return true;
+
+				// If we reach here, we haven't been able to deduce the lofs parameter
+				// type, but we have advanced the offset pointer already. So move on
+				// to the next opcode
+				continue;
+			}
+		}
+
+		if (featureDetection == kDetectSoundType) {
+			// The play method of the Sound object pushes the DoSound command
+			// that it'll use just before it calls DoSound. We intercept that here
+			// in order to check what sound semantics are used, cause the position
+			// of the sound commands has changed at some point during SCI1 middle
+			if (opcode == op_pushi) {
+				// Load the pushi parameter
+				if (opsize & 1) {
+					if (offset >= script->_bufSize)
+						break;
+					intParam = script->_buf[offset++];
+				} else {
+					if ((uint32)offset + 1 >= (uint32)script->_bufSize)
+						break;
+					intParam = READ_LE_UINT16(script->_buf + offset);
+					offset += 2;
+				}
+
+				continue;
 			}
 		}
 
@@ -381,8 +409,28 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
 							foundTarget = true;
 						} else if (kFuncNum == 45) {	// kDoSound (SCI1)
-							_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
-							return true;
+							// First, check which DoSound function is called by the play method of
+							// the Sound object
+							switch (intParam) {
+							case 1:
+								_doSoundType = SCI_VERSION_0_EARLY;
+								break;
+							case 7:
+								_doSoundType = SCI_VERSION_1_EARLY;
+								break;
+							case 8:
+								_doSoundType = SCI_VERSION_1_LATE;
+								break;
+							default:
+								// Unknown case... should never happen. We fall back to
+								// alternative detection here, which works in general, apart from
+								// some transitive games like Jones CD
+								_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
+								break;
+							}
+
+							if (_doSoundType != SCI_VERSION_AUTODETECT)
+								return true;
 						}
 						break;
 					case kDetectSetCursorType:
@@ -393,6 +441,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 							_setCursorType = foundTarget ? SCI_VERSION_1_1 : SCI_VERSION_0_EARLY;
 							return true;
 						}
+						break;
 					default:
 						break;
 					}
@@ -415,6 +464,13 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 		}
 	} while (offset > 0);
 
+	// Some games, like KQ5CD, never actually call SetCursor inside Game::setCursor
+	// but call isObject
+	if (featureDetection == kDetectSetCursorType && foundTarget) {
+		_setCursorType = SCI_VERSION_1_1;
+		return true;
+	}
+
 	return false;	// not found
 }
 
@@ -436,21 +492,6 @@ SciVersion EngineState::detectDoSoundType() {
 						_doSoundType = SCI_VERSION_1_LATE;
 					else if (getSciVersion() > SCI_VERSION_01)
 						_doSoundType = SCI_VERSION_1_EARLY;
-				}
-			}
-		}
-
-		// Jones CD and perhaps others were in the middle of the transition from SCI1 old to SCI1 new
-		// sound code, and had some temporary selector methods in the Sound object. Check for these here,
-		// and set the doSound type to SCI1 new if they're found
-		if (getSciVersion() == SCI_VERSION_1_MIDDLE) {
-			reg_t tmp;
-			Selector slc = _kernel->findSelector("cue");
-			if (slc != -1) {
-				if (lookup_selector(_segMan, _segMan->findObjectByName("Sound"), slc, NULL, &tmp) == kSelectorMethod) {
-					// The Sound object has a temporary cue selector, therefore the game is using late
-					// SCI1 sound functions
-					_doSoundType = SCI_VERSION_1_LATE;
 				}
 			}
 		}
