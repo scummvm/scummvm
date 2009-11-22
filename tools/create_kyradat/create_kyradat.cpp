@@ -42,10 +42,13 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 68
+	kKyraDatVersion = 69
 };
 
 const ExtractFilename extractFilenames[] = {
+	// GENERIC ID MAP
+	{ kIdMap, -1, true },
+
 	// INTRO / OUTRO sequences
 	{ k1ForestSeq, kTypeRawData, false },
 	{ k1KallakWritingSeq, kTypeRawData, false },
@@ -327,12 +330,13 @@ byte getGameID(int game) {
 }
 
 const TypeTable languageTable[] = {
-	{ EN_ANY, 0 },
-	{ FR_FRA, 1 },
-	{ DE_DEU, 2 },
-	{ ES_ESP, 3 },
-	{ IT_ITA, 4 },
-	{ JA_JPN, 5 },
+	{ UNK_LANG, 0 },
+	{ EN_ANY, 1 },
+	{ FR_FRA, 2 },
+	{ DE_DEU, 3 },
+	{ ES_ESP, 4 },
+	{ IT_ITA, 5 },
+	{ JA_JPN, 6 },
 	{ -1, -1 }
 };
 
@@ -367,17 +371,23 @@ byte getSpecialID(int special) {
 
 // filename processing
 
+uint32 getFilename(const ExtractInformation *info, const int id) {
+	const ExtractFilename *fDesc = getFilenameDesc(id);
+
+	if (!fDesc)
+		return 0;
+
+	// GAME, PLATFORM, SPECIAL, ID, LANG
+	return ((getGameID(info->game) & 0xF) << 24) |
+	       ((getPlatformID(info->platform) & 0xF) << 20) |
+	       ((getSpecialID(info->special) & 0xF) << 16) |
+	       ((id & 0xFFF) << 4) |
+	       ((getLanguageID(fDesc->langSpecific ? info->lang : UNK_LANG) & 0xF) << 0);
+}
+
+// TODO: Get rid of this
 bool getFilename(char *dstFilename, const ExtractInformation *info, const int id) {
-	const ExtractFilename *i = getFilenameDesc(id);
-
-	if (!i)
-		return false;
-
-	// GAME, PLATFORM, SPECIAL, TYPE, ID[, LANG]
-	if (i->langSpecific)
-		sprintf(dstFilename, "%01X%01X%01X%02X%03X%01X", getGameID(info->game), getPlatformID(info->platform), getSpecialID(info->special), getTypeID(i->type), id, getLanguageID(info->lang));
-	else
-		sprintf(dstFilename, "%01X%01X%01X%02X%03X", getGameID(info->game), getPlatformID(info->platform), getSpecialID(info->special), getTypeID(i->type), id);
+	sprintf(dstFilename, "%08X", getFilename(info, id));
 	return true;
 }
 
@@ -388,7 +398,8 @@ typedef uint16 GameDef;
 GameDef createGameDef(const ExtractInformation *eI) {
 	return ((getGameID(eI->game) & 0xF) << 12) |
 	       ((getPlatformID(eI->platform) & 0xF) << 8) |
-	       ((getSpecialID(eI->special) & 0xF) << 4);
+	       ((getSpecialID(eI->special) & 0xF) << 4) |
+	       ((getLanguageID(eI->lang) & 0xF) << 0);
 }
 
 struct Index {
@@ -1127,6 +1138,8 @@ typedef std::multimap<int, ExtractData> ExtractMap;
 
 bool getExtractionData(const Game *g, Search &search, ExtractMap &map);
 
+bool createIDMap(PAKFile &out, const ExtractInformation *eI, const int *needList);
+
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	char filename[128];
 
@@ -1149,6 +1162,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 	for (ExtractMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
 		const int id = i->first;
+		extractInfo.lang = i->second.desc.lang;
 
 		const ExtractFilename *fDesc = getFilenameDesc(id);
 
@@ -1156,11 +1170,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			fprintf(stderr, "ERROR: couldn't find file description for id %d/%s\n", id, getIdString(id));
 			return false;
 		}
-
-		if (fDesc->langSpecific)
-			extractInfo.lang = i->second.desc.lang;
-		else
-			extractInfo.lang = UNK_LANG;
 
 		filename[0] = 0;
 		if (!getFilename(filename, &extractInfo, id)) {
@@ -1190,10 +1199,48 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			continue;
 
 		extractInfo.lang = g->lang[i];
+		if (!createIDMap(out, &extractInfo, needList))
+			return false;
+
 		if (!updateIndex(out, &extractInfo)) {
 			error("couldn't update INDEX file, stop processing of all files");
 			return false;
 		}
+	}
+
+	return true;
+}
+
+bool createIDMap(PAKFile &out, const ExtractInformation *eI, const int *needList) {
+	int dataEntries = 0;
+	// Count entries in the need list
+	for (const int *n = needList; *n != -1; ++n)
+		++dataEntries;
+
+	const int mapSize = 2 + dataEntries * (2 + 1 + 4);
+	uint8 *map = new uint8[mapSize];
+	uint8 *dst = map;
+
+	WRITE_BE_UINT16(dst, dataEntries); dst += 2;
+	for (const int *id = needList; *id != -1; ++id) {
+		WRITE_BE_UINT16(dst, *id); dst += 2;
+		const ExtractFilename *fDesc = getFilenameDesc(*id);
+		if (!fDesc)
+			return false;
+		*dst++ = getTypeID(fDesc->type);
+		WRITE_BE_UINT32(dst, getFilename(eI, *id)); dst += 4;
+	}
+
+	char filename[12];
+	if (!getFilename(filename, eI, 0)) {
+		fprintf(stderr, "ERROR: Could not create ID map for game\n");
+		return false;
+	}
+
+	out.removeFile(filename);
+	if (!out.addFile(filename, map, mapSize)) {
+		fprintf(stderr, "ERROR: Could not add ID map \"%s\" to kyra.dat\n", filename);
+		return false;
 	}
 
 	return true;

@@ -27,7 +27,9 @@
 
 // This list has to match orderwise (and thus value wise) the static data list of "engines/kyra/resource.h"!
 enum kExtractID {
-	k1ForestSeq = 0,
+	kIdMap = 0,
+
+	k1ForestSeq = 1,
 	k1KallakWritingSeq,
 	k1KyrandiaLogoSeq,
 	k1KallakMalcolmSeq,

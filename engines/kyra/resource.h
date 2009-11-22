@@ -103,7 +103,7 @@ enum KyraResources {
 	kLoadAll = -1,
 
 	// This list has to match orderwise (and thus value wise) the static data list of "tools/create_kyradat/create_kyradat.h"!
-	k1ForestSeq,
+	k1ForestSeq = 1,
 	k1KallakWritingSeq,
 	k1KyrandiaLogoSeq,
 	k1KallakMalcolmSeq,
@@ -348,7 +348,7 @@ class StaticResource {
 public:
 	static const Common::String staticDataFilename() { return "KYRA.DAT"; }
 
-	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _dataTable(0) {}
+	StaticResource(KyraEngine_v1 *vm) : _vm(vm), _resList(), _fileLoader(0), _dataTable() {}
 	~StaticResource() { deinit(); }
 
 	bool loadStaticResourceFile();
@@ -469,7 +469,16 @@ private:
 	Common::List<ResData> _resList;
 
 	const FileType *_fileLoader;
-	const int *_dataTable;
+
+	struct DataDescriptor {
+		DataDescriptor() : filename(0), type(0) {}
+		DataDescriptor(uint32 f, uint8 t) : filename(f), type(t) {}
+
+		uint32 filename;
+		uint8 type;
+	};
+	typedef Common::HashMap<uint16, DataDescriptor> DataMap;
+	DataMap _dataTable;
 };
 
 } // End of namespace Kyra

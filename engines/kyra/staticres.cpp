@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 68
+#define RESFILE_VERSION 69
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -91,12 +91,12 @@ byte getGameID(const GameFlags &flags) {
 }
 
 const IndexTable iLanguageTable[] = {
-	{ Common::EN_ANY, 0 },
-	{ Common::FR_FRA, 1 },
-	{ Common::DE_DEU, 2 },
-	{ Common::ES_ESP, 3 },
-	{ Common::IT_ITA, 4 },
-	{ Common::JA_JPN, 5 },
+	{ Common::EN_ANY, 1 },
+	{ Common::FR_FRA, 2 },
+	{ Common::DE_DEU, 3 },
+	{ Common::ES_ESP, 4 },
+	{ Common::IT_ITA, 5 },
+	{ Common::JA_JPN, 6 },
 	{ -1, -1 }
 };
 
@@ -192,9 +192,13 @@ bool StaticResource::tryKyraDatLoad() {
 		return false;
 	}
 
-	const uint16 gameDef = ((getGameID(_vm->gameFlags()) & 0xF) << 12) |
-	                       ((getPlatformID(_vm->gameFlags()) & 0xF) << 8) |
-	                       ((getSpecialID(_vm->gameFlags()) & 0xF) << 4);
+	const GameFlags &flags = _vm->gameFlags();
+	const byte game = getGameID(flags) & 0xF;
+	const byte platform = getPlatformID(flags) & 0xF;
+	const byte special = getSpecialID(flags) & 0xF;
+	const byte lang = getLanguageID(flags) & 0xF;
+
+	const uint16 gameDef = (game << 12) | (platform << 8) | (special << 4) | (lang << 0);
 
 	bool found = false;
 	for (uint32 i = 0; i < includedGames; ++i) {
@@ -208,6 +212,26 @@ bool StaticResource::tryKyraDatLoad() {
 	index = 0;
 
 	if (!found)
+		return false;
+
+	// load the ID map for our game
+	const Common::String filenamePattern = Common::String::printf("0%01X%01X%01X%03X%01X", game, platform, special, 0, lang);
+	Common::SeekableReadStream *idMap = _vm->resource()->createReadStream(filenamePattern);
+	if (!idMap)
+		return false;
+
+	uint16 numIDs = idMap->readUint16BE();
+	while (numIDs--) {
+		uint16 id = idMap->readUint16BE();
+		uint8 type = idMap->readByte();
+		uint32 filename = idMap->readUint32BE();
+
+		_dataTable[id] = DataDescriptor(filename, type);
+	}
+
+	const bool fileError = idMap->err();
+	delete idMap;
+	if (fileError)
 		return false;
 
 	// load all tables for now
@@ -244,288 +268,6 @@ bool StaticResource::init() {
 	};
 #undef proc
 	_fileLoader = fileTypeTable;
-
-	// Kyrandia 1 Filenames
-	static const int kyra1StaticRes[] = {
-		// INTRO / OUTRO sequences
-		k1ForestSeq,
-		k1KallakWritingSeq,
-		k1KyrandiaLogoSeq,
-		k1KallakMalcolmSeq,
-		k1MalcolmTreeSeq,
-		k1WestwoodLogoSeq,
-		k1Demo1Seq,
-		k1Demo2Seq,
-		k1Demo3Seq,
-		k1Demo4Seq,
-		k1OutroReunionSeq,
-
-		// INTRO / OUTRO strings
-		k1IntroCPSStrings,
-		k1IntroCOLStrings,
-		k1IntroWSAStrings,
-		k1IntroStrings,
-		k1OutroHomeString,
-
-		// INGAME strings
-		k1ItemNames,
-		k1TakenStrings,
-		k1PlacedStrings,
-		k1DroppedStrings,
-		k1NoDropStrings,
-		k1PutDownString,
-		k1WaitAmuletString,
-		k1BlackJewelString,
-		k1PoisonGoneString,
-		k1HealingTipString,
-		k1ThePoisonStrings,
-		k1FluteStrings,
-		k1WispJewelStrings,
-		k1MagicJewelStrings,
-		k1FlaskFullString,
-		k1FullFlaskString,
-		k1VeryCleverString,
-		k1NewGameString,
-
-		// GUI strings table
-		k1GUIStrings,
-		k1ConfigStrings,
-
-		// ROOM table/filenames
-		k1RoomList,
-		k1RoomFilenames,
-
-		// SHAPE tables
-		k1DefaultShapes,
-		k1Healing1Shapes,
-		k1Healing2Shapes,
-		k1PoisonDeathShapes,
-		k1FluteShapes,
-		k1Winter1Shapes,
-		k1Winter2Shapes,
-		k1Winter3Shapes,
-		k1DrinkShapes,
-		k1WispShapes,
-		k1MagicAnimShapes,
-		k1BranStoneShapes,
-
-		// IMAGE filename table
-		k1CharacterImageFilenames,
-
-		// AMULET anim
-		k1AmuleteAnimSeq,
-
-		// PALETTE table
-		k1SpecialPalette1,
-		k1SpecialPalette2,
-		k1SpecialPalette3,
-		k1SpecialPalette4,
-		k1SpecialPalette5,
-		k1SpecialPalette6,
-		k1SpecialPalette7,
-		k1SpecialPalette8,
-		k1SpecialPalette9,
-		k1SpecialPalette10,
-		k1SpecialPalette11,
-		k1SpecialPalette12,
-		k1SpecialPalette13,
-		k1SpecialPalette14,
-		k1SpecialPalette15,
-		k1SpecialPalette16,
-		k1SpecialPalette17,
-		k1SpecialPalette18,
-		k1SpecialPalette19,
-		k1SpecialPalette20,
-		k1SpecialPalette21,
-		k1SpecialPalette22,
-		k1SpecialPalette23,
-		k1SpecialPalette24,
-		k1SpecialPalette25,
-		k1SpecialPalette26,
-		k1SpecialPalette27,
-		k1SpecialPalette28,
-		k1SpecialPalette29,
-		k1SpecialPalette30,
-		k1SpecialPalette31,
-		k1SpecialPalette32,
-		k1SpecialPalette33,
-
-		// AUDIO files
-		k1AudioTracks,
-		k1AudioTracksIntro,
-
-		// FM-TOWNS specific
-		k1TownsSFXwdTable,
-		k1TownsSFXbtTable,
-		k1TownsCDATable,
-
-		// PC98 specific
-		k1PC98StoryStrings,
-		k1PC98IntroSfx,
-
-		// CREDITS (used in FM-TOWNS and AMIGA)
-		k1CreditsStrings,
-
-		// AMIGA specific
-		k1AmigaIntroSFXTable,
-		k1AmigaGameSFXTable,
-
-		-1
-	};
-
-	static const int kyra2StaticRes[] = {
-		// Sequence Player
-		k2SeqplayPakFiles,
-		k2SeqplayCredits,
-		k2SeqplayCreditsSpecial,
-		k2SeqplayStrings,
-		k2SeqplaySfxFiles,
-		k2SeqplayTlkFiles,
-		k2SeqplaySeqData,
-		k2SeqplayIntroTracks,
-		k2SeqplayFinaleTracks,
-		k2SeqplayIntroCDA,
-		k2SeqplayFinaleCDA,
-		k2SeqplayShapeAnimData,
-
-		// Ingame
-		k2IngamePakFiles,
-		k2IngameSfxFiles,
-		k2IngameSfxIndex,
-		k2IngameTracks,
-		k2IngameCDA,
-		k2IngameTalkObjIndex,
-		k2IngameTimJpStrings,
-		k2IngameShapeAnimData,
-		k2IngameTlkDemoStrings,
-
-		-1
-	};
-
-	static const int kyra3StaticRes[] = {
-		k3MainMenuStrings,
-		k3MusicFiles,
-		k3ScoreTable,
-		k3SfxFiles,
-		k3SfxMap,
-		k3ItemAnimData,
-		k3ItemMagicTable,
-		k3ItemStringMap,
-
-		-1
-	};
-
-#ifdef ENABLE_LOL
-	static const int kLolStaticRes[] = {
-		// Demo Sequence Player
-		k2SeqplayPakFiles,
-		k2SeqplayStrings,
-		k2SeqplaySfxFiles,
-		k2SeqplaySeqData,
-		k2SeqplayIntroTracks,
-
-		// Ingame
-		kLolIngamePakFiles,
-
-		kLolCharacterDefs,
-		kLolIngameSfxFiles,
-		kLolIngameSfxIndex,
-		kLolMusicTrackMap,
-		kLolIngameGMSfxIndex,
-		kLolIngameMT32SfxIndex,
-		kLolIngamePcSpkSfxIndex,
-		kLolSpellProperties,
-		kLolGameShapeMap,
-		kLolSceneItemOffs,
-		kLolCharInvIndex,
-		kLolCharInvDefs,
-		kLolCharDefsMan,
-		kLolCharDefsWoman,
-		kLolCharDefsKieran,
-		kLolCharDefsAkshel,
-		kLolExpRequirements,
-		kLolMonsterModifiers,
-		kLolMonsterShiftOffsets,
-		kLolMonsterDirFlags,
-		kLolMonsterScaleY,
-		kLolMonsterScaleX,
-		kLolMonsterScaleWH,
-		kLolFlyingObjectShp,
-		kLolInventoryDesc,
-
-		kLolLevelShpList,
-		kLolLevelDatList,
-		kLolCompassDefs,
-		kLolItemPrices,
-		kLolStashSetup,
-
-		kLolDscUnk1,
-		kLolDscShapeIndex,
-		kLolDscOvlMap,
-		kLolDscScaleWidthData,
-		kLolDscScaleHeightData,
-		kLolDscX,
-		kLolDscY,
-		kLolDscTileIndex,
-		kLolDscUnk2,
-		kLolDscDoorShapeIndex,
-		kLolDscDimData1,
-		kLolDscDimData2,
-		kLolDscBlockMap,
-		kLolDscDimMap,
-		kLolDscDoorScale,
-		kLolDscDoor4,
-		kLolDscOvlIndex,
-		kLolDscBlockIndex,
-		kLolDscDoor1,
-		kLolDscDoorX,
-		kLolDscDoorY,
-
-		kLolScrollXTop,
-		kLolScrollYTop,
-		kLolScrollXBottom,
-		kLolScrollYBottom,
-
-		kLolButtonDefs,
-		kLolButtonList1,
-		kLolButtonList2,
-		kLolButtonList3,
-		kLolButtonList4,
-		kLolButtonList5,
-		kLolButtonList6,
-		kLolButtonList7,
-		kLolButtonList8,
-
-		kLolLegendData,
-		kLolMapCursorOvl,
-		kLolMapStringId,
-
-		kLolSpellbookAnim,
-		kLolSpellbookCoords,
-		kLolHealShapeFrames,
-		kLolLightningDefs,
-		kLolFireballCoords,
-
-		kLolCredits,
-
-		kLolHistory,
-
-		-1
-	};
-#endif // ENABLE_LOL
-
-	if (_vm->game() == GI_KYRA1)
-		_dataTable = kyra1StaticRes;
-	else if (_vm->game() == GI_KYRA2)
-		_dataTable = kyra2StaticRes;
-	else if (_vm->game() == GI_KYRA3)
-		_dataTable = kyra3StaticRes;
-#ifdef ENABLE_LOL
-	else if (_vm->game() == GI_LOL)
-		_dataTable = kLolStaticRes;
-#endif // ENABLE_LOL
-	else
-		error("StaticResource: Unknown game ID");
 
 	return loadStaticResourceFile();
 }
@@ -598,8 +340,10 @@ const ButtonDef *StaticResource::loadButtonDefs(int id, int &entries) {
 
 bool StaticResource::prefetchId(int id) {
 	if (id == -1) {
-		for (int i = 0; _dataTable[i] != -1; ++i)
-			prefetchId(_dataTable[i]);
+		for (DataMap::const_iterator i = _dataTable.begin(); i != _dataTable.end(); ++i) {
+			if (!prefetchId(i->_key))
+				return false;
+		}
 		return true;
 	}
 
@@ -609,44 +353,18 @@ bool StaticResource::prefetchId(int id) {
 	if (checkResList(id, type, ptr, size))
 		return true;
 
-	const GameFlags &flags = _vm->gameFlags();
-	byte game = getGameID(flags);
-	byte platform = getPlatformID(flags);
-	byte special = getSpecialID(flags);
-	byte lang = getLanguageID(flags);
-
-	Common::ArchiveMemberList fileCandidates;
-
-	const Common::String filenamePattern = Common::String::printf("%01X%01X%01X??%03X", game, platform, special, id);
-	const Common::String langFilenamePattern = filenamePattern + Common::String::printf("%01X", lang);
-
-	// We assume the order of "fileCandidates" never changes across these calls. This means:
-	// The filenames matching "filenamePattern" will be added after the ones matching
-	// "langFilenamePattern".
-	_vm->resource()->listFiles(langFilenamePattern.c_str(), fileCandidates);
-	_vm->resource()->listFiles(filenamePattern.c_str(), fileCandidates);
-
-	if (fileCandidates.empty())
+	DataMap::const_iterator dDesc = _dataTable.find(id);
+	if (dDesc == _dataTable.end())
 		return false;
 
-	// First entry in the list should be the one we want
-	Common::ArchiveMemberPtr file = *fileCandidates.begin();
-	fileCandidates.clear();
-
-	unsigned int rType = (unsigned int)-1;
-	if (sscanf(file->getDisplayName().c_str(), "%*01X%*01X%*01X%02X%*03X", &rType) != 1) {
-		warning("Failed to parse filename from kyra.dat: \"%s\"", file->getDisplayName().c_str());
-		return false;
-	}
-
-	const FileType *filetype = getFiletype(rType);
+	const FileType *filetype = getFiletype(dDesc->_value.type);
 	if (!filetype)
 		return false;
 
 	ResData data;
 	data.id = id;
-	data.type = rType;
-	Common::SeekableReadStream *fileStream = file->createReadStream();
+	data.type = dDesc->_value.type;
+	Common::SeekableReadStream *fileStream = _vm->resource()->createReadStream(Common::String::printf("%08X", dDesc->_value.filename));
 	if (!fileStream)
 		return false;
 
