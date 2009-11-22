@@ -773,6 +773,9 @@ void Game::putItem(GameItem *item, int position) {
 void Game::inventoryInit() {
 	// Pause all "background" animations
 	_vm->_anims->pauseAnimations();
+	if (_walkingState.isActive()) {
+		walkHero(_hero.x, _hero.y, kDirectionLast);
+	}
 
 	// Draw the inventory and the current items
 	inventoryDraw();
