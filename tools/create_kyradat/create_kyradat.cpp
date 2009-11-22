@@ -436,6 +436,9 @@ bool updateIndex(PAKFile &out, const ExtractInformation *eI) {
 		if (std::find(index.gameList.begin(), index.gameList.end(), gameDef) == index.gameList.end()) {
 			++index.includedGames;
 			index.gameList.push_back(gameDef);
+		} else {
+			// Already included in the game list, thus we do not need any further processing here.
+			return true;
 		}
 	} else {
 		index.version = kKyraDatVersion;
