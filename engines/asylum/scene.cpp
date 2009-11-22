@@ -286,6 +286,16 @@ void Scene::update() {
 	drawScene();
 
 	//TODO: other process stuffs from sub 0040AE30
+
+    if (_speech->_soundResIdx != 0) {
+        if (_vm->sound()->isPlaying(_speech->_soundResIdx)) {
+            _speech->prepareSpeech();
+        } else {
+            _speech->_textResIdx = 0;
+            _speech->_soundResIdx = 0;
+            _vm->clearGameFlag(219);
+        }
+    }
 }
 
 int Scene::updateScene() {

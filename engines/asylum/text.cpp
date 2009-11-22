@@ -128,9 +128,11 @@ void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId) {
 }
 
 void Text::drawText(uint32 x, uint32 y, char *text) {
-	int textWidth = getTextWidth(text);
-	setTextPos(x - textWidth, y);
-	drawText(text);
+    if (text) {
+	    int textWidth = getTextWidth(text);
+	    setTextPos(x - textWidth, y);
+	    drawText(text);
+    }
 }
 
 void Text::drawResText(uint32 x, uint32 y, uint32 resId) {
