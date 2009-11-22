@@ -99,6 +99,7 @@ public:
 	void playAnim(int i);
 	void stopAnim();
 	void deleteAnims();
+	void deleteAnimsFrom(int index);
 	void load(uint objNum, BArchive *archive);
 };
 

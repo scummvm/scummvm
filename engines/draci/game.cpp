@@ -1161,6 +1161,7 @@ void Game::deleteObjectAnimations() {
 	// survive clearing the sound sample cache when changing the location.
 	// It's OK to unload them even if they are still in the inventory,
 	// because we only need their icons which survive.
+	// Start from 1, because 0==kDragonObject.
 	for (uint i = 1; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
 		obj->deleteAnims();
@@ -1197,29 +1198,25 @@ void Game::deleteObjectAnimations() {
 	// be re-loaded next time assuming that they are already correctly
 	// loaded.
 	//
-	// mini-TODO: integrate this deletion into deleteAnim() an optional
-	// parameter with starting index for deletion.
-	//
-	// Why this only occurs for sound samples and not sprites?  This bug is
+	// Why this only occurred for sound samples and not sprites?  This bug is
 	// concealed by a complete coincidence, that all sprites are stored
 	// column-wise and our class Sprite detects this and creates a local
 	// copy.  If this wasn't the case, each animation (not just with sound
 	// samples) would fail and preserving the ~20 hero animations wouldn't
 	// work either.
 	//
-	// TODO: maybe simply deallocate everything except for those ~20 hero
-	// animations instead of listing what to deallocate.  maybe simply
-	// deallocate everything; reloading isn't that expensive.
-	//
 	// TODO: completely rewrite the resource management.  maybe implement
 	// usage counters?  maybe completely ignore the GPL2 hints and manage
 	// memory completely on my own?
+
+	// We don't want to deallocate the first ~20 resident dragon
+	// animations, because they are loaded exactly once in dragon's init
+	// script and we rely upon their existence.
 	GameObject *dragon = &_objects[kDragonObject];
-	for (uint i = dragon->_anim.size() - 1; i >= kFirstTemporaryAnimation; --i) {
-		dragon->_anim.back()->del();
-		dragon->_anim.pop_back();
-	}
-	if (dragon->_playingAnim >= kFirstTemporaryAnimation) {
+	dragon->deleteAnimsFrom(kFirstTemporaryAnimation);
+	if (dragon->_playingAnim < 0) {
+		// For the hero, we always need to have exactly 1 playing
+		// animation, otherwise we index an array with -1.
 		dragon->_playingAnim = 0;
 	}
 }
@@ -1549,11 +1546,17 @@ void GameObject::stopAnim() {
 }
 
 void GameObject::deleteAnims() {
-	for (uint j = 0; j < _anim.size(); ++j) {
-		_anim[j]->del();
+	deleteAnimsFrom(0);
+}
+
+void GameObject::deleteAnimsFrom(int index) {
+	for (int j = _anim.size() - 1; j >= index; --j) {
+		_anim.back()->del();
+		_anim.pop_back();
 	}
-	_anim.clear();
-	_playingAnim = -1;
+	if (_playingAnim >= index) {
+		_playingAnim = -1;
+	}
 }
 
 void GameObject::load(uint objNum, BArchive *archive) {
