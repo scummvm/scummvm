@@ -427,9 +427,6 @@ private:
 	void freeButtonDefs(void *&ptr, int &size);
 #endif // ENABLE_LOL
 
-	const char *getFilename(const char *name);
-	Common::SeekableReadStream *getFile(const char *name);
-
 	enum ResTypes {
 		kStringList = 0,
 		kRawData = 1,

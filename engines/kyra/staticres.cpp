@@ -925,41 +925,6 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 }
 #endif // ENABLE_LOL
 
-const char *StaticResource::getFilename(const char *name) {
-	static Common::String filename;
-
-	filename = name;
-
-	if (_vm->gameFlags().gameID == GI_KYRA2)
-		filename += ".K2";
-	else if (_vm->gameFlags().gameID == GI_KYRA3)
-		filename += ".K3";
-	else if (_vm->gameFlags().gameID == GI_LOL)
-		filename += ".LOL";
-
-	if (_vm->gameFlags().isTalkie && _vm->gameFlags().isDemo) {
-		filename += ".CD.DEM";
-		return filename.c_str();
-	}
-
-	if (_vm->gameFlags().isTalkie)
-		filename += ".CD";
-	else if (_vm->gameFlags().isDemo)
-		filename += ".DEM";
-	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && (_vm->gameFlags().gameID == GI_KYRA1 || _vm->gameFlags().gameID == GI_LOL))
-		filename += ".98";
-	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-		filename += ".TNS";
-	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		filename += ".AMG";
-
-	return filename.c_str();
-}
-
-Common::SeekableReadStream *StaticResource::getFile(const char *name) {
-	return _vm->resource()->createReadStream(getFilename(name));
-}
-
 #pragma mark -
 
 void KyraEngine_LoK::initStaticResource() {
