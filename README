@@ -735,6 +735,7 @@ site, please see the section on reporting bugs.
       as the Loom scripts automatically turn them on again
     - MIDI support in the EGA version requires the Roland update from
       LucasArts
+    - The PC-Engine Kanji version requires the system card rom
 
   The Secret of Monkey Island:
     - MIDI support in the EGA version requires the Roland update from
@@ -783,7 +784,7 @@ site, please see the section on reporting bugs.
 
   Humongous Entertainment games:
     - Only the original load and save interface can be used.
-    - No support for printing images
+    - No support for multiplayer or printing images
 
 
 4.0) Supported Platforms:
