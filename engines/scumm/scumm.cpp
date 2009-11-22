@@ -113,10 +113,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
-	} else if (_game.platform == Common::kPlatformPCEngine) {
-		_gdi = new GdiPCEngine(this);
+#ifdef USE_RGB_COLOR
 	} else if (_game.features & GF_16BIT_COLOR) {
-		_gdi = new Gdi16Bit(this);
+		if (_game.platform == Common::kPlatformPCEngine)
+			_gdi = new GdiPCEngine(this);
+		else
+			_gdi = new Gdi16Bit(this);
+#endif
 	} else if (_game.version <= 1) {
 		_gdi = new GdiV1(this);
 	} else if (_game.version == 2) {
@@ -1270,9 +1273,11 @@ void ScummEngine::setupCharsetRenderer() {
 		else
 			_charset = new CharsetRendererV2(this, _language);
 	} else if (_game.version == 3) {
+#ifdef USE_RGB_COLOR
 		if (_game.platform == Common::kPlatformPCEngine)
 			_charset = new CharsetRendererPCE(this);
 		else
+#endif
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 8) {
@@ -1293,9 +1298,11 @@ void ScummEngine::setupCostumeRenderer() {
 	} else if (_game.platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
+#ifdef USE_RGB_COLOR
 	} else if (_game.platform == Common::kPlatformPCEngine) {
 		_costumeRenderer = new PCEngineCostumeRenderer(this);
 		_costumeLoader = new ClassicCostumeLoader(this);
+#endif
 	} else {
 		_costumeRenderer = new ClassicCostumeRenderer(this);
 		_costumeLoader = new ClassicCostumeLoader(this);

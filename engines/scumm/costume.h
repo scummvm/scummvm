@@ -130,12 +130,14 @@ protected:
 	byte drawLimb(const Actor *a, int limb);
 };
 
+#ifdef USE_RGB_COLOR
 class PCEngineCostumeRenderer : public ClassicCostumeRenderer {
 public:
 	PCEngineCostumeRenderer(ScummEngine *vm) : ClassicCostumeRenderer(vm) {}
 
 	void setPalette(uint16 *palette);
 };
+#endif
 
 class C64CostumeRenderer : public BaseCostumeRenderer {
 protected:

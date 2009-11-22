@@ -620,12 +620,14 @@ void CharsetRendererV3::setColor(byte color) {
 	translateColor();
 }
 
+#ifdef USE_RGB_COLOR
 void CharsetRendererPCE::setColor(byte color) {
 	_vm->setPCETextPalette(color);
 	_color = 15;
 
 	enableShadow(true);
 }
+#endif
 
 void CharsetRendererCommon::enableShadow(bool enable) {
 	if (enable) {
@@ -1076,6 +1078,7 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 	}
 }
 
+#ifdef USE_RGB_COLOR
 void CharsetRendererPCE::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth) {
 	int y, x;
 	int bitCount = 0;
@@ -1109,6 +1112,7 @@ void CharsetRendererPCE::drawBits1(const Graphics::Surface &s, byte *dst, const 
 		dst += s.pitch - width * bitDepth;
 	}
 }
+#endif
 
 #ifdef ENABLE_SCUMM_7_8
 CharsetRendererNut::CharsetRendererNut(ScummEngine *vm)

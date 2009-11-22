@@ -305,6 +305,7 @@ public:
 	virtual void roomChanged(byte *roomptr);
 };
 
+#ifdef USE_RGB_COLOR
 class GdiPCEngine : public Gdi {
 protected:
 	struct {
@@ -347,6 +348,7 @@ public:
 	virtual void loadTiles(byte *roomptr);
 	virtual void roomChanged(byte *roomptr);
 };
+#endif
 
 class GdiV1 : public Gdi {
 protected:
@@ -409,12 +411,14 @@ public:
 	virtual void roomChanged(byte *roomptr);
 };
 
+#ifdef USE_RGB_COLOR
 class Gdi16Bit : public Gdi {
 protected:
 	virtual void writeRoomColor(byte *dst, byte color) const;
 public:
 	Gdi16Bit(ScummEngine *vm);
 };
+#endif
 
 } // End of namespace Scumm
 

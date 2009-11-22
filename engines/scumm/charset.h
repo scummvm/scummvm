@@ -164,6 +164,7 @@ public:
 	int getCharWidth(byte chr);
 };
 
+#ifdef USE_RGB_COLOR
 class CharsetRendererPCE : public CharsetRendererV3 {
 protected:
 	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
@@ -173,6 +174,7 @@ public:
 
 	void setColor(byte color);
 };
+#endif
 
 class CharsetRendererV2 : public CharsetRendererV3 {
 protected:
