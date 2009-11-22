@@ -743,7 +743,7 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 		
-		if (callback_timer) {
+		if (!busy && !restart && callback_timer) {
 			if (--callback_timer == 0) {
 				if (_engine->inventory->active())
 					_engine->inventory->activate(false);
