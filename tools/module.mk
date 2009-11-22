@@ -1,7 +1,6 @@
 # $URL$
 # $Id$
 
-CC=gcc
 MODULE := tools
 
 MODULE_DIRS += \
@@ -64,7 +63,7 @@ credits:
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > engines/scumm/scumm-md5.h
-	cp $(srcdir)/tools/scumm-md5.txt ../web/data/scumm-md5.txt
+	cp $(srcdir)/tools/scumm-md5.txt ../../web/trunk/data/scumm-md5.txt
 
 
 #

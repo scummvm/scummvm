@@ -179,7 +179,7 @@ loom	Loom
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
 
 	0aa050f4ad79402fbe9c4f78fb8ac494	-1	en	PC-Engine	PC-Engine	-	-	Kirben
-	090bd4521c64c7b05a3de5398e0ffd9f	-1	jp	PC-Engine	PC-Engine	-	-	clone2727
+	79b05f628586837e7166e82b2279bb50	-1	jp	PC-Engine	PC-Engine	-	-	clone2727
 
 	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	EGA	EGA Demo	non-interactive	Fingolfin
 	a00554c31d623fdb9fcb0f924b89b42b	-1	en	DOS	EGA	EGA Demo	non-interactive	Adrian C. Fruehwirth
