@@ -665,7 +665,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		reloadLan();
 		playSound(82, 19);
 		playAnimation(669, 1);
-		Dialog::showMono(scene, 0x3779, 0, 0xd1, 0);
+		Dialog::showMark(scene, 0x3779);
 		enableObject(15);
 		disableObject(8);
 		return true;
@@ -2648,12 +2648,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			Dialog::show(scene, 0x2992, 0, 524, 0xd1, 0xe5, 0, 2);
 			playSound(5, 3);
 			playSound(5, 20);
-			playActorAnimation(671, true);
-			playAnimation(670, 1, true);
+			playAnimation(671, true);
+			playActorAnimation(670, true);
 			waitAnimation();
-			playAnimation(672, 1);
+			//playAnimation(672, 1);
 			Dialog::show(scene, 0x2a00, 0, 672, 0xd1, 0xe5, 0, 2);
-			playAnimation(672, 1);
+			//playAnimation(672, 1);
 
 			playSound(83, 12);
 			displayAsyncMessage(0x4a5b, 36684, 23, 38, 0xe5);
