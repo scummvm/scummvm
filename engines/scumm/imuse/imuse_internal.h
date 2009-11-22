@@ -185,6 +185,7 @@ protected:
 	int8 _pan;
 	int8 _transpose;
 	int8 _detune;
+	int _note_offset;
 	byte _vol_eff;
 
 	uint _track_index;
@@ -270,6 +271,7 @@ public:
 	void saveLoadWithSerializer(Serializer *ser);
 	int setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
 	void setDetune(int detune);
+	void setOffsetNote(int offset);
 	bool setLoop(uint count, uint tobeat, uint totick, uint frombeat, uint fromtick);
 	void setPan(int pan);
 	void setPriority(int pri);
@@ -507,7 +509,7 @@ protected:
 
 protected:
 	// Internal mutex-free versions of the IMuse and MusicEngine methods.
-	bool startSound_internal(int sound);
+	bool startSound_internal(int sound, int offset = 0);
 	int stopSound_internal(int sound);
 	int stopAllSounds_internal();
 	int getSoundStatus_internal(int sound, bool ignoreFadeouts) const;
@@ -525,6 +527,8 @@ public:
 	virtual void addSysexHandler(byte mfgID, sysexfunc handler);
 
 public:
+	void startSoundWithNoteOffset(int sound, int offset);
+
 	// MusicEngine interface
 	void setMusicVolume(int vol);
 	void startSound(int sound);

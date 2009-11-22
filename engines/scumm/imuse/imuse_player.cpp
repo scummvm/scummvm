@@ -72,6 +72,7 @@ Player::Player() :
 	_pan(0),
 	_transpose(0),
 	_detune(0),
+	_note_offset(0),
 	_vol_eff(0),
 	_track_index(0),
 	_loop_to_beat(0),
@@ -165,6 +166,7 @@ void Player::clear() {
 	_active = false;
 	_midi = NULL;
 	_id = 0;
+	_note_offset = 0;
 }
 
 void Player::hook_clear() {
@@ -252,6 +254,7 @@ void Player::send(uint32 b) {
 		break;
 
 	case 0x9: // Key On
+		param1 += _note_offset;
 		if (!_scanning) {
 			if (_isMT32 && !_se->isNativeMT32())
 				param2 = (((param2 * 3) >> 2) + 32) & 0x7F;
@@ -664,6 +667,10 @@ void Player::setDetune(int detune) {
 	for (part = _parts; part; part = part->_next) {
 		part->set_detune(part->_detune);
 	}
+}
+
+void Player::setOffsetNote(int offset) {
+	_note_offset = offset;
 }
 
 int Player::scan(uint totrack, uint tobeat, uint totick) {

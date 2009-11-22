@@ -491,7 +491,10 @@ void IMuseInternal::addSysexHandler(byte mfgID, sysexfunc handler) {
 	_sysex = handler;
 }
 
-
+void IMuseInternal::startSoundWithNoteOffset(int sound, int offset) {
+	Common::StackLock lock(_mutex, "IMuseInternal::startSound()");
+	startSound_internal(sound, offset);
+}
 
 ////////////////////////////////////////
 //
@@ -559,7 +562,7 @@ int IMuseInternal::getMusicTimer() const {
 //
 ////////////////////////////////////////
 
-bool IMuseInternal::startSound_internal(int sound) {
+bool IMuseInternal::startSound_internal(int sound, int offset) {
 	// Do not start a sound if it is already set to start on an ImTrigger
 	// event. This fixes carnival music problems where a sound has been set
 	// to trigger at the right time, but then is started up immediately
@@ -632,6 +635,7 @@ bool IMuseInternal::startSound_internal(int sound) {
 		ImClearTrigger(81, 1);
 
 	player->clear();
+	player->setOffsetNote(offset);
 	return player->startSound(sound, driver, _direct_passthrough);
 }
 

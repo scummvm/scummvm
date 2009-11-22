@@ -748,9 +748,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {
+			// This is used in the DOS version of Fatty Bear's
+			// Birthday Surprise to change the note on the piano
+			// when not using a digitized instrument.
 			_vm->_imuse->stopSound(_currentMusic);
 			_currentMusic = soundID;
-			_vm->_imuse->startSound(soundID);
+			_vm->_imuse->startSoundWithNoteOffset(soundID, heOffset);
 		}
 	}
 }

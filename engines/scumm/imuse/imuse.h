@@ -74,6 +74,8 @@ public:
 	virtual void addSysexHandler (byte mfgID, sysexfunc handler) = 0;
 
 public:
+	virtual void startSoundWithNoteOffset(int sound, int offset) = 0;
+
 	// MusicEngine base class methods.
 	// Not actually redefined here because none are implemented.
 
