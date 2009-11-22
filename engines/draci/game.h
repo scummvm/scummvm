@@ -188,11 +188,6 @@ public:
 	int nextRoomNum() const {
 		int n = _currentRoom._roomNum;
 		n = n < 37 ? n+1 : n;
-
-		// disable former distributor logo
-		if (n == 30)
-			++n;
-
 		return n;
 	}
 
@@ -200,11 +195,6 @@ public:
 	int prevRoomNum() const {
 		int n = _currentRoom._roomNum;
 		n = n > 0 ? n-1 : n;
-
-		// disable former distributor logo
-		if (n == 30)
-			--n;
-
 		return n;
 	}
 

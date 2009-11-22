@@ -227,10 +227,14 @@ void DraciEngine::handleEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_RIGHT:
-				_game->scheduleEnteringRoomUsingGate(_game->nextRoomNum(), 0);
+				if (gDebugLevel >= 0) {
+					_game->scheduleEnteringRoomUsingGate(_game->nextRoomNum(), 0);
+				}
 				break;
 			case Common::KEYCODE_LEFT:
-				_game->scheduleEnteringRoomUsingGate(_game->prevRoomNum(), 0);
+				if (gDebugLevel >= 0) {
+					_game->scheduleEnteringRoomUsingGate(_game->prevRoomNum(), 0);
+				}
 				break;
 			case Common::KEYCODE_ESCAPE: {
 				if (_game->getLoopStatus() == kStatusInventory &&
