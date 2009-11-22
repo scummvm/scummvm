@@ -327,7 +327,7 @@ private:
 	void advanceAnimationsAndTestLoopExit();
 	void handleStatusChangeByMouse();
 
-	bool enterNewRoom();	// Returns false if another room change has been triggered and therefore loop() shouldn't be called yet.
+	void enterNewRoom();
 	void initWalkingOverlays();
 	void loadRoomObjects();
 	void redrawWalkingPath(Animation *anim, byte colour, const WalkingPath &path);

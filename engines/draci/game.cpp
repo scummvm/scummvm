@@ -154,10 +154,21 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 
 void Game::start() {
 	while (!shouldQuit()) {
-		if (enterNewRoom()) {
-			// Call the outer loop doing all the hard job.
-			loop(kOuterLoop, false);
+		// Reset the flag allowing to run the scripts.
+		_vm->_script->endCurrentProgram(false);
+
+		enterNewRoom();
+
+		if (_vm->_script->shouldEndProgram()) {
+			// Escape pressed during the intro or map animations run in the
+			// init scripts.  This flag was turned on to skip the rest of
+			// those programs.  Don't call loop(), because the
+			// location may have changed.
+			continue;
 		}
+
+		// Call the outer loop doing all the hard job.
+		loop(kOuterLoop, false);
 	}
 
 }
@@ -432,6 +443,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	// by the user clicking on something or run at the end of a
 	// gate script in the intro).
 	if ((_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate) && (_newRoom != getRoomNum() || _newGate != _variables[0] - 1)) {
+		// TODO: don't use _variables but a new named attribute
 		setExitLoop(true);
 	}
 
@@ -1221,20 +1233,7 @@ void Game::deleteObjectAnimations() {
 	}
 }
 
-bool Game::enterNewRoom() {
-	if ((_newRoom == getRoomNum() && _newGate == _variables[0] - 1) && !isReloaded()) {
-		// Re-entering the same room via a different gate is correct
-		// and the room needs to be reloaded (used in the ballroom when
-		// propping the chair by the brick).
-		// TODO: 1. don't use _variables but a new named attribute.  2.
-		// investigate whether the optimization with shortcut is
-		// needed; maybe reloading the room always is the right thing
-		// to do.
-		_vm->_script->endCurrentProgram(false);
-		return true;
-	}
-	// If the game has been reloaded, force reloading all animations.
-	setIsReloaded(false);
+void Game::enterNewRoom() {
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
 	_vm->_mouse->cursorOff();
 
@@ -1285,10 +1284,6 @@ bool Game::enterNewRoom() {
 	// cleaned up.  Some rooms (e.g., the map) don't support walking.
 	_walkingState.stopWalking();
 
-	// Reset the flag allowing to run the scripts.  It may have been turned
-	// on by pressing Escape in the intro or in the map room.
-	_vm->_script->endCurrentProgram(false);
-
 	_currentRoom.load(_newRoom, _vm->_roomsArchive);
 	loadWalkingMap(getMapID());
 	loadRoomObjects();
@@ -1303,7 +1298,10 @@ bool Game::enterNewRoom() {
 	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", _newGate);
 	_vm->_script->runWrapper(_currentRoom._program, _currentRoom._gates[_newGate], true, true);
 
+	// Reset the loop status.
+	setLoopStatus(kStatusOrdinary);
 	setExitLoop(false);
+	setIsReloaded(false);
 
 	// Set cursor state
 	// Need to do this after we set the palette since the cursors use it
@@ -1315,18 +1313,6 @@ bool Game::enterNewRoom() {
 		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
 		_vm->_mouse->cursorOff();
 	}
-
-	// Reset the loop status.
-	setLoopStatus(kStatusOrdinary);
-
-	if (_vm->_script->shouldEndProgram()) {
-		// Escape pressed during the intro or map animations run in the
-		// init scripts.  This flag was turned on to skip the rest of
-		// those programs.  Return false to make start() rerun us from
-		// the beginning, because the room number has changed.
-		return false;
-	}
-	return true;
 }
 
 void Game::positionAnimAsHero(Animation *anim) {
