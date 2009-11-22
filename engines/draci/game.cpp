@@ -1157,11 +1157,13 @@ void Game::loadOverlays() {
 }
 
 void Game::deleteObjectAnimations() {
+	// Deallocate all animations, because their sound samples will not
+	// survive clearing the sound sample cache when changing the location.
+	// It's OK to unload them even if they are still in the inventory,
+	// because we only need their icons which survive.
 	for (uint i = 1; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
-		if (obj->_location == getPreviousRoomNum()) {
-			obj->deleteAnims();
-		}
+		obj->deleteAnims();
 	}
 	
 	// WORKAROUND
@@ -1208,13 +1210,6 @@ void Game::deleteObjectAnimations() {
 	// TODO: maybe simply deallocate everything except for those ~20 hero
 	// animations instead of listing what to deallocate.  maybe simply
 	// deallocate everything; reloading isn't that expensive.
-	//
-	// TODO: if a game item's location changes (e.g., due to a GPL2
-	// command), its animations survive in the memory.  I believe this
-	// isn't needed, because only icons need to survive, but it is
-	// dangerous if those animations contain sounds.  maybe delete all
-	// objects regardless of their location.  dump first how often this
-	// happens.
 	//
 	// TODO: completely rewrite the resource management.  maybe implement
 	// usage counters?  maybe completely ignore the GPL2 hints and manage
