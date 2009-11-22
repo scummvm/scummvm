@@ -643,9 +643,14 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 			for (int h = 0; h < height * m; ++h) {
 				for (int w = 0; w < width * m; ++w) {
 					uint16 tmp = *textPtr++;
-					if (tmp == CHARSET_MASK_TRANSPARENCY)
+					if (tmp == CHARSET_MASK_TRANSPARENCY) {
 						tmp = READ_UINT16(srcPtr);
-					WRITE_UINT16(dstPtr, tmp); dstPtr += 2;
+						WRITE_UINT16(dstPtr, tmp); dstPtr += 2;
+					} else if (_game.heversion != 0) {
+						error ("16Bit Color HE Game using old charset");
+					} else {
+						WRITE_UINT16(dstPtr, _16BitPalette[tmp]); dstPtr += 2;
+					}
 					srcPtr += vs->bytesPerPixel;
 				}
 				srcPtr += vsPitch;

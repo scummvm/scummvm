@@ -209,6 +209,17 @@ void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b) {
 	*g = ((color >> 6) & 0x7) << 5;
 }
 
+void ScummEngine::setPCETextPalette(uint8 color) {
+	const uint16 CHARSET_COLORS[16] = {
+		0x0000, 0x0096, 0x0140, 0x0145, 0x0059, 0x002D, 0x00A8, 0x016D,
+		0x0092, 0x016F, 0x01CD, 0x01DF, 0x00F7, 0x00B6, 0x01B0, 0x01B6
+	};
+
+	byte r, g, b;
+	colorPCEToRGB(CHARSET_COLORS[color], &r, &g, &b);
+	setPalColor(15, r, g, b);
+}
+
 void ScummEngine::readPCEPalette(const byte **ptr, byte **dest, int numEntries) {
 	byte r, g, b;
 	byte msbs = 0;

@@ -620,6 +620,13 @@ void CharsetRendererV3::setColor(byte color) {
 	translateColor();
 }
 
+void CharsetRendererPCE::setColor(byte color) {
+	_vm->setPCETextPalette(color);
+	_color = 15;
+
+	enableShadow(true);
+}
+
 void CharsetRendererCommon::enableShadow(bool enable) {
 	if (enable) {
 		if (_vm->_game.platform == Common::kPlatformFMTowns) {

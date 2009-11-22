@@ -170,6 +170,8 @@ protected:
 
 public:
 	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm) {}
+
+	void setColor(byte color);
 };
 
 class CharsetRendererV2 : public CharsetRendererV3 {
