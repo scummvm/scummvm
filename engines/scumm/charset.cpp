@@ -66,6 +66,21 @@ void ScummEngine::loadCJKFont() {
 			fp.close();
 		}
 		_textSurfaceMultiplier = 2;
+	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) {
+		int numChar = 3418;
+		_2byteWidth = 12;
+		_2byteHeight = 12;
+		// use PC-Engine System Card, since game files don't have kanji font resources
+		if (!fp.open("pce.cdbios")) {
+			error("SCUMM::Font: Couldn't open System Card pce.cdbios");
+		} else {
+			_useCJKMode = true;
+			debug(2, "Loading PC-Engine System Card");
+			fp.seek(0x30000);
+			_2byteFontPtr = new byte[_2byteWidth * _2byteHeight * numChar / 8];
+			fp.read(_2byteFontPtr, _2byteWidth * _2byteHeight * numChar / 8);
+			fp.close();
+		}
 	} else if (_game.version >= 7 && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
 		int numChar = 0;
 		const char *fontFile = NULL;
@@ -210,13 +225,73 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
 }
 
+static int SJIStoPCEChunk(int f, int s) { //converts sjis code to pce font offset
+	// rangeTbl maps SJIS char-codes to the PCE System Card font rom.
+	// Each pair {<upperBound>,<lowerBound>} in the array represents a SJIS range.
+	const int rangeCnt = 45;
+	static const uint16 rangeTbl[rangeCnt][2] = {
+		// Symbols
+		{0x8140,0x817E},{0x8180,0x81AC},
+		// 0-9
+		{0x824F,0x8258},
+		// Latin upper
+		{0x8260,0x8279},
+		// Latin lower
+		{0x8281,0x829A},
+		// Kana
+		{0x829F,0x82F1},{0x8340,0x837E},{0x8380,0x8396},
+		// Greek upper
+		{0x839F,0x83B6},
+		// Greek lower
+		{0x83BF,0x83D6},
+		// Cyrillic upper
+		{0x8440,0x8460},
+		// Cyrillic lower
+		{0x8470,0x847E},{0x8480,0x8491},
+		// Kanji
+		{0x889F,0x88FC},
+		{0x8940,0x897E},{0x8980,0x89FC},
+		{0x8A40,0x8A7E},{0x8A80,0x8AFC},
+		{0x8B40,0x8B7E},{0x8B80,0x8BFC},
+		{0x8C40,0x8C7E},{0x8C80,0x8CFC},
+		{0x8D40,0x8D7E},{0x8D80,0x8DFC},
+		{0x8E40,0x8E7E},{0x8E80,0x8EFC},
+		{0x8F40,0x8F7E},{0x8F80,0x8FFC},
+		{0x9040,0x907E},{0x9080,0x90FC},
+		{0x9140,0x917E},{0x9180,0x91FC},
+		{0x9240,0x927E},{0x9280,0x92FC},
+		{0x9340,0x937E},{0x9380,0x93FC},
+		{0x9440,0x947E},{0x9480,0x94FC},
+		{0x9540,0x957E},{0x9580,0x95FC},
+		{0x9640,0x967E},{0x9680,0x96FC},
+		{0x9740,0x977E},{0x9780,0x97FC},
+		{0x9840,0x9872}
+	};
+
+	int ch = (f << 8) | (s & 0xFF);
+	int offset = 0;
+	for (int i = 0; i < rangeCnt; ++i) {
+		if (ch >= rangeTbl[i][0] && ch <= rangeTbl[i][1])
+			return offset + ch - rangeTbl[i][0];
+		offset += rangeTbl[i][1] - rangeTbl[i][0] + 1;
+	}
+
+	debug(4, "Invalid Char: 0x%x", ch);
+	return 0;
+}
+
 byte *ScummEngine::get2byteCharPtr(int idx) {
 	switch (_language) {
 	case Common::KO_KOR:
 		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
 		break;
 	case Common::JA_JPN:
-		idx = SJIStoFMTChunk((idx % 256), (idx / 256));
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+			idx = SJIStoPCEChunk((idx % 256), (idx / 256));
+			return _2byteFontPtr + (_2byteWidth * _2byteHeight / 8) * idx;
+		} else {
+			idx = SJIStoFMTChunk((idx % 256), (idx / 256));
+		}
 		break;
 	case Common::ZH_TWN:
 		{
@@ -988,6 +1063,42 @@ void CharsetRendererCommon::drawBits1(const Graphics::Surface &s, byte *dst, con
 				}
 			}
 			dst += bitDepth;
+		}
+
+		dst += s.pitch - width * bitDepth;
+	}
+}
+
+void CharsetRendererPCE::drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth) {
+	int y, x;
+	int bitCount = 0;
+	byte bits = 0;
+
+	const bool resetLineBitCount = (_vm->_language != Common::JA_JPN || width != 12);
+
+	for (y = 0; y < height && y + drawTop < s.h; y++) {
+		if (resetLineBitCount)
+			bitCount = 0;
+		for (x = 0; x < width; x++) {
+			if ((bitCount % 8) == 0)
+				bits = *src++;
+			if ((bits & revBitMask(bitCount % 8)) && y + drawTop >= 0) {
+				if (bitDepth == 2) {
+					if (_shadowMode != kNoShadowMode) {
+						WRITE_UINT16(dst + s.pitch + 2, 0);
+					}
+					WRITE_UINT16(dst, _vm->_16BitPalette[_color]);
+				} else {
+					if (_shadowMode != kNoShadowMode) {
+						*(dst + 1) = _shadowColor;
+						*(dst + s.pitch) = _shadowColor;
+						*(dst + s.pitch + 1) = _shadowColor;
+					}
+					*dst = _color;
+				}
+			}
+			dst += bitDepth;
+			bitCount++;
 		}
 
 		dst += s.pitch - width * bitDepth;

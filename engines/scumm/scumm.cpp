@@ -1089,22 +1089,27 @@ Common::Error ScummEngine::init() {
 	// Initialize backend
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		initGraphics(Common::kHercW, Common::kHercH, true);
-	} else if (_useCJKMode) {
-		initGraphics(_screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier,
-					// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
-					// there is no text surface for them. This takes that into account
-					(_screenWidth * _textSurfaceMultiplier > 320));
-	} else if (_game.features & GF_16BIT_COLOR) {
-#ifdef USE_RGB_COLOR
-		Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, &format);
-		if (format != _system->getScreenFormat())
-			return Common::kUnsupportedColorMode;
-#else
-		error("16bit color support is required for this game");
-#endif
 	} else {
-		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320);
+		int screenWidth = _screenWidth;
+		int screenHeight = _screenHeight;
+		if (_useCJKMode) {
+			// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
+			// there is no text surface for them. This takes that into account
+			screenWidth *= _textSurfaceMultiplier;
+			screenHeight *= _textSurfaceMultiplier;
+		}
+		if (_game.features & GF_16BIT_COLOR) {
+#ifdef USE_RGB_COLOR
+			Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+			initGraphics(screenWidth, screenHeight, screenWidth > 320, &format);
+			if (format != _system->getScreenFormat())
+				return Common::kUnsupportedColorMode;
+#else
+			error("16bit color support is required for this game");
+#endif
+		} else {
+			initGraphics(screenWidth, screenHeight, (screenWidth > 320));
+		}
 	}
 
 	setupScumm();
@@ -1259,18 +1264,23 @@ void ScummEngine_v7::setupScumm() {
 #endif
 
 void ScummEngine::setupCharsetRenderer() {
-	if (_game.platform == Common::kPlatformNES)
-		_charset = new CharsetRendererNES(this);
-	else if (_game.version <= 2)
-		_charset = new CharsetRendererV2(this, _language);
-	else if (_game.version == 3)
-		_charset = new CharsetRendererV3(this);
+	if (_game.version <= 2) {
+		if (_game.platform == Common::kPlatformNES)
+			_charset = new CharsetRendererNES(this);
+		else
+			_charset = new CharsetRendererV2(this, _language);
+	} else if (_game.version == 3) {
+		if (_game.platform == Common::kPlatformPCEngine)
+			_charset = new CharsetRendererPCE(this);
+		else
+			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
-	else if (_game.version == 8)
+	} else if (_game.version == 8) {
 		_charset = new CharsetRendererNut(this);
 #endif
-	else
+	} else {
 		_charset = new CharsetRendererClassic(this);
+	}
 }
 
 void ScummEngine::setupCostumeRenderer() {

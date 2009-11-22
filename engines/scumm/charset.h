@@ -164,6 +164,14 @@ public:
 	int getCharWidth(byte chr);
 };
 
+class CharsetRendererPCE : public CharsetRendererV3 {
+protected:
+	void drawBits1(const Graphics::Surface &s, byte *dst, const byte *src, int drawTop, int width, int height, uint8 bitDepth);
+
+public:
+	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm) {}
+};
+
 class CharsetRendererV2 : public CharsetRendererV3 {
 protected:
 	bool _deleteFontPtr;

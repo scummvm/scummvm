@@ -1089,7 +1089,7 @@ void ScummEngine::clearCharsetMask() {
 }
 
 void ScummEngine::clearTextSurface() {
-	memset(_textSurface.pixels, CHARSET_MASK_TRANSPARENCY, _textSurface.pitch * _textSurface.h);
+	fill((byte*)_textSurface.pixels,  _textSurface.pitch,  CHARSET_MASK_TRANSPARENCY,  _textSurface.w, _textSurface.h, _textSurface.bytesPerPixel);
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
