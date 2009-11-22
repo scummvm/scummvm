@@ -1207,13 +1207,16 @@ void Game::deleteObjectAnimations() {
 	// animations instead of listing what to deallocate.  maybe simply
 	// deallocate everything; reloading isn't that expensive.
 	//
+	// URGENT TODO: if a game item's location changes (e.g., due to a GPL2
+	// command), its animations survive and we get assert in
+	// AnimationManager::load() next time.  we must address this before a
+	// proper clean-up to make game playable.  happens when loading game
+	// before getting the fairy tale book, playing a bit, and then doing it
+	// again.  the fairy-tale book's animations raise an assert.
+	//
 	// TODO: completely rewrite the resource management.  maybe implement
 	// usage counters?  maybe completely ignore the GPL2 hints and manage
 	// memory completely on my own?
-	//
-	// URGENT TODO: if a game item is in the hero's hands when changing
-	// locations, its animations survive and we get assert in
-	// AnimationManager::load().
 	GameObject *dragon = &_objects[kDragonObject];
 	for (uint i = dragon->_anim.size() - 1; i >= kFirstTemporaryAnimation; --i) {
 		dragon->_anim.back()->del();
