@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	text.o \
 	video.o \
 	worldstats.o \
+	speech.o \
 	config.o
 
 # This module can be built as a plugin

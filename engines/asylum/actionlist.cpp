@@ -433,7 +433,7 @@ int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
 		}
 		scn->actions()->lineIncrement = 1;
 	} else {
-		if (cmd->param4) { // RECHECK THIS
+		if (cmd->param4) {
 			barrier->flags &= 0xFFFEF1C7;
             barrier->flags |= 0x20;
 		} else if (cmd->param3) {
@@ -934,12 +934,45 @@ int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
 	uint32 sndIdx = cmd->param1;
 
 	if ((int)sndIdx >= 0) {
-		if (sndIdx >= 259) {
-			sndIdx -= 9;
-			scn->vm()->sound()->playSpeech(sndIdx - 0x7FFD0000);
-		} else {
-			scn->vm()->sound()->playSpeech(sndIdx);
-		}
+        if (cmd->param4 != 2) {
+            uint32 resIdx = scn->speech()->play(sndIdx);
+            cmd->param5 = resIdx;
+
+            if (cmd->param2) {
+                scn->vm()->setGameFlag(183);
+                cmd->param4 = 2;
+                if (cmd->param6) {
+                    // TODO: set flag 01
+                }
+                scn->actions()->lineIncrement = 1;
+            }
+
+            if (cmd->param3) {
+                if (!cmd->param6) {
+                    scn->vm()->setGameFlag(219);
+                }
+            }
+        }
+        
+        if (scn->vm()->sound()->isPlaying(cmd->param5)) {
+            scn->actions()->lineIncrement = 1;
+        }
+
+        scn->vm()->clearGameFlag(183);
+        cmd->param4 = 0;
+        
+        if (cmd->param3) {
+            if (cmd->param6) {
+                // TODO: clear flag 01
+            }
+            scn->vm()->clearGameFlag(219);
+        }
+        
+        if (!cmd->param6) {
+            cmd->param6 = 1;
+        }
+
+        // TODO: clear flag 01
 	} else
 		debugC(kDebugLevelScripts,
 		       "Requested invalid sound ID:0x%02X in Scene %d Line %d.",
@@ -947,7 +980,7 @@ int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
 		       scn->getSceneIndex(),
 		       scn->actions()->currentLine);
 
-	return -1;
+	return 0;
 }
 
 int k_unk42(ActionCommand *cmd, Scene *scn) {

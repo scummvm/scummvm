@@ -68,6 +68,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	fd->close();
 	delete fd;
 
+    _speech = new Speech(this);
 	_resPack = new ResourcePack(sceneIdx);
 
 	// FIXME

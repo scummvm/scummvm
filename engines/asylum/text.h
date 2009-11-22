@@ -43,6 +43,7 @@ public:
 	void setTextPos(uint32 x, uint32 y);
 	uint32 getTextWidth(char *text);
 	uint32 getResTextWidth(uint32 resId);
+    char * getResText(uint32 resId);
 
 	void drawChar(char character);
 	void drawText(char *text);
