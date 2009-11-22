@@ -204,9 +204,9 @@ void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) 
 
 void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b) {
 	// 3 bits for each color component: 0xgggrrrbbb
-	*b = ((color)      & 0x7) << 5;
-	*r = ((color >> 3) & 0x7) << 5;
-	*g = ((color >> 6) & 0x7) << 5;
+	*b = ((color)      & 0x7) * 0xFF / 0x7;
+	*r = ((color >> 3) & 0x7) * 0xFF / 0x7;
+	*g = ((color >> 6) & 0x7) * 0xFF / 0x7;
 }
 
 void ScummEngine::setPCETextPalette(uint8 color) {
@@ -242,6 +242,7 @@ void ScummEngine::readPCEPalette(const byte **ptr, byte **dest, int numEntries) 
 void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
 	byte *dest;
 	byte bgSpriteR, bgSpriteG, bgSpriteB;
+	byte charsetR, charsetG, charsetB;
 
 	int paletteOffset = *ptr++;
 	int numPalettes = *ptr++;	
@@ -254,6 +255,9 @@ void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
 	colorPCEToRGB(READ_LE_UINT16(ptr), &bgSpriteR, &bgSpriteG, &bgSpriteB);
 	ptr += 2;
 
+	// CHARSET_COLORS[_curTextColor] (unused?)
+	colorPCEToRGB(0x01B6, &charsetR, &charsetG, &charsetB);
+
 	dest = _currentPalette + firstIndex * 3;
 
 	for (int i = 0; i < numPalettes; ++i) {
@@ -265,10 +269,10 @@ void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
 		// entry 1 - 14
 		readPCEPalette(&ptr, &dest, 14);
 
-		// entry 15: DEFAULT_PALETTE[var3AE3];
-		*dest++ = 6 << 5;
-		*dest++ = 6 << 5;
-		*dest++ = 6 << 5;
+		// entry 15
+		*dest++ = charsetR;
+		*dest++ = charsetG;
+		*dest++ = charsetB;
 	}
 
 	if (_game.features & GF_16BIT_COLOR) {
