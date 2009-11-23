@@ -27,8 +27,8 @@
 
 #include <kernel.h>
 #include <malloc.h>
-#include "DmaPipe.h"
-#include "GsDefs.h"
+#include "backends/platform/ps2/DmaPipe.h"
+#include "backends/platform/ps2/GsDefs.h"
 
 class SinglePipe {
 public:

@@ -26,22 +26,21 @@
 #ifndef __PS2FILE_IO__
 #define __PS2FILE_IO__
 
-typedef unsigned long uint64;
-typedef signed long   int64;
-
 #include <stdio.h>
 #include "common/scummsys.h"
 
+enum {
+	CACHE_SIZE				= 2048 * 32,
+	MAX_READ_STEP			= 2048 * 16,
+	MAX_CACHED_FILES		= 6,
+	CACHE_READ_THRESHOLD	= 16 * 2048,
+	CACHE_FILL_MIN			= 2048 * 24,
+	READ_ALIGN				= 64,   // align all reads to the size of an EE cache line
+	READ_ALIGN_MASK			= READ_ALIGN - 1
+};
 
-#define CACHE_SIZE (2048 * 32)
-#define MAX_READ_STEP (2048 * 16)
-#define MAX_CACHED_FILES 6
-#define CACHE_READ_THRESHOLD (16 * 2048)
-#define CACHE_FILL_MIN (2048 * 24)
-#define READ_ALIGN 64   // align all reads to the size of an EE cache line
-#define READ_ALIGN_MASK (READ_ALIGN - 1)
-
-
+// TODO: Make this a subclass of SeekableReadStream & WriteStream
+// See also StdioStream.
 class Ps2File {
 public:
 	Ps2File(void);

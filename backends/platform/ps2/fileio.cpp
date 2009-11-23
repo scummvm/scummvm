@@ -30,24 +30,16 @@
 #include <fileio.h>
 #include <assert.h>
 #include <string.h>
-#include "backends/platform/ps2/asyncfio.h"
-#include "engines/engine.h"
-#include "common/file.h"
-#include "eecodyvdfs.h"
+
 #include "common/config-manager.h"
+#include "common/file.h"
+#include "engines/engine.h"
+#include "backends/platform/ps2/asyncfio.h"
+#include "backends/platform/ps2/eecodyvdfs.h"
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/platform/ps2/systemps2.h"
 
 #define __PS2_FILE_SEMA__ 1
-// #define __PS2_FILE_DEBUG 1
-// #define __PS2_CACHE_DEBUG__ 1
-
-#define PS2_CACHE_MAX (128 * 1024)
-#define PS2_CACHE_CHK (16 * 1024)
-
-extern OSystem_PS2 *g_systemPs2;
-
-uint32 _rseek;
 
 AsyncFio fio;
 
@@ -59,8 +51,6 @@ Ps2File::Ps2File(void) {
 	_cachePos = 0;
 	_eof = false;
 	_err = false;
-
-	// _cache = (uint8 *)malloc(PS2_CACHE_MAX);
 
 	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE * 2);
 
@@ -96,7 +86,6 @@ Ps2File::~Ps2File(void) {
 		printf("close [%d] - sync'd = %d\n", _fd, r);
 	}
 
-	// free(_cache);
 	free(_cacheBuf);
 
 #ifdef __PS2_FILE_SEMA__
@@ -237,7 +226,6 @@ int Ps2File::seek(int32 offset, int origin) {
 #ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
 #endif
-	_rseek = 0;
 	int seekDest;
 	int res = -1;
 	switch (origin) {
@@ -255,7 +243,7 @@ int Ps2File::seek(int32 offset, int origin) {
 			break;
 	}
 	if ((seekDest >= 0) && (seekDest <= (int)_fileSize)) {
-		// _rseek = fio.sync(_fd);
+		// uint32 _rseek = fio.sync(_fd);
 		_filePos = seekDest;
 		// fio.seek(_fd, _filePos, SEEK_SET);
 		// fio.sync(_fd);
