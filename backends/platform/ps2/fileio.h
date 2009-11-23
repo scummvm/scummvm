@@ -26,8 +26,11 @@
 #ifndef __PS2FILE_IO__
 #define __PS2FILE_IO__
 
-#include <stdio.h>
+#include <stdio.h>	// FIXME: Only for FILE -- get rid of this!
+
 #include "common/scummsys.h"
+#include "common/noncopyable.h"
+#include "common/stream.h"
 
 enum {
 	CACHE_SIZE				= 2048 * 32,
@@ -43,22 +46,22 @@ enum {
 // See also StdioStream.
 class Ps2File {
 public:
-	Ps2File(void);
-	virtual ~Ps2File(void);
+	Ps2File();
+	virtual ~Ps2File();
 	virtual bool open(const char *name, int mode);
 	virtual uint32 read(void *dest, uint32 len);
 	virtual uint32 write(const void *src, uint32 len);
-	virtual int32 tell(void);
-	virtual int32 size(void);
+	virtual int32 tell();
+	virtual int32 size();
 	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
-	virtual bool getErr(void);
+	virtual bool eof();
+	virtual bool getErr();
 	virtual void setErr(bool);
 
 
 private:
-	void cacheReadAhead(void);
-	void cacheReadSync(void);
+	void cacheReadAhead();
+	void cacheReadSync();
 
 	int _fd;
 	uint32 _mode;
@@ -83,23 +86,42 @@ private:
 	bool _stream;
 };
 
+// TODO: Merge Ps2File into PS2FileStream
+class PS2FileStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
+protected:
+	/** File handle to the actual file. */
+	FILE *_handle;
+
+public:
+	/**
+	 * Given a path, invokes fopen on that path and wrap the result in a
+	 * PS2FileStream instance.
+	 */
+	static PS2FileStream *makeFromPath(const Common::String &path, bool writeMode);
+
+	PS2FileStream(FILE *handle);
+	virtual ~PS2FileStream();
+
+	virtual bool err() const;
+	virtual void clearErr();
+	virtual bool eos() const;
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual bool flush();
+
+	virtual int32 pos() const;
+	virtual int32 size() const;
+	virtual bool seek(int32 offs, int whence = SEEK_SET);
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
+
+// TODO: Get rid of the following, instead use PS2FileStream directly.
 FILE *ps2_fopen(const char *fname, const char *mode);
 int ps2_fclose(FILE *stream);
 int ps2_fflush(FILE *stream);
-int ps2_fseek(FILE *stream, long offset, int origin);
-uint32 ps2_ftell(FILE *stream);
-int ps2_feof(FILE *stream);
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream);
-int ps2_fgetc(FILE *stream);
-char *ps2_fgets(char *buf, int n, FILE *stream);
-
 size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream);
-int ps2_fputc(int c, FILE *stream);
 int ps2_fputs(const char *s, FILE *stream);
 
-int ps2_ferror(FILE *stream);
-void ps2_clearerr(FILE *stream);
-
 #endif // __PS2FILE_IO__
-

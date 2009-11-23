@@ -23,11 +23,9 @@
  */
 
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/stdiostream.h"
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "backends/platform/ps2/asyncfio.h"
 #include "backends/platform/ps2/fileio.h"
 #include "backends/platform/ps2/systemps2.h"
@@ -504,10 +502,10 @@ const char *Ps2FilesystemNode::getDeviceDescription() const {
 }
 
 Common::SeekableReadStream *Ps2FilesystemNode::createReadStream() {
-	Common::SeekableReadStream *ss = StdioStream::makeFromPath(getPath().c_str(), false);
+	Common::SeekableReadStream *ss = PS2FileStream::makeFromPath(getPath().c_str(), false);
 	return ss;
 }
 
 Common::WriteStream *Ps2FilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
+	return PS2FileStream::makeFromPath(getPath().c_str(), true);
 }

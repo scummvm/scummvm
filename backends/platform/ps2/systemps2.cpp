@@ -955,8 +955,7 @@ void OSystem_PS2::makeConfigPath() {
 					ps2_fwrite(buf, size, 1, dst);
 					ps2_fclose(dst);
 					sprintf(path, "mc0:ScummVM/ScummVM.ini");
-				}
-				else {
+				} else {
 					sprintf(path, "cdfs:ScummVM.ini");
 				}
 

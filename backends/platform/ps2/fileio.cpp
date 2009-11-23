@@ -43,7 +43,7 @@
 
 AsyncFio fio;
 
-Ps2File::Ps2File(void) {
+Ps2File::Ps2File() {
 	_fd = -1;
 	_fileSize = 0;
 	_filePos = 0;
@@ -70,7 +70,7 @@ Ps2File::Ps2File(void) {
 #endif
 }
 
-Ps2File::~Ps2File(void) {
+Ps2File::~Ps2File() {
 	uint32 w;
 	if (_fd >= 0) {
 
@@ -177,7 +177,7 @@ bool Ps2File::open(const char *name, int mode) {
 #endif
 }
 
-int32 Ps2File::tell(void) {
+int32 Ps2File::tell() {
 #ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
 #endif
@@ -188,7 +188,7 @@ int32 Ps2File::tell(void) {
 	return res;
 }
 
-int32 Ps2File::size(void) {
+int32 Ps2File::size() {
 #ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
 #endif
@@ -199,7 +199,7 @@ int32 Ps2File::size(void) {
 	return res;
 }
 
-bool Ps2File::eof(void) {
+bool Ps2File::eof() {
 #ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
 #endif
@@ -213,7 +213,7 @@ bool Ps2File::eof(void) {
 	return res;
 }
 
-bool Ps2File::getErr(void) {
+bool Ps2File::getErr() {
 	return _err;
 }
 
@@ -265,7 +265,7 @@ int Ps2File::seek(int32 offset, int origin) {
 	return res;
 }
 
-void Ps2File::cacheReadAhead(void) {
+void Ps2File::cacheReadAhead() {
 	if (_cacheOpRunning) {
 		// there's already some cache read running
 		if (fio.poll(_fd)) // did it finish?
@@ -321,7 +321,7 @@ void Ps2File::cacheReadAhead(void) {
 	}
 }
 
-void Ps2File::cacheReadSync(void) {
+void Ps2File::cacheReadSync() {
 	if (_cacheOpRunning) {
 		int res = fio.sync(_fd);
 		assert(res >= 0);
@@ -429,6 +429,19 @@ uint32 Ps2File::write(const void *src, uint32 len) {
 	return len;
 }
 
+
+PS2FileStream *PS2FileStream::makeFromPath(const Common::String &path, bool writeMode) {
+	FILE *handle = ps2_fopen(path.c_str(), writeMode ? "wb" : "rb");
+
+	if (handle)
+		return new PS2FileStream(handle);
+	return 0;
+}
+
+PS2FileStream::PS2FileStream(FILE *handle) : _handle(handle) {
+	assert(handle);
+}
+
 FILE *ps2_fopen(const char *fname, const char *mode) {
 	Ps2File *file = new Ps2File();
 	int _mode = O_RDONLY;
@@ -448,6 +461,10 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		return NULL;
 }
 
+PS2FileStream::~PS2FileStream() {
+	ps2_fclose(_handle);
+}
+
 int ps2_fclose(FILE *stream) {
 	Ps2File *file = (Ps2File*)stream;
 
@@ -456,16 +473,20 @@ int ps2_fclose(FILE *stream) {
 	return 0;
 }
 
-int ps2_fseek(FILE *stream, long offset, int origin) {
-	return ((Ps2File*)stream)->seek(offset, origin);
+bool PS2FileStream::seek(int32 offs, int whence) {
+	return ((Ps2File*)_handle)->seek(offs, whence) == 0;
 }
 
-uint32 ps2_ftell(FILE *stream) {
-	return ((Ps2File*)stream)->tell();
+int32 PS2FileStream::pos() const {
+	return ((Ps2File*)_handle)->tell();
 }
 
-int ps2_feof(FILE *stream) {
-	return ((Ps2File*)stream)->eof();
+bool PS2FileStream::eos() const {
+	return ((Ps2File*)_handle)->eof();
+}
+
+uint32 PS2FileStream::read(void *ptr, uint32 len) {
+	return ps2_fread((byte *)ptr, 1, len, _handle);
 }
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream) {
@@ -473,24 +494,13 @@ size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream) {
 	return ((Ps2File*)stream)->read(buf, r * n) / r;
 }
 
-int ps2_fgetc(FILE *stream) {
-	uint8 temp;
-	if (((Ps2File*)stream)->read(&temp, 1))
-		return temp;
-	else
-		return EOF;
+uint32 PS2FileStream::write(const void *ptr, uint32 len) {
+	return ps2_fwrite(ptr, 1, len, _handle);
 }
 
 size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
 	return ((Ps2File*)stream)->write(buf, r * n) / r;
-}
-
-int ps2_fputc(int c, FILE *stream) {
-	if (((Ps2File*)stream)->write(&c, 1) == 1)
-		return c;
-	else
-		return -1;
 }
 
 int ps2_fputs(const char *s, FILE *stream) {
@@ -508,21 +518,29 @@ int ps2_fputs(const char *s, FILE *stream) {
 		return EOF;
 }
 
+bool PS2FileStream::flush() {
+	return ps2_fflush(_handle) == 0;
+}
+
 int ps2_fflush(FILE *stream) {
 	// printf("fflush not implemented\n");
 	return 0;
 }
 
-int ps2_ferror(FILE *stream) {
-	int err = ((Ps2File*)stream)->getErr();
+bool PS2FileStream::err() const {
+	int errVal = ((Ps2File*)_handle)->getErr();
 
-	if (err) {
-		printf("ferror -> %d\n", err);
+	if (errVal) {
+		printf("ferror -> %d\n", errVal);
 	}
 
-	return err;
+	return errVal != 0;
 }
 
-void ps2_clearerr(FILE *stream) {
-	((Ps2File*)stream)->setErr(false);
+void PS2FileStream::clearErr() {
+	((Ps2File*)_handle)->setErr(false);
+}
+
+int32 PS2FileStream::size() const {
+	return ((Ps2File*)_handle)->size();
 }
