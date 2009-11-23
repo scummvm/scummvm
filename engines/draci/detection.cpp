@@ -27,6 +27,7 @@
 #include "draci/saveload.h"
 
 #include "base/plugins.h"
+#include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 
 static const PlainGameDescriptor draciGames[] = {

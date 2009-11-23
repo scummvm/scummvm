@@ -30,8 +30,6 @@
 
 #include "common/system.h"
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
-#include "sound/mididrv.h"
 
 #include "draci/game.h"
 #include "draci/mouse.h"
@@ -42,6 +40,8 @@
 #include "draci/animation.h"
 #include "draci/sound.h"
 #include "draci/music.h"
+
+struct ADGameDescription;
 
 namespace Draci {
 
