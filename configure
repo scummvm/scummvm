@@ -1287,8 +1287,9 @@ case $_host_os in
 	amigaos*)
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
-		# FIXME: Please document why 'long' has to be used instead of int
-		#type_4_byte='long'
+		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
