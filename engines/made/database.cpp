@@ -320,13 +320,28 @@ void GameDatabase::setObjectString(int16 index, const char *str) {
 		obj->setString(str);
 }
 
+int16 *GameDatabase::findObjectPropertyCached(int16 objectIndex, int16 propertyId, int16 &propertyFlag) {
+	uint32 id = (objectIndex << 16) | propertyId;
+	ObjectPropertyCacheMap::iterator iter = _objectPropertyCache.find(id);
+	int16 *propertyPtr = NULL;
+	if (iter != _objectPropertyCache.end()) {
+		propertyPtr = (*iter)._value;
+	} else {
+		propertyPtr = findObjectProperty(objectIndex, propertyId, propertyFlag);
+		_objectPropertyCache[id] = propertyPtr;
+	}
+	propertyFlag = 1;
+	return propertyPtr;
+}
+
 int16 GameDatabase::getObjectProperty(int16 objectIndex, int16 propertyId) {
 
 	if (objectIndex == 0)
 		return 0;
 
 	int16 propertyFlag;
-	int16 *property = findObjectProperty(objectIndex, propertyId, propertyFlag);
+	//int16 *property = findObjectProperty(objectIndex, propertyId, propertyFlag);
+	int16 *property = findObjectPropertyCached(objectIndex, propertyId, propertyFlag);
 
 	if (property) {
 		return (int16)READ_LE_UINT16(property);
@@ -342,7 +357,8 @@ int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16
 		return 0;
 
 	int16 propertyFlag;
-	int16 *property = findObjectProperty(objectIndex, propertyId, propertyFlag);
+	//int16 *property = findObjectProperty(objectIndex, propertyId, propertyFlag);
+	int16 *property = findObjectPropertyCached(objectIndex, propertyId, propertyFlag);
 
 	if (property) {
 		if (propertyFlag == 1) {

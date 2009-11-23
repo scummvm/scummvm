@@ -27,6 +27,7 @@
 #define MADE_DATABASE_H
 
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/util.h"
 #include "common/file.h"
 #include "common/stream.h"
@@ -141,6 +142,7 @@ public:
 	void setObjectString(int16 index, const char *str);
 
 	virtual int16 *findObjectProperty(int16 objectIndex, int16 propertyId, int16 &propertyFlag) = 0;
+	int16 *findObjectPropertyCached(int16 objectIndex, int16 propertyId, int16 &propertyFlag);
 	virtual const char *getString(uint16 offset) = 0;
 	virtual bool getSavegameDescription(const char *filename, Common::String &description, int16 version) = 0;
 	virtual int16 savegame(const char *filename, const char *description, int16 version) = 0;
@@ -152,8 +154,10 @@ public:
 	void dumpObject(int16 index);
 
 protected:
+	typedef Common::HashMap<uint32, int16*> ObjectPropertyCacheMap;
 	MadeEngine *_vm;
 	Common::Array<Object*> _objects;
+	ObjectPropertyCacheMap _objectPropertyCache;
 	byte *_gameState;
 	uint32 _gameStateSize;
 	int16 _mainCodeObjectIndex;
