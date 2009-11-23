@@ -39,7 +39,6 @@
 	#define fread(a, b, c, d)	ps2_fread(a, b, c, d)
 	#define fwrite(a, b, c, d)	ps2_fwrite(a, b, c, d)
 
-	#define fprintf				ps2_fprintf  // used in common/util.cpp
 	#define fflush(a)			ps2_fflush(a)  // used in common/util.cpp
 	#define ferror(a)			ps2_ferror(a)
 	#define clearerr(a)			ps2_clearerr(a)

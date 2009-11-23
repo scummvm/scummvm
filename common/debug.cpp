@@ -33,11 +33,8 @@
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
-	typedef unsigned long	uint64;
-	typedef signed long	int64;
 	#include "backends/platform/ps2/fileio.h"
 
-	#define fprintf				ps2_fprintf
 	#define fputs(str, file)	ps2_fputs(str, file)
 	#define fflush(a)			ps2_fflush(a)
 #endif
@@ -45,12 +42,8 @@
 #ifdef __DS__
 	#include "backends/fs/ds/ds-fs.h"
 
-	void	std_fprintf(FILE* handle, const char* fmt, ...);
-	void	std_fflush(FILE* handle);
-
-	#define fprintf(file, fmt, ...)				do { char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); } while(0)
-	#define fputs(str, file)					DS::std_fwrite(str, strlen(str), 1, file)
-	#define fflush(file)						DS::std_fflush(file)
+	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
+	#define fflush(file)		DS::std_fflush(file)
 #endif
 
 

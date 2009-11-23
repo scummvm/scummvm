@@ -769,10 +769,4 @@ void std_clearerr(FILE* handle) {
 //	consolePrintf("clearerr ");
 }
 
-void std_fprintf(FILE* handle, const char* fmt, ...) {
-	//FIXME: not implemented properly
-	consolePrintf("%s", fmt);
-}
-
-
 } // namespace DS

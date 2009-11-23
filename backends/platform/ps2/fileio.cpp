@@ -508,22 +508,6 @@ int ps2_fputs(const char *s, FILE *stream) {
 		return EOF;
 }
 
-int ps2_fprintf(FILE *pOut, const char *zFormat, ...) {
-	va_list ap;
-	char resStr[2048];
-
-	va_start(ap,zFormat);
-	int res = vsnprintf(resStr, 2048, zFormat, ap);
-	va_end(ap);
-	if ((pOut == stderr) || (pOut == stdout)) {
-		printf("%s", resStr);
-		sioprintf("%s", resStr);
-	} else
-		res = ps2_fwrite(resStr, 1, res, pOut);
-
-	return res;
-}
-
 int ps2_fflush(FILE *stream) {
 	// printf("fflush not implemented\n");
 	return 0;

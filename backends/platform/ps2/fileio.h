@@ -97,7 +97,6 @@ char *ps2_fgets(char *buf, int n, FILE *stream);
 size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream);
 int ps2_fputc(int c, FILE *stream);
 int ps2_fputs(const char *s, FILE *stream);
-int ps2_fprintf(FILE *pOut, const char *zFormat, ...);
 
 int ps2_ferror(FILE *stream);
 void ps2_clearerr(FILE *stream);
