@@ -313,5 +313,44 @@ void Text::setFont(const Font *font) {
 	_height = _font->getStringHeight(_text);
 }
 
+void Text::repeatedlySplitLongLines(uint maxWidth) {
+	while (_width > maxWidth) {
+		splitLinesLongerThan(maxWidth);
+		_width = _font->getStringWidth(_text, _spacing);
+		_height = _font->getStringHeight(_text);
+	}
+}
+
+void Text::splitLinesLongerThan(uint maxWidth) {
+	char *start = const_cast<char*> (_text.c_str());	// hacky
+	while (1) {
+		char *end = strchr(start, '|');
+		if (end) {
+			*end = 0;
+		}
+		uint lineWidth = _font->getStringWidth(start, _spacing);
+		if (lineWidth > maxWidth) {
+			int middle = end ? (end - start) / 2 : strlen(start) / 2;
+			for (int i = 0; ; ++i) {
+				if (start[middle + i] == ' ') {
+					start[middle + i] = '|';
+					break;
+				}
+				if (start[middle - i] == ' ') {
+					start[middle - i] = '|';
+					break;
+				}
+			}
+			debugC(2, kDraciGeneralDebugLevel, "Long line of width %d split into %s\n", lineWidth, start);
+		}
+		if (end) {
+			*end = '|';
+			start = end + 1;
+		} else {
+			break;
+		}
+	}
+}
+
 } // End of namespace Draci
 

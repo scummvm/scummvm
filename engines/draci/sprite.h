@@ -144,6 +144,8 @@ public:
 	void setSpacing(uint spacing) { _spacing = spacing; }
 	void setFont(const Font *font);
 
+	void repeatedlySplitLongLines(uint maxWidth);
+
 	uint getLength() const { return _length; }
 
 	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
@@ -155,6 +157,8 @@ public:
 
 	DrawableType getType() const { return kDrawableText; }
 private:
+	void splitLinesLongerThan(uint maxWidth);
+
 	Common::String _text;
 	uint _length;
 	uint8 _colour;

@@ -715,13 +715,7 @@ void Script::talk(const Common::Array<int> &params) {
 		speechFrame->setText("");
 	}
 	speechFrame->setColour(person->_fontColour);
-
-	// HACK: Some strings in the English data files are too long to fit the screen
-	// This is a temporary resolution.
-	speechFrame->setFont(_vm->_bigFont);
-	if (speechFrame->getWidth() >= kScreenWidth) {
-		speechFrame->setFont(_vm->_smallFont);
-	}
+	speechFrame->repeatedlySplitLongLines(kScreenWidth);
 
 	// Speak the dubbing if possible
 	uint dubbingDuration = 0;
