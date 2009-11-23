@@ -121,9 +121,6 @@
 //    - Define this on a big endian target
 // SCUMM_NEED_ALIGNMENT
 //    - Define this if your system has problems reading e.g. an int32 from an odd address
-// SCUMMVM_USE_LONG_INT
-//    - Define this if your port needs to use 'long' for the int32 datatype
-//      (i.e. an integer with exactly 32 bits).
 // SCUMMVM_DONT_DEFINE_TYPES
 //    - Define this if you need to provide your own typedefs, e.g. because your
 //      system headers conflict with our typenames, or because you have odd
@@ -398,24 +395,14 @@
 // Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
 //
 #ifndef SCUMMVM_DONT_DEFINE_TYPES
-
 	typedef unsigned char byte;
-
 	typedef unsigned char uint8;
 	typedef signed char int8;
-
 	typedef unsigned short uint16;
 	typedef signed short int16;
-
-	#ifdef SCUMMVM_USE_LONG_INT
-	typedef unsigned long uint32;
-	typedef signed long int32;
-	typedef unsigned long uint;
-	#else
 	typedef unsigned int uint32;
 	typedef signed int int32;
 	typedef unsigned int uint;
-	#endif
 #endif
 
 
