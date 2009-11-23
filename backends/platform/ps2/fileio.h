@@ -90,7 +90,7 @@ private:
 class PS2FileStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
 protected:
 	/** File handle to the actual file. */
-	FILE *_handle;
+	Ps2File *_handle;
 
 public:
 	/**
@@ -99,7 +99,7 @@ public:
 	 */
 	static PS2FileStream *makeFromPath(const Common::String &path, bool writeMode);
 
-	PS2FileStream(FILE *handle);
+	PS2FileStream(Ps2File *handle);
 	virtual ~PS2FileStream();
 
 	virtual bool err() const;
