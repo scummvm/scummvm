@@ -378,7 +378,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		//
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
-			if (Common::md5_file_string(d.node, md5str, kMD5FileSizeLimit)) {
+			Common::File tmp;
+			if (tmp.open(d.node) && Common::md5_file_string(tmp, md5str, kMD5FileSizeLimit)) {
 
 				d.md5 = md5str;
 				d.md5Entry = findInMD5Table(md5str);

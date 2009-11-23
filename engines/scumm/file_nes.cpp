@@ -1371,7 +1371,9 @@ bool ScummNESFile::open(const Common::String &filename) {
 
 	if (_ROMset == kROMsetNum) {
 		char md5str[32+1];
-		if (Common::md5_file_string(filename.c_str(), md5str)) {
+		File f;
+		f.open(filename);
+		if (f.isOpen() && Common::md5_file_string(f, md5str)) {
 
 			if (!strcmp(md5str, "3905799e081b80a61d4460b7b733c206")) {
 				_ROMset = kROMsetUSA;

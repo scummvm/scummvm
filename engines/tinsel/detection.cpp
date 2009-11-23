@@ -740,14 +740,16 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 			Common::String fname(tempFilename);
 			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
 				SizeMD5 tmp;
-				if (!md5_file_string(allFiles[fname], tmp.md5, detectionParams.md5Bytes))
-					tmp.md5[0] = 0;
-
 				Common::File testFile;
-				if (testFile.open(allFiles[fname]))
+
+				if (testFile.open(allFiles[fname])) {
 					tmp.size = (int32)testFile.size();
-				else
+					if (!md5_file_string(testFile, tmp.md5, detectionParams.md5Bytes))
+						tmp.md5[0] = 0;
+				} else {
 					tmp.size = -1;
+					tmp.md5[0] = 0;
+				}
 
 				filesSizeMD5[fname] = tmp;
 			}

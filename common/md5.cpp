@@ -31,20 +31,19 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/md5.h"
-#include "common/util.h"
 #include "common/endian.h"
 
 namespace Common {
 
-typedef struct {
+struct md5_context {
 	uint32 total[2];
 	uint32 state[4];
 	uint8 buffer[64];
-} md5_context;
+};
 
-void md5_starts(md5_context *ctx);
-void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
-void md5_finish(md5_context *ctx, uint8 digest[16]);
+static void md5_starts(md5_context *ctx);
+static void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
+static void md5_finish(md5_context *ctx, uint8 digest[16]);
 
 
 #define GET_UINT32(n, b, i)	(n) = READ_LE_UINT32(b + i)
@@ -246,41 +245,6 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 	PUT_UINT32(ctx->state[3], digest, 12);
 }
 
-bool md5_file(const FSNode &file, uint8 digest[16], uint32 length) {
-	if (!file.exists()) {
-		warning("md5_file: using an inexistent FSNode");
-		return false;
-	} else if (!file.isReadable()) {
-		warning("md5_file: using an unreadable FSNode");
-		return false;
-	} else if (file.isDirectory()) {
-		warning("md5_file: using a directory FSNode");
-		return false;
-	}
-
-	ReadStream *stream = file.createReadStream();
-	if (!stream) {
-		warning("md5_file: failed to open '%s'", file.getPath().c_str());
-		return false;
-	}
-
-	bool result =  md5_file(*stream, digest, length);
-	delete stream;
-	return result;
-}
-
-bool md5_file(const char *name, uint8 digest[16], uint32 length) {
-	File f;
-
-	f.open(name);
-	if (!f.isOpen()) {
-		warning("md5_file couldn't open '%s'", name);
-		return false;
-	}
-
-	return md5_file(f, digest, length);
-}
-
 
 bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 
@@ -316,30 +280,6 @@ bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 	return true;
 }
 
-bool md5_file_string(const FSNode &file, char *md5str, uint32 length) {
-	uint8 digest[16];
-	if (!md5_file(file, digest, length))
-		return false;
-
-	for (int i = 0; i < 16; i++) {
-		snprintf(md5str + i*2, 3, "%02x", (int)digest[i]);
-	}
-
-	return true;
-}
-
-bool md5_file_string(const char *name, char *md5str, uint32 length) {
-	uint8 digest[16];
-	if (!md5_file(name, digest, length))
-		return false;
-
-	for (int i = 0; i < 16; i++) {
-		snprintf(md5str + i*2, 3, "%02x", (int)digest[i]);
-	}
-
-	return true;
-}
-
 bool md5_file_string(ReadStream &stream, char *md5str, uint32 length) {
 	uint8 digest[16];
 	if (!md5_file(stream, digest, length))
@@ -353,78 +293,3 @@ bool md5_file_string(ReadStream &stream, char *md5str, uint32 length) {
 }
 
 } // End of namespace Common
-
-#ifdef TEST
-
-#include <stdlib.h>
-#include <stdio.h>
-
-/*
- * those are the standard RFC 1321 test vectors
- */
-
-static const char *msg[] = {
-	"",
-	"a",
-	"abc",
-	"message digest",
-	"abcdefghijklmnopqrstuvwxyz",
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-	"12345678901234567890123456789012345678901234567890123456789012" \
-		"345678901234567890"
-};
-
-static const char *val[] = {
-	"d41d8cd98f00b204e9800998ecf8427e",
-	"0cc175b9c0f1b6a831c399e269772661",
-	"900150983cd24fb0d6963f7d28e17f72",
-	"f96b697d7cb7938d525a2f31aaf161d0",
-	"c3fcd3d76192e4007dfb496cca67e13b",
-	"d174ab98d277d9f5a5611c2c9f419d9f",
-	"57edf4a22be3c955ac49da2e2107b67a"
-};
-
-int main(int argc, char *argv[]) {
-	int i, j;
-	char output[33];
-	md5_context ctx;
-	unsigned char md5sum[16];
-
-	if (argc < 2) {
-		printf("\n MD5 Validation Tests:\n\n");
-
-		for (i = 0; i < 7; i++) {
-			printf(" Test %d ", i + 1);
-
-			md5_starts(&ctx);
-			md5_update(&ctx, (const uint8 *)msg[i], strlen(msg[i]));
-			md5_finish(&ctx, md5sum);
-
-			for (j = 0; j < 16; j++) {
-				sprintf(output + j * 2, "%02x", md5sum[j]);
-			}
-
-			if (memcmp(output, val[i], 32)) {
-				printf("failed!\n");
-				return 1;
-			}
-
-			printf("passed.\n");
-		}
-
-		printf("\n");
-	} else {
-		for (i = 1; i < argc; i++) {
-			md5_file(argv[i], md5sum);
-			for (j = 0; j < 16; j++) {
-				printf("%02x", md5sum[j]);
-			}
-
-			printf("  %s\n", argv[i]);
-		}
-	}
-
-	return 0;
-}
-
-#endif

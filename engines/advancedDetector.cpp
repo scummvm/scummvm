@@ -370,16 +370,18 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 				debug(3, "+ %s", fname.c_str());
 
 				SizeMD5 tmp;
-				if (!md5_file_string(allFiles[fname], tmp.md5, params.md5Bytes))
+				Common::File testFile;
+
+				if (testFile.open(allFiles[fname])) {
+					tmp.size = (int32)testFile.size();
+					if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
+						tmp.md5[0] = 0;
+				} else {
+					tmp.size = -1;
 					tmp.md5[0] = 0;
+				}
 
 				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
-
-				Common::File testFile;
-				if (testFile.open(allFiles[fname]))
-					tmp.size = (int32)testFile.size();
-				else
-					tmp.size = -1;
 
 				filesSizeMD5[fname] = tmp;
 			}
