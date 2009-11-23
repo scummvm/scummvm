@@ -25,8 +25,6 @@
 
 #include "backends/fs/stdiostream.h"
 
-#include <errno.h>
-
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
 	#include "backends/platform/ps2/fileio.h"
