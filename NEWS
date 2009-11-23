@@ -19,6 +19,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Adapted KYRA to support the custom SJIS font.
 
  SCUMM:
+   - Added support for the PC-Engine version of Loom.
    - Added support for music and sound effects in the the Amiga version of
      The Secret of Monkey Island. (GSoC Task)
    - Fixed some other bugs related to game versions for the Amiga.
