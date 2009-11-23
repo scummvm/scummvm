@@ -52,6 +52,7 @@
 #include "scumm/he/sound_he.h"
 #include "scumm/object.h"
 #include "scumm/player_nes.h"
+#include "scumm/player_pce.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
@@ -1726,7 +1727,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 3) {
 		_musicEngine = new Player_V3A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformPCEngine && _game.version == 3) {
-		// TODO: Add support for music format
+		_musicEngine = new Player_PCE(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {

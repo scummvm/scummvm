@@ -171,8 +171,9 @@ void Sound::playSound(int soundID) {
 			_currentCDSound = soundID;
 			playCDTrack(tracks[soundID - 13], 1, 0, 0);
 		} else {
-			// FIXME: Sound effect resources are currently missing
-			printf("Sound %d unsupported\n", soundID);
+			if (_vm->_musicEngine) {
+				_vm->_musicEngine->startSound(soundID);
+			}
 		}
 		return;
 	}
