@@ -26,6 +26,8 @@
 #include "common/system.h"
 #include "common/file.h"
 
+#include "engines/advancedDetector.h"	// for ADGF_DEMO
+
 #include "sci/sci.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"

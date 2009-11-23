@@ -27,7 +27,9 @@
 #define SCI_H
 
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
+//#include "engines/advancedDetector.h"
+
+struct ADGameDescription;
 
 namespace Sci {
 
