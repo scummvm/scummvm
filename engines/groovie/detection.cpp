@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 
 #include "groovie/groovie.h"
+#include "groovie/detection.h"
 #include "groovie/saveload.h"
 
 namespace Groovie {

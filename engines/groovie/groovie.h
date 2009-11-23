@@ -26,7 +26,6 @@
 #ifndef GROOVIE_H
 #define GROOVIE_H
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
@@ -56,12 +55,7 @@ enum DebugLevels {
 		// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
-struct GroovieGameDescription {
-	ADGameDescription desc;
-
-	EngineVersion version; // Version of the engine
-	int indexEntry; // The index of the entry in disk.1 for V2 games
-};
+struct GroovieGameDescription;
 
 class GroovieEngine : public Engine {
 public:

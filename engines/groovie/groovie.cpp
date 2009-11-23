@@ -28,6 +28,7 @@
 #include "sound/mixer.h"
 
 #include "groovie/groovie.h"
+#include "groovie/detection.h"
 #include "groovie/music.h"
 #include "groovie/roq.h"
 #include "groovie/vdx.h"
