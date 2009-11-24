@@ -23,11 +23,6 @@
  *
  */
 
-/**
- * Video decoder used in engines:
- *  - tucker
- */
-
 #ifndef GRAPHICS_VIDEO_FlicDecoder_H
 #define GRAPHICS_VIDEO_FlicDecoder_H
 
@@ -41,6 +36,12 @@ namespace Common {
 
 namespace Graphics {
 
+/**
+ *
+ * Decoder for DXA videos.
+ * Video decoder used in engines:
+ *  - tucker
+ */
 class FlicDecoder : public VideoDecoder {
 public:
 	FlicDecoder();

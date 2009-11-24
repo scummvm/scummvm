@@ -23,13 +23,6 @@
  *
  */
 
-/**
- * Video decoder used in engines:
- *  - agos
- *  - sword1
- *  - sword2
- */
-
 #ifndef GRAPHICS_VIDEO_DXA_PLAYER_H
 #define GRAPHICS_VIDEO_DXA_PLAYER_H
 
@@ -37,6 +30,14 @@
 
 namespace Graphics {
 
+/**
+ * Decoder for DXA videos.
+ *
+ * Video decoder used in engines:
+ *  - agos
+ *  - sword1
+ *  - sword2
+ */
 class DXADecoder : public VideoDecoder {
 public:
 	DXADecoder();

@@ -143,9 +143,6 @@ page 376) */
 /* 8SVX Voice8Header */
 
 
-char * ID2string(Common::IFF_ID id);
-
-
 /**
  *  Represents a IFF chunk available to client code.
  *

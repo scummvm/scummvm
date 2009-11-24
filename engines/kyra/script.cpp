@@ -96,7 +96,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 		break;
 
 	default:
-		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk._type), chunk._size, _filename);
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::tag2string(chunk._type).c_str(), chunk._size, _filename);
 	}
 
 	return false;

@@ -22,7 +22,7 @@
  * $Id$
  */
 
-/**
+/*
  * Bitmap decoder used in engines:
  *  - parallaction
  *  - saga
@@ -104,40 +104,23 @@ struct ILBMDecoder {
 
 
 
-
-//	handles PBM subtype of IFF FORM files
-//
-struct PBMDecoder {
-	/**
-	 * PBM header data, necessary for loadBitmap()
-	 */
-	Graphics::BMHD	_header;
-
-	/**
-	 * Fills the _header member from the given stream.
-	 */
-	void loadHeader(Common::ReadStream *stream);
-
-	/**
-	 * Loads and unpacks the PBM bitmap data from the stream into the buffer.
-	 * The functions assumes the buffer is large enough to contain all data.
-	 */
-	void loadBitmap(byte *buffer, Common::ReadStream *stream);
-};
-
+/**
+ * Handles PBM subtype of IFF FORM files
+ */
 void decodePBM(Common::ReadStream &input, Surface &surface, byte *colors);
 
 
-/*
-	PackBits is a RLE compression algorithm introduced
-	by Apple. It is also used to encode ILBM and PBM
-	subtypes of IFF files, and some flavours of TIFF.
-
-	As there is no compression across row boundaries
-	in the above formats, read() will extract a *new*
-	line on each call, discarding any alignment or
-	padding.
-*/
+/**
+ * Decode a given PackBits encoded stream.
+ *
+ * PackBits is an RLE compression algorithm introduced by Apple. It is also
+ * used to encode ILBM and PBM subtypes of IFF files, and some flavours of
+ * TIFF.
+ *
+ * As there is no compression across row boundaries in the above formats,
+ * read() will extract a *new* line on each call, discarding any alignment
+ * or padding.
+ */
 class PackBitsReadStream : public Common::ReadStream {
 
 protected:
@@ -152,6 +135,6 @@ public:
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
-}
+} // End of namespace Graphics
 
 #endif

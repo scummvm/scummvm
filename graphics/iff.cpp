@@ -27,25 +27,6 @@
 
 #include "common/util.h"
 
-
-namespace Common {
-
-// this really belongs to iff_container.cpp, but we don't want
-// to put only this in a source file
-char *ID2string(Common::IFF_ID id) {
-	static char str[] = "abcd";
-
-	str[0] = (char)(id >> 24 & 0xff);
-	str[1] = (char)(id >> 16 & 0xff);
-	str[2] = (char)(id >>  8 & 0xff);
-	str[3] = (char)(id >>  0 & 0xff);
-
-	return str;
-}
-
-}
-
-
 namespace Graphics {
 
 void BMHD::load(Common::ReadStream *stream) {
@@ -153,6 +134,26 @@ void ILBMDecoder::planarToChunky(byte *out, uint32 outPitch, byte *in, uint32 in
 
 }
 
+
+//	handles PBM subtype of IFF FORM files
+//
+struct PBMDecoder {
+	/**
+	 * PBM header data, necessary for loadBitmap()
+	 */
+	Graphics::BMHD	_header;
+
+	/**
+	 * Fills the _header member from the given stream.
+	 */
+	void loadHeader(Common::ReadStream *stream);
+
+	/**
+	 * Loads and unpacks the PBM bitmap data from the stream into the buffer.
+	 * The functions assumes the buffer is large enough to contain all data.
+	 */
+	void loadBitmap(byte *buffer, Common::ReadStream *stream);
+};
 
 void PBMDecoder::loadHeader(Common::ReadStream *stream) {
 	_header.load(stream);
@@ -266,5 +267,4 @@ uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize - left;
 }
 
-
-}
+} // End of namespace Graphics
