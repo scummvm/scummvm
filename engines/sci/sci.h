@@ -31,6 +31,14 @@
 
 struct ADGameDescription;
 
+/**
+ * This is the namespace of the SCI engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Sci {
 
 #define INCLUDE_OLDGFX

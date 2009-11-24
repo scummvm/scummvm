@@ -36,6 +36,14 @@
 
 #include "engines/engine.h"
 
+/**
+ * This is the namespace of the Touche engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Touche {
 
 struct Area {

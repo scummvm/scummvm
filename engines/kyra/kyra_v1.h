@@ -43,6 +43,14 @@ class WriteStream;
 
 class KyraMetaEngine;
 
+/**
+ * This is the namespace of the Kyra engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Kyra {
 
 struct GameFlags {

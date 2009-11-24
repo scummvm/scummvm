@@ -47,6 +47,14 @@
 
 class OSystem;
 
+/**
+ * This is the namespace of the Sword2 engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Sword2 {
 
 enum {

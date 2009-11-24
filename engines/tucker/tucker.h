@@ -38,6 +38,14 @@
 
 #include "engines/engine.h"
 
+/**
+ * This is the namespace of the Tucker engine.
+ *
+ * Status of this engine: Complete
+ *
+ * Supported games:
+ * - Bud Tucker in Double Trouble
+ */
 namespace Tucker {
 
 struct Action {

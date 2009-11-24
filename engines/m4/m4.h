@@ -48,6 +48,14 @@
 
 //#define DUMP_SCRIPTS
 
+/**
+ * This is the namespace of the M4 engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace M4 {
 
 class MidiPlayer;

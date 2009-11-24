@@ -36,6 +36,14 @@
 #include "cruise/debugger.h"
 #include "cruise/sound.h"
 
+/**
+ * This is the namespace of the Cruise engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Cruise {
 
 enum CruiseGameType {

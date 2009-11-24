@@ -49,6 +49,14 @@
 
 //#define DUMP_SCRIPTS
 
+/**
+ * This is the namespace of the Cine engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Cine {
 
 enum CineGameType {

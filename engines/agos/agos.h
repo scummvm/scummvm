@@ -41,6 +41,14 @@
 #include "agos/sound.h"
 #include "agos/vga.h"
 
+/**
+ * This is the namespace of the AGOS engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace AGOS {
 
 uint fileReadItemID(Common::SeekableReadStream *in);

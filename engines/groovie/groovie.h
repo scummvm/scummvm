@@ -36,6 +36,14 @@
 #include "groovie/resource.h"
 #include "groovie/script.h"
 
+/**
+ * This is the namespace of the Groovie engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Groovie {
 
 class MusicPlayer;

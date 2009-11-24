@@ -42,6 +42,14 @@
 #include "lure/room.h"
 #include "lure/fights.h"
 
+/**
+ * This is the namespace of the Lure engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Lure {
 
 #define RandomNumberGen LureEngine::getReference().rnd()

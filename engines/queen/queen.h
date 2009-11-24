@@ -50,6 +50,14 @@ FORCEINLINE int16 READ_BE_INT16(const void *ptr) {
 
 #endif
 
+/**
+ * This is the namespace of the Queen engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Queen {
 
 struct GameStateHeader {

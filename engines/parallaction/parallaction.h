@@ -42,6 +42,14 @@
 #define PATH_LEN	200
 
 
+/**
+ * This is the namespace of the Parallaction engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Parallaction {
 
 enum {

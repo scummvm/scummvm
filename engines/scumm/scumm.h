@@ -51,6 +51,14 @@ namespace Common {
 	class WriteStream;
 }
 
+/**
+ * This is the namespace of the SCUMM engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Scumm {
 
 class Actor;

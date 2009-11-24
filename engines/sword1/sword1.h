@@ -31,6 +31,14 @@
 #include "common/util.h"
 #include "sword1/sworddefs.h"
 
+/**
+ * This is the namespace of the Sword1 engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Sword1 {
 
 enum {

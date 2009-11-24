@@ -37,6 +37,14 @@ namespace GUI {
 	class StaticTextWidget;
 }
 
+/**
+ * This is the namespace of the Gob engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Gob {
 
 class Game;

@@ -30,6 +30,14 @@
 #include "common/events.h"
 #include "engines/engine.h"
 
+/**
+ * This is the namespace of the Sky engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Sky {
 
 struct SystemVars {

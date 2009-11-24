@@ -47,6 +47,14 @@
 
 #include "made/sound.h"
 
+/**
+ * This is the namespace of the Made engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Made {
 
 enum MadeGameID {

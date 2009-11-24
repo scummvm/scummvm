@@ -42,6 +42,15 @@
 #include "tinsel/sound.h"
 #include "tinsel/dw.h"
 
+/**
+ * This is the namespace of the Tinsel engine.
+ *
+ * Status of this engine: Complete
+ *
+ * Supported games:
+ * - Discworld
+ * - Discworld 2: Missing Presumed ...!?
+ */
 namespace Tinsel {
 
 class BMVPlayer;

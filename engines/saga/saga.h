@@ -35,6 +35,14 @@
 
 struct ADGameFileDescription;
 
+/**
+ * This is the namespace of the SAGA engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Saga {
 
 class SndRes;

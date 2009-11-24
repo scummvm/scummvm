@@ -34,6 +34,14 @@
 
 struct ADGameDescription;
 
+/**
+ * This is the namespace of the TeenAgent engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace TeenAgent {
 
 struct Object;

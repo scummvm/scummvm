@@ -43,6 +43,14 @@
 
 struct ADGameDescription;
 
+/**
+ * This is the namespace of the Draci engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Draci {
 
 class DraciEngine : public Engine {

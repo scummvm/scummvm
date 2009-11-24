@@ -41,6 +41,14 @@
 
 #include "engines/engine.h"
 
+/**
+ * This is the namespace of the Drascula engine.
+ *
+ * Status of this engine: ???
+ *
+ * Supported games:
+ * - ???
+ */
 namespace Drascula {
 
 #define DRASCULA_DAT_VER 4
