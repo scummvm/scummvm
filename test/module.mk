@@ -13,6 +13,12 @@ TEST_FLAGS   := --runner=StdioPrinter
 TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS :=
 
+ifdef HAVE_GCC3
+# In test/common/str.h, we test a zero length format string. This causes GCC
+# to generate a warning which in turn poses a problem when building with -Werror.
+# To work around this, we disable -Wformat here.
+TEST_CFLAGS  +=  -Wno-format
+endif
 
 # Enable this to get an X11 GUI for the error reporter.
 #TEST_FLAGS   += --gui=X11Gui
