@@ -121,7 +121,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	size       = stream->readUint32LE();
 	numEntries = stream->readUint32LE();
 
-	numChapter = stream->readUint32LE();
+	numChapter = stream->readSint32LE();
 	xLeft      = stream->readUint32LE();
 	yTop       = stream->readUint32LE();
 
@@ -215,9 +215,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	numAmbientSound   = stream->readUint32LE();
 	musicStatus       = stream->readUint32LE();
-	musicCurrentResId = stream->readUint32LE();
+	musicCurrentResId = stream->readSint32LE();
 	musicFlag         = stream->readUint32LE();
-	musicResId        = stream->readUint32LE();
+	musicResId        = stream->readSint32LE();
 	musicStatusExt    = stream->readUint32LE();
 
 	for (uint32 a = 0; a < numBarriers; a++) {

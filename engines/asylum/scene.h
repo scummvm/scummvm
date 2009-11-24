@@ -79,7 +79,7 @@ private:
 
 class Scene {
 public:
-	Scene(uint8 sceneIdx, AsylumEngine *vm);
+	Scene(uint8 sceneIdx, AsylumEngine *engine);
 	~Scene();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -190,6 +190,11 @@ private:
 	bool	_skipDrawScene;
 	uint32  _playerActorIdx;
 
+	/** .text:0040E460
+	 * Initialize the current scene
+	 */
+	void initialize();
+
 	void   update();
 	int    updateScene();
 	void   updateMouse();
@@ -224,6 +229,8 @@ private:
 	friend class SceneTitle;
 
 }; // end of class Scene
+
+const int actorType[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
 
 } // end of namespace Asylum
 
