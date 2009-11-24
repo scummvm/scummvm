@@ -120,14 +120,15 @@ ENABLED = STATIC_PLUGIN
 endif
 
 # SDL Libs and Flags
-SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags) 
+SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags)
+SDLLIBS := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
 PSPLIBS = -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
  	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio
 
 # Add in PSPSDK includes and libraries.
 CXXFLAGS += $(SDLFLAGS)
-LIBS     += -L$(PSPSDK)/../lib -L$(PSPSDK)/lib -lSDLmain -lSDL -lGL -lpng -lz -lstdc++ -lc -lm $(PSPLIBS)
+LIBS     += -lpng -lz -lstdc++ -lc $(SDLLIBS) $(PSPLIBS)  
 
 OBJS := powerman.o \
 	psp_main.o \
