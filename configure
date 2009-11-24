@@ -247,7 +247,7 @@ add_to_config_mk_if_no() {
 #
 # Determine sdl-config
 #
-# TODO: small bit of code to test sdl useability
+# TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
