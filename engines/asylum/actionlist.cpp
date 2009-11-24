@@ -579,20 +579,13 @@ int kSetSceneMotionStat(ActionCommand *cmd, Scene *scn) {
 
 int kDisableActor(ActionCommand *cmd, Scene *scn) {
 	int actorIndex = cmd->param1;
-	Actor* actor;
 
-	// TODO is this really efficient? Now that changeOrientation()
-	// is implemented, this opcode is effectively done, but I
-	// don't want to clear the incomplete flag until actor
-	// handling is better implemented.
 	if (actorIndex == -1)
-		actor = scn->getActor();
-	else
-		actor = &scn->worldstats()->actors[actorIndex];
+		actorIndex = scn->getActorIndex();
 
-	actor->changeOrientation(5);
+	scn->updateActorDirection(actorIndex, 5);
 
-	return -1;
+	return 0;
 }
 
 int kEnableActor(ActionCommand *cmd, Scene *scn) {

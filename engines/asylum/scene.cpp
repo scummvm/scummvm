@@ -127,7 +127,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	_ws->boundingRect = Common::Rect(195, 115, 445 - actor->boundingRect.right, 345 - actor->boundingRect.bottom);
 
 	actor->flags |= 1;
-	actor->changeOrientation(4);
+	updateActorDirectionDefault(_playerActorIdx);
 
 	actor->x1 -= actor->x2;
 	actor->y1 -= actor->y2;
@@ -137,7 +137,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 			Actor *act = &_ws->actors[a];
 			act->flags |= 1;
 			act->direction = 1;
-			act->changeOrientation(4);
+			updateActorDirectionDefault(a);
 			act->x1 -= act->x2;
 			act->y1 -= act->y2;
 			act->boundingRect.bottom = act->y2;
@@ -175,8 +175,167 @@ Scene::~Scene() {
 #endif
 }
 
-Actor* Scene::getActor() {
-	return &_ws->actors[_playerActorIdx];
+Actor* Scene::getActor(int index) {
+	return &_ws->actors[(index != -1) ? index : _playerActorIdx];
+}
+
+void Scene::updateActorDirection(int actorIndex, int param) {
+	Actor *actor = getActor(actorIndex);
+	GraphicResource *gra;
+
+	switch (param) {
+	case 16:
+		actor->frameNum = 0;
+		if (actor->direction > 4)
+			actor->direction = 8 - actor->direction;
+		actor->grResId = actor->grResTable[15];
+		gra = new GraphicResource(_resPack, actor->grResId);
+		actor->frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case 18:
+		if (_ws->numChapter > 2) {
+			actor->frameNum = 0;
+			if (actorIndex > 12)
+				actor->grResId = actor->grResTable[30];
+			if (_playerActorIdx == actorIndex) {
+				gra = new GraphicResource(_resPack, actor->grResId);
+				actor->frameNum = gra->getFrameCount() - 1;
+				delete gra;
+			}
+
+			if (actorIndex == 11) {
+				// TODO check a global variable (that likely
+				// relates to direction) to see if it's > 4,
+				// and if so, subtract it from 8. Then use this
+				// to set actor[11].grResId
+			}
+
+			// FIXME I know this seems wasteful, but it's how the
+			// original worked. I guess this is to set the framecount
+			// regardless of the actorIndex value, though it assumes
+			// the actor's grResId has been set.
+			gra = new GraphicResource(_resPack, actor->grResId);
+			actor->frameCount = gra->getFrameCount();
+			delete gra;
+		}
+		break;
+	case 15:
+		// TODO Refactor, because this is identical to case 16,
+		// other than a different grResTable index
+		actor->frameNum = 0;
+		if (actor->direction > 4)
+			actor->direction = 8 - actor->direction;
+		actor->grResId = actor->grResTable[10];
+		gra = new GraphicResource(_resPack, actor->grResId);
+		actor->frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case 9:
+		// TODO Check if there is an encounter currently
+		// active (via the global at .data:00543504)
+		// FIXME skipping for now
+		if (0) {
+			if (rand() % -2 == 1 && defaultActorDirectionLoaded(actorIndex, 15)) {
+				actor->frameNum = 0;
+				if (actor->direction > 4)
+					actor->direction = 8 - actor->direction;
+				actor->grResId = actor->grResTable[15];
+				gra = new GraphicResource(_resPack, actor->grResId);
+				actor->frameCount = gra->getFrameCount();
+				delete gra;
+			} else {
+				actor->frameNum = 0;
+				if (actor->direction > 4)
+					actor->direction = 8 - actor->direction;
+				actor->grResId = actor->grResTable[10];
+				gra = new GraphicResource(_resPack, actor->grResId);
+				actor->frameCount = gra->getFrameCount();
+				delete gra;
+			}
+		}
+		break;
+	case 4:
+	case 6:
+	case 14:
+		actor->frameNum = 0;
+		if (actor->direction > 4)
+			actor->direction = 8 - actor->direction;
+		actor->grResId = actor->grResTable[15];
+		gra = new GraphicResource(_resPack, actor->grResId);
+		actor->frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case 1:
+	case 12:
+		// TODO check if sceneNumber == 2 && actorIndex == _playerActorInde
+		// && actor->field_40 equals/doesn't equal a bunch of values,
+		// then set direction like other cases
+		break;
+	case 2:
+	case 13:
+		actor->frameNum = 0;
+		if (actor->direction > 4)
+			actor->direction = 8 - actor->direction;
+		actor->grResId = actor->grResTable[actor->direction];
+		gra = new GraphicResource(_resPack, actor->grResId);
+		actor->frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	case 5:
+		actor->frameNum = 0;
+		if (actor->direction > 4)
+			actor->direction = 8 - actor->direction;
+		actor->grResId = actor->grResTable[actor->direction];
+		gra = new GraphicResource(_resPack, actor->grResId);
+		actor->frameCount = gra->getFrameCount();
+		delete gra;
+		// TODO set word_446EE4 to -1. This global seems to
+		// be used with screen blitting
+		break;
+	case 3:
+	case 19:
+		// TODO check if the actor's name is equal to
+		// "Big Crow"???
+		break;
+	case 7:
+		if (_ws->numChapter == 2 && actorIndex == 10 && _vm->isGameFlagSet(279)) {
+			Actor *act0 = getActor(0);
+			act0->x1 = actor->x2 + actor->x1 - act0->x2;
+			act0->y1 = actor->y2 + actor->y1 - act0->y2;
+			act0->direction = 4;
+			_playerActorIdx = 0;
+			// TODO disableCharacterVisible(actorIndex)
+			// TODO enableActorVisible(0)
+			_vm->clearGameFlag(279);
+			// TODO some cursor update
+		}
+		break;
+	case 8:
+	case 10:
+	case 17:
+		actor->frameNum = 0;
+		if (actor->direction > 4)
+			actor->direction = 8 - actor->direction;
+		actor->grResId = actor->grResTable[20];
+		gra = new GraphicResource(_resPack, actor->grResId);
+		actor->frameCount = gra->getFrameCount();
+		delete gra;
+		break;
+	}
+
+	actor->updateType = param;
+}
+
+void Scene::updateActorDirectionDefault(int actorIndex) {
+	if (actorIndex == -1)
+		actorIndex = _playerActorIdx;
+	updateActorDirection(actorIndex, 4);
+}
+
+bool Scene::defaultActorDirectionLoaded(int actorIndex, int grResTableIdx) {
+	Actor *actor = getActor(actorIndex);
+	return actor->grResTable[grResTableIdx] != actor->grResTable[5];
 }
 
 void Scene::enterScene() {

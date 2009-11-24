@@ -162,16 +162,6 @@ public:
 	 */
 	void setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame);
 
-	/**
-	 * Change the direction the actor's facing based
-	 * on the supplied parament.
-	 *
-	 * Note that the parameter doesn't directly update the
-	 * actor's direction, but it used as a lookup
-	 * to determine the value
-	 */
-	void changeOrientation(int param);
-
 	void faceTarget(int targetId, int targetType);
 
 	// FIXME

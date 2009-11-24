@@ -278,53 +278,6 @@ void Actor::walkTo(uint32 curX, uint32 curY) {
 	drawActor();
 }
 
-
-void Actor::changeOrientation(int param) {
-	int newGrId = 0;
-	int newDir  = 0;
-
-	switch (param) {
-	case 4:
-	case 6:
-	case 14:
-		if (direction > 4)
-			newDir = 8 - direction;
-		else
-			newDir = direction;
-		newGrId = grResTable[newDir + 5];
-		break;
-
-	case 5:
-		newDir = direction;
-		if (newDir > 4)
-			direction = 8 - newDir;
-
-		newGrId = grResTable[newDir + 5];
-
-		// XXX This has something to do with screen updating
-		Config.word_446EE4 = -1;
-		break;
-
-	default:
-		warning ("[update_4072A0] unimplemented case: %d", param);
-		break;
-	}
-
-	grResId = newGrId;
-
-	GraphicResource *gra = new GraphicResource(_resPack, grResId);
-	frameCount = gra->getFrameCount();
-	frameNum   = 0;
-	delete gra;
-
-	// TODO
-	// The update type can be different than the provided parameter
-	// depending on the switch case. Change this once a case handler
-	// is implemented that requires this ... namely:
-	//    if (!v34) v3 = 4; // so updateType = 4
-	updateType = param;
-}
-
 void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame) {
 	x1 = newX - x2;
 	y1 = newY - y2;
