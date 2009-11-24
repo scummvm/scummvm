@@ -35,7 +35,7 @@ namespace Asylum {
 int g_debugPolygons;
 int g_debugBarriers;
 
-Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
+Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_sceneIdx = sceneIdx;
 
 	char filename[10];
@@ -71,15 +71,6 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
     _speech = new Speech(this);
 	_resPack = new ResourcePack(sceneIdx);
 
-	// FIXME
-	// Is there EVER more than one actor enabled for a scene? I can't
-	// remember, so I guess a playthrough is in order :P
-	// Either way, this is kinda dumb
-	for (uint8 i = 0; i < _ws->numActors; i++) {
-		_ws->actors[i].setResourcePack(_resPack);
-		_ws->actors[i].setScene(this);
-	}
-
 	// TODO
 	// This will have to be re-initialized elsewhere due to
 	// the title screen overwriting the font
@@ -101,9 +92,37 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	g_debugPolygons = 0;
 	g_debugBarriers = 0;
 
-	// TODO: do all the rest stuffs in sub at address 40E460
-	// XXX The player actor index is only ever changed again using
-	// changeCharacter()
+	// TODO figure out what field_120 is used for
+	_ws->field_120 = -1;
+
+	for (uint32 a = 0; a < _ws->numActors; a++) {
+		_ws->actors[a].tickValue1 = _vm->getTick();
+		// FIXME This is a hack just to get the current resource
+		// pack and scene into the actor instance(s)
+		_ws->actors[a].setResourcePack(_resPack);
+		_ws->actors[a].setScene(this);
+	}
+
+	// XXX initialize array dword_5433A8[15] to zero
+	// This array doesn't appear to be used anywhere afterwards
+	// though, so skipping this step.
+
+	initialize();
+
+	// XXX
+	// This is a hack for the moment to test out
+	// the new sound queuing functionality
+	for (uint i = 0; i < _ws->numAmbientSound; i++)
+		_vm->sound()->addToSoundBuffer(_ws->ambientSounds[i].resId);
+
+	// TODO: init action list
+
+	_titleLoaded = false;
+}
+
+void Scene::initialize() {
+	_vm->setGameFlag(183);
+
 	_playerActorIdx = 0;
 
 	if (_ws->numBarriers > 0) {
@@ -116,28 +135,32 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 		}
 	}
 
+	_cursor->load(_ws->commonRes.curMagnifyingGlass);
+	_cursor->set(0);
+	_cursor->show();
+
 	_ws->sceneRectIdx = 0;
-	_vm->screen()->clearGraphicsInQueue();
+	_vm->screen()->clearScreen();
 	_ws->motionStatus = 1;
 
 	Actor *actor = getActor();
-
 	actor->boundingRect.bottom = actor->y2;
-	actor->boundingRect.right = 2 * actor->x2;
-	_ws->boundingRect = Common::Rect(195, 115, 445 - actor->boundingRect.right, 345 - actor->boundingRect.bottom);
+	actor->boundingRect.right  = actor->x2 * 2;
+
+	_ws->boundingRect = Common::Rect(195,
+			115,
+			445 - actor->boundingRect.right,
+			345 - actor->boundingRect.bottom);
 
 	actor->flags |= 1;
-	updateActorDirectionDefault(_playerActorIdx);
-
-	actor->x1 -= actor->x2;
-	actor->y1 -= actor->y2;
+	updateActorDirection(_playerActorIdx, 4);
 
 	if (_ws->numActors > 1) {
 		for (uint32 a = 1; a < _ws->numActors; a++) {
 			Actor *act = &_ws->actors[a];
 			act->flags |= 1;
 			act->direction = 1;
-			updateActorDirectionDefault(a);
+			updateActorDirection(a, 4);
 			act->x1 -= act->x2;
 			act->y1 -= act->y2;
 			act->boundingRect.bottom = act->y2;
@@ -145,15 +168,30 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 		}
 	}
 
-	// XXX
-	// This is a hack for the moment to test out
-	// the new sound queuing functionality
-	for (uint i = 0; i < _ws->numAmbientSound; i++)
-		_vm->sound()->addToSoundBuffer(_ws->ambientSounds[i].resId);
-
-	// TODO: init action list
-
-	_titleLoaded = false;
+	// TODO initActionListArrayItem(idx, 0) .text:00401050
+	// XXX not sure why we need to do this again
+	_vm->screen()->clearScreen();
+	// TODO loadTransTables(3, field_64/68/7C)
+	// TODO setTransTable(1)
+	_vm->text()->loadFont(_resPack, _ws->commonRes.font1);
+	// TODO preloadGraphics() .text:00410F10
+	// TODO sound_sub(sceneNumber) .text:0040E750
+	_ws->actorType = actorType[_ws->numChapter];
+	// TODO musicCacheOk check as part of if
+	int musicId = 0;
+	if (_ws->musicCurrentResId != -666 && _ws->numChapter != 1)
+		musicId = _ws->musicResId - 0x7FFE0000;
+	// TODO playMusic(musicId, cfgMusicVolume);
+	_vm->tempTick07 = 1;
+	// TODO sceneRectChangedFlag = 1;
+	actor->tickValue1= _vm->getTick();
+	// XXX This initialization was already done earlier,
+	// so I'm not sure why we need to do it again. Investigate.
+	updateActorDirectionDefault(_playerActorIdx);
+	if (_ws->numChapter == 9) {
+		// TODO changeActorIndex(1); .text:00405140
+		_ws->field_E860C = -1;
+	}
 }
 
 Scene::~Scene() {

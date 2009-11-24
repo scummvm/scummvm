@@ -96,7 +96,7 @@ public:
 
 	uint32			 size;
 	uint32			 numEntries;
-	uint32			 numChapter;
+	int				 numChapter;
 	uint32			 xLeft;			 // scene start x position
 	uint32			 yTop;			 // scene start y position
 	Common::Rect	 boundingRect;
@@ -130,9 +130,9 @@ public:
 	AmbientSoundItem ambientSounds[15];
 	uint32			 numAmbientSound;
 	uint32			 musicStatus;
-	uint32			 musicCurrentResId;
+	int				 musicCurrentResId;
 	uint32			 musicFlag;
-	uint32			 musicResId;
+	int				 musicResId;
 	uint32			 musicStatusExt;
 
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays.
