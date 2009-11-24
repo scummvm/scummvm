@@ -98,8 +98,6 @@ public:
 		return _sceneIdx;
 	}
 
-	Actor* getActor();
-
 	Cursor*          getCursor()       {
 		return _cursor;
 	}
@@ -138,8 +136,35 @@ public:
 		return _speech;
 	}
 
-    void   getActorPosition(Actor *actor, Common::Point *pt);
+    void getActorPosition(Actor *actor, Common::Point *pt);
 
+    /**
+     * Return the index of the current player actor
+     */
+    int getActorIndex() { return _playerActorIdx; }
+    /**
+     * Get a reference to an actor object from the
+     * WorldStats actor list. Default parameter just
+     * gets the instance associated with _playerActorIdx
+     */
+    Actor* getActor(int index = -1);
+    /** .text:004072A0
+     * Based on the value of param, replace the actor
+     * graphic from the actor's grResTable
+     *
+     * TODO figure out exactly what param means
+     */
+    void updateActorDirection(int actorIndex, int param);
+    /** .text:0040A2E0
+     * If the actor index is invalid, load the default actor,
+     * then call updateActorDirection with a param of 4
+     */
+    void updateActorDirectionDefault(int actorIndex);
+    /** .text:00407260
+     * Check the actor at actorIndex to see if the currently loaded
+     * graphic resource matches the resource at grResTable[5]
+     */
+    bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
 private:
 	AsylumEngine *_vm;
 	uint8	     _sceneIdx;
