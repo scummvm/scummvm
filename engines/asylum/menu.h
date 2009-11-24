@@ -85,6 +85,11 @@ private:
 		kMainMenu        = 12
 	};
 
+	enum Fonts {
+		kFontBlue,
+		kFontYellow
+	};
+
 	Common::Event *_ev;
 
 	Cursor *_cursor;
@@ -98,10 +103,6 @@ private:
 	bool   _leftClick;
 	bool   _active;
 
-	// FIXME this shouldnt be here. Need a proper config place
-	uint32 _confGammaLevel;
-	uint32 _confGameQuality;
-
 	MenuScreen      _activeMenuScreen;
 	ResourcePack    *_resPack;
 	GraphicResource *_bgResource;
@@ -109,6 +110,13 @@ private:
 	GraphicResource *_iconResource;
 	GraphicResource *_creditsResource;
 	GraphicResource *_creditsFadeResource;
+
+	void loadFont(Fonts font);
+	/**
+	 * Determine which font colour to use. If the condition is true,
+	 * load kFontYellow, if false, load kFontBlue
+	 */
+	void switchFont(bool condition);
 
 	void updateEyesAnimation();
 	void updateMainMenu();

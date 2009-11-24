@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "asylum/staticres.h"
 #include "asylum/console.h"
 #include "asylum/scene.h"
 #include "asylum/menu.h"

@@ -30,9 +30,6 @@
 
 namespace Asylum {
 
-/** This fixes the menu icons text x position on screen */
-const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
-
 MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_leftClick			= false;
 	_activeIcon			= -1;
@@ -44,8 +41,9 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_creditsTextScroll	= 0x1E0 - 30;
 	_activeMenuScreen	= kMainMenu;
 	_active				= false;
-	_confGammaLevel		= 2;
-	_confGameQuality	= 5;
+
+	Config.gammaLevel  = 2;
+	Config.performance = 5;
 
 	_resPack		= new ResourcePack(1);
 	_bgResource		= new GraphicResource(_resPack, 0);
@@ -57,7 +55,7 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_creditsResource	 = 0;
 	_creditsFadeResource = 0;
 
-	_vm->text()->loadFont(_resPack, 16);	// 0x80010010, yellow font
+	loadFont(kFontYellow);
 }
 
 MainMenu::~MainMenu() {
@@ -70,12 +68,31 @@ MainMenu::~MainMenu() {
 	delete _resPack;
 }
 
+void MainMenu::loadFont(Fonts font) {
+	switch (font) {
+	case kFontBlue:
+		_vm->text()->loadFont(_resPack, 0x80010016);
+		break;
+	case kFontYellow:
+		_vm->text()->loadFont(_resPack, 0x80010010);
+		break;
+	default:
+		error("Unknown Font Colour Specified");
+	}
+}
+
+void MainMenu::switchFont(bool condition) {
+	if (condition)
+		loadFont(kFontYellow);
+	else
+		loadFont(kFontBlue);
+}
+
 void MainMenu::openMenu() {
 	_active = true;
 	_vm->scene()->deactivate();
 
-	// yellow font
-	_vm->text()->loadFont(_resPack, 0x80010010);
+	loadFont(kFontYellow);
 
 	// Load the graphics palette
 	_vm->screen()->setPalette(_resPack, 17);
@@ -254,8 +271,7 @@ void MainMenu::updateMainMenu() {
 		return;
 	}
 
-	// yellow font
-	_vm->text()->loadFont(_resPack, 0x80010010);
+	loadFont(kFontYellow);
 
 	// Icon animation
 	for (uint32 i = 0; i <= 5; i++) {
@@ -351,25 +367,18 @@ void MainMenu::updateSubMenu() {
 }
 
 void MainMenu::updateSubMenuNewGame() {
-	// yellow font
-	_vm->text()->loadFont(_resPack, 0x80010010);
+	loadFont(kFontYellow);
 
 	// begin new game
 	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000529);
 
 	// Yes
-	if (_cursor->x() < 247 || _cursor->x() > 247 + _vm->text()->getResTextWidth(0x8000052A) || _cursor->y() < 273 || _cursor->y() > 273 + 24)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 247 || _cursor->x() > 247 + _vm->text()->getResTextWidth(0x8000052A) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
 	_vm->text()->setTextPos(247, 273);
 	_vm->text()->drawResText(0x8000052A);
 
 	// No
-	if (_cursor->x() < 369 || _cursor->x() > 369 + _vm->text()->getResTextWidth(0x8000052B) || _cursor->y() < 273 || _cursor->y() > 273 + 24)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 369 || _cursor->x() > 369 + _vm->text()->getResTextWidth(0x8000052B) || _cursor->y() < 273 ||	_cursor->y() > 273 + 24);
 	_vm->text()->setTextPos(369, 273);
 	_vm->text()->drawResText(0x8000052B);
 
@@ -393,17 +402,17 @@ void MainMenu::updateSubMenuCinematics() {
 	_vm->text()->drawResText(0x80000549);	// Prev Page
 
 	if (_cursor->x() >= 280 && _cursor->x() <= 400 && _cursor->y() >= 340 && _cursor->y() <= 360) {
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+		loadFont(kFontBlue);
 		if (_leftClick)
 			exitSubMenu();
 	} else {
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
+		loadFont(kFontYellow);
 	}
 
 	_vm->text()->setTextPos(280, 340);
 	_vm->text()->drawResText(0x8000054B);	// Main Menu
 
-	_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
+	loadFont(kFontYellow);
 
 	_vm->text()->setTextPos(500, 340);
 	_vm->text()->drawResText(0x8000054A);	// Next Page
@@ -414,72 +423,56 @@ void MainMenu::updateSubMenuSettings() {
 	uint32 sizePlus		= _vm->text()->getTextWidth("+");
 	uint32 sizeMainMenu = _vm->text()->getResTextWidth(0x8000059D);
 
-	// yellow font
-	_vm->text()->loadFont(_resPack, 0x80010010);
+	loadFont(kFontYellow);
 	// Settings
 	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000598);
 
 	// gamma correction
 	_vm->text()->drawResTextAlignRight(320, 150, 0x80000599);
-	if (_cursor->x() < 350 || _cursor->x() > sizeMinus + 350 || _cursor->y() < 150 || _cursor->y() > 174)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 350 || _cursor->x() > sizeMinus + 350 || _cursor->y() < 150 || _cursor->y() > 174);
 	_vm->text()->setTextPos(350, 150);
 	_vm->text()->drawText("-");
 
-	if (_cursor->x() < sizeMinus + 360 || _cursor->x() > sizeMinus + sizePlus + 360 || _cursor->y() < 150 || _cursor->y() > 174)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < sizeMinus + 360 || _cursor->x() > sizeMinus + sizePlus + 360 || _cursor->y() < 150 || _cursor->y() > 174);
 	_vm->text()->setTextPos(sizeMinus + 360, 150);
 	_vm->text()->drawText("+");
 
 	_vm->text()->setTextPos(sizeMinus + sizePlus + 365, 150);
-	_vm->text()->loadFont(_resPack, 0x80010010);
-	if (_confGammaLevel) {
-		for (uint32 i = 0; i < _confGammaLevel; i++) {
+	loadFont(kFontYellow);
+	if (Config.gammaLevel) {
+		for (uint32 i = 0; i < Config.gammaLevel; i++) {
 			_vm->text()->drawText("]");
 		}
-		if (_confGammaLevel == 8)
+		if (Config.gammaLevel == 8)
 			_vm->text()->drawText("*");
 	} else
 		_vm->text()->drawResText(0x8000059B);
 
 	// performance
-	_vm->text()->loadFont(_resPack, 0x80010010);
+	loadFont(kFontYellow);
 	_vm->text()->drawResTextAlignRight(320, 179, 0x8000059A);
-	if (_cursor->x() < 350 || _cursor->x() > sizeMinus + 350 || _cursor->y() < 179 || _cursor->y() > 203)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 350 || _cursor->x() > sizeMinus + 350 || _cursor->y() < 179 || _cursor->y() > 203);
 	_vm->text()->setTextPos(350, 179);
 	_vm->text()->drawText("-");
 
-	if (_cursor->x() < sizeMinus + 360 || _cursor->x() > sizeMinus + sizePlus + 360 || _cursor->y() < 179 || _cursor->y() > 203)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < sizeMinus + 360 || _cursor->x() > sizeMinus + sizePlus + 360 || _cursor->y() < 179 || _cursor->y() > 203);
 	_vm->text()->setTextPos(sizeMinus + 360, 179);
 	_vm->text()->drawText("+");
 
 	_vm->text()->setTextPos(sizeMinus + sizePlus + 365, 179);
-	_vm->text()->loadFont(_resPack, 0x80010010);
-	if (_confGameQuality == 5) {
+	loadFont(kFontYellow);
+	if (Config.performance == 5) {
 		_vm->text()->drawResText(0x8000059C);
 	} else {
-		for (uint32 i = 5; i > _confGameQuality; --i) {
+		for (uint32 i = 5; i > Config.performance; --i) {
 			_vm->text()->drawText("]");
 		}
-		if (!_confGameQuality)
+		if (!Config.performance)
 			_vm->text()->drawText("*");
 	}
 
 	// back to main menu
-	if (_cursor->x() < 300 || _cursor->x() > 300 + sizeMainMenu || _cursor->y() < 340 || _cursor->y() > 340 + 24)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 300 || _cursor->x() > 300 + sizeMainMenu || _cursor->y() < 340 || _cursor->y() > 340 + 24);
 	_vm->text()->setTextPos(300, 340);
 	_vm->text()->drawResText(0x8000059D);
 
@@ -493,30 +486,30 @@ void MainMenu::updateSubMenuSettings() {
 
 		// gamma level minus
 		if (_cursor->x() >= 350 && _cursor->x() <= sizeMinus + 350 && _cursor->y() >= 150 && _cursor->y() <= 174) {
-			if (_confGammaLevel) {
-				_confGammaLevel -= 1;
+			if (Config.gammaLevel) {
+				Config.gammaLevel -= 1;
 				// TODO: setResGammaLevel(0x80010011, 0);
 			}
 		}
 		// gamma level plus
 		if (_cursor->x() >= sizeMinus + 360 && _cursor->x() <= sizeMinus + sizePlus + 360 && _cursor->y() >= 150 && _cursor->y() <= 174) {
-			if (_confGammaLevel < 8) {
-				_confGammaLevel += 1;
+			if (Config.gammaLevel < 8) {
+				Config.gammaLevel += 1;
 				// TODO: setResGammaLevel(0x80010011, 0);
 			}
 		}
 
 		// performance minus
 		if (_cursor->x() >= 350 && _cursor->x() <= sizeMinus + 350 && _cursor->y() >= 179 && _cursor->y() <= 203) {
-			if (_confGameQuality) {
-				_confGameQuality -= 1;
+			if (Config.performance) {
+				Config.performance -= 1;
 				// TODO: change quality settings
 			}
 		}
 		// performance plus
 		if (_cursor->x() >= sizeMinus + 360 && _cursor->x() <= sizeMinus + sizePlus + 360 && _cursor->y() >= 179 && _cursor->y() <= 203) {
-			if (_confGameQuality < 5) {
-				_confGameQuality += 1;
+			if (Config.performance < 5) {
+				Config.performance += 1;
 				// TODO: change quality settings
 			}
 		}
@@ -524,25 +517,18 @@ void MainMenu::updateSubMenuSettings() {
 }
 
 void MainMenu::updateSubMenuQuitGame() {
-	// yellow font
-	_vm->text()->loadFont(_resPack, 0x80010010);
+	loadFont(kFontYellow);
 
 	// begin new game
 	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000580);
 
 	// Yes
-	if (_cursor->x() < 247 || _cursor->x() > 247 + _vm->text()->getResTextWidth(0x80000581) || _cursor->y() < 273 || _cursor->y() > 273 + 24)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 247 || _cursor->x() > 247 + _vm->text()->getResTextWidth(0x80000581) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
 	_vm->text()->setTextPos(247, 273);
 	_vm->text()->drawResText(0x80000581);
 
 	// No
-	if (_cursor->x() < 369 || _cursor->x() > 369 + _vm->text()->getResTextWidth(0x80000582) || _cursor->y() < 273 || _cursor->y() > 273 + 24)
-		_vm->text()->loadFont(_resPack, 0x80010010); // yellow font
-	else
-		_vm->text()->loadFont(_resPack, 0x80010016); // blue font
+	switchFont(_cursor->x() < 369 || _cursor->x() > 369 + _vm->text()->getResTextWidth(0x80000582) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
 	_vm->text()->setTextPos(369, 273);
 	_vm->text()->drawResText(0x80000582);
 
