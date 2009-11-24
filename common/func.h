@@ -423,7 +423,7 @@ private:
  *     warning("Unimplemented opcode %d", opcodeNum);
  *
  * If you want to see an real world example check the kyra engine.
- * Files: engines/kyra/script.cpp and .h and engine/kyra/script_*.cpp
+ * Files: engines/kyra/script.cpp and .h and engines/kyra/script_*.cpp
  * are interesting for that matter.
  */
 template<class Arg, class Res>
