@@ -67,7 +67,6 @@ private:
 	GraphicResource *_bg;
 	GraphicResource *_progress;
 
-
 	uint32 _start;
 	uint32 _ticks;
 	bool   _done;
@@ -85,56 +84,25 @@ public:
 	void handleEvent(Common::Event *event, bool doUpdate);
 
 	void enterScene();
-	void activate()      {
-		_isActive = true;
-	}
-	void deactivate()    {
-		_isActive = false;
-	}
-	bool isActive()      {
-		return _isActive;
-	}
-	int  getSceneIndex() {
-		return _sceneIdx;
-	}
 
-	Cursor*          getCursor()       {
-		return _cursor;
-	}
-	ResourcePack*	 getResourcePack() {
-		return _resPack;
-	}
-	ResourcePack*	 getMusicPack()    {
-		return _musPack;
-	}
-	GraphicResource* getGraphicResource(uint32 entry) {
-		return new GraphicResource(_resPack, entry);
-	}
-	BlowUpPuzzle*    getBlowUpPuzzle() {
-		return _blowUp;
-	}
+	void activate() { _isActive = true;	}
+	void deactivate() { _isActive = false; }
+	bool isActive() { return _isActive;	}
+	int  getSceneIndex() { return _sceneIdx; }
 
-	void setBlowUpPuzzle(BlowUpPuzzle* puzzle) {
-		_blowUp = puzzle;
-	}
+	Cursor* getCursor() { return _cursor; }
+	ResourcePack* getResourcePack() { return _resPack; }
+	ResourcePack* getMusicPack() { return _musPack; }
+	GraphicResource* getGraphicResource(uint32 entry) {	return new GraphicResource(_resPack, entry); }
+	BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
+	void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);
 
-	AsylumEngine* vm()         {
-		return _vm;
-	}
-	WorldStats*   worldstats() {
-		return _ws;
-	}
-	Polygons*     polygons()   {
-		return _polygons;
-	}
-	ActionList*   actions()    {
-		return _actions;
-	}
-
-    Speech*   speech()    {
-		return _speech;
-	}
+	AsylumEngine* vm() { return _vm; }
+	WorldStats* worldstats() { return _ws; }
+	Polygons* polygons() { return _polygons; }
+	ActionList* actions() {	return _actions; }
+    Speech* speech() { return _speech; }
 
     void getActorPosition(Actor *actor, Common::Point *pt);
 
@@ -182,13 +150,13 @@ private:
 	GraphicResource *_bgResource;
 	GraphicFrame	*_background;
 
-	bool	_titleLoaded;
-	bool	_walking;
-	bool	_leftClick;
-	bool	_rightButton;
-	bool	_isActive;
-	bool	_skipDrawScene;
-	uint32  _playerActorIdx;
+	bool   _titleLoaded;
+	bool   _walking;
+	bool   _leftClick;
+	bool   _rightButton;
+	bool   _isActive;
+	bool   _skipDrawScene;
+	uint32 _playerActorIdx;
 
 	/** .text:0040E460
 	 * Initialize the current scene

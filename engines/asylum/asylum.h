@@ -101,24 +101,18 @@ public:
 	 */
 	uint32 getTick() { return _system->getMillis(); }
 
+	/**
+	 * This is the global tick counter.
+	 *
+	 * TODO rename?
+	 */
 	uint32 tempTick07;
 
-
-	Video*  video()  {
-		return _video;
-	}
-	Sound*  sound()  {
-		return _sound;
-	}
-	Screen* screen() {
-		return _screen;
-	}
-	Scene*  scene()  {
-		return _scene;
-	}
-	Text* text() {
-		return _text;
-	}
+	Video* video() { return _video;	}
+	Sound* sound() { return _sound; }
+	Screen* screen() { return _screen; }
+	Scene* scene() { return _scene;}
+	Text* text() { return _text; }
 
 private:
 	void checkForEvent(bool doUpdate);

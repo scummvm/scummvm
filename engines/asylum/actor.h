@@ -35,10 +35,10 @@ class Scene;
 class Screen;
 struct ActionArea;
 
+// TODO: check if the names match the actor type
 enum ActorType {
-	kMax    = 0,
-    // TODO: check if the names match the actor type
-	kSarah    = 1,
+	kMax     = 0,
+	kSarah   = 1,
     kCyclops = 2,
     kAztec   = 3
 };
@@ -166,15 +166,11 @@ public:
 
 	// FIXME
 	// I don't really like how this is used in the scene constructor
-	void setResourcePack(ResourcePack *res) {
-		_resPack = res;
-	}
+	void setResourcePack(ResourcePack *res) { _resPack = res; }
 
-	// XXX Hack to get a reference to the parent scene
+	// FIXME Hack to get a reference to the parent scene
 	// into the actor instance
-	void setScene(Scene *scene) {
-		_scene = scene;
-	}
+	void setScene(Scene *scene) { _scene = scene; }
 
 	// OLD METHODS
 	// TODO ALL of these need to be depreciated in favour
@@ -185,7 +181,6 @@ public:
 	void drawActorAt(uint32 curX, uint32 curY);
 	void drawActor();
 	void walkTo(uint32 curX, uint32 curY);
-
 
 	int currentAction; // TODO depreciate
 

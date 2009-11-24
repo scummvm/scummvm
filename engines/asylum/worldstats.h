@@ -114,8 +114,7 @@ public:
 	uint32			 field_A8;
 	uint32			 field_AC;
 	uint32			 field_B0;
-	uint32			 numActors;		 // Max and all other characters that have
-	// own interactions
+	uint32			 numActors;
 	uint32			 stereoReversedFlag;
 	Common::Rect	 sceneRects[6];	 // including scene size rect
 	uint8			 sceneRectIdx;
@@ -156,11 +155,11 @@ public:
 	bool isBarrierVisible(uint32 idx);
 	// TODO this needs a better name
 	bool checkBarrierFlagsCondition(uint32 idx);
+
 private:
 	Scene *_scene;
 
 	void load(Common::SeekableReadStream *stream);
-
 };
 
 } // end of namespace Asylum

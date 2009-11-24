@@ -140,7 +140,7 @@ void Scene::initialize() {
 	_cursor->show();
 
 	_ws->sceneRectIdx = 0;
-	_vm->screen()->clearScreen();
+	_vm->screen()->clearScreen(); // XXX was clearGraphicsInQueue()
 	_ws->motionStatus = 1;
 
 	Actor *actor = getActor();
@@ -1651,7 +1651,7 @@ void Scene::debugShowActors() {
 }
 
 SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
-	_start = _scene->vm()->_system->getMillis();
+	_start = _scene->vm()->getTick();
 
 	_bg = new GraphicResource(_scene->_resPack, _scene->_ws->sceneTitleGrResId);
 	_scene->vm()->screen()->setPalette(_scene->_resPack, _scene->_ws->sceneTitlePalResId);
