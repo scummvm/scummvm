@@ -42,6 +42,8 @@
 #include "graphics/surface.h"
 #include "sound/mixer_intern.h"
 
+#include "backends/platform/psp/pspkeyboard.h"
+
 
 #define	SAMPLES_PER_SEC	44100
 
@@ -59,32 +61,7 @@ unsigned int __attribute__((aligned(16))) displayList[2048];
 unsigned short __attribute__((aligned(16))) clut256[256];
 unsigned short __attribute__((aligned(16))) mouseClut[256];
 unsigned short __attribute__((aligned(16))) cursorPalette[256];
-unsigned short __attribute__((aligned(16))) kbClut[256];
 unsigned int __attribute__((aligned(16))) mouseBuf256[MOUSE_SIZE*MOUSE_SIZE];
-
-extern unsigned int  size_keyboard_symbols_compressed;
-extern unsigned char keyboard_symbols_compressed[];
-extern unsigned int  size_keyboard_symbols_shift_compressed;
-extern unsigned char keyboard_symbols_shift_compressed[];
-extern unsigned int  size_keyboard_letters_compressed;
-extern unsigned char keyboard_letters_compressed[];
-extern unsigned int  size_keyboard_letters_shift_compressed;
-extern unsigned char keyboard_letters_shift_compressed[];
-unsigned char *keyboard_symbols;
-unsigned char *keyboard_symbols_shift;
-unsigned char *keyboard_letters;
-unsigned char *keyboard_letters_shift;
-
-unsigned char kbd_ascii[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '[', ']', '\\', ';', '\'', ',', '.', '/', '`'};
-Common::KeyCode  kbd_code[] = {Common::KEYCODE_1, Common::KEYCODE_2, Common::KEYCODE_3, Common::KEYCODE_4, Common::KEYCODE_5, Common::KEYCODE_6, Common::KEYCODE_7, Common::KEYCODE_8, Common::KEYCODE_9, Common::KEYCODE_0, Common::KEYCODE_MINUS, Common::KEYCODE_EQUALS, Common::KEYCODE_LEFTBRACKET, Common::KEYCODE_RIGHTBRACKET,
-							Common::KEYCODE_BACKSLASH, Common::KEYCODE_SEMICOLON, Common::KEYCODE_QUOTE, Common::KEYCODE_COMMA, Common::KEYCODE_PERIOD, Common::KEYCODE_SLASH, Common::KEYCODE_BACKQUOTE};
-unsigned char kbd_ascii_cl[] = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?', '~'};
-Common::KeyCode  kbd_code_cl[]  = {Common::KEYCODE_EXCLAIM, Common::KEYCODE_AT, Common::KEYCODE_HASH, Common::KEYCODE_DOLLAR, (Common::KeyCode)37, Common::KEYCODE_CARET, Common::KEYCODE_AMPERSAND, Common::KEYCODE_ASTERISK, Common::KEYCODE_LEFTPAREN, Common::KEYCODE_RIGHTPAREN, Common::KEYCODE_UNDERSCORE,
-								Common::KEYCODE_PLUS, (Common::KeyCode)123, (Common::KeyCode)125, (Common::KeyCode)124, Common::KEYCODE_COLON, Common::KEYCODE_QUOTEDBL, Common::KEYCODE_LESS, Common::KEYCODE_GREATER, Common::KEYCODE_QUESTION, (Common::KeyCode)126};
-#define CAPS_LOCK	(1 << 0)
-#define SYMBOLS		(1 << 1)
-
-
 
 
 unsigned long RGBToColour(unsigned long r, unsigned long g, unsigned long b) {
@@ -107,8 +84,8 @@ const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 
 
 OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0),
-	_offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _lastScreenUpdate(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
-
+		_offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _lastScreenUpdate(0),
+		_mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
 	memset(_palette, 0, sizeof(_palette));
 
 	_cursorPaletteDisabled = true;
@@ -119,38 +96,12 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	uint32	sdlFlags = SDL_INIT_AUDIO | SDL_INIT_TIMER;
 	SDL_Init(sdlFlags);
 
-
-	//decompress keyboard data
-	uLongf kbdSize = KBD_DATA_SIZE;
-	keyboard_letters = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	if (Z_OK != uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed))
-		error("OSystem_PSP: uncompressing keyboard_letters failed");
-
-	kbdSize = KBD_DATA_SIZE;
-	keyboard_letters_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	if (Z_OK != uncompress((Bytef *)keyboard_letters_shift, &kbdSize, (const Bytef *)keyboard_letters_shift_compressed, size_keyboard_letters_shift_compressed))
-		error("OSystem_PSP: uncompressing keyboard_letters_shift failed");
-
-	kbdSize = KBD_DATA_SIZE;
-	keyboard_symbols = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	if (Z_OK != uncompress((Bytef *)keyboard_symbols, &kbdSize, (const Bytef *)keyboard_symbols_compressed, size_keyboard_symbols_compressed))
-		error("OSystem_PSP: uncompressing keyboard_symbols failed");
-
-	kbdSize = KBD_DATA_SIZE;
-	keyboard_symbols_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
-	if (Z_OK != uncompress((Bytef *)keyboard_symbols_shift, &kbdSize, (const Bytef *)keyboard_symbols_shift_compressed, size_keyboard_symbols_shift_compressed))
-		error("OSystem_PSP: uncompressing keyboard_symbols_shift failed");
-
-	_keyboardVisible = false;
-	_clut = clut256;	// Mustn't use uncached as it'll cause cache coherency issues
-	_kbdClut = (unsigned short *)(((unsigned int)kbClut) | 0x40000000);
+	_clut = clut256;
 	_mouseBuf = (byte *)mouseBuf256;
 	_graphicMode = STRETCHED_480X272;
-	_keySelected = 1;
-	_keyboardMode = 0;
-	_mouseX = PSP_SCREEN_WIDTH >> 1;
-	_mouseY = PSP_SCREEN_HEIGHT >> 1;
 
+	_mouseX = PSP_SCREEN_WIDTH >> 1;	// Mouse in the middle of the screen
+	_mouseY = PSP_SCREEN_HEIGHT >> 1;
 
 
 	// Init GU
@@ -176,14 +127,11 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 }
 
 OSystem_PSP::~OSystem_PSP() {
-	free(keyboard_symbols_shift);
-	free(keyboard_symbols);
-	free(keyboard_letters_shift);
-	free(keyboard_letters);
 
 	free(_offscreen);
 	free(_overlayBuffer);
 	free(_mouseBuf);
+	delete _keyboard;
 
 	_offscreen = 0;
 	_overlayBuffer = 0;
@@ -196,6 +144,10 @@ void OSystem_PSP::initBackend() {
 	_savefile = new PSPSaveFileManager;
 
 	_timer = new DefaultTimerManager();
+
+	_keyboard = new PSPKeyboard();
+	_keyboard->load();
+		
 	setTimerCallback(&timer_handler, 10);
 
 	setupMixer();
@@ -267,12 +219,6 @@ void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat 
 	
 	clearOverlay();
 	memset(_palette, 0xFFFF, 256 * sizeof(unsigned short));
-	_kbdClut[0] = 0xFFFF;
-	_kbdClut[246] = 0x4CCC;
-	_kbdClut[247] = 0x0000;
-
-	for (int i = 1; i < 31; i++)
-		_kbdClut[i] = 0xF888;
 
 	_mouseVisible = false;
 	sceKernelDcacheWritebackAll();
@@ -605,42 +551,8 @@ void OSystem_PSP::updateScreen() {
 		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertMouse);
 	}
 
-	if (_keyboardVisible) {
-		sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
-		sceGuClutMode(GU_PSM_4444, 0, 0xFF, 0);
-		sceGuClutLoad(32, kbClut); // upload 32*8 entries (256)
-		sceGuDisable(GU_ALPHA_TEST);
-		sceGuEnable(GU_BLEND);
-		sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
-		switch (_keyboardMode) {
-		case 0:
-			sceGuTexImage(0, 512, 512, 480, keyboard_letters);
-			break;
-		case CAPS_LOCK:
-			sceGuTexImage(0, 512, 512, 480, keyboard_letters_shift);
-			break;
-		case SYMBOLS:
-			sceGuTexImage(0, 512, 512, 480, keyboard_symbols);
-			break;
-		case (CAPS_LOCK | SYMBOLS):
-			sceGuTexImage(0, 512, 512, 480, keyboard_symbols_shift);
-			break;
-		}
-		sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
-
-		Vertex *vertKB = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
-		vertKB[0].u = 0.5f;
-		vertKB[0].v = 0.5f;
-		vertKB[1].u = PSP_SCREEN_WIDTH - 0.5f;
-		vertKB[1].v = PSP_SCREEN_HEIGHT - 0.5f;
-		vertKB[0].x = 0;
-		vertKB[0].y = 0;
-		vertKB[0].z = 0;
-		vertKB[1].x = PSP_SCREEN_WIDTH;
-		vertKB[1].y = PSP_SCREEN_HEIGHT;
-		vertKB[1].z = 0;
-		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertKB);
-		sceGuDisable(GU_BLEND);
+	if (_keyboard->isVisible()) {
+		_keyboard->render();
 	}
 
 	sceGuFinish();
@@ -667,7 +579,6 @@ void OSystem_PSP::clearOverlay() {
 	PSPDebugTrace("clearOverlay\n");
 
 	bzero(_overlayBuffer, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
-	
 	sceKernelDcacheWritebackAll();
 }
 
@@ -774,7 +685,7 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 
 	for (unsigned int i = 0; i < h; i++)
 		memcpy(_mouseBuf + i * MOUSE_SIZE, buf + i * w, w);
-
+		
 	sceKernelDcacheWritebackAll();		
 }
 
@@ -784,13 +695,18 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 bool OSystem_PSP::processInput(Common::Event &event) {
 	s8 analogStepAmountX = 0;
 	s8 analogStepAmountY = 0;
-/*
-	SceCtrlData pad;
 
 	sceCtrlSetSamplingCycle(0);
 	sceCtrlSetSamplingMode(1);
 	sceCtrlReadBufferPositive(&pad, 1);
-*/
+
+	bool usedInput, haveEvent;
+	
+	haveEvent = _keyboard->processInput(event, pad, usedInput);
+	
+	if (usedInput) 	// Check if the keyboard used up the input
+		return haveEvent;
+	
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
 	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE | PSP_CTRL_TRIANGLE)) {
@@ -924,8 +840,6 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 }
 
 bool OSystem_PSP::pollEvent(Common::Event &event) {
-	float nub_angle = -1;
-	int x, y;
 	
 	// If we're polling for events, we should check for pausing the engine 
 	// Pausing the engine is a necessary fix for games that use the timer for music synchronization
@@ -933,130 +847,9 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 	//  get it right now.
 
 	PowerMan.pollPauseEngine();
+	
+	return processInput(event);
 
-	sceCtrlSetSamplingCycle(0);
-	sceCtrlSetSamplingMode(1);
-	sceCtrlReadBufferPositive(&pad, 1);
-
-	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
-
-	if  ((buttonsChanged & PSP_CTRL_SELECT) || (pad.Buttons & PSP_CTRL_SELECT)) {
-		if ( !(pad.Buttons & PSP_CTRL_SELECT) )
-			_keyboardVisible = !_keyboardVisible;
-		_prevButtons = pad.Buttons;
-		return false;
-	}
-
-	if (!_keyboardVisible)
-		return processInput(event);
-
-	if ( (buttonsChanged & PSP_CTRL_RTRIGGER) && !(pad.Buttons & PSP_CTRL_RTRIGGER))
-		_keyboardMode ^= CAPS_LOCK;
-
-	if ( (buttonsChanged & PSP_CTRL_LTRIGGER) && !(pad.Buttons & PSP_CTRL_LTRIGGER))
-		_keyboardMode ^= SYMBOLS;
-
-	if ( (buttonsChanged & PSP_CTRL_LEFT) && !(pad.Buttons & PSP_CTRL_LEFT)) {
-		event.kbd.flags = 0;
-		event.kbd.ascii = 0;
-		event.kbd.keycode = Common::KEYCODE_LEFT;
-		_prevButtons = pad.Buttons;
-		return true;
-	}
-
-	if ( (buttonsChanged & PSP_CTRL_RIGHT) && !(pad.Buttons & PSP_CTRL_RIGHT)) {
-		event.kbd.flags = 0;
-		event.kbd.ascii = 0;
-		event.kbd.keycode = Common::KEYCODE_RIGHT;
-		_prevButtons = pad.Buttons;
-		return true;
-	}
-
-	if ( (buttonsChanged & PSP_CTRL_UP) && !(pad.Buttons & PSP_CTRL_UP)) {
-		event.kbd.flags = 0;
-		event.kbd.ascii = 0;
-		event.kbd.keycode = Common::KEYCODE_UP;
-		_prevButtons = pad.Buttons;
-		return true;
-	}
-
-	if ( (buttonsChanged & PSP_CTRL_DOWN) && !(pad.Buttons & PSP_CTRL_DOWN)) {
-		event.kbd.flags = 0;
-		event.kbd.ascii = 0;
-		event.kbd.keycode = Common::KEYCODE_DOWN;
-		_prevButtons = pad.Buttons;
-		return true;
-	}
-
-	// compute nub direction
-	x = pad.Lx-128;
-	y = pad.Ly-128;
-	_kbdClut[_keySelected] = 0xf888;
-	if (x*x + y*y > 10000) {
-		nub_angle = atan2(y, x);
-		_keySelected = (int)(1 + (M_PI + nub_angle) * 30 / (2 * M_PI));
-		_keySelected -= 2;
-		if (_keySelected < 1)
-			_keySelected += 30;
-		_kbdClut[_keySelected] = 0xFFFF;
-
-		if  (buttonsChanged & PSP_CTRL_CROSS) {
-			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
-			if (_keySelected > 26) {
-				event.kbd.flags = 0;
-				switch (_keySelected) {
-				case 27:
-					event.kbd.ascii = ' ';
-					event.kbd.keycode = Common::KEYCODE_SPACE;
-				break;
-				case 28:
-					event.kbd.ascii = 127;
-					event.kbd.keycode = Common::KEYCODE_DELETE;
-				break;
-				case 29:
-					event.kbd.ascii = 8;
-					event.kbd.keycode = Common::KEYCODE_BACKSPACE;
-				break;
-				case 30:
-					event.kbd.ascii = 13;
-					event.kbd.keycode = Common::KEYCODE_RETURN;
-				break;
-				}
-			} else {
-				switch ( _keyboardMode) {
-				case 0:
-					event.kbd.flags = 0;
-					event.kbd.ascii = 'a'+_keySelected-1;
-					event.kbd.keycode = (Common::KeyCode)(Common::KEYCODE_a + _keySelected-1);
-					break;
-				case CAPS_LOCK:
-					event.kbd.ascii = 'A'+_keySelected-1;
-					event.kbd.keycode = (Common::KeyCode)(Common::KEYCODE_a + _keySelected-1);
-					event.kbd.flags = Common::KBD_SHIFT;
-					break;
-				case SYMBOLS:
-					if (_keySelected < 21) {
-						event.kbd.flags = 0;
-						event.kbd.ascii = kbd_ascii[_keySelected-1];
-						event.kbd.keycode = kbd_code[ _keySelected-1];
-					}
-					break;
-				case (SYMBOLS|CAPS_LOCK):
-					if (_keySelected < 21) {
-						event.kbd.flags = 0;
-						event.kbd.ascii = kbd_ascii_cl[_keySelected-1];
-						event.kbd.keycode = kbd_code_cl[ _keySelected-1];
-					}
-					break;
-				}
-			}
-			_prevButtons = pad.Buttons;
-			return true;
-		}
-	}
-
-	_prevButtons = pad.Buttons;
-	return false;
 }
 
 

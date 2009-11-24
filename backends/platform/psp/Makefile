@@ -67,7 +67,7 @@ endif
 CXX      = psp-g++
 CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
 DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB
-LDFLAGS  :=
+LDFLAGS  := 
 INCDIR   := $(srcdir) . $(srcdir)/engines/ $(PSPSDK)/include
 INCLUDES := $(addprefix -I, $(INCDIR))
 #EXECUTABLE = $(TARGET)
@@ -87,12 +87,7 @@ CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.syms scummvm-psp.elf
-# ,--retain-symbols-file,plugin.syms
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-psp.org.elf,-Tplugin.ld \
- 		-lstdc++ -lc -Wl,-Map,mapfile.txt
-
-#PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms scummvm-psp.elf
-#PLUGIN_LDFLAGS = -Wl -Tplugin.ld --just-symbols=scummvm-psp.org.elf --retain-symbols-file plugin.syms
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-psp.org.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
 # Remove unneeded scalers
 DISABLE_SCALERS = true
@@ -126,24 +121,21 @@ endif
 
 # SDL Libs and Flags
 SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags) 
-SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
-PSPLIBS = -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet \
- 	-lpspnet_inet -lpsputility -lpspuser -lpsppower 
+PSPLIBS = -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
+ 	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio
 
 # Add in PSPSDK includes and libraries.
 CXXFLAGS += $(SDLFLAGS)
-LIBS     += -lz -lstdc++ -lc $(SDLLIBS) $(PSPLIBS) 
+LIBS     += -L$(PSPSDK)/../lib -L$(PSPSDK)/lib -lSDLmain -lSDL -lGL -lpng -lz -lstdc++ -lc -lm $(PSPLIBS)
 
 OBJS := powerman.o \
 	psp_main.o \
 	osys_psp.o \
-	kbd_ss_c.o \
-	kbd_s_c.o \
-	kbd_ls_c.o \
-	kbd_l_c.o \
 	trace.o \
-	psploader.o
+	psploader.o \
+	pspkeyboard.o 
+
 
 # Include common Scummvm makefile
 include $(srcdir)/Makefile.common

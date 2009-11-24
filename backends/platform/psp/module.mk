@@ -4,12 +4,9 @@ MODULE_OBJS := \
 	powerman.o \
 	psp_main.o \
 	osys_psp.o \
-	kbd_ss_c.o \
-	kbd_s_c.o \
-	kbd_ls_c.o \
-	kbd_l_c.o \
 	trace.o \
-	psploader.o
+	psploader.o \
+	pspkeyboard.o
 
 MODULE_DIRS += \
 	backends/platform/psp/

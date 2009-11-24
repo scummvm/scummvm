@@ -12,21 +12,35 @@ Installation
 Controls
 ========
 
-Left trigger		- ESC
-Right trigger		- Modifier key (see below for uses)
-Analog			- Mouse movement
+Left trigger			- ESC
+Right trigger			- Modifier key (see below for uses)
+Analog					- Mouse movement
 Right trigger + Analog	- Fine control mouse
-Directionals		- Mouse movement
-Triangle		- Enter
-Cross			- Mouse button 1
-Circle			- Mouse button 2
-Square			- '.' (skip dialogue in some games)
-Select			- Show/Hide Virtual Keyboard
-Start			- F5
+Directionals			- Mouse movement
+Triangle				- Enter
+Cross					- Mouse button 1
+Circle					- Mouse button 2
+Square					- '.' (skip dialogue in some games)
+Start					- F5
 Right trigger + Start	- Return-To-Launcher menu
+
+Virtual Keyboard
+================
+
+Select					- Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen.
+Start					- Enter
+Right trigger			- Switch to/between letter modes
+Left trigger			- Switch to/between numbers and symbols
+D-Pad					- Select square of characters
+Buttons/Triggers		- Choose a specific character
 
 Notes
 =====
+
+- Plugin files are NOT interchangeable between versions! You must copy ALL the
+  plugin files that come with every version of scummvm. They sit in the /plugin 
+  subdirectory. If you get a crash upon startup, try deleting all the existing 
+  plugin files in the plugin directory and copying the new ones over again.
 
 - While it's possible to compress certain game resources to reduce their size,
   this can (and usually will) cause games (especially animation) to be choppy
@@ -39,6 +53,12 @@ Notes
 
 Frequently Asked Questions
 ==========================
+
+Q:  Pressing select doesn't make the virtual keyboard show up on screen!
+A:  You need to make sure that the kbd.zip file is in the same directory as the scummvm executable.	
+
+Q:  Scummvm crashes upon starting up!
+A:  See the first note above.
 
 Q:  What do I need to run the games?
 A:  A 1.00 or 1.50 firmware PSP (or an EBOOT loader on firmware 2.00 or
@@ -68,7 +88,6 @@ A:  Possibly.
     and if at all possible a nearby savegame), this will make it much easier
     for us to reproduce (and hopefully fix) the problem.
 
-
 Building the source code
 ========================
 To build ScummVM for PSP you need:
@@ -83,9 +102,13 @@ To build ScummVM for PSP you need:
 
 - zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
 
+- libPNG	(svn co svn://svn.pspdev.org/psp/trunk/libpng)
+
 - libmad(*)	(svn co svn://svn.pspdev.org/psp/trunk/libmad)
 
 - libTremor(*)	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
+
+
 
 (*) = optional
 
@@ -103,4 +126,5 @@ Port Authors
 Joost Peters   (joostp@scummvm.org)
 Paolo Costabel (paoloc@pacbell.net)
 Thomas Mayer   (tommybear@internode.on.net)
+Yotam Barnoy   (yotambarnoy@gmail.com)
 

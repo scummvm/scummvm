@@ -900,7 +900,9 @@ psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
-	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
+	PSPDEV=$(psp-config --pspdev-path)
+	PSPSDK=$(psp-config --pspsdk-path)
+	LDFLAGS="$LDFLAGS -L$PSPSDK/lib -L$PSPDEV/psp/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
 	;;
 ps2)
 	_host_os=ps2
@@ -983,7 +985,6 @@ wii | gamecube | nds)
 	fi
 	;;
 psp)
-	PSPSDK=$(psp-config --pspsdk-path)
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
 		exit 1
@@ -2306,7 +2307,6 @@ case $_backend in
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
-		LIBS="$LIBS -lSDL"
 		;;
 	ps2)
 		# TODO ps2

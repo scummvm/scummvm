@@ -32,6 +32,7 @@
 #include "sound/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
+#include "backends/platform/psp/pspkeyboard.h"
 
 #include <SDL.h>
 
@@ -77,12 +78,8 @@ protected:
 	bool	_cursorPaletteDisabled;
 
 	int _graphicMode;
-	Vertex *_vertices;
 	unsigned short* _clut;
-	unsigned short* _kbdClut;
-	bool _keyboardVisible;
-	int _keySelected;
-	int _keyboardMode;
+	PSPKeyboard *_keyboard;
 
 	uint32	_prevButtons;
 	uint32	_lastPadCheck;
