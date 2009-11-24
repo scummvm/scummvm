@@ -26,6 +26,7 @@
 #define COMMON_DEBUG_H
 
 #include "common/scummsys.h"
+#include "common/console.h"
 #include "common/list.h"
 #include "common/str.h"
 
@@ -94,6 +95,12 @@ bool isDebugChannelEnabled(uint32 level);
  * Test whether the given debug level is enabled.
  */
 bool isDebugChannelEnabled(const String &name);
+
+
+/**
+ * Set the output formatter used by debug() and related functions.
+ */
+void setDebugOutputFormatter(OutputFormatter f);
 
 
 }	// End of namespace Common

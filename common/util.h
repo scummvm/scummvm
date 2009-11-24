@@ -26,6 +26,7 @@
 #define COMMON_UTIL_H
 
 #include "common/scummsys.h"
+#include "common/console.h"
 #include "common/str.h"
 
 
@@ -292,29 +293,5 @@ String getGameGUIOptionsDescription(uint32 options);
 void updateGameGUIOptions(const uint32 options);
 
 }	// End of namespace Common
-
-
-#if defined(__GNUC__)
-void error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
-#else
-void NORETURN error(const char *s, ...);
-#endif
-
-#ifdef DISABLE_TEXT_CONSOLE
-
-inline int printf(const char *s, ...) { return 0; }
-
-inline void warning(const char *s, ...) {}
-
-#else
-
-/**
- * Print a warning message to the text console (stderr).
- * Automatically prepends the text "WARNING: " and appends
- * an exclamation mark and a newline.
- */
-void warning(const char *s, ...) GCC_PRINTF(1, 2);
-
-#endif
 
 #endif
