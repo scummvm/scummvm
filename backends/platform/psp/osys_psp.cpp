@@ -147,7 +147,7 @@ void OSystem_PSP::initBackend() {
 
 	_keyboard = new PSPKeyboard();
 	_keyboard->load();
-		
+
 	setTimerCallback(&timer_handler, 10);
 
 	setupMixer();
@@ -216,7 +216,7 @@ void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat 
 	free(_offscreen);
 	_offscreen = (byte *)memalign(16, scrBufSize);
 	bzero(_offscreen, scrBufSize);
-	
+
 	clearOverlay();
 	memset(_palette, 0xFFFF, 256 * sizeof(unsigned short));
 
@@ -358,7 +358,7 @@ void OSystem_PSP::updateScreen() {
 
 	switch (_graphicMode) {
 		case CENTERED_320X200:
-			vertices[0].x = (PSP_SCREEN_WIDTH - 320) / 2; 
+			vertices[0].x = (PSP_SCREEN_WIDTH - 320) / 2;
 			vertices[0].y = (PSP_SCREEN_HEIGHT - 200) / 2;
 			vertices[0].z = 0;
 			vertices[1].x = PSP_SCREEN_WIDTH - (PSP_SCREEN_WIDTH - 320) / 2;
@@ -402,13 +402,13 @@ void OSystem_PSP::updateScreen() {
 		sceGuTexImage(0, 512, 512, _screenWidth, _offscreen+512);
 		vertices2[0].u = 512 + 0.5f;
 		vertices2[0].v = vertices[0].v;
-		vertices2[1].u = vertices[1].u; 
+		vertices2[1].u = vertices[1].u;
 		vertices2[1].v = _screenHeight - 0.5f;
-		vertices2[0].x = vertices[0].x + (vertices[1].x - vertices[0].x) * 511 / 640; 
-		vertices2[0].y = 0; 
+		vertices2[0].x = vertices[0].x + (vertices[1].x - vertices[0].x) * 511 / 640;
+		vertices2[0].y = 0;
 		vertices2[0].z = 0;
-		vertices2[1].x = vertices[1].x; 
-		vertices2[1].y = vertices[1].y; 
+		vertices2[1].x = vertices[1].x;
+		vertices2[1].y = vertices[1].y;
 		vertices2[1].z = 0;
 		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices2);
 	}
@@ -417,11 +417,11 @@ void OSystem_PSP::updateScreen() {
 	// draw overlay
 	if (_overlayVisible) {
 		Vertex *vertOverlay = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
-		vertOverlay[0].x = 0; 
-		vertOverlay[0].y = 0; 
+		vertOverlay[0].x = 0;
+		vertOverlay[0].y = 0;
 		vertOverlay[0].z = 0;
-		vertOverlay[1].x = PSP_SCREEN_WIDTH; 
-		vertOverlay[1].y = PSP_SCREEN_HEIGHT; 
+		vertOverlay[1].x = PSP_SCREEN_WIDTH;
+		vertOverlay[1].y = PSP_SCREEN_HEIGHT;
 		vertOverlay[1].z = 0;
 		vertOverlay[0].u = 0.5f;
 		vertOverlay[0].v = 0.5f;
@@ -447,14 +447,14 @@ void OSystem_PSP::updateScreen() {
 			sceGuTexImage(0, 512, 512, _overlayWidth, _overlayBuffer + 512);
 			vertOverlay2[0].u = 512 + 0.5f;
 			vertOverlay2[0].v = vertOverlay[0].v;
-			vertOverlay2[1].u = vertOverlay[1].u; 
+			vertOverlay2[1].u = vertOverlay[1].u;
 			vertOverlay2[1].v = _overlayHeight - 0.5f;
-			vertOverlay2[0].x = PSP_SCREEN_WIDTH * 512 / 640; 
-			vertOverlay2[0].y = 0; 
+			vertOverlay2[0].x = PSP_SCREEN_WIDTH * 512 / 640;
+			vertOverlay2[0].y = 0;
 			vertOverlay2[0].z = 0;
-			vertOverlay2[1].x = PSP_SCREEN_WIDTH; 
-			vertOverlay2[1].y = PSP_SCREEN_HEIGHT; 
-			vertOverlay2[1].z = 0;			
+			vertOverlay2[1].x = PSP_SCREEN_WIDTH;
+			vertOverlay2[1].y = PSP_SCREEN_HEIGHT;
+			vertOverlay2[1].z = 0;
 			sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertOverlay2);
 		}
 		sceGuDisable(GU_BLEND);
@@ -685,8 +685,8 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 
 	for (unsigned int i = 0; i < h; i++)
 		memcpy(_mouseBuf + i * MOUSE_SIZE, buf + i * w, w);
-		
-	sceKernelDcacheWritebackAll();		
+
+	sceKernelDcacheWritebackAll();
 }
 
 #define PAD_CHECK_TIME	40
@@ -701,12 +701,12 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 	sceCtrlReadBufferPositive(&pad, 1);
 
 	bool usedInput, haveEvent;
-	
+
 	haveEvent = _keyboard->processInput(event, pad, usedInput);
-	
+
 	if (usedInput) 	// Check if the keyboard used up the input
 		return haveEvent;
-	
+
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
 	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE | PSP_CTRL_TRIANGLE)) {
@@ -840,14 +840,14 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 }
 
 bool OSystem_PSP::pollEvent(Common::Event &event) {
-	
-	// If we're polling for events, we should check for pausing the engine 
+
+	// If we're polling for events, we should check for pausing the engine
 	// Pausing the engine is a necessary fix for games that use the timer for music synchronization
 	// 	recovering many hours later causes the game to crash. We're polling without mutexes since it's not critical to
 	//  get it right now.
 
 	PowerMan.pollPauseEngine();
-	
+
 	return processInput(event);
 
 }

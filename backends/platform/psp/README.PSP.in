@@ -38,8 +38,8 @@ Notes
 =====
 
 - Plugin files are NOT interchangeable between versions! You must copy ALL the
-  plugin files that come with every version of scummvm. They sit in the /plugin 
-  subdirectory. If you get a crash upon startup, try deleting all the existing 
+  plugin files that come with every version of scummvm. They sit in the /plugin
+  subdirectory. If you get a crash upon startup, try deleting all the existing
   plugin files in the plugin directory and copying the new ones over again.
 
 - While it's possible to compress certain game resources to reduce their size,
@@ -55,7 +55,7 @@ Frequently Asked Questions
 ==========================
 
 Q:  Pressing select doesn't make the virtual keyboard show up on screen!
-A:  You need to make sure that the kbd.zip file is in the same directory as the scummvm executable.	
+A:  You need to make sure that the kbd.zip file is in the same directory as the scummvm executable.
 
 Q:  Scummvm crashes upon starting up!
 A:  See the first note above.

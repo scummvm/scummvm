@@ -67,7 +67,7 @@ endif
 CXX      = psp-g++
 CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
 DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB
-LDFLAGS  := 
+LDFLAGS  :=
 INCDIR   := $(srcdir) . $(srcdir)/engines/ $(PSPSDK)/include
 INCLUDES := $(addprefix -I, $(INCDIR))
 #EXECUTABLE = $(TARGET)
@@ -121,21 +121,21 @@ endif
 
 # SDL Libs and Flags
 SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags)
-SDLLIBS := $(shell $(PSPBIN)/sdl-config --libs)
+SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
 PSPLIBS = -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
- 	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio
+	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio
 
 # Add in PSPSDK includes and libraries.
 CXXFLAGS += $(SDLFLAGS)
-LIBS     += -lpng -lz -lstdc++ -lc $(SDLLIBS) $(PSPLIBS)  
+LIBS     += -lpng -lz -lstdc++ -lc $(SDLLIBS) $(PSPLIBS)
 
 OBJS := powerman.o \
 	psp_main.o \
 	osys_psp.o \
 	trace.o \
 	psploader.o \
-	pspkeyboard.o 
+	pspkeyboard.o
 
 
 # Include common Scummvm makefile
