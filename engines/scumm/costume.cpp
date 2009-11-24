@@ -1201,17 +1201,13 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 		palette[3] = 11;
 	}
 
-	int width = *data++;
-	int height = *data++;
-	int offsetX = *data++;
-	int offsetY = *data++;
-	// these two fields seems to be most times zero
-	// byte6 was one time 255 in one costume I tried
-//	int byte5 = *data++;		// 0x1F80			// This value is never used
-//	int byte6 = *data++;		// 0x1F86			// This value is subtracted from ?actor drawy? at 0x2383
-//	debug(3, "byte5: %d", byte5);
-//	debug(3, "byte6: %d", byte6);
-	data += 2;
+	int width = data[0];
+	int height = data[1];
+	int offsetX = _xmove + data[2];
+	int offsetY = _ymove + data[3];
+	_xmove += (int8)data[4];
+	_ymove += (int8)data[5];
+	data += 6;
 
 	if (!width || !height)
 		return 0;
