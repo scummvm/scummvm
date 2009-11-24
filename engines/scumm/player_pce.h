@@ -31,6 +31,8 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
+#ifdef USE_RGB_COLOR
+
 namespace Scumm {
 
 class ScummEngine;
@@ -127,5 +129,7 @@ private:
 };
 
 } // End of namespace Scumm
+
+#endif // USE_RGB_COLOR
 
 #endif

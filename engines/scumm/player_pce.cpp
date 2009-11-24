@@ -34,6 +34,8 @@
 #include <math.h>
 #include "player_pce.h"
 
+#ifdef USE_RGB_COLOR
+
 namespace Scumm {
 
 // CPU and PSG use the same base clock but with a different divider
@@ -753,3 +755,5 @@ int Player_PCE::getMusicTimer() const {
 }
 
 } // End of namespace Scumm
+
+#endif // USE_RGB_COLOR

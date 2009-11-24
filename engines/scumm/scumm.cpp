@@ -1726,8 +1726,10 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 3) {
 		_musicEngine = new Player_V3A(this, _mixer);
+#ifdef USE_RGB_COLOR
 	} else if (_game.platform == Common::kPlatformPCEngine && _game.version == 3) {
 		_musicEngine = new Player_PCE(this, _mixer);
+#endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
