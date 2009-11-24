@@ -107,13 +107,11 @@ PSPKeyboard::PSPKeyboard() {
 }
 
 // Destructor
-PSPKeyboard::~PSPKeyboard()
-{
+PSPKeyboard::~PSPKeyboard() {
 	if (!_init) return;
 
 	int a;
-	for (a = 0; a < guiStringsSize; a++)
-	{
+	for (a = 0; a < guiStringsSize; a++) {
 		free(_keyTextures[a].texture);
 		free(_keyTextures[a].palette);
 		_keyTextures[a].texture = NULL;
@@ -144,7 +142,6 @@ const char *PSPKeyboard::_guiStrings[] = {
  *  Uses the state machine.
  */
 bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad, bool &usedInput) {
-
 	usedInput = false;			// Assume we don't use an input
 	bool haveEvent = false;		// Whether we have an event for the event manager to process
 	event.kbd.flags = 0;
@@ -439,8 +436,7 @@ void PSPKeyboard::render() {
 
 //  Render the given surface at the current screen position offset by screenX, screenY
 //  the surface will be internally offset by offsetX,offsetY. And the size of it to be drawn will be intWidth,intHeight
-void PSPKeyboard::surface_draw_offset(struct gu_surface* surface, int screenX, int screenY, int offsetX, int offsetY, int intWidth, int intHeight)
-{
+void PSPKeyboard::surface_draw_offset(struct gu_surface* surface, int screenX, int screenY, int offsetX, int offsetY, int intWidth, int intHeight) {
 	sceGuAlphaFunc( GU_GREATER, 0, 0xff );
 	sceGuEnable( GU_ALPHA_TEST );
 	sceGuTexFunc(GU_TFX_BLEND,GU_TCC_RGBA);
@@ -451,13 +447,11 @@ void PSPKeyboard::surface_draw_offset(struct gu_surface* surface, int screenX, i
 		sceGuClutMode(GU_PSM_8888, 0, 0xFF, 0);
 		sceGuClutLoad(32, surface->palette); // upload 32*8 entries (256)
 		sceGuTexMode(GU_PSM_T8, 0, 0, 0);   // 8-bit image
-	}
-	else if (surface->paletteSize == 16) {	// 4-bit
+	} else if (surface->paletteSize == 16) {	// 4-bit
 		sceGuClutMode(GU_PSM_8888, 0, 0x0F, 0);
 		sceGuClutLoad(2, surface->palette); // upload 2*8 entries (16)
 		sceGuTexMode(GU_PSM_T4, 0, 0, 0);   // 4-bit image
-	} 
-	else {	// 32-bit
+	} else {	// 32-bit
 		sceGuTexMode(GU_PSM_8888,0,0,GU_FALSE);
 	}
 	sceGuTexImage(0,surface->surface_width, surface->surface_height,surface->surface_width, surface->texture);
@@ -486,8 +480,7 @@ void PSPKeyboard::surface_draw_offset(struct gu_surface* surface, int screenX, i
 }
 
 /* load all the guibits that make up the OSK */
-bool PSPKeyboard::load()
-{
+bool PSPKeyboard::load() {
 	unsigned char *temp_texture = NULL;
 	uint32 *temp_palette = NULL;
 	int a;
@@ -523,8 +516,7 @@ bool PSPKeyboard::load()
 	}
 	
 	// Loop through different png images
-	for (a = 0; a < guiStringsSize; a++)
-	{
+	for (a = 0; a < guiStringsSize; a++) {
 		uint32 height = 0, width = 0, paletteSize = 0;
 
 #ifdef PSP_KB_DEBUG		
@@ -562,8 +554,7 @@ bool PSPKeyboard::load()
 			goto ERROR;
 		}
 		
-		if (get_png_image_size(file, &width, &height, &paletteSize) == 0) // Check image size and palette size
-		{	
+		if (get_png_image_size(file, &width, &height, &paletteSize) == 0) { // Check image size and palette size
 			// Allocate memory for image
 #ifdef PSP_KB_DEBUG
 			fprintf(stderr, "load(): width=%d, height=%d, paletteSize=%d\n", width, height, paletteSize);
@@ -600,8 +591,7 @@ bool PSPKeyboard::load()
 			
 			if (load_png_image(file, temp_texture, temp_palette) != 0)
 				goto ERROR;
-			else	// Success
-			{
+			else {	// Success
 #ifdef PSP_KB_DEBUG
 				fprintf(stderr, "Managed to load the image.\n");
 #endif				
@@ -670,7 +660,6 @@ ERROR:
 // Copy texture from regular size image to power of 2 size image
 //
 void PSPKeyboard::block_copy(gu_surface* surface, u8 *texture) {
-	
 	u32 stride = 0, width = 0;
 	
 	switch(surface->paletteSize) {
@@ -709,11 +698,9 @@ void PSPKeyboard::block_copy(gu_surface* surface, u8 *texture) {
 // Convert 4 bit images to match weird PSP format
 //
 void PSPKeyboard::flipNibbles(gu_surface* surface) {
-
 	u32 *dest = (u32 *)surface->texture;
 	
 	for (u32 y = 0 ; y < surface->texture_height ; y++) {
-	
 		for (u32 x = 0; x < (surface->surface_width >> 3); x++) {
 			u32 val = *dest;
 			*dest++ = ((val >> 4) & 0x0F0F0F0F) | ((val << 4) & 0xF0F0F0F0);
@@ -798,7 +785,6 @@ int PSPKeyboard::load_png_image(Common::SeekableReadStream *file, unsigned char 
 	png_set_strip_16(png_ptr);
 
 	if (color_type == PNG_COLOR_TYPE_PALETTE) {
-		
 		// We copy the palette
 		uint32 *dstPal = palette;
 		png_colorp srcPal = info_ptr->palette;
@@ -814,16 +800,13 @@ int PSPKeyboard::load_png_image(Common::SeekableReadStream *file, unsigned char 
 			return -1;
 		}
 		
-		for (y = 0; y < height; y++)
-		{
+		for (y = 0; y < height; y++) {
 			png_read_row(png_ptr, line, png_bytep_NULL);
 			memcpy(&ImageBuffer[y * info_ptr->rowbytes], line, info_ptr->rowbytes);
 		}
 		
 		free(line);
-	}
-	else {	// Not a palettized image
-	
+	} else {	// Not a palettized image
 		if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
 		// Convert trans channel to alpha for 32 bits
 		if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
@@ -836,8 +819,7 @@ int PSPKeyboard::load_png_image(Common::SeekableReadStream *file, unsigned char 
 		}
 
 		u32* Image = (u32 *)ImageBuffer;
-		for (y = 0; y < height; y++)
-		{
+		for (y = 0; y < height; y++) {
 			png_read_row(png_ptr, (u8*) line, png_bytep_NULL);
 			for (x = 0; x < width; x++)
 			{
