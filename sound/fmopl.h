@@ -71,6 +71,8 @@ public:
 
 	/**
 	 * Detects a driver for the specific type.
+	 *
+	 * @return Returns a valid driver id on success, -1 otherwise.
 	 */
 	static DriverId detect(OplType type);
 
