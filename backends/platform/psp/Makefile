@@ -128,7 +128,7 @@ PSPLIBS = -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
 
 # Add in PSPSDK includes and libraries.
 CXXFLAGS += $(SDLFLAGS)
-LIBS     += -lpng -lz -lstdc++ -lc $(SDLLIBS) $(PSPLIBS)
+LIBS     += -lpng -lSDL -lz $(findstring -lGL,$(SDLLIBS)) -lstdc++ -lc -lm $(filter -L%,$(SDLLIBS)) $(PSPLIBS)
 
 OBJS := powerman.o \
 	psp_main.o \
