@@ -79,11 +79,14 @@ Config::DriverId Config::detect(OplType type) {
 	// the requested OPL chip.
 	if (drv != -1 && drv != kAuto) {
 		// If the chip is supported, just use the driver.
-		if ((flags & _drivers[drv].flags))
+		if ((flags & _drivers[drv].flags)) {
 			return drv;
-		// When it doesn't support the flags fall back to auto detection
-		else
-			drv = -1;
+		} else {
+			// Else we will output a warning and just
+			// return that no valid driver is found.
+			warning("Your selected OPL driver \"%s\" does not support type %d emulation, which is requested by your game.", _drivers[drv].description, type);
+			return -1;
+		}
 	}
 
 	// Detect the first matching emulator
