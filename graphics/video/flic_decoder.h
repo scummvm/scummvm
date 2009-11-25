@@ -38,7 +38,7 @@ namespace Graphics {
 
 /**
  *
- * Decoder for DXA videos.
+ * Decoder for FLIC videos.
  * Video decoder used in engines:
  *  - tucker
  */
