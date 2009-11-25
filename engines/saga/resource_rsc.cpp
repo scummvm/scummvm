@@ -98,7 +98,7 @@ bool Resource_RSC::loadMacContext(ResourceContext *context) {
 	byte macNameLen;
 	bool notSagaContext = false;
 
-	if (context->file->size() < RSC_MIN_FILESIZE + MAC_BINARY_HEADER_SIZE) {
+	if (context->fileSize < RSC_MIN_FILESIZE + MAC_BINARY_HEADER_SIZE) {
 		return false;
 	}
 
@@ -128,8 +128,8 @@ bool Resource_RSC::loadMacContext(ResourceContext *context) {
 	macDataLength = context->file->readUint32BE();
 	macMapLength = context->file->readUint32BE();
 
-	if (macDataOffset >= (uint)context->file->size() || macMapOffset >= (uint)context->file->size() ||
-		macDataLength + macMapLength > (uint)context->file->size()) {
+	if (macDataOffset >= (uint)context->fileSize || macMapOffset >= (uint)context->fileSize ||
+		macDataLength + macMapLength > (uint)context->fileSize) {
 			return false;
 	}
 

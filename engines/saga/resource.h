@@ -69,6 +69,7 @@ struct ResourceContext {
 	const char *fileName;
 	uint16 fileType;
 	Common::File *file;
+	int32 fileSize;
 	int serial;			// IHNM speech files
 
 	bool isCompressed;

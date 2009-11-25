@@ -95,7 +95,7 @@ bool Resource::loadResContext_v1(ResourceContext *context, uint32 contextOffset,
 			resourceData->offset = contextOffset + readS1.readUint32();
 			resourceData->size = readS1.readUint32();
 			//sanity check
-			if ((resourceData->offset > (uint)context->file->size()) || (resourceData->size > contextSize)) {
+			if ((resourceData->offset > (uint)context->fileSize) || (resourceData->size > contextSize)) {
 				result = false;
 				break;
 			}
@@ -123,6 +123,7 @@ bool Resource::loadContext(ResourceContext *context) {
 		return false;
 	}
 
+	context->fileSize = context->file->size();
 	context->isBigEndian = _vm->isBigEndian();
 
 	if (context->fileType & GAME_SWAPENDIAN)
@@ -132,7 +133,7 @@ bool Resource::loadContext(ResourceContext *context) {
 	context->fileType &= ~GAME_MACBINARY;
 
 	if (!isMacBinary) {
-		if (!loadResContext(context, 0, context->file->size())) {
+		if (!loadResContext(context, 0, context->fileSize)) {
 			return false;
 		}
 	} else {
