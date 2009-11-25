@@ -24,6 +24,7 @@
  */
 
 /**
+ * @file
  * Sound decoder used in engines:
  *  - agos
  *  - parallaction

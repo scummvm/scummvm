@@ -22,6 +22,7 @@
  */
 
 /**
+ * @file
  * Sound decoder used in engines:
  *  - cine
  */

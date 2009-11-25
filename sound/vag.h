@@ -23,9 +23,11 @@
  *
  */
 
-/* Sound decoder used in engines:
- * sword1 (PSX port of the game)
- * sword2 (PSX port of the game)
+/**
+ * @file
+ * Sound decoder used in engines:
+ * - sword1 (PSX port of the game)
+ * - sword2 (PSX port of the game)
  */
 
 #ifndef SOUND_VAG_H
