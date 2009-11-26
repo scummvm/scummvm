@@ -65,8 +65,9 @@
  * functionality has been implemented. No further work has been done on this for some time, so progress 
  * on this part of the engine can be considered frozen.
  *
- * Supported games:
- * - No fully supported games yet
+ * Games this engine will support:
+ * MADS Games: Dragonsphere, Return of the Phantom, Rex Nebular and the Cosmic Gender Bender
+ * M4 Games: Orion Burger, The Riddle of Master Lu
  */
 namespace M4 {
 
