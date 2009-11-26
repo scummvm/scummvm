@@ -4,7 +4,7 @@ MODULE_OBJS := \
 	archive.o \
 	config-file.o \
 	config-manager.o \
-	console.o \
+	textconsole.o \
 	debug.o \
 	EventDispatcher.o \
 	EventRecorder.o \

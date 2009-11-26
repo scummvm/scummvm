@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/console.h"
+#include "common/textconsole.h"
 #include "common/system.h"
 
 namespace Common {
