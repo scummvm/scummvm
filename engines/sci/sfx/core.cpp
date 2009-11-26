@@ -68,7 +68,7 @@ protected:
 	bool _iteratorIsDone;
 	uint32 _tempo;
 
-	Common::Mutex *_mutex;
+	Common::Mutex _mutex;
 	int _volume;
 
 	void play_song(SongIterator *it);
@@ -148,7 +148,6 @@ SfxPlayer::SfxPlayer() {
 	_iteratorIsDone = false;
 	_tempo = 0;
 
-	_mutex = 0;
 	_volume = 15;
 }
 
@@ -157,7 +156,6 @@ SfxPlayer::~SfxPlayer() {
 		_mididrv->close();
 		delete _mididrv;
 	}
-	delete _mutex;
 	delete _iterator;
 	_iterator = NULL;
 }
@@ -211,7 +209,7 @@ void SfxPlayer::tell_synth(int buf_nr, byte *buf) {
 void SfxPlayer::player_timer_callback(void *refCon) {
 	SfxPlayer *thePlayer = (SfxPlayer *)refCon;
 	assert(refCon);
-	Common::StackLock lock(*thePlayer->_mutex);
+	Common::StackLock lock(thePlayer->_mutex);
 
 	if (thePlayer->_iterator && !thePlayer->_iteratorIsDone && !thePlayer->_paused) {
 		thePlayer->play_song(thePlayer->_iterator);
@@ -252,8 +250,6 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 	_currentTime = Audio::Timestamp(time, 1000000 / _tempo);
 	_wakeupTime = Audio::Timestamp(time, SFX_TICKS_PER_SEC);
 
-	_mutex = new Common::Mutex();
-
 	_mididrv->setTimerCallback(this, player_timer_callback);
 	_mididrv->open(resMan);
 	_mididrv->setVolume(_volume);
@@ -262,7 +258,7 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 }
 
 Common::Error SfxPlayer::add_iterator(SongIterator *it, uint32 start_time) {
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayMask()));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(_mididrv->hasRhythmChannel()));
 
@@ -280,7 +276,7 @@ Common::Error SfxPlayer::add_iterator(SongIterator *it, uint32 start_time) {
 
 Common::Error SfxPlayer::stop() {
 	debug(3, "Player: Stopping song iterator %p", (void *)_iterator);
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 	delete _iterator;
 	_iterator = NULL;
 	for (int i = 0; i < MIDI_CHANNELS; i++)
@@ -290,7 +286,7 @@ Common::Error SfxPlayer::stop() {
 }
 
 Common::Error SfxPlayer::iterator_message(const SongIterator::Message &msg) {
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 	if (!_iterator) {
 		return Common::kUnknownError;
 	}
@@ -301,7 +297,7 @@ Common::Error SfxPlayer::iterator_message(const SongIterator::Message &msg) {
 }
 
 Common::Error SfxPlayer::pause() {
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 
 	_paused = true;
 	_pauseTimeDiff = _wakeupTime.msecsDiff(_currentTime);
@@ -312,7 +308,7 @@ Common::Error SfxPlayer::pause() {
 }
 
 Common::Error SfxPlayer::resume() {
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 
 	_wakeupTime = Audio::Timestamp(_currentTime.msecs() + _pauseTimeDiff, SFX_TICKS_PER_SEC);
 	_mididrv->playSwitch(true);
