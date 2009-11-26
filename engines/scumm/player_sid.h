@@ -35,7 +35,7 @@
 
 namespace Scumm {
 
-// the "channel" parameters seem to be in fact SID register 
+// the "channel" parameters seem to be in fact SID register
 // offsets. Should be replaced.
 enum sid_reg_t {
 	FREQ_VOICE1,
