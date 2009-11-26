@@ -46,10 +46,56 @@ class KyraMetaEngine;
 /**
  * This is the namespace of the Kyra engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ *
+ * The KYRA engine supports all three Kyrandia games by Westwood. It also supports Westwood's
+ * Lands of Lore. There are various platform ports of the different games, almost all of them are
+ * fully supported. Only the Macintosh port of Kyrandia 1 makes a difference here, which lacks
+ * support for sound effects and music.
+ *
+ * The different translations of the games are mostly supported, since every translation
+ * requires some work for kyra.dat for example, it is almost impossible to support translations,
+ * without owning them. There a currently a few reported unsupported translations:
+ *
+ * - Official translactions
+ * None known.
+ * - Probably official translations (currently no sources are known to verify this)
+ * Kyrandia 2 Spanish (feature request #2499966 "KYRA2: Add support for Spanish floppy version")
+ * - Doubtful official translations (no sources here either, but less likely to be official)
+ * Kyrandia 1 Korean (feature request #1758252 "KYRA1: Add support for Korean/DOS version")
+ * Kyrandia 2 Polish (feature request #2146192 "KYRA2: Add support for Polish floppy version")
+ * - Fan translations:
+ * Kyrandia 1 Russian (no feature request)
+ * Kyrandia 2 Russian (no feature request)
+ * Kyrandia 3 Russian (feature request #2812792 "Kyrandia3 Russian")
+ * 
+ * The primary maintainer for the engine is LordHoto, altough some parts are maintained by _athrxx.
+ * If you have questions about parts of the code, the following rough description might help in
+ * determining who you should ask:
+ * _athrxx is the maintainer for the Lands of Lore subengine, he also maintains most of the FM-TOWNS
+ * and PC98 specific code (especially the sound code, also some ingame code) and the Kyrandia 2
+ * sequence player code.
+ * LordHoto is responsible for the rest of the codebase, he also worked on the graphics output for 16
+ * color PC98 games.
+ *
+ * Other people who worked on this engine include cyx, who initially started to work on Kyrandia 1
+ * support, vinterstum, who did various things for Kyrandia 1 and started to work on the Kyrandia 2
+ * sequence player code and also on the TIM script code, and eriktorbjorn, who helped out naming
+ * our AdLib player code and also contributed a work around for a music bug in the "Pool of Sorrow"
+ * scene of Kyrandia 1, which is also present in the original. All three mentioned developers are
+ * not actively working on KYRA anymore.
+ *
+ * The engine is mostly finished code wise. A possible remaining task is proper refactoring,
+ * which might help in reducing binary size and along with it runtime memory use, but of course
+ * might lead to regressions (since the current code makes no problems on our low end ports, it
+ * is pretty minor priority though, since the benefit would be mostly nicer code). The biggest
+ * task left is the kyra.dat handling, which is currently being revised by LordHoto.
  *
  * Supported games:
- * - ???
+ * - The Legend of Kyrandia (fully supported, except for Macintosh port, which lacks sound)
+ * - (The) Hand of Fate (fully supported)
+ * - Malcolm's Revenge (fully supported)
+ * - Lands of Lore: The Throne of Chaos (completable, still work in progress)
  */
 namespace Kyra {
 
