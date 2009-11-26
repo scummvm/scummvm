@@ -33,24 +33,6 @@
 
 namespace Sci {
 
-struct _midi_device {
-	const char *name;
-
-	Common::Error (*init)(struct _midi_device *self);
-	/* Initializes the device
-	** Parameters: (midi_device_t *) self: Self reference
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError if the device could not be
-	**                   opened
-	*/
-
-	Common::Error (*set_option)(struct _midi_device *self, char *name, char *value);
-	/* Sets an option for the device
-	** Parameters: (char *) name: Name of the option to set
-	**             (char *) value: Value of the option to set
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError otherwise (unsupported option)
-	*/
-};
-
 struct midi_writer_t {
 	char *name; /* Name description of the device */
 
