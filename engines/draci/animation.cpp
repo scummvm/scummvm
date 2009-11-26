@@ -406,10 +406,10 @@ void AnimationManager::deleteAnimation(Animation *anim) {
 			// Remember index of the deleted animation
 			index = (*it)->getIndex();
 
+			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", anim->getID());
+
 			delete *it;
 			_animations.erase(it);
-
-			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", anim->getID());
 
 			break;
 		}
