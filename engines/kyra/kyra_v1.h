@@ -57,7 +57,7 @@ class KyraMetaEngine;
  * requires some work for kyra.dat for example, it is almost impossible to support translations,
  * without owning them. There a currently a few reported unsupported translations:
  *
- * - Official translactions
+ * - Official translations
  * None known.
  * - Probably official translations (currently no sources are known to verify this)
  * Kyrandia 2 Spanish (feature request #2499966 "KYRA2: Add support for Spanish floppy version")
@@ -69,7 +69,7 @@ class KyraMetaEngine;
  * Kyrandia 2 Russian (no feature request)
  * Kyrandia 3 Russian (feature request #2812792 "Kyrandia3 Russian")
  * 
- * The primary maintainer for the engine is LordHoto, altough some parts are maintained by _athrxx.
+ * The primary maintainer for the engine is LordHoto, although some parts are maintained by _athrxx.
  * If you have questions about parts of the code, the following rough description might help in
  * determining who you should ask:
  * _athrxx is the maintainer for the Lands of Lore subengine, he also maintains most of the FM-TOWNS
