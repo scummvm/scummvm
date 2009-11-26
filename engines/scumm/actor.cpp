@@ -572,8 +572,17 @@ void Actor_v2::walkActor() {
 
 				_walkdata.curbox = next_box;
 
-				getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, tmp.x, tmp.y);
-				getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
+				// WORKAROUND: The route of the meteor landing in the introduction isn't correct. 
+				// MM V0 in contrast to MM V2 uses two walkboxes instead of just one. Hence a route
+				// from walkbox 1 to 0 is calculated first. This causes the meteor to fly on a 
+				// horizontal line to walkbox 0 then vertically to the ground.
+				// To fix this problem, the box-to-box routing has been disabled in room 33.
+				if (_vm->_game.version == 0 && _vm->_currentRoom == 33) {
+					foundPath = _walkdata.dest;
+				} else {
+					getClosestPtOnBox(_vm->getBoxCoordinates(_walkdata.curbox), _pos.x, _pos.y, tmp.x, tmp.y);
+					getClosestPtOnBox(_vm->getBoxCoordinates(_walkbox), tmp.x, tmp.y, foundPath.x, foundPath.y);
+				}
 			}
 			calcMovementFactor(foundPath);
 		}
