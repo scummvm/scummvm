@@ -51,10 +51,22 @@
 /**
  * This is the namespace of the M4 engine.
  *
- * Status of this engine: ???
+ * Status of this engine: 
+ * This engine is eventually intended to compromise two evolutions of the same engine: 'MADS' for the
+ * first generation of the engine, and 'M4' for the second generation. This engine is called M4 overall
+ * simply because work first began on the M4 side (focusing on the game 'Orion Burger').
+ *
+ * MADS Status: The current game being focused on is 'Rex Nebular' by DreamMaster, who is implementing 
+ * functionality as he disassembles the games original executables. Currently the engine has no particular
+ * game logic implemented, although it does have the title screen implemented, and displays the initial 
+ * game screen and some game interface elements
+ *
+ * M4 Status: Work on this engine began with the game 'Orion Burger'. Some of the user interface
+ * functionality has been implemented. No further work has been done on this for some time, so progress 
+ * on this part of the engine can be considered frozen.
  *
  * Supported games:
- * - ???
+ * - No fully supported games yet
  */
 namespace M4 {
 
