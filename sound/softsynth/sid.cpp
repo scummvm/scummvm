@@ -58,19 +58,19 @@ void WaveformGenerator::set_sync_source(WaveformGenerator* source) {
 }
 
 void WaveformGenerator::writeFREQ_LO(reg8 freq_lo) {
-	freq = freq & 0xff00 | freq_lo & 0x00ff;
+	freq = (freq & 0xff00) | (freq_lo & 0x00ff);
 }
 
 void WaveformGenerator::writeFREQ_HI(reg8 freq_hi) {
-	freq = (freq_hi << 8) & 0xff00 | freq & 0x00ff;
+	freq = ((freq_hi << 8) & 0xff00) | (freq & 0x00ff);
 }
 
 void WaveformGenerator::writePW_LO(reg8 pw_lo) {
-	pw = pw & 0xf00 | pw_lo & 0x0ff;
+	pw = (pw & 0xf00) | (pw_lo & 0x0ff);
 }
 
 void WaveformGenerator::writePW_HI(reg8 pw_hi) {
-	pw = (pw_hi << 8) & 0xf00 | pw & 0x0ff;
+	pw = ((pw_hi << 8) & 0xf00) | (pw & 0x0ff);
 }
 
 void WaveformGenerator::writeCONTROL_REG(reg8 control) {
@@ -542,12 +542,12 @@ void Filter::reset(){
 }
 
 void Filter::writeFC_LO(reg8 fc_lo) {
-	fc = fc & 0x7f8 | fc_lo & 0x007;
+	fc = (fc & 0x7f8) | (fc_lo & 0x007);
 	set_w0();
 }
 
 void Filter::writeFC_HI(reg8 fc_hi) {
-	fc = (fc_hi << 3) & 0x7f8 | fc & 0x007;
+	fc = ((fc_hi << 3) & 0x7f8) | (fc & 0x007);
 	set_w0();
 }
 
