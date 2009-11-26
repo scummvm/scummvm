@@ -308,6 +308,7 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 		// removes this menu screen from being displayed
 		vm->_mouse->cursorOn();
 		vm->_viewManager->addView(vm->_scene);
+		vm->_viewManager->addView(vm->_actionsView);
 		vm->_scene->loadScene(101);
 
 		// **DEBUG** - set the default object

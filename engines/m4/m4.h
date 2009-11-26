@@ -173,6 +173,7 @@ public:
 	Font *_font;
 	Actor *_actor;
 	Scene *_scene;
+	ActionsView *_actionsView;
 	Dialogs *_dialogs;
 	M4Surface *_screen;
 	Inventory *_inventory;

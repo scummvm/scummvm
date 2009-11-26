@@ -127,6 +127,29 @@ private:
 	void nextCommonCursor();
 };
 
+enum FontMode {MODE_0, MODE_1, MODE_2};
+
+class InterfaceElement: public View {
+protected:
+	void setFontMode(FontMode newMode);
+public:
+	InterfaceElement(M4Engine *vm, const Common::Rect &viewBounds, bool transparent = true);
+	~InterfaceElement() {};
+};
+
+class ActionsView: public InterfaceElement {
+private:
+	int _highlightedAction;
+
+	void getActionRect(int actionId, Common::Rect &bounds);
+public:
+	ActionsView(M4Engine *vm);
+	~ActionsView() {};
+
+	void onRefresh(RectList *rects, M4Surface *destSurface);
+	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
+};
+
 } // End of namespace M4
 
 #endif

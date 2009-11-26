@@ -56,6 +56,7 @@ enum M4MouseState {
 
 enum M4CommonCursors {
 	CURSOR_ARROW = 0,
+	CURSOR_WAIT = 1,
 	CURSOR_HOURGLASS = 5,
 	CURSOR_LOOK = 6,
 	CURSOR_TAKE = 8,

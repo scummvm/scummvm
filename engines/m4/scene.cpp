@@ -717,4 +717,171 @@ void Scene::setSelectedObject(int objectNumber) {
 	_selectedObject = objectNumber;
 }
 
+/*
+ * TODO: decide if this should be kept centralised like it is in the original, or separated for the different
+ * visual elements
+void Scene::getInterfaceObjectRect(int xv, int yv, Common::Rect &bounds) {
+	// TODO: Implement these later as proper fields of the interface when I understand them better
+	const int interfaceObjY = 0;
+	const int interfaceObjX = 0;
+
+	int16 height = 8, width = 0;
+	bounds.top = 0; bounds.left = 0;
+
+	// Handle X position and width
+	switch (xv) {
+	case 1:
+		bounds.left = ((yv / 5) << 3) + 3;
+		width = ((yv / 5) << 6) + 2;
+		break;
+
+	case 2:
+		if ((yv < interfaceObjX) || (yv > (interfaceObjX + 5))) return;
+		bounds.left = ((yv - interfaceObjX) << 3) + 3;
+		width = yv * 69 + 90;
+		break;
+
+	case 6:
+		bounds.left = (yv << 3) + 3;
+		width = yv * 318 + 2;
+		break;
+
+	case 7:
+		bounds.left = 0;
+		width = (yv == 4) ? 75 : 73;
+		break;
+
+	default:
+		bounds.left = (yv << 3) + 3;
+		width = yv * 80 + 240;
+		break;
+	}
+
+	// Handle Y position and height
+	if (xv ==  7) {
+		switch (yv) {
+		case 1:
+			bounds.top = 4;
+			height = 7;
+			break;
+		case 2:
+			bounds.top = 35;
+			height = 7;
+			break;
+		case 3:
+			bounds.top = 12;
+			height = 22;
+			break;
+		case 4:
+			bounds.top = interfaceObjY + 14;
+			height = 1;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Set the right and bottom bounds based on the specified size
+	bounds.right = bounds.left + width;
+	bounds.bottom = bounds.top + height;
+}
+*/
+
+/**
+ *--------------------------------------------------------------------------
+ * Base class for interface elements
+ *
+ *--------------------------------------------------------------------------
+ */
+
+InterfaceElement::InterfaceElement(M4Engine *vm, const Common::Rect &viewBounds, bool transparent):
+					View(vm, viewBounds, transparent) {
+}
+
+void InterfaceElement::setFontMode(FontMode newMode) {
+	switch (newMode) {
+	case MODE_0:
+		_vm->_font->setColors(4, 4, 0xff);
+		break;
+	case MODE_1:
+		//_vm->_font->setColors(5, 5, 0xff);
+		_vm->_font->setColors(0xff, 0xff, 0xff);
+		break;
+	case MODE_2:
+		_vm->_font->setColors(6, 6, 0xff);
+		break;
+	}
+}
+
+/**
+ *--------------------------------------------------------------------------
+ * ActionsView handles the display of the actions/verb list
+ *
+ *--------------------------------------------------------------------------
+ */
+
+ActionsView::ActionsView(M4Engine *vm): InterfaceElement(vm, Common::Rect(0, MADS_SURFACE_HEIGHT, 70, 
+														 vm->_screen->height())) {
+	_screenType = VIEWID_INTERFACE;
+	_highlightedAction = 0;
+}
+
+void ActionsView::getActionRect(int actionId, Common::Rect &bounds) {
+	int idx = actionId - kVerbLook;
+
+	bounds.left = (idx / 5) * 32 + 2;
+	bounds.top = (idx % 5) * 8 + MADS_SURFACE_HEIGHT + 3;
+	bounds.right = ((idx / 5) + 1) * 32 + 3;
+	bounds.bottom = ((idx % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 4;
+}
+
+void ActionsView::onRefresh(RectList *rects, M4Surface *destSurface) {
+	_vm->_font->setFont(FONT_INTERFACE_MADS);
+
+	int actionId = kVerbLook;
+	for (int x = 0; x < 2; ++x) {
+		for (int y = 0; y < 5; ++y, ++actionId) {
+			// Get the bounds for the next item
+			Common::Rect r;
+			getActionRect(actionId, r);
+
+			// Determine the font colour depending on whether an item is selected
+			setFontMode((_highlightedAction == actionId) ? MODE_1 : MODE_0);
+
+			// Get the verb action and capitalise it
+			const char *verbStr = _vm->_globals->getVocab(actionId);
+			char buffer[20];
+			strcpy(buffer, verbStr);
+			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
+
+			// Display the verb
+			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
+		}
+	}
+}
+
+bool ActionsView::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
+	if (eventType == MEVENT_MOVE) {
+		// If the cursor isn't in "wait mode", reset it back to the normal cursor
+		if (_vm->_mouse->getCursorNum() != CURSOR_WAIT)
+			_vm->_mouse->setCursorNum(CURSOR_ARROW);
+
+		// Check if any of the actions are currently highlighted
+		_highlightedAction = 0;
+		for (int i = kVerbLook; i <= kVerbThrow; ++i) {
+			Common::Rect r;
+			getActionRect(i, r);
+
+			if (r.contains(x, y)) {
+				_highlightedAction = i;
+				break;
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 } // End of namespace M4
