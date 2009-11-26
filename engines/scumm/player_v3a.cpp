@@ -345,7 +345,7 @@ void Player_V3A::playMusic() {
 	}
 }
 
-int Player_V3A::getMusicTimer() const {
+int Player_V3A::getMusicTimer() {
 	return _music_timer / 30;
 }
 

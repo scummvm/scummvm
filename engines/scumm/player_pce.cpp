@@ -751,7 +751,7 @@ int Player_PCE::getSoundStatus(int nr) const {
 	return 0;
 }
 
-int Player_PCE::getMusicTimer() const {
+int Player_PCE::getMusicTimer() {
 	return 0;
 }
 

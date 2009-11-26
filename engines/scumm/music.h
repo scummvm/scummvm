@@ -80,7 +80,7 @@ public:
 	 * the music/sound.
 	 * @return the music timer
 	 */
-	virtual int  getMusicTimer() const { return 0; }
+	virtual int  getMusicTimer() { return 0; }
 };
 
 } // End of namespace Scumm

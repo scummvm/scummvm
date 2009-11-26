@@ -125,7 +125,7 @@ void Player_V1::clear_channel(int i) {
 	_channels[i].volume = 15;
 }
 
-int Player_V1::getMusicTimer() const {
+int Player_V1::getMusicTimer() {
 	/* Do V1 games have a music timer? */
 	return 0;
 }

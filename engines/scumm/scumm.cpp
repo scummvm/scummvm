@@ -52,6 +52,7 @@
 #include "scumm/he/sound_he.h"
 #include "scumm/object.h"
 #include "scumm/player_nes.h"
+#include "scumm/player_sid.h"
 #include "scumm/player_pce.h"
 #include "scumm/player_v1.h"
 #include "scumm/player_v2.h"
@@ -1719,7 +1720,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
 		// TODO: Add support for music format
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
-		// TODO: Add support for music format
+		_musicEngine = new Player_SID(this, _mixer);
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
 		_musicEngine = new Player_NES(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 2) {

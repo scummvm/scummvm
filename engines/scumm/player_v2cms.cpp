@@ -1095,7 +1095,7 @@ void Player_V2CMS::clear_channel(int i) {
 	memset(channel, 0, sizeof(ChannelInfo));
 }
 
-int Player_V2CMS::getMusicTimer() const {
+int Player_V2CMS::getMusicTimer() {
 	if (_isV3Game)
 		return _music_timer;
 	else

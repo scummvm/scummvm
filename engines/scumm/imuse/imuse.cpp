@@ -537,7 +537,7 @@ int IMuseInternal::getSoundStatus(int sound) const {
 	return getSoundStatus_internal (sound, true);
 }
 
-int IMuseInternal::getMusicTimer() const {
+int IMuseInternal::getMusicTimer() {
 	Common::StackLock lock(_mutex, "IMuseInternal::getMusicTimer()");
 	int best_time = 0;
 	const Player *player = _players;

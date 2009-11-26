@@ -535,7 +535,7 @@ public:
 	void stopSound(int sound);
 	void stopAllSounds();
 	int getSoundStatus(int sound) const;
-	int getMusicTimer() const;
+	int getMusicTimer();
 
 public:
 	// Factory function

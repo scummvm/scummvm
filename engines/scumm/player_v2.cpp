@@ -530,7 +530,7 @@ void Player_V2::clear_channel(int i) {
 	memset(channel, 0, sizeof(ChannelInfo));
 }
 
-int Player_V2::getMusicTimer() const {
+int Player_V2::getMusicTimer() {
 	if (_isV3Game)
 		return _music_timer;
 	else

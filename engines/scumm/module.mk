@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	player_mod.o \
 	player_nes.o \
 	player_pce.o \
+	player_sid.o \
 	player_v1.o \
 	player_v2.o \
 	player_v2a.o \

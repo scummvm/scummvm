@@ -1936,7 +1936,7 @@ void Player_V2A::updateSound() {
 	}
 }
 
-int Player_V2A::getMusicTimer() const {
+int Player_V2A::getMusicTimer() {
 	return 0;	// FIXME - need to keep track of playing music resources
 }
 

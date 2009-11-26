@@ -83,7 +83,7 @@ public:
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
 	virtual int  getSoundStatus(int sound) const;
-	virtual int  getMusicTimer() const;
+	virtual int  getMusicTimer();
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);

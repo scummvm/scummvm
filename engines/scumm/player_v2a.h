@@ -49,7 +49,7 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-	virtual int  getMusicTimer() const;
+	virtual int  getMusicTimer();
 	virtual int  getSoundStatus(int sound) const;
 
 private:

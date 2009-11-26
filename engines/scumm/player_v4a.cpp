@@ -171,7 +171,7 @@ void Player_V4A::startSound(int nr) {
 	}
 }
 
-int Player_V4A::getMusicTimer() const {
+int Player_V4A::getMusicTimer() {
 	// A workaround if the modplayer couldnt load the datafiles - just return a number big enough to pass all tests
 	if (_initState < 0)
 		return 2000;
