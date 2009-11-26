@@ -55,6 +55,7 @@ struct CostumeData {
 	byte active[16];
 	uint16 animCounter;
 	byte soundCounter;
+	byte soundPos;
 	uint16 stopped;
 	uint16 curpos[16];
 	uint16 start[16];

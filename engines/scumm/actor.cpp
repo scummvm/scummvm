@@ -1164,6 +1164,7 @@ void Actor::adjustActorPos() {
 
 	stopActorMoving();
 	_cost.soundCounter = 0;
+	_cost.soundPos = 0;
 
 	if (_walkbox != kInvalidBox) {
 		byte flags = _vm->getBoxFlags(_walkbox);
@@ -1223,6 +1224,7 @@ void Actor::hideActor() {
 	}
 	_visible = false;
 	_cost.soundCounter = 0;
+	_cost.soundPos = 0;
 	_needRedraw = false;
 	_needBgReset = true;
 }
@@ -1269,16 +1271,50 @@ void ScummEngine::showActors() {
 	}
 }
 
+// bits 0..5: sound, bit 6: ???
+static const byte v0ActorSounds[24] = {
+	0x06, // Syd
+	0x06, // Razor
+	0x06, // Dave
+	0x06, // Michael
+	0x06, // Bernard
+	0x06, // Wendy
+	0x00, // Jeff
+	0x46, // ???
+	0x06, // Dr Fred
+	0x06, // Nurse Edna
+	0x06, // Weird Ed
+	0x06, // Dead Cousin Ted
+	0xFF, // Purple Tentacle
+	0xFF, // Green Tentacle
+	0x06, // Meteor
+	0xC0, // Plant
+	0x06, // ???
+	0x06, // ???
+	0x00, // ???
+	0xC0, // ???
+	0xC0, // ???
+	0x00, // ???
+	0x06, // Sandy
+	0x06, // ???
+};
+
 /* Used in Scumm v5 only. Play sounds associated with actors */
 void ScummEngine::playActorSounds() {
-	int i;
+	int i, j;
+	int sound;
 
 	for (i = 1; i < _numActors; i++) {
 		if (_actors[i]->_cost.soundCounter && _actors[i]->isInCurrentRoom() && _actors[i]->_sound) {
 			_currentScript = 0xFF;
-			_sound->addSoundToQueue(_actors[i]->_sound[0]);
-			for (i = 1; i < _numActors; i++) {
-				_actors[i]->_cost.soundCounter = 0;
+			if (_game.version == 0) {
+				sound = v0ActorSounds[i - 1] & 0x3F;
+			} else {
+				sound = _actors[i]->_sound[0];
+			}
+			_sound->addSoundToQueue(sound);
+			for (j = 1; j < _numActors; j++) {
+				_actors[j]->_cost.soundCounter = 0;
 			}
 			return;
 		}

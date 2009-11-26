@@ -1423,6 +1423,12 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 		frameUpdate(A, cmd);
 	}
 
+	if (A->_moving  && _vm->_currentRoom != 1 && _vm->_currentRoom != 44) {
+		if (a->_cost.soundPos == 0)
+			a->_cost.soundCounter++;
+		a->_cost.soundPos = (a->_cost.soundPos + 1) % 3;
+	}
+
 	// increase each frame pos
 	for (int limb = 0; limb < 8; ++limb) {
 		if (a->_cost.curpos[limb] < a->_cost.end[limb])
