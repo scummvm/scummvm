@@ -826,13 +826,13 @@ ActionsView::ActionsView(M4Engine *vm): InterfaceElement(vm, Common::Rect(0, MAD
 	_highlightedAction = 0;
 }
 
-void ActionsView::getActionRect(int actionId, Common::Rect &bounds) {
+void ActionsView::getActionRect(int actionId, Common::Rect &b) {
 	int idx = actionId - kVerbLook;
 
-	bounds.left = (idx / 5) * 32 + 2;
-	bounds.top = (idx % 5) * 8 + MADS_SURFACE_HEIGHT + 3;
-	bounds.right = ((idx / 5) + 1) * 32 + 3;
-	bounds.bottom = ((idx % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 4;
+	b.left = (idx / 5) * 32 + 2;
+	b.top = (idx % 5) * 8 + MADS_SURFACE_HEIGHT + 3;
+	b.right = ((idx / 5) + 1) * 32 + 3;
+	b.bottom = ((idx % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 4;
 }
 
 void ActionsView::onRefresh(RectList *rects, M4Surface *destSurface) {
