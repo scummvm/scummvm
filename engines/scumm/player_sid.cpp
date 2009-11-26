@@ -23,7 +23,6 @@
  *
  */
 
-#include <algorithm>
 #include "engines/engine.h"
 #include "scumm/player_sid.h"
 #include "scumm/scumm.h"
@@ -755,22 +754,22 @@ void Player_SID::stopChannel(int channel) {
 // channel: 0..6, swapIndex: 0..2
 void Player_SID::swapVars(int channel, int swapIndex) { // $51a5
 	if (channel < 3) {
-		std::swap(attackReg[channel], swapAttack[swapIndex]);
-		std::swap(sustainReg[channel], swapSustain[swapIndex]);
+		SWAP(attackReg[channel], swapAttack[swapIndex]);
+		SWAP(sustainReg[channel], swapSustain[swapIndex]);
 	}
-	//std::swap(vec5[channel],  swapVec5[swapIndex]);  // not used
-	//std::swap(vec19[channel], swapVec19[swapIndex]); // not used
+	//SWAP(vec5[channel],  swapVec5[swapIndex]);  // not used
+	//SWAP(vec19[channel], swapVec19[swapIndex]); // not used
 
-	std::swap(chanPrio[channel], swapSongPrio[swapIndex]);
-	std::swap(channelMap[channel], swapVec479C[swapIndex]);
-	std::swap(songPosUpdateCounter[channel], swapSongPosUpdateCounter[swapIndex]);
-	std::swap(waveCtrlReg[channel], swapWaveCtrlReg[swapIndex]);
-	std::swap(songPosPtr[channel],  swapSongPosPtr[swapIndex]);
-	std::swap(freqReg[channel],  swapFreqReg[swapIndex]);
-	std::swap(freqDeltaCounter[channel], swapVec11[swapIndex]);
-	std::swap(freqDelta[channel], swapVec10[swapIndex]);
-	std::swap(vec20[channel], swapVec20[swapIndex]);
-	std::swap(songFileOrChanBufOffset[channel],  swapVec8[swapIndex]);
+	SWAP(chanPrio[channel], swapSongPrio[swapIndex]);
+	SWAP(channelMap[channel], swapVec479C[swapIndex]);
+	SWAP(songPosUpdateCounter[channel], swapSongPosUpdateCounter[swapIndex]);
+	SWAP(waveCtrlReg[channel], swapWaveCtrlReg[swapIndex]);
+	SWAP(songPosPtr[channel],  swapSongPosPtr[swapIndex]);
+	SWAP(freqReg[channel],  swapFreqReg[swapIndex]);
+	SWAP(freqDeltaCounter[channel], swapVec11[swapIndex]);
+	SWAP(freqDelta[channel], swapVec10[swapIndex]);
+	SWAP(vec20[channel], swapVec20[swapIndex]);
+	SWAP(songFileOrChanBufOffset[channel],  swapVec8[swapIndex]);
 }
 
 void Player_SID::resetSwapVars() { // $52d0
