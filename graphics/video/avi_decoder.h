@@ -56,6 +56,7 @@ namespace Graphics {
 #define ID_VEDT MKID_BE('vedt')
 #define ID_IDX1 MKID_BE('idx1')
 #define ID_STRD MKID_BE('strd')
+#define ID_00AM MKID_BE('00AM')
 //#define ID_INFO MKID_BE('INFO')
 
 // Codec tags

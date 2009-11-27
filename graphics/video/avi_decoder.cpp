@@ -236,7 +236,7 @@ bool AviDecoder::loadFile(const char *fileName) {
 		
 	// Now, create the codec
 	_videoCodec = createCodec();
-	
+
 	// Initialize the video stuff too
 	_audStream = createAudioStream();
 	if (_audStream)
@@ -254,6 +254,9 @@ bool AviDecoder::loadFile(const char *fileName) {
 	_videoInfo.frameCount = _header.totalFrames;
 	// Our frameDelay is calculated in 1/100 ms, so we convert it here
 	_videoInfo.frameDelay = _header.microSecondsPerFrame / 10;
+
+	if (!_videoCodec)
+		return false;
 
 	return true;
 }
@@ -274,12 +277,18 @@ void AviDecoder::closeFile() {
 	_decodedHeader = false;
 	
 	delete _videoCodec;
+	_videoCodec = 0;
+
 	delete[] _ixInfo.indices;
+	_ixInfo.indices = 0;
 }
 
 Surface *AviDecoder::getNextFrame() {
 	uint32 nextTag = _fileStream->readUint32BE();
-		
+
+	if (_fileStream->eos())
+		return NULL;
+
 	if (nextTag == ID_LIST) {
 		// A list of audio/video chunks
 		uint32 listSize = _fileStream->readUint32LE() - 4;
@@ -340,8 +349,12 @@ Surface *AviDecoder::getNextFrame() {
 		// No alignment necessary. It's always even.
 	} else if (nextTag == ID_JUNK) {
 		runHandle(ID_JUNK);
+	} else if (nextTag == ID_00AM) {
+		runHandle(ID_JUNK);
+	} else if (nextTag == ID_IDX1) {
+		runHandle(ID_IDX1);
 	} else
-		error ("Tag = \'%s\'", tag2str(nextTag));
+		error ("Tag = \'%s\', %d", tag2str(nextTag), _fileStream->pos());
 
 	return NULL;
 }
@@ -352,9 +365,16 @@ bool AviDecoder::decodeNextFrame() {
 
 	Surface *surface = NULL;
 	
-	while (!surface && _videoInfo.currentFrame < _videoInfo.frameCount)
+	uint32 curFrame = _videoInfo.currentFrame;
+
+	while (!surface && _videoInfo.currentFrame < _videoInfo.frameCount && !_fileStream->eos())
 		surface = getNextFrame();
 	
+	if (curFrame == _videoInfo.currentFrame) {
+		warning("No video frame found");
+		_videoInfo.currentFrame++;
+	}
+
 	if (surface)
 		memcpy(_videoFrameBuffer, surface->pixels, _header.width * _header.height);
 
