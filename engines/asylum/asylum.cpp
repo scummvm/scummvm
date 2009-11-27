@@ -55,8 +55,6 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::enableDebugChannel("Scripts");
 
 	g_eventRec.registerRandomSource(_rnd, "asylum");
-
-	memset(_gameFlags, 0, 1512);
 }
 
 AsylumEngine::~AsylumEngine() {
@@ -70,6 +68,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _screen;
 	delete _encounter;
 	delete _text;
+	delete _actionArray;
 }
 
 Common::Error AsylumEngine::run() {
@@ -94,6 +93,9 @@ Common::Error AsylumEngine::init() {
 	_scene    = 0;
 
 	_introPlaying = false;
+
+	memset(_gameFlags, 0, 1512);
+	_actionArray = new ActionArray(this);
 
 	return Common::kNoError;
 }

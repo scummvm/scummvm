@@ -57,7 +57,6 @@ typedef struct ActionDefinitions {
 	uint32        field_1BAC;
 	uint32        field_1BB0;
 	uint32        counter;
-
 } ActionDefinitions;
 
 class ActionList {
@@ -88,6 +87,10 @@ public:
 	ActionDefinitions* getScript() {
 		return _currentScript;
 	}
+
+	/** .text:00402120
+	 * Process the current script
+	 */
 	int  process();
 
 	void processActionListSub02(ActionDefinitions* script, ActionCommand* command,  int a4);
@@ -149,8 +152,8 @@ int kChangeScene(ActionCommand *cmd, Scene *scn);
 int k_unk2C_ActorSub(ActionCommand *cmd, Scene *scn);
 int kPlayMovie(ActionCommand *cmd, Scene *scn);
 int kStopAllBarriersSounds(ActionCommand *cmd, Scene *scn);
-int kSetActionFlag01(ActionCommand *cmd, Scene *scn);
-int kClearActionFlag01(ActionCommand *cmd, Scene *scn);
+int kSetActionFlag(ActionCommand *cmd, Scene *scn);
+int kClearActionFlag(ActionCommand *cmd, Scene *scn);
 int kResetSceneRect(ActionCommand *cmd, Scene *scn);
 int kChangeMusicById(ActionCommand *cmd, Scene *scn);
 int kStopMusic(ActionCommand *cmd, Scene *scn);

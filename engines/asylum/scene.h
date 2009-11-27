@@ -163,17 +163,30 @@ private:
 	 */
 	void initialize();
 
-	void   update();
-	int    updateScene();
-	void   updateMouse();
-	void   updateActor(uint32 actorIdx);
+	void update();
+	void startMusic();
+
+	/** .text:0040B5B0
+	 * Loop through the various update blocks (actors,
+	 * barriers, mouse, music, sfx, screenPosition), then
+	 * process the current action script
+	 */
+	int updateScene();
+	/** .text:0040D190 */
+	void updateMouse();
+	/** .text:0040B740 */
+	void updateActor(uint32 actorIdx);
 	/**
 	 * TODO give more meaningful name
 	 */
 	void   updateActorSub01(Actor *act);
+	/** .text:0040CBD0 */
 	void   updateBarriers();
+	/** .text:00409BA0 */
 	void   updateAmbientSounds();
+	/** .text:00409EF0 */
 	void   updateMusic();
+	/** .text:0040DAE0 */
 	void   updateAdjustScreen();
 	int    drawScene();
 	void   drawActorsAndBarriers();

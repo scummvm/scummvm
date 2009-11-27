@@ -25,6 +25,7 @@
 
 #include "asylum/sound.h"
 #include "asylum/asylum.h"
+#include "asylum/config.h"
 
 #include "common/stream.h"
 #include "sound/audiostream.h"
@@ -36,6 +37,7 @@ namespace Asylum {
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
 	_speechPack = new ResourcePack(3);
 	_soundPack  = new ResourcePack(18);
+	_currentMusicResIndex = -666;
 }
 
 Sound::~Sound() {
@@ -226,7 +228,7 @@ void Sound::playMusic(ResourcePack *pack, uint resId) {
 	stopMusic();
 
 	ResourceEntry *resource = pack->getResource(resId);
-	playSoundData(&_musicHandle, resource->data, resource->size, true, 0, 0);
+	playSoundData(&_musicHandle, resource->data, resource->size, true, Config.musicVolume, 0);
 }
 
 void Sound::stopMusic() {
