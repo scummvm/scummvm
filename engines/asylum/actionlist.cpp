@@ -554,13 +554,13 @@ int kMoveScenePosition(Script *script, ScriptEntry *cmd, Scene *scn) {
 		ws->targetY  = cmd->param2;
 		ws->field_A0 = cmd->param3;
 
-		if (ws->targetX < (uint32)sr->left)
+		if (ws->targetX < sr->left)
 			ws->targetX = sr->left;
-		if (ws->targetY < (uint32)sr->top)
+		if (ws->targetY < sr->top)
 			ws->targetY = sr->top;
-		if (ws->targetX + 640 > (uint32)sr->right)
+		if (ws->targetX + 640 > sr->right)
 			ws->targetX = sr->right - 640;
-		if (ws->targetY + 480 > (uint32)sr->bottom)
+		if (ws->targetY + 480 > sr->bottom)
 			ws->targetY = sr->bottom - 480;
 
 		// TODO: reverse asm block
@@ -577,15 +577,15 @@ int kMoveScenePosition(Script *script, ScriptEntry *cmd, Scene *scn) {
 		ws->targetY  = cmd->param2;
 		ws->field_A0 = cmd->param3;
 
-		if (ws->targetX + 640 > ws->width)
+		if (ws->targetX + 640 > (int)ws->width)
 			ws->targetX = ws->width - 640;
-		if (ws->targetX < (uint32)sr->left)
+		if (ws->targetX < sr->left)
 			ws->targetX = sr->left;
-		if (ws->targetY < (uint32)sr->top)
+		if (ws->targetY < sr->top)
 			ws->targetY = sr->top;
-		if (ws->targetX + 640 > (uint32)sr->right)
+		if (ws->targetX + 640 > sr->right)
 			ws->targetX = sr->right - 640;
-		if (ws->targetY + 480 > (uint32)sr->bottom)
+		if (ws->targetY + 480 > sr->bottom)
 			ws->targetY = sr->bottom - 480;
 
 		// TODO: reverse asm block
@@ -1046,7 +1046,7 @@ int kPlaySpeech(Script *script, ScriptEntry *cmd, Scene *scn) {
 		       scn->getSceneIndex(),
 		       scn->actions()->currentLine);
 
-	return 0;
+	return -1;
 }
 
 int k_unk42(Script *script, ScriptEntry *cmd, Scene *scn) {
