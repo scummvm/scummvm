@@ -38,6 +38,8 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 	delayedSceneIndex = -1;
 	delayedVideoIndex = -1;
 	allowInput        = true;
+	_actionFlag       = false;
+	reset();
 }
 
 ActionList::~ActionList() {
@@ -182,6 +184,43 @@ void ActionList::setScriptByIndex(uint32 index) {
 			       _currentScript->commands[i].param8,
 			       _currentScript->commands[i].param9);
 		}
+	}
+}
+
+void ActionList::reset() {
+	memset(&_items, 0, sizeof(ActionStruct));
+	for (int i = 0; i < 10; i++)
+		_items.entries[i].actionListIndex = -1;
+}
+
+void ActionList::initItem(int actionIndex, int actorIndex) {
+	// TODO properly define what actionFlag is actually for.
+	// It appears to remain false 99% of the time, so I'm guessing
+	// it's a "skip processing" flag.
+	if (!_actionFlag) {
+		int i;
+		// iterate through the availble entry slots to determine
+		// the next available slot
+		for (i = 1; i < 10; i++) {
+			if (_items.entries[i].actionListIndex == -1)
+				break;
+		}
+
+		_scene->actions()->entries[actionIndex].counter = 0;
+
+		_items.entries[i].field_10 = 0;
+		_items.entries[i].field_C = 0;
+
+		if (_items.count) {
+			_items.entries[_items.field_CC].field_C = i ;
+			_items.entries[0].field_10 = _items.field_CC;
+		} else {
+			_items.count = i;
+		}
+		_items.field_CC = i;
+		_items.entries[0].actionListIndex = actionIndex;
+		_items.entries[0].actionListItemIndex = 0;
+		_items.entries[0].actorIndex = actorIndex;
 	}
 }
 
@@ -809,11 +848,11 @@ int kStopAllBarriersSounds(ActionCommand *cmd, Scene *scn) {
 }
 
 int kSetActionFlag(ActionCommand *cmd, Scene *scn) {
-	scn->vm()->actionarray()->setActionFlag(true);
+	scn->actions()->setActionFlag(true);
 	return 0;
 }
 int kClearActionFlag(ActionCommand *cmd, Scene *scn) {
-	scn->vm()->actionarray()->setActionFlag(false);
+	scn->actions()->setActionFlag(false);
 	return 0;
 }
 int kResetSceneRect(ActionCommand *cmd, Scene *scn) {
