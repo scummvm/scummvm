@@ -170,7 +170,7 @@ void Scene::initialize() {
 
 	uint32 actionIdx = _ws->actionListIdx;
 	if (actionIdx)
-		_vm->actionarray()->initItem(&_actions->entries[actionIdx], actionIdx, 0);
+		_actions->initItem(actionIdx, 0);
 
 	// TODO initActionListArrayItem(idx, 0) .text:00401050
 	// XXX not sure why we need to do this again

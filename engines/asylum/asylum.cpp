@@ -68,7 +68,6 @@ AsylumEngine::~AsylumEngine() {
 	delete _screen;
 	delete _encounter;
 	delete _text;
-	delete _actionArray;
 }
 
 Common::Error AsylumEngine::run() {
@@ -95,7 +94,6 @@ Common::Error AsylumEngine::init() {
 	_introPlaying = false;
 
 	memset(_gameFlags, 0, 1512);
-	_actionArray = new ActionArray(this);
 
 	return Common::kNoError;
 }

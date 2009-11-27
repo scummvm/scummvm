@@ -38,7 +38,7 @@ namespace Asylum {
 class Scene;
 
 typedef struct ActionCommand {
-	uint32 numLines;	//	Only set on the first line of each script
+	uint32 numLines; // Only set on the first line of each script
 	uint32 opcode;
 	int param1;
 	int param2;
@@ -58,6 +58,22 @@ typedef struct ActionDefinitions {
 	uint32        field_1BB0;
 	uint32        counter;
 } ActionDefinitions;
+
+typedef struct ActionItem {
+	int actionListIndex;
+	int actionListItemIndex;
+	int actorIndex;
+	int field_C;
+	int field_10;
+
+} ActionItem;
+
+typedef struct ActionStruct {
+	ActionItem entries[10];
+	int     count;
+	int     field_CC;
+
+} ActionStruct;
 
 class ActionList {
 public:
@@ -83,15 +99,30 @@ public:
 	bool done;
 	bool waitCycle;
 
+	// TODO depreciate
 	void setScriptByIndex(uint32 index);
-	ActionDefinitions* getScript() {
-		return _currentScript;
-	}
+	// TODO depreciate
+	ActionDefinitions* getScript() { return _currentScript;	}
 
 	/** .text:00402120
 	 * Process the current script
 	 */
-	int  process();
+	int process();
+	/** .text:00401020
+	 * Reset the _actionArray entries to their
+	 * default values
+	 */
+	void reset();
+	/** .text:00401050
+	 * Initialize the script element at actionIndex to
+	 * the actor at actorIndex
+	 */
+	void initItem(int actionIndex, int actorIndex);
+	/**
+	 * Toggle the action queue processing flag
+	 */
+	void setActionFlag(bool value) { _actionFlag = value; }
+
 
 	void processActionListSub02(ActionDefinitions* script, ActionCommand* command,  int a4);
 	void enableActorSub(int actorIndex, int condition);
@@ -99,9 +130,10 @@ public:
 private:
 	Scene *_scene;
 	ActionDefinitions *_currentScript;
+	bool         _actionFlag;
+	ActionStruct _items;
 
 	void load(Common::SeekableReadStream *stream);
-
 };
 
 // opcode functions
