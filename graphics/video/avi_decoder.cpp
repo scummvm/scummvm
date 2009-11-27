@@ -53,8 +53,8 @@ AviDecoder::AviDecoder(Audio::Mixer *mixer) : _mixer(mixer) {
 }
 
 AviDecoder::~AviDecoder() {
-	delete _audHandle;
 	closeFile();
+	delete _audHandle;
 }
 	
 void AviDecoder::runHandle(uint32 tag) {
