@@ -129,6 +129,14 @@ private:
 	Common::Array<SoundBufferItem> _soundBuffer;
 
 	/**
+	 * The resource pointer for the currently playing music file.
+	 * This was originally a scene variable, but it makes more sense
+	 * to track it uniquely, as this doesn't involve initializing the
+	 * scene just to set a single variable
+	 */
+	int _currentMusicResIndex;
+
+	/**
 	 * Find the index within the _soundBuffer array of the
 	 * sound sample with provided id.
 	 */

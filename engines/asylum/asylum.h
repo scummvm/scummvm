@@ -37,6 +37,7 @@
 #include "asylum/video.h"
 #include "asylum/blowuppuzzle.h"
 #include "asylum/encounters.h"
+#include "asylum/actionarray.h"
 
 namespace Asylum {
 
@@ -66,6 +67,7 @@ class Screen;
 class Sound;
 class Video;
 class Encounter;
+class ActionArray;
 
 enum kDebugLevels {
 	kDebugLevelMain      = 1 << 0,
@@ -85,7 +87,9 @@ public:
 	AsylumEngine(OSystem *system, Common::Language language);
 	virtual ~AsylumEngine();
 
-	// Engine APIs
+	/** .text:0040F430
+	 * Initalize the game environment
+	 */
 	Common::Error init();
 	Common::Error go();
 	virtual Common::Error run();
@@ -114,6 +118,7 @@ public:
 	Screen* screen() { return _screen; }
 	Scene* scene() { return _scene;}
 	Text* text() { return _text; }
+	ActionArray *actionarray() { return _actionArray; }
 
 private:
 	void checkForEvent(bool doUpdate);
@@ -135,6 +140,8 @@ private:
 	Video     *_video;
 	Text      *_text;
 	Encounter *_encounter;
+
+	ActionArray *_actionArray;
 
 	int _gameFlags[1512];
 

@@ -168,6 +168,10 @@ void Scene::initialize() {
 		}
 	}
 
+	uint32 actionIdx = _ws->actionListIdx;
+	if (actionIdx)
+		_vm->actionarray()->initItem(&_actions->entries[actionIdx], actionIdx, 0);
+
 	// TODO initActionListArrayItem(idx, 0) .text:00401050
 	// XXX not sure why we need to do this again
 	_vm->screen()->clearScreen();
@@ -177,21 +181,31 @@ void Scene::initialize() {
 	// TODO preloadGraphics() .text:00410F10
 	// TODO sound_sub(sceneNumber) .text:0040E750
 	_ws->actorType = actorType[_ws->numChapter];
-	// TODO musicCacheOk check as part of if
-	int musicId = 0;
-	if (_ws->musicCurrentResId != -666 && _ws->numChapter != 1)
-		musicId = _ws->musicResId - 0x7FFE0000;
-	// TODO playMusic(musicId, cfgMusicVolume);
+
+	startMusic();
+
 	_vm->tempTick07 = 1;
+
 	// TODO sceneRectChangedFlag = 1;
+
 	actor->tickValue1= _vm->getTick();
 	// XXX This initialization was already done earlier,
 	// so I'm not sure why we need to do it again. Investigate.
 	updateActorDirectionDefault(_playerActorIdx);
+
 	if (_ws->numChapter == 9) {
 		// TODO changeActorIndex(1); .text:00405140
 		_ws->field_E860C = -1;
 	}
+}
+
+void Scene::startMusic() {
+	// TODO musicCacheOk check as part of if
+	int musicId = 0;
+	if (_ws->musicCurrentResId != -666 && _ws->numChapter != 1)
+		musicId = _ws->musicResId - 0x7FFE0000;
+	_vm->sound()->playMusic(_musPack, musicId);
+
 }
 
 Scene::~Scene() {
@@ -399,8 +413,8 @@ void Scene::enterScene() {
 		_cursor->set(0);
 		_cursor->show();
 
-		// Music testing: play the first music track
-		_vm->sound()->playMusic(_musPack, 0);
+		startMusic();
+
 		_walking  = false;
 #ifdef SHOW_SCENE_LOADING
 	}
@@ -1409,7 +1423,7 @@ void Scene::drawActorsAndBarriers() {
 				if (bar->flags & 4) {
 					if (intersects) {
 						if(act->flags & 2)
-							warning ("Assigning mask to masked character [%s]", bar->name);
+							warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", bar->name);
 						else {
 							// TODO there's a call to sub_40ac10 that does
 							// a point calculation, but the result doesn't appear to
@@ -1459,7 +1473,6 @@ void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 }
 
 int Scene::queueActorUpdates() {
-
 	if (_ws->numActors > 0) {
 		Common::Point pt;
 		for (uint32 a = 0; a < _ws->numActors; a++) {

@@ -104,8 +104,8 @@ static const AsylumFunction function_map[] = {
 	/*0x2C*/ MAPFUNC("k_unk2C_ActorSub", k_unk2C_ActorSub),
 	/*0x2D*/ MAPFUNC("kPlayMovie", kPlayMovie),
 	/*0x2E*/ MAPFUNC("kStopAllBarriersSounds", kStopAllBarriersSounds),
-	/*0x2F*/ MAPFUNC("kSetActionFlag01", kSetActionFlag01),
-	/*0x30*/ MAPFUNC("kClearActionFlag01", kClearActionFlag01),
+	/*0x2F*/ MAPFUNC("kSetActionFlag", kSetActionFlag),
+	/*0x30*/ MAPFUNC("kClearActionFlag", kClearActionFlag),
 	/*0x31*/ MAPFUNC("kResetSceneRect", kResetSceneRect),
 	/*0x32*/ MAPFUNC("kChangeMusicById", kChangeMusicById),
 	/*0x33*/ MAPFUNC("kStopMusic", kStopMusic),
@@ -808,11 +808,13 @@ int kStopAllBarriersSounds(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kSetActionFlag01(ActionCommand *cmd, Scene *scn) {
-	return -2;
+int kSetActionFlag(ActionCommand *cmd, Scene *scn) {
+	scn->vm()->actionarray()->setActionFlag(true);
+	return 0;
 }
-int kClearActionFlag01(ActionCommand *cmd, Scene *scn) {
-	return -2;
+int kClearActionFlag(ActionCommand *cmd, Scene *scn) {
+	scn->vm()->actionarray()->setActionFlag(false);
+	return 0;
 }
 int kResetSceneRect(ActionCommand *cmd, Scene *scn) {
 	return -2;
