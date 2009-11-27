@@ -172,7 +172,6 @@ void Scene::initialize() {
 	if (actionIdx)
 		_actions->queueScript(actionIdx, 0);
 
-	// TODO initActionListArrayItem(idx, 0) .text:00401050
 	// XXX not sure why we need to do this again
 	_vm->screen()->clearScreen();
 	// TODO loadTransTables(3, field_64/68/7C)

@@ -141,7 +141,7 @@ public:
 	// TODO add rest fields
 	Common::Array<ActionArea> actions;  // maxsize 400
 	// TODO add rest fields
-	uint32 field_E860C;
+	int field_E860C;
 	// TODO add rest fields
 
 	int         getActionAreaIndexById(uint32 id);
