@@ -313,7 +313,7 @@ Surface *AviDecoder::getNextFrame() {
 		_fileStream->read(data, chunkSize);
 		_audStream->queueBuffer(data, chunkSize);
 		_fileStream->skip(chunkSize & 1); // Alignment
-	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id') {		
+	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' || getStreamType(nextTag) == 'AM') {		
 		// Compressed Frame
 		_videoInfo.currentFrame++;
 		uint32 chunkSize = _fileStream->readUint32LE();
@@ -348,8 +348,6 @@ Surface *AviDecoder::getNextFrame() {
 
 		// No alignment necessary. It's always even.
 	} else if (nextTag == ID_JUNK) {
-		runHandle(ID_JUNK);
-	} else if (nextTag == ID_00AM) {
 		runHandle(ID_JUNK);
 	} else if (nextTag == ID_IDX1) {
 		runHandle(ID_IDX1);
