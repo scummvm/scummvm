@@ -160,7 +160,8 @@ void Actor::drawActor() {
 
 void Actor::setWalkArea(ActionArea *target) {
 	if (_currentWalkArea != target) {
-		_scene->actions()->setScriptByIndex(target->actionListIdx1);
+		// FIXME
+		//_scene->actions()->setScriptByIndex(target->actionListIdx1);
 		_currentWalkArea = target;
 		debugC(kDebugLevelScripts, "%s", target->name);
 	}
