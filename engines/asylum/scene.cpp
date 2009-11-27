@@ -170,7 +170,7 @@ void Scene::initialize() {
 
 	uint32 actionIdx = _ws->actionListIdx;
 	if (actionIdx)
-		_actions->initItem(actionIdx, 0);
+		_actions->queueScript(actionIdx, 0);
 
 	// TODO initActionListArrayItem(idx, 0) .text:00401050
 	// XXX not sure why we need to do this again
@@ -1277,7 +1277,7 @@ void Scene::OLD_UPDATE() {
 					       _ws->actions[a].actionListIdx2,
 					       _ws->actions[a].actionType,
 					       _ws->actions[a].soundResId);
-					_actions->setScriptByIndex(_ws->actions[a].actionListIdx1);
+					// FIXME _actions->setScriptByIndex(_ws->actions[a].actionListIdx1);
 				}
 			}
 		} else if (curBarrier >= 0) {
@@ -1288,7 +1288,7 @@ void Scene::OLD_UPDATE() {
 			       b.soundResId,
 			       b.flags,
 			       b.flags2);
-			_actions->setScriptByIndex(b.actionListIdx);
+			// FIXME _actions->setScriptByIndex(b.actionListIdx);
 		}
 	}
 }
@@ -1402,7 +1402,7 @@ void Scene::drawActorsAndBarriers() {
 						if (pt.x > 0 && pt.y > 0 && poly->numPoints > 0)
 							intersects = poly->contains(pt.x, pt.y);
 						else
-							warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
+							;//warning ("[drawActorsAndBarriers] trying to find intersection of uninitialized point");
 					}
 					// XXX the original has an else case here that
 					// assigns intersects the value of the
@@ -1423,7 +1423,7 @@ void Scene::drawActorsAndBarriers() {
 				if (bar->flags & 4) {
 					if (intersects) {
 						if(act->flags & 2)
-							warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", bar->name);
+							;//warning ("[drawActorsAndBarriers] Assigning mask to masked character [%s]", bar->name);
 						else {
 							// TODO there's a call to sub_40ac10 that does
 							// a point calculation, but the result doesn't appear to

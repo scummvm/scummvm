@@ -39,14 +39,14 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 	delayedVideoIndex = -1;
 	allowInput        = true;
 	_actionFlag       = false;
-	reset();
+	resetQueue();
 }
 
 ActionList::~ActionList() {
 	entries.clear();
 }
 
-typedef int AsylumFunc(ActionCommand *cmd, Scene *scn);
+typedef int AsylumFunc(Script *script, ScriptEntry *cmd, Scene *scn);
 
 struct AsylumFunction {
 	const char *name;
@@ -163,6 +163,7 @@ static const AsylumFunction function_map[] = {
 
 #undef MAPFUNC
 
+/*
 void ActionList::setScriptByIndex(uint32 index) {
 	currentLine    = 0;
 	_currentScript = &entries[index]; // TODO assert if out of bounds
@@ -186,14 +187,15 @@ void ActionList::setScriptByIndex(uint32 index) {
 		}
 	}
 }
+*/
 
-void ActionList::reset() {
-	memset(&_items, 0, sizeof(ActionStruct));
+void ActionList::resetQueue() {
+	memset(&_scripts, 0, sizeof(ScriptQueue));
 	for (int i = 0; i < 10; i++)
-		_items.entries[i].actionListIndex = -1;
+		_scripts.entries[i].actionListIndex = -1;
 }
 
-void ActionList::initItem(int actionIndex, int actorIndex) {
+void ActionList::queueScript(int actionIndex, int actorIndex) {
 	// TODO properly define what actionFlag is actually for.
 	// It appears to remain false 99% of the time, so I'm guessing
 	// it's a "skip processing" flag.
@@ -202,29 +204,55 @@ void ActionList::initItem(int actionIndex, int actorIndex) {
 		// iterate through the availble entry slots to determine
 		// the next available slot
 		for (i = 1; i < 10; i++) {
-			if (_items.entries[i].actionListIndex == -1)
+			if (_scripts.entries[i].actionListIndex == -1)
 				break;
 		}
 
 		_scene->actions()->entries[actionIndex].counter = 0;
 
-		_items.entries[i].field_10 = 0;
-		_items.entries[i].field_C = 0;
+		_scripts.entries[i].field_10 = 0;
+		_scripts.entries[i].field_C = 0;
 
-		if (_items.count) {
-			_items.entries[_items.field_CC].field_C = i ;
-			_items.entries[0].field_10 = _items.field_CC;
+		if (_scripts.count) {
+			_scripts.entries[_scripts.field_CC].field_C = i ;
+			_scripts.entries[0].field_10 = _scripts.field_CC;
 		} else {
-			_items.count = i;
+			_scripts.count = i;
 		}
-		_items.field_CC = i;
-		_items.entries[0].actionListIndex = actionIndex;
-		_items.entries[0].actionListItemIndex = 0;
-		_items.entries[0].actorIndex = actorIndex;
+		_scripts.field_CC = i;
+		_scripts.entries[0].actionListIndex = actionIndex;
+		_scripts.entries[0].actionListItemIndex = 0;
+		_scripts.entries[0].actorIndex = actorIndex;
 	}
 }
 
-void ActionList::processActionListSub02(ActionDefinitions* script, ActionCommand *command, int a4) {
+void ActionList::updateQueue(int queueIndex) {
+	if (_scripts.count == _scripts.field_CC) {
+		_scripts.field_CC = 0;
+		_scripts.count = 0;
+		_scripts.entries[queueIndex].actionListIndex = -1;
+	} else {
+		if (_scripts.count == queueIndex) {
+			_scripts.count = _scripts.entries[queueIndex].field_C;
+			_scripts.entries[queueIndex].field_10 = 0;
+			_scripts.entries[queueIndex].actionListIndex = -1;
+		} else {
+			if (_scripts.field_CC == queueIndex) {
+				_scripts.field_CC = _scripts.entries[queueIndex].field_10;
+				_scripts.entries[queueIndex].field_C = 0;
+				_scripts.entries[queueIndex].actionListIndex = -1;
+			} else {
+				int tmp10 = _scripts.entries[queueIndex].field_10;
+				int tmpC  = _scripts.entries[queueIndex].field_C;
+				_scripts.entries[tmp10].field_C = _scripts.entries[queueIndex].field_C;
+				_scripts.entries[tmpC].field_10 = _scripts.entries[queueIndex].field_10;
+				_scripts.entries[queueIndex].actionListIndex = -1;
+			}
+		}
+	}
+}
+
+void ActionList::processActionListSub02(Script* script, ScriptEntry *command, int a4) {
 	//int v4 = 0;
 	int result;
 	int barrierIdx = 0;
@@ -298,14 +326,15 @@ void ActionList::enableActorSub(int actorIndex, int condition) {
 
 }
 
-
 int ActionList::process() {
 	done          = false;
 	waitCycle     = false;
 	lineIncrement = 1;
 	processing    = true;
 
-	if (_currentScript) {
+	while (_scripts.count) {
+		Script *currentScript = &entries[_scripts.entries[_scripts.count - 1].actionListIndex];
+		currentLine = 0;
 		while (!done && !waitCycle) {
 			lineIncrement = 0;      //Reset line increment value
 
@@ -313,12 +342,14 @@ int ActionList::process() {
 				//TODO - processActionLists has run too many iterations
 			}
 
-			ActionCommand *currentCommand = &_currentScript->commands[currentLine];
+			ScriptEntry *currentCommand = &currentScript->commands[currentLine];
 
 			uint32 opcode = currentCommand->opcode;
 
+			debugC(kDebugLevelScripts, "%s (0x%02d)", function_map[opcode].name, opcode);
+
 			// Execute command from function mapping
-			int cmdRet = function_map[opcode].function(currentCommand, _scene);
+			int cmdRet = function_map[opcode].function(currentScript, currentCommand, _scene);
 
 			// Check function return
 			if (cmdRet == -1)
@@ -348,18 +379,18 @@ int ActionList::process() {
 
 		} // end while
 
-		if (done) {
-			currentLine    = 0;
-			currentLoops   = 0;
-			_currentScript = 0;
+		updateQueue(_scripts.count);
 
-			// XXX
-			// gameFlag 183 is the same as the
-			// processing flag, but is not being used
-			_scene->vm()->clearGameFlag(183);
+		if (done) {
+			currentLine  = 0;
+			currentLoops = 0;
 		}
 	}
 
+	// XXX
+	// gameFlag 183 is the same as the
+	// processing flag, but is not being used
+	_scene->vm()->clearGameFlag(183);
 	processing = false;
 
 	return 0;
@@ -370,12 +401,12 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 	numEntries = stream->readUint32LE();
 
 	for (uint32 a = 0; a < numEntries; a++) {
-		ActionDefinitions action;
-		memset(&action, 0, sizeof(ActionDefinitions));
+		Script action;
+		memset(&action, 0, sizeof(Script));
 
 		for (uint32 c = 0; c < MAX_ACTION_COMMANDS; c++) {
-			ActionCommand command;
-			memset(&command, 0, sizeof(ActionCommand));
+			ScriptEntry command;
+			memset(&command, 0, sizeof(ScriptEntry));
 
 			command.numLines = stream->readUint32LE();
 			command.opcode   = stream->readUint32LE();
@@ -402,13 +433,13 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 
 /* Opcode Functions */
 
-int kReturn0(ActionCommand *cmd, Scene *scn) {
+int kReturn0(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->actions()->done          = true;
 	scn->actions()->lineIncrement = 0;
 	return 0;
 }
 
-int kSetGameFlag(ActionCommand *cmd, Scene *scn) {
+int kSetGameFlag(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum >= 0)
@@ -417,7 +448,7 @@ int kSetGameFlag(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kClearGameFlag(ActionCommand *cmd, Scene *scn) {
+int kClearGameFlag(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum >= 0)
@@ -426,7 +457,7 @@ int kClearGameFlag(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kToggleGameFlag(ActionCommand *cmd, Scene *scn) {
+int kToggleGameFlag(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum >= 0)
@@ -435,7 +466,7 @@ int kToggleGameFlag(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kJumpIfGameFlag(ActionCommand *cmd, Scene *scn) {
+int kJumpIfGameFlag(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum) {
@@ -449,14 +480,14 @@ int kJumpIfGameFlag(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kHideCursor(ActionCommand *cmd, Scene *scn) {
+int kHideCursor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->getCursor()->hide();
 	scn->actions()->allowInput = false;
 
 	return 0;
 }
 
-int kShowCursor(ActionCommand *cmd, Scene *scn) {
+int kShowCursor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->getCursor()->show();
 	scn->actions()->allowInput = true;
 
@@ -464,7 +495,7 @@ int kShowCursor(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
+int kPlayAnimation(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int barrierId    = cmd->param1;
 	int barrierIndex = scn->worldstats()->getBarrierIndexById(barrierId);
 	Barrier *barrier = scn->worldstats()->getBarrierByIndex(barrierIndex);
@@ -509,7 +540,7 @@ int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kMoveScenePosition(ActionCommand *cmd, Scene *scn) {
+int kMoveScenePosition(Script *script, ScriptEntry *cmd, Scene *scn) {
 	WorldStats   *ws = scn->worldstats();
 	Common::Rect *sr = &ws->sceneRects[ws->sceneRectIdx];
 
@@ -563,7 +594,7 @@ int kMoveScenePosition(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kHideActor(ActionCommand *cmd, Scene *scn) {
+int kHideActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Actor *actor = 0;
 
 	// TODO better default actor handling
@@ -577,7 +608,7 @@ int kHideActor(ActionCommand *cmd, Scene *scn) {
 	return -3;
 }
 
-int kShowActor(ActionCommand *cmd, Scene *scn) {
+int kShowActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Actor *actor = 0;
 
 	// TODO revisit when actor selection is cleaned up
@@ -593,7 +624,7 @@ int kShowActor(ActionCommand *cmd, Scene *scn) {
 	return -2;
 }
 
-int kSetActorStats(ActionCommand *cmd, Scene *scn) {
+int kSetActorStats(Script *script, ScriptEntry *cmd, Scene *scn) {
 	//WorldStats *ws = scn->worldstats();
 
 	// TODO
@@ -610,13 +641,13 @@ int kSetActorStats(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kSetSceneMotionStat(ActionCommand *cmd, Scene *scn) {
+int kSetSceneMotionStat(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->worldstats()->motionStatus = cmd->param1;
 
 	return 0;
 }
 
-int kDisableActor(ActionCommand *cmd, Scene *scn) {
+int kDisableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int actorIndex = cmd->param1;
 
 	if (actorIndex == -1)
@@ -627,7 +658,7 @@ int kDisableActor(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kEnableActor(ActionCommand *cmd, Scene *scn) {
+int kEnableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int actorIndex = 0;
 
 	if (cmd->param1 == -1)
@@ -641,12 +672,12 @@ int kEnableActor(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
+int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int    barIdx = scn->worldstats()->getBarrierIndexById(cmd->param1);
 	uint32 sndIdx = cmd->param3;
 	uint32 v59    = cmd->param2;
 
-	if (!scn->actions()->getScript()->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
+	if (!script->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
 		// FIXME: I really don't understand what (sndIdx != 0) & 5 is supposed to be doing here,
 		// but this is effectively trying to do a boolean AND operation on a boolean variable
 		// which is odd, and wrong. Changing it to (sndIdx & 5), for now
@@ -654,15 +685,15 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 		scn->vm()->sound()->playSound((sndIdx & 5) + 0x80120001, false, Config.sfxVolume, 0);
 	}
 
-	if (scn->actions()->getScript()->counter >= 3 * v59 - 1) {
-		scn->actions()->getScript()->counter = 0;
+	if (script->counter >= 3 * v59 - 1) {
+		script->counter = 0;
 		scn->worldstats()->barriers[barIdx].field_67C = 0;
-		scn->actions()->processActionListSub02(scn->actions()->getScript(), cmd, 2);
+		scn->actions()->processActionListSub02(script, cmd, 2);
 		scn->actions()->currentLoops = 1; // v4 = 1;
 	} else {
 		int v64;
-		int v62 = scn->actions()->getScript()->counter + 1;
-		scn->actions()->getScript()->counter = v62;
+		int v62 = script->counter + 1;
+		script->counter = v62;
 		if (sndIdx) {
 			v64 = 1;
 			int v170 = 3 - v62 / v59;
@@ -672,20 +703,20 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 			scn->worldstats()->barriers[barIdx].field_67C = v62 / v59 + 1;
 		}
 
-		scn->actions()->processActionListSub02(scn->actions()->getScript(), cmd, v64);
+		scn->actions()->processActionListSub02(script, cmd, v64);
 	}
 
 	return -1;
 }
 
-int kReturn(ActionCommand *cmd, Scene *scn) {
+int kReturn(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->actions()->done          = true;
 	scn->actions()->lineIncrement = 0;
 
 	return 0;
 }
 
-int kDestroyBarrier(ActionCommand *cmd, Scene *scn) {
+int kDestroyBarrier(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
@@ -702,20 +733,20 @@ int kDestroyBarrier(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk12_JMP_WALK_ACTOR(ActionCommand *cmd, Scene *scn) {
+int k_unk12_JMP_WALK_ACTOR(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk13_JMP_WALK_ACTOR(ActionCommand *cmd, Scene *scn) {
+int k_unk13_JMP_WALK_ACTOR(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk14_JMP_WALK_ACTOR(ActionCommand *cmd, Scene *scn) {
+int k_unk14_JMP_WALK_ACTOR(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk15(ActionCommand *cmd, Scene *scn) {
+int k_unk15(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kResetAnimation(ActionCommand *cmd, Scene *scn) {
+int kResetAnimation(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if ((barrier->flags & 0x10000) == 0)
@@ -726,7 +757,7 @@ int kResetAnimation(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kClearFlag1Bit0(ActionCommand *cmd, Scene *scn) {
+int kClearFlag1Bit0(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	barrier->flags &= 0xFFFFFFFE;
@@ -734,11 +765,11 @@ int kClearFlag1Bit0(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk18_PLAY_SND(ActionCommand *cmd, Scene *scn) {
+int k_unk18_PLAY_SND(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kJumpIfFlag2Bit0(ActionCommand *cmd, Scene *scn) {
+int kJumpIfFlag2Bit0(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int targetType = cmd->param2;
 
 	return 0;
@@ -757,7 +788,7 @@ int kJumpIfFlag2Bit0(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kSetFlag2Bit0(ActionCommand *cmd, Scene *scn) {
+int kSetFlag2Bit0(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int targetType = cmd->param2;
 
 	if (targetType == 2)
@@ -771,56 +802,56 @@ int kSetFlag2Bit0(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kClearFlag2Bit0(ActionCommand *cmd, Scene *scn) {
+int kClearFlag2Bit0(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kJumpIfFlag2Bit2(ActionCommand *cmd, Scene *scn) {
+int kJumpIfFlag2Bit2(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kSetFlag2Bit2(ActionCommand *cmd, Scene *scn) {
+int kSetFlag2Bit2(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kClearFlag2Bit2(ActionCommand *cmd, Scene *scn) {
+int kClearFlag2Bit2(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kJumpIfFlag2Bit1(ActionCommand *cmd, Scene *scn) {
+int kJumpIfFlag2Bit1(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kSetFlag2Bit1(ActionCommand *cmd, Scene *scn) {
+int kSetFlag2Bit1(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kClearFlag2Bit1(ActionCommand *cmd, Scene *scn) {
+int kClearFlag2Bit1(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk22(ActionCommand *cmd, Scene *scn) {
+int k_unk22(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk23(ActionCommand *cmd, Scene *scn) {
+int k_unk23(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk24(ActionCommand *cmd, Scene *scn) {
+int k_unk24(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kRunEncounter(ActionCommand *cmd, Scene *scn) {
+int kRunEncounter(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kJumpIfFlag2Bit4(ActionCommand *cmd, Scene *scn) {
+int kJumpIfFlag2Bit4(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kSetFlag2Bit4(ActionCommand *cmd, Scene *scn) {
+int kSetFlag2Bit4(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kClearFlag2Bit4(ActionCommand *cmd, Scene *scn) {
+int kClearFlag2Bit4(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kSetActorField638(ActionCommand *cmd, Scene *scn) {
+int kSetActorField638(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kJumpIfActorField638(ActionCommand *cmd, Scene *scn) {
+int kJumpIfActorField638(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kChangeScene(ActionCommand *cmd, Scene *scn) {
+int kChangeScene(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->actions()->delayedSceneIndex = cmd->param1 + 4;
 	debug(kDebugLevelScripts,
 	      "Queueing Scene Change to scene %d...",
@@ -829,46 +860,46 @@ int kChangeScene(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk2C_ActorSub(ActionCommand *cmd, Scene *scn) {
+int k_unk2C_ActorSub(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kPlayMovie(ActionCommand *cmd, Scene *scn) {
+int kPlayMovie(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// TODO: add missing code here
 	scn->actions()->delayedVideoIndex = cmd->param1;
 
 	return -1;
 }
 
-int kStopAllBarriersSounds(ActionCommand *cmd, Scene *scn) {
+int kStopAllBarriersSounds(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// TODO: do this for all barriers that have sfx playing
 	scn->vm()->sound()->stopAllSounds();
 
 	return -1;
 }
 
-int kSetActionFlag(ActionCommand *cmd, Scene *scn) {
+int kSetActionFlag(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->actions()->setActionFlag(true);
 	return 0;
 }
-int kClearActionFlag(ActionCommand *cmd, Scene *scn) {
+int kClearActionFlag(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->actions()->setActionFlag(false);
 	return 0;
 }
-int kResetSceneRect(ActionCommand *cmd, Scene *scn) {
+int kResetSceneRect(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kChangeMusicById(ActionCommand *cmd, Scene *scn) {
+int kChangeMusicById(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kStopMusic(ActionCommand *cmd, Scene *scn) {
+int kStopMusic(Script *script, ScriptEntry *cmd, Scene *scn) {
 	scn->vm()->sound()->stopMusic();
 
 	return 0;
 }
 
-int k_unk34_Status(ActionCommand *cmd, Scene *scn) {
+int k_unk34_Status(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param1 >= 2) {
 		cmd->param1 = 0;
 	} else {
@@ -879,14 +910,14 @@ int k_unk34_Status(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk35(ActionCommand *cmd, Scene *scn) {
+int k_unk35(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk36(ActionCommand *cmd, Scene *scn) {
+int k_unk36(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kRunBlowUpPuzzle(ActionCommand *cmd, Scene *scn) {
+int kRunBlowUpPuzzle(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// FIXME: improve this to call other blowUpPuzzles than VCR
 	//int puzzleIdx = cmd->param1;
 
@@ -896,20 +927,20 @@ int kRunBlowUpPuzzle(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kJumpIfFlag2Bit3(ActionCommand *cmd, Scene *scn) {
+int kJumpIfFlag2Bit3(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kSetFlag2Bit3(ActionCommand *cmd, Scene *scn) {
+int kSetFlag2Bit3(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kClearFlag2Bit3(ActionCommand *cmd, Scene *scn) {
+int kClearFlag2Bit3(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk3B_PALETTE_MOD(ActionCommand *cmd, Scene *scn) {
+int k_unk3B_PALETTE_MOD(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int k_unk3C_CMP_VAL(ActionCommand *cmd, Scene *scn) {
+int k_unk3C_CMP_VAL(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param1) {
 		if (cmd->param2 >= cmd->param1) {
 			cmd->param2 = 0;
@@ -922,7 +953,7 @@ int k_unk3C_CMP_VAL(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kWaitUntilFramePlayed(ActionCommand *cmd, Scene *scn) {
+int kWaitUntilFramePlayed(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
@@ -944,7 +975,7 @@ int kWaitUntilFramePlayed(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int kUpdateWideScreen(ActionCommand *cmd, Scene *scn) {
+int kUpdateWideScreen(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int barSize = cmd->param1;
 
 	if (barSize >= 22) {
@@ -957,14 +988,14 @@ int kUpdateWideScreen(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk3F(ActionCommand *cmd, Scene *scn) {
+int k_unk3F(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk40_SOUND(ActionCommand *cmd, Scene *scn) {
+int k_unk40_SOUND(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
+int kPlaySpeech(Script *script, ScriptEntry *cmd, Scene *scn) {
 	//TODO - Add support for other param options
 	uint32 sndIdx = cmd->param1;
 
@@ -1018,23 +1049,23 @@ int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk42(ActionCommand *cmd, Scene *scn) {
+int k_unk42(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk43(ActionCommand *cmd, Scene *scn) {
+int k_unk43(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kPaletteFade(ActionCommand *cmd, Scene *scn) {
+int kPaletteFade(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kStartPaletteFadeThread(ActionCommand *cmd, Scene *scn) {
+int kStartPaletteFadeThread(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk46(ActionCommand *cmd, Scene *scn) {
+int k_unk46(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kActorFaceObject(ActionCommand *cmd, Scene *scn) {
+int kActorFaceObject(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// XXX
 	// Dropping param1, since it's the character index
 	// Investigate further if/when we have a scene with
@@ -1044,20 +1075,20 @@ int kActorFaceObject(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int k_unk48_MATTE_01(ActionCommand *cmd, Scene *scn) {
+int k_unk48_MATTE_01(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk49_MATTE_90(ActionCommand *cmd, Scene *scn) {
+int k_unk49_MATTE_90(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kJumpIfSoundPlaying(ActionCommand *cmd, Scene *scn) {
+int kJumpIfSoundPlaying(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int kChangePlayerCharacterIndex(ActionCommand *cmd, Scene *scn) {
+int kChangePlayerCharacterIndex(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kChangeActorField40(ActionCommand *cmd, Scene *scn) {
+int kChangeActorField40(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// TODO: figure out what is this field and what values are set
 	int actorIdx  = cmd->param1;
 	int fieldType = cmd->param2;
@@ -1072,25 +1103,25 @@ int kChangeActorField40(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int kStopSound(ActionCommand *cmd, Scene *scn) {
+int kStopSound(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk4E_RANDOM_COMMAND(ActionCommand *cmd, Scene *scn) {
+int k_unk4E_RANDOM_COMMAND(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kClearScreen(ActionCommand *cmd, Scene *scn) {
+int kClearScreen(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param1)
 		scn->vm()->screen()->clearScreen();
 
 	return 0;
 }
 
-int kQuit(ActionCommand *cmd, Scene *scn) {
+int kQuit(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kJumpBarrierFrame(ActionCommand *cmd, Scene *scn) {
+int kJumpBarrierFrame(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 	int idx = (int)barrier->frameIdx;
 
@@ -1111,7 +1142,7 @@ int kJumpBarrierFrame(ActionCommand *cmd, Scene *scn) {
 		//break;
 	}
 
-	ActionCommand *nextCmd = &scn->actions()->getScript()->commands[cmd->param9];
+	ScriptEntry *nextCmd = &script->commands[cmd->param9];
 
 	// 0x10 == kReturn
 	if (nextCmd->opcode != 0x10 && nextCmd->opcode)
@@ -1120,42 +1151,42 @@ int kJumpBarrierFrame(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk52(ActionCommand *cmd, Scene *scn) {
+int k_unk52(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk53(ActionCommand *cmd, Scene *scn) {
+int k_unk53(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int k_unk54_SET_ACTIONLIST_6EC(ActionCommand *cmd, Scene *scn) {
+int k_unk54_SET_ACTIONLIST_6EC(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param2)
-		scn->actions()->getScript()->field_1BB0 = rand() % cmd->param1;
+		script->field_1BB0 = rand() % cmd->param1;
 	else
-		scn->actions()->getScript()->field_1BB0 = cmd->param1;
+		script->field_1BB0 = cmd->param1;
 
 	return 0;
 }
 
-int k_unk55(ActionCommand *cmd, Scene *scn) {
+int k_unk55(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// TODO
 	/*
 	if (!cmd->param2) {
-		if (cmd->param3 && scn->actions()->getScript()->field_1BB0 < cmd->param1)
+		if (cmd->param3 && script->field_1BB0 < cmd->param1)
 			//break;
-		else if (cmd->param4 && scn->actions()->getScript()->field_1BB0 > cmd->param1)
+		else if (cmd->param4 && script->field_1BB0 > cmd->param1)
 			//break;
-		else if (cmd->param5 && scn->actions()->getScript()->field_1BB0 <= cmd->param1)
+		else if (cmd->param5 && script->field_1BB0 <= cmd->param1)
 			//break;
-		else if (cmd->param6 && scn->actions()->getScript()->field_1BB0 >= cmd->param1)
+		else if (cmd->param6 && script->field_1BB0 >= cmd->param1)
 			//break;
-		else if (cmd->param7 && scn->actions()->getScript()->field_1BB0 != cmd->param1)
+		else if (cmd->param7 && script->field_1BB0 != cmd->param1)
 			//break;
-	} else if(scn->actions()->getScript()->field_1BB0 == cmd->param1) {
+	} else if(script->field_1BB0 == cmd->param1) {
 		//break;
 	}
 	*/
 
-	ActionCommand *nextCmd = &scn->actions()->getScript()->commands[cmd->param8];
+	ScriptEntry *nextCmd = &script->commands[cmd->param8];
 
 	if (nextCmd->opcode != 0x10 && nextCmd->opcode)
 		scn->actions()->done = true;
@@ -1165,18 +1196,18 @@ int k_unk55(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int k_unk56(ActionCommand *cmd, Scene *scn) {
+int k_unk56(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kSetResourcePalette(ActionCommand *cmd, Scene *scn) {
+int kSetResourcePalette(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param1 > 0)
 		scn->vm()->screen()->setPalette(scn->getResourcePack(), scn->worldstats()->grResId[cmd->param1]);
 
 	return 0;
 }
 
-int kSetBarrierFrameIdxFlaged(ActionCommand *cmd, Scene *scn) {
+int kSetBarrierFrameIdxFlaged(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (cmd->param3)
@@ -1189,26 +1220,26 @@ int kSetBarrierFrameIdxFlaged(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk59(ActionCommand *cmd, Scene *scn) {
+int k_unk59(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk5A(ActionCommand *cmd, Scene *scn) {
+int k_unk5A(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk5B(ActionCommand *cmd, Scene *scn) {
+int k_unk5B(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk5C(ActionCommand *cmd, Scene *scn) {
+int k_unk5C(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk5D(ActionCommand *cmd, Scene *scn) {
+int k_unk5D(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk5E(ActionCommand *cmd, Scene *scn) {
+int k_unk5E(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int kSetBarrierLastFrameIdx(ActionCommand *cmd, Scene *scn) {
+int kSetBarrierLastFrameIdx(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier->frameIdx == barrier->frameCount - 1) {
@@ -1221,11 +1252,11 @@ int kSetBarrierLastFrameIdx(ActionCommand *cmd, Scene *scn) {
 	return 0;
 }
 
-int k_unk60_SET_OR_CLR_ACTIONAREA_FLAG(ActionCommand *cmd, Scene *scn) {
+int k_unk60_SET_OR_CLR_ACTIONAREA_FLAG(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 
-int k_unk61(ActionCommand *cmd, Scene *scn) {
+int k_unk61(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param2) {
 		if (scn->worldstats()->field_E860C == -1) {
 			scn->actions()->lineIncrement = 0;
@@ -1242,10 +1273,10 @@ int k_unk61(ActionCommand *cmd, Scene *scn) {
 	return -1;
 }
 
-int k_unk62_SHOW_OPTIONS_SCREEN(ActionCommand *cmd, Scene *scn) {
+int k_unk62_SHOW_OPTIONS_SCREEN(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk63(ActionCommand *cmd, Scene *scn) {
+int k_unk63(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
 

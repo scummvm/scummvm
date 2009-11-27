@@ -127,8 +127,8 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 		DebugPrintf("Usage %s <script number>\n", argv[0]);
 		return true;
 	}
-
-	_vm->scene()->actions()->setScriptByIndex(atoi(argv[1]));
+	// FIXME push the script index into the script queue
+	//_vm->scene()->actions()->setScriptByIndex(atoi(argv[1]));
 
 	return false;
 }
@@ -145,8 +145,9 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 	}
 
 	_vm->scene()->actions()->delayedSceneIndex = atoi(argv[1]);
-	_vm->scene()->actions()->setScriptByIndex(0); 	// XXX is this right or should it be
-	// ws->actionListIdx???
+	// FIXME push the script index into the script queue
+	// XXX is this right or should it be ws->actionListIdx???
+	//_vm->scene()->actions()->setScriptByIndex(0);
 
 	return false;
 }

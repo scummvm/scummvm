@@ -115,10 +115,6 @@ Common::Error AsylumEngine::go() {
 	// can be removed as well.
 	_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
 
-	// FIXME This can probably also be rolled into the scene constructor.
-	// Investigate if this will fuck up the execution sequence though :P
-	_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
-
 	// Set up main menu
 	_mainMenu = new MainMenu(this);
 
@@ -285,7 +281,6 @@ void AsylumEngine::processDelayedEvents() {
 		_scene->enterScene();
 
 		_scene->actions()->delayedSceneIndex = -1;
-		_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
 	}
 }
 
