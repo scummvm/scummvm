@@ -127,16 +127,10 @@ void LoLEngine::setupPrologueData(bool load) {
 		"HISTORY.PAK", 0
 	};
 
-	static const char * const fileListFloppyExtracted[] = {
+	static const char * const fileListFloppy[] = {
 		"INTRO.PAK", "INTROVOC.PAK", 0
 	};
-
-	static const char * const fileListFloppy[] = {
-		"INTRO.PAK", "INTROVOC.CMP", 0
-	};
-
-	const char * const *fileList = _flags.isTalkie ? fileListCD :
-		(_flags.useInstallerPackage ? fileListFloppy : fileListFloppyExtracted);
+	const char * const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
 
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {

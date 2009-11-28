@@ -871,6 +871,20 @@ struct InsArchive {
 
 } // end of anonymouse namespace
 
+class CmpVocDecoder {
+public:
+	CmpVocDecoder();
+	~CmpVocDecoder();
+	uint8 *process(uint8 *src, uint32 insize, uint32 *outsize, bool disposeInput = true);
+
+private:		
+	void decodeHelper(int p);
+
+	int32 *_vtbl;
+	int32 *_tbl1, *_p1, *_tbl2, *_p2, *_tbl3, *_p3, *_tbl4, *_p4, *_floatArray, *_stTbl;
+	uint8 *_sndArray;
+};
+
 Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &filename, const Common::String &extension, const uint8 containerOffset) {
 	uint32 pos = 0;
 	uint32 bytesleft = 0;
@@ -945,6 +959,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	}
 
 	FileExpander exp;
+	CmpVocDecoder cvdec;
 	CachedArchive::InputEntry newEntry;
 	uint32 insize = 0;
 	uint32 outsize = 0;
@@ -998,9 +1013,22 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 
 					delete[] inbuffer;
 					inbuffer = 0;
+
 					newEntry.data = outbuffer;
 					newEntry.size = outsize;
 					newEntry.name = entryStr;
+
+					entryStr.toUppercase();						
+					if (entryStr.hasSuffix(".CMP")) {
+						entryStr.deleteLastChar();
+						entryStr.deleteLastChar();
+						entryStr.deleteLastChar();
+						entryStr += "PAK";
+						newEntry.data = cvdec.process(outbuffer, outsize, &outsize);
+						newEntry.size = outsize;
+						newEntry.name = entryStr;
+					}
+					
 					fileList.push_back(newEntry);
 				}
 				pos++;
@@ -1078,6 +1106,18 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						newEntry.data = outbuffer;
 						newEntry.size = outsize;
 						newEntry.name = entryStr;
+
+						entryStr.toUppercase();						
+						if (entryStr.hasSuffix(".CMP")) {
+							entryStr.deleteLastChar();
+							entryStr.deleteLastChar();
+							entryStr.deleteLastChar();
+							entryStr += "PAK";
+							newEntry.data = cvdec.process(outbuffer, outsize, &outsize);
+							newEntry.size = outsize;
+							newEntry.name = entryStr;
+						}
+
 						fileList.push_back(newEntry);
 					}
 
@@ -1098,6 +1138,169 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 
 	archives.clear();
 	return new CachedArchive(fileList);
+}
+
+CmpVocDecoder::CmpVocDecoder() {
+
+	_tbl1 = new int32[4000];
+	_p1 = _tbl1 + 2000;
+	_tbl2 = new int32[4000];
+	_p2 = _tbl2 + 2000;
+	_tbl3 = new int32[4000];
+	_p3 = _tbl3 + 2000;
+	_tbl4 = new int32[4000];
+	_p4 = _tbl4 + 2000;
+
+	_vtbl = new int32[8193];
+	_floatArray = new int32[8193];
+	_sndArray = new uint8[8192];
+	_stTbl = new int32[256];
+
+	assert(_tbl1);
+	assert(_tbl2);
+	assert(_tbl3);
+	assert(_tbl4);
+	assert(_vtbl);
+	assert(_floatArray);
+	assert(_sndArray);
+	assert(_stTbl);
+
+	for (int32 i = -2000; i < 2000; i++) {
+		int32 x = i + 2000;
+		_tbl1[x] = (int32)(0.4829629131445341 * (double)i * 256.0);
+		_tbl2[x] = (int32)(0.8365163037378079 * (double)i * 256.0);
+		_tbl3[x] = (int32)(0.2241438680420134 * (double)i * 256.0);
+		_tbl4[x] = (int32)(-0.1294095225512604 * (double)i * 256.0);
+	}
+}
+
+CmpVocDecoder::~CmpVocDecoder() {
+	delete[] _stTbl;
+	delete[] _sndArray;
+	delete[] _floatArray;
+	delete[] _vtbl;
+	delete[] _tbl1;
+	delete[] _tbl2;
+	delete[] _tbl3;
+	delete[] _tbl4;
+}
+
+uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool disposeInput) {
+	*outsize = 0;
+	uint8 *outTemp = new uint8[insize];
+	
+	uint8 *inPosH = src;
+	uint8 *outPosH = outTemp;
+	uint8 *outPosD = outTemp + READ_LE_UINT32(src);
+	uint8 *end = outPosD;
+
+	while (outPosH < end) {
+		uint8 *spos = inPosH;
+		uint32 offset = READ_LE_UINT32(inPosH);
+		inPosH += 4;
+		char *name = (char *)inPosH;
+		inPosH += strlen(name) + 1;		
+
+		if (!name[0]) {
+			*outsize = outPosD - outTemp;
+			WRITE_LE_UINT32(outPosH, *outsize);
+			memset(outPosH + 4, 0, 5);
+			break;
+		}
+
+		uint32 fileSize = READ_LE_UINT32(inPosH) - offset;
+		int headerEntryLen = inPosH - spos;
+
+		if (scumm_stricmp(name + strlen(name) - 4, ".voc")) {
+			memcpy(outPosH, spos, headerEntryLen);
+			WRITE_LE_UINT32(outPosH, outPosD - outTemp);
+			outPosH += headerEntryLen;
+			memcpy(outPosD, src + offset, fileSize);
+			outPosD += fileSize;
+			continue;
+		}
+
+		uint8 *vocPtr = src + offset;		
+		uint32 vocLen = (vocPtr[27] | (vocPtr[28] << 8) | (vocPtr[29] << 16)) - 2;
+		
+		uint8 *vocOutEnd = outPosD + vocLen + 32;
+		uint8 *vocInEnd = src + offset + fileSize;
+		memcpy(outPosD, vocPtr, 32);
+		uint8 *dst = outPosD + 32;
+		vocPtr += 32;
+		float t = 0.0f;
+
+ 		while (dst < vocOutEnd) {
+			memcpy(&t, vocPtr, 4);
+			vocPtr += 4;
+			uint32 readSize = MIN(8192, vocInEnd - vocPtr);
+			memcpy(_sndArray, vocPtr, readSize);
+			vocPtr += readSize;
+		
+			for (int i = -128; i < 128; i++)
+				_stTbl[i + 128] = (int32)((float)i / t + 0.5f);
+
+			int8 *ps = (int8*)_sndArray;
+			for (int i = 0; i < 8192; i++)
+				_floatArray[i + 1] = _stTbl[128 + *ps++];
+
+			for (int i = 4; i <= 8192; i <<= 1)
+				decodeHelper(i);
+
+			for (int i = 1; i <= 8192; i++) {
+				int32 v = CLIP(_floatArray[i] + 128, 0, 255);
+				_sndArray[i - 1] = v;
+			}
+
+			uint16 numBytesOut = MIN(vocOutEnd - dst, 8192);
+			memcpy(dst, _sndArray, numBytesOut);
+			dst += numBytesOut;
+		}
+		
+		*dst++ = 0;
+		memcpy(outPosH, spos, headerEntryLen);
+		WRITE_LE_UINT32(outPosH, outPosD - outTemp);
+		outPosH += headerEntryLen;
+		outPosD += (vocLen + 33);
+	}
+
+	if (disposeInput)
+		delete[] src;
+
+	uint8 *outFinal = new uint8[*outsize];
+	memcpy(outFinal, outTemp, *outsize);
+	delete[] outTemp;
+
+	return outFinal;
+}
+
+void CmpVocDecoder::decodeHelper(int p1) {
+	int p2 = p1 >> 1;
+	int p3 = p2 + 1;
+
+	int16 fi1 = _floatArray[1];
+	int16 fi2 = _floatArray[p2];
+	int16 fi3 = _floatArray[p3];
+	int16 fi4 = _floatArray[p1];
+
+	_vtbl[1] = (*(_p3 + fi2) + *(_p2 + fi4) + *(_p1 + fi1) + *(_p4 + fi3)) >> 8;
+	_vtbl[2] = (*(_p4 + fi2) - *(_p1 + fi4) + *(_p2 + fi1) - *(_p3 + fi3)) >> 8;
+
+	int d = 3;
+	int s = 1;
+	
+	while (s < p2) {
+		fi2 = _floatArray[s];
+		fi1 = _floatArray[s + 1];
+		fi4 = _floatArray[s + p2];
+		fi3 = _floatArray[s + p3];
+
+		_vtbl[d++] = (*(_p3 + fi2) + *(_p2 + fi4) + *(_p1 + fi1) + *(_p4 + fi3)) >> 8;
+		_vtbl[d++] = (*(_p4 + fi2) - *(_p1 + fi4) + *(_p2 + fi1) - *(_p3 + fi3)) >> 8;
+		s++;
+	}
+
+	memcpy(&_floatArray[1], &_vtbl[1], p1 * sizeof(int32));
 }
 
 } // End of namespace Kyra
