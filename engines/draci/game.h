@@ -50,6 +50,11 @@ enum {
 	kBlackPalette = -1
 };
 
+enum {
+	kMouseEnableSwitching = -1,
+	kMouseDoNotSwitch = -2
+};
+
 // Constants tuned such that with ScummVM's default talkspeed kStandardSpeed, the speed
 // computed by equation (kBaseSpeechDuration + kSpeechTimeUnit * #characters) /
 // talkspeed is equal to the original game.

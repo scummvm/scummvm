@@ -245,7 +245,7 @@ void Game::init() {
 	rememberRoomNumAsPrevious();
 	scheduleEnteringRoomUsingGate(_info._startRoom, 0);
 	_pushedNewRoom = _pushedNewGate = -1;
-	_mouseChangeTick = -1;
+	_mouseChangeTick = kMouseDoNotSwitch;
 }
 
 void Game::handleOrdinaryLoop(int x, int y) {
@@ -564,15 +564,15 @@ void Game::handleStatusChangeByMouse() {
 	}
 
 	if (!wantsChange) {
-		// Disable the timer.
-		_mouseChangeTick = -1;
+		// Turn off the timer, but enable switching.
+		_mouseChangeTick = kMouseEnableSwitching;
 	
 	// Otherwise the mouse signalizes that the mode should be changed.
-	} else if (_mouseChangeTick == -1) {
+	} else if (_mouseChangeTick == kMouseEnableSwitching) {
 		// If the timer is currently disabled, this is the first time
 		// when the mouse left the region.  Start counting.
 		_mouseChangeTick = _vm->_system->getMillis();
-	} else if (_mouseChangeTick == -2) {
+	} else if (_mouseChangeTick == kMouseDoNotSwitch) {
 		// Do nothing.  This exception is good when the status has just
 		// changed.  Even if the mouse starts in the outside region
 		// (e.g., due to flipping the change by a key or due to
@@ -583,10 +583,8 @@ void Game::handleStatusChangeByMouse() {
 		if (_loopStatus == kStatusOrdinary) {
 			if (getRoomNum() == getMapRoom()) {
 				scheduleEnteringRoomUsingGate(getPreviousRoomNum(), 0);
-				_mouseChangeTick = -2;
 			} else if (mouseY >= kScreenHeight - 1) {
 				scheduleEnteringRoomUsingGate(getMapRoom(), 0);
-				_mouseChangeTick = -2;
 			} else if (mouseY == 0) {
 				inventoryInit();
 			}
@@ -801,7 +799,7 @@ void Game::inventoryInit() {
 	setLoopStatus(kStatusInventory);
 
 	// Don't return from the inventory mode immediately if the mouse is out.
-	_mouseChangeTick = -2;
+	_mouseChangeTick = kMouseDoNotSwitch;
 }
 
 void Game::inventoryDone() {
@@ -822,7 +820,7 @@ void Game::inventoryDone() {
 	_itemUnderCursor = NULL;
 
 	// Don't start the inventory mode again if the mouse is on the top.
-	_mouseChangeTick = -2;
+	_mouseChangeTick = kMouseDoNotSwitch;
 }
 
 void Game::inventoryDraw() {
@@ -1302,6 +1300,10 @@ void Game::enterNewRoom() {
 	// Reset the loop status.
 	setLoopStatus(kStatusOrdinary);
 	setExitLoop(false);
+
+	// Don't immediately switch to the map or inventory even if the mouse
+	// position tell us to.
+	_mouseChangeTick = kMouseDoNotSwitch;
 
 	// Set cursor state
 	// Need to do this after we set the palette since the cursors use it
