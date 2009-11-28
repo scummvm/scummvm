@@ -174,7 +174,8 @@ struct AVIStreamHeader {
 
 class AviDecoder : public VideoDecoder {
 public:
-	AviDecoder(Audio::Mixer *mixer);
+	AviDecoder(Audio::Mixer *mixer,
+			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AviDecoder();
 
 	/**
@@ -207,6 +208,8 @@ private:
 	Codec *_videoCodec;
 	Codec *createCodec();
 	
+	Audio::Mixer::SoundType _soundType;
+
 	void runHandle(uint32 tag);
 	void handleList();
 	void handleStreamHeader();
