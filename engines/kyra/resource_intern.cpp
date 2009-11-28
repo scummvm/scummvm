@@ -1018,7 +1018,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 					newEntry.size = outsize;
 					newEntry.name = entryStr;
 
-					entryStr.toUppercase();						
+					entryStr.toUppercase();
 					if (entryStr.hasSuffix(".CMP")) {
 						entryStr.deleteLastChar();
 						entryStr.deleteLastChar();
@@ -1107,7 +1107,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						newEntry.size = outsize;
 						newEntry.name = entryStr;
 
-						entryStr.toUppercase();						
+						entryStr.toUppercase();
 						if (entryStr.hasSuffix(".CMP")) {
 							entryStr.deleteLastChar();
 							entryStr.deleteLastChar();
@@ -1141,7 +1141,6 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 }
 
 CmpVocDecoder::CmpVocDecoder() {
-
 	_tbl1 = new int32[4000];
 	_p1 = _tbl1 + 2000;
 	_tbl2 = new int32[4000];
@@ -1199,7 +1198,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 		uint32 offset = READ_LE_UINT32(inPosH);
 		inPosH += 4;
 		char *name = (char *)inPosH;
-		inPosH += strlen(name) + 1;		
+		inPosH += strlen(name) + 1;
 
 		if (!name[0]) {
 			*outsize = outPosD - outTemp;
@@ -1220,7 +1219,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 			continue;
 		}
 
-		uint8 *vocPtr = src + offset;		
+		uint8 *vocPtr = src + offset;
 		uint32 vocLen = (vocPtr[27] | (vocPtr[28] << 8) | (vocPtr[29] << 16)) - 2;
 		
 		uint8 *vocOutEnd = outPosD + vocLen + 32;
@@ -1230,10 +1229,10 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 		vocPtr += 32;
 		float t = 0.0f;
 
- 		while (dst < vocOutEnd) {
+		while (dst < vocOutEnd) {
 			memcpy(&t, vocPtr, 4);
 			vocPtr += 4;
-			uint32 readSize = MIN(8192, vocInEnd - vocPtr);
+			uint32 readSize = MIN<uint32>(8192, vocInEnd - vocPtr);
 			memcpy(_sndArray, vocPtr, readSize);
 			vocPtr += readSize;
 		
@@ -1252,7 +1251,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 				_sndArray[i - 1] = v;
 			}
 
-			uint16 numBytesOut = MIN(vocOutEnd - dst, 8192);
+			uint16 numBytesOut = MIN<uint16>(vocOutEnd - dst, 8192);
 			memcpy(dst, _sndArray, numBytesOut);
 			dst += numBytesOut;
 		}
