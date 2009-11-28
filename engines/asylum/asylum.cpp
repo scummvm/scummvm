@@ -270,7 +270,9 @@ void AsylumEngine::processDelayedEvents() {
 
 	// check for a delayed scene change
 	int sceneIdx = _scene->actions()->delayedSceneIndex;
-	if (sceneIdx >= 0 && !_scene->actions()->processing) {
+	// XXX Flag 183 indicates whether the actionlist is currently
+	// processing
+	if (sceneIdx >= 0 && isGameFlagNotSet(183)) {
 		_sound->stopMusic();
 		_sound->stopAllSounds();
 

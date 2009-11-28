@@ -34,7 +34,6 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 
 	currentLine       = 0;
 	currentLoops      = 0;
-	processing        = false;
 	delayedSceneIndex = -1;
 	delayedVideoIndex = -1;
 	allowInput        = true;
@@ -44,6 +43,7 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 
 ActionList::~ActionList() {
 	entries.clear();
+	_scripts.clear();
 }
 
 typedef int AsylumFunc(Script *script, ScriptEntry *cmd, Scene *scn);
@@ -326,7 +326,6 @@ int ActionList::process() {
 	done          = false;
 	waitCycle     = false;
 	lineIncrement = 1;
-	processing    = true;
 
 	_scene->vm()->setGameFlag(183);
 
@@ -392,12 +391,7 @@ int ActionList::process() {
 
 	}
 
-	// XXX
-	// gameFlag 183 is the same as the
-	// processing flag, but is not being used
 	_scene->vm()->clearGameFlag(183);
-	processing = false;
-
 	return 0;
 }
 

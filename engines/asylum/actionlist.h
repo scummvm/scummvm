@@ -97,7 +97,6 @@ public:
 	int  delayedSceneIndex;
 	int  delayedVideoIndex;
 	bool allowInput;
-	bool processing;
 	int  lineIncrement;
 	bool done;
 	bool waitCycle;
