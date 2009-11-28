@@ -163,36 +163,13 @@ static const AsylumFunction function_map[] = {
 
 #undef MAPFUNC
 
-/*
-void ActionList::setScriptByIndex(uint32 index) {
-	currentLine    = 0;
-	_currentScript = &entries[index]; // TODO assert if out of bounds
-
-	if (Common::isDebugChannelEnabled(kDebugLevelScripts)) {
-		for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
-			debugC(kDebugLevelScripts,
-			       "Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-			       i,
-			       _currentScript->commands[0].numLines - 1,
-			       _currentScript->commands[i].opcode,
-			       _currentScript->commands[i].param1,
-			       _currentScript->commands[i].param2,
-			       _currentScript->commands[i].param3,
-			       _currentScript->commands[i].param4,
-			       _currentScript->commands[i].param5,
-			       _currentScript->commands[i].param6,
-			       _currentScript->commands[i].param7,
-			       _currentScript->commands[i].param8,
-			       _currentScript->commands[i].param9);
-		}
-	}
-}
-*/
-
 void ActionList::resetQueue() {
+	/*
 	memset(&_scripts, 0, sizeof(ScriptQueue));
 	for (int i = 0; i < 10; i++)
 		_scripts.entries[i].actionListIndex = -1;
+	*/
+	_scripts.clear();
 }
 
 void ActionList::queueScript(int actionIndex, int actorIndex) {
@@ -200,6 +177,8 @@ void ActionList::queueScript(int actionIndex, int actorIndex) {
 	// It appears to remain false 99% of the time, so I'm guessing
 	// it's a "skip processing" flag.
 	if (!_actionFlag) {
+
+		/*
 		int i;
 		// iterate through the availble entry slots to determine
 		// the next available slot
@@ -223,9 +202,25 @@ void ActionList::queueScript(int actionIndex, int actorIndex) {
 		_scripts.entries[0].actionListIndex = actionIndex;
 		_scripts.entries[0].actionListItemIndex = 0;
 		_scripts.entries[0].actorIndex = actorIndex;
+		*/
+
+		ScriptQueueEntry entry;
+		entry.actionListIndex = actionIndex;
+		entry.actorIndex      = actorIndex;
+
+		// If there's currently no script for the processor to run,
+		// assign it directly and skip the stack push. If however the
+		// current script is assigned, push the script to the stack
+		if (_currentScript)
+			_scripts.push(entry);
+		else {
+			_currentQueueEntry = entry;
+			_currentScript = &entries[entry.actionListIndex];
+		}
 	}
 }
 
+/*
 void ActionList::updateQueue(int queueIndex) {
 	if (_scripts.count == _scripts.field_CC) {
 		_scripts.field_CC = 0;
@@ -251,6 +246,7 @@ void ActionList::updateQueue(int queueIndex) {
 		}
 	}
 }
+*/
 
 void ActionList::processActionListSub02(Script* script, ScriptEntry *command, int a4) {
 	//int v4 = 0;
@@ -332,24 +328,31 @@ int ActionList::process() {
 	lineIncrement = 1;
 	processing    = true;
 
-	while (_scripts.count) {
-		Script *currentScript = &entries[_scripts.entries[_scripts.count - 1].actionListIndex];
-		currentLine = 0;
+	_scene->vm()->setGameFlag(183);
+
+	if (_currentScript)
 		while (!done && !waitCycle) {
-			lineIncrement = 0;      //Reset line increment value
+			lineIncrement = 0; //Reset line increment value
 
-			if (currentLoops > 1000) {
-				//TODO - processActionLists has run too many iterations
-			}
-
-			ScriptEntry *currentCommand = &currentScript->commands[currentLine];
+			ScriptEntry *currentCommand = &_currentScript->commands[currentLine];
 
 			uint32 opcode = currentCommand->opcode;
 
-			debugC(kDebugLevelScripts, "%s (0x%02d)", function_map[opcode].name, opcode);
+			debugC(kDebugLevelScripts,
+			   "[0x%02d] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			   opcode,function_map[opcode].name,
+			   currentCommand->param1,
+			   currentCommand->param2,
+			   currentCommand->param3,
+			   currentCommand->param4,
+			   currentCommand->param5,
+			   currentCommand->param6,
+			   currentCommand->param7,
+			   currentCommand->param8,
+			   currentCommand->param9);
 
 			// Execute command from function mapping
-			int cmdRet = function_map[opcode].function(currentScript, currentCommand, _scene);
+			int cmdRet = function_map[opcode].function(_currentScript, currentCommand, _scene);
 
 			// Check function return
 			if (cmdRet == -1)
@@ -374,17 +377,19 @@ int ActionList::process() {
 
             if (!lineIncrement) {
 			    currentLine ++;
-			    currentLoops++;
             }
 
 		} // end while
 
-		updateQueue(_scripts.count);
-
 		if (done) {
 			currentLine  = 0;
-			currentLoops = 0;
+			if (!_scripts.empty()) {
+				_currentQueueEntry = _scripts.pop();
+				_currentScript = &entries[_currentQueueEntry.actionListIndex];
+			} else {
+				_currentScript = 0;
 		}
+
 	}
 
 	// XXX
