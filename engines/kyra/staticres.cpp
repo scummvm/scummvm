@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 69
+#define RESFILE_VERSION 70
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {

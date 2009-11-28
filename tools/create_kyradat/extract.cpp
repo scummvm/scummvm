@@ -461,7 +461,7 @@ bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte 
 				output += 28;
 
 				if (info->platform == kPlatformFMTowns) { // startupCommand + finalCommand
-					memcpy(output , ptr, 2);
+					memcpy(output, ptr, 2);
 					ptr += 2;
 					output += 2;
 				} else {

@@ -76,6 +76,9 @@ const Game kyra2Games[] = {
 	// FM-TOWNS games
 	{ kKyra2, { EN_ANY, JA_JPN, -1 }, kPlatformFMTowns, kNoSpecial, { "74f50d79c919cc8e7196c24942ce43d7", "a9a7fd4f05d00090e9e8bda073e6d431" } },
 
+	// PC-98
+	{ kKyra2, { EN_ANY, JA_JPN, -1 }, kPlatformPC98, kNoSpecial, { "9bbf9a69be956db072b485929b416082", "f55fda3e60c4956ce6e72b24d2ae1a07" } },
+
 	GAME_DUMMY_ENTRY
 };
 
@@ -627,6 +630,23 @@ const int kyra2TownsNeed[] = {
 	-1
 };
 
+const int kyra2PC98Need[] = {
+	k2SeqplayPakFiles,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplaySeqData,
+	//k2SeqplayIntroCDA,
+	//k2SeqplayFinaleCDA,
+	k2IngamePakFiles,
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
+	//k2IngameCDA,
+	k2IngameTalkObjIndex,
+	k2IngameTimJpStrings,
+	k2IngameShapeAnimData,
+	-1
+};
+
 const int kyra2DemoNeed[] = {
 	k2SeqplayPakFiles,
 	k2SeqplaySeqData,
@@ -934,6 +954,8 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra2, kPlatformPC, kTalkieDemoVersion, kyra2CDDemoNeed },
 
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, kyra2TownsNeed },
+
+	{ kKyra2, kPlatformPC98, kNoSpecial, kyra2PC98Need },
 
 	{ kKyra2, kPlatformPC, kDemoVersion, kyra2DemoNeed },
 
