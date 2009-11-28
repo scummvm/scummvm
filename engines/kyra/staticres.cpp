@@ -114,9 +114,6 @@ const IndexTable iPlatformTable[] = {
 };
 
 byte getPlatformID(const GameFlags &flags) {
-	// HACK: Gross hack to support Kyra2 PC98, till there's data for it in kyra.dat
-	if (flags.gameID == GI_KYRA2 && flags.platform == Common::kPlatformPC98)
-		return 3;
 	return Common::find(iPlatformTable, iPlatformTable + ARRAYSIZE(iPlatformTable) - 1, flags.platform)->value;
 }
 
