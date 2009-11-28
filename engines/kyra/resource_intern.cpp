@@ -1251,7 +1251,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 				_sndArray[i - 1] = v;
 			}
 
-			uint16 numBytesOut = MIN<uint16>(vocOutEnd - dst, 8192);
+			uint32 numBytesOut = MIN<uint32>(vocOutEnd - dst, 8192);
 			memcpy(dst, _sndArray, numBytesOut);
 			dst += numBytesOut;
 		}
