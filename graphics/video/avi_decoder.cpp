@@ -45,6 +45,7 @@ AviDecoder::AviDecoder(Audio::Mixer *mixer) : _mixer(mixer) {
 	_audStream = NULL;
 	_fileStream = NULL;
 	_audHandle = new Audio::SoundHandle();
+	memset(_palette, 0, sizeof(_palette));
 	memset(&_wvInfo, 0, sizeof(PCMWAVEFORMAT));
 	memset(&_bmInfo, 0, sizeof(BITMAPINFOHEADER));
 	memset(&_vidsHeader, 0, sizeof(AVIStreamHeader));
