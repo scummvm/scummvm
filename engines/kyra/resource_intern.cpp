@@ -1247,7 +1247,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 				decodeHelper(i);
 
 			for (int i = 1; i <= 8192; i++) {
-				int32 v = CLIP(_floatArray[i] + 128, 0, 255);
+				int32 v = CLIP<int32>(_floatArray[i] + 128, 0, 255);
 				_sndArray[i - 1] = v;
 			}
 
