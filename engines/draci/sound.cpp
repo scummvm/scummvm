@@ -180,8 +180,10 @@ SndHandle *Sound::getHandle() {
 	}
 
 	for (int i = 0; i < SOUND_HANDLES; i++) {
-		if (_handles[i].type == kFreeHandle)
+		if (_handles[i].type == kFreeHandle) {
+			debugC(5, kDraciSoundDebugLevel, "Allocated handle %d", i);
 			return &_handles[i];
+		}
 	}
 
 	error("Sound::getHandle(): Too many sound handles");
@@ -230,6 +232,7 @@ void Sound::stopSound() {
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		if (_handles[i].type == kEffectHandle) {
 			_mixer->stopHandle(_handles[i].handle);
+			debugC(5, kDraciSoundDebugLevel, "Stopping effect handle %d", i);
 			_handles[i].type = kFreeHandle;
 		}
 }
@@ -259,6 +262,7 @@ void Sound::stopVoice() {
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		if (_handles[i].type == kVoiceHandle) {
 			_mixer->stopHandle(_handles[i].handle);
+			debugC(5, kDraciSoundDebugLevel, "Stopping voice handle %d", i);
 			_handles[i].type = kFreeHandle;
 		}
 }

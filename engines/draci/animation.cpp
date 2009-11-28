@@ -116,7 +116,15 @@ void Animation::nextFrame(bool force) {
 			// Fetch new frame and mark it dirty
 			markDirtyRect(surface);
 
-			_hasChangedFrame = true;
+			// If the animation is paused, then nextFrameNum()
+			// returns the same frame number even though the time
+			// has elapsed to switch to another frame.  We must not
+			// flip _hasChangedFrame to true, otherwise the sample
+			// assigned to this frame will be re-started over and
+			// over until all sound handles are exhausted (happens,
+			// e.g., when switching to the inventory which pauses
+			// all animations).
+			_hasChangedFrame = !_paused;
 		}
 	}
 

@@ -341,7 +341,7 @@ void Text::splitLinesLongerThan(uint maxWidth) {
 					break;
 				}
 			}
-			debugC(2, kDraciGeneralDebugLevel, "Long line of width %d split into %s\n", lineWidth, start);
+			debugC(2, kDraciGeneralDebugLevel, "Long line of width %d split into %s", lineWidth, start);
 		}
 		if (end) {
 			*end = '|';
