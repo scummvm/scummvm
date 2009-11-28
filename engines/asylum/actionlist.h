@@ -27,6 +27,7 @@
 #define ASYLUM_ACTIONLIST_H_
 
 #include "common/array.h"
+#include "common/stack.h"
 #include "common/stream.h"
 
 #include "asylum/scene.h"
@@ -61,19 +62,21 @@ typedef struct Script {
 
 typedef struct ScriptQueueEntry {
 	int actionListIndex;
-	int actionListItemIndex;
+	//int actionListItemIndex;
 	int actorIndex;
-	int field_C;
-	int field_10;
+	//int field_C;
+	//int field_10;
 
 } ScriptQueueEntry;
 
+/*
 typedef struct ScriptQueue {
 	ScriptQueueEntry entries[10];
 	int count;
 	int field_CC;
 
 } ScriptQueue;
+*/
 
 class ActionList {
 public:
@@ -115,7 +118,7 @@ public:
 	/** .text:00401100
 	 * Update the queued scripts
 	 */
-	void updateQueue(int queueIndex);
+	//void updateQueue(int queueIndex);
 	/**
 	 * Toggle the action queue processing flag
 	 */
@@ -128,8 +131,10 @@ public:
 private:
 	Scene *_scene;
 	bool  _actionFlag;
-	ScriptQueue _scripts;
-
+	//ScriptQueue _scripts;
+	Common::Stack<ScriptQueueEntry> _scripts;
+	Script *_currentScript;
+	ScriptQueueEntry _currentQueueEntry;
 	void load(Common::SeekableReadStream *stream);
 };
 
