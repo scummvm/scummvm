@@ -52,7 +52,7 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 		if (command == 1) {
 			_sound->beginFadeOut();
 		} else if (command >= 35 && command <= 38) {
-			snd_playSoundEffect(command-20);
+			snd_playSoundEffect(command - 20);
 		} else if (command >= 2) {
 			if (_lastMusicCommand != command)
 				// the original does -2 here we handle this inside _sound->playTrack()

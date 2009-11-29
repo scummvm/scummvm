@@ -62,7 +62,6 @@ public:
 
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
-	void loadSoundFile(const uint8 *soundData, int dataSize) {}
 	void loadSfxFile(Common::String file);
 
 	void playTrack(uint8 track);
@@ -115,7 +114,6 @@ public:
 
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String) {}
-	void loadSoundFile(const uint8 *soundData, int dataSize) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -172,9 +170,8 @@ public:
 	bool init();
 
 	void process() {}
-	void loadSoundFile(uint file) {}
+	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
-	void loadSoundFile(const uint8 *soundData, int dataSize);
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -202,7 +199,6 @@ public:
 
 	void loadSoundFile(uint file) {}
 	void loadSoundFile(Common::String file);
-	void loadSoundFile(const uint8 *soundData, int dataSize) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -310,7 +306,6 @@ public:
 	void process() {}
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String) {}
-	void loadSoundFile(const uint8 *soundData, int dataSize) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();

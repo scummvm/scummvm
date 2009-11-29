@@ -2772,7 +2772,7 @@ void KyraEngine_HoF::seq_init() {
 	_res->loadFileList(_sequencePakList, _sequencePakListSize);
 
 	if (_flags.platform == Common::kPlatformPC98)
-		_sound->loadSoundFile("sound.dat");
+		_sound->loadSoundFile("SOUND.DAT");
 
 	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 

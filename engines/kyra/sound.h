@@ -83,14 +83,14 @@ public:
 	 * Sets the soundfiles the output device will use
 	 * when playing a track and/or sound effect.
 	 *
-	 * @param list	soundfile list
+	 * @param list soundfile list
 	 */
 	virtual void setSoundList(const AudioDataStruct *list) { _soundDataList = list; }
 
 	/**
 	 * Checks if a given sound file is present.
 	 *
-	 * @param track	track number
+	 * @param track track number
 	 * @return true if available, false otherwise
 	 */
 	virtual bool hasSoundFile(uint file) { return (fileListEntry(file) != 0); }
@@ -108,12 +108,6 @@ public:
 	virtual void loadSoundFile(Common::String file) = 0;
 
 	/**
-	 * Load static data for playing sound
-	 * effects from.
-	 */
-	virtual void loadSoundFile(const uint8 *soundData, int dataSize) = 0;
-
-	/**
 	 * Load a sound file for playing sound
 	 * effects from.
 	 */
@@ -122,7 +116,7 @@ public:
 	/**
 	 * Plays the specified track.
 	 *
-	 * @param track	track number
+	 * @param track track number
 	 */
 	virtual void playTrack(uint8 track) = 0;
 
@@ -134,7 +128,7 @@ public:
 	/**
 	 * Plays the specified sound effect.
 	 *
-	 * @param track	sound effect id
+	 * @param track sound effect id
 	 */
 	virtual void playSoundEffect(uint8 track) = 0;
 
@@ -274,7 +268,6 @@ public:
 	bool hasSoundFile(uint file) const { return _music->hasSoundFile(file) && _sfx->hasSoundFile(file); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 	void loadSoundFile(Common::String file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
-	void loadSoundFile(const uint8 *soundData, int dataSize) { _sfx->loadSoundFile(soundData, dataSize); }
 	
 	void loadSfxFile(Common::String file) { _sfx->loadSoundFile(file); }
 

@@ -313,7 +313,7 @@ Common::Error KyraEngine_HoF::go() {
 
 		if (_flags.platform == Common::kPlatformPC98) {
 			_res->loadPakFile("AUDIO.PAK");
-			_sound->loadSoundFile("sound.dat");
+			_sound->loadSoundFile("SOUND.DAT");
 		}
 	}
 

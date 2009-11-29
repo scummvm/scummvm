@@ -1024,8 +1024,8 @@ void KyraEngine_LoK::initStaticResource() {
 	}
 
 	// audio data tables
-	static const char *tIntro98[] = { "intro%d.dat" };
-	static const char *tIngame98[] = { "kyram%d.dat" };
+	static const char *tIntro98[] = { "INTRO%d.DAT" };
+	static const char *tIngame98[] = { "KYRAM%d.DAT" };
 
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
 	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).

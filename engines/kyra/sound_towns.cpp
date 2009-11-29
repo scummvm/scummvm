@@ -4014,13 +4014,13 @@ float SoundTowns::calculatePhaseStep(int8 semiTone, int8 semiToneRootkey,
 	static const float noteFrq[] = {
 		0004.13f, 0004.40f, 0004.64f, 0004.95f, 0005.16f, 0005.50f, 0005.80f, 0006.19f, 0006.60f, 0006.86f,
 		0007.43f, 0007.73f, 0008.25f, 0008.80f, 0009.28f, 0009.90f, 0010.31f, 0011.00f, 0011.60f, 0012.38f,
-		0013.20f, 0013.75f, 0014.85f, 0015.47f,	0016.50f, 0017.60f, 0018.56f, 0019.80f, 0020.63f, 0022.00f,
+		0013.20f, 0013.75f, 0014.85f, 0015.47f, 0016.50f, 0017.60f, 0018.56f, 0019.80f, 0020.63f, 0022.00f,
 		0023.21f, 0024.75f, 0026.40f, 0027.50f, 0029.70f, 0030.94f, 0033.00f, 0035.20f, 0037.16f, 0039.60f,
 		0041.25f, 0044.00f, 0046.41f, 0049.50f, 0052.80f, 0055.00f, 0059.40f, 0061.88f, 0066.00f, 0070.40f,
 		0074.25f, 0079.20f, 0082.50f, 0088.00f, 0092.83f, 0099.00f, 0105.60f, 0110.00f, 0118.80f, 0123.75f,
 		0132.00f, 0140.80f, 0148.50f, 0158.40f, 0165.00f, 0176.00f, 0185.65f, 0198.00f, 0211.20f, 0220.00f,
 		0237.60f, 0247.50f, 0264.00f, 0281.60f, 0297.00f, 0316.80f, 0330.00f, 0352.00f, 0371.30f, 0396.00f,
-		0422.40f, 0440.00f, 0475.20f, 0495.00f,	0528.00f, 0563.20f, 0594.00f, 0633.60f, 0660.00f, 0704.00f,
+		0422.40f, 0440.00f, 0475.20f, 0495.00f, 0528.00f, 0563.20f, 0594.00f, 0633.60f, 0660.00f, 0704.00f,
 		0742.60f, 0792.00f, 0844.80f, 0880.00f, 0950.40f, 0990.00f, 1056.00f, 1126.40f, 1188.00f, 1267.20f,
 		1320.00f, 1408.00f, 1485.20f, 1584.00f, 1689.60f, 1760.00f, 1900.80f, 1980.00f, 2112.00f, 2252.80f,
 		2376.00f, 2534.40f, 2640.00f, 2816.00f, 2970.40f, 3168.00f, 3379.20f, 3520.00f, 3801.60f, 3960.00f
@@ -4031,7 +4031,7 @@ float SoundTowns::calculatePhaseStep(int8 semiTone, int8 semiToneRootkey,
 	float rateshift = (noteFrq[semiTone] - ((noteFrq[semiTone] -
 		noteFrq[semiTone + d]) * pwModifier * d)) / noteFrq[semiToneRootkey];
 
-	return (float) sampleRate * 10.0f * rateshift / outputRate;
+	return (float)sampleRate * 10.0f * rateshift / outputRate;
 }
 
 SoundPC98::SoundPC98(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
@@ -4049,15 +4049,27 @@ bool SoundPC98::init() {
 	return _driver->init();
 }
 
-void SoundPC98::loadSoundFile(Common::String file) {
-	delete[] _sfxTrackData;	
-	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
+void SoundPC98::loadSoundFile(uint file) {
+	if (!scumm_strnicmp(fileListEntry(0), "INTRO", 5)) {
+		delete[] _sfxTrackData;
+		_sfxTrackData = 0;
+
+		int dataSize = 0;
+		const uint8 *tmp = _vm->staticres()->loadRawData(k1PC98IntroSfx, dataSize);
+
+		if (!tmp) {
+			warning("Could not load static intro sound effects data\n");
+			return;
+		}
+
+		_sfxTrackData = new uint8[dataSize];
+		memcpy(_sfxTrackData, tmp, dataSize);
+	}
 }
 
-void SoundPC98::loadSoundFile(const uint8 *soundData, int dataSize) {
+void SoundPC98::loadSoundFile(Common::String file) {
 	delete[] _sfxTrackData;
-	_sfxTrackData = new uint8[dataSize];
-	memcpy(_sfxTrackData, soundData, dataSize);
+	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 
 void SoundPC98::playTrack(uint8 track) {
