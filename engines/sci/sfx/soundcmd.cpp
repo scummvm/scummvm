@@ -131,10 +131,8 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music = new SciMusic();
 	_music->init();
-#endif
 
 	switch (doSoundVersion) {
 	case SCI_VERSION_0_EARLY:
@@ -351,6 +349,31 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, SongHandle handle, int value) 
 			PUT_SEL32V(_segMan, obj, signal, 0);
 		}
 	}
+
+#if 0
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	HEAPHANDLE hptr = obj.getProperty(44);
+	if (hptr) {
+		sciSound *pSnd = (sciSound *)heap2Ptr(hptr);
+		if (pSnd->resnum != obj.getProperty(43)) { // another sound loaded into struct
+			KillSnd(hobj);
+			InitSnd(hobj);
+		}
+		ResMgr.ResLock(SCI_RES_SOUND, pSnd->resnum);
+		obj.setProperty(93, 0x1234/*res->getHandle()*/); // handle
+		obj.setProperty(17, 0);	// signal
+		obj.setProperty(94, 0);	// min
+		obj.setProperty(95, 0);	// sec
+		obj.setProperty(96, 0);	// frame
+		pSnd->loop = (obj.getProperty(6) == 0xFFFF ? 1 : 0);	// loop
+		pSnd->prio = obj.getProperty(63);	// priority
+		pSnd->volume = obj.getProperty(97);	// vol
+		//ChangeSndState(hobj);
+		_audio->soundPlay(pSnd);
+	}
+#endif
 }
 
 void SoundCommandParser::cmdDummy(reg_t obj, SongHandle handle, int value) {
@@ -374,6 +397,22 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, SongHandle handle, int valu
 		if (!_hasNodePtr)
 			PUT_SEL32V(_segMan, obj, handle, 0x0000);
 	}
+
+#if 0
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	StopSnd(hobj);
+	HEAPHANDLE hptr = obj.getProperty(44);	// nodePtr
+	if (hptr) {
+		sciSound *pSnd = (sciSound *)heap2Ptr(hptr);
+		_audio->soundKill(pSnd);
+		ResMgr.ResUnload(SCI_RES_SOUND, pSnd->resnum);
+		_soundList->DeleteNode(hptr);
+		heapDisposePtr(hptr);
+	}
+	obj.setProperty(44, 0);	// nodePtr
+#endif
 }
 
 void SoundCommandParser::cmdStopHandle(reg_t obj, SongHandle handle, int value) {
@@ -381,6 +420,20 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, SongHandle handle, int value) 
 
 	if (_hasNodePtr)
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+
+#if 0
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	obj.setProperty(93, 0);	// handle
+	obj.setProperty(17, 0xFFFF);	// signal
+	sciSound *pSnd = (sciSound *)heap2Ptr(obj.getProperty(44));
+	if (pSnd) {
+		pSnd->dataInc = 0;
+		pSnd->signal = 0xFFFF;
+		_audio->soundStop(pSnd);
+	}
+#endif
 }
 
 void SoundCommandParser::cmdSuspendHandle(reg_t obj, SongHandle handle, int value) {
@@ -388,6 +441,21 @@ void SoundCommandParser::cmdSuspendHandle(reg_t obj, SongHandle handle, int valu
 		changeHandleStatus(obj, handle, SOUND_STATUS_SUSPENDED);
 	else
 		changeHandleStatus(obj, handle, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
+
+#if 0
+	// PauseSnd(argv[2], argv[3]); - PauseSnd(HEAPHANDLE hobj, uint16 w)
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
+	if (!hnode)
+		return;
+	sciSound *pSnd = (sciSound *)heap2Ptr(hnode);
+	if (w)
+		_audio->soundPause(pSnd);
+	else
+		_audio->soundPlay(pSnd);
+#endif
 }
 
 void SoundCommandParser::cmdResumeHandle(reg_t obj, SongHandle handle, int value) {
@@ -395,6 +463,8 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, SongHandle handle, int value
 }
 
 void SoundCommandParser::cmdMuteSound(reg_t obj, SongHandle handle, int value) {
+	//_acc = _music->SoundOn(argc > 1 ? argv[2] : 0xFF);
+
 	// TODO
 
 	/* if there's a parameter, we're setting it.  Otherwise, we're querying it. */
@@ -407,10 +477,9 @@ void SoundCommandParser::cmdMuteSound(reg_t obj, SongHandle handle, int value) {
 }
 
 void SoundCommandParser::cmdVolume(reg_t obj, SongHandle handle, int value) {
-	if (obj != SIGNAL_REG)
-		_state->sfx_setVolume(obj.toSint16());
-
-	_acc = make_reg(0, _state->sfx_getVolume());
+	if (_argc > 1)
+		_music->soundSetMasterVolume(obj.toSint16());
+	_acc = make_reg(0, _music->soundGetMasterVolume());
 }
 
 void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) {
@@ -446,36 +515,43 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) 
 			PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 		}
 	}
+
+#if 0
+	// FadeSnd(argv[2], argv[3], argv[4], argv[5]);
+
+//void SciEngine::FadeSnd(HEAPHANDLE hobj, uint16 tVolume, uint16 tickerstep, int16 fadestep) {
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
+	if (!hnode)
+		return;
+	sciSound *pSnd = (sciSound *)heap2Ptr(hnode);
+	pSnd->FadeTo = tVolume;
+	pSnd->FadeStep = pSnd->volume > tVolume ? -fadestep : fadestep;
+	pSnd->FadeTickerStep = tickerstep * 16667 / _audio->soundGetTempo();
+	pSnd->FadeTicker = 0;
+//}
+#endif
 }
 
 void SoundCommandParser::cmdGetPolyphony(reg_t obj, SongHandle handle, int value) {
 	_acc = make_reg(0, _state->sfx_get_player_polyphony());
-}
-
-void cmdGetPlayNext(EngineState *s, reg_t obj, SongHandle handle, int value) {
-	// TODO
-	// _state->sfx_all_stop();
+	// TODO: Amiga music
+	//_acc = make_reg(0, _music->soundGetVoices());
 }
 
 void SoundCommandParser::cmdUpdateHandle(reg_t obj, SongHandle handle, int value) {
-	// FIXME: Get these from the sound server
-	int signal = 0;
-	int min = 0;
-	int sec = 0;
-	int frame = 0;
+	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
+		int16 loop = GET_SEL32V(_segMan, obj, loop);
+		int16 vol = GET_SEL32V(_segMan, obj, vol);
+		int16 priority = GET_SEL32V(_segMan, obj, priority);
 
-	// FIXME: Update the sound server state with 'vol'
-	//int vol = GET_SEL32V(segMan, obj, vol);
-
-	_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
-	_state->sfx_song_renice(handle, GET_SEL32V(_segMan, obj, pri));
-
-	debugC(2, kDebugLevelSound, "[sound01-update-handle] -- CUE %04x:%04x", PRINT_REG(obj));
-
-	PUT_SEL32V(_segMan, obj, signal, signal);
-	PUT_SEL32V(_segMan, obj, min, min);
-	PUT_SEL32V(_segMan, obj, sec, sec);
-	PUT_SEL32V(_segMan, obj, frame, frame);
+		// TODO: pSnd
+		//pSnd->loop = (loop == 0xFFFF ? 1 : 0);
+		//_music->soundSetVolume(pSnd, vol);
+		//_music->soundSetPriority(pSnd, prio);
+	}
 }
 
 void SoundCommandParser::cmdUpdateCues(reg_t obj, SongHandle handle, int value) {
@@ -546,6 +622,35 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, SongHandle handle, int value) 
 		PUT_SEL32V(_segMan, obj, sec, sec);
 		PUT_SEL32V(_segMan, obj, frame, frame);
 	}
+
+#if 0
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
+	if (hnode) {
+		sciSound *pSnd = (sciSound *)heap2Ptr(hnode);
+		switch (pSnd->signal) {
+		case 0:
+			if (pSnd->dataInc != obj.getProperty(92)) { // dataInc
+				obj.setProperty(92, pSnd->dataInc);	// dataInc
+				obj.setProperty(17, pSnd->dataInc + 127); // signal
+			}
+			break;
+		case 0xFFFF:
+			StopSnd(hobj);
+			break;
+		default:
+			obj.setProperty(17, pSnd->signal);	// signal
+		}
+		//D13E
+		pSnd->signal = 0;
+		obj.setProperty(94, pSnd->ticker / 3600); // .min
+		obj.setProperty(95, pSnd->ticker % 3600 / 60); // .sec
+		obj.setProperty(96, pSnd->ticker); // .frame
+		obj.setProperty(97, pSnd->volume); // volume
+	}
+#endif
 }
 
 void SoundCommandParser::cmdSendMidi(reg_t obj, SongHandle handle, int value) {
@@ -559,6 +664,7 @@ void SoundCommandParser::cmdReverb(reg_t obj, SongHandle handle, int value) {
 }
 void SoundCommandParser::cmdHoldHandle(reg_t obj, SongHandle handle, int value) {
 	_state->sfx_song_set_hold(handle, value);
+	// TODO
 }
 
 void SoundCommandParser::cmdGetAudioCapability(reg_t obj, SongHandle handle, int value) {
@@ -571,17 +677,49 @@ void SoundCommandParser::cmdGetPlayNext(reg_t obj, SongHandle handle, int value)
 
 void SoundCommandParser::cmdSetHandleVolume(reg_t obj, SongHandle handle, int value) {
 	// TODO
+#if 0
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	sciSound *pSnd;
+	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
+	if (hnode && (pSnd = (sciSound *)heap2Ptr(hnode))) {
+		if (pSnd->volume != w) {
+			pSnd->volume = w;
+			_audio->soundSetVolume(pSnd, w);
+			obj.setProperty(97, w);	// volume
+		}
+	}
+#endif
 }
 
 void SoundCommandParser::cmdSetHandlePriority(reg_t obj, SongHandle handle, int value) {
 	script_set_priority(_resMan, _segMan, _state, obj, value);
+
+#if 0
+	if (hobj == 0)
+		return;
+	Object obj(hobj);
+	sciSound *pSnd;
+	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
+	if (hnode && (pSnd = (sciSound *)heap2Ptr(hnode))) {
+		if (w == 0xFFFF) {
+			//pSnd->prio=0;field_15B=0
+			obj.setProperty(102, obj.getProperty(102) & 0xFD);//flags
+		} else {
+			//pSnd->field_15B=1;
+			obj.setProperty(102, obj.getProperty(102) | 2);//flags
+			//DoSOund(0xF,hobj,w)
+		}
+	}
+#endif
 }
 
 void SoundCommandParser::cmdSetHandleLoop(reg_t obj, SongHandle handle, int value) {
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
 		uint16 looping = (value == -1) ? 1 : 0xFFFF;
 		_state->sfx_song_set_loops(handle, looping);
-		PUT_SEL32V(_segMan, obj, loop, looping);
+		PUT_SEL32V(_segMan, obj, loop, (value == -1) ? 0xFFFF : 1);
 	}
 }
 
@@ -594,6 +732,19 @@ void SoundCommandParser::cmdUpdateVolumePriority(reg_t obj, SongHandle handle, i
  		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
  		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
  	}
+
+#if 0
+	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
+		int16 loop = GET_SEL32V(_segMan, obj, loop);
+		int16 vol = GET_SEL32V(_segMan, obj, vol);
+		int16 priority = GET_SEL32V(_segMan, obj, priority);
+
+		// TODO: pSnd
+		//pSnd->loop = (loop == 0xFFFF ? 1 : 0);
+		//_music->soundSetVolume(pSnd, vol);
+		//_music->soundSetPriority(pSnd, prio);
+	}
+#endif
 }
 
 } // End of namespace Sci
