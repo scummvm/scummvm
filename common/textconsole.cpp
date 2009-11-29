@@ -73,7 +73,7 @@ void warning(const char *s, ...) {
 
 #endif
 
-void NORETURN error(const char *s, ...) {
+void NORETURN_PRE error(const char *s, ...) {
 	char buf_input[STRINGBUFLEN];
 	char buf_output[STRINGBUFLEN];
 	va_list va;

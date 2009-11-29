@@ -187,7 +187,7 @@
 
 	#ifndef __GNUC__
 		#define FORCEINLINE __forceinline
-		#define NORETURN __declspec(noreturn)
+		#define NORETURN_PRE __declspec(noreturn)
 	#endif
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
@@ -204,7 +204,7 @@
 	#define SCUMM_LITTLE_ENDIAN
 
 	#define FORCEINLINE __forceinline
-	#define NORETURN __declspec(noreturn)
+	#define NORETURN_PRE __declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
 
@@ -350,7 +350,7 @@
 // GCC specific stuff
 //
 #if defined(__GNUC__)
-	#define NORETURN __attribute__((__noreturn__))
+	#define NORETURN_POST __attribute__((__noreturn__))
 	#define PACKED_STRUCT __attribute__((__packed__))
 	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
 
@@ -374,8 +374,12 @@
 #define PLUGIN_EXPORT
 #endif
 
-#ifndef NORETURN
-#define	NORETURN
+#ifndef NORETURN_PRE
+#define	NORETURN_PRE
+#endif
+
+#ifndef NORETURN_POST
+#define	NORETURN_POST
 #endif
 
 #ifndef STRINGBUFLEN

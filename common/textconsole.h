@@ -62,11 +62,7 @@ void setErrorHandler(ErrorHandler handler);
 }	// End of namespace Common
 
 
-#if defined(__GNUC__)
-void error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
-#else
-void NORETURN error(const char *s, ...);
-#endif
+void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 #ifdef DISABLE_TEXT_CONSOLE
 
