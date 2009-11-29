@@ -151,7 +151,7 @@ bool PAKFile::outputFileAs(const char *f, const char *fn) {
 	FileList *cur = (_fileList != 0) ? _fileList->findEntry(f) : 0;
 
 	if (!cur) {
-		error("file '%s' not found");
+		error("file '%s' not found", f);
 		return false;
 	}
 
