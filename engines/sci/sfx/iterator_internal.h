@@ -65,12 +65,10 @@ struct SongIteratorChannel {
 	int initial_offset;
 
 	int playmask;			///< Active playmask (MIDI channels to play in here) */
-	int notes_played;		///< #of notes played since the last loop start */
 	int loop_timepos;		///< Total delay for this channel's loop marker */
 	int total_timepos;		///< Number of ticks since the beginning, ignoring loops */
 	int timepos_increment;	///< Number of ticks until the next command (to add) */
 
-	int saw_notes;			///< Bitmask of channels we have currently played notes on */
 	byte last_cmd;			///< Last operation executed, for running status */
 
 public:
@@ -81,8 +79,6 @@ public:
 class BaseSongIterator : public SongIterator {
 public:
 	int _polyphony[MIDI_CHANNELS];	///< # of simultaneous notes on each
-	int _importance[MIDI_CHANNELS];	///< priority rating for each channel, 0 means unrated.
-
 
 	int _ccc;					///< Cumulative cue counter, for those who need it
 	byte _resetflag;			///< for 0x4C -- on DoSound StopSound, do we return to start?
