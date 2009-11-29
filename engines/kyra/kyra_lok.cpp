@@ -197,10 +197,13 @@ Common::Error KyraEngine_LoK::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	if (_flags.platform == Common::kPlatformPC98)
-		_sound->loadSoundFile(k1PC98IntroSfx);
-	else
+	if (_flags.platform == Common::kPlatformPC98) {
+		int sfxSize;
+		const uint8 *sfxData = _staticres->loadRawData(k1PC98IntroSfx, sfxSize);
+		_sound->loadSoundFile(sfxData, sfxSize);
+	} else {
 		_sound->loadSoundFile(0);
+	}
 
 	setupButtonData();
 
