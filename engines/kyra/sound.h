@@ -165,7 +165,7 @@ public:
 	/**
 	 * Checks whether a voice file with the given name is present
 	 *
-	 * @param file		file name
+	 * @param file     file name
 	 * @return true if available, false otherwise
 	 */
 	bool isVoicePresent(const char *file);
@@ -177,10 +177,10 @@ public:
 	 * specified voice file, it stops the
 	 * current voice.
 	 *
-	 * @param file		file to be played
-	 * @param volume	volume of the voice file
-	 * @param isSfx		marks file as sfx instead of voice
-	 * @param handle	store a copy of the sound handle
+	 * @param file      file to be played
+	 * @param volume    volume of the voice file
+	 * @param isSfx     marks file as sfx instead of voice
+	 * @param handle    store a copy of the sound handle
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
 	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
@@ -304,12 +304,12 @@ public:
 	/**
 	 * Plays a sound.
 	 *
-	 * @param filename		file to be played
-	 * @param priority		priority of the sound
-	 * @param type			type
-	 * @param volume		channel volume
-	 * @param loop			true if the sound should loop (endlessly)
-	 * @param channel		tell the sound player to use a specific channel for playback
+	 * @param filename  file to be played
+	 * @param priority  priority of the sound
+	 * @param type      type
+	 * @param volume    channel volume
+	 * @param loop      true if the sound should loop (endlessly)
+	 * @param channel   tell the sound player to use a specific channel for playback
 	 *
 	 * @return channel playing the sound
 	 */
@@ -318,7 +318,7 @@ public:
 	/**
 	 * Checks if a given channel is playing a sound.
 	 *
-	 * @param channel	channel number to check
+	 * @param channel channel number to check
 	 * @return true if playing, else false
 	 */
 	bool isPlaying(int channel);
@@ -327,7 +327,7 @@ public:
 	 * Stop the playback of a sound in the given
 	 * channel.
 	 *
-	 * @param channel	channel number
+	 * @param channel channel number
 	 */
 	void stopSound(int channel);
 
@@ -340,8 +340,8 @@ public:
 	 * Makes the sound in a given channel
 	 * fading out.
 	 *
-	 * @param channel	channel number
-	 * @param ticks		fadeout time
+	 * @param channel channel number
+	 * @param ticks   fadeout time
 	 */
 	void beginFadeOut(int channel, int ticks);
 private:
