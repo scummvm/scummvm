@@ -543,9 +543,9 @@ void SoundCommandParser::cmdGetPolyphony(reg_t obj, SongHandle handle, int value
 
 void SoundCommandParser::cmdUpdateHandle(reg_t obj, SongHandle handle, int value) {
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
-		int16 loop = GET_SEL32V(_segMan, obj, loop);
+		/*int16 loop = GET_SEL32V(_segMan, obj, loop);
 		int16 vol = GET_SEL32V(_segMan, obj, vol);
-		int16 priority = GET_SEL32V(_segMan, obj, priority);
+		int16 priority = GET_SEL32V(_segMan, obj, priority);*/
 
 		// TODO: pSnd
 		//pSnd->loop = (loop == 0xFFFF ? 1 : 0);
