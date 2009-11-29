@@ -4049,6 +4049,22 @@ bool SoundPC98::init() {
 	return _driver->init();
 }
 
+void SoundPC98::loadSoundFile(uint file) {
+	delete[] _sfxTrackData;
+
+	int tmpSize;
+	const uint8 *tmp = _vm->staticres()->loadRawData((int) file, tmpSize);
+	
+	if (!tmp) {
+		warning("Failed to load static sound data with id %d.", file);
+		_sfxTrackData = 0;
+		return;
+	}
+		
+	_sfxTrackData = new uint8[tmpSize];
+	memcpy(_sfxTrackData, tmp, tmpSize);
+}
+
 void SoundPC98::loadSoundFile(Common::String file) {
 	delete[] _sfxTrackData;	
 	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);

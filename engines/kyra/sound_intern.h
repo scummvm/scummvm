@@ -170,7 +170,7 @@ public:
 	bool init();
 
 	void process() {}
-	void loadSoundFile(uint file) {}
+	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 
 	void playTrack(uint8 track);

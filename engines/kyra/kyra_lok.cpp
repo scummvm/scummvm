@@ -198,7 +198,7 @@ Common::Error KyraEngine_LoK::init() {
 		error("Couldn't init sound");
 
 	if (_flags.platform == Common::kPlatformPC98)
-		_sound->loadSoundFile("introsfx.98");
+		_sound->loadSoundFile(k1PC98IntroSfx);
 	else
 		_sound->loadSoundFile(0);
 
