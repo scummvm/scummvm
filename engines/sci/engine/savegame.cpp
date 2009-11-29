@@ -790,6 +790,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->sfx_init_flags = s->sfx_init_flags;
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
+	retval->_soundCmd->updateSfxState(&retval->_sound);
 
 	reconstruct_stack(retval);
 	retval->_segMan->reconstructScripts(retval);

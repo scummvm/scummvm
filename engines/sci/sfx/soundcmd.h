@@ -46,6 +46,8 @@ public:
 	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, SfxState *state, AudioPlayer *audio, SciVersion doSoundVersion);
 	~SoundCommandParser();
 
+	void updateSfxState(SfxState *newState) { _state = newState; }
+
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 private:
