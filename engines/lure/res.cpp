@@ -656,6 +656,11 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 		// Default characters to facing upwards until they start moving
 		hotspot->setDirection(UP);
 		hotspot->setCharRectY(0);
+
+		// When reactivating an NPC, ensure that their previous state wasn't PROCESSING_PATH, since
+		// the pause has destroyed the previously decided destination position
+		if (!hData->npcSchedule.isEmpty() && (hData->npcSchedule.top().action() == PROCESSING_PATH))
+			hData->npcSchedule.top().setAction(DISPATCH_ACTION);
 	}
 
 	return hotspot;
