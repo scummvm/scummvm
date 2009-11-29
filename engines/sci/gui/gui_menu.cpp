@@ -191,9 +191,10 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 		if (rightAlignedPos) {
 			rightAlignedPos++;
 			tempPos = endPos;
-			//if (tagPos)
-			if (tagPos && tagPos >= rightAlignedPos)	// FIXME: sanity check for LB1 and KQ4
-				tempPos = tagPos;
+			// Shouldnt be needed at all, cause right aligned occurs after tag (hopefully)
+			//  If no game is found that causes problems, remove this line (29.11.2009)
+			//if (tagPos && tagPos >= rightAlignedPos)
+			//	tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
 		}
 
