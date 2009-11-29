@@ -146,12 +146,6 @@ public:
 	int removeSong(SongHandle handle);
 
 	/**
-	 * Removes a song from the library and sorts it in again; for use after renicing.
-	 * @param son		song to work on
-	 */
-	void resortSong(Song *song);
-
-	/**
 	 * Counts the number of songs in a song library.
 	 * @return the number of songs
 	 */

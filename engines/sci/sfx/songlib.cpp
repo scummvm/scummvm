@@ -163,22 +163,6 @@ int SongLibrary::removeSong(SongHandle handle) {
 	return retval;
 }
 
-void SongLibrary::resortSong(Song *song) {
-	if (_lib == song)
-		_lib = song->_next;
-	else {
-		Song *seeker = _lib;
-
-		while (seeker->_next && (seeker->_next != song))
-			seeker = seeker->_next;
-
-		if (seeker->_next)
-			seeker->_next = seeker->_next->_next;
-	}
-
-	addSong(song);
-}
-
 int SongLibrary::countSongs() {
 	Song *seeker = _lib;
 	int retval = 0;
