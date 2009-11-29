@@ -33,7 +33,8 @@ Table of Contents:
  * 3.16 Mickey's Space Adventure notes
  * 3.17 Winnie the Pooh notes
  * 3.18 Troll's Tale notes
- * 3.19 Known Problems
+ * 3.19 Dragon History notes
+ * 3.20 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -241,6 +242,7 @@ Other Games:
      Cruise for a Corpse                         [cruise]
      Discworld                                   [dw]
      Discworld 2: Missing Presumed ...!?         [dw2]
+     Dragon History                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
      Flight of the Amazon Queen                  [queen]
      Future Wars                                 [fw]
@@ -709,7 +711,24 @@ dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
 
-3.19) Known Problems:
+3.19) Dragon History notes:
+----- ---------------------
+There are 3 language variants of the game: Czech, English, and Polish.
+Each of them is distributed in a separate archive.  The only official
+version is the Czech one, and the English and Polish ports have always
+been work in progress and never officially released.  Although all texts
+are fully translated, it is known that some of them contain typos.
+
+There exists an optional Czech dubbing for the game.  For bandwidth
+reasons, you can download it separately and then unpack it to the
+directory of the game.  You can listen to the Czech dubbing with all
+language variants of the game, while reading the subtitles.
+
+All game files and the walkthrough can be downloaded from
+http://www.ucw.cz/draci-historie/index-en.html
+
+
+3.20) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to
 report them, although patches to fix them are welcome. If you discover a
@@ -1075,6 +1094,7 @@ Engines which currently support returning to the Launcher are:
     AGI
     AGOS
     CINE
+    DRACI
     GOB
     GROOVIE
     KYRA
@@ -1152,6 +1172,15 @@ other games.
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
     p                      - Pauses
+
+  Dragon History:
+    left click             - walk, explore
+    right click            - use, talk
+    move mouse up, i       - inventory
+    move mouse down, m     - map
+    Escape                 - skip the intro, exit map/inventory
+    any click              - skip the currently dubbed sentence
+    q                      - quick walking on/off
 
   Flight of the Amazon Queen:
     Ctrl-d                 - Starts the debugger
@@ -1309,6 +1338,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
        AGI
        AGOS
        CINE
+       DRACI
        GROOVIE
        KYRA
        LURE
@@ -1333,6 +1363,7 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 
        AGI
        CINE
+       DRACI
        GROOVIE
        KYRA
        LURE
