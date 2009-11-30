@@ -4,7 +4,7 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 sci
+		cruise made m4 tinsel tucker sword1 sword2 sci draci
 	);
 	
 	@WorkingEngines_1st = qw(
@@ -16,7 +16,7 @@
 	@WorkingEngines_2nd = qw(
 		agos sky gob 
 		kyra lure agi tinsel
-		sword1 sword2 
+		sword1 sword2 draci
 	);
 
 	@TestingEngines = qw(
@@ -205,7 +205,7 @@
 		$SDK_RootDirs{'UIQ3'}= "G:\\UIQ3";
 		#$SDK_RootDirs{'S60v1'}= "D:\\S60v1";
 		#$SDK_RootDirs{'S60v2'}= "D:\\S60v2";
-		$SDK_RootDirs{'S60v3'}= "G:\\S60_3rd_FP1";
+		$SDK_RootDirs{'S60v3'}= "G:\\S60v3";
 		#$SDK_RootDirs{'S80'}= "D:\\S80";
 		#$SDK_RootDirs{'S90'}= "D:\\S90";
 		$ECompXL_BinDir= "D:\\ECompXL\\";
