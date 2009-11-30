@@ -247,7 +247,7 @@ bool AviDecoder::loadFile(const char *fileName) {
 			
 	debug (0, "Frames = %d, Dimensions = %d x %d", _header.totalFrames, _header.width, _header.height);
 	debug (0, "Frame Rate = %d", getFrameRate());
-	if (_header.flags & AVIF_ISINTERLEAVED)
+	if ((_audsHeader.scale != 0) && (_header.flags & AVIF_ISINTERLEAVED))
 		debug (0, "Sound Rate = %d", AUDIO_RATE);
 	debug (0, "Video Codec = \'%s\'", tag2str(_vidsHeader.streamHandler));
 
