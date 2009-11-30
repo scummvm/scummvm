@@ -58,10 +58,10 @@ public:
 	uint32		   flags;
 	uint32		   field_3C;
 	uint8		   name[52];
-	uint32		   field_74; // XXX looks like fields
-	uint32		   field_78; // 78 => 80 have something
-	uint32		   field_7C; // to do with calculating
-	uint32		   field_80; // actor intersection
+	int32		   field_74; // XXX looks like fields
+	int32		   field_78; // 78 => 80 have something
+	int32		   field_7C; // to do with calculating
+	int32		   field_80; // actor intersection
 	uint32		   polyIdx;
 	uint32		   flags2;
 	uint32		   gameFlags[10];

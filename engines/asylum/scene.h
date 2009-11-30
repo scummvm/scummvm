@@ -156,7 +156,7 @@ private:
 	bool   _rightButton;
 	bool   _isActive;
 	bool   _skipDrawScene;
-	uint32 _playerActorIdx;
+	int32 _playerActorIdx;
 
 	/** .text:0040E460
 	 * Initialize the current scene
@@ -175,7 +175,7 @@ private:
 	/** .text:0040D190 */
 	void updateMouse();
 	/** .text:0040B740 */
-	void updateActor(uint32 actorIdx);
+	void updateActor(int32 actorIdx);
 	/**
 	 * TODO give more meaningful name
 	 */
@@ -189,6 +189,7 @@ private:
 	/** .text:0040DAE0 */
 	void   updateAdjustScreen();
 	int    drawScene();
+    /** .text:0040A3C0 */
 	void   drawActorsAndBarriers();
 	int    queueActorUpdates();
 	int    queueBarrierUpdates();
