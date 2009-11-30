@@ -273,17 +273,25 @@ void AviDecoder::closeFile() {
 
 	delete[] _videoFrameBuffer;
 	_videoFrameBuffer = 0;
-		
+
 	// Deinitialize sound
 	_mixer->stopHandle(*_audHandle);
-		
+	_audStream = 0;
+
 	_decodedHeader = false;
-	
+
 	delete _videoCodec;
 	_videoCodec = 0;
 
 	delete[] _ixInfo.indices;
 	_ixInfo.indices = 0;
+
+	memset(_palette, 0, sizeof(_palette));
+	memset(&_wvInfo, 0, sizeof(PCMWAVEFORMAT));
+	memset(&_bmInfo, 0, sizeof(BITMAPINFOHEADER));
+	memset(&_vidsHeader, 0, sizeof(AVIStreamHeader));
+	memset(&_audsHeader, 0, sizeof(AVIStreamHeader));
+	memset(&_ixInfo, 0, sizeof(AVIOLDINDEX));
 }
 
 Surface *AviDecoder::getNextFrame() {
