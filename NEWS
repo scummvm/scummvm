@@ -98,7 +98,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed bug with switching modes with keyboard active.
 
  PSP port:
-   - Fixed video flickering and stretching is some situations.
+   - Fixed video flickering and stretching in some situations.
    - Improved suspend/resume support.
 
  WinCE port:
