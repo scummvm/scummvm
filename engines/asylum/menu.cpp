@@ -440,7 +440,7 @@ void MainMenu::updateSubMenuSettings() {
 	_vm->text()->setTextPos(sizeMinus + sizePlus + 365, 150);
 	loadFont(kFontYellow);
 	if (Config.gammaLevel) {
-		for (uint32 i = 0; i < Config.gammaLevel; i++) {
+		for (int32 i = 0; i < Config.gammaLevel; i++) {
 			_vm->text()->drawText("]");
 		}
 		if (Config.gammaLevel == 8)
@@ -464,7 +464,7 @@ void MainMenu::updateSubMenuSettings() {
 	if (Config.performance == 5) {
 		_vm->text()->drawResText(0x8000059C);
 	} else {
-		for (uint32 i = 5; i > Config.performance; --i) {
+		for (int32 i = 5; i > Config.performance; --i) {
 			_vm->text()->drawText("]");
 		}
 		if (!Config.performance)

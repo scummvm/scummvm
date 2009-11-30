@@ -32,6 +32,7 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 		: _scene(scene) {
 	load(stream);
 
+    _currentScript    = 0;
 	currentLine       = 0;
 	currentLoops      = 0;
 	delayedSceneIndex = -1;

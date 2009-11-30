@@ -167,7 +167,7 @@ void Actor::setWalkArea(ActionArea *target) {
 	}
 }
 
-void Actor::walkTo(uint32 curX, uint32 curY) {
+void Actor::walkTo(int32 curX, int32 curY) {
 	int newAction = currentAction;
 	WorldStats *ws = _scene->worldstats();
 

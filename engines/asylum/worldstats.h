@@ -119,7 +119,7 @@ public:
 	Common::Rect	 sceneRects[6];	 // including scene size rect
 	uint8			 sceneRectIdx;
 	uint8			 field_11D[3];
-	uint32			 field_120;
+	int32			 field_120;
 	uint32			 actionListIdx;	 // actionList start index
 	uint32			 grResId[100];
 	uint32			 sceneTitleGrResId;

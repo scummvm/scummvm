@@ -684,7 +684,7 @@ void Scene::updateMouse() {
 	//printf("Current Dir %d -- New Dir %d\n", actor->direction, dir);
 }
 
-void Scene::updateActor(uint32 actorIdx) {
+void Scene::updateActor(int32 actorIdx) {
 	Actor *actor = getActor();
 
 	if (actor->visible()) {
@@ -1381,7 +1381,7 @@ void Scene::drawActorsAndBarriers() {
 				// works the way I assume it should :P
 				if (!actInBar) {
 					if (LOBYTE(bar->flags) & 0x20)
-						if (!LOBYTE(bar->flags) & 0x80)
+						if (!(LOBYTE(bar->flags) & 0x80))
 							// XXX not sure if this will work, as it's
 							// supposed to set 0x40 to the lobyte...
 							bar->flags |= 0x40;
@@ -1571,13 +1571,13 @@ void Scene::debugScreenScrolling(GraphicFrame *bg) {
 	// Horizontal scrolling
 	if (_cursor->x() < SCREEN_EDGES && _ws->targetX >= SCROLL_STEP)
 		_ws->targetX -= SCROLL_STEP;
-	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->targetX <= (uint32)bg->surface.w - 640 - SCROLL_STEP)
+	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->targetX <= bg->surface.w - 640 - SCROLL_STEP)
 		_ws->targetX += SCROLL_STEP;
 
 	// Vertical scrolling
 	if (_cursor->y() < SCREEN_EDGES && _ws->targetY >= SCROLL_STEP)
 		_ws->targetY -= SCROLL_STEP;
-	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->targetY <= (uint32)bg->surface.h - 480 - SCROLL_STEP)
+	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->targetY <= bg->surface.h - 480 - SCROLL_STEP)
 		_ws->targetY += SCROLL_STEP;
 }
 

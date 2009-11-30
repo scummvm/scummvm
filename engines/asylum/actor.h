@@ -180,7 +180,7 @@ public:
 	void setActionByIndex(int index);
 	void drawActorAt(uint32 curX, uint32 curY);
 	void drawActor();
-	void walkTo(uint32 curX, uint32 curY);
+	void walkTo(int32 curX, int32 curY);
 
 	int currentAction; // TODO depreciate
 
