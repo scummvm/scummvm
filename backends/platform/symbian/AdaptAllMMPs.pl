@@ -31,6 +31,7 @@ chdir("../../../");
 	"mmp/scummvm_tucker.mmp", 
 	"mmp/scummvm_sci.mmp", 
 	"mmp/scummvm_draci.mmp", 
+	"mmp/scummvm_teenagent.mmp", 
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
@@ -69,6 +70,7 @@ my @section_empty = (""); # section standard: no #ifdef's in module.mk files
 my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections for engine SCUMM
 my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
 my @sections_kyra = ("", "ENABLE_LOL"); # special sections for engine KYRA
+my @sections_agos = ("", "ENABLE_AGOS2"); # special sections for engine AGOS
 
 # files excluded from build, case insensitive, will be matched in filename string only
 my @excludes_snd = ( 
@@ -110,7 +112,7 @@ ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
 chdir("engines/");
 ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );
 ParseModule("_queen",	"queen",	\@section_empty);
-ParseModule("_agos",	"agos",		\@section_empty);
+ParseModule("_agos",	"agos",		\@sections_agos);
 ParseModule("_sky",	"sky",		\@section_empty);
 ParseModule("_gob",	"gob",		\@section_empty);
 ParseModule("_saga",	"saga",		\@sections_saga);
@@ -129,8 +131,9 @@ ParseModule("_m4",	"m4",		\@section_empty);
 ParseModule("_tinsel",	"tinsel",	\@section_empty);
 ParseModule("_groovie",	"groovie",	\@section_empty);
 ParseModule("_tucker",	"tucker",	\@section_empty);
-ParseModule("_sci",	"sci",	\@section_empty);
+ParseModule("_sci",	"sci",		\@section_empty);
 ParseModule("_draci",	"draci",	\@section_empty);
+ParseModule("_teenagent","teenagent",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

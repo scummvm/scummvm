@@ -4,7 +4,7 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 sci draci
+		cruise made m4 tinsel tucker sword1 sword2 sci draci teenagent
 	);
 	
 	@WorkingEngines_1st = qw(
@@ -16,7 +16,7 @@
 	@WorkingEngines_2nd = qw(
 		agos sky gob 
 		kyra lure agi tinsel
-		sword1 sword2 draci
+		sword1 sword2 draci teenagent
 	);
 
 	@TestingEngines = qw(
@@ -33,6 +33,7 @@
 		he
 		ihnm
 		lol
+		agos2
 	);
 
 	%UseableFeatures = (

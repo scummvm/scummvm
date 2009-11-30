@@ -26,7 +26,7 @@
 
 // *** Definitions
 
-TARGET          scummvm_agos.lib
+TARGET          scummvm_teenagent.lib
 TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
@@ -41,19 +41,13 @@ ALWAYS_BUILD_AS_ARM
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\..\engines\agos
+SOURCEPATH ..\..\..\..\engines\teenagent
 
-//START_AUTO_OBJECTS_AGOS_//
+//START_AUTO_OBJECTS_TEENAGENT_//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_AGOS_//
-
-//START_AUTO_OBJECTS_AGOS_ENABLE_AGOS2//
-
-        // empty base file, will be updated by Perl build scripts
-
-//STOP_AUTO_OBJECTS_AGOS_ENABLE_AGOS2//
+//STOP_AUTO_OBJECTS_TEENAGENT_//
 
 // *** Include paths
 
