@@ -32,8 +32,6 @@
 #include "draci/script.h"
 #include "draci/animation.h"
 
-#include <cmath>
-
 namespace Draci {
 
 static const Common::String dialoguePath("ROZH");

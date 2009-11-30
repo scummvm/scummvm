@@ -29,8 +29,6 @@
 #include "draci/sprite.h"
 #include "draci/font.h"
 
-#include <cmath>
-
 namespace Draci {
 
 const Displacement kNoDisplacement = { 0, 0, 1.0, 1.0 };
