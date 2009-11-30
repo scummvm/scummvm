@@ -43,6 +43,8 @@ SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciG
 	// center mouse cursor
 	setPosition(Common::Point(_screen->_displayWidth / 2, _screen->_displayHeight / 2));
 	setMoveZone(Common::Rect(0, 0, _screen->_displayWidth, _screen->_displayHeight));
+
+	_isVisible = true;
 }
 
 SciGuiCursor::~SciGuiCursor() {
@@ -51,10 +53,16 @@ SciGuiCursor::~SciGuiCursor() {
 
 void SciGuiCursor::show() {
 	CursorMan.showMouse(true);
+	_isVisible = true;
 }
 
 void SciGuiCursor::hide() {
 	CursorMan.showMouse(false);
+	_isVisible = false;
+}
+
+bool SciGuiCursor::isVisible() {
+	return _isVisible;
 }
 
 void SciGuiCursor::purgeCache() {

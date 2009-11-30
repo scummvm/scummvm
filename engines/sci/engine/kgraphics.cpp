@@ -110,11 +110,20 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argc) {
 	case 1:
-		if (argv[0].isNull())
+		switch (argv[0].toSint16()) {
+		case 0:
 			s->_gui->hideCursor();
-		else
+			break;
+		case -1:
+			// TODO: Special case at least in kq6, check disassembly
+			break;
+		case -2:
+			// TODO: Special case at least in kq6, check disassembly
+			break;
+		default:
 			s->_gui->showCursor();
-		break;
+			break;
+		}
 	case 2:
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
@@ -986,8 +995,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 1)
 		return NULL_REG;
 
-	s->_gui->hideCursor();
-
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
 	if (argv[0].toUint16() == 0) {
@@ -1020,8 +1027,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		delete player;
 		delete seqDecoder;
 	}
-
-	s->_gui->showCursor();
 
 	return s->r_acc;
 }

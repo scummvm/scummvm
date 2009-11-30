@@ -49,6 +49,7 @@ public:
 
 	void show();
 	void hide();
+	bool isVisible();
 	void setShape(GuiResourceId resourceId);
 	void setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot);
 	void setPosition(Common::Point pos);
@@ -74,6 +75,8 @@ private:
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
 
 	CursorCache _cachedCursors;
+
+	bool _isVisible;
 };
 
 } // End of namespace Sci

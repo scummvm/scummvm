@@ -583,12 +583,15 @@ uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 void SciGui::animateShowPic() {
 	GuiPort *picPort = _windowMgr->_picWind;
 	Common::Rect picRect = picPort->rect;
+	bool previousCursorState = _cursor->isVisible();
 
-	_cursor->hide();
+	if (previousCursorState)
+		_cursor->hide();
 	// Adjust picRect to become relative to screen
 	picRect.translate(picPort->left, picPort->top);
 	_transitions->doit(picRect);
-	_cursor->show();
+	if (previousCursorState)
+		_cursor->show();
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
