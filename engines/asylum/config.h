@@ -28,6 +28,8 @@
 
 #include "common/array.h"
 #include "common/singleton.h"
+#include "common/config-manager.h"
+#include "video.h"
 
 namespace Asylum {
 
@@ -49,8 +51,8 @@ public:
     VideoSubtitles showMovieSubtitles;
 	Common::Array<int>  movieSubtitles;
 	bool showEncounterSubtitles;
-	Common::Array<int>  encounterSubtitles;
-	int  musicVolume;
+	Common::Array<int>  encounterSubtitles; // FIXME: take this out
+    int  musicVolume;
 	int  ambientVolume;
 	int  sfxVolume;
 	int  voiceVolume;
@@ -74,18 +76,14 @@ public:
 	int switchToOlmecKey;
 
 	/**
-	 * Load a value from the configuration file
+	 * Load configuration file
 	 */
-	bool readValue(int target);
+	void read();
 
 	/**
 	 * Save a value to the configuration file
-	 *
-	 * XXX Some values (like viewed cinematics) used to be written to
-	 * the Windows registry, so we're going to handle this from the
-	 * same file as other settings
 	 */
-	bool writeValue(int target);
+	void write();
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;

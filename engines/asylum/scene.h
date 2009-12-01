@@ -73,6 +73,8 @@ private:
 	uint32 _spinnerFrame;
 	uint32 _spinnerProgress;
 
+    bool _showMouseState;
+
 }; // end of class SceneTitle
 
 
@@ -80,6 +82,11 @@ class Scene {
 public:
 	Scene(uint8 sceneIdx, AsylumEngine *engine);
 	~Scene();
+
+	/** .text:0040E460
+	 * Initialize the current scene
+	 */
+	void initialize();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
 
@@ -157,11 +164,6 @@ private:
 	bool   _isActive;
 	bool   _skipDrawScene;
 	int32 _playerActorIdx;
-
-	/** .text:0040E460
-	 * Initialize the current scene
-	 */
-	void initialize();
 
 	void update();
 	void startMusic();

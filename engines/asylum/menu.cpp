@@ -90,7 +90,9 @@ void MainMenu::switchFont(bool condition) {
 
 void MainMenu::openMenu() {
 	_active = true;
-	_vm->scene()->deactivate();
+    if (_vm->scene()) {
+    	_vm->scene()->deactivate();
+    }
 
 	loadFont(kFontYellow);
 
@@ -123,7 +125,9 @@ void MainMenu::openMenu() {
 
 void MainMenu::closeMenu() {
 	_active = false;
-	_vm->scene()->activate();
+    if (_vm->scene()) {
+	    _vm->scene()->activate();
+    }
 
 	// Stop menu sounds and menu music
 	_vm->sound()->stopSound();
@@ -217,8 +221,10 @@ void MainMenu::update() {
 			_vm->sound()->playMusic(_resPack, 38);
 			break;
 		case kReturnToGame:
-			closeMenu();
-			_vm->scene()->enterScene();
+            if (_vm->scene()) { // FIXME: do this properly
+                closeMenu();
+			    _vm->scene()->enterScene();
+            }
 			break;
 		}
 	}

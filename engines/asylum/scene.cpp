@@ -103,18 +103,6 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 		_ws->actors[a].setScene(this);
 	}
 
-	// XXX initialize array dword_5433A8[15] to zero
-	// This array doesn't appear to be used anywhere afterwards
-	// though, so skipping this step.
-
-	initialize();
-
-	// XXX
-	// This is a hack for the moment to test out
-	// the new sound queuing functionality
-	for (uint i = 0; i < _ws->numAmbientSound; i++)
-		_vm->sound()->addToSoundBuffer(_ws->ambientSounds[i].resId);
-
 	// TODO: init action list
 
 	_titleLoaded = false;
@@ -137,7 +125,6 @@ void Scene::initialize() {
 
 	_cursor->load(_ws->commonRes.curMagnifyingGlass);
 	_cursor->set(0);
-	_cursor->show();
 
 	_ws->sceneRectIdx = 0;
 	_vm->screen()->clearScreen(); // XXX was clearGraphicsInQueue()
@@ -1678,6 +1665,7 @@ SceneTitle::SceneTitle(Scene *scene): _scene(scene) {
 	delete pack;
 
 	_done = false;
+    _showMouseState = g_system->showMouse(false);
 }
 
 SceneTitle::~SceneTitle() {
@@ -1725,8 +1713,10 @@ void SceneTitle::update(uint32 tick) {
 	if (_spinnerFrame > _progress->getFrameCount() - 1)
 		_spinnerFrame = 0;
 
-	if (_spinnerProgress > 590)
+    if (_spinnerProgress > 590) {
 		_done = true;
+        g_system->showMouse(_showMouseState);
+    }
 }
 
 } // end of namespace Asylum

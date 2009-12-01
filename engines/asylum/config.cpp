@@ -32,7 +32,6 @@ namespace Asylum {
 static bool g_config_initialized = false;
 
 ConfigurationManager::ConfigurationManager() {
-
 	if (!g_config_initialized) {
 		g_config_initialized = true;
 	}
@@ -44,11 +43,23 @@ ConfigurationManager::ConfigurationManager() {
 	movieVolume   = 0;
 	musicVolume   = 0;
 	sfxVolume     = 0;
-
 }
 
 ConfigurationManager::~ConfigurationManager() {
-	// TODO Auto-generated destructor stub
+}
+
+void ConfigurationManager::read() {
+    // TODO: read all necessary configuration settings
+    musicVolume = ConfMan.getInt("music_volume");
+    sfxVolume   = ConfMan.getInt("sfx_volume");
+    voiceVolume = ConfMan.getInt("speech_volume");
+}
+
+void ConfigurationManager::write() {
+    // TODO: save all necessary configuration settings
+    ConfMan.setInt("music_volume", musicVolume);
+    ConfMan.setInt("sfx_volume", sfxVolume);
+    ConfMan.setInt("speech_volume", voiceVolume);
 }
 
 } // end of namespace Asylum
