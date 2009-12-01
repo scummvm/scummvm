@@ -109,13 +109,22 @@ int Sound::getBufferPosition(uint32 resId) {
 bool Sound::addToSoundBuffer(uint resId) {
 	int exists = getBufferPosition(resId);
 
-	if (exists >= 0) {
+	if (exists < 0) {
 		SoundBufferItem sound;
 		sound.resId = resId;
+        sound.handle = _soundHandle;
 		_soundBuffer.push_back(sound);
 	}
 
 	return (exists < 0) ? true : false;
+}
+
+void Sound::removeFromSoundBuffer(uint resId) {
+    int pos = getBufferPosition(resId);
+
+	if (pos >= 0) {
+		_soundBuffer.remove_at(pos);
+	}
 }
 
 void Sound::clearSoundBuffer() {
@@ -131,7 +140,9 @@ bool Sound::isPlaying(uint resId) {
 		SoundBufferItem snd = _soundBuffer[pos];
 		if (_mixer->isSoundHandleActive(snd.handle)) {
 			return true;
-		}
+        } else {
+            removeFromSoundBuffer(resId);
+        }
 	}
 
 	return false;
@@ -166,6 +177,7 @@ void Sound::playSound(ResourcePack *pack, uint resId, bool looping, int volume, 
 		} else {
 			ResourceEntry *ent = _soundPack->getResource(resId);
 			playSoundData(&snd.handle, ent->data, ent->size, looping, volume, panning);
+            addToSoundBuffer(resId);
 		}
 	}
 
@@ -180,6 +192,7 @@ void Sound::playSound(uint resId, bool looping, int volume, int panning, bool fr
 		} else {
 			ResourceEntry *ent = _soundPack->getResource(resId);
 			playSound(ent, looping, volume, panning);
+            addToSoundBuffer(resId);
 		}
 	}
 }

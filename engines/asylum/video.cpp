@@ -131,12 +131,14 @@ Video::~Video() {
 }
 
 bool Video::playVideo(int number, VideoSubtitles subtitles) {
-	char filename[20];
+	bool lastMouseState = false;
+    char filename[20];
+
 	sprintf(filename, "mov%03d.smk", number);
 
 	bool result = _smkDecoder->loadFile(filename);
 
-	g_system->showMouse(false);
+	lastMouseState = g_system->showMouse(false);
 	if (result) {
 		if (subtitles == kSubtitlesOff)
 			_player->playVideo(_stopEvents);
@@ -144,7 +146,7 @@ bool Video::playVideo(int number, VideoSubtitles subtitles) {
 			_player->playVideoWithSubtitles(_stopEvents, number);
 	}
 	_smkDecoder->closeFile();
-	g_system->showMouse(true);
+	g_system->showMouse(lastMouseState);
 
 	return result;
 }

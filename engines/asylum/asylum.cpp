@@ -126,12 +126,15 @@ Common::Error AsylumEngine::go() {
 	// Also, this routine is used to set game flags 4 and 12, so if we're
 	// skipping the intro, but not loading a save file, those flags
 	// need to be set somewhere else.
-	//playIntro();
+	playIntro();
 
-	// Enter first scene
-	setGameFlag(4);
-	setGameFlag(12);
-	_scene->enterScene();
+    // Enter first scene
+    if(!_introPlaying)
+    {
+		setGameFlag(4);
+	    setGameFlag(12);
+	    _scene->enterScene();
+    }
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -152,7 +155,10 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 }
 
 void AsylumEngine::playIntro() {
-	_video->playVideo(1, kSubtitlesOn);
+    _introPlaying = true;
+    g_system->showMouse(false);
+
+	_video->playVideo(1, Config.showMovieSubtitles);
 
 	if (_scene->worldstats()->musicCurrentResId != 0xFFFFFD66)
 		_sound->playMusic(_scene->worldstats()->musicCurrentResId);
@@ -164,7 +170,7 @@ void AsylumEngine::playIntro() {
 
 	// Play the intro sound sample (the screen is blacked out, you hear
 	// an alarm sounding and men talking about.
-	_sound->playSound(0x8012007, false, Config.sfxVolume, 0);
+	_sound->playSound(0x80120007, false, Config.sfxVolume, 0);
 }
 
 void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
@@ -178,7 +184,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	// by moving the logic to the event loop and checking whether a flag is
 	// set to determine if control should be returned to the engine.
 	if (_introPlaying) {
-		if (!_sound->isPlaying(0x8012007)) {
+		if (!_sound->isPlaying(0x80120007)) {
 			_introPlaying = false;
 
 			// TODO Since we've currently only got one sfx handle to play with in
@@ -191,8 +197,6 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			// especially when you examine isSoundinList() or isSoundPlaying())
 
 			_scene->enterScene();
-		} else {
-			return;
 		}
 	}
 
@@ -247,10 +251,6 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	else if (_scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
-
-	if (_introPlaying) {
-
-	}
 }
 
 void AsylumEngine::processDelayedEvents() {
