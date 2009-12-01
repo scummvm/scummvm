@@ -117,6 +117,7 @@ public:
 
 private:
 	void processObject();
+	bool trySelectedObject();
 
 	bool scene_busy;
 	Action action;

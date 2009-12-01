@@ -42,6 +42,45 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) :
 	music = new MusicPlayer();
 }
 
+bool TeenAgentEngine::trySelectedObject() {
+	InventoryObject *inv = inventory->selectedObject();
+	if (inv == NULL)
+		return false;
+
+	Resources *res = Resources::instance();
+	debug(0, "checking active object %u on %u", inv->id, dst_object->id);
+	
+	//mouse time challenge hack:
+	if (
+		(res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
+		(res->dseg.get_byte(0) == 2 && inv->id == 29 && dst_object->id == 5)
+	) {
+		//putting rock into hole or superglue on rock
+		processCallback(0x8d57);
+		return true;
+	}
+
+	const Common::Array<UseHotspot> &hotspots = use_hotspots[scene->getId() - 1];
+	for (uint i = 0; i < hotspots.size(); ++i) {
+		const UseHotspot &spot = hotspots[i];
+		if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
+			debug(0, "use object on hotspot!");
+			spot.dump();
+			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
+				moveTo(spot.actor_x, spot.actor_y, spot.orientation);
+			inventory->resetSelectedObject();
+			if (!processCallback(TO_LE_16(spot.callback)))
+				debug(0, "fixme! display proper description");
+			return true;
+		}
+	}
+
+	//error
+	inventory->resetSelectedObject();
+	displayMessage(0x3457);
+	return true;
+}
+
 void TeenAgentEngine::processObject() {
 	if (dst_object == NULL)
 		return;
@@ -49,6 +88,9 @@ void TeenAgentEngine::processObject() {
 	Resources *res = Resources::instance();
 	switch (action) {
 	case kActionExamine: {
+		if (trySelectedObject())
+			break;
+
 		byte *dcall = res->dseg.ptr(0xb5ce);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
@@ -61,49 +103,15 @@ void TeenAgentEngine::processObject() {
 	}
 	break;
 	case kActionUse: {
-		InventoryObject *inv = inventory->selectedObject();
-		if (inv != NULL) {
-			debug(0, "checking active object %u on %u", inv->id, dst_object->id);
-			
-			//mouse time challenge hack:
-			if (
-				(res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
-				(res->dseg.get_byte(0) == 2 && inv->id == 29 && dst_object->id == 5)
-			) {
-				//putting rock into hole or superglue on rock
-				processCallback(0x8d57);
-				return;
-			}
-			
-			
-			const Common::Array<UseHotspot> &hotspots = use_hotspots[scene->getId() - 1];
-			for (uint i = 0; i < hotspots.size(); ++i) {
-				const UseHotspot &spot = hotspots[i];
-				if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
-					debug(0, "use object on hotspot!");
-					spot.dump();
-					if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
-						moveTo(spot.actor_x, spot.actor_y, spot.orientation);
-					inventory->resetSelectedObject();
-					if (!processCallback(TO_LE_16(spot.callback)))
-						debug(0, "fixme! display proper description");
-					return;
-				}
-			}
-
-			//error
-			inventory->resetSelectedObject();
-			displayMessage(0x3457);
-
+		if (trySelectedObject())
 			break;
-		} else {
-			byte *dcall = res->dseg.ptr(0xb89c);
-			dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-			dcall += 2 * dst_object->id - 2;
-			uint16 callback = READ_LE_UINT16(dcall);
-			if (!processCallback(callback))
-				scene->displayMessage(dst_object->description);
-		}
+		
+		byte *dcall = res->dseg.ptr(0xb89c);
+		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
+		dcall += 2 * dst_object->id - 2;
+		uint16 callback = READ_LE_UINT16(dcall);
+		if (!processCallback(callback))
+			scene->displayMessage(dst_object->description);
 	}
 	break;
 
