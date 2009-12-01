@@ -31,6 +31,8 @@
 
 namespace Asylum {
 
+enum VideoSubtitles;
+
 /**
  * The ConfigurationManager is where the common configuration options used
  * by the engine are bound.
@@ -44,7 +46,7 @@ public:
 	// I know how to better handle them
 	int  word_446EE4;
 
-	bool showMovieSubtitles;
+    VideoSubtitles showMovieSubtitles;
 	Common::Array<int>  movieSubtitles;
 	bool showEncounterSubtitles;
 	Common::Array<int>  encounterSubtitles;

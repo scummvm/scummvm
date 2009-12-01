@@ -75,6 +75,7 @@ public:
 	~Sound();
 
 	bool addToSoundBuffer(uint resId);
+    void removeFromSoundBuffer(uint resId);
 	void clearSoundBuffer();
 
 	/**
