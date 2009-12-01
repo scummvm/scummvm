@@ -475,11 +475,12 @@ begin_credits("Credits");
 		"list. Contact us and we'll add you.");
 		add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
 		add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support");
-		add_person("Marcus Comstedt", "", "Dreamcast port");
+		add_person("Marcus Comstedt", "marcus_c", "Initial Dreamcast port");
 		add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor");
 		add_person("Jonathan Gray", "khalek", "Various code fixes");
+		add_person("Yaron Tausky", "yaront", "Fixes to subtitles");
 		add_person("Vincent Hamm", "yazoo", "Various engine code");
-		add_person("Erich Hoover", "Compholio", "x86-64, various fixes and comments, menu support, improved state support");
+		add_person("Erich Hoover", "Compholio", "x86-64 fixes, various fixes and comments, menu support, improved state support");
 		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
 		add_person("Joost Peters", "joostp", "Various code fixes");
 		add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
@@ -493,34 +494,46 @@ begin_credits("Credits");
 
     begin_section("ScummVM code");
 	  add_paragraph(
-	  "Residual use some ScummVM common code. ".
+	  "Residual use some ScummVM code. ".
 	  "Copyrights for this code belongs to persons listed below. ".
 	  "If you are missed in this list contact us and we'll add you.");
 	  begin_persons();
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Chris Apers", "chrilith", "");
 		  add_person("Bertrand Augereau", "", "");
+		  add_person("Yotam Barnoy", "bluddy", "");
 		  add_person("James Brown", "ender", "");
 		  add_person("Jamieson Christian", "jamieson630", "");
+		  add_person("David Corrales-Lopez", "david_corrales", "");
+		  add_person("Oystein Eftevaag", "vinterstum", "");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
+		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Jonathan Gray", "khalek", "");
 		  add_person("Vincent Hamm", "yazoo", "");
 		  add_person("R&uuml;diger Hanke", "", "");
+		  add_person("Sven Hesse", "DrMcCoy", "");
+		  add_person("Matthew Hoops", "clone2727", "");
 		  add_person("Max Horn", "Fingolfin", "");
+		  add_person("Florian Kagerer", "athrxx", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Oliver Kiehl", "olki", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
+		  add_person("Vicent Marti", "tanoku", "");
 		  add_person("Claudio Matsuoka", "", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Kostas Nakos", "Jubanka", "");
+		  add_person("Chris Page", "cp88", "");
 		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Lars Persson", "AnotherGuest", "");
+		  add_person("Joost Peters", "joostp", "");
+		  add_person("Jordi Vilalta Prat", "jvprat", "");
 		  add_person("Kari Salminen", "Buddha^", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("Johannes Schickel", "LordHoto", "");
 		  add_person("Ludvig Strigeus", "ludde", "");
 		  add_person("Lionel Ulmer", "bbrox", "");
+		  add_person("Jody Northup", "Upthorn", "");
 		  add_person("Jordi Vilalta", "", "");
 		  add_person("Robin Watts", "robinwatts", "");
 		  add_person("", "agent-q", "");
@@ -528,6 +541,12 @@ begin_credits("Credits");
 		  add_person("", "peres", "");
 	  end_persons();
     end_section();
+
+  begin_section("Website (code)");
+	begin_persons();
+		add_person("Fredrik Wendel", "", "");
+	end_persons();
+  end_section();
 
   # HACK!
   $max_name_width = 16;
