@@ -38,10 +38,25 @@ struct ADGameFileDescription;
 /**
  * This is the namespace of the SAGA engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ *
+ * This engine contains 2 main engine generations, SAGA and SAGA2
+ *
+ * SAGA status: complete
+ *
+ * SAGA2 status: in early stages of development, no recent activity. Contact sev
+ *  if you want to work on it, since we have some original source codes.
  *
  * Supported games:
- * - ???
+ *
+ * SAGA:
+ * - Inherit the Earth
+ * - I Have No Mouth And I Must Scream
+ *
+ * SAGA2:
+ * - Dinotopia
+ * - Faery Tale Adventure II: Halls of the Dead
+ *
  */
 namespace Saga {
 
