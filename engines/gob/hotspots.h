@@ -202,6 +202,9 @@ private:
 	/** Handling hotspot leave events. */
 	void leave(uint16 index);
 
+	/** Which window is the mouse cursor currently in? (Fascination) */
+	int16 curWindow(int16 &dx, int16 &dy) const;
+
 	/** Which hotspot is the mouse cursor currently at? */
 	uint16 checkMouse(Type type, uint16 &id, uint16 &index) const;
 

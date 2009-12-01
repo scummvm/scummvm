@@ -522,6 +522,31 @@ void Hotspots::leave(uint16 index) {
 		call(spot.funcLeave);
 }
 
+int16 Hotspots::curWindow(int16 &dx, int16 &dy) const {
+	if ((_vm->_draw->_renderFlags & 0x80)==0) 
+		return(0);
+	for (int i = 0; i < 10; i++)
+		if (_vm->_draw->_fascinWin[i].id != -1)
+			if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left && 
+				_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width && 
+				_vm->_global->_inter_mouseY >= _vm->_draw->_fascinWin[i].top && 
+				_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + _vm->_draw->_fascinWin[i].height)
+				if (_vm->_draw->_fascinWin[i].id == _vm->_draw->_winCount-1) {
+					dx = _vm->_draw->_fascinWin[i].left;
+					dy = _vm->_draw->_fascinWin[i].top;
+					if (_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + 12 && 
+						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top  + 12 && 
+						(VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 2))
+						return(5);
+					if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width - 12 && 
+						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + 12 && 
+						(VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 4))
+						return(6);
+					return(-i);
+				}
+	return(0);
+}
+
 uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 	id    = 0;
 	index = 0;
@@ -1581,29 +1606,56 @@ void Hotspots::evaluate() {
 int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	int16 cursor = 0;
 
-	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
-		const Hotspot &spot = _hotspots[i];
+	int16 deltax;
+	int16 deltay;
+	
+	if ( _vm->getGameType() == kGameTypeFascination ) {
+		cursor = curWindow(deltax, deltay);
+	}
+	if (cursor == 0) {
+		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
+			const Hotspot &spot = _hotspots[i];
 
-		if ((spot.getWindow() != 0) || spot.isDisabled())
-			// Ignore disabled and non-main-windowed hotspots
-			continue;
+			if ((spot.getWindow() != 0) || spot.isDisabled())
+				// Ignore disabled and non-main-windowed hotspots
+				continue;
 
-		if (!spot.isIn(x, y))
-			// We're not in that hotspot, ignore it
-			continue;
+			if (!spot.isIn(x, y))
+				// We're not in that hotspot, ignore it
+				continue;
 
-		if (spot.getCursor() == 0) {
-			// Hotspot doesn't itself specify a cursor...
-			if (spot.getType() >= kTypeInput1NoLeave) {
-				// ...but the type has a generic one
-				cursor = 3;
-				break;
-			} else if ((spot.getButton() != kMouseButtonsRight) && (cursor == 0))
-				// ...but there's a generic "click" cursor
-				cursor = 1;
-		} else if (cursor == 0)
-			// Hotspot had an attached cursor index
-			cursor = spot.getCursor();
+			if (spot.getCursor() == 0) {
+				// Hotspot doesn't itself specify a cursor...
+				if (spot.getType() >= kTypeInput1NoLeave) {
+					// ...but the type has a generic one
+					cursor = 3;
+					break;
+				} else if ((spot.getButton() != kMouseButtonsRight) && (cursor == 0))
+					// ...but there's a generic "click" cursor
+					cursor = 1;
+			} else if (cursor == 0)
+				// Hotspot had an attached cursor index
+				cursor = spot.getCursor();
+		}
+	} else {
+		if (cursor < 0) {
+			int16 curType = - cursor * 256;
+			cursor = 0;
+			for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
+				const Hotspot &spot = _hotspots[i];
+				if ((spot.flags & 0xFF00) == curType)
+					if (spot.isIn(x - deltax, y - deltay)) {
+						if (spot.getType() < kTypeInput1NoLeave)
+							cursor = 1;
+						else 
+							cursor = 3;
+						break; 
+					}
+			}
+		}
+		if (_vm->_draw->_cursorAnimLow[cursor] == -1)
+		// If the cursor is invalid... there's a generic "click" cursor
+			cursor = 1;
 	}
 
 	return cursor;
