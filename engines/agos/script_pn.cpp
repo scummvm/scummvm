@@ -259,7 +259,7 @@ void AGOSEngine_PN::opn_opcode14() {
 }
 
 void AGOSEngine_PN::opn_opcode15() {
-	int32 x = varval();;
+	int32 x = varval();
 	if ((x < 0) || (x > 4))
 		x = 0;
 

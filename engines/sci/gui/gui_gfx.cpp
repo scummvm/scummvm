@@ -290,7 +290,7 @@ void SciGuiGfx::BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
-		memoryPtr = kmem(_segMan, memoryHandle);;
+		memoryPtr = kmem(_segMan, memoryHandle);
 
 		if (memoryPtr) {
 			_screen->bitsGetRect(memoryPtr, destRect);
@@ -302,7 +302,7 @@ void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
-		memoryPtr = kmem(_segMan, memoryHandle);;
+		memoryPtr = kmem(_segMan, memoryHandle);
 
 		if (memoryPtr) {
 			_screen->bitsRestore(memoryPtr);

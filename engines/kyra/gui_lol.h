@@ -68,7 +68,7 @@ namespace Kyra {
 		item.y = c; \
 		item.width = d; \
 		item.height = e; \
-		item.textColor =  _vm->gameFlags().use16ColorMode ? 0xc1 : 204;; \
+		item.textColor =  _vm->gameFlags().use16ColorMode ? 0xc1 : 204; \
 		item.highlightColor = _vm->gameFlags().use16ColorMode ? 0xe1 : 254; \
 		item.titleX = -1; \
 		if (_vm->gameFlags().use16ColorMode) { \
