@@ -99,41 +99,25 @@ Common::Error AsylumEngine::init() {
 }
 
 Common::Error AsylumEngine::go() {
-	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
-	// TODO: load startup configurations (address 0041A970)
-	// TODO: init unknown game stuffs (address 0040F430)
-	// TODO: if savegame exists on folder, than start NewGame()
+    g_system->showMouse(true);
 
-	// FIXME The scene shouldn't be created here, as we don't technically know
-	// how the scene is starting. This was put in for testing, but will eventually
-	// have to be removed once saveload is implemented
-	_scene = new Scene(5, this);
+	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing) (address 00411CD0)
+    // load startup configurations (.text:0041A970)
+    Config.read();
+	// TODO: init unknown game stuffs (.text:0040F430)
 
-	// FIXME This is just here for testing purposes. It is also defined
-	// in the processActionList() method when the necessary action is fired.
-	// Once the blowup puzzle testing is removed from checkForEvent(), this
-	// can be removed as well.
-	_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
+#ifndef SKIP_INTRO
+    _video->playVideo(0, Config.showMovieSubtitles);
+#endif
 
-	// Set up main menu
+    // Set up main menu
 	_mainMenu = new MainMenu(this);
 
-	// XXX Testing
-	_encounter = new Encounter(_scene);
-
-	// TODO you should be able to skip this if you want. The original
-	// allows this through the /SKIP command line argument.
-	// Also, this routine is used to set game flags 4 and 12, so if we're
-	// skipping the intro, but not loading a save file, those flags
-	// need to be set somewhere else.
-	playIntro();
-
-    // Enter first scene
-    if(!_introPlaying)
-    {
-		setGameFlag(4);
-	    setGameFlag(12);
-	    _scene->enterScene();
+	// TODO: if savegame not exists on folder, than start game()
+    if(0) { //SearchMan.hasArchive
+        startGame();
+    } else {
+        _mainMenu->openMenu();
     }
 
 	while (!shouldQuit()) {
@@ -149,9 +133,37 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 	while (_system->getMillis() < start_time + msec_delay) {
 		checkForEvent(false);
-		processDelayedEvents();
+        if (_scene) {
+		    processDelayedEvents();
+        }
 		_system->updateScreen();
 	}
+}
+
+void AsylumEngine::startGame() {
+    _scene = new Scene(5, this);
+    // TODO: reset what need to be reset for a new game
+#ifndef SKIP_INTRO
+    playIntro();
+#endif
+    _scene->initialize();
+
+	// FIXME This is just here for testing purposes. It is also defined
+	// in the processActionList() method when the necessary action is fired.
+	// Once the blowup puzzle testing is removed from checkForEvent(), this
+	// can be removed as well.
+	_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
+
+	// XXX Testing
+	_encounter = new Encounter(_scene);
+
+    // Enter first scene
+    if(!_introPlaying)
+    {
+		setGameFlag(4);
+	    setGameFlag(12);
+	    _scene->enterScene();
+    }
 }
 
 void AsylumEngine::playIntro() {
@@ -207,11 +219,13 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				// Toggle menu
 				if (_mainMenu->isActive()) {
-					_mainMenu->closeMenu();
-					_scene->enterScene();
-				} else if (_scene->isActive()) {
+                    if (_scene) {
+                        _mainMenu->closeMenu();
+					    _scene->enterScene();
+                    }
+				} else if (_scene && _scene->isActive()) {
 					_mainMenu->openMenu();
-				} else if (_scene->getBlowUpPuzzle()->isActive()) {
+				} else if (_scene && _scene->getBlowUpPuzzle()->isActive()) {
 					_scene->getBlowUpPuzzle()->closeBlowUp();
 					_scene->enterScene();
 				}
@@ -221,8 +235,9 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 
 			// XXX: TEST ONLY
 			if (ev.kbd.keycode == Common::KEYCODE_b) {
-				//_mainMenu->closeMenu();
-				_scene->getBlowUpPuzzle()->openBlowUp();
+                if (_scene) {
+				    _scene->getBlowUpPuzzle()->openBlowUp();
+                }
 			}
 
 			if (ev.kbd.flags == Common::KBD_CTRL) {
@@ -234,7 +249,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	}
 
 	if (doUpdate) {
-		if (_mainMenu->isActive() || _scene->isActive() || _scene->getBlowUpPuzzle()->isActive())
+		if (_mainMenu->isActive() || (_scene && _scene->isActive()) || (_scene && _scene->getBlowUpPuzzle()->isActive()))
 			// Copy background image
 			_screen->copyBackBufferToScreen();
 
@@ -245,10 +260,10 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	if (_mainMenu->isActive())
 		// Main menu active, pass events to it
 		_mainMenu->handleEvent(&ev, doUpdate);
-	else if (_scene->isActive())
+	else if (_scene && _scene->isActive())
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
-	else if (_scene->getBlowUpPuzzle()->isActive())
+	else if (_scene && _scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
 }

@@ -89,9 +89,18 @@ public:
 	 * Initalize the game environment
 	 */
 	Common::Error init();
+   
+    /** .text:0041A500
+	 * Start the game environment
+	 */
 	Common::Error go();
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
+
+    /** .text:00415830
+	 * Start a new the game
+	 */
+    void startGame();
 
 	void setGameFlag(int flag);
 	void clearGameFlag(int flag);
@@ -122,6 +131,10 @@ private:
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 	void processDelayedEvents();
+
+    /** .text:0041B630
+	 * Start a new the game
+	 */
 	void playIntro();
 
 	Common::Language     _language;
