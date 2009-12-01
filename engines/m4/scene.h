@@ -127,7 +127,7 @@ private:
 	void nextCommonCursor();
 };
 
-enum FontMode {MODE_0, MODE_1, MODE_2};
+enum FontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
 
 class InterfaceElement: public View {
 protected:

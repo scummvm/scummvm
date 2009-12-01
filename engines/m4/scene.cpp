@@ -114,6 +114,12 @@ void Scene::loadScene(int sceneNumber) {
 		_backgroundSurface->loadBackground(sceneNumber);
 		_palData = NULL;
 	} else {
+		// Set system palette entries
+		_vm->_palette->blockRange(0, 7);
+		RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0}, 
+			{0x00<<2, 0x10<<2, 0x16<<2, 0}};
+		_vm->_palette->setPalette(&sysColors[0], 4, 3);
+
 		_backgroundSurface->loadBackground(sceneNumber, &_palData);
 		_vm->_palette->addRange(_palData);
 		_backgroundSurface->translate(_palData);
@@ -800,14 +806,13 @@ InterfaceElement::InterfaceElement(M4Engine *vm, const Common::Rect &viewBounds,
 
 void InterfaceElement::setFontMode(FontMode newMode) {
 	switch (newMode) {
-	case MODE_0:
+	case ITEM_NORMAL:
 		_vm->_font->setColors(4, 4, 0xff);
 		break;
-	case MODE_1:
-		//_vm->_font->setColors(5, 5, 0xff);
-		_vm->_font->setColors(0xff, 0xff, 0xff);
+	case ITEM_HIGHLIGHTED:
+		_vm->_font->setColors(5, 5, 0xff);
 		break;
-	case MODE_2:
+	case ITEM_SELECTED:
 		_vm->_font->setColors(6, 6, 0xff);
 		break;
 	}
@@ -845,8 +850,10 @@ void ActionsView::onRefresh(RectList *rects, M4Surface *destSurface) {
 			Common::Rect r;
 			getActionRect(actionId, r);
 
-			// Determine the font colour depending on whether an item is selected
-			setFontMode((_highlightedAction == actionId) ? MODE_1 : MODE_0);
+			// Determine the font colour depending on whether an item is selected. Note that the 'Look' item
+			// is always 'selected', even when another action is selected
+			setFontMode((_highlightedAction == actionId) ? ITEM_HIGHLIGHTED : 
+				((actionId == kVerbLook) ? ITEM_SELECTED : ITEM_NORMAL));
 
 			// Get the verb action and capitalise it
 			const char *verbStr = _vm->_globals->getVocab(actionId);
@@ -862,9 +869,12 @@ void ActionsView::onRefresh(RectList *rects, M4Surface *destSurface) {
 
 bool ActionsView::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
 	if (eventType == MEVENT_MOVE) {
-		// If the cursor isn't in "wait mode", reset it back to the normal cursor
-		if (_vm->_mouse->getCursorNum() != CURSOR_WAIT)
-			_vm->_mouse->setCursorNum(CURSOR_ARROW);
+		// If the cursor isn't in "wait mode", don't do any processing
+		if (_vm->_mouse->getCursorNum() == CURSOR_WAIT)
+			return true;
+
+		// Ensure the cursor is the standard arrow
+		_vm->_mouse->setCursorNum(CURSOR_ARROW);
 
 		// Check if any of the actions are currently highlighted
 		_highlightedAction = 0;
