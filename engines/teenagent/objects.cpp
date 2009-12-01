@@ -148,10 +148,10 @@ void UseHotspot::dump() const {
 }
 
 void Walkbox::dump() const {
-	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ",
+	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] top: %u, right: %u, bottom: %u, left: %u",
 		type, orientation,
 		rect.left, rect.right, rect.top, rect.bottom,
-		unk0a, unk0b, unk0c, unk0d);
+		top_side_hint, right_side_hint, bottom_side_hint, left_side_hint);
 }
 
 void Walkbox::load(byte *src) {
@@ -161,10 +161,10 @@ void Walkbox::load(byte *src) {
 	orientation = *src++;
 	rect.load(src);
 	src += 8;
-	unk0a = *src++;
-	unk0b = *src++;
-	unk0c = *src++;
-	unk0d = *src++;
+	top_side_hint = *src++;
+	right_side_hint = *src++;
+	bottom_side_hint = *src++;
+	left_side_hint = *src++;
 }
 
 void Walkbox::save() const {

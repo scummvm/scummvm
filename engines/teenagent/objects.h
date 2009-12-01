@@ -146,10 +146,10 @@ struct Walkbox {
 	byte type;
 	byte orientation;
 	Rect rect;
-	byte unk0a;
-	byte unk0b;
-	byte unk0c;
-	byte unk0d;
+	byte top_side_hint;
+	byte right_side_hint;
+	byte bottom_side_hint;
+	byte left_side_hint;
 
 	Walkbox() : _base(NULL) {}
 	void dump() const;
