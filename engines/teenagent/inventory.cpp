@@ -274,11 +274,12 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 	}
 
 	Common::String name;
-	if (inventory->selected_obj && inventory->selected_obj != inventory->hovered_obj) {
+	if (inventory->selected_obj) {
 		name = inventory->selected_obj->name;
 		name += " & ";
 	}
-	name += obj->name;
+	if (inventory->selected_obj != inventory->hovered_obj)
+		name += obj->name;
 
 	if (hovered && inventory->_engine->scene->getMessage().empty()) {
 		int w = res->font7.render(NULL, 0, 0, name, 0xd1, true);
