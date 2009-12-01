@@ -16,11 +16,12 @@ Residual Team
 
        Torbjorn Andersson    - Various code fixes
        Ori Avtalion          - Lipsync, LAF support
-       Marcus Comstedt       - Dreamcast port
+       Marcus Comstedt       - Initial Dreamcast port
        Andrea Corna          - Improved font support, patch extractor
        Jonathan Gray         - Various code fixes
+       Yaron Tausky          - Fixes to subtitles
        Vincent Hamm          - Various engine code
-       Erich Hoover          - x86-64, various fixes and comments, menu
+       Erich Hoover          - x86-64 fixes, various fixes and comments, menu
                                support, improved state support
        Travis Howell         - Various code fixes, Windows port
        Joost Peters          - Various code fixes
@@ -31,39 +32,55 @@ Residual Team
 
 ScummVM code
 ************
-   Residual use some ScummVM common code. Copyrights for this code belongs to
+   Residual use some ScummVM code. Copyrights for this code belongs to
    persons listed below. If you are missed in this list contact us and we'll
    add you.
 
    Torbjorn Andersson   
    Chris Apers          
    Bertrand Augereau    
+   Yotam Barnoy         
    James Brown          
    Jamieson Christian   
+   David Corrales-Lopez 
+   Oystein Eftevaag     
    Robert Goeffringmann 
+   Paul Gilbert         
    Jonathan Gray        
    Vincent Hamm         
    Ruediger Hanke       
+   Sven Hesse           
+   Matthew Hoops        
    Max Horn             
+   Florian Kagerer      
    Filippos Karapetis   
    Oliver Kiehl         
    Pawel Kolodziejski   
    Andrew Kurushin      
+   Vicent Marti         
    Claudio Matsuoka     
    Gregory Montoir      
    Kostas Nakos         
+   Chris Page           
    Willem Jan Palenstijn
    Lars Persson         
+   Joost Peters         
+   Jordi Vilalta Prat   
    Kari Salminen        
    Eugene Sandulenko    
    Johannes Schickel    
    Ludvig Strigeus      
    Lionel Ulmer         
+   Jody Northup         
    Jordi Vilalta        
    Robin Watts          
    agent-q              
    arisme               
    peres                
+
+Website (code)
+**************
+   Fredrik Wendel       
 
 Special thanks to
 *****************
