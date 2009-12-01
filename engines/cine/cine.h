@@ -52,10 +52,30 @@
 /**
  * This is the namespace of the Cine engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ *
+ * This enigne has 2 generations Cinematique evo.1 and Cinematique evo.2
+ * first generation is fairly complete, and second one is under development
+ *
+ * Cinematique evo.1 status:
+ * The engine supports Future Wars and is basically complete with support of
+ * all known game variants. Based on Yaz0r's engine.
+ *
+ * Cinematique evo.2 status:
+ * This generation supports Operation Stealth, originally developed by Yaz0r for
+ * French variant of the game which heared to be completable.
+ * Later the work was renewed as part of GSoC'08, by Kari Salminen, but it has not
+ * yet been finished. The game is not completable.
+ * 
  *
  * Supported games:
- * - ???
+ *
+ * Cinematique evo.1
+ * - Future Wars
+ *
+ * Cinematique evo.2
+ * - Operation Stealth
+ *
  */
 namespace Cine {
 
