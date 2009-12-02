@@ -1802,7 +1802,7 @@ PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS		+= -DDYNAMIC_MODULES
 LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
-PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm -Wl,-Map,mapfile.txt
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -2312,7 +2312,7 @@ case $_backend in
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
-		LIBS="$LIBS -lpng -lSDL"
+		LIBS="$LIBS -lpng -lSDL -Wl,-Map,mapfile.txt"
 		SDLLIBS=$($PSPDEV/psp/bin/sdl-config --libs)
 		
 		if `echo "$SDLLIBS" | grep ".*-lGL.*" 1>/dev/null 2>&1`

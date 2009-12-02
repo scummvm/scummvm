@@ -27,6 +27,7 @@
 #include "./trace.h"
 
 
+
 void PSPDebugTrace (const char *format, ...) {
 #ifdef __PSP_DEBUG__
 	va_list	opt;

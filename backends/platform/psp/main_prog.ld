@@ -198,11 +198,15 @@ SECTIONS
   __plugin_hole_start = .;
   . = _gp + 0x7ff0;
   __plugin_hole_end = .;
+  COMMON          :
+  {
+   *(COMMON)
+  }
+  . = ALIGN(32 / 8);
   .bss            :
   {
    *(.dynbss)
    *(.bss .bss.* .gnu.linkonce.b.*)
-   *(COMMON)
    /* Align here to ensure that the .bss section occupies space up to
       _end.  Align after .bss to ensure correct alignment even if the
       .bss section disappears because there are no input sections.  */
