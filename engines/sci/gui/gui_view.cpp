@@ -225,23 +225,20 @@ GuiResourceId SciGuiView::getResourceId() {
 }
 
 int16 SciGuiView::getWidth(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (celNo >= _loop[loopNo].celCount)
-		celNo = 0;
+	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
 }
 
 int16 SciGuiView::getHeight(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (celNo >= _loop[loopNo].celCount)
-		celNo = 0;
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
 }
 
 sciViewCelInfo *SciGuiView::getCelInfo(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	if (celNo >= _loop[loopNo].celCount)
-		celNo = 0;
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
 }
 
@@ -345,8 +342,7 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 
 byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (celNo >= _loop[loopNo].celCount)
-		celNo = 0;
+	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
 		return _loop[loopNo].cel[celNo].rawBitmap;
 
