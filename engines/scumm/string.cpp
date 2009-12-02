@@ -1043,6 +1043,10 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				*dst++ = 0x3E;
 				*dst++ = 0x2A;
 				continue;
+			// Code for " character
+			} else if (chr == 0x19) {
+				*dst++ = 0x2F;
+				continue;
 			}
 		}
 
