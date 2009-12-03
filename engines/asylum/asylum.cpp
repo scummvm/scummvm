@@ -83,13 +83,14 @@ Common::Error AsylumEngine::run() {
 Common::Error AsylumEngine::init() {
 	initGraphics(640, 480, true);
 
-	_screen   = new Screen(this);
-	_sound    = new Sound(_mixer);
-	_video    = new Video(_mixer);
-	_console  = new Console(this);
-	_text     = new Text(_screen);
-	_mainMenu = 0;
-	_scene    = 0;
+	_screen    = new Screen(this);
+	_sound     = new Sound(_mixer);
+	_video     = new Video(_mixer);
+	_console   = new Console(this);
+	_text      = new Text(_screen);
+	_mainMenu  = 0;
+	_scene     = 0;
+    _encounter = 0;
 
 	_introPlaying = false;
 
@@ -114,7 +115,7 @@ Common::Error AsylumEngine::go() {
 	_mainMenu = new MainMenu(this);
 
 	// TODO: if savegame not exists on folder, than start game()
-    if(0) { //SearchMan.hasArchive
+    if(1) { //SearchMan.hasArchive
         startGame();
     } else {
         _mainMenu->openMenu();
@@ -141,8 +142,14 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 }
 
 void AsylumEngine::startGame() {
-    _scene = new Scene(5, this);
     // TODO: reset what need to be reset for a new game
+    
+    if (_scene) {
+        delete _scene;    
+    }
+
+    _scene = new Scene(5, this);
+    
 #ifndef SKIP_INTRO
     playIntro();
 #endif
