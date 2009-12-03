@@ -249,7 +249,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	ArrayIDObj *arraysObj = arrayStrings;
 	int32 maxStringsLength;
 	maxStringsLength = restoreSint32();
-	char *tempStringBuffer = (char *)luaM_malloc(maxStringsLength);
+	char *tempStringBuffer = (char *)luaM_malloc(maxStringsLength + 1); // add extra char for 0 terminate string
 
 	//printf("1: %d\n", g_grim->_savedState->getBufferPos());
 
@@ -265,6 +265,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			restoreObjectValue(&obj, restoreSint32, restoreUint32);
 			int32 length = restoreSint32();
 			restoreStream(tempStringBuffer, length);
+			tempStringBuffer[length] = 0;
 			tempString = luaS_new(tempStringBuffer);
 			tempString->globalval = obj;
 		} else {
