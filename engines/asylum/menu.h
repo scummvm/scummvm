@@ -128,6 +128,7 @@ private:
 	void updateSubMenuSettings();
 	void updateSubMenuQuitGame();
 	void updateSubMenuShowCredits();
+    void updateSubMenuReturnToGame();
 
 	void update();
 

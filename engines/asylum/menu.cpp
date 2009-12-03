@@ -367,7 +367,7 @@ void MainMenu::updateSubMenu() {
 		updateSubMenuShowCredits();
 		break;
 	case kReturnToGame:
-		// TODO
+		updateSubMenuReturnToGame();
 		break;
 	}
 }
@@ -393,7 +393,8 @@ void MainMenu::updateSubMenuNewGame() {
 		// Yes
 		if (_cursor->x() >= 247 && _cursor->x() <= 247 + 24 && _cursor->y() >= 273 && _cursor->y() <= 273 + _vm->text()->getResTextWidth(0x8000052A)) {
 			_leftClick = false;
-			// TODO handle new game event
+            closeMenu();
+            _vm->startGame();
 		}
 		// No
 		if (_cursor->x() >= 369 && _cursor->x() <= 369 + 24 && _cursor->y() >= 273 && _cursor->y() <= 273 + _vm->text()->getResTextWidth(0x8000052B))
@@ -626,6 +627,25 @@ void MainMenu::exitSubMenu() {
 
 	// Set the cursor
 	_cursor->load(2);
+}
+
+void MainMenu::updateSubMenuReturnToGame() {
+    loadFont(kFontYellow);
+
+	// no game loaded
+	_vm->text()->drawResTextCentered(10, 100, 620, 0x80000712);
+
+    // Main menu
+    switchFont(_cursor->x() < 285 || _cursor->x() > 285 + _vm->text()->getResTextWidth(0x80000713) || _cursor->y() < 273 || _cursor->y() > 273 + 24);
+	_vm->text()->setTextPos(285, 273);
+	_vm->text()->drawResText(0x80000713);
+
+    // action
+	if (_leftClick) { 
+        // Main menu
+		if (_cursor->x() >= 285 && _cursor->x() <= 285 + _vm->text()->getResTextWidth(0x80000713) && _cursor->y() >= 273 && _cursor->y() <= 273 + 24)
+			exitSubMenu();
+	}
 }
 
 } // end of namespace Asylum
