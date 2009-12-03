@@ -131,8 +131,10 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
 
-	_music = new SciMusic();
-	_music->init();
+	#ifndef USE_OLD_MUSIC_FUNCTIONS
+		_music = new SciMusic();
+		_music->init();
+	#endif
 
 	switch (doSoundVersion) {
 	case SCI_VERSION_0_EARLY:
