@@ -479,9 +479,11 @@ void SoundCommandParser::cmdMuteSound(reg_t obj, SongHandle handle, int value) {
 }
 
 void SoundCommandParser::cmdVolume(reg_t obj, SongHandle handle, int value) {
-	if (_argc > 1)
-		_music->soundSetMasterVolume(obj.toSint16());
-	_acc = make_reg(0, _music->soundGetMasterVolume());
+	#ifndef USE_OLD_MUSIC_FUNCTIONS
+		if (_argc > 1)
+			_music->soundSetMasterVolume(obj.toSint16());
+		_acc = make_reg(0, _music->soundGetMasterVolume());
+	#endif
 }
 
 void SoundCommandParser::cmdFadeHandle(reg_t obj, SongHandle handle, int value) {
