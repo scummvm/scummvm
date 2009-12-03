@@ -41,11 +41,8 @@ namespace Made {
 struct SpriteChannel {
 	int16 type;
 	int16 state;
-	int16 needRefresh;
 	uint16 index;
 	int16 x, y;
-	int16 x1, y1, x2, y2;
-	uint32 area;
 	uint16 fontNum;
 	int16 textColor, outlineColor;
 	int16 frameNum;

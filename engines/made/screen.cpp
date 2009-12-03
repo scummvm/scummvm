@@ -465,11 +465,6 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 		_channels[channelIndex].index = flexIndex;
 		_channels[channelIndex].x = x;
 		_channels[channelIndex].y = y;
-		_channels[channelIndex].x1 = x1;
-		_channels[channelIndex].y1 = y1;
-		_channels[channelIndex].x2 = x2;
-		_channels[channelIndex].y2 = y2;
-		_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
 
 		if (_channelsUsedCount <= channelIndex)
 			_channelsUsedCount = channelIndex + 1;
@@ -514,14 +509,8 @@ uint16 Screen::placeAnim(uint16 channelIndex, uint16 animIndex, int16 x, int16 y
 		_channels[channelIndex].type = 3;
 		_channels[channelIndex].index = animIndex;
 		_channels[channelIndex].frameNum = frameNum;
-		_channels[channelIndex].needRefresh = 1;
 		_channels[channelIndex].x = x;
 		_channels[channelIndex].y = y;
-		_channels[channelIndex].x1 = x1;
-		_channels[channelIndex].y1 = y1;
-		_channels[channelIndex].x2 = x2;
-		_channels[channelIndex].y2 = y2;
-		_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
 
 		if (_channelsUsedCount <= channelIndex)
 			_channelsUsedCount = channelIndex + 1;
@@ -541,7 +530,6 @@ int16 Screen::setAnimFrame(uint16 channelIndex, int16 frameNum) {
 		return 0;
 	 channelIndex--;
 	_channels[channelIndex].frameNum = frameNum;
-	_channels[channelIndex].needRefresh = 1;
 	return updateChannel(channelIndex) + 1;
 }
 
@@ -598,11 +586,6 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 	_channels[channelIndex].textColor = textColor;
 	_channels[channelIndex].fontNum = fontNum;
 	_channels[channelIndex].outlineColor = outlineColor;
-	_channels[channelIndex].x1 = x1;
-	_channels[channelIndex].y1 = y1;
-	_channels[channelIndex].x2 = x2;
-	_channels[channelIndex].y2 = y2;
-	_channels[channelIndex].area = (x2 - x1) * (y2 - y1);
 
 	if (_channelsUsedCount <= channelIndex)
 		_channelsUsedCount = channelIndex + 1;
