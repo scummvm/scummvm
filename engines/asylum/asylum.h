@@ -47,6 +47,10 @@ namespace Asylum {
 // of pre-loading that was performed in the original
 //#define SHOW_SCENE_LOADING
 
+// XXX If defined, this flag will prevent the intro movies
+// from being played whenever the engine is started
+#define SKIP_INTRO
+
 // XXX
 // I'm not sure if system endian-ness would have any
 // effect on the byte order of the data files, but I guess
