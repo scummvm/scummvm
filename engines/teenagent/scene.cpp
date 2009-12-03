@@ -36,7 +36,7 @@ namespace TeenAgent {
 Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
 		_id(0), ons(0),
-		orientation(Object::kActorRight), actor_talking(false), 
+		orientation(kActorRight), actor_talking(false), 
 		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL), 
 		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0) {}
 
@@ -48,159 +48,88 @@ void Scene::warp(const Common::Point &_point, byte o) {
 		orientation = o;
 }
 
-struct Splitter {
-	typedef Common::List<int> ListType;
-	ListType values;
-	uint _size;
-	
-	Splitter(): values(), _size(0) {}
-	
-	void insert(int v) {
-		ListType::iterator i;
-		for(i = values.begin(); i != values.end(); ++i) {
-			if (v == *i)
-				return;
-			
-			if (v < *i)
-				break;
-		}
-		values.insert(i, v);
-		++_size;
-	}
-	uint size() const { return _size; }
-};
-
-struct Node {
-	Rect rect;
-	int step;
-	int prev;
-
-	Node(): step(0), prev(0) {}
-};
-
-
-static void search(Node *nodes, int n, int m, int i, int j, int prev_idx, int end, int level) {
-	if (i < 0 || i >= n || j < 0 || j >= m)
-		return;
-	int idx = j + i * m;
-	int v = nodes[idx].step;
-	//debug(1, "search (%d, %d) %d, value = %d", i, j, level, v);
-	if (v != 0 && (v == -1 || v <= level))
-		return;
-
-	
-	nodes[idx].step = level; //mark as visited
-	nodes[idx].prev = prev_idx;
-
-	++level;
-	
-	search(nodes, n, m, i - 1, j, idx, end, level);
-	search(nodes, n, m, i + 1, j, idx, end, level);
-	search(nodes, n, m, i, j - 1, idx, end, level);
-	search(nodes, n, m, i, j + 1, idx, end, level);
-}
-
-
 bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Point &dst) const {
 	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
 	if (dst.x < 0 || dst.x > 319 || dst.y < 0 || dst.y > 199)
 		return false;
 	
 	debug(1, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
-
-	Splitter hsplit, vsplit;
-	for(byte i = 0; i < scene_walkboxes.size(); ++i) {
-		const Walkbox &w = scene_walkboxes[i];
-		if (w.rect.valid()) {
-			hsplit.insert(w.rect.left);
-			hsplit.insert(w.rect.right);
-			vsplit.insert(w.rect.top);
-			vsplit.insert(w.rect.bottom);
-		}
-	}
+	p.clear();
+	p.push_back(src);
+	p.push_back(dst);
 	
-	int n = (int)vsplit.size() - 1, m = (int)hsplit.size() - 1;
-	debug(1, "split: %ux%u", n, m);
-	if (n <= 0 || m <= 0) {
-		p.push_back(Common::Point(src.x, dst.y));
-		p.push_back(dst);
-		return true;
-	}
-	
-	Node *nodes = new Node[n * m];
-	int start = -1, end = -1;
-	{
-		int idx = 0;
-		for(Splitter::ListType::const_iterator i = vsplit.values.begin(); i != vsplit.values.end(); ++i) {
-			Splitter::ListType::const_iterator in = i; ++in;
-			if (in == vsplit.values.end())
-				break;
-		
-			for(Splitter::ListType::const_iterator j = hsplit.values.begin(); j != hsplit.values.end(); ++j) {
-				Splitter::ListType::const_iterator jn = j; ++jn;
-				if (jn == hsplit.values.end())
-					break;
-
-				Rect &r = nodes[idx].rect;
-				r = Rect(*j, *i, *jn, *in);
-				if (r.in(src))
-					start = idx;
-				if (r.in(dst))
-					end = idx;
-
-				byte k = 0;
-				for(k = 0; k < scene_walkboxes.size(); ++k) {
-					const Walkbox &w = scene_walkboxes[k];
-					if (w.rect.contains(r))
-						break;
-				}
-				nodes[idx].step = k >= scene_walkboxes.size()? 0: -1;
-				nodes[idx].prev = -1;
-				++idx;
-			}
-		}
-	}
-
-	debug(1, "%d -> %d", start, end);
-	
-	if (start == -1 || end == -1)
-		return false;
-
-	search(nodes, n, m, start / m, start % m, -1, end, 1);
-	int v = end;
-	Common::Point prev(dst);
-	do {
-		debug(1, "backtrace %d", v);
-		Common::Point c = nodes[v].rect.closest_to(prev);
-		prev = c;
-		p.push_front(c);
-		if (v == start)
+	for(Path::iterator i = p.begin(); i != p.end(); ) {
+		Path::iterator next = i;
+		++next;
+		if (next == p.end())
 			break;
+			
+		const Common::Point &p1 = *i, &p2 = *next;
+		debug(1, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
 		
-		v = nodes[v].prev;
-	} while(v >= 0);
-	
-	debug(1, "end vertex = %d", v);
-
-#if 0
-	{
-		int idx = 0;
-		for(int i = 0; i < n; ++i) {
-			Common::String line;
-			for(int j = 0; j < m; ++j) {
-				line += Common::String::printf("%2d.%2d  ", nodes[idx].step, nodes[idx].prev);
-				++idx;
+		byte wi;
+		for(wi = 0; wi < scene_walkboxes.size(); ++wi) {
+			const Walkbox & w = scene_walkboxes[wi];
+			int mask = w.rect.intersects_line(p1, p2);
+			if (mask == 0) {
+				continue;
 			}
-			debug(1, "map: %s", line.c_str());
-		}
-	}
-#endif
+			
+			w.dump();
+			debug(1, "%u: intersection mask 0x%04x, searching hints", wi, mask);
+			int dx = p2.x - p1.x, dy = p2.y - p1.y;
+			if (dx >= 0) {
+				if ((mask & 8) != 0 && w.side_hint[3] != 0) {
+					debug(1, "hint left: %u", w.side_hint[3]);
+					Common::Point w1, w2;
+					w.rect.side(w1, w2, w.side_hint[3], p1);
+					if (w1 == p2)
+						continue;
+					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					p.insert(next, w1);
+					break;
+				}
+			} else {
+				if ((mask & 2) != 0 && w.side_hint[1] != 0) {
+					debug(1, "hint right: %u", w.side_hint[1]);
+					Common::Point w1, w2;
+					w.rect.side(w1, w2, w.side_hint[1], p1);
+					if (w1 == p2)
+						continue;
+					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					p.insert(next, w1);
+					break;
+				}
+			}
 
-	if (v != start)
-		return false;
-	
-	
-	delete[] nodes;
+			if (dy >= 0) {
+				if ((mask & 1) != 0 && w.side_hint[0] != 0) {
+					debug(1, "hint top: %u", w.side_hint[0]);
+					Common::Point w1, w2;
+					w.rect.side(w1, w2, w.side_hint[0], p1);
+					if (w1 == p2)
+						continue;
+					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					p.insert(next, w1);
+					break;
+				}
+			} else {
+				if ((mask & 4) != 0 && w.side_hint[2] != 0) {
+					debug(1, "hint bottom: %u", w.side_hint[2]);
+					Common::Point w1, w2;
+					w.rect.side(w1, w2, w.side_hint[2], p1);
+					if (w1 == p2)
+						continue;
+					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
+					p.insert(next, w1);
+					break;
+				}
+			}
+		}
+		if (wi >= scene_walkboxes.size())
+			++i;
+	}
+
 	return true;
 }
 
@@ -679,25 +608,17 @@ bool Scene::render(OSystem *system) {
 					const int speed_x = 10, speed_y = 5;
 					const Common::Point &destination = path.front();
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
-					switch(orientation) {
-					case 2: //left or right
-					case 4: 
-						if (dp.y != 0)
-							dp.x = 0; //first, walking up-down
-						break;
-					default:
-						if (dp.x != 0)
-							dp.y = 0; //first, walking left-right
-					}
-					
-					int o;
-					if (ABS(dp.x) > ABS(dp.y))
-						o = dp.x > 0 ? Object::kActorRight : Object::kActorLeft;
-					else
-						o = dp.y > 0 ? Object::kActorDown : Object::kActorUp;
 
-					position.x += (ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
+					int o;
+					if (ABS(dp.x) > 3 * ABS(dp.y))
+						o = dp.x > 0 ? kActorRight : kActorLeft;
+					else
+						o = dp.y > 0 ? kActorDown : kActorUp;
+
 					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
+					position.x += (o == kActorDown || o == kActorUp)? 
+						(ABS(dp.x) < speed_y? dp.x: SIGN(dp.x) * speed_y):
+						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 					
 					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
 					if (position == destination) {

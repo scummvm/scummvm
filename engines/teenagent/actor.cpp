@@ -69,8 +69,8 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	}
 	int dx, dy;
 	switch (orientation) {
-	case Object::kActorLeft:
-	case Object::kActorRight:
+	case kActorLeft:
+	case kActorRight:
 		if (render_head) {
 			if (head_index >= sizeof(frames_head_left_right))
 				head_index = 0;
@@ -84,7 +84,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		dx = 11;
 		dy = 62;
 		break;
-	case Object::kActorUp:
+	case kActorUp:
 		if (render_head) {
 			if (head_index >= sizeof(frames_head_up))
 				head_index = 0;
@@ -98,7 +98,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		dx = 11;
 		dy = 62;
 		break;
-	case Object::kActorDown:
+	case kActorDown:
 		if (render_head) {
 			if (head_index >= sizeof(frames_head_down))
 				head_index = 0;
@@ -137,10 +137,10 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (yp + clip.top + clip.height() > 200)
 		yp = 200 - clip.top - clip.height();
 	
-	dirty = s->render(surface, xp, yp + clip.top, orientation == Object::kActorLeft, clip, zoom);
+	dirty = s->render(surface, xp, yp + clip.top, orientation == kActorLeft, clip, zoom);
 
 	if (head != NULL)
-		dirty.extend(head->render(surface, xp, yp, orientation == Object::kActorLeft, Common::Rect(), zoom));
+		dirty.extend(head->render(surface, xp, yp, orientation == kActorLeft, Common::Rect(), zoom));
 
 	return dirty;
 }

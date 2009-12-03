@@ -31,6 +31,8 @@
 
 namespace TeenAgent {
 
+enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
+
 struct Rect {
 	int16 left, top, right, bottom;
 
@@ -79,18 +81,75 @@ struct Rect {
 		return rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
 	}
 	
-	inline Common::Point closest_to(const Common::Point & src) const {
-		Common::Point p(src);
-		if (p.x < left)
-			p.x = left;
-		if (p.x > right)
-			p.x = right;
+	static inline bool inside(int x, int a, int b) {
+		if (a > b)
+			SWAP(a, b);
+		return x >= a && x <= b;
+	}
+	
+	int intersects_line(const Common::Point &a, const Common::Point &b) const {
+		int dy = b.y - a.y, dx = b.x - a.x;
 
-		if (p.y < top)
-			p.y = top;
-		if (p.y > bottom)
-			p.y = bottom;
-		return p;
+		int mask = 0; //orientation bitmask: 1 - top, 2 - right, 3 - bottom, 4 - left
+		
+		if (dx != 0) {
+			int yl = (left - a.x) * dy / dx + a.y;
+			if (yl > top && yl < bottom && inside(yl, a.y, b.y)) {
+				//c[idx++] = Common::Point(left, yl);
+				mask |= 8;
+			}
+			int yr = (right - a.x) * dy / dx + a.y;
+			if (yr > top && yr < bottom && inside(yr, a.y, b.y)) {
+				//c[idx++] = Common::Point(right, yr);
+				mask |= 2;
+			}
+		} 
+		
+		if (dy != 0) {
+			int xt = (top - a.y) * dx / dy + a.x;
+			if (xt > left && xt < right && inside(xt, a.x, b.x)) {
+				//assert(idx < 2);
+				//c[idx++] = Common::Point(xt, top);
+				mask |= 1;
+			}
+			int xb = (bottom - a.y) * dx / dy + a.x;
+			if (xb > left && xb < right && inside(xb, a.x, b.x)) {
+				//assert(idx < 2);
+				//c[idx++] = Common::Point(xb, bottom);
+				mask |= 4;
+			}
+		}
+		return mask;
+	}
+	
+	void side(Common::Point &p1, Common::Point &p2, int o, const Common::Point &nearest) const {
+		switch(o) {
+		case kActorLeft:
+			p1 = Common::Point(left, top);
+			p2 = Common::Point(left, bottom);
+			break;
+
+		case kActorRight:
+			p1 = Common::Point(right, top);
+			p2 = Common::Point(right, bottom);
+			break;
+
+		case kActorUp:
+			p1 = Common::Point(left, top);
+			p2 = Common::Point(right, top);
+			break;
+
+		case kActorDown:
+			p1 = Common::Point(left, bottom);
+			p2 = Common::Point(right, bottom);
+			break;
+		
+		default:
+			p1 = Common::Point();
+			p2 = Common::Point();
+		}
+		if (p1.sqrDist(nearest) >= p2.sqrDist(nearest)) 
+			SWAP(p1, p2);
 	}
 
 protected:
@@ -98,7 +157,6 @@ protected:
 };
 
 struct Object {
-	enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
 
 	byte id; //0
 	Rect rect; //1
@@ -146,10 +204,7 @@ struct Walkbox {
 	byte type;
 	byte orientation;
 	Rect rect;
-	byte top_side_hint;
-	byte right_side_hint;
-	byte bottom_side_hint;
-	byte left_side_hint;
+	byte side_hint[4];
 
 	Walkbox() : _base(NULL) {}
 	void dump() const;
