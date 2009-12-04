@@ -297,9 +297,8 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-
-		handleScalerHotkeys(ev.key);
-		return false;
+		if (handleScalerHotkeys(ev.key))
+			return false;
 	}
 
 	if (remapKey(ev, event))

@@ -492,7 +492,7 @@ protected:
 
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 
-	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
+	bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
 };
 
 #endif

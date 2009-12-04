@@ -1910,7 +1910,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 #pragma mark --- Misc ---
 #pragma mark -
 
-void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
+bool OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key.keysym.sym == 'a') {
 		beginGFXTransaction();
@@ -1931,7 +1931,7 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 		displayMessageOnOSD(buffer);
 #endif
 		internUpdateScreen();
-		return;
+		return true;
 	}
 
 	int newMode = -1;
@@ -1951,7 +1951,7 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	if (isNormalNumber || isKeypadNumber) {
 		_scalerType = key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
-			return;
+			return false;
 
 		while (s_gfxModeSwitchTable[_scalerType][factor] < 0) {
 			assert(factor > 0);
@@ -1987,6 +1987,9 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 		}
 #endif
 		internUpdateScreen();
-	}
 
+		return true;
+	} else {
+		return false;
+	}
 }
