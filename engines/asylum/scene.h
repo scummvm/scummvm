@@ -63,17 +63,17 @@ public:
 	bool loadingComplete() { return _done; }
 
 private:
-	Scene           *_scene;
+	Scene *_scene;
+
 	GraphicResource *_bg;
 	GraphicResource *_progress;
 
 	int32 _start;
 	int32 _ticks;
-	bool   _done;
+	bool  _done;
 	int32 _spinnerFrame;
 	int32 _spinnerProgress;
-
-    bool _showMouseState;
+	bool  _showMouseState;
 
 }; // end of class SceneTitle
 
@@ -109,67 +109,67 @@ public:
 	WorldStats* worldstats() { return _ws; }
 	Polygons* polygons() { return _polygons; }
 	ActionList* actions() {	return _actions; }
-    Speech* speech() { return _speech; }
+	Speech* speech() { return _speech; }
 
-    void getActorPosition(Actor *actor, Common::Point *pt);
+	void getActorPosition(Actor *actor, Common::Point *pt);
+	/**
+	 * Return the index of the current player actor
+	 */
+	int getActorIndex() { return _playerActorIdx; }
+	/**
+	 * Get a reference to an actor object from the
+	 * WorldStats actor list. Default parameter just
+	 * gets the instance associated with _playerActorIdx
+	 */
+	Actor* getActor(int index = -1);
+	/** .text:004072A0
+	 * Based on the value of param, replace the actor
+	 * graphic from the actor's grResTable
+	 *
+	 * TODO figure out exactly what param means
+	 */
+	void updateActorDirection(int actorIndex, int param);
+	/** .text:0040A2E0
+	 * If the actor index is invalid, load the default actor,
+	 * then call updateActorDirection with a param of 4
+	 */
+	void updateActorDirectionDefault(int actorIndex);
+	/** .text:00407260
+	 * Check the actor at actorIndex to see if the currently loaded
+	 * graphic resource matches the resource at grResTable[5]
+	 */
+	bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
+	/** .text:004094c0
+	 * Determine the amount to increase the supplied sound
+	 * sample's volume based on the actor's position
+	 */
+	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 
-    /**
-     * Return the index of the current player actor
-     */
-    int getActorIndex() { return _playerActorIdx; }
-    /**
-     * Get a reference to an actor object from the
-     * WorldStats actor list. Default parameter just
-     * gets the instance associated with _playerActorIdx
-     */
-    Actor* getActor(int index = -1);
-    /** .text:004072A0
-     * Based on the value of param, replace the actor
-     * graphic from the actor's grResTable
-     *
-     * TODO figure out exactly what param means
-     */
-    void updateActorDirection(int actorIndex, int param);
-    /** .text:0040A2E0
-     * If the actor index is invalid, load the default actor,
-     * then call updateActorDirection with a param of 4
-     */
-    void updateActorDirectionDefault(int actorIndex);
-    /** .text:00407260
-     * Check the actor at actorIndex to see if the currently loaded
-     * graphic resource matches the resource at grResTable[5]
-     */
-    bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
-
-    /** .text:004094c0
-     * Determine the amount to increase the supplied sound
-     * sample's volume based on the actor's position
-     */
-    int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 private:
-	AsylumEngine *_vm;
-	uint8	     _sceneIdx;
+	AsylumEngine  *_vm;
+	Common::Event *_ev;
+
+	uint8 _sceneIdx;
+	int32 _playerActorIdx;
+	bool  _titleLoaded;
+	bool  _walking;
+	bool  _leftClick;
+	bool  _rightButton;
+	bool  _isActive;
+	bool  _skipDrawScene;
+
 	WorldStats   *_ws;
 	Polygons     *_polygons;
 	ActionList   *_actions;
 	SceneTitle   *_title;
-    Speech       *_speech;
+	Speech       *_speech;
+	Cursor       *_cursor;
+	ResourcePack *_resPack;
+	ResourcePack *_musPack;
+	BlowUpPuzzle *_blowUp;
 
-	Cursor			*_cursor;
-	ResourcePack	*_resPack;
-	ResourcePack	*_musPack;
-	BlowUpPuzzle    *_blowUp;
-	Common::Event   *_ev;
 	GraphicResource *_bgResource;
-	GraphicFrame	*_background;
-
-	bool   _titleLoaded;
-	bool   _walking;
-	bool   _leftClick;
-	bool   _rightButton;
-	bool   _isActive;
-	bool   _skipDrawScene;
-	int32 _playerActorIdx;
+	GraphicFrame    *_background;
 
 	void update();
 	void startMusic();
@@ -180,29 +180,43 @@ private:
 	 * process the current action script
 	 */
 	int updateScene();
-	/** .text:0040D190 */
+	/** .text:0040D190
+	 * TODO add description
+	 */
 	void updateMouse();
-	/** .text:0040B740 */
+	/** .text:0040B740
+	 * TODO add description
+	 */
 	void updateActor(int32 actorIdx);
 	/**
 	 * TODO give more meaningful name
 	 */
-	void   updateActorSub01(Actor *act);
-	/** .text:0040CBD0 */
-	void   updateBarriers();
-	/** .text:00409BA0 */
-	void   updateAmbientSounds();
-	/** .text:00409EF0 */
-	void   updateMusic();
-	/** .text:0040DAE0 */
-	void   updateAdjustScreen();
-	int    drawScene();
-    /** .text:0040A3C0 */
-	void   drawActorsAndBarriers();
-	int    queueActorUpdates();
-	int    queueBarrierUpdates();
-	bool   isBarrierVisible(BarrierItem *barrier);
-	bool   isBarrierOnScreen(BarrierItem *barrier);
+	void updateActorSub01(Actor *act);
+	/** .text:0040CBD0
+	 * TODO add description
+	 */
+	void updateBarriers();
+	/** .text:00409BA0
+	 * TODO add description
+	 */
+	void updateAmbientSounds();
+	/** .text:00409EF0
+	 * TODO add description
+	 */
+	void updateMusic();
+	/** .text:0040DAE0
+	 * TODO add description
+	 */
+	void updateAdjustScreen();
+	int drawScene();
+	/** .text:0040A3C0
+	 * TODO add description
+	 */
+	void drawActorsAndBarriers();
+	int queueActorUpdates();
+	int queueBarrierUpdates();
+	bool isBarrierVisible(BarrierItem *barrier);
+	bool isBarrierOnScreen(BarrierItem *barrier);
 	int32 getRandomResId(BarrierItem *barrier);
 
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
