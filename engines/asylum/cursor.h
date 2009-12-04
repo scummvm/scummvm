@@ -53,16 +53,16 @@ public:
 	 * Load a GraphicResource at the position specified by
 	 * index from the buffered ResourcePack
 	 */
-	void load(uint32 index);
+	void load(int32 index);
 	/**
 	 * Set the current cursor to a specific frame
 	 * within the loaded cursorResource
 	 */
-	void set(int frame);
+	void set(int32 frame);
 	/**
 	 * Set the x/y coordinates of the cursor
 	 */
-	void setCoords(uint32 mouseX, uint32 mouseY);
+	void setCoords(int32 mouseX, int32 mouseY);
 	/**
 	 * Scene-based update to the current cursor. This
 	 * checks whether the cursor should be updated depending
@@ -71,7 +71,7 @@ public:
 	 * TODO this probably doesn't belong here, but on the
 	 * scene, where it originally was
 	 */
-	void update(CommonResources *cr, int currentAction);
+	void update(CommonResources *cr, int32 currentAction);
 	/**
 	 * Get the next logical frame from the currently loaded
 	 * cursorResource and draw it
@@ -81,20 +81,20 @@ public:
 	/**
 	 * Get the X position of the cursor
 	 */
-	uint32 x() {
+	int32 x() {
 		return _mouseX;
 	}
 	/**
 	 * get the Y position of the cursor
 	 */
-	uint32 y() {
+	int32 y() {
 		return _mouseY;
 	}
 	/**
 	 * Get the current frame number of the
 	 * loaded cursorResource
 	 */
-	uint32 currentFrame() {
+	int32 currentFrame() {
 		return _curFrame;
 	}
 
@@ -104,10 +104,10 @@ private:
 	ResourcePack	*_resPack;
 	GraphicResource *_cursorResource;
 	bool   cursorLoaded;
-	uint32 _curFrame;
+	int32 _curFrame;
 	int32  _cursorStep;
-	uint32 _mouseX;
-	uint32 _mouseY;
+	int32 _mouseX;
+	int32 _mouseY;
 
 }; // end of class Cursor
 

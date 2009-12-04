@@ -68,7 +68,7 @@ protected:
 	GraphicResource *_bgResource;
 
 	virtual void update() {};
-	void playSound(uint resourceId, bool loop = false);
+	void playSound(int32 resourceId, bool loop = false);
 
 }; // end of class BlowUpPuzzle
 
@@ -76,9 +76,9 @@ protected:
 // ---- VCR -------------------
 
 typedef struct VCRDrawInfo {
-	uint32 resId;
-	uint32 x;
-	uint32 y;
+	int32 resId;
+	int32 x;
+	int32 y;
 } VCRDrawInfo;
 
 const Common::Rect BlowUpPuzzleVCRPolies[10] = {

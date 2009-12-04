@@ -233,7 +233,7 @@ void MainMenu::update() {
 void MainMenu::updateEyesAnimation() {
 	// Eyes animation
 	// Get the appropriate eye resource depending on the mouse position
-	int eyeFrameNum = kEyesFront;
+	int32 eyeFrameNum = kEyesFront;
 
 	if (_cursor->x() <= 200) {
 		if (_cursor->y() <= 160)
@@ -264,7 +264,7 @@ void MainMenu::updateEyesAnimation() {
 }
 
 void MainMenu::updateMainMenu() {
-	int rowId = 0;
+	int32 rowId = 0;
 
 	if (_cursor->y() >= 20 && _cursor->y() <= 20 + 48) {
 		rowId = 0; // Top row
@@ -280,10 +280,10 @@ void MainMenu::updateMainMenu() {
 	loadFont(kFontYellow);
 
 	// Icon animation
-	for (uint32 i = 0; i <= 5; i++) {
-		uint32 curX = 40 + i * 100;
+	for (int32 i = 0; i <= 5; i++) {
+		int32 curX = 40 + i * 100;
 		if (_cursor->x() >= curX && _cursor->x() <= curX + 55) {
-			int iconNum = i + 6 * rowId;
+			int32 iconNum = i + 6 * rowId;
 			_activeIcon = iconNum;
 
 			// The last 2 icons are swapped
@@ -403,7 +403,7 @@ void MainMenu::updateSubMenuNewGame() {
 }
 
 void MainMenu::updateSubMenuCinematics() {
-	int currentCD = 1;	// FIXME: dummy value
+	int32 currentCD = 1;	// FIXME: dummy value
 	_vm->text()->drawResTextWithValueCentered(10, 100, 620, 0x80000548, currentCD);
 	_vm->text()->setTextPos(30, 340);
 	_vm->text()->drawResText(0x80000549);	// Prev Page
@@ -426,9 +426,9 @@ void MainMenu::updateSubMenuCinematics() {
 }
 
 void MainMenu::updateSubMenuSettings() {
-	uint32 sizeMinus	= _vm->text()->getTextWidth("-");
-	uint32 sizePlus		= _vm->text()->getTextWidth("+");
-	uint32 sizeMainMenu = _vm->text()->getResTextWidth(0x8000059D);
+	int32 sizeMinus	= _vm->text()->getTextWidth("-");
+	int32 sizePlus		= _vm->text()->getTextWidth("+");
+	int32 sizeMainMenu = _vm->text()->getResTextWidth(0x8000059D);
 
 	loadFont(kFontYellow);
 	// Settings
@@ -557,11 +557,11 @@ void MainMenu::updateSubMenuQuitGame() {
 }
 
 void MainMenu::updateSubMenuShowCredits() {
-	int posY	 = _creditsTextScroll;
-	int resId	 = 0;
-	int step	 = 0;
-	int minBound = 0;
-	int maxBound = 0;
+	int32 posY	 = _creditsTextScroll;
+	int32 resId	 = 0;
+	int32 step	 = 0;
+	int32 minBound = 0;
+	int32 maxBound = 0;
 
 	GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
 	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);

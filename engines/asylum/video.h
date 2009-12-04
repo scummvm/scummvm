@@ -89,13 +89,13 @@ public:
 	VideoText();
 	~VideoText();
 
-	void loadFont(ResourcePack *resPack, uint32 resId);
-	void drawMovieSubtitle(byte *screenBuffer, uint32 resId);
+	void loadFont(ResourcePack *resPack, int32 resId);
+	void drawMovieSubtitle(byte *screenBuffer, int32 resId);
 
 private:
-	uint32 getTextWidth(const char *text);
+	int32 getTextWidth(const char *text);
 
-	void drawText(byte *screenBuffer, int x, int y, const char *text);
+	void drawText(byte *screenBuffer, int16 x, int16 y, const char *text);
 	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
 
 	GraphicResource *_fontResource;

@@ -36,13 +36,13 @@
 namespace Asylum {
 
 typedef struct GraphicQueueItem {
-	uint32 resId;
-	uint32 frameIdx;
-	uint32 x;
-	uint32 y;
-	uint32 flags;
-	uint32 transTableNum;
-	uint32 priority;
+	int32 resId;
+	int32 frameIdx;
+	int32 x;
+	int32 y;
+	int32 flags;
+	int32 transTableNum;
+	int32 priority;
 
 } GraphicQueueItem;
 
@@ -51,26 +51,26 @@ public:
 	Screen(AsylumEngine *_vm);
 	~Screen();
 
-	void copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, int height);
-	void copyToBackBufferWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height);
+	void copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
+	void copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void copyBackBufferToScreen();
-	void copyRectToScreen(byte *buffer, int pitch, int x, int y, int width, int height);
-	void copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height);
+	void copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
+	void copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height);
 	void setPalette(byte *rgbPalette);
-	void setPalette(ResourcePack *resPack, int entry) {
+	void setPalette(ResourcePack *resPack, int32 entry) {
 		setPalette(resPack->getResource(entry)->data + 32);
 	}
 	void drawWideScreen(int16 barSize);
 	void clearScreen();
 
-	void addGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority);
-	void addCrossFadeGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority);
+	void addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority);
+	void addCrossFadeGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem item);
 	void drawGraphicsInQueue();
 	void clearGraphicsInQueue();
 	void graphicsSelectionSort();
-	void swapGraphicItem(int item1, int item2);
-	void deleteGraphicFromQueue(uint32 resId);
+	void swapGraphicItem(int32 item1, int32 item2);
+	void deleteGraphicFromQueue(int32 resId);
 
 private:
 	Graphics::Surface _backBuffer;

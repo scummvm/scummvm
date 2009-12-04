@@ -40,13 +40,13 @@ Speech::~Speech() {
 	// TODO Auto-generated destructor stub
 }
 
-uint32 Speech::play(uint32 speechIdx) {
-    uint32 soundResIdx = 0;
+int32 Speech::play(int32 speechIdx) {
+    int32 soundResIdx = 0;
 
     switch (_scene->worldstats()->actorType) {
     case kMax: {
-        uint32 soundResIdx2 = speechIdx;
-        uint32 textResIdx = speechIdx;
+        int32 soundResIdx2 = speechIdx;
+        int32 textResIdx = speechIdx;
 
         if (speechIdx >= 259) {
             soundResIdx2 -= 9;
@@ -82,7 +82,7 @@ uint32 Speech::play(uint32 speechIdx) {
     return soundResIdx;
 }
 
-void Speech::setPlayerSpeech(uint32 soundResIdx, uint32 textResIdx) {
+void Speech::setPlayerSpeech(int32 soundResIdx, int32 textResIdx) {
     if (soundResIdx) {
         if (_scene->vm()->sound()->isPlaying(soundResIdx)) {
             _scene->vm()->sound()->stopSound(soundResIdx);
@@ -96,7 +96,7 @@ void Speech::setPlayerSpeech(uint32 soundResIdx, uint32 textResIdx) {
 }
 
 void Speech::prepareSpeech() {
-    uint32 startTick = _scene->vm()->getTick();
+    //int32 startTick = _scene->vm()->getTick();
 
     if (_soundResIdx) {
         if (!_scene->vm()->sound()->isPlaying(_soundResIdx)/* || _tick && startTick >= _tick*/) {
@@ -110,7 +110,7 @@ void Speech::prepareSpeech() {
             
             check = pt->y < 240;
             check = pt->y >= 240;*/
-            uint32 posY = ((check - 1) & 0x118) + 40;
+            int32 posY = ((check - 1) & 0x118) + 40;
 
             _scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font3);
             _scene->vm()->text()->drawText(20, posY, _textDataPos);

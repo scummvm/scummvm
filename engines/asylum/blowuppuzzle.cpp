@@ -112,7 +112,7 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
-void BlowUpPuzzle::playSound(uint resourceId, bool loop) {
+void BlowUpPuzzle::playSound(int32 resourceId, bool loop) {
 	_scene->vm()->sound()->playSound(_scene->getResourcePack(), resourceId, Config.sfxVolume, loop, 0, true);
 }
 
@@ -440,9 +440,9 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 		        || inPolyRegion(_cursor->x(), _cursor->y(), kYellowJack)) {
 			_cursor->animate();
 		} else {
-			if (inPolyRegion(_cursor->x(), _cursor->y(), kRedHole) && _holesState[kPluggedOnRed-1]
-			        || inPolyRegion(_cursor->x(), _cursor->y(), kYellowHole) && _holesState[kPluggedOnYellow-1]
-			        || inPolyRegion(_cursor->x(), _cursor->y(), kBlackHole) && _holesState[kPluggedOnBlack-1]) {
+			if ((inPolyRegion(_cursor->x(), _cursor->y(), kRedHole) && _holesState[kPluggedOnRed-1])
+			        || (inPolyRegion(_cursor->x(), _cursor->y(), kYellowHole) && _holesState[kPluggedOnYellow-1])
+			        || (inPolyRegion(_cursor->x(), _cursor->y(), kBlackHole) && _holesState[kPluggedOnBlack-1])) {
 				if (_cursor->currentFrame() != 2) { // reset cursor
 					_cursor->show();
 					_cursor->set(2);
@@ -500,8 +500,8 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 
 	// Put jacks on table --
 	if (jackType) {
-		if (_cursor->x() >= (uint32)BlowUpPuzzleVCRPolies[kBlackJack].left && _cursor->x() <= (uint32)BlowUpPuzzleVCRPolies[kYellowJack].right &&
-		        _cursor->y() >= (uint32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _cursor->y() <= (uint32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
+		if (_cursor->x() >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].left && _cursor->x() <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].right &&
+		        _cursor->y() >= (int32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _cursor->y() <= (int32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
 			_jacksState[jackType-1] = kOnTable;
 			playSound(_scene->worldstats()->grResId[50]);
 			_cursor->show();

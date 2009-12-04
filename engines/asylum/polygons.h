@@ -35,7 +35,7 @@
 namespace Asylum {
 
 typedef struct PolyDefinitions {
-	uint32		  numPoints;
+	int32		  numPoints;
 	Common::Point *points;
 	Common::Rect  boundingRect;
 
@@ -45,7 +45,7 @@ typedef struct PolyDefinitions {
 	 *
 	 * (was pointInPoly())
 	 */
-	bool contains(int x, int y);
+	bool contains(int16 x, int16 y);
 
 } PolyDefinitions;
 
@@ -54,8 +54,8 @@ public:
 	Polygons(Common::SeekableReadStream *stream);
 	virtual ~Polygons();
 
-	uint32 size;
-	uint32 numEntries;
+	int32 size;
+	int32 numEntries;
 
 	Common::Array<PolyDefinitions> entries;
 

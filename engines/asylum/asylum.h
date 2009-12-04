@@ -49,7 +49,7 @@ namespace Asylum {
 
 // XXX If defined, this flag will prevent the intro movies
 // from being played whenever the engine is started
-#define SKIP_INTRO
+// #define SKIP_INTRO
 
 // XXX
 // I'm not sure if system endian-ness would have any
@@ -115,7 +115,7 @@ public:
 	/**
 	 * Wrapper function to the OSystem getMillis() method
 	 */
-	uint32 getTick() { return _system->getMillis(); }
+	int32 getTick() { return (int32)_system->getMillis(); }
 
 	/**
 	 * This is the global tick counter.

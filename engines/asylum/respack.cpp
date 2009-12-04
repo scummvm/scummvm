@@ -31,7 +31,7 @@ ResourcePack::ResourcePack(const char *resourceFile) {
 	init(resourceFile);
 }
 
-ResourcePack::ResourcePack(int resourceIndex) {
+ResourcePack::ResourcePack(int32 resourceIndex) {
 	// We don't use the file number part of resource IDs
 	//uint32 fileNum = (resourceID >> 16) & 0x7FFF;
 	char filename[20];

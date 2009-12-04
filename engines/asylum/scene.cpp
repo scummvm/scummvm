@@ -95,7 +95,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
 
-	for (uint32 a = 0; a < _ws->numActors; a++) {
+	for (int32 a = 0; a < _ws->numActors; a++) {
 		_ws->actors[a].tickValue1 = _vm->getTick();
 		// FIXME This is a hack just to get the current resource
 		// pack and scene into the actor instance(s)
@@ -114,8 +114,8 @@ void Scene::initialize() {
 	_playerActorIdx = 0;
 
 	if (_ws->numBarriers > 0) {
-		uint32 priority = 0x0FFB;
-		for (uint32 b = 0; b < _ws->numBarriers; b++) {
+		int32 priority = 0x0FFB;
+		for (int32 b = 0; b < _ws->numBarriers; b++) {
 			Barrier *barrier  = &_ws->barriers[b];
 			barrier->priority = priority;
 			barrier->flags &= 0xFFFF3FFF;
@@ -143,7 +143,7 @@ void Scene::initialize() {
 	updateActorDirection(_playerActorIdx, 4);
 
 	if (_ws->numActors > 1) {
-		for (uint32 a = 1; a < _ws->numActors; a++) {
+		for (int32 a = 1; a < _ws->numActors; a++) {
 			Actor *act = &_ws->actors[a];
 			act->flags |= 1;
 			act->direction = 1;
@@ -155,7 +155,7 @@ void Scene::initialize() {
 		}
 	}
 
-	uint32 actionIdx = _ws->actionListIdx;
+	int32 actionIdx = _ws->actionListIdx;
 	if (actionIdx)
 		_actions->queueScript(actionIdx, 0);
 
@@ -496,7 +496,7 @@ void Scene::update() {
 }
 
 int Scene::updateScene() {
-	uint32 startTick   = 0;
+	int32 startTick   = 0;
 
 	// Mouse
 	startTick = _vm->getTick();
@@ -505,7 +505,7 @@ int Scene::updateScene() {
 
 	// Actors
 	startTick = _vm->getTick();
-	for (uint32 a = 0; a < _ws->numActors; a++)
+	for (int32 a = 0; a < _ws->numActors; a++)
 		updateActor(a);
 	debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->getTick() - startTick);
 
@@ -553,9 +553,9 @@ void Scene::updateMouse() {
 	int  dir = -1;
 	bool done = false;
 
-	if (_cursor->x() < (uint32)actorPos.left) {
-		if (_cursor->y() >= (uint32)actorPos.top) {
-			if (_cursor->y() > (uint32)actorPos.bottom) {
+	if (_cursor->x() < actorPos.left) {
+		if (_cursor->y() >= actorPos.top) {
+			if (_cursor->y() > actorPos.bottom) {
 				if (getActor()->direction == 2) {
 					if (_cursor->y() - actorPos.bottom > 10)
 						dir = 3;
@@ -596,9 +596,9 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->x() <= (uint32)actorPos.right) {
-		if (_cursor->y() >= (uint32)actorPos.top) {
-			if (_cursor->y() > (uint32)actorPos.bottom) {
+	if (!done && _cursor->x() <= actorPos.right) {
+		if (_cursor->y() >= actorPos.top) {
+			if (_cursor->y() > actorPos.bottom) {
 				if (getActor()->direction == 3) {
 					if (_cursor->x() - actorPos.left > 10)
 						dir = 4;
@@ -627,7 +627,7 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->y() < (uint32)actorPos.top) {
+	if (!done && _cursor->y() < actorPos.top) {
 		if (getActor()->direction) {
 			if (getActor()->direction == 6) {
 				if (actorPos.top - _cursor->y() > 10)
@@ -642,7 +642,7 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->y() <= (uint32)actorPos.bottom) {
+	if (!done && _cursor->y() <= actorPos.bottom) {
 		if (getActor()->direction == 5) {
 			if (actorPos.bottom - _cursor->y() > 10)
 				dir = 6;
@@ -710,7 +710,7 @@ void Scene::updateActor(int32 actorIdx) {
 			}
 			break;
 		case 0x5: {
-			uint32 frameNum = actor->frameNum + 1;
+			int32 frameNum = actor->frameNum + 1;
 			actor->frameNum = frameNum % actor->frameCount;
 
 			if (_vm->getTick() - actor->tickValue1 > 300) {
@@ -814,17 +814,17 @@ void Scene::updateActorSub01(Actor *act) {
 void Scene::updateBarriers() {
 	//Screen *screen = _vm->screen();
 
-	uint barriersCount  = _ws->barriers.size();
+	int32 barriersCount  = (int32)_ws->barriers.size();
 	//int  startTickCount = 0;
 	bool canPlaySound   = false;
 
 	if (barriersCount > 0) {
-		for (uint32 b = 0; b < barriersCount; b++) {
+		for (int32 b = 0; b < barriersCount; b++) {
 			Barrier *barrier = &_ws->barriers[b];
 
 			if (barrier->field_3C == 4) {
 				if (_ws->isBarrierVisible(b)) {
-					uint32 flag = barrier->flags;
+					int32 flag = barrier->flags;
 					if (flag & 0x20) {
 						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
 							barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
@@ -868,7 +868,7 @@ void Scene::updateBarriers() {
 					} else if (flag & 8) {
 						// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
 						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
-							uint32 frameIdx = barrier->frameIdx + 1;
+							int32 frameIdx = barrier->frameIdx + 1;
 							if (frameIdx < barrier->frameCount - 1) {
 								if (barrier->field_688 == 1) {
 									// TODO: get global x, y positions
@@ -892,7 +892,7 @@ void Scene::updateBarriers() {
 					} else if (!((flag & 0xFFFF) & 6)) {
 						// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
 						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) && (flag & 0x10000)) {
-							uint32 frameIdx = barrier->frameIdx - 1;
+							int32 frameIdx = barrier->frameIdx - 1;
 							if (frameIdx <= 0) {
 								barrier->flags &= 0xFFFEFFFF;
 								if (barrier->field_688 == 1) {
@@ -960,9 +960,9 @@ void Scene::updateAmbientSounds() {
 
 	int panning, volume;
 
-	for (uint32 i = 0; i < _ws->numAmbientSound; i++) {
+	for (int32 i = 0; i < _ws->numAmbientSound; i++) {
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
-		for (uint32 f = 0; f < 6; f++) {
+		for (int32 f = 0; f < 6; f++) {
 			int gameFlag = snd->flagNum[f];
 			if (gameFlag >= 0) {
 				if (_vm->isGameFlagNotSet(gameFlag)) {
@@ -1069,13 +1069,13 @@ void Scene::updateAdjustScreen() {
 		}
 		if (v1 < 0)
 			v1 = _ws->xLeft = 0;
-		if ((uint32)v1 > _ws->width - 640) {
+		if (v1 > _ws->width - 640) {
 			v1 = _ws->width - 640;
 			_ws->xLeft = v1;
 		}
 		if (v0 < 0)
 			v0 = _ws->yTop = 0;
-		if ((uint32)v0 > _ws->height - 480) {
+		if (v0 > _ws->height - 480) {
 			v0 = _ws->height - 480;
 			_ws->yTop = v0;
 		}
@@ -1180,7 +1180,7 @@ void Scene::OLD_UPDATE() {
 
 	// DEBUGGING
 	// Check current walk region
-	for (uint32 a = 0; a < _ws->numActions; a++) {
+	for (int32 a = 0; a < _ws->numActions; a++) {
 		if (_ws->actions[a].actionType == 0) {
 			ActionArea *area = &_ws->actions[a];
 			PolyDefinitions poly = _polygons->entries[area->polyIdx];
@@ -1216,7 +1216,7 @@ void Scene::OLD_UPDATE() {
 		debugShowBarriers();
 
 	// Check if we're within a barrier
-	for (uint32 p = 0; p < _ws->numBarriers; p++) {
+	for (int32 p = 0; p < _ws->numBarriers; p++) {
 		Barrier b = _ws->barriers[p];
 		if (b.flags & 0x20) {
 			if ((b.boundingRect.left + b.x <= _cursor->x() + _ws->targetX) &&
@@ -1237,7 +1237,7 @@ void Scene::OLD_UPDATE() {
 	// of the barrier/polygon action scripts should be processed first
 	if (curBarrier < 0) {
 		// Update cursor if it's in a polygon hotspot
-		for (uint32 p = 0; p < _polygons->numEntries; p++) {
+		for (int32 p = 0; p < _polygons->numEntries; p++) {
 			PolyDefinitions poly = _polygons->entries[p];
 			if (poly.boundingRect.contains(_cursor->x() + _ws->targetX, _cursor->y() + _ws->targetY)) {
 				if (poly.contains(_cursor->x() + _ws->targetX, _cursor->y() + _ws->targetY)) {
@@ -1253,8 +1253,8 @@ void Scene::OLD_UPDATE() {
 		_leftClick = false;
 
 		if (curHotspot >= 0) {
-			for (uint32 a = 0; a < _ws->numActions; a++) {
-				if (_ws->actions[a].polyIdx == (uint32)curHotspot) {
+			for (int32 a = 0; a < _ws->numActions; a++) {
+				if (_ws->actions[a].polyIdx == curHotspot) {
 					debugC(kDebugLevelScripts, "Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
 					       _ws->actions[a].id,
 					       _ws->actions[a].name,
@@ -1323,7 +1323,7 @@ void Scene::drawActorsAndBarriers() {
 	// a collection of CharacterUpdateItems. Since
 	// we're only on scene 1 atm, and there is only one
 	// character, this will have to do :P
-	for (uint i = 0; i < _ws->numActors; i++) {
+	for (int32 i = 0; i < _ws->numActors; i++) {
 		int actorRegPt = 0;
 		Actor *act = &_ws->actors[i];
 		Common::Point pt;
@@ -1359,7 +1359,7 @@ void Scene::drawActorsAndBarriers() {
 			*/
 
 			// XXX from .text:0040a4d1
-			for (uint barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
+			for (int32 barIdx = 0; barIdx < _ws->numBarriers; barIdx++) {
 				Barrier *bar    = &_ws->barriers[barIdx];
 				bool actInBar   = bar->boundingRect.contains(act->boundingRect);
 				bool intersects = false;
@@ -1461,7 +1461,7 @@ void Scene::getActorPosition(Actor *actor, Common::Point *pt) {
 int Scene::queueActorUpdates() {
 	if (_ws->numActors > 0) {
 		Common::Point pt;
-		for (uint32 a = 0; a < _ws->numActors; a++) {
+		for (int32 a = 0; a < _ws->numActors; a++) {
 			Actor *actor = &_ws->actors[a];
 
 			if ((actor->flags & 0xFF) & 1) { // check this mask
@@ -1469,7 +1469,7 @@ int Scene::queueActorUpdates() {
 				//pt.x += actor->x;
 				//pt.y += actor->y;
 
-				uint32 frameNum = actor->frameNum;
+				int32 frameNum = actor->frameNum;
 				if (actor->frameNum >= actor->frameCount) {
 					frameNum = 2 * actor->frameCount - actor->frameNum - 1;
 				}
@@ -1491,10 +1491,10 @@ int Scene::queueActorUpdates() {
 }
 
 int Scene::queueBarrierUpdates() {
-	uint barriersCount = _ws->barriers.size();
+	int32 barriersCount = (int32)_ws->barriers.size();
 
 	if (barriersCount > 0) {
-		for (uint32 b = 0; b < barriersCount; b++) {
+		for (int32 b = 0; b < barriersCount; b++) {
 			Barrier *barrier = &_ws->barriers[b];
 
 			if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
@@ -1576,7 +1576,7 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 	               1);
 
 	// Draw all lines in Polygon
-	for (uint32 i = 0; i < poly->numPoints; i++) {
+	for (int32 i = 0; i < poly->numPoints; i++) {
 		surface.drawLine(
 		    poly->points[i].x - poly->boundingRect.left,
 		    poly->points[i].y - poly->boundingRect.top,
@@ -1591,7 +1591,7 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 
 // POLYGONS DEBUG
 void Scene::debugShowPolygons() {
-	for (uint32 p = 0; p < _polygons->numEntries; p++) {
+	for (int32 p = 0; p < _polygons->numEntries; p++) {
 		Graphics::Surface surface;
 		PolyDefinitions poly = _polygons->entries[p];
 		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
@@ -1599,7 +1599,7 @@ void Scene::debugShowPolygons() {
 		               1);
 
 		// Draw all lines in Polygon
-		for (uint32 i = 0; i < poly.numPoints; i++) {
+		for (int32 i = 0; i < poly.numPoints; i++) {
 			surface.drawLine(
 			    poly.points[i].x - poly.boundingRect.left,
 			    poly.points[i].y - poly.boundingRect.top,
@@ -1615,7 +1615,7 @@ void Scene::debugShowPolygons() {
 
 // BARRIER DEBUGGING
 void Scene::debugShowBarriers() {
-	for (uint32 p = 0; p < _ws->numBarriers; p++) {
+	for (int32 p = 0; p < _ws->numBarriers; p++) {
 		Graphics::Surface surface;
 		Barrier b = _ws->barriers[p];
 
@@ -1633,7 +1633,7 @@ void Scene::debugShowBarriers() {
 
 // BARRIER DEBUGGING
 void Scene::debugShowActors() {
-	for (uint32 p = 0; p < _ws->numActors; p++) {
+	for (int32 p = 0; p < _ws->numActors; p++) {
 		Graphics::Surface surface;
 		Actor a = _ws->actors[p];
 
@@ -1673,7 +1673,7 @@ SceneTitle::~SceneTitle() {
 	delete _progress;
 }
 
-void SceneTitle::update(uint32 tick) {
+void SceneTitle::update(int32 tick) {
 
 	// XXX This is not from the original. It's just some
 	// arbitrary math to throttle the progress indicator.
@@ -1694,8 +1694,8 @@ void SceneTitle::update(uint32 tick) {
 		bgFrame->surface.w,
 		0, 0, 640, 480);
 
-	uint32 resId = _scene->getSceneIndex() - 4 + 1811;
-	uint32 resWidth = _scene->vm()->text()->getResTextWidth(resId);
+	int32 resId = _scene->getSceneIndex() - 4 + 1811;
+	int32 resWidth = _scene->vm()->text()->getResTextWidth(resId);
 	_scene->vm()->text()->drawResTextCentered(320 - resWidth * 24, 30, resWidth, resId);
 
 	GraphicFrame *frame = _progress->getFrame(_spinnerFrame);

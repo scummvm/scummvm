@@ -30,8 +30,8 @@
 
 namespace Asylum {
 
-extern int g_debugPolygons;
-extern int g_debugBarriers;
+extern int32 g_debugPolygons;
+extern int32 g_debugBarriers;
 
 Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -50,12 +50,12 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 Console::~Console() {
 }
 
-bool Console::cmdDumpActionArea(int argc, const char **argv) {
+bool Console::cmdDumpActionArea(int32 argc, const char **argv) {
 
 	if (argc == 2) {
 		// TODO Get an action area by index/id
 	} else {
-		for (uint32 i = 0; i < _vm->scene()->worldstats()->numActions; i++) {
+		for (int32 i = 0; i < _vm->scene()->worldstats()->numActions; i++) {
 			ActionArea *a = &_vm->scene()->worldstats()->actions[i];
 			printActionAreaStats(a);
 		}
@@ -90,8 +90,8 @@ void Console::printActionAreaStats(ActionArea *a) {
 	            a->volume);
 }
 
-bool Console::cmdShowFlags(int argc, const char **argv) {
-	for (int i = 0; i < 1512; i++) {
+bool Console::cmdShowFlags(int32 argc, const char **argv) {
+	for (int32 i = 0; i < 1512; i++) {
 		if (_vm->isGameFlagSet(i)) {
 			DebugPrintf("Game Flag %d is Active\n", i);
 		}
@@ -100,7 +100,7 @@ bool Console::cmdShowFlags(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdToggleFlag(int argc, const char **argv) {
+bool Console::cmdToggleFlag(int32 argc, const char **argv) {
 	if (argc != 2 || atoi(argv[1]) > 1512 || atoi(argv[1]) < 0) {
 		DebugPrintf("Enter a value between 0 and 1512\n");
 		return true;
@@ -111,7 +111,7 @@ bool Console::cmdToggleFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdPlayVideo(int argc, const char **argv) {
+bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Usage %s <video number>\n", argv[0]);
 		return true;
@@ -122,7 +122,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdRunScript(int argc, const char **argv) {
+bool Console::cmdRunScript(int32 argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Usage %s <script number>\n", argv[0]);
 		return true;
@@ -133,7 +133,7 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdChangeScene(int argc, const char **argv) {
+bool Console::cmdChangeScene(int32 argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Usage %s <scene number>\n", argv[0]);
 		return true;

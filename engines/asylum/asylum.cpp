@@ -115,7 +115,7 @@ Common::Error AsylumEngine::go() {
 	_mainMenu = new MainMenu(this);
 
 	// TODO: if savegame not exists on folder, than start game()
-    if(1) { //SearchMan.hasArchive
+    if(0) { //SearchMan.hasArchive
         startGame();
     } else {
         _mainMenu->openMenu();
@@ -179,7 +179,7 @@ void AsylumEngine::playIntro() {
 
 	_video->playVideo(1, Config.showMovieSubtitles);
 
-	if (_scene->worldstats()->musicCurrentResId != 0xFFFFFD66)
+	if (_scene->worldstats()->musicCurrentResId != -666)
 		_sound->playMusic(_scene->worldstats()->musicCurrentResId);
 
 	_screen->clearScreen();

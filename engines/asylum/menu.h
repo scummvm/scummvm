@@ -95,11 +95,11 @@ private:
 	Cursor *_cursor;
 	int32  _activeIcon;
 	int32  _previousActiveIcon;
-	uint32 _curIconFrame;
-	uint32 _curMouseCursor;
+	int32 _curIconFrame;
+	int32 _curMouseCursor;
 	int32  _cursorStep;
-	uint32 _creditsBgFrame;
-	uint32 _creditsTextScroll;
+	int32 _creditsBgFrame;
+	int32 _creditsTextScroll;
 	bool   _leftClick;
 	bool   _active;
 
