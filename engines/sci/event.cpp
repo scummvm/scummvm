@@ -400,7 +400,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 		event.character = event.data;
 
 		// TODO: Remove this as soon as ScummVM handles Ctrl-Alt-X to us
-		if ((event.modifiers == SCI_KEYMOD_CTRL) && (event.character = 'x'))
+		if ((event.modifiers == SCI_KEYMOD_CTRL) && (event.character == 'x'))
 			event.modifiers |= SCI_KEYMOD_ALT;
 
 		// Scancodify if appropriate
