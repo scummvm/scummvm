@@ -32,22 +32,22 @@
 namespace Asylum {
 
 typedef struct EncounterItem {
-	uint32 keywordIndex;
-	uint32 field2;
-	uint32 scriptResId;
-	uint32 array[50];
-	uint16 value;
+	int32 keywordIndex;
+	int32 field2;
+	int32 scriptResId;
+	int32 array[50];
+	int16 value;
 } EncounterItem;
 
 typedef struct EncounterStruct {
-	uint32 x1;
-	uint32 y1;
-	uint32 x2;
-	uint32 y2;
-	uint32 frameNum;
-	uint32 transTableNum;
-	uint32 status;
-	uint32 grResId;
+	int32 x1;
+	int32 y1;
+	int32 x2;
+	int32 y2;
+	int32 frameNum;
+	int32 transTableNum;
+	int32 status;
+	int32 grResId;
 } EncounterStruct;
 
 class Encounter {
@@ -55,14 +55,14 @@ public:
 	Encounter(Scene *scene);
 	virtual ~Encounter();
 
-	void setVariable(int idx, int value) {
+	void setVariable(int32 idx, int32 value) {
 		_variables[idx] = value;
 	}
-	void run(int encounterIdx, int barrierId1, int barrierId2, int characterIdx);
+	void run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx);
 
 private:
-	uint16 *_variables;
-	uint16 _anvilStyleFlag;
+	int16 *_variables;
+	int16 _anvilStyleFlag;
 
 	EncounterItem *_currentEncounter;
 	Common::Array<EncounterItem> _items;

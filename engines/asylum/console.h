@@ -41,12 +41,12 @@ public:
 	virtual ~Console(void);
 
 private:
-	bool cmdPlayVideo(int argc, const char **argv);
-	bool cmdRunScript(int argc, const char **argv);
-	bool cmdChangeScene(int argc, const char **argv);
-	bool cmdShowFlags(int argc, const char **argv);
-	bool cmdToggleFlag(int argc, const char **argv);
-	bool cmdDumpActionArea(int argc, const char **argv);
+	bool cmdPlayVideo(int32 argc, const char **argv);
+	bool cmdRunScript(int32 argc, const char **argv);
+	bool cmdChangeScene(int32 argc, const char **argv);
+	bool cmdShowFlags(int32 argc, const char **argv);
+	bool cmdToggleFlag(int32 argc, const char **argv);
+	bool cmdDumpActionArea(int32 argc, const char **argv);
 
 	void printActionAreaStats(ActionArea *a);
 

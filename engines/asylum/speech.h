@@ -36,22 +36,22 @@ public:
     Speech(Scene *scene);
     virtual ~Speech();
 
-    uint32 _soundResIdx;
-    uint32 _textResIdx;
+    int32 _soundResIdx;
+    int32 _textResIdx;
 
     /** .text:00414810
      *  Play player speech
      *  @param speechIdx speech index (used for sound and text resources)
      *  @return correct resourceId 
      */
-    uint32 play(uint32 speechIdx);
+    int32 play(int32 speechIdx);
 
     /** .text:004146D0
      *  Set speech for different player type
      *  @param soundResIdx sound resource id
      *  @param textResIdx text resource id
      */
-    void setPlayerSpeech(uint32 soundResIdx, uint32 textResIdx);
+    void setPlayerSpeech(int32 soundResIdx, int32 textResIdx);
 
     /** .text:004144C0
      *  Prepare speech to play
@@ -61,7 +61,7 @@ public:
 private:
     Scene *_scene;
 
-    uint32 _tick;
+    int32 _tick;
 
     char * _textData;
     char * _textDataPos;
@@ -71,7 +71,7 @@ private:
     void processSpeech();
 
     // This function was cutoff since it doesn't make any sence using it. Its here for address information only
-    /** .text:00414630 void playSpeech(uint32 textResIdx, uint32 fontResIdx); */
+    /** .text:00414630 void playSpeech(int32 textResIdx, int32 fontResIdx); */
 
 }; // end of class Speech
 

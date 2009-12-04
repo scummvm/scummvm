@@ -35,29 +35,29 @@ Encounter::Encounter(Scene *scene) {
 	// TODO error checks
 	file.open("sntrm.dat");
 
-	uint16 _count = file.readUint16LE();
+	int16 _count = file.readSint16LE();
 
-	_variables = (uint16*)malloc(_count);
+	_variables = (int16*)malloc(_count);
 	file.read(_variables, _count);
 
 	file.seek(2 + _count * 2, SEEK_SET);
 
 	// TODO assert if true
-	_anvilStyleFlag = file.readUint16LE();
+	_anvilStyleFlag = file.readSint16LE();
 
-	uint16 _dataCount = file.readUint16LE();
+	int16 _dataCount = file.readSint16LE();
 
 	for (uint8 i = 0; i < _dataCount; i++) {
 		EncounterItem item;
 		memset(&item, 0, sizeof(EncounterItem));
 
-		item.keywordIndex = file.readUint32LE();
-		item.field2       = file.readUint32LE();
-		item.scriptResId  = file.readUint32LE();
+		item.keywordIndex = file.readSint32LE();
+		item.field2       = file.readSint32LE();
+		item.scriptResId  = file.readSint32LE();
 		for (uint8 j = 0; j < 50; j++) {
-			item.array[j] = file.readUint32LE();
+			item.array[j] = file.readSint32LE();
 		}
-		item.value = file.readUint16LE();
+		item.value = file.readSint16LE();
 
 		_items.push_back(item);
 	}
@@ -67,7 +67,7 @@ Encounter::Encounter(Scene *scene) {
 	_scene = scene;
 }
 
-void Encounter::run(int encounterIdx, int barrierId1, int barrierId2, int characterIdx) {
+void Encounter::run(int32 encounterIdx, int32 barrierId1, int32 barrierId2, int32 characterIdx) {
 	// Line: 12/15 :: 0x25 (1, 1584, 1584, 0, 0, 0, 0, 0, 0) // First Encounter
 
 	//debugC(kDebugLevelEncounter, "Running Encounter %d", encounterIdx);
@@ -78,12 +78,12 @@ void Encounter::run(int encounterIdx, int barrierId1, int barrierId2, int charac
 
 	//Barrier *b1 = _scene->worldstats()->getBarrierById(barrierId1);
 	/*
-	 int __cdecl runEncounter(int newMessageHandler, int encounterIndex, int objectId1, int objectId2, int characterIndex)
+	 int32 __cdecl runEncounter(int32 newMessageHandler, int32 encounterIndex, int32 objectId1, int32 objectId2, int32 characterIndex)
 	{
-	  int result; // eax@7
+	  int32 result; // eax@7
 	  EncounterItem *v6; // eax@2
-	  int v7; // ST04_4@4
-	  int v8; // eax@4
+	  int32 v7; // ST04_4@4
+	  int32 v8; // eax@4
 
 	  if ( !encounterKeywordIndex )
 	  {
@@ -118,7 +118,7 @@ void Encounter::run(int encounterIdx, int barrierId1, int barrierId2, int charac
 	      character_sub_4072A0(playerCharacterIndex, 5);
 	    }
 	    flag04 = 0;
-	    switchMessageHandler((int (__cdecl *)(_DWORD, _DWORD, _DWORD))handleMessageEncounter);
+	    switchMessageHandler((int32 (__cdecl *)(_DWORD, _DWORD, _DWORD))handleMessageEncounter);
 	    result = 1;
 	  }
 	  return result;

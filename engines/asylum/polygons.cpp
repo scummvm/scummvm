@@ -32,18 +32,18 @@ Polygons::Polygons(Common::SeekableReadStream *stream) {
 }
 
 Polygons::~Polygons() {
-	for (uint32 i = 0; i < numEntries; i++)
+	for (int32 i = 0; i < numEntries; i++)
 		delete[] entries[i].points;
 
 	entries.clear();
 }
 
-bool PolyDefinitions::contains(int x, int y) {
+bool PolyDefinitions::contains(int16 x, int16 y) {
 	// Copied from backends/vkeybd/polygon.cpp
-	int  yflag0;
-	int  yflag1;
+	int32  yflag0;
+	int32  yflag1;
 	bool inside_flag = false;
-	unsigned int pt;
+	int32 pt;
 
 	Common::Point *vtx0 = &points[numPoints - 1];
 	Common::Point *vtx1 = &points[0];
@@ -65,28 +65,28 @@ bool PolyDefinitions::contains(int x, int y) {
 }
 
 void Polygons::load(Common::SeekableReadStream *stream) {
-	size       = stream->readUint32LE();
-	numEntries = stream->readUint32LE();
+	size       = stream->readSint32LE();
+	numEntries = stream->readSint32LE();
 
-	for (uint32 g = 0; g < numEntries; g++) {
+	for (int32 g = 0; g < numEntries; g++) {
 		PolyDefinitions poly;
 		memset(&poly, 0, sizeof(PolyDefinitions));
 
-		poly.numPoints = stream->readUint32LE();
+		poly.numPoints = stream->readSint32LE();
 		if (poly.numPoints > 0)
 			poly.points = new Common::Point[poly.numPoints];
 
-		for (uint32 i = 0; i < poly.numPoints; i++) {
-			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
-			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
+		for (int32 i = 0; i < poly.numPoints; i++) {
+			poly.points[i].x = stream->readSint32LE() & 0xFFFF;
+			poly.points[i].y = stream->readSint32LE() & 0xFFFF;
 		}
 
 		stream->skip((MAX_POLYGONS - poly.numPoints) * 8);
 
-		poly.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
-		poly.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
-		poly.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
-		poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+		poly.boundingRect.left   = stream->readSint32LE() & 0xFFFF;
+		poly.boundingRect.top    = stream->readSint32LE() & 0xFFFF;
+		poly.boundingRect.right  = stream->readSint32LE() & 0xFFFF;
+		poly.boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
 		entries.push_back(poly);
 	}

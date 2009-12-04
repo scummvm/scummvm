@@ -59,7 +59,7 @@ public:
 	SceneTitle(Scene *scene);
 	~SceneTitle();
 
-	void update(uint32 tick);
+	void update(int32 tick);
 	bool loadingComplete() { return _done; }
 
 private:
@@ -67,11 +67,11 @@ private:
 	GraphicResource *_bg;
 	GraphicResource *_progress;
 
-	uint32 _start;
-	uint32 _ticks;
+	int32 _start;
+	int32 _ticks;
 	bool   _done;
-	uint32 _spinnerFrame;
-	uint32 _spinnerProgress;
+	int32 _spinnerFrame;
+	int32 _spinnerProgress;
 
     bool _showMouseState;
 
@@ -100,7 +100,7 @@ public:
 	Cursor* getCursor() { return _cursor; }
 	ResourcePack* getResourcePack() { return _resPack; }
 	ResourcePack* getMusicPack() { return _musPack; }
-	GraphicResource* getGraphicResource(uint32 entry) {	return new GraphicResource(_resPack, entry); }
+	GraphicResource* getGraphicResource(int32 entry) {	return new GraphicResource(_resPack, entry); }
 	BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
 	void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);
@@ -197,7 +197,7 @@ private:
 	int    queueBarrierUpdates();
 	bool   isBarrierVisible(BarrierItem *barrier);
 	bool   isBarrierOnScreen(BarrierItem *barrier);
-	uint32 getRandomResId(BarrierItem *barrier);	
+	int32 getRandomResId(BarrierItem *barrier);
 
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 

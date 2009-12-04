@@ -39,9 +39,9 @@ void Screen::copyBackBufferToScreen() {
 	_vm->_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, int height) {
-	int h = height;
-	int w = width;
+void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
+	int32 h = height;
+	int32 w = width;
 	byte *dest = (byte *)_backBuffer.pixels;
 
 	while (h--) {
@@ -51,13 +51,13 @@ void Screen::copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, 
 	}
 }
 
-void Screen::copyToBackBufferWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height) {
-	// int h = height;
-	// int w = width;
+void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
+	// int32 h = height;
+	// int32 w = width;
 	byte *dest = (byte *)_backBuffer.pixels;
 
-	for (int curY = 0; curY < height; curY++) {
-		for (int curX = 0; curX < width; curX++) {
+	for (int32 curY = 0; curY < height; curY++) {
+		for (int32 curX = 0; curX < width; curX++) {
 			if (buffer[curX + curY * pitch] != 0) {
 				dest[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
@@ -65,15 +65,15 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int pitch, int x, in
 	}
 }
 
-void Screen::copyRectToScreen(byte *buffer, int pitch, int x, int y, int width, int height) {
+void Screen::copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
 	_vm->_system->copyRectToScreen(buffer, pitch, x, y, width, height);
 }
 
-void Screen::copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height) {
+void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
 	byte *screenBuffer = (byte *)_vm->_system->lockScreen()->pixels;
 
-	for (int curY = 0; curY < height; curY++) {
-		for (int curX = 0; curX < width; curX++) {
+	for (int32 curY = 0; curY < height; curY++) {
+		for (int32 curX = 0; curX < width; curX++) {
 			if (buffer[curX + curY * pitch] != 0 && (x + curX + (y + curY) * 640 <= 640*480)) {
 				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
@@ -91,7 +91,7 @@ void Screen::setPalette(byte *rgbPalette) {
 	memset(palette, 0, 4);
 	p += 3;
 
-	for (int i = 1; i < 256; i++) {
+	for (int32 i = 1; i < 256; i++) {
 		palette[i * 4 + 0] = *p++ << 2;
 		palette[i * 4 + 1] = *p++ << 2;
 		palette[i * 4 + 2] = *p++ << 2;
@@ -115,7 +115,7 @@ void Screen::clearScreen() {
 	_vm->_system->fillScreen(0);
 }
 
-void Screen::addGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority) {
+void Screen::addGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 flags, int32 transTableNum, int32 priority) {
 	GraphicQueueItem item;
 	item.resId = resId;
 	item.x = x;
@@ -128,7 +128,7 @@ void Screen::addGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y
 	_queueItems.push_back(item);
 }
 
-void Screen::addCrossFadeGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority) {
+void Screen::addCrossFadeGraphicToQueue(int32 resId, int32 frameIdx, int32 x, int32 y, int32 redId2, int32 x2, int32 y2, int32 flags, int32 priority) {
 
 }
 
@@ -142,7 +142,7 @@ void Screen::drawGraphicsInQueue() {
 	// sort by priority first
 	graphicsSelectionSort();
 
-	for (uint i = 0; i < _queueItems.size(); i++) {
+	for (uint32 i = 0; i < _queueItems.size(); i++) {
 		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
 		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
 		copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->targetX, _queueItems[i].y - ws->targetY, fra->surface.w, fra->surface.h);
@@ -155,12 +155,12 @@ void Screen::clearGraphicsInQueue() {
 }
 
 void Screen::graphicsSelectionSort() {
-	uint minIdx;
+	uint32 minIdx;
 
-	for (uint i = 0; i < _queueItems.size(); i++) {
+	for (uint32 i = 0; i < _queueItems.size(); i++) {
 		minIdx = i;
 
-		for (uint j = i + 1; j < _queueItems.size(); j++)
+		for (uint32 j = i + 1; j < _queueItems.size(); j++)
 			if (_queueItems[j].priority > _queueItems[i].priority)
 				minIdx = j;
 
@@ -169,15 +169,15 @@ void Screen::graphicsSelectionSort() {
 	}
 }
 
-void Screen::swapGraphicItem(int item1, int item2) {
+void Screen::swapGraphicItem(int32 item1, int32 item2) {
 	GraphicQueueItem temp;
 	temp = _queueItems[item1];
 	_queueItems[item1] = _queueItems[item2];
 	_queueItems[item2] = temp;
 }
 
-void Screen::deleteGraphicFromQueue(uint32 resId) {
-	for (uint i = 0; i < _queueItems.size(); i++) {
+void Screen::deleteGraphicFromQueue(int32 resId) {
+	for (uint32 i = 0; i < _queueItems.size(); i++) {
 		if (_queueItems[i].resId == resId) {
 			_queueItems.remove_at(i);
 			break;

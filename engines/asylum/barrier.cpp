@@ -36,11 +36,11 @@ Barrier::~Barrier() {
 	// TODO Auto-generated destructor stub
 }
 
-uint32 Barrier::getRandomId() {
-	int numRes = 0;
-	uint32 rndResId[5];
+int32 Barrier::getRandomId() {
+	int32 numRes = 0;
+	int32 rndResId[5];
 	memset(&rndResId, 0, sizeof(rndResId));
-	for (int i = 0; i < 5; i++) {
+	for (int32 i = 0; i < 5; i++) {
 		if (field_68C[i]) {
 			rndResId[numRes] = field_68C[i];
 			numRes++;
@@ -52,12 +52,12 @@ uint32 Barrier::getRandomId() {
 	return resId;
 }
 
-int Barrier::checkFlags() {
+int32 Barrier::checkFlags() {
 	return flags & 1 && (flags & 8 || flags & 0x10000);
 }
 
-void Barrier::setNextFrame(int targetFlags) {
-	int newFlag = targetFlags | 1 | flags;
+void Barrier::setNextFrame(int32 targetFlags) {
+	int32 newFlag = targetFlags | 1 | flags;
 	flags |= targetFlags | 1;
 
 	if (newFlag & 0x10000)

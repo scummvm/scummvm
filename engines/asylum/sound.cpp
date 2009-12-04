@@ -48,7 +48,7 @@ Sound::~Sound() {
 }
 
 // from engines/agos/sound.cpp
-void convertVolume(int &vol) {
+void convertVolume(int32 &vol) {
 	// DirectSound was orginally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
@@ -61,7 +61,7 @@ void convertVolume(int &vol) {
 	// affecting the right speaker. Thus -10,000 means the left speaker is
 	// silent.
 
-	int v = CLIP(vol, -10000, 0);
+	int32 v = CLIP(vol, -10000, 0);
 	if (v) {
 		vol = (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, (double)v / 2000.0) + 0.5);
 	} else {
@@ -70,7 +70,7 @@ void convertVolume(int &vol) {
 }
 
 // from engines/agos/sound.cpp
-void convertPan(int &pan) {
+void convertPan(int32 &pan) {
 	// DirectSound was orginally used, which specifies volume
 	// and panning differently than ScummVM does, using a logarithmic scale
 	// rather than a linear one.
@@ -83,7 +83,7 @@ void convertPan(int &pan) {
 	// affecting the right speaker. Thus -10,000 means the left speaker is
 	// silent.
 
-	int p = CLIP(pan, -10000, 10000);
+	int32 p = CLIP(pan, -10000, 10000);
 	if (p < 0) {
 		pan = (int)(255.0 * pow(10.0, (double)p / 2000.0) + 127.5);
 	} else if (p > 0) {
@@ -93,10 +93,10 @@ void convertPan(int &pan) {
 	}
 }
 
-int Sound::getBufferPosition(uint32 resId) {
-	int pos = -1;
+int32 Sound::getBufferPosition(int32 resId) {
+	int32 pos = -1;
 
-	for (uint i = 0; i < _soundBuffer.size(); i++) {
+	for (uint32 i = 0; i < _soundBuffer.size(); i++) {
 		if (resId == _soundBuffer[i].resId) {
 			pos = i;
 			break;
@@ -106,8 +106,8 @@ int Sound::getBufferPosition(uint32 resId) {
 	return pos;
 }
 
-bool Sound::addToSoundBuffer(uint resId) {
-	int exists = getBufferPosition(resId);
+bool Sound::addToSoundBuffer(int32 resId) {
+	int32 exists = getBufferPosition(resId);
 
 	if (exists < 0) {
 		SoundBufferItem sound;
@@ -119,8 +119,8 @@ bool Sound::addToSoundBuffer(uint resId) {
 	return (exists < 0) ? true : false;
 }
 
-void Sound::removeFromSoundBuffer(uint resId) {
-    int pos = getBufferPosition(resId);
+void Sound::removeFromSoundBuffer(int32 resId) {
+    int32 pos = getBufferPosition(resId);
 
 	if (pos >= 0) {
 		_soundBuffer.remove_at(pos);
@@ -131,8 +131,8 @@ void Sound::clearSoundBuffer() {
 	_soundBuffer.clear();
 }
 
-bool Sound::isPlaying(uint resId) {
-	int pos = getBufferPosition(resId);
+bool Sound::isPlaying(int32 resId) {
+	int32 pos = getBufferPosition(resId);
 
 	if (pos < 0) {
 		warning("isPlaying: resId %d not currently bufferred", resId);
@@ -148,7 +148,7 @@ bool Sound::isPlaying(uint resId) {
 	return false;
 }
 
-void Sound::playSound(ResourcePack *pack, uint resId, int volume, bool looping, int panning, bool overwrite) {
+void Sound::playSound(ResourcePack *pack, int32 resId, int32 volume, bool looping, int32 panning, bool overwrite) {
 	ResourceEntry *resource = pack->getResource(resId);
 	if (_mixer->isSoundHandleActive(_soundHandle)) {
 		if (overwrite) {
@@ -161,12 +161,12 @@ void Sound::playSound(ResourcePack *pack, uint resId, int volume, bool looping, 
 	}
 }
 
-void Sound::playSound(ResourceEntry *resource, bool looping, int volume, int panning) {
+void Sound::playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning) {
 	playSoundData(&_soundHandle, resource->data, resource->size, looping, volume, panning);
 }
 
-void Sound::playSound(ResourcePack *pack, uint resId, bool looping, int volume, int panning) {
-	int pos = getBufferPosition(resId);
+void Sound::playSound(ResourcePack *pack, int32 resId, bool looping, int32 volume, int32 panning) {
+	int32 pos = getBufferPosition(resId);
 
 	if (pos < 0) {
 		warning("playSound: resId %d not currently bufferred", resId);
@@ -183,7 +183,7 @@ void Sound::playSound(ResourcePack *pack, uint resId, bool looping, int volume, 
 
 }
 
-void Sound::playSound(uint resId, bool looping, int volume, int panning, bool fromBuffer) {
+void Sound::playSound(int32 resId, bool looping, int32 volume, int32 panning, bool fromBuffer) {
 	if (fromBuffer) {
 		playSound(_soundPack, resId, looping, volume, panning);
 	} else {
@@ -202,8 +202,8 @@ void Sound::stopSound() {
 		_mixer->stopHandle(_soundHandle);
 }
 
-void Sound::stopSound(uint resId) {
-	int pos = getBufferPosition(resId);
+void Sound::stopSound(int32 resId) {
+	int32 pos = getBufferPosition(resId);
 
 	if (pos < 0) {
 		warning("stopSound: resId %d not currently bufferred", resId);
@@ -220,24 +220,24 @@ void Sound::stopAllSounds(bool stopSpeechAndMusic) {
 		_mixer->stopHandle(_musicHandle);
 	}
 
-	for (uint i = 0; i < _soundBuffer.size(); i++)
+	for (uint32 i = 0; i < _soundBuffer.size(); i++)
 		_mixer->stopHandle(_soundBuffer[i].handle);
 }
 
-void Sound::playSpeech(uint resId) {
+void Sound::playSpeech(int32 resId) {
 	ResourceEntry *ent = _speechPack->getResource(resId);
 
 	_mixer->stopHandle(_speechHandle);
 	playSoundData(&_speechHandle, ent->data, ent->size, false, 0, 0);
 }
 
-void Sound::playMusic(uint resId) {
+void Sound::playMusic(int32 resId) {
 	stopMusic();
 
 	// TODO Play music :P
 }
 
-void Sound::playMusic(ResourcePack *pack, uint resId) {
+void Sound::playMusic(ResourcePack *pack, int32 resId) {
 	stopMusic();
 
 	ResourceEntry *resource = pack->getResource(resId);
@@ -249,13 +249,13 @@ void Sound::stopMusic() {
 }
 
 // from engines/agos/sound.cpp
-void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soundDataLength, bool loop, int vol, int pan) {
+void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop, int32 vol, int32 pan) {
 	byte   *buffer, flags;
 	uint16 compType;
-	int    blockAlign, rate;
+	int32    blockAlign, rate;
 
 	// TODO: Use makeWAVStream() in future, when makeADPCMStream() allows sound looping
-	int size = soundDataLength;
+	int32 size = soundDataLength;
 	Common::MemoryReadStream stream(soundData, size);
 	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
 		error("playSoundData: Not valid WAV data");

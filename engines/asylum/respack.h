@@ -43,7 +43,7 @@ struct ResourceEntry {
 class ResourcePack {
 public:
 	ResourcePack(const char *resourceFile);
-	ResourcePack(int resourceIndex);
+	ResourcePack(int32 resourceIndex);
 	~ResourcePack();
 
 	ResourceEntry *getResource(uint32 resourceId);

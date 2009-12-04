@@ -37,55 +37,55 @@
 namespace Asylum {
 
 typedef struct CommonResources {
-	uint32 backgroundImage;
-	uint32 curScrollUp;
-	uint32 curScrollUpLeft;
-	uint32 curScrollLeft;
-	uint32 curScrollDownLeft;
-	uint32 curScrollDown;
-	uint32 curScrollDownRight;
-	uint32 curScrollRight;
-	uint32 curScrollUpRight;
-	uint32 curHand;
-	uint32 curMagnifyingGlass;
-	uint32 curTalkNCP;
-	uint32 curGrabPointer;
-	uint32 curTalkNCP2;
-	uint32 font1;
-	uint32 font2;
-	uint32 font3;
-	uint32 palette;
-	uint32 cellShadeMask1;
-	uint32 cellShadeMask2;
-	uint32 cellShadeMask3;
-	uint32 unused;
-	uint32 smallCurUp;
-	uint32 smallCurDown;
-	uint32 encounterFrameBg;
+	int32 backgroundImage;
+	int32 curScrollUp;
+	int32 curScrollUpLeft;
+	int32 curScrollLeft;
+	int32 curScrollDownLeft;
+	int32 curScrollDown;
+	int32 curScrollDownRight;
+	int32 curScrollRight;
+	int32 curScrollUpRight;
+	int32 curHand;
+	int32 curMagnifyingGlass;
+	int32 curTalkNCP;
+	int32 curGrabPointer;
+	int32 curTalkNCP2;
+	int32 font1;
+	int32 font2;
+	int32 font3;
+	int32 palette;
+	int32 cellShadeMask1;
+	int32 cellShadeMask2;
+	int32 cellShadeMask3;
+	int32 unused;
+	int32 smallCurUp;
+	int32 smallCurDown;
+	int32 encounterFrameBg;
 
 } CommonResources;
 
 typedef struct ActionArea {
 	char   name[52];
-	uint32 id;
-	uint32 field01;
-	uint32 field02;
-	uint32 field_40;
-	uint32 field_44;
-	uint32 flags;
-	uint32 actionListIdx1;
-	uint32 actionListIdx2;
-	uint32 actionType; // aka flags2: 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
-	uint32 flagNums[10];
-	uint32 field_7C;
-	uint32 polyIdx;
-	uint32 field_84;
-	uint32 field_88;
-	uint32 soundResId;
-	uint32 field_90;
-	uint32 paletteValue;
-	uint32 array[5];
-	uint32 volume;
+	int32 id;
+	int32 field01;
+	int32 field02;
+	int32 field_40;
+	int32 field_44;
+	int32 flags;
+	int32 actionListIdx1;
+	int32 actionListIdx2;
+	int32 actionType; // aka flags2: 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
+	int32 flagNums[10];
+	int32 field_7C;
+	int32 polyIdx;
+	int32 field_84;
+	int32 field_88;
+	int32 soundResId;
+	int32 field_90;
+	int32 paletteValue;
+	int32 array[5];
+	int32 volume;
 
 } ActionArea;
 
@@ -94,45 +94,45 @@ public:
 	WorldStats(Common::SeekableReadStream *stream, Scene *scene);
 	virtual ~WorldStats();
 
-	uint32			 size;
-	uint32			 numEntries;
-	int				 numChapter;
-	uint32			 xLeft;			 // scene start x position
-	uint32			 yTop;			 // scene start y position
+	int32 size;
+	int32 numEntries;
+	int32 numChapter;
+	int32 xLeft;			 // scene start x position
+	int32 yTop;			 // scene start y position
 	Common::Rect	 boundingRect;
 	CommonResources	 commonRes;		 // field_1C till field_7C
-	uint32			 width;			 // field_80
-	uint32			 height;
-	uint32			 motionStatus;
-	uint32			 field_8C;
-	uint32			 numActions;	 // field_90
-	uint32			 numBarriers;
-	int				 targetX;
-	int				 targetY;
-	uint32			 field_A0;
-	uint32			 field_A4;
-	uint32			 field_A8;
-	uint32			 field_AC;
-	uint32			 field_B0;
-	uint32			 numActors;
-	uint32			 stereoReversedFlag;
-	Common::Rect	 sceneRects[6];	 // including scene size rect
-	uint8			 sceneRectIdx;
-	uint8			 field_11D[3];
-	int32			 field_120;
-	uint32			 actionListIdx;	 // actionList start index
-	uint32			 grResId[100];
-	uint32			 sceneTitleGrResId;
-	uint32			 sceneTitlePalResId;
-	uint32			 actorType;
-	uint32			 soundResId[50];
+	int32 width;			 // field_80
+	int32 height;
+	int32 motionStatus;
+	int32 field_8C;
+	int32 numActions;	 // field_90
+	int32 numBarriers;
+	int32 targetX;
+	int32 targetY;
+	int32 field_A0;
+	int32 field_A4;
+	int32 field_A8;
+	int32 field_AC;
+	int32 field_B0;
+	int32 numActors;
+	int32 stereoReversedFlag;
+	Common::Rect sceneRects[6];	 // including scene size rect
+	uint8 sceneRectIdx;
+	uint8 field_11D[3];
+	int32 field_120;
+	int32 actionListIdx;	 // actionList start index
+	int32 grResId[100];
+	int32 sceneTitleGrResId;
+	int32 sceneTitlePalResId;
+	int32 actorType;
+	int32 soundResId[50];
 	AmbientSoundItem ambientSounds[15];
-	uint32			 numAmbientSound;
-	uint32			 musicStatus;
-	int				 musicCurrentResId;
-	uint32			 musicFlag;
-	int				 musicResId;
-	uint32			 musicStatusExt;
+	int32 numAmbientSound;
+	int32 musicStatus;
+	int32 musicCurrentResId;
+	int32 musicFlag;
+	int32 musicResId;
+	int32 musicStatusExt;
 
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays.
 	// It always have that size under scene file and they are always save in savegames.
@@ -141,20 +141,20 @@ public:
 	// TODO add rest fields
 	Common::Array<ActionArea> actions;  // maxsize 400
 	// TODO add rest fields
-	int field_E860C;
+	int32 field_E860C;
 	// TODO add rest fields
 
-	int         getActionAreaIndexById(uint32 id);
-	ActionArea* getActionAreaById(uint32 id);
+	int32 getActionAreaIndexById(int32 id);
+	ActionArea* getActionAreaById(int32 id);
 
-	int      getBarrierIndexById(uint32 id);
-	Barrier* getBarrierById(uint32 id);
-	Barrier* getBarrierByIndex(uint32 idx);
+	int32 getBarrierIndexById(int32 id);
+	Barrier* getBarrierById(int32 id);
+	Barrier* getBarrierByIndex(int32 idx);
 
-	bool isBarrierOnScreen(uint32 idx);
-	bool isBarrierVisible(uint32 idx);
+	bool isBarrierOnScreen(int32 idx);
+	bool isBarrierVisible(int32 idx);
 	// TODO this needs a better name
-	bool checkBarrierFlagsCondition(uint32 idx);
+	bool checkBarrierFlagsCondition(int32 idx);
 
 private:
 	Scene *_scene;

@@ -154,15 +154,15 @@ public:
 
 	void visible(bool value);
 
-	void setPosition(uint32 targetX, uint32 targetY);
+	void setPosition(int32 targetX, int32 targetY);
 
 	/**
 	 * Initialize the x1/y1 values of the actor, update the active animation frame
 	 * and, if the current direction isn't 8, update the actor's direction
 	 */
-	void setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame);
+	void setPosition_40A260(int32 newX, int32 newY, int32 newDirection, int32 frame);
 
-	void faceTarget(int targetId, int targetType);
+	void faceTarget(int32 targetId, int32 targetType);
 
 	// FIXME
 	// I don't really like how this is used in the scene constructor
@@ -176,86 +176,86 @@ public:
 	// TODO ALL of these need to be depreciated in favour
 	// of the proper functions from the original
 	void setWalkArea(ActionArea *target);
-	void setAction(int action);
-	void setActionByIndex(int index);
-	void drawActorAt(uint32 curX, uint32 curY);
+	void setAction(int32 action);
+	void setActionByIndex(int32 index);
+	void drawActorAt(int32 curX, int32 curY);
 	void drawActor();
 	void walkTo(int32 curX, int32 curY);
 
-	int currentAction; // TODO depreciate
+	int32 currentAction; // TODO depreciate
 
 	int32		 x;
 	int32		 y;
-	uint32		 grResId;
-	uint32		 field_C; // BarrierIndex? Mask index?
-	uint32		 frameNum;
-	uint32		 frameCount;
+	int32		 grResId;
+	int32		 field_C; // BarrierIndex? Mask index?
+	int32		 frameNum;
+	int32		 frameCount;
 	int32		 x1;
 	int32		 y1;
 	int32		 x2;
 	int32		 y2;
 	Common::Rect boundingRect;
-	uint32		 direction;
-	uint32		 field_3C;
-	uint32		 updateType;
-	uint32		 field_44;
-	uint32		 priority;
-	uint32		 flags;
-	uint32		 field_50;
-	uint32		 field_54;
-	uint32		 field_58;
-	uint32		 field_5C;
-	uint32		 field_60;
-	uint32		 actionIdx3;
+	int32		 direction;
+	int32		 field_3C;
+	int32		 updateType;
+	int32		 field_44;
+	int32		 priority;
+	int32		 flags;
+	int32		 field_50;
+	int32		 field_54;
+	int32		 field_58;
+	int32		 field_5C;
+	int32		 field_60;
+	int32		 actionIdx3;
 	// TODO field_68 till field_617
-	uint32		 reaction[8];
-	uint32		 field_638;
-	uint32		 walkingSound1;
-	uint32		 walkingSound2;
-	uint32		 walkingSound3;
-	uint32		 walkingSound4;
-	uint32		 field_64C;
-	uint32		 field_650;
-	uint32		 grResTable[55];
+	int32		 reaction[8];
+	int32		 field_638;
+	int32		 walkingSound1;
+	int32		 walkingSound2;
+	int32		 walkingSound3;
+	int32		 walkingSound4;
+	int32		 field_64C;
+	int32		 field_650;
+	int32		 grResTable[55];
 	char		 name[256];
-	uint32		 field_830[20];
-	uint32		 field_880[20];
-	uint32		 field_8D0[20];
-	uint32		 actionIdx2;
-	uint32		 field_924;
-	uint32		 tickValue1;
-	uint32		 field_92C;
-	uint32		 flags2;
-	uint32		 field_934;
-	uint32		 field_938;
-	uint32		 soundResId; // field_93C
-	uint32       field_940;
-	uint32       field_944;
-	uint32       field_948;
-	uint32       field_94C;
-	uint32       field_950;
-	uint32       field_954;
-	uint32       field_958;
-	uint32       field_95C;
-	uint32       field_960;
-	uint32       field_964;
-	uint32       field_968;
-	uint32       field_96C;
-	uint32       field_970;
-	uint32       field_974;
-	uint32       field_978;
-	uint32		 actionIdx1;
+	int32		 field_830[20];
+	int32		 field_880[20];
+	int32		 field_8D0[20];
+	int32		 actionIdx2;
+	int32		 field_924;
+	int32		 tickValue1;
+	int32		 field_92C;
+	int32		 flags2;
+	int32		 field_934;
+	int32		 field_938;
+	int32		 soundResId; // field_93C
+	int32       field_940;
+	int32       field_944;
+	int32       field_948;
+	int32       field_94C;
+	int32       field_950;
+	int32       field_954;
+	int32       field_958;
+	int32       field_95C;
+	int32       field_960;
+	int32       field_964;
+	int32       field_968;
+	int32       field_96C;
+	int32       field_970;
+	int32       field_974;
+	int32       field_978;
+	int32		 actionIdx1;
 	// TODO field_980 till field_9A0
 
 private:
 	Scene			*_scene;
 	ResourcePack    *_resPack;
 	GraphicResource *_graphic;
-	uint32          _resources[61];
+	int32          _resources[61];
 	ActionArea 	    *_currentWalkArea;
 
 	GraphicFrame *getFrame();
-	int getAngle(int ax1, int ay1, int ax2, int ay2);
+	int32 getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2);
 
 }; // end of class MainActor
 

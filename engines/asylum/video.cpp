@@ -39,7 +39,7 @@ VideoPlayer::~VideoPlayer() {
 	delete _text;
 }
 
-bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents, int videoNumber) {
+bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents, int32 videoNumber) {
 	// Read vids.cap
 	char movieToken[10];
 	sprintf(movieToken, "[MOV%03d]", videoNumber);
@@ -59,7 +59,7 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 	// -1 means that the video has no subtitles, -2 that it doesn't exist
 	// The negative values aren't used in the code, they just make the table easier to
 	// understand.
-	int textRes[49] = {	  -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//	0 - 9
+	int32 textRes[49] = {	  -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//	0 - 9
 	                      -1,	-2, 1140, 1141,	  -2,	-1, 1142,	-1,	  -2, 1155,	// 10 - 19
 	                      1157, 1159, 1162, 1164,	  -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
 	                      -2,	-2,	  -2, 1207, 1213, 1217, 1223, 1227,	  -2, 1228,	// 30 - 39
@@ -69,7 +69,7 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 	if (start) {
 		start += 20;	// skip token, newline and "CAPTION = "
 
-		int count = strcspn(start, "\r\n");
+		int32 count = strcspn(start, "\r\n");
 		line = new char[count + 1];
 
 		strncpy(line, start, count);
@@ -98,7 +98,7 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 }
 
 void VideoPlayer::performPostProcessing(byte *screen) {
-	int curFrame = _decoder->getCurFrame();
+	int32 curFrame = _decoder->getCurFrame();
 
 	// Reset subtitle area, by filling it with zeroes
 	memset(screen + 640 * 400, 0, 640 * 80);
@@ -130,7 +130,7 @@ Video::~Video() {
 	delete _smkDecoder;
 }
 
-bool Video::playVideo(int number, VideoSubtitles subtitles) {
+bool Video::playVideo(int32 number, VideoSubtitles subtitles) {
 	bool lastMouseState = false;
     char filename[20];
 
@@ -163,7 +163,7 @@ VideoText::~VideoText() {
 	delete _fontResource;
 }
 
-void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
+void VideoText::loadFont(ResourcePack *resPack, int32 resId) {
 	delete _fontResource;
 
 	_fontResource = new GraphicResource(resPack, resId);
@@ -174,15 +174,15 @@ void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
 	}
 }
 
-void VideoText::drawMovieSubtitle(byte *screenBuffer, uint32 resId) {
+void VideoText::drawMovieSubtitle(byte *screenBuffer, int32 resId) {
 	Common::String textLine[4];
 	Common::String tmpLine;
-	int curLine = 0;
+	int32 curLine = 0;
 	ResourceEntry *textRes = _textPack->getResource(resId);
 	char *text = strdup((const char *)textRes->data);	// for strtok
 	char *tok = strtok(text, " ");
-	int startY = 420;	// starting y for up to 2 subtitles
-	int spacing = 30;	// spacing for up to 2 subtitles
+	int32 startY = 420;	// starting y for up to 2 subtitles
+	int32 spacing = 30;	// spacing for up to 2 subtitles
 
 	// Videos can have up to 4 lines of text
 	while (tok) {
@@ -204,18 +204,18 @@ void VideoText::drawMovieSubtitle(byte *screenBuffer, uint32 resId) {
 		tok = strtok(NULL, " ");
 	}
 
-	for (int i = 0; i < curLine + 1; i++) {
-		int textWidth = getTextWidth(textLine[i].c_str());
+	for (int32 i = 0; i < curLine + 1; i++) {
+		int32 textWidth = getTextWidth(textLine[i].c_str());
 		drawText(screenBuffer, 0 + (640 - textWidth) / 2, startY + i * spacing, textLine[i].c_str());
 	}
 
 	free(text);
 }
 
-uint32 VideoText::getTextWidth(const char *text) {
+int32 VideoText::getTextWidth(const char *text) {
 	assert(_fontResource);
 
-	int width = 0;
+	int32 width = 0;
 	uint8 character = *text;
 	const char *curChar = text;
 	while (character) {
@@ -228,10 +228,10 @@ uint32 VideoText::getTextWidth(const char *text) {
 	return width;
 }
 
-void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
+void VideoText::drawText(byte *screenBuffer, int16 x, int16 y, const char *text) {
 	assert(_fontResource);
 	const byte *curChar = (byte *)text;
-	int curX = x;
+	int16 curX = x;
 
 	while (*curChar) {
 		GraphicFrame *fontLetter = _fontResource->getFrame(*curChar);
@@ -241,10 +241,10 @@ void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
 	}
 }
 
-void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y) {
-	int h = frame->surface.h;
-	int w = frame->surface.w;
-	int screenBufferPitch = 640;
+void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int32 x, int32 y) {
+	uint16 h = frame->surface.h;
+	uint16 w = frame->surface.w;
+	int32 screenBufferPitch = 640;
 	byte *buffer = (byte *)frame->surface.pixels;
 	byte *dest = screenBuffer + y * screenBufferPitch + x;
 

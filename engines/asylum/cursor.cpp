@@ -40,7 +40,7 @@ Cursor::~Cursor() {
 		delete _cursorResource;
 }
 
-void Cursor::load(uint32 index) {
+void Cursor::load(int32 index) {
 	if (cursorLoaded)
 		delete _cursorResource;
 
@@ -62,7 +62,7 @@ void Cursor::set(byte *data, byte width, byte height) {
 	CursorMan.replaceCursor(data, width, height, 0, 0, 0);
 }
 
-void Cursor::set(int frame) {
+void Cursor::set(int32 frame) {
 	if (frame >= 0) {
 		GraphicFrame *mouseCursor = _cursorResource->getFrame(frame);
 		set((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
@@ -72,7 +72,7 @@ void Cursor::set(int frame) {
 	}
 }
 
-void Cursor::setCoords(uint32 mouseX, uint32 mouseY) {
+void Cursor::setCoords(int32 mouseX, int32 mouseY) {
 	_mouseX = mouseX;
 	_mouseY = mouseY;
 }
@@ -87,8 +87,8 @@ void Cursor::animate() {
 	set(_curFrame);
 }
 
-void Cursor::update(CommonResources *cr, int currentAction) {
-	uint32 newCursor = 0;
+void Cursor::update(CommonResources *cr, int32 currentAction) {
+	int32 newCursor = 0;
 
 	// Change cursor
 	switch (currentAction) {

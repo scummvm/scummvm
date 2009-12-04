@@ -36,7 +36,7 @@ public:
 	virtual ~Barrier();
 
 	bool   visible();
-	uint32 getRandomId(); // TODO Give this a better name?
+	int32 getRandomId(); // TODO Give this a better name?
 	bool   onscreen();
 
 	// TODO document this function
@@ -44,42 +44,42 @@ public:
 	// TODO document this function
 	void setNextFrame(int flags);
 
-	uint32		   id;
-	uint32		   resId;
-	uint32		   x;
-	uint32		   y;
+	int32		   id;
+	int32		   resId;
+	int32		   x;
+	int32		   y;
 	Common::Rect   boundingRect;
-	uint32		   field_20;
-	uint32		   frameIdx;
-	uint32		   frameCount;
-	uint32		   field_2C;
-	uint32		   field_30;
-	uint32		   field_34;
-	uint32		   flags;
-	uint32		   field_3C;
+	int32		   field_20;
+	int32		   frameIdx;
+	int32		   frameCount;
+	int32		   field_2C;
+	int32		   field_30;
+	int32		   field_34;
+	int32		   flags;
+	int32		   field_3C;
 	uint8		   name[52];
 	int32		   field_74; // XXX looks like fields
 	int32		   field_78; // 78 => 80 have something
 	int32		   field_7C; // to do with calculating
 	int32		   field_80; // actor intersection
-	uint32		   polyIdx;
-	uint32		   flags2;
-	uint32		   gameFlags[10];
-	uint32		   field_B4;
-	uint32		   tickCount;
-	uint32		   tickCount2;
-	uint32		   field_C0;
-	uint32		   priority;
-	uint32		   actionListIdx;
+	int32		   polyIdx;
+	int32		   flags2;
+	int32		   gameFlags[10];
+	int32		   field_B4;
+	int32		   tickCount;
+	int32		   tickCount2;
+	int32		   field_C0;
+	int32		   priority;
+	int32		   actionListIdx;
 	SoundItem	   soundItems[16];
 	FrameSoundItem frameSoundItems[50];
-	uint32		   field_67C;
-	uint32		   soundX;
-	uint32		   soundY;
-	uint32		   field_688;
-	uint32		   field_68C[5];
-	uint32		   soundResId;
-	uint32		   field_6A4;
+	int32		   field_67C;
+	int32		   soundX;
+	int32		   soundY;
+	int32		   field_688;
+	int32		   field_68C[5];
+	int32		   soundResId;
+	int32		   field_6A4;
 
 }; // end of class Barrier
 

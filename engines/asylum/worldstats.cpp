@@ -38,8 +38,8 @@ WorldStats::~WorldStats() {
 	actions.clear();
 }
 
-int WorldStats::getActionAreaIndexById(uint32 id) {
-	for (uint32 i = 0; i < numActions; i++) {
+int32 WorldStats::getActionAreaIndexById(int32 id) {
+	for (int32 i = 0; i < numActions; i++) {
 		if (actions[i].id == id)
 			return i;
 	}
@@ -47,12 +47,12 @@ int WorldStats::getActionAreaIndexById(uint32 id) {
 	return -1;
 }
 
-ActionArea* WorldStats::getActionAreaById(uint32 id) {
+ActionArea* WorldStats::getActionAreaById(int32 id) {
 	return &actions[getActionAreaIndexById(id)];
 }
 
-int WorldStats::getBarrierIndexById(uint32 id) {
-	for (uint32 i = 0; i < numBarriers; i++) {
+int32 WorldStats::getBarrierIndexById(int32 id) {
+	for (int32 i = 0; i < numBarriers; i++) {
 		if (barriers[i].id == id)
 			return i;
 	}
@@ -60,15 +60,15 @@ int WorldStats::getBarrierIndexById(uint32 id) {
 	return -1;
 }
 
-Barrier* WorldStats::getBarrierById(uint32 id) {
+Barrier* WorldStats::getBarrierById(int32 id) {
 	return &barriers[getBarrierIndexById(id)];
 }
 
-Barrier* WorldStats::getBarrierByIndex(uint32 idx) {
+Barrier* WorldStats::getBarrierByIndex(int32 idx) {
 	return &barriers[idx];
 }
 
-bool WorldStats::isBarrierOnScreen(uint32 idx) {
+bool WorldStats::isBarrierOnScreen(int32 idx) {
 	Barrier *b = getBarrierByIndex(idx);
 
 	Common::Rect screenRect  = Common::Rect(xLeft, yTop, xLeft + 640, yTop + 480);
@@ -77,13 +77,13 @@ bool WorldStats::isBarrierOnScreen(uint32 idx) {
 	return isBarrierVisible(idx) && (b->flags & 1) && screenRect.intersects(barrierRect);
 }
 
-bool WorldStats::isBarrierVisible(uint32 idx) {
+bool WorldStats::isBarrierVisible(int32 idx) {
 	Barrier *b = getBarrierByIndex(idx);
 
 	if ((b->flags & 0xFF) & 1) {
-		for (int f = 0; f < 10; f++) {
+		for (int32 f = 0; f < 10; f++) {
 			bool   isSet = false;
-			uint32 flag  = b->gameFlags[f];
+			int32 flag  = b->gameFlags[f];
 
 			if (flag <= 0)
 				isSet = _scene->vm()->isGameFlagNotSet(flag); // -flag
@@ -98,12 +98,12 @@ bool WorldStats::isBarrierVisible(uint32 idx) {
 	return false;
 }
 
-bool WorldStats::checkBarrierFlagsCondition(uint32 idx) {
+bool WorldStats::checkBarrierFlagsCondition(int32 idx) {
 	Barrier *b = getBarrierByIndex(idx);
 	bool result;
 
 	if (LOBYTE(b->flags) & 1) {
-		for (int i = 0; i < 10; i++) {
+		for (int32 i = 0; i < 10; i++) {
 			result = _scene->vm()->isGameFlagSet(b->gameFlags[i]);
 			if (result)
 				return result;
@@ -118,177 +118,177 @@ bool WorldStats::checkBarrierFlagsCondition(uint32 idx) {
 
 // FIXME: load necessary World Stats content
 void WorldStats::load(Common::SeekableReadStream *stream) {
-	size       = stream->readUint32LE();
-	numEntries = stream->readUint32LE();
+	size       = stream->readSint32LE();
+	numEntries = stream->readSint32LE();
 
 	numChapter = stream->readSint32LE();
-	xLeft      = stream->readUint32LE();
-	yTop       = stream->readUint32LE();
+	xLeft      = stream->readSint32LE();
+	yTop       = stream->readSint32LE();
 
-	boundingRect.left   = stream->readUint32LE() & 0xFFFF;
-	boundingRect.top    = stream->readUint32LE() & 0xFFFF;
-	boundingRect.right  = stream->readUint32LE() & 0xFFFF;
-	boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+	boundingRect.left   = stream->readSint32LE() & 0xFFFF;
+	boundingRect.top    = stream->readSint32LE() & 0xFFFF;
+	boundingRect.right  = stream->readSint32LE() & 0xFFFF;
+	boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
 	// read common graphic resources
-	commonRes.backgroundImage    = stream->readUint32LE();
-	commonRes.curScrollUp        = stream->readUint32LE();
-	commonRes.curScrollUpLeft    = stream->readUint32LE();
-	commonRes.curScrollLeft      = stream->readUint32LE();
-	commonRes.curScrollDownLeft  = stream->readUint32LE();
-	commonRes.curScrollDown      = stream->readUint32LE();
-	commonRes.curScrollDownRight = stream->readUint32LE();
-	commonRes.curScrollRight     = stream->readUint32LE();
-	commonRes.curScrollUpRight   = stream->readUint32LE();
-	commonRes.curHand            = stream->readUint32LE();
-	commonRes.curMagnifyingGlass = stream->readUint32LE();
-	commonRes.curTalkNCP         = stream->readUint32LE();
-	commonRes.curGrabPointer     = stream->readUint32LE();
-	commonRes.curTalkNCP2        = stream->readUint32LE();
-	commonRes.font1              = stream->readUint32LE();
-	commonRes.font2              = stream->readUint32LE();
-	commonRes.font3	             = stream->readUint32LE();
-	commonRes.palette            = stream->readUint32LE();
-	commonRes.cellShadeMask1     = stream->readUint32LE();
-	commonRes.cellShadeMask2     = stream->readUint32LE();
-	commonRes.cellShadeMask3     = stream->readUint32LE();
-	commonRes.unused             = stream->readUint32LE();
-	commonRes.smallCurUp         = stream->readUint32LE();
-	commonRes.smallCurDown       = stream->readUint32LE();
-	commonRes.encounterFrameBg   = stream->readUint32LE();
+	commonRes.backgroundImage    = stream->readSint32LE();
+	commonRes.curScrollUp        = stream->readSint32LE();
+	commonRes.curScrollUpLeft    = stream->readSint32LE();
+	commonRes.curScrollLeft      = stream->readSint32LE();
+	commonRes.curScrollDownLeft  = stream->readSint32LE();
+	commonRes.curScrollDown      = stream->readSint32LE();
+	commonRes.curScrollDownRight = stream->readSint32LE();
+	commonRes.curScrollRight     = stream->readSint32LE();
+	commonRes.curScrollUpRight   = stream->readSint32LE();
+	commonRes.curHand            = stream->readSint32LE();
+	commonRes.curMagnifyingGlass = stream->readSint32LE();
+	commonRes.curTalkNCP         = stream->readSint32LE();
+	commonRes.curGrabPointer     = stream->readSint32LE();
+	commonRes.curTalkNCP2        = stream->readSint32LE();
+	commonRes.font1              = stream->readSint32LE();
+	commonRes.font2              = stream->readSint32LE();
+	commonRes.font3	             = stream->readSint32LE();
+	commonRes.palette            = stream->readSint32LE();
+	commonRes.cellShadeMask1     = stream->readSint32LE();
+	commonRes.cellShadeMask2     = stream->readSint32LE();
+	commonRes.cellShadeMask3     = stream->readSint32LE();
+	commonRes.unused             = stream->readSint32LE();
+	commonRes.smallCurUp         = stream->readSint32LE();
+	commonRes.smallCurDown       = stream->readSint32LE();
+	commonRes.encounterFrameBg   = stream->readSint32LE();
 
-	width        = stream->readUint32LE();
-	height       = stream->readUint32LE();
-	motionStatus = stream->readUint32LE();
-	field_8C     = stream->readUint32LE();
-	numActions   = stream->readUint32LE();
-	numBarriers  = stream->readUint32LE();
-	targetX      = stream->readUint32LE();
-	targetY      = stream->readUint32LE();
-	field_A0     = stream->readUint32LE();
-	field_A4     = stream->readUint32LE();
-	field_A8     = stream->readUint32LE();
-	field_AC     = stream->readUint32LE();
-	field_B0     = stream->readUint32LE();
-	numActors    = stream->readUint32LE();
+	width        = stream->readSint32LE();
+	height       = stream->readSint32LE();
+	motionStatus = stream->readSint32LE();
+	field_8C     = stream->readSint32LE();
+	numActions   = stream->readSint32LE();
+	numBarriers  = stream->readSint32LE();
+	targetX      = stream->readSint32LE();
+	targetY      = stream->readSint32LE();
+	field_A0     = stream->readSint32LE();
+	field_A4     = stream->readSint32LE();
+	field_A8     = stream->readSint32LE();
+	field_AC     = stream->readSint32LE();
+	field_B0     = stream->readSint32LE();
+	numActors    = stream->readSint32LE();
 
-	stereoReversedFlag = stream->readUint32LE();
+	stereoReversedFlag = stream->readSint32LE();
 
-	for (int r = 0; r < 6; r++) {
-		sceneRects[r].left   = stream->readUint32LE() & 0xFFFF;
-		sceneRects[r].top    = stream->readUint32LE() & 0xFFFF;
-		sceneRects[r].right  = stream->readUint32LE() & 0xFFFF;
-		sceneRects[r].bottom = stream->readUint32LE() & 0xFFFF;
+	for (int32 r = 0; r < 6; r++) {
+		sceneRects[r].left   = stream->readSint32LE() & 0xFFFF;
+		sceneRects[r].top    = stream->readSint32LE() & 0xFFFF;
+		sceneRects[r].right  = stream->readSint32LE() & 0xFFFF;
+		sceneRects[r].bottom = stream->readSint32LE() & 0xFFFF;
 	}
 
 	sceneRectIdx  = stream->readByte();
 	field_11D[0]  = stream->readByte();
 	field_11D[1]  = stream->readByte();
 	field_11D[2]  = stream->readByte();
-	field_120     = stream->readUint32LE();
-	actionListIdx = stream->readUint32LE();
+	field_120     = stream->readSint32LE();
+	actionListIdx = stream->readSint32LE();
 
-	for (int gr = 0; gr < 100; gr++)
-		grResId[gr] = stream->readUint32LE();
+	for (int32 gr = 0; gr < 100; gr++)
+		grResId[gr] = stream->readSint32LE();
 
-	sceneTitleGrResId  = stream->readUint32LE();
-	sceneTitlePalResId = stream->readUint32LE();
-	actorType          = stream->readUint32LE();
+	sceneTitleGrResId  = stream->readSint32LE();
+	sceneTitlePalResId = stream->readSint32LE();
+	actorType          = stream->readSint32LE();
 
-	for (int s = 0; s < 50; s++)
-		soundResId[s] = stream->readUint32LE();
+	for (int32 s = 0; s < 50; s++)
+		soundResId[s] = stream->readSint32LE();
 
-	for (int s = 0; s < 15; s++) {
-		ambientSounds[s].field_0  = stream->readUint32LE();
-		ambientSounds[s].flags    = stream->readUint32LE();
-		ambientSounds[s].resId    = stream->readUint32LE();
-		ambientSounds[s].field_C  = stream->readUint32LE();
-		ambientSounds[s].field_10 = stream->readUint32LE();
-		ambientSounds[s].field_14 = stream->readUint32LE();
+	for (int32 s = 0; s < 15; s++) {
+		ambientSounds[s].field_0  = stream->readSint32LE();
+		ambientSounds[s].flags    = stream->readSint32LE();
+		ambientSounds[s].resId    = stream->readSint32LE();
+		ambientSounds[s].field_C  = stream->readSint32LE();
+		ambientSounds[s].field_10 = stream->readSint32LE();
+		ambientSounds[s].field_14 = stream->readSint32LE();
 
-		for (int i = 0; i < 6; i++)
-			ambientSounds[s].flagNum[i] = stream->readUint32LE();
+		for (int32 i = 0; i < 6; i++)
+			ambientSounds[s].flagNum[i] = stream->readSint32LE();
 
-		ambientSounds[s].x = stream->readUint32LE();
-		ambientSounds[s].y = stream->readUint32LE();
+		ambientSounds[s].x = stream->readSint32LE();
+		ambientSounds[s].y = stream->readSint32LE();
 	}
 
-	numAmbientSound   = stream->readUint32LE();
-	musicStatus       = stream->readUint32LE();
+	numAmbientSound   = stream->readSint32LE();
+	musicStatus       = stream->readSint32LE();
 	musicCurrentResId = stream->readSint32LE();
-	musicFlag         = stream->readUint32LE();
+	musicFlag         = stream->readSint32LE();
 	musicResId        = stream->readSint32LE();
-	musicStatusExt    = stream->readUint32LE();
+	musicStatusExt    = stream->readSint32LE();
 
-	for (uint32 a = 0; a < numBarriers; a++) {
-		int i;
+	for (int32 a = 0; a < numBarriers; a++) {
+		int32 i;
 		Barrier barrier;
 
-		barrier.id	  = stream->readUint32LE();
-		barrier.resId = stream->readUint32LE();
-		barrier.x	  = stream->readUint32LE();
-		barrier.y	  = stream->readUint32LE();
+		barrier.id	  = stream->readSint32LE();
+		barrier.resId = stream->readSint32LE();
+		barrier.x	  = stream->readSint32LE();
+		barrier.y	  = stream->readSint32LE();
 
-		barrier.boundingRect.left	= stream->readUint32LE() & 0xFFFF;
-		barrier.boundingRect.top	= stream->readUint32LE() & 0xFFFF;
-		barrier.boundingRect.right	= stream->readUint32LE() & 0xFFFF;
-		barrier.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+		barrier.boundingRect.left	= stream->readSint32LE() & 0xFFFF;
+		barrier.boundingRect.top	= stream->readSint32LE() & 0xFFFF;
+		barrier.boundingRect.right	= stream->readSint32LE() & 0xFFFF;
+		barrier.boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
-		barrier.field_20   = stream->readUint32LE();
-		barrier.frameIdx   = stream->readUint32LE();
-		barrier.frameCount = stream->readUint32LE();
-		barrier.field_2C   = stream->readUint32LE();
-		barrier.field_30   = stream->readUint32LE();
-		barrier.field_34   = stream->readUint32LE();
-		barrier.flags	   = stream->readUint32LE();
-		barrier.field_3C   = stream->readUint32LE();
+		barrier.field_20   = stream->readSint32LE();
+		barrier.frameIdx   = stream->readSint32LE();
+		barrier.frameCount = stream->readSint32LE();
+		barrier.field_2C   = stream->readSint32LE();
+		barrier.field_30   = stream->readSint32LE();
+		barrier.field_34   = stream->readSint32LE();
+		barrier.flags	   = stream->readSint32LE();
+		barrier.field_3C   = stream->readSint32LE();
 
 		stream->read(barrier.name, sizeof(barrier.name));
 
-		barrier.field_74 = stream->readUint32LE();
-		barrier.field_78 = stream->readUint32LE();
-		barrier.field_7C = stream->readUint32LE();
-		barrier.field_80 = stream->readUint32LE();
-		barrier.polyIdx	 = stream->readUint32LE();
-		barrier.flags2	 = stream->readUint32LE();
+		barrier.field_74 = stream->readSint32LE();
+		barrier.field_78 = stream->readSint32LE();
+		barrier.field_7C = stream->readSint32LE();
+		barrier.field_80 = stream->readSint32LE();
+		barrier.polyIdx	 = stream->readSint32LE();
+		barrier.flags2	 = stream->readSint32LE();
 
 		for (i = 0; i < 10; i++)
-			barrier.gameFlags[i] = stream->readUint32LE();
+			barrier.gameFlags[i] = stream->readSint32LE();
 
-		barrier.field_B4	  = stream->readUint32LE();
-		barrier.tickCount	  = stream->readUint32LE();
-		barrier.tickCount2	  = stream->readUint32LE();
-		barrier.field_C0	  = stream->readUint32LE();
-		barrier.priority	  = stream->readUint32LE();
-		barrier.actionListIdx = stream->readUint32LE();
+		barrier.field_B4	  = stream->readSint32LE();
+		barrier.tickCount	  = stream->readSint32LE();
+		barrier.tickCount2	  = stream->readSint32LE();
+		barrier.field_C0	  = stream->readSint32LE();
+		barrier.priority	  = stream->readSint32LE();
+		barrier.actionListIdx = stream->readSint32LE();
 
 		for (i = 0; i < 16; i++) {
-			barrier.soundItems[i].resId	  = stream->readUint32LE();
-			barrier.soundItems[i].field_4 = stream->readUint32LE();
-			barrier.soundItems[i].field_8 = stream->readUint32LE();
-			barrier.soundItems[i].field_C = stream->readUint32LE();
+			barrier.soundItems[i].resId	  = stream->readSint32LE();
+			barrier.soundItems[i].field_4 = stream->readSint32LE();
+			barrier.soundItems[i].field_8 = stream->readSint32LE();
+			barrier.soundItems[i].field_C = stream->readSint32LE();
 
 		}
 
 		for (i = 0; i < 50; i++) {
-			barrier.frameSoundItems[i].resId	= stream->readUint32LE();
-			barrier.frameSoundItems[i].frameIdx = stream->readUint32LE();
-			barrier.frameSoundItems[i].index	= stream->readUint32LE();
-			barrier.frameSoundItems[i].field_C	= stream->readUint32LE();
-			barrier.frameSoundItems[i].field_10 = stream->readUint32LE();
-			barrier.frameSoundItems[i].field_14 = stream->readUint32LE();
+			barrier.frameSoundItems[i].resId	= stream->readSint32LE();
+			barrier.frameSoundItems[i].frameIdx = stream->readSint32LE();
+			barrier.frameSoundItems[i].index	= stream->readSint32LE();
+			barrier.frameSoundItems[i].field_C	= stream->readSint32LE();
+			barrier.frameSoundItems[i].field_10 = stream->readSint32LE();
+			barrier.frameSoundItems[i].field_14 = stream->readSint32LE();
 		}
 
-		barrier.field_67C = stream->readUint32LE();
-		barrier.soundX	  = stream->readUint32LE();
-		barrier.soundY	  = stream->readUint32LE();
-		barrier.field_688 = stream->readUint32LE();
+		barrier.field_67C = stream->readSint32LE();
+		barrier.soundX	  = stream->readSint32LE();
+		barrier.soundY	  = stream->readSint32LE();
+		barrier.field_688 = stream->readSint32LE();
 
 		for (i = 0; i < 5; i++)
-			barrier.field_68C[i] = stream->readUint32LE();
+			barrier.field_68C[i] = stream->readSint32LE();
 
-		barrier.soundResId = stream->readUint32LE();
-		barrier.field_6A4  = stream->readUint32LE();
+		barrier.soundResId = stream->readSint32LE();
+		barrier.field_6A4  = stream->readSint32LE();
 
 		barriers.push_back(barrier);
 	}
@@ -296,91 +296,91 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	// need to jump all unused barriers data to where actors data start
 	stream->seek(0xA6D7A);
 
-	for (uint32 a = 0; a < numActors; a++) {
-		int i;
+	for (int32 a = 0; a < numActors; a++) {
+		int32 i;
 		Actor actor;
 
 		actor.x          = stream->readSint32LE();
 		actor.y          = stream->readSint32LE();
-		actor.grResId    = stream->readUint32LE();
-		actor.field_C    = stream->readUint32LE();
-		actor.frameNum   = stream->readUint32LE();
-		actor.frameCount = stream->readUint32LE();
+		actor.grResId    = stream->readSint32LE();
+		actor.field_C    = stream->readSint32LE();
+		actor.frameNum   = stream->readSint32LE();
+		actor.frameCount = stream->readSint32LE();
 		actor.x1         = stream->readSint32LE();
 		actor.y1         = stream->readSint32LE();
 		actor.x2         = stream->readSint32LE();
 		actor.y2         = stream->readSint32LE();
 
-		actor.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
-		actor.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
-		actor.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
-		actor.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+		actor.boundingRect.left   = stream->readSint32LE() & 0xFFFF;
+		actor.boundingRect.top    = stream->readSint32LE() & 0xFFFF;
+		actor.boundingRect.right  = stream->readSint32LE() & 0xFFFF;
+		actor.boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
-		actor.direction  = stream->readUint32LE();
-		actor.field_3C   = stream->readUint32LE();
-		actor.updateType = stream->readUint32LE();
-		actor.field_44	 = stream->readUint32LE();
-		actor.priority	 = stream->readUint32LE();
-		actor.flags      = stream->readUint32LE();
-		actor.field_50   = stream->readUint32LE();
-		actor.field_54	 = stream->readUint32LE();
-		actor.field_58	 = stream->readUint32LE();
-		actor.field_5C	 = stream->readUint32LE();
-		actor.field_60	 = stream->readUint32LE();
-		actor.actionIdx3 = stream->readUint32LE();
+		actor.direction  = stream->readSint32LE();
+		actor.field_3C   = stream->readSint32LE();
+		actor.updateType = stream->readSint32LE();
+		actor.field_44	 = stream->readSint32LE();
+		actor.priority	 = stream->readSint32LE();
+		actor.flags      = stream->readSint32LE();
+		actor.field_50   = stream->readSint32LE();
+		actor.field_54	 = stream->readSint32LE();
+		actor.field_58	 = stream->readSint32LE();
+		actor.field_5C	 = stream->readSint32LE();
+		actor.field_60	 = stream->readSint32LE();
+		actor.actionIdx3 = stream->readSint32LE();
 
 		// TODO skip field_68 till field_617
 		stream->skip(0x5B0);
 
 		for (i = 0; i < 8; i++)
-			actor.reaction[i] = stream->readUint32LE();
+			actor.reaction[i] = stream->readSint32LE();
 
-		actor.field_638     = stream->readUint32LE();
-		actor.walkingSound1 = stream->readUint32LE();
-		actor.walkingSound2 = stream->readUint32LE();
-		actor.walkingSound3 = stream->readUint32LE();
-		actor.walkingSound4 = stream->readUint32LE();
-		actor.field_64C     = stream->readUint32LE();
-		actor.field_650     = stream->readUint32LE();
+		actor.field_638     = stream->readSint32LE();
+		actor.walkingSound1 = stream->readSint32LE();
+		actor.walkingSound2 = stream->readSint32LE();
+		actor.walkingSound3 = stream->readSint32LE();
+		actor.walkingSound4 = stream->readSint32LE();
+		actor.field_64C     = stream->readSint32LE();
+		actor.field_650     = stream->readSint32LE();
 
 		for (i = 0; i < 55; i++)
-			actor.grResTable[i] = stream->readUint32LE();
+			actor.grResTable[i] = stream->readSint32LE();
 
 		stream->read(actor.name, sizeof(actor.name));
 
 		for (i = 0; i < 20; i++)
-			actor.field_830[i] = stream->readUint32LE();
+			actor.field_830[i] = stream->readSint32LE();
 
 		for (i = 0; i < 20; i++)
-			actor.field_880[i] = stream->readUint32LE();
+			actor.field_880[i] = stream->readSint32LE();
 
 		for (i = 0; i < 20; i++)
-			actor.field_8D0[i] = stream->readUint32LE();
+			actor.field_8D0[i] = stream->readSint32LE();
 
-		actor.actionIdx2 = stream->readUint32LE();
-		actor.field_924  = stream->readUint32LE();
-		actor.tickValue1 = stream->readUint32LE();
-		actor.field_92C  = stream->readUint32LE();
-		actor.flags2     = stream->readUint32LE();
-		actor.field_934  = stream->readUint32LE();
-		actor.field_938  = stream->readUint32LE();
-		actor.soundResId = stream->readUint32LE();
-		actor.field_940  = stream->readUint32LE();
-		actor.field_944  = stream->readUint32LE();
-		actor.field_948  = stream->readUint32LE();
-		actor.field_94C  = stream->readUint32LE();
-		actor.field_950  = stream->readUint32LE();
-		actor.field_954  = stream->readUint32LE();
-		actor.field_958  = stream->readUint32LE();
-		actor.field_95C  = stream->readUint32LE();
-		actor.field_960  = stream->readUint32LE();
-		actor.field_964  = stream->readUint32LE();
-		actor.field_968  = stream->readUint32LE();
-		actor.field_96C  = stream->readUint32LE();
-		actor.field_970  = stream->readUint32LE();
-		actor.field_974  = stream->readUint32LE();
-		actor.field_978  = stream->readUint32LE();
-		actor.actionIdx1 = stream->readUint32LE();
+		actor.actionIdx2 = stream->readSint32LE();
+		actor.field_924  = stream->readSint32LE();
+		actor.tickValue1 = stream->readSint32LE();
+		actor.field_92C  = stream->readSint32LE();
+		actor.flags2     = stream->readSint32LE();
+		actor.field_934  = stream->readSint32LE();
+		actor.field_938  = stream->readSint32LE();
+		actor.soundResId = stream->readSint32LE();
+		actor.field_940  = stream->readSint32LE();
+		actor.field_944  = stream->readSint32LE();
+		actor.field_948  = stream->readSint32LE();
+		actor.field_94C  = stream->readSint32LE();
+		actor.field_950  = stream->readSint32LE();
+		actor.field_954  = stream->readSint32LE();
+		actor.field_958  = stream->readSint32LE();
+		actor.field_95C  = stream->readSint32LE();
+		actor.field_960  = stream->readSint32LE();
+		actor.field_964  = stream->readSint32LE();
+		actor.field_968  = stream->readSint32LE();
+		actor.field_96C  = stream->readSint32LE();
+		actor.field_970  = stream->readSint32LE();
+		actor.field_974  = stream->readSint32LE();
+		actor.field_978  = stream->readSint32LE();
+		actor.actionIdx1 = stream->readSint32LE();
 
 		// TODO skip field_980 till field_9A0
 		stream->skip(0x24);
@@ -402,36 +402,36 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	stream->seek(0xD6B5A); // where action items start
 
 	// FIXME Figure out all the actions items
-	for (uint32 a = 0; a < numActions; a++) {
+	for (int32 a = 0; a < numActions; a++) {
 		ActionArea action;
 		memset(&action, 0, sizeof(ActionArea));
 
 		stream->read(action.name, 52);
-		action.id             = stream->readUint32LE();
-		action.field01        = stream->readUint32LE();
-		action.field02        = stream->readUint32LE();
-		action.field_40       = stream->readUint32LE();
-		action.field_44       = stream->readUint32LE();
-		action.flags          = stream->readUint32LE();
-		action.actionListIdx1 = stream->readUint32LE();
-		action.actionListIdx2 = stream->readUint32LE();
-		action.actionType     = stream->readUint32LE();
+		action.id             = stream->readSint32LE();
+		action.field01        = stream->readSint32LE();
+		action.field02        = stream->readSint32LE();
+		action.field_40       = stream->readSint32LE();
+		action.field_44       = stream->readSint32LE();
+		action.flags          = stream->readSint32LE();
+		action.actionListIdx1 = stream->readSint32LE();
+		action.actionListIdx2 = stream->readSint32LE();
+		action.actionType     = stream->readSint32LE();
 
-		for (int aa1 = 0; aa1 < 10; aa1++)
-			action.flagNums[aa1] = stream->readUint32LE();
+		for (int32 aa1 = 0; aa1 < 10; aa1++)
+			action.flagNums[aa1] = stream->readSint32LE();
 
-		action.field_7C     = stream->readUint32LE();
-		action.polyIdx      = stream->readUint32LE();
-		action.field_84     = stream->readUint32LE();
-		action.field_88     = stream->readUint32LE();
-		action.soundResId   = stream->readUint32LE();
-		action.field_90     = stream->readUint32LE();
-		action.paletteValue = stream->readUint32LE();
+		action.field_7C     = stream->readSint32LE();
+		action.polyIdx      = stream->readSint32LE();
+		action.field_84     = stream->readSint32LE();
+		action.field_88     = stream->readSint32LE();
+		action.soundResId   = stream->readSint32LE();
+		action.field_90     = stream->readSint32LE();
+		action.paletteValue = stream->readSint32LE();
 
-		for (int aa2 = 0; aa2 < 5; aa2++)
-			action.array[aa2] = stream->readUint32LE();
+		for (int32 aa2 = 0; aa2 < 5; aa2++)
+			action.array[aa2] = stream->readSint32LE();
 
-		action.volume = stream->readUint32LE();
+		action.volume = stream->readSint32LE();
 
 		actions.push_back(action);
 	}

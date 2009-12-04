@@ -336,7 +336,7 @@ int ActionList::process() {
 
 			ScriptEntry *currentCommand = &_currentScript->commands[currentLine];
 
-			uint32 opcode = currentCommand->opcode;
+			int32 opcode = currentCommand->opcode;
 
 			debugC(kDebugLevelScripts,
 			   "[0x%02d] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
@@ -397,19 +397,19 @@ int ActionList::process() {
 }
 
 void ActionList::load(Common::SeekableReadStream *stream) {
-	size       = stream->readUint32LE();
-	numEntries = stream->readUint32LE();
+	size       = stream->readSint32LE();
+	numEntries = stream->readSint32LE();
 
-	for (uint32 a = 0; a < numEntries; a++) {
+	for (int32 a = 0; a < numEntries; a++) {
 		Script action;
 		memset(&action, 0, sizeof(Script));
 
-		for (uint32 c = 0; c < MAX_ACTION_COMMANDS; c++) {
+		for (int32 c = 0; c < MAX_ACTION_COMMANDS; c++) {
 			ScriptEntry command;
 			memset(&command, 0, sizeof(ScriptEntry));
 
-			command.numLines = stream->readUint32LE();
-			command.opcode   = stream->readUint32LE();
+			command.numLines = stream->readSint32LE();
+			command.opcode   = stream->readSint32LE();
 			command.param1   = stream->readSint32LE();
 			command.param2   = stream->readSint32LE();
 			command.param3   = stream->readSint32LE();
@@ -423,9 +423,9 @@ void ActionList::load(Common::SeekableReadStream *stream) {
 			action.commands[c] = command;
 		}
 
-		action.field_1BAC = stream->readUint32LE();
-		action.field_1BB0 = stream->readUint32LE();
-		action.counter    = stream->readUint32LE();
+		action.field_1BAC = stream->readSint32LE();
+		action.field_1BB0 = stream->readSint32LE();
+		action.counter    = stream->readSint32LE();
 
 		entries.push_back(action);
 	}
@@ -674,8 +674,8 @@ int kEnableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 
 int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
 	int    barIdx = scn->worldstats()->getBarrierIndexById(cmd->param1);
-	uint32 sndIdx = cmd->param3;
-	uint32 v59    = cmd->param2;
+	int32 sndIdx = cmd->param3;
+	int32 v59    = cmd->param2;
 
 	if (!script->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
 		// FIXME: I really don't understand what (sndIdx != 0) & 5 is supposed to be doing here,
@@ -957,7 +957,7 @@ int kWaitUntilFramePlayed(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
-		uint32 frameNum = cmd->param2;
+		int32 frameNum = cmd->param2;
 		if (cmd->param2 == -1)
 			frameNum = barrier->frameCount - 1;
 
@@ -997,11 +997,11 @@ int k_unk40_SOUND(Script *script, ScriptEntry *cmd, Scene *scn) {
 
 int kPlaySpeech(Script *script, ScriptEntry *cmd, Scene *scn) {
 	//TODO - Add support for other param options
-	uint32 sndIdx = cmd->param1;
+	int32 sndIdx = cmd->param1;
 
 	if ((int)sndIdx >= 0) {
         if (cmd->param4 != 2) {
-            uint32 resIdx = scn->speech()->play(sndIdx);
+            int32 resIdx = scn->speech()->play(sndIdx);
             cmd->param5 = resIdx;
 
             if (cmd->param2) {

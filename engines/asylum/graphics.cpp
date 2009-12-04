@@ -28,7 +28,7 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(ResourcePack *resPack, int entry) {
+GraphicResource::GraphicResource(ResourcePack *resPack, int32 entry) {
 	ResourceEntry *resEntry = resPack->getResource(entry);
 	_entryNum = entry;
 	init(resEntry->data, resEntry->size);
@@ -42,19 +42,19 @@ GraphicResource::~GraphicResource() {
 	_frames.clear();
 }
 
-void GraphicResource::init(byte *data, uint32 size) {
+void GraphicResource::init(byte *data, int32 size) {
 	byte   *dataPtr      = data;
-	uint32 contentOffset = 0;
-	uint32 frameCount    = 0;
+	int32 contentOffset = 0;
+	int16 frameCount    = 0;
 
-	uint32 i = 0;
+	int32 i = 0;
 
 	dataPtr += 4; // tag value
 
-	_flags = READ_LE_UINT32(dataPtr);
+	_flags = (int32)READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
 
-	contentOffset = READ_LE_UINT32(dataPtr);
+	contentOffset = (int32)READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
 
 	dataPtr += 4; // unknown
@@ -69,16 +69,16 @@ void GraphicResource::init(byte *data, uint32 size) {
 	_frames.resize(frameCount);
 
 	// Read frame offsets
-	uint32 prevOffset = READ_LE_UINT32(dataPtr) + contentOffset;
+	int32 prevOffset = (int32)READ_LE_UINT32(dataPtr) + contentOffset;
 	dataPtr += 4;
-	uint32 nextOffset = 0;
+	int32 nextOffset = 0;
 
 	for (i = 0; i < frameCount; i++) {
 		GraphicFrame frame;
 		frame.offset = prevOffset;
 
 		// Read the offset of the next entry to determine the size of this one
-		nextOffset = (i < frameCount - 1) ? READ_LE_UINT32(dataPtr) + contentOffset : size;
+		nextOffset = (i < frameCount - 1) ? (int32)READ_LE_UINT32(dataPtr) + contentOffset : size;
 		dataPtr += 4; // offset
 		frame.size = (nextOffset > 0) ? nextOffset - prevOffset : size - prevOffset;
 
@@ -97,14 +97,14 @@ void GraphicResource::init(byte *data, uint32 size) {
 		dataPtr += 4; // size
 		dataPtr += 4; // flag
 
-		_frames[i].x  = READ_LE_UINT16(dataPtr);
+		_frames[i].x  = (int16)READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
-		_frames[i].y  = READ_LE_UINT16(dataPtr);
+		_frames[i].y  = (int16)READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
-		uint16 height = READ_LE_UINT16(dataPtr);
+		int16 height = (int16)READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
-		uint16 width  = READ_LE_UINT16(dataPtr);
+		int16 width  = (int16)READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
 		_frames[i].surface.create(width, height, 1);

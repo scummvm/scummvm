@@ -33,50 +33,50 @@
 namespace Asylum {
 
 struct GraphicFrame {
-	uint32 size;
-	uint32 offset;
+	int32 size;
+	int32 offset;
 
-	uint16 x;
-	uint16 y;
+	int16 x;
+	int16 y;
 	Graphics::Surface surface;
 };
 
 // Graphic resources can be sprites or images, with multiple frames
 class GraphicResource {
 public:
-	GraphicResource(ResourcePack *resPack, int entry);
+	GraphicResource(ResourcePack *resPack, int32 entry);
 	~GraphicResource();
 
-	uint32 getFrameCount() {
+	int32 getFrameCount() {
 		return _frames.size();
 	}
-	GraphicFrame *getFrame(int frame) {
+	GraphicFrame *getFrame(int32 frame) {
 		return &_frames[frame];
 	}
-	uint32 getFlags() {
+	int32 getFlags() {
 		return _flags;
 	}
 
 	/**
 	 * Copies an animation frame to the target buffer
 	 */
-	void copyFrameToDest(byte *dest, int frame);
+	void copyFrameToDest(byte *dest, int32 frame);
 
 	/**
 	 * Copies a sprite to the target buffer, with transparency
 	 */
-	void copySpriteToDest(byte *dest, int frame);
+	void copySpriteToDest(byte *dest, int32 frame);
 
-	uint32 getEntryNum() {
+	int32 getEntryNum() {
 		return _entryNum;
 	}
 
 private:
 	Common::Array <GraphicFrame> _frames;
-	uint32 _flags;
-	uint32 _entryNum;
+	int32 _flags;
+	int32 _entryNum;
 
-	void init(byte *data, uint32 size);
+	void init(byte *data, int32 size);
 };
 
 } // end of namespace Asylum

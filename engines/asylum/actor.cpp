@@ -43,7 +43,7 @@ Actor::~Actor() {
 	// free _resources?
 }
 
-void Actor::setPosition(uint32 targetX, uint32 targetY) {
+void Actor::setPosition(int32 targetX, int32 targetY) {
 	//boundingRect.left = targetX;
 	//boundingRect.top  = targetY;
 
@@ -60,7 +60,7 @@ void Actor::visible(bool value) {
 }
 
 /*
-void Actor::setDirection(int dir) {
+void Actor::setDirection(int32 dir) {
 	direction = dir;
 	setActionByIndex(dir);
 }
@@ -69,13 +69,13 @@ void Actor::setDirection(int dir) {
 void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
 
-	for (uint32 i = 0; i < 60; i++) {
-		_resources[i] = READ_LE_UINT32(dataPtr);
+	for (int32 i = 0; i < 60; i++) {
+		_resources[i] = (int32)READ_LE_UINT32(dataPtr);
 		dataPtr += 4;
 	}
 }
 
-void Actor::setAction(int action) {
+void Actor::setAction(int32 action) {
 	assert(_resPack);
 
 	if (action == currentAction)
@@ -84,19 +84,19 @@ void Actor::setAction(int action) {
 	currentAction = action;
 
 	delete _graphic;
-	int act = (action < 100) ? action : action - 100;
+	int32 act = (action < 100) ? action : action - 100;
 
 	_graphic = new GraphicResource(_resPack, _resources[act]);
 
 	// Flip horizontally if necessary
 	if (currentAction > 100) {
-		for (uint32 i = 0; i < _graphic->getFrameCount(); i++) {
+		for (int32 i = 0; i < _graphic->getFrameCount(); i++) {
 			GraphicFrame *frame = _graphic->getFrame(i);
 			byte *buffer = (byte *)frame->surface.pixels;
 
-			for (int tmpY = 0; tmpY < frame->surface.h; tmpY++) {
-				int w = frame->surface.w / 2;
-				for (int tmpX = 0; tmpX < w; tmpX++) {
+			for (int32 tmpY = 0; tmpY < frame->surface.h; tmpY++) {
+				int32 w = frame->surface.w / 2;
+				for (int32 tmpX = 0; tmpX < w; tmpX++) {
 					SWAP(buffer[tmpY * frame->surface.pitch + tmpX],
 					     buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
 				}
@@ -107,7 +107,7 @@ void Actor::setAction(int action) {
 	frameNum = 0;
 }
 
-void Actor::setActionByIndex(int index) {
+void Actor::setActionByIndex(int32 index) {
 	setAction(_resources[index] & 0xFFFF);
 }
 
@@ -129,7 +129,7 @@ GraphicFrame *Actor::getFrame() {
 	return frame;
 }
 
-void Actor::drawActorAt(uint32 curX, uint32 curY) {
+void Actor::drawActorAt(int32 curX, int32 curY) {
 	GraphicFrame *frame = getFrame();
 
 	WorldStats *ws = _scene->worldstats();
@@ -168,15 +168,15 @@ void Actor::setWalkArea(ActionArea *target) {
 }
 
 void Actor::walkTo(int32 curX, int32 curY) {
-	int newAction = currentAction;
+	int32 newAction = currentAction;
 	WorldStats *ws = _scene->worldstats();
 
 	// step is the increment by which to move the
 	// actor in a given direction
-	int step = 2;
+	int32 step = 2;
 
-	uint32 newX = x;
-	uint32 newY = y;
+	int32 newX = x;
+	int32 newY = y;
 	bool   done = false;
 
 	// Walking left...
@@ -220,7 +220,7 @@ void Actor::walkTo(int32 curX, int32 curY) {
 	}
 
 	// DEBUGGING
-	// Show registration point from which we're calculating the
+	// Show registration point32 from which we're calculating the
 	// actor's barrier hit-test
 	Graphics::Surface surface;
 	surface.create(5, 5, 1);
@@ -241,12 +241,12 @@ void Actor::walkTo(int32 curX, int32 curY) {
 	// the actor at the PERFECT spot to be able to intersect a walk region and move to
 	// the next one.
 
-	int availableAreas[5];
-	int areaPtr = 0;
+	int32 availableAreas[5];
+	int32 areaPtr = 0;
 	ActionArea *area;
 
 	// Check what valid walk region(s) is/are currently available
-	for (uint32 a = 0; a < ws->numActions; a++) {
+	for (int32 a = 0; a < ws->numActions; a++) {
 		if (ws->actions[a].actionType == 0) {
 			area = &ws->actions[a];
 			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
@@ -265,7 +265,7 @@ void Actor::walkTo(int32 curX, int32 curY) {
 
 	// Check that we can walk in the current direction within any of the available
 	// walkable regions
-	for (int i = 0; i < areaPtr; i++) {
+	for (int32 i = 0; i < areaPtr; i++) {
 		area = &ws->actions[availableAreas[i]];
 		PolyDefinitions *region = &_scene->polygons()->entries[area->polyIdx];
 		if (region->contains(newX, newY)) {
@@ -279,7 +279,7 @@ void Actor::walkTo(int32 curX, int32 curY) {
 	drawActor();
 }
 
-void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame) {
+void Actor::setPosition_40A260(int32 newX, int32 newY, int32 newDirection, int32 frame) {
 	x1 = newX - x2;
 	y1 = newY - y2;
 
@@ -291,20 +291,20 @@ void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int f
 		frameNum = frame;
 }
 
-void Actor::faceTarget(int targetId, int targetType) {
-	int newX2, newY2;
+void Actor::faceTarget(int32 targetId, int32 targetType) {
+	int32 newX2, newY2;
 
 	printf("faceTarget: id %d type %d\n", targetId, targetType);
 
 	if (targetType) {
 		if (targetType == 1) {
-			int actionIdx = _scene->worldstats()->getActionAreaIndexById(targetId);
+			int32 actionIdx = _scene->worldstats()->getActionAreaIndexById(targetId);
 			if (actionIdx == -1) {
 				warning("No ActionArea found for id %d", targetId);
 				return;
 			}
 
-			uint32 polyIdx = _scene->worldstats()->actions[actionIdx].polyIdx;
+			int32 polyIdx = _scene->worldstats()->actions[actionIdx].polyIdx;
 			PolyDefinitions *poly = &_scene->polygons()->entries[polyIdx];
 
 			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
@@ -318,7 +318,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 			}
 		}
 	} else {
-		int barrierIdx = _scene->worldstats()->getBarrierIndexById(targetId);
+		int32 barrierIdx = _scene->worldstats()->getBarrierIndexById(targetId);
 		if (barrierIdx == -1) {
 			warning("No Barrier found for id %d", targetId);
 			return;
@@ -342,7 +342,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 		newY2 = (fra->surface.h >> 1) + barrier->y; // Check .text:004088A2 for more details
 	}
 
-	int newAngle = getAngle(x2 + x1, y2 + y1, newX2, newY2);
+	int32 newAngle = getAngle(x2 + x1, y2 + y1, newX2, newY2);
 
 	printf("Angle calculated as %d\n", newAngle);
 
@@ -350,10 +350,10 @@ void Actor::faceTarget(int targetId, int targetType) {
 	//setDirection(newAngle);
 }
 
-int Actor::getAngle(int ax1, int ay1, int ax2, int ay2) {
+int32 Actor::getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	int32 v5 = (ax2 << 16) - (ax1 << 16);
-	int v6 = 0;
-	int v4 = (ay1 << 16) - (ay2 << 16);
+	int32 v6 = 0;
+	int32 v4 = (ay1 << 16) - (ay2 << 16);
 
 	if (v5 < 0) {
 		v6 = 2;
@@ -365,8 +365,8 @@ int Actor::getAngle(int ax1, int ay1, int ax2, int ay2) {
 		v4 = -v4;
 	}
 
-	int v7;
-	int v8 = -1;
+	int32 v7;
+	int32 v8 = -1;
 
 	if (v5) {
 		v7 = (v4 << 8) / v5;
@@ -396,7 +396,7 @@ int Actor::getAngle(int ax1, int ay1, int ax2, int ay2) {
 	if (v8 >= 360)
 		v8 -= 360;
 
-	int result;
+	int32 result;
 
 	if (v8 < 157 || v8 >= 202) {
 		if (v8 < 112 || v8 >= 157) {
