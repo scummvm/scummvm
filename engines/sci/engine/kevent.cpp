@@ -86,8 +86,42 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
 
-			if (e.buckybits == SCI_EVM_CTRL) {
-				// If Control is pressed, we need to convert the actual key to a DOS scancode
+			// TODO: Remove this as soon as ScummVM handles Ctrl-Alt-X to us
+			if ((e.buckybits == SCI_EVM_CTRL) && (e.character = 'x'))
+				e.buckybits |= SCI_EVM_ALT;
+
+			if (e.buckybits & SCI_EVM_ALT) {
+				// If Alt is pressed, we need to convert the actual key to a DOS scancode
+				switch (e.character) {
+				case 'a': e.character = 30 << 8; break;
+				case 'b': e.character = 48 << 8; break;
+				case 'c': e.character = 46 << 8; break;
+				case 'd': e.character = 32 << 8; break;
+				case 'e': e.character = 18 << 8; break;
+				case 'f': e.character = 33 << 8; break;
+				case 'g': e.character = 34 << 8; break;
+				case 'h': e.character = 35 << 8; break;
+				case 'i': e.character = 33 << 8; break;
+				case 'j': e.character = 23 << 8; break;
+				case 'k': e.character = 37 << 8; break;
+				case 'l': e.character = 38 << 8; break;
+				case 'm': e.character = 50 << 8; break;
+				case 'n': e.character = 49 << 8; break;
+				case 'o': e.character = 24 << 8; break;
+				case 'p': e.character = 25 << 8; break;
+				case 'q': e.character = 16 << 8; break;
+				case 'r': e.character = 19 << 8; break;
+				case 's': e.character = 31 << 8; break;
+				case 't': e.character = 20 << 8; break;
+				case 'u': e.character = 22 << 8; break;
+				case 'v': e.character = 47 << 8; break;
+				case 'w': e.character = 17 << 8; break;
+				case 'x': e.character = 45 << 8; break;
+				case 'y': e.character = 21 << 8; break;
+				case 'z': e.character = 44 << 8; break;
+				}
+			} else if (e.buckybits & SCI_EVM_CTRL) {
+				// Control is pressed...
 				if ((e.character >= 97) && (e.character <= 121)) {
 					e.character -= 96; // 'a' -> 0x01, etc.
 				}
