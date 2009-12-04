@@ -761,14 +761,14 @@ void SciGui::moveCursor(Common::Point pos) {
 
 	if (pos.x > _screen->_width || pos.y > _screen->_height) {
 		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
-		return; // Not fatal
+		return;
 	}
 
 	_cursor->setPosition(pos);
+
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	//gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
-	// FIXME!
+	gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
 }
 
 void SciGui::setCursorZone(Common::Rect zone) {
