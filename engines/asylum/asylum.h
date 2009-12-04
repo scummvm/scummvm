@@ -40,6 +40,9 @@
 
 namespace Asylum {
 
+static int32 g_object_x;
+static int32 g_object_y;
+
 // XXX
 // If defined, this will play the scene title loading
 // progress before the scene is entered. This is
@@ -49,7 +52,7 @@ namespace Asylum {
 
 // XXX If defined, this flag will prevent the intro movies
 // from being played whenever the engine is started
-// #define SKIP_INTRO
+//#define SKIP_INTRO
 
 // XXX
 // I'm not sure if system endian-ness would have any
