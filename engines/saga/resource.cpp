@@ -236,19 +236,19 @@ bool Resource::createContexts() {
 
 	//// Detect and add SFX files ////////////////////////////////////////////////
 	SoundFileInfo sfxFiles[] = {
-		{	GID_ITE,	"sounds.rsc",		false	},
-		{	GID_ITE,	"sounds.cmp",		true	},
-		{	GID_ITE,	"soundsd.rsc",		false	},
-		{	GID_ITE,	"soundsd.cmp",		true	},
+		{	GID_ITE,	"sounds.rsc",		false,	0	},
+		{	GID_ITE,	"sounds.cmp",		true,	0	},
+		{	GID_ITE,	"soundsd.rsc",		false,	0	},
+		{	GID_ITE,	"soundsd.cmp",		true,	0	},
 #ifdef ENABLE_IHNM
-		{	GID_IHNM,	"sfx.res",			false	},
-		{	GID_IHNM,	"sfx.cmp",			true	},
+		{	GID_IHNM,	"sfx.res",			false,	0	},
+		{	GID_IHNM,	"sfx.cmp",			true,	0	},
 #endif
 #ifdef ENABLE_SAGA2
-		{	GID_FTA2,	"ftasound.hrs",		false	},
-		{	GID_DINO,	"dinosnd.hrs",		false	},
+		{	GID_FTA2,	"ftasound.hrs",		false,	0	},
+		{	GID_DINO,	"dinosnd.hrs",		false,	0	},
 #endif
-		{	-1,			NULL,				false	}
+		{	-1,			"",				false,	0	}
 	};
 
 	_soundFileName[0] = 0;
@@ -283,7 +283,7 @@ bool Resource::createContexts() {
 #ifdef ENABLE_SAGA2
 		{	GID_FTA2,	"ftavoice.hrs",					false	,	0},
 #endif
-		{	-1,			NULL,							false	,	0}
+		{	-1,			"",							false	,	0}
 	};
 
 	// Detect and add voice files
@@ -329,11 +329,11 @@ bool Resource::createContexts() {
 
 	//// Detect and add music files /////////////////////////////////////////
 	SoundFileInfo musicFiles[] = {
-		{	GID_ITE,	"music.rsc",	false	},
-		{	GID_ITE,	"music.cmp",	true	},
-		{	GID_ITE,	"musicd.rsc",	false	},
-		{	GID_ITE,	"musicd.cmp",	true	},
-		{	-1,			NULL,			false	}
+		{	GID_ITE,	"music.rsc",	false,	0	},
+		{	GID_ITE,	"music.cmp",	true,	0	},
+		{	GID_ITE,	"musicd.rsc",	false,	0	},
+		{	GID_ITE,	"musicd.cmp",	true,	0	},
+		{	-1,			"",			false	,	0}
 	};
 
 	// Check for digital music in ITE

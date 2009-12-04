@@ -107,6 +107,9 @@ public:
 		_fileSize(0) {
 	}
 
+	virtual ~ResourceContext() {
+	}
+
 	bool isCompressed() const {
 		return _isCompressed;
 	}
