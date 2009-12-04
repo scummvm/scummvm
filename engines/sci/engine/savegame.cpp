@@ -30,6 +30,7 @@
 #include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #ifdef INCLUDE_OLDGFX
 #include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
@@ -767,6 +768,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Create a new EngineState object
 	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_gui, s->_audio);
+	retval->_event = new SciEvent();
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;
