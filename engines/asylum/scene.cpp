@@ -826,7 +826,7 @@ void Scene::updateBarriers() {
 				if (_ws->isBarrierVisible(b)) {
 					int32 flag = barrier->flags;
 					if (flag & 0x20) {
-						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
 							barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
 							barrier->tickCount = _vm->getTick();
 							canPlaySound       = true;
@@ -858,16 +858,14 @@ void Scene::updateBarriers() {
 						}
 
 						if (!((lessZero ^ 0) | equalZero)) {
-							// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-							if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+							if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
 								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
 								barrier->tickCount = _vm->getTick();
 								canPlaySound = true;
 							}
 						}
 					} else if (flag & 8) {
-						// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
 							int32 frameIdx = barrier->frameIdx + 1;
 							if (frameIdx < barrier->frameCount - 1) {
 								if (barrier->field_688 == 1) {
@@ -890,8 +888,7 @@ void Scene::updateBarriers() {
 							}
 						}
 					} else if (!((flag & 0xFFFF) & 6)) {
-						// FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-						if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) && (flag & 0x10000)) {
+						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4 && (flag & 0x10000)) {
 							int32 frameIdx = barrier->frameIdx - 1;
 							if (frameIdx <= 0) {
 								barrier->flags &= 0xFFFEFFFF;
@@ -905,7 +902,7 @@ void Scene::updateBarriers() {
 								// TODO: get global x, y positions
 							}
 							barrier->frameIdx = frameIdx;
-						} else if (barrier->field_B4 && (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
+						} else if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
 							if ((flag & 0xFF) & 2) {
 								if (barrier->frameIdx == barrier->frameCount - 1) {
 									barrier->frameIdx--;
@@ -930,7 +927,7 @@ void Scene::updateBarriers() {
 						if (barrier->frameIdx == barrier->frameCount - 1) {
 							if (barrier->field_B4 <= 15) {
 								barrier->field_B4 -= 2;
-								if (barrier->field_B4 < 0) // FIXME: check this
+								if (barrier->field_B4 < 0)
 									barrier->field_B4 = 0;
 							} else {
 								barrier->field_B4 = 15;
