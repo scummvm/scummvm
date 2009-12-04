@@ -952,37 +952,46 @@ void Scene::updateBarriers() {
 }
 
 void Scene::updateAmbientSounds() {
-	// TODO
-	// if (cfgGameQualityValue > 3)
-
-	int v2 = 1;
-	int v15, v11, v10, v16;
-
-	int panning, volume;
+	if (Config.performance <= 3)
+		return;
 
 	for (int32 i = 0; i < _ws->numAmbientSound; i++) {
+		bool processSound = true;
+		int panning = 0;
+		int volume  = 0;
 		AmbientSoundItem *snd = &_ws->ambientSounds[i];
+
 		for (int32 f = 0; f < 6; f++) {
 			int gameFlag = snd->flagNum[f];
 			if (gameFlag >= 0) {
 				if (_vm->isGameFlagNotSet(gameFlag)) {
-					v2 = 0;
+					processSound = false;
 					break;
 				}
 			} else {
-				if (_vm->isGameFlagSet(-(int)gameFlag)) {
-					// XXX Looks like this just jumps back to
-					// the top of the loop, so not sure if this
-					// is somehow important
+				if (_vm->isGameFlagSet(-gameFlag)) {
+					processSound = false;
+					break;
 				}
 			}
 		}
-		if (v2) {
+		if (processSound) {
 			if (_vm->sound()->isPlaying(snd->resId)) {
 				if (snd->field_0) {
-					; // TODO volume calculation
+					// TODO optimize
+					// This adjustment only uses the actor at
+					// index zero, but it's supposed to loop through
+					// all available actors as well (I think)
+					volume = calculateVolumeAdjustment(snd, getActor(0));
+					if (volume <= 0) {
+						if (volume < -10000)
+							volume = -10000;
+						// TODO setSoundVolume(snd->resId, volume);
+					} else
+						; // TODO setSoundVolume(snd->resId, 0);
 				}
 			} else {
+				int loflag = LOBYTE(snd->flags);
 				if (snd->field_0) {
 					; // TODO calculate panning at point
 				} else {
@@ -996,7 +1005,7 @@ void Scene::updateAmbientSounds() {
 				} else {
 					; // TODO calculate volume increase
 				}
-
+				/*
 				if (LOBYTE(snd->flags) & 2) {
 					if (rand() % 10000 < 10) {
 						if (snd->field_0) {
@@ -1017,7 +1026,7 @@ void Scene::updateAmbientSounds() {
 						}
 					} else {
 						if (LOBYTE(snd->flags) & 4) {
-							/*
+
 							  if ( (unsigned int)*ambientPanningArray < getTickCount() )
 							{
 							  if ( v1->field_14 >= 0 )
@@ -1027,22 +1036,56 @@ void Scene::updateAmbientSounds() {
 							  *ambientPanningArray = v12;
 							  playSound(v7, 0, v9, panning);
 							}
-							*/
+
 						} else {
 							if (LOBYTE(snd->flags) & 8) {
-								/*
+
 								if ( !*(ambientPanningArray - 15) )
 								{
 								 playSound(v7, 0, v9, panning);
 								 *(ambientPanningArray - 15) = 1;
 								}
-								*/
+
 							}
 						}
 					}
-				}
+				} */
 			}
+		} else {
+			if (_vm->sound()->isPlaying(snd->resId))
+				_vm->sound()->stopSound(snd->resId);
 		}
+	}
+}
+
+int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
+	int32 x, y;
+	if (snd->field_10) {
+		if (g_object_x == -1) {
+			x = snd->x - act->x1 - act->x2;
+			y = snd->y - act->y1 - act->y2;
+		} else {
+			x = snd->x - g_object_x;
+			y = snd->y - g_object_y;
+		}
+
+		// FIXME vol = sub_432CA0(x ^ 2 + y ^ 2);
+		// Just assigning an arbitrary value for the
+		// time being
+		int vol = 5000;
+		if (100 / snd->field_C)
+			vol = vol / (100 / snd->field_C);
+		else
+			vol = snd->field_C;
+		vol = (vol - snd->field_C) ^ 2;
+		if (vol <= 10000)
+			vol = -vol;
+		else
+			vol = -10000;
+
+		return vol;
+	} else {
+		return -(snd->field_C ^ 2);
 	}
 }
 

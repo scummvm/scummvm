@@ -140,6 +140,12 @@ public:
      * graphic resource matches the resource at grResTable[5]
      */
     bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
+
+    /** .text:004094c0
+     * Determine the amount to increase the supplied sound
+     * sample's volume based on the actor's position
+     */
+    int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 private:
 	AsylumEngine *_vm;
 	uint8	     _sceneIdx;
