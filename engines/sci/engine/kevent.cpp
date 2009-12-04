@@ -85,9 +85,16 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		} else {
 			PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
+
+			if (e.buckybits == SCI_EVM_CTRL) {
+				// If Control is pressed, we need to convert the actual key to a DOS scancode
+				if ((e.character >= 97) && (e.character <= 121)) {
+					e.character -= 96; // 'a' -> 0x01, etc.
+				}
+			}
+
 			PUT_SEL32V(segMan, obj, message, e.character);
-			// We only care about the translated
-			// character
+			// We only care about the translated character
 			PUT_SEL32V(segMan, obj, modifiers, e.buckybits&modifier_mask);
 		}
 		break;
