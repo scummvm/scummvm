@@ -1753,6 +1753,12 @@ void ScummEngine_v5::o5_roomOps() {
 
 	case 13:	// SO_SAVE_STRING
 		{
+			// This subopcode is used in Indy 4 to save the IQ points data.
+			// No other game uses it. We use this to replace the given filename by
+			// one based on the targetname ("TARGET.iq").
+			// This way, the iq data of each Indy 4 variant a user might have stays
+			// separate. Moreover, the filename now clearly reflects to which target
+			// it belongs (as it should).
 			Common::String filename;
 			char chr;
 
@@ -1760,7 +1766,7 @@ void ScummEngine_v5::o5_roomOps() {
 			while ((chr = fetchScriptByte()))
 				filename += chr;
 
-			if (filename.hasPrefix("iq-") || filename.hasPrefix("IQ-") || filename.hasSuffix("-iq") || filename.hasSuffix("-IQ")) {
+			if (_game.id == GID_INDY4) {
 				filename = _targetName + ".iq";
 			} else {
 				error("SO_SAVE_STRING: Unsupported filename %s", filename.c_str());
@@ -1778,6 +1784,8 @@ void ScummEngine_v5::o5_roomOps() {
 		}
 	case 14:	// SO_LOAD_STRING
 		{
+			// This subopcode is used in Indy 4 to load the IQ points data.
+			// See SO_SAVE_STRING for details
 			Common::String filename;
 			char chr;
 
@@ -1785,7 +1793,7 @@ void ScummEngine_v5::o5_roomOps() {
 			while ((chr = fetchScriptByte()))
 				filename += chr;
 
-			if (filename.hasPrefix("iq-") || filename.hasPrefix("IQ-") || filename.hasSuffix("-iq") || filename.hasSuffix("-IQ")) {
+			if (_game.id == GID_INDY4) {
 				filename = _targetName + ".iq";
 			} else {
 				error("SO_LOAD_STRING: Unsupported filename %s", filename.c_str());
