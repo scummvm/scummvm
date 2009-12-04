@@ -33,45 +33,44 @@ namespace Asylum {
 
 class Speech {
 public:
-    Speech(Scene *scene);
-    virtual ~Speech();
+	Speech(Scene *scene);
+	virtual ~Speech();
 
-    int32 _soundResIdx;
-    int32 _textResIdx;
+	int32 _soundResIdx;
+	int32 _textResIdx;
 
-    /** .text:00414810
-     *  Play player speech
-     *  @param speechIdx speech index (used for sound and text resources)
-     *  @return correct resourceId 
-     */
-    int32 play(int32 speechIdx);
+	/** .text:00414810
+	 *  Play player speech
+	 *  @param speechIdx speech index (used for sound and text resources)
+	 *  @return correct resourceId
+	 */
+	int32 play(int32 speechIdx);
+	/** .text:004146D0
+	 *  Set speech for different player type
+	 *  @param soundResIdx sound resource id
+	 *  @param textResIdx text resource id
+	 */
+	void setPlayerSpeech(int32 soundResIdx, int32 textResIdx);
+	/** .text:004144C0
+	 *  Prepare speech to play
+	 *   - Process sound speech and draws dialogue in screen
+	 */
+	void prepareSpeech();
 
-    /** .text:004146D0
-     *  Set speech for different player type
-     *  @param soundResIdx sound resource id
-     *  @param textResIdx text resource id
-     */
-    void setPlayerSpeech(int32 soundResIdx, int32 textResIdx);
-
-    /** .text:004144C0
-     *  Prepare speech to play
-     *   - Process sound speech and draws dialogue in screen
-     */
-    void prepareSpeech();
 private:
-    Scene *_scene;
+	Scene *_scene;
 
-    int32 _tick;
+	int32 _tick;
+	char * _textData;
+	char * _textDataPos;
 
-    char * _textData;
-    char * _textDataPos;
+	/** .text:00414580
+	 * TODO add description
+	 */
+	void processSpeech();
 
-    /** .text:00414580
-     */
-    void processSpeech();
-
-    // This function was cutoff since it doesn't make any sence using it. Its here for address information only
-    /** .text:00414630 void playSpeech(int32 textResIdx, int32 fontResIdx); */
+	// This function was cutoff since it doesn't make any sense using it. Its here for address information only
+	/** .text:00414630 void playSpeech(int32 textResIdx, int32 fontResIdx); */
 
 }; // end of class Speech
 

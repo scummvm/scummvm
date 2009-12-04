@@ -92,15 +92,15 @@ public:
 
 	void enterScene();
 
-	void activate() { _isActive = true;	}
+	void activate() { _isActive = true; }
 	void deactivate() { _isActive = false; }
-	bool isActive() { return _isActive;	}
+	bool isActive() { return _isActive; }
 	int  getSceneIndex() { return _sceneIdx; }
 
 	Cursor* getCursor() { return _cursor; }
 	ResourcePack* getResourcePack() { return _resPack; }
 	ResourcePack* getMusicPack() { return _musPack; }
-	GraphicResource* getGraphicResource(int32 entry) {	return new GraphicResource(_resPack, entry); }
+	GraphicResource* getGraphicResource(int32 entry) { return new GraphicResource(_resPack, entry); }
 	BlowUpPuzzle* getBlowUpPuzzle() { return _blowUp;}
 	void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 	void setScenePosition(int x, int y);
@@ -108,7 +108,7 @@ public:
 	AsylumEngine* vm() { return _vm; }
 	WorldStats* worldstats() { return _ws; }
 	Polygons* polygons() { return _polygons; }
-	ActionList* actions() {	return _actions; }
+	ActionList* actions() { return _actions; }
 	Speech* speech() { return _speech; }
 
 	void getActorPosition(Actor *actor, Common::Point *pt);
