@@ -37,9 +37,9 @@ namespace Sci {
 struct sciEvent {
 	short type;
 	short data;
-	short buckybits;
+	short modifiers;
 	short character; /* for keyboard events: 'data' after applying
-			 ** the effects of 'buckybits', e.g. if
+			 ** the effects of 'modifiers', e.g. if
 			 **   type == SCI_EVT_KEYBOARD
 			 **   data == 'a'
 			 **   buckybits == SCI_EVM_LSHIFT

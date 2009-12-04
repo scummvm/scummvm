@@ -75,11 +75,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case SCI_EVENT_KEYBOARD:
-		if ((curEvent.buckybits & SCI_KEYMOD_LSHIFT) && (curEvent.buckybits & SCI_KEYMOD_RSHIFT) && (curEvent.data == '-')) {
+		if ((curEvent.modifiers & SCI_KEYMOD_LSHIFT) && (curEvent.modifiers & SCI_KEYMOD_RSHIFT) && (curEvent.data == '-')) {
 			printf("Debug mode activated\n");
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
-		} else if ((curEvent.buckybits & SCI_KEYMOD_CTRL) && (curEvent.data == '`')) {
+		} else if ((curEvent.modifiers & SCI_KEYMOD_CTRL) && (curEvent.data == '`')) {
 			printf("Debug mode activated\n");
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
@@ -89,7 +89,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 			PUT_SEL32V(segMan, obj, message, curEvent.character);
 			// We only care about the translated character
-			PUT_SEL32V(segMan, obj, modifiers, curEvent.buckybits&modifier_mask);
+			PUT_SEL32V(segMan, obj, modifiers, curEvent.modifiers & modifier_mask);
 		}
 		break;
 
@@ -117,7 +117,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 			PUT_SEL32V(segMan, obj, type, curEvent.type);
 			PUT_SEL32V(segMan, obj, message, 0);
-			PUT_SEL32V(segMan, obj, modifiers, (curEvent.buckybits | extra_bits)&modifier_mask);
+			PUT_SEL32V(segMan, obj, modifiers, (curEvent.modifiers | extra_bits) & modifier_mask);
 			s->r_acc = make_reg(0, 1);
 		}
 		break;

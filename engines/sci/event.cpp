@@ -215,7 +215,7 @@ sciEvent SciEvent::getFromScummVM() {
 		}
 		//TODO: SCI_EVM_INSERT
 
-		input.buckybits =
+		input.modifiers =
 		    ((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
 		    ((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
 		    ((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0) |
@@ -237,7 +237,7 @@ sciEvent SciEvent::getFromScummVM() {
 				input.type = SCI_EVENT_NONE;
 				input.character = 0;
 				input.data = 0;
-				input.buckybits = 0;
+				input.modifiers = 0;
 
 				return input;
 			}
@@ -249,7 +249,7 @@ sciEvent SciEvent::getFromScummVM() {
 					// Tab
 					input.type = SCI_EVENT_KEYBOARD;
 					input.data = SCI_KEY_TAB;
-					if (input.buckybits & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
+					if (input.modifiers & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
 						input.character = SCI_KEY_SHIFT_TAB;
 					else
 						input.character = SCI_KEY_TAB;
@@ -260,7 +260,7 @@ sciEvent SciEvent::getFromScummVM() {
 				// SCI_K_F1 == 59 << 8
 				// SCI_K_SHIFT_F1 == 84 << 8
 				input.data = SCI_KEY_F1 + ((input.data - Common::KEYCODE_F1)<<8);
-				if (input.buckybits & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
+				if (input.modifiers & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
 					input.character = input.data + 25;
 				else
 					input.character = input.data;
@@ -400,23 +400,23 @@ sciEvent SciEvent::get(unsigned int mask) {
 		event.character = event.data;
 
 		// TODO: Remove this as soon as ScummVM handles Ctrl-Alt-X to us
-		if ((event.buckybits == SCI_KEYMOD_CTRL) && (event.character = 'x'))
-			event.buckybits |= SCI_KEYMOD_ALT;
+		if ((event.modifiers == SCI_KEYMOD_CTRL) && (event.character = 'x'))
+			event.modifiers |= SCI_KEYMOD_ALT;
 
 		// Scancodify if appropriate
-		if (event.buckybits & SCI_KEYMOD_ALT) {
+		if (event.modifiers & SCI_KEYMOD_ALT) {
 			event.character = altify(event.character);
-		} else if (event.buckybits & SCI_KEYMOD_CTRL) {
+		} else if (event.modifiers & SCI_KEYMOD_CTRL) {
 			event.character = controlify(event.character);
 		}
 
 		// Shift if appropriate
-		else if (((event.buckybits & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && !(event.buckybits & SCI_KEYMOD_CAPSLOCK))
-		         || (!(event.buckybits & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && (event.buckybits & SCI_KEYMOD_CAPSLOCK)))
+		else if (((event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && !(event.modifiers & SCI_KEYMOD_CAPSLOCK))
+		         || (!(event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && (event.modifiers & SCI_KEYMOD_CAPSLOCK)))
 			event.character = shiftify(event.character);
 
 		// Numlockify if appropriate
-		else if (event.buckybits & SCI_KEYMOD_NUMLOCK)
+		else if (event.modifiers & SCI_KEYMOD_NUMLOCK)
 			event.data = numlockify(event.data);
 	}
 
