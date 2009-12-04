@@ -35,18 +35,17 @@ const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 3
 const int actorType[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
 
 // We hardcode all the text resources here. It makes the resulting code easier,
-// otherwise we'll have to read the text resources in the same obscure way they're stored
-// in vids.cap
-// -1 means that the video has no subtitles, -2 that it doesn't exist
-// The negative values aren't used in the code, they just make the table easier to
-// understand.
+// otherwise we'll have to read the text resources in the same obscure way
+// they're stored in VIDS.CAP.
+// A value of -1 means that the video has no subtitles, -2 that it doesn't exist.
+// The negative values aren't used in the code, they just make the table
+// easier to understand.
 const int32 video_subtitle_resourceIds[49] = {
 	-1,   1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136, // 0 - 9
 	-1,   -2,   1140, 1141, -2,   -1,   1142, -1,   -2,   1155, // 10 - 19
 	1157, 1159, 1162, 1164, -2,   1171, 1177, 1184, 1190, 1201, // 20 - 29
 	-2,   -2,   -2,   1207, 1213, 1217, 1223, 1227, -2,   1228, // 30 - 39
 	-2,   1244, 1247, 1250, 1256, 1120, 1127, -1,   -1 };       // 40 - 48
-
 
 // Angle Tables used by getAngle()
 const uint8 angleTable01[256] = {
