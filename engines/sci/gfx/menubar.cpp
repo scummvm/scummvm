@@ -31,6 +31,7 @@
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
 #ifdef INCLUDE_OLDGFX
 
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/gfx/menubar.h"
 #include "sci/gui/gui.h"

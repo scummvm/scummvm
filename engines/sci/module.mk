@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	console.o \
 	decompressor.o \
 	detection.o \
+	event.o \
 	resource.o \
 	sci.o \
 	seq_decoder.o \

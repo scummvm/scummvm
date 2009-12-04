@@ -28,6 +28,7 @@
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_screen.h"
@@ -62,7 +63,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_text = new SciGuiText(_s->resMan, _gfx, _screen);
 	_windowMgr = new SciGuiWindowMgr(this, _screen, _gfx, _text);
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
-	_menu = new SciGuiMenu(_s->_segMan, _gfx, _text, _screen, _cursor);
+	_menu = new SciGuiMenu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
@@ -109,7 +110,7 @@ void SciGui::wait(int16 ticks) {
 	_s->last_wait_time = time;
 
 	ticks *= g_debug_sleeptime_factor;
-	gfxop_sleep(_s->gfx_state, ticks * 1000 / 60);
+	kernel_sleep(_s->_event, ticks * 1000 / 60);
 }
 
 void SciGui::setPort(uint16 portPtr) {
@@ -319,7 +320,7 @@ void SciGui::drawMenuBar(bool clear) {
 
 void SciGui::menuReset() {
 	delete _menu;
-	_menu = new SciGuiMenu(_s->_segMan, _gfx, _text, _screen, _cursor);
+	_menu = new SciGuiMenu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
 	_menu->init(_s->gfx_state);
 }
 
@@ -768,7 +769,7 @@ void SciGui::moveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
+	_s->_event->get(SCI_EVT_PEEK);
 }
 
 void SciGui::setCursorZone(Common::Rect zone) {

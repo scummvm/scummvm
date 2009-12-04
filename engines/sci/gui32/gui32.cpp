@@ -31,6 +31,7 @@
 
 #include "sci/engine/state.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -394,7 +395,7 @@ void SciGui32::wait(int16 ticks) {
 	_s->last_wait_time = time;
 
 	ticks *= g_debug_sleeptime_factor;
-	gfxop_sleep(_s->gfx_state, ticks * 1000 / 60);
+	kernel_sleep(_s->_event, ticks * 1000 / 60);
 }
 
 void SciGui32::setPort(uint16 portPtr) {
@@ -945,7 +946,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 		old_menu = -1;
 
 		while (menu_mode) {
-			sci_event_t ev = gfxop_get_event(_s->gfx_state, SCI_EVT_ANY);
+			sciEvent ev = _s->_event->get(SCI_EVT_ANY);
 
 			claimed = false;
 
@@ -1015,7 +1016,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 				break;
 
 			case SCI_EVT_NONE:
-				gfxop_sleep(_s->gfx_state, 2500 / 1000);
+				kernel_sleep(_s->_event, 2500 / 1000);
 				break;
 			}
 
@@ -1609,11 +1610,11 @@ void SciGui32::shakeScreen(uint16 shakeCount, uint16 directions) {
 		                  Common::Point(shake_right, shake_down));
 
 		gfxop_update(_s->gfx_state);
-		gfxop_sleep(_s->gfx_state, 50);
+		kernel_sleep(_s->_event, 50);
 
 		gfxop_draw_pixmap(_s->gfx_state, screen, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		gfxop_update(_s->gfx_state);
-		gfxop_sleep(_s->gfx_state, 50);
+		kernel_sleep(_s->_event, 50);
 	}
 
 	gfx_free_pixmap(screen);
@@ -2301,7 +2302,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 			GRAPH_BLANK_BOX(_s, 319 - i, 10, granularity1, 190, 0);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 1000);
+			kernel_sleep(_s->_event, animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
@@ -2313,7 +2314,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 			GRAPH_UPDATE_BOX(_s, 319 - i, 10, granularity1, 190);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 1000);
+			kernel_sleep(_s->_event, animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2326,7 +2327,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 			GRAPH_BLANK_BOX(_s, 0, 199 - i, 320, granularity2, 0);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, 2 * animation_delay / 1000);
+			kernel_sleep(_s->_event, 2 * animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
@@ -2338,7 +2339,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 			GRAPH_UPDATE_BOX(_s, 0, 199 - i, 320, granularity2);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, 2 * animation_delay / 1000);
+			kernel_sleep(_s->_event, 2 * animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2349,7 +2350,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 0; i < 319 + granularity0; i += granularity0) {
 			GRAPH_BLANK_BOX(_s, i, 10, granularity0, 190, 0);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 2 / 1000);
+			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
 			process_sound_events(_s);
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
@@ -2358,7 +2359,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 319; i >= 1 - granularity0; i -= granularity0) {
 			GRAPH_UPDATE_BOX(_s, i, 10, granularity0, 190);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 2 / 1000);
+			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2369,7 +2370,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 319; i >= 1 - granularity0; i -= granularity0) {
 			GRAPH_BLANK_BOX(_s, i, 10, granularity0, 190, 0);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 2 / 1000);
+			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
 			process_sound_events(_s);
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
@@ -2379,7 +2380,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 0; i < 319 + granularity0; i += granularity0) {
 			GRAPH_UPDATE_BOX(_s, i, 10, granularity0, 190);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 2 / 1000);
+			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2390,7 +2391,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 10; i < 199 + granularity1; i += granularity1) {
 			GRAPH_BLANK_BOX(_s, 0, i, 320, granularity1, 0);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 1000);
+			kernel_sleep(_s->_event, animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
@@ -2400,7 +2401,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 199; i >= 11 - granularity1; i -= granularity1) {
 			GRAPH_UPDATE_BOX(_s, 0, i, 320, granularity1);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 1000);
+			kernel_sleep(_s->_event, animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2411,7 +2412,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 199; i >= 11 - granularity1; i -= granularity1) {
 			GRAPH_BLANK_BOX(_s, 0, i, 320, granularity1, 0);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 1000);
+			kernel_sleep(_s->_event, animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
@@ -2421,7 +2422,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 		for (i = 10; i < 199 + granularity1; i += granularity1) {
 			GRAPH_UPDATE_BOX(_s, 0, i, 320, granularity1);
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, animation_delay / 1000);
+			kernel_sleep(_s->_event, animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2446,7 +2447,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, width, 200 - height_l - height, 320 - 2 * width, height_l, 0);
 			gfxop_update(_s->gfx_state);
 
-			gfxop_sleep(_s->gfx_state, 4 * animation_delay / 1000);
+			kernel_sleep(_s->_event, 4 * animation_delay / 1000);
 			process_sound_events(_s);
 		}
 
@@ -2469,7 +2470,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, width, 200 - height_l - height, 320 - 2 * width, height_l);
 			gfxop_update(_s->gfx_state);
 
-			gfxop_sleep(_s->gfx_state, 4 * animation_delay / 1000);
+			kernel_sleep(_s->_event, 4 * animation_delay / 1000);
 			process_sound_events(_s);
 		}
 
@@ -2494,7 +2495,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, width, 200 - height_l - height, 320 - 2 * width, height_l, 0);
 			gfxop_update(_s->gfx_state);
 
-			gfxop_sleep(_s->gfx_state, 7 * animation_delay / 1000);
+			kernel_sleep(_s->_event, 7 * animation_delay / 1000);
 			process_sound_events(_s);
 		}
 
@@ -2517,7 +2518,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, width, 200 - height_l - height, 320 - 2 * width, height_l);
 			gfxop_update(_s->gfx_state);
 
-			gfxop_sleep(_s->gfx_state, 7 * animation_delay / 1000);
+			kernel_sleep(_s->_event, 7 * animation_delay / 1000);
 			process_sound_events(_s);
 		}
 		break;
@@ -2552,7 +2553,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			}
 
 			if (remaining_checkers & 1) {
-				gfxop_sleep(_s->gfx_state, animation_delay / 4 / 1000);
+				kernel_sleep(_s->_event, animation_delay / 4 / 1000);
 			}
 
 			--remaining_checkers;
@@ -2584,7 +2585,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			}
 
 			if (remaining_checkers & 1) {
-				gfxop_sleep(_s->gfx_state, animation_delay / 4 / 1000);
+				kernel_sleep(_s->_event, animation_delay / 4 / 1000);
 			}
 
 			--remaining_checkers;
@@ -2599,7 +2600,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_draw_pixmap(_s->gfx_state, newscreen, gfx_rect(320 - i, 0, i, 190), Common::Point(0, 10));
 			gfxop_draw_pixmap(_s->gfx_state, _s->old_screen, gfx_rect(0, 0, 320 - i, 190), Common::Point(i, 10));
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, (animation_delay >> 3) / 1000);
+			kernel_sleep(_s->_event, (animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(_s, 0, 10, 320, 190);
 		break;
@@ -2610,7 +2611,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_draw_pixmap(_s->gfx_state, newscreen, gfx_rect(0, 0, i, 190), Common::Point(319 - i, 10));
 			gfxop_draw_pixmap(_s->gfx_state, _s->old_screen, gfx_rect(i, 0, 320 - i, 190), Common::Point(0, 10));
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, (animation_delay >> 3) / 1000);
+			kernel_sleep(_s->_event, (animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(_s, 0, 10, 320, 190);
 		break;
@@ -2621,7 +2622,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_draw_pixmap(_s->gfx_state, newscreen, gfx_rect(0, 190 - i, 320, i), Common::Point(0, 10));
 			gfxop_draw_pixmap(_s->gfx_state, _s->old_screen, gfx_rect(0, 0, 320, 190 - i), Common::Point(0, 10 + i));
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, (animation_delay >> 3) / 1000);
+			kernel_sleep(_s->_event, (animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(_s, 0, 10, 320, 190);
 		break;
@@ -2632,7 +2633,7 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_draw_pixmap(_s->gfx_state, newscreen, gfx_rect(0, 0, 320, i), Common::Point(0, 200 - i));
 			gfxop_draw_pixmap(_s->gfx_state, _s->old_screen, gfx_rect(0, i, 320, 190 - i), Common::Point(0, 10));
 			gfxop_update(_s->gfx_state);
-			gfxop_sleep(_s->gfx_state, (animation_delay >> 3) / 1000);
+			kernel_sleep(_s->_event, (animation_delay >> 3) / 1000);
 		}
 		GRAPH_UPDATE_BOX(_s, 0, 10, 320, 190);
 		break;
@@ -2965,7 +2966,7 @@ void SciGui32::moveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
+	_s->_event->get(SCI_EVT_PEEK);
 }
 
 void SciGui32::graphAdjustPriority(int top, int bottom) {

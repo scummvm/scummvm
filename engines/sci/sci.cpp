@@ -31,6 +31,7 @@
 #include "sci/sci.h"
 #include "sci/debug.h"
 #include "sci/console.h"
+#include "sci/event.h"
 
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -138,6 +139,7 @@ Common::Error SciEngine::run() {
 
 	// We'll set the GUI below
 	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, segMan, NULL, _audio);
+	_gamestate->_event = new SciEvent();
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -196,6 +198,7 @@ Common::Error SciEngine::run() {
 
 	delete _gamestate->_soundCmd;
 	delete _gamestate->_gui;
+	delete _gamestate->_event;
 	delete segMan;
 	delete cursor;
 	delete palette;

@@ -27,6 +27,7 @@
 
 #include "sci/sci.h"
 #include "sci/debug.h"
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
@@ -43,8 +44,6 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 	script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;
 }
-
-void gfxop_sleep(GfxState *gfx, uint32 duration);
 
 /* kGameIsRestarting():
 ** Returns the restarting_flag in acc
@@ -69,7 +68,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	uint32 neededSleep = 30;
 
 	if (duration < neededSleep) {
-		gfxop_sleep(s->gfx_state, neededSleep - duration);
+		kernel_sleep(s->_event, neededSleep - duration);
 		s->_lastAnimateTime = g_system->getMillis();
 	} else {
 		s->_lastAnimateTime = curTime;

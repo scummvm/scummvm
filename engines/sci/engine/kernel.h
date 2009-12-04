@@ -242,7 +242,6 @@ extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
  */
 void process_sound_events(EngineState *s);
 
-
 /******************** Constants ********************/
 
 /* Maximum length of a savegame name (including terminator character) */

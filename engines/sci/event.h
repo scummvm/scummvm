@@ -23,16 +23,18 @@
  *
  */
 
-#ifndef SCI_UINPUT_H
-#define SCI_UINPUT_H
+#ifndef SCI_ENGINE_EVENT_H
+#define SCI_ENGINE_EVENT_H
+
+#include "common/list.h"
 
 namespace Sci {
 
-#if 0
 #define SCI_INPUT_DEFAULT_CLOCKTIME 100000
 #define SCI_INPUT_DEFAULT_REDRAWTIME 30000
 
-struct sci_event_t {
+
+struct sciEvent {
 	short type;
 	short data;
 	short buckybits;
@@ -62,8 +64,6 @@ struct sci_event_t {
 /* The QUIT event may be used to signal an external 'quit' command being
 ** issued to the gfx driver.  */
 #define SCI_EVT_ANY             0x7fff
-
-
 
 /* Keycodes of special keys: */
 #define SCI_K_ESC 27
@@ -111,8 +111,25 @@ struct sci_event_t {
 #define SCI_EVM_NO_FOOLOCK      (~(SCI_EVM_SCRLOCK | SCI_EVM_NUMLOCK | SCI_EVM_CAPSLOCK | SCI_EVM_INSERT))
 #define SCI_EVM_ALL             0xFF
 
-#endif
+class SciEvent {
+public:
+	SciEvent();
+	~SciEvent();
+
+	sciEvent get(unsigned int mask);
+
+private:
+	int controlify (int ch);
+	int altify (int ch);
+	int shiftify (int c);
+	int numlockify (int c);
+	sciEvent getFromScummVM();
+
+	Common::List<sciEvent> _events;
+};
+
+void kernel_sleep(SciEvent *event, uint32 msecs); // is in kernel.cpp
 
 } // End of namespace Sci
 
-#endif // SCI_UINPUT_H
+#endif

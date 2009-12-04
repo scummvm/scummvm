@@ -48,6 +48,7 @@ namespace Common {
 
 namespace Sci {
 
+class SciEvent;
 class Menubar;
 class SciGui;
 class SciGuiCursor;
@@ -142,6 +143,8 @@ public:
 	/* Non-VM information */
 
 	SciGui *_gui; /* Currently active Gui */
+
+	SciEvent *_event; // Event handling
 
 	GfxState *gfx_state; /**< Graphics state and driver */
 

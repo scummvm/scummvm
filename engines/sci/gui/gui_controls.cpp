@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_font.h"

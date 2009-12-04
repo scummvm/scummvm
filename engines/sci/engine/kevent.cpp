@@ -29,6 +29,7 @@
 #include "sci/gfx/operations.h"
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
+#include "sci/event.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"
 
@@ -39,7 +40,7 @@ namespace Sci {
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
-	sci_event_t e;
+	sciEvent curEvent;
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
@@ -59,7 +60,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	oldx = mousePos.x;
 	oldy = mousePos.y;
-	e = gfxop_get_event(s->gfx_state, mask);
+	curEvent = s->_event->get(mask);
 
 	s->parser_event = NULL_REG; // Invalidate parser event
 
@@ -68,17 +69,17 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
-	switch (e.type) {
+	switch (curEvent.type) {
 	case SCI_EVT_QUIT:
 		quit_vm();
 		break;
 
 	case SCI_EVT_KEYBOARD:
-		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
+		if ((curEvent.buckybits & SCI_EVM_LSHIFT) && (curEvent.buckybits & SCI_EVM_RSHIFT) && (curEvent.data == '-')) {
 			printf("Debug mode activated\n");
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
-		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
+		} else if ((curEvent.buckybits & SCI_EVM_CTRL) && (curEvent.data == '`')) {
 			printf("Debug mode activated\n");
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
@@ -86,50 +87,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
 
-			// TODO: Remove this as soon as ScummVM handles Ctrl-Alt-X to us
-			if ((e.buckybits == SCI_EVM_CTRL) && (e.character = 'x'))
-				e.buckybits |= SCI_EVM_ALT;
-
-			if (e.buckybits & SCI_EVM_ALT) {
-				// If Alt is pressed, we need to convert the actual key to a DOS scancode
-				switch (e.character) {
-				case 'a': e.character = 30 << 8; break;
-				case 'b': e.character = 48 << 8; break;
-				case 'c': e.character = 46 << 8; break;
-				case 'd': e.character = 32 << 8; break;
-				case 'e': e.character = 18 << 8; break;
-				case 'f': e.character = 33 << 8; break;
-				case 'g': e.character = 34 << 8; break;
-				case 'h': e.character = 35 << 8; break;
-				case 'i': e.character = 33 << 8; break;
-				case 'j': e.character = 23 << 8; break;
-				case 'k': e.character = 37 << 8; break;
-				case 'l': e.character = 38 << 8; break;
-				case 'm': e.character = 50 << 8; break;
-				case 'n': e.character = 49 << 8; break;
-				case 'o': e.character = 24 << 8; break;
-				case 'p': e.character = 25 << 8; break;
-				case 'q': e.character = 16 << 8; break;
-				case 'r': e.character = 19 << 8; break;
-				case 's': e.character = 31 << 8; break;
-				case 't': e.character = 20 << 8; break;
-				case 'u': e.character = 22 << 8; break;
-				case 'v': e.character = 47 << 8; break;
-				case 'w': e.character = 17 << 8; break;
-				case 'x': e.character = 45 << 8; break;
-				case 'y': e.character = 21 << 8; break;
-				case 'z': e.character = 44 << 8; break;
-				}
-			} else if (e.buckybits & SCI_EVM_CTRL) {
-				// Control is pressed...
-				if ((e.character >= 97) && (e.character <= 121)) {
-					e.character -= 96; // 'a' -> 0x01, etc.
-				}
-			}
-
-			PUT_SEL32V(segMan, obj, message, e.character);
+			PUT_SEL32V(segMan, obj, message, curEvent.character);
 			// We only care about the translated character
-			PUT_SEL32V(segMan, obj, modifiers, e.buckybits&modifier_mask);
+			PUT_SEL32V(segMan, obj, modifiers, curEvent.buckybits&modifier_mask);
 		}
 		break;
 
@@ -137,15 +97,15 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	case SCI_EVT_MOUSE_PRESS:
 
 		// track left buttton clicks, if requested
-		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && g_debug_track_mouse_clicks) {
+		if (curEvent.type == SCI_EVT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
 			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
 						mousePos.x, mousePos.y);
 		}
 
-		if (mask & e.type) {
+		if (mask & curEvent.type) {
 			int extra_bits = 0;
 
-			switch (e.data) {
+			switch (curEvent.data) {
 			case 2:
 				extra_bits = SCI_EVM_LSHIFT | SCI_EVM_RSHIFT;
 				break;
@@ -155,9 +115,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 				break;
 			}
 
-			PUT_SEL32V(segMan, obj, type, e.type);
+			PUT_SEL32V(segMan, obj, type, curEvent.type);
 			PUT_SEL32V(segMan, obj, message, 0);
-			PUT_SEL32V(segMan, obj, modifiers, (e.buckybits | extra_bits)&modifier_mask);
+			PUT_SEL32V(segMan, obj, modifiers, (curEvent.buckybits | extra_bits)&modifier_mask);
 			s->r_acc = make_reg(0, 1);
 		}
 		break;
@@ -172,7 +132,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// A SCI event occured, and we have been asked to stop, so open the debug console
 		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 		con->DebugPrintf("SCI event occured: ");
-		switch (e.type) {
+		switch (curEvent.type) {
 		case SCI_EVT_QUIT:
 			con->DebugPrintf("quit event\n");
 			break;
@@ -184,7 +144,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			con->DebugPrintf("mouse click event\n");
 			break;
 		default:
-			con->DebugPrintf("unknown or no event (event type %d)\n", e.type);
+			con->DebugPrintf("unknown or no event (event type %d)\n", curEvent.type);
 		}
 
 		con->attach();

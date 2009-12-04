@@ -121,8 +121,6 @@ struct GfxState {
 
 	DirtyRectList _dirtyRects; /**< Dirty rectangles */
 #endif
-
-	Common::List<sci_event_t> _events;
 };
 
 
@@ -527,28 +525,6 @@ int _gfxop_clip(rect_t *rect, rect_t clipzone);
 
 /** @name Pointer and IO ops */
 /** @{ */
-
-/**
- * Suspends program execution for the specified amount of milliseconds.
- *
- * The mouse pointer will be redrawn continually, if applicable
- *
- * @param[in] state	The state affected
- * @param[in] msecs	The amount of milliseconds to wait
- */
-void gfxop_sleep(GfxState *state, uint32 msecs);
-
-/**
- * Retrieves the next input event from the driver.
- *
- * @param[in] state	The affected state
- * @param[in] mask	The event mask to poll from (see uinput.h)
- * @return			The next event in the driver's event queue, or a NONE event
- * 					if no event matching the mask was found.
- */
-sci_event_t gfxop_get_event(GfxState *state, unsigned int mask);
-/** @} */
-
 
 } // End of namespace Sci
 

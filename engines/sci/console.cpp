@@ -28,6 +28,7 @@
 #include "sci/sci.h"
 #include "sci/console.h"
 #include "sci/debug.h"
+#include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/vocabulary.h"
 #include "sci/engine/savegame.h"
@@ -789,7 +790,7 @@ bool Console::cmdRedrawScreen(int argc, const char **argv) {
 	_vm->_gamestate->visual->draw(Common::Point(0, 0));
 	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(_vm->_gamestate->gfx_state);
-	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
+	kernel_sleep(_vm->_gamestate->_event, 0);
 #endif
 	return false;
 }
@@ -1018,7 +1019,7 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 	gfxop_new_pic(_vm->_gamestate->gfx_state, atoi(argv[1]), flags, default_palette);
 	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(_vm->_gamestate->gfx_state);
-	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
+	kernel_sleep(_vm->_gamestate->_event, 0);
 #endif
 
 	return false;
@@ -1190,7 +1191,7 @@ bool Console::cmdPropagateZone(int argc, const char **argv) {
 	else
 		gfxop_update_box(_vm->_gamestate->gfx_state, rect);
 	gfxop_update(_vm->_gamestate->gfx_state);
-	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
+	kernel_sleep(_vm->_gamestate->_event, 0);
 #endif
 
 	return false;

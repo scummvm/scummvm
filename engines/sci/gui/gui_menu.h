@@ -78,7 +78,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
 class SciGuiMenu {
 public:
-	SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor);
+	SciGuiMenu(SciEvent *event, SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor);
 	~SciGuiMenu();
 
 	void init(GfxState *gfxstate);
@@ -99,6 +99,7 @@ private:
 	GuiMenuItemEntry *interactiveWithMouse();
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
+	SciEvent *_event;
 	GfxState *_gfxstate;
 	SegManager *_segMan;
 	SciGuiGfx *_gfx;

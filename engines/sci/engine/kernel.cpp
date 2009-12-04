@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
+#include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel_types.h"
@@ -669,6 +670,27 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 		return false; // Too many arguments
 	else
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
+}
+
+void kernel_sleep(SciEvent *event, uint32 msecs ) {
+	uint32 time;
+	const uint32 wakeup_time = g_system->getMillis() + msecs;
+
+	while (true) {
+		// let backend process events and update the screen
+		event->get(SCI_EVT_PEEK);
+		// TODO: we need to call SciGuiCursor::refreshPosition() before each screen update to limit the mouse cursor position
+		g_system->updateScreen();
+		time = g_system->getMillis();
+		if (time + 10 < wakeup_time) {
+			g_system->delayMillis(10);
+		} else {
+			if (time < wakeup_time)
+				g_system->delayMillis(wakeup_time - time);
+			break;
+		}
+
+	}
 }
 
 void Kernel::setDefaultKernelNames() {

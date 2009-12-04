@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/gfx_state_internal.h"
@@ -41,8 +42,8 @@
 
 namespace Sci {
 
-SciGuiMenu::SciGuiMenu(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor)
-	: _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
+SciGuiMenu::SciGuiMenu(SciEvent *event, SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor)
+	: _event(event), _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
 	// We actually set active item in here and remember last selection of the user
@@ -553,7 +554,7 @@ void SciGuiMenu::invertMenuSelection(uint16 itemId) {
 }
 
 GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
-	sci_event_t curEvent;
+	sciEvent curEvent;
 	uint16 newMenuId = _curMenuId;
 	uint16 newItemId = _curItemId;
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
@@ -575,7 +576,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	_gfx->BitsShow(_menuRect);
 
 	while (true) {
-		curEvent = gfxop_get_event(_gfxstate, SCI_EVT_ANY);
+		curEvent = _event->get(SCI_EVT_ANY);
 
 		switch (curEvent.type) {
 		case SCI_EVT_KEYBOARD:
@@ -633,7 +634,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 			break;
 
 		case SCI_EVT_NONE:
-			gfxop_sleep(_gfxstate, 2500 / 1000);
+			kernel_sleep(_event, 2500 / 1000);
 			break;
 		}
 	}
