@@ -296,12 +296,12 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				// Digital music
 				ResourceData *resData = _digitalMusicContext->getResourceData(resourceId - 9);
 				Common::File *musicFile = _digitalMusicContext->getFile(resData);
-				int offs = (_digitalMusicContext->isCompressed) ? 9 : 0;
+				int offs = (_digitalMusicContext->isCompressed()) ? 9 : 0;
 
 				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile, 
 							(uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
 
-				if (!_digitalMusicContext->isCompressed) {
+				if (!_digitalMusicContext->isCompressed()) {
 					byte musicFlags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_STEREO | 
 										Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
 					if (flags == MUSIC_LOOP)

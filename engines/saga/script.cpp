@@ -109,7 +109,7 @@ SAGA1Script::SAGA1Script(SagaEngine *vm) : Script(vm) {
 	}
 
 	// Convert LUT resource to logical LUT
-	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, resourceContext->isBigEndian);
+	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, resourceContext->isBigEndian());
 	for (i = 0; i < _modulesCount; i++) {
 		memset(&_modules[i], 0, sizeof(ModuleData));
 
@@ -1127,7 +1127,7 @@ void Script::loadModuleBase(ModuleData &module, const byte *resourcePointer, siz
 
 	memcpy(module.moduleBase, resourcePointer, resourceLength);
 
-	MemoryReadStreamEndian scriptS(module.moduleBase, module.moduleBaseSize, _scriptContext->isBigEndian);
+	MemoryReadStreamEndian scriptS(module.moduleBase, module.moduleBaseSize, _scriptContext->isBigEndian());
 
 	module.entryPointsCount = scriptS.readUint16();
 	scriptS.readUint16(); //skip
@@ -1177,7 +1177,7 @@ void Script::loadVoiceLUT(VoiceLUT &voiceLUT, const byte *resourcePointer, size_
 		error("Script::loadVoiceLUT() not enough memory");
 	}
 
-	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, _scriptContext->isBigEndian);
+	MemoryReadStreamEndian scriptS(resourcePointer, resourceLength, _scriptContext->isBigEndian());
 
 	for (i = 0; i < voiceLUT.voicesCount; i++) {
 		voiceLUT.voices[i] = scriptS.readUint16();

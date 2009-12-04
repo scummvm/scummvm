@@ -352,7 +352,7 @@ void Actor::loadFrameList(int frameListResourceId, ActorFrameSequence *&framesPo
 		memoryError("Actor::loadFrameList");
 	}
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _actorContext->isBigEndian());
 
 	for (int i = 0; i < framesCount; i++) {
 		debug(9, "frameType %d", i);

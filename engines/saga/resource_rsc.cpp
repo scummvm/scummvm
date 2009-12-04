@@ -52,6 +52,12 @@ struct MacResource {
 	byte attr;
 	int32 dataOffset;
 	byte name[255];
+	MacResource() : id(0), nameOffset(0), attr(0), dataOffset(0) {
+		name[0] = 0;
+	}
+};
+
+class MacResourceArray : public Common::Array<MacResource> {
 };
 
 struct MacResType {
@@ -59,10 +65,134 @@ struct MacResType {
 	int16 items;
 	int16 maxItemId;
 	int16 offset;
-	MacResource *resources;
+	MacResourceArray resources;
+	MacResType() : id(0), items(0), maxItemId(0), offset(0) {
+	}
+};
+
+class MacResTypeArray : public Common::Array<MacResType> {
 };
 
 #define ID_MIDI     MKID_BE('Midi')
+
+bool ResourceContext_RSC::loadMac() {
+	int32 macDataSize, macDataSizePad;
+	int32 macResSize, macResSizePad;
+	int32 macResOffset;
+
+	uint32 macMapLength;
+	uint32 macDataLength;
+	uint32 macMapOffset;
+	uint32 macDataOffset;
+
+	MacResMap macResMap;
+	MacResTypeArray macResTypes;
+
+	byte macNameLen;
+	bool notSagaContext = false;
+
+	if (_fileSize < RSC_MIN_FILESIZE + MAC_BINARY_HEADER_SIZE) {
+		return false;
+	}
+
+	if (_file.readByte() != 0) {
+		return false;
+	}
+	_file.readByte(); //MAX Name Len
+	_file.seek(74);
+	if (_file.readByte() != 0) {
+		return false;
+	}
+	_file.seek(82);
+	if (_file.readByte() != 0) {
+		return false;
+	}
+
+	macDataSize = _file.readSint32BE();
+	macResSize = _file.readSint32BE();
+	macDataSizePad = (((macDataSize + 127) >> 7) << 7);
+	macResSizePad = (((macResSize + 127) >> 7) << 7);
+
+	macResOffset = MAC_BINARY_HEADER_SIZE + macDataSizePad;
+	_file.seek(macResOffset);
+
+	macDataOffset = _file.readUint32BE() + macResOffset;
+	macMapOffset = _file.readUint32BE() + macResOffset;
+	macDataLength = _file.readUint32BE();
+	macMapLength = _file.readUint32BE();
+
+	if (macDataOffset >= (uint)_fileSize || macMapOffset >= (uint)_fileSize ||
+		macDataLength + macMapLength > (uint)_fileSize) {
+			return false;
+	}
+
+	_file.seek(macMapOffset + 22);
+
+	macResMap.resAttr = _file.readUint16BE();
+	macResMap.typeOffset = _file.readUint16BE();
+	macResMap.nameOffset = _file.readUint16BE();
+	macResMap.numTypes = _file.readUint16BE();
+	macResMap.numTypes++;
+
+	_file.seek(macMapOffset + macResMap.typeOffset + 2);
+
+	macResTypes.resize(macResMap.numTypes);
+
+	for (MacResTypeArray::iterator k = macResTypes.begin(); k != macResTypes.end(); ++k) {
+		k->id = _file.readUint32BE();
+		k->items = _file.readUint16BE();
+		k->offset = _file.readUint16BE();
+		k->items++;
+		k->resources.resize(k->items);
+	}
+
+	for (MacResTypeArray::iterator k = macResTypes.begin(); k != macResTypes.end(); ++k) {
+		_file.seek(k->offset + macMapOffset + macResMap.typeOffset);
+
+		for (MacResourceArray::iterator j = k->resources.begin(); j != k->resources.end(); ++j) {
+			j->id = _file.readUint16BE();
+			j->nameOffset = _file.readUint16BE();
+			j->dataOffset = _file.readUint32BE();
+			macResSize = _file.readUint32BE();
+
+			j->attr = j->dataOffset >> 24;
+			j->dataOffset &= 0xFFFFFF;
+			if (j->id > k->maxItemId) {
+				k->maxItemId = j->id;
+			}
+		}
+
+		for (MacResourceArray::iterator j = k->resources.begin(); j != k->resources.end(); ++j) {
+			if (j->nameOffset != -1) {
+				_file.seek(j->nameOffset + macMapOffset + macResMap.nameOffset);
+				macNameLen = _file.readByte();
+				_file.read(j->name, macNameLen);
+			}
+		}
+	}
+
+	//
+	for (MacResTypeArray::iterator k = macResTypes.begin(); k != macResTypes.end(); ++k) {
+		//getting offsets & sizes of midi
+		if (((_fileType & GAME_MUSICFILE_GM) > 0) && (k->id == ID_MIDI)) {
+
+			_table.resize(k->maxItemId + 1);
+			for (MacResourceArray::iterator j = k->resources.begin(); j != k->resources.end(); ++j) {
+				_file.seek(macDataOffset + j->dataOffset);
+				_table[j->id].size = _file.readUint32BE();
+				_table[j->id].offset = _file.pos();
+			}
+			notSagaContext = true;
+			break;
+		}
+	}
+
+	if ((!notSagaContext) && (!loadRes(MAC_BINARY_HEADER_SIZE, macDataSize))) {
+		return false;
+	}
+
+	return true;
+}
 
 uint32 Resource_RSC::convertResourceId(uint32 resourceId) {
 
@@ -78,135 +208,5 @@ uint32 Resource_RSC::convertResourceId(uint32 resourceId) {
 
 	return resourceId;
 }
-
-bool Resource_RSC::loadMacContext(ResourceContext *context) {
-	int32 macDataSize, macDataSizePad;
-	int32 macResSize, macResSizePad;
-	int32 macResOffset;
-
-	uint32 macMapLength;
-	uint32 macDataLength;
-	uint32 macMapOffset;
-	uint32 macDataOffset;
-
-	MacResMap macResMap;
-	MacResType *macResTypes;
-
-	MacResType *macResType;
-	MacResource *macResource;
-	int i, j;
-	byte macNameLen;
-	bool notSagaContext = false;
-
-	if (context->fileSize < RSC_MIN_FILESIZE + MAC_BINARY_HEADER_SIZE) {
-		return false;
-	}
-
-	if (context->file->readByte() != 0) {
-		return false;
-	}
-	context->file->readByte(); //MAX Name Len
-	context->file->seek(74);
-	if (context->file->readByte() != 0) {
-		return false;
-	}
-	context->file->seek(82);
-	if (context->file->readByte() != 0) {
-		return false;
-	}
-
-	macDataSize = context->file->readSint32BE();
-	macResSize = context->file->readSint32BE();
-	macDataSizePad = (((macDataSize + 127) >> 7) << 7);
-	macResSizePad = (((macResSize + 127) >> 7) << 7);
-
-	macResOffset = MAC_BINARY_HEADER_SIZE + macDataSizePad;
-	context->file->seek(macResOffset);
-
-	macDataOffset = context->file->readUint32BE() + macResOffset;
-	macMapOffset = context->file->readUint32BE() + macResOffset;
-	macDataLength = context->file->readUint32BE();
-	macMapLength = context->file->readUint32BE();
-
-	if (macDataOffset >= (uint)context->fileSize || macMapOffset >= (uint)context->fileSize ||
-		macDataLength + macMapLength > (uint)context->fileSize) {
-			return false;
-	}
-
-	context->file->seek(macMapOffset + 22);
-
-	macResMap.resAttr = context->file->readUint16BE();
-	macResMap.typeOffset = context->file->readUint16BE();
-	macResMap.nameOffset = context->file->readUint16BE();
-	macResMap.numTypes = context->file->readUint16BE();
-	macResMap.numTypes++;
-
-	context->file->seek(macMapOffset + macResMap.typeOffset + 2);
-
-	macResTypes = (MacResType *)calloc(macResMap.numTypes, sizeof(*macResTypes));
-
-	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
-		macResType->id = context->file->readUint32BE();
-		macResType->items = context->file->readUint16BE();
-		macResType->offset = context->file->readUint16BE();
-		macResType->items++;
-		macResType->resources = (MacResource*)calloc(macResType->items, sizeof(*macResType->resources));
-	}
-
-	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
-		context->file->seek(macResType->offset + macMapOffset + macResMap.typeOffset);
-
-		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
-			macResource->id = context->file->readUint16BE();
-			macResource->nameOffset = context->file->readUint16BE();
-			macResource->dataOffset = context->file->readUint32BE();
-			macResSize = context->file->readUint32BE();
-
-			macResource->attr = macResource->dataOffset >> 24;
-			macResource->dataOffset &= 0xFFFFFF;
-			if (macResource->id > macResType->maxItemId) {
-				macResType->maxItemId = macResource->id;
-			}
-		}
-
-		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
-			if (macResource->nameOffset != -1) {
-				context->file->seek(macResource->nameOffset + macMapOffset + macResMap.nameOffset);
-				macNameLen = context->file->readByte();
-				context->file->read(macResource->name, macNameLen);
-			}
-		}
-	}
-
-//
-	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
-		//getting offsets & sizes of midi
-		if (((context->fileType & GAME_MUSICFILE_GM) > 0) && (macResType->id == ID_MIDI)) {
-
-			context->count = macResType->maxItemId + 1;
-			context->table = (ResourceData *)calloc(context->count, sizeof(*context->table));
-			for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
-				context->file->seek(macDataOffset + macResource->dataOffset);
-				context->table[macResource->id].size = context->file->readUint32BE();
-				context->table[macResource->id].offset = context->file->pos();
-			}
-			notSagaContext = true;
-			break;
-		}
-	}
-
-//free
-	for (i = 0; i < macResMap.numTypes; i++) {
-		free(macResTypes[i].resources);
-	}
-	free(macResTypes);
-
-	if ((!notSagaContext) && (!loadResContext(context, MAC_BINARY_HEADER_SIZE, macDataSize))) {
-		return false;
-	}
-
-	return true;
-}
-
 
 } // End of namespace Saga

@@ -62,53 +62,111 @@ struct ResourceData {
 	size_t size;
 	PatchData *patchData;
 
-	bool isExternal() { return ((offset & (1L<<31)) != 0L); }	// SAGA2
+	ResourceData() :
+		id(0), offset(0), size(0), patchData(NULL) {
+	}
+
+	~ResourceData() {
+		if (patchData) {
+			delete patchData;
+			patchData = NULL;
+		}
+	}
+
+	bool isExternal() {	// SAGA2
+		return ((offset & (1L<<31)) != 0L);
+	}
 };
 
-struct ResourceContext {
-	const char *fileName;
-	uint16 fileType;
-	Common::File *file;
-	int32 fileSize;
-	int serial;			// IHNM speech files
+class ResourceDataArray : public Common::Array<ResourceData> {
+};
 
-	bool isCompressed;
-	bool isBigEndian;
-	ResourceData *table;
-	size_t count;
-	ResourceData *categories;		// SAGA2
+class ResourceContext {
+friend class Resource;
+protected:
+	const char *_fileName;
+	uint16 _fileType;
+	bool _isCompressed;
+	int _serial;					// IHNM speech files
 
-	Common::File *getFile(ResourceData *resourceData) const {
-		if (resourceData->patchData != NULL) {
-			if (!resourceData->patchData->_patchFile->isOpen())
-				resourceData->patchData->_patchFile->open(resourceData->patchData->_patchDescription->fileName);
-			return resourceData->patchData->_patchFile;
+	bool _isBigEndian;
+	ResourceDataArray _table;
+	Common::File _file;
+	int32 _fileSize;
+
+	bool load(SagaEngine *_vm, Resource *resource);
+	bool loadResV1(uint32 contextOffset, uint32 contextSize);
+
+	virtual bool loadMac() = 0;
+	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) = 0;
+public:
+
+	ResourceContext():
+		_fileName(NULL), _fileType(0), _isCompressed(false), _serial(0),
+		_isBigEndian(false),
+		_fileSize(0) {
+	}
+
+	bool isCompressed() const {
+		return _isCompressed;
+	}
+
+	uint16 fileType() const {
+		return _fileType;
+	}
+
+	int serial() const {
+		return _serial;
+	}
+
+	bool isBigEndian() const {
+		return _isBigEndian;
+	}
+
+	const char * fileName() const {
+		return _fileName;
+	}
+
+	Common::File *getFile(ResourceData *resourceData) {
+		Common::File *file;
+		const char * fn;
+		if (resourceData && resourceData->patchData != NULL) {
+			file = resourceData->patchData->_patchFile;
+			fn = resourceData->patchData->_patchDescription->fileName;
 		} else {
-			return file;
+			file = &_file;
+			fn = _fileName;
 		}
+		if (!file->isOpen())
+			file->open(fn);
+		return file;
 	}
 
 	bool validResourceId(uint32 resourceId) const {
-		return (resourceId < count);
+		return (resourceId < _table.size());
 	}
 
-	ResourceData *getResourceData(uint32 resourceId) const {
-		if (resourceId >= count) {
+	ResourceData *getResourceData(uint32 resourceId) {
+		if (resourceId >= _table.size()) {
 			error("ResourceContext::getResourceData() wrong resourceId %d", resourceId);
 		}
-		return &table[resourceId];
+		return &_table[resourceId];
 	}
 
 	// SAGA 2
 	int32 getEntryNum(uint32 id) {
-		for (int32 i = 0; i < (int32)count; i++) {
-			if (table[i].id == id) {
-				return i;
+		int32 num = 0;
+		for (ResourceDataArray::const_iterator i = _table.begin(); i != _table.end(); ++i) {
+			if (i->id == id) {
+				return num;
 			}
+			num++;
 		}
 		return -1;
 	}
+};
 
+class ResourceContextList : public Common::List<ResourceContext*> {
 };
 
 struct MetaResource {
@@ -145,32 +203,29 @@ public:
 	virtual uint32 convertResourceId(uint32 resourceId) = 0;
 	virtual void loadGlobalResources(int chapter, int actorsEntrance) = 0;
 
-	ResourceContext *getContext(uint16 fileType, int serial = 0) {
-		for (int i = 0; i < _contextsCount; i++) {
-			if ((_contexts[i].fileType & fileType) && _contexts[i].serial == serial) {
-				return &_contexts[i];
-			}
-		}
-		return NULL;
-	}
-
+	ResourceContext *getContext(uint16 fileType, int serial = 0);
 protected:
 	SagaEngine *_vm;
-	ResourceContext *_contexts;
-	int _contextsCount;
+	ResourceContextList _contexts;
 	char _voicesFileName[8][256];
 	char _musicFileName[256];
 	char _soundFileName[256];
 
-	bool loadContext(ResourceContext *context);
-	virtual bool loadMacContext(ResourceContext *context) = 0;
-	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) = 0;
-	bool loadResContext_v1(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
+	void addContext(const char *fileName, uint16 fileType, bool isCompressed = false, int serial = 0);
+	virtual ResourceContext *createContext() = 0;
 public:
 	virtual MetaResource* getMetaResource() = 0;
 };
 
 // ITE
+class ResourceContext_RSC: public ResourceContext {
+protected:
+	virtual bool loadMac();
+	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+		return loadResV1(contextOffset, contextSize);
+	}
+};
+
 class Resource_RSC : public Resource {
 public:
 	Resource_RSC(SagaEngine *vm) : Resource(vm) {}
@@ -180,32 +235,70 @@ public:
 		MetaResource *dummy = 0;
 		return dummy;
 	}
-private:
-	virtual bool loadMacContext(ResourceContext *context);
-	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
-		return loadResContext_v1(context, contextOffset, contextSize);
+protected:
+	virtual ResourceContext *createContext() {
+		return new ResourceContext_RSC();
 	}
 };
 
 #ifdef ENABLE_IHNM
 // IHNM
+class ResourceContext_RES: public ResourceContext {
+protected:
+	virtual bool loadMac() {
+		return false;
+	}
+	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+		return loadResV1(0, contextSize);
+	}
+};
+
+//TODO: move load routines from sndres
+class VoiceResourceContext_RES: public ResourceContext {
+protected:
+	virtual bool loadMac() {
+		return false;
+	}
+	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+		return false;
+	}
+public:
+	VoiceResourceContext_RES() : ResourceContext() {
+		_fileType = GAME_VOICEFILE;
+		_isBigEndian = true;
+	}
+};
+
 class Resource_RES : public Resource {
 public:
 	Resource_RES(SagaEngine *vm) : Resource(vm) {}
 	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
 	virtual void loadGlobalResources(int chapter, int actorsEntrance);
 	virtual MetaResource* getMetaResource() { return &_metaResource; };
-private:
-	virtual bool loadMacContext(ResourceContext *context) { return false; }
-	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
-		return loadResContext_v1(context, 0, contextSize);
+protected:
+	virtual ResourceContext *createContext() {
+		return new ResourceContext_RES();
 	}
+private:
 	MetaResource _metaResource;
 };
 #endif
 
 #ifdef ENABLE_SAGA2
 // DINO, FTA2
+class ResourceContext_HRS: public ResourceContext {
+protected:
+	ResourceDataArray _categories;
+
+	virtual bool loadMac() {
+		return false;
+	}
+	virtual bool loadRes(uint32 contextOffset, uint32 contextSize) {
+		return loadResV2(contextSize);
+	}
+	bool loadResV2(uint32 contextSize);
+};
+
 class Resource_HRS : public Resource {
 public:
 	Resource_HRS(SagaEngine *vm) : Resource(vm) {}
@@ -215,12 +308,10 @@ public:
 		MetaResource *dummy = 0;
 		return dummy;
 	}
-private:
-	virtual bool loadMacContext(ResourceContext *context) { return false; }
-	virtual bool loadResContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize) {
-		return loadResContext_v2(context, contextSize);
+protected:
+	virtual ResourceContext *createContext() {
+		return new ResourceContext_HRS();
 	}
-	bool loadResContext_v2(ResourceContext *context, uint32 contextSize);
 };
 #endif
 

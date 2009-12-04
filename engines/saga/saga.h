@@ -79,7 +79,7 @@ class PalAnim;
 class Puzzle;
 class Resource;
 
-struct ResourceContext;
+class ResourceContext;
 struct StringList;
 
 using Common::MemoryReadStream;

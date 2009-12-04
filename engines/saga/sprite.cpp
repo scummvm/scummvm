@@ -106,7 +106,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		return;
 	}
 
-	MemoryReadStreamEndian readS(spriteListData, spriteListLength, _spriteContext->isBigEndian);
+	MemoryReadStreamEndian readS(spriteListData, spriteListLength, _spriteContext->isBigEndian());
 
 	spriteCount = readS.readUint16();
 
@@ -142,7 +142,7 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 		spritePointer += offset;
 
 		if (bigHeader) {
-			MemoryReadStreamEndian readS2(spritePointer, 8, _spriteContext->isBigEndian);
+			MemoryReadStreamEndian readS2(spritePointer, 8, _spriteContext->isBigEndian());
 
 			spriteInfo->xAlign = readS2.readSint16();
 			spriteInfo->yAlign = readS2.readSint16();

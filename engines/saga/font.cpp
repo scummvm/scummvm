@@ -90,7 +90,7 @@ void Font::loadFont(uint32 fontResourceId) {
 		error("Font::loadFont() Invalid font length (%i < %i)", (int)fontResourceLength, FONT_DESCSIZE);
 	}
 
-	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, fontContext->isBigEndian);
+	MemoryReadStreamEndian readS(fontResourcePointer, fontResourceLength, fontContext->isBigEndian());
 
 	// Create new font structure
 	font = (FontData *)malloc(sizeof(*font));

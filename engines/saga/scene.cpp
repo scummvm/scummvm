@@ -168,7 +168,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 		memoryError("Scene::Scene()");
 	}
 
-	MemoryReadStreamEndian readS(sceneLUTPointer, sceneLUTLength, _sceneContext->isBigEndian);
+	MemoryReadStreamEndian readS(sceneLUTPointer, sceneLUTLength, _sceneContext->isBigEndian());
 
 	for (i = 0; i < _sceneCount; i++) {
 		_sceneLUT[i] = readS.readUint16();
@@ -929,7 +929,7 @@ void Scene::loadSceneDescriptor(uint32 resourceId) {
 	_vm->_resource->loadResource(_sceneContext, resourceId, sceneDescriptorData, sceneDescriptorDataLength);
 
 	if (sceneDescriptorDataLength == 16) {
-		MemoryReadStreamEndian readS(sceneDescriptorData, sceneDescriptorDataLength, _sceneContext->isBigEndian);
+		MemoryReadStreamEndian readS(sceneDescriptorData, sceneDescriptorDataLength, _sceneContext->isBigEndian());
 
 		_sceneDescription.flags = readS.readSint16();
 		_sceneDescription.resourceListResourceId = readS.readSint16();
@@ -960,7 +960,7 @@ void Scene::loadSceneResourceList(uint32 resourceId) {
 	_vm->_resource->loadResource(_sceneContext, resourceId, resourceListData, resourceListDataLength);
 
 	if ((resourceListDataLength % SAGA_RESLIST_ENTRY_LEN) == 0) {
-		MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian);
+		MemoryReadStreamEndian readS(resourceListData, resourceListDataLength, _sceneContext->isBigEndian());
 
 		// Allocate memory for scene resource list
 		_resourceListCount = resourceListDataLength / SAGA_RESLIST_ENTRY_LEN;
@@ -1302,7 +1302,7 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 
 	_entryList.entryListCount = resourceLength / 8;
 
-	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _sceneContext->isBigEndian);
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _sceneContext->isBigEndian());
 
 
 	if (_entryList.entryList)
