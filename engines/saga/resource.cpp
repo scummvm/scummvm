@@ -300,7 +300,7 @@ bool Resource::createContexts() {
 			!scumm_stricmp(curSoundFile->fileName, "voicess.cmp")) {
 				// IHNM has multiple voice files
 				for (size_t i = 1; i <= 6; i++) { // voices1-voices6
-					sprintf(_voicesFileName[i], "voices%i.%s", i, curSoundFile->isCompressed ? "cmp" : "res");
+					sprintf(_voicesFileName[i], "voices%i.%s", (uint)i, curSoundFile->isCompressed ? "cmp" : "res");
 					if (i == 4) {
 						// The German and French versions of IHNM don't have Nimdok's chapter,
 						// therefore the voices file for that chapter is missing
