@@ -997,59 +997,34 @@ void Scene::updateAmbientSounds() {
 				} else {
 					panning = 0;
 				}
-
 				if (snd->field_0 == 0) {
-					// FIXME: Applying the minus operator to an unsigned type results
-					// in an unsigned type again. Casting gameFlag to int32 for now
-					volume = -(int32)(snd->field_C ^ 2);
+					volume = -(snd->field_C ^ 2);
 				} else {
-					; // TODO calculate volume increase
+					volume = calculateVolumeAdjustment(snd, getActor(0));
+					volume += Config.ambientVolume;
 				}
-				/*
-				if (LOBYTE(snd->flags) & 2) {
-					if (rand() % 10000 < 10) {
+				if (loflag & 2) {
+					int tmpVol = volume;
+					if (rand() % 10000 < 10)
 						if (snd->field_0) {
-							_vm->sound()->playSound(_resPack, snd->resId, false, Config.sfxVolume + volume, panning);
+							_vm->sound()->playSound(snd->resId, false, volume, panning, false);
 						} else {
-							v15 = rand() % 500;
-							v11 = v15 * ((((rand() % 100 >= 50) - 1) & 2) - 1) + volume;
-							v10 = v11;
-							if (v11 <= -10000)
-								v10 = -10000;
-							if (v10 >= 0)
-								v11 = 0;
+							// FIXME will this even work?
+							tmpVol += (rand() % 500) * (((rand() % 100 >= 50) - 1) & 2) - 1;
+							if (tmpVol <= -10000)
+								volume = -10000;
+							if (volume >= 0)
+								tmpVol = 0;
 							else
-								if (v11 <= -10000)
-									v11 = -10000;
-							v16 = rand();
-							_vm->sound()->playSound(_resPack, snd->resId, false, v11, v16 % 20001 - 10000);
+								if (tmpVol <= -10000)
+									tmpVol = -10000;
+							_vm->sound()->playSound(snd->resId, 0, tmpVol, rand() % 20001 - 10000);
 						}
-					} else {
-						if (LOBYTE(snd->flags) & 4) {
-
-							  if ( (unsigned int)*ambientPanningArray < getTickCount() )
-							{
-							  if ( v1->field_14 >= 0 )
-							    v12 = 60000 * v1->field_14 + getTickCount();
-							  else
-							    v12 = getTickCount() - 1000 * v1->field_14;
-							  *ambientPanningArray = v12;
-							  playSound(v7, 0, v9, panning);
-							}
-
-						} else {
-							if (LOBYTE(snd->flags) & 8) {
-
-								if ( !*(ambientPanningArray - 15) )
-								{
-								 playSound(v7, 0, v9, panning);
-								 *(ambientPanningArray - 15) = 1;
-								}
-
-							}
-						}
+				} else {
+					if (loflag & 4) {
+						// TODO panning array stuff
 					}
-				} */
+				}
 			}
 		} else {
 			if (_vm->sound()->isPlaying(snd->resId))
