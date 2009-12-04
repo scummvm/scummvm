@@ -53,21 +53,8 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 	char *start = strstr(buffer, movieToken);
 	char *line = 0;
 
-	// We hardcode all the text resources here. It makes the resulting code easier,
-	// otherwise we'll have to read the text resources in the same obscure way they're stored
-	// in vids.cap
-	// -1 means that the video has no subtitles, -2 that it doesn't exist
-	// The negative values aren't used in the code, they just make the table easier to
-	// understand.
-	int32 textRes[49] = {	  -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//	0 - 9
-	                      -1,	-2, 1140, 1141,	  -2,	-1, 1142,	-1,	  -2, 1155,	// 10 - 19
-	                      1157, 1159, 1162, 1164,	  -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
-	                      -2,	-2,	  -2, 1207, 1213, 1217, 1223, 1227,	  -2, 1228,	// 30 - 39
-	                      -2, 1244, 1247, 1250, 1256, 1120, 1127,	-1,	  -1
-	                  };		// 40 - 48
-
 	if (start) {
-		start += 20;	// skip token, newline and "CAPTION = "
+		start += 20; // skip token, newline and "CAPTION = "
 
 		int32 count = strcspn(start, "\r\n");
 		line = new char[count + 1];
@@ -83,7 +70,7 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 			tok = strtok(NULL, " ");
 			newSubtitle.frameEnd = atoi(tok);
 			tok = strtok(NULL, " ");
-			newSubtitle.textRes = atoi(tok) + textRes[videoNumber];
+			newSubtitle.textRes = atoi(tok) + video_subtitle_resourceIds[videoNumber];
 			tok = strtok(NULL, " ");
 
 			_subtitles.push_back(newSubtitle);
@@ -111,7 +98,6 @@ void VideoPlayer::performPostProcessing(byte *screen) {
 			break;
 		}
 	}
-
 }
 
 Video::Video(Audio::Mixer *mixer) {
@@ -121,8 +107,8 @@ Video::Video(Audio::Mixer *mixer) {
 	stopEvent.kbd  = Common::KEYCODE_ESCAPE;
 	_stopEvents.push_back(stopEvent);
 
-	_smkDecoder	 = new Graphics::SmackerDecoder(mixer);
-	_player		 = new VideoPlayer(_smkDecoder);
+	_smkDecoder = new Graphics::SmackerDecoder(mixer);
+	_player     = new VideoPlayer(_smkDecoder);
 }
 
 Video::~Video() {
@@ -180,9 +166,9 @@ void VideoText::drawMovieSubtitle(byte *screenBuffer, int32 resId) {
 	int32 curLine = 0;
 	ResourceEntry *textRes = _textPack->getResource(resId);
 	char *text = strdup((const char *)textRes->data);	// for strtok
-	char *tok = strtok(text, " ");
-	int32 startY = 420;	// starting y for up to 2 subtitles
-	int32 spacing = 30;	// spacing for up to 2 subtitles
+	char *tok  = strtok(text, " ");
+	int32 startY  = 420; // starting y for up to 2 subtitles
+	int32 spacing = 30;  // spacing for up to 2 subtitles
 
 	// Videos can have up to 4 lines of text
 	while (tok) {
@@ -192,11 +178,11 @@ void VideoText::drawMovieSubtitle(byte *screenBuffer, int32 resId) {
 			tmpLine = tok;
 			curLine++;
 			if (curLine >= 2) {
-				startY = 410;	// starting Y for 3 subtitles
-				spacing = 20;	// spacing for 3-4 subtitles
+				startY  = 410; // starting Y for 3 subtitles
+				spacing = 20;  // spacing for 3-4 subtitles
 			}
 			if (curLine >= 3) {
-				startY = 402;	// starting Y for 4 subtitles
+				startY = 402;  // starting Y for 4 subtitles
 			}
 		}
 		textLine[curLine] += tok;
@@ -218,6 +204,7 @@ int32 VideoText::getTextWidth(const char *text) {
 	int32 width = 0;
 	uint8 character = *text;
 	const char *curChar = text;
+
 	while (character) {
 		GraphicFrame *font = _fontResource->getFrame(character);
 		width += font->surface.w + font->x - _curFontFlags;
@@ -246,11 +233,11 @@ void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int32 
 	uint16 w = frame->surface.w;
 	int32 screenBufferPitch = 640;
 	byte *buffer = (byte *)frame->surface.pixels;
-	byte *dest = screenBuffer + y * screenBufferPitch + x;
+	byte *dest   = screenBuffer + y * screenBufferPitch + x;
 
 	while (h--) {
 		memcpy(dest, buffer, w);
-		dest += screenBufferPitch;
+		dest   += screenBufferPitch;
 		buffer += frame->surface.w;
 	}
 }
