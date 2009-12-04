@@ -125,7 +125,7 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 		// Control/Alt/Function key mapping...
 		if (controlPos) {
 			content.setChar(SCI_MENU_REPLACE_ONCONTROL, controlPos);
-			itemEntry->keyModifier = SCI_EVM_CTRL;
+			itemEntry->keyModifier = SCI_KEYMOD_CTRL;
 			tempPos = controlPos + 1;
 			if (tempPos >= contentSize)
 				error("control marker at end of item");
@@ -134,7 +134,7 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 		}
 		if (altPos) {
 			content.setChar(SCI_MENU_REPLACE_ONALT, altPos);
-			itemEntry->keyModifier = SCI_EVM_ALT;
+			itemEntry->keyModifier = SCI_KEYMOD_ALT;
 			tempPos = altPos + 1;
 			if (tempPos >= contentSize)
 				error("alt marker at end of item");
@@ -148,16 +148,16 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 				error("function marker at end of item");
 			itemEntry->keyPress = content[tempPos];
 			switch (content[functionPos + 1]) {
-			case '1': itemEntry->keyPress = SCI_K_F1; break;
-			case '2': itemEntry->keyPress = SCI_K_F2; break;
-			case '3': itemEntry->keyPress = SCI_K_F3; break;
-			case '4': itemEntry->keyPress = SCI_K_F4; break;
-			case '5': itemEntry->keyPress = SCI_K_F5; break;
-			case '6': itemEntry->keyPress = SCI_K_F6; break;
-			case '7': itemEntry->keyPress = SCI_K_F7; break;
-			case '8': itemEntry->keyPress = SCI_K_F8; break;
-			case '9': itemEntry->keyPress = SCI_K_F9; break;
-			case '0': itemEntry->keyPress = SCI_K_F10; break;
+			case '1': itemEntry->keyPress = SCI_KEY_F1; break;
+			case '2': itemEntry->keyPress = SCI_KEY_F2; break;
+			case '3': itemEntry->keyPress = SCI_KEY_F3; break;
+			case '4': itemEntry->keyPress = SCI_KEY_F4; break;
+			case '5': itemEntry->keyPress = SCI_KEY_F5; break;
+			case '6': itemEntry->keyPress = SCI_KEY_F6; break;
+			case '7': itemEntry->keyPress = SCI_KEY_F7; break;
+			case '8': itemEntry->keyPress = SCI_KEY_F8; break;
+			case '9': itemEntry->keyPress = SCI_KEY_F9; break;
+			case '0': itemEntry->keyPress = SCI_KEY_F10; break;
 			default:
 				error("illegal function key specified");
 			}
@@ -341,13 +341,13 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 	byte saidSpec[64];
 
 	switch (eventType) {
-	case SCI_EVT_KEYBOARD:
+	case SCI_EVENT_KEYBOARD:
 		keyPress = GET_SEL32V(_segMan, eventObject, message);
 		keyModifier = GET_SEL32V(_segMan, eventObject, modifiers);
 		switch (keyPress) {
 		case 0:
 			break;
-		case SCI_K_ESC:
+		case SCI_KEY_ESC:
 			itemEntry = interactiveWithKeyboard();
 			forceClaimed = true;
 			break;
@@ -363,7 +363,7 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 		}
 		break;
 
-	case SCI_EVT_SAID:
+	case SCI_EVENT_SAID:
 		// HACK: should be removed as soon as said() is cleaned up
 		s = ((SciEngine *)g_engine)->getEngineState();
 		while (itemIterator != itemEnd) {
@@ -381,7 +381,7 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 			itemEntry = NULL;
 		break;
 
-	case SCI_EVT_MOUSE_PRESS:
+	case SCI_EVENT_MOUSE_PRESS:
 		mousePosition = _cursor->getPosition();
 		if (mousePosition.y < 10) {
 			itemEntry = interactiveWithMouse();
@@ -576,33 +576,33 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	_gfx->BitsShow(_menuRect);
 
 	while (true) {
-		curEvent = _event->get(SCI_EVT_ANY);
+		curEvent = _event->get(SCI_EVENT_ANY);
 
 		switch (curEvent.type) {
-		case SCI_EVT_KEYBOARD:
+		case SCI_EVENT_KEYBOARD:
 			// We don't 100% follow sierra here: - sierra didn't wrap around when changing item id
 			//									 - sierra allowed item id to be 0, which didnt make any sense
 			do {
 				switch (curEvent.data) {
-				case SCI_K_ESC:
+				case SCI_KEY_ESC:
 					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 					return NULL;
-				case SCI_K_ENTER:
+				case SCI_KEY_ENTER:
 					if (curItemEntry->enabled)  {
 						_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 						return curItemEntry;
 					}
 					break;
-				case SCI_K_LEFT:
+				case SCI_KEY_LEFT:
 					newMenuId--; newItemId = 1;
 					break;
-				case SCI_K_RIGHT:
+				case SCI_KEY_RIGHT:
 					newMenuId++; newItemId = 1;
 					break;
-				case SCI_K_UP:
+				case SCI_KEY_UP:
 					newItemId--;
 					break;
-				case SCI_K_DOWN:
+				case SCI_KEY_DOWN:
 					newItemId++;
 					break;
 				}
@@ -613,9 +613,9 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 
 					// if we do this step again because of a separator line -> don't repeat left/right, but go down
 					switch (curEvent.data) {
-					case SCI_K_LEFT:
-					case SCI_K_RIGHT:
-						curEvent.data = SCI_K_DOWN;
+					case SCI_KEY_LEFT:
+					case SCI_KEY_RIGHT:
+						curEvent.data = SCI_KEY_DOWN;
 					}
 				}
 			} while (newItemEntry->separatorLine);
@@ -633,7 +633,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 			}
 			break;
 
-		case SCI_EVT_NONE:
+		case SCI_EVENT_NONE:
 			kernel_sleep(_event, 2500 / 1000);
 			break;
 		}

@@ -769,7 +769,7 @@ void SciGui::moveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_s->_event->get(SCI_EVT_PEEK);
+	_s->_event->get(SCI_EVENT_PEEK);
 }
 
 void SciGui::setCursorZone(Common::Rect zone) {

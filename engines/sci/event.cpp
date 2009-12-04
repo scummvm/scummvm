@@ -92,8 +92,8 @@ int SciEvent::shiftify (int c) {
 			return shifted_numbers[c-'0'];
 
 		switch (c) {
-		case SCI_K_TAB:
-			return SCI_K_SHIFT_TAB;
+		case SCI_KEY_TAB:
+			return SCI_KEY_SHIFT_TAB;
 		case ']':
 			return '}';
 		case '[':
@@ -121,7 +121,7 @@ int SciEvent::shiftify (int c) {
 		}
 	}
 
-	if (c >= SCI_K_F1 && c <= SCI_K_F10)
+	if (c >= SCI_KEY_F1 && c <= SCI_KEY_F10)
 		return c + 25;
 
 	return c;
@@ -129,27 +129,27 @@ int SciEvent::shiftify (int c) {
 
 int SciEvent::numlockify (int c) {
 	switch (c) {
-	case SCI_K_DELETE:
+	case SCI_KEY_DELETE:
 		return '.';
-	case SCI_K_INSERT:
+	case SCI_KEY_INSERT:
 		return '0';
-	case SCI_K_END:
+	case SCI_KEY_END:
 		return '1';
-	case SCI_K_DOWN:
+	case SCI_KEY_DOWN:
 		return '2';
-	case SCI_K_PGDOWN:
+	case SCI_KEY_PGDOWN:
 		return '3';
-	case SCI_K_LEFT:
+	case SCI_KEY_LEFT:
 		return '4';
-	case SCI_K_CENTER:
+	case SCI_KEY_CENTER:
 		return '5';
-	case SCI_K_RIGHT:
+	case SCI_KEY_RIGHT:
 		return '6';
-	case SCI_K_HOME:
+	case SCI_KEY_HOME:
 		return '7';
-	case SCI_K_UP:
+	case SCI_KEY_UP:
 		return '8';
-	case SCI_K_PGUP:
+	case SCI_KEY_PGUP:
 		return '9';
 	default:
 		return c; // Unchanged
@@ -158,7 +158,7 @@ int SciEvent::numlockify (int c) {
 
 sciEvent SciEvent::getFromScummVM() {
 	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
-	sciEvent input = { SCI_EVT_NONE, 0, 0, 0 };
+	sciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -190,23 +190,23 @@ sciEvent SciEvent::getFromScummVM() {
 			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_CAPSLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					_modifierStates |= SCI_EVM_CAPSLOCK;
+					_modifierStates |= SCI_KEYMOD_CAPSLOCK;
 				} else {
-					_modifierStates &= ~SCI_EVM_CAPSLOCK;
+					_modifierStates &= ~SCI_KEYMOD_CAPSLOCK;
 				}
 				break;
 			case Common::KEYCODE_NUMLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					_modifierStates |= SCI_EVM_NUMLOCK;
+					_modifierStates |= SCI_KEYMOD_NUMLOCK;
 				} else {
-					_modifierStates &= ~SCI_EVM_NUMLOCK;
+					_modifierStates &= ~SCI_KEYMOD_NUMLOCK;
 				}
 				break;
 			case Common::KEYCODE_SCROLLOCK:
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					_modifierStates |= SCI_EVM_SCRLOCK;
+					_modifierStates |= SCI_KEYMOD_SCRLOCK;
 				} else {
-					_modifierStates &= ~SCI_EVM_SCRLOCK;
+					_modifierStates &= ~SCI_KEYMOD_SCRLOCK;
 				}
 				break;
 			default:
@@ -216,9 +216,9 @@ sciEvent SciEvent::getFromScummVM() {
 		//TODO: SCI_EVM_INSERT
 
 		input.buckybits =
-		    ((modifiers & Common::KBD_ALT) ? SCI_EVM_ALT : 0) |
-		    ((modifiers & Common::KBD_CTRL) ? SCI_EVM_CTRL : 0) |
-		    ((modifiers & Common::KBD_SHIFT) ? SCI_EVM_LSHIFT | SCI_EVM_RSHIFT : 0) |
+		    ((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
+		    ((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
+		    ((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0) |
 			_modifierStates;
 
 		switch (ev.type) {
@@ -234,7 +234,7 @@ sciEvent SciEvent::getFromScummVM() {
 				con->attach();
 
 				// Clear keyboard event
-				input.type = SCI_EVT_NONE;
+				input.type = SCI_EVENT_NONE;
 				input.character = 0;
 				input.data = 0;
 				input.buckybits = 0;
@@ -244,83 +244,83 @@ sciEvent SciEvent::getFromScummVM() {
 
 			if (!(input.data & 0xFF00)) {
 				// Directly accept most common keys without conversion
-				input.type = SCI_EVT_KEYBOARD;
+				input.type = SCI_EVENT_KEYBOARD;
 				if (input.data == Common::KEYCODE_TAB) {
 					// Tab
-					input.type = SCI_EVT_KEYBOARD;
-					input.data = SCI_K_TAB;
-					if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
-						input.character = SCI_K_SHIFT_TAB;
+					input.type = SCI_EVENT_KEYBOARD;
+					input.data = SCI_KEY_TAB;
+					if (input.buckybits & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
+						input.character = SCI_KEY_SHIFT_TAB;
 					else
-						input.character = SCI_K_TAB;
+						input.character = SCI_KEY_TAB;
 				}
 			} else if ((input.data >= Common::KEYCODE_F1) && input.data <= Common::KEYCODE_F10) {
 				// F1-F10
-				input.type = SCI_EVT_KEYBOARD;
+				input.type = SCI_EVENT_KEYBOARD;
 				// SCI_K_F1 == 59 << 8
 				// SCI_K_SHIFT_F1 == 84 << 8
-				input.data = SCI_K_F1 + ((input.data - Common::KEYCODE_F1)<<8);
-				if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
+				input.data = SCI_KEY_F1 + ((input.data - Common::KEYCODE_F1)<<8);
+				if (input.buckybits & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
 					input.character = input.data + 25;
 				else
 					input.character = input.data;
 			} else {
 				// Special keys that need conversion
-				input.type = SCI_EVT_KEYBOARD;
+				input.type = SCI_EVENT_KEYBOARD;
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_UP:
-					input.data = SCI_K_UP;
+					input.data = SCI_KEY_UP;
 					break;
 				case Common::KEYCODE_DOWN:
-					input.data = SCI_K_DOWN;
+					input.data = SCI_KEY_DOWN;
 					break;
 				case Common::KEYCODE_RIGHT:
-					input.data = SCI_K_RIGHT;
+					input.data = SCI_KEY_RIGHT;
 					break;
 				case Common::KEYCODE_LEFT:
-					input.data = SCI_K_LEFT;
+					input.data = SCI_KEY_LEFT;
 					break;
 				case Common::KEYCODE_INSERT:
-					input.data = SCI_K_INSERT;
+					input.data = SCI_KEY_INSERT;
 					break;
 				case Common::KEYCODE_HOME:
-					input.data = SCI_K_HOME;
+					input.data = SCI_KEY_HOME;
 					break;
 				case Common::KEYCODE_END:
-					input.data = SCI_K_END;
+					input.data = SCI_KEY_END;
 					break;
 				case Common::KEYCODE_PAGEUP:
-					input.data = SCI_K_PGUP;
+					input.data = SCI_KEY_PGUP;
 					break;
 				case Common::KEYCODE_PAGEDOWN:
-					input.data = SCI_K_PGDOWN;
+					input.data = SCI_KEY_PGDOWN;
 					break;
 				case Common::KEYCODE_DELETE:
-					input.data = SCI_K_DELETE;
+					input.data = SCI_KEY_DELETE;
 					break;
 				// Keypad keys
 				case Common::KEYCODE_KP8:	// up
-					if (!(_modifierStates & SCI_EVM_NUMLOCK))
-						input.data = SCI_K_UP;
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_UP;
 					break;
 				case Common::KEYCODE_KP2:	// down
-					if (!(_modifierStates & SCI_EVM_NUMLOCK))
-						input.data = SCI_K_DOWN;
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_DOWN;
 					break;
 				case Common::KEYCODE_KP6:	// right
-					if (!(_modifierStates & SCI_EVM_NUMLOCK))
-						input.data = SCI_K_RIGHT;
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_RIGHT;
 					break;
 				case Common::KEYCODE_KP4:	// left
-					if (!(_modifierStates & SCI_EVM_NUMLOCK))
-						input.data = SCI_K_LEFT;
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_LEFT;
 					break;
 				case Common::KEYCODE_KP5:	// center
-					if (!(_modifierStates & SCI_EVM_NUMLOCK))
-						input.data = SCI_K_CENTER;
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_CENTER;
 					break;
 				default:
-					input.type = SCI_EVT_NONE;
+					input.type = SCI_EVENT_NONE;
 					break;
 				}
 				input.character = input.data;
@@ -329,25 +329,25 @@ sciEvent SciEvent::getFromScummVM() {
 
 			// Mouse events
 		case Common::EVENT_LBUTTONDOWN:
-			input.type = SCI_EVT_MOUSE_PRESS;
+			input.type = SCI_EVENT_MOUSE_PRESS;
 			input.data = 1;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			input.type = SCI_EVT_MOUSE_PRESS;
+			input.type = SCI_EVENT_MOUSE_PRESS;
 			input.data = 2;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			input.type = SCI_EVT_MOUSE_RELEASE;
+			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 1;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			input.type = SCI_EVT_MOUSE_RELEASE;
+			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 2;
 			break;
 
 			// Misc events
 		case Common::EVENT_QUIT:
-			input.type = SCI_EVT_QUIT;
+			input.type = SCI_EVENT_QUIT;
 			break;
 
 		default:
@@ -370,9 +370,9 @@ sciEvent SciEvent::get(unsigned int mask) {
 	// Get all queued events from graphics driver
 	do {
 		event = getFromScummVM();
-		if (event.type != SCI_EVT_NONE)
+		if (event.type != SCI_EVENT_NONE)
 			_events.push_back(event);
-	} while (event.type != SCI_EVT_NONE);
+	} while (event.type != SCI_EVENT_NONE);
 
 	// Search for matching event in queue
 	Common::List<sciEvent>::iterator iter = _events.begin();
@@ -384,7 +384,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 		event = *iter;
 
 		// If not peeking at the queue, remove the event
-		if (!(mask & SCI_EVT_PEEK)) {
+		if (!(mask & SCI_EVENT_PEEK)) {
 			_events.erase(iter);
 		}
 	} else {
@@ -394,29 +394,29 @@ sciEvent SciEvent::get(unsigned int mask) {
 		// there is no need to change it.
 	}
 
-	if (event.type == SCI_EVT_KEYBOARD) {
+	if (event.type == SCI_EVENT_KEYBOARD) {
 		// Do we still have to translate the key?
 
 		event.character = event.data;
 
 		// TODO: Remove this as soon as ScummVM handles Ctrl-Alt-X to us
-		if ((event.buckybits == SCI_EVM_CTRL) && (event.character = 'x'))
-			event.buckybits |= SCI_EVM_ALT;
+		if ((event.buckybits == SCI_KEYMOD_CTRL) && (event.character = 'x'))
+			event.buckybits |= SCI_KEYMOD_ALT;
 
 		// Scancodify if appropriate
-		if (event.buckybits & SCI_EVM_ALT) {
+		if (event.buckybits & SCI_KEYMOD_ALT) {
 			event.character = altify(event.character);
-		} else if (event.buckybits & SCI_EVM_CTRL) {
+		} else if (event.buckybits & SCI_KEYMOD_CTRL) {
 			event.character = controlify(event.character);
 		}
 
 		// Shift if appropriate
-		else if (((event.buckybits & (SCI_EVM_RSHIFT | SCI_EVM_LSHIFT)) && !(event.buckybits & SCI_EVM_CAPSLOCK))
-		         || (!(event.buckybits & (SCI_EVM_RSHIFT | SCI_EVM_LSHIFT)) && (event.buckybits & SCI_EVM_CAPSLOCK)))
+		else if (((event.buckybits & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && !(event.buckybits & SCI_KEYMOD_CAPSLOCK))
+		         || (!(event.buckybits & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && (event.buckybits & SCI_KEYMOD_CAPSLOCK)))
 			event.character = shiftify(event.character);
 
 		// Numlockify if appropriate
-		else if (event.buckybits & SCI_EVM_NUMLOCK)
+		else if (event.buckybits & SCI_KEYMOD_NUMLOCK)
 			event.data = numlockify(event.data);
 	}
 

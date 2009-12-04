@@ -42,16 +42,16 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[1];
 	sciEvent curEvent;
 	int oldx, oldy;
-	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
+	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
 	const Common::Point mousePos = s->_gui->getCursorPos();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
-	if (g_debug_simulated_key && (mask & SCI_EVT_KEYBOARD)) {
-		PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
+	if (g_debug_simulated_key && (mask & SCI_EVENT_KEYBOARD)) {
+		PUT_SEL32V(segMan, obj, type, SCI_EVENT_KEYBOARD); // Keyboard event
 		PUT_SEL32V(segMan, obj, message, g_debug_simulated_key);
-		PUT_SEL32V(segMan, obj, modifiers, SCI_EVM_NUMLOCK); // Numlock on
+		PUT_SEL32V(segMan, obj, modifiers, SCI_KEYMOD_NUMLOCK); // Numlock on
 		PUT_SEL32V(segMan, obj, x, mousePos.x);
 		PUT_SEL32V(segMan, obj, y, mousePos.y);
 		g_debug_simulated_key = 0;
@@ -70,21 +70,21 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
 	switch (curEvent.type) {
-	case SCI_EVT_QUIT:
+	case SCI_EVENT_QUIT:
 		quit_vm();
 		break;
 
-	case SCI_EVT_KEYBOARD:
-		if ((curEvent.buckybits & SCI_EVM_LSHIFT) && (curEvent.buckybits & SCI_EVM_RSHIFT) && (curEvent.data == '-')) {
+	case SCI_EVENT_KEYBOARD:
+		if ((curEvent.buckybits & SCI_KEYMOD_LSHIFT) && (curEvent.buckybits & SCI_KEYMOD_RSHIFT) && (curEvent.data == '-')) {
 			printf("Debug mode activated\n");
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
-		} else if ((curEvent.buckybits & SCI_EVM_CTRL) && (curEvent.data == '`')) {
+		} else if ((curEvent.buckybits & SCI_KEYMOD_CTRL) && (curEvent.data == '`')) {
 			printf("Debug mode activated\n");
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
 		} else {
-			PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
+			PUT_SEL32V(segMan, obj, type, SCI_EVENT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
 
 			PUT_SEL32V(segMan, obj, message, curEvent.character);
@@ -93,11 +93,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 
-	case SCI_EVT_MOUSE_RELEASE:
-	case SCI_EVT_MOUSE_PRESS:
+	case SCI_EVENT_MOUSE_RELEASE:
+	case SCI_EVENT_MOUSE_PRESS:
 
 		// track left buttton clicks, if requested
-		if (curEvent.type == SCI_EVT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
+		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
 			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
 						mousePos.x, mousePos.y);
 		}
@@ -107,10 +107,10 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 			switch (curEvent.data) {
 			case 2:
-				extra_bits = SCI_EVM_LSHIFT | SCI_EVM_RSHIFT;
+				extra_bits = SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT;
 				break;
 			case 3:
-				extra_bits = SCI_EVM_CTRL;
+				extra_bits = SCI_KEYMOD_CTRL;
 			default:
 				break;
 			}
@@ -133,14 +133,14 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 		con->DebugPrintf("SCI event occured: ");
 		switch (curEvent.type) {
-		case SCI_EVT_QUIT:
+		case SCI_EVENT_QUIT:
 			con->DebugPrintf("quit event\n");
 			break;
-		case SCI_EVT_KEYBOARD:
+		case SCI_EVENT_KEYBOARD:
 			con->DebugPrintf("keyboard event\n");
 			break;
-		case SCI_EVT_MOUSE_RELEASE:
-		case SCI_EVT_MOUSE_PRESS:
+		case SCI_EVENT_MOUSE_RELEASE:
+		case SCI_EVENT_MOUSE_PRESS:
 			con->DebugPrintf("mouse click event\n");
 			break;
 		default:
@@ -158,35 +158,35 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segMan = s->_segMan;
 
-	if (GET_SEL32V(segMan, obj, type) == SCI_EVT_KEYBOARD) { // Keyboard
+	if (GET_SEL32V(segMan, obj, type) == SCI_EVENT_KEYBOARD) { // Keyboard
 		int mover = -1;
 		switch (GET_SEL32V(segMan, obj, message)) {
-		case SCI_K_HOME:
+		case SCI_KEY_HOME:
 			mover = 8;
 			break;
-		case SCI_K_UP:
+		case SCI_KEY_UP:
 			mover = 1;
 			break;
-		case SCI_K_PGUP:
+		case SCI_KEY_PGUP:
 			mover = 2;
 			break;
-		case SCI_K_LEFT:
+		case SCI_KEY_LEFT:
 			mover = 7;
 			break;
-		case SCI_K_CENTER:
+		case SCI_KEY_CENTER:
 		case 76:
 			mover = 0;
 			break;
-		case SCI_K_RIGHT:
+		case SCI_KEY_RIGHT:
 			mover = 3;
 			break;
-		case SCI_K_END:
+		case SCI_KEY_END:
 			mover = 6;
 			break;
-		case SCI_K_DOWN:
+		case SCI_KEY_DOWN:
 			mover = 5;
 			break;
-		case SCI_K_PGDOWN:
+		case SCI_KEY_PGDOWN:
 			mover = 4;
 			break;
 		default:
@@ -194,7 +194,7 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mover >= 0) {
-			PUT_SEL32V(segMan, obj, type, SCI_EVT_JOYSTICK);
+			PUT_SEL32V(segMan, obj, type, SCI_EVENT_JOYSTICK);
 			PUT_SEL32V(segMan, obj, message, mover);
 			return make_reg(0, 1);
 		} else

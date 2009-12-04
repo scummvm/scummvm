@@ -203,10 +203,10 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 				if (right[0] == '#') {
 					right[0] = SCI_SPECIAL_CHAR_FUNCTION; // Function key
 
-					key = SCI_K_F1 + ((right[1] - '1') << 8);
+					key = SCI_KEY_F1 + ((right[1] - '1') << 8);
 
 					if (right[1] == '0')
-						key = SCI_K_F10; // F10
+						key = SCI_KEY_F10; // F10
 
 					if (right[2] == '=') {
 						tag = atoi(right + 3);
@@ -215,7 +215,7 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 				} else if (right[0] == '@') { // Alt key
 					right[0] = SCI_SPECIAL_CHAR_ALT; // ALT
 					key = right[1];
-					modifiers = SCI_EVM_ALT;
+					modifiers = SCI_KEYMOD_ALT;
 
 					if ((key >= 'a') && (key <= 'z'))
 						right[1] = key - 'a' + 'A';
@@ -228,7 +228,7 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 					if (right[0] == '^') {
 						right[0] = SCI_SPECIAL_CHAR_CTRL; // Control key - there must be a replacement...
 						key = right[1];
-						modifiers = SCI_EVM_CTRL;
+						modifiers = SCI_KEYMOD_CTRL;
 
 						if ((key >= 'a') && (key <= 'z'))
 							right[1] = key - 'a' + 'A';
@@ -278,10 +278,10 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 }
 
 bool MenuItem::matchKey(int message, int modifiers) {
-	if ((_key == message) && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == _modifiers))
+	if ((_key == message) && ((modifiers & (SCI_KEYMOD_CTRL | SCI_KEYMOD_ALT)) == _modifiers))
 		return true;
 
-	if (message == '\t' && _key == 'i' && ((modifiers & (SCI_EVM_CTRL | SCI_EVM_ALT)) == 0) && _modifiers == SCI_EVM_CTRL)
+	if (message == '\t' && _key == 'i' && ((modifiers & (SCI_KEYMOD_CTRL | SCI_KEYMOD_ALT)) == 0) && _modifiers == SCI_KEYMOD_CTRL)
 		return true; // Match TAB to ^I
 
 	return 0;

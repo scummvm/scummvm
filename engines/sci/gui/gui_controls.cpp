@@ -156,34 +156,34 @@ void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		eventType = GET_SEL32V(_segMan, eventObject, type);
 
 		switch (eventType) {
-		case SCI_EVT_MOUSE_PRESS:
+		case SCI_EVENT_MOUSE_PRESS:
 			// TODO: Implement mouse support for cursor change
 			break;
-		case SCI_EVT_KEYBOARD:
+		case SCI_EVENT_KEYBOARD:
 			eventKey = GET_SEL32V(_segMan, eventObject, message);
 			switch (eventKey) {
-			case SCI_K_BACKSPACE:
+			case SCI_KEY_BACKSPACE:
 				if (cursorPos > 0) {
 					cursorPos--; text.deleteChar(cursorPos);
 					textChanged = true;
 				}
 				break;
-			case SCI_K_DELETE:
+			case SCI_KEY_DELETE:
 				text.deleteChar(cursorPos);
 				textChanged = true;
 				break;
-			case SCI_K_HOME: // HOME
+			case SCI_KEY_HOME: // HOME
 				cursorPos = 0; textChanged = true;
 				break;
-			case SCI_K_END: // END
+			case SCI_KEY_END: // END
 				cursorPos = textSize; textChanged = true;
 				break;
-			case SCI_K_LEFT: // LEFT
+			case SCI_KEY_LEFT: // LEFT
 				if (cursorPos > 0) {
 					cursorPos--; textChanged = true;
 				}
 				break;
-			case SCI_K_RIGHT: // RIGHT
+			case SCI_KEY_RIGHT: // RIGHT
 				if (cursorPos + 1 <= textSize) {
 					cursorPos++; textChanged = true;
 				}

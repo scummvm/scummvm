@@ -51,65 +51,65 @@ struct sciEvent {
 };
 
 /*Values for type*/
-#define SCI_EVT_NONE            0
-#define SCI_EVT_MOUSE_PRESS     (1<<0)
-#define SCI_EVT_MOUSE_RELEASE   (1<<1)
-#define SCI_EVT_KEYBOARD        (1<<2)
-#define SCI_EVT_JOYSTICK        (1<<6)
-#define SCI_EVT_SAID            (1<<7)
+#define SCI_EVENT_NONE            0
+#define SCI_EVENT_MOUSE_PRESS     (1<<0)
+#define SCI_EVENT_MOUSE_RELEASE   (1<<1)
+#define SCI_EVENT_KEYBOARD        (1<<2)
+#define SCI_EVENT_JOYSTICK        (1<<6)
+#define SCI_EVENT_SAID            (1<<7)
 /*Fake values for other events*/
-#define SCI_EVT_ERROR           (1<<10)
-#define SCI_EVT_QUIT            (1<<11)
-#define SCI_EVT_PEEK            (1<<15)
+#define SCI_EVENT_ERROR           (1<<10)
+#define SCI_EVENT_QUIT            (1<<11)
+#define SCI_EVENT_PEEK            (1<<15)
 /* The QUIT event may be used to signal an external 'quit' command being
 ** issued to the gfx driver.  */
-#define SCI_EVT_ANY             0x7fff
+#define SCI_EVENT_ANY             0x7fff
 
 /* Keycodes of special keys: */
-#define SCI_K_ESC 27
-#define SCI_K_BACKSPACE 8
-#define SCI_K_ENTER 13
-#define SCI_K_TAB '\t'
-#define SCI_K_SHIFT_TAB (0xf << 8)
+#define SCI_KEY_ESC 27
+#define SCI_KEY_BACKSPACE 8
+#define SCI_KEY_ENTER 13
+#define SCI_KEY_TAB '\t'
+#define SCI_KEY_SHIFT_TAB (0xf << 8)
 
-#define SCI_K_HOME (71 << 8)	// 7
-#define SCI_K_UP (72 << 8)		// 8
-#define SCI_K_PGUP (73 << 8)	// 9
+#define SCI_KEY_HOME (71 << 8)	// 7
+#define SCI_KEY_UP (72 << 8)		// 8
+#define SCI_KEY_PGUP (73 << 8)	// 9
 //
-#define SCI_K_LEFT (75 << 8)	// 4 
-#define SCI_K_CENTER (76 << 8)	// 5
-#define SCI_K_RIGHT (77 << 8)	// 6
+#define SCI_KEY_LEFT (75 << 8)	// 4 
+#define SCI_KEY_CENTER (76 << 8)	// 5
+#define SCI_KEY_RIGHT (77 << 8)	// 6
 //
-#define SCI_K_END (79 << 8)		// 1
-#define SCI_K_DOWN (80 << 8)	// 2
-#define SCI_K_PGDOWN (81 << 8)	// 3
+#define SCI_KEY_END (79 << 8)		// 1
+#define SCI_KEY_DOWN (80 << 8)	// 2
+#define SCI_KEY_PGDOWN (81 << 8)	// 3
 //
-#define SCI_K_INSERT (82 << 8)	// 0
-#define SCI_K_DELETE (83 << 8)	// .
+#define SCI_KEY_INSERT (82 << 8)	// 0
+#define SCI_KEY_DELETE (83 << 8)	// .
 
-#define SCI_K_F1 (59<<8)
-#define SCI_K_F2 (60<<8)
-#define SCI_K_F3 (61<<8)
-#define SCI_K_F4 (62<<8)
-#define SCI_K_F5 (63<<8)
-#define SCI_K_F6 (64<<8)
-#define SCI_K_F7 (65<<8)
-#define SCI_K_F8 (66<<8)
-#define SCI_K_F9 (67<<8)
-#define SCI_K_F10 (68<<8)
+#define SCI_KEY_F1 (59<<8)
+#define SCI_KEY_F2 (60<<8)
+#define SCI_KEY_F3 (61<<8)
+#define SCI_KEY_F4 (62<<8)
+#define SCI_KEY_F5 (63<<8)
+#define SCI_KEY_F6 (64<<8)
+#define SCI_KEY_F7 (65<<8)
+#define SCI_KEY_F8 (66<<8)
+#define SCI_KEY_F9 (67<<8)
+#define SCI_KEY_F10 (68<<8)
 
 /*Values for buckybits */
-#define SCI_EVM_RSHIFT          (1<<0)
-#define SCI_EVM_LSHIFT          (1<<1)
-#define SCI_EVM_CTRL            (1<<2)
-#define SCI_EVM_ALT             (1<<3)
-#define SCI_EVM_SCRLOCK         (1<<4)
-#define SCI_EVM_NUMLOCK         (1<<5)
-#define SCI_EVM_CAPSLOCK        (1<<6)
-#define SCI_EVM_INSERT          (1<<7)
+#define SCI_KEYMOD_RSHIFT          (1<<0)
+#define SCI_KEYMOD_LSHIFT          (1<<1)
+#define SCI_KEYMOD_CTRL            (1<<2)
+#define SCI_KEYMOD_ALT             (1<<3)
+#define SCI_KEYMOD_SCRLOCK         (1<<4)
+#define SCI_KEYMOD_NUMLOCK         (1<<5)
+#define SCI_KEYMOD_CAPSLOCK        (1<<6)
+#define SCI_KEYMOD_INSERT          (1<<7)
 
-#define SCI_EVM_NO_FOOLOCK      (~(SCI_EVM_SCRLOCK | SCI_EVM_NUMLOCK | SCI_EVM_CAPSLOCK | SCI_EVM_INSERT))
-#define SCI_EVM_ALL             0xFF
+#define SCI_KEYMOD_NO_FOOLOCK      (~(SCI_KEYMOD_SCRLOCK | SCI_KEYMOD_NUMLOCK | SCI_KEYMOD_CAPSLOCK | SCI_KEYMOD_INSERT))
+#define SCI_KEYMOD_ALL             0xFF
 
 class SciEvent {
 public:

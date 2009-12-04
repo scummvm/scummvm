@@ -871,16 +871,16 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 #endif
 
 	/* Check whether we can claim the event directly as a keyboard or said event */
-	if (type & (SCI_EVT_KEYBOARD | SCI_EVT_SAID)) {
+	if (type & (SCI_EVENT_KEYBOARD | SCI_EVENT_SAID)) {
 		int menuc, itemc;
 
-		if ((type == SCI_EVT_KEYBOARD)
-		        && (message == SCI_K_ESC))
+		if ((type == SCI_EVENT_KEYBOARD)
+		        && (message == SCI_KEY_ESC))
 			menu_mode = 1;
 
-		else if ((type == SCI_EVT_SAID) || message) { /* Don't claim 0 keyboard event */
+		else if ((type == SCI_EVENT_SAID) || message) { /* Don't claim 0 keyboard event */
 			debugC(2, kDebugLevelMenu, "Menu: Got %s event: %04x/%04x\n",
-			          ((type == SCI_EVT_SAID) ? "SAID" : "KBD"), message, modifiers);
+			          ((type == SCI_EVENT_SAID) ? "SAID" : "KBD"), message, modifiers);
 
 			for (menuc = 0; menuc < (int)_s->_menubar->_menus.size(); menuc++)
 				for (itemc = 0; itemc < (int)_s->_menubar->_menus[menuc]._items.size(); itemc++) {
@@ -891,11 +891,11 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 					          item->_type, item->_enabled ? "enabled" : "disabled");
 
 					if ((item->_type == MENU_TYPE_NORMAL && item->_enabled)
-					    && ((type == SCI_EVT_KEYBOARD
+					    && ((type == SCI_EVENT_KEYBOARD
 					           && item->matchKey(message, modifiers)
 					        )
 					      ||
-					        (type == SCI_EVT_SAID
+					        (type == SCI_EVENT_SAID
 					           && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
 					           && said(_s, item->_said, debug_parser) != SAID_NO_MATCH
 					        )
@@ -913,7 +913,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 
 	Common::Point cursorPos = _cursor->getPosition();
 
-	if ((type == SCI_EVT_MOUSE_PRESS) && (cursorPos.y < 10)) {
+	if ((type == SCI_EVENT_MOUSE_PRESS) && (cursorPos.y < 10)) {
 		menu_mode = 1;
 		mouse_down = 1;
 	}
@@ -946,29 +946,29 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 		old_menu = -1;
 
 		while (menu_mode) {
-			sciEvent ev = _s->_event->get(SCI_EVT_ANY);
+			sciEvent ev = _s->_event->get(SCI_EVENT_ANY);
 
 			claimed = false;
 
 			switch (ev.type) {
-			case SCI_EVT_QUIT:
+			case SCI_EVENT_QUIT:
 				quit_vm();
 				return NULL_REG;
 
-			case SCI_EVT_KEYBOARD:
+			case SCI_EVENT_KEYBOARD:
 				switch (ev.data) {
 
-				case SCI_K_ESC:
+				case SCI_KEY_ESC:
 					menu_mode = 0;
 					break;
 
-				case SCI_K_ENTER:
+				case SCI_KEY_ENTER:
 					menu_mode = 0;
 					if ((item_nr >= 0) && (menu_nr >= 0))
 						claimed = true;
 					break;
 
-				case SCI_K_LEFT:
+				case SCI_KEY_LEFT:
 					if (menu_nr > 0)
 						--menu_nr;
 					else
@@ -977,7 +977,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 					item_nr = _menu_go_down(_s->_menubar, menu_nr, -1);
 					break;
 
-				case SCI_K_RIGHT:
+				case SCI_KEY_RIGHT:
 					if (menu_nr < ((int)_s->_menubar->_menus.size() - 1))
 						++menu_nr;
 					else
@@ -986,7 +986,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 					item_nr = _menu_go_down(_s->_menubar, menu_nr, -1);
 					break;
 
-				case SCI_K_UP:
+				case SCI_KEY_UP:
 					if (item_nr > -1) {
 
 						do { --item_nr; }
@@ -994,7 +994,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 					}
 					break;
 
-				case SCI_K_DOWN: {
+				case SCI_KEY_DOWN: {
 					item_nr = _menu_go_down(_s->_menubar, menu_nr, item_nr);
 				}
 				break;
@@ -1002,7 +1002,7 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 				}
 				break;
 
-			case SCI_EVT_MOUSE_RELEASE:
+			case SCI_EVENT_MOUSE_RELEASE:
 				{
 				Common::Point curMousePos = _cursor->getPosition();
 				menu_mode = (curMousePos.y < 10);
@@ -1011,11 +1011,11 @@ reg_t SciGui32::menuSelect(reg_t eventObject) {
 				}
 				break;
 
-			case SCI_EVT_MOUSE_PRESS:
+			case SCI_EVENT_MOUSE_PRESS:
 				mouse_down = 1;
 				break;
 
-			case SCI_EVT_NONE:
+			case SCI_EVENT_NONE:
 				kernel_sleep(_s->_event, 2500 / 1000);
 				break;
 			}
@@ -1251,7 +1251,7 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 		break; // NOP
 
 	case K_CONTROL_EDIT:
-		if (eventObject.segment && ((GET_SEL32V(_s->_segMan, eventObject, type)) == SCI_EVT_KEYBOARD)) {
+		if (eventObject.segment && ((GET_SEL32V(_s->_segMan, eventObject, type)) == SCI_EVENT_KEYBOARD)) {
 			int max_displayed = GET_SEL32V(_s->_segMan, controlObject, max);
 			int max = max_displayed;
 			int cursor = GET_SEL32V(_s->_segMan, controlObject, cursor);
@@ -1277,7 +1277,7 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 			if (cursor > textlen)
 				cursor = textlen;
 
-			if (modifiers & SCI_EVM_CTRL) {
+			if (modifiers & SCI_KEYMOD_CTRL) {
 
 				switch (tolower((char)key)) {
 				case 'a':
@@ -1304,7 +1304,7 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 				}
 				PUT_SEL32V(_s->_segMan, eventObject, claimed, 1);
 
-			} else if (modifiers & SCI_EVM_ALT) { // Ctrl has precedence over Alt
+			} else if (modifiers & SCI_KEYMOD_ALT) { // Ctrl has precedence over Alt
 				switch (key) {
 				case 0x2100 /* A-f */:
 					while ((cursor < textlen) && (text[cursor++] != ' '))
@@ -1330,7 +1330,7 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 			} else if (key < 31) {
 				PUT_SEL32V(_s->_segMan, eventObject, claimed, 1);
 				switch (key) {
-				case SCI_K_BACKSPACE:
+				case SCI_KEY_BACKSPACE:
 					_K_EDIT_BACKSPACE;
 					break;
 				default:
@@ -1338,29 +1338,29 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 				}
 			} else if (key & 0xff00) {
 				switch (key) {
-				case SCI_K_HOME:
+				case SCI_KEY_HOME:
 					cursor = 0;
 					break;
-				case SCI_K_END:
+				case SCI_KEY_END:
 					cursor = textlen;
 					break;
-				case SCI_K_RIGHT:
+				case SCI_KEY_RIGHT:
 					if (cursor + 1 <= textlen)
 						++cursor;
 					break;
-				case SCI_K_LEFT:
+				case SCI_KEY_LEFT:
 					if (cursor > 0)
 						--cursor;
 					break;
-				case SCI_K_DELETE:
+				case SCI_KEY_DELETE:
 					_K_EDIT_DELETE;
 					break;
 				}
 				PUT_SEL32V(_s->_segMan, eventObject, claimed, 1);
 			} else if ((key > 31) && (key < 128)) {
-				int inserting = (modifiers & SCI_EVM_INSERT);
+				int inserting = (modifiers & SCI_KEYMOD_INSERT);
 
-				modifiers &= ~(SCI_EVM_RSHIFT | SCI_EVM_LSHIFT | SCI_EVM_CAPSLOCK);
+				modifiers &= ~(SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT | SCI_KEYMOD_CAPSLOCK);
 
 				if (cursor == textlen) {
 					if (textlen < max) {
@@ -2966,7 +2966,7 @@ void SciGui32::moveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_s->_event->get(SCI_EVT_PEEK);
+	_s->_event->get(SCI_EVENT_PEEK);
 }
 
 void SciGui32::graphAdjustPriority(int top, int bottom) {
