@@ -44,6 +44,7 @@ namespace M4 {
 #define MADS_SURFACE_HEIGHT 156
 
 enum MADSVerbs {
+	kVerbNone   = 0,
 	kVerbLook	= 3,
 	kVerbTake	= 4,
 	kVerbPush	= 5,
@@ -99,6 +100,7 @@ public:
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
 	byte *getInverseColorTable() const { return _inverseColorTable; }
 	MadsInterfaceView *getMadsInterface() { return _madsInterfaceSurface; }
+	void setAction(int action, int objectId = -1);
 	void update();
 	void setMADSStatusText(const char *text) { strcpy(_statusText, text); }
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
@@ -118,6 +120,7 @@ private:
 	HotSpotList _sceneHotspots;
 	SpriteAsset *_sceneSprites;
 	SpriteAsset *_walkerSprite;
+	int _currentAction;
 	char _statusText[100];
 
 	void nextCommonCursor();

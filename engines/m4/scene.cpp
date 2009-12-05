@@ -57,6 +57,7 @@ Scene::Scene(M4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm
 	_inverseColorTable = NULL;
 	strcpy(_statusText, "");
 	_vm->_rails->setCodeSurface(_codeSurface);
+	_currentAction = kVerbNone;
 }
 
 Scene::~Scene() {
@@ -393,11 +394,13 @@ void Scene::checkHotspotAtMousePosMads(int x, int y) {
 		// This is the "easy" interface, which updates the status text when the mouse is moved
 		// TODO: toggle this code for easy/normal interface mode
 		char statusText[50];
-		if (currentHotSpot->getVerbID() != 0) {
-			sprintf(statusText, "%s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
-		} else {
-			sprintf(statusText, "%s %s\n", _vm->_globals->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
-		}
+		int verbId = _currentAction;
+		if (verbId == kVerbNone)
+			verbId = currentHotSpot->getVerbID();
+		if (verbId == kVerbNone)
+			verbId = kVerbWalkTo;
+
+		sprintf(statusText, "%s %s\n", _vm->_globals->getVocab(verbId), currentHotSpot->getVocab());
 
 		statusText[0] = toupper(statusText[0]);	// capitalize first letter
 		setMADSStatusText(statusText);
@@ -688,80 +691,29 @@ void Scene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
 }
 
-/*--------------------------------------------------------------------------*/
+void Scene::setAction(int action, int objectId) {
+	VALIDATE_MADS;
+	char statusText[50];
 
-/*
- * TODO: decide if this should be kept centralised like it is in the original, or separated for the different
- * visual elements
-void Scene::getInterfaceObjectRect(int xv, int yv, Common::Rect &bounds) {
-	// TODO: Implement these later as proper fields of the interface when I understand them better
-	const int interfaceObjY = 0;
-	const int interfaceObjX = 0;
+	// TODO: Actually executing actions directly for objects. Also, some object actions are special in that
+	// a second object can be selected, as in 'use gun to shoot person', with requires a target
 
-	int16 height = 8, width = 0;
-	bounds.top = 0; bounds.left = 0;
-
-	// Handle X position and width
-	switch (xv) {
-	case 1:
-		bounds.left = ((yv / 5) << 3) + 3;
-		width = ((yv / 5) << 6) + 2;
-		break;
-
-	case 2:
-		if ((yv < interfaceObjX) || (yv > (interfaceObjX + 5))) return;
-		bounds.left = ((yv - interfaceObjX) << 3) + 3;
-		width = yv * 69 + 90;
-		break;
-
-	case 6:
-		bounds.left = (yv << 3) + 3;
-		width = yv * 318 + 2;
-		break;
-
-	case 7:
-		bounds.left = 0;
-		width = (yv == 4) ? 75 : 73;
-		break;
-
-	default:
-		bounds.left = (yv << 3) + 3;
-		width = yv * 80 + 240;
-		break;
+	// Set up the new action
+	strcpy(statusText, _vm->_globals->getVocab(action));
+	statusText[0] = toupper(statusText[0]);	// capitalize first letter
+	
+	if (objectId != -1) {
+		MadsObject *obj = _vm->_globals->getObject(objectId);
+		sprintf(statusText + strlen(statusText), " %s", _vm->_globals->getVocab(obj->descId));
+	} else {
+		_currentAction = action;
 	}
 
-	// Handle Y position and height
-	if (xv ==  7) {
-		switch (yv) {
-		case 1:
-			bounds.top = 4;
-			height = 7;
-			break;
-		case 2:
-			bounds.top = 35;
-			height = 7;
-			break;
-		case 3:
-			bounds.top = 12;
-			height = 22;
-			break;
-		case 4:
-			bounds.top = interfaceObjY + 14;
-			height = 1;
-			break;
-		default:
-			break;
-		}
-	}
-
-	// Set the right and bottom bounds based on the specified size
-	bounds.right = bounds.left + width;
-	bounds.bottom = bounds.top + height;
+	setMADSStatusText(statusText);
 }
-*/
 
-/**
- *--------------------------------------------------------------------------
+
+/*--------------------------------------------------------------------------
  * MadsInterfaceView handles the user interface section at the bottom of
  * game screens in MADS games
  *--------------------------------------------------------------------------
@@ -997,7 +949,15 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int param1, int x, int y,
 				// Set the selected object
 				setSelectedObject(_inventoryList[_topIndex + idx]);
 			}
-			return true;
+		} else if ((_highlightedElement >= ACTIONS_START) && (_highlightedElement < (ACTIONS_START + 10))) {
+			// A standard action was selected
+			_vm->_scene->setAction(kVerbLook + (_highlightedElement - ACTIONS_START));
+		} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
+			// A vocab action was selected
+			MadsObject *obj = _vm->_globals->getObject(_selectedObject);
+			int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
+			if (vocabIndex >= 0)
+				_vm->_scene->setAction(obj->vocabList[vocabIndex].vocabId, _selectedObject);
 		}
 
 		return true;
