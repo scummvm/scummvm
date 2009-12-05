@@ -59,7 +59,7 @@ void RectList::addRect(const Common::Rect &rect) {
 }
 
 int RectList::find(const Common::Point &pt) {
-	for (int idx = 0; idx < size(); ++idx) {
+	for (uint idx = 0; idx < size(); ++idx) {
 		if (this->operator [](idx).contains(pt.x, pt.y))
 			return idx;
 	}
