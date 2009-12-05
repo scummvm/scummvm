@@ -32,6 +32,7 @@ namespace Asylum {
 
 extern int32 g_debugPolygons;
 extern int32 g_debugBarriers;
+extern int32 g_debugScrolling;
 
 Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -45,6 +46,7 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 
 	DVar_Register("showpolygons",  &g_debugPolygons, DVAR_INT, 0);
 	DVar_Register("showbarriers",  &g_debugBarriers, DVAR_INT, 0);
+	DVar_Register("use_scrolling",  &g_debugScrolling, DVAR_INT, 0);
 }
 
 Console::~Console() {

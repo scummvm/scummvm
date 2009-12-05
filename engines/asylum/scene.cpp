@@ -34,6 +34,7 @@ namespace Asylum {
 
 int g_debugPolygons;
 int g_debugBarriers;
+int g_debugScrolling;
 
 Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_sceneIdx = sceneIdx;
@@ -89,8 +90,9 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	_isActive      = false;
 	_skipDrawScene = 0;
 
-	g_debugPolygons = 0;
-	g_debugBarriers = 0;
+	g_debugPolygons  = 0;
+	g_debugBarriers  = 0;
+	g_debugScrolling = 0;
 
 	// TODO figure out what field_120 is used for
 	_ws->field_120 = -1;
@@ -387,7 +389,7 @@ void Scene::enterScene() {
 		_vm->screen()->setPalette(_resPack, _ws->commonRes.palette);
 		_background = _bgResource->getFrame(0);
 		_vm->screen()->copyToBackBuffer(
-			((byte *)_background->surface.pixels) + _ws->targetY * _background->surface.w + _ws->targetX, _background->surface.w,
+			((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
 			0, 0, 640, 480);
 
 		// FIXME
@@ -526,8 +528,19 @@ int Scene::updateScene() {
 
 	// Adjust Screen
 	startTick = _vm->getTick();
-	updateAdjustScreen();
+	
+	if (g_debugScrolling) { // DEBUG ScreenScrolling
+		debugScreenScrolling(_bgResource->getFrame(0));
+	} else {
+		updateAdjustScreen();
+	}
 	debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", _vm->getTick() - startTick);
+
+	// Update Debug
+	if (g_debugPolygons)
+		debugShowPolygons();
+	if (g_debugBarriers)
+		debugShowBarriers();
 
 	if (_actions->process())
 		return 1;
@@ -1225,10 +1238,7 @@ void Scene::OLD_UPDATE() {
 		_cursor->update(&_ws->commonRes, getActor()->direction);
 	}
 
-	if (g_debugPolygons)
-		debugShowPolygons();
-	if (g_debugBarriers)
-		debugShowBarriers();
+	
 
 	// Check if we're within a barrier
 	for (int32 p = 0; p < _ws->numBarriers; p++) {
@@ -1307,16 +1317,13 @@ int Scene::drawScene() {
 	} else {
 		// Draw scene background
 		GraphicFrame *bg = _bgResource->getFrame(0);
+
 		_vm->screen()->copyToBackBuffer(
-		    ((byte *)bg->surface.pixels) + _ws->targetY * bg->surface.w + _ws->targetX, bg->surface.w,
-		    _ws->xLeft,
-		    _ws->yTop,
+		    ((byte *)bg->surface.pixels) + _ws->yTop * bg->surface.w + _ws->xLeft, bg->surface.w,
+		    0,
+		    0,
 		    640,
 		    480);
-
-		// DEBUG
-		// Force the screen to scroll if the mouse approaches the edges
-		//debugScreenScrolling(bg);
 
 		drawActorsAndBarriers();
 		queueActorUpdates();
@@ -1537,21 +1544,21 @@ int Scene::queueBarrierUpdates() {
 // ----------------------------------
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-	Common::Rect screenRect(_ws->targetX, _ws->targetY, _ws->targetX + 640, _ws->targetY + 480);
+	Common::Rect screenRect(_ws->xLeft, _ws->yTop, _ws->xLeft + 640, _ws->yTop + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
 	animRect.clip(screenRect);
 
 	if (!animRect.isEmpty()) {
 		// Translate anim rectangle
-		animRect.translate(-(int16)_ws->targetX, -(int16)_ws->targetY);
+		animRect.translate(-(int16)_ws->xLeft, -(int16)_ws->yTop);
 
 		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
 
 		if (surface->w > 640)
-			startX = _ws->targetX;
+			startX = _ws->xLeft;
 		if (surface->h > 480)
-			startY = _ws->targetY;
+			startY = _ws->yTop;
 
 		_vm->screen()->copyToBackBufferWithTransparency(
 		    ((byte*)surface->pixels) +
@@ -1571,16 +1578,16 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
 	// Horizontal scrolling
-	if (_cursor->x() < SCREEN_EDGES && _ws->targetX >= SCROLL_STEP)
-		_ws->targetX -= SCROLL_STEP;
-	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->targetX <= bg->surface.w - 640 - SCROLL_STEP)
-		_ws->targetX += SCROLL_STEP;
+	if (_cursor->x() < SCREEN_EDGES && _ws->xLeft >= SCROLL_STEP)
+		_ws->xLeft -= SCROLL_STEP;
+	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->xLeft <= bg->surface.w - 640 - SCROLL_STEP)
+		_ws->xLeft += SCROLL_STEP;
 
 	// Vertical scrolling
-	if (_cursor->y() < SCREEN_EDGES && _ws->targetY >= SCROLL_STEP)
-		_ws->targetY -= SCROLL_STEP;
-	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->targetY <= bg->surface.h - 480 - SCROLL_STEP)
-		_ws->targetY += SCROLL_STEP;
+	if (_cursor->y() < SCREEN_EDGES && _ws->yTop >= SCROLL_STEP)
+		_ws->yTop -= SCROLL_STEP;
+	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->yTop <= bg->surface.h - 480 - SCROLL_STEP)
+		_ws->yTop += SCROLL_STEP;
 }
 
 // WALK REGION DEBUG
