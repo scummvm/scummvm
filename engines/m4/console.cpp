@@ -304,7 +304,7 @@ bool Console::cmdObject(int argc, const char **argv) {
 	if (_vm->isM4()) {
 		DebugPrintf("Command not implemented for M4 games\n");
 	} else if (argc == 1) {
-		DebugPrintf("Usage: object ['list' | '#objnum']\n");
+		DebugPrintf("Usage: object ['list' | '#objnum' | 'add #objnum']\n");
 	} else if (!strcmp(argv[1], "list")) {
 		// List of objects
 		for (uint objStart = 0; objStart < _vm->_globals->getObjectsSize(); objStart += 5) {
@@ -319,16 +319,29 @@ bool Console::cmdObject(int argc, const char **argv) {
 		}
 
 		DebugPrintf("\n");
+	} else if (!strcmp(argv[1], "add") && (argc == 3)) {
+		// Add the specified object to the player's inventory
+		int objNum = strToInt(argv[2]);
+
+		if ((objNum < 0) || (objNum >= (int)_vm->_globals->getObjectsSize()))
+			DebugPrintf("Invalid object specified\n");
+		else if (_vm->isM4())
+			DebugPrintf("Not implemented for M4 games\n");
+		else {
+			_vm->_scene->getMadsInterface()->addObjectToInventory(objNum);
+			return false;
+		}
+
 	} else {
 		// Print the details of a specific object
-		int id = strToInt(argv[1]);
+		int objNum = strToInt(argv[1]);
 
-		if ((id < 0) || (id >= (int)_vm->_globals->getObjectsSize()))
+		if ((objNum < 0) || (objNum >= (int)_vm->_globals->getObjectsSize()))
 			DebugPrintf("Invalid object specified\n");
 		else {
-			const MadsObject *obj = _vm->_globals->getObject(id);
+			const MadsObject *obj = _vm->_globals->getObject(objNum);
 
-			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", id, _vm->_globals->getVocab(obj->descId),
+			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", objNum, _vm->_globals->getVocab(obj->descId),
 				obj->roomNumber, (int)obj->article, englishMADSArticleList[obj->article], obj->vocabCount);
 
 			if (obj->vocabCount > 0) {
