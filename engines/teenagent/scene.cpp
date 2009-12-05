@@ -971,8 +971,13 @@ Object *Scene::getObject(int id, int scene_id) {
 
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {
 	Resources *res = Resources::instance();
+	int lines = 1;
+	for(uint i = 0; i < str.size(); ++i)
+		if (str[i] == '\n')
+			++lines;
+
 	uint w = res->font7.render(NULL, 0, 0, str, 0);
-	uint h = res->font7.height + 3;
+	uint h = res->font7.height * lines + 3;
 
 	position.x -= w / 2;
 	position.y -= h;
