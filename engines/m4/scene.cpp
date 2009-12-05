@@ -36,6 +36,12 @@
 
 namespace M4 {
 
+static const int INV_ANIM_FRAME_SPEED = 8;
+static const int INVENTORY_X = 160;
+static const int INVENTORY_Y = 159;
+static const int SCROLLER_DELAY = 200;
+
+
 Scene::Scene(M4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
 	_screenType = VIEWID_SCENE;
 
@@ -834,23 +840,18 @@ void MadsInterfaceView::setSelectedObject(int objectNumber) {
 	}
 
 	// Check to make sure the object is in the inventory, and also visible on-screen
-	int idx = 0;
-	while (idx < (int)_inventoryList.size()) {
-		if (_inventoryList[idx] == objectNumber) {
-			// Found the object
-			if (idx < _topIndex)
-				_topIndex = idx;
-			else if (idx >= (_topIndex + 5))
-				_topIndex = MAX(0, idx - 4);
-			break;
-		}
-		++idx;
-	}
-	if (idx == (int)_inventoryList.size()) {
+	int idx = _inventoryList.indexOf(objectNumber);
+	if (idx == -1) {
 		// Object wasn't found, so return
 		_selectedObject = -1;
 		return;
 	}
+
+	// Found the object
+	if (idx < _topIndex)
+		_topIndex = idx;
+	else if (idx >= (_topIndex + 5))
+		_topIndex = MAX(0, idx - 4);
 	
 	_selectedObject = objectNumber;
 	sprintf(resName, "*OB%.3dI.SS", objectNumber);
@@ -867,10 +868,14 @@ void MadsInterfaceView::setSelectedObject(int objectNumber) {
 	_objectFrameNumber = 0;
 }
 
-static const int FRAME_SPEED = 8;
-static const int INVENTORY_X = 160;
-static const int INVENTORY_Y = 159;
+void MadsInterfaceView::addObjectToInventory(int objectNumber) {
+	if (_inventoryList.indexOf(objectNumber) == -1) {
+		_vm->_globals->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
+		_inventoryList.push_back(objectNumber);
+	}
 
+	setSelectedObject(objectNumber);
+}
 
 void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	_vm->_font->setFont(FONT_INTERFACE_MADS);
@@ -905,7 +910,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 
 	// Draw the horizontal line in the scroller representing the current top selected 
 	const Common::Rect scroller(_screenObjects[SCROLL_SCROLLER]);
-	int yP = (_inventoryList.size() == 0) ? 0 : (scroller.height() - 4) * _topIndex / _inventoryList.size();
+	int yP = (_inventoryList.size() < 2) ? 0 : (scroller.height() - 5) * _topIndex / (_inventoryList.size() - 1);
 	destSurface->setColor(4);
 	destSurface->hLine(scroller.left + 2, scroller.right - 3, scroller.top + 2 + yP);
 
@@ -934,12 +939,12 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	if (_objectSprites) {
 		// Display object sprite. Note that the frame number isn't used directly, because it would result
 		// in too fast an animation
-		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / FRAME_SPEED);
+		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
 		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
 
 		if (!_vm->_globals->invObjectsStill) {
 			// If objetcs are to animated, move to the next frame
-			if (++_objectFrameNumber >= (_objectSprites->getCount() * FRAME_SPEED))
+			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
 				_objectFrameNumber = 0;
 		}
 
@@ -963,7 +968,13 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 }
 
 bool MadsInterfaceView::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
-	if (eventType == MEVENT_MOVE) {
+	// If the mouse isn't being held down, then reset the repeated scroll timer
+	if (eventType != MEVENT_LEFT_HOLD)
+		_nextScrollerTicks = 0;
+
+	// Handle various event types
+	switch (eventType) {
+	case MEVENT_MOVE:
 		// If the cursor isn't in "wait mode", don't do any processing
 		if (_vm->_mouse->getCursorNum() == CURSOR_WAIT)
 			return true;
@@ -975,6 +986,51 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int param1, int x, int y,
 		_highlightedElement = _screenObjects.find(Common::Point(x, y));
 
 		return true;
+	
+	case MEVENT_LEFT_CLICK:
+		// Left mouse click
+		// Check if an inventory object was selected
+		if ((_highlightedElement >= INVLIST_START) && (_highlightedElement < (INVLIST_START + 5))) {
+			// Ensure there is an inventory item listed in that cell
+			uint idx = _highlightedElement - INVLIST_START;
+			if ((_topIndex + idx) < _inventoryList.size()) {
+				// Set the selected object
+				setSelectedObject(_inventoryList[_topIndex + idx]);
+			}
+			return true;
+		}
+
+		return true;
+
+	case MEVENT_LEFT_HOLD:
+		// Left mouse hold
+		// Handle the scroller - the up/down buttons allow for multiple actions whilst the mouse is held down
+		if ((_highlightedElement == SCROLL_UP) || (_highlightedElement == SCROLL_DOWN)) {
+			if ((_nextScrollerTicks == 0) || (g_system->getMillis() >= _nextScrollerTicks)) {
+				// Handle scroll up/down action
+				_nextScrollerTicks = g_system->getMillis() + SCROLLER_DELAY;
+
+				if ((_highlightedElement == SCROLL_UP) && (_topIndex > 0))
+					--_topIndex;
+				if ((_highlightedElement == SCROLL_DOWN) && (_topIndex < (int)(_inventoryList.size() - 1)))
+					++_topIndex;
+			}
+		}
+		return true;
+
+	case MEVENT_LEFT_DRAG:
+		// Left mouse drag
+		// Handle the the the scroller area that can be dragged to adjust the top displayed index
+		if (_highlightedElement == SCROLL_SCROLLER) {
+			// Calculate the new top index based on the Y position
+			const Common::Rect r(_screenObjects[SCROLL_SCROLLER]);
+			_topIndex = CLIP((int)(_inventoryList.size() - 1) * (y - r.top - 2) / (r.height() - 5),
+				0, (int)_inventoryList.size() - 1);
+		}
+		return true;
+
+	default:
+		break;
 	}
 
 	return false;

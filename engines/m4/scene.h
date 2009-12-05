@@ -98,6 +98,7 @@ public:
 	SceneResources getSceneResources() { return _sceneResources; }
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
 	byte *getInverseColorTable() const { return _inverseColorTable; }
+	MadsInterfaceView *getMadsInterface() { return _madsInterfaceSurface; }
 	void update();
 	void setMADSStatusText(const char *text) { strcpy(_statusText, text); }
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
@@ -127,12 +128,23 @@ enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
 enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
 		INVLIST_START = 13, VOCAB_START = 18};
 
+class IntegerList: public Common::Array<int> {
+public:
+	int indexOf(int v) {
+		for (uint i = 0; i < size(); ++i)
+			if (operator [](i) == v) 
+				return i;
+		return -1;
+	}
+};
+
 class MadsInterfaceView: public View {
 private:
-	Common::Array<int> _inventoryList;
+	IntegerList _inventoryList;
 	RectList _screenObjects;
 	int _highlightedElement;
 	int _topIndex;
+	uint32 _nextScrollerTicks;
 	
 	// Object display fields
 	int _selectedObject;
@@ -147,6 +159,7 @@ public:
 
 	void initialise();
 	void setSelectedObject(int objectNumber);
+	void addObjectToInventory(int objectNumber);
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
