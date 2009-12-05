@@ -145,7 +145,7 @@ void Screen::drawGraphicsInQueue() {
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
 		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
 		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
-		copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->targetX, _queueItems[i].y - ws->targetY, fra->surface.w, fra->surface.h);
+		copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->xLeft, _queueItems[i].y - ws->yTop, fra->surface.w, fra->surface.h);
 		delete grRes;
 	}
 }
