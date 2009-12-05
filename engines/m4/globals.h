@@ -228,7 +228,7 @@ public:
 
 	void loadMadsObjects();
 	uint32 getObjectsSize() { return _madsObjects.size(); }
-	const MadsObject *getObject(uint32 index) { return _madsObjects[index].get(); }
+	MadsObject *getObject(uint32 index) { return _madsObjects[index].get(); }
 };
 
 #define PLAYER_FIELD_LENGTH 40

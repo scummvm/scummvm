@@ -72,6 +72,8 @@ struct SceneResources {
 	int32 railNodeCount;	// # of rails
 };
 
+class MadsInterfaceView;
+
 class Scene: public View {
 public:
 	Scene(M4Engine *vm);
@@ -79,6 +81,7 @@ public:
 
 	// TODO: perhaps move playIntro() someplace else?
 	void playIntro();
+	void show();
 	void loadScene(int sceneNumber);
 	void loadSceneResources(int sceneNumber);
 	void loadSceneHotSpotsMads(int sceneNumber);
@@ -102,13 +105,11 @@ public:
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
 
-	void setSelectedObject(int objectNumber);
-
 private:
 	int _currentScene;
 	M4Surface *_backgroundSurface;
 	M4Surface *_codeSurface;
-	M4Surface *_madsInterfaceSurface;
+	MadsInterfaceView *_madsInterfaceSurface;
 	byte *_inverseColorTable;
 	RGBList *_palData;
 	RGBList *_interfacePal;
@@ -118,33 +119,34 @@ private:
 	SpriteAsset *_walkerSprite;
 	char _statusText[100];
 
-	// Inventory related fields
+	void nextCommonCursor();
+};
+
+enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
+
+enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
+		INVLIST_START = 13, VOCAB_START = 18};
+
+class MadsInterfaceView: public View {
+private:
+	Common::Array<int> _inventoryList;
+	RectList _screenObjects;
+	int _highlightedElement;
+	int _topIndex;
+	
+	// Object display fields
 	int _selectedObject;
 	SpriteAsset *_objectSprites;
 	RGBList *_objectPalData;
 	int _objectFrameNumber;
 
-	void nextCommonCursor();
-};
-
-enum FontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
-
-class InterfaceElement: public View {
-protected:
-	void setFontMode(FontMode newMode);
+	void setFontMode(InterfaceFontMode newMode);
 public:
-	InterfaceElement(M4Engine *vm, const Common::Rect &viewBounds, bool transparent = true);
-	~InterfaceElement() {};
-};
+	MadsInterfaceView(M4Engine *vm);
+	~MadsInterfaceView();
 
-class ActionsView: public InterfaceElement {
-private:
-	int _highlightedAction;
-
-	void getActionRect(int actionId, Common::Rect &bounds);
-public:
-	ActionsView(M4Engine *vm);
-	~ActionsView() {};
+	void initialise();
+	void setSelectedObject(int objectNumber);
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);

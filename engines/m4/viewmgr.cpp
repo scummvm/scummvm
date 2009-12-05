@@ -58,6 +58,14 @@ void RectList::addRect(const Common::Rect &rect) {
 	push_back(rect);
 }
 
+int RectList::find(const Common::Point &pt) {
+	for (int idx = 0; idx < size(); ++idx) {
+		if (this->operator [](idx).contains(pt.x, pt.y))
+			return idx;
+	}
+	return -1;	
+}
+
 //--------------------------------------------------------------------------
 
 HotkeyList::HotkeyList(View *owner) {

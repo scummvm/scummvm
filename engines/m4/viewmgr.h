@@ -84,6 +84,7 @@ public:
 	void addRect(const Common::Rect &rect);
 
 //	Common::Rect& operator [](int idx) { return _rects[idx]; }
+	int find(const Common::Point &pt);
 };
 
 struct Hotkey {

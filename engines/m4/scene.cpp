@@ -44,9 +44,8 @@ Scene::Scene(M4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm
 	_sceneResources.props = new HotSpotList();
 	_backgroundSurface = new M4Surface();
 	_codeSurface = new M4Surface();
-	_madsInterfaceSurface = new M4Surface();
+	_madsInterfaceSurface = new MadsInterfaceView(vm);
 	_sceneSprites = NULL;
-	_objectSprites = NULL;
 	_palData = NULL;
 	_interfacePal = NULL;
 	_inverseColorTable = NULL;
@@ -65,12 +64,9 @@ Scene::~Scene() {
 
 	delete _backgroundSurface;
 	delete _codeSurface;
-	delete _madsInterfaceSurface;
 
 	if (_sceneSprites)
 		delete _sceneSprites;
-	if (_objectSprites)
-		delete _objectSprites;
 
 	_vm->_palette->deleteAllRanges();
 
@@ -133,6 +129,8 @@ void Scene::loadScene(int sceneNumber) {
 			_vm->_palette->addRange(_interfacePal);
 			_madsInterfaceSurface->translate(_interfacePal);
 			_backgroundSurface->copyFrom(_madsInterfaceSurface, Common::Rect(0, 0, 320, 44), 0, 200 - 44);
+
+			_madsInterfaceSurface->initialise();
 		}
 	}
 
@@ -450,9 +448,10 @@ void Scene::playIntro() {
 
 }
 
-static const int FRAME_SPEED = 8;
-static const int INVENTORY_X = 160;
-static const int INVENTORY_Y = 159;
+void Scene::show() {
+	_vm->_viewManager->addView(this);
+	_vm->_viewManager->addView(_madsInterfaceSurface);
+}
 
 void Scene::update() {
 	// TODO: Needs a proper implementation
@@ -473,19 +472,6 @@ void Scene::update() {
 		}
 
 		_madsInterfaceSurface->copyTo(this, 0, this->height() - _madsInterfaceSurface->height());
-
-		if (_objectSprites) {
-			// Display object sprite. Note that the frame number isn't used directly, because it would result
-			// in too fast an animation
-			M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / FRAME_SPEED);
-			spr->copyTo(this, INVENTORY_X, INVENTORY_Y, 0);
-
-			if (!_vm->_globals->invObjectsStill) {
-				// If objetcs are to animated, move to the next frame
-				if (++_objectFrameNumber >= (_objectSprites->getCount() * FRAME_SPEED))
-					_objectFrameNumber = 0;
-			}
-		}
 	}
 }
 
@@ -698,31 +684,6 @@ void Scene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 
 /*--------------------------------------------------------------------------*/
 
-void Scene::setSelectedObject(int objectNumber) {
-	VALIDATE_MADS;
-
-	// Load inventory resource
-	if (_objectSprites) {
-		_vm->_palette->deleteRange(_objectPalData);
-		delete _objectSprites;
-	}
-
-	char resName[80];
-	sprintf(resName, "*OB%.3dI.SS", objectNumber);
-
-	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	_objectSprites = new SpriteAsset(_vm, data, data->size(), resName);
-	_vm->res()->toss(resName);
-
-	// Slot it into available palette space
-	_objectPalData = _objectSprites->getRgbList();
-	_vm->_palette->addRange(_objectPalData);
-	_objectSprites->translate(_objectPalData, true);
-
-	_objectFrameNumber = 0;
-	_selectedObject = objectNumber;
-}
-
 /*
  * TODO: decide if this should be kept centralised like it is in the original, or separated for the different
  * visual elements
@@ -795,16 +756,46 @@ void Scene::getInterfaceObjectRect(int xv, int yv, Common::Rect &bounds) {
 
 /**
  *--------------------------------------------------------------------------
- * Base class for interface elements
- *
+ * MadsInterfaceView handles the user interface section at the bottom of
+ * game screens in MADS games
  *--------------------------------------------------------------------------
  */
 
-InterfaceElement::InterfaceElement(M4Engine *vm, const Common::Rect &viewBounds, bool transparent):
-					View(vm, viewBounds, transparent) {
+MadsInterfaceView::MadsInterfaceView(M4Engine *vm): View(vm, Common::Rect(0, MADS_SURFACE_HEIGHT,
+														 vm->_screen->width(), vm->_screen->height())) {
+	_screenType = VIEWID_INTERFACE;
+	_highlightedElement = -1;
+	_topIndex = 0;
+	_selectedObject = -1;
+
+	_objectSprites = NULL;
+	_objectPalData = NULL;
+
+	/* Set up the rect list for screen elements */
+	// Actions
+	for (int i = 0; i < 10; ++i)
+		_screenObjects.addRect((i / 5) * 32 + 1, (i % 5) * 8 + MADS_SURFACE_HEIGHT + 2,
+			((i / 5) + 1) * 32 + 3, ((i % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 2);
+	
+	// Scroller elements (up arrow, scroller, down arrow)
+	_screenObjects.addRect(73, 160, 82, 167);
+	_screenObjects.addRect(73, 168, 82, 190);
+	_screenObjects.addRect(73, 191, 82, 198);
+
+	// Inventory object names
+	for (int i = 0; i < 5; ++i)
+		_screenObjects.addRect(89, 158 + i * 8, 160, 166 + i * 8);
+	
+	// Full rectangle area for all vocab actions
+	for (int i = 0; i < 5; ++i)
+		_screenObjects.addRect(239, 158 + i * 8, 320, 166 + i * 8);
 }
 
-void InterfaceElement::setFontMode(FontMode newMode) {
+MadsInterfaceView::~MadsInterfaceView() {
+	delete _objectSprites;
+}
+
+void MadsInterfaceView::setFontMode(InterfaceFontMode newMode) {
 	switch (newMode) {
 	case ITEM_NORMAL:
 		_vm->_font->setColors(4, 4, 0xff);
@@ -818,56 +809,160 @@ void InterfaceElement::setFontMode(FontMode newMode) {
 	}
 }
 
-/**
- *--------------------------------------------------------------------------
- * ActionsView handles the display of the actions/verb list
- *
- *--------------------------------------------------------------------------
- */
+void MadsInterfaceView::initialise() {
+	// Build up the inventory list
+	_inventoryList.clear();
 
-ActionsView::ActionsView(M4Engine *vm): InterfaceElement(vm, Common::Rect(0, MADS_SURFACE_HEIGHT, 70, 
-														 vm->_screen->height())) {
-	_screenType = VIEWID_INTERFACE;
-	_highlightedAction = 0;
+	for (uint i = 0; i < _vm->_globals->getObjectsSize(); ++i) {
+		MadsObject *obj = _vm->_globals->getObject(i);
+		if (obj->roomNumber == PLAYER_INVENTORY)
+			_inventoryList.push_back(i);
+	}
+
+	// If the inventory has at least one object, select it
+	if (_inventoryList.size() > 0)
+		setSelectedObject(_inventoryList[0]);
 }
 
-void ActionsView::getActionRect(int actionId, Common::Rect &b) {
-	int idx = actionId - kVerbLook;
+void MadsInterfaceView::setSelectedObject(int objectNumber) {
+	char resName[80];
 
-	b.left = (idx / 5) * 32 + 2;
-	b.top = (idx % 5) * 8 + MADS_SURFACE_HEIGHT + 3;
-	b.right = ((idx / 5) + 1) * 32 + 3;
-	b.bottom = ((idx % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 4;
+	// Load inventory resource
+	if (_objectSprites) {
+		_vm->_palette->deleteRange(_objectPalData);
+		delete _objectSprites;
+	}
+
+	// Check to make sure the object is in the inventory, and also visible on-screen
+	int idx = 0;
+	while (idx < (int)_inventoryList.size()) {
+		if (_inventoryList[idx] == objectNumber) {
+			// Found the object
+			if (idx < _topIndex)
+				_topIndex = idx;
+			else if (idx >= (_topIndex + 5))
+				_topIndex = MAX(0, idx - 4);
+			break;
+		}
+		++idx;
+	}
+	if (idx == (int)_inventoryList.size()) {
+		// Object wasn't found, so return
+		_selectedObject = -1;
+		return;
+	}
+	
+	_selectedObject = objectNumber;
+	sprintf(resName, "*OB%.3dI.SS", objectNumber);
+
+	Common::SeekableReadStream *data = _vm->res()->get(resName);
+	_objectSprites = new SpriteAsset(_vm, data, data->size(), resName);
+	_vm->res()->toss(resName);
+
+	// Slot it into available palette space
+	_objectPalData = _objectSprites->getRgbList();
+	_vm->_palette->addRange(_objectPalData);
+	_objectSprites->translate(_objectPalData, true);
+
+	_objectFrameNumber = 0;
 }
 
-void ActionsView::onRefresh(RectList *rects, M4Surface *destSurface) {
+static const int FRAME_SPEED = 8;
+static const int INVENTORY_X = 160;
+static const int INVENTORY_Y = 159;
+
+
+void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	_vm->_font->setFont(FONT_INTERFACE_MADS);
+	char buffer[100];
 
-	int actionId = kVerbLook;
+	// Highlighting logic for action list
+	int actionIndex = 0;
 	for (int x = 0; x < 2; ++x) {
-		for (int y = 0; y < 5; ++y, ++actionId) {
-			// Get the bounds for the next item
-			Common::Rect r;
-			getActionRect(actionId, r);
-
-			// Determine the font colour depending on whether an item is selected. Note that the 'Look' item
-			// is always 'selected', even when another action is selected
-			setFontMode((_highlightedAction == actionId) ? ITEM_HIGHLIGHTED : 
-				((actionId == kVerbLook) ? ITEM_SELECTED : ITEM_NORMAL));
+		for (int y = 0; y < 5; ++y, ++actionIndex) {
+			// Determine the font colour depending on whether an item is selected. Note that the first action,
+			// 'Look', is always 'selected', even when another action is clicked on
+			setFontMode((_highlightedElement == actionIndex) ? ITEM_HIGHLIGHTED : 
+				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
 
 			// Get the verb action and capitalise it
-			const char *verbStr = _vm->_globals->getVocab(actionId);
-			char buffer[20];
+			const char *verbStr = _vm->_globals->getVocab(kVerbLook + actionIndex);
 			strcpy(buffer, verbStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
 			// Display the verb
+			const Common::Rect r(_screenObjects[actionIndex]);
+			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
+		}
+	}
+
+	// Check for highlighting of the scrollbar controls
+	if ((_highlightedElement == SCROLL_UP) || (_highlightedElement == SCROLL_SCROLLER) || (_highlightedElement == SCROLL_DOWN)) {
+		// Highlight the control's borders
+		const Common::Rect r(_screenObjects[_highlightedElement]);
+		destSurface->frameRect(r, 5);
+	}
+
+	// Draw the horizontal line in the scroller representing the current top selected 
+	const Common::Rect scroller(_screenObjects[SCROLL_SCROLLER]);
+	int yP = (_inventoryList.size() == 0) ? 0 : (scroller.height() - 4) * _topIndex / _inventoryList.size();
+	destSurface->setColor(4);
+	destSurface->hLine(scroller.left + 2, scroller.right - 3, scroller.top + 2 + yP);
+
+	// List inventory items
+	for (uint i = 0; i < 5; ++i) {
+		if ((_topIndex + i) >= _inventoryList.size())
+			break;
+
+		const char *descStr = _vm->_globals->getVocab(_vm->_globals->getObject(
+			_inventoryList[_topIndex + i])->descId);
+		strcpy(buffer, descStr);
+		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
+
+		const Common::Rect r(_screenObjects[INVLIST_START + i]);
+	
+		// Set the highlighting of the inventory item
+		if (_highlightedElement == (int)(INVLIST_START + i)) setFontMode(ITEM_HIGHLIGHTED);
+		else if (_selectedObject == _inventoryList[_topIndex + i]) setFontMode(ITEM_SELECTED);
+		else setFontMode(ITEM_NORMAL);
+
+		// Write out it's description
+		_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
+	}
+
+	// Handle the display of any currently selected object
+	if (_objectSprites) {
+		// Display object sprite. Note that the frame number isn't used directly, because it would result
+		// in too fast an animation
+		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / FRAME_SPEED);
+		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
+
+		if (!_vm->_globals->invObjectsStill) {
+			// If objetcs are to animated, move to the next frame
+			if (++_objectFrameNumber >= (_objectSprites->getCount() * FRAME_SPEED))
+				_objectFrameNumber = 0;
+		}
+
+		// List the vocab actions for the currently selected object
+		MadsObject *obj = _vm->_globals->getObject(_selectedObject);
+		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
+
+		for (int i = 0; i < obj->vocabCount; ++i) {
+			const Common::Rect r(_screenObjects[VOCAB_START + i]);
+
+			// Get the vocab description and capitalise it
+			const char *descStr = _vm->_globals->getVocab(obj->vocabList[i].vocabId);
+			strcpy(buffer, descStr);
+			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
+		
+			// Set the highlighting and display the entry
+			setFontMode((i == yIndex) ? ITEM_HIGHLIGHTED : ITEM_NORMAL);
 			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
 		}
 	}
 }
 
-bool ActionsView::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
+bool MadsInterfaceView::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
 	if (eventType == MEVENT_MOVE) {
 		// If the cursor isn't in "wait mode", don't do any processing
 		if (_vm->_mouse->getCursorNum() == CURSOR_WAIT)
@@ -876,17 +971,8 @@ bool ActionsView::onEvent(M4EventType eventType, int param1, int x, int y, bool 
 		// Ensure the cursor is the standard arrow
 		_vm->_mouse->setCursorNum(CURSOR_ARROW);
 
-		// Check if any of the actions are currently highlighted
-		_highlightedAction = 0;
-		for (int i = kVerbLook; i <= kVerbThrow; ++i) {
-			Common::Rect r;
-			getActionRect(i, r);
-
-			if (r.contains(x, y)) {
-				_highlightedAction = i;
-				break;
-			}
-		}
+		// Check if any interface element is currently highlighted
+		_highlightedElement = _screenObjects.find(Common::Point(x, y));
 
 		return true;
 	}

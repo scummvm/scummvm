@@ -307,12 +307,8 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 		// Load a sample starting scene - note that, currently, calling loadScene automatically
 		// removes this menu screen from being displayed
 		vm->_mouse->cursorOn();
-		vm->_viewManager->addView(vm->_scene);
-		vm->_viewManager->addView(vm->_actionsView);
+		vm->_scene->show();
 		vm->_scene->loadScene(101);
-
-		// **DEBUG** - set the default object
-		vm->_scene->setSelectedObject(48);
 		return;
 
 	case SHOW_INTRO:

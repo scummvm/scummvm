@@ -182,7 +182,6 @@ Common::Error M4Engine::run() {
 	}
 	_rails = new Rails();	// needs to be initialized before _scene
 	_scene = new Scene(this);
-	_actionsView = new ActionsView(this);
 	_dialogs = new Dialogs();
 	_viewManager = new ViewManager(this);
 	_inventory = new Inventory(this);
@@ -306,8 +305,7 @@ Common::Error M4Engine::goMADS() {
 			_scene->loadScene(106);		// a more interesting scene
 		}
 
-		_viewManager->addView(_scene);
-		_viewManager->addView(_actionsView);
+		_scene->show();
 
 		_font->setFont(FONT_MAIN_MADS);
 		_font->setColors(2, 1, 3);
