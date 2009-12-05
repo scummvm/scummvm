@@ -57,8 +57,12 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	p.clear();
 	p.push_back(src);
 	p.push_back(dst);
+
+	Common::List<int> boxes;
+	for(uint i = 0; i < scene_walkboxes.size(); ++i)
+		boxes.push_back(i);
 	
-	for(Path::iterator i = p.begin(); i != p.end(); ) {
+	for(Path::iterator i = p.begin(); i != p.end() && !boxes.empty(); ) {
 		Path::iterator next = i;
 		++next;
 		if (next == p.end())
@@ -67,16 +71,16 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		const Common::Point &p1 = *i, &p2 = *next;
 		debug(1, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
 		
-		byte wi;
-		for(wi = 0; wi < scene_walkboxes.size(); ++wi) {
-			const Walkbox & w = scene_walkboxes[wi];
+		Common::List<int>::iterator wi;
+		for(wi = boxes.begin(); wi != boxes.end(); ++wi) {
+			const Walkbox & w = scene_walkboxes[*wi];
 			int mask = w.rect.intersects_line(p1, p2);
 			if (mask == 0) {
 				continue;
 			}
 			
 			w.dump();
-			debug(1, "%u: intersection mask 0x%04x, searching hints", wi, mask);
+			debug(1, "%u: intersection mask 0x%04x, searching hints", *wi, mask);
 			int dx = p2.x - p1.x, dy = p2.y - p1.y;
 			if (dx >= 0) {
 				if ((mask & 8) != 0 && w.side_hint[3] != 0) {
@@ -87,6 +91,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					boxes.erase(wi);
 					break;
 				}
 			} else {
@@ -98,6 +103,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					boxes.erase(wi);
 					break;
 				}
 			}
@@ -111,6 +117,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					boxes.erase(wi);
 					break;
 				}
 			} else {
@@ -122,11 +129,12 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					boxes.erase(wi);
 					break;
 				}
 			}
 		}
-		if (wi >= scene_walkboxes.size())
+		if (wi == boxes.end())
 			++i;
 	}
 
