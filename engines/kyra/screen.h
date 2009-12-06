@@ -133,7 +133,7 @@ private:
 
 	int _width, _height;
 
-	uint8 _numGlyphs;
+	int _numGlyphs;
 
 	uint8 *_widthTable;
 	uint8 *_heightTable;
