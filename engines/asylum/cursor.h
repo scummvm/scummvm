@@ -94,7 +94,7 @@ public:
 	 * Get the current frame number of the
 	 * loaded cursorResource
 	 */
-	int32 currentFrame() {
+	uint32 currentFrame() {
 		return _curFrame;
 	}
 
@@ -104,7 +104,7 @@ private:
 	ResourcePack	*_resPack;
 	GraphicResource *_cursorResource;
 	bool   cursorLoaded;
-	int32 _curFrame;
+	uint32 _curFrame;
 	int32  _cursorStep;
 	int32 _mouseX;
 	int32 _mouseY;

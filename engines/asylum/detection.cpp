@@ -68,6 +68,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},
+	{
+		"asylum",
+		"French Version",
+		{
+			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
+			{"RES.000",   0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{0,0,0,0}
+		},
+		Common::FR_FRA,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
+	},
 	AD_TABLE_END_MARKER
 };
 

@@ -845,7 +845,7 @@ void Scene::updateBarriers() {
 							canPlaySound       = true;
 						}
 					} else if (flag & 0x10) {
-						int frameIdx  = barrier->frameIdx;
+						uint32 frameIdx  = barrier->frameIdx;
 						int equalZero = frameIdx == 0;
 						int lessZero  = frameIdx < 0;
 						if (!frameIdx) {
@@ -879,7 +879,7 @@ void Scene::updateBarriers() {
 						}
 					} else if (flag & 8) {
 						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
-							int32 frameIdx = barrier->frameIdx + 1;
+							uint32 frameIdx = barrier->frameIdx + 1;
 							if (frameIdx < barrier->frameCount - 1) {
 								if (barrier->field_688 == 1) {
 									// TODO: get global x, y positions
@@ -902,7 +902,7 @@ void Scene::updateBarriers() {
 						}
 					} else if (!((flag & 0xFFFF) & 6)) {
 						if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4 && (flag & 0x10000)) {
-							int32 frameIdx = barrier->frameIdx - 1;
+							uint32 frameIdx = barrier->frameIdx - 1;
 							if (frameIdx <= 0) {
 								barrier->flags &= 0xFFFEFFFF;
 								if (barrier->field_688 == 1) {

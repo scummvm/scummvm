@@ -28,7 +28,7 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(ResourcePack *resPack, int32 entry) {
+GraphicResource::GraphicResource(ResourcePack *resPack, uint32 entry) {
 	ResourceEntry *resEntry = resPack->getResource(entry);
 	_entryNum = entry;
 	init(resEntry->data, resEntry->size);
@@ -45,7 +45,7 @@ GraphicResource::~GraphicResource() {
 void GraphicResource::init(byte *data, int32 size) {
 	byte   *dataPtr      = data;
 	int32 contentOffset = 0;
-	int16 frameCount    = 0;
+	uint16 frameCount    = 0;
 
 	int32 i = 0;
 

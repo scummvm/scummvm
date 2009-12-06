@@ -90,7 +90,7 @@ void Actor::setAction(int32 action) {
 
 	// Flip horizontally if necessary
 	if (currentAction > 100) {
-		for (int32 i = 0; i < _graphic->getFrameCount(); i++) {
+		for (uint32 i = 0; i < _graphic->getFrameCount(); i++) {
 			GraphicFrame *frame = _graphic->getFrame(i);
 			byte *buffer = (byte *)frame->surface.pixels;
 

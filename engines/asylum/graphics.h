@@ -44,13 +44,13 @@ struct GraphicFrame {
 // Graphic resources can be sprites or images, with multiple frames
 class GraphicResource {
 public:
-	GraphicResource(ResourcePack *resPack, int32 entry);
+	GraphicResource(ResourcePack *resPack, uint32 entry);
 	~GraphicResource();
 
-	int32 getFrameCount() {
+	uint32 getFrameCount() {
 		return _frames.size();
 	}
-	GraphicFrame *getFrame(int32 frame) {
+	GraphicFrame *getFrame(uint32 frame) {
 		return &_frames[frame];
 	}
 	int32 getFlags() {
@@ -60,21 +60,21 @@ public:
 	/**
 	 * Copies an animation frame to the target buffer
 	 */
-	void copyFrameToDest(byte *dest, int32 frame);
+	void copyFrameToDest(byte *dest, uint32 frame);
 
 	/**
 	 * Copies a sprite to the target buffer, with transparency
 	 */
-	void copySpriteToDest(byte *dest, int32 frame);
+	void copySpriteToDest(byte *dest, uint32 frame);
 
-	int32 getEntryNum() {
+	uint32 getEntryNum() {
 		return _entryNum;
 	}
 
 private:
 	Common::Array <GraphicFrame> _frames;
 	int32 _flags;
-	int32 _entryNum;
+	uint32 _entryNum;
 
 	void init(byte *data, int32 size);
 };
