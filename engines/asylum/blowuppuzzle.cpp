@@ -488,6 +488,7 @@ void BlowUpPuzzleVCR::handleMouseDown() {
 	}
 	if (inPolyRegion(_cursor->x(), _cursor->y(), kBlackHole)) {
 		if (!setJackOnHole(jackType, kPluggedOnBlack)) {
+			// TODO: this will probably segfault!
 			if (_holesState[kBlackHole] != kPluggedOnYellow && _buttonsState[kPower] == 1) {
 				_buttonsState[kPower]  = kOFF;
 				_buttonsState[kStop]   = kOFF;

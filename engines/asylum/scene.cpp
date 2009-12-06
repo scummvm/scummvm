@@ -457,6 +457,10 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		if (_actions->allowInput)
 			_rightButton = true;
 		break;
+
+	default:
+		break;
+	
 	}
 
 	if (doUpdate || _leftClick)
@@ -847,7 +851,6 @@ void Scene::updateBarriers() {
 					} else if (flag & 0x10) {
 						uint32 frameIdx  = barrier->frameIdx;
 						int equalZero = frameIdx == 0;
-						int lessZero  = frameIdx < 0;
 						if (!frameIdx) {
 							if (_vm->getTick() - barrier->tickCount >= 1000 * barrier->tickCount2) {
 								if (rand() % barrier->field_C0 == 1) {
@@ -867,10 +870,9 @@ void Scene::updateBarriers() {
 							}
 							frameIdx  = barrier->frameIdx;
 							equalZero = frameIdx == 0;
-							lessZero  = frameIdx < 0;
 						}
 
-						if (!((lessZero ^ 0) | equalZero)) {
+						if (!equalZero) {
 							if (_vm->getTick() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
 								barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
 								barrier->tickCount = _vm->getTick();
@@ -1015,7 +1017,7 @@ void Scene::updateAmbientSounds() {
 				}
 				if (loflag & 2) {
 					int tmpVol = volume;
-					if (rand() % 10000 < 10)
+					if (rand() % 10000 < 10) {
 						if (snd->field_0) {
 							_vm->sound()->playSound(snd->resId, false, volume, panning, false);
 						} else {
@@ -1030,6 +1032,7 @@ void Scene::updateAmbientSounds() {
 									tmpVol = -10000;
 							_vm->sound()->playSound(snd->resId, 0, tmpVol, rand() % 20001 - 10000);
 						}
+					}
 				} else {
 					if (loflag & 4) {
 						// TODO panning array stuff
