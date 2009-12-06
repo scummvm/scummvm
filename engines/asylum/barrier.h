@@ -45,13 +45,13 @@ public:
 	void setNextFrame(int flags);
 
 	int32		   id;
-	int32		   resId;
+	uint32		   resId;
 	int32		   x;
 	int32		   y;
 	Common::Rect   boundingRect;
 	int32		   field_20;
-	int32		   frameIdx;
-	int32		   frameCount;
+	uint32		   frameIdx;
+	uint32		   frameCount;
 	int32		   field_2C;
 	int32		   field_30;
 	int32		   field_34;

@@ -71,7 +71,7 @@ private:
 	int32 _start;
 	int32 _ticks;
 	bool  _done;
-	int32 _spinnerFrame;
+	uint32 _spinnerFrame;
 	int32 _spinnerProgress;
 	bool  _showMouseState;
 

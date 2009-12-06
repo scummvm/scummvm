@@ -957,7 +957,7 @@ int kWaitUntilFramePlayed(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
-		int32 frameNum = cmd->param2;
+		uint32 frameNum = cmd->param2;
 		if (cmd->param2 == -1)
 			frameNum = barrier->frameCount - 1;
 

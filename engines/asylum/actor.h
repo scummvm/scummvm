@@ -186,10 +186,10 @@ public:
 
 	int32		 x;
 	int32		 y;
-	int32		 grResId;
+	uint32		 grResId;
 	int32		 field_C; // BarrierIndex? Mask index?
-	int32		 frameNum;
-	int32		 frameCount;
+	uint32		 frameNum;
+	uint32		 frameCount;
 	int32		 x1;
 	int32		 y1;
 	int32		 x2;

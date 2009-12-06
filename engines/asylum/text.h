@@ -38,25 +38,25 @@ public:
 	Text(Screen *screen);
 	~Text();
 
-	void loadFont(ResourcePack *resPack, int32 resId);
+	void loadFont(ResourcePack *resPack, uint32 resId);
 
 	void setTextPos(int32 x, int32 y);
 	int32 getTextWidth(const char *text);
-	int32 getResTextWidth(int32 resId);
-    char * getResText(int32 resId);
+	int32 getResTextWidth(uint32 resId);
+    char * getResText(uint32 resId);
 
-	void drawChar(const char character);
+	void drawChar(unsigned char character);
 	void drawText(const char *text);
 	void drawText(int32 x, int32 y, const char *text);
-	void drawResText(int32 resId);
-	void drawResText(int32 x, int32 y, int32 resId);
+	void drawResText(uint32 resId);
+	void drawResText(int32 x, int32 y, uint32 resId);
 
 	void drawTextCentered(int32 x, int32 y, int32 width, const char *text);
-	void drawResTextCentered(int32 x, int32 y, int32 width, int32 resId);
-	void drawResTextWithValueCentered(int32 x, int32 y, int32 width, int32 resId, int32 value);
+	void drawResTextCentered(int32 x, int32 y, int32 width, uint32 resId);
+	void drawResTextWithValueCentered(int32 x, int32 y, int32 width, uint32 resId, int32 value);
 
 	void drawTextAlignRight(int32 x, int32 y, const char *text);
-	void drawResTextAlignRight(int32 x, int32 y, int32 resId);
+	void drawResTextAlignRight(int32 x, int32 y, uint32 resId);
 
 private:
 	Screen			*_screen;

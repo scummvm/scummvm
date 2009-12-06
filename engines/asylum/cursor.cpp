@@ -88,7 +88,7 @@ void Cursor::animate() {
 }
 
 void Cursor::update(CommonResources *cr, int32 currentAction) {
-	int32 newCursor = 0;
+	uint32 newCursor = 0;
 
 	// Change cursor
 	switch (currentAction) {
