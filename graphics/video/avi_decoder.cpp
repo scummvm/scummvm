@@ -425,8 +425,16 @@ Codec *AviDecoder::createCodec() {
 }
 
 Audio::AppendableAudioStream *AviDecoder::createAudioStream() {
-	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM)
-		return Audio::makeAppendableAudioStream(AUDIO_RATE, Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE);
+	byte flags = Audio::Mixer::FLAG_AUTOFREE;
+
+	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM) {
+		if (_audsHeader.sampleSize == 2)
+			flags |= Audio::Mixer::FLAG_16BITS|Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		else
+			flags |= Audio::Mixer::FLAG_UNSIGNED;
+
+		return Audio::makeAppendableAudioStream(AUDIO_RATE, flags);
+	}
 	
 	if (_wvInfo.tag != 0) // No sound
 		warning ("Unsupported AVI audio format %d", _wvInfo.tag);
