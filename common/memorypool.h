@@ -32,6 +32,16 @@
 
 namespace Common {
 
+/**
+ * This class provides a pool of memory 'chunks' of identical size.
+ * The size of a chunk is determined when creating the memory pool.
+ *
+ * Using a memory pool may yield better performance and memory usage
+ * when allocating and deallocating many memory blocks of equal size.
+ * E.g. the Common::String class uses a memory pool for the refCount
+ * variables (each the size of an int) it allocates for each string
+ * instance.
+ */
 class MemoryPool {
 protected:
 	MemoryPool(const MemoryPool&);
@@ -42,7 +52,7 @@ protected:
 		size_t numChunks;
 	};
 
-	size_t			_chunkSize;
+	const size_t	_chunkSize;
 	Array<Page>		_pages;
 	void			*_next;
 	size_t			_chunksPerPage;
@@ -52,17 +62,48 @@ protected:
 	bool	isPointerInPage(void *ptr, const Page &page);
 
 public:
+	/**
+	 * Constructor for a memory pool with the given chunk size.
+	 * @param chunkSize		the chunk size of this memory pool
+	 */
 	MemoryPool(size_t chunkSize);
 	~MemoryPool();
 
+	/**
+	 * Allocate a new chunk from the memory pool.
+	 */
 	void	*allocChunk();
+	/**
+	 * Return a chunk to the memory pool. The given pointer must have
+	 * been obtained from calling the allocChunk() method of the very
+	 * same MemoryPool instance. Passing any other pointer (e.g. to
+	 * a chunk from another MemoryPool, or a malloc'ed memory block)
+	 * will lead to undefined behavior and may result in a crash (if
+	 * you are lucky) or in silent data corruption.
+	 */
 	void	freeChunk(void *ptr);
 
+	/**
+	 * Perform garbage collection. The memory pool stores all the
+	 * chunks it manages in memory 'pages' obtained via the classic
+	 * memory allocation APIs (i.e. malloc/free). Ordinarily, once
+	 * a page has been allocated, it won't be released again during
+	 * the life time of the memory pool. The exception is when this
+	 * method is called.
+	 */
 	void	freeUnusedPages();
 
+	/**
+	 * Return the chunk size used by this memory pool.
+	 */
 	size_t	getChunkSize() const { return _chunkSize; }
 };
 
+/**
+ * This is a memory pool which already contains in itself some storage
+ * space for a fixed number of chunks. Thus if the memory pool is only
+ * lightly used, no malloc() calls have to be made at all.
+ */
 template<size_t CHUNK_SIZE, size_t NUM_INTERNAL_CHUNKS = 32>
 class FixedSizeMemoryPool : public MemoryPool {
 private:
@@ -80,16 +121,23 @@ public:
 	}
 };
 
+// Ensure NUM_INTERNAL_CHUNKS == 0 results in a compile error
 template<size_t CHUNK_SIZE>
 class FixedSizeMemoryPool<CHUNK_SIZE,0> : public MemoryPool {
 public:
 	FixedSizeMemoryPool() : MemoryPool(CHUNK_SIZE) {}
 };
 
-
+/**
+ * A memory pool for C++ objects.
+ */
 template<class T, size_t NUM_INTERNAL_CHUNKS = 32>
 class ObjectPool : public FixedSizeMemoryPool<sizeof(T), NUM_INTERNAL_CHUNKS> {
 public:
+	/**
+	 * Return the memory chunk used as storage for the given object back
+	 * to the pool, after calling its destructor.
+	 */
 	void deleteChunk(T *ptr) {
 		ptr->~T();
 		this->freeChunk(ptr);
@@ -98,14 +146,14 @@ public:
 
 }	// End of namespace Common
 
-// Provide a custom placement new operator, using an arbitrary
-// MemoryPool.
-//
-// This *should* work with all C++ implementations, but may not.
-//
-// For details on using placement new for custom allocators, see e.g.
-// <http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.14>
-
+/**
+ * A custom placement new operator, using an arbitrary MemoryPool.
+ *
+ * This *should* work with all C++ implementations, but may not.
+ *
+ * For details on using placement new for custom allocators, see e.g.
+ * <http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.14>
+ */
 inline void* operator new(size_t nbytes, Common::MemoryPool& pool) {
 	assert(nbytes <= pool.getChunkSize());
 	return pool.allocChunk();
