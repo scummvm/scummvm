@@ -58,9 +58,12 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	p.push_back(src);
 	p.push_back(dst);
 
-	Common::List<int> boxes;
-	for(uint i = 0; i < scene_walkboxes.size(); ++i)
-		boxes.push_back(i);
+	Common::List<uint> boxes;
+	for(uint i = 0; i < scene_walkboxes.size(); ++i) {
+		const Walkbox & w = scene_walkboxes[i];
+		if (!w.rect.in(src) && !w.rect.in(dst))
+			boxes.push_back(i);
+	}
 	
 	for(Path::iterator i = p.begin(); i != p.end() && !boxes.empty(); ) {
 		Path::iterator next = i;
@@ -71,7 +74,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		const Common::Point &p1 = *i, &p2 = *next;
 		debug(1, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
 		
-		Common::List<int>::iterator wi;
+		Common::List<uint>::iterator wi;
 		for(wi = boxes.begin(); wi != boxes.end(); ++wi) {
 			const Walkbox & w = scene_walkboxes[*wi];
 			int mask = w.rect.intersects_line(p1, p2);
@@ -87,8 +90,6 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					debug(1, "hint left: %u", w.side_hint[3]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[3], p1);
-					if (w1 == p2)
-						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					boxes.erase(wi);
@@ -99,8 +100,6 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					debug(1, "hint right: %u", w.side_hint[1]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[1], p1);
-					if (w1 == p2)
-						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					boxes.erase(wi);
@@ -113,8 +112,6 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					debug(1, "hint top: %u", w.side_hint[0]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[0], p1);
-					if (w1 == p2)
-						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					boxes.erase(wi);
@@ -125,8 +122,6 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					debug(1, "hint bottom: %u", w.side_hint[2]);
 					Common::Point w1, w2;
 					w.rect.side(w1, w2, w.side_hint[2], p1);
-					if (w1 == p2)
-						continue;
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
 					boxes.erase(wi);
