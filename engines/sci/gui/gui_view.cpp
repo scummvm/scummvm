@@ -262,15 +262,15 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 	byte *rlePtr;
 	byte *literalPtr;
 	uint16 pixelNo = 0, runLength;
-	byte byte;
+	byte pixel;
 
 	if (celInfo->offsetEGA) {
 		// decompression for EGA views
 		literalPtr = _resourceData + _loop[loopNo].cel[celNo].offsetEGA;
 		while (pixelNo < pixelCount) {
-			byte = *literalPtr++;
-			runLength = byte >> 4;
-			memset(outPtr + pixelNo, byte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNo));
+			pixel = *literalPtr++;
+			runLength = pixel >> 4;
+			memset(outPtr + pixelNo, pixel & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNo));
 			pixelNo += runLength;
 		}
 		return;
@@ -281,15 +281,15 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 		if (_resMan->getViewType() == kViewAmiga) {
 			// decompression for amiga views
 			while (pixelNo < pixelCount) {
-				byte = *rlePtr++;
-				if (byte & 0x07) { // fill with color
-					runLength = byte & 0x07;
-					byte = byte >> 3;
+				pixel = *rlePtr++;
+				if (pixel & 0x07) { // fill with color
+					runLength = pixel & 0x07;
+					pixel = pixel >> 3;
 					while (runLength-- && pixelNo < pixelCount) {
-						outPtr[pixelNo++] = byte;
+						outPtr[pixelNo++] = pixel;
 					}
 				} else { // fill with transparent
-					runLength = byte >> 3;
+					runLength = pixel >> 3;
 					pixelNo += runLength;
 				}
 			}
@@ -297,9 +297,9 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 		} else {
 			// decompression for data that has just one combined stream
 			while (pixelNo < pixelCount) {
-				byte = *rlePtr++;
-				runLength = byte & 0x3F;
-				switch (byte & 0xC0) {
+				pixel = *rlePtr++;
+				runLength = pixel & 0x3F;
+				switch (pixel & 0xC0) {
 				case 0: // copy bytes as-is
 					while (runLength-- && pixelNo < pixelCount)
 						outPtr[pixelNo++] = *rlePtr++;
@@ -319,9 +319,9 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 		// decompression for data that has separate rle and literal streams
 		literalPtr = _resourceData + celInfo->offsetLiteral;
 		while (pixelNo < pixelCount) {
-			byte = *rlePtr++;
-			runLength = byte & 0x3F;
-			switch (byte & 0xC0) {
+			pixel = *rlePtr++;
+			runLength = pixel & 0x3F;
+			switch (pixel & 0xC0) {
 			case 0: // copy bytes as-is
 				while (runLength-- && pixelNo < pixelCount)
 					outPtr[pixelNo++] = *literalPtr++;

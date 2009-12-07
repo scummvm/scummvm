@@ -46,7 +46,7 @@ private:
 	void drawSci11Vga();
 	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY);
 	void drawVectorData(byte *data, int size);
-	bool vectorIsNonOpcode(byte byte);
+	bool vectorIsNonOpcode(byte pixel);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);
 	void vectorGetAbsCoordsNoMirror(byte *data, int &curPos, int16 &x, int16 &y);
 	void vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y);

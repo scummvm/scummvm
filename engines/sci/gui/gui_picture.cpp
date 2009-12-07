@@ -317,7 +317,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	bool isEGA = false;
 	int curPos = 0;
 	uint16 size;
-	byte byte;
+	byte pixel;
 	int i;
 	GuiPalette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
@@ -444,21 +444,21 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				switch (pic_op = data[curPos++]) {
 				case PIC_OPX_EGA_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
-						byte = data[curPos++];
-						if (byte >= PIC_EGAPALETTE_TOTALSIZE) {
+						pixel = data[curPos++];
+						if (pixel >= PIC_EGAPALETTE_TOTALSIZE) {
 							error("picture trying to write to invalid EGA-palette");
 						}
-						EGApalettes[byte] = data[curPos++];
+						EGApalettes[pixel] = data[curPos++];
 					}
 					break;
 				case PIC_OPX_EGA_SET_PALETTE:
-					byte = data[curPos++];
-					if (byte >= PIC_EGAPALETTE_COUNT) {
-						error("picture trying to write to invalid palette %d", (int)byte);
+					pixel = data[curPos++];
+					if (pixel >= PIC_EGAPALETTE_COUNT) {
+						error("picture trying to write to invalid palette %d", (int)pixel);
 					}
-					byte *= PIC_EGAPALETTE_SIZE;
+					pixel *= PIC_EGAPALETTE_SIZE;
 					for (i = 0; i < PIC_EGAPALETTE_SIZE; i++) {
-						EGApalettes[byte + i] = data[curPos++];
+						EGApalettes[pixel + i] = data[curPos++];
 					}
 					break;
 				case PIC_OPX_EGA_MONO0:
@@ -539,51 +539,51 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	error("picture vector data without terminator");
 }
 
-bool SciGuiPicture::vectorIsNonOpcode(byte byte) {
-	if (byte >= PIC_OP_FIRST)
+bool SciGuiPicture::vectorIsNonOpcode(byte pixel) {
+	if (pixel >= PIC_OP_FIRST)
 		return false;
 	return true;
 }
 
 void SciGuiPicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y) {
-	byte byte = data[curPos++];
-	x = data[curPos++] + ((byte & 0xF0) << 4);
-	y = data[curPos++] + ((byte & 0x0F) << 8);
+	byte pixel = data[curPos++];
+	x = data[curPos++] + ((pixel & 0xF0) << 4);
+	y = data[curPos++] + ((pixel & 0x0F) << 8);
 	if (_mirroredFlag) x = 319 - x;
 }
 
 void SciGuiPicture::vectorGetAbsCoordsNoMirror(byte *data, int &curPos, int16 &x, int16 &y) {
-	byte byte = data[curPos++];
-	x = data[curPos++] + ((byte & 0xF0) << 4);
-	y = data[curPos++] + ((byte & 0x0F) << 8);
+	byte pixel = data[curPos++];
+	x = data[curPos++] + ((pixel & 0xF0) << 4);
+	y = data[curPos++] + ((pixel & 0x0F) << 8);
 }
 
 void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y) {
-	byte byte = data[curPos++];
-	if (byte & 0x80) {
-		x -= ((byte >> 4) & 7) * (_mirroredFlag ? -1 : 1);
+	byte pixel = data[curPos++];
+	if (pixel & 0x80) {
+		x -= ((pixel >> 4) & 7) * (_mirroredFlag ? -1 : 1);
 	} else {
-		x += (byte >> 4) * (_mirroredFlag ? -1 : 1);
+		x += (pixel >> 4) * (_mirroredFlag ? -1 : 1);
 	}
-	if (byte & 0x08) {
-		y -= (byte & 7);
+	if (pixel & 0x08) {
+		y -= (pixel & 7);
 	} else {
-		y += (byte & 7);
+		y += (pixel & 7);
 	}
 }
 
 void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int16 &y) {
-	byte byte = data[curPos++];
-	if (byte & 0x80) {
-		y -= (byte & 0x7F);
+	byte pixel = data[curPos++];
+	if (pixel & 0x80) {
+		y -= (pixel & 0x7F);
 	} else {
-		y += byte;
+		y += pixel;
 	}
-	byte = data[curPos++];
-	if (byte & 0x80) {
-		x -= (128 - (byte & 0x7F)) * (_mirroredFlag ? -1 : 1);
+	pixel = data[curPos++];
+	if (pixel & 0x80) {
+		x -= (128 - (pixel & 0x7F)) * (_mirroredFlag ? -1 : 1);
 	} else {
-		x += byte * (_mirroredFlag ? -1 : 1);
+		x += pixel * (_mirroredFlag ? -1 : 1);
 	}
 }
 
