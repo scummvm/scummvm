@@ -80,7 +80,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH, MDT_MIDI},
 #endif
 #ifdef USE_MT32EMU
-	{"mt32", "MT-32", MD_MT32, MDT_MIDI},
+	{"mt32", "MT-32 Emulation", MD_MT32, MDT_MIDI},
 #endif
 
 	// The flags for the "adlib" driver indicates that it can do adlib and MIDI.
