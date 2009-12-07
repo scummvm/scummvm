@@ -125,8 +125,15 @@ public:
 	int width() { return w; }
 	int height() { return h; }
 	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }
-	byte *getData();
-	byte *getBasePtr(int x, int y);
+	inline byte *getBasePtr() {
+		return (byte *)pixels;
+	}
+	inline byte *getBasePtr(int x, int y) {
+		return (byte *)Graphics::Surface::getBasePtr(x, y);
+	}
+	inline const byte *getBasePtr(int x, int y) const {
+		return (const byte *)Graphics::Surface::getBasePtr(x, y);
+	}
 	void freeData();
 	void clear();
 	void frameRect(const Common::Rect &r, uint8 color);

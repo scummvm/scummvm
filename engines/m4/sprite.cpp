@@ -47,7 +47,7 @@ M4Sprite::M4Sprite(Common::SeekableReadStream* source, int xOfs, int yOfs, int w
 			loadRle(source);
 		} else {
 			// Raw sprite data, load directly
-			byte *dst = getData();
+			byte *dst = getBasePtr();
 			source->read(dst, widthVal * heightVal);
 		}
 	} else {
@@ -60,7 +60,7 @@ M4Sprite::M4Sprite(Common::SeekableReadStream* source, int xOfs, int yOfs, int w
 }
 
 void M4Sprite::loadRle(Common::SeekableReadStream* rleData) {
-	byte *dst = getData();
+	byte *dst = getBasePtr();
 	while (1) {
 		byte len = rleData->readByte();
 		if (len == 0) {
@@ -124,8 +124,8 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 	byte *outp, *lineStart;
 	bool newLine = false;
 
-	outp = getData();
-	lineStart = getData();
+	outp = getBasePtr();
+	lineStart = getBasePtr();
 
 	while (1) {
 		byte cmd1, cmd2, count, pixel;

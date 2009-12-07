@@ -158,7 +158,7 @@ void SpriteAsset::loadM4SpriteAsset(M4Engine *vm, Common::SeekableReadStream* st
 			char fn[512];
 			sprintf(fn, "%04d.raw", curFrame);
 			FILE *h = fopen(fn, "wb");
-			fwrite((byte*)frame.frame->getData(), frame.w * frame.h, 1, h);
+			fwrite((byte*)frame.frame->getBasePtr(), frame.w * frame.h, 1, h);
 			fclose(h);
 #endif
 		}

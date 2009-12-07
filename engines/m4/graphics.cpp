@@ -216,7 +216,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 		return;
 	int heightAmt = scaledHeight;
 
-	byte *src = info.sprite->getData();
+	byte *src = info.sprite->getBasePtr();
 	byte *dst = getBasePtr(x - info.hotX - clipX, y - info.hotY - clipY);
 
 	int status = kStatusSkip;
@@ -309,19 +309,11 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 
 // Surface methods
 
-byte *M4Surface::getData() {
-	return (byte *)pixels;
-}
-
-byte *M4Surface::getBasePtr(int x, int y) {
-	return (byte *)Graphics::Surface::getBasePtr(x, y);
-}
-
 void M4Surface::freeData() {
 }
 
 void M4Surface::clear() {
-	Common::set_to((byte *) pixels, (byte *) pixels + w * h, _vm->_palette->BLACK);
+	Common::set_to((byte *)pixels, (byte *)pixels + w * h, _vm->_palette->BLACK);
 }
 
 void M4Surface::frameRect(const Common::Rect &r, uint8 color) {
@@ -357,7 +349,7 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
 
 	// Copy the specified area
 
-	byte *data = src->getData();
+	byte *data = src->getBasePtr();
 	byte *srcPtr = data + (src->width() * copyRect.top + copyRect.left);
 	byte *destPtr = (byte *)pixels + (destY * width()) + destX;
 
@@ -855,7 +847,7 @@ void Palette::fadeToGreen(int numSteps, uint delayAmount) {
 
 	// Remap all pixels into the #32-63 range
 
-	tempP = _vm->_scene->getData();
+	tempP = _vm->_scene->getBasePtr();
 	for (int pixelCtr = 0; pixelCtr < _vm->_scene->width() * _vm->_scene->height();
 			++pixelCtr, ++tempP) {
 		// If pixel is in #32-63 range already, remap to higher palette entries
