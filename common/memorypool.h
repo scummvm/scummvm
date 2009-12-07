@@ -92,7 +92,7 @@ class ObjectPool : public FixedSizeMemoryPool<sizeof(T), NUM_INTERNAL_CHUNKS> {
 public:
 	void deleteChunk(T *ptr) {
 		ptr->~T();
-		freeChunk(ptr);
+		this->freeChunk(ptr);
 	}
 };
 
