@@ -1174,13 +1174,14 @@ other games.
     p                      - Pauses
 
   Dragon History:
-    left click             - walk, explore
-    right click            - use, talk
-    move mouse up, i       - inventory
-    move mouse down, m     - map
-    Escape                 - skip the intro, exit map/inventory
-    any click              - skip the currently dubbed sentence
-    q                      - quick walking on/off
+    F5                     - Displays the Global Menu
+    left click             - Walk, explore
+    right click            - Use, talk
+    move mouse up, i       - Inventory
+    move mouse down, m     - Map
+    Escape                 - Skip the intro, exit map/inventory
+    any click              - Skip the currently dubbed sentence
+    q                      - Quick walking on/off
 
   Flight of the Amazon Queen:
     Ctrl-d                 - Starts the debugger
@@ -1249,6 +1250,9 @@ other games.
   The Legend of Kyrandia:
     Ctrl 0-9 and Alt 0-9   - Load and save game state
     Ctrl-d                 - Starts the debugger
+
+  TeenAgent
+    F5                     - Displays the Global Menu
 
   Touche: The Adventures of the Fifth Musketeer:
     Ctrl-f                 - Toggle fast mode
