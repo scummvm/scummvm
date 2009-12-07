@@ -190,13 +190,13 @@ protected:
 	int _delta; /**!< Remaining time */
 
 public:
-	TimerSongIterator(int delta);
+	TimerSongIterator(int delta) : _delta(delta) {}
 
 	int nextCommand(byte *buf, int *result);
-	Audio::AudioStream *getAudioStream();
-	SongIterator *handleMessage(Message msg);
-	int getTimepos();
-	SongIterator *clone(int delta);
+	Audio::AudioStream *getAudioStream() { return NULL; }
+	SongIterator *handleMessage(Message msg) { return NULL; }
+	int getTimepos() { return 0; }
+	SongIterator *clone(int delta) { return new TimerSongIterator(*this); }
 };
 
 /**********************************/

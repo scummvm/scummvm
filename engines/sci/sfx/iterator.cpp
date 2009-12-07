@@ -1169,10 +1169,6 @@ int CleanupSongIterator::nextCommand(byte *buf, int *result) {
 /**********************/
 /*-- Timer iterator --*/
 /**********************/
-TimerSongIterator::TimerSongIterator(int delta)
-	: _delta(delta) {
-}
-
 int TimerSongIterator::nextCommand(byte *buf, int *result) {
 	if (_delta) {
 		int d = _delta;
@@ -1180,23 +1176,6 @@ int TimerSongIterator::nextCommand(byte *buf, int *result) {
 		return d;
 	}
 	return SI_FINISHED;
-}
-
-SongIterator *TimerSongIterator::handleMessage(Message msg) {
-	return NULL;
-}
-
-int TimerSongIterator::getTimepos() {
-	return 0;
-}
-
-Audio::AudioStream *TimerSongIterator::getAudioStream() {
-	return NULL;
-}
-
-SongIterator *TimerSongIterator::clone(int delta) {
-	TimerSongIterator *newit = new TimerSongIterator(*this);
-	return newit;
 }
 
 SongIterator *new_timer_iterator(int delta) {
