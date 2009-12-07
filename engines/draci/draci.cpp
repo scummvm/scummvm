@@ -293,6 +293,11 @@ void DraciEngine::handleEvents() {
 					_game->inventoryInit();
 				}
 				break;
+			case Common::KEYCODE_F5:
+				if (event.kbd.flags == 0) {
+					openMainMenuDialog();
+				}
+				break;
 			default:
 				break;
 			}
