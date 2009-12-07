@@ -305,6 +305,8 @@ Common::Error TeenAgentEngine::run() {
 					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 					console->attach();
 				}
+				if (event.kbd.flags == 0 && event.kbd.keycode == Common::KEYCODE_F5)
+					openMainMenuDialog();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (scene->getId() < 0)
