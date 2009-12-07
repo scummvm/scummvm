@@ -94,12 +94,12 @@ struct Rect {
 		
 		if (dx != 0) {
 			int yl = (left - a.x) * dy / dx + a.y;
-			if (yl > top && yl < bottom && inside(yl, a.y, b.y)) {
+			if (yl > top && yl < bottom && inside(yl, a.y, b.y) && inside(left, a.x, b.x)) {
 				//c[idx++] = Common::Point(left, yl);
 				mask |= 8;
 			}
 			int yr = (right - a.x) * dy / dx + a.y;
-			if (yr > top && yr < bottom && inside(yr, a.y, b.y)) {
+			if (yr > top && yr < bottom && inside(yr, a.y, b.y) && inside(right, a.x, b.x)) {
 				//c[idx++] = Common::Point(right, yr);
 				mask |= 2;
 			}
@@ -107,13 +107,13 @@ struct Rect {
 		
 		if (dy != 0) {
 			int xt = (top - a.y) * dx / dy + a.x;
-			if (xt > left && xt < right && inside(xt, a.x, b.x)) {
+			if (xt > left && xt < right && inside(xt, a.x, b.x) && inside(top, a.y, b.y)) {
 				//assert(idx < 2);
 				//c[idx++] = Common::Point(xt, top);
 				mask |= 1;
 			}
 			int xb = (bottom - a.y) * dx / dy + a.x;
-			if (xb > left && xb < right && inside(xb, a.x, b.x)) {
+			if (xb > left && xb < right && inside(xb, a.x, b.x) && inside(bottom, a.y, b.y)) {
 				//assert(idx < 2);
 				//c[idx++] = Common::Point(xb, bottom);
 				mask |= 4;
