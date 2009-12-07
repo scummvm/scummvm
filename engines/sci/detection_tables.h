@@ -1039,6 +1039,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NONE	},
 
 #ifdef ENABLE_SCI32
+	
+
+	// King's Quest 7 - English Windows (from abevi)
+	// VERSION 1.65c
+	{"kq7", "", {
+		{"resource.000", 0, "4948e4e1506f1e1c4e1d47abfa06b7f8", 204385195},
+		{"resource.map", 0, "40ccafb2195301504eba2e4f4f2c7f3d", 18925},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 7 - English DOS (from the King's Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.4"
 	{"kq7", "", {
@@ -2410,6 +2420,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE
 	},
+
+	// Shivers 2 - English Windows (from abevi)
+	// VERSION.TXT Version 1.0 (3/25/97)
+	{"shivers2", "", {
+		{"ressci.001", 0, "a79d03d6eb75be0a79324f14e3d2ace4", 95346793},
+		{"resmap.001", 0, "a4804d436d90c4ec2e46b537f5e954db", 6268},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
 #endif // ENABLE_SCI32
 
 	// Slater & Charlie Go Camping - English DOS Demo
@@ -2483,8 +2501,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 746496},
 		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 761984},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH
-			},
+		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - German Amiga
 	// Executable scanning reports "1.004.006"
@@ -2497,8 +2514,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 545053},
 		{"resource.005", 0, "6d8f34090503ce937e7dbef6cb6cdb6a", 687507},
 		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformAmiga, 0, GUIO_NOSPEECH
-	},
+		Common::DE_DEU, Common::kPlatformAmiga, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - English DOS Non-Interactive Demo
 	// SCI interpreter version 0.000.453
@@ -2506,8 +2522,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "ec66ac2b1ce58b2575ba00b65058de1a", 612},
 		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 180245},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH
-			},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH },
 
 	// Space Quest 3 - English DOS (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 0.000.453
@@ -2517,8 +2532,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 720244},
 		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 688367},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
-			},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
@@ -2528,8 +2542,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 715777},
 		{"resource.003", 0, "8b55c4875298f45ea5696a5ee8f6a7fe", 703370},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - English DOS (from abevi, bug report #2612718)
 	{"sq3", "", {
@@ -2541,8 +2554,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 328278},
 		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356702},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - German DOS (from Tobis87)
 	// SCI interpreter version 0.000.453 (?)
@@ -2556,8 +2568,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "9107c2aa5398e28b5c5406df13491f85", 320643},
 		{"resource.007", 0, "9107c2aa5398e28b5c5406df13491f85", 344287},
 		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
-			},
+		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 v1.052 - German DOS (supplied by markcoolio in bug report #2723860)
 	// Executable scanning reports "S.old.114"
@@ -2567,8 +2578,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "9107c2aa5398e28b5c5406df13491f85", 596768},
 		{"resource.003", 0, "9107c2aa5398e28b5c5406df13491f85", 693573},
 		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
+		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH },
 
 	// Space Quest 4 - English Amiga
 	// Executable scanning reports "1.004.024"
