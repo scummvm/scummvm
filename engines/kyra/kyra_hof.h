@@ -119,21 +119,21 @@ class TextDisplayer_HoF;
 
 struct TIM;
 
-typedef int (KyraEngine_HoF::*SeqProc)(WSAMovie_v2*, int, int, int);
+typedef int (KyraEngine_HoF::*SeqProc)(WSAMovie_v2 *, int, int, int);
 
 struct ActiveWSA {
-	int16 flags;
+	SeqProc callback;
 	WSAMovie_v2 *movie;
+	const FrameControl *control;
+	int16 flags;
 	uint16 startFrame;
 	uint16 endFrame;
 	uint16 frameDelay;
-	SeqProc callback;
 	uint32 nextFrame;
 	uint16 currentFrame;
 	uint16 lastFrame;
 	uint16 x;
 	uint16 y;
-	const FrameControl *control;
 	uint16 startupCommand;
 	uint16 finalCommand;
 };
@@ -142,16 +142,16 @@ struct ActiveText {
 	uint16 strIndex;
 	uint16 x;
 	uint16 y;
-	int duration;
 	uint16 width;
+	int32 duration;
 	uint32 startTime;
 	int16 textcolor;
 };
 
 struct Sequence {
+	const char *wsaFile;
+	const char *cpsFile;
 	uint16 flags;
-	const char * wsaFile;
-	const char * cpsFile;
 	uint8 startupCommand;
 	uint8 finalCommand;
 	int16 stringIndex1;
@@ -165,14 +165,14 @@ struct Sequence {
 };
 
 struct NestedSequence {
+	const char *wsaFile;
+	const FrameControl *wsaControl;
 	uint16 flags;
-	const char * wsaFile;
 	uint16 startframe;
 	uint16 endFrame;
 	uint16 frameDelay;
 	uint16 x;
 	uint16 y;
-	const FrameControl *wsaControl;
 	uint16 startupCommand;
 	uint16 finalCommand;
 };
