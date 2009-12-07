@@ -83,7 +83,7 @@ struct SpriteInfo {
 	RGB8 *palette;
 };
 
-class M4Surface : public Graphics::Surface {
+class M4Surface : protected Graphics::Surface {
 private:
 	byte _color;
 	bool _isScreen;
@@ -96,7 +96,10 @@ public:
 		create(g_system->getWidth(), g_system->getHeight(), 1);
 		_isScreen = isScreen;
 	}
-	M4Surface(int Width, int Height) { create(Width, Height, 1); _isScreen = false; }
+	M4Surface(int width_, int height_) {
+		create(width_, height_, 1);
+		_isScreen = false;
+	}
 
 	// loads a .COD file into the M4Surface
 	// TODO: maybe move this to the rail system? check where it makes sense
@@ -110,7 +113,7 @@ public:
 	void madsloadInterface(int index, RGBList **palData);
 
 	void setColor(byte value) { _color = value; }
-	byte getColor() { return _color; }
+	inline byte getColor() const { return _color; }
 	void vLine(int x, int y1, int y2);
 	void hLine(int x1, int x2, int y);
 	void vLineXor(int x, int y1, int y2);
@@ -122,8 +125,8 @@ public:
 	void drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &clipRect);
 
 	// Surface methods
-	int width() { return w; }
-	int height() { return h; }
+	inline int width() const { return w; }
+	inline int height() const { return h; }
 	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }
 	inline byte *getBasePtr() {
 		return (byte *)pixels;
@@ -149,13 +152,13 @@ public:
 	}
 
 	// copyTo methods
-	void copyTo(M4Surface *dest, int transparentColor = -1) {
+	inline void copyTo(M4Surface *dest, int transparentColor = -1) {
 		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColor);
 	}
-	void copyTo(M4Surface *dest, int x, int y, int transparentColor = -1) {
+	inline void copyTo(M4Surface *dest, int x, int y, int transparentColor = -1) {
 		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColor);
 	}
-	void copyTo(M4Surface *dest, const Common::Rect &srcBounds, int destX, int destY,
+	inline void copyTo(M4Surface *dest, const Common::Rect &srcBounds, int destX, int destY,
 				int transparentColor = -1) {
 		dest->copyFrom(this, srcBounds, destX, destY, transparentColor);
 	}

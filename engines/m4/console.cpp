@@ -224,7 +224,7 @@ bool Console::cmdShowSprite(int argc, const char **argv) {
 				break;
 
 			// FIXME: We assume that the transparent color is the color of the top left pixel
-			byte *transparentColor = (byte *)spr->pixels;
+			byte *transparentColor = spr->getBasePtr(0, 0);
 
 			spr->copyTo(bg, x, y, (int)*transparentColor);
 

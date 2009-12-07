@@ -206,13 +206,13 @@ void TextviewView::updateState() {
 				Common::copy(srcP, srcP + _bgSurface.width(), destP);
 			}
 
-			Common::copy(linesTemp, linesTemp + _panY * _bgSurface.width(), (byte *)_bgSurface.pixels);
+			Common::copy(linesTemp, linesTemp + _panY * _bgSurface.width(), _bgSurface.getBasePtr(0, 0));
 			delete[] linesTemp;
 		}
 	}
 
 	// Scroll the text surface up by one row
-	byte *pixelsP = (byte *)_textSurface.pixels;
+	byte *pixelsP = _textSurface.getBasePtr(0, 0);
 	Common::copy(pixelsP + width(),  pixelsP + _textSurface.width() * _textSurface.height(), pixelsP);
 	pixelsP = _textSurface.getBasePtr(0, _textSurface.height() - 1);
 	Common::set_to(pixelsP, pixelsP + _textSurface.width(), _vm->_palette->BLACK);

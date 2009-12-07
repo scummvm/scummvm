@@ -44,8 +44,8 @@ Actor::~Actor() {
 	unloadWalkers();
 }
 
-int Actor::getWalkerWidth() { return _walkerSprites[kFacingSouth]->getFrame(0)->w; }
-int Actor::getWalkerHeight() { return _walkerSprites[kFacingSouth]->getFrame(0)->h; }
+int Actor::getWalkerWidth() { return _walkerSprites[kFacingSouth]->getFrame(0)->width(); }
+int Actor::getWalkerHeight() { return _walkerSprites[kFacingSouth]->getFrame(0)->height(); }
 
 void Actor::placeWalkerSpriteAt(int spriteNum, int x, int y) {
 	if (_direction < 1 || _direction > 9) {
@@ -55,8 +55,8 @@ void Actor::placeWalkerSpriteAt(int spriteNum, int x, int y) {
 	SpriteInfo info;
 	info.sprite = _walkerSprites[_direction]->getFrame(spriteNum);
 	info.hotX = info.hotY = 0;
-	info.width = info.sprite->w;
-	info.height = info.sprite->h;
+	info.width = info.sprite->width();
+	info.height = info.sprite->height();
 	info.scaleX = info.scaleY = _scaling;
 	info.palette = _walkerSprites[_direction]->getPalette();
 	info.inverseColorTable = _vm->_scene->getInverseColorTable();

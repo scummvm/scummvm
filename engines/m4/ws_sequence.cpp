@@ -291,8 +291,8 @@ void Sequence::draw(M4Surface *surface, const Common::Rect &clipRect, Common::Re
 	info.encoding = _curFrame->encoding;
 	info.inverseColorTable = _vm->_scene->getInverseColorTable();
 	info.palette = _ws->getMainPalette();
-	info.width = _curFrame->w;
-	info.height = _curFrame->h;
+	info.width = _curFrame->width();
+	info.height = _curFrame->height();
 	int32 scaler = FixedMul(_vars[kSeqVarScale], 100 << 16) >> 16;
 	info.scaleX = _vars[kSeqVarWidth] < 0 ? -scaler : scaler;
 	info.scaleY = scaler;
@@ -750,8 +750,8 @@ bool Sequence::streamNextFrame() {
 
 	_streamSpriteAsset->loadStreamingFrame(_curFrame, frameNum, _vars[kSeqVarX], _vars[kSeqVarY]);
 
-	_vars[kSeqVarWidth] = _curFrame->w << 16;
-	_vars[kSeqVarHeight] = _curFrame->h << 16;
+	_vars[kSeqVarWidth] = _curFrame->width() << 16;
+	_vars[kSeqVarHeight] = _curFrame->height() << 16;
 
 	return true;
 }

@@ -472,8 +472,8 @@ M4Surface *OrionMenuView::createThumbnail() {
 	// Translate the scene data
 
 	_vm->_scene->onRefresh(NULL, &srcSurface);
-	byte *srcP = (byte *)srcSurface.pixels;
-	byte *destP = (byte *)result->pixels;
+	byte *srcP = srcSurface.getBasePtr(0, 0);
+	byte *destP = result->getBasePtr(0, 0);
 
 	for (int yCtr = 0; yCtr < _vm->_scene->height() / 3; ++yCtr, srcP += g_system->getWidth() * 3) {
 		byte *src0P = srcP;
@@ -499,12 +499,12 @@ M4Surface *OrionMenuView::createThumbnail() {
 	// averaged, simply take the top left pixel of every 3x3 pixel block
 
 	_vm->_interfaceView->onRefresh(NULL, &srcSurface);
-	destP = (byte *)result->pixels + (_vm->_screen->width() / 3) * (_vm->_interfaceView->bounds().top / 3);
+	destP = result->getBasePtr(0, 0) + (_vm->_screen->width() / 3) * (_vm->_interfaceView->bounds().top / 3);
 
 	int yStart = _vm->_interfaceView->bounds().top;
 	int yEnd = MIN(_vm->_screen->height() - 1, (int) _vm->_interfaceView->bounds().bottom - 1);
 	for (int yCtr = yStart; yCtr <= yEnd; yCtr += 3) {
-		srcP = (byte *)srcSurface.pixels + (yCtr * _vm->_screen->width());
+		srcP = (byte *)srcSurface.getBasePtr(0, yCtr) + (yCtr * _vm->_screen->width());
 
 		for (int xCtr = 0; xCtr < result->width(); ++xCtr, srcP += 3)
 			*destP++ = *srcP;

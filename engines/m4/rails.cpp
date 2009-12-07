@@ -79,7 +79,7 @@ static void checkPoint(int x, int y, int color, void *data) {
 		return;
 	else {
 	   M4Surface *codes = isWalkableData->codes;
-	   if (x >= 0 && x < codes->w && y >= 0 && y < codes->h) {
+	   if (x >= 0 && x < codes->width() && y >= 0 && y < codes->height()) {
 			isWalkableData->result = !((*((uint8*)codes->getBasePtr(x, y))) & 0x10);
 		} else {
 			isWalkableData->result = false;

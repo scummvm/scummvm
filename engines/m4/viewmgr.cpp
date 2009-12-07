@@ -68,8 +68,7 @@ int RectList::find(const Common::Point &pt) {
 
 //--------------------------------------------------------------------------
 
-HotkeyList::HotkeyList(View *owner) {
-	_view = owner;
+HotkeyList::HotkeyList(View *owner) : _view(owner) {
 }
 
 HotkeyList::~HotkeyList() {
@@ -106,14 +105,15 @@ bool HotkeyList::call(uint32 key) {
 
 // View constructor
 
-View::View(M4Engine *vm, const Common::Rect &viewBounds, bool transparent):
-	_hotkeys(HotkeyList(this)), M4Surface(viewBounds.width(), viewBounds.height()), _vm(vm) {
+View::View(M4Engine *vm, const Common::Rect &viewBounds, bool transparent)
+	: M4Surface(viewBounds.width(), viewBounds.height()), _hotkeys(this), _vm(vm) {
 	SCREEN_FLAGS_DEFAULT;
 	_coords = viewBounds;
 	_transparent = transparent;
 }
 
-View::View(M4Engine *vm, int x, int y, bool transparent): _hotkeys(HotkeyList(this)), M4Surface(), _vm(vm) {
+View::View(M4Engine *vm, int x, int y, bool transparent)
+	: M4Surface(), _hotkeys(this), _vm(vm) {
 	SCREEN_FLAGS_DEFAULT;
 	_coords.left = x;
 	_coords.top = y;

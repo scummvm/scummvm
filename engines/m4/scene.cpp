@@ -435,8 +435,8 @@ void Scene::showHotSpots() {
 
 // Test function, shows all scene codes
 void Scene::showCodes() {
-	uint8 *pixelData = (uint8*)_codeSurface->pixels;
-	for (int i = 0; i < _codeSurface->w * _codeSurface->h; i++)
+	uint8 *pixelData = _codeSurface->getBasePtr(0, 0);
+	for (int i = 0; i < _codeSurface->width() * _codeSurface->height(); i++)
 		if (pixelData[i] & 0x10)
 			pixelData[i] = 0xFF;
 		else
@@ -450,7 +450,7 @@ void Scene::showCodes() {
 	_vm->_palette->setPalette(colors, 0, 256);
 
 	_backgroundSurface->copyFrom(_codeSurface, Common::Rect(0, 0, 640, 480), 0, 0);
-	//_system->copyRectToScreen((byte *)codes->pixels, codes->w, 0, 0, codes->w, codes->h);
+	//_system->copyRectToScreen(codes->getBasePtr(0, 0), codes->w, 0, 0, codes->w, codes->h);
 }
 
 void Scene::playIntro() {

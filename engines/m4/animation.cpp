@@ -176,7 +176,7 @@ bool Animation::updateAnim() {
 		M4Sprite *spr = _spriteSeries->getFrame(seriesFrameIndex);
 
 		// FIXME: We assume that the transparent color is the color of the top left pixel
-		byte *transparentColor = (byte *)spr->pixels;
+		byte *transparentColor = spr->getBasePtr(0, 0);
 
 		// FIXME: correct x, y
 		spr->copyTo(bg, frame->x, frame->y, (int)*transparentColor);
