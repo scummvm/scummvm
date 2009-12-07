@@ -528,9 +528,7 @@ void DragonMainMenuView::updateState() {
 	_itemPalData.push_back(palData);
 
 	spr = _menuItem->getFrame(1);
-	// FIXME: We assume that the transparent color is the color of the top left pixel
-	byte *transparentColor = spr->getBasePtr(0, 0);
-	spr->copyTo(this, spr->xOffset - 140, spr->yOffset - spr->height(), (int)*transparentColor);
+	spr->copyTo(this, spr->xOffset - 140, spr->yOffset - spr->height(), (int)spr->getTransparentColor());
 
 	_vm->_mouse->cursorOn();
 }

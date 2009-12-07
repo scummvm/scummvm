@@ -171,4 +171,10 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 	}
 }
 
+byte M4Sprite::getTransparentColor() const {
+	// FIXME: We assume that the transparent color is the color of the
+	// top left pixel.
+	return *getBasePtr(0, 0);
+}
+
 } // End of namespace M4

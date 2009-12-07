@@ -114,6 +114,8 @@ public:
 	void loadRle(Common::SeekableReadStream* rleData);
 	void loadDeltaRle(Common::SeekableReadStream* rleData, int destX, int destY);
 	void loadMadsSprite(Common::SeekableReadStream* source);
+
+	byte getTransparentColor() const;
 protected:
 };
 

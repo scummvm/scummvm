@@ -175,11 +175,8 @@ bool Animation::updateAnim() {
 		// Write the sprite onto the screen
 		M4Sprite *spr = _spriteSeries->getFrame(seriesFrameIndex);
 
-		// FIXME: We assume that the transparent color is the color of the top left pixel
-		byte *transparentColor = spr->getBasePtr(0, 0);
-
 		// FIXME: correct x, y
-		spr->copyTo(bg, frame->x, frame->y, (int)*transparentColor);
+		spr->copyTo(bg, frame->x, frame->y, (int)spr->getTransparentColor());
 
 		// HACK: wait a bit
 		g_system->delayMillis(100);

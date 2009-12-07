@@ -223,10 +223,7 @@ bool Console::cmdShowSprite(int argc, const char **argv) {
 			if (y >= bg->height())
 				break;
 
-			// FIXME: We assume that the transparent color is the color of the top left pixel
-			byte *transparentColor = spr->getBasePtr(0, 0);
-
-			spr->copyTo(bg, x, y, (int)*transparentColor);
+			spr->copyTo(bg, x, y, (int)spr->getTransparentColor());
 
 			x += spr->width();
 			yMax = MAX(yMax, spr->height());
