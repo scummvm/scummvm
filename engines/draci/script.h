@@ -69,13 +69,13 @@ struct GPL2Command {
 };
 
 struct GPL2Operator {
-	const char *_name;
 	GPLOperatorHandler _handler;
+	const char *_name;
 };
 
 struct GPL2Function {
-	const char *_name;
 	GPLFunctionHandler _handler;
+	const char *_name;
 };
 
 /**

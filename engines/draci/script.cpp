@@ -100,44 +100,44 @@ void Script::setupCommandList() {
 
 	/** Operators used by the mathematical evaluator */
 	static const GPL2Operator gplOperators[] = {
-		{"&", 	&Script::operAnd 		},
-		{"|",	&Script::operOr 		},
-		{"^", 	&Script::operXor 		},
-		{"==",	&Script::operEqual 		},
-		{"!=", 	&Script::operNotEqual		},
-		{"<", 	&Script::operLess		},
-		{">", 	&Script::operGreater		},
-		{"<=",	&Script::operLessOrEqual	},
-		{">=",	&Script::operGreaterOrEqual	},
-		{"*",	&Script::operMul		},
-		{"/", 	&Script::operDiv		},
-		{"%",	&Script::operMod		},
-		{"+", 	&Script::operAdd		},
-		{"-",	&Script::operSub		}
+		{ &Script::operAnd,            "&" },
+		{ &Script::operOr,             "|" },
+		{ &Script::operXor,            "^" },
+		{ &Script::operEqual,          "==" },
+		{ &Script::operNotEqual,       "!=" },
+		{ &Script::operLess,           "<" },
+		{ &Script::operGreater,        ">" },
+		{ &Script::operLessOrEqual,    "<=" },
+		{ &Script::operGreaterOrEqual, ">=" },
+		{ &Script::operMul,            "*" },
+		{ &Script::operDiv,            "/" },
+		{ &Script::operMod,            "%" },
+		{ &Script::operAdd,            "+" },
+		{ &Script::operSub,            "-" }
 	};
 
 	/** Functions used by the mathematical evaluator */
 	static const GPL2Function gplFunctions[] = {
-		{ "Not", 		&Script::funcNot },
-		{ "Random", 	&Script::funcRandom },
-		{ "IsIcoOn", 	&Script::funcIsIcoOn },
-		{ "IsIcoAct", 	&Script::funcIsIcoAct },
-		{ "IcoStat", 	&Script::funcIcoStat },
-		{ "ActIco", 	&Script::funcActIco },
-		{ "IsObjOn", 	&Script::funcIsObjOn },
-		{ "IsObjOff", 	&Script::funcIsObjOff },
-		{ "IsObjAway", 	&Script::funcIsObjAway },
-		{ "ObjStat", 	&Script::funcObjStat },
-		{ "LastBlock", 	&Script::funcLastBlock },
-		{ "AtBegin", 	&Script::funcAtBegin },
-		{ "BlockVar", 	&Script::funcBlockVar },
-		{ "HasBeen", 	&Script::funcHasBeen },
-		{ "MaxLine", 	&Script::funcMaxLine },
-		{ "ActPhase", 	&Script::funcActPhase },
+		{ &Script::funcNot,       "Not" },
+		{ &Script::funcRandom,    "Random" },
+		{ &Script::funcIsIcoOn,   "IsIcoOn" },
+		{ &Script::funcIsIcoAct,  "IsIcoAct" },
+		{ &Script::funcIcoStat,   "IcoStat" },
+		{ &Script::funcActIco,    "ActIco" },
+		{ &Script::funcIsObjOn,   "IsObjOn" },
+		{ &Script::funcIsObjOff,  "IsObjOff" },
+		{ &Script::funcIsObjAway, "IsObjAway" },
+		{ &Script::funcObjStat,   "ObjStat" },
+		{ &Script::funcLastBlock, "LastBlock" },
+		{ &Script::funcAtBegin,   "AtBegin" },
+		{ &Script::funcBlockVar,  "BlockVar" },
+		{ &Script::funcHasBeen,   "HasBeen" },
+		{ &Script::funcMaxLine,   "MaxLine" },
+		{ &Script::funcActPhase,  "ActPhase" },
 		// The following function is not even defined in the game
 		// sources, but its number is allocated for internal purposes
 		// of the old player.
-		{ "Cheat",  	NULL },
+		{ NULL, "Cheat" },
 	};
 
 	_commandList = gplCommands;
