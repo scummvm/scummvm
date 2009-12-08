@@ -75,8 +75,8 @@ public:
 		_iter = _savefiles.begin();
 	}
 
-	void firstFile(const char *mask, reg_t buffer);
-	void nextFile();
+	reg_t firstFile(const Common::String &mask, reg_t buffer);
+	reg_t nextFile();
 };
 
 enum {

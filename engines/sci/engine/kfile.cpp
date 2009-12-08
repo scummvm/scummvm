@@ -619,13 +619,12 @@ enum {
 };
 
 
-void DirSeeker::firstFile(const char *mask, reg_t buffer) {
+reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer) {
 
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
-		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask);
-		_state->r_acc = NULL_REG;
-		return;
+		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
+		return NULL_REG;
 	}
 	_outbuffer = buffer;
 
@@ -636,13 +635,12 @@ void DirSeeker::firstFile(const char *mask, reg_t buffer) {
 
 	// Reset the list iterator and write the first match to the output buffer, if any.
 	_iter = _savefiles.begin();
-	nextFile();
+	return nextFile();
 }
 
-void DirSeeker::nextFile() {
+reg_t DirSeeker::nextFile() {
 	if (_iter == _savefiles.end()) {
-		_state->r_acc = NULL_REG;
-		return;
+		return NULL_REG;
 	}
 
 	// TODO: Transform the string back into a format usable by the SCI scripts.
@@ -653,8 +651,8 @@ void DirSeeker::nextFile() {
 	_state->_segMan->strcpy(_outbuffer, string.c_str());
 
 	// Return the result and advance the list iterator :)
-	_state->r_acc = _outbuffer;
 	++_iter;
+	return _outbuffer;
 }
 
 
@@ -797,13 +795,13 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		if (mask == "*.*")
 			mask = "*"; // For UNIX
 #endif
-		s->_dirseeker.firstFile(mask.c_str(), buf);
+		s->r_acc = s->_dirseeker.firstFile(mask, buf);
 
 		break;
 	}
 	case K_FILEIO_FIND_NEXT : {
 		debug(3, "K_FILEIO_FIND_NEXT()");
-		s->_dirseeker.nextFile();
+		s->r_acc = s->_dirseeker.nextFile();
 		break;
 	}
 	case K_FILEIO_FILE_EXISTS : {
