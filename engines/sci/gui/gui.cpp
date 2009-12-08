@@ -126,9 +126,9 @@ void SciGui::setPort(uint16 portPtr) {
 	};
 }
 
-Common::Rect SciGui::getPortPic(int16 *picTop, int16 *picLeft) {
-	*picTop = _windowMgr->_picWind->top;
-	*picLeft = _windowMgr->_picWind->left;
+Common::Rect SciGui::getPortPic(int16 &picTop, int16 &picLeft) {
+	picTop = _windowMgr->_picWind->top;
+	picLeft = _windowMgr->_picWind->left;
 	return _windowMgr->_picWind->rect;
 }
 

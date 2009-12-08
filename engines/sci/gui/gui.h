@@ -63,7 +63,7 @@ public:
 
 	virtual void wait(int16 ticks);
 	virtual void setPort(uint16 portPtr);
-	virtual Common::Rect getPortPic(int16 *picTop, int16 *picLeft);
+	virtual Common::Rect getPortPic(int16 &picTop, int16 &picLeft);
 	virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag);
 	virtual reg_t getPort();
 	virtual void globalToLocal(int16 *x, int16 *y);
