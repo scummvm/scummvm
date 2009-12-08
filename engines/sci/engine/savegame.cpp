@@ -340,6 +340,21 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
 
+	if (s.getVersion() >= 13) {
+		// Save/Load picPort as well (cause sierra sci also does this)
+		int16 picPortTop, picPortLeft;
+		Common::Rect picPortRect;
+		if (s.isSaving())
+			picPortRect = _gui->getPortPic(&picPortTop, &picPortLeft);
+
+		s.syncBytes((byte *)&picPortRect, sizeof(picPortRect));
+		s.syncAsSint16LE(picPortTop);
+		s.syncAsSint16LE(picPortLeft);
+
+		if (s.isLoading())
+			_gui->setPortPic(picPortRect, picPortTop, picPortLeft, true);
+	}
+
 	sync_SegManagerPtr(s, resMan, _segMan);
 
 	syncArray<Class>(s, _segMan->_classtable);

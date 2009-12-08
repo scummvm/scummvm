@@ -420,6 +420,14 @@ void SciGui32::setPort(uint16 portPtr) {
 	_s->port = new_port;
 }
 
+Common::Rect SciGui32::getPortPic(int16 *picTop, int16 *picLeft) {
+	// Don't want to fiddle around with oldgui, so we just return defaults when saving games
+	Common::Rect defaultRect(0, 0, 320, 200);
+	*picTop = 10;
+	*picLeft = 0;
+	return defaultRect;
+}
+
 void SciGui32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag) {
 	if (activated_icon_bar) {
 		port_origin_x = port_origin_y = 0;
