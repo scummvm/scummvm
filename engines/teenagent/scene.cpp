@@ -491,6 +491,20 @@ bool Scene::render(OSystem *system) {
 	do {
 		restart = false;
 		busy = processEventQueue();
+		
+		if (current_event.type == SceneEvent::kCredits) {
+			system->fillScreen(0);
+			///\todo: optimize me
+			Graphics::Surface *surface = system->lockScreen();
+			res->font7.render(surface, current_event.dst.x, current_event.dst.y--, current_event.message, current_event.color);
+			system->unlockScreen();
+
+			if (current_event.dst.y < -(int)current_event.timer)
+				current_event.clear();
+			
+			return true;
+		}
+
 		if (!message.empty() && message_timer != 0) {
 			if (--message_timer == 0) {
 				clearMessage();
@@ -924,6 +938,10 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kEffect:
 			debug(0, "*stub* shaking the screen");
 			current_event.clear();
+			break;
+			
+		case SceneEvent::kCredits:
+			debug(0, "showing credits");
 			break;
 
 		case SceneEvent::kQuit:

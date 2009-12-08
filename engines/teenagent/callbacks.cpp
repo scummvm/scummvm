@@ -3784,7 +3784,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		waitAnimation();
 
 		playMusic(11);
-		//BIG FIXME: show scrolling credits
+		displayCredits();
 		loadScene(39, 192, 177, 0);
 		hideActor();
 		Dialog::showMono(scene, 0x8b4d, 953, 0xe3, 1); //well...

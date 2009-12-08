@@ -105,6 +105,7 @@ public:
 	void waitLanAnimationFrame(byte slot, uint16 frame);
 	void setTimerCallback(uint16 addr, uint16 frames);
 	void shakeScreen();
+	void displayCredits();
 
 	Common::RandomSource random;
 

@@ -489,6 +489,21 @@ void TeenAgentEngine::displayCredits(uint16 addr) {
 	scene->push(event);
 }
 
+void TeenAgentEngine::displayCredits() {
+	SceneEvent event(SceneEvent::kCredits);
+	event.message = parseMessage(0xe488);
+	event.dst.y = 200;
+
+	int lines = 1;
+	for(uint i = 0; i < event.message.size(); ++i)
+		if (event.message[i] == '\n')
+			++lines;
+	event.dst.x = (320 - Resources::instance()->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
+	event.timer = 11 * lines - event.dst.y + 22;
+	//debug(0, "credits = %s", event.message.c_str());
+	scene->push(event);
+}
+
 void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 position) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
