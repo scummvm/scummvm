@@ -750,6 +750,8 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kLoadScene: {
 			if (current_event.scene != 0) {
 				init(current_event.scene, current_event.dst);
+				if (current_event.orientation != 0)
+					orientation = current_event.orientation;
 				sounds.clear();
 			} else {
 				//special case, empty scene
