@@ -74,7 +74,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	font7.load(7);
 	font7.width_pack = 1;
-	font7.height = 10;
+	font7.height = 11;
 	font8.load(8);
 	font8.height = 31;
 
