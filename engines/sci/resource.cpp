@@ -955,10 +955,9 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 
 	Common::String mask, name;
 	Common::ArchiveMemberList files;
-	int number;
+	int number = -1;
 	const char *szResType;
 	ResourceSource *psrcPatch;
-	bool bAdd;
 
 	for (int i = kResourceTypeView; i < kResourceTypeAudio36; i ++) {
 		files.clear();
@@ -972,7 +971,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 		mask += resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
-			bAdd = false;
+			bool bAdd = false;
 			name = (*x)->getName();
 			// SCI1 scheme
 			if (isdigit(name[0])) {

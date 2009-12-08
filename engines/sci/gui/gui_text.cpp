@@ -355,7 +355,8 @@ void SciGuiText::Show(const char *text, int16 from, int16 len, GuiResourceId org
 
 // Draws a text in rect.
 void SciGuiText::Box(const char *text, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId) {
-	int16 textWidth, textHeight, charCount, offset;
+	int16 textWidth, textHeight, charCount;
+	int16 offset = 0;
 	int16 hline = 0;
 	GuiResourceId orgFontId = GetFontId();
 	int16 orgPenColor = _gfx->_curPort->penClr;

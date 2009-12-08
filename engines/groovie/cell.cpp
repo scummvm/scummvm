@@ -749,7 +749,7 @@ int16 CellGame::doGame(int8 color, int depth) {
 const int8 depths[] = { 1, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 2, 3, 2, 2, 3, 3, 2, 3, 3, 3 };
 
 int16 CellGame::calcMove(int8 color, uint16 depth) {
-	int result;
+	int result = 0;
 
 	_flag1 = false;
 	++_moveCount;

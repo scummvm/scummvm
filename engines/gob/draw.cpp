@@ -815,7 +815,7 @@ void Draw::handleWinBorder(int16 id) {
 }
 
 int16 Draw::handleCurWin() {
-	int8 matchNum;
+	int8 matchNum = 0;
 	int16 bestMatch = -1;
 
 	warning("handleCurWin");

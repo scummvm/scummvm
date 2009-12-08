@@ -1606,8 +1606,8 @@ void Hotspots::evaluate() {
 int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	int16 cursor = 0;
 
-	int16 deltax;
-	int16 deltay;
+	int16 deltax = 0;
+	int16 deltay = 0;
 	
 	if ( _vm->getGameType() == kGameTypeFascination ) {
 		cursor = curWindow(deltax, deltay);
