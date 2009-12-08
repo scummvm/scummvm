@@ -36,9 +36,9 @@ class SoundCommandParser;
 typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, SongHandle handle, int value);
 
 struct SciSoundCommand {
-	SciSoundCommand(const char* d, SoundCommand c) : desc(d), sndCmd(c) {}
-	const char* desc;
+	SciSoundCommand(const char *d, SoundCommand c) : sndCmd(c), desc(d) {}
 	SoundCommand sndCmd;
+	const char *desc;
 };
 
 class SoundCommandParser {
