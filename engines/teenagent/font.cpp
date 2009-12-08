@@ -52,15 +52,26 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 	idx -= 0x20;
 	byte *glyph = data + READ_LE_UINT16(data + idx * 2);
 
-	uint h = glyph[0], w = glyph[1];
-	if (surface == NULL || surface->pixels == NULL)
+	int h = glyph[0], w = glyph[1];
+	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= 200 || x + w <= 0 || x >= 320)
 		return w - width_pack;
-
+	
+	int i0 = 0, j0 = 0;
+	if (x < 0) {
+		j0 = -x;
+		x = 0;
+	}
+	if (y < 0) {
+		i0 = -y;
+		y = 0;
+	}
 	//debug(0, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
+	glyph += i0 * w + j0;
 	byte *dst = (byte *)surface->getBasePtr(x, y);
-	for (uint i = 0; i < h; ++i) {
-		for (uint j = 0; j < w; ++j) {
+	byte *end = (byte *)surface->getBasePtr(0, surface->h);
+	for (int i = i0; i < h && dst < end; ++i) {
+		for (int j = j0; j < w; ++j) {
 			byte v = *glyph++;
 			switch (v) {
 			case 0:
@@ -97,11 +108,14 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 			Common::String line(str.c_str() + i, j - i);
 			//debug(0, "line: %s", line.c_str());
 
-			uint w = render(NULL, 0, 0, line, false);
-			int xp = x + (max_w - w) / 2;
-			for (uint k = 0; k < line.size(); ++k) {
-				xp += render(surface, xp, y, line[k], color);
-			}
+			if (y + (int)height >= 0) {
+				uint w = render(NULL, 0, 0, line, false);
+				int xp = x + (max_w - w) / 2;
+				for (uint k = 0; k < line.size(); ++k) {
+					xp += render(surface, xp, y, line[k], color);
+				}
+			} else if (y >= 200)
+				break;
 
 			y += height;
 			i = j + 1;
