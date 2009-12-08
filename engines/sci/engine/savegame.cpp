@@ -351,8 +351,10 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortTop);
 		s.syncAsSint16LE(picPortLeft);
 
-		if (s.isLoading())
-			_gui->setPortPic(picPortRect, picPortTop, picPortLeft, true);
+		#ifndef USE_OLDGFX
+			if (s.isLoading())
+				_gui->setPortPic(picPortRect, picPortTop, picPortLeft, true);
+		#endif
 	}
 
 	sync_SegManagerPtr(s, resMan, _segMan);

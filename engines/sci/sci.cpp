@@ -145,9 +145,11 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 
 #ifdef INCLUDE_OLDGFX
-	// Gui change
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
-	//_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
+	#ifndef USE_OLDGFX
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
+	#else
+		_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
+	#endif
 #else
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
 #endif

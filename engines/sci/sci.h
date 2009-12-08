@@ -42,6 +42,8 @@ struct ADGameDescription;
 namespace Sci {
 
 #define INCLUDE_OLDGFX
+// Please uncomment this if you want to use oldgui
+//#define USE_OLDGFX
 
 class Console;
 struct EngineState;
