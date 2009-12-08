@@ -3732,32 +3732,32 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(0x5349);
 		//moveTo(105, 157, 0, true);
 		playMusic(3);
-		loadScene(11, 105, 157, 0);
+		loadScene(11, 105, 157, 4);
+		
 		Dialog::show(scene, 0x8409, 0, 938, 0xd1, 0xec, 0, 1);
 
-		playAnimation(939, 0, true);
+		playAnimation(939, 0, true, true);
 		playActorAnimation(942, true);
 		waitAnimation();
 
-		playAnimation(939, 0, true);
-		playAnimation(935, 1, true);
+		playAnimation(939, 0, true, true);
+		playAnimation(935, 1, true, true);
 		playActorAnimation(943, true);
 		waitAnimation();
-
-		playAnimation(940, 0, true);
-		playAnimation(936, 1, true);
+		
+		playAnimation(940, 0, true, true);
+		playAnimation(936, 1, true, true);
 		playActorAnimation(944, true);
 		waitAnimation();
-
-		playAnimation(941, 0, true);
-		playAnimation(937, 1, true);
+		
+		playAnimation(941, 0, true, true);
+		playAnimation(937, 1, true, true);
 		playActorAnimation(945, true);
 		waitAnimation();
 
-		playAnimation(945, 0);
-		Dialog::show(scene, 0x844f, 0, 938, 0xd1, 0xec, 0, 2);
-		playAnimation(946, 1);
-		Dialog::show(scene, 0x87c7, 0, 938, 0xd1, 0xec, 0, 2);
+		Dialog::show(scene, 0x844f, 0, 938, 0xd1, 0xec, 0, 1);
+		playAnimation(946, 0);
+		Dialog::show(scene, 0x87c7, 0, 938, 0xd1, 0xec, 0, 1);
 
 		playSound(24, 7);
 		playAnimation(948, 0, true);
@@ -3772,7 +3772,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		moveTo(237, 186, 0);
 		moveTo(237, 177, 0);
-		moveTo(192, 177, 0);
+		moveTo(192, 177, 4);
 		playAnimation(949, 1);
 		Dialog::showMono(scene, 0x8af6, 950, 0xe7, 1);
 
@@ -3784,14 +3784,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		waitAnimation();
 
 		playMusic(11);
+		//BIG FIXME: show scrolling credits
 		loadScene(39, 192, 177, 0);
 		hideActor();
-		Dialog::showMono(scene, 0x8b4d, 953, 0xe3, 1);
+		Dialog::showMono(scene, 0x8b4d, 953, 0xe3, 1); //well...
 		playSound(5, 15);
 		playAnimation(954, 0);
-		Dialog::showMono(scene, 0x8b7a, 955, 0xe3, 1);
+		Dialog::showMono(scene, 0x8b7a, 955, 0xe3, 1); //that's all folks
 		playMusic(2);
-
 		displayCredits(0xe47c);
 		scene->push(SceneEvent(SceneEvent::kQuit));
 
