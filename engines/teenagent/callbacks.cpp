@@ -3792,7 +3792,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(954, 0);
 		Dialog::showMono(scene, 0x8b7a, 955, 0xe3, 1); //that's all folks
 		playMusic(2);
-		displayCredits(0xe47c);
+		displayCredits(0xe47c, 4500); //3 minutes (infinite until key pressed in original)
 		scene->push(SceneEvent(SceneEvent::kQuit));
 
 		return true;

@@ -466,7 +466,7 @@ void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 f
 }
 
 
-void TeenAgentEngine::displayCredits(uint16 addr) {
+void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
 	const byte *src = Resources::instance()->dseg.ptr(addr);
@@ -486,6 +486,7 @@ void TeenAgentEngine::displayCredits(uint16 addr) {
 	}
 	int w = Resources::instance()->font8.render(NULL, 0, 0, event.message, 0xd1);
 	event.dst.x = (320 - w) / 2;
+	event.timer = timer;
 	scene->push(event);
 }
 

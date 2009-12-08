@@ -79,7 +79,7 @@ public:
 	void displayMessage(const Common::String &str, byte color = 0xd1, uint16 position = 0);
 	void displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
 	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color = 0xd1);
-	void displayCredits(uint16 addr);
+	void displayCredits(uint16 addr, uint16 timer = 0);
 	void displayCutsceneMessage(uint16 addr, uint16 position);
 	void moveTo(const Common::Point &dst, byte o, bool warp = false);
 	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);

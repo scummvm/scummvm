@@ -812,7 +812,7 @@ bool Scene::processEventQueue() {
 						message_animation = &actor_animation;
 					debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
 				} else {
-					message_timer = messageDuration(message);
+					message_timer = current_event.timer? current_event.timer: messageDuration(message);
 					message_first_frame = message_last_frame = 0;
 				}
 				Common::Point p;
