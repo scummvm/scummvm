@@ -220,8 +220,32 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	}
 }
 
+
+using Graphics::PixelFormat;
+
+/**
+ * Determines the first matching format between two lists.
+ *
+ * @param backend	The higher priority list, meant to be a list of formats supported by the backend
+ * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
+ * @return			The first item on the backend list that also occurs on the frontend list
+ *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
+ */
+inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+#ifdef USE_RGB_COLOR
+	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+			if (*i == *j)
+				return *i;
+		}
+	}
+#endif
+	return PixelFormat::createFormatCLUT8();
+}
+
+
 void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
-	Graphics::PixelFormat format = Graphics::findCompatibleFormat(g_system->getSupportedFormats(), formatList);
+	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
 	initGraphics(width, height, defaultTo1xScaler, &format);
 }
 
