@@ -30,7 +30,7 @@
 #include "common/stack.h"
 #include "common/str.h"
 
-#include "graphics/fontman.h"
+#include "graphics/font.h"
 
 #include "gui/widget.h"
 #include "gui/ThemeEngine.h"

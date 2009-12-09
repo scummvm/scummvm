@@ -32,7 +32,7 @@
 #include "common/events.h"
 #include "common/system.h"
 
-#include "graphics/font.h"
+#include "graphics/fontman.h"
 
 namespace GUI {
 

@@ -32,7 +32,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/system.h"
-#include "graphics/fontman.h"
+#include "graphics/font.h"
 #include "graphics/surface.h"
 
 namespace Common {

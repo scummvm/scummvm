@@ -31,10 +31,11 @@
 #include "common/fs.h"
 #include "common/unzip.h"
 
-#include "graphics/surface.h"
 #include "graphics/colormasks.h"
-#include "graphics/imagedec.h"
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
+#include "graphics/imagedec.h"
+#include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 
 #include "gui/launcher.h"
