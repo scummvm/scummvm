@@ -164,7 +164,10 @@ public:
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
-	CursorManager();
+	// Even though this is basically the default constructor we implement it
+	// ourselves, so it is private and thus there is no way to create this class
+	// except from the Singleton code.
+	CursorManager() {}
 
 	struct Cursor {
 		byte *_data;
