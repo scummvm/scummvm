@@ -31,11 +31,11 @@ DECLARE_SINGLETON(Graphics::CursorManager);
 
 namespace Graphics {
 
-static bool g_initialized = false;
+static bool s_initialized = false;
 
 CursorManager::CursorManager() {
-	if (!g_initialized) {
-		g_initialized = true;
+	if (!s_initialized) {
+		s_initialized = true;
 		_cursorStack.clear();
 		_cursorPaletteStack.clear();
 	}

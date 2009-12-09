@@ -140,17 +140,15 @@ public:
 	static NewFont *loadFromCache(Common::SeekableReadStream &stream);
 };
 
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-#	define DEFINE_FONT(n) \
+#define DEFINE_FONT(n) \
 		const NewFont *n;	\
 		void create_##n() {	\
 			n = new NewFont(desc);	\
 		}
 
-#	define INIT_FONT(n) \
+#define INIT_FONT(n) \
 		extern void create_##n(); \
 		create_##n();
-#endif
 
 } // End of namespace Graphics
 
