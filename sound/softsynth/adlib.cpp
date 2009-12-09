@@ -1594,7 +1594,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver) const;
 };
 
 MusicDevices AdlibEmuMusicPlugin::getDevices() const {
@@ -1603,17 +1603,17 @@ MusicDevices AdlibEmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error AdlibEmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
-	*mididriver = new MidiDriver_ADLIB(mixer);
+Common::Error AdlibEmuMusicPlugin::createInstance(MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_ADLIB(g_system->getMixer());
 
 	return Common::kNoError;
 }
 
-MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
+MidiDriver *MidiDriver_ADLIB_create() {
 	MidiDriver *mididriver;
 
 	AdlibEmuMusicPlugin p;
-	p.createInstance(mixer, &mididriver);
+	p.createInstance(&mididriver);
 
 	return mididriver;
 }

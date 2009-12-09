@@ -226,11 +226,11 @@ MidiDriverType MidiDriver::detectMusicDriver(int flags) {
 
 MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	switch (midiDriver) {
-	case MD_NULL:      return MidiDriver_NULL_create(g_system->getMixer());
+	case MD_NULL:      return MidiDriver_NULL_create();
 
-	case MD_ADLIB:     return MidiDriver_ADLIB_create(g_system->getMixer());
+	case MD_ADLIB:     return MidiDriver_ADLIB_create();
 
-	case MD_TOWNS:     return MidiDriver_YM2612_create(g_system->getMixer());
+	case MD_TOWNS:     return MidiDriver_YM2612_create();
 
 	// Right now PC Speaker and PCjr are handled
 	// outside the MidiDriver architecture, so
@@ -240,45 +240,45 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	case MD_PCJR:      return NULL;
 
 #ifdef USE_FLUIDSYNTH
-	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create(g_system->getMixer());
+	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create();
 #endif
 
 #ifdef USE_MT32EMU
-	case MD_MT32:      return MidiDriver_MT32_create(g_system->getMixer());
+	case MD_MT32:      return MidiDriver_MT32_create();
 #endif
 
 #if defined(PALMOS_MODE)
 #if defined(COMPILE_CLIE)
-	case MD_YPA1:      return MidiDriver_YamahaPa1_create(g_system->getMixer());
+	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
 #elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
-	case MD_ZODIAC:    return MidiDriver_Zodiac_create(g_system->getMixer());
+	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
 #endif
 #endif
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	case MD_WINDOWS:   return MidiDriver_WIN_create(g_system->getMixer());
+	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MINT__)
-	case MD_STMIDI:    return MidiDriver_STMIDI_create(g_system->getMixer());
+	case MD_STMIDI:    return MidiDriver_STMIDI_create();
 #endif
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) && !defined(__MINT__)
-	case MD_SEQ:       return MidiDriver_SEQ_create(g_system->getMixer());
+	case MD_SEQ:       return MidiDriver_SEQ_create();
 #endif
 #if defined(UNIX)
-	case MD_TIMIDITY:  return MidiDriver_TIMIDITY_create(g_system->getMixer());
+	case MD_TIMIDITY:  return MidiDriver_TIMIDITY_create();
 #endif
 #if defined(IRIX)
-	case MD_DMEDIA:    return MidiDriver_DMEDIA_create(g_system->getMixer());
+	case MD_DMEDIA:    return MidiDriver_DMEDIA_create();
 #endif
 #if defined(MACOSX)
-	case MD_COREAUDIO: return MidiDriver_CORE_create(g_system->getMixer());
-	case MD_COREMIDI:  return MidiDriver_CoreMIDI_create(g_system->getMixer());
+	case MD_COREAUDIO: return MidiDriver_CORE_create();
+	case MD_COREMIDI:  return MidiDriver_CoreMIDI_create();
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
-	case MD_ALSA:      return MidiDriver_ALSA_create(g_system->getMixer());
+	case MD_ALSA:      return MidiDriver_ALSA_create();
 #endif
 #if defined(__amigaos4__)
-	case MD_CAMD:      return MidiDriver_CAMD_create(g_system->getMixer());
+	case MD_CAMD:      return MidiDriver_CAMD_create();
 #endif
 	}
 

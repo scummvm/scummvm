@@ -98,12 +98,11 @@ public:
 	 * the currently active ConfMan target. That is, the MusicPluginObject
 	 * should query the ConfMan singleton for the device name, port, etc.
 	 *
-	 * @param mixer			Pointer to the global Mixer object
 	 * @param mididriver	Pointer to a pointer which the MusicPluginObject sets
 	 *				to the newly create MidiDriver, or 0 in case of an error
 	 * @return		a Common::Error describing the error which occurred, or kNoError
 	 */
-	virtual Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const = 0;
+	virtual Common::Error createInstance(MidiDriver **mididriver) const = 0;
 };
 
 

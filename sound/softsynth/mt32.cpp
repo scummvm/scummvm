@@ -497,7 +497,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver) const;
 };
 
 MusicDevices MT32EmuMusicPlugin::getDevices() const {
@@ -506,13 +506,13 @@ MusicDevices MT32EmuMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error MT32EmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
-	*mididriver = new MidiDriver_MT32(mixer);
+Common::Error MT32EmuMusicPlugin::createInstance(MidiDriver **mididriver) const {
+	*mididriver = new MidiDriver_MT32(g_system->getMixer());
 
 	return Common::kNoError;
 }
 
-MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {
+MidiDriver *MidiDriver_MT32_create() {
 	// HACK: It will stay here until engine plugin loader overhaul
 	if (ConfMan.hasKey("extrapath"))
 		SearchMan.addDirectory("extrapath", ConfMan.get("extrapath"));
@@ -520,7 +520,7 @@ MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {
 	MidiDriver *mididriver;
 
 	MT32EmuMusicPlugin p;
-	p.createInstance(mixer, &mididriver);
+	p.createInstance(&mididriver);
 
 	return mididriver;
 }

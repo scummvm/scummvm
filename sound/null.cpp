@@ -46,10 +46,10 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver) const;
 };
 
-Common::Error NullMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_NULL();
 
 	return Common::kNoError;
@@ -62,18 +62,18 @@ MusicDevices NullMusicPlugin::getDevices() const {
 	return devices;
 }
 
-MidiDriver *MidiDriver_NULL_create(Audio::Mixer *mixer) {
+MidiDriver *MidiDriver_NULL_create() {
 	MidiDriver *mididriver;
 
 	NullMusicPlugin p;
-	p.createInstance(mixer, &mididriver);
+	p.createInstance(&mididriver);
 
 	return mididriver;
 }
 
 #ifdef DISABLE_ADLIB
-MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer) {
-	return MidiDriver_NULL_create(mixer);
+MidiDriver *MidiDriver_ADLIB_create() {
+	return MidiDriver_NULL_create();
 }
 #endif
 

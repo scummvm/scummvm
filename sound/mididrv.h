@@ -273,26 +273,26 @@ public:
 
 
 // Factory functions, for faster compile
-extern MidiDriver *MidiDriver_NULL_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_STMIDI_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_SEQ_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_TIMIDITY_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_QT_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_CORE_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_CoreMIDI_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_DMEDIA_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_CAMD_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer);
+extern MidiDriver *MidiDriver_NULL_create();
+extern MidiDriver *MidiDriver_ADLIB_create();
+extern MidiDriver *MidiDriver_WIN_create();
+extern MidiDriver *MidiDriver_STMIDI_create();
+extern MidiDriver *MidiDriver_SEQ_create();
+extern MidiDriver *MidiDriver_TIMIDITY_create();
+extern MidiDriver *MidiDriver_QT_create();
+extern MidiDriver *MidiDriver_CORE_create();
+extern MidiDriver *MidiDriver_CoreMIDI_create();
+extern MidiDriver *MidiDriver_ALSA_create();
+extern MidiDriver *MidiDriver_DMEDIA_create();
+extern MidiDriver *MidiDriver_CAMD_create();
+extern MidiDriver *MidiDriver_YM2612_create();
 #ifdef USE_FLUIDSYNTH
-extern MidiDriver *MidiDriver_FluidSynth_create(Audio::Mixer *mixer);
+extern MidiDriver *MidiDriver_FluidSynth_create();
 #endif
 #ifdef USE_MT32EMU
-extern MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer);
+extern MidiDriver *MidiDriver_MT32_create();
 #endif
-extern MidiDriver *MidiDriver_YamahaPa1_create(Audio::Mixer *mixer);
-extern MidiDriver *MidiDriver_Zodiac_create(Audio::Mixer *mixer);
+extern MidiDriver *MidiDriver_YamahaPa1_create();
+extern MidiDriver *MidiDriver_Zodiac_create();
 
 #endif

@@ -117,7 +117,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver) const;
 };
 
 MusicDevices YamahaPa1MusicPlugin::getDevices() const {
@@ -128,17 +128,17 @@ MusicDevices YamahaPa1MusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error YamahaPa1MusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error YamahaPa1MusicPlugin::createInstance(MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_YamahaPa1();
 
 	return Common::kNoError;
 }
 
-MidiDriver *MidiDriver_YamahaPa1_create(Audio::Mixer *mixer) {
+MidiDriver *MidiDriver_YamahaPa1_create() {
 	MidiDriver *mididriver;
 
 	YamahaPa1MusicPlugin p;
-	p.createInstance(mixer, &mididriver);
+	p.createInstance(&mididriver);
 
 	return mididriver;
 }

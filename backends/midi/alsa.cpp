@@ -269,7 +269,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver) const;
 };
 
 #define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
@@ -315,17 +315,17 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error AlsaMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_ALSA();
 
 	return Common::kNoError;
 }
 
-MidiDriver *MidiDriver_ALSA_create(Audio::Mixer *mixer) {
+MidiDriver *MidiDriver_ALSA_create() {
 	MidiDriver *mididriver;
 
 	AlsaMusicPlugin p;
-	p.createInstance(mixer, &mididriver);
+	p.createInstance(&mididriver);
 
 	return mididriver;
 }

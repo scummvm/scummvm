@@ -1753,7 +1753,7 @@ void ScummEngine::setupMusic(int midi) {
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
 		if (_musicType == MDT_ADLIB || multi_midi) {
-			adlibMidiDriver = MidiDriver_ADLIB_create(_mixer);
+			adlibMidiDriver = MidiDriver_ADLIB_create();
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 

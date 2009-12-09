@@ -158,7 +158,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver) const;
 };
 
 MusicDevices WindowsMusicPlugin::getDevices() const {
@@ -169,17 +169,17 @@ MusicDevices WindowsMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error WindowsMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver **mididriver) const {
+Common::Error WindowsMusicPlugin::createInstance(MidiDriver **mididriver) const {
 	*mididriver = new MidiDriver_WIN();
 
 	return Common::kNoError;
 }
 
-MidiDriver *MidiDriver_WIN_create(Audio::Mixer *mixer) {
+MidiDriver *MidiDriver_WIN_create() {
 	MidiDriver *mididriver;
 
 	WindowsMusicPlugin p;
-	p.createInstance(mixer, &mididriver);
+	p.createInstance(&mididriver);
 
 	return mididriver;
 }
