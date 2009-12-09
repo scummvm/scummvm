@@ -33,6 +33,7 @@
 #include "sound/mididrv.h"
 
 #include "gui/GuiManager.h"
+#include "gui/dialog.h"
 #include "gui/widget.h"
 
 #include "gob/gob.h"
@@ -70,6 +71,18 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 	Common::JA_JPN
 };
 
+
+class PauseDialog : public GUI::Dialog {
+public:
+	PauseDialog();
+
+  virtual void reflowLayout();
+	virtual void handleKeyDown(Common::KeyState state);
+
+private:
+	Common::String _message;
+	GUI::StaticTextWidget *_text;
+};
 
 PauseDialog::PauseDialog() : GUI::Dialog("PauseDialog") {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;

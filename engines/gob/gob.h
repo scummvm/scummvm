@@ -29,8 +29,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
-#include "gui/dialog.h"
-
 #include "engines/engine.h"
 
 namespace GUI {
@@ -146,18 +144,6 @@ enum {
 };
 
 struct GOBGameDescription;
-
-class PauseDialog : public GUI::Dialog {
-public:
-	PauseDialog();
-
-  virtual void reflowLayout();
-	virtual void handleKeyDown(Common::KeyState state);
-
-private:
-	Common::String _message;
-	GUI::StaticTextWidget *_text;
-};
 
 class GobEngine : public Engine {
 private:
