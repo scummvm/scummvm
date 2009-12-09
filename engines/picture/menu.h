@@ -139,6 +139,9 @@ protected:
 	ItemID _currItemID;
 	int _top;
 	int _savegameListTopIndex;
+	bool _editingDescription;
+	ItemID _editingDescriptionID;
+	Item *_editingDescriptionItem;
 
 	Common::Array<Item> _items;
 	Common::Array<SavegameItem> _savegames;
@@ -151,6 +154,7 @@ protected:
 	void drawItem(ItemID itemID, bool active);
 	void handleMouseMove(int x, int y);
 	void handleMouseClick(int x, int y);
+	void handleKeyDown(const Common::KeyState& kbd);
 	
 	ItemID findItemAt(int x, int y);
 	Item *getItem(ItemID id);

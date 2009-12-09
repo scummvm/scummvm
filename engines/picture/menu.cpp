@@ -44,9 +44,11 @@ namespace Picture {
 
 MenuSystem::MenuSystem(PictureEngine *vm) : _vm(vm) {
 	_currMenuID = kMenuIdNone;
-	//_newMenuID = kMenuIdLoad;
 	_newMenuID = kMenuIdMain;
+	//_newMenuID = kMenuIdLoad;
+	_newMenuID = kMenuIdSave;
 	_currItemID = kItemIdNone;
+	_editingDescription = false;
 	_cfgText = true;
 	_cfgVoices = true;
 	_cfgMasterVolume = 10;
@@ -107,6 +109,7 @@ void MenuSystem::handleEvents() {
 	while (eventMan->pollEvent(event)) {
 	switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			handleKeyDown(event.kbd);
 			break;
 		case Common::EVENT_QUIT:
 			// TODO: quitGame();
@@ -146,17 +149,44 @@ void MenuSystem::drawItem(ItemID itemID, bool active) {
 }
 
 void MenuSystem::handleMouseMove(int x, int y) {
-	ItemID newItemID = findItemAt(x, y);
-	if (_currItemID != newItemID) {
-		leaveItem(_currItemID);
-		_currItemID = newItemID;
-		enterItem(newItemID);
+	if (!_editingDescription) {
+		ItemID newItemID = findItemAt(x, y);
+		if (_currItemID != newItemID) {
+			leaveItem(_currItemID);
+			_currItemID = newItemID;
+			enterItem(newItemID);
+		}
 	}
 }
 
 void MenuSystem::handleMouseClick(int x, int y) {
-	ItemID id = findItemAt(x, y);
-	clickItem(id);
+	if (!_editingDescription) {
+		ItemID id = findItemAt(x, y);
+		clickItem(id);
+	}
+}
+
+void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
+	if (_editingDescription) {
+		if (kbd.keycode >= Common::KEYCODE_SPACE && kbd.keycode <= Common::KEYCODE_z) {
+			debug("ascii = %c", kbd.ascii);
+			_editingDescriptionItem->caption += kbd.ascii;
+			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
+				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
+			setItemCaption(_editingDescriptionItem, (const byte*)_editingDescriptionItem->caption.c_str());
+			drawItem(_editingDescriptionID, true);
+		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
+			debug("backspace");
+			_editingDescriptionItem->caption.deleteLastChar();
+			restoreRect(_editingDescriptionItem->rect.left, _editingDescriptionItem->rect.top,
+				_editingDescriptionItem->rect.width() + 1, _editingDescriptionItem->rect.height() - 2);
+			setItemCaption(_editingDescriptionItem, (const byte*)_editingDescriptionItem->caption.c_str());
+			drawItem(_editingDescriptionID, true);
+		} else if (kbd.keycode == Common::KEYCODE_RETURN) {
+			debug("return");
+			_editingDescription = false;
+		}
+	}
 }
 
 ItemID MenuSystem::findItemAt(int x, int y) {
@@ -218,6 +248,22 @@ void MenuSystem::initMenu(MenuID menuID) {
 		initSavegames();
 		setSavegameCaptions();
 		break;
+	case kMenuIdSave:
+		drawString(0, 74, 320, 1, 229, (byte*)"Save game");
+		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, (const byte*)"^", 255, 253);
+		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, (const byte*)"\\", 255, 253);
+		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, (const byte*)"CANCEL", 255, 253);
+		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, (const byte*)"SAVEGAME 1", 231, 234);
+		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, (const byte*)"SAVEGAME 2", 231, 234);
+		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, (const byte*)"SAVEGAME 3", 231, 234);
+		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, (const byte*)"SAVEGAME 4", 231, 234);
+		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, (const byte*)"SAVEGAME 5", 231, 234);
+		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, (const byte*)"SAVEGAME 6", 231, 234);
+		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, (const byte*)"SAVEGAME 7", 231, 234);
+		initSavegames();
+		_savegames.push_back(SavegameItem("", Common::String::printf("GAME %03d", _savegames.size() + 1)));
+		setSavegameCaptions();
+		break;
 	case kMenuIdVolumes:
 		drawString(0, 74, 320, 1, 229, (byte*)"Adjust volume");
 		drawString(0, 130, 200, 0, 244, (byte*)"Master");
@@ -266,10 +312,9 @@ void MenuSystem::clickItem(ItemID id) {
 	switch (id) {
 	// Main menu
 	case kItemIdSave:
-		debug("kItemIdSave");
+		_newMenuID = kMenuIdSave;
 		break;
 	case kItemIdLoad:
-		debug("kItemIdLoad");
 		_newMenuID = kMenuIdLoad;
 		break;
 	case kItemIdToggleText:
@@ -412,7 +457,7 @@ void MenuSystem::initSavegames() {
 }
 
 void MenuSystem::setSavegameCaptions() {
-	int index = _savegameListTopIndex;
+	uint index = _savegameListTopIndex;
 	setItemCaption(getItem(kItemIdSavegame1), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
 	setItemCaption(getItem(kItemIdSavegame2), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
 	setItemCaption(getItem(kItemIdSavegame3), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
@@ -447,10 +492,14 @@ void MenuSystem::clickSavegameItem(ItemID id) {
 		default:
 			return;
 		}
-		
 		debug("filename = [%s]; description = [%s]", savegameItem->_filename.c_str(), savegameItem->_description.c_str());
-		
 	} else {
+		_editingDescription = true;
+		_editingDescriptionItem = getItem(id);
+		_editingDescriptionID = id;
+		_editingDescriptionItem->activeColor = 230; // TODO: Correct color
+		_editingDescriptionItem->defaultColor = 230;
+		drawItem(_editingDescriptionID, true);
 	}
 }
 
