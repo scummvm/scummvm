@@ -433,7 +433,7 @@ MidiDriver_Amiga::Instrument *MidiDriver_Amiga::readInstrument(Common::File &fil
 	if (file.read(instrument->samples, size) < (unsigned int)size) {
 		warning("[sfx:seq:amiga] failed to read instrument samples");
 		free(instrument->samples);
-		free(instrument);
+		delete instrument;
 		return NULL;
 	}
 
@@ -449,7 +449,7 @@ MidiDriver_Amiga::Instrument *MidiDriver_Amiga::readInstrument(Common::File &fil
 		if (seg_size[1] < 0) {
 			warning("[sfx:seq:amiga] invalid looping point");
 			free(instrument->samples);
-			free(instrument);
+			delete instrument;
 			return NULL;
 		}
 

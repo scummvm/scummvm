@@ -596,8 +596,10 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
 		return RDERR_OUTOFMEMORY;
 
 	_blockSurfaces[_layer] = (BlockSurface **)calloc(_xBlocks[_layer] * _yBlocks[_layer], sizeof(BlockSurface *));
-	if (!_blockSurfaces[_layer])
+	if (!_blockSurfaces[_layer]) {
+		free(tileChunk);
 		return RDERR_OUTOFMEMORY;
+	}
 
 	// Group PSX background (64x32, when stretched vertically) tiles together,
 	// to make them compatible with pc version (composed by 64x64 tiles)
