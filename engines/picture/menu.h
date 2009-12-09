@@ -48,74 +48,35 @@
 
 namespace Picture {
 
-const byte kFontColorMenuDefault = 229;
-const byte kFontColorMenuActive  = 255;
+const byte kFontColorMenuDefault	= 229;
+const byte kFontColorMenuActive		= 255;
+const uint kFontResourceIndex		= 13;
 
-class Widget {
-public:
-	Widget(PictureEngine *vm, int16 x, int16 y);
-	virtual ~Widget();
-	virtual void redraw();
-	virtual Widget *getHoveredWidget(int mouseX, int mouseY);
-	virtual void calcDimensions();
-	void setRect(Common::Rect rect);
-	//virtual void setHilighted(bool active);
-	virtual void onMouseEnter();
-	virtual void onMouseLeave();
-	virtual void onMouseMove(int mouseX, int mouseY);
-protected:
-	PictureEngine *_vm;
-	Common::Rect _rect;
-	//bool _hilighted;
+enum MenuID {
+	kMenuIdNone,
+	kMenuIdMain,
+	kMenuIdSave,
+	kMenuIdLoad,
+	kMenuIdVolumes
 };
 
-const int kLabelCentered	= 1 << 1;
-const int kLabelHideOnMovie = 1 << 2;
-
-class LabelWidget : public Widget {
-public:
-	LabelWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags);
-	~LabelWidget();
-	void redraw();
-	void calcDimensions();
-	void setCaption(Common::String caption);
-	void setFontColor(byte fontColor);
-	void onMouseEnter();
-	void onMouseLeave();
-protected:
-	Common::String _caption;
-	uint _flags;
-	byte _fontColor;
-};
-
-class VolumeControlWidget : public Widget {
-public:
-	VolumeControlWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags);
-	~VolumeControlWidget();
-	void redraw();
-	Widget *getHoveredWidget(int mouseX, int mouseY);
-	void calcDimensions();
-	//void setHilighted(bool active);
-	void onMouseEnter();
-	void onMouseLeave();
-	void onMouseMove(int mouseX, int mouseY);
-protected:
-	uint _flags;
-	LabelWidget *_label, *_up, *_down, *_indicator;
-	Widget *_activeWidget;
-};
-
-class MenuPage {
-public:
-	MenuPage(Common::String caption);
-	~MenuPage();
-	void addWidget(Widget *widget);
-	void redraw();
-	Widget *getHoveredWidget(int mouseX, int mouseY);
-protected:
-	typedef Common::Array<Widget*> WidgetArray;
-	Common::String _caption;
-	WidgetArray _widgets;
+enum ItemID {
+	kItemIdNone,
+	// Main menu
+	kItemIdSave,
+	kItemIdLoad,
+	kItemIdToggleText,
+	kItemIdToggleVoices,
+	kItemIdVolumesMenu,
+	kItemIdPlay,
+	kItemIdQuit,
+	// Volumes menu
+	// TODO: Up/down buttons
+	kItemIdDone,
+	kItemIdCancel,
+	// Save/load menu
+	// TODO
+	kMenuIdDummy
 };
 
 class MenuSystem {
@@ -125,15 +86,51 @@ public:
 	~MenuSystem();
 
 	void update();
+	void handleEvents();
 	
 protected:
+
+	struct Item {
+		Common::Rect rect;
+		ItemID id;
+		//const byte *caption;
+		Common::String caption;
+		byte defaultColor, activeColor;
+		int x, y, w;
+	};
+
 	PictureEngine *_vm;
+	Graphics::Surface *_background;
 
-	//LabelWidget *label1, *label2;
-	MenuPage *_page;
+	MenuID _currMenuID, _newMenuID;
+	ItemID _currItemID;
 
-	Widget *_activeWidget;
-	int16 _oldMouseX, _oldMouseY;
+	Common::Array<Item> _items;
+	
+	bool _cfgText, _cfgVoices;
+
+	void addClickTextItem(ItemID id, int x, int y, int w, const byte *caption, byte defaultColor, byte activeColor);
+
+	void drawItem(ItemID itemID, bool active);
+	void handleMouseMove(int x, int y);
+	void handleMouseClick(int x, int y);
+	
+	ItemID findItemAt(int x, int y);
+	Item *getItem(ItemID id);
+	void setItemCaption(Item *item, const byte *caption);
+
+	void initMenu(MenuID menuID);
+	
+	void enterItem(ItemID id);
+	void leaveItem(ItemID id);
+	void clickItem(ItemID id);
+
+	void saveBackground();
+	void restoreBackground();
+	void drawString(int16 x, int16 y, int w, byte color, byte *text);
+	
+	void setCfgText(bool value, bool active);
+	void setCfgVoices(bool value, bool active);
 
 };
 
