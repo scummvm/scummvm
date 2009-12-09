@@ -235,7 +235,7 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 
 bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
-	Selector slc;
+	Selector slc = 0;
 	reg_t objAddr;
 	bool foundTarget = false;
 
@@ -268,7 +268,8 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 		objAddr = _segMan->findObjectByName(objName);
 		break;
 	default:
-		break;
+		warning("autoDetectFeature: invalid featureDetection value %x", featureDetection);
+		return false;
 	}
 
 	reg_t addr;
