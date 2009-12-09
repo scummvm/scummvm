@@ -29,30 +29,32 @@ DECLARE_SINGLETON(Graphics::FontManager);
 
 namespace Graphics {
 
-const ScummFont *g_scummfont;
+const ScummFont *g_scummfont = 0;
 extern const NewFont *g_sysfont;
 extern const NewFont *g_sysfont_big;
 extern const NewFont *g_consolefont;
 
-static bool s_initialized = false;
-
 FontManager::FontManager() {
-	if (!s_initialized) {
-		// FIXME : this need to be freed
-		s_initialized = true;
-		g_scummfont = new ScummFont;
-		INIT_FONT(g_sysfont)
-		INIT_FONT(g_sysfont_big)
-		INIT_FONT(g_consolefont)
-	}
+	// This assert should *never* trigger, because
+	// FontManager is a singleton, thus there is only
+	// one instance of it per time. (g_scummfont gets
+	// reset to 0 in the desctructor of this class).
+	assert(g_scummfont == 0);
+	g_scummfont = new ScummFont;
+	INIT_FONT(g_sysfont)
+	INIT_FONT(g_sysfont_big)
+	INIT_FONT(g_consolefont)
 }
 
 FontManager::~FontManager() {
-	s_initialized = false;
 	delete g_scummfont;
+	g_scummfont = 0;
 	delete g_sysfont;
+	g_sysfont = 0;
 	delete g_sysfont_big;
+	g_sysfont_big = 0;
 	delete g_consolefont;
+	g_consolefont = 0;
 }
 
 const Font *FontManager::getFontByName(const Common::String &name) const {

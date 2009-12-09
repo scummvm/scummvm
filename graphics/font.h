@@ -141,7 +141,7 @@ public:
 };
 
 #define DEFINE_FONT(n) \
-		const NewFont *n;	\
+		const NewFont *n = 0;	\
 		void create_##n() {	\
 			n = new NewFont(desc);	\
 		}

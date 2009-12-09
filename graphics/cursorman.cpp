@@ -31,14 +31,9 @@ DECLARE_SINGLETON(Graphics::CursorManager);
 
 namespace Graphics {
 
-static bool s_initialized = false;
-
 CursorManager::CursorManager() {
-	if (!s_initialized) {
-		s_initialized = true;
-		_cursorStack.clear();
-		_cursorPaletteStack.clear();
-	}
+	_cursorStack.clear();
+	_cursorPaletteStack.clear();
 }
 
 bool CursorManager::isVisible() {
