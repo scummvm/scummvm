@@ -240,7 +240,7 @@ MusicDevices FluidSynthMusicPlugin::getDevices() const {
 }
 
 Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver) const {
-	*mididriver = new MidiDriver_FluidSynth(_system->getMixer());
+	*mididriver = new MidiDriver_FluidSynth(g_system->getMixer());
 
 	return Common::kNoError;
 }
