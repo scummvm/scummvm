@@ -75,6 +75,7 @@ public:
 	const ToltecsGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
+	const Common::String& getTargetName() const { return _targetName; }
 
 	void loadScene(uint resIndex);
 
