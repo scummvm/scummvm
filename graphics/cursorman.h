@@ -175,7 +175,7 @@ private:
 		int _hotspotY;
 		uint32 _keycolor;
 		Graphics::PixelFormat _format;
-		byte _targetScale;
+		int _targetScale;
 
 		uint _size;
 		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {

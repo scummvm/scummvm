@@ -198,7 +198,7 @@ struct Rect {
 		else if (right < r.left) right = r.left;
 	}
 
-	void clip(int maxw, int maxh) {
+	void clip(int16 maxw, int16 maxh) {
 		clip(Rect(0, 0, maxw, maxh));
 	}
 
