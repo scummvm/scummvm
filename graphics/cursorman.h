@@ -165,6 +165,7 @@ private:
 	// ourselves, so it is private and thus there is no way to create this class
 	// except from the Singleton code.
 	CursorManager() {}
+	~CursorManager();
 
 	struct Cursor {
 		byte *_data;

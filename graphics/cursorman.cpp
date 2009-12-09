@@ -31,6 +31,15 @@ DECLARE_SINGLETON(Graphics::CursorManager);
 
 namespace Graphics {
 
+CursorManager::~CursorManager() {
+	for (int i = 0; i < _cursorStack.size(); ++i)
+		delete _cursorStack[i];
+	_cursorStack.clear();
+	for (int i = 0; i < _cursorPaletteStack.size(); ++i)
+		delete _cursorPaletteStack[i];
+	_cursorPaletteStack.clear();
+}
+
 bool CursorManager::isVisible() {
 	if (_cursorStack.empty())
 		return false;
