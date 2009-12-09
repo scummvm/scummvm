@@ -36,6 +36,7 @@
 
 #include "picture/picture.h"
 #include "picture/menu.h"
+#include "picture/palette.h"
 #include "picture/resource.h"
 #include "picture/screen.h"
 
@@ -43,6 +44,7 @@ namespace Picture {
 
 MenuSystem::MenuSystem(PictureEngine *vm) : _vm(vm) {
 	_currMenuID = kMenuIdNone;
+	//_newMenuID = kMenuIdLoad;
 	_newMenuID = kMenuIdMain;
 	_currItemID = kItemIdNone;
 	_cfgText = true;
@@ -62,7 +64,15 @@ int MenuSystem::run() {
 	_background = new Graphics::Surface();
 	_background->create(640, 400, 1);
 
+	_top = 30 - _vm->_guiHeight / 2;
+
+	memset(_vm->_screen->_frontScreen, 250, 640 * 400);
+
 	memcpy(_background->pixels, _vm->_screen->_frontScreen, 640 * 400);
+
+	_vm->_palette->buildColorTransTable(0, 16, 7);
+
+	shadeRect(60, 39, 520, 246, 30, 94);
 	
 	while (1) {
 		update();
@@ -131,7 +141,7 @@ void MenuSystem::drawItem(ItemID itemID, bool active) {
 	Item *item = getItem(itemID);
 	if (item) {
 		byte color = active ? item->activeColor : item->defaultColor;
-		drawString(item->rect.left, item->rect.top, 0, item->fontNum, color, (byte*)item->caption.c_str());
+		drawString(item->rect.left, item->y, 0, item->fontNum, color, (byte*)item->caption.c_str());
 	}
 }
 
@@ -169,7 +179,7 @@ void MenuSystem::setItemCaption(Item *item, const byte *caption) {
 	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(item->fontNum))->data);
 	int width = font.getTextWidth((byte*)caption);
 	int height = font.getHeight();
-	item->rect = Common::Rect(item->x, item->y, item->x + width, item->y + height);
+	item->rect = Common::Rect(item->x, item->y - height, item->x + width, item->y);
 	if (item->w) {
 		item->rect.translate(item->w - width / 2, 0);
 	}
@@ -192,6 +202,21 @@ void MenuSystem::initMenu(MenuID menuID) {
 		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, (const byte*)"VOLUME", kFontColorMenuDefault, kFontColorMenuActive);
 		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, (const byte*)"PLAY", kFontColorMenuDefault, kFontColorMenuActive);
 		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, (const byte*)"QUIT GAME", kFontColorMenuDefault, kFontColorMenuActive);
+		break;
+	case kMenuIdLoad:
+		drawString(0, 74, 320, 1, 229, (byte*)"Load game");
+		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, (const byte*)"^", 255, 253);
+		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, (const byte*)"\\", 255, 253);
+		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, (const byte*)"CANCEL", 255, 253);
+		addClickTextItem(kItemIdSavegame1, 0, 115 + 20 * 0, 300, 0, (const byte*)"SAVEGAME 1", 231, 234);
+		addClickTextItem(kItemIdSavegame2, 0, 115 + 20 * 1, 300, 0, (const byte*)"SAVEGAME 2", 231, 234);
+		addClickTextItem(kItemIdSavegame3, 0, 115 + 20 * 2, 300, 0, (const byte*)"SAVEGAME 3", 231, 234);
+		addClickTextItem(kItemIdSavegame4, 0, 115 + 20 * 3, 300, 0, (const byte*)"SAVEGAME 4", 231, 234);
+		addClickTextItem(kItemIdSavegame5, 0, 115 + 20 * 4, 300, 0, (const byte*)"SAVEGAME 5", 231, 234);
+		addClickTextItem(kItemIdSavegame6, 0, 115 + 20 * 5, 300, 0, (const byte*)"SAVEGAME 6", 231, 234);
+		addClickTextItem(kItemIdSavegame7, 0, 115 + 20 * 6, 300, 0, (const byte*)"SAVEGAME 7", 231, 234);
+		initSavegames();
+		setSavegameCaptions();
 		break;
 	case kMenuIdVolumes:
 		drawString(0, 74, 320, 1, 229, (byte*)"Adjust volume");
@@ -245,12 +270,17 @@ void MenuSystem::clickItem(ItemID id) {
 		break;
 	case kItemIdLoad:
 		debug("kItemIdLoad");
+		_newMenuID = kMenuIdLoad;
 		break;
 	case kItemIdToggleText:
 		setCfgText(!_cfgText, true);
+		if (!_cfgVoices && !_cfgText)
+			setCfgVoices(true, false);
 		break;
 	case kItemIdToggleVoices:
 		setCfgVoices(!_cfgVoices, true);
+		if (!_cfgVoices && !_cfgText)
+			setCfgText(true, false);
 		break;
 	case kItemIdVolumesMenu:
 		debug("kItemIdVolumesMenu");
@@ -297,6 +327,14 @@ void MenuSystem::clickItem(ItemID id) {
 		_newMenuID = kMenuIdMain;
 		break;
 	// Save/Load menu
+	case kItemIdSavegame1:
+	case kItemIdSavegame2:
+	case kItemIdSavegame3:
+	case kItemIdSavegame4:
+	case kItemIdSavegame5:
+	case kItemIdSavegame6:
+		clickSavegameItem(id);
+		break;
 	default:
 		break;
 	}
@@ -318,19 +356,109 @@ void MenuSystem::restoreRect(int x, int y, int w, int h) {
 	}
 }
 
+void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2) {
+	byte *src = (byte*)_background->getBasePtr(x, y);
+	for (int xc = 0; xc < w; xc++) {
+		src[xc] = color1;
+		//src[xc] = 46;
+	}
+	src += 640;
+	w -= 2;
+	h -= 2;
+	while (h--) {
+		src[0] = color2;
+		src[w + 1] = color2;
+		for (int xc = 1; xc < w; xc++) {
+			src[xc] = _vm->_palette->getColorTransPixel(src[xc]);
+		}
+		src += 640;
+	}
+}
+
 void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, byte *text) {
 	fontNum = _vm->_screen->getFontResIndex(fontNum);
+	Font font(_vm->_res->load(fontNum)->data);
 	if (w) {
-		Font font(_vm->_res->load(fontNum)->data);
 		x = x + w - font.getTextWidth(text) / 2;
 	}
-	_vm->_screen->drawString(x, y, color, fontNum, text, -1, NULL, true);
+	_vm->_screen->drawString(x, y - font.getHeight(), color, fontNum, text, -1, NULL, true);
+}
+
+void MenuSystem::initSavegames() {
+
+	_savegameListTopIndex = 0;
+	_savegames.clear();
+	
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Picture::PictureEngine::SaveHeader header;
+	Common::String pattern = _vm->getTargetName();
+	pattern += ".???";
+
+	Common::StringList filenames;
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+		Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+		if (in) {
+			if (_vm->readSaveHeader(in, false, header) == Picture::PictureEngine::kRSHENoError) {
+				_savegames.push_back(SavegameItem(*file, header.description));
+				debug("%s -> %s", file->c_str(), header.description.c_str());
+			}
+			delete in;
+		}
+	}
+
+}
+
+void MenuSystem::setSavegameCaptions() {
+	int index = _savegameListTopIndex;
+	setItemCaption(getItem(kItemIdSavegame1), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame2), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame3), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame4), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame5), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame6), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+	setItemCaption(getItem(kItemIdSavegame7), index < _savegames.size() ? (const byte*)_savegames[index++]._description.c_str() : (const byte*)"");
+}
+
+void MenuSystem::clickSavegameItem(ItemID id) {
+	if (_currMenuID == kMenuIdLoad) {
+		SavegameItem *savegameItem;
+		switch (id) {
+		case kItemIdSavegame1:
+			savegameItem = &_savegames[_savegameListTopIndex + 0];
+			break;
+		case kItemIdSavegame2:
+			savegameItem = &_savegames[_savegameListTopIndex + 1];
+			break;
+		case kItemIdSavegame3:
+			savegameItem = &_savegames[_savegameListTopIndex + 2];
+			break;
+		case kItemIdSavegame4:
+			savegameItem = &_savegames[_savegameListTopIndex + 3];
+			break;
+		case kItemIdSavegame5:
+			savegameItem = &_savegames[_savegameListTopIndex + 4];
+			break;
+		case kItemIdSavegame6:
+			savegameItem = &_savegames[_savegameListTopIndex + 5];
+			break;
+		default:
+			return;
+		}
+		
+		debug("filename = [%s]; description = [%s]", savegameItem->_filename.c_str(), savegameItem->_description.c_str());
+		
+	} else {
+	}
 }
 
 void MenuSystem::setCfgText(bool value, bool active) {
 	if (_cfgText != value) {
 		Item *item = getItem(kItemIdToggleText);
 		_cfgText = value;
+  		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
 		if (_cfgText)
 			setItemCaption(item, (const byte*)"TEXT ON");
 		else
@@ -343,6 +471,7 @@ void MenuSystem::setCfgVoices(bool value, bool active) {
 	if (_cfgVoices != value) {
 		Item *item = getItem(kItemIdToggleVoices);
 		_cfgVoices = value;
+		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
 		if (_cfgVoices)
 			setItemCaption(item, (const byte*)"VOICES ON");
 		else
@@ -380,7 +509,8 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 		return;
 	}
 
-	restoreRect(390, y, 100, 25);
+	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(1))->data);
+	restoreRect(390, y - font.getHeight(), 100, 25);
 	
 	for (int i = 0; i < volume; i++)
 		text[i] = '|';

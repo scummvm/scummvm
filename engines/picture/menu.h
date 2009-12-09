@@ -88,6 +88,15 @@ enum ItemID {
 	kItemIdDone,
 	kItemIdCancel,
 	// Save/load menu
+	kItemIdSavegameUp,
+	kItemIdSavegameDown,
+	kItemIdSavegame1,
+	kItemIdSavegame2,
+	kItemIdSavegame3,
+	kItemIdSavegame4,
+	kItemIdSavegame5,
+	kItemIdSavegame6,
+	kItemIdSavegame7,
 	// TODO
 	kMenuIdDummy
 };
@@ -113,14 +122,26 @@ protected:
 		int x, y, w;
 		uint fontNum;
 	};
+	
+	struct SavegameItem {
+		Common::String _filename;
+		Common::String _description;
+		SavegameItem()
+			: _filename(""), _description("") {}
+		SavegameItem(Common::String filename, Common::String description)
+			: _filename(filename), _description(description) {}
+	};
 
 	PictureEngine *_vm;
 	Graphics::Surface *_background;
 
 	MenuID _currMenuID, _newMenuID;
 	ItemID _currItemID;
+	int _top;
+	int _savegameListTopIndex;
 
 	Common::Array<Item> _items;
+	Common::Array<SavegameItem> _savegames;
 	
 	bool _cfgText, _cfgVoices;
 	int _cfgMasterVolume, _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume,	_cfgBackgroundVolume;
@@ -144,8 +165,12 @@ protected:
 	void saveBackground();
 	void restoreBackground();
 	void restoreRect(int x, int y, int w, int h);
+	void shadeRect(int x, int y, int w, int h, byte color1, byte color2);
 	void drawString(int16 x, int16 y, int w, uint fontNum, byte color, byte *text);
-	
+
+	void initSavegames();
+	void setSavegameCaptions();
+	void clickSavegameItem(ItemID id);
 	void setCfgText(bool value, bool active);
 	void setCfgVoices(bool value, bool active);
 	void drawVolumeBar(ItemID itemID);
