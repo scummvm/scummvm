@@ -216,6 +216,8 @@ public:
 	void saveState(Common::WriteStream *out);
 	void loadState(Common::ReadStream *in);
 
+	uint getFontResIndex(int fontNum) const { return _fontResIndexArray[fontNum]; }
+
 //protected:
 public:
 
