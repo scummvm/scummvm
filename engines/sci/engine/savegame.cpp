@@ -347,7 +347,10 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		if (s.isSaving())
 			picPortRect = _gui->getPortPic(picPortTop, picPortLeft);
 
-		s.syncBytes((byte *)&picPortRect, sizeof(picPortRect));
+		s.syncAsSint16LE(picPortRect.top);
+		s.syncAsSint16LE(picPortRect.left);
+		s.syncAsSint16LE(picPortRect.bottom);
+		s.syncAsSint16LE(picPortRect.right);
 		s.syncAsSint16LE(picPortTop);
 		s.syncAsSint16LE(picPortLeft);
 
