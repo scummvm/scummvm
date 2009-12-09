@@ -1453,7 +1453,7 @@ void Game::DoSync(Common::Serializer &s) {
 			int itemID = _inventory[i] ? _inventory[i]->_absNum : -1;
 			s.syncAsSint16LE(itemID);
 		} else {
-			int itemID;
+			int itemID = -1;
 			s.syncAsSint16LE(itemID);
 			_inventory[i] = getItem(itemID);
 		}
