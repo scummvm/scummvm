@@ -217,4 +217,50 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 	}
 }
 
+CursorManager::Cursor::Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, const Graphics::PixelFormat *format) {
+#ifdef USE_RGB_COLOR
+	if (!format)
+		_format = Graphics::PixelFormat::createFormatCLUT8();
+	 else 
+		_format = *format;
+	_size = w * h * _format.bytesPerPixel;
+	_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);
+#else
+	_format = Graphics::PixelFormat::createFormatCLUT8();
+	_size = w * h;
+	_keycolor = keycolor & 0xFF;
+#endif
+	_data = new byte[_size];
+	if (data && _data)
+		memcpy(_data, data, _size);
+	_width = w;
+	_height = h;
+	_hotspotX = hotspotX;
+	_hotspotY = hotspotY;
+	_targetScale = targetScale;
+}
+
+CursorManager::Cursor::~Cursor() {
+	delete[] _data;
+}
+
+CursorManager::Palette::Palette(const byte *colors, uint start, uint num) {
+	_start = start;
+	_num = num;
+	_size = 4 * num;
+
+	if (num) {
+		_data = new byte[_size];
+		memcpy(_data, colors, _size);
+	} else {
+		_data = NULL;
+	}
+
+	_disabled = false;
+}
+
+CursorManager::Palette::~Palette() {
+	delete[] _data;
+}
+
 } // End of namespace Graphics

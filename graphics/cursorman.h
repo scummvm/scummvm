@@ -29,9 +29,6 @@
 #include "common/stack.h"
 #include "common/singleton.h"
 #include "graphics/pixelformat.h"
-#ifdef USE_RGB_COLOR
-#include "common/system.h"
-#endif
 
 namespace Graphics {
 
@@ -181,32 +178,9 @@ private:
 		int _targetScale;
 
 		uint _size;
-		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {
-#ifdef USE_RGB_COLOR
-			if (!format)
-				_format = Graphics::PixelFormat::createFormatCLUT8();
-			 else 
-				_format = *format;
-			_size = w * h * _format.bytesPerPixel;
-			_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);
-#else
-			_format = Graphics::PixelFormat::createFormatCLUT8();
-			_size = w * h;
-			_keycolor = keycolor & 0xFF;
-#endif
-			_data = new byte[_size];
-			if (data && _data)
-				memcpy(_data, data, _size);
-			_width = w;
-			_height = h;
-			_hotspotX = hotspotX;
-			_hotspotY = hotspotY;
-			_targetScale = targetScale;
-		}
 
-		~Cursor() {
-			delete[] _data;
-		}
+		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
+		~Cursor();
 	};
 
 	struct Palette {
@@ -217,24 +191,8 @@ private:
 
 		bool _disabled;
 
-		Palette(const byte *colors, uint start, uint num) {
-			_start = start;
-			_num = num;
-			_size = 4 * num;
-
-			if (num) {
-				_data = new byte[_size];
-				memcpy(_data, colors, _size);
-			} else {
-				_data = NULL;
-			}
-
-			_disabled = false;
-		}
-
-		~Palette() {
-			delete[] _data;
-		}
+		Palette(const byte *colors, uint start, uint num);
+		~Palette();
 	};
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
