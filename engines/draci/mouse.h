@@ -27,7 +27,6 @@
 #define DRACI_MOUSE_H
 
 #include "common/events.h"
-#include "graphics/cursorman.h"
 
 namespace Draci {
 
@@ -75,6 +74,6 @@ private:
 	DraciEngine *_vm;
 };
 
-}
+} // End of namespace Draci
 
 #endif // DRACI_MOUSE_H

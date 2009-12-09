@@ -402,6 +402,3 @@ const BAFile *BArchive::getFile(uint i) {
 }
 
 } // End of namespace Draci
-
-
-

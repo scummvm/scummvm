@@ -27,6 +27,10 @@
 #include "draci/game.h"
 #include "draci/mouse.h"
 #include "draci/barchive.h"
+#include "draci/screen.h"
+#include "draci/sprite.h"
+
+#include "graphics/cursorman.h"
 
 namespace Draci {
 
@@ -123,4 +127,4 @@ void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	        sp.getWidth() / 2, sp.getHeight() / 2);
 }
 
-}
+} // End of namespace Draci

@@ -26,8 +26,9 @@
 #include "common/stream.h"
 
 #include "draci/draci.h"
-#include "draci/sprite.h"
 #include "draci/font.h"
+#include "draci/sprite.h"
+#include "draci/surface.h"
 
 namespace Draci {
 
@@ -351,4 +352,3 @@ void Text::splitLinesLongerThan(uint maxWidth) {
 }
 
 } // End of namespace Draci
-

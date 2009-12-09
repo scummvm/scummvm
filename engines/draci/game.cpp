@@ -23,14 +23,21 @@
  *
  */
 
+#include "common/serializer.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/util.h"
 
 #include "draci/draci.h"
+#include "draci/animation.h"
 #include "draci/game.h"
 #include "draci/barchive.h"
+#include "draci/font.h"
+#include "draci/mouse.h"
+#include "draci/screen.h"
 #include "draci/script.h"
-#include "draci/animation.h"
+#include "draci/sound.h"
+#include "draci/surface.h"
 
 namespace Draci {
 
@@ -1689,4 +1696,4 @@ void Room::load(int roomNum, BArchive *archive) {
 	_program._length = f->_length;
 }
 
-}
+} // End of namespace Draci

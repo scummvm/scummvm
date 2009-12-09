@@ -1,20 +1,20 @@
 MODULE := engines/draci
  
 MODULE_OBJS := \
-	draci.o \
-	detection.o \
-	barchive.o \
-	script.o \
-	font.o \
-	saveload.o \
-	sound.o \
-	music.o \
-	sprite.o \
-	screen.o \
-	surface.o \
-	mouse.o \
-	game.o \
 	animation.o \
+	barchive.o \
+	detection.o \
+	draci.o \
+	font.o \
+	game.o \
+	mouse.o \
+	music.o \
+	saveload.o \
+	screen.o \
+	script.o \
+	sound.o \
+	sprite.o \
+	surface.o \
 	walking.o
  
 MODULE_DIRS += \

@@ -35,13 +35,17 @@
 #include "graphics/font.h"
 
 #include "draci/draci.h"
+#include "draci/animation.h"
 #include "draci/barchive.h"
-#include "draci/script.h"
 #include "draci/font.h"
-#include "draci/sprite.h"
-#include "draci/screen.h"
+#include "draci/game.h"
 #include "draci/mouse.h"
+#include "draci/music.h"
 #include "draci/saveload.h"
+#include "draci/screen.h"
+#include "draci/script.h"
+#include "draci/sound.h"
+#include "draci/sprite.h"
 
 namespace Draci {
 

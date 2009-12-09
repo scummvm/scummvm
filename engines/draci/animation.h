@@ -26,9 +26,8 @@
 #ifndef DRACI_ANIMATION_H
 #define DRACI_ANIMATION_H
 
-#include "draci/sprite.h"
-#include "draci/sound.h"
 #include "common/rect.h"
+#include "draci/sprite.h"
 
 namespace Draci {
 
@@ -56,6 +55,8 @@ enum {
 enum { kIgnoreIndex = -2 };
 
 class DraciEngine;
+class Surface;
+struct SoundSample;
 
 class Animation {
 
@@ -215,6 +216,6 @@ private:
 	int _lastIndex;
 };
 
-}
+} // End of namespace Draci
 
 #endif // DRACI_ANIMATION_H

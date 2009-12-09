@@ -24,6 +24,7 @@
  */
 
 #include "draci/draci.h"
+#include "draci/game.h"
 #include "draci/saveload.h"
 
 #include "common/serializer.h"

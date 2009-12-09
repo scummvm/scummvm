@@ -27,15 +27,16 @@
 #define DRACI_GAME_H
 
 #include "common/str.h"
-#include "common/serializer.h"
-#include "draci/barchive.h"
 #include "draci/script.h"
-#include "draci/animation.h"
-#include "draci/sprite.h"
 #include "draci/walking.h"
+
+namespace Common {
+	class Serializer;
+}
 
 namespace Draci {
 
+class BArchive;
 class DraciEngine;
 
 enum {

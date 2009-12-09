@@ -27,8 +27,9 @@
 
 #include "common/stream.h"
 
-#include "draci/animation.h"
 #include "draci/draci.h"
+#include "draci/animation.h"
+#include "draci/game.h"
 #include "draci/walking.h"
 #include "draci/sprite.h"
 
@@ -764,4 +765,4 @@ defaultCase:
 	}
 }
 
-}
+} // End of namespace Draci

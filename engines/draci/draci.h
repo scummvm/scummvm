@@ -28,20 +28,12 @@
 
 #include <math.h>
 
-#include "common/system.h"
 #include "engines/engine.h"
 
-#include "draci/game.h"
-#include "draci/mouse.h"
-#include "draci/screen.h"
-#include "draci/font.h"
-#include "draci/script.h"
-#include "draci/barchive.h"
-#include "draci/animation.h"
-#include "draci/sound.h"
-#include "draci/music.h"
-
 struct ADGameDescription;
+
+class MidiDriver;
+class OSystem;
 
 /**
  * This is the namespace of the Draci engine.
@@ -52,6 +44,17 @@ struct ADGameDescription;
  * - ???
  */
 namespace Draci {
+
+class Screen;
+class Mouse;
+class Game;
+class Script;
+class AnimationManager;
+class Sound;
+class MusicPlayer;
+class Font;
+class BArchive;
+class SoundArchive;
 
 class DraciEngine : public Engine {
 public:
@@ -125,4 +128,3 @@ static inline long scummvm_lround(double val) { return (long)floor(val + 0.5); }
 } // End of namespace Draci
 
 #endif // DRACI_H
-

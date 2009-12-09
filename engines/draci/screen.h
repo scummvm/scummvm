@@ -26,8 +26,7 @@
 #ifndef DRACI_SCREEN_H
 #define DRACI_SCREEN_H
 
-#include "draci/surface.h"
-#include "draci/sprite.h"
+#include "common/scummsys.h"
 
 namespace Draci {
 
@@ -39,6 +38,7 @@ enum ScreenParameters {
 };
 
 class DraciEngine;
+class Surface;
 
 class Screen {
 

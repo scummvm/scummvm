@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -26,6 +25,11 @@
 
 #include "draci/draci.h"
 #include "draci/animation.h"
+#include "draci/barchive.h"
+#include "draci/game.h"
+#include "draci/screen.h"
+#include "draci/sound.h"
+#include "draci/surface.h"
 
 namespace Draci {
 
@@ -611,4 +615,4 @@ Animation *AnimationManager::load(uint animNum) {
 	return anim;
 }
 
-}
+} // End of namespace Draci

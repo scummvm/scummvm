@@ -29,8 +29,15 @@
 #include "common/stack.h"
 
 #include "draci/draci.h"
-#include "draci/script.h"
+#include "draci/animation.h"
+#include "draci/barchive.h"
 #include "draci/game.h"
+#include "draci/mouse.h"
+#include "draci/music.h"
+#include "draci/screen.h"
+#include "draci/script.h"
+#include "draci/sound.h"
+#include "draci/surface.h"
 
 namespace Draci {
 
@@ -1201,4 +1208,3 @@ void Script::runWrapper(const GPL2Program &program, uint16 offset, bool disableC
 }
 
 } // End of namespace Draci
-

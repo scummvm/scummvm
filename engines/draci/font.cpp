@@ -27,6 +27,7 @@
 
 #include "draci/draci.h"
 #include "draci/font.h"
+#include "draci/surface.h"
 
 namespace Draci {
 

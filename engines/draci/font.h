@@ -33,6 +33,8 @@ namespace Draci {
 extern const char * const kFontSmall;
 extern const char * const kFontBig;
 
+class Surface;
+
 /**
  *  Default font colours. They all seem to remain constant except for the
  *  first one which varies depending on the character speaking.

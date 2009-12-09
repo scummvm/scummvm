@@ -24,9 +24,13 @@
  */
 
 #include "common/stream.h"
+#include "common/system.h"
 
 #include "draci/draci.h"
 #include "draci/screen.h"
+#include "draci/surface.h"
+#include "draci/sprite.h"
+
 
 namespace Draci {
 
@@ -145,5 +149,3 @@ void Screen::clearScreen() {
 }
 
 } // End of namespace Draci
-
-

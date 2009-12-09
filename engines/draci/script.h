@@ -27,31 +27,33 @@
 #define DRACI_SCRIPT_H
 
 #include "common/array.h"
-#include "common/str.h"
 #include "common/stream.h"
+
+namespace Common {
+	class MemoryReadStream;
+}
 
 namespace Draci {
 
-/** The maximum number of parameters for a GPL command */
-const int kMaxParams = 3;
+enum {
+	/** The maximum number of parameters for a GPL command */
+	kMaxParams = 3,
+
+	kNumCommands = 55
+};
 
 class DraciEngine;
 class Script;
-
-enum {
-	kNumCommands = 55
-};
 
 typedef void (Script::*GPLHandler)(const Common::Array<int> &);
 typedef int  (Script::*GPLOperatorHandler)(int, int) const;
 typedef int  (Script::*GPLFunctionHandler)(int) const;
 
 /**
- *  Represents a single command in the GPL scripting language bytecode.
- *  Each command is represented in the bytecode by a command number and a
- *  subnumber.
+ * Represents a single command in the GPL scripting language bytecode.
+ * Each command is represented in the bytecode by a command number and a
+ * subnumber.
  */
-
 enum GPL2ParameterType {
 	kGPL2Num = 1,
 	kGPL2Str = 2,

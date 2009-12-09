@@ -26,8 +26,8 @@
 #ifndef DRACI_SPRITE_H
 #define DRACI_SPRITE_H
 
-#include "draci/surface.h"
-#include "draci/font.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Draci {
 
@@ -37,10 +37,14 @@ enum DrawableType {
 };
 
 struct Displacement {
-  int relX, relY;
-  double extraScaleX, extraScaleY;
+	int relX, relY;
+	double extraScaleX, extraScaleY;
 };
+
 extern const Displacement kNoDisplacement;
+
+class Surface;
+class Font;
 
 class Drawable {
 public:
