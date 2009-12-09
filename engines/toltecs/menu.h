@@ -48,7 +48,6 @@ namespace Toltecs {
 
 const byte kFontColorMenuDefault	= 229;
 const byte kFontColorMenuActive		= 255;
-const uint kFontResourceIndex		= 13;
 
 enum MenuID {
 	kMenuIdNone,
@@ -69,7 +68,21 @@ enum ItemID {
 	kItemIdPlay,
 	kItemIdQuit,
 	// Volumes menu
-	// TODO: Up/down buttons
+	kItemIdMasterUp,
+	kItemIdVoicesUp,
+	kItemIdMusicUp,
+	kItemIdSoundFXUp,
+	kItemIdBackgroundUp,
+	kItemIdMasterDown,
+	kItemIdVoicesDown,
+	kItemIdMusicDown,
+	kItemIdSoundFXDown,
+	kItemIdBackgroundDown,
+	kItemIdMaster,
+	kItemIdVoices,
+	kItemIdMusic,
+	kItemIdSoundFX,
+	kItemIdBackground,
 	kItemIdDone,
 	kItemIdCancel,
 	// Save/load menu
@@ -83,6 +96,7 @@ public:
 	MenuSystem(ToltecsEngine *vm);
 	~MenuSystem();
 
+	int run();
 	void update();
 	void handleEvents();
 	
@@ -95,6 +109,7 @@ protected:
 		Common::String caption;
 		byte defaultColor, activeColor;
 		int x, y, w;
+		uint fontNum;
 	};
 
 	ToltecsEngine *_vm;
@@ -106,8 +121,9 @@ protected:
 	Common::Array<Item> _items;
 	
 	bool _cfgText, _cfgVoices;
+	int _cfgMasterVolume, _cfgVoicesVolume, _cfgMusicVolume, _cfgSoundFXVolume,	_cfgBackgroundVolume;
 
-	void addClickTextItem(ItemID id, int x, int y, int w, const byte *caption, byte defaultColor, byte activeColor);
+	void addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const byte *caption, byte defaultColor, byte activeColor);
 
 	void drawItem(ItemID itemID, bool active);
 	void handleMouseMove(int x, int y);
@@ -125,10 +141,13 @@ protected:
 
 	void saveBackground();
 	void restoreBackground();
-	void drawString(int16 x, int16 y, int w, byte color, byte *text);
+	void restoreRect(int x, int y, int w, int h);
+	void drawString(int16 x, int16 y, int w, uint fontNum, byte color, byte *text);
 	
 	void setCfgText(bool value, bool active);
 	void setCfgVoices(bool value, bool active);
+	void drawVolumeBar(ItemID itemID);
+	void changeVolumeBar(ItemID itemID, int delta);
 
 };
 
