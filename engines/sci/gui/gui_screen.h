@@ -91,6 +91,7 @@ public:
 	uint _displayPixels;
 
 	int _picNotValid; // possible values 0, 1 and 2
+	int _picNotValidSci11; // another variable that is used by kPicNotValid in sci1.1
 
 	byte _colorWhite;
 	byte _colorDefaultVectorData;

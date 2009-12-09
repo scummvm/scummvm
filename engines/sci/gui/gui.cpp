@@ -366,6 +366,12 @@ void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo ce
 	_palette->setOnScreen();
 }
 
+int SciGui::getControlPicNotValid() {
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		return _screen->_picNotValidSci11;
+	return _screen->_picNotValid;
+}
+
 void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
 	if (!hilite) {
 		rect.grow(1);
@@ -378,7 +384,7 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		rect.grow(1);
 		if (style & 8) // selected
 			_gfx->FrameRect(rect);
-		if (_screen->_picNotValid == 0) {
+		if (!getControlPicNotValid()) {
 			rect.grow(1);
 			_gfx->BitsShow(rect);
 		}
@@ -398,7 +404,7 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 			_gfx->FrameRect(rect);
 		}
 		rect.grow(1);
-		if (_screen->_picNotValid == 0)
+		if (!getControlPicNotValid())
 			_gfx->BitsShow(rect);
 	} else {
 		_gfx->InvertRect(rect);
@@ -422,7 +428,7 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 		_text->SetFont(oldFontId);
 		rect.grow(1);
 	}
-	if (_screen->_picNotValid == 0)
+	if (!getControlPicNotValid())
 		_gfx->BitsShow(rect);
 }
 
@@ -432,7 +438,7 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 		if (style & 0x20) {
 			_gfx->FrameRect(rect);
 		}
-		if (_screen->_picNotValid == 0)
+		if (!getControlPicNotValid())
 			_gfx->BitsShow(rect);
 	} else {
 		_gfx->InvertRect(rect);
@@ -447,7 +453,7 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 		if (isAlias && (style & 8)) {
 			_gfx->FrameRect(rect);
 		}
-		if (_screen->_picNotValid == 0)
+		if (!getControlPicNotValid())
 			_gfx->BitsShow(rect);
 	}
 }
@@ -524,10 +530,19 @@ void SciGui::graphAdjustPriority(int top, int bottom) {
 }
 
 int16 SciGui::picNotValid(int16 newPicNotValid) {
-	int16 oldPicNotValid = _screen->_picNotValid;
+	int16 oldPicNotValid;
 
-	if (newPicNotValid != -1)
-		_screen->_picNotValid = newPicNotValid;
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		oldPicNotValid = _screen->_picNotValidSci11;
+
+		if (newPicNotValid != -1)
+			_screen->_picNotValidSci11 = newPicNotValid;
+	} else {
+		oldPicNotValid = _screen->_picNotValid;
+
+		if (newPicNotValid != -1)
+			_screen->_picNotValid = newPicNotValid;
+	}
 
 	return oldPicNotValid;
 }

@@ -347,8 +347,13 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		Common::Rect clipRectTranslated = clipRect;
 		OffsetRect(clipRectTranslated);
 		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, origHeight);
-		if (!_screen->_picNotValid)
-			BitsShow(rect);
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			if (!_screen->_picNotValidSci11)
+				BitsShow(rect);
+		} else {
+			if (!_screen->_picNotValid)
+				BitsShow(rect);
+		}
 	}
 }
 

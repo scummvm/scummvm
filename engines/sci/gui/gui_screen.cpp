@@ -54,7 +54,8 @@ SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, b
 	// Sets display screen to be actually displayed
 	_activeScreen = _displayScreen;
 
-	_picNotValid = false;
+	_picNotValid = 0;
+	_picNotValidSci11 = 0;
 	_unditherState = true;
 
 	if (_resMan->isVGA()) {

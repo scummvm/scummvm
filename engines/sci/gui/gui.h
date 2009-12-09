@@ -165,6 +165,7 @@ private:
 	virtual void initPriorityBands();
 	virtual void animateShowPic();
 	virtual void addToPicSetPicNotValid();
+	virtual int getControlPicNotValid();
 
 	SciGuiWindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
