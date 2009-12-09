@@ -61,7 +61,7 @@ Common::Error Parallaction_br::init() {
 			_disk = new DosDisk_br(this);
 		}
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 		_soundManI = new DosSoundMan_br(this, driver);
 	} else {

@@ -252,7 +252,7 @@ void SciMusic::loadPatchMT32() {
 	}
 }
 //----------------------------------------
-void SciMusic::soundInitSnd(SoundRes*res, sciSound *pSnd) {
+void SciMusic::soundInitSnd(SoundRes *res, sciSound *pSnd) {
 	//_mutex.lock();
 	SoundRes::tagTrack *pTrack = NULL;
 	switch (_midiType) {
@@ -267,6 +267,8 @@ void SciMusic::soundInitSnd(SoundRes*res, sciSound *pSnd) {
 		break;
 	case MD_MT32:
 		pTrack = res->getTrackByType(SoundRes::kTrackMT32);
+		break;
+	default:
 		break;
 	}
 	// attempting to select default MT-32/Roland track

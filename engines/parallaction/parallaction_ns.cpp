@@ -167,7 +167,7 @@ Common::Error Parallaction_ns::init() {
 	_disk->init();
 
 	if (getPlatform() == Common::kPlatformPC) {
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
 		_soundManI = new DosSoundMan_ns(this, driver);
 		_soundManI->setMusicVolume(ConfMan.getInt("music_volume"));

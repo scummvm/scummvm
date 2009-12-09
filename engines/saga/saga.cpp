@@ -227,7 +227,7 @@ Common::Error SagaEngine::run() {
 	_console = new Console(this);
 
 	// Graphics should be initialized before music
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	bool adlib = (midiDriver == MD_ADLIB);
 

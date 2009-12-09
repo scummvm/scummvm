@@ -552,7 +552,7 @@ Common::Error AGOSEngine::init() {
 		(getPlatform() == Common::kPlatformPC)) {
 
 		// Setup midi driver
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
+		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
 		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
 		_driver = MidiDriver::createMidi(midiDriver);

@@ -383,7 +383,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	_midiParser = MidiParser::createParser_XMIDI();
 
 	// Create the driver
-	int driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriverType driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_driver = createMidi(driver);
 	this->open();
 

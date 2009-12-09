@@ -105,7 +105,7 @@ Common::Error KyraEngine_v1::init() {
 
 	if (!_flags.useDigSound) {
 		// We prefer AdLib over MIDI, since generally AdLib is better supported
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_MIDI | MDT_ADLIB);
+		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_MIDI | MDT_ADLIB);
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)

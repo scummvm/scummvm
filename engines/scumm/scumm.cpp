@@ -1635,7 +1635,7 @@ void ScummEngine_v100he::resetScumm() {
 #endif
 
 void ScummEngine::setupMusic(int midi) {
-	int midiDriver = MidiDriver::detectMusicDriver(midi);
+	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(midi);
 	_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
 	switch (midiDriver) {

@@ -224,7 +224,7 @@ MidiDriverType MidiDriver::detectMusicDriver(int flags) {
 	return musicDriver;
 }
 
-MidiDriver *MidiDriver::createMidi(int midiDriver) {
+MidiDriver *MidiDriver::createMidi(MidiDriverType midiDriver) {
 	switch (midiDriver) {
 	case MD_NULL:      return MidiDriver_NULL_create();
 
@@ -280,8 +280,9 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #if defined(__amigaos4__)
 	case MD_CAMD:      return MidiDriver_CAMD_create();
 #endif
+	default:
+		error("Invalid midi driver selected");
 	}
 
-	error("Invalid midi driver selected");
 	return NULL;
 }

@@ -150,7 +150,7 @@ Common::Error M4Engine::run() {
 
 	_screen = new M4Surface(true); // Special form for creating screen reference
 
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
 	MidiDriver *driver = MidiDriver::createMidi(midiDriver);

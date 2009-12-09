@@ -163,7 +163,7 @@ protected:
 
 	Audio::Mixer *_pMixer;
 	MidiDriver *_pMidiDrv;
-	int _midiType;
+	MidiDriverType _midiType;
 	Common::Mutex _mutex;
 
 	Common::Array<sciSound *> _playList;

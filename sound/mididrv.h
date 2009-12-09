@@ -139,7 +139,7 @@ public:
 	 */
 	static const MidiDriverDescription *getAvailableMidiDrivers();
 
-	static MidiDriver *createMidi(int midiDriver);
+	static MidiDriver *createMidi(MidiDriverType midiDriver);
 
 	static MidiDriverType detectMusicDriver(int flags);
 

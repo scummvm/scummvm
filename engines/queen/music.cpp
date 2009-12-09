@@ -45,7 +45,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_queuePos = _lastSong = _currentSong = 0;
 	queueClear();
 
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_adlib = (midiDriver == MD_ADLIB);
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 

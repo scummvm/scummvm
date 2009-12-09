@@ -92,7 +92,7 @@ void MidiPlayer::setVolume(int volume) {
 }
 
 int MidiPlayer::open() {
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	_driver = MidiDriver::createMidi(midiDriver);
 	int ret = _driver->open();
