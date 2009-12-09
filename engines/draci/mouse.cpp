@@ -32,6 +32,8 @@
 
 #include "graphics/cursorman.h"
 
+#include "common/system.h"
+
 namespace Draci {
 
 Mouse::Mouse(DraciEngine *vm) {
