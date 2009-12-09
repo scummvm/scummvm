@@ -184,11 +184,10 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 			// If nothing is selected in the list widget, choose the current dir.
 			// Else, choose the dir that is selected.
 			int selection = _fileList->getSelected();
-			if (selection >= 0) {
+			if (selection >= 0)
 				_choice = _nodeContent[selection];
-			} else {
+			else
 				_choice = _node;
-			}
 			setResult(1);
 			close();
 		} else {
@@ -214,11 +213,18 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		if (_nodeContent[data].isDirectory()) {
 			_node = _nodeContent[data];
 			updateListing();
-		} else {
+		} else if (!_isDirBrowser) {
 			_choice = _nodeContent[data];
 			setResult(1);
 			close();
 		}
+		break;
+	case kListSelectionChangedCmd:
+		// We do not allow selecting directories in directory
+		// browser mode, thus we will invalidate the selection
+		// when the user selects an directory over here.
+		if (data != (uint32)-1 && _isDirBrowser && !_nodeContent[data].isDirectory())
+			_fileList->setSelected(-1);
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -233,24 +239,32 @@ void BrowserDialog::updateListing() {
 	ConfMan.set("browser_lastpath", _node.getPath());
 
 	// Read in the data from the file system
-	Common::FSNode::ListMode listMode =
-	         _isDirBrowser ? Common::FSNode::kListDirectoriesOnly
-	                       : Common::FSNode::kListAll;
-	if (!_node.getChildren(_nodeContent, listMode)) {
+	if (!_node.getChildren(_nodeContent, Common::FSNode::kListAll))
 		_nodeContent.clear();
-	} else {
+	else
 		Common::sort(_nodeContent.begin(), _nodeContent.end());
-	}
 
 	// Populate the ListWidget
 	Common::StringList list;
+	ListWidget::ColorList colors;
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
-		if (!_isDirBrowser && i->isDirectory())
+		if (i->isDirectory())
 			list.push_back(i->getDisplayName() + "/");
 		else
 			list.push_back(i->getDisplayName());
+
+		if (_isDirBrowser) {
+			if (i->isDirectory())
+				colors.push_back(ThemeEngine::kFontColorNormal);
+			else
+				colors.push_back(ThemeEngine::kFontColorAlternate);
+		}
 	}
-	_fileList->setList(list);
+
+	if (_isDirBrowser)
+		_fileList->setList(list, &colors);
+	else
+		_fileList->setList(list);
 	_fileList->scrollTo(0);
 
 	// Finally, redraw
