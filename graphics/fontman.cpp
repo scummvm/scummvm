@@ -30,9 +30,9 @@ DECLARE_SINGLETON(Graphics::FontManager);
 namespace Graphics {
 
 const ScummFont *g_scummfont = 0;
-extern const NewFont *g_sysfont;
-extern const NewFont *g_sysfont_big;
-extern const NewFont *g_consolefont;
+FORWARD_DECLARE_FONT(g_sysfont)
+FORWARD_DECLARE_FONT(g_sysfont_big)
+FORWARD_DECLARE_FONT(g_consolefont)
 
 FontManager::FontManager() {
 	// This assert should *never* trigger, because
