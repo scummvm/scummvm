@@ -172,6 +172,7 @@ protected:
 
 	void initSavegames();
 	void setSavegameCaptions();
+	void scrollSavegames(int delta);
 	void clickSavegameItem(ItemID id);
 	void setCfgText(bool value, bool active);
 	void setCfgVoices(bool value, bool active);
