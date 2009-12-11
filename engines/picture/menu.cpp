@@ -223,13 +223,13 @@ void MenuSystem::initMenu(MenuID menuID) {
 	switch (menuID) {
 	case kMenuIdMain:
 		drawString(0, 74, 320, 1, 229, (byte*)"What can I do for you?");
-		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, (const byte*)"LOAD", kFontColorMenuDefault, kFontColorMenuActive);
-		addClickTextItem(kItemIdSave, 0, 135, 320, 0, (const byte*)"SAVE", kFontColorMenuDefault, kFontColorMenuActive);
-		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, (const byte*)"TEXT ON", kFontColorMenuDefault, kFontColorMenuActive);
-		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, (const byte*)"VOICES ON", kFontColorMenuDefault, kFontColorMenuActive);
-		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, (const byte*)"VOLUME", kFontColorMenuDefault, kFontColorMenuActive);
-		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, (const byte*)"PLAY", kFontColorMenuDefault, kFontColorMenuActive);
-		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, (const byte*)"QUIT GAME", kFontColorMenuDefault, kFontColorMenuActive);
+		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, (const byte*)"LOAD", 229, 255);
+		addClickTextItem(kItemIdSave, 0, 135, 320, 0, (const byte*)"SAVE", 229, 255);
+		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, (const byte*)"TEXT ON", 229, 255);
+		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, (const byte*)"VOICES ON", 229, 255);
+		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, (const byte*)"VOLUME", 229, 255);
+		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, (const byte*)"PLAY", 229, 255);
+		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, (const byte*)"QUIT GAME", 229, 255);
 		break;
 	case kMenuIdLoad:
 		drawString(0, 74, 320, 1, 229, (byte*)"Load game");
@@ -269,18 +269,18 @@ void MenuSystem::initMenu(MenuID menuID) {
 		drawString(0, 180, 200, 0, 244, (byte*)"Music");
 		drawString(0, 205, 200, 0, 244, (byte*)"Sound FX");
 		drawString(0, 230, 200, 0, 244, (byte*)"Background");
-		addClickTextItem(kItemIdDone, 0, 275, 200, 0, (const byte*)"DONE", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 440, 0, (const byte*)"CANCEL", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdMasterDown, 0, 130 + 25 * 0, 348, 1, (const byte*)"[", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdVoicesDown, 0, 130 + 25 * 1, 348, 1, (const byte*)"[", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdMusicDown, 0, 130 + 25 * 2, 348, 1, (const byte*)"[", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdSoundFXDown, 0, 130 + 25 * 3, 348, 1, (const byte*)"[", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdBackgroundDown, 0, 130 + 25 * 4, 348, 1, (const byte*)"[", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdMasterUp, 0, 130 + 25 * 0, 372, 1, (const byte*)"]", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdVoicesUp, 0, 130 + 25 * 1, 372, 1, (const byte*)"]", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdMusicUp, 0, 130 + 25 * 2, 372, 1, (const byte*)"]", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdSoundFXUp, 0, 130 + 25 * 3, 372, 1, (const byte*)"]", kFontColorMenuDefault, 253);
-		addClickTextItem(kItemIdBackgroundUp, 0, 130 + 25 * 4, 372, 1, (const byte*)"]", kFontColorMenuDefault, 253);
+		addClickTextItem(kItemIdDone, 0, 275, 200, 0, (const byte*)"DONE", 229, 253);
+		addClickTextItem(kItemIdCancel, 0, 275, 440, 0, (const byte*)"CANCEL", 229, 253);
+		addClickTextItem(kItemIdMasterDown, 0, 130 + 25 * 0, 348, 1, (const byte*)"[", 229, 253);
+		addClickTextItem(kItemIdVoicesDown, 0, 130 + 25 * 1, 348, 1, (const byte*)"[", 229, 253);
+		addClickTextItem(kItemIdMusicDown, 0, 130 + 25 * 2, 348, 1, (const byte*)"[", 229, 253);
+		addClickTextItem(kItemIdSoundFXDown, 0, 130 + 25 * 3, 348, 1, (const byte*)"[", 229, 253);
+		addClickTextItem(kItemIdBackgroundDown, 0, 130 + 25 * 4, 348, 1, (const byte*)"[", 229, 253);
+		addClickTextItem(kItemIdMasterUp, 0, 130 + 25 * 0, 372, 1, (const byte*)"]", 229, 253);
+		addClickTextItem(kItemIdVoicesUp, 0, 130 + 25 * 1, 372, 1, (const byte*)"]", 229, 253);
+		addClickTextItem(kItemIdMusicUp, 0, 130 + 25 * 2, 372, 1, (const byte*)"]", 229, 253);
+		addClickTextItem(kItemIdSoundFXUp, 0, 130 + 25 * 3, 372, 1, (const byte*)"]", 229, 253);
+		addClickTextItem(kItemIdBackgroundUp, 0, 130 + 25 * 4, 372, 1, (const byte*)"]", 229, 253);
 		drawVolumeBar(kItemIdMaster);
 		drawVolumeBar(kItemIdVoices);
 		drawVolumeBar(kItemIdMusic);
@@ -393,12 +393,6 @@ void MenuSystem::clickItem(ItemID id) {
 	}
 }
 
-void MenuSystem::saveBackground() {
-}
-
-void MenuSystem::restoreBackground() {
-}
-
 void MenuSystem::restoreRect(int x, int y, int w, int h) {
 	byte *src = (byte*)_background->getBasePtr(x, y);
 	byte *dst = _vm->_screen->_frontScreen + x + y * 640;
@@ -413,14 +407,14 @@ void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2)
 	byte *src = (byte*)_background->getBasePtr(x, y);
 	for (int xc = 0; xc < w; xc++) {
 		src[xc] = color1;
-		//src[xc] = 46;
+		src[xc + h * 640] = 46;
 	}
 	src += 640;
-	w -= 2;
-	h -= 2;
+	w -= 1;
+	h -= 1;
 	while (h--) {
 		src[0] = color2;
-		src[w + 1] = color2;
+		src[w] = color2;
 		for (int xc = 1; xc < w; xc++) {
 			src[xc] = _vm->_palette->getColorTransPixel(src[xc]);
 		}
