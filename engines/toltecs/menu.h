@@ -46,9 +46,6 @@
 
 namespace Toltecs {
 
-const byte kFontColorMenuDefault	= 229;
-const byte kFontColorMenuActive		= 255;
-
 enum MenuID {
 	kMenuIdNone,
 	kMenuIdMain,
@@ -164,8 +161,6 @@ protected:
 	void leaveItem(ItemID id);
 	void clickItem(ItemID id);
 
-	void saveBackground();
-	void restoreBackground();
 	void restoreRect(int x, int y, int w, int h);
 	void shadeRect(int x, int y, int w, int h, byte color1, byte color2);
 	void drawString(int16 x, int16 y, int w, uint fontNum, byte color, byte *text);
