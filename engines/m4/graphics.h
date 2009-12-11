@@ -118,7 +118,7 @@ public:
 	void hLine(int x1, int x2, int y);
 	void vLineXor(int x, int y1, int y2);
 	void hLineXor(int x1, int x2, int y);
-	void line(int x1, int y1, int x2, int y2, byte color);
+	void drawLine(int x1, int y1, int x2, int y2, byte color);
 	void frameRect(int x1, int y1, int x2, int y2);
 	void fillRect(int x1, int y1, int x2, int y2);
 

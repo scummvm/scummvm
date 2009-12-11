@@ -155,7 +155,7 @@ void M4Surface::hLineXor(int x1, int x2, int y) {
 
 }
 
-void M4Surface::line(int x1, int y1, int x2, int y2, byte color) {
+void M4Surface::drawLine(int x1, int y1, int x2, int y2, byte color) {
 	Graphics::Surface::drawLine(x1, y1, x2, y2, color);
 }
 
