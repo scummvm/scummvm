@@ -619,10 +619,11 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 	int16 charWidth, charHeight;
 	byte *charData;
 
-	dest += x + (y * 640);
+	dest += x + y * 640;
 
 	charWidth = font.getCharWidth(ch);
-	charHeight = font.getHeight() - 2;
+	//charHeight = font.getHeight() - 2;//Why was this here?!
+	charHeight = font.getHeight();
 	charData = font.getCharData(ch);
 
 	while (charHeight--) {
