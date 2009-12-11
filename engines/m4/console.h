@@ -54,6 +54,7 @@ private:
 	bool cmdShowAnimview(int argc, const char **argv);
 	bool cmdPlayAnimation(int argc, const char **argv);
 	bool cmdObject(int argc, const char **argv);
+	bool cmdMessage(int argc, const char **argv);
 
 private:
 	M4Engine *_vm;

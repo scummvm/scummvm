@@ -224,6 +224,7 @@ public:
 
 	void loadMadsMessagesInfo();
 	uint32 getMessagesSize() { return _madsMessages.size(); }
+	int messageIndexOf(uint32 messageId);
 	const char *loadMessage(uint index);
 
 	void loadMadsObjects();

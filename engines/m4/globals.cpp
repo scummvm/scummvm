@@ -369,6 +369,15 @@ void Globals::loadMadsObjects() {
 	_vm->res()->toss("objects.dat");
 }
 
+int Globals::messageIndexOf(uint32 messageId) {
+	for (uint i = 0; i < _madsMessages.size(); ++i)
+	{
+		if (_madsMessages[i]->id == messageId)
+			return i;
+	}
+	return -1;
+}
+
 const char *Globals::loadMessage(uint index) {
 	if (index > _madsMessages.size() - 1) {
 		warning("Invalid message index: %i", index);
@@ -388,6 +397,7 @@ const char *Globals::loadMessage(uint index) {
 		if (buffer[i] == '\0') buffer[i] = '\n';
 
 	_vm->res()->toss("messages.dat");
+	delete compData;
 
 	return (char*)buffer;
 }

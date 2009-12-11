@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 
+#include "m4/dialogs.h"
 #include "m4/globals.h"
 #include "m4/scene.h"
 #include "m4/events.h"
@@ -555,6 +556,12 @@ bool Scene::onEvent(M4EventType eventType, int param1, int x, int y, bool &captu
 		if (_vm->getGameType() == GType_Burger) {
 			nextCommonCursor();
 			_vm->_interfaceView->_inventory.clearSelected();
+		} else {
+			// ***DEBUG*** - sample dialog display
+			const char *msg = _vm->_globals->loadMessage(10);
+			Dialog *dlg = new Dialog(_vm, msg);
+			_vm->_viewManager->addView(dlg);
+			_vm->_viewManager->moveToFront(dlg);
 		}
 		break;
 	case MEVENT_MOVE:

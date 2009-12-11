@@ -25,6 +25,7 @@
 
 #include "m4/m4.h"
 #include "m4/console.h"
+#include "m4/dialogs.h"
 #include "m4/scene.h"
 #include "m4/staticres.h"
 
@@ -49,6 +50,7 @@ Console::Console(M4Engine *vm) : GUI::Debugger() {
 	DCmd_Register("animview",		WRAP_METHOD(Console, cmdShowAnimview));
 	DCmd_Register("anim",			WRAP_METHOD(Console, cmdPlayAnimation));
 	DCmd_Register("object",			WRAP_METHOD(Console, cmdObject));
+	DCmd_Register("message",		WRAP_METHOD(Console, cmdMessage));
 }
 
 Console::~Console() {
@@ -350,6 +352,31 @@ bool Console::cmdObject(int argc, const char **argv) {
 				}
 			}
 			DebugPrintf("\n");
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdMessage(int argc, const char **argv) {
+	VALIDATE_MADS;
+
+	if (argc == 1)
+		DebugPrintf("message 'objnum'\n");
+	else {
+		int messageId = strToInt(argv[1]);
+		int idx = _vm->_globals->messageIndexOf(messageId);
+		if (idx == -1)
+			DebugPrintf("Unknown message");
+		else
+		{
+			const char *msg = _vm->_globals->loadMessage(idx);
+			Dialog *dlg = new Dialog(_vm, msg);
+
+			_vm->_viewManager->addView(dlg);
+			_vm->_viewManager->moveToFront(dlg);
+
+			return false;
 		}
 	}
 

@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	console.o \
 	converse.o \
 	detection.o \
+	dialogs.o \
 	events.o \
 	font.o \
 	globals.o \
