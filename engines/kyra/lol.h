@@ -300,6 +300,7 @@ class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
 friend class TIMInterpreter_LoL;
+friend class TimAnimator;
 friend class Debugger_LoL;
 friend class HistoryPlayer;
 public:
@@ -314,6 +315,7 @@ private:
 	GUI_LoL *_gui;
 
 	TIMInterpreter *_tim;
+	TimAnimator *_animator;
 
 	Common::Error init();
 	Common::Error go();

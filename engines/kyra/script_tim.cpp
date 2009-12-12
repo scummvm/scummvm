@@ -91,9 +91,6 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
 
-	_animations = new Animation[TIM::kWSASlots];
-	memset(_animations, 0, TIM::kWSASlots * sizeof(Animation));
-
 	_langData = 0;
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
@@ -103,6 +100,8 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	else
 		_drawPage2 = 8;
 
+	_animator = new TimAnimator(0, 0, 0, false);
+
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
 	_tim = 0;
@@ -111,13 +110,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 TIMInterpreter::~TIMInterpreter() {
 	delete[] _langData;
 	delete[] _textAreaBuffer;
-
-	for (int i = 0; i < TIM::kWSASlots; i++) {
-		delete _animations[i].wsa;
-		delete[] _animations[i].parts;
-	}
-
-	delete[] _animations;
+	delete _animator;
 }
 
 bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
@@ -472,11 +465,9 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	}
 }
 
-TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
-	Animation *anim = &_animations[index];
-	anim->x = x;
-	anim->y = y;
-	anim->wsaCopyParams = wsaFlags;
+TimAnimator::Animation *TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
+	Movie *wsa = 0;
+
 	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL;
 
 	if (isLoLDemo || _vm->gameFlags().platform == Common::kPlatformPC98 || _currentTim->isLoLOutro)
@@ -502,34 +493,34 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 
 	if (_vm->resource()->exists(file)) {
 		if (isLoLDemo)
-			anim->wsa = new WSAMovie_v1(_vm);
+			wsa = new WSAMovie_v1(_vm);
 		else
-			anim->wsa = new WSAMovie_v2(_vm);
-		assert(anim->wsa);
+			wsa = new WSAMovie_v2(_vm);
+		assert(wsa);
 
-		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
+		wsa->open(file, wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
 	}
 
-	if (anim->wsa && anim->wsa->opened()) {
+	if (wsa && wsa->opened()) {
 		if (isLoLDemo) {
 			if (x == -1) {
-				int16 t = int8(320 - anim->wsa->width());
+				int16 t = int8(320 - wsa->width());
 				uint8 v = int8(t & 0x00FF) - int8((t & 0xFF00) >> 8);
 				v >>= 1;
-				anim->x = x = v;
+				x = v;
 			}
 
 			if (y == -1) {
-				int16 t = int8(200 - anim->wsa->height());
+				int16 t = int8(200 - wsa->height());
 				uint8 v = int8(t & 0x00FF) - int8((t & 0xFF00) >> 8);
 				v >>= 1;
-				anim->y = y = v;
+				y = v;
 			}
 		} else {
 			if (x == -1)
-				anim->x = x = 0;
+				x = 0;
 			if (y == -1)
-				anim->y = y = 0;
+				y = 0;
 		}
 
 		if (wsaFlags & 2) {
@@ -551,7 +542,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 				_screen->updateScreen();
 			}
 
-			anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
+			wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 		}
 
 		if (wsaFlags & 2)
@@ -579,16 +570,13 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	}
 
-	return anim;
+	_animator->init(index, wsa, x, y, wsaFlags, 0);
+
+	return _animator->getAnimPtr(index);
 }
 
 int TIMInterpreter::freeAnimStruct(int index) {
-	Animation *anim = &_animations[index];
-	if (!anim)
-		return 0;
-
-	delete anim->wsa;
-	memset(anim, 0, sizeof(Animation));
+	_animator->reset(index, true);
 	return 1;
 }
 
@@ -666,26 +654,13 @@ int TIMInterpreter::cmd_uninitWSA(const uint16 *param) {
 	if (!slot.anim)
 		return 0;
 
-	Animation &anim = _animations[index];
-
 	if (slot.offscreen) {
-		delete anim.wsa;
-		anim.wsa = 0;
+		_animator->reset(index, false);
 		slot.anim = 0;
 	} else {
 		//XXX
-
-		delete anim.wsa;
-		bool hasParts = anim.parts ? true : false;
-		delete[] anim.parts;
-
-		memset(&anim, 0, sizeof(Animation));
+		_animator->reset(index, true);
 		memset(&slot, 0, sizeof(TIM::WSASlot));
-
-		if (hasParts) {
-			anim.parts = new AnimPart[TIM::kAnimParts];
-			memset(anim.parts, 0, TIM::kAnimParts * sizeof(AnimPart));
-		}
 	}
 
 	return 1;
@@ -709,14 +684,7 @@ int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_wsaDisplayFrame(const uint16 *param) {
-	Animation &anim = _animations[param[0]];
-	const int frame = param[1];
-	int page = (anim.wsaCopyParams & 0x4000) != 0 ? 2 : _drawPage2;
-	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
-	if (anim.wsa)
-		anim.wsa->displayFrame(frame, page, anim.x, anim.y, anim.wsaCopyParams & 0xF0FF, 0, 0);
-	if (!page)
-		_screen->updateScreen();
+	_animator->displayFrame(param[0], _drawPage2, param[1]);
 	return 1;
 }
 
@@ -944,10 +912,7 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 
 	_screen = engine->_screen;
 
-	for (int i = 0; i < TIM::kWSASlots; i++) {
-		_animations[i].parts = new AnimPart[TIM::kAnimParts];
-		memset(_animations[i].parts, 0, TIM::kAnimParts * sizeof(AnimPart));
-	}
+	_animator = new TimAnimator(engine, screen_v2, system, true);
 
 	_drawPage2 = 0;
 
@@ -955,15 +920,8 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 	_dialogueButtonPosX = _dialogueButtonPosY = _dialogueNumButtons = _dialogueButtonXoffs = _dialogueHighlightedButton = 0;
 }
 
-TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaFlags) {
-	Animation *anim = &_animations[index];
-	anim->x = x;
-	anim->y = y;
-	anim->frameDelay = frameDelay;
-	anim->wsaCopyParams = wsaFlags;
-	anim->enable = 0;
-	anim->lastPart = -1;
-
+TimAnimator::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaFlags) {
+	Movie *wsa = 0;
 	uint16 wsaOpenFlags = 0;
 	if (wsaFlags & 0x10)
 		wsaOpenFlags |= 2;
@@ -974,9 +932,9 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	snprintf(file, 32, "%s.WSA", filename);
 
 	if (_vm->resource()->exists(file)) {
-		anim->wsa = new WSAMovie_v2(_vm);
-		assert(anim->wsa);
-		anim->wsa->open(file, wsaOpenFlags, &_screen->getPalette(3));
+		wsa = new WSAMovie_v2(_vm);
+		assert(wsa);
+		wsa->open(file, wsaOpenFlags, &_screen->getPalette(3));
 	}
 
 	if (!_vm->_flags.use16ColorMode) {
@@ -990,7 +948,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	}
 
 	if (wsaFlags & 7)
-		anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
+		wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {
 		if (_vm->_flags.use16ColorMode) {
@@ -1002,21 +960,13 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 		_screen->_fadeFlag = 0;
 	}
 
-	return anim;
+	_animator->init(index, wsa, x, y, wsaFlags, frameDelay);
+
+	return _animator->getAnimPtr(index);
 }
 
 int TIMInterpreter_LoL::freeAnimStruct(int index) {
-	Animation *anim = &_animations[index];
-	if (!anim)
-		return 0;
-
-	delete anim->wsa;
-	delete[] anim->parts;
-	memset(anim, 0, sizeof(Animation));
-
-	anim->parts = new AnimPart[TIM::kAnimParts];
-	memset(anim->parts, 0, TIM::kAnimParts * sizeof(AnimPart));
-
+	_animator->reset(index, true);
 	return 1;
 }
 
@@ -1065,120 +1015,6 @@ void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char 
 
 	if (!_vm->shouldQuit())
 		_vm->removeInputTop();
-}
-
-void TIMInterpreter_LoL::setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame) {
-	AnimPart *a = &_animations[animIndex].parts[part];
-	a->firstFrame = firstFrame;
-	a->lastFrame = lastFrame;
-	a->cycles = cycles;
-	a->nextPart = nextPart;
-	a->partDelay = partDelay;
-	a->field_A = f;
-	a->sfxIndex = sfxIndex;
-	a->sfxFrame = sfxFrame;
-}
-
-void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
-	Animation *anim = &_animations[animIndex];
-	anim->curPart = part;
-	AnimPart *p = &anim->parts[part];
-	anim->enable = 1;
-	anim->nextFrame = _system->getMillis() + anim->frameDelay * _vm->_tickLength;
-	anim->curFrame = p->firstFrame;
-	anim->cyclesCompleted = 0;
-
-	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
-	if (anim->wsa)
-		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0, 0, 0);
-}
-
-void TIMInterpreter_LoL::stopBackgroundAnimation(int animIndex) {
-	Animation *anim = &_animations[animIndex];
-	anim->enable = 0;
-	anim->field_D = 0;
-	if (animIndex == 5) {
-		delete anim->wsa;
-		anim->wsa = 0;
-	}
-}
-
-void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
-	Animation *anim = &_animations[animIndex];
-	if (!anim->enable || anim->nextFrame >= _system->getMillis())
-		return;
-
-	AnimPart *p = &anim->parts[anim->curPart];
-	anim->nextFrame = 0;
-
-	int step = 0;
-	if (p->lastFrame >= p->firstFrame) {
-		step = 1;
-		anim->curFrame++;
-	} else {
-		step = -1;
-		anim->curFrame--;
-	}
-
-	if (anim->curFrame == (p->lastFrame + step)) {
-		anim->cyclesCompleted++;
-
-		if ((anim->cyclesCompleted > p->cycles) || anim->field_D) {
-			anim->lastPart = anim->curPart;
-
-			if ((p->nextPart == -1) || (anim->field_D && p->field_A)) {
-				anim->enable = 0;
-				anim->field_D = 0;
-				return;
-			}
-
-			anim->nextFrame += (p->partDelay * _vm->_tickLength);
-			anim->curPart = p->nextPart;
-
-			p = &anim->parts[anim->curPart];
-			anim->curFrame = p->firstFrame;
-			anim->cyclesCompleted = 0;
-
-		} else {
-			anim->curFrame = p->firstFrame;
-		}
-	}
-
-	if (p->sfxIndex != -1 && p->sfxFrame == anim->curFrame)
-		_vm->snd_playSoundEffect(p->sfxIndex, -1);
-
-	anim->nextFrame += (anim->frameDelay * _vm->_tickLength);
-
-	anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0, 0, 0);
-	anim->nextFrame += _system->getMillis();
-}
-
-void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {
-	Animation *anim = &_animations[animIndex];
-
-	int step = (lastFrame >= firstFrame) ? 1 : -1;
-	for (int i = firstFrame; i != (lastFrame + step) ; i += step) {
-		uint32 next = _system->getMillis() + delay * _vm->_tickLength;
-		if (anim->wsaCopyParams & 0x4000) {
-			_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, 2);
-			anim->wsa->displayFrame(i - 1, 2, anim->x, anim->y, anim->wsaCopyParams & 0x1000 ? 0x5000 : 0x4000, _vm->_transparencyTable1, _vm->_transparencyTable2);
-			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
-			_screen->updateScreen();
-		} else {
-			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0, 0, 0);
-			_screen->updateScreen();
-		}
-		int32 del  = (int32)(next - _system->getMillis());
-		if (del > 0)
-			_vm->delay(del, true);
-	}
-}
-
-int TIMInterpreter_LoL::resetAnimationLastPart(int animIndex) {
-	Animation *anim = &_animations[animIndex];
-	int8 res = -1;
-	SWAP(res, anim->lastPart);
-	return res;
 }
 
 void TIMInterpreter_LoL::drawDialogueButtons() {
@@ -1316,10 +1152,7 @@ void TIMInterpreter_LoL::checkSpeechProgress() {
 			_currentTim->dlgFunc = _currentFunc;
 			advanceToOpcode(21);
 			_currentTim->dlgFunc = -1;
-			_animations[5].field_D = 0;
-			_animations[5].enable = 0;
-			delete _animations[5].wsa;
-			_animations[5].wsa = 0;
+			_animator->reset(5, false);
 		}
 	}
 }
@@ -1387,10 +1220,7 @@ int TIMInterpreter_LoL::cmd_processDialogue(const uint16 *param) {
 	_currentTim->procFunc = -1;
 	_currentTim->clickedButton = res;
 
-	_animations[5].field_D = 0;
-	_animations[5].enable = 0;
-	delete _animations[5].wsa;
-	_animations[5].wsa = 0;
+	_animator->reset(5, false);
 
 	if (_currentTim->procParam)
 		advanceToOpcode(21);

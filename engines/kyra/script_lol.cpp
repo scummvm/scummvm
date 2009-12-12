@@ -520,7 +520,7 @@ int LoLEngine::olol_initAnimStruct(EMCState *script) {
 
 int LoLEngine::olol_playAnimationPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAnimationPart(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-	_tim->playAnimationPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_animator->playPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	return 1;
 }
 
@@ -589,13 +589,13 @@ int LoLEngine::olol_clearDialogueField(EMCState *script) {
 
 int LoLEngine::olol_setupBackgroundAnimationPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setupBackgroundAnimationPart(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
-	_tim->setupBackgroundAnimationPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
+	_animator->setupPart(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
 	return 0;
 }
 
 int LoLEngine::olol_startBackgroundAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_startBackgroundAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_tim->startBackgroundAnimation(stackPos(0), stackPos(1));
+	_animator->start(stackPos(0), stackPos(1));
 	return 1;
 }
 
@@ -625,7 +625,7 @@ int LoLEngine::olol_loadBitmap(EMCState *script) {
 
 int LoLEngine::olol_stopBackgroundAnimation(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopBackgroundAnimation(%p) (%d)", (const void *)script, stackPos(0));
-	_tim->stopBackgroundAnimation(stackPos(0));
+	_animator->stop(stackPos(0));
 	return 1;
 }
 
@@ -1978,7 +1978,7 @@ int LoLEngine::olol_removeInventoryItem(EMCState *script) {
 
 int LoLEngine::olol_getAnimationLastPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getAnimationLastPart(%p) (%d)", (const void *)script, stackPos(0));
-	return _tim->resetAnimationLastPart(stackPos(0));
+	return _animator->resetLastPart(stackPos(0));
 }
 
 int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
@@ -2393,7 +2393,7 @@ int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_processWsaFrame(%p, %p) (%d, %d, %d, %d, %d)",
 		(const void *)tim, (const void *)param, param[0], param[1], param[2], param[3], param[4]);
-	TIMInterpreter::Animation *anim = (TIMInterpreter::Animation *)tim->wsa[param[0]].anim;
+	TimAnimator::Animation *anim = (TimAnimator::Animation *) tim->wsa[param[0]].anim;
 	const int frame = param[1];
 	const int x2 = param[2];
 	const int y2 = param[3];
@@ -2576,13 +2576,13 @@ int LoLEngine::tlol_playSoundEffect(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_startBackgroundAnimation(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
-	_tim->startBackgroundAnimation(param[0], param[1]);
+	_animator->start(param[0], param[1]);
 	return 1;
 }
 
 int LoLEngine::tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_stopBackgroundAnimation(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	_tim->stopBackgroundAnimation(param[0]);
+	_animator->stop(param[0]);
 	return 1;
 }
 
@@ -2665,7 +2665,7 @@ int LoLEngine::tlol_fadeOutSound(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayAnimFrame(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 
-	TIMInterpreter::Animation *anim = (TIMInterpreter::Animation *)tim->wsa[param[0]].anim;
+	TimAnimator::Animation *anim = (TimAnimator::Animation *)tim->wsa[param[0]].anim;
 	if (param[1] == 0xFFFF) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {

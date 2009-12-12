@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	animator_v2.o \
 	animator_hof.o \
 	animator_mr.o \
+	animator_tim.o \
 	debugger.o \
 	detection.o \
 	gui.o \

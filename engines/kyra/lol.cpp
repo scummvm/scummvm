@@ -47,6 +47,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_gui = 0;
 	_txt = 0;
 	_tim = 0;
+	_animator = 0;
 
 	switch (_flags.lang) {
 	case Common::EN_ANY:
@@ -579,6 +580,7 @@ Common::Error LoLEngine::go() {
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
+	_animator = _tim->animator();
 
 	if (shouldQuit())
 		return Common::kNoError;
@@ -1796,7 +1798,7 @@ void LoLEngine::updateSequenceBackgroundAnimations() {
 		return;
 
 	for (int i = 0; i < 6; i++)
-		_tim->updateBackgroundAnimation(i);
+		_animator->update(i);
 }
 
 void LoLEngine::loadTalkFile(int index) {
