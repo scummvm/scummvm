@@ -535,14 +535,6 @@ bool Scene::render(OSystem *system) {
 
 		bool got_any_animation = false;
 
-		if (ons != NULL && debug_features.feature[DebugFeatures::kShowOns]) {
-			for (uint32 i = 0; i < ons_count; ++i) {
-				Surface *s = ons + i;
-				if (s != NULL)
-					s->render(surface);
-			}
-		}
-
 		for (byte i = 0; i < 4; ++i) {
 			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame();
@@ -659,6 +651,14 @@ bool Scene::render(OSystem *system) {
 		if (debug_features.feature[DebugFeatures::kShowOn]) {
 			if (_id != 16 || getOns(16)[0] != 0) {
 				on.render(surface, position.y, true); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
+			}
+		}
+
+		if (ons != NULL && debug_features.feature[DebugFeatures::kShowOns]) {
+			for (uint32 i = 0; i < ons_count; ++i) {
+				Surface *s = ons + i;
+				if (s != NULL)
+					s->render(surface);
 			}
 		}
 
