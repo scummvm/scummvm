@@ -100,7 +100,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	else
 		_drawPage2 = 8;
 
-	_animator = new TimAnimator(0, 0, 0, false);
+	_animator = new TimAnimator(0, screen_v2, 0, false);
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
