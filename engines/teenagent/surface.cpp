@@ -78,10 +78,10 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 		byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
 
 		for (int i = src_rect.top; i < src_rect.bottom; ++i) {
-			for (int j = src_rect.left; j < src_rect.right; ++j) {
+			for (int j = 0; j < src_rect.width(); ++j) {
 				byte p = src[j];
 				if (p != 0xff)
-					dst[mirror? w - j - 1: j] = p;
+					dst[(mirror? src_rect.width() - j - 1: j)] = p;
 			}
 			dst += surface->pitch;
 			src += pitch;
