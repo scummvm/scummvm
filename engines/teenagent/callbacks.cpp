@@ -1358,7 +1358,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x5561://Enter lakeside house
-		processCallback(0x557e);
+		moveTo(94, 115, 4); //call 557e, but it's not needed I guess
 		loadScene(19, 223, 199, 1);
 		return true;
 	
@@ -1369,6 +1369,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x557e:
 		//scaled moveTo
+		debug(0, "y = %d", scene->getPosition().y);
 		if (scene->getPosition().y <= 149)
 			moveTo(94, 115, 4);
 		else
