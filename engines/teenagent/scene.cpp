@@ -622,7 +622,7 @@ bool Scene::render(OSystem *system) {
 				}
 
 				if (!path.empty()) {
-					const int speed_x = 10, speed_y = 5;
+					const int speed_x = 10, speed_y = 2;
 					const Common::Point &destination = path.front();
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
 
