@@ -339,6 +339,9 @@ void Scene::loadLans() {
 void Scene::init(int id, const Common::Point &pos) {
 	debug(0, "init(%d)", id);
 	_id = id;
+	sounds.clear();
+	for (byte i = 0; i < 4; ++i) 
+		custom_animation[i].free();
 
 	if (background.pixels == NULL)
 		background.create(320, 200, 1);
@@ -389,6 +392,7 @@ void Scene::init(int id, const Common::Point &pos) {
 }
 
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
+	debug("playAnimation(%u, %u, %s, %s, %s)", idx, id, loop?"true":"false", paused?"true":"false", ignore?"true":"false");
 	assert(idx < 4);
 	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
@@ -558,8 +562,6 @@ bool Scene::render(OSystem *system) {
 			if (s != NULL) {
 				if (!a->ignore) 
 					busy = true;
-				else 
-					busy = false;
 				if (!a->paused && !a->loop)
 					got_any_animation = true;
 			} else {
@@ -635,7 +637,7 @@ bool Scene::render(OSystem *system) {
 				}
 
 				if (!path.empty()) {
-					const int speed_x = 10, speed_y = 2;
+					const int speed_x = 10, speed_y = 3;
 					const Common::Point &destination = path.front();
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
 
@@ -651,10 +653,6 @@ bool Scene::render(OSystem *system) {
 						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 					
 					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
-					//render on
-					if (debug_features.feature[DebugFeatures::kShowOn]) {
-						on.render(surface, actor_animation_position);
-					}
 
 					if (position == destination) {
 						path.pop_front();
@@ -670,12 +668,12 @@ bool Scene::render(OSystem *system) {
 						busy = true;
 				} else {
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
-					//render on
-					if (debug_features.feature[DebugFeatures::kShowOn]) {
-						on.render(surface, actor_animation_position);
-					}
 				}
 			}
+		}
+		//render on
+		if (debug_features.feature[DebugFeatures::kShowOn]) {
+			on.render(surface, actor_animation_position);
 		}
 
 		for(; z_order_it != z_order.end(); ++z_order_it) {
@@ -787,7 +785,6 @@ bool Scene::processEventQueue() {
 				init(current_event.scene, current_event.dst);
 				if (current_event.orientation != 0)
 					orientation = current_event.orientation;
-				sounds.clear();
 			} else {
 				//special case, empty scene
 				background.free();
@@ -868,11 +865,11 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kPlayAnimation: {
 				byte slot = current_event.slot & 7; //0 - mark's
 				if (current_event.animation != 0) {
-					debug(0, "playing animation %u in slot %u", current_event.animation, slot);
+					debug(0, "playing animation %u in slot %u(%02x)", current_event.animation, slot, current_event.slot);
 					if (slot != 0) {
 						--slot;
 						assert(slot < 4);
-						playAnimation(slot, current_event.animation, (current_event.slot & 0x80) != 0, (slot & 0x40) != 0, (slot & 0x20) != 0);
+						playAnimation(slot, current_event.animation, (current_event.slot & 0x80) != 0, (current_event.slot & 0x40) != 0, (current_event.slot & 0x20) != 0);
 					} else
 						actor_talking = true;
 				} else {
