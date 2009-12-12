@@ -595,12 +595,6 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-		if (debug_features.feature[DebugFeatures::kShowOn]) {
-			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface, position.y, false); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
-			}
-		}
-
 		{
 			Surface *mark = actor_animation.currentFrame();
 			if (mark != NULL) {
@@ -657,9 +651,7 @@ bool Scene::render(OSystem *system) {
 
 		//render on
 		if (debug_features.feature[DebugFeatures::kShowOn]) {
-			if (_id != 16 || getOns(16)[0] != 0) {
-				on.render(surface, position.y, true); //do not render boat on isle. I double checked all callbacks, there's no code switching off the boat :(
-			}
+			on.render(surface, actor_animation_position);
 		}
 
 		if (!message.empty()) {

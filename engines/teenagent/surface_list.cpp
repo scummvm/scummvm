@@ -24,6 +24,7 @@
 
 #include "teenagent/surface.h"
 #include "teenagent/surface_list.h"
+#include "objects.h"
 
 namespace TeenAgent {
 
@@ -44,16 +45,13 @@ void SurfaceList::load(Common::SeekableReadStream *stream, Type type, int sub_ha
 	
 	surfaces = new Surface[surfaces_n];
 
-	byte i;
-	for (i = 0; i < surfaces_n; ++i) {
+	for (byte i = 0; i < surfaces_n; ++i) {
 		uint offset = stream->readUint16LE();
 		uint pos = stream->pos(); 
 		stream->seek(offset);
 		surfaces[i].load(stream, Surface::kTypeOns);
 		stream->seek(pos);
 	}
-	//for(; i < fn; ++i)
-	//	debug(0, "*hack* skipping flag %04x", stream->readUint16LE());
 }
 
 void SurfaceList::free() {
@@ -62,20 +60,17 @@ void SurfaceList::free() {
 	surfaces_n = 0;
 }
 
-Common::Rect SurfaceList::render(Graphics::Surface *surface, int horizon, bool second_pass) const {
-	Common::Rect dirty;
+void SurfaceList::render(Graphics::Surface *surface, const Common::Rect & clip) const {
 	for(uint i = 0; i < surfaces_n; ++i) {
 		const Surface &s = surfaces[i];
-		if (second_pass) {
-			//debug(0, "%d %d", s.y + s.h, horizon);
-			if (s.y + s.h > horizon)
-				dirty.extend(s.render(surface));
-		} else {
-			if (s.y + s.h <= horizon)
-				dirty.extend(s.render(surface));
-		}
+		Common::Rect r(s.x, s.y, s.x + s.w, s.y + s.h);
+		if (r.bottom < clip.bottom || !clip.intersects(r))
+			continue;
+		
+		r.clip(clip);
+		r.translate(-s.x, -s.y);
+		s.render(surface, r.left, r.top, false, r);
 	}
-	return dirty;
 }
 
 }
