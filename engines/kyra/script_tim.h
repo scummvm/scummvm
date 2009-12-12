@@ -66,7 +66,11 @@ public:
 		AnimPart *parts;
 	};
 
+#ifdef ENABLE_LOL
 	TimAnimator(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts);
+#else
+	TimAnimator(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts);
+#endif
 	~TimAnimator();
 
 	Animation *getAnimPtr(int index) { return (index >= 0 && index < 6) ? &_animations[index] : 0; }
@@ -76,15 +80,21 @@ public:
 
 	void displayFrame(int animIndex, int page, int frame);
 
+#ifdef ENABLE_LOL
 	void setupPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame);
 	void start(int animIndex, int part);
 	void stop(int animIndex);
 	void update(int animIndex);
 	void playPart(int animIndex, int firstFrame, int lastFrame, int delay);
 	int resetLastPart(int animIndex);
+#endif
 
 private:
+#ifdef ENABLE_LOL
 	LoLEngine *_vm;
+#else
+	KyraEngine_v1 *_vm;
+#endif
 	Screen_v2 *_screen;
 	OSystem *_system;
 
