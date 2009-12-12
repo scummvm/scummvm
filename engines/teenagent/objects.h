@@ -37,7 +37,7 @@ struct Rect {
 	int16 left, top, right, bottom;
 
 	inline Rect() : left(0), top(0), right(0), bottom(0), _base(NULL) {}
-
+	inline Rect(const Common::Rect &r) : left(r.left), top(r.top), right(r.right), bottom(r.bottom), _base(NULL) {}
 	inline Rect(uint16 l, uint16 t, uint16 r, uint16 b) : left(l), top(t), right(r), bottom(b), _base(NULL) {}
 
 	inline bool in(const Common::Point &point) const {
