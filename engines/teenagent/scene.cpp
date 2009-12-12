@@ -26,6 +26,7 @@
 #include "teenagent/resources.h"
 #include "teenagent/surface.h"
 #include "common/debug.h"
+#include "common/algorithm.h"
 #include "teenagent/objects.h"
 #include "teenagent/teenagent.h"
 #include "teenagent/dialog.h"
@@ -483,6 +484,12 @@ bool Scene::processEvent(const Common::Event &event) {
 	}
 }
 
+struct ZOrderCmp {
+	inline bool operator()(const Surface *a, const Surface *b) const {
+		return a->y + a->h < b->y + b->h;
+	}
+};
+
 bool Scene::render(OSystem *system) {
 	Resources *res = Resources::instance();
 	bool busy;
@@ -542,7 +549,9 @@ bool Scene::render(OSystem *system) {
 					s->render(surface);
 			}
 		}
-
+		
+		Common::List<Surface *> z_order;
+		
 		for (byte i = 0; i < 4; ++i) {
 			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame();
@@ -577,9 +586,9 @@ bool Scene::render(OSystem *system) {
 			
 			if (s == NULL)
 				continue;
-
+			
 			if (debug_features.feature[DebugFeatures::kShowLan])
-				animation_position[i] = s->render(surface);
+				z_order.push_back(s);
 
 			if (a->id == 0)
 				continue;
@@ -593,6 +602,16 @@ bool Scene::render(OSystem *system) {
 				obj->rect.save();
 				//obj->dump();
 			}
+		}
+
+		Common::sort(z_order.begin(), z_order.end(), ZOrderCmp());
+		Common::List<Surface *>::iterator z_order_it;
+
+		for(z_order_it = z_order.begin(); z_order_it != z_order.end(); ++z_order_it) {
+			Surface *s = *z_order_it;
+			if (s->y + s->h > position.y)
+				break;
+			s->render(surface);
 		}
 
 		{
@@ -657,6 +676,11 @@ bool Scene::render(OSystem *system) {
 					}
 				}
 			}
+		}
+
+		for(; z_order_it != z_order.end(); ++z_order_it) {
+			Surface *s = *z_order_it;
+			s->render(surface);
 		}
 
 		if (!message.empty()) {
