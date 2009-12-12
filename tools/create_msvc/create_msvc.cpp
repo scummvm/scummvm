@@ -1319,7 +1319,7 @@ FileList listDirectory(const std::string &dir) {
 		result.push_back(FSNode(fileInformation.cFileName, (fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0));
 	} while (FindNextFile(fileHandle, &fileInformation) == TRUE);
 
-	CloseHandle(fileHandle);
+	FindClose(fileHandle);
 #else
 	DIR *dirp = opendir(dir.c_str());
 	struct dirent *dp = NULL;
