@@ -82,7 +82,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 				continue;
 			}
 			
-			w.dump();
+			w.dump(1);
 			debug(1, "%u: intersection mask 0x%04x, searching hints", *wi, mask);
 			int dx = p2.x - p1.x, dy = p2.y - p1.y;
 			if (dx >= 0) {

@@ -54,8 +54,8 @@ struct Rect {
 
 	void render(Graphics::Surface *surface, uint8 color) const;
 
-	void dump() const {
-		debug(0, "rect[%u, %u, %u, %u]", left, top, right, bottom);
+	void dump(int level = 0) const {
+		debug(level, "rect[%u, %u, %u, %u]", left, top, right, bottom);
 	}
 
 	inline void clear() {
@@ -167,7 +167,7 @@ struct Object {
 	Common::String name, description;
 
 	Object(): _base(NULL) {}
-	void dump() const;
+	void dump(int level = 0) const;
 	void setName(const Common::String &name);
 	void load(byte *addr);
 	void save() const;
@@ -197,7 +197,7 @@ struct UseHotspot {
 	uint16 actor_x, actor_y;
 	uint16 callback;
 	void load(byte *src);
-	void dump() const;
+	void dump(int level = 0) const;
 };
 
 struct Walkbox {
@@ -207,7 +207,7 @@ struct Walkbox {
 	byte side_hint[4];
 
 	Walkbox() : _base(NULL) {}
-	void dump() const;
+	void dump(int level = 0) const;
 	void load(byte *src);
 	void save() const;
 

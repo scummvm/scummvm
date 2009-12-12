@@ -86,8 +86,8 @@ void Object::setName(const Common::String &new_name) {
 	name = new_name;
 }
 
-void Object::dump() const {
-	debug(0, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
+void Object::dump(int level) const {
+	debug(level, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
 		rect.left, rect.top, rect.right, rect.bottom,
 		actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom,
 		actor_orientation, name.c_str()
@@ -140,15 +140,15 @@ void UseHotspot::load(byte *src) {
 	callback = in.readUint16LE();
 }
 
-void UseHotspot::dump() const {
-	debug(0, 
+void UseHotspot::dump(int level) const {
+	debug(level, 
 		"hotspot: inv_id: %02x, obj_id: %02x, orientation?: %02x, actor position: (%d,%d), callback: %04x", 
 		inventory_id, object_id, orientation, actor_x, actor_y, callback
 	);
 }
 
-void Walkbox::dump() const {
-	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] top: %u, right: %u, bottom: %u, left: %u",
+void Walkbox::dump(int level) const {
+	debug(level, "walkbox %02x %02x [%d, %d, %d, %d] top: %u, right: %u, bottom: %u, left: %u",
 		type, orientation,
 		rect.left, rect.top, rect.right, rect.bottom,
 		side_hint[0], side_hint[1], side_hint[2], side_hint[3]);
