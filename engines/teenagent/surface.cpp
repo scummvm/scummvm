@@ -67,7 +67,7 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 		src_rect = Common::Rect(0, 0, w, h);
 	} else if (src_rect.right > w)
 		src_rect.right = w;
-	else if (src_rect.bottom < h) 
+	else if (src_rect.bottom > h) 
 		src_rect.bottom = h;
 
 	if (zoom == 256) {
