@@ -64,9 +64,12 @@ public:
 	void setFont(const char *filename);
 	void setColor(uint8 color);
 	void setColors(uint8 alt1, uint8 alt2, uint8 foreground);
+	void setColour(uint8 colour) { setColor(colour); }
+	void setColours(uint8 alt1, uint8 alt2, uint8 foreground) { setColors(alt1, alt2, foreground); } 
 
 	int32 getWidth(char *text, int spaceWidth = -1);
 	int32 getHeight() const { return _maxHeight; }
+	int32 getMaxWidth() const { return _maxWidth; }
 	int32 write(M4Surface *surface, const char *text, int x, int y, int width, int spaceWidth, uint8 colors[]);
 	int32 writeString(M4Surface *surface, const char *text, int x, int y, int width = 0, int spaceWidth = -1) {
 		return write(surface, text, x, y, width, spaceWidth, _fontColors);

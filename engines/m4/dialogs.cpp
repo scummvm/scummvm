@@ -35,17 +35,25 @@ static void strToUpper(char *s) {
 	}
 }
 
+const RGB8 DIALOG_PALETTE[8] = {
+	{0x80, 0x80, 0x80, 0xff}, {0x90, 0x90, 0x90, 0xff}, {0x70, 0x70, 0x70, 0xff}, {0x9c, 0x9c, 0x9c, 0xff},
+	{0x80, 0x80, 0x80, 0xff}, {0x90, 0x90, 0x90, 0xff}, {0xDC, 0xDC, 0xDC, 0xff}, {0x00, 0x00, 0x00, 0xff}
+};
+
+#define ROR16(v,amt) (((uint16)(v) >> amt) | ((uint16)(v) << (16 - amt)))
+
 void Dialog::initDialog() {
 
 }
 
 void Dialog::incLine() {
-	++_numLines;
-	assert(++_numLines < 20);
+	_lines.push_back(*new DialogLine());	
+	assert(_lines.size() < 20);
 }
 
 void Dialog::writeChars(const char *line) {
-
+	assert(_lines.size() > 0);
+	strcpy(_lines[_lines.size() - 1].data, line);
 }
 
 void Dialog::addLine(const char *line) {
@@ -56,7 +64,7 @@ bool Dialog::matchCommand(const char *s1, const char *s2) {
 	return strncmp(s1, s2, strlen(s2)) == 0;
 }
 
-Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(100, 80, 220, 140)) {
+Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(0, 0, 0, 0)) {
 	assert(msgData);
 	const char *srcP = msgData;
 	bool skipLine = false;
@@ -64,9 +72,11 @@ Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(100, 80
 	bool cmdFlag = false;
 	bool crFlag = false;
 
-	_dialogTitleId = 0;
-	_numLines = 0;
+	_screenType = LAYER_DIALOG;
+	_widthChars = 0;
 	_dialogIndex = 0;
+	_askPosition.x = 0;
+	_askPosition.y = 0;
 
 	char dialogLine[256];
 	char cmdText[80];
@@ -105,7 +115,8 @@ Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(100, 80
 				// Title command
 				int id = atoi(cmdText + 5);
 				if (id > 0) 
-					_dialogTitleId = id;
+					// Suffix provided - specifies the dialog width in number of chars
+					_widthChars = id;
 			} else if (matchCommand(cmdText, "CR")) {
 				// CR command
 				if (skipLine)
@@ -137,14 +148,90 @@ Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(100, 80
 
 	if (!skipLine)
 		incLine();
+
+	// FIXME: Remove dummy dialog test string
+	incLine();
+	strcpy(_lines[_lines.size() - 1].data, "Test dialog");
+	_lines[_lines.size() - 1].xp = 20;
+
 	draw();
 }
 
+Dialog::~Dialog() {
+	_vm->_palette->deleteRange(_palette);
+	delete _palette;
+}
+
 void Dialog::draw() {
-	// TODO: Implement rendering of dialog correctly
-	this->fillRect(Common::Rect(0, 0, width(), height()), 0);
-	_vm->_font->setColors(5, 5, 0xff);
-	_vm->_font->writeString(this, "This will be a dialog", 10, 10, 0, 0);
+	_vm->_font->setFont(FONT_INTERFACE_MADS);
+
+	// Set up the palette for this view
+	_palette = new RGBList(8, NULL);
+	_palette->setRange(0, 8, DIALOG_PALETTE);
+	_vm->_palette->addRange(_palette);
+
+	// Calculate bounds
+	int dlgWidth = _widthChars * (_vm->_font->getMaxWidth() + 1) + 10;
+	int dlgHeight = (_lines.size() + 1) * (_vm->_font->getHeight() + 1) + 10;
+	int dialogX = (_vm->_screen->width() - dlgWidth) / 2;
+	int dialogY = (_vm->_screen->height() - dlgHeight) / 2;
+
+	// Create the surface for the dialog
+	create(dlgWidth, dlgHeight, 1);
+	_coords.left = dialogX;
+	_coords.top = dialogY;
+	_coords.right = dialogX + dlgWidth + 1;
+	_coords.bottom = dialogY + dlgHeight + 1;
+
+	// Ask position
+	//int askY = (_vm->_font->getHeight() + 1) * _askPosition.y + 3;
+
+	// Set up the dialog 
+	fillRect(Common::Rect(0, 0, width(), height()), 3);
+	setColour(2);
+	hLine(1, width() - 1, height() - 2);	// Bottom edge
+	hLine(0, width(), height() - 1);
+	vLine(width() - 2, 2, height());		// Right edge
+	vLine(width() - 1, 1, height());
+
+	// Render dialog interior
+	uint16 seed = 0xb78e;
+	for (int yp = 2; yp < (height() - 2); ++yp) {
+		byte *destP = this->getBasePtr(2, yp);
+
+		for (int xp = 2; xp < (width() - 2); ++xp) {
+			// Adjust the random seed
+			uint16 v = seed;
+			seed += 0x181D;
+			v = ROR16(v, 9);
+			seed = (seed ^ v) + ROR16(v, 3);
+			
+			*destP++ = ((seed & 0x10) != 0) ? 1 : 0;
+		}
+	}
+
+	// Handle drawing the text contents
+	_vm->_font->setColours(7, 7, 7);
+	setColour(7);
+
+	for (uint lineCtr = 0, yp = 5; lineCtr < _lines.size(); ++lineCtr, yp += _vm->_font->getHeight() + 1) {
+
+		if (_lines[lineCtr].xp == 0xff) {
+			hLine(2, width() - 6, ((_vm->_font->getHeight() + 1) >> 1) + yp);
+		} else {
+			Common::Point pt(_lines[lineCtr].xp & 0x7f, yp + 
+				(((_lines[lineCtr].xp & 0x40) != 0) ? 1 : 0));
+
+			_vm->_font->writeString(this, _lines[lineCtr].data, pt.x, pt.y, 0, 0);
+
+			if (_lines[lineCtr].xp & 0x80)
+				// Underline needed
+				hLine(pt.x, pt.x + _vm->_font->getWidth(_lines[lineCtr].data), pt.y);
+		}
+	}
+
+	// Do final translation of the dialog to game palette
+	this->translate(_palette);
 }
 
 bool Dialog::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {

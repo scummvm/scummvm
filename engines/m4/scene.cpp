@@ -76,7 +76,7 @@ Scene::~Scene() {
 	if (_sceneSprites)
 		delete _sceneSprites;
 
-	_vm->_palette->deleteAllRanges();
+//	_vm->_palette->deleteAllRanges();
 
 	if (_palData)
 		delete _palData;
@@ -558,7 +558,8 @@ bool Scene::onEvent(M4EventType eventType, int param1, int x, int y, bool &captu
 			_vm->_interfaceView->_inventory.clearSelected();
 		} else {
 			// ***DEBUG*** - sample dialog display
-			const char *msg = _vm->_globals->loadMessage(10);
+			int idx = _vm->_globals->messageIndexOf(0x277a);
+			const char *msg = _vm->_globals->loadMessage(idx);
 			Dialog *dlg = new Dialog(_vm, msg);
 			_vm->_viewManager->addView(dlg);
 			_vm->_viewManager->moveToFront(dlg);
@@ -840,6 +841,9 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	_vm->_font->setFont(FONT_INTERFACE_MADS);
 	char buffer[100];
 
+	// Check to see if any dialog is currently active
+	bool dialogVisible = _vm->_viewManager->getView(LAYER_DIALOG) != NULL;
+
 	// Highlighting logic for action list
 	int actionIndex = 0;
 	for (int x = 0; x < 2; ++x) {
@@ -901,7 +905,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
 		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
 
-		if (!_vm->_globals->invObjectsStill) {
+		if (!_vm->_globals->invObjectsStill && !dialogVisible) {
 			// If objetcs are to animated, move to the next frame
 			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
 				_objectFrameNumber = 0;

@@ -28,14 +28,26 @@
 
 #include "m4/m4.h"
 #include "m4/viewmgr.h"
+#include "common/list.h"
 
 namespace M4 {
 
+class DialogLine {
+public:
+	char data[100];
+	uint8 xp;
+
+	DialogLine() { data[0] = '\0'; xp = 0; }
+};
+
 class Dialog: public View {
 private:
-	int _numLines;
-	int _dialogTitleId;
+	Common::Array<DialogLine> _lines;
+	int _widthChars;
 	int _dialogIndex;
+	Common::Point _askPosition;
+	RGBList *_palette;
+
 
 	void initDialog();
 	void incLine();
@@ -45,7 +57,7 @@ private:
 	void draw();
 public:
 	Dialog(M4Engine *vm, const char *msgData);
-	virtual ~Dialog() {}
+	virtual ~Dialog();
 
 	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
 };

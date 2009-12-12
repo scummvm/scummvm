@@ -59,6 +59,12 @@ RGBList::~RGBList() {
 	delete[] _palIndexes;
 }
 
+void RGBList::setRange(int start, int count, const RGB8 *src) {
+	assert((start + count) <= _size);
+	
+	Common::copy(&src[0], &src[count], &_data[start]);
+}
+
 //--------------------------------------------------------------------------
 
 #define VGA_COLOR_TRANS(x) (x == 0x3f ? 255 : x << 2)

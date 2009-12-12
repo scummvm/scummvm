@@ -66,6 +66,8 @@ public:
 	RGB8 *data() { return _data; }
 	byte *palIndexes() { return _palIndexes; }
 	int size() { return _size; }
+	RGB8 &operator[](int idx) { return _data[idx]; }
+	void setRange(int start, int count, const RGB8 *src);
 };
 
 // M4Surface
@@ -113,6 +115,7 @@ public:
 	void madsloadInterface(int index, RGBList **palData);
 
 	void setColor(byte value) { _color = value; }
+	void setColour(byte value) { _color = value; }
 	inline byte getColor() const { return _color; }
 	void vLine(int x, int y1, int y2);
 	void hLine(int x1, int x2, int y);
