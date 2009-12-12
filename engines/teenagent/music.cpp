@@ -131,6 +131,9 @@ void MusicPlayer::stop() {
 }
 
 void MusicPlayer::interrupt() {
+	if (_rows.empty())
+		return;
+	
 	_currRow %= _rows.size();
 
 	Row *row = &_rows[_currRow];
