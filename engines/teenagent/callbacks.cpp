@@ -653,8 +653,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	return true;
 
 	case 0x4d94: //talking with fatso
-		Dialog::show(scene, 0x33bd, 0, 666, 0xd1, 0xd0, 0, 2);
-		displayMessage(0x49ae, 0xd0, 25060);
+		//Dialog::show(scene, 0x33bd, 0, 666, 0xd1, 0xd0, 0, 2);
+		displayAsyncMessage(0x49ae, /*25060*/ 35000, 1, 10, 0xd0);
 		playSound(5, 3);
 		playAnimation(667, 1);
 		playAnimation(668, 1);
@@ -1670,7 +1670,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		loadScene(24, scene->getPosition());
 		setOns(2, 0);
 		setLan(1, 0);
-		playAnimation(660, 1);
+		playAnimation(660, 0);
 		disableObject(1);
 		SET_FLAG(0xDBA4, 1);
 		loadScene(24, scene->getPosition());
@@ -1991,7 +1991,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(71, 3);
 			playActorAnimation(700);
 
-			playAnimation(CHECK_FLAG(0xDBC6, 0) ? 701 : 702, 0, true, true, true);
+			playAnimation((CHECK_FLAG(0xDBC6, 0) ? 701 : 702), 0, true, true, true);
 
 			if (CHECK_FLAG(0xDBC6, 1)) {
 				displayMessage(0x4da6);
@@ -2649,7 +2649,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			Dialog::show(scene, 0x2992, 0, 524, 0xd1, 0xe5, 0, 2);
 			playSound(5, 3);
 			playSound(5, 20);
-			playAnimation(671, true);
+			playAnimation(671, 1, true);
 			playActorAnimation(670, true);
 			waitAnimation();
 			//playAnimation(672, 1);
@@ -3993,13 +3993,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9de5:
 		hideActor();
 		loadScene(30, scene->getPosition());
-		playAnimation(887, 1, true);
-		playAnimation(888, 2, true);
-		waitAnimation();
-		Dialog::show(scene, 0x6fb8, 889, 890, 0xd9, 0xd0, 2, 3);
+		playAnimation(887, 1);
+		playAnimation(888, 2, true, true, true);
+		//waitAnimation();
+		Dialog::showMono(scene, 0x6fb8, 889, 0xd9, 2);
 		playSound(26, 3);
-		playAnimation(891, 1, true);
-		playAnimation(892, 2, true);
+		playAnimation(891, 1, true, true, true);
+		playAnimation(892, 2);
 		waitAnimation();
 		Dialog::show(scene, 0x6ff0, 890, 889, 0xd0, 0xd9, 3, 2);
 		showActor();
@@ -4008,10 +4008,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9e54:
 		hideActor();
 		loadScene(32, scene->getPosition());
-		playAnimation(894, 1, true);
+		playAnimation(894, 1, true, true, true);
 		playAnimation(893, 2, true);
 		waitAnimation();
-		Dialog::show(scene, 0x706e, 894, 893, 0xd9, 0xd1, 3, 2);
+		Dialog::showMono(scene, 0x706e, 895, 0xd9, 3);
 		playSound(75, 9);
 		playAnimation(898, 1, true);
 		playAnimation(897, 2, true);
@@ -4044,6 +4044,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		Dialog::show(scene, 0x7243, 908, 909, 0xd9, 0xd0, 2, 3);
 		Dialog::show(scene, 0x7318, 910, 908, 0xd0, 0xd9, 3, 2);
 		loadScene(11, scene->getPosition());
+		showActor();
 		setOns(3, 51);
 		playAnimation(911, 1);
 		playAnimation(899, 1);
