@@ -1978,6 +1978,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x73a3:
 		if (CHECK_FLAG(0xdbc5, 1)) {
 			SET_FLAG(0xdbc5, 0);
+			reloadLan();
 
 			//call 73e6
 			playSound(71, 3);
@@ -1986,12 +1987,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		} else {
 			SET_FLAG(0xdbc5, 1);
+			reloadLan();
 
 			//call 73e6
 			playSound(71, 3);
 			playActorAnimation(700);
 
-			playAnimation((CHECK_FLAG(0xDBC6, 0) ? 701 : 702), 0, true, true, true);
+			playAnimation((CHECK_FLAG(0xDBC6, 0) ? 701 : 702), 0);
 
 			if (CHECK_FLAG(0xDBC6, 1)) {
 				displayMessage(0x4da6);
