@@ -871,7 +871,7 @@ bool Scene::processEventQueue() {
 				byte slot = current_event.slot & 7; //0 - mark's
 				if (slot != 0) {
 					--slot;
-					debug(0, "pause animation in slot %u", slot);
+					debug(1, "pause animation in slot %u", slot);
 					custom_animation[slot].paused = (current_event.slot & 0x80) != 0;
 				} else {
 					actor_talking = false;

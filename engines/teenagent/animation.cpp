@@ -113,7 +113,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 	free();
 
 	if (s == NULL && s->size() <= 1) {
-		debug(0, "empty animation");
+		debug(1, "empty animation");
 		return;
 	}
 
@@ -123,7 +123,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 	case kTypeLan:
 		data_size = s->readUint16LE();
 		if (s->eos()) {
-			debug(0, "empty animation");
+			debug(1, "empty animation");
 			return;
 		}
 
@@ -136,7 +136,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 				debug(0, ", %u frames", data_size / 3);
 		*/
 		frames_count = s->readByte();
-		debug(0, "%u physical frames", frames_count);
+		debug(1, "%u physical frames", frames_count);
 		if (frames_count == 0)
 			return;
 
@@ -182,7 +182,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 
 	case kTypeVaria:
 		frames_count = s->readByte();
-		debug(0, "loading varia resource, %u physical frames", frames_count);
+		debug(1, "loading varia resource, %u physical frames", frames_count);
 		uint16 offset[255];
 		for (byte i = 0; i < frames_count; ++i) {
 			offset[i] = s->readUint16LE();
