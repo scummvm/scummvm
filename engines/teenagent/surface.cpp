@@ -106,7 +106,7 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 			dst += surface->pitch;
 		}
 	}
-	return Common::Rect(x + dx, y + dy, x + w + dx, y + h + dy);
+	return Common::Rect(x + dx, y + dy, x + src_rect.width() + dx, y + src_rect.height() + dy);
 }
 
 } // End of namespace TeenAgent
