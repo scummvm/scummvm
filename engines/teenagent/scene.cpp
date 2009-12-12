@@ -632,6 +632,11 @@ bool Scene::render(OSystem *system) {
 						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 					
 					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
+					//render on
+					if (debug_features.feature[DebugFeatures::kShowOn]) {
+						on.render(surface, actor_animation_position);
+					}
+
 					if (position == destination) {
 						path.pop_front();
 						if (path.empty()) {
@@ -644,14 +649,14 @@ bool Scene::render(OSystem *system) {
 						busy = true;
 					} else
 						busy = true;
-				} else 
+				} else {
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
+					//render on
+					if (debug_features.feature[DebugFeatures::kShowOn]) {
+						on.render(surface, actor_animation_position);
+					}
+				}
 			}
-		}
-
-		//render on
-		if (debug_features.feature[DebugFeatures::kShowOn]) {
-			on.render(surface, actor_animation_position);
 		}
 
 		if (!message.empty()) {
