@@ -1881,7 +1881,7 @@ void LoLEngine::drawVcnBlocks() {
 					horizontalFlip = true;
 				}
 
-				shift = _vcnShift? _vcnShift[remainder] : _blockBrightness;
+				shift = _vcnShift ? _vcnShift[remainder] : _blockBrightness;
 				src = &_vcnBlocks[remainder << 5];
 
 				if (horizontalFlip) {

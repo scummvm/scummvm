@@ -65,7 +65,7 @@ TimAnimator::~TimAnimator() {
 }
 
 void TimAnimator::init(int animIndex, Movie *wsa, int x, int y, int wsaCopyParams, int frameDelay) {
-	TimAnimator::Animation *anim = &_animations[animIndex];
+	Animation *anim = &_animations[animIndex];
 	anim->wsa = wsa;
 	anim->x = x;	
 	anim->y = y;
@@ -76,7 +76,7 @@ void TimAnimator::init(int animIndex, Movie *wsa, int x, int y, int wsaCopyParam
 }
 
 void TimAnimator::reset(int animIndex, bool clearStruct) {
-	TimAnimator::Animation *anim = &_animations[animIndex];
+	Animation *anim = &_animations[animIndex];
 	if (!anim)
 		return;
 	anim->field_D = 0;
@@ -98,7 +98,7 @@ void TimAnimator::reset(int animIndex, bool clearStruct) {
 }
 
 void TimAnimator::displayFrame(int animIndex, int page, int frame, int flags) {
-	TimAnimator::Animation *anim = &_animations[animIndex];
+	Animation *anim = &_animations[animIndex];
 	if ((anim->wsaCopyParams & 0x4000) != 0)
 		page = 2;
 	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations

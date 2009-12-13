@@ -1794,7 +1794,7 @@ void LoLEngine::createTransparencyTables() {
 }
 
 void LoLEngine::updateSequenceBackgroundAnimations() {
-	if (_updateFlags & 8)
+	if (_updateFlags & 8 || !_animator)
 		return;
 
 	for (int i = 0; i < 6; i++)

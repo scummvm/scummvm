@@ -255,6 +255,7 @@ void LoLEngine::showIntro() {
 
 	delete _tim;
 	_tim = 0;
+	_animator = 0;
 
 	_screen->fadePalette(_screen->getPalette(1), 30, 0);
 }
@@ -379,6 +380,7 @@ int LoLEngine::chooseCharacter() {
 
 	delete _tim;
 	_tim = 0;
+	_animator = 0;
 
 	return _charSelection;
 }
@@ -1144,6 +1146,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	_tim->clearLangData();
 	delete _tim;
 	_tim = timBackUp;
+	_animator = 0;
+
 	setupEpilogueData(false);
 }
 
