@@ -73,12 +73,14 @@ public:
 #endif
 	~TimAnimator();
 
-	Animation *getAnimPtr(int index) { return (index >= 0 && index < 6) ? &_animations[index] : 0; }
-
 	void init(int animIndex, Movie *wsa, int x, int y, int wsaCopyParams, int frameDelay);
 	void reset(int animIndex, bool clearStruct);
 
-	void displayFrame(int animIndex, int page, int frame);
+	void displayFrame(int animIndex, int page, int frame, int flags = -1);
+
+	const Movie *getWsaCPtr(int animIndex) { return (animIndex >= 0 && animIndex < 6) ? _animations[animIndex].wsa : 0; }
+	int getAnimX(int animIndex) { return (animIndex >= 0 && animIndex < 6) ? _animations[animIndex].x : 0; }
+	int getAnimY(int animIndex) { return (animIndex >= 0 && animIndex < 6) ? _animations[animIndex].y : 0; }
 
 #ifdef ENABLE_LOL
 	void setupPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame);
@@ -136,7 +138,7 @@ struct TIM {
 	};
 
 	struct WSASlot {
-		void *anim;
+		int anim;
 
 		int16 x, y;
 		uint16 wsaFlags;
@@ -164,7 +166,7 @@ public:
 
 	bool callback(Common::IFFChunk &chunk);
 
-	virtual TimAnimator::Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
+	virtual int initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
 	virtual int freeAnimStruct(int index);
 	TimAnimator *animator() { return _animator; }
 
@@ -270,7 +272,7 @@ class TIMInterpreter_LoL : public TIMInterpreter {
 public:
 	TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system);
 
-	TimAnimator::Animation *initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams);
+	int initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams);
 	int freeAnimStruct(int index);
 
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);

@@ -97,13 +97,13 @@ void TimAnimator::reset(int animIndex, bool clearStruct) {
 	}
 }
 
-void TimAnimator::displayFrame(int animIndex, int page, int frame) {
+void TimAnimator::displayFrame(int animIndex, int page, int frame, int flags) {
 	TimAnimator::Animation *anim = &_animations[animIndex];
 	if ((anim->wsaCopyParams & 0x4000) != 0)
 		page = 2;
 	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
 	if (anim->wsa)
-		anim->wsa->displayFrame(frame, page, anim->x, anim->y, anim->wsaCopyParams & 0xF0FF, 0, 0);
+		anim->wsa->displayFrame(frame, page, anim->x, anim->y, (flags == -1) ? (anim->wsaCopyParams & 0xF0FF) : flags, 0, 0);
 	if (!page)
 		_screen->updateScreen();
 }

@@ -465,7 +465,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	}
 }
 
-TimAnimator::Animation *TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
+int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
 	Movie *wsa = 0;
 
 	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL;
@@ -572,7 +572,7 @@ TimAnimator::Animation *TIMInterpreter::initAnimStruct(int index, const char *fi
 
 	_animator->init(index, wsa, x, y, wsaFlags, 0);
 
-	return _animator->getAnimPtr(index);
+	return index + 1;
 }
 
 int TIMInterpreter::freeAnimStruct(int index) {
@@ -920,7 +920,7 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 	_dialogueButtonPosX = _dialogueButtonPosY = _dialogueNumButtons = _dialogueButtonXoffs = _dialogueHighlightedButton = 0;
 }
 
-TimAnimator::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaFlags) {
+int TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaFlags) {
 	Movie *wsa = 0;
 	uint16 wsaOpenFlags = 0;
 	if (wsaFlags & 0x10)
@@ -962,7 +962,7 @@ TimAnimator::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const char
 
 	_animator->init(index, wsa, x, y, wsaFlags, frameDelay);
 
-	return _animator->getAnimPtr(index);
+	return index + 1;
 }
 
 int TIMInterpreter_LoL::freeAnimStruct(int index) {

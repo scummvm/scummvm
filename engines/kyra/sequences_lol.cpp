@@ -195,6 +195,7 @@ void LoLEngine::setupPrologueData(bool load) {
 void LoLEngine::showIntro() {
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
+	_animator = _tim->animator();
 
 	if (_flags.platform == Common::kPlatformPC98)
 		showStarcraftLogo();
@@ -261,6 +262,7 @@ void LoLEngine::showIntro() {
 int LoLEngine::chooseCharacter() {
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
+	_animator = _tim->animator();
 
 	_tim->setLangData("LOLINTRO.DIP");
 
@@ -1046,6 +1048,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	setupEpilogueData(true);
 	TIMInterpreter *timBackUp = _tim;
 	_tim = new TIMInterpreter(this, _screen, _system);
+	_animator = _tim->animator();
 
 	_screen->getPalette(0).clear();
 	_screen->setScreenPalette(_screen->getPalette(0));

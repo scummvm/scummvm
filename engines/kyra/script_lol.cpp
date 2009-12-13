@@ -2393,21 +2393,23 @@ int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_processWsaFrame(%p, %p) (%d, %d, %d, %d, %d)",
 		(const void *)tim, (const void *)param, param[0], param[1], param[2], param[3], param[4]);
-	TimAnimator::Animation *anim = (TimAnimator::Animation *) tim->wsa[param[0]].anim;
+
+	const int animIndex = tim->wsa[param[0]].anim - 1;
 	const int frame = param[1];
 	const int x2 = param[2];
 	const int y2 = param[3];
 	const int factor = MAX<int>(0, (int16)param[4]);
 
-	const int x1 = anim->x;
-	const int y1 = anim->y;
+	const int x1 = _animator->getAnimX(animIndex);
+	const int y1 = _animator->getAnimY(animIndex);
+	const Movie *wsa = _animator->getWsaCPtr(animIndex);
 
-	int w1 = anim->wsa->width();
-	int h1 = anim->wsa->height();
+	int w1 = wsa->width();
+	int h1 = wsa->height();
 	int w2 = (w1 * factor) / 100;
 	int h2 = (h1 * factor) / 100;
 
-	anim->wsa->displayFrame(frame, 2, x1, y1, anim->wsaCopyParams & 0xF0FF, 0, 0);
+	_animator->displayFrame(animIndex, 2, frame);
 	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, _flags.isDemo && _flags.platform != Common::kPlatformPC98 ? 0 : 8, 0);
 	if (!_flags.isDemo && _flags.platform != Common::kPlatformPC98)
 		_screen->checkedPageUpdate(8, 4);
@@ -2665,12 +2667,14 @@ int LoLEngine::tlol_fadeOutSound(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayAnimFrame(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 
-	TimAnimator::Animation *anim = (TimAnimator::Animation *)tim->wsa[param[0]].anim;
+	const int animIndex = tim->wsa[param[0]].anim - 1;
+	const Movie *wsa = _animator->getWsaCPtr(animIndex);
+
 	if (param[1] == 0xFFFF) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {
-		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0, 0, 0);
-		_screen->copyRegion(anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->width(), anim->wsa->height(), 2, 0);
+		_animator->displayFrame(animIndex, 2, param[1], 0);
+		_screen->copyRegion(wsa->xAdd(), wsa->yAdd(), wsa->xAdd(), wsa->yAdd(), wsa->width(), wsa->height(), 2, 0);
 	}
 
 	return 1;
