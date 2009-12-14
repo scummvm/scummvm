@@ -1975,32 +1975,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(1);
 		return true;
 
-	case 0x73a3:
-		if (CHECK_FLAG(0xdbc5, 1)) {
-			SET_FLAG(0xdbc5, 0);
-			reloadLan();
-
-			//call 73e6
-			playSound(71, 3);
-			playActorAnimation(700);
-			playAnimation(0, 0, true);
-
-		} else {
-			SET_FLAG(0xdbc5, 1);
-			reloadLan();
-
-			//call 73e6
-			playSound(71, 3);
-			playActorAnimation(700);
-
-			playAnimation((CHECK_FLAG(0xDBC6, 0) ? 701 : 702), 0);
-
-			if (CHECK_FLAG(0xDBC6, 1)) {
-				displayMessage(0x4da6);
-			}
-		}
-		return true;
-
 	case 0x7381:
 		playSound(5, 12);
 		playActorAnimation(704);
@@ -3652,33 +3626,59 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(0x528b);
 		return true;
 
+	case 0x73a3:
+		if (CHECK_FLAG(0xdbc5, 1)) {
+			SET_FLAG(0xdbc5, 0);
+
+			//call 73e6
+			playSound(71, 3);
+			playActorAnimation(700);
+			playAnimation(0, 0, true);
+			reloadLan();
+
+			if (CHECK_FLAG(0xDBC6, 1)) {
+				displayMessage(0x4da6);
+			}
+		} else {
+			SET_FLAG(0xdbc5, 1);
+
+			//call 73e6
+			playSound(71, 3);
+			playActorAnimation(700);
+			reloadLan();
+		}
+		return true;
+
 	case 0x9537: //using remote on VCR
 		playSound(5, 3);
 		playSound(5, 16);
 		playActorAnimation(703);
-		if (CHECK_FLAG(0xDBC8, 1)) {
-			if (CHECK_FLAG(0xDBC6, 0)) {
-				if (CHECK_FLAG(0xDBC5, 1)) { //tv on
-					if (!CHECK_FLAG(0xDBC7, 1))
-						displayMessage(0x4d93); //the tape started
-					playAnimation(702, 0, true, true, true); //fixme: we need some overlay animation support
-					SET_FLAG(0xDBC6, 1);
-					if (!CHECK_FLAG(0xDBC7, 1)) {
-						Dialog::show(scene, 0x392c, 0, 0, 0xd1, 0xd0, 0, 1);
-						SET_FLAG(0xDBC7, 1);
-					}
-					reloadLan();
-				} else
-					displayMessage(0x4d5b);
-			} else {
-				SET_FLAG(0xDBC6, 0);
-				if (CHECK_FLAG(0xDBC5, 1)) { //tv on
-					playAnimation(701, 1);
-					displayMessage(0x4da6); //much better!
-				}
-			}
-		} else
+		if (!CHECK_FLAG(0xDBC8, 1)) {
 			displayMessage(0x4D80); //nothing happened
+			return true;
+		}
+
+		//0x955a
+		if (CHECK_FLAG(0xDBC6, 0)) {
+			if (CHECK_FLAG(0xDBC5, 1)) { //tv on
+				if (!CHECK_FLAG(0xDBC7, 1))
+					displayMessage(0x4d93); //the tape started
+
+				SET_FLAG(0xDBC6, 1);
+				reloadLan();
+				if (!CHECK_FLAG(0xDBC7, 1)) {
+					Dialog::show(scene, 0x392c, 0, 702, 0xd1, 0xd0, 0, 1);
+					SET_FLAG(0xDBC7, 1);
+				}
+			} else
+				displayMessage(0x4d5b); //i just realized that tv is off
+		} else {
+			SET_FLAG(0xDBC6, 0);
+			if (CHECK_FLAG(0xDBC5, 1)) { //tv on
+				reloadLan();
+				displayMessage(0x4da6); //much better!
+			}
+		}
 		return true;
 
 	case 0x95eb: //polaroid + tv
