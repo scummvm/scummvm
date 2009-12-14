@@ -671,6 +671,10 @@ bool Scene::render(OSystem *system) {
 				}
 			}
 		}
+		if (restart) {
+			system->unlockScreen();
+			continue;
+		}
 		//render on
 		if (debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
