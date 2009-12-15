@@ -782,20 +782,31 @@ int Font::getStringWidth(const Common::String &str) const {
 	return space;
 }
 
-void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
+void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, int w, uint32 color, TextAlign align, int deltax, bool useEllipsis) const {
 	assert(dst != 0);
 	const int leftX = x, rightX = x + w;
 	uint i;
+	Common::String s = sOld;
 	int width = getStringWidth(s);
 	Common::String str;
 
+	if (useEllipsis && width > w && s.hasSuffix("...")) {
+		// String is too wide. Check whether it ends in an ellipsis
+		// ("..."). If so, remove that and try again!
+		s.deleteLastChar();
+		s.deleteLastChar();
+		s.deleteLastChar();
+		width = getStringWidth(s);
+	}
+
 	if (useEllipsis && width > w) {
-		// String is too wide. So we shorten it "intellegently", by replacing
-		// parts of it by an ellipsis ("..."). There are three possibilities
-		// for this: replace the start, the end, or the middle of the string.
-		// What is best really depends on the context; but unless we want to
-		// make this configurable, replacing the middle probably is a good
-		// compromise.
+		// String is too wide. So we shorten it "intelligently" by
+		// replacing parts of the string by an ellipsis. There are
+		// three possibilities for this: replace the start, the end, or
+		// the middle of the string. What is best really depends on the
+		// context; but unless we want to make this configurable,
+		// replacing the middle seems to be a good compromise.
+
 		const int ellipsisWidth = getStringWidth("...");
 
 		// SLOW algorithm to remove enough of the middle. But it is good enough
@@ -816,7 +827,7 @@ void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w
 
 		// The original string is width wide. Of those we already skipped past
 		// w2 pixels, which means (width - w2) remain.
-		// The new str is (w2+ellipsisWidth) wide, so we can accomodate about
+		// The new str is (w2+ellipsisWidth) wide, so we can accommodate about
 		// (w - (w2+ellipsisWidth)) more pixels.
 		// Thus we skip ((width - w2) - (w - (w2+ellipsisWidth))) =
 		// (width + ellipsisWidth - w)
@@ -831,7 +842,6 @@ void Font::drawString(Surface *dst, const Common::String &s, int x, int y, int w
 		}
 
 		width = getStringWidth(str);
-
 	} else {
 		str = s;
 	}

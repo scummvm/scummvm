@@ -850,7 +850,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 		dd = kDDButtonDisabled;
 
 	queueDD(dd, r, 0, hints & WIDGET_CLEARBG);
-	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
