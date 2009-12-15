@@ -663,7 +663,7 @@ void LauncherDialog::addGame() {
 
 			// If new target(s) were added, update the ListWidget and move
 			// the selection to to first newly detected game.
-			Common::String newTarget = massAddDlg.getFirtAddedTarget();
+			Common::String newTarget = massAddDlg.getFirstAddedTarget();
 			if (!newTarget.empty()) {
 				updateListing();
 				selectTarget(newTarget);
