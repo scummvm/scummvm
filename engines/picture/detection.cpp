@@ -65,7 +65,8 @@ static const PictureGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("WESTERN", "05472037e9cfde146e953c434e74f0f4", 337643527),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 	},
 
@@ -77,7 +78,8 @@ static const PictureGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("WESTERN", "ba1742d3193b68ceb9434e2ab7a09a9b", 391462783),
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 	},
 
@@ -89,7 +91,8 @@ static const PictureGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("WESTERN", "1a3292bad8e0bb5701800c73531dd75e", 345176617),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 	},
 
@@ -101,7 +104,8 @@ static const PictureGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("WESTERN", "1c85e82712d24f1d5c1ea2a66ddd75c2", 47730038),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 	},
 
@@ -126,7 +130,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NONE
 };
 
 class PictureMetaEngine : public AdvancedMetaEngine {
