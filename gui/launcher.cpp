@@ -538,7 +538,7 @@ LauncherDialog::LauncherDialog()
 
 	// Restore last selection
 	String last(ConfMan.get("lastselectedgame", ConfigManager::kApplicationDomain));
-	selectGame(last);
+	selectTarget(last);
 
 	// En-/disable the buttons depending on the list selection
 	updateButtons();
@@ -550,12 +550,12 @@ LauncherDialog::LauncherDialog()
 	_loadDialog = new SaveLoadChooser("Load game:", "Load");
 }
 
-void LauncherDialog::selectGame(const String &name) {
-	if (!name.empty()) {
+void LauncherDialog::selectTarget(const String &target) {
+	if (!target.empty()) {
 		int itemToSelect = 0;
 		StringList::const_iterator iter;
 		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
-			if (name == *iter) {
+			if (target == *iter) {
 				_list->setSelected(itemToSelect);
 				break;
 			}
@@ -657,19 +657,17 @@ void LauncherDialog::addGame() {
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
 
-			if (_list->getSelected() != -1) {
-				// Save current game position, so on cancel cursor will move back
-				ConfMan.set("temp_selection", _domains[_list->getSelected()], ConfigManager::kApplicationDomain);
-			}
-
 			massAddDlg.runModal();
 
 			// Update the ListWidget and force a redraw
-			updateListing();
 
-			// Set cursor to first detected game
-			selectGame(ConfMan.get("temp_selection", ConfigManager::kApplicationDomain));
-			ConfMan.removeKey("temp_selection", ConfigManager::kApplicationDomain);
+			// If new target(s) were added, update the ListWidget and move
+			// the selection to to first newly detected game.
+			Common::String newTarget = massAddDlg.getFirtAddedTarget();
+			if (!newTarget.empty()) {
+				updateListing();
+				selectTarget(newTarget);
+			}
 
 			draw();
 		}
@@ -750,7 +748,7 @@ void LauncherDialog::addGame() {
 
 					// Update the ListWidget, select the new item, and force a redraw
 					updateListing();
-					selectGame(editDialog.getDomain());
+					selectTarget(editDialog.getDomain());
 					draw();
 				} else {
 					// User aborted, remove the the new domain again
@@ -840,7 +838,7 @@ void LauncherDialog::editGame(int item) {
 
 		// Update the ListWidget, reselect the edited game and force a redraw
 		updateListing();
-		selectGame(editDialog.getDomain());
+		selectTarget(editDialog.getDomain());
 		draw();
 	}
 }
@@ -923,7 +921,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kStartCmd:
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
-		// Print out what was selected
+		// Start the selected game.
 		assert(item >= 0);
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
@@ -940,9 +938,11 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kSearchCmd:
+		// Update the active search filter.
 		_list->setFilter(_searchWidget->getEditString());
 		break;
 	case kSearchClearCmd:
+		// Reset the active search filter, thus showing all games again
 		_searchWidget->setEditString("");
 		_list->setFilter("");
 		break;

@@ -139,7 +139,7 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
 		for (GameList::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
-			printf("  Added gameid '%s', desc '%s'\n",
+			debug(1, "  Added gameid '%s', desc '%s'\n",
 				(*iter)["gameid"].c_str(),
 				(*iter)["description"].c_str());
 			(*iter)["gameid"] = addGameToConf(*iter);
@@ -157,6 +157,7 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		close();
 	} else if (cmd == kCancelCmd) {
 		// User cancelled, so we don't do anything and just leave.
+		_games.clear();
 		close();
 	} else {
 		Dialog::handleCommand(sender, cmd, data);
