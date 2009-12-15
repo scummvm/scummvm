@@ -150,7 +150,7 @@ Common::Error ToltecsEngine::run() {
 
 	syncSoundSettings();
 
-//#define TEST_MENU
+#define TEST_MENU
 #ifdef TEST_MENU
 	_screen->registerFont(0, 0x0D);
 	_screen->registerFont(1, 0x0E);
@@ -159,14 +159,17 @@ Common::Error ToltecsEngine::run() {
 	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
 	_screen->finishTalkTextItems();
 	_screen->clearSprites();
+	_menuSystem->run();
+	/*
 	while (1) {
-		updateInput();
+		//updateInput();
 		_menuSystem->update();
 		updateScreen();
 	}
+	*/
 #endif
 
-#if 1
+#if 0
 	_script->loadScript(0, 0);
 	_script->runScript(0);
 #endif
