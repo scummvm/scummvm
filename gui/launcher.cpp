@@ -497,19 +497,19 @@ LauncherDialog::LauncherDialog()
 #endif
 
 	new ButtonWidget(this, "Launcher.QuitButton", "Quit", kQuitCmd, 'Q');
-	new ButtonWidget(this, "Launcher.AboutButton", "About", kAboutCmd, 'B');
-	new ButtonWidget(this, "Launcher.OptionsButton", "Options", kOptionsCmd, 'O');
+	new ButtonWidget(this, "Launcher.AboutButton", "About...", kAboutCmd, 'B');
+	new ButtonWidget(this, "Launcher.OptionsButton", "Options...", kOptionsCmd, 'O');
 	_startButton =
 			new ButtonWidget(this, "Launcher.StartButton", "Start", kStartCmd, 'S');
 
 	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", "Load", kLoadGameCmd, 'L');
+		new ButtonWidget(this, "Launcher.LoadGameButton", "Load...", kLoadGameCmd, 'L');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game", kAddGameCmd, 'A');
+		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game...", kAddGameCmd, 'A');
 	_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game", kEditGameCmd, 'E');
+		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game...", kEditGameCmd, 'E');
 	_removeButton =
 		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
@@ -649,7 +649,7 @@ void LauncherDialog::updateListing() {
 
 void LauncherDialog::addGame() {
 	int modifiers = g_system->getEventManager()->getModifierState();
-	bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 
 	if (massAdd) {
 		MessageDialog alert("Do you really want to run the mass game detector? "
@@ -979,9 +979,10 @@ void LauncherDialog::updateButtons() {
 
 	// Update the label of the "Add" button depending on whether shift is pressed or not
 	int modifiers = g_system->getEventManager()->getModifierState();
-	const char *newAddButtonLabel = ((modifiers & Common::KBD_SHIFT) != 0)
-		? "Mass Add"
-		: "Add Game";
+	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
+	const char *newAddButtonLabel = massAdd
+		? "Mass Add..."
+		: "Add Game...";
 
 	if (_addButton->getLabel() != newAddButtonLabel)
 		_addButton->setLabel(newAddButtonLabel);
