@@ -103,7 +103,7 @@ add_engine sci32 "SCI32 games" no
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
 add_engine sword2 "Broken Sword 2" yes
-add_engine teenagent "Teen Agent" no
+add_engine teenagent "Teen Agent" yes
 add_engine tinsel "Tinsel" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
