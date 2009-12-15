@@ -467,7 +467,7 @@ static bool DoRestore() {
 	if (id != (uint32)0xFEEDFACE)
 		error("Incompatible saved game");
 
-	bool failed = f->ioFailed();
+	bool failed = (f->eos() || f->err());
 
 	delete f;
 

@@ -177,12 +177,6 @@ public:
 	// in general should not overload them.
 
 	/**
-	 * DEPRECATED
-	 * Default implementation for backward compatibility
-	 */
-	inline bool ioFailed() { return (eos() || err()); }
-
-	/**
 	 * Read an unsigned byte from the stream and return it.
 	 * Performs no error checking. The return value is undefined
 	 * if a read error occurred (for which client code can check by

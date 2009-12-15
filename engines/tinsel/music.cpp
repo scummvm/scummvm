@@ -370,7 +370,7 @@ void OpenMidiFiles() {
 
 	// gen length of the largest sequence
 	midiBuffer.size = midiStream.readUint32LE();
-	if (midiStream.ioFailed())
+	if (midiStream.eos() || midiStream.err())
 		error(FILE_IS_CORRUPT, MIDI_FILE);
 
 	if (midiBuffer.size) {
@@ -860,7 +860,7 @@ bool PCMMusicPlayer::getNextChunk() {
 			error(CANNOT_FIND_FILE, _fileName);
 
 		file.seek(sampleOffset);
-		if (file.ioFailed() || (uint32)file.pos() != sampleOffset)
+		if (file.eos() || file.err() || (uint32)file.pos() != sampleOffset)
 			error(FILE_IS_CORRUPT, _fileName);
 
 		buffer = (byte *) malloc(sampleCLength);

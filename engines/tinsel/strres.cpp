@@ -112,7 +112,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 	// first long is the filelength and for uncompressed files it is the chunk
 	// identifier
 	textLen = f.readUint32LE();
-	if (f.ioFailed())
+	if (f.eos() || f.err())
 		error(FILE_IS_CORRUPT, _vm->getTextFile(newLang));
 
 	if (textLen == CHUNK_STRING || textLen == CHUNK_MBSTRING) {

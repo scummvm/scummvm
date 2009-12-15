@@ -1016,7 +1016,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		id = file.readUint16LE();
 		offset = file.readUint32LE();
 
-		if (file.ioFailed()) {
+		if (file.eos() || file.err()) {
 			warning("Error while reading %s", map->location_name.c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
@@ -1095,7 +1095,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 					// in SCI32 it's a plain offset
 				}
 			}
-			if (file.ioFailed()) {
+			if (file.eos() || file.err()) {
 				warning("Error while reading %s", map->location_name.c_str());
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
@@ -1278,7 +1278,7 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 		uint32 offset = file.readUint32LE();
 		uint32 size = file.readUint32LE();
 
-		if (file.ioFailed()) {
+		if (file.eos() || file.err()) {
 			warning("Error while reading %s", map->location_name.c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
@@ -1405,7 +1405,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
 	// check if there were errors while reading
-	if (file->ioFailed())
+	if ((file->eos() || file->err()))
 		return SCI_ERROR_IO_ERROR;
 	res->id = ResourceId(type, number);
 	res->size = szUnpacked;

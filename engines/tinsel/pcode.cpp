@@ -406,7 +406,7 @@ void RegisterGlobals(int num) {
 		for (int i = 0; i < length; ++i)
 			pGlobals[i] = f.readSint32LE();
 
-		if (f.ioFailed())
+		if (f.eos() || f.err())
 			error(FILE_IS_CORRUPT, GLOBALS_FILENAME);
 
 		f.close();

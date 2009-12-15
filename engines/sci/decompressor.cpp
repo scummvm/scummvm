@@ -36,13 +36,13 @@
 namespace Sci {
 int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	uint32 chunk;
-	while (nPacked && !src->ioFailed()) {
+	while (nPacked && !(src->eos() || src->err())) {
 		chunk = MIN<uint32>(1024, nPacked);
 		src->read(dest, chunk);
 		nPacked -= chunk;
 		dest += chunk;
 	}
-	return src->ioFailed() ? 1 : 0;
+	return (src->eos() || src->err()) ? 1 : 0;
 }
 
 void Decompressor::init(Common::ReadStream *src, byte *dest, uint32 nPacked,

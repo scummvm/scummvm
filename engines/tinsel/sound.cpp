@@ -98,12 +98,12 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
-	if (_sampleStream.ioFailed() || (uint32)_sampleStream.pos() != dwSampleIndex)
+	if (_sampleStream.eos() || _sampleStream.err() || (uint32)_sampleStream.pos() != dwSampleIndex)
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	// read the length of the sample
 	uint32 sampleLen = _sampleStream.readUint32LE();
-	if (_sampleStream.ioFailed())
+	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	if (TinselV1PSX) {
@@ -244,12 +244,12 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
-	if (_sampleStream.ioFailed() || (uint32)_sampleStream.pos() != dwSampleIndex)
+	if (_sampleStream.eos() || _sampleStream.err() || (uint32)_sampleStream.pos() != dwSampleIndex)
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	// read the length of the sample
 	uint32 sampleLen = _sampleStream.readUint32LE();
-	if (_sampleStream.ioFailed())
+	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	if (sampleLen & 0x80000000) {
@@ -263,11 +263,11 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		for (int32 i = 0; i < sub; i++) {
 			sampleLen = _sampleStream.readUint32LE();
 			_sampleStream.skip(sampleLen);
-			if (_sampleStream.ioFailed())
+			if (_sampleStream.eos() || _sampleStream.err())
 				error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 		}
 		sampleLen = _sampleStream.readUint32LE();
-		if (_sampleStream.ioFailed())
+		if (_sampleStream.eos() || _sampleStream.err())
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 	}
 
@@ -553,7 +553,7 @@ void SoundManager::openSampleFiles() {
 /*
 	// gen length of the largest sample
 	sampleBuffer.size = _sampleStream.readUint32LE();
-	if (_sampleStream.ioFailed())
+	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 */
 }

@@ -133,7 +133,7 @@ void SetupHandleTable() {
 				handleTable[i].flags2 = t2Flag ? f.readUint32LE() : 0;
 			}
 
-			if (f.ioFailed()) {
+			if (f.eos() || f.err()) {
 				// index file is corrupt
 				error(FILE_IS_CORRUPT, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
 			}
