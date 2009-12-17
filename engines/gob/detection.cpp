@@ -2255,8 +2255,26 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"lit2",
-			"",
+			"Light install",
 			AD_ENTRY1s("intro.stk", "17acbb212e62addbe48dc8f2282c98cb", 72318),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"lit2",
+			"Full install",
+			{
+				{"intro.stk", 0, "17acbb212e62addbe48dc8f2282c98cb", 72318},
+				{"partie4.itk", 0, "6ce4967e0c79d7daeabc6c1d26783d4c", 2612087},
+				{0, 0, 0, 0}
+			},
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
