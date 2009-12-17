@@ -371,7 +371,7 @@ bool Console::cmdMessage(int argc, const char **argv) {
 		else
 		{
 			const char *msg = _vm->_globals->loadMessage(idx);
-			Dialog *dlg = new Dialog(_vm, msg);
+			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 
 			_vm->_viewManager->addView(dlg);
 			_vm->_viewManager->moveToFront(dlg);

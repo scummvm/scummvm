@@ -252,7 +252,7 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 
 }
 
-int32 Font::getWidth(char *text, int spaceWidth) {
+int32 Font::getWidth(const char *text, int spaceWidth) {
 	/*
 	if (custom_ascii_converter) {			 // if there is a function to convert the extended ASCII characters
 		custom_ascii_converter(out_string);	 // call it with the string

@@ -36,27 +36,32 @@ class DialogLine {
 public:
 	char data[100];
 	uint8 xp;
+	bool underline;
 
-	DialogLine() { data[0] = '\0'; xp = 0; }
+	DialogLine() { data[0] = '\0'; xp = 0; underline = false; }
 };
 
 class Dialog: public View {
 private:
 	Common::Array<DialogLine> _lines;
 	int _widthChars;
+	int _dialogWidth;
 	int _dialogIndex;
 	Common::Point _askPosition;
 	RGBList *_palette;
+	int _lineX;
+	int _widthX;
 
 
 	void initDialog();
 	void incLine();
 	bool matchCommand(const char *s1, const char *s2);
 	void writeChars(const char *line);
-	void addLine(const char *line);
+	void addLine(const char *line, bool underlineP = false);
+	void appendText(const char *line);
 	void draw();
 public:
-	Dialog(M4Engine *vm, const char *msgData);
+	Dialog(M4Engine *vm, const char *msgData, const char *title = NULL);
 	virtual ~Dialog();
 
 	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);

@@ -560,7 +560,7 @@ bool Scene::onEvent(M4EventType eventType, int param1, int x, int y, bool &captu
 			// ***DEBUG*** - sample dialog display
 			int idx = _vm->_globals->messageIndexOf(0x277a);
 			const char *msg = _vm->_globals->loadMessage(idx);
-			Dialog *dlg = new Dialog(_vm, msg);
+			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 			_vm->_viewManager->addView(dlg);
 			_vm->_viewManager->moveToFront(dlg);
 		}

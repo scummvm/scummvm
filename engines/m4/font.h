@@ -67,7 +67,7 @@ public:
 	void setColour(uint8 colour) { setColor(colour); }
 	void setColours(uint8 alt1, uint8 alt2, uint8 foreground) { setColors(alt1, alt2, foreground); } 
 
-	int32 getWidth(char *text, int spaceWidth = -1);
+	int32 getWidth(const char *text, int spaceWidth = -1);
 	int32 getHeight() const { return _maxHeight; }
 	int32 getMaxWidth() const { return _maxWidth; }
 	int32 write(M4Surface *surface, const char *text, int x, int y, int width, int spaceWidth, uint8 colors[]);

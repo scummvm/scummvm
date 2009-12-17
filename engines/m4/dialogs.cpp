@@ -42,60 +42,168 @@ const RGB8 DIALOG_PALETTE[8] = {
 
 #define ROR16(v,amt) (((uint16)(v) >> amt) | ((uint16)(v) << (16 - amt)))
 
-void Dialog::initDialog() {
+const int DIALOG_SPACING = 1;
 
+void Dialog::initDialog() {
+	incLine();
 }
 
 void Dialog::incLine() {
+	_lineX = 0;
+	_widthX = 0;
+
 	_lines.push_back(*new DialogLine());	
-	assert(_lines.size() < 20);
+	assert(_lines.size() <= 20);
 }
 
-void Dialog::writeChars(const char *line) {
-	assert(_lines.size() > 0);
-	strcpy(_lines[_lines.size() - 1].data, line);
+void Dialog::writeChars(const char *srcLine) {
+	char wordStr[80];
+	char line[80];
+	int lineLen, lineWidth;
+	const char *srcP = srcLine;
+
+	while (*srcP) {
+		bool wordEndedP = false, newlineP = false;
+		char *destP = &wordStr[0];
+		Common::set_to(&wordStr[0], &wordStr[80], 0);
+
+		// Try and get the next word
+		for (;;) {
+			char v = *srcP;
+			*destP++ = v;
+
+			if (v == '\0') break;
+			if (v == '\n') {
+				newlineP = true;
+				++srcP;
+				--destP;
+				break;
+			}
+
+			if (v == ' ') {
+				// Word separator
+				++srcP;
+				--destP;
+				wordEndedP = true;
+			} else {
+				// Standard character
+				if (!wordEndedP)
+					// Still in the initial word
+					++srcP;
+				else {
+					// First character of next word, so time to break
+					--destP;
+					break;
+				}
+			}
+		}
+
+		if (destP < &wordStr[0])
+			destP = &wordStr[0];
+		*destP = '\0';
+
+		lineLen = strlen(wordStr);
+
+		strcpy(line, "");
+		if (_lineX > 0)
+			strcat(line, " ");
+		strcat(line, wordStr);
+
+		lineLen = strlen(line);
+		lineWidth = _vm->_font->getWidth(line, DIALOG_SPACING);
+
+		if (((_lineX + lineLen) > _widthChars) || ((_widthX + lineWidth) > _dialogWidth)) {
+			incLine();
+			appendText(wordStr);
+		} else {
+			appendText(line);
+		}
+
+		if (newlineP)
+			incLine();
+	}
 }
 
-void Dialog::addLine(const char *line) {
+void Dialog::appendText(const char *line) {
+	_lineX += strlen(line);
+	_widthX += _vm->_font->getWidth(line, DIALOG_SPACING);
 
+	strcat(_lines[_lines.size() - 1].data, line);
+}
+
+void Dialog::addLine(const char *line, bool underlineP) {
+	if ((_widthX > 0) || (_lineX > 0))
+		incLine();
+
+	int lineWidth = _vm->_font->getWidth(line, DIALOG_SPACING);
+	int lineLen = strlen(line);
+
+	if ((lineWidth > _dialogWidth) || (lineLen >= _widthChars))
+		writeChars(line);
+	else {
+		_lines[_lines.size() - 1].xp = (_dialogWidth - lineWidth) / 2;
+		strcpy(_lines[_lines.size() - 1].data, line);
+	}
+
+	if (underlineP)
+		_lines[_lines.size() - 1].underline = true;
+
+	incLine();
 }
 
 bool Dialog::matchCommand(const char *s1, const char *s2) {
 	return strncmp(s1, s2, strlen(s2)) == 0;
 }
 
-Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(0, 0, 0, 0)) {
+Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, Common::Rect(0, 0, 0, 0)) {
 	assert(msgData);
 	const char *srcP = msgData;
 	bool skipLine = false;
 	bool initFlag = false;
 	bool cmdFlag = false;
 	bool crFlag = false;
+	bool underline = false;
 
 	_screenType = LAYER_DIALOG;
 	_widthChars = 0;
 	_dialogIndex = 0;
 	_askPosition.x = 0;
 	_askPosition.y = 0;
+	_lineX = 0;
+	_widthX = 0;
+	_dialogWidth = 0;
 
 	char dialogLine[256];
 	char cmdText[80];
 	char *lineP = &dialogLine[0];
 	char *cmdP = NULL;
 
-	while (*srcP != '\0') {
-		if (*srcP == '\n') {
+	while (*(srcP - 1) != '\0') {
+		if ((*srcP == '\n') || (*srcP == '\0')) {
 			// Line completed
 			*lineP = '\0';
 			++srcP;
 
 			if (!initFlag) {
 				initDialog();
-				incLine();
 				initFlag = true;
-			} else {
-				writeChars(dialogLine);
 			}
+
+			if (!skipLine)
+				writeChars(dialogLine);
+			else {
+				addLine(dialogLine, underline);
+
+				if (crFlag)
+					incLine();
+			}
+
+			// Clear the current line contents
+			dialogLine[0] = '\0';
+			lineP = &dialogLine[0];
+			skipLine = crFlag = underline = false;
+			continue;
+
 		} else if (*srcP == '[') {
 			// Start of a command sequence
 			cmdFlag = true;
@@ -108,15 +216,24 @@ Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(0, 0, 0
 			cmdFlag = false;
 			strToUpper(cmdText);
 
-			if (matchCommand(cmdText, "CENTER"))
-				// Center command
+			if (matchCommand(cmdText, "TITLE")) {
+				// Title command - specifies the dialog width in number of characters
 				skipLine = true;
-			else if (matchCommand(cmdText, "TITLE")) {
-				// Title command
+				crFlag = true;
+				underline = true;
+
 				int id = atoi(cmdText + 5);
-				if (id > 0) 
+				if (id > 0) {
 					// Suffix provided - specifies the dialog width in number of chars
-					_widthChars = id;
+					_widthChars = id * 2;
+					_dialogWidth = id * (_vm->_font->getMaxWidth() + 1) + 10;
+				}
+			} else if (matchCommand(cmdText, "SENTENCE")) {
+				// Sentence command - loads the title into the line buffer
+				strcpy(dialogLine, title);
+				strToUpper(dialogLine);
+				lineP += strlen(dialogLine) + 1;
+
 			} else if (matchCommand(cmdText, "CR")) {
 				// CR command
 				if (skipLine)
@@ -124,8 +241,16 @@ Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(0, 0, 0
 				else {
 					initDialog();
 				}
+
+			} else if (matchCommand(cmdText, "UNDER")) {
+				// Underline command
+				underline = true;
+
 			} else if (matchCommand(cmdText, "ASK")) {
 				// doAsk();
+			} else if (matchCommand(cmdText, "CENTER")) {
+				// Center command
+				skipLine = true;
 			} else if (matchCommand(cmdText, "VERB")) {
 				// Verb/vocab retrieval
 				/*getVocab(); */
@@ -134,25 +259,16 @@ Dialog::Dialog(M4Engine *vm, const char *msgData): View(vm, Common::Rect(0, 0, 0
 				_dialogIndex = atoi(cmdText + 5);
 			} else if (matchCommand(cmdText, "NOUN")) {
 				// Noun command
-			} else if (matchCommand(cmdText, "SENTENCE")) {
-				// Sentence command
 			} else {
 				error("Unknown dialog command '%s' encountered", cmdText);
 			}
 		}
 
+		*lineP++ = *srcP;
 		if (cmdFlag)
 			*cmdP++ = *srcP;
 		++srcP;
 	}
-
-	if (!skipLine)
-		incLine();
-
-	// FIXME: Remove dummy dialog test string
-	incLine();
-	strcpy(_lines[_lines.size() - 1].data, "Test dialog");
-	_lines[_lines.size() - 1].xp = 20;
 
 	draw();
 }
@@ -170,9 +286,15 @@ void Dialog::draw() {
 	_palette->setRange(0, 8, DIALOG_PALETTE);
 	_vm->_palette->addRange(_palette);
 
+	// Validation
+	if (_widthChars == 0) {
+		warning("Dialog being shown without TITLE specified");
+		_widthChars = 30;
+	}
+
 	// Calculate bounds
-	int dlgWidth = _widthChars * (_vm->_font->getMaxWidth() + 1) + 10;
-	int dlgHeight = (_lines.size() + 1) * (_vm->_font->getHeight() + 1) + 10;
+	int dlgWidth = _dialogWidth;
+	int dlgHeight = _lines.size() * (_vm->_font->getHeight() + 1) + 10;
 	int dialogX = (_vm->_screen->width() - dlgWidth) / 2;
 	int dialogY = (_vm->_screen->height() - dlgHeight) / 2;
 
@@ -219,14 +341,16 @@ void Dialog::draw() {
 		if (_lines[lineCtr].xp == 0xff) {
 			hLine(2, width() - 6, ((_vm->_font->getHeight() + 1) >> 1) + yp);
 		} else {
-			Common::Point pt(_lines[lineCtr].xp & 0x7f, yp + 
-				(((_lines[lineCtr].xp & 0x40) != 0) ? 1 : 0));
+			Common::Point pt((_lines[lineCtr].xp & 0x7f) + 5, yp);
+			if (_lines[lineCtr].xp & 0x40)
+				++pt.y;
 
-			_vm->_font->writeString(this, _lines[lineCtr].data, pt.x, pt.y, 0, 0);
+			_vm->_font->writeString(this, _lines[lineCtr].data, pt.x, pt.y, 0, DIALOG_SPACING);
 
-			if (_lines[lineCtr].xp & 0x80)
+			if (_lines[lineCtr].underline)
 				// Underline needed
-				hLine(pt.x, pt.x + _vm->_font->getWidth(_lines[lineCtr].data), pt.y);
+				hLine(pt.x, pt.x + _vm->_font->getWidth(_lines[lineCtr].data, DIALOG_SPACING), 
+					pt.y + _vm->_font->getHeight());
 		}
 	}
 
