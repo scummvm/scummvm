@@ -25,7 +25,7 @@
 
 #include "common/util.h"
 
-#include "sci/sfx/device.h"
+#include "sci/sfx/seq/midiwriter.h"
 #include "sci/sfx/seq/instrument-map.h"
 
 namespace Sci {

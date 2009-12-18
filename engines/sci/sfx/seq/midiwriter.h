@@ -25,8 +25,8 @@
 
 /* song player structure */
 
-#ifndef SCI_SFX_DEVICE_H
-#define SCI_SFX_DEVICE_H
+#ifndef SCI_SFX_SEQ_MIDIWRITER_H
+#define SCI_SFX_SEQ_MIDIWRITER_H
 
 #include "common/scummsys.h"
 #include "common/error.h"
@@ -85,4 +85,4 @@ struct midi_writer_t {
 
 } // End of namespace Sci
 
-#endif // SCI_SFX_DEVICE_H
+#endif // SCI_SFX_SEQ_MIDIWRITER_H
