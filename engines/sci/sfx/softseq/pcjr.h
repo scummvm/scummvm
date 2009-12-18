@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 namespace Sci {
 

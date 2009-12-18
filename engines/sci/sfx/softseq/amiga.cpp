@@ -24,7 +24,7 @@
  */
 
 #include "sound/softsynth/emumidi.h"
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 #include "common/file.h"
 #include "common/frac.h"

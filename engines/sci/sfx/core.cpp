@@ -28,7 +28,7 @@
 #include "sci/sci.h"
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 #include "sci/sfx/softseq/pcjr.h"
 

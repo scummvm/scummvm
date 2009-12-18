@@ -24,7 +24,7 @@
  */
 
 #include "common/scummsys.h"
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 #include "sci/sfx/seq/instrument-map.h"
 #include "sci/sfx/core.h"
 

@@ -27,7 +27,7 @@
 #define SCI_SFX_SFX_ITERATOR_INTERNAL
 
 #include "sci/sfx/iterator.h"
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 #include "common/array.h"
 #include "common/list.h"

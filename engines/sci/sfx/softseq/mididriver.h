@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_SFX_MIDI_H
-#define SCI_SFX_MIDI_H
+#ifndef SCI_SFX_SOFTSEQ_MIDIDRIVER_H
+#define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 
 #include "sound/mididrv.h"
 #include "sound/softsynth/emumidi.h"
@@ -103,4 +103,4 @@ extern MidiPlayer *MidiPlayer_Amiga_create();
 
 } // End of namespace Sci
 
-#endif // SCI_SFX_MIDI_H
+#endif // SCI_SFX_SOFTSEQ_MIDIDRIVER_H

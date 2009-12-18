@@ -42,7 +42,7 @@
 #endif
 #include "sci/sfx/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 #include "sci/vocabulary.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"

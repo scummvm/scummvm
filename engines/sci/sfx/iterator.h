@@ -28,7 +28,7 @@
 #ifndef SCI_SFX_SFX_ITERATOR_H
 #define SCI_SFX_SFX_ITERATOR_H
 
-#include "sci/sfx/sci_midi.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 namespace Audio {
 	class AudioStream;
