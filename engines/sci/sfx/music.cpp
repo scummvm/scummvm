@@ -34,7 +34,7 @@ namespace Sci {
 static const int nMidiParams[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
 
 static int f_compare(const void *arg1, const void *arg2) {
-	return ((sciSound *)arg2)->prio - ((sciSound *)arg1)->prio;
+	return ((const sciSound *)arg2)->prio - ((const sciSound *)arg1)->prio;
 }
 
 SciMusic::SciMusic() {

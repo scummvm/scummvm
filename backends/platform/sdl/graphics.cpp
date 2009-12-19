@@ -1583,9 +1583,9 @@ void OSystem_SDL::blitCursor() {
 #ifdef USE_RGB_COLOR
 			if (_cursorFormat.bytesPerPixel > 1) {
 				if (_cursorFormat.bytesPerPixel == 2)
-					color = *(uint16 *)srcPtr;
+					color = *(const uint16 *)srcPtr;
 				else
-					color = *(uint32 *)srcPtr;
+					color = *(const uint32 *)srcPtr;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
 					uint8 r, g, b;
 					_cursorFormat.colorToRGB(color, r, g, b);
