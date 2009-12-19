@@ -43,10 +43,10 @@
 namespace Sci {
 
 struct OldNewIdTableEntry {
-	Common::String oldId;
-	Common::String newId;
+	const char *oldId;
+	const char *newId;
 	bool demo;
-	Common::String demoCheckFile;	// if not empty and it doesn't exist, the demo flag is set
+	const char *demoCheckFile;	// if not empty and it doesn't exist, the demo flag is set
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
@@ -101,14 +101,14 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 
 	// TODO: SCI32 IDs
 
-	for (const OldNewIdTableEntry *cur = s_oldNewTable; !cur->oldId.empty(); ++cur) {
+	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
 		if (sierraId == cur->oldId) {
 			if (cur->demo)
 				*gameFlags |= ADGF_DEMO;
-			if (!cur->demoCheckFile.empty())
-				if (!Common::File::exists(cur->demoCheckFile.c_str()))
+			if (cur->demoCheckFile[0])
+				if (!Common::File::exists(cur->demoCheckFile))
 					*gameFlags |= ADGF_DEMO;
-			return cur->newId.c_str();
+			return cur->newId;
 		}
 	}
 
