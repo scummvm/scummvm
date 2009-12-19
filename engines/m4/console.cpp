@@ -364,13 +364,15 @@ bool Console::cmdMessage(int argc, const char **argv) {
 	if (argc == 1)
 		DebugPrintf("message 'objnum'\n");
 	else {
-		int messageId = strToInt(argv[1]);
-		int idx = _vm->_globals->messageIndexOf(messageId);
-		if (idx == -1)
+		int messageIdx = strToInt(argv[1]);
+		if ((argc == 3) && !strcmp(argv[2], "id"))
+			messageIdx = _vm->_globals->messageIndexOf(messageIdx);
+
+		if (messageIdx == -1)
 			DebugPrintf("Unknown message");
 		else
 		{
-			const char *msg = _vm->_globals->loadMessage(idx);
+			const char *msg = _vm->_globals->loadMessage(messageIdx);
 			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 
 			_vm->_viewManager->addView(dlg);

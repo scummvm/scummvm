@@ -37,8 +37,9 @@ public:
 	char data[100];
 	uint8 xp;
 	bool underline;
+	bool barLine;
 
-	DialogLine() { data[0] = '\0'; xp = 0; underline = false; }
+	DialogLine() { data[0] = '\0'; xp = 0; underline = barLine = false; }
 };
 
 class Dialog: public View {
@@ -51,7 +52,7 @@ private:
 	RGBList *_palette;
 	int _lineX;
 	int _widthX;
-
+	bool _commandCase;
 
 	void initDialog();
 	void incLine();
@@ -59,6 +60,9 @@ private:
 	void writeChars(const char *line);
 	void addLine(const char *line, bool underlineP = false);
 	void appendText(const char *line);
+	void addBarLine();
+	void getVocab(int vocabId, char **line);
+	bool handleNounSuffix(char *destP, int nounNum, const char *srcP);
 	void draw();
 public:
 	Dialog(M4Engine *vm, const char *msgData, const char *title = NULL);
