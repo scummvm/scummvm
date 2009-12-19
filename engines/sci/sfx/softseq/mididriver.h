@@ -26,6 +26,7 @@
 #ifndef SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 #define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 
+#include "sci/sci.h"
 #include "sound/mididrv.h"
 #include "sound/softsynth/emumidi.h"
 #include "common/error.h"
@@ -67,7 +68,10 @@ class MidiPlayer : public MidiDriver {
 protected:
 	MidiDriver *_driver;
 public:
-	int open() { return open(NULL); }
+	int open() {
+		ResourceManager *resMan = ((SciEngine *)g_engine)->getResourceManager();	// HACK
+		return open(resMan);
+	}
 	virtual int open(ResourceManager *resMan) { return _driver->open(); }
 	virtual void close() { _driver->close(); }
 	virtual void send(uint32 b) { _driver->send(b); }

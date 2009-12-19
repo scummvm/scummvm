@@ -24,7 +24,6 @@
  */
 
 #include "sci/sci.h"
-#include "sci/sfx/iterator.h"
 
 #include "sound/fmopl.h"
 #include "sound/softsynth/emumidi.h"
@@ -810,6 +809,10 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 
 MidiPlayer *MidiPlayer_Adlib_create() {
 	return new MidiPlayer_Adlib();
+}
+
+MidiDriver *MidiDriver_Adlib_create() {
+	return new MidiDriver_Adlib(g_system->getMixer());
 }
 
 } // End of namespace Sci
