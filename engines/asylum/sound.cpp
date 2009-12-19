@@ -135,7 +135,7 @@ bool Sound::isPlaying(int32 resId) {
 	int32 pos = getBufferPosition(resId);
 
 	if (pos < 0) {
-		warning("isPlaying: resId %d not currently bufferred", resId);
+		//warning("isPlaying: resId %d not currently bufferred", resId);
 	} else {
 		SoundBufferItem snd = _soundBuffer[pos];
 		if (_mixer->isSoundHandleActive(snd.handle)) {
