@@ -1904,20 +1904,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{ // Supplied by Arshlan in the forums
-		{
-			"lit",
-			"",
-			AD_ENTRY1s("intro.stk", "3712e7527ba8ce5637d2aadf62783005", 72318),
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
-		},
-		kGameTypeLostInTime,
-		kFeaturesAdlib,
-		0, 0, 0
-	},
 	{ // Supplied by cartman_ on #scummvm
 		{
 			"lit",
