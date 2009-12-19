@@ -290,6 +290,7 @@ void ViewManager::handleMouseEvents(M4EventType event) {
 	// If a window sets the _captureEvents flag to true, it will receive all events until
 	// it sets it to false, even if it's not the top window
 	if (_captureEvents) {
+		assert(_captureScreen);
 		if (_captureScreen->screenFlags().get & SCREVENT_MOUSE)
 			(_captureScreen->onEvent)(event, 0, mousePos.x, mousePos.y, _captureEvents);
 
