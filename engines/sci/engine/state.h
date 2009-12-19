@@ -43,7 +43,9 @@ namespace Common {
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/sfx/audio.h"
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/core.h"
+#endif
 #include "sci/sfx/soundcmd.h"
 
 namespace Sci {
@@ -149,7 +151,9 @@ public:
 	GfxState *gfx_state; /**< Graphics state and driver */
 
 	AudioPlayer *_audio;
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState _sound; /**< sound subsystem */
+#endif
 	SoundCommandParser *_soundCmd;
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 

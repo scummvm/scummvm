@@ -292,11 +292,13 @@ static void _free_graphics_input(EngineState *s) {
 #endif
 
 int game_init_sound(EngineState *s, int sound_flags) {
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (getSciVersion() > SCI_VERSION_0_LATE)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
 	s->_sound.sfx_init(s->resMan, sound_flags);
+#endif
 
 	return 0;
 }
@@ -417,8 +419,10 @@ int game_init(EngineState *s) {
 	s->_menubar = new Menubar(); // Create menu bar
 #endif
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
 		game_init_sound(s, 0);
+#endif
 
 	// Load game language into printLang property of game object
 	s->getLanguage();
@@ -429,11 +433,13 @@ int game_init(EngineState *s) {
 int game_exit(EngineState *s) {
 	s->_executionStack.clear();
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (!s->successor) {
 		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
+#endif
 
 	// Note: It's a bad idea to delete the segment manager here
 	// when loading a game.

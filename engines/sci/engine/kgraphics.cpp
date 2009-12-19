@@ -956,7 +956,9 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	bool cycle = (argc > 1) ? ((argv[1].toUint16()) ? true : false) : false;
 
 	// Take care of incoming events (kAnimate is called semi-regularly)
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	process_sound_events(s);
+#endif
 
 	s->_gui->animate(castListReference, cycle, argc, argv);
 

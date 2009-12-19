@@ -40,8 +40,10 @@
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for getPort
 #endif
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
+#endif
 #include "sci/sfx/softseq/mididriver.h"
 #include "sci/vocabulary.h"
 #include "sci/gui/gui.h"
@@ -204,14 +206,18 @@ Console::~Console() {
 }
 
 void Console::preEnter() {
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(true);
+#endif
 	_vm->_mixer->pauseAll(true);
 }
 
 void Console::postEnter() {
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(false);
+#endif
 	_vm->_mixer->pauseAll(false);
 
 	if (!_videoFile.empty()) {
@@ -1602,6 +1608,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 bool Console::cmdSongLib(int argc, const char **argv) {
 	DebugPrintf("Song library:\n");
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	Song *seeker = _vm->_gamestate->_sound._songlib._lib;
 
 	do {
@@ -1614,6 +1621,7 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 		DebugPrintf("\n");
 	} while (seeker);
 	DebugPrintf("\n");
+#endif
 
 	return true;
 }
@@ -2523,6 +2531,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	Resource *song = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 	SongIterator *songit;
 	Audio::AudioStream *data;
@@ -2550,6 +2559,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		DebugPrintf("Valid song, but not a sample.\n");
 
 	delete songit;
+#endif
 
 	return true;
 }
@@ -2757,6 +2767,7 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
 
 	if (id.segment) {
@@ -2767,6 +2778,7 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 		PUT_SEL32V(segMan, id, nodePtr, 0);
 		PUT_SEL32V(segMan, id, handle, 0);
 	}
+#endif
 
 	return true;
 }

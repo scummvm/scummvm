@@ -41,9 +41,10 @@ struct ADGameDescription;
  */
 namespace Sci {
 
-#define INCLUDE_OLDGFX
 // Please uncomment this if you want to use oldgui
 //#define USE_OLDGFX
+// Uncomment this to use old music functions
+#define USE_OLD_MUSIC_FUNCTIONS
 
 class Console;
 struct EngineState;

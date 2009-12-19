@@ -427,6 +427,49 @@ protected:
 	void detectSciVersion();
 };
 
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+
+class SoundResource {
+public:
+	enum kTrackType {
+		kTrackAdlib = 0,
+		kTrackGameBlaster = 9,
+		kTrackMT32 = 12,
+		kTrackSpeaker = 18,
+		kTrackTandy = 19
+	};
+
+	struct tagChannel {
+		byte number;
+		byte poly;
+		uint16 unk;
+		uint16 size;
+		byte *ptr;
+		long time;
+		byte prev;
+	};
+
+	struct tagTrack {
+		kTrackType type;
+		byte nDigital;
+		byte nChannels;
+		tagChannel *aChannels;
+		uint sz;
+	};
+public:
+	SoundResource(uint32 resNumber, ResourceManager *resMan);
+	~SoundResource();
+	tagTrack *getTrackByNumber(uint16 number);
+	tagTrack *getTrackByType(kTrackType type);
+
+private:
+	byte nTracks;
+	tagTrack *aTracks;
+	Resource *_innerResource;
+	ResourceManager *_resMan;
+};
+#endif
+
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_RESOURCE_H

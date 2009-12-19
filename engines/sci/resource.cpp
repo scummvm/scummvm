@@ -1808,4 +1808,85 @@ bool ResourceManager::hasSci1Voc900() {
 	return offset == res->size;
 }
 
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+
+SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan) : _resMan(resMan) {
+	Resource *res = resNumber ? _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true) : NULL;
+	if (!res)
+		return;
+
+	_innerResource = res;
+
+	byte *ptr = res->data, *p1;
+	tagChannel *pCh;
+	// count # of tracks
+	nTracks = 0;
+	while ((*ptr++) != 0xFF) {
+		nTracks++;
+		while (*ptr != 0xFF)
+			ptr += 6;
+		ptr++;
+	}
+	aTracks = new tagTrack[nTracks];
+	ptr = res->data;
+	for (int i = 0; i < nTracks; i++) {
+		aTracks[i].type = (kTrackType) * ptr++;
+		// counting # of channels used
+		p1 = ptr;
+		aTracks[i].nChannels = 0;
+		while (*p1 != 0xFF) {
+			p1 += 6;
+			aTracks[i].nChannels++;
+		}
+		aTracks[i].aChannels = new tagChannel[aTracks[i].nChannels];
+		if (aTracks[i].type != 0xF0) // digital track marker - not supported at time
+		{
+			aTracks[i].nDigital = 0xFF; // meanwhile - no ditigal channel associated
+			for (int j = 0; j < aTracks[i].nChannels; j++) {
+				pCh = &aTracks[i].aChannels[j];
+				pCh->unk = READ_LE_UINT16(ptr);
+				pCh->ptr = res->data + READ_LE_UINT16(ptr + 2) + 2;
+				pCh->size = READ_LE_UINT16(ptr + 4) - 2; // not counting channel header
+				pCh->number = *(pCh->ptr - 2);
+				pCh->poly = *(pCh->ptr - 1);
+				pCh->time = pCh->prev = 0;
+				if (pCh->number == 0xFE) // digital channel
+					aTracks[i].nDigital = j;
+				ptr += 6;
+			}
+		}
+		ptr++; // skipping 0xFF that closes channels list
+	}
+	/*
+	 digital track ->ptr points to header:
+	 [w] sample rate
+	 [w] size
+	 [w] ? 00 00  maybe compression flag
+	 [w] ? size again - decompressed size maybe
+	 */
+}
+//----------------------------------------------------
+SoundResource::~SoundResource() {
+	for (int i = 0; i < nTracks; i++)
+		delete[] aTracks[i].aChannels;
+	delete[] aTracks;
+
+	_resMan->unlockResource(_innerResource);
+}
+//----------------------------------------------------
+SoundResource::tagTrack* SoundResource::getTrackByNumber(uint16 number) {
+	if (/*number >= 0 &&*/number < nTracks)
+		return &aTracks[number];
+	return NULL;
+}
+
+SoundResource::tagTrack* SoundResource::getTrackByType(kTrackType type) {
+	for (int i = 0; i < nTracks; i++)
+		if (aTracks[i].type == type)
+			return &aTracks[i];
+	return NULL;
+}
+
+#endif
+
 } // End of namespace Sci
