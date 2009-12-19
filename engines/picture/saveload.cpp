@@ -81,7 +81,7 @@ PictureEngine::kReadSaveHeaderError PictureEngine::readSaveHeader(Common::Seekab
 	header.gameID = in->readByte();
 	header.flags = in->readUint32LE();
 
-	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
+	return ((in->eos() || in->err()) ? kRSHEIoError : kRSHENoError);
 }
 
 void PictureEngine::savegame(const char *filename, const char *description) {
