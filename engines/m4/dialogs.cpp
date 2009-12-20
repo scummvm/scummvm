@@ -364,18 +364,24 @@ Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, C
 				// Noun command 1
 				handleNounSuffix(lineP, 1, cmdText + 5);
 
-			} else if (matchCommand(cmdText, "NOUN1")) {
+			} else if (matchCommand(cmdText, "NOUN2")) {
 				// Noun command 2
 				handleNounSuffix(lineP, 2, cmdText + 5);
+
+			} else if (matchCommand(cmdText, "TAB")) {
+				// Specifies the X offset for the current line
+				_lines[_lines.size() - 1].xp = atoi(cmdText + 3);
+
+			} else if (matchCommand(cmdText, "UNDER")) {
+				// Underline command
+				underline = true;
 
 			} else if (matchCommand(cmdText, "VERB")) {
 				// Verb/vocab retrieval
 				int verbId = 1; // TODO: Get correct vocab
 				getVocab(verbId, &lineP);
 
-			} else if (matchCommand(cmdText, "UNDER")) {
-				// Underline command
-				underline = true;
+
 
 			} else if (matchCommand(cmdText, "ASK")) {
 				// doAsk();
@@ -393,6 +399,27 @@ Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, C
 		++srcP;
 	}
 
+	draw();
+}
+
+Dialog::Dialog(M4Engine *vm, int widthChars, const char **descEntries): View(vm, Common::Rect(0, 0, 0, 0)) {
+	_vm->_font->setFont(FONT_INTERFACE_MADS);
+	_widthChars = widthChars * 2;
+	_dialogWidth = widthChars * (_vm->_font->getMaxWidth() + DIALOG_SPACING) + 10;
+	_screenType = LAYER_DIALOG;
+	_lineX = 0;
+	_widthX = 0;
+
+	while (*descEntries != NULL) {
+		incLine();
+		writeChars(*descEntries);
+
+		int lineWidth = _vm->_font->getWidth(*descEntries, DIALOG_SPACING);
+		_lines[_lines.size() - 1].xp = (_dialogWidth - 10 - lineWidth) / 2;
+		++descEntries;
+	}
+
+	_lines[0].underline = true;
 	draw();
 }
 
@@ -477,7 +504,7 @@ void Dialog::draw() {
 	this->translate(_palette);
 }
 
-bool Dialog::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
+bool Dialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
 	if (_vm->_mouse->getCursorNum() != CURSOR_ARROW)
 		_vm->_mouse->setCursorNum(CURSOR_ARROW);
 
@@ -491,5 +518,10 @@ bool Dialog::onEvent(M4EventType eventType, int param1, int x, int y, bool &capt
 	return true;
 }
 
+void Dialog::display(M4Engine *vm, int widthChars, const char **descEntries) {
+	Dialog *dlg = new Dialog(vm, widthChars, descEntries);
+	vm->_viewManager->addView(dlg);
+	vm->_viewManager->moveToFront(dlg);
+}
 
 } // End of namespace M4

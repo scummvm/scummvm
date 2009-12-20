@@ -33,6 +33,8 @@ namespace M4 {
 
 extern const char *englishMADSArticleList[9];
 
+extern const char *cheatingEnabledDesc[3];
+
 } // End of namespace M4
 
 #endif

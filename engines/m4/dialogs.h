@@ -66,9 +66,12 @@ private:
 	void draw();
 public:
 	Dialog(M4Engine *vm, const char *msgData, const char *title = NULL);
+	Dialog(M4Engine *vm, int widthChars, const char **descEntries);
 	virtual ~Dialog();
 
-	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
+	static void display(M4Engine *vm, int widthChars, const char **descEntries);
+
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 } // End of namespace M4

@@ -34,6 +34,7 @@
 #include "m4/font.h"
 #include "m4/m4_views.h"
 #include "m4/compression.h"
+#include "m4/staticres.h"
 
 namespace M4 {
 
@@ -490,7 +491,7 @@ void Scene::onRefresh(RectList *rects, M4Surface *destSurface) {
 	View::onRefresh(rects, destSurface);
 }
 
-bool Scene::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
+bool Scene::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
 	//if (_vm->getGameType() != GType_Burger)
 	//	return false;
 
@@ -558,7 +559,7 @@ bool Scene::onEvent(M4EventType eventType, int param1, int x, int y, bool &captu
 			_vm->_interfaceView->_inventory.clearSelected();
 		} else {
 			// ***DEBUG*** - sample dialog display
-			int idx = _vm->_globals->messageIndexOf(0x277a);
+			int idx = 3; //_vm->_globals->messageIndexOf(0x277a);
 			const char *msg = _vm->_globals->loadMessage(idx);
 			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 			_vm->_viewManager->addView(dlg);
@@ -733,6 +734,7 @@ MadsInterfaceView::MadsInterfaceView(M4Engine *vm): View(vm, Common::Rect(0, MAD
 	_highlightedElement = -1;
 	_topIndex = 0;
 	_selectedObject = -1;
+	_cheatKeyCtr = 0;
 
 	_objectSprites = NULL;
 	_objectPalData = NULL;
@@ -930,7 +932,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	}
 }
 
-bool MadsInterfaceView::onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents) {
+bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
 	// If the mouse isn't being held down, then reset the repeated scroll timer
 	if (eventType != MEVENT_LEFT_HOLD)
 		_nextScrollerTicks = 0;
@@ -1000,11 +1002,62 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int param1, int x, int y,
 		}
 		return true;
 
+	case KEVENT_KEY:
+		if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
+			handleCheatKey(param1);
+		handleKeypress(param1);
+		return true;
+
 	default:
 		break;
 	}
 
 	return false;
 }
+
+bool MadsInterfaceView::handleCheatKey(int32 keycode) {
+	switch (keycode) {
+	case Common::KEYCODE_SPACE:
+		// TODO: Move player to current destination
+		return true;
+
+	case Common::KEYCODE_t | (Common::KEYCODE_LALT):
+	case Common::KEYCODE_t | (Common::KEYCODE_RALT):
+	{
+		// Teleport to room
+		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
+		
+
+		return true;
+	}
+
+	default:
+		break;
+	}
+
+	return false;
+}
+
+const char *CHEAT_SEQUENCE = "widepipe";
+
+bool MadsInterfaceView::handleKeypress(int32 keycode) {
+	int flags = keycode >> 24;
+	int kc = keycode & 0xffff;
+
+	// Capitalise the letter if necessary
+	if (_cheatKeyCtr < CHEAT_SEQUENCE_MAX) {
+		if ((flags == Common::KBD_CTRL) && (kc == CHEAT_SEQUENCE[_cheatKeyCtr])) {
+			++_cheatKeyCtr;
+			if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
+				Dialog::display(_vm, 22, cheatingEnabledDesc);
+			return true;
+		} else {
+			_cheatKeyCtr = 0;
+		}
+	}
+
+	return false;
+}
+
 
 } // End of namespace M4

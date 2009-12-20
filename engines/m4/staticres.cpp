@@ -31,4 +31,11 @@ const char *englishMADSArticleList[9] = {
 	NULL, "with", "to", "at", "from", "on", "in", "under", "behind"
 };
 
+const char *cheatingEnabledDesc[3] = {
+	"CHEATING ENABLED",
+	"(For your convenience).",
+	NULL
+};
+
+
 } // End of namespace M4

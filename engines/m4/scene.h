@@ -43,6 +43,8 @@ namespace M4 {
 #define INTERFACE_HEIGHT 106
 #define MADS_SURFACE_HEIGHT 156
 
+#define CHEAT_SEQUENCE_MAX 8
+
 enum MADSVerbs {
 	kVerbNone   = 0,
 	kVerbLook	= 3,
@@ -106,7 +108,7 @@ public:
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 
 private:
 	int _currentScene;
@@ -148,6 +150,7 @@ private:
 	int _highlightedElement;
 	int _topIndex;
 	uint32 _nextScrollerTicks;
+	int _cheatKeyCtr;
 	
 	// Object display fields
 	int _selectedObject;
@@ -156,6 +159,8 @@ private:
 	int _objectFrameNumber;
 
 	void setFontMode(InterfaceFontMode newMode);
+	bool handleCheatKey(int32 keycode);
+	bool handleKeypress(int32 keycode);
 public:
 	MadsInterfaceView(M4Engine *vm);
 	~MadsInterfaceView();
@@ -165,7 +170,7 @@ public:
 	void addObjectToInventory(int objectNumber);
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 } // End of namespace M4
