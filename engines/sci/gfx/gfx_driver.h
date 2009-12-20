@@ -30,7 +30,6 @@
 #define SCI_GFX_GFX_DRIVER_H
 
 #include "sci/gfx/gfx_system.h"
-#include "sci/uinput.h"
 
 namespace Sci {
 

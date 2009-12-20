@@ -30,7 +30,7 @@
 #include "common/debug.h"
 #include "common/rect.h"
 
-#include "sci/uinput.h"
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
 #include "sci/vocabulary.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
@@ -235,6 +235,7 @@ int _find_view_priority(EngineState *s, int y);
 extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
 
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 /******************** Misc functions ********************/
 
 /**
@@ -243,6 +244,7 @@ extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
 void process_sound_events(EngineState *s);
 
 /******************** Constants ********************/
+#endif
 
 /* Maximum length of a savegame name (including terminator character) */
 #define SCI_MAX_SAVENAME_LENGTH 0x24

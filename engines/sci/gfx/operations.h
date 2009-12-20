@@ -34,7 +34,6 @@
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_system.h"
 #endif
-#include "sci/uinput.h"
 
 #include "common/list.h"
 
