@@ -866,7 +866,7 @@ void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
 	_system->setPalette(ci, dstColorIndex, 1);
 }
 
-bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime) {
+bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTicks, uint32 totalTicks) {
 	if (_use16ColorMode)
 		return false;
 
@@ -876,30 +876,28 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 
 	bool res = false;
 
-	int16 t1 = 0;
-	int16 t2 = 0;
-	int32 t3 = 0;
+	int16 srcV = 0;
+	int16 dstV = 0;
+	int32 outV = 0;
 
 	uint8 tmpPalEntry[3];
 
 	for (int i = 0; i < 3; i++) {
-		if (elapsedTime < targetTime) {
-			t1 = *src & 0x3f;
-			t2 = *dst & 0x3f;
+		if (elapsedTicks < totalTicks) {
+			srcV = *src & 0x3f;
+			dstV = *dst & 0x3f;
 
-			t3 = t1 - t2;
-			if (t3)
+			outV = srcV - dstV;
+			if (outV)
 				res = true;
 
-			t3 = (((t3 << 8) / (int)targetTime) * (int)elapsedTime) >> 8;
-			t3 =  t2 + t3;
+			outV = dstV + ((((outV << 8) / (int32)totalTicks) * (int32)elapsedTicks) >> 8);
 		} else {
-			t1 = *dst & 0x3f;
-			*p = t3 = t1;
+			*p = outV = *src;
 			res = false;
 		}
 
-		tmpPalEntry[i] = t3 & 0xff;
+		tmpPalEntry[i] = outV & 0xff;
 		src++;
 		dst++;
 		p++;

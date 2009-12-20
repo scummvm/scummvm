@@ -1649,7 +1649,7 @@ void LoLEngine::fadeText() {
 	if (!_fadeText)
 		return;
 
-	if (_screen->fadeColor(192, 252, _system->getMillis() - _palUpdateTimer, 60 * _tickLength))
+	if (_screen->fadeColor(192, 252, (_system->getMillis() - _palUpdateTimer) / _tickLength, 60))
 		return;
 
 	if (_needSceneRestore)

@@ -74,7 +74,7 @@ public:
 	void fadeToPalette1(int delay);
 	void loadSpecialColors(Palette &dst);
 	void copyColor(int dstColorIndex, int srcColorIndex);
-	bool fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime);
+	bool fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTicks, uint32 totalTicks);
 	bool fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime);
 	Palette **generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs);
 
