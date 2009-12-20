@@ -532,7 +532,7 @@ void OrionMenuView::destroyView() {
 	}
 }
 
-bool OrionMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool OrionMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	static Common::Point movingPos(0, 0);
 	static bool movingFlag = false;
 

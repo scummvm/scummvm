@@ -142,7 +142,7 @@ public:
 	void setNode(int32 nodeIndex);
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	int32 getCurrentNodeIndex() { return _currentNodeIndex; }
 	void selectEntry(int entryIndex);
 

@@ -88,7 +88,7 @@ RexMainMenuView::~RexMainMenuView() {
 	}
 }
 
-bool RexMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool RexMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	// Handle keypresses - these can be done at any time, even when the menu items are being drawn
 	if (eventType == KEVENT_KEY) {
 		switch (param) {
@@ -351,7 +351,7 @@ MadsMainMenuView::MadsMainMenuView(M4Engine *vm):
 
 }
 
-bool MadsMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool MadsMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	return false;
 }
 
@@ -394,7 +394,7 @@ DragonMainMenuView::~DragonMainMenuView() {
 	}
 }
 
-bool DragonMainMenuView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool DragonMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	char resName[20];
 	Common::SeekableReadStream *data;
 

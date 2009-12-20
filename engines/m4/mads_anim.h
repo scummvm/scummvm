@@ -81,7 +81,7 @@ public:
 	bool isAnimating() { return _animating; }
 	void scriptDone();
 
-	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 	void updateState();
 };
 
@@ -128,7 +128,7 @@ public:
 	void setScript(const char *resourceName, AnimviewCallback callback);
 	void scriptDone();
 
-	bool onEvent(M4EventType eventType, int param1, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 	void updateState();
 };
 

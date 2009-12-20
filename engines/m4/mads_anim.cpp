@@ -120,7 +120,7 @@ void TextviewView::setScript(const char *resourceName, TextviewCallback callback
 	processLines();
 }
 
-bool TextviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool TextviewView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	if (!_processEvents)
 		return false;
 
@@ -494,7 +494,7 @@ void AnimviewView::setScript(const char *resourceName, AnimviewCallback callback
 	_script = _vm->res()->get(_resourceName);
 }
 
-bool AnimviewView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool AnimviewView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	// Wait for the Escape key or a mouse press
 	if (((eventType == KEVENT_KEY) && (param == Common::KEYCODE_ESCAPE)) ||
 		(eventType == MEVENT_LEFT_RELEASE) || (eventType == MEVENT_RIGHT_RELEASE)) {

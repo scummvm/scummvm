@@ -70,7 +70,7 @@ public:
 	void refresh(const Common::Rect &areaRect);
 	void close() { _closeFlag = true; }
 
-	bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 
 	int _originalMidiVolume;
 	SaveGameList *_saveNames;

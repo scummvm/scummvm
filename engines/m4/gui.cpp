@@ -115,7 +115,7 @@ MenuButton::MenuButton(DialogView *owner, int buttonId, int xs, int ys, int widt
 	_callback = callbackFn;
 }
 
-bool MenuButton::onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem) {
+bool MenuButton::onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem) {
 	bool redrawFlag = false;
 	bool callbackFlag = false;
 	bool handledFlag = true;
@@ -386,7 +386,7 @@ void MenuHorizSlider::onRefresh() {
 	sprite->copyTo(parent(), _bounds.left + _thumbX, _bounds.top, 0);
 }
 
-bool MenuHorizSlider::onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem) {
+bool MenuHorizSlider::onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem) {
 	static bool movingFlag = false;
 	static int movingX = 0;
 	bool redrawFlag = false, handledFlag = false, callbackFlag = false;
@@ -568,7 +568,7 @@ void MenuVertSlider::onRefresh() {
 		thumbSprite->copyTo(parent(), _bounds.left, _bounds.top + _thumbY, 0);
 }
 
-bool MenuVertSlider::onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem) {
+bool MenuVertSlider::onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem) {
 	static bool movingFlag = false;
 	static int movingY = 0;
 	static uint32 callbackTime;
@@ -858,7 +858,7 @@ void MenuSaveLoadText::onRefresh() {
 	}
 }
 
-bool MenuSaveLoadText::onEvent(M4::M4EventType event, int param, int x, int y, M4::MenuObject *&currentItem) {
+bool MenuSaveLoadText::onEvent(M4::M4EventType event, int32 param, int x, int y, M4::MenuObject *&currentItem) {
 	if (!_visible) return false;
 	bool handledFlag = MenuButton::onEvent(event, param, x, y, currentItem);
 
@@ -985,7 +985,7 @@ void MenuTextField::onRefresh() {
 	}
 }
 
-bool MenuTextField::onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem) {
+bool MenuTextField::onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem) {
 	char tempStr[MAX_SAVEGAME_NAME];
 	int tempLen;
 	char *tempP;
@@ -1177,7 +1177,7 @@ void GUIButton::onRefresh() {
 	}
 }
 
-bool GUIButton::onEvent(M4EventType eventType, int param, int x, int y, GUIObject *&currentItem) {
+bool GUIButton::onEvent(M4EventType eventType, int32 param, int x, int y, GUIObject *&currentItem) {
 	bool result = false;
 	bool isPressed = (eventType == MEVENT_LEFT_CLICK) || (eventType == MEVENT_LEFT_HOLD) ||
 		(eventType == MEVENT_LEFT_DRAG);

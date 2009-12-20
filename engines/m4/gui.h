@@ -268,7 +268,7 @@ public:
 	int getObjectId() { return _objectId; }
 
 	void onExecute();
-	virtual bool onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem) { return false; }
+	virtual bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem) { return false; }
 };
 
 class MenuButton: public MenuObject {
@@ -278,7 +278,7 @@ public:
 		ObjectType buttonType = OBJTYPE_BUTTON);
 
 	void onRefresh();
-	bool onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem);
+	bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem);
 	bool getToggled() { return _objectType == OBJTYPE_OM_SWITCH_ON; }
 };
 
@@ -297,7 +297,7 @@ public:
 		int initialPercentage, Callback callbackFn = NULL, bool transparent = false);
 
 	void onRefresh();
-	bool onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem);
+	bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem);
 	int percent() { return _percent; }
 };
 
@@ -326,7 +326,7 @@ public:
 		int initialPercentage, Callback callbackFn = NULL, bool transparent = false);
 
 	void onRefresh();
-	bool onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem);
+	bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem);
 	MenuVertSliderState sliderState() { return _sliderState; }
 	int percent() { return _percent; }
 	void setPercentage(int value);
@@ -367,7 +367,7 @@ public:
 		bool loadFlag = false, const char *displayText = NULL, int displayValue = 0);
 
 	void onRefresh();
-	bool onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem);
+	bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem);
 	void setDisplay(int value, const char *text) { _displayValue = value; _displayText = text; }
 	int getIndex() { return _index; }
 	const char *getText() { return _displayText; }
@@ -388,7 +388,7 @@ public:
 		int displayValue = 0, bool transparent = true);
 
 	void onRefresh();
-	bool onEvent(M4EventType event, int param, int x, int y, MenuObject *&currentItem);
+	bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem);
 
 	const char *getText() { return _displayText; }
 	int getDisplayValue() { return _displayValue; }
@@ -401,7 +401,7 @@ private:
 public:
 	GUIRect(View *owner, const Common::Rect &bounds, int tag): GUIObject(owner, bounds) { _tag = tag; };
 
-	virtual bool onEvent(M4EventType eventType, int param, int x, int y, GUIObject *&currentItem) { return false; }
+	virtual bool onEvent(M4EventType eventType, int32 param, int x, int y, GUIObject *&currentItem) { return false; }
 	int getTag() const { return _tag; }
 };
 
@@ -418,7 +418,7 @@ public:
 		M4Surface *normalSprite, M4Surface *mouseOverSprite, M4Surface *pressedSprite);
 
 	void onRefresh();
-	bool onEvent(M4EventType eventType, int param, int x, int y, GUIObject *&currentItem);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, GUIObject *&currentItem);
 	GUIButtonState getState() const { return _buttonState; }
 };
 

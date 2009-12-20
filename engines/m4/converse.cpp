@@ -173,7 +173,7 @@ void ConversationView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	View::onRefresh(rects, destSurface);
 }
 
-bool ConversationView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool ConversationView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	//if (!this->isVisible())
 	//	return false;
 	if (!_entriesShown)

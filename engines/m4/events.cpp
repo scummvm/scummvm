@@ -50,6 +50,7 @@ Events::Events(M4Engine *vm) : _vm(vm) {
 	_keyCode = 0;
 	_console = new Console(_vm);
 	_mouseButtons = 0;
+	_ctrlFlag = false;
 }
 
 M4EventType Events::handleEvents() {
@@ -63,12 +64,20 @@ M4EventType Events::handleEvents() {
 			quitFlag = true;
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (_event.kbd.flags == Common::KBD_CTRL) {
-				if (_event.kbd.keycode == Common::KEYCODE_d)
+			// Note: The Ctrl-D ScummVM shortcut has been specialised so it will only activate the debugger
+			// if it's the first key pressed after the Ctrl key is held down
+			if ((_event.kbd.keycode == Common::KEYCODE_LCTRL) || (_event.kbd.keycode == Common::KEYCODE_RCTRL))
+				_ctrlFlag = true;
+			
+			else if (_event.kbd.flags == Common::KBD_CTRL) {
+				if ((_event.kbd.keycode == Common::KEYCODE_d) && _ctrlFlag) {
 					_console->attach();
 					_console->onFrame();
+				}
+				_ctrlFlag = false;
 			}
-			_keyCode = (int)_event.kbd.keycode;
+			_keyCode = (int32)_event.kbd.keycode | (_event.kbd.flags << 24);
+			
 
 			break;
 		case Common::EVENT_LBUTTONDOWN:

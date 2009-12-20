@@ -135,7 +135,7 @@ public:
 	HotkeyList &hotkeys() { return _hotkeys; }
 
 	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
-	virtual bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) { return false; }
+	virtual bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) { return false; }
 	virtual void updateState() {};
 
 protected:

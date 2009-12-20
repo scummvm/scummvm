@@ -91,7 +91,7 @@ void GUIInventory::onRefresh() {
 	}
 }
 
-bool GUIInventory::onEvent(M4EventType eventType, int param, int x, int y, GUIObject *&currentItem) {
+bool GUIInventory::onEvent(M4EventType eventType, int32 param, int x, int y, GUIObject *&currentItem) {
 	bool result = false;
 	int overIndex = getInsideIndex(x, y);
 	bool isPressed = (eventType == MEVENT_LEFT_CLICK) || (eventType == MEVENT_LEFT_HOLD) ||
@@ -268,7 +268,7 @@ void GameInterfaceView::setHighlightedButton(int index) {
 	_highlightedIndex = index;
 }
 
-bool GameInterfaceView::onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents) {
+bool GameInterfaceView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	static bool selectionFlag = false;
 	if (eventType == MEVENT_LEFT_RELEASE)
 		selectionFlag = false;

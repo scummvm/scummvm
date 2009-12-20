@@ -52,7 +52,7 @@ public:
 	RexMainMenuView(M4Engine *vm);
 	~RexMainMenuView();
 
-	bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	void updateState();
 };
 
@@ -74,7 +74,7 @@ public:
 	DragonMainMenuView(M4Engine *vm);
 	~DragonMainMenuView();
 
-	bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	void updateState();
 };
 
@@ -82,7 +82,7 @@ class MadsMainMenuView: public View {
 public:
 	MadsMainMenuView(M4Engine *vm);
 
-	bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	void updateState();
 };
 

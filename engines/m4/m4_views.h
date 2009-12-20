@@ -64,7 +64,7 @@ public:
 				 int horizCells, int vertCells, int cellWidth, int cellHeight, int tag);
 
 	void onRefresh();
-	bool onEvent(M4EventType eventType, int param, int x, int y, GUIObject *&currentItem);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, GUIObject *&currentItem);
 
 	void add(const char *name, const char *verb, M4Surface *icon, int iconIndex);
 	bool remove(const char *name);
@@ -104,7 +104,7 @@ public:
 	~GameInterfaceView();
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int param, int x, int y, bool &captureEvents);
+	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	void setStatusText(const char *text) { _statusText.setText(text); }
 	void cancelSentence() { setStatusText(NULL); }
 	void inventoryAdd(const char *name, const char *verb, int iconIndex) {

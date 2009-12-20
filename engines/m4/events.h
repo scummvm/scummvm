@@ -71,9 +71,10 @@ private:
 	M4Engine *_vm;
 	Common::Event _event;
 	M4MouseState _mouseState;
-	int _keyCode;
+	int32 _keyCode;
 	int _mouseButtons;
 	Console *_console;
+	bool _ctrlFlag;
 public:
 	bool quitFlag;
 	Events(M4Engine *vm);
