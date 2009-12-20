@@ -26,6 +26,8 @@
 #ifndef SCI_SOUNDCMD_H
 #define SCI_SOUNDCMD_H
 
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+
 #include "common/list.h"
 #include "sci/engine/state.h"
 
@@ -33,10 +35,10 @@ namespace Sci {
 
 class SciMusic;
 class SoundCommandParser;
-typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, SongHandle handle, int value);
+typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, int16 value);
 
-struct SciSoundCommand {
-	SciSoundCommand(const char *d, SoundCommand c) : sndCmd(c), desc(d) {}
+struct MusicEntryCommand {
+	MusicEntryCommand(const char *d, SoundCommand c) : sndCmd(c), desc(d) {}
 	SoundCommand sndCmd;
 	const char *desc;
 };
@@ -46,16 +48,20 @@ public:
 	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion doSoundVersion);
 	~SoundCommandParser();
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	void updateSfxState(SfxState *newState) { _state = newState; }
+#endif
 
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 private:
 	SciMusic *_music;
-	Common::Array<SciSoundCommand*> _soundCommands;
+	Common::Array<MusicEntryCommand*> _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState *_state;
+#endif
 	AudioPlayer *_audio;
 	bool _hasNodePtr;
 	SciVersion _doSoundVersion;
@@ -64,35 +70,36 @@ private:
 	reg_t _acc;
 	int _midiCmd, _controller, _param;
 
-	Common::List<reg_t> _soundList;
+	void cmdInitHandle(reg_t obj, int16 value);
+	void cmdPlayHandle(reg_t obj, int16 value);
+	void cmdDummy(reg_t obj, int16 value);
+	void cmdMuteSound(reg_t obj, int16 value);
+	void cmdSuspendHandle(reg_t obj, int16 value);
+	void cmdResumeHandle(reg_t obj, int16 value);
+	void cmdStopHandle(reg_t obj, int16 value);
+	void cmdDisposeHandle(reg_t obj, int16 value);
+	void cmdVolume(reg_t obj, int16 value);
+	void cmdFadeHandle(reg_t obj, int16 value);
+	void cmdGetPolyphony(reg_t obj, int16 value);
+	void cmdGetPlayNext(reg_t obj, int16 value);
 
-	void cmdInitHandle(reg_t obj, SongHandle handle, int value);
-	void cmdPlayHandle(reg_t obj, SongHandle handle, int value);
-	void cmdDummy(reg_t obj, SongHandle handle, int value);
-	void cmdMuteSound(reg_t obj, SongHandle handle, int value);
-	void cmdSuspendHandle(reg_t obj, SongHandle handle, int value);
-	void cmdResumeHandle(reg_t obj, SongHandle handle, int value);
-	void cmdStopHandle(reg_t obj, SongHandle handle, int value);
-	void cmdDisposeHandle(reg_t obj, SongHandle handle, int value);
-	void cmdVolume(reg_t obj, SongHandle handle, int value);
-	void cmdFadeHandle(reg_t obj, SongHandle handle, int value);
-	void cmdGetPolyphony(reg_t obj, SongHandle handle, int value);
-	void cmdGetPlayNext(reg_t obj, SongHandle handle, int value);
+	void initHandle(reg_t obj, bool isSci1);
 
-	void initHandle(reg_t obj, SongHandle handle, bool isSci1);
-	void changeHandleStatus(reg_t obj, SongHandle handle, int newStatus);
+	void cmdUpdateHandle(reg_t obj, int16 value);
+	void cmdUpdateCues(reg_t obj, int16 value);
+	void cmdSendMidi(reg_t obj, int16 value);
+	void cmdReverb(reg_t obj, int16 value);
+	void cmdHoldHandle(reg_t obj, int16 value);
+	void cmdGetAudioCapability(reg_t obj, int16 value);
+	void cmdSetHandleVolume(reg_t obj, int16 value);
+	void cmdSetHandlePriority(reg_t obj, int16 value);
+	void cmdSetHandleLoop(reg_t obj, int16 value);
+	void cmdSuspendSound(reg_t obj, int16 value);
+	void cmdUpdateVolumePriority(reg_t obj, int16 value);
 
-	void cmdUpdateHandle(reg_t obj, SongHandle handle, int value);
-	void cmdUpdateCues(reg_t obj, SongHandle handle, int value);
-	void cmdSendMidi(reg_t obj, SongHandle handle, int value);
-	void cmdReverb(reg_t obj, SongHandle handle, int value);
-	void cmdHoldHandle(reg_t obj, SongHandle handle, int value);
-	void cmdGetAudioCapability(reg_t obj, SongHandle handle, int value);
-	void cmdSetHandleVolume(reg_t obj, SongHandle handle, int value);
-	void cmdSetHandlePriority(reg_t obj, SongHandle handle, int value);
-	void cmdSetHandleLoop(reg_t obj, SongHandle handle, int value);
-	void cmdSuspendSound(reg_t obj, SongHandle handle, int value);
-	void cmdUpdateVolumePriority(reg_t obj, SongHandle handle, int value);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+	void changeHandleStatus(reg_t obj, int newStatus);
+#endif
 };
 
 } // End of namespace Sci
