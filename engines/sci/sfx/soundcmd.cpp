@@ -604,6 +604,9 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 }
 
 void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
+	if (!obj.segment)
+		return;
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	int signal = 0;
 	int min = 0;
@@ -674,35 +677,32 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, frame, frame);
 	}
 #else
-	// TODO
-#endif
 
-#if 0
-	if (hobj == 0)
+	int slot = _music->findListSlot(obj);
+	if (slot < 0) {
+		warning("cmdUpdateCues: Slot not found");
 		return;
-	Object obj(hobj);
-	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
-	if (hnode) {
-		MusicEntry *pSnd = (MusicEntry *)heap2Ptr(hnode);
-		switch (pSnd->signal) {
-		case 0:
-			if (pSnd->dataInc != obj.getProperty(92)) { // dataInc
-				obj.setProperty(92, pSnd->dataInc);	// dataInc
-				obj.setProperty(17, pSnd->dataInc + 127); // signal
-			}
-			break;
-		case 0xFFFF:
-			StopSnd(hobj);
-			break;
-		default:
-			obj.setProperty(17, pSnd->signal);	// signal
+	}
+
+	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
+		int16 signal = GET_SEL32V(_segMan, obj, signal);
+		int16 dataInc = GET_SEL32V(_segMan, obj, dataInc);
+
+		switch (signal) {
+			case 0:
+				PUT_SEL32V(_segMan, obj, signal, dataInc + 127);
+				break;
+			case 0xFFFF:
+				cmdStopHandle(obj, value);
+				break;
+			default:
+				break;
 		}
-		//D13E
-		pSnd->signal = 0;
-		obj.setProperty(94, pSnd->ticker / 3600); // .min
-		obj.setProperty(95, pSnd->ticker % 3600 / 60); // .sec
-		obj.setProperty(96, pSnd->ticker); // .frame
-		obj.setProperty(97, pSnd->volume); // volume
+
+		uint16 ticker = _music->_playList[slot]->ticker;
+		PUT_SEL32V(_segMan, obj, min, ticker / 3600);
+		PUT_SEL32V(_segMan, obj, sec, ticker % 3600 / 60);
+		PUT_SEL32V(_segMan, obj, frame, ticker);
 	}
 #endif
 }

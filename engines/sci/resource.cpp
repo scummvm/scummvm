@@ -1809,7 +1809,7 @@ bool ResourceManager::hasSci1Voc900() {
 }
 
 SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan) : _resMan(resMan) {
-	Resource *res = resNumber ? _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true) : NULL;
+	Resource *res = _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true);
 	if (!res)
 		return;
 
