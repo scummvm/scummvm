@@ -4,7 +4,7 @@
 #   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
 #   Free Software Foundation, Inc.
 
-timestamp='2009-09-18'
+timestamp='2009-12-13'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ GNU config.guess ($timestamp)
 
 Originally written by Per Bothner.
 Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
-2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
@@ -332,6 +332,9 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
 	exit ;;
     sun4*:SunOS:5.*:* | tadpole*:SunOS:5.*:*)
 	echo sparc-sun-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+	exit ;;
+    i86pc:AuroraUX:5.*:* | i86xen:AuroraUX:5.*:*)
+	echo i386-pc-auroraux${UNAME_RELEASE}
 	exit ;;
     i86pc:SunOS:5.*:* | i86xen:SunOS:5.*:*)
 	eval $set_cc_for_build
@@ -807,12 +810,12 @@ EOF
     i*:PW*:*)
 	echo ${UNAME_MACHINE}-pc-pw32
 	exit ;;
-    *:Interix*:[3456]*)
+    *:Interix*:*)
     	case ${UNAME_MACHINE} in
 	    x86)
 		echo i586-pc-interix${UNAME_RELEASE}
 		exit ;;
-	    EM64T | authenticamd | genuineintel)
+	    authenticamd | genuineintel | EM64T)
 		echo x86_64-unknown-interix${UNAME_RELEASE}
 		exit ;;
 	    IA64)
@@ -891,7 +894,15 @@ EOF
     	echo frv-unknown-linux-gnu
 	exit ;;
     i*86:Linux:*:*)
-	echo ${UNAME_MACHINE}-pc-linux-gnu
+	LIBC=gnu
+	eval $set_cc_for_build
+	sed 's/^	//' << EOF >$dummy.c
+	#ifdef __dietlibc__
+	LIBC=dietlibc
+	#endif
+EOF
+	eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^LIBC'`
+	echo "${UNAME_MACHINE}-pc-linux-${LIBC}"
 	exit ;;
     ia64:Linux:*:*)
 	echo ${UNAME_MACHINE}-unknown-linux-gnu
@@ -918,11 +929,7 @@ EOF
 	#endif
 	#endif
 EOF
-	eval "`$CC_FOR_BUILD -E $dummy.c 2>/dev/null | sed -n '
-	    /^CPU/{
-		s: ::g
-		p
-	    }'`"
+	eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^CPU'`
 	test x"${CPU}" != x && { echo "${CPU}-unknown-linux-gnu"; exit; }
 	;;
     or32:Linux:*:*)
