@@ -455,7 +455,6 @@ private:
 
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
-	int _timer3Para;
 
 	// sound
 	int convertVolumeToMixer(int value);

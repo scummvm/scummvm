@@ -238,7 +238,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lightningSfxFrame = 0;
 
 	_compassTimer = 0;
-	_timer3Para = 0;
 	_scriptCharacterCycle = 0;
 	_partyDamageFlags = -1;
 
@@ -3511,7 +3510,6 @@ void LoLEngine::removeCharacterEffects(LoLCharacter *c, int first, int last) {
 		}
 	}
 
-	_timer3Para = 1;
 	_timer->enable(3);
 }
 

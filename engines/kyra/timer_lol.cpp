@@ -107,7 +107,7 @@ void LoLEngine::timerProcessMonsters(int timerNum) {
 }
 
 void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
-	int v = 0;
+	int eventsLeft = 0;
 	for (int i = 0; i < 4; i++) {
 		if (!(_characters[i].flags & 1))
 			continue;
@@ -117,8 +117,8 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 				continue;
 
 			if (--_characters[i].characterUpdateDelay[ii] > 0) {
-				if (_characters[i].characterUpdateDelay[ii] > v)
-					v = _characters[i].characterUpdateDelay[ii];
+				if (_characters[i].characterUpdateDelay[ii] > eventsLeft)
+					eventsLeft = _characters[i].characterUpdateDelay[ii];
 				continue;
 			}
 
@@ -127,8 +127,8 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 				if (_characters[i].weaponHit) {
 					_characters[i].weaponHit = 0;
 					_characters[i].characterUpdateDelay[ii] = calcMonsterSkillLevel(i, 6);
-					if (_characters[i].characterUpdateDelay[ii] > v)
-						v = _characters[i].characterUpdateDelay[ii];
+					if (_characters[i].characterUpdateDelay[ii] > eventsLeft)
+						eventsLeft = _characters[i].characterUpdateDelay[ii];
 				} else {
 					_characters[i].flags &= 0xfffb;
 				}
@@ -147,12 +147,12 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 				break;
 
 			case 3:
-				v = rollDice(1, 2);
-				if (inflictDamage(i, v, 0x8000, 0, 0x80)) {
+				eventsLeft = rollDice(1, 2);
+				if (inflictDamage(i, eventsLeft, 0x8000, 0, 0x80)) {
 					_txt->printMessage(2, getLangString(0x4022), _characters[i].name);
 					_characters[i].characterUpdateDelay[ii] = 10;
-					if (_characters[i].characterUpdateDelay[ii] > v)
-						v = _characters[i].characterUpdateDelay[ii];
+					if (_characters[i].characterUpdateDelay[ii] > eventsLeft)
+						eventsLeft = _characters[i].characterUpdateDelay[ii];
 				}
 				break;
 
@@ -184,12 +184,10 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 		}
 	}
 
-	if (v) {
+	if (eventsLeft)
 		_timer->enable(3);
-		_timer3Para = v * 15;
-	} else {
+	else
 		_timer->disable(3);
-	}
 }
 
 void LoLEngine::timerProcessFlyingObjects(int timerNum) {
