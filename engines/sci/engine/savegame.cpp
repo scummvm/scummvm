@@ -42,8 +42,10 @@
 #include "sci/engine/vm_types.h"
 #include "sci/gui/gui.h"
 #include "sci/sfx/audio.h"
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
+#endif
 
 namespace Sci {
 
@@ -55,21 +57,27 @@ namespace Sci {
 const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
 
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 // from ksound.cpp:
 SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id);
+#endif
+
 
 #pragma mark -
 
 // TODO: Many of the following sync_*() methods should be turned into member funcs
 // of the classes they are syncing.
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj);
+#endif
 
 static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
 	s.syncAsUint16LE(obj.segment);
 	s.syncAsUint16LE(obj.offset);
 }
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_song_t(Common::Serializer &s, Song &obj) {
 	s.syncAsSint32LE(obj._handle);
 	s.syncAsSint32LE(obj._resourceNum);
@@ -88,7 +96,7 @@ static void sync_song_t(Common::Serializer &s, Song &obj) {
 		obj._nextStopping = 0;
 	}
 }
-
+#endif
 
 // Experimental hack: Use syncWithSerializer to sync. By default, this assume
 // the object to be synced is a subclass of Serializable and thus tries to invoke
@@ -275,9 +283,11 @@ void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	sync_reg_t(s, obj.reg);
 }
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_sfx_state_t(Common::Serializer &s, SfxState &obj) {
 	sync_songlib_t(s, obj._songlib);
 }
+#endif
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
 	// TODO: It would be a good idea to store a magic number & a header size here,
@@ -364,7 +374,12 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncArray<Class>(s, _segMan->_classtable);
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	sync_sfx_state_t(s, _sound);
+#else
+	// TODO. For now, error out on purpose
+	error("TODO: Sync music state");
+#endif
 }
 
 void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
@@ -527,6 +542,7 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 
 #pragma mark -
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 	int songcount = 0;
 	if (s.isSaving())
@@ -549,6 +565,7 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 		}
 	}
 }
+#endif
 
 #pragma mark -
 
@@ -712,6 +729,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 int _reset_graphics_input(EngineState *s);
 #endif
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
 	SongIteratorType it_type;
@@ -724,7 +742,7 @@ static void reconstruct_sounds(EngineState *s) {
 	seeker = s->_sound._songlib._lib;
 
 	while (seeker) {
-		SongIterator *base, *ff;
+		SongIterator *base, *ff = 0;
 		int oldstatus;
 		SongIterator::Message msg;
 
@@ -745,10 +763,13 @@ static void reconstruct_sounds(EngineState *s) {
 		seeker = seeker->_next;
 	}
 }
+#endif
 
 EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	EngineState *retval;
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongLibrary temp;
+#endif
 
 /*
 	if (s->sound_server) {
@@ -796,7 +817,9 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	s->_sound.sfx_exit();
+#endif
 
 	// Set exec stack base to zero
 	retval->execution_stack_base = 0;
@@ -807,12 +830,14 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->old_screen = 0;
 #endif
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	temp = retval->_sound._songlib;
 	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags);
 	retval->sfx_init_flags = s->sfx_init_flags;
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
 	retval->_soundCmd->updateSfxState(&retval->_sound);
+#endif
 
 	reconstruct_stack(retval);
 	retval->_segMan->reconstructScripts(retval);
@@ -844,11 +869,13 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 #endif
 	retval->_gameName = s->_gameName;
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	retval->_sound._it = NULL;
 	retval->_sound._flags = s->_sound._flags;
 	retval->_sound._song = NULL;
 	retval->_sound._suspended = s->_sound._suspended;
 	reconstruct_sounds(retval);
+#endif
 
 	// Message state:
 	retval->_msgState = new MessageState(retval->_segMan);
