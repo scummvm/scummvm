@@ -35,6 +35,7 @@
 
 #include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 /*
  Sound drivers info: (from driver cmd0)
@@ -54,73 +55,38 @@ namespace Sci {
 typedef uint16 SCIHANDLE;
 typedef uint16 HEAPHANDLE;
 
-class SoundRes : Resource {
-public:
-	enum kTrackType {
-		kTrackAdlib = 0,
-		kTrackGameBlaster = 9,
-		kTrackMT32 = 12,
-		kTrackSpeaker = 18,
-		kTrackTandy = 19
-	};
+class SegManager;
 
-	struct tagChannel {
-		byte number;
-		byte poly;
-		uint16 unk;
-		uint16 size;
-		byte *ptr;
-		long time;
-		byte prev;
-	};
-
-	struct tagTrack {
-		kTrackType type;
-		byte nDigital;
-		byte nChannels;
-		tagChannel *aChannels;
-		uint sz;
-	};
-public:
-	SoundRes(SCIHANDLE handle, uint32 ResId);
-	~SoundRes();
-	tagTrack *getTrackByNumber(uint16 number);
-	tagTrack *getTrackByType(kTrackType type);
-
-protected:
-	byte nTracks;
-	tagTrack *aTracks;
+enum kTrackType {
+	kTrackAdlib = 0,
+	kTrackGameBlaster = 9,
+	kTrackMT32 = 12,
+	kTrackSpeaker = 18,
+	kTrackTandy = 19
 };
 
 enum kSndStatus {
 	kStopped = 0, kPaused, kPlaying
 };
 
-// script-used struct to manipulate sound (358 bytes)
 class MidiParser_SCI;
 
-struct sciSound {
-	//sciNode node; // [0-5]	// we use a Common::List
-	uint16 resnum;// [6-7]
-	//  byte * pMidiData;
-	Audio::AudioStream* pStreamAud;
+struct MusicEntry {
+	SoundResource *soundRes;
+	reg_t soundObj;
+	int16 prio;	// stored for faster sound sorting
 	MidiParser_SCI *pMidiParser;
-	Audio::SoundHandle hCurrentAud;
-	kSndStatus sndStatus;
 
-	uint16 dataInc; //[338-339]
+	// Variables used for music fading
 	uint16 ticker;
-	uint16 signal; //[344]
-	byte prio; // 348
-	byte loop; // 349
-	byte volume; // 350
-
 	byte FadeTo;
 	short FadeStep;
 	uint32 FadeTicker;
 	uint32 FadeTickerStep;
 
-	//  byte unk7[7];
+	Audio::AudioStream* pStreamAud;
+	Audio::SoundHandle hCurrentAud;
+	kSndStatus status;
 };
 
 class SciMusic {
@@ -138,13 +104,13 @@ public:
 		_playList.clear();
 	}
 	// sound and midi functions
-	void soundInitSnd(SoundRes *res, sciSound *pSnd);
-	void soundPlay(sciSound *pSnd);
-	void soundStop(sciSound *pSnd);
-	void soundKill(sciSound *pSnd);
-	void soundPause(sciSound *pSnd);
-	void soundSetVolume(sciSound *pSnd, byte volume);
-	void soundSetPriority(sciSound *pSnd, byte prio);
+	void soundInitSnd(MusicEntry *pSnd);
+	void soundPlay(MusicEntry *pSnd);
+	void soundStop(MusicEntry *pSnd);
+	void soundKill(MusicEntry *pSnd);
+	void soundPause(MusicEntry *pSnd);
+	void soundSetVolume(MusicEntry *pSnd, byte volume);
+	void soundSetPriority(MusicEntry *pSnd, byte prio);
 	uint16 soundGetMasterVolume();
 	void soundSetMasterVolume(uint16 vol);
 	uint16 soundGetVoices();
@@ -152,34 +118,42 @@ public:
 		return _dwTempo;
 	}
 
+	int findListSlot(reg_t obj) {
+		for (uint32 i = 0; i < _playList.size(); i++) {
+			if (_playList[i]->soundObj == obj)
+				return i;
+		}
+		return -1;
+	}
+
 	uint16 _savelen;
+	Common::Array<MusicEntry *> _playList;
+
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);
 	void sortPlayList();
 	void loadPatchMT32();
 	void patchSysEx(byte * addr, byte *pdata, int len);
 	void patchUpdateAddr(byte *addr, int len);
-	void doFade(sciSound *pSnd);
+	void doFade(MusicEntry *pSnd);
 
 	Audio::Mixer *_pMixer;
 	MidiDriver *_pMidiDrv;
 	MidiDriverType _midiType;
 	Common::Mutex _mutex;
 
-	Common::Array<sciSound *> _playList;
 	uint32 _dwTempo;
 	bool _bMultiMidi; // use adlib's digital track if midi track don't have one
-
 private:
 	static void miditimerCallback(void *p);
-
+	SegManager *_segMan;
 };
 
 class MidiParser_SCI : public MidiParser {
 public:
 	MidiParser_SCI();
 	~MidiParser_SCI();
-	bool loadMusic(SoundRes::tagTrack *ptrack, sciSound *psnd);
+	bool loadMusic(SoundResource::tagTrack *ptrack, MusicEntry *psnd);
 	bool loadMusic(byte *, uint32) {
 		return false;
 	}
@@ -197,10 +171,13 @@ protected:
 	byte *midiMixChannels();
 	byte midiGetNextChannel(long ticker);
 	byte *_pMidiData;
-	SoundRes::tagTrack *_pTrack;
-	sciSound *_pSnd;
+	SoundResource::tagTrack *_pTrack;
+	MusicEntry *_pSnd;
 	uint32 _loopTick;
 	byte _volume;
+
+private:
+	SegManager *_segMan;
 };
 
 } // end of namespace

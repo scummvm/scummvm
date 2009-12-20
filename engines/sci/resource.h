@@ -427,8 +427,6 @@ protected:
 	void detectSciVersion();
 };
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-
 class SoundResource {
 public:
 	enum kTrackType {
@@ -468,7 +466,6 @@ private:
 	Resource *_innerResource;
 	ResourceManager *_resMan;
 };
-#endif
 
 } // End of namespace Sci
 

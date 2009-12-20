@@ -23,21 +23,26 @@
  *
  */
 
-#include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/sfx/music.h"
 #include "sound/audiostream.h"
 #include "common/config-manager.h"
+
+#include "sci/sci.h"
+#include "sci/engine/state.h"
+#include "sci/engine/kernel.h"
+#include "sci/resource.h"
+#include "sci/sfx/music.h"
+#include "sci/sfx/softseq/pcjr.h"
 
 namespace Sci {
 
 static const int nMidiParams[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
 
 static int f_compare(const void *arg1, const void *arg2) {
-	return ((const sciSound *)arg2)->prio - ((const sciSound *)arg1)->prio;
+	return ((const MusicEntry *)arg2)->prio - ((const MusicEntry *)arg1)->prio;
 }
 
 SciMusic::SciMusic() {
+	_segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 }
 
 SciMusic::~SciMusic() {
@@ -58,9 +63,27 @@ void SciMusic::init() {
 			ConfMan.getInt("music_volume"));
 	// SCI sound init
 	_dwTempo = 0;
-	_midiType = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PCSPK
-			| MDT_PREFER_MIDI);
-	_pMidiDrv = MidiDriver::createMidi(_midiType);
+
+	_midiType = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PCSPK);
+
+	switch (_midiType) {
+	case MD_ADLIB:
+		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
+		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
+			_pMidiDrv = MidiPlayer_Amiga_create();
+		else
+			_pMidiDrv = MidiPlayer_Adlib_create();
+		break;
+	case MD_PCJR:
+		_pMidiDrv = new MidiPlayer_PCJr();
+		break;
+	case MD_PCSPK:
+		_pMidiDrv = new MidiPlayer_PCSpeaker();
+		break;
+	default:
+		break;
+	}
+
 	if (_pMidiDrv) {
 		_pMidiDrv->open();
 		_pMidiDrv->setTimerCallback(this, &miditimerCallback);
@@ -74,7 +97,7 @@ bool SciMusic::saveState(Common::OutSaveFile *pFile) {
 	// TODO
 #if 0
 	pFile->writeString("AUDIO\n");
-	// palylist
+	// playlist
 	int sz = _playList.size();
 	pFile->writeUint16LE(sz);
 	for(int i = 0; i < sz; i++) {
@@ -92,11 +115,9 @@ bool SciMusic::saveState(Common::OutSaveFile *pFile) {
 
 //----------------------------------------
 bool SciMusic::restoreState(Common::InSaveFile *pFile){
-	// TODO
-#if 0
 	if (pFile->readLine() != "AUDIO")
 		return false;
-#endif
+
 	return true;
 }
 //----------------------------------------
@@ -115,30 +136,23 @@ void SciMusic::miditimerCallback(void *p) {
 }
 //----------------------------------------
 uint16 SciMusic::soundGetVoices() {
-	uint16 res;
 	switch (_midiType) {
 	case MD_PCSPK:
-		res = 1;
-		break;
+		return 1;
 	case MD_PCJR:
-		res = 3;
-		break;
+		return 3;
 	case MD_ADLIB:
-		res = 8;
-		break;
+		return 8;
 	case MD_MT32:
-		res = 16;
-		break;
+		return 16;
 	default:
-		res = 1;
-		break;
+		return 1;
 	}
-	return res;
 }
 //----------------------------------------
 void SciMusic::sortPlayList() {
-	sciSound ** pData = _playList.begin();
-	qsort(pData, _playList.size(), sizeof(sciSound *), &f_compare);
+	MusicEntry ** pData = _playList.begin();
+	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
 }
 
 void SciMusic::patchSysEx(byte * addr, byte *pdata, int len) {
@@ -171,10 +185,14 @@ void SciMusic::patchUpdateAddr(byte *addr, int len) {
 	}
 }
 void SciMusic::loadPatch() {
+// FIXME: This should be done at the driver level
+#if 0
 	if (_midiType == MD_MT32)
 		loadPatchMT32();
+#endif
 }
 
+#if 0
 // currently loads patch 1.pat for Roland/MT-32 device
 void SciMusic::loadPatchMT32() {
 	//byte sysText[] = { 0x20, 0, 0 };
@@ -251,35 +269,39 @@ void SciMusic::loadPatchMT32() {
 	debug("MT-32 patch loaded");
 	}
 }
+#endif
+
 //----------------------------------------
-void SciMusic::soundInitSnd(SoundRes *res, sciSound *pSnd) {
+void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	//_mutex.lock();
-	SoundRes::tagTrack *pTrack = NULL;
+
+	SoundResource::tagTrack *pTrack = NULL;
 	switch (_midiType) {
 	case MD_PCSPK:
-		pTrack = res->getTrackByType(SoundRes::kTrackSpeaker);
+		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackSpeaker);
 		break;
 	case MD_PCJR:
-		pTrack = res->getTrackByType(SoundRes::kTrackTandy);
+		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackTandy);
 		break;
 	case MD_ADLIB:
-		pTrack = res->getTrackByType(SoundRes::kTrackAdlib);
+		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackAdlib);
 		break;
 	case MD_MT32:
-		pTrack = res->getTrackByType(SoundRes::kTrackMT32);
+		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackMT32);
 		break;
 	default:
 		break;
 	}
+
 	// attempting to select default MT-32/Roland track
 	if (!pTrack)
-		pTrack = res->getTrackByType(SoundRes::kTrackMT32);
+		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackMT32);
 	if (pTrack) {
 		// if MIDI device is selected but there is no digital track in sound resource
 		// try to use adlib's digital sample if possible
 		if (_midiType <= MD_MT32 && pTrack->nDigital == 0xFF && _bMultiMidi) {
-			if (res->getTrackByType(SoundRes::kTrackAdlib)->nDigital != 0xFF)
-				pTrack = res->getTrackByType(SoundRes::kTrackAdlib);
+			if (pSnd->soundRes->getTrackByType(SoundResource::kTrackAdlib)->nDigital != 0xFF)
+				pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackAdlib);
 		}
 		// play digital sample
 		if (pTrack->nDigital != 0xFF) {
@@ -302,14 +324,16 @@ void SciMusic::soundInitSnd(SoundRes *res, sciSound *pSnd) {
 			pSnd->pMidiParser->loadMusic(pTrack, pSnd);
 		}
 	}
+
 	//_mutex.unlock();
 }
 //----------------------------------------
 void SciMusic::onTimer() {
+
 	_mutex.lock();
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
-		if (_playList[i]->sndStatus != kPlaying)
+		if (_playList[i]->status != kPlaying)
 			continue;
 		if (_playList[i]->pMidiParser) {
 			if (_playList[i]->FadeStep)
@@ -317,35 +341,41 @@ void SciMusic::onTimer() {
 			_playList[i]->pMidiParser->onTimer();
 			_playList[i]->ticker = (uint16)_playList[i]->pMidiParser->getTick();
 		} else if (_playList[i]->pStreamAud) {
-			if (_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)
-					== false) {
+			if (!_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)) {
 				_playList[i]->ticker = 0xFFFF;
-				_playList[i]->signal = 0xFFFF;
-				_playList[i]->sndStatus = kStopped;
-			} else
+				PUT_SEL32V(_segMan, _playList[i]->soundObj, signal, 0xFFFF);
+				_playList[i]->status = kStopped;
+			} else {
 				_playList[i]->ticker = (uint16)(_pMixer->getSoundElapsedTime(
 						_playList[i]->hCurrentAud) * 0.06);
+			}
 		}
 	}//for()
 	_mutex.unlock();
 }
 //---------------------------------------------
-void SciMusic::doFade(sciSound *pSnd) {
+void SciMusic::doFade(MusicEntry *pSnd) {
 	if (pSnd->FadeTicker)
 		pSnd->FadeTicker--;
 	else {
 		pSnd->FadeTicker = pSnd->FadeTickerStep;
-		if (pSnd->volume + pSnd->FadeStep > pSnd->FadeTo) {
-			pSnd->volume = pSnd->FadeTo;
+		// Get volume for sound
+		int16 sndVol = GET_SEL32V(_segMan, pSnd->soundObj, vol);
+
+		if (sndVol + pSnd->FadeStep > pSnd->FadeTo) {
+			sndVol = pSnd->FadeTo;
 			pSnd->FadeStep = 0;
 		} else
-			pSnd->volume += pSnd->FadeStep;
-		pSnd->pMidiParser->setVolume(pSnd->volume);
+			sndVol += pSnd->FadeStep;
+
+		PUT_SEL32V(_segMan, pSnd->soundObj, vol, sndVol);
+
+		pSnd->pMidiParser->setVolume(sndVol);
 	}
 }
 
 //---------------------------------------------
-void SciMusic::soundPlay(sciSound *pSnd) {
+void SciMusic::soundPlay(MusicEntry *pSnd) {
 	//_mutex.lock();
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
@@ -356,22 +386,24 @@ void SciMusic::soundPlay(sciSound *pSnd) {
 		sortPlayList();
 	}
 
-	if (pSnd->pStreamAud && _pMixer->isSoundHandleActive(pSnd->hCurrentAud)
-			== false)
+	// Get volume for sound
+	int16 sndVol = GET_SEL32V(_segMan, pSnd->soundObj, vol);
+
+	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
-				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
-	else if (pSnd->pMidiParser) {
-		pSnd->pMidiParser->setVolume(pSnd->volume);
-		if (pSnd->sndStatus == kStopped)
+				pSnd->pStreamAud, -1, sndVol, 0, false);
+	} else if (pSnd->pMidiParser) {
+		pSnd->pMidiParser->setVolume(sndVol);
+		if (pSnd->status == kStopped)
 			pSnd->pMidiParser->jumpToTick(0);
 	}
-	pSnd->sndStatus = kPlaying;
+	pSnd->status = kPlaying;
 	//_mutex.unlock();
 }
 //---------------------------------------------
-void SciMusic::soundStop(sciSound *pSnd) {
+void SciMusic::soundStop(MusicEntry *pSnd) {
 	//_mutex.lock();
-	pSnd->sndStatus = kStopped;
+	pSnd->status = kStopped;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 	if (pSnd->pMidiParser)
@@ -379,21 +411,21 @@ void SciMusic::soundStop(sciSound *pSnd) {
 	//_mutex.unlock();
 }
 //---------------------------------------------
-void SciMusic::soundSetVolume(sciSound *pSnd, byte volume) {
+void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	if (pSnd->pStreamAud)
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume);
 	else if (pSnd->pMidiParser)
 		pSnd->pMidiParser->setVolume(volume);
 }
 //---------------------------------------------
-void SciMusic::soundSetPriority(sciSound *pSnd, byte prio) {
+void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 	pSnd->prio = prio;
 	sortPlayList();
 }
 //---------------------------------------------
-void SciMusic::soundKill(sciSound *pSnd) {
+void SciMusic::soundKill(MusicEntry *pSnd) {
 	//_mutex.lock();
-	pSnd->sndStatus = kStopped;
+	pSnd->status = kStopped;
 	if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->unloadMusic();
 		delete pSnd->pMidiParser;
@@ -405,7 +437,7 @@ void SciMusic::soundKill(sciSound *pSnd) {
 	}
 
 	uint sz = _playList.size(), i;
-	// searching if sound is already in _playList
+	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
 		if (_playList[i] == pSnd) {
 			_playList.remove_at(i);
@@ -415,8 +447,8 @@ void SciMusic::soundKill(sciSound *pSnd) {
 	//_mutex.unlock();
 }
 //---------------------------------------------
-void SciMusic::soundPause(sciSound *pSnd) {
-	pSnd->sndStatus = kPaused;
+void SciMusic::soundPause(MusicEntry *pSnd) {
+	pSnd->status = kPaused;
 	if (pSnd->pStreamAud)
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	else if (pSnd->pMidiParser)
@@ -449,17 +481,19 @@ MidiParser_SCI::MidiParser_SCI() :
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
 	setTempo(16667);
+
+	_segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 }
 //---------------------------------------------
 MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
 }
 //---------------------------------------------
-bool MidiParser_SCI::loadMusic(SoundRes::tagTrack *ptrack, sciSound *psnd) {
+bool MidiParser_SCI::loadMusic(SoundResource::tagTrack *ptrack, MusicEntry *psnd) {
 	unloadMusic();
 	_pTrack = ptrack;
 	_pSnd = psnd;
-	setVolume(psnd->volume);
+	setVolume(GET_SEL32V(_segMan, _pSnd->soundObj, vol));
 	midiMixChannels();
 
 	_num_tracks = 1;
@@ -497,10 +531,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
-			if (info.basic.param1 != 0x7F)
-				_pSnd->signal = info.basic.param1;
-			else
+			if (info.basic.param1 != 0x7F) {
+				PUT_SEL32V(_segMan, _pSnd->soundObj, signal, info.basic.param1);
+			} else {
 				_loopTick = _position._play_tick;
+			}
 		}
 		break;
 	case 0xD:
@@ -512,8 +547,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
 		if (info.channel() == 0xF) {// SCI special
-			if (info.basic.param1 == 0x60)
-				_pSnd->dataInc++;
+			if (info.basic.param1 == 0x60) {
+				int dataInc = GET_SEL32V(_segMan, _pSnd->soundObj, dataInc);
+				PUT_SEL32V(_segMan, _pSnd->soundObj, dataInc, dataInc++);
+			}
 			// BF 50 x - set reverb to x
 			// BF 60 x - dataInc++
 			// BF 52 x - bHold=x
@@ -567,12 +604,13 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
-				if (_pSnd->loop) {
+				int loop = GET_SEL32V(_segMan, _pSnd->soundObj, loop);
+				if (loop) {
 					jumpToTick(_loopTick);
-					_pSnd->loop--;
+					PUT_SEL32V(_segMan, _pSnd->soundObj, loop, loop--);
 				} else {
-					_pSnd->sndStatus = kStopped;
-					_pSnd->signal = 0xFFFF;
+					_pSnd->status = kStopped;
+					PUT_SEL32V(_segMan, _pSnd->soundObj, signal, 0xFFFF);
 				}
 			}
 			break;
@@ -588,6 +626,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	byte curr = 0xFF;
 	long closest = ticker + 1000000, next = 0;
+
 	for (int i = 0; i < _pTrack->nChannels; i++) {
 		if (_pTrack->aChannels[i].time == -1) // channel ended
 			continue;
@@ -600,6 +639,7 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 			closest = next;
 		}
 	}
+
 	return curr;
 }
 //----------------------------------------
@@ -612,13 +652,14 @@ byte *MidiParser_SCI::midiMixChannels() {
 		_pTrack->aChannels[i].prev = 0;
 		lSize += _pTrack->aChannels[i].size;
 	}
+
 	byte *pOutData = new byte[lSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
 	_pMidiData = pOutData;
 	long ticker = 0;
 	byte curr, delta;
 	byte cmd, par1, global_prev = 0;
 	long new_delta;
-	SoundRes::tagChannel *pCh;
+	SoundResource::tagChannel *pCh;
 	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still active channel
 		pCh = &_pTrack->aChannels[curr];
 		delta = *pCh->ptr++;
@@ -673,6 +714,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 
 	for (int i = 0; i < _pTrack->nChannels; i++)
 		_pTrack->aChannels[i].ptr = pDataPtr[i];
+
 	delete[] pDataPtr;
 	return _pMidiData;
 }
@@ -682,26 +724,11 @@ void MidiParser_SCI::setVolume(byte bVolume) {
 		bVolume = 0x7F;
 	if (_volume != bVolume) {
 		_volume = bVolume;
+
 		// sending volume change to all active channels
 		for (int i = 0; i < _pTrack->nChannels; i++)
 			if (_pTrack->aChannels[i].number <= 0xF)
 				_driver->send(0xB0 + _pTrack->aChannels[i].number, 7, _volume);
 	}
 }
-
-//---------------------------
-
-SoundRes::tagTrack* SoundRes::getTrackByNumber(uint16 number) {
-	if (/*number >= 0 &&*/number < nTracks)
-		return &aTracks[number];
-	return NULL;
-}
-
-SoundRes::tagTrack* SoundRes::getTrackByType(kTrackType type) {
-	for (int i = 0; i < nTracks; i++)
-		if (aTracks[i].type == type)
-			return &aTracks[i];
-	return NULL;
-}
-
 } // end of namespace SCI

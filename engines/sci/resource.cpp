@@ -1808,8 +1808,6 @@ bool ResourceManager::hasSci1Voc900() {
 	return offset == res->size;
 }
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-
 SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan) : _resMan(resMan) {
 	Resource *res = resNumber ? _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true) : NULL;
 	if (!res)
@@ -1886,7 +1884,5 @@ SoundResource::tagTrack* SoundResource::getTrackByType(kTrackType type) {
 			return &aTracks[i];
 	return NULL;
 }
-
-#endif
 
 } // End of namespace Sci
