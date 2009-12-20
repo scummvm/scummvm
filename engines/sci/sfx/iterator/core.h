@@ -28,7 +28,11 @@
 #define SCI_SFX_CORE_H
 
 #include "common/error.h"
-#include "sci/sfx/songlib.h"
+
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+#include "sci/sfx/iterator/songlib.h"
 #include "sci/resource.h"
 
 namespace Sci {
@@ -199,5 +203,7 @@ protected:
 };
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS
 
 #endif // SCI_SFX_CORE_H

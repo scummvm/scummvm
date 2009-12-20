@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/sfx/iterator.h"	// for SongIteratorStatus
+#include "sci/sfx/iterator/iterator.h"	// for SongIteratorStatus
 #include "sci/sfx/music.h"
 #include "sci/sfx/soundcmd.h"
 
@@ -126,8 +126,11 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 #define SOUNDCOMMAND(x) _soundCommands.push_back(new SciSoundCommand(#x, &SoundCommandParser::x))
 
-SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, SfxState *state, AudioPlayer *audio, SciVersion doSoundVersion) : 
-	_resMan(resMan), _segMan(segMan), _state(state), _audio(audio), _doSoundVersion(doSoundVersion) {
+SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion doSoundVersion) : 
+	_resMan(resMan), _segMan(segMan), _audio(audio), _doSoundVersion(doSoundVersion) {
+
+	// The following hack is needed to ease the change from old to new sound code (because the new sound code does not use SfxState)
+	_state = &((SciEngine *)g_engine)->getEngineState()->_sound;	// HACK
 
 	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
 

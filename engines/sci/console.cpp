@@ -41,8 +41,8 @@
 #include "sci/gfx/gfx_widgets.h"	// for getPort
 #endif
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sfx/songlib.h"	// for SongLibrary
-#include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
+#include "sci/sfx/iterator/songlib.h"	// for SongLibrary
+#include "sci/sfx/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #endif
 #include "sci/sfx/softseq/mididriver.h"
 #include "sci/vocabulary.h"

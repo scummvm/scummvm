@@ -69,11 +69,11 @@ MODULE_OBJS := \
 	gui32/res_pic.o \
 	gui32/res_view.o \
 	sfx/audio.o \
-	sfx/core.o \
-	sfx/iterator.o \
 	sfx/music.o \
-	sfx/songlib.o \
 	sfx/soundcmd.o \
+	sfx/iterator/core.o \
+	sfx/iterator/iterator.o \
+	sfx/iterator/songlib.o \
 	sfx/seq/gm.o \
 	sfx/seq/instrument-map.o \
 	sfx/seq/map-mt32-to-gm.o \

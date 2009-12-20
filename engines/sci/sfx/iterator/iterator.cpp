@@ -28,9 +28,11 @@
 #include "common/util.h"
 
 #include "sci/sci.h"
-#include "sci/sfx/iterator_internal.h"
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+
+#include "sci/sfx/iterator/iterator_internal.h"
 #include "sci/engine/state.h"	// for sfx_player_tell_synth :/
-#include "sci/sfx/core.h"	// for sfx_player_tell_synth
+#include "sci/sfx/iterator/core.h"	// for sfx_player_tell_synth
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -1701,3 +1703,5 @@ SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2) {
 }
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS

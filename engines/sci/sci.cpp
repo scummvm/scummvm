@@ -166,7 +166,7 @@ Common::Error SciEngine::run() {
 	// since we cannot let the game control where saves are stored)
 	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "/");
 
-	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, &_gamestate->_sound, _audio, _gamestate->detectDoSoundType());
+	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _audio, _gamestate->detectDoSoundType());
 
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
@@ -269,7 +269,9 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	_gamestate->_sound.sfx_suspend(pause);
+#endif
 	_mixer->pauseAll(pause);
 }
 

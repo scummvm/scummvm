@@ -28,6 +28,9 @@
 #ifndef SCI_SFX_SFX_ITERATOR_H
 #define SCI_SFX_SFX_ITERATOR_H
 
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/softseq/mididriver.h"
 
 namespace Audio {
@@ -317,5 +320,7 @@ SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2);
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS
 
 #endif // SCI_SFX_SFX_ITERATOR_H

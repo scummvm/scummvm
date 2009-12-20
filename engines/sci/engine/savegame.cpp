@@ -43,8 +43,8 @@
 #include "sci/gui/gui.h"
 #include "sci/sfx/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sfx/core.h"
-#include "sci/sfx/iterator.h"
+#include "sci/sfx/iterator/core.h"
+#include "sci/sfx/iterator/iterator.h"
 #endif
 
 namespace Sci {

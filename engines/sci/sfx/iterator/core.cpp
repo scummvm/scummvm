@@ -26,8 +26,10 @@
 /* Sound subsystem core: Event handler, sound player dispatching */
 
 #include "sci/sci.h"
-#include "sci/sfx/core.h"
-#include "sci/sfx/iterator.h"
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+
+#include "sci/sfx/iterator/core.h"
+#include "sci/sfx/iterator/iterator.h"
 #include "sci/sfx/softseq/mididriver.h"
 
 #include "sci/sfx/softseq/pcjr.h"
@@ -1007,3 +1009,5 @@ void SfxState::sfx_all_stop() {
 }
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS

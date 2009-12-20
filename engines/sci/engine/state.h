@@ -44,7 +44,7 @@ namespace Common {
 #include "sci/gfx/gfx_system.h"
 #include "sci/sfx/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sfx/core.h"
+#include "sci/sfx/iterator/core.h"
 #endif
 #include "sci/sfx/soundcmd.h"
 

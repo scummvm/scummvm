@@ -43,7 +43,7 @@ struct SciSoundCommand {
 
 class SoundCommandParser {
 public:
-	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, SfxState *state, AudioPlayer *audio, SciVersion doSoundVersion);
+	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion doSoundVersion);
 	~SoundCommandParser();
 
 	void updateSfxState(SfxState *newState) { _state = newState; }

@@ -26,7 +26,10 @@
 #ifndef SCI_SFX_SFX_ITERATOR_INTERNAL
 #define SCI_SFX_SFX_ITERATOR_INTERNAL
 
-#include "sci/sfx/iterator.h"
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+#include "sci/sfx/iterator/iterator.h"
 #include "sci/sfx/softseq/mididriver.h"
 
 #include "common/array.h"
@@ -267,5 +270,7 @@ public:
 };
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS
 
 #endif // SCI_SFX_SFX_ITERATOR_INTERNAL

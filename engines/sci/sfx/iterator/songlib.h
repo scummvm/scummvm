@@ -31,6 +31,9 @@
 #include "common/scummsys.h"
 #include "sound/timestamp.h"
 
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+
 namespace Sci {
 
 class SongIterator;
@@ -162,5 +165,7 @@ public:
 };
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS
 
 #endif // SCI_SSFX_SFX_SONGLIB_H

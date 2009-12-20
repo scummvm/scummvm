@@ -23,8 +23,11 @@
  *
  */
 
-#include "sci/sfx/core.h"
-#include "sci/sfx/iterator.h"
+#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+#include "sci/sfx/iterator/core.h"
+#include "sci/sfx/iterator/iterator.h"
 
 namespace Sci {
 
@@ -182,3 +185,5 @@ void SongLibrary::setSongRestoreBehavior(SongHandle handle, RESTORE_BEHAVIOR act
 }
 
 } // End of namespace Sci
+
+#endif	// USE_OLD_MUSIC_FUNCTIONS
