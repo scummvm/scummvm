@@ -23,7 +23,7 @@
  *
  */
 
-#include "sci/sci.h"	// for INCLUDE_OLDGFX
+#include "sci/sci.h"	// for INCLUDE_OLDGFX and USE_OLD_MUSIC_FUNCTIONS
 #ifdef INCLUDE_OLDGFX
 
 #include "graphics/cursorman.h"
@@ -2311,7 +2311,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, 319 - i, 10, granularity1, 190, 0);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
 
@@ -2323,7 +2325,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, 319 - i, 10, granularity1, 190);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2336,7 +2340,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, 0, 199 - i, 320, granularity2, 0);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, 2 * animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
 
@@ -2348,7 +2354,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, 0, 199 - i, 320, granularity2);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, 2 * animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2359,7 +2367,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, i, 10, granularity0, 190, 0);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
 
@@ -2368,7 +2378,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, i, 10, granularity0, 190);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2379,7 +2391,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, i, 10, granularity0, 190, 0);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
 
@@ -2389,7 +2403,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, i, 10, granularity0, 190);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 2 / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2400,7 +2416,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, 0, i, 320, granularity1, 0);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
 
@@ -2410,7 +2428,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, 0, i, 320, granularity1);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2421,7 +2441,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_BLANK_BOX(_s, 0, i, 320, granularity1, 0);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		GRAPH_BLANK_BOX(_s, 0, 10, 320, 190, 0);
 
@@ -2431,7 +2453,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			GRAPH_UPDATE_BOX(_s, 0, i, 320, granularity1);
 			gfxop_update(_s->gfx_state);
 			kernel_sleep(_s->_event, animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2456,7 +2480,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 
 			kernel_sleep(_s->_event, 4 * animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 
 	case K_ANIMATE_BORDER_OPEN_F :
@@ -2479,7 +2505,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 
 			kernel_sleep(_s->_event, 4 * animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 
 		break;
@@ -2504,7 +2532,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 
 			kernel_sleep(_s->_event, 7 * animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 
 	case K_ANIMATE_CENTER_OPEN_F :
@@ -2527,7 +2557,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			gfxop_update(_s->gfx_state);
 
 			kernel_sleep(_s->_event, 7 * animation_delay / 1000);
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
@@ -2565,7 +2597,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			}
 
 			--remaining_checkers;
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 
 	case K_ANIMATE_OPEN_CHECKERS :
@@ -2597,7 +2631,9 @@ void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 			}
 
 			--remaining_checkers;
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 			process_sound_events(_s);
+#endif
 		}
 		break;
 
