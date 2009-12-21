@@ -538,9 +538,13 @@ static const AGIGameDescription gameDescriptions[] = {
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("sq1", "1.1A 1986-02-06", "6421fb64b0e6604c9dd065975d9279e9", 0x2440, GF_MENUS, GID_SQ1, Common::kPlatformAtariST),
 
-	// Space Quest 1 (PC) 1.1A [AGI 2.272]
+	// Space Quest 1 (PC 360k) 1.1A [AGI 2.272]
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformPC),
+
+	// Space Quest 1 (PC 720k) 1.1A [AGI 2.272]
+	// The original game did not have menus, they are enabled under ScummVM
+	GAME_FP("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformPC),
 
 	// Space Quest 1 (Amiga) 1.2			# 2.082
 	// The original game did not have menus, they are enabled under ScummVM
