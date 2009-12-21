@@ -389,15 +389,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 3 (CoCo3 158k/360k) [AGI 2.023]
 	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
 
-	// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
-	GAME3("kq4", "2.3 1988-09-27", "kq4dir", "6d7714b8b61466a5f5981242b993498f", 0x3086, GID_KQ4),
-
 	// King's Quest 4 (PC 5.25") 2.0 7/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.0 1988-07-27", "kq4dir", "f50f7f997208ca0e35b2650baec43a2d", 0x3086, GID_KQ4),
-
-	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
-	// Menus not tested
-	GAME3_P("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS),
 
 	// King's Quest 4 (PC 3.5") 2.0 7/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.0 1988-07-27 3.5\"", "kq4dir", "fe44655c42f16c6f81046fdf169b6337", 0x3086, GID_KQ4),
@@ -405,6 +398,13 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 4 (PC 3.5") 2.2 9/27/88 [AGI 3.002.086]
 	// Menus not tested
 	GAME3("kq4", "2.2 1988-09-27 3.5\"", "kq4dir", "7470b3aeb49d867541fc66cc8454fb7d", 0x3086, GID_KQ4),
+
+	// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
+	GAME3("kq4", "2.3 1988-09-27", "kq4dir", "6d7714b8b61466a5f5981242b993498f", 0x3086, GID_KQ4),
+
+	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
+	// Menus not tested
+	GAME3_P("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS),
 
 	// King's Quest 4 demo (PC) [AGI 3.002.102]
 	// Menus not tested
