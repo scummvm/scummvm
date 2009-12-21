@@ -722,7 +722,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = GET_SEL32V(s->_segMan, controlObject, mode);
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
-		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, alignment, style, hilite);
+		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
