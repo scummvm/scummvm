@@ -432,7 +432,6 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
 	changeHandleStatus(obj, SOUND_STATUS_STOPPED);
 
 	if (_hasNodePtr)
@@ -458,7 +457,6 @@ void SoundCommandParser::cmdSuspendHandle(reg_t obj, int16 value) {
 	if (!obj.segment)
 		return;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
 	if (!_hasNodePtr)
 		changeHandleStatus(obj, SOUND_STATUS_SUSPENDED);
 	else
@@ -484,7 +482,6 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 		return;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
 	changeHandleStatus(obj, SOUND_STATUS_PLAYING);
 #else
 	int slot = _music->findListSlot(obj);
