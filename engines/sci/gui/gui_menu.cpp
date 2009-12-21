@@ -184,7 +184,8 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 		if (separatorCount == tempPos - beginPos) {
 			itemEntry->separatorLine = true;
 		} else {
-			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
+			EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK: needed for strSplit()
+			itemEntry->text = s->strSplit(Common::String(content.c_str() + beginPos, tempPos - beginPos).c_str());
 		}
 		itemEntry->textVmPtr = contentVmPtr;
 		itemEntry->textVmPtr.offset += beginPos;
@@ -229,6 +230,7 @@ GuiMenuItemEntry *SciGuiMenu::findItem(uint16 menuId, uint16 itemId) {
 }
 
 void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
+	EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK: needed for strSplit()
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
 		error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
@@ -240,7 +242,7 @@ void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, 
 		itemEntry->saidVmPtr = value;
 		break;
 	case SCI_MENU_ATTRIBUTE_TEXT:
-		itemEntry->text = _segMan->getString(value);
+		itemEntry->text = s->strSplit(_segMan->getString(value).c_str());
 		itemEntry->textVmPtr = value;
 		// We assume here that no script ever creates a separatorLine dynamically
 		break;
