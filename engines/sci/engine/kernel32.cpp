@@ -366,11 +366,11 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 		return make_reg(0, array->getSize());
 		}
-	case 2: { // At
+	case 2: { // At (return value at an index)
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 		return array->getValue(argv[2].toUint16());
 		}
-	case 3: { // Atput
+	case 3: { // Atput (put value at an index)
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 
 		uint32 index = argv[2].toUint16();
@@ -459,9 +459,9 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		}
 	case 1: // Size
 		return make_reg(0, s->_segMan->getString(argv[1]).size());
-	case 2:  // At
+	case 2:  // At (return value at an index)
 		return make_reg(0, s->_segMan->getString(argv[1])[argv[2].toUint16()]);
-	case 3: { // Atput
+	case 3: { // Atput (put value at an index)
 		SciString *string = s->_segMan->lookupString(argv[1]);
 
 		uint32 index = argv[2].toUint16();
@@ -553,12 +553,15 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, string.size());
 		}
 	case 11: // Printf
+		// TODO: Return a new formatting string
 		warning("kString(Printf)");
 		break;
 	case 12: // Printf Buf
+		// TODO: Store a formatted string in a specified string
 		warning("kString(PrintfBuf)");
 		break;
 	case 13: // atoi
+		// TODO: String to integer
 		warning("kString(atoi)");
 		break;
 	default:
