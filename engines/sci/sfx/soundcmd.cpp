@@ -456,6 +456,7 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 void SoundCommandParser::cmdSuspendHandle(reg_t obj, int16 value) {
 	if (!obj.segment)
 		return;
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (!_hasNodePtr)
 		changeHandleStatus(obj, SOUND_STATUS_SUSPENDED);
@@ -511,11 +512,16 @@ void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
 }
 
 void SoundCommandParser::cmdVolume(reg_t obj, int16 value) {
-	#ifndef USE_OLD_MUSIC_FUNCTIONS
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+	if (obj != SIGNAL_REG)
+ 		_state->sfx_setVolume(obj.toSint16());
+
+	_acc = make_reg(0, _state->sfx_getVolume());
+#else
 		if (_argc > 1)
 			_music->soundSetMasterVolume(obj.toSint16());
 		_acc = make_reg(0, _music->soundGetMasterVolume());
-	#endif
+#endif
 }
 
 void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
