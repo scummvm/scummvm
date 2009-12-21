@@ -230,7 +230,8 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	if (command < _soundCommands.size()) {
-		// printf("%s\n", _soundCommands[command]->desc);	// debug
+		//if (strcmp(_soundCommands[command]->desc, "cmdUpdateCues"))
+		//printf("%s\n", _soundCommands[command]->desc);	// debug
 		debugC(2, kDebugLevelSound, "%s", _soundCommands[command]->desc);
 		(this->*(_soundCommands[command]->sndCmd))(obj, value);
 	} else {
@@ -261,12 +262,9 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 		}
 	}
 
-#endif
-
 	if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, number)))
 		return;
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
 	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
 #endif
 
@@ -279,16 +277,20 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	MusicEntry *newSound = new MusicEntry();
-	newSound->soundRes = new SoundResource(number, _resMan);
+	newSound->soundRes = 0;
+	if (_resMan->testResource(ResourceId(kResourceTypeSound, number)))
+		newSound->soundRes = new SoundResource(number, _resMan);
 	newSound->soundObj = obj;
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	newSound->pStreamAud = 0;
 	newSound->pMidiParser = 0;
+
+	// TODO
+	//_music->soundKill(newSound);
 	_music->_playList.push_back(newSound);
 
-	//_music->soundKill(newSound);
-
-	_music->soundInitSnd(newSound);
+	if (newSound->soundRes)
+		_music->soundInitSnd(newSound);
 #endif
 }
 

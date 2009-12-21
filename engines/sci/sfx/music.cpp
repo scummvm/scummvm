@@ -66,6 +66,12 @@ void SciMusic::init() {
 
 	_midiType = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PCSPK);
 
+	// Sanity check
+	if (_midiType != MDT_MIDI && _midiType != MDT_ADLIB && _midiType != MDT_PCSPK) {
+		warning("Unhandled MIDI type, switching to Adlib");
+		_midiType = MD_ADLIB;
+	}
+
 	switch (_midiType) {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
