@@ -41,7 +41,9 @@ struct ADGameDescription;
  */
 namespace Sci {
 
-// Please uncomment this if you want to use oldgui
+// Uncomment this to include old graphics code
+//#define INCLUDE_OLDGFX
+// Uncomment this if you want to use the old graphics code. INCLUDE_OLDGFX must be defined
 //#define USE_OLDGFX
 // Uncomment this to use old music functions
 #define USE_OLD_MUSIC_FUNCTIONS
