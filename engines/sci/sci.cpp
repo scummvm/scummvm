@@ -44,6 +44,9 @@
 #include "sci/sfx/audio.h"
 #include "sci/sfx/soundcmd.h"
 #include "sci/gui/gui.h"
+#ifdef ENABLE_SCI32
+#include "sci/gui/gui_dummy.h"
+#endif
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_screen.h"
@@ -114,11 +117,12 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	bool upscaledHires = false;
-
 	// Scale the screen, if needed
-	if (!strcmp(getGameID(), "kq6") && getPlatform() == Common::kPlatformWindows)
-		upscaledHires = true;
+	bool upscaledHires = (!strcmp(getGameID(), "kq6") 
+#ifdef ENABLE_SCI32
+							|| getSciVersion() >= SCI_VERSION_2
+#endif
+							) && getPlatform() == Common::kPlatformWindows;
 
 	// TODO: Detect japanese editions and set upscaledHires on those as well
 	// TODO: Possibly look at first picture resource and determine if its hires or not
@@ -144,6 +148,12 @@ Common::Error SciEngine::run() {
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		// Falsify the Views with a Dummy GUI
+		_gamestate->_gui = new SciGuiDummy(_gamestate, screen, palette, cursor);
+	} else {
+#endif
 #ifdef INCLUDE_OLDGFX
 	#ifndef USE_OLDGFX
 		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
@@ -151,7 +161,10 @@ Common::Error SciEngine::run() {
 		_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 	#endif
 #else
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
+#endif
+#ifdef ENABLE_SCI32
+	}
 #endif
 
 	if (game_init(_gamestate)) { /* Initialize */

@@ -63,6 +63,11 @@ enum SegmentType {
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
 	SEG_TYPE_STRING_FRAG = 10,	// obsolete, we keep it to be able to load old saves
+	
+#ifdef ENABLE_SCI32
+	SEG_TYPE_ARRAY = 11,
+	SEG_TYPE_STRING = 12,
+#endif
 
 	SEG_TYPE_MAX // For sanity checking
 };
@@ -658,6 +663,112 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
+
+#ifdef ENABLE_SCI32
+
+template <typename T>
+class SciArray {
+public:
+	SciArray() {
+		_type = -1;
+		_data = NULL;
+		_size = 0;
+		_actualSize = 0;
+	}
+
+	~SciArray() {
+		delete[] _data;
+	}
+
+	void setType(byte type) {
+		if (_type >= 0)
+			error("SciArray::setType(): Type already set");
+
+		_type = type;
+	}
+	
+	void setSize(uint32 size) {
+		if (_type < 0)
+			error("SciArray::setSize(): No type set");
+
+		// Check if we don't have to do anything
+		if (_size == size)
+			return;
+
+		// Check if we don't have to expand the array
+		if (size <= _actualSize) {
+			_size = size;
+			return;
+		}
+
+		// So, we're going to have to create an array of some sort
+		T *newArray = new T[size];
+
+		// Check if we never created an array before
+		if (!_data) {
+			_data = newArray;
+			return;
+		}
+
+		// Copy data from the old array to the new
+		memcpy(newArray, _data, _size * sizeof(T));
+
+		// Now set the new array to the old and set the sizes
+		delete[] _data;
+		_data = newArray;
+		_size = _actualSize = size;
+	}
+	
+	T getValue(uint16 index) {
+		if (index >= _size)
+			error("SciArray::getValue(): %d is out of bounds (%d)", index, _size);
+
+		return _data[index];
+	}
+	
+	void setValue(uint16 index, T value) {
+		if (index >= _size)
+			error("SciArray::setValue(): %d is out of bounds (%d)", index, _size);
+
+		_data[index] = value;
+	}
+	
+	byte getType() { return _type; }
+	uint32 getSize() { return _size; }
+	T *getRawData() { return _data; }
+	
+	//Common::String toString();
+	//void fromString(Common::String string);
+
+protected:
+	int8 _type;
+	T *_data;
+	uint32 _size; // _size holds the number of entries that the scripts have requested
+	uint32 _actualSize; // _actualSize is the actual numbers of entries allocated
+};
+
+class SciString : public SciArray<char> {
+public:
+	SciString() : SciArray<char>() {}
+	
+	Common::String toString();
+	void fromString(Common::String string);
+};
+
+struct ArrayTable : public Table<SciArray<reg_t> > {
+	ArrayTable() : Table<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+};
+
+struct StringTable : public Table<SciString> {
+	StringTable() : Table<SciString>(SEG_TYPE_STRING) {}
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+	SegmentRef dereference(reg_t pointer);
+};
+
+#endif
 
 
 } // End of namespace Sci

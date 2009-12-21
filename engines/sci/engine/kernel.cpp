@@ -187,7 +187,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
 	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),
 	/*02*/	DEFUN("ScriptID", kScriptID, "Ioi*"),
-	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oi"), // Work around QfG1 bug
+	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oii*"), // Work around QfG1 bug
 	/*04*/	DEFUN("Clone", kClone, "o"),
 	/*05*/	DEFUN("DisposeClone", kDisposeClone, "o"),
 	/*06*/	DEFUN("IsObject", kIsObject, "."),
@@ -217,7 +217,7 @@ SciKernelFunction kfunct_mappers[] = {
 	// FIXME: signature check removed (set to .*) as kGetEvent is different in Mac versions
 	/*1c*/	DEFUN("GetEvent", kGetEvent, ".*"),
 	///*1c*/	DEFUN("GetEvent", kGetEvent, "io"),
-	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "o"),
+	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "oo*"),
 	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "o"),
 	/*1f*/	DEFUN("MapKeyToDir", kMapKeyToDir, "o"),
 	/*20*/	DEFUN("DrawMenuBar", kDrawMenuBar, "i"),
@@ -336,6 +336,13 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
 	DEFUN("Portrait", kPortrait, ".*"),
+	
+#ifdef ENABLE_SCI32
+	// SCI32 Kernel Functions
+	DEFUN("IsHiRes", kIsHiRes, ""),
+	DEFUN("Array", kArray, ".*"),
+	DEFUN("String", kString, ".*"),
+#endif
 
 	// its a stub, but its needed for Pharkas to work
 	DEFUN("PalVary", kPalVary, "ii*"),

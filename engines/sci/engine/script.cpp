@@ -237,6 +237,10 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(topString);
 	FIND_SELECTOR(scaleX);
 	FIND_SELECTOR(scaleY);
+
+#ifdef ENABLE_SCI32
+	FIND_SELECTOR(data);
+#endif
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

@@ -23,11 +23,13 @@
  *
  */
 
+#ifdef ENABLE_SCI32
+
 #include "sci/engine/kernel.h"
+#include "sci/engine/segment.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
-
-#ifdef ENABLE_SCI32
 
 static const char *sci2_default_knames[] = {
 	/*0x00*/ "Load",
@@ -341,6 +343,231 @@ void Kernel::setKernelNamesSci21() {
 	_kernelNames = Common::StringList(sci21_default_knames, ARRAYSIZE(sci21_default_knames));
 }
 
-#endif	// ENABLE_SCI32
+// SCI2 Kernel Functions
+
+reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
+	// Returns 0 if the screen width or height is less than 640 or 400, respectively.
+	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
+		return make_reg(0, 0);
+
+	return make_reg(0, 1);
+}
+
+reg_t kArray(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: { // New
+		reg_t arrayHandle;
+		SciArray<reg_t> *array = s->_segMan->allocateArray(&arrayHandle);
+		array->setType(argv[2].toUint16());
+		array->setSize(argv[1].toUint16());
+		return arrayHandle;
+		}
+	case 1: { // Size
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		return make_reg(0, array->getSize());
+		}
+	case 2: { // At
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		return array->getValue(argv[2].toUint16());
+		}
+	case 3: { // Atput
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+
+		uint32 index = argv[2].toUint16();
+		uint32 count = argc - 3;
+
+		if (index + count > 65535)
+			break;
+
+		if (array->getSize() < index + count)
+			array->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array->setValue(i + index, argv[i + 3]);
+
+		return argv[1]; // We also have to return the handle
+		}
+	case 4: // Free
+		s->_segMan->freeArray(argv[1]);
+		return s->r_acc;
+	case 5: { // Fill
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		uint16 index = argv[2].toUint16();
+
+		// A count of -1 means fill the rest of the array
+		uint16 count = argv[3].toSint16() == -1 ? array->getSize() - index : argv[3].toUint16();
+
+		if (array->getSize() < index + count)
+			array->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array->setValue(i + index, argv[4]);
+
+		return argv[1];
+		}
+	case 6: { // Cpy
+		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
+		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
+		uint32 index1 = argv[2].toUint16();
+		uint32 index2 = argv[4].toUint16();
+
+		// The original engine ignores bad copies too
+		if (index2 > array2->getSize())
+			break;
+
+		// A count of -1 means fill the rest of the array
+		uint32 count = argv[5].toSint16() == -1 ? array2->getSize() - index2 : argv[5].toUint16();
+
+		if (array1->getSize() < index1 + count)
+			array1->setSize(index1 + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array1->setValue(i + index1, array2->getValue(i + index2));
+
+		return argv[1];
+		}
+	case 7: // Cmp
+		// Not implemented in SSCI
+		return s->r_acc;
+	case 8: { // Dup
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		reg_t arrayHandle;
+		SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);
+		*dupArray = SciArray<reg_t>(*array);
+		return arrayHandle;
+		}
+	case 9: // Getdata
+		if (!s->_segMan->isHeapObject(argv[1]))
+			return argv[1];
+	
+		return GET_SEL32(s->_segMan, argv[1], data);
+	default:
+		error("Unknown kArray subop %d", argv[0].toUint16());
+	}
+	
+	return NULL_REG;
+}
+
+reg_t kString(EngineState *s, int argc, reg_t *argv) {	
+	switch (argv[0].toUint16()) {
+	case 0: { // New
+		reg_t stringHandle;
+		SciString *string = s->_segMan->allocateString(&stringHandle);
+		string->setType(3);
+		string->setSize(argv[1].toUint16());
+		return stringHandle;
+		}
+	case 1: // Size
+		return make_reg(0, s->_segMan->getString(argv[1]).size());
+	case 2:  // At
+		return make_reg(0, s->_segMan->getString(argv[1])[argv[2].toUint16()]);
+	case 3: { // Atput
+		SciString *string = s->_segMan->lookupString(argv[1]);
+
+		uint32 index = argv[2].toUint16();
+		uint32 count = argc - 3;
+
+		if (index + count > 65535)
+			break;
+
+		if (string->getSize() < index + count)
+			string->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			string->setValue(i + index, argv[i + 3].toUint16());
+
+		return argv[1]; // We also have to return the handle
+		}
+	case 4: // Free
+		s->_segMan->freeString(argv[1]);
+		return s->r_acc;
+	case 5: { // Fill
+		SciString *string = s->_segMan->lookupString(argv[1]);
+		uint16 index = argv[2].toUint16();
+
+		// A count of -1 means fill the rest of the array
+		uint16 count = argv[3].toSint16() == -1 ? string->getSize() - index : argv[3].toUint16();
+
+		if (string->getSize() < index + count)
+			string->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			string->setValue(i + index, argv[4].toUint16());
+
+		return argv[1];
+		}
+	case 6: { // Cpy
+		SciString *string1 = s->_segMan->lookupString(argv[1]);
+		Common::String string2 = s->_segMan->getString(argv[3]);
+		uint32 index1 = argv[2].toUint16();
+		uint32 index2 = argv[4].toUint16();
+
+		// The original engine ignores bad copies too
+		if (index2 > string2.size())
+			break;
+
+		// A count of -1 means fill the rest of the array
+		uint32 count = argv[5].toSint16() == -1 ? string2.size() - index2 : argv[5].toUint16();
+
+		if (string1->getSize() < index1 + count)
+			string1->setSize(index1 + count);
+
+		for (uint16 i = 0; i < count; i++)
+			string1->setValue(i + index1, string2[i + index2]);
+
+		return argv[1];
+		}
+	case 7: { // Cmp
+		Common::String string1, string2;
+
+		if (argv[1].isNull())
+			string1 = "";
+		else
+			string1 = s->_segMan->lookupString(argv[1])->toString();
+			
+		if (argv[2].isNull())
+			string2 = "";
+		else
+			string2 = s->_segMan->lookupString(argv[2])->toString();
+			
+		if (argc == 4) // Strncmp
+			return make_reg(0, strncmp(string1.c_str(), string2.c_str(), argv[3].toUint16()));
+		else           // Strcmp
+			return make_reg(0, strcmp(string1.c_str(), string2.c_str()));
+		}
+	case 8: { // Dup
+		SciString *string = s->_segMan->lookupString(argv[1]);
+		reg_t stringHandle;
+		SciString *dupString = s->_segMan->allocateString(&stringHandle);
+		*dupString = SciString(*string);
+		return stringHandle;
+		}
+	case 9: // Getdata
+		if (!s->_segMan->isHeapObject(argv[1]))
+			return argv[1];
+	
+		return GET_SEL32(s->_segMan, argv[1], data);
+	case 10: { // Stringlen
+		SciString *sciString = s->_segMan->lookupString(argv[1]);
+		Common::String string = sciString->toString();
+		return make_reg(0, string.size());
+		}
+	case 11: // Printf
+		warning("kString(Printf)");
+		break;
+	case 12: // Printf Buf
+		warning("kString(PrintfBuf)");
+		break;
+	case 13: // atoi
+		warning("kString(atoi)");
+		break;
+	default:
+		error("Unknown kString subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
 
 } // End of namespace Sci
+
+#endif	// ENABLE_SCI32

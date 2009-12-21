@@ -53,6 +53,11 @@ SegManager::SegManager(ResourceManager *resMan) {
 	Lists_seg_id = 0;
 	Nodes_seg_id = 0;
 	Hunks_seg_id = 0;
+	
+#ifdef ENABLE_SCI32
+	Arrays_seg_id = 0;
+	String_seg_id = 0;
+#endif
 
 	_exportsAreWide = false;
 	_resMan = resMan;
@@ -1249,5 +1254,86 @@ void SegManager::createClassTable() {
 
 	_resMan->unlockResource(vocab996);
 }
+
+#ifdef ENABLE_SCI32
+SciArray<reg_t> *SegManager::allocateArray(reg_t *addr) {
+	ArrayTable *table;
+	int offset;
+
+	if (!Arrays_seg_id) {
+		table = (ArrayTable *)allocSegment(new ArrayTable(), &(Arrays_seg_id));
+	} else
+		table = (ArrayTable *)_heap[Arrays_seg_id];
+
+	offset = table->allocEntry();
+
+	*addr = make_reg(Arrays_seg_id, offset);
+	return &(table->_table[offset]);
+}
+
+SciArray<reg_t> *SegManager::lookupArray(reg_t addr) {
+	if (_heap[addr.segment]->getType() != SEG_TYPE_ARRAY)
+		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
+
+	ArrayTable *arrayTable = (ArrayTable *)_heap[addr.segment];
+
+	if (!arrayTable->isValidEntry(addr.offset))
+		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
+
+	return &(arrayTable->_table[addr.offset]);
+}
+
+void SegManager::freeArray(reg_t addr) {
+	if (_heap[addr.segment]->getType() != SEG_TYPE_ARRAY)
+		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
+
+	ArrayTable *arrayTable = (ArrayTable *)_heap[addr.segment];
+
+	if (!arrayTable->isValidEntry(addr.offset))
+		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
+
+	arrayTable->freeEntry(addr.offset);
+}
+
+SciString *SegManager::allocateString(reg_t *addr) {
+	StringTable *table;
+	int offset;
+
+	if (!String_seg_id) {
+		table = (StringTable *)allocSegment(new StringTable(), &(String_seg_id));
+	} else
+		table = (StringTable *)_heap[String_seg_id];
+
+	offset = table->allocEntry();
+
+	*addr = make_reg(String_seg_id, offset);
+	return &(table->_table[offset]);
+}
+
+SciString *SegManager::lookupString(reg_t addr) {
+	if (_heap[addr.segment]->getType() != SEG_TYPE_STRING)
+		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+
+	StringTable *stringTable = (StringTable *)_heap[addr.segment];
+
+	if (!stringTable->isValidEntry(addr.offset))
+		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+
+	return &(stringTable->_table[addr.offset]);
+}
+
+void SegManager::freeString(reg_t addr) {
+	if (_heap[addr.segment]->getType() != SEG_TYPE_STRING)
+		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+
+	StringTable *stringTable = (StringTable *)_heap[addr.segment];
+
+	if (!stringTable->isValidEntry(addr.offset))
+		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+
+	stringTable->freeEntry(addr.offset);
+}
+
+#endif
 
 } // End of namespace Sci

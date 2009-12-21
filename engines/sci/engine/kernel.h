@@ -390,6 +390,13 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 
+#ifdef ENABLE_SCI32
+// SCI2 Kernel Functions
+reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
+reg_t kArray(EngineState *s, int argc, reg_t *argv);
+reg_t kString(EngineState *s, int argc, reg_t *argv);
+#endif
+
 } // End of namespace Sci
 
-#endif // SCI_ENGIENE_KERNEL_H
+#endif // SCI_ENGINE_KERNEL_H

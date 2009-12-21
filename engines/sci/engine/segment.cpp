@@ -66,6 +66,14 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	case SEG_TYPE_DYNMEM:
 		mem = new DynMem();
 		break;
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_ARRAY:
+		mem = new ArrayTable();
+		break;
+	case SEG_TYPE_STRING:
+		mem = new StringTable();
+		break;
+#endif
 	default:
 		error("Unknown SegmentObj type %d", type);
 		break;
@@ -478,5 +486,38 @@ void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback not
 	(*note)(param, make_reg(segId, 0));
 }
 
+#ifdef ENABLE_SCI32
+
+Common::String SciString::toString() {
+	if (_type != 3)
+		error("SciString::toString(): Array is not a string");
+
+	Common::String string;
+	for (uint32 i = 0; i < _size && _data[i] != 0; i++)
+		string += _data[i];
+
+	return string;
+}
+
+void SciString::fromString(Common::String string) {
+	if (_type != 3)
+		error("SciString::fromString(): Array is not a string");
+
+	if (string.size() > _size)
+		setSize(string.size());
+		
+	for (uint32 i = 0; i < string.size(); i++)
+		_data[i] = string[i];
+}
+
+SegmentRef StringTable::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = false;
+	ret.maxSize = _table[pointer.offset].getSize();
+	ret.raw = (byte*)_table[pointer.offset].getRawData();
+	return ret;
+}
+
+#endif
 
 } // End of namespace Sci

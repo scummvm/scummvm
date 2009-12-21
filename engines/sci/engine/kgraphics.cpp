@@ -292,7 +292,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	default:
-		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
+		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
 	}
 
 #ifdef INCLUDE_OLDGFX

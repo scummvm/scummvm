@@ -195,6 +195,10 @@ struct SelectorCache {
 	// Used for auto detection purposes
 	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
 	Selector setCursor; ///< For cursor semantics autodetection
+	
+#ifdef ENABLE_SCI32
+	Selector data; // Used by Array()
+#endif
 };
 
 // A reference to an object's variable.

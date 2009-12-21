@@ -440,6 +440,16 @@ public:
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
 	Common::Array<Class> _classtable; /**< Table of all classes */
+	
+#ifdef ENABLE_SCI32
+	SciArray<reg_t> *allocateArray(reg_t *addr);
+	SciArray<reg_t> *lookupArray(reg_t addr);
+	void freeArray(reg_t addr);
+	SciString *allocateString(reg_t *addr);
+	SciString *lookupString(reg_t addr);
+	void freeString(reg_t addr);
+	SegmentId getStringSegmentId() { return String_seg_id; }
+#endif
 
 private:
 	/** Map script ids to segment ids. */
@@ -453,6 +463,11 @@ private:
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment
 	SegmentId Nodes_seg_id; ///< ID of the (a) node segment
 	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
+
+#ifdef ENABLE_SCI32
+	SegmentId Arrays_seg_id;
+	SegmentId String_seg_id;
+#endif
 
 private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);

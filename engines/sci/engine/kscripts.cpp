@@ -225,7 +225,8 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	if (argc != 2) {
 		return s->r_acc;
 	} else {
-		// This exists in the KQ5CD interpreter, but a test case hasn't been found yet
+		// This exists in the KQ5CD and GK1 interpreter. We know it is used when GK1 starts
+		// up, before the Sierra logo.
 		warning("kDisposeScript called with 2 parameters, still untested");
 		return argv[1];
 	}
