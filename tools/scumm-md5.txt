@@ -134,6 +134,7 @@ indy3	Indiana Jones and the Last Crusade
 	89cfc425566003ff74b7dc7b3e6fd469	-1	fr	DOS	EGA	EGA	?? v1.3, 25 Aug 89	Jorpho
 	69d70269fafc4445adbb0d223e4f9a3f	5361	en	DOS	EGA	EGA	v1.4, 11/07/89 (5.25\")	Petr Maruska
 	6f6ef668c608c7f534fea6e6d3878dde	-1	de	DOS	EGA	EGA	v1.4 from 19 Oct 89	dhewg, Peter Eckerlein
+	eb700bb73ca1cc44a1ad5e4b1a4bdeaf	-1	de	DOS	EGA	EGA	PC-Spiele	a.borque
 	d62d248c3df6ec177405e2cb23d923b2	-1	it	DOS	EGA	EGA	v1.4 from 25 Nov 89	Andrea Petrucci, Peter Eckerlein
 	86be8ada36371d4fdc35659d0e912a26	-1	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	Andrea Petrucci, Peter Eckerlein
 	ce7fd0c382389a6791fc3e199c117ef4	-1	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	abnog, Peter Eckerlein
