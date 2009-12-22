@@ -1039,9 +1039,9 @@ bool Console::cmdDrawRect(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	int col = CLIP<int>(atoi(argv[5]), 0, 15);
 
-#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]),
 										atoi(argv[3]), atoi(argv[4])), _vm->_gamestate->ega_colors[col]);
@@ -1058,13 +1058,12 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	int view = atoi(argv[1]);
 	int loop = atoi(argv[2]);
 	int cel = atoi(argv[3]);
 	int palette = atoi(argv[4]);
 
-
-#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 	gfxop_draw_cel(_vm->_gamestate->gfx_state, view, loop, cel, Common::Point(160, 100), _vm->_gamestate->ega_colors[0], palette);
 	gfxop_update(_vm->_gamestate->gfx_state);
@@ -1162,12 +1161,12 @@ bool Console::cmdUpdateZone(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	int x = atoi(argv[1]);
 	int y = atoi(argv[2]);
 	int width = atoi(argv[3]);
 	int height = atoi(argv[4]);
 
-#ifdef INCLUDE_OLDGFX
 	_vm->_gamestate->gfx_state->driver->update(gfx_rect(x, y, width, height), Common::Point(x, y), GFX_BUFFER_FRONT);
 #endif
 
@@ -1211,9 +1210,9 @@ bool Console::cmdFillScreen(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef INCLUDE_OLDGFX
 	int col = CLIP<int>(atoi(argv[1]), 0, 15);
 
-#ifdef INCLUDE_OLDGFX
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect_fullscreen, _vm->_gamestate->ega_colors[col]);
 	gfxop_update(_vm->_gamestate->gfx_state);
