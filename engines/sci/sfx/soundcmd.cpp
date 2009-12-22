@@ -779,7 +779,7 @@ void SoundCommandParser::cmdSetHandlePriority(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
-		PUT_SEL32V(_segMan, obj, loop, value);
+		PUT_SEL32V(_segMan, obj, loop, value == 0xFFFF ? 0xFFFF : 1);
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	_state->sfx_song_set_loops(handle, value);
