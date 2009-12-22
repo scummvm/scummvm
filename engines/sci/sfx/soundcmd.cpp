@@ -689,7 +689,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	}
 
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
-		int16 signal = GET_SEL32V(_segMan, obj, signal);
+		uint16 signal = GET_SEL32V(_segMan, obj, signal);
 		int16 dataInc = GET_SEL32V(_segMan, obj, dataInc);
 
 		switch (signal) {
@@ -767,7 +767,7 @@ void SoundCommandParser::cmdSetHandlePriority(reg_t obj, int16 value) {
 		return;
 	}
 
-	if (value == 0xFFFF) {
+	if (value == -1) {
 		//pSnd->prio=0;field_15B=0
 		PUT_SEL32V(_segMan, obj, flags, GET_SEL32V(_segMan, obj, flags) & 0xFD);
 	} else {
@@ -780,7 +780,7 @@ void SoundCommandParser::cmdSetHandlePriority(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
-		PUT_SEL32V(_segMan, obj, loop, value == 0xFFFF ? 0xFFFF : 1);
+		PUT_SEL32V(_segMan, obj, loop, value == -1 ? 0xFFFF : 1);
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	_state->sfx_song_set_loops(handle, value);
