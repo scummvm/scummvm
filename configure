@@ -1394,7 +1394,6 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_vkeybd="yes"
-			_keymapper="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		bfin*)
