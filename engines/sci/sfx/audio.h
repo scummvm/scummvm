@@ -63,6 +63,7 @@ public:
 		
 	void setAudioRate(uint16 rate) { _audioRate = rate; }
 	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
+	Audio::AudioStream* getAudioStream(uint32 number, uint32 volume, int *sampleLen);
 	int getAudioPosition();
 	int startAudio(uint16 module, uint32 tuple);
 	void stopAudio();
@@ -88,8 +89,6 @@ private:
 	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
 	uint _syncOffset;
 	uint32 _audioCdStart;
-
-	Audio::AudioStream* getAudioStream(uint32 number, uint32 volume, int *sampleLen);
 };
 
 } // End of namespace Sci

@@ -321,13 +321,42 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pStreamAud = Audio::makeLinearInputStream(pdata + 8, size, rate,
 					Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 			pSnd->hCurrentAud = Audio::SoundHandle();
-		} else {// play MIDI track
-			if (pSnd->pMidiParser == NULL) {
-				pSnd->pMidiParser = new MidiParser_SCI();
-				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
-				pSnd->pMidiParser->setTimerRate(_dwTempo);
+		} else {
+			// In SCI1.1 games, sound effects are started from here. If we can find
+			// a relevant audio resource, play it, otherwise switch to synthesized
+			// effects. If the resource exists, play it using map 65535 (sound
+			// effects map)
+			int16 songNumber = GET_SEL32V(_segMan, pSnd->soundObj, number);
+			EngineState *s = ((SciEngine *)g_engine)->getEngineState();		// HACK
+			AudioPlayer *audio = s->_audio;
+			ResourceManager* resMan = s->resMan;
+
+			if (resMan->testResource(ResourceId(kResourceTypeAudio, songNumber)) &&
+				getSciVersion() >= SCI_VERSION_1_1) {
+				// Found a relevant audio resource, play it
+				audio->stopAudio();
+
+				if (pSnd->pStreamAud)
+					delete pSnd->pStreamAud;
+				int sampleLen;
+				pSnd->pStreamAud = audio->getAudioStream(songNumber, 65535, &sampleLen);
+				pSnd->hCurrentAud = Audio::SoundHandle();
+
+				PUT_SEL32V(_segMan, pSnd->soundObj, signal, 0);
+
+				// FIXME: the scripts are signalled that the sound has stopped before it has
+				// actually stopped, observable in the ship flight sequence in the first scene
+				// of SQ4CD, right after the intro
+				soundPlay(pSnd);
+			} else {
+				// play MIDI track
+				if (pSnd->pMidiParser == NULL) {
+					pSnd->pMidiParser = new MidiParser_SCI();
+					pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
+					pSnd->pMidiParser->setTimerRate(_dwTempo);
+				}
+				pSnd->pMidiParser->loadMusic(pTrack, pSnd);
 			}
-			pSnd->pMidiParser->loadMusic(pTrack, pSnd);
 		}
 	}
 
