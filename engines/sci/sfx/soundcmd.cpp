@@ -289,6 +289,12 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	newSound->pStreamAud = 0;
 	newSound->pMidiParser = 0;
+	newSound->ticker = 0;
+	newSound->FadeTo = 0;
+	newSound->FadeStep = 0;
+	newSound->FadeTicker = 0;
+	newSound->FadeTickerStep = 0;
+	newSound->status = kStopped;
 	_music->_playList.push_back(newSound);
 
 	if (newSound->soundRes)
@@ -489,7 +495,7 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 #else
 	int slot = _music->findListSlot(obj);
 	if (slot < 0) {
-		warning("cmdSuspendHandle: Slot not found");
+		warning("cmdResumeHandle: Slot not found");
 		return;
 	}
 
@@ -511,6 +517,9 @@ void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
 	s->acc = s->sound_server->command(s, SOUND_COMMAND_SET_MUTE, 0, param);
 	else
 	s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_MUTE, 0, 0);*/
+
+	// TODO
+	warning("STUB: cmdMuteSound");
 }
 
 void SoundCommandParser::cmdVolume(reg_t obj, int16 value) {
@@ -562,29 +571,19 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 		}
 	}
 #else
-	// TODO/FIXME: actually fade the sound instead of stopping it
-	cmdStopHandle(obj, value);
+	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
+		int slot = _music->findListSlot(obj);
+		if (slot < 0) {
+			warning("cmdFadeHandle: Slot not found");
+			return;
+		}
 
-	PUT_SEL32V(_segMan, obj, state, 0);
-	PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
-#endif
-
-#if 0
-	// FadeSnd(argv[2], argv[3], argv[4], argv[5]);
-
-//void SciEngine::FadeSnd(HEAPHANDLE hobj, uint16 tVolume, uint16 tickerstep, int16 fadestep) {
-	if (hobj == 0)
-		return;
-	Object obj(hobj);
-	HEAPHANDLE hnode = obj.getProperty(44);	// nodePtr
-	if (!hnode)
-		return;
-	MusicEntry *pSnd = (MusicEntry *)heap2Ptr(hnode);
-	pSnd->FadeTo = tVolume;
-	pSnd->FadeStep = pSnd->volume > tVolume ? -fadestep : fadestep;
-	pSnd->FadeTickerStep = tickerstep * 16667 / _audio->soundGetTempo();
-	pSnd->FadeTicker = 0;
-//}
+		int volume = GET_SEL32V(_segMan, obj, vol);
+		_music->_playList[slot]->FadeTo = _argv[2].toUint16();
+		_music->_playList[slot]->FadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
+		_music->_playList[slot]->FadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
+		_music->_playList[slot]->FadeTicker = 0;
+	}
 #endif
 }
 
@@ -718,6 +717,7 @@ void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
 	_state->sfx_send_midi(handle, value, _midiCmd, _controller, _param);
 #else
 	// TODO: implement this...
+	warning("STUB: cmdSendMidi");
 #endif
 }
 
@@ -730,6 +730,7 @@ void SoundCommandParser::cmdHoldHandle(reg_t obj, int16 value) {
 	_state->sfx_song_set_hold(handle, value);
 #else
 	// TODO: implement this...
+	warning("STUB: cmdHoldHandle");
 #endif
 }
 
@@ -789,6 +790,7 @@ void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdSuspendSound(reg_t obj, int16 value) {
 	// TODO
+	warning("STUB: cmdSuspendSound");
 }
 
 void SoundCommandParser::cmdUpdateVolumePriority(reg_t obj, int16 value) {
