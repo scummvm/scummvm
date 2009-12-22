@@ -55,8 +55,6 @@ namespace Sci {
 typedef uint16 SCIHANDLE;
 typedef uint16 HEAPHANDLE;
 
-class SegManager;
-
 enum kTrackType {
 	kTrackAdlib = 0,
 	kTrackGameBlaster = 9,
@@ -72,18 +70,24 @@ enum kSndStatus {
 class MidiParser_SCI;
 
 struct MusicEntry {
-	SoundResource *soundRes;
 	reg_t soundObj;
-	int16 prio;	// stored for faster sound sorting
-	MidiParser_SCI *pMidiParser;
 
-	// Variables used for music fading
+	SoundResource *soundRes;
+	uint16 resnum;
+
+	uint16 dataInc;
 	uint16 ticker;
+	uint16 signal;
+	byte prio;
+	byte loop;
+	byte volume;
+
 	byte FadeTo;
 	short FadeStep;
 	uint32 FadeTicker;
 	uint32 FadeTickerStep;
 
+	MidiParser_SCI *pMidiParser;
 	Audio::AudioStream* pStreamAud;
 	Audio::SoundHandle hCurrentAud;
 	kSndStatus status;
@@ -146,7 +150,6 @@ protected:
 	bool _bMultiMidi; // use adlib's digital track if midi track don't have one
 private:
 	static void miditimerCallback(void *p);
-	SegManager *_segMan;
 };
 
 class MidiParser_SCI : public MidiParser {
@@ -175,9 +178,6 @@ protected:
 	MusicEntry *_pSnd;
 	uint32 _loopTick;
 	byte _volume;
-
-private:
-	SegManager *_segMan;
 };
 
 } // end of namespace

@@ -74,7 +74,7 @@ private:
 	void cmdPlayHandle(reg_t obj, int16 value);
 	void cmdDummy(reg_t obj, int16 value);
 	void cmdMuteSound(reg_t obj, int16 value);
-	void cmdSuspendHandle(reg_t obj, int16 value);
+	void cmdPauseHandle(reg_t obj, int16 value);
 	void cmdResumeHandle(reg_t obj, int16 value);
 	void cmdStopHandle(reg_t obj, int16 value);
 	void cmdDisposeHandle(reg_t obj, int16 value);

@@ -42,7 +42,7 @@ static int f_compare(const void *arg1, const void *arg2) {
 }
 
 SciMusic::SciMusic() {
-	_segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+
 }
 
 SciMusic::~SciMusic() {
@@ -322,41 +322,13 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 					Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
-			// In SCI1.1 games, sound effects are started from here. If we can find
-			// a relevant audio resource, play it, otherwise switch to synthesized
-			// effects. If the resource exists, play it using map 65535 (sound
-			// effects map)
-			int16 songNumber = GET_SEL32V(_segMan, pSnd->soundObj, number);
-			EngineState *s = ((SciEngine *)g_engine)->getEngineState();		// HACK
-			AudioPlayer *audio = s->_audio;
-			ResourceManager* resMan = s->resMan;
-
-			if (resMan->testResource(ResourceId(kResourceTypeAudio, songNumber)) &&
-				getSciVersion() >= SCI_VERSION_1_1) {
-				// Found a relevant audio resource, play it
-				audio->stopAudio();
-
-				if (pSnd->pStreamAud)
-					delete pSnd->pStreamAud;
-				int sampleLen;
-				pSnd->pStreamAud = audio->getAudioStream(songNumber, 65535, &sampleLen);
-				pSnd->hCurrentAud = Audio::SoundHandle();
-
-				PUT_SEL32V(_segMan, pSnd->soundObj, signal, 0);
-
-				// FIXME: the scripts are signalled that the sound has stopped before it has
-				// actually stopped, observable in the ship flight sequence in the first scene
-				// of SQ4CD, right after the intro
-				soundPlay(pSnd);
-			} else {
-				// play MIDI track
-				if (pSnd->pMidiParser == NULL) {
-					pSnd->pMidiParser = new MidiParser_SCI();
-					pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
-					pSnd->pMidiParser->setTimerRate(_dwTempo);
-				}
-				pSnd->pMidiParser->loadMusic(pTrack, pSnd);
+			// play MIDI track
+			if (pSnd->pMidiParser == NULL) {
+				pSnd->pMidiParser = new MidiParser_SCI();
+				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
+				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
+			pSnd->pMidiParser->loadMusic(pTrack, pSnd);
 		}
 	}
 
@@ -378,8 +350,13 @@ void SciMusic::onTimer() {
 		} else if (_playList[i]->pStreamAud) {
 			if (!_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)) {
 				_playList[i]->ticker = 0xFFFF;
-				PUT_SEL32V(_segMan, _playList[i]->soundObj, signal, 0xFFFF);
+				_playList[i]->signal = 0xFFFF;
 				_playList[i]->status = kStopped;
+
+				// Signal the engine scripts that the sound is done playing
+				// FIXME: is there any other place this can be triggered properly?
+				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;
+				PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
 			} else {
 				_playList[i]->ticker = (uint16)(_pMixer->getSoundElapsedTime(
 						_playList[i]->hCurrentAud) * 0.06);
@@ -394,18 +371,12 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 		pSnd->FadeTicker--;
 	else {
 		pSnd->FadeTicker = pSnd->FadeTickerStep;
-		// Get volume for sound
-		int16 sndVol = GET_SEL32V(_segMan, pSnd->soundObj, vol);
-
-		if (sndVol + pSnd->FadeStep > pSnd->FadeTo) {
-			sndVol = pSnd->FadeTo;
+		if (pSnd->volume + pSnd->FadeStep > pSnd->FadeTo) {
+			pSnd->volume = pSnd->FadeTo;
 			pSnd->FadeStep = 0;
 		} else
-			sndVol += pSnd->FadeStep;
-
-		PUT_SEL32V(_segMan, pSnd->soundObj, vol, sndVol);
-
-		pSnd->pMidiParser->setVolume(sndVol);
+			pSnd->volume += pSnd->FadeStep;
+		pSnd->pMidiParser->setVolume(pSnd->volume);
 	}
 }
 
@@ -421,14 +392,11 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		sortPlayList();
 	}
 
-	// Get volume for sound
-	int16 sndVol = GET_SEL32V(_segMan, pSnd->soundObj, vol);
-
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
-				pSnd->pStreamAud, -1, sndVol, 0, false);
+				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
-		pSnd->pMidiParser->setVolume(sndVol);
+		pSnd->pMidiParser->setVolume(pSnd->volume);
 		if (pSnd->status == kStopped)
 			pSnd->pMidiParser->jumpToTick(0);
 	}
@@ -517,8 +485,6 @@ MidiParser_SCI::MidiParser_SCI() :
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
 	setTempo(16667);
-
-	_segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 }
 //---------------------------------------------
 MidiParser_SCI::~MidiParser_SCI() {
@@ -529,7 +495,7 @@ bool MidiParser_SCI::loadMusic(SoundResource::tagTrack *ptrack, MusicEntry *psnd
 	unloadMusic();
 	_pTrack = ptrack;
 	_pSnd = psnd;
-	setVolume(GET_SEL32V(_segMan, _pSnd->soundObj, vol));
+	setVolume(psnd->volume);
 	midiMixChannels();
 
 	_num_tracks = 1;
@@ -567,11 +533,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
-			if (info.basic.param1 != 0x7F) {
-				PUT_SEL32V(_segMan, _pSnd->soundObj, signal, info.basic.param1);
-			} else {
+			if (info.basic.param1 != 0x7F)
+				_pSnd->signal = info.basic.param1;
+			else
 				_loopTick = _position._play_tick;
-			}
 		}
 		break;
 	case 0xD:
@@ -583,10 +548,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
 		if (info.channel() == 0xF) {// SCI special
-			if (info.basic.param1 == 0x60) {
-				int dataInc = GET_SEL32V(_segMan, _pSnd->soundObj, dataInc);
-				PUT_SEL32V(_segMan, _pSnd->soundObj, dataInc, dataInc++);
-			}
+			if (info.basic.param1 == 0x60)
+				_pSnd->dataInc++;
 			// BF 50 x - set reverb to x
 			// BF 60 x - dataInc++
 			// BF 52 x - bHold=x
@@ -640,13 +603,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
-				uint16 loop = GET_SEL32V(_segMan, _pSnd->soundObj, loop);
-				if (loop == 0xFFFF) {
+				if (_pSnd->loop) {
 					jumpToTick(_loopTick);
-					PUT_SEL32V(_segMan, _pSnd->soundObj, loop, loop--);
+					_pSnd->loop--;
 				} else {
 					_pSnd->status = kStopped;
-					PUT_SEL32V(_segMan, _pSnd->soundObj, signal, 0xFFFF);
+					_pSnd->signal = 0xFFFF;
 				}
 			}
 			break;
