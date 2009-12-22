@@ -276,6 +276,11 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	PUT_SEL32(_segMan, obj, handle, obj);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
+	// Check if a track with the same sound object is already playing
+	int prevTrack = _music->findListSlot(obj);
+	if (prevTrack > -1)
+		_music->soundKill(_music->_playList[prevTrack]);
+
 	MusicEntry *newSound = new MusicEntry();
 	newSound->soundRes = 0;
 	if (_resMan->testResource(ResourceId(kResourceTypeSound, number)))
@@ -284,9 +289,6 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	newSound->pStreamAud = 0;
 	newSound->pMidiParser = 0;
-
-	// TODO
-	//_music->soundKill(newSound);
 	_music->_playList.push_back(newSound);
 
 	if (newSound->soundRes)
@@ -424,8 +426,6 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
 		_music->soundKill(_music->_playList[slot]);
-		delete _music->_playList[slot]->soundRes;
-		_music->_playList.remove_at(slot);
 		PUT_SEL32(_segMan, obj, nodePtr, NULL_REG);
 	}
 

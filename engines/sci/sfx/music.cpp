@@ -446,6 +446,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
 		if (_playList[i] == pSnd) {
+			delete _playList[i]->soundRes;
 			_playList.remove_at(i);
 			break;
 		}
