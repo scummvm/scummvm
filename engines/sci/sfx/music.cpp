@@ -161,6 +161,7 @@ void SciMusic::sortPlayList() {
 	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
 }
 
+#if 0
 void SciMusic::patchSysEx(byte * addr, byte *pdata, int len) {
 	byte *buff = new byte[7 + len + 1];
 	uint16 chk = 0;
@@ -190,13 +191,15 @@ void SciMusic::patchUpdateAddr(byte *addr, int len) {
 		addr[2] -= 0x80;
 	}
 }
-void SciMusic::loadPatch() {
+#endif
+
 // FIXME: This should be done at the driver level
 #if 0
+void SciMusic::loadPatch() {
 	if (_midiType == MD_MT32)
 		loadPatchMT32();
-#endif
 }
+#endif
 
 #if 0
 // currently loads patch 1.pat for Roland/MT-32 device
