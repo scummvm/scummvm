@@ -5,10 +5,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Games:
    - Added support for Blue's Art Time Activities.
    - Added support for Blue's Reading Time Activities.
-   - Added support for Dragon Historie.
    - Added support for Freddi Fish 5: The Case of the Creature of Coral Cove.
-   - Added support for TeenAgent.
    - Added support for Pajama Sam: Games to Play on Any Day.
+   - Added support for Dragon Historie.
+   - Added support for TeenAgent.
 
  General:
    - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
