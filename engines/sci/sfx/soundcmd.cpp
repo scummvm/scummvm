@@ -408,10 +408,11 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 
 	PUT_SEL32V(_segMan, obj, handle, 0x1234);
 	PUT_SEL32V(_segMan, obj, signal, 0);
-	PUT_SEL32V(_segMan, obj, min, 0);
-	PUT_SEL32V(_segMan, obj, sec, 0);
-	PUT_SEL32V(_segMan, obj, frame, 0);
-
+	if (_hasNodePtr) {
+		PUT_SEL32V(_segMan, obj, min, 0);
+		PUT_SEL32V(_segMan, obj, sec, 0);
+		PUT_SEL32V(_segMan, obj, frame, 0);
+	}
 	_music->_playList[slot]->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	_music->_playList[slot]->prio = GET_SEL32V(_segMan, obj, priority);
 	_music->_playList[slot]->volume = GET_SEL32V(_segMan, obj, vol);
