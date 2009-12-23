@@ -48,9 +48,9 @@ typedef struct CommonResources {
 	int32 curScrollUpRight;
 	int32 curHand;
 	int32 curMagnifyingGlass;
-	int32 curTalkNCP;
+	int32 curTalkNPC;
 	int32 curGrabPointer;
-	int32 curTalkNCP2;
+	int32 curTalkNPC2;
 	int32 font1;
 	int32 font2;
 	int32 font3;
@@ -97,15 +97,15 @@ public:
 	int32 size;
 	int32 numEntries;
 	int32 numChapter;
-	int32 xLeft;			 // scene start x position
-	int32 yTop;			 // scene start y position
+	int32 xLeft; // scene start x position
+	int32 yTop;  // scene start y position
 	Common::Rect	 boundingRect;
-	CommonResources	 commonRes;		 // field_1C till field_7C
-	int32 width;			 // field_80
+	CommonResources	 commonRes; // field_1C till field_7C
+	int32 width; // field_80
 	int32 height;
 	int32 motionStatus;
 	int32 field_8C;
-	int32 numActions;	 // field_90
+	int32 numActions; // field_90
 	int32 numBarriers;
 	int32 targetX;
 	int32 targetY;
@@ -116,7 +116,7 @@ public:
 	int32 field_B0;
 	int32 numActors;
 	int32 stereoReversedFlag;
-	Common::Rect sceneRects[6];	 // including scene size rect
+	Common::Rect sceneRects[6]; // including scene size rect
 	uint8 sceneRectIdx;
 	uint8 field_11D[3];
 	int32 field_120;

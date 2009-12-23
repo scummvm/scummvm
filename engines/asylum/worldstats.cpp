@@ -142,9 +142,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	commonRes.curScrollUpRight   = stream->readSint32LE();
 	commonRes.curHand            = stream->readSint32LE();
 	commonRes.curMagnifyingGlass = stream->readSint32LE();
-	commonRes.curTalkNCP         = stream->readSint32LE();
+	commonRes.curTalkNPC         = stream->readSint32LE();
 	commonRes.curGrabPointer     = stream->readSint32LE();
-	commonRes.curTalkNCP2        = stream->readSint32LE();
+	commonRes.curTalkNPC2        = stream->readSint32LE();
 	commonRes.font1              = stream->readSint32LE();
 	commonRes.font2              = stream->readSint32LE();
 	commonRes.font3	             = stream->readSint32LE();

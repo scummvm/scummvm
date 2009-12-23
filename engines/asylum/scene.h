@@ -54,6 +54,13 @@ struct BarrierItem;
 class WorldStats;
 class Speech;
 
+enum HitType {
+	kHitNone       = -1,
+	kHitActionArea = 2,
+	kHitBarrier    = 3,
+	kHitActor      = 4
+};
+
 class SceneTitle {
 public:
 	SceneTitle(Scene *scene);
@@ -111,6 +118,10 @@ public:
 	ActionList* actions() { return _actions; }
 	Speech* speech() { return _speech; }
 
+	/** .text:0040A1B0
+	 * Get the supplied actor's position relative to the
+	 * current scene's xLeft and yTop
+	 */
 	void getActorPosition(Actor *actor, Common::Point *pt);
 	/**
 	 * Return the index of the current player actor
@@ -139,12 +150,53 @@ public:
 	 * graphic resource matches the resource at grResTable[5]
 	 */
 	bool defaultActorDirectionLoaded(int actorIndex, int grResTableIdx);
+	/** .text:00407A00
+	 * TODO
+	 */
+	void setActorDirection(Actor *act, int direction);
+
 	/** .text:004094c0
 	 * Determine the amount to increase the supplied sound
 	 * sample's volume based on the actor's position
 	 */
 	int32 calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act);
 
+protected:
+	/** .text:0040EA50
+	 * Run various hit tests and return the index,
+	 * and a reference to the located type
+	 */
+	int32 hitTest(int32 x, int32 y, HitType &type);
+	/** .text:0040F010
+	 * TODO
+	 */
+	int32 hitTestActionArea(int32 x, int32 y);
+	/** .text:0040E7F0
+	 * Check if the mouse cursor is currently intersecting
+	 * the currently active actor
+	 */
+	bool hitTestActor(int16 x, int16 y);
+	/** .text:004341E0
+	 * Check if the mouse cursor is currently intersecting
+	 * a graphic resource at the supplied coordinates
+	 */
+	bool hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flipped);
+	/** .text:0040E8A0
+	 * Checks if the supplied coordinates are inside an action area, barrier or
+	 * actor, and returns -1 if nothing was found, or the type of hit if found
+	 */
+	int32 hitTestScene(int16 x, int16 y, HitType &type);
+	/** .text:00408980
+	 * Determine if the supplied point intersects
+	 * an action area's active region
+	 */
+	int32 findActionArea(int32 pointX, int32 pointY);
+	/** .text:0040EAA0
+	 * Check if a barrier exist at the supplied coordinates.
+	 * If so, return it's index within the barriers array, if not,
+	 * return -1
+	 */
+	int32 hitTestBarrier(int32 x, int32 y);
 private:
 	AsylumEngine  *_vm;
 	Common::Event *_ev;
@@ -184,6 +236,10 @@ private:
 	 * TODO add description
 	 */
 	void updateMouse();
+	/** .text:0040D580
+	 * TODO
+	 */
+	void handleMouseUpdate(int direction, Common::Rect rect);
 	/** .text:0040B740
 	 * TODO add description
 	 */
