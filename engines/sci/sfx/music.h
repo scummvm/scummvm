@@ -160,7 +160,7 @@ class MidiParser_SCI : public MidiParser {
 public:
 	MidiParser_SCI();
 	~MidiParser_SCI();
-	bool loadMusic(SoundResource::tagTrack *ptrack, MusicEntry *psnd);
+	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd);
 	bool loadMusic(byte *, uint32) {
 		return false;
 	}
@@ -177,8 +177,8 @@ protected:
 	void parseNextEvent(EventInfo &info);
 	byte *midiMixChannels();
 	byte midiGetNextChannel(long ticker);
-	byte *_pMidiData;
-	SoundResource::tagTrack *_pTrack;
+	byte *_mixedData;
+	SoundResource::Track *_track;
 	MusicEntry *_pSnd;
 	uint32 _loopTick;
 	byte _volume;

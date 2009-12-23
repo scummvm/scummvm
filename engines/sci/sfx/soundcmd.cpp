@@ -288,7 +288,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->soundRes = 0;
 	newSound->resnum = number;
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
-		newSound->soundRes = new SoundResource(number, _resMan);
+		newSound->soundRes = new SoundResource(number, _resMan, _doSoundVersion);
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;

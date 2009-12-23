@@ -1808,89 +1808,105 @@ bool ResourceManager::hasSci1Voc900() {
 	return offset == res->size;
 }
 
-SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan) : _resMan(resMan) {
-	Resource *res = _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true);
-	if (!res)
+SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true);
+	int trackNr, channelNr;
+	if (!resource)
 		return;
 
-	_innerResource = res;
+	_innerResource = resource;
 
-	byte *ptr = res->data, *p1;
-	tagChannel *pCh;
-	// count # of tracks
-	nTracks = 0;
-	while ((*ptr++) != 0xFF) {
-		nTracks++;
-		while (*ptr != 0xFF)
-			ptr += 6;
-		ptr++;
-	}
-	aTracks = new tagTrack[nTracks];
-	ptr = res->data;
-	for (int i = 0; i < nTracks; i++) {
-		// SCI01/SCI1/SCI11
-		// Track info starts with track-type:BYTE
-		// Then track-information gets appeneded Unknown:WORD, TrackOffset:WORD, TrackSize:WORD
-		// 0xFF:BYTE as terminator to end that track and begin with another track-type
-		// track-type 0xFF means end-of-tracks
+	byte *data = resource->data, *data2;
+	Channel *channel;
 
-		aTracks[i].type = (kTrackType) * ptr++;
-		// counting # of channels used
-		p1 = ptr;
-		aTracks[i].nChannels = 0;
-		while (*p1 != 0xFF) {
-			p1 += 6;
-			aTracks[i].nChannels++;
+	switch (_soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		error("SCI0 sound data currently not supported");
+		break;
+
+	case SCI_VERSION_1_EARLY:
+	case SCI_VERSION_1_LATE:
+		// count # of tracks
+		_trackCount = 0;
+		while ((*data++) != 0xFF) {
+			_trackCount++;
+			while (*data != 0xFF)
+				data += 6;
+			data++;
 		}
-		aTracks[i].aChannels = new tagChannel[aTracks[i].nChannels];
-		if (aTracks[i].type != 0xF0) // digital track marker - not supported at time
-		{
-			aTracks[i].nDigital = 0xFF; // meanwhile - no ditigal channel associated
-			for (int j = 0; j < aTracks[i].nChannels; j++) {
-				pCh = &aTracks[i].aChannels[j];
-				pCh->unk = READ_LE_UINT16(ptr);
-				pCh->ptr = res->data + READ_LE_UINT16(ptr + 2) + 2;
-				pCh->size = READ_LE_UINT16(ptr + 4) - 2; // not counting channel header
-				pCh->number = *(pCh->ptr - 2);
-				pCh->poly = *(pCh->ptr - 1);
-				pCh->time = pCh->prev = 0;
-				if (pCh->number == 0xFE) // digital channel
-					aTracks[i].nDigital = j;
-				ptr += 6;
+		_tracks = new Track[_trackCount];
+		data = resource->data;
+		for (trackNr = 0; trackNr < _trackCount; trackNr++) {
+			// SCI01/SCI1/SCI11
+			// Track info starts with track-type:BYTE
+			// Then channel-information gets appeneded Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
+			// 0xFF:BYTE as terminator to end that track and begin with another track-type
+			// track-type 0xFF means end-of-tracks
+
+			_tracks[trackNr].type = (TrackType) *data++;
+			// counting # of channels used
+			data2 = data;
+			_tracks[trackNr].channelCount = 0;
+			while (*data2 != 0xFF) {
+				data2 += 6;
+				_tracks[trackNr].channelCount++;
 			}
-		} else {
-			// Skip over digital track
-			ptr += 6;
+			_tracks[trackNr].channels = new Channel[_tracks[trackNr].channelCount];
+			if (_tracks[trackNr].type != 0xF0) { // digital track marker - not supported at time
+				_tracks[trackNr].nDigital = 0xFF; // meanwhile - no ditigal channel associated
+				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
+					channel = &_tracks[trackNr].channels[channelNr];
+					channel->unk = READ_LE_UINT16(data);
+					channel->data = resource->data + READ_LE_UINT16(data + 2) + 2;
+					channel->size = READ_LE_UINT16(data + 4) - 2; // not counting channel header
+					channel->number = *(channel->data - 2);
+					channel->poly = *(channel->data - 1);
+					channel->time = channel->prev = 0;
+					if (channel->number == 0xFE) // digital channel
+						_tracks[trackNr].nDigital = channelNr;
+					data += 6;
+				}
+			} else {
+				// Skip over digital track
+				data += 6;
+			}
+			data++; // skipping 0xFF that closes channels list
 		}
-		ptr++; // skipping 0xFF that closes channels list
+		/*
+		digital track ->ptr points to header:
+		[w] sample rate
+		[w] size
+		[w] ? 00 00  maybe compression flag
+		[w] ? size again - decompressed size maybe
+		*/
+		break;
 	}
-	/*
-	 digital track ->ptr points to header:
-	 [w] sample rate
-	 [w] size
-	 [w] ? 00 00  maybe compression flag
-	 [w] ? size again - decompressed size maybe
-	 */
 }
 //----------------------------------------------------
 SoundResource::~SoundResource() {
-	for (int i = 0; i < nTracks; i++)
-		delete[] aTracks[i].aChannels;
-	delete[] aTracks;
+	for (int trackNr = 0; trackNr < _trackCount; trackNr++)
+		delete[] _tracks[trackNr].channels;
+	delete[] _tracks;
 
 	_resMan->unlockResource(_innerResource);
 }
 //----------------------------------------------------
-SoundResource::tagTrack* SoundResource::getTrackByNumber(uint16 number) {
-	if (/*number >= 0 &&*/number < nTracks)
-		return &aTracks[number];
+SoundResource::Track* SoundResource::getTrackByNumber(uint16 number) {
+	if (_soundVersion == SCI_VERSION_0_EARLY)
+		return &_tracks[0];
+
+	if (/*number >= 0 &&*/number < _trackCount)
+		return &_tracks[number];
 	return NULL;
 }
 
-SoundResource::tagTrack* SoundResource::getTrackByType(kTrackType type) {
-	for (int i = 0; i < nTracks; i++) {
-		if (aTracks[i].type == type)
-			return &aTracks[i];
+SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
+	if (_soundVersion == SCI_VERSION_0_EARLY)
+		return &_tracks[0];
+
+	for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
+		if (_tracks[trackNr].type == type)
+			return &_tracks[trackNr];
 	}
 	return NULL;
 }

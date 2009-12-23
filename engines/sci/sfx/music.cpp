@@ -282,46 +282,46 @@ void SciMusic::loadPatchMT32() {
 
 //----------------------------------------
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
-	//_mutex.lock();
+	SoundResource::Track *track = NULL;
 
-	SoundResource::tagTrack *pTrack = NULL;
+	//_mutex.lock();
 	switch (_midiType) {
 	case MD_PCSPK:
-		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackSpeaker);
+		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_SPEAKER);
 		break;
 	case MD_PCJR:
-		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackTandy);
+		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_TANDY);
 		break;
 	case MD_ADLIB:
-		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackAdlib);
+		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
 		break;
 	case MD_MT32:
-		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackMT32);
+		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_MT32);
 		break;
 	default:
 		break;
 	}
 
 	// attempting to select default MT-32/Roland track
-	if (!pTrack)
-		pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackMT32);
-	if (pTrack) {
+	if (!track)
+		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_MT32);
+	if (track) {
 		// if MIDI device is selected but there is no digital track in sound resource
 		// try to use adlib's digital sample if possible
-		if (_midiType <= MD_MT32 && pTrack->nDigital == 0xFF && _bMultiMidi) {
-			if (pSnd->soundRes->getTrackByType(SoundResource::kTrackAdlib)->nDigital != 0xFF)
-				pTrack = pSnd->soundRes->getTrackByType(SoundResource::kTrackAdlib);
+		if (_midiType <= MD_MT32 && track->nDigital == 0xFF && _bMultiMidi) {
+			if (pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB)->nDigital != 0xFF)
+				track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
 		}
 		// play digital sample
-		if (pTrack->nDigital != 0xFF) {
-			byte *pdata = pTrack->aChannels[pTrack->nDigital].ptr;
-			int rate = READ_LE_UINT16(pdata);
-			uint32 size = READ_LE_UINT16(pdata + 2);
-			assert(READ_LE_UINT16(pdata + 4) == 0);	// Possibly a compression flag
-			//assert(READ_LE_UINT16(pdata + 6) == size);
+		if (track->nDigital != 0xFF) {
+			byte *channelData = track->channels[track->nDigital].data;
+			int rate = READ_LE_UINT16(channelData);
+			uint32 size = READ_LE_UINT16(channelData + 2);
+			assert(READ_LE_UINT16(channelData + 4) == 0);	// Possibly a compression flag
+			//assert(READ_LE_UINT16(channelData + 6) == size);
 			if (pSnd->pStreamAud)
 				delete pSnd->pStreamAud;
-			pSnd->pStreamAud = Audio::makeLinearInputStream(pdata + 8, size, rate,
+			pSnd->pStreamAud = Audio::makeLinearInputStream(channelData + 8, size, rate,
 					Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
@@ -331,7 +331,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
-			pSnd->pMidiParser->loadMusic(pTrack, pSnd);
+			pSnd->pMidiParser->loadMusic(track, pSnd);
 		}
 	}
 
@@ -482,7 +482,7 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 //
 MidiParser_SCI::MidiParser_SCI() :
 	MidiParser() {
-	_pMidiData = NULL;
+	_mixedData = NULL;
 	// mididata contains delta in 1/60th second
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
@@ -493,15 +493,15 @@ MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
 }
 //---------------------------------------------
-bool MidiParser_SCI::loadMusic(SoundResource::tagTrack *ptrack, MusicEntry *psnd) {
+bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd) {
 	unloadMusic();
-	_pTrack = ptrack;
+	_track = track;
 	_pSnd = psnd;
 	setVolume(psnd->volume);
 	midiMixChannels();
 
 	_num_tracks = 1;
-	_tracks[0] = _pMidiData;
+	_tracks[0] = _mixedData;
 	setTrack(0);
 	_loopTick = 0;
 	return true;
@@ -511,9 +511,9 @@ void MidiParser_SCI::unloadMusic() {
 	allNotesOff();
 	resetTracking();
 	_num_tracks = 0;
-	if (_pMidiData) {
-		delete[] _pMidiData;
-		_pMidiData = NULL;
+	if (_mixedData) {
+		delete[] _mixedData;
+		_mixedData = NULL;
 	}
 }
 
@@ -629,13 +629,13 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	byte curr = 0xFF;
 	long closest = ticker + 1000000, next = 0;
 
-	for (int i = 0; i < _pTrack->nChannels; i++) {
-		if (_pTrack->aChannels[i].time == -1) // channel ended
+	for (int i = 0; i < _track->channelCount; i++) {
+		if (_track->channels[i].time == -1) // channel ended
 			continue;
-		next = *_pTrack->aChannels[i].ptr; // when the next event shoudl occur
+		next = *_track->channels[i].data; // when the next event shoudl occur
 		if (next == 0xF8) // 0xF8 means 240 ticks delay
 			next = 240;
-		next += _pTrack->aChannels[i].time;
+		next += _track->channels[i].time;
 		if (next < closest) {
 			curr = i;
 			closest = next;
@@ -646,79 +646,80 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 }
 //----------------------------------------
 byte *MidiParser_SCI::midiMixChannels() {
-	int lSize = 0;
-	byte **pDataPtr = new byte *[_pTrack->nChannels];
-	for (int i = 0; i < _pTrack->nChannels; i++) {
-		pDataPtr[i] = _pTrack->aChannels[i].ptr;
-		_pTrack->aChannels[i].time = 0;
-		_pTrack->aChannels[i].prev = 0;
-		lSize += _pTrack->aChannels[i].size;
+	int totalSize = 0;
+	byte **dataPtr = new byte *[_track->channelCount];
+
+	for (int i = 0; i < _track->channelCount; i++) {
+		dataPtr[i] = _track->channels[i].data;
+		_track->channels[i].time = 0;
+		_track->channels[i].prev = 0;
+		totalSize += _track->channels[i].size;
 	}
 
-	byte *pOutData = new byte[lSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
-	_pMidiData = pOutData;
+	byte *mixedData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
+	_mixedData = mixedData;
 	long ticker = 0;
 	byte curr, delta;
 	byte cmd, par1, global_prev = 0;
 	long new_delta;
-	SoundResource::tagChannel *pCh;
+	SoundResource::Channel *channel;
 	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still active channel
-		pCh = &_pTrack->aChannels[curr];
-		delta = *pCh->ptr++;
-		pCh->time += (delta == 0xF8 ? 240 : delta); // when the comamnd is supposed to occur
+		channel = &_track->channels[curr];
+		delta = *channel->data++;
+		channel->time += (delta == 0xF8 ? 240 : delta); // when the comamnd is supposed to occur
 		if (delta == 0xF8)
 			continue;
-		new_delta = pCh->time - ticker;
+		new_delta = channel->time - ticker;
 		ticker += new_delta;
 
-		cmd = *pCh->ptr++;
+		cmd = *channel->data++;
 		if (cmd != 0xFC) {
 			// output new delta
 			while (new_delta > 240) {
-				*pOutData++ = 0xF8;
+				*mixedData++ = 0xF8;
 				new_delta -= 240;
 			}
-			*pOutData++ = (byte)new_delta;
+			*mixedData++ = (byte)new_delta;
 		}
 		switch (cmd) {
 		case 0xF0: // sysEx
-			*pOutData++ = cmd;
+			*mixedData++ = cmd;
 			do {
-				par1 = *pCh->ptr++;
-				*pOutData++ = par1; // out
+				par1 = *channel->data++;
+				*mixedData++ = par1; // out
 			} while (par1 != 0xF7);
 			break;
 		case 0xFC: // end channel
-			pCh->time = -1; // FIXME
+			channel->time = -1; // FIXME
 			break;
 		default: // MIDI command
 			if (cmd & 0x80)
-				par1 = *pCh->ptr++;
+				par1 = *channel->data++;
 			else {// running status
 				par1 = cmd;
-				cmd = pCh->prev;
+				cmd = channel->prev;
 			}
 			if (cmd != global_prev)
-				*pOutData++ = cmd; // out cmd
-			*pOutData++ = par1;// pout par1
+				*mixedData++ = cmd; // out cmd
+			*mixedData++ = par1;// pout par1
 			if (nMidiParams[(cmd >> 4) - 8] == 2)
-				*pOutData++ = *pCh->ptr++; // out par2
-			pCh->prev = cmd;
+				*mixedData++ = *channel->data++; // out par2
+			channel->prev = cmd;
 			global_prev = cmd;
 		}// switch(cmd)
 	}// while (curr)
 	// mixing finished. inserting stop event
-	*pOutData++ = 0;
-	*pOutData++ = 0xFF;
-	*pOutData++ = 0x2F;
-	*pOutData++ = 0x00;
-	*pOutData++ = 0x00;
+	*mixedData++ = 0;
+	*mixedData++ = 0xFF;
+	*mixedData++ = 0x2F;
+	*mixedData++ = 0x00;
+	*mixedData++ = 0x00;
 
-	for (int i = 0; i < _pTrack->nChannels; i++)
-		_pTrack->aChannels[i].ptr = pDataPtr[i];
+	for (int channelNr = 0; channelNr < _track->channelCount; channelNr++)
+		_track->channels[channelNr].data = dataPtr[channelNr];
 
-	delete[] pDataPtr;
-	return _pMidiData;
+	delete[] dataPtr;
+	return _mixedData;
 }
 
 void MidiParser_SCI::setVolume(byte bVolume) {
@@ -728,9 +729,9 @@ void MidiParser_SCI::setVolume(byte bVolume) {
 		_volume = bVolume;
 
 		// sending volume change to all active channels
-		for (int i = 0; i < _pTrack->nChannels; i++)
-			if (_pTrack->aChannels[i].number <= 0xF)
-				_driver->send(0xB0 + _pTrack->aChannels[i].number, 7, _volume);
+		for (int i = 0; i < _track->channelCount; i++)
+			if (_track->channels[i].number <= 0xF)
+				_driver->send(0xB0 + _track->channels[i].number, 7, _volume);
 	}
 }
 } // end of namespace SCI

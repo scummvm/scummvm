@@ -429,40 +429,42 @@ protected:
 
 class SoundResource {
 public:
-	enum kTrackType {
-		kTrackAdlib = 0,
-		kTrackGameBlaster = 9,
-		kTrackMT32 = 12,
-		kTrackSpeaker = 18,
-		kTrackTandy = 19
+	enum TrackType {
+		TRACKTYPE_ADLIB = 0,
+		TRACKTYPE_GAMEBLASTER = 9,
+		TRACKTYPE_MT32 = 12,
+		TRACKTYPE_SPEAKER = 18,
+		TRACKTYPE_TANDY = 19,
+		TRACKTYPE_NONE = 255
 	};
 
-	struct tagChannel {
+	struct Channel {
 		byte number;
 		byte poly;
 		uint16 unk;
 		uint16 size;
-		byte *ptr;
+		byte *data;
 		long time;
 		byte prev;
 	};
 
-	struct tagTrack {
-		kTrackType type;
+	struct Track {
+		TrackType type;
 		byte nDigital;
-		byte nChannels;
-		tagChannel *aChannels;
+		byte channelCount;
+		Channel *channels;
 		uint sz;
 	};
 public:
-	SoundResource(uint32 resNumber, ResourceManager *resMan);
+	SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion);
 	~SoundResource();
-	tagTrack *getTrackByNumber(uint16 number);
-	tagTrack *getTrackByType(kTrackType type);
+	Track *getTrackByNumber(uint16 number);
+	Track *getTrackByType(TrackType type);
 
 private:
-	byte nTracks;
-	tagTrack *aTracks;
+	SciVersion _soundVersion;
+	int _trackCount;
+	Track *_tracks;
 	Resource *_innerResource;
 	ResourceManager *_resMan;
 };
