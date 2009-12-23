@@ -24,6 +24,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      The Secret of Monkey Island. (GSoC Task)
    - Fixed some other bugs related to game versions for the Amiga.
    - Added support for original save/load dialog in MM NES.
+   - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'
 
 1.0.0 (2009-11-15)
  New Ports:
