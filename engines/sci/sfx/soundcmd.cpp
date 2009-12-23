@@ -42,14 +42,6 @@ namespace Sci {
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 #endif
 
-/* Sound status */
-enum {
-	_K_SOUND_STATUS_STOPPED = 0,
-	_K_SOUND_STATUS_INITIALIZED = 1,
-	_K_SOUND_STATUS_PAUSED = 2,
-	_K_SOUND_STATUS_PLAYING = 3
-};
-
 #define SOUNDCOMMAND(x) _soundCommands.push_back(new MusicEntryCommand(#x, &SoundCommandParser::x))
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -272,7 +264,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 #endif
 
 	if (!_hasNodePtr)
-		PUT_SEL32V(_segMan, obj, state, _K_SOUND_STATUS_INITIALIZED);
+		PUT_SEL32V(_segMan, obj, state, kSndStatusInitialized);
 	else
 		PUT_SEL32(_segMan, obj, nodePtr, obj);
 
@@ -301,7 +293,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->FadeStep = 0;
 	newSound->FadeTicker = 0;
 	newSound->FadeTickerStep = 0;
-	newSound->status = kStopped;
+	newSound->status = kSndStatusStopped;
 	_music->_playList.push_back(newSound);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
@@ -407,11 +399,13 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	}
 
 	PUT_SEL32V(_segMan, obj, handle, 0x1234);
-	PUT_SEL32V(_segMan, obj, signal, 0);
 	if (_hasNodePtr) {
 		PUT_SEL32V(_segMan, obj, min, 0);
 		PUT_SEL32V(_segMan, obj, sec, 0);
 		PUT_SEL32V(_segMan, obj, frame, 0);
+		PUT_SEL32V(_segMan, obj, signal, 0);
+	} else {
+		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
 	}
 	_music->_playList[slot]->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	_music->_playList[slot]->prio = GET_SEL32V(_segMan, obj, priority);
@@ -438,6 +432,9 @@ void SoundCommandParser::changeHandleStatus(reg_t obj, int newStatus) {
 #endif
 
 void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
+	if (!obj.segment)
+		return;
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	changeHandleStatus(obj, SOUND_STATUS_STOPPED);
@@ -462,11 +459,15 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 	_music->soundKill(_music->_playList[slot]);
 	if (_hasNodePtr)
 		PUT_SEL32(_segMan, obj, nodePtr, NULL_REG);
-
+	else
+		PUT_SEL32V(_segMan, obj, state, kSndStatusStopped);
 #endif
 }
 
 void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
+	if (!obj.segment)
+		return;
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	changeHandleStatus(obj, SOUND_STATUS_STOPPED);
 
@@ -480,7 +481,10 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 	}
 
 	PUT_SEL32V(_segMan, obj, handle, 0);
-	PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+	if (!_hasNodePtr)
+		PUT_SEL32V(_segMan, obj, state, kSndStatusStopped);
+	else
+		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 
 	_music->_playList[slot]->dataInc = 0;
 	_music->soundStop(_music->_playList[slot]);
@@ -503,10 +507,15 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 		return;
 	}
 
-	if (value)
+	if (!_hasNodePtr) {
+		PUT_SEL32V(_segMan, obj, state, kSndStatusPaused);
 		_music->soundPause(_music->_playList[slot]);
-	else
-		_music->soundPlay(_music->_playList[slot]);
+	} else {
+		if (value)
+			_music->soundPause(_music->_playList[slot]);
+		else
+			_music->soundPlay(_music->_playList[slot]);
+	}
 #endif
 }
 
@@ -525,6 +534,7 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 		return;
 	}
 
+	PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
 	_music->soundPlay(_music->_playList[slot]);
 #endif
 }
@@ -777,6 +787,8 @@ void SoundCommandParser::cmdGetAudioCapability(reg_t obj, int16 value) {
 }
 
 void SoundCommandParser::cmdGetPlayNext(reg_t obj, int16 value) {
+	// TODO
+	warning("STUB: cmdGetPlayNext");
 }
 
 void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {

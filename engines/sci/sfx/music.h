@@ -64,7 +64,10 @@ enum kTrackType {
 };
 
 enum kSndStatus {
-	kStopped = 0, kPaused, kPlaying
+	kSndStatusStopped = 0,
+	kSndStatusInitialized = 1,
+	kSndStatusPaused = 2,
+	kSndStatusPlaying = 3
 };
 
 class MidiParser_SCI;

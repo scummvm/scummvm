@@ -343,7 +343,7 @@ void SciMusic::onTimer() {
 	_mutex.lock();
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
-		if (_playList[i]->status != kPlaying)
+		if (_playList[i]->status != kSndStatusPlaying)
 			continue;
 		if (_playList[i]->pMidiParser) {
 			if (_playList[i]->FadeStep)
@@ -353,7 +353,7 @@ void SciMusic::onTimer() {
 		} else if (_playList[i]->pStreamAud) {
 			if (!_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)) {
 				_playList[i]->ticker = 0xFFFF;
-				_playList[i]->status = kStopped;
+				_playList[i]->status = kSndStatusStopped;
 
 				// Signal the engine scripts that the sound is done playing
 				// FIXME: is there any other place this can be triggered properly?
@@ -399,16 +399,16 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->setVolume(pSnd->volume);
-		if (pSnd->status == kStopped)
+		if (pSnd->status == kSndStatusStopped)
 			pSnd->pMidiParser->jumpToTick(0);
 	}
-	pSnd->status = kPlaying;
+	pSnd->status = kSndStatusPlaying;
 	//_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundStop(MusicEntry *pSnd) {
 	//_mutex.lock();
-	pSnd->status = kStopped;
+	pSnd->status = kSndStatusStopped;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 	if (pSnd->pMidiParser)
@@ -430,7 +430,7 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	//_mutex.lock();
-	pSnd->status = kStopped;
+	pSnd->status = kSndStatusStopped;
 	if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->unloadMusic();
 		delete pSnd->pMidiParser;
@@ -454,7 +454,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {
-	pSnd->status = kPaused;
+	pSnd->status = kSndStatusPaused;
 	if (pSnd->pStreamAud)
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	else if (pSnd->pMidiParser)
@@ -611,7 +611,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					jumpToTick(_loopTick);
 					_pSnd->loop--;
 				} else {
-					_pSnd->status = kStopped;
+					_pSnd->status = kSndStatusStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
 				}
 			}
