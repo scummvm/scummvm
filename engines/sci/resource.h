@@ -453,7 +453,6 @@ public:
 		byte nDigital;
 		byte channelCount;
 		Channel *channels;
-		uint sz;
 	};
 public:
 	SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion);
