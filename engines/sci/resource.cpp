@@ -1892,6 +1892,9 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		[w] ? size again - decompressed size maybe
 		*/
 		break;
+
+	default:
+		error("SoundResource: SCI version %d is unsupported", _soundVersion);
 	}
 }
 //----------------------------------------------------
