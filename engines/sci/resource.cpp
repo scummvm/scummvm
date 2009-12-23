@@ -1828,6 +1828,12 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan) : _resMa
 	aTracks = new tagTrack[nTracks];
 	ptr = res->data;
 	for (int i = 0; i < nTracks; i++) {
+		// SCI01/SCI1/SCI11
+		// Track info starts with track-type:BYTE
+		// Then track-information gets appeneded Unknown:WORD, TrackOffset:WORD, TrackSize:WORD
+		// 0xFF:BYTE as terminator to end that track and begin with another track-type
+		// track-type 0xFF means end-of-tracks
+
 		aTracks[i].type = (kTrackType) * ptr++;
 		// counting # of channels used
 		p1 = ptr;
