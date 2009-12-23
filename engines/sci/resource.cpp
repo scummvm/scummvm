@@ -1821,7 +1821,19 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		error("SCI0 sound data currently not supported");
+		_trackCount = 1;
+		_tracks = new Track[_trackCount];
+		_tracks->nDigital = 0xFF;
+		_tracks->type = TRACKTYPE_NONE;
+		_tracks->channelCount = 1;
+		_tracks->channels = new Channel[_tracks->channelCount];
+		channel = _tracks->channels;
+		channel->data = resource->data + 0x21;
+		channel->size = resource->size - 0x21;
+		channel->number = 0;
+		channel->poly = 0;
+		channel->time = channel->prev = 0;
+		channel->unk = 0;
 		break;
 
 	case SCI_VERSION_1_EARLY:
