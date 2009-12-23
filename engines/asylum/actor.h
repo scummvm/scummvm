@@ -184,75 +184,76 @@ public:
 
 	int32 currentAction; // TODO depreciate
 
-	int32		 x;
-	int32		 y;
-	uint32		 grResId;
-	int32		 field_C; // BarrierIndex? Mask index?
-	uint32		 frameNum;
-	uint32		 frameCount;
-	int32		 x1;
-	int32		 y1;
-	int32		 x2;
-	int32		 y2;
+	int32  x;
+	int32  y;
+	uint32 grResId;
+	int32  field_C; // BarrierIndex? Mask index?
+	uint32 frameNum;
+	uint32 frameCount;
+	int32  x1;
+	int32  y1;
+	int32  x2;
+	int32  y2;
 	Common::Rect boundingRect;
-	int32		 direction;
-	int32		 field_3C;
-	int32		 updateType;
-	int32		 field_44;
-	int32		 priority;
-	int32		 flags;
-	int32		 field_50;
-	int32		 field_54;
-	int32		 field_58;
-	int32		 field_5C;
-	int32		 field_60;
-	int32		 actionIdx3;
+	int32  direction;
+	int32  field_3C;
+	int32  updateType;
+	int32  field_44;
+	int32  priority;
+	int32  flags;
+	int32  field_50;
+	int32  field_54;
+	int32  field_58;
+	int32  field_5C;
+	int32  field_60;
+	int32  actionIdx3;
 	// TODO field_68 till field_617
-	int32		 reaction[8];
-	int32		 field_638;
-	int32		 walkingSound1;
-	int32		 walkingSound2;
-	int32		 walkingSound3;
-	int32		 walkingSound4;
-	int32		 field_64C;
-	int32		 field_650;
-	int32		 grResTable[55];
-	char		 name[256];
-	int32		 field_830[20];
-	int32		 field_880[20];
-	int32		 field_8D0[20];
-	int32		 actionIdx2;
-	int32		 field_924;
-	int32		 tickValue1;
-	int32		 field_92C;
-	int32		 flags2;
-	int32		 field_934;
-	int32		 field_938;
-	int32		 soundResId; // field_93C
-	int32       field_940;
-	int32       field_944;
-	int32       field_948;
-	int32       field_94C;
-	int32       field_950;
-	int32       field_954;
-	int32       field_958;
-	int32       field_95C;
-	int32       field_960;
-	int32       field_964;
-	int32       field_968;
-	int32       field_96C;
-	int32       field_970;
-	int32       field_974;
-	int32       field_978;
-	int32		 actionIdx1;
+	int32  reaction[8];
+	int32  field_638;
+	int32  walkingSound1;
+	int32  walkingSound2;
+	int32  walkingSound3;
+	int32  walkingSound4;
+	int32  field_64C;
+	int32  field_650;
+	int32  grResTable[55];
+	char   name[256];
+	int32  field_830[20];
+	int32  field_880[20];
+	int32  field_8D0[20];
+	int32  actionIdx2;
+	int32  field_924;
+	int32  tickValue1;
+	int32  field_92C;
+	int32  flags2;
+	int32  field_934;
+	int32  field_938;
+	int32  soundResId; // field_93C
+	int32  field_940;
+	int32  field_944;
+	int32  field_948;
+	int32  field_94C;
+	int32  field_950;
+	int32  field_954;
+	int32  field_958;
+	int32  field_95C;
+	int32  field_960;
+	int32  field_964;
+	int32  field_968;
+	int32  field_96C;
+	int32  field_970;
+	int32  field_974;
+	int32  field_978;
+	int32  actionIdx1;
 	// TODO field_980 till field_9A0
 
 private:
-	Scene			*_scene;
+	Scene *_scene;
+	int32 _resources[61];
+
 	ResourcePack    *_resPack;
 	GraphicResource *_graphic;
-	int32          _resources[61];
-	ActionArea 	    *_currentWalkArea;
+	ActionArea      *_currentWalkArea;
 
 	GraphicFrame *getFrame();
 	int32 getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2);

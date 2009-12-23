@@ -128,6 +128,9 @@ void Scene::initialize() {
 	_cursor->load(_ws->commonRes.curMagnifyingGlass);
 	_cursor->set(0);
 
+	// FIXME this is just here for testing
+	_cursor->grResId = _ws->commonRes.curMagnifyingGlass;
+
 	_ws->sceneRectIdx = 0;
 	_vm->screen()->clearScreen(); // XXX was clearGraphicsInQueue()
 	_ws->motionStatus = 1;
@@ -506,7 +509,7 @@ int Scene::updateScene() {
 
 	// Mouse
 	startTick = _vm->getTick();
-	updateMouse();
+	// updateMouse();
 	debugC(kDebugLevelScene, "UpdateMouse Time: %d", _vm->getTick() - startTick);
 
 	// Actors
@@ -553,18 +556,27 @@ int Scene::updateScene() {
 }
 
 void Scene::updateMouse() {
-	Common::Rect actorPos;
+	Common::Rect  actorPos;
+	Common::Point pt;
+	Actor *act = getActor();
+
+	// The code below was from
+	// .text:0040A1B0 getCharacterScreenPosition()
+	// which was only ever called at this point, so
+	// inlining it for simplicity
+	pt.x = act->x1 -_ws->xLeft;
+	pt.y = act->y1 -_ws->yTop;
 
 	if (_sceneIdx != 2 || _playerActorIdx != 10) {
-		actorPos.top    = getActor()->y;
-		actorPos.left   = getActor()->x + 20;
-		actorPos.right  = getActor()->x + 2 + getActor()->x2;
-		actorPos.bottom = getActor()->y + getActor()->y2;
+		actorPos.left   = pt.x + 20;
+		actorPos.top    = pt.y;
+		actorPos.right  = pt.x + 2 * act->x2;
+		actorPos.bottom = pt.y + act->y2;
 	} else {
-		actorPos.top    = getActor()->y + 60;
-		actorPos.left   = getActor()->x + 50;
-		actorPos.right  = getActor()->x + getActor()->x2 + 10;
-		actorPos.bottom = getActor()->y + getActor()->y2 - 20;
+		actorPos.left   = pt.x + 50;
+		actorPos.top    = pt.y + 60;
+		actorPos.right  = pt.x + getActor(10)->x2 + 10;
+		actorPos.bottom = pt.y + getActor(10)->y2 - 20;
 	}
 
 	int  dir = -1;
@@ -573,11 +585,11 @@ void Scene::updateMouse() {
 	if (_cursor->x() < actorPos.left) {
 		if (_cursor->y() >= actorPos.top) {
 			if (_cursor->y() > actorPos.bottom) {
-				if (getActor()->direction == 2) {
+				if (act->direction == 2) {
 					if (_cursor->y() - actorPos.bottom > 10)
 						dir = 3;
 				} else {
-					if (getActor()->direction == 4) {
+					if (act->direction == 4) {
 						if (actorPos.left - _cursor->x() > 10)
 							dir = 3;
 					} else {
@@ -585,11 +597,11 @@ void Scene::updateMouse() {
 					}
 				}
 			} else {
-				if (getActor()->direction == 1) {
+				if (act->direction == 1) {
 					if (_cursor->y() - actorPos.top > 10)
 						dir = 2;
 				} else {
-					if (getActor()->direction == 3) {
+					if (act->direction == 3) {
 						if (actorPos.bottom - _cursor->y() > 10)
 							dir = 2;
 					} else {
@@ -598,8 +610,8 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (getActor()->direction) {
-				if (getActor()->direction == 2) {
+			if (act->direction) {
+				if (act->direction == 2) {
 					if (actorPos.top - _cursor->y() > 10)
 						dir = 1;
 				} else {
@@ -616,11 +628,11 @@ void Scene::updateMouse() {
 	if (!done && _cursor->x() <= actorPos.right) {
 		if (_cursor->y() >= actorPos.top) {
 			if (_cursor->y() > actorPos.bottom) {
-				if (getActor()->direction == 3) {
+				if (act->direction == 3) {
 					if (_cursor->x() - actorPos.left > 10)
 						dir = 4;
 				} else {
-					if (getActor()->direction == 5) {
+					if (act->direction == 5) {
 						if (actorPos.right - _cursor->x() > 10)
 							dir = 4;
 					} else {
@@ -629,11 +641,11 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (getActor()->direction == 1) {
+			if (act->direction == 1) {
 				if (_cursor->x() - actorPos.left > 10)
 					dir = 0;
 			} else {
-				if (getActor()->direction == 7) {
+				if (act->direction == 7) {
 					if (actorPos.right - _cursor->x() > 10)
 						dir = 0;
 				} else {
@@ -645,8 +657,8 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && _cursor->y() < actorPos.top) {
-		if (getActor()->direction) {
-			if (getActor()->direction == 6) {
+		if (act->direction) {
+			if (act->direction == 6) {
 				if (actorPos.top - _cursor->y() > 10)
 					dir = 7;
 			} else {
@@ -660,11 +672,11 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && _cursor->y() <= actorPos.bottom) {
-		if (getActor()->direction == 5) {
+		if (act->direction == 5) {
 			if (actorPos.bottom - _cursor->y() > 10)
 				dir = 6;
 		} else {
-			if (getActor()->direction == 7) {
+			if (act->direction == 7) {
 				if (_cursor->y() - actorPos.top > 10)
 					dir = 6;
 			} else {
@@ -674,18 +686,294 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && getActor()->direction == 4) {
+	if (!done && act->direction == 4) {
 		if (_cursor->x() - actorPos.right <= 10)
 			done = true;
 		if (!done)
 			dir = 5;
 	}
 
-	if (!done && (getActor()->direction != 6 || _cursor->y() - actorPos.bottom > 10)) {
+	if (!done && (act->direction != 6 || _cursor->y() - actorPos.bottom > 10))
 		dir = 5;
+
+	handleMouseUpdate(dir, actorPos);
+	if (dir >= 0) {
+		if (act->updateType == 1 || act->updateType == 12)
+			setActorDirection(act, dir);
 	}
 
 	//printf("Current Dir %d -- New Dir %d\n", actor->direction, dir);
+}
+
+void Scene::setActorDirection(Actor *act, int direction) {
+	act->direction = (direction > 4) ? 8 - direction : direction;
+	int32 grResId;
+
+	if (act->field_944 != 5) {
+		switch (act->updateType) {
+		case 0x04:
+		case 0x05:
+		case 0x0E: {
+			grResId = act->grResTable[act->direction + 5];
+			// FIXME this seems kind of wasteful just to grab a frame count
+			GraphicResource *gra = new GraphicResource(_resPack, grResId);
+			act->grResId = grResId;
+			act->frameCount = gra->getFrameCount();
+			delete gra;
+		}
+			break;
+		case 0x12:
+			if (_ws->numChapter == 2) {
+				if (_playerActorIdx == 11) {
+					// NOTE this is supposed to explicitely point to the actor 11 reference,
+					// (_ws->actors[11])
+					// but I'm assuming if control drops through to here, getActor() would
+					// pull the right object because the _playerActorIndex should == 11
+					if (act->direction > 4)
+						act->grResId = act->grResTable[8 - act->direction];
+					else
+						act->grResId = act->grResTable[act->direction];
+				}
+			}
+			break;
+		case 0x01:
+		case 0x02:
+		case 0x0C:
+			// TODO verify that this is correct
+			grResId = act->grResTable[act->direction];
+			break;
+		case 0x08:
+			// TODO verify that this is correct
+			grResId = act->grResTable[act->direction + 20];
+			break;
+		default:
+			warning ("[setActorDirection] default case hit with updateType of %d", act->updateType);
+		}
+	}
+}
+
+void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
+	int16 rlimit = rect.right - 10;
+	int32 newGrResId;
+	HitType type = kHitNone;
+
+	// TODO if encounter_flag03
+	if (0 && _cursor->grResId != _ws->commonRes.curTalkNPC) {
+		// TODO setMouseCursor(_ws->commonRes.curTalkNPC);
+	}
+
+	Actor *act = getActor(); // get the player actor reference
+
+	if (_cursor->field_11 & 2) {
+		if (act->updateType == 1 || act->updateType == 12) {
+			if (direction >= 0) {
+				newGrResId = _ws->commonRes.curScrollUp + direction;
+				if (_cursor->grResId != newGrResId) {
+					// TODO setMouseCursor(newGrResId);
+					warning("%d", newGrResId);
+				}
+			}
+		}
+	}
+
+	if (act->updateType == 6 || act->updateType == 10) {
+		newGrResId = _ws->commonRes.curHand;
+		if (_cursor->grResId != newGrResId) {
+			// TODO setMouseCursor(newGrResId);
+			warning("%d", newGrResId);
+		}
+	} else {
+		if (act->field_638) {
+			if (_cursor->x() >= rect.left && _cursor->x() <= rlimit &&
+				_cursor->y() >= rect.top  && _cursor->y() <= rect.bottom &&
+				hitTestActor(_cursor->x(), _cursor->y())) {
+				// TODO LOTS of work here, because apparently we need to use
+				// field_638 as an index into _ws->field_D6AC8, which is not
+				// yet defined as part of worldstats, but according to IDA, is:
+				// 000D6A88 field_D6A88     dd 16 dup(?)
+				// so this is an array that is initialized as part of the scene
+				// loading process. Need to investigate further ...
+				warning("Something...");
+			} else {
+				// TODO pass a reference to hitType so it can be populated by
+				// hitTestScene
+				newGrResId = hitTestScene(_cursor->x(), _cursor->y(), type);
+				if (newGrResId != -1) {
+					warning ("Can't set mouse cursor, field_D6AC8 not handled ... yet");
+					// TODO
+					// check if _ws->field_D6AC8[act->field_638] != newGrResId
+					// if false, set mouse cursor
+				} else {
+					// TODO _ws->field_D6B08 stuff, then set cursor
+					warning ("Can't set mouse cursor, field_D6B08 not handled ... yet");
+				}
+			}
+			return; // return result;
+		}
+		newGrResId = hitTest(_cursor->x(), _cursor->y(), type);
+		if (_cursor->x() >= rect.left && _cursor->x() <= rlimit &&
+			_cursor->y() >= rect.top  && _cursor->y() <= rect.bottom &&
+			hitTestActor(_cursor->x(), _cursor->y())) {
+			if (act->reaction[0]) {
+				if (_cursor->grResId != _ws->commonRes.curGrabPointer) {
+					warning ("Changing Cursor to curGrabPointer");
+					// TODO setMouseCursor
+				}
+				return;
+			}
+		}
+		if (newGrResId != -1) {
+			if (_ws->numChapter != 2 || _playerActorIdx != 10) {
+				if (_cursor->grResId != _ws->commonRes.curMagnifyingGlass) { // TODO || _cursor->flags)
+					warning ("Changing Cursor to curMagnifying Glass");
+					// TODO setMouseCursor
+				}
+			} else {
+				if (_cursor->grResId != _ws->commonRes.curTalkNPC2) { // TODO || _cursor->flags)
+					warning ("Changing Cursor to curTalkNPC2");
+					// TODO setMouseCursor
+				}
+			}
+		} else {
+			switch (type) {
+			case kHitActionArea:
+				warning ("Cursor = kHitActionArea");
+				break;
+			case kHitBarrier:
+				warning ("Cursor = kHitBarrier");
+				break;
+			case kHitActor:
+				warning ("Cursor = kHitActor");
+				break;
+			default:
+				// TODO LOBYTE(hitType)
+				break;
+			}
+
+			// TODO
+			// Handle the various switches and change the mouse cursor
+			// accordingly. I'm not 100% sure that this can't be done
+			// directly in each case, as the disassembly shows the need
+			// to compare the lobyte first, then take the appropriate action
+		}
+	}
+
+
+}
+
+int32 Scene::hitTestBarrier(int32 x, int32 y) {
+	int32 targetIdx = -1;
+	for (int32 i = 0; i < _ws->numBarriers; i++) {
+		Barrier b = _ws->barriers[i];
+		if (_ws->isBarrierOnScreen(i))
+			if (b.polyIdx)
+				if (hitTestPixel(b.resId, b.frameIdx, x, y, b.flags & 0x1000)) {
+					targetIdx = i;
+					break;
+				}
+	}
+	return targetIdx;
+}
+
+int32 Scene::hitTest(int32 x, int32 y, HitType &type) {
+	type = kHitNone;
+	int32 targetIdx = hitTestBarrier(x, y);
+	if (targetIdx == -1) {
+		targetIdx = hitTestActionArea(x, y);
+		if (targetIdx == -1) {
+			targetIdx = hitTestActor(x, y);
+			if (targetIdx != -1)
+				type = kHitActor;
+		} else {
+			type = kHitActionArea;
+		}
+	} else {
+		type = kHitBarrier;
+	}
+	return targetIdx;
+}
+
+int32 Scene::hitTestActionArea(int32 x, int32 y) {
+	int32 targetIdx = findActionArea(_ws->xLeft + x, _ws->yTop + y);
+
+	// TODO
+	// if ( result == -1 || !(LOBYTE(scene.actionAreas[result].flags2) & 0x17) )
+	//     targetIdx = -1
+	// This won't work becase I can't remember what flags2 is at the moment :P
+
+	return targetIdx;
+}
+
+int32 Scene::findActionArea(int32 pointX, int32 pointY) {
+	// TODO
+	// This is a VERY loose implementation of the target
+	// function, as this doesn't do any of the flag checking
+	// the original did
+	int32 targetIdx = -1;
+	for (int32 i = 0; i < _ws->numActions; i++) {
+		ActionArea a = _ws->actions[i];
+		PolyDefinitions p = _polygons->entries[a.polyIdx];
+		if (p.contains(pointX, pointY)) {
+			targetIdx = i;
+			break;
+		}
+	}
+	return targetIdx;
+}
+
+int32 Scene::hitTestScene(int16 x, int16 y, HitType &type) {
+	int32 top  = x + _ws->xLeft;
+	int32 left = y + _ws->yTop;
+	type = kHitNone;
+
+	int32 result = findActionArea(top, left);
+
+	if (result != -1) {
+		if (LOBYTE(_ws->actions[result].actionType) & 8) {
+			type = kHitActionArea;
+			return result;
+		}
+	}
+
+	// TODO barrier and actor checks
+
+	return result;
+}
+
+bool Scene::hitTestActor(int16 x, int16 y) {
+	Actor *act = getActor();
+	Common::Point pt;
+	getActorPosition(act, &pt);
+
+	int32 hitFrame;
+	if (act->frameNum >= act->frameCount)
+		hitFrame = 2 * act->frameNum - act->frameCount - 1;
+	else
+		hitFrame = act->frameNum;
+
+	return hitTestPixel(act->grResId,
+		hitFrame,
+		x - act->x - pt.x,
+		y - act->y - pt.y,
+		(act->direction >= 0));
+}
+
+bool Scene::hitTestPixel(int32 grResId, int32 frame, int16 x, int16 y, bool flipped) {
+	GraphicResource *gra = new GraphicResource(_resPack, grResId);
+	GraphicFrame    *fra = gra->getFrame(frame);
+
+	// TODO this gets a bit funky with the "flipped" calculations for x intersection
+	// The below is a pretty basic intersection test for proof of concept
+
+	Common::Rect rect;
+	rect.top    = fra->x;
+	rect.left   = fra->y;
+	rect.right  = fra->x + fra->surface.w;
+	rect.bottom = fra->y + fra->surface.h;
+
+	delete gra;
+
+	return rect.contains(x, y);
 }
 
 void Scene::updateActor(int32 actorIdx) {

@@ -98,6 +98,21 @@ public:
 		return _curFrame;
 	}
 
+
+	// NOTE
+	// .text:00435060 contains a function that assigns global variables to a
+	// struct associated with cursor graphics info. Since this functionality only
+	// ever seems to be used to reference cursor info, the struct members
+	// may as well be class members in order to simplify the logic a bit
+
+	// typedef struct CursorInfo {
+	int32 grResId;
+	int32 field_4;
+	int32 frameCount;
+	int32 field_C;
+	byte  flags;
+	byte  field_11;
+	// } CursorInfo;
 private:
 	void set(byte *data, byte width, byte height);
 
