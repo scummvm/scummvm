@@ -460,7 +460,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Windows/Linux/DOS CD Version",
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8929956},
-	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", 350243},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
@@ -584,7 +584,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"Floppy",
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", 8905108},
-	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", 340726},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
