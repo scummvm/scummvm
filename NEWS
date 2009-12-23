@@ -23,6 +23,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for music and sound effects in the the Amiga version of
      The Secret of Monkey Island. (GSoC Task)
    - Fixed some other bugs related to game versions for the Amiga.
+   - Added support for original save/load dialog in MM NES.
 
 1.0.0 (2009-11-15)
  New Ports:
