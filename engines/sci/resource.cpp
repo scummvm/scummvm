@@ -1852,6 +1852,9 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan) : _resMa
 					aTracks[i].nDigital = j;
 				ptr += 6;
 			}
+		} else {
+			// Skip over digital track
+			ptr += 6;
 		}
 		ptr++; // skipping 0xFF that closes channels list
 	}
@@ -1879,9 +1882,10 @@ SoundResource::tagTrack* SoundResource::getTrackByNumber(uint16 number) {
 }
 
 SoundResource::tagTrack* SoundResource::getTrackByType(kTrackType type) {
-	for (int i = 0; i < nTracks; i++)
+	for (int i = 0; i < nTracks; i++) {
 		if (aTracks[i].type == type)
 			return &aTracks[i];
+	}
 	return NULL;
 }
 
