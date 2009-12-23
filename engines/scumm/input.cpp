@@ -447,6 +447,9 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 		if (_game.id == GID_MANIAC && _game.version == 0) {
 			runScript(2, 0, 0, 0);
 		}
+		if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
+			runScript(163, 0, 0, 0);
+		}
 	}
 
 	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input
