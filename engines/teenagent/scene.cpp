@@ -392,7 +392,7 @@ void Scene::init(int id, const Common::Point &pos) {
 }
 
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
-	debug("playAnimation(%u, %u, %s, %s, %s)", idx, id, loop?"true":"false", paused?"true":"false", ignore?"true":"false");
+	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop?"true":"false", paused?"true":"false", ignore?"true":"false");
 	assert(idx < 4);
 	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
