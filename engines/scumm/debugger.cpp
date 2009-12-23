@@ -89,6 +89,9 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	if (_vm->_game.id == GID_LOOM)
 		DCmd_Register("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
 
+	if (_vm->_game.id == GID_MONKEY && Common::kPlatformSegaCD)
+		DCmd_Register("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
+
 	DCmd_Register("loadgame",  WRAP_METHOD(ScummDebugger, Cmd_LoadGame));
 	DCmd_Register("savegame",  WRAP_METHOD(ScummDebugger, Cmd_SaveGame));
 
@@ -847,6 +850,30 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
+	if (argc > 1) {
+		_vm->_bootParam = atoi(argv[1]);
+		int args[16];
+		memset(args, 0, sizeof(args));
+		args[0] = _vm->_bootParam;
+	
+		_vm->runScript(61, 0, 0, args);
+		
+		if (_vm->_bootParam != _vm->_scummVars[411]){
+			DebugPrintf("Invalid Passcode\n");
+			return true;
+		}
+		
+		_vm->_bootParam = 0;	
+		_detach_now = true;
+		
+	} else {
+		DebugPrintf("Use 'passcode <SEGA CD Passcode>'\n");
+		return true;
+	}
+	return false;
 }
 
 bool ScummDebugger::Cmd_ResetCursors(int argc, const char **argv) {
