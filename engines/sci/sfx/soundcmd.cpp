@@ -293,7 +293,6 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	newSound->volume = GET_SEL32V(_segMan, obj, vol) & 0xFF;
-	newSound->signal = 0;
 	newSound->dataInc = 0;
 	newSound->pStreamAud = 0;
 	newSound->pMidiParser = 0;
@@ -486,7 +485,6 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 
 	if (!GET_SEL32(_segMan, obj, nodePtr).isNull()) {
 		_music->_playList[slot]->dataInc = 0;
-		_music->_playList[slot]->signal = SIGNAL_OFFSET;
 		_music->soundStop(_music->_playList[slot]);
 	}
 #endif
@@ -752,7 +750,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 				cmdStopHandle(obj, value);
 				break;
 			default:
-				PUT_SEL32V(_segMan, obj, signal, _music->_playList[slot]->signal);
 				break;
 		}
 

@@ -353,7 +353,6 @@ void SciMusic::onTimer() {
 		} else if (_playList[i]->pStreamAud) {
 			if (!_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)) {
 				_playList[i]->ticker = 0xFFFF;
-				_playList[i]->signal = 0xFFFF;
 				_playList[i]->status = kStopped;
 
 				// Signal the engine scripts that the sound is done playing
@@ -530,6 +529,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	if (info.event < 0x80)
 		return;
 
+	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+
 	_position._running_status = info.event;
 	switch (info.command()) {
 	case 0xC:
@@ -537,7 +538,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != 0x7F)
-				_pSnd->signal = info.basic.param1;
+				PUT_SEL32V(segMan, _pSnd->soundObj, signal, info.basic.param1);
 			else
 				_loopTick = _position._play_tick;
 		}
@@ -611,7 +612,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					_pSnd->loop--;
 				} else {
 					_pSnd->status = kStopped;
-					_pSnd->signal = 0xFFFF;
+					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
 				}
 			}
 			break;

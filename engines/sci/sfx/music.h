@@ -77,7 +77,6 @@ struct MusicEntry {
 
 	uint16 dataInc;
 	uint16 ticker;
-	uint16 signal;
 	byte prio;
 	byte loop;
 	byte volume;
