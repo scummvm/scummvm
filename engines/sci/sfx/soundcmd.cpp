@@ -114,7 +114,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
 			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
-			PUT_SEL32V(segMan, obj, state, _K_SOUND_STATUS_STOPPED);
+			PUT_SEL32V(segMan, obj, state, kSndStatusStopped);
 			break;
 
 		default:
@@ -323,7 +323,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	if (!_hasNodePtr) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
-		PUT_SEL32V(_segMan, obj, state, _K_SOUND_STATUS_PLAYING);
+		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
 	} else if (_doSoundVersion == SCI_VERSION_1_EARLY) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
