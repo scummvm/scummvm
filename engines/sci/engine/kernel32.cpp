@@ -455,6 +455,11 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		SciString *string = s->_segMan->allocateString(&stringHandle);
 		string->setType(3);
 		string->setSize(argv[1].toUint16());
+
+		// Make sure the first character is a null character
+		if (string->getSize() > 0)
+			string->setValue(0, 0);
+
 		return stringHandle;
 		}
 	case 1: // Size
@@ -512,23 +517,16 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		if (string1->getSize() < index1 + count)
 			string1->setSize(index1 + count);
 
+		// Note: We're accessing from c_str() here because the string's size ignores
+		// the trailing 0 and therefore triggers an assert when doing string2[i + index2].
 		for (uint16 i = 0; i < count; i++)
-			string1->setValue(i + index1, string2[i + index2]);
+			string1->setValue(i + index1, string2.c_str()[i + index2]);
 
 		return argv[1];
 		}
 	case 7: { // Cmp
-		Common::String string1, string2;
-
-		if (argv[1].isNull())
-			string1 = "";
-		else
-			string1 = s->_segMan->lookupString(argv[1])->toString();
-			
-		if (argv[2].isNull())
-			string2 = "";
-		else
-			string2 = s->_segMan->lookupString(argv[2])->toString();
+		Common::String string1 = argv[1].isNull() ? "" : s->_segMan->getString(argv[1]);
+		Common::String string2 = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
 			
 		if (argc == 4) // Strncmp
 			return make_reg(0, strncmp(string1.c_str(), string2.c_str(), argv[3].toUint16()));
@@ -547,11 +545,8 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			return argv[1];
 	
 		return GET_SEL32(s->_segMan, argv[1], data);
-	case 10: { // Stringlen
-		SciString *sciString = s->_segMan->lookupString(argv[1]);
-		Common::String string = sciString->toString();
-		return make_reg(0, string.size());
-		}
+	case 10: // Stringlen
+		return make_reg(0, s->_segMan->strlen(argv[1]));
 	case 11: // Printf
 		// TODO: Return a new formatting string
 		warning("kString(Printf)");

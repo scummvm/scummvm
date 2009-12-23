@@ -153,14 +153,11 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		reader = new MessageReaderV3(res->data, res->size);
 		break;
 	case 4:
+#ifdef ENABLE_SCI32
+	case 5: // v5 seems to be compatible with v4
+#endif
 		reader = new MessageReaderV4(res->data, res->size);
 		break;
-#ifdef ENABLE_SCI32
-	case 5:
-		// TODO: Decode this version's format... It's at least used in Torin.
-		warning("The SCI 2.1 message format is not supported");
-		return false;
-#endif
 	default:
 		warning("Message: unsupported resource version %d", version);
 		return false;

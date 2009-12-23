@@ -706,6 +706,7 @@ public:
 
 		// Check if we never created an array before
 		if (!_data) {
+			_size = _actualSize = size;
 			_data = newArray;
 			return;
 		}
@@ -736,9 +737,6 @@ public:
 	byte getType() { return _type; }
 	uint32 getSize() { return _size; }
 	T *getRawData() { return _data; }
-	
-	//Common::String toString();
-	//void fromString(Common::String string);
 
 protected:
 	int8 _type;
