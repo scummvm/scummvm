@@ -398,7 +398,6 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		cmdInitHandle(obj, value);
 	}
 
-	PUT_SEL32V(_segMan, obj, handle, 0x1234);
 	if (_hasNodePtr) {
 		PUT_SEL32V(_segMan, obj, min, 0);
 		PUT_SEL32V(_segMan, obj, sec, 0);
@@ -407,6 +406,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	} else {
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
 	}
+
 	_music->_playList[slot]->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	_music->_playList[slot]->prio = GET_SEL32V(_segMan, obj, priority);
 	_music->_playList[slot]->volume = GET_SEL32V(_segMan, obj, vol);
