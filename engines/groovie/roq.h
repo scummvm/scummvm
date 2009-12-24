@@ -84,9 +84,8 @@ private:
 	byte _codebook4[256 * 4];
 
 	// Buffers
-	Graphics::Surface *_currBuf;
-	Graphics::Surface *_prevBuf;
-	Graphics::Surface _showBuf;
+	Graphics::Surface *_fg, *_bg, *_thirdBuf;
+	Graphics::Surface *_currBuf, *_prevBuf;
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
 	byte _offScale;

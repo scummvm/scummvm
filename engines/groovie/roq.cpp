@@ -43,7 +43,8 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 #ifdef DITHER
 	_dither(NULL),
 #endif
-	VideoPlayer(vm), _codingTypeCount(0) {
+	VideoPlayer(vm), _codingTypeCount(0),
+	_fg(&_vm->_graphicsMan->_foreground), _bg(&_vm->_graphicsMan->_background) {
 
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
@@ -103,7 +104,6 @@ ROQPlayer::~ROQPlayer() {
 	delete _currBuf;
 	_prevBuf->free();
 	delete _prevBuf;
-	_showBuf.free();
 
 #ifdef DITHER
 	// Free the dithering algorithm
@@ -158,10 +158,10 @@ void ROQPlayer::buildShowBuf() {
 	_dither->newFrame();
 #endif
 
-	for (int line = 0; line < _showBuf.h; line++) {
-		byte *out = (byte *)_showBuf.getBasePtr(0, line);
+	for (int line = 0; line < _bg->h; line++) {
+		byte *out = (byte *)_bg->getBasePtr(0, line);
 		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
-		for (int x = 0; x < _showBuf.w; x++) {
+		for (int x = 0; x < _bg->w; x++) {
 			if (_vm->_mode8bit) {
 #ifdef DITHER
 				*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
@@ -214,7 +214,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen((byte *)_showBuf.getBasePtr(0, 0), _showBuf.pitch, 0, (_syst->getHeight() - _showBuf.h) / 2, _showBuf.w, _showBuf.h);
+		_syst->copyRectToScreen((byte *)_bg->getBasePtr(0, 0), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
 
 		// Clear the dirty flag
@@ -333,12 +333,10 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// Free the previous surfaces
 		_currBuf->free();
 		_prevBuf->free();
-		_showBuf.free();
 
 		// Allocate new buffers
 		_currBuf->create(width, height, 3);
 		_prevBuf->create(width, height, 3);
-		_showBuf.create(width * _scaleX, height * _scaleY, _vm->_pixelFormat.bytesPerPixel);
 
 		// Clear the buffers with black YUV values
 		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
@@ -503,7 +501,6 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 		*ptr++ = *u++;
 		*ptr++ = *v++;
 	}
-	memcpy(_prevBuf->getBasePtr(0, 0), _currBuf->getBasePtr(0, 0), _prevBuf->w * _prevBuf->h * 3);
 
 	delete jpg;
 	return true;
