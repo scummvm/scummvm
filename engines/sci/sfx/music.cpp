@@ -333,7 +333,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
 			// Find out what channels to filter for SCI0
-			channelFilterMask = pSnd->soundRes->getChannelFilterMask(0x04); // Adlib hardcoded (TODO)
+			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayMask());
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask);
 		}
 	}

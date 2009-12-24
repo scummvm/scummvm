@@ -770,7 +770,9 @@ void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdReverb(reg_t obj, int16 value) {
 	// TODO
+	warning("STUB: cmdReverb");
 }
+
 void SoundCommandParser::cmdHoldHandle(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);

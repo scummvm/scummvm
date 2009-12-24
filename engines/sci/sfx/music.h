@@ -149,7 +149,7 @@ protected:
 	void doFade(MusicEntry *pSnd);
 
 	Audio::Mixer *_pMixer;
-	MidiDriver *_pMidiDrv;
+	MidiPlayer *_pMidiDrv;
 	MidiDriverType _midiType;
 	Common::Mutex _mutex;
 
