@@ -28,6 +28,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/segment.h"
 #include "sci/engine/state.h"
+#include "sci/gui/gui.h"
 
 namespace Sci {
 
@@ -594,11 +595,15 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
 	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
 	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
-	//int16 leftPos = 0;
-	//int16 topPos = 0;
+	int16 leftPos = 50;	// HACK: lsLeft, perhaps? (but it's 0...)
+	int16 topPos = 50; // HACK: lsTop, perhaps? (but it's 0...)
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
-	warning("kAddScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+
+	// HACK: just draw the view on screen
+	s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
+
+	warning("kAddScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	//s->_gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 	return NULL_REG;
 }
@@ -612,6 +617,7 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	//int16 topPos = 0;
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
+	
 	warning("kUpdateScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
 	return NULL_REG;
 }

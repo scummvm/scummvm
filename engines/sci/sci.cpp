@@ -151,7 +151,8 @@ Common::Error SciEngine::run() {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// Falsify the Views with a Dummy GUI
-		_gamestate->_gui = new SciGuiDummy(_gamestate, screen, palette, cursor);
+		//_gamestate->_gui = new SciGuiDummy(_gamestate, screen, palette, cursor);
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
 	} else {
 #endif
 #ifdef INCLUDE_OLDGFX
