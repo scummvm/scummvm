@@ -283,6 +283,7 @@ void SciMusic::loadPatchMT32() {
 //----------------------------------------
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	SoundResource::Track *track = NULL;
+	int channelFilterMask = 0;
 
 	//_mutex.lock();
 	switch (_midiType) {
@@ -331,7 +332,9 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
-			pSnd->pMidiParser->loadMusic(track, pSnd);
+			// Find out what channels to filter for SCI0
+			channelFilterMask = pSnd->soundRes->getChannelFilterMask(0x04); // Adlib hardcoded (TODO)
+			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask);
 		}
 	}
 
@@ -493,12 +496,18 @@ MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
 }
 //---------------------------------------------
-bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd) {
+bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask) {
 	unloadMusic();
 	_track = track;
 	_pSnd = psnd;
 	setVolume(psnd->volume);
-	midiMixChannels();
+
+	if (channelFilterMask) {
+		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
+		midiFilterChannels(channelFilterMask);
+	} else {
+		midiMixChannels();
+	}
 
 	_num_tracks = 1;
 	_tracks[0] = _mixedData;
@@ -719,6 +728,90 @@ byte *MidiParser_SCI::midiMixChannels() {
 		_track->channels[channelNr].data = dataPtr[channelNr];
 
 	delete[] dataPtr;
+	return _mixedData;
+}
+
+// This is used for SCI0 sound-data. SCI0 only has one stream that may contain several channels and according to output
+//  device we remove certain channels from that data
+byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
+	SoundResource::Channel *channel = &_track->channels[0];
+	byte *channelData = channel->data;
+	byte *channelDataEnd = channel->data + channel->size;
+	byte *filterData = new byte[channel->size];
+	byte curChannel, curByte;
+	byte command, lastCommand;
+	int delta = 0;
+	int dataLeft = channel->size;
+	int midiParamCount;
+
+	_mixedData = filterData;
+	lastCommand = 0;
+
+	// Find out which channels to filter out
+
+	while (channelData <= channelDataEnd) {
+		delta += *channelData++;
+		curByte = *channelData++;
+
+		switch (curByte) {
+		case 0xF0: // sysEx
+		case 0xFC: // end of channel
+			curChannel = 15;
+			break;
+		default:
+			if (curByte & 0x80) {
+				command = curByte;
+				curChannel = command & 0x0F;
+				midiParamCount = nMidiParams[(command >> 4) - 8];
+			}
+		}
+		if ((1 << curChannel) & channelMask) {
+			if (command != 0xFC) {
+				// Write delta
+				while (delta > 240) {
+					*filterData++ = 0xF8;
+					delta -= 240;
+				}
+				*filterData++ = (byte)delta;
+				delta = 0;
+			}
+			// Write command
+			switch (command) {
+			case 0xF0: // sysEx
+				*filterData++ = command;
+				do {
+					curByte = *channelData++;
+					*filterData++ = curByte; // out
+				} while (curByte != 0xF7);
+				break;
+
+			case 0xFC: // end of channel
+				*filterData++ = command;
+				break;
+
+			default: // MIDI command
+				if (curByte & 0x80) {
+					if (lastCommand != command) {
+						*filterData++ = command;
+					}
+					if (midiParamCount > 0)
+						*filterData++ = *channelData++;
+				} else {
+					*filterData++ = curByte;
+				}
+				if (midiParamCount > 1)
+					*filterData++ = *channelData++;
+			}
+		} else {
+			if (curByte & 0x80) {
+				channelData += midiParamCount;
+			} else {
+				channelData += midiParamCount - 1;
+			}
+		}
+		lastCommand = command;
+	}
+
 	return _mixedData;
 }
 

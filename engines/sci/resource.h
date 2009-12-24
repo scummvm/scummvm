@@ -459,6 +459,7 @@ public:
 	~SoundResource();
 	Track *getTrackByNumber(uint16 number);
 	Track *getTrackByType(TrackType type);
+	int getChannelFilterMask(int hardwareMask);
 
 private:
 	SciVersion _soundVersion;

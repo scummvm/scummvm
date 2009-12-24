@@ -1926,4 +1926,24 @@ SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
 	return NULL;
 }
 
+// Gets the filter-mask for SCI0 sound resources
+int SoundResource::getChannelFilterMask(int hardwareMask) {
+	byte *data = _innerResource->data;
+	int channelMask = 0;
+
+	if (_soundVersion == SCI_VERSION_0_EARLY) {
+		data++; // Skip over digital sample flag
+		for (int channelNr = 0; channelNr < 16; channelNr++) {
+			data++;
+			channelMask = channelMask >> 1;
+			if (*data & hardwareMask) {
+				// this Channel is supposed to get played for hardware
+				channelMask |= 0x8000;
+			}
+			data++;
+		}
+	}
+	return channelMask;
+}
+
 } // End of namespace Sci
