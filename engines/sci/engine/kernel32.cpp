@@ -397,8 +397,9 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 
 		// A count of -1 means fill the rest of the array
 		uint16 count = argv[3].toSint16() == -1 ? array->getSize() - index : argv[3].toUint16();
+		uint16 arraySize = array->getSize();
 
-		if (array->getSize() < index + count)
+		if (arraySize < index + count)
 			array->setSize(index + count);
 
 		for (uint16 i = 0; i < count; i++)
@@ -498,8 +499,9 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 
 		// A count of -1 means fill the rest of the array
 		uint16 count = argv[3].toSint16() == -1 ? string->getSize() - index : argv[3].toUint16();
+		uint16 stringSize = string->getSize();
 
-		if (string->getSize() < index + count)
+		if (stringSize < index + count)
 			string->setSize(index + count);
 
 		for (uint16 i = 0; i < count; i++)
