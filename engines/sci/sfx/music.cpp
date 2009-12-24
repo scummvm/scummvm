@@ -529,6 +529,14 @@ void MidiParser_SCI::unloadMusic() {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
+	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+
+	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
+	if (_signalSet) {
+		_signalSet = false;
+		PUT_SEL32V(segMan, _pSnd->soundObj, signal, _signalToSet);
+	}
+
 	info.start = _position._play_pos;
 	info.delta = 0;
 	while (*_position._play_pos == 0xF8) {
@@ -545,8 +553,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	if (info.event < 0x80)
 		return;
 
-	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-
 	_position._running_status = info.event;
 	switch (info.command()) {
 	case 0xC:
@@ -554,7 +560,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != 0x7F) {
-				PUT_SEL32V(segMan, _pSnd->soundObj, signal, info.basic.param1);
+				_signalSet = true;
+				_signalToSet = info.basic.param1;
 			} else {
 				_loopTick = _position._play_tick;
 			}
@@ -573,8 +580,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				switch (_soundVersion) {
 				case SCI_VERSION_0_EARLY:
 					_pSnd->dataInc += info.basic.param2;
-					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0x7f + _pSnd->dataInc);
-					warning("dataInc");
+					_signalSet = true;
+					_signalToSet = 0x7f + _pSnd->dataInc;
 					break;
 				case SCI_VERSION_1_EARLY:
 				case SCI_VERSION_1_LATE:
@@ -766,6 +773,8 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	int midiParamCount;
 
 	_mixedData = filterData;
+	command = 0;
+	midiParamCount = 0;
 	lastCommand = 0;
 	curChannel = 15;
 

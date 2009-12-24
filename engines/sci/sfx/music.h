@@ -190,6 +190,9 @@ protected:
 	MusicEntry *_pSnd;
 	uint32 _loopTick;
 	byte _volume;
+
+	bool _signalSet;
+	int16 _signalToSet;
 };
 
 } // end of namespace
