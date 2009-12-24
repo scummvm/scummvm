@@ -694,8 +694,17 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 
-	// Likely performs doit() on each element, for screen updates/animations?
-	// It's called constantly, so perhaps that's its purpose...
+	// Called with 2 or 3 parameters
+	// object, selector and optionally a third unknown parameter
+
+	// With 2 parameters, the selector can be:
+	// - 0x45 (doit)
+	// - 0x5c (delete)
+	// - 0xfd (check)
+
+	// With 3 parameters, the selector can be:
+	// - 0x145 (checkDetail)
+	// - 0x211 (newRoom) - that one seems a bit odd
 
 	// TODO
 
