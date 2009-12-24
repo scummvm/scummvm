@@ -57,6 +57,15 @@ JPEG::JPEG() :
 		_huff[i].sizes = NULL;
 		_huff[i].codes = NULL;
 	}
+
+	// Initialize sqrt_2 and cosine lookups
+	_sqrt_2 = sqrt(2.0f);
+	debug(2, "JPEG: _sqrt_2: %f", _sqrt_2);
+
+	for(byte i = 0; i < 32; i++) {
+		_cosine_32[i] = cos(i * PI / 16);
+		debug(2, "JPEG: _cosine_32[%d]: %f", i, _cosine_32[i]);
+	}
 }
 
 JPEG::~JPEG() {
@@ -151,19 +160,30 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 }
 
 bool JPEG::readJFIF() {
-	/* uint16 length = */ _str->readUint16BE();
+	uint16 length = _str->readUint16BE();
 	uint32 tag = _str->readUint32BE();
-	if (tag != MKID_BE('JFIF'))
+	if (tag != MKID_BE('JFIF')) {
+		warning("JPEG::readJFIF() tag mismatch");
 		return false;
-	_str->readByte(); // NULL
-	/* byte majorVersion = */ _str->readByte();
-	/* byte minorVersion = */ _str->readByte();
+	}
+	if (_str->readByte() != 0)  { // NULL
+		warning("JPEG::readJFIF() NULL mismatch");
+		return false;
+	}
+	byte majorVersion = _str->readByte();
+	byte minorVersion = _str->readByte();
+	if(majorVersion != 1 || minorVersion != 1)
+		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly!");
 	/* byte densityUnits = */ _str->readByte();
 	/* uint16 xDensity = */ _str->readUint16BE();
 	/* uint16 yDensity = */ _str->readUint16BE();
 	byte thumbW = _str->readByte();
 	byte thumbH = _str->readByte();
 	_str->seek(thumbW * thumbH * 3, SEEK_CUR); // Ignore thumbnail
+	if (length != (thumbW * thumbH * 3) + 16) {
+		warning("JPEG::readJFIF() length mismatch");
+		return false;
+	}
 	return true;
 }
 
@@ -325,10 +345,6 @@ bool JPEG::readSOS() {
 		// Initialize the DC predictor
 		_scanComp[c]->DCpredictor = 0;
 	}
-	
-	// Initialize the scan surfaces
-	for (int c = 0; c < _numScanComp; c++)
-		_scanComp[c]->surface.create(_w, _h, 1);
 
 	// Start of spectral selection
 	if (_str->readByte() != 0) {
@@ -356,15 +372,27 @@ bool JPEG::readSOS() {
 	uint16 yMCU = _h / (_maxFactorV * 8);
 
 	// Check for non- multiple-of-8 dimensions
-	if (_w % 8 != 0)
+	if (_w % (_maxFactorH * 8) != 0)
 		xMCU++;
-	if (_h % 8 != 0)
+	if (_h % (_maxFactorV * 8) != 0)
 		yMCU++;
 
+	// Initialize the scan surfaces
+	for (uint16 c = 0; c < _numScanComp; c++) {
+		_scanComp[c]->surface.create(xMCU * _maxFactorH * 8, yMCU * _maxFactorV * 8, 1);
+	}
+
 	bool ok = true;
-	for (int y = 0; ok && (y < yMCU); y++) 
+	for (int y = 0; ok && (y < yMCU); y++)
 		for (int x = 0; ok && (x < xMCU); x++)
 			ok = readMCU(x, y);
+
+	// Trim Component surfaces back to image height and width
+	// Note: Code using jpeg must use surface.pitch correctly...
+	for (uint16 c = 0; c < _numScanComp; c++) {
+		_scanComp[c]->surface.w = _w;
+		_scanComp[c]->surface.h = _h;
+	}
 
 	return ok;
 }
@@ -415,15 +443,15 @@ bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 }
 
 float JPEG::idct(int x, int y, int weight, int fx, int fy) {
-	float vx = cos((2 * x + 1) * fx * PI / 16);
-	float vy = cos((2 * y + 1) * fy * PI / 16);
-	float ret = (float)weight * vx * vy;
+	byte vx_in = ((int32)((2 * x) + 1) * fx) % 32;
+	byte vy_in = ((int32)((2 * y) + 1) * fy) % 32;
+	float ret = (float)weight * _cosine_32[vx_in] * _cosine_32[vy_in];
 	
 	if (fx == 0)
-		ret /= sqrt(2.0f);
+		ret /= _sqrt_2;
 		
 	if (fy == 0)
-		ret /= sqrt(2.0f);
+		ret /= _sqrt_2;
 
 	return ret;
 }
@@ -443,7 +471,7 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 
 	// Calculate the DCT coefficients from the input sequence
 	int16 DCT[64];
-	for (int i = 0; i < 64; i++) {
+	for (uint8 i = 0; i < 64; i++) {
 		// Dequantize
 		int16 val = readData[i];
 		int16 quant = _quant[_currentComp->quantTableSelector][i];
@@ -455,7 +483,7 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 
 	// Shortcut the IDCT for DC component
 	float result[64];
-	for (int i = 0; i < 64; i++)
+	for (uint8 i = 0; i < 64; i++)
 		result[i] = DCT[0] / 2;
 
 	// Apply the IDCT (PAG31)
@@ -486,21 +514,13 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	x <<= 3;
 	y <<= 3;
 
-	// Handle non- multiple-of-8 dimensions
-	byte xLim = 8;
-	byte yLim = 8;
-	if (x*scalingH + 8 > _w)
-		xLim -= (x*scalingH + 8 - _w);
-	if (y*scalingV + 8 > _h)
-		yLim -= (y*scalingV + 8 - _h);
-
-	for (int j = 0; j < yLim; j++) {
-		for (int sV = 0; sV < scalingV; sV++) {
+	for (uint8 j = 0; j < 8; j++) {
+		for (uint16 sV = 0; sV < scalingV; sV++) {
 			// Get the beginning of the block line
 			byte *ptr = (byte *)_currentComp->surface.getBasePtr(x * scalingH, (y + j) * scalingV + sV);
 
-			for (int i = 0; i < xLim; i++) {
-				for (uint8 sH = 0; sH < scalingH; sH++) {
+			for (uint8 i = 0; i < 8; i++) {
+				for (uint16 sH = 0; sH < scalingH; sH++) {
 					*ptr = (byte)(result[j * 8 + i]);
 					ptr++;
 				}
