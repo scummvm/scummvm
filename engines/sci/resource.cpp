@@ -1942,6 +1942,8 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 			}
 			data++;
 		}
+		// Play channel 15 anytime (control channel)
+		channelMask |= 0x8000;
 	}
 	return channelMask;
 }
