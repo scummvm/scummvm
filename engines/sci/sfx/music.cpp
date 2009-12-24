@@ -530,7 +530,12 @@ void MidiParser_SCI::unloadMusic() {
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	info.start = _position._play_pos;
-	info.delta = *(_position._play_pos++);
+	info.delta = 0;
+	while (*_position._play_pos == 0xF8) {
+		info.delta += 240;
+		_position._play_pos++;
+	}
+	info.delta += *(_position._play_pos++);
 
 	// Process the next info.
 	if ((_position._play_pos[0] & 0xF0) >= 0x80)
@@ -569,6 +574,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				case SCI_VERSION_0_EARLY:
 					_pSnd->dataInc += info.basic.param2;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0x7f + _pSnd->dataInc);
+					warning("dataInc");
 					break;
 				case SCI_VERSION_1_EARLY:
 				case SCI_VERSION_1_LATE:
@@ -752,8 +758,8 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	SoundResource::Channel *channel = &_track->channels[0];
 	byte *channelData = channel->data;
 	byte *channelDataEnd = channel->data + channel->size;
-	byte *filterData = new byte[channel->size];
-	byte curChannel, curByte;
+	byte *filterData = new byte[channel->size + 5];
+	byte curChannel, curByte, curDelta;
 	byte command, lastCommand;
 	int delta = 0;
 	//int dataLeft = channel->size;
@@ -761,14 +767,23 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 	_mixedData = filterData;
 	lastCommand = 0;
+	curChannel = 15;
+
+	//channelMask = 0xFFFF;
 
 	while (channelData <= channelDataEnd) {
-		delta += *channelData++;
+		curDelta = *channelData++;
+		if (curDelta == 0xF8) {
+			delta += 240;
+			continue;
+		}
+		delta += curDelta;
 		curByte = *channelData++;
 
 		switch (curByte) {
 		case 0xF0: // sysEx
 		case 0xFC: // end of channel
+			command = curByte;
 			curChannel = 15;
 			break;
 		default:
@@ -780,40 +795,51 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 		}
 		if ((1 << curChannel) & channelMask) {
 			if (command != 0xFC) {
+				printf("\nDELTA ");
 				// Write delta
 				while (delta > 240) {
 					*filterData++ = 0xF8;
+					printf("F8 ");
 					delta -= 240;
 				}
 				*filterData++ = (byte)delta;
+				printf("%02X ", delta);
 				delta = 0;
 			}
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
 				*filterData++ = command;
+				printf("%02X ", command);
 				do {
 					curByte = *channelData++;
 					*filterData++ = curByte; // out
 				} while (curByte != 0xF7);
+				lastCommand = command;
 				break;
 
 			case 0xFC: // end of channel
-				*filterData++ = command;
 				break;
 
 			default: // MIDI command
-				if (curByte & 0x80) {
-					if (lastCommand != command) {
-						*filterData++ = command;
-					}
-					if (midiParamCount > 0)
-						*filterData++ = *channelData++;
-				} else {
-					*filterData++ = curByte;
+				if (lastCommand != command) {
+					*filterData++ = command;
+					printf("%02X ", command);
+					lastCommand = command;
 				}
-				if (midiParamCount > 1)
+				if (midiParamCount > 0) {
+					if (curByte & 0x80) {
+						printf("%02X ", *channelData);
+						*filterData++ = *channelData++;
+					} else {
+						printf("%02X ", curByte);
+						*filterData++ = curByte;
+					}
+				}
+				if (midiParamCount > 1) {
+					printf("%02X ", *channelData);
 					*filterData++ = *channelData++;
+				}
 			}
 		} else {
 			if (curByte & 0x80) {
@@ -822,8 +848,13 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 				channelData += midiParamCount - 1;
 			}
 		}
-		lastCommand = command;
 	}
+	// Stop event
+	*filterData++ = 0;    // delta
+	*filterData++ = 0xFF; // Meta-Event
+	*filterData++ = 0x2F; // End-Of-Track
+	*filterData++ = 0x00;
+	*filterData++ = 0x00;
 
 	return _mixedData;
 }
