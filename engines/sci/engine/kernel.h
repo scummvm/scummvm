@@ -395,6 +395,9 @@ reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
+reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
+reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
+reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kSave(EngineState *s, int argc, reg_t *argv);

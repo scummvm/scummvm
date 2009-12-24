@@ -403,6 +403,8 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
+	if (viewId == -1)	// Happens in SCI32
+		return NULL_REG;
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 
@@ -411,6 +413,8 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
+	if (viewId == -1)	// Happens in SCI32
+		return NULL_REG;
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 

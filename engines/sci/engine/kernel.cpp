@@ -342,7 +342,10 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("IsHiRes", kIsHiRes, ""),
 	DEFUN("Array", kArray, ".*"),
 	DEFUN("String", kString, ".*"),
-	
+	DEFUN("AddScreenItem", kAddScreenItem, "o"),
+	DEFUN("UpdateScreenItem", kUpdateScreenItem, "o"),
+	DEFUN("DeleteScreenItem", kDeleteScreenItem, "o"),
+
 	// SCI2.1 Kernel Functions
 	DEFUN("Save", kSave, ".*"),
 #endif

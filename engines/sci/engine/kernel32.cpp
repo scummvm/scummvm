@@ -589,6 +589,46 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
+	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
+	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
+	//int16 leftPos = 0;
+	//int16 topPos = 0;
+	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
+	//int16 control = 0;
+	warning("kAddScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	//s->_gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+	return NULL_REG;
+}
+
+reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
+	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
+	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
+	//int16 leftPos = 0;
+	//int16 topPos = 0;
+	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
+	//int16 control = 0;
+	warning("kUpdateScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
+	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
+	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
+	//int16 leftPos = 0;
+	//int16 topPos = 0;
+	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
+	//int16 control = 0;
+	warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
 } // End of namespace Sci
 
 #endif	// ENABLE_SCI32
