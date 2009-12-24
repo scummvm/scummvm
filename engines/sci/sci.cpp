@@ -177,7 +177,7 @@ Common::Error SciEngine::run() {
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)
-	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "/");
+	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _audio, _gamestate->detectDoSoundType());
 

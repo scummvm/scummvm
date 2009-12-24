@@ -338,10 +338,13 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Portrait", kPortrait, ".*"),
 	
 #ifdef ENABLE_SCI32
-	// SCI32 Kernel Functions
+	// SCI2 Kernel Functions
 	DEFUN("IsHiRes", kIsHiRes, ""),
 	DEFUN("Array", kArray, ".*"),
 	DEFUN("String", kString, ".*"),
+	
+	// SCI2.1 Kernel Functions
+	DEFUN("Save", kSave, ".*"),
 #endif
 
 	// its a stub, but its needed for Pharkas to work

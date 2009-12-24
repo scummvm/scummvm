@@ -615,12 +615,19 @@ enum {
 	K_FILEIO_SEEK			= 7,
 	K_FILEIO_FIND_FIRST		= 8,
 	K_FILEIO_FIND_NEXT		= 9,
-	K_FILEIO_FILE_EXISTS	= 10
+	K_FILEIO_FILE_EXISTS	= 10,
+	// SCI1.1
+	K_FILEIO_RENAME         = 11,
+	// SCI32
+	// 12?
+	K_FILEIO_READ_BYTE      = 13,
+	K_FILEIO_WRITE_BYTE     = 14,
+	K_FILEIO_READ_WORD      = 15,
+	K_FILEIO_WRITE_WORD     = 16
 };
 
 
 reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer) {
-
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
 		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
@@ -842,6 +849,30 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name.c_str(), exists);
 		return make_reg(0, exists);
 	}
+	case K_FILEIO_RENAME: {
+		Common::String oldName = s->_segMan->getString(argv[1]);
+		Common::String newName = s->_segMan->getString(argv[2]);
+
+		// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32 returns -1 on fail.
+		// We just return -1 for all versions.
+		if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
+			return NULL_REG;
+		else 
+			return SIGNAL_REG;
+	}
+#ifdef ENABLE_SCI32
+	case K_FILEIO_READ_BYTE:
+		// Read the byte into the low byte of the accumulator
+		return make_reg(0, s->r_acc.toUint16() & 0xff00 | getFileFromHandle(s, argv[1].toUint16())->_in->readByte());
+	case K_FILEIO_WRITE_BYTE:
+		getFileFromHandle(s, argv[1].toUint16())->_out->writeByte(argv[2].toUint16() & 0xff);
+		break;
+	case K_FILEIO_READ_WORD:
+		return make_reg(0, getFileFromHandle(s, argv[1].toUint16())->_in->readUint16LE());
+	case K_FILEIO_WRITE_WORD:
+		getFileFromHandle(s, argv[1].toUint16())->_out->writeUint16LE(argv[2].toUint16());
+		break;
+#endif
 	default :
 		error("Unknown FileIO() sub-command: %d", func_nr);
 	}

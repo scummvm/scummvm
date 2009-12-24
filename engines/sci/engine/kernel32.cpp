@@ -433,7 +433,13 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 		reg_t arrayHandle;
 		SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);
-		*dupArray = SciArray<reg_t>(*array);
+
+		dupArray->setType(array->getType());
+		dupArray->setSize(array->getSize());
+
+		for (uint32 i = 0; i < array->getSize(); i++)
+			dupArray->setValue(i, array->getValue(i));
+
 		return arrayHandle;
 		}
 	case 9: // Getdata
@@ -453,7 +459,6 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // New
 		reg_t stringHandle;
 		SciString *string = s->_segMan->allocateString(&stringHandle);
-		string->setType(3);
 		string->setSize(argv[1].toUint16());
 
 		// Make sure the first character is a null character
@@ -512,7 +517,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			break;
 
 		// A count of -1 means fill the rest of the array
-		uint32 count = argv[5].toSint16() == -1 ? string2.size() - index2 : argv[5].toUint16();
+		uint32 count = argv[5].toSint16() == -1 ? string2.size() - index2 + 1 : argv[5].toUint16();
 
 		if (string1->getSize() < index1 + count)
 			string1->setSize(index1 + count);
@@ -534,10 +539,16 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, strcmp(string1.c_str(), string2.c_str()));
 		}
 	case 8: { // Dup
-		SciString *string = s->_segMan->lookupString(argv[1]);
+		Common::String string = s->_segMan->getString(argv[1]);
 		reg_t stringHandle;
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
-		*dupString = SciString(*string);
+		dupString->setSize(string.size() + 1);
+		
+		for (uint32 i = 0; i < string.size(); i++)
+			dupString->setValue(i, string.c_str()[i]);
+			
+		dupString->setValue(dupString->getSize() - 1, 0);
+
 		return stringHandle;
 		}
 	case 9: // Getdata
@@ -561,6 +572,18 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		break;
 	default:
 		error("Unknown kString subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+reg_t kSave(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 2: // GetSaveDir
+		// Yay! Reusing the old kernel function!
+		return kGetSaveDir(s, argc - 1, argv + 1);
+	default:
+		warning("Unknown/unhandled kSave subop %d", argv[0].toUint16());
 	}
 
 	return NULL_REG;

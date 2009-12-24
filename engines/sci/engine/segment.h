@@ -747,7 +747,7 @@ protected:
 
 class SciString : public SciArray<char> {
 public:
-	SciString() : SciArray<char>() {}
+	SciString() : SciArray<char>() { setType(3); }
 	
 	Common::String toString();
 	void fromString(Common::String string);

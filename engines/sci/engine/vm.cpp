@@ -343,7 +343,14 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		ObjVarRef varp;
 		switch (lookup_selector(s->_segMan, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
-			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
+#ifdef ENABLE_SCI32
+			// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
+			// an invalid selector.
+			if (getSciVersion() >= SCI_VERSION_2)
+				warning("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
+			else
+#endif
+				error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 
 			break;
 
