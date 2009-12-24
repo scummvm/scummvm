@@ -632,7 +632,7 @@ void LoLEngine::updateLampStatus() {
 				}
 			} else {
 				if (_screen->_fadeFlag == 0)
-					setPaletteBrightness(_screen->getPalette(0), _lampEffect, newLampEffect);
+					setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
 			}
 		}
 	}
