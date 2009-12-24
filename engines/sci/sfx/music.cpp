@@ -41,8 +41,8 @@ static int f_compare(const void *arg1, const void *arg2) {
 	return ((const MusicEntry *)arg2)->prio - ((const MusicEntry *)arg1)->prio;
 }
 
-SciMusic::SciMusic() {
-
+SciMusic::SciMusic(SciVersion soundVersion)
+	: _soundVersion(soundVersion) {
 }
 
 SciMusic::~SciMusic() {
@@ -334,7 +334,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			}
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayMask());
-			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask);
+			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 		}
 	}
 
@@ -496,10 +496,12 @@ MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
 }
 //---------------------------------------------
-bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask) {
+bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion) {
 	unloadMusic();
 	_track = track;
 	_pSnd = psnd;
+	_soundVersion = soundVersion;
+
 	setVolume(psnd->volume);
 
 	if (channelFilterMask) {
@@ -546,10 +548,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
-			if (info.basic.param1 != 0x7F)
+			if (info.basic.param1 != 0x7F) {
 				PUT_SEL32V(segMan, _pSnd->soundObj, signal, info.basic.param1);
-			else
+			} else {
 				_loopTick = _position._play_tick;
+			}
 		}
 		break;
 	case 0xD:
@@ -561,8 +564,18 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
 		if (info.channel() == 0xF) {// SCI special
-			if (info.basic.param1 == 0x60)
-				_pSnd->dataInc++;
+			if (info.basic.param1 == 0x60) {
+				switch (_soundVersion) {
+				case SCI_VERSION_0_EARLY:
+					_pSnd->dataInc += info.basic.param2;
+					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0x7f + _pSnd->dataInc);
+					break;
+				case SCI_VERSION_1_EARLY:
+				case SCI_VERSION_1_LATE:
+					_pSnd->dataInc++;
+					break;
+				}
+			}
 			// BF 50 x - set reverb to x
 			// BF 60 x - dataInc++
 			// BF 52 x - bHold=x
@@ -746,8 +759,6 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 	_mixedData = filterData;
 	lastCommand = 0;
-
-	// Find out which channels to filter out
 
 	while (channelData <= channelDataEnd) {
 		delta += *channelData++;

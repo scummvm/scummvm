@@ -97,7 +97,7 @@ struct MusicEntry {
 
 class SciMusic {
 public:
-	SciMusic();
+	SciMusic(SciVersion soundVersion);
 	~SciMusic();
 
 	void init();
@@ -148,6 +148,8 @@ protected:
 
 	void doFade(MusicEntry *pSnd);
 
+	SciVersion _soundVersion;
+
 	Audio::Mixer *_pMixer;
 	MidiPlayer *_pMidiDrv;
 	MidiDriverType _midiType;
@@ -163,7 +165,7 @@ class MidiParser_SCI : public MidiParser {
 public:
 	MidiParser_SCI();
 	~MidiParser_SCI();
-	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask);
+	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion);
 	bool loadMusic(byte *, uint32) {
 		return false;
 	}
@@ -181,6 +183,8 @@ protected:
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
+
+	SciVersion _soundVersion;
 	byte *_mixedData;
 	SoundResource::Track *_track;
 	MusicEntry *_pSnd;

@@ -136,7 +136,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
 
 	#ifndef USE_OLD_MUSIC_FUNCTIONS
-		_music = new SciMusic();
+		_music = new SciMusic(_doSoundVersion);
 		_music->init();
 	#endif
 
@@ -674,7 +674,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	case SI_ABSOLUTE_CUE:
 		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 		          PRINT_REG(obj), signal);
-
 		PUT_SEL32V(_segMan, obj, signal, signal);
 		break;
 
