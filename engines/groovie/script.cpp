@@ -1600,6 +1600,20 @@ void Script::o2_vdxtransition() {
 	}
 }
 
+void Script::o2_copyscreentobg() {
+	uint16 val = readScript16bits();
+
+	debugScript(1, true, "CopyScreenToBG3: 0x%04X", val);
+	error("Unimplemented Opcode 0x4F");
+}
+
+void Script::o2_copybgtoscreen() {
+	uint16 val = readScript16bits();
+
+	debugScript(1, true, "CopyBG3ToScreen: 0x%04X", val);
+	error("Unimplemented Opcode 0x50");
+}
+
 void Script::o2_setvideoskip() {
 	_videoSkipAddress = readScript16bits();
 	debugScript(1, true, "SetVideoSkip (0x%04X)", _videoSkipAddress);
@@ -1791,8 +1805,8 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_invalid, // 0x4C
 	&Script::o_invalid,
 	&Script::o_invalid,
-	&Script::o_nop16,
-	&Script::o_nop16, // 0x50
+	&Script::o2_copyscreentobg,
+	&Script::o2_copybgtoscreen, // 0x50
 	&Script::o2_setvideoskip,
 	&Script::o2_stub52,
 	&Script::o_hotspot_outrect,
