@@ -711,6 +711,16 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
+	// This kernel function looks like it calls a function in the object (arg 2) with
+	// the x/y coordinates supplied in args 0/1. Arg 3 seems to be 0.
+	
+	// TODO
+
+	warning("kOnMe: (%d, %d) on object %04x:%04x", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]));
+	return NULL_REG;
+}
+
 } // End of namespace Sci
 
 #endif	// ENABLE_SCI32

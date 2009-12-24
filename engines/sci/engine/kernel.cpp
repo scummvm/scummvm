@@ -351,6 +351,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("RepaintPlane", kRepaintPlane, "o"),
 	DEFUN("FrameOut", kFrameOut, ""),
 	DEFUN("ListEachElementDo", kListEachElementDo, ".*"),
+	DEFUN("OnMe", kOnMe, "iio.*"),
 
 	// SCI2.1 Kernel Functions
 	DEFUN("Save", kSave, ".*"),
