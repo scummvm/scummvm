@@ -574,6 +574,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				case SCI_VERSION_1_LATE:
 					_pSnd->dataInc++;
 					break;
+				default:
+					break;
 				}
 			}
 			// BF 50 x - set reverb to x
@@ -754,7 +756,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	byte curChannel, curByte;
 	byte command, lastCommand;
 	int delta = 0;
-	int dataLeft = channel->size;
+	//int dataLeft = channel->size;
 	int midiParamCount;
 
 	_mixedData = filterData;
