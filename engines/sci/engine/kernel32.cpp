@@ -603,6 +603,8 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	// HACK: just draw the view on screen
 	s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 
+	// TODO
+
 	warning("kAddScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	//s->_gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 	return NULL_REG;
@@ -618,6 +620,8 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
 	
+	// TODO
+
 	warning("kUpdateScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
 	return NULL_REG;
 }
@@ -631,7 +635,70 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	//int16 topPos = 0;
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
+
+	// TODO
+
 	warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+	// This kernel call shows pictures on screen
+	// The picture ID is likely in the "picture" selector (?)
+
+	// TODO
+
+	warning("kAddPlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+	// The picture ID is likely in the "picture" selector (?)
+
+	// TODO
+
+	warning("kDeletePlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+	// The picture ID is likely in the "picture" selector (?)
+
+	// TODO
+
+	warning("kUpdatePlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+	// The picture ID is likely in the "picture" selector (?)
+
+	// TODO
+
+	warning("kRepaintPlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
+	// This kernel call likely seems to be doing the screen updates, 
+	// as its called right after a view is updated
+
+	// TODO
+
+	return NULL_REG;
+}
+
+reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
+
+	// Likely performs doit() on each element, for screen updates/animations?
+	// It's called constantly, so perhaps that's its purpose...
+
+	// TODO
+
 	return NULL_REG;
 }
 

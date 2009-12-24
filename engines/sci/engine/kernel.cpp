@@ -345,6 +345,12 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("AddScreenItem", kAddScreenItem, "o"),
 	DEFUN("UpdateScreenItem", kUpdateScreenItem, "o"),
 	DEFUN("DeleteScreenItem", kDeleteScreenItem, "o"),
+	DEFUN("AddPlane", kAddPlane, "o"),
+	DEFUN("DeletePlane", kDeletePlane, "o"),
+	DEFUN("UpdatePlane", kUpdatePlane, "o"),
+	DEFUN("RepaintPlane", kRepaintPlane, "o"),
+	DEFUN("FrameOut", kFrameOut, ""),
+	DEFUN("ListEachElementDo", kListEachElementDo, ".*"),
 
 	// SCI2.1 Kernel Functions
 	DEFUN("Save", kSave, ".*"),
