@@ -611,6 +611,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			if (info.basic.param1 == 0x60) {
 				switch (_soundVersion) {
 				case SCI_VERSION_0_EARLY:
+				case SCI_VERSION_0_LATE:
 					_pSnd->dataInc += info.basic.param2;
 					_signalSet = true;
 					_signalToSet = 0x7f + _pSnd->dataInc;
@@ -835,22 +836,22 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 		}
 		if ((1 << curChannel) & channelMask) {
 			if (command != 0xFC) {
-				printf("\nDELTA ");
+				debugC(2, kDebugLevelSound, "\nDELTA ");
 				// Write delta
 				while (delta > 240) {
 					*filterData++ = 0xF8;
-					printf("F8 ");
+					debugC(2, kDebugLevelSound, "F8 ");
 					delta -= 240;
 				}
 				*filterData++ = (byte)delta;
-				printf("%02X ", delta);
+				debugC(2, kDebugLevelSound, "%02X ", delta);
 				delta = 0;
 			}
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
 				*filterData++ = command;
-				printf("%02X ", command);
+				debugC(2, kDebugLevelSound, "%02X ", command);
 				do {
 					curByte = *channelData++;
 					*filterData++ = curByte; // out
@@ -864,20 +865,20 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			default: // MIDI command
 				if (lastCommand != command) {
 					*filterData++ = command;
-					printf("%02X ", command);
+					debugC(2, kDebugLevelSound, "%02X ", command);
 					lastCommand = command;
 				}
 				if (midiParamCount > 0) {
 					if (curByte & 0x80) {
-						printf("%02X ", *channelData);
+						debugC(2, kDebugLevelSound, "%02X ", *channelData);
 						*filterData++ = *channelData++;
 					} else {
-						printf("%02X ", curByte);
+						debugC(2, kDebugLevelSound, "%02X ", curByte);
 						*filterData++ = curByte;
 					}
 				}
 				if (midiParamCount > 1) {
-					printf("%02X ", *channelData);
+					debugC(2, kDebugLevelSound, "%02X ", *channelData);
 					*filterData++ = *channelData++;
 				}
 			}

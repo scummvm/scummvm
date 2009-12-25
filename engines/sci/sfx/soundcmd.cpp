@@ -101,14 +101,14 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		case SI_RELATIVE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d\n",
 			          PRINT_REG(obj), cue);
-			printf("rel-signal %04X\n", cue + 0x7f);
+			debugC(2, kDebugLevelSound, "rel-signal %04X\n", cue + 0x7f);
 			PUT_SEL32V(segMan, obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d\n",
 			          PRINT_REG(obj), cue);
-			printf("abs-signal %04X\n", cue);
+			debugC(2, kDebugLevelSound, "abs-signal %04X\n", cue);
 			PUT_SEL32V(segMan, obj, signal, cue);
 			break;
 
@@ -145,6 +145,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE:
 		SOUNDCOMMAND(cmdInitHandle);
 		SOUNDCOMMAND(cmdPlayHandle);
 		SOUNDCOMMAND(cmdDummy);
@@ -415,15 +416,10 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	_music->_playList[slot]->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	_music->_playList[slot]->prio = GET_SEL32V(_segMan, obj, priority);
 	// vol selector doesnt get used before sci1late
-	switch (_soundVersion) {
-	case SCI_VERSION_0_EARLY:
-	case SCI_VERSION_1_EARLY:
+	if (_soundVersion < SCI_VERSION_1_LATE)
 		_music->_playList[slot]->volume = 100;
-		break;
-	case SCI_VERSION_1_LATE:
+	else
 		_music->_playList[slot]->volume = GET_SEL32V(_segMan, obj, vol);
-		break;
-	}
 	_music->soundPlay(_music->_playList[slot]);
 
 #endif
@@ -688,7 +684,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	case SI_ABSOLUTE_CUE:
 		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 		          PRINT_REG(obj), signal);
-		printf("abs-signal %04X\n", signal);
+		debugC(2, kDebugLevelSound, "abs-signal %04X\n", signal);
 		PUT_SEL32V(_segMan, obj, signal, signal);
 		break;
 
@@ -700,7 +696,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		 * below, with proper storage of dataInc and
 		 * signal in the iterator code. */
 		PUT_SEL32V(_segMan, obj, dataInc, signal);
-		printf("rel-signal %04X\n", signal);
+		debugC(2, kDebugLevelSound, "rel-signal %04X\n", signal);
 		if (_soundVersion == SCI_VERSION_1_EARLY)
 			PUT_SEL32V(_segMan, obj, signal, signal);
 		else

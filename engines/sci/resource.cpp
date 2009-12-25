@@ -1821,6 +1821,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE:
 		_trackCount = 1;
 		_tracks = new Track[_trackCount];
 		_tracks->nDigital = 0xFF;
@@ -1907,7 +1908,7 @@ SoundResource::~SoundResource() {
 }
 //----------------------------------------------------
 SoundResource::Track* SoundResource::getTrackByNumber(uint16 number) {
-	if (_soundVersion == SCI_VERSION_0_EARLY)
+	if (_soundVersion <= SCI_VERSION_0_LATE)
 		return &_tracks[0];
 
 	if (/*number >= 0 &&*/number < _trackCount)
@@ -1916,7 +1917,7 @@ SoundResource::Track* SoundResource::getTrackByNumber(uint16 number) {
 }
 
 SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
-	if (_soundVersion == SCI_VERSION_0_EARLY)
+	if (_soundVersion <= SCI_VERSION_0_LATE)
 		return &_tracks[0];
 
 	for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
@@ -1931,7 +1932,7 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 	byte *data = _innerResource->data;
 	int channelMask = 0;
 
-	if (_soundVersion == SCI_VERSION_0_EARLY) {
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		data++; // Skip over digital sample flag
 		for (int channelNr = 0; channelNr < 16; channelNr++) {
 			data++;

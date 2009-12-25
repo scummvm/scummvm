@@ -239,7 +239,8 @@ public:
 
 	/**
 	 * Autodetects the DoSound type
-	 * @return DoSound type, SCI_VERSION_0_EARLY / SCI_VERSION_1_EARLY / SCI_VERSION_1_LATE
+	 * @return DoSound type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE / 
+	 *                       SCI_VERSION_1_EARLY / SCI_VERSION_1_LATE
 	 */
 	SciVersion detectDoSoundType();
 

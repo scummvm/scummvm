@@ -479,10 +479,13 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 
 SciVersion EngineState::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_AUTODETECT) {
-		if (_kernel->_selectorCache.nodePtr == -1) {
-			// No nodePtr selector, so this game is definitely using
-			// SCI0 sound code (i.e. SCI_VERSION_0_EARLY)
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			// This game is using early SCI0 sound code (different headers than SCI0 late)
 			_doSoundType = SCI_VERSION_0_EARLY;
+		} else if (_kernel->_selectorCache.nodePtr == -1) {
+			// No nodePtr selector, so this game is definitely using newer
+			// SCI0 sound code (i.e. SCI_VERSION_0_LATE)
+			_doSoundType = SCI_VERSION_0_LATE;
 		} else {
 			if (getSciVersion() >= SCI_VERSION_1_LATE) {
 				// All SCI1 late games use the newer doSound semantics
