@@ -92,7 +92,7 @@ __declspec(naked) void __fastcall KmpSearch::init(const char *subStr) {
 	}
 }
 
-__declspec(naked) char * __fastcall KmpSearch::search(const char *str) {
+__declspec(naked) const char * __fastcall KmpSearch::search(const char *str) {
 	__asm {
 		push esi
 		push edi
@@ -160,7 +160,7 @@ void __fastcall KmpSearch::init(const char *subStr) {
 	strcpy(_subStr, subStr);
 }
 
-char * __fastcall KmpSearch::search(const char *str) {
+const char * __fastcall KmpSearch::search(const char *str) {
 	return strstr(str, _subStr);
 }
 
