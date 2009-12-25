@@ -814,7 +814,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 int MidiPlayer_Adlib::getPlayMask(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		return 0x10; // FIXME: Not correct
+		return 0x01;
 	}
 	return 0x04;
 }

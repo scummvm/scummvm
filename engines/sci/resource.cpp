@@ -1939,15 +1939,30 @@ SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
 int SoundResource::getChannelFilterMask(int hardwareMask) {
 	byte *data = _innerResource->data;
 	int channelMask = 0;
+	int reverseHardwareMask = 0;
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
+		// TODO: MT32 driver uses no hardwaremask at all and uses all channels
+		switch (hardwareMask) {
+		case 0x01: // Adlib needs an additional reverse check against bit 3
+			reverseHardwareMask = 0x08;
+			break;
+		}
+		// Control-Channel -> where bit 0 is not set, bit 3 is set
 		data++; // Skip over digital sample flag
 		for (int channelNr = 0; channelNr < 16; channelNr++) {
 			channelMask = channelMask >> 1;
 			if (*data & hardwareMask) {
-				// this Channel is supposed to get played for hardware
+				if ((reverseHardwareMask == 0) || ((*data & reverseHardwareMask) == 0)) {
+					// this Channel is supposed to get played for hardware
+					channelMask |= 0x8000;
+				}
+			}
+			if ((*data & 0x08) && ((*data & 0x01) == 0)) {
+				// this channel is control channel, so don't filter it
 				channelMask |= 0x8000;
+				// TODO: We need to accept this channel in parseNextEvent() for events
 			}
 			data++;
 		}

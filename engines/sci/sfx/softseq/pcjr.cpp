@@ -203,7 +203,7 @@ int MidiPlayer_PCJr::getPlayMask(SciVersion soundVersion) {
 int MidiPlayer_PCSpeaker::getPlayMask(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		return 0x20; // FIXME: Not correct
+		return 0x02;
 	}
 	return 0x20;
 }

@@ -666,7 +666,7 @@ MidiPlayer *MidiPlayer_Amiga_create() {
 int MidiPlayer_Amiga::getPlayMask(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		return 0x40; // FIXME: Not correct
+		error("No amiga support for sci0early");
 	}
 	return 0x40;
 }
