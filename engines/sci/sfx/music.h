@@ -84,10 +84,10 @@ struct MusicEntry {
 	byte loop;
 	byte volume;
 
-	byte FadeTo;
-	short FadeStep;
-	uint32 FadeTicker;
-	uint32 FadeTickerStep;
+	byte fadeTo;
+	short fadeStep;
+	uint32 fadeTicker;
+	uint32 fadeTickerStep;
 
 	MidiParser_SCI *pMidiParser;
 	Audio::AudioStream* pStreamAud;

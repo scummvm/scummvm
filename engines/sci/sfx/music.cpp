@@ -349,7 +349,7 @@ void SciMusic::onTimer() {
 		if (_playList[i]->status != kSndStatusPlaying)
 			continue;
 		if (_playList[i]->pMidiParser) {
-			if (_playList[i]->FadeStep)
+			if (_playList[i]->fadeStep)
 				doFade(_playList[i]);
 			_playList[i]->pMidiParser->onTimer();
 			_playList[i]->ticker = (uint16)_playList[i]->pMidiParser->getTick();
@@ -372,15 +372,15 @@ void SciMusic::onTimer() {
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
-	if (pSnd->FadeTicker)
-		pSnd->FadeTicker--;
+	if (pSnd->fadeTicker)
+		pSnd->fadeTicker--;
 	else {
-		pSnd->FadeTicker = pSnd->FadeTickerStep;
-		if (pSnd->volume + pSnd->FadeStep > pSnd->FadeTo) {
-			pSnd->volume = pSnd->FadeTo;
-			pSnd->FadeStep = 0;
+		pSnd->fadeTicker = pSnd->fadeTickerStep;
+		if (pSnd->volume + pSnd->fadeStep > pSnd->fadeTo) {
+			pSnd->volume = pSnd->fadeTo;
+			pSnd->fadeStep = 0;
 		} else
-			pSnd->volume += pSnd->FadeStep;
+			pSnd->volume += pSnd->fadeStep;
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 	}
 }

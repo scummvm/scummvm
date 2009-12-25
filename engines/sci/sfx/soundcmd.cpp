@@ -292,10 +292,10 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->pStreamAud = 0;
 	newSound->pMidiParser = 0;
 	newSound->ticker = 0;
-	newSound->FadeTo = 0;
-	newSound->FadeStep = 0;
-	newSound->FadeTicker = 0;
-	newSound->FadeTickerStep = 0;
+	newSound->fadeTo = 0;
+	newSound->fadeStep = 0;
+	newSound->fadeTicker = 0;
+	newSound->fadeTickerStep = 0;
 	newSound->status = kSndStatusStopped;
 	_music->_playList.push_back(newSound);
 
@@ -624,10 +624,10 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 	}
 
 	int volume = GET_SEL32V(_segMan, obj, vol);
-	_music->_playList[slot]->FadeTo = _argv[2].toUint16();
-	_music->_playList[slot]->FadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
-	_music->_playList[slot]->FadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
-	_music->_playList[slot]->FadeTicker = 0;
+	_music->_playList[slot]->fadeTo = _argv[2].toUint16();
+	_music->_playList[slot]->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
+	_music->_playList[slot]->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
+	_music->_playList[slot]->fadeTicker = 0;
 #endif
 }
 

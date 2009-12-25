@@ -126,10 +126,10 @@ static void syncSong(Common::Serializer &s, MusicEntry *song) {
 		song->volume = 100;
 		song->dataInc = 0;
 		// No fading info
-		song->FadeTo = 0;
-		song->FadeStep = 0;
-		song->FadeTicker = 0;
-		song->FadeTickerStep = 0;
+		song->fadeTo = 0;
+		song->fadeStep = 0;
+		song->fadeTicker = 0;
+		song->fadeTickerStep = 0;
 	} else {
 		// A bit more optimized saving
 		sync_reg_t(s, song->soundObj);
@@ -139,10 +139,10 @@ static void syncSong(Common::Serializer &s, MusicEntry *song) {
 		s.syncAsByte(song->prio);
 		s.syncAsByte(song->loop);
 		s.syncAsByte(song->volume);
-		s.syncAsByte(song->FadeTo);
-		s.syncAsSint16LE(song->FadeStep);
-		s.syncAsSint32LE(song->FadeTicker);
-		s.syncAsSint32LE(song->FadeTickerStep);
+		s.syncAsByte(song->fadeTo);
+		s.syncAsSint16LE(song->fadeStep);
+		s.syncAsSint32LE(song->fadeTicker);
+		s.syncAsSint32LE(song->fadeTickerStep);
 		s.syncAsByte(song->status);
 	}
 
