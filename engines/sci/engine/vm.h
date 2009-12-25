@@ -492,9 +492,10 @@ int game_init_graphics(EngineState *s);
  * the sound data.
  * @param[in] s				The state to initialize the sound in
  * @param[in] sound_flags	Flags to pass to the sound subsystem
+ * @param[in] soundVersion	sound-version that got detected during game init
  * @return					0 on success, 1 if an error occured
  */
-int game_init_sound(EngineState *s, int sound_flags);
+int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion);
 
 /**
  * Runs an SCI game

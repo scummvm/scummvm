@@ -291,13 +291,13 @@ static void _free_graphics_input(EngineState *s) {
 }
 #endif
 
-int game_init_sound(EngineState *s, int sound_flags) {
+int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (getSciVersion() > SCI_VERSION_0_LATE)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
-	s->_sound.sfx_init(s->resMan, sound_flags);
+	s->_sound.sfx_init(s->resMan, sound_flags, soundVersion);
 #endif
 
 	return 0;
@@ -421,7 +421,7 @@ int game_init(EngineState *s) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
-		game_init_sound(s, 0);
+		game_init_sound(s, 0, s->detectDoSoundType());
 #endif
 
 	// Load game language into printLang property of game object
@@ -437,7 +437,7 @@ int game_exit(EngineState *s) {
 	if (!s->successor) {
 		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state
-		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
+		game_init_sound(s, SFX_STATE_FLAG_NOSOUND, s->detectDoSoundType());
 	}
 #endif
 

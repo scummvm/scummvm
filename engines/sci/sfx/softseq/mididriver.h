@@ -81,7 +81,7 @@ public:
 	MidiChannel *getPercussionChannel() { return _driver->getPercussionChannel(); }
 	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
 
-	virtual int getPlayMask() const = 0;
+	virtual int getPlayMask(SciVersion soundVersion) = 0;
 	virtual int getPolyphony() const = 0;
 
 	virtual void setVolume(byte volume) {

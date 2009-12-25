@@ -651,7 +651,7 @@ void MidiDriver_Amiga::generateSamples(int16 *data, int len) {
 class MidiPlayer_Amiga : public MidiPlayer {
 public:
 	MidiPlayer_Amiga() { _driver = new MidiDriver_Amiga(g_system->getMixer()); }
-	int getPlayMask() const { return 0x40; }
+	int getPlayMask(SciVersion soundVersion);
 	int getPolyphony() const { return MidiDriver_Amiga::kVoices; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_Amiga *>(_driver)->setVolume(volume); }
@@ -661,6 +661,14 @@ public:
 
 MidiPlayer *MidiPlayer_Amiga_create() {
 	return new MidiPlayer_Amiga();
+}
+
+int MidiPlayer_Amiga::getPlayMask(SciVersion soundVersion) {
+	switch (soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		return 0x40; // FIXME: Not correct
+	}
+	return 0x40;
 }
 
 } // End of namespace Sci

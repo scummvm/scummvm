@@ -192,4 +192,20 @@ void MidiDriver_PCJr::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 }
 
+int MidiPlayer_PCJr::getPlayMask(SciVersion soundVersion) {
+	switch (soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		return 0x10; // FIXME: Not correct
+	}
+	return 0x10;
+}
+
+int MidiPlayer_PCSpeaker::getPlayMask(SciVersion soundVersion) {
+	switch (soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		return 0x20; // FIXME: Not correct
+	}
+	return 0x20;
+}
+
 } // End of namespace Sci

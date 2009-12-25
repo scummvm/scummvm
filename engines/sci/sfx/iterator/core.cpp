@@ -59,6 +59,7 @@ public:
 	int _polyphony;
 
 protected:
+	SciVersion _soundVersion;
 	MidiPlayer *_mididrv;
 
 	SongIterator *_iterator;
@@ -77,7 +78,7 @@ protected:
 	static void player_timer_callback(void *refCon);
 
 public:
-	SfxPlayer();
+	SfxPlayer(SciVersion soundVersion);
 	~SfxPlayer();
 
 	/**
@@ -138,7 +139,8 @@ public:
 	int getVolume();
 };
 
-SfxPlayer::SfxPlayer() {
+SfxPlayer::SfxPlayer(SciVersion soundVersion)
+	: _soundVersion(soundVersion) {
 	_polyphony = 0;
 
 	_mididrv = 0;
@@ -261,7 +263,7 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 
 Common::Error SfxPlayer::add_iterator(SongIterator *it, uint32 start_time) {
 	Common::StackLock lock(_mutex);
-	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayMask()));
+	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayMask(_soundVersion)));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(_mididrv->hasRhythmChannel()));
 
 	if (_iterator == NULL) {
@@ -648,7 +650,7 @@ static int sfx_play_iterator_pcm(SongIterator *it, SongHandle handle) {
 
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
-void SfxState::sfx_init(ResourceManager *resMan, int flags) {
+void SfxState::sfx_init(ResourceManager *resMan, int flags, SciVersion soundVersion) {
 	_songlib._lib = 0;
 	_song = NULL;
 	_flags = flags;
@@ -673,7 +675,7 @@ void SfxState::sfx_init(ResourceManager *resMan, int flags) {
 		return;
 	}
 
-	_player = new SfxPlayer();
+	_player = new SfxPlayer(soundVersion);
 
 	if (!_player) {
 		warning("[SFX] No song player found");

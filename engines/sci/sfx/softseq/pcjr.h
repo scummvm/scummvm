@@ -68,7 +68,7 @@ class MidiPlayer_PCJr : public MidiPlayer {
 public:
 	MidiPlayer_PCJr() { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
 	int open(ResourceManager *resMan) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
-	int getPlayMask() const { return 0x10; }
+	int getPlayMask(SciVersion soundVersion);
 	int getPolyphony() const { return 3; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volume; }
@@ -76,7 +76,7 @@ public:
 
 class MidiPlayer_PCSpeaker : public MidiPlayer_PCJr {
 public:
-	int getPlayMask() const { return 0x20; }
+	int getPlayMask(SciVersion soundVersion);
 	int getPolyphony() const { return 1; }
 };
 

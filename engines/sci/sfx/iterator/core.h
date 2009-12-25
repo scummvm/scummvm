@@ -72,7 +72,7 @@ public:
 	** Parameters: (ResourceManager *) resMan: Resource manager for initialization
 	**             (int) flags: SFX_STATE_FLAG_*
 	*/
-	void sfx_init(ResourceManager *resMan, int flags);
+	void sfx_init(ResourceManager *resMan, int flags, SciVersion soundVersion);
 
 	/** Deinitializes the sound subsystem. */
 	void sfx_exit();

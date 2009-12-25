@@ -180,7 +180,9 @@ Common::Error SciEngine::run() {
 	// since we cannot let the game control where saves are stored)
 	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
 
-	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _audio, _gamestate->detectDoSoundType());
+	SciVersion soundVersion = _gamestate->detectDoSoundType();
+
+	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _audio, soundVersion);
 
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
@@ -198,7 +200,7 @@ Common::Error SciEngine::run() {
 	}
 #endif
 
-	if (game_init_sound(_gamestate, 0)) {
+	if (game_init_sound(_gamestate, 0, soundVersion)) {
 		warning("Game initialization failed: Error in sound subsystem. Aborting...");
 		return Common::kUnknownError;
 	}

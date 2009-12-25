@@ -903,7 +903,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	temp = retval->_sound._songlib;
-	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags);
+	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags, s->detectDoSoundType());
 	retval->sfx_init_flags = s->sfx_init_flags;
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;

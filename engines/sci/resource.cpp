@@ -1942,7 +1942,15 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		channelMask = 0xFFFF;
+		data++; // Skip over digital sample flag
+		for (int channelNr = 0; channelNr < 16; channelNr++) {
+			channelMask = channelMask >> 1;
+			if (*data & hardwareMask) {
+				// this Channel is supposed to get played for hardware
+				channelMask |= 0x8000;
+			}
+			data++;
+		}
 		break;
 
 	case SCI_VERSION_0_LATE:
