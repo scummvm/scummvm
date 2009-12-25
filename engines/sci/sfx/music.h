@@ -95,6 +95,8 @@ struct MusicEntry {
 	kSndStatus status;
 };
 
+typedef Common::Array<MusicEntry *> MusicList;
+
 class SciMusic {
 public:
 	SciMusic(SciVersion soundVersion);
@@ -135,7 +137,7 @@ public:
 	}
 
 	uint16 _savelen;
-	Common::Array<MusicEntry *> _playList;
+	MusicList _playList;
 
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);
