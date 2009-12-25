@@ -130,7 +130,6 @@ static void syncSong(Common::Serializer &s, MusicEntry *song) {
 		song->FadeStep = 0;
 		song->FadeTicker = 0;
 		song->FadeTickerStep = 0;
-		song->pMidiParser = 0;
 	} else {
 		// A bit more optimized saving
 		sync_reg_t(s, song->soundObj);
@@ -145,8 +144,10 @@ static void syncSong(Common::Serializer &s, MusicEntry *song) {
 		s.syncAsSint32LE(song->FadeTicker);
 		s.syncAsSint32LE(song->FadeTickerStep);
 		s.syncAsByte(song->status);
-		song->pMidiParser = 0;
 	}
+
+	song->pMidiParser = 0;
+	song->pStreamAud = 0;
 }
 #endif
 
