@@ -778,9 +778,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	lastCommand = 0;
 	curChannel = 15;
 
-	//channelMask = 0xFFFF;
-
-	while (channelData <= channelDataEnd) {
+	while (channelData < channelDataEnd) {
 		curDelta = *channelData++;
 		if (curDelta == 0xF8) {
 			delta += 240;
