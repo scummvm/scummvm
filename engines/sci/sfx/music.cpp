@@ -128,12 +128,14 @@ bool SciMusic::restoreState(Common::InSaveFile *pFile){
 }
 //----------------------------------------
 void SciMusic::stopAll() {
+	_mutex.lock();
 	_pMixer->stopAll();
 	//audioStop();
 	for(uint i = 0; i < _playList.size(); i++){
 		soundStop(_playList[i]);
 		soundKill(_playList[i]);
 	}
+	_mutex.unlock();
 }
 //----------------------------------------
 void SciMusic::miditimerCallback(void *p) {
@@ -282,10 +284,10 @@ void SciMusic::loadPatchMT32() {
 
 //----------------------------------------
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
+	_mutex.lock();
 	SoundResource::Track *track = NULL;
 	int channelFilterMask = 0;
 
-	//_mutex.lock();
 	switch (_midiType) {
 	case MD_PCSPK:
 		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_SPEAKER);
@@ -338,12 +340,12 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		}
 	}
 
-	//_mutex.unlock();
+	_mutex.unlock();
 }
 //----------------------------------------
 void SciMusic::onTimer() {
-
 	_mutex.lock();
+
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
 		if (_playList[i]->status != kSndStatusPlaying)
@@ -368,10 +370,13 @@ void SciMusic::onTimer() {
 			}
 		}
 	}//for()
+	
 	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
+	_mutex.lock();
+
 	if (pSnd->fadeTicker)
 		pSnd->fadeTicker--;
 	else {
@@ -383,11 +388,14 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 			pSnd->volume += pSnd->fadeStep;
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 	}
+
+	_mutex.unlock();
 }
 
 //---------------------------------------------
 void SciMusic::soundPlay(MusicEntry *pSnd) {
-	//_mutex.lock();
+	_mutex.lock();
+
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
 	for (i = 0; i < sz && _playList[i] != pSnd; i++)
@@ -406,33 +414,45 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->pMidiParser->jumpToTick(0);
 	}
 	pSnd->status = kSndStatusPlaying;
-	//_mutex.unlock();
+
+	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundStop(MusicEntry *pSnd) {
-	//_mutex.lock();
+	_mutex.lock();
+
 	pSnd->status = kSndStatusStopped;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 	if (pSnd->pMidiParser)
 		pSnd->pMidiParser->stop();
-	//_mutex.unlock();
+
+	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
+	_mutex.lock();
+
 	if (pSnd->pStreamAud)
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume);
 	else if (pSnd->pMidiParser)
 		pSnd->pMidiParser->setVolume(volume);
+
+	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
+	_mutex.lock();
+
 	pSnd->prio = prio;
 	sortPlayList();
+
+	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
-	//_mutex.lock();
+	_mutex.lock();
+
 	pSnd->status = kSndStatusStopped;
 	if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->unloadMusic();
@@ -453,15 +473,20 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 			break;
 		}
 	}
-	//_mutex.unlock();
+
+	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {
+	_mutex.lock();
+
 	pSnd->status = kSndStatusPaused;
 	if (pSnd->pStreamAud)
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	else if (pSnd->pMidiParser)
 		pSnd->pMidiParser->pause();
+
+	_mutex.unlock();
 }
 
 //---------------------------------------------
@@ -471,12 +496,16 @@ uint16 SciMusic::soundGetMasterVolume() {
 }
 //---------------------------------------------
 void SciMusic::soundSetMasterVolume(uint16 vol) {
+	_mutex.lock();
+
 	vol = vol & 0xF; // 0..15
 	vol = vol * Audio::Mixer::kMaxMixerVolume / 0xF;
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
+
+	_mutex.unlock();
 }
 
 //---------------------------------------------
