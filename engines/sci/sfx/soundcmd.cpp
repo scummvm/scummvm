@@ -399,6 +399,8 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	if (_music->_playList[slot]->resnum != number) { // another sound loaded into struct
 		cmdDisposeHandle(obj, value);
 		cmdInitHandle(obj, value);
+		// Find slot again :)
+		slot = _music->findListSlot(obj);
 	}
 
 	if (_hasNodePtr) {
@@ -686,6 +688,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	case SI_ABSOLUTE_CUE:
 		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 		          PRINT_REG(obj), signal);
+		printf("abs-signal %04X\n", signal);
 		PUT_SEL32V(_segMan, obj, signal, signal);
 		break;
 
@@ -697,6 +700,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		 * below, with proper storage of dataInc and
 		 * signal in the iterator code. */
 		PUT_SEL32V(_segMan, obj, dataInc, signal);
+		printf("rel-signal %04X\n", signal);
 		if (_soundVersion == SCI_VERSION_1_EARLY)
 			PUT_SEL32V(_segMan, obj, signal, signal);
 		else
