@@ -736,11 +736,13 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	}
 
 	uint16 signal = GET_SEL32V(_segMan, obj, signal);
+	uint16 dataInc = _music->_playList[slot]->dataInc;
+
 	switch (signal) {
 		case 0:
-			if (_music->_playList[slot]->dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
-				PUT_SEL32V(_segMan, obj, dataInc, _music->_playList[slot]->dataInc);
-				PUT_SEL32V(_segMan, obj, signal, _music->_playList[slot]->dataInc + 127);
+			if (dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
+				PUT_SEL32V(_segMan, obj, dataInc, dataInc);
+				PUT_SEL32V(_segMan, obj, signal, dataInc + 127);
 			}
 			break;
 		case 0xFFFF:
