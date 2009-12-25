@@ -574,6 +574,9 @@ void MidiDriver_Amiga::send(uint32 b) {
 	byte op2 = (b >> 16) & 0xff;
 
 	switch (command) {
+	case 0x80:
+		stopNote(channel, op1);
+		break;
 	case 0x90:
 		if (op2 > 0)
 			startNote(channel, op1, op2);
