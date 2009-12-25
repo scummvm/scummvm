@@ -85,7 +85,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "TEENAGENT demo and TEENAGENT name copyright (c) Metropolis 1994.";
+		return "TEENAGENT (C) 1994 Metropolis";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const {
