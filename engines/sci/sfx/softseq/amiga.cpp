@@ -664,10 +664,9 @@ MidiPlayer *MidiPlayer_Amiga_create() {
 }
 
 int MidiPlayer_Amiga::getPlayMask(SciVersion soundVersion) {
-	switch (soundVersion) {
-	case SCI_VERSION_0_EARLY:
+	if (soundVersion == SCI_VERSION_0_EARLY)
 		error("No amiga support for sci0early");
-	}
+
 	return 0x40;
 }
 

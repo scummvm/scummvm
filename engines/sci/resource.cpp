@@ -1830,16 +1830,15 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		_tracks->channelCount = 1;
 		_tracks->channels = new Channel[_tracks->channelCount];
 		channel = _tracks->channels;
-		switch (_soundVersion) {
-		case SCI_VERSION_0_EARLY:
+		
+		if (_soundVersion == SCI_VERSION_0_EARLY) {
 			channel->data = resource->data + 0x11;
 			channel->size = resource->size - 0x11;
-			break;
-		case SCI_VERSION_0_LATE:
+		} else {
 			channel->data = resource->data + 0x21;
 			channel->size = resource->size - 0x21;
-			break;
 		}
+
 		channel->number = 0;
 		channel->poly = 0;
 		channel->time = channel->prev = 0;
@@ -1982,7 +1981,10 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 		// Play channel 15 anytime (control channel)
 		channelMask |= 0x8000;
 		break;
+	default:
+		break;
 	}
+
 	return channelMask;
 }
 
