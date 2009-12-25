@@ -45,7 +45,7 @@ struct MusicEntryCommand {
 
 class SoundCommandParser {
 public:
-	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion doSoundVersion);
+	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion soundVersion);
 	~SoundCommandParser();
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -64,7 +64,7 @@ private:
 #endif
 	AudioPlayer *_audio;
 	bool _hasNodePtr;
-	SciVersion _doSoundVersion;
+	SciVersion _soundVersion;
 	int _argc;
 	reg_t *_argv;
 	reg_t _acc;

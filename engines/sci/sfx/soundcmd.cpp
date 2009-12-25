@@ -101,18 +101,21 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		case SI_RELATIVE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d\n",
 			          PRINT_REG(obj), cue);
+			printf("rel-signal %04X\n", cue + 0x7f);
 			PUT_SEL32V(segMan, obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d\n",
 			          PRINT_REG(obj), cue);
+			printf("abs-signal %04X\n", cue);
 			PUT_SEL32V(segMan, obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
+			printf("signal 0xFFFF\n");
 			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			PUT_SEL32V(segMan, obj, state, kSndStatusStopped);
 			break;
@@ -125,8 +128,8 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 }
 
 #endif
-SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion doSoundVersion) : 
-	_resMan(resMan), _segMan(segMan), _audio(audio), _doSoundVersion(doSoundVersion) {
+SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion soundVersion) : 
+	_resMan(resMan), _segMan(segMan), _audio(audio), _soundVersion(soundVersion) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	// The following hack is needed to ease the change from old to new sound code (because the new sound code does not use SfxState)
@@ -136,11 +139,11 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
 
 	#ifndef USE_OLD_MUSIC_FUNCTIONS
-		_music = new SciMusic(_doSoundVersion);
+		_music = new SciMusic(_soundVersion);
 		_music->init();
 	#endif
 
-	switch (doSoundVersion) {
+	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
 		SOUNDCOMMAND(cmdInitHandle);
 		SOUNDCOMMAND(cmdPlayHandle);
@@ -197,7 +200,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdUpdateHandle);
 		break;
 	default:
-		warning("Sound command parser: unknown DoSound type %d", doSoundVersion);
+		warning("Sound command parser: unknown sound version %d", _soundVersion);
 		break;
 	}
 }
@@ -280,7 +283,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->soundRes = 0;
 	newSound->resnum = number;
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
-		newSound->soundRes = new SoundResource(number, _resMan, _doSoundVersion);
+		newSound->soundRes = new SoundResource(number, _resMan, _soundVersion);
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
@@ -409,7 +412,16 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 
 	_music->_playList[slot]->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	_music->_playList[slot]->prio = GET_SEL32V(_segMan, obj, priority);
-	_music->_playList[slot]->volume = GET_SEL32V(_segMan, obj, vol);
+	// vol selector doesnt get used before sci1late
+	switch (_soundVersion) {
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_1_EARLY:
+		_music->_playList[slot]->volume = 100;
+		break;
+	case SCI_VERSION_1_LATE:
+		_music->_playList[slot]->volume = GET_SEL32V(_segMan, obj, vol);
+		break;
+	}
 	_music->soundPlay(_music->_playList[slot]);
 
 #endif
