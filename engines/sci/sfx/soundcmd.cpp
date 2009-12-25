@@ -101,21 +101,18 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		case SI_RELATIVE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d\n",
 			          PRINT_REG(obj), cue);
-			debugC(2, kDebugLevelSound, "rel-signal %04X\n", cue + 0x7f);
 			PUT_SEL32V(segMan, obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d\n",
 			          PRINT_REG(obj), cue);
-			debugC(2, kDebugLevelSound, "abs-signal %04X\n", cue);
 			PUT_SEL32V(segMan, obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
-			printf("signal 0xFFFF\n");
 			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			PUT_SEL32V(segMan, obj, state, kSndStatusStopped);
 			break;
