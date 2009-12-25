@@ -472,8 +472,7 @@ uint16 SciMusic::soundGetMasterVolume() {
 //---------------------------------------------
 void SciMusic::soundSetMasterVolume(uint16 vol) {
 	vol = vol & 0xF; // 0..15
-	vol = (vol * Audio::Mixer::kMaxMixerVolume / 0xF) & 0xFF;	// 0...255
-	// TODO:balance volume to prevent music to be too loud
+	vol = vol * Audio::Mixer::kMaxMixerVolume / 0xF;
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);

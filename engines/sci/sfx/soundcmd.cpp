@@ -287,7 +287,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
-	newSound->volume = GET_SEL32V(_segMan, obj, vol) & 0xFF;
+	newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, Audio::Mixer::kMaxChannelVolume);
 	newSound->dataInc = 0;
 	newSound->pStreamAud = 0;
 	newSound->pMidiParser = 0;
@@ -659,7 +659,7 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 	}
 
 	_music->_playList[slot]->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
-	uint32 objVol = GET_SEL32V(_segMan, obj, vol) & 0xFF;
+	uint32 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
 	if (objVol != _music->_playList[slot]->volume)
 		_music->soundSetVolume(_music->_playList[slot], objVol);
 	uint32 objPrio = GET_SEL32V(_segMan, obj, vol);
@@ -821,7 +821,7 @@ void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {
 		return;
 	}
 
-	value = value & 0xFF;	// 0...255
+	value = CLIP<int>(value, 0, Audio::Mixer::kMaxChannelVolume);
 
 	if (_music->_playList[slot]->volume != value) {
 		_music->_playList[slot]->volume = value;
