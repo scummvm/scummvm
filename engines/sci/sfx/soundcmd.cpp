@@ -659,7 +659,7 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 	}
 
 	_music->_playList[slot]->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
-	uint32 objVol = GET_SEL32V(_segMan, obj, vol);
+	uint32 objVol = GET_SEL32V(_segMan, obj, vol) & 0xFF;
 	if (objVol != _music->_playList[slot]->volume)
 		_music->soundSetVolume(_music->_playList[slot], objVol);
 	uint32 objPrio = GET_SEL32V(_segMan, obj, vol);
@@ -820,6 +820,8 @@ void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {
 		warning("cmdSetHandleVolume: Slot not found");
 		return;
 	}
+
+	value = value & 0xFF;	// 0...255
 
 	if (_music->_playList[slot]->volume != value) {
 		_music->_playList[slot]->volume = value;
