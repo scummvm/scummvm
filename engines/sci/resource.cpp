@@ -1948,8 +1948,12 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 			reverseHardwareMask = 0x08;
 			break;
 		}
-		// Control-Channel -> where bit 0 is not set, bit 3 is set
 		data++; // Skip over digital sample flag
+		// Now all 16 channels follow. Each one is specified by a single byte
+		// Upper 4 bits of the byte is a voices count
+		// Lower 4 bits -> bit 0 means use as Adlib driver
+		//				   bit 1 means use as PCjr driver
+		//				   bit 3 means is control channel (bit 0 needs to be unset)
 		for (int channelNr = 0; channelNr < 16; channelNr++) {
 			channelMask = channelMask >> 1;
 			if (*data & hardwareMask) {
@@ -1969,6 +1973,9 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 
 	case SCI_VERSION_0_LATE:
 		data++; // Skip over digital sample flag
+		// Now all 16 channels follow. Each one is specified by 2 bytes
+		// 1st byte is voices count
+		// 2nd byte is play-mask which specifies if the channel is supposed to get played by the corresponding hardware
 		for (int channelNr = 0; channelNr < 16; channelNr++) {
 			data++;
 			channelMask = channelMask >> 1;
