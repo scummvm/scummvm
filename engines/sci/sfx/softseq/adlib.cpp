@@ -308,11 +308,9 @@ void MidiDriver_Adlib::send(uint32 b) {
 	case 0xc0:
 		_channels[channel].patch = op1;
 		break;
+	// The original adlib driver from sierra ignores aftertouch completely, so should we
 	case 0xa0: // Polyphonic key pressure (aftertouch)
-		// Aftertouch in the OPL thing?
-		break;
 	case 0xd0: // Channel pressure (aftertouch)
-		// Aftertouch in the OPL thing?
 		break;
 	case 0xf0:	// SysEx, ignore it
 		break;
