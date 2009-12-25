@@ -863,7 +863,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 	case K_FILEIO_READ_BYTE:
 		// Read the byte into the low byte of the accumulator
-		return make_reg(0, s->r_acc.toUint16() & 0xff00 | getFileFromHandle(s, argv[1].toUint16())->_in->readByte());
+		return make_reg(0, (s->r_acc.toUint16() & 0xff00) | getFileFromHandle(s, argv[1].toUint16())->_in->readByte());
 	case K_FILEIO_WRITE_BYTE:
 		getFileFromHandle(s, argv[1].toUint16())->_out->writeByte(argv[2].toUint16() & 0xff);
 		break;
@@ -873,7 +873,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		getFileFromHandle(s, argv[1].toUint16())->_out->writeUint16LE(argv[2].toUint16());
 		break;
 #endif
-	default :
+	default:
 		error("Unknown FileIO() sub-command: %d", func_nr);
 	}
 
