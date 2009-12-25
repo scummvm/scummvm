@@ -1822,6 +1822,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
+		// SCI0 only has a header of 0x11/0x21 byte length and the actual miditrack follows afterwards
 		_trackCount = 1;
 		_tracks = new Track[_trackCount];
 		_tracks->nDigital = 0xFF;
@@ -1829,8 +1830,16 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		_tracks->channelCount = 1;
 		_tracks->channels = new Channel[_tracks->channelCount];
 		channel = _tracks->channels;
-		channel->data = resource->data + 0x21;
-		channel->size = resource->size - 0x21;
+		switch (_soundVersion) {
+		case SCI_VERSION_0_EARLY:
+			channel->data = resource->data + 0x11;
+			channel->size = resource->size - 0x11;
+			break;
+		case SCI_VERSION_0_LATE:
+			channel->data = resource->data + 0x21;
+			channel->size = resource->size - 0x21;
+			break;
+		}
 		channel->number = 0;
 		channel->poly = 0;
 		channel->time = channel->prev = 0;
@@ -1850,7 +1859,6 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		_tracks = new Track[_trackCount];
 		data = resource->data;
 		for (trackNr = 0; trackNr < _trackCount; trackNr++) {
-			// SCI01/SCI1/SCI11
 			// Track info starts with track-type:BYTE
 			// Then channel-information gets appeneded Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
 			// 0xFF:BYTE as terminator to end that track and begin with another track-type
@@ -1932,7 +1940,12 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 	byte *data = _innerResource->data;
 	int channelMask = 0;
 
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
+	switch (_soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		channelMask = 0xFFFF;
+		break;
+
+	case SCI_VERSION_0_LATE:
 		data++; // Skip over digital sample flag
 		for (int channelNr = 0; channelNr < 16; channelNr++) {
 			data++;
@@ -1945,6 +1958,7 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 		}
 		// Play channel 15 anytime (control channel)
 		channelMask |= 0x8000;
+		break;
 	}
 	return channelMask;
 }
