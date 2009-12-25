@@ -88,6 +88,11 @@ std::string getLastPathComponent(const std::string &path);
  * @param exe Name of the executable.
  */
 void displayHelp(const char *exe);
+
+// Map containing a project-specific list of warnings
+// TODO: Remove the use of global variables
+std::map<std::string, std::string> g_projectWarnings;
+std::string g_globalWarnings;
 } // End of anonymous namespace
 
 int main(int argc, char *argv[]) {
@@ -240,6 +245,13 @@ int main(int argc, char *argv[]) {
 
 	setup.libraries.push_back("winmm.lib");
 	setup.libraries.push_back("sdl.lib");
+
+	// Initialize global & project-specific warnings
+	g_globalWarnings = "4068;4100;4103;4127;4244;4250;4310;4351;4512;4702;4706;4800;4996";
+
+	g_projectWarnings["agi"] = "4510;4610";
+	g_projectWarnings["lure"] = "4189;4355";
+	g_projectWarnings["kyra"] = "4355";
 
 	createMSVCProject(setup, msvcVersion);
 }
@@ -841,6 +853,9 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 	           "\t</Platforms>\n"
 	           "\t<Configurations>\n";
 
+	// Check for project-specific warnings:
+	std::map<std::string, std::string>::iterator warnings = g_projectWarnings.find(name);
+
 	if (name == "scummvm") {
 		std::string libraries;
 
@@ -876,6 +891,21 @@ void createProjectFile(const std::string &name, const std::string &uuid, const B
 		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
 		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
 		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n";
+	} else if (warnings != g_projectWarnings.end()) {
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n";
+		// x64
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
 		           "\t\t</Configuration>\n";
 	} else if (name == "tinsel") {
 		// Win32
@@ -940,7 +970,7 @@ void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string
 	              "\t<Tool\n"
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"true\"\n"
-	              "\t\tDisableSpecificWarnings=\"4068;4100;4103;4121;4127;4189;4201;4221;4244;4250;4267;4310;4351;4355;4510;4511;4512;4610;4701;4702;4706;4800;4996\"\n"
+	              "\t\tDisableSpecificWarnings=\"" << g_globalWarnings << "\"\n"
 	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
 	              "\t\tExceptionHandling=\"0\"\n"
