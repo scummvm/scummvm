@@ -54,8 +54,9 @@ public:
 
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
-private:
 	SciMusic *_music;
+
+private:
 	Common::Array<MusicEntryCommand*> _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;

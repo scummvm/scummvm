@@ -45,6 +45,8 @@
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/iterator/core.h"
 #include "sci/sfx/iterator/iterator.h"
+#else
+#include "sci/sfx/music.h"
 #endif
 
 namespace Sci {
@@ -69,7 +71,9 @@ SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorT
 // of the classes they are syncing.
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj);
+static void sync_songlib(Common::Serializer &s, SongLibrary &obj);
+#else
+static void sync_songlib(Common::Serializer &s, SciMusic *music);
 #endif
 
 static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
@@ -78,7 +82,7 @@ static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
 }
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_song_t(Common::Serializer &s, Song &obj) {
+static void syncSong(Common::Serializer &s, Song &obj) {
 	s.syncAsSint32LE(obj._handle);
 	s.syncAsSint32LE(obj._resourceNum);
 	s.syncAsSint32LE(obj._priority);
@@ -94,6 +98,54 @@ static void sync_song_t(Common::Serializer &s, Song &obj) {
 		obj._next = 0;
 		obj._nextPlaying = 0;
 		obj._nextStopping = 0;
+	}
+}
+#else
+
+#define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
+#define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
+
+static void syncSong(Common::Serializer &s, MusicEntry *song) {
+	if (s.getVersion() < 14) {
+		// Old sound system data
+		uint32 handle = 0;
+		if (s.isSaving())
+			handle = FROBNICATE_HANDLE(song->soundObj);
+		s.syncAsSint32LE(handle);
+		if (s.isLoading())
+			song->soundObj = DEFROBNICATE_HANDLE(handle);
+		s.syncAsSint32LE(song->resnum);
+		s.syncAsSint32LE(song->prio);
+		s.syncAsSint32LE(song->status);
+		s.skip(4);	// restoreBehavior
+		s.syncAsSint32LE(song->ticker);
+		s.syncAsSint32LE(song->loop);
+		s.skip(4);	// hold
+		// volume and dataInc will be synced from the sound objects
+		// when the sound list is reconstructed
+		song->volume = 100;
+		song->dataInc = 0;
+		// No fading info
+		song->FadeTo = 0;
+		song->FadeStep = 0;
+		song->FadeTicker = 0;
+		song->FadeTickerStep = 0;
+		song->pMidiParser = 0;
+	} else {
+		// A bit more optimized saving
+		sync_reg_t(s, song->soundObj);
+		s.syncAsSint16LE(song->resnum);
+		s.syncAsSint16LE(song->dataInc);
+		s.syncAsSint16LE(song->ticker);
+		s.syncAsByte(song->prio);
+		s.syncAsByte(song->loop);
+		s.syncAsByte(song->volume);
+		s.syncAsByte(song->FadeTo);
+		s.syncAsSint16LE(song->FadeStep);
+		s.syncAsSint32LE(song->FadeTicker);
+		s.syncAsSint32LE(song->FadeTickerStep);
+		s.syncAsByte(song->status);
+		song->pMidiParser = 0;
 	}
 }
 #endif
@@ -283,12 +335,6 @@ void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	sync_reg_t(s, obj.reg);
 }
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_sfx_state_t(Common::Serializer &s, SfxState &obj) {
-	sync_songlib_t(s, obj._songlib);
-}
-#endif
-
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
 	// TODO: It would be a good idea to store a magic number & a header size here,
 	// so that we can implement backward compatibility if the savegame format changes.
@@ -320,29 +366,31 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	// FIXME: This code goes out of sync when loading. Find out why
 
 	// OBSOLETE: Saved menus. Skip all of the saved data
-	int totalMenus = 0;
-	s.syncAsUint32LE(totalMenus);
+	if (s.getVersion() < 14) {
+		int totalMenus = 0;
+		s.syncAsUint32LE(totalMenus);
 
-	// Now iterate through the obsolete saved menu data
-	for (int i = 0; i < totalMenus; i++) {
-		s.syncString(tmp);				// OBSOLETE: Used to be _title
-		s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _titleWidth
-		s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _width
+		// Now iterate through the obsolete saved menu data
+		for (int i = 0; i < totalMenus; i++) {
+			s.syncString(tmp);				// OBSOLETE: Used to be _title
+			s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _titleWidth
+			s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _width
 
-		int menuLength = 0;
-		s.syncAsUint32LE(menuLength);
+			int menuLength = 0;
+			s.syncAsUint32LE(menuLength);
 
-		for (int j = 0; j < menuLength; j++) {
-			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
-			s.syncString(tmp);					// OBSOLETE: Used to be _keytext
-			s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
+			for (int j = 0; j < menuLength; j++) {
+				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
+				s.syncString(tmp);					// OBSOLETE: Used to be _keytext
+				s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
 
-			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
-			s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
-			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _saidPos
-			s.syncString(tmp);					// OBSOLETE: Used to be _text
-			s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _textPos
-			s.skip(4 * 4, VER(12), VER(12));	// OBSOLETE: Used to be _modifiers, _key, _enabled and _tag
+				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
+				s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
+				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _saidPos
+				s.syncString(tmp);					// OBSOLETE: Used to be _text
+				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _textPos
+				s.skip(4 * 4, VER(12), VER(12));	// OBSOLETE: Used to be _modifiers, _key, _enabled and _tag
+			}
 		}
 	}
 #endif
@@ -375,10 +423,9 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<Class>(s, _segMan->_classtable);
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	sync_sfx_state_t(s, _sound);
+	sync_songlib(s, _sound._songlib);
 #else
-	// TODO. For now, error out on purpose
-	error("TODO: Sync music state");
+	sync_songlib(s, _soundCmd->_music);
 #endif
 }
 
@@ -543,7 +590,7 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 #pragma mark -
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
+static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
 	int songcount = 0;
 	if (s.isSaving())
 		songcount = obj.countSongs();
@@ -553,15 +600,38 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 		obj._lib = 0;
 		while (songcount--) {
 			Song *newsong = new Song;
-			sync_song_t(s, *newsong);
+			syncSong(s, *newsong);
 			obj.addSong(newsong);
 		}
 	} else {
 		Song *seeker = obj._lib;
 		while (seeker) {
 			seeker->_restoreTime = seeker->_it->getTimepos();
-			sync_song_t(s, *seeker);
+			syncSong(s, *seeker);
 			seeker = seeker->_next;
+		}
+	}
+}
+#else
+static void sync_songlib(Common::Serializer &s, SciMusic *music) {
+	int songcount = 0;
+	if (s.isSaving())
+		songcount = music->_playList.size();
+	s.syncAsUint32LE(songcount);
+	if (s.isLoading()) {
+		music->stopAll();
+		music->_playList.resize(songcount);
+	}
+
+	if (s.isLoading()) {
+		for (int i = 0; i < songcount; i++) {
+			MusicEntry *curSong = new MusicEntry();
+			syncSong(s, curSong);
+			music->_playList[i] = curSong;
+		}
+	} else {
+		for (int i = 0; i < songcount; i++) {
+			syncSong(s, music->_playList[i]);
 		}
 	}
 }
@@ -875,6 +945,22 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_sound._song = NULL;
 	retval->_sound._suspended = s->_sound._suspended;
 	reconstruct_sounds(retval);
+#else
+	// Reconstruct sounds
+	SciMusic *music = retval->_soundCmd->_music;
+	for (uint32 i = 0; i < music->_playList.size(); i++) {
+		if (meta.savegame_version < 14) {
+			if (retval->detectDoSoundType() >= SCI_VERSION_1_EARLY) {
+				music->_playList[i]->dataInc = GET_SEL32V(retval->_segMan, music->_playList[i]->soundObj, dataInc);
+				music->_playList[i]->volume = GET_SEL32V(retval->_segMan, music->_playList[i]->soundObj, vol);
+			} else {
+				music->_playList[i]->volume = 100;
+			}
+		}
+
+		music->_playList[i]->soundRes = new SoundResource(music->_playList[i]->resnum, retval->resMan, retval->detectDoSoundType());
+		music->soundInitSnd(music->_playList[i]);
+	}
 #endif
 
 	// Message state:
