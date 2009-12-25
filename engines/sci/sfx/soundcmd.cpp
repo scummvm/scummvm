@@ -246,7 +246,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 
-	if (_doSoundVersion != SCI_VERSION_1_LATE) {
+	if (_soundVersion != SCI_VERSION_1_LATE) {
 		if (!obj.segment)
 			return;
 	}
@@ -327,14 +327,14 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
-	} else if (_doSoundVersion == SCI_VERSION_1_EARLY) {
+	} else if (_soundVersion == SCI_VERSION_1_EARLY) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
 		_state->sfx_song_renice(handle, GET_SEL32V(_segMan, obj, pri));
 		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) value;		/* Too lazy to look up a default value for this */
 		_state->_songlib.setSongRestoreBehavior(handle, rb);
 		PUT_SEL32V(_segMan, obj, signal, 0);
-	} else if (_doSoundVersion == SCI_VERSION_1_LATE) {
+	} else if (_soundVersion == SCI_VERSION_1_LATE) {
 		int looping = GET_SEL32V(_segMan, obj, loop);
 		//int vol = GET_SEL32V(_segMan, obj, vol);
 		int pri = GET_SEL32V(_segMan, obj, pri);
@@ -587,7 +587,7 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
-	if (_doSoundVersion != SCI_VERSION_1_LATE) {
+	if (_soundVersion != SCI_VERSION_1_LATE) {
 		/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
 		/* FIXME: The next couple of lines actually STOP the handle, rather
 		** than fading it! */
@@ -697,7 +697,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		 * below, with proper storage of dataInc and
 		 * signal in the iterator code. */
 		PUT_SEL32V(_segMan, obj, dataInc, signal);
-		if (_doSoundVersion == SCI_VERSION_1_EARLY)
+		if (_soundVersion == SCI_VERSION_1_EARLY)
 			PUT_SEL32V(_segMan, obj, signal, signal);
 		else
 			PUT_SEL32V(_segMan, obj, signal, signal + 127);
@@ -734,7 +734,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	//	break;
 	//}
 
-	if (_doSoundVersion == SCI_VERSION_1_EARLY) {
+	if (_soundVersion == SCI_VERSION_1_EARLY) {
 		PUT_SEL32V(_segMan, obj, min, min);
 		PUT_SEL32V(_segMan, obj, sec, sec);
 		PUT_SEL32V(_segMan, obj, frame, frame);
