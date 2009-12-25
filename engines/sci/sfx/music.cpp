@@ -490,6 +490,9 @@ MidiParser_SCI::MidiParser_SCI() :
 	// values of ppqn and tempo are found experimentally and may be wrong
 	_ppqn = 1;
 	setTempo(16667);
+
+	_signalSet = false;
+	_signalToSet = 0;
 }
 //---------------------------------------------
 MidiParser_SCI::~MidiParser_SCI() {
@@ -535,6 +538,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	if (_signalSet) {
 		_signalSet = false;
 		PUT_SEL32V(segMan, _pSnd->soundObj, signal, _signalToSet);
+		warning("signal %04x", _signalToSet);
 	}
 
 	info.start = _position._play_pos;
@@ -650,6 +654,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				} else {
 					_pSnd->status = kSndStatusStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
+					warning("signal EOT");
 				}
 			}
 			break;
