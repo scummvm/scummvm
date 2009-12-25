@@ -310,6 +310,8 @@ void MidiDriver_Adlib::send(uint32 b) {
 	case 0xd0: // Aftertouch
 		// Aftertouch in the OPL thing?
 		break;
+	case 0xf0:	// SysEx, ignore it
+		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
 	}
