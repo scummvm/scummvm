@@ -248,6 +248,7 @@ void MidiDriver_Adlib::setVolume(byte volume) {
 	renewNotes(-1, true);
 }
 
+// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
 void MidiDriver_Adlib::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;
@@ -307,7 +308,10 @@ void MidiDriver_Adlib::send(uint32 b) {
 	case 0xc0:
 		_channels[channel].patch = op1;
 		break;
-	case 0xd0: // Aftertouch
+	case 0xa0: // Polyphonic key pressure (aftertouch)
+		// Aftertouch in the OPL thing?
+		break;
+	case 0xd0: // Channel pressure (aftertouch)
 		// Aftertouch in the OPL thing?
 		break;
 	case 0xf0:	// SysEx, ignore it
