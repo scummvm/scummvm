@@ -125,6 +125,8 @@ void SciGuiPicture::drawSci32Vga() {
 	_palette->set(&palette, 2);
 
 	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, true);
+
+	// TODO: find out where priority map is stored
 }
 
 void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
