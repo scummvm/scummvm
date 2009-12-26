@@ -598,49 +598,42 @@ SciVersion EngineState::detectGfxFunctionsType() {
 		}
 
 		if (getSciVersion() > SCI_VERSION_0_EARLY) {
-			if (_kernel->findSelector("shiftParser") != -1) {
-				// The shiftParser selector was introduced just a bit after the
-				// changes to the graphics functions, so if it exists, the game is
-				// definitely using newer graphics functions
-				_gfxFunctionsType = SCI_VERSION_0_LATE;
-			} else {
-				// No shiftparser selector, check if the game is using an overlay
-				bool found = false;
+			// Check if the game is using an overlay
+			bool found = false;
 
-				if (_kernel->_selectorCache.overlay == -1) {
-					// No overlay selector found, check if any method of the Rm object
-					// is calling kDrawPic, as the overlay selector might be missing in demos
-					
-					Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
-					for (uint m = 0; m < obj->getMethodCount(); m++) {
-						found = autoDetectFeature(kDetectGfxFunctions, m);
-						if (found)
-							break;
-					}
+			if (_kernel->_selectorCache.overlay == -1) {
+				// No overlay selector found, check if any method of the Rm object
+				// is calling kDrawPic, as the overlay selector might be missing in demos
+				
+				Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
+				for (uint m = 0; m < obj->getMethodCount(); m++) {
+					found = autoDetectFeature(kDetectGfxFunctions, m);
+					if (found)
+						break;
 				}
+			}
 
-				if (_kernel->_selectorCache.overlay == -1 && !found) {
-					// No overlay selector found, therefore the game is definitely
-					// using old graphics functions
-					_gfxFunctionsType = SCI_VERSION_0_EARLY;
-				} else if (_kernel->_selectorCache.overlay == -1 && found) {
-					// Detection already done above
-				} else {	// _kernel->_selectorCache.overlay != -1
-					// An in-between case: The game does not have a shiftParser
-					// selector, but it does have an overlay selector, so it uses an
-					// overlay. Therefore, check it to see how it calls kDrawPic to
-					// determine the graphics functions type used
+			if (_kernel->_selectorCache.overlay == -1 && !found) {
+				// No overlay selector found, therefore the game is definitely
+				// using old graphics functions
+				_gfxFunctionsType = SCI_VERSION_0_EARLY;
+			} else if (_kernel->_selectorCache.overlay == -1 && found) {
+				// Detection already done above
+			} else {	// _kernel->_selectorCache.overlay != -1
+				// An in-between case: The game does not have a shiftParser
+				// selector, but it does have an overlay selector, so it uses an
+				// overlay. Therefore, check it to see how it calls kDrawPic to
+				// determine the graphics functions type used
 
-					if (!autoDetectFeature(kDetectGfxFunctions)) {
-						warning("Graphics functions detection failed, taking an educated guess");
+				if (!autoDetectFeature(kDetectGfxFunctions)) {
+					warning("Graphics functions detection failed, taking an educated guess");
 
-						// Try detecting the graphics function types from the existence of the motionCue
-						// selector (which is a bit of a hack)
-						if (_kernel->findSelector("motionCue") != -1)
-							_gfxFunctionsType = SCI_VERSION_0_LATE;
-						else
-							_gfxFunctionsType = SCI_VERSION_0_EARLY;
-					}
+					// Try detecting the graphics function types from the existence of the motionCue
+					// selector (which is a bit of a hack)
+					if (_kernel->findSelector("motionCue") != -1)
+						_gfxFunctionsType = SCI_VERSION_0_LATE;
+					else
+						_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				}
 			}
 		} else {	// (getSciVersion() == SCI_VERSION_0_EARLY)
