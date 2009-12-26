@@ -110,9 +110,7 @@ public:
 	bool saveState(Common::OutSaveFile *pFile);
 	bool restoreState(Common::InSaveFile *pFile);
 	void stopAll();
-	void clearPlaylist() {
-		_playList.clear();
-	}
+
 	// sound and midi functions
 	void soundInitSnd(MusicEntry *pSnd);
 	void soundPlay(MusicEntry *pSnd);
@@ -136,8 +134,28 @@ public:
 		return -1;
 	}
 
+	MusicEntry *getSlot(int slot) { return _playList[slot]; }
+	void setSlot(uint32 slot, MusicEntry *slotEntry) {
+		_mutex.lock();
+		_playList[slot] = slotEntry;
+		_mutex.unlock();
+	}
+
+	void pushBackSlot(MusicEntry *slotEntry) {
+		_mutex.lock();
+		_playList.push_back(slotEntry);
+		_mutex.unlock();
+	}
+
+	uint32 listSize() { return _playList.size(); }
+
+	void resizeList(uint32 newSize) {
+		_mutex.lock();
+		_playList.resize(newSize);
+		_mutex.unlock();
+	}
+
 	uint16 _savelen;
-	MusicList _playList;
 
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);
@@ -161,6 +179,8 @@ protected:
 	bool _bMultiMidi; // use adlib's digital track if midi track don't have one
 private:
 	static void miditimerCallback(void *p);
+
+	MusicList _playList;
 };
 
 class MidiParser_SCI : public MidiParser {

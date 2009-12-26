@@ -275,7 +275,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	// Check if a track with the same sound object is already playing
 	int prevTrack = _music->findListSlot(obj);
 	if (prevTrack > -1)
-		_music->soundKill(_music->_playList[prevTrack]);
+		_music->soundKill(_music->getSlot(prevTrack));
 
 	MusicEntry *newSound = new MusicEntry();
 	newSound->soundRes = 0;
@@ -295,7 +295,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->fadeTicker = 0;
 	newSound->fadeTickerStep = 0;
 	newSound->status = kSndStatusStopped;
-	_music->_playList.push_back(newSound);
+	_music->pushBackSlot(newSound);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -394,7 +394,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 
 	int number = obj.segment ? GET_SEL32V(_segMan, obj, number) : -1;
 
-	if (_music->_playList[slot]->resnum != number) { // another sound loaded into struct
+	if (_music->getSlot(slot)->resnum != number) { // another sound loaded into struct
 		cmdDisposeHandle(obj, value);
 		cmdInitHandle(obj, value);
 		// Find slot again :)
@@ -410,14 +410,15 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
 	}
 
-	_music->_playList[slot]->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
-	_music->_playList[slot]->prio = GET_SEL32V(_segMan, obj, priority);
+	MusicEntry *musicSlot = _music->getSlot(slot);
+	musicSlot->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
+	musicSlot->prio = GET_SEL32V(_segMan, obj, priority);
 	// vol selector doesnt get used before sci1late
 	if (_soundVersion < SCI_VERSION_1_LATE)
-		_music->_playList[slot]->volume = 100;
+		musicSlot->volume = 100;
 	else
-		_music->_playList[slot]->volume = GET_SEL32V(_segMan, obj, vol);
-	_music->soundPlay(_music->_playList[slot]);
+		musicSlot->volume = GET_SEL32V(_segMan, obj, vol);
+	_music->soundPlay(musicSlot);
 
 #endif
 
@@ -463,7 +464,7 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 
 	cmdStopHandle(obj, value);
 
-	_music->soundKill(_music->_playList[slot]);
+	_music->soundKill(_music->getSlot(slot));
 	if (_hasNodePtr)
 		PUT_SEL32(_segMan, obj, nodePtr, NULL_REG);
 	else
@@ -493,8 +494,8 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 	else
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 
-	_music->_playList[slot]->dataInc = 0;
-	_music->soundStop(_music->_playList[slot]);
+	_music->getSlot(slot)->dataInc = 0;
+	_music->soundStop(_music->getSlot(slot));
 #endif
 }
 
@@ -516,12 +517,12 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 
 	if (!_hasNodePtr) {
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPaused);
-		_music->soundPause(_music->_playList[slot]);
+		_music->soundPause(_music->getSlot(slot));
 	} else {
 		if (value)
-			_music->soundPause(_music->_playList[slot]);
+			_music->soundPause(_music->getSlot(slot));
 		else
-			_music->soundPlay(_music->_playList[slot]);
+			_music->soundPlay(_music->getSlot(slot));
 	}
 #endif
 }
@@ -542,7 +543,7 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 	}
 
 	PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
-	_music->soundPlay(_music->_playList[slot]);
+	_music->soundPlay(_music->getSlot(slot));
 #endif
 }
 
@@ -619,10 +620,11 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 	}
 
 	int volume = GET_SEL32V(_segMan, obj, vol);
-	_music->_playList[slot]->fadeTo = _argv[2].toUint16();
-	_music->_playList[slot]->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
-	_music->_playList[slot]->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
-	_music->_playList[slot]->fadeTicker = 0;
+	MusicEntry *musicSlot = _music->getSlot(slot);
+	musicSlot->fadeTo = _argv[2].toUint16();
+	musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
+	musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
+	musicSlot->fadeTicker = 0;
 #endif
 }
 
@@ -651,13 +653,14 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 		return;
 	}
 
-	_music->_playList[slot]->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
+	MusicEntry *musicSlot = _music->getSlot(slot);
+	musicSlot->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
 	uint32 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
-	if (objVol != _music->_playList[slot]->volume)
-		_music->soundSetVolume(_music->_playList[slot], objVol);
+	if (objVol != musicSlot->volume)
+		_music->soundSetVolume(musicSlot, objVol);
 	uint32 objPrio = GET_SEL32V(_segMan, obj, vol);
-	if (objPrio != _music->_playList[slot]->prio)
-		_music->soundSetPriority(_music->_playList[slot], objPrio);
+	if (objPrio != musicSlot->prio)
+		_music->soundSetPriority(musicSlot, objPrio);
 
 #endif
 }
@@ -745,7 +748,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	}
 
 	uint16 signal = GET_SEL32V(_segMan, obj, signal);
-	uint16 dataInc = _music->_playList[slot]->dataInc;
+	uint16 dataInc = _music->getSlot(slot)->dataInc;
 
 	switch (signal) {
 		case 0:
@@ -761,7 +764,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			break;
 	}
 
-	uint16 ticker = _music->_playList[slot]->ticker;
+	uint16 ticker = _music->getSlot(slot)->ticker;
 	PUT_SEL32V(_segMan, obj, min, ticker / 3600);
 	PUT_SEL32V(_segMan, obj, sec, ticker % 3600 / 60);
 	PUT_SEL32V(_segMan, obj, frame, ticker);
@@ -816,9 +819,9 @@ void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {
 
 	value = CLIP<int>(value, 0, Audio::Mixer::kMaxChannelVolume);
 
-	if (_music->_playList[slot]->volume != value) {
-		_music->_playList[slot]->volume = value;
-		_music->soundSetVolume(_music->_playList[slot], value);
+	if (_music->getSlot(slot)->volume != value) {
+		_music->getSlot(slot)->volume = value;
+		_music->soundSetVolume(_music->getSlot(slot), value);
 		PUT_SEL32V(_segMan, obj, vol, value);
 	}
 #endif
@@ -864,10 +867,10 @@ void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 		return;
 	}
 	if (value == -1) {
-		_music->_playList[slot]->loop = 1;
+		_music->getSlot(slot)->loop = 1;
 		PUT_SEL32V(_segMan, obj, loop, 0xFFFF);
 	} else {
-		_music->_playList[slot]->loop = 0;
+		_music->getSlot(slot)->loop = 0;
 		PUT_SEL32V(_segMan, obj, loop, 1);
 	}
 #endif

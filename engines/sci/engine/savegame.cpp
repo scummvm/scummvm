@@ -623,21 +623,21 @@ static void sync_songlib(Common::Serializer &s, SciMusic *music) {
 	// afterwards in gamestate_restore()
 	int songcount = 0;
 	if (s.isSaving())
-		songcount = music->_playList.size();
+		songcount = music->listSize();
 	s.syncAsUint32LE(songcount);
 
 	if (s.isLoading()) {
 		music->stopAll();
-		music->_playList.resize(songcount);
+		music->resizeList(songcount);
 
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			syncSong(s, curSong);
-			music->_playList[i] = curSong;
+			music->setSlot(i, curSong);
 		}
 	} else {
 		for (int i = 0; i < songcount; i++) {
-			syncSong(s, music->_playList[i]);
+			syncSong(s, music->getSlot(i));
 		}
 	}
 }
@@ -954,18 +954,18 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 #else
 	// Reconstruct sounds
 	SciMusic *music = retval->_soundCmd->_music;
-	for (uint32 i = 0; i < music->_playList.size(); i++) {
+	for (uint32 i = 0; i < music->listSize(); i++) {
 		if (meta.savegame_version < 14) {
 			if (retval->detectDoSoundType() >= SCI_VERSION_1_EARLY) {
-				music->_playList[i]->dataInc = GET_SEL32V(retval->_segMan, music->_playList[i]->soundObj, dataInc);
-				music->_playList[i]->volume = GET_SEL32V(retval->_segMan, music->_playList[i]->soundObj, vol);
+				music->getSlot(i)->dataInc = GET_SEL32V(retval->_segMan, music->getSlot(i)->soundObj, dataInc);
+				music->getSlot(i)->volume = GET_SEL32V(retval->_segMan, music->getSlot(i)->soundObj, vol);
 			} else {
-				music->_playList[i]->volume = 100;
+				music->getSlot(i)->volume = 100;
 			}
 		}
 
-		music->_playList[i]->soundRes = new SoundResource(music->_playList[i]->resnum, retval->resMan, retval->detectDoSoundType());
-		music->soundInitSnd(music->_playList[i]);
+		music->getSlot(i)->soundRes = new SoundResource(music->getSlot(i)->resnum, retval->resMan, retval->detectDoSoundType());
+		music->soundInitSnd(music->getSlot(i));
 	}
 #endif
 

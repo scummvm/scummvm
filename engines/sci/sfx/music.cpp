@@ -128,15 +128,12 @@ bool SciMusic::restoreState(Common::InSaveFile *pFile){
 }
 //----------------------------------------
 void SciMusic::stopAll() {
-	_mutex.lock();
 	_pMixer->stopAll();
 
-	for (uint i = 0; i < _playList.size(); i++){
-		soundStop(_playList[i]);
-		soundKill(_playList[i]);
+	while (!_playList.empty()) {
+		soundStop(_playList[0]);
+		soundKill(_playList[0]);
 	}
-
-	_mutex.unlock();
 }
 //----------------------------------------
 void SciMusic::miditimerCallback(void *p) {
@@ -285,7 +282,6 @@ void SciMusic::loadPatchMT32() {
 
 //----------------------------------------
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
-	_mutex.lock();
 	SoundResource::Track *track = NULL;
 	int channelFilterMask = 0;
 
@@ -340,8 +336,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 		}
 	}
-
-	_mutex.unlock();
 }
 //----------------------------------------
 void SciMusic::onTimer() {
@@ -376,8 +370,6 @@ void SciMusic::onTimer() {
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
-	_mutex.lock();
-
 	if (pSnd->fadeTicker)
 		pSnd->fadeTicker--;
 	else {
@@ -389,21 +381,20 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 			pSnd->volume += pSnd->fadeStep;
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 	}
-
-	_mutex.unlock();
 }
 
 //---------------------------------------------
 void SciMusic::soundPlay(MusicEntry *pSnd) {
-	_mutex.lock();
 
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
 	for (i = 0; i < sz && _playList[i] != pSnd; i++)
 		;
 	if (i == sz) {// not found
+		_mutex.lock();
 		_playList.push_back(pSnd);
 		sortPlayList();
+		_mutex.unlock();
 	}
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
@@ -415,31 +406,21 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->pMidiParser->jumpToTick(0);
 	}
 	pSnd->status = kSndStatusPlaying;
-
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundStop(MusicEntry *pSnd) {
-	_mutex.lock();
-
 	pSnd->status = kSndStatusStopped;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 	if (pSnd->pMidiParser)
 		pSnd->pMidiParser->stop();
-
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
-	_mutex.lock();
-
 	if (pSnd->pStreamAud)
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume);
 	else if (pSnd->pMidiParser)
 		pSnd->pMidiParser->setVolume(volume);
-
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
@@ -453,7 +434,7 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
 
-	// For some reason, adding a mutex here freezes some games (e.g. LSL5)
+	_mutex.lock();
 
 	pSnd->status = kSndStatusStopped;
 	if (pSnd->pMidiParser) {
@@ -471,24 +452,22 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	for (i = 0; i < sz; i++) {
 		if (_playList[i] == pSnd) {
 			delete _playList[i]->soundRes;
-			_playList[i]->soundRes = 0;
+			delete _playList[i];
 			_playList.remove_at(i);
 			break;
 		}
 	}
 
+	_mutex.unlock();
+
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {
-	_mutex.lock();
-
 	pSnd->status = kSndStatusPaused;
 	if (pSnd->pStreamAud)
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	else if (pSnd->pMidiParser)
 		pSnd->pMidiParser->pause();
-
-	_mutex.unlock();
 }
 
 //---------------------------------------------
@@ -498,16 +477,12 @@ uint16 SciMusic::soundGetMasterVolume() {
 }
 //---------------------------------------------
 void SciMusic::soundSetMasterVolume(uint16 vol) {
-	_mutex.lock();
-
 	vol = vol & 0xF; // 0..15
 	vol = vol * Audio::Mixer::kMaxMixerVolume / 0xF;
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
-
-	_mutex.unlock();
 }
 
 //---------------------------------------------
@@ -568,7 +543,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	if (_signalSet) {
 		_signalSet = false;
 		PUT_SEL32V(segMan, _pSnd->soundObj, signal, _signalToSet);
-		warning("signal %04x", _signalToSet);
+		debugC(2, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 
 	info.start = _position._play_pos;
@@ -685,7 +660,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				} else {
 					_pSnd->status = kSndStatusStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
-					warning("signal EOT");
+					debugC(2, kDebugLevelSound, "signal EOT");
 				}
 			}
 			break;
