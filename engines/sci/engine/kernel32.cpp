@@ -456,6 +456,34 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
+	if (argc != 2) {
+		warning("kListAt called with %d parameters", argc);
+		return NULL_REG;
+	}
+
+	List *list = s->_segMan->lookupList(argv[0]);
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject = curNode->value;
+	int16 listIndex = argv[1].toUint16();
+	int curIndex = 0;
+
+	while (curIndex != listIndex) {
+		if (curNode->succ.isNull()) {	// end of the list?
+			return NULL_REG;
+		}
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+		curObject = curNode->value;
+
+		curIndex++;
+	}
+
+	return curObject;
+}
+
 reg_t kString(EngineState *s, int argc, reg_t *argv) {	
 	switch (argv[0].toUint16()) {
 	case 0: { // New
@@ -695,22 +723,37 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
 
-	// Called with 2 or 3 parameters
-	// object, selector and optionally a third unknown parameter
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
 
-	// With 2 parameters, the selector can be:
-	// - 0x45 (doit)
-	// - 0x5c (delete)
-	// - 0xfd (check)
+	while (curNode) {
+		curObject = curNode->value;
 
-	// With 3 parameters, the selector can be:
-	// - 0x145 (checkDetail)
-	// - 0x211 (newRoom) - that one seems a bit odd
+		// FIXME: Yes, this is an ugly hack...
+		if (argc == 2) {
+			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 0);
+		} else if (argc == 3) {
+			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
+		} else if (argc == 4) {
+			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
+		} else if (argc == 5) {
+			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+		} else {
+			warning("kListEachElementDo: called with %d params", argc);
+		}
 
-	// TODO
+		// Lookup node again, since the nodetable it was in may have been reallocated
+		curNode = s->_segMan->lookupNode(curAddress);
 
-	return NULL_REG;
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+	}
+
+
+	return s->r_acc;
 }
 
 reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
@@ -720,7 +763,7 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	// TODO
 
 	warning("kOnMe: (%d, %d) on object %04x:%04x", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]));
-	return NULL_REG;
+	return s->r_acc;
 }
 
 } // End of namespace Sci

@@ -394,6 +394,7 @@ reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 // SCI2 Kernel Functions
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
+reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
 // "Screen items" in SCI32 are views
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);

@@ -341,6 +341,7 @@ SciKernelFunction kfunct_mappers[] = {
 	// SCI2 Kernel Functions
 	DEFUN("IsHiRes", kIsHiRes, ""),
 	DEFUN("Array", kArray, ".*"),
+	DEFUN("ListAt", kListAt, ".*"),
 	DEFUN("String", kString, ".*"),
 	DEFUN("AddScreenItem", kAddScreenItem, "o"),
 	DEFUN("UpdateScreenItem", kUpdateScreenItem, "o"),
