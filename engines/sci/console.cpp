@@ -1026,6 +1026,9 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(_vm->_gamestate->gfx_state);
 	kernel_sleep(_vm->_gamestate->_event, 0);
+#else
+	_vm->_gamestate->_gui->drawPicture(atoi(argv[1]), 100, false, false, false, 0);
+	_vm->_gamestate->_gui->animateShowPic();
 #endif
 
 	return false;

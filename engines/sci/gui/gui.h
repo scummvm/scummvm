@@ -121,6 +121,7 @@ public:
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
 	virtual uint16 onControl(byte screenMask, Common::Rect rect);
+	virtual void animateShowPic();
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
 	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
@@ -163,7 +164,6 @@ protected:
 
 private:
 	virtual void initPriorityBands();
-	virtual void animateShowPic();
 	virtual void addToPicSetPicNotValid();
 	virtual int getControlPicNotValid();
 
