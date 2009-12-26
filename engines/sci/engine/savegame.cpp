@@ -102,27 +102,26 @@ static void syncSong(Common::Serializer &s, Song &obj) {
 }
 #else
 
-#define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 
 static void syncSong(Common::Serializer &s, MusicEntry *song) {
 	if (s.getVersion() < 14) {
-		// Old sound system data
+		// Old sound system data. This data is only loaded, never saved (as we're never
+		// saving in the older version format)
 		uint32 handle = 0;
-		if (s.isSaving())
-			handle = FROBNICATE_HANDLE(song->soundObj);
 		s.syncAsSint32LE(handle);
-		if (s.isLoading())
-			song->soundObj = DEFROBNICATE_HANDLE(handle);
+		song->soundObj = DEFROBNICATE_HANDLE(handle);
 		s.syncAsSint32LE(song->resnum);
 		s.syncAsSint32LE(song->prio);
 		s.syncAsSint32LE(song->status);
 		s.skip(4);	// restoreBehavior
-		s.syncAsSint32LE(song->ticker);
+		uint32 restoreTime = 0;
+		s.syncAsSint32LE(restoreTime);
+		song->ticker = restoreTime * 60 / 1000;
 		s.syncAsSint32LE(song->loop);
 		s.skip(4);	// hold
 		// volume and dataInc will be synced from the sound objects
-		// when the sound list is reconstructed
+		// when the sound list is reconstructed in gamestate_restore()
 		song->volume = 100;
 		song->dataInc = 0;
 		// No fading info
@@ -146,8 +145,12 @@ static void syncSong(Common::Serializer &s, MusicEntry *song) {
 		s.syncAsByte(song->status);
 	}
 
-	song->pMidiParser = 0;
-	song->pStreamAud = 0;
+	// pMidiParser and pStreamAud will be initialized when the
+	// sound list is reconstructed in gamestate_restore()
+	if (s.isLoading()) {
+		song->pMidiParser = 0;
+		song->pStreamAud = 0;
+	}
 }
 #endif
 
@@ -615,16 +618,17 @@ static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
 }
 #else
 static void sync_songlib(Common::Serializer &s, SciMusic *music) {
+	// Sync song lib data. When loading, the actual song lib will be initialized
+	// afterwards in gamestate_restore()
 	int songcount = 0;
 	if (s.isSaving())
 		songcount = music->_playList.size();
 	s.syncAsUint32LE(songcount);
+
 	if (s.isLoading()) {
 		music->stopAll();
 		music->_playList.resize(songcount);
-	}
 
-	if (s.isLoading()) {
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			syncSong(s, curSong);
