@@ -148,6 +148,7 @@ static void syncSong(Common::Serializer &s, MusicEntry *song) {
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()
 	if (s.isLoading()) {
+		song->soundRes = 0;
 		song->pMidiParser = 0;
 		song->pStreamAud = 0;
 	}

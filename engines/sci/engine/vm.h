@@ -486,6 +486,7 @@ int game_init(EngineState *s);
 int game_init_graphics(EngineState *s);
 #endif
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 /**
  * Initializes the sound part of an SCI game
  * This function may only be called if game_init() did not initialize
@@ -496,6 +497,7 @@ int game_init_graphics(EngineState *s);
  * @return					0 on success, 1 if an error occured
  */
 int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion);
+#endif
 
 /**
  * Runs an SCI game

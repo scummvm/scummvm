@@ -33,12 +33,13 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
-#include "sci/gui/gui.h"
 #include "sci/engine/message.h"
+#include "sci/gui/gui.h"
 #ifdef INCLUDE_OLDGFX
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gfx/menubar.h"
 #endif
+#include "sci/sfx/music.h"
 
 namespace Sci {
 
@@ -291,17 +292,17 @@ static void _free_graphics_input(EngineState *s) {
 }
 #endif
 
-int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
+int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion) {
 	if (getSciVersion() > SCI_VERSION_0_LATE)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
 	s->_sound.sfx_init(s->resMan, sound_flags, soundVersion);
-#endif
 
 	return 0;
 }
+#endif
 
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
@@ -433,13 +434,16 @@ int game_init(EngineState *s) {
 int game_exit(EngineState *s) {
 	s->_executionStack.clear();
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (!s->successor) {
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND, s->detectDoSoundType());
-	}
+#else
+		s->_audio->stopAllAudio();
+		s->_soundCmd->_music->stopAll();
 #endif
+	}
 
 	// Note: It's a bad idea to delete the segment manager here
 	// when loading a game.

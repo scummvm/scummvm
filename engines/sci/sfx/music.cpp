@@ -130,11 +130,12 @@ bool SciMusic::restoreState(Common::InSaveFile *pFile){
 void SciMusic::stopAll() {
 	_mutex.lock();
 	_pMixer->stopAll();
-	//audioStop();
-	for(uint i = 0; i < _playList.size(); i++){
+
+	for (uint i = 0; i < _playList.size(); i++){
 		soundStop(_playList[i]);
 		soundKill(_playList[i]);
 	}
+
 	_mutex.unlock();
 }
 //----------------------------------------
@@ -469,6 +470,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	for (i = 0; i < sz; i++) {
 		if (_playList[i] == pSnd) {
 			delete _playList[i]->soundRes;
+			_playList[i]->soundRes = 0;
 			_playList.remove_at(i);
 			break;
 		}

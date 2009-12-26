@@ -200,10 +200,12 @@ Common::Error SciEngine::run() {
 	}
 #endif
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (game_init_sound(_gamestate, 0, soundVersion)) {
 		warning("Game initialization failed: Error in sound subsystem. Aborting...");
 		return Common::kUnknownError;
 	}
+#endif
 
 	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
 
