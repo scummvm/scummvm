@@ -74,8 +74,11 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 			error("[Kernel] Not recoverable: VM was halted");
 		return 1;
 	}
-	if (slc_type == kSelectorVariable) // Swallow silently
+	if (slc_type == kSelectorVariable) {
+		warning("Attempting to invoke variable selector %s of object %04x:%04x", 
+			s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 		return 0;
+	}
 
 	va_start(argp, argc);
 	for (i = 0; i < argc; i++) {
