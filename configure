@@ -2553,7 +2553,7 @@ EOF
 # Create a custom Makefile when building outside the source tree
 # TODO: Add a better check than just looking for 'Makefile'
 #
-if test ! -f Makefile ; then
+if test ! -f Makefile.common ; then
 echo "Creating Makefile"
 
 cat > Makefile << EOF
