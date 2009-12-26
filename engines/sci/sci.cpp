@@ -135,7 +135,7 @@ Common::Error SciEngine::run() {
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 
-	_kernel = new Kernel(_resMan);
+	_kernel = new Kernel(_resMan, getGameID());
 	_vocabulary = new Vocabulary(_resMan);
 	_audio = new AudioPlayer(_resMan);
 
