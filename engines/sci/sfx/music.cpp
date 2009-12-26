@@ -345,7 +345,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 }
 //----------------------------------------
 void SciMusic::onTimer() {
-//	_mutex.lock();
+	_mutex.lock();
 
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
@@ -372,7 +372,7 @@ void SciMusic::onTimer() {
 		}
 	}//for()
 	
-//	_mutex.unlock();
+	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
@@ -452,7 +452,8 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 }
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
-	_mutex.lock();
+
+	// For some reason, adding a mutex here freezes some games (e.g. LSL5)
 
 	pSnd->status = kSndStatusStopped;
 	if (pSnd->pMidiParser) {
@@ -476,7 +477,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		}
 	}
 
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {
