@@ -135,12 +135,11 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[1].toUint16());
 		break;
 	case kSciAudioLanguage:
-		if (argc == 1) {
-			// In SCI1.1: tests for digital audio support
+		// In SCI1.1: tests for digital audio support
+		if (getSciVersion() == SCI_VERSION_1_1)
 			return make_reg(0, 1);
-		} else {
+		else
 			s->resMan->setAudioLanguage(argv[1].toSint16());
-		}
 		break;
 	case kSciAudioCD:
 		return kDoCdAudio(s, argc - 1, argv + 1);
