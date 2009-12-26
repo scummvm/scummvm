@@ -138,6 +138,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	int16 displaceX, displaceY;
 	byte priority = _addToFlag ? _priority : 0;
 	byte clearColor;
+	bool compression = true;
 	byte curByte, runLength;
 	int16 y, lastY, x, leftX, rightX;
 	uint16 pixelNr, pixelCount;
@@ -150,6 +151,8 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 		displaceX = READ_LE_UINT16(headerPtr + 4); // probably signed?!?
 		displaceY = READ_LE_UINT16(headerPtr + 6); // probably signed?!?
 		clearColor = headerPtr[8];
+		if (headerPtr[9] == 0)
+			compression = false;
 	}
 
 	if (displaceX || displaceY)
@@ -160,34 +163,74 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	if (!celBitmap)
 		error("Unable to allocate temporary memory for picture drawing");
 
-	// We will unpack cel-data into a temporary buffer and then plot it to screen
-	//  That needs to be done cause a mirrored picture may be requested
-	memset(celBitmap, clearColor, pixelCount);
-	pixelNr = 0;
-	ptr = celBitmap;
-	if (literalPos == 0) {
-		// decompression for data that has only one stream (vecor embedded view data)
-		switch (_resMan->getViewType()) {
-		case kViewEga:
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
-				runLength = curByte >> 4;
-				memset(ptr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
-				pixelNr += runLength;
+	if (compression) {
+		// We will unpack cel-data into a temporary buffer and then plot it to screen
+		//  That needs to be done cause a mirrored picture may be requested
+		memset(celBitmap, clearColor, pixelCount);
+		pixelNr = 0;
+		ptr = celBitmap;
+		if (literalPos == 0) {
+			// decompression for data that has only one stream (vecor embedded view data)
+			switch (_resMan->getViewType()) {
+			case kViewEga:
+				while (pixelNr < pixelCount) {
+					curByte = *rlePtr++;
+					runLength = curByte >> 4;
+					memset(ptr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+					pixelNr += runLength;
+				}
+				break;
+			case kViewVga:
+			case kViewVga11:
+				while (pixelNr < pixelCount) {
+					curByte = *rlePtr++;
+					runLength = curByte & 0x3F;
+					switch (curByte & 0xC0) {
+					case 0: // copy bytes as-is
+						while (runLength-- && pixelNr < pixelCount)
+							ptr[pixelNr++] = *rlePtr++;
+						break;
+					case 0x80: // fill with color
+						memset(ptr + pixelNr, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+						pixelNr += runLength;
+						break;
+					case 0xC0: // fill with transparent
+						pixelNr += runLength;
+						break;
+					}
+				}
+				break;
+			case kViewAmiga:
+				while (pixelNr < pixelCount) {
+					curByte = *rlePtr++;
+					if (curByte & 0x07) { // fill with color
+						runLength = curByte & 0x07;
+						curByte = curByte >> 3;
+						while (runLength-- && pixelNr < pixelCount) {
+							ptr[pixelNr++] = curByte;
+						}
+					} else { // fill with transparent
+						runLength = curByte >> 3;
+						pixelNr += runLength;
+					}
+				}
+				break;
+
+			default:
+				error("Unsupported picture viewtype");
 			}
-			break;
-		case kViewVga:
-		case kViewVga11:
+		} else {
+			// decompression for data that has two separate streams (probably SCI 1.1 picture)
 			while (pixelNr < pixelCount) {
 				curByte = *rlePtr++;
 				runLength = curByte & 0x3F;
 				switch (curByte & 0xC0) {
 				case 0: // copy bytes as-is
 					while (runLength-- && pixelNr < pixelCount)
-						ptr[pixelNr++] = *rlePtr++;
+						ptr[pixelNr++] = *literalPtr++;
 					break;
 				case 0x80: // fill with color
-					memset(ptr + pixelNr, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+					memset(ptr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
 					pixelNr += runLength;
 					break;
 				case 0xC0: // fill with transparent
@@ -195,45 +238,10 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 					break;
 				}
 			}
-			break;
-		case kViewAmiga:
-			while (pixelNr < pixelCount) {
-				curByte = *rlePtr++;
-				if (curByte & 0x07) { // fill with color
-					runLength = curByte & 0x07;
-					curByte = curByte >> 3;
-					while (runLength-- && pixelNr < pixelCount) {
-						ptr[pixelNr++] = curByte;
-					}
-				} else { // fill with transparent
-					runLength = curByte >> 3;
-					pixelNr += runLength;
-				}
-			}
-			break;
-
-		default:
-			error("Unsupported picture viewtype");
 		}
 	} else {
-		// decompression for data that has two separate streams (probably SCI 1.1 picture)
-		while (pixelNr < pixelCount) {
-			curByte = *rlePtr++;
-			runLength = curByte & 0x3F;
-			switch (curByte & 0xC0) {
-			case 0: // copy bytes as-is
-				while (runLength-- && pixelNr < pixelCount)
-					ptr[pixelNr++] = *literalPtr++;
-				break;
-			case 0x80: // fill with color
-				memset(ptr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
-				pixelNr += runLength;
-				break;
-			case 0xC0: // fill with transparent
-				pixelNr += runLength;
-				break;
-			}
-		}
+		// No compression (some SCI32 pictures)
+		memcpy(celBitmap, rlePtr, pixelCount);
 	}
 
 	// Set initial vertical coordinate by using current port
