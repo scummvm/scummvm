@@ -363,6 +363,7 @@ void SciMusic::onTimer() {
 				// FIXME: is there any other place this can be triggered properly?
 				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;
 				PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
+				PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
 			} else {
 				_playList[i]->ticker = (uint16)(_pMixer->getSoundElapsedTime(
 						_playList[i]->hCurrentAud) * 0.06);
