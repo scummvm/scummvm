@@ -345,7 +345,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 }
 //----------------------------------------
 void SciMusic::onTimer() {
-	_mutex.lock();
+//	_mutex.lock();
 
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
@@ -372,7 +372,7 @@ void SciMusic::onTimer() {
 		}
 	}//for()
 	
-	_mutex.unlock();
+//	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
