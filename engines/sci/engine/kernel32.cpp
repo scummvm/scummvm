@@ -622,11 +622,11 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
-	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
+	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
 	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
 	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
-	int16 leftPos = 50;	// HACK: lsLeft, perhaps? (but it's 0...)
-	int16 topPos = 50; // HACK: lsTop, perhaps? (but it's 0...)
+	int16 leftPos = GET_SEL32V(s->_segMan, viewObj, x);
+	int16 topPos = GET_SEL32V(s->_segMan, viewObj, y);
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
 
@@ -642,23 +642,24 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
-	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
+	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
 	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
 	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
-	//int16 leftPos = 0;
-	//int16 topPos = 0;
+	int16 leftPos = GET_SEL32V(s->_segMan, viewObj, x);
+	int16 topPos = GET_SEL32V(s->_segMan, viewObj, y);
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
 	
-	// TODO
+	// HACK: just draw the view on screen
+	s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 
-	warning("kUpdateScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	return NULL_REG;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
-	int16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
+	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
 	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
 	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
 	//int16 leftPos = 0;
@@ -762,7 +763,7 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	
 	// TODO
 
-	warning("kOnMe: (%d, %d) on object %04x:%04x", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]));
+	//warning("kOnMe: (%d, %d) on object %04x:%04x", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]));
 	return s->r_acc;
 }
 
