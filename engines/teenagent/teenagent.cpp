@@ -36,6 +36,8 @@
 #include "teenagent/music.h"
 #include "teenagent/console.h"
 
+#include "graphics/cursorman.h"
+
 namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), action(kActionNone), _gameDescription(gd) {
@@ -171,8 +173,6 @@ void TeenAgentEngine::init() {
 	}
 }
 
-
-
 void TeenAgentEngine::deinit() {
 	_mixer->stopAll();
 	delete scene;
@@ -183,6 +183,7 @@ void TeenAgentEngine::deinit() {
 	//music = NULL;
 	use_hotspots.clear();
 	Resources::instance()->deinit();
+	CursorMan.popCursor();
 }
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
@@ -260,7 +261,8 @@ Common::Error TeenAgentEngine::run() {
 	
 	init();
 
-	_system->setMouseCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
+	CursorMan.pushCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
+	CursorMan.showMouse(true);
 
 	syncSoundSettings();
 
