@@ -1112,7 +1112,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	if (res == 0)
 		return 0;
 
-	_vm->updatePortraits();
+	_vm->stopPortraitSpeechAnim();
 
 	if (!_vm->textEnabled() && _vm->_currentControlMode) {
 		_screen->setScreenDim(5);

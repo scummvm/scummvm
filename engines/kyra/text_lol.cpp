@@ -211,7 +211,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	if (type & 4)
 		type ^= 4;
 	else
-		_vm->updatePortraits();
+		_vm->stopPortraitSpeechAnim();
 
 	uint16 col = textColors[type & 0x7fff];
 
@@ -706,12 +706,12 @@ void TextDisplayer_LoL::textPageBreak() {
 	_vm->_timer->pauseSingleTimer(11, true);
 
 	_vm->_fadeText = false;
-	int updateCharV3 = 0;
+	int resetPortraitAfterSpeechAnim = 0;
 	int updatePortraitSpeechAnimDuration = 0;
 
 	if (_vm->_updateCharNum != -1)  {
-		updateCharV3 = _vm->_updateCharV3;
-		_vm->_updateCharV3 = 0;
+		resetPortraitAfterSpeechAnim = _vm->_resetPortraitAfterSpeechAnim;
+		_vm->_resetPortraitAfterSpeechAnim = 0;
 		updatePortraitSpeechAnimDuration = _vm->_updatePortraitSpeechAnimDuration;
 		if (_vm->_updatePortraitSpeechAnimDuration > 36)
 			_vm->_updatePortraitSpeechAnimDuration = 36;
@@ -794,7 +794,7 @@ void TextDisplayer_LoL::textPageBreak() {
 	_vm->_timer->pauseSingleTimer(11, false);
 
 	if (_vm->_updateCharNum != -1) {
-		_vm->_updateCharV3 = updateCharV3;
+		_vm->_resetPortraitAfterSpeechAnim = resetPortraitAfterSpeechAnim;
 		if (updatePortraitSpeechAnimDuration > 36)
 			updatePortraitSpeechAnimDuration -= 36;
 		else

@@ -63,7 +63,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		c->raceClassSex = in.readByte();
 		c->id = in.readSint16BE();
 		c->curFaceFrame = in.readByte();
-		c->defaultFaceFrame = in.readByte();
+		c->tempFaceFrame = in.readByte();
 		c->screamSfx = in.readByte();
 		for (int ii = 0; ii < 8; ii++)
 			c->itemsMight[ii] = in.readUint16BE();
@@ -153,7 +153,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		_globalScriptVars[i] = in.readUint16BE();
 	_brightness = in.readByte();
 	_lampOilStatus = in.readByte();
-	_lampEffect = in.readByte();
+	_lampEffect = in.readSByte();
 	_credits = in.readUint16BE();
 	for (int i = 0; i < 8; i++)
 		_globalScriptVars2[i] = in.readUint16BE();
@@ -291,7 +291,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 		out->writeByte(c->raceClassSex);
 		out->writeSint16BE(c->id);
 		out->writeByte(c->curFaceFrame);
-		out->writeByte(c->defaultFaceFrame);
+		out->writeByte(c->tempFaceFrame);
 		out->writeByte(c->screamSfx);
 		for (int ii = 0; ii < 8; ii++)
 			out->writeUint16BE(c->itemsMight[ii]);
@@ -350,7 +350,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 		out->writeUint16BE(_globalScriptVars[i]);
 	out->writeByte(_brightness);
 	out->writeByte(_lampOilStatus);
-	out->writeByte(_lampEffect);
+	out->writeSByte(_lampEffect);
 	out->writeUint16BE(_credits);
 	for (int i = 0; i < 8; i++)
 		out->writeUint16BE(_globalScriptVars2[i]);

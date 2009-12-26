@@ -473,11 +473,11 @@ void LoLEngine::gui_drawBox(int x, int y, int w, int h, int frameColor1, int fra
 }
 
 void LoLEngine::gui_drawCharFaceShape(int charNum, int x, int y, int pageNum) {
-	if (_characters[charNum].curFaceFrame < 7 && _characters[charNum].defaultFaceFrame)
-		_characters[charNum].curFaceFrame = _characters[charNum].defaultFaceFrame;
+	if (_characters[charNum].curFaceFrame < 7 && _characters[charNum].tempFaceFrame)
+		_characters[charNum].curFaceFrame = _characters[charNum].tempFaceFrame;
 
-	if (_characters[charNum].defaultFaceFrame == 0 && _characters[charNum].curFaceFrame > 1 && _characters[charNum].curFaceFrame < 7)
-		_characters[charNum].curFaceFrame = _characters[charNum].defaultFaceFrame;
+	if (_characters[charNum].tempFaceFrame == 0 && _characters[charNum].curFaceFrame > 1 && _characters[charNum].curFaceFrame < 7)
+		_characters[charNum].curFaceFrame = _characters[charNum].tempFaceFrame;
 
 	int frm = (_characters[charNum].flags & 0x1108 && _characters[charNum].curFaceFrame < 7) ? 1 : _characters[charNum].curFaceFrame;
 
@@ -1596,7 +1596,7 @@ int LoLEngine::clickedOptions(Button *button) {
 		clickedExitCharInventory(&b);
 
 	initTextFading(0, 1);
-	updatePortraits();
+	stopPortraitSpeechAnim();
 	setLampMode(true);
 	setMouseCursorToIcon(0);
 	disableSysTimer(2);

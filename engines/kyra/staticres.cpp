@@ -654,7 +654,7 @@ bool StaticResource::loadCharData(Common::SeekableReadStream &stream, void *&ptr
 		t->raceClassSex = stream.readByte();
 		t->id = stream.readSint16LE();
 		t->curFaceFrame = stream.readByte();
-		t->defaultFaceFrame = stream.readByte();
+		t->tempFaceFrame = stream.readByte();
 		t->screamSfx = stream.readByte();
 		stream.readUint32LE();
 		for (int ii = 0; ii < 8; ii++)

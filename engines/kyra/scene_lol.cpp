@@ -42,7 +42,7 @@ void LoLEngine::loadLevel(int index) {
 
 	snd_stopMusic();
 
-	updatePortraits();
+	stopPortraitSpeechAnim();
 
 	for (int i = 0; i < 400; i++) {
 		delete[] _levelShapes[i];

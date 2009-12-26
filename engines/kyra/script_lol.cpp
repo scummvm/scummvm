@@ -1295,7 +1295,7 @@ int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (_flags.isTalkie) {
 		snd_stopSpeech(1);
-		updatePortraits();
+		stopPortraitSpeechAnim();
 	}
 	return playCharacterScriptChat(stackPos(0), stackPos(1), 1, getLangString(stackPos(2)), script, 0, 3);
 }
@@ -1440,11 +1440,11 @@ int LoLEngine::olol_playEndSequence(EMCState *script){
 	return 0;
 }
 
-int LoLEngine::olol_updatePortraits(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updatePortraits(%p)", (const void *)script);
+int LoLEngine::olol_stopPortraitSpeechAnim(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopPortraitSpeechAnim(%p)", (const void *)script);
 	if (_flags.isTalkie)
 		snd_stopSpeech(1);
-	updatePortraits();
+	stopPortraitSpeechAnim();
 	return 1;
 }
 
@@ -2863,7 +2863,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x68
 	Opcode(olol_countAllMonsters);
 	Opcode(olol_playEndSequence);
-	Opcode(olol_updatePortraits);
+	Opcode(olol_stopPortraitSpeechAnim);
 	Opcode(olol_setPaletteBrightness);
 
 	// 0x6C

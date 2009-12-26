@@ -114,7 +114,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_spellProperties = 0;
 	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _updateCharV3 = _textColorFlag = _needSceneRestore = 0;
+	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _resetPortraitAfterSpeechAnim = _textColorFlag = _needSceneRestore = 0;
 	_fadeText = false;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
@@ -1114,7 +1114,7 @@ bool LoLEngine::addCharacter(int id) {
 }
 
 void LoLEngine::setTemporaryFaceFrame(int charNum, int frame, int updateDelay, int redraw) {
-	_characters[charNum].defaultFaceFrame = frame;
+	_characters[charNum].tempFaceFrame = frame;
 	if (frame || updateDelay)
 		setCharacterUpdateEvent(charNum, 6, updateDelay, 1);
 	if (redraw)
@@ -1200,9 +1200,15 @@ void LoLEngine::updatePortraitSpeechAnim() {
 
 	if (speechEnabled()) {
 		if (snd_updateCharacterSpeech() == 2)
-			_updatePortraitSpeechAnimDuration = 2;
+			// WORKAROUND for portrait speech animations which would "freeze" in some situations
+			if (_resetPortraitAfterSpeechAnim == 2)
+				_resetPortraitAfterSpeechAnim = 1;
+			else
+				_updatePortraitSpeechAnimDuration = 2;
 		else
 			_updatePortraitSpeechAnimDuration = 1;
+	} else if (_resetPortraitAfterSpeechAnim == 2) {
+		_resetPortraitAfterSpeechAnim = 1;
 	}
 
 	_updatePortraitSpeechAnimDuration--;
@@ -1214,7 +1220,7 @@ void LoLEngine::updatePortraitSpeechAnim() {
 		else
 			gui_drawCharFaceShape(_updateCharNum, x, y, 0);
 		_updatePortraitNext = _system->getMillis() + 10 * _tickLength;
-	} else if (_updateCharV3 != 0) {
+	} else if (_resetPortraitAfterSpeechAnim != 0) {
 		faceFrameRefresh(_updateCharNum);
 		if (redraw) {
 			gui_drawCharPortraitWithStats(_updateCharNum);
@@ -1226,11 +1232,13 @@ void LoLEngine::updatePortraitSpeechAnim() {
 	}
 }
 
-void LoLEngine::updatePortraits() {
+void LoLEngine::stopPortraitSpeechAnim() {
 	if (_updateCharNum == -1)
 		return;
 
-	_updatePortraitSpeechAnimDuration = _updateCharV3 = 1;
+	_updatePortraitSpeechAnimDuration = 1;
+	// WORKAROUND for portrait speech animations which would "freeze" in some situations
+	_resetPortraitAfterSpeechAnim = 2;
 	updatePortraitSpeechAnim();
 	_updatePortraitSpeechAnimDuration = 1;
 	_updateCharNum = -1;
@@ -1248,7 +1256,7 @@ void LoLEngine::initTextFading(int textType, int clearField) {
 	if (!clearField)
 		return;
 
-	updatePortraits();
+	stopPortraitSpeechAnim();
 	if (_needSceneRestore)
 		_screen->setScreenDim(_txt->clearDim(3));
 
@@ -1264,7 +1272,7 @@ void LoLEngine::faceFrameRefresh(int charNum) {
 	if (_characters[charNum].curFaceFrame == 1)
 		setTemporaryFaceFrame(charNum, 0, 0, 0);
 	else if (_characters[charNum].curFaceFrame == 6)
-		if (_characters[charNum].defaultFaceFrame != 5)
+		if (_characters[charNum].tempFaceFrame != 5)
 			setTemporaryFaceFrame(charNum, 0, 0, 0);
 		else
 			_characters[charNum].curFaceFrame = 5;
@@ -1597,7 +1605,7 @@ void LoLEngine::initDialogueSequence(int controlMode, int pageNum) {
 				_portraitSpeechAnimMode = 2;
 				_updateCharNum = i;
 				_screen->drawShape(0, _gameShapes[88], _activeCharsXpos[_updateCharNum] + 8, 142, 0, 0);
-				updatePortraits();
+				stopPortraitSpeechAnim();
 			}
 		}
 
@@ -1618,7 +1626,7 @@ void LoLEngine::restoreAfterDialogueSequence(int controlMode) {
 	if (!_dialogueField)
 		return;
 
-	updatePortraits();
+	stopPortraitSpeechAnim();
 	_currentControlMode = controlMode;
 	calcCharPortraitXpos();
 
@@ -1839,10 +1847,10 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	bool r = snd_playCharacterSpeech(track, charId, 0);
 
 	if (r && redraw) {
-		updatePortraits();
+		stopPortraitSpeechAnim();
 		_updateCharNum = charId;
 		_portraitSpeechAnimMode = 0;
-		_updateCharV3 = 1;
+		_resetPortraitAfterSpeechAnim = 1;
 		_fadeText = false;
 		updatePortraitSpeechAnim();
 	}
@@ -1850,7 +1858,7 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	return r ? (textEnabled() ? 1 : 0) : 1;
 }
 
-int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
+int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int ch = 0;
 	bool skipAnim = false;
 
@@ -1859,7 +1867,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 	else
 		charId ^= 0x70;
 
-	updatePortraits();
+	stopPortraitSpeechAnim();
 
 	if (charId < 0) {
 		charId = ch = (_rnd.getRandomNumber(0x7fff) * countActiveCharacters()) / 0x8000;
@@ -1888,7 +1896,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 		_updateCharNum = charId;
 		_portraitSpeechAnimMode = mode;
 		_updatePortraitSpeechAnimDuration = strlen(str) >> 1;
-		_updateCharV3 = unk1;
+		_resetPortraitAfterSpeechAnim = restorePortrait;
 	}
 
 	if (script)
@@ -3577,7 +3585,7 @@ void LoLEngine::checkForPartyDeath() {
 		restoreAfterSpecialScene(0, 1, 1, 0);
 
 		snd_playTrack(325);
-		updatePortraits();
+		stopPortraitSpeechAnim();
 		initTextFading(0, 1);
 		setMouseCursorToIcon(0);
 		_updateFlags |= 4;

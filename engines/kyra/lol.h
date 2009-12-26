@@ -49,7 +49,7 @@ struct LoLCharacter {
 	uint8 raceClassSex;
 	int16 id;
 	uint8 curFaceFrame;
-	uint8 defaultFaceFrame;
+	uint8 tempFaceFrame;
 	uint8 screamSfx;
 	const uint16 *defaultModifiers;
 	uint16 itemsMight[8];
@@ -629,7 +629,7 @@ private:
 
 	// text
 	int characterSays(int track, int charId, bool redraw);
-	int playCharacterScriptChat(int charId, int mode, int unk1, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	int playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 
 	TextDisplayer_LoL *_txt;
 
@@ -747,7 +747,7 @@ private:
 	int olol_characterSkillTest(EMCState *script);
 	int olol_countAllMonsters(EMCState *script);
 	int olol_playEndSequence(EMCState *script);
-	int olol_updatePortraits(EMCState *script);
+	int olol_stopPortraitSpeechAnim(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_calcInflictableDamage(EMCState *script);
 	int olol_getInflictedDamage(EMCState *script);
@@ -921,7 +921,7 @@ private:
 	void calcCharPortraitXpos();
 
 	void updatePortraitSpeechAnim();
-	void updatePortraits();
+	void stopPortraitSpeechAnim();
 	void initTextFading(int textType, int clearField);
 	void setCharFaceFrame(int charNum, int frameNum);
 	void faceFrameRefresh(int charNum);
@@ -940,7 +940,7 @@ private:
 	int _updateCharNum;
 	int _updatePortraitSpeechAnimDuration;
 	int _portraitSpeechAnimMode;
-	int _updateCharV3;
+	int _resetPortraitAfterSpeechAnim;
 	int _textColorFlag;
 	bool _fadeText;
 	int _needSceneRestore;
