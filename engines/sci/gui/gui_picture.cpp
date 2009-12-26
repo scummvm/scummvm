@@ -54,16 +54,23 @@ GuiResourceId SciGuiPicture::getResourceId() {
 }
 
 void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
+	uint16 headerSize;
+
 	_animationNr = animationNr;
 	_mirroredFlag = mirroredFlag;
 	_addToFlag = addToFlag;
 	_EGApaletteNo = EGApaletteNo;
 	_priority = 0;
 
- 	if (READ_LE_UINT16(_resource->data) == 0x26) {
-		// SCI 1.1 VGA picture
+	headerSize = READ_LE_UINT16(_resource->data);
+	switch (headerSize) {
+	case 0x26: // SCI 1.1 VGA picture
 		drawSci11Vga();
-	} else {
+		break;
+	case 0x0e: // SCI32 VGA picture
+		drawSci32Vga();
+		break;
+	default:
 		// VGA, EGA or Amiga vector data
 		drawVectorData(_resource->data, _resource->size);
 	}
@@ -96,14 +103,31 @@ void SciGuiPicture::drawSci11Vga() {
 
 	// display Cel-data
 	if (has_cel) {
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, false);
 	}
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
 }
 
-void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY) {
+void SciGuiPicture::drawSci32Vga() {
+	byte *inbuffer = _resource->data;
+	int size = _resource->size;
+	int header_size = READ_LE_UINT16(inbuffer);
+	int palette_data_ptr = READ_LE_UINT16(inbuffer + 6);
+	int cel_headerPos = header_size;
+	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
+	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
+	GuiPalette palette;
+
+	// Create palette and set it
+	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+	_palette->set(&palette, 2);
+
+	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, true);
+}
+
+void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -111,13 +135,22 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	byte *literalPtr = inbuffer + literalPos;
 	uint16 width = READ_LE_UINT16(headerPtr + 0);
 	uint16 height = READ_LE_UINT16(headerPtr + 2);
-	int16 displaceX = (signed char)headerPtr[4];
-	int16 displaceY = (unsigned char)headerPtr[5];
+	int16 displaceX, displaceY;
 	byte priority = _addToFlag ? _priority : 0;
-	byte clearColor = headerPtr[6];
+	byte clearColor;
 	byte curByte, runLength;
 	int16 y, lastY, x, leftX, rightX;
 	uint16 pixelNr, pixelCount;
+
+	if (!hasSci32Header) {
+		displaceX = (signed char)headerPtr[4];
+		displaceY = (unsigned char)headerPtr[5];
+		clearColor = headerPtr[6];
+	} else {
+		displaceX = READ_LE_UINT16(headerPtr + 4); // probably signed?!?
+		displaceY = READ_LE_UINT16(headerPtr + 6); // probably signed?!?
+		clearColor = headerPtr[8];
+	}
 
 	if (displaceX || displaceY)
 		error("unsupported embedded cel-data in picture");
@@ -475,7 +508,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -504,7 +537,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
