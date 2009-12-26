@@ -889,7 +889,7 @@ private:
 	void fadeText();
 	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 	void setPaletteBrightness(const Palette &srcPal, int brightness, int modifier);
-	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
+	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int16 modifier);
 	void generateFlashPalette(const Palette &src, Palette &dst, int colorFlags);
 	void createTransparencyTables();
 	void updateSequenceBackgroundAnimations();
@@ -972,7 +972,7 @@ private:
 	void setLampMode(bool lampOn);
 	void updateLampStatus();
 
-	int _lampEffect;
+	int8 _lampEffect;
 	int _brightness;
 	int _lampOilStatus;
 	uint32 _lampStatusTimer;

@@ -1705,7 +1705,7 @@ void LoLEngine::setPaletteBrightness(const Palette &srcPal, int brightness, int 
 	_screen->_fadeFlag = 0;
 }
 
-void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier) {
+void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int16 modifier) {
 	dst.copy(src);
 	if (_flags.use16ColorMode) {
 		if (!brightness)

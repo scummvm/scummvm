@@ -596,7 +596,7 @@ void LoLEngine::resetLampStatus() {
 
 void LoLEngine::setLampMode(bool lampOn) {
 	_flagsTable[31] &= 0xFB;
-	if (!(_flagsTable[30] & 0x08) || !lampOn)
+	if (!(_flagsTable[31] & 0x08) || !lampOn)
 		return;
 
 	_screen->drawShape(0, _gameShapes[_flags.isTalkie ? 43 : 41], 291, 56, 0, 0);
@@ -604,7 +604,7 @@ void LoLEngine::setLampMode(bool lampOn) {
 }
 
 void LoLEngine::updateLampStatus() {
-	uint8 newLampEffect = 0;
+	int8 newLampEffect = 0;
 	uint8 tmpOilStatus = 0;
 
 	if ((_updateFlags & 4) || !(_flagsTable[31] & 0x08))
