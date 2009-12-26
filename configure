@@ -2336,7 +2336,7 @@ esac
 MODULES="$MODULES backends/platform/$_backend"
 
 #
-# Do CXXFLAGS now we know the compiler version
+# Do CXXFLAGS now that we know the compiler version
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
