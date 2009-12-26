@@ -6,20 +6,6 @@
 	objectVersion = 45;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		DF573C400F5A827500961A72 /* Info.plist */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = DF573C550F5A829500961A72 /* Build configuration list for PBXAggregateTarget "Info.plist" */;
-			buildPhases = (
-				DF573C3F0F5A827500961A72 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = Info.plist;
-			productName = Info.plist;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		DF093E5F0F63CAD4002D821E /* pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5C0F63CAD4002D821E /* pn.cpp */; };
 		DF093E600F63CAD4002D821E /* script_pn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF093E5D0F63CAD4002D821E /* script_pn.cpp */; };
@@ -2868,30 +2854,6 @@
 		DFF95CCF0FB22D8500A3EC78 /* libmpeg2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFD6476D0F49F7EF008E18EF /* libmpeg2.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		DF09425C0F63CDBB002D821E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DF573C400F5A827500961A72;
-			remoteInfo = Info.plist;
-		};
-		DF573C870F5A835E00961A72 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DF573C400F5A827500961A72;
-			remoteInfo = Info.plist;
-		};
-		DFF9590B0FB22D5700A3EC78 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DF573C400F5A827500961A72;
-			remoteInfo = Info.plist;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		DF0942260F63CB26002D821E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -4498,7 +4460,7 @@
 		DFE4778A0D81F4E900B6D1FB /* about.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = about.h; sourceTree = "<group>"; };
 		DFE4778B0D81F4E900B6D1FB /* Actions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Actions.cpp; sourceTree = "<group>"; };
 		DFE4778C0D81F4E900B6D1FB /* Actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actions.h; sourceTree = "<group>"; };
-		DFE4778D0D81F4E900B6D1FB /* browser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = browser.cpp; sourceTree = "<group>"; };
+		DFE4778D0D81F4E900B6D1FB /* browser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = browser.cpp; sourceTree = "<group>"; };
 		DFE4778E0D81F4E900B6D1FB /* browser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = browser.h; sourceTree = "<group>"; };
 		DFE4778F0D81F4E900B6D1FB /* chooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chooser.cpp; sourceTree = "<group>"; };
 		DFE477900D81F4E900B6D1FB /* chooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chooser.h; sourceTree = "<group>"; };
@@ -6979,7 +6941,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				DF573C880F5A835E00961A72 /* PBXTargetDependency */,
 			);
 			name = "ScummVM-iPhone";
 			productName = scummvm;
@@ -6998,7 +6959,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				DF09425D0F63CDBB002D821E /* PBXTargetDependency */,
 			);
 			name = "ScummVM-OS X";
 			productName = scummvm;
@@ -7017,7 +6977,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				DFF9590A0FB22D5700A3EC78 /* PBXTargetDependency */,
 			);
 			name = "ScummVM-Simulator";
 			productName = scummvm;
@@ -7037,7 +6996,6 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* ScummVM-iPhone */,
-				DF573C400F5A827500961A72 /* Info.plist */,
 				DF093E730F63CB26002D821E /* ScummVM-OS X */,
 				DFF959090FB22D5700A3EC78 /* ScummVM-Simulator */,
 			);
@@ -7090,26 +7048,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		DF573C3F0F5A827500961A72 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Info.plist.in",
-				"$(SRCROOT)/../macosx/Info.plist.in\n$(SRCROOT)/Info.plist.in",
-			);
-			outputPaths = (
-				"$(SRCROOT)/Info.plist",
-				"$(SRCROOT)/../macosx/Info.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "VERSION=`cat $SRCROOT/../../base/internal_version.h | cut -d\\\" -f2`\ncat $SRCROOT/Info.plist.in | sed -e \"s/@VERSION@/svn-snapshot/g\" > $SRCROOT/Info.plist\ncat $SRCROOT/../macosx/Info.plist.in | sed -e \"s/@VERSION@/svn-snapshot/g\" > $SRCROOT/../macosx/Info.plist\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
@@ -9927,24 +9865,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		DF09425D0F63CDBB002D821E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DF573C400F5A827500961A72 /* Info.plist */;
-			targetProxy = DF09425C0F63CDBB002D821E /* PBXContainerItemProxy */;
-		};
-		DF573C880F5A835E00961A72 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DF573C400F5A827500961A72 /* Info.plist */;
-			targetProxy = DF573C870F5A835E00961A72 /* PBXContainerItemProxy */;
-		};
-		DFF9590A0FB22D5700A3EC78 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DF573C400F5A827500961A72 /* Info.plist */;
-			targetProxy = DFF9590B0FB22D5700A3EC78 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -10331,27 +10251,6 @@
 			};
 			name = Release;
 		};
-		DF573C410F5A827600961A72 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = Info.plist;
-			};
-			name = Debug;
-		};
-		DF573C420F5A827600961A72 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = Info.plist;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		DFF95CC80FB22D5700A3EC78 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -10516,15 +10415,6 @@
 			buildConfigurations = (
 				DF0942280F63CB26002D821E /* Debug */,
 				DF0942290F63CB26002D821E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DF573C550F5A829500961A72 /* Build configuration list for PBXAggregateTarget "Info.plist" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DF573C410F5A827600961A72 /* Debug */,
-				DF573C420F5A827600961A72 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

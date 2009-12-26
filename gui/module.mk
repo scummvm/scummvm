@@ -2,7 +2,6 @@ MODULE := gui
 
 MODULE_OBJS := \
 	about.o \
-	browser.o \
 	chooser.o \
 	console.o \
 	debugger.o \
@@ -26,6 +25,14 @@ MODULE_OBJS := \
 	ThemeLayout.o \
 	ThemeParser.o \
 	widget.o
+
+ifdef MACOSX
+MODULE_OBJS += \
+	browser_osx.o
+else
+MODULE_OBJS += \
+	browser.o
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

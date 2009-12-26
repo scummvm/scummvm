@@ -1274,6 +1274,7 @@ case $_host_os in
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		add_line_to_config_mk 'MACOSX = 1'
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
@@ -2562,6 +2563,7 @@ vpath %.h \$(srcdir)
 vpath %.cpp \$(srcdir)
 vpath %.c \$(srcdir)
 vpath %.m \$(srcdir)
+vpath %.mm \$(srcdir)
 vpath %.asm \$(srcdir)
 vpath %.s \$(srcdir)
 vpath %.S \$(srcdir)
