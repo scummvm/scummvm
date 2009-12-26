@@ -30,8 +30,8 @@
 #include "common/system.h"
 #include "common/algorithm.h"
 
-#import <AppKit/NSOpenPanel.h>
-#import <Foundation/NSString.h>
+#include <AppKit/NSOpenPanel.h>
+#include <Foundation/NSString.h>
 
 namespace GUI {
 
