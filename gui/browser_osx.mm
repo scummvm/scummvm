@@ -69,7 +69,7 @@ int BrowserDialog::runModal() {
 		const char *filename = [[panel filename] cStringUsingEncoding:NSUTF8StringEncoding];
 #endif
 		_choice = Common::FSNode(filename);
-		choiceMade = true;		
+		choiceMade = true;
 	}
 
 
@@ -83,4 +83,4 @@ int BrowserDialog::runModal() {
 	return choiceMade;
 }
 
-}
+} // End of namespace GUI
