@@ -28,7 +28,7 @@
 
 namespace Sci {
 
-reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id, const char *file, int line) {
+reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id) {
 	ObjVarRef address;
 
 	if (lookup_selector(segMan, object, selector_id, &address, NULL) != kSelectorVariable)
@@ -37,24 +37,24 @@ reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id, cons
 		return *address.getPointer(segMan);
 }
 
-void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
+void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value) {
 	ObjVarRef address;
 
 	if ((selector_id < 0) || (selector_id > (int)((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize())) {
 		warning("Attempt to write to invalid selector %d of"
-		         " object at %04x:%04x (%s L%d).", selector_id, PRINT_REG(object), fname, line);
+		         " object at %04x:%04x.", selector_id, PRINT_REG(object));
 		return;
 	}
 
 	if (lookup_selector(segMan, object, selector_id, &address, NULL) != kSelectorVariable)
 		warning("Selector '%s' of object at %04x:%04x could not be"
-		         " written to (%s L%d)", ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
+		         " written to", ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 	else
 		*address.getPointer(segMan) = value;
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, 
-	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...) {
+	StackPtr k_argp, int k_argc, int argc, ...) {
 	va_list argp;
 	int i;
 	int framesize = 2 + 1 * argc;
@@ -68,8 +68,8 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	slc_type = lookup_selector(s->_segMan, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
-		warning("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
-		         s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
+		warning("Selector '%s' of object at %04x:%04x could not be invoked",
+		         s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 		if (noinvalid == kStopOnInvalidSelector)
 			error("[Kernel] Not recoverable: VM was halted");
 		return 1;

@@ -93,7 +93,7 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 		signal = GET_SEL32V(_s->_segMan, curObject, signal);
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
-			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
 		}
@@ -466,7 +466,7 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 
 		if (signal & kSignalDisposeMe) {
 			// Call .delete_ method of that object
-			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, 0);
 		}
 		listIterator--;
 	}
