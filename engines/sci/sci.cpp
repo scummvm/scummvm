@@ -178,7 +178,13 @@ Common::Error SciEngine::run() {
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)
-	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
+	// Some SCI1.1 games (e.g. SQ4CD) complain if this is empty
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2)
+		strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
+	else
+#endif
+		strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "/");
 
 	SciVersion soundVersion = _gamestate->detectDoSoundType();
 
