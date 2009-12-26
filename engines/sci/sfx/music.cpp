@@ -669,6 +669,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				} else {
 					_pSnd->status = kSndStatusStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
+					PUT_SEL32V(segMan, _pSnd->soundObj, state, kSndStatusStopped);
 					debugC(2, kDebugLevelSound, "signal EOT");
 				}
 			}
