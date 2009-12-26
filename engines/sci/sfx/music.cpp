@@ -43,6 +43,10 @@ static int f_compare(const void *arg1, const void *arg2) {
 
 SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion) {
+
+	// Reserve some space in the playlist, to avoid expensive insertion
+	// operations
+	_playList.reserve(10);
 }
 
 SciMusic::~SciMusic() {
@@ -370,6 +374,8 @@ void SciMusic::onTimer() {
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
+	// This is called from inside onTimer, where the mutex is already locked
+
 	if (pSnd->fadeTicker)
 		pSnd->fadeTicker--;
 	else {
@@ -401,10 +407,13 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
+		_mutex.lock();
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 		if (pSnd->status == kSndStatusStopped)
 			pSnd->pMidiParser->jumpToTick(0);
+		_mutex.unlock();
 	}
+
 	pSnd->status = kSndStatusPlaying;
 }
 //---------------------------------------------
@@ -434,9 +443,8 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
 
-	_mutex.lock();
-
 	pSnd->status = kSndStatusStopped;
+
 	if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->unloadMusic();
 		delete pSnd->pMidiParser;
@@ -446,6 +454,8 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		pSnd->pStreamAud = NULL;
 	}
+
+	_mutex.lock();
 
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
@@ -459,7 +469,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	}
 
 	_mutex.unlock();
-
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {

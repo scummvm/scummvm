@@ -628,12 +628,11 @@ static void sync_songlib(Common::Serializer &s, SciMusic *music) {
 
 	if (s.isLoading()) {
 		music->stopAll();
-		music->resizeList(songcount);
 
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			syncSong(s, curSong);
-			music->setSlot(i, curSong);
+			music->pushBackSlot(curSong);
 		}
 	} else {
 		for (int i = 0; i < songcount; i++) {

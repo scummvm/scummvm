@@ -135,11 +135,6 @@ public:
 	}
 
 	MusicEntry *getSlot(int slot) { return _playList[slot]; }
-	void setSlot(uint32 slot, MusicEntry *slotEntry) {
-		_mutex.lock();
-		_playList[slot] = slotEntry;
-		_mutex.unlock();
-	}
 
 	void pushBackSlot(MusicEntry *slotEntry) {
 		_mutex.lock();
@@ -148,12 +143,6 @@ public:
 	}
 
 	uint32 listSize() { return _playList.size(); }
-
-	void resizeList(uint32 newSize) {
-		_mutex.lock();
-		_playList.resize(newSize);
-		_mutex.unlock();
-	}
 
 	uint16 _savelen;
 
