@@ -44,7 +44,9 @@ private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
+#ifdef ENABLE_SCI32
 	void drawSci32Vga();
+#endif
 	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte pixel);

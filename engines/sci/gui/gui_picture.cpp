@@ -53,6 +53,7 @@ GuiResourceId SciGuiPicture::getResourceId() {
 	return _resourceId;
 }
 
+// TODO: subclass this
 void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	uint16 headerSize;
 
@@ -67,9 +68,11 @@ void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, i
 	case 0x26: // SCI 1.1 VGA picture
 		drawSci11Vga();
 		break;
+#ifdef ENABLE_SCI32
 	case 0x0e: // SCI32 VGA picture
 		drawSci32Vga();
 		break;
+#endif
 	default:
 		// VGA, EGA or Amiga vector data
 		drawVectorData(_resource->data, _resource->size);
@@ -110,6 +113,7 @@ void SciGuiPicture::drawSci11Vga() {
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
 }
 
+#ifdef ENABLE_SCI32
 void SciGuiPicture::drawSci32Vga() {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
@@ -128,6 +132,7 @@ void SciGuiPicture::drawSci32Vga() {
 
 	// TODO: find out where priority map is stored
 }
+#endif
 
 void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
 	byte *celBitmap = NULL;
@@ -145,10 +150,13 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	int16 y, lastY, x, leftX, rightX;
 	uint16 pixelNr, pixelCount;
 
+#ifdef ENABLE_SCI32
 	if (!hasSci32Header) {
+#endif
 		displaceX = (signed char)headerPtr[4];
 		displaceY = (unsigned char)headerPtr[5];
 		clearColor = headerPtr[6];
+#ifdef ENABLE_SCI32
 	} else {
 		displaceX = READ_LE_UINT16(headerPtr + 4); // probably signed?!?
 		displaceY = READ_LE_UINT16(headerPtr + 6); // probably signed?!?
@@ -156,6 +164,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 		if (headerPtr[9] == 0)
 			compression = false;
 	}
+#endif
 
 	if (displaceX || displaceY)
 		error("unsupported embedded cel-data in picture");
