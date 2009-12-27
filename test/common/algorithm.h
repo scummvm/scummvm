@@ -12,11 +12,11 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 			return true;
 
 		// Check whether the container is sorted by the given binary predicate, which
-		// decides whether the first value passed preceeds the second value passed.
+		// decides whether the first value passed precedes the second value passed.
 		//
 		// To do that it checks an item and its follower in the container with the
 		// given predicate in reverse order, when it returns false everything is
-		// fine, when it returns false, the follower preceeds the item and thus
+		// fine, when it returns false, the follower precedes the item and thus
 		// the order is violated.
 		for (T prev = first++; first != last; ++prev, ++first) {
 			if (comp(*first, *prev))
