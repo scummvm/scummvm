@@ -675,10 +675,11 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t picObj = argv[0];
-	// This kernel call shows pictures on screen
-	// The picture ID is likely in the "picture" selector (?)
 
 	// TODO
+
+	// The picture selector usually doesn't hold the actual picture at this point. It's filled in
+	// when kUpdatePlane is called
 
 	warning("kAddPlane object %04x:%04x", PRINT_REG(picObj));
 	return NULL_REG;
@@ -686,7 +687,6 @@ reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t picObj = argv[0];
-	// The picture ID is likely in the "picture" selector (?)
 
 	// TODO
 
@@ -696,17 +696,18 @@ reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t picObj = argv[0];
-	// The picture ID is likely in the "picture" selector (?)
+	int16 picNum = GET_SEL32V(s->_segMan, picObj, picture);
 
-	// TODO
+	if (picNum > -1) {
+		s->_gui->drawPicture(picNum, 100, false, false, false, 0);
+		s->_gui->animateShowPic();
+	}
 
-	warning("kUpdatePlane object %04x:%04x", PRINT_REG(picObj));
-	return NULL_REG;
+	return s->r_acc;
 }
 
 reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t picObj = argv[0];
-	// The picture ID is likely in the "picture" selector (?)
 
 	// TODO
 

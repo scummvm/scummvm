@@ -198,6 +198,7 @@ struct SelectorCache {
 	
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()
+	Selector picture; // Used to hold the picture ID for SCI32 pictures
 #endif
 };
 
