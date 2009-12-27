@@ -311,7 +311,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		// play digital sample
 		if (track->digitalChannelNr != -1) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
-			//assert(READ_LE_UINT16(channelData + 6) == size);
 			if (pSnd->pStreamAud)
 				delete pSnd->pStreamAud;
 			pSnd->pStreamAud = Audio::makeLinearInputStream(channelData, track->digitalSampleSize, track->digitalSampleRate,

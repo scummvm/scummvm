@@ -1912,6 +1912,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
 						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
 						assert(READ_LE_UINT16(channel->data + 4) == 0); // Possibly a compression flag
+						//assert(READ_LE_UINT16(channelData + 6) == size);
 						channel->data += 8; // Skip over header
 						channel->size -= 8;
 					}
