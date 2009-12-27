@@ -34,6 +34,17 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 		}
 	};
 public:
+	void test_check_sort() {
+		const int arraySorted[] = { 1, 2, 3, 3, 4, 5 };
+		const int arrayUnsorted[] = { 5, 3, 1, 2, 4, 3 };
+
+		TS_ASSERT_EQUALS(checkSort(arraySorted, arraySorted + ARRAYSIZE(arraySorted), Common::Less<int>()), true);
+		TS_ASSERT_EQUALS(checkSort(arraySorted, arraySorted + ARRAYSIZE(arraySorted), Common::Greater<int>()), false);
+
+		TS_ASSERT_EQUALS(checkSort(arrayUnsorted, arrayUnsorted + ARRAYSIZE(arrayUnsorted), Common::Less<int>()), false);
+		TS_ASSERT_EQUALS(checkSort(arrayUnsorted, arrayUnsorted + ARRAYSIZE(arrayUnsorted), Common::Greater<int>()), false);
+	}
+
 	void test_pod_sort() {
 		{
 			int array[] = { 63, 11, 31, 72, 1, 48, 32, 69, 38, 31 };
