@@ -94,6 +94,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	//SearchMan.addSubDirectoryMatching(_gameDataDir, "patches");	// resource patches
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "seq");	// SEQ movie files for DOS versions
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "wav");	// speech files in WAV format
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "sfx");	// music/sound files in WAV format
 }
 
 SciEngine::~SciEngine() {

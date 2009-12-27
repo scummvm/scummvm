@@ -405,6 +405,11 @@ protected:
 	 */
 	void readResourcePatches(ResourceSource *source);
 	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
+	
+	/**
+	 * Process wave files as patches for Audio resources
+	 */
+	void readWaveAudioPatches();
 
  	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
