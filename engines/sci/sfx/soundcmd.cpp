@@ -644,7 +644,7 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 	}
 
 	musicSlot->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
-	uint32 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
+	int32 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
 	uint32 objPrio = GET_SEL32V(_segMan, obj, pri);
