@@ -53,8 +53,12 @@ public:
 		Common::List<item> list;
 		for(int i = 0; i < n; ++i) {
 			list.push_back(item(i));
-			Common::sort(list.begin(), list.end(), item_cmp());
-			check_sort(list.begin(), list.end(), item_cmp());
 		}
+		Common::sort(list.begin(), list.end(), item_cmp());
+		check_sort(list.begin(), list.end(), item_cmp());
+		//already sorted
+		Common::sort(list.begin(), list.end(), item_cmp());
+		check_sort(list.begin(), list.end(), item_cmp());
 	}
 };
+
