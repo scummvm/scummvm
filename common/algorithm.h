@@ -147,13 +147,13 @@ Op for_each(In first, In last, Op f) {
 }
 
 template<typename T>
-unsigned distance(T * first, T * last) {
+unsigned int distance(T *first, T *last) {
 	return last - first;
 }
 
 template<typename T>
-unsigned distance(T first, T last) {
-	unsigned n = 0;
+unsigned int distance(T first, T last) {
+	unsigned int n = 0;
 	while (first != last) {
 		++n;
 		++first;
@@ -162,13 +162,13 @@ unsigned distance(T first, T last) {
 }
 
 template<typename T>
-T * _sort_choose_pivot(T * first, T * last) {
+T *sortChoosePivot(T *first, T *last) {
 	return first + distance(first, last) / 2;
 }
 
 template<typename T>
-T _sort_choose_pivot(T first, T last) {
-	unsigned n = distance(first, last);
+T sortChoosePivot(T first, T last) {
+	unsigned int n = distance(first, last);
 	n /= 2;
 	while (n--)
 		++first;
@@ -176,7 +176,7 @@ T _sort_choose_pivot(T first, T last) {
 }
 
 template<typename T, class StrictWeakOrdering>
-T _sort_partition(T first, T last, T pivot, StrictWeakOrdering &comp) {
+T sortPatition(T first, T last, T pivot, StrictWeakOrdering &comp) {
 	--last;
 	SWAP(*pivot, *last);
 
@@ -197,25 +197,22 @@ T _sort_partition(T first, T last, T pivot, StrictWeakOrdering &comp) {
  * Simple sort function, modeled after std::sort.
  * It compares data with the given comparator object comp.
  */
-
 template<typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
 	if (first == last)
 		return;
 
-	T pivot = _sort_choose_pivot(first, last);
-	pivot = _sort_partition(first, last, pivot, comp);
+	T pivot = sortChoosePivot(first, last);
+	pivot = sortPatition(first, last, pivot, comp);
 	sort<T, StrictWeakOrdering>(first, pivot, comp);
 	sort<T, StrictWeakOrdering>(++pivot, last, comp);
 }
 
 /**
  * Simple sort function, modeled after std::sort.
- * Use it like this: sort(container.begin(), container.end()).
  */
-
 template<typename T>
-void sort(T * first, T * last) {
+void sort(T *first, T *last) {
 	sort(first, last, Common::Less<T>());
 }
 
