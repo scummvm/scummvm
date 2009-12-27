@@ -363,7 +363,8 @@ void SciMusic::onTimer() {
 				// FIXME: is there any other place this can be triggered properly?
 				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;
 				PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
-				PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
+				if (_soundVersion <= SCI_VERSION_0_LATE)
+					PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
 			} else {
 				_playList[i]->ticker = (uint16)(_pMixer->getSoundElapsedTime(
 						_playList[i]->hCurrentAud) * 0.06);
@@ -670,7 +671,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				} else {
 					_pSnd->status = kSndStatusStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
-					PUT_SEL32V(segMan, _pSnd->soundObj, state, kSndStatusStopped);
+					if (_soundVersion <= SCI_VERSION_0_LATE)
+						PUT_SEL32V(segMan, _pSnd->soundObj, state, kSndStatusStopped);
 					debugC(2, kDebugLevelSound, "signal EOT");
 				}
 			}
