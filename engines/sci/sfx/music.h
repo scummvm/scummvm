@@ -86,7 +86,12 @@ struct MusicEntry {
 
 typedef Common::Array<MusicEntry *> MusicList;
 
-class SciMusic : public Common::Serializable {
+class SciMusic 
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	: public Common::Serializable
+#endif
+{
+
 public:
 	SciMusic(SciVersion soundVersion);
 	~SciMusic();
@@ -136,7 +141,9 @@ public:
 
 	void reconstructSounds(int savegame_version);
 
+#ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+#endif
 
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);

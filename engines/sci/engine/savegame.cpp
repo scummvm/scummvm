@@ -615,10 +615,8 @@ static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
 		}
 	}
 }
-#endif
-
+#else
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
 	_mutex.lock();
@@ -643,8 +641,8 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	_mutex.unlock();
-#endif
 }
+#endif
 
 #pragma mark -
 
