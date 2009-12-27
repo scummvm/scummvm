@@ -95,9 +95,9 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "", "", false, "" }
 };
 
-const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
+const char *convertSierraGameId(const char *gameId, uint32 *gameFlags) {
 	// Convert the id to lower case, so that we match all upper/lower case variants.
-	Common::String sierraId = gameName;
+	Common::String sierraId = gameId;
 	sierraId.toLowercase();
 
 	// TODO: SCI32 IDs
@@ -412,9 +412,9 @@ int game_init(EngineState *s) {
 	// The first entry in the export table of script 0 points to the game object
 	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
-	s->_gameName = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags);
+	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags);
 
-	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->_gameObj));
+	debug(2, " \"%s\" at %04x:%04x", s->_gameId.c_str(), PRINT_REG(s->_gameObj));
 
 #ifdef INCLUDE_OLDGFX
 	s->_menubar = new Menubar(); // Create menu bar

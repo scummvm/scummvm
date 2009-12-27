@@ -61,7 +61,7 @@ public:
 	/**
 	 * Initializes the SCI kernel
 	 */
-	Kernel(ResourceManager *resMan, Common::String gameName);
+	Kernel(ResourceManager *resMan, Common::String gameId);
 	~Kernel();
 
 	uint getSelectorNamesSize() const;
@@ -95,12 +95,12 @@ private:
 	 * name table of the resource (the format changed between version 0 and 1).
 	 * @return true on success, false on failure
 	 */
-	bool loadKernelNames(Common::String gameName);
+	bool loadKernelNames(Common::String gameId);
 
 	/**
 	 * Sets the default kernel function names, based on the SCI version used
 	 */
-	void setDefaultKernelNames(Common::String gameName);
+	void setDefaultKernelNames(Common::String gameId);
 	
 #ifdef ENABLE_SCI32
 	/**

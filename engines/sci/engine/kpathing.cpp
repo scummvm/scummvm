@@ -1297,7 +1297,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
-	if ((size == 19) && (s->_gameName == "lsl1sci")) {
+	if ((size == 19) && (s->_gameId == "lsl1sci")) {
 		if ((s->currentRoomNumber() == 350)
 		&& (read_point(segMan, points, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
@@ -1307,21 +1307,21 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 #ifdef OLD_PATHFINDING
 	// WORKAROUND: self-intersecting polygons in ECO, rooms 221, 280 and 300
-	if ((size == 11) && (s->_gameName == "ecoquest")) {
+	if ((size == 11) && (s->_gameId == "ecoquest")) {
 		if ((s->currentRoomNumber() == 300)
 		&& (read_point(segMan, points, 10) == Common::Point(221, 0))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 300");
 			size = 10;
 		}
 	}
-	if ((size == 12) && (s->_gameName == "ecoquest")) {
+	if ((size == 12) && (s->_gameId == "ecoquest")) {
 		if ((s->currentRoomNumber() == 280)
 		&& (read_point(segMan, points, 11) == Common::Point(238, 189))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 280");
 			size = 10;
 		}
 	}
-	if ((size == 16) && (s->_gameName == "ecoquest")) {
+	if ((size == 16) && (s->_gameId == "ecoquest")) {
 		if ((s->currentRoomNumber() == 221)
 		&& (read_point(segMan, points, 1) == Common::Point(419, 175))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 221");
@@ -1335,7 +1335,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	for (i = skip; i < size; i++) {
 #ifdef OLD_PATHFINDING
-		if (size == 35 && (i == 20 || i == 21) && s->_gameName == "sq1sci" &&
+		if (size == 35 && (i == 20 || i == 21) && s->_gameId == "sq1sci" &&
 			s->currentRoomNumber() == 66) {
 			if (i == 20 && read_point(segMan, points, 20) == Common::Point(0, 104)) {
 				debug(1, "Applying fix for self-intersecting polygon in SQ1, room 66");
@@ -1527,14 +1527,14 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 		// WORKAROUND LSL5 room 660. Priority glitch due to us choosing a different path
 		// than SSCI. Happens when Patti walks to the control room.
-		if ((s->_gameName == "lsl5") && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
+		if ((s->_gameId == "lsl5") && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
 			debug(1, "[avoidpath] Applying fix for priority problem in LSL5, room 660");
 			pf_s->_prependPoint = new_start;
 			new_start = new Common::Point(77, 107);
 		}
 
 #ifdef OLD_PATHFINDING
-		if (s->_gameName == "longbow" && s->currentRoomNumber() == 210)
+		if (s->_gameId == "longbow" && s->currentRoomNumber() == 210)
 				fixLongbowRoom210(pf_s, *new_start, *new_end);
 #endif
 

@@ -378,11 +378,11 @@ SciKernelFunction kfunct_mappers[] = {
 	{NULL, NULL, NULL} // Terminator
 };
 
-Kernel::Kernel(ResourceManager *resMan, Common::String gameName) : _resMan(resMan) {
+Kernel::Kernel(ResourceManager *resMan, Common::String gameId) : _resMan(resMan) {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
 
-	loadKernelNames(gameName);
+	loadKernelNames(gameId);
 	mapFunctions();      // Map the kernel functions
 }
 
@@ -714,7 +714,7 @@ void kernel_sleep(SciEvent *event, uint32 msecs ) {
 	}
 }
 
-void Kernel::setDefaultKernelNames(Common::String gameName) {
+void Kernel::setDefaultKernelNames(Common::String gameId) {
 	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
@@ -748,7 +748,7 @@ void Kernel::setDefaultKernelNames(Common::String gameName) {
 	case SCI_VERSION_1_1:
 		// In SCI1.1, this kernel function is empty, apart from KQ6CD,
 		// where it has been replaced with kPortrait
-		if (gameName == "kq6")
+		if (gameId == "kq6")
 			_kernelNames[0x26] = "Portrait";
 		else
 			_kernelNames[0x26] = "Dummy";
@@ -762,7 +762,7 @@ void Kernel::setDefaultKernelNames(Common::String gameName) {
 	}
 }
 
-bool Kernel::loadKernelNames(Common::String gameName) {
+bool Kernel::loadKernelNames(Common::String gameId) {
 	_kernelNames.clear();
 	
 #ifdef ENABLE_SCI32
@@ -772,7 +772,7 @@ bool Kernel::loadKernelNames(Common::String gameName) {
 		setKernelNamesSci2();
 	else
 #endif
-		setDefaultKernelNames(gameName);
+		setDefaultKernelNames(gameId);
 	return true;
 }
 

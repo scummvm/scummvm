@@ -944,7 +944,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 #ifdef INCLUDE_OLDGFX
 	retval->pic_priority_table = (int *)(retval->gfx_state->pic) ? retval->gfx_state->pic->priorityTable : NULL;
 #endif
-	retval->_gameName = s->_gameName;
+	retval->_gameId = s->_gameId;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	retval->_sound._it = NULL;

@@ -1843,7 +1843,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
-	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameName.c_str());
+	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameId.c_str());
 	_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-

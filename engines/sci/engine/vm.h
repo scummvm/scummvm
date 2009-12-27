@@ -461,11 +461,11 @@ void script_uninstantiate(SegManager *segMan, int script_nr);
 
 /**
  * Converts the builtin Sierra game IDs to the ones we use in ScummVM
- * @param[in] gameName		The internal game name
+ * @param[in] gameId		The internal game ID
  * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
  * @return					The equivalent ScummVM game id
  */
-const char *convertSierraGameId(const char *gameName, uint32 *gameFlags);
+const char *convertSierraGameId(const char *gameId, uint32 *gameFlags);
 
 /**
  * Initializes an SCI game

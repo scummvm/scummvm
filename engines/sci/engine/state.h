@@ -140,7 +140,7 @@ public:
 	Kernel *_kernel;
 	Vocabulary *_voc;
 
-	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */
+	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */
 
 	/* Non-VM information */
 

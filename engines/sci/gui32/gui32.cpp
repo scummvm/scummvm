@@ -450,7 +450,7 @@ void SciGui32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool i
 	// LSL6 calls kSetPort to extend the screen to draw the Gui. If we free all resources
 	// here, the background picture is freed too, and this makes everything a big mess.
 	// FIXME/TODO: This code really needs to be rewritten to conform to the original behavior
-	if (_s->_gameName != "lsl6") {
+	if (_s->_gameId != "lsl6") {
 		_s->gfx_state->pic_port_bounds = gfx_rect(picLeft, picTop, rect.right, rect.bottom);
 
 		// FIXME: Should really only invalidate all loaded pic resources here;

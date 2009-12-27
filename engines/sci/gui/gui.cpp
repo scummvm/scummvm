@@ -89,7 +89,7 @@ void SciGui::init(bool usesOldGfxFunctions) {
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 
 	_gfx->init(_text);
-	_windowMgr->init(_s->_gameName);
+	_windowMgr->init(_s->_gameId);
 	_menu->init(_s->gfx_state);
 	initPriorityBands();
 }

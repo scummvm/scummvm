@@ -52,7 +52,7 @@ SciGuiWindowMgr::~SciGuiWindowMgr() {
 	// TODO: Clear _windowList and delete all stuff in it?
 }
 
-void SciGuiWindowMgr::init(Common::String gameName) {
+void SciGuiWindowMgr::init(Common::String gameId) {
 	int16 offTop = 10;
 
 	_wmgrPort = new GuiPort(0);
@@ -61,7 +61,7 @@ void SciGuiWindowMgr::init(Common::String gameName) {
 
 	// Jones sierra sci was called with parameter -Nw 0 0 200 320
 	//  this actually meant not skipping the first 10 pixellines in windowMgrPort
-	if (gameName == "jones")
+	if (gameId == "jones")
 		offTop = 0;
 
 	_gfx->OpenPort(_wmgrPort);
