@@ -193,7 +193,7 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 
 bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
 	// We assume that the resource type matches res->type
-	file.seek(res->file_offset, SEEK_SET);
+	file.seek(res->file_offset + 2, SEEK_SET);
 
 	res->data = new byte[res->size];
 
@@ -944,7 +944,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	newrsc->source = source;
 	newrsc->size = fsize - patch_data_offset - 2;
 	newrsc->headerSize = patch_data_offset;
-	newrsc->file_offset = 2;
+	newrsc->file_offset = 0;
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->location_name.c_str());
 }
 
@@ -1034,7 +1034,7 @@ void ResourceManager::readWaveAudioPatches() {
 			newrsc->source = psrcPatch;
 			newrsc->size = fileSize;
 			newrsc->headerSize = 0;
-			newrsc->file_offset = 0; // No patch header
+			newrsc->file_offset = -2; // Use -2 to signal there's no patch header
 			debugC(1, kDebugLevelResMan, "Patching %s - OK", psrcPatch->location_name.c_str());
 		}
 	}

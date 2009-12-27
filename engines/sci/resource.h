@@ -204,7 +204,7 @@ public:
 	byte *header;
 	uint32 headerSize;
 protected:
-	uint32 file_offset; /**< Offset in file */
+	int32 file_offset; /**< Offset in file */
 	ResourceStatus status;
 	uint16 lockers; /**< Number of places where this resource was locked */
 	ResourceSource *source;
