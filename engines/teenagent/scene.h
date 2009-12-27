@@ -60,6 +60,7 @@ struct SceneEvent {
 		kCredits,
 		kTimer,
 		kEffect,
+		kFade,
 		kQuit
 	} type;
 
@@ -137,6 +138,7 @@ public:
 	void displayMessage(const Common::String &str, byte color = 0xd1, const Common::Point &pos = Common::Point());
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
+	SceneEvent::Type last_event_type() const { return !events.empty()? events.back().type: SceneEvent::kNone; }
 
 	bool processEvent(const Common::Event &event);
 
@@ -155,6 +157,7 @@ public:
 	Animation * getAnimation(byte slot);
 	inline Animation * getActorAnimation() { return &actor_animation; }
 	inline const Common::String& getMessage() const { return message; }
+	void setPalette(unsigned mul);
 
 private:
 	void loadOns();
@@ -164,7 +167,6 @@ private:
 	void playActorAnimation(uint id, bool loop, bool ignore);
 
 	byte palette[768];
-	void setPalette(OSystem *system, const byte *palette, unsigned mul = 1);
 	static Common::Point messagePosition(const Common::String &str, Common::Point position);
 	static uint messageDuration(const Common::String &str);
 

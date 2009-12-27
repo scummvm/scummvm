@@ -194,6 +194,8 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_engine = engine;
 	_system = system;
 
+	memset(palette, 0, sizeof(palette));
+	
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *s = res->varia.getStream(1);
 	if (s == NULL)
@@ -363,7 +365,6 @@ void Scene::init(int id, const Common::Point &pos) {
 			}
 		}
 	}
-	setPalette(_system, palette, 4);
 
 	Common::SeekableReadStream *stream = res->on.getStream(id);
 	int sub_hack = 0;
@@ -389,6 +390,9 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	if (now_playing != res->dseg.get_byte(0xDB90))
 		_engine->music->load(res->dseg.get_byte(0xDB90));
+	
+	_system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+	setPalette(0);
 }
 
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
@@ -450,7 +454,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				for (int i = 0; i < 4; ++i) 
 					custom_animation[i].free();
 				_engine->playMusic(4);
-				init(10, Common::Point(136, 153));
+				_engine->loadScene(10, Common::Point(136, 153));
 				return true;
 			}
 		
@@ -504,7 +508,8 @@ bool Scene::render(OSystem *system) {
 		restart = false;
 		busy = processEventQueue();
 		
-		if (current_event.type == SceneEvent::kCredits) {
+		switch(current_event.type) {
+		case SceneEvent::kCredits: {
 			system->fillScreen(0);
 			///\todo: optimize me
 			Graphics::Surface *surface = system->lockScreen();
@@ -513,8 +518,19 @@ bool Scene::render(OSystem *system) {
 
 			if (current_event.dst.y < -(int)current_event.timer)
 				current_event.clear();
-			
+			}
 			return true;
+		case SceneEvent::kFade:
+			//debug(0, "fade timer = %d", current_event.timer);
+			setPalette(current_event.orientation? 4 - current_event.timer: current_event.timer);
+			++current_event.timer;
+			if (current_event.timer > 4) {
+				nextEvent();
+				continue;
+			} else
+				busy |= true;
+		default:
+			;
 		}
 
 		if (!message.empty() && message_timer != 0) {
@@ -962,7 +978,10 @@ bool Scene::processEventQueue() {
 			debug(0, "*stub* shaking the screen");
 			current_event.clear();
 			break;
-			
+
+		case SceneEvent::kFade:
+			break;
+
 		case SceneEvent::kCredits:
 			debug(0, "showing credits");
 			break;
@@ -983,16 +1002,16 @@ bool Scene::processEventQueue() {
 	return !current_event.empty();
 }
 
-void Scene::setPalette(OSystem *system, const byte *buf, unsigned mul) {
+void Scene::setPalette(unsigned mul) {
 	byte p[1024];
 
 	memset(p, 0, 1024);
 	for (int i = 0; i < 256; ++i) {
 		for (int c = 0; c < 3; ++c)
-			p[i * 4 + c] = buf[i * 3 + c] * mul;
+			p[i * 4 + c] = (unsigned)palette[i * 3 + c] * mul;
 	}
 
-	system->setPalette(p, 0, 256);
+	_system->setPalette(p, 0, 256);
 }
 
 Object *Scene::getObject(int id, int scene_id) {
@@ -1003,8 +1022,13 @@ Object *Scene::getObject(int id, int scene_id) {
 
 	if (scene_id == 0)
 		return NULL;
-
-	return &objects[scene_id - 1][id - 1];
+	
+	Common::Array<Object> &scene_objects = objects[scene_id - 1];
+	--id;
+	if (id >= (int)scene_objects.size())
+		return NULL;
+	
+	return &scene_objects[id];
 }
 
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {

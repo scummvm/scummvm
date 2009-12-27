@@ -218,6 +218,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	uint16 x = res->dseg.get_word(0x64AF), y = res->dseg.get_word(0x64B1);
 	scene->loadObjectData();
 	scene->init(id, Common::Point(x, y));
+	scene->setPalette(4);
 	return Common::kNoError;
 }
 
@@ -518,7 +519,6 @@ void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 position) {
 	scene->push(event);
 }
 
-
 void TeenAgentEngine::moveTo(const Common::Point &dst, byte o, bool warp) {
 	moveTo(dst.x, dst.y, o, warp);
 }
@@ -573,12 +573,16 @@ void TeenAgentEngine::loadScene(byte id, const Common::Point &pos, byte o) {
 }
 
 void TeenAgentEngine::loadScene(byte id, uint16 x, uint16 y, byte o) {
+	if (scene->last_event_type() != SceneEvent::kCreditsMessage)
+		fadeOut();
+	
 	SceneEvent event(SceneEvent::kLoadScene);
 	event.scene = id;
 	event.dst.x = x;
 	event.dst.y = y;
 	event.orientation = o;
 	scene->push(event);
+	fadeIn();
 }
 
 void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
@@ -673,6 +677,18 @@ void TeenAgentEngine::setTimerCallback(uint16 addr, uint16 frames) {
 
 void TeenAgentEngine::shakeScreen() {
 	SceneEvent event(SceneEvent::kEffect);
+	scene->push(event);
+}
+
+void TeenAgentEngine::fadeIn() {
+	SceneEvent event(SceneEvent::kFade);
+	event.orientation = 0;
+	scene->push(event);
+}
+
+void TeenAgentEngine::fadeOut() {
+	SceneEvent event(SceneEvent::kFade);
+	event.orientation = 1;
 	scene->push(event);
 }
 

@@ -106,6 +106,8 @@ public:
 	void setTimerCallback(uint16 addr, uint16 frames);
 	void shakeScreen();
 	void displayCredits();
+	void fadeIn();
+	void fadeOut();
 
 	Common::RandomSource random;
 
