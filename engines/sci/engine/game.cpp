@@ -441,7 +441,7 @@ int game_exit(EngineState *s) {
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND, s->detectDoSoundType());
 #else
 		s->_audio->stopAllAudio();
-		s->_soundCmd->_music->stopAll();
+		s->_soundCmd->_music->clearPlayList();
 #endif
 	}
 

@@ -102,6 +102,7 @@ public:
 #endif
 	void onTimer();
 	bool saveState(Common::OutSaveFile *pFile);
+	void clearPlayList();
 	void stopAll();
 
 	// sound and midi functions
@@ -123,23 +124,20 @@ public:
 	uint32 soundGetTempo() { return _dwTempo; }
 
 	MusicEntry *getSlot(reg_t obj) { 
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 
 		for (uint32 i = 0; i < _playList.size(); i++) {
 			if (_playList[i]->soundObj == obj) {
-				_mutex.unlock();
 				return _playList[i];
 			}
 		}
 
-		_mutex.unlock();
 		return NULL;
 	}
 
 	void pushBackSlot(MusicEntry *slotEntry) {
-		_mutex.lock();
+		Common::StackLock lock(_mutex);
 		_playList.push_back(slotEntry);
-		_mutex.unlock();
 	}
 
 	void reconstructSounds(int savegame_version);

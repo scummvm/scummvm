@@ -619,7 +619,7 @@ static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	int songcount = 0;
 	byte masterVolume = soundGetMasterVolume();
@@ -645,7 +645,7 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(songcount);
 
 	if (s.isLoading()) {
-		stopAll();
+		clearPlayList();
 
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
@@ -657,8 +657,6 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 			syncSong(s, _playList[i]);
 		}
 	}
-
-	_mutex.unlock();
 }
 #endif
 

@@ -153,7 +153,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdUpdateHandle);
 		SOUNDCOMMAND(cmdFadeHandle);
 		SOUNDCOMMAND(cmdGetPolyphony);
-		SOUNDCOMMAND(cmdGetPlayNext);
+		SOUNDCOMMAND(cmdStopAllSounds);
 		break;
 	case SCI_VERSION_1_EARLY:
 		SOUNDCOMMAND(cmdVolume);
@@ -644,7 +644,7 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 	}
 
 	musicSlot->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
-	int32 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
+	int16 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
 	uint32 objPrio = GET_SEL32V(_segMan, obj, pri);
@@ -790,9 +790,10 @@ void SoundCommandParser::cmdGetAudioCapability(reg_t obj, int16 value) {
 	_acc = make_reg(0, 1);
 }
 
-void SoundCommandParser::cmdGetPlayNext(reg_t obj, int16 value) {
-	// TODO
-	warning("STUB: cmdGetPlayNext");
+void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->stopAll();
+#endif
 }
 
 void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {

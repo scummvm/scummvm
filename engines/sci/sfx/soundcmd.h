@@ -81,7 +81,7 @@ private:
 	void cmdVolume(reg_t obj, int16 value);
 	void cmdFadeHandle(reg_t obj, int16 value);
 	void cmdGetPolyphony(reg_t obj, int16 value);
-	void cmdGetPlayNext(reg_t obj, int16 value);
+	void cmdStopAllSounds(reg_t obj, int16 value);
 
 	void initHandle(reg_t obj, bool isSci1);
 

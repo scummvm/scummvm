@@ -123,12 +123,30 @@ bool SciMusic::saveState(Common::OutSaveFile *pFile) {
 }
 
 //----------------------------------------
-void SciMusic::stopAll() {
+void SciMusic::clearPlayList() {
+	Common::StackLock lock(_mutex);
+
 	_pMixer->stopAll();
 
 	while (!_playList.empty()) {
 		soundStop(_playList[0]);
 		soundKill(_playList[0]);
+	}
+}
+//----------------------------------------
+void SciMusic::stopAll() {
+	Common::StackLock lock(_mutex);
+
+	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+	
+	for (uint32 i = 0; i < _playList.size(); i++) {
+		if (_soundVersion <= SCI_VERSION_0_LATE)
+			PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
+		else
+			PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
+
+		_playList[i]->dataInc = 0;
+		soundStop(_playList[i]);
 	}
 }
 //----------------------------------------
@@ -331,7 +349,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 }
 //----------------------------------------
 void SciMusic::onTimer() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
@@ -359,8 +377,6 @@ void SciMusic::onTimer() {
 			}
 		}
 	}//for()
-	
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::doFade(MusicEntry *pSnd) {
@@ -388,27 +404,24 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 
 //---------------------------------------------
 void SciMusic::soundPlay(MusicEntry *pSnd) {
+	Common::StackLock lock(_mutex);
 
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
 	for (i = 0; i < sz && _playList[i] != pSnd; i++)
 		;
 	if (i == sz) {// not found
-		_mutex.lock();
 		_playList.push_back(pSnd);
 		sortPlayList();
-		_mutex.unlock();
 	}
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
-		_mutex.lock();
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 		if (pSnd->status == kSndStatusStopped)
 			pSnd->pMidiParser->jumpToTick(0);
-		_mutex.unlock();
 	}
 
 	pSnd->status = kSndStatusPlaying;
@@ -430,15 +443,14 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 }
 //---------------------------------------------
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	pSnd->prio = prio;
 	sortPlayList();
-
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
+	Common::StackLock lock(_mutex);
 
 	pSnd->status = kSndStatusStopped;
 
@@ -452,8 +464,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		pSnd->pStreamAud = NULL;
 	}
 
-	_mutex.lock();
-
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
@@ -464,8 +474,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 			break;
 		}
 	}
-
-	_mutex.unlock();
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {
@@ -491,7 +499,7 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 }
 
 void SciMusic::reconstructSounds(int savegame_version) {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
 
 	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 	ResourceManager *resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
@@ -509,8 +517,6 @@ void SciMusic::reconstructSounds(int savegame_version) {
 		_playList[i]->soundRes = new SoundResource(_playList[i]->resnum, resMan, _soundVersion);
 		soundInitSnd(_playList[i]);
 	}
-
-	_mutex.unlock();
 }
 
 } // end of namespace SCI
