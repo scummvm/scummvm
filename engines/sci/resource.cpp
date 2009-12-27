@@ -944,7 +944,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	newrsc->size = fsize - patch_data_offset - 2;
 	newrsc->headerSize = patch_data_offset;
 	newrsc->file_offset = 0;
-	debug("Patching %s - OK", source->location_name.c_str());
+	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->location_name.c_str());
 }
 
 
