@@ -759,13 +759,23 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
-	// This kernel function looks like it calls a function in the object (arg 2) with
-	// the x/y coordinates supplied in args 0/1. Arg 3 seems to be 0.
-	
-	// TODO
+	// Tests if the cursor is on the passed object
 
-	//warning("kOnMe: (%d, %d) on object %04x:%04x", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]));
-	return s->r_acc;
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
+	nsRect.left = GET_SEL32V(s->_segMan, targetObject, nsLeft);
+	nsRect.top = GET_SEL32V(s->_segMan, targetObject, nsTop);
+	nsRect.right = GET_SEL32V(s->_segMan, targetObject, nsRight);
+	nsRect.bottom = GET_SEL32V(s->_segMan, targetObject, nsBottom);
+
+	//warning("kOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
+
+	return make_reg(0, nsRect.contains(x, y));
 }
 
 } // End of namespace Sci
