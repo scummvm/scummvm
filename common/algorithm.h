@@ -154,7 +154,7 @@ unsigned distance(T* first, T* last) {
 template<typename T>
 unsigned distance(T first, T last) {
 	unsigned n = 0;
-	while(first != last) {
+	while (first != last) {
 		++n;
 		++first;
 	}
@@ -170,7 +170,7 @@ template<typename T>
 T _sort_choose_pivot(T first, T last) {
 	unsigned n = distance(first, last);
 	n /= 2;
-	while(n--) 
+	while (n--)
 		++first;
 	return first;
 }
@@ -181,7 +181,7 @@ T _sort_partition(T first, T last, T pivot, StrictWeakOrdering &comp) {
 	SWAP(*pivot, *last);
 
 	T sorted;
-	for(sorted = first; first != last; ++first) {
+	for (sorted = first; first != last; ++first) {
 		if (!comp(*last, *first)) {
 			if (first != sorted)
 				SWAP(*first, *sorted);
