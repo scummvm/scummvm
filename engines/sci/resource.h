@@ -450,9 +450,11 @@ public:
 
 	struct Track {
 		TrackType type;
-		int16 digitalChannelNr;
 		byte channelCount;
 		Channel *channels;
+		int16 digitalChannelNr;
+		int digitalSampleRate;
+		uint32 digitalSampleSize;
 	};
 public:
 	SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion);

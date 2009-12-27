@@ -1858,6 +1858,12 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			sampleChannel->data = data;
 			sampleChannel->size = channel->size - (data - channel->data);
 			channel->size = data - channel->data;
+			// Read sample header information
+			//Offset 14 in the header contains the frequency as a short integer. Offset 32 contains the sample length, also as a short integer.
+			_tracks->digitalSampleRate = READ_LE_UINT16(sampleChannel->data + 14);
+			_tracks->digitalSampleSize = READ_LE_UINT16(sampleChannel->data + 32);
+			sampleChannel->data += 44; // Skip over header
+			sampleChannel->size -= 44;
 		}
 		break;
 
@@ -1891,6 +1897,8 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			_tracks[trackNr].channels = new Channel[_tracks[trackNr].channelCount];
 			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
 				_tracks[trackNr].digitalChannelNr = -1; // No digital sound associated
+				_tracks[trackNr].digitalSampleRate = 0;
+				_tracks[trackNr].digitalSampleSize = 0;
 				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
 					channel = &_tracks[trackNr].channels[channelNr];
 					channel->unk = READ_LE_UINT16(data);
@@ -1899,8 +1907,14 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 					channel->number = *(channel->data - 2);
 					channel->poly = *(channel->data - 1);
 					channel->time = channel->prev = 0;
-					if (channel->number == 0xFE) // Digital channel
+					if (channel->number == 0xFE) { // Digital channel
 						_tracks[trackNr].digitalChannelNr = channelNr;
+						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
+						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
+						assert(READ_LE_UINT16(channel->data + 4) == 0); // Possibly a compression flag
+						channel->data += 8; // Skip over header
+						channel->size -= 8;
+					}
 					data += 6;
 				}
 			} else {
