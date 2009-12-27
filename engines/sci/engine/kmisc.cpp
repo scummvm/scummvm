@@ -241,6 +241,10 @@ enum kSciPlatforms {
 };
 
 enum kPlatformOps {
+	kPlatformUnk0 = 0,
+	kPlatformCDSpeed = 1,
+	kPlatformUnk2 = 2,
+	kPlatformCDCheck = 3,
 	kPlatformGetPlatform = 4,
 	kPlatformUnk5 = 5,
 	kPlatformIsHiRes = 6,
@@ -249,9 +253,24 @@ enum kPlatformOps {
 
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	bool isWindows = ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows;
-	uint16 operation = argv[0].toUint16();
+
+	// No arguments is the same as operation 0
+	uint16 operation = (argc == 1) ? argv[0].toUint16() : 0;
 
 	switch (operation) {
+	case kPlatformUnk0:
+		return make_reg(0, !isWindows);
+	case kPlatformCDSpeed:
+		// TODO: Returns CD Speed?
+		warning("STUB: kPlatform(CDSpeed)");
+		break;
+	case kPlatformUnk2:
+		// Always returns 2
+		return make_reg(0, 2);
+	case kPlatformCDCheck:
+		// TODO: Some sort of CD check?
+		warning("STUB: kPlatform(CDCheck)");
+		break;
 	case kPlatformGetPlatform:
 		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
 	case kPlatformUnk5:
@@ -264,7 +283,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	default:
 		warning("Unsupported kPlatform operation %d", operation);
 	}
-	
+
 	return NULL_REG;
 }
 
