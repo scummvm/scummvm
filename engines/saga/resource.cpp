@@ -153,7 +153,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 			patchResourceId = readS2.readUint32();
 			subjectResourceData = subjectContext->getResourceData(subjectResourceId);
 			resourceData = getResourceData(patchResourceId);
-			subjectResourceData->patchData = new PatchData(&_file);
+			subjectResourceData->patchData = new PatchData(&_file, _fileName);
 			subjectResourceData->offset = resourceData->offset;
 			subjectResourceData->size = resourceData->size;
 		}
@@ -165,7 +165,7 @@ bool ResourceContext::load(SagaEngine *vm, Resource *resource) {
 		if ((patchDescription->fileType & _fileType) != 0) {
 			if (patchDescription->resourceId < _table.size()) {
 				resourceData = &_table[patchDescription->resourceId];
-				resourceData->patchData = new PatchData(patchDescription);
+				resourceData->patchData = new PatchData(patchDescription->fileName);
 				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
 					resourceData->offset = 0;
 					resourceData->size = resourceData->patchData->_patchFile->size();

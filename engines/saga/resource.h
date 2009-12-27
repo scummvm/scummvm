@@ -39,14 +39,14 @@ namespace Saga {
 #define RSC_MIN_FILESIZE (RSC_TABLEINFO_SIZE + RSC_TABLEENTRY_SIZE + 1)
 
 struct PatchData {
-	bool _deletePatchFile;
 	Common::File *_patchFile;
-	const GamePatchDescription *_patchDescription;
+	const char *_fileName;
+	bool _deletePatchFile;
 
-	PatchData(const GamePatchDescription *patchDescription): _patchDescription(patchDescription), _deletePatchFile(true) {
+	PatchData(const char *fileName): _fileName(fileName), _deletePatchFile(true) {
 		_patchFile = new Common::File();
 	}
-	PatchData(Common::File *patchFile): _patchDescription(NULL), _patchFile(patchFile), _deletePatchFile(false) {
+	PatchData(Common::File *patchFile, const char *fileName): _patchFile(patchFile), _fileName(fileName), _deletePatchFile(false) {
 	}
 
 	~PatchData() {
@@ -135,7 +135,7 @@ public:
 		const char * fn;
 		if (resourceData && resourceData->patchData != NULL) {
 			file = resourceData->patchData->_patchFile;
-			fn = resourceData->patchData->_patchDescription->fileName;
+			fn = resourceData->patchData->_fileName;
 		} else {
 			file = &_file;
 			fn = _fileName;
