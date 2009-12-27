@@ -22,14 +22,11 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 	struct Item {
 		int value;
 		Item(int v) : value(v) {}
-	};
 
-	struct ItemCmp {
-		bool operator()(const Item &a, const Item &b) {
-			return a.value < b.value;
+		bool operator<(const Item &r) const {
+			return value < r.value;
 		}
 	};
-
 public:
 	void test_pod_sort() {
 		{
@@ -37,7 +34,8 @@ public:
 			Common::sort(array, array + ARRAYSIZE(array));
 			checkSort(array, array + ARRAYSIZE(array), Common::Less<int>());
 
-			Common::sort(array, array + ARRAYSIZE(array)); //already sorted one
+			// already sorted
+			Common::sort(array, array + ARRAYSIZE(array));
 			checkSort(array, array + ARRAYSIZE(array), Common::Less<int>());
 		}
 		{
@@ -57,12 +55,12 @@ public:
 		for(int i = 0; i < n; ++i)
 			list.push_back(Item(i * 0xDEADBEEF % 1337));
 
-		Common::sort(list.begin(), list.end(), ItemCmp());
-		checkSort(list.begin(), list.end(), ItemCmp());
+		Common::sort(list.begin(), list.end(), Common::Less<Item>());
+		checkSort(list.begin(), list.end(), Common::Less<Item>());
 
-		//already sorted
-		Common::sort(list.begin(), list.end(), ItemCmp());
-		checkSort(list.begin(), list.end(), ItemCmp());
+		// already sorted
+		Common::sort(list.begin(), list.end(), Common::Less<Item>());
+		checkSort(list.begin(), list.end(), Common::Less<Item>());
 	}
 };
 
