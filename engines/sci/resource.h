@@ -450,7 +450,7 @@ public:
 
 	struct Track {
 		TrackType type;
-		byte nDigital;
+		int16 digitalChannelNr;
 		byte channelCount;
 		Channel *channels;
 	};

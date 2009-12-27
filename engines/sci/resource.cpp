@@ -198,7 +198,7 @@ bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
 	res->data = new byte[res->size];
 
 	if (res->headerSize > 0)
-		res->header = new byte[res->headerSize];	
+		res->header = new byte[res->headerSize];
 
 	if ((res->data == NULL) || ((res->headerSize > 0) && (res->header == NULL))) {
 		error("Can't allocate %d bytes needed for loading %s", res->size + res->headerSize, res->id.toString().c_str());
@@ -367,11 +367,11 @@ int ResourceManager::addAppropriateSources() {
 #endif
 	else
 		return 0;
-	
+
 
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "RESOURCE.0??");
-	
+
 #ifdef ENABLE_SCI32
 	SearchMan.listMatchingMembers(files, "RESSCI.0??");
 #endif
@@ -757,7 +757,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			mapDetected = kResVersionSci32;
 		else if (directoryType < 0x80 || ((directoryType & 0x7f) > 0x20 && directoryType != 0xFF))
 			break;
-		
+
 		// Offset is above file size? -> definitely not SCI1/SCI1.1
 		if (directoryOffset > fileStream->size())
 			break;
@@ -769,7 +769,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			if ((directorySize % 5 == 0) && (directorySize % 6))
 				mapDetected = kResVersionSci11;
 		}
-		
+
 		if (directoryType == 0xFF) {
 			// FFh entry needs to point to EOF
 			if (directoryOffset != fileStream->size())
@@ -1601,7 +1601,7 @@ void ResourceManager::detectSciVersion() {
 	}
 
 	// Set view type
-	if (viewCompression == kCompDCL 
+	if (viewCompression == kCompDCL
 #ifdef ENABLE_SCI32
 		|| viewCompression == kCompSTACpack
 #endif
@@ -1612,7 +1612,7 @@ void ResourceManager::detectSciVersion() {
 		// Otherwise we detect it from a view
 		_viewType = detectViewType();
 	}
-	
+
 	// Handle SCI32 versions here
 	if (_volVersion == kResVersionSci32) {
 		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
@@ -1816,8 +1816,9 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 
 	_innerResource = resource;
 
-	byte *data = resource->data, *data2;
-	Channel *channel;
+	byte *data, *data2;
+	byte *dataEnd;
+	Channel *channel, *sampleChannel;
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
@@ -1825,12 +1826,15 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		// SCI0 only has a header of 0x11/0x21 byte length and the actual midi track follows afterwards
 		_trackCount = 1;
 		_tracks = new Track[_trackCount];
-		_tracks->nDigital = 0xFF;
+		_tracks->digitalChannelNr = -1;
 		_tracks->type = TRACKTYPE_NONE;
 		_tracks->channelCount = 1;
+		// Digital sample data included? -> Add an additional channel
+		if (resource->data[0] == 2)
+			_tracks->channelCount++;
 		_tracks->channels = new Channel[_tracks->channelCount];
-		channel = _tracks->channels;
-		
+		memset(_tracks->channels, 0, sizeof(Channel) * _tracks->channelCount);
+		channel = &_tracks->channels[0];
 		if (_soundVersion == SCI_VERSION_0_EARLY) {
 			channel->data = resource->data + 0x11;
 			channel->size = resource->size - 0x11;
@@ -1838,15 +1842,28 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			channel->data = resource->data + 0x21;
 			channel->size = resource->size - 0x21;
 		}
-
-		channel->number = 0;
-		channel->poly = 0;
-		channel->time = channel->prev = 0;
-		channel->unk = 0;
+		if (_tracks->channelCount == 2) {
+			// Digital sample data included
+			_tracks->digitalChannelNr = 1;
+			sampleChannel = &_tracks->channels[1];
+			// we need to find 0xFC (channel terminator) within the data
+			data = channel->data;
+			dataEnd = channel->data + channel->size;
+			while ((data < dataEnd) && (*data != 0xfc))
+				data++;
+			// Skip any following 0xFCs as well
+			while ((data < dataEnd) && (*data == 0xfc))
+				data++;
+			// Now adjust channels accordingly
+			sampleChannel->data = data;
+			sampleChannel->size = channel->size - (data - channel->data);
+			channel->size = data - channel->data;
+		}
 		break;
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
+		data = resource->data;
 		// Count # of tracks
 		_trackCount = 0;
 		while ((*data++) != 0xFF) {
@@ -1873,7 +1890,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			}
 			_tracks[trackNr].channels = new Channel[_tracks[trackNr].channelCount];
 			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
-				_tracks[trackNr].nDigital = 0xFF; // No digital channel associated
+				_tracks[trackNr].digitalChannelNr = -1; // No digital sound associated
 				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
 					channel = &_tracks[trackNr].channels[channelNr];
 					channel->unk = READ_LE_UINT16(data);
@@ -1883,7 +1900,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 					channel->poly = *(channel->data - 1);
 					channel->time = channel->prev = 0;
 					if (channel->number == 0xFE) // Digital channel
-						_tracks[trackNr].nDigital = channelNr;
+						_tracks[trackNr].digitalChannelNr = channelNr;
 					data += 6;
 				}
 			} else {

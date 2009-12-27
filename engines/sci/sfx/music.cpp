@@ -304,13 +304,13 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	if (track) {
 		// if MIDI device is selected but there is no digital track in sound resource
 		// try to use adlib's digital sample if possible
-		if (_midiType <= MD_MT32 && track->nDigital == 0xFF && _bMultiMidi) {
-			if (pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB)->nDigital != 0xFF)
+		if (_midiType <= MD_MT32 && track->digitalChannelNr == -1 && _bMultiMidi) {
+			if (pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB)->digitalChannelNr != -1)
 				track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
 		}
 		// play digital sample
-		if (track->nDigital != 0xFF) {
-			byte *channelData = track->channels[track->nDigital].data;
+		if (track->digitalChannelNr != -1) {
+			byte *channelData = track->channels[track->digitalChannelNr].data;
 			int rate = READ_LE_UINT16(channelData);
 			uint32 size = READ_LE_UINT16(channelData + 2);
 			assert(READ_LE_UINT16(channelData + 4) == 0);	// Possibly a compression flag
