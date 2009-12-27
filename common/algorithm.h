@@ -147,7 +147,7 @@ Op for_each(In first, In last, Op f) {
 }
 
 template<typename T>
-unsigned distance(T* first, T* last) {
+unsigned distance(T * first, T * last) {
 	return last - first;
 }
 
@@ -162,7 +162,7 @@ unsigned distance(T first, T last) {
 }
 
 template<typename T>
-T* _sort_choose_pivot(T* first, T* last) {
+T * _sort_choose_pivot(T * first, T * last) {
 	return first + distance(first, last) / 2;
 }
 
@@ -215,7 +215,7 @@ void sort(T first, T last, StrictWeakOrdering comp) {
  */
 
 template<typename T>
-void sort(T* first, T* last) {
+void sort(T * first, T * last) {
 	sort(first, last, Common::Less<T>());
 }
 
