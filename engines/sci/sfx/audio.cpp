@@ -32,6 +32,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/audiocd.h"
+#include "sound/wave.h"
 
 namespace Sci {
 
@@ -224,21 +225,31 @@ Audio::AudioStream* AudioPlayer::getAudioStream(uint32 number, uint32 volume, in
 			data = readSOLAudio(&dataStream, size, audioFlags, flags);
 		}
 	} else {
-		// SCI1
-		size = audioRes->size;
-		data = (byte *)malloc(size);
-		assert(data);
-		memcpy(data, audioRes->data, size);
-		flags = Audio::Mixer::FLAG_UNSIGNED;
+		// SCI1 or WAVE file
+		if (audioRes->size > 4) {
+			if (memcmp(audioRes->data, "RIFF", 4) == 0) {
+				// WAVE detected
+				Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, Common::DisposeAfterUse::NO);
+				audioStream = Audio::makeWAVStream(waveStream, true, false);
+			}
+		}
+		if (!audioStream) {
+			// SCI1 raw audio
+			size = audioRes->size;
+			data = (byte *)malloc(size);
+			assert(data);
+			memcpy(data, audioRes->data, size);
+			flags = Audio::Mixer::FLAG_UNSIGNED;
+		}
 	}
 
 	if (data) {
 		audioStream = Audio::makeLinearInputStream(data, size, _audioRate, 
 										flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-		if (audioStream) {
-			*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
-			return audioStream;
-		}
+	}
+	if (audioStream) {
+		*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
+		return audioStream;
 	}
 
 	return NULL;
