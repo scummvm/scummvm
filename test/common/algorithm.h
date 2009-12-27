@@ -7,7 +7,10 @@
 
 class AlgorithmTestSuite : public CxxTest::TestSuite {
 	template<typename T, class StrictWeakOrdering>
-	void checkSort(T first, T last, StrictWeakOrdering comp = StrictWeakOrdering()) {
+	bool checkSort(T first, T last, StrictWeakOrdering comp = StrictWeakOrdering()) {
+		if (first == last)
+			return true;
+
 		// Check whether the container is sorted by the given binary predicate, which
 		// decides whether the first value passed preceeds the second value passed.
 		//
@@ -15,8 +18,11 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 		// given predicate in reverse order, when it returns false everything is
 		// fine, when it returns false, the follower preceeds the item and thus
 		// the order is violated.
-		for (T prev = first++; first != last; ++prev, ++first)
-			TS_ASSERT_EQUALS(comp(*first, *prev), false);
+		for (T prev = first++; first != last; ++prev, ++first) {
+			if (comp(*first, *prev))
+				return false;
+		}
+		return true;
 	}
 
 	struct Item {
@@ -32,19 +38,19 @@ public:
 		{
 			int array[] = { 63, 11, 31, 72, 1, 48, 32, 69, 38, 31 };
 			Common::sort(array, array + ARRAYSIZE(array));
-			checkSort(array, array + ARRAYSIZE(array), Common::Less<int>());
+			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Less<int>()), true);
 
 			// already sorted
 			Common::sort(array, array + ARRAYSIZE(array));
-			checkSort(array, array + ARRAYSIZE(array), Common::Less<int>());
+			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Less<int>()), true);
 		}
 		{
 			int array[] = { 90, 80, 70, 60, 50, 40, 30, 20, 10 };
 			Common::sort(array, array + ARRAYSIZE(array));
-			checkSort(array, array + ARRAYSIZE(array), Common::Less<int>());
+			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Less<int>()), true);
 
 			Common::sort(array, array + ARRAYSIZE(array), Common::Greater<int>());
-			checkSort(array, array + ARRAYSIZE(array), Common::Greater<int>());
+			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Greater<int>()), true);
 		}
 	}
 	
@@ -56,11 +62,11 @@ public:
 			list.push_back(Item(i * 0xDEADBEEF % 1337));
 
 		Common::sort(list.begin(), list.end(), Common::Less<Item>());
-		checkSort(list.begin(), list.end(), Common::Less<Item>());
+		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 
 		// already sorted
 		Common::sort(list.begin(), list.end(), Common::Less<Item>());
-		checkSort(list.begin(), list.end(), Common::Less<Item>());
+		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 	}
 };
 
