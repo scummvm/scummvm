@@ -76,7 +76,7 @@ public:
 		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 
 		// already sorted
-		Common::sort(list.begin(), list.end(), Common::Less<Item>());
+		Common::sort(list.begin(), list.end());
 		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 	}
 };

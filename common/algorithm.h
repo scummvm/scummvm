@@ -216,8 +216,10 @@ void sort(T *first, T *last) {
 	sort(first, last, Common::Less<T>());
 }
 
-///\todo add value_type to all iterators and add default sort variant with Common::Less<T::value_type>()
-
+template<class T>
+void sort(T first, T last) {
+	sort(first, last, Common::Less<typename T::ValueType>());
+}
 
 } // End of namespace Common
 #endif
