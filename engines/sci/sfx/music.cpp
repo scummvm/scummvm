@@ -123,13 +123,6 @@ bool SciMusic::saveState(Common::OutSaveFile *pFile) {
 }
 
 //----------------------------------------
-bool SciMusic::restoreState(Common::InSaveFile *pFile){
-	if (pFile->readLine() != "AUDIO")
-		return false;
-
-	return true;
-}
-//----------------------------------------
 void SciMusic::stopAll() {
 	_pMixer->stopAll();
 
@@ -360,7 +353,7 @@ void SciMusic::onTimer() {
 
 				// Signal the engine scripts that the sound is done playing
 				// FIXME: is there any other place this can be triggered properly?
-				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;
+				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 				PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
 				if (_soundVersion <= SCI_VERSION_0_LATE)
 					PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
@@ -493,6 +486,29 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
+}
+
+void SciMusic::reconstructSounds(int savegame_version) {
+	_mutex.lock();
+
+	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+	ResourceManager *resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
+
+	for (uint32 i = 0; i < _playList.size(); i++) {
+		if (savegame_version < 14) {
+			if (_soundVersion >= SCI_VERSION_1_EARLY) {
+				_playList[i]->dataInc = GET_SEL32V(segMan, _playList[i]->soundObj, dataInc);
+				_playList[i]->volume = GET_SEL32V(segMan, _playList[i]->soundObj, vol);
+			} else {
+				_playList[i]->volume = 100;
+			}
+		}
+
+		_playList[i]->soundRes = new SoundResource(_playList[i]->resnum, resMan, _soundVersion);
+		soundInitSnd(_playList[i]);
+	}
+
+	_mutex.unlock();
 }
 
 } // end of namespace SCI

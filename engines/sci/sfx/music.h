@@ -26,12 +26,14 @@
 #ifndef SCI_MUSIC_H
 #define SCI_MUSIC_H
 
+#include "common/savefile.h"
+#include "common/serializer.h"
+#include "common/mutex.h"
+
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "common/mutex.h"
-#include "common/savefile.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"
@@ -84,7 +86,7 @@ struct MusicEntry {
 
 typedef Common::Array<MusicEntry *> MusicList;
 
-class SciMusic {
+class SciMusic : public Common::Serializable {
 public:
 	SciMusic(SciVersion soundVersion);
 	~SciMusic();
@@ -95,7 +97,6 @@ public:
 #endif
 	void onTimer();
 	bool saveState(Common::OutSaveFile *pFile);
-	bool restoreState(Common::InSaveFile *pFile);
 	void stopAll();
 
 	// sound and midi functions
@@ -113,15 +114,19 @@ public:
 		return _dwTempo;
 	}
 
-	int findListSlot(reg_t obj) {
-		for (uint32 i = 0; i < _playList.size(); i++) {
-			if (_playList[i]->soundObj == obj)
-				return i;
-		}
-		return -1;
-	}
+	MusicEntry *getSlot(reg_t obj) { 
+		_mutex.lock();
 
-	MusicEntry *getSlot(int slot) { return _playList[slot]; }
+		for (uint32 i = 0; i < _playList.size(); i++) {
+			if (_playList[i]->soundObj == obj) {
+				_mutex.unlock();
+				return _playList[i];
+			}
+		}
+
+		_mutex.unlock();
+		return NULL;
+	}
 
 	void pushBackSlot(MusicEntry *slotEntry) {
 		_mutex.lock();
@@ -129,9 +134,9 @@ public:
 		_mutex.unlock();
 	}
 
-	uint32 listSize() { return _playList.size(); }
+	void reconstructSounds(int savegame_version);
 
-	uint16 _savelen;
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);

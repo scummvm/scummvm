@@ -273,9 +273,9 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	// Check if a track with the same sound object is already playing
-	int prevTrack = _music->findListSlot(obj);
-	if (prevTrack > -1)
-		_music->soundKill(_music->getSlot(prevTrack));
+	MusicEntry *oldSound = _music->getSlot(obj);
+	if (oldSound)
+		_music->soundKill(oldSound);
 
 	MusicEntry *newSound = new MusicEntry();
 	newSound->soundRes = 0;
@@ -386,19 +386,19 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 
 #else
 
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdPlayHandle: Slot not found");
 		return;
 	}
 
 	int number = obj.segment ? GET_SEL32V(_segMan, obj, number) : -1;
 
-	if (_music->getSlot(slot)->resnum != number) { // another sound loaded into struct
+	if (musicSlot->resnum != number) { // another sound loaded into struct
 		cmdDisposeHandle(obj, value);
 		cmdInitHandle(obj, value);
 		// Find slot again :)
-		slot = _music->findListSlot(obj);
+		musicSlot = _music->getSlot(obj);
 	}
 
 	if (_hasNodePtr) {
@@ -410,7 +410,6 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
 	}
 
-	MusicEntry *musicSlot = _music->getSlot(slot);
 	musicSlot->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	musicSlot->prio = GET_SEL32V(_segMan, obj, priority);
 	// vol selector doesnt get used before sci1late
@@ -456,15 +455,15 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 
 #else
 
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdDisposeHandle: Slot not found");
 		return;
 	}
 
 	cmdStopHandle(obj, value);
 
-	_music->soundKill(_music->getSlot(slot));
+	_music->soundKill(musicSlot);
 	if (_hasNodePtr)
 		PUT_SEL32(_segMan, obj, nodePtr, NULL_REG);
 	else
@@ -482,8 +481,8 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 	if (_hasNodePtr)
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdStopHandle: Slot not found");
 		return;
 	}
@@ -494,8 +493,8 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 	else
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 
-	_music->getSlot(slot)->dataInc = 0;
-	_music->soundStop(_music->getSlot(slot));
+	musicSlot->dataInc = 0;
+	_music->soundStop(musicSlot);
 #endif
 }
 
@@ -509,20 +508,20 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 	else
 		changeHandleStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdPauseHandle: Slot not found");
 		return;
 	}
 
 	if (!_hasNodePtr) {
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPaused);
-		_music->soundPause(_music->getSlot(slot));
+		_music->soundPause(musicSlot);
 	} else {
 		if (value)
-			_music->soundPause(_music->getSlot(slot));
+			_music->soundPause(musicSlot);
 		else
-			_music->soundPlay(_music->getSlot(slot));
+			_music->soundPlay(musicSlot);
 	}
 #endif
 }
@@ -536,14 +535,14 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	changeHandleStatus(obj, SOUND_STATUS_PLAYING);
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdResumeHandle: Slot not found");
 		return;
 	}
 
 	PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
-	_music->soundPlay(_music->getSlot(slot));
+	_music->soundPlay(musicSlot);
 #endif
 }
 
@@ -613,14 +612,13 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 		}
 	}
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdFadeHandle: Slot not found");
 		return;
 	}
 
 	int volume = GET_SEL32V(_segMan, obj, vol);
-	MusicEntry *musicSlot = _music->getSlot(slot);
 	musicSlot->fadeTo = _argv[2].toUint16();
 	musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
 	musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
@@ -647,13 +645,12 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
  		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
  	}
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdUpdateHandle: Slot not found");
 		return;
 	}
 
-	MusicEntry *musicSlot = _music->getSlot(slot);
 	musicSlot->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
 	uint32 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
 	if (objVol != musicSlot->volume)
@@ -741,14 +738,14 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	}
 #else
 
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdUpdateCues: Slot not found");
 		return;
 	}
 
 	uint16 signal = GET_SEL32V(_segMan, obj, signal);
-	uint16 dataInc = _music->getSlot(slot)->dataInc;
+	uint16 dataInc = musicSlot->dataInc;
 
 	switch (signal) {
 		case 0:
@@ -764,7 +761,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			break;
 	}
 
-	uint16 ticker = _music->getSlot(slot)->ticker;
+	uint16 ticker = musicSlot->ticker;
 	PUT_SEL32V(_segMan, obj, min, ticker / 3600);
 	PUT_SEL32V(_segMan, obj, sec, ticker % 3600 / 60);
 	PUT_SEL32V(_segMan, obj, frame, ticker);
@@ -811,17 +808,17 @@ void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {
 		return;
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdSetHandleVolume: Slot not found");
 		return;
 	}
 
 	value = CLIP<int>(value, 0, Audio::Mixer::kMaxChannelVolume);
 
-	if (_music->getSlot(slot)->volume != value) {
-		_music->getSlot(slot)->volume = value;
-		_music->soundSetVolume(_music->getSlot(slot), value);
+	if (musicSlot->volume != value) {
+		musicSlot->volume = value;
+		_music->soundSetVolume(musicSlot, value);
 		PUT_SEL32V(_segMan, obj, vol, value);
 	}
 #endif
@@ -834,12 +831,6 @@ void SoundCommandParser::cmdSetHandlePriority(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	script_set_priority(_resMan, _segMan, _state, obj, value);
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
-		warning("cmdSetHandlePriority: Slot not found");
-		return;
-	}
-
 	if (value == -1) {
 		//pSnd->prio=0;field_15B=0
 		PUT_SEL32V(_segMan, obj, flags, GET_SEL32V(_segMan, obj, flags) & 0xFD);
@@ -861,16 +852,16 @@ void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 		_state->sfx_song_set_loops(handle, value);
 	}
 #else
-	int slot = _music->findListSlot(obj);
-	if (slot < 0) {
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
 		warning("cmdSetHandleLoop: Slot not found");
 		return;
 	}
 	if (value == -1) {
-		_music->getSlot(slot)->loop = 1;
+		musicSlot->loop = 1;
 		PUT_SEL32V(_segMan, obj, loop, 0xFFFF);
 	} else {
-		_music->getSlot(slot)->loop = 0;
+		musicSlot->loop = 0;
 		PUT_SEL32V(_segMan, obj, loop, 1);
 	}
 #endif

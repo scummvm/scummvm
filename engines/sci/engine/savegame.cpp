@@ -72,8 +72,6 @@ SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorT
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_songlib(Common::Serializer &s, SongLibrary &obj);
-#else
-static void sync_songlib(Common::Serializer &s, SciMusic *music);
 #endif
 
 static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
@@ -430,7 +428,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sync_songlib(s, _sound._songlib);
 #else
-	sync_songlib(s, _soundCmd->_music);
+	_soundCmd->_music->saveLoadWithSerializer(s);
 #endif
 }
 
@@ -618,27 +616,31 @@ static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
 	}
 }
 #else
-static void sync_songlib(Common::Serializer &s, SciMusic *music) {
+void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
+	_mutex.lock();
+
 	int songcount = 0;
 	if (s.isSaving())
-		songcount = music->listSize();
+		songcount = _playList.size();
 	s.syncAsUint32LE(songcount);
 
 	if (s.isLoading()) {
-		music->stopAll();
+		stopAll();
 
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			syncSong(s, curSong);
-			music->pushBackSlot(curSong);
+			_playList.push_back(curSong);
 		}
 	} else {
 		for (int i = 0; i < songcount; i++) {
-			syncSong(s, music->getSlot(i));
+			syncSong(s, _playList[i]);
 		}
 	}
+
+	_mutex.unlock();
 }
 #endif
 
@@ -951,21 +953,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_sound._suspended = s->_sound._suspended;
 	reconstruct_sounds(retval);
 #else
-	// Reconstruct sounds
-	SciMusic *music = retval->_soundCmd->_music;
-	for (uint32 i = 0; i < music->listSize(); i++) {
-		if (meta.savegame_version < 14) {
-			if (retval->detectDoSoundType() >= SCI_VERSION_1_EARLY) {
-				music->getSlot(i)->dataInc = GET_SEL32V(retval->_segMan, music->getSlot(i)->soundObj, dataInc);
-				music->getSlot(i)->volume = GET_SEL32V(retval->_segMan, music->getSlot(i)->soundObj, vol);
-			} else {
-				music->getSlot(i)->volume = 100;
-			}
-		}
-
-		music->getSlot(i)->soundRes = new SoundResource(music->getSlot(i)->resnum, retval->resMan, retval->detectDoSoundType());
-		music->soundInitSnd(music->getSlot(i));
-	}
+	retval->_soundCmd->_music->reconstructSounds(meta.savegame_version);
 #endif
 
 	// Message state:
