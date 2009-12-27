@@ -478,8 +478,7 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 
 //---------------------------------------------
 uint16 SciMusic::soundGetMasterVolume() {
-	return _pMixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * 0xF
-			/ Audio::Mixer::kMaxMixerVolume;
+	return (_pMixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 8) * 0xF / Audio::Mixer::kMaxMixerVolume;
 }
 //---------------------------------------------
 void SciMusic::soundSetMasterVolume(uint16 vol) {
