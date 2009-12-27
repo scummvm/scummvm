@@ -64,7 +64,6 @@ private:
 	SfxState *_state;
 #endif
 	AudioPlayer *_audio;
-	bool _hasNodePtr;
 	SciVersion _soundVersion;
 	int _argc;
 	reg_t *_argv;

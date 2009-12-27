@@ -133,8 +133,6 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 	_state = &((SciEngine *)g_engine)->getEngineState()->_sound;	// HACK
 #endif
 
-	_hasNodePtr = (((SciEngine*)g_engine)->getKernel()->_selectorCache.nodePtr != -1);
-
 	#ifndef USE_OLD_MUSIC_FUNCTIONS
 		_music = new SciMusic(_soundVersion);
 		_music->init();
@@ -249,9 +247,9 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 			return;
 	}
 
-	SongIteratorType type = !_hasNodePtr ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
+	SongIteratorType type = (_soundVersion <= SCI_VERSION_0_LATE) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
 
-	if (_hasNodePtr) {
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		if (GET_SEL32V(_segMan, obj, nodePtr)) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			_state->sfx_remove_song(handle);
@@ -264,7 +262,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
 #endif
 
-	if (!_hasNodePtr)
+	if (_soundVersion <= SCI_VERSION_0_LATE)
 		PUT_SEL32V(_segMan, obj, state, kSndStatusInitialized);
 	else
 		PUT_SEL32(_segMan, obj, nodePtr, obj);
@@ -321,7 +319,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 
-	if (!_hasNodePtr) {
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
@@ -401,7 +399,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		musicSlot = _music->getSlot(obj);
 	}
 
-	if (_hasNodePtr) {
+	if (_soundVersion >= SCI_VERSION_1_EARLY) {
 		PUT_SEL32V(_segMan, obj, min, 0);
 		PUT_SEL32V(_segMan, obj, sec, 0);
 		PUT_SEL32V(_segMan, obj, frame, 0);
@@ -432,7 +430,7 @@ void SoundCommandParser::changeHandleStatus(reg_t obj, int newStatus) {
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	if (obj.segment) {
 		_state->sfx_song_set_status(handle, newStatus);
-		if (!_hasNodePtr)
+		if (_soundVersion <= SCI_VERSION_0_LATE)
 			PUT_SEL32V(_segMan, obj, state, newStatus);
 	}
 }
@@ -449,7 +447,7 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 	if (obj.segment) {
 		_state->sfx_remove_song(handle);
 
-		if (!_hasNodePtr)
+		if (_soundVersion <= SCI_VERSION_0_LATE)
 			PUT_SEL32V(_segMan, obj, handle, 0x0000);
 	}
 
@@ -464,7 +462,7 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 	cmdStopHandle(obj, value);
 
 	_music->soundKill(musicSlot);
-	if (_hasNodePtr)
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		PUT_SEL32(_segMan, obj, nodePtr, NULL_REG);
 	else
 		PUT_SEL32V(_segMan, obj, state, kSndStatusStopped);
@@ -478,7 +476,7 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	changeHandleStatus(obj, SOUND_STATUS_STOPPED);
 
-	if (_hasNodePtr)
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
@@ -488,7 +486,7 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 	}
 
 	PUT_SEL32V(_segMan, obj, handle, 0);
-	if (!_hasNodePtr)
+	if (_soundVersion <= SCI_VERSION_0_LATE)
 		PUT_SEL32V(_segMan, obj, state, kSndStatusStopped);
 	else
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
@@ -503,7 +501,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 		return;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (!_hasNodePtr)
+	if (_soundVersion <= SCI_VERSION_0_LATE)
 		changeHandleStatus(obj, SOUND_STATUS_SUSPENDED);
 	else
 		changeHandleStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
@@ -514,7 +512,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 		return;
 	}
 
-	if (!_hasNodePtr) {
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		PUT_SEL32V(_segMan, obj, state, kSndStatusPaused);
 		_music->soundPause(musicSlot);
 	} else {
@@ -578,7 +576,7 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 		/* FIXME: The next couple of lines actually STOP the handle, rather
 		** than fading it! */
 		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		if (!_hasNodePtr)
+		if (_soundVersion <= SCI_VERSION_0_LATE)
 			PUT_SEL32V(_segMan, obj, state, SOUND_STATUS_STOPPED);
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 	} else {
@@ -634,7 +632,7 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
-	if (!_hasNodePtr && obj.segment) {
+	if (_soundVersion <= SCI_VERSION_0_LATE && obj.segment) {
  		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
  		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, pri));
  	}
