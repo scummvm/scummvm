@@ -167,12 +167,12 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x80*/ "AssertPalette",
 	/*0x81*/ "TextColors",
 	/*0x82*/ "TextFonts",
-	/*0x83*/ "Record",
-	/*0x84*/ "PlayBack",
+	/*0x83*/ "Dummy",	// Record
+	/*0x84*/ "Dummy",	// PlayBack
 	/*0x85*/ "ShowMovie",
 	/*0x86*/ "SetVideoMode",
 	/*0x87*/ "SetQuitStr",
-	/*0x88*/ "DbugStr"
+	/*0x88*/ "Dummy"	// DbugStr
 };
 
 struct SciKernelFunction {
