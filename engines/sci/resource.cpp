@@ -819,7 +819,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
-	// SCI32 volume format :  {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
+	// SCI32 volume format:   {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
 	// Try to parse volume with SCI0 scheme to see if it make sense
 	// Checking 1MB of data should be enough to determine the version
 	uint16 resId, wCompression;
@@ -835,7 +835,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 		resId = fileStream->readUint16LE();
 		dwPacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
 		dwUnpacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
-		wCompression = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		wCompression = fileStream->readUint16LE();
 		if (fileStream->eos()) {
 			delete fileStream;
 			return curVersion;
@@ -873,7 +873,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 		else if (curVersion == kResVersionSci11)
 			fileStream->seek(sci11Align && ((9 + dwPacked) % 2) ? dwPacked + 1 : dwPacked, SEEK_CUR);
 		else if (curVersion == kResVersionSci32)
-			fileStream->seek(dwPacked - 2, SEEK_CUR);
+			fileStream->seek(dwPacked, SEEK_CUR);
 	}
 
 	delete fileStream;
