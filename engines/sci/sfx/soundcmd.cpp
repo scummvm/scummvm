@@ -547,20 +547,11 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 }
 
 void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
-	//_acc = _music->SoundOn(argc > 1 ? argv[2] : 0xFF);
-
-	// TODO
-
-	/* if there's a parameter, we're setting it.  Otherwise, we're querying it. */
-	/*int param = UPARAM_OR_ALT(1,-1);
-
-	if (param != -1)
-	s->acc = s->sound_server->command(s, SOUND_COMMAND_SET_MUTE, 0, param);
-	else
-	s->acc = s->sound_server->command(s, SOUND_COMMAND_GET_MUTE, 0, 0);*/
-
-	// TODO
-	warning("STUB: cmdMuteSound");
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	if (_argc > 0)
+		_music->soundSetSoundOn(_argv[0].toUint16());
+	_acc = make_reg(0, _music->soundGetSoundOn());
+#endif
 }
 
 void SoundCommandParser::cmdVolume(reg_t obj, int16 value) {

@@ -622,6 +622,24 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	_mutex.lock();
 
 	int songcount = 0;
+	byte masterVolume = soundGetMasterVolume();
+
+	if (s.isSaving()) {
+		s.syncAsByte(_soundOn);
+		s.syncAsByte(masterVolume);
+	} else if (s.isLoading()) {
+		if (s.getVersion() >= 15) {
+			s.syncAsByte(_soundOn);
+			s.syncAsByte(masterVolume);
+		} else {
+			_soundOn = true;
+			masterVolume = 15;
+		}
+
+		soundSetSoundOn(_soundOn);
+		soundSetMasterVolume(masterVolume);
+	}
+
 	if (s.isSaving())
 		songcount = _playList.size();
 	s.syncAsUint32LE(songcount);

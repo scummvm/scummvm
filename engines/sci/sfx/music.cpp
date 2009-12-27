@@ -41,7 +41,7 @@ static int f_compare(const void *arg1, const void *arg2) {
 }
 
 SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion) {
+	: _soundVersion(soundVersion), _soundOn(true) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations

@@ -114,10 +114,13 @@ public:
 	void soundSetPriority(MusicEntry *pSnd, byte prio);
 	uint16 soundGetMasterVolume();
 	void soundSetMasterVolume(uint16 vol);
-	uint16 soundGetVoices();
-	uint32 soundGetTempo() {
-		return _dwTempo;
+	uint16 soundGetSoundOn() { return _soundOn; }
+	void soundSetSoundOn(bool soundOnFlag) {
+		_soundOn = soundOnFlag;
+		_pMidiDrv->playSwitch(soundOnFlag);
 	}
+	uint16 soundGetVoices();
+	uint32 soundGetTempo() { return _dwTempo; }
 
 	MusicEntry *getSlot(reg_t obj) { 
 		_mutex.lock();
@@ -169,6 +172,7 @@ private:
 	static void miditimerCallback(void *p);
 
 	MusicList _playList;
+	bool _soundOn;
 };
 
 } // end of namespace
