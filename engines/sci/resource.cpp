@@ -1822,7 +1822,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
-		// SCI0 only has a header of 0x11/0x21 byte length and the actual miditrack follows afterwards
+		// SCI0 only has a header of 0x11/0x21 byte length and the actual midi track follows afterwards
 		_trackCount = 1;
 		_tracks = new Track[_trackCount];
 		_tracks->nDigital = 0xFF;
@@ -1847,7 +1847,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-		// count # of tracks
+		// Count # of tracks
 		_trackCount = 0;
 		while ((*data++) != 0xFF) {
 			_trackCount++;
@@ -1858,13 +1858,13 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		_tracks = new Track[_trackCount];
 		data = resource->data;
 		for (trackNr = 0; trackNr < _trackCount; trackNr++) {
-			// Track info starts with track-type:BYTE
-			// Then channel-information gets appeneded Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
-			// 0xFF:BYTE as terminator to end that track and begin with another track-type
-			// track-type 0xFF means end-of-tracks
+			// Track info starts with track type:BYTE
+			// Then the channel information gets appended Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
+			// 0xFF:BYTE as terminator to end that track and begin with another track type
+			// Track type 0xFF is the marker signifying the end of the tracks
 
 			_tracks[trackNr].type = (TrackType) *data++;
-			// counting # of channels used
+			// Counting # of channels used
 			data2 = data;
 			_tracks[trackNr].channelCount = 0;
 			while (*data2 != 0xFF) {
@@ -1872,17 +1872,17 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 				_tracks[trackNr].channelCount++;
 			}
 			_tracks[trackNr].channels = new Channel[_tracks[trackNr].channelCount];
-			if (_tracks[trackNr].type != 0xF0) { // digital track marker - not supported at time
-				_tracks[trackNr].nDigital = 0xFF; // meanwhile - no ditigal channel associated
+			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
+				_tracks[trackNr].nDigital = 0xFF; // No digital channel associated
 				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
 					channel = &_tracks[trackNr].channels[channelNr];
 					channel->unk = READ_LE_UINT16(data);
 					channel->data = resource->data + READ_LE_UINT16(data + 2) + 2;
-					channel->size = READ_LE_UINT16(data + 4) - 2; // not counting channel header
+					channel->size = READ_LE_UINT16(data + 4) - 2; // Not counting channel header
 					channel->number = *(channel->data - 2);
 					channel->poly = *(channel->data - 1);
 					channel->time = channel->prev = 0;
-					if (channel->number == 0xFE) // digital channel
+					if (channel->number == 0xFE) // Digital channel
 						_tracks[trackNr].nDigital = channelNr;
 					data += 6;
 				}
@@ -1890,10 +1890,10 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 				// Skip over digital track
 				data += 6;
 			}
-			data++; // skipping 0xFF that closes channels list
+			data++; // Skipping 0xFF that closes channels list
 		}
 		/*
-		digital track ->ptr points to header:
+		Digital track ->ptr points to header:
 		[w] sample rate
 		[w] size
 		[w] ? 00 00  maybe compression flag
@@ -1934,7 +1934,7 @@ SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
 	return NULL;
 }
 
-// Gets the filter-mask for SCI0 sound resources
+// Gets the filter mask for SCI0 sound resources
 int SoundResource::getChannelFilterMask(int hardwareMask) {
 	byte *data = _innerResource->data;
 	int channelMask = 0;
@@ -1942,7 +1942,7 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		// TODO: MT32 driver uses no hardwaremask at all and uses all channels
+		// TODO: MT32 driver uses no hardware mask at all and uses all channels
 		switch (hardwareMask) {
 		case 0x01: // Adlib needs an additional reverse check against bit 3
 			reverseHardwareMask = 0x08;
@@ -1958,12 +1958,12 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 			channelMask = channelMask >> 1;
 			if (*data & hardwareMask) {
 				if ((reverseHardwareMask == 0) || ((*data & reverseHardwareMask) == 0)) {
-					// this Channel is supposed to get played for hardware
+					// This Channel is supposed to get played for hardware
 					channelMask |= 0x8000;
 				}
 			}
 			if ((*data & 0x08) && ((*data & 0x01) == 0)) {
-				// this channel is control channel, so don't filter it
+				// This channel is control channel, so don't filter it
 				channelMask |= 0x8000;
 				// TODO: We need to accept this channel in parseNextEvent() for events
 			}
@@ -1975,17 +1975,18 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 		data++; // Skip over digital sample flag
 		// Now all 16 channels follow. Each one is specified by 2 bytes
 		// 1st byte is voices count
-		// 2nd byte is play-mask which specifies if the channel is supposed to get played by the corresponding hardware
+		// 2nd byte is play mask, which specifies if the channel is supposed to be played
+		// by the corresponding hardware
 		for (int channelNr = 0; channelNr < 16; channelNr++) {
 			data++;
 			channelMask = channelMask >> 1;
 			if (*data & hardwareMask) {
-				// this Channel is supposed to get played for hardware
+				// This Channel is supposed to be played by the hardware
 				channelMask |= 0x8000;
 			}
 			data++;
 		}
-		// Play channel 15 anytime (control channel)
+		// Play channel 15 at all times (control channel)
 		channelMask |= 0x8000;
 		break;
 	default:
