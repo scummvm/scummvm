@@ -370,20 +370,18 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 		pSnd->fadeTicker--;
 	else {
 		pSnd->fadeTicker = pSnd->fadeTickerStep;
-		if (pSnd->volume + pSnd->fadeStep > pSnd->fadeTo) {
+		pSnd->volume += pSnd->fadeStep;
+		if (((pSnd->fadeStep > 0) && (pSnd->volume >= pSnd->fadeTo)) || ((pSnd->fadeStep < 0) && (pSnd->volume <= pSnd->fadeTo))) {
 			pSnd->volume = pSnd->fadeTo;
 			pSnd->fadeStep = 0;
-		} else {
-			pSnd->volume += pSnd->fadeStep;
 		}
 
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 
 		if (pSnd->fadeStep == 0) {
 			// Signal the engine scripts that the sound is done fading
-			// FIXME: is this correct?
-			//SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-			//PUT_SEL32V(segMan, pSnd->soundObj, signal, SIGNAL_OFFSET);
+			SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+			PUT_SEL32V(segMan, pSnd->soundObj, signal, SIGNAL_OFFSET);
 		}
 	}
 }

@@ -71,7 +71,7 @@ struct MusicEntry {
 	uint16 ticker;
 	byte prio;
 	byte loop;
-	byte volume;
+	int16 volume;
 
 	byte fadeTo;
 	short fadeStep;
