@@ -782,8 +782,8 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
 	int size = READ_LE_UINT32(soundData + 4);
-	Common::MemoryReadStream stream(soundData, size);
-	Audio::AudioStream *sndStream = Audio::makeWAVStream(&stream, true, loop);
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, size);
+	Audio::AudioStream *sndStream = Audio::makeWAVStream(stream, true, loop);
 
 	convertVolume(vol);
 	convertPan(pan);
