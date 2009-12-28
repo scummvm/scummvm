@@ -222,8 +222,8 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 
 	if (command < _soundCommands.size()) {
 		//if (strcmp(_soundCommands[command]->desc, "cmdUpdateCues"))
-		//printf("%s\n", _soundCommands[command]->desc);	// debug
-		debugC(2, kDebugLevelSound, "%s", _soundCommands[command]->desc);
+		//printf("%s, object %04x:%04x\n", _soundCommands[command]->desc, PRINT_REG(obj));	// debug
+		debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
 		(this->*(_soundCommands[command]->sndCmd))(obj, value);
 	} else {
 		warning("Invalid sound command requested (%d), valid range is 0-%d", command, _soundCommands.size() - 1);
@@ -507,6 +507,14 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 		changeHandleStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
+
+	if (musicSlot->status == kSndStatusStopped) {
+		// WORKAROUND for the Sierra logo screen in Castle of Dr. Brain, where the
+		// game tries to pause/unpause the wrong sound in the playlist
+		if (!strcmp(_segMan->getObjectName(obj), "cMusic2"))
+			musicSlot = _music->getSlot(_segMan->findObjectByName("cMusic"));
+	}
+
 	if (!musicSlot) {
 		warning("cmdPauseHandle: Slot not found");
 		return;
