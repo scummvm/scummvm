@@ -209,21 +209,29 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	int16 value = (argc > 2) ? argv[2].toSint16() : 0;
 	_acc = acc;
-	_argc = argc;
 	_argv = argv;
 
-	if (argc > 5) {	// for cmdSendMidi
-		_midiCmd = argv[3].toUint16() == 0xff ?
+	// cmdMuteSound and cmdVolume do not operate on an object, but need the number of
+	// arguments passed. We load this in the value
+	if (obj.isNull())
+		value = argc - 1;	// minus the command
+
+	if (argc == 6) {	// cmdSendMidi
+		byte channel = argv[2].toUint16() & 0xf;
+		byte midiCmd = argv[3].toUint16() == 0xff ?
 					  0xe0 : /* Pitch wheel */
 					  0xb0; /* argv[3].toUint16() is actually a controller number */
-		_controller = argv[3].toUint16();
-		_param = argv[4].toUint16();
+		
+		uint16 controller = argv[4].toUint16();
+		uint16 param = argv[5].toUint16();
+
+		_midiCommand = (channel | midiCmd) | ((uint32)controller << 8) | ((uint32)param << 16);
 	}
 
 	if (command < _soundCommands.size()) {
 		if (strcmp(_soundCommands[command]->desc, "cmdUpdateCues")) {
 			//printf("%s, object %04x:%04x\n", _soundCommands[command]->desc, PRINT_REG(obj));	// debug
-			//debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
+			debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
 		}
 
 		// If the command is operating on an object of the sound list, don't allow onTimer to kick in till the
@@ -563,8 +571,8 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	if (_argc > 0)
-		_music->soundSetSoundOn(_argv[0].toUint16());
+	if (value > 0)
+		_music->soundSetSoundOn(obj.toUint16());
 	_acc = make_reg(0, _music->soundGetSoundOn());
 #endif
 }
@@ -576,7 +584,7 @@ void SoundCommandParser::cmdVolume(reg_t obj, int16 value) {
 
 	_acc = make_reg(0, _state->sfx_getVolume());
 #else
-		if (_argc > 1)
+		if (value > 0)
 			_music->soundSetMasterVolume(obj.toSint16());
 		_acc = make_reg(0, _music->soundGetMasterVolume());
 #endif
@@ -779,11 +787,10 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-	_state->sfx_send_midi(handle, value, _midiCmd, _controller, _param);
+	//SongHandle handle = FROBNICATE_HANDLE(obj);
+	//_state->sfx_send_midi(handle, value, _midiCmd, _controller, _param);
 #else
-	// TODO: implement this...
-	warning("STUB: cmdSendMidi");
+	_music->sendMidiCommand(_midiCommand);
 #endif
 }
 

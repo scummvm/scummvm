@@ -162,6 +162,8 @@ public:
 	void enterCriticalSection() { _inCriticalSection = true; }
 	void leaveCriticalSection() { _inCriticalSection = false; }
 
+	void sendMidiCommand (uint32 cmd) { _pMidiDrv->send(cmd); }
+
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 #endif

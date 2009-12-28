@@ -70,8 +70,8 @@ private:
 #endif
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;
-	int _argc;
-	reg_t *_argv;
+	reg_t *_argv;	// for cmdFadeHandle
+	uint32 _midiCommand;	// for cmdSendMidi
 	reg_t _acc;
 	int _midiCmd, _controller, _param;
 
