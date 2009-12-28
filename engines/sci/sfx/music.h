@@ -91,6 +91,10 @@ public:
 
 public:
 	MusicEntry();
+	~MusicEntry();
+
+	void doFade();
+	void onTimer(SciVersion soundVersion, Audio::Mixer *mixer);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -169,8 +173,6 @@ protected:
 	void patchSysEx(byte * addr, byte *pdata, int len);
 	void patchUpdateAddr(byte *addr, int len);
 #endif
-
-	void doFade(MusicEntry *pSnd);
 
 	SciVersion _soundVersion;
 

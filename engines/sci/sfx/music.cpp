@@ -331,48 +331,51 @@ void SciMusic::onTimer() {
 	if (_inCriticalSection)
 		return;
 
-	uint sz = _playList.size();
-	for (uint i = 0; i < sz; i++) {
-		if (_playList[i]->status != kSoundPlaying)
-			continue;
-		if (_playList[i]->pMidiParser) {
-			if (_playList[i]->fadeStep)
-				doFade(_playList[i]);
-			_playList[i]->pMidiParser->onTimer();
-			_playList[i]->ticker = (uint16)_playList[i]->pMidiParser->getTick();
-		} else if (_playList[i]->pStreamAud) {
-			if (!_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)) {
-				_playList[i]->ticker = 0xFFFF;
-				_playList[i]->status = kSoundStopped;
-
-				// Signal the engine scripts that the sound is done playing
-				// FIXME: is there any other place this can be triggered properly?
-				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-				PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
-				if (_soundVersion <= SCI_VERSION_0_LATE)
-					PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSoundStopped);
-			} else {
-				_playList[i]->ticker = (uint16)(_pMixer->getSoundElapsedTime(
-						_playList[i]->hCurrentAud) * 0.06);
-			}
-		}
-	}//for()
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		(*i)->onTimer(_soundVersion, _pMixer);
+	}
 }
 
-void SciMusic::doFade(MusicEntry *pSnd) {
+void MusicEntry::onTimer(SciVersion soundVersion, Audio::Mixer *mixer) {
+	if (status != kSoundPlaying)
+		return;
+	if (pMidiParser) {
+		if (fadeStep)
+			doFade();
+		pMidiParser->onTimer();
+		ticker = (uint16)pMidiParser->getTick();
+	} else if (pStreamAud) {
+		if (!mixer->isSoundHandleActive(hCurrentAud)) {
+			ticker = 0xFFFF;
+			status = kSoundStopped;
+
+			// Signal the engine scripts that the sound is done playing
+			// FIXME: is there any other place this can be triggered properly?
+			SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+			PUT_SEL32V(segMan, soundObj, signal, SIGNAL_OFFSET);
+			if (soundVersion <= SCI_VERSION_0_LATE)
+				PUT_SEL32V(segMan, soundObj, state, kSoundStopped);
+		} else {
+			ticker = (uint16)(mixer->getSoundElapsedTime(hCurrentAud) * 0.06);
+		}
+	}
+}
+
+void MusicEntry::doFade() {
 	// This is called from inside onTimer, where the mutex is already locked
 
-	if (pSnd->fadeTicker)
-		pSnd->fadeTicker--;
+	if (fadeTicker)
+		fadeTicker--;
 	else {
-		pSnd->fadeTicker = pSnd->fadeTickerStep;
-		pSnd->volume += pSnd->fadeStep;
-		if (((pSnd->fadeStep > 0) && (pSnd->volume >= pSnd->fadeTo)) || ((pSnd->fadeStep < 0) && (pSnd->volume <= pSnd->fadeTo))) {
-			pSnd->volume = pSnd->fadeTo;
-			pSnd->fadeStep = 0;
+		fadeTicker = fadeTickerStep;
+		volume += fadeStep;
+		if (((fadeStep > 0) && (volume >= fadeTo)) || ((fadeStep < 0) && (volume <= fadeTo))) {
+			volume = fadeTo;
+			fadeStep = 0;
 		}
 
-		pSnd->pMidiParser->setVolume(pSnd->volume);
+		pMidiParser->setVolume(volume);
 	}
 }
 
@@ -470,10 +473,11 @@ void SciMusic::printPlayList(Console *con) {
 	Common::StackLock lock(_mutex);
 	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
 
-	for (uint32 i = 0; i < _playList.size(); i++) {
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		con->DebugPrintf("%d: %04x:%04x, priority: %d, status: %s\n", i, 
-						PRINT_REG(_playList[i]->soundObj), _playList[i]->prio,
-						musicStatus[_playList[i]->status]);
+						PRINT_REG((*i)->soundObj), (*i)->prio,
+						musicStatus[(*i)->status]);
 	}
 }
 
@@ -481,18 +485,19 @@ void SciMusic::reconstructPlayList(int savegame_version) {
 	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 	ResourceManager *resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
 
-	for (uint32 i = 0; i < _playList.size(); i++) {
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		if (savegame_version < 14) {
 			if (_soundVersion >= SCI_VERSION_1_EARLY) {
-				_playList[i]->dataInc = GET_SEL32V(segMan, _playList[i]->soundObj, dataInc);
-				_playList[i]->volume = GET_SEL32V(segMan, _playList[i]->soundObj, vol);
+				(*i)->dataInc = GET_SEL32V(segMan, (*i)->soundObj, dataInc);
+				(*i)->volume = GET_SEL32V(segMan, (*i)->soundObj, vol);
 			} else {
-				_playList[i]->volume = 100;
+				(*i)->volume = 100;
 			}
 		}
 
-		_playList[i]->soundRes = new SoundResource(_playList[i]->resnum, resMan, _soundVersion);
-		soundInitSnd(_playList[i]);
+		(*i)->soundRes = new SoundResource((*i)->resnum, resMan, _soundVersion);
+		soundInitSnd(*i);
 	}
 }
 
@@ -518,6 +523,9 @@ MusicEntry::MusicEntry() {
 
 	pStreamAud = 0;
 	pMidiParser = 0;
+}
+
+MusicEntry::~MusicEntry() {
 }
 
 } // End of namespace Sci
