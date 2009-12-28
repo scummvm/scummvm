@@ -176,7 +176,7 @@ T sortChoosePivot(T first, T last) {
 }
 
 template<typename T, class StrictWeakOrdering>
-T sortPatition(T first, T last, T pivot, StrictWeakOrdering &comp) {
+T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
 	--last;
 	SWAP(*pivot, *last);
 
@@ -203,7 +203,7 @@ void sort(T first, T last, StrictWeakOrdering comp) {
 		return;
 
 	T pivot = sortChoosePivot(first, last);
-	pivot = sortPatition(first, last, pivot, comp);
+	pivot = sortPartition(first, last, pivot, comp);
 	sort<T, StrictWeakOrdering>(first, pivot, comp);
 	sort<T, StrictWeakOrdering>(++pivot, last, comp);
 }
