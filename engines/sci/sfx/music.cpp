@@ -393,12 +393,6 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 		}
 
 		pSnd->pMidiParser->setVolume(pSnd->volume);
-
-		if (pSnd->fadeStep == 0) {
-			// Signal the engine scripts that the sound is done fading
-			SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-			PUT_SEL32V(segMan, pSnd->soundObj, signal, SIGNAL_OFFSET);
-		}
 	}
 }
 
