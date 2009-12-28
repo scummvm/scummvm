@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 
 #include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/resource.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
@@ -490,6 +491,17 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
+}
+
+void SciMusic::printSongLib(Console *con) {
+	Common::StackLock lock(_mutex);
+	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
+
+	for (uint32 i = 0; i < _playList.size(); i++) {
+		con->DebugPrintf("%d: %04x:%04x, priority: %d, status: %s\n", i, 
+						PRINT_REG(_playList[i]->soundObj), _playList[i]->prio,
+						musicStatus[_playList[i]->status]);
+	}
 }
 
 void SciMusic::reconstructSounds(int savegame_version) {

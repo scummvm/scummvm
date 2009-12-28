@@ -140,6 +140,8 @@ public:
 		_playList.push_back(slotEntry);
 	}
 
+	void printSongLib(Console *con);
+
 	void reconstructSounds(int savegame_version);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS

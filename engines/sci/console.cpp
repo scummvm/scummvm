@@ -43,6 +43,8 @@
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/iterator/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
+#else
+#include "sci/sfx/music.h"
 #endif
 #include "sci/sfx/softseq/mididriver.h"
 #include "sci/vocabulary.h"
@@ -1623,6 +1625,8 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 		DebugPrintf("\n");
 	} while (seeker);
 	DebugPrintf("\n");
+#else
+	_vm->getEngineState()->_soundCmd->_music->printSongLib(this);
 #endif
 
 	return true;
