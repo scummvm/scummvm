@@ -1010,7 +1010,7 @@ int LoLEngine::olol_inflictDamage(EMCState *script) {
 }
 
 int LoLEngine::olol_moveMonster(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	MonsterInPlay *m = &_monsters[stackPos(0)];
 
 	if (m->mode == 1 || m->mode == 2) {
