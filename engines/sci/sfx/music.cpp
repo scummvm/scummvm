@@ -42,7 +42,7 @@ static int f_compare(const void *arg1, const void *arg2) {
 }
 
 SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion), _soundOn(true) {
+	: _soundVersion(soundVersion), _soundOn(true), _inCriticalSection(false) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -125,8 +125,6 @@ bool SciMusic::saveState(Common::OutSaveFile *pFile) {
 
 //----------------------------------------
 void SciMusic::clearPlayList() {
-	Common::StackLock lock(_mutex);
-
 	_pMixer->stopAll();
 
 	while (!_playList.empty()) {
@@ -136,8 +134,6 @@ void SciMusic::clearPlayList() {
 }
 //----------------------------------------
 void SciMusic::stopAll() {
-	Common::StackLock lock(_mutex);
-
 	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 	
 	for (uint32 i = 0; i < _playList.size(); i++) {
@@ -352,6 +348,9 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 void SciMusic::onTimer() {
 	Common::StackLock lock(_mutex);
 
+	if (_inCriticalSection)
+		return;
+
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
 		if (_playList[i]->status != kSndStatusPlaying)
@@ -399,8 +398,6 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 
 //---------------------------------------------
 void SciMusic::soundPlay(MusicEntry *pSnd) {
-	Common::StackLock lock(_mutex);
-
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
 	for (i = 0; i < sz && _playList[i] != pSnd; i++)
@@ -438,8 +435,6 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 }
 //---------------------------------------------
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
-	Common::StackLock lock(_mutex);
-
 	pSnd->prio = prio;
 	sortPlayList();
 }
@@ -456,8 +451,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		pSnd->pStreamAud = NULL;
 	}
-
-	Common::StackLock lock(_mutex);
 
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
@@ -493,7 +486,7 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
 }
 
-void SciMusic::printSongLib(Console *con) {
+void SciMusic::printPlayList(Console *con) {
 	Common::StackLock lock(_mutex);
 	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
 
@@ -504,9 +497,7 @@ void SciMusic::printSongLib(Console *con) {
 	}
 }
 
-void SciMusic::reconstructSounds(int savegame_version) {
-	Common::StackLock lock(_mutex);
-
+void SciMusic::reconstructPlayList(int savegame_version) {
 	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 	ResourceManager *resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
 

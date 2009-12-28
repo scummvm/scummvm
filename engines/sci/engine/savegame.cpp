@@ -428,7 +428,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sync_songlib(s, _sound._songlib);
 #else
-	_soundCmd->_music->saveLoadWithSerializer(s);
+	_soundCmd->syncPlayList(s);
 #endif
 }
 
@@ -969,7 +969,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_sound._suspended = s->_sound._suspended;
 	reconstruct_sounds(retval);
 #else
-	retval->_soundCmd->_music->reconstructSounds(meta.savegame_version);
+	retval->_soundCmd->reconstructPlayList(meta.savegame_version);
 #endif
 
 	// Message state:

@@ -1626,7 +1626,7 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 	} while (seeker);
 	DebugPrintf("\n");
 #else
-	_vm->getEngineState()->_soundCmd->_music->printSongLib(this);
+	_vm->getEngineState()->_soundCmd->printPlayList(this);
 #endif
 
 	return true;

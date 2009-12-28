@@ -221,10 +221,22 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	if (command < _soundCommands.size()) {
-		//if (strcmp(_soundCommands[command]->desc, "cmdUpdateCues"))
-		//printf("%s, object %04x:%04x\n", _soundCommands[command]->desc, PRINT_REG(obj));	// debug
-		debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
+		if (strcmp(_soundCommands[command]->desc, "cmdUpdateCues")) {
+			//printf("%s, object %04x:%04x\n", _soundCommands[command]->desc, PRINT_REG(obj));	// debug
+			//debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
+		}
+
+		// If the command is operating on an object of the sound list, don't allow onTimer to kick in till the
+		// command is done
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+		if (obj != NULL_REG)
+			_music->enterCriticalSection();
+#endif
 		(this->*(_soundCommands[command]->sndCmd))(obj, value);
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+		if (obj != NULL_REG)
+			_music->leaveCriticalSection();
+#endif
 	} else {
 		warning("Invalid sound command requested (%d), valid range is 0-%d", command, _soundCommands.size() - 1);
 	}
@@ -270,11 +282,6 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	PUT_SEL32(_segMan, obj, handle, obj);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	// Check if a track with the same sound object is already playing
-	MusicEntry *oldSound = _music->getSlot(obj);
-	if (oldSound)
-		_music->soundKill(oldSound);
-
 	MusicEntry *newSound = new MusicEntry();
 	newSound->soundRes = 0;
 	newSound->resnum = number;
@@ -293,6 +300,12 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->fadeTicker = 0;
 	newSound->fadeTickerStep = 0;
 	newSound->status = kSndStatusStopped;
+
+	// Check if a track with the same sound object is already playing
+	MusicEntry *oldSound = _music->getSlot(obj);
+	if (oldSound)
+		_music->soundKill(oldSound);
+
 	_music->pushBackSlot(newSound);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
@@ -871,6 +884,30 @@ void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 void SoundCommandParser::cmdSuspendSound(reg_t obj, int16 value) {
 	// TODO
 	warning("STUB: cmdSuspendSound");
+}
+
+void SoundCommandParser::clearPlayList() {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->clearPlayList();
+#endif
+}
+
+void SoundCommandParser::syncPlayList(Common::Serializer &s) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->saveLoadWithSerializer(s);
+#endif
+}
+
+void SoundCommandParser::reconstructPlayList(int savegame_version) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->reconstructPlayList(savegame_version);
+#endif
+}
+
+void SoundCommandParser::printPlayList(Console *con) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->printPlayList(con);
+#endif
 }
 
 } // End of namespace Sci

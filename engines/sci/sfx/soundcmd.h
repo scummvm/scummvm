@@ -33,6 +33,7 @@
 
 namespace Sci {
 
+class Console;
 class SciMusic;
 class SoundCommandParser;
 typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, int16 value);
@@ -53,8 +54,10 @@ public:
 #endif
 
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
-
-	SciMusic *_music;
+	void clearPlayList();
+	void syncPlayList(Common::Serializer &s);
+	void reconstructPlayList(int savegame_version);
+	void printPlayList(Console *con);
 
 private:
 	Common::Array<MusicEntryCommand*> _soundCommands;
@@ -62,6 +65,8 @@ private:
 	SegManager *_segMan;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState *_state;
+#else
+	SciMusic *_music;
 #endif
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;

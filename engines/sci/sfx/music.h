@@ -124,8 +124,6 @@ public:
 	uint32 soundGetTempo() { return _dwTempo; }
 
 	MusicEntry *getSlot(reg_t obj) { 
-		Common::StackLock lock(_mutex);
-
 		for (uint32 i = 0; i < _playList.size(); i++) {
 			if (_playList[i]->soundObj == obj) {
 				return _playList[i];
@@ -136,13 +134,15 @@ public:
 	}
 
 	void pushBackSlot(MusicEntry *slotEntry) {
-		Common::StackLock lock(_mutex);
 		_playList.push_back(slotEntry);
 	}
 
-	void printSongLib(Console *con);
+	void printPlayList(Console *con);
 
-	void reconstructSounds(int savegame_version);
+	void reconstructPlayList(int savegame_version);
+
+	void enterCriticalSection() { _inCriticalSection = true; }
+	void leaveCriticalSection() { _inCriticalSection = false; }
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -173,6 +173,7 @@ private:
 
 	MusicList _playList;
 	bool _soundOn;
+	bool _inCriticalSection;
 };
 
 } // end of namespace
