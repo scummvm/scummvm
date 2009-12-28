@@ -102,53 +102,53 @@ static void syncSong(Common::Serializer &s, Song &obj) {
 
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 
-static void syncSong(Common::Serializer &s, MusicEntry *song) {
+void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.getVersion() < 14) {
 		// Old sound system data. This data is only loaded, never saved (as we're never
 		// saving in the older version format)
 		uint32 handle = 0;
 		s.syncAsSint32LE(handle);
-		song->soundObj = DEFROBNICATE_HANDLE(handle);
-		s.syncAsSint32LE(song->resnum);
-		s.syncAsSint32LE(song->prio);
-		s.syncAsSint32LE(song->status);
+		soundObj = DEFROBNICATE_HANDLE(handle);
+		s.syncAsSint32LE(resnum);
+		s.syncAsSint32LE(prio);
+		s.syncAsSint32LE(status);
 		s.skip(4);	// restoreBehavior
 		uint32 restoreTime = 0;
 		s.syncAsSint32LE(restoreTime);
-		song->ticker = restoreTime * 60 / 1000;
-		s.syncAsSint32LE(song->loop);
+		ticker = restoreTime * 60 / 1000;
+		s.syncAsSint32LE(loop);
 		s.skip(4);	// hold
 		// volume and dataInc will be synced from the sound objects
 		// when the sound list is reconstructed in gamestate_restore()
-		song->volume = 100;
-		song->dataInc = 0;
+		volume = 100;
+		dataInc = 0;
 		// No fading info
-		song->fadeTo = 0;
-		song->fadeStep = 0;
-		song->fadeTicker = 0;
-		song->fadeTickerStep = 0;
+		fadeTo = 0;
+		fadeStep = 0;
+		fadeTicker = 0;
+		fadeTickerStep = 0;
 	} else {
 		// A bit more optimized saving
-		sync_reg_t(s, song->soundObj);
-		s.syncAsSint16LE(song->resnum);
-		s.syncAsSint16LE(song->dataInc);
-		s.syncAsSint16LE(song->ticker);
-		s.syncAsByte(song->prio);
-		s.syncAsByte(song->loop);
-		s.syncAsByte(song->volume);
-		s.syncAsByte(song->fadeTo);
-		s.syncAsSint16LE(song->fadeStep);
-		s.syncAsSint32LE(song->fadeTicker);
-		s.syncAsSint32LE(song->fadeTickerStep);
-		s.syncAsByte(song->status);
+		sync_reg_t(s, soundObj);
+		s.syncAsSint16LE(resnum);
+		s.syncAsSint16LE(dataInc);
+		s.syncAsSint16LE(ticker);
+		s.syncAsByte(prio);
+		s.syncAsByte(loop);
+		s.syncAsByte(volume);
+		s.syncAsByte(fadeTo);
+		s.syncAsSint16LE(fadeStep);
+		s.syncAsSint32LE(fadeTicker);
+		s.syncAsSint32LE(fadeTickerStep);
+		s.syncAsByte(status);
 	}
 
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()
 	if (s.isLoading()) {
-		song->soundRes = 0;
-		song->pMidiParser = 0;
-		song->pStreamAud = 0;
+		soundRes = 0;
+		pMidiParser = 0;
+		pStreamAud = 0;
 	}
 }
 #endif
@@ -649,12 +649,12 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
-			syncSong(s, curSong);
+			curSong->saveLoadWithSerializer(s);
 			_playList.push_back(curSong);
 		}
 	} else {
 		for (int i = 0; i < songcount; i++) {
-			syncSong(s, _playList[i]);
+			_playList[i]->saveLoadWithSerializer(s);
 		}
 	}
 }

@@ -37,10 +37,6 @@
 
 namespace Sci {
 
-static int f_compare(const void *arg1, const void *arg2) {
-	return ((const MusicEntry *)arg2)->prio - ((const MusicEntry *)arg1)->prio;
-}
-
 SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion), _soundOn(true), _inCriticalSection(false) {
 
@@ -115,19 +111,20 @@ void SciMusic::clearPlayList() {
 void SciMusic::stopAll() {
 	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 	
-	for (uint32 i = 0; i < _playList.size(); i++) {
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSoundStopped);
+			PUT_SEL32V(segMan, (*i)->soundObj, state, kSoundStopped);
 		else
-			PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
+			PUT_SEL32V(segMan, (*i)->soundObj, signal, SIGNAL_OFFSET);
 
-		_playList[i]->dataInc = 0;
-		soundStop(_playList[i]);
+		(*i)->dataInc = 0;
+		soundStop(*i);
 	}
 }
 
 void SciMusic::miditimerCallback(void *p) {
-	SciMusic* aud = (SciMusic *)p;
+	SciMusic *aud = (SciMusic *)p;
 	aud->onTimer();
 }
 
@@ -144,6 +141,10 @@ uint16 SciMusic::soundGetVoices() {
 	default:
 		return 1;
 	}
+}
+
+static int f_compare(const void *arg1, const void *arg2) {
+	return ((const MusicEntry *)arg2)->prio - ((const MusicEntry *)arg1)->prio;
 }
 
 void SciMusic::sortPlayList() {
@@ -493,6 +494,30 @@ void SciMusic::reconstructPlayList(int savegame_version) {
 		_playList[i]->soundRes = new SoundResource(_playList[i]->resnum, resMan, _soundVersion);
 		soundInitSnd(_playList[i]);
 	}
+}
+
+
+MusicEntry::MusicEntry() {
+	soundObj = NULL_REG;
+
+	soundRes = 0;
+	resnum = 0;
+
+	dataInc = 0;
+	ticker = 0;
+	prio = 0;
+	loop = 0;
+	volume = 0;
+
+	fadeTo = 0;
+	fadeStep = 0;
+	fadeTicker = 0;
+	fadeTickerStep = 0;
+
+	status = kSoundStopped;
+
+	pStreamAud = 0;
+	pMidiParser = 0;
 }
 
 } // End of namespace Sci

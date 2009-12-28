@@ -58,7 +58,12 @@ enum SoundStatus {
 
 class MidiParser_SCI;
 
-struct MusicEntry {
+class MusicEntry
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	: public Common::Serializable
+#endif
+{
+public:
 	reg_t soundObj;
 
 	SoundResource *soundRes;
@@ -75,10 +80,21 @@ struct MusicEntry {
 	uint32 fadeTicker;
 	uint32 fadeTickerStep;
 
+	SoundStatus status;
+
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+//protected:
+#endif
 	MidiParser_SCI *pMidiParser;
 	Audio::AudioStream* pStreamAud;
 	Audio::SoundHandle hCurrentAud;
-	SoundStatus status;
+
+public:
+	MusicEntry();
+
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+#endif
 };
 
 typedef Common::Array<MusicEntry *> MusicList;
@@ -120,9 +136,10 @@ public:
 	uint32 soundGetTempo() const { return _dwTempo; }
 
 	MusicEntry *getSlot(reg_t obj) { 
-		for (uint32 i = 0; i < _playList.size(); i++) {
-			if (_playList[i]->soundObj == obj) {
-				return _playList[i];
+		const MusicList::iterator end = _playList.end();
+		for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+			if ((*i)->soundObj == obj) {
+				return *i;
 			}
 		}
 

@@ -283,7 +283,6 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	MusicEntry *newSound = new MusicEntry();
-	newSound->soundRes = 0;
 	newSound->resnum = number;
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
 		newSound->soundRes = new SoundResource(number, _resMan, _soundVersion);
@@ -291,15 +290,6 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, Audio::Mixer::kMaxChannelVolume);
-	newSound->dataInc = 0;
-	newSound->pStreamAud = 0;
-	newSound->pMidiParser = 0;
-	newSound->ticker = 0;
-	newSound->fadeTo = 0;
-	newSound->fadeStep = 0;
-	newSound->fadeTicker = 0;
-	newSound->fadeTickerStep = 0;
-	newSound->status = kSoundStopped;
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -317,7 +307,6 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 		// Found a relevant audio resource, play it
 		int sampleLen;
 		newSound->pStreamAud = _audio->getAudioStream(number, 65535, &sampleLen);
-		newSound->hCurrentAud = Audio::SoundHandle();
 	} else {
 		if (newSound->soundRes)
 			_music->soundInitSnd(newSound);
