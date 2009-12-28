@@ -538,7 +538,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 			if (value)
 				_music->soundPause(musicSlot);
 			else
-				_music->soundPlay(musicSlot);
+				_music->soundResume(musicSlot);
 		}
 		if (slotLoop) {
 			slotLoop = _music->enumPlayList(slotLoop);
@@ -565,7 +565,7 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 	}
 
 	PUT_SEL32V(_segMan, obj, state, kSoundPlaying);
-	_music->soundPlay(musicSlot);
+	_music->soundResume(musicSlot);
 #endif
 }
 

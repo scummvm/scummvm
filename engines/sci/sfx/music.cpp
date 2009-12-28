@@ -448,6 +448,9 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
+	pSnd->pauseCounter++;
+	if (pSnd->status == kSoundPaused)
+		return;
 	pSnd->status = kSoundPaused;
 	if (pSnd->pStreamAud)
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
@@ -455,6 +458,14 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 		pSnd->pMidiParser->pause();
 }
 
+void SciMusic::soundResume(MusicEntry *pSnd) {
+	pSnd->pauseCounter--;
+	if (pSnd->pauseCounter != 0)
+		return;
+	if (pSnd->status != kSoundPaused)
+		return;
+	soundPlay(pSnd);
+}
 
 uint16 SciMusic::soundGetMasterVolume() {
 	return (_pMixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 8) * 0xF / Audio::Mixer::kMaxMixerVolume;
@@ -526,6 +537,8 @@ MusicEntry::MusicEntry() {
 	prio = 0;
 	loop = 0;
 	volume = 0;
+
+	pauseCounter = 0;
 
 	fadeTo = 0;
 	fadeStep = 0;

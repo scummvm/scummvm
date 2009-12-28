@@ -75,6 +75,8 @@ public:
 	byte loop;
 	int16 volume;
 
+	int16 pauseCounter;
+
 	byte fadeTo;
 	short fadeStep;
 	uint32 fadeTicker;
@@ -127,6 +129,7 @@ public:
 	void soundStop(MusicEntry *pSnd);
 	void soundKill(MusicEntry *pSnd);
 	void soundPause(MusicEntry *pSnd);
+	void soundResume(MusicEntry *pSnd);
 	void soundSetVolume(MusicEntry *pSnd, byte volume);
 	void soundSetPriority(MusicEntry *pSnd, byte prio);
 	uint16 soundGetMasterVolume();
