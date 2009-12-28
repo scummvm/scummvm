@@ -38,7 +38,6 @@ namespace Sci {
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 //#define DEBUG_AVOIDPATH	//enable for avoidpath debugging
-#define OLD_PATHFINDING
 
 static void POLY_GET_POINT(const byte *p, int i, Common::Point &pt) {
 	pt.x = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE);

@@ -47,6 +47,8 @@ namespace Sci {
 //#define USE_OLDGFX
 // Uncomment this to use old music functions
 #define USE_OLD_MUSIC_FUNCTIONS
+// Uncomment this to use old pathfinding code
+#define OLD_PATHFINDING
 
 class Console;
 struct EngineState;
