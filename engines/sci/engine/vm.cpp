@@ -1591,11 +1591,17 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			int species;
 			species = scr->getHeap(addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
 			if (species < 0 || species >= (int)segMan->_classtable.size()) {
-				warning("Invalid species %d(0x%x) not in interval "
-				          "[0,%d) while instantiating script %d\n",
-				          species, species, segMan->_classtable.size(),
-				          script_nr);
-				return 0;
+				if (species == (int)segMan->_classtable.size()) {
+					// Happens in the LSL2 demo
+					warning("Applying workaround for an off-by-one invalid species access");
+					segMan->_classtable.resize(segMan->_classtable.size() + 1);
+				} else {
+					warning("Invalid species %d(0x%x) not in interval "
+							  "[0,%d) while instantiating script %d\n",
+							  species, species, segMan->_classtable.size(),
+							  script_nr);
+					return 0;
+				}
 			}
 
 			segMan->_classtable[species].reg = addr;
