@@ -41,10 +41,7 @@
 
 namespace Sci {
 
-typedef uint16 SCIHANDLE;
-typedef uint16 HEAPHANDLE;
-
-enum kTrackType {
+enum TrackType {
 	kTrackAdlib = 0,
 	kTrackGameBlaster = 9,
 	kTrackMT32 = 12,
@@ -52,11 +49,11 @@ enum kTrackType {
 	kTrackTandy = 19
 };
 
-enum kSndStatus {
-	kSndStatusStopped = 0,
-	kSndStatusInitialized = 1,
-	kSndStatusPaused = 2,
-	kSndStatusPlaying = 3
+enum SoundStatus {
+	kSoundStopped = 0,
+	kSoundInitialized = 1,
+	kSoundPaused = 2,
+	kSoundPlaying = 3
 };
 
 class MidiParser_SCI;
@@ -81,7 +78,7 @@ struct MusicEntry {
 	MidiParser_SCI *pMidiParser;
 	Audio::AudioStream* pStreamAud;
 	Audio::SoundHandle hCurrentAud;
-	kSndStatus status;
+	SoundStatus status;
 };
 
 typedef Common::Array<MusicEntry *> MusicList;

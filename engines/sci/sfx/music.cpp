@@ -138,7 +138,7 @@ void SciMusic::stopAll() {
 	
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
+			PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSoundStopped);
 		else
 			PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
 
@@ -353,7 +353,7 @@ void SciMusic::onTimer() {
 
 	uint sz = _playList.size();
 	for (uint i = 0; i < sz; i++) {
-		if (_playList[i]->status != kSndStatusPlaying)
+		if (_playList[i]->status != kSoundPlaying)
 			continue;
 		if (_playList[i]->pMidiParser) {
 			if (_playList[i]->fadeStep)
@@ -363,14 +363,14 @@ void SciMusic::onTimer() {
 		} else if (_playList[i]->pStreamAud) {
 			if (!_pMixer->isSoundHandleActive(_playList[i]->hCurrentAud)) {
 				_playList[i]->ticker = 0xFFFF;
-				_playList[i]->status = kSndStatusStopped;
+				_playList[i]->status = kSoundStopped;
 
 				// Signal the engine scripts that the sound is done playing
 				// FIXME: is there any other place this can be triggered properly?
 				SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 				PUT_SEL32V(segMan, _playList[i]->soundObj, signal, SIGNAL_OFFSET);
 				if (_soundVersion <= SCI_VERSION_0_LATE)
-					PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSndStatusStopped);
+					PUT_SEL32V(segMan, _playList[i]->soundObj, state, kSoundStopped);
 			} else {
 				_playList[i]->ticker = (uint16)(_pMixer->getSoundElapsedTime(
 						_playList[i]->hCurrentAud) * 0.06);
@@ -412,15 +412,15 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->setVolume(pSnd->volume);
-		if (pSnd->status == kSndStatusStopped)
+		if (pSnd->status == kSoundStopped)
 			pSnd->pMidiParser->jumpToTick(0);
 	}
 
-	pSnd->status = kSndStatusPlaying;
+	pSnd->status = kSoundPlaying;
 }
 //---------------------------------------------
 void SciMusic::soundStop(MusicEntry *pSnd) {
-	pSnd->status = kSndStatusStopped;
+	pSnd->status = kSoundStopped;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 	if (pSnd->pMidiParser)
@@ -440,7 +440,7 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 }
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
-	pSnd->status = kSndStatusStopped;
+	pSnd->status = kSoundStopped;
 
 	if (pSnd->pMidiParser) {
 		pSnd->pMidiParser->unloadMusic();
@@ -465,7 +465,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 }
 //---------------------------------------------
 void SciMusic::soundPause(MusicEntry *pSnd) {
-	pSnd->status = kSndStatusPaused;
+	pSnd->status = kSoundPaused;
 	if (pSnd->pStreamAud)
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	else if (pSnd->pMidiParser)

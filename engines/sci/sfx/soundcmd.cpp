@@ -114,7 +114,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
 			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
-			PUT_SEL32V(segMan, obj, state, kSndStatusStopped);
+			PUT_SEL32V(segMan, obj, state, kSoundStopped);
 			break;
 
 		default:
@@ -275,7 +275,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 #endif
 
 	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, state, kSndStatusInitialized);
+		PUT_SEL32V(_segMan, obj, state, kSoundInitialized);
 	else
 		PUT_SEL32(_segMan, obj, nodePtr, obj);
 
@@ -299,7 +299,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->fadeStep = 0;
 	newSound->fadeTicker = 0;
 	newSound->fadeTickerStep = 0;
-	newSound->status = kSndStatusStopped;
+	newSound->status = kSoundStopped;
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -335,7 +335,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
-		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
+		PUT_SEL32V(_segMan, obj, state, kSoundPlaying);
 	} else if (_soundVersion == SCI_VERSION_1_EARLY) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, loop));
@@ -418,7 +418,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, frame, 0);
 		PUT_SEL32V(_segMan, obj, signal, 0);
 	} else {
-		PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
+		PUT_SEL32V(_segMan, obj, state, kSoundPlaying);
 	}
 
 	musicSlot->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
@@ -478,7 +478,7 @@ void SoundCommandParser::cmdDisposeHandle(reg_t obj, int16 value) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		PUT_SEL32(_segMan, obj, nodePtr, NULL_REG);
 	else
-		PUT_SEL32V(_segMan, obj, state, kSndStatusStopped);
+		PUT_SEL32V(_segMan, obj, state, kSoundStopped);
 #endif
 }
 
@@ -500,7 +500,7 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 
 	PUT_SEL32V(_segMan, obj, handle, 0);
 	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, state, kSndStatusStopped);
+		PUT_SEL32V(_segMan, obj, state, kSoundStopped);
 	else
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 
@@ -521,7 +521,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 
-	if (musicSlot->status == kSndStatusStopped) {
+	if (musicSlot->status == kSoundStopped) {
 		// WORKAROUND for the Sierra logo screen in Castle of Dr. Brain, where the
 		// game tries to pause/unpause the wrong sound in the playlist
 		if (!strcmp(_segMan->getObjectName(obj), "cMusic2"))
@@ -534,7 +534,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 	}
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		PUT_SEL32V(_segMan, obj, state, kSndStatusPaused);
+		PUT_SEL32V(_segMan, obj, state, kSoundPaused);
 		_music->soundPause(musicSlot);
 	} else {
 		if (value)
@@ -560,7 +560,7 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 		return;
 	}
 
-	PUT_SEL32V(_segMan, obj, state, kSndStatusPlaying);
+	PUT_SEL32V(_segMan, obj, state, kSoundPlaying);
 	_music->soundPlay(musicSlot);
 #endif
 }

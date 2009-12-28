@@ -204,10 +204,10 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					jumpToTick(_loopTick);
 					_pSnd->loop--;
 				} else {
-					_pSnd->status = kSndStatusStopped;
+					_pSnd->status = kSoundStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
 					if (_soundVersion <= SCI_VERSION_0_LATE)
-						PUT_SEL32V(segMan, _pSnd->soundObj, state, kSndStatusStopped);
+						PUT_SEL32V(segMan, _pSnd->soundObj, state, kSoundStopped);
 					debugC(2, kDebugLevelSound, "signal EOT");
 				}
 			}
