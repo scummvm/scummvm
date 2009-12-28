@@ -499,38 +499,45 @@ void SoundCommandParser::cmdStopHandle(reg_t obj, int16 value) {
 }
 
 void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (!obj.segment)
 		return;
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		changeHandleStatus(obj, SOUND_STATUS_SUSPENDED);
 	else
 		changeHandleStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
-	MusicEntry *musicSlot = _music->getSlot(obj);
+	MusicEntry *musicSlot = NULL;
+	MusicList::iterator slotLoop = NULL;
 
-	if (musicSlot->status == kSoundStopped) {
-		// WORKAROUND for the Sierra logo screen in Castle of Dr. Brain, where the
-		// game tries to pause/unpause the wrong sound in the playlist
-		if (!strcmp(_segMan->getObjectName(obj), "cMusic2"))
-			musicSlot = _music->getSlot(_segMan->findObjectByName("cMusic"));
-	}
-
-	if (!musicSlot) {
-		warning("cmdPauseHandle: Slot not found");
-		return;
-	}
-
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		PUT_SEL32V(_segMan, obj, state, kSoundPaused);
-		_music->soundPause(musicSlot);
+	if (!obj.segment) {
+		slotLoop = _music->enumPlayList(NULL);
+		musicSlot = *slotLoop;
 	} else {
-		if (value)
-			_music->soundPause(musicSlot);
-		else
-			_music->soundPlay(musicSlot);
+		musicSlot = _music->getSlot(obj);
+		if (!musicSlot) {
+			warning("cmdPauseHandle: Slot not found");
+			return;
+		}
 	}
+
+	do {
+		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			PUT_SEL32V(_segMan, obj, state, kSoundPaused);
+			_music->soundPause(musicSlot);
+		} else {
+			if (value)
+				_music->soundPause(musicSlot);
+			else
+				_music->soundPlay(musicSlot);
+		}
+		if (slotLoop) {
+			slotLoop = _music->enumPlayList(slotLoop);
+			if (slotLoop)
+				musicSlot = *slotLoop;
+		}
+	} while (slotLoop);
 #endif
 }
 

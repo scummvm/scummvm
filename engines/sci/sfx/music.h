@@ -157,6 +157,7 @@ public:
 	void printPlayList(Console *con);
 
 	void reconstructPlayList(int savegame_version);
+	MusicList::iterator enumPlayList(MusicList::iterator slotLoop);
 
 	void enterCriticalSection() { _inCriticalSection = true; }
 	void leaveCriticalSection() { _inCriticalSection = false; }

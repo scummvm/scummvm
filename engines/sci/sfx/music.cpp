@@ -501,6 +501,17 @@ void SciMusic::reconstructPlayList(int savegame_version) {
 	}
 }
 
+MusicList::iterator SciMusic::enumPlayList(MusicList::iterator slotLoop) {
+	if (!slotLoop) {
+		if (_playList.begin() == _playList.end())
+			return NULL;
+		return _playList.begin();
+	}
+	slotLoop++;
+	if (slotLoop == _playList.end())
+		return NULL;
+	return slotLoop;
+}
 
 MusicEntry::MusicEntry() {
 	soundObj = NULL_REG;
