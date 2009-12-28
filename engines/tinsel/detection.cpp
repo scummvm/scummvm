@@ -427,6 +427,27 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// Russian Discworld 1
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "cfc40a8d5d476a1c9d3abf826fa46f8c", 1265532},
+				{"english.txt", 0, "c69b5d2067e9114a63569a61e9a82faa", 230326},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// European/Australian Discworld 2 release
 		{
 			"dw2",
