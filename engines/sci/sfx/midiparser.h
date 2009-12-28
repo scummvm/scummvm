@@ -60,7 +60,6 @@ public:
 		allNotesOff();
 	}
 	void pause() {
-		_abort_parse = true;
 		allNotesOff();
 	}
 
