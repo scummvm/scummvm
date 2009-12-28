@@ -501,6 +501,8 @@ void SciMusic::reconstructPlayList(int savegame_version) {
 	}
 }
 
+// There is some weird code going on in sierra sci. it checks the first 2 playlist entries if they are 0
+//  we should never need to care about this, anyway this is just meant as note
 MusicList::iterator SciMusic::enumPlayList(MusicList::iterator slotLoop) {
 	if (!slotLoop) {
 		if (_playList.begin() == _playList.end())
