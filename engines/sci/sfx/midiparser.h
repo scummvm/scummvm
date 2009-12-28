@@ -56,10 +56,12 @@ public:
 	void unloadMusic();
 	void setVolume(byte bVolume);
 	void stop() {
-		_abort_parse = true;/*hangAllActiveNotes();*/
+		_abort_parse = true;
+		allNotesOff();
 	}
 	void pause() {
-		_abort_parse = true; /*hangAllActiveNotes();*/
+		_abort_parse = true;
+		allNotesOff();
 	}
 
 protected:
