@@ -444,8 +444,6 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 }
 //---------------------------------------------
 void SciMusic::soundKill(MusicEntry *pSnd) {
-	Common::StackLock lock(_mutex);
-
 	pSnd->status = kSndStatusStopped;
 
 	if (pSnd->pMidiParser) {
@@ -457,6 +455,8 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		pSnd->pStreamAud = NULL;
 	}
+
+	Common::StackLock lock(_mutex);
 
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
