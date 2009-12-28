@@ -80,6 +80,6 @@ protected:
 	int16 _signalToSet;
 };
 
-} // end of namespace
+} // End of namespace Sci
 
 #endif

@@ -55,7 +55,7 @@ SciMusic::~SciMusic() {
 		delete _pMidiDrv;
 	}
 }
-//----------------------------------------
+
 void SciMusic::init() {
 	// system init
 	_pMixer = g_system->getMixer();
@@ -102,28 +102,7 @@ void SciMusic::init() {
 		warning("Can't initialise music driver");
 	_bMultiMidi = ConfMan.getBool("multi_midi");
 }
-//----------------------------------------
-bool SciMusic::saveState(Common::OutSaveFile *pFile) {
-	// TODO
-#if 0
-	pFile->writeString("AUDIO\n");
-	// playlist
-	int sz = _playList.size();
-	pFile->writeUint16LE(sz);
-	for(int i = 0; i < sz; i++) {
-		pFile->writeUint16LE(ptr2heap((byte*)_playList[i]));
-		// member variable
-		pFile->writeUint16LE(_audVolNum);
-		pFile->writeByte(_langID);
-		pFile->writeUint16LE(_audioType);
-		pFile->writeUint16LE(_audioRate);
-		// TODO: current playing stream (hCurrentAud) info
-	}
-#endif
-	return true;
-}
 
-//----------------------------------------
 void SciMusic::clearPlayList() {
 	_pMixer->stopAll();
 
@@ -132,7 +111,7 @@ void SciMusic::clearPlayList() {
 		soundKill(_playList[0]);
 	}
 }
-//----------------------------------------
+
 void SciMusic::stopAll() {
 	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 	
@@ -146,12 +125,12 @@ void SciMusic::stopAll() {
 		soundStop(_playList[i]);
 	}
 }
-//----------------------------------------
+
 void SciMusic::miditimerCallback(void *p) {
 	SciMusic* aud = (SciMusic *)p;
 	aud->onTimer();
 }
-//----------------------------------------
+
 uint16 SciMusic::soundGetVoices() {
 	switch (_midiType) {
 	case MD_PCSPK:
@@ -166,7 +145,7 @@ uint16 SciMusic::soundGetVoices() {
 		return 1;
 	}
 }
-//----------------------------------------
+
 void SciMusic::sortPlayList() {
 	MusicEntry ** pData = _playList.begin();
 	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
@@ -291,7 +270,7 @@ void SciMusic::loadPatchMT32() {
 }
 #endif
 
-//----------------------------------------
+
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	SoundResource::Track *track = NULL;
 	int channelFilterMask = 0;
@@ -344,7 +323,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		}
 	}
 }
-//----------------------------------------
+
 void SciMusic::onTimer() {
 	Common::StackLock lock(_mutex);
 
@@ -378,7 +357,7 @@ void SciMusic::onTimer() {
 		}
 	}//for()
 }
-//---------------------------------------------
+
 void SciMusic::doFade(MusicEntry *pSnd) {
 	// This is called from inside onTimer, where the mutex is already locked
 
@@ -396,7 +375,7 @@ void SciMusic::doFade(MusicEntry *pSnd) {
 	}
 }
 
-//---------------------------------------------
+
 void SciMusic::soundPlay(MusicEntry *pSnd) {
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
@@ -418,7 +397,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	pSnd->status = kSoundPlaying;
 }
-//---------------------------------------------
+
 void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 	if (pSnd->pStreamAud)
@@ -426,19 +405,19 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	if (pSnd->pMidiParser)
 		pSnd->pMidiParser->stop();
 }
-//---------------------------------------------
+
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	if (pSnd->pStreamAud)
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume);
 	else if (pSnd->pMidiParser)
 		pSnd->pMidiParser->setVolume(volume);
 }
-//---------------------------------------------
+
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 	pSnd->prio = prio;
 	sortPlayList();
 }
-//---------------------------------------------
+
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
@@ -463,7 +442,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		}
 	}
 }
-//---------------------------------------------
+
 void SciMusic::soundPause(MusicEntry *pSnd) {
 	pSnd->status = kSoundPaused;
 	if (pSnd->pStreamAud)
@@ -472,11 +451,11 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 		pSnd->pMidiParser->pause();
 }
 
-//---------------------------------------------
+
 uint16 SciMusic::soundGetMasterVolume() {
 	return (_pMixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 8) * 0xF / Audio::Mixer::kMaxMixerVolume;
 }
-//---------------------------------------------
+
 void SciMusic::soundSetMasterVolume(uint16 vol) {
 	vol = vol & 0xF; // 0..15
 	vol = vol * Audio::Mixer::kMaxMixerVolume / 0xF;
@@ -516,4 +495,4 @@ void SciMusic::reconstructPlayList(int savegame_version) {
 	}
 }
 
-} // end of namespace SCI
+} // End of namespace Sci

@@ -98,7 +98,6 @@ public:
 	void loadPatch();
 #endif
 	void onTimer();
-	bool saveState(Common::OutSaveFile *pFile);
 	void clearPlayList();
 	void stopAll();
 
@@ -112,13 +111,13 @@ public:
 	void soundSetPriority(MusicEntry *pSnd, byte prio);
 	uint16 soundGetMasterVolume();
 	void soundSetMasterVolume(uint16 vol);
-	uint16 soundGetSoundOn() { return _soundOn; }
+	uint16 soundGetSoundOn() const { return _soundOn; }
 	void soundSetSoundOn(bool soundOnFlag) {
 		_soundOn = soundOnFlag;
 		_pMidiDrv->playSwitch(soundOnFlag);
 	}
 	uint16 soundGetVoices();
-	uint32 soundGetTempo() { return _dwTempo; }
+	uint32 soundGetTempo() const { return _dwTempo; }
 
 	MusicEntry *getSlot(reg_t obj) { 
 		for (uint32 i = 0; i < _playList.size(); i++) {
@@ -173,6 +172,6 @@ private:
 	bool _inCriticalSection;
 };
 
-} // end of namespace
+} // End of namespace Sci
 
 #endif

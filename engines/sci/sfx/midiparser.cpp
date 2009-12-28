@@ -31,7 +31,7 @@ namespace Sci {
 
 static const int nMidiParams[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
 
-//---------------------------------------------
+
 //  MidiParser_SCI
 //
 MidiParser_SCI::MidiParser_SCI() :
@@ -45,11 +45,11 @@ MidiParser_SCI::MidiParser_SCI() :
 	_signalSet = false;
 	_signalToSet = 0;
 }
-//---------------------------------------------
+
 MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
 }
-//---------------------------------------------
+
 bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion) {
 	unloadMusic();
 	_track = track;
@@ -220,7 +220,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	}// switch (info.command())
 }
 
-//----------------------------------------
+
 byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	byte curr = 0xFF;
 	long closest = ticker + 1000000, next = 0;
@@ -240,7 +240,7 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 
 	return curr;
 }
-//----------------------------------------
+
 byte *MidiParser_SCI::midiMixChannels() {
 	int totalSize = 0;
 	byte **dataPtr = new byte *[_track->channelCount];
@@ -318,8 +318,9 @@ byte *MidiParser_SCI::midiMixChannels() {
 	return _mixedData;
 }
 
-// This is used for SCI0 sound-data. SCI0 only has one stream that may contain several channels and according to output
-//  device we remove certain channels from that data
+// This is used for SCI0 sound-data. SCI0 only has one stream that may
+// contain several channels and according to output device we remove
+// certain channels from that data.
 byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	SoundResource::Channel *channel = &_track->channels[0];
 	byte *channelData = channel->data;
@@ -437,4 +438,5 @@ void MidiParser_SCI::setVolume(byte bVolume) {
 				_driver->send(0xB0 + _track->channels[i].number, 7, _volume);
 	}
 }
-} // end of namespace SCI
+
+} // End of namespace Sci
