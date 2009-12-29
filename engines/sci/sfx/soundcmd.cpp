@@ -663,10 +663,7 @@ void SoundCommandParser::cmdGetPolyphony(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	_acc = make_reg(0, _state->sfx_get_player_polyphony());
 #else
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		_acc = make_reg(0, 1);	// Check if the sound driver was installed properly (always true)
-	else
-		_acc = make_reg(0, _music->soundGetVoices());	// Get the number of voices
+	_acc = make_reg(0, _music->soundGetVoices());	// Get the number of voices
 #endif
 }
 
