@@ -523,6 +523,9 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 	MusicList::iterator slotLoop = NULL;
 
 	if (!obj.segment) {
+		// Pausing/Resuming whole playlist was introduced sci1late (soundversion-wise)
+		if (_soundVersion <= SCI_VERSION_1_EARLY)
+			return;
 		slotLoop = _music->enumPlayList(NULL);
 		musicSlot = *slotLoop;
 	} else {
