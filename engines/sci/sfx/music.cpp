@@ -43,6 +43,9 @@ SciMusic::SciMusic(SciVersion soundVersion)
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
 	_playList.reserve(10);
+
+	_segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+	_resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
 }
 
 SciMusic::~SciMusic() {
@@ -109,14 +112,12 @@ void SciMusic::clearPlayList() {
 }
 
 void SciMusic::stopAll() {
-	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-	
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(segMan, (*i)->soundObj, state, kSoundStopped);
+			PUT_SEL32V(_segMan, (*i)->soundObj, state, kSoundStopped);
 		else
-			PUT_SEL32V(segMan, (*i)->soundObj, signal, SIGNAL_OFFSET);
+			PUT_SEL32V(_segMan, (*i)->soundObj, signal, SIGNAL_OFFSET);
 
 		(*i)->dataInc = 0;
 		soundStop(*i);
@@ -318,6 +319,9 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
+
+			pSnd->pauseCounter = 0;
+
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayMask(_soundVersion));
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
@@ -449,7 +453,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
 	pSnd->pauseCounter++;
-	if (pSnd->status == kSoundPaused)
+	if (pSnd->status != kSoundPlaying)
 		return;
 	pSnd->status = kSoundPaused;
 	if (pSnd->pStreamAud)
@@ -493,22 +497,37 @@ void SciMusic::printPlayList(Console *con) {
 }
 
 void SciMusic::reconstructPlayList(int savegame_version) {
-	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-	ResourceManager *resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
+	// Stop the music driver
+	if (_pMidiDrv) {
+		_pMidiDrv->close();
+		delete _pMidiDrv;
+	}
+
+	Common::StackLock lock(_mutex);
+
+	// Reinit the music driver
+	init();
 
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		if (savegame_version < 14) {
 			if (_soundVersion >= SCI_VERSION_1_EARLY) {
-				(*i)->dataInc = GET_SEL32V(segMan, (*i)->soundObj, dataInc);
-				(*i)->volume = GET_SEL32V(segMan, (*i)->soundObj, vol);
+				(*i)->dataInc = GET_SEL32V(_segMan, (*i)->soundObj, dataInc);
+				(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
 			} else {
 				(*i)->volume = 100;
 			}
 		}
 
-		(*i)->soundRes = new SoundResource((*i)->resnum, resMan, _soundVersion);
+		(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
 		soundInitSnd(*i);
+		if ((*i)->pMidiParser)
+			(*i)->pMidiParser->jumpToTick((*i)->ticker);
+		// Replay all paused sounds - a lot of games pause sounds while saving, so
+		// we need to restore the correct sound state
+		if ((*i)->status == kSoundPaused) {
+			soundPlay(*i);
+		}
 	}
 }
 

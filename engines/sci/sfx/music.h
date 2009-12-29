@@ -57,6 +57,7 @@ enum SoundStatus {
 };
 
 class MidiParser_SCI;
+class SegManager;
 
 class MusicEntry
 #ifndef USE_OLD_MUSIC_FUNCTIONS
@@ -195,6 +196,9 @@ private:
 	MusicList _playList;
 	bool _soundOn;
 	bool _inCriticalSection;
+
+	SegManager *_segMan;
+	ResourceManager *_resMan;
 };
 
 } // End of namespace Sci
