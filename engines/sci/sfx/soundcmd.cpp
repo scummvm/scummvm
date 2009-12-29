@@ -565,29 +565,15 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 	changeHandleStatus(obj, SOUND_STATUS_PLAYING);
 #else
 	MusicEntry *musicSlot = NULL;
-	MusicList::iterator slotLoop = NULL;
 
-	if (!obj.segment) {
-		slotLoop = _music->enumPlayList(NULL);
-		musicSlot = *slotLoop;
-	} else {
-		musicSlot = _music->getSlot(obj);
-		if (!musicSlot) {
-			warning("cmdResumeHandle: Slot not found");
-			return;
-		}
+	musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
+		warning("cmdResumeHandle: Slot not found");
+		return;
 	}
 
-	do {
-		PUT_SEL32V(_segMan, musicSlot->soundObj, state, kSoundPlaying);
-		_music->soundResume(musicSlot);
-
-		if (slotLoop) {
-			slotLoop = _music->enumPlayList(slotLoop);
-			if (slotLoop)
-				musicSlot = *slotLoop;
-		}
-	} while (slotLoop);
+	PUT_SEL32V(_segMan, musicSlot->soundObj, state, kSoundPlaying);
+	_music->soundResume(musicSlot);
 #endif
 }
 
