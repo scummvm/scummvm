@@ -131,31 +131,31 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	boundingRect.bottom = stream->readSint32LE() & 0xFFFF;
 
 	// read common graphic resources
-	commonRes.backgroundImage    = stream->readSint32LE();
-	commonRes.curScrollUp        = stream->readSint32LE();
-	commonRes.curScrollUpLeft    = stream->readSint32LE();
-	commonRes.curScrollLeft      = stream->readSint32LE();
-	commonRes.curScrollDownLeft  = stream->readSint32LE();
-	commonRes.curScrollDown      = stream->readSint32LE();
-	commonRes.curScrollDownRight = stream->readSint32LE();
-	commonRes.curScrollRight     = stream->readSint32LE();
-	commonRes.curScrollUpRight   = stream->readSint32LE();
-	commonRes.curHand            = stream->readSint32LE();
-	commonRes.curMagnifyingGlass = stream->readSint32LE();
-	commonRes.curTalkNPC         = stream->readSint32LE();
-	commonRes.curGrabPointer     = stream->readSint32LE();
-	commonRes.curTalkNPC2        = stream->readSint32LE();
-	commonRes.font1              = stream->readSint32LE();
-	commonRes.font2              = stream->readSint32LE();
-	commonRes.font3	             = stream->readSint32LE();
-	commonRes.palette            = stream->readSint32LE();
-	commonRes.cellShadeMask1     = stream->readSint32LE();
-	commonRes.cellShadeMask2     = stream->readSint32LE();
-	commonRes.cellShadeMask3     = stream->readSint32LE();
-	commonRes.unused             = stream->readSint32LE();
-	commonRes.smallCurUp         = stream->readSint32LE();
-	commonRes.smallCurDown       = stream->readSint32LE();
-	commonRes.encounterFrameBg   = stream->readSint32LE();
+	backgroundImage    = stream->readSint32LE();
+	curScrollUp        = stream->readSint32LE();
+	curScrollUpLeft    = stream->readSint32LE();
+	curScrollLeft      = stream->readSint32LE();
+	curScrollDownLeft  = stream->readSint32LE();
+	curScrollDown      = stream->readSint32LE();
+	curScrollDownRight = stream->readSint32LE();
+	curScrollRight     = stream->readSint32LE();
+	curScrollUpRight   = stream->readSint32LE();
+	curHand            = stream->readSint32LE();
+	curMagnifyingGlass = stream->readSint32LE();
+	curTalkNPC         = stream->readSint32LE();
+	curGrabPointer     = stream->readSint32LE();
+	curTalkNPC2        = stream->readSint32LE();
+	font1              = stream->readSint32LE();
+	font2              = stream->readSint32LE();
+	font3	             = stream->readSint32LE();
+	palette            = stream->readSint32LE();
+	cellShadeMask1     = stream->readSint32LE();
+	cellShadeMask2     = stream->readSint32LE();
+	cellShadeMask3     = stream->readSint32LE();
+	unused             = stream->readSint32LE();
+	smallCurUp         = stream->readSint32LE();
+	smallCurDown       = stream->readSint32LE();
+	encounterFrameBg   = stream->readSint32LE();
 
 	width        = stream->readSint32LE();
 	height       = stream->readSint32LE();
@@ -404,7 +404,6 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	// FIXME Figure out all the actions items
 	for (int32 a = 0; a < numActions; a++) {
 		ActionArea action;
-		memset(&action, 0, sizeof(ActionArea));
 
 		stream->read(action.name, 52);
 		action.id             = stream->readSint32LE();

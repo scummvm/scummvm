@@ -112,10 +112,10 @@ void Speech::prepareSpeech() {
 			check = pt->y >= 240;*/
 			int32 posY = ((check - 1) & 0x118) + 40;
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font3);
+			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font3);
 			_scene->vm()->text()->drawText(20, posY, _textDataPos);
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font1);
+			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font1);
 			_scene->vm()->text()->drawText(20, posY, _textData);
 		}
 	}
@@ -137,7 +137,7 @@ void Speech::processSpeech() {
 			_textData = txt + 3;
 			_textDataPos = 0;
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font1);
+			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font1);
 			_scene->vm()->sound()->playSpeech(_soundResIdx);
 		} else {
 			_textData = 0;
@@ -147,7 +147,7 @@ void Speech::processSpeech() {
 				_textDataPos = txt + 2;
 			}
 
-			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->commonRes.font3);
+			_scene->vm()->text()->loadFont(_scene->getResourcePack(), _scene->worldstats()->font3);
 			_scene->vm()->sound()->playSpeech(_soundResIdx);
 		}
 	}

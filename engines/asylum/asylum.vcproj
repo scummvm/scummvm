@@ -16,6 +16,8 @@
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
 	<Files>
+		<File RelativePath="..\..\engines\asylum\actionarea.cpp" />
+		<File RelativePath="..\..\engines\asylum\actionarea.h" />
 		<File RelativePath="..\..\engines\asylum\actionlist.cpp" />
 		<File RelativePath="..\..\engines\asylum\actionlist.h" />
 		<File RelativePath="..\..\engines\asylum\actor.cpp" />
