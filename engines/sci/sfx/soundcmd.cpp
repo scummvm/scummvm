@@ -516,6 +516,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 	else
 		changeHandleStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
+
 	MusicEntry *musicSlot = NULL;
 	MusicList::iterator slotLoop = NULL;
 
@@ -532,7 +533,7 @@ void SoundCommandParser::cmdPauseHandle(reg_t obj, int16 value) {
 
 	do {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			PUT_SEL32V(_segMan, obj, state, kSoundPaused);
+			PUT_SEL32V(_segMan, musicSlot->soundObj, state, kSoundPaused);
 			_music->soundPause(musicSlot);
 		} else {
 			if (value)
@@ -558,14 +559,30 @@ void SoundCommandParser::cmdResumeHandle(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	changeHandleStatus(obj, SOUND_STATUS_PLAYING);
 #else
-	MusicEntry *musicSlot = _music->getSlot(obj);
-	if (!musicSlot) {
-		warning("cmdResumeHandle: Slot not found");
-		return;
+	MusicEntry *musicSlot = NULL;
+	MusicList::iterator slotLoop = NULL;
+
+	if (!obj.segment) {
+		slotLoop = _music->enumPlayList(NULL);
+		musicSlot = *slotLoop;
+	} else {
+		musicSlot = _music->getSlot(obj);
+		if (!musicSlot) {
+			warning("cmdResumeHandle: Slot not found");
+			return;
+		}
 	}
 
-	PUT_SEL32V(_segMan, obj, state, kSoundPlaying);
-	_music->soundResume(musicSlot);
+	do {
+		PUT_SEL32V(_segMan, musicSlot->soundObj, state, kSoundPlaying);
+		_music->soundResume(musicSlot);
+
+		if (slotLoop) {
+			slotLoop = _music->enumPlayList(slotLoop);
+			if (slotLoop)
+				musicSlot = *slotLoop;
+		}
+	} while (slotLoop);
 #endif
 }
 
