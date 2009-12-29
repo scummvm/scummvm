@@ -264,10 +264,12 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
 	ret.maxSize = (_locals.size() - pointer.offset/2) * 2;
-	if (ret.maxSize > 0)
+	if (ret.maxSize > 0) {
 		ret.raw = (byte *)&_locals[pointer.offset/2];
-	else
+	} else {
 		warning("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		ret.raw = 0;
+	}
 	return ret;
 }
 
