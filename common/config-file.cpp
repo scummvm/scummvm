@@ -95,7 +95,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 
 		if (line.size() == 0) {
 			// Do nothing
-		} else if (line[0] == '#') {
+		} else if (line[0] == '#' || line[0] == ';') {
 			// Accumulate comments here. Once we encounter either the start
 			// of a new section, or a key-value-pair, we associate the value
 			// of the 'comment' variable with that entity.
@@ -116,8 +116,8 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			const char *p = line.c_str() + 1;
 			// Get the section name, and check whether it's valid (that
 			// is, verify that it only consists of alphanumerics,
-			// dashes and underscores).
-			while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+			// periods, dashes and underscores).
+			while (*p && (isalnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 				p++;
 
 			if (*p == '\0')

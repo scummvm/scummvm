@@ -40,7 +40,7 @@ private:
 	int _channels;
 	typesADPCM _type;
 	uint32 _blockAlign;
-	uint32 _blockPos;
+	uint32 _blockPos[2];
 	uint8 _chunkPos;
 	uint16 _chunkData;
 	int _blockLen;
@@ -63,6 +63,9 @@ private:
 			int32 last;
 			int32 stepIndex;
 		} ima_ch[2];
+
+		// Apple QuickTime IMA ADPCM
+		int32 streamPos[2];
 
 		// MS ADPCM
 		ADPCMChannelStatus ch[2];
@@ -94,6 +97,7 @@ public:
 	int readBufferTinsel4(int channels, int16 *buffer, const int numSamples);
 	int readBufferTinsel6(int channels, int16 *buffer, const int numSamples);
 	int readBufferTinsel8(int channels, int16 *buffer, const int numSamples);
+	int readBufferApple(int16 *buffer, const int numSamples);
 
 	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
 	bool isStereo() const	{ return _channels == 2; }
@@ -135,7 +139,6 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 	_startpos = stream->pos();
 	_endpos = _startpos + size;
 	_curLoop = 0;
-	_blockPos = 0;
 	reset();
 }
 
@@ -147,7 +150,9 @@ ADPCMInputStream::~ADPCMInputStream() {
 void ADPCMInputStream::reset() {
 	memset(&_status, 0, sizeof(_status));
 	_blockLen = 0;
-	_blockPos = _blockAlign; // To make sure first header is read
+	_blockPos[0] = _blockPos[1] = _blockAlign; // To make sure first header is read
+	_status.streamPos[0] = 0;
+	_status.streamPos[1] = _blockAlign;
 	_chunkPos = 0;
 }
 
@@ -177,6 +182,9 @@ int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		break;
 	case kADPCMIma:
 		samplesDecoded = readBufferIMA(buffer, numSamples);
+		break;
+	case kADPCMApple:
+		samplesDecoded = readBufferApple(buffer, numSamples);
 		break;
 	default:
 		error("Unsupported ADPCM encoding");
@@ -224,6 +232,77 @@ int ADPCMInputStream::readBufferIMA(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
+int ADPCMInputStream::readBufferApple(int16 *buffer, const int numSamples) {
+	// Need to write 2 samples per channel
+	assert(numSamples % (2 * _channels) == 0);
+
+	// Current sample positions
+	int    samples[2] = {   0,    0};
+	// Current data bytes
+	byte      data[2] = {   0,    0};
+	// Current nibble selectors
+	bool lowNibble[2] = {true, true};
+
+	// Number of samples per channel
+	int chanSamples = numSamples / _channels;
+
+	for (int i = 0; i < _channels; i++) {
+		_stream->seek(_status.streamPos[i]);
+
+		while ((samples[i] < chanSamples) &&
+		       // Last byte read and a new one needed
+		       !((_stream->eos() || (_stream->pos() >= _endpos)) && lowNibble[i])) {
+
+			if (_blockPos[i] == _blockAlign) {
+				// 2 byte header per block
+				uint16 temp = _stream->readUint16BE();
+
+				// First 9 bits are the upper bits of the predictor
+				_status.ima_ch[i].last      = (int16) (temp & 0xFF80);
+				// Lower 7 bits are the step index
+				_status.ima_ch[i].stepIndex =          temp & 0x007F;
+
+				// Clip the step index
+				_status.ima_ch[i].stepIndex = CLIP(_status.ima_ch[i].stepIndex, 0, 88);
+
+				_blockPos[i] = 2;
+			}
+
+			// First decode the lower nibble, then the upper
+			if (lowNibble[i])
+				data[i] = _stream->readByte();
+
+			int16 sample;
+			if (lowNibble[i])
+				sample = decodeIMA(data[i] &  0x0F, i);
+			else
+				sample = decodeIMA(data[i] >>    4, i);
+
+			// The original is interleaved block-wise, we want it sample-wise
+			buffer[_channels * samples[i] + i] = sample;
+
+			samples[i]++;
+
+			// Different nibble
+			lowNibble[i] = !lowNibble[i];
+
+			// We're about to decode a new lower nibble again, so advance the block position
+			if (lowNibble[i])
+				_blockPos[i]++;
+
+			if (_channels == 2)
+				if (_blockPos[i] == _blockAlign)
+					// We're at the end of the block.
+					// Since the channels are interleaved, skip the next block
+					_stream->skip(MIN<uint32>(_blockAlign, _endpos - _stream->pos()));
+
+			_status.streamPos[i] = _stream->pos();
+		}
+	}
+
+	return samples[0] + samples[1];
+}
+
 int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	byte data;
@@ -231,16 +310,16 @@ int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 	assert(numSamples % 2 == 0);
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos == _blockAlign) {
+		if (_blockPos[0] == _blockAlign) {
 			// read block header
 			_status.ima_ch[0].last = _stream->readSint16LE();
 			_status.ima_ch[0].stepIndex = _stream->readSint16LE();
-			_blockPos = 4;
+			_blockPos[0] = 4;
 		}
 
-		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
-			_blockPos++;
+			_blockPos[0]++;
 			buffer[samples] = decodeIMA(data & 0x0f);
 			buffer[samples + 1] = decodeIMA((data >> 4) & 0x0f);
 		}
@@ -288,7 +367,7 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 	samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos == _blockAlign) {
+		if (_blockPos[0] == _blockAlign) {
 			// read block header
 			for (i = 0; i < channels; i++) {
 				_status.ch[i].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
@@ -308,12 +387,12 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 			for (i = 0; i < channels; i++)
 				buffer[samples++] = _status.ch[i].sample1;
 
-			_blockPos = channels * 7;
+			_blockPos[0] = channels * 7;
 		}
 
-		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
+		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
-			_blockPos++;
+			_blockPos[0]++;
 			buffer[samples] = decodeMS(&_status.ch[0], (data >> 4) & 0x0f);
 			buffer[samples + 1] = decodeMS(&_status.ch[channels - 1], data & 0x0f);
 		}
@@ -363,12 +442,12 @@ int ADPCMInputStream::readBufferTinsel4(int channels, int16 *buffer, const int n
 	assert(numSamples % 2 == 0);
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos == _blockAlign) {
+		if (_blockPos[0] == _blockAlign) {
 			readBufferTinselHeader();
-			_blockPos = 0;
+			_blockPos[0] = 0;
 		}
 
-		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2, _blockPos++) {
+		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2, _blockPos[0]++) {
 			// Read 1 byte = 8 bits = two 4 bit blocks
 			data = _stream->readByte();
 			buffer[samples] = decodeTinsel((data << 8) & 0xF000, eVal);
@@ -386,13 +465,13 @@ int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int n
 	samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos == _blockAlign) {
+		if (_blockPos[0] == _blockAlign) {
 			readBufferTinselHeader();
-			_blockPos = 0;
+			_blockPos[0] = 0;
 			_chunkPos = 0;
 		}
 
-		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _chunkPos = (_chunkPos + 1) % 4) {
+		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _chunkPos = (_chunkPos + 1) % 4) {
 
 			switch (_chunkPos) {
 			case 0:
@@ -402,17 +481,17 @@ int ADPCMInputStream::readBufferTinsel6(int channels, int16 *buffer, const int n
 			case 1:
 				_chunkData = (_chunkData << 8) | (_stream->readByte());
 				buffer[samples] = decodeTinsel((_chunkData << 6) & 0xFC00, eVal);
-				_blockPos++;
+				_blockPos[0]++;
 				break;
 			case 2:
 				_chunkData = (_chunkData << 8) | (_stream->readByte());
 				buffer[samples] = decodeTinsel((_chunkData << 4) & 0xFC00, eVal);
-				_blockPos++;
+				_blockPos[0]++;
 				break;
 			case 3:
 				_chunkData = (_chunkData << 8);
 				buffer[samples] = decodeTinsel((_chunkData << 2) & 0xFC00, eVal);
-				_blockPos++;
+				_blockPos[0]++;
 				break;
 			}
 
@@ -431,12 +510,12 @@ int ADPCMInputStream::readBufferTinsel8(int channels, int16 *buffer, const int n
 	samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
-		if (_blockPos == _blockAlign) {
+		if (_blockPos[0] == _blockAlign) {
 			readBufferTinselHeader();
-			_blockPos = 0;
+			_blockPos[0] = 0;
 		}
 
-		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _blockPos++) {
+		for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++, _blockPos[0]++) {
 			// Read 1 byte = 8 bits = one 8 bit block
 			data = _stream->readByte();
 			buffer[samples] = decodeTinsel(data << 8, eVal);

@@ -388,6 +388,13 @@ public:
 	 * err() or eos() to determine whether an exception occurred.
 	 */
 	virtual String readLine();
+
+	/**
+	 * Return the beginning offset in the stream, which defaults to 0.
+	 *
+	 * @return the beginning offset of the stream
+	 */
+	virtual uint32 getBeginOffset() { return 0; }
 };
 
 
@@ -447,6 +454,7 @@ public:
 
 	virtual int32 pos() const { return _pos - _begin; }
 	virtual int32 size() const { return _end - _begin; }
+	virtual uint32 getBeginOffset() { return _begin; }
 
 	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
