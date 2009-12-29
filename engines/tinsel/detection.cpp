@@ -432,8 +432,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			"dw",
 			"CD",
 			{
-				{"dw.scn", 0, "cfc40a8d5d476a1c9d3abf826fa46f8c", 1265532},
-				{"english.txt", 0, "c69b5d2067e9114a63569a61e9a82faa", 230326},
+				{"dw.scn", 0, "133041bde59d05c1bf084fd6f1bdce4b", 776524},
+				{"english.txt", 0, "f73dcbd7b136b37c2adf7c9448ea336d", 231821},
 				{"english.smp", 0, NULL, -1},
 				{NULL, 0, NULL, 0}
 			},
