@@ -496,15 +496,11 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	fprintf(stderr, "savedir_nr = %d\n", savedir_nr);
-
 	if (savedir_nr >= 0 && (uint)savedir_nr < saves.size()) {
 		// Overwrite
 		savedir_id = saves[savedir_nr].id;
 	} else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
 		uint i = 0;
-
-		fprintf(stderr, "searching for hole\n");
 
 		savedir_id = 0;
 
