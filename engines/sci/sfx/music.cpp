@@ -463,8 +463,9 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundResume(MusicEntry *pSnd) {
-	pSnd->pauseCounter--;
 	if (pSnd->pauseCounter > 0)
+		pSnd->pauseCounter--;
+	if (pSnd->pauseCounter != 0)
 		return;
 	if (pSnd->status != kSoundPaused)
 		return;
