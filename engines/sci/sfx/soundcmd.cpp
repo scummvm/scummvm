@@ -640,11 +640,14 @@ void SoundCommandParser::cmdFadeHandle(reg_t obj, int16 value) {
 		return;
 	}
 
-	int volume = GET_SEL32V(_segMan, obj, vol);
+	int volume = musicSlot->volume;
+	PUT_SEL32V(_segMan, musicSlot->soundObj, vol, volume);
 	musicSlot->fadeTo = _argv[2].toUint16();
 	musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
 	musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
 	musicSlot->fadeTicker = 0;
+
+	debugC(2, kDebugLevelSound, "cmdFadeHandle: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
 #endif
 }
 

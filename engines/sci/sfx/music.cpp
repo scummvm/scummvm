@@ -378,6 +378,8 @@ void MusicEntry::doFade() {
 			volume = fadeTo;
 			fadeStep = 0;
 		}
+		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+		PUT_SEL32V(segMan, soundObj, vol, volume);
 
 		pMidiParser->setVolume(volume);
 	}
