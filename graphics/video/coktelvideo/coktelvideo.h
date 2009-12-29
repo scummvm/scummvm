@@ -23,8 +23,8 @@
  *
  */
 
-// Currently, only GOB plays IMDs and VMDs, so skip compiling if GOB is disabled.
-#if !(defined(ENABLE_GOB) || defined(DYNAMIC_MODULES))
+// Currently, only GOB and SCI32 games play IMDs and VMDs, so skip compiling if GOB and SCI32 is disabled.
+#if !(defined(ENABLE_GOB) || defined(ENABLE_SCI32) || defined(DYNAMIC_MODULES))
 
 // Do not compile the CoktelVideo code
 
