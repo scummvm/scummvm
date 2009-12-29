@@ -1,6 +1,7 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
+	actionarea.o \
 	actionlist.o \
 	actor.o \
 	asylum.o \

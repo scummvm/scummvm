@@ -75,13 +75,13 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *engine): _vm(engine) {
 	// TODO
 	// This will have to be re-initialized elsewhere due to
 	// the title screen overwriting the font
-	_vm->text()->loadFont(_resPack, _ws->commonRes.font1);
+	_vm->text()->loadFont(_resPack, _ws->font1);
 
 	char musPackFileName[10];
 	sprintf(musPackFileName, MUSIC_FILE_MASK, sceneIdx);
 	_musPack = new ResourcePack(musPackFileName);
 
-	_bgResource    = new GraphicResource(_resPack, _ws->commonRes.backgroundImage);
+	_bgResource    = new GraphicResource(_resPack, _ws->backgroundImage);
 	_blowUp        = 0;
 	_cursor        = new Cursor(_resPack);
 	_background    = 0;
@@ -125,11 +125,11 @@ void Scene::initialize() {
 		}
 	}
 
-	_cursor->load(_ws->commonRes.curMagnifyingGlass);
+	_cursor->load(_ws->curMagnifyingGlass);
 	_cursor->set(0);
 
 	// FIXME this is just here for testing
-	_cursor->grResId = _ws->commonRes.curMagnifyingGlass;
+	_cursor->grResId = _ws->curMagnifyingGlass;
 
 	_ws->sceneRectIdx = 0;
 	_vm->screen()->clearScreen(); // XXX was clearGraphicsInQueue()
@@ -168,7 +168,7 @@ void Scene::initialize() {
 	_vm->screen()->clearScreen();
 	// TODO loadTransTables(3, field_64/68/7C)
 	// TODO setTransTable(1)
-	_vm->text()->loadFont(_resPack, _ws->commonRes.font1);
+	_vm->text()->loadFont(_resPack, _ws->font1);
 	// TODO preloadGraphics() .text:00410F10
 	// TODO sound_sub(sceneNumber) .text:0040E750
 	_ws->actorType = actorType[_ws->numChapter];
@@ -389,7 +389,7 @@ void Scene::enterScene() {
 		_actions->allowInput = false;
 	} else {
 #endif
-		_vm->screen()->setPalette(_resPack, _ws->commonRes.palette);
+		_vm->screen()->setPalette(_resPack, _ws->palette);
 		_background = _bgResource->getFrame(0);
 		_vm->screen()->copyToBackBuffer(
 			((byte *)_background->surface.pixels) + _ws->yTop * _background->surface.w + _ws->xLeft, _background->surface.w,
@@ -400,7 +400,7 @@ void Scene::enterScene() {
 		// when the scene is started. Check against the original to see
 		// when the cursor is initalized, and then how it reacts to the
 		// show_cursor opcode
-		_cursor->load(_ws->commonRes.curMagnifyingGlass);
+		_cursor->load(_ws->curMagnifyingGlass);
 		_cursor->set(0);
 		_cursor->show();
 
@@ -451,7 +451,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
-			_cursor->load(_ws->commonRes.curMagnifyingGlass);
+			_cursor->load(_ws->curMagnifyingGlass);
 			_rightButton    = false;
 		}
 		break;
@@ -466,7 +466,10 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	
 	}
 
-	if (doUpdate || _leftClick)
+	// FIXME just updating because a left click event
+	// is caught causes animation speeds to change. This needs
+	// to be addressed
+	if (doUpdate) // || _leftClick)
 		update();
 }
 
@@ -493,15 +496,15 @@ void Scene::update() {
 
 	//TODO: other process stuffs from sub 0040AE30
 
-    if (_speech->_soundResIdx != 0) {
-        if (_vm->sound()->isPlaying(_speech->_soundResIdx)) {
-            _speech->prepareSpeech();
-        } else {
-            _speech->_textResIdx = 0;
-            _speech->_soundResIdx = 0;
-            _vm->clearGameFlag(219);
-        }
-    }
+	if (_speech->_soundResIdx != 0) {
+		if (_vm->sound()->isPlaying(_speech->_soundResIdx)) {
+			_speech->prepareSpeech();
+		} else {
+			_speech->_textResIdx = 0;
+			_speech->_soundResIdx = 0;
+			_vm->clearGameFlag(219);
+		}
+}
 }
 
 int Scene::updateScene() {
@@ -758,8 +761,8 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	HitType type = kHitNone;
 
 	// TODO if encounter_flag03
-	if (0 && _cursor->grResId != _ws->commonRes.curTalkNPC) {
-		// TODO setMouseCursor(_ws->commonRes.curTalkNPC);
+	if (0 && _cursor->grResId != _ws->curTalkNPC) {
+		// TODO setMouseCursor(_ws->curTalkNPC);
 	}
 
 	Actor *act = getActor(); // get the player actor reference
@@ -767,7 +770,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	if (_cursor->field_11 & 2) {
 		if (act->updateType == 1 || act->updateType == 12) {
 			if (direction >= 0) {
-				newGrResId = _ws->commonRes.curScrollUp + direction;
+				newGrResId = _ws->curScrollUp + direction;
 				if (_cursor->grResId != newGrResId) {
 					// TODO setMouseCursor(newGrResId);
 					warning("%d", newGrResId);
@@ -777,7 +780,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 	}
 
 	if (act->updateType == 6 || act->updateType == 10) {
-		newGrResId = _ws->commonRes.curHand;
+		newGrResId = _ws->curHand;
 		if (_cursor->grResId != newGrResId) {
 			// TODO setMouseCursor(newGrResId);
 			warning("%d", newGrResId);
@@ -815,7 +818,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 			_cursor->y() >= rect.top  && _cursor->y() <= rect.bottom &&
 			hitTestActor(_cursor->x(), _cursor->y())) {
 			if (act->reaction[0]) {
-				if (_cursor->grResId != _ws->commonRes.curGrabPointer) {
+				if (_cursor->grResId != _ws->curGrabPointer) {
 					warning ("Changing Cursor to curGrabPointer");
 					// TODO setMouseCursor
 				}
@@ -824,12 +827,12 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 		}
 		if (newGrResId != -1) {
 			if (_ws->numChapter != 2 || _playerActorIdx != 10) {
-				if (_cursor->grResId != _ws->commonRes.curMagnifyingGlass) { // TODO || _cursor->flags)
+				if (_cursor->grResId != _ws->curMagnifyingGlass) { // TODO || _cursor->flags)
 					warning ("Changing Cursor to curMagnifying Glass");
 					// TODO setMouseCursor
 				}
 			} else {
-				if (_cursor->grResId != _ws->commonRes.curTalkNPC2) { // TODO || _cursor->flags)
+				if (_cursor->grResId != _ws->curTalkNPC2) { // TODO || _cursor->flags)
 					warning ("Changing Cursor to curTalkNPC2");
 					// TODO setMouseCursor
 				}
@@ -1492,109 +1495,6 @@ void Scene::updateAdjustScreen() {
 	 */
 }
 
-
-void Scene::OLD_UPDATE() {
-	int32 curHotspot = -1;
-	int32 curBarrier = -1;
-
-	// DEBUGGING
-	// Check current walk region
-	for (int32 a = 0; a < _ws->numActions; a++) {
-		if (_ws->actions[a].actionType == 0) {
-			ActionArea *area = &_ws->actions[a];
-			PolyDefinitions poly = _polygons->entries[area->polyIdx];
-			if (poly.contains(getActor()->x, getActor()->y)) {
-				debugShowWalkRegion(&poly);
-				//break;
-			}
-		}
-	}
-
-	if (!_rightButton) {
-		if (_ws->actors[0].flags & 0x01) {	// TESTING - only draw if visible flag
-			// Check if the character was walking before the right-button
-			// was released. If so, change the resource to one where he/she
-			// is standing still, facing the last active direction
-			if (_walking) {
-				if (getActor()->currentAction > 0)
-					getActor()->setAction(getActor()->currentAction + 5);
-				_walking = false;
-			}
-			getActor()->drawActor();
-		}
-	} else {
-		_walking = true;
-
-		getActor()->walkTo(_cursor->x(), _cursor->y());
-		_cursor->update(&_ws->commonRes, getActor()->direction);
-	}
-
-	
-
-	// Check if we're within a barrier
-	for (int32 p = 0; p < _ws->numBarriers; p++) {
-		Barrier b = _ws->barriers[p];
-		if (b.flags & 0x20) {
-			if ((b.boundingRect.left + b.x <= _cursor->x() + _ws->targetX) &&
-			        (_cursor->x() + _ws->targetX < b.boundingRect.right + b.x) &&
-			        (b.boundingRect.top + b.y <= _cursor->y() + _ws->targetY) &&
-			        (_cursor->y() + _ws->targetY < b.boundingRect.bottom + b.y)) {
-				_cursor->animate();
-				curBarrier = (int32)p;
-				break;
-			}
-		}
-	}
-
-	// FIXME? I'm assigning a higher priority to barriers than polygons. I'm assuming
-	// that barriers that overlap polygons will have actions associated with them, and
-	// the polygon will be part of a walk/look region (so it's accessible elsewhere).
-	// This could be completely wrong, and if so, we just have to check to see which
-	// of the barrier/polygon action scripts should be processed first
-	if (curBarrier < 0) {
-		// Update cursor if it's in a polygon hotspot
-		for (int32 p = 0; p < _polygons->numEntries; p++) {
-			PolyDefinitions poly = _polygons->entries[p];
-			if (poly.boundingRect.contains(_cursor->x() + _ws->targetX, _cursor->y() + _ws->targetY)) {
-				if (poly.contains(_cursor->x() + _ws->targetX, _cursor->y() + _ws->targetY)) {
-					curHotspot = (int32)p;
-					_cursor->animate();
-					break;
-				}
-			}
-		}
-	}
-
-	if (_leftClick) {
-		_leftClick = false;
-
-		if (curHotspot >= 0) {
-			for (int32 a = 0; a < _ws->numActions; a++) {
-				if (_ws->actions[a].polyIdx == curHotspot) {
-					debugC(kDebugLevelScripts, "Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
-					       _ws->actions[a].id,
-					       _ws->actions[a].name,
-					       _ws->actions[a].polyIdx,
-					       _ws->actions[a].actionListIdx1,
-					       _ws->actions[a].actionListIdx2,
-					       _ws->actions[a].actionType,
-					       _ws->actions[a].soundResId);
-					// FIXME _actions->setScriptByIndex(_ws->actions[a].actionListIdx1);
-				}
-			}
-		} else if (curBarrier >= 0) {
-			Barrier b = _ws->barriers[curBarrier];
-			debugC(kDebugLevelScripts, "%s: action(%d) sound(%d) flags(%d/%d)\n",
-			       b.name,
-			       b.actionListIdx,
-			       b.soundResId,
-			       b.flags,
-			       b.flags2);
-			// FIXME _actions->setScriptByIndex(b.actionListIdx);
-		}
-	}
-}
-
 // ----------------------------------
 // ---------- DRAW REGION -----------
 // ----------------------------------
@@ -1610,11 +1510,11 @@ int Scene::drawScene() {
 		GraphicFrame *bg = _bgResource->getFrame(0);
 
 		_vm->screen()->copyToBackBuffer(
-		    ((byte *)bg->surface.pixels) + _ws->yTop * bg->surface.w + _ws->xLeft, bg->surface.w,
-		    0,
-		    0,
-		    640,
-		    480);
+			((byte *)bg->surface.pixels) + _ws->yTop * bg->surface.w + _ws->xLeft, bg->surface.w,
+			0,
+			0,
+			640,
+			480);
 
 		drawActorsAndBarriers();
 		queueActorUpdates();
@@ -1623,9 +1523,6 @@ int Scene::drawScene() {
 		// TODO: draw main actor stuff
 
 		_vm->screen()->drawGraphicsInQueue();
-
-		// TODO: we must get rid of this
-		//OLD_UPDATE();
 	}
 
 	return 1;
@@ -1818,7 +1715,7 @@ int Scene::queueBarrierUpdates() {
 						_vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
 					} else {
 						// TODO: Do Cross Fade
-						// parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, _ws->commonRes.backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
+						// parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, _ws->backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
 						_vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
 					}
 				}

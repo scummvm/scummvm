@@ -31,7 +31,7 @@
 
 namespace Asylum {
 
-struct CommonResources;
+class WorldStats;
 
 /**
  * Asylum cursors are GraphicResources, and are stored in
@@ -71,7 +71,7 @@ public:
 	 * TODO this probably doesn't belong here, but on the
 	 * scene, where it originally was
 	 */
-	void update(CommonResources *cr, int32 currentAction);
+	void update(WorldStats *ws, int32 currentAction);
 	/**
 	 * Get the next logical frame from the currently loaded
 	 * cursorResource and draw it
@@ -123,6 +123,10 @@ private:
 	int32  _cursorStep;
 	int32 _mouseX;
 	int32 _mouseY;
+
+	// The number of millis between
+	// cursor gfx updates
+	uint32 _cursorTicks;
 
 }; // end of class Cursor
 

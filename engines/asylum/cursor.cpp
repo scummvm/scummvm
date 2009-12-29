@@ -28,6 +28,8 @@
 
 namespace Asylum {
 
+const uint32 CURSOR_UPDATE_TICKS = 100;
+
 Cursor::Cursor(ResourcePack *res) {
 	_resPack = res;
 	_mouseX  = 0;
@@ -87,34 +89,34 @@ void Cursor::animate() {
 	set(_curFrame);
 }
 
-void Cursor::update(CommonResources *cr, int32 currentAction) {
+void Cursor::update(WorldStats *ws, int32 currentAction) {
 	uint32 newCursor = 0;
 
 	// Change cursor
 	switch (currentAction) {
 	case kWalkN:
-		newCursor = cr->curScrollUp;
+		newCursor = ws->curScrollUp;
 		break;
 	case kWalkNE:
-		newCursor = cr->curScrollUpRight;
+		newCursor = ws->curScrollUpRight;
 		break;
 	case kWalkNW:
-		newCursor = cr->curScrollUpLeft;
+		newCursor = ws->curScrollUpLeft;
 		break;
 	case kWalkS:
-		newCursor = cr->curScrollDown;
+		newCursor = ws->curScrollDown;
 		break;
 	case kWalkSE:
-		newCursor = cr->curScrollDownRight;
+		newCursor = ws->curScrollDownRight;
 		break;
 	case kWalkSW:
-		newCursor = cr->curScrollDownLeft;
+		newCursor = ws->curScrollDownLeft;
 		break;
 	case kWalkW:
-		newCursor = cr->curScrollLeft;
+		newCursor = ws->curScrollLeft;
 		break;
 	case kWalkE:
-		newCursor = cr->curScrollRight;
+		newCursor = ws->curScrollRight;
 		break;
 	}
 

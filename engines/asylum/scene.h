@@ -75,12 +75,12 @@ private:
 	GraphicResource *_bg;
 	GraphicResource *_progress;
 
-	int32 _start;
-	int32 _ticks;
-	bool  _done;
+	int32  _start;
+	int32  _ticks;
+	bool   _done;
 	uint32 _spinnerFrame;
-	int32 _spinnerProgress;
-	bool  _showMouseState;
+	int32  _spinnerProgress;
+	bool   _showMouseState;
 
 }; // end of class SceneTitle
 
@@ -282,9 +282,6 @@ private:
 	void debugShowBarriers();
 	void debugShowActors();
 	void debugShowWalkRegion(PolyDefinitions *poly);
-
-	// TODO: get rid of this
-	void OLD_UPDATE();
 
 	friend class SceneTitle;
 

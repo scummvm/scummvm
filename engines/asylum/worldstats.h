@@ -31,12 +31,23 @@
 
 #include "asylum/actor.h"
 #include "asylum/barrier.h"
+#include "asylum/actionarea.h"
 #include "asylum/scene.h"
 #include "asylum/sound.h"
 
 namespace Asylum {
 
-typedef struct CommonResources {
+class WorldStats {
+public:
+	WorldStats(Common::SeekableReadStream *stream, Scene *scene);
+	virtual ~WorldStats();
+
+	int32 size;
+	int32 numEntries;
+	int32 numChapter;
+	int32 xLeft; // scene start x position
+	int32 yTop;  // scene start y position
+	Common::Rect boundingRect;
 	int32 backgroundImage;
 	int32 curScrollUp;
 	int32 curScrollUpLeft;
@@ -62,45 +73,6 @@ typedef struct CommonResources {
 	int32 smallCurUp;
 	int32 smallCurDown;
 	int32 encounterFrameBg;
-
-} CommonResources;
-
-typedef struct ActionArea {
-	char   name[52];
-	int32 id;
-	int32 field01;
-	int32 field02;
-	int32 field_40;
-	int32 field_44;
-	int32 flags;
-	int32 actionListIdx1;
-	int32 actionListIdx2;
-	int32 actionType; // aka flags2: 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
-	int32 flagNums[10];
-	int32 field_7C;
-	int32 polyIdx;
-	int32 field_84;
-	int32 field_88;
-	int32 soundResId;
-	int32 field_90;
-	int32 paletteValue;
-	int32 array[5];
-	int32 volume;
-
-} ActionArea;
-
-class WorldStats {
-public:
-	WorldStats(Common::SeekableReadStream *stream, Scene *scene);
-	virtual ~WorldStats();
-
-	int32 size;
-	int32 numEntries;
-	int32 numChapter;
-	int32 xLeft; // scene start x position
-	int32 yTop;  // scene start y position
-	Common::Rect	 boundingRect;
-	CommonResources	 commonRes; // field_1C till field_7C
 	int32 width; // field_80
 	int32 height;
 	int32 motionStatus;
