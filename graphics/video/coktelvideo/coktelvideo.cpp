@@ -96,6 +96,10 @@ bool Imd::getFrameCoords(int16 frame,
 	return false;
 }
 
+bool Imd::hasExtraData() const {
+	return false;
+}
+
 bool Imd::hasExtraData(const char *fileName) const {
 	return false;
 }
@@ -2271,6 +2275,10 @@ bool Vmd::getFrameCoords(int16 frame,
 		int16 &x, int16 &y, int16 &width, int16 &height) {
 
 	return getPartCoords(frame, kPartTypeVideo, x, y, width, height);
+}
+
+bool Vmd::hasExtraData() const {
+	return !_extraData.empty();
 }
 
 bool Vmd::hasExtraData(const char *fileName) const {

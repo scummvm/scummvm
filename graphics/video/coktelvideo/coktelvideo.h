@@ -141,6 +141,8 @@ public:
 	virtual bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height) = 0;
 
+	/** Returns whether any extra data files are embedded in this video. */
+	virtual bool hasExtraData() const = 0;
 	/** Returns whether that extra data file exists */
 	virtual bool hasExtraData(const char *fileName) const = 0;
 	/** Returns an extra data file */
@@ -227,6 +229,7 @@ public:
 	bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height);
 
+	bool hasExtraData() const;
 	bool hasExtraData(const char *fileName) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName);
 
@@ -388,6 +391,7 @@ public:
 	bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height);
 
+	bool hasExtraData() const;
 	bool hasExtraData(const char *fileName) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName);
 
