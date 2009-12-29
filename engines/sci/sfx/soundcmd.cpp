@@ -213,8 +213,10 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 
 	// cmdMuteSound and cmdVolume do not operate on an object, but need the number of
 	// arguments passed. We load this in the value
-	if (obj.isNull())
+	if (!strcmp(_soundCommands[command]->desc, "cmdMuteSound") ||
+		!strcmp(_soundCommands[command]->desc, "cmdVolume")) {
 		value = argc - 1;	// minus the command
+	}
 
 	if (argc == 6) {	// cmdSendMidi
 		byte channel = argv[2].toUint16() & 0xf;
