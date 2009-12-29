@@ -184,6 +184,8 @@ public:
 
 	/** Render the next frame. */
 	virtual State nextFrame() = 0;
+	/** Get the time in ms until the next frame can be displayed. Already includes A/V sync measures. */
+	virtual uint32 getFrameWaitTime() = 0;
 	/** Wait for the frame to end. */
 	virtual void waitEndFrame() = 0;
 
@@ -252,6 +254,7 @@ public:
 	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
 
 	State nextFrame();
+	uint32 getFrameWaitTime();
 	void waitEndFrame();
 
 	void copyCurrentFrame(byte *dest,

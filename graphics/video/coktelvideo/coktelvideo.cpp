@@ -452,10 +452,10 @@ CoktelVideo::State Imd::nextFrame() {
 	return processFrame(_curFrame);
 }
 
-void Imd::waitEndFrame() {
+uint32 Imd::getFrameWaitTime() {
 	if (_soundEnabled && _hasSound) {;
 		if (_soundStage != 2)
-			return;
+			return 0;
 
 		if (_skipFrames == 0) {
 			int32 waitTime = (int16) (((_curFrame * _soundSliceLength) -
@@ -465,12 +465,20 @@ void Imd::waitEndFrame() {
 				_skipFrames = -waitTime / (_soundSliceLength >> 16);
 				warning("Video A/V sync broken, skipping %d frame(s)", _skipFrames + 1);
 			} else if (waitTime > 0)
-				g_system->delayMillis(waitTime);
+				return waitTime;
 
 		} else
 			_skipFrames--;
 	} else
-		g_system->delayMillis(_frameLength);
+		return _frameLength;
+
+	return 0;
+}
+
+void Imd::waitEndFrame() {
+	uint32 waitTime = getFrameWaitTime();
+	if (waitTime > 0)
+		g_system->delayMillis(waitTime);
 }
 
 void Imd::copyCurrentFrame(byte *dest,
