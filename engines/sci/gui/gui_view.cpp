@@ -73,7 +73,8 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	uint16 loopSize = 0, celSize = 0;
 	int loopNo, celNo, EGAmapNr;
 	byte seekEntry;
-	bool IsEGA = false;
+	bool isEGA = false;
+	bool isCompressed = true;
 
 	_loopCount = 0;
 	_embeddedPal = false;
@@ -81,13 +82,15 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 
 	switch (_resMan->getViewType()) {
 	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
-		IsEGA = true;
+		isEGA = true;
 	case kViewAmiga: // View-format Amiga (32 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 		
-		// bit 0x8000 of _resourceData[1] means palette is set
 		_loopCount = _resourceData[0];
+		// bit 0x8000 of _resourceData[1] means palette is set
+		if (_resourceData[1] & 0x40)
+			isCompressed = false;
 		mirrorBits = READ_LE_UINT16(_resourceData + 2);
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
@@ -96,7 +99,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			//  but on those games using that mapping will actually screw things up.
 			// On the other side: vga sci1 games have this pointing to a VGA palette
 			//  and ega sci1 games have this pointing to a 8x16 byte mapping table that needs to get applied then
-			if (!IsEGA) {
+			if (!isEGA) {
 				_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
 				_embeddedPal = true;
 			} else {
@@ -143,14 +146,20 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 				cel->displaceX = celData[4];
 				cel->displaceY = celData[5];
 				cel->clearKey = celData[6];
-				if (IsEGA) {
+				if (isEGA) {
 					cel->offsetEGA = celOffset + 7;
 					cel->offsetRLE = 0;
+					cel->offsetLiteral = 0;
 				} else {
 					cel->offsetEGA = 0;
-					cel->offsetRLE = celOffset + 8;
+					if (isCompressed) {
+						cel->offsetRLE = celOffset + 8;
+						cel->offsetLiteral = 0;
+					} else {
+						cel->offsetRLE = 0;
+						cel->offsetLiteral = celOffset + 8;
+					}
 				}
-				cel->offsetLiteral = 0;
 				cel->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
 					cel->displaceX = -cel->displaceX;
@@ -316,24 +325,29 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 			return;
 		}
 	} else {
-		// decompression for data that has separate rle and literal streams
 		literalPtr = _resourceData + celInfo->offsetLiteral;
-		while (pixelNo < pixelCount) {
-			pixel = *rlePtr++;
-			runLength = pixel & 0x3F;
-			switch (pixel & 0xC0) {
-			case 0: // copy bytes as-is
-				while (runLength-- && pixelNo < pixelCount)
-					outPtr[pixelNo++] = *literalPtr++;
-				break;
-			case 0x80: // fill with color
-				memset(outPtr + pixelNo, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
-				pixelNo += runLength;
-				break;
-			case 0xC0: // fill with transparent
-				pixelNo += runLength;
-				break;
+		if (celInfo->offsetRLE) {
+			// decompression for data that has separate rle and literal streams
+			while (pixelNo < pixelCount) {
+				pixel = *rlePtr++;
+				runLength = pixel & 0x3F;
+				switch (pixel & 0xC0) {
+				case 0: // copy bytes as-is
+					while (runLength-- && pixelNo < pixelCount)
+						outPtr[pixelNo++] = *literalPtr++;
+					break;
+				case 0x80: // fill with color
+					memset(outPtr + pixelNo, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
+					pixelNo += runLength;
+					break;
+				case 0xC0: // fill with transparent
+					pixelNo += runLength;
+					break;
+				}
 			}
+		} else {
+			// literal stream only, so no compression
+			memcpy(outPtr, literalPtr, pixelCount);
 		}
 		return;
 	}
