@@ -414,6 +414,8 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
+reg_t kList(EngineState *s, int argc, reg_t *argv);
+
 #endif
 
 } // End of namespace Sci

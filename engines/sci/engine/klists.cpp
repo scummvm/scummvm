@@ -632,6 +632,69 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// In SCI2.1, all the list functions were merged in one
+reg_t kList(EngineState *s, int argc, reg_t *argv) {
+
+	switch (argv[0].toUint16()) {
+		case 0:
+			return kNewList(s, argc - 1, argv + 1);
+		case 1:
+			return kDisposeList(s, argc - 1, argv + 1);
+		case 2:
+			return kNewNode(s, argc - 1, argv + 1);
+		case 3:
+			return kFirstNode(s, argc - 1, argv + 1);
+		case 4:
+			return kLastNode(s, argc - 1, argv + 1);
+		case 5:
+			return kEmptyList(s, argc - 1, argv + 1);
+		case 6:
+			return kNextNode(s, argc - 1, argv + 1);
+		case 7:
+			return kPrevNode(s, argc - 1, argv + 1);
+		case 8:
+			return kNodeValue(s, argc - 1, argv + 1);
+		case 9:
+			return kAddAfter(s, argc - 1, argv + 1);
+		case 10:
+			return kAddToFront(s, argc - 1, argv + 1);
+		case 11:
+			return kAddToEnd(s, argc - 1, argv + 1);
+		case 12:
+			warning("kList: unimplemented subfunction kAddBefore");
+			//return kAddBefore(s, argc - 1, argv + 1);
+			return NULL_REG;
+		case 13:
+			warning("kList: unimplemented subfunction kMoveToFront");
+			//return kMoveToFront(s, argc - 1, argv + 1);
+			return NULL_REG;
+		case 14:
+			warning("kList: unimplemented subfunction kMoveToEnd");
+			//return kMoveToEnd(s, argc - 1, argv + 1);
+			return NULL_REG;
+		case 15:
+			return kFindKey(s, argc - 1, argv + 1);
+		case 16:
+			return kDeleteKey(s, argc - 1, argv + 1);
+		case 17:
+			return kListAt(s, argc - 1, argv + 1);
+		case 18:
+			return kListIndexOf(s, argc - 1, argv + 1);
+		case 19:
+			return kListEachElementDo(s, argc - 1, argv + 1);
+		case 20:
+			return kListFirstTrue(s, argc - 1, argv + 1);
+		case 21:
+			return kListAllTrue(s, argc - 1, argv + 1);
+		case 22:
+			return kSort(s, argc - 1, argv + 1);
+		default:
+			warning("kList: Unhandled case %d");
+			return NULL_REG;
+	}
+
+}
+
 #endif
 
 } // End of namespace Sci
