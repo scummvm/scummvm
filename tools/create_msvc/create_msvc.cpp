@@ -552,7 +552,7 @@ void displayHelp(const char *exe) {
 	        " --msvc-version version   set the targeted MSVC version. Possible values:\n"
 	        "                           8 stands for \"Visual Studio 2005\"\n"
 	        "                           9 stands for \"Visual Studio 2008\"\n"
-	        "                           10 stands for \"Visual Studio 2010\"\n"
+	        "                           10 stands for \"Visual Studio 2010\" (Experimental)\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
 	        "                          MSVC project files. By default the prefix is the\n"
