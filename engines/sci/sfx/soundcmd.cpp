@@ -304,7 +304,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
 	if (oldSound)
-		_music->soundKill(oldSound);
+		cmdDisposeHandle(obj, value);
 
 	_music->pushBackSlot(newSound);
 
@@ -804,7 +804,18 @@ void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdReverb(reg_t obj, int16 value) {
 	// TODO
-	warning("STUB: cmdReverb");
+	// This function has one parameter, enabling the reverb effect
+	// in MT-32 if the parameter is non-zero. This is either the
+	// reverb level, or delay time. The reverb type is probably fixed
+	// to 1 ("room"). I'm not quite sure how and if this works for
+	// Adlib.
+	// Refer to http://www.midi.org/techspecs/midimessages.php
+	// and http://www.youngmonkey.ca/nose/audio_tech/synth/Roland-MT32.html
+	// Also, /sound/softsynth/mt32/synth.h is a good reference
+	// A good test case for this are the first two rooms in Longbow:
+	// reverb is set for the first room (the cave) and is subsequently
+	// cleared when Robin exits the cave
+	warning("STUB: cmdReverb (%d)", obj.toUint16());
 }
 
 void SoundCommandParser::cmdHoldHandle(reg_t obj, int16 value) {
