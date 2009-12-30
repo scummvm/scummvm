@@ -31,6 +31,8 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_saveload.h"
+#include "mohawk/dialogs.h"
+#include "mohawk/video/video.h"
 
 namespace Mohawk {
 
@@ -60,6 +62,11 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _optionsDialog;
 	_cardData.scripts.clear();
 }
+
+GUI::Debugger *MohawkEngine_Riven::getDebugger() {
+	return _console;
+}
+
 
 Common::Error MohawkEngine_Riven::run() {
 	MohawkEngine::run();

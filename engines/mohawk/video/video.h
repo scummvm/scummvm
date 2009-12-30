@@ -28,7 +28,7 @@
 
 #include "common/queue.h"
 #include "sound/audiostream.h"
-#include "sound/mixer.h"
+#include "sound/mixer.h"	// for Audio::SoundHandle
 #include "graphics/pixelformat.h"
 #include "graphics/video/codecs/codec.h"
 

@@ -35,7 +35,6 @@
 #define MOHAWK_QT_PLAYER_H
 
 #include "common/scummsys.h"
-#include "common/file.h"
 
 #include "mohawk/video/video.h"
 

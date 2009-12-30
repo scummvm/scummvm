@@ -26,6 +26,8 @@
 #include "mohawk/livingbooks.h"
 #include "mohawk/file.h"
 
+#include "common/events.h"
+
 namespace Mohawk {
 
 MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
@@ -319,6 +321,10 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(Common::String strin
 	}
 
 	return filename;
+}
+
+MohawkFile *MohawkEngine_LivingBooks::createMohawkFile() const {
+	return (getGameType() == GType_NEWLIVINGBOOKS) ? new MohawkFile() : new OldMohawkFile();
 }
 
 } // End of namespace Mohawk

@@ -27,6 +27,8 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_scripts.h"
+#include "mohawk/sound.h"
+#include "mohawk/video/video.h"
 
 #include "common/stream.h"
 #include "graphics/cursorman.h"

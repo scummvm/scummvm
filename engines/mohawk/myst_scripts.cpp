@@ -26,6 +26,8 @@
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/sound.h"
+#include "mohawk/video/video.h"
 
 #include "gui/message.h"
 

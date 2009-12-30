@@ -38,6 +38,8 @@
 namespace Mohawk {
 
 class MohawkEngine;
+class MohawkEngine_Myst;
+class MohawkEngine_Riven;
 
 class InfoDialog : public GUI::Dialog {
 protected:

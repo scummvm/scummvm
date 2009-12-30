@@ -33,6 +33,8 @@
 #include "mohawk/video/rpza.h"
 #include "mohawk/video/smc.h"
 
+#include "common/events.h"
+
 namespace Mohawk {
 
 ////////////////////////////////////////////

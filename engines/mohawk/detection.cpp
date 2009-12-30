@@ -63,15 +63,15 @@ uint16 MohawkEngine::getVersion() const {
 	return _gameDescription->version;
 }
 
-uint8 MohawkEngine::getGameType() {
+uint8 MohawkEngine::getGameType() const {
 	return _gameDescription->gameType;
 }
 
-Common::String MohawkEngine_LivingBooks::getBookInfoFileName() {
+Common::String MohawkEngine_LivingBooks::getBookInfoFileName() const {
 	return _gameDescription->desc.filesDescriptions[0].fileName;
 }
 
-Common::Language MohawkEngine::getLanguage() {
+Common::Language MohawkEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 

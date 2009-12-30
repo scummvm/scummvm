@@ -29,6 +29,9 @@
 #include "mohawk/myst.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_saveload.h"
+#include "mohawk/dialogs.h"
+#include "mohawk/file.h"
+#include "mohawk/video/video.h"
 
 namespace Mohawk {
 

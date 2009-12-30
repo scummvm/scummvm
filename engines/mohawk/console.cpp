@@ -29,6 +29,8 @@
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/sound.h"
+#include "mohawk/video/video.h"
 
 namespace Mohawk {
 

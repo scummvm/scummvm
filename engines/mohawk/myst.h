@@ -40,6 +40,7 @@ class MystGraphics;
 class MystScriptParser;
 class MystConsole;
 class MystSaveLoad;
+class MystOptionsDialog;
 
 // Engine Debug Flags
 enum {

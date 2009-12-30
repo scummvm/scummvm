@@ -27,20 +27,11 @@
 #define MOHAWK_H
 
 #include "common/scummsys.h"
-#include "common/util.h"
-#include "common/system.h"
-#include "common/rect.h"
 #include "common/array.h"
 
 #include "engines/engine.h"
 
-#include "gui/dialog.h"
-
-#include "mohawk/console.h"
-#include "mohawk/dialogs.h"
-#include "mohawk/file.h"
-#include "mohawk/sound.h"
-#include "mohawk/video/video.h"
+class OSystem;
 
 namespace Mohawk {
 
@@ -72,6 +63,8 @@ enum MohawkGameFeatures {
 struct MohawkGameDescription;
 class Sound;
 class PauseDialog;
+class MohawkFile;
+class VideoManager;
 
 class MohawkEngine : public ::Engine {
 protected:
@@ -87,8 +80,8 @@ public:
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
-	uint8 getGameType();
-	Common::Language getLanguage();
+	uint8 getGameType() const;
+	Common::Language getLanguage() const;
 	
 	bool hasFeature(EngineFeature f) const;
 
@@ -105,7 +98,7 @@ protected:
 	void pauseEngineIntern(bool);
 
 	// An array holding the main Mohawk archives require by the games
-	Common::Array<MohawkFile*> _mhk;
+	Common::Array<MohawkFile *> _mhk;
 };
 
 } // End of namespace Mohawk

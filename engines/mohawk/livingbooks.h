@@ -59,7 +59,7 @@ private:
 	Common::ConfigFile _bookInfoFile;
 
 	uint16 _curPage;
-	Common::String getBookInfoFileName();
+	Common::String getBookInfoFileName() const;
 	void loadBookInfo(Common::String filename);
 	void loadIntro();
 
@@ -85,8 +85,8 @@ private:
 	Common::String getFileNameFromConfig(Common::String section, Common::String key);
 	
 	// Platform/Version functions
-	bool isBigEndian() { return getGameType() == GType_NEWLIVINGBOOKS || getPlatform() == Common::kPlatformMacintosh; }
-	MohawkFile *createMohawkFile() { return (getGameType() == GType_NEWLIVINGBOOKS) ? new MohawkFile() : new OldMohawkFile(); }
+	bool isBigEndian() const { return getGameType() == GType_NEWLIVINGBOOKS || getPlatform() == Common::kPlatformMacintosh; }
+	MohawkFile *createMohawkFile() const;
 };
 
 } // End of namespace Mohawk

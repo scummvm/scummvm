@@ -33,6 +33,11 @@
 #include "base/version.h"
 
 #include "mohawk/mohawk.h"
+#include "mohawk/dialogs.h"
+#include "mohawk/sound.h"
+#include "mohawk/video/video.h"
+
+#include "sound/mixer.h"
 
 namespace Mohawk {
 

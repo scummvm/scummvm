@@ -39,6 +39,7 @@ class RivenGraphics;
 class RivenExternal;
 class RivenConsole;
 class RivenSaveLoad;
+class RivenOptionsDialog;
 
 #define RIVEN_STACKS 8
 
@@ -110,7 +111,7 @@ public:
 	Card _cardData;
 	bool _gameOver;
 	
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger();
 	
 	bool canLoadGameStateCurrently() { return true; }
 	bool canSaveGameStateCurrently() { return true; }
