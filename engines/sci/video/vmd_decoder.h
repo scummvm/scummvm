@@ -38,11 +38,18 @@ namespace Sci {
  * Wrapper for the Coktel Vision VMD video decoder
  * for videos by Coktel Vision/Sierra.
  *
- * Video decoder used in engines:
- *  - gob (without this wrapper)
- *  - sci
+ * VMD videos were used in the following SCI21/SCI3
+ * adventure games, developed by Sierra:
+ * - Gabriel Knight 2: The Beast Within
+ * - Leisure Suit Larry 7
+ * - Lighthouse
+ * - Phantasmagoria 1
+ * - RAMA
+ * - Shivers
+ * - Shivers 2: Harvest of Souls
+ * - Torin's Passage
  */
-	class VMDDecoder : public Graphics::VideoDecoder {
+class VMDDecoder : public Graphics::VideoDecoder {
 public:
 	VMDDecoder(Audio::Mixer *mixer);
 	virtual ~VMDDecoder();
