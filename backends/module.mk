@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	fs/symbian/symbian-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
 	fs/wii/wii-fs-factory.o \
+	fs/n64/n64-fs-factory.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \

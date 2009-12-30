@@ -33,7 +33,7 @@
 
 #include "mame.h"
 
-#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__) || defined (__MINT__)
+#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__) || defined (__MINT__) || defined(__N64__)
 #include "common/config-manager.h"
 #endif
 
@@ -1212,7 +1212,7 @@ FM_OPL *makeAdlibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined (GP2X) || defined(__MAEMO__) || defined(__DS__) || defined (__MINT__)
+#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined (GP2X) || defined(__MAEMO__) || defined(__DS__) || defined (__MINT__) || defined(__N64__)
 	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
 		env_bits = FMOPL_ENV_BITS_HQ;
 		eg_ent = FMOPL_EG_ENT_HQ;

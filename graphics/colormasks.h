@@ -117,10 +117,17 @@ struct ColorMasks<555> {
 		kGreenBits  = 5,
 		kBlueBits   = 5,
 
+#ifdef __N64__
+		kAlphaShift = 0,
+		kRedShift   = kBlueBits+kGreenBits+1,
+		kGreenShift = kBlueBits + 1,
+		kBlueShift  = 1,
+#else
 		kAlphaShift = 0,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
+#endif
 
 		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
 		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,

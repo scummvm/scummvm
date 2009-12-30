@@ -301,6 +301,31 @@
 	#define SCUMM_LITTLE_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
+#elif defined(__N64__)
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_BIG_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
+
+	#define STRINGBUFLEN 256
+
+	#define SCUMMVM_DONT_DEFINE_TYPES
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned int uint32;
+	typedef signed int int32;
+
+	typedef unsigned long long uint64;
+	typedef signed long long int64;
+
 #elif defined(__PSP__)
 
 	#include <malloc.h>
