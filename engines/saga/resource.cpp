@@ -315,16 +315,20 @@ bool Resource::createContexts() {
 	}
 
 	if (_voicesFileName[0][0] == 0) {
+#ifdef ENABLE_IHNM
 		if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 			// The Macintosh version of IHNM has no voices.res, and it has all
 			// its voice files in subdirectories, so don't do anything here
 			_contexts.push_back(new VoiceResourceContext_RES());
 		} else {
+#endif
 			warning("No voice file found, voices will be disabled");
 			_vm->_voicesEnabled = false;
 			_vm->_subtitlesEnabled = true;
 			_vm->_voiceFilesExist = false;
+#ifdef ENABLE_IHNM
 		}
+#endif
 	}
 
 	//// Detect and add music files /////////////////////////////////////////
