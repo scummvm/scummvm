@@ -265,7 +265,7 @@ Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(
 }
 
 Common::String MohawkEngine_LivingBooks::getStringFromConfig(Common::String section, Common::String key) {
-	Common::String x = Common::String::emptyString;
+	Common::String x;
 	_bookInfoFile.getKey(key, section, x);
 	return removeQuotesFromString(x);
 }

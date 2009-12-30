@@ -31,7 +31,6 @@ namespace Mohawk {
 
 MohawkFile::MohawkFile() {
 	_mhk = NULL;
-	_curFile = Common::String::emptyString;
 	_types = NULL;
 	_fileTable = NULL;
 }
@@ -51,7 +50,7 @@ void MohawkFile::close() {
 	delete[] _types; _types = NULL;
 	delete[] _fileTable; _fileTable = NULL;
 	
-	_curFile = Common::String::emptyString;
+	_curFile.clear();
 }
 
 void MohawkFile::open(Common::SeekableReadStream *stream) {

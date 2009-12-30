@@ -498,7 +498,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	for (uint32 i = 0; i < namesCount; i++) {
 		nameStream->seek(curNamesPos + stringOffsets[i]);
 			
-		Common::String name = Common::String::emptyString;
+		Common::String name;
 		for (char c = nameStream->readByte(); c; c = nameStream->readByte())
 			name += c;
 		varNames.push_back(name);
@@ -519,7 +519,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	for (uint32 i = 0; i < namesCount; i++) {
 		nameStream->seek(curNamesPos + stringOffsets[i]);
 			
-		Common::String name = Common::String::emptyString;
+		Common::String name;
 		for (char c = nameStream->readByte(); c; c = nameStream->readByte())
 			name += c;
 		xNames.push_back(name);

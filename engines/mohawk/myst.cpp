@@ -714,7 +714,7 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 
 	uint16 count = helpStream->readUint16LE();
 	uint16 *u0 = new uint16[count];
-	Common::String helpText = Common::String::emptyString;
+	Common::String helpText;
 	
 	debugC(kDebugHelp, "\tcount: %d", count);
 	

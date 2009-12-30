@@ -434,7 +434,7 @@ Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {
 	assert(hotspot < _hotspotCount);
 	
 	if (_hotspots[hotspot].name_resource < 0)
-		return Common::String::emptyString;
+		return Common::String();
 
 	return getName(HotspotNames, _hotspots[hotspot].name_resource);
 }
@@ -488,7 +488,7 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 	Common::SeekableReadStream* nameStream = getRawData(ID_NAME, nameResource);
 	uint16 fieldCount = nameStream->readUint16BE();
 	uint16* stringOffsets = new uint16[fieldCount];
-	Common::String name = Common::String::emptyString;
+	Common::String name;
 	char c;
 
 	if (nameID < fieldCount) {

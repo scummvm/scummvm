@@ -143,7 +143,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		names->seek(curNamesPos);
 		names->seek(stringOffsets[i], SEEK_CUR);
 			
-		Common::String name = Common::String::emptyString;
+		Common::String name;
 		char c = (char)names->readByte();
 
 		while (c) {
