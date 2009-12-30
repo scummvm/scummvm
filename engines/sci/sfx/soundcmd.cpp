@@ -220,9 +220,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 
 	if (argc == 6) {	// cmdSendMidi
 		byte channel = argv[2].toUint16() & 0xf;
-		byte midiCmd = argv[3].toUint16() == 0xff ?
-					  0xe0 : /* Pitch wheel */
-					  0xb0; /* argv[3].toUint16() is actually a controller number */
+		byte midiCmd = argv[3].toUint16() & 0xff;
 		
 		uint16 controller = argv[4].toUint16();
 		uint16 param = argv[5].toUint16();
