@@ -32,6 +32,8 @@
 
 namespace Sci {
 
+// NOTE: 0x72-0x79, 0x85-0x86, 0x88 are from the GK2 demo (which has debug support) and are
+// just Dummy in other SCI2 games.
 static const char *sci2_default_knames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
@@ -147,14 +149,14 @@ static const char *sci2_default_knames[] = {
 	/*0x6f*/ "AvoidPath",
 	/*0x70*/ "InPolygon",
 	/*0x71*/ "MergePoly",
-	/*0x72*/ "Dummy",
-	/*0x73*/ "Dummy",
-	/*0x74*/ "Dummy",
-	/*0x75*/ "Dummy",
-	/*0x76*/ "Dummy",
-	/*0x77*/ "Dummy",
-	/*0x78*/ "Dummy",
-	/*0x79*/ "Dummy",
+	/*0x72*/ "SetDebug",
+	/*0x73*/ "InspectObject",
+	/*0x74*/ "MemoryInfo",
+	/*0x75*/ "Profiler",
+	/*0x76*/ "Record",
+	/*0x77*/ "PlayBack",
+	/*0x78*/ "MonoOut",
+	/*0x79*/ "SetFatalStr",
 	/*0x7a*/ "GetCWD",
 	/*0x7b*/ "ValidPath",
 	/*0x7c*/ "FileIO",
@@ -166,12 +168,35 @@ static const char *sci2_default_knames[] = {
 	/*0x82*/ "Array",
 	/*0x83*/ "String",
 	/*0x84*/ "RemapColors",
-	/*0x85*/ "Dummy",
-	/*0x86*/ "Dummy",
+	/*0x85*/ "IntegrityChecking",
+	/*0x86*/ "CheckIntegrity",
 	/*0x87*/ "ObjectIntersect",
-	/*0x88*/ "Dummy",
+	/*0x88*/ "MarkMemory",
 	/*0x89*/ "TextWidth",
-	/*0x8a*/ "PointSize"
+	/*0x8a*/ "PointSize",
+	
+	// GK2 Demo only kernel functions
+	/*0x8b*/ "AddLine",
+	/*0x8c*/ "DeleteLine",
+	/*0x8d*/ "UpdateLine",
+	/*0x8e*/ "AddPolygon",
+	/*0x8f*/ "DeletePolygon",
+	/*0x90*/ "UpdatePolygon",
+	/*0x91*/ "Bitmap",
+	/*0x92*/ "ScrollWindow",
+	/*0x93*/ "SetFontRes",
+	/*0x94*/ "MovePlaneItems",
+	/*0x95*/ "PreloadResource",
+	/*0x96*/ "Dummy",
+	/*0x97*/ "ResourceTrack",
+	/*0x98*/ "CheckCDisc",
+	/*0x99*/ "GetSaveCDisc",
+	/*0x9a*/ "TestPoly",
+	/*0x9b*/ "WinHelp",
+	/*0x9c*/ "LoadChunk",
+	/*0x9d*/ "SetPalStyleRange",
+	/*0x9e*/ "AddPicAt",
+	/*0x9f*/ "MessageBox"
 };
 
 static const char *sci21_default_knames[] = {
@@ -302,7 +327,7 @@ static const char *sci21_default_knames[] = {
 	/*0x7c*/ "SetQuitStr",
 	/*0x7d*/ "GetConfig",
 	/*0x7e*/ "Table",
-	/*0x7f*/ "Dummy",
+	/*0x7f*/ "WinHelp", // Windows only
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
@@ -314,7 +339,7 @@ static const char *sci21_default_knames[] = {
 	/*0x88*/ "Dummy",
 	/*0x89*/ "Dummy",
 	/*0x8a*/ "LoadChunk",
-	/*0x8b*/ "SetPalStyleRange"
+	/*0x8b*/ "SetPalStyleRange",
 	/*0x8c*/ "AddPicAt",
 	/*0x8d*/ "Dummy",
 	/*0x8e*/ "NewRoom",
@@ -324,11 +349,11 @@ static const char *sci21_default_knames[] = {
 	/*0x92*/ "PlayVMD",
 	/*0x93*/ "SetHotRectangles",
 	/*0x94*/ "MulDiv",
-	/*0x95*/ "Dummy",
-	/*0x96*/ "Dummy",
-	/*0x97*/ "Dummy",
-	/*0x98*/ "Dummy",
-	/*0x99*/ "Dummy",
+	/*0x95*/ "GetSierraProfileInt", // Windows only
+	/*0x96*/ "GetSierraProfileString", // Windows only
+	/*0x97*/ "SetWindowsOption", // Windows only
+	/*0x98*/ "GetWindowsOption", // Windows only
+	/*0x99*/ "WinDLL", // Windows only
 
 	// SCI3
 	/*0x9a*/ "Dummy",
@@ -336,12 +361,30 @@ static const char *sci21_default_knames[] = {
 	/*0x9c*/ "DeletePic"
 };
 
+enum {
+	kKernelEntriesSci2 = 0x8b,
+	kKernelEntriesGk2Demo = 0xa0,
+	kKernelEntriesSci21 = 0x9a,
+	kKernelEntriesSci3 = 0x9d
+};
+
 void Kernel::setKernelNamesSci2() {
-	_kernelNames = Common::StringList(sci2_default_knames, ARRAYSIZE(sci2_default_knames));
+	_kernelNames = Common::StringList(sci2_default_knames, kKernelEntriesSci2);
 }
 
-void Kernel::setKernelNamesSci21() {
-	_kernelNames = Common::StringList(sci21_default_knames, ARRAYSIZE(sci21_default_knames));
+void Kernel::setKernelNamesSci21(Common::String gameId) {
+	// The Gabriel Knight 2 demo uses a different kernel function set. It's pretty much a cross between
+	// the SCI2 and SCI2.1 set. Strangely, the GK2 executable still has the 2.100.002 version string,
+	// even though it wouldn't be compatible with the other 2.100.002 games...
+	if (gameId == "gk2" && ((SciEngine *)g_engine)->isDemo()) {
+		_kernelNames = Common::StringList(sci2_default_knames, kKernelEntriesGk2Demo);
+		// OnMe is IsOnMe here, but they should be compatible
+		_kernelNames[0x23] = "Robot"; // Graph in SCI2
+		_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
+	} else {
+		// TODO: Differentiate between SCI2.1/3
+		_kernelNames = Common::StringList(sci21_default_knames, kKernelEntriesSci3);
+	}
 }
 
 // SCI2 Kernel Functions

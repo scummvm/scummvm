@@ -134,6 +134,7 @@ public:
 	Kernel *getKernel() const { return _kernel; }
 	EngineState *getEngineState() const { return _gamestate; }
 	Vocabulary *getVocabulary() const { return _vocabulary; }
+	bool isDemo() const;
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;

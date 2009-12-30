@@ -929,7 +929,14 @@ byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
+#ifdef ENABLE_SCI32
+	// HACK: Due to a limitation in the SegManager, we don't know if the pointer needs to be
+	// word aligned. If it's a new style array, then it is just accessing the arrays from a
+	// table and this doesn't need to be true.
+	if (pointer.offset & 1 && pointer.segment != Arrays_seg_id) {
+#else
 	if (pointer.offset & 1) {
+#endif
 		warning("Unaligned pointer read: %04x:%04x expected with word alignment", PRINT_REG(pointer));
 		return NULL;
 	}

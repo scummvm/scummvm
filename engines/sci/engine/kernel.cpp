@@ -657,6 +657,10 @@ int determine_reg_type(SegManager *segMan, reg_t reg) {
 	case SEG_TYPE_STACK:
 	case SEG_TYPE_SYS_STRINGS:
 	case SEG_TYPE_DYNMEM:
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_ARRAY:
+	case SEG_TYPE_STRING:
+#endif
 		return KSIG_REF;
 	case SEG_TYPE_LISTS:
 		return KSIG_LIST;
@@ -771,7 +775,7 @@ bool Kernel::loadKernelNames(Common::String gameId) {
 	
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
-		setKernelNamesSci21();
+		setKernelNamesSci21(gameId);
 	else if (getSciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else

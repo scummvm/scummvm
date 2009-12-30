@@ -493,6 +493,14 @@ void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback not
 
 #ifdef ENABLE_SCI32
 
+SegmentRef ArrayTable::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = false;
+	ret.maxSize = _table[pointer.offset].getSize() * 2;
+	ret.reg = _table[pointer.offset].getRawData();
+	return ret;
+}
+
 Common::String SciString::toString() {
 	if (_type != 3)
 		error("SciString::toString(): Array is not a string");

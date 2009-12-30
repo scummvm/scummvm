@@ -757,6 +757,7 @@ struct ArrayTable : public Table<SciArray<reg_t> > {
 	ArrayTable() : Table<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+	SegmentRef dereference(reg_t pointer);
 };
 
 struct StringTable : public Table<SciString> {

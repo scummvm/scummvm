@@ -592,8 +592,8 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	Common::String path = s->_segMan->getString(argv[0]);
 
-	// FIXME: For now, we only accept the (fake) root dir "/" as a valid path.
-	s->r_acc = make_reg(0, path == "/");
+	// FIXME: For now, we only accept the (fake) dir "" as a valid path.
+	s->r_acc = make_reg(0, path == "");
 
 	debug(3, "kValidPath(%s) -> %d", path.c_str(), s->r_acc.offset);
 

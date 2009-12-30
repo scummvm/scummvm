@@ -111,7 +111,7 @@ private:
 	/**
 	 * Sets the default kernel function names to the SCI2.1 kernel functions
 	 */
-	void setKernelNamesSci21();
+	void setKernelNamesSci21(Common::String gameId);
 #endif
 
 	/**

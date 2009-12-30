@@ -363,17 +363,29 @@ Common::String MessageState::processString(const char *s) {
 }
 
 void MessageState::outputString(reg_t buf, const Common::String &str) {
-	SegmentRef buffer_r = _segMan->dereference(buf);
-
-	if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
-		_segMan->strcpy(buf, str.c_str());
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		SciString *sciString = _segMan->lookupString(buf);
+		sciString->setSize(str.size() + 1);
+		for (uint32 i = 0; i < str.size(); i++)
+			sciString->setValue(i, str.c_str()[i]);
+		sciString->setValue(str.size(), 0);
 	} else {
-		warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+#endif
+		SegmentRef buffer_r = _segMan->dereference(buf);
 
-		// Set buffer to empty string if possible
-		if (buffer_r.maxSize > 0)
-			_segMan->strcpy(buf, "");
+		if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
+			_segMan->strcpy(buf, str.c_str());
+		} else {
+			warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+
+			// Set buffer to empty string if possible
+			if (buffer_r.maxSize > 0)
+				_segMan->strcpy(buf, "");
+		}
+#ifdef ENABLE_SCI32
 	}
+#endif
 }
 
 void MessageState::lastQuery(int &module, MessageTuple &tuple) {
