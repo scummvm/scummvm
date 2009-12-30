@@ -263,7 +263,7 @@ int ADPCMInputStream::readBufferApple(int16 *buffer, const int numSamples) {
 				_status.ima_ch[i].stepIndex =          temp & 0x007F;
 
 				// Clip the step index
-				_status.ima_ch[i].stepIndex = CLIP(_status.ima_ch[i].stepIndex, 0, 88);
+				_status.ima_ch[i].stepIndex = CLIP<int32>(_status.ima_ch[i].stepIndex, 0, 88);
 
 				_blockPos[i] = 2;
 			}
