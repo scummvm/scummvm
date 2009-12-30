@@ -46,10 +46,6 @@ extern bool isSmartphone();
 	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
 #endif
 
-#ifdef __N64__
-	#define fputs(str, file)	asm("nop");
-#endif
-
 namespace Common {
 
 StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {

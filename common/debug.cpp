@@ -45,15 +45,6 @@
 	#define fflush(file)		DS::std_fflush(file)
 #endif
 
-#ifdef __N64__
-	#include <n64utils.h>
-
-	#define fputs(str, file)	asm("nop");
-	#define fflush(a)			asm("nop");
-	#define OutputDebugString	addLineTextLayer
-#endif
-
-
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
 

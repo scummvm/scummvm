@@ -22,6 +22,8 @@
 
 #include <romfs.h>
 
+#include <malloc.h> // Required for memalign
+
 #include "osys_n64.h"
 #include "pakfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"

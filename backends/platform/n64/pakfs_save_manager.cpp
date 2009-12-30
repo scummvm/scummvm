@@ -21,9 +21,8 @@
  */
 
 #include <n64utils.h>
-#include "pakfs_save_manager.h"
 
-static bool matches(const char *glob, const char *name);
+#include "pakfs_save_manager.h"
 
 bool deleteSaveGame(const char *filename) {
 	int res = removeFileOnPak(filename);
@@ -56,37 +55,19 @@ Common::StringList PAKSaveManager::listSavefiles(const Common::String &pattern) 
 	PAKDIR *dirp = pakfs_opendir();
 	pakfs_dirent *dp;
 	Common::StringList list;
+	Common::String *fname;
 
 	while ((dp = pakfs_readdir(dirp)) != NULL) {
-		if (matches(pattern.c_str(), dp->entryname))
+		fname = new Common::String(dp->entryname);
+		if (fname->matchString(pattern, false, false))
 			list.push_back(dp->entryname);
 
+		delete fname;
 		free(dp);
 	}
 
 	pakfs_closedir(dirp);
 
 	return list;
-}
-
-static bool matches(const char *glob, const char *name) {
-	while (*glob)
-		if (*glob == '*') {
-			while (*glob == '*')
-				glob++;
-			do {
-				if ((*name == *glob || *glob == '?') &&
-				        matches(glob, name))
-					return true;
-			} while (*name++);
-			return false;
-		} else if (!*name)
-			return false;
-		else if (*glob == '?' || *glob == *name) {
-			glob++;
-			name++;
-		} else
-			return false;
-	return !*name;
 }
 

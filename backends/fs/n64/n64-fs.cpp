@@ -23,12 +23,10 @@
 #ifdef __N64__
 
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/stdiostream.h"
+#include "backends/fs/n64/romfsstream.h"
 
 #include <sys/param.h>
-
 #include <unistd.h>
-
 #include <n64utils.h>
 
 #define	ROOT_PATH	"/"
@@ -202,11 +200,11 @@ AbstractFSNode *N64FilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *N64FilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return RomfsStream::makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *N64FilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+	return RomfsStream::makeFromPath(getPath(), true);
 }
 
 #endif //#ifdef __N64__

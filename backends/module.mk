@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	fs/windows/windows-fs-factory.o \
 	fs/wii/wii-fs-factory.o \
 	fs/n64/n64-fs-factory.o \
+	fs/n64/romfsstream.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \

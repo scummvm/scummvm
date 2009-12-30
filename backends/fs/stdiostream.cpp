@@ -25,28 +25,6 @@
 
 #include "backends/fs/stdiostream.h"
 
-#ifdef __N64__
-	#include <romfs.h> 
-
-	#undef feof
-	#undef clearerr
-	#undef ferror
-
-	#undef FILE
-	#define FILE ROMFILE
-
-	#define fopen(name, mode)					romfs_open(name, mode)
-	#define fclose(handle)						romfs_close(handle)
-	#define fread(ptr, size, items, file)		romfs_read(ptr, size, items, file)
-	#define fwrite(ptr, size, items, file)		romfs_write(ptr, size, items, file)
-	#define feof(handle)						romfs_eof(handle)
-	#define ftell(handle)						romfs_tell(handle)
-	#define fseek(handle, offset, whence)		romfs_seek(handle, offset, whence)
-	#define clearerr(handle)					romfs_clearerr(handle)
-	#define fflush(file)						romfs_flush(file)
-	#define ferror(handle)						romfs_error(handle)
-#endif
-
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);
 }

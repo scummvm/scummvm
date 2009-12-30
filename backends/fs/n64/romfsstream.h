@@ -18,25 +18,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
-#ifndef __N64_PORTDEFS__
-#define __N64_PORTDEFS__
+#ifndef BACKENDS_FS_ROMFSSTREAM_H
+#define BACKENDS_FS_ROMFSSTREAM_H
 
-#include <n64utils.h>
+#include "common/scummsys.h"
+#include "common/noncopyable.h"
+#include "common/stream.h"
+#include "common/str.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <math.h>
+class RomfsStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
+protected:
+	/** File handle to the actual file. */
+	void *_handle;
 
-#undef assert
-#define assert(x)  ((x) ? 0 : (print_error("["#x"] (%s:%d)", __FILE__, __LINE__)))
+public:
+	/**
+	 * Given a path, invokes fopen on that path and wrap the result in a
+	 * RomfsStream instance.
+	 */
+	static RomfsStream *makeFromPath(const Common::String &path, bool writeMode);
+
+	RomfsStream(void *handle);
+	virtual ~RomfsStream();
+
+	virtual bool err() const;
+	virtual void clearErr();
+	virtual bool eos() const;
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual bool flush();
+
+	virtual int32 pos() const;
+	virtual int32 size() const;
+	virtual bool seek(int32 offs, int whence = SEEK_SET);
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+};
 
 #endif
-
