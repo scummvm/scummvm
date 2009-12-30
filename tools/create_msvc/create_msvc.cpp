@@ -217,8 +217,10 @@ public:
 	 * Generates the project properties for debug and release settings.
 	 *
 	 * @param setup Description of the desired build setup.
+	 * @param isRelease Type of property file
+	 * @param isWin32 Bitness of property file
 	 */
-	virtual void createBuildProp(const BuildSetup &setup) = 0;
+	virtual void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32) = 0;
 
 	/**
 	 * Get the file extension for project files
@@ -282,7 +284,7 @@ public:
 
 	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix);
 
-	void createBuildProp(const BuildSetup &setup);
+	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32);
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
@@ -898,8 +900,11 @@ void ProjectProvider::createMSVCProject(const BuildSetup &setup) {
 	// Create the global property file
 	createGlobalProp(setup);
 
-	// Create the configuration property files
-	createBuildProp(setup);
+	// Create the configuration property files (for Debug and Release with 32 and 64bits versions)
+	createBuildProp(setup, true, false);
+	createBuildProp(setup, true, true);
+	createBuildProp(setup, false, false);
+	createBuildProp(setup, false, true);
 }
 
 void ProjectProvider::createScummVMSolution(const BuildSetup &setup) {
@@ -1565,130 +1570,55 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	properties.flush();
 }
 
-void VisualStudioProvider::createBuildProp(const BuildSetup &setup) {
-	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Debug" + getPropertiesExtension()).c_str());
+void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32) {
+	const std::string outputType = (isRelease ? "Release" : "Debug");
+	const std::string outputBitness = (isWin32 ? "32" : "64");
+
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug" +  + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
 	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Debug32\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global.vsprops\"\n"
+	              "\tName=\"ScummVM_" << outputType << outputBitness << "\"\n"
+	              "\tInheritedPropertySheets=\".\\ScummVM_Global" << (isWin32 ? "" : "64") << ".vsprops\"\n"
 	              "\t>\n"
 	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tOptimization=\"0\"\n"
+	              "\t\tName=\"VCCLCompilerTool\"\n";
+
+	if (isRelease) {
+		properties << "\t\tEnableIntrinsicFunctions=\"true\"\n"
+		              "\t\tWholeProgramOptimization=\"true\"\n"
+	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+		              "\t\tStringPooling=\"true\"\n"
+		              "\t\tBufferSecurityCheck=\"false\"\n"
+		              "\t\tDebugInformationFormat=\"0\"\n"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLinkerTool\"\n"
+		              "\t\tLinkIncremental=\"1\"\n"
+		              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+		              "\t\tSetChecksum=\"true\"\n";
+	} else {
+		properties << "\t\tOptimization=\"0\"\n"
 	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
 	              "\t\tMinimalRebuild=\"true\"\n"
 	              "\t\tBasicRuntimeChecks=\"3\"\n"
 	              "\t\tRuntimeLibrary=\"1\"\n"
 	              "\t\tEnableFunctionLevelLinking=\"true\"\n"
 	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"4\"\n"
+		              "\t\tDebugInformationFormat=\"" << (isWin32 ? "4" : "3") << "\"\n"	// For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCLinkerTool\"\n"
 	              "\t\tLinkIncremental=\"2\"\n"
 	              "\t\tGenerateDebugInformation=\"true\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
+		              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n";
+	}
 
-	properties.flush();
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Debug64" + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug64" + getPropertiesExtension() + "\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Debug64\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global64.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tOptimization=\"0\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tMinimalRebuild=\"true\"\n"
-	              "\t\tBasicRuntimeChecks=\"3\"\n"
-	              "\t\tRuntimeLibrary=\"1\"\n"
-	              "\t\tEnableFunctionLevelLinking=\"true\"\n"
-	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"3\"\n"      // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"2\"\n"
-	              "\t\tGenerateDebugInformation=\"true\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Release" + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release" + getPropertiesExtension() + "\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Release32\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tEnableIntrinsicFunctions=\"true\"\n"
-	              "\t\tWholeProgramOptimization=\"true\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tStringPooling=\"true\"\n"
-	              "\t\tBufferSecurityCheck=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"0\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"1\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSetChecksum=\"true\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Release64" + getPropertiesExtension()).c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release64" + getPropertiesExtension() + "\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Release64\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global64.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tEnableIntrinsicFunctions=\"true\"\n"
-	              "\t\tWholeProgramOptimization=\"true\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tStringPooling=\"true\"\n"
-	              "\t\tBufferSecurityCheck=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"0\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"1\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSetChecksum=\"true\"\n"
-	              "\t/>\n"
+	properties << "\t/>\n"
 	              "</VisualStudioPropertySheet>\n";
 
 	properties.flush();
