@@ -291,6 +291,52 @@ public:
 	int getVisualStudioVersion();
 };
 
+class MSBuildProvider : public ProjectProvider {
+public:
+	MSBuildProvider(const int version, std::string global_warnings, std::map<std::string, std::string> project_warnings);
+
+	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
+	                       const StringList &includeList, const StringList &excludeList);
+
+	void outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32);
+
+	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
+
+	void writeReferences(std::ofstream &output);
+
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix);
+
+	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32);
+
+	const char *getProjectExtension();
+	const char *getPropertiesExtension();
+	int getVisualStudioVersion();
+
+private:
+	struct FileEntry {
+		std::string name;
+		std::string path;
+		std::string filter;
+		std::string prefix;
+
+		bool operator<(const FileEntry& rhs) {
+			return path.compare(rhs.path) == -1;   // Not exactly right for alphabetical order, but good enough
+		}
+	};
+	typedef std::list<FileEntry> FileEntries;
+
+	std::list<std::string> _filters; // list of filters (we need to create a GUID for each filter id)
+	FileEntries _compileFiles;
+	FileEntries _includeFiles;
+	FileEntries _otherFiles;
+	FileEntries _asmFiles;
+	FileEntries _resourceFiles;
+
+	void computeFileList(const FileNode &dir, const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
+	void createFiltersFile(const BuildSetup &setup, const std::string &name);
+};
+
 } // End of anonymous namespace
 
 int main(int argc, char *argv[]) {
@@ -347,7 +393,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 8 && msvcVersion != 9) {
+			if (msvcVersion != 8 && msvcVersion != 9 && msvcVersion != 10) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -456,7 +502,12 @@ int main(int argc, char *argv[]) {
 	projectWarnings["lure"] = "4189;4355";
 	projectWarnings["kyra"] = "4355";
 
-	ProjectProvider *provider = new VisualStudioProvider(msvcVersion, globalWarnings, projectWarnings);
+	ProjectProvider *provider = NULL;
+
+	if (msvcVersion == 8 || msvcVersion == 9)
+		provider = new VisualStudioProvider(msvcVersion, globalWarnings, projectWarnings);
+	else
+		provider = new MSBuildProvider(msvcVersion, globalWarnings, projectWarnings);
 
 	provider->createMSVCProject(setup);
 
@@ -501,6 +552,7 @@ void displayHelp(const char *exe) {
 	        " --msvc-version version   set the targeted MSVC version. Possible values:\n"
 	        "                           8 stands for \"Visual Studio 2005\"\n"
 	        "                           9 stands for \"Visual Studio 2008\"\n"
+	        "                           10 stands for \"Visual Studio 2010\"\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --file-prefix prefix     allow overwriting of relative file prefix in the\n"
 	        "                          MSVC project files. By default the prefix is the\n"
@@ -926,7 +978,9 @@ void ProjectProvider::createScummVMSolution(const BuildSetup &setup) {
 
 	solution << "Project(\"{" << solutionUUID << "}\") = \"scummvm\", \"scummvm" << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
 
-	writeReferences(solution);
+	// Project dependencies are moved to vcxproj files in Visual Studio 2010
+	if (_version < 10)
+		writeReferences(solution);
 
 	solution << "EndProject\n";
 
@@ -1690,6 +1744,450 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 
 	if (indentation)
 		projectFile << getIndent(indentation + 1) << "</Filter>\n";
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MSBuild Provider (Visual Studio 2010)
+//////////////////////////////////////////////////////////////////////////
+
+MSBuildProvider::MSBuildProvider(const int version, std::string global_warnings, std::map<std::string, std::string> project_warnings)
+	: ProjectProvider(version, global_warnings, project_warnings) {
+
+}
+
+const char *MSBuildProvider::getProjectExtension() {
+	return ".vcxproj";
+}
+
+const char *MSBuildProvider::getPropertiesExtension() {
+	return ".props";
+}
+
+int MSBuildProvider::getVisualStudioVersion() {
+	return 2010;
+}
+
+#define OUTPUT_CONFIGURATION_MSBUILD(config, platform) \
+	project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << platform << "\">\n" \
+	           "\t\t\t<Configuration>" << config << "</Configuration>\n" \
+	           "\t\t\t<Platform>" << platform << "</Platform>\n" \
+	           "\t\t</ProjectConfiguration>\n"
+
+#define OUTPUT_CONFIGURATION_TYPE_MSBUILD(config) \
+	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n" \
+	           "\t\t<ConfigurationType>" << (name == "scummvm" ? "Application" : "StaticLibrary") << "</ConfigurationType>\n" \
+	           "\t</PropertyGroup>\n"
+
+#define OUTPUT_PROPERTIES_MSBUILD(config, properties) \
+	project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"PropertySheets\">\n" \
+	           "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" />\n" \
+	           "\t\t<Import Project=\"" << properties << "\" />\n" \
+	           "\t</ImportGroup>\n"
+
+void MSBuildProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
+                                        const StringList &includeList, const StringList &excludeList) {
+	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
+	std::ofstream project(projectFile.c_str());
+	if (!project)
+		error("Could not open \"" + projectFile + "\" for writing");
+
+	project << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+	           "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	           "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
+
+	OUTPUT_CONFIGURATION_MSBUILD("Debug", "Win32");
+	OUTPUT_CONFIGURATION_MSBUILD("Debug", "x64");
+	OUTPUT_CONFIGURATION_MSBUILD("Release", "Win32");
+	OUTPUT_CONFIGURATION_MSBUILD("Release", "x64");
+
+	project << "\t</ItemGroup>\n";
+
+	// Project name & Guid
+	project << "\t<PropertyGroup Label=\"Globals\">\n"
+	           "\t\t<ProjectGuid>" << uuid << "</ProjectGuid>\n"
+	           "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
+	           "\t\t<Keyword>Win32Proj</Keyword>\n"
+	           "\t</PropertyGroup>\n";
+
+	// Shared configuration
+	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
+
+	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Release|Win32");
+	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Debug|Win32");
+	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Release|x64");
+	OUTPUT_CONFIGURATION_TYPE_MSBUILD("Debug|x64");
+
+	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
+	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
+	           "\t</ImportGroup>\n";
+
+	OUTPUT_PROPERTIES_MSBUILD("Release|Win32", "ScummVM_Release.props");
+	OUTPUT_PROPERTIES_MSBUILD("Debug|Win32", "ScummVM_Debug.props");
+	OUTPUT_PROPERTIES_MSBUILD("Release|x64", "ScummVM_Release64.props");
+	OUTPUT_PROPERTIES_MSBUILD("Debug|x64", "ScummVM_Debug64.props");
+
+	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
+
+	// Project version number
+	project << "\t<PropertyGroup>\n"
+	           "\t\t<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>\n"; // FIXME: update temporary entry _ProjectFileVersion
+
+	if (name == "scummvm")
+		project << "<ExecutablePath>$(SCUMMVM_LIBS)\\bin;$(VCInstallDir)bin;$(WindowsSdkDir)bin\\NETFX 4.0 Tools;$(WindowsSdkDir)bin;$(VSInstallDir)Common7\\Tools\\bin;$(VSInstallDir)Common7\\tools;$(VSInstallDir)Common7\\ide;$(ProgramFiles)\\HTML Help Workshop;$(FrameworkSDKDir)\\bin;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>\n"
+		           "<IncludePath>$(SCUMMVM_LIBS)\\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\\include;</IncludePath>\n"
+		           "<LibraryPath>$(SCUMMVM_LIBS)\\lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\\lib</LibraryPath>\n";
+
+	project << "\t</PropertyGroup>\n";
+
+	// Project-specific settings
+	outputProjectSettings(project, name, setup, false, true);
+	outputProjectSettings(project, name, setup, true, true);
+	outputProjectSettings(project, name, setup, false, false);
+	outputProjectSettings(project, name, setup, true, false);
+
+	// Files
+	std::string modulePath;
+	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
+		modulePath = moduleDir.substr(setup.srcDir.size());
+		if (!modulePath.empty() && modulePath.at(0) == '/')
+			modulePath.erase(0, 1);
+	}
+
+	if (modulePath.size())
+		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
+	else
+		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
+
+	// Output references for scummvm project
+	if (name == "scummvm")
+		writeReferences(project);
+
+	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
+	           "\t<ImportGroup Label=\"ExtensionTargets\">\n"
+	           "\t</ImportGroup>\n"
+	           "</Project>\n";
+
+	// Output filter file if necessary
+	createFiltersFile(setup, name);
+}
+
+#define OUTPUT_FILTER_MSBUILD(files, action) \
+	if (!files.empty()) { \
+		filters << "\t<ItemGroup>\n"; \
+		for (std::list<FileEntry>::const_iterator entry = files.begin(); entry != files.end(); ++entry) { \
+			if ((*entry).filter != "") { \
+				filters << "\t\t<" action " Include=\"" << (*entry).path << "\">\n" \
+				           "\t\t\t<Filter>" << (*entry).filter << "</Filter>\n" \
+				           "\t\t</" action ">\n"; \
+			} else { \
+				filters << "\t\t<" action " Include=\"" << (*entry).path << "\" />\n"; \
+			} \
+		} \
+		filters << "\t</ItemGroup>\n"; \
+	}
+
+void MSBuildProvider::createFiltersFile(const BuildSetup &setup, const std::string &name) {
+	// No filters => no need to create a filter file
+	if (_filters.empty())
+		return;
+
+	// Sort all list alphabetically
+	_filters.sort();
+	_compileFiles.sort();
+	_includeFiles.sort();
+	_otherFiles.sort();
+	_resourceFiles.sort();
+	_asmFiles.sort();
+
+	const std::string filtersFile = setup.outputDir + '/' + name + getProjectExtension() + ".filters";
+	std::ofstream filters(filtersFile.c_str());
+	if (!filters)
+		error("Could not open \"" + filtersFile + "\" for writing");
+
+	filters << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+	           "<Project ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n";
+
+	// Output the list of filters
+	filters << "\t<ItemGroup>\n";
+	for (std::list<std::string>::iterator filter = _filters.begin(); filter != _filters.end(); ++filter) {
+		filters << "\t\t<Filter Include=\"" << *filter << "\">\n"
+		           "\t\t\t<UniqueIdentifier>" << createUUID() << "</UniqueIdentifier>\n"
+		           "\t\t</Filter>\n";
+	}
+	filters << "\t</ItemGroup>\n";
+
+	// Output files
+	OUTPUT_FILTER_MSBUILD(_compileFiles, "ClCompile")
+	OUTPUT_FILTER_MSBUILD(_includeFiles, "ClInclude")
+	OUTPUT_FILTER_MSBUILD(_otherFiles, "None")
+	OUTPUT_FILTER_MSBUILD(_resourceFiles, "ResourceCompile")
+	OUTPUT_FILTER_MSBUILD(_asmFiles, "CustomBuild")
+
+	filters << "</Project>";
+}
+
+void MSBuildProvider::writeReferences(std::ofstream &output) {
+	output << "\t<ItemGroup>\n";
+
+	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+		if (i->first == "scummvm")
+			continue;
+
+		output << "\t<ProjectReference Include=\"" << i->first << ".vcxproj\">\n"
+		          "\t\t<Project>{" << i->second << "}</Project>\n"
+		          "\t</ProjectReference>\n";
+	}
+
+	output << "\t</ItemGroup>\n";
+}
+
+void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::string &name, const BuildSetup &setup, bool isRelease, bool isWin32) {
+	// Check for project-specific warnings:
+	std::map<std::string, std::string>::iterator warnings = _projectWarnings.find(name);
+
+	// Nothing to add here, move along!
+	if (name != "scummvm" && name != "tinsel" && warnings == _projectWarnings.end())
+		return;
+
+	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << (isRelease ? "Release" : "Debug") << "|" << (isWin32 ? "Win32" : "x64") << "'\">\n"
+	           "\t\t<ClCompile>\n";
+
+	// Compile configuration
+	if (name == "scummvm") {
+		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
+	} else {
+		if (name == "tinsel" && !isRelease)
+			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
+
+		if (warnings != _projectWarnings.end())
+			project << "\t\t\t<DisableSpecificWarnings>" << warnings->second << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
+	}
+
+	project << "\t\t</ClCompile>\n";
+
+	// Link configuration for scummvm project
+	if (name == "scummvm") {
+		std::string libraries;
+
+		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
+			libraries += *i + ';';
+
+		project << "\t\t<Link>\n"
+		           "\t\t\t<OutputFile>$(OutDir)scummvm.exe</OutputFile>\n"
+		           "\t\t\t<AdditionalDependencies>" << libraries << "%(AdditionalDependencies)</AdditionalDependencies>\n"
+		           "\t\t</Link>\n";
+	}
+
+	project << "\t</ItemDefinitionGroup>\n";
+}
+
+void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {
+	// FIXME: update temporary entries _ProjectFileVersion & _PropertySheetDisplayName
+	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	              "<PropertyGroup>\n"
+	              "<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>\n"
+	              "<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>\n"
+	              "<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
+	              "<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
+	              "</PropertyGroup>\n"
+	              "<ItemDefinitionGroup>\n"
+	              "<ClCompile>\n"
+	              "<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
+	              "<DisableSpecificWarnings>" << _globalWarnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
+	              "<AdditionalIncludeDirectories>" << prefix << ";" << prefix << "\\engines;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "<PreprocessorDefinitions>" << defines << ";%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+	              "<ExceptionHandling>\n"
+	              "</ExceptionHandling>\n"
+	              "<RuntimeTypeInfo>false</RuntimeTypeInfo>\n"
+	              "<WarningLevel>Level4</WarningLevel>\n"
+	              "<TreatWarningAsError>false</TreatWarningAsError>\n"
+	              "<CompileAs>Default</CompileAs>\n"
+	              "</ClCompile>\n"
+	              "<Link>\n"
+	              "<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
+	              "<SubSystem>Console</SubSystem>\n"
+	              "<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n"
+	              "</Link>\n"
+	              "<ResourceCompile>\n"
+	              "<PreprocessorDefinitions>HAS_INCLUDE_SET;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+	              "<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "</ResourceCompile>\n"
+	              "</ItemDefinitionGroup>\n"
+	              "</Project>\n";
+
+	properties.flush();
+}
+
+void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32) {
+	const std::string outputType = (isRelease ? "Release" : "Debug");
+	const std::string outputBitness = (isWin32 ? "32" : "64");
+
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
+
+	// FIXME: update temporary entries _ProjectFileVersion & _PropertySheetDisplayName
+	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
+	              "\t<ImportGroup Label=\"PropertySheets\">\n"
+	              "\t\t<Import Project=\"ScummVM_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
+	              "\t</ImportGroup>\n"
+	              "\t<PropertyGroup>\n"
+	              "\t\t<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>\n"
+	              "\t\t<_PropertySheetDisplayName>ScummVM_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
+	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
+	              "\t</PropertyGroup>\n"
+	              "\t<ItemDefinitionGroup>\n"
+	              "\t\t<ClCompile>\n";
+
+	if (isRelease) {
+		properties << "\t\t\t<IntrinsicFunctions>true</IntrinsicFunctions>\n"
+		              "\t\t\t<WholeProgramOptimization>true</WholeProgramOptimization>\n"
+		              "\t\t\t<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+		              "\t\t\t<StringPooling>true</StringPooling>\n"
+		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
+		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"
+		              "\t\t</ClCompile>\n"
+		              "\t\t<Link>\n"
+		              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
+		              "\t\t\t<SetChecksum>true</SetChecksum>\n";
+	} else {
+		properties << "\t\t\t<Optimization>Disabled</Optimization>\n"
+		              "\t\t\t<PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+		              "\t\t\t<MinimalRebuild>true</MinimalRebuild>\n"
+		              "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
+		              "\t\t\t<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n"
+		              "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
+		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
+		              "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n" // For x64 format Edit and continue is not supported, thus we default to Program Database
+		              "\t\t</ClCompile>\n"
+		              "\t\t<Link>\n"
+		              "\t\t\t<GenerateDebugInformation>true</GenerateDebugInformation>\n"
+		              "\t\t\t<IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
+	}
+
+	properties << "\t\t</Link>\n"
+	              "\t</ItemDefinitionGroup>\n"
+	              "</Project>\n";
+
+	properties.flush();
+	properties.close();
+}
+
+#define OUTPUT_NASM_COMMAND_MSBUILD(config) \
+	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(FileName).obj\" \"%(FullPath)\"</Command>\n" \
+	               "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(FileName).obj;%(Outputs)</Outputs>\n";
+
+#define OUPUT_OBJECT_FILENAME_MSBUILD(config, platform, prefix) \
+	projectFile << "\t\t<ObjectFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(FileName).obj</ObjectFileName>\n" \
+	               "\t\t<XMLDocumentationFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(FileName).xdc</XMLDocumentationFileName>\n";
+
+#define OUPUT_FILES_MSBUILD(files, action) \
+	if (!files.empty()) { \
+		projectFile << "\t<ItemGroup>\n"; \
+		for (std::list<FileEntry>::const_iterator entry = files.begin(); entry != files.end(); ++entry) { \
+			projectFile << "\t\t<" action " Include=\"" << (*entry).path << "\" />\n"; \
+		} \
+		projectFile << "\t</ItemGroup>\n"; \
+	}
+
+void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int, const StringList &duplicate,
+                                             const std::string &objPrefix, const std::string &filePrefix) {
+	// Reset lists
+	_filters.clear();
+	_compileFiles.clear();
+	_includeFiles.clear();
+	_otherFiles.clear();
+	_resourceFiles.clear();
+	_asmFiles.clear();
+
+	// Compute the list of files
+	_filters.push_back(""); // init filters
+	computeFileList(dir, duplicate, objPrefix, filePrefix);
+	_filters.pop_back();    // remove last empty filter
+
+	// Output compile files
+	if (!_compileFiles.empty()) {
+		projectFile << "\t<ItemGroup>\n";
+		for (std::list<FileEntry>::const_iterator entry = _compileFiles.begin(); entry != _compileFiles.end(); ++entry) {
+			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), (*entry).name + ".o") != duplicate.end());
+
+			// Deal with duplicated file names
+			if (isDuplicate) {
+				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\">\n";
+				OUPUT_OBJECT_FILENAME_MSBUILD("Debug", "Win32", (*entry).prefix)
+				OUPUT_OBJECT_FILENAME_MSBUILD("Debug", "x64", (*entry).prefix)
+				OUPUT_OBJECT_FILENAME_MSBUILD("Release", "Win32", (*entry).prefix)
+				OUPUT_OBJECT_FILENAME_MSBUILD("Release", "x64", (*entry).prefix)
+				projectFile << "\t\t</ClCompile>\n";
+			} else {
+				projectFile << "\t\t<ClCompile Include=\"" << (*entry).path << "\" />\n";
+			}
+		}
+		projectFile << "\t</ItemGroup>\n";
+	}
+
+	// Output include, other and resource files
+	OUPUT_FILES_MSBUILD(_includeFiles, "ClInclude")
+	OUPUT_FILES_MSBUILD(_otherFiles, "None")
+	OUPUT_FILES_MSBUILD(_resourceFiles, "ResourceCompile")
+
+	// Output asm files
+	if (!_asmFiles.empty()) {
+		projectFile << "\t<ItemGroup>\n";
+		for (std::list<FileEntry>::const_iterator entry = _asmFiles.begin(); entry != _asmFiles.end(); ++entry) {
+
+			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), (*entry).name + ".o") != duplicate.end());
+
+			projectFile << "\t\t<CustomBuild Include=\"" << (*entry).path << "\">\n"
+			               "\t\t\t<FileType>Document</FileType>\n";
+
+			OUTPUT_NASM_COMMAND_MSBUILD("Debug")
+			OUTPUT_NASM_COMMAND_MSBUILD("Release")
+
+			projectFile << "\t\t</CustomBuild>\n";
+		}
+		projectFile << "\t</ItemGroup>\n";
+	}
+}
+
+void MSBuildProvider::computeFileList(const FileNode &dir, const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
+		const FileNode *node = *i;
+
+		if (!node->children.empty()) {
+			// Update filter
+			std::string _currentFilter = _filters.back();
+			_filters.back().append((_filters.back() == "" ? "" : "\\") + node->name);
+
+			computeFileList(*node, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+
+			// Reset filter
+			_filters.push_back(_currentFilter);
+		} else {
+			// Filter files by extension
+			std::string name, ext;
+			splitFilename(node->name, name, ext);
+
+			FileEntry entry;
+			entry.name = name;
+			entry.path = convertPathToWin(filePrefix + node->name);
+			entry.filter = _filters.back();
+			entry.prefix = objPrefix;
+
+			if (ext == "cpp" || ext == "c")
+				_compileFiles.push_back(entry);
+			else if (ext == "h")
+				_includeFiles.push_back(entry);
+			else if (ext == "rc")
+				_resourceFiles.push_back(entry);
+			else if (ext == "asm")
+				_asmFiles.push_back(entry);
+			else
+				_otherFiles.push_back(entry);
+		}
+	}
 }
 
 } // End of anonymous namespace
