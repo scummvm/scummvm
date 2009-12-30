@@ -44,7 +44,7 @@ CinepakDecoder::CinepakDecoder() : Graphics::Codec() {
 	_curFrame.strips = NULL;
 	_y = 0;
 	_pixelFormat = g_system->getScreenFormat();
-	
+
 	// We're going to have to dither if we're running in 8bpp.
 	// We'll take RGBA8888 for best color performance in this case.
 	if (_pixelFormat.bytesPerPixel == 1)
@@ -63,10 +63,10 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 	_curFrame.width = stream->readUint16BE();
 	_curFrame.height = stream->readUint16BE();
 	_curFrame.stripCount = stream->readUint16BE();
-	
+
 	if (_curFrame.strips == NULL)
 		_curFrame.strips = new CinepakStrip[_curFrame.stripCount];
-	
+
 	debug (4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
 	
 #if 0
@@ -77,15 +77,15 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 			stream->readUint32BE();
 	}
 #endif
-	
+
 	if (!_curFrame.surface) {
 		_curFrame.surface = new Graphics::Surface();
 		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat.bytesPerPixel);
 	}
-	
+
 	// Reset the y variable.
 	_y = 0;
-	
+
 	for (uint16 i = 0; i < _curFrame.stripCount; i++) {
 		if (i > 0 && !(_curFrame.flags & 1)) { // Use codebooks from last strip
 			for (uint16 j = 0; j < 256; j++) {
@@ -93,57 +93,57 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 				_curFrame.strips[i].v4_codebook[j] = _curFrame.strips[i - 1].v4_codebook[j];
 			}
 		}
-	
+
 		_curFrame.strips[i].id = stream->readUint16BE();
 		_curFrame.strips[i].length = stream->readUint16BE() - 12; // Subtract the 12 byte header
 		_curFrame.strips[i].rect.top = _y; stream->readUint16BE(); // Ignore, substitute with our own.
 		_curFrame.strips[i].rect.left = 0; stream->readUint16BE(); // Ignore, substitute with our own
 		_curFrame.strips[i].rect.bottom = _y + stream->readUint16BE();
 		_curFrame.strips[i].rect.right = _curFrame.width; stream->readUint16BE(); // Ignore, substitute with our own
-		
+
 		//printf ("Left = %d, Top = %d, Right = %d, Bottom = %d\n", _curFrame.strips[i].rect.left, _curFrame.strips[i].rect.top, _curFrame.strips[i].rect.right, _curFrame.strips[i].rect.bottom);
-		
+
 		// Sanity check. Because Cinepak is based on 4x4 blocks, the width and height of each strip needs to be divisible by 4.
 		assert(!(_curFrame.strips[i].rect.width() % 4) && !(_curFrame.strips[i].rect.height() % 4));
-		
+
 		uint32 pos = stream->pos();
-		
+
 		while ((uint32)stream->pos() < (pos + _curFrame.strips[i].length) && !stream->eos()) {
 			byte chunkID = stream->readByte();
-			
+
 			if (stream->eos())
 				break;
-			
+
 			uint32 chunkSize = (stream->readByte() << 16) + stream->readUint16BE() - 4; // 24bit
 			int32 startPos = stream->pos();
-			
+
 			switch (chunkID) {
-				case 0x20:
-				case 0x21:
-				case 0x24:
-				case 0x25:
-					loadCodebook(stream, i, 4, chunkID, chunkSize);
-					break;
-				case 0x22:
-				case 0x23:
-				case 0x26:
-				case 0x27:
-					loadCodebook(stream, i, 1, chunkID, chunkSize);
-					break;
-				case 0x30:
-				case 0x31:
-				case 0x32:
-					decodeVectors(stream, i, chunkID, chunkSize);
-					break;
-				default:
-					warning("Unknown Cinepak chunk ID %02x", chunkID);
-					return _curFrame.surface;
+			case 0x20:
+			case 0x21:
+			case 0x24:
+			case 0x25:
+				loadCodebook(stream, i, 4, chunkID, chunkSize);
+				break;
+			case 0x22:
+			case 0x23:
+			case 0x26:
+			case 0x27:
+				loadCodebook(stream, i, 1, chunkID, chunkSize);
+				break;
+			case 0x30:
+			case 0x31:
+			case 0x32:
+				decodeVectors(stream, i, chunkID, chunkSize);
+				break;
+			default:
+				warning("Unknown Cinepak chunk ID %02x", chunkID);
+				return _curFrame.surface;
 			}
-			
+
 			if (stream->pos() != startPos + (int32)chunkSize)
 				stream->seek(startPos + chunkSize);
 		}
-		
+
 		_y = _curFrame.strips[i].rect.bottom;
 	}
 	
@@ -154,60 +154,60 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream *stream, uint16 str
 	CinepakCodebook *codebook = (codebookType == 1) ? _curFrame.strips[strip].v1_codebook : _curFrame.strips[strip].v4_codebook;
 
 	int32 startPos = stream->pos();
-    uint32 flag = 0, mask = 0;
+	uint32 flag = 0, mask = 0;
 
-    for (uint16 i = 0; i < 256; i++) {
-        if ((chunkID & 0x01) && !(mask >>= 1)) {
-            if ((stream->pos() - startPos + 4) > (int32)chunkSize)
+	for (uint16 i = 0; i < 256; i++) {
+		if ((chunkID & 0x01) && !(mask >>= 1)) {
+			if ((stream->pos() - startPos + 4) > (int32)chunkSize)
                 break;
 
-            flag  = stream->readUint32BE();
-            mask  = 0x80000000;
-        }
+			flag  = stream->readUint32BE();
+			mask  = 0x80000000;
+		}
 
-        if (!(chunkID & 0x01) || (flag & mask)) {
+		if (!(chunkID & 0x01) || (flag & mask)) {
 			byte n = (chunkID & 0x04) ? 4 : 6;
-            if ((stream->pos() - startPos + n) > (int32)chunkSize)
-                break;
+			if ((stream->pos() - startPos + n) > (int32)chunkSize)
+				break;
 
 			for (byte j = 0; j < 4; j++)
 				codebook[i].y[j] = stream->readByte();
-				
-            if (n == 6) {
-                codebook[i].u  = stream->readByte() + 128;
-                codebook[i].v  = stream->readByte() + 128;
-            } else {
+
+			if (n == 6) {
+				codebook[i].u  = stream->readByte() + 128;
+				codebook[i].v  = stream->readByte() + 128;
+			} else {
 				/* this codebook type indicates either greyscale or
-				* palettized video; if palettized, U & V components will
-				* not be used so it is safe to set them to 128 for the
-				* benefit of greyscale rendering in YUV420P */
-                codebook[i].u  = 128;
-                codebook[i].v  = 128;
-            }
-        }
-    }
+				 * palettized video; if palettized, U & V components will
+				 * not be used so it is safe to set them to 128 for the
+				 * benefit of greyscale rendering in YUV420P */
+				codebook[i].u  = 128;
+				codebook[i].v  = 128;
+			}
+		}
+	}
 }
 
 void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize) {
-    uint32 flag = 0, mask = 0;
-    uint32 iy[4];
+	uint32 flag = 0, mask = 0;
+	uint32 iy[4];
 	int32 startPos = stream->pos();
 	byte r = 0, g = 0, b = 0;
 
-    for (uint16 y = _curFrame.strips[strip].rect.top; y < _curFrame.strips[strip].rect.bottom; y += 4) {
-        iy[0] = _curFrame.strips[strip].rect.left + y * _curFrame.width;
-        iy[1] = iy[0] + _curFrame.width;
-        iy[2] = iy[1] + _curFrame.width;
-        iy[3] = iy[2] + _curFrame.width;
+	for (uint16 y = _curFrame.strips[strip].rect.top; y < _curFrame.strips[strip].rect.bottom; y += 4) {
+		iy[0] = _curFrame.strips[strip].rect.left + y * _curFrame.width;
+		iy[1] = iy[0] + _curFrame.width;
+		iy[2] = iy[1] + _curFrame.width;
+		iy[3] = iy[2] + _curFrame.width;
 
-        for (uint16 x = _curFrame.strips[strip].rect.left; x < _curFrame.strips[strip].rect.right; x += 4) {
-            if ((chunkID & 0x01) && !(mask >>= 1)) {
-                if ((stream->pos() - startPos + 4) > (int32)chunkSize)
-                    return;
+		for (uint16 x = _curFrame.strips[strip].rect.left; x < _curFrame.strips[strip].rect.right; x += 4) {
+			if ((chunkID & 0x01) && !(mask >>= 1)) {
+				if ((stream->pos() - startPos + 4) > (int32)chunkSize)
+					return;
 
-                flag  = stream->readUint32BE();
-                mask  = 0x80000000;
-            }
+				flag  = stream->readUint32BE();
+				mask  = 0x80000000;
+			}
 
             if (!(chunkID & 0x01) || (flag & mask)) {
                 if (!(chunkID & 0x02) && !(mask >>= 1)) {
@@ -218,23 +218,23 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
                     mask  = 0x80000000;
                 }
 
-                if ((chunkID & 0x02) || (~flag & mask)) {
-                    if ((stream->pos() - startPos + 1) > (int32)chunkSize)
-                        return;
+				if ((chunkID & 0x02) || (~flag & mask)) {
+					if ((stream->pos() - startPos + 1) > (int32)chunkSize)
+						return;
 
 					// Get the codebook
 					CinepakCodebook codebook = _curFrame.strips[strip].v1_codebook[stream->readByte()];
-					
+
 					PUT_PIXEL(iy[0] + 0, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[0] + 1, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 0, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 1, codebook.y[0], codebook.u, codebook.v);
-					
+
 					PUT_PIXEL(iy[0] + 2, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[0] + 3, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 2, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 3, codebook.y[1], codebook.u, codebook.v);
-					
+
 					PUT_PIXEL(iy[2] + 0, codebook.y[2], codebook.u, codebook.v);
 					PUT_PIXEL(iy[2] + 1, codebook.y[2], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 0, codebook.y[2], codebook.u, codebook.v);
@@ -244,40 +244,40 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
 					PUT_PIXEL(iy[2] + 3, codebook.y[3], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 2, codebook.y[3], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 3, codebook.y[3], codebook.u, codebook.v);
-                } else if (flag & mask) {
-                    if ((stream->pos() - startPos + 4) > (int32)chunkSize)
-                        return;
+				} else if (flag & mask) {
+					if ((stream->pos() - startPos + 4) > (int32)chunkSize)
+						return;
 
-                    CinepakCodebook codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
+					CinepakCodebook codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
 					PUT_PIXEL(iy[0] + 0, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[0] + 1, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 0, codebook.y[2], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 1, codebook.y[3], codebook.u, codebook.v);
-					
-                    codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
+
+					codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
 					PUT_PIXEL(iy[0] + 2, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[0] + 3, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 2, codebook.y[2], codebook.u, codebook.v);
 					PUT_PIXEL(iy[1] + 3, codebook.y[3], codebook.u, codebook.v);
 
-                    codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
+					codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
 					PUT_PIXEL(iy[2] + 0, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[2] + 1, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 0, codebook.y[2], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 1, codebook.y[3], codebook.u, codebook.v);
 
-                    codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
+					codebook = _curFrame.strips[strip].v4_codebook[stream->readByte()];
 					PUT_PIXEL(iy[2] + 2, codebook.y[0], codebook.u, codebook.v);
 					PUT_PIXEL(iy[2] + 3, codebook.y[1], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 2, codebook.y[2], codebook.u, codebook.v);
 					PUT_PIXEL(iy[3] + 3, codebook.y[3], codebook.u, codebook.v);
-                }
-            }
+				}
+			}
 
 			for (byte i = 0; i < 4; i++)
 				iy[i] += 4;
-        }
-    }
+		}
+	}
 }
 
-}
+} // End of namespace Mohawk
