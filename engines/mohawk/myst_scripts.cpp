@@ -743,7 +743,7 @@ void MystScriptParser::opcode_28(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 		// TODO: Need to fix VIEW logic so this doesn't need
 		//       calculation at this level.
-		uint16 imageToDraw;
+		uint16 imageToDraw = 0;
 		if (_vm->_view.conditionalImageCount == 0)
 			imageToDraw = _vm->_view.mainImage;
 		else {
@@ -1088,8 +1088,8 @@ void MystScriptParser::opcode_41(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		uint16 u2 = argv[9];
 
 		Common::Rect region2;
-		uint16 updateDirection2;
-		uint16 u3;
+		uint16 updateDirection2 = 0;
+		uint16 u3 = 0;
 		if (argc == 16) {
 			region2 = Common::Rect(argv[10], argv[11], argv[12], argv[13]);
 			updateDirection2 = argv[14];
@@ -1186,8 +1186,8 @@ void MystScriptParser::opcode_42(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		uint16 u2 = argv[8];
 
 		Common::Rect region2;
-		uint16 updateDirection2;
-		uint16 u3;
+		uint16 updateDirection2 = 0;
+		uint16 u3 = 0;
 		if (argc == 15) {
 			region2 = Common::Rect(argv[9], argv[10], argv[11], argv[12]);
 			updateDirection2 = argv[13];
