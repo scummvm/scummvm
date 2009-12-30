@@ -322,7 +322,7 @@ void MohawkBitmap::unpackRiven() {
 static byte getLastTwoBits(byte c) {
 	return (c & 0x03);
 }
-        
+
 static byte getLastThreeBits(byte c) {
 	return (c & 0x07);
 }
@@ -408,7 +408,7 @@ void MohawkBitmap::handleRivenSubcommandStream(byte count, byte *&dst) {
 			B_LASTDUPLET();
 		} else if (cmd == 0x50) {
 			// Output two absolute pixel values, p1 and p2
-			B_BYTE();           
+			B_BYTE();
 			B_BYTE();
 		} else if (cmd >= 0x51 && cmd <= 0x57) {
 			// Output pixel at relative position -m, then absolute pixel value p

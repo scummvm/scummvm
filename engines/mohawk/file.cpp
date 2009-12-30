@@ -106,7 +106,7 @@ void MohawkFile::open(Common::SeekableReadStream *stream) {
 		debug (3, "Resources = %04x", _types[i].resTable.resources);
 
 		_types[i].resTable.entries = new Type::ResourceTable::Entries[_types[i].resTable.resources];
-                        
+
 		for (uint16 j = 0; j < _types[i].resTable.resources; j++) {
 			_types[i].resTable.entries[j].id = _mhk->readUint16BE();
 			_types[i].resTable.entries[j].index = _mhk->readUint16BE();
@@ -121,7 +121,7 @@ void MohawkFile::open(Common::SeekableReadStream *stream) {
 		debug (3, "Names = %04x", _types[i].nameTable.num);
 
 		_types[i].nameTable.entries = new Type::NameTable::Entries[_types[i].nameTable.num];
-                        
+
 		for (uint16 j = 0; j < _types[i].nameTable.num; j++) {
 			_types[i].nameTable.entries[j].offset = _mhk->readUint16BE();
 			_types[i].nameTable.entries[j].index = _mhk->readUint16BE();
@@ -152,7 +152,7 @@ void MohawkFile::open(Common::SeekableReadStream *stream) {
 	_mhk->seek(_rsrc.abs_offset + _rsrc.file_table_offset);
 	_fileTableAmount = _mhk->readUint32BE();
 	_fileTable = new FileTable[_fileTableAmount];
-                
+
 	for (uint32 i = 0; i < _fileTableAmount; i++) {
 		_fileTable[i].offset = _mhk->readUint32BE();
 		_fileTable[i].dataSize = _mhk->readUint16BE();

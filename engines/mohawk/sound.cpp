@@ -85,7 +85,7 @@ void Sound::initMidi() {
 	_midiParser->setMidiDriver(_midiDriver);
 	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
-        
+
 Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume) {
 	debug (0, "Playing sound %d", id);
 	

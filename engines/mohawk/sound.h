@@ -131,7 +131,7 @@ public:
 	void pauseSLST();
 	void resumeSLST();
 	void stopAllSLST();
-                
+
 private:
 	MohawkEngine *_vm;
 	MohawkFile *_rivenSoundFile;
