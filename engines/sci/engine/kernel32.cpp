@@ -389,7 +389,8 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1]; // We also have to return the handle
 		}
 	case 4: // Free
-		s->_segMan->freeArray(argv[1]);
+		if (!argv[1].isNull())
+			s->_segMan->freeArray(argv[1]);
 		return s->r_acc;
 	case 5: { // Fill
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
@@ -519,7 +520,8 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return argv[1]; // We also have to return the handle
 		}
 	case 4: // Free
-		s->_segMan->freeString(argv[1]);
+		if (!argv[1].isNull())
+			s->_segMan->freeString(argv[1]);
 		return s->r_acc;
 	case 5: { // Fill
 		SciString *string = s->_segMan->lookupString(argv[1]);
@@ -597,10 +599,10 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		// TODO: Store a formatted string in a specified string
 		warning("kString(PrintfBuf)");
 		break;
-	case 13: // atoi
-		// TODO: String to integer
-		warning("kString(atoi)");
-		break;
+	case 13: { // atoi
+		Common::String string = s->_segMan->getString(argv[1]);
+		return make_reg(0, (uint16)atoi(string.c_str()));
+		}
 	default:
 		error("Unknown kString subop %d", argv[0].toUint16());
 	}
@@ -631,7 +633,8 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	//int16 control = 0;
 
 	// HACK: just draw the view on screen
-	s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
+	if (viewId != 0xffff)
+		s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 
 	// TODO
 
@@ -651,7 +654,8 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	//int16 control = 0;
 	
 	// HACK: just draw the view on screen
-	s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
+	if (viewId != 0xffff)
+		s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 
 	warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	return NULL_REG;
@@ -722,6 +726,27 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	// TODO
 
 	return NULL_REG;
+}
+
+reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	uint16 curIndex = 0;
+
+	while (curNode) {
+		curObject = curNode->value;
+		if (curObject == argv[1])
+			return make_reg(0, curIndex);
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+		curIndex++;
+	}
+
+	return SIGNAL_REG;
 }
 
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {

@@ -341,7 +341,7 @@ SciKernelFunction kfunct_mappers[] = {
 	// SCI2 Kernel Functions
 	DEFUN("IsHiRes", kIsHiRes, ""),
 	DEFUN("Array", kArray, ".*"),
-	DEFUN("ListAt", kListAt, ".*"),
+	DEFUN("ListAt", kListAt, "li"),
 	DEFUN("String", kString, ".*"),
 	DEFUN("AddScreenItem", kAddScreenItem, "o"),
 	DEFUN("UpdateScreenItem", kUpdateScreenItem, "o"),
@@ -352,6 +352,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("RepaintPlane", kRepaintPlane, "o"),
 	DEFUN("FrameOut", kFrameOut, ""),
 	DEFUN("ListEachElementDo", kListEachElementDo, ".*"),
+	DEFUN("ListIndexOf", kListIndexOf, "lo"),
 	DEFUN("OnMe", kOnMe, "iio.*"),
 
 	// SCI2.1 Kernel Functions
