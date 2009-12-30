@@ -659,7 +659,7 @@ void Sword2Engine::initialiseFontResourceFlags() {
 
 	// Get the game name for the windows application
 
-	// According to the GetNameFunction(), which was never called and has
+	// According to the GetGameName(), which was never called and has
 	// therefore been removed, the name of the game is:
 	//
 	// ENGLISH:  "Broken Sword II"
