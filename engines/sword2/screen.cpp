@@ -977,7 +977,7 @@ void Screen::rollCredits() {
 
 	while (1) {
 		char buffer[80];
-		char *line = f.readLine_NEW(buffer, sizeof(buffer));
+		char *line = f.readLine(buffer, sizeof(buffer));
 
 		if (line) {
 			// Replace invalid character codes prevent the 'dud'

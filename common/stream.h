@@ -374,7 +374,7 @@ public:
 	 * @param bufSize	the size of the buffer
 	 * @return a pointer to the read string, or NULL if an error occurred
 	 */
-	virtual char *readLine_NEW(char *s, size_t bufSize);
+	virtual char *readLine(char *s, size_t bufSize);
 
 
 	/**

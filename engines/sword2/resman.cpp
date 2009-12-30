@@ -117,7 +117,7 @@ bool ResourceManager::init() {
 		char *buf = _resFiles[_totalClusters].fileName;
 		uint len = sizeof(_resFiles[_totalClusters].fileName);
 
-		if (!file.readLine_NEW(buf, len))
+		if (!file.readLine(buf, len))
 			break;
 
 		int pos = strlen(buf);

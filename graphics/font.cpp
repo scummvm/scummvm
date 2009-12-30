@@ -524,7 +524,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 }
 
 /* read the next non-comment line, returns buf or NULL if EOF*/
-// TODO: Can we use SeekableReadStream::readLine resp. readLine_NEW instead?
+// TODO: Can we use SeekableReadStream::readLine instead?
 char *bdf_getline(Common::SeekableReadStream &fp, char *buf, int len) {
 	int c;
 	char *b;
