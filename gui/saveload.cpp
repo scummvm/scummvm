@@ -114,7 +114,8 @@ void SaveLoadChooser::open() {
 }
 
 const Common::String &SaveLoadChooser::getResultString() const {
-	return (_list->getSelected() > -1) ? _list->getSelectedString() : _resultString;
+	int selItem = _list->getSelected();
+	return (selItem >= 0) ? _list->getSelectedString() : _resultString;
 }
 
 void SaveLoadChooser::setSaveMode(bool saveMode) {

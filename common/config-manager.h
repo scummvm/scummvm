@@ -68,29 +68,15 @@ public:
 
 	typedef HashMap<String, Domain, IgnoreCase_Hash, IgnoreCase_EqualTo> DomainMap;
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	/** The name of the application domain (normally 'scummvm'). */
-	static const String kApplicationDomain;
+	static const char *kApplicationDomain;
 
 	/** The transient (pseudo) domain. */
-	static const String kTransientDomain;
-
-#ifdef ENABLE_KEYMAPPER
-	/** The name of keymapper domain used to store the key maps */
-	static const String kKeymapperDomain;
-#endif
-
-#else
-	static const char *kApplicationDomain;
 	static const char *kTransientDomain;
-
-	const String _emptyString;
 
 #ifdef ENABLE_KEYMAPPER
 	/** The name of keymapper domain used to store the key maps */
 	static const char *kKeymapperDomain;
-#endif
-
 #endif
 
 	void				loadDefaultConfigFile();
@@ -179,6 +165,8 @@ private:
 	Domain *		_activeDomain;
 
 	String			_filename;
+
+	const String	_emptyString;
 };
 
 }	// End of namespace Common

@@ -40,17 +40,6 @@ static bool isValidDomainName(const Common::String &domName) {
 
 namespace Common {
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-
-const String ConfigManager::kApplicationDomain("scummvm");
-const String ConfigManager::kTransientDomain("__TRANSIENT");
-
-#ifdef ENABLE_KEYMAPPER
-const String ConfigManager::kKeymapperDomain("keymapper");
-#endif
-
-#else
-
 const char *ConfigManager::kApplicationDomain = "scummvm";
 const char *ConfigManager::kTransientDomain = "__TRANSIENT";
 
@@ -58,13 +47,10 @@ const char *ConfigManager::kTransientDomain = "__TRANSIENT";
 const char *ConfigManager::kKeymapperDomain = "keymapper";
 #endif
 
-#endif
-
 #pragma mark -
 
 
-ConfigManager::ConfigManager()
- : _activeDomain(0) {
+ConfigManager::ConfigManager() : _activeDomain(0) {
 }
 
 
@@ -407,11 +393,7 @@ const String & ConfigManager::get(const String &key) const {
 	else if (_defaultsDomain.contains(key))
 		return _defaultsDomain[key];
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	return String::emptyString;
-#else
-	return ConfMan._emptyString;
-#endif
+	return _emptyString;
 }
 
 const String & ConfigManager::get(const String &key, const String &domName) const {
@@ -434,11 +416,7 @@ const String & ConfigManager::get(const String &key, const String &domName) cons
 
 	if (!domain->contains(key)) {
 #if 1
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	return String::emptyString;
-#else
-	return ConfMan._emptyString;
-#endif
+		return _emptyString;
 #else
 		error("ConfigManager::get(%s,%s) called on non-existent key",
 					key.c_str(), domName.c_str());
@@ -641,11 +619,7 @@ const String &ConfigManager::Domain::get(const String &key) const {
 	if (iter != end())
 		return iter->_value;
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	return String::emptyString;
-#else
 	return ConfMan._emptyString;
-#endif
 }
 
 void ConfigManager::Domain::setDomainComment(const String &comment) {
