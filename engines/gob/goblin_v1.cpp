@@ -618,7 +618,7 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 		if (_forceNextState[0] != -1) {
 			gobDesc->nextState = _forceNextState[0];
-			for (i = 0; i < 10; i++)
+			for (i = 0; i < 9; i++)
 				_forceNextState[i] = _forceNextState[i + 1];
 		}
 
