@@ -33,7 +33,7 @@
 namespace Mohawk {
 	
 #define PUT_PIXEL(offset, lum, u, v) \
-	Graphics::YUV2RGB(lum, u, v, r, g, b); \
+	Graphics::CPYUV2RGB(lum, u, v, r, g, b); \
 	if (_pixelFormat.bytesPerPixel == 2) \
 		*((uint16 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
 	else \
