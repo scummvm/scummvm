@@ -27,6 +27,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed some other bugs related to game versions for the Amiga.
    - Added support for original save/load dialog in MM NES.
    - Added support for savepoint passcodes for Sega CD MI1 via debugger command 'passcode'
+   - Added support for Kanji rendering in Japanese version of Monkey Island Sega CD.
 
 1.0.0 (2009-11-15)
  New Ports:
