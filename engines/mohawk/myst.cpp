@@ -118,34 +118,34 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(Common::String movieName, ui
 	const char* prefix;
 	
 	switch (stack) {
-		case kIntroStack:
-			prefix = "intro/";
-			break;
-		case kChannelwoodStack:
-			// The Windmill videos like to hide in a different folder
-			if (movieName.contains("wmill"))
-				prefix = "channel2/";
-			else
-				prefix = "channel/";
-			break;
-		case kDniStack:
-			prefix = "dunny/";
-			break;
-		case kMechanicalStack:
-			prefix = "mech/";
-			break;
-		case kMystStack:
-			prefix = "myst/";
-			break;
-		case kSeleniticStack:
-			prefix = "selen/";
-			break;
-		case kStoneshipStack:
-			prefix = "stone/";
-			break;
-		default:
-			prefix = ""; // Masterpiece Edition Only Movies
-			break;
+	case kIntroStack:
+		prefix = "intro/";
+		break;
+	case kChannelwoodStack:
+		// The Windmill videos like to hide in a different folder
+		if (movieName.contains("wmill"))
+			prefix = "channel2/";
+		else
+			prefix = "channel/";
+		break;
+	case kDniStack:
+		prefix = "dunny/";
+		break;
+	case kMechanicalStack:
+		prefix = "mech/";
+		break;
+	case kMystStack:
+		prefix = "myst/";
+		break;
+	case kSeleniticStack:
+		prefix = "selen/";
+		break;
+	case kStoneshipStack:
+		prefix = "stone/";
+		break;
+	default:
+		prefix = ""; // Masterpiece Edition Only Movies
+		break;
 	}
 
 	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
@@ -243,52 +243,52 @@ Common::Error MohawkEngine_Myst::run() {
 
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					_mousePos = event.mouse;
-					_needsUpdate = true;
-					checkCurrentResource();
-					break;
-				case Common::EVENT_LBUTTONUP:
-					if (_curResource >= 0) {
-						debug(2, "Sending mouse up event to resource %d\n", _curResource);
-						_resources[_curResource]->handleMouseUp();
-					}
+			case Common::EVENT_MOUSEMOVE:
+				_mousePos = event.mouse;
+				_needsUpdate = true;
+				checkCurrentResource();
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (_curResource >= 0) {
+					debug(2, "Sending mouse up event to resource %d\n", _curResource);
+					_resources[_curResource]->handleMouseUp();
+				}
 
-					for (uint16 i = 0; i < _resources.size(); i++)
-						if (_resources[i]->isEnabled())
-							_resources[i]->drawDataToScreen();
+				for (uint16 i = 0; i < _resources.size(); i++)
+					if (_resources[i]->isEnabled())
+						_resources[i]->drawDataToScreen();
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (_curResource >= 0) {
+					debug(2, "Sending mouse up event to resource %d\n", _curResource);
+					_resources[_curResource]->handleMouseDown();
+				}
+				break;	
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_d:
+					if (event.kbd.flags & Common::KBD_CTRL) {
+						_console->attach();
+						_console->onFrame();
+					}
 					break;
-				case Common::EVENT_LBUTTONDOWN:
-					if (_curResource >= 0) {
-						debug(2, "Sending mouse up event to resource %d\n", _curResource);
-						_resources[_curResource]->handleMouseDown();
-					}
-					break;	
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-						case Common::KEYCODE_d:
-							if (event.kbd.flags & Common::KBD_CTRL) {
-								_console->attach();
-								_console->onFrame();
-							}
-							break;
-						case Common::KEYCODE_SPACE:
-							pauseGame();
-							break;
-						case Common::KEYCODE_F4:
-							_showResourceRects = !_showResourceRects;
-							if (_showResourceRects)
-								drawResourceRects();
-							break;
-						case Common::KEYCODE_F5:
-							runDialog(*_optionsDialog);
-							break;
-						default:
-							break;
-					}
+				case Common::KEYCODE_SPACE:
+					pauseGame();
+					break;
+				case Common::KEYCODE_F4:
+					_showResourceRects = !_showResourceRects;
+					if (_showResourceRects)
+						drawResourceRects();
+					break;
+				case Common::KEYCODE_F5:
+					runDialog(*_optionsDialog);
 					break;
 				default:
 					break;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -527,18 +527,18 @@ void MohawkEngine_Myst::loadCard() {
 			debugC(kDebugView, "\t\t Type: %d", _view.scriptResources[i].type);
 
 			switch (_view.scriptResources[i].type) {
-				case 1:
-					debugC(kDebugView, "\t\t\t\t= Image");
-					break;
-				case 2:
-					debugC(kDebugView, "\t\t\t\t= Sound");
-					break;
-				case 3:
-					debugC(kDebugView, "\t\t\t\t= Resource List");
-					break;
-				default:
-					debugC(kDebugView, "\t\t\t\t= Unknown");
-					break;
+			case 1:
+				debugC(kDebugView, "\t\t\t\t= Image");
+				break;
+			case 2:
+				debugC(kDebugView, "\t\t\t\t= Sound");
+				break;
+			case 3:
+				debugC(kDebugView, "\t\t\t\t= Resource List");
+				break;
+			default:
+				debugC(kDebugView, "\t\t\t\t= Unknown");
+				break;
 			}
 
 			if (_view.scriptResources[i].type == 3) {
@@ -839,31 +839,31 @@ static MystResource *loadResource(MohawkEngine_Myst *vm, Common::SeekableReadStr
 	debugC(kDebugResource, "\tSub_Record: %d", (parent == NULL) ? 0 : 1);
 
 	switch (type) {
-		case kMystForwardResource:
-		case kMystLeftResource:
-		case kMystRightResource:
-		case kMystDownResource:
-		case kMystUpResource:
-		case 14: // TODO: kMystBackwardResource?
-			return new MystResource(vm, rlstStream, parent);
-		case kMystActionResource:
-			return new MystResourceType5(vm, rlstStream, parent);
-		case kMystVideoResource:
-			return new MystResourceType6(vm, rlstStream, parent);
-		case kMystSwitchResource:
-			return new MystResourceType7(vm, rlstStream, parent);
-		case 8:
-			return new MystResourceType8(vm, rlstStream, parent);
-		case 10:
-			return new MystResourceType10(vm, rlstStream, parent);
-		case 11:
-			return new MystResourceType11(vm, rlstStream, parent);
-		case 12:
-			return new MystResourceType12(vm, rlstStream, parent);
-		case 13:
-			return new MystResourceType13(vm, rlstStream, parent);
-		default:
-			error ("Unknown/Unhandled MystResource type %d", type);
+	case kMystForwardResource:
+	case kMystLeftResource:
+	case kMystRightResource:
+	case kMystDownResource:
+	case kMystUpResource:
+	case 14: // TODO: kMystBackwardResource?
+		return new MystResource(vm, rlstStream, parent);
+	case kMystActionResource:
+		return new MystResourceType5(vm, rlstStream, parent);
+	case kMystVideoResource:
+		return new MystResourceType6(vm, rlstStream, parent);
+	case kMystSwitchResource:
+		return new MystResourceType7(vm, rlstStream, parent);
+	case 8:
+		return new MystResourceType8(vm, rlstStream, parent);
+	case 10:
+		return new MystResourceType10(vm, rlstStream, parent);
+	case 11:
+		return new MystResourceType11(vm, rlstStream, parent);
+	case 12:
+		return new MystResourceType12(vm, rlstStream, parent);
+	case 13:
+		return new MystResourceType13(vm, rlstStream, parent);
+	default:
+		error ("Unknown/Unhandled MystResource type %d", type);
 	}
 }
 

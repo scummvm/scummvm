@@ -367,81 +367,81 @@ uint16 MystVar::saveGetVar(uint16 stack, uint16 v) {
 	uint16 i;
 	
 	switch (stack) {
-		case kIntroStack:
-			for (i = 0; i < ARRAYSIZE(introVars); i++) {
-				if (introVars[i].refNum == v) {
-					value = introVars[i].storage;
-					desc = introVars[i].description;
-					break;
-				}
+	case kIntroStack:
+		for (i = 0; i < ARRAYSIZE(introVars); i++) {
+			if (introVars[i].refNum == v) {
+				value = introVars[i].storage;
+				desc = introVars[i].description;
+				break;
 			}
-			break;
-		case kSeleniticStack:
-			for (i = 0; i < ARRAYSIZE(seleniticVars); i++) {
-				if (seleniticVars[i].refNum == v) {
-					value = seleniticVars[i].storage;
-					desc = seleniticVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kSeleniticStack:
+		for (i = 0; i < ARRAYSIZE(seleniticVars); i++) {
+			if (seleniticVars[i].refNum == v) {
+				value = seleniticVars[i].storage;
+				desc = seleniticVars[i].description;
+				break;
 			}
-			break;
-		case kStoneshipStack:
-			for (i = 0; i < ARRAYSIZE(stoneshipVars); i++) {
-				if (stoneshipVars[i].refNum == v) {
-					value = stoneshipVars[i].storage;
-					desc = stoneshipVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kStoneshipStack:
+		for (i = 0; i < ARRAYSIZE(stoneshipVars); i++) {
+			if (stoneshipVars[i].refNum == v) {
+				value = stoneshipVars[i].storage;
+				desc = stoneshipVars[i].description;
+				break;
 			}
-			break;
-		case kDemoPreviewStack:
-		case kMystStack:
-			for (i = 0; i < ARRAYSIZE(mystVars); i++) {
-				if (mystVars[i].refNum == v) {
-					value = mystVars[i].storage;
-					desc = mystVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kDemoPreviewStack:
+	case kMystStack:
+		for (i = 0; i < ARRAYSIZE(mystVars); i++) {
+			if (mystVars[i].refNum == v) {
+				value = mystVars[i].storage;
+				desc = mystVars[i].description;
+				break;
 			}
-			break;
-		case kMechanicalStack:
-			for (i = 0; i < ARRAYSIZE(mechVars); i++) {
-				if (mechVars[i].refNum == v) {
-					value = mechVars[i].storage;
-					desc = mechVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kMechanicalStack:
+		for (i = 0; i < ARRAYSIZE(mechVars); i++) {
+			if (mechVars[i].refNum == v) {
+				value = mechVars[i].storage;
+				desc = mechVars[i].description;
+				break;
 			}
-			break;
-		case kChannelwoodStack:
-			for (i = 0; i < ARRAYSIZE(channelwoodVars); i++) {
-				if (channelwoodVars[i].refNum == v) {
-					value = channelwoodVars[i].storage;
-					desc = channelwoodVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kChannelwoodStack:
+		for (i = 0; i < ARRAYSIZE(channelwoodVars); i++) {
+			if (channelwoodVars[i].refNum == v) {
+				value = channelwoodVars[i].storage;
+				desc = channelwoodVars[i].description;
+				break;
 			}
-			break;
-		case kDniStack:
-			for (i = 0; i < ARRAYSIZE(dniVars); i++) {
-				if (dniVars[i].refNum == v) {
-					value = dniVars[i].storage;
-					desc = dniVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kDniStack:
+		for (i = 0; i < ARRAYSIZE(dniVars); i++) {
+			if (dniVars[i].refNum == v) {
+				value = dniVars[i].storage;
+				desc = dniVars[i].description;
+				break;
 			}
-			break;
-		case kCreditsStack:
-			for (i = 0; i < ARRAYSIZE(creditsVars); i++) {
-				if (creditsVars[i].refNum == v) {
-					value = creditsVars[i].storage;
-					desc = creditsVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kCreditsStack:
+		for (i = 0; i < ARRAYSIZE(creditsVars); i++) {
+			if (creditsVars[i].refNum == v) {
+				value = creditsVars[i].storage;
+				desc = creditsVars[i].description;
+				break;
 			}
-			break;
-		default:
-			break;
+		}
+		break;
+	default:
+		break;
 	}
 	
 	if (desc == NULL) {
@@ -471,81 +471,81 @@ void MystVar::loadSetVar(uint16 stack, uint16 v, uint16 value) {
 	uint16 i;
 	
 	switch (stack) {
-		case kIntroStack:
-			for (i = 0; i < ARRAYSIZE(introVars); i++) {
-				if (introVars[i].refNum == v) {
-					introVars[i].storage = value;
-					desc = introVars[i].description;
-					break;
-				}
+	case kIntroStack:
+		for (i = 0; i < ARRAYSIZE(introVars); i++) {
+			if (introVars[i].refNum == v) {
+				introVars[i].storage = value;
+				desc = introVars[i].description;
+				break;
 			}
-			break;
-		case kSeleniticStack:
-			for (i = 0; i < ARRAYSIZE(seleniticVars); i++) {
-				if (seleniticVars[i].refNum == v) {
-					seleniticVars[i].storage = value;
-					desc = seleniticVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kSeleniticStack:
+		for (i = 0; i < ARRAYSIZE(seleniticVars); i++) {
+			if (seleniticVars[i].refNum == v) {
+				seleniticVars[i].storage = value;
+				desc = seleniticVars[i].description;
+				break;
 			}
-			break;
-		case kStoneshipStack:
-			for (i = 0; i < ARRAYSIZE(stoneshipVars); i++) {
-				if (stoneshipVars[i].refNum == v) {
-					stoneshipVars[i].storage = value;
-					desc = stoneshipVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kStoneshipStack:
+		for (i = 0; i < ARRAYSIZE(stoneshipVars); i++) {
+			if (stoneshipVars[i].refNum == v) {
+				stoneshipVars[i].storage = value;
+				desc = stoneshipVars[i].description;
+				break;
 			}
-			break;
-		case kDemoPreviewStack:
-		case kMystStack:
-			for (i = 0; i < ARRAYSIZE(mystVars); i++) {
-				if (mystVars[i].refNum == v) {
-					mystVars[i].storage = value;
-					desc = mystVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kDemoPreviewStack:
+	case kMystStack:
+		for (i = 0; i < ARRAYSIZE(mystVars); i++) {
+			if (mystVars[i].refNum == v) {
+				mystVars[i].storage = value;
+				desc = mystVars[i].description;
+				break;
 			}
-			break;
-		case kMechanicalStack:
-			for (i = 0; i < ARRAYSIZE(mechVars); i++) {
-				if (mechVars[i].refNum == v) {
-					mechVars[i].storage = value;
-					desc = mechVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kMechanicalStack:
+		for (i = 0; i < ARRAYSIZE(mechVars); i++) {
+			if (mechVars[i].refNum == v) {
+				mechVars[i].storage = value;
+				desc = mechVars[i].description;
+				break;
 			}
-			break;
-		case kChannelwoodStack:
-			for (i = 0; i < ARRAYSIZE(channelwoodVars); i++) {
-				if (channelwoodVars[i].refNum == v) {
-					channelwoodVars[i].storage = value;
-					desc = channelwoodVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kChannelwoodStack:
+		for (i = 0; i < ARRAYSIZE(channelwoodVars); i++) {
+			if (channelwoodVars[i].refNum == v) {
+				channelwoodVars[i].storage = value;
+				desc = channelwoodVars[i].description;
+				break;
 			}
-			break;
-		case kDniStack:
-			for (i = 0; i < ARRAYSIZE(dniVars); i++) {
-				if (dniVars[i].refNum == v) {
-					dniVars[i].storage = value;
-					desc = dniVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kDniStack:
+		for (i = 0; i < ARRAYSIZE(dniVars); i++) {
+			if (dniVars[i].refNum == v) {
+				dniVars[i].storage = value;
+				desc = dniVars[i].description;
+				break;
 			}
-			break;
-		case kCreditsStack:
-			for (i = 0; i < ARRAYSIZE(creditsVars); i++) {
-				if (creditsVars[i].refNum == v) {
-					creditsVars[i].storage = value;
-					desc = creditsVars[i].description;
-					break;
-				}
+		}
+		break;
+	case kCreditsStack:
+		for (i = 0; i < ARRAYSIZE(creditsVars); i++) {
+			if (creditsVars[i].refNum == v) {
+				creditsVars[i].storage = value;
+				desc = creditsVars[i].description;
+				break;
 			}
-			break;
-		default:
-			break;
+		}
+		break;
+	default:
+		break;
 	}
 
 	if (desc == NULL) {

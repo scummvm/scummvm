@@ -659,35 +659,35 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					changeX = event.mouse.x - _vm->_mousePos.x;
-					changeY = _vm->_mousePos.y - event.mouse.y;
-					_vm->_system->updateScreen();
-					break;
-				case Common::EVENT_LBUTTONUP:
-					// FIXME: These values for changes in x/y could be tweaked.
-					if (*valve == 0 && changeY <= -10) {
-						*valve = 1;
+			case Common::EVENT_MOUSEMOVE:
+				changeX = event.mouse.x - _vm->_mousePos.x;
+				changeY = _vm->_mousePos.y - event.mouse.y;
+				_vm->_system->updateScreen();
+				break;
+			case Common::EVENT_LBUTTONUP:
+				// FIXME: These values for changes in x/y could be tweaked.
+				if (*valve == 0 && changeY <= -10) {
+					*valve = 1;
+					// TODO: Play movie
+					_vm->changeToCard(); // Refresh
+				} else if (*valve == 1) {
+					if (changeX >= 0 && changeY >= 10) {
+						*valve = 0;
 						// TODO: Play movie
 						_vm->changeToCard(); // Refresh
-					} else if (*valve == 1) {
-						if (changeX >= 0 && changeY >= 10) {
-							*valve = 0;
-							// TODO: Play movie
-							_vm->changeToCard(); // Refresh
-						} else if (changeX <= -10 && changeY <= 10) {
-							*valve = 2;
-							// TODO: Play movie
-							_vm->changeToCard(); // Refresh
-						}
-					} else if (*valve == 2 && changeX >= 10) {
-						*valve = 1;
+					} else if (changeX <= -10 && changeY <= 10) {
+						*valve = 2;
 						// TODO: Play movie
 						_vm->changeToCard(); // Refresh
 					}
-					return;
-				default:
-					break;
+				} else if (*valve == 2 && changeX >= 10) {
+					*valve = 1;
+					// TODO: Play movie
+					_vm->changeToCard(); // Refresh
+				}
+				return;
+			default:
+				break;
 			}
 		}
 		_vm->_system->delayMillis(10);
@@ -1004,22 +1004,22 @@ int RivenExternal::jspitElevatorLoop() {
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					if (event.mouse.y > (_vm->_mousePos.y + 10)) {
-						changeLevel = -1;
-					} else if (event.mouse.y < (_vm->_mousePos.y - 10)) {
-						changeLevel = 1;
-					} else {
-						changeLevel = 0;
-					}
-					_vm->_system->updateScreen();
-					break;
-				case Common::EVENT_LBUTTONUP:
-					_vm->_gfx->changeCursor(kRivenMainCursor);
-					_vm->_system->updateScreen();
-					return changeLevel;
-				default:
-					break;
+			case Common::EVENT_MOUSEMOVE:
+				if (event.mouse.y > (_vm->_mousePos.y + 10)) {
+					changeLevel = -1;
+				} else if (event.mouse.y < (_vm->_mousePos.y - 10)) {
+					changeLevel = 1;
+				} else {
+					changeLevel = 0;
+				}
+				_vm->_system->updateScreen();
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_vm->_gfx->changeCursor(kRivenMainCursor);
+				_vm->_system->updateScreen();
+				return changeLevel;
+			default:
+				break;
 			}
 		}
 		_vm->_system->delayMillis(10);

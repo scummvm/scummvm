@@ -104,69 +104,69 @@ Common::Error MohawkEngine_Riven::run() {
 
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					_mousePos = event.mouse;
-					checkHotspotChange();
+			case Common::EVENT_MOUSEMOVE:
+				_mousePos = event.mouse;
+				checkHotspotChange();
 					
-					// Check to show the inventory
-					if (_mousePos.y >= 392)
-						_gfx->showInventory();
-					else
-						_gfx->hideInventory();
+				// Check to show the inventory
+				if (_mousePos.y >= 392)
+					_gfx->showInventory();
+				else
+					_gfx->hideInventory();
 					
-					needsUpdate = true;
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					if (_curHotspot >= 0) {
-						runHotspotScript(_curHotspot, kMouseDownScript);
-						//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
+				needsUpdate = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (_curHotspot >= 0) {
+					runHotspotScript(_curHotspot, kMouseDownScript);
+					//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
+				}
+				break;
+			case Common::EVENT_LBUTTONUP:
+				if (_curHotspot >= 0) {
+					runHotspotScript(_curHotspot, kMouseUpScript);
+					//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
+				} else
+					checkInventoryClick();
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_d:
+					if (event.kbd.flags & Common::KBD_CTRL) {
+						_console->attach();
+						_console->onFrame();
 					}
 					break;
-				case Common::EVENT_LBUTTONUP:
-					if (_curHotspot >= 0) {
-						runHotspotScript(_curHotspot, kMouseUpScript);
-						//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
-					} else
-						checkInventoryClick();
+				case Common::KEYCODE_SPACE:
+					pauseGame();
 					break;
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-						case Common::KEYCODE_d:
-							if (event.kbd.flags & Common::KBD_CTRL) {
-								_console->attach();
-								_console->onFrame();
-							}
-							break;
-						case Common::KEYCODE_SPACE:
-							pauseGame();
-							break;
-						case Common::KEYCODE_F4:
-							_showHotspots = !_showHotspots;
-							if (_showHotspots) {
-								for (uint16 i = 0; i < _hotspotCount; i++)
-									_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
-								needsUpdate = true;
-							} else {
-								changeToCard();
-							}
-							break;
-						case Common::KEYCODE_F5:
-							runDialog(*_optionsDialog);
-							updateZipMode();
-							break;
-						case Common::KEYCODE_ESCAPE:
-							if (getFeatures() & GF_DEMO) {
-								if (_curStack != aspit)
-									changeToStack(aspit);
-								changeToCard(1);
-							}
-							break;
-						default:
-							break;
+				case Common::KEYCODE_F4:
+					_showHotspots = !_showHotspots;
+					if (_showHotspots) {
+						for (uint16 i = 0; i < _hotspotCount; i++)
+							_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
+						needsUpdate = true;
+					} else {
+						changeToCard();
+					}
+					break;
+				case Common::KEYCODE_F5:
+					runDialog(*_optionsDialog);
+					updateZipMode();
+					break;
+				case Common::KEYCODE_ESCAPE:
+					if (getFeatures() & GF_DEMO) {
+						if (_curStack != aspit)
+							changeToStack(aspit);
+						changeToCard(1);
 					}
 					break;
 				default:
 					break;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 

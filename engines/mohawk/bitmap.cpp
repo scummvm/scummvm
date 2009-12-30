@@ -84,18 +84,18 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 
 byte MohawkBitmap::getBitsPerPixel() {
 	switch (_header.format & kBitsPerPixelMask) {
-		case kBitsPerPixel1:
-			return 1;
-		case kBitsPerPixel4:
-			return 4;
-		case kBitsPerPixel8:
-			return 8;
-		case kBitsPerPixel16:
-			return 16;
-		case kBitsPerPixel24:
-			return 24;
-		default:
-			error ("Unknown bits per pixel");
+	case kBitsPerPixel1:
+		return 1;
+	case kBitsPerPixel4:
+		return 4;
+	case kBitsPerPixel8:
+		return 8;
+	case kBitsPerPixel16:
+		return 16;
+	case kBitsPerPixel24:
+		return 24;
+	default:
+		error ("Unknown bits per pixel");
 	}
 	
 	return 0;

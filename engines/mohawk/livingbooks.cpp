@@ -77,29 +77,29 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	while (!shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_MOUSEMOVE:
-					break;
-				case Common::EVENT_LBUTTONUP:
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-					break;
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-						case Common::KEYCODE_d:
-							if (event.kbd.flags & Common::KBD_CTRL) {
-								_console->attach();
-								_console->onFrame();
-							}
-							break;
-						case Common::KEYCODE_SPACE:
-							pauseGame();
-							break;
-						default:
-							break;
+			case Common::EVENT_MOUSEMOVE:
+				break;
+			case Common::EVENT_LBUTTONUP:
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_d:
+					if (event.kbd.flags & Common::KBD_CTRL) {
+						_console->attach();
+						_console->onFrame();
 					}
+					break;
+				case Common::KEYCODE_SPACE:
+					pauseGame();
 					break;
 				default:
 					break;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 

@@ -463,27 +463,27 @@ void RivenGraphics::runScheduledTransition() {
 	// transitions were found by hacking scripts.
 
 	switch (_scheduledTransition) {
-		case 12: // Pan Left
-			warning ("STUB: Pan left");
-			break;
-		case 13: // Pan Right
-			warning ("STUB: Pan right");
-			break;
-		case 14: // Pan Up
-			warning ("STUB: Pan up");
-			break;
-		case 15: // Pan Down
-			warning ("STUB: Pan down");
-			break;
-		case 16: // Dissolve
-		case 17: // Dissolve (tspit CARD 155)
-			warning ("STUB: Dissolve");
-			break;
-		default:
-			if (_scheduledTransition < 12)
-				error ("Found unused transition %d", _scheduledTransition);
-			else
-				error ("Found unknown transition %d", _scheduledTransition);
+	case 12: // Pan Left
+		warning ("STUB: Pan left");
+		break;
+	case 13: // Pan Right
+		warning ("STUB: Pan right");
+		break;
+	case 14: // Pan Up
+		warning ("STUB: Pan up");
+		break;
+	case 15: // Pan Down
+		warning ("STUB: Pan down");
+		break;
+	case 16: // Dissolve
+	case 17: // Dissolve (tspit CARD 155)
+		warning ("STUB: Dissolve");
+		break;
+	default:
+		if (_scheduledTransition < 12)
+			error ("Found unused transition %d", _scheduledTransition);
+		else
+			error ("Found unknown transition %d", _scheduledTransition);
 	}
 	
 	// For now, just copy the image to screen without doing any transition.
@@ -498,90 +498,90 @@ void RivenGraphics::changeCursor(uint16 num) {
 	// All of Riven's cursors are hardcoded. See riven_cursors.h for these definitions.
 
 	switch (num) {
-		case 1002:
-			// Zip Mode
-			CursorMan.replaceCursor(zipModeCursor, 16, 16, 8, 8, 0);
-			CursorMan.replaceCursorPalette(zipModeCursorPalette, 1, ARRAYSIZE(zipModeCursorPalette) / 4);
-			break;
-		case 2003:
-			// Hand Over Object
-			CursorMan.replaceCursor(objectHandCursor, 16, 16, 8, 8, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 2004:
-			// Grabbing/Using Object
-			CursorMan.replaceCursor(grabbingHandCursor, 13, 13, 6, 6, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3000:
-			// Standard Hand
-			CursorMan.replaceCursor(standardHandCursor, 15, 16, 6, 0, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3001:
-			// Pointing Left
-			CursorMan.replaceCursor(pointingLeftCursor, 15, 13, 0, 3, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3002:
-			// Pointing Right
-			CursorMan.replaceCursor(pointingRightCursor, 15, 13, 14, 3, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3003:
-			// Pointing Down (Palm Up)
-			CursorMan.replaceCursor(pointingDownCursorPalmUp, 13, 16, 3, 15, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3004:
-			// Pointing Up (Palm Up)
-			CursorMan.replaceCursor(pointingUpCursorPalmUp, 13, 16, 3, 0, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3005:
-			// Pointing Left (Curved)
-			CursorMan.replaceCursor(pointingLeftCursorBent, 15, 13, 0, 5, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3006:
-			// Pointing Right (Curved)
-			CursorMan.replaceCursor(pointingRightCursorBent, 15, 13, 14, 5, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 3007:
-			// Pointing Down (Palm Down)
-			CursorMan.replaceCursor(pointingDownCursorPalmDown, 15, 16, 7, 15, 0);
-			CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
-			break;
-		case 4001:
-			// Red Marble
-			break;
-		case 4002:
-			// Orange Marble
-			break;
-		case 4003:
-			// Yellow Marble
-			break;
-		case 4004:
-			// Green Marble
-			break;
-		case 4005:
-			// Blue Marble
-			break;
-		case 4006:
-			// Purple Marble
-			break;
-		case 5000:
-			// Pellet
-			CursorMan.replaceCursor(pelletCursor, 8, 8, 4, 4, 0);
-			CursorMan.replaceCursorPalette(pelletCursorPalette, 1, ARRAYSIZE(pelletCursorPalette) / 4);
-			break;
-		case 9000:
-			// Hide Cursor
-			CursorMan.showMouse(false);
-			break;
-		default:
-			error ("Cursor %d does not exist!", num);
+	case 1002:
+		// Zip Mode
+		CursorMan.replaceCursor(zipModeCursor, 16, 16, 8, 8, 0);
+		CursorMan.replaceCursorPalette(zipModeCursorPalette, 1, ARRAYSIZE(zipModeCursorPalette) / 4);
+		break;
+	case 2003:
+		// Hand Over Object
+		CursorMan.replaceCursor(objectHandCursor, 16, 16, 8, 8, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 2004:
+		// Grabbing/Using Object
+		CursorMan.replaceCursor(grabbingHandCursor, 13, 13, 6, 6, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3000:
+		// Standard Hand
+		CursorMan.replaceCursor(standardHandCursor, 15, 16, 6, 0, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3001:
+		// Pointing Left
+		CursorMan.replaceCursor(pointingLeftCursor, 15, 13, 0, 3, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3002:
+		// Pointing Right
+		CursorMan.replaceCursor(pointingRightCursor, 15, 13, 14, 3, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3003:
+		// Pointing Down (Palm Up)
+		CursorMan.replaceCursor(pointingDownCursorPalmUp, 13, 16, 3, 15, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3004:
+		// Pointing Up (Palm Up)
+		CursorMan.replaceCursor(pointingUpCursorPalmUp, 13, 16, 3, 0, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3005:
+		// Pointing Left (Curved)
+		CursorMan.replaceCursor(pointingLeftCursorBent, 15, 13, 0, 5, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3006:
+		// Pointing Right (Curved)
+		CursorMan.replaceCursor(pointingRightCursorBent, 15, 13, 14, 5, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 3007:
+		// Pointing Down (Palm Down)
+		CursorMan.replaceCursor(pointingDownCursorPalmDown, 15, 16, 7, 15, 0);
+		CursorMan.replaceCursorPalette(handCursorPalette, 1, ARRAYSIZE(handCursorPalette) / 4);
+		break;
+	case 4001:
+		// Red Marble
+		break;
+	case 4002:
+		// Orange Marble
+		break;
+	case 4003:
+		// Yellow Marble
+		break;
+	case 4004:
+		// Green Marble
+		break;
+	case 4005:
+		// Blue Marble
+		break;
+	case 4006:
+		// Purple Marble
+		break;
+	case 5000:
+		// Pellet
+		CursorMan.replaceCursor(pelletCursor, 8, 8, 4, 4, 0);
+		CursorMan.replaceCursorPalette(pelletCursorPalette, 1, ARRAYSIZE(pelletCursorPalette) / 4);
+		break;
+	case 9000:
+		// Hide Cursor
+		CursorMan.showMouse(false);
+		break;
+	default:
+		error ("Cursor %d does not exist!", num);
 	}
 	
 	if (num != 9000) // Show Cursor

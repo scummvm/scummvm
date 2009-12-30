@@ -97,17 +97,17 @@ void MystOptionsDialog::open() {
 
 void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-		case kZipCmd:
-			_vm->_zipMode = _zipModeCheckbox->getState();
-			break;
-		case kTransCmd:
-			_vm->_transitionsEnabled = _transistionsCheckbox->getState();
-			break;
-		case kCloseCmd:
-			close();
-			break;
-		default:
-			GUI::OptionsDialog::handleCommand(sender, cmd, data);
+	case kZipCmd:
+		_vm->_zipMode = _zipModeCheckbox->getState();
+		break;
+	case kTransCmd:
+		_vm->_transitionsEnabled = _transistionsCheckbox->getState();
+		break;
+	case kCloseCmd:
+		close();
+		break;
+	default:
+		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
 
@@ -131,17 +131,17 @@ void RivenOptionsDialog::open() {
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-		case kZipCmd:
-			*_vm->matchVarToString("azip") = _zipModeCheckbox->getState() ? 1 : 0;
-			break;
-		case kWaterCmd:
-			*_vm->matchVarToString("waterenabled") = _waterEffectCheckbox->getState() ? 1 : 0;
-			break;
-		case kCloseCmd:
-			close();
-			break;
-		default:
-			GUI::OptionsDialog::handleCommand(sender, cmd, data);
+	case kZipCmd:
+		*_vm->matchVarToString("azip") = _zipModeCheckbox->getState() ? 1 : 0;
+		break;
+	case kWaterCmd:
+		*_vm->matchVarToString("waterenabled") = _waterEffectCheckbox->getState() ? 1 : 0;
+		break;
+	case kCloseCmd:
+		close();
+		break;
+	default:
+		GUI::OptionsDialog::handleCommand(sender, cmd, data);
 	}
 }
 

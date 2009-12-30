@@ -95,43 +95,43 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume)
 	Audio::AudioStream* audStream = NULL;
 
 	switch (_vm->getGameType()) {
-		case GType_MYST:
-			if (_vm->getFeatures() & GF_ME) {
-				// Myst ME is a bit more efficient with sound storage than Myst
-				// Myst has lots of sounds repeated. To overcome this, Myst ME
-				// has MJMP resources which provide a link to the actual MSND
-				// resource we're looking for. This saves a lot of space from
-				// repeated data.
-				if (_vm->hasResource(ID_MJMP, id)) {
-					Common::SeekableReadStream *mjmpStream = _vm->getRawData(ID_MJMP, id);
-					id = mjmpStream->readUint16LE();
-					delete mjmpStream;
-				}
-				
-				audStream = Audio::makeWAVStream(_vm->getRawData(ID_MSND, id), true);
-			} else
-				audStream = makeMohawkWaveStream(_vm->getRawData(ID_MSND, id));
-			break;
-		case GType_RIVEN:
-			if (mainSoundFile)
-				audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id));
-			else
-				audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
-			break;
-		case GType_ZOOMBINI:
-			audStream = makeMohawkWaveStream(_vm->getRawData(ID_SND, id));
-			break;
-		case GType_CSAMTRAK:
-			if (mainSoundFile)
-				audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
-			else
-				audStream = getCSAmtrakMusic(id);
-			break;
-		case GType_OLDLIVINGBOOKS:
-			audStream = makeOldMohawkWaveStream(_vm->getRawData(ID_WAV, id));
-			break;
-		default:
+	case GType_MYST:
+		if (_vm->getFeatures() & GF_ME) {
+			// Myst ME is a bit more efficient with sound storage than Myst
+			// Myst has lots of sounds repeated. To overcome this, Myst ME
+			// has MJMP resources which provide a link to the actual MSND
+			// resource we're looking for. This saves a lot of space from
+			// repeated data.
+			if (_vm->hasResource(ID_MJMP, id)) {
+				Common::SeekableReadStream *mjmpStream = _vm->getRawData(ID_MJMP, id);
+				id = mjmpStream->readUint16LE();
+				delete mjmpStream;
+			}
+			
+			audStream = Audio::makeWAVStream(_vm->getRawData(ID_MSND, id), true);
+		} else
+			audStream = makeMohawkWaveStream(_vm->getRawData(ID_MSND, id));
+		break;
+	case GType_RIVEN:
+		if (mainSoundFile)
+			audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id));
+		else
 			audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
+		break;
+	case GType_ZOOMBINI:
+		audStream = makeMohawkWaveStream(_vm->getRawData(ID_SND, id));
+		break;
+	case GType_CSAMTRAK:
+		if (mainSoundFile)
+			audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
+		else
+			audStream = getCSAmtrakMusic(id);
+		break;
+	case GType_OLDLIVINGBOOKS:
+		audStream = makeOldMohawkWaveStream(_vm->getRawData(ID_WAV, id));
+		break;
+	default:
+		audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
 	}
 	
 	if (audStream) {
@@ -351,79 +351,79 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		tag = stream->readUint32BE();
 
 		switch (tag) {
-			case ID_ADPC:
-				debug(2, "Found Tag ADPC");
-				// Riven ADPCM Sound Only
-				// NOTE: This is completely useless for us. All of this
-				// is already in the ADPCM decoder in /sound.
-				adpc.size = stream->readUint32BE();
-				adpc.u0 = stream->readUint16BE();
-				adpc.channels = stream->readUint16BE();
-				adpc.u1 = stream->readUint32BE();
+		case ID_ADPC:
+			debug(2, "Found Tag ADPC");
+			// Riven ADPCM Sound Only
+			// NOTE: This is completely useless for us. All of this
+			// is already in the ADPCM decoder in /sound.
+			adpc.size = stream->readUint32BE();
+			adpc.u0 = stream->readUint16BE();
+			adpc.channels = stream->readUint16BE();
+			adpc.u1 = stream->readUint32BE();
 
+			for (uint16 i = 0; i < adpc.channels; i++)
+				adpc.u2[i] = stream->readUint32BE();
+			if (adpc.u0 == 2) {
+				adpc.u3 = stream->readUint32BE();
 				for (uint16 i = 0; i < adpc.channels; i++)
-					adpc.u2[i] = stream->readUint32BE();
-				if (adpc.u0 == 2) {
-					adpc.u3 = stream->readUint32BE();
-					for (uint16 i = 0; i < adpc.channels; i++)
-						adpc.u4[i] = stream->readUint32BE();
-				}
-				break;
-			case ID_CUE:
-				debug(2, "Found Tag Cue#");
-				// I have not tested this with Myst, but the one Riven test-case,
-				// pspit tWAV 3, has two cue points: "Beg Loop" and "End Loop".
-				// So, my guess is that a cue chunk just holds where to loop the
-				// sound. Some cue chunks even have no point count (such as
-				// Myst's intro.dat MSND 2. So, my theory is that a cue chunk
-				// always represents a loop, and if there is a point count, that
-				// represents the points from which to loop.
-				//
-				// This theory is probably not entirely true anymore. I've found
-				// that the values (which were previously unknown) in the DATA
-				// chunk are for looping. Since it was only used in Myst, it was
-				// always 10 0's, Tito just thought it was useless. I'm still not
-				// sure what purpose this has.
+					adpc.u4[i] = stream->readUint32BE();
+			}
+			break;
+		case ID_CUE:
+			debug(2, "Found Tag Cue#");
+			// I have not tested this with Myst, but the one Riven test-case,
+			// pspit tWAV 3, has two cue points: "Beg Loop" and "End Loop".
+			// So, my guess is that a cue chunk just holds where to loop the
+			// sound. Some cue chunks even have no point count (such as
+			// Myst's intro.dat MSND 2. So, my theory is that a cue chunk
+			// always represents a loop, and if there is a point count, that
+			// represents the points from which to loop.
+			//
+			// This theory is probably not entirely true anymore. I've found
+			// that the values (which were previously unknown) in the DATA
+			// chunk are for looping. Since it was only used in Myst, it was
+			// always 10 0's, Tito just thought it was useless. I'm still not
+			// sure what purpose this has.
 		
-				cue.size = stream->readUint32BE();
-				cue.point_count = stream->readUint16BE();
+			cue.size = stream->readUint32BE();
+			cue.point_count = stream->readUint16BE();
 
-				if (cue.point_count == 0)
-					debug (2, "Cue# chunk found with no points!");
-				else
-					debug (2, "Cue# chunk found with %d point(s)!", cue.point_count);
+			if (cue.point_count == 0)
+				debug (2, "Cue# chunk found with no points!");
+			else
+				debug (2, "Cue# chunk found with %d point(s)!", cue.point_count);
 
-				for (uint16 i = 0; i < cue.point_count; i++) {
-					cue.cueList[i].position = stream->readUint32BE();
-					cue.cueList[i].length = stream->readByte();
-					for (byte j = 0; j < cue.cueList[i].length; j++)
-						cue.cueList[i].name += stream->readByte();
-					// Realign to uint16 boundaries...
-					if (!(cue.cueList[i].length & 1))
-						stream->readByte();
-					debug (3, "Cue# chunk point %d: %s", i, cue.cueList[i].name.c_str());
-				}
-				break;
-			case ID_DATA:
-				debug(2, "Found Tag DATA");
-				// We subtract 20 from the actual chunk size, which is the total size
-				// of the chunk's header
-				data_chunk.size = stream->readUint32BE() - 20;
-				data_chunk.sample_rate = stream->readUint16BE();
-				data_chunk.sample_count = stream->readUint32BE();
-				data_chunk.bitsPerSample = stream->readByte();
-				data_chunk.channels = stream->readByte();
-				data_chunk.encoding = stream->readUint16BE();
-				data_chunk.loop = stream->readUint16BE();
-				data_chunk.loopStart = stream->readUint32BE();
-				data_chunk.loopEnd = stream->readUint32BE();
+			for (uint16 i = 0; i < cue.point_count; i++) {
+				cue.cueList[i].position = stream->readUint32BE();
+				cue.cueList[i].length = stream->readByte();
+				for (byte j = 0; j < cue.cueList[i].length; j++)
+					cue.cueList[i].name += stream->readByte();
+				// Realign to uint16 boundaries...
+				if (!(cue.cueList[i].length & 1))
+					stream->readByte();
+				debug (3, "Cue# chunk point %d: %s", i, cue.cueList[i].name.c_str());
+			}
+			break;
+		case ID_DATA:
+			debug(2, "Found Tag DATA");
+			// We subtract 20 from the actual chunk size, which is the total size
+			// of the chunk's header
+			data_chunk.size = stream->readUint32BE() - 20;
+			data_chunk.sample_rate = stream->readUint16BE();
+			data_chunk.sample_count = stream->readUint32BE();
+			data_chunk.bitsPerSample = stream->readByte();
+			data_chunk.channels = stream->readByte();
+			data_chunk.encoding = stream->readUint16BE();
+			data_chunk.loop = stream->readUint16BE();
+			data_chunk.loopStart = stream->readUint32BE();
+			data_chunk.loopEnd = stream->readUint32BE();
 
-				data_chunk.audio_data = (byte *)malloc(data_chunk.size);
-				stream->read(data_chunk.audio_data, data_chunk.size);
-				foundData = true;
-				break;
-			default:
-				error ("Unknown tag found in 'tWAV' chunk -- \'%s\'", tag2str(tag));
+			data_chunk.audio_data = (byte *)malloc(data_chunk.size);
+			stream->read(data_chunk.audio_data, data_chunk.size);
+			foundData = true;
+			break;
+		default:
+			error ("Unknown tag found in 'tWAV' chunk -- \'%s\'", tag2str(tag));
 		}
 	}
 	

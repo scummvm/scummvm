@@ -46,22 +46,22 @@ Common::StringList RivenSaveLoad::generateSaveGameList() {
 // so, match them ;)
 static uint16 mapOldStackIDToNew(uint16 oldID) {
 	switch (oldID) {
-		case 1:
-			return ospit;
-		case 2:
-			return pspit;
-		case 3:
-			return rspit;
-		case 4:
-			return tspit;
-		case 5:
-			return bspit;
-		case 6:
-			return gspit;
-		case 7:
-			return jspit;
-		case 8:
-			return aspit;
+	case 1:
+		return ospit;
+	case 2:
+		return pspit;
+	case 3:
+		return rspit;
+	case 4:
+		return tspit;
+	case 5:
+		return bspit;
+	case 6:
+		return gspit;
+	case 7:
+		return jspit;
+	case 8:
+		return aspit;
 	}
 	error ("Unknown old stack ID %d", oldID);
 	return 0;
@@ -69,22 +69,22 @@ static uint16 mapOldStackIDToNew(uint16 oldID) {
 
 static uint16 mapNewStackIDToOld(uint16 newID) {
 	switch (newID) {
-		case aspit:
-			return 8;
-		case bspit:
-			return 5;
-		case gspit:
-			return 6;
-		case jspit:
-			return 7;
-		case ospit:
-			return 1;
-		case pspit:
-			return 2;
-		case rspit:
-			return 3;
-		case tspit:
-			return 4;
+	case aspit:
+		return 8;
+	case bspit:
+		return 5;
+	case gspit:
+		return 6;
+	case jspit:
+		return 7;
+	case ospit:
+		return 1;
+	case pspit:
+		return 2;
+	case rspit:
+		return 3;
+	case tspit:
+		return 4;
 	}
 	error ("Unknown new stack ID %d", newID);
 	return 0;
