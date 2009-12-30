@@ -638,7 +638,7 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 	// TODO
 
-	warning("kAddScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
+	//warning("kAddScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	//s->_gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 	return NULL_REG;
 }
@@ -657,7 +657,7 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	if (viewId != 0xffff)
 		s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 
-	warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
+	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	return NULL_REG;
 }
 
@@ -673,7 +673,7 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 	// TODO
 
-	warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	//warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
 	return NULL_REG;
 }
 
@@ -755,21 +755,34 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
+	Selector slc = argv[1].toUint16();
+
+	ObjVarRef address;
 
 	while (curNode) {
 		curObject = curNode->value;
 
-		// FIXME: Yes, this is an ugly hack...
-		if (argc == 2) {
-			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 0);
-		} else if (argc == 3) {
-			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
-		} else if (argc == 4) {
-			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
-		} else if (argc == 5) {
-			invoke_selector(s, curObject, argv[1].toUint16(), kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+		// First, check if the target selector is a variable
+		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+			// This can only happen with 3 params (list, target object, variable)
+			if (argc != 3) {
+				warning("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
+			} else {
+				write_selector(s->_segMan, curObject, slc, argv[2]);
+			}
 		} else {
-			warning("kListEachElementDo: called with %d params", argc);
+			// FIXME: Yes, this is an ugly hack...
+			if (argc == 2) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
+			} else if (argc == 3) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
+			} else if (argc == 4) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
+			} else if (argc == 5) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+			} else {
+				warning("kListEachElementDo: called with %d params", argc);
+			}
 		}
 
 		// Lookup node again, since the nodetable it was in may have been reallocated
