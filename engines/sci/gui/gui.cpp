@@ -823,6 +823,14 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 void SciGui::portraitUnload(uint16 portraitId) {
 }
 
+uint16 SciGui::getScreenWidth() {
+	return _screen->_displayWidth;
+}
+
+uint16 SciGui::getScreenHeight() {
+	return _screen->_displayHeight;
+}
+
 bool SciGui::debugUndither(bool flag) {
 	_screen->unditherSetState(flag);
 	return false;

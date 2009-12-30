@@ -108,6 +108,9 @@ public:
 	void setCursorPos(Common::Point pos);
 	void moveCursor(Common::Point pos);
 
+	uint16 getScreenWidth() { return 320; }
+	uint16 getScreenHeight() { return 200; }
+
 	bool debugUndither(bool flag);
 	bool debugShowMap(int mapNo);
 

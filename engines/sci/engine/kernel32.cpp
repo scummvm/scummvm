@@ -640,12 +640,25 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
-	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
-	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
-	int16 leftPos = GET_SEL32V(s->_segMan, viewObj, x);
-	int16 topPos = GET_SEL32V(s->_segMan, viewObj, y);
+	uint16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
+	uint16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
+	uint16 leftPos = GET_SEL32V(s->_segMan, viewObj, x);
+	uint16 topPos = GET_SEL32V(s->_segMan, viewObj, y);
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
+
+	// Theoretically, leftPos and topPos should be sane
+	// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
+	// the hack underneath does not try and draw cels outside the screen coordinates
+	if (leftPos >= (int16)s->_gui->getScreenWidth()) {
+		warning("kAddScreenItem: invalid left position (%d), resetting to 0", leftPos);
+		leftPos = 0;
+	}
+
+	if (topPos >= s->_gui->getScreenHeight()) {
+		warning("kAddScreenItem: invalid top position (%d), resetting to 0", topPos);
+		topPos = 0;
+	}
 
 	// HACK: just draw the view on screen
 	if (viewId != 0xffff)
@@ -661,13 +674,26 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
-	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
-	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
-	int16 leftPos = GET_SEL32V(s->_segMan, viewObj, x);
-	int16 topPos = GET_SEL32V(s->_segMan, viewObj, y);
+	uint16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
+	uint16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
+	uint16 leftPos = GET_SEL32V(s->_segMan, viewObj, x);
+	uint16 topPos = GET_SEL32V(s->_segMan, viewObj, y);
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
 	
+	// Theoretically, leftPos and topPos should be sane
+	// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
+	// the hack underneath does not try and draw cels outside the screen coordinates
+	if (leftPos >= s->_gui->getScreenWidth()) {
+		warning("kUpdateScreenItem: invalid left position (%d), resetting to 0", leftPos);
+		leftPos = 0;
+	}
+
+	if (topPos >= s->_gui->getScreenHeight()) {
+		warning("kUpdateScreenItem: invalid top position (%d), resetting to 0", topPos);
+		topPos = 0;
+	}
+
 	// HACK: just draw the view on screen
 	if (viewId != 0xffff)
 		s->_gui->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
