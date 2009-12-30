@@ -634,6 +634,7 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	/*
 	reg_t viewObj = argv[0];
 	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
 	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
@@ -642,6 +643,7 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	//int16 topPos = 0;
 	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
 	//int16 control = 0;
+	*/
 
 	// TODO
 

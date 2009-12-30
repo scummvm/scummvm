@@ -689,7 +689,7 @@ reg_t kList(EngineState *s, int argc, reg_t *argv) {
 		case 22:
 			return kSort(s, argc - 1, argv + 1);
 		default:
-			warning("kList: Unhandled case %d");
+			warning("kList: Unhandled case %d", argv[0].toUint16());
 			return NULL_REG;
 	}
 
