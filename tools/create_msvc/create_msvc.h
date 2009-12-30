@@ -41,7 +41,7 @@ typedef std::list<std::string> StringList;
  */
 struct EngineDesc {
 	/**
-	 * The name of the engine. We use this to determin the directory
+	 * The name of the engine. We use this to determine the directory
 	 * the engine is in and to create the define, which needs to be
 	 * set to enable the engine.
 	 */
@@ -86,7 +86,7 @@ typedef std::list<EngineDesc> EngineDescList;
 EngineDescList parseConfigure(const std::string &srcDir);
 
 /**
- * Checks whether the specified engine is a sub engine. To dertermin this
+ * Checks whether the specified engine is a sub engine. To determine this
  * there is a fully setup engine list needed.
  *
  * @param name Name of the engine to check.
@@ -189,16 +189,6 @@ struct BuildSetup {
 	StringList defines;   ///< List of all defines for the build.
 	StringList libraries; ///< List of all external libraries required for the build.
 };
-
-/**
- * Creates all MSVC build files: the solution
- * for all projects, all projects itself and the
- * global config files.
- *
- * @param setup Description of the desired build setup.
- * @param version Target MSVC version.
- */
-void createMSVCProject(const BuildSetup &setup, const int version);
 
 /**
  * Quits the program with the specified error message.

@@ -89,10 +89,206 @@ std::string getLastPathComponent(const std::string &path);
  */
 void displayHelp(const char *exe);
 
-// Map containing a project-specific list of warnings
-// TODO: Remove the use of global variables
-std::map<std::string, std::string> g_projectWarnings;
-std::string g_globalWarnings;
+/**
+ * Structure representing a file tree. This contains two
+ * members: name and children. "name" holds the name of
+ * the node. "children" does contain all the node's children.
+ * When the list "children" is empty, the node is a file entry,
+ * otherwise it's a directory.
+ */
+struct FileNode {
+	typedef std::list<FileNode *> NodeList;
+
+	FileNode(const std::string &n) : name(n), children() {}
+
+	~FileNode() {
+		for (NodeList::iterator i = children.begin(); i != children.end(); ++i)
+			delete *i;
+	}
+
+	std::string name;  ///< Name of the node
+	NodeList children; ///< List of children for the node
+};
+
+/**
+ * Structure for describing an FSNode. This is a very minimalistic
+ * description, which includes everything we need.
+ * It only contains the name of the node and whether it is a directory
+ * or not.
+ */
+struct FSNode {
+	FSNode() : name(), isDirectory(false) {}
+	FSNode(const std::string &n, bool iD) : name(n), isDirectory(iD) {}
+
+	std::string name; ///< Name of the file system node
+	bool isDirectory; ///< Whether it is a directory or not
+};
+
+typedef std::list<FSNode> FileList;
+
+class ProjectProvider {
+public:
+	typedef std::map<std::string, std::string> UUIDMap;
+
+protected:
+	const int _version;                                      ///< Target MSVC version
+	std::string _globalWarnings;                             ///< Global warnings
+	std::map<std::string, std::string> _projectWarnings;     ///< Per-project warnings
+
+	UUIDMap _uuidMap;                                        ///< List of (project name, UUID) pairs
+
+public:
+	/**
+	 * Instantiate new ProjectProvider class
+	 *
+	 * @param version Target MSVC version.
+	 */
+	ProjectProvider(const int version, std::string global_warnings, std::map<std::string, std::string> project_warnings);
+	virtual ~ProjectProvider() {}
+
+	/**
+	 * Creates all MSVC build files: the solution
+	 * for all projects, all projects itself and the
+	 * global config files.
+	 *
+	 * @param setup Description of the desired build setup.
+	 */
+	void createMSVCProject(const BuildSetup &setup);
+
+	/**
+	 * Creates the main solution file "scummvm.sln" for a specific
+	 * build setup.
+	 *
+	 * @param setup Description of the desired build.
+	 */
+	void createScummVMSolution(const BuildSetup &setup);
+
+	/**
+	 * Create a project file for the specified list of files.
+	 *
+	 * @param name Name of the project file.
+	 * @param uuid UUID of the project file.
+	 * @param setup Description of the desired build.
+	 * @param moduleDir Path to the module.
+	 * @param includeList Files to include (must have "moduleDir" as prefix).
+	 * @param excludeList Files to exclude (must have "moduleDir" as prefix).
+	 */
+	virtual void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
+	                               const StringList &includeList, const StringList &excludeList) = 0;
+
+	/**
+	 * Writes file entries for the specified directory node into
+	 * the given project file. It will also take care of duplicate
+	 * object files.
+	 *
+	 * @param dir Directory node.
+	 * @param projectFile File stream to write to.
+	 * @param indentation Indentation level to use.
+	 * @param duplicate List of duplicate object file names.
+	 * @param objPrefix Prefix to use for object files, which would name clash.
+	 * @param filePrefix Generic prefix to all files of the node.
+	 */
+	virtual void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+	                                    const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) = 0;
+
+	/**
+	 * Output a list of project references to the file stream
+	 *
+	 * @param output File stream to write to.
+	 */
+	virtual void writeReferences(std::ofstream &output) = 0;
+
+	/**
+	 * Outputs a property file based on the input parameters.
+	 *
+	 * It can be easily used to create different global properties files
+	 * for a 64 bit and a 32 bit version. It will also take care that the
+	 * two platform configurations will output their files into different
+	 * directories.
+	 *
+	 * @param properties File stream in which to write the property settings.
+	 * @param bits Number of bits the platform supports.
+	 * @param defines Defines the platform needs to have set.
+	 * @param prefix File prefix, used to add additional include paths.
+	 */
+	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) = 0;
+
+	/**
+	 * Generates the project properties for debug and release settings.
+	 *
+	 * @param setup Description of the desired build setup.
+	 */
+	virtual void createBuildProp(const BuildSetup &setup) = 0;
+
+	/**
+	 * Get the file extension for project files
+	 */
+	virtual const char *getProjectExtension() = 0;
+
+	/**
+	 * Get the file extension for property files
+	 */
+	virtual const char *getPropertiesExtension() = 0;
+
+	/**
+	 * Get the Visual Studio version (used by the VS shell extension to launch the correct VS version)
+	 */
+	virtual int getVisualStudioVersion() = 0;
+
+	/**
+	 * Create the global project properties.
+	 *
+	 * @param setup Description of the desired build setup.
+	 */
+	void createGlobalProp(const BuildSetup &setup);
+
+	/**
+	 * Adds files of the specified directory recursively to given project file.
+	 *
+	 * @param dir Path to the directory.
+	 * @param projectFile Output stream object, where all data should be written to.
+	 * @param includeList Files to include (must have a relative directory as prefix).
+	 * @param excludeList Files to exclude (must have a relative directory as prefix).
+	 * @param filePrefix Prefix to use for relative path arguments.
+	 */
+	void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
+	                       const StringList &includeList, const StringList &excludeList,
+	                       const std::string &filePrefix);
+
+	/**
+	 * Creates a list of files of the specified module. This also
+	 * creates a list of files, which should not be included.
+	 * All filenames will have "moduleDir" as prefix.
+	 *
+	 * @param moduleDir Path to the module.
+	 * @param defines List of set defines.
+	 * @param includeList Reference to a list, where included files should be added.
+	 * @param excludeList Reference to a list, where excluded files should be added.
+	 */
+	void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &includeList, StringList &excludeList);
+};
+
+class VisualStudioProvider : public ProjectProvider {
+public:
+	VisualStudioProvider(const int version, std::string global_warnings, std::map<std::string, std::string> project_warnings);
+
+	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
+	                       const StringList &includeList, const StringList &excludeList);
+
+	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
+
+	void writeReferences(std::ofstream &output);
+
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix);
+
+	void createBuildProp(const BuildSetup &setup);
+
+	const char *getProjectExtension();
+	const char *getPropertiesExtension();
+	int getVisualStudioVersion();
+};
+
 } // End of anonymous namespace
 
 int main(int argc, char *argv[]) {
@@ -246,14 +442,23 @@ int main(int argc, char *argv[]) {
 	setup.libraries.push_back("winmm.lib");
 	setup.libraries.push_back("sdl.lib");
 
+
+	// List of global warnings and a map for project-specific warnings
+	std::string globalWarnings;
+	std::map<std::string, std::string> projectWarnings;
+
 	// Initialize global & project-specific warnings
-	g_globalWarnings = "4068;4100;4103;4127;4244;4250;4310;4351;4512;4702;4706;4800;4996";
+	globalWarnings = "4068;4100;4103;4127;4244;4250;4310;4351;4512;4702;4706;4800;4996";
 
-	g_projectWarnings["agi"] = "4510;4610";
-	g_projectWarnings["lure"] = "4189;4355";
-	g_projectWarnings["kyra"] = "4355";
+	projectWarnings["agi"] = "4510;4610";
+	projectWarnings["lure"] = "4189;4355";
+	projectWarnings["kyra"] = "4355";
 
-	createMSVCProject(setup, msvcVersion);
+	ProjectProvider *provider = new VisualStudioProvider(msvcVersion, globalWarnings, projectWarnings);
+
+	provider->createMSVCProject(setup);
+
+	delete provider;
 }
 
 namespace {
@@ -582,132 +787,6 @@ UUIDMap createUUIDMap(const BuildSetup &setup);
  */
 std::string createUUID();
 
-/**
- * Creates the main solution file "scummvm.sln" for a specific
- * build setup.
- *
- * @param setup Description of the desired build.
- * @param uuids Map of all project file UUIDs.
- * @param version Target MSVC version.
- */
-void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const int version);
-
-/**
- * Create a project file for the specified list of files.
- *
- * @param name Name of the project file.
- * @param uuid UUID of the project file.
- * @param setup Description of the desired build.
- * @param moduleDir Path to the module.
- * @param includeList Files to include (must have "moduleDir" as prefix).
- * @param excludeList Files to exclude (must have "moduleDir" as prefix).
- * @param version Target MSVC version.
- */
-void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-                       const StringList &includeList, const StringList &excludeList, const int version);
-
-/**
- * Adds files of the specified directory recursively to given project file.
- *
- * @param dir Path to the directory.
- * @param projectFile Output stream object, where all data should be written to.
- * @param includeList Files to include (must have a relative directory as prefix).
- * @param excludeList Files to exclude (must have a relative directory as prefix).
- * @param filePrefix Prefix to use for relativ path arguments.
- */
-void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
-                       const StringList &includeList, const StringList &excludeList,
-                       const std::string &filePrefix);
-
-/**
- * Create the global project properties.
- *
- * @param setup Description of the desired build setup.
- * @param version Target MSVC version.
- */
-void createGlobalProp(const BuildSetup &setup, const int version);
-
-/**
- * Generates the project properties for debug and release settings.
- *
- * @param setup Description of the desired build setup.
- * @param version Target MSVC version.
- */
-void createBuildProp(const BuildSetup &setup, const int version);
-
-/**
- * Creates a list of files of the specified module. This also
- * creates a list of files, which should not be included.
- * All filenames will have "moduleDir" as prefix.
- *
- * @param moduleDir Path to the module.
- * @param defines List of set defines.
- * @param includeList Reference to a list, where included files should be added.
- * @param excludeList Reference to a list, where excluded files should be added.
- */
-void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &includeList, StringList &excludeList);
-} // End of anonymous namespace
-
-void createMSVCProject(const BuildSetup &setup, const int version) {
-	UUIDMap uuidMap = createUUIDMap(setup);
-
-	// We also need to add the UUID of the main project file.
-	const std::string svmUUID = uuidMap["scummvm"] = createUUID();
-
-	createScummVMSolution(setup, uuidMap, version);
-
-	StringList in, ex;
-
-	// Create engine project files
-	for (UUIDMap::const_iterator i = uuidMap.begin(); i != uuidMap.end(); ++i) {
-		if (i->first == "scummvm")
-			continue;
-
-		in.clear(); ex.clear();
-		const std::string moduleDir = setup.srcDir + "/engines/" + i->first;
-
-		createModuleList(moduleDir, setup.defines, in, ex);
-		createProjectFile(i->first, i->second, setup, moduleDir, in, ex, version);
-	}
-
-	// Last but not least create the main ScummVM project file.
-	in.clear(); ex.clear();
-
-	// File list for the ScummVM project file
-	createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/common", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/graphics", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/sound", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/sound/softsynth/mt32", setup.defines, in, ex);
-
-	// Resource files
-	in.push_back(setup.srcDir + "/icons/scummvm.ico");
-	in.push_back(setup.srcDir + "/dists/scummvm.rc");
-
-	// Various text files
-	in.push_back(setup.srcDir + "/AUTHORS");
-	in.push_back(setup.srcDir + "/COPYING");
-	in.push_back(setup.srcDir + "/COPYING.LGPL");
-	in.push_back(setup.srcDir + "/COPYRIGHT");
-	in.push_back(setup.srcDir + "/NEWS");
-	in.push_back(setup.srcDir + "/README");
-	in.push_back(setup.srcDir + "/TODO");
-
-	// Create the "scummvm.vcproj" file.
-	createProjectFile("scummvm", svmUUID, setup, setup.srcDir, in, ex, version);
-
-	// Create the global property file
-	createGlobalProp(setup, version);
-
-	// Create the configuration property files
-	createBuildProp(setup, version);
-}
-
-namespace {
 UUIDMap createUUIDMap(const BuildSetup &setup) {
 	UUIDMap result;
 
@@ -757,9 +836,75 @@ std::string createUUID() {
 #endif
 }
 
-void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const int version) {
-	UUIDMap::const_iterator svmUUID = uuids.find("scummvm");
-	if (svmUUID == uuids.end())
+//////////////////////////////////////////////////////////////////////////
+// Project Provider methods
+//////////////////////////////////////////////////////////////////////////
+ProjectProvider::ProjectProvider(const int version, std::string global_warnings, std::map<std::string, std::string> project_warnings)
+	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
+}
+
+void ProjectProvider::createMSVCProject(const BuildSetup &setup) {
+	_uuidMap = createUUIDMap(setup);
+
+	// We also need to add the UUID of the main project file.
+	const std::string svmUUID = _uuidMap["scummvm"] = createUUID();
+
+	createScummVMSolution(setup);
+
+	StringList in, ex;
+
+	// Create engine project files
+	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+		if (i->first == "scummvm")
+			continue;
+
+		in.clear(); ex.clear();
+		const std::string moduleDir = setup.srcDir + "/engines/" + i->first;
+
+		createModuleList(moduleDir, setup.defines, in, ex);
+		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
+	}
+
+	// Last but not least create the main ScummVM project file.
+	in.clear(); ex.clear();
+
+	// File list for the ScummVM project file
+	createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/common", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/graphics", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/gui", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/sound", setup.defines, in, ex);
+	createModuleList(setup.srcDir + "/sound/softsynth/mt32", setup.defines, in, ex);
+
+	// Resource files
+	in.push_back(setup.srcDir + "/icons/scummvm.ico");
+	in.push_back(setup.srcDir + "/dists/scummvm.rc");
+
+	// Various text files
+	in.push_back(setup.srcDir + "/AUTHORS");
+	in.push_back(setup.srcDir + "/COPYING");
+	in.push_back(setup.srcDir + "/COPYING.LGPL");
+	in.push_back(setup.srcDir + "/COPYRIGHT");
+	in.push_back(setup.srcDir + "/NEWS");
+	in.push_back(setup.srcDir + "/README");
+	in.push_back(setup.srcDir + "/TODO");
+
+	// Create the scummvm project file.
+	createProjectFile("scummvm", svmUUID, setup, setup.srcDir, in, ex);
+
+	// Create the global property file
+	createGlobalProp(setup);
+
+	// Create the configuration property files
+	createBuildProp(setup);
+}
+
+void ProjectProvider::createScummVMSolution(const BuildSetup &setup) {
+	UUIDMap::const_iterator svmUUID = _uuidMap.find("scummvm");
+	if (svmUUID == _uuidMap.end())
 		error("No UUID for \"scummvm\" project created");
 
 	const std::string svmProjectUUID = svmUUID->second;
@@ -771,32 +916,21 @@ void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const 
 	if (!solution)
 		error("Could not open \"" + setup.outputDir + '/' + "scummvm.sln\" for writing");
 
-	solution << "Microsoft Visual Studio Solution File, Format Version " << version + 1 << ".00\n";
-	if (version == 9)
-		solution << "# Visual Studio 2008\n";
-	else if (version == 8)
-		solution << "# Visual Studio 2005\n";
-	else
-		error("Unsupported version passed to createScummVMSolution");
+	solution << "Microsoft Visual Studio Solution File, Format Version " << _version + 1 << ".00\n";
+	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
 
-	solution << "Project(\"{" << solutionUUID << "}\") = \"scummvm\", \"scummvm.vcproj\", \"{" << svmProjectUUID << "}\"\n"
-	         << "\tProjectSection(ProjectDependencies) = postProject\n";
-	for (UUIDMap::const_iterator i = uuids.begin(); i != uuids.end(); ++i) {
-		if (i->first == "scummvm")
-			continue;
+	solution << "Project(\"{" << solutionUUID << "}\") = \"scummvm\", \"scummvm" << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
 
-		solution << "\t\t{" << i->second << "} = {" << i->second << "}\n";
-	}
+	writeReferences(solution);
 
-	solution << "\tEndProjectSection\n"
-	         << "EndProject\n";
+	solution << "EndProject\n";
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
-	for (UUIDMap::const_iterator i = uuids.begin(); i != uuids.end(); ++i) {
+	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 		if (i->first == "scummvm")
 			continue;
 
-		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i->first << "\", \"" << i->first << ".vcproj\", \"{" << i->second << "}\"\n"
+		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i->first << "\", \"" << i->first << getProjectExtension() << "\", \"{" << i->second << "}\"\n"
 		         << "EndProject\n";
 	}
 
@@ -809,7 +943,7 @@ void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const 
 	            "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
 
-	for (UUIDMap::const_iterator i = uuids.begin(); i != uuids.end(); ++i) {
+	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
 		solution << "\t\t{" << i->second << "}.Debug|Win32.ActiveCfg = Debug|Win32\n"
 		         << "\t\t{" << i->second << "}.Debug|Win32.Build.0 = Debug|Win32\n"
 		         << "\t\t{" << i->second << "}.Release|Win32.ActiveCfg = Release|Win32\n"
@@ -825,345 +959,6 @@ void createScummVMSolution(const BuildSetup &setup, const UUIDMap &uuids, const 
 	            "\t\tHideSolutionNode = FALSE\n"
 	            "\tEndGlobalSection\n"
 	            "EndGlobal\n";
-}
-
-void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-                       const StringList &includeList, const StringList &excludeList, const int version) {
-	const std::string projectFile = setup.outputDir + '/' + name + ".vcproj";
-	std::ofstream project(projectFile.c_str());
-	if (!project)
-		error("Could not open \"" + projectFile + "\" for writing");
-
-	project << "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n"
-	           "<VisualStudioProject\n"
-	           "\tProjectType=\"Visual C++\"\n"
-	           "\tVersion=\"" << version << ".00\"\n"
-	           "\tName=\"" << name << "\"\n"
-	           "\tProjectGUID=\"{" << uuid << "}\"\n"
-	           "\tRootNamespace=\"" << name << "\"\n"
-	           "\tKeyword=\"Win32Proj\"\n";
-
-	if (version >= 9)
-		project << "\tTargetFrameworkVersion=\"131072\"\n";
-
-	project << "\t>\n"
-	           "\t<Platforms>\n"
-	           "\t\t<Platform Name=\"Win32\" />\n"
-               "\t\t<Platform Name=\"x64\" />\n"
-	           "\t</Platforms>\n"
-	           "\t<Configurations>\n";
-
-	// Check for project-specific warnings:
-	std::map<std::string, std::string>::iterator warnings = g_projectWarnings.find(name);
-
-	if (name == "scummvm") {
-		std::string libraries;
-
-		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
-			libraries += ' ' + *i;
-
-		// Win32
-		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
-		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
-		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
-		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-		           "\t\t\t/>\n"
-		           "\t\t</Configuration>\n"
-		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
-		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
-		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
-		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-		           "\t\t\t/>\n"
-		           "\t\t</Configuration>\n";
-
-		// x64
-		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
-		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
-		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
-		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
-		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
-		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
-		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-		           "\t\t\t/>\n"
-		           "\t\t</Configuration>\n"
-		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
-		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
-		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
-		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
-		           "\t\t\t/>\n"
-		           "\t\t</Configuration>\n";
-	} else if (warnings != g_projectWarnings.end()) {
-		// Win32
-		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
-		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
-		           "\t\t</Configuration>\n"
-		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
-		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
-		           "\t\t</Configuration>\n";
-		// x64
-		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
-		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
-		           "\t\t</Configuration>\n"
-		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
-		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
-		           "\t\t</Configuration>\n";
-	} else if (name == "tinsel") {
-		// Win32
-		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
-		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DebugInformationFormat=\"3\" />\n"
-		           "\t\t</Configuration>\n"
-		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
-		// x64
-		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
-		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DebugInformationFormat=\"3\" />\n"
-		           "\t\t</Configuration>\n"
-		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
-	} else {
-		// Win32
-		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\" />\n"
-	               "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
-		// x64
-		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\" />\n"
-	               "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
-	}
-	project << "\t</Configurations>\n"
-	           "\t<Files>\n";
-
-	std::string modulePath;
-	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
-		modulePath = moduleDir.substr(setup.srcDir.size());
-		if (!modulePath.empty() && modulePath.at(0) == '/')
-			modulePath.erase(0, 1);
-	}
-
-	if (modulePath.size())
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
-	else
-		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
-
-	project << "\t</Files>\n"
-	           "</VisualStudioProject>\n";
-}
-
-/**
- * Outputs a property file based on the input parameters.
- *
- * It can be easily used to create different global properties files
- * for a 64 bit and a 32 bit version. It will also take care that the
- * two platform configurations will output their files into different
- * directories.
- *
- * @param properties File stream in which to write the property settings.
- * @param bits Number of bits the platform supports.
- * @param defines Defines the platform needs to have set.
- * @param prefix File prefix, used to add additional include paths.
- */
-void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Global\"\n"
-	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
-	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tDisableLanguageExtensions=\"true\"\n"
-	              "\t\tDisableSpecificWarnings=\"" << g_globalWarnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines\"\n"
-	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
-	              "\t\tExceptionHandling=\"0\"\n"
-	              "\t\tRuntimeTypeInfo=\"false\"\n"
-	              "\t\tWarningLevel=\"4\"\n"
-	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tCompileAs=\"0\"\n"
-	              "\t\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLibrarianTool\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSubSystem=\"1\"\n"
-	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-}
-
-void createGlobalProp(const BuildSetup &setup, const int /*version*/) {
-	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Global.vsprops").c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global.vsprops\" for writing");
-
-	std::string defines;
-	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (i != setup.defines.begin())
-			defines += ';';
-		defines += *i;
-	}
-
-	outputGlobalPropFile(properties, 32, defines, convertPathToWin(setup.filePrefix));
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Global64.vsprops").c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global64.vsprops\" for writing");
-
-	// HACK: We must disable the "nasm" feature for x64. To achieve that we must duplicate the feature list and
-	// recreate a define list.
-	FeatureList x64Features = setup.features;
-	setFeatureBuildState("nasm", x64Features, false);
-	StringList x64Defines = getFeatureDefines(x64Features);
-	StringList x64EngineDefines = getEngineDefines(setup.engines);
-	x64Defines.splice(x64Defines.end(), x64EngineDefines);
-
-	defines.clear();
-	for (StringList::const_iterator i = x64Defines.begin(); i != x64Defines.end(); ++i) {
-		if (i != x64Defines.begin())
-			defines += ';';
-		defines += *i;
-	}
-
-	outputGlobalPropFile(properties, 64, defines, convertPathToWin(setup.filePrefix));
-}
-
-void createBuildProp(const BuildSetup &setup, const int /*version*/) {
-	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Debug.vsprops").c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug.vsprops\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Debug32\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tOptimization=\"0\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tMinimalRebuild=\"true\"\n"
-	              "\t\tBasicRuntimeChecks=\"3\"\n"
-	              "\t\tRuntimeLibrary=\"1\"\n"
-	              "\t\tEnableFunctionLevelLinking=\"true\"\n"
-	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"4\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"2\"\n"
-	              "\t\tGenerateDebugInformation=\"true\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Debug64.vsprops").c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug64.vsprops\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Debug64\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global64.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tOptimization=\"0\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tMinimalRebuild=\"true\"\n"
-	              "\t\tBasicRuntimeChecks=\"3\"\n"
-	              "\t\tRuntimeLibrary=\"1\"\n"
-	              "\t\tEnableFunctionLevelLinking=\"true\"\n"
-	              "\t\tWarnAsError=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"3\"\n"      // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"2\"\n"
-	              "\t\tGenerateDebugInformation=\"true\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Release.vsprops").c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release.vsprops\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Release32\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tEnableIntrinsicFunctions=\"true\"\n"
-	              "\t\tWholeProgramOptimization=\"true\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tStringPooling=\"true\"\n"
-	              "\t\tBufferSecurityCheck=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"0\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"1\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSetChecksum=\"true\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-	properties.close();
-
-	properties.open((setup.outputDir + '/' + "ScummVM_Release64.vsprops").c_str());
-	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release64.vsprops\" for writing");
-
-	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
-	              "<VisualStudioPropertySheet\n"
-	              "\tProjectType=\"Visual C++\"\n"
-	              "\tVersion=\"8.00\"\n"
-	              "\tName=\"ScummVM_Release64\"\n"
-	              "\tInheritedPropertySheets=\".\\ScummVM_Global64.vsprops\"\n"
-	              "\t>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCCLCompilerTool\"\n"
-	              "\t\tEnableIntrinsicFunctions=\"true\"\n"
-	              "\t\tWholeProgramOptimization=\"true\"\n"
-	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
-	              "\t\tStringPooling=\"true\"\n"
-	              "\t\tBufferSecurityCheck=\"false\"\n"
-	              "\t\tDebugInformationFormat=\"0\"\n"
-	              "\t/>\n"
-	              "\t<Tool\n"
-	              "\t\tName=\"VCLinkerTool\"\n"
-	              "\t\tLinkIncremental=\"1\"\n"
-	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
-	              "\t\tSetChecksum=\"true\"\n"
-	              "\t/>\n"
-	              "</VisualStudioPropertySheet>\n";
-
-	properties.flush();
-	properties.close();
 }
 
 /**
@@ -1264,27 +1059,6 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 }
 
 /**
- * Structure representing a file tree. This contains two
- * members: name and children. "name" holds the name of
- * the node. "children" does contain all the node's children.
- * When the list "children" is empty, the node is a file entry,
- * otherwise it's a directory.
- */
-struct FileNode {
-	typedef std::list<FileNode *> NodeList;
-
-	FileNode(const std::string &n) : name(n), children() {}
-
-	~FileNode() {
-		for (NodeList::iterator i = children.begin(); i != children.end(); ++i)
-			delete *i;
-	}
-
-	std::string name;  ///< Name of the node
-	NodeList children; ///< List of children for the node
-};
-
-/**
  * A strict weak compare predicate for sorting a list of
  * "FileNode *" entries.
  *
@@ -1309,22 +1083,6 @@ bool compareNodes(const FileNode *l, const FileNode *r) {
 		}
 	}
 }
-
-/**
- * Structure for describing an FSNode. This is a very minimalistic
- * description, which includes everything we need.
- * It only contains the name of the node and whether it is a directory
- * or not.
- */ 
-struct FSNode {
-	FSNode() : name(), isDirectory(false) {}
-	FSNode(const std::string &n, bool iD) : name(n), isDirectory(iD) {}
-
-	std::string name; ///< Name of the file system node
-	bool isDirectory; ///< Whether it is a directory or not
-};
-
-typedef std::list<FSNode> FileList;
 
 /**
  * Returns a list of all files and directories in the specified
@@ -1429,86 +1187,44 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 	}
 }
 
-/**
- * Writes file entries for the specified directory node into
- * the given project file. It will also take care of duplicate
- * object files.
- *
- * @param dir Directory node.
- * @param projectFile File stream to write to.
- * @param indentation Indentation level to use.
- * @param duplicate List of duplicate object file names.
- * @param objPrefix Prefix to use for object files, which would name clash.
- * @param filePrefix Generic prefix to all files of the node.
- */
-void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
-	const std::string indentString = getIndent(indentation + 2);
+void ProjectProvider::createGlobalProp(const BuildSetup &setup) {
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Global" + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global" + getPropertiesExtension() + "\" for writing");
 
-	if (indentation)
-		projectFile << getIndent(indentation + 1) << "<Filter\tName=\"" << dir.name << "\">\n";
-
-	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
-		const FileNode *node = *i;
-
-		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
-		} else {
-			if (producesObjectFile(node->name)) {
-				std::string name, ext;
-				splitFilename(node->name, name, ext);
-				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name + ".o") != duplicate.end());
-
-				if (ext == "asm") {
-					std::string objFileName = "$(IntDir)\\";
-					if (isDuplicate)
-						objFileName += objPrefix;
-					objFileName += "$(InputName).obj";
-
-					const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCustomBuildTool\" CommandLine=\"nasm.exe -f win32 -g -o &quot;" + objFileName + "&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;\" Outputs=\"" + objFileName + "\" />\n";
-
-					// NASM is not supported for x64, thus we do not need to add additional entries here :-).
-					projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-					            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
-					            << toolLine
-					            << indentString << "\t</FileConfiguration>\n"
-					            << indentString << "</File>\n";
-				} else {
-					if (isDuplicate) {
-						const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCLCompilerTool\" ObjectFile=\"$(IntDir)\\" + objPrefix + "$(InputName).obj\" XMLDocumentationFileName=\"$(IntDir)\\" + objPrefix + "$(InputName).xdc\" />\n";
-
-						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
-						            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Debug|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "\t<FileConfiguration Name=\"Release|x64\">\n"
-						            << toolLine
-						            << indentString << "\t</FileConfiguration>\n"
-						            << indentString << "</File>\n";
-					} else {
-						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
-					}
-				}
-			} else {
-				projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
-			}
-		}
+	std::string defines;
+	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
+		if (i != setup.defines.begin())
+			defines += ';';
+		defines += *i;
 	}
 
-	if (indentation)
-		projectFile << getIndent(indentation + 1) << "</Filter>\n";
+	outputGlobalPropFile(properties, 32, defines, convertPathToWin(setup.filePrefix));
+	properties.close();
+
+	properties.open((setup.outputDir + '/' + "ScummVM_Global64" + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Global64" + getPropertiesExtension() + "\" for writing");
+
+	// HACK: We must disable the "nasm" feature for x64. To achieve that we must duplicate the feature list and
+	// recreate a define list.
+	FeatureList x64Features = setup.features;
+	setFeatureBuildState("nasm", x64Features, false);
+	StringList x64Defines = getFeatureDefines(x64Features);
+	StringList x64EngineDefines = getEngineDefines(setup.engines);
+	x64Defines.splice(x64Defines.end(), x64EngineDefines);
+
+	defines.clear();
+	for (StringList::const_iterator i = x64Defines.begin(); i != x64Defines.end(); ++i) {
+		if (i != x64Defines.begin())
+			defines += ';';
+		defines += *i;
+	}
+
+	outputGlobalPropFile(properties, 64, defines, convertPathToWin(setup.filePrefix));
 }
 
-void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
+void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &projectFile,
                        const StringList &includeList, const StringList &excludeList,
                        const std::string &filePrefix) {
 	// Check for duplicate object file names
@@ -1516,7 +1232,7 @@ void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
 
 	for (StringList::const_iterator i = includeList.begin(); i != includeList.end(); ++i) {
 		const std::string fileName = getLastPathComponent(*i);
-		
+
 		// Leave out non object file names.
 		if (fileName.size() < 2 || fileName.compare(fileName.size() - 2, 2, ".o"))
 			continue;
@@ -1542,7 +1258,7 @@ void addFilesToProject(const std::string &dir, std::ofstream &projectFile,
 	delete files;
 }
 
-void createModuleList(const std::string &moduleDir, const StringList &defines, StringList &includeList, StringList &excludeList) {
+void ProjectProvider::createModuleList(const std::string &moduleDir, const StringList &defines, StringList &includeList, StringList &excludeList) {
 	const std::string moduleMkFile = moduleDir + "/module.mk";
 	std::ifstream moduleMk(moduleMkFile.c_str());
 	if (!moduleMk)
@@ -1649,6 +1365,403 @@ void createModuleList(const std::string &moduleDir, const StringList &defines, S
 	if (shouldInclude.size() != 1)
 		error("Malformed file " + moduleMkFile);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Visual Studio Provider
+//////////////////////////////////////////////////////////////////////////
+
+VisualStudioProvider::VisualStudioProvider(const int version, std::string global_warnings, std::map<std::string, std::string> project_warnings)
+	: ProjectProvider(version, global_warnings, project_warnings) {
+}
+
+const char *VisualStudioProvider::getProjectExtension() {
+	return ".vcproj";
+}
+
+const char *VisualStudioProvider::getPropertiesExtension() {
+	return ".vsprops";
+}
+
+int VisualStudioProvider::getVisualStudioVersion() {
+	if (_version == 9)
+		return 2008;
+
+	if (_version == 8)
+		return 2005;
+
+	error("Unsupported version passed to createScummVMSolution");
+	return 0;
+}
+
+void VisualStudioProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
+                                             const StringList &includeList, const StringList &excludeList) {
+	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
+	std::ofstream project(projectFile.c_str());
+	if (!project)
+		error("Could not open \"" + projectFile + "\" for writing");
+
+	project << "<?xml version=\"1.0\" encoding=\"windows-1252\"?>\n"
+	           "<VisualStudioProject\n"
+	           "\tProjectType=\"Visual C++\"\n"
+	           "\tVersion=\"" << _version << ".00\"\n"
+	           "\tName=\"" << name << "\"\n"
+	           "\tProjectGUID=\"{" << uuid << "}\"\n"
+	           "\tRootNamespace=\"" << name << "\"\n"
+	           "\tKeyword=\"Win32Proj\"\n";
+
+	if (_version >= 9)
+		project << "\tTargetFrameworkVersion=\"131072\"\n";
+
+	project << "\t>\n"
+	           "\t<Platforms>\n"
+	           "\t\t<Platform Name=\"Win32\" />\n"
+	           "\t\t<Platform Name=\"x64\" />\n"
+	           "\t</Platforms>\n"
+	           "\t<Configurations>\n";
+
+	// Check for project-specific warnings:
+	std::map<std::string, std::string>::iterator warnings = _projectWarnings.find(name);
+
+	if (name == "scummvm") {
+		std::string libraries;
+
+		for (StringList::const_iterator i = setup.libraries.begin(); i != setup.libraries.end(); ++i)
+			libraries += ' ' + *i;
+
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
+		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
+		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
+		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
+		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n";
+
+		// x64
+		// For 'x64' we must disable NASM support. Usually we would need to disable the "nasm" feature for that and
+		// re-create the library list, BUT since NASM doesn't link any additional libraries, we can just use the
+		// libraries list created for IA-32. If that changes in the future, we need to adjust this part!
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
+		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
+		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"1\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
+		           "\t\t\t<Tool\tName=\"VCCLCompilerTool\" DisableLanguageExtensions=\"false\" />\n"
+		           "\t\t\t<Tool\tName=\"VCLinkerTool\" OutputFile=\"$(OutDir)/scummvm.exe\"\n"
+		           "\t\t\t\tAdditionalDependencies=\"" << libraries << "\"\n"
+		           "\t\t\t/>\n"
+		           "\t\t</Configuration>\n";
+	} else if (warnings != _projectWarnings.end()) {
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n";
+		// x64
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DisableSpecificWarnings=\"" << warnings->second << "\" />\n"
+		           "\t\t</Configuration>\n";
+	} else if (name == "tinsel") {
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DebugInformationFormat=\"3\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
+		// x64
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\">\n"
+		           "\t\t\t<Tool Name=\"VCCLCompilerTool\" DebugInformationFormat=\"3\" />\n"
+		           "\t\t</Configuration>\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
+	} else {
+		// Win32
+		project << "\t\t<Configuration Name=\"Debug|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug.vsprops\" />\n"
+		           "\t\t<Configuration Name=\"Release|Win32\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release.vsprops\" />\n";
+		// x64
+		project << "\t\t<Configuration Name=\"Debug|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Debug64.vsprops\" />\n"
+		           "\t\t<Configuration Name=\"Release|x64\" ConfigurationType=\"4\" InheritedPropertySheets=\".\\ScummVM_Release64.vsprops\" />\n";
+	}
+	project << "\t</Configurations>\n"
+	           "\t<Files>\n";
+
+	std::string modulePath;
+	if (!moduleDir.compare(0, setup.srcDir.size(), setup.srcDir)) {
+		modulePath = moduleDir.substr(setup.srcDir.size());
+		if (!modulePath.empty() && modulePath.at(0) == '/')
+			modulePath.erase(0, 1);
+	}
+
+	if (modulePath.size())
+		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
+	else
+		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
+
+	project << "\t</Files>\n"
+	           "</VisualStudioProject>\n";
+}
+
+void VisualStudioProvider::writeReferences(std::ofstream &output) {
+	output << "\tProjectSection(ProjectDependencies) = postProject\n";
+
+	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
+		if (i->first == "scummvm")
+			continue;
+
+		output << "\t\t{" << i->second << "} = {" << i->second << "}\n";
+	}
+
+	output << "\tEndProjectSection\n";
+}
+
+void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {
+	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
+	              "<VisualStudioPropertySheet\n"
+	              "\tProjectType=\"Visual C++\"\n"
+	              "\tVersion=\"8.00\"\n"
+	              "\tName=\"ScummVM_Global\"\n"
+	              "\tOutputDirectory=\"$(ConfigurationName)" << bits << "\"\n"
+	              "\tIntermediateDirectory=\"$(ConfigurationName)" << bits << "/$(ProjectName)\"\n"
+	              "\t>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCCLCompilerTool\"\n"
+	              "\t\tDisableLanguageExtensions=\"true\"\n"
+	              "\t\tDisableSpecificWarnings=\"" << _globalWarnings << "\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines\"\n"
+	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
+	              "\t\tExceptionHandling=\"0\"\n"
+	              "\t\tRuntimeTypeInfo=\"false\"\n"
+	              "\t\tWarningLevel=\"4\"\n"
+	              "\t\tWarnAsError=\"false\"\n"
+	              "\t\tCompileAs=\"0\"\n"
+	              "\t\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLibrarianTool\"\n"
+	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLinkerTool\"\n"
+	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+	              "\t\tSubSystem=\"1\"\n"
+	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCResourceCompilerTool\"\n"
+	              "\t\tPreprocessorDefinitions=\"HAS_INCLUDE_SET\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
+	              "\t/>\n"
+	              "</VisualStudioPropertySheet>\n";
+
+	properties.flush();
+}
+
+void VisualStudioProvider::createBuildProp(const BuildSetup &setup) {
+	std::ofstream properties((setup.outputDir + '/' + "ScummVM_Debug" + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug" +  + getPropertiesExtension() + "\" for writing");
+
+	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
+	              "<VisualStudioPropertySheet\n"
+	              "\tProjectType=\"Visual C++\"\n"
+	              "\tVersion=\"8.00\"\n"
+	              "\tName=\"ScummVM_Debug32\"\n"
+	              "\tInheritedPropertySheets=\".\\ScummVM_Global.vsprops\"\n"
+	              "\t>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCCLCompilerTool\"\n"
+	              "\t\tOptimization=\"0\"\n"
+	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+	              "\t\tMinimalRebuild=\"true\"\n"
+	              "\t\tBasicRuntimeChecks=\"3\"\n"
+	              "\t\tRuntimeLibrary=\"1\"\n"
+	              "\t\tEnableFunctionLevelLinking=\"true\"\n"
+	              "\t\tWarnAsError=\"false\"\n"
+	              "\t\tDebugInformationFormat=\"4\"\n"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLinkerTool\"\n"
+	              "\t\tLinkIncremental=\"2\"\n"
+	              "\t\tGenerateDebugInformation=\"true\"\n"
+	              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n"
+	              "\t/>\n"
+	              "</VisualStudioPropertySheet>\n";
+
+	properties.flush();
+	properties.close();
+
+	properties.open((setup.outputDir + '/' + "ScummVM_Debug64" + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Debug64" + getPropertiesExtension() + "\" for writing");
+
+	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
+	              "<VisualStudioPropertySheet\n"
+	              "\tProjectType=\"Visual C++\"\n"
+	              "\tVersion=\"8.00\"\n"
+	              "\tName=\"ScummVM_Debug64\"\n"
+	              "\tInheritedPropertySheets=\".\\ScummVM_Global64.vsprops\"\n"
+	              "\t>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCCLCompilerTool\"\n"
+	              "\t\tOptimization=\"0\"\n"
+	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+	              "\t\tMinimalRebuild=\"true\"\n"
+	              "\t\tBasicRuntimeChecks=\"3\"\n"
+	              "\t\tRuntimeLibrary=\"1\"\n"
+	              "\t\tEnableFunctionLevelLinking=\"true\"\n"
+	              "\t\tWarnAsError=\"false\"\n"
+	              "\t\tDebugInformationFormat=\"3\"\n"      // For x64 format "4" (Edit and continue) is not supported, thus we default to "3"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLinkerTool\"\n"
+	              "\t\tLinkIncremental=\"2\"\n"
+	              "\t\tGenerateDebugInformation=\"true\"\n"
+	              "\t\tIgnoreDefaultLibraryNames=\"libcmt.lib\"\n"
+	              "\t/>\n"
+	              "</VisualStudioPropertySheet>\n";
+
+	properties.flush();
+	properties.close();
+
+	properties.open((setup.outputDir + '/' + "ScummVM_Release" + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release" + getPropertiesExtension() + "\" for writing");
+
+	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
+	              "<VisualStudioPropertySheet\n"
+	              "\tProjectType=\"Visual C++\"\n"
+	              "\tVersion=\"8.00\"\n"
+	              "\tName=\"ScummVM_Release32\"\n"
+	              "\tInheritedPropertySheets=\".\\ScummVM_Global.vsprops\"\n"
+	              "\t>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCCLCompilerTool\"\n"
+	              "\t\tEnableIntrinsicFunctions=\"true\"\n"
+	              "\t\tWholeProgramOptimization=\"true\"\n"
+	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+	              "\t\tStringPooling=\"true\"\n"
+	              "\t\tBufferSecurityCheck=\"false\"\n"
+	              "\t\tDebugInformationFormat=\"0\"\n"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLinkerTool\"\n"
+	              "\t\tLinkIncremental=\"1\"\n"
+	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+	              "\t\tSetChecksum=\"true\"\n"
+	              "\t/>\n"
+	              "</VisualStudioPropertySheet>\n";
+
+	properties.flush();
+	properties.close();
+
+	properties.open((setup.outputDir + '/' + "ScummVM_Release64" + getPropertiesExtension()).c_str());
+	if (!properties)
+		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_Release64" + getPropertiesExtension() + "\" for writing");
+
+	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
+	              "<VisualStudioPropertySheet\n"
+	              "\tProjectType=\"Visual C++\"\n"
+	              "\tVersion=\"8.00\"\n"
+	              "\tName=\"ScummVM_Release64\"\n"
+	              "\tInheritedPropertySheets=\".\\ScummVM_Global64.vsprops\"\n"
+	              "\t>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCCLCompilerTool\"\n"
+	              "\t\tEnableIntrinsicFunctions=\"true\"\n"
+	              "\t\tWholeProgramOptimization=\"true\"\n"
+	              "\t\tPreprocessorDefinitions=\"WIN32\"\n"
+	              "\t\tStringPooling=\"true\"\n"
+	              "\t\tBufferSecurityCheck=\"false\"\n"
+	              "\t\tDebugInformationFormat=\"0\"\n"
+	              "\t/>\n"
+	              "\t<Tool\n"
+	              "\t\tName=\"VCLinkerTool\"\n"
+	              "\t\tLinkIncremental=\"1\"\n"
+	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
+	              "\t\tSetChecksum=\"true\"\n"
+	              "\t/>\n"
+	              "</VisualStudioPropertySheet>\n";
+
+	properties.flush();
+	properties.close();
+}
+
+void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
+                                                  const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+	const std::string indentString = getIndent(indentation + 2);
+
+	if (indentation)
+		projectFile << getIndent(indentation + 1) << "<Filter\tName=\"" << dir.name << "\">\n";
+
+	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
+		const FileNode *node = *i;
+
+		if (!node->children.empty()) {
+			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+		} else {
+			if (producesObjectFile(node->name)) {
+				std::string name, ext;
+				splitFilename(node->name, name, ext);
+				const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), name + ".o") != duplicate.end());
+
+				if (ext == "asm") {
+					std::string objFileName = "$(IntDir)\\";
+					if (isDuplicate)
+						objFileName += objPrefix;
+					objFileName += "$(InputName).obj";
+
+					const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCustomBuildTool\" CommandLine=\"nasm.exe -f win32 -g -o &quot;" + objFileName + "&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;\" Outputs=\"" + objFileName + "\" />\n";
+
+					// NASM is not supported for x64, thus we do not need to add additional entries here :-).
+					projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
+					            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
+					            << toolLine
+					            << indentString << "\t</FileConfiguration>\n"
+					            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
+					            << toolLine
+					            << indentString << "\t</FileConfiguration>\n"
+					            << indentString << "</File>\n";
+				} else {
+					if (isDuplicate) {
+						const std::string toolLine = indentString + "\t\t<Tool Name=\"VCCLCompilerTool\" ObjectFile=\"$(IntDir)\\" + objPrefix + "$(InputName).obj\" XMLDocumentationFileName=\"$(IntDir)\\" + objPrefix + "$(InputName).xdc\" />\n";
+
+						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\">\n"
+						            << indentString << "\t<FileConfiguration Name=\"Debug|Win32\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
+						            << indentString << "\t<FileConfiguration Name=\"Release|Win32\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
+						            << indentString << "\t<FileConfiguration Name=\"Debug|x64\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
+						            << indentString << "\t<FileConfiguration Name=\"Release|x64\">\n"
+						            << toolLine
+						            << indentString << "\t</FileConfiguration>\n"
+						            << indentString << "</File>\n";
+					} else {
+						projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
+					}
+				}
+			} else {
+				projectFile << indentString << "<File RelativePath=\"" << convertPathToWin(filePrefix + node->name) << "\" />\n";
+			}
+		}
+	}
+
+	if (indentation)
+		projectFile << getIndent(indentation + 1) << "</Filter>\n";
+}
+
 } // End of anonymous namespace
 
 void error(const std::string &message) {
