@@ -23,9 +23,9 @@
  *
  */
 
-#include "graphics/video/vmd_decoder.h"
+#ifdef ENABLE_SCI32
 
-#ifdef GRAPHICS_VIDEO_COKTELVIDEO_H
+#include "sci/video/vmd_decoder.h"
 
 #include "common/archive.h"
 #include "common/endian.h"
@@ -38,10 +38,10 @@
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
-namespace Graphics {
+namespace Sci {
 
 VMDDecoder::VMDDecoder(Audio::Mixer *mixer) : _mixer(mixer) {
-	_vmdDecoder = new Vmd(new Graphics::PaletteLUT(5, PaletteLUT::kPaletteYUV));
+	_vmdDecoder = new Graphics::Vmd(new Graphics::PaletteLUT(5, Graphics::PaletteLUT::kPaletteYUV));
 }
 
 VMDDecoder::~VMDDecoder() {
@@ -62,12 +62,12 @@ bool VMDDecoder::loadFile(const char *fileName) {
 	if (!_vmdDecoder->load(*_fileStream))
 		return false;
 
-	if (_vmdDecoder->getFeatures() & CoktelVideo::kFeaturesPalette) {
+	if (_vmdDecoder->getFeatures() & Graphics::CoktelVideo::kFeaturesPalette) {
 		getPalette();
 		setPalette(_palette);
 	}
 
-	if (_vmdDecoder->getFeatures() & CoktelVideo::kFeaturesSound)
+	if (_vmdDecoder->getFeatures() & Graphics::CoktelVideo::kFeaturesSound)
 		_vmdDecoder->enableSound(*_mixer);
 
 	_videoInfo.width = _vmdDecoder->getWidth();
@@ -106,9 +106,9 @@ bool VMDDecoder::decodeNextFrame() {
 	if (_videoInfo.currentFrame == 0)
 		_videoInfo.startTime = g_system->getMillis();
 
-	CoktelVideo::State state = _vmdDecoder->nextFrame();
+	Graphics::CoktelVideo::State state = _vmdDecoder->nextFrame();
 
-	if (state.flags & CoktelVideo::kStatePalette) {
+	if (state.flags & Graphics::CoktelVideo::kStatePalette) {
 		getPalette();
 		setPalette(_palette);
 	}

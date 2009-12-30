@@ -31,7 +31,7 @@
 
 #include "graphics/surface.h"
 
-#include "sci/seq_decoder.h"
+#include "sci/video/seq_decoder.h"
 
 namespace Sci {
 

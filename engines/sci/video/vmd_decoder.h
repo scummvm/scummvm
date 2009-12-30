@@ -23,17 +23,16 @@
  *
  */
 
-#include "graphics/video/coktelvideo/coktelvideo.h"
-
-#ifdef GRAPHICS_VIDEO_COKTELVIDEO_H
+#ifdef ENABLE_SCI32
 
 #ifndef GRAPHICS_VIDEO_VMD_DECODER_H
 #define GRAPHICS_VIDEO_VMD_DECODER_H
 
+#include "graphics/video/coktelvideo/coktelvideo.h"
 #include "graphics/video/video_player.h"
 #include "sound/mixer.h"
 
-namespace Graphics {
+namespace Sci {
 
 /**
  * Wrapper for the Coktel Vision VMD video decoder
@@ -43,7 +42,7 @@ namespace Graphics {
  *  - gob (without this wrapper)
  *  - sci
  */
-class VMDDecoder : public VideoDecoder {
+	class VMDDecoder : public Graphics::VideoDecoder {
 public:
 	VMDDecoder(Audio::Mixer *mixer);
 	virtual ~VMDDecoder();
@@ -64,7 +63,7 @@ public:
 	bool decodeNextFrame();
 
 private:
-	Vmd *_vmdDecoder;
+	Graphics::Vmd *_vmdDecoder;
 	Audio::Mixer *_mixer;
 	byte _palette[256 * 3];
 

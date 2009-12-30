@@ -52,7 +52,10 @@
 #include "sci/gui/gui_cursor.h"
 
 #include "graphics/video/avi_decoder.h"
-#include "sci/seq_decoder.h"
+#include "sci/video/seq_decoder.h"
+#ifdef ENABLE_SCI32
+#include "sci/video/vmd_decoder.h"
+#endif
 
 #include "common/savefile.h"
 
@@ -245,6 +248,18 @@ void Console::postEnter() {
 			aviDecoder->closeFile();
 			delete player;
 			delete aviDecoder;
+		} else if (_videoFile.hasSuffix(".vmd")) {
+#ifdef ENABLE_SCI32
+			VMDDecoder *vmdDecoder = new VMDDecoder(g_system->getMixer());
+			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(vmdDecoder);
+			if (vmdDecoder->loadFile(_videoFile.c_str()))
+				player->playVideo();
+			else
+				DebugPrintf("Failed to open movie file %s\n", _videoFile.c_str());
+			vmdDecoder->closeFile();
+			delete player;
+			delete vmdDecoder;
+#endif
 		}
 
 		_vm->_gamestate->_gui->showCursor();
@@ -1139,7 +1154,7 @@ bool Console::cmdUndither(int argc, const char **argv) {
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Plays a SEQ or AVI video.\n");
+		DebugPrintf("Plays a SEQ, AVI or VMD video.\n");
 		DebugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
 		DebugPrintf("The video file name should include the extension\n");
 		DebugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
@@ -1149,7 +1164,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi")) {
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
 		return false;

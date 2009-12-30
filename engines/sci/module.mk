@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	event.o \
 	resource.o \
 	sci.o \
-	seq_decoder.o \
 	vocabulary.o \
 	engine/game.o \
 	engine/gc.o \
@@ -80,7 +79,9 @@ MODULE_OBJS := \
 	sfx/seq/map-mt32-to-gm.o \
 	sfx/softseq/adlib.o \
 	sfx/softseq/amiga.o \
-	sfx/softseq/pcjr.o
+	sfx/softseq/pcjr.o \
+	video/seq_decoder.o \
+	video/vmd_decoder.o
 	
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
