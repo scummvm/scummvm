@@ -764,7 +764,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 
 		// First, check if the target selector is a variable
 		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
-			// This can only happen with 3 params (list, target object, variable)
+			// This can only happen with 3 params (list, target selector, variable)
 			if (argc != 3) {
 				warning("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
 			} else {
@@ -794,6 +794,55 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 
 
 	return s->r_acc;
+}
+
+reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	Selector slc = argv[1].toUint16();
+
+	ObjVarRef address;
+
+	s->r_acc = NULL_REG;	// reset the accumulator
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		// First, check if the target selector is a variable
+		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+			// Can this happen with variable selectors?
+			warning("kListFirstTrue: Attempted to access a variable selector");
+		} else {
+			// FIXME: Yes, this is an ugly hack...
+			if (argc == 2) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
+			} else if (argc == 3) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
+			} else if (argc == 4) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
+			} else if (argc == 5) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+			} else {
+				warning("kListFirstTrue: called with %d params", argc);
+			}
+
+			// Check if the result is true
+			if (s->r_acc != NULL_REG)
+				return curObject;
+		}
+
+		// Lookup node again, since the nodetable it was in may have been reallocated
+		curNode = s->_segMan->lookupNode(curAddress);
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+	}
+
+	// No selector returned true
+	return NULL_REG;
 }
 
 reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
