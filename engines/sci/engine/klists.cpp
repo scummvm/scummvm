@@ -436,4 +436,202 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// SCI32 list functions
+#ifdef ENABLE_SCI32
+
+reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
+	if (argc != 2) {
+		warning("kListAt called with %d parameters", argc);
+		return NULL_REG;
+	}
+
+	List *list = s->_segMan->lookupList(argv[0]);
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject = curNode->value;
+	int16 listIndex = argv[1].toUint16();
+	int curIndex = 0;
+
+	while (curIndex != listIndex) {
+		if (curNode->succ.isNull()) {	// end of the list?
+			return NULL_REG;
+		}
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+		curObject = curNode->value;
+
+		curIndex++;
+	}
+
+	return curObject;
+}
+
+reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	uint16 curIndex = 0;
+
+	while (curNode) {
+		curObject = curNode->value;
+		if (curObject == argv[1])
+			return make_reg(0, curIndex);
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+		curIndex++;
+	}
+
+	return SIGNAL_REG;
+}
+
+reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	Selector slc = argv[1].toUint16();
+
+	ObjVarRef address;
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		// First, check if the target selector is a variable
+		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+			// This can only happen with 3 params (list, target selector, variable)
+			if (argc != 3) {
+				warning("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
+			} else {
+				write_selector(s->_segMan, curObject, slc, argv[2]);
+			}
+		} else {
+			// FIXME: Yes, this is an ugly hack...
+			if (argc == 2) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
+			} else if (argc == 3) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
+			} else if (argc == 4) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
+			} else if (argc == 5) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+			} else {
+				warning("kListEachElementDo: called with %d params", argc);
+			}
+		}
+
+		// Lookup node again, since the nodetable it was in may have been reallocated
+		curNode = s->_segMan->lookupNode(curAddress);
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+	}
+
+
+	return s->r_acc;
+}
+
+reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	Selector slc = argv[1].toUint16();
+
+	ObjVarRef address;
+
+	s->r_acc = NULL_REG;	// reset the accumulator
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		// First, check if the target selector is a variable
+		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+			// Can this happen with variable selectors?
+			warning("kListFirstTrue: Attempted to access a variable selector");
+		} else {
+			// FIXME: Yes, this is an ugly hack...
+			if (argc == 2) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
+			} else if (argc == 3) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
+			} else if (argc == 4) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
+			} else if (argc == 5) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+			} else {
+				warning("kListFirstTrue: called with %d params", argc);
+			}
+
+			// Check if the result is true
+			if (!s->r_acc.isNull())
+				return curObject;
+		}
+
+		// Lookup node again, since the nodetable it was in may have been reallocated
+		curNode = s->_segMan->lookupNode(curAddress);
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+	}
+
+	// No selector returned true
+	return NULL_REG;
+}
+
+reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
+	List *list = s->_segMan->lookupList(argv[0]);
+
+	reg_t curAddress = list->first;
+	Node *curNode = s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	Selector slc = argv[1].toUint16();
+
+	ObjVarRef address;
+
+	s->r_acc = make_reg(0, 1);	// reset the accumulator
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		// First, check if the target selector is a variable
+		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+			// Can this happen with variable selectors?
+			warning("kListAllTrue: Attempted to access a variable selector");
+		} else {
+			// FIXME: Yes, this is an ugly hack...
+			if (argc == 2) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
+			} else if (argc == 3) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
+			} else if (argc == 4) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
+			} else if (argc == 5) {
+				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
+			} else {
+				warning("kListAllTrue: called with %d params", argc);
+			}
+
+			// Check if the result isn't true
+			if (s->r_acc.isNull())
+				break;
+		}
+
+		// Lookup node again, since the nodetable it was in may have been reallocated
+		curNode = s->_segMan->lookupNode(curAddress);
+
+		curAddress = curNode->succ;
+		curNode = s->_segMan->lookupNode(curAddress);
+	}
+
+	return s->r_acc;
+}
+
+#endif
+
 } // End of namespace Sci

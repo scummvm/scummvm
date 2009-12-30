@@ -409,8 +409,7 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv);
 reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv);
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv);
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
-// TODO: What is this supposed to return?
-//reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
+reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kOnMe(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions

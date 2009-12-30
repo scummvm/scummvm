@@ -353,7 +353,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("FrameOut", kFrameOut, ""),
 	DEFUN("ListEachElementDo", kListEachElementDo, "li.*"),
 	DEFUN("ListFirstTrue", kListFirstTrue, "li.*"),
-	//DEFUN("ListAllTrue", kListAllTrue, "li.*"),
+	DEFUN("ListAllTrue", kListAllTrue, "li.*"),
 	DEFUN("ListIndexOf", kListIndexOf, "lo"),
 	DEFUN("OnMe", kOnMe, "iio.*"),
 
