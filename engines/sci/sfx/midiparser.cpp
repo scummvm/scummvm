@@ -200,9 +200,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
-				if (_pSnd->loop) {
-					jumpToTick(_loopTick);
+				if (_pSnd->loop)
 					_pSnd->loop--;
+				PUT_SEL32V(segMan, _pSnd->soundObj, loop, _pSnd->loop);
+				if (_pSnd->loop) {
+					// We need to play it again...
+					jumpToTick(_loopTick);
 				} else {
 					_pSnd->status = kSoundStopped;
 					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
@@ -210,7 +213,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 						PUT_SEL32V(segMan, _pSnd->soundObj, state, kSoundStopped);
 					debugC(2, kDebugLevelSound, "signal EOT");
 				}
-				PUT_SEL32V(segMan, _pSnd->soundObj, loop, _pSnd->loop);
 			}
 			break;
 		default:

@@ -297,7 +297,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
 		newSound->soundRes = new SoundResource(number, _resMan, _soundVersion);
 	newSound->soundObj = obj;
-	newSound->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
+	newSound->loop = GET_SEL32V(_segMan, obj, loop);
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, Audio::Mixer::kMaxChannelVolume);
 
@@ -420,7 +420,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, state, kSoundPlaying);
 	}
 
-	musicSlot->loop = GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0;
+	musicSlot->loop = GET_SEL32V(_segMan, obj, loop);
 	musicSlot->prio = GET_SEL32V(_segMan, obj, priority);
 	// vol selector doesnt get used before sci1late
 	if (_soundVersion < SCI_VERSION_1_LATE)
@@ -676,7 +676,7 @@ void SoundCommandParser::cmdUpdateHandle(reg_t obj, int16 value) {
 		return;
 	}
 
-	musicSlot->loop = (GET_SEL32V(_segMan, obj, loop) == 0xFFFF ? 1 : 0);
+	musicSlot->loop = GET_SEL32V(_segMan, obj, loop);
 	int16 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
@@ -894,12 +894,11 @@ void SoundCommandParser::cmdSetHandleLoop(reg_t obj, int16 value) {
 		return;
 	}
 	if (value == -1) {
-		musicSlot->loop = 1;
-		PUT_SEL32V(_segMan, obj, loop, 0xFFFF);
+		musicSlot->loop = 0xFFFF;
 	} else {
-		musicSlot->loop = 0;
-		PUT_SEL32V(_segMan, obj, loop, 1);
+		musicSlot->loop = 1; // actually plays the music once
 	}
+	PUT_SEL32V(_segMan, obj, loop, musicSlot->loop);
 #endif
 }
 

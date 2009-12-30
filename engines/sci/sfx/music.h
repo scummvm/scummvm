@@ -73,7 +73,7 @@ public:
 	uint16 dataInc;
 	uint16 ticker;
 	byte prio;
-	byte loop;
+	uint16 loop;
 	int16 volume;
 
 	int16 pauseCounter;
