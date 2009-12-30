@@ -208,6 +208,13 @@ void SciGuiPalette::merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
 			pFrom->mapping[i] = i;
 			continue;
 		}
+		// is the same color already at the same position? -> match it directly w/o lookup
+		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
+		//  otherwise match the wrong one
+		if ((pTo->colors[i].r == pFrom->colors[i].r) && (pTo->colors[i].g == pFrom->colors[i].g) && (pTo->colors[i].b == pFrom->colors[i].b)) {
+			pFrom->mapping[i] = i;
+			continue;
+		}
 		// check if exact color could be matched
 		res = matchColor(pTo, pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
 		if (res & 0x8000) { // exact match was found
@@ -238,7 +245,7 @@ uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
 
-	for (int i = 0; i < 256; i++) {
+	for (int i = 1; i < 255; i++) {
 		if ((!pPal->colors[i].used))
 			continue;
 		dr = pPal->colors[i].r - r;
