@@ -154,6 +154,7 @@ public:
  * List of game language.
  */
 enum Language {
+	ZH_CNA,
 	ZH_TWN,
 	CZ_CZE,
 	NL_NLD,

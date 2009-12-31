@@ -210,7 +210,17 @@ static bool searchFSNode(const Common::FSList &fslist, const Common::String &nam
 
 // The following function tries to detect the language for COMI and DIG
 static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
-	assert(id == GID_CMI || id == GID_DIG);
+	// First try to detect Chinese translation
+	Common::FSNode fontFile;
+
+	if (searchFSNode(fslist, "chinese_gb16x12.fnt", fontFile)) {
+		debug(0, "Chinese detected");
+		return Common::ZH_CNA;
+	}
+
+	// Now try to detect COMI and Dig by language files
+	if (id != GID_CMI && id != GID_DIG)
+		return Common::UNK_LANG;
 
 	// Check for LANGUAGE.BND (Dig) resp. LANGUAGE.TAB (CMI).
 	// These are usually inside the "RESOURCE" subdirectory.
@@ -314,8 +324,8 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 					dr.game.features |= GF_DEMO;
 				}
 
-				// HACK: Detect COMI & Dig languages
-				if (dr.language == UNK_LANG && (dr.game.id == GID_CMI || dr.game.id == GID_DIG)) {
+				// HACK: Try to detect languages for translated games
+				if (dr.language == UNK_LANG) {
 					dr.language = detectLanguage(fslist, dr.game.id);
 				}
 				break;
@@ -442,6 +452,8 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 				continue;
 			}
 
+			// HACK: Perhaps it is some modified translation?
+			dr.language = detectLanguage(fslist, g->id);
 
 			// Add the game/variant to the candidates list if it is consistent
 			// with the file(s) we are seeing.

@@ -181,6 +181,7 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 
 
 const LanguageDescription g_languages[] = {
+	{"zh-cn", "Chinese (China)", ZH_CNA},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
 	{"cz", "Czech", CZ_CZE},
 	{"nl", "Dutch", NL_NLD},
