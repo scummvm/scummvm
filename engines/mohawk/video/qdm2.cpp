@@ -2961,8 +2961,7 @@ int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
 		return 0;
 	}
 
-	for(i = 0; i < _packetSize; i++)
-		_compressedData[i] = in->readByte();
+	in->read(_compressedData, _packetSize);
 	debug(1, "QDM2Stream::qdm2_decodeFrame constructed input data");
 
 	// copy old block, clear new block of output samples
