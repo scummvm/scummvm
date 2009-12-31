@@ -285,7 +285,7 @@ Common::String SciEngine::wrapFilename(const Common::String &name) const {
 }
 
 Common::String SciEngine::unwrapFilename(const Common::String &name) const {
-	Common::String prefix = name + "-";
+	Common::String prefix = _targetName + "-";
 	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
 	return name;
