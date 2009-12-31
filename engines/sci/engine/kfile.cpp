@@ -620,7 +620,6 @@ enum {
 	K_FILEIO_WRITE_WORD     = 16
 };
 
-
 reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer) {
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
@@ -629,10 +628,12 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer) {
 	}
 	_outbuffer = buffer;
 
+	// Prefix the mask
+	const Common::String wrappedMask = ((Sci::SciEngine*)g_engine)->wrapFilename(mask);
+
 	// Obtain a list of all savefiles matching the given mask
-	// TODO: Modify the mask, e.g. by prefixing "TARGET-".
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	_savefiles = saveFileMan->listSavefiles(mask);
+	_savefiles = saveFileMan->listSavefiles(wrappedMask);
 
 	// Reset the list iterator and write the first match to the output buffer, if any.
 	_iter = _savefiles.begin();
@@ -644,9 +645,10 @@ reg_t DirSeeker::nextFile() {
 		return NULL_REG;
 	}
 
-	// TODO: Transform the string back into a format usable by the SCI scripts.
-	// I.e., strip any TARGET- prefix.
-	Common::String string = *_iter;
+	const Common::String wrappedString = *_iter;
+
+	// Strip the prefix
+	Common::String string = ((Sci::SciEngine*)g_engine)->unwrapFilename(wrappedString);
 	if (string.size() > 12)
 		string = Common::String(string.c_str(), 12);
 	_state->_segMan->strcpy(_outbuffer, string.c_str());
@@ -655,8 +657,6 @@ reg_t DirSeeker::nextFile() {
 	++_iter;
 	return _outbuffer;
 }
-
-
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	int func_nr = argv[0].toUint16();
@@ -789,13 +789,17 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
 		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask.c_str(), attr);
 
+		// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
+		if (mask == "*.*")
+			mask = "*";
+
 		// QfG3 uses this mask for the character import
 		if (mask == "/\\*.*")
-			mask = "*.*";
-#ifndef WIN32
-		if (mask == "*.*")
-			mask = "*"; // For UNIX
-#endif
+			mask = "*";
+//#ifndef WIN32
+//		if (mask == "*.*")
+//			mask = "*"; // For UNIX
+//#endif
 		s->r_acc = s->_dirseeker.firstFile(mask, buf);
 
 		break;
