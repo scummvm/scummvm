@@ -116,7 +116,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		uint32 restoreTime = 0;
 		s.syncAsSint32LE(restoreTime);
 		ticker = restoreTime * 60 / 1000;
-		s.syncAsSint32LE(loop);
+		s.skip(4);	// loop
 		s.skip(4);	// hold
 		// volume and dataInc will be synced from the sound objects
 		// when the sound list is reconstructed in gamestate_restore()
@@ -134,7 +134,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(dataInc);
 		s.syncAsSint16LE(ticker);
 		s.syncAsByte(prio);
-		s.syncAsByte(loop);
+		s.skip(1, VER(15), VER(15));
 		s.syncAsByte(volume);
 		s.syncAsByte(fadeTo);
 		s.syncAsSint16LE(fadeStep);

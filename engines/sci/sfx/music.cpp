@@ -557,7 +557,6 @@ MusicEntry::MusicEntry() {
 	dataInc = 0;
 	ticker = 0;
 	prio = 0;
-	loop = 0;
 	volume = 0;
 
 	pauseCounter = 0;

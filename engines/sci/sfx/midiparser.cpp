@@ -200,10 +200,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
-				if (_pSnd->loop)
-					_pSnd->loop--;
-				PUT_SEL32V(segMan, _pSnd->soundObj, loop, _pSnd->loop);
-				if (_pSnd->loop) {
+				int16 loop = GET_SEL32V(segMan, _pSnd->soundObj, loop);
+				if (loop)
+					loop--;
+				PUT_SEL32V(segMan, _pSnd->soundObj, loop, loop);
+				if (loop) {
 					// We need to play it again...
 					jumpToTick(_loopTick);
 				} else {
