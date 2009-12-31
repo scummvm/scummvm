@@ -397,23 +397,26 @@ sciEvent SciEvent::get(unsigned int mask) {
 	if (event.type == SCI_EVENT_KEYBOARD) {
 		// Do we still have to translate the key?
 
-		event.character = event.data;
+		// TODO: Needs cleanup
+		//event.character = event.data;
 
 		// Scancodify if appropriate
 		if (event.modifiers & SCI_KEYMOD_ALT) {
-			event.character = altify(event.character);
+			event.character = altify(event.data);
 		} else if (event.modifiers & SCI_KEYMOD_CTRL) {
-			event.character = controlify(event.character);
+			event.character = event.data;
+			//event.character = controlify(event.data);
 		}
 
 		// Shift if appropriate
-		else if (((event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && !(event.modifiers & SCI_KEYMOD_CAPSLOCK))
-		         || (!(event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && (event.modifiers & SCI_KEYMOD_CAPSLOCK)))
-			event.character = shiftify(event.character);
+		// else
+		//if (((event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && !(event.modifiers & SCI_KEYMOD_CAPSLOCK))
+		//         || (!(event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && (event.modifiers & SCI_KEYMOD_CAPSLOCK)))
+		//	event.character = shiftify(event.character);
 
 		// Numlockify if appropriate
-		else if (event.modifiers & SCI_KEYMOD_NUMLOCK)
-			event.data = numlockify(event.data);
+		//else if (event.modifiers & SCI_KEYMOD_NUMLOCK)
+		//	event.data = numlockify(event.data);
 	}
 
 	return event;
