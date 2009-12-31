@@ -218,7 +218,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*1c*/	DEFUN("GetEvent", kGetEvent, ".*"),
 	///*1c*/	DEFUN("GetEvent", kGetEvent, "io"),
 	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "oo*"),
-	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "o"),
+	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "oo*"),
 	/*1f*/	DEFUN("MapKeyToDir", kMapKeyToDir, "o"),
 	/*20*/	DEFUN("DrawMenuBar", kDrawMenuBar, "i"),
 	/*21*/	DEFUN("MenuSelect", kMenuSelect, "oi*"),
