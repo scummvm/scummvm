@@ -71,6 +71,7 @@ protected:
 
 	bool	_mouseVisible;
 	int	_mouseX, _mouseY;
+	int _dpadX, _dpadY;
 	int	_mouseWidth, _mouseHeight;
 	int	_mouseHotspotX, _mouseHotspotY;
 	byte	_mouseKeyColour;
@@ -92,6 +93,8 @@ protected:
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
 
+	Common::KeyCode getDpadEvent(int x, int y);
+	
 public:
 	OSystem_PSP();
 	virtual ~OSystem_PSP();

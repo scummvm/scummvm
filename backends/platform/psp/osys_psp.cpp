@@ -85,7 +85,7 @@ const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 
 OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0),
 		_offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _lastScreenUpdate(0),
-		_mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
+		_mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _mixer(0) {
 	memset(_palette, 0, sizeof(_palette));
 
 	_cursorPaletteDisabled = true;
@@ -102,6 +102,7 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 
 	_mouseX = PSP_SCREEN_WIDTH >> 1;	// Mouse in the middle of the screen
 	_mouseY = PSP_SCREEN_HEIGHT >> 1;
+	_dpadX = _dpadY = 0;
 
 
 	// Init GU
@@ -709,7 +710,58 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
-	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE | PSP_CTRL_TRIANGLE)) {
+	int newDpadX = 0, newDpadY = 0;
+	event.kbd.ascii = 0;
+	event.kbd.flags = 0;
+	
+	if (pad.Buttons & PSP_CTRL_UP) {
+		newDpadY += 1;
+		if (pad.Buttons & PSP_CTRL_RTRIGGER)
+			newDpadX += 1;
+	}
+	if (pad.Buttons & PSP_CTRL_RIGHT) {
+		newDpadX += 1;
+		if (pad.Buttons & PSP_CTRL_RTRIGGER)
+			newDpadY -= 1;
+	}
+	if (pad.Buttons & PSP_CTRL_DOWN) {
+		newDpadY -= 1;
+		if (pad.Buttons & PSP_CTRL_RTRIGGER)
+			newDpadX -= 1;
+	}
+	if (pad.Buttons & PSP_CTRL_LEFT) {
+		newDpadX -= 1;
+		if (pad.Buttons & PSP_CTRL_RTRIGGER)
+			newDpadY += 1;
+	}
+	//fprintf(stderr, "x=%d, y=%d, oldx=%d, oldy=%d\n", newDpadX, newDpadY, _dpadX, _dpadY);
+	if (newDpadX != _dpadX || newDpadY != _dpadY) {
+		if (_dpadX == 0 && _dpadY == 0)	{// We pressed dpad
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = getDpadEvent(newDpadX, newDpadY);
+			event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
+			_dpadX = newDpadX; 
+			_dpadY = newDpadY;
+		}
+		else if (newDpadX == 0 && newDpadY == 0) {// We unpressed dpad
+			event.type = Common::EVENT_KEYUP;
+			event.kbd.keycode = getDpadEvent(_dpadX, _dpadY);
+			event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
+			_dpadX = newDpadX;
+			_dpadY = newDpadY;
+		} else { // we moved from one pressed dpad to another one
+			event.type = Common::EVENT_KEYUP;	// first release the last dpad direction
+			event.kbd.keycode = getDpadEvent(_dpadX, _dpadY);
+			event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
+			_dpadX = 0; // so that we'll pick up a new dpad movement
+			_dpadY = 0;
+		}
+		
+		_prevButtons = pad.Buttons;
+		return true;
+	
+	} else if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | 
+						PSP_CTRL_SELECT | PSP_CTRL_SQUARE | PSP_CTRL_TRIANGLE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
 		} else if (buttonsChanged & PSP_CTRL_CIRCLE) {
@@ -717,9 +769,7 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 		} else {
 			//any of the other buttons.
 			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
-			event.kbd.ascii = 0;
-			event.kbd.flags = 0;
-
+			
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
 				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
@@ -768,40 +818,25 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 			analogStepAmountY = pad.Ly - 155;
 		}
 
-		if (pad.Buttons & PAD_DIR_MASK ||
-		    analogStepAmountX != 0 || analogStepAmountY != 0) {
-			if (_prevButtons & PAD_DIR_MASK) {
-				if (_padAccel < 16)
-					_padAccel++;
-			} else
-				_padAccel = 0;
+		if (analogStepAmountX != 0 || analogStepAmountY != 0) {
 
 			_prevButtons = pad.Buttons;
-
-			if (pad.Buttons & PSP_CTRL_LEFT)
-				newX -= _padAccel >> 2;
-			if (pad.Buttons & PSP_CTRL_RIGHT)
-				newX += _padAccel >> 2;
-			if (pad.Buttons & PSP_CTRL_UP)
-				newY -= _padAccel >> 2;
-			if (pad.Buttons & PSP_CTRL_DOWN)
-				newY += _padAccel >> 2;
 
 			// If no movement then this has no effect
 			if (pad.Buttons & PSP_CTRL_RTRIGGER) {
 				// Fine control mode for analog
 					if (analogStepAmountX != 0) {
 						if (analogStepAmountX > 0)
-							newX += analogStepAmountX - (analogStepAmountX - 1);
+							newX += 1;
 						else
-							newX -= -analogStepAmountX - (-analogStepAmountX - 1);
+							newX -= 1;
 					}
 
 					if (analogStepAmountY != 0) {
 						if (analogStepAmountY > 0)
-							newY += analogStepAmountY - (analogStepAmountY - 1);
+							newY += 1;
 						else
-							newY -= -analogStepAmountY - (-analogStepAmountY - 1);
+							newY -= 1;
 					}
 			} else {
 				newX += analogStepAmountX >> ((_screenWidth == 640) ? 2 : 3);
@@ -830,13 +865,37 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 				event.mouse.y = _mouseY = newY;
 				return true;
 			}
-		} else {
-			//reset pad acceleration
-			_padAccel = 0;
 		}
 	}
 
 	return false;
+}
+
+inline Common::KeyCode OSystem_PSP::getDpadEvent(int x, int y) {
+	Common::KeyCode key;
+
+	if (x == -1) {
+		if (y == -1)
+			key = Common::KEYCODE_KP1;
+		else if (y == 0)
+			key = Common::KEYCODE_KP4;
+		else /* y == 1 */
+			key = Common::KEYCODE_KP7;
+	} else if (x == 0) {
+		if (y == -1)
+			key = Common::KEYCODE_KP2;
+		else /* y == 1 */
+			key = Common::KEYCODE_KP8;
+	} else {/* x == 1 */
+		if (y == -1)
+			key = Common::KEYCODE_KP3;
+		else if (y == 0)
+			key = Common::KEYCODE_KP6;
+		else /* y == 1 */
+			key = Common::KEYCODE_KP9;
+	}
+	
+	return key;
 }
 
 bool OSystem_PSP::pollEvent(Common::Event &event) {
