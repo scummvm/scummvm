@@ -864,8 +864,6 @@ static const MohawkGameDescription fallbackDescs[] = {
 		0
 	},
 
-	// The Masterpiece Edition of Myst has 24bit color, and thus is not supported by ScummVM
-	// Currently, its graphics are just bypassed.
 	{
 		{
 			"myst",
