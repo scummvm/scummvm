@@ -280,16 +280,9 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 		return;
 
 	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
-#endif
 
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, state, kSoundInitialized);
-	else
-		PUT_SEL32(_segMan, obj, nodePtr, obj);
+#else
 
-	PUT_SEL32(_segMan, obj, handle, obj);
-
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resnum = number;
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
@@ -320,6 +313,13 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 			_music->soundInitSnd(newSound);
 	}
 #endif
+
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		PUT_SEL32V(_segMan, obj, state, kSoundInitialized);
+	else
+		PUT_SEL32(_segMan, obj, nodePtr, obj);
+
+	PUT_SEL32(_segMan, obj, handle, obj);
 }
 
 void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
@@ -409,7 +409,10 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		musicSlot = _music->getSlot(obj);
 	}
 
+	PUT_SEL32(_segMan, obj, handle, obj);
+
 	if (_soundVersion >= SCI_VERSION_1_EARLY) {
+		PUT_SEL32(_segMan, obj, nodePtr, obj);
 		PUT_SEL32V(_segMan, obj, min, 0);
 		PUT_SEL32V(_segMan, obj, sec, 0);
 		PUT_SEL32V(_segMan, obj, frame, 0);
