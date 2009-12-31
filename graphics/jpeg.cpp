@@ -114,15 +114,40 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 	bool done = false;
 	while (!_str->eos() && ok && !done) {
 		// Read the marker
+
+		// WORKAROUND: While each and every JPEG file should end with
+		// an EOI (end of image) tag, in reality this may not be the
+		// case. For instance, at least one image in the Masterpiece
+		// edition of Myst doesn't, yet other programs are able to read
+		// the image without complaining.
+		//
+		// Apparently, the customary workaround is to insert a fake
+		// EOI tag.
+
 		uint16 marker = _str->readByte();
+		bool fakeEOI = false;
+
+		if (_str->eos()) {
+			fakeEOI = true;
+			marker = 0xFF;
+		}
+
 		if (marker != 0xFF) {
 			error("JPEG: Invalid marker[0]: 0x%02X", marker);
 			ok = false;
 			break;
 		}
 		
-		while (marker == 0xFF)
+		while (marker == 0xFF && !_str->eos())
 			marker = _str->readByte();
+
+		if (_str->eos()) {
+			fakeEOI = true;
+			marker = 0xD9;
+		}
+
+		if (fakeEOI)
+			warning("JPEG: Inserted fake EOI");
 
 		// Process the marker data
 		switch (marker) {
