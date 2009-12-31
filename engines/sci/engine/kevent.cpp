@@ -75,22 +75,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case SCI_EVENT_KEYBOARD:
-		if ((curEvent.modifiers & SCI_KEYMOD_LSHIFT) && (curEvent.modifiers & SCI_KEYMOD_RSHIFT) && (curEvent.data == '-')) {
-			printf("Debug mode activated\n");
-			g_debugState.seeking = kDebugSeekNothing;
-			g_debugState.runningStep = 0;
-		} else if ((curEvent.modifiers & SCI_KEYMOD_CTRL) && (curEvent.data == '`')) {
-			printf("Debug mode activated\n");
-			g_debugState.seeking = kDebugSeekNothing;
-			g_debugState.runningStep = 0;
-		} else {
-			PUT_SEL32V(segMan, obj, type, SCI_EVENT_KEYBOARD); // Keyboard event
-			s->r_acc = make_reg(0, 1);
+		PUT_SEL32V(segMan, obj, type, SCI_EVENT_KEYBOARD); // Keyboard event
+		s->r_acc = make_reg(0, 1);
 
-			PUT_SEL32V(segMan, obj, message, curEvent.character);
-			// We only care about the translated character
-			PUT_SEL32V(segMan, obj, modifiers, curEvent.modifiers & modifier_mask);
-		}
+		PUT_SEL32V(segMan, obj, message, curEvent.character);
+		// We only care about the translated character
+		PUT_SEL32V(segMan, obj, modifiers, curEvent.modifiers & modifier_mask);
 		break;
 
 	case SCI_EVENT_MOUSE_RELEASE:

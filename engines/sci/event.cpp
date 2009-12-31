@@ -52,9 +52,8 @@ struct scancode_row {
 };
 
 int SciEvent::controlify(int ch) {
-	if ((ch >= 97) && (ch <= 121)) {
-		ch -= 96; // 'a' -> 0x01, etc.
-	}
+	if (ch < 26)
+		ch += 96; // 0x01 -> 'a'
 	return ch;
 }
 
@@ -77,54 +76,6 @@ int SciEvent::altify (int ch) {
 	}
 
 	return ch;
-}
-
-int SciEvent::shiftify (int c) {
-	char shifted_numbers[] = ")!@#$%^&*(";
-
-	if (c < 256) {
-		c = toupper((char)c);
-
-		if (c >= 'A' && c <= 'Z')
-			return c;
-
-		if (c >= '0' && c <= '9')
-			return shifted_numbers[c-'0'];
-
-		switch (c) {
-		case SCI_KEY_TAB:
-			return SCI_KEY_SHIFT_TAB;
-		case ']':
-			return '}';
-		case '[':
-			return '{';
-		case '`':
-			return '~';
-		case '-':
-			return '_';
-		case '=':
-			return '+';
-		case ';':
-			return ':';
-		case '\'':
-			return '"';
-		case '\\':
-			return '|';
-		case ',':
-			return '<';
-		case '.':
-			return '>';
-		case '/':
-			return '?';
-		default:
-			return c; // No match
-		}
-	}
-
-	if (c >= SCI_KEY_F1 && c <= SCI_KEY_F10)
-		return c + 25;
-
-	return c;
 }
 
 int SciEvent::numlockify (int c) {
@@ -397,26 +348,18 @@ sciEvent SciEvent::get(unsigned int mask) {
 	if (event.type == SCI_EVENT_KEYBOARD) {
 		// Do we still have to translate the key?
 
-		// TODO: Needs cleanup
-		//event.character = event.data;
-
 		// Scancodify if appropriate
 		if (event.modifiers & SCI_KEYMOD_ALT) {
-			event.character = altify(event.data);
+			event.character = altify(event.character);
 		} else if (event.modifiers & SCI_KEYMOD_CTRL) {
-			event.character = event.data;
-			//event.character = controlify(event.data);
+			//event.character = event.data;
+			event.character = controlify(event.character);
 		}
 
-		// Shift if appropriate
-		// else
-		//if (((event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && !(event.modifiers & SCI_KEYMOD_CAPSLOCK))
-		//         || (!(event.modifiers & (SCI_KEYMOD_RSHIFT | SCI_KEYMOD_LSHIFT)) && (event.modifiers & SCI_KEYMOD_CAPSLOCK)))
-		//	event.character = shiftify(event.character);
-
 		// Numlockify if appropriate
-		//else if (event.modifiers & SCI_KEYMOD_NUMLOCK)
+		//if (event.modifiers & SCI_KEYMOD_NUMLOCK)
 		//	event.data = numlockify(event.data);
+		// TODO: dont know yet if this can get dumped as well
 	}
 
 	return event;
