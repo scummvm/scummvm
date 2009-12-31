@@ -675,9 +675,40 @@ public:
 		_size = 0;
 		_actualSize = 0;
 	}
+	
+	SciArray(const SciArray<T> &array) {
+		_type = array._type;
+		_size = array._size;
+		_actualSize = array._actualSize;
+		_data = new T[_actualSize];
+		assert(_data);
+		memcpy(_data, array._data, _size * sizeof(T));
+	} 
+	
+	SciArray<T>& operator=(const SciArray<T> &array) {
+		if (this == &array)
+			return *this;
 
-	~SciArray() {
 		delete[] _data;
+		_type = array._type;
+		_size = array._size;
+		_actualSize = array._actualSize;
+		_data = new T[_actualSize];
+		assert(_data);
+		memcpy(_data, array._data, _size * sizeof(T));
+
+		return *this;
+	}
+
+	virtual ~SciArray() {
+		destroy();
+	}
+	
+	virtual void destroy() {
+		delete[] _data;
+		_data = NULL;
+		_type = -1;
+		_size = _actualSize = 0;
 	}
 
 	void setType(byte type) {
@@ -748,6 +779,9 @@ protected:
 class SciString : public SciArray<char> {
 public:
 	SciString() : SciArray<char>() { setType(3); }
+	
+	// We overload destroy to ensure the string type is 3 after destroying
+	void destroy() { _type = 3; }
 	
 	Common::String toString();
 	void fromString(Common::String string);

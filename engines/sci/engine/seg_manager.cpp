@@ -1299,6 +1299,7 @@ void SegManager::freeArray(reg_t addr) {
 	if (!arrayTable->isValidEntry(addr.offset))
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
+	arrayTable->_table[addr.offset].destroy();
 	arrayTable->freeEntry(addr.offset);
 }
 
@@ -1338,6 +1339,7 @@ void SegManager::freeString(reg_t addr) {
 	if (!stringTable->isValidEntry(addr.offset))
 		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
+	stringTable->_table[addr.offset].destroy();
 	stringTable->freeEntry(addr.offset);
 }
 
