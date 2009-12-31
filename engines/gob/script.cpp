@@ -155,9 +155,11 @@ byte *Script::getData() {
 }
 
 byte Script::readByte() {
-	byte v;
+	byte v = 0;
+	uint32 n;
 
-	read(&v, 1);
+	n = read(&v, 1);
+	assert(n == 1);
 
 	return v;
 }
@@ -171,17 +173,21 @@ uint8 Script::readUint8() {
 }
 
 uint16 Script::readUint16() {
-	byte v[2];
+	byte v[2] = {0, 0};
+	uint32 n;
 
-	read(v, 2);
+	n = read(v, 2);
+	assert(n == 2);
 
 	return READ_LE_UINT16(v);
 }
 
 uint32 Script::readUint32() {
-	byte v[4];
+	byte v[4] = {0, 0, 0, 0};
+	uint32 n;
 
-	read(v, 4);
+	n = read(v, 4);
+	assert(n == 4);
 
 	return READ_LE_UINT32(v);
 }
