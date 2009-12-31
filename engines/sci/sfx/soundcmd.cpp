@@ -134,7 +134,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 #endif
 
 	#ifndef USE_OLD_MUSIC_FUNCTIONS
-		_music = new SciMusic(_soundVersion);
+		_music = new SciMusic(_resMan, _segMan, _soundVersion);
 		_music->init();
 	#endif
 

@@ -37,15 +37,13 @@
 
 namespace Sci {
 
-SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion), _soundOn(true), _inCriticalSection(false) {
+SciMusic::SciMusic(ResourceManager *resMan, SegManager *segMan, SciVersion soundVersion)
+	: _resMan(resMan), _segMan(segMan), _soundVersion(soundVersion),
+	  _soundOn(true), _inCriticalSection(false) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
 	_playList.reserve(10);
-
-	_segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-	_resMan = ((SciEngine *)g_engine)->getEngineState()->resMan;	// HACK
 }
 
 SciMusic::~SciMusic() {

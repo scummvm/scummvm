@@ -112,7 +112,7 @@ class SciMusic
 {
 
 public:
-	SciMusic(SciVersion soundVersion);
+	SciMusic(ResourceManager *resMan, SegManager *segMan, SciVersion soundVersion);
 	~SciMusic();
 
 	void init();
