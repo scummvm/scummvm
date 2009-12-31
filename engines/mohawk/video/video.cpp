@@ -507,9 +507,12 @@ void VideoManager::playMovie(uint16 id) {
 		if (_mlstRecords[i].code == id) {
 			warning("STUB: Play tMOV %d (non-blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
 			return; // TODO: This will do a lot of things wrong if enabled right now ;)
+			QTPlayer *qtPlayer = new QTPlayer();
+			qtPlayer->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, _mlstRecords[i].movieID));
+			qtPlayer->loadFile(_vm->getRawData(ID_TMOV, _mlstRecords[i].movieID));
+
 			VideoEntry entry;
-			entry.video = new QTPlayer();
-			entry->loadFile(_vm->getRawData(ID_TMOV, _mlstRecords[i].movieID));
+			entry.video = qtPlayer;
 			entry.x = _mlstRecords[i].left;
 			entry.y = _mlstRecords[i].top;
 			entry.id = _mlstRecords[i].movieID;
@@ -529,10 +532,12 @@ void VideoManager::playMovieBlocking(uint16 id) {
 			
 			// TODO: See if a non-blocking movie has been activated with the same id,
 			// and if so, block input until that movie is finished.
-			
+			QTPlayer *qtPlayer = new QTPlayer();
+			qtPlayer->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, _mlstRecords[i].movieID));
+			qtPlayer->loadFile(_vm->getRawData(ID_TMOV, _mlstRecords[i].movieID));
+
 			VideoEntry entry;
-			entry.video = new QTPlayer();
-			entry->loadFile(_vm->getRawData(ID_TMOV, _mlstRecords[i].movieID));
+			entry.video = qtPlayer;
 			entry.x = _mlstRecords[i].left;
 			entry.y = _mlstRecords[i].top;
 			entry.id = _mlstRecords[i].movieID;

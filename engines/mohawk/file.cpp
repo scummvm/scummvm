@@ -179,6 +179,18 @@ bool MohawkFile::hasResource(uint32 tag, uint16 id) {
 	return (getIdIndex(typeIndex, id) >= 0);
 }
 
+uint32 MohawkFile::getOffset(uint32 tag, uint16 id) {
+	assert(_mhk);
+
+	int16 typeIndex = getTypeIndex(tag);
+	assert(typeIndex >= 0);
+
+	int16 idIndex = getIdIndex(typeIndex, id);
+	assert(idIndex >= 0);
+	
+	return _fileTable[_types[typeIndex].resTable.entries[idIndex].index - 1].offset;
+}
+
 Common::SeekableReadStream *MohawkFile::getRawData(uint32 tag, uint16 id) {
 	if (!_mhk)
 		error ("MohawkFile::getRawData - No File in Use");
@@ -294,6 +306,18 @@ void OldMohawkFile::open(Common::SeekableReadStream *stream) {
 	} else
 		error("Could not determine type of Old Mohawk resource");
 
+}
+
+uint32 OldMohawkFile::getOffset(uint32 tag, uint16 id) {
+	assert(_mhk);
+
+	int16 typeIndex = getTypeIndex(tag);
+	assert(typeIndex >= 0);
+
+	int16 idIndex = getIdIndex(typeIndex, id);
+	assert(idIndex >= 0);
+	
+	return _types[typeIndex].resTable.entries[idIndex].offset;
 }
 
 Common::SeekableReadStream *OldMohawkFile::getRawData(uint32 tag, uint16 id) {

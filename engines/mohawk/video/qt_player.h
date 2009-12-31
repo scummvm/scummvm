@@ -84,19 +84,30 @@ public:
 	 * @param stream	the stream to load
 	 */
 	bool loadFile(Common::SeekableReadStream* stream);
-	
-	/**
-	 * Get a packet of A/V data
-	 */
-	//VideoPacket getNextPacket();
 
 	/**
 	 * Close a QuickTime encoded video file
 	 */
 	void closeFile();
 	
+	/**
+	 * Returns the downscale mode of the video
+	 * @return the downscale mode of the video
+	 */
 	ScaleMode getScaleMode();
+	
+	/**
+	 * Returns the palette of the video
+	 * @return the palette of the video
+	 */
 	byte *getPalette() { return _palette; }
+	
+	/**
+	 * Set the beginning offset of the video so we can modify the offsets in the stco
+	 * atom of videos inside the Mohawk archives
+	 * @param the beginning offset of the video
+	 */
+	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -215,10 +226,12 @@ protected:
 	Common::SeekableReadStream *getNextFramePacket();
 	void resetInternal();
 	uint32 getFrameDuration(uint32 frame);
+
+	QueuedAudioStream *_audStream;
 	int8 _videoStreamIndex;
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
-	QueuedAudioStream *_audStream;
+	uint32 _beginOffset;
 
 	int readDefault(MOVatom atom);
 	int readLeaf(MOVatom atom);

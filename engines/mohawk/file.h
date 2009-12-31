@@ -184,6 +184,7 @@ public:
 	
 	bool hasResource(uint32 tag, uint16 id);
 	virtual Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	virtual uint32 getOffset(uint32 tag, uint16 id);
 
 protected:
 	Common::SeekableReadStream *_mhk;
@@ -222,6 +223,7 @@ public:
 	
 	void open(Common::SeekableReadStream *stream);
 	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	uint32 getOffset(uint32 tag, uint16 id);
 	
 private:
 	struct OldType {

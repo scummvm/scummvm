@@ -45,6 +45,7 @@ namespace Mohawk {
 
 QTPlayer::QTPlayer() : Video() {
 	_audStream = NULL;
+	_beginOffset = 0;
 }
 
 QTPlayer::~QTPlayer() {
@@ -897,10 +898,10 @@ int QTPlayer::readSTCO(MOVatom atom) {
 		return -1;
 
 	for (uint32 i = 0; i < st->chunk_count; i++) {
-		// WORKAROUND/HACK: The offsets in Riven videos (aka inside the Mohawk archives themselves)
+		// WORKAROUND/HACK: The offsets in Riven videos (ones inside the Mohawk archives themselves)
 		// have offsets relative to the archive and not the video. This is quite nasty. We subtract
 		// the initial offset of the stream to get the correct value inside of the stream.
-		st->chunk_offsets[i] = _fd->readUint32BE() - _fd->getBeginOffset();
+		st->chunk_offsets[i] = _fd->readUint32BE() - _beginOffset;
 	}
 
 	for (uint32 i = 0; i < _numStreams; i++) {
