@@ -372,11 +372,12 @@ void MusicEntry::doFade() {
 	else {
 		fadeTicker = fadeTickerStep;
 		volume += fadeStep;
+		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 		if (((fadeStep > 0) && (volume >= fadeTo)) || ((fadeStep < 0) && (volume <= fadeTo))) {
 			volume = fadeTo;
 			fadeStep = 0;
+			PUT_SEL32V(segMan, soundObj, signal, 0xFFFF);
 		}
-		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
 		PUT_SEL32V(segMan, soundObj, vol, volume);
 
 		pMidiParser->setVolume(volume);
