@@ -79,7 +79,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		}
 
 		if (index >= sizeof(frames_left_right))
-			index = 1;
+			index = 0;
 		s = frames + frames_left_right[index];
 		dx = 11;
 		dy = 62;
@@ -93,7 +93,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		}
 
 		if (index >= sizeof(frames_up))
-			index = 1;
+			index = 0;
 		s = frames + frames_up[index];
 		dx = 11;
 		dy = 62;
@@ -107,7 +107,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		}
 
 		if (index >= sizeof(frames_down))
-			index = 1;
+			index = 0;
 		s = frames + frames_down[index];
 		dx = 11;
 		dy = 62;
