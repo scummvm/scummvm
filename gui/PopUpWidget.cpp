@@ -228,15 +228,19 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 		close();
 		break;
 	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
 		moveUp();
 		break;
 	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
 		moveDown();
 		break;
 	case Common::KEYCODE_HOME:
+	case Common::KEYCODE_KP7:
 		setSelection(0);
 		break;
 	case Common::KEYCODE_END:
+	case Common::KEYCODE_KP1:
 		setSelection(_popUpBoss->_entries.size()-1);
 		break;
 	default:

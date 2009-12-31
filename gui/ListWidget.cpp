@@ -286,7 +286,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (!_editMode && isprint((unsigned char)state.ascii)) {
+	if (!_editMode && state.keycode <= Common::KEYCODE_z && isprint((unsigned char)state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
@@ -351,27 +351,33 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			break;
 		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
 			if (_selectedItem > 0)
 				_selectedItem--;
 			break;
 		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
 			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
 			break;
 		case Common::KEYCODE_PAGEUP:
+		case Common::KEYCODE_KP9:
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)
 				_selectedItem = 0;
 			break;
 		case Common::KEYCODE_PAGEDOWN:
+		case Common::KEYCODE_KP3:
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
 		case Common::KEYCODE_HOME:
+		case Common::KEYCODE_KP7:
 			_selectedItem = 0;
 			break;
 		case Common::KEYCODE_END:
+		case Common::KEYCODE_1:
 			_selectedItem = _list.size() - 1;
 			break;
 		default:

@@ -270,6 +270,22 @@ sciEvent SciEvent::getFromScummVM() {
 					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
 						input.data = SCI_KEY_CENTER;
 					break;
+				case Common::KEYCODE_KP7:	// home
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_HOME;
+					break;
+				case Common::KEYCODE_KP9:	// pageup
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_PGUP;
+					break;
+				case Common::KEYCODE_KP1:	// end
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_END;
+					break;
+				case Common::KEYCODE_KP3:	// pagedown
+					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
+						input.data = SCI_KEY_PGDOWN;
+					break;					
 				default:
 					input.type = SCI_EVENT_NONE;
 					break;
