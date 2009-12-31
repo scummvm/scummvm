@@ -313,7 +313,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 				memcpy(_2byteFontPtr, charsetPtr + 46, _2byteWidth * _2byteHeight * numChar / 8);
 			}
 
-			idx = ((idx & 0x7F) << 8) | ((idx >> 8) & 0xFF) - 1;
+			idx = (SWAP_CONSTANT_16(idx) & 0x7fff) - 1;
 		} else {
 			idx = SJIStoFMTChunk((idx % 256), (idx / 256));
 		}
