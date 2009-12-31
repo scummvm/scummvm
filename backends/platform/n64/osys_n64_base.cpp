@@ -28,9 +28,6 @@
 #include "pakfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
 
-#define DEFAULT_FRAMEBUFFER_WIDTH 340 // a horizontal resolution of 340 takes into account overscan
-#define DEFAULT_PIX_SKIP 15
-
 extern uint8 _romfs; // Defined by linker (used to calculate position of romfs image)
 
 inline uint16 colBGR888toRGB555(byte r, byte g, byte b);
@@ -61,7 +58,7 @@ OSystem_N64::OSystem_N64() {
 	// Init Controller Pak
 	initPakFs();
 
-	// Use the first save pak found
+	// Use the first controller pak found
 	uint8 ctrl_num;
 	for (ctrl_num = 0; ctrl_num < 4; ctrl_num++) {
 		int8 pak_type = identifyPak(ctrl_num);
@@ -72,26 +69,27 @@ OSystem_N64::OSystem_N64() {
 	}
 
 	// Screen size
-	_screenWidth = DEFAULT_SCREEN_WIDTH;
-	_screenHeight = DEFAULT_SCREEN_HEIGHT;
+	_screenWidth = 320;
+	_screenHeight = 240;
 
 	// Game screen size
-	_gameHeight = DEFAULT_SCREEN_WIDTH;
-	_gameWidth = DEFAULT_SCREEN_HEIGHT;
+	_gameHeight = 320;
+	_gameWidth = 240;
 
 	// Overlay size
-	_overlayWidth = DEFAULT_SCREEN_WIDTH;
-	_overlayHeight = DEFAULT_SCREEN_HEIGHT;
+	_overlayWidth = 320;
+	_overlayHeight = 240;
 
 	// Framebuffer width
-	_frameBufferWidth = DEFAULT_FRAMEBUFFER_WIDTH;
+	_frameBufferWidth = 340;
 
 	// Pixels to skip
-	_offscrPixels = DEFAULT_PIX_SKIP;
+	_offscrPixels = 15;
 
 	// Video clock
 	_viClockRate = VI_NTSC_CLOCK;
 
+	// Max FPS
 	_maxFps = N64_NTSC_FPS;
 
 	_overlayVisible = false;
@@ -99,9 +97,9 @@ OSystem_N64::OSystem_N64() {
 	_shakeOffset = 0;
 
 	// Allocate memory for offscreen buffers
-	_offscreen_hic = (uint16*)memalign(8, DEFAULT_SCREEN_WIDTH * DEFAULT_SCREEN_HEIGHT * 2);
-	_offscreen_pal = (uint8*)memalign(8, DEFAULT_SCREEN_WIDTH * DEFAULT_SCREEN_HEIGHT);
-	_overlayBuffer = (uint16*)memalign(8, DEFAULT_SCREEN_WIDTH * DEFAULT_SCREEN_HEIGHT * sizeof(OverlayColor));
+	_offscreen_hic = (uint16*)memalign(8, _screenWidth * _screenHeight * 2);
+	_offscreen_pal = (uint8*)memalign(8, _screenWidth * _screenHeight);
+	_overlayBuffer = (uint16*)memalign(8, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
 
 	_cursor_pal = NULL;
 
@@ -233,8 +231,8 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_maxFps = N64_PAL_FPS;
 		initDisplay(PAL_320X240_16BIT);
 		_frameBufferWidth = 320;
-		_screenWidth = DEFAULT_SCREEN_WIDTH;
-		_screenHeight = DEFAULT_SCREEN_HEIGHT;
+		_screenWidth = 320;
+		_screenHeight = 240;
 		_offscrPixels = 0;
 		_graphicMode = NORM_PAL_320X240;
 		enableAudioPlayback();
@@ -245,10 +243,10 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_viClockRate = VI_PAL_CLOCK;
 		_maxFps = N64_PAL_FPS;
 		initDisplay(PAL_340X240_16BIT);
-		_frameBufferWidth = DEFAULT_FRAMEBUFFER_WIDTH;
-		_screenWidth = DEFAULT_SCREEN_WIDTH;
-		_screenHeight = DEFAULT_SCREEN_HEIGHT;
-		_offscrPixels = DEFAULT_PIX_SKIP;
+		_frameBufferWidth = 340;
+		_screenWidth = 320;
+		_screenHeight = 240;
+		_offscrPixels = 15;
 		_graphicMode = OVERS_PAL_340X240;
 		enableAudioPlayback();
 		break;
@@ -259,8 +257,8 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_maxFps = N64_NTSC_FPS;
 		initDisplay(MPAL_320X240_16BIT);
 		_frameBufferWidth = 320;
-		_screenWidth = DEFAULT_SCREEN_WIDTH;
-		_screenHeight = DEFAULT_SCREEN_HEIGHT;
+		_screenWidth = 320;
+		_screenHeight = 240;
 		_offscrPixels = 0;
 		_graphicMode = NORM_MPAL_320X240;
 		enableAudioPlayback();
@@ -271,10 +269,10 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_viClockRate = VI_MPAL_CLOCK;
 		_maxFps = N64_NTSC_FPS;
 		initDisplay(MPAL_340X240_16BIT);
-		_frameBufferWidth = DEFAULT_FRAMEBUFFER_WIDTH;
-		_screenWidth = DEFAULT_SCREEN_WIDTH;
-		_screenHeight = DEFAULT_SCREEN_HEIGHT;
-		_offscrPixels = DEFAULT_PIX_SKIP;
+		_frameBufferWidth = 340;
+		_screenWidth = 320;
+		_screenHeight = 240;
+		_offscrPixels = 15;
 		_graphicMode = OVERS_MPAL_340X240;
 		enableAudioPlayback();
 		break;
@@ -285,8 +283,8 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_maxFps = N64_NTSC_FPS;
 		initDisplay(NTSC_320X240_16BIT);
 		_frameBufferWidth = 320;
-		_screenWidth = DEFAULT_SCREEN_WIDTH;
-		_screenHeight = DEFAULT_SCREEN_HEIGHT;
+		_screenWidth = 320;
+		_screenHeight = 240;
 		_offscrPixels = 0;
 		_graphicMode = NORM_NTSC_320X240;
 		enableAudioPlayback();
@@ -298,10 +296,10 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_viClockRate = VI_NTSC_CLOCK;
 		_maxFps = N64_NTSC_FPS;
 		initDisplay(NTSC_340X240_16BIT);
-		_frameBufferWidth = DEFAULT_FRAMEBUFFER_WIDTH;
-		_screenWidth = DEFAULT_SCREEN_WIDTH;
-		_screenHeight = DEFAULT_SCREEN_HEIGHT;
-		_offscrPixels = DEFAULT_PIX_SKIP;
+		_frameBufferWidth = 340;
+		_screenWidth = 320;
+		_screenHeight = 240;
+		_offscrPixels = 15;
 		_graphicMode = OVERS_NTSC_340X240;
 		enableAudioPlayback();
 		break;

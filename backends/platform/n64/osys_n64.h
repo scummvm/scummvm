@@ -45,11 +45,6 @@
 #define DEFAULT_SOUND_SAMPLE_RATE 8000 // 8 kHz
 //#define DEFAULT_SOUND_SAMPLE_RATE 11025 // 11 kHz
 
-// Limit the N64 resolution to 320x240, because framebuffer
-// at higher resolutions would be too slow and memory hogging
-#define DEFAULT_SCREEN_WIDTH  320
-#define DEFAULT_SCREEN_HEIGHT 240
-
 #define N64_PAL_FPS 25
 #define N64_NTSC_FPS 30
 
