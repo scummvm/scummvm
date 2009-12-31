@@ -200,6 +200,13 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
+				// We deviate from SSCI here: in SSCI, the loop is cached, whereas it's
+				// read directly from the sound code here (changed in rev. r46792).
+				// Theoretically, this shouldn't matter at all, as the loop should always
+				// be in sync and should never be changed. In SCI01 and later, the loop is
+				// set from the scripts via cmdSetHandleLoop, so again if there is any
+				// problem with this approach, it'll likely be apparent in SCI0 games
+				// (but no problems have been encountered because of this so far)
 				int16 loop = GET_SEL32V(segMan, _pSnd->soundObj, loop);
 				if (loop)
 					loop--;
