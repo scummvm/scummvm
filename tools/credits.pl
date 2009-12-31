@@ -602,6 +602,13 @@ begin_credits("Credits");
 		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 	  end_section();
+
+	  begin_section("Mohawk");
+		  add_person("Matthew Hoops", "clone2727", "");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("David Turner", "digitall", "");
+	  end_section();
 	  
 	  begin_section("Parallaction");
 		  add_person("", "peres", "");

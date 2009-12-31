@@ -118,6 +118,12 @@ ScummVM Team
        Benjamin Haisch      
        Filippos Karapetis   
 
+    Mohawk:
+       Matthew Hoops        
+       Filippos Karapetis   
+       Eugene Sandulenko    
+       David Turner         
+
     Parallaction:
        peres                
 
@@ -320,7 +326,8 @@ Other contributions
      Thierry Crozat        - Support for Broken Sword 1 Macintosh version
      Martin Doucha         - CinE engine objectification
      Thomas Fach-Pedersen  - ProTracker module player
-     Tobias Gunkel         - Graphic support for PCE version of Loom
+     Tobias Gunkel         - Sound support for C64 version of MM/Zak, Loom
+                             PCE support
      Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
      Kovacs Endre Janos    - Several fixes for Simon1
      Jeroen Janssen        - Numerous readability and bugfix patches
