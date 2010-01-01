@@ -367,10 +367,12 @@ Common::Error TeenAgentEngine::run() {
 
 				uint w = res->font7.render(NULL, 0, 0, name, 0xd1);
 				res->font7.render(surface, (320 - w) / 2, 180, name, 0xd1, true);
+#if 0
 				if (current_object) {
-					//current_object->rect.render(surface, 0x80);
-					//current_object->actor_rect.render(surface, 0x81);
+					current_object->rect.render(surface, 0x80);
+					current_object->actor_rect.render(surface, 0x81);
 				}
+#endif
 			}
 		}
 
