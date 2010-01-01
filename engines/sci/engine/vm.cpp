@@ -1644,11 +1644,18 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			obj->setSpeciesSelector(INST_LOOKUP_CLASS(obj->getSpeciesSelector().offset));
 
 			Object *baseObj = segMan->getObject(obj->getSpeciesSelector());
-			obj->setVarCount(baseObj->getVarCount());
-			// Copy base from species class, as we need its selector IDs
-			obj->_baseObj = baseObj->_baseObj;
 
-			obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector().offset));
+			if (baseObj) {
+				obj->setVarCount(baseObj->getVarCount());
+				// Copy base from species class, as we need its selector IDs
+				obj->_baseObj = baseObj->_baseObj;
+
+				obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector().offset));
+			} else {
+				warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+
+				scr->scriptObjRemove(addr);
+			}
 		} // if object or class
 		break;
 		case SCI_OBJ_POINTERS: // A relocation table

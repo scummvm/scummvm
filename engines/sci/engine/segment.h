@@ -381,6 +381,12 @@ public:
 	Object *scriptObjInit(reg_t obj_pos);
 
 	/**
+	 * Removes a script object
+	 * @param obj_pos	Location (segment, offset) of the object.
+	 */
+	void scriptObjRemove(reg_t obj_pos);
+
+	/**
 	 * Processes a relocation block witin a script
 	 *  This function is idempotent, but it must only be called after all
 	 *  objects have been instantiated, or a run-time error will occur.

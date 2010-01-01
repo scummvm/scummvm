@@ -568,6 +568,13 @@ Object *Script::scriptObjInit(reg_t obj_pos) {
 	return obj;
 }
 
+void Script::scriptObjRemove(reg_t obj_pos) {
+	if (getSciVersion() < SCI_VERSION_1_1)
+		obj_pos.offset += 8;
+
+	_objects.erase(obj_pos.toUint16());
+}
+
 LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 	if (!count) { // No locals
 		scr->_localsSegment = 0;
