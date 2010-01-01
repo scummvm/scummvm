@@ -143,7 +143,11 @@ public:
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
-	int32 getTotalPlayTime() const { return _totalPlayTime; }
+	int32 getTotalPlayTime() const {
+		if (!_numLoops)
+			return kUnknownPlayTime;
+		return _totalPlayTime * _numLoops;
+	}
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
@@ -260,7 +264,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 					int32 seconds = samples / rate;
 					int32 milliseconds = (1000 * (samples % rate)) / rate;
 
-					_totalPlayTime = (seconds * 1000 + milliseconds) * numLoops;
+					_totalPlayTime = (seconds * 1000 + milliseconds);
 				} else {
 					_totalPlayTime = kUnknownPlayTime;
 				}

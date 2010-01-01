@@ -98,10 +98,6 @@ public:
 										uint32 duration = 0,
 										uint numLoops = 1);
 
-	enum {
-		kUnknownPlayTime = -1
-	};
-
 	/** 
 	 * Sets number of times the stream is supposed to get looped
 	 * @param numLoops number of loops to play, 0 - infinite
@@ -114,9 +110,13 @@ public:
 	 */
 	virtual uint getNumPlayedLoops() { return 0; }
 
+	enum {
+		kUnknownPlayTime = -1
+	};
+
 	/**
 	 * Returns total playtime of the AudioStream object.
-	 * Note that this does not require to return an playtime, if the
+	 * Note that this does not require to return any playtime, if the
 	 * playtime of the AudioStream is unknown it returns 'kUnknownPlayTime'.
 	 * @see kUnknownPlayTime
 	 *
