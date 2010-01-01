@@ -143,6 +143,9 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case kSciAudioCD:
 		return kDoCdAudio(s, argc - 1, argv + 1);
+	// TODO: There are 3 more functions used in Freddy Pharkas (11, 12 and 13) and new within sierra sci
+	//			Details currently unknown
+	// kDoAudio sits at seg026:038C
 	default:
 		warning("kDoAudio: Unhandled case %d", argv[0].toUint16());
 	}
