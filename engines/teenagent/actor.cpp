@@ -126,7 +126,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (head != NULL) 
 		clip.top = head->h;
 
-	int xp = position.x - dx, yp = position.y - dy;
+	int xp = position.x - dx * zoom / 256, yp = position.y - dy * zoom / 256;
 	if (xp < 0)
 		xp = 0;
 	if (xp + s->w > 320)
@@ -137,7 +137,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (yp + clip.top + clip.height() > 200)
 		yp = 200 - clip.top - clip.height();
 	
-	dirty = s->render(surface, xp, yp + clip.top, orientation == kActorLeft, clip, zoom);
+	dirty = s->render(surface, xp, yp + clip.top * zoom / 256, orientation == kActorLeft, clip, zoom);
 
 	if (head != NULL)
 		dirty.extend(head->render(surface, xp, yp, orientation == kActorLeft, Common::Rect(), zoom));

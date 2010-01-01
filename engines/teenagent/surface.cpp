@@ -86,10 +86,12 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 			dst += surface->pitch;
 			src += pitch;
 		}
+		src_rect.translate(x + dx, y + dy);
+		return src_rect;
 	} else {
 		Common::Rect dst_rect(src_rect);
 		dst_rect.right = (dst_rect.width() * zoom / 256) + dst_rect.left;
-		dst_rect.top = dst_rect.bottom - (dst_rect.height() * zoom / 256);
+		dst_rect.bottom = dst_rect.top + (dst_rect.height() * zoom / 256);
 
 		assert(x + dx + dst_rect.width() <= surface->w);
 		assert(y + dy + dst_rect.height() <= surface->h);
@@ -105,8 +107,9 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 			}
 			dst += surface->pitch;
 		}
+		dst_rect.translate(x + dx, y + dy);
+		return dst_rect;
 	}
-	return Common::Rect(x + dx, y + dy, x + src_rect.width() + dx, y + src_rect.height() + dy);
 }
 
 } // End of namespace TeenAgent
