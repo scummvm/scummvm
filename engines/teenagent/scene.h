@@ -158,6 +158,7 @@ public:
 	inline Animation * getActorAnimation() { return &actor_animation; }
 	inline const Common::String& getMessage() const { return message; }
 	void setPalette(unsigned mul);
+	int lookupZoom(uint y) const;
 
 private:
 	void loadOns();

@@ -498,6 +498,22 @@ struct ZOrderCmp {
 	}
 };
 
+int Scene::lookupZoom(uint y) const {
+	Resources *res = Resources::instance();
+	for(byte *zoom_table = res->dseg.ptr(res->dseg.get_word(0x70f4 + (_id - 1) * 2));
+		zoom_table[0] != 0xff && zoom_table[1] != 0xff; 
+		zoom_table += 2
+	) {
+		//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
+		if (y <= zoom_table[0]) {
+			//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
+			return 256u * (100 - zoom_table[1]) / 100;
+		}
+	}
+	return 256;
+}
+
+
 bool Scene::render(OSystem *system) {
 	Resources *res = Resources::instance();
 	bool busy;
@@ -643,17 +659,10 @@ bool Scene::render(OSystem *system) {
 				got_any_animation = true;
 			} else if (!hide_actor) {
 				actor_animation.free();
-				uint zoom = 256;
-				const int zoom_min = 115, zoom_max = 150;
-				if (_id == 18 && position.y < zoom_max) { //zoom hack
-					if (position.y >= zoom_min) 
-						zoom = 128 + 128 * (position.y - zoom_min) / (zoom_max - zoom_min);
-					else 
-						zoom = 128;
-				}
+				uint zoom = lookupZoom(position.y);
 
 				if (!path.empty()) {
-					const int speed_x = 10, speed_y = 3;
+					const int speed_x = 10 * zoom / 256, speed_y = 3 * zoom / 256;
 					const Common::Point &destination = path.front();
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
 
