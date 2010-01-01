@@ -247,7 +247,7 @@ void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 }
 
 void AdLib::setVolume(byte voice, byte volume) {
-	volume = 0x3F - (volume * 0x7E + 0x7F) / 0xFE;
+	volume = 0x3F - ((volume * 0x7E) + 0x7F) / 0xFE;
 	writeOPL(0x40 + _volRegNums[voice], volume);
 }
 
@@ -598,7 +598,7 @@ void MDYPlayer::interpret() {
 	uint8 timbre;
 
 	if (_first) {
-		for (int i = 0; i < 11; i ++)
+		for (int i = 0; i < 9; i ++)
 			setVolume(i, 0);
 
 //	TODO : Set pitch range
