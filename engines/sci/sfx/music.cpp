@@ -411,8 +411,9 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
+	assert(volume <= MUSIC_VOLUME_MAX);
 	if (pSnd->pStreamAud) {
-		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume);
+		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
 	} else if (pSnd->pMidiParser) {
 		_mutex.lock();
 		pSnd->pMidiParser->setVolume(volume);

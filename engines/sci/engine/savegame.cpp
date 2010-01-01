@@ -120,7 +120,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint32LE(hold);
 		// volume and dataInc will be synced from the sound objects
 		// when the sound list is reconstructed in gamestate_restore()
-		volume = MUSIC_VOLUME_FOR_SCI0;
+		volume = MUSIC_VOLUME_MAX;
 		dataInc = 0;
 		// No fading info
 		fadeTo = 0;

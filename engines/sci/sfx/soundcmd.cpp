@@ -280,7 +280,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop);
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
-	newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, Audio::Mixer::kMaxChannelVolume);
+	newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, MUSIC_VOLUME_MAX);
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -895,7 +895,7 @@ void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {
 
 	debugC(2, kDebugLevelSound, "cmdSetHandleVolume: %d", value);
 
-	value = CLIP<int>(value, 0, Audio::Mixer::kMaxChannelVolume);
+	value = CLIP<int>(value, 0, MUSIC_VOLUME_MAX);
 
 	if (musicSlot->volume != value) {
 		musicSlot->volume = value;
