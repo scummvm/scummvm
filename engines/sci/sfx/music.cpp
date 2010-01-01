@@ -572,8 +572,6 @@ void MusicEntry::doFade() {
 		// TODO: create onTimer within audio.cpp to do the handling there, if we do it in cmdUpdateCues it wont
 		//  work right, because the last volume set won't get done at all. Also we are fading digital sound effects
 		//  currently here in any case currently. Fade code should get moved to void SciMusic::onTimer()
-		if (hCurrentAud)
-			mixer->setChannelVolume(musicSlot->hCurrentAud, volume);
 	}
 }
 

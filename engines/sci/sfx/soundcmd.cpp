@@ -775,6 +775,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	if (musicSlot->pStreamAud) {
+		
 		// TODO: We need to update loop selector here, when sample is looping
 		if (!mixer->isSoundHandleActive(musicSlot->hCurrentAud)) {
 			musicSlot->ticker = SIGNAL_OFFSET;
@@ -783,6 +784,8 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		} else {
 			musicSlot->ticker = (uint16)(mixer->getSoundElapsedTime(musicSlot->hCurrentAud) * 0.06);
 		}
+		if (musicSlot->fadeStep)
+				mixer->setChannelVolume(musicSlot->hCurrentAud, musicSlot->volume);
 	}
 
 	_music->_mutex.lock();	// and lock again
