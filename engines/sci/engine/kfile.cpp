@@ -265,6 +265,8 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			SavegameDesc desc;
 			desc.id = strtol(filename.end() - 3, NULL, 10);
 			desc.date = meta.savegame_date;
+			// We need to fix date in here, because we save DDMMYYYY instead of YYYYMMDD, so sorting wouldnt work
+			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
 			desc.time = meta.savegame_time;
 			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
 
