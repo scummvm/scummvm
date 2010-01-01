@@ -296,6 +296,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 		// Found a relevant audio resource, play it
 		int sampleLen;
 		newSound->pStreamAud = _audio->getAudioStream(number, 65535, &sampleLen);
+		newSound->soundType = Audio::Mixer::kSpeechSoundType;
 	} else {
 		if (newSound->soundRes)
 			_music->soundInitSnd(newSound);
@@ -590,9 +591,10 @@ void SoundCommandParser::cmdVolume(reg_t obj, int16 value) {
 
 	_acc = make_reg(0, _state->sfx_getVolume());
 #else
-		if (value > 0)
-			_music->soundSetMasterVolume(obj.toSint16());
-		_acc = make_reg(0, _music->soundGetMasterVolume());
+	debugC(2, kDebugLevelSound, "cmdVolume: %d", value);
+	if (value > 0)
+		_music->soundSetMasterVolume(obj.toSint16());
+	_acc = make_reg(0, _music->soundGetMasterVolume());
 #endif
 }
 

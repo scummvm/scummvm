@@ -92,6 +92,8 @@ public:
 
 	SoundStatus status;
 
+	Audio::Mixer::SoundType soundType;
+
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 //protected:
 #endif

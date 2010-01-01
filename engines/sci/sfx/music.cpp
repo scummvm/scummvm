@@ -333,10 +333,12 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				delete pSnd->pStreamAud;
 			pSnd->pStreamAud = Audio::makeLinearInputStream(channelData, track->digitalSampleSize, track->digitalSampleRate,
 					Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+			pSnd->soundType = Audio::Mixer::kSFXSoundType;
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
 			// play MIDI track
 			_mutex.lock();
+			pSnd->soundType = Audio::Mixer::kMusicSoundType;
 			if (pSnd->pMidiParser == NULL) {
 				pSnd->pMidiParser = new MidiParser_SCI();
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
@@ -385,7 +387,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->pStreamAud->setNumLoops(loop);
 		else
 			pSnd->pStreamAud->setNumLoops(1);
-		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
+		_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
 		_mutex.lock();
@@ -486,10 +488,9 @@ uint16 SciMusic::soundGetMasterVolume() {
 void SciMusic::soundSetMasterVolume(uint16 vol) {
 	vol = vol & 0xF; // 0..15
 	vol = vol * Audio::Mixer::kMaxMixerVolume / 0xF;
+	// "master volume" is music and SFX only, speech (audio resources) are supposed to be unaffected
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
 	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol);
 }
 
 void SciMusic::printPlayList(Console *con) {
@@ -527,6 +528,8 @@ MusicEntry::MusicEntry() {
 	fadeTickerStep = 0;
 
 	status = kSoundStopped;
+
+	soundType = Audio::Mixer::kMusicSoundType;
 
 	pStreamAud = 0;
 	pMidiParser = 0;
