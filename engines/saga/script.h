@@ -333,7 +333,16 @@ public:
 	}
 	void setNoPendingVerb() {
 		_pendingVerb = getVerbType(kVerbNone);
-		_currentObject[0] = _currentObject[0] = ID_NOTHING;
+		// TODO: Someone with knowledge of SAGA should review this.
+		// This initially looked like:
+		// _currentObject[0] = _currentObject[0] = ID_NOTHING;
+		// and thus was an undefined operation on _currentObject[0]
+		// according to the C(++) standard.
+		// Now the question is whether this should really reset
+		// both objets or just _currentObject[0].
+		// In case the current code is ok, just remove the TODO,
+		// otherwise fix the code and remove the TODO.
+		_currentObject[0] = _currentObject[1] = ID_NOTHING;
 		setPointerVerb();
 	}
 	int getVerbType(VerbTypes verbType);
