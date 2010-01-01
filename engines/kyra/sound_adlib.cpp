@@ -113,7 +113,7 @@ private:
 	int snd_unkOpcode1(va_list &list);
 	int snd_startSong(va_list &list);
 	int snd_isChannelPlaying(va_list &list);
-	int snd_unkOpcode3(va_list &list);
+	int snd_stopChannel(va_list &list);
 	int snd_readByte(va_list &list);
 	int snd_writeByte(va_list &list);
 	int snd_getSoundTrigger(va_list &list);
@@ -529,6 +529,7 @@ int AdlibDriver::snd_startSong(va_list &list) {
 	_flagTrigger = 1;
 
 	uint8 *ptr = getProgram(songId);
+	assert(ptr);
 	uint8 chan = *ptr;
 
 	if ((songId << 1) != 0) {
@@ -549,29 +550,30 @@ int AdlibDriver::snd_startSong(va_list &list) {
 
 int AdlibDriver::snd_isChannelPlaying(va_list &list) {
 	int channel = va_arg(list, int);
-	if (_channels[channel].dataptr)
-		return 1;
-	return 0;
+	assert(channel >= 0 && channel <= 9);
+	return (_channels[channel].dataptr != 0) ? 1 : 0;
 }
 
-int AdlibDriver::snd_unkOpcode3(va_list &list) {
-	int value = va_arg(list, int);
-	int loop = value;
-	if (value < 0) {
-		value = 0;
-		loop = 9;
-	}
-	loop -= value;
-	++loop;
+int AdlibDriver::snd_stopChannel(va_list &list) {
+	int channel = va_arg(list, int);
 
-	while (loop--) {
-		_curChannel = value;
-		Channel &channel = _channels[_curChannel];
-		channel.priority = 0;
-		channel.dataptr = 0;
-		if (value != 9)
-			noteOff(channel);
-		++value;
+	int maxChannel;
+	if (channel < 0) {
+		channel = 0;
+		maxChannel = 9;
+	} else {
+		maxChannel = channel;
+	}
+
+	for (; channel <= maxChannel; ++channel) {
+		_curChannel = channel;
+
+		Channel &chan = _channels[_curChannel];
+		chan.priority = 0;
+		chan.dataptr = 0;
+
+		if (channel != 9)
+			noteOff(chan);
 	}
 
 	return 0;
@@ -581,17 +583,18 @@ int AdlibDriver::snd_readByte(va_list &list) {
 	int a = va_arg(list, int);
 	int b = va_arg(list, int);
 	uint8 *ptr = getProgram(a) + b;
+	assert(ptr);
 	return *ptr;
 }
 
 int AdlibDriver::snd_writeByte(va_list &list) {
 	int a = va_arg(list, int);
 	int b = va_arg(list, int);
-	int c = va_arg(list, int);
+	uint8 value = va_arg(list, int);
 	uint8 *ptr = getProgram(a) + b;
-	uint8 oldValue = *ptr;
-	*ptr = (uint8)c;
-	return oldValue;
+	assert(ptr);
+	SWAP(*ptr, value);
+	return value;
 }
 
 int AdlibDriver::snd_getSoundTrigger(va_list &list) {
@@ -1898,7 +1901,7 @@ void AdlibDriver::setupOpcodeList() {
 		COMMAND(snd_unkOpcode1),
 		COMMAND(snd_startSong),
 		COMMAND(snd_isChannelPlaying),
-		COMMAND(snd_unkOpcode3),
+		COMMAND(snd_stopChannel),
 		COMMAND(snd_readByte),
 		COMMAND(snd_writeByte),
 		COMMAND(snd_getSoundTrigger),
