@@ -292,7 +292,7 @@ void SoundCommandParser::cmdInitHandle(reg_t obj, int16 value) {
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
 
-	if (_resMan->testResource(ResourceId(kResourceTypeAudio, number)) && getSciVersion() >= SCI_VERSION_1_1) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, number))) {
 		// Found a relevant audio resource, play it
 		int sampleLen;
 		newSound->pStreamAud = _audio->getAudioStream(number, 65535, &sampleLen);
