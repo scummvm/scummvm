@@ -121,7 +121,10 @@ public:
 	bool isStereo() const		{ return _isStereo; }
 	int getRate() const			{ return _rate; }
 
-	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	void setNumLoops(uint numLoops) {
+		_numLoops = numLoops;
+		_numPlayedLoops = 0;
+	}
 	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 	int32 getTotalPlayTime() const {

@@ -151,7 +151,10 @@ public:
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
-	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	void setNumLoops(uint numLoops = 1) {
+		_numLoops = numLoops;
+		_numPlayedLoops = 0;
+	}
 	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 protected:

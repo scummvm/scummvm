@@ -224,7 +224,10 @@ class LinearDiskStream : public AudioStream {
 	static const int32 BUFFER_SIZE = 16384;
 #endif
 
-	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	void setNumLoops(uint numLoops) {
+		_numLoops = numLoops;
+		_numPlayedLoops = 0;
+	}
 	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 protected:

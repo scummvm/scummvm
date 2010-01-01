@@ -98,7 +98,10 @@ public:
 		return _totalPlayTime * _numLoops;
 	}
 
-	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	void setNumLoops(uint numLoops) {
+		_numLoops = numLoops;
+		_numPlayedLoops = 0;
+	}
 	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 protected:
