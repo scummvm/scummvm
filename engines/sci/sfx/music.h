@@ -65,6 +65,11 @@ class MusicEntry
 #endif
 {
 public:
+	// Do not get these directly for the sound objects!
+	// It's a bad idea, as the sound code (i.e. the SciMusic
+	// class) should be as separate as possible from the rest
+	// of the engine
+
 	reg_t soundObj;
 
 	SoundResource *soundRes;
@@ -72,8 +77,11 @@ public:
 
 	uint16 dataInc;
 	uint16 ticker;
+	uint16 signal;
 	byte prio;
-	int16 volume;
+	uint16 loop;
+	byte volume;
+	byte hold;
 
 	int16 pauseCounter;
 
@@ -121,7 +129,6 @@ public:
 #endif
 	void onTimer();
 	void clearPlayList();
-	void stopAll();
 
 	// sound and midi functions
 	void soundInitSnd(MusicEntry *pSnd);
@@ -135,41 +142,42 @@ public:
 	uint16 soundGetMasterVolume();
 	void soundSetMasterVolume(uint16 vol);
 	uint16 soundGetSoundOn() const { return _soundOn; }
-	void soundSetSoundOn(bool soundOnFlag) {
-		_soundOn = soundOnFlag;
-		_pMidiDrv->playSwitch(soundOnFlag);
-	}
+	void soundSetSoundOn(bool soundOnFlag);
 	uint16 soundGetVoices();
 	uint32 soundGetTempo() const { return _dwTempo; }
 
-	MusicEntry *getSlot(reg_t obj) { 
-		const MusicList::iterator end = _playList.end();
-		for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-			if ((*i)->soundObj == obj) {
-				return *i;
-			}
-		}
-
-		return NULL;
-	}
+	MusicEntry *getSlot(reg_t obj);
 
 	void pushBackSlot(MusicEntry *slotEntry) {
+		Common::StackLock lock(_mutex);
 		_playList.push_back(slotEntry);
 	}
 
 	void printPlayList(Console *con);
 
-	void reconstructPlayList(int savegame_version);
-	MusicList::iterator enumPlayList(MusicList::iterator slotLoop);
+	// The following two methods are NOT thread safe - make sure that
+	// the mutex is always locked before calling them
+	MusicList::iterator getPlayListStart() { return _playList.begin(); }
+	MusicList::iterator getPlayListEnd() { return _playList.end(); }
 
-	void enterCriticalSection() { _inCriticalSection = true; }
-	void leaveCriticalSection() { _inCriticalSection = false; }
+	void sendMidiCommand (uint32 cmd) {
+		Common::StackLock lock(_mutex);
+		_pMidiDrv->send(cmd);
+	}
 
-	void sendMidiCommand (uint32 cmd) { _pMidiDrv->send(cmd); }
+	void setReverb(byte reverb);
+
+	void resetDriver();
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 #endif
+
+	// Mutex for music code. Used to guard access to the song playlist, to the
+	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT
+	// include references to the mixer, otherwise there will probably be situations
+	// where a deadlock can occur
+	Common::Mutex _mutex;
 
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);
@@ -185,7 +193,6 @@ protected:
 	Audio::Mixer *_pMixer;
 	MidiPlayer *_pMidiDrv;
 	MidiDriverType _midiType;
-	Common::Mutex _mutex;
 
 	uint32 _dwTempo;
 	bool _bMultiMidi; // use adlib's digital track if midi track don't have one
@@ -194,10 +201,7 @@ private:
 
 	MusicList _playList;
 	bool _soundOn;
-	bool _inCriticalSection;
-
-	SegManager *_segMan;
-	ResourceManager *_resMan;
+	byte _reverb;
 };
 
 } // End of namespace Sci

@@ -116,8 +116,8 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		uint32 restoreTime = 0;
 		s.syncAsSint32LE(restoreTime);
 		ticker = restoreTime * 60 / 1000;
-		s.skip(4);	// loop
-		s.skip(4);	// hold
+		s.syncAsSint32LE(loop);
+		s.syncAsSint32LE(hold);
 		// volume and dataInc will be synced from the sound objects
 		// when the sound list is reconstructed in gamestate_restore()
 		volume = 100;
@@ -133,9 +133,11 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(resnum);
 		s.syncAsSint16LE(dataInc);
 		s.syncAsSint16LE(ticker);
+		s.syncAsSint16LE(signal);
 		s.syncAsByte(prio);
-		s.skip(1, VER(15), VER(15));
+		s.syncAsSint16LE(loop);
 		s.syncAsByte(volume);
+		s.syncAsByte(hold);
 		s.syncAsByte(fadeTo);
 		s.syncAsSint16LE(fadeStep);
 		s.syncAsSint32LE(fadeTicker);
@@ -628,16 +630,19 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsByte(_soundOn);
 		s.syncAsByte(masterVolume);
 	} else if (s.isLoading()) {
-		if (s.getVersion() >= 15) {
+		if (s.getVersion() >= 14) {
 			s.syncAsByte(_soundOn);
 			s.syncAsByte(masterVolume);
+			s.syncAsByte(_reverb);
 		} else {
 			_soundOn = true;
 			masterVolume = 15;
+			_reverb = 0;
 		}
 
 		soundSetSoundOn(_soundOn);
 		soundSetMasterVolume(masterVolume);
+		setReverb(_reverb);
 	}
 
 	if (s.isSaving())

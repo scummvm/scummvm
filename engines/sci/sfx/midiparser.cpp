@@ -83,12 +83,10 @@ void MidiParser_SCI::unloadMusic() {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_signalSet) {
 		_signalSet = false;
-		PUT_SEL32V(segMan, _pSnd->soundObj, signal, _signalToSet);
+		_pSnd->signal = _signalToSet;
 		debugC(2, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 
@@ -131,7 +129,19 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = *(_position._play_pos++);
 		if (info.channel() == 0xF) {// SCI special
-			if (info.basic.param1 == 0x60) {
+			// Reference for some events:
+			// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
+			// Also, sci/sfx/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
+			switch (info.basic.param1) {
+			case 0x50:	// set volume
+				// This is documented to be "reverb", but it looks like channel
+				// volume, at least in SCI11, so treat it as such
+				_pSnd->volume = info.basic.param2;
+				break;
+			case 0x52:	// set hold
+				_pSnd->hold = info.basic.param2;
+				break;
+			case 0x60:	// update dataInc
 				switch (_soundVersion) {
 				case SCI_VERSION_0_EARLY:
 				case SCI_VERSION_0_LATE:
@@ -146,10 +156,13 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				default:
 					break;
 				}
+				break;
+			case 0x1:	// unknown (example case: LB2CD)
+			case 0xA:	// unknown (example case: LB2CD)
+			default:
+				warning("Unhandled SCI SysEx 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
+				break;
 			}
-			// BF 50 x - set reverb to x
-			// BF 60 x - dataInc++
-			// BF 52 x - bHold=x
 		}
 		if (info.basic.param1 == 7) // channel volume change -scale it
 			info.basic.param2 = info.basic.param2 * _volume / 0x7F;
@@ -200,25 +213,15 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
-				// We deviate from SSCI here: in SSCI, the loop is cached, whereas it's
-				// read directly from the sound code here (changed in rev. r46792).
-				// Theoretically, this shouldn't matter at all, as the loop should always
-				// be in sync and should never be changed. In SCI01 and later, the loop is
-				// set from the scripts via cmdSetHandleLoop, so again if there is any
-				// problem with this approach, it'll likely be apparent in SCI0 games
-				// (but no problems have been encountered because of this so far)
-				int16 loop = GET_SEL32V(segMan, _pSnd->soundObj, loop);
-				if (loop)
-					loop--;
-				PUT_SEL32V(segMan, _pSnd->soundObj, loop, loop);
-				if (loop) {
+				if (_pSnd->loop)
+					_pSnd->loop--;
+				if (_pSnd->loop) {
 					// We need to play it again...
 					jumpToTick(_loopTick);
 				} else {
 					_pSnd->status = kSoundStopped;
-					PUT_SEL32V(segMan, _pSnd->soundObj, signal, 0xFFFF);
-					if (_soundVersion <= SCI_VERSION_0_LATE)
-						PUT_SEL32V(segMan, _pSnd->soundObj, state, kSoundStopped);
+					_pSnd->signal = SIGNAL_OFFSET;
+
 					debugC(2, kDebugLevelSound, "signal EOT");
 				}
 			}

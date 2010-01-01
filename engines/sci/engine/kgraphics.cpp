@@ -962,6 +962,9 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// Take care of incoming events (kAnimate is called semi-regularly)
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	process_sound_events(s);
+#else
+	if (s->detectDoSoundType() <= SCI_VERSION_0_LATE)
+		s->_soundCmd->updateSci0Cues();
 #endif
 
 	s->_gui->animate(castListReference, cycle, argc, argv);

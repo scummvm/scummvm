@@ -38,8 +38,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(ResourceManager *resMan, SegManager *segMan, SciVersion soundVersion)
-	: _resMan(resMan), _segMan(segMan), _soundVersion(soundVersion),
-	  _soundOn(true), _inCriticalSection(false) {
+	: _soundVersion(soundVersion), _soundOn(true) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -103,28 +102,24 @@ void SciMusic::init() {
 void SciMusic::clearPlayList() {
 	_pMixer->stopAll();
 
+	_mutex.lock();
 	while (!_playList.empty()) {
 		soundStop(_playList[0]);
 		soundKill(_playList[0]);
 	}
-}
-
-void SciMusic::stopAll() {
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(_segMan, (*i)->soundObj, state, kSoundStopped);
-		else
-			PUT_SEL32V(_segMan, (*i)->soundObj, signal, SIGNAL_OFFSET);
-
-		(*i)->dataInc = 0;
-		soundStop(*i);
-	}
+	_mutex.unlock();
 }
 
 void SciMusic::miditimerCallback(void *p) {
 	SciMusic *aud = (SciMusic *)p;
+
+	Common::StackLock lock(aud->_mutex);
 	aud->onTimer();
+}
+
+void SciMusic::soundSetSoundOn(bool soundOnFlag) {
+	_soundOn = soundOnFlag;
+	_pMidiDrv->playSwitch(soundOnFlag);
 }
 
 uint16 SciMusic::soundGetVoices() {
@@ -140,6 +135,35 @@ uint16 SciMusic::soundGetVoices() {
 	default:
 		return 1;
 	}
+}
+
+MusicEntry *SciMusic::getSlot(reg_t obj) {
+	Common::StackLock lock(_mutex);
+
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		if ((*i)->soundObj == obj)
+			return *i;
+	}
+
+	return NULL;
+}
+
+void SciMusic::setReverb(byte reverb) {
+	_reverb = reverb;
+
+	// TODO: actually set reverb for MT-32
+
+	// A good test case for this are the first two rooms in Longbow:
+	// reverb is set for the first room (the cave) and is subsequently
+	// cleared when Robin exits the cave
+}
+
+void SciMusic::resetDriver() {
+	_pMidiDrv->close();
+	_pMidiDrv->open();
+	_pMidiDrv->setTimerCallback(this, &miditimerCallback);
+	_dwTempo = _pMidiDrv->getBaseTempo();
 }
 
 static int f_compare(const void *arg1, const void *arg2) {
@@ -312,6 +336,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
 			// play MIDI track
+			_mutex.lock();
 			if (pSnd->pMidiParser == NULL) {
 				pSnd->pMidiParser = new MidiParser_SCI();
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
@@ -323,69 +348,23 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayMask(_soundVersion));
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
+
+			pSnd->pMidiParser->jumpToTick(pSnd->ticker);	// for resuming when loading
+			_mutex.unlock();
 		}
 	}
 }
 
 void SciMusic::onTimer() {
-	Common::StackLock lock(_mutex);
-
-	if (_inCriticalSection)
-		return;
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		(*i)->onTimer(_soundVersion, _pMixer);
 	}
 }
 
-void MusicEntry::onTimer(SciVersion soundVersion, Audio::Mixer *mixer) {
-	if (status != kSoundPlaying)
-		return;
-	if (pMidiParser) {
-		if (fadeStep)
-			doFade();
-		pMidiParser->onTimer();
-		ticker = (uint16)pMidiParser->getTick();
-	} else if (pStreamAud) {
-		if (!mixer->isSoundHandleActive(hCurrentAud)) {
-			ticker = 0xFFFF;
-			status = kSoundStopped;
-
-			// Signal the engine scripts that the sound is done playing
-			// FIXME: is there any other place this can be triggered properly?
-			SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-			PUT_SEL32V(segMan, soundObj, signal, SIGNAL_OFFSET);
-			if (soundVersion <= SCI_VERSION_0_LATE)
-				PUT_SEL32V(segMan, soundObj, state, kSoundStopped);
-		} else {
-			ticker = (uint16)(mixer->getSoundElapsedTime(hCurrentAud) * 0.06);
-		}
-	}
-}
-
-void MusicEntry::doFade() {
-	// This is called from inside onTimer, where the mutex is already locked
-
-	if (fadeTicker)
-		fadeTicker--;
-	else {
-		fadeTicker = fadeTickerStep;
-		volume += fadeStep;
-		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-		if (((fadeStep > 0) && (volume >= fadeTo)) || ((fadeStep < 0) && (volume <= fadeTo))) {
-			volume = fadeTo;
-			fadeStep = 0;
-			PUT_SEL32V(segMan, soundObj, signal, 0xFFFF);
-		}
-		PUT_SEL32V(segMan, soundObj, vol, volume);
-
-		pMidiParser->setVolume(volume);
-	}
-}
-
-
 void SciMusic::soundPlay(MusicEntry *pSnd) {
+	_mutex.lock();
+
 	uint sz = _playList.size(), i;
 	// searching if sound is already in _playList
 	for (i = 0; i < sz && _playList[i] != pSnd; i++)
@@ -394,14 +373,18 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		_playList.push_back(pSnd);
 		sortPlayList();
 	}
+	
+	_mutex.unlock();
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
+		_mutex.lock();
 		pSnd->pMidiParser->setVolume(pSnd->volume);
 		if (pSnd->status == kSoundStopped)
 			pSnd->pMidiParser->jumpToTick(0);
+		_mutex.unlock();
 	}
 
 	pSnd->status = kSoundPlaying;
@@ -411,18 +394,26 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
+
+	_mutex.lock();
 	if (pSnd->pMidiParser)
 		pSnd->pMidiParser->stop();
+	_mutex.unlock();
 }
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
-	if (pSnd->pStreamAud)
+	if (pSnd->pStreamAud) {
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume);
-	else if (pSnd->pMidiParser)
+	} else if (pSnd->pMidiParser) {
+		_mutex.lock();
 		pSnd->pMidiParser->setVolume(volume);
+		_mutex.unlock();
+	}
 }
 
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
+	Common::StackLock lock(_mutex);
+
 	pSnd->prio = prio;
 	sortPlayList();
 }
@@ -431,15 +422,18 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
 	if (pSnd->pMidiParser) {
+		_mutex.lock();
 		pSnd->pMidiParser->unloadMusic();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
+		_mutex.unlock();
 	}
 	if (pSnd->pStreamAud) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		pSnd->pStreamAud = NULL;
 	}
 
+	_mutex.lock();
 	uint sz = _playList.size(), i;
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
@@ -450,6 +444,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 			break;
 		}
 	}
+	_mutex.unlock();
 }
 
 void SciMusic::soundPause(MusicEntry *pSnd) {
@@ -457,10 +452,13 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 	if (pSnd->status != kSoundPlaying)
 		return;
 	pSnd->status = kSoundPaused;
-	if (pSnd->pStreamAud)
+	if (pSnd->pStreamAud) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
-	else if (pSnd->pMidiParser)
+	} else if (pSnd->pMidiParser) {
+		_mutex.lock();
 		pSnd->pMidiParser->pause();
+		_mutex.unlock();
+	}
 }
 
 void SciMusic::soundResume(MusicEntry *pSnd) {
@@ -498,55 +496,6 @@ void SciMusic::printPlayList(Console *con) {
 	}
 }
 
-void SciMusic::reconstructPlayList(int savegame_version) {
-	// Stop the music driver
-	if (_pMidiDrv) {
-		_pMidiDrv->close();
-		delete _pMidiDrv;
-	}
-
-	Common::StackLock lock(_mutex);
-
-	// Reinit the music driver
-	init();
-
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		if (savegame_version < 14) {
-			if (_soundVersion >= SCI_VERSION_1_EARLY) {
-				(*i)->dataInc = GET_SEL32V(_segMan, (*i)->soundObj, dataInc);
-				(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
-			} else {
-				(*i)->volume = 100;
-			}
-		}
-
-		(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
-		soundInitSnd(*i);
-		if ((*i)->pMidiParser)
-			(*i)->pMidiParser->jumpToTick((*i)->ticker);
-		// Replay all paused sounds - a lot of games pause sounds while saving, so
-		// we need to restore the correct sound state
-		if ((*i)->status == kSoundPaused) {
-			soundPlay(*i);
-		}
-	}
-}
-
-// There is some weird code going on in sierra sci. it checks the first 2 playlist entries if they are 0
-//  we should never need to care about this, anyway this is just meant as note
-MusicList::iterator SciMusic::enumPlayList(MusicList::iterator slotLoop) {
-	if (!slotLoop) {
-		if (_playList.begin() == _playList.end())
-			return NULL;
-		return _playList.begin();
-	}
-	slotLoop++;
-	if (slotLoop == _playList.end())
-		return NULL;
-	return slotLoop;
-}
-
 MusicEntry::MusicEntry() {
 	soundObj = NULL_REG;
 
@@ -555,8 +504,11 @@ MusicEntry::MusicEntry() {
 
 	dataInc = 0;
 	ticker = 0;
+	signal = 0;
 	prio = 0;
+	loop = 0;
 	volume = 0;
+	hold = 0;
 
 	pauseCounter = 0;
 
@@ -572,6 +524,41 @@ MusicEntry::MusicEntry() {
 }
 
 MusicEntry::~MusicEntry() {
+}
+
+void MusicEntry::onTimer(SciVersion soundVersion, Audio::Mixer *mixer) {
+	if (status != kSoundPlaying)
+		return;
+	if (pMidiParser) {
+		if (fadeStep)
+			doFade();
+		pMidiParser->onTimer();
+		ticker = (uint16)pMidiParser->getTick();
+	} else if (pStreamAud) {
+		if (!mixer->isSoundHandleActive(hCurrentAud)) {
+			ticker = SIGNAL_OFFSET;
+			signal = SIGNAL_OFFSET;
+			status = kSoundStopped;
+		} else {
+			ticker = (uint16)(mixer->getSoundElapsedTime(hCurrentAud) * 0.06);
+		}
+	}
+}
+
+void MusicEntry::doFade() {
+	if (fadeTicker)
+		fadeTicker--;
+	else {
+		fadeTicker = fadeTickerStep;
+		volume += fadeStep;
+		if (((fadeStep > 0) && (volume >= fadeTo)) || ((fadeStep < 0) && (volume <= fadeTo))) {
+			volume = fadeTo;
+			fadeStep = 0;
+			signal = SIGNAL_OFFSET;
+		}
+
+		pMidiParser->setVolume(volume);
+	}
 }
 
 } // End of namespace Sci
