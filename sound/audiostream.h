@@ -102,7 +102,10 @@ public:
 		kUnknownPlayTime = -1
 	};
 
-	/** Set number of times the stream is supposed to get looped, 0 - infinite times */
+	/** 
+	 * Sets number of times the stream is supposed to get looped
+	 * @param numLoops number of loops to play, 0 - infinite
+	 */
 	virtual void setNumLoops(uint numLoops = 1) {};
 
 	/**
