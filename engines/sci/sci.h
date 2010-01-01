@@ -139,6 +139,8 @@ public:
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
 
+	Common::String getFilePrefix() const;
+
 	/** Prepend 'TARGET-' to the given filename. */
 	Common::String wrapFilename(const Common::String &name) const;
 

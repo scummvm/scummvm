@@ -280,12 +280,29 @@ Common::String SciEngine::getSavegamePattern() const {
 	return _targetName + ".???";
 }
 
+Common::String SciEngine::getFilePrefix() const {
+	const char* gameID = getGameID();
+	if (!strcmp(gameID, "qfg2")) {
+		// Quest for Glory 2 wants to read files from Quest for Glory 1 (EGA/VGA) to import character data
+		if (_gamestate->currentRoomNumber() == 805)
+			return "qfg1";
+		// TODO: Include import-room for qfg1vga
+	}
+	if (!strcmp(gameID, "qfg3")) {
+		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
+		if (_gamestate->currentRoomNumber() == 54)
+			return "qfg2";
+	}
+	// TODO: Implement the same for qfg4, when sci32 is good enough
+	return _targetName;
+}
+
 Common::String SciEngine::wrapFilename(const Common::String &name) const {
-	return _targetName + "-" + name;
+	return getFilePrefix() + "-" + name;
 }
 
 Common::String SciEngine::unwrapFilename(const Common::String &name) const {
-	Common::String prefix = _targetName + "-";
+	Common::String prefix = getFilePrefix() + "-";
 	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
 	return name;
