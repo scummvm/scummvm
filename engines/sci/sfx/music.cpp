@@ -358,7 +358,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 void SciMusic::onTimer() {
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		(*i)->onTimer(_soundVersion, _pMixer);
+		(*i)->onTimer(_soundVersion);
 	}
 }
 
@@ -374,7 +374,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		sortPlayList();
 	}
 	
-	_mutex.unlock();
+	_mutex.unlock();	// unlock to perform mixer-related calls
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
@@ -493,6 +493,7 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 
 void SciMusic::printPlayList(Console *con) {
 	Common::StackLock lock(_mutex);
+
 	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
 
 	const MusicList::iterator end = _playList.end();
@@ -533,29 +534,21 @@ MusicEntry::MusicEntry() {
 MusicEntry::~MusicEntry() {
 }
 
-void MusicEntry::onTimer(SciVersion soundVersion, Audio::Mixer *mixer) {
+void MusicEntry::onTimer(SciVersion soundVersion) {
 	if (status != kSoundPlaying)
 		return;
 
 	if (fadeStep)
-		doFade(mixer);
+		doFade();
 
+	// Only process MIDI streams in this thread, not digital sound effects
 	if (pMidiParser) {
 		pMidiParser->onTimer();
 		ticker = (uint16)pMidiParser->getTick();
-	} else if (pStreamAud) {
-		// TODO: We need to update loop selector here, when sample is looping
-		if (!mixer->isSoundHandleActive(hCurrentAud)) {
-			ticker = SIGNAL_OFFSET;
-			signal = SIGNAL_OFFSET;
-			status = kSoundStopped;
-		} else {
-			ticker = (uint16)(mixer->getSoundElapsedTime(hCurrentAud) * 0.06);
-		}
 	}
 }
 
-void MusicEntry::doFade(Audio::Mixer *mixer) {
+void MusicEntry::doFade() {
 	if (fadeTicker)
 		fadeTicker--;
 	else {
@@ -569,10 +562,9 @@ void MusicEntry::doFade(Audio::Mixer *mixer) {
 		}
 		volume = fadeVolume;
 
+		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser)
 			pMidiParser->setVolume(volume);
-		if (pStreamAud)
-			mixer->setChannelVolume(hCurrentAud, volume);
 	}
 }
 

@@ -60,6 +60,13 @@ public:
 	void printPlayList(Console *con);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
+	/**
+	 * Synchronizes the current state of the music list to the rest of the engine, so that
+	 * the changes that the sound thread makes to the music are registered with the engine
+	 * scripts. In SCI0, we invoke this from kAnimate (which is called very often). SCI01
+	 * and later have a specific callback function, cmdUpdateCues, which is called regularly
+	 * by the engine scripts themselves, so the engine itself polls for changes to the music
+	 */
 	void updateSci0Cues();
 #endif
 
@@ -78,17 +85,6 @@ private:
 	uint32 _midiCommand;	// for cmdSendMidi
 	reg_t _acc;
 	int _midiCmd, _controller, _param;
-
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	/**
-	 * Synchronizes the current state of the music list to the rest of the engine, so that
-	 * the changes that the sound thread makes to the music are registered with the engine
-	 * scripts. In SCI0, we invoke this from kAnimate (which is called very often). SCI01
-	 * and later have a specific callback function, cmdUpdateCues, which is called regularly
-	 * by the engine scripts themselves, so the engine itself polls for changes to the music
-	 */
-	void updateCues(reg_t obj);
-#endif
 
 	void cmdInitHandle(reg_t obj, int16 value);
 	void cmdPlayHandle(reg_t obj, int16 value);

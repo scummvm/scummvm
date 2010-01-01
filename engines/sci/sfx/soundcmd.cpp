@@ -760,27 +760,34 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, frame, frame);
 	}
 #else
-	updateCues(obj);
-#endif
-}
-
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-
-void SoundCommandParser::updateSci0Cues() {
-	Common::StackLock(_music->_mutex);
-
-	const MusicList::iterator end = _music->getPlayListEnd();
-	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		updateCues((*i)->soundObj);
-	}
-}
-
-void SoundCommandParser::updateCues(reg_t obj) {
+	_music->_mutex.lock();
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("cmdUpdateCues: Slot not found");
+		_music->_mutex.unlock();
 		return;
 	}
+	_music->_mutex.unlock();	// unlock to perform mixer-related calls
+
+	// Update digital sound effect slots here
+	Audio::Mixer *mixer = g_system->getMixer();
+
+	if (musicSlot->pStreamAud) {
+		// TODO: We need to update loop selector here, when sample is looping
+		if (!mixer->isSoundHandleActive(musicSlot->hCurrentAud)) {
+			musicSlot->ticker = SIGNAL_OFFSET;
+			musicSlot->signal = SIGNAL_OFFSET;
+			musicSlot->status = kSoundStopped;
+		} else {
+			musicSlot->ticker = (uint16)(mixer->getSoundElapsedTime(musicSlot->hCurrentAud) * 0.06);
+
+			// Handle fading
+			if (musicSlot->fadeStep)
+				mixer->setChannelVolume(musicSlot->hCurrentAud, musicSlot->volume);
+		}
+	}
+
+	_music->_mutex.lock();	// and lock again
 
 	switch (musicSlot->signal) {
 		case 0:
@@ -811,8 +818,10 @@ void SoundCommandParser::updateCues(reg_t obj) {
 		PUT_SEL32V(_segMan, obj, sec, musicSlot->ticker % 3600 / 60);
 		PUT_SEL32V(_segMan, obj, frame, musicSlot->ticker);
 	}
-}
+
+	_music->_mutex.unlock();
 #endif
+}
 
 void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -937,23 +946,33 @@ void SoundCommandParser::cmdSuspendSound(reg_t obj, int16 value) {
 	warning("STUB: cmdSuspendSound");
 }
 
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+
+void SoundCommandParser::updateSci0Cues() {
+	Common::StackLock(_music->_mutex);
+
+	const MusicList::iterator end = _music->getPlayListEnd();
+	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
+		cmdUpdateCues((*i)->soundObj, 0);
+	}
+}
+
+#endif
+
 void SoundCommandParser::clearPlayList() {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	Common::StackLock lock(_music->_mutex);
 	_music->clearPlayList();
 #endif
 }
 
 void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	Common::StackLock lock(_music->_mutex);
 	_music->saveLoadWithSerializer(s);
 #endif
 }
 
 void SoundCommandParser::reconstructPlayList(int savegame_version) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-
 	Common::StackLock lock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();

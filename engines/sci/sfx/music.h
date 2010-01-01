@@ -103,8 +103,8 @@ public:
 	MusicEntry();
 	~MusicEntry();
 
-	void doFade(Audio::Mixer *mixer);
-	void onTimer(SciVersion soundVersion, Audio::Mixer *mixer);
+	void doFade();
+	void onTimer(SciVersion soundVersion);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
