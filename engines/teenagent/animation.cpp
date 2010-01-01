@@ -193,8 +193,6 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 			//debug(0, "%04x", offset[i]);
 			s->seek(offset[i] + off);
 			frames[i].load(s, Surface::kTypeOns);
-			frames[i].x = 0;
-			frames[i].y = 0;
 		}
 
 		break;
