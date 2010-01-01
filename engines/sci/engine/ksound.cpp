@@ -131,9 +131,12 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioRate:
 		s->_audio->setAudioRate(argv[1].toUint16());
 		break;
-	case kSciAudioVolume:
-		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[1].toUint16());
+	case kSciAudioVolume: {
+		int16 volume = argv[1].toUint16();
+		volume = CLIP<int16>(volume, 0, AUDIO_VOLUME_MAX);
+		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
 		break;
+	}
 	case kSciAudioLanguage:
 		// In SCI1.1: tests for digital audio support
 		if (getSciVersion() == SCI_VERSION_1_1)

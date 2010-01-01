@@ -51,6 +51,8 @@ enum AudioSyncCommands {
 	kSciAudioSyncStop = 2
 };
 
+#define AUDIO_VOLUME_MAX 127
+
 class Resource;
 class ResourceId;
 class ResourceManager;
