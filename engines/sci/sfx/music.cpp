@@ -559,13 +559,15 @@ void MusicEntry::doFade(Audio::Mixer *mixer) {
 	if (fadeTicker)
 		fadeTicker--;
 	else {
+		int16 fadeVolume = volume;
 		fadeTicker = fadeTickerStep;
-		volume += fadeStep;
-		if (((fadeStep > 0) && (volume >= fadeTo)) || ((fadeStep < 0) && (volume <= fadeTo))) {
-			volume = fadeTo;
+		fadeVolume += fadeStep;
+		if (((fadeStep > 0) && (fadeVolume >= fadeTo)) || ((fadeStep < 0) && (fadeVolume <= fadeTo))) {
+			fadeVolume = fadeTo;
 			fadeStep = 0;
 			signal = SIGNAL_OFFSET;
 		}
+		volume = fadeVolume;
 
 		if (pMidiParser)
 			pMidiParser->setVolume(volume);
