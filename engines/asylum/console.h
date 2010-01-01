@@ -33,7 +33,7 @@
 namespace Asylum {
 
 class AsylumEngine;
-struct ActionArea;
+class ActionArea;
 
 class Console : public GUI::Debugger {
 public:

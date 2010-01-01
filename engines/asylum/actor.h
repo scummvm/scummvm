@@ -33,7 +33,7 @@ namespace Asylum {
 
 class Scene;
 class Screen;
-struct ActionArea;
+class ActionArea;
 
 // TODO: check if the names match the actor type
 enum ActorType {
