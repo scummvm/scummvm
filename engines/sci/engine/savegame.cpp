@@ -133,11 +133,11 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(resnum);
 		s.syncAsSint16LE(dataInc);
 		s.syncAsSint16LE(ticker);
-		s.syncAsSint16LE(signal);
+		s.syncAsSint16LE(signal, VER(17));
 		s.syncAsByte(prio);
-		s.syncAsSint16LE(loop);
+		s.syncAsSint16LE(loop, VER(17));
 		s.syncAsByte(volume);
-		s.syncAsByte(hold);
+		s.syncAsByte(hold, VER(17));
 		s.syncAsByte(fadeTo);
 		s.syncAsSint16LE(fadeStep);
 		s.syncAsSint32LE(fadeTicker);
@@ -630,10 +630,11 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsByte(_soundOn);
 		s.syncAsByte(masterVolume);
 	} else if (s.isLoading()) {
-		if (s.getVersion() >= 14) {
+		if (s.getVersion() >= 15) {
 			s.syncAsByte(_soundOn);
 			s.syncAsByte(masterVolume);
-			s.syncAsByte(_reverb);
+			_reverb = 0;
+			s.syncAsByte(_reverb, VER(17));
 		} else {
 			_soundOn = true;
 			masterVolume = 15;
