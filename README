@@ -465,11 +465,26 @@ identical.
 
 3.7) Broken Sword notes:
 ---- -------------------
-Broken Sword 1 and 2 both come with in-game cutscenes compressed using
-RAD Game Tools' legacy Smacker(tm) format. As RAD is unwilling to open
-the older legacy versions of this format to us, and have requested we
-not reverse engineer it, Revolution Software has kindly allowed us to
-provide re-encoded Broken Sword cutscenes for download on our website:
+The instructions for the Broken Sword games are for the Sold-Out
+Software versions, with each game on two CDs, since these were the
+versions most easily available at the time ScummVM gained support for
+them. Hopefully they are general enough to be useful to other releases
+as well.
+
+
+3.7.1) Broken Sword cutscenes:
+------ -----------------------
+The cutscenes for the Broken Sword games have a bit of a history (see
+the next section, if you are interested), but in general all you need
+to do is to copy the .SMK files from the "SMACKS" or "SMACKSHI"
+directories on the CDs to the same directory as the other game data
+files. (Broken Sword 1 has a "SMACKSLO" directory with the same
+cutscenes, but these are of lower quality.) You can put them in a
+subdirectory called "video" if you find that neater.
+
+Some re-releases of the games, as well as the PlayStation version, do
+not have Smacker videos. Revolution Software has kindly allowed us to
+provide re-encoded cutscenes for download on our website:
 
   http://www.scummvm.org/downloads.php
 
@@ -478,24 +493,42 @@ quality is equal to the original games due to the use of lossless
 compression. Viewing these cutscenes requires a version of ScummVM
 compiled with both FLAC and zlib support.
 
-The PlayStation version's videos are not yet supported and therefore
-the DXA cutscenes are also needed.
-
 For systems that are too slow to handle the decoding of FLAC audio, the
 audio for these cutscenes is also provided separately as OGG Vorbis
 audio. Viewing these cutscenes with OGG Vorbis audio requires a version
 of ScummVM compiled with both libVorbis and zlib support.
 
-The cutscenes should be placed in the main game data directory. Note
-that currently this requires either copying the game to hard disk or
-burning customized versions of the game CDs.
-
-The instructions for the Broken Sword games are for the Sold-Out
-Software versions, which are the ones you are probably most likely to
-find in stores now.
+For Broken Sword 1, we also provide a subtitles add-on. Simply unpack
+it and follow the instructions in its readme.txt file. (Broken Sword 2
+already has subtitles; no extra work is needed for them.)
 
 
-3.7.1) Broken Sword 1:
+3.7.2) Broken Sword cutscenes, in retrospect
+------ -------------------------------------
+The original releases of the Broken Sword games used RAD Game Tools's
+Smacker(tm) format. As RAD was unwilling to open the older legacy
+versions of this format to us, and had requested we not reverse engineer
+it, an alternative solution had to be found.
+
+In Broken Sword 2, it was possible to play back the voice-over without
+playing the video itself. This remained a fallback until ScummVM 1.0.0,
+but was never the only solution for any stable release.
+
+In ScummVM 0.6.0 we used MPEG, which provided a reasonable trade-off
+between size and quality. In ScummVM 0.10.0 this was superceeded by DXA
+(originally added for AdventureSoft's "The Feeble Files"). This gave us
+a way of providing the cutscenes in the exact same quality as the
+originals, at the cost of being larger.
+
+Finally, in early 2006, the Smacker format was reverse engineered for
+the FFmpeg project. Thanks to their hard work, ScummVM 1.0.0 now
+supports the original cutscenes. At the same time, MPEG support was
+dropped. From a technical standpoint, this was a good thing since
+decoding MPEG movies added a lot of complexity, and they didn't look as
+good as the Smacker and DXA versions anyway.
+
+
+3.7.3) Broken Sword 1:
 ------ ---------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. For the Windows and Macintosh versions, you
@@ -515,7 +548,7 @@ ScummVM does not support the original cutscene files, so there is no
 need to copy them.
 
 
-3.7.2) Broken Sword 2:
+3.7.4) Broken Sword 2:
 ------ ---------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. (Actually, a few of them may not be strictly
