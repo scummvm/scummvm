@@ -102,6 +102,9 @@ public:
 		kUnknownPlayTime = -1
 	};
 
+	/** Set number of times the stream is supposed to get looped, 0 - infinite times */
+	virtual void setNumLoops(uint numLoops = 1) {};
+
 	/**
 	 * Returns total playtime of the AudioStream object.
 	 * Note that this does not require to return an playtime, if the
