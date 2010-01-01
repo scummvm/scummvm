@@ -891,6 +891,8 @@ void SoundCommandParser::cmdSetHandleVolume(reg_t obj, int16 value) {
 		return;
 	}
 
+	debugC(2, kDebugLevelSound, "cmdSetHandleVolume: %d", value);
+
 	value = CLIP<int>(value, 0, Audio::Mixer::kMaxChannelVolume);
 
 	if (musicSlot->volume != value) {
