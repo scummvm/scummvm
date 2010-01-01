@@ -72,13 +72,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	case kActorLeft:
 	case kActorRight:
 		if (render_head) {
-			if (head_index >= sizeof(frames_head_left_right))
+			if (head_index >= ARRAYSIZE(frames_head_left_right))
 				head_index = 0;
 			head = frames + frames_head_left_right[head_index];
 			++head_index;
 		}
 
-		if (index >= sizeof(frames_left_right))
+		if (index >= ARRAYSIZE(frames_left_right))
 			index = 0;
 		s = frames + frames_left_right[index];
 		dx = 11;
@@ -86,13 +86,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		break;
 	case kActorUp:
 		if (render_head) {
-			if (head_index >= sizeof(frames_head_up))
+			if (head_index >= ARRAYSIZE(frames_head_up))
 				head_index = 0;
 			head = frames + frames_head_up[head_index];
 			++head_index;
 		}
 
-		if (index >= sizeof(frames_up))
+		if (index >= ARRAYSIZE(frames_up))
 			index = 0;
 		s = frames + frames_up[index];
 		dx = 11;
@@ -100,13 +100,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		break;
 	case kActorDown:
 		if (render_head) {
-			if (head_index >= sizeof(frames_head_down))
+			if (head_index >= ARRAYSIZE(frames_head_down))
 				head_index = 0;
 			head = frames + frames_head_down[head_index];
 			++head_index;
 		}
 
-		if (index >= sizeof(frames_down))
+		if (index >= ARRAYSIZE(frames_down))
 			index = 0;
 		s = frames + frames_down[index];
 		dx = 11;
