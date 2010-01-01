@@ -629,6 +629,7 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isSaving()) {
 		s.syncAsByte(_soundOn);
 		s.syncAsByte(masterVolume);
+		s.syncAsByte(_reverb, VER(17));
 	} else if (s.isLoading()) {
 		if (s.getVersion() >= 15) {
 			s.syncAsByte(_soundOn);
