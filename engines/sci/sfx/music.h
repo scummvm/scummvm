@@ -87,11 +87,13 @@ public:
 	byte hold;
 
 	int16 pauseCounter;
+	uint sampleLoopCounter;
 
 	byte fadeTo;
 	short fadeStep;
 	uint32 fadeTicker;
 	uint32 fadeTickerStep;
+	bool fadeVolumeSet;
 
 	SoundStatus status;
 

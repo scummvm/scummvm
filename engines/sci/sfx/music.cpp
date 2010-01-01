@@ -359,9 +359,8 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 void SciMusic::onTimer() {
 	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
 		(*i)->onTimer(_soundVersion);
-	}
 }
 
 void SciMusic::soundPlay(MusicEntry *pSnd) {
@@ -521,11 +520,13 @@ MusicEntry::MusicEntry() {
 	hold = 0;
 
 	pauseCounter = 0;
+	sampleLoopCounter = 0;
 
 	fadeTo = 0;
 	fadeStep = 0;
 	fadeTicker = 0;
 	fadeTickerStep = 0;
+	fadeVolumeSet = false;
 
 	status = kSoundStopped;
 
@@ -542,6 +543,7 @@ void MusicEntry::onTimer(SciVersion soundVersion) {
 	if (status != kSoundPlaying)
 		return;
 
+	// Fade MIDI and digital sound effects
 	if (fadeStep)
 		doFade();
 
@@ -569,9 +571,8 @@ void MusicEntry::doFade() {
 		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser)
 			pMidiParser->setVolume(volume);
-		// TODO: create onTimer within audio.cpp to do the handling there, if we do it in cmdUpdateCues it wont
-		//  work right, because the last volume set won't get done at all. Also we are fading digital sound effects
-		//  currently here in any case currently. Fade code should get moved to void SciMusic::onTimer()
+		if (pStreamAud)
+			fadeVolumeSet = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
 	}
 }
 
