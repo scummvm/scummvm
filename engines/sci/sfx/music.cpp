@@ -163,7 +163,6 @@ void SciMusic::resetDriver() {
 	_pMidiDrv->close();
 	_pMidiDrv->open();
 	_pMidiDrv->setTimerCallback(this, &miditimerCallback);
-	_dwTempo = _pMidiDrv->getBaseTempo();
 }
 
 static int f_compare(const void *arg1, const void *arg2) {

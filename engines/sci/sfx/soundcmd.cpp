@@ -1010,4 +1010,10 @@ void SoundCommandParser::printPlayList(Console *con) {
 #endif
 }
 
+void SoundCommandParser::resetDriver() {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->resetDriver();
+#endif
+}
+
 } // End of namespace Sci
