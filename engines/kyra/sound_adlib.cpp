@@ -301,11 +301,10 @@ private:
 	int update_removePrimaryEffect2(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback41(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, uint8 value);
-	int update_nop1(uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_nop(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setDurationRandomness(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_changeChannelTempo(uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback46(uint8 *&dataptr, Channel &channel, uint8 value);
-	int update_nop2(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_playRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removeRhythmSection(uint8 *&dataptr, Channel &channel, uint8 value);
@@ -1655,7 +1654,7 @@ int AdlibDriver::update_resetToGlobalTempo(uint8 *&dataptr, Channel &channel, ui
 	return 0;
 }
 
-int AdlibDriver::update_nop1(uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdlibDriver::update_nop(uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	return 0;
 }
@@ -1685,14 +1684,6 @@ int AdlibDriver::updateCallback46(uint8 *&dataptr, Channel &channel, uint8 value
 		// Frequency
 		writeOPL(0xA0, _tablePtr2[0]);
 	}
-	return 0;
-}
-
-// TODO: This is really the same as update_nop1(), so they should be combined
-//       into one single update_nop().
-
-int AdlibDriver::update_nop2(uint8 *&dataptr, Channel &channel, uint8 value) {
-	--dataptr;
 	return 0;
 }
 
@@ -2031,7 +2022,7 @@ void AdlibDriver::setupParserOpcodeTable() {
 		COMMAND(update_stopChannel),
 		COMMAND(updateCallback41),
 		COMMAND(update_resetToGlobalTempo),
-		COMMAND(update_nop1),
+		COMMAND(update_nop),
 
 		// 60
 		COMMAND(update_setDurationRandomness),
@@ -2040,7 +2031,7 @@ void AdlibDriver::setupParserOpcodeTable() {
 		COMMAND(updateCallback46),
 
 		// 64
-		COMMAND(update_nop2),
+		COMMAND(update_nop),
 		COMMAND(update_setupRhythmSection),
 		COMMAND(update_playRhythmSection),
 		COMMAND(update_removeRhythmSection),
