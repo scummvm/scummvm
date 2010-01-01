@@ -648,8 +648,11 @@ int MidiDriver_Adlib::calcVelocity(int voice, int op) {
 	if (_isSCI0) {
 		int velocity = _masterVolume;
 
-		if ((velocity > 0) && (velocity < 13))
+		if (velocity > 0)
 			velocity += 3;
+
+		if (velocity > 15)
+			velocity = 15;
 
 		int insVelocity;
 		if (_channels[_voices[voice].channel].enableVelocity)
