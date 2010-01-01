@@ -1368,8 +1368,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x557e:
-		//scaled moveTo
-		debug(0, "y = %d", scene->getPosition().y);
 		if (scene->getPosition().y <= 149)
 			moveTo(94, 115, 4);
 		else
