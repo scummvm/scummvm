@@ -56,7 +56,6 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	
 	debug(1, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
 	p.clear();
-	p.push_back(src);
 	p.push_back(dst);
 
 	Common::List<uint> boxes;
@@ -668,7 +667,7 @@ bool Scene::render(OSystem *system) {
 					position.x += (o == kActorDown || o == kActorUp)? 
 						(ABS(dp.x) < speed_y? dp.x: SIGN(dp.x) * speed_y):
 						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
-					
+
 					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
 
 					if (position == destination) {
