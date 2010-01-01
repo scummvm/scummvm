@@ -782,10 +782,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->status = kSoundStopped;
 		} else {
 			musicSlot->ticker = (uint16)(mixer->getSoundElapsedTime(musicSlot->hCurrentAud) * 0.06);
-
-			// Handle fading
-			if (musicSlot->fadeStep)
-				mixer->setChannelVolume(musicSlot->hCurrentAud, musicSlot->volume);
 		}
 	}
 
