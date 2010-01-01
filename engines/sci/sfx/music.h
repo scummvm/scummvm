@@ -56,6 +56,8 @@ enum SoundStatus {
 	kSoundPlaying = 3
 };
 
+#define MUSIC_VOLUME_FOR_SCI0 127
+
 class MidiParser_SCI;
 class SegManager;
 

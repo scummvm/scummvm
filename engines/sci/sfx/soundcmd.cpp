@@ -420,7 +420,7 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 	musicSlot->prio = GET_SEL32V(_segMan, obj, priority);
 	// vol selector doesnt get used before sci1late
 	if (_soundVersion < SCI_VERSION_1_LATE)
-		musicSlot->volume = 100;
+		musicSlot->volume = MUSIC_VOLUME_FOR_SCI0;
 	else
 		musicSlot->volume = GET_SEL32V(_segMan, obj, vol);
 	_music->soundPlay(musicSlot);
@@ -991,7 +991,7 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
 				(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
 			else
-				(*i)->volume = 100;
+				(*i)->volume = MUSIC_VOLUME_FOR_SCI0;
 		}
 
 		(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
