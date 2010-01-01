@@ -2660,6 +2660,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
+	// The Feeble Files - Polish Windows 4CD
+	{
+		{
+			"feeble",
+			"4CD",
+
+			{
+	{ "game22",		GAME_BASEFILE,	"c498f892a5dbcbc968e0dbb8697884fc", 258660},
+	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
+	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOMUSIC
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE
+	},
+
 	// The Feeble Files - Spanish Windows 4CD
 	{
 		{
