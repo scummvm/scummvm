@@ -92,8 +92,10 @@ protected:
 
 	bool _isStereo;
 	int _rate;
-	uint _numLoops;
 	const uint _totalNumLoops;
+
+	uint _numLoops;			///< Number of loops to play
+	uint _numPlayedLoops;	///< Number of loops which have been played
 
 #ifdef USE_TREMOR
 	ogg_int64_t _startTime;
@@ -119,6 +121,9 @@ public:
 	bool endOfData() const		{ return _pos >= _bufferEnd; }
 	bool isStereo() const		{ return _isStereo; }
 	int getRate() const			{ return _rate; }
+
+	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 	int32 getTotalPlayTime() const {
 		if (!_totalNumLoops)
@@ -219,6 +224,8 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 					// If looping is on and there are loops left, rewind to the start
 					if (_numLoops != 0)
 						_numLoops--;
+
+					_numPlayedLoops++;
 
 					res = ov_time_seek(&_ovFile, _startTime);
 					if (res < 0) {

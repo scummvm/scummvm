@@ -56,7 +56,6 @@ protected:
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
 
-	uint _numLoops;
 	uint _posInFrame;
 	State _state;
 
@@ -65,6 +64,9 @@ protected:
 	mad_timer_t _totalTime;
 
 	int32 _totalPlayTime;
+
+	uint _numLoops;			///< Number of loops to play
+	uint _numPlayedLoops;	///< Number of loops which have been played
 
 	mad_stream _stream;
 	mad_frame _frame;
@@ -91,6 +93,9 @@ public:
 	bool isStereo() const		{ return MAD_NCHANNELS(&_frame.header) == 2; }
 	int getRate() const			{ return _frame.header.samplerate; }
 	int32 getTotalPlayTime() const { return _totalPlayTime; }
+
+	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 protected:
 	void decodeMP3Data();
@@ -284,6 +289,8 @@ void MP3InputStream::decodeMP3Data() {
 			// If looping is on and there are loops left, rewind to the start
 			if (_numLoops != 0)
 				_numLoops--;
+
+			_numPlayedLoops++;
 
 			// Deinit MAD
 			mad_synth_finish(&_synth);

@@ -106,7 +106,13 @@ public:
 	 * Sets number of times the stream is supposed to get looped
 	 * @param numLoops number of loops to play, 0 - infinite
 	 */
-	virtual void setNumLoops(uint numLoops = 1) {};
+	virtual void setNumLoops(uint numLoops = 1) {}
+
+	/** 
+	 * Returns number of loops the stream has played.
+	 * @param numLoops number of loops to play, 0 - infinite
+	 */
+	virtual uint getNumPlayedLoops() { return 0; }
 
 	/**
 	 * Returns total playtime of the AudioStream object.

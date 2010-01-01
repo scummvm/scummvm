@@ -130,6 +130,9 @@ protected:
 	const byte *_origPtr;
 	const int32 _playtime;
 
+	uint _numLoops;			///< Number of loops to play
+	uint _numPlayedLoops;	///< Number of loops which have been played
+
 public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
@@ -153,6 +156,8 @@ public:
 	int32 getTotalPlayTime() const	{ return _playtime; }
 
 	void setNumLoops(uint numLoops) {
+		_numLoops = numLoops;
+
 		if (numLoops == 1) {
 			_loopPtr = 0;
 			_loopEnd = 0;
@@ -161,6 +166,8 @@ public:
 			_loopEnd = _end;
 		}
 	}
+
+	uint getNumPlayedLoops() { return _numPlayedLoops; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
@@ -177,6 +184,8 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 		if (_loopPtr && _ptr >= _end) {
 			_ptr = _loopPtr;
 			_end = _loopEnd;
+
+			_numPlayedLoops++;
 		}
 	}
 	return numSamples-samples;
@@ -205,6 +214,9 @@ class LinearDiskStream : public AudioStream {
 	static const int32 BUFFER_SIZE = 16384;
 #endif
 
+	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	uint getNumPlayedLoops() { return _numPlayedLoops; }
+
 protected:
 	byte* _buffer;			///< Streaming buffer
 	const byte *_ptr;		///< Pointer to current position in stream buffer
@@ -224,11 +236,13 @@ protected:
 	int _beginLoop;			///< Loop start parameter
 	int _endLoop;			///< Loop end parameter, currently not implemented
 	bool _loop;				///< Determines if the stream should be looped when it finishes
+	uint _numLoops;			///< Number of loops to play
+	uint _numPlayedLoops;	///< Number of loops which have been played
 
 public:
 	LinearDiskStream(int rate, uint beginLoop, uint endLoop, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks, bool loop)
 		: _rate(rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
-		  _audioBlockCount(numBlocks), _loop(loop) {
+		  _audioBlockCount(numBlocks), _loop(loop), _numPlayedLoops(0) {
 
 		assert(numBlocks > 0);
 
@@ -333,6 +347,8 @@ int LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffe
 			_currentBlock = 0;
 			_filePos = _audioBlock[_currentBlock].pos + _beginLoop;
 			_diskLeft = _audioBlock[_currentBlock].len;
+
+			_numPlayedLoops++;
 		}
 	}
 

@@ -87,8 +87,6 @@ protected:
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
 
-	uint _numLoops;
-
 	::FLAC__SeekableStreamDecoder *_decoder;
 
 	/** Header of the stream */
@@ -102,6 +100,9 @@ protected:
 
 	/** total play time */
 	int32 _totalPlayTime;
+
+	uint _numLoops;			///< Number of loops to play
+	uint _numPlayedLoops;	///< Number of loops which have been played
 
 	/** true if the last sample was decoded from the FLAC-API - there might still be data in the buffer */
 	bool _lastSampleWritten;
@@ -145,6 +146,9 @@ public:
 	int32 getTotalPlayTime() const { return _totalPlayTime; }
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
+
+	void setNumLoops(uint numLoops = 1) { _numLoops = numLoops; }
+	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 protected:
 	uint getChannels() const { return MIN<uint>(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
@@ -193,6 +197,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 		_inStream(inStream),
 		_disposeAfterUse(dispose),
 		_numLoops(numLoops),
+		_numPlayedLoops(0),
 		_firstSample(0), _lastSample(0),
 		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(false),
 		_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
@@ -373,6 +378,7 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_lastSampleWritten && _numLoops != 1) {
 			if (_numLoops != 0)
 				_numLoops--;
+			_numPlayedLoops++;
 			seekAbsolute(_firstSample);
 			state = getStreamDecoderState();
 		}
