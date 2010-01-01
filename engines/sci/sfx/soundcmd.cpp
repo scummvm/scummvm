@@ -804,6 +804,9 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			PUT_SEL32V(_segMan, obj, signal, musicSlot->signal);
 			break;
 	}
+	// Sync loop selector for SCI0
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		PUT_SEL32V(_segMan, obj, loop, musicSlot->loop);
 
 	// Signal the game when a digital sound effect is done playing
 	if (musicSlot->pStreamAud && musicSlot->status == kSoundStopped && 
