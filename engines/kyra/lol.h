@@ -1439,7 +1439,6 @@ private:
 	void stunCharacter(int charNum);
 	void restoreSwampPalette();
 
-	void distObj1Sub(int a, int b, int c, int d);
 	void launchMagicViper();
 
 	void breakIceWall(uint8 *pal1, uint8 *pal2);

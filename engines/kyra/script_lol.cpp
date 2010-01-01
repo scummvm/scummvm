@@ -2990,7 +2990,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_queueSpeech);
 	Opcode(olol_getItemPrice);
 	Opcode(olol_getLanguage);
-	OpcodeUnImpl();
+	Opcode(olol_dummy0);
 
 	Common::Array<const TIMOpcode*> *timTable = 0;
 
