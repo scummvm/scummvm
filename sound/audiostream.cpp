@@ -144,6 +144,7 @@ public:
 		} else {
 			_numLoops = 1;
 		}
+		_numPlayedLoops = 0;
 
 		_origPtr = autoFreeMemory ? ptr : 0;
 	}
@@ -164,6 +165,7 @@ public:
 
 	void setNumLoops(uint numLoops) {
 		_numLoops = numLoops;
+		_numPlayedLoops = 0;
 
 		if (numLoops == 1) {
 			_loopPtr = 0;
