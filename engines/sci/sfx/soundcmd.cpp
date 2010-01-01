@@ -400,6 +400,8 @@ void SoundCommandParser::cmdPlayHandle(reg_t obj, int16 value) {
 		// Find slot again :)
 		musicSlot = _music->getSlot(obj);
 	}
+	int16 loop = GET_SEL32V(_segMan, obj, loop);
+	debugC(2, kDebugLevelSound, "cmdPlayHandle: resource number %d, loop %d", number, loop);
 
 	PUT_SEL32(_segMan, obj, handle, obj);
 

@@ -103,7 +103,7 @@ public:
 	MusicEntry();
 	~MusicEntry();
 
-	void doFade();
+	void doFade(Audio::Mixer *mixer);
 	void onTimer(SciVersion soundVersion, Audio::Mixer *mixer);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS

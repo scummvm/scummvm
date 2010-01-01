@@ -377,6 +377,13 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	_mutex.unlock();
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
+		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
+		uint16 loop = GET_SEL32V(segMan, pSnd->soundObj, loop);
+		// Are we supposed to loop the stream?
+		if (loop > 1)
+			pSnd->pStreamAud->setNumLoops(loop);
+		else
+			pSnd->pStreamAud->setNumLoops(1);
 		_pMixer->playInputStream(Audio::Mixer::kSFXSoundType, &pSnd->hCurrentAud,
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
 	} else if (pSnd->pMidiParser) {
@@ -529,12 +536,15 @@ MusicEntry::~MusicEntry() {
 void MusicEntry::onTimer(SciVersion soundVersion, Audio::Mixer *mixer) {
 	if (status != kSoundPlaying)
 		return;
+
+	if (fadeStep)
+		doFade(mixer);
+
 	if (pMidiParser) {
-		if (fadeStep)
-			doFade();
 		pMidiParser->onTimer();
 		ticker = (uint16)pMidiParser->getTick();
 	} else if (pStreamAud) {
+		// TODO: We need to update loop selector here, when sample is looping
 		if (!mixer->isSoundHandleActive(hCurrentAud)) {
 			ticker = SIGNAL_OFFSET;
 			signal = SIGNAL_OFFSET;
@@ -545,7 +555,7 @@ void MusicEntry::onTimer(SciVersion soundVersion, Audio::Mixer *mixer) {
 	}
 }
 
-void MusicEntry::doFade() {
+void MusicEntry::doFade(Audio::Mixer *mixer) {
 	if (fadeTicker)
 		fadeTicker--;
 	else {
@@ -557,7 +567,10 @@ void MusicEntry::doFade() {
 			signal = SIGNAL_OFFSET;
 		}
 
-		pMidiParser->setVolume(volume);
+		if (pMidiParser)
+			pMidiParser->setVolume(volume);
+		if (pStreamAud)
+			mixer->setChannelVolume(hCurrentAud, volume);
 	}
 }
 
