@@ -221,13 +221,9 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 			// If we are still out of data, and also past the end of specified
 			// time range, check whether looping is enabled...
 			if (_pos >= _bufferEnd && ov_time_tell(&_ovFile) >= _endTime) {
-				if (_numLoops != 1) {
-					// If looping is on and there are loops left, rewind to the start
-					if (_numLoops != 0)
-						_numLoops--;
-
-					_numPlayedLoops++;
-
+				++_numPlayedLoops;
+				// If looping is on and there are loops left, rewind to the start
+				if (!_numLoops || _numPlayedLoops < _numLoops) {
 					res = ov_time_seek(&_ovFile, _startTime);
 					if (res < 0) {
 						warning("Error seeking in Vorbis stream (%d)", res);

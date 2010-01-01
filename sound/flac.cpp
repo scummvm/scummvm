@@ -379,13 +379,11 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		if (state == FLAC__STREAM_DECODER_END_OF_STREAM) {
 			_lastSampleWritten = true;
+			++_numPlayedLoops;
 		}
 
 		// If we reached the end of the stream, and looping is enabled: Try to rewind
-		if (_lastSampleWritten && _numLoops != 1) {
-			if (_numLoops != 0)
-				_numLoops--;
-			_numPlayedLoops++;
+		if (_lastSampleWritten && (!_numLoops || _numPlayedLoops < _numLoops)) {
 			seekAbsolute(_firstSample);
 			state = getStreamDecoderState();
 		}

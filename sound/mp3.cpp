@@ -290,20 +290,18 @@ void MP3InputStream::decodeMP3Data() {
 			break;
 		}
 
-		if (_state == MP3_STATE_EOS && _numLoops != 1) {
+		if (_state == MP3_STATE_EOS) {
+			++_numPlayedLoops;
 			// If looping is on and there are loops left, rewind to the start
-			if (_numLoops != 0)
-				_numLoops--;
+			if (!_numLoops || _numPlayedLoops < _numLoops) {
+				// Deinit MAD
+				mad_synth_finish(&_synth);
+				mad_frame_finish(&_frame);
+				mad_stream_finish(&_stream);
 
-			_numPlayedLoops++;
-
-			// Deinit MAD
-			mad_synth_finish(&_synth);
-			mad_frame_finish(&_frame);
-			mad_stream_finish(&_stream);
-
-			// Reset the decoder state to indicate we should start over
-			_state = MP3_STATE_INIT;
+				// Reset the decoder state to indicate we should start over
+				_state = MP3_STATE_INIT;
+			}
 		}
 
 	} while (_state != MP3_STATE_EOS && _stream.error == MAD_ERROR_BUFLEN);
