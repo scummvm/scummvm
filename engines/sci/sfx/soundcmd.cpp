@@ -781,7 +781,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
-		// TODO: We need to update loop selector here, when sample is looping
 		if (!mixer->isSoundHandleActive(musicSlot->hCurrentAud)) {
 			musicSlot->ticker = SIGNAL_OFFSET;
 			musicSlot->signal = SIGNAL_OFFSET;
