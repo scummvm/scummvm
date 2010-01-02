@@ -918,10 +918,25 @@ void SoundCommandParser::cmdSetSoundPriority(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	script_set_priority(_resMan, _segMan, _state, obj, value);
 #else
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
+		warning("cmdSetSoundPriority: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return;
+	}
+
 	if (value == -1) {
+		// Set priority from the song data
+		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, musicSlot->resnum), 0);
+		if (song->data[0] == 0xf0)
+			_music->soundSetPriority(musicSlot, song->data[1]);
+		else
+			warning("cmdSetSoundPriority: Attempt to unset song priority when there is no built-in value");
+
 		//pSnd->prio=0;field_15B=0
 		PUT_SEL32V(_segMan, obj, flags, GET_SEL32V(_segMan, obj, flags) & 0xFD);
 	} else {
+		// Scripted priority
+
 		//pSnd->field_15B=1;
 		PUT_SEL32V(_segMan, obj, flags, GET_SEL32V(_segMan, obj, flags) | 2);
 		//DoSOund(0xF,hobj,w)
