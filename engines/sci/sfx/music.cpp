@@ -524,7 +524,7 @@ MusicEntry::MusicEntry() {
 	signal = 0;
 	prio = 0;
 	loop = 0;
-	volume = 0;
+	volume = MUSIC_VOLUME_DEFAULT;
 	hold = 0;
 
 	pauseCounter = 0;

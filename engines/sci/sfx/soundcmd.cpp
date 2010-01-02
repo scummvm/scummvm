@@ -280,7 +280,8 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop);
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
-	newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, MUSIC_VOLUME_MAX);
+	if (_soundVersion >= SCI_VERSION_1_LATE)
+		newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, MUSIC_VOLUME_MAX);
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -418,10 +419,7 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 
 	musicSlot->loop = GET_SEL32V(_segMan, obj, loop);
 	musicSlot->prio = GET_SEL32V(_segMan, obj, priority);
-	// vol selector doesnt get used before sci1late
-	if (_soundVersion < SCI_VERSION_1_LATE)
-		musicSlot->volume = MUSIC_VOLUME_FOR_SCI0;
-	else
+	if (_soundVersion >= SCI_VERSION_1_LATE)
 		musicSlot->volume = GET_SEL32V(_segMan, obj, vol);
 	_music->soundPlay(musicSlot);
 
@@ -641,7 +639,6 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 	}
 
 	int volume = musicSlot->volume;
-	PUT_SEL32V(_segMan, musicSlot->soundObj, vol, volume);
 	musicSlot->fadeTo = _argv[2].toUint16();
 	musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
 	musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
@@ -1018,10 +1015,8 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 			(*i)->dataInc = GET_SEL32V(_segMan, (*i)->soundObj, dataInc);
 			(*i)->signal = GET_SEL32V(_segMan, (*i)->soundObj, signal);
 
-			if (_soundVersion >= SCI_VERSION_1_EARLY)
+			if (_soundVersion >= SCI_VERSION_1_LATE)
 				(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
-			else
-				(*i)->volume = MUSIC_VOLUME_FOR_SCI0;
 		}
 
 		(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);

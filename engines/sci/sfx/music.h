@@ -56,7 +56,7 @@ enum SoundStatus {
 	kSoundPlaying = 3
 };
 
-#define MUSIC_VOLUME_FOR_SCI0 127
+#define MUSIC_VOLUME_DEFAULT 127
 #define MUSIC_VOLUME_MAX 127
 
 class MidiParser_SCI;
