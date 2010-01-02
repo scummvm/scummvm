@@ -785,9 +785,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
 		if (!mixer->isSoundHandleActive(musicSlot->hCurrentAud)) {
-			musicSlot->ticker = SIGNAL_OFFSET;
-			musicSlot->signal = SIGNAL_OFFSET;
-			musicSlot->status = kSoundStopped;
+			cmdStopSound(obj, 0);
 		} else {
 			musicSlot->ticker = (uint16)(mixer->getSoundElapsedTime(musicSlot->hCurrentAud) * 0.06);
 		}
@@ -796,32 +794,27 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			mixer->setChannelVolume(musicSlot->hCurrentAud, musicSlot->volume);
 			musicSlot->fadeVolumeSet = false;
 		}
+	} else {
+		switch (musicSlot->signal) {
+			case 0:
+				if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
+					PUT_SEL32V(_segMan, obj, dataInc, musicSlot->dataInc);
+					PUT_SEL32V(_segMan, obj, signal, musicSlot->dataInc + 127);
+				}
+				break;
+			case SIGNAL_OFFSET:
+				cmdStopSound(obj, 0);
+				break;
+			default:
+				// Sync the signal of the sound object
+				PUT_SEL32V(_segMan, obj, signal, musicSlot->signal);
+				break;
+		}
 	}
 
-	switch (musicSlot->signal) {
-		case 0:
-			if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
-				PUT_SEL32V(_segMan, obj, dataInc, musicSlot->dataInc);
-				PUT_SEL32V(_segMan, obj, signal, musicSlot->dataInc + 127);
-			}
-			break;
-		case SIGNAL_OFFSET:
-			cmdStopSound(obj, 0);
-			break;
-		default:
-			// Sync the signal of the sound object
-			PUT_SEL32V(_segMan, obj, signal, musicSlot->signal);
-			break;
-	}
 	// Sync loop selector for SCI0
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		PUT_SEL32V(_segMan, obj, loop, musicSlot->loop);
-
-	// Signal the game when a digital sound effect is done playing
-	if (musicSlot->pStreamAud && musicSlot->status == kSoundStopped && 
-		musicSlot->signal == SIGNAL_OFFSET) {
-		cmdStopSound(obj, 0);
-	}
 
 	musicSlot->signal = 0;
 

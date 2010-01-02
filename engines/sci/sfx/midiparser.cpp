@@ -133,10 +133,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
 			// Also, sci/sfx/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
 			switch (info.basic.param1) {
-			case 0x50:	// set volume
-				// This is documented to be "reverb", but it looks like channel
-				// volume, at least in SCI11, so treat it as such
-				_pSnd->volume = info.basic.param2;
+			case 0x50:	// set reverb
 				break;
 			case 0x52:	// set hold
 				_pSnd->hold = info.basic.param2;
