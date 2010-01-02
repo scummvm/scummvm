@@ -25,6 +25,8 @@
 
 #include "common/stream.h"
 
+namespace Groovie {
+
 class LzssReadStream : public Common::ReadStream {
 private:
 	uint8 *_outLzssBufData;
@@ -40,3 +42,5 @@ public:
 	bool eos() const;
 	uint32 read(void *buf, uint32 size);
 };
+
+} // End of Groovie namespace
