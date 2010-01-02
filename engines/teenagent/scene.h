@@ -127,7 +127,7 @@ public:
 
 	void init(TeenAgentEngine *engine, OSystem *system);
 	void init(int id, const Common::Point &pos);
-	bool render(OSystem *system);
+	bool render();
 	int getId() const { return _id; }
 
 	void warp(const Common::Point &point, byte orientation = 0);

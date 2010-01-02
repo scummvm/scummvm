@@ -528,7 +528,7 @@ int Scene::lookupZoom(uint y) const {
 }
 
 
-bool Scene::render(OSystem *system) {
+bool Scene::render() {
 	Resources *res = Resources::instance();
 	bool busy;
 	bool restart;
@@ -538,7 +538,6 @@ bool Scene::render(OSystem *system) {
 		busy = processEventQueue();
 		
 		if (_fade_timer) {
-			debug(0, "fade timer = %d, type = %d", _fade_timer, _fade_type);
 			if (_fade_timer > 0) {
 				--_fade_timer;
 				setPalette(_fade_timer);
@@ -550,11 +549,11 @@ bool Scene::render(OSystem *system) {
 		
 		switch(current_event.type) {
 		case SceneEvent::kCredits: {
-			system->fillScreen(0);
+			_system->fillScreen(0);
 			///\todo: optimize me
-			Graphics::Surface *surface = system->lockScreen();
+			Graphics::Surface *surface = _system->lockScreen();
 			res->font7.render(surface, current_event.dst.x, current_event.dst.y--, current_event.message, current_event.color);
-			system->unlockScreen();
+			_system->unlockScreen();
 
 			if (current_event.dst.y < -(int)current_event.timer)
 				current_event.clear();
@@ -573,24 +572,24 @@ bool Scene::render(OSystem *system) {
 		}
 
 		if (current_event.type == SceneEvent::kCreditsMessage) {
-			system->fillScreen(0);
-			Graphics::Surface *surface = system->lockScreen();
+			_system->fillScreen(0);
+			Graphics::Surface *surface = _system->lockScreen();
 			if (current_event.lan == 8) {
 				res->font8.shadow_color = current_event.orientation;
 				res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
 				res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
 			} 
-			system->unlockScreen();
+			_system->unlockScreen();
 			return true;
 		}
 
 		if (background.pixels && debug_features.feature[DebugFeatures::kShowBack]) {
-			system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+			_system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
 		} else
-			system->fillScreen(0);
+			_system->fillScreen(0);
 
-		Graphics::Surface *surface = system->lockScreen();
+		Graphics::Surface *surface = _system->lockScreen();
 
 		bool got_any_animation = false;
 
@@ -713,7 +712,7 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 		if (restart) {
-			system->unlockScreen();
+			_system->unlockScreen();
 			continue;
 		}
 		//render on
@@ -774,7 +773,7 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-		system->unlockScreen();
+		_system->unlockScreen();
 
 		if (!restart && current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
 			debug(0, "no animations, nextevent");
