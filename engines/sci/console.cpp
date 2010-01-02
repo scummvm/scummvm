@@ -109,7 +109,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
-	DCmd_Register("listsaves",			WRAP_METHOD(Console, cmdListSaves));
+	DCmd_Register("list_saves",			WRAP_METHOD(Console, cmdListSaves));
 	// Screen
 	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
 	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));
@@ -324,6 +324,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
 	DebugPrintf(" restore_game - Restores a saved game from the hard disk\n");
+	DebugPrintf(" list_saves - List all saved games including filenames\n");
 	DebugPrintf(" restart_game - Restarts the game\n");
 	DebugPrintf(" version - Shows the resource and interpreter versions\n");
 	DebugPrintf(" room - Shows the current room number\n");
