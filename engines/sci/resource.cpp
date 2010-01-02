@@ -1944,7 +1944,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 				_tracks[trackNr].digitalSampleSize = 0;
 				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
 					channel = &_tracks[trackNr].channels[channelNr];
-					channel->unk = READ_LE_UINT16(data);
+					channel->prio = READ_LE_UINT16(data);
 					channel->data = resource->data + READ_LE_UINT16(data + 2) + 2;
 					channel->size = READ_LE_UINT16(data + 4) - 2; // Not counting channel header
 					channel->number = *(channel->data - 2);
@@ -1980,7 +1980,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		error("SoundResource: SCI version %d is unsupported", _soundVersion);
 	}
 }
-//----------------------------------------------------
+
 SoundResource::~SoundResource() {
 	for (int trackNr = 0; trackNr < _trackCount; trackNr++)
 		delete[] _tracks[trackNr].channels;
@@ -1988,7 +1988,8 @@ SoundResource::~SoundResource() {
 
 	_resMan->unlockResource(_innerResource);
 }
-//----------------------------------------------------
+
+#if 0
 SoundResource::Track* SoundResource::getTrackByNumber(uint16 number) {
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		return &_tracks[0];
@@ -1997,6 +1998,7 @@ SoundResource::Track* SoundResource::getTrackByNumber(uint16 number) {
 		return &_tracks[number];
 	return NULL;
 }
+#endif
 
 SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
 	if (_soundVersion <= SCI_VERSION_0_LATE)

@@ -446,7 +446,7 @@ public:
 	struct Channel {
 		byte number;
 		byte poly;
-		uint16 unk;
+		uint16 prio;
 		uint16 size;
 		byte *data;
 		long time;
@@ -464,7 +464,9 @@ public:
 public:
 	SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion);
 	~SoundResource();
+#if 0
 	Track *getTrackByNumber(uint16 number);
+#endif
 	Track *getTrackByType(TrackType type);
 	int getChannelFilterMask(int hardwareMask);
 
