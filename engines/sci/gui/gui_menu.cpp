@@ -256,7 +256,8 @@ void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, 
 		itemEntry->tag = value.offset;
 		break;
 	default:
-		error("setAttribute() called with unsupported attributeId %X", attributeId);
+		// Happens when loading a game in LSL3 - attribute 1A
+		warning("setAttribute() called with unsupported attributeId %X", attributeId);
 	}
 }
 
