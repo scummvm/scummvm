@@ -31,6 +31,13 @@ namespace Sci {
 
 static const int nMidiParams[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
 
+enum SciSysExCommands {
+	kSetSignalLoop = 0x7F,
+	kEndOfTrack = 0xFC,
+	kSetReverb = 0x50,
+	kMidiHold = 0x52,
+	kUpdateCue = 0x60
+};
 
 //  MidiParser_SCI
 //
@@ -112,7 +119,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param1 = *(_position._play_pos++);
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
-			if (info.basic.param1 != 0x7F) {
+			if (info.basic.param1 != kSetSignalLoop) {
 				_signalSet = true;
 				_signalToSet = info.basic.param1;
 			} else {
@@ -133,15 +140,16 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
 			// Also, sci/sfx/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
 			switch (info.basic.param1) {
-			case 0x50:	// set reverb
+			case kSetReverb:
+				// TODO: Not implemented yet
 				break;
-			case 0x52:	// hold ID marker
+			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID marker set for that song by
 				// cmdSetSoundHold. If it is, set the loop position
 				if (info.basic.param2 == _pSnd->hold)
 					_loopTick = _position._play_tick;
 				break;
-			case 0x60:	// update dataInc
+			case kUpdateCue:
 				switch (_soundVersion) {
 				case SCI_VERSION_0_EARLY:
 				case SCI_VERSION_0_LATE:
@@ -283,7 +291,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 		ticker += new_delta;
 
 		cmd = *channel->data++;
-		if (cmd != 0xFC) {
+		if (cmd != kEndOfTrack) {
 			// output new delta
 			while (new_delta > 240) {
 				*mixedData++ = 0xF8;
@@ -299,7 +307,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 				*mixedData++ = par1; // out
 			} while (par1 != 0xF7);
 			break;
-		case 0xFC: // end channel
+		case kEndOfTrack: // end channel
 			channel->time = -1; // FIXME
 			break;
 		default: // MIDI command
@@ -363,7 +371,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 		switch (curByte) {
 		case 0xF0: // sysEx
-		case 0xFC: // end of channel
+		case kEndOfTrack: // end of channel
 			command = curByte;
 			curChannel = 15;
 			break;
@@ -375,7 +383,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			}
 		}
 		if ((1 << curChannel) & channelMask) {
-			if (command != 0xFC) {
+			if (command != kEndOfTrack) {
 				debugC(2, kDebugLevelSound, "\nDELTA ");
 				// Write delta
 				while (delta > 240) {
@@ -399,7 +407,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 				lastCommand = command;
 				break;
 
-			case 0xFC: // end of channel
+			case kEndOfTrack: // end of channel
 				break;
 
 			default: // MIDI command
