@@ -767,13 +767,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		return;
 	}
 
-	// In SCI0, make absolutely sure that the sound object hasn't
-	// been deleted (can happen e.g. at the ending of QFG1)
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		if (!_segMan->getObject(musicSlot->soundObj))
-			return;
-	}
-
 	// Update digital sound effect slots here
 	Audio::Mixer *mixer = g_system->getMixer();
 
@@ -987,6 +980,11 @@ void SoundCommandParser::updateSci0Cues() {
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
+		// Is the sound stopped, and the sound object updated too? If yes, skip
+		// this sound, as SCI0 only allows one active song
+		if ((*i)->signal == 0 && (*i)->status != kSoundPlaying)
+			continue;
+
 		cmdUpdateCues((*i)->soundObj, 0);
 	}
 }
