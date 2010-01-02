@@ -264,10 +264,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	// now drawing the text
 	_text->Size(rect, text, -1, width);
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
-	if (getSciVersion() >= SCI_VERSION_1_EGA) {
-		// TODO: Not absolutely sure when this changed happened
-		// Clipping is definitely not done in qfg1, but are done in kq5cd
-		// This fixes colonels bequest
+	if (getSciVersion() >= SCI_VERSION_1_LATE) {
 		_gfx->Move(rect.right <= _screen->_width ? 0 : _screen->_width - rect.right, rect.bottom <= _screen->_height ? 0 : _screen->_width - rect.bottom);
 		rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 	}
