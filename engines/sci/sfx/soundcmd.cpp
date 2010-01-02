@@ -514,7 +514,6 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 		changeSoundStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
 
-	Common::StackLock lock(_music->_mutex);
 	MusicEntry *musicSlot = NULL;
 	MusicList::iterator slotLoop = NULL;
 
@@ -532,6 +531,8 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 			return;
 		}
 	}
+
+	Common::StackLock lock(_music->_mutex);
 
 	do {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
@@ -551,6 +552,7 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 				musicSlot = *(slotLoop++);
 		}
 	} while (slotLoop);
+
 #endif
 }
 
@@ -759,14 +761,11 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, frame, frame);
 	}
 #else
-	_music->_mutex.lock();
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("cmdUpdateCues: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		_music->_mutex.unlock();
 		return;
 	}
-	_music->_mutex.unlock();	// unlock to perform mixer-related calls
 
 	// In SCI0, make absolutely sure that the sound object hasn't
 	// been deleted (can happen e.g. at the ending of QFG1)
@@ -798,8 +797,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->fadeVolumeSet = false;
 		}
 	}
-
-	_music->_mutex.lock();	// and lock again
 
 	switch (musicSlot->signal) {
 		case 0:
@@ -834,7 +831,6 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, frame, musicSlot->ticker);
 	}
 
-	_music->_mutex.unlock();
 #endif
 }
 
