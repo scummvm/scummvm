@@ -355,7 +355,8 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayMask(_soundVersion));
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
-			pSnd->pMidiParser->jumpToTick(pSnd->ticker);	// for resuming when loading
+			// Fast forward to the last position and perform associated events when loading
+			pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
 			_mutex.unlock();
 		}
 	}
