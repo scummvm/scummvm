@@ -535,6 +535,7 @@ MusicEntry::MusicEntry() {
 	fadeTicker = 0;
 	fadeTickerStep = 0;
 	fadeSetVolume = false;
+	fadeCompleted = false;
 
 	status = kSoundStopped;
 
@@ -572,7 +573,7 @@ void MusicEntry::doFade() {
 		if (((fadeStep > 0) && (fadeVolume >= fadeTo)) || ((fadeStep < 0) && (fadeVolume <= fadeTo))) {
 			fadeVolume = fadeTo;
 			fadeStep = 0;
-			signal = SIGNAL_OFFSET;
+			fadeCompleted = true;
 		}
 		volume = fadeVolume;
 
