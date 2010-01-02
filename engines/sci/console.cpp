@@ -109,6 +109,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
+	DCmd_Register("listsaves",			WRAP_METHOD(Console, cmdListSaves));
 	// Screen
 	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
 	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));

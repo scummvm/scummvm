@@ -79,6 +79,7 @@ private:
 	bool cmdGetVersion(int argc, const char **argv);
 	bool cmdRoomNumber(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
+	bool cmdListSaves(int argc, const char **argv);
 	// Screen
 	bool cmdSci0Palette(int argc, const char **argv);
 	bool cmdClearScreen(int argc, const char **argv);

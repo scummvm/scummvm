@@ -32,6 +32,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/console.h"
 
 namespace Sci {
 
@@ -276,6 +277,35 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 	// Sort the list by creation date of the saves
 	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
+}
+
+bool Console::cmdListSaves(int argc, const char **argv) {
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
+	for (uint i = 0; i < saves.size(); i++) {
+		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(saves[i].id);
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename))) {
+			SavegameMetadata meta;
+			if (!get_savegame_metadata(in, &meta)) {
+				// invalid
+				delete in;
+				continue;
+			}
+
+			if (!meta.savegame_name.empty()) {
+				if (meta.savegame_name.lastChar() == '\n')
+					meta.savegame_name.deleteLastChar();
+
+				DebugPrintf("%s: '%s'\n", filename.c_str(), meta.savegame_name.c_str());
+			}
+			delete in;
+		}
+	}
+	return true;
 }
 
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
