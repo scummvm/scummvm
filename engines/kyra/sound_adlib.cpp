@@ -410,9 +410,6 @@ private:
 	Audio::SoundHandle _soundHandle;
 
 	bool _v2;
-
-	void lock() { _mutex.lock(); }
-	void unlock() { _mutex.unlock(); }
 };
 
 AdlibDriver::AdlibDriver(Audio::Mixer *mixer, bool v2) {
@@ -471,7 +468,7 @@ AdlibDriver::~AdlibDriver() {
 }
 
 int AdlibDriver::callback(int opcode, ...) {
-	lock();
+	Common::StackLock lock(_mutex);
 	if (opcode >= _opcodesEntries || opcode < 0) {
 		warning("AdlibDriver: calling unknown opcode '%d'", opcode);
 		return 0;
@@ -483,7 +480,6 @@ int AdlibDriver::callback(int opcode, ...) {
 	va_start(args, opcode);
 	int returnValue = (this->*(_opcodeList[opcode].function))(args);
 	va_end(args);
-	unlock();
 	return returnValue;
 }
 
@@ -634,7 +630,7 @@ int AdlibDriver::snd_clearFlag(va_list &list) {
 // timer callback
 
 void AdlibDriver::callback() {
-	lock();
+	Common::StackLock lock(_mutex);
 	--_flagTrigger;
 	if (_flagTrigger < 0)
 		_flags &= ~8;
@@ -649,7 +645,6 @@ void AdlibDriver::callback() {
 			++_unkValue4;
 		}
 	}
-	unlock();
 }
 
 void AdlibDriver::setupPrograms() {
