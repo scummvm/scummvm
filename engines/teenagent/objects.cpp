@@ -172,5 +172,10 @@ void Walkbox::save() const {
 	rect.save();
 }
 
+void FadeType::load(byte *src) {
+	rect.load(src);
+	src += 8;
+	value = *src;
+}
 
 } // End of namespace TeenAgent

@@ -201,6 +201,7 @@ private:
 	
 	Common::Array<Common::Array<Object> > objects;
 	Common::Array<Common::Array<Walkbox> > walkboxes;
+	Common::Array<Common::Array<FadeType> > fades;
 
 	Common::String message;
 	Common::Point message_pos;

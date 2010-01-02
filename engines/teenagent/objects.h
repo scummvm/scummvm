@@ -215,6 +215,13 @@ protected:
 	byte * _base;
 };
 
+struct FadeType {
+	Rect rect;
+	byte value;
+
+	void load(byte *src);
+};
+
 //\todo move it to util.h?
 template<typename T> inline T SIGN (T x) { return (x > 0)? 1: ((x < 0)? -1: 0); }
 

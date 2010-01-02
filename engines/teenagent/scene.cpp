@@ -221,6 +221,7 @@ void Scene::loadObjectData() {
 	//loading objects & walkboxes
 	objects.resize(42);
 	walkboxes.resize(42);
+	fades.resize(42);
 	
 	for (byte i = 0; i < 42; ++i) {
 		Common::Array<Object> &scene_objects = objects[i];
@@ -248,6 +249,16 @@ void Scene::loadObjectData() {
 			//walkbox[i]->dump();
 			scene_walkboxes.push_back(w);
 		}
+
+		byte *fade_table = res->dseg.ptr(res->dseg.get_word(0x663e + i * 2));
+		Common::Array<FadeType> &scene_fades = fades[i];
+		while(READ_LE_UINT16(fade_table) != 0xffff) {
+			FadeType fade;
+			fade.load(fade_table);
+			fade_table += 9;
+			scene_fades.push_back(fade);
+		}
+		debug(0, "scene[%u] has %u fadeboxes", i + 1, scene_fades.size());
 	}
 }
 
