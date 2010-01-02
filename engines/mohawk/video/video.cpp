@@ -318,23 +318,23 @@ void VideoManager::playMovie(VideoEntry videoEntry) {
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-				case Common::EVENT_RTL:
-				case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+			case Common::EVENT_QUIT:
+				continuePlaying = false;
+				break;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_SPACE:
+					_vm->pauseGame();
+					break;
+				case Common::KEYCODE_ESCAPE:
 					continuePlaying = false;
 					break;
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-						case Common::KEYCODE_SPACE:
-							_vm->pauseGame();
-							break;
-						case Common::KEYCODE_ESCAPE:
-							continuePlaying = false;
-							break;
-						default:
-							break;
-					}
 				default:
 					break;
+			}
+			default:
+				break;
 			}
 		}
 		
