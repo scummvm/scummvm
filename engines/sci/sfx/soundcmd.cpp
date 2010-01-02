@@ -806,10 +806,13 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 				// Check if this signal is the end of the track or the end of fading effect.
 				// If this came from a fading effect, don't stop the track here, it'll be stopped
 				// by the engine scripts
-				if (musicSlot->fadeSetVolume)
+				if (musicSlot->fadeSetVolume) {
 					musicSlot->fadeSetVolume = false;
-				else
+					// Notify the game scripts that music fading is done
+					PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+				} else {
 					cmdStopSound(obj, 0);
+				}
 				break;
 			default:
 				// Sync the signal of the sound object
