@@ -63,6 +63,12 @@ public:
 		allNotesOff();
 	}
 
+	void hangAllnotes(byte value) {
+		if (value)
+			hangAllActiveNotes();
+		else
+			allNotesOff();
+	}
 protected:
 	void parseNextEvent(EventInfo &info);
 	byte *midiMixChannels();

@@ -857,9 +857,12 @@ void SoundCommandParser::cmdSetSoundHold(reg_t obj, int16 value) {
 		return;
 	}
 
-	musicSlot->hold = value;
-
-	// TODO: actually handle channel hold!
+	// Hold the sound before it ends for the specified amount of time. The
+	// engine will signal when to stop it, by setting hold to 0, in which
+	// case stop the sound
+	_music->soundSetHold(musicSlot, value);
+	if (!value)
+		cmdStopSound(obj, 0);
 #endif
 }
 

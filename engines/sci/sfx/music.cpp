@@ -433,6 +433,13 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 	sortPlayList();
 }
 
+void SciMusic::soundSetHold(MusicEntry *pSnd, byte hold) {
+	Common::StackLock lock(_mutex);
+
+	pSnd->hold = hold;
+	pSnd->pMidiParser->hangAllnotes(hold);
+}
+
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
