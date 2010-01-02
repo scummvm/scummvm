@@ -639,7 +639,7 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 	}
 
 	int volume = musicSlot->volume;
-	musicSlot->fadeTo = _argv[2].toUint16();
+	musicSlot->fadeTo = CLIP<uint16>(_argv[2].toUint16(), 0, MUSIC_VOLUME_MAX);
 	musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
 	musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
 	musicSlot->fadeTicker = 0;
