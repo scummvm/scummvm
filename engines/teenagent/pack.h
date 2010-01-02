@@ -37,8 +37,11 @@ class Pack {
 public:
 	Pack();
 	~Pack();
-	void open(const Common::String &filename);
+
+	bool open(const Common::String &filename);
 	void close();
+	
+	inline uint32 files_count() const { return count; }
 	uint32 get_size(uint32 id) const;
 	uint32 read(uint32 id, byte *dst, uint32 size) const;
 	Common::SeekableReadStream *getStream(uint32 id) const;

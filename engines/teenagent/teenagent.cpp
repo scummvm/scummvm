@@ -22,21 +22,21 @@
  * $Id$
  */
 
-#include "teenagent/teenagent.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/debug.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/events.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "engines/advancedDetector.h"
 #include "sound/mixer.h"
-#include "graphics/thumbnail.h"
-#include "teenagent/scene.h"
-#include "teenagent/objects.h"
-#include "teenagent/music.h"
-#include "teenagent/console.h"
-
 #include "graphics/cursorman.h"
+#include "graphics/thumbnail.h"
+#include "teenagent/console.h"
+#include "teenagent/music.h"
+#include "teenagent/objects.h"
+#include "teenagent/pack.h"
+#include "teenagent/scene.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
@@ -244,6 +244,66 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;
 }
 
+bool TeenAgentEngine::showLogo(const Common::String &name) {
+	Pack logo;
+	if (!logo.open(name))
+		return true;
+
+	Common::EventManager *_event = _system->getEventManager();
+
+	byte bg[0xfa00];
+	byte palette[0x400];
+		
+	Common::SeekableReadStream *frame = logo.getStream(1);
+	if (frame == NULL)
+		return true;
+
+	frame->read(bg, sizeof(bg));
+	memset(palette, 0, sizeof(palette));
+	
+	for(uint c = 0; c < 0x100; ++c) {
+		uint idx = c * 4;
+		frame->read(palette + idx, 3);
+		palette[idx] *= 4;
+		palette[idx + 1] *= 4;
+		palette[idx + 2] *= 4;
+	}
+	_system->setPalette(palette, 0, 0x100);
+
+	uint n = logo.files_count();
+	for(uint f = 0; f < 4; ++f) 
+		for(uint i = 2; i <= n; ++i) {
+			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+	
+			frame = logo.getStream(i);
+			if (frame == NULL)
+				return true;
+			
+			Common::Event event;
+			while (_event->pollEvent(event)) {
+				switch(event.type) {
+				case Common::EVENT_RTL:
+					return false;
+				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+				case Common::EVENT_KEYDOWN:
+					return true;
+				default: ;
+				}
+			}
+			Surface s;
+			s.load(frame, Surface::kTypeOns);
+			if (s.empty())
+				return true;
+
+			_system->copyRectToScreen((const byte *)s.pixels, s.w, s.x, s.y, s.w, s.h);
+			_system->updateScreen();
+
+			_system->delayMillis(100);
+		}
+	return true;
+}
+
 Common::Error TeenAgentEngine::run() {
 	Resources *res = Resources::instance();
 	if (!res->loadArchives(_gameDescription))
@@ -252,6 +312,8 @@ Common::Error TeenAgentEngine::run() {
 	Common::EventManager *_event = _system->getEventManager();
 
 	initGraphics(320, 200, false);
+	if (!showLogo("unlogic.res"))
+		return Common::kNoError;
 
 	scene = new Scene;
 	inventory = new Inventory;

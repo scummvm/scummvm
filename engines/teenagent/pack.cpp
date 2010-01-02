@@ -42,8 +42,10 @@ void Pack::close() {
 }
 
 
-void Pack::open(const Common::String &filename) {
-	file.open(filename);
+bool Pack::open(const Common::String &filename) {
+	if (!file.open(filename))
+		return false;
+	
 	count = file.readUint32LE();
 	debug(0, "opened %s, found %u entries", filename.c_str(), count);
 	offsets = new uint32[count + 1];
@@ -55,6 +57,7 @@ void Pack::open(const Common::String &filename) {
 			debug(0, "%d: len = %d", i, offsets[i + 1] - offsets[i]);
 		}
 	*/
+	return true;
 }
 
 uint32 Pack::get_size(uint32 id) const {

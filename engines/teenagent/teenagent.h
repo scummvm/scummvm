@@ -72,6 +72,8 @@ public:
 	bool processCallback(uint16 addr);
 	inline Scene *getScene() { return scene; }
 
+	bool showLogo(const Common::String &name);
+
 	static Common::String parseMessage(uint16 addr);
 
 	//event driven:
