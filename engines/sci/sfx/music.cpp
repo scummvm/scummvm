@@ -118,6 +118,8 @@ void SciMusic::miditimerCallback(void *p) {
 }
 
 void SciMusic::soundSetSoundOn(bool soundOnFlag) {
+	Common::StackLock lock(_mutex);
+
 	_soundOn = soundOnFlag;
 	_pMidiDrv->playSwitch(soundOnFlag);
 }
@@ -160,6 +162,8 @@ void SciMusic::setReverb(byte reverb) {
 }
 
 void SciMusic::resetDriver() {
+	Common::StackLock lock(_mutex);
+
 	_pMidiDrv->close();
 	_pMidiDrv->open();
 	_pMidiDrv->setTimerCallback(this, &miditimerCallback);
@@ -387,11 +391,13 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->pStreamAud->setNumLoops(1);
 		_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
 				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
-	} else if (pSnd->pMidiParser) {
+	} else {
 		_mutex.lock();
-		pSnd->pMidiParser->setVolume(pSnd->volume);
-		if (pSnd->status == kSoundStopped)
-			pSnd->pMidiParser->jumpToTick(0);
+		if (pSnd->pMidiParser) {
+			pSnd->pMidiParser->setVolume(pSnd->volume);
+			if (pSnd->status == kSoundStopped)
+				pSnd->pMidiParser->jumpToTick(0);
+		}
 		_mutex.unlock();
 	}
 
@@ -430,13 +436,14 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
+	_mutex.lock();
 	if (pSnd->pMidiParser) {
-		_mutex.lock();
 		pSnd->pMidiParser->unloadMusic();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
-		_mutex.unlock();
 	}
+	_mutex.unlock();
+
 	if (pSnd->pStreamAud) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		pSnd->pStreamAud = NULL;
@@ -463,9 +470,10 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 	pSnd->status = kSoundPaused;
 	if (pSnd->pStreamAud) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
-	} else if (pSnd->pMidiParser) {
+	} else {
 		_mutex.lock();
-		pSnd->pMidiParser->pause();
+		if (pSnd->pMidiParser)
+			pSnd->pMidiParser->pause();
 		_mutex.unlock();
 	}
 }
