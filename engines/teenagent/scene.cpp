@@ -192,6 +192,9 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_engine = engine;
 	_system = system;
+	
+	_fade_timer = 0;
+	_fade_type = 0;
 
 	memset(palette, 0, sizeof(palette));
 	
@@ -534,6 +537,17 @@ bool Scene::render(OSystem *system) {
 		restart = false;
 		busy = processEventQueue();
 		
+		if (_fade_timer) {
+			debug(0, "fade timer = %d, type = %d", _fade_timer, _fade_type);
+			if (_fade_timer > 0) {
+				--_fade_timer;
+				setPalette(_fade_timer);
+			} else {
+				++_fade_timer;
+				setPalette(_fade_timer + 4);
+			}
+		}
+		
 		switch(current_event.type) {
 		case SceneEvent::kCredits: {
 			system->fillScreen(0);
@@ -546,15 +560,6 @@ bool Scene::render(OSystem *system) {
 				current_event.clear();
 			}
 			return true;
-		case SceneEvent::kFade:
-			//debug(0, "fade timer = %d", current_event.timer);
-			setPalette(current_event.orientation? 4 - current_event.timer: current_event.timer);
-			++current_event.timer;
-			if (current_event.timer > 4) {
-				nextEvent();
-				continue;
-			} else
-				busy |= true;
 		default:
 			;
 		}
@@ -999,6 +1004,20 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kFade:
+			_fade_timer = current_event.orientation != 0? 5: -5;
+			_fade_type = 0;
+			if (_id > 0) {
+				Common::Array<FadeType> &scene_fades = fades[_id - 1];
+				for(uint i = 0; i < scene_fades.size(); ++i) {
+					const FadeType &fade = scene_fades[i];
+					if (fade.rect.in(position)) {
+						debug(0, "found fade type %u", fade.value);
+						_fade_type = fade.value;
+						break;
+					}
+				}
+			}
+			current_event.clear();
 			break;
 
 		case SceneEvent::kCredits:

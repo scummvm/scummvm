@@ -217,6 +217,9 @@ private:
 	bool hide_actor;
 	
 	uint16 callback, callback_timer;
+	
+	int _fade_timer;
+	int _fade_type;
 
 	struct Sound {
 		byte id, delay;
