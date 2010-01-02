@@ -135,8 +135,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			switch (info.basic.param1) {
 			case 0x50:	// set reverb
 				break;
-			case 0x52:	// set hold
-				_pSnd->hold = info.basic.param2;
+			case 0x52:	// hold ID marker
+				// Check if the hold ID marker is the same as the hold ID marker set for that song by
+				// cmdSetSoundHold. If it is, set the loop position
+				if (info.basic.param2 == _pSnd->hold)
+					_loopTick = _position._play_tick;
 				break;
 			case 0x60:	// update dataInc
 				switch (_soundVersion) {

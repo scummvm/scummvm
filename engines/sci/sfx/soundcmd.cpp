@@ -853,10 +853,12 @@ void SoundCommandParser::cmdSetSoundHold(reg_t obj, int16 value) {
 		return;
 	}
 
-	// Hold the sound before it ends for the specified amount of time. The
-	// engine will signal when to stop it, by setting hold to 0, in which
-	// case stop the sound
-	_music->soundSetHold(musicSlot, value);
+	// Set the special hold marker ID where the song should be looped at.
+	// If the hold marker is 0, stop the song, as songs with a hold marker
+	// embedded don't have an end of track signal at the end, so that they
+	// loop instead of stopping
+	musicSlot->hold = value;
+
 	if (!value)
 		cmdStopSound(obj, 0);
 #endif

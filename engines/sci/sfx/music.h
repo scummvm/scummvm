@@ -146,7 +146,6 @@ public:
 	void soundResume(MusicEntry *pSnd);
 	void soundSetVolume(MusicEntry *pSnd, byte volume);
 	void soundSetPriority(MusicEntry *pSnd, byte prio);
-	void soundSetHold(MusicEntry *pSnd, byte hold);
 	uint16 soundGetMasterVolume();
 	void soundSetMasterVolume(uint16 vol);
 	uint16 soundGetSoundOn() const { return _soundOn; }
