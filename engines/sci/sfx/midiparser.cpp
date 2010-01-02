@@ -146,16 +146,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
-				// If it is, loop back
-
-				// FIXME: this is currently broken, as seen in the
-				// scene in LSL5 where Larry first arrives at the airport
-				// in the limo. The engine sound is stopped instead of
-				// continuing. As a possible direction to look at for a fix,
-				// removing the allNotesOff() call in jumpToTick() lets the
-				// engine sound continue.
+				// If it is, loop back, but don't stop notes when jumping.
 				if (info.basic.param2 == _pSnd->hold)
-					jumpToTick(_loopTick);
+					jumpToTick(_loopTick, false, false);
 				break;
 			case kUpdateCue:
 				switch (_soundVersion) {

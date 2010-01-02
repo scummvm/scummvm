@@ -353,7 +353,7 @@ void MidiParser::hangAllActiveNotes() {
 	}
 }
 
-bool MidiParser::jumpToTick(uint32 tick, bool fireEvents) {
+bool MidiParser::jumpToTick(uint32 tick, bool fireEvents, bool stopNotes) {
 	if (_active_track >= _num_tracks)
 		return false;
 
@@ -402,18 +402,20 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents) {
 		}
 	}
 
-	if (!_smartJump || !currentPos._play_pos) {
-		allNotesOff();
-	} else {
-		EventInfo targetEvent(_next_event);
-		Tracker targetPosition(_position);
+	if (stopNotes) {
+		if (!_smartJump || !currentPos._play_pos) {
+			allNotesOff();
+		} else {
+			EventInfo targetEvent(_next_event);
+			Tracker targetPosition(_position);
 
-		_position = currentPos;
-		_next_event = currentEvent;
-		hangAllActiveNotes();
+			_position = currentPos;
+			_next_event = currentEvent;
+			hangAllActiveNotes();
 
-		_next_event = targetEvent;
-		_position = targetPosition;
+			_next_event = targetEvent;
+			_position = targetPosition;
+		}
 	}
 
 	_abort_parse = true;
