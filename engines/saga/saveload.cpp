@@ -194,7 +194,14 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	out->write(title, TITLESIZE);
 
 	// Thumbnail
+	// First draw scene without save dialog
+	int oldMode = _interface->getMode();
+	_interface->setMode(kPanelMain);
+	_render->drawScene();
+
 	Graphics::saveThumbnail(*out);
+
+	_interface->setMode(oldMode);
 
 	// Date / time
 	TimeDate curTime;
