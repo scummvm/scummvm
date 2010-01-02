@@ -66,7 +66,7 @@ int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 
 // Refer to the "addresses" command on how to pass address parameters
-static int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
+static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue);
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -1681,7 +1681,7 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -1710,7 +1710,7 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -1740,7 +1740,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -1812,9 +1812,10 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(scriptState.variables[vartype][idx]));
 		break;
 	case 4:
-		if (parse_reg_t(_vm->_gamestate, argv[3], &scriptState.variables[vartype][idx])) {
-			DebugPrintf("Invalid address passed.\n");
+		if (parse_reg_t(_vm->_gamestate, argv[3], &scriptState.variables[vartype][idx], true)) {
+			DebugPrintf("Invalid value/address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			DebugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
 			return true;
 		}
 		break;
@@ -1862,7 +1863,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 
 	reg_t val;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &val)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &val, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -1900,7 +1901,7 @@ bool Console::cmdViewListNode(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -1923,14 +1924,14 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 	reg_t reg = NULL_REG;
 	reg_t reg_end = NULL_REG;
 
-	if (parse_reg_t(_vm->_gamestate, argv[1], &reg)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &reg, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	if (argc > 2) {
-		if (parse_reg_t(_vm->_gamestate, argv[2], &reg_end)) {
+		if (parse_reg_t(_vm->_gamestate, argv[2], &reg_end, false)) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -2030,7 +2031,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2071,7 +2072,7 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 
 	reg_t val;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &val)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &val, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2228,7 +2229,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 
 	reg_t objAddr = NULL_REG;
 
-	if (parse_reg_t(_vm->_gamestate, argv[1], &objAddr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &objAddr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2277,7 +2278,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	int do_bytes = 0;
 	int size;
 
-	if (parse_reg_t(_vm->_gamestate, argv[1], &vpc)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &vpc, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2321,7 +2322,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 
 	reg_t object;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &object)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &object, false)) {
 		DebugPrintf("Invalid address \"%s\" passed.\n", argv[1]);
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2357,7 +2358,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	stackframe[0] = make_reg(0, selector_id);
 	stackframe[1] = make_reg(0, send_argc);
 	for (int i = 0; i < send_argc; i++) {
-		if (parse_reg_t(_vm->_gamestate, argv[3+i], &stackframe[2+i])) {
+		if (parse_reg_t(_vm->_gamestate, argv[3+i], &stackframe[2+i], false)) {
 			DebugPrintf("Invalid address \"%s\" passed.\n", argv[3+i]);
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -2782,7 +2783,7 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 
 	reg_t id;
 	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &id)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &id, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2843,7 +2844,7 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 }
 
 // Returns 0 on success
-static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
+static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue) {
 	// Pointer to the part of str which contains a numeric offset (if any)
 	const char *offsetStr = NULL;
 
@@ -2948,7 +2949,25 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 
 		if (!colon) {
 			// No segment specified
-			offsetStr = str;
+			if (mayBeValue) {
+				// We assume that this is not an offset, but a straight (decimal) value
+				int val;
+				int length = strlen(str);
+				const char *lastchar = str + length - (length ? 1 : 0);
+				if (*lastchar != 'h') {
+					val = strtol(str, &endptr, 10);
+					if (*endptr)
+						return 1;
+				} else {
+					val = strtol(str, &endptr, 16);
+					if (endptr != lastchar)
+						return 1;
+				}
+				dest->offset = val;
+			} else {
+				// We require an address, so interpret it as an offset (hexadecimal)
+				offsetStr = str;
+			}
 			dest->segment = 0;
 		} else {
 			offsetStr = colon + 1;
