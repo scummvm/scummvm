@@ -77,45 +77,41 @@ private:
 	SegManager *_segMan;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState *_state;
+	int _midiCmd, _controller, _param;
 #else
 	SciMusic *_music;
 #endif
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;
-	reg_t *_argv;	// for cmdFadeHandle
+	reg_t *_argv;	// for cmdFadeSound
 	uint32 _midiCommand;	// for cmdSendMidi
 	reg_t _acc;
-	int _midiCmd, _controller, _param;
 
-	void cmdInitHandle(reg_t obj, int16 value);
-	void cmdPlayHandle(reg_t obj, int16 value);
+	void cmdInitSound(reg_t obj, int16 value);
+	void cmdPlaySound(reg_t obj, int16 value);
 	void cmdDummy(reg_t obj, int16 value);
 	void cmdMuteSound(reg_t obj, int16 value);
-	void cmdPauseHandle(reg_t obj, int16 value);
-	void cmdResumeHandle(reg_t obj, int16 value);
-	void cmdStopHandle(reg_t obj, int16 value);
-	void cmdDisposeHandle(reg_t obj, int16 value);
-	void cmdVolume(reg_t obj, int16 value);
-	void cmdFadeHandle(reg_t obj, int16 value);
+	void cmdPauseSound(reg_t obj, int16 value);
+	void cmdResumeSound(reg_t obj, int16 value);
+	void cmdStopSound(reg_t obj, int16 value);
+	void cmdDisposeSound(reg_t obj, int16 value);
+	void cmdMasterVolume(reg_t obj, int16 value);
+	void cmdFadeSound(reg_t obj, int16 value);
 	void cmdGetPolyphony(reg_t obj, int16 value);
 	void cmdStopAllSounds(reg_t obj, int16 value);
-
-	void initHandle(reg_t obj, bool isSci1);
-
-	void cmdUpdateHandle(reg_t obj, int16 value);
+	void cmdUpdateSound(reg_t obj, int16 value);
 	void cmdUpdateCues(reg_t obj, int16 value);
 	void cmdSendMidi(reg_t obj, int16 value);
 	void cmdReverb(reg_t obj, int16 value);
-	void cmdSetHandleHold(reg_t obj, int16 value);
+	void cmdSetSoundHold(reg_t obj, int16 value);
 	void cmdGetAudioCapability(reg_t obj, int16 value);
-	void cmdSetHandleVolume(reg_t obj, int16 value);
-	void cmdSetHandlePriority(reg_t obj, int16 value);
-	void cmdSetHandleLoop(reg_t obj, int16 value);
+	void cmdSetSoundVolume(reg_t obj, int16 value);
+	void cmdSetSoundPriority(reg_t obj, int16 value);
+	void cmdSetSoundLoop(reg_t obj, int16 value);
 	void cmdSuspendSound(reg_t obj, int16 value);
-	void cmdUpdateVolumePriority(reg_t obj, int16 value);
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	void changeHandleStatus(reg_t obj, int newStatus);
+	void changeSoundStatus(reg_t obj, int newStatus);
 #endif
 };
 
