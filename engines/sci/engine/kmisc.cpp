@@ -252,18 +252,18 @@ enum kPlatformOps {
 };
 
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
-	if (argc == 0) {
-		// This is called in KQ5CD with no parameters, where
-		// it seems to do some graphics driver check. This
-		// kernel function didn't have subfunctions then.
-		// If 0 is returned, the game functions normally,
-		// otherwise all the animations show up like a
-		// slideshow (e.g. in the intro). So we return 0 :)
+	bool isWindows = ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows;
+
+	if (argc == 0 && getSciVersion() < SCI_VERSION_2) {
+		// This is called in KQ5CD with no parameters, where it seems to do some graphics
+		// driver check. This kernel function didn't have subfunctions then. If 0 is
+		// returned, the game functions normally, otherwise all the animations show up 
+		// like a slideshow (e.g. in the intro). So we return 0. However, the behavior
+		// changed for kPlatform with no parameters in SCI32.
 		return NULL_REG;
 	}
 
-	bool isWindows = ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows;
-	uint16 operation = argv[0].toUint16();
+	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 
 	switch (operation) {
 	case kPlatformUnk0:
