@@ -768,6 +768,13 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	}
 	_music->_mutex.unlock();	// unlock to perform mixer-related calls
 
+	// In SCI0, make absolutely sure that the sound object hasn't
+	// been deleted (can happen e.g. at the ending of QFG1)
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
+		if (!_segMan->getObject(musicSlot->soundObj))
+			return;
+	}
+
 	// Update digital sound effect slots here
 	Audio::Mixer *mixer = g_system->getMixer();
 
