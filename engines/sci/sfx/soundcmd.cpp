@@ -790,9 +790,9 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->ticker = (uint16)(mixer->getSoundElapsedTime(musicSlot->hCurrentAud) * 0.06);
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
-		if (musicSlot->fadeVolumeSet) {
+		if (musicSlot->fadeSetVolume) {
 			mixer->setChannelVolume(musicSlot->hCurrentAud, musicSlot->volume);
-			musicSlot->fadeVolumeSet = false;
+			musicSlot->fadeSetVolume = false;
 		}
 	} else {
 		switch (musicSlot->signal) {
@@ -803,7 +803,13 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 				}
 				break;
 			case SIGNAL_OFFSET:
-				cmdStopSound(obj, 0);
+				// Check if this signal is the end of the track or the end of fading effect.
+				// If this came from a fading effect, don't stop the track here, it'll be stopped
+				// by the engine scripts
+				if (musicSlot->fadeSetVolume)
+					musicSlot->fadeSetVolume = false;
+				else
+					cmdStopSound(obj, 0);
 				break;
 			default:
 				// Sync the signal of the sound object

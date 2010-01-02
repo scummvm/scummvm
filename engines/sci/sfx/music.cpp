@@ -534,7 +534,7 @@ MusicEntry::MusicEntry() {
 	fadeStep = 0;
 	fadeTicker = 0;
 	fadeTickerStep = 0;
-	fadeVolumeSet = false;
+	fadeSetVolume = false;
 
 	status = kSoundStopped;
 
@@ -579,8 +579,7 @@ void MusicEntry::doFade() {
 		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser)
 			pMidiParser->setVolume(volume);
-		if (pStreamAud)
-			fadeVolumeSet = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
+		fadeSetVolume = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
 	}
 }
 

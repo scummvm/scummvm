@@ -93,7 +93,7 @@ public:
 	short fadeStep;
 	uint32 fadeTicker;
 	uint32 fadeTickerStep;
-	bool fadeVolumeSet;
+	bool fadeSetVolume;
 
 	SoundStatus status;
 
