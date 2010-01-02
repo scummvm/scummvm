@@ -273,12 +273,6 @@ bool TeenAgentEngine::showLogo(const Common::String &name) {
 	uint n = logo.files_count();
 	for(uint f = 0; f < 4; ++f) 
 		for(uint i = 2; i <= n; ++i) {
-			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
-	
-			frame = logo.getStream(i);
-			if (frame == NULL)
-				return true;
-			
 			Common::Event event;
 			while (_event->pollEvent(event)) {
 				switch(event.type) {
@@ -291,8 +285,15 @@ bool TeenAgentEngine::showLogo(const Common::String &name) {
 				default: ;
 				}
 			}
+			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+	
+			frame = logo.getStream(i);
+			if (frame == NULL)
+				return true;
+
 			Surface s;
 			s.load(frame, Surface::kTypeOns);
+			delete frame;
 			if (s.empty())
 				return true;
 
