@@ -233,6 +233,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst
+	// French Windows 3.11
+	// From Strangerke
+	{
+		{
+			"myst",
+			"",
+			AD_ENTRY1("MYST.DAT", "d631d42567a941c67c78f2e491f4ea58"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_MYST,
+		0,
+		0,
+	},
+
 	// Making of Myst
 	// English Windows 3.11
 	// From clone2727
