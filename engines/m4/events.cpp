@@ -186,8 +186,7 @@ Mouse::Mouse(M4Engine *vm) : _vm(vm) {
 }
 
 Mouse::~Mouse() {
-	if (_cursorSprites)
-		delete _cursorSprites;
+	delete _cursorSprites;
 }
 
 bool Mouse::init(const char *seriesName, RGB8 *palette) {

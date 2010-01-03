@@ -78,12 +78,9 @@ Text::~Text() {
 			SkyEngine::_itemList[i] = NULL;
 		}
 
-	if (_mainCharacterSet.addr)
-		free(_mainCharacterSet.addr);
-	if (_controlCharacterSet.addr)
-		free(_controlCharacterSet.addr);
-	if (_linkCharacterSet.addr)
-		free(_linkCharacterSet.addr);
+	free(_mainCharacterSet.addr);
+	free(_controlCharacterSet.addr);
+	free(_linkCharacterSet.addr);
 }
 
 void Text::fnSetFont(uint32 fontNr) {

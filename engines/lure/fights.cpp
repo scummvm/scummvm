@@ -49,9 +49,8 @@ FightsManager::FightsManager() : _rnd(LureEngine::getReference().rnd()) {
 }
 
 FightsManager::~FightsManager() {
-	if (_fightData != NULL)
-		// Release the fight data
-		delete _fightData;
+	// Release the fight data
+	delete _fightData;
 }
 
 FightsManager &FightsManager::getReference() {

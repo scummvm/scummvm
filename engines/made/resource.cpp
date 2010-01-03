@@ -310,8 +310,7 @@ FontResource::FontResource() : _data(NULL), _size(0) {
 }
 
 FontResource::~FontResource() {
-	if (_data)
-		delete[] _data;
+	delete[] _data;
 }
 
 void FontResource::load(byte *source, int size) {
@@ -362,8 +361,7 @@ GenericResource::GenericResource() : _data(NULL), _size(0) {
 }
 
 GenericResource::~GenericResource() {
-	if (_data)
-		delete[] _data;
+	delete[] _data;
 }
 
 void GenericResource::load(byte *source, int size) {

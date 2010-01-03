@@ -75,12 +75,9 @@ TextviewView::TextviewView(M4Engine *vm):
 TextviewView::~TextviewView() {
 	if (_script)
 		_vm->res()->toss(_resourceName);
-	if (_spareScreen)
-		delete _spareScreen;
-	if (_bgCurrent)
-		delete _bgCurrent;
-	if (_bgSpare)
-		delete _bgSpare;
+	delete _spareScreen;
+	delete _bgCurrent;
+	delete _bgSpare;
 }
 
 void TextviewView::reset() {

@@ -150,7 +150,7 @@ bool RoomExitData::insideRect(int16 xp, int16 yp) {
 
 RoomExitData *RoomExitList::checkExits(int16 xp, int16 yp) {
 	iterator i;
-	for (i = begin(); i != end(); i++) {
+	for (i = begin(); i != end(); ++i) {
 		RoomExitData *rec = (*i).get();
 		if (rec->insideRect(xp, yp)) {
 			return rec;

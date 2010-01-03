@@ -93,10 +93,8 @@ Screen::Screen(OSystem *pSystem, Disk *pDisk, SkyCompact *skyCompact) {
 
 Screen::~Screen() {
 	free(_gameGrid);
-	if (_currentScreen)
-		free(_currentScreen);
-	if (_scrollScreen)
-		free(_scrollScreen);
+	free(_currentScreen);
+	free(_scrollScreen);
 }
 
 void Screen::clearScreen() {
@@ -151,8 +149,7 @@ void Screen::setPalette(uint16 fileNum) {
 
 void Screen::showScreen(uint16 fileNum) {
 	// This is only used for static images in the floppy and cd intro
-	if (_currentScreen)
-		free(_currentScreen);
+	free(_currentScreen);
 	_currentScreen = _skyDisk->loadFile(fileNum);
 	// make sure the last 8 lines are forced to black.
 	memset(_currentScreen + GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH, 0, (FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT) * GAME_SCREEN_WIDTH);

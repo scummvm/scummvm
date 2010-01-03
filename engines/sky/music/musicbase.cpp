@@ -40,16 +40,14 @@ MusicBase::MusicBase(Disk *pDisk) {
 
 MusicBase::~MusicBase() {
 	stopMusic();
-	if (_musicData)
-		free(_musicData);
+	free(_musicData);
 }
 
 void MusicBase::loadSection(uint8 pSection) {
 	_mutex.lock();
 	if (_currentMusic)
 		stopMusicInternal();
-	if (_musicData)
-		free(_musicData);
+	free(_musicData);
 	_currentSection = pSection;
 	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection);
 

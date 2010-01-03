@@ -238,10 +238,7 @@ SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, in
 	SaveStateDescriptor desc;
 
 	Common::InSaveFile *savefile = SaveLoad::openForLoading(target, slot, &desc);
-	if (savefile) {
-		// Loaded correctly
-		delete savefile;
-	}
+	delete savefile;
 
 	return desc;
 }

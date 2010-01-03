@@ -213,8 +213,7 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 }
 
 AnimationSequence::~AnimationSequence() {
-	if (_lineRefs != NULL)
-		delete _lineRefs;
+	delete _lineRefs;
 	delete _decodedData;
 
 	// Renable GMM saving/loading now that the animation is done

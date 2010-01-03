@@ -74,8 +74,7 @@ RexMainMenuView::RexMainMenuView(M4Engine *vm):
 }
 
 RexMainMenuView::~RexMainMenuView() {
-	if (_menuItem)
-		delete _menuItem;
+	delete _menuItem;
 
 	_vm->_palette->deleteRange(_bgPalData);
 
@@ -121,8 +120,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, 
 			// Goodness knows why, but Rex has a key to restart the menuitem animations
 
 			// Delete the current menu items
-			if (_menuItem)
-				delete _menuItem;
+			delete _menuItem;
 
 			_vm->_palette->deleteRange(_bgPalData);
 			delete _bgPalData;

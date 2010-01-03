@@ -74,9 +74,7 @@ void SciGuiText::SetFont(GuiResourceId fontId) {
 void SciGuiText::CodeSetFonts(int argc, reg_t *argv) {
 	int i;
 
-	if (_codeFonts) {
-		delete _codeFonts;
-	}
+	delete _codeFonts;
 	_codeFontsCount = argc;
 	_codeFonts = new GuiResourceId[argc];
 	for (i = 0; i < argc; i++) {
@@ -87,9 +85,7 @@ void SciGuiText::CodeSetFonts(int argc, reg_t *argv) {
 void SciGuiText::CodeSetColors(int argc, reg_t *argv) {
 	int i;
 
-	if (_codeColors) {
-		delete _codeColors;
-	}
+	delete _codeColors;
 	_codeColorsCount = argc;
 	_codeColors = new uint16[argc];
 	for (i = 0; i < argc; i++) {

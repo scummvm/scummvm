@@ -36,7 +36,7 @@ namespace Common {
 Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDomain(0) {
 	List<Action*>::iterator it;
 
-	for (it = _actions.begin(); it != _actions.end(); it++) {
+	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		const HardwareKey *hwKey = (*it)->getMappedKey();
 
 		if (hwKey) {
@@ -48,7 +48,7 @@ Keymap::Keymap(const Keymap& km) : _actions(km._actions), _keymap(), _configDoma
 Keymap::~Keymap() {
 	List<Action*>::iterator it;
 
-	for (it = _actions.begin(); it != _actions.end(); it++)
+	for (it = _actions.begin(); it != _actions.end(); ++it)
 		delete *it;
 }
 
@@ -87,7 +87,7 @@ Action *Keymap::getAction(const char *id) {
 Action *Keymap::findAction(const char *id) {
 	List<Action*>::iterator it;
 
-	for (it = _actions.begin(); it != _actions.end(); it++) {
+	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
 			return *it;
 	}
@@ -97,7 +97,7 @@ Action *Keymap::findAction(const char *id) {
 const Action *Keymap::findAction(const char *id) const {
 	List<Action*>::const_iterator it;
 
-	for (it = _actions.begin(); it != _actions.end(); it++) {
+	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		if (strncmp((*it)->id, id, ACTION_ID_SIZE) == 0)
 			return *it;
 	}
@@ -127,7 +127,7 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 	ConfigManager::Domain::iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
-	for (it = _configDomain->begin(); it != _configDomain->end(); it++) {
+	for (it = _configDomain->begin(); it != _configDomain->end(); ++it) {
 		const String& key = it->_key;
 
 		if (!key.hasPrefix(prefix.c_str()))
@@ -164,7 +164,7 @@ void Keymap::saveMappings() {
 	List<Action*>::const_iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
-	for (it = _actions.begin(); it != _actions.end(); it++) {
+	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		uint actIdLen = strlen((*it)->id);
 
 		actIdLen = (actIdLen > ACTION_ID_SIZE) ? ACTION_ID_SIZE : actIdLen;
@@ -186,7 +186,7 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 	bool allMapped = true;
 	uint numberMapped = 0;
 
-	for (it = _actions.begin(); it != _actions.end(); it++) {
+	for (it = _actions.begin(); it != _actions.end(); ++it) {
 		if ((*it)->getMappedKey()) {
 			numberMapped++;
 		} else {

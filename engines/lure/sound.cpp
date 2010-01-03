@@ -82,8 +82,7 @@ SoundManager::~SoundManager() {
 	g_system->unlockMutex(_soundMutex);
 
 	delete _descs;
-	if (_soundData)
-		delete _soundData;
+	delete _soundData;
 
 	if (_driver) {
 		_driver->close();
@@ -641,8 +640,7 @@ MidiMusic::~MidiMusic() {
 	_parser->unloadMusic();
 	delete _parser;
 	this->close();
-	if (_decompressedSound != NULL)
-		delete _decompressedSound;
+	delete _decompressedSound;
 }
 
 void MidiMusic::setVolume(int volume) {

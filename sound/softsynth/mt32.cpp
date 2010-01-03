@@ -248,8 +248,7 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
-	if (_synth != NULL)
-		delete _synth;
+	delete _synth;
 }
 
 int MidiDriver_MT32::open() {

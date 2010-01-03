@@ -2202,6 +2202,7 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open("DARKLITE.WSA", 2, 0);
 	if (!mov->opened()) {
+		delete mov;
 		warning("LoLEngine::olol_restoreMagicShroud: Could not open file: \"DARKLITE.WSA\"");
 		return 1;
 	}

@@ -238,9 +238,7 @@ void MidiDriver_Adlib::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	delete _opl;
-
-	if (_rhythmKeyMap)
-		delete[] _rhythmKeyMap;
+	delete[] _rhythmKeyMap;
 }
 
 void MidiDriver_Adlib::setVolume(byte volume) {

@@ -72,8 +72,7 @@ void EventDispatcher::dispatch() {
 }
 
 void EventDispatcher::registerMapper(EventMapper *mapper) {
-	if (_mapper)
-		delete _mapper;
+	delete _mapper;
 	_mapper = mapper;
 }
 

@@ -175,7 +175,7 @@ uint8 Menu::execute() {
 		system.delayMillis(10);
 	}
 
-	if (_surfaceMenu) delete _surfaceMenu;
+	delete _surfaceMenu;
 
 	// Deselect the currently selected menu header
 	if (_selectedMenu)

@@ -129,8 +129,7 @@ void Synth::printDebug(const char *fmt, ...) {
 
 void Synth::initReverb(Bit8u newRevMode, Bit8u newRevTime, Bit8u newRevLevel) {
 	// FIXME:KG: I don't think it's necessary to recreate the reverbModel... Just set the parameters
-	if (reverbModel != NULL)
-		delete reverbModel;
+	delete reverbModel;
 	reverbModel = new revmodel();
 
 	switch (newRevMode) {

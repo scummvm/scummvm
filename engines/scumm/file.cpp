@@ -399,9 +399,7 @@ bool ScummDiskImage::generateIndex() {
 
 	extractIndex(&out);
 
-	if (_stream)
-		delete _stream;
-
+	delete _stream;
 	_stream = new Common::MemoryReadStream(_buf, bufsize);
 
 	return true;

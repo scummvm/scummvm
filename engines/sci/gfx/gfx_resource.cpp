@@ -66,11 +66,9 @@ void gfxr_free_pic(gfxr_pic_t *pic) {
 	pic->visual_map = NULL;
 	pic->priority_map = NULL;
 	pic->control_map = NULL;
-	if (pic->priorityTable)
-		free(pic->priorityTable);
+	free(pic->priorityTable);
 	pic->priorityTable = NULL;
-	if (pic->undithered_buffer)
-		free(pic->undithered_buffer);
+	free(pic->undithered_buffer);
 	pic->undithered_buffer = 0;
 	free(pic);
 }

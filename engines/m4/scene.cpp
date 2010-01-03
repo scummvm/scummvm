@@ -73,21 +73,13 @@ Scene::~Scene() {
 
 	delete _backgroundSurface;
 	delete _codeSurface;
-
-	if (_sceneSprites)
-		delete _sceneSprites;
+	delete _sceneSprites;
 
 //	_vm->_palette->deleteAllRanges();
 
-	if (_palData)
-		delete _palData;
-
-	if (_interfacePal)
-		delete _interfacePal;
-
-	if (_inverseColorTable)
-		delete[] _inverseColorTable;
-
+	delete _palData;
+	delete _interfacePal;
+	delete[] _inverseColorTable;
 }
 
 void Scene::loadScene(int sceneNumber) {
@@ -284,8 +276,7 @@ void Scene::loadSceneInverseColorTable(int sceneNumber) {
 	if (_vm->isM4()) {
 		sprintf(filename, "%i.ipl", sceneNumber);
 		iplS = _vm->res()->openFile(filename);
-		if (_inverseColorTable)
-			delete[] _inverseColorTable;
+		delete[] _inverseColorTable;
 		_inverseColorTable = new byte[iplS->size()];
 		iplS->read(_inverseColorTable, iplS->size());
 		_vm->res()->toss(filename);

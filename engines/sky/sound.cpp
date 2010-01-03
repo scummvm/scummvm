@@ -1030,8 +1030,7 @@ Sound::Sound(Audio::Mixer *mixer, Disk *pDisk, uint8 pVolume) {
 
 Sound::~Sound() {
 	_mixer->stopAll();
-	if (_soundData)
-		free(_soundData);
+	free(_soundData);
 }
 
 void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle) {
@@ -1049,8 +1048,7 @@ void Sound::loadSection(uint8 pSection) {
 	fnStopFx();
 	_mixer->stopAll();
 
-	if (_soundData)
-		free(_soundData);
+	free(_soundData);
 	_soundData = _skyDisk->loadFile(pSection * 4 + SOUND_FILE_BASE);
 	uint16 asmOfs;
 	if (SkyEngine::_systemVars.gameVersion == 109) {

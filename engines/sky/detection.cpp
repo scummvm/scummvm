@@ -206,7 +206,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*"));
 
 	// Prepare the list of savestates by looping over all matching savefiles
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();

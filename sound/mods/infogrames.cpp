@@ -34,8 +34,7 @@ Infogrames::Instruments::Instruments() {
 }
 
 Infogrames::Instruments::~Instruments() {
-	if (_sampleData)
-		delete[] _sampleData;
+	delete[] _sampleData;
 }
 
 void Infogrames::Instruments::init() {
@@ -104,8 +103,7 @@ bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 }
 
 void Infogrames::Instruments::unload() {
-	if (_sampleData)
-		delete[] _sampleData;
+	delete[] _sampleData;
 	init();
 }
 
@@ -142,8 +140,7 @@ Infogrames::Infogrames(Instruments &ins, bool stereo, int rate,
 }
 
 Infogrames::~Infogrames() {
-	if (_data)
-		delete[] _data;
+	delete[] _data;
 }
 
 void Infogrames::init() {

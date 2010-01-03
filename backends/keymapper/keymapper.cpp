@@ -41,7 +41,7 @@ void Keymapper::Domain::addKeymap(Keymap *map) {
 }
 
 void Keymapper::Domain::deleteAllKeyMaps() {
-	for (iterator it = begin(); it != end(); it++)
+	for (iterator it = begin(); it != end(); ++it)
 		delete it->_value;
 
 	clear();

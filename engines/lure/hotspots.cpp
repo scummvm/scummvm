@@ -199,7 +199,7 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 }
 
 Hotspot::~Hotspot() {
-	if (_frames) delete _frames;
+	delete _frames;
 }
 
 void Hotspot::setAnimation(uint16 newAnimId) {

@@ -433,10 +433,8 @@ OrionMenuView::~OrionMenuView() {
 		delete *i;
 	_menuObjects.clear();
 
-	if (_saveNames)
-		delete _saveNames;
-	if (_savegameThumbnail)
-		delete _savegameThumbnail;
+	delete _saveNames;
+	delete _savegameThumbnail;
 }
 
 bool OrionMenuView::loadSprites(const char *seriesName) {

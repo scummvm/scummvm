@@ -397,7 +397,7 @@ const char *Globals::loadMessage(uint index) {
 		if (buffer[i] == '\0') buffer[i] = '\n';
 
 	_vm->res()->toss("messages.dat");
-	delete compData;
+	delete[] compData;
 
 	return (char*)buffer;
 }

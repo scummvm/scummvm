@@ -47,7 +47,7 @@ bool MenuInputHelper::run() {
 
 MenuInputHelper::~MenuInputHelper() {
 	StateMap::iterator b = _map.begin();
-	for ( ; b != _map.end(); b++) {
+	for ( ; b != _map.end(); ++b) {
 		delete b->_value;
 	}
 	_map.clear();

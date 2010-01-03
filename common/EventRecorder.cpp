@@ -203,12 +203,8 @@ void EventRecorder::deinit() {
 	g_system->unlockMutex(_timeMutex);
 	g_system->unlockMutex(_recorderMutex);
 
-	if (_playbackFile != NULL) {
-		delete _playbackFile;
-	}
-	if (_playbackTimeFile != NULL) {
-		delete _playbackTimeFile;
-	}
+	delete _playbackFile;
+	delete _playbackTimeFile;
 
 	if (_recordFile != NULL) {
 		_recordFile->finalize();

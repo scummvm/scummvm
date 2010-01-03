@@ -647,12 +647,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 		error("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
 	}
 
-	if (string != NULL) {
-		free (string);
-	}
-	if (string3 != NULL) {
-		free (string3);
-	}
+	free(string);
+	free(string3);
 }
 
 const char *SmushPlayer::getString(int id) {

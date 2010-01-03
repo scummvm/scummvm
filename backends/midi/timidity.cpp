@@ -320,13 +320,12 @@ int MidiDriver_TIMIDITY::connect_to_server(const char* hostname, unsigned short 
 char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 	/* XXX: I don't like this static buffer!!! */
 	static char buff[BUFSIZ];
-	int status, len;
 	va_list ap;
 
 	if (fmt != NULL) {
 		/* if argumends are present, write them to control connection */
 		va_start(ap, fmt);
-		len = vsnprintf(buff, BUFSIZ-1, fmt, ap); /* leave one byte for \n */
+		int len = vsnprintf(buff, BUFSIZ-1, fmt, ap); /* leave one byte for \n */
 		va_end(ap);
 
 		/* add newline if needed */
@@ -345,7 +344,7 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 		}
 
 		/* report errors from server */
-		status = atoi(buff);
+		int status = atoi(buff);
 		if (400 <= status && status <= 499) { /* Error of data stream */
 			warning("TiMidity: error from server: %s", buff);
 			continue;

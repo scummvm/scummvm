@@ -49,7 +49,7 @@ Disk::Disk() {
 }
 
 Disk::~Disk() {
-	if (_fileHandle) delete _fileHandle;
+	delete _fileHandle;
 	int_disk = NULL;
 }
 

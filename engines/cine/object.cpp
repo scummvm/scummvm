@@ -40,7 +40,7 @@ Common::List<overlay> overlayList;
 
 /*! \brief Resets all elements in the object table. */
 void resetObjectTable() {
-	for (Common::Array<ObjectStruct>::iterator it = objectTable.begin(); it != objectTable.end(); it++) {
+	for (Common::Array<ObjectStruct>::iterator it = objectTable.begin(); it != objectTable.end(); ++it) {
 		it->clear();
 	}
 }

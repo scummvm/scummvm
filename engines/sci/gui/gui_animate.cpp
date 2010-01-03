@@ -44,10 +44,8 @@ SciGuiAnimate::SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *s
 }
 
 SciGuiAnimate::~SciGuiAnimate() {
-	if (_listData)
-		free(_listData);
-	if (_lastCastData)
-		free(_lastCastData);
+	free(_listData);
+	free(_lastCastData);
 }
 
 void SciGuiAnimate::init() {
@@ -129,15 +127,13 @@ void SciGuiAnimate::makeSortedList(List *list) {
 
 	// Adjust list size, if needed
 	if ((_listData == NULL) || (_listCount < listCount)) {
-		if (_listData)
-			free(_listData);
+		free(_listData);
 		_listData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
 		if (!_listData)
 			error("Could not allocate memory for _listData");
 		_listCount = listCount;
 
-		if (_lastCastData)
-			free(_lastCastData);
+		free(_lastCastData);
 		_lastCastData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
 		if (!_lastCastData)
 			error("Could not allocate memory for _lastCastData");

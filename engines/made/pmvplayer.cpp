@@ -115,9 +115,7 @@ bool PmvPlayer::play(const char *filename) {
 
 		// Only reallocate the frame data buffer if its size has changed
 		if (prevChunkSize != chunkSize || !frameData) {
-			if (frameData)
-				delete[] frameData;
-
+			delete[] frameData;
 			frameData = new byte[chunkSize];
 		}
 

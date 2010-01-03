@@ -116,10 +116,9 @@ Room::Room(): _screen(Screen::getReference()) {
 
 Room::~Room() {
 	for (int layerNum = 0; layerNum < _numLayers; ++layerNum)
-		if (_layers[layerNum])
-			delete _layers[layerNum];
+		delete _layers[layerNum];
 
-	if (_talkDialog) delete _talkDialog;
+	delete _talkDialog;
 	int_room = NULL;
 }
 

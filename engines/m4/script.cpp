@@ -101,8 +101,7 @@ StringTable::StringTable() : _stringsData(NULL) {
 }
 
 StringTable::~StringTable() {
-	if (_stringsData)
-		delete[] _stringsData;
+	delete[] _stringsData;
 }
 
 void StringTable::load(Common::File *fd) {
@@ -191,8 +190,7 @@ ScriptFunction::ScriptFunction(ScriptInterpreter *inter) : _inter(inter) {
 }
 
 ScriptFunction::~ScriptFunction() {
-	if (_code)
-		delete _code;
+	delete _code;
 }
 
 void ScriptFunction::load(Common::File *fd) {
@@ -293,9 +291,7 @@ void ScriptInterpreter::open(const char *filename) {
 }
 
 void ScriptInterpreter::close() {
-	if (_scriptFile) {
-		delete _scriptFile;
-	}
+	delete _scriptFile;
 }
 
 void ScriptInterpreter::initScriptKernel() {

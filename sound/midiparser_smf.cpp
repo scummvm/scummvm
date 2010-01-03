@@ -52,8 +52,7 @@ static const byte command_lengths[8] = { 3, 3, 3, 3, 2, 2, 3, 0 };
 static const byte special_lengths[16] = { 0, 2, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 
 MidiParser_SMF::~MidiParser_SMF() {
-	if (_buffer)
-		free(_buffer);
+	free(_buffer);
 }
 
 void MidiParser_SMF::property(int prop, int value) {

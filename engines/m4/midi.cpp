@@ -47,9 +47,7 @@ MidiPlayer::~MidiPlayer() {
 	stopMusic();
 	close();
 	delete _parser;
-	
-	if (_midiData)
-		free(_midiData);
+	free(_midiData);
 }
 
 void MidiPlayer::setVolume(int volume) {

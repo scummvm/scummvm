@@ -95,8 +95,7 @@ void Actor::unloadWalkers() {
 			continue;	// walker sprite 6 is unused
 		SpriteAsset *tempSprite = _walkerSprites[i];
 		_walkerSprites.remove_at(i);
-		if (tempSprite)
-			delete tempSprite;
+		delete tempSprite;
 	}
 }
 

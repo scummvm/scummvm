@@ -188,8 +188,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 	ptr = _se->findStartOfSound(sound);
 	if (ptr == NULL)
 		return -1;
-	if (_parser)
-		delete _parser;
+	delete _parser;
 
 	if (!memcmp(ptr, "RO", 2)) {
 		// Old style 'RO' resource

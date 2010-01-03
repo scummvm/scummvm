@@ -166,9 +166,7 @@ void ResMan::freeCluDescript() {
 			}
 		}
 		delete[] cluster->grp;
-
-		if (cluster->file != NULL)
-			delete cluster->file;
+		delete cluster->file;
 	}
 	delete[] _prj.clu;
 }

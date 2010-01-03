@@ -983,10 +983,8 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 				}
 
-				if (row != NULL)
-					free(row);
-				if (palette != NULL)
-					free(palette);
+				free(row);
+				free(palette);
 				if (image_data != NULL) {
 					free(image_data);
 					free(mask_data);
@@ -995,10 +993,8 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 
 			local_cleanup:
 
-				if (row != NULL)
-					free(row);
-				if (palette != NULL)
-					free(palette);
+				free(row);
+				free(palette);
 				if (image_data != NULL) {
 					free(image_data);
 					free(mask_data);

@@ -90,8 +90,7 @@ MenuObject::MenuObject(DialogView *owner, int objectId, int xs, int ys, int widt
 }
 
 MenuObject::~MenuObject() {
-	if (_background)
-		delete _background;
+	delete _background;
 }
 
 void MenuObject::onExecute() {

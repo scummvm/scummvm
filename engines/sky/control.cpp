@@ -165,8 +165,7 @@ ControlStatus::ControlStatus(Text *skyText, OSystem *system, uint8 *scrBuf) {
 }
 
 ControlStatus::~ControlStatus() {
-	if (_textData)
-		free(_textData);
+	free(_textData);
 	delete _statusText;
 }
 
@@ -184,8 +183,7 @@ void ControlStatus::setToText(const char *newText) {
 }
 
 void ControlStatus::setToText(uint16 textNum) {
-	if (_textData)
-		free(_textData);
+	free(_textData);
 	DisplayedText disText = _skyText->displayText(textNum, NULL, true, STATUS_WIDTH, 255);
 	_textData = (DataFileHeader *)disText.textData;
 	_statusText->setSprite(_textData);
@@ -330,16 +328,14 @@ void Control::initPanel() {
 void Control::buttonControl(ConResource *pButton) {
 	char autoSave[] = "Restore Autosave";
 	if (pButton == NULL) {
-		if (_textSprite)
-			free(_textSprite);
+		free(_textSprite);
 		_textSprite = NULL;
 		_curButtonText = 0;
 		_text->setSprite(NULL);
 		return;
 	}
 	if (_curButtonText != pButton->_text) {
-		if (_textSprite)
-			free(_textSprite);
+		free(_textSprite);
 		_textSprite = NULL;
 		_curButtonText = pButton->_text;
 		if (pButton->_text) {
@@ -647,8 +643,7 @@ bool Control::getYesNo(char *text) {
 	}
 	_mouseClicked = false;
 	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
-	if (dlgTextDat)
-		free(dlgTextDat);
+	free(dlgTextDat);
 	delete dlgText;
 	return retVal;
 }

@@ -894,8 +894,7 @@ AGOSEngine::~AGOSEngine() {
 		delete _gameFile;
 
 	_midi.close();
-	if (_driver)
-		delete _driver;
+	delete _driver;
 
 	AudioCD.stop();
 

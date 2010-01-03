@@ -131,8 +131,13 @@ bool Introduction::show() {
 		anim = new AnimationSequence(curr_anim->resourceId,
 			isEGA ? EgaPalette : coll.getPalette(curr_anim->paletteIndex), fadeIn,
 			(curr_anim->resourceId == 0x44) ? 4 : 7);
-		if (curr_anim->initialPause != 0)
-			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
+
+		if (curr_anim->initialPause != 0) {
+			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) {
+				delete anim;
+				return true;
+			}
+		}
 
 		result = false;
 		switch (anim->show()) {

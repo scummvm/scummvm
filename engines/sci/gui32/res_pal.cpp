@@ -125,6 +125,7 @@ Palette *gfxr_read_pal1_amiga(Common::File &file) {
 		b2 = file.readByte();
 
 		if (b1 == EOF || b2 == EOF) {
+			delete retval;
 			error("Amiga palette file ends prematurely");
 			return NULL;
 		}

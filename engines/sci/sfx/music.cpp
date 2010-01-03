@@ -332,8 +332,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		// play digital sample
 		if (track->digitalChannelNr != -1) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
-			if (pSnd->pStreamAud)
-				delete pSnd->pStreamAud;
+			delete pSnd->pStreamAud;
 			pSnd->pStreamAud = Audio::makeLinearInputStream(channelData, track->digitalSampleSize, track->digitalSampleRate,
 					Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 			pSnd->soundType = Audio::Mixer::kSFXSoundType;

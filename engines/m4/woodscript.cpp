@@ -180,7 +180,7 @@ Sequence *WoodScript::createSequence(Machine *machine, int32 sequenceHash) {
 
 void WoodScript::runSequencePrograms() {
 	// A lot TODO
-	for (Common::Array<Sequence*>::iterator it = _sequences.begin(); it != _sequences.end(); it++) {
+	for (Common::Array<Sequence*>::iterator it = _sequences.begin(); it != _sequences.end(); ++it) {
 		Sequence *sequence = *it;
 		if (sequence->isActive()) {
 			sequence->runProgram();

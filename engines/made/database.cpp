@@ -255,8 +255,7 @@ GameDatabase::GameDatabase(MadeEngine *vm) : _vm(vm) {
 }
 
 GameDatabase::~GameDatabase() {
-	if (_gameState)
-		delete[] _gameState;
+	delete[] _gameState;
 }
 
 void GameDatabase::open(const char *filename) {
@@ -388,8 +387,7 @@ GameDatabaseV2::GameDatabaseV2(MadeEngine *vm) : GameDatabase(vm), _gameText(NUL
 }
 
 GameDatabaseV2::~GameDatabaseV2() {
-	if (_gameText)
-		delete[] _gameText;
+	delete[] _gameText;
 }
 
 void GameDatabaseV2::load(Common::SeekableReadStream &sourceS) {

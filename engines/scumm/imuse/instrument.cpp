@@ -273,8 +273,7 @@ void Instrument::nativeMT32(bool native) {
 }
 
 void Instrument::clear() {
-	if (_instrument)
-		delete _instrument;
+	delete _instrument;
 	_instrument = NULL;
 	_type = itNone;
 }

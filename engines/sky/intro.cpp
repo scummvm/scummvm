@@ -743,8 +743,7 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case LOADBG:
 		_mixer->stopID(SOUND_BG);
-		if (_bgBuf)
-			free(_bgBuf);
+		free(_bgBuf);
 		_bgBuf = _skyDisk->loadFile(*data++);
 		_bgSize = _skyDisk->_lastLoadedFileSize;
 		return true;
