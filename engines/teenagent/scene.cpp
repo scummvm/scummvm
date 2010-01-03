@@ -423,6 +423,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 }
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
+	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop?"true":"false", ignore?"true":"false");
 	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
 		error("playing animation %u failed", id);
@@ -664,16 +665,9 @@ bool Scene::render() {
 			s->render(surface);
 		}
 
-		{
-			Surface *mark = actor_animation.currentFrame();
-			if (mark != NULL) {
-				actor_animation_position = mark->render(surface);
-				if (!actor_animation.ignore) 
-					busy = true;
-				else 
-					busy = false;
-				got_any_animation = true;
-			} else if (!hide_actor) {
+		Surface *mark = actor_animation.currentFrame();
+		if (mark == NULL) {
+			if (!hide_actor) {
 				actor_animation.free();
 				uint zoom = lookupZoom(position.y);
 
@@ -729,6 +723,15 @@ bool Scene::render() {
 		for(; z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
 			s->render(surface);
+		}
+		if (mark != NULL) {
+			debug("pos.y = %d, anim.y = %d", position.y, mark->y + mark->h);
+			actor_animation_position = mark->render(surface);
+			if (!actor_animation.ignore) 
+				busy = true;
+			else 
+				busy = false;
+			got_any_animation = true;
 		}
 
 		if (!message.empty()) {
