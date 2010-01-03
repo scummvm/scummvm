@@ -544,9 +544,6 @@ they are either identical or, in one case, so nearly identical that it
 makes little difference. The PlayStation version requires tunes.dat and
 tunes.tab.
 
-ScummVM does not support the original cutscene files, so there is no
-need to copy them.
-
 
 3.7.4) Broken Sword II:
 ------ ----------------
@@ -561,9 +558,6 @@ like.
 
 In addition, you will need the cd.inf and, optionally, the startup.inf
 files from the sword2 directory on CD 1.
-
-ScummVM does not support the original cutscene files, so there is no
-need to copy them.
 
 
 3.8) Beneath a Steel Sky notes:
