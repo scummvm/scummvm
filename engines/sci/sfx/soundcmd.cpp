@@ -279,6 +279,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 		newSound->soundRes = new SoundResource(number, _resMan, _soundVersion);
 	else
 		newSound->soundRes = 0;
+
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop);
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
@@ -301,8 +302,11 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 		newSound->pStreamAud = _audio->getAudioStream(number, 65535, &sampleLen);
 		newSound->soundType = Audio::Mixer::kSpeechSoundType;
 	} else {
-		if (newSound->soundRes)
-			_music->soundInitSnd(newSound);
+		// If sound resource doesnt exist, we are supposed to leave nodePtr/handle selector alone
+		//  otherwise character selection music in qfg1vga wont work.
+		if (!newSound->soundRes)
+			return;
+		_music->soundInitSnd(newSound);
 	}
 
 	_music->pushBackSlot(newSound);
