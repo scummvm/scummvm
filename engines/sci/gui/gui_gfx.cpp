@@ -318,14 +318,14 @@ void SciGuiGfx::BitsFree(GuiMemoryHandle memoryHandle) {
 }
 
 void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
-	SciGuiPicture *picture;
+	SciGuiPicture *picture = new SciGuiPicture(_resMan, this, _screen, _palette, pictureId);
 
-	picture = new SciGuiPicture(_resMan, this, _screen, _palette, pictureId);
 	// do we add to a picture? if not -> clear screen with white
-	if (!addToFlag) {
+	if (!addToFlag)
 		ClearScreen(_screen->_colorWhite);
-	}
+
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
+	delete picture;
 }
 
 // This one is the only one that updates screen!
