@@ -146,6 +146,22 @@ using Common::GUIO_NONE;
 		ver, \
 	}
 
+#define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp) { \
+		{ \
+			id, \
+			name, \
+			AD_ENTRY1s(fname,md5,size),		\
+			lang, \
+			platform, \
+			ADGF_USEEXTRAASTITLE,					\
+			GUIO_NONE	\
+		}, \
+		gid, \
+		interp, \
+		features, \
+		ver, \
+	}
+
 #define GAME(id,name,md5,ver,gid) GAME_LVFPN(id,name,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
 #define GAME3(id,name,fname,md5,ver,gid) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V3)
 
@@ -167,9 +183,9 @@ using Common::GUIO_NONE;
 
 #define GAME3_PS(id,name,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
-#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
-#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPN(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
+#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPNF(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
 #define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVP("agi-fanmade",name,md5,size,ver,platform)
 
 #define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
@@ -734,7 +750,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_USEEXTRAASTITLE,
 			GUIO_NONE
 		},
 		GID_FANMADE,
@@ -751,7 +767,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "aaea5b4a348acb669d13b0e6f22d4dc9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_USEEXTRAASTITLE,
 			GUIO_NONE
 		},
 		GID_GETOUTTASQ,
@@ -905,7 +921,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
+			ADGF_USEEXTRAASTITLE,
 			GUIO_NONE
 		},
 		GID_FANMADE,
