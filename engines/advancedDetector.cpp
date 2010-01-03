@@ -142,15 +142,23 @@ GameDescriptor findGameID(
 
 static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGameDescriptor *sg) {
 	const char *title = 0;
+	const char *extra;
 
-	while (sg->gameid) {
-		if (!scumm_stricmp(g.gameid, sg->gameid))
-			title = sg->description;
-		sg++;
+	if (g.flags & ADGF_USEEXTRAASTITLE) {
+		title = g.extra;
+		extra = "";
+	} else {
+		while (sg->gameid) {
+			if (!scumm_stricmp(g.gameid, sg->gameid))
+				title = sg->description;
+			sg++;
+		}
+
+		extra = g.extra;
 	}
 
 	GameDescriptor gd(g.gameid, title, g.language, g.platform);
-	gd.updateDesc(g.extra);
+	gd.updateDesc(extra);
 	return gd;
 }
 

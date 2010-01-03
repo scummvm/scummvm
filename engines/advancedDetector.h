@@ -43,11 +43,12 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_USEEXTRAASTITLE = (1 << 26), // Extra field value will be used as main game title, not gameid
 	ADGF_KEEPMATCH = (1 << 27), // this entry is kept even when there are matched
 								// entries with more files
 	ADGF_DROPLANGUAGE = (1 << 28), // don't add language to gameid
-	ADGF_CD = (1 << 29),    // add "-cd" to gameid
-	ADGF_DEMO = (1 << 30)   // add "-demo" to gameid
+	ADGF_CD = (1 << 29),    	// add "-cd" to gameid
+	ADGF_DEMO = (1 << 30)   	// add "-demo" to gameid
 };
 
 struct ADGameDescription {
@@ -102,7 +103,16 @@ enum ADFlags {
 	 * not equal to english) and platform (if not equal to PC).
 	 */
 	kADFlagDontAugmentPreferredTarget = (1 << 0),
+	/**
+	 * Warn user about new variant if his version was detected with fallback
+	 */
 	kADFlagPrintWarningOnFileBasedFallback = (1 << 1),
+	/**
+	 * Store value of extra field in config file, and use it as a hint
+	 * on subsequent runs. Could be used when there is no way to autodetect
+	 * game (when more than one game sits in same directory), and user picks
+	 * up a variant manually.
+	 */
 	kADFlagUseExtraAsHint = (1 << 2)
 };
 
