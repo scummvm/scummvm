@@ -166,6 +166,14 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					break;
 				}
 				break;
+			// Unhandled SCI commands
+			case 0x46: // LSL3 - binoculars
+			case 0x61: // Iceman (Adlib?)
+			case 0x73: // Hoyle
+			case 0xd1: // KQ4, when riding the unicorn
+				// Obscure SCI commands - ignored
+				break;
+			// Standard MIDI commands
 			case 0x01:	// mod wheel
 			case 0x04:	// foot controller
 			case 0x07:	// channel volume
@@ -180,12 +188,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			case 0x4B:	// voice mapping
 				// TODO: is any support for this needed at the MIDI parser level?
 				warning("Unhanded SCI MIDI command 0x%x - voice mapping (parameter %d)", info.basic.param1, info.basic.param2);
-				break;
-			case 0x46: // LSL3 - binoculars
-			case 0x61: // Iceman (Adlib?)
-			case 0x73: // Hoyle
-			case 0xd1: // KQ4, when riding the unicorn
-				// Obscure SCI commands - ignored
 				break;
 			default:
 				warning("Unhandled SCI MIDI command 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
@@ -482,3 +484,4 @@ void MidiParser_SCI::setVolume(byte bVolume) {
 }
 
 } // End of namespace Sci
+space Sci
