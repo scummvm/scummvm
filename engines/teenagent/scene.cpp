@@ -687,8 +687,10 @@ bool Scene::render() {
 					int o;
 					if (ABS(dp.x) > ABS(dp.y))
 						o = dp.x > 0 ? kActorRight : kActorLeft;
-					else
+					else {
 						o = dp.y > 0 ? kActorDown : kActorUp;
+						speed_y *= 2;
+					}
 
 					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
 					position.x += (o == kActorDown || o == kActorUp)? 
