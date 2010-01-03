@@ -677,7 +677,10 @@ bool Scene::render() {
 				uint zoom = lookupZoom(position.y);
 
 				if (!path.empty()) {
-					const int speed_x = 10 * zoom / 256, speed_y = 3 * zoom / 256;
+					int speed_x = 4 * zoom / 256, speed_y = 3 * zoom / 256;
+					if ((teenagent.currentIndex() % 5) == 0)
+						speed_x *= 4;
+					
 					const Common::Point &destination = path.front();
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
 

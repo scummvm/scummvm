@@ -67,7 +67,8 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (delta_frame == 0) {
 		index = 0; //static animation
 	}
-	int dx, dy;
+
+	bool mirror = orientation == kActorLeft;
 	switch (orientation) {
 	case kActorLeft:
 	case kActorRight:
@@ -81,8 +82,6 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		if (index >= ARRAYSIZE(frames_left_right))
 			index = 0;
 		s = frames + frames_left_right[index];
-		dx = 11;
-		dy = 62;
 		break;
 	case kActorUp:
 		if (render_head) {
@@ -95,8 +94,6 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		if (index >= ARRAYSIZE(frames_up))
 			index = 0;
 		s = frames + frames_up[index];
-		dx = 11;
-		dy = 62;
 		break;
 	case kActorDown:
 		if (render_head) {
@@ -109,8 +106,6 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		if (index >= ARRAYSIZE(frames_down))
 			index = 0;
 		s = frames + frames_down[index];
-		dx = 11;
-		dy = 62;
 		break;
 	default:
 		return Common::Rect();
@@ -120,13 +115,13 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		warning("no surface, skipping");
 		return Common::Rect();
 	}
-
+	
 	Common::Rect dirty;
 	Common::Rect clip(0, 0, s->w, s->h);
 	if (head != NULL) 
 		clip.top = head->h;
 
-	int xp = position.x - dx * zoom / 256, yp = position.y - dy * zoom / 256;
+	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - s->h * zoom / 256 - s->y;
 	if (xp < 0)
 		xp = 0;
 	if (xp + s->w > 320)
@@ -137,7 +132,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	if (yp + clip.top + clip.height() > 200)
 		yp = 200 - clip.top - clip.height();
 	
-	dirty = s->render(surface, xp, yp + clip.top * zoom / 256, orientation == kActorLeft, clip, zoom);
+	dirty = s->render(surface, xp, yp + clip.top * zoom / 256, mirror, clip, zoom);
 
 	if (head != NULL)
 		dirty.extend(head->render(surface, xp, yp, orientation == kActorLeft, Common::Rect(), zoom));
