@@ -685,7 +685,7 @@ bool Scene::render() {
 					Common::Point dp(destination.x - position.x, destination.y - position.y);
 
 					int o;
-					if (ABS(dp.x) > 3 * ABS(dp.y))
+					if (ABS(dp.x) > ABS(dp.y))
 						o = dp.x > 0 ? kActorRight : kActorLeft;
 					else
 						o = dp.y > 0 ? kActorDown : kActorUp;
