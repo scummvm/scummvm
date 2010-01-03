@@ -83,6 +83,8 @@ private:
 	int get_png_image_size(Common::SeekableReadStream *, uint32 *png_width, uint32 *png_height, u32 *paletteSize);
 	uint32 convert_pow2(uint32 size);
 	void flipNibbles(gu_surface* surface);		// Convert to PSP 4-bit format
+	void increaseKeyboardLocationX(int amount);		// Move keyboard onscreen
+	void increaseKeyboardLocationY(int amount);
 			
 	static short _modeChar[MODE_COUNT][5][6];
 	static const char *_guiStrings[];

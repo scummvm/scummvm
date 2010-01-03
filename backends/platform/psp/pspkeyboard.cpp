@@ -38,6 +38,8 @@
 #include "common/fs.h"
 #include "common/unzip.h"
 
+#define PSP_SCREEN_WIDTH 480
+#define PSP_SCREEN_HEIGHT 272
 #define K(x)	((short)(Common::KEYCODE_INVALID + (x)))
 #define C(x)	((short)(Common::KEYCODE_##x))
 
@@ -180,13 +182,13 @@ bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad, bool &use
 			_dirty = true;
 
 			if (DOWN(PSP_CTRL_DOWN))
-				_moved_y += 5;
+				increaseKeyboardLocationY(5);
 			else if (DOWN(PSP_CTRL_UP))
-				_moved_y -= 5;
+				increaseKeyboardLocationY(-5);
 			else if (DOWN(PSP_CTRL_LEFT))
-				_moved_x -= 5;
+				increaseKeyboardLocationX(-5);
 			else  /* DOWN(PSP_CTRL_RIGHT) */
-				_moved_x += 5;
+				increaseKeyboardLocationX(5);
 		}
 		usedInput = true;	// We used up the input (select was held down)
 		goto END;
@@ -373,6 +375,24 @@ END:
 /* move the position the keyboard is currently drawn at */
 void PSPKeyboard::moveTo(const int newX, const int newY) {
 	_moved_x = newX;
+	_moved_y = newY;
+}
+
+/* move the position the keyboard is currently drawn at */
+void PSPKeyboard::increaseKeyboardLocationX(int amount) {
+	int newX = _moved_x + amount;
+	
+	if (newX > PSP_SCREEN_WIDTH - 5 || newX < 0 - 140)	// clamp
+		return;
+	_moved_x = newX;
+}
+
+/* move the position the keyboard is currently drawn at */
+void PSPKeyboard::increaseKeyboardLocationY(int amount) {
+	int newY = _moved_y + amount;
+	
+	if (newY > PSP_SCREEN_HEIGHT - 5 || newY < 0 - 140)	// clamp
+		return;
 	_moved_y = newY;
 }
 
