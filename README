@@ -21,7 +21,7 @@ Table of Contents:
  * 3.4 Macintosh games notes
  * 3.5 Multi-CD games notes
  * 3.6 The Curse of Monkey Island notes
- * 3.7 Broken Sword notes
+ * 3.7 Broken Sword games notes
  * 3.8 Beneath a Steel Sky notes
  * 3.9 Flight of the Amazon Queen notes
  * 3.10 Gobliiins notes
@@ -72,14 +72,14 @@ shipped with the game, allowing you to play them on systems for which
 they were never designed!
 
 Some of the adventures ScummVM supports include Adventure Soft's Simon
-the Sorcerer 1 and 2; Revolution's Beneath A Steel Sky, Broken Sword 1
-and Broken Sword 2; Flight of the Amazon Queen; Wyrmkeep's Inherit the
-Earth; Coktel Vision's Gobliiins; Westwood Studios' The Legend of
-Kyrandia and games based on LucasArts' SCUMM (Script Creation Utility
-for Maniac Mansion) system such as Monkey Island, Day of the Tentacle,
-Sam and Max and more. You can find a thorough list with details on which
-games are supported and how well on the compatibility page. ScummVM is
-continually improving, so check back often.
+the Sorcerer 1 and 2; Revolution's Beneath A Steel Sky, Broken Sword I
+and II; Flight of the Amazon Queen; Wyrmkeep's Inherit the Earth; Coktel
+Vision's Gobliiins; Westwood Studios' The Legend of Kyrandia and games
+based on LucasArts' SCUMM (Script Creation Utility for Maniac Mansion)
+system such as Monkey Island, Day of the Tentacle, Sam and Max and more.
+You can find a thorough list with details on which games are supported
+and how well on the compatibility page. ScummVM is continually
+improving, so check back often.
 
 Among the systems on which you can play those games are Windows, Linux,
 Mac OS X, Dreamcast, PocketPC, PalmOS, AmigaOS, BeOS, OS/2, PSP, PS2,
@@ -237,8 +237,8 @@ MADE Games by Activision:
 
 Other Games:
      Beneath a Steel Sky                         [sky]
-     Broken Sword 1: The Shadow of the Templars  [sword1]
-     Broken Sword 2: The Smoking Mirror          [sword2]
+     Broken Sword: The Shadow of the Templars    [sword1]
+     Broken Sword II: The Smoking Mirror         [sword2]
      Cruise for a Corpse                         [cruise]
      Discworld                                   [dw]
      Discworld 2: Missing Presumed ...!?         [dw2]
@@ -463,8 +463,8 @@ two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
 
-3.7) Broken Sword notes:
----- -------------------
+3.7) Broken Sword games notes:
+---- -------------------------
 The instructions for the Broken Sword games are for the Sold-Out
 Software versions, with each game on two CDs, since these were the
 versions most easily available at the time ScummVM gained support for
@@ -472,15 +472,15 @@ them. Hopefully they are general enough to be useful to other releases
 as well.
 
 
-3.7.1) Broken Sword cutscenes:
------- -----------------------
+3.7.1) Broken Sword games cutscenes:
+------ -----------------------------
 The cutscenes for the Broken Sword games have a bit of a history (see
-the next section, if you are interested), but in general all you need
-to do is to copy the .SMK files from the "SMACKS" or "SMACKSHI"
-directories on the CDs to the same directory as the other game data
-files. (Broken Sword 1 has a "SMACKSLO" directory with the same
-cutscenes, but these are of lower quality.) You can put them in a
-subdirectory called "video" if you find that neater.
+the next section, if you are interested), but in general all you need to
+do is to copy the .SMK files from the "SMACKS" or "SMACKSHI" directories
+on the CDs to the same directory as the other game data files. (Broken
+Sword has a "SMACKSLO" directory with the same cutscenes, but these are
+of lower quality.) You can put them in a subdirectory called "video" if
+you find that neater.
 
 Some re-releases of the games, as well as the PlayStation version, do
 not have Smacker videos. Revolution Software has kindly allowed us to
@@ -498,19 +498,19 @@ audio for these cutscenes is also provided separately as OGG Vorbis
 audio. Viewing these cutscenes with OGG Vorbis audio requires a version
 of ScummVM compiled with both libVorbis and zlib support.
 
-For Broken Sword 1, we also provide a subtitles add-on. Simply unpack
-it and follow the instructions in its readme.txt file. (Broken Sword 2
+For Broken Sword, we also provide a subtitles add-on. Simply unpack it
+and follow the instructions in its readme.txt file. (Broken Sword II
 already has subtitles; no extra work is needed for them.)
 
 
-3.7.2) Broken Sword cutscenes, in retrospect
------- -------------------------------------
+3.7.2) Broken Sword games cutscenes, in retrospect
+------ -------------------------------------------
 The original releases of the Broken Sword games used RAD Game Tools's
 Smacker(tm) format. As RAD was unwilling to open the older legacy
 versions of this format to us, and had requested we not reverse engineer
 it, an alternative solution had to be found.
 
-In Broken Sword 2, it was possible to play back the voice-over without
+In Broken Sword II, it was possible to play back the voice-over without
 playing the video itself. This remained a fallback until ScummVM 1.0.0,
 but was never the only solution for any stable release.
 
@@ -528,8 +528,8 @@ decoding MPEG movies added a lot of complexity, and they didn't look as
 good as the Smacker and DXA versions anyway.
 
 
-3.7.3) Broken Sword 1:
------- ---------------
+3.7.3) Broken Sword:
+------ -------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. For the Windows and Macintosh versions, you
 will also need the speech.clu files from the speech directories, but
@@ -548,8 +548,8 @@ ScummVM does not support the original cutscene files, so there is no
 need to copy them.
 
 
-3.7.4) Broken Sword 2:
------- ---------------
+3.7.4) Broken Sword II:
+------ ----------------
 For this game, you will need all of the files from the clusters
 directories on both CDs. (Actually, a few of them may not be strictly
 necessary, but the ones that I'm uncertain about are all fairly small.)
@@ -997,10 +997,10 @@ Examples:
 5.2) Language options:
 ---- -----------------
 ScummVM includes a language option for Maniac Mansion, Zak McKracken,
-The Dig, The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword 1
+The Dig, The Curse of Monkey Island, Beneath a Steel Sky, Broken Sword
 and Simon the Sorcerer 1 and 2.
 
-Note that with the exception of Beneath a Steel Sky, Broken Sword 1,
+Note that with the exception of Beneath a Steel Sky, Broken Sword,
 multilanguage versions of Goblins games and Nippon Safes Inc., using
 this option does *not* change the language of the game (which usually is
 hardcoded), but rather is only used to select the appropriate font (e.g.
@@ -1043,7 +1043,7 @@ Beneath a Steel Sky
     es  - Spanish
     se  - Swedish
 
-Broken Sword 1
+Broken Sword
     en  - English (default)
     de  - German
     fr  - French
@@ -1198,10 +1198,10 @@ other games.
     Escape                 - Skips the game intro
     Period (.)             - Skips current line of text
 
-  Broken Sword 1:
+  Broken Sword:
     F5 or Escape           - Displays save/load box
 
-  Broken Sword 2:
+  Broken Sword II:
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
     p                      - Pauses
@@ -1772,8 +1772,8 @@ Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy
 this file to your game directory. You can safely remove the old file.
 
 
-7.8.7) Compressing speech/music in Broken Sword 1
------- ------------------------------------------
+7.8.7) Compressing speech/music in Broken Sword
+------ ----------------------------------------
 The 'compress_sword1' tool from the scummvm-tools package can encode
 music and speech to MP3 as well as Ogg Vorbis. The easiest way to encode
 the files is simply copying the executable into your BS1 directory
@@ -1790,8 +1790,8 @@ instead of MP3.
 Use "compress_sword1 --help" to get a full list of the options.
 
 
-7.8.8) Compressing speech/music in Broken Sword 2
------- ------------------------------------------
+7.8.8) Compressing speech/music in Broken Sword II
+------ -------------------------------------------
 Use our 'compress_sword2' utility from the scummvm-tools package to
 perform this task. You can choose between multiple target formats, but
 note  that you can only use each if ScummVM was compiled with the
@@ -1812,9 +1812,9 @@ However, the resulting *.clf file will actually be larger than the
 original.
 
 Please note that compress_sword2 will only work with the four
-speech/music files in Broken Sword 2. It will not work with any of the
+speech/music files in Broken Sword II. It will not work with any of the
 other *.clu files, nor will it work with the speech files from Broken
-Sword 1.
+Sword.
 
 
 7.9) Output sample rate:
@@ -1979,7 +1979,7 @@ The following keywords are recognized:
 
     boot_param      number   Pass this number to the boot script
 
-Broken Sword 2 adds the following non-standard keywords:
+Broken Sword II adds the following non-standard keywords:
 
     gfx_details     number   Graphics details setting (0-3)
     music_mute      bool     If true, music is muted

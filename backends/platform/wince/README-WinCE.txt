@@ -527,9 +527,9 @@ How can I scroll through my inventory items in Zak Mc Kracken ?
 You need to map the hide toolbar button (see the General Questions section) or
 double tap at the top of the screen (from 0.8.0+)
 
-------------------------
--- Broken Sword 1 & 2 --
-------------------------
+-------------------------
+-- Broken Sword I & II --
+-------------------------
 
 I've installed the movies pack but they are not playing/they are slow
 ---------------------------------------------------------------------

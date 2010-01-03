@@ -36,19 +36,19 @@
 
 #include "engines/metaengine.h"
 
-/* Broken Sword 1 */
+/* Broken Sword */
 static const PlainGameDescriptorGUIOpts sword1FullSettings =
-	{"sword1", "Broken Sword 1: The Shadow of the Templars", Common::GUIO_NOMIDI};
+	{"sword1", "Broken Sword: The Shadow of the Templars", Common::GUIO_NOMIDI};
 static const PlainGameDescriptorGUIOpts sword1DemoSettings =
-	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)", Common::GUIO_NOMIDI};
+	{"sword1demo", "Broken Sword: The Shadow of the Templars (Demo)", Common::GUIO_NOMIDI};
 static const PlainGameDescriptorGUIOpts sword1MacFullSettings =
-	{"sword1mac", "Broken Sword 1: The Shadow of the Templars (Mac)", Common::GUIO_NOMIDI};
+	{"sword1mac", "Broken Sword: The Shadow of the Templars (Mac)", Common::GUIO_NOMIDI};
 static const PlainGameDescriptorGUIOpts sword1MacDemoSettings =
-	{"sword1macdemo", "Broken Sword 1: The Shadow of the Templars (Mac demo)", Common::GUIO_NOMIDI};
+	{"sword1macdemo", "Broken Sword: The Shadow of the Templars (Mac demo)", Common::GUIO_NOMIDI};
 static const PlainGameDescriptorGUIOpts sword1PSXSettings =
-	{"sword1psx", "Broken Sword 1: The Shadow of the Templars (PlayStation)", Common::GUIO_NOMIDI};
+	{"sword1psx", "Broken Sword: The Shadow of the Templars (PlayStation)", Common::GUIO_NOMIDI};
 static const PlainGameDescriptorGUIOpts sword1PSXDemoSettings =
-	{"sword1psxdemo", "Broken Sword 1: The Shadow of the Templars (PlayStation demo)", Common::GUIO_NOMIDI};
+	{"sword1psxdemo", "Broken Sword: The Shadow of the Templars (PlayStation demo)", Common::GUIO_NOMIDI};
  
 
 // check these subdirectories (if present)

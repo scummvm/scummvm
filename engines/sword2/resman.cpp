@@ -106,7 +106,7 @@ bool ResourceManager::init() {
 	Common::File file;
 
 	if (!file.open("resource.inf")) {
-		GUIErrorMessage("Broken Sword 2: Cannot open resource.inf");
+		GUIErrorMessage("Broken Sword II: Cannot open resource.inf");
 		return false;
 	}
 
@@ -127,7 +127,7 @@ bool ResourceManager::init() {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
 		if (++_totalClusters >= MAX_res_files) {
-			GUIErrorMessage("Broken Sword 2: Too many entries in resource.inf");
+			GUIErrorMessage("Broken Sword II: Too many entries in resource.inf");
 			return false;
 		}
 	}
@@ -136,7 +136,7 @@ bool ResourceManager::init() {
 
 	// Now load in the binary id to res conversion table
 	if (!file.open("resource.tab")) {
-		GUIErrorMessage("Broken Sword 2: Cannot open resource.tab");
+		GUIErrorMessage("Broken Sword II: Cannot open resource.tab");
 		return false;
 	}
 
@@ -153,7 +153,7 @@ bool ResourceManager::init() {
 
 	if (file.eos() || file.err()) {
 		file.close();
-		GUIErrorMessage("Broken Sword 2: Cannot read resource.tab");
+		GUIErrorMessage("Broken Sword II: Cannot read resource.tab");
 		return false;
 	}
 
@@ -163,7 +163,7 @@ bool ResourceManager::init() {
 	// version, which has all files on one disc.
 
 	if (!file.open("cd.inf") && !Sword2Engine::isPsx()) {
-		GUIErrorMessage("Broken Sword 2: Cannot open cd.inf");
+		GUIErrorMessage("Broken Sword II: Cannot open cd.inf");
 		return false;
 	}
 
@@ -181,7 +181,7 @@ bool ResourceManager::init() {
 			if (file.eos() || file.err()) {
 				delete[] cdInf;
 				file.close();
-				GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
+				GUIErrorMessage("Broken Sword II: Cannot read cd.inf");
 				return false;
 			}
 
@@ -209,7 +209,7 @@ bool ResourceManager::init() {
 		// the resource manager will print a fatal error.
 
 		if (cdInf[i].cd == 0 && !Common::File::exists((char *)cdInf[i].clusterName)) {
-			GUIErrorMessage("Broken Sword 2: Cannot find " + Common::String((char *)cdInf[i].clusterName));
+			GUIErrorMessage("Broken Sword II: Cannot find " + Common::String((char *)cdInf[i].clusterName));
 			delete[] cdInf;
 			return false;
 		}

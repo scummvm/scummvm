@@ -54,11 +54,11 @@ ScummVM Team
        Oliver Kiehl          - (retired)
        Joost Peters         
 
-    Broken Sword 1:
+    Broken Sword:
        Fabio Battaglia       - PSX version support
        Robert Goeffringmann  - (retired)
 
-    Broken Sword 2:
+    Broken Sword II:
        Torbjorn Andersson   
        Fabio Battaglia       - PSX version support
        Jonathan Gray         - (retired)
@@ -323,7 +323,7 @@ Other contributions
      Stuart Caie           - Decoders for Amiga and AtariST data files (AGOS
                              engine)
      Paolo Costabel        - PSP port contributions
-     Thierry Crozat        - Support for Broken Sword 1 Macintosh version
+     Thierry Crozat        - Support for Broken Sword Macintosh version
      Martin Doucha         - CinE engine objectification
      Thomas Fach-Pedersen  - ProTracker module player
      Tobias Gunkel         - Sound support for C64 version of MM/Zak, Loom
@@ -344,7 +344,7 @@ Other contributions
      Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
                              NES support
      segra                 - Improved support for Apple II/C64 versions of MM
-     Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
+     Andreas Roever        - Broken Sword I & II MPEG2 cutscene support
      Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom audio
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
                              support

@@ -305,7 +305,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 	byte *buffer;
 
 	if (!file.open("screens.clu")) {
-		GUIErrorMessage("Broken Sword 2: Cannot open screens.clu");
+		GUIErrorMessage("Broken Sword II: Cannot open screens.clu");
 		return NULL;
 	}
 
@@ -373,7 +373,7 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 		return NULL;
 
 	if (!file.open("screens.clu")) {
-		GUIErrorMessage("Broken Sword 2: Cannot open screens.clu");
+		GUIErrorMessage("Broken Sword II: Cannot open screens.clu");
 		return NULL;
 	}
 

@@ -36,7 +36,7 @@ ScummVM is an interpreter that will play graphic adventure games written for
 LucasArts' SCUMM virtual machine (such as Day of the Tentacle and
 Monkey Island), Sierra's AGI adventures (such as early King's Quest and
 Space Quest games), Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files,
-Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
+Revolution Software's Beneath a Steel Sky and Broken Sword I and II,
 Interactive Binary Illusions' Flight of the Amazon Queen,
 Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth, Westwood's
 Legend of Kyrandia, and various others.

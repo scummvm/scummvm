@@ -31,7 +31,7 @@
 // with our PocketPC version.
 //
 // There is one thing that prevents us from replacing the whole memory manager
-// with the standard memory allocation functions: Broken Sword 2 absolutely,
+// with the standard memory allocation functions: Broken Sword II absolutely,
 // positively needs to be able to encode pointers as 32-bit integers. The
 // original engine did this simply by casting between pointers and integers,
 // but as far as I know that's not a very portable thing to do.
