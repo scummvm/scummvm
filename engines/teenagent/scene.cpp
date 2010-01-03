@@ -673,6 +673,11 @@ bool Scene::render() {
 
 				if (!path.empty()) {
 					int speed_x = 4 * zoom / 256, speed_y = 1 * zoom / 256;
+					if (speed_x == 0)
+						speed_x = 1;
+					if (speed_y == 0)
+						speed_y = 1;
+					
 					if ((teenagent.currentIndex() % 5) == 0)
 						speed_x *= 4;
 					
