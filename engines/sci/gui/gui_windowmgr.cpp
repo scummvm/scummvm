@@ -55,9 +55,13 @@ SciGuiWindowMgr::~SciGuiWindowMgr() {
 void SciGuiWindowMgr::init(Common::String gameId) {
 	int16 offTop = 10;
 
-	_wmgrPort = new GuiPort(0);
-	_windowsById.resize(1);
-	_windowsById[0] = _wmgrPort;
+	_wmgrPort = new GuiPort(1);
+	_windowsById.resize(2);
+	_windowsById[0] = _wmgrPort; // wmgrPort is supposed to be accessible via id 0
+	_windowsById[1] = _wmgrPort; //  but wmgrPort may not actually have id 0, so we assign id 1 (as well)
+	// Background: sierra sci replies with the offset of curPort on kGetPort calls. If we reply with 0 there most games
+	//				will work, but some scripts seem to check for 0 and initialize the variable again in that case
+	//				resulting in problems.
 
 	// Jones sierra sci was called with parameter -Nw 0 0 200 320
 	//  this actually meant not skipping the first 10 pixellines in windowMgrPort
