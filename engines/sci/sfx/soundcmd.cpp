@@ -277,6 +277,8 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	newSound->resnum = number;
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
 		newSound->soundRes = new SoundResource(number, _resMan, _soundVersion);
+	else
+		newSound->soundRes = 0;
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, loop);
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
@@ -514,6 +516,8 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 		changeSoundStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
 
+	Common::StackLock lock(_music->_mutex);
+
 	MusicEntry *musicSlot = NULL;
 	MusicList::iterator slotLoop = NULL;
 
@@ -531,8 +535,6 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 			return;
 		}
 	}
-
-	Common::StackLock lock(_music->_mutex);
 
 	do {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
@@ -1023,8 +1025,12 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 				(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
 		}
 
-		(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
-		_music->soundInitSnd(*i);
+		if ((*i)->resnum && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resnum))) {
+			(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
+			_music->soundInitSnd(*i);
+		} else {
+			(*i)->soundRes = 0;
+		}
 		if ((*i)->status == kSoundPlaying)
 			cmdPlaySound((*i)->soundObj, 0);
 	}
