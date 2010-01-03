@@ -31,7 +31,7 @@ namespace Sci {
 
 static const int nMidiParams[] = { 2, 2, 2, 2, 1, 1, 2, 0 };
 
-enum SciSysExCommands {
+enum SciMidiCommands {
 	kSetSignalLoop = 0x7F,
 	kEndOfTrack = 0xFC,
 	kSetReverb = 0x50,
@@ -166,10 +166,20 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					break;
 				}
 				break;
-			case 0x1:	// unknown (example case: LB2CD)
-			case 0xA:	// unknown (example case: LB2CD)
+			case 0x01:	// mod wheel
+			case 0x07:	// channel volume
+			case 0x0A:	// pan
+			case 0x40:	// hold pedal
+			case 0x4E:	// velocity control
+			case 0x7B:	// notes off
+				// These are all handled by the music driver, so ignore them
+				break;
+			case 0x4B:	// voice mapping
+				// TODO: is any support for this needed at the MIDI parser level?
+				warning("Unhanded SCI MIDI command 0x%x - voice mapping (parameter %d)", info.basic.param1, info.basic.param2);
+				break;
 			default:
-				warning("Unhandled SCI SysEx 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
+				warning("Unhandled SCI MIDI command 0x%x (parameter %d)", info.basic.param1, info.basic.param2);
 				break;
 			}
 		}
