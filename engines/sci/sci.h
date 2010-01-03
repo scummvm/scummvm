@@ -88,7 +88,7 @@ extern const char *versionNames[];
 
 /** SCI versions */
 enum SciVersion {
-	SCI_VERSION_AUTODETECT,
+	SCI_VERSION_NONE,
 	SCI_VERSION_0_EARLY, // Early KQ4, 1988 xmas card
 	SCI_VERSION_0_LATE, // KQ4, LSL2, LSL3, SQ3 etc
 	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
@@ -165,8 +165,8 @@ SciVersion getSciVersion();
 
 inline static Common::String getSciVersionDesc(SciVersion version) {
 	switch (version) {
-	case SCI_VERSION_AUTODETECT:
-		return "Autodetect";
+	case SCI_VERSION_NONE:
+		return "Invalid SCI version";
 	case SCI_VERSION_0_EARLY:
 		return "Early SCI0";
 	case SCI_VERSION_0_LATE:

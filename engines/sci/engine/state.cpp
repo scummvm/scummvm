@@ -101,10 +101,10 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_lastAnimateCounter = 0;
 	_lastAnimateTime = 0;
 
-	_setCursorType = SCI_VERSION_AUTODETECT;
-	_doSoundType = SCI_VERSION_AUTODETECT;
-	_lofsType = SCI_VERSION_AUTODETECT;
-	_gfxFunctionsType = SCI_VERSION_AUTODETECT;
+	_setCursorType = SCI_VERSION_NONE;
+	_doSoundType = SCI_VERSION_NONE;
+	_lofsType = SCI_VERSION_NONE;
+	_gfxFunctionsType = SCI_VERSION_NONE;
 	_moveCountType = kMoveCountUninitialized;
 	
 	_usesCdTrack = Common::File::exists("cdaudio.map");
@@ -328,7 +328,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 				if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
 					_lofsType = SCI_VERSION_1_MIDDLE;
 
-				if (_lofsType != SCI_VERSION_AUTODETECT)
+				if (_lofsType != SCI_VERSION_NONE)
 					return true;
 
 				// If we reach here, we haven't been able to deduce the lofs parameter
@@ -434,7 +434,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 								break;
 							}
 
-							if (_doSoundType != SCI_VERSION_AUTODETECT)
+							if (_doSoundType != SCI_VERSION_NONE)
 								return true;
 						}
 						break;
@@ -482,7 +482,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 }
 
 SciVersion EngineState::detectDoSoundType() {
-	if (_doSoundType == SCI_VERSION_AUTODETECT) {
+	if (_doSoundType == SCI_VERSION_NONE) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			// This game is using early SCI0 sound code (different headers than SCI0 late)
 			_doSoundType = SCI_VERSION_0_EARLY;
@@ -513,7 +513,7 @@ SciVersion EngineState::detectDoSoundType() {
 }
 
 SciVersion EngineState::detectSetCursorType() {
-	if (_setCursorType == SCI_VERSION_AUTODETECT) {
+	if (_setCursorType == SCI_VERSION_NONE) {
 		if (getSciVersion() <= SCI_VERSION_01) {
 			// SCI0/SCI01 games never use cursor views
 			_setCursorType = SCI_VERSION_0_EARLY;
@@ -554,7 +554,7 @@ SciVersion EngineState::detectSetCursorType() {
 }
 
 SciVersion EngineState::detectLofsType() {
-	if (_lofsType == SCI_VERSION_AUTODETECT) {
+	if (_lofsType == SCI_VERSION_NONE) {
 		// This detection only works (and is only needed) for SCI 1
 		if (getSciVersion() <= SCI_VERSION_01) {
 			_lofsType = SCI_VERSION_0_EARLY;
@@ -594,7 +594,7 @@ SciVersion EngineState::detectLofsType() {
 }
 
 SciVersion EngineState::detectGfxFunctionsType() {
-	if (_gfxFunctionsType == SCI_VERSION_AUTODETECT) {
+	if (_gfxFunctionsType == SCI_VERSION_NONE) {
 		// This detection only works (and is only needed) for SCI0 games
 		if (getSciVersion() >= SCI_VERSION_01) {
 			_gfxFunctionsType = SCI_VERSION_0_LATE;

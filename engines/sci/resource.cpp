@@ -37,10 +37,10 @@
 
 namespace Sci {
 
-static SciVersion s_sciVersion = SCI_VERSION_AUTODETECT;
+static SciVersion s_sciVersion = SCI_VERSION_NONE;
 
 SciVersion getSciVersion() {
-	assert(s_sciVersion != SCI_VERSION_AUTODETECT);
+	assert(s_sciVersion != SCI_VERSION_NONE);
 	return s_sciVersion;
 }
 
@@ -1771,7 +1771,7 @@ void ResourceManager::detectSciVersion() {
 		s_sciVersion = SCI_VERSION_1_1;
 		return;
 	default:
-		s_sciVersion = SCI_VERSION_AUTODETECT;
+		s_sciVersion = SCI_VERSION_NONE;
 		error("detectSciVersion(): Unable to detect the game's SCI version");
 	}
 }

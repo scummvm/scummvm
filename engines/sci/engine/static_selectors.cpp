@@ -73,7 +73,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,      "flags", 102 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
-	{ SCI_VERSION_AUTODETECT, SCI_VERSION_AUTODETECT,            0,   0 }
+	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames() {
