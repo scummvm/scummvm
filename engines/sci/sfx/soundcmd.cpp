@@ -769,10 +769,10 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		return;
 	}
 
-	// Update digital sound effect slots here
-	Audio::Mixer *mixer = g_system->getMixer();
-
 	if (musicSlot->pStreamAud) {
+		// Update digital sound effect slots here
+		Audio::Mixer *mixer = g_system->getMixer();
+
 		uint currentLoopCounter = musicSlot->pStreamAud->getNumPlayedLoops();
 		if (currentLoopCounter != musicSlot->sampleLoopCounter) {
 			// during last time we looped at least one time, update loop accordingly
