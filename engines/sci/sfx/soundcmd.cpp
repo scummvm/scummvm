@@ -271,6 +271,15 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 
 	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
 
+
+	// Notify the engine
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		PUT_SEL32V(_segMan, obj, state, kSoundInitialized);
+	else
+		PUT_SEL32(_segMan, obj, nodePtr, obj);
+
+	PUT_SEL32(_segMan, obj, handle, obj);
+
 #else
 
 	MusicEntry *newSound = new MusicEntry();
@@ -302,24 +311,23 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 		newSound->pStreamAud = _audio->getAudioStream(number, 65535, &sampleLen);
 		newSound->soundType = Audio::Mixer::kSpeechSoundType;
 	} else {
-		// If sound resource doesnt exist, we are supposed to leave nodePtr/handle selector alone
-		//  otherwise character selection music in qfg1vga wont work.
-		if (!newSound->soundRes)
-			return;
-		_music->soundInitSnd(newSound);
+		if (newSound->soundRes)
+			_music->soundInitSnd(newSound);
 	}
 
 	_music->pushBackSlot(newSound);
 
+	if (newSound->soundRes || newSound->pStreamAud) {
+		// Notify the engine
+		if (_soundVersion <= SCI_VERSION_0_LATE)
+			PUT_SEL32V(_segMan, obj, state, kSoundInitialized);
+		else
+			PUT_SEL32(_segMan, obj, nodePtr, obj);
+
+		PUT_SEL32(_segMan, obj, handle, obj);
+	}
 #endif
 
-	// Notify the engine
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, state, kSoundInitialized);
-	else
-		PUT_SEL32(_segMan, obj, nodePtr, obj);
-
-	PUT_SEL32(_segMan, obj, handle, obj);
 }
 
 void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
