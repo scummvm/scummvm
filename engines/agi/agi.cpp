@@ -41,10 +41,8 @@
 #include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/sprite.h"
-#include "agi/opcodes.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
-#include "agi/sound.h"
 
 namespace Agi {
 

@@ -28,6 +28,7 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "graphics/thumbnail.h"
 
 #include "agi/agi.h"

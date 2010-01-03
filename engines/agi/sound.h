@@ -26,12 +26,9 @@
 #ifndef AGI_SOUND_H
 #define AGI_SOUND_H
 
-#include "agi/agi.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "common/frac.h"
-#include "common/array.h"
-#include "common/ptr.h"
 
 namespace Agi {
 

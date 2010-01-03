@@ -24,7 +24,6 @@
  */
 
 #include "agi/preagi.h"
-#include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 

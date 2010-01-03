@@ -26,8 +26,6 @@
 #ifndef AGI_FONT_H
 #define AGI_FONT_H
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 // 8x8 font patterns

@@ -26,8 +26,6 @@
 #ifndef AGI_MENU_H
 #define AGI_MENU_H
 
-#include "common/list.h"
-
 namespace Agi {
 
 #define MENU_BG		0x0f	// White

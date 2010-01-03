@@ -26,15 +26,12 @@
 #ifndef AGI_CONSOLE_H
 #define AGI_CONSOLE_H
 
-#include "gui/debugger.h"
-
-#include "agi/preagi_mickey.h"
-#include "agi/preagi_winnie.h"
-
 namespace Agi {
 
 class AgiEngine;
 class PreAgiEngine;
+class Winnie;
+class Mickey;
 
 struct AgiDebug {
 	int enabled;

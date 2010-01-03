@@ -26,9 +26,6 @@
 #ifndef AGI_VIEW_H
 #define AGI_VIEW_H
 
-
-#include "common/scummsys.h"
-
 namespace Agi {
 
 struct ViewCel {

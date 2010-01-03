@@ -26,7 +26,6 @@
 #ifndef AGI_GRAPHICS_H
 #define AGI_GRAPHICS_H
 
-
 #include "agi/font.h"
 
 namespace Agi {

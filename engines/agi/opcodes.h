@@ -26,8 +26,6 @@
 #ifndef AGI_OPCODES_H
 #define AGI_OPCODES_H
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 struct AgiLogicnames {

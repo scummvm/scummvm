@@ -25,9 +25,6 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "common/stack.h"
-
-#include "graphics/primitives.h"
 
 namespace Agi {
 

@@ -24,11 +24,9 @@
  */
 
 #include "agi/agi.h"
-#include "agi/sprite.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
-#include "common/list.h"
 
 namespace Agi {
 

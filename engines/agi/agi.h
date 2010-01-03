@@ -26,17 +26,16 @@
 #ifndef AGI_H
 #define AGI_H
 
-
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/file.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "common/hash-str.h"
 #include "common/stack.h"
+#include "common/system.h"
 
 #include "engines/engine.h"
+
+#include "gui/debugger.h"
 
 /**
  * This is the namespace of the AGI engine.

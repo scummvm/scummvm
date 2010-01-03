@@ -26,8 +26,6 @@
 #ifndef AGI_PREAGI_TROLL_H
 #define AGI_PREAGI_TROLL_H
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 // strings

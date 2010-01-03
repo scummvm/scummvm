@@ -28,7 +28,6 @@
 //
 
 #include "agi/agi.h"
-#include "agi/keyboard.h"	// for clean_input()
 
 namespace Agi {
 

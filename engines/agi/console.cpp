@@ -23,14 +23,11 @@
  *
  */
 
-
-
 #include "agi/agi.h"
-#include "agi/graphics.h"
-#include "agi/sprite.h"
-#include "agi/keyboard.h"
 #include "agi/opcodes.h"
-#include "agi/console.h"
+
+#include "agi/preagi_mickey.h"
+#include "agi/preagi_winnie.h"
 
 namespace Agi {
 

@@ -26,9 +26,6 @@
 #ifndef AGI_LOGIC_H
 #define AGI_LOGIC_H
 
-
-#include "common/scummsys.h"
-
 namespace Agi {
 
 /**

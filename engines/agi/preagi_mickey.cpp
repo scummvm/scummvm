@@ -25,12 +25,10 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
-#include "common/stream.h"
 
 #include "graphics/cursorman.h"
 
 #include "agi/preagi.h"
-#include "agi/preagi_common.h"
 #include "agi/preagi_mickey.h"
 #include "agi/graphics.h"
 

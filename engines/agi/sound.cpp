@@ -25,12 +25,8 @@
 
 #include "common/md5.h"
 #include "common/config-manager.h"
-#include "common/fs.h"
-#include "common/algorithm.h"
-#include "sound/mixer.h"
 
 #include "agi/agi.h"
-#include "agi/sound.h"
 
 namespace Agi {
 

@@ -31,7 +31,6 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
-#include "common/stream.h"
 
 namespace Agi {
 

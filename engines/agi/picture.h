@@ -26,8 +26,6 @@
 #ifndef AGI_PICTURE_H
 #define AGI_PICTURE_H
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 #define _DEFAULT_WIDTH		160

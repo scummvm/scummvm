@@ -27,7 +27,6 @@
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 
-#include "common/func.h"
 #include "common/config-manager.h"
 
 #ifdef __DS__

@@ -26,8 +26,6 @@
 #ifndef AGI_PREAGI_MICKEY_H
 #define AGI_PREAGI_MICKEY_H
 
-#include "agi/agi.h"
-
 namespace Agi {
 
 #define MSA_SAVEGAME_VERSION			2

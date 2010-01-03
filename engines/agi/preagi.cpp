@@ -23,23 +23,12 @@
  *
  */
 
-#include "common/file.h"
-#include "common/savefile.h"
 #include "common/config-manager.h"
 
-#include "base/plugins.h"
-#include "base/version.h"
-
 #include "sound/mididrv.h"
-#include "sound/mixer.h"
 
 #include "agi/preagi.h"
 #include "agi/graphics.h"
-#include "agi/sprite.h"
-#include "agi/opcodes.h"
-#include "agi/keyboard.h"
-#include "agi/menu.h"
-#include "agi/sound.h"
 
 // preagi engines
 #include "agi/preagi_mickey.h"

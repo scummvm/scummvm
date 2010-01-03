@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 #include "agi/opcodes.h"
 

@@ -23,12 +23,9 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
-#include "agi/menu.h"
 #ifdef __DS__
 #include "wordcompletion.h"
 #endif

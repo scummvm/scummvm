@@ -24,7 +24,6 @@
  */
 
 #include "agi/preagi.h"
-#include "agi/preagi_common.h"
 #include "agi/preagi_troll.h"
 #include "agi/graphics.h"
 

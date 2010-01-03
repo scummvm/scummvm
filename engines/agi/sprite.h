@@ -26,8 +26,6 @@
 #ifndef AGI_SPRITE_H
 #define AGI_SPRITE_H
 
-#include "common/list.h"
-
 namespace Agi {
 
 
