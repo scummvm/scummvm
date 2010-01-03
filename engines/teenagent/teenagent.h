@@ -37,10 +37,10 @@ struct ADGameDescription;
 /**
  * This is the namespace of the TeenAgent engine.
  *
- * Status of this engine: ???
+ * Status of this engine: Complete
  *
  * Supported games:
- * - ???
+ * - Teen Agent
  */
 namespace TeenAgent {
 
@@ -72,7 +72,9 @@ public:
 	bool processCallback(uint16 addr);
 	inline Scene *getScene() { return scene; }
 
-	bool showLogo(const Common::String &name);
+	bool showLogo();
+	bool showMetropolis();
+	int skipEvents() const;
 
 	static Common::String parseMessage(uint16 addr);
 

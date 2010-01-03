@@ -47,6 +47,21 @@ void Resources::deinit() {
 	sam_sam.close();
 }
 
+/*
+quick note on varia resources:
+1: Mark's animations (with head)
+2: Mark's idle animation
+3: Inventory background
+4: Inventory items
+5: Metropolis palette
+6: TEENAGENT logo (flames)
+7: Small font
+8: Bigger font
+9: Metropolis software house
+10: quit registered
+11: quit shareware
+*/
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File dat_file;
 	if (!dat_file.open("teenagent.dat")) {

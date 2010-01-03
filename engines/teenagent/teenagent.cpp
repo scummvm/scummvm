@@ -244,12 +244,32 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	return Common::kNoError;
 }
 
-bool TeenAgentEngine::showLogo(const Common::String &name) {
-	Pack logo;
-	if (!logo.open(name))
-		return true;
 
+int TeenAgentEngine::skipEvents() const {
 	Common::EventManager *_event = _system->getEventManager();
+	Common::Event event;
+	while (_event->pollEvent(event)) {
+		switch(event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			return -1;
+		case Common::EVENT_MAINMENU:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			return 1;
+		case Common::EVENT_KEYDOWN:
+		if (event.kbd.ascii)
+			return 1;
+		default: ;
+		}
+	}
+	return 0;
+}
+
+bool TeenAgentEngine::showLogo() {
+	Pack logo;
+	if (!logo.open("unlogic.res"))
+		return true;
 
 	byte bg[0xfa00];
 	byte palette[0x400];
@@ -273,17 +293,10 @@ bool TeenAgentEngine::showLogo(const Common::String &name) {
 	uint n = logo.files_count();
 	for(uint f = 0; f < 4; ++f) 
 		for(uint i = 2; i <= n; ++i) {
-			Common::Event event;
-			while (_event->pollEvent(event)) {
-				switch(event.type) {
-				case Common::EVENT_RTL:
-					return false;
-				case Common::EVENT_LBUTTONDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-				case Common::EVENT_KEYDOWN:
-					return true;
-				default: ;
-				}
+			{
+				int r = skipEvents();
+				if (r != 0)
+					return r > 0? true: false;
 			}
 			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 	
@@ -302,6 +315,95 @@ bool TeenAgentEngine::showLogo(const Common::String &name) {
 
 			_system->delayMillis(100);
 		}
+	return true;
+}
+
+bool TeenAgentEngine::showMetropolis() {
+	_system->fillScreen(0);
+	_system->updateScreen();
+	
+	Resources *res = Resources::instance();
+	
+	byte palette[0x400];
+	memset(palette, 0, sizeof(palette));
+	{
+		Common::SeekableReadStream *s = res->varia.getStream(5);
+		for(uint c = 0; c < 0x100; ++c) {
+			uint idx = c * 4;
+			s->read(palette + idx, 3);
+			palette[idx] *= 4;
+			palette[idx + 1] *= 4;
+			palette[idx + 2] *= 4;
+		}
+	}
+	
+	_system->setPalette(palette, 0, 0x100);
+	
+	byte varia_6[21760], varia_9[18302];
+	res->varia.read(6, varia_6, sizeof(varia_6));
+	res->varia.read(9, varia_9, sizeof(varia_9));
+	
+	byte colors[56 * 160 * 2];
+	memset(colors, 0, sizeof(colors));
+
+	int logo_y = -56;
+	for(uint f = 0; f < 300; ++f) {
+		{
+			int r = skipEvents();
+			if (r != 0)
+				return r > 0? true: false;
+		}
+
+		Graphics::Surface *surface = _system->lockScreen();
+		if (logo_y > 0) {
+			surface->fillRect(Common::Rect(0, 0, 320, logo_y), 0);
+		}
+		
+		{
+			//generate colors matrix
+			memmove(colors + 320, colors + 480, 8480);
+			for(uint c = 0; c < 17; ++c) {
+				byte x = (random.getRandomNumber(185) + 5) & 0xf;
+				colors[8800 + random.getRandomNumber(159)] = x | (x << 4); //last line
+			}
+			for(uint y = 1; y < 56; ++y) {
+				for(uint x = 1; x < 160; ++x) {
+					uint offset = y * 160 + x;
+					uint v = 
+						(uint)colors[offset - 161] + colors[offset - 160] + colors[offset - 159] + 
+						(uint)colors[offset - 1] + colors[offset + 1] + 
+						(uint)colors[offset + 161] + colors[offset + 160] + colors[offset + 159];
+					v >>= 3;
+					colors[offset + 8960] = v;
+				}
+			}
+			memmove(colors, colors + 8960, 8960);
+		}
+
+		byte *dst = (byte *)surface->getBasePtr(0, 131);
+		byte *src = varia_6;
+		for(uint y = 0; y < 68; ++y) {
+			for(uint x = 0; x < 320; ++x) {
+				if (*src++ == 1) {
+					*dst++ = colors[18 * 160 + y / 2 * 160 + x / 2];
+				} else 
+					++dst;
+			}
+		}
+		_system->unlockScreen();
+		
+		_system->copyRectToScreen(
+			varia_9 + (logo_y < 0? -logo_y * 320: 0), 320, 
+			0, logo_y >= 0? logo_y: 0, 
+			320, logo_y >= 0? 57: 57 + logo_y);
+
+		if (logo_y < 82 - 57)
+			++logo_y;
+		
+		
+		_system->updateScreen();
+		_system->delayMillis(100);
+	}
 	return true;
 }
 
@@ -335,7 +437,9 @@ Common::Error TeenAgentEngine::run() {
 	if (load_slot >= 0) {
 		loadGameState(load_slot);
 	} else {
-		if (!showLogo("unlogic.res"))
+		if (!showLogo())
+			return Common::kNoError;
+		if (!showMetropolis())
 			return Common::kNoError;
 		scene->intro = true;
 		scene_busy = true;
