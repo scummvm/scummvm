@@ -672,7 +672,7 @@ bool Scene::render() {
 				uint zoom = lookupZoom(position.y);
 
 				if (!path.empty()) {
-					int speed_x = ((teenagent.currentIndex() % 5) == 0? 16: 4) * zoom / 256, speed_y = 1 * zoom / 256;
+					int speed_x = ((teenagent.currentIndex() % 6) == 0? 8: 4) * zoom / 256, speed_y = 1 * zoom / 256;
 					if (speed_x == 0)
 						speed_x = 1;
 					if (speed_y == 0)

@@ -32,7 +32,7 @@ Actor::Actor() : head_index(0) {}
 //idle animation lists at dseg: 0x6540
 
 Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool render_head, uint zoom) {
-	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, /* step */ 6, 7, 8, 9};
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
 
@@ -80,7 +80,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		}
 
 		if (index >= ARRAYSIZE(frames_left_right))
-			index = 0;
+			index = 1;
 		s = frames + frames_left_right[index];
 		break;
 	case kActorUp:
@@ -92,7 +92,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		}
 
 		if (index >= ARRAYSIZE(frames_up))
-			index = 0;
+			index = 1;
 		s = frames + frames_up[index];
 		break;
 	case kActorDown:
@@ -104,7 +104,7 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		}
 
 		if (index >= ARRAYSIZE(frames_down))
-			index = 0;
+			index = 1;
 		s = frames + frames_down[index];
 		break;
 	default:
