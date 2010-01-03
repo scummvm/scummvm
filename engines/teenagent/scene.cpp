@@ -725,7 +725,6 @@ bool Scene::render() {
 			s->render(surface);
 		}
 		if (mark != NULL) {
-			debug("pos.y = %d, anim.y = %d", position.y, mark->y + mark->h);
 			actor_animation_position = mark->render(surface);
 			if (!actor_animation.ignore) 
 				busy = true;
