@@ -385,7 +385,7 @@ bool TeenAgentEngine::showMetropolis() {
 		for(uint y = 0; y < 68; ++y) {
 			for(uint x = 0; x < 320; ++x) {
 				if (*src++ == 1) {
-					*dst++ = colors[18 * 160 + y / 2 * 160 + x / 2];
+					*dst++ = colors[19 * 160 + y / 2 * 160 + x / 2];
 				} else 
 					++dst;
 			}
