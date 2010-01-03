@@ -209,6 +209,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	int16 value = (argc > 2) ? argv[2].toSint16() : 0;
 	_acc = acc;
+	_argc = argc;
 	_argv = argv;
 
 	// cmdMuteSound and cmdMasterVolume do not operate on an object, but need the number of
@@ -655,10 +656,26 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 	}
 
 	int volume = musicSlot->volume;
-	musicSlot->fadeTo = CLIP<uint16>(_argv[2].toUint16(), 0, MUSIC_VOLUME_MAX);
-	musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
-	musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
-	musicSlot->fadeTicker = 0;
+
+	switch (_argc) {
+	case 2: // SCI0
+		musicSlot->fadeTo = 0;
+		musicSlot->fadeStep = -5;
+		musicSlot->fadeTickerStep = 0x10 * 16667 / _music->soundGetTempo();
+		musicSlot->fadeTicker = 0;
+		break;
+
+	case 5: // Possibly SCI1?!
+	case 6: // SCI 1.1 TODO: find out what additional parameter is
+		musicSlot->fadeTo = CLIP<uint16>(_argv[2].toUint16(), 0, MUSIC_VOLUME_MAX);
+		musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
+		musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
+		musicSlot->fadeTicker = 0;
+		break;
+
+	default:
+		error("cmdFadeSound: unsupported argc %d", _argc);
+	}
 
 	debugC(2, kDebugLevelSound, "cmdFadeSound: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
 #endif
