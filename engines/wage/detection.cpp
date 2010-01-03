@@ -1,0 +1,176 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/agi/detection.cpp $
+ * $Id: detection.cpp 46472 2009-12-21 22:40:52Z sev $
+ *
+ */
+
+
+#include "base/plugins.h"
+
+#include "engines/advancedDetector.h"
+#include "common/system.h"
+#include "common/savefile.h"
+
+#include "wage/wage.h"
+
+static const PlainGameDescriptor cineGames[] = {
+	{"wage", "World Adventure Game Engine game"},
+	{0, 0}
+};
+
+namespace Wage {
+
+using Common::GUIO_NONE;
+
+static const ADGameDescription gameDescriptions[] = {
+	{
+		"wage",
+		"Another Fine Mess (v1.8)",
+		AD_ENTRY1s("Another Fine Mess 1.8", "8e5aa915f3253efb2aab52435647b25e", 1456000),
+		Common::EN_ANY,
+		Common::kPlatformPC,
+		ADGF_USEEXTRAASTITLE,
+		GUIO_NONE
+	},
+
+	AD_TABLE_END_MARKER
+};
+
+} // End of namespace Wage
+
+static const ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Wage::gameDescriptions,
+	// Size of that superset structure
+	sizeof(ADGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	cineGames,
+	// Structure for autoupgrading obsolete targets
+	0,
+	// Name of single gameid (optional)
+	"wage",
+	// List of files for file-based fallback detection (optional)
+	0,
+	// Flags
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI
+};
+
+class WageMetaEngine : public AdvancedMetaEngine {
+public:
+	WageMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "World Adventure Game Engine";
+	}
+
+	virtual const char *getOriginalCopyright() const {
+		return "World Builder (C) Silicon Beach Software";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
+};
+
+bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave);
+}
+
+bool Wage::WageEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+bool WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	if (desc) {
+		*engine = new Wage::WageEngine(syst, desc);
+	}
+	return desc != 0;
+}
+
+SaveStateList WageMetaEngine::listSaves(const char *target) const {
+	const uint32 WAGEflag = MKID_BE('WAGE');
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	char saveDesc[31];
+	Common::String pattern = target;
+	pattern += ".???";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			if (in) {
+				uint32 type = in->readUint32BE();
+				if (type == WAGEflag)
+					in->read(saveDesc, 31);
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+int WageMetaEngine::getMaximumSaveSlot() const { return 999; }
+
+void WageMetaEngine::removeSaveState(const char *target, int slot) const {
+	char fileName[MAXPATHLEN];
+	sprintf(fileName, "%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+#if PLUGIN_ENABLED_DYNAMIC(WAGE)
+	REGISTER_PLUGIN_DYNAMIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
+#else
+	REGISTER_PLUGIN_STATIC(WAGE, PLUGIN_TYPE_ENGINE, WageMetaEngine);
+#endif
+
+namespace Wage {
+
+bool WageEngine::canLoadGameStateCurrently() {
+	return false;
+}
+
+bool WageEngine::canSaveGameStateCurrently() {
+	return false;
+}
+
+} // End of namespace Wage
