@@ -516,7 +516,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 
 	default:
 		// Changed this to warning, because iceman does this during dancing with girl
-		warning("[VM] Error: Attempt to add %d to pointer %04x:%04x: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base));
+		warning("[VM] Error: Attempt to add %d to pointer %04x:%04x, type %d: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base), mobj->getType());
 		return NULL_REG;
 
 	}
@@ -1352,7 +1352,12 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x63: // +ap
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			s->r_acc = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				s->r_acc = pointer_add(s, r_temp, 1);
+			} else
+				s->r_acc = make_reg(0, r_temp.offset + 1);
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
@@ -1362,7 +1367,12 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x67: // +sp
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				r_temp = pointer_add(s, r_temp, 1);
+			} else
+				r_temp = make_reg(0, r_temp.offset + 1);
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
@@ -1373,7 +1383,12 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x6b: // +api
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			s->r_acc = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				s->r_acc = pointer_add(s, r_temp, 1);
+			} else
+				s->r_acc = make_reg(0, r_temp.offset + 1);
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
@@ -1383,7 +1398,12 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x6f: // +spi
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = make_reg(0, 1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				r_temp = pointer_add(s, r_temp, 1);
+			} else
+				r_temp = make_reg(0, r_temp.offset + 1);
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
@@ -1392,19 +1412,30 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x71: // -al
 		case 0x72: // -at
 		case 0x73: // -ap
+		{
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			s->r_acc = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				s->r_acc = pointer_add(s, r_temp, -1);
+			} else
+				s->r_acc = make_reg(0, r_temp.offset - 1);
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
-
+		}
 		case 0x74: // -sg
 		case 0x75: // -sl
 		case 0x76: // -st
 		case 0x77: // -sp
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				r_temp = pointer_add(s, r_temp, -1);
+			} else
+				r_temp = make_reg(0, r_temp.offset - 1);
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
@@ -1415,7 +1446,12 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x7b: // -api
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			s->r_acc = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				s->r_acc = pointer_add(s, r_temp, -1);
+			} else
+				s->r_acc = make_reg(0, r_temp.offset - 1);
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
@@ -1425,7 +1461,12 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x7f: // -spi
 			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = make_reg(0, -1 + validate_arithmetic(READ_VAR(var_type, var_number, s->r_acc)));
+			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			if (r_temp.segment) {
+				// Pointer arithmetics!
+				r_temp = pointer_add(s, r_temp, -1);
+			} else
+				r_temp = make_reg(0, r_temp.offset - 1);
 			PUSH32(r_temp);
 			WRITE_VAR(var_type, var_number, r_temp);
 			break;
