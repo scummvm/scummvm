@@ -505,7 +505,9 @@ Common::Error TeenAgentEngine::run() {
 		}
 
 		_system->showMouse(scene->getMessage().empty());
-		uint32 f0 = frame * 12 / 25, f1 = (frame + 1) * 12 / 25;
+		//game delays: slow 16, normal 11, fast 5, crazy 1
+		//mark delays: 4 * (3 - hero_speed), normal == 1
+		uint32 f0 = frame * 10 / 25, f1 = (frame + 1) * 10 / 25;
 		if (f0 != f1) {
 			bool b = scene->render();
 			scene_busy = b;
