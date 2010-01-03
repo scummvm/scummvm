@@ -805,7 +805,12 @@ const ADGameDescription *TinselMetaEngine::fallbackDetect(const Common::FSList &
 			char tempFilename[50];
 			strcpy(tempFilename, fileDesc->fileName);
 			char *pOne = strchr(tempFilename, '1');
-			if (pOne) strcpy(pOne, pOne + 1);
+			if (pOne) {
+				do {
+					*pOne = *(pOne + 1);
+					pOne++;
+				} while (*pOne);
+			}
 
 			Common::String tstr(tempFilename);
 
