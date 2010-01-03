@@ -44,12 +44,10 @@ protected:
 	/* Total time: msecs + frame_offset/frame_rate */
 
 public:
-	Timestamp();
-
 	/**
 	 * Set up a timestamp with a given time and framerate.
-	 * @param msecs		staring time in milliseconds
-	 * @param frameRate	number of frames per second
+	 * @param msecs     staring time in milliseconds
+	 * @param frameRate number of frames per second (must be > 0)
 	 */
 	Timestamp(uint32 msecs, int frameRate);
 

@@ -33,7 +33,7 @@ namespace Sci {
 
 #define debug_stream stderr
 
-Song::Song() {
+Song::Song() : _wakeupTime(0, SFX_TICKS_PER_SEC) {
 	_handle = 0;
 	_resourceNum = 0;
 	_priority = 0;
@@ -53,7 +53,7 @@ Song::Song() {
 	_nextStopping = NULL;
 }
 
-Song::Song(SongHandle handle, SongIterator *it, int priority) {
+Song::Song(SongHandle handle, SongIterator *it, int priority) : _wakeupTime(0, SFX_TICKS_PER_SEC) {
 	_handle = handle;
 	_resourceNum = 0;
 	_priority = priority;

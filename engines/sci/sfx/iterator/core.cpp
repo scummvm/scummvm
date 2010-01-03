@@ -140,7 +140,7 @@ public:
 };
 
 SfxPlayer::SfxPlayer(SciVersion soundVersion)
-	: _soundVersion(soundVersion) {
+	: _soundVersion(soundVersion), _wakeupTime(0, SFX_TICKS_PER_SEC), _currentTime(0, 1)  {
 	_polyphony = 0;
 
 	_mididrv = 0;

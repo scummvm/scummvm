@@ -27,12 +27,9 @@
 
 namespace Audio {
 
-Timestamp::Timestamp() :
-	_msecs(0), _frameRate(0), _frameOffset(0) {
-}
-
 Timestamp::Timestamp(uint32 m, int frameRate) :
 	_msecs(m), _frameRate(frameRate), _frameOffset(0) {
+	assert(_frameRate > 0);
 }
 
 
