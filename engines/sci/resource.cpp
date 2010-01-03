@@ -1430,8 +1430,8 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
 	// SCI32 volume format :  {bResType wResNumber dwPacked dwUnpacked wCompression} = 13 bytes
-	uint16 w, number, szUnpacked;
-	uint32 wCompression;
+	uint16 w, number;
+	uint32 wCompression, szUnpacked;
 	ResourceType type;
 
 	switch (_volVersion) {
