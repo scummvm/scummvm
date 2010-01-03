@@ -112,7 +112,7 @@ public:
 	~MusicEntry();
 
 	void doFade();
-	void onTimer(SciVersion soundVersion);
+	void onTimer();
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -128,7 +128,7 @@ class SciMusic
 {
 
 public:
-	SciMusic(ResourceManager *resMan, SegManager *segMan, SciVersion soundVersion);
+	SciMusic(SciVersion soundVersion);
 	~SciMusic();
 
 	void init();

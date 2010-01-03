@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-SciMusic::SciMusic(ResourceManager *resMan, SegManager *segMan, SciVersion soundVersion)
+SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion), _soundOn(true) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
@@ -365,7 +365,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 void SciMusic::onTimer() {
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
-		(*i)->onTimer(_soundVersion);
+		(*i)->onTimer();
 }
 
 void SciMusic::soundPlay(MusicEntry *pSnd) {
@@ -383,11 +383,9 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	_mutex.unlock();	// unlock to perform mixer-related calls
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
-		SegManager *segMan = ((SciEngine *)g_engine)->getEngineState()->_segMan;	// HACK
-		uint16 loop = GET_SEL32V(segMan, pSnd->soundObj, loop);
 		// Are we supposed to loop the stream?
-		if (loop > 1)
-			pSnd->pStreamAud->setNumLoops(loop);
+		if (pSnd->loop > 1)
+			pSnd->pStreamAud->setNumLoops(pSnd->loop);
 		else
 			pSnd->pStreamAud->setNumLoops(1);
 		_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
@@ -549,7 +547,7 @@ MusicEntry::MusicEntry() {
 MusicEntry::~MusicEntry() {
 }
 
-void MusicEntry::onTimer(SciVersion soundVersion) {
+void MusicEntry::onTimer() {
 	if (status != kSoundPlaying)
 		return;
 

@@ -134,7 +134,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 #endif
 
 	#ifndef USE_OLD_MUSIC_FUNCTIONS
-		_music = new SciMusic(_resMan, _segMan, _soundVersion);
+		_music = new SciMusic(_soundVersion);
 		_music->init();
 	#endif
 
@@ -796,7 +796,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 				}
 				break;
 			case SIGNAL_OFFSET:
-				cmdStopSound(obj, 0);
+				PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 				break;
 			default:
 				// Sync the signal of the sound object
@@ -885,7 +885,11 @@ void SoundCommandParser::cmdSetSoundVolume(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdSetSoundVolume: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		// Do not throw a warning if the sound can't be found, as in some games 
+		// this is called before the actual sound is loaded (e.g. SQ4CD, with the
+		// drum sounds of the energizer bunny at the beginning), so this is normal
+		// behavior
+		//warning("cmdSetSoundVolume: Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
