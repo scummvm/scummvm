@@ -1300,15 +1300,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdbb2, 1)) { //spoken to man in well
 			displayMessage(0x411d);
 		} else {
-			SET_FLAG(0xDBB2, 1);
 			displayMessage(0x408a);
-			displayMessage(0x4091);
+			displayMessage(0x4091, 0xe5, 52728);
 			displayMessage(0x4098);
-			displayMessage(0x40a7);
+			displayMessage(0x40a7, 0xe5, 52705);
 			displayMessage(0x40b6);
-			displayMessage(0x40ce);
+			displayMessage(0x40ce, 0xe5, 52652);
 			displayMessage(0x40e8);
-			displayMessage(0x410f);
+			displayMessage(0x410f, 0xe5, 52712);
+			//wait 100
+			displayMessage(0x4091, 0xe5, 52728);
+			SET_FLAG(0xDBB2, 1);
 		}
 		return true;
 
