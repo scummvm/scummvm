@@ -1285,6 +1285,12 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(segMan, polygon, points);
 	int size = GET_SEL32(segMan, polygon, size).toUint16();
 
+#ifdef ENABLE_SCI32
+	// SCI32 stores the actual points in the data property of points (in a new array)
+	if (segMan->isHeapObject(points))
+		points = GET_SEL32(segMan, points, data);
+#endif
+
 	if (size == 0) {
 		// If the polygon has no vertices, we skip it
 		return NULL;

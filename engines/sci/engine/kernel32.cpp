@@ -791,6 +791,11 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, nsRect.contains(x, y));
 }
 
+reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
+	// kAvoidPath already implements this
+	return kAvoidPath(s, argc, argv);
+}
+
 } // End of namespace Sci
 
 #endif	// ENABLE_SCI32
