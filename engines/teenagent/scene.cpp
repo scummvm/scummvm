@@ -56,6 +56,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	
 	debug(1, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
 	p.clear();
+	p.push_back(src);
 	p.push_back(dst);
 
 	Common::List<uint> boxes;
@@ -132,7 +133,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		if (wi == boxes.end())
 			++i;
 	}
-
+	p.pop_front();
 	return true;
 }
 
