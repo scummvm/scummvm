@@ -226,6 +226,7 @@ public:
 	Script *script_000;  /**< script 000, e.g. for globals */
 
 	uint16 currentRoomNumber() const;
+	void setRoomNumber(uint16 roomNumber);
 
 	/**
 	 * Processes a multilanguage string based on the current language settings and

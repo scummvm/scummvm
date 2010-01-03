@@ -120,6 +120,10 @@ uint16 EngineState::currentRoomNumber() const {
 	return script_000->_localsBlock->_locals[13].toUint16();
 }
 
+void EngineState::setRoomNumber(uint16 roomNumber) {
+	script_000->_localsBlock->_locals[13] = make_reg(0, roomNumber);
+}
+
 kLanguage EngineState::charToLanguage(const char c) const {
 	switch (c) {
 	case 'F':

@@ -327,7 +327,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" list_saves - List all saved games including filenames\n");
 	DebugPrintf(" restart_game - Restarts the game\n");
 	DebugPrintf(" version - Shows the resource and interpreter versions\n");
-	DebugPrintf(" room - Shows the current room number\n");
+	DebugPrintf(" room - Gets or sets the current room number\n");
 	DebugPrintf(" exit - Exits the game\n");
 	DebugPrintf("\n");
 	DebugPrintf("Screen:\n");
@@ -630,7 +630,18 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 }
 
 bool Console::cmdRoomNumber(int argc, const char **argv) {
-	DebugPrintf("Current room number is %d\n", _vm->_gamestate->currentRoomNumber());
+	// The room number is stored in global var 13
+	// The same functionality is provided by "vmvars g 13" (but this one is more straighforward)
+
+	if (argc != 2) {
+		DebugPrintf("Current room number is %d\n", _vm->_gamestate->currentRoomNumber());
+		DebugPrintf("Calling this command with the room number (in decimal or hexadecimal) changes the room\n");
+	} else {
+		Common::String roomNumberStr = argv[1];
+		int roomNumber = strtol(roomNumberStr.c_str(), NULL, roomNumberStr.hasSuffix("h") ? 16 : 10);
+		_vm->getEngineState()->setRoomNumber(roomNumber);
+		DebugPrintf("Room number changed to %d (%x in hex)\n", roomNumber, roomNumber);
+	}
 
 	return true;
 }
