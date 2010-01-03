@@ -28,13 +28,6 @@
 
 namespace Sci {
 
-#ifdef DISABLE_VALIDATIONS
-
-#define sane_nodep(a, b) 1
-#define sane_listp(a, b) 1
-
-#else
-
 static int sane_nodep(EngineState *s, reg_t addr) {
 	int have_prev = 0;
 	reg_t prev = addr;
@@ -89,7 +82,6 @@ int sane_listp(EngineState *s, reg_t addr) {
 
 	return 1; // Empty list is fine
 }
-#endif
 
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 	reg_t listbase;
