@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_scripts.h"
@@ -3125,7 +3125,8 @@ void MystScriptParser::opcode_200_run() {
 			else
 				rect = Common::Rect(0, 0, 544, 333);
 
-			_vm->_gfx->copyImageToScreen(g_opcode200Parameters.imageBaseId + curImageIndex, rect);
+			if (curImageIndex != lastImageIndex)
+				_vm->_gfx->copyImageToScreen(g_opcode200Parameters.imageBaseId + curImageIndex, rect);
 
 			// TODO: Comparison with original engine shows that this simple solution
 			//       may not be the correct one and the choice of which sound
