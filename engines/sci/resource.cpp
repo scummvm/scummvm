@@ -231,7 +231,28 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	return loadPatch(res, file);
 }
 
+bool ResourceManager::loadFromWaveFile(Resource *res, Common::File &file) {
+	res->data = new byte[res->size];
+
+	uint32 really_read = file.read(res->data, res->size);
+	if (really_read != res->size)
+		error("Read %d bytes from %s but expected %d", really_read, res->id.toString().c_str(), res->size);
+
+	res->status = kResStatusAllocated;
+	return true;	
+}
+
 bool ResourceManager::loadFromAudioVolumeSCI11(Resource *res, Common::File &file) {
+	// Check for WAVE files here
+	uint32 riffTag = file.readUint32BE();
+	if (riffTag == MKID_BE('RIFF')) {
+		res->headerSize = 0;
+		res->size = file.readUint32LE();
+		file.seek(-8, SEEK_CUR);
+		return loadFromWaveFile(res, file);
+	}
+	file.seek(-4, SEEK_CUR);
+
 	ResourceType type = (ResourceType)(file.readByte() & 0x7f);
 	if (((res->id.type == kResourceTypeAudio || res->id.type == kResourceTypeAudio36) && (type != kResourceTypeAudio))
 		|| ((res->id.type == kResourceTypeSync || res->id.type == kResourceTypeSync36) && (type != kResourceTypeSync))) {
@@ -319,6 +340,9 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 	file->seek(res->file_offset, SEEK_SET);
+	
+	if (res->source->source_type == kSourceWave && loadFromWaveFile(res, *file))
+		return;
 
 	if (res->source->source_type == kSourceAudioVolume) {
 		if (getSciVersion() < SCI_VERSION_1_1)
@@ -1009,7 +1033,7 @@ void ResourceManager::readWaveAudioPatches() {
 		if (isdigit(name[0])) {
 			int number = atoi(name.c_str());
 			ResourceSource *psrcPatch = new ResourceSource;
-			psrcPatch->source_type = kSourcePatch;
+			psrcPatch->source_type = kSourceWave;
 			psrcPatch->location_name = name;
 
 			ResourceId resId = ResourceId(kResourceTypeAudio, number);
@@ -1034,7 +1058,6 @@ void ResourceManager::readWaveAudioPatches() {
 			newrsc->source = psrcPatch;
 			newrsc->size = fileSize;
 			newrsc->headerSize = 0;
-			newrsc->file_offset = -2; // Use -2 to signal there's no patch header
 			debugC(1, kDebugLevelResMan, "Patching %s - OK", psrcPatch->location_name.c_str());
 		}
 	}

@@ -80,7 +80,8 @@ enum ResSourceType {
 	kSourceExtMap,
 	kSourceIntMap,
 	kSourceAudioVolume,
-	kSourceExtAudioMap
+	kSourceExtAudioMap,
+	kSourceWave
 };
 
 enum {
@@ -357,6 +358,7 @@ protected:
 	void loadResource(Resource *res);
 	bool loadPatch(Resource *res, Common::File &file);
 	bool loadFromPatchFile(Resource *res);
+	bool loadFromWaveFile(Resource *res, Common::File &file);
 	bool loadFromAudioVolumeSCI1(Resource *res, Common::File &file);
 	bool loadFromAudioVolumeSCI11(Resource *res, Common::File &file);
 	void freeOldResources();
