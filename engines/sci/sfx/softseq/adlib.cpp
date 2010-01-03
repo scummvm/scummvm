@@ -813,10 +813,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 }
 
 int MidiPlayer_Adlib::getPlayMask(SciVersion soundVersion) {
-	if (soundVersion == SCI_VERSION_0_EARLY)
-		return 0x01;
-
-	return 0x04;
+	return (soundVersion == SCI_VERSION_0_EARLY) ? 0x01 : 0x04;
 }
 
 MidiPlayer *MidiPlayer_Adlib_create() {
