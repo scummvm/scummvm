@@ -224,10 +224,6 @@ public:
 		kResVersionSci32
 	};
 
-	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
-
-	ViewType getViewType() const { return _viewType; }
-
 	/**
 	 * Creates a new SCI resource manager.
 	 */
@@ -271,6 +267,10 @@ public:
 	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
 
 	void setAudioLanguage(int language);
+	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
+	ViewType getViewType() const { return _viewType; }
+	const char *getMapVersionDesc() const { return versionDescription(_mapVersion); }
+	const char *getVolVersionDesc() const { return versionDescription(_volVersion); }
 
 protected:
 	// Maximum number of bytes to allow being allocated for resources
