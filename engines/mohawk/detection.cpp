@@ -616,7 +616,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_HASMIDI,
 		0
 	},
-	
+
+	// In The 1rst Degree
+	// French Windows
+	// From Strangerke
+	{
+		{
+			"1stdegree",
+			"",
+			AD_ENTRY1("AL236_1.MHK", "0e0c70b1b702b6ddca61a1192ada1282"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_1STDEGREE,
+		GF_HASMIDI,
+		0
+	},
+
 	{
 		{
 			"csusa",
