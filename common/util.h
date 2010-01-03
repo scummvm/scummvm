@@ -165,6 +165,7 @@ enum Language {
 	DE_DEU,
 	GR_GRE,
 	HB_ISR,
+	HU_HUN,
 	IT_ITA,
 	JA_JPN,
 	KO_KOR,
@@ -174,7 +175,6 @@ enum Language {
 	RU_RUS,
 	ES_ESP,
 	SE_SWE,
-	HU_HUN,
 
 	UNK_LANG = -1	// Use default language (i.e. none specified)
 };

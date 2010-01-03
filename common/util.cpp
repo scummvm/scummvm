@@ -192,6 +192,7 @@ const LanguageDescription g_languages[] = {
 	{"de", "German", DE_DEU},
 	{"gr", "Greek", GR_GRE},
 	{"hb", "Hebrew", HB_ISR},
+	{"hu", "Hungarian", HU_HUN},
 	{"it", "Italian", IT_ITA},
 	{"jp", "Japanese", JA_JPN},
 	{"kr", "Korean", KO_KOR},
@@ -201,7 +202,6 @@ const LanguageDescription g_languages[] = {
 	{"ru", "Russian", RU_RUS},
 	{"es", "Spanish", ES_ESP},
 	{"se", "Swedish", SE_SWE},
-	{"hu", "Hungarian", HU_HUN},
 	{0, 0, UNK_LANG}
 };
 
