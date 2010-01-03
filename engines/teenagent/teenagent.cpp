@@ -314,11 +314,6 @@ Common::Error TeenAgentEngine::run() {
 
 	initGraphics(320, 200, false);
 
-	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
-	
-	if (load_slot < 0 && !showLogo("unlogic.res"))
-		return Common::kNoError;
-
 	scene = new Scene;
 	inventory = new Inventory;
 	console = new Console(this);
@@ -329,7 +324,6 @@ Common::Error TeenAgentEngine::run() {
 	init();
 
 	CursorMan.pushCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
-	CursorMan.showMouse(true);
 
 	syncSoundSettings();
 
@@ -337,13 +331,18 @@ Common::Error TeenAgentEngine::run() {
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, 255, 0, true, false);
 	music->start();
 
+	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
 	if (load_slot >= 0) {
 		loadGameState(load_slot);
 	} else {
+		if (!showLogo("unlogic.res"))
+			return Common::kNoError;
 		scene->intro = true;
 		scene_busy = true;
 		processCallback(0x24c);
 	}
+
+	CursorMan.showMouse(true);
 
 	uint32 frame = 0;
 
