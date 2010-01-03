@@ -185,7 +185,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #  define validate_arithmetic(r) ((r).offset)
 #  define signed_validate_arithmetic(r) ((int) ((r).offset) & 0x8000 ? (signed) ((r).offset) - 65536 : ((r).offset))
 #  define validate_variable(r, sb, t, m, i, l)
-#  define validate_read_var(r, sb, t, m, i, l) ((r)[i])
+#  define validate_read_var(r, sb, t, m, i, l, dv) ((r)[i])
 #  define validate_write_var(r, sb, t, m, i, l, v, sm, k) ((r)[i] = (v))
 #  define validate_property(o, p) ((o)->_variables[p])
 
@@ -492,7 +492,7 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 	return &(s->_executionStack.back());
 }
 
-#ifdef DISABLE_VALIDATONS
+#ifdef DISABLE_VALIDATIONS
 #  define kernel_matches_signature(a, b, c, d) 1
 #endif
 

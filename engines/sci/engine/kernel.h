@@ -41,6 +41,7 @@ struct Node;	// from segment.h
 struct List;	// from segment.h
 
 //#define DEBUG_PARSER	// enable for parser debugging
+//#define DISABLE_VALIDATIONS	// enable to stop validation checks
 
 /* Generic description: */
 typedef reg_t KernelFunc(EngineState *s, int argc, reg_t *argv);

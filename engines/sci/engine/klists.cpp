@@ -247,8 +247,10 @@ reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kPrevNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
-	if (!sane_nodep(s, argv[0]))
+	if (!sane_nodep(s, argv[0])) {
 		warning("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
+		return NULL_REG;
+	}
 
 	return n->pred;
 }
