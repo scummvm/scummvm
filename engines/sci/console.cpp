@@ -2099,7 +2099,7 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
 
-	printf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
+	DebugPrintf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
 	Common::List<ExecStack>::iterator iter;
 	uint i = 0;
 
@@ -2112,17 +2112,17 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		switch (call.type) {
 
 		case EXEC_STACK_TYPE_CALL: {// Normal function
-			printf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
+			DebugPrintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
 			          selector_name(_vm->_gamestate, call.selector));
 		}
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			printf(" %x:[%x]  k%s(", i, call.origin, _vm->getKernel()->getKernelName(call.selector).c_str());
+			DebugPrintf(" %x:[%x]  k%s(", i, call.origin, _vm->getKernel()->getKernelName(call.selector).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
-			printf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
+			DebugPrintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
 			          objname, _vm->getKernel()->getSelectorName(call.selector).c_str());
 			break;
 		}
@@ -2133,31 +2133,31 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			totalparamc = 16;
 
 		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			printf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
+			DebugPrintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
 
 			if (paramc < call.argc)
-				printf(", ");
+				DebugPrintf(", ");
 		}
 
 		if (call.argc > 16)
-			printf("...");
+			DebugPrintf("...");
 
-		printf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
+		DebugPrintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
 		if (call.type == EXEC_STACK_TYPE_CALL) {
-			printf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
+			DebugPrintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
 			if (call.sp == CALL_SP_CARRY)
-				printf(" sp,fp:carry");
+				DebugPrintf(" sp,fp:carry");
 			else {
-				printf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
-				printf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
+				DebugPrintf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
+				DebugPrintf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
 			}
 		} else
-			printf(" pc:none");
+			DebugPrintf(" pc:none");
 
-		printf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
+		DebugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			printf(" script: %d", (*(Script *)_vm->_gamestate->_segMan->_heap[call.addr.pc.segment])._nr);
-		printf("\n");
+			DebugPrintf(" script: %d", (*(Script *)_vm->_gamestate->_segMan->_heap[call.addr.pc.segment])._nr);
+		DebugPrintf("\n");
 	}
 
 	return true;
