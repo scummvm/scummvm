@@ -484,4 +484,3 @@ void MidiParser_SCI::setVolume(byte bVolume) {
 }
 
 } // End of namespace Sci
-space Sci
