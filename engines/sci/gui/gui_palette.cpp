@@ -299,7 +299,7 @@ void SciGuiPalette::setIntensity(uint16 fromColor, uint16 toColor, uint16 intens
 // Returns true, if palette got changed
 bool SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	GuiColor col;
-	byte colorNr;
+	//byte colorNr;
 	int16 colorCount;
 	uint32 now = g_system->getMillis() * 60 / 1000;
 
