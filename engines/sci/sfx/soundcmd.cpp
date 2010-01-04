@@ -529,20 +529,24 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 		changeSoundStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
 
-	Common::StackLock lock(_music->_mutex);
-
 	MusicEntry *musicSlot = NULL;
 	MusicList::iterator slotLoop = NULL;
+	MusicList::iterator listEnd = NULL;
 
 	if (!obj.segment) {
 		// Pausing/Resuming the whole playlist was introduced 
 		// in the SCI1 late sound scheme
 		if (_soundVersion <= SCI_VERSION_1_EARLY)
 			return;
+		_music->_mutex.lock();
 		slotLoop = _music->getPlayListStart();
+		listEnd = _music->getPlayListEnd();
 		musicSlot = *slotLoop;
+		_music->_mutex.unlock();
 	} else {
+		_music->_mutex.lock();
 		musicSlot = _music->getSlot(obj);
+		_music->_mutex.unlock();
 		if (!musicSlot) {
 			warning("cmdPauseSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
 			return;
@@ -561,10 +565,13 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 		}
 
 		if (slotLoop) {
-			if (slotLoop == _music->getPlayListEnd())
+			if (slotLoop == listEnd) {
 				break;
-			else
+			} else {
+				_music->_mutex.lock();
 				musicSlot = *(slotLoop++);
+				_music->_mutex.unlock();
+			}
 		}
 	} while (slotLoop);
 
