@@ -65,6 +65,8 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
 	_menu = new SciGuiMenu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
+
+	_screenItemCount = 0;
 }
 
 SciGui::SciGui() {
@@ -835,6 +837,41 @@ uint16 SciGui::getScreenWidth() {
 
 uint16 SciGui::getScreenHeight() {
 	return _screen->_displayHeight;
+}
+
+void SciGui::addScreenItem(reg_t object) {
+	_screenItems.push_back(object);
+	_screenItemCount++;
+}
+
+void SciGui::frameOut() {
+	for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
+		reg_t viewObj = _screenItems[itemNr];
+		uint16 viewId = GET_SEL32V(_s->_segMan, viewObj, view);
+		uint16 loopNo = GET_SEL32V(_s->_segMan, viewObj, loop);
+		uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
+		uint16 leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
+		uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
+		int16 priority = GET_SEL32V(_s->_segMan, viewObj, priority);
+		//int16 control = 0;
+
+		// Theoretically, leftPos and topPos should be sane
+		// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
+		// the hack underneath does not try and draw cels outside the screen coordinates
+		if (leftPos >= getScreenWidth()) {
+			warning("kAddScreenItem: invalid left position (%d), resetting to 0", leftPos);
+			leftPos = 0;
+		}
+
+		if (topPos >= getScreenHeight()) {
+			warning("kAddScreenItem: invalid top position (%d), resetting to 0", topPos);
+			topPos = 0;
+		}
+
+		// HACK: just draw the view on screen
+		if (viewId != 0xffff)
+			drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
+	}
 }
 
 bool SciGui::debugUndither(bool flag) {

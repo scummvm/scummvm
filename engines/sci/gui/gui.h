@@ -153,6 +153,10 @@ public:
 	virtual uint16 getScreenWidth();
 	virtual uint16 getScreenHeight();
 
+	// SCI32
+	virtual void addScreenItem(reg_t object);
+	virtual void frameOut();
+
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 
@@ -180,6 +184,9 @@ private:
 // 	SciGui32 *_gui32; // for debug purposes
 
 	bool _usesOldGfxFunctions;
+
+	Common::Array<reg_t> _screenItems;
+	int _screenItemCount;
 };
 
 } // End of namespace Sci
