@@ -307,20 +307,17 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_MT32);
 		break;
 	default:
+		// Should never occur
+		error("soundInitSnd: Unknown MIDI type");
 		break;
 	}
 
-	// attempting to select default MT-32/Roland track
-	if (!track)
-		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_MT32);
 	if (track) {
-		// if MIDI device is selected but there is no digital track in sound resource
+		// If MIDI device is selected but there is no digital track in sound resource
 		// try to use adlib's digital sample if possible
-		if (_midiType <= MD_MT32 && track->digitalChannelNr == -1 && _bMultiMidi) {
-			if (pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB)->digitalChannelNr != -1)
-				track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
-		}
-		// play digital sample
+		if (_bMultiMidi && pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB)->digitalChannelNr != -1)
+			track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
+		// Play digital sample
 		if (track->digitalChannelNr != -1) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
 			delete pSnd->pStreamAud;

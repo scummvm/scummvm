@@ -203,7 +203,9 @@ protected:
 	MidiDriverType _midiType;
 
 	uint32 _dwTempo;
-	bool _bMultiMidi; // use adlib's digital track if midi track don't have one
+	// Mixed Adlib/MIDI mode: when enabled from the ScummVM sound options screen,
+	// and a sound has a digital track, the sound from the Adlib track is played
+	bool _bMultiMidi;
 private:
 	static void miditimerCallback(void *p);
 
