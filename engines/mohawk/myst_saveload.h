@@ -174,8 +174,8 @@ struct MystVariables {
 	*/
 	uint16 dunny_vars[1];
 
-    // The values in these regions seem to be lists of resource IDs
-    // which correspond to VIEW resources i.e. cards
+	// The values in these regions seem to be lists of resource IDs
+	// which correspond to VIEW resources i.e. cards
 	uint16 unknown_myst[31];
 
 	uint16 unknown_channelwood[37];

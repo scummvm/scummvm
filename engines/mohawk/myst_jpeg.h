@@ -31,7 +31,7 @@
 
 #include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
- 
+
 namespace Mohawk {
 
 // Myst JPEG Decoder

@@ -22,15 +22,15 @@
  * $Id$
  *
  */
- 
+
 #ifndef MOHAWK_RPZA_H
 #define MOHAWK_RPZA_H
 
 #include "graphics/pixelformat.h"
 #include "graphics/video/codecs/codec.h"
- 
+
 namespace Mohawk {
- 
+
 class RPZADecoder : public Graphics::Codec {
 public:
 	RPZADecoder(uint16 width, uint16 height);

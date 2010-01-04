@@ -22,12 +22,12 @@
  * $Id$
  *
  */
- 
+
 #ifndef MOHAWK_VIDEO_SMC_H
 #define MOHAWK_VIDEO_SMC_H
 
 #include "graphics/video/codecs/codec.h"
- 
+
 namespace Mohawk {
 
 enum {
@@ -36,7 +36,7 @@ enum {
 	COCTET = 8,
 	COLORS_PER_TABLE = 256
 };
- 
+
 class SMCDecoder : public Graphics::Codec {
 public:
 	SMCDecoder(uint16 width, uint16 height);

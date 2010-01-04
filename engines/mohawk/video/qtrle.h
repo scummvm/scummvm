@@ -28,9 +28,9 @@
 
 #include "graphics/pixelformat.h"
 #include "graphics/video/codecs/codec.h"
- 
+
 namespace Mohawk {
- 
+
 class QTRLEDecoder : public Graphics::Codec {
 public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);

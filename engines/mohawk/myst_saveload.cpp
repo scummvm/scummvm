@@ -59,7 +59,7 @@ bool MystSaveLoad::loadGame(Common::String filename) {
 	    || (size != 664 && (_vm->getFeatures() & GF_ME))
 	    || (size != 601 && !(_vm->getFeatures() & GF_ME))) {
 		warning ("Incompatible saved game version");
-        // FIXME - Add Support to load original game saves in ME and vice versa
+		// FIXME - Add Support to load original game saves in ME and vice versa
 		delete loadFile;
 		return false;
 	}

@@ -159,7 +159,7 @@ void CinepakDecoder::loadCodebook(Common::SeekableReadStream *stream, uint16 str
 	for (uint16 i = 0; i < 256; i++) {
 		if ((chunkID & 0x01) && !(mask >>= 1)) {
 			if ((stream->pos() - startPos + 4) > (int32)chunkSize)
-                break;
+				break;
 
 			flag  = stream->readUint32BE();
 			mask  = 0x80000000;
@@ -209,14 +209,14 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
 				mask  = 0x80000000;
 			}
 
-            if (!(chunkID & 0x01) || (flag & mask)) {
-                if (!(chunkID & 0x02) && !(mask >>= 1)) {
-                    if ((stream->pos() - startPos + 4) > (int32)chunkSize)
-                        return;
+			if (!(chunkID & 0x01) || (flag & mask)) {
+				if (!(chunkID & 0x02) && !(mask >>= 1)) {
+					if ((stream->pos() - startPos + 4) > (int32)chunkSize)
+						return;
 
-                    flag  = stream->readUint32BE();
-                    mask  = 0x80000000;
-                }
+					flag  = stream->readUint32BE();
+					mask  = 0x80000000;
+				}
 
 				if ((chunkID & 0x02) || (~flag & mask)) {
 					if ((stream->pos() - startPos + 1) > (int32)chunkSize)
