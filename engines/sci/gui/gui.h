@@ -193,9 +193,7 @@ private:
 
 #ifdef ENABLE_SCI32
 	Common::Array<reg_t> _screenItems;
-	int _screenItemCount;
 	Common::Array<reg_t> _planes;
-	int _planeCount;
 #endif
 };
 
