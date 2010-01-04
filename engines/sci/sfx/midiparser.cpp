@@ -51,6 +51,8 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 	_ppqn = 1;
 	setTempo(16667);
 
+	_volume = 0;
+
 	_signalSet = false;
 	_signalToSet = 0;
 }
