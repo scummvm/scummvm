@@ -154,6 +154,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdFadeSound);
 		SOUNDCOMMAND(cmdGetPolyphony);
 		SOUNDCOMMAND(cmdStopAllSounds);
+		_cmdUpdateCuesIndex = -1;
 		break;
 	case SCI_VERSION_1_EARLY:
 		SOUNDCOMMAND(cmdMasterVolume);
@@ -171,6 +172,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdSendMidi);
 		SOUNDCOMMAND(cmdReverb);
 		SOUNDCOMMAND(cmdSetSoundHold);
+		_cmdUpdateCuesIndex = 11;
 		break;
 	case SCI_VERSION_1_LATE:
 		SOUNDCOMMAND(cmdMasterVolume);
@@ -194,6 +196,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdSendMidi);
 		SOUNDCOMMAND(cmdReverb);
 		SOUNDCOMMAND(cmdUpdateSound);
+		_cmdUpdateCuesIndex = 17;
 		break;
 	default:
 		warning("Sound command parser: unknown sound version %d", _soundVersion);
@@ -212,13 +215,6 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	_argc = argc;
 	_argv = argv;
 
-	// cmdMuteSound and cmdMasterVolume do not operate on an object, but need the number of
-	// arguments passed. We load this in the value
-	if (!strcmp(_soundCommands[command]->desc, "cmdMuteSound") ||
-		!strcmp(_soundCommands[command]->desc, "cmdMasterVolume")) {
-		value = argc - 1;	// minus the command
-	}
-
 	if (argc == 6) {	// cmdSendMidi
 		byte channel = argv[2].toUint16() & 0xf;
 		byte midiCmd = argv[3].toUint16() & 0xff;
@@ -230,7 +226,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	}
 
 	if (command < _soundCommands.size()) {
-		if (strcmp(_soundCommands[command]->desc, "cmdUpdateCues")) {
+		if (command != _cmdUpdateCuesIndex) {
 			//printf("%s, object %04x:%04x\n", _soundCommands[command]->desc, PRINT_REG(obj));	// debug
 			debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
 		}
@@ -600,7 +596,7 @@ void SoundCommandParser::cmdResumeSound(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	if (value > 0)
+	if (_argc > 1)	// the first parameter is the sound command
 		_music->soundSetSoundOn(obj.toUint16());
 	_acc = make_reg(0, _music->soundGetSoundOn());
 #endif
@@ -614,7 +610,7 @@ void SoundCommandParser::cmdMasterVolume(reg_t obj, int16 value) {
 	_acc = make_reg(0, _state->sfx_getVolume());
 #else
 	debugC(2, kDebugLevelSound, "cmdMasterVolume: %d", value);
-	if (value > 0)
+	if (_argc > 1)	// the first parameter is the sound command
 		_music->soundSetMasterVolume(obj.toSint16());
 	_acc = make_reg(0, _music->soundGetMasterVolume());
 #endif

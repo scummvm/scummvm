@@ -87,6 +87,7 @@ private:
 	reg_t *_argv;	// for cmdFadeSound
 	uint32 _midiCommand;	// for cmdSendMidi
 	reg_t _acc;
+	int _cmdUpdateCuesIndex;
 
 	void cmdInitSound(reg_t obj, int16 value);
 	void cmdPlaySound(reg_t obj, int16 value);
