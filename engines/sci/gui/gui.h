@@ -153,6 +153,7 @@ public:
 	virtual uint16 getScreenWidth();
 	virtual uint16 getScreenHeight();
 
+#ifdef ENABLE_SCI32
 	// SCI32
 	virtual void addScreenItem(reg_t object);
 	virtual void deleteScreenItem(reg_t object);
@@ -160,6 +161,7 @@ public:
 	virtual void updatePlane(reg_t object);
 	virtual void deletePlane(reg_t object);
 	virtual void frameOut();
+#endif
 
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
@@ -189,10 +191,12 @@ private:
 
 	bool _usesOldGfxFunctions;
 
+#ifdef ENABLE_SCI32
 	Common::Array<reg_t> _screenItems;
 	int _screenItemCount;
 	Common::Array<reg_t> _planes;
 	int _planeCount;
+#endif
 };
 
 } // End of namespace Sci

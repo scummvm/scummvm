@@ -66,8 +66,10 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_menu = new SciGuiMenu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 
+#ifdef ENABLE_SCI32
 	_screenItemCount = 0;
 	_planeCount = 0;
+#endif
 }
 
 SciGui::SciGui() {
@@ -840,6 +842,7 @@ uint16 SciGui::getScreenHeight() {
 	return _screen->_displayHeight;
 }
 
+#ifdef ENABLE_SCI32
 void SciGui::addScreenItem(reg_t object) {
 	_screenItems.push_back(object);
 	_screenItemCount++;
@@ -922,6 +925,7 @@ void SciGui::frameOut() {
 		}
 	}
 }
+#endif
 
 bool SciGui::debugUndither(bool flag) {
 	_screen->unditherSetState(flag);
