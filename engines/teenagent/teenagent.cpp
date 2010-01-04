@@ -363,8 +363,10 @@ bool TeenAgentEngine::showMetropolis() {
 			//generate colors matrix
 			memmove(colors + 320, colors + 480, 8480);
 			for(uint c = 0; c < 17; ++c) {
-				byte x = (random.getRandomNumber(185) + 5) & 0xf;
-				colors[8800 + random.getRandomNumber(159)] = x | (x << 4); //last line
+				byte x = (random.getRandomNumber(185) + 5) & 0xff;
+				uint offset = 8800 + random.getRandomNumber(159);
+				colors[offset++] = x;
+				colors[offset++] = x;
 			}
 			for(uint y = 1; y < 56; ++y) {
 				for(uint x = 1; x < 160; ++x) {
