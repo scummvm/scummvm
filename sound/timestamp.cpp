@@ -27,51 +27,110 @@
 
 namespace Audio {
 
-Timestamp::Timestamp(uint32 m, int frameRate) :
-	_msecs(m), _frameRate(frameRate), _frameOffset(0) {
-	assert(_frameRate > 0);
+static uint gcd(uint a, uint b) {
+	while (a > 0) {
+		int tmp = a;
+		a = b % a;
+		b = tmp;
+	}
+	return b;
+}
+
+Timestamp::Timestamp(uint32 m, int framerate) :
+	_msecs(m), _framerate(framerate), _numberOfFrames(0) {
+	assert(_framerate > 0);
+}
+
+
+Timestamp Timestamp::convertToFramerate(int newFramerate) const {
+	Timestamp ts(*this);
+
+	if (ts._framerate != newFramerate) {
+		ts._framerate = newFramerate;
+
+		const uint g = gcd(_framerate, ts._framerate);
+		const uint p = _framerate / g;
+		const uint q = ts._framerate / g;
+
+		// Convert the frame offset to the new framerate.
+		// We round to the nearest (as opposed to always
+		// rounding down), to minimize rounding errors during
+		// round trip conversions.
+		ts._numberOfFrames = (ts._numberOfFrames * q + p/2) / p;
+
+		ts._msecs += (ts._numberOfFrames / ts._framerate) * 1000;
+		ts._numberOfFrames %= ts._framerate;
+	}
+
+	return ts;
+}
+
+bool Timestamp::operator==(const Timestamp &ts) const {
+	// TODO: Alternatively, we could define equality to mean that
+	// two timestamps describe the exacts same moment in time.
+	return (_msecs == ts._msecs) &&
+	       (_numberOfFrames == ts._numberOfFrames) &&
+	       (_framerate == ts._framerate);
+}
+
+bool Timestamp::operator!=(const Timestamp &ts) const {
+	return !(*this == ts);
 }
 
 
 Timestamp Timestamp::addFrames(int frames) const {
-	Timestamp timestamp(*this);
-	timestamp._frameOffset += frames;
+	Timestamp ts(*this);
+	ts._numberOfFrames += frames;
 
-	if (timestamp._frameOffset < 0) {
-		int secsub = 1 + (-timestamp._frameOffset / timestamp._frameRate);
+	if (ts._numberOfFrames < 0) {
+		int secsub = 1 + (-ts._numberOfFrames / ts._framerate);
 
-		timestamp._frameOffset += timestamp._frameRate * secsub;
-		timestamp._msecs -= secsub * 1000;
+		ts._numberOfFrames += ts._framerate * secsub;
+		ts._msecs -= secsub * 1000;
 	}
 
-	timestamp._msecs += (timestamp._frameOffset / timestamp._frameRate) * 1000;
-	timestamp._frameOffset %= timestamp._frameRate;
+	ts._msecs += (ts._numberOfFrames / ts._framerate) * 1000;
+	ts._numberOfFrames %= ts._framerate;
 
-	return timestamp;
+	return ts;
 }
 
 Timestamp Timestamp::addMsecs(int ms) const {
-	Timestamp timestamp(*this);
-	timestamp._msecs += ms;
-	return timestamp;
+	Timestamp ts(*this);
+	ts._msecs += ms;
+	return ts;
 }
 
-int Timestamp::frameDiff(const Timestamp &b) const {
-	assert(_frameRate == b._frameRate);
+int Timestamp::frameDiff(const Timestamp &ts) const {
 
-	int msecdelta = 0;
-	if (_msecs != b._msecs)
-		msecdelta = (long(_msecs) - long(b._msecs)) * _frameRate / 1000;
+	int delta = 0;
+	if (_msecs != ts._msecs)
+		delta = (long(_msecs) - long(ts._msecs)) * _framerate / 1000;
 
-	return msecdelta + _frameOffset - b._frameOffset;
+	delta += _numberOfFrames;
+
+	if (_framerate == ts._framerate) {
+		delta -= ts._numberOfFrames;
+	} else {
+		// We need to multiply by the quotient of the two framerates.
+		// We cancel the GCD in this fraction to reduce the risk of
+		// overflows.
+		const uint g = gcd(_framerate, ts._framerate);
+		const uint p = _framerate / g;
+		const uint q = ts._framerate / g;
+
+		delta -= (ts._numberOfFrames * p + q/2) / q;
+	}
+
+	return delta;
 }
 
-int Timestamp::msecsDiff(const Timestamp &b) const {
-	return long(msecs()) - long(b.msecs());
+int Timestamp::msecsDiff(const Timestamp &ts) const {
+	return long(msecs()) - long(ts.msecs());
 }
 
 uint32 Timestamp::msecs() const {
-	return _msecs + _frameOffset * 1000L / _frameRate;
+	return _msecs + _numberOfFrames * 1000L / _framerate;
 }
 
 
