@@ -125,18 +125,9 @@ void SciMusic::soundSetSoundOn(bool soundOnFlag) {
 }
 
 uint16 SciMusic::soundGetVoices() {
-	switch (_midiType) {
-	case MD_PCSPK:
-		return 1;
-	case MD_PCJR:
-		return 3;
-	case MD_ADLIB:
-		return 8;
-	case MD_MT32:
-		return 16;
-	default:
-		return 1;
-	}
+	Common::StackLock lock(_mutex);
+
+	return _pMidiDrv->getPolyphony();
 }
 
 MusicEntry *SciMusic::getSlot(reg_t obj) {
