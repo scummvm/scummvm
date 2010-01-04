@@ -167,6 +167,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	_vm->changeToCard(cardID);
 
 	delete names;
+	delete[] stringOffsets;
 		
 	// Reset zip mode data
 	_vm->_zipModeData.clear();
