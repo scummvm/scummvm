@@ -156,6 +156,9 @@ public:
 	// SCI32
 	virtual void addScreenItem(reg_t object);
 	virtual void deleteScreenItem(reg_t object);
+	virtual void addPlane(reg_t object);
+	virtual void updatePlane(reg_t object);
+	virtual void deletePlane(reg_t object);
 	virtual void frameOut();
 
 	virtual bool debugUndither(bool flag);
@@ -188,6 +191,8 @@ private:
 
 	Common::Array<reg_t> _screenItems;
 	int _screenItemCount;
+	Common::Array<reg_t> _planes;
+	int _planeCount;
 };
 
 } // End of namespace Sci

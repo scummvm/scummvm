@@ -67,6 +67,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 
 	_screenItemCount = 0;
+	_planeCount = 0;
 }
 
 SciGui::SciGui() {
@@ -854,33 +855,71 @@ void SciGui::deleteScreenItem(reg_t object) {
 	}
 }
 
+void SciGui::addPlane(reg_t object) {
+	_planes.push_back(object);
+	_planeCount++;
+}
+
+void SciGui::updatePlane(reg_t object) {
+	int16 picNum = GET_SEL32V(_s->_segMan, object, picture);
+	if (picNum > -1) {
+		drawPicture(picNum, 100, false, false, false, 0);
+		animateShowPic();
+	}
+}
+
+void SciGui::deletePlane(reg_t object) {
+	for (int planeNr = 0; planeNr < _planeCount; planeNr++) {
+		if (_planes[planeNr] == object) {
+			_planes.remove_at(planeNr);
+			_planeCount--;
+			return;
+		}
+	}
+}
+
 void SciGui::frameOut() {
-	for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
-		reg_t viewObj = _screenItems[itemNr];
-		uint16 viewId = GET_SEL32V(_s->_segMan, viewObj, view);
-		uint16 loopNo = GET_SEL32V(_s->_segMan, viewObj, loop);
-		uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
-		uint16 leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
-		uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
-		int16 priority = GET_SEL32V(_s->_segMan, viewObj, priority);
-		//int16 control = 0;
+	for (int planeNr = 0; planeNr < _planeCount; planeNr++) {
+		reg_t planeObj = _planes[planeNr];
+		int16 priority = GET_SEL32V(_s->_segMan, planeObj, priority);
 
-		// Theoretically, leftPos and topPos should be sane
-		// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
-		// the hack underneath does not try and draw cels outside the screen coordinates
-		if (leftPos >= getScreenWidth()) {
-			warning("kAddScreenItem: invalid left position (%d), resetting to 0", leftPos);
-			leftPos = 0;
+		if (priority == -1)
+			continue;
+
+		for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
+			reg_t viewObj = _screenItems[itemNr];
+			reg_t planeOfItem = GET_SEL32(_s->_segMan, viewObj, plane);
+			if (planeOfItem == _planes[planeNr]) {
+				uint16 viewId = GET_SEL32V(_s->_segMan, viewObj, view);
+				uint16 loopNo = GET_SEL32V(_s->_segMan, viewObj, loop);
+				uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
+				uint16 leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
+				uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
+				int16 priority = GET_SEL32V(_s->_segMan, viewObj, priority);
+				int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
+				int16 plane = GET_SEL32V(_s->_segMan, viewObj, plane);
+
+				warning("viewId %d plane %X", viewId, plane);
+				//int16 control = 0;
+
+				// Theoretically, leftPos and topPos should be sane
+				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
+				// the hack underneath does not try and draw cels outside the screen coordinates
+				if (leftPos >= getScreenWidth()) {
+					warning("kAddScreenItem: invalid left position (%d), resetting to 0", leftPos);
+					leftPos = 0;
+				}
+	
+				if (topPos >= getScreenHeight()) {
+					warning("kAddScreenItem: invalid top position (%d), resetting to 0", topPos);
+					topPos = 0;
+				}
+	
+				// HACK: just draw the view on screen
+				if (viewId != 0xffff)
+					drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
+			}
 		}
-
-		if (topPos >= getScreenHeight()) {
-			warning("kAddScreenItem: invalid top position (%d), resetting to 0", topPos);
-			topPos = 0;
-		}
-
-		// HACK: just draw the view on screen
-		if (viewId != 0xffff)
-			drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 	}
 }
 

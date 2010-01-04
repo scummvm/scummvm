@@ -698,35 +698,25 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t picObj = argv[0];
+	reg_t planeObj = argv[0];
 
-	// TODO
-
-	// The picture selector usually doesn't hold the actual picture at this point. It's filled in
-	// when kUpdatePlane is called
-
-	warning("kAddPlane object %04x:%04x", PRINT_REG(picObj));
+	s->_gui->addPlane(planeObj);
+	warning("kAddPlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
 
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t picObj = argv[0];
+	reg_t planeObj = argv[0];
 
-	// TODO
-
-	warning("kDeletePlane object %04x:%04x", PRINT_REG(picObj));
+	s->_gui->deletePlane(planeObj);
+	warning("kDeletePlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
 
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
-	reg_t picObj = argv[0];
-	int16 picNum = GET_SEL32V(s->_segMan, picObj, picture);
+	reg_t planeObj = argv[0];
 
-	if (picNum > -1) {
-		s->_gui->drawPicture(picNum, 100, false, false, false, 0);
-		s->_gui->animateShowPic();
-	}
-
+	s->_gui->updatePlane(planeObj);
 	return s->r_acc;
 }
 
