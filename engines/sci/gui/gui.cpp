@@ -898,8 +898,8 @@ void SciGui::frameOut() {
 				uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
 				uint16 leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
 				uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
-				int16 priority = GET_SEL32V(_s->_segMan, viewObj, priority);
-				int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
+				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
+				//int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
 
 				// Theoretically, leftPos and topPos should be sane
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
