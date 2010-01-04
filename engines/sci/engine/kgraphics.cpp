@@ -962,15 +962,6 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	// Take care of incoming events (kAnimate is called semi-regularly)
 	process_sound_events(s);
-#else
-	if (s->detectDoSoundType() <= SCI_VERSION_0_LATE) {
-		// If we're running a SCI0 game, update the sound cues, to compensate
-		// for the fact that SCI0 does not poll to update the sound cues itself,
-		// like SCI01 and later do with cmdUpdateSoundCues. kAnimate is called
-		// quite often, so emulate the SCI01 behavior of cmdUpdateSoundCues with
-		// this call
-		s->_soundCmd->updateSci0Cues();
-	}
 #endif
 
 	s->_gui->animate(castListReference, cycle, argc, argv);
