@@ -32,27 +32,11 @@
 
 namespace Sci {
 
-// FIXME: Is AVOIDPATH_DYNMEM_STRING still needed?
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 //#define DEBUG_AVOIDPATH	//enable for avoidpath debugging
-
-static void POLY_GET_POINT(const byte *p, int i, Common::Point &pt) {
-	pt.x = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE);
-	pt.y = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE + 2);
-}
-
-static void POLY_SET_POINT(byte *p, int i, const Common::Point &pt) {
-	WRITE_LE_UINT16((p) + (i) * POLY_POINT_SIZE, pt.x);
-	WRITE_LE_UINT16((p) + (i) * POLY_POINT_SIZE + 2, pt.y);
-}
-
-static void POLY_GET_POINT_REG_T(const reg_t *p, int i, Common::Point &pt) {
-	pt.x = (p)[(i) * 2].toUint16();
-	pt.y = (p)[(i) * 2 + 1].toUint16();
-}
 
 // SCI-defined polygon types
 enum {
@@ -245,7 +229,10 @@ struct PathfindingState {
 	Common::Point *_prependPoint;
 	Common::Point *_appendPoint;
 
-	PathfindingState() {
+	// Screen size
+	int _width, _height;
+
+	PathfindingState(int width, int height) : _width(width), _height(height) {
 		vertex_start = NULL;
 		vertex_end = NULL;
 		vertex_index = NULL;
@@ -264,6 +251,10 @@ struct PathfindingState {
 			delete *it;
 		}
 	}
+
+	bool pointOnScreenBorder(const Common::Point &p);
+	bool edgeOnScreenBorder(const Common::Point &p, const Common::Point &q);
+	int findNearPoint(const Common::Point &p, Polygon *polygon, Common::Point *ret);
 };
 
 
@@ -275,39 +266,52 @@ static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	Common::Point point;
 
 	if (list_r.isRaw) {
-		POLY_GET_POINT(list_r.raw, offset, point);
+		point.x = (int16)READ_LE_UINT16(list_r.raw + offset * POLY_POINT_SIZE);
+		point.y = (int16)READ_LE_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 2);
 	} else {
-		POLY_GET_POINT_REG_T(list_r.reg, offset, point);
+		point.x = list_r.reg[offset * 2].toUint16();
+		point.y = list_r.reg[offset * 2 + 1].toUint16();
 	}
 	return point;
 }
 
+static void writePoint(SegmentRef ref, int offset, const Common::Point &point) {
+	if (ref.isRaw) {
+		WRITE_LE_UINT16(ref.raw + offset * POLY_POINT_SIZE, point.x);
+		WRITE_LE_UINT16(ref.raw + offset * POLY_POINT_SIZE + 2, point.y);
+	} else {
+		ref.reg[offset * 2] = make_reg(0, point.x);
+		ref.reg[offset * 2 + 1] = make_reg(0, point.y);
+	}
+}
+
 #ifdef DEBUG_AVOIDPATH
 
-static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type) {
+static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type, int width, int height) {
 	// Colors for polygon debugging.
 	// Green: Total access
-	// Red : Barred access
 	// Blue: Near-point access
+	// Red : Barred access
 	// Yellow: Contained access
 	int poly_colors[4] = {
 		s->_gui->paletteFind(0, 255, 0),	// green
-		s->_gui->paletteFind(255, 0, 0),	// red
 		s->_gui->paletteFind(0, 0, 255),	// blue
+		s->_gui->paletteFind(255, 0, 0),	// red
 		s->_gui->paletteFind(255, 255, 0)	// yellow
 	};
 
 	// Clip
-	p1.x = CLIP<int16>(p1.x, 0, 319);
-	p1.y = CLIP<int16>(p1.y, 0, 199);
-	p2.x = CLIP<int16>(p2.x, 0, 319);
-	p2.y = CLIP<int16>(p2.y, 0, 199);
+	// FIXME: Do proper line clipping
+	p1.x = CLIP<int16>(p1.x, 0, width - 1);
+	p1.y = CLIP<int16>(p1.y, 0, height - 1);
+	p2.x = CLIP<int16>(p2.x, 0, width - 1);
+	p2.y = CLIP<int16>(p2.y, 0, height - 1);
 
 	assert(type >= 0 && type <= 3);
 	s->_gui->graphDrawLine(p1, p2, poly_colors[type], 255, 255);
 }
 
-static void draw_point(EngineState *s, Common::Point p, int start) {
+static void draw_point(EngineState *s, Common::Point p, int start, int width, int height) {
 	// Colors for starting and end point
 	// Green: End point
 	// Blue: Starting point
@@ -319,18 +323,24 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);
 
 	// Clip
-	rect.top = CLIP<int16>(rect.top, 0, 199);
-	rect.bottom = CLIP<int16>(rect.bottom, 0, 199);
-	rect.left = CLIP<int16>(rect.left, 0, 319);
-	rect.right = CLIP<int16>(rect.right, 0, 319);
+	rect.top = CLIP<int16>(rect.top, 0, height - 1);
+	rect.bottom = CLIP<int16>(rect.bottom, 0, height - 1);
+	rect.left = CLIP<int16>(rect.left, 0, width - 1);
+	rect.right = CLIP<int16>(rect.right, 0, width - 1);
 
 	assert(start >= 0 && start <= 1);
 	s->_gui->graphFrameBox(rect, point_colors[start]);
 }
 
-static void draw_polygon(EngineState *s, reg_t polygon) {
+static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
 	SegManager *segMan = s->_segMan;
 	reg_t points = GET_SEL32(segMan, polygon, points);
+
+#ifdef ENABLE_SCI32
+	if (segMan->isHeapObject(points))
+		points = GET_SEL32(segMan, points, data);
+#endif
+
 	int size = GET_SEL32(segMan, polygon, size).toUint16();
 	int type = GET_SEL32(segMan, polygon, type).toUint16();
 	Common::Point first, prev;
@@ -340,19 +350,19 @@ static void draw_polygon(EngineState *s, reg_t polygon) {
 
 	for (i = 1; i < size; i++) {
 		Common::Point point = read_point(segMan, points, i);
-		draw_line(s, prev, point, type);
+		draw_line(s, prev, point, type, width, height);
 		prev = point;
 	}
 
-	draw_line(s, prev, first, type % 3);
+	draw_line(s, prev, first, type % 3, width, height);
 }
 
-static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
+static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt, int width, int height) {
 	List *list;
 	Node *node;
 
-	draw_point(s, start, 1);
-	draw_point(s, end, 0);
+	draw_point(s, start, 1, width, height);
+	draw_point(s, end, 0, width, height);
 
 	if (!poly_list.segment)
 		return;
@@ -367,7 +377,7 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
-		draw_polygon(s, node->value);
+		draw_polygon(s, node->value, width, height);
 		node = s->_segMan->lookupNode(node->succ);
 	}
 }
@@ -376,6 +386,12 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 
 static void print_polygon(SegManager *segMan, reg_t polygon) {
 	reg_t points = GET_SEL32(segMan, polygon, points);
+
+#ifdef ENABLE_SCI32
+	if (segMan->isHeapObject(points))
+		points = GET_SEL32(segMan, points, data);
+#endif
+
 	int size = GET_SEL32(segMan, polygon, size).toUint16();
 	int type = GET_SEL32(segMan, polygon, type).toUint16();
 	int i;
@@ -901,20 +917,20 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 
 #endif // OLD_PATHFINDING
 
-static bool point_on_screen_border(const Common::Point &p) {
+bool PathfindingState::pointOnScreenBorder(const Common::Point &p) {
 	// Determines if a point lies on the screen border
 	// Parameters: (const Common::Point &) p: The point
 	// Returns   : (int) true if p lies on the screen border, false otherwise
-	// FIXME get dimensions from somewhere?
-	return (p.x == 0) || (p.x == 319) || (p.y == 0) || (p.y == 189);
+	return (p.x == 0) || (p.x == _width - 1) || (p.y == 0) || (p.y == _height - 1);
 }
 
-static bool edge_on_screen_border(const Common::Point &p, const Common::Point &q) {
+bool PathfindingState::edgeOnScreenBorder(const Common::Point &p, const Common::Point &q) {
 	// Determines if an edge lies on the screen border
 	// Parameters: (const Common::Point &) p, q: The edge (p, q)
 	// Returns   : (int) true if (p, q) lies on the screen border, false otherwise
-	// FIXME get dimensions from somewhere?
-	return ((p.x == 0 && q.x == 0) || (p.x == 319 && q.x == 319) || (p.y == 0 && q.y == 0) || (p.y == 189 && q.y == 189));
+	return ((p.x == 0 && q.x == 0) || (p.y == 0 && q.y == 0)
+			|| ((p.x == _width - 1) && (q.x == _width - 1))
+			|| ((p.y == _height - 1) && (q.y == _height - 1)));
 }
 
 static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
@@ -952,7 +968,7 @@ static int find_free_point(FloatPoint f, Polygon *polygon, Common::Point *ret) {
 	return PF_OK;
 }
 
-static int near_point(const Common::Point &p, Polygon *polygon, Common::Point *ret) {
+int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Common::Point *ret) {
 	// Computes the near point of a point contained in a polygon
 	// Parameters: (const Common::Point &) p: The point
 	//             (Polygon *) polygon: The polygon
@@ -970,7 +986,7 @@ static int near_point(const Common::Point &p, Polygon *polygon, Common::Point *r
 		uint32 new_dist;
 
 		// Ignore edges on the screen border, except for contained access polygons
-		if ((polygon->type != POLY_CONTAINED_ACCESS) && (edge_on_screen_border(p1, p2)))
+		if ((polygon->type != POLY_CONTAINED_ACCESS) && (edgeOnScreenBorder(p1, p2)))
 			continue;
 
 		// Compute near point
@@ -1154,7 +1170,7 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 					continue;
 				}
 
-				if (near_point(start, (*it), new_start) != PF_OK) {
+				if (s->findNearPoint(start, (*it), new_start) != PF_OK) {
 					delete new_start;
 					return NULL;
 				}
@@ -1209,7 +1225,7 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 				}
 
 				// The original end position is in an invalid location, so we move the point
-				if (near_point(end, (*it), new_end) != PF_OK) {
+				if (s->findNearPoint(end, (*it), new_end) != PF_OK) {
 					delete new_end;
 					return NULL;
 				}
@@ -1438,7 +1454,7 @@ static void change_polygons_opt_0(PathfindingState *s) {
 	}
 }
 
-static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
+static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int width, int height, int opt) {
 	// Converts the SCI input data for pathfinding
 	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) poly_list: Polygon list
@@ -1451,7 +1467,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	Polygon *polygon;
 	int err;
 	int count = 0;
-	PathfindingState *pf_s = new PathfindingState();
+	PathfindingState *pf_s = new PathfindingState(width, height);
 
 	// Convert all polygons
 	if (poly_list.segment) {
@@ -1664,7 +1680,7 @@ static void AStar(PathfindingState *s, bool avoidScreenEdge) {
 
 			if (avoidScreenEdge) {
 				// Avoid plotting path along screen edge
-				if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
+				if ((vertex != s->vertex_end) && s->pointOnScreenBorder(vertex->v))
 					continue;
 			}
 
@@ -1686,64 +1702,82 @@ static void AStar(PathfindingState *s, bool avoidScreenEdge) {
 		warning("[avoidpath] End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
 }
 
+static reg_t allocateOutputArray(SegManager *segMan, int size) {
+	reg_t addr;
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		SciArray<reg_t> *array = segMan->allocateArray(&addr);
+		assert(array);
+		array->setType(0);
+		array->setSize(size * 2);
+		return addr;
+	}
+#endif
+
+	segMan->allocDynmem(POLY_POINT_SIZE * size, AVOIDPATH_DYNMEM_STRING, &addr);
+	return addr;
+}
+
 static reg_t output_path(PathfindingState *p, EngineState *s) {
 	// Stores the final path in newly allocated dynmem
 	// Parameters: (PathfindingState *) p: The pathfinding state
 	//             (EngineState *) s: The game state
 	// Returns   : (reg_t) Pointer to dynmem containing path
 	int path_len = 0;
-	byte *oref;
 	reg_t output;
 	Vertex *vertex = p->vertex_end;
 	int unreachable = vertex->path_prev == NULL;
 
+	if (!unreachable) {
+		while (vertex) {
+			// Compute path length
+			path_len++;
+			vertex = vertex->path_prev;
+		}
+	}
+
+	// Allocate memory for path, plus 3 extra for appended point, prepended point and sentinel
+	output = allocateOutputArray(s->_segMan, path_len + 3);
+	SegmentRef arrayRef = s->_segMan->dereference(output);
+	assert(arrayRef.isValid());
+
 	if (unreachable) {
 		// If pathfinding failed we only return the path up to vertex_start
-		oref = s->_segMan->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
 
 		if (p->_prependPoint)
-			POLY_SET_POINT(oref, 0, *p->_prependPoint);
+			writePoint(arrayRef, 0, *p->_prependPoint);
 		else
-			POLY_SET_POINT(oref, 0, p->vertex_start->v);
+			writePoint(arrayRef, 0, p->vertex_start->v);
 
-		POLY_SET_POINT(oref, 1, p->vertex_start->v);
-		POLY_SET_POINT(oref, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
+		writePoint(arrayRef, 1, p->vertex_start->v);
+		writePoint(arrayRef, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 		return output;
 	}
 
-	while (vertex) {
-		// Compute path length
-		path_len++;
-		vertex = vertex->path_prev;
-	}
-
-	// Allocate memory for path, plus 3 extra for appended point, prepended point and sentinel
-	oref = s->_segMan->allocDynmem(POLY_POINT_SIZE * (path_len + 3), AVOIDPATH_DYNMEM_STRING, &output);
-
 	int offset = 0;
 
 	if (p->_prependPoint)
-		POLY_SET_POINT(oref, offset++, *p->_prependPoint);
+		writePoint(arrayRef, offset++, *p->_prependPoint);
 
 	vertex = p->vertex_end;
 	for (int i = path_len - 1; i >= 0; i--) {
-		POLY_SET_POINT(oref, offset + i, vertex->v);
+		writePoint(arrayRef, offset + i, vertex->v);
 		vertex = vertex->path_prev;
 	}
 	offset += path_len;
 
 	if (p->_appendPoint)
-		POLY_SET_POINT(oref, offset++, *p->_appendPoint);
+		writePoint(arrayRef, offset++, *p->_appendPoint);
 
 	// Sentinel
-	POLY_SET_POINT(oref, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
+	writePoint(arrayRef, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 #ifdef DEBUG_AVOIDPATH
 	printf("[avoidpath] Returning path:");
 	for (int i = 0; i < offset; i++) {
-		Common::Point pt;
-		POLY_GET_POINT(oref, i, pt);
+		Common::Point pt = read_point(s->_segMan, output, i);
 		printf(" (%i, %i)", pt.x, pt.y);
 	}
 	printf("\n");
@@ -1772,29 +1806,44 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 		return retval;
 	}
 	case 6 :
-	case 7 : {
+	case 7 : 
+	case 8 : {
 		Common::Point end = Common::Point(argv[2].toSint16(), argv[3].toSint16());
-		reg_t poly_list = argv[4];
-		//int poly_list_size = argv[5].toUint16();
-		int opt = (argc > 6) ? argv[6].toUint16() : 1;
-		reg_t output;
-		PathfindingState *p;
+		reg_t poly_list, output;
+		int width, height, opt;
+
+		if (getSciVersion() >= SCI_VERSION_2) {
+			if (argc < 7)
+				error("[avoidpath] Not enough arguments");
+
+			poly_list = GET_SEL32(s->_segMan, argv[4], elements);
+			width = argv[5].toUint16();
+			height = argv[6].toUint16();
+			if (argc > 7)
+				opt = argv[7].toUint16();
+		} else {
+			poly_list = argv[4];
+			width = 320;
+			height = 190;
+			if (argc > 6)
+				opt = argv[6].toUint16();
+		}
 
 #ifdef DEBUG_AVOIDPATH
 		printf("[avoidpath] Pathfinding input:\n");
-		draw_point(s, start, 1);
-		draw_point(s, end, 0);
+		draw_point(s, start, 1, width, height);
+		draw_point(s, end, 0, width, height);
 
 		if (poly_list.segment) {
 			print_input(s, poly_list, start, end, opt);
-			draw_input(s, poly_list, start, end, opt);
+			draw_input(s, poly_list, start, end, opt, width, height);
 		}
 
 		// Update the whole screen
-		s->_gui->graphUpdateBox(Common::Rect(0, 0, 319, 219));
+		s->_gui->graphUpdateBox(Common::Rect(0, 0, width - 1, height - 1));
 #endif
 
-		p = convert_polygon_set(s, poly_list, start, end, opt);
+		PathfindingState *p = convert_polygon_set(s, poly_list, start, end, width, height, opt);
 
 #ifdef OLD_PATHFINDING
 		if (p && intersecting_polygons(p)) {
@@ -1805,16 +1854,16 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 		if (!p) {
-			byte *oref;
 			printf("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
 			printf("[avoidpath] Returning direct path from start point to end point\n");
-			oref = s->_segMan->allocDynmem(POLY_POINT_SIZE * 3,
-			                                   AVOIDPATH_DYNMEM_STRING, &output);
+			output = allocateOutputArray(s->_segMan, 3);
+			SegmentRef arrayRef = s->_segMan->dereference(output);
+			assert(arrayRef.isValid());
 
-			POLY_SET_POINT(oref, 0, start);
-			POLY_SET_POINT(oref, 1, end);
-			POLY_SET_POINT(oref, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
+			writePoint(arrayRef, 0, start);
+			writePoint(arrayRef, 1, end);
+			writePoint(arrayRef, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 			return output;
 		}
