@@ -145,7 +145,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	if (s->detectDoSoundType() <= SCI_VERSION_0_LATE) {
 		// If we're running a SCI0 game, update the sound cues, to compensate
 		// for the fact that SCI0 does not poll to update the sound cues itself,
-		// like SCI01 and later do with cmdUpdateSoundCues. kAnimate is called
+		// like SCI01 and later do with cmdUpdateSoundCues. kGetEvent is called
 		// quite often, so emulate the SCI01 behavior of cmdUpdateSoundCues with
 		// this call
 		s->_soundCmd->updateSci0Cues();
