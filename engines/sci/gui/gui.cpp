@@ -65,11 +65,6 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_controls = new SciGuiControls(_s->_segMan, _gfx, _text);
 	_menu = new SciGuiMenu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
-
-#ifdef ENABLE_SCI32
-	_screenItemCount = 0;
-	_planeCount = 0;
-#endif
 }
 
 SciGui::SciGui() {
@@ -845,14 +840,12 @@ uint16 SciGui::getScreenHeight() {
 #ifdef ENABLE_SCI32
 void SciGui::addScreenItem(reg_t object) {
 	_screenItems.push_back(object);
-	_screenItemCount++;
 }
 
 void SciGui::deleteScreenItem(reg_t object) {
-	for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
+	for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
 		if (_screenItems[itemNr] == object) {
 			_screenItems.remove_at(itemNr);
-			_screenItemCount--;
 			return;
 		}
 	}
@@ -860,7 +853,6 @@ void SciGui::deleteScreenItem(reg_t object) {
 
 void SciGui::addPlane(reg_t object) {
 	_planes.push_back(object);
-	_planeCount++;
 }
 
 void SciGui::updatePlane(reg_t object) {
@@ -872,24 +864,23 @@ void SciGui::updatePlane(reg_t object) {
 }
 
 void SciGui::deletePlane(reg_t object) {
-	for (int planeNr = 0; planeNr < _planeCount; planeNr++) {
+	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
 		if (_planes[planeNr] == object) {
 			_planes.remove_at(planeNr);
-			_planeCount--;
 			return;
 		}
 	}
 }
 
 void SciGui::frameOut() {
-	for (int planeNr = 0; planeNr < _planeCount; planeNr++) {
+	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
 		reg_t planeObj = _planes[planeNr];
 		int16 priority = GET_SEL32V(_s->_segMan, planeObj, priority);
 
 		if (priority == -1)
 			continue;
 
-		for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
+		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
 			reg_t viewObj = _screenItems[itemNr];
 			reg_t planeOfItem = GET_SEL32(_s->_segMan, viewObj, plane);
 			if (planeOfItem == _planes[planeNr]) {
