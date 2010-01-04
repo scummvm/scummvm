@@ -1588,8 +1588,12 @@ void SciGui32::paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 inte
 #endif
 }
 
-void SciGui32::paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed) {
+bool SciGui32::paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed) {
 	//warning("STUB");
+	return false;
+}
+
+void SciGui32::paletteAnimateSet() {
 }
 
 #define SHAKE_DOWN 1

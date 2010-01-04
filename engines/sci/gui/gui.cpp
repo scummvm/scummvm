@@ -573,12 +573,16 @@ void SciGui::paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intens
 	_palette->setIntensity(fromColor, toColor, intensity, setPalette);
 }
 
-void SciGui::paletteAnimate(uint16 fromColor, uint16 toColor, int16 speed) {
+bool SciGui::paletteAnimate(uint16 fromColor, uint16 toColor, int16 speed) {
 	// we are also called on Amiga as well, but for colors above 32, so it doesnt make sense
 	if (!_s->resMan->isVGA())
-		return;
+		return false;
 
-	_palette->animate(fromColor, toColor, speed);
+	return _palette->animate(fromColor, toColor, speed);
+}
+
+void SciGui::paletteAnimateSet() {
+	_palette->setOnScreen();
 }
 
 void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {

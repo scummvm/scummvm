@@ -94,7 +94,8 @@ public:
 	void paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	int16 paletteFind(uint16 r, uint16 g, uint16 b);
 	void paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity);
-	void paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed);
+	bool paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed);
+	void paletteAnimateSet();
 
 	void shakeScreen(uint16 shakeCount, uint16 directions);
 

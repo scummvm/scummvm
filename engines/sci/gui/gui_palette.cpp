@@ -296,37 +296,59 @@ void SciGuiPalette::setIntensity(uint16 fromColor, uint16 toColor, uint16 intens
 		setOnScreen();
 }
 
-void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
+// Returns true, if palette got changed
+bool SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	GuiColor col;
-	int len = toColor - fromColor - 1;
+	byte colorNr;
+	int16 colorCount;
 	uint32 now = g_system->getMillis() * 60 / 1000;
 
 	// search for sheduled animations with the same 'from' value
-	int sz = _schedules.size();
-	for (int i = 0; i < sz; i++) {
-		if (_schedules[i].from == fromColor) {
-			if (_schedules[i].schedule < now) {
+	// schedule animation...
+	int scheduleCount = _schedules.size();
+	int scheduleNr;
+	for (scheduleNr = 0; scheduleNr < scheduleCount; scheduleNr++) {
+		if (_schedules[scheduleNr].from == fromColor)
+			break;
+	}
+	if (scheduleNr == scheduleCount) {
+		// adding a new schedule
+		GuiPalSchedule newSchedule;
+		newSchedule.from = fromColor;
+		newSchedule.schedule = now + ABS(speed);
+		_schedules.push_back(newSchedule);
+		scheduleCount++;
+	}
+
+	for (scheduleNr = 0; scheduleNr < scheduleCount; scheduleNr++) {
+		if (_schedules[scheduleNr].from == fromColor) {
+			if (_schedules[scheduleNr].schedule <= now) {
 				if (speed > 0) {
+					// TODO: Not really sure about this, sierra sci seems to do exactly this here
 					col = _sysPalette.colors[fromColor];
-					memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], len * sizeof(GuiColor));
+					if (fromColor < toColor) {
+						colorCount = toColor - fromColor - 1;
+						memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], colorCount * sizeof(GuiColor));
+					}
 					_sysPalette.colors[toColor - 1] = col;
 				} else {
 					col = _sysPalette.colors[toColor - 1];
-					memmove(&_sysPalette.colors[fromColor + 1], &_sysPalette.colors[fromColor], len * sizeof(GuiColor));
+					if (fromColor < toColor) {
+						colorCount = toColor - fromColor - 1;
+						memmove(&_sysPalette.colors[fromColor + 1], &_sysPalette.colors[fromColor], colorCount * sizeof(GuiColor));
+					}
 					_sysPalette.colors[fromColor] = col;
 				}
 				// removing schedule
-				_schedules.remove_at(i);
+				_schedules[scheduleNr].schedule = now + ABS(speed);
+				// TODO: Not sure when sierra actually removes a schedule
+				//_schedules.remove_at(scheduleNr);
+				return true;
 			}
-			setOnScreen();
-			return;
+			return false;
 		}
 	}
-	// adding a new schedule
-	GuiPalSchedule newSchedule;
-	newSchedule.from = fromColor;
-	newSchedule.schedule = now + ABS(speed);
-	_schedules.push_back(newSchedule);
+	return false;
 }
 
 // palVary

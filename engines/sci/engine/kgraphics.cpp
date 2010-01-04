@@ -569,12 +569,16 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 6: { // Animate
 		int16 argNr;
+		bool paletteChanged = false;
 		for (argNr = 1; argNr < argc; argNr += 3) {
 			uint16 fromColor = argv[argNr].toUint16();
 			uint16 toColor = argv[argNr + 1].toUint16();
 			int16 speed = argv[argNr + 2].toSint16();
-			s->_gui->paletteAnimate(fromColor, toColor, speed);
+			if (s->_gui->paletteAnimate(fromColor, toColor, speed))
+				paletteChanged = true;
 		}
+		if (paletteChanged)
+			s->_gui->paletteAnimateSet();
 		break;
 	}
 	case 7: { // Save palette to heap
@@ -963,7 +967,6 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// Take care of incoming events (kAnimate is called semi-regularly)
 	process_sound_events(s);
 #endif
-
 	s->_gui->animate(castListReference, cycle, argc, argv);
 
 	return s->r_acc;

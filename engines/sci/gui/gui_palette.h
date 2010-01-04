@@ -50,7 +50,7 @@ public:
 	void setFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	void animate(byte fromColor, byte toColor, int speed);
+	bool animate(byte fromColor, byte toColor, int speed);
 
 	GuiPalette _sysPalette;
 
