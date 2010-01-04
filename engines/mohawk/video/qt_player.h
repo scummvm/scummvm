@@ -35,8 +35,10 @@
 #define MOHAWK_QT_PLAYER_H
 
 #include "common/scummsys.h"
-
-#include "mohawk/video/video.h"
+#include "common/queue.h"
+#include "graphics/video/codecs/codec.h"
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 
 namespace Common {
 	class File;
@@ -44,7 +46,38 @@ namespace Common {
 
 namespace Mohawk {
 
-class QTPlayer : public Video {
+class QueuedAudioStream : public Audio::AudioStream {
+public:
+	QueuedAudioStream(int rate, int channels, bool autofree = true);
+	~QueuedAudioStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool isStereo() const { return _channels == 2; }
+	int getRate() const { return _rate; }
+	bool endOfData() const { return _queue.empty(); }
+	bool endOfStream() const { return _finished; }
+
+	void queueAudioStream(Audio::AudioStream *audStream);
+	void finish() { _finished = true; }
+
+	uint32 streamsInQueue() { return _queue.size(); }
+
+private:
+	bool _autofree;
+	bool _finished;
+	int _rate;
+	int _channels;
+
+	Common::Queue<Audio::AudioStream*> _queue;
+};
+
+enum ScaleMode {
+	kScaleNormal = 1,
+	kScaleHalf = 2,
+	kScaleQuarter = 4
+};
+
+class QTPlayer {
 public:
 	QTPlayer();
 	virtual ~QTPlayer();
@@ -108,6 +141,19 @@ public:
 	 * @param the beginning offset of the video
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
+	
+	int32 getCurFrame() { return _curFrame; }
+	void addPauseTime(uint32 p) { _lastFrameStart += p; _nextFrameStart += p; }
+	Graphics::Surface *getNextFrame();
+	void updateAudioBuffer();
+	void startAudio();
+	void stopAudio();
+	void pauseAudio();
+	void resumeAudio();
+	bool needsUpdate();
+	bool endOfVideo();
+	void stop();
+	void reset();
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -219,19 +265,24 @@ protected:
 	byte _palette[256 * 4];
 
 	void initParseTable();
-	QueuedAudioStream *getAudioStream() { return _audStream; }
 	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
 	bool checkAudioCodecSupport(uint32 tag);
-	void updateAudioBuffer();
 	Common::SeekableReadStream *getNextFramePacket();
 	void resetInternal();
-	uint32 getFrameDuration(uint32 frame);
+	uint32 getFrameDuration();
 
 	QueuedAudioStream *_audStream;
 	int8 _videoStreamIndex;
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
 	uint32 _beginOffset;
+	
+	Graphics::Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
+	Graphics::Codec *_videoCodec;
+	bool _noCodecFound;
+	int32 _curFrame;
+	uint32 _lastFrameStart, _nextFrameStart; // In 1/100 ms
+	Audio::SoundHandle _audHandle;
 
 	int readDefault(MOVatom atom);
 	int readLeaf(MOVatom atom);

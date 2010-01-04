@@ -56,8 +56,7 @@ enum MohawkGameFeatures {
 	GF_DVD =     (1 << 1),
 	GF_10TH =    (1 << 2),	// 10th Anniversary
 	GF_DEMO =    (1 << 3),
-	GF_HASMIDI = (1 << 4),
-	GF_HASBINK = (1 << 5)
+	GF_HASMIDI = (1 << 4)
 };
 
 struct MohawkGameDescription;

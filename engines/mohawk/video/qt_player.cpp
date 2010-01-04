@@ -33,6 +33,7 @@
 
 #include "mohawk/video/qt_player.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/zlib.h"
@@ -41,15 +42,72 @@
 #include "sound/adpcm.h"
 #include "mohawk/video/qdm2.h"
 
+// Video codecs
+#include "mohawk/video/cinepak.h"
+#include "mohawk/video/qtrle.h"
+#include "mohawk/video/rpza.h"
+#include "mohawk/video/smc.h"
+
 namespace Mohawk {
 
-QTPlayer::QTPlayer() : Video() {
+////////////////////////////////////////////
+// QueuedAudioStream 
+////////////////////////////////////////////
+
+QueuedAudioStream::QueuedAudioStream(int rate, int channels, bool autofree) {
+	_rate = rate;
+	_channels = channels;
+	_autofree = autofree;
+	_finished = false;
+}
+
+QueuedAudioStream::~QueuedAudioStream() {
+	if (_autofree)
+		while (!_queue.empty())
+			delete _queue.pop();
+	_queue.clear();
+}
+
+void QueuedAudioStream::queueAudioStream(Audio::AudioStream *audStream) {
+	if (audStream->getRate() != getRate() && audStream->isStereo() && isStereo())
+		error("QueuedAudioStream::queueAudioStream: audStream has mismatched parameters");
+		
+	_queue.push(audStream);
+}
+
+int QueuedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesDecoded = 0;
+
+	while (samplesDecoded < numSamples && !_queue.empty()) {
+		samplesDecoded += _queue.front()->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
+
+		if (_queue.front()->endOfData()) {
+			Audio::AudioStream *temp = _queue.pop();
+			if (_autofree)
+				delete temp;
+		}
+	}
+
+	return samplesDecoded;
+}
+
+////////////////////////////////////////////
+// QTPlayer 
+////////////////////////////////////////////
+
+QTPlayer::QTPlayer() {
 	_audStream = NULL;
 	_beginOffset = 0;
+	_videoCodec = NULL;
+	_noCodecFound = false;
+	_curFrame = -1;
+	_lastFrameStart = _nextFrameStart = 0;
+	_audHandle = Audio::SoundHandle();
+	_numStreams = 0;
 }
 
 QTPlayer::~QTPlayer() {
-	closeFile();
+	stop();
 }
 
 uint16 QTPlayer::getWidth() {
@@ -94,22 +152,142 @@ ScaleMode QTPlayer::getScaleMode() {
 	return (ScaleMode)(_scaleMode * _streams[_videoStreamIndex]->scaleMode);
 }
 
-uint32 QTPlayer::getFrameDuration(uint32 frame) {
+uint32 QTPlayer::getFrameDuration() {
 	if (_videoStreamIndex < 0)
 		return 0;
 	
 	uint32 curFrameIndex = 0;
 	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count; i++) {
 		curFrameIndex += _streams[_videoStreamIndex]->stts_data[i].count;
-		if (frame < curFrameIndex) {
+		if ((uint32)_curFrame < curFrameIndex) {
 			// Ok, now we have what duration this frame has. Now, we have to convert the duration to 1/100 ms.
 			return _streams[_videoStreamIndex]->stts_data[i].duration * 1000 * 100 / _streams[_videoStreamIndex]->time_scale;
 		}
 	}
 	
 	// This should never occur
-	error ("Cannot find duration for frame %d", frame);
+	error ("Cannot find duration for frame %d", _curFrame);
 	return 0;
+}
+
+void QTPlayer::stop() {
+	stopAudio();
+	
+	if (!_noCodecFound)
+		delete _videoCodec;
+	
+	closeFile();
+}
+
+void QTPlayer::reset() {
+	delete _videoCodec; _videoCodec = NULL;
+	_noCodecFound = false;
+	_curFrame = -1;
+	_lastFrameStart = _nextFrameStart = 0;
+
+	// Restart the audio too
+	stopAudio();
+	if (_audioStreamIndex >= 0) {
+		_curAudioChunk = 0;
+		_audStream = new QueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels);
+	}
+	startAudio();
+}
+
+Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
+	if (codecTag == MKID_BE('cvid')) {
+		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
+		return new CinepakDecoder();
+	} else if (codecTag == MKID_BE('rpza')) {
+		// Apple Video ("Road Pizza"): Used by some Myst videos.
+		return new RPZADecoder(getWidth(), getHeight());
+	} else if (codecTag == MKID_BE('rle ')) {
+		// QuickTime RLE: Used by some Myst ME videos.
+		return new QTRLEDecoder(getWidth(), getHeight(), bitsPerPixel);
+	} else if (codecTag == MKID_BE('smc ')) {
+		// Apple SMC: Used by some Myst videos.
+		return new SMCDecoder(getWidth(), getHeight());
+	} else if (codecTag == MKID_BE('SVQ1')) {
+		// Sorenson Video 1: Used by some Myst ME videos.
+		warning ("Sorenson Video 1 not yet supported");
+	} else if (codecTag == MKID_BE('SVQ3')) {
+		// Sorenson Video 3: Used by some Myst ME videos.
+		warning ("Sorenson Video 3 not yet supported");
+	} else if (codecTag == MKID_BE('jpeg')) {
+		// Motion JPEG: Used by some Myst ME videos.
+		warning ("Motion JPEG not yet supported");
+	} else if (codecTag == MKID_BE('QkBk')) {
+		// CDToons: Used by most of the Broderbund games. This is an unknown format so far.
+		warning ("CDToons not yet supported");
+	} else {
+		warning ("Unsupported codec \'%s\'", tag2str(codecTag));
+	}
+	
+	return NULL;
+}
+
+void QTPlayer::startAudio() {
+	if (!_audStream) // No audio/audio not supported
+		return;
+	
+	g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
+}
+
+void QTPlayer::pauseAudio() {
+	g_system->getMixer()->pauseHandle(_audHandle, true);
+}
+
+void QTPlayer::resumeAudio() {
+	g_system->getMixer()->pauseHandle(_audHandle, false);
+}
+
+void QTPlayer::stopAudio() {
+	g_system->getMixer()->stopHandle(_audHandle);
+}
+
+Graphics::Surface *QTPlayer::getNextFrame() {	
+	if (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1)
+		return NULL;
+		
+	if (_nextFrameStart == 0)
+		_nextFrameStart = g_system->getMillis() * 100;
+		
+	_lastFrameStart = _nextFrameStart;
+	_curFrame++;
+	_nextFrameStart = getFrameDuration() + _lastFrameStart;
+	
+	Common::SeekableReadStream *frameData = getNextFramePacket();
+	
+	if (!_videoCodec) {
+		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
+		// If we don't get it still, the codec is unsupported ;)
+		if (!_videoCodec) {
+			_noCodecFound = true;
+			return NULL;
+		}
+	}
+
+	if (frameData) {
+		Graphics::Surface *frame = _videoCodec->decodeImage(frameData);
+		delete frameData;
+		return frame;
+	}
+
+	return NULL;
+}
+
+bool QTPlayer::endOfVideo() {
+	return (!_audStream || _audStream->endOfData()) && (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1);
+}
+
+bool QTPlayer::needsUpdate() {
+	if (endOfVideo())
+		return false;
+
+	if (_curFrame == -1)
+		return true;
+
+	return (g_system->getMillis() * 100 - _lastFrameStart) >= getFrameDuration();
 }
 
 bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
@@ -949,10 +1127,7 @@ void QTPlayer::closeFile() {
 }
 
 void QTPlayer::resetInternal() {
-	if (_audioStreamIndex >= 0) {
-		_curAudioChunk = 0;
-		_audStream = new QueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels);
-	}
+	
 }
 
 Common::SeekableReadStream *QTPlayer::getNextFramePacket() {

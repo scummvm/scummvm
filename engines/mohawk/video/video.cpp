@@ -27,204 +27,11 @@
 #include "mohawk/video/video.h"
 #include "mohawk/video/qt_player.h"
 
-// Codecs
-#include "mohawk/video/cinepak.h"
-#include "mohawk/video/qtrle.h"
-#include "mohawk/video/rpza.h"
-#include "mohawk/video/smc.h"
-
 #include "common/events.h"
 
 namespace Mohawk {
-
-////////////////////////////////////////////
-// QueuedAudioStream 
-////////////////////////////////////////////
-
-QueuedAudioStream::QueuedAudioStream(int rate, int channels, bool autofree) {
-	_rate = rate;
-	_channels = channels;
-	_autofree = autofree;
-	_finished = false;
-}
-
-QueuedAudioStream::~QueuedAudioStream() {
-	if (_autofree)
-		while (!_queue.empty())
-			delete _queue.pop();
-	_queue.clear();
-}
-
-void QueuedAudioStream::queueAudioStream(Audio::AudioStream *audStream) {
-	if (audStream->getRate() != getRate() && audStream->isStereo() && isStereo())
-		error("QueuedAudioStream::queueAudioStream: audStream has mismatched parameters");
-		
-	_queue.push(audStream);
-}
-
-int QueuedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samplesDecoded = 0;
-
-	while (samplesDecoded < numSamples && !_queue.empty()) {
-		samplesDecoded += _queue.front()->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
-
-		if (_queue.front()->endOfData()) {
-			Audio::AudioStream *temp = _queue.pop();
-			if (_autofree)
-				delete temp;
-		}
-	}
-
-	return samplesDecoded;
-}
-
-////////////////////////////////////////////
-// Video 
-////////////////////////////////////////////
-
-Video::Video() {
-	_videoCodec = NULL;
-	_noCodecFound = false;
-	_curFrame = -1;
-	_lastFrameStart = _nextFrameStart = 0;
-	_audHandle = Audio::SoundHandle();
-}
-
-Video::~Video() {
-}
-
-void Video::stop() {
-	stopAudio();
-	
-	if (!_noCodecFound)
-		delete _videoCodec;
-	
-	closeFile();
-}
-
-void Video::reset() {
-	delete _videoCodec; _videoCodec = NULL;
-	_noCodecFound = false;
-	_curFrame = -1;
-	_lastFrameStart = _nextFrameStart = 0;
-
-	stopAudio();
-	resetInternal();
-	startAudio();
-}
-
-Graphics::Codec *Video::createCodec(uint32 codecTag, byte bitsPerPixel) {
-	if (codecTag == MKID_BE('cvid')) {
-		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
-		return new CinepakDecoder();
-	} else if (codecTag == MKID_BE('rpza')) {
-		// Apple Video ("Road Pizza"): Used by some Myst videos.
-		return new RPZADecoder(getWidth(), getHeight());
-	} else if (codecTag == MKID_BE('rle ')) {
-		// QuickTime RLE: Used by some Myst ME videos.
-		return new QTRLEDecoder(getWidth(), getHeight(), bitsPerPixel);
-	} else if (codecTag == MKID_BE('smc ')) {
-		// Apple SMC: Used by some Myst videos.
-		return new SMCDecoder(getWidth(), getHeight());
-	} else if (codecTag == MKID_BE('SVQ1')) {
-		// Sorenson Video 1: Used by some Myst ME videos.
-		warning ("Sorenson Video 1 not yet supported");
-	} else if (codecTag == MKID_BE('SVQ3')) {
-		// Sorenson Video 3: Used by some Myst ME videos.
-		warning ("Sorenson Video 3 not yet supported");
-	} else if (codecTag == MKID_BE('jpeg')) {
-		// Motion JPEG: Used by some Myst ME videos.
-		warning ("Motion JPEG not yet supported");
-	} else if (codecTag == MKID_BE('QkBk')) {
-		// CDToons: Used by most of the Broderbund games. This is an unknown format so far.
-		warning ("CDToons not yet supported");
-	} else {
-		warning ("Unsupported codec \'%s\'", tag2str(codecTag));
-	}
-	
-	return NULL;
-}
-
-void Video::startAudio() {
-	Audio::AudioStream *audStream = getAudioStream();
-	
-	if (!audStream) // No audio/audio not supported
-		return;
-	
-	g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &_audHandle, audStream);
-}
-
-void Video::pauseAudio() {
-	g_system->getMixer()->pauseHandle(_audHandle, true);
-}
-
-void Video::resumeAudio() {
-	g_system->getMixer()->pauseHandle(_audHandle, false);
-}
-
-void Video::stopAudio() {
-	g_system->getMixer()->stopHandle(_audHandle);
-}
-
-Graphics::Surface *Video::getNextFrame() {	
-	if (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1)
-		return NULL;
-		
-	if (_nextFrameStart == 0)
-		_nextFrameStart = g_system->getMillis() * 100;
-		
-	_lastFrameStart = _nextFrameStart;
-	_curFrame++;
-	_nextFrameStart = getFrameDuration() + _lastFrameStart;
-	
-	Common::SeekableReadStream *frameData = getNextFramePacket();
-	
-	if (!_videoCodec) {
-		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
-		// If we don't get it still, the codec is unsupported ;)
-		if (!_videoCodec) {
-			_noCodecFound = true;
-			return NULL;
-		}
-	}
-
-	if (frameData) {
-		Graphics::Surface *frame = _videoCodec->decodeImage(frameData);
-		delete frameData;
-		return frame;
-	}
-
-	return NULL;
-}
-
-bool Video::endOfVideo() {
-	QueuedAudioStream *audStream = getAudioStream();
-		
-	return (!audStream || audStream->endOfData()) && (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1);
-}
-
-bool Video::needsUpdate() {
-	if (endOfVideo())
-		return false;
-
-	if (_curFrame == -1)
-		return true;
-
-	return (g_system->getMillis() * 100 - _lastFrameStart) >= getFrameDuration();
-}
-
-////////////////////////////////////////////
-// VideoManager 
-////////////////////////////////////////////
 	
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
-	if (_vm->getFeatures() & GF_HASBINK) {
-		warning ("This game uses bink video. Playback is disabled.");
-		_videoType = kBinkVideo;
-	} else {
-		_videoType = kQuickTimeVideo;
-	}
-	
 	_pauseStart = 0;
 }
 	
@@ -260,7 +67,7 @@ void VideoManager::playMovie(Common::String filename, uint16 x, uint16 y, bool c
 		return; // Return silently for now...
 
 	VideoEntry entry;
-	entry.video = createVideo();
+	entry.video = new QTPlayer();
 
 	if (!entry.video)
 		return;
@@ -285,7 +92,7 @@ void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) 
 		return; // Return silently for now...
 
 	VideoEntry entry;
-	entry.video = createVideo();
+	entry.video = new QTPlayer();
 
 	if (!entry.video)
 		return;
@@ -353,7 +160,7 @@ void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y
 		return; // Return silently for now...
 
 	VideoEntry entry;
-	entry.video = createVideo();
+	entry.video = new QTPlayer();
 	
 	if (!entry.video)
 		return;
@@ -577,13 +384,6 @@ void VideoManager::disableAllMovies() {
 	debug(2, "Disabling all movies");
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		_mlstRecords[i].enabled = false;
-}
-
-Video *VideoManager::createVideo() {
-	if (_videoType == kBinkVideo || _vm->shouldQuit())
-		return NULL;
-
-	return new QTPlayer();
 }
 
 } // End of namespace Mohawk

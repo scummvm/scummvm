@@ -26,11 +26,7 @@
 #ifndef MOHAWK_VIDEO_H
 #define MOHAWK_VIDEO_H
 
-#include "common/queue.h"
-#include "sound/audiostream.h"
-#include "sound/mixer.h"	// for Audio::SoundHandle
 #include "graphics/pixelformat.h"
-#include "graphics/video/codecs/codec.h"
 
 namespace Mohawk {
 
@@ -50,99 +46,17 @@ struct MLSTRecord {
 	bool enabled;
 };
 
-class QueuedAudioStream : public Audio::AudioStream {
-public:
-	QueuedAudioStream(int rate, int channels, bool autofree = true);
-	~QueuedAudioStream();
-
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _rate; }
-	bool endOfData() const { return _queue.empty(); }
-	bool endOfStream() const { return _finished; }
-
-	void queueAudioStream(Audio::AudioStream *audStream);
-	void finish() { _finished = true; }
-
-	uint32 streamsInQueue() { return _queue.size(); }
-
-private:
-	bool _autofree;
-	bool _finished;
-	int _rate;
-	int _channels;
-
-	Common::Queue<Audio::AudioStream*> _queue;
-};
-
-enum ScaleMode {
-	kScaleNormal = 1,
-	kScaleHalf = 2,
-	kScaleQuarter = 4
-};
-
-class Video {
-public:
-	Video();
-	virtual ~Video();
-
-	virtual bool loadFile(Common::SeekableReadStream *stream) = 0;
-	virtual void closeFile() = 0;
-	void stop();
-	void reset();
-
-	Graphics::Surface *getNextFrame();
-	virtual uint16 getWidth() = 0;
-	virtual uint16 getHeight() = 0;
-	virtual uint32 getFrameCount() = 0;
-
-	virtual void updateAudioBuffer() {}
-	void startAudio();
-	void stopAudio();
-	void pauseAudio();
-	void resumeAudio();
-
-	int32 getCurFrame() { return _curFrame; }
-	void addPauseTime(uint32 p) { _lastFrameStart += p; _nextFrameStart += p; }
-	bool needsUpdate();
-	bool endOfVideo();
-
-	virtual byte getBitsPerPixel() = 0;
-	virtual byte *getPalette() { return NULL; }
-	virtual uint32 getCodecTag() = 0;
-	virtual ScaleMode getScaleMode() { return kScaleNormal; }
-
-private:
-	Graphics::Codec *_videoCodec;
-	bool _noCodecFound;
-	Graphics::Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
-	int32 _curFrame;
-	uint32 _lastFrameStart, _nextFrameStart; // In 1/100 ms
-	Audio::SoundHandle _audHandle;
-
-	uint32 getFrameDuration() { return getFrameDuration(_curFrame); }
-
-protected:
-	virtual Common::SeekableReadStream *getNextFramePacket() = 0;
-	virtual uint32 getFrameDuration(uint32 frame) = 0;
-	virtual QueuedAudioStream *getAudioStream() = 0;
-	virtual void resetInternal() {}
-};
+class QTPlayer;
 
 struct VideoEntry {
-	Video *video;
+	QTPlayer *video;
 	uint16 x;
 	uint16 y;
 	bool loop;
 	Common::String filename;
 	uint16 id; // Riven only
 
-	Video *operator->() const { assert(video); return video; }
-};
-
-enum VideoType {
-	kQuickTimeVideo,
-	kBinkVideo
+	QTPlayer *operator->() const { assert(video); return video; }
 };
 
 class VideoManager {
@@ -175,10 +89,8 @@ private:
 	MohawkEngine *_vm;
 
 	void playMovie(VideoEntry videoEntry);
-	Video *createVideo();
 
 	// Keep tabs on any videos playing
-	VideoType _videoType;
 	Common::Array<VideoEntry> _videoStreams;
 	uint32 _pauseStart;
 };
