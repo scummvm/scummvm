@@ -54,9 +54,8 @@ enum MohawkGameType {
 enum MohawkGameFeatures {
 	GF_ME =      (1 << 0),	// Myst Masterpiece Edition
 	GF_DVD =     (1 << 1),
-	GF_10TH =    (1 << 2),	// 10th Anniversary
-	GF_DEMO =    (1 << 3),
-	GF_HASMIDI = (1 << 4)
+	GF_DEMO =    (1 << 2),
+	GF_HASMIDI = (1 << 3)
 };
 
 struct MohawkGameDescription;
@@ -93,10 +92,11 @@ public:
 
 	void pauseGame();
 
-protected:
+private:
 	PauseDialog *_pauseDialog;
 	void pauseEngineIntern(bool);
 
+protected:
 	// An array holding the main Mohawk archives require by the games
 	Common::Array<MohawkFile *> _mhk;
 };

@@ -625,7 +625,6 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	if (_info.colorsUsed == 0)
 		_info.colorsUsed = 256;
 		
-	// TODO: Myst ME's Help.dat contains WDIB's with 24bpp color.
 	if (_info.bitsPerPixel != 8 && _info.bitsPerPixel != 24)
 		error("%dbpp Bitmaps not supported", _info.bitsPerPixel);
 		

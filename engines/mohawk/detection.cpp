@@ -301,7 +301,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_MYST,
-		GF_ME|GF_10TH,
+		GF_ME,
 		0,
 	},
 	
@@ -319,7 +319,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_MYST,
-		GF_ME|GF_10TH,
+		GF_ME,
 		0,
 	},
 	
@@ -409,7 +409,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_RIVEN,
-		GF_DVD|GF_10TH,
+		GF_DVD,
 		0,
 	},
 	
@@ -617,7 +617,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
-	// In The 1rst Degree
+	// In The 1st Degree
 	// French Windows
 	// From Strangerke
 	{
