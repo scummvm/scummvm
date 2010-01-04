@@ -26,6 +26,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/sfx/midiparser.h"
+#include "sci/sfx/softseq/mididriver.h"
 
 namespace Sci {
 
@@ -41,8 +42,9 @@ enum SciMidiCommands {
 
 //  MidiParser_SCI
 //
-MidiParser_SCI::MidiParser_SCI() :
+MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 	MidiParser() {
+	_soundVersion = soundVersion;
 	_mixedData = NULL;
 	// mididata contains delta in 1/60th second
 	// values of ppqn and tempo are found experimentally and may be wrong
@@ -476,10 +478,26 @@ void MidiParser_SCI::setVolume(byte bVolume) {
 	if (_volume != bVolume) {
 		_volume = bVolume;
 
-		// sending volume change to all active channels
-		for (int i = 0; i < _track->channelCount; i++)
-			if (_track->channels[i].number <= 0xF)
-				_driver->send(0xB0 + _track->channels[i].number, 7, _volume);
+		switch (_soundVersion) {
+		case SCI_VERSION_0_EARLY:
+		case SCI_VERSION_0_LATE: {
+			MidiPlayer *SCIDriver = (MidiPlayer *)_driver;
+			int16 globalVolume = _volume * 15 / 127;
+			SCIDriver->setVolume(globalVolume);
+			break;
+		}
+
+		case SCI_VERSION_1_EARLY:
+		case SCI_VERSION_1_LATE:
+			// sending volume change to all active channels
+			for (int i = 0; i < _track->channelCount; i++)
+				if (_track->channels[i].number <= 0xF)
+					_driver->send(0xB0 + _track->channels[i].number, 7, _volume);
+			break;
+
+		default:
+			error("MidiParser_SCI::setVolume: Unsupported soundVersion");
+		}
 	}
 }
 

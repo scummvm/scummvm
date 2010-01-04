@@ -666,9 +666,10 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 
 	switch (_argc) {
 	case 2: // SCI0
+		// SCI0 fades out all the time and when fadeout is done it will also stop the music from playing
 		musicSlot->fadeTo = 0;
 		musicSlot->fadeStep = -5;
-		musicSlot->fadeTickerStep = 0x10 * 16667 / _music->soundGetTempo();
+		musicSlot->fadeTickerStep = 10 * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
 		break;
 
@@ -845,7 +846,11 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	if (musicSlot->fadeCompleted) {
 		musicSlot->fadeCompleted = false;
-		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			cmdStopSound(obj, 0);
+		} else {
+			PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+		}
 	}
 
 	// Sync loop selector for SCI0

@@ -333,7 +333,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			_mutex.lock();
 			pSnd->soundType = Audio::Mixer::kMusicSoundType;
 			if (pSnd->pMidiParser == NULL) {
-				pSnd->pMidiParser = new MidiParser_SCI();
+				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 				pSnd->pMidiParser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);

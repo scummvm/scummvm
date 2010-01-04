@@ -47,7 +47,7 @@ namespace Sci {
 
 class MidiParser_SCI : public MidiParser {
 public:
-	MidiParser_SCI();
+	MidiParser_SCI(SciVersion soundVersion);
 	~MidiParser_SCI();
 	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion);
 	bool loadMusic(byte *, uint32) {

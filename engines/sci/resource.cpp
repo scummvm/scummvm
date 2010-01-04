@@ -1894,7 +1894,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		_tracks = new Track[_trackCount];
 		_tracks->digitalChannelNr = -1;
 		_tracks->type = TRACKTYPE_NONE;
-		_tracks->channelCount = 16;
+		_tracks->channelCount = 1;
 		// Digital sample data included? -> Add an additional channel
 		if (resource->data[0] == 2)
 			_tracks->channelCount++;
@@ -1908,17 +1908,10 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			channel->data = resource->data + 0x21;
 			channel->size = resource->size - 0x21;
 		}
-		data = resource->data + 1;
-		for (channelNr = 0; channelNr < 16; channelNr++) {
-			channel = &_tracks->channels[channelNr];
-			channel->number = channelNr;
-			channel->poly = *data >> 4;
-			data++;
-		}
-		if (_tracks->channelCount == 17) {
+		if (_tracks->channelCount == 2) {
 			// Digital sample data included
-			_tracks->digitalChannelNr = 16;
-			sampleChannel = &_tracks->channels[16];
+			_tracks->digitalChannelNr = 1;
+			sampleChannel = &_tracks->channels[1];
 			// we need to find 0xFC (channel terminator) within the data
 			data = channel->data;
 			dataEnd = channel->data + channel->size;
