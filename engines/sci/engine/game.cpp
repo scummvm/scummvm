@@ -46,119 +46,133 @@ namespace Sci {
 struct OldNewIdTableEntry {
 	const char *oldId;
 	const char *newId;
-	bool demo;
-	const char *demoCheckFile;	// if not empty and it doesn't exist, the demo flag is set
+	SciVersion version;
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
-	{ "arthur",		"camelot",			false,	"resource.002" },
-	{ "demo",		"christmas1988",	false,	"" },
-	{ "RH Budget",	"cnick-longbow",	false,	"" },
+	{ "arthur",		"camelot",			SCI_VERSION_NONE     },
+	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE },	// Amiga
+	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE   },
+	{ "demo",		"christmas1988",	SCI_VERSION_NONE     },
+	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY, },
+	{ "card",       "christmas1992",    SCI_VERSION_1_1      },
+	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE     },
 	// iceman is the same
-	{ "icedemo",	"iceman",			true,	"" },
+	{ "icedemo",	"iceman",			SCI_VERSION_NONE     },
 	// longbow is the same
-	{ "eco",		"ecoquest",			false,	"resource.000" },
-	{ "eco2",		"ecoquest2",		true,	"" },		// EcoQuest 2 demo
-	{ "rain",		"ecoquest2",		false,	"" },		// EcoQuest 2 full
-	{ "fp",			"freddypharkas",	false,	"" },
-	{ "emc",		"funseeker",		false,	"" },
-	{ "gk",			"gk1",				false,	"" },
-	{ "hoyledemo",	"hoyle1",			true,	"" },
-	{ "cardgames",	"hoyle1",			false,	"" },
-	{ "solitare",	"hoyle2",			false,	"" },
+	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
+	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
+	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
+	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
+	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
+	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
+	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
 	// hoyle3 is the same
 	// hoyle4 is the same
-	{ "demo000",	"kq1sci",			true,	"" },
-	{ "kq1",		"kq1sci",			false,	"" },
-	{ "kq4",		"kq4sci",			false,	"" },
-	{ "cb1",		"laurabow",			false,	"" },
-	{ "lb2",		"laurabow2",		false,	"resource.aud" },
-	{ "rh",			"longbow",			true,	"" },
-	{ "ll1",		"lsl1sci",			true,	"" },
+	{ "brain",      "islandbrain",      SCI_VERSION_1_1      },
+	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
+	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
+	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
+	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
+	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
+	{ "rh",			"longbow",			SCI_VERSION_NONE     },
+	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE     },
+	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE     },
 	// lsl2 is the same
-	{ "lsl3",		"lsl3",				false,	"resource.003" },
-	{ "ll5",		"lsl5",				true,	"" },
+	{ "lsl3",		"lsl3",				SCI_VERSION_NONE     },
+	{ "ll5",		"lsl5",				SCI_VERSION_NONE     },
 	// lsl5 is the same
 	// lsl6 is the same
-	{ "mg",			"mothergoose",		false,	"" },
-	{ "twisty",		"pepper",			false,	"" },
-	{ "pq1",		"pq1sci",			false,	"" },
-	{ "pq",			"pq2",				false,	"" },
-	{ "tales",		"fairytales",		false,	"resource.002" },
-	{ "trial",		"qfg2",				false,	"" },
-	{ "hq2demo",	"qfg2",				true,	"" },
-	{ "thegame",	"slater",			false,	"" },
-	{ "sq1demo",	"sq1sci",			true,	"" },
-	{ "sq1",		"sq1sci",			false,	"" },
+	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
+	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
+	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
+	{ "pq",			"pq2",				SCI_VERSION_NONE     },
+	// pq3 is the same
+	// pq4 is the same
+	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
+	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
+	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
+	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
+	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	{ "thegame",	"slater",			SCI_VERSION_NONE     },
+	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
+	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
+	// sq3 is the same
+	// sq4 is the same
 	// sq5 is the same
+	// torin is the same
 
-	{ "", "", false, "" }
+	// TODO: SCI2.1, SCI3 IDs
+
+	{ "", "", SCI_VERSION_NONE }
 };
 
-const char *convertSierraGameId(const char *gameId, uint32 *gameFlags) {
+const char *convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceManager *resMan) {
 	// Convert the id to lower case, so that we match all upper/lower case variants.
 	Common::String sierraId = gameId;
 	sierraId.toLowercase();
 
-	// TODO: SCI32 IDs
+	// If the game has less than the expected scripts, it's a demo
+	uint32 demoThreshold = 100;
+	// ...but there are some exceptions
+	if (sierraId == "brain" || sierraId == "lsl1" ||
+		sierraId == "mg" || sierraId == "pq" ||
+		sierraId == "jones" ||
+		sierraId == "cardgames" || sierraId == "solitare" ||
+		sierraId == "hoyle3" || sierraId == "hoyle4")
+		demoThreshold = 40;
+	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
+		demoThreshold = 150;
+
+	Common::List<ResourceId> *resources = resMan->listResources(kResourceTypeScript, -1);
+	if (resources->size() < demoThreshold) {
+		*gameFlags |= ADGF_DEMO;
+
+		// Crazy Nick's Picks
+		if (sierraId == "lsl1" && resources->size() == 34)
+			return "cnick-lsl";
+		if (sierraId == "sq4" && resources->size() == 34)
+			return "cnick-sq";
+
+		// TODO: cnick-kq, cnick-laurabow and cnick-longbow (their resources can't be read)
+
+		// Handle Astrochicken 1 (SQ3) and 2 (SQ4)
+		if (sierraId == "sq3" && resources->size() == 20)
+			return "astrochicken";
+		if (sierraId == "sq4")
+			return "msastrochicken";
+	}
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
 		if (sierraId == cur->oldId) {
-			if (cur->demo)
-				*gameFlags |= ADGF_DEMO;
-			if (cur->demoCheckFile[0])
-				if (!Common::File::exists(cur->demoCheckFile))
-					*gameFlags |= ADGF_DEMO;
+			// Distinguish same IDs from the SCI version
+			if (cur->version != SCI_VERSION_NONE && cur->version != getSciVersion())
+				continue;
+
 			return cur->newId;
 		}
 	}
 
-	if (sierraId == "card") {
-		// This could either be christmas1990 or christmas1992
-		// christmas1990 has a "resource.001" file, whereas 
-		// christmas1992 has a "resource.000" file
-		return (Common::File::exists("resource.001")) ? "christmas1990" : "christmas1992";
-	}
-	if (sierraId == "brain") {
-		// This could either be The Castle of Dr. Brain, or The Island of Dr. Brain
-		// castlebrain has resource.001, whereas islandbrain doesn't
-		return (Common::File::exists("resource.001")) ? "castlebrain" : "islandbrain";
-	}
-	if (sierraId == "lsl1") {
-		// This could either be LSL1 full version, or LSL casino
-		// LSL1 full has resource.000, whereas LSL casino doesn't
-		return (Common::File::exists("resource.000")) ? "lsl1sci" : "cnick-lsl";
-	}
-	// TODO: cnick-kq and cnick-longbow (their resources can't be read)
-	// TODO: cnick-sq (same files as Ms. Astro Chicken)
-	if (sierraId == "pq3") {
-		// The pq3 demo comes with resource.000 and resource.001
-		// The full version was released with several resource.* files,
-		// or one big resource.000 file
-		if (Common::File::exists("resource.000") && Common::File::exists("resource.001") &&
-			!Common::File::exists("resource.002"))
-			*gameFlags |= ADGF_DEMO;
-		return "pq3";
-	}
-	if (sierraId == "glory" || sierraId == "hq") {
-		// This could either be qfg1 or qfg3 or qfg4
-		// qfg3 has resource.aud, qfg4 has resource.sfx
-		if (Common::File::exists("resource.aud"))
-			return "qfg3";
-		else if (Common::File::exists("resource.sfx"))
-			return "qfg4";
-		else
+	if (sierraId == "glory") {
+		// This could either be qfg1 VGA, qfg3 or qfg4 demo (all SCI1.1),
+		// or qfg4 full (SCI2)
+		// qfg1 VGA doesn't have view 1
+		if (!resMan->testResource(ResourceId(kResourceTypeView, 1)))
 			return "qfg1";
-	}
-	if (sierraId == "sq3") {
-		// This could either be SQ3 full version, or Astro Chicken
-		// SQ3 full has resource.002, whereas Astro Chicken doesn't
-		return (Common::File::exists("resource.002")) ? "sq3" : "astrochicken";
-	}
-	if (sierraId == "sq4") {
-		// This could either be SQ4 full version, or Ms. Astro Chicken
-		// SQ4 full (floppy and CD) has resource.000, whereas Ms. Astro Chicken doesn't
-		return (Common::File::exists("resource.000")) ? "sq4" : "msastrochicken";
+
+		// qfg4 full is SCI2
+		if (getSciVersion() == SCI_VERSION_2)
+			return "qfg4";
+
+		// qfg4 demo has less than 50 scripts
+		if (resources->size() < 50)
+			return "qfg4";
+
+		// Otherwise it's qfg3
+		return "qfg3";
 	}
 
 	// FIXME: Evil use of strdup here (we are leaking that memory, too)
@@ -412,7 +426,7 @@ int game_init(EngineState *s) {
 	// The first entry in the export table of script 0 points to the game object
 	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
-	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags);
+	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags, s->resMan);
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameId.c_str(), PRINT_REG(s->_gameObj));
 

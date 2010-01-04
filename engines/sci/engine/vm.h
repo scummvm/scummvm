@@ -465,7 +465,7 @@ void script_uninstantiate(SegManager *segMan, int script_nr);
  * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
  * @return					The equivalent ScummVM game id
  */
-const char *convertSierraGameId(const char *gameId, uint32 *gameFlags);
+const char *convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceManager *resMan);
 
 /**
  * Initializes an SCI game

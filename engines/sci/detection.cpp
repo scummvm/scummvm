@@ -316,7 +316,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	reg_t game_obj = segMan->lookupScriptExport(0, 0);
 	const char *gameId = segMan->getObjectName(game_obj);
 	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameId, PRINT_REG(game_obj));
-	s_fallbackDesc.gameid = convertSierraGameId(gameId, &s_fallbackDesc.flags);
+	s_fallbackDesc.gameid = convertSierraGameId(gameId, &s_fallbackDesc.flags, resMan);
 	delete segMan;
 
 	// Try to determine the game language
