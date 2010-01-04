@@ -29,9 +29,11 @@ namespace TeenAgent {
 
 class Actor : public Animation {
 	uint head_index;
+	uint idle_type;
 public:
 	Actor();
 	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head, uint zoom);
+	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, uint zoom);
 };
 
 } // End of namespace TeenAgent

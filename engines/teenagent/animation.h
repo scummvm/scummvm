@@ -44,6 +44,7 @@ public:
 	Surface *firstFrame();
 	Surface *currentFrame(int dt = 1);
 	uint16 currentIndex() const { return index; }
+	void resetIndex() { index = 0; }
 
 	~Animation();
 

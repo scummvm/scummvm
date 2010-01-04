@@ -39,7 +39,8 @@ Scene::Scene() : intro(false), _engine(NULL),
 		_id(0), ons(0),
 		orientation(kActorRight), actor_talking(false), 
 		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL), 
-		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0) {}
+		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), 
+		_fade_timer(0), _fade_type(0), _idle_timer(0) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
@@ -707,6 +708,8 @@ bool Scene::render() {
 						(ABS(dp.x) < speed_y? dp.x: SIGN(dp.x) * speed_y):
 						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 
+					_idle_timer = 0;
+					teenagent_idle.resetIndex();
 					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
 
 					if (position == destination) {
@@ -722,7 +725,11 @@ bool Scene::render() {
 					} else
 						busy = true;
 				} else {
-					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
+					++_idle_timer;
+					if (_idle_timer < 50)
+						actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
+					else 
+						actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, zoom);
 				}
 			}
 		}

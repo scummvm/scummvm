@@ -24,12 +24,48 @@
 
 #include "teenagent/actor.h"
 #include "teenagent/objects.h"
+#include "teenagent/resources.h"
 
 namespace TeenAgent {
 
-Actor::Actor() : head_index(0) {}
+Actor::Actor() : head_index(0), idle_type(0) {}
 
 //idle animation lists at dseg: 0x6540
+Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, uint zoom) {
+	static Common::RandomSource random;
+	if (index == 0) {
+		idle_type = random.getRandomNumber(2);
+		debug(0, "switched to idle animation %u", idle_type);
+	}
+
+	Resources * res = Resources::instance();
+	byte *frames_idle;
+	do {
+		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index++;
+		if (*frames_idle == 0) {
+			idle_type = random.getRandomNumber(2);
+			debug(0, "switched to idle animation %u[loop]", idle_type);
+			index = 3; //put 4th frame (base 1) if idle animation loops
+		}
+	} while(*frames_idle == 0);
+
+	bool mirror = orientation == kActorLeft;
+	Surface *s = frames + *frames_idle - 1;
+
+	///\todo remove copy-paste here and below
+	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - s->h * zoom / 256 - s->y;
+	if (xp < 0)
+		xp = 0;
+	if (xp + s->w > 320)
+		xp = 320 - s->w;
+
+	if (yp < 0)
+		yp = 0;
+	if (yp + s->h > 200)
+		yp = 200 - s->h;
+	
+	return s->render(surface, xp, yp, mirror, Common::Rect(), zoom);
+}
 
 Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool render_head, uint zoom) {
 	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, /* step */ 6, 7, 8, 9};

@@ -220,6 +220,7 @@ private:
 	
 	int _fade_timer;
 	int _fade_type;
+	uint _idle_timer;
 
 	struct Sound {
 		byte id, delay;
