@@ -29,6 +29,7 @@
 #include "sound/mixer_intern.h"
 #include "sound/rate.h"
 #include "sound/audiostream.h"
+#include "sound/timestamp.h"
 
 
 namespace Audio {
@@ -451,15 +452,15 @@ uint32 Channel::getElapsedTime() {
 	if (_mixerTimeStamp == 0)
 		return 0;
 
-	// Convert the number of samples into a time duration. To avoid
-	// overflow, this has to be done in a somewhat non-obvious way.
+	const uint32 rate = _mixer->getOutputRate();
+	const uint32 delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
 
-	uint32 rate = _mixer->getOutputRate();
+	// Convert the number of samples into a time duration.
 
-	uint32 seconds = _samplesConsumed / rate;
-	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;
+	Audio::Timestamp ts(0, rate);
 
-	uint32 delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
+	ts = ts.addFrames(_samplesConsumed);
+	ts = ts.addMsecs(delta);
 
 	// In theory it would seem like a good idea to limit the approximation
 	// so that it never exceeds the theoretical upper bound set by
@@ -467,7 +468,7 @@ uint32 Channel::getElapsedTime() {
 	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
 	// isn't invoked at the regular intervals that I first imagined.
 
-	return 1000 * seconds + milliseconds + delta;
+	return ts.msecs();
 }
 
 
