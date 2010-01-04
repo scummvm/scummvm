@@ -844,6 +844,16 @@ void SciGui::addScreenItem(reg_t object) {
 	_screenItemCount++;
 }
 
+void SciGui::deleteScreenItem(reg_t object) {
+	for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
+		if (_screenItems[itemNr] == object) {
+			_screenItems.remove_at(itemNr);
+			_screenItemCount--;
+			return;
+		}
+	}
+}
+
 void SciGui::frameOut() {
 	for (int itemNr = 0; itemNr < _screenItemCount; itemNr++) {
 		reg_t viewObj = _screenItems[itemNr];

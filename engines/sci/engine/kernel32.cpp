@@ -676,6 +676,10 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	s->_gui->deleteScreenItem(viewObj);
+	
 	/*
 	reg_t viewObj = argv[0];
 	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);

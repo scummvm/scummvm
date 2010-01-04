@@ -155,6 +155,7 @@ public:
 
 	// SCI32
 	virtual void addScreenItem(reg_t object);
+	virtual void deleteScreenItem(reg_t object);
 	virtual void frameOut();
 
 	virtual bool debugUndither(bool flag);
