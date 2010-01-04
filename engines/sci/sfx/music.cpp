@@ -64,13 +64,8 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	_midiType = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PCSPK);
-
-	// Sanity check
-	if (_midiType != MD_ADLIB && _midiType != MD_PCJR && _midiType != MD_PCSPK) {
-		warning("Unhandled MIDI type, switching to Adlib");
-		_midiType = MD_ADLIB;
-	}
+	const MidiDriverDescription *md = MidiDriver::findMusicDriver(ConfMan.get("music_driver"));
+	_midiType = md ? md->id : MD_AUTO;
 
 	switch (_midiType) {
 	case MD_ADLIB:
@@ -86,7 +81,12 @@ void SciMusic::init() {
 	case MD_PCSPK:
 		_pMidiDrv = new MidiPlayer_PCSpeaker();
 		break;
+	case MD_MT32:
+		// TODO
 	default:
+		warning("Unhandled MIDI type, switching to Adlib");
+		_midiType = MD_ADLIB;
+		_pMidiDrv = MidiPlayer_Adlib_create();
 		break;
 	}
 
