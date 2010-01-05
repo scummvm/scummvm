@@ -207,6 +207,10 @@ static const ResString string_map_table_v345[] = {
 
 #pragma mark -
 
+ScummDialog::ScummDialog(int x, int y, int w, int h) : GUI::Dialog(x, y, w, h) {
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
+}
+
 ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 }
@@ -743,7 +747,7 @@ void HelpDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 #pragma mark -
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
-: ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
+: ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
 
 	_message = queryResString(res);
 
@@ -752,7 +756,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
-: ScummDialog("scummDummyDialog"), _vm(scumm) { // dummy x and w
+: ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
 
 	_message = message;
 
@@ -853,7 +857,7 @@ void ConfirmDialog::handleKeyDown(Common::KeyState state) {
 
 ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, int maxVal,
 		int val, uint16 incKey, uint16 decKey)
-	: GUI::Dialog("scummDummyDialog"),
+	: GUI::Dialog(0, 0, 0, 0),
 	_label(label), _min(minVal), _max(maxVal),
 	_value(val), _incKey(incKey), _decKey(decKey) {
 	assert(_min <= _value && _value <= _max);
