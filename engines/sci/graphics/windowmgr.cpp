@@ -71,8 +71,8 @@ void WindowMgr::init(Common::String gameId) {
 	_gfx->OpenPort(_wmgrPort);
 	_gfx->SetPort(_wmgrPort);
 	_gfx->SetOrigin(0, offTop);
-	_wmgrPort->rect.bottom = 200 - offTop;
-	_wmgrPort->rect.right = 320;
+	_wmgrPort->rect.bottom = _screen->_height - offTop;
+	_wmgrPort->rect.right = _screen->_width;
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
 	_wmgrPort->curLeft = 0;
