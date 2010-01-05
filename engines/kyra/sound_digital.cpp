@@ -35,9 +35,9 @@
 
 namespace Kyra {
 
-class KyraAudioStream : public Audio::AudioStream {
+class KyraAudioStream : public Audio::SeekableAudioStream {
 public:
-	KyraAudioStream(Audio::AudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
+	KyraAudioStream(Audio::SeekableAudioStream *impl) : _impl(impl), _rate(impl->getRate()), _fadeSamples(0), _fadeCount(0), _fading(0), _endOfData(false) {}
 	~KyraAudioStream() { delete _impl; _impl = 0; }
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -47,8 +47,11 @@ public:
 
 	void setRate(int newRate) { _rate = newRate; }
 	void beginFadeOut(uint32 millis);
+
+	bool seek(const Audio::Timestamp &where) { return _impl->seek(where); }
+	Audio::Timestamp getLength() const { return _impl->getLength(); }
 private:
-	Audio::AudioStream *_impl;
+	Audio::SeekableAudioStream *_impl;
 
 	int _rate;
 
@@ -108,7 +111,7 @@ int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 class AUDStream : public Audio::SeekableAudioStream {
 public:
-	AUDStream(Common::SeekableReadStream *stream, bool loop = false);
+	AUDStream(Common::SeekableReadStream *stream);
 	~AUDStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -118,18 +121,16 @@ public:
 
 	int getRate() const { return _rate; }
 
-	// GROSS HACK, if anyone sees this, be aware that you should
-	// never copy this! This is just a temporary hack...
-	bool seek(const Audio::Timestamp &) { return false; }
-	Audio::Timestamp getLength() const { return Audio::Timestamp(0, getRate()); }
+	bool seek(const Audio::Timestamp &);
+	Audio::Timestamp getLength() const { return _length; }
 private:
 	Common::SeekableReadStream *_stream;
-	bool _loop;
-	uint32 _loopStart;
+	uint32 _streamStart;
 	bool _endOfData;
 	int _rate;
 	uint _processedSize;
 	uint _totalSize;
+	Audio::Timestamp _length;
 
 	int _bytesLeft;
 
@@ -152,19 +153,30 @@ const int8 AUDStream::WSTable4Bit[] = {
 	 0,  1,  2,  3,  4,  5,  6,  8
 };
 
-AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(stream), _endOfData(true), _rate(0),
-	_processedSize(0), _totalSize(0), _bytesLeft(0), _outBuffer(0),
+AUDStream::AUDStream(Common::SeekableReadStream *stream) : _stream(stream), _endOfData(true), _rate(0),
+	_processedSize(0), _totalSize(0), _length(0, 1), _bytesLeft(0), _outBuffer(0),
 	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
 
 	_rate = _stream->readUint16LE();
+	_length = Audio::Timestamp(0, _rate);
 	_totalSize = _stream->readUint32LE();
-	_loop = loop;
 
 	// TODO?: add checks
 	int flags = _stream->readByte();	// flags
 	int type = _stream->readByte();	// type
 
-	_loopStart = stream->pos();
+	_streamStart = stream->pos();
+
+	for (uint32 i = 0; i < _totalSize;) {
+		uint16 size = _stream->readUint16LE();
+		uint16 outSize = _stream->readUint16LE();
+
+		_length = _length.addFrames(outSize);
+		stream->seek(size + 4, SEEK_CUR);
+		i += size + 8;
+	}
+
+	stream->seek(_streamStart, SEEK_SET);
 
 	if (type == 1 && !flags)
 		_endOfData = false;
@@ -205,13 +217,8 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 	// if no bytes of the old chunk are left, read the next one
 	if (_bytesLeft <= 0) {
 		if (_processedSize >= _totalSize) {
-			if (_loop) {
-				_stream->seek(_loopStart);
-				_processedSize = 0;
-			} else {
-				_endOfData = true;
-				return 0;
-			}
+			_endOfData = true;
+			return 0;
 		}
 
 		uint16 size = _stream->readUint16LE();
@@ -348,6 +355,44 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 	return samplesProcessed;
 }
 
+bool AUDStream::seek(const Audio::Timestamp &where) {
+	// TODO: A more exact implementation would be nice
+	const uint32 seekSample = where.msecs() * getRate() / 1000;
+
+	_stream->seek(_streamStart);
+	_processedSize = 0;
+	_bytesLeft = 0;
+	_endOfData = false;
+
+	uint32 curSample = 0;
+
+	while (!endOfData()) {
+		uint16 size = _stream->readUint16LE();
+		uint16 outSize = _stream->readUint16LE();
+
+		if (curSample + outSize > seekSample) {
+			_stream->seek(-4, SEEK_CUR);
+
+			uint32 samples = seekSample - curSample;
+			int16 *temp = new int16[samples];
+			assert(temp);
+
+			readChunk(temp, samples);
+			delete[] temp;
+			curSample += samples;
+			break;
+		} else {
+			curSample += outSize;
+			_processedSize += 8 + size;
+			_stream->seek(size + 4, SEEK_CUR);
+		}
+	}
+
+	_endOfData = (_processedSize >= _totalSize);
+
+	return (curSample == seekSample);
+}
+
 #pragma mark -
 
 SoundDigital::SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
@@ -416,7 +461,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 
 	strncpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
-	Audio::AudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, true, 0, 0, loop ? 0 : 1);
+	Audio::SeekableAudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, true, 0, 0, 1);
 	if (!audioStream) {
 		warning("Couldn't create audio stream for file '%s'", filename);
 		return -1;
@@ -437,7 +482,12 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	if (type == Audio::Mixer::kSpeechSoundType && _vm->heliumMode())
 		use->stream->setRate(32765);
 
-	_mixer->playInputStream(type, &use->handle, use->stream, -1, volume);
+	if (loop) {
+		Audio::Timestamp zero(0, 1000);
+		_mixer->playInputStreamLooping(type, &use->handle, use->stream, 0, zero, zero, -1, volume);
+	} else {
+		_mixer->playInputStream(type, &use->handle, use->stream, -1, volume);
+	}
 
 	return use - _sounds;
 }
@@ -480,7 +530,7 @@ void SoundDigital::beginFadeOut(int channel, int ticks) {
 namespace {
 
 Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
-	return new AUDStream(stream, numLoops == 0 ? true : false);
+	return new AUDStream(stream);
 }
 
 } // end of anonymous namespace
