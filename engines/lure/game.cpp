@@ -40,6 +40,10 @@ namespace Lure {
 
 static Game *int_game = NULL;
 
+bool Game::isCreated() {
+	return int_game != NULL;
+}
+
 Game &Game::getReference() {
 	return *int_game;
 }

@@ -73,6 +73,7 @@ public:
 	Game();
 	virtual ~Game();
 
+	static bool isCreated();
 	static Game &getReference();
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);

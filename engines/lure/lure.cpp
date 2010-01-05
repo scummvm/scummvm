@@ -254,7 +254,7 @@ void LureEngine::GUIError(const char *msg, ...) {
 }
 
 GUI::Debugger *LureEngine::getDebugger() {
-	return &Game::getReference().debugger();
+	return !Game::isCreated() ? NULL : &Game::getReference().debugger();
 }
 
 void LureEngine::syncSoundSettings() {
