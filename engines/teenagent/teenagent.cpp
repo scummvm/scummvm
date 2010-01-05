@@ -465,6 +465,7 @@ Common::Error TeenAgentEngine::run() {
 
 		while (_event->pollEvent(event)) {
 			if (event.type == Common::EVENT_RTL) {
+				debug(0, "returning to launcher");
 				deinit();
 				return Common::kNoError;
 			}
