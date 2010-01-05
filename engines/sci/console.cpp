@@ -108,6 +108,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	// Screen
 	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
 	// Graphics
+	DCmd_Register("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
@@ -307,6 +308,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" exit - Exits the game\n");
 	DebugPrintf("\n");
 	DebugPrintf("Graphics:\n");
+	DebugPrintf(" set_palette - Sets a palette resource\n");
 	DebugPrintf(" draw_pic - Draws a pic resource\n");
 	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
@@ -968,6 +970,20 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 	_vm->getVocabulary()->printParserNodes(end);
 
+	return true;
+}
+
+bool Console::cmdSetPalette(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Sets a palette resource\n");
+		DebugPrintf("Usage: %s <resourceId>\n", argv[0]);
+		DebugPrintf("where <resourceId> is the number of the palette resource to set\n");
+		return true;
+	}
+
+	uint16 resourceId = atoi(argv[1]);
+
+	_vm->_gamestate->_gui->paletteSet(resourceId, 2);
 	return true;
 }
 
