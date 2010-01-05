@@ -329,7 +329,7 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 }
 
 // This one is the only one that updates screen!
-void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawCelAndShow(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
 	Common::Rect rect;
 	

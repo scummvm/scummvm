@@ -352,7 +352,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 }
 
 void SciGui::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
-	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, origHeight);
+	_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, origHeight);
 	_palette->setOnScreen();
 }
 
@@ -424,7 +424,7 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 
 void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 style, bool hilite) {
 	if (!hilite) {
-		_gfx->drawCel(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
+		_gfx->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
 		if (style & 0x20) {
 			_gfx->FrameRect(rect);
 		}
