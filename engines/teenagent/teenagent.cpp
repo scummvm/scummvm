@@ -450,13 +450,17 @@ Common::Error TeenAgentEngine::run() {
 
 	CursorMan.showMouse(true);
 
-	uint32 frame = 0;
+	///\todo move game timers to the option dialog
+	const uint32 kGameDelay = 110, kMarkDelay = 80;
+
+	uint32 game_timer = kGameDelay;
+	uint32 mark_timer = kMarkDelay;
 
 	Common::Event event;
 	Common::Point mouse;
+	uint32 timer = _system->getMillis();
 
 	do {
-		uint32 t0 = _system->getMillis();
 		Object *current_object = scene->findObject(mouse);
 
 		while (_event->pollEvent(event)) {
@@ -509,16 +513,24 @@ Common::Error TeenAgentEngine::run() {
 		_system->showMouse(scene->getMessage().empty());
 		//game delays: slow 16, normal 11, fast 5, crazy 1
 		//mark delays: 4 * (3 - hero_speed), normal == 1
-		uint32 f0 = frame * 10 / 25, f1 = (frame + 1) * 10 / 25;
-		if (f0 != f1) {
+		//game delays in 1/100th of seconds
+		uint32 new_timer = _system->getMillis();
+		uint32 delta = new_timer - timer;
+		timer = new_timer;
+
+		if (game_timer <= delta) {
 			bool b = scene->render();
-			scene_busy = b;
-			if (!inventory->active() && !scene_busy && action != kActionNone) {
+			if (!inventory->active() && !b && action != kActionNone) {
 				processObject();
 				action = kActionNone;
 				dst_object = NULL;
 			}
-		}
+
+			scene_busy = b;
+			game_timer = kGameDelay - ((delta - game_timer) % kGameDelay);
+		} else
+			game_timer -= delta;
+
 		bool busy = inventory->active() || scene_busy;
 
 		Graphics::Surface *surface = _system->lockScreen();
@@ -555,11 +567,10 @@ Common::Error TeenAgentEngine::run() {
 			console->onFrame();
 		}
 
-		uint32 dt = _system->getMillis() - t0;
-		if (dt < 40)
-			_system->delayMillis(40 - dt);
-
-		++frame;
+		uint32 next_tick = MIN(game_timer, mark_timer);
+		if (next_tick > 0) {
+			_system->delayMillis(next_tick > 40? 40: next_tick);
+		}
 	} while (!_event->shouldQuit());
 
 	deinit();
