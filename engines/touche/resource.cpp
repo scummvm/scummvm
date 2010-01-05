@@ -30,6 +30,7 @@
 #include "sound/mp3.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
+#include "sound/audiostream.h"
 
 #include "touche/midi.h"
 #include "touche/touche.h"
@@ -44,7 +45,7 @@ enum {
 
 struct CompressedSpeechFile {
 	const char *filename;
-	Audio::AudioStream *(*makeStream)(
+	Audio::SeekableAudioStream *(*makeStream)(
 			Common::SeekableReadStream *stream,
 			bool disposeAfterUse,
 			uint32 startTime,

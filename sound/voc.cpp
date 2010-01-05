@@ -292,7 +292,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 	return currentBlock;
 }
 
-AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
+SeekableAudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
@@ -315,7 +315,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, b
 #endif
 
 
-AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, bool takeOwnershipOfStream) {
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, bool takeOwnershipOfStream) {
 #ifdef STREAM_AUDIO_FROM_DISK
 	return makeVOCDiskStream(stream, flags, takeOwnershipOfStream);
 #else

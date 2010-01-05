@@ -30,7 +30,11 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 
+#include "sound/timestamp.h"
+
 namespace Audio {
+
+class SeekableAudioStream;
 
 /**
  * Generic audio input stream. Subclasses of this are used to feed arbitrary
@@ -93,10 +97,10 @@ public:
 	 * @return	an Audiostream ready to use in case of success;
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
-	static AudioStream* openStreamFile(const Common::String &basename,
-										uint32 startTime = 0,
-										uint32 duration = 0,
-										uint numLoops = 1);
+	static SeekableAudioStream *openStreamFile(const Common::String &basename,
+	                                           uint32 startTime = 0,
+	                                           uint32 duration = 0,
+	                                           uint numLoops = 1);
 
 	/** 
 	 * Sets number of times the stream is supposed to get looped
@@ -129,6 +133,32 @@ public:
 	virtual int32 getTotalPlayTime() const { return kUnknownPlayTime; }
 };
 
+/**
+ * A seekable audio stream. Subclasses of this class implement a
+ * working seeking. The seeking itself is not required to be
+ * working when the stream is being played by Mixer!
+ */
+class SeekableAudioStream : public AudioStream {
+public:
+	/**
+	 * Seeks to a given offset in the stream.
+	 *
+	 * @param where offset in milliseconds
+	 * @return true on success, false on failure.
+	 */
+	bool seek(uint32 where) {
+		return seek(Timestamp(where, getRate()));
+	}
+
+	/**
+	 * Seeks to a given offset in the stream.
+	 *
+	 * @param where offset as timestamp
+	 * @return true on success, false on failure.
+	 */
+	virtual bool seek(const Timestamp &where) = 0;
+};
+
 
 /**
  * Factory function for a raw linear AudioStream, which will simply treat all
@@ -138,7 +168,7 @@ public:
  * signed native endian). Optionally supports (infinite) looping of a portion
  * of the data.
  */
-AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
+SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
 		byte flags, uint loopStart, uint loopEnd);
 
 
@@ -157,8 +187,7 @@ struct LinearDiskStreamAudioBlock {
  * LinearDiskStreamAudioBlock which defines the start position and length of
  * each block of uncompressed audio in the stream.
  */
-
-AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
 		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
 
 /**

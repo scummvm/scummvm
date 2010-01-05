@@ -45,7 +45,7 @@ namespace Common { class SeekableReadStream; }
 
 namespace Audio {
 
-class AudioStream;
+class SeekableAudioStream;
 
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -93,7 +93,7 @@ extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate)
  *
  * This function uses loadVOCFromStream() internally.
  */
-AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0, bool takeOwnershipOfStream = false);
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0, bool takeOwnershipOfStream = false);
 
 } // End of namespace Audio
 

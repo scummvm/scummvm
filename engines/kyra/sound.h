@@ -35,6 +35,7 @@
 
 namespace Audio {
 class AudioStream;
+class SeekableAudioStream;
 } // End of namespace Audio
 
 namespace Kyra {
@@ -240,7 +241,7 @@ private:
 
 	struct SpeechCodecs {
 		const char *fileext;
-		Audio::AudioStream *(*streamFunc)(
+		Audio::SeekableAudioStream *(*streamFunc)(
 			Common::SeekableReadStream *stream,
 			bool disposeAfterUse,
 			uint32 startTime,
@@ -358,7 +359,7 @@ private:
 
 	struct AudioCodecs {
 		const char *fileext;
-		Audio::AudioStream *(*streamFunc)(
+		Audio::SeekableAudioStream *(*streamFunc)(
 			Common::SeekableReadStream *stream,
 			bool disposeAfterUse,
 			uint32 startTime,

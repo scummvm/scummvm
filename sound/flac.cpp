@@ -82,7 +82,7 @@ namespace Audio {
 static const uint MAX_OUTPUT_CHANNELS = 2;
 
 
-class FlacInputStream : public AudioStream {
+class FlacInputStream : public SeekableAudioStream {
 protected:
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
@@ -148,6 +148,8 @@ public:
 			return kUnknownPlayTime;
 		return _totalPlayTime * _numLoops;
 	}
+
+	bool seek(const Timestamp &where);
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 
@@ -332,6 +334,14 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 		_lastSampleWritten = (_lastSample != 0 && sample >= _lastSample); // only set if we are SURE
 	}
 	return result;
+}
+
+bool FlacInputStream::seek(const Timestamp &where) {
+	_sampleCache.bufFill = 0;
+	_sampleCache.bufReadPos = NULL;
+	// Compute the start/end sample (we use floating point arithmetics here to
+	// avoid overflows).
+	return seekAbsolute((FLAC__uint64)(where.msecs() * (_streaminfo.sample_rate / 1000.0)));
 }
 
 int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -770,7 +780,7 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 #pragma mark -
 
 
-AudioStream *makeFlacStream(
+SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
 	uint32 startTime,

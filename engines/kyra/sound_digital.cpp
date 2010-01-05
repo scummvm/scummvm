@@ -107,7 +107,7 @@ int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 // TODO: cleanup of whole AUDStream
 
-class AUDStream : public Audio::AudioStream {
+class AUDStream : public Audio::SeekableAudioStream {
 public:
 	AUDStream(Common::SeekableReadStream *stream, bool loop = false);
 	~AUDStream();
@@ -118,6 +118,10 @@ public:
 	bool endOfData() const { return _endOfData; }
 
 	int getRate() const { return _rate; }
+
+	// GROSS HACK, if anyone sees this, be aware that you should
+	// never copy this! This is just a temporary hack...
+	bool seek(const Audio::Timestamp &) { return false; }
 private:
 	Common::SeekableReadStream *_stream;
 	bool _loop;
@@ -475,7 +479,7 @@ void SoundDigital::beginFadeOut(int channel, int ticks) {
 
 namespace {
 
-Audio::AudioStream *makeAUDStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
+Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
 	return new AUDStream(stream, numLoops == 0 ? true : false);
 }
 

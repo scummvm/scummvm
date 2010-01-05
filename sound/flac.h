@@ -51,7 +51,7 @@ namespace Common {
 
 namespace Audio {
 
-class AudioStream;
+class SeekableAudioStream;
 
 /**
  * Create a new AudioStream from the FLAC data in the given stream.
@@ -66,7 +66,7 @@ class AudioStream;
  * @param numLoops			how often the data shall be looped (0 = infinite)
  * @return	a new AudioStream, or NULL, if an error occured
  */
-AudioStream *makeFlacStream(
+SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
 	uint32 startTime = 0,

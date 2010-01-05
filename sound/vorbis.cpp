@@ -85,7 +85,7 @@ static ov_callbacks g_stream_wrap = {
 #pragma mark -
 
 
-class VorbisInputStream : public AudioStream {
+class VorbisInputStream : public SeekableAudioStream {
 protected:
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
@@ -137,6 +137,8 @@ public:
 		return (int32)((_endTime - _startTime) * 1000.0) * _numLoops;
 #endif
 	}
+
+	bool seek(const Timestamp &where);
 
 protected:
 	bool refill();
@@ -240,6 +242,23 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
+bool VorbisInputStream::seek(const Timestamp &where) {
+#ifdef USE_TREMOR
+	ogg_int64_t pos = where.msecs();
+#else
+	double pos = where.msecs() / 1000.0;
+#endif
+
+	int res = ov_time_seek(&_ovFile, pos);
+	if (res < 0) {
+		warning("Error seeking in Vorbis stream (%d)", res);
+		_pos = _bufferEnd;
+		return false;
+	}
+
+	return refill();
+}
+
 bool VorbisInputStream::refill() {
 	// Read the samples
 	int res;
@@ -314,7 +333,7 @@ bool VorbisInputStream::refill() {
 #pragma mark -
 
 
-AudioStream *makeVorbisStream(
+SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
 	uint32 startTime,
