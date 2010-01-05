@@ -977,7 +977,15 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gamestate->_gui->drawPicture(atoi(argv[1]), 100, false, false, false, 0);
+	char *offsetStr = NULL;
+	uint16 resourceId = strtol(argv[1], &offsetStr, 10);
+
+	if (*offsetStr) {
+		DebugPrintf("Invalid resourceId\n");
+		return true;
+	}
+
+	_vm->_gamestate->_gui->drawPicture(resourceId, 100, false, false, false, 0);
 	_vm->_gamestate->_gui->animateShowPic();
 
 	return false;
