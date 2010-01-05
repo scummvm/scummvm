@@ -109,6 +109,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
 	// Graphics
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
+	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
 	// Segments
@@ -307,6 +308,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Graphics:\n");
 	DebugPrintf(" draw_pic - Draws a pic resource\n");
+	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
@@ -972,23 +974,32 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 bool Console::cmdDrawPic(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Draws a pic resource\n");
-		DebugPrintf("Usage: %s <nr>\n", argv[0]);
-		DebugPrintf("where <nr> is the number of the pic resource to draw\n");
+		DebugPrintf("Usage: %s <resourceId>\n", argv[0]);
+		DebugPrintf("where <resourceId> is the number of the pic resource to draw\n");
 		return true;
 	}
 
-	char *offsetStr = NULL;
-	uint16 resourceId = strtol(argv[1], &offsetStr, 10);
-
-	if (*offsetStr) {
-		DebugPrintf("Invalid resourceId\n");
-		return true;
-	}
+	uint16 resourceId = atoi(argv[1]);
 
 	_vm->_gamestate->_gui->drawPicture(resourceId, 100, false, false, false, 0);
 	_vm->_gamestate->_gui->animateShowPic();
+	return true;
+}
 
-	return false;
+bool Console::cmdDrawCel(int argc, const char **argv) {
+	if (argc < 4) {
+		DebugPrintf("Draws a cel from a view resource\n");
+		DebugPrintf("Usage: %s <resourceId> <loopNr> <celNr> \n", argv[0]);
+		DebugPrintf("where <resourceId> is the number of the view resource to draw\n");
+		return true;
+	}
+
+	uint16 resourceId = atoi(argv[1]);
+	uint16 loopNo = atoi(argv[2]);
+	uint16 celNo = atoi(argv[3]);
+
+	_vm->_gamestate->_gui->drawCel(resourceId, loopNo, celNo, 50, 50, 0, 0);
+	return true;
 }
 
 bool Console::cmdUndither(int argc, const char **argv) {

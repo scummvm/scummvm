@@ -84,6 +84,7 @@ private:
 	bool cmdShowMap(int argc, const char **argv);
 	// Graphics
 	bool cmdDrawPic(int argc, const char **argv);
+	bool cmdDrawCel(int argc, const char **argv);
 	bool cmdUndither(int argc, const char **argv);
 	bool cmdPlayVideo(int argc, const char **argv);
 	// Segments
