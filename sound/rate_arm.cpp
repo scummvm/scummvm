@@ -137,7 +137,8 @@ extern "C" {
 #endif
 }
 
-extern "C" void ARM_SimpleRate_M(AudioStream       &input,
+extern "C" st_sample_t *ARM_SimpleRate_M(
+                                 AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  SimpleRateDetails *sr,
                                  st_sample_t       *obuf,
@@ -145,7 +146,8 @@ extern "C" void ARM_SimpleRate_M(AudioStream       &input,
                                  st_volume_t        vol_l,
                                  st_volume_t        vol_r);
 
-extern "C" void ARM_SimpleRate_S(AudioStream       &input,
+extern "C" st_sample_t *ARM_SimpleRate_S(
+                                 AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  SimpleRateDetails *sr,
                                  st_sample_t       *obuf,
@@ -153,7 +155,8 @@ extern "C" void ARM_SimpleRate_S(AudioStream       &input,
                                  st_volume_t        vol_l,
                                  st_volume_t        vol_r);
 
-extern "C" void ARM_SimpleRate_R(AudioStream       &input,
+extern "C" st_sample_t *ARM_SimpleRate_R(
+                                 AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  SimpleRateDetails *sr,
                                  st_sample_t       *obuf,
@@ -178,23 +181,25 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 fprintf(stderr, "Simple st=%d rev=%d\n", stereo, reverseStereo);
 fflush(stderr);
 #endif
+	st_sample_t *ostart = obuf;
+
 	if (!stereo) {
-		ARM_SimpleRate_M(input,
-		                 &SimpleRate_readFudge,
-		                 &sr,
-				 obuf, osamp, vol_l, vol_r);
+		obuf = ARM_SimpleRate_M(input,
+		                        &SimpleRate_readFudge,
+		                        &sr,
+			                obuf, osamp, vol_l, vol_r);
 	} else if (reverseStereo) {
-		ARM_SimpleRate_R(input,
-		                 &SimpleRate_readFudge,
-		                 &sr,
-				 obuf, osamp, vol_l, vol_r);
+		obuf = ARM_SimpleRate_R(input,
+		                        &SimpleRate_readFudge,
+		                        &sr,
+				        obuf, osamp, vol_l, vol_r);
 	} else {
-		ARM_SimpleRate_S(input,
-		                 &SimpleRate_readFudge,
-		                 &sr,
-				 obuf, osamp, vol_l, vol_r);
+		obuf = ARM_SimpleRate_S(input,
+		                        &SimpleRate_readFudge,
+		                        &sr,
+				        obuf, osamp, vol_l, vol_r);
 	}
-	return (ST_SUCCESS);
+	return (obuf-ostart)/2;
 }
 
 /**
@@ -236,7 +241,8 @@ extern "C" {
 #endif
 }
 
-extern "C" void ARM_LinearRate_M(AudioStream       &input,
+extern "C" st_sample_t *ARM_LinearRate_M(
+                                 AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  LinearRateDetails *lr,
                                  st_sample_t       *obuf,
@@ -244,7 +250,8 @@ extern "C" void ARM_LinearRate_M(AudioStream       &input,
                                  st_volume_t        vol_l,
                                  st_volume_t        vol_r);
 
-extern "C" void ARM_LinearRate_S(AudioStream       &input,
+extern "C" st_sample_t *ARM_LinearRate_S(
+                                 AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  LinearRateDetails *lr,
                                  st_sample_t       *obuf,
@@ -252,7 +259,8 @@ extern "C" void ARM_LinearRate_S(AudioStream       &input,
                                  st_volume_t        vol_l,
                                  st_volume_t        vol_r);
 
-extern "C" void ARM_LinearRate_R(AudioStream       &input,
+extern "C" st_sample_t *ARM_LinearRate_R(
+                                 AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  LinearRateDetails *lr,
                                  st_sample_t       *obuf,
@@ -304,7 +312,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 
 /*
  * Processed signed long samples from ibuf to obuf.
- * Return number of samples processed.
+ * Return number of sample pairs processed.
  */
 template<bool stereo, bool reverseStereo>
 int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
@@ -313,23 +321,25 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 fprintf(stderr, "Linear st=%d rev=%d\n", stereo, reverseStereo);
 fflush(stderr);
 #endif
+	st_sample_t *ostart = obuf;
+
 	if (!stereo) {
-		ARM_LinearRate_M(input,
-		                 &SimpleRate_readFudge,
-		                 &lr,
-				 obuf, osamp, vol_l, vol_r);
+		obuf = ARM_LinearRate_M(input,
+		                        &SimpleRate_readFudge,
+		                        &lr,
+				        obuf, osamp, vol_l, vol_r);
 	} else if (reverseStereo) {
-		ARM_LinearRate_R(input,
-		                 &SimpleRate_readFudge,
-		                 &lr,
-				 obuf, osamp, vol_l, vol_r);
+		obuf = ARM_LinearRate_R(input,
+		                        &SimpleRate_readFudge,
+		                        &lr,
+				        obuf, osamp, vol_l, vol_r);
 	} else {
-		ARM_LinearRate_S(input,
-		                 &SimpleRate_readFudge,
-		                 &lr,
-				 obuf, osamp, vol_l, vol_r);
+		obuf = ARM_LinearRate_S(input,
+		                        &SimpleRate_readFudge,
+		                        &lr,
+				        obuf, osamp, vol_l, vol_r);
 	}
-	return (ST_SUCCESS);
+	return (obuf-ostart)/2;
 }
 
 
@@ -347,19 +357,22 @@ extern "C" {
 #endif
 }
 
-extern "C" void ARM_CopyRate_M(st_size_t    len,
+extern "C" st_sample_t *ARM_CopyRate_M(
+                               st_size_t    len,
                                st_sample_t *obuf,
                                st_volume_t  vol_l,
                                st_volume_t  vol_r,
                                st_sample_t *_buffer);
 
-extern "C" void ARM_CopyRate_S(st_size_t    len,
+extern "C" st_sample_t *ARM_CopyRate_S(
+                               st_size_t    len,
                                st_sample_t *obuf,
                                st_volume_t  vol_l,
                                st_volume_t  vol_r,
                                st_sample_t *_buffer);
 
-extern "C" void ARM_CopyRate_R(st_size_t    len,
+extern "C" st_sample_t *ARM_CopyRate_R(
+                               st_size_t    len,
                                st_sample_t *obuf,
                                st_volume_t  vol_l,
                                st_volume_t  vol_r,
@@ -384,6 +397,7 @@ fprintf(stderr, "Copy st=%d rev=%d\n", stereo, reverseStereo);
 fflush(stderr);
 #endif
 		st_size_t len;
+                st_sample_t *ostart = obuf;
 
 		if (stereo)
 			osamp *= 2;
@@ -398,17 +412,17 @@ fflush(stderr);
 		// Read up to 'osamp' samples into our temporary buffer
 		len = input.readBuffer(_buffer, osamp);
 		if (len <= 0)
-			return (ST_SUCCESS);
+			return 0;
 
 		// Mix the data into the output buffer
 		if (stereo && reverseStereo)
-			ARM_CopyRate_R(len, obuf, vol_l, vol_r, _buffer);
+			obuf = ARM_CopyRate_R(len, obuf, vol_l, vol_r, _buffer);
 		else if (stereo)
-			ARM_CopyRate_S(len, obuf, vol_l, vol_r, _buffer);
+			obuf = ARM_CopyRate_S(len, obuf, vol_l, vol_r, _buffer);
 		else
-			ARM_CopyRate_M(len, obuf, vol_l, vol_r, _buffer);
+			obuf = ARM_CopyRate_M(len, obuf, vol_l, vol_r, _buffer);
 
-		return (ST_SUCCESS);
+		return (obuf-ostart)/2;
 	}
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
 		return (ST_SUCCESS);

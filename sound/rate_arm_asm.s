@@ -72,6 +72,8 @@ CopyRate_M_loop:
         SUBS    r0,r0,#1                @ len--
         BGT     CopyRate_M_loop         @ and loop
 
+	MOV	r0, r1			@ return obuf
+
         LDMFD   r13!,{r4-r7,PC}
 
 _ARM_CopyRate_S:
@@ -108,6 +110,8 @@ CopyRate_S_loop:
         SUBS    r0,r0,#2                @ len -= 2
         BGT     CopyRate_S_loop         @ and loop
 
+	MOV	r0, r1			@ return obuf
+
         LDMFD   r13!,{r4-r7,PC}
 
 _ARM_CopyRate_R:
@@ -143,6 +147,8 @@ CopyRate_R_loop:
 
         SUBS    r0,r0,#2                @ len -= 2
         BGT     CopyRate_R_loop         @ and loop
+
+	MOV	r0, r1			@ return obuf
 
         LDMFD   r13!,{r4-r7,PC}
 
@@ -199,6 +205,9 @@ SimpleRate_M_end:
         LDR     r14,[r13,#8]            @ r14 = sr
         ADD     r13,r13,#12             @ Skip over r0-r2 on stack
         STMIA   r14,{r0,r1,r2}          @ Store back updated values
+
+	MOV	r0, r3			@ return obuf
+
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_M_read:
         LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
@@ -283,6 +292,7 @@ SimpleRate_S_end:
         LDR     r14,[r13,#8]            @ r14 = sr
         ADD     r13,r13,#12             @ skip over r0-r2 on stack
         STMIA   r14,{r0,r1,r2}          @ store back updated values
+	MOV	r0, r3			@ return obuf
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_S_read:
         LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
@@ -367,6 +377,7 @@ SimpleRate_R_end:
         LDR     r14,[r13,#8]            @ r14 = sr
         ADD     r13,r13,#12             @ Skip over r0-r2 on stack
         STMIA   r14,{r0,r1,r2}          @ Store back updated values
+	MOV	r0, r3			@ return obuf
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_R_read:
         LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
@@ -469,6 +480,7 @@ LinearRate_M_part2:
 LinearRate_M_end:
         ADD     r13,r13,#8
         STMIA   r2,{r0,r1,r8}
+	MOV	r0, r3			@ return obuf
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_M_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
@@ -576,6 +588,7 @@ LinearRate_S_part2:
 LinearRate_S_end:
         ADD     r13,r13,#8
         STMIA   r2,{r0,r1,r8}
+	MOV	r0, r3			@ return obuf
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_S_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
@@ -680,6 +693,7 @@ LinearRate_R_part2:
 LinearRate_R_end:
         ADD     r13,r13,#8
         STMIA   r2,{r0,r1,r8}
+	MOV	r0, r3			@ return obuf
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_R_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
