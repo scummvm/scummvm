@@ -79,15 +79,19 @@ public:
 	void pause(bool paused) {
 		//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
 
-		if (paused)
+		if (paused) {
 			_pauseLevel++;
-		else if (_pauseLevel > 0)
+
+			if (_pauseLevel == 1)
+				_pauseStartTime = g_system->getMillis();
+		} else if (_pauseLevel > 0) {
 			_pauseLevel--;
 
-		if (_pauseLevel > 0)
-			_pauseStartTime = g_system->getMillis();
-		else
-			_pauseTime += (g_system->getMillis() - _pauseStartTime);
+			if (!_pauseLevel) {
+				_pauseTime = (g_system->getMillis() - _pauseStartTime);
+				_pauseStartTime = 0;
+			}
+		}
 	}
 	bool isPaused() {
 		return _pauseLevel != 0;
@@ -441,7 +445,6 @@ void Channel::mix(int16 *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
-
 		_samplesDecoded += _converter->flow(*_input, data, len, vol_l, vol_r);
 	}
 }
@@ -451,7 +454,12 @@ uint32 Channel::getElapsedTime() {
 		return 0;
 
 	const uint32 rate = _mixer->getOutputRate();
-	const uint32 delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
+	uint32 delta = 0;
+
+	if (isPaused())
+		delta = _pauseStartTime - _mixerTimeStamp;
+	else
+		delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
 
 	// Convert the number of samples into a time duration.
 
