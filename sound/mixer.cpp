@@ -40,33 +40,94 @@ namespace Audio {
 
 
 /**
- * Channels used by the sound mixer.
+ * Generic Channel interface used by the default Mixer implementation.
  */
 class Channel {
 public:
 	Channel(Mixer *mixer, Mixer::SoundType type, int id, bool permanent);
 	virtual ~Channel() {}
 
+	/**
+	 * Mixes the channel's samples into the given buffer.
+	 *
+	 * @param data buffer where to mix the data
+	 * @param len  number of sample *pairs*. So a value of
+	 *             10 means that the buffer contains twice 10 sample, each
+	 *             16 bits, for a total of 40 bytes.
+	 */
 	virtual void mix(int16 *data, uint len) = 0;
 
+	/**
+	 * Queries whether the channel is still playing or not.
+	 */
 	virtual bool isFinished() const = 0;
 
+	/**
+	 * Queries whether the channel is a permanent channel.
+	 * A permanent channel is not affected by a Mixer::stopAll
+	 * call.
+	 */
 	bool isPermanent() const { return _permanent; }
 
+	/**
+	 * Returns the id of the channel.
+	 */
 	int getId() const { return _id; }
 
+	/**
+	 * Pauses or unpaused the channel in a recursive fashion.
+	 *
+	 * @param paused true, when the channel should be paused.
+	 *               false when it should be unpaused.
+	 */
 	void pause(bool paused);
+
+	/**
+	 * Queries whether the channel is currently paused.
+	 */
 	bool isPaused() const { return (_pauseLevel != 0); }
 
+	/**
+	 * Sets the channel's own volume.
+	 *
+	 * @param volume new volume
+	 */
 	void setVolume(const byte volume);
+
+	/**
+	 * Sets the channel's balance setting.
+	 *
+	 * @param balance new balance
+	 */
 	void setBalance(const int8 balance);
+
+	/**
+	 * Notifies the channel that the global sound type
+	 * volume settings changed.
+	 */
 	void notifyGlobalVolChange() { updateChannelVolumes(); }
 
+	/**
+	 * Queries how many milliseconds the channel has
+	 * been playing.
+	 */
 	uint32 getElapsedTime();
 
+	/**
+	 * Queries the channel's sound type.
+	 */
 	Mixer::SoundType getType() const { return _type; }
 
+	/**
+	 * Sets the channel's sound handle.
+	 *
+	 * @param handle new handle
+	 */
 	void setHandle(const SoundHandle handle) { _handle = handle; }
+
+	/**
+	 * Queries the channel's sound handle.
+	 */
 	SoundHandle getHandle() const { return _handle; }
 
 private:
@@ -83,7 +144,14 @@ private:
 	st_volume_t _volL, _volR;
 
 protected:
+	/**
+	 * Queries the volume of the left output channel.
+	 */
 	st_volume_t getLeftVolume() const { return _volL; }
+
+	/**
+	 * Queries the volume of the right output channel.
+	 */
 	st_volume_t getRightVolume() const { return _volR; }
 
 	Mixer *_mixer;
@@ -503,10 +571,6 @@ SimpleChannel::~SimpleChannel() {
 		delete _input;
 }
 
-/* len indicates the number of sample *pairs*. So a value of
-   10 means that the buffer contains twice 10 sample, each
-   16 bits, for a total of 40 bytes.
- */
 void SimpleChannel::mix(int16 *data, uint len) {
 	assert(_input);
 
