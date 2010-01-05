@@ -375,9 +375,9 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 						break;
 					case kDetectMoveCountType:
 						// Games which ignore move count call kAbs before calling kDoBresen
-						if (kFuncNum == 61) {	// kAbs (SCI1)
+						if (_kernel->getKernelName(kFuncNum) == "Abs") {
 							foundTarget = true;
-						} else if (kFuncNum == 80) {	// kDoBresen (SCI1)
+						} else if (_kernel->getKernelName(kFuncNum) == "DoBresen") {
 							_moveCountType = foundTarget ? kIgnoreMoveCount : kIncrementMoveCount;
 							return true;
 						}
