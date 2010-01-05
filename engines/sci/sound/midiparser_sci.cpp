@@ -199,7 +199,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			}
 		}
 		if (info.basic.param1 == 7) // channel volume change -scale it
-			info.basic.param2 = info.basic.param2 * _volume / 0x7F;
+			info.basic.param2 = info.basic.param2 * _volume / MUSIC_VOLUME_MAX;
 		info.length = 0;
 		break;
 
@@ -474,18 +474,16 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	return _mixedData;
 }
 
-void MidiParser_SCI::setVolume(byte bVolume) {
-	if (bVolume > 0x7F)
-		bVolume = 0x7F;
-	if (_volume != bVolume) {
-		_volume = bVolume;
+void MidiParser_SCI::setVolume(byte volume) {
+	assert(volume <= MUSIC_VOLUME_MAX);
+	if (_volume != volume) {
+		_volume = volume;
 
 		switch (_soundVersion) {
 		case SCI_VERSION_0_EARLY:
 		case SCI_VERSION_0_LATE: {
-			MidiPlayer *SCIDriver = (MidiPlayer *)_driver;
 			int16 globalVolume = _volume * 15 / 127;
-			SCIDriver->setVolume(globalVolume);
+			((MidiPlayer *)_driver)->setVolume(globalVolume);
 			break;
 		}
 

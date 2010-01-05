@@ -804,22 +804,20 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	if (musicSlot->pStreamAud) {
 		// Update digital sound effect slots here
-		Audio::Mixer *mixer = g_system->getMixer();
-
 		uint currentLoopCounter = musicSlot->pStreamAud->getNumPlayedLoops();
 		if (currentLoopCounter != musicSlot->sampleLoopCounter) {
 			// during last time we looped at least one time, update loop accordingly
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
-		if (!mixer->isSoundHandleActive(musicSlot->hCurrentAud)) {
+		if (!_music->soundIsActive(musicSlot)) {
 			cmdStopSound(obj, 0);
 		} else {
-			musicSlot->ticker = (uint16)(mixer->getSoundElapsedTime(musicSlot->hCurrentAud) * 0.06);
+			_music->updateAudioStreamTicker(musicSlot);
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
 		if (musicSlot->fadeSetVolume) {
-			mixer->setChannelVolume(musicSlot->hCurrentAud, musicSlot->volume);
+			_music->soundSetVolume(musicSlot, musicSlot->volume);
 			musicSlot->fadeSetVolume = false;
 		}
 	} else {

@@ -54,7 +54,7 @@ public:
 		return false;
 	}
 	void unloadMusic();
-	void setVolume(byte bVolume);
+	void setVolume(byte volume);
 	void stop() {
 		_abort_parse = true;
 		allNotesOff();
