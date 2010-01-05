@@ -22,11 +22,12 @@
  * $Id$
  */
 
+#include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/algorithm.h"
 #include "teenagent/scene.h"
 #include "teenagent/resources.h"
 #include "teenagent/surface.h"
-#include "common/debug.h"
-#include "common/algorithm.h"
 #include "teenagent/objects.h"
 #include "teenagent/teenagent.h"
 #include "teenagent/dialog.h"
@@ -810,6 +811,11 @@ bool Scene::render() {
 			nextEvent();
 			restart = true;
 		}
+
+		if (busy) {
+			_idle_timer = 0;
+			teenagent_idle.resetIndex();
+		}
 	} while (restart);
 
 	for (Sounds::iterator i = sounds.begin(); i != sounds.end();) {
@@ -1124,11 +1130,18 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point po
 }
 
 uint Scene::messageDuration(const Common::String &str) {
-	uint chars = str.size();
-	//to be discovered
-	if (chars < 10)
-		chars = 10;
-	return chars;
+	//original game uses static delays: 100-slow, 50, 20 and 1 tick - crazy speed.
+	//total delay = total message length * delay / 8 + 60.
+	uint total_width = str.size();
+
+	int speed = Common::ConfigManager::instance().getInt("talkspeed");
+	if (speed < 0)
+		speed = 60;
+	uint delay_delta = 1 + (255 - speed) * 99 / 255;
+	
+	uint delay = 60 + (total_width * delay_delta) / 8;
+	//debug(0, "delay = %u, delta: %u", delay, delay_delta);
+	return delay / 10;
 }
 
 

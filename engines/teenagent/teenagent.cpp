@@ -894,6 +894,7 @@ bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 	case kSupportsRTL:
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
+	case kSupportsSubtitleOptions:
 		return true;
 	default:
 		return false;
