@@ -58,8 +58,9 @@ public:
 	void pause(bool paused);
 	bool isPaused() const { return (_pauseLevel != 0); }
 
-	void setVolume(const byte volume) { _volume = volume; }
-	void setBalance(const int8 balance) { _balance = balance; }
+	void setVolume(const byte volume);
+	void setBalance(const int8 balance);
+	void notifyGlobalVolChange() { updateChannelVolumes(); }
 
 	uint32 getElapsedTime();
 
@@ -75,10 +76,17 @@ private:
 	int _pauseLevel;
 	int _id;
 
-protected:
-	Mixer *_mixer;
 	byte _volume;
 	int8 _balance;
+
+	void updateChannelVolumes();
+	st_volume_t _volL, _volR;
+
+protected:
+	st_volume_t getLeftVolume() const { return _volL; }
+	st_volume_t getRightVolume() const { return _volR; }
+
+	Mixer *_mixer;
 
 	uint32 _samplesConsumed;
 	uint32 _samplesDecoded;
@@ -372,7 +380,13 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 	// TODO: Maybe we should do logarithmic (not linear) volume
 	// scaling? See also Player_V2::setMasterVolume
 
+	Common::StackLock lock(_mutex);
 	_volumeForSoundType[type] = volume;
+
+	for (int i = 0; i != NUM_CHANNELS; ++i) {
+		if (_channels[i] && _channels[i]->getType() == type)
+			_channels[i]->notifyGlobalVolChange();
+	}
 }
 
 int MixerImpl::getVolumeForSoundType(SoundType type) const {
@@ -390,6 +404,40 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, int id, bool permanent)
     : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
       _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
       _pauseStartTime(0), _pauseTime(0) {
+	updateChannelVolumes();
+}
+
+void Channel::setVolume(const byte volume) {
+	_volume = volume;
+	updateChannelVolumes();
+}
+
+void Channel::setBalance(const int8 balance) {
+	_balance = balance;
+	updateChannelVolumes();
+}
+
+void Channel::updateChannelVolumes() {
+	// From the channel balance/volume and the global volume, we compute
+	// the effective volume for the left and right channel. Note the
+	// slightly odd divisor: the 255 reflects the fact that the maximal
+	// value for _volume is 255, while the 127 is there because the
+	// balance value ranges from -127 to 127.  The mixer (music/sound)
+	// volume is in the range 0 - kMaxMixerVolume.
+	// Hence, the vol_l/vol_r values will be in that range, too
+
+	int vol = _mixer->getVolumeForSoundType(_type) * _volume;
+
+	if (_balance == 0) {
+		_volL = vol / Mixer::kMaxChannelVolume;
+		_volR = vol / Mixer::kMaxChannelVolume;
+	} else if (_balance < 0) {
+		_volL = vol / Mixer::kMaxChannelVolume;
+		_volR = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+	} else {
+		_volL = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+		_volR = vol / Mixer::kMaxChannelVolume;
+	}
 }
 
 void Channel::pause(bool paused) {
@@ -467,32 +515,10 @@ void SimpleChannel::mix(int16 *data, uint len) {
 	} else {
 		assert(_converter);
 
-		// From the channel balance/volume and the global volume, we compute
-		// the effective volume for the left and right channel. Note the
-		// slightly odd divisor: the 255 reflects the fact that the maximal
-		// value for _volume is 255, while the 127 is there because the
-		// balance value ranges from -127 to 127.  The mixer (music/sound)
-		// volume is in the range 0 - kMaxMixerVolume.
-		// Hence, the vol_l/vol_r values will be in that range, too
-
-		int vol = _mixer->getVolumeForSoundType(getType()) * _volume;
-		st_volume_t vol_l, vol_r;
-
-		if (_balance == 0) {
-			vol_l = vol / Mixer::kMaxChannelVolume;
-			vol_r = vol / Mixer::kMaxChannelVolume;
-		} else if (_balance < 0) {
-			vol_l = vol / Mixer::kMaxChannelVolume;
-			vol_r = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
-		} else {
-			vol_l = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
-			vol_r = vol / Mixer::kMaxChannelVolume;
-		}
-
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
-		_samplesDecoded += _converter->flow(*_input, data, len, vol_l, vol_r);
+		_samplesDecoded += _converter->flow(*_input, data, len, getLeftVolume(), getRightVolume());
 	}
 }
 
