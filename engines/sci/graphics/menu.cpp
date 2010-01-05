@@ -40,7 +40,7 @@
 
 namespace Sci {
 
-SciGuiMenu::SciGuiMenu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor)
+Menu::Menu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor)
 	: _event(event), _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
@@ -54,11 +54,11 @@ SciGuiMenu::SciGuiMenu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text
 	_oldPort = NULL;
 }
 
-SciGuiMenu::~SciGuiMenu() {
+Menu::~Menu() {
 	// TODO: deallocate _list and _itemList
 }
 
-void SciGuiMenu::add(Common::String title, Common::String content, reg_t contentVmPtr) {
+void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr) {
 	GuiMenuEntry *menuEntry;
 	uint16 itemCount = 0;
 	GuiMenuItemEntry *itemEntry;
@@ -207,7 +207,7 @@ void SciGuiMenu::add(Common::String title, Common::String content, reg_t content
 	} while (curPos < contentSize);
 }
 
-GuiMenuItemEntry *SciGuiMenu::findItem(uint16 menuId, uint16 itemId) {
+GuiMenuItemEntry *Menu::findItem(uint16 menuId, uint16 itemId) {
 	GuiMenuItemList::iterator listIterator;
 	GuiMenuItemList::iterator listEnd = _itemList.end();
 	GuiMenuItemEntry *listEntry;
@@ -223,7 +223,7 @@ GuiMenuItemEntry *SciGuiMenu::findItem(uint16 menuId, uint16 itemId) {
 	return NULL;
 }
 
-void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
+void Menu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
 	EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK: needed for strSplit()
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
@@ -255,7 +255,7 @@ void SciGuiMenu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, 
 	}
 }
 
-reg_t SciGuiMenu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
+reg_t Menu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
 		error("Tried to getAttribute() on non-existant menu-item %d:%d", menuId, itemId);
@@ -279,7 +279,7 @@ reg_t SciGuiMenu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId)
 	return NULL_REG;
 }
 
-void SciGuiMenu::drawBar() {
+void Menu::drawBar() {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
@@ -299,7 +299,7 @@ void SciGuiMenu::drawBar() {
 }
 
 // This helper calculates all text widths for all menus/items
-void SciGuiMenu::calculateTextWidth() {
+void Menu::calculateTextWidth() {
 	GuiMenuList::iterator menuIterator;
 	GuiMenuList::iterator menuEnd = _list.end();
 	GuiMenuEntry *menuEntry;
@@ -326,7 +326,7 @@ void SciGuiMenu::calculateTextWidth() {
 	}
 }
 
-reg_t SciGuiMenu::select(reg_t eventObject) {
+reg_t Menu::select(reg_t eventObject) {
 	int16 eventType = GET_SEL32V(_segMan, eventObject, type);
 	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
@@ -408,7 +408,7 @@ reg_t SciGuiMenu::select(reg_t eventObject) {
 	return NULL_REG;
 }
 
-GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged) {
+GuiMenuItemEntry *Menu::interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged) {
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry;
@@ -437,7 +437,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveGetItem(uint16 menuId, uint16 itemId, b
 	return firstItemEntry;
 }
 
-void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
+void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
@@ -539,7 +539,7 @@ void SciGuiMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	_gfx->BitsShow(_menuRect);
 }
 
-void SciGuiMenu::invertMenuSelection(uint16 itemId) {
+void Menu::invertMenuSelection(uint16 itemId) {
 	Common::Rect itemRect = _menuRect;
 
 	itemRect.top += (itemId - 1) * _gfx->_curPort->fontHeight;
@@ -550,7 +550,7 @@ void SciGuiMenu::invertMenuSelection(uint16 itemId) {
 	_gfx->BitsShow(itemRect);
 }
 
-GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
+GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	sciEvent curEvent;
 	uint16 newMenuId = _curMenuId;
 	uint16 newItemId = _curItemId;
@@ -637,7 +637,7 @@ GuiMenuItemEntry *SciGuiMenu::interactiveWithKeyboard() {
 	}
 }
 
-GuiMenuItemEntry *SciGuiMenu::interactiveWithMouse() {
+GuiMenuItemEntry *Menu::interactiveWithMouse() {
 	calculateTextWidth();
 
 	// TODO

@@ -76,10 +76,10 @@ struct GuiMenuItemEntry {
 };
 typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
-class SciGuiMenu {
+class Menu {
 public:
-	SciGuiMenu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor);
-	~SciGuiMenu();
+	Menu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor);
+	~Menu();
 
 	void reset();
 	void add(Common::String title, Common::String content, reg_t contentVmPtr);

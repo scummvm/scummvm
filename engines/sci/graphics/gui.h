@@ -47,8 +47,8 @@ class Cursor;
 class Gfx;
 class WindowMgr;
 class SciGuiAnimate;
-class SciGuiControls;
-class SciGuiMenu;
+class Controls;
+class Menu;
 class Text;
 class Transitions;
 class SciGui32; // for debug purposes
@@ -183,8 +183,8 @@ private:
 
 	WindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
-	SciGuiControls *_controls;
-	SciGuiMenu *_menu;
+	Controls *_controls;
+	Menu *_menu;
 	Text *_text;
 	Transitions *_transitions;
 // 	SciGui32 *_gui32; // for debug purposes

@@ -31,10 +31,10 @@ namespace Sci {
 class Gfx;
 class Font;
 class Text;
-class SciGuiControls {
+class Controls {
 public:
-	SciGuiControls(SegManager *segMan, Gfx *gfx, Text *text);
-	~SciGuiControls();
+	Controls(SegManager *segMan, Gfx *gfx, Text *text);
+	~Controls();
 
 	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
 	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);

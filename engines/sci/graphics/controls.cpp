@@ -37,22 +37,22 @@
 
 namespace Sci {
 
-SciGuiControls::SciGuiControls(SegManager *segMan, Gfx *gfx, Text *text)
+Controls::Controls(SegManager *segMan, Gfx *gfx, Text *text)
 	: _segMan(segMan), _gfx(gfx), _text(text) {
 	init();
 }
 
-SciGuiControls::~SciGuiControls() {
+Controls::~Controls() {
 }
 
-void SciGuiControls::init() {
+void Controls::init() {
 	_texteditCursorVisible = false;
 }
 
 const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
-void SciGuiControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
+void Controls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = _text->GetFontId();
 	int16 oldPenColor = _gfx->_curPort->penClr;
@@ -107,7 +107,7 @@ void SciGuiControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChar
 	_text->SetFont(oldFontId);
 }
 
-void SciGuiControls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
+void Controls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
 	int16 textWidth, i;
 	if (!_texteditCursorVisible) {
 		textWidth = 0;
@@ -125,7 +125,7 @@ void SciGuiControls::TexteditCursorDraw(Common::Rect rect, const char *text, uin
 	}
 }
 
-void SciGuiControls::TexteditCursorErase() {
+void Controls::TexteditCursorErase() {
 	if (_texteditCursorVisible) {
 		_gfx->InvertRect(_texteditCursorRect);
 		_gfx->BitsShow(_texteditCursorRect);
@@ -134,11 +134,11 @@ void SciGuiControls::TexteditCursorErase() {
 	TexteditSetBlinkTime();
 }
 
-void SciGuiControls::TexteditSetBlinkTime() {
+void Controls::TexteditSetBlinkTime() {
 	_texteditBlinkTime = g_system->getMillis() + (30 * 1000 / 60);
 }
 
-void SciGuiControls::TexteditChange(reg_t controlObject, reg_t eventObject) {
+void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 cursorPos = GET_SEL32V(_segMan, controlObject, cursor);
 	uint16 maxChars = GET_SEL32V(_segMan, controlObject, max);
 	reg_t textReference = GET_SEL32(_segMan, controlObject, text);
