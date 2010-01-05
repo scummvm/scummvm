@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/mutex.h"
 
+#include "sound/timestamp.h"
 
 class OSystem;
 
@@ -36,6 +37,7 @@ class OSystem;
 namespace Audio {
 
 class AudioStream;
+class SeekableAudioStream;
 class Channel;
 class Mixer;
 class MixerImpl;
@@ -167,7 +169,39 @@ public:
 		bool permanent = false,
 		bool reverseStereo = false) = 0;
 
-
+	/**
+	 * Start playing the given audio input stream with looping.
+	 *
+	 * Note that the sound id assigned below is unique. At most one stream
+	 * with a given id can play at any given time. Trying to play a sound
+	 * with an id that is already in use causes the new sound to be not played.
+	 *
+	 * @param type	the type (voice/sfx/music) of the stream
+	 * @param handle	a SoundHandle which can be used to reference and control
+	 *                  the stream via suitable mixer methods
+	 * @param input	the actual SeekableAudioStream to be played
+	 * @param loopCount			how often the data shall be looped (0 = infinite)
+	 * @param loopStart			the (optional) time offset from which to start playback
+	 * @param loopEnd			the (optional) time offset where the loop should end
+	 * @param id	a unique id assigned to this stream
+	 * @param volume	the volume with which to play the sound, ranging from 0 to 255
+	 * @param balance	the balance with which to play the sound, ranging from -128 to 127
+	 * @param autofreeStream	a flag indicating whether the stream should be
+	 *                          freed after playback finished
+	 * @param permanent	a flag indicating whether a plain stopAll call should
+	 *                  not stop this particular stream
+	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
+	 */
+	virtual void playInputStreamLooping(
+		SoundType type,
+		SoundHandle *handle,
+		SeekableAudioStream *input,
+		uint loopCount,
+		Timestamp loopStart = Timestamp(0, 1000), Timestamp loopEnd = Timestamp(0, 1000),
+		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
+		bool autofreeStream = true,
+		bool permanent = false,
+		bool reverseStereo = false) = 0;
 
 	/**
 	 * Stop all currently playing sounds.

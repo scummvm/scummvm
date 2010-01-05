@@ -60,7 +60,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 		char trackName[2][16];
 		sprintf(trackName[0], "track%d", track);
 		sprintf(trackName[1], "track%02d", track);
-		Audio::AudioStream *stream = 0;
+		Audio::SeekableAudioStream *stream = 0;
 
 		for (int i = 0; !stream && i < 2; ++i) {
 			/*
@@ -69,7 +69,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 			repetitions. Finally, -1 means infinitely many
 			*/
 			// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
-			stream = AudioStream::openStreamFile(trackName[i], startFrame * 40 / 3, duration * 40 / 3, (numLoops < 1) ? numLoops + 1 : numLoops);
+			stream = AudioStream::openStreamFile(trackName[i]);
 		}
 
 		// Stop any currently playing emulated track
@@ -77,7 +77,8 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 
 		if (stream != 0) {
 			_emulating = true;
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle, stream);
+			_mixer->playInputStreamLooping(Audio::Mixer::kMusicSoundType, &_handle, stream, (numLoops < 1) ? numLoops + 1 : numLoops,
+			                               Timestamp(startFrame * 40 / 3, 1000), Timestamp(startFrame * 40 / 3 + duration * 40 / 3, 1000));
 		} else {
 			_emulating = false;
 			if (!only_emulate)

@@ -170,7 +170,7 @@ private:
 	AudioStream *_input;
 
 public:
-	SimpleChannel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
+	SimpleChannel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo, int id, bool permanent);
 	~SimpleChannel();
 
 	void mix(int16 *data, uint len);
@@ -180,6 +180,23 @@ public:
 	}
 };
 
+class LoopingChannel : public Channel {
+public:
+	LoopingChannel(Mixer *mixer, Mixer::SoundType type, SeekableAudioStream *input, uint loopCount, Timestamp loopStart, Timestamp loopEnd, bool autofreeStream, bool reverseStereo, int id, bool permanent);
+	~LoopingChannel();
+
+	void mix(int16 *data, uint len);
+	bool isFinished() const;
+private:
+	uint _loopCount;
+	Timestamp _loopStart;
+	Timestamp _loopEnd;
+
+	bool _autofreeStream;
+	RateConverter *_converter;
+	SeekableAudioStream *_input;
+	Timestamp _pos;
+};
 
 #pragma mark -
 #pragma mark --- Mixer ---
@@ -283,7 +300,47 @@ void MixerImpl::playInputStream(
 	}
 
 	// Create the channel
-	SimpleChannel *chan = new SimpleChannel(this, type, input, autofreeStream, reverseStereo, id, permanent);
+	Channel *chan = new SimpleChannel(this, type, input, autofreeStream, reverseStereo, id, permanent);
+	chan->setVolume(volume);
+	chan->setBalance(balance);
+	insertChannel(handle, chan);
+}
+
+void MixerImpl::playInputStreamLooping(
+			SoundType type,
+			SoundHandle *handle,
+			SeekableAudioStream *input,
+			uint loopCount,
+			Timestamp loopStart, Timestamp loopEnd,
+			int id, byte volume, int8 balance,
+			bool autofreeStream,
+			bool permanent,
+			bool reverseStereo) {
+	Common::StackLock lock(_mutex);
+
+	if (input == 0) {
+		warning("input stream is 0");
+		return;
+	}
+
+	// Prevent duplicate sounds
+	if (id != -1) {
+		for (int i = 0; i != NUM_CHANNELS; i++)
+			if (_channels[i] != 0 && _channels[i]->getId() == id) {
+				if (autofreeStream)
+					delete input;
+				return;
+			}
+	}
+
+	if (loopEnd.msecs() == 0)
+		loopEnd = input->getLength();
+
+	// Create the channel
+	Channel *chan = new LoopingChannel(this, type, input, loopCount,
+	                                   loopStart.convertToFramerate(getOutputRate()),
+	                                   loopEnd.convertToFramerate(getOutputRate()),
+	                                   autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
@@ -586,5 +643,56 @@ void SimpleChannel::mix(int16 *data, uint len) {
 	}
 }
 
+LoopingChannel::LoopingChannel(Mixer *mixer, Mixer::SoundType type, SeekableAudioStream *input, uint loopCount,
+                               Timestamp loopStart, Timestamp loopEnd, bool autofreeStream, bool reverseStereo,
+                               int id, bool permanent)
+    : Channel(mixer, type, id, permanent), _loopCount(loopCount), _loopStart(loopStart), _loopEnd(loopEnd),
+      _autofreeStream(autofreeStream), _converter(0), _input(input), _pos(0, mixer->getOutputRate()) {
+	_input->seek(loopStart);
+	// Get a rate converter instance
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
+}
+
+LoopingChannel::~LoopingChannel() {
+	delete _converter;
+	if (_autofreeStream)
+		delete _input;
+}
+
+void LoopingChannel::mix(int16 *data, uint len) {
+	Timestamp newPos = _pos.addFrames(len);
+	int frameDiff = newPos.frameDiff(_loopEnd);
+	bool needLoop = false;
+
+	assert(frameDiff <= (int)len);
+
+	if (frameDiff >= 0) {
+		len -= frameDiff;
+		needLoop = true;
+	}
+
+	_samplesConsumed = _samplesDecoded;
+	_mixerTimeStamp = g_system->getMillis();
+	_pauseTime = 0;
+	uint samplesRead = _converter->flow(*_input, data, len, getLeftVolume(), getRightVolume());
+	_samplesDecoded += samplesRead;
+	_pos = _pos.addFrames(samplesRead);
+
+	if (needLoop) {
+		if (!_loopCount || _loopCount > 1) {
+			if (_loopCount > 1)
+				--_loopCount;
+
+			_input->seek(_loopStart);
+			samplesRead = _converter->flow(*_input, data + len * 2, frameDiff, getLeftVolume(), getRightVolume());
+			_samplesDecoded += samplesRead;
+			_pos = _loopStart.addFrames(samplesRead);
+		}
+	}
+}
+
+bool LoopingChannel::isFinished() const {
+	return (_loopCount == 1) && (_pos == _loopEnd);
+}
 
 } // End of namespace Audio
