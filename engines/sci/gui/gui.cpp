@@ -875,9 +875,14 @@ void SciGui::frameOut() {
 
 		if (priority == -1)
 			continue;
-
-		int16 planeTop = GET_SEL32V(_s->_segMan, planeObj, top);
-		int16 planeLeft = GET_SEL32V(_s->_segMan, planeObj, left);
+	
+		// FIXME: This code doesn't currently work properly because of the way we set up the
+		// view port. We are starting at 10 pixels from the top automatically. The offset should
+		// be based on the plane's top in SCI32 instead. Here we would be adding 10 to 10 and
+		// therefore drawing too low. We would need to draw each picture at the correct offset
+		// which doesn't currently happen.
+		//int16 planeTop = GET_SEL32V(_s->_segMan, planeObj, top);
+		//int16 planeLeft = GET_SEL32V(_s->_segMan, planeObj, left);
 
 		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
 			reg_t viewObj = _screenItems[itemNr];
@@ -891,8 +896,9 @@ void SciGui::frameOut() {
 				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
 				//int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
 
-				leftPos += planeLeft;
-				topPos += planeTop;
+				// FIXME: See above
+				//leftPos += planeLeft;
+				//topPos += planeTop;
 
 				// Theoretically, leftPos and topPos should be sane
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
