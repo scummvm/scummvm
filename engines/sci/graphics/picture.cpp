@@ -155,7 +155,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	bool compression = true;
 	byte curByte, runLength;
 	int16 y, lastY, x, leftX, rightX;
-	uint16 pixelNr, pixelCount;
+	int pixelNr, pixelCount;
 
 #ifdef ENABLE_SCI32
 	if (!hasSci32Header) {
