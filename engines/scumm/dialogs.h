@@ -48,6 +48,7 @@ class ScummEngine;
 
 class ScummDialog : public GUI::Dialog {
 public:
+	ScummDialog(int x, int y, int w, int h);
 	ScummDialog(Common::String name);
 
 protected:
