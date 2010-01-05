@@ -288,6 +288,8 @@ public:
 		st_sample_t *ptr;
 		st_size_t len;
 
+		st_sample_t *ostart = obuf;
+
 		if (stereo)
 			osamp *= 2;
 
@@ -316,7 +318,7 @@ public:
 
 			obuf += 2;
 		}
-		return ST_SUCCESS;
+		return (obuf - ostart) / 2;
 	}
 
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {
