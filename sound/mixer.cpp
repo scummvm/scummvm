@@ -63,11 +63,14 @@ public:
 
 	uint32 getElapsedTime();
 
-public:
-	const Mixer::SoundType _type;
-	SoundHandle _handle;
+	Mixer::SoundType getType() const { return _type; }
+
+	void setHandle(const SoundHandle handle) { _handle = handle; }
+	SoundHandle getHandle() const { return _handle; }
 
 private:
+	const Mixer::SoundType _type;
+	SoundHandle _handle;
 	bool _permanent;
 	int _pauseLevel;
 	int _id;
@@ -153,11 +156,14 @@ void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 	}
 
 	_channels[index] = chan;
-	 chan->_handle._val = index + (_handleSeed * NUM_CHANNELS);
+
+	SoundHandle chanHandle;
+	chanHandle._val = index + (_handleSeed * NUM_CHANNELS);
+
+	chan->setHandle(chanHandle);
 	_handleSeed++;
-	if (handle) {
-		*handle = chan->_handle;
-	}
+	if (handle)
+		*handle = chanHandle;
 }
 
 void MixerImpl::playRaw(
@@ -257,7 +263,7 @@ void MixerImpl::stopHandle(SoundHandle handle) {
 
 	// Simply ignore stop requests for handles of sounds that already terminated
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	delete _channels[index];
@@ -268,7 +274,7 @@ void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	_channels[index]->setVolume(volume);
@@ -278,7 +284,7 @@ void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	_channels[index]->setBalance(balance);
@@ -288,7 +294,7 @@ uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return 0;
 
 	return _channels[index]->getElapsedTime();
@@ -318,7 +324,7 @@ void MixerImpl::pauseHandle(SoundHandle handle, bool paused) {
 
 	// Simply ignore (un)pause requests for sounds that already terminated
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	_channels[index]->pause(paused);
@@ -335,7 +341,7 @@ bool MixerImpl::isSoundIDActive(int id) {
 int MixerImpl::getSoundID(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
-	if (_channels[index] && _channels[index]->_handle._val == handle._val)
+	if (_channels[index] && _channels[index]->getHandle()._val == handle._val)
 		return _channels[index]->getId();
 	return 0;
 }
@@ -343,13 +349,13 @@ int MixerImpl::getSoundID(SoundHandle handle) {
 bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
-	return _channels[index] && _channels[index]->_handle._val == handle._val;
+	return _channels[index] && _channels[index]->getHandle()._val == handle._val;
 }
 
 bool MixerImpl::hasActiveChannelOfType(SoundType type) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i] && _channels[i]->_type == type)
+		if (_channels[i] && _channels[i]->getType() == type)
 			return true;
 	return false;
 }
@@ -469,7 +475,7 @@ void SimpleChannel::mix(int16 *data, uint len) {
 		// volume is in the range 0 - kMaxMixerVolume.
 		// Hence, the vol_l/vol_r values will be in that range, too
 
-		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
+		int vol = _mixer->getVolumeForSoundType(getType()) * _volume;
 		st_volume_t vol_l, vol_r;
 
 		if (_balance == 0) {
