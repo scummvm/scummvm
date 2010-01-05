@@ -74,21 +74,21 @@ bool Sound::isVoicePresent(const char *file) {
 }
 
 int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
-	Audio::AudioStream *audioStream = getVoiceStream(file);
+	Audio::SeekableAudioStream *audioStream = getVoiceStream(file);
 
 	if (!audioStream) {
 		return 0;
 	}
 
-	int playTime = audioStream->getTotalPlayTime();
+	int playTime = audioStream->getLength().msecs();
 	playVoiceStream(audioStream, handle, volume, isSfx);
 	return playTime;
 }
 
-Audio::AudioStream *Sound::getVoiceStream(const char *file) {
+Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) {
 	char filenamebuffer[25];
 
-	Audio::AudioStream *audioStream = 0;
+	Audio::SeekableAudioStream *audioStream = 0;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, _supportedCodecs[i].fileext);

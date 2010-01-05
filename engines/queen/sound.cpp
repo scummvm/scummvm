@@ -94,9 +94,6 @@ public:
 	int getRate() const {
 		return _rate;
 	}
-	int32 getTotalPlayTime() {
-		return _stream->getTotalPlayTime();
-	}
 };
 
 class SilentSound : public PCSound {

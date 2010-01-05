@@ -58,7 +58,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	char file3[13];
 	file3[0] = 0;
 
-	Common::List<Audio::AudioStream *> newSpeechList;
+	SpeechList newSpeechList;
 
 	snprintf(pattern2, sizeof(pattern2), "%02d", id & 0x4000 ? 0 : _curTlkFile);
 
@@ -95,18 +95,18 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	while (_sound->allVoiceChannelsPlaying())
 		delay(_tickLength);
 
-	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
+	for (SpeechList::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;
 	_speechList.clear();
 	_speechList = newSpeechList;
 
 	_activeVoiceFileTotalTime = 0;
-	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i) {
+	for (SpeechList::iterator i = _speechList.begin(); i != _speechList.end(); ++i) {
 		// Just in case any file loading failed: Remove the bad streams here.
 		if (!*i)
 			i = _speechList.erase(i);
 		else
-			_activeVoiceFileTotalTime += (*i)->getTotalPlayTime();
+			_activeVoiceFileTotalTime += (*i)->getLength().msecs();
 	}
 
 	_sound->playVoiceStream(*_speechList.begin(), &_speechHandle);
@@ -151,7 +151,7 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 	_activeVoiceFileTotalTime = 0;
 	_nextSpeechId = _nextSpeaker = -1;
 
-	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
+	for (SpeechList::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;
 	_speechList.clear();
 

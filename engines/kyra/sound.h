@@ -186,7 +186,7 @@ public:
 	 */
 	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
 
-	Audio::AudioStream *getVoiceStream(const char *file);
+	Audio::SeekableAudioStream *getVoiceStream(const char *file);
 
 	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
 

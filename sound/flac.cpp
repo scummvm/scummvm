@@ -143,12 +143,6 @@ public:
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
-	int32 getTotalPlayTime() const {
-		if (!_numLoops)
-			return kUnknownPlayTime;
-		return _totalPlayTime * _numLoops;
-	}
-
 	bool seek(const Timestamp &where);
 	// TODO: We can definitly increase the precision here, since FLAC allows us to catch the sample count
 	Timestamp getLength() const { return Timestamp(_totalPlayTime, getRate()); }
@@ -256,7 +250,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 			_lastSample = (FLAC__uint64)(endTime * (_streaminfo.sample_rate / 1000.0));
 
 			if (_firstSample == 0 || seekAbsolute(_firstSample)) {
-				int32 samples = kUnknownPlayTime;
+				int32 samples = -1;
 
 				if (!_lastSample) {
 					if (_streaminfo.total_samples)
@@ -265,7 +259,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 					samples = _lastSample - _firstSample - 1;
 				}
 
-				if (samples != kUnknownPlayTime && samples >= 0 && numLoops) {
+				if (samples != -1 && samples >= 0 && numLoops) {
 					const int32 rate = _streaminfo.sample_rate;
 
 					int32 seconds = samples / rate;
@@ -273,7 +267,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 
 					_totalPlayTime = (seconds * 1000 + milliseconds);
 				} else {
-					_totalPlayTime = kUnknownPlayTime;
+					_totalPlayTime = 0;
 				}
 
 				return; // no error occured

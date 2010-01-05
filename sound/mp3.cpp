@@ -93,11 +93,6 @@ public:
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
 	bool isStereo() const		{ return MAD_NCHANNELS(&_frame.header) == 2; }
 	int getRate() const			{ return _frame.header.samplerate; }
-	int32 getTotalPlayTime() const {
-		if (!_numLoops)
-			return kUnknownPlayTime;
-		return _totalPlayTime * _numLoops;
-	}
 
 	bool seek(const Timestamp &where);
 	// TODO: Maybe we can have a more precise implementation of this
@@ -167,7 +162,7 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 	_totalPlayTime = mad_timer_count(length, MAD_UNITS_MILLISECONDS);
 
 	if (mad_timer_sign(length) < 0)
-		_totalPlayTime = kUnknownPlayTime;
+		_totalPlayTime = 0;
 
 	// Decode the first chunk of data. This is necessary so that _frame
 	// is setup and isStereo() and getRate() return correct results.

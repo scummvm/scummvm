@@ -489,7 +489,8 @@ private:
 	uint16 _envSfxQueuedBlocks[10];
 	int _nextSpeechId;
 	int _nextSpeaker;
-	Common::List<Audio::AudioStream*> _speechList;
+	typedef Common::List<Audio::SeekableAudioStream *> SpeechList;
+	SpeechList _speechList;
 
 	int _curTlkFile;
 

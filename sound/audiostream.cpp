@@ -168,12 +168,6 @@ public:
 	bool endOfData() const			{ return _ptr >= _end; }
 
 	int getRate() const				{ return _rate; }
-	int32 getTotalPlayTime() const	{
-		if (!_numLoops)
-			return kUnknownPlayTime;
-		return _playtime * _numLoops;
-	}
-
 	bool seek(const Timestamp &where);
 	// TODO: We can definitly increase the precision here, since we know the exact sample count
 	Timestamp getLength() const { return Timestamp(_playtime, getRate()); }
@@ -331,11 +325,6 @@ public:
 	bool endOfData() const			{ return (_currentBlock == _audioBlockCount - 1) && (_diskLeft == 0) && (_bufferLeft == 0); }
 
 	int getRate() const			{ return _rate; }
-	int32 getTotalPlayTime() const	{
-		if (!_numLoops)
-			return kUnknownPlayTime;
-		return _playtime * _numLoops;
-	}
 	// TODO: We can definitly increase the precision here, since we know the exact sample count
 	Timestamp getLength() const { return Timestamp(_playtime, getRate()); }
 

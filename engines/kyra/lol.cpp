@@ -405,7 +405,7 @@ LoLEngine::~LoLEngine() {
 		delete *i;
 	_spellProcs.clear();
 
-	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
+	for (SpeechList::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;
 	_speechList.clear();
 

@@ -127,17 +127,6 @@ public:
 	}
 	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
-	int32 getTotalPlayTime() const {
-		if (!_numLoops)
-			return AudioStream::kUnknownPlayTime;
-
-#ifdef USE_TREMOR
-		return (_endTime - _startTime) * _numLoops;
-#else
-		return (int32)((_endTime - _startTime) * 1000.0) * _numLoops;
-#endif
-	}
-
 	bool seek(const Timestamp &where);
 	// TODO: Maybe we can have a more precise implementation of this
 	Timestamp getLength() const {

@@ -44,7 +44,6 @@ public:
 	bool isStereo() const { return _impl->isStereo(); }
 	bool endOfData() const { return _impl->endOfData() | _endOfData; }
 	int getRate() const { return _rate; }
-	int32 getTotalPlayTime() const { return _impl->getTotalPlayTime(); }
 
 	void setRate(int newRate) { _rate = newRate; }
 	void beginFadeOut(uint32 millis);

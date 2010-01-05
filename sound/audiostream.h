@@ -117,20 +117,6 @@ public:
 	 * @param numLoops number of loops to play, 0 - infinite
 	 */
 	virtual uint getNumPlayedLoops() { return 0; }
-
-	enum {
-		kUnknownPlayTime = -1
-	};
-
-	/**
-	 * Returns total playtime of the AudioStream object.
-	 * Note that this does not require to return any playtime, if the
-	 * playtime of the AudioStream is unknown it returns 'kUnknownPlayTime'.
-	 * @see kUnknownPlayTime
-	 *
-	 * @return	playtime in milliseconds
-	 */
-	virtual int32 getTotalPlayTime() const { return kUnknownPlayTime; }
 };
 
 /**
