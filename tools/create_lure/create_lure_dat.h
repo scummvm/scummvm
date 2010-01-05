@@ -415,6 +415,15 @@ public:
 extern File lureExe;
 extern void add_talk_offset(uint16 offset);
 
+enum LureLanguage {
+	LANG_IT_ITA = 10,
+	LANG_FR_FRA = 6,
+	LANG_DE_DEU = 7,
+	LANG_ES_ESP = 17,
+	LANG_EN_ANY = 3,
+	LANG_UNKOWN = -1
+};
+
 extern Common::Language language;
 extern uint16 dataSegment;
 
