@@ -480,17 +480,6 @@ const char *convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceM
  */
 int game_init(EngineState *s);
 
-#ifdef INCLUDE_OLDGFX
-/**
- * Initializes the graphics part of an SCI game
- * This function may only be called if game_init() did not initialize
- * the graphics data.
- * @param[in] s	The state to initialize the graphics in
- * @return		0 on success, 1 if an error occured
- */
-int game_init_graphics(EngineState *s);
-#endif
-
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 /**
  * Initializes the sound part of an SCI game

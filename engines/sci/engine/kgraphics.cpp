@@ -33,7 +33,6 @@
 #include "sci/video/seq_decoder.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/gfx/operations.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
@@ -295,9 +294,6 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
 	}
 
-#ifdef INCLUDE_OLDGFX
-	gfxop_update(s->gfx_state);
-#endif
 	return s->r_acc;
 }
 

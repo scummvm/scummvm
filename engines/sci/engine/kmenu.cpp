@@ -27,11 +27,6 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#ifdef INCLUDE_OLDGFX
-#include "sci/gfx/gfx_gui.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
-#include "sci/gfx/menubar.h"
-#endif
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"
 

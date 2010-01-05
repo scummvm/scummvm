@@ -81,7 +81,6 @@ public:
 	SciGuiMenu(SciEvent *event, SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor);
 	~SciGuiMenu();
 
-	void init(GfxState *gfxstate);
 	void reset();
 	void add(Common::String title, Common::String content, reg_t contentVmPtr);
 	void setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
@@ -100,7 +99,6 @@ private:
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
 	SciEvent *_event;
-	GfxState *_gfxstate;
 	SegManager *_segMan;
 	SciGuiGfx *_gfx;
 	SciGuiText *_text;

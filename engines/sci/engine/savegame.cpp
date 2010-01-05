@@ -31,10 +31,6 @@
 
 #include "sci/sci.h"
 #include "sci/event.h"
-#ifdef INCLUDE_OLDGFX
-#include "sci/gfx/menubar.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
-#endif
 
 #include "sci/engine/state.h"
 #include "sci/engine/message.h"
@@ -217,39 +213,6 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 	sync_reg_t(s, obj);
 }
 
-
-#ifdef INCLUDE_OLDGFX
-
-void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsSint32LE(_type);
-	s.syncString(_keytext);
-	s.skip(4, VER(9), VER(9)); 	// OBSOLETE: Used to be keytext_size
-
-	s.syncAsSint32LE(_flags);
-	s.syncBytes(_said, MENU_SAID_SPEC_SIZE);
-	sync_reg_t(s, _saidPos);
-	s.syncString(_text);
-	sync_reg_t(s, _textPos);
-	s.syncAsSint32LE(_modifiers);
-	s.syncAsSint32LE(_key);
-	s.syncAsSint32LE(_enabled);
-	s.syncAsSint32LE(_tag);
-}
-
-void Menu::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncString(_title);
-	s.syncAsSint32LE(_titleWidth);
-	s.syncAsSint32LE(_width);
-
-	syncArray<MenuItem>(s, _items);
-}
-
-void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
-	syncArray<Menu>(s, _menus);
-}
-
-#endif
-
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be reserved_id
 	s.syncAsSint32LE(_exportsAreWide);
@@ -360,16 +323,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncString(tmp);			// OBSOLETE: Used to be game_version
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
 
-#ifdef INCLUDE_OLDGFX
-	if (s.isLoading()) {
-		//free(menubar);
-		_menubar = new Menubar();
-	} else
-		assert(_menubar);
-	_menubar->saveLoadWithSerializer(s);
-#else
-	// FIXME: This code goes out of sync when loading. Find out why
-
 	// OBSOLETE: Saved menus. Skip all of the saved data
 	if (s.getVersion() < 14) {
 		int totalMenus = 0;
@@ -398,7 +351,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 		}
 	}
-#endif
 
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
@@ -416,11 +368,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortRect.right);
 		s.syncAsSint16LE(picPortTop);
 		s.syncAsSint16LE(picPortLeft);
-
-		#ifndef USE_OLDGFX
-			if (s.isLoading())
-				_gui->setPortPic(picPortRect, picPortTop, picPortLeft, true);
-		#endif
 	}
 
 	sync_SegManagerPtr(s, resMan, _segMan);
@@ -825,9 +772,6 @@ void SegManager::reconstructScripts(EngineState *s) {
 		}
 	}
 }
-#ifdef INCLUDE_OLDGFX
-int _reset_graphics_input(EngineState *s);
-#endif
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 static void reconstruct_sounds(EngineState *s) {
@@ -912,7 +856,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_event = new SciEvent();
 
 	// Copy some old data
-	retval->gfx_state = s->gfx_state;
 	retval->_soundCmd = s->_soundCmd;
 
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
@@ -925,10 +868,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->execution_stack_base = 0;
 
 	// Now copy all current state information
-#ifdef INCLUDE_OLDGFX
-	// Graphics and input state:
-	retval->old_screen = 0;
-#endif
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	temp = retval->_sound._songlib;
@@ -947,9 +886,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->_segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
-#ifdef INCLUDE_OLDGFX
-	_reset_graphics_input(retval);
-#endif
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
@@ -964,9 +900,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->bp_list = s->bp_list;
 
 	retval->successor = NULL;
-#ifdef INCLUDE_OLDGFX
-	retval->pic_priority_table = (int *)(retval->gfx_state->pic) ? retval->gfx_state->pic->priorityTable : NULL;
-#endif
 	retval->_gameId = s->_gameId;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS

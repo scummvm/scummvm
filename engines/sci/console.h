@@ -81,29 +81,11 @@ private:
 	bool cmdExit(int argc, const char **argv);
 	bool cmdListSaves(int argc, const char **argv);
 	// Screen
-	bool cmdSci0Palette(int argc, const char **argv);
-	bool cmdClearScreen(int argc, const char **argv);
-	bool cmdRedrawScreen(int argc, const char **argv);
-	bool cmdFillScreen(int argc, const char **argv);
 	bool cmdShowMap(int argc, const char **argv);
-	bool cmdUpdateZone(int argc, const char **argv);
-	bool cmdPropagateZone(int argc, const char **argv);
-	bool cmdPriorityBands(int argc, const char **argv);
 	// Graphics
 	bool cmdDrawPic(int argc, const char **argv);
-	bool cmdDrawRect(int argc, const char **argv);
-	bool cmdDrawCel(int argc, const char **argv);
-	bool cmdViewInfo(int argc, const char **argv);
 	bool cmdUndither(int argc, const char **argv);
 	bool cmdPlayVideo(int argc, const char **argv);
-	// GUI
-	bool cmdCurrentPort(int argc, const char **argv);
-	bool cmdPrintPort(int argc, const char **argv);
-	bool cmdVisualState(int argc, const char **argv);
-	bool cmdFlushPorts(int argc, const char **argv);
-	bool cmdDynamicViews(int argc, const char **argv);
-	bool cmdDroppedViews(int argc, const char **argv);
-	bool cmdPrintWidget(int argc, const char **argv);
 	// Segments
 	bool cmdPrintSegmentTable(int argc, const char **argv);
 	bool cmdSegmentInfo(int argc, const char **argv);

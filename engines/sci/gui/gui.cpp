@@ -43,8 +43,6 @@
 #include "sci/gui/gui_transitions.h"
 #include "sci/gui/gui_view.h"
 
-#include "sci/gfx/operations.h"
-
 namespace Sci {
 
 // for debug purposes
@@ -90,7 +88,6 @@ void SciGui::init(bool usesOldGfxFunctions) {
 
 	_gfx->init(_text);
 	_windowMgr->init(_s->_gameId);
-	_menu->init(_s->gfx_state);
 	initPriorityBands();
 }
 
@@ -329,7 +326,6 @@ void SciGui::drawMenuBar(bool clear) {
 void SciGui::menuReset() {
 	delete _menu;
 	_menu = new SciGuiMenu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
-	_menu->init(_s->gfx_state);
 }
 
 void SciGui::menuAdd(Common::String title, Common::String content, reg_t contentVmPtr) {

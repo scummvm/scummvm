@@ -35,17 +35,6 @@ MODULE_OBJS := \
 	engine/static_selectors.o \
 	engine/state.o \
 	engine/vm.o \
-	gfx/gfx_driver.o \
-	gfx/gfx_gui.o \
-	gfx/gfx_pixmap_scale.o \
-	gfx/gfx_resmgr.o \
-	gfx/gfx_resource.o \
-	gfx/gfx_support.o \
-	gfx/gfx_tools.o \
-	gfx/gfx_widgets.o \
-	gfx/menubar.o \
-	gfx/operations.o \
-	gfx/palette.o \
 	gui/gui.o \
 	gui/gui_animate.o \
 	gui/gui_controls.o \
@@ -61,12 +50,6 @@ MODULE_OBJS := \
 	gui/gui_transitions.o \
 	gui/gui_view.o \
 	gui/gui_windowmgr.o \
-	gui32/gui32.o \
-	gui32/font.o \
-	gui32/res_font.o \
-	gui32/res_pal.o \
-	gui32/res_pic.o \
-	gui32/res_view.o \
 	sfx/audio.o \
 	sfx/midiparser.o \
 	sfx/music.o \

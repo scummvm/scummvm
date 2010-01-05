@@ -36,20 +36,12 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
-#include "sci/gfx/operations.h"	// fog GfxState
-#ifdef INCLUDE_OLDGFX
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
-#include "sci/gui32/gui32.h"
-#endif
 #include "sci/sfx/audio.h"
 #include "sci/sfx/soundcmd.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_screen.h"
-
-#include "sci/gfx/gfx_resource.h"
-#include "sci/gfx/gfx_tools.h"
 
 namespace Sci {
 
@@ -146,15 +138,7 @@ Common::Error SciEngine::run() {
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
-#ifdef INCLUDE_OLDGFX
-	#ifndef USE_OLDGFX
-		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
-	#else
-		_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
-	#endif
-#else
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
-#endif
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
@@ -172,21 +156,9 @@ Common::Error SciEngine::run() {
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _audio, soundVersion);
 
-	GfxState gfx_state;
-	_gamestate->gfx_state = &gfx_state;
-
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("undither", "true");
 	screen->unditherSetState(ConfMan.getBool("undither"));
-
-#ifdef INCLUDE_OLDGFX
-	gfxop_init(&gfx_state, _resMan, screen, palette, 1);
-
-	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
-		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
-		return Common::kUnknownError;
-	}
-#endif
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (game_init_sound(_gamestate, 0, soundVersion)) {
@@ -212,10 +184,6 @@ Common::Error SciEngine::run() {
 	delete palette;
 	delete screen;
 	delete _gamestate;
-
-#ifdef INCLUDE_OLDGFX
-	gfxop_exit(&gfx_state);
-#endif
 
 	return Common::kNoError;
 }

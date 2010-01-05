@@ -41,7 +41,6 @@ namespace Common {
 #include "sci/engine/kernel.h"	// for kfunct_sig_pair_t
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/gfx/gfx_system.h"
 #include "sci/sfx/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/iterator/core.h"
@@ -148,8 +147,6 @@ public:
 
 	SciEvent *_event; // Event handling
 
-	GfxState *gfx_state; /**< Graphics state and driver */
-
 	AudioPlayer *_audio;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState _sound; /**< sound subsystem */
@@ -158,35 +155,6 @@ public:
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 
 	byte restarting_flags; /**< Flags used for restarting */
-
-#ifdef INCLUDE_OLDGFX
-	int *pic_priority_table; /**< 16 entries with priorities or NULL if not present */
-	byte pic_not_valid; /**< Is 0 if the background picture is "valid" */
-	byte pic_is_new; /**< New pic was loaded or port was opened */
-	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */
-
-	GfxPort *port; /**< The currently active port */
-
-	gfx_color_t ega_colors[16]; /**< The 16 EGA colors- for SCI0(1) */
-
-	GfxVisual *visual; /**< A visual widget, containing all ports */
-
-	GfxPort *titlebar_port; /**< Title bar viewport (0,0,9,319) */
-	GfxPort *wm_port; /**< window manager viewport and designated &heap[0] view (10,0,199,319) */
-	GfxPort *picture_port; /**< The background picture viewport (10,0,199,319) */
-	GfxPort *iconbar_port; /**< Full-screen port used for non-clipped icon bar draw in SCI1 */
-
-	gfx_map_mask_t pic_visible_map; /**< The number of the map to display in update commands */
-	int pic_animate; /**< The animation used by Animate() to display the picture */
-
-	GfxList *dyn_views; /**< Pointers to pic and dynamic view lists */
-	GfxList *drop_views; /**< A list Animate() can dump dropped dynviews into */
-
-	int priority_first; /**< The line where priority zone 0 ends */
-	int priority_last; /**< The line where the highest priority zone starts */
-
-	Menubar *_menubar; /**< The menu bar */
-#endif
 
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
@@ -309,24 +277,6 @@ private:
 	kLanguage charToLanguage(const char c) const;
 	bool _usesCdTrack;
 };
-
-#ifdef INCLUDE_OLDGFX
-
-/**
- * Retrieves the gfx_pixmap_color_t associated with a game color index.
- * @param s			game state
- * @param color		color to look up
- * @return the requested color
- */
-PaletteEntry get_pic_color(EngineState *s, int color);
-
-/* Functions used in gui32\gui32.cpp */
-reg_t graph_save_box(EngineState *s, rect_t area);
-void graph_restore_box(EngineState *s, reg_t handle);
-void assert_primary_widget_lists(EngineState *s);
-void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport);
-
-#endif
 
 } // End of namespace Sci
 

@@ -35,10 +35,6 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/message.h"
 #include "sci/gui/gui.h"
-#ifdef INCLUDE_OLDGFX
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
-#include "sci/gfx/menubar.h"
-#endif
 #include "sci/sfx/music.h"
 
 namespace Sci {
@@ -179,133 +175,6 @@ const char *convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceM
 	return strdup(sierraId.c_str());
 }
 
-#ifdef INCLUDE_OLDGFX
-int _reset_graphics_input(EngineState *s) {
-	Resource *resource;
-	int font_nr;
-	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
-	debug(2, "Initializing graphics");
-
-	if (s->resMan->getViewType() == kViewEga) {
-		for (int i = 0; i < 16; i++) {
-			gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
-					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1);
-			s->gfx_state->driver->getMode()->palette->makeSystemColor(i, s->ega_colors[i].visual);
-		}
-	} else {
-		// Allocate SCI1 system colors
-		gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
-		s->gfx_state->driver->getMode()->palette->makeSystemColor(0, black.visual);
-
-		// Check for Amiga palette file.
-		Common::File file;
-		if (file.open("spal")) {
-			s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1_amiga(file));
-			file.close();
-		} else {
-			resource = s->resMan->findResource(ResourceId(kResourceTypePalette, 999), 1);
-			if (resource) {
-				if (s->resMan->getViewType() != kViewVga11)
-					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
-				else
-					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
-				s->resMan->unlockResource(resource);
-			} else {
-				debug(2, "Couldn't find the default palette!");
-			}
-		}
-	}
-
-	gfxop_fill_box(s->gfx_state, gfx_rect(0, 0, 320, 200), s->ega_colors[0]); // Fill screen black
-	gfxop_update(s->gfx_state);
-
-	s->pic_is_new = 0;
-	s->pic_visible_map = GFX_MASK_NONE; // Other values only make sense for debugging
-	s->dyn_views = NULL; // no DynViews
-	s->drop_views = NULL; // And, consequently, no list for dropped views
-
-	font_nr = -1;
-	do {
-		resource = s->resMan->testResource(ResourceId(kResourceTypeFont, ++font_nr));
-	} while ((!resource) && (font_nr < 65536));
-
-	if (!resource) {
-		debug(2, "No text font was found.");
-		return 1;
-	}
-
-	s->visual = new GfxVisual(s->gfx_state, font_nr);
-
-	s->wm_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
-
-	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
-	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
-
-	if (s->resMan->isVGA()) {
-		// This bit sets the foreground and background colors in VGA SCI games
-		gfx_color_t fgcolor;
-		gfx_color_t bgcolor;
-		memset(&fgcolor, 0, sizeof(gfx_color_t));
-		memset(&bgcolor, 0, sizeof(gfx_color_t));
-
-#if 0
-		fgcolor.visual = s->gfx_state->resstate->static_palette[0];
-		fgcolor.mask = GFX_MASK_VISUAL;
-		bgcolor.visual = s->gfx_state->resstate->static_palette[255];
-		bgcolor.mask = GFX_MASK_VISUAL;
-#endif
-		s->titlebar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 10), fgcolor, bgcolor);
-	} else {
-		s->titlebar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 10), s->ega_colors[0], s->ega_colors[15]);
-	}
-	s->titlebar_port->_color.mask |= GFX_MASK_PRIORITY;
-	s->titlebar_port->_color.priority = 11;
-	s->titlebar_port->_bgcolor.mask |= GFX_MASK_PRIORITY;
-	s->titlebar_port->_bgcolor.priority = 11;
-	s->titlebar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
-
-	// but this is correct
-	s->picture_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
-
-	s->visual->add((GfxContainer *)s->visual, s->wm_port);
-	s->visual->add((GfxContainer *)s->visual, s->titlebar_port);
-	s->visual->add((GfxContainer *)s->visual, s->picture_port);
-	s->visual->add((GfxContainer *)s->visual, s->iconbar_port);
-	// Add ports to visual
-
-	s->port = s->picture_port; // Currently using the picture port
-
-#if 0
-	s->titlebar_port->_bgcolor.mask |= GFX_MASK_PRIORITY;
-	s->titlebar_port->_bgcolor.priority = 11; // Standard priority for the titlebar port
-#endif
-
-	s->priority_first = 42; // Priority zone 0 ends here
-
-	if (s->usesOldGfxFunctions())
-		s->priority_last = 200;
-	else
-		s->priority_last = 190;
-
-	return 0;
-}
-
-int game_init_graphics(EngineState *s) {
-	return _reset_graphics_input(s);
-}
-
-static void _free_graphics_input(EngineState *s) {
-	debug(2, "Freeing graphics");
-
-	delete s->visual;
-
-	s->wm_port = s->titlebar_port = s->picture_port = NULL;
-	s->visual = NULL;
-	s->dyn_views = NULL;
-	s->port = NULL;
-}
-#endif
-
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion) {
 	if (getSciVersion() > SCI_VERSION_0_LATE)
@@ -358,10 +227,6 @@ int script_init_engine(EngineState *s) {
 
 	debug(2, "Engine initialized");
 
-#ifdef INCLUDE_OLDGFX
-	s->pic_priority_table = NULL;
-#endif
-
 	return 0;
 }
 
@@ -401,10 +266,6 @@ int game_init(EngineState *s) {
 	s->parserIsValid = false; // Invalidate parser
 	s->parser_event = NULL_REG; // Invalidate parser event
 
-#ifdef INCLUDE_OLDGFX
-	if (s->gfx_state && _reset_graphics_input(s))
-		return 1;
-#endif
 	// Initialize menu TODO: Actually this should be another init()
 	s->_gui->menuReset();
 
@@ -429,10 +290,6 @@ int game_init(EngineState *s) {
 	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags, s->resMan);
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameId.c_str(), PRINT_REG(s->_gameObj));
-
-#ifdef INCLUDE_OLDGFX
-	s->_menubar = new Menubar(); // Create menu bar
-#endif
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
@@ -471,12 +328,6 @@ int game_exit(EngineState *s) {
 	// TODO Free parser segment here
 
 	// TODO Free scripts here
-
-#ifdef INCLUDE_OLDGFX
-	delete s->_menubar;
-
-	_free_graphics_input(s);
-#endif
 
 	// Close all opened file handles
 	s->_fileHandles.clear();

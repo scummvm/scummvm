@@ -35,11 +35,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel_types.h"	// for determine_reg_type
-#ifdef INCLUDE_OLDGFX
-#include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
-#include "sci/gfx/gfx_state_internal.h"
-#include "sci/gfx/gfx_widgets.h"	// for getPort
-#endif
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sfx/iterator/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
@@ -111,31 +106,11 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 	DCmd_Register("list_saves",			WRAP_METHOD(Console, cmdListSaves));
 	// Screen
-	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
-	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));
-	DCmd_Register("redraw_screen",		WRAP_METHOD(Console, cmdRedrawScreen));
-	DCmd_Register("fill_screen",		WRAP_METHOD(Console, cmdFillScreen));
 	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
-	DCmd_Register("update_zone",		WRAP_METHOD(Console, cmdUpdateZone));
-	DCmd_Register("propagate_zone",		WRAP_METHOD(Console, cmdPropagateZone));
-	DCmd_Register("priority_bands",		WRAP_METHOD(Console, cmdPriorityBands));
 	// Graphics
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
-	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
-	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
-	DCmd_Register("view_info",			WRAP_METHOD(Console, cmdViewInfo));
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
-	// GUI
-	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
-	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
-	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
-	DCmd_Register("flush_visual",		WRAP_METHOD(Console, cmdFlushPorts));
-	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
-	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
-#ifdef GFXW_DEBUG_WIDGETS
-	DCmd_Register("print_widget",		WRAP_METHOD(Console, cmdPrintWidget));
-#endif
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
@@ -330,33 +305,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" room - Gets or sets the current room number\n");
 	DebugPrintf(" exit - Exits the game\n");
 	DebugPrintf("\n");
-	DebugPrintf("Screen:\n");
-	DebugPrintf(" sci0_palette - Sets the SCI0 palette to use (EGA, Amiga or grayscale)\n");
-	DebugPrintf(" clear_screen - Clears the screen\n");
-	DebugPrintf(" redraw_screen - Redraws the screen\n");
-	DebugPrintf(" fill_screen - Fills the screen with one of the EGA colors\n");
-	DebugPrintf(" show_map - Shows one of the screen maps (visual, priority or control)\n");
-	DebugPrintf(" update_zone - Propagates a rectangular area from the back buffer to the front buffer\n");
-	DebugPrintf(" propagate_zone - Propagates a rectangular area from a lower graphics buffer to a higher one\n");
-	DebugPrintf(" priority_bands - Shows information about priority bands\n");
-	DebugPrintf("\n");
 	DebugPrintf("Graphics:\n");
 	DebugPrintf(" draw_pic - Draws a pic resource\n");
-	DebugPrintf(" draw_rect - Draws a rectangle to the screen with one of the EGA colors\n");
-	DebugPrintf(" draw_cel - Draws a single view cel to the center of the screen\n");
-	DebugPrintf(" view_info - Displays information for the specified view\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
-	DebugPrintf("\n");
-	DebugPrintf("GUI:\n");
-	DebugPrintf(" current_port - Shows the ID of the currently active port\n");
-	DebugPrintf(" print_port - Prints information about a port\n");
-	DebugPrintf(" visual_state - Shows the state of the current visual widget\n");
-	DebugPrintf(" flush_visual - Flushes dynamically allocated ports (for memory profiling)\n");
-	DebugPrintf(" dynamic_views - Lists active dynamic views\n");
-	DebugPrintf(" dropped_views - Lists dropped dynamic views\n");
-#ifdef GFXW_DEBUG_WIDGETS
-	DebugPrintf(" print_widget - Shows active widgets (no params) or information on the specified widget indices\n");
-#endif
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
 	DebugPrintf(" segment_table / segtable - Lists all segments\n");
@@ -699,22 +650,6 @@ bool Console::cmdResourceTypes(int argc, const char **argv) {
 	return true;
 }
 
-extern int sci0_palette;
-
-bool Console::cmdSci0Palette(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Sets the SCI0 palette to use - 0: EGA, 1: AGI/Amiga, 2: Grayscale\n");
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	sci0_palette = atoi(argv[1]);
-	cmdRedrawScreen(argc, argv);
-#endif
-
-	return false;
-}
-
 bool Console::cmdHexgrep(int argc, const char **argv) {
 	if (argc < 4) {
 		DebugPrintf("Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers.\n");
@@ -830,24 +765,6 @@ bool Console::cmdList(int argc, const char **argv) {
 	}
 
 	return true;
-}
-
-bool Console::cmdClearScreen(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
-#endif
-	return false;
-}
-
-bool Console::cmdRedrawScreen(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	_vm->_gamestate->visual->draw(Common::Point(0, 0));
-	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update(_vm->_gamestate->gfx_state);
-	kernel_sleep(_vm->_gamestate->_event, 0);
-#endif
-	return false;
 }
 
 bool Console::cmdSaveGame(int argc, const char **argv) {
@@ -1055,121 +972,15 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 bool Console::cmdDrawPic(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Draws a pic resource\n");
-		DebugPrintf("Usage: %s <nr> [<pal>] [<fl>]\n", argv[0]);
+		DebugPrintf("Usage: %s <nr>\n", argv[0]);
 		DebugPrintf("where <nr> is the number of the pic resource to draw\n");
-		DebugPrintf("<pal> is the optional default palette for the pic (default: 0)\n");
-		DebugPrintf("<fl> are any pic draw flags (default: 1)\n");
 		return true;
 	}
 
-	int flags = 1, default_palette = 0;
-
-	if (argc > 2)
-		default_palette = atoi(argv[2]);
-
-	if (argc == 4)
-		flags = atoi(argv[3]);
-
-#ifdef INCLUDE_OLDGFX
-	gfxop_new_pic(_vm->_gamestate->gfx_state, atoi(argv[1]), flags, default_palette);
-	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update(_vm->_gamestate->gfx_state);
-	kernel_sleep(_vm->_gamestate->_event, 0);
-#else
 	_vm->_gamestate->_gui->drawPicture(atoi(argv[1]), 100, false, false, false, 0);
 	_vm->_gamestate->_gui->animateShowPic();
-#endif
 
 	return false;
-}
-
-bool Console::cmdDrawRect(int argc, const char **argv) {
-	if (argc != 6) {
-		DebugPrintf("Draws a rectangle to the screen with one of the EGA colors\n");
-		DebugPrintf("Usage: %s <x> <y> <width> <height> <color>\n", argv[0]);
-		DebugPrintf("where <color> is the EGA color to use (0-15)\n");
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	int col = CLIP<int>(atoi(argv[5]), 0, 15);
-
-	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]),
-										atoi(argv[3]), atoi(argv[4])), _vm->_gamestate->ega_colors[col]);
-	gfxop_update(_vm->_gamestate->gfx_state);
-#endif
-
-	return false;
-}
-
-bool Console::cmdDrawCel(int argc, const char **argv) {
-	if (argc != 4) {
-		DebugPrintf("Draws a single view cel to the center of the screen\n");
-		DebugPrintf("Usage: %s <view> <loop> <cel> <palette>\n", argv[0]);
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	int view = atoi(argv[1]);
-	int loop = atoi(argv[2]);
-	int cel = atoi(argv[3]);
-	int palette = atoi(argv[4]);
-
-	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
-	gfxop_draw_cel(_vm->_gamestate->gfx_state, view, loop, cel, Common::Point(160, 100), _vm->_gamestate->ega_colors[0], palette);
-	gfxop_update(_vm->_gamestate->gfx_state);
-#endif
-
-	return false;
-}
-
-bool Console::cmdViewInfo(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Displays the number of loops and cels of each loop\n");
-		DebugPrintf("for the specified view resource and palette.");
-		DebugPrintf("Usage: %s <view> <palette>\n", argv[0]);
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	int view = atoi(argv[1]);
-	int palette = atoi(argv[2]);
-	int loops, i;
-	gfxr_view_t *view_pixmaps = NULL;
-	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
-
-	DebugPrintf("Resource view.%d ", view);
-
-	loops = _vm->_gamestate->_gui->getLoopCount(view);
-
-	if (loops < 0)
-		DebugPrintf("does not exist.\n");
-	else {
-		DebugPrintf("has %d loops:\n", loops);
-
-		for (i = 0; i < loops; i++) {
-			int j, cels = _vm->_gamestate->_gui->getCelCount(view, i);
-
-			DebugPrintf("Loop %d: %d cels.\n", i, cels);
-			for (j = 0; j < cels; j++) {
-				int width;
-				int height;
-				Common::Point mod;
-
-				// Show pixmap on screen
-				view_pixmaps = _vm->_gamestate->gfx_state->gfxResMan->getView(view, &i, &j, palette);
-				gfxop_draw_cel(_vm->_gamestate->gfx_state, view, i, j, Common::Point(0,0), transparent, palette);
-
-				gfxop_get_cel_parameters(_vm->_gamestate->gfx_state, view, i, j, &width, &height, &mod);
-
-				DebugPrintf("   cel %d: size %dx%d, adj+(%d,%d)\n", j, width, height, mod.x, mod.y);
-			}
-		}
-	}
-#endif
-
-	return true;
 }
 
 bool Console::cmdUndither(int argc, const char **argv) {
@@ -1206,188 +1017,10 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	}
 }
 
-bool Console::cmdUpdateZone(int argc, const char **argv) {
-	if (argc != 4) {
-		DebugPrintf("Propagates a rectangular area from the back buffer to the front buffer\n");
-		DebugPrintf("Usage: %s <x> <y> <width> <height>\n", argv[0]);
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	int x = atoi(argv[1]);
-	int y = atoi(argv[2]);
-	int width = atoi(argv[3]);
-	int height = atoi(argv[4]);
-
-	_vm->_gamestate->gfx_state->driver->update(gfx_rect(x, y, width, height), Common::Point(x, y), GFX_BUFFER_FRONT);
-#endif
-
-	return false;
-}
-
-bool Console::cmdPropagateZone(int argc, const char **argv) {
-	if (argc != 5) {
-		DebugPrintf("Propagates a rectangular area from a lower graphics buffer to a higher one\n");
-		DebugPrintf("Usage: %s <x> <y> <width> <height> <map>\n", argv[0]);
-		DebugPrintf("Where <map> can be 0 or 1\n");
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	int x = atoi(argv[1]);
-	int y = atoi(argv[2]);
-	int width = atoi(argv[3]);
-	int height = atoi(argv[4]);
-	int map = CLIP<int>(atoi(argv[5]), 0, 1);
-	rect_t rect = gfx_rect(x, y, width, height);
-
-	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
-
-	if (map == 1)
-		gfxop_clear_box(_vm->_gamestate->gfx_state, rect);
-	else
-		gfxop_update_box(_vm->_gamestate->gfx_state, rect);
-	gfxop_update(_vm->_gamestate->gfx_state);
-	kernel_sleep(_vm->_gamestate->_event, 0);
-#endif
-
-	return false;
-}
-
-bool Console::cmdFillScreen(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Fills the screen with one of the EGA colors\n");
-		DebugPrintf("Usage: %s <color>\n", argv[0]);
-		DebugPrintf("where <color> is the EGA color to use (0-15)\n");
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	int col = CLIP<int>(atoi(argv[1]), 0, 15);
-
-	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect_fullscreen, _vm->_gamestate->ega_colors[col]);
-	gfxop_update(_vm->_gamestate->gfx_state);
-#endif
-
-	return false;
-}
-
-bool Console::cmdCurrentPort(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	if (!_vm->_gamestate->port)
-		DebugPrintf("There is no port active currently.\n");
-	else
-		DebugPrintf("Current port ID: %d\n", _vm->_gamestate->port->_ID);
-#endif
-
-	return true;
-}
-
-bool Console::cmdPrintPort(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Prints information about a port\n");
-		DebugPrintf("%s current - prints information about the current port\n", argv[0]);
-		DebugPrintf("%s <ID> - prints information about the port with the specified ID\n", argv[0]);
-		return true;
-	}
-
-#ifdef INCLUDE_OLDGFX
-	GfxPort *port;
-	
-	if (!scumm_stricmp(argv[1], "current")) {
-		port = _vm->_gamestate->port;
-		if (!port)
-			DebugPrintf("There is no active port currently\n");
-		else
-			port->print(0);
-	} else {
-		if (!_vm->_gamestate->visual) {
-			DebugPrintf("Visual is uninitialized\n");
-		} else {
-			port = _vm->_gamestate->visual->getPort(atoi(argv[1]));
-			if (!port)
-				DebugPrintf("No such port\n");
-			else
-				port->print(0);
-		}
-	}
-#endif
-
-	return true;
-}
-
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
 	_vm->getVocabulary()->buildGNF(true);
-
-	return true;
-}
-
-bool Console::cmdVisualState(int argc, const char **argv) {
-	DebugPrintf("State of the current visual widget:\n");
-
-#ifdef INCLUDE_OLDGFX
-	if (_vm->_gamestate->visual)
-		_vm->_gamestate->visual->print(0);
-	else
-		DebugPrintf("The visual widget is uninitialized.\n");
-#endif
-
-	return true;
-}
-
-bool Console::cmdFlushPorts(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	_vm->_gamestate->_gui->hideCursor();
-	DebugPrintf("Flushing dynamically allocated ports (for memory profiling)...\n");
-	delete _vm->_gamestate->visual;
-	_vm->_gamestate->gfx_state->gfxResMan->freeAllResources();
-	_vm->_gamestate->visual = NULL;
-#endif
-
-	return true;
-}
-
-bool Console::cmdDynamicViews(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	DebugPrintf("List of active dynamic views:\n");
-
-	if (_vm->_gamestate->dyn_views)
-		_vm->_gamestate->dyn_views->print(0);
-	else
-		DebugPrintf("The list is empty.\n");
-#endif
-
-	return true;
-}
-
-bool Console::cmdDroppedViews(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	DebugPrintf("List of dropped dynamic views:\n");
-
-	if (_vm->_gamestate->drop_views)
-		_vm->_gamestate->drop_views->print(0);
-	else
-		DebugPrintf("The list is empty.\n");
-#endif
-
-	return true;
-}
-
-bool Console::cmdPriorityBands(int argc, const char **argv) {
-#ifdef INCLUDE_OLDGFX
-	if (argc != 2) {
-		DebugPrintf("Priority bands start at y=%d. They end at y=%d\n", _vm->_gamestate->priority_first, _vm->_gamestate->priority_last);
-		DebugPrintf("Use %s <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
-		return true;
-	}
-
-	int zone = CLIP<int>(atoi(argv[1]), 0, 15);
-
-	DebugPrintf("Zone %x starts at y=%d\n", zone, _find_priority_band(_vm->_gamestate, zone));
-#endif
 
 	return true;
 }
@@ -3144,220 +2777,5 @@ int Console::printObject(reg_t pos) {
 
 	return 0;
 }
-
-#define GETRECT(ll, rr, tt, bb) \
-	ll = GET_SELECTOR(pos, ll); \
-	rr = GET_SELECTOR(pos, rr); \
-	tt = GET_SELECTOR(pos, tt); \
-	bb = GET_SELECTOR(pos, bb);
-
-#if 0
-// TODO Re-implement this
-static void viewobjinfo(EngineState *s, HeapPtr pos) {
-	char *signals[16] = {
-		"stop_update",
-		"updated",
-		"no_update",
-		"hidden",
-		"fixed_priority",
-		"always_update",
-		"force_update",
-		"remove",
-		"frozen",
-		"is_extra",
-		"hit_obstacle",
-		"doesnt_turn",
-		"no_cycler",
-		"ignore_horizon",
-		"ignore_actor",
-		"dispose!"
-	};
-
-	int x, y, z, priority;
-	int cel, loop, view, signal;
-	int nsLeft, nsRight, nsBottom, nsTop;
-	int lsLeft, lsRight, lsBottom, lsTop;
-	int brLeft, brRight, brBottom, brTop;
-	int i;
-	int have_rects = 0;
-	Common::Rect nsrect, nsrect_clipped, brrect;
-
-	if (lookup_selector(s->_segMan, pos, s->_kernel->_selectorCache.nsBottom, NULL) == kSelectorVariable) {
-		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
-		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
-		GETRECT(brLeft, brRight, brBottom, brTop);
-		have_rects = 1;
-	}
-
-	GETRECT(view, loop, signal, cel);
-
-	printf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
-
-	x = GET_SELECTOR(pos, x);
-	y = GET_SELECTOR(pos, y);
-	priority = GET_SELECTOR(pos, priority);
-	if (s->_kernel->_selectorCache.z > 0) {
-		z = GET_SELECTOR(pos, z);
-		printf("(%d,%d,%d)\n", x, y, z);
-	} else
-		printf("(%d,%d)\n", x, y);
-
-	if (priority == -1)
-		printf("No priority.\n\n");
-	else
-		printf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
-
-	if (have_rects) {
-		printf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
-		printf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
-		printf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
-	}
-
-	nsrect = get_nsrect(s, pos, 0);
-	nsrect_clipped = get_nsrect(s, pos, 1);
-	//brrect = set_base(s, pos);
-	printf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
-	printf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
-	printf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
-	printf("\n signals = %04x:\n", signal);
-
-	for (i = 0; i < 16; i++)
-		if (signal & (1 << i))
-			printf("  %04x: %s\n", 1 << i, signals[i]);
-}
-#endif
-#undef GETRECT
-
-#define GETRECT(ll, rr, tt, bb) \
-	ll = GET_SELECTOR(pos, ll); \
-	rr = GET_SELECTOR(pos, rr); \
-	tt = GET_SELECTOR(pos, tt); \
-	bb = GET_SELECTOR(pos, bb);
-
-#if 0
-// Draws the nsRect and brRect of a dynview object. nsRect is green, brRect is blue.
-// TODO: Re-implement this
-static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	HeapPtr pos = (HeapPtr)(cmdParams[0].val);
-	int is_view;
-	int x, y, priority;
-	int nsLeft, nsRight, nsBottom, nsTop;
-	int brLeft, brRight, brBottom, brTop;
-
-	if (!s) {
-		printf("Not in debug state!\n");
-		return 1;
-	}
-
-	if ((pos < 4) || (pos > 0xfff0)) {
-		printf("Invalid address.\n");
-		return 1;
-	}
-
-	if (((int16)READ_LE_UINT16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
-		printf("Not an object.\n");
-		return 0;
-	}
-
-
-	is_view = (lookup_selector(s->_segMan, pos, s->_kernel->_selectorCache.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->_segMan, pos, s->_kernel->_selectorCache.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->_segMan, pos, s->_kernel->_selectorCache.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->_segMan, pos, s->_kernel->_selectorCache.nsTop, NULL) == kSelectorVariable);
-
-	if (!is_view) {
-		printf("Not a dynamic View object.\n");
-		return 0;
-	}
-
-	x = GET_SELECTOR(pos, x);
-	y = GET_SELECTOR(pos, y);
-	priority = GET_SELECTOR(pos, priority);
-	GETRECT(brLeft, brRight, brBottom, brTop);
-	GETRECT(nsLeft, nsRight, nsBottom, nsTop);
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-
-	brTop += 10;
-	brBottom += 10;
-	nsTop += 10;
-	nsBottom += 10;
-
-	gfxop_fill_box(s->gfx_state, gfx_rect(nsLeft, nsTop, nsRight - nsLeft + 1, nsBottom - nsTop + 1), s->ega_colors[2]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(brLeft, brTop, brRight - brLeft + 1, brBottom - brTop + 1), s->ega_colors[1]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y - 1, 3, 3), s->ega_colors[0]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y, 3, 1), s->ega_colors[priority]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(x, y - 1, 1, 3), s->ega_colors[priority]);
-	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-#endif
-#undef GETRECT
-
-#if 0
-// Executes one operation skipping over sends
-// TODO Re-implement this
-int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int opcode, opnumber;
-
-	opcode = s->_heap[*p_pc];
-	opnumber = opcode >> 1;
-	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
-	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		g_debugState.seeking = kDebugSeekSO;
-		g_debugState.seekLevel = s->_executionStack.size()-1;
-		// Store in g_debugState.seekSpecial the offset of the next command after send
-		switch (opcode) {
-		case 0x46: // calle W
-			g_debugState.seekSpecial = *p_pc + 5;
-			break;
-
-		case 0x44: // callb W
-		case 0x47: // calle B
-		case 0x56: // super W
-			g_debugState.seekSpecial = *p_pc + 4;
-			break;
-
-		case 0x45: // callb B
-		case 0x57: // super B
-		case 0x4A: // send W
-		case 0x54: // self W
-			g_debugState.seekSpecial = *p_pc + 3;
-			break;
-
-		default:
-			g_debugState.seekSpecial = *p_pc + 2;
-		}
-	}
-
-	return 0;
-}
-#endif
-
-#ifdef GFXW_DEBUG_WIDGETS
-extern GfxWidget *debug_widgets[];
-extern int debug_widget_pos;
-
-// If called with no parameters, it shows which widgets are active
-// With parameters, it lists the widget corresponding to the numerical index specified (for each parameter).
-bool Console::cmdPrintWidget(int argc, const char **argv) {
-	if (argc > 1) {
-		for (int i = 0; i < argc; i++) {
-			int widget_nr = atoi(argv[1]);
-
-			DebugPrintf("===== Widget #%d:\n", widget_nr);
-			debug_widgets[widget_nr]->print(0);
-		}
-	} else if (debug_widget_pos > 1) {
-		DebugPrintf("Widgets 0-%d are active\n", debug_widget_pos - 1);
-	} else if (debug_widget_pos == 1) {
-		DebugPrintf("Widget 0 is active\n");
-	} else {
-		DebugPrintf("No widgets are active\n");
-	}
-
-	return true;
-}
-#endif
 
 } // End of namespace Sci
