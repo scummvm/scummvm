@@ -51,7 +51,6 @@ class Controls;
 class Menu;
 class Text;
 class Transitions;
-class SciGui32; // for debug purposes
 
 class SciGui {
 public:
@@ -187,7 +186,6 @@ private:
 	Menu *_menu;
 	Text *_text;
 	Transitions *_transitions;
-// 	SciGui32 *_gui32; // for debug purposes
 
 	bool _usesOldGfxFunctions;
 

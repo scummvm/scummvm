@@ -45,13 +45,6 @@
 
 namespace Sci {
 
-// for debug purposes
-// class SciGui32 : public SciGui {
-// public:
-// 	SciGui32(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor);
-// 	~SciGui32();
-// };
-
 SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor)
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
@@ -62,7 +55,6 @@ SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *
 	_windowMgr = new WindowMgr(this, _screen, _gfx, _text);
 	_controls = new Controls(_s->_segMan, _gfx, _text);
 	_menu = new Menu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
-//  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
 SciGui::SciGui() {
