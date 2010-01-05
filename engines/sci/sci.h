@@ -46,7 +46,7 @@ namespace Sci {
 // Uncomment this if you want to use the old graphics code. INCLUDE_OLDGFX must be defined
 //#define USE_OLDGFX
 // Uncomment this to use old music functions
-#define USE_OLD_MUSIC_FUNCTIONS
+//#define USE_OLD_MUSIC_FUNCTIONS
 // Uncomment this to use old pathfinding code
 //#define OLD_PATHFINDING
 
