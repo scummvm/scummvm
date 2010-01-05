@@ -44,68 +44,61 @@ namespace Audio {
  */
 class Channel {
 public:
-	const Mixer::SoundType	_type;
+	Channel(Mixer *mixer, Mixer::SoundType type, int id, bool permanent);
+	virtual ~Channel() {}
+
+	virtual void mix(int16 *data, uint len) = 0;
+
+	virtual bool isFinished() const = 0;
+
+	bool isPermanent() const { return _permanent; }
+
+	int getId() const { return _id; }
+
+	void pause(bool paused);
+	bool isPaused() const { return (_pauseLevel != 0); }
+
+	void setVolume(const byte volume) { _volume = volume; }
+	void setBalance(const int8 balance) { _balance = balance; }
+
+	uint32 getElapsedTime();
+
+public:
+	const Mixer::SoundType _type;
 	SoundHandle _handle;
+
 private:
-	Mixer *_mixer;
-	bool _autofreeStream;
 	bool _permanent;
-	byte _volume;
-	int8 _balance;
 	int _pauseLevel;
 	int _id;
+
+protected:
+	Mixer *_mixer;
+	byte _volume;
+	int8 _balance;
+
 	uint32 _samplesConsumed;
 	uint32 _samplesDecoded;
 	uint32 _mixerTimeStamp;
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
+};
 
-protected:
+class SimpleChannel : public Channel {
+private:
+	bool _autofreeStream;
 	RateConverter *_converter;
 	AudioStream *_input;
 
 public:
-	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
-	virtual ~Channel();
+	SimpleChannel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
+	~SimpleChannel();
 
 	void mix(int16 *data, uint len);
 
-	bool isPermanent() const {
-		return _permanent;
-	}
 	bool isFinished() const {
 		return _input->endOfStream();
 	}
-	void pause(bool paused) {
-		//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
-
-		if (paused) {
-			_pauseLevel++;
-
-			if (_pauseLevel == 1)
-				_pauseStartTime = g_system->getMillis();
-		} else if (_pauseLevel > 0) {
-			_pauseLevel--;
-
-			if (!_pauseLevel) {
-				_pauseTime = (g_system->getMillis() - _pauseStartTime);
-				_pauseStartTime = 0;
-			}
-		}
-	}
-	bool isPaused() {
-		return _pauseLevel != 0;
-	}
-	void setVolume(const byte volume) {
-		_volume = volume;
-	}
-	void setBalance(const int8 balance) {
-		_balance = balance;
-	}
-	int getId() const {
-		return _id;
-	}
-	uint32 getElapsedTime();
 };
 
 
@@ -146,7 +139,6 @@ void MixerImpl::setOutputRate(uint sampleRate) {
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
-
 	int index = -1;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == 0) {
@@ -209,7 +201,7 @@ void MixerImpl::playInputStream(
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, type, input, autofreeStream, reverseStereo, id, permanent);
+	SimpleChannel *chan = new SimpleChannel(this, type, input, autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
@@ -388,13 +380,62 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 #pragma mark --- Channel implementations ---
 #pragma mark -
 
+Channel::Channel(Mixer *mixer, Mixer::SoundType type, int id, bool permanent)
+    : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
+      _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
+      _pauseStartTime(0), _pauseTime(0) {
+}
 
-Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
+void Channel::pause(bool paused) {
+	//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
+
+	if (paused) {
+		_pauseLevel++;
+
+		if (_pauseLevel == 1)
+			_pauseStartTime = g_system->getMillis();
+	} else if (_pauseLevel > 0) {
+		_pauseLevel--;
+
+		if (!_pauseLevel) {
+			_pauseTime = (g_system->getMillis() - _pauseStartTime);
+			_pauseStartTime = 0;
+		}
+	}
+}
+
+uint32 Channel::getElapsedTime() {
+	if (_mixerTimeStamp == 0)
+		return 0;
+
+	const uint32 rate = _mixer->getOutputRate();
+	uint32 delta = 0;
+
+	if (isPaused())
+		delta = _pauseStartTime - _mixerTimeStamp;
+	else
+		delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
+
+	// Convert the number of samples into a time duration.
+
+	Audio::Timestamp ts(0, rate);
+
+	ts = ts.addFrames(_samplesConsumed);
+	ts = ts.addMsecs(delta);
+
+	// In theory it would seem like a good idea to limit the approximation
+	// so that it never exceeds the theoretical upper bound set by
+	// _samplesDecoded. Meanwhile, back in the real world, doing so makes
+	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
+	// isn't invoked at the regular intervals that I first imagined.
+
+	return ts.msecs();
+}
+
+SimpleChannel::SimpleChannel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 				bool autofreeStream, bool reverseStereo, int id, bool permanent)
-	: _type(type), _mixer(mixer), _autofreeStream(autofreeStream),
-	  _volume(Mixer::kMaxChannelVolume), _balance(0), _pauseLevel(0), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _mixerTimeStamp(0), _pauseStartTime(0), _pauseTime(0), _converter(0),
-	  _input(input), _permanent(permanent) {
+	: Channel(mixer, type, id, permanent), _autofreeStream(autofreeStream), _converter(0),
+	  _input(input) {
 	assert(mixer);
 	assert(input);
 
@@ -402,7 +443,7 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
 }
 
-Channel::~Channel() {
+SimpleChannel::~SimpleChannel() {
 	delete _converter;
 	if (_autofreeStream)
 		delete _input;
@@ -412,7 +453,7 @@ Channel::~Channel() {
    10 means that the buffer contains twice 10 sample, each
    16 bits, for a total of 40 bytes.
  */
-void Channel::mix(int16 *data, uint len) {
+void SimpleChannel::mix(int16 *data, uint len) {
 	assert(_input);
 
 	if (_input->endOfData()) {
@@ -447,34 +488,6 @@ void Channel::mix(int16 *data, uint len) {
 		_pauseTime = 0;
 		_samplesDecoded += _converter->flow(*_input, data, len, vol_l, vol_r);
 	}
-}
-
-uint32 Channel::getElapsedTime() {
-	if (_mixerTimeStamp == 0)
-		return 0;
-
-	const uint32 rate = _mixer->getOutputRate();
-	uint32 delta = 0;
-
-	if (isPaused())
-		delta = _pauseStartTime - _mixerTimeStamp;
-	else
-		delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
-
-	// Convert the number of samples into a time duration.
-
-	Audio::Timestamp ts(0, rate);
-
-	ts = ts.addFrames(_samplesConsumed);
-	ts = ts.addMsecs(delta);
-
-	// In theory it would seem like a good idea to limit the approximation
-	// so that it never exceeds the theoretical upper bound set by
-	// _samplesDecoded. Meanwhile, back in the real world, doing so makes
-	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
-	// isn't invoked at the regular intervals that I first imagined.
-
-	return ts.msecs();
 }
 
 
