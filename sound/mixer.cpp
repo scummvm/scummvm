@@ -647,7 +647,7 @@ LoopingChannel::LoopingChannel(Mixer *mixer, Mixer::SoundType type, SeekableAudi
                                Timestamp loopStart, Timestamp loopEnd, bool autofreeStream, bool reverseStereo,
                                int id, bool permanent)
     : Channel(mixer, type, id, permanent), _loopCount(loopCount), _loopStart(loopStart), _loopEnd(loopEnd),
-      _autofreeStream(autofreeStream), _converter(0), _input(input), _pos(0, mixer->getOutputRate()) {
+      _autofreeStream(autofreeStream), _converter(0), _input(input), _pos(loopStart) {
 	_input->seek(loopStart);
 	// Get a rate converter instance
 	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
