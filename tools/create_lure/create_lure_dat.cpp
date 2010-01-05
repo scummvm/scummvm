@@ -1859,7 +1859,7 @@ void createFile(const char *outFilename) {
 		} else {
 			rec.id = TO_LE_16(resourceId);
 			rec.offset = TO_LE_16(startOffset >> 5);
-			rec.sizeExtension = (uint8) ((resourceSize >> 16) & 0xff);
+			rec.sizeExtension = 0; //(uint8) ((resourceSize >> 16) & 0xff); --never needed
 			rec.size = TO_LE_16(resourceSize & 0xffff);
 			rec.unused = 0xff;
 		}
