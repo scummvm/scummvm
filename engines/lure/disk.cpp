@@ -115,7 +115,7 @@ void Disk::openFile(uint8 fileNum) {
 			error("The file %s is not a valid Lure support file", sFilename);
 
 		// Scan for the correct language block
-		Common::Language language = LureEngine::getReference().getLanguage();
+		LureLanguage language = LureEngine::getReference().getLureLanguage();
 		bool foundFlag = false;
 
 		while (!foundFlag) {
@@ -123,7 +123,7 @@ void Disk::openFile(uint8 fileNum) {
 			if ((byte)buffer[0] == 0xff)
 				error("Could not find language data in support file");
 
-			if ((language == (Common::Language)buffer[0]) || (language == UNK_LANG)) {
+			if ((language == (LureLanguage)buffer[0]) || (language == LANG_UNKNOWN)) {
 				foundFlag = true;
 				_dataOffset = READ_LE_UINT32(&buffer[1]);
 				_fileHandle->seek(_dataOffset);

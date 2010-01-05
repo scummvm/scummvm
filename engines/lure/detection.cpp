@@ -43,6 +43,19 @@ uint32 LureEngine::getFeatures() const { return _gameDescription->features; }
 Common::Language LureEngine::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform LureEngine::getPlatform() const { return _gameDescription->desc.platform; }
 
+LureLanguage LureEngine::getLureLanguage() const {
+	switch (_gameDescription->desc.language) {
+	case IT_ITA: return LANG_IT_ITA;
+	case FR_FRA: return LANG_FR_FRA;
+	case DE_DEU: return LANG_DE_DEU;
+	case ES_ESP: return LANG_ES_ESP;
+	case EN_ANY: return LANG_EN_ANY;
+	case UNK_LANG: return LANG_UNKNOWN;
+	default:
+		error("Unknown game language");
+	}
+}
+
 } // End of namespace Lure
 
 static const PlainGameDescriptor lureGames[] = {

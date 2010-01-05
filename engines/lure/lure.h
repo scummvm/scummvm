@@ -54,6 +54,15 @@ namespace Lure {
 
 #define RandomNumberGen LureEngine::getReference().rnd()
 
+enum LureLanguage {
+	LANG_IT_ITA = 10,
+	LANG_FR_FRA = 6,
+	LANG_DE_DEU = 7,
+	LANG_ES_ESP = 17,
+	LANG_EN_ANY = 3,
+	LANG_UNKNOWN = -1
+};
+
 struct LureGameDescription;
 
 class LureEngine : public Engine {
@@ -107,6 +116,7 @@ public:
 	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
 
 	uint32 getFeatures() const;
+	LureLanguage getLureLanguage() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	virtual GUI::Debugger *getDebugger();
