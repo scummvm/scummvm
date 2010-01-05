@@ -41,11 +41,11 @@ namespace Common {
 #include "sci/engine/kernel.h"	// for kfunct_sig_pair_t
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/sfx/audio.h"
+#include "sci/sound/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sfx/iterator/core.h"
+#include "sci/sound/iterator/core.h"
 #endif
-#include "sci/sfx/soundcmd.h"
+#include "sci/sound/soundcmd.h"
 
 namespace Sci {
 

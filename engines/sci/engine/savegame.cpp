@@ -36,13 +36,13 @@
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/vm_types.h"
-#include "sci/gui/gui.h"
-#include "sci/sfx/audio.h"
+#include "sci/graphics/gui.h"
+#include "sci/sound/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sfx/iterator/core.h"
-#include "sci/sfx/iterator/iterator.h"
+#include "sci/sound/iterator/core.h"
+#include "sci/sound/iterator/iterator.h"
 #else
-#include "sci/sfx/music.h"
+#include "sci/sound/music.h"
 #endif
 
 namespace Sci {

@@ -31,7 +31,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
-#include "sci/gui/gui.h"
+#include "sci/graphics/gui.h"
 
 namespace Sci {
 

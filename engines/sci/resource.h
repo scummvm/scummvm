@@ -34,7 +34,7 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"			// for SoundHandle
 
-#include "gui/gui_helpers.h"		// for ViewType
+#include "graphics/gui_helpers.h"		// for ViewType
 
 #include "sci/decompressor.h"
 #include "sci/sci.h"

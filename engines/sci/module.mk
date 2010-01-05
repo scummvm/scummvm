@@ -35,34 +35,34 @@ MODULE_OBJS := \
 	engine/static_selectors.o \
 	engine/state.o \
 	engine/vm.o \
-	gui/gui.o \
-	gui/gui_animate.o \
-	gui/gui_controls.o \
-	gui/gui_cursor.o \
-	gui/gui_font.o \
-	gui/gui_gfx.o \
-	gui/gui_menu.o \
-	gui/gui_palette.o \
-	gui/gui_picture.o \
-	gui/gui_portrait.o \
-	gui/gui_screen.o \
-	gui/gui_text.o \
-	gui/gui_transitions.o \
-	gui/gui_view.o \
-	gui/gui_windowmgr.o \
-	sfx/audio.o \
-	sfx/midiparser.o \
-	sfx/music.o \
-	sfx/soundcmd.o \
-	sfx/iterator/core.o \
-	sfx/iterator/iterator.o \
-	sfx/iterator/songlib.o \
-	sfx/seq/gm.o \
-	sfx/seq/instrument-map.o \
-	sfx/seq/map-mt32-to-gm.o \
-	sfx/softseq/adlib.o \
-	sfx/softseq/amiga.o \
-	sfx/softseq/pcjr.o \
+	graphics/gui.o \
+	graphics/gui_animate.o \
+	graphics/gui_controls.o \
+	graphics/gui_cursor.o \
+	graphics/gui_font.o \
+	graphics/gui_gfx.o \
+	graphics/gui_menu.o \
+	graphics/gui_palette.o \
+	graphics/gui_picture.o \
+	graphics/gui_portrait.o \
+	graphics/gui_screen.o \
+	graphics/gui_text.o \
+	graphics/gui_transitions.o \
+	graphics/gui_view.o \
+	graphics/gui_windowmgr.o \
+	sound/audio.o \
+	sound/midiparser.o \
+	sound/music.o \
+	sound/soundcmd.o \
+	sound/iterator/core.o \
+	sound/iterator/iterator.o \
+	sound/iterator/songlib.o \
+	sound/seq/gm.o \
+	sound/seq/instrument-map.o \
+	sound/seq/map-mt32-to-gm.o \
+	sound/softseq/adlib.o \
+	sound/softseq/amiga.o \
+	sound/softseq/pcjr.o \
 	video/seq_decoder.o \
 	video/vmd_decoder.o
 	

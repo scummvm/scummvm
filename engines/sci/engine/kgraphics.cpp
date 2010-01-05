@@ -33,11 +33,11 @@
 #include "sci/video/seq_decoder.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/gui/gui.h"
-#include "sci/gui/gui_animate.h"
-#include "sci/gui/gui_cursor.h"
-#include "sci/gui/gui_screen.h"
-#include "sci/gui/gui_view.h"
+#include "sci/graphics/gui.h"
+#include "sci/graphics/gui_animate.h"
+#include "sci/graphics/gui_cursor.h"
+#include "sci/graphics/gui_screen.h"
+#include "sci/graphics/gui_view.h"
 
 namespace Sci {
 

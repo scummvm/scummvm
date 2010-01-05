@@ -36,15 +36,15 @@
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel_types.h"	// for determine_reg_type
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sfx/iterator/songlib.h"	// for SongLibrary
-#include "sci/sfx/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
+#include "sci/sound/iterator/songlib.h"	// for SongLibrary
+#include "sci/sound/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #else
-#include "sci/sfx/music.h"
+#include "sci/sound/music.h"
 #endif
-#include "sci/sfx/softseq/mididriver.h"
+#include "sci/sound/softseq/mididriver.h"
 #include "sci/vocabulary.h"
-#include "sci/gui/gui.h"
-#include "sci/gui/gui_cursor.h"
+#include "sci/graphics/gui.h"
+#include "sci/graphics/gui_cursor.h"
 
 #include "graphics/video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"

@@ -36,12 +36,12 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
-#include "sci/sfx/audio.h"
-#include "sci/sfx/soundcmd.h"
-#include "sci/gui/gui.h"
-#include "sci/gui/gui_palette.h"
-#include "sci/gui/gui_cursor.h"
-#include "sci/gui/gui_screen.h"
+#include "sci/sound/audio.h"
+#include "sci/sound/soundcmd.h"
+#include "sci/graphics/gui.h"
+#include "sci/graphics/gui_palette.h"
+#include "sci/graphics/gui_cursor.h"
+#include "sci/graphics/gui_screen.h"
 
 namespace Sci {
 

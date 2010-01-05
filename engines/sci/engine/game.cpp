@@ -34,8 +34,8 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/message.h"
-#include "sci/gui/gui.h"
-#include "sci/sfx/music.h"
+#include "sci/graphics/gui.h"
+#include "sci/sound/music.h"
 
 namespace Sci {
 

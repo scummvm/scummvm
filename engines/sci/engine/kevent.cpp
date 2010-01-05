@@ -29,8 +29,8 @@
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
-#include "sci/gui/gui.h"
-#include "sci/gui/gui_cursor.h"
+#include "sci/graphics/gui.h"
+#include "sci/graphics/gui_cursor.h"
 
 namespace Sci {
 
