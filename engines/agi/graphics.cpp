@@ -770,7 +770,7 @@ void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor
 int GfxMgr::testButton(int x, int y, const char *s) {
 	int len = strlen(s);
 	Common::Rect rect(x - 3, y - 3, x + CHAR_COLS * len + 3, y + CHAR_LINES + 3);
-	return rect.contains(x, y);
+	return rect.contains(_vm->_mouse.x, _vm->_mouse.y);
 }
 
 void GfxMgr::putBlock(int x1, int y1, int x2, int y2) {
