@@ -461,7 +461,7 @@ void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clear
 	}
 }
 
-void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight) {
+void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -481,6 +481,8 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 	height = MIN(clipRect.height(), celHeight);
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
+
+	// TODO: SCI1.1 view scaling
 
 	if (!_EGAmapping) {
 		for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {

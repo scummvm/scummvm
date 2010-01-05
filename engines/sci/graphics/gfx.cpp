@@ -329,7 +329,7 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 }
 
 // This one is the only one that updates screen!
-void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight) {
+void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
 	Common::Rect rect;
 	
@@ -339,7 +339,7 @@ void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftP
 		rect.right = rect.left + view->getWidth(loopNo, celNo);
 		rect.bottom = rect.top + view->getHeight(loopNo, celNo);
 
-		drawCel(view, loopNo, celNo, rect, priority, paletteNo, origHeight);
+		drawCel(view, loopNo, celNo, rect, priority, paletteNo, origHeight, scaleX, scaleY);
 
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			if (!_screen->_picNotValidSci11)
@@ -352,12 +352,12 @@ void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftP
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight) {
-	drawCel(getView(viewId), loopNo, celNo, celRect, priority, paletteNo);
+void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+	drawCel(getView(viewId), loopNo, celNo, celRect, priority, paletteNo, origHeight, scaleX, scaleY);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight) {
+void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -365,7 +365,7 @@ void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, 
 
 	Common::Rect clipRectTranslated = clipRect;
 	OffsetRect(clipRectTranslated);
-	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
+	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, origHeight, scaleX, scaleY);
 }
 
 uint16 Gfx::onControl(uint16 screenMask, Common::Rect rect) {

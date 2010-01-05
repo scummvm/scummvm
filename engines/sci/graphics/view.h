@@ -60,7 +60,7 @@ public:
 	LoopInfo *getLoopInfo(LoopNo loopNo);
 	void getCelRect(LoopNo loopNo, CelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
 	byte *getBitmap(LoopNo loopNo, CelNo celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1);
+	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1, uint16 scaleX = 128, uint16 scaleY = 128);
 	uint16 getLoopCount() const { return _loopCount; }
 	uint16 getCelCount(LoopNo loopNo) { return _loop[loopNo].celCount; }
 	Palette *getPalette();

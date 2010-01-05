@@ -347,7 +347,7 @@ void SciGuiAnimate::drawCels() {
 	reg_t bitsHandle;
 	AnimateList::iterator listIterator;
 	AnimateList::iterator listEnd = _list.end();
-
+	uint16 scaleX = 128, scaleY = 128;	// no scaling
 	_lastCastCount = 0;
 
 	listIterator = _list.begin();
@@ -361,8 +361,14 @@ void SciGuiAnimate::drawCels() {
 			bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 			PUT_SEL32(_s->_segMan, curObject, underBits, bitsHandle);
 
+			if (getSciVersion() >= SCI_VERSION_1_1) {
+				// View scaling
+				scaleX = GET_SEL32V(_s->_segMan, curObject, scaleX);
+				scaleY = GET_SEL32V(_s->_segMan, curObject, scaleY);
+			}
+
 			// draw corresponding cel
-			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, -1, scaleX, scaleY);
 			listEntry->showBitsFlag = true;
 
 			if (signal & kSignalRemoveView) {
