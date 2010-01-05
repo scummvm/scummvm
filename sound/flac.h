@@ -54,6 +54,9 @@ namespace Audio {
 class SeekableAudioStream;
 
 /**
+ * TODO: This is an deprecated interface, it is only for the transition to
+ * SeekableAudioStream in the engines.
+ *
  * Create a new AudioStream from the FLAC data in the given stream.
  * Allows for looping (which is why we require a SeekableReadStream),
  * and specifying only a portion of the data to be played, based
@@ -69,9 +72,21 @@ class SeekableAudioStream;
 SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
-	uint32 startTime = 0,
-	uint32 duration = 0,
-	uint numLoops = 1);
+	uint32 startTime,
+	uint32 duration,
+	uint numLoops);
+
+/**
+ * Create a new SeekableAudioStream from the FLAC data in the given stream.
+ * Allows for seeking (which is why we require a SeekableReadStream).
+ *
+ * @param stream			the SeekableReadStream from which to read the FLAC data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @return	a new SeekableAudioStream, or NULL, if an error occured
+ */
+SeekableAudioStream *makeFlacStream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse);
 
 } // End of namespace Audio
 

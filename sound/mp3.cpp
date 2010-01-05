@@ -425,6 +425,12 @@ SeekableAudioStream *makeMP3Stream(
 	return new MP3InputStream(stream, disposeAfterUse, start, end, numLoops);
 }
 
+SeekableAudioStream *makeMP3Stream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse) {
+	return makeMP3Stream(stream, disposeAfterUse, 0, 0, 1);
+}
+
 } // End of namespace Audio
 
 #endif // #ifdef USE_MAD

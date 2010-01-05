@@ -793,6 +793,12 @@ SeekableAudioStream *makeFlacStream(
 	return input;
 }
 
+SeekableAudioStream *makeFlacStream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse) {
+	return makeFlacStream(stream, disposeAfterUse, 0, 0, 1);
+}
+
 } // End of namespace Audio
 
 #endif // #ifdef USE_FLAC

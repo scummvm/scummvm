@@ -54,7 +54,10 @@ namespace Audio {
 class SeekableAudioStream;
 
 /**
- * Create a new AudioStream from the MP3 data in the given stream.
+ * TODO: This is an deprecated interface, it is only for the transition to
+ * SeekableAudioStream in the engines.
+ *
+ * Create a new SeekableAudioStream from the MP3 data in the given stream.
  * Allows for looping (which is why we require a SeekableReadStream),
  * and specifying only a portion of the data to be played, based
  * on time offsets.
@@ -64,14 +67,26 @@ class SeekableAudioStream;
  * @param startTime			the (optional) time offset in milliseconds from which to start playback
  * @param duration			the (optional) time in milliseconds specifying how long to play
  * @param numLoops			how often the data shall be looped (0 = infinite)
- * @return	a new AudioStream, or NULL, if an error occured
+ * @return	a new SeekableAudioStream, or NULL, if an error occured
  */
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
-	uint32 startTime = 0,
-	uint32 duration = 0,
-	uint numLoops = 1);
+	uint32 startTime,
+	uint32 duration,
+	uint numLoops);
+
+/**
+ * Create a new SeekableAudioStream from the MP3 data in the given stream.
+ * Allows for seeking (which is why we require a SeekableReadStream).
+ *
+ * @param stream			the SeekableReadStream from which to read the MP3 data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @return	a new SeekableAudioStream, or NULL, if an error occured
+ */
+SeekableAudioStream *makeMP3Stream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse);
 
 } // End of namespace Audio
 

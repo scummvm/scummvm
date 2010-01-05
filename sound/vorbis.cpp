@@ -349,6 +349,11 @@ SeekableAudioStream *makeVorbisStream(
 	return input;
 }
 
+SeekableAudioStream *makeVorbisStream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse) {
+	return makeVorbisStream(stream, disposeAfterUse, 0, 0, 1);
+}
 
 } // End of namespace Audio
 
