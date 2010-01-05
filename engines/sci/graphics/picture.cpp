@@ -26,14 +26,14 @@
 #include "common/stack.h"
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_palette.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_picture.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/picture.h"
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId)
+SciGuiPicture::SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId)
 	: _resMan(resMan), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
@@ -98,7 +98,7 @@ void SciGuiPicture::drawSci11Vga() {
 	int cel_headerPos = READ_LE_UINT16(inbuffer + 32);
 	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
 	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
-	GuiPalette palette;
+	Palette palette;
 
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
@@ -122,7 +122,7 @@ void SciGuiPicture::drawSci32Vga() {
 	int cel_headerPos = header_size;
 	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
 	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
-	GuiPalette palette;
+	Palette palette;
 
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
@@ -371,7 +371,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	uint16 size;
 	byte pixel;
 	int i;
-	GuiPalette palette;
+	Palette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 
 	memset(&palette, 0, sizeof(palette));
@@ -647,7 +647,7 @@ void SciGuiPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 patte
 
 // Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
 void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
-	GuiPort *curPort = _gfx->GetPort();
+	Port *curPort = _gfx->GetPort();
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 	byte screenMask = _screen->getDrawingMask(color, priority, control);

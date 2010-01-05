@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef SCI_GUI_GUI_H
-#define SCI_GUI_GUI_H
+#ifndef SCI_GRAPHICS_GUI_H
+#define SCI_GRAPHICS_GUI_H
 
-#include "sci/graphics/gui_helpers.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
@@ -41,21 +41,21 @@ enum {
 	SCI_CONTROLS_TYPE_DUMMY			= 10
 };
 
-class SciGuiScreen;
-class SciGuiPalette;
-class SciGuiCursor;
-class SciGuiGfx;
-class SciGuiWindowMgr;
+class Screen;
+class SciPalette;
+class Cursor;
+class Gfx;
+class WindowMgr;
 class SciGuiAnimate;
 class SciGuiControls;
 class SciGuiMenu;
-class SciGuiText;
-class SciGuiTransitions;
+class Text;
+class Transitions;
 class SciGui32; // for debug purposes
 
 class SciGui {
 public:
-	SciGui(EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor);
+	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor);
 	SciGui();
 	virtual ~SciGui();
 
@@ -89,11 +89,11 @@ public:
 	virtual reg_t menuSelect(reg_t eventObject);
 
 	virtual void drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
-	virtual void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight = -1);
+	virtual void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight = -1);
 	virtual void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
 	virtual void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 alignment, int16 style, bool hilite);
 	virtual void drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite);
-	virtual void drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool hilite);
+	virtual void drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 style, bool hilite);
 	virtual void drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite);
 	virtual void editControl(reg_t controlObject, reg_t eventObject);
 
@@ -125,7 +125,7 @@ public:
 	virtual void animateShowPic();
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
-	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	virtual void addToPicView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 	virtual bool canBeHere(reg_t curObject, reg_t listReference);
 	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
@@ -170,23 +170,23 @@ public:
 	virtual void resetEngineState(EngineState *s);
 
 protected:
-	SciGuiCursor *_cursor;
+	Cursor *_cursor;
 	EngineState *_s;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
-	SciGuiGfx *_gfx;
+	Screen *_screen;
+	SciPalette *_palette;
+	Gfx *_gfx;
 
 private:
 	virtual void initPriorityBands();
 	virtual void addToPicSetPicNotValid();
 	virtual int getControlPicNotValid();
 
-	SciGuiWindowMgr *_windowMgr;
+	WindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
 	SciGuiControls *_controls;
 	SciGuiMenu *_menu;
-	SciGuiText *_text;
-	SciGuiTransitions *_transitions;
+	Text *_text;
+	Transitions *_transitions;
 // 	SciGui32 *_gui32; // for debug purposes
 
 	bool _usesOldGfxFunctions;

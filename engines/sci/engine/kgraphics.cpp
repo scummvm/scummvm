@@ -34,10 +34,10 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/gui.h"
-#include "sci/graphics/gui_animate.h"
-#include "sci/graphics/gui_cursor.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_view.h"
+#include "sci/graphics/animate.h"
+#include "sci/graphics/cursor.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/view.h"
 
 namespace Sci {
 
@@ -701,12 +701,12 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	reg_t textReference = GET_SEL32(s->_segMan, controlObject, text);
 	Common::String text;
 	Common::Rect rect;
-	GuiTextAlignment alignment;
+	TextAlignment alignment;
 	int16 mode, maxChars, cursorPos, upperPos, listCount, i;
 	int16 upperOffset, cursorOffset;
 	GuiResourceId viewId;
-	GuiViewLoopNo loopNo;
-	GuiViewCelNo celNo;
+	LoopNo loopNo;
+	CelNo celNo;
 	reg_t listSeeker;
 	Common::String *listStrings = NULL;
 	const char **listEntries = NULL;
@@ -842,8 +842,8 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId;
-	GuiViewLoopNo loopNo;
-	GuiViewCelNo celNo;
+	LoopNo loopNo;
+	CelNo celNo;
 	int16 leftPos, topPos, priority, control;
 
 	switch (argc) {
@@ -909,8 +909,8 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
-	GuiViewLoopNo loopNo = argv[1].toSint16();
-	GuiViewCelNo celNo = argv[2].toSint16();
+	LoopNo loopNo = argv[1].toSint16();
+	CelNo celNo = argv[2].toSint16();
 	uint16 x = argv[3].toUint16();
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;

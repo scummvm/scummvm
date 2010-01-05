@@ -23,11 +23,11 @@
  *
  */
 
-#ifndef SCI_GUI_SCREEN_H
-#define SCI_GUI_SCREEN_H
+#ifndef SCI_GRAPHICS_SCREEN_H
+#define SCI_GRAPHICS_SCREEN_H
 
 #include "sci/sci.h"
-#include "sci/graphics/gui_helpers.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
@@ -41,10 +41,10 @@ namespace Sci {
 
 #define SCI_SCREEN_UNDITHERMEMORIAL_SIZE 256
 
-class SciGuiScreen {
+class Screen {
 public:
-	SciGuiScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
-	~SciGuiScreen();
+	Screen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
+	~Screen();
 
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);
@@ -71,7 +71,7 @@ public:
 	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
 	void bitsRestore(byte *memoryPtr);
 
-	void setPalette(GuiPalette*pal);
+	void setPalette(Palette*pal);
 
 	void setVerticalShakePos(uint16 shakePos);
 

@@ -44,7 +44,7 @@
 #include "sci/sound/softseq/mididriver.h"
 #include "sci/vocabulary.h"
 #include "sci/graphics/gui.h"
-#include "sci/graphics/gui_cursor.h"
+#include "sci/graphics/cursor.h"
 
 #include "graphics/video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"

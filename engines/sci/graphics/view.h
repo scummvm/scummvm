@@ -23,12 +23,12 @@
  *
  */
 
-#ifndef SCI_GUI_VIEW_H
-#define SCI_GUI_VIEW_H
+#ifndef SCI_GRAPHICS_VIEW_H
+#define SCI_GRAPHICS_VIEW_H
 
 namespace Sci {
 
-struct sciViewCelInfo {
+struct CelInfo {
 	int16 width, height;
 	char displaceX;
 	byte displaceY;
@@ -39,49 +39,49 @@ struct sciViewCelInfo {
 	byte *rawBitmap;
 };
 
-struct sciViewLoopInfo {
+struct LoopInfo {
 	bool mirrorFlag;
 	uint16 celCount;
-	sciViewCelInfo *cel;
+	CelInfo *cel;
 };
 
 #define SCI_VIEW_EGAMAPPING_SIZE 16
 #define SCI_VIEW_EGAMAPPING_COUNT 8
 
-class SciGuiView {
+class View {
 public:
-	SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
-	~SciGuiView();
+	View(ResourceManager *resMan, Screen *screen, SciPalette *palette, GuiResourceId resourceId);
+	~View();
 
 	GuiResourceId getResourceId();
-	int16 getWidth(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	int16 getHeight(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	sciViewCelInfo *getCelInfo(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	sciViewLoopInfo *getLoopInfo(GuiViewLoopNo loopNo);
-	void getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
-	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1);
+	int16 getWidth(LoopNo loopNo, CelNo celNo);
+	int16 getHeight(LoopNo loopNo, CelNo celNo);
+	CelInfo *getCelInfo(LoopNo loopNo, CelNo celNo);
+	LoopInfo *getLoopInfo(LoopNo loopNo);
+	void getCelRect(LoopNo loopNo, CelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
+	byte *getBitmap(LoopNo loopNo, CelNo celNo);
+	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1);
 	uint16 getLoopCount() const { return _loopCount; }
-	uint16 getCelCount(GuiViewLoopNo loopNo) { return _loop[loopNo].celCount; }
-	GuiPalette *getPalette();
+	uint16 getCelCount(LoopNo loopNo) { return _loop[loopNo].celCount; }
+	Palette *getPalette();
 
 private:
 	void initData(GuiResourceId resourceId);
-	void unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount);
+	void unpackCel(LoopNo loopNo, CelNo celNo, byte *outPtr, uint16 pixelCount);
 	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
+	Screen *_screen;
+	SciPalette *_palette;
 
 	GuiResourceId _resourceId;
 	Resource *_resource;
 	byte *_resourceData;
 
 	uint16 _loopCount;
-	sciViewLoopInfo *_loop;
+	LoopInfo *_loop;
 	bool _embeddedPal;
-	GuiPalette _viewPalette;
+	Palette _viewPalette;
 
 	byte *_EGAmapping;
 };

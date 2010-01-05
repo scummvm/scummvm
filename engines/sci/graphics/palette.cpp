@@ -28,12 +28,12 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_palette.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/palette.h"
 
 namespace Sci {
 
-SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool autoSetPalette)
+SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPalette)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -63,20 +63,20 @@ SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool
 	}
 }
 
-SciGuiPalette::~SciGuiPalette() {
+SciPalette::~SciPalette() {
 }
 
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void SciGuiPalette::createFromData(byte *data, GuiPalette *paletteOut) {
+void SciPalette::createFromData(byte *data, Palette *paletteOut) {
 	int palFormat = 0;
 	int palOffset = 0;
 	int palColorStart = 0;
 	int palColorCount = 0;
 	int colorNo = 0;
 
-	memset(paletteOut, 0, sizeof(GuiPalette));
+	memset(paletteOut, 0, sizeof(Palette));
 	// Setup default mapping
 	for (colorNo = 0; colorNo < 256; colorNo++) {
 		paletteOut->mapping[colorNo] = colorNo;
@@ -115,7 +115,7 @@ void SciGuiPalette::createFromData(byte *data, GuiPalette *paletteOut) {
 
 
 // Will try to set amiga palette by using "spal" file. If not found, we return false
-bool SciGuiPalette::setAmiga() {
+bool SciPalette::setAmiga() {
 	Common::File file;
 	int curColor, byte1, byte2;
 
@@ -137,7 +137,7 @@ bool SciGuiPalette::setAmiga() {
 	return false;
 }
 
-void SciGuiPalette::setEGA() {
+void SciPalette::setEGA() {
 	int i;
 	byte color1, color2;
 	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
@@ -170,9 +170,9 @@ void SciGuiPalette::setEGA() {
 	setOnScreen();
 }
 
-bool SciGuiPalette::setFromResource(GuiResourceId resourceId, uint16 flag) {
+bool SciPalette::setFromResource(GuiResourceId resourceId, uint16 flag) {
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
-	GuiPalette palette;
+	Palette palette;
 
 	if (palResource) {
 		createFromData(palResource->data, &palette);
@@ -182,7 +182,7 @@ bool SciGuiPalette::setFromResource(GuiResourceId resourceId, uint16 flag) {
 	return false;
 }
 
-void SciGuiPalette::set(GuiPalette *sciPal, uint16 flag) {
+void SciPalette::set(Palette *sciPal, uint16 flag) {
 	uint32 systime = _sysPalette.timestamp;
 	if (flag == 2 || sciPal->timestamp != systime) {
 		merge(sciPal, &_sysPalette, flag);
@@ -192,7 +192,7 @@ void SciGuiPalette::set(GuiPalette *sciPal, uint16 flag) {
 	}
 }
 
-void SciGuiPalette::merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
+void SciPalette::merge(Palette *pFrom, Palette *pTo, uint16 flag) {
 	uint16 res;
 	int i,j;
 	// colors 0 (black) and 255 (white) are not affected by merging
@@ -240,7 +240,7 @@ void SciGuiPalette::merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
 	pTo->timestamp = g_system->getMillis() * 60 / 1000;
 }
 
-uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
+uint16 SciPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {
 	byte found = 0xFF;
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
@@ -265,40 +265,40 @@ uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
 	return found;
 }
 
-void SciGuiPalette::getSys(GuiPalette *pal) {
+void SciPalette::getSys(Palette *pal) {
 	if (pal != &_sysPalette)
-		memcpy(pal, &_sysPalette,sizeof(GuiPalette));
+		memcpy(pal, &_sysPalette,sizeof(Palette));
 }
 
-void SciGuiPalette::setOnScreen() {
+void SciPalette::setOnScreen() {
 //	if (pal != &_sysPalette)
-//		memcpy(&_sysPalette,pal,sizeof(GuiPalette));
+//		memcpy(&_sysPalette,pal,sizeof(Palette));
 	_screen->setPalette(&_sysPalette);
 }
 
-void SciGuiPalette::setFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+void SciPalette::setFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
 	uint16 colorNr;
 	for (colorNr = fromColor; colorNr < toColor; colorNr++) {
 		_sysPalette.colors[colorNr].used |= flag;
 	}
 }
 
-void SciGuiPalette::unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+void SciPalette::unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
 	uint16 colorNr;
 	for (colorNr = fromColor; colorNr < toColor; colorNr++) {
 		_sysPalette.colors[colorNr].used &= ~flag;
 	}
 }
 
-void SciGuiPalette::setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
+void SciPalette::setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
 	memset(&_sysPalette.intensity[0] + fromColor, intensity, toColor - fromColor);
 	if (setPalette)
 		setOnScreen();
 }
 
 // Returns true, if palette got changed
-bool SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
-	GuiColor col;
+bool SciPalette::animate(byte fromColor, byte toColor, int speed) {
+	Color col;
 	//byte colorNr;
 	int16 colorCount;
 	uint32 now = g_system->getMillis() * 60 / 1000;
@@ -313,7 +313,7 @@ bool SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	}
 	if (scheduleNr == scheduleCount) {
 		// adding a new schedule
-		GuiPalSchedule newSchedule;
+		PalSchedule newSchedule;
 		newSchedule.from = fromColor;
 		newSchedule.schedule = now + ABS(speed);
 		_schedules.push_back(newSchedule);
@@ -328,14 +328,14 @@ bool SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 					col = _sysPalette.colors[fromColor];
 					if (fromColor < toColor) {
 						colorCount = toColor - fromColor - 1;
-						memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], colorCount * sizeof(GuiColor));
+						memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], colorCount * sizeof(Color));
 					}
 					_sysPalette.colors[toColor - 1] = col;
 				} else {
 					col = _sysPalette.colors[toColor - 1];
 					if (fromColor < toColor) {
 						colorCount = toColor - fromColor - 1;
-						memmove(&_sysPalette.colors[fromColor + 1], &_sysPalette.colors[fromColor], colorCount * sizeof(GuiColor));
+						memmove(&_sysPalette.colors[fromColor + 1], &_sysPalette.colors[fromColor], colorCount * sizeof(Color));
 					}
 					_sysPalette.colors[fromColor] = col;
 				}

@@ -29,21 +29,21 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_palette.h"
-#include "sci/graphics/gui_portrait.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/portrait.h"
 
 namespace Sci {
 
-SciGuiPortrait::SciGuiPortrait(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, Common::String resourceName)
+Portrait::Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, Common::String resourceName)
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceName(resourceName) {
 	init();
 }
 
-SciGuiPortrait::~SciGuiPortrait() {
+Portrait::~Portrait() {
 }
 
-void SciGuiPortrait::init() {
+void Portrait::init() {
 	// .BIN files are loaded from actors directory and from .\ directory
 	// header:
 	// 3 bytes "WIN"

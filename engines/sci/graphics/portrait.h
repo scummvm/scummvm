@@ -23,22 +23,22 @@
  *
  */
 
-#ifndef SCI_GUI_PORTRAITS_H
-#define SCI_GUI_PORTRAITS_H
+#ifndef SCI_GRAPHICS_PORTRAITS_H
+#define SCI_GRAPHICS_PORTRAITS_H
 
 namespace Sci {
 
-class SciGuiPortrait {
+class Portrait {
 public:
-	SciGuiPortrait(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, Common::String resourceName);
-	~SciGuiPortrait();
+	Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, Common::String resourceName);
+	~Portrait();
 
 private:
 	void init();
 
 	ResourceManager *_resMan;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
+	Screen *_screen;
+	SciPalette *_palette;
 
 	Common::String _resourceName;
 	byte *_resourceData;

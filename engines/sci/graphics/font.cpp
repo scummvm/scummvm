@@ -25,12 +25,12 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_font.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/font.h"
 
 namespace Sci {
 
-SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
+Font::Font(ResourceManager *resMan, GuiResourceId resourceId)
 	: _resourceId(resourceId), _resMan(resMan) {
 	assert(resourceId != -1);
 
@@ -56,29 +56,29 @@ SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 	}
 }
 
-SciGuiFont::~SciGuiFont() {
+Font::~Font() {
 	delete []_chars;
 	_resMan->unlockResource(_resource);
 }
 
-GuiResourceId SciGuiFont::getResourceId() {
+GuiResourceId Font::getResourceId() {
 	return _resourceId;
 }
 
-byte SciGuiFont::getHeight() {
+byte Font::getHeight() {
 	return _fontHeight;
 }
-byte SciGuiFont::getCharWidth(byte chr) {
+byte Font::getCharWidth(byte chr) {
 	return chr < _numChars ? _chars[chr].w : 0;
 }
-byte SciGuiFont::getCharHeight(byte chr) {
+byte Font::getCharHeight(byte chr) {
 	return chr < _numChars ? _chars[chr].h : 0;
 }
-byte *SciGuiFont::getCharData(byte chr) {
+byte *Font::getCharData(byte chr) {
 	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;
 }
 
-void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
+void Font::draw(Screen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
 	int charWidth = MIN<int>(getCharWidth(chr), screen->_width - left);
 	int charHeight = MIN<int>(getCharHeight(chr), 200 - top);
 	byte b = 0, mask = 0xFF;

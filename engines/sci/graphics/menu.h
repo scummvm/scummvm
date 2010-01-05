@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_MENU_H
-#define SCI_GUI_MENU_H
+#ifndef SCI_GRAPHICS_MENU_H
+#define SCI_GRAPHICS_MENU_H
 
 namespace Sci {
 
@@ -78,7 +78,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
 class SciGuiMenu {
 public:
-	SciGuiMenu(SciEvent *event, SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor);
+	SciGuiMenu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor);
 	~SciGuiMenu();
 
 	void reset();
@@ -100,10 +100,10 @@ private:
 
 	SciEvent *_event;
 	SegManager *_segMan;
-	SciGuiGfx *_gfx;
-	SciGuiText *_text;
-	SciGuiScreen *_screen;
-	SciGuiCursor *_cursor;
+	Gfx *_gfx;
+	Text *_text;
+	Screen *_screen;
+	Cursor *_cursor;
 
 	uint16 _listCount;
 	GuiMenuList _list;
@@ -112,9 +112,9 @@ private:
 	uint16 _curMenuId;
 	uint16 _curItemId;
 
-	GuiPort *_oldPort;
-	GuiMemoryHandle _barSaveHandle;
-	GuiMemoryHandle _menuSaveHandle;
+	Port *_oldPort;
+	MemoryHandle _barSaveHandle;
+	MemoryHandle _menuSaveHandle;
 	Common::Rect _menuRect;
 };
 

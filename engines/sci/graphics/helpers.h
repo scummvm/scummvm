@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_HELPERS_H
-#define SCI_GUI_HELPERS_H
+#ifndef SCI_GRAPHICS_HELPERS_H
+#define SCI_GRAPHICS_HELPERS_H
 
 #include "common/endian.h"	// for READ_LE_UINT16
 #include "common/rect.h"
@@ -36,13 +36,13 @@ namespace Sci {
 #define SCI_SHAKE_DIRECTION_HORIZONTAL 2
 
 typedef int GuiResourceId; // is a resource-number and -1 means no parameter given
-typedef reg_t GuiMemoryHandle;
-typedef int16 GuiViewLoopNo;
-typedef int16 GuiViewCelNo;
+typedef reg_t MemoryHandle;
+typedef int16 LoopNo;
+typedef int16 CelNo;
 
-typedef int16 GuiTextAlignment;
+typedef int16 TextAlignment;
 
-struct GuiPort {
+struct Port {
 	uint16 id;
 	int16 top, left;
 	Common::Rect rect;
@@ -53,14 +53,14 @@ struct GuiPort {
 	int16 penClr, backClr;
 	int16 penMode;
 
-	GuiPort(uint16 theId) : id(theId), top(0), left(0),
+	Port(uint16 theId) : id(theId), top(0), left(0),
 		curTop(0), curLeft(0),
 		fontHeight(0), fontId(0), greyedOutput(false),
 		penClr(0), backClr(0xFF), penMode(0) {
 	}
 };
 
-struct GuiWindow : public GuiPort {
+struct Window : public Port {
 	Common::Rect dims; // client area of window
 	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
@@ -70,41 +70,41 @@ struct GuiWindow : public GuiPort {
 	Common::String title;
 	bool bDrawn;
 
-	GuiWindow(uint16 theId) : GuiPort(theId),
+	Window(uint16 theId) : Port(theId),
 		wndStyle(0), saveScreenMask(0),
 		hSaved1(NULL_REG), hSaved2(NULL_REG),
 		bDrawn(false) {
 	}
 };
 
-struct GuiAnimateEntry {
+struct AnimateEntry {
 	reg_t object;
 	GuiResourceId viewId;
-	GuiViewLoopNo loopNo;
-	GuiViewCelNo celNo;
+	LoopNo loopNo;
+	CelNo celNo;
 	int16 paletteNo;
 	int16 x, y, z;
 	int16 priority;
 	uint16 signal;
 	Common::Rect celRect;
 	bool showBitsFlag;
-	GuiMemoryHandle castHandle;
+	MemoryHandle castHandle;
 };
-typedef Common::List<GuiAnimateEntry *> GuiAnimateList;
+typedef Common::List<AnimateEntry *> AnimateList;
 
-struct GuiColor {
+struct Color {
 	byte used;
 	byte r, g, b;
 };
 
-struct GuiPalette {
+struct Palette {
 	byte mapping[256];
 	uint32 timestamp;
-	GuiColor colors[256];
+	Color colors[256];
 	byte intensity[256];
 };
 
-struct GuiPalSchedule {
+struct PalSchedule {
 	byte from;
 	uint32 schedule;
 };

@@ -30,7 +30,7 @@
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
 #include "sci/graphics/gui.h"
-#include "sci/graphics/gui_cursor.h"
+#include "sci/graphics/cursor.h"
 
 namespace Sci {
 

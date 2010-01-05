@@ -30,17 +30,17 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_helpers.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_cursor.h"
-#include "sci/graphics/gui_font.h"
-#include "sci/graphics/gui_text.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_menu.h"
+#include "sci/graphics/helpers.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/cursor.h"
+#include "sci/graphics/font.h"
+#include "sci/graphics/text.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/menu.h"
 
 namespace Sci {
 
-SciGuiMenu::SciGuiMenu(SciEvent *event, SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text, SciGuiScreen *screen, SciGuiCursor *cursor)
+SciGuiMenu::SciGuiMenu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor)
 	: _event(event), _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;

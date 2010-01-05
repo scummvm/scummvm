@@ -329,7 +329,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sciEvent event = { 0, 0, 0, 0 };
 
-	// TODO: we need to call SciGuiCursor::refreshPosition() before each screen update to limit the mouse cursor position
+	// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
 
 	// Update the screen here, since it's called very often
 	g_system->updateScreen();

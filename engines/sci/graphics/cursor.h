@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_CURSOR_H
-#define SCI_GUI_CURSOR_H
+#ifndef SCI_GRAPHICS_CURSOR_H
+#define SCI_GRAPHICS_CURSOR_H
 
 #include "common/hashmap.h"
 
@@ -37,15 +37,15 @@ namespace Sci {
 
 #define MAX_CACHED_CURSORS 10
 
-class SciGuiView;
-class SciGuiPalette;
+class View;
+class SciPalette;
 
-typedef Common::HashMap<int, SciGuiView *> CursorCache;
+typedef Common::HashMap<int, View *> CursorCache;
 
-class SciGuiCursor {
+class Cursor {
 public:
-	SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciGuiScreen *screen);
-	~SciGuiCursor();
+	Cursor(ResourceManager *resMan, SciPalette *palette, Screen *screen);
+	~Cursor();
 
 	void show();
 	void hide();
@@ -67,8 +67,8 @@ private:
 	void purgeCache();
 
 	ResourceManager *_resMan;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
+	Screen *_screen;
+	SciPalette *_palette;
 
 	bool _upscaledHires;
 

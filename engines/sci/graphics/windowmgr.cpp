@@ -27,11 +27,11 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_animate.h"
-#include "sci/graphics/gui_text.h"
-#include "sci/graphics/gui_windowmgr.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/animate.h"
+#include "sci/graphics/text.h"
+#include "sci/graphics/windowmgr.h"
 
 namespace Sci {
 
@@ -44,18 +44,18 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
-SciGuiWindowMgr::SciGuiWindowMgr(SciGui *gui, SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiText *text)
+WindowMgr::WindowMgr(SciGui *gui, Screen *screen, Gfx *gfx, Text *text)
 	: _gui(gui), _screen(screen), _gfx(gfx), _text(text) {
 }
 
-SciGuiWindowMgr::~SciGuiWindowMgr() {
+WindowMgr::~WindowMgr() {
 	// TODO: Clear _windowList and delete all stuff in it?
 }
 
-void SciGuiWindowMgr::init(Common::String gameId) {
+void WindowMgr::init(Common::String gameId) {
 	int16 offTop = 10;
 
-	_wmgrPort = new GuiPort(1);
+	_wmgrPort = new Port(1);
 	_windowsById.resize(2);
 	_windowsById[0] = _wmgrPort; // wmgrPort is supposed to be accessible via id 0
 	_windowsById[1] = _wmgrPort; //  but wmgrPort may not actually have id 0, so we assign id 1 (as well)
@@ -81,25 +81,25 @@ void SciGuiWindowMgr::init(Common::String gameId) {
 	_picWind = NewWindow(Common::Rect(0, offTop, _screen->_width, _screen->_height), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 }
 
-int16 SciGuiWindowMgr::isFrontWindow(GuiWindow *pWnd) {
+int16 WindowMgr::isFrontWindow(Window *pWnd) {
 	return _windowList.back() == pWnd;
 }
 
-void SciGuiWindowMgr::BeginUpdate(GuiWindow *wnd) {
-	GuiPort *oldPort = _gfx->SetPort(_wmgrPort);
+void WindowMgr::BeginUpdate(Window *wnd) {
+	Port *oldPort = _gfx->SetPort(_wmgrPort);
 	PortList::iterator it = _windowList.reverse_begin();
 	const PortList::iterator end = Common::find(_windowList.begin(), _windowList.end(), wnd);
 	while (it != end) {
-		// FIXME: We also store GuiPort objects in the window list.
+		// FIXME: We also store Port objects in the window list.
 		// We should add a check that we really only pass windows here...
-		UpdateWindow((GuiWindow *)*it);
+		UpdateWindow((Window *)*it);
 		--it;
 	}
 	_gfx->SetPort(oldPort);
 }
 
-void SciGuiWindowMgr::EndUpdate(GuiWindow *wnd) {
-	GuiPort *oldPort = _gfx->SetPort(_wmgrPort);
+void WindowMgr::EndUpdate(Window *wnd) {
+	Port *oldPort = _gfx->SetPort(_wmgrPort);
 	const PortList::iterator end = _windowList.end();
 	PortList::iterator it = Common::find(_windowList.begin(), end, wnd);
 
@@ -107,15 +107,15 @@ void SciGuiWindowMgr::EndUpdate(GuiWindow *wnd) {
 	assert(it != end);
 
 	while (++it != end) {
-		// FIXME: We also store GuiPort objects in the window list.
+		// FIXME: We also store Port objects in the window list.
 		// We should add a check that we really only pass windows here...
-		UpdateWindow((GuiWindow *)*it);
+		UpdateWindow((Window *)*it);
 	}
 
 	_gfx->SetPort(oldPort);
 }
 
-GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
+Window *WindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
 	// Find an unused window/port id
 	uint id = 1;
 	while (id < _windowsById.size() && _windowsById[id]) {
@@ -125,7 +125,7 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 		_windowsById.push_back(0);
 	assert(0 < id && id < 0xFFFF);
 
-	GuiWindow *pwnd = new GuiWindow(id);
+	Window *pwnd = new Window(id);
 	Common::Rect r;
 
 	if (!pwnd) {
@@ -195,20 +195,20 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	
 	if (draw)
 		DrawWindow(pwnd);
-	_gfx->SetPort((GuiPort *)pwnd);
+	_gfx->SetPort((Port *)pwnd);
 	_gfx->SetOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
 	pwnd->rect.moveTo(0, 0);
 	return pwnd;
 }
 
-void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
+void WindowMgr::DrawWindow(Window *pWnd) {
 	if (pWnd->bDrawn)
 		return;
 	Common::Rect r;
 	int16 wndStyle = pWnd->wndStyle;
 
 	pWnd->bDrawn = true;
-	GuiPort *oldport = _gfx->SetPort(_wmgrPort);
+	Port *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
 	if ((wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0) {
 		pWnd->hSaved1 = _gfx->BitsSave(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
@@ -254,7 +254,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	_gfx->SetPort(oldport);
 }
 
-void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, bool reanimate) {
+void WindowMgr::DisposeWindow(Window *pWnd, bool reanimate) {
 	_gfx->SetPort(_wmgrPort);
 	_gfx->BitsRestore(pWnd->hSaved1);
 	_gfx->BitsRestore(pWnd->hSaved2);
@@ -268,8 +268,8 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, bool reanimate) {
 	delete pWnd;
 }
 
-void SciGuiWindowMgr::UpdateWindow(GuiWindow *wnd) {
-	GuiMemoryHandle handle;
+void WindowMgr::UpdateWindow(Window *wnd) {
+	MemoryHandle handle;
 
 	if (wnd->saveScreenMask && wnd->bDrawn) {
 		handle = _gfx->BitsSave(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);

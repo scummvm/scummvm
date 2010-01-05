@@ -29,14 +29,14 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_palette.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_view.h"
-#include "sci/graphics/gui_cursor.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/view.h"
+#include "sci/graphics/cursor.h"
 
 namespace Sci {
 
-SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciGuiScreen *screen)
+Cursor::Cursor(ResourceManager *resMan, SciPalette *palette, Screen *screen)
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	_upscaledHires = _screen->getUpscaledHires();
@@ -47,25 +47,25 @@ SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette, SciG
 	_isVisible = true;
 }
 
-SciGuiCursor::~SciGuiCursor() {
+Cursor::~Cursor() {
 	purgeCache();
 }
 
-void SciGuiCursor::show() {
+void Cursor::show() {
 	CursorMan.showMouse(true);
 	_isVisible = true;
 }
 
-void SciGuiCursor::hide() {
+void Cursor::hide() {
 	CursorMan.showMouse(false);
 	_isVisible = false;
 }
 
-bool SciGuiCursor::isVisible() {
+bool Cursor::isVisible() {
 	return _isVisible;
 }
 
-void SciGuiCursor::purgeCache() {
+void Cursor::purgeCache() {
 	for (CursorCache::iterator iter = _cachedCursors.begin(); iter != _cachedCursors.end(); ++iter) {
 		delete iter->_value;
 		iter->_value = 0;
@@ -74,7 +74,7 @@ void SciGuiCursor::purgeCache() {
 	_cachedCursors.clear();
 }
 
-void SciGuiCursor::setShape(GuiResourceId resourceId) {
+void Cursor::setShape(GuiResourceId resourceId) {
 	Resource *resource;
 	byte *resourceData;
 	Common::Point hotspot = Common::Point(0, 0);
@@ -133,16 +133,16 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 	delete[] rawBitmap;
 }
 
-void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+void Cursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
 	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
 		purgeCache();
 
 	if (!_cachedCursors.contains(viewNum))
-		_cachedCursors[viewNum] = new SciGuiView(_resMan, _screen, _palette, viewNum);
+		_cachedCursors[viewNum] = new View(_resMan, _screen, _palette, viewNum);
 
-	SciGuiView *cursorView = _cachedCursors[viewNum];
+	View *cursorView = _cachedCursors[viewNum];
 
-	sciViewCelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
+	CelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
 	int16 width = celInfo->width;
 	int16 height = celInfo->height;
 	byte clearKey = celInfo->clearKey;
@@ -180,7 +180,7 @@ void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Commo
 	delete cursorHotspot;
 }
 
-void SciGuiCursor::setPosition(Common::Point pos) {
+void Cursor::setPosition(Common::Point pos) {
 	if (!_upscaledHires) {
 		g_system->warpMouse(pos.x, pos.y);
 	} else {
@@ -188,7 +188,7 @@ void SciGuiCursor::setPosition(Common::Point pos) {
 	}
 }
 
-Common::Point SciGuiCursor::getPosition() {
+Common::Point Cursor::getPosition() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	
 	if (_upscaledHires) {
@@ -199,7 +199,7 @@ Common::Point SciGuiCursor::getPosition() {
 	return mousePos;
 }
 
-void SciGuiCursor::refreshPosition() {
+void Cursor::refreshPosition() {
 	bool clipped = false;
 	Common::Point mousePoint = getPosition();
 

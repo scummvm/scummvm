@@ -52,7 +52,7 @@ namespace Sci {
 class SciEvent;
 class Menubar;
 class SciGui;
-class SciGuiCursor;
+class Cursor;
 class MessageState;
 class SoundCommandParser;
 

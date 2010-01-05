@@ -23,47 +23,47 @@
  *
  */
 
-#ifndef SCI_GUI_WINDOWMGR_H
-#define SCI_GUI_WINDOWMGR_H
+#ifndef SCI_GRAPHICS_WINDOWMGR_H
+#define SCI_GRAPHICS_WINDOWMGR_H
 
 #include "common/list.h"
 #include "common/array.h"
 
 namespace Sci {
 
-class SciGuiWindowMgr {
+class WindowMgr {
 public:
-	SciGuiWindowMgr(SciGui *gui, SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiText *text);
-	~SciGuiWindowMgr();
+	WindowMgr(SciGui *gui, Screen *screen, Gfx *gfx, Text *text);
+	~WindowMgr();
 
 	void init(Common::String gameId);
 
-	int16 isFrontWindow(GuiWindow *wnd);
-	void BeginUpdate(GuiWindow *wnd);
-	void EndUpdate(GuiWindow *wnd);
-	GuiWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
-	void DrawWindow(GuiWindow *wnd);
-	void DisposeWindow(GuiWindow *pWnd, bool reanimate);
-	void UpdateWindow(GuiWindow *wnd);
+	int16 isFrontWindow(Window *wnd);
+	void BeginUpdate(Window *wnd);
+	void EndUpdate(Window *wnd);
+	Window *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
+	void DrawWindow(Window *wnd);
+	void DisposeWindow(Window *pWnd, bool reanimate);
+	void UpdateWindow(Window *wnd);
 
-	GuiPort *getPortById(uint16 id) const { return _windowsById[id]; }
+	Port *getPortById(uint16 id) const { return _windowsById[id]; }
 
-	GuiPort *_wmgrPort;
-	GuiWindow *_picWind;
+	Port *_wmgrPort;
+	Window *_picWind;
 
 private:
-	typedef Common::List<GuiPort *> PortList;
+	typedef Common::List<Port *> PortList;
 
 	SciGui *_gui;
-	SciGuiScreen *_screen;
-	SciGuiGfx *_gfx;
-	SciGuiText *_text;
+	Screen *_screen;
+	Gfx *_gfx;
+	Text *_text;
 
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;
 
 	/** The list of all open 'windows' (and ports), ordered by their id. */
-	Common::Array<GuiPort *> _windowsById;
+	Common::Array<Port *> _windowsById;
 };
 
 } // End of namespace Sci

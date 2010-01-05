@@ -29,11 +29,11 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_screen.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
-SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) : 
+Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) : 
 	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
 
 	_pixels = _width * _height;
@@ -73,25 +73,25 @@ SciGuiScreen::SciGuiScreen(ResourceManager *resMan, int16 width, int16 height, b
 	initGraphics(_displayWidth, _displayHeight, _displayWidth > 320);
 }
 
-SciGuiScreen::~SciGuiScreen() {
+Screen::~Screen() {
 	free(_visualScreen);
 	free(_priorityScreen);
 	free(_controlScreen);
 	free(_displayScreen);
 }
 
-void SciGuiScreen::copyToScreen() {
+void Screen::copyToScreen() {
 	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }
 
-void SciGuiScreen::copyFromScreen(byte *buffer) {
+void Screen::copyFromScreen(byte *buffer) {
 	Graphics::Surface *screen;
 	screen = g_system->lockScreen();
 	memcpy(buffer, screen->pixels, _displayWidth * _displayHeight);
 	g_system->unlockScreen();
 }
 
-void SciGuiScreen::copyRectToScreen(const Common::Rect &rect) {
+void Screen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
 	} else {
@@ -99,7 +99,7 @@ void SciGuiScreen::copyRectToScreen(const Common::Rect &rect) {
 	}
 }
 
-void SciGuiScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
+void Screen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
 	} else {
@@ -107,7 +107,7 @@ void SciGuiScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) 
 	}
 }
 
-byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
+byte Screen::getDrawingMask(byte color, byte prio, byte control) {
 	byte flag = 0;
 	if (color != 255)
 		flag |= SCI_SCREEN_MASK_VISUAL;
@@ -118,7 +118,7 @@ byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 	return flag;
 }
 
-void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
+void Screen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
@@ -141,14 +141,14 @@ void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priori
 
 // This will just change a pixel directly on displayscreen. Its supposed to get only used on upscaled-Hires games where
 //  hires content needs to get drawn ONTO the upscaled display screen (like japanese fonts, hires portraits, etc.)
-void SciGuiScreen::putPixelOnDisplay(int x, int y, byte color) {
+void Screen::putPixelOnDisplay(int x, int y, byte color) {
 	int offset = y * _width + x;
 	_displayScreen[offset] = color;
 }
 
 // Sierra's Bresenham line drawing
 // WARNING: Do not just blindly replace this with Graphics::drawLine(), as it seems to create issues with flood fill
-void SciGuiScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+void Screen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
 	int16 left = startPoint.x;
 	int16 top = startPoint.y;
 	int16 right = endPoint.x;
@@ -210,19 +210,19 @@ void SciGuiScreen::drawLine(Common::Point startPoint, Common::Point endPoint, by
 	}
 }
 
-byte SciGuiScreen::getVisual(int x, int y) {
+byte Screen::getVisual(int x, int y) {
 	return _visualScreen[y * _width + x];
 }
 
-byte SciGuiScreen::getPriority(int x, int y) {
+byte Screen::getPriority(int x, int y) {
 	return _priorityScreen[y * _width + x];
 }
 
-byte SciGuiScreen::getControl(int x, int y) {
+byte Screen::getControl(int x, int y) {
 	return _controlScreen[y * _width + x];
 }
 
-byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con) {
+byte Screen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con) {
 	int offset = y * _width + x;
 	byte match = 0;
 
@@ -235,7 +235,7 @@ byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, 
 	return match;
 }
 
-int SciGuiScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
+int Screen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
@@ -261,7 +261,7 @@ int SciGuiScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	return byteCount;
 }
 
-void SciGuiScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
+void Screen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&rect, sizeof(rect)); memoryPtr += sizeof(rect);
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
@@ -282,7 +282,7 @@ void SciGuiScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	}
 }
 
-void SciGuiScreen::bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
+void Screen::bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
 	int width = rect.width();
 	int y;
 
@@ -294,7 +294,7 @@ void SciGuiScreen::bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memory
 	}
 }
 
-void SciGuiScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
+void Screen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	byte *screen = _displayScreen;
 	int width = rect.width();
 	int y;
@@ -313,11 +313,11 @@ void SciGuiScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void SciGuiScreen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
+void Screen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
 	memcpy((void *)destRect, memoryPtr, sizeof(Common::Rect));
 }
 
-void SciGuiScreen::bitsRestore(byte *memoryPtr) {
+void Screen::bitsRestore(byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
 
@@ -341,7 +341,7 @@ void SciGuiScreen::bitsRestore(byte *memoryPtr) {
 	}
 }
 
-void SciGuiScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
+void Screen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
 	int width = rect.width();
 	int y;
 
@@ -353,7 +353,7 @@ void SciGuiScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *
 	}
 }
 
-void SciGuiScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
+void Screen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	byte *screen = _displayScreen;
 	int width = rect.width();
 	int y;
@@ -372,7 +372,7 @@ void SciGuiScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr)
 	}
 }
 
-void SciGuiScreen::setPalette(GuiPalette*pal) {
+void Screen::setPalette(Palette*pal) {
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back
@@ -388,14 +388,14 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 	g_system->setPalette(bpal, 0, 256);
 }
 
-void SciGuiScreen::setVerticalShakePos(uint16 shakePos) {
+void Screen::setVerticalShakePos(uint16 shakePos) {
 	if (!_upscaledHires)
 		g_system->setShakePos(shakePos);
 	else
 		g_system->setShakePos(shakePos * 2);
 }
 
-void SciGuiScreen::dither(bool addToFlag) {
+void Screen::dither(bool addToFlag) {
 	int y, x;
 	byte color, ditheredColor;
 	byte *visualPtr = _visualScreen;
@@ -461,18 +461,18 @@ void SciGuiScreen::dither(bool addToFlag) {
 	}
 }
 
-void SciGuiScreen::unditherSetState(bool flag) {
+void Screen::unditherSetState(bool flag) {
 	_unditherState = flag;
 }
 
-int16 *SciGuiScreen::unditherGetMemorial() {
+int16 *Screen::unditherGetMemorial() {
 	if (_unditherState)
 		return (int16 *)&_unditherMemorial;
 	else
 		return NULL;
 }
 
-void SciGuiScreen::debugShowMap(int mapNo) {
+void Screen::debugShowMap(int mapNo) {
 	// We cannot really support changing maps when in upscaledHires mode
 	if (_upscaledHires)
 		return;
@@ -494,7 +494,7 @@ void SciGuiScreen::debugShowMap(int mapNo) {
 	copyToScreen();
 }
 
-void SciGuiScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
+void Screen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
 	int newWidth = srcWidth * 2;
 	byte *srcPtr = src;
 

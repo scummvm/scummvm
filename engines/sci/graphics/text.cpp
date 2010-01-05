@@ -29,22 +29,22 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_font.h"
-#include "sci/graphics/gui_text.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/font.h"
+#include "sci/graphics/text.h"
 
 namespace Sci {
 
-SciGuiText::SciGuiText(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen)
+Text::Text(ResourceManager *resMan, Gfx *gfx, Screen *screen)
 	: _resMan(resMan), _gfx(gfx), _screen(screen) {
 	init();
 }
 
-SciGuiText::~SciGuiText() {
+Text::~Text() {
 	delete _font;
 }
 
-void SciGuiText::init() {
+void Text::init() {
 	_font = NULL;
 	_codeFonts = NULL;
 	_codeFontsCount = 0;
@@ -52,26 +52,26 @@ void SciGuiText::init() {
 	_codeColorsCount = 0;
 }
 
-GuiResourceId SciGuiText::GetFontId() {
+GuiResourceId Text::GetFontId() {
 	return _gfx->_curPort->fontId;
 }
 
-SciGuiFont *SciGuiText::GetFont() {
+Font *Text::GetFont() {
 	if ((_font == NULL) || (_font->getResourceId() != _gfx->_curPort->fontId))
-		_font = new SciGuiFont(_resMan, _gfx->_curPort->fontId);
+		_font = new Font(_resMan, _gfx->_curPort->fontId);
 
 	return _font;
 }
 
-void SciGuiText::SetFont(GuiResourceId fontId) {
+void Text::SetFont(GuiResourceId fontId) {
 	if ((_font == NULL) || (_font->getResourceId() != fontId))
-		_font = new SciGuiFont(_resMan, fontId);
+		_font = new Font(_resMan, fontId);
 
 	_gfx->_curPort->fontId = _font->getResourceId();
 	_gfx->_curPort->fontHeight = _font->getHeight();
 }
 
-void SciGuiText::CodeSetFonts(int argc, reg_t *argv) {
+void Text::CodeSetFonts(int argc, reg_t *argv) {
 	int i;
 
 	delete _codeFonts;
@@ -82,7 +82,7 @@ void SciGuiText::CodeSetFonts(int argc, reg_t *argv) {
 	}
 }
 
-void SciGuiText::CodeSetColors(int argc, reg_t *argv) {
+void Text::CodeSetColors(int argc, reg_t *argv) {
 	int i;
 
 	delete _codeColors;
@@ -93,7 +93,7 @@ void SciGuiText::CodeSetColors(int argc, reg_t *argv) {
 	}
 }
 
-void SciGuiText::ClearChar(int16 chr) {
+void Text::ClearChar(int16 chr) {
 	if (_gfx->_curPort->penMode != 1)
 		return;
 	Common::Rect rect;
@@ -104,14 +104,14 @@ void SciGuiText::ClearChar(int16 chr) {
 	_gfx->EraseRect(rect);
 }
 
-void SciGuiText::DrawChar(int16 chr) {
+void Text::DrawChar(int16 chr) {
 	chr = chr & 0xFF;
 	ClearChar(chr);
 	StdChar(chr);
 	_gfx->_curPort->curLeft += GetFont()->getCharWidth(chr);
 }
 
-void SciGuiText::StdChar(int16 chr) {
+void Text::StdChar(int16 chr) {
 #if 0
 	CResFont*res = getResFont();
 	if (res)
@@ -125,7 +125,7 @@ void SciGuiText::StdChar(int16 chr) {
 //  It will process the encountered code and set new font/set color
 //  We only support one-digit codes currently, don't know if multi-digit codes are possible
 //  Returns textcode character count
-int16 SciGuiText::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor) {
+int16 Text::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor) {
 	const char *textCode = text;
 	int16 textCodeSize = 0;
 	char curCode;
@@ -168,7 +168,7 @@ int16 SciGuiText::CodeProcessing(const char *&text, GuiResourceId orgFontId, int
 }
 
 // return max # of chars to fit maxwidth with full words
-int16 SciGuiText::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
+int16 Text::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
 	char curChar;
 	int16 maxChars = 0, curCharCount = 0;
 	uint16 width = 0;
@@ -213,7 +213,7 @@ int16 SciGuiText::GetLongest(const char *text, int16 maxWidth, GuiResourceId org
 	return maxChars;
 }
 
-void SciGuiText::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+void Text::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
 	unsigned char curChar;
 	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _gfx->_curPort->penClr;
@@ -246,18 +246,18 @@ void SciGuiText::Width(const char *text, int16 from, int16 len, GuiResourceId or
 	return;
 }
 
-void SciGuiText::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+void Text::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
 	Width(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight);
 }
 
-void SciGuiText::ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
+void Text::ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
 	Show(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 }
-void SciGuiText::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
+void Text::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
 	Draw(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 }
 
-int16 SciGuiText::Size(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth) {
+int16 Text::Size(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth) {
 	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _gfx->_curPort->penClr;
 	int16 charCount;
@@ -299,7 +299,7 @@ int16 SciGuiText::Size(Common::Rect &rect, const char *str, GuiResourceId fontId
 }
 
 // returns maximum font height used
-void SciGuiText::Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
+void Text::Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
 	int16 curChar, charWidth;
 	Common::Rect rect;
 
@@ -338,7 +338,7 @@ void SciGuiText::Draw(const char *text, int16 from, int16 len, GuiResourceId org
 }
 
 // returns maximum font height used
-void SciGuiText::Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
+void Text::Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
 	Common::Rect rect;
 
 	rect.top = _gfx->_curPort->curTop;
@@ -350,7 +350,7 @@ void SciGuiText::Show(const char *text, int16 from, int16 len, GuiResourceId org
 }
 
 // Draws a text in rect.
-void SciGuiText::Box(const char *text, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId) {
+void Text::Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
 	int16 textWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
@@ -398,7 +398,7 @@ void SciGuiText::Box(const char *text, int16 bshow, const Common::Rect &rect, Gu
 	_gfx->PenColor(orgPenColor);
 }
 
-void SciGuiText::Draw_String(const char *text) {
+void Text::Draw_String(const char *text) {
 	GuiResourceId orgFontId = GetFontId();
 	int16 orgPenColor = _gfx->_curPort->penClr;
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_PICTURE_H
-#define SCI_GUI_PICTURE_H
+#ifndef SCI_GRAPHICS_PICTURE_H
+#define SCI_GRAPHICS_PICTURE_H
 
 namespace Sci {
 
@@ -34,7 +34,7 @@ namespace Sci {
 
 class SciGuiPicture {
 public:
-	SciGuiPicture(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
+	SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
@@ -63,9 +63,9 @@ private:
 	void vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture);
 
 	ResourceManager *_resMan;
-	SciGuiGfx *_gfx;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
+	Gfx *_gfx;
+	Screen *_screen;
+	SciPalette *_palette;
 
 	int16 _resourceId;
 	Resource *_resource;

@@ -29,46 +29,46 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_animate.h"
-#include "sci/graphics/gui_font.h"
-#include "sci/graphics/gui_picture.h"
-#include "sci/graphics/gui_view.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_palette.h"
-#include "sci/graphics/gui_text.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/animate.h"
+#include "sci/graphics/font.h"
+#include "sci/graphics/picture.h"
+#include "sci/graphics/view.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/text.h"
 
 namespace Sci {
 
-SciGuiGfx::SciGuiGfx(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGuiScreen *screen, SciGuiPalette *palette)
+Gfx::Gfx(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, Screen *screen, SciPalette *palette)
 	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _screen(screen), _palette(palette) {
 }
 
-SciGuiGfx::~SciGuiGfx() {
+Gfx::~Gfx() {
 	purgeCache();
 
 	delete _mainPort;
 	delete _menuPort;
 }
 
-void SciGuiGfx::init(SciGuiText *text) {
+void Gfx::init(Text *text) {
 	_text = text;
 
 	// _mainPort is not known to windowmanager, that's okay according to sierra sci
 	//  its not even used currently in our engine
-	_mainPort = new GuiPort(0);
+	_mainPort = new Port(0);
 	SetPort(_mainPort);
 	OpenPort(_mainPort);
 
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
-	_menuPort = new GuiPort(0xFFFF);
+	_menuPort = new Port(0xFFFF);
 	OpenPort(_menuPort);
 	_text->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuBarRect = Common::Rect(0, 0, _screen->_width, 9);
 }
 
-void SciGuiGfx::purgeCache() {
+void Gfx::purgeCache() {
 	for (ViewCache::iterator iter = _cachedViews.begin(); iter != _cachedViews.end(); ++iter) {
 		delete iter->_value;
 		iter->_value = 0;
@@ -77,46 +77,46 @@ void SciGuiGfx::purgeCache() {
 	_cachedViews.clear();
 }
 
-SciGuiView *SciGuiGfx::getView(GuiResourceId viewNum) {
+View *Gfx::getView(GuiResourceId viewNum) {
 	if (_cachedViews.size() >= MAX_CACHED_VIEWS)
 		purgeCache();
 
 	if (!_cachedViews.contains(viewNum))
-		_cachedViews[viewNum] = new SciGuiView(_resMan, _screen, _palette, viewNum);
+		_cachedViews[viewNum] = new View(_resMan, _screen, _palette, viewNum);
 
 	return _cachedViews[viewNum];
 }
 
-GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
-	GuiPort *oldPort = _curPort;
+Port *Gfx::SetPort(Port *newPort) {
+	Port *oldPort = _curPort;
 	_curPort = newPort;
 	return oldPort;
 }
 
-GuiPort *SciGuiGfx::GetPort() {
+Port *Gfx::GetPort() {
 	return _curPort;
 }
 
-void SciGuiGfx::SetOrigin(int16 left, int16 top) {
+void Gfx::SetOrigin(int16 left, int16 top) {
 	_curPort->left = left;
 	_curPort->top = top;
 }
 
-void SciGuiGfx::MoveTo(int16 left, int16 top) {
+void Gfx::MoveTo(int16 left, int16 top) {
 	_curPort->curTop = top;
 	_curPort->curLeft = left;
 }
 
-void SciGuiGfx::Move(int16 left, int16 top) {
+void Gfx::Move(int16 left, int16 top) {
 	_curPort->curTop += top;
 	_curPort->curLeft += left;
 }
 
-void SciGuiGfx::OpenPort(GuiPort *port) {
+void Gfx::OpenPort(Port *port) {
 	port->fontId = 0;
 	port->fontHeight = 8;
 
-	GuiPort *tmp = _curPort;
+	Port *tmp = _curPort;
 	_curPort = port;
 	_text->SetFont(port->fontId);
 	_curPort = tmp;
@@ -130,46 +130,46 @@ void SciGuiGfx::OpenPort(GuiPort *port) {
 	port->rect = _bounds;
 }
 
-void SciGuiGfx::PenColor(int16 color) {
+void Gfx::PenColor(int16 color) {
 	_curPort->penClr = color;
 }
 
-void SciGuiGfx::BackColor(int16 color) {
+void Gfx::BackColor(int16 color) {
 	_curPort->backClr = color;
 }
 
-void SciGuiGfx::PenMode(int16 mode) {
+void Gfx::PenMode(int16 mode) {
 	_curPort->penMode = mode;
 }
 
-void SciGuiGfx::TextGreyedOutput(bool state) {
+void Gfx::TextGreyedOutput(bool state) {
 	_curPort->greyedOutput = state;
 }
 
-int16 SciGuiGfx::GetPointSize() {
+int16 Gfx::GetPointSize() {
 	return _curPort->fontHeight;
 }
 
-void SciGuiGfx::ClearScreen(byte color) {
+void Gfx::ClearScreen(byte color) {
 	FillRect(_curPort->rect, SCI_SCREEN_MASK_ALL, color, 0, 0);
 }
 
-void SciGuiGfx::InvertRect(const Common::Rect &rect) {
+void Gfx::InvertRect(const Common::Rect &rect) {
 	int16 oldpenmode = _curPort->penMode;
 	_curPort->penMode = 2;
 	FillRect(rect, 1, _curPort->penClr, _curPort->backClr);
 	_curPort->penMode = oldpenmode;
 }
 
-void SciGuiGfx::EraseRect(const Common::Rect &rect) {
+void Gfx::EraseRect(const Common::Rect &rect) {
 	FillRect(rect, 1, _curPort->backClr);
 }
 
-void SciGuiGfx::PaintRect(const Common::Rect &rect) {
+void Gfx::PaintRect(const Common::Rect &rect) {
 	FillRect(rect, 1, _curPort->penClr);
 }
 
-void SciGuiGfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
+void Gfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
 	Common::Rect r = rect;
 	r.clip(_curPort->rect);
 	if (r.isEmpty()) // nothing to fill
@@ -221,7 +221,7 @@ void SciGuiGfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen,
 	}
 }
 
-void SciGuiGfx::FrameRect(const Common::Rect &rect) {
+void Gfx::FrameRect(const Common::Rect &rect) {
 	Common::Rect r;
 	// left
 	r = rect;
@@ -241,21 +241,21 @@ void SciGuiGfx::FrameRect(const Common::Rect &rect) {
 	PaintRect(r);
 }
 
-void SciGuiGfx::OffsetRect(Common::Rect &r) {
+void Gfx::OffsetRect(Common::Rect &r) {
 	r.top += _curPort->top;
 	r.bottom += _curPort->top;
 	r.left += _curPort->left;
 	r.right += _curPort->left;
 }
 
-void SciGuiGfx::OffsetLine(Common::Point &start, Common::Point &end) {
+void Gfx::OffsetLine(Common::Point &start, Common::Point &end) {
 	start.x += _curPort->left;
 	start.y += _curPort->top;
 	end.x += _curPort->left;
 	end.y += _curPort->top;
 }
 
-void SciGuiGfx::BitsShow(const Common::Rect &rect) {
+void Gfx::BitsShow(const Common::Rect &rect) {
 	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
 	workerRect.clip(_curPort->rect);
 	if (workerRect.isEmpty()) // nothing to show
@@ -265,8 +265,8 @@ void SciGuiGfx::BitsShow(const Common::Rect &rect) {
 	_screen->copyRectToScreen(workerRect);
 }
 
-GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
-	GuiMemoryHandle memoryId;
+MemoryHandle Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
+	MemoryHandle memoryId;
 	byte *memoryPtr;
 	int size;
 
@@ -286,7 +286,7 @@ GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	return memoryId;
 }
 
-void SciGuiGfx::BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect) {
+void Gfx::BitsGetRect(MemoryHandle memoryHandle, Common::Rect *destRect) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
@@ -298,7 +298,7 @@ void SciGuiGfx::BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect
 	}
 }
 
-void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
+void Gfx::BitsRestore(MemoryHandle memoryHandle) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
@@ -311,13 +311,13 @@ void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
 	}
 }
 
-void SciGuiGfx::BitsFree(GuiMemoryHandle memoryHandle) {
+void Gfx::BitsFree(MemoryHandle memoryHandle) {
 	if (!memoryHandle.isNull()) {
 		kfree(_segMan, memoryHandle);
 	}
 }
 
-void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
+void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
 	SciGuiPicture *picture = new SciGuiPicture(_resMan, this, _screen, _palette, pictureId);
 
 	// do we add to a picture? if not -> clear screen with white
@@ -329,8 +329,8 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 }
 
 // This one is the only one that updates screen!
-void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight) {
-	SciGuiView *view = getView(viewId);
+void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight) {
+	View *view = getView(viewId);
 	Common::Rect rect;
 	Common::Rect clipRect;
 	if (view) {
@@ -358,8 +358,8 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
-	SciGuiView *view = getView(viewId);
+void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
+	View *view = getView(viewId);
 	Common::Rect clipRect;
 	if (view) {
 		clipRect = celRect;
@@ -375,7 +375,7 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void SciGuiGfx::drawCel(SciGuiView *view, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
+void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
 	Common::Rect clipRect;
 	clipRect = celRect;
 	clipRect.clip(_curPort->rect);
@@ -387,7 +387,7 @@ void SciGuiGfx::drawCel(SciGuiView *view, GuiViewLoopNo loopNo, GuiViewCelNo cel
 	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
 }
 
-uint16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
+uint16 Gfx::onControl(uint16 screenMask, Common::Rect rect) {
 	Common::Rect outRect(rect.left, rect.top, rect.right, rect.bottom);
 	int16 x, y;
 	uint16 result = 0;
@@ -420,7 +420,7 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
-void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
+void Gfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	int16 y;
 	int32 bandSize;
 
@@ -449,7 +449,7 @@ void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 		_priorityBands[y] = _priorityBandCount;
 }
 
-void SciGuiGfx::PriorityBandsInit(byte *data) {
+void Gfx::PriorityBandsInit(byte *data) {
 	int i = 0, inx;
 	byte priority = 0;
 
@@ -462,7 +462,7 @@ void SciGuiGfx::PriorityBandsInit(byte *data) {
 		_priorityBands[i++] = inx;
 }
 
-byte SciGuiGfx::CoordinateToPriority(int16 y) {
+byte Gfx::CoordinateToPriority(int16 y) {
 	if (y < _priorityTop) 
 		return _priorityBands[_priorityTop];
 	if (y > _priorityBottom)
@@ -470,7 +470,7 @@ byte SciGuiGfx::CoordinateToPriority(int16 y) {
 	return _priorityBands[y];
 }
 
-int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
+int16 Gfx::PriorityToCoordinate(byte priority) {
 	int16 y;
 	if (priority <= _priorityBandCount) {
 		for (y = 0; y <= _priorityBottom; y++)
@@ -480,7 +480,7 @@ int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
 	return _priorityBottom;
 }
 
-bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
+bool Gfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _segMan->lookupNode(curAddress);
 	reg_t curObject;
@@ -508,12 +508,12 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 	return true;
 }
 
-void SciGuiGfx::SetNowSeen(reg_t objectReference) {
-	SciGuiView *view = NULL;
+void Gfx::SetNowSeen(reg_t objectReference) {
+	View *view = NULL;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, view);
-	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(_segMan, objectReference, loop));
-	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(_segMan, objectReference, cel));
+	LoopNo loopNo = sign_extend_byte((LoopNo)GET_SEL32V(_segMan, objectReference, loop));
+	CelNo celNo = sign_extend_byte((CelNo)GET_SEL32V(_segMan, objectReference, cel));
 	int16 x = (int16)GET_SEL32V(_segMan, objectReference, x);
 	int16 y = (int16)GET_SEL32V(_segMan, objectReference, y);
 	int16 z = 0;

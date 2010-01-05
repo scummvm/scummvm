@@ -25,20 +25,20 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_palette.h"
-#include "sci/graphics/gui_view.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/view.h"
 
 namespace Sci {
 
-SciGuiView::SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId)
+View::View(ResourceManager *resMan, Screen *screen, SciPalette *palette, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
-SciGuiView::~SciGuiView() {
+View::~View() {
 	// Iterate through the loops
 	for (uint16 loopNum = 0; loopNum < _loopCount; loopNum++) {
 		// and through the cells of each loop
@@ -56,7 +56,7 @@ static const byte EGAmappingStraight[SCI_VIEW_EGAMAPPING_SIZE] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
 
-void SciGuiView::initData(GuiResourceId resourceId) {
+void View::initData(GuiResourceId resourceId) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), true);
 	if (!_resource) {
 		error("view resource %d not found", resourceId);
@@ -65,7 +65,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 
 	byte *celData, *loopData;
 	uint16 celOffset;
-	sciViewCelInfo *cel;
+	CelInfo *cel;
 	uint16 celCount = 0;
 	uint16 mirrorBits = 0;
 	uint16 palOffset = 0;
@@ -120,7 +120,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			}
 		}
 
-		_loop = new sciViewLoopInfo[_loopCount];
+		_loop = new LoopInfo[_loopCount];
 		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
 			loopData = _resourceData + READ_LE_UINT16(_resourceData + 8 + loopNo * 2);
 			// CelCount:WORD Unknown:WORD CelOffset0:WORD CelOffset1:WORD...
@@ -131,7 +131,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			mirrorBits >>= 1;
 
 			// read cel info
-			_loop[loopNo].cel = new sciViewCelInfo[celCount];
+			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
 				celOffset = READ_LE_UINT16(loopData + 4 + celNo * 2);
 				celData = _resourceData + celOffset;
@@ -184,7 +184,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			_embeddedPal = true;
 		}
 
-		_loop = new sciViewLoopInfo[_loopCount];
+		_loop = new LoopInfo[_loopCount];
 		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
 			loopData = _resourceData + headerSize + (loopNo * loopSize);
 
@@ -204,7 +204,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			celData = _resourceData + READ_LE_UINT16(loopData + 14);
 
 			// read cel info
-			_loop[loopNo].cel = new sciViewCelInfo[celCount];
+			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
 				cel = &_loop[loopNo].cel[celNo];
 				cel->width = READ_LE_UINT16(celData);
@@ -229,35 +229,35 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	}
 }
 
-GuiResourceId SciGuiView::getResourceId() {
+GuiResourceId View::getResourceId() {
 	return _resourceId;
 }
 
-int16 SciGuiView::getWidth(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
+int16 View::getWidth(LoopNo loopNo, CelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
 }
 
-int16 SciGuiView::getHeight(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
+int16 View::getHeight(LoopNo loopNo, CelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
 }
 
-sciViewCelInfo *SciGuiView::getCelInfo(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
+CelInfo *View::getCelInfo(LoopNo loopNo, CelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
 }
 
-sciViewLoopInfo *SciGuiView::getLoopInfo(GuiViewLoopNo loopNo) {
+LoopInfo *View::getLoopInfo(LoopNo loopNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loopCount ? &_loop[loopNo] : NULL;
 }
 
-void SciGuiView::getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
-	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
+void View::getCelRect(LoopNo loopNo, CelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
+	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	if (celInfo) {
 		outRect->left = x + celInfo->displaceX - (celInfo->width >> 1);
 		outRect->right = outRect->left + celInfo->width;
@@ -266,8 +266,8 @@ void SciGuiView::getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, i
 	}
 }
 
-void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount) {
-	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
+void View::unpackCel(LoopNo loopNo, CelNo celNo, byte *outPtr, uint16 pixelCount) {
+	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
 	uint16 pixelNo = 0, runLength;
@@ -354,7 +354,7 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 	error("Unable to decompress view");
 }
 
-byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
+byte *View::getBitmap(LoopNo loopNo, CelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
@@ -388,7 +388,7 @@ byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 
 // Called after unpacking an EGA cel, this will try to undither (parts) of the cel if the dithering in here
 //  matches dithering used by the current picture
-void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
+void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
 	int16 *unditherMemorial = _screen->unditherGetMemorial();
 
 	// It makes no sense to go further, if no memorial data from current picture is available
@@ -461,9 +461,9 @@ void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte
 	}
 }
 
-void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight) {
-	GuiPalette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
-	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
+void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight) {
+	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
+	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
 	int16 width, height;
@@ -506,7 +506,7 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 	}
 }
 
-GuiPalette *SciGuiView::getPalette() {
+Palette *View::getPalette() {
 	return _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 }
 

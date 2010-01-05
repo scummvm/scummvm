@@ -27,7 +27,7 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/graphics/gui_animate.h"
+#include "sci/graphics/animate.h"
 
 namespace Sci {
 

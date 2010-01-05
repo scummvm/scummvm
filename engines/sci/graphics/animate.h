@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef SCI_GUI_ANIMATE_H
-#define SCI_GUI_ANIMATE_H
+#ifndef SCI_GRAPHICS_ANIMATE_H
+#define SCI_GRAPHICS_ANIMATE_H
 
-#include "sci/graphics/gui_helpers.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
@@ -52,13 +52,13 @@ enum ViewSignals {
 	kSignalStopUpdHack	 = 0x20000000 // View has been stop-updated (again???) - a hack used by the old GUI code only, for dynamic views
 };
 
-class SciGuiGfx;
-class SciGuiScreen;
-class SciGuiPalette;
-class SciGuiTransitions;
+class Gfx;
+class Screen;
+class SciPalette;
+class Transitions;
 class SciGuiAnimate {
 public:
-	SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGuiAnimate(EngineState *state, Gfx *gfx, Screen *screen, SciPalette *palette);
 	~SciGuiAnimate();
 
 	// FIXME: Don't store EngineState
@@ -74,22 +74,22 @@ public:
 	void restoreAndDelete(int argc, reg_t *argv);
 	void reAnimate(Common::Rect rect);
 	void addToPicDrawCels();
-	void addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	void addToPicDrawView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 
 private:
 	void init();
 
 	EngineState *_s;
-	SciGuiGfx *_gfx;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
+	Gfx *_gfx;
+	Screen *_screen;
+	SciPalette *_palette;
 
 	uint16 _listCount;
-	GuiAnimateEntry *_listData;
-	GuiAnimateList _list;
+	AnimateEntry *_listData;
+	AnimateList _list;
 
 	uint16 _lastCastCount;
-	GuiAnimateEntry *_lastCastData;
+	AnimateEntry *_lastCastData;
 
 	bool _ignoreFastCast;
 };

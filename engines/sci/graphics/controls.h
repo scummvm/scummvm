@@ -23,42 +23,36 @@
  *
  */
 
-#ifndef SCI_GUI_PALETTE_H
-#define SCI_GUI_PALETTE_H
-
-#include "sci/graphics/gui_helpers.h"
+#ifndef SCI_GRAPHICS_CONTROLS_H
+#define SCI_GRAPHICS_CONTROLS_H
 
 namespace Sci {
 
-class SciGuiScreen;
-class SciGuiPalette {
+class Gfx;
+class Font;
+class Text;
+class SciGuiControls {
 public:
-	SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool autoSetPalette = true);
-	~SciGuiPalette();
+	SciGuiControls(SegManager *segMan, Gfx *gfx, Text *text);
+	~SciGuiControls();
 
-	void createFromData(byte *data, GuiPalette *paletteOut);
-	bool setAmiga();
-	void setEGA();
-	bool setFromResource(GuiResourceId resourceId, uint16 flag);
-	void set(GuiPalette *sciPal, uint16 flag);
-	void merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag);
-	uint16 matchColor(GuiPalette *pPal, byte r, byte g, byte b);
-	void getSys(GuiPalette *pal);
-
-	void setOnScreen();
-
-	void setFlag(uint16 fromColor, uint16 toColor, uint16 flag);
-	void unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
-	void setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	bool animate(byte fromColor, byte toColor, int speed);
-
-	GuiPalette _sysPalette;
+	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
+	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
+	void TexteditCursorErase();
+	void TexteditChange(reg_t controlObject, reg_t eventObject);
 
 private:
-	SciGuiScreen *_screen;
-	ResourceManager *_resMan;
+	void init();
+	void TexteditSetBlinkTime();
 
-	Common::Array<GuiPalSchedule> _schedules;
+	SegManager *_segMan;
+	Gfx *_gfx;
+	Text *_text;
+
+	// Textedit-Control related
+	Common::Rect _texteditCursorRect;
+	bool _texteditCursorVisible;
+	uint32 _texteditBlinkTime;
 };
 
 } // End of namespace Sci

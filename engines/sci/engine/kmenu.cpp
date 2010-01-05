@@ -28,7 +28,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/gui.h"
-#include "sci/graphics/gui_cursor.h"
+#include "sci/graphics/cursor.h"
 
 namespace Sci {
 

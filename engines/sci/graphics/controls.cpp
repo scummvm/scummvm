@@ -30,14 +30,14 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_font.h"
-#include "sci/graphics/gui_text.h"
-#include "sci/graphics/gui_controls.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/font.h"
+#include "sci/graphics/text.h"
+#include "sci/graphics/controls.h"
 
 namespace Sci {
 
-SciGuiControls::SciGuiControls(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text)
+SciGuiControls::SciGuiControls(SegManager *segMan, Gfx *gfx, Text *text)
 	: _segMan(segMan), _gfx(gfx), _text(text) {
 	init();
 }

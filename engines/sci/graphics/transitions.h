@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef SCI_GUI_TRANSITIONS_H
-#define SCI_GUI_TRANSITIONS_H
+#ifndef SCI_GRAPHICS_TRANSITIONS_H
+#define SCI_GRAPHICS_TRANSITIONS_H
 
-#include "sci/graphics/gui_helpers.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
@@ -59,11 +59,11 @@ enum {
 	SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER		= 301
 };
 
-class SciGuiScreen;
-class SciGuiTransitions {
+class Screen;
+class Transitions {
 public:
-	SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette, bool isVGA);
-	~SciGuiTransitions();
+	Transitions(SciGui *gui, Screen *screen, SciPalette *palette, bool isVGA);
+	~Transitions();
 
 	void setup(int16 number, bool blackoutFlag);
 	void doit(Common::Rect picRect);
@@ -90,8 +90,8 @@ private:
 	void updateScreenAndWait(int msec);
 
 	SciGui *_gui;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
+	Screen *_screen;
+	SciPalette *_palette;
 
 	bool _isVGA;
 	const GuiTransitionTranslateEntry *_translationTable;

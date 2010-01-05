@@ -23,39 +23,42 @@
  *
  */
 
-#ifndef SCI_GUI_FONT_H
-#define SCI_GUI_FONT_H
+#ifndef SCI_GRAPHICS_PALETTE_H
+#define SCI_GRAPHICS_PALETTE_H
 
-#include "sci/graphics/gui_helpers.h"
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
-class SciGuiFont {
+class Screen;
+class SciPalette {
 public:
-	SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId);
-	~SciGuiFont();
+	SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPalette = true);
+	~SciPalette();
 
-	GuiResourceId getResourceId();
-	byte getHeight();
-	byte getCharWidth(byte chr);
-	byte getCharHeight(byte chr);
-	byte *getCharData(byte chr);
-	void draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput);
+	void createFromData(byte *data, Palette *paletteOut);
+	bool setAmiga();
+	void setEGA();
+	bool setFromResource(GuiResourceId resourceId, uint16 flag);
+	void set(Palette *sciPal, uint16 flag);
+	void merge(Palette *pFrom, Palette *pTo, uint16 flag);
+	uint16 matchColor(Palette *pPal, byte r, byte g, byte b);
+	void getSys(Palette *pal);
+
+	void setOnScreen();
+
+	void setFlag(uint16 fromColor, uint16 toColor, uint16 flag);
+	void unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
+	void setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
+	bool animate(byte fromColor, byte toColor, int speed);
+
+	Palette _sysPalette;
 
 private:
+	Screen *_screen;
 	ResourceManager *_resMan;
 
-	Resource *_resource;
-	GuiResourceId _resourceId;
-	byte *_resourceData;
-
-	struct Charinfo {
-		byte w, h;
-		int16 offset;
-	};
-	byte _fontHeight;
-	uint16 _numChars;
-	Charinfo *_chars;
+	Common::Array<PalSchedule> _schedules;
 };
 
 } // End of namespace Sci

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_GFX_H
-#define SCI_GUI_GFX_H
+#ifndef SCI_GRAPHICS_GFX_H
+#define SCI_GRAPHICS_GFX_H
 
 #include "sci/graphics/gui.h"
 
@@ -38,30 +38,30 @@ namespace Sci {
 
 #define MAX_CACHED_VIEWS 50
 
-class SciGuiScreen;
-class SciGuiPalette;
-class SciGuiFont;
+class Screen;
+class SciPalette;
+class Font;
 class SciGuiPicture;
-class SciGuiView;
+class View;
 
-typedef Common::HashMap<int, SciGuiView *> ViewCache;
+typedef Common::HashMap<int, View *> ViewCache;
 
-class SciGuiGfx {
+class Gfx {
 public:
-	SciGuiGfx(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGuiScreen *screen, SciGuiPalette *palette);
-	~SciGuiGfx();
+	Gfx(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, Screen *screen, SciPalette *palette);
+	~Gfx();
 
-	void init(SciGuiText *text);
+	void init(Text *text);
 
 	byte *GetSegment(byte seg);
 	void ResetScreen();
 
-	GuiPort *SetPort(GuiPort *port);
-	GuiPort *GetPort();
+	Port *SetPort(Port *port);
+	Port *GetPort();
 	void SetOrigin(int16 left, int16 top);
 	void MoveTo(int16 left, int16 top);
 	void Move(int16 left, int16 top);
-	void OpenPort(GuiPort *port);
+	void OpenPort(Port *port);
 	void PenColor(int16 color);
 	void BackColor(int16 color);
 	void PenMode(int16 mode);
@@ -78,15 +78,15 @@ public:
 	void OffsetLine(Common::Point &start, Common::Point &end);
 
 	void BitsShow(const Common::Rect &r);
-	GuiMemoryHandle BitsSave(const Common::Rect &rect, byte screenFlags);
-	void BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect);
-	void BitsRestore(GuiMemoryHandle memoryHandle);
-	void BitsFree(GuiMemoryHandle memoryHandle);
+	MemoryHandle BitsSave(const Common::Rect &rect, byte screenFlags);
+	void BitsGetRect(MemoryHandle memoryHandle, Common::Rect *destRect);
+	void BitsRestore(MemoryHandle memoryHandle);
+	void BitsFree(MemoryHandle memoryHandle);
 
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
-	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight = -1);
-	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
-	void drawCel(SciGuiView *view, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
+	void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight = -1);
+	void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
+	void drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
 
 	uint16 onControl(uint16 screenMask, Common::Rect rect);
 
@@ -99,11 +99,11 @@ public:
 
 	void SetNowSeen(reg_t objectReference);
 
-	GuiPort *_menuPort;
+	Port *_menuPort;
 	Common::Rect _menuBarRect;
-	GuiPort *_curPort;
+	Port *_curPort;
 
-	SciGuiView *getView(GuiResourceId viewNum);
+	View *getView(GuiResourceId viewNum);
 
 private:
 	void purgeCache();
@@ -111,12 +111,12 @@ private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 	Kernel *_kernel;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
-	SciGuiText *_text;
+	Screen *_screen;
+	SciPalette *_palette;
+	Text *_text;
 
 	Common::Rect _bounds;
-	GuiPort *_mainPort;
+	Port *_mainPort;
 
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;

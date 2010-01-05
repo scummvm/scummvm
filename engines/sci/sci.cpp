@@ -39,9 +39,9 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/gui.h"
-#include "sci/graphics/gui_palette.h"
-#include "sci/graphics/gui_cursor.h"
-#include "sci/graphics/gui_screen.h"
+#include "sci/graphics/palette.h"
+#include "sci/graphics/cursor.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
@@ -118,9 +118,9 @@ Common::Error SciEngine::run() {
 	// TODO: Possibly look at first picture resource and determine if its hires or not
 
 	// Initialize graphics-related parts
-	SciGuiScreen *screen = new SciGuiScreen(_resMan, 320, 200, upscaledHires);	// invokes initGraphics()
-	SciGuiPalette *palette = new SciGuiPalette(_resMan, screen);
-	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette, screen);
+	Screen *screen = new Screen(_resMan, 320, 200, upscaledHires);	// invokes initGraphics()
+	SciPalette *palette = new SciPalette(_resMan, screen);
+	Cursor *cursor = new Cursor(_resMan, palette, screen);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

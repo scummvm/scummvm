@@ -36,20 +36,20 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/vm.o \
 	graphics/gui.o \
-	graphics/gui_animate.o \
-	graphics/gui_controls.o \
-	graphics/gui_cursor.o \
-	graphics/gui_font.o \
-	graphics/gui_gfx.o \
-	graphics/gui_menu.o \
-	graphics/gui_palette.o \
-	graphics/gui_picture.o \
-	graphics/gui_portrait.o \
-	graphics/gui_screen.o \
-	graphics/gui_text.o \
-	graphics/gui_transitions.o \
-	graphics/gui_view.o \
-	graphics/gui_windowmgr.o \
+	graphics/animate.o \
+	graphics/controls.o \
+	graphics/cursor.o \
+	graphics/font.o \
+	graphics/gfx.o \
+	graphics/menu.o \
+	graphics/palette.o \
+	graphics/picture.o \
+	graphics/portrait.o \
+	graphics/screen.o \
+	graphics/text.o \
+	graphics/transitions.o \
+	graphics/view.o \
+	graphics/windowmgr.o \
 	sound/audio.o \
 	sound/midiparser_sci.o \
 	sound/music.o \

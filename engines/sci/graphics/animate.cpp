@@ -30,15 +30,15 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
-#include "sci/graphics/gui_gfx.h"
-#include "sci/graphics/gui_view.h"
-#include "sci/graphics/gui_screen.h"
-#include "sci/graphics/gui_transitions.h"
-#include "sci/graphics/gui_animate.h"
+#include "sci/graphics/gfx.h"
+#include "sci/graphics/view.h"
+#include "sci/graphics/screen.h"
+#include "sci/graphics/transitions.h"
+#include "sci/graphics/animate.h"
 
 namespace Sci {
 
-SciGuiAnimate::SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette)
+SciGuiAnimate::SciGuiAnimate(EngineState *state, Gfx *gfx, Screen *screen, SciPalette *palette)
 	: _s(state), _gfx(gfx), _screen(screen), _palette(palette) {
 	init();
 }
@@ -101,7 +101,7 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 	return true;
 }
 
-bool sortHelper(const GuiAnimateEntry* entry1, const GuiAnimateEntry* entry2) {
+bool sortHelper(const AnimateEntry* entry1, const AnimateEntry* entry2) {
 	return (entry1->y == entry2->y) ? (entry1->z < entry2->z) : (entry1->y < entry2->y);
 }
 
@@ -109,7 +109,7 @@ void SciGuiAnimate::makeSortedList(List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
+	AnimateEntry *listEntry;
 	int16 listNr, listCount = 0;
 
 	// Count the list entries
@@ -128,13 +128,13 @@ void SciGuiAnimate::makeSortedList(List *list) {
 	// Adjust list size, if needed
 	if ((_listData == NULL) || (_listCount < listCount)) {
 		free(_listData);
-		_listData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
+		_listData = (AnimateEntry *)malloc(listCount * sizeof(AnimateEntry));
 		if (!_listData)
 			error("Could not allocate memory for _listData");
 		_listCount = listCount;
 
 		free(_lastCastData);
-		_lastCastData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
+		_lastCastData = (AnimateEntry *)malloc(listCount * sizeof(AnimateEntry));
 		if (!_lastCastData)
 			error("Could not allocate memory for _lastCastData");
 		_lastCastCount = 0;
@@ -169,19 +169,19 @@ void SciGuiAnimate::makeSortedList(List *list) {
 	}
 
 	// Now sort the list according y and z (descending)
-	GuiAnimateList::iterator listBegin = _list.begin();
-	GuiAnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listBegin = _list.begin();
+	AnimateList::iterator listEnd = _list.end();
 
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
 void SciGuiAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
+	AnimateEntry *listEntry;
 	uint16 signal;
-	SciGuiView *view = NULL;
-	GuiAnimateList::iterator listIterator;
-	GuiAnimateList::iterator listEnd = _list.end();
+	View *view = NULL;
+	AnimateList::iterator listIterator;
+	AnimateList::iterator listEnd = _list.end();
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
@@ -236,13 +236,13 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 
 void SciGuiAnimate::update() {
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
+	AnimateEntry *listEntry;
 	uint16 signal;
 	reg_t bitsHandle;
 	Common::Rect rect;
-	GuiAnimateList::iterator listIterator;
-	GuiAnimateList::iterator listBegin = _list.begin();
-	GuiAnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listIterator;
+	AnimateList::iterator listBegin = _list.begin();
+	AnimateList::iterator listEnd = _list.end();
 
 	// Remove all no-update cels, if requested
 	listIterator = _list.reverse_begin();
@@ -341,12 +341,12 @@ void SciGuiAnimate::update() {
 
 void SciGuiAnimate::drawCels() {
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
-	GuiAnimateEntry *lastCastEntry = _lastCastData;
+	AnimateEntry *listEntry;
+	AnimateEntry *lastCastEntry = _lastCastData;
 	uint16 signal;
 	reg_t bitsHandle;
-	GuiAnimateList::iterator listIterator;
-	GuiAnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listIterator;
+	AnimateList::iterator listEnd = _list.end();
 
 	_lastCastCount = 0;
 
@@ -371,7 +371,7 @@ void SciGuiAnimate::drawCels() {
 			listEntry->signal = signal;
 
 			// Remember that entry in lastCast
-			memcpy(lastCastEntry, listEntry, sizeof(GuiAnimateEntry));
+			memcpy(lastCastEntry, listEntry, sizeof(AnimateEntry));
 			lastCastEntry++; _lastCastCount++;
 		}
 		listIterator++;
@@ -380,10 +380,10 @@ void SciGuiAnimate::drawCels() {
 
 void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
+	AnimateEntry *listEntry;
 	uint16 signal;
-	GuiAnimateList::iterator listIterator;
-	GuiAnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listIterator;
+	AnimateList::iterator listEnd = _list.end();
 	Common::Rect lsRect;
 	Common::Rect workerRect;
 
@@ -429,10 +429,10 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 
 void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
+	AnimateEntry *listEntry;
 	uint16 signal;
-	GuiAnimateList::iterator listIterator;
-	GuiAnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listIterator;
+	AnimateList::iterator listEnd = _list.end();
 
 
 	// This has to be done in a separate loop. At least in sq1 some .dispose modifies FIXEDLOOP flag in signal for
@@ -469,7 +469,7 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 }
 
 void SciGuiAnimate::reAnimate(Common::Rect rect) {
-	GuiAnimateEntry *lastCastEntry;
+	AnimateEntry *lastCastEntry;
 	uint16 lastCastCount;
 
 	if (_lastCastCount > 0) {
@@ -517,10 +517,10 @@ void SciGuiAnimate::reAnimate(Common::Rect rect) {
 
 void SciGuiAnimate::addToPicDrawCels() {
 	reg_t curObject;
-	GuiAnimateEntry *listEntry;
-	SciGuiView *view = NULL;
-	GuiAnimateList::iterator listIterator;
-	GuiAnimateList::iterator listEnd = _list.end();
+	AnimateEntry *listEntry;
+	View *view = NULL;
+	AnimateList::iterator listIterator;
+	AnimateList::iterator listEnd = _list.end();
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
@@ -547,8 +547,8 @@ void SciGuiAnimate::addToPicDrawCels() {
 	}
 }
 
-void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
-	SciGuiView *view = _gfx->getView(viewId);
+void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+	View *view = _gfx->getView(viewId);
 	Common::Rect celRect;
 
 	// Create rect according to coordinates and given cel

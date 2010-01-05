@@ -23,36 +23,39 @@
  *
  */
 
-#ifndef SCI_GUI_CONTROLS_H
-#define SCI_GUI_CONTROLS_H
+#ifndef SCI_GRAPHICS_FONT_H
+#define SCI_GRAPHICS_FONT_H
+
+#include "sci/graphics/helpers.h"
 
 namespace Sci {
 
-class SciGuiGfx;
-class SciGuiFont;
-class SciGuiText;
-class SciGuiControls {
+class Font {
 public:
-	SciGuiControls(SegManager *segMan, SciGuiGfx *gfx, SciGuiText *text);
-	~SciGuiControls();
+	Font(ResourceManager *resMan, GuiResourceId resourceId);
+	~Font();
 
-	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
-	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
-	void TexteditCursorErase();
-	void TexteditChange(reg_t controlObject, reg_t eventObject);
+	GuiResourceId getResourceId();
+	byte getHeight();
+	byte getCharWidth(byte chr);
+	byte getCharHeight(byte chr);
+	byte *getCharData(byte chr);
+	void draw(Screen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 
 private:
-	void init();
-	void TexteditSetBlinkTime();
+	ResourceManager *_resMan;
 
-	SegManager *_segMan;
-	SciGuiGfx *_gfx;
-	SciGuiText *_text;
+	Resource *_resource;
+	GuiResourceId _resourceId;
+	byte *_resourceData;
 
-	// Textedit-Control related
-	Common::Rect _texteditCursorRect;
-	bool _texteditCursorVisible;
-	uint32 _texteditBlinkTime;
+	struct Charinfo {
+		byte w, h;
+		int16 offset;
+	};
+	byte _fontHeight;
+	uint16 _numChars;
+	Charinfo *_chars;
 };
 
 } // End of namespace Sci

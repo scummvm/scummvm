@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_TEXT_H
-#define SCI_GUI_TEXT_H
+#ifndef SCI_GRAPHICS_TEXT_H
+#define SCI_GRAPHICS_TEXT_H
 
 namespace Sci {
 
@@ -32,16 +32,16 @@ namespace Sci {
 #define SCI_TEXT_ALIGNMENT_CENTER 1
 #define SCI_TEXT_ALIGNMENT_LEFT	0
 
-class SciGuiGfx;
-class SciGuiScreen;
-class SciGuiFont;
-class SciGuiText {
+class Gfx;
+class Screen;
+class Font;
+class Text {
 public:
-	SciGuiText(ResourceManager *_resMan, SciGuiGfx *gfx, SciGuiScreen *screen);
-	~SciGuiText();
+	Text(ResourceManager *_resMan, Gfx *gfx, Screen *screen);
+	~Text();
 
 	GuiResourceId GetFontId();
-	SciGuiFont *GetFont();
+	Font *GetFont();
 	void SetFont(GuiResourceId fontId);
 
 	void CodeSetFonts(int argc, reg_t *argv);
@@ -60,17 +60,17 @@ public:
 	int16 Size(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth);
 	void Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
-	void Box(const char *text, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId);
+	void Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);
 	void Draw_String(const char *text);
 
-	SciGuiFont *_font;
+	Font *_font;
 
 private:
 	void init();
 
 	ResourceManager *_resMan;
-	SciGuiGfx *_gfx;
-	SciGuiScreen *_screen;
+	Gfx *_gfx;
+	Screen *_screen;
 
 	int _codeFontsCount;
 	GuiResourceId *_codeFonts;
