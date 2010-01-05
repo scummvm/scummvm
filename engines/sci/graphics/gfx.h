@@ -85,8 +85,8 @@ public:
 
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight = -1);
-	void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
-	void drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
+	void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight = -1);
+	void drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight = -1);
 
 	uint16 onControl(uint16 screenMask, Common::Rect rect);
 

@@ -332,21 +332,15 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight) {
 	View *view = getView(viewId);
 	Common::Rect rect;
-	Common::Rect clipRect;
+	
 	if (view) {
 		rect.left = leftPos;
 		rect.top = topPos;
 		rect.right = rect.left + view->getWidth(loopNo, celNo);
 		rect.bottom = rect.top + view->getHeight(loopNo, celNo);
-		clipRect = rect;
-		clipRect.clip(_curPort->rect);
-		if (clipRect.isEmpty()) {	// nothing to draw
-			return;
-		}
 
-		Common::Rect clipRectTranslated = clipRect;
-		OffsetRect(clipRectTranslated);
-		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, origHeight);
+		drawCel(view, loopNo, celNo, rect, priority, paletteNo, origHeight);
+
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			if (!_screen->_picNotValidSci11)
 				BitsShow(rect);
@@ -358,26 +352,13 @@ void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftP
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
-	View *view = getView(viewId);
-	Common::Rect clipRect;
-	if (view) {
-		clipRect = celRect;
-		clipRect.clip(_curPort->rect);
-		if (clipRect.isEmpty()) { // nothing to draw
-			return;
-		}
-
-		Common::Rect clipRectTranslated = clipRect;
-		OffsetRect(clipRectTranslated);
-		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
-	}
+void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight) {
+	drawCel(getView(viewId), loopNo, celNo, celRect, priority, paletteNo);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
-	Common::Rect clipRect;
-	clipRect = celRect;
+void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight) {
+	Common::Rect clipRect = celRect;
 	clipRect.clip(_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
 		return;
