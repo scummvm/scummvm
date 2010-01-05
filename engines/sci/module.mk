@@ -51,7 +51,7 @@ MODULE_OBJS := \
 	graphics/gui_view.o \
 	graphics/gui_windowmgr.o \
 	sound/audio.o \
-	sound/midiparser.o \
+	sound/midiparser_sci.o \
 	sound/music.o \
 	sound/soundcmd.o \
 	sound/iterator/core.o \
