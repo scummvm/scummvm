@@ -363,8 +363,7 @@ byte *View::getBitmap(LoopNo loopNo, CelNo celNo) {
 	uint16 width = _loop[loopNo].cel[celNo].width;
 	uint16 height = _loop[loopNo].cel[celNo].height;
 	// allocating memory to store cel's bitmap
-	assert(width * height <= 64000);
-	uint16 pixelCount = width * height;
+	int pixelCount = width * height;
 	_loop[loopNo].cel[celNo].rawBitmap = new byte[pixelCount];
 	byte *pBitmap = _loop[loopNo].cel[celNo].rawBitmap;
 
