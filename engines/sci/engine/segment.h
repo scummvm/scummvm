@@ -740,6 +740,7 @@ public:
 
 		// So, we're going to have to create an array of some sort
 		T *newArray = new T[size];
+		memset(newArray, 0, size * sizeof(T));
 
 		// Check if we never created an array before
 		if (!_data) {
