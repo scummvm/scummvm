@@ -127,7 +127,7 @@ public:
 
 	void init(TeenAgentEngine *engine, OSystem *system);
 	void init(int id, const Common::Point &pos);
-	bool render();
+	bool render(bool tick_game, bool tick_mark, uint32 message_delta);
 	int getId() const { return _id; }
 
 	void warp(const Common::Point &point, byte orientation = 0);

@@ -532,21 +532,23 @@ int Scene::lookupZoom(uint y) const {
 }
 
 
-bool Scene::render() {
+bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 	Resources *res = Resources::instance();
 	bool busy;
 	bool restart;
+	uint32 game_delta = tick_game? 1: 0;
+	uint32 mark_delta = tick_mark? 1: 0;
 
 	do {
 		restart = false;
 		busy = processEventQueue();
 		
-		if (_fade_timer) {
+		if (_fade_timer && game_delta != 0) {
 			if (_fade_timer > 0) {
-				--_fade_timer;
+				_fade_timer -= game_delta;
 				setPalette(_fade_timer);
 			} else {
-				++_fade_timer;
+				_fade_timer += game_delta;
 				setPalette(_fade_timer + 4);
 			}
 		}
@@ -556,7 +558,7 @@ bool Scene::render() {
 			_system->fillScreen(0);
 			///\todo: optimize me
 			Graphics::Surface *surface = _system->lockScreen();
-			res->font7.render(surface, current_event.dst.x, current_event.dst.y--, current_event.message, current_event.color);
+			res->font7.render(surface, current_event.dst.x, current_event.dst.y -= game_delta, current_event.message, current_event.color);
 			_system->unlockScreen();
 
 			if (current_event.dst.y < -(int)current_event.timer)
@@ -568,11 +570,12 @@ bool Scene::render() {
 		}
 
 		if (!message.empty() && message_timer != 0) {
-			if (--message_timer == 0) {
+			if (message_timer <= message_delta) {
 				clearMessage();
 				nextEvent();
 				continue;
-			}
+			} else
+				message_timer -= message_delta;
 		}
 
 		if (current_event.type == SceneEvent::kCreditsMessage) {
@@ -609,7 +612,7 @@ bool Scene::render() {
 		
 		for (byte i = 0; i < 4; ++i) {
 			Animation *a = custom_animation + i;
-			Surface *s = a->currentFrame();
+			Surface *s = a->currentFrame(game_delta);
 			if (s != NULL) {
 				if (!a->ignore) 
 					busy = true;
@@ -622,7 +625,7 @@ bool Scene::render() {
 					custom_animation[i].free();
 					a->restart();
 				}
-				s = a->currentFrame();
+				s = a->currentFrame(game_delta);
 			}
 			
 			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.slot == i) {
@@ -667,19 +670,29 @@ bool Scene::render() {
 			s->render(surface);
 		}
 
-		Surface *mark = actor_animation.currentFrame();
-		if (mark == NULL) {
-			if (!hide_actor) {
-				actor_animation.free();
-				uint zoom = lookupZoom(position.y);
+		Surface *mark = actor_animation.currentFrame(game_delta);
+		if (!hide_actor && mark == NULL) {
+			actor_animation.free();
+			uint zoom = lookupZoom(position.y);
 
-				if (!path.empty()) {
+			if (!path.empty()) {
+				const Common::Point &destination = path.front();
+				Common::Point dp(destination.x - position.x, destination.y - position.y);
+
+				int o;
+				if (ABS(dp.x) > ABS(dp.y))
+					o = dp.x > 0 ? kActorRight : kActorLeft;
+				else {
+					o = dp.y > 0 ? kActorDown : kActorUp;
+				}
+
+				if (tick_mark) {
 					int speed_x;
 					switch(teenagent.currentIndex()) {
 					case 6: 
 						speed_x = 10;
 						break;
-					case 8:
+					case 7:
 						speed_x = 1;
 						break;
 					default:
@@ -687,53 +700,44 @@ bool Scene::render() {
 						break;
 					}
 					speed_x = speed_x * zoom / 256;
-					int speed_y = 1 * zoom / 256;
+					int speed_y = (o == kActorDown || o == kActorUp? 2: 1) * zoom / 256;
 					if (speed_x == 0)
 						speed_x = 1;
 					if (speed_y == 0)
 						speed_y = 1;
-					
-					const Common::Point &destination = path.front();
-					Common::Point dp(destination.x - position.x, destination.y - position.y);
-
-					int o;
-					if (ABS(dp.x) > ABS(dp.y))
-						o = dp.x > 0 ? kActorRight : kActorLeft;
-					else {
-						o = dp.y > 0 ? kActorDown : kActorUp;
-						speed_y *= 2;
-					}
-
+				
 					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
 					position.x += (o == kActorDown || o == kActorUp)? 
 						(ABS(dp.x) < speed_y? dp.x: SIGN(dp.x) * speed_y):
 						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
-
-					_idle_timer = 0;
-					teenagent_idle.resetIndex();
-					actor_animation_position = teenagent.render(surface, position, o, 1, false, zoom);
-
-					if (position == destination) {
-						path.pop_front();
-						if (path.empty()) {
-							if (orientation == 0)
-								orientation = o; //save last orientation
-							nextEvent();
-							got_any_animation = true;
-							restart = true;
-						}
-						busy = true;
-					} else
-						busy = true;
-				} else {
-					++_idle_timer;
-					if (_idle_timer < 50)
-						actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
-					else 
-						actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, zoom);
 				}
+				
+				_idle_timer = 0;
+				teenagent_idle.resetIndex();
+				actor_animation_position = teenagent.render(surface, position, o, mark_delta, false, zoom);
+
+				if (tick_mark && position == destination) {
+					path.pop_front();
+					if (path.empty()) {
+						if (orientation == 0)
+							orientation = o; //save last orientation
+						nextEvent();
+						got_any_animation = true;
+						restart = true;
+					}
+					busy = true;
+				} else
+					busy = true;
+			} else {
+				teenagent.resetIndex();
+				_idle_timer += mark_delta;
+				if (_idle_timer < 50)
+					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
+				else 
+					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom);
 			}
 		}
+
 		if (restart) {
 			_system->unlockScreen();
 			continue;
@@ -825,7 +829,7 @@ bool Scene::render() {
 			_engine->playSoundNow(sound.id);
 			i = sounds.erase(i);
 		} else {
-			--sound.delay;
+			sound.delay -= game_delta;
 			++i;
 		}
 	}
@@ -910,7 +914,7 @@ bool Scene::processEventQueue() {
 						message_animation = &actor_animation;
 					debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
 				} else {
-					message_timer = current_event.timer? current_event.timer: messageDuration(message);
+					message_timer = current_event.timer? current_event.timer * 110: messageDuration(message);
 					message_first_frame = message_last_frame = 0;
 				}
 				Common::Point p;
@@ -1141,7 +1145,7 @@ uint Scene::messageDuration(const Common::String &str) {
 	
 	uint delay = 60 + (total_width * delay_delta) / 8;
 	//debug(0, "delay = %u, delta: %u", delay, delay_delta);
-	return delay / 10;
+	return delay * 10;
 }
 
 

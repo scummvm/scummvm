@@ -518,18 +518,27 @@ Common::Error TeenAgentEngine::run() {
 		uint32 delta = new_timer - timer;
 		timer = new_timer;
 
-		if (game_timer <= delta) {
-			bool b = scene->render();
+		bool tick_game = game_timer <= delta;
+		if (tick_game)
+			game_timer = kGameDelay - ((delta - game_timer) % kGameDelay);
+		else
+			game_timer -= delta;
+
+		bool tick_mark = mark_timer <= delta;
+		if (tick_mark)
+			mark_timer = kMarkDelay - ((delta - mark_timer) % kMarkDelay);
+		else
+			mark_timer -= delta;
+
+		if (tick_game || tick_mark) {
+			bool b = scene->render(tick_game, tick_mark, delta);
 			if (!inventory->active() && !b && action != kActionNone) {
 				processObject();
 				action = kActionNone;
 				dst_object = NULL;
 			}
-
 			scene_busy = b;
-			game_timer = kGameDelay - ((delta - game_timer) % kGameDelay);
-		} else
-			game_timer -= delta;
+		}
 
 		bool busy = inventory->active() || scene_busy;
 

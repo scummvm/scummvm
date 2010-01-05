@@ -254,9 +254,9 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 			animation.load(inventory->items, Animation::kTypeInventory);
 		}
 		if (hovered) {
-			Surface *s = animation.currentFrame();
+			Surface *s = animation.currentFrame(1);
 			if (animation.currentIndex() == 0)
-				s = animation.currentFrame();
+				s = animation.currentFrame(1);
 			if (s != NULL)
 				s->render(dst, rect.left + 1, rect.top + 1);
 		} else {

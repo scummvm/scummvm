@@ -31,7 +31,7 @@ namespace TeenAgent {
 Actor::Actor() : head_index(0), idle_type(0) {}
 
 //idle animation lists at dseg: 0x6540
-Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, uint zoom) {
+Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom) {
 	static Common::RandomSource random;
 	if (index == 0) {
 		idle_type = random.getRandomNumber(2);
@@ -41,7 +41,8 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 	Resources * res = Resources::instance();
 	byte *frames_idle;
 	do {
-		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index++;
+		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index;
+		index += delta_frame;
 		if (*frames_idle == 0) {
 			idle_type = random.getRandomNumber(2);
 			debug(0, "switched to idle animation %u[loop]", idle_type);
@@ -100,11 +101,9 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 
 	Surface *s = NULL, *head = NULL;
 
-	if (delta_frame == 0) {
-		index = 0; //static animation
-	}
-
 	bool mirror = orientation == kActorLeft;
+	index += delta_frame;
+
 	switch (orientation) {
 	case kActorLeft:
 	case kActorRight:
@@ -146,7 +145,6 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 	default:
 		return Common::Rect();
 	}
-	index += delta_frame;
 	if (s == NULL) {
 		warning("no surface, skipping");
 		return Common::Rect();

@@ -42,7 +42,7 @@ public:
 	void free();
 
 	Surface *firstFrame();
-	Surface *currentFrame(int dt = 1);
+	Surface *currentFrame(int dt);
 	uint16 currentIndex() const { return index; }
 	void resetIndex() { index = 0; }
 
