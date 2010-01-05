@@ -668,7 +668,7 @@ void LoopingChannel::mix(int16 *data, uint len) {
 
 	if (frameDiff >= 0) {
 		len -= frameDiff;
-		needLoop = true;
+		needLoop = (_loopCount != 1);
 	}
 
 	_samplesConsumed = _samplesDecoded;
@@ -679,15 +679,13 @@ void LoopingChannel::mix(int16 *data, uint len) {
 	_pos = _pos.addFrames(samplesRead);
 
 	if (needLoop) {
-		if (!_loopCount || _loopCount > 1) {
-			if (_loopCount > 1)
-				--_loopCount;
+		if (_loopCount > 1)
+			--_loopCount;
 
-			_input->seek(_loopStart);
-			samplesRead = _converter->flow(*_input, data + len * 2, frameDiff, getLeftVolume(), getRightVolume());
-			_samplesDecoded += samplesRead;
-			_pos = _loopStart.addFrames(samplesRead);
-		}
+		_input->seek(_loopStart);
+		samplesRead = _converter->flow(*_input, data + len * 2, frameDiff, getLeftVolume(), getRightVolume());
+		_samplesDecoded += samplesRead;
+		_pos = _loopStart.addFrames(samplesRead);
 	}
 }
 
