@@ -226,7 +226,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	const int temp = s->_segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {
-		error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+		warning("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
 		return NULL;
 	}
 
