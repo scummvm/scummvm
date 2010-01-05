@@ -880,6 +880,9 @@ void SciGui::frameOut() {
 		if (priority == -1)
 			continue;
 
+		int16 planeTop = GET_SEL32V(_s->_segMan, planeObj, top);
+		int16 planeLeft = GET_SEL32V(_s->_segMan, planeObj, left);
+
 		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
 			reg_t viewObj = _screenItems[itemNr];
 			reg_t planeOfItem = GET_SEL32(_s->_segMan, viewObj, plane);
@@ -891,6 +894,9 @@ void SciGui::frameOut() {
 				uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
 				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
 				//int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
+
+				leftPos += planeLeft;
+				topPos += planeTop;
 
 				// Theoretically, leftPos and topPos should be sane
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 

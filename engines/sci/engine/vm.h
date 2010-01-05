@@ -201,6 +201,8 @@ struct SelectorCache {
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
 
 	Selector plane;
+	Selector top;
+	Selector left;
 #endif
 };
 
