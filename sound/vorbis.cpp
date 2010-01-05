@@ -139,6 +139,14 @@ public:
 	}
 
 	bool seek(const Timestamp &where);
+	// TODO: Maybe we can have a more precise implementation of this
+	Timestamp getLength() const {
+#ifdef USE_TREMOR
+		return Timestamp(_endTime, getRate());
+#else
+		return Timestamp((uint32)(_endTime * 1000.0), getRate());
+#endif
+	}
 
 protected:
 	bool refill();

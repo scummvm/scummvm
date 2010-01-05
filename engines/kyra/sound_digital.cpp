@@ -122,6 +122,7 @@ public:
 	// GROSS HACK, if anyone sees this, be aware that you should
 	// never copy this! This is just a temporary hack...
 	bool seek(const Audio::Timestamp &) { return false; }
+	Audio::Timestamp getLength() const { return Audio::Timestamp(0, getRate()); }
 private:
 	Common::SeekableReadStream *_stream;
 	bool _loop;

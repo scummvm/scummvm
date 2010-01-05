@@ -150,6 +150,8 @@ public:
 	}
 
 	bool seek(const Timestamp &where);
+	// TODO: We can definitly increase the precision here, since FLAC allows us to catch the sample count
+	Timestamp getLength() const { return Timestamp(_totalPlayTime, getRate()); }
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
 

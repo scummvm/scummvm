@@ -157,6 +157,13 @@ public:
 	 * @return true on success, false on failure.
 	 */
 	virtual bool seek(const Timestamp &where) = 0;
+
+	/**
+	 * Returns the length of the stream.
+	 *
+	 * @return length as Timestamp.
+	 */
+	virtual Timestamp getLength() const = 0;
 };
 
 

@@ -175,6 +175,8 @@ public:
 	}
 
 	bool seek(const Timestamp &where);
+	// TODO: We can definitly increase the precision here, since we know the exact sample count
+	Timestamp getLength() const { return Timestamp(_playtime, getRate()); }
 
 	void setNumLoops(uint numLoops) {
 		_numLoops = numLoops;
@@ -334,6 +336,8 @@ public:
 			return kUnknownPlayTime;
 		return _playtime * _numLoops;
 	}
+	// TODO: We can definitly increase the precision here, since we know the exact sample count
+	Timestamp getLength() const { return Timestamp(_playtime, getRate()); }
 
 	bool seek(const Timestamp &where);
 };

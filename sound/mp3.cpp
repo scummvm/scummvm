@@ -100,6 +100,8 @@ public:
 	}
 
 	bool seek(const Timestamp &where);
+	// TODO: Maybe we can have a more precise implementation of this
+	Timestamp getLength() const { return Timestamp(_totalPlayTime, getRate()); }
 
 	void setNumLoops(uint numLoops) {
 		_numLoops = numLoops;
