@@ -119,18 +119,25 @@ void SciGuiPicture::drawSci32Vga() {
 	int size = _resource->size;
 	int header_size = READ_LE_UINT16(inbuffer);
 	int palette_data_ptr = READ_LE_UINT16(inbuffer + 6);
+	int celCount = inbuffer[2];
 	int cel_headerPos = header_size;
-	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
-	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
+	int cel_RlePos, cel_LiteralPos;
+	int cel_relXpos, cel_relYpos;
 	Palette palette;
 
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
 	_palette->set(&palette, 2);
 
-	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, true);
-
-	// TODO: find out where priority map is stored
+	while (celCount > 0) {
+		cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
+		cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
+		cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
+		cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos, true);
+		cel_headerPos += 42;
+		celCount--;
+	}
 }
 #endif
 
