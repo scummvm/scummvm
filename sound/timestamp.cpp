@@ -66,11 +66,8 @@ Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 }
 
 bool Timestamp::operator==(const Timestamp &ts) const {
-	// TODO: Alternatively, we could define equality to mean that
-	// two timestamps describe the exacts same moment in time.
-	return (_msecs == ts._msecs) &&
-	       (_numberOfFrames == ts._numberOfFrames) &&
-	       (_framerate == ts._framerate);
+	// TODO: Improve this
+	return (ts.msecs() == msecs()) && !frameDiff(ts);
 }
 
 bool Timestamp::operator!=(const Timestamp &ts) const {
