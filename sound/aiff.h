@@ -39,7 +39,7 @@ namespace Common { class SeekableReadStream; }
 
 namespace Audio {
 
-class AudioStream;
+class SeekableAudioStream;
 
 /**
  * Try to load an AIFF from the given seekable stream. Returns true if
@@ -56,7 +56,7 @@ extern bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, in
  *
  * This function uses loadAIFFFromStream() internally.
  */
-AudioStream *makeAIFFStream(Common::SeekableReadStream &stream);
+SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream &stream);
 
 } // End of namespace Audio
 

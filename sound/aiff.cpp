@@ -160,7 +160,7 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 	return true;
 }
 
-AudioStream *makeAIFFStream(Common::SeekableReadStream &stream) {
+SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream &stream) {
 	int size, rate;
 	byte *data, flags;
 
