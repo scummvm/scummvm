@@ -239,7 +239,7 @@ bool Music::isPlaying() {
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
-	Audio::AudioStream *audioStream = NULL;
+	Audio::SeekableAudioStream *audioStream = NULL;
 	MidiParser *parser;
 	ResourceContext *context = NULL;
 	byte *resourceData;
@@ -275,11 +275,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	char trackName[2][16];
 	sprintf(trackName[0], "track%d", realTrackNumber);
 	sprintf(trackName[1], "track%02d", realTrackNumber);
-	Audio::AudioStream *stream = 0;
+	Audio::SeekableAudioStream *stream = 0;
 	for (int i = 0; i < 2; ++i) {
-		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 0, (flags == MUSIC_LOOP) ? 0 : 1);
+		stream = Audio::AudioStream::openStreamFile(trackName[i]);
 		if (stream) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+			_mixer->playInputStreamLooping(Audio::Mixer::kMusicSoundType, &_musicHandle, stream, (flags == MUSIC_LOOP) ? 0 : 1);
 			_digitalMusic = true;
 			return;
 		}
@@ -318,15 +318,15 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 					if (identifier == 0) {		// MP3
 #ifdef USE_MAD
-						audioStream = Audio::makeMP3Stream(musicStream, false, 0, 0, (flags == MUSIC_LOOP ? 0 : 1));
+						audioStream = Audio::makeMP3Stream(musicStream, false);
 #endif
 					} else if (identifier == 1) {	// OGG
 #ifdef USE_VORBIS
-						audioStream = Audio::makeVorbisStream(musicStream, false, 0, 0, (flags == MUSIC_LOOP ? 0 : 1));
+						audioStream = Audio::makeVorbisStream(musicStream, false);
 #endif
 					} else if (identifier == 2) {	// FLAC
 #ifdef USE_FLAC
-						audioStream = Audio::makeFlacStream(musicStream, false, 0, 0, (flags == MUSIC_LOOP ? 0 : 1));
+						audioStream = Audio::makeFlacStream(musicStream, false);
 #endif
 					}
 				}
@@ -336,7 +336,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (audioStream) {
 		debug(2, "Playing digitized music");
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream);
+		_mixer->playInputStreamLooping(Audio::Mixer::kMusicSoundType, &_musicHandle, audioStream, (flags == MUSIC_LOOP ? 0 : 1));
 		_digitalMusic = true;
 		return;
 	}
