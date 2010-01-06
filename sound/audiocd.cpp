@@ -69,7 +69,7 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 			repetitions. Finally, -1 means infinitely many
 			*/
 			// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
-			stream = AudioStream::openStreamFile(trackName[i]);
+			stream = SeekableAudioStream::openStreamFile(trackName[i]);
 		}
 
 		// Stop any currently playing emulated track

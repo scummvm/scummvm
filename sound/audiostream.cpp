@@ -74,7 +74,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ NULL, NULL, NULL } // Terminator
 };
 
-SeekableAudioStream *AudioStream::openStreamFile(const Common::String &basename) {
+SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
 	SeekableAudioStream *stream = NULL;
 	Common::File *fileHandle = new Common::File();
 

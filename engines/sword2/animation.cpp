@@ -63,7 +63,7 @@ MoviePlayer:: ~MoviePlayer() {
  */
 bool MoviePlayer::load(const char *name) {
 	if (_decoderType == kVideoDecoderDXA) {
-		_bgSoundStream = Audio::AudioStream::openStreamFile(name);
+		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(name);
 	} else {
 		_bgSoundStream = NULL;
 	}

@@ -87,7 +87,7 @@ bool MoviePlayer::load(uint32 id) {
 	char filename[20];
 
 	if (_decoderType == kVideoDecoderDXA) {
-		_bgSoundStream = Audio::AudioStream::openStreamFile(sequenceList[id]);
+		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(sequenceList[id]);
 	} else {
 		_bgSoundStream = NULL;
 	}

@@ -277,7 +277,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	sprintf(trackName[1], "track%02d", realTrackNumber);
 	Audio::SeekableAudioStream *stream = 0;
 	for (int i = 0; i < 2; ++i) {
-		stream = Audio::AudioStream::openStreamFile(trackName[i]);
+		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 		if (stream) {
 			_mixer->playInputStreamLooping(Audio::Mixer::kMusicSoundType, &_musicHandle, stream, (flags == MUSIC_LOOP) ? 0 : 1);
 			_digitalMusic = true;

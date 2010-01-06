@@ -84,21 +84,6 @@ public:
 	 */
 	virtual bool endOfStream() const { return endOfData(); }
 
-	/**
-	 * Tries to load a file by trying all available formats.
-	 * In case of an error, the file handle will be closed, but deleting
-	 * it is still the responsibilty of the caller.
-	 * @param basename	a filename without an extension
-	 * @param startTime	the (optional) time offset in milliseconds from which
-	 *					to start playback
-	 * @param duration	the (optional) time in milliseconds specifying how long
-						to play
-	 * @param numLoops	how often the data shall be looped (0 = infinite)
-	 * @return	an Audiostream ready to use in case of success;
-	 *			NULL in case of an error (e.g. invalid/nonexisting file)
-	 */
-	static SeekableAudioStream *openStreamFile(const Common::String &basename);
-
 	/** 
 	 * Sets number of times the stream is supposed to get looped
 	 * This also resets the number of loops played counter, which
@@ -123,6 +108,16 @@ public:
  */
 class SeekableAudioStream : public AudioStream {
 public:
+	/**
+	 * Tries to load a file by trying all available formats.
+	 * In case of an error, the file handle will be closed, but deleting
+	 * it is still the responsibilty of the caller.
+	 * @param basename	a filename without an extension
+	 * @return	an SeekableAudioStream ready to use in case of success;
+	 *			NULL in case of an error (e.g. invalid/nonexisting file)
+	 */
+	static SeekableAudioStream *openStreamFile(const Common::String &basename);
+
 	/**
 	 * Seeks to a given offset in the stream.
 	 *

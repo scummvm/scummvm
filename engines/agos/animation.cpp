@@ -308,7 +308,7 @@ void MoviePlayerDXA::startSound() {
 			_bgSoundStream = Audio::makeWAVStream(_fileStream->readStream(size), true);
 		}
 	} else {
-		_bgSoundStream = Audio::AudioStream::openStreamFile(baseName);
+		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(baseName);
 	}
 
 	if (_bgSoundStream != NULL) {
