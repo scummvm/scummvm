@@ -39,6 +39,7 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
+#include "sci/graphics/robot.h"
 #include "sci/graphics/text.h"
 #include "sci/graphics/transitions.h"
 #include "sci/graphics/view.h"
@@ -918,6 +919,11 @@ void SciGui::frameOut() {
 			}
 		}
 	}
+}
+
+void SciGui::drawRobot() {
+	Robot *test = new Robot(_s->resMan, _screen, 91);
+	test->draw();
 }
 #endif
 

@@ -161,6 +161,8 @@ public:
 	virtual void frameOut();
 	virtual void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
 	virtual void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
+
+	virtual void drawRobot();
 #endif
 
 	virtual bool debugUndither(bool flag);

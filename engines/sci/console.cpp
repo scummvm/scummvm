@@ -111,6 +111,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
+#ifdef ENABLE_SCI32
+	DCmd_Register("draw_robot",			WRAP_METHOD(Console, cmdDrawRobot));
+#endif
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
 	// Segments
@@ -1017,6 +1020,22 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	_vm->_gamestate->_gui->drawCel(resourceId, loopNo, celNo, 50, 50, 0, 0);
 	return true;
 }
+
+#ifdef ENABLE_SCI32
+bool Console::cmdDrawRobot(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Draws a frame from a robot resource\n");
+		DebugPrintf("Usage: %s <resourceId>\n", argv[0]);
+		DebugPrintf("where <resourceId> is the id of the robot resource to draw\n");
+		return true;
+	}
+
+	uint16 resourceId = atoi(argv[1]);
+
+	_vm->_gamestate->_gui->drawRobot();
+	return true;
+}
+#endif
 
 bool Console::cmdUndither(int argc, const char **argv) {
 	if (argc != 2) {
