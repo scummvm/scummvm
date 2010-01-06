@@ -69,12 +69,16 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 	{
 		int left = x + dx, right = left + src_rect.width();
 		int top = y + dy, bottom = top + src_rect.height();
-		if (left < 0)
-			src_rect.left -= left;
+		if (left < 0) {
+			src_rect.left = -left;
+			dx = -x;
+		}
 		if (right > surface->w)
 			src_rect.right -= right - surface->w;
-		if (top < 0)
+		if (top < 0) {
 			src_rect.top -= top;
+			dy = -y;
+		}
 		if (bottom > surface->h)
 			src_rect.bottom -= bottom - surface->h;
 		if (src_rect.isEmpty())
@@ -82,19 +86,22 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 	}
 	
 	if (zoom == 256) {
-		assert(x + dx + src_rect.width() <= surface->w);
-		assert(y + dy + src_rect.height() <= surface->h);
+		assert(x + dx >= 0 && x + dx + src_rect.width() <= surface->w);
+		assert(y + dy >= 0 && y + dy + src_rect.height() <= surface->h);
 
-		byte *src = (byte *)getBasePtr(src_rect.left, src_rect.top);
-		byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
+		byte *src = (byte *)getBasePtr(0, src_rect.top);
+		byte *dst_base = (byte *)surface->getBasePtr(dx + x, dy + y);
 
 		for (int i = src_rect.top; i < src_rect.bottom; ++i) {
-			for (int j = 0; j < src_rect.width(); ++j) {
-				byte p = src[j];
+			byte *dst = dst_base;
+			for (int j = src_rect.left; j < src_rect.right; ++j) {
+				byte p = src[(mirror? w - j - 1: j)];
 				if (p != 0xff)
-					dst[(mirror? src_rect.width() - j - 1: j)] = p;
+					*dst++ = p;
+				else
+					++dst;
 			}
-			dst += surface->pitch;
+			dst_base += surface->pitch;
 			src += pitch;
 		}
 		src_rect.translate(x + dx, y + dy);
