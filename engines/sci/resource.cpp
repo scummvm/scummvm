@@ -68,14 +68,15 @@ static const char *resourceTypeNames[] = {
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
 	"audio", "sync", "message", "map", "heap",
-	"audio36", "sync36"
+	"audio36", "sync36", "", "", "robot"
 };
 
 static const char *resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
 	"   ", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",
-	"msg", "map", "hep", "aud", "syn"
+	"msg", "map", "hep", "aud", "syn",
+	"trn", "   ", "rbt"
 };
 
 const char *getResourceTypeName(ResourceType restype) {
@@ -984,7 +985,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
-	for (int i = kResourceTypeView; i < kResourceTypeAudio36; i ++) {
+	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn

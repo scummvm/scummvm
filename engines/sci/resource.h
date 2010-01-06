@@ -111,6 +111,9 @@ enum ResourceType {
 	kResourceTypeHeap,
 	kResourceTypeAudio36,
 	kResourceTypeSync36,
+	kResourceTypeUnknown1, // Translation, currently unsupported
+	kResourceTypeUnknown2,
+	kResourceTypeRobot,
 	kResourceTypeInvalid
 };
 
