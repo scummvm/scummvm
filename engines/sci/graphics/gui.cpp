@@ -80,10 +80,7 @@ void SciGui::init(bool usesOldGfxFunctions) {
 
 	_gfx->init(_text);
 	_windowMgr->init(_s->_gameId);
-	// Init priority bands for SCI0-SCI11. SCI2+ games don't
-	// use priority bands anymore
-	if (getSciVersion() <= SCI_VERSION_1_1)
-		initPriorityBands();
+	initPriorityBands();
 }
 
 void SciGui::initPriorityBands() {

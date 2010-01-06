@@ -405,6 +405,10 @@ void Gfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	int16 y;
 	int32 bandSize;
 
+	// This code is for 320x200 games only
+	if (_screen->getHeight() != 200)
+		return;
+
 	if (bandCount != -1)
 		_priorityBandCount = bandCount;
 
