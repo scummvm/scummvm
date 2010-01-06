@@ -195,9 +195,6 @@ Common::Language charToScummVMLanguage(const char c) {
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
-	// This flag is used to determine if the size of resource.000 is less than 1MB, to distinguish
-	// between full and demo versions
-	bool smallResource000Size = false;
 
 	// Set some defaults
 	s_fallbackDesc.extra = "";
@@ -243,13 +240,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 				s_fallbackDesc.flags |= ADGF_CD;
 				s_fallbackDesc.extra = "CD";
 			}
-			delete tmpStream;
-		}
-
-		if (filename.contains("resource.000")) {
-			Common::SeekableReadStream *tmpStream = file->createReadStream();
-			if (tmpStream->size() < 1 * 1024 * 1024)
-				smallResource000Size = true;
 			delete tmpStream;
 		}
 
@@ -341,20 +331,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	}
 
 	delete resMan;
-
-	// Distinguish demos from full versions
-	if (!strcmp(s_fallbackDesc.gameid, "castlebrain") && !Common::File::exists("resource.002")) {
-		// The Spanish full version doesn't have resource.002, but we can distinguish it from the
-		// demo from the size of resource.000
-		if (smallResource000Size)
-			s_fallbackDesc.flags |= ADGF_DEMO;
-	}
-
-	if (!strcmp(s_fallbackDesc.gameid, "islandbrain") && smallResource000Size)
-		s_fallbackDesc.flags |= ADGF_DEMO;
-
-	if (!strcmp(s_fallbackDesc.gameid, "kq6") && smallResource000Size)
-		s_fallbackDesc.flags |= ADGF_DEMO;
 
 	// Fill in extras field
 	if (!strcmp(s_fallbackDesc.gameid, "lsl1sci") ||
