@@ -663,15 +663,24 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 		Common::sort(z_order.begin(), z_order.end(), ZOrderCmp());
 		Common::List<Surface *>::iterator z_order_it;
 
+		Surface *mark = actor_animation.currentFrame(game_delta);
+		int horizon = mark != NULL? mark->y + mark->h: position.y;
+
 		for(z_order_it = z_order.begin(); z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
-			if (s->y + s->h > position.y)
+			if (s->y + s->h > horizon)
 				break;
 			s->render(surface);
 		}
 
-		Surface *mark = actor_animation.currentFrame(game_delta);
-		if (!hide_actor && mark == NULL) {
+		if (mark != NULL) {
+			actor_animation_position = mark->render(surface);
+			if (!actor_animation.ignore) 
+				busy = true;
+			else 
+				busy = false;
+			got_any_animation = true;
+		} else if (!hide_actor) {
 			actor_animation.free();
 			uint zoom = lookupZoom(position.y);
 
@@ -738,14 +747,6 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 		for(; z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
 			s->render(surface);
-		}
-		if (mark != NULL) {
-			actor_animation_position = mark->render(surface);
-			if (!actor_animation.ignore) 
-				busy = true;
-			else 
-				busy = false;
-			got_any_animation = true;
 		}
 
 		if (!message.empty()) {
