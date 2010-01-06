@@ -240,14 +240,8 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool VorbisInputStream::seek(const Timestamp &where) {
-#ifdef USE_TREMOR
-	ogg_int64_t pos = where.msecs();
-#else
-	double pos = where.msecs() / 1000.0;
-#endif
-
-	int res = ov_time_seek(&_ovFile, pos);
-	if (res < 0) {
+	int res = ov_pcm_seek(&_ovFile, calculateSampleOffset(where, getRate()));
+	if (res) {
 		warning("Error seeking in Vorbis stream (%d)", res);
 		_pos = _bufferEnd;
 		return false;
