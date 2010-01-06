@@ -58,7 +58,7 @@ void Robot::initData(GuiResourceId resourceId) {
 void Robot::draw() {
 	byte *bitmapData = _resourceData + 0x48;
 	int x, y;
-	int frame;
+	//int frame;
 
 	//for (frame = 0; frame < 30; frame++) {
 	for (y = 0; y < _height; y++) {

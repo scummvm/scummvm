@@ -1030,7 +1030,7 @@ bool Console::cmdDrawRobot(int argc, const char **argv) {
 		return true;
 	}
 
-	uint16 resourceId = atoi(argv[1]);
+	//uint16 resourceId = atoi(argv[1]);
 
 	_vm->_gamestate->_gui->drawRobot();
 	return true;
