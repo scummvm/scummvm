@@ -79,8 +79,8 @@ byte *Font::getCharData(byte chr) {
 }
 
 void Font::draw(Screen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
-	int charWidth = MIN<int>(getCharWidth(chr), screen->_width - left);
-	int charHeight = MIN<int>(getCharHeight(chr), 200 - top);
+	int charWidth = MIN<int>(getCharWidth(chr), screen->getWidth() - left);
+	int charHeight = MIN<int>(getCharHeight(chr), screen->getHeight() - top);
 	byte b = 0, mask = 0xFF;
 	int y = top;
 

@@ -285,7 +285,7 @@ void Menu::drawBar() {
 	GuiMenuList::iterator listEnd = _list.end();
 
 	// Hardcoded black on white
-	_gfx->FillRect(_gfx->_menuBarRect, 1, _screen->_colorWhite);
+	_gfx->FillRect(_gfx->_menuBarRect, 1, _screen->getColorWhite());
 	_gfx->PenColor(0);
 	_gfx->MoveTo(8, 1);
 
@@ -503,7 +503,7 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	// Do the drawing
 	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, 0);
 	_menuRect.left++; _menuRect.right--; _menuRect.bottom--;
-	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, _screen->_colorWhite);
+	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, _screen->getColorWhite());
 
 	_menuRect.left += 8;
 	topPos = _menuRect.top + 1;
@@ -564,7 +564,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
 
 	_gfx->PenColor(0);
-	_gfx->BackColor(_screen->_colorWhite);
+	_gfx->BackColor(_screen->getColorWhite());
 
 	drawBar();
 	drawMenu(0, curItemEntry->menuId);

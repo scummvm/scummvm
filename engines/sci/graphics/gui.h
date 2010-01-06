@@ -149,9 +149,6 @@ public:
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);
 
-	virtual uint16 getScreenWidth();
-	virtual uint16 getScreenHeight();
-
 #ifdef ENABLE_SCI32
 	// SCI32
 	virtual void addScreenItem(reg_t object);

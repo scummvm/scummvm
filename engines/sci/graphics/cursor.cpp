@@ -41,8 +41,8 @@ Cursor::Cursor(ResourceManager *resMan, SciPalette *palette, Screen *screen)
 
 	_upscaledHires = _screen->getUpscaledHires();
 	// center mouse cursor
-	setPosition(Common::Point(_screen->_displayWidth / 2, _screen->_displayHeight / 2));
-	setMoveZone(Common::Rect(0, 0, _screen->_displayWidth, _screen->_displayHeight));
+	setPosition(Common::Point(_screen->getDisplayWidth() / 2, _screen->getDisplayHeight() / 2));
+	setMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
 
 	_isVisible = true;
 }
@@ -109,7 +109,7 @@ void Cursor::setShape(GuiResourceId resourceId) {
 
 	// Now find out what colors we are supposed to use
 	colorMapping[0] = 0; // Black is hardcoded
-	colorMapping[1] = _screen->_colorWhite; // White is also hardcoded
+	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
 	colorMapping[3] = _palette->matchColor(&_palette->_sysPalette, 170, 170, 170); // Grey
 	

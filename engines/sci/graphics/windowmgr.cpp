@@ -71,14 +71,14 @@ void WindowMgr::init(Common::String gameId) {
 	_gfx->OpenPort(_wmgrPort);
 	_gfx->SetPort(_wmgrPort);
 	_gfx->SetOrigin(0, offTop);
-	_wmgrPort->rect.bottom = _screen->_height - offTop;
-	_wmgrPort->rect.right = _screen->_width;
+	_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+	_wmgrPort->rect.right = _screen->getWidth();
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = NewWindow(Common::Rect(0, offTop, _screen->_width, _screen->_height), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	_picWind = NewWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 }
 
 int16 WindowMgr::isFrontWindow(Window *pWnd) {

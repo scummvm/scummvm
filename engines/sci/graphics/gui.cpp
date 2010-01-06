@@ -254,7 +254,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	_text->Size(rect, text, -1, width);
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 	if (getSciVersion() >= SCI_VERSION_1_LATE) {
-		_gfx->Move(rect.right <= _screen->_width ? 0 : _screen->_width - rect.right, rect.bottom <= _screen->_height ? 0 : _screen->_width - rect.bottom);
+		_gfx->Move(rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right, rect.bottom <= _screen->getHeight() ? 0 : _screen->getWidth() - rect.bottom);
 		rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 	}
 
@@ -775,7 +775,7 @@ void SciGui::moveCursor(Common::Point pos) {
 	pos.y = CLIP<int16>(pos.y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
 	pos.x = CLIP<int16>(pos.x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
 
-	if (pos.x > _screen->_width || pos.y > _screen->_height) {
+	if (pos.x > _screen->getWidth() || pos.y > _screen->getHeight()) {
 		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
 		return;
 	}
@@ -815,14 +815,6 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 }
 
 void SciGui::portraitUnload(uint16 portraitId) {
-}
-
-uint16 SciGui::getScreenWidth() {
-	return _screen->_displayWidth;
-}
-
-uint16 SciGui::getScreenHeight() {
-	return _screen->_displayHeight;
 }
 
 #ifdef ENABLE_SCI32
@@ -895,12 +887,12 @@ void SciGui::frameOut() {
 				// Theoretically, leftPos and topPos should be sane
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
 				// the hack underneath does not try and draw cels outside the screen coordinates
-				if (leftPos >= getScreenWidth()) {
+				if (leftPos >= _screen->getWidth()) {
 					warning("kAddScreenItem: invalid left position (%d), resetting to 0", leftPos);
 					leftPos = 0;
 				}
 	
-				if (topPos >= getScreenHeight()) {
+				if (topPos >= _screen->getHeight()) {
 					warning("kAddScreenItem: invalid top position (%d), resetting to 0", topPos);
 					topPos = 0;
 				}

@@ -102,7 +102,7 @@ static const GuiTransitionTranslateEntry blackoutTransitionIDs[] = {
 };
 
 void Transitions::init() {
-	_oldScreen = new byte[_screen->_displayHeight * _screen->_displayWidth];
+	_oldScreen = new byte[_screen->getDisplayHeight() * _screen->getDisplayWidth()];
 
 	if (getSciVersion() >= SCI_VERSION_1_LATE)
 		_translationTable = NULL;
@@ -170,7 +170,7 @@ void Transitions::doit(Common::Rect picRect) {
 	// Now we do the actual transition to the new screen
 	doTransition(_number, false);
 
-	if (picRect.bottom != _screen->_height) {
+	if (picRect.bottom != _screen->getHeight()) {
 		// TODO: this is a workaround for lsl6 not showing menubar when playing
 		//  There is some new code in the sierra sci in ShowPic that seems to do something similar to this
 		_screen->copyToScreen();
@@ -305,10 +305,10 @@ void Transitions::pixelation (bool blackoutFlag) {
 
 	do {
 		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
-		if (mask >= _screen->_width * _screen->_height)
+		if (mask >= _screen->getWidth() * _screen->getHeight())
 			continue;
-		pixelRect.left = mask % _screen->_width; pixelRect.right = pixelRect.left + 1;
-		pixelRect.top = mask / _screen->_width;	pixelRect.bottom = pixelRect.top + 1;
+		pixelRect.left = mask % _screen->getWidth(); pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / _screen->getWidth();	pixelRect.bottom = pixelRect.top + 1;
 		pixelRect.clip(_picRect);
 		if (!pixelRect.isEmpty())
 			copyRectToScreen(pixelRect, blackoutFlag);
@@ -403,7 +403,7 @@ void Transitions::scroll(int16 number) {
 	Common::Rect newScreenRect = _picRect;
 
 	_screen->copyFromScreen(_oldScreen);
-	screenWidth = _screen->_displayWidth; screenHeight = _screen->_displayHeight;
+	screenWidth = _screen->getDisplayWidth(); screenHeight = _screen->getDisplayHeight();
 
 	oldScreenPtr = _oldScreen + _picRect.left + _picRect.top * screenWidth;
 

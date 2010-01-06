@@ -46,6 +46,13 @@ public:
 	Screen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
 	~Screen();
 
+	uint16 getWidth() { return _width; };
+	uint16 getHeight() { return _height; };
+	uint16 getDisplayWidth() { return _displayWidth; };
+	uint16 getDisplayHeight() { return _displayHeight; };
+	byte getColorWhite() { return _colorWhite; };
+	byte getColorDefaultVectorData() { return _colorDefaultVectorData; };
+
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);
 	void copyRectToScreen(const Common::Rect &rect);
@@ -83,6 +90,10 @@ public:
 
 	void debugShowMap(int mapNo);
 
+	int _picNotValid; // possible values 0, 1 and 2
+	int _picNotValidSci11; // another variable that is used by kPicNotValid in sci1.1
+
+private:
 	uint16 _width;
 	uint16 _height;
 	uint _pixels;
@@ -90,13 +101,9 @@ public:
 	uint16 _displayHeight;
 	uint _displayPixels;
 
-	int _picNotValid; // possible values 0, 1 and 2
-	int _picNotValidSci11; // another variable that is used by kPicNotValid in sci1.1
-
 	byte _colorWhite;
 	byte _colorDefaultVectorData;
 
-private:
 	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
 	void bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr);
 	void bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
@@ -105,7 +112,6 @@ private:
 	bool _unditherState;
 	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 
-public:	// HACK. TODO: make private
 	// these screens have the real resolution of the game engine (320x200 for SCI0/SCI1/SCI11 games, 640x480 for SCI2 games)
 	//  SCI0 games will be dithered in here at any time
 	byte *_visualScreen;
@@ -115,7 +121,7 @@ public:	// HACK. TODO: make private
 	// this screen is the one that is actually displayed to the user. It may be 640x480 for japanese SCI1 games
 	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
-private:
+
 	Common::Rect getScaledRect(Common::Rect rect);
 
 	ResourceManager *_resMan;

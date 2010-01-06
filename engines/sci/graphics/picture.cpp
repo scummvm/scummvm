@@ -81,8 +81,8 @@ void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, i
 
 void SciGuiPicture::reset() {
 	int16 x, y;
-	for (y = _gfx->GetPort()->top; y < _screen->_height; y++) {
-		for (x = 0; x < _screen->_width; x++) {
+	for (y = _gfx->GetPort()->top; y < _screen->getHeight(); y++) {
+		for (x = 0; x < _screen->getWidth(); x++) {
 			_screen->putPixel(x, y, SCI_SCREEN_MASK_ALL, 255, 0, 0);
 		}
 	}
@@ -273,7 +273,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	//  SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
 	//  the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra
 	if (!_addToFlag)
-		clearColor = _screen->_colorWhite;
+		clearColor = _screen->getColorWhite();
 
 	ptr = celBitmap;
 	if (!_mirroredFlag) {
@@ -367,7 +367,7 @@ static const byte vector_defaultEGApriority[PIC_EGAPRIORITY_SIZE] = {
 
 void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
-	byte pic_color = _screen->_colorDefaultVectorData;
+	byte pic_color = _screen->getColorDefaultVectorData();
 	byte pic_priority = 255, pic_control = 255;
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
@@ -671,7 +671,7 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
-		if ((color == _screen->_colorWhite) || (searchColor != _screen->_colorWhite))
+		if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
 			return;
 	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
 		if ((priority == 0) || (searchPriority != 0))
@@ -957,7 +957,7 @@ void SciGuiPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, b
 	rect.top = y; rect.left = x;
 	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
 	_gfx->OffsetRect(rect);
-	rect.clip(_screen->_width, _screen->_height);
+	rect.clip(_screen->getWidth(), _screen->getHeight());
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {
 		// Rectangle

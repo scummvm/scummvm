@@ -64,8 +64,8 @@ void Gfx::init(Text *text) {
 	_menuPort = new Port(0xFFFF);
 	OpenPort(_menuPort);
 	_text->SetFont(0);
-	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
-	_menuBarRect = Common::Rect(0, 0, _screen->_width, 9);
+	_menuPort->rect = Common::Rect(0, 0, _screen->getWidth(), _screen->getHeight());
+	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
 }
 
 void Gfx::purgeCache() {
@@ -322,7 +322,7 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 
 	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag)
-		ClearScreen(_screen->_colorWhite);
+		ClearScreen(_screen->getColorWhite());
 
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 	delete picture;
@@ -426,7 +426,7 @@ void Gfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 			_priorityBands[y]--;
 	}
 	// We fill space that is left over with the highest band
-	for (y = _priorityBottom; y < _screen->_height; y++)
+	for (y = _priorityBottom; y < _screen->getHeight(); y++)
 		_priorityBands[y] = _priorityBandCount;
 }
 
