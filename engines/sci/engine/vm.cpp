@@ -226,7 +226,14 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	const int temp = s->_segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {
-		warning("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+#ifdef ENABLE_SCI32
+		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
+		// an invalid exported function.
+		if (getSciVersion() >= SCI_VERSION_2)
+			warning("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
+		else
+#endif
+			error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
 		return NULL;
 	}
 
