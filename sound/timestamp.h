@@ -129,6 +129,17 @@ public:
 	/** Return the framerate used by this timestamp. */
 	int getFramerate() const { return _framerate / _framerateFactor; }
 
+	/**
+	 * Determines the time in seconds described by this timestamp,
+	 * rounded down.
+	 */
+	uint32 secs() const { return _secs; }
+
+	/**
+	 * Determines the frames described by this timestamp.
+	 */
+	int getNumberOfFrames() const { return _numberOfFrames / _framerateFactor; }
+
 protected:
 
 	int cmp(const Timestamp &ts) const;
