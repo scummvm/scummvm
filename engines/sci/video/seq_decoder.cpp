@@ -35,6 +35,10 @@
 
 namespace Sci {
 
+// SEQ videos always run at 320x200
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
+
 enum seqPalTypes {
 	kSeqPalVariable = 0,
 	kSeqPalConstant = 1
@@ -59,8 +63,8 @@ bool SeqDecoder::loadFile(const char *fileName, int frameDelay) {
 	// Seek to the first frame
 	_videoInfo.currentFrame = 0;
 
-	_videoInfo.width = 320;
-	_videoInfo.height = 200;
+	_videoInfo.width = SCREEN_WIDTH;
+	_videoInfo.height = SCREEN_HEIGHT;
 	_videoInfo.frameCount = _fileStream->readUint16LE();
 	// Our frameDelay is calculated in 1/100 ms, so we convert it here
 	_videoInfo.frameDelay = 100 * frameDelay * 1000 / 60;
@@ -129,7 +133,7 @@ bool SeqDecoder::decodeNextFrame() {
 		_videoInfo.startTime = g_system->getMillis();
 
 	if (frameType == kSeqFrameFull) {
-		byte *dst = _videoFrameBuffer + frameTop * 320 + frameLeft;
+		byte *dst = _videoFrameBuffer + frameTop * SCREEN_WIDTH + frameLeft;
 		
 		byte *linebuf = new byte[frameWidth];
 
@@ -143,7 +147,7 @@ bool SeqDecoder::decodeNextFrame() {
 	} else {
 		byte *buf = new byte[frameSize];
 		_fileStream->read(buf, frameSize);
-		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, _videoFrameBuffer + 320 * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
+		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, _videoFrameBuffer + SCREEN_WIDTH * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
 		delete[] buf;
 	}
 
@@ -151,14 +155,14 @@ bool SeqDecoder::decodeNextFrame() {
 }
 
 #define WRITE_TO_BUFFER(n) \
-	if (writeRow * 320 + writeCol + (n) > 320 * height) { \
+	if (writeRow * SCREEN_WIDTH + writeCol + (n) > SCREEN_WIDTH * height) { \
 		warning("SEQ player: writing out of bounds, aborting"); \
 		return false; \
 	} \
 	if (litPos + (n) > litSize) { \
 		warning("SEQ player: reading out of bounds, aborting"); \
 	} \
-	memcpy(dest + writeRow * 320 + writeCol, litData + litPos, n);
+	memcpy(dest + writeRow * SCREEN_WIDTH + writeCol, litData + litPos, n);
 
 bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey) {
 	int writeRow = 0;

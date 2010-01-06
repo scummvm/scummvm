@@ -1822,6 +1822,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			if (argc > 7)
 				opt = argv[7].toUint16();
 		} else {
+			// SCI1.1 and older games always ran with an internal resolution of 320x200
 			poly_list = argv[4];
 			width = 320;
 			height = 190;

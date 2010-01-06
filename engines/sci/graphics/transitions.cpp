@@ -170,7 +170,7 @@ void Transitions::doit(Common::Rect picRect) {
 	// Now we do the actual transition to the new screen
 	doTransition(_number, false);
 
-	if (picRect.bottom != 320) {
+	if (picRect.bottom != _screen->_height) {
 		// TODO: this is a workaround for lsl6 not showing menubar when playing
 		//  There is some new code in the sierra sci in ShowPic that seems to do something similar to this
 		_screen->copyToScreen();
@@ -305,10 +305,10 @@ void Transitions::pixelation (bool blackoutFlag) {
 
 	do {
 		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
-		if (mask >= 320 * 200)
+		if (mask >= _screen->_width * _screen->_height)
 			continue;
-		pixelRect.left = mask % 320; pixelRect.right = pixelRect.left + 1;
-		pixelRect.top = mask / 320;	pixelRect.bottom = pixelRect.top + 1;
+		pixelRect.left = mask % _screen->_width; pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / _screen->_width;	pixelRect.bottom = pixelRect.top + 1;
 		pixelRect.clip(_picRect);
 		if (!pixelRect.isEmpty())
 			copyRectToScreen(pixelRect, blackoutFlag);
