@@ -243,10 +243,7 @@ private:
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
 			Common::SeekableReadStream *stream,
-			bool disposeAfterUse,
-			uint32 startTime,
-			uint32 duration,
-			uint numLoops);
+			bool disposeAfterUse);
 	};
 
 	static const SpeechCodecs _supportedCodecs[];
@@ -361,10 +358,7 @@ private:
 		const char *fileext;
 		Audio::SeekableAudioStream *(*streamFunc)(
 			Common::SeekableReadStream *stream,
-			bool disposeAfterUse,
-			uint32 startTime,
-			uint32 duration,
-			uint numLoops);
+			bool disposeAfterUse);
 	};
 
 	static const AudioCodecs _supportedCodecs[];

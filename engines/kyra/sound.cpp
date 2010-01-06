@@ -97,7 +97,7 @@ Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) {
 		if (!stream)
 			continue;
 
-		audioStream = _supportedCodecs[i].streamFunc(stream, true, 0, 0, 1);
+		audioStream = _supportedCodecs[i].streamFunc(stream, true);
 		break;
 	}
 
@@ -241,7 +241,7 @@ namespace {
 
 // A simple wrapper to create VOC streams the way like creating MP3, OGG/Vorbis and FLAC streams.
 // Possible TODO: Think of making this complete and moving it to sound/voc.cpp ?
-Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
+Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, bool disposeAfterUse) {
 
 #ifdef STREAM_AUDIO_FROM_DISK
 	Audio::SeekableAudioStream *as = Audio::makeVOCStream(*stream, Audio::Mixer::FLAG_UNSIGNED, 0, 0, disposeAfterUse);
