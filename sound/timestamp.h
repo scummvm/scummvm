@@ -39,23 +39,35 @@ namespace Audio {
 class Timestamp {
 protected:
 	/**
-	 * The millisecond part of this timestamp.
-	 * The total time represented by this timestamp is
+	 * The seconds part of this timestamp.
+	 * The total time in seconds represented by this timestamp can be
 	 * computed as follows:
-	 *   _msecs + 1000 * _numberOfFrames / _framerate
+	 *   _secs + (double)_numberOfFrames / _framerate
 	 */
-	uint _msecs;
+	uint _secs;
 
 	/**
-	 * The number of frames which together with _msecs encodes
+	 * The number of frames which together with _secs encodes
 	 * the timestamp. The total number of frames represented
 	 * by this timestamp is computed as follows:
-	 *   _numberOfFrames + _msecs * _framerate / 1000
+	 *   _numberOfFrames + _secs * _framerate
 	 */
 	int _numberOfFrames;
 
-	/** The framerate, i.e. the number of frames per second. */
+	/**
+	 * The internal framerate, i.e. the number of frames per second.
+	 * This is computed as the least common multiple of the framerate
+	 * specified by the client code, and 1000.
+	 * This way, we ensure that we can store both frames and
+	 * milliseconds without any rounding losses.
+	 */
 	int _framerate;
+
+	/**
+	 * Factor by which the original framerate specified by the client
+	 * code was multipled to obtain the internal _framerate value.
+	 */
+	int _framerateFactor;
 
 public:
 	/**
@@ -72,7 +84,13 @@ public:
 	 */
 	Timestamp convertToFramerate(int newFramerate) const;
 
+	/**
+	 * Check whether to timestamps describe the exact same moment
+	 * in time. This means that two timestamps can compare
+	 * as equal even if they use different framerates.
+	 */
 	bool operator==(const Timestamp &ts) const;
+
 	bool operator!=(const Timestamp &ts) const;
 // 	bool operator<(const Timestamp &ts) const;
 // 	bool operator<=(const Timestamp &ts) const;
@@ -82,14 +100,16 @@ public:
 	/**
 	 * Returns a new timestamp, which corresponds to the time encoded
 	 * by this timestamp with the given number of frames added.
+	 * @param frames     number of frames to add
 	 */
 	Timestamp addFrames(int frames) const;
 
 	/**
 	 * Returns a new timestamp, which corresponds to the time encoded
 	 * by this timestamp with the given number of milliseconds added.
+	 * @param msecs     number of milliseconds to add
 	 */
-	Timestamp addMsecs(int ms) const;
+	Timestamp addMsecs(int msecs) const;
 
 	/**
 	 * Computes the number of frames between this timestamp and ts.
@@ -108,7 +128,7 @@ public:
 	uint32 msecs() const;
 
 	/** Return the framerate used by this timestamp. */
-	int getFramerate() const { return _framerate; }
+	int getFramerate() const { return _framerate / _framerateFactor; }
 };
 
 

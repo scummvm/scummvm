@@ -87,8 +87,32 @@ class TimestampTestSuite : public CxxTest::TestSuite
 
 	void test_equals() {
 		const Audio::Timestamp a = Audio::Timestamp(500, 1000);
-		const Audio::Timestamp b = Audio::Timestamp(0, 1000).addFrames(500);
+		Audio::Timestamp b = Audio::Timestamp(0, 1000);
+		Audio::Timestamp c = Audio::Timestamp(0, 100);
+
+		TS_ASSERT(a != b);
+		TS_ASSERT(a != c);
+		TS_ASSERT(b == c);
+
+		b = b.addFrames(500);
+		c = c.addFrames(50);
 
 		TS_ASSERT(a == b);
+		TS_ASSERT(a == c);
+		TS_ASSERT(b == c);
+	}
+
+
+	void test_framerate() {
+		const Audio::Timestamp a = Audio::Timestamp(500, 1000);
+		const Audio::Timestamp b = Audio::Timestamp(500, 67);
+		const Audio::Timestamp c = Audio::Timestamp(500, 100);
+		const Audio::Timestamp d = Audio::Timestamp(500, 44100);
+
+
+		TS_ASSERT_EQUALS(a.getFramerate(), 1000);
+		TS_ASSERT_EQUALS(b.getFramerate(), 67);
+		TS_ASSERT_EQUALS(c.getFramerate(), 100);
+		TS_ASSERT_EQUALS(d.getFramerate(), 44100);
 	}
 };

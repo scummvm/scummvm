@@ -36,17 +36,23 @@ static uint gcd(uint a, uint b) {
 	return b;
 }
 
-Timestamp::Timestamp(uint32 m, int framerate) :
-	_msecs(m), _framerate(framerate), _numberOfFrames(0) {
-	assert(_framerate > 0);
+Timestamp::Timestamp(uint32 ms, int framerate) {
+	assert(framerate > 0);
+
+	_secs = ms / 1000;
+	_framerateFactor = 1000 / gcd(1000, framerate);
+	_framerate = framerate * _framerateFactor;
+
+	_numberOfFrames = (ms % 1000) * _framerate / 1000;
 }
 
 
 Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 	Timestamp ts(*this);
 
-	if (ts._framerate != newFramerate) {
-		ts._framerate = newFramerate;
+	if (ts.getFramerate() != newFramerate) {
+		ts._framerateFactor = 1000 / gcd(1000, newFramerate);
+		ts._framerate = newFramerate * ts._framerateFactor;
 
 		const uint g = gcd(_framerate, ts._framerate);
 		const uint p = _framerate / g;
@@ -58,7 +64,7 @@ Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 		// round trip conversions.
 		ts._numberOfFrames = (ts._numberOfFrames * q + p/2) / p;
 
-		ts._msecs += (ts._numberOfFrames / ts._framerate) * 1000;
+		ts._secs += (ts._numberOfFrames / ts._framerate);
 		ts._numberOfFrames %= ts._framerate;
 	}
 
@@ -66,8 +72,8 @@ Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 }
 
 bool Timestamp::operator==(const Timestamp &ts) const {
-	// TODO: Improve this
-	return (ts.msecs() == msecs()) && !frameDiff(ts);
+	return (ts._secs == _secs) &&
+			(ts._numberOfFrames * _framerate == _numberOfFrames * ts._framerate);
 }
 
 bool Timestamp::operator!=(const Timestamp &ts) const {
@@ -77,16 +83,19 @@ bool Timestamp::operator!=(const Timestamp &ts) const {
 
 Timestamp Timestamp::addFrames(int frames) const {
 	Timestamp ts(*this);
-	ts._numberOfFrames += frames;
+
+	// The frames are given in the original framerate, so we have to
+	// adjust by _framerateFactor accordingly.
+	ts._numberOfFrames += frames * _framerateFactor;
 
 	if (ts._numberOfFrames < 0) {
 		int secsub = 1 + (-ts._numberOfFrames / ts._framerate);
 
 		ts._numberOfFrames += ts._framerate * secsub;
-		ts._msecs -= secsub * 1000;
+		ts._secs -= secsub;
 	}
 
-	ts._msecs += (ts._numberOfFrames / ts._framerate) * 1000;
+	ts._secs += (ts._numberOfFrames / ts._framerate);
 	ts._numberOfFrames %= ts._framerate;
 
 	return ts;
@@ -94,15 +103,16 @@ Timestamp Timestamp::addFrames(int frames) const {
 
 Timestamp Timestamp::addMsecs(int ms) const {
 	Timestamp ts(*this);
-	ts._msecs += ms;
-	return ts;
+	ts._secs += ms / 1000;
+	// Add the remaining frames. Note that _framerate is always divisible by 1000.
+	return ts.addFrames((ms % 1000) * (_framerate / 1000));
 }
 
 int Timestamp::frameDiff(const Timestamp &ts) const {
 
 	int delta = 0;
-	if (_msecs != ts._msecs)
-		delta = (long(_msecs) - long(ts._msecs)) * _framerate / 1000;
+	if (_secs != ts._secs)
+		delta = (long(_secs) - long(ts._secs)) * _framerate;
 
 	delta += _numberOfFrames;
 
@@ -119,7 +129,7 @@ int Timestamp::frameDiff(const Timestamp &ts) const {
 		delta -= (ts._numberOfFrames * p + q/2) / q;
 	}
 
-	return delta;
+	return delta / _framerateFactor;
 }
 
 int Timestamp::msecsDiff(const Timestamp &ts) const {
@@ -127,7 +137,7 @@ int Timestamp::msecsDiff(const Timestamp &ts) const {
 }
 
 uint32 Timestamp::msecs() const {
-	return _msecs + _numberOfFrames * 1000L / _framerate;
+	return _secs * 1000 + _numberOfFrames / (_framerate / 1000);
 }
 
 
