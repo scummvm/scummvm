@@ -140,10 +140,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		moveTo(319, 150, 1, true);
 		moveTo(63, 150, 1);
-		displayAsyncMessage(0x5da8, 19844, 18, 36);
-		playAnimation(851, 0);
+		displayAsyncMessage(0x5da8, 19844, 18, 36); //hey, what's the matter?
+		playAnimation(851, 0, true);
+		playActorAnimation(930, true);
+		waitAnimation();
 		playSound(24, 11);
 		playActorAnimation(931);
+
 		displayCredits(0xe42f);
 
 		playMusic(3);
