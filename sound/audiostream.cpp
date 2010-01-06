@@ -55,8 +55,7 @@ struct StreamFileFormat {
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file).
 	 */
-	SeekableAudioStream *(*openStreamFile)(Common::SeekableReadStream *stream, bool disposeAfterUse,
-					uint32 startTime, uint32 duration, uint numLoops);
+	SeekableAudioStream *(*openStreamFile)(Common::SeekableReadStream *stream, bool disposeAfterUse);
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
@@ -75,7 +74,7 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ NULL, NULL, NULL } // Terminator
 };
 
-SeekableAudioStream *AudioStream::openStreamFile(const Common::String &basename, uint32 startTime, uint32 duration, uint numLoops) {
+SeekableAudioStream *AudioStream::openStreamFile(const Common::String &basename) {
 	SeekableAudioStream *stream = NULL;
 	Common::File *fileHandle = new Common::File();
 
@@ -84,7 +83,7 @@ SeekableAudioStream *AudioStream::openStreamFile(const Common::String &basename,
 		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {
 			// Create the stream object
-			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true, startTime, duration, numLoops);
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true);
 			fileHandle = 0;
 			break;
 		}

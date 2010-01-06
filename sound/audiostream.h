@@ -97,10 +97,7 @@ public:
 	 * @return	an Audiostream ready to use in case of success;
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
-	static SeekableAudioStream *openStreamFile(const Common::String &basename,
-	                                           uint32 startTime = 0,
-	                                           uint32 duration = 0,
-	                                           uint numLoops = 1);
+	static SeekableAudioStream *openStreamFile(const Common::String &basename);
 
 	/** 
 	 * Sets number of times the stream is supposed to get looped
