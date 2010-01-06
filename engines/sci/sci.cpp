@@ -114,8 +114,9 @@ Common::Error SciEngine::run() {
 #endif
 							) && getPlatform() == Common::kPlatformWindows;
 
-	// TODO: Detect japanese editions and set upscaledHires on those as well
-	// TODO: Possibly look at first picture resource and determine if its hires or not
+	// Japanese versions of games use hi-res font on upscaled version of the game
+	if ((getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
+		upscaledHires = true;
 
 	// Initialize graphics-related parts
 	Screen *screen = 0;
