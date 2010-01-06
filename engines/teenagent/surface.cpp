@@ -65,11 +65,22 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror, Common::Rect src_rect, uint zoom) const {
 	if (src_rect.isEmpty()) {
 		src_rect = Common::Rect(0, 0, w, h);
-	} else if (src_rect.right > w)
-		src_rect.right = w;
-	else if (src_rect.bottom > h) 
-		src_rect.bottom = h;
-
+	}
+	{
+		int left = x + dx, right = left + src_rect.width();
+		int top = y + dy, bottom = top + src_rect.height();
+		if (left < 0)
+			src_rect.left -= left;
+		if (right > surface->w)
+			src_rect.right -= right - surface->w;
+		if (top < 0)
+			src_rect.top -= top;
+		if (bottom > surface->h)
+			src_rect.bottom -= bottom - surface->h;
+		if (src_rect.isEmpty())
+			return Common::Rect();
+	}
+	
 	if (zoom == 256) {
 		assert(x + dx + src_rect.width() <= surface->w);
 		assert(y + dy + src_rect.height() <= surface->h);

@@ -55,16 +55,6 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 
 	///\todo remove copy-paste here and below
 	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - s->h * zoom / 256 - s->y;
-	if (xp < 0)
-		xp = 0;
-	if (xp + s->w > 320)
-		xp = 320 - s->w;
-
-	if (yp < 0)
-		yp = 0;
-	if (yp + s->h > 200)
-		yp = 200 - s->h;
-	
 	return s->render(surface, xp, yp, mirror, Common::Rect(), zoom);
 }
 
@@ -156,16 +146,6 @@ Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &posi
 		clip.top = head->h;
 
 	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - s->h * zoom / 256 - s->y;
-	if (xp < 0)
-		xp = 0;
-	if (xp + s->w > 320)
-		xp = 320 - s->w;
-
-	if (yp < 0)
-		yp = 0;
-	if (yp + clip.top + clip.height() > 200)
-		yp = 200 - clip.top - clip.height();
-	
 	dirty = s->render(surface, xp, yp + clip.top * zoom / 256, mirror, clip, zoom);
 
 	if (head != NULL)
