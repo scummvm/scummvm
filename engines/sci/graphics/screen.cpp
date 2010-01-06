@@ -91,6 +91,13 @@ void Screen::copyFromScreen(byte *buffer) {
 	g_system->unlockScreen();
 }
 
+void Screen::syncWithFramebuffer() {
+	Graphics::Surface *screen = g_system->lockScreen();
+
+	memcpy(_displayScreen, screen->pixels, _displayPixels);
+	g_system->unlockScreen();
+}
+
 void Screen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());

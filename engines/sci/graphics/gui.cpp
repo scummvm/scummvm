@@ -821,6 +821,10 @@ int16 SciGui::getCelCount(GuiResourceId viewId, int16 loopNo) {
 	return _gfx->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
+void SciGui::syncWithFramebuffer() {
+	_screen->syncWithFramebuffer();
+}
+
 reg_t SciGui::portraitLoad(Common::String resourceName) {
 	return NULL_REG;
 }

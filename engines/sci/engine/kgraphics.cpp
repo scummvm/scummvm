@@ -995,6 +995,8 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
+	bool playedVideo = false;
+
 	// KQ6 Windows calls this with one argument. It doesn't seem
 	// to have a purpose...
 	if (argc == 1)
@@ -1009,10 +1011,12 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 		Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
 		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
-		if (aviDecoder->loadFile(filename.c_str()))
+		if (aviDecoder->loadFile(filename.c_str())) {
 			player->playVideo();
-		else
+			playedVideo = true;
+		} else {
 			warning("Failed to open movie file %s", filename.c_str());
+		}
 		aviDecoder->closeFile();
 		delete player;
 		delete aviDecoder;
@@ -1024,14 +1028,19 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 		SeqDecoder *seqDecoder = new SeqDecoder();
 		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
-		if (seqDecoder->loadFile(filename.c_str(), delay))
+		if (seqDecoder->loadFile(filename.c_str(), delay)) {
 			player->playVideo();
-		else
+			playedVideo = true;
+		} else {
 			warning("Failed to open movie file %s", filename.c_str());
+		}
 		seqDecoder->closeFile();
 		delete player;
 		delete seqDecoder;
 	}
+
+	if (playedVideo)
+		s->_gui->syncWithFramebuffer();
 
 	return s->r_acc;
 }
