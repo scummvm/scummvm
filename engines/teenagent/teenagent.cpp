@@ -146,7 +146,8 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 		if (object->actor_rect.valid())
 			scene->moveTo(dst, object->actor_orientation);
 		dst_object = object;
-	} else {
+	} else if (!scene_busy || action == kActionNone) {
+		//do not reset anything while scene is busy, but allow interrupts while walking.
 		debug(0, "click %d, %d", point.x, point.y);
 		action = kActionNone;
 		scene->moveTo(point, 0, true);
