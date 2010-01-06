@@ -687,19 +687,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 				}
 
 				if (tick_mark) {
-					int speed_x;
-					switch(teenagent.currentIndex()) {
-					case 6: 
-						speed_x = 10;
-						break;
-					case 7:
-						speed_x = 1;
-						break;
-					default:
-						speed_x = 6;
-						break;
-					}
-					speed_x = speed_x * zoom / 256;
+					int speed_x = zoom / 32; //8 * zoom / 256
 					int speed_y = (o == kActorDown || o == kActorUp? 2: 1) * zoom / 256;
 					if (speed_x == 0)
 						speed_x = 1;
