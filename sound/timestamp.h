@@ -78,6 +78,14 @@ public:
 	Timestamp(uint32 msecs, int framerate);
 
 	/**
+	 * Set up a timestamp with a given time, frames and framerate.
+	 * @param secs      starting time in seconds
+	 * @param frames    starting frames
+	 * @param framerate number of frames per second (must be > 0)
+	 */
+	Timestamp(uint secs, int frames, int framerate);
+
+	/**
 	 * Return a timestamp which represents as closely as possible
 	 * the point in time describes by this timestamp, but with
 	 * a different framerate.

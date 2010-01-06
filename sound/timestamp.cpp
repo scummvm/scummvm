@@ -46,6 +46,15 @@ Timestamp::Timestamp(uint32 ms, int fr) {
 	_numberOfFrames = (ms % 1000) * _framerate / 1000;
 }
 
+Timestamp::Timestamp(uint s, int frames, int fr) {
+	assert(fr > 0);
+
+	_secs = s;
+	_framerateFactor = 1000 / gcd(1000, fr);
+	_framerate = fr * _framerateFactor;
+	_numberOfFrames = 0;
+	*this = addFrames(frames);
+}
 
 Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 	Timestamp ts(*this);

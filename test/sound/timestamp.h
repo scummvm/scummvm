@@ -89,6 +89,8 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		const Audio::Timestamp a = Audio::Timestamp(500, 1000);
 		Audio::Timestamp b = Audio::Timestamp(0, 1000);
 		Audio::Timestamp c = Audio::Timestamp(0, 100);
+		
+		TS_ASSERT_EQUALS(a, Audio::Timestamp(0, 500, 1000));
 
 		TS_ASSERT(a != b);
 		TS_ASSERT(a != c);
