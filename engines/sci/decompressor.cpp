@@ -901,7 +901,8 @@ int DecompressorLZS::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 }
 
 int DecompressorLZS::unpackLZS() {
-	uint16 offs = 0, clen;
+	uint16 offs = 0;
+	uint32 clen;
 
 	while (!isFinished()) {
 		if (getBitsMSB(1)) { // Compressed bytes follow
@@ -928,8 +929,9 @@ int DecompressorLZS::unpackLZS() {
 	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
-uint16 DecompressorLZS::getCompLen() {
-	int clen, nibble;
+uint32 DecompressorLZS::getCompLen() {
+	uint32 clen;
+	int nibble;
 	// The most probable cases are hardcoded
 	switch (getBitsMSB(2)) {
 	case 0:
@@ -958,7 +960,7 @@ uint16 DecompressorLZS::getCompLen() {
 	}
 }
 
-void DecompressorLZS::copyComp(int offs, int clen) {
+void DecompressorLZS::copyComp(int offs, uint32 clen) {
 	int hpos = _dwWrote - offs;
 
 	while (clen--)

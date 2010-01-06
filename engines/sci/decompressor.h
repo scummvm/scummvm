@@ -192,8 +192,8 @@ public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 protected:
 	int unpackLZS();
-	uint16 getCompLen();
-	void copyComp(int offs, int clen);
+	uint32 getCompLen();
+	void copyComp(int offs, uint32 clen);
 };
 #endif
 
