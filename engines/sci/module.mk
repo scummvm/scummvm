@@ -45,6 +45,7 @@ MODULE_OBJS := \
 	graphics/palette.o \
 	graphics/picture.o \
 	graphics/portrait.o \
+	graphics/robot.o \
 	graphics/screen.o \
 	graphics/text.o \
 	graphics/transitions.o \
