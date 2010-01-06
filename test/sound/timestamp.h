@@ -143,10 +143,10 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		const Audio::Timestamp c = Audio::Timestamp(500, 100);
 		const Audio::Timestamp d = Audio::Timestamp(500, 44100);
 
-		TS_ASSERT_EQUALS(a.getFramerate(), 1000);
-		TS_ASSERT_EQUALS(b.getFramerate(), 67);
-		TS_ASSERT_EQUALS(c.getFramerate(), 100);
-		TS_ASSERT_EQUALS(d.getFramerate(), 44100);
+		TS_ASSERT_EQUALS(a.framerate(), 1000);
+		TS_ASSERT_EQUALS(b.framerate(), 67);
+		TS_ASSERT_EQUALS(c.framerate(), 100);
+		TS_ASSERT_EQUALS(d.framerate(), 44100);
 	}
 
 	void test_direct_query() {
@@ -156,14 +156,14 @@ class TimestampTestSuite : public CxxTest::TestSuite
 
 		TS_ASSERT_EQUALS(a.secs(), (uint32)0);
 		TS_ASSERT_EQUALS(a.msecs(), (uint32)0);
-		TS_ASSERT_EQUALS(a.getNumberOfFrames(), 0);
+		TS_ASSERT_EQUALS(a.numberOfFrames(), 0);
 
 		TS_ASSERT_EQUALS(b.secs(), (uint32)0);
 		TS_ASSERT_EQUALS(b.msecs(), (uint32)500);
-		TS_ASSERT_EQUALS(b.getNumberOfFrames(), 11025);
+		TS_ASSERT_EQUALS(b.numberOfFrames(), 11025);
 
 		TS_ASSERT_EQUALS(c.secs(), (uint32)1);
 		TS_ASSERT_EQUALS(c.msecs(), (uint32)1500);
-		TS_ASSERT_EQUALS(c.getNumberOfFrames(), 11025);
+		TS_ASSERT_EQUALS(c.numberOfFrames(), 11025);
 	}
 };

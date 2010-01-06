@@ -126,19 +126,19 @@ public:
 	 */
 	uint32 msecs() const;
 
-	/** Return the framerate used by this timestamp. */
-	int getFramerate() const { return _framerate / _framerateFactor; }
-
 	/**
 	 * Determines the time in seconds described by this timestamp,
 	 * rounded down.
 	 */
-	uint32 secs() const { return _secs; }
+	inline uint32 secs() const { return _secs; }
 
 	/**
 	 * Determines the frames described by this timestamp.
 	 */
-	int getNumberOfFrames() const { return _numberOfFrames / _framerateFactor; }
+	inline int numberOfFrames() const { return _numberOfFrames / _framerateFactor; }
+
+	/** Return the framerate used by this timestamp. */
+	inline int framerate() const { return _framerate / _framerateFactor; }
 
 protected:
 

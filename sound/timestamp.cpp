@@ -36,12 +36,12 @@ static uint gcd(uint a, uint b) {
 	return b;
 }
 
-Timestamp::Timestamp(uint32 ms, int framerate) {
-	assert(framerate > 0);
+Timestamp::Timestamp(uint32 ms, int fr) {
+	assert(fr > 0);
 
 	_secs = ms / 1000;
-	_framerateFactor = 1000 / gcd(1000, framerate);
-	_framerate = framerate * _framerateFactor;
+	_framerateFactor = 1000 / gcd(1000, fr);
+	_framerate = fr * _framerateFactor;
 
 	_numberOfFrames = (ms % 1000) * _framerate / 1000;
 }
@@ -50,7 +50,7 @@ Timestamp::Timestamp(uint32 ms, int framerate) {
 Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 	Timestamp ts(*this);
 
-	if (ts.getFramerate() != newFramerate) {
+	if (ts.framerate() != newFramerate) {
 		ts._framerateFactor = 1000 / gcd(1000, newFramerate);
 		ts._framerate = newFramerate * ts._framerateFactor;
 

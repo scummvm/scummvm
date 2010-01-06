@@ -110,7 +110,7 @@ inline int32 calculatePlayTime(int rate, int samples) {
 
 uint32 calculateSampleOffset(const Timestamp &where, int rate) {
 	const Timestamp whereRate = where.convertToFramerate(rate);
-	return whereRate.secs() * rate + whereRate.getNumberOfFrames();
+	return whereRate.secs() * rate + whereRate.numberOfFrames();
 }
 
 /**
