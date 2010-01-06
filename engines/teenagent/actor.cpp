@@ -54,7 +54,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 	Surface *s = frames + *frames_idle - 1;
 
 	///\todo remove copy-paste here and below
-	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - s->h * zoom / 256 - s->y;
+	int xp = position.x - s->w * zoom / 512 - s->x, yp = position.y - 62 * zoom / 256 - s->y; //hardcoded in original game
 	return s->render(surface, xp, yp, mirror, Common::Rect(), zoom);
 }
 
