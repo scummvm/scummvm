@@ -121,7 +121,7 @@ public:
 
 	int getRate() const { return _rate; }
 
-	bool seek(const Audio::Timestamp &);
+	bool seek(const Audio::Timestamp &where);
 	Audio::Timestamp getLength() const { return _length; }
 private:
 	Common::SeekableReadStream *_stream;
@@ -356,8 +356,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 }
 
 bool AUDStream::seek(const Audio::Timestamp &where) {
-	// TODO: A more exact implementation would be nice
-	const uint32 seekSample = where.msecs() * getRate() / 1000;
+	const uint32 seekSample = Audio::calculateSampleOffset(where, getRate());
 
 	_stream->seek(_streamStart);
 	_processedSize = 0;

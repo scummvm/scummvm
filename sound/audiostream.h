@@ -205,6 +205,15 @@ public:
  */
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte flags);
 
+/**
+ * Calculates the sample, which the timestamp describes in a
+ * AudioStream with the given framerate.
+ *
+ * @param where point in time
+ * @param rate rate of the AudioStream
+ * @return sample index
+ */
+uint32 calculateSampleOffset(const Timestamp &where, int rate);
 
 } // End of namespace Audio
 

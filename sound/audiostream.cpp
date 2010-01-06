@@ -109,14 +109,8 @@ inline int32 calculatePlayTime(int rate, int samples) {
 }
 
 uint32 calculateSampleOffset(const Timestamp &where, int rate) {
-	const uint32 msecs = where.msecs();
-
-	const Timestamp msecStamp(msecs, rate);
-	const uint32 seconds = msecs / 1000;
-	const uint32 millis = msecs % 1000;
-	const uint32 samples = msecStamp.frameDiff(where) + (millis * rate) / 1000;
-
-	return seconds * rate + samples;
+	const Timestamp whereRate = where.convertToFramerate(rate);
+	return whereRate.secs() * rate + whereRate.getNumberOfFrames();
 }
 
 /**
