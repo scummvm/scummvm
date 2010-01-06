@@ -95,7 +95,7 @@ protected:
 	/** index of the first sample to be played */
 	FLAC__uint64 _firstSample;
 
-	/** index + 1(!) of the last sample to be played - 0 is end of stream */
+	/** index + 1(!) of the last sample to be played */
 	FLAC__uint64 _lastSample;
 
 	/** total play time */
@@ -247,7 +247,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 			// Compute the start/end sample (we use floating point arithmetics here to
 			// avoid overflows).
 			_firstSample = (FLAC__uint64)(startTime * (_streaminfo.sample_rate / 1000.0));
-			_lastSample = (FLAC__uint64)(endTime * (_streaminfo.sample_rate / 1000.0));
+			_lastSample = !endTime ? _streaminfo.total_samples + 1 : (FLAC__uint64)(endTime * (_streaminfo.sample_rate / 1000.0));
 
 			if (_firstSample == 0 || seekAbsolute(_firstSample)) {
 				int32 samples = -1;
