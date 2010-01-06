@@ -90,12 +90,11 @@ public:
 	 * as equal even if they use different framerates.
 	 */
 	bool operator==(const Timestamp &ts) const;
-
 	bool operator!=(const Timestamp &ts) const;
-// 	bool operator<(const Timestamp &ts) const;
-// 	bool operator<=(const Timestamp &ts) const;
-// 	bool operator>(const Timestamp &ts) const;
-// 	bool operator>=(const Timestamp &ts) const;
+	bool operator<(const Timestamp &ts) const;
+	bool operator<=(const Timestamp &ts) const;
+	bool operator>(const Timestamp &ts) const;
+	bool operator>=(const Timestamp &ts) const;
 
 	/**
 	 * Returns a new timestamp, which corresponds to the time encoded
@@ -129,6 +128,10 @@ public:
 
 	/** Return the framerate used by this timestamp. */
 	int getFramerate() const { return _framerate / _framerateFactor; }
+
+protected:
+
+	int cmp(const Timestamp &ts) const;
 };
 
 

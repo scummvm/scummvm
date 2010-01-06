@@ -72,12 +72,40 @@ Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 }
 
 bool Timestamp::operator==(const Timestamp &ts) const {
-	return (ts._secs == _secs) &&
-			(ts._numberOfFrames * _framerate == _numberOfFrames * ts._framerate);
+	return cmp(ts) == 0;
 }
 
 bool Timestamp::operator!=(const Timestamp &ts) const {
-	return !(*this == ts);
+	return cmp(ts) != 0;
+}
+
+bool Timestamp::operator<(const Timestamp &ts) const {
+	return cmp(ts) < 0;
+}
+
+bool Timestamp::operator<=(const Timestamp &ts) const {
+	return cmp(ts) <= 0;
+}
+
+bool Timestamp::operator>(const Timestamp &ts) const {
+	return cmp(ts) > 0;
+}
+
+bool Timestamp::operator>=(const Timestamp &ts) const {
+	return cmp(ts) >= 0;
+}
+
+int Timestamp::cmp(const Timestamp &ts) const {
+	int delta = _secs - ts._secs;
+	if (!delta) {
+		const uint g = gcd(_framerate, ts._framerate);
+		const uint p = _framerate / g;
+		const uint q = ts._framerate / g;
+
+		delta = (_numberOfFrames * q - ts._numberOfFrames * p);
+	}
+
+	return delta;
 }
 
 
