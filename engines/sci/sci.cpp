@@ -110,7 +110,7 @@ Common::Error SciEngine::run() {
 	// Scale the screen, if needed
 	bool upscaledHires = (!strcmp(getGameID(), "kq6") 
 #ifdef ENABLE_SCI32
-							|| getSciVersion() >= SCI_VERSION_2
+							|| getSciVersion() == SCI_VERSION_2
 #endif
 							) && getPlatform() == Common::kPlatformWindows;
 
@@ -118,7 +118,16 @@ Common::Error SciEngine::run() {
 	// TODO: Possibly look at first picture resource and determine if its hires or not
 
 	// Initialize graphics-related parts
-	Screen *screen = new Screen(_resMan, 320, 200, upscaledHires);	// invokes initGraphics()
+	Screen *screen = 0;
+	
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2_1)
+		screen = new Screen(_resMan, 640, 480, false);	// invokes initGraphics()
+	else
+#endif
+		screen = new Screen(_resMan, 320, 200, upscaledHires);	// invokes initGraphics()
+
+
 	SciPalette *palette = new SciPalette(_resMan, screen);
 	Cursor *cursor = new Cursor(_resMan, palette, screen);
 
