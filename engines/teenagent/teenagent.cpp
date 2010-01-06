@@ -70,9 +70,9 @@ bool TeenAgentEngine::trySelectedObject() {
 			spot.dump();
 			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
 				moveTo(spot.actor_x, spot.actor_y, spot.orientation);
-			inventory->resetSelectedObject();
 			if (!processCallback(TO_LE_16(spot.callback)))
 				debug(0, "fixme! display proper description");
+			inventory->resetSelectedObject();
 			return true;
 		}
 	}
@@ -97,11 +97,8 @@ void TeenAgentEngine::processObject() {
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
-		if (callback == 0 || !processCallback(callback)) {
-			Common::String desc = dst_object->description;
-			displayMessage(desc);
-			//debug(0, "%s[%u]: description: %s", current_object->name, current_object->id, desc.c_str());
-		}
+		if (callback == 0 || !processCallback(callback)) 
+			displayMessage(dst_object->description);
 	}
 	break;
 	case kActionUse: {
@@ -113,7 +110,7 @@ void TeenAgentEngine::processObject() {
 		dcall += 2 * dst_object->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
-			scene->displayMessage(dst_object->description);
+			displayMessage(dst_object->description);
 	}
 	break;
 
