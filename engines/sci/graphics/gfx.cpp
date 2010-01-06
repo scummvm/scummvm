@@ -265,8 +265,8 @@ void Gfx::BitsShow(const Common::Rect &rect) {
 	_screen->copyRectToScreen(workerRect);
 }
 
-MemoryHandle Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
-	MemoryHandle memoryId;
+reg_t Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
+	reg_t memoryId;
 	byte *memoryPtr;
 	int size;
 
@@ -286,7 +286,7 @@ MemoryHandle Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	return memoryId;
 }
 
-void Gfx::BitsGetRect(MemoryHandle memoryHandle, Common::Rect *destRect) {
+void Gfx::BitsGetRect(reg_t memoryHandle, Common::Rect *destRect) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
@@ -298,7 +298,7 @@ void Gfx::BitsGetRect(MemoryHandle memoryHandle, Common::Rect *destRect) {
 	}
 }
 
-void Gfx::BitsRestore(MemoryHandle memoryHandle) {
+void Gfx::BitsRestore(reg_t memoryHandle) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
@@ -311,7 +311,7 @@ void Gfx::BitsRestore(MemoryHandle memoryHandle) {
 	}
 }
 
-void Gfx::BitsFree(MemoryHandle memoryHandle) {
+void Gfx::BitsFree(reg_t memoryHandle) {
 	if (!memoryHandle.isNull()) {
 		kfree(_segMan, memoryHandle);
 	}
@@ -329,7 +329,7 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 }
 
 // This one is the only one that updates screen!
-void Gfx::drawCelAndShow(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
 	Common::Rect rect;
 	
@@ -352,12 +352,12 @@ void Gfx::drawCelAndShow(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint1
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	drawCel(getView(viewId), loopNo, celNo, celRect, priority, paletteNo, origHeight, scaleX, scaleY);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(View *view, LoopNo loopNo, CelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -497,8 +497,8 @@ void Gfx::SetNowSeen(reg_t objectReference) {
 	View *view = NULL;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, view);
-	LoopNo loopNo = sign_extend_byte((LoopNo)GET_SEL32V(_segMan, objectReference, loop));
-	CelNo celNo = sign_extend_byte((CelNo)GET_SEL32V(_segMan, objectReference, cel));
+	int16 loopNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, loop));
+	int16 celNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, cel));
 	int16 x = (int16)GET_SEL32V(_segMan, objectReference, x);
 	int16 y = (int16)GET_SEL32V(_segMan, objectReference, y);
 	int16 z = 0;

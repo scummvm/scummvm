@@ -72,7 +72,7 @@ public:
 	void restoreAndDelete(int argc, reg_t *argv);
 	void reAnimate(Common::Rect rect);
 	void addToPicDrawCels();
-	void addToPicDrawView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 
 private:
 	void init();

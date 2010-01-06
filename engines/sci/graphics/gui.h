@@ -88,11 +88,11 @@ public:
 	virtual reg_t menuSelect(reg_t eventObject);
 
 	virtual void drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
-	virtual void drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight = -1);
+	virtual void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight = -1);
 	virtual void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
 	virtual void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 alignment, int16 style, bool hilite);
 	virtual void drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite);
-	virtual void drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 style, bool hilite);
+	virtual void drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 style, bool hilite);
 	virtual void drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite);
 	virtual void editControl(reg_t controlObject, reg_t eventObject);
 
@@ -124,7 +124,7 @@ public:
 	virtual void animateShowPic();
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
-	virtual void addToPicView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	virtual void addToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 	virtual bool canBeHere(reg_t curObject, reg_t listReference);
 	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
@@ -157,6 +157,8 @@ public:
 	virtual void updatePlane(reg_t object);
 	virtual void deletePlane(reg_t object);
 	virtual void frameOut();
+	virtual void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
+	virtual void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
 #endif
 
 	virtual bool debugUndither(bool flag);

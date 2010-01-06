@@ -54,20 +54,20 @@ public:
 	~View();
 
 	GuiResourceId getResourceId();
-	int16 getWidth(LoopNo loopNo, CelNo celNo);
-	int16 getHeight(LoopNo loopNo, CelNo celNo);
-	CelInfo *getCelInfo(LoopNo loopNo, CelNo celNo);
-	LoopInfo *getLoopInfo(LoopNo loopNo);
-	void getCelRect(LoopNo loopNo, CelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
-	byte *getBitmap(LoopNo loopNo, CelNo celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1, uint16 scaleX = 128, uint16 scaleY = 128);
+	int16 getWidth(int16 loopNo, int16 celNo);
+	int16 getHeight(int16 loopNo, int16 celNo);
+	CelInfo *getCelInfo(int16 loopNo, int16 celNo);
+	LoopInfo *getLoopInfo(int16 loopNo);
+	void getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
+	byte *getBitmap(int16 loopNo, int16 celNo);
+	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, int16 origHeight = -1, uint16 scaleX = 128, uint16 scaleY = 128);
 	uint16 getLoopCount() const { return _loopCount; }
-	uint16 getCelCount(LoopNo loopNo) { return _loop[loopNo].celCount; }
+	uint16 getCelCount(int16 loopNo) { return _loop[loopNo].celCount; }
 	Palette *getPalette();
 
 private:
 	void initData(GuiResourceId resourceId);
-	void unpackCel(LoopNo loopNo, CelNo celNo, byte *outPtr, uint16 pixelCount);
+	void unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount);
 	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;

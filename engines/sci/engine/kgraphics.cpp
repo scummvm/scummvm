@@ -705,8 +705,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	int16 mode, maxChars, cursorPos, upperPos, listCount, i;
 	int16 upperOffset, cursorOffset;
 	GuiResourceId viewId;
-	LoopNo loopNo;
-	CelNo celNo;
+	int16 loopNo;
+	int16 celNo;
 	reg_t listSeeker;
 	Common::String *listStrings = NULL;
 	const char **listEntries = NULL;
@@ -842,8 +842,8 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId;
-	LoopNo loopNo;
-	CelNo celNo;
+	int16 loopNo;
+	int16 celNo;
 	int16 leftPos, topPos, priority, control;
 
 	switch (argc) {
@@ -909,8 +909,8 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = argv[0].toSint16();
-	LoopNo loopNo = argv[1].toSint16();
-	CelNo celNo = argv[2].toSint16();
+	int16 loopNo = argv[1].toSint16();
+	int16 celNo = argv[2].toSint16();
 	uint16 x = argv[3].toUint16();
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;

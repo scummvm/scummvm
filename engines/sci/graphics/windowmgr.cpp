@@ -269,7 +269,7 @@ void WindowMgr::DisposeWindow(Window *pWnd, bool reanimate) {
 }
 
 void WindowMgr::UpdateWindow(Window *wnd) {
-	MemoryHandle handle;
+	reg_t handle;
 
 	if (wnd->saveScreenMask && wnd->bDrawn) {
 		handle = _gfx->BitsSave(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);

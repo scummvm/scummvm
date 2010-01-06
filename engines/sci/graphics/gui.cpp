@@ -145,6 +145,20 @@ void SciGui::localToGlobal(int16 *x, int16 *y) {
 	*y = *y + curPort->top;
 }
 
+#ifdef ENABLE_SCI32
+
+void SciGui::globalToLocal(int16 *x, int16 *y, reg_t planeObj) {
+	*x = *x - GET_SEL32V(_s->_segMan, planeObj, left);
+	*y = *y - GET_SEL32V(_s->_segMan, planeObj, top);
+}
+
+void SciGui::localToGlobal(int16 *x, int16 *y, reg_t planeObj) {
+	*x = *x + GET_SEL32V(_s->_segMan, planeObj, left);
+	*y = *y + GET_SEL32V(_s->_segMan, planeObj, top);
+}
+
+#endif
+
 int16 SciGui::coordinateToPriority(int16 y) {
 	return _gfx->CoordinateToPriority(y);
 }
@@ -351,7 +365,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 	_gfx->SetPort(oldPort);
 }
 
-void SciGui::drawCel(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
+void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
 	_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, origHeight);
 	_palette->setOnScreen();
 }
@@ -422,7 +436,7 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 		_gfx->BitsShow(rect);
 }
 
-void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 style, bool hilite) {
+void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 style, bool hilite) {
 	if (!hilite) {
 		_gfx->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
 		if (style & 0x20) {
@@ -674,7 +688,7 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	addToPicSetPicNotValid();
 }
 
-void SciGui::addToPicView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void SciGui::addToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	_gfx->SetPort((Port *)_windowMgr->_picWind);
 	_animate->addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 	addToPicSetPicNotValid();
@@ -725,8 +739,8 @@ void SciGui::baseSetter(reg_t object) {
 		int16 z = (_s->_kernel->_selectorCache.z > -1) ? GET_SEL32V(_s->_segMan, object, z) : 0;
 		int16 yStep = GET_SEL32V(_s->_segMan, object, yStep);
 		GuiResourceId viewId = GET_SEL32V(_s->_segMan, object, view);
-		LoopNo loopNo = GET_SEL32V(_s->_segMan, object, loop);
-		CelNo celNo = GET_SEL32V(_s->_segMan, object, cel);
+		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
+		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
 
 		View *tmpView = _gfx->getView(viewId);
 		Common::Rect celRect;
@@ -888,16 +902,13 @@ void SciGui::frameOut() {
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
 				// the hack underneath does not try and draw cels outside the screen coordinates
 				if (leftPos >= _screen->getWidth()) {
-					warning("kAddScreenItem: invalid left position (%d), resetting to 0", leftPos);
-					leftPos = 0;
+					continue;
 				}
 	
 				if (topPos >= _screen->getHeight()) {
-					warning("kAddScreenItem: invalid top position (%d), resetting to 0", topPos);
-					topPos = 0;
+					continue;
 				}
 	
-				// HACK: just draw the view on screen
 				if (viewId != 0xffff)
 					drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 			}

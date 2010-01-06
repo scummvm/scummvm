@@ -36,9 +36,6 @@ namespace Sci {
 #define SCI_SHAKE_DIRECTION_HORIZONTAL 2
 
 typedef int GuiResourceId; // is a resource-number and -1 means no parameter given
-typedef reg_t MemoryHandle;
-typedef int16 LoopNo;
-typedef int16 CelNo;
 
 typedef int16 TextAlignment;
 
@@ -80,15 +77,15 @@ struct Window : public Port {
 struct AnimateEntry {
 	reg_t object;
 	GuiResourceId viewId;
-	LoopNo loopNo;
-	CelNo celNo;
+	int16 loopNo;
+	int16 celNo;
 	int16 paletteNo;
 	int16 x, y, z;
 	int16 priority;
 	uint16 signal;
 	Common::Rect celRect;
 	bool showBitsFlag;
-	MemoryHandle castHandle;
+	reg_t castHandle;
 };
 typedef Common::List<AnimateEntry *> AnimateList;
 

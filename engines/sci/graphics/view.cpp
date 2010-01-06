@@ -233,30 +233,30 @@ GuiResourceId View::getResourceId() {
 	return _resourceId;
 }
 
-int16 View::getWidth(LoopNo loopNo, CelNo celNo) {
+int16 View::getWidth(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
 }
 
-int16 View::getHeight(LoopNo loopNo, CelNo celNo) {
+int16 View::getHeight(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
 }
 
-CelInfo *View::getCelInfo(LoopNo loopNo, CelNo celNo) {
+CelInfo *View::getCelInfo(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
 }
 
-LoopInfo *View::getLoopInfo(LoopNo loopNo) {
+LoopInfo *View::getLoopInfo(int16 loopNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loopCount ? &_loop[loopNo] : NULL;
 }
 
-void View::getCelRect(LoopNo loopNo, CelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
+void View::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	if (celInfo) {
 		outRect->left = x + celInfo->displaceX - (celInfo->width >> 1);
@@ -266,7 +266,7 @@ void View::getCelRect(LoopNo loopNo, CelNo celNo, int16 x, int16 y, int16 z, Com
 	}
 }
 
-void View::unpackCel(LoopNo loopNo, CelNo celNo, byte *outPtr, uint16 pixelCount) {
+void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount) {
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
@@ -354,7 +354,7 @@ void View::unpackCel(LoopNo loopNo, CelNo celNo, byte *outPtr, uint16 pixelCount
 	error("Unable to decompress view");
 }
 
-byte *View::getBitmap(LoopNo loopNo, CelNo celNo) {
+byte *View::getBitmap(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
@@ -460,7 +460,7 @@ void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clear
 	}
 }
 
-void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, LoopNo loopNo, CelNo celNo, byte priority, uint16 EGAmappingNr, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, int16 origHeight, uint16 scaleX, uint16 scaleY) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);

@@ -113,8 +113,8 @@ private:
 	uint16 _curItemId;
 
 	Port *_oldPort;
-	MemoryHandle _barSaveHandle;
-	MemoryHandle _menuSaveHandle;
+	reg_t _barSaveHandle;
+	reg_t _menuSaveHandle;
 	Common::Rect _menuRect;
 };
 

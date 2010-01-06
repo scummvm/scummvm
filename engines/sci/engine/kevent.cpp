@@ -205,12 +205,6 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
-#ifdef ENABLE_SCI32
-	// SCI32 has an extra argument for a plane here
-	if (argc > 1)
-		warning("kGlobalToLocal Plane: %04x:%04x", PRINT_REG(argv[1]));
-#endif
-
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
 	SegManager *segMan = s->_segMan;
 
@@ -218,7 +212,12 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 		int16 x = GET_SEL32V(segMan, obj, x);
 		int16 y = GET_SEL32V(segMan, obj, y);
 
-		s->_gui->globalToLocal(&x, &y);
+#ifdef ENABLE_SCI32
+		if (argc > 1)
+			s->_gui->globalToLocal(&x, &y, argv[1]);
+		else
+#endif
+			s->_gui->globalToLocal(&x, &y);
 
 		PUT_SEL32V(segMan, obj, x, x);
 		PUT_SEL32V(segMan, obj, y, y);
@@ -229,12 +228,6 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
-#ifdef ENABLE_SCI32
-	// SCI32 has an extra argument for a plane here
-	if (argc > 1)
-		warning("kLocalToGlobal Plane: %04x:%04x", PRINT_REG(argv[1]));
-#endif
-
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
 	SegManager *segMan = s->_segMan;
 
@@ -242,6 +235,11 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 		int16 x = GET_SEL32V(segMan, obj, x);
 		int16 y = GET_SEL32V(segMan, obj, y);
 
+#ifdef ENABLE_SCI32
+		if (argc > 1)
+			s->_gui->localToGlobal(&x, &y, argv[1]);
+		else
+#endif
 		s->_gui->localToGlobal(&x, &y);
 
 		PUT_SEL32V(segMan, obj, x, x);

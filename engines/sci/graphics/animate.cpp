@@ -553,7 +553,7 @@ void SciGuiAnimate::addToPicDrawCels() {
 	}
 }
 
-void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, LoopNo loopNo, CelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	View *view = _gfx->getView(viewId);
 	Common::Rect celRect;
 
