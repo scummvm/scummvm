@@ -140,7 +140,7 @@ bool SeqDecoder::decodeNextFrame() {
 		do {
 			_fileStream->read(linebuf, frameWidth);
 			memcpy(dst, linebuf, frameWidth);
-			dst += 320;
+			dst += SCREEN_WIDTH;
 		} while (--frameHeight);
 
 		delete[] linebuf;
