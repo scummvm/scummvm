@@ -274,6 +274,13 @@ void Mixer::playInputStreamLooping(
 			bool permanent,
 			bool reverseStereo) {
 
+	// Just in case the user wants the stream just looped once, we will take care of that with the normal
+	// playInputStream method
+	if (loopCount == 1) {
+		playInputStream(type, handle, input, id, volume, balance, autofreeStream, permanent, reverseStereo);
+		return;
+	}
+
 	LoopingAudioStream *loopingStream = new LoopingAudioStream(input, loopCount, autofreeStream);
 	assert(loopingStream);
 
