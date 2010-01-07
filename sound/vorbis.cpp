@@ -131,12 +131,6 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 		return;
 	}
 
-#ifdef USE_TREMOR
-	_length = Timestamp(ov_time_total(&_ovFile, -1), getRate());
-#else
-	_length = Timestamp(uint32(ov_time_total(&_ovFile, -1) * 1000.0), getRate());
-#endif
-
 	// Read in initial data
 	if (!refill())
 		return;
@@ -144,6 +138,12 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 	// Setup some header information
 	_isStereo = ov_info(&_ovFile, -1)->channels >= 2;
 	_rate = ov_info(&_ovFile, -1)->rate;
+
+#ifdef USE_TREMOR
+	_length = Timestamp(ov_time_total(&_ovFile, -1), getRate());
+#else
+	_length = Timestamp(uint32(ov_time_total(&_ovFile, -1) * 1000.0), getRate());
+#endif
 }
 
 VorbisInputStream::~VorbisInputStream() {
