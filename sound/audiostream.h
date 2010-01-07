@@ -102,11 +102,61 @@ public:
 };
 
 /**
+ * A rewindable audio stream. This allows for restting the AudioStream
+ * to its initial state. Note that rewinding itself is not required to
+ * be working when the stream is being played by Mixer!
+ */
+class RewindableAudioStream : public AudioStream {
+public:
+	/**
+	 * Rewinds the stream to its start.
+	 *
+	 * @return true on success, false otherwise.
+	 */
+	virtual bool rewind() = 0;
+};
+
+/**
+ * A looping audio stream. This object does nothing beides using
+ * a RewindableAudioStream to play a stream in a loop.
+ */
+class LoopingAudioStream : public AudioStream {
+public:
+	/**
+	 * Creates a looping audio stream object.
+	 *
+	 * @param stream Stream to loop
+	 * @param loops How often to loop (0 = infinite)
+	 * @param disposeAfteruse Destroy the stream after the LoopingAudioStream has finished playback.
+	 */
+	LoopingAudioStream(RewindableAudioStream *stream, uint loops, bool disposeAfterUse = true);
+	~LoopingAudioStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool endOfData() const;
+
+	bool isStereo() const { return _parent->isStereo(); }
+	int getRate() const { return _parent->getRate(); }
+
+	/** 
+	 * Returns number of loops the stream has played.
+	 * @param numLoops number of loops to play, 0 - infinite
+	 */
+	uint getCompleteIterations() const { return _completeIterations; }
+private:
+	RewindableAudioStream *_parent;
+	bool _disposeAfterUse;
+
+	uint _loops;
+	uint _completeIterations;
+};
+
+/**
  * A seekable audio stream. Subclasses of this class implement a
  * working seeking. The seeking itself is not required to be
  * working when the stream is being played by Mixer!
  */
-class SeekableAudioStream : public AudioStream {
+class SeekableAudioStream : public RewindableAudioStream {
 public:
 	/**
 	 * Tries to load a file by trying all available formats.
@@ -142,8 +192,49 @@ public:
 	 * @return length as Timestamp.
 	 */
 	virtual Timestamp getLength() const = 0;
+
+	virtual bool rewind() { return seek(0); }
 };
 
+/**
+ * A SubSeekableAudioStream provides access to a SeekableAudioStream
+ * just in the range [start, end).
+ * The same caveats apply to SubSeekableAudioStream as do to SeekableAudioStream.
+ * 
+ * Manipulating the parent stream directly /will/ mess up a substream.
+ */
+class SubSeekableAudioStream : public SeekableAudioStream {
+public:
+	/**
+	 * Creates a new SubSeekableAudioStream.
+	 *
+	 * @param parent parent stream object.
+	 * @param start Start time.
+	 * @param end End time.
+	 * @param disposeAfterUse Whether the parent stream object should be destroied on desctruction of the SubSeekableAudioStream.
+	 */
+	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, bool disposeAfterUse = true);
+	~SubSeekableAudioStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool isStereo() const { return _isStereo; }
+
+	int getRate() const { return _parent->getRate(); }
+
+	bool endOfData() const { return (_pos >= _length) || _parent->endOfStream(); }
+
+	bool seek(const Timestamp &where);
+
+	Timestamp getLength() const { return _length; }
+private:
+	SeekableAudioStream *_parent;
+	bool _disposeAfterUse;
+	const bool _isStereo;
+
+	const Timestamp _start;
+	Timestamp _pos, _length;
+};
 
 /**
  * Factory function for a raw linear AudioStream, which will simply treat all

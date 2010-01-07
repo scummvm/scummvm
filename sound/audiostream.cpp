@@ -99,6 +99,80 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 }
 
 #pragma mark -
+#pragma mark --- LoopingAudioStream ---
+#pragma mark -
+
+LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, bool disposeAfterUse)
+    : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops), _completeIterations(0) {
+}
+
+LoopingAudioStream::~LoopingAudioStream() {
+	if (_disposeAfterUse)
+		delete _parent;
+}
+
+int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesRead = _parent->readBuffer(buffer, numSamples);
+
+	if (_parent->endOfStream()) {
+		++_completeIterations;
+		if (_completeIterations == _loops)
+			return samplesRead;
+
+		int remainingSamples = numSamples - samplesRead;
+
+		if (!_parent->rewind()) {
+			// TODO: Properly indicate error
+			_loops = _completeIterations = 1;
+			return samplesRead;
+		}
+
+		samplesRead += _parent->readBuffer(buffer, remainingSamples);
+	}
+
+	return samplesRead;
+}
+
+bool LoopingAudioStream::endOfData() const {
+	return (_loops != 0 && (_completeIterations == _loops));
+}
+
+#pragma mark -
+#pragma mark --- SubSeekableAudioStream ---
+#pragma mark -
+
+SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, bool disposeAfterUse)
+    : _parent(parent), _disposeAfterUse(disposeAfterUse), _isStereo(parent->isStereo()),
+      _start(start.convertToFramerate(getRate())), _pos(0, getRate()), _length(end.convertToFramerate(getRate())) {
+	// TODO: This really looks like Timestamp::operator-
+	_length = Timestamp(_length.secs() - _start.secs(), _length.numberOfFrames() - _start.numberOfFrames(), getRate());
+	_parent->seek(_start);
+}
+
+SubSeekableAudioStream::~SubSeekableAudioStream() {
+	if (_disposeAfterUse)
+		delete _parent;
+}
+
+int SubSeekableAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int framesLeft = MIN(_length.frameDiff(_pos) * (_isStereo ? 2 : 1), numSamples);
+	int framesRead = _parent->readBuffer(buffer, framesLeft);
+	_pos = _pos.addFrames(framesRead / (_isStereo ? 2 : 1));
+	return framesRead;
+}
+
+bool SubSeekableAudioStream::seek(const Timestamp &where) {
+	_pos = where.convertToFramerate(getRate());
+	// TODO: This really looks like Timestamp::operator+
+	if (_parent->seek(Timestamp(_pos.secs() + _start.secs(), _pos.numberOfFrames() + _start.numberOfFrames(), getRate()))) {
+		return true;
+	} else {
+		_pos = _length;
+		return false;
+	}
+}
+
+#pragma mark -
 #pragma mark --- LinearMemoryStream ---
 #pragma mark -
 
