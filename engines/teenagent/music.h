@@ -54,17 +54,26 @@ protected:
 		} channels[3];
 	};
 
-	struct {
-		const byte *data;
-		uint32 size;
+	struct Sample {
+		byte *data;
+		uint size;
+		Sample(): data(0), size(0) {}
+		~Sample() { delete[] data; }
+
+		void resize(uint s) {
+			if (s != size) {
+				delete[] data;
+				data = new byte[s];
+				size = s;
+			}
+		}
+		void clear() { 
+			delete[] data; 
+			data = 0; 
+			size = 0; 
+		}
 	} _samples[256];
 	byte sampleCount;
-
-	struct {
-		byte volume;
-		const byte *data;
-		uint32 size;
-	} _channels[3];
 
 	Common::Array<Row> _rows;
 	uint _currRow;

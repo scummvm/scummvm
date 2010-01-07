@@ -51,10 +51,7 @@ bool MusicPlayer::load(int id) {
 	stream->read(header, 4);
 	//check header?
 
-	memset(_samples, 0, sizeof(_samples));
-
 	// Load the samples
-
 	sampleCount = stream->readByte();
 
 	debug(0, "sampleCount = %d", sampleCount);
@@ -70,25 +67,15 @@ bool MusicPlayer::load(int id) {
 
 		if (in == 0) {
 			warning("load: invalid sample %d (0x%02x)", sample, sample);
-			_samples[sample].data = NULL;
-			_samples[sample].size = 0;
+			_samples[sample].clear();
 			continue;
 		}
 
-		byte *sampleData = new byte[sampleSize];
-		in->read(sampleData, sampleSize);
-
-		// Convert the sample from signed to unsigned
-		for (uint32 i = 0; i < sampleSize; i++)
-			*sampleData ^= 0x80;
-
-		delete _samples[sample].data;
-		_samples[sample].data = sampleData;
-		_samples[sample].size = sampleSize;
+		_samples[sample].resize(sampleSize);
+		in->read(_samples[sample].data, sampleSize);
 	}
 
 	// Load the music data
-
 	_rows.clear();
 
 	Row row;
