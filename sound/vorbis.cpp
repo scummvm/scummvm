@@ -134,7 +134,7 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 #ifdef USE_TREMOR
 	_length = Timestamp(ov_time_total(&_ovFile, -1), getRate());
 #else
-	_length = Timestamp(ov_time_total(&_ovFile, -1) * 1000.0, getRate());
+	_length = Timestamp(uint32(ov_time_total(&_ovFile, -1) * 1000.0), getRate());
 #endif
 
 	// Read in initial data
