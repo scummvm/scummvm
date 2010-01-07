@@ -187,10 +187,10 @@ void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr)
 		if (rightAlignedPos) {
 			rightAlignedPos++;
 			tempPos = endPos;
-			// Shouldnt be needed at all, cause right aligned occurs after tag (hopefully)
-			//  If no game is found that causes problems, remove this line (29.11.2009)
-			//if (tagPos && tagPos >= rightAlignedPos)
-			//	tempPos = tagPos;
+			// some games have tagPos in front of right rightAlignedPos
+			// some have it the other way... (qfg1ega)
+			if (tagPos && tagPos >= rightAlignedPos)
+				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
 		}
 
