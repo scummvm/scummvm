@@ -108,7 +108,7 @@ void Mouse::setCursorType(CursorType cur) {
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
-	        sp.getWidth() / 2, sp.getHeight() / 2);
+	        sp.getWidth() / 2, sp.getHeight() / 2, 255);
 }
 
 void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
@@ -126,7 +126,7 @@ void Mouse::loadItemCursor(const GameItem *item, bool highlighted) {
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
-	        sp.getWidth() / 2, sp.getHeight() / 2);
+	        sp.getWidth() / 2, sp.getHeight() / 2, 255);
 }
 
 } // End of namespace Draci

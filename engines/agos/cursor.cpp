@@ -797,7 +797,7 @@ void AGOSEngine::initMouse() {
 
 void AGOSEngine::drawMousePointer() {
 	if (getGameType() == GType_SIMON2) {
-		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
+		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7, 0xFF);
 	} else if (getGameType() != GType_SIMON1) {
 		const uint16 *src;
 		int i, j;

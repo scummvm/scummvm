@@ -779,7 +779,7 @@ public:
 	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 * @param format			pointer to the pixel format which cursor graphic uses
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Replace the specified range of cursor the palette with new colors.

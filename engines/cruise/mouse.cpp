@@ -76,7 +76,7 @@ void changeCursor(CursorType eType) {
 			}
 			++src;
 		}
-		CursorMan.replaceCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY);
+		CursorMan.replaceCursor(mouseCursor, 16, 16, mc->hotspotX, mc->hotspotY, 0xFF);
 		CursorMan.replaceCursorPalette(cursorPalette, 0, 2);
 		currentCursor = eType;
 	}
