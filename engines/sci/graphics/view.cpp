@@ -482,26 +482,25 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 
 	// TODO: SCI1.1 view scaling
-
 	if (!_EGAmapping) {
-		for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
+		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
 				color = bitmap[x];
-				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y)) {
+				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
 					if (origHeight == -1)	// HACK: this parameter is passed for already scaled views, but we're not actually using it
-						_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
+						_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
 					else
-						_screen->putPixelOnDisplay(clipRectTranslated.left + x, y, palette->mapping[color]);
+						_screen->putPixelOnDisplay(clipRectTranslated.left + x, clipRectTranslated.top + y, palette->mapping[color]);
 				}
 			}
 		}
 	} else {
 		byte *EGAmapping = _EGAmapping + (EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE);
-		for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
+		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
 				color = EGAmapping[bitmap[x]];
-				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y))
-					_screen->putPixel(clipRectTranslated.left + x, y, drawMask, color, priority, 0);
+				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y))
+					_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, color, priority, 0);
 			}
 		}
 	}
