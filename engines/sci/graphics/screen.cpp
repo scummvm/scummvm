@@ -156,7 +156,7 @@ void Screen::putPixel(int x, int y, byte drawMask, byte color, byte priority, by
 // This will just change a pixel directly on displayscreen. Its supposed to get only used on upscaled-Hires games where
 //  hires content needs to get drawn ONTO the upscaled display screen (like japanese fonts, hires portraits, etc.)
 void Screen::putPixelOnDisplay(int x, int y, byte color) {
-	int offset = y * _width + x;
+	int offset = y * _displayWidth + x;
 	_displayScreen[offset] = color;
 }
 
