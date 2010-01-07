@@ -176,12 +176,6 @@ bool SubSeekableAudioStream::seek(const Timestamp &where) {
 #pragma mark --- LinearMemoryStream ---
 #pragma mark -
 
-inline int32 calculatePlayTime(int rate, int samples) {
-	int32 seconds = samples / rate;
-	int32 milliseconds = (1000 * (samples % rate)) / rate;
-	return seconds * 1000 + milliseconds;
-}
-
 uint32 calculateSampleOffset(const Timestamp &where, int rate) {
 	return where.convertToFramerate(rate).totalNumberOfFrames();
 }
@@ -205,14 +199,14 @@ protected:
 	const byte *_loopEnd;
 	const int _rate;
 	const byte *_origPtr;
-	const int32 _playtime;
+	const Timestamp _playtime;
 
 	uint _numLoops;			///< Number of loops to play
 	uint _numPlayedLoops;	///< Number of loops which have been played
 
 public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
-		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
+		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate) {
 
 		if (loopLen) {
 			_numLoops = 0;
@@ -235,8 +229,7 @@ public:
 
 	int getRate() const				{ return _rate; }
 	bool seek(const Timestamp &where);
-	// TODO: We can definitly increase the precision here, since we know the exact sample count
-	Timestamp getLength() const { return Timestamp(_playtime, getRate()); }
+	Timestamp getLength() const { return _playtime; }
 
 	void setNumLoops(uint numLoops) {
 		_numLoops = numLoops;
@@ -323,7 +316,7 @@ protected:
 	const byte *_ptr;		///< Pointer to current position in stream buffer
 	const int _rate;		///< Sample rate of stream
 
-	int32 _playtime;		///< Calculated total play time
+	Timestamp _playtime;	///< Calculated total play time
 	Common::SeekableReadStream *_stream;	///< Stream to read data from
 	int32 _filePos;			///< Current position in stream
 	int32 _diskLeft;		///< Samples left in stream in current block not yet read to buffer
@@ -342,7 +335,7 @@ protected:
 
 public:
 	LinearDiskStream(int rate, uint beginLoop, uint endLoop, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks, bool loop)
-		: _rate(rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
+		: _rate(rate), _playtime(0, rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
 		  _audioBlockCount(numBlocks), _loop(loop), _numLoops(loop ? 0 : 1), _numPlayedLoops(0) {
 
 		assert(numBlocks > 0);
@@ -373,7 +366,7 @@ public:
 		for (int r = 0; r < _audioBlockCount; r++) {
 			len += _audioBlock[r].len;
 		}
-		_playtime = calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1));
+		_playtime = Timestamp(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate);
 	}
 
 
@@ -391,8 +384,7 @@ public:
 	bool endOfData() const			{ return (_currentBlock == _audioBlockCount - 1) && (_diskLeft == 0) && (_bufferLeft == 0); }
 
 	int getRate() const			{ return _rate; }
-	// TODO: We can definitly increase the precision here, since we know the exact sample count
-	Timestamp getLength() const { return Timestamp(_playtime, getRate()); }
+	Timestamp getLength() const { return _playtime; }
 
 	bool seek(const Timestamp &where);
 };
