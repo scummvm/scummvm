@@ -106,9 +106,9 @@ private:
 	byte _colorWhite;
 	byte _colorDefaultVectorData;
 
-	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
+	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen, uint16 screenWidth);
 	void bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr);
-	void bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
+	void bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr);
 	void bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr);
 
 	bool _unditherState;

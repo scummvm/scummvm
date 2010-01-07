@@ -266,6 +266,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	case K_GRAPH_UPDATE_BOX:
 		kGraphCreateRect(x, y, x1, y1, &rect);
+		// argc == 7 on upscaled hires
 		s->_gui->graphUpdateBox(rect);
 		break;
 

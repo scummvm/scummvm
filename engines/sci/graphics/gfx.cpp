@@ -277,6 +277,12 @@ reg_t Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 
 	OffsetRect(workerRect);
 
+	if (screenMask == SCI_SCREEN_MASK_DISPLAY) {
+		// Adjust rect to upscaled hires
+		workerRect.top *= 2; workerRect.bottom *= 2; workerRect.bottom++;
+		workerRect.left *= 2; workerRect.right *= 2; workerRect.right++;
+	}
+
 	// now actually ask _screen how much space it will need for saving
 	size = _screen->bitsGetDataSize(workerRect, screenMask);
 
@@ -383,8 +389,8 @@ void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, u
 		// adjust curPort to upscaled hires
 		clipRect = celRect;
 		curPortRect = _curPort->rect;
-		curPortRect.top *= 2; curPortRect.bottom *= 2;
-		curPortRect.left *= 2; curPortRect.right *= 2;
+		curPortRect.top *= 2; curPortRect.bottom *= 2; curPortRect.bottom++;
+		curPortRect.left *= 2; curPortRect.right *= 2; curPortRect.right++;
 		clipRect.clip(curPortRect);
 		if (clipRect.isEmpty()) // nothing to draw
 			return;

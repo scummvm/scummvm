@@ -280,31 +280,31 @@ void Screen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
-		bitsSaveScreen(rect, _visualScreen, memoryPtr);
+		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
 		bitsSaveDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
-		bitsSaveScreen(rect, _priorityScreen, memoryPtr);
+		bitsSaveScreen(rect, _priorityScreen, _width, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
-		bitsSaveScreen(rect, _controlScreen, memoryPtr);
+		bitsSaveScreen(rect, _controlScreen, _width, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
 			error("bitsSave() called w/o being in upscaled hires mode");
-		bitsSaveScreen(rect, _displayScreen, memoryPtr);
+		bitsSaveScreen(rect, _displayScreen, _displayWidth, memoryPtr);
 	}
 }
 
-void Screen::bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
+void Screen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr) {
 	int width = rect.width();
 	int y;
 
-	screen += (rect.top * _width) + rect.left;
+	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
 		memcpy(memoryPtr, (void*)screen, width); memoryPtr += width;
-		screen += _width;
+		screen += screenWidth;
 	}
 }
 
@@ -339,31 +339,31 @@ void Screen::bitsRestore(byte *memoryPtr) {
 	memcpy((void *)&mask, memoryPtr, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
-		bitsRestoreScreen(rect, memoryPtr, _visualScreen);
+		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
 		bitsRestoreDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
-		bitsRestoreScreen(rect, memoryPtr, _priorityScreen);
+		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _width);
 	}
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
-		bitsRestoreScreen(rect, memoryPtr, _controlScreen);
+		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _width);
 	}
 	if (mask & SCI_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
 			error("bitsRestore() called w/o being in upscaled hires mode");
-		bitsRestoreScreen(rect, memoryPtr, _displayScreen);
+		bitsRestoreScreen(rect, memoryPtr, _displayScreen, _displayWidth);
 	}
 }
 
-void Screen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
+void Screen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen, uint16 screenWidth) {
 	int width = rect.width();
 	int y;
 
-	screen += (rect.top * _width) + rect.left;
+	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
 		memcpy((void*) screen, memoryPtr, width); memoryPtr += width;
-		screen += _width;
+		screen += screenWidth;
 	}
 }
 
