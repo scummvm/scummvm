@@ -106,6 +106,7 @@ SOURCE	   backends\timer\default\default-timer.cpp
 SOURCE	   backends\saves\savefile.cpp
 SOURCE	   backends\saves\default\default-saves.cpp
 SOURCE	   backends\base-backend.cpp
+SOURCE	   gui\browser.cpp
 SOURCE	   engines\engine.cpp
 SOURCE	   engines\dialogs.cpp
 SOURCE	   engines\game.cpp
