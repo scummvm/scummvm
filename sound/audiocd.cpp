@@ -69,21 +69,16 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 		_mixer->stopHandle(_handle);
 
 		if (stream != 0) {
-			if (startFrame != 0 || duration != 0) {
-				stream = new SubSeekableAudioStream(stream, Timestamp(0, startFrame, 75), Timestamp(0, startFrame + duration, 75));
-				assert(stream);
-			}
+			Timestamp start = Timestamp(0, startFrame, 75);
+			Timestamp end = duration ? Timestamp(0, startFrame + duration, 75) : stream->getLength();
 
 			/*
 			FIXME: Seems numLoops == 0 and numLoops == 1 both indicate a single repetition,
 			while all other positive numbers indicate precisely the number of desired
 			repetitions. Finally, -1 means infinitely many
 			*/
-			AudioStream *output = new LoopingAudioStream(stream, (numLoops < 1) ? numLoops + 1 : numLoops);
-			assert(output);
-
 			_emulating = true;
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle, output);
+			_mixer->playInputStreamLooping(Audio::Mixer::kMusicSoundType, &_handle, stream, (numLoops < 1) ? numLoops + 1 : numLoops, start, end);
 		} else {
 			_emulating = false;
 			if (!only_emulate)
