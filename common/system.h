@@ -770,14 +770,16 @@ public:
 	/**
 	 * Set the bitmap used for drawing the cursor.
 	 *
-	 * @param buf				the pixmap data to be used (8bit/pixel)
+	 * @param buf				the pixmap data to be used
 	 * @param w					width of the mouse cursor
 	 * @param h					height of the mouse cursor
 	 * @param hotspotX			horizontal offset from the left side to the hotspot
 	 * @param hotspotY			vertical offset from the top side to the hotspot
-	 * @param keycolor			transparency color index
+	 * @param keycolor			transparency color value. This should not exceed the maximum color value of the specified format.
+	 *                          In case it does the behavior is undefined. The backend might just error out or simply ignore the
+	 *                          value. (The SDL backend will just assert to prevent abuse of this).
 	 * @param cursorTargetScale	scale factor which cursor is designed for
-	 * @param format			pointer to the pixel format which cursor graphic uses
+	 * @param format			pointer to the pixel format which cursor graphic uses (0 means screen format)
 	 */
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
 

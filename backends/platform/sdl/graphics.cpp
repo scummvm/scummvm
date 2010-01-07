@@ -1490,9 +1490,11 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
 		_cursorFormat = *format;
-	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+
+	if (_cursorFormat.bytesPerPixel < 4)
+		assert(keycolor < (uint)(1 << (_cursorFormat.bytesPerPixel << 3)));
 #else
-	keycolor &= 0xFF;
+	assert(keycolor <= 0xFF);
 #endif
 
 	if (w == 0 || h == 0)

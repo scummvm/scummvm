@@ -64,7 +64,8 @@ public:
 	 * @param h			the height
 	 * @param hotspotX	the hotspot X coordinate
 	 * @param hotspotY	the hotspot Y coordinate
-	 * @param keycolor	the index for the transparent color
+	 * @param keycolor	the color value for the transparent color. This may not exceed
+	 *                  the maximum color value as defined by format.
 	 * @param targetScale	the scale for which the cursor is designed
 	 * @param format	a pointer to the pixel format which the cursor graphic uses, 
 	 *					CLUT8 will be used if this is NULL or not specified.
@@ -90,7 +91,8 @@ public:
 	 * @param h		the height
 	 * @param hotspotX	the hotspot X coordinate
 	 * @param hotspotY	the hotspot Y coordinate
-	 * @param keycolor	the index for the transparent color
+	 * @param keycolor	the color value for the transparent color. This may not exceed
+	 *                  the maximum color value as defined by format.
 	 * @param targetScale	the scale for which the cursor is designed
 	 * @param format	a pointer to the pixel format which the cursor graphic uses,
 	 *					CLUT8 will be used if this is NULL or not specified.
