@@ -804,7 +804,11 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	if (musicSlot->pStreamAud) {
 		// Update digital sound effect slots here
-		uint currentLoopCounter = musicSlot->pStreamAud->getNumPlayedLoops();
+		uint currentLoopCounter = 0;
+
+		if (musicSlot->pLoopStream)
+			currentLoopCounter = musicSlot->pLoopStream->getCompleteIterations();
+
 		if (currentLoopCounter != musicSlot->sampleLoopCounter) {
 			// during last time we looped at least one time, update loop accordingly
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;

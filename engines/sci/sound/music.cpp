@@ -323,6 +323,8 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			delete pSnd->pStreamAud;
 			pSnd->pStreamAud = Audio::makeLinearInputStream(channelData, track->digitalSampleSize, track->digitalSampleRate,
 					Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+			delete pSnd->pLoopStream;
+			pSnd->pLoopStream = 0;
 			pSnd->soundType = Audio::Mixer::kSFXSoundType;
 			pSnd->hCurrentAud = Audio::SoundHandle();
 		} else {
@@ -370,13 +372,18 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	_mutex.unlock();	// unlock to perform mixer-related calls
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
-		// Are we supposed to loop the stream?
-		if (pSnd->loop > 1)
-			pSnd->pStreamAud->setNumLoops(pSnd->loop);
-		else
-			pSnd->pStreamAud->setNumLoops(1);
-		_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
-				pSnd->pStreamAud, -1, pSnd->volume, 0, false);
+		if (pSnd->loop > 1) {
+			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
+			                                                  pSnd->loop, false
+			                                                  );
+			_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
+			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
+			                         false);
+		} else {
+			_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
+			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
+			                         false);
+		}
 	} else {
 		_mutex.lock();
 		if (pSnd->pMidiParser) {
@@ -434,6 +441,8 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 		delete pSnd->pStreamAud;
 		pSnd->pStreamAud = NULL;
+		delete pSnd->pLoopStream;
+		pSnd->pLoopStream = 0;
 	}
 
 	_mutex.lock();
@@ -529,6 +538,7 @@ MusicEntry::MusicEntry() {
 	soundType = Audio::Mixer::kMusicSoundType;
 
 	pStreamAud = 0;
+	pLoopStream = 0;
 	pMidiParser = 0;
 }
 

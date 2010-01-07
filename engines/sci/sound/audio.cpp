@@ -192,8 +192,8 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	return buffer;
 }
 
-Audio::AudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
-	Audio::AudioStream *audioStream = 0;
+Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
+	Audio::RewindableAudioStream *audioStream = 0;
 	uint32 size = 0;
 	byte *data = 0;
 	byte flags = 0;

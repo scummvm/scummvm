@@ -104,7 +104,11 @@ public:
 //protected:
 #endif
 	MidiParser_SCI *pMidiParser;
-	Audio::AudioStream *pStreamAud;
+
+	// TODO: We need to revise how we store the different
+	// audio stream objects we require.
+	Audio::RewindableAudioStream *pStreamAud;
+	Audio::LoopingAudioStream *pLoopStream;
 	Audio::SoundHandle hCurrentAud;
 
 public:
