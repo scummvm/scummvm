@@ -83,22 +83,6 @@ public:
 	 * By default this maps to endOfData()
 	 */
 	virtual bool endOfStream() const { return endOfData(); }
-
-	/** 
-	 * Sets number of times the stream is supposed to get looped
-	 * This also resets the number of loops played counter, which
-	 * can be queried with getNumPlayedLoops.
-	 * @see getNumPlayedLoops
-	 *
-	 * @param numLoops number of loops to play, 0 - infinite
-	 */
-	virtual void setNumLoops(uint numLoops = 1) {}
-
-	/** 
-	 * Returns number of loops the stream has played.
-	 * @param numLoops number of loops to play, 0 - infinite
-	 */
-	virtual uint getNumPlayedLoops() { return 0; }
 };
 
 /**

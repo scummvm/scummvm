@@ -237,21 +237,6 @@ public:
 	int getRate() const				{ return _rate; }
 	bool seek(const Timestamp &where);
 	Timestamp getLength() const { return _playtime; }
-
-	void setNumLoops(uint numLoops) {
-		_numLoops = numLoops;
-		_numPlayedLoops = 0;
-
-		if (numLoops == 1) {
-			_loopPtr = 0;
-			_loopEnd = 0;
-		} else {
-			_loopPtr = _ptr;
-			_loopEnd = _end;
-		}
-	}
-
-	uint getNumPlayedLoops() { return _numPlayedLoops; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
@@ -311,12 +296,6 @@ class LinearDiskStream : public SeekableAudioStream {
 #else
 	static const int32 BUFFER_SIZE = 16384;
 #endif
-
-	void setNumLoops(uint numLoops) {
-		_numLoops = numLoops;
-		_numPlayedLoops = 0;
-	}
-	uint getNumPlayedLoops() { return _numPlayedLoops; }
 
 protected:
 	byte* _buffer;			///< Streaming buffer
