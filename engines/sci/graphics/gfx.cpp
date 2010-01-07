@@ -275,12 +275,12 @@ reg_t Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	if (workerRect.isEmpty()) // nothing to save
 		return NULL_REG;
 
-	OffsetRect(workerRect);
-
 	if (screenMask == SCI_SCREEN_MASK_DISPLAY) {
-		// Adjust rect to upscaled hires
+		// Adjust rect to upscaled hires, but dont adjust according to port
 		workerRect.top *= 2; workerRect.bottom *= 2; workerRect.bottom++;
 		workerRect.left *= 2; workerRect.right *= 2; workerRect.right++;
+	} else {
+		OffsetRect(workerRect);
 	}
 
 	// now actually ask _screen how much space it will need for saving
