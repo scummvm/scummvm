@@ -173,10 +173,21 @@ AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfter
 		return 0;
 	}
 
-	if (type == 17) // MS IMA ADPCM
-		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign, loop ? 0 : 1);
-	else if (type == 2) // MS ADPCM
-		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign, loop ? 0 : 1);
+	if (type == 17) { // MS IMA ADPCM
+		RewindableAudioStream *adpcm = makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+
+		if (loop)
+			return new LoopingAudioStream(adpcm, 0);
+		else
+			return adpcm;
+	} else if (type == 2) { // MS ADPCM
+		RewindableAudioStream *adpcm = makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+
+		if (loop)
+			return new LoopingAudioStream(adpcm, 0);
+		else
+			return adpcm;
+	}
 	
 	// Raw PCM. Just read everything at once.
 	// TODO: More elegant would be to wrap the stream.

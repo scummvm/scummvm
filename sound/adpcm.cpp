@@ -31,7 +31,7 @@
 
 namespace Audio {
 
-class ADPCMInputStream : public AudioStream {
+class ADPCMInputStream : public RewindableAudioStream {
 private:
 	Common::SeekableReadStream *_stream;
 	bool _disposeAfterUse;
@@ -45,8 +45,6 @@ private:
 	uint16 _chunkData;
 	int _blockLen;
 	int _rate;
-	uint _numLoops;
-	uint _curLoop;
 
 	struct ADPCMChannelStatus {
 		byte predictor;
@@ -84,7 +82,7 @@ private:
 	int16 decodeTinsel(int16, double);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels = 2, uint32 blockAlign = 0, uint numLoops = 1);
+	ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign);
 	~ADPCMInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -102,6 +100,8 @@ public:
 	bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
 	bool isStereo() const	{ return _channels == 2; }
 	int getRate() const	{ return _rate; }
+
+	bool rewind();
 };
 
 // Routines to convert 12 bit linear samples to the
@@ -114,8 +114,8 @@ public:
 // In addition, also MS IMA ADPCM is supported. See
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign, uint numLoops)
-	: _stream(stream), _disposeAfterUse(disposeAfterUse), _channels(channels), _type(type), _blockAlign(blockAlign), _rate(rate), _numLoops(numLoops) {
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign)
+	: _stream(stream), _disposeAfterUse(disposeAfterUse), _channels(channels), _type(type), _blockAlign(blockAlign), _rate(rate) {
 
 	if (type == kADPCMMSIma && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specified for MS IMA ADPCM");
@@ -138,7 +138,6 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 
 	_startpos = stream->pos();
 	_endpos = _startpos + size;
-	_curLoop = 0;
 	reset();
 }
 
@@ -154,6 +153,13 @@ void ADPCMInputStream::reset() {
 	_status.streamPos[0] = 0;
 	_status.streamPos[1] = _blockAlign;
 	_chunkPos = 0;
+}
+
+bool ADPCMInputStream::rewind() {
+	// TODO: Error checking.
+	reset();
+	_stream->seek(_startpos);
+	return true;
 }
 
 int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -189,16 +195,6 @@ int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	default:
 		error("Unsupported ADPCM encoding");
 		break;
-	}
-
-	// Loop if necessary
-	if (samplesDecoded < numSamples || _stream->pos() == _endpos) {
-		_curLoop++;
-		if (_numLoops == 0 || _curLoop < _numLoops) {
-			reset();
-			_stream->seek(_startpos);
-			return samplesDecoded + readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
-		}
 	}
 
 	return samplesDecoded;
@@ -624,8 +620,8 @@ int16 ADPCMInputStream::decodeTinsel(int16 code, double eVal) {
 	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
 }
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign, uint numLoops) {
-	return new ADPCMInputStream(stream, disposeAfterUse, size, type, rate, channels, blockAlign, numLoops);
+RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
+	return new ADPCMInputStream(stream, disposeAfterUse, size, type, rate, channels, blockAlign);
 }
 
 } // End of namespace Audio
