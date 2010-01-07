@@ -43,7 +43,7 @@ enum {
 
 struct CompressedSoundFile {
 	const char *filename;
-	Audio::AudioStream *(*makeStream)(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops);
+	Audio::SeekableAudioStream *(*makeStream)(Common::SeekableReadStream *stream, bool disposeAfterUse);
 };
 
 static const CompressedSoundFile compressedSoundFilesTable[] = {
@@ -232,7 +232,7 @@ void CompressedSound::closeFile() {
 	_fCompressedSound.close();
 }
 
-Audio::AudioStream *CompressedSound::load(CompressedSoundType type, int num, bool loop) {
+Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, int num) {
 	if (_compressedSoundType < 0) {
 		return 0;
 	}
@@ -256,7 +256,7 @@ Audio::AudioStream *CompressedSound::load(CompressedSoundType type, int num, boo
 	if (offset == 0) {
 		return 0;
 	}
-	Audio::AudioStream *stream = 0;
+	Audio::SeekableAudioStream *stream = 0;
 	_fCompressedSound.seek(offset);
 	int dirOffset = _fCompressedSound.readUint32LE();
 	int dirSize = _fCompressedSound.readUint32LE();
@@ -270,7 +270,7 @@ Audio::AudioStream *CompressedSound::load(CompressedSoundType type, int num, boo
 			_fCompressedSound.seek(dirOffset + dirSize * 8 + soundOffset);
 			Common::MemoryReadStream *tmp = _fCompressedSound.readStream(soundSize);
 			if (tmp) {
-				stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true, 0, 0, loop ? 0 : 1);
+				stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true);
 			}
 		}
 	}
@@ -913,16 +913,16 @@ void TuckerEngine::loadFx() {
 }
 
 void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle) {
-	Audio::AudioStream *stream = 0;
+	Audio::RewindableAudioStream *stream = 0;
 	switch (type) {
 	case Audio::Mixer::kSFXSoundType:
-		stream = _compressedSound.load(kSoundTypeFx, num, loop);
+		stream = _compressedSound.load(kSoundTypeFx, num);
 		break;
 	case Audio::Mixer::kMusicSoundType:
-		stream = _compressedSound.load(kSoundTypeMusic, num, loop);
+		stream = _compressedSound.load(kSoundTypeMusic, num);
 		break;
 	case Audio::Mixer::kSpeechSoundType:
-		stream = _compressedSound.load(kSoundTypeSpeech, num, loop);
+		stream = _compressedSound.load(kSoundTypeSpeech, num);
 		break;
 	default:
 		return;
@@ -946,7 +946,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		snprintf(fileName, sizeof(fileName), fmt, num);
 		Common::File *f = new Common::File;
 		if (f->open(fileName)) {
-			stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(f, true), loop ? 0 : 1);
+			stream = Audio::makeWAVStream(f, true);
 		} else {
 			delete f;
 		}
@@ -954,7 +954,11 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 
 	if (stream) {
 		_mixer->stopHandle(*handle);
-		_mixer->playInputStream(type, handle, stream, -1, scaleMixerVolume(volume, kMaxSoundVolume));
+
+		if (loop)
+			_mixer->playInputStreamLooping(type, handle, stream, 0, -1, scaleMixerVolume(volume, kMaxSoundVolume));
+		else
+			_mixer->playInputStream(type, handle, stream, -1, scaleMixerVolume(volume, kMaxSoundVolume));
 	}
 }
 

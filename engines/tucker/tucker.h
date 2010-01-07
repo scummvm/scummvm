@@ -232,7 +232,7 @@ public:
 
 	void openFile();
 	void closeFile();
-	Audio::AudioStream *load(CompressedSoundType type, int num, bool loop);
+	Audio::RewindableAudioStream *load(CompressedSoundType type, int num);
 
 private:
 
@@ -872,8 +872,7 @@ enum {
 enum AnimationSoundType {
 	kAnimationSoundType8BitsRAW,
 	kAnimationSoundType16BitsRAW,
-	kAnimationSoundTypeWAV,
-	kAnimationSoundTypeLoopingWAV
+	kAnimationSoundTypeWAV
 };
 
 enum {
@@ -927,7 +926,7 @@ private:
 
 	void syncTime();
 	void loadSounds(int num);
-	Audio::AudioStream *loadSound(int index, AnimationSoundType type);
+	Audio::RewindableAudioStream *loadSound(int index, AnimationSoundType type);
 	void updateSounds();
 	void fadeInPalette();
 	void fadeOutPalette();

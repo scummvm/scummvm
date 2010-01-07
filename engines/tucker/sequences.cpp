@@ -574,11 +574,11 @@ void AnimationSequencePlayer::syncTime() {
 	} while (_lastFrameTime <= end);
 }
 
-Audio::AudioStream *AnimationSequencePlayer::loadSound(int index, AnimationSoundType type) {
-	Audio::AudioStream *stream = _compressedSound->load(kSoundTypeIntro, index, type == kAnimationSoundTypeLoopingWAV);
-	if (stream) {
+Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, AnimationSoundType type) {
+	Audio::RewindableAudioStream *stream = _compressedSound->load(kSoundTypeIntro, index);
+	if (stream)
 		return stream;
-	}
+
 	char fileName[64];
 	snprintf(fileName, sizeof(fileName), "audio/%s", _audioFileNamesTable[index]);
 	Common::File f;
@@ -603,8 +603,7 @@ Audio::AudioStream *AnimationSequencePlayer::loadSound(int index, AnimationSound
 			}
 			break;
 		case kAnimationSoundTypeWAV:
-		case kAnimationSoundTypeLoopingWAV:
-			stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(&f, true), type == kAnimationSoundTypeLoopingWAV ? 0 : 1);
+			stream = Audio::makeWAVStream(&f, true);
 			break;
 		}
 		
@@ -625,7 +624,7 @@ void AnimationSequencePlayer::loadSounds(int num) {
 }
 
 void AnimationSequencePlayer::updateSounds() {
-	Audio::AudioStream *s = 0;
+	Audio::RewindableAudioStream *s = 0;
 	const SoundSequenceData *p = &_soundSeqData[_soundSeqDataIndex];
 	while (_soundSeqDataIndex < _soundSeqDataCount && p->timestamp <= _frameCounter) {
 		switch (p->opcode) {
@@ -635,8 +634,8 @@ void AnimationSequencePlayer::updateSounds() {
 			}
 			break;
 		case 1:
-			if ((s = loadSound(p->num, kAnimationSoundTypeLoopingWAV)) != 0) {
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
+				_mixer->playInputStreamLooping(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, 0, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 2:
