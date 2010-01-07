@@ -223,7 +223,7 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const { return _isStereo; }
+	bool isStereo() const { return _parent->isStereo(); }
 
 	int getRate() const { return _parent->getRate(); }
 
@@ -235,7 +235,6 @@ public:
 private:
 	SeekableAudioStream *_parent;
 	bool _disposeAfterUse;
-	const bool _isStereo;
 
 	const Timestamp _start;
 	Timestamp _pos, _length;
