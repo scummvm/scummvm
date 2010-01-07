@@ -739,8 +739,8 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 			_system->unlockScreen();
 			continue;
 		}
-		//render on
-		if (debug_features.feature[DebugFeatures::kShowOn]) {
+		//render on, skipped for animation
+		if (mark == NULL && debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
 		}
 
