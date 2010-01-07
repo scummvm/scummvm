@@ -260,10 +260,7 @@ AudioStream *makeVorbisStream(
 		assert(input);
 	}
 
-	if (numLoops)
-		return new LoopingAudioStream(input, numLoops);
-	else
-		return input;
+	return makeLoopingAudioStream(input, numLoops);
 }
 
 SeekableAudioStream *makeVorbisStream(

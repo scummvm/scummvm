@@ -358,10 +358,7 @@ AudioStream *makeMP3Stream(
 		assert(mp3);
 	}
 
-	if (numLoops)
-		return new LoopingAudioStream(mp3, numLoops);
-	else
-		return mp3;
+	return makeLoopingAudioStream(mp3, numLoops);
 }
 
 SeekableAudioStream *makeMP3Stream(

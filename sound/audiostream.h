@@ -125,6 +125,8 @@ public:
 	/**
 	 * Creates a looping audio stream object.
 	 *
+	 * @see makeLoopingAudioStream
+	 *
 	 * @param stream Stream to loop
 	 * @param loops How often to loop (0 = infinite)
 	 * @param disposeAfteruse Destroy the stream after the LoopingAudioStream has finished playback.
@@ -150,6 +152,20 @@ private:
 	uint _loops;
 	uint _completeIterations;
 };
+
+/**
+ * Wrapper functionallity to efficiently create a stream, which might be looped.
+ *
+ * Note that this function does not return a LoopingAudioStream, because it does
+ * not create one, when the loop count is "1". This allows to keep the runtime
+ * overhead down, when the code does not require any functionallity only offered
+ * by LoopingAudioStream.
+ *
+ * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
+ * @param loops How often to loop (0 = infinite)
+ * @return A new AudioStream, which offers the desired functionallity.
+ */
+AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops);
 
 /**
  * A seekable audio stream. Subclasses of this class implement an

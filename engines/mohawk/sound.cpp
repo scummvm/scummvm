@@ -444,12 +444,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, Common::DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
 
-		Audio::RewindableAudioStream *audio = Audio::makeADPCMStream(dataStream, true, data_chunk.size, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign);
-
-		if (loop)
-			return new Audio::LoopingAudioStream(audio, 0);
-		else
-			return audio;
+		return makeLoopingAudioStream(Audio::makeADPCMStream(dataStream, true, data_chunk.size, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign), loop ? 0 : 1);
 	} else if (data_chunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, Common::DisposeAfterUse::YES);

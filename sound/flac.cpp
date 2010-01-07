@@ -745,10 +745,7 @@ AudioStream *makeFlacStream(
 		assert(input);
 	}
 
-	if (numLoops)
-		return new LoopingAudioStream(input, numLoops);
-	else
-		return input;
+	return makeLoopingAudioStream(input, numLoops);
 }
 
 SeekableAudioStream *makeFlacStream(
