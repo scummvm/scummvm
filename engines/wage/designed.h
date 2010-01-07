@@ -23,35 +23,40 @@
  *
  */
 
-#include "wage/wage.h"
+#ifndef WAGE_DESIGNED_H
+#define WAGE_DESIGNED_H
 
-#include "common/stream.h"
+#include "common/str.h"
+#include "common/rect.h"
+
+using Common::String;
 
 namespace Wage {
 
-Common::String readPascalString(Common::SeekableReadStream &in) {
-	Common::String s;
-	char *buf;
-	int len;
-	int i;
+class Design;
 
-	len = in.readSByte();
-	if (len < 0)
-		len += 256;
+class Designed {
+public:
+	Designed() : _design(NULL), _designBounds(NULL) {}
 
-	buf = (char *)malloc(len + 1);
-	for (i = 0; i < len; i++) {
-		buf[i] = in.readByte();
-		if (buf[i] == 0x0d)
-			buf[i] = '\n';
+	String _name;
+	Design *_design;
+	Common::Rect *_designBounds;
+
+	String getName() { return _name; }
+	void setName(String name) { _name = name; }
+	String toString() { return _name; }
+
+	Design *getDesign() { return _design; }
+	void setDesign(Design *design) { _design = design; }
+
+	Common::Rect *getDesignBounds() { 
+		return _designBounds == NULL ? NULL : new Common::Rect(*_designBounds);
 	}
 
-	buf[i] = 0;
-
-	s = buf;
-	free(buf);
-
-	return s;
-}
+	void setDesignBounds(Common::Rect bounds);
+};
 
 } // End of namespace Wage
+ 
+#endif

@@ -32,7 +32,16 @@
 
 #include "wage/wage.h"
 
+namespace Wage {
+
+const char *WageEngine::getGameFile() const {
+	return _gameDescription->filesDescriptions[0].fileName;
+}
+
+}
+
 static const PlainGameDescriptor cineGames[] = {
+	{"afm", "Another Fine Mess"},
 	{"wage", "World Adventure Game Engine game"},
 	{0, 0}
 };
@@ -43,12 +52,12 @@ using Common::GUIO_NONE;
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"wage",
-		"Another Fine Mess (v1.8)",
+		"afm",
+		"v1.8",
 		AD_ENTRY1s("Another Fine Mess 1.8", "8e5aa915f3253efb2aab52435647b25e", 1456000),
 		Common::EN_ANY,
 		Common::kPlatformPC,
-		ADGF_USEEXTRAASTITLE,
+		ADGF_NO_FLAGS,
 		GUIO_NONE
 	},
 

@@ -23,35 +23,47 @@
  *
  */
 
-#include "wage/wage.h"
+#ifndef WAGE_WORLD_H
+#define WAGE_WORLD_H
 
-#include "common/stream.h"
+#include "wage/scene.h"
+#include "wage/script.h"
+#include "wage/obj.h"
+#include "wage/chr.h"
+#include "wage/sound.h"
 
 namespace Wage {
 
-Common::String readPascalString(Common::SeekableReadStream &in) {
-	Common::String s;
-	char *buf;
-	int len;
-	int i;
+#define STORAGESCENE "STORAGE@"
 
-	len = in.readSByte();
-	if (len < 0)
-		len += 256;
+class World {
+public:
+	World();
+	~World();
+ 
+	bool loadWorld(MacResManager *resMan);
 
-	buf = (char *)malloc(len + 1);
-	for (i = 0; i < len; i++) {
-		buf[i] = in.readByte();
-		if (buf[i] == 0x0d)
-			buf[i] = '\n';
-	}
+	String _name;
+	String _aboutMessage;
+	String _soundLibrary1;
+	String _soundLibrary2;
 
-	buf[i] = 0;
-
-	s = buf;
-	free(buf);
-
-	return s;
-}
-
+	bool _weaponMenuDisabled;
+	Script *_globalScript;
+	Common::HashMap<String, Scene> _scenes;
+	Common::HashMap<String, Obj> _objs;
+	Common::HashMap<String, Chr> _chrs;
+	Common::HashMap<String, Sound> _sounds;
+	Common::List<Scene> _orderedScenes;
+	Common::List<Obj> _orderedObjs;
+	Common::List<Chr> _orderedChrs;
+	Common::List<Sound> _orderedSounds;
+	Common::List<byte *> _patterns;
+	Scene _storageScene;
+	Chr _player;
+	//List<MoveListener> moveListeners;
+};
+ 
 } // End of namespace Wage
+ 
+#endif

@@ -25,16 +25,31 @@
 
 #include "wage/wage.h"
 #include "wage/macresman.h"
+#include "wage/script.h"
+#include "wage/obj.h"
+#include "wage/world.h"
 
 #include "common/stream.h"
 
 namespace Wage {
 
-bool WageEngine::loadWorld(MacResManager *resMan) {
+World::World() {
+	_storageScene.setName(STORAGESCENE);
+	_orderedScenes.push_back(_storageScene);
+	_scenes[STORAGESCENE] = _storageScene;
+}
+
+bool World::loadWorld(MacResManager *resMan) {
 	int resSize;
 	MacResIDArray resArray;
 	byte *res;
 	MacResIDArray::const_iterator iter;
+
+	if ((resArray = resMan->getResIDArray("GCOD")).size() == 0)
+		return false;
+
+	res = resMan->getResource("GCOD", resArray[0], &resSize);
+	_globalScript = new Script(res);
 
 	if ((resArray = resMan->getResIDArray("VERS")).size() == 0)
 		return false;
@@ -54,7 +69,7 @@ bool WageEngine::loadWorld(MacResManager *resMan) {
 	readS.skip(3);
 	_aboutMessage = readPascalString(readS);
 
-	if (!stricmp(getGameFile(), "Scepters"))
+	if (!stricmp(resMan->getFileName().c_str(), "Scepters"))
 		readS.skip(1); // ????
 
 	_soundLibrary1 = readPascalString(readS);

@@ -24,34 +24,14 @@
  */
 
 #include "wage/wage.h"
-
-#include "common/stream.h"
+#include "wage/sound.h"
 
 namespace Wage {
 
-Common::String readPascalString(Common::SeekableReadStream &in) {
-	Common::String s;
-	char *buf;
-	int len;
-	int i;
+Sound::Sound() {
+}
 
-	len = in.readSByte();
-	if (len < 0)
-		len += 256;
-
-	buf = (char *)malloc(len + 1);
-	for (i = 0; i < len; i++) {
-		buf[i] = in.readByte();
-		if (buf[i] == 0x0d)
-			buf[i] = '\n';
-	}
-
-	buf[i] = 0;
-
-	s = buf;
-	free(buf);
-
-	return s;
+Sound::~Sound() {
 }
 
 } // End of namespace Wage

@@ -26,12 +26,13 @@
 #include "common/scummsys.h"
  
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
  
 #include "wage/wage.h"
+#include "wage/macresman.h"
+#include "wage/world.h"
  
 namespace Wage {
  
@@ -61,15 +62,14 @@ Common::Error WageEngine::run() {
 	printf("WageEngine::init\n");
  
 	// Your main even loop should be (invoked from) here.
-	printf("WageEngine::go: Hello, World!\n");
- 
-	// This test will show up if -d1 and --debugflags=example are specified on the commandline
-	debugC(1, kWageDebugExample, "Example debug call");
- 
-	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
-	debugC(3, kWageDebugExample | kWageDebugExample2, "Example debug call two");
+	_resManager = new MacResManager(getGameFile());
+
+	_world = new World();
+
+	if (!_world->loadWorld(_resManager))
+		return Common::kNoGameDataFoundError;
  
 	return Common::kNoError;
 }
- 
+
 } // End of namespace Wage

@@ -44,6 +44,8 @@ public:
 
 	MacResIDArray getResIDArray(const char *typeID);
 
+	Common::String getFileName() { return _fileName; }
+
 private:
 	int extractResource(int id, byte **buf);
 	bool init();

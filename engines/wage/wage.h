@@ -27,6 +27,7 @@
 #define WAGE_H
  
 #include "engines/engine.h"
+#include "common/debug.h"
 #include "gui/debugger.h"
 #include "common/endian.h"
 
@@ -35,6 +36,10 @@ struct ADGameDescription;
 namespace Wage {
  
 class Console;
+class MacResManager;
+class World;
+
+using Common::String;
  
 // our engine debug levels
 enum {
@@ -43,6 +48,8 @@ enum {
 	// next new level must be 1 << 2 (4)
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
+
+Common::String readPascalString(Common::SeekableReadStream &in);
 
 class WageEngine : public Engine {
 public:
@@ -56,6 +63,11 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 
+	const char *getGameFile() const;
+
+private:
+	bool loadWorld(MacResManager *resMan);
+
 private:
 	Console *_console;
  
@@ -63,6 +75,10 @@ private:
 	Common::RandomSource _rnd;
 
 	const ADGameDescription *_gameDescription;
+
+	MacResManager *_resManager;
+
+	World *_world;
 };
  
 // Example console class
