@@ -252,7 +252,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 	// not over file size
 	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
 		_file.seek(offset, SEEK_SET);
-		_audioSource = new Audio::VagStream(_file.readStream(size), loop);
+		_audioSource = Audio::makeLoopingAudioStream(new Audio::VagStream(_file.readStream(size)), loop ? 0 : 1);
 		fadeUp();
 	} else {
 		_audioSource = NULL;

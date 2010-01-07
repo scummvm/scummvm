@@ -38,21 +38,20 @@
 
 namespace Audio {
 
-class VagStream : public Audio::AudioStream {
+class VagStream : public Audio::RewindableAudioStream {
 public:
-	VagStream(Common::SeekableReadStream *stream, bool loop = false, int rate = 11025);
+	VagStream(Common::SeekableReadStream *stream, int rate = 11025);
 	~VagStream();
 
 	bool isStereo() const { return false; }
 	bool endOfData() const { return _stream->pos() == _stream->size(); }
 	int getRate() const { return _rate; }
 	int readBuffer(int16 *buffer, const int numSamples);
-	void rewind();
 
+	bool rewind();
 private:
 	Common::SeekableReadStream *_stream;
 
-	bool _loop;
 	byte _predictor;
 	double _samples[28];
 	byte _samplesRemaining;

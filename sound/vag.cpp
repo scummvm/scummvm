@@ -27,11 +27,10 @@
 
 namespace Audio {
 
-VagStream::VagStream(Common::SeekableReadStream *stream, bool loop, int rate) : _stream(stream) {
+VagStream::VagStream(Common::SeekableReadStream *stream, int rate) : _stream(stream) {
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
-	_loop = loop;
 	_rate = rate;
 }
 
@@ -109,17 +108,16 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 			_samplesRemaining = 28 - i;
 	}
 
-	if (_loop && _stream->eos())
-		rewind();
-
 	return samplesDecoded;
 }
 
-void VagStream::rewind() {
+bool VagStream::rewind() {
 	_stream->seek(0);
 	_samplesRemaining = 0;
 	_predictor = 0;
 	_s1 = _s2 = 0.0;
+
+	return true;
 }
 
 }

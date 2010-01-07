@@ -331,17 +331,19 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 		return RDERR_FXALREADYOPEN;
 
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, len);
-	Audio::AudioStream *input = 0;
+	Audio::RewindableAudioStream *input = 0;
 
-	if (Sword2Engine::isPsx()) {
-		input = new Audio::VagStream(stream, loop);
-	} else {
-		input = Audio::makeLoopingAudioStream(Audio::makeWAVStream(stream, true), loop ? 0 : 1);
-	}
+	if (Sword2Engine::isPsx())
+		input = new Audio::VagStream(stream);
+	else
+		input = Audio::makeWAVStream(stream, true);
 
 	assert(input);
 
-	_vm->_mixer->playInputStream(soundType, handle, input, -1, vol, pan, true, false, isReverseStereo());
+	if (loop)
+		_vm->_mixer->playInputStreamLooping(soundType, handle, input, 0, -1, vol, pan, true, false, isReverseStereo());
+	else
+		_vm->_mixer->playInputStream(soundType, handle, input, -1, vol, pan, true, false, isReverseStereo());
 
 	return RD_OK;
 }
