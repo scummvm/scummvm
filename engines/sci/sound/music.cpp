@@ -432,6 +432,7 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 
 	if (pSnd->pStreamAud) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
+		delete pSnd->pStreamAud;
 		pSnd->pStreamAud = NULL;
 	}
 
