@@ -127,7 +127,7 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			return samplesRead;
 		}
 
-		samplesRead += _parent->readBuffer(buffer, remainingSamples);
+		samplesRead += _parent->readBuffer(buffer + samplesRead, remainingSamples);
 	}
 
 	return samplesRead;
