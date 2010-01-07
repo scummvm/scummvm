@@ -910,9 +910,9 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	bool upscaledHires = (argc > 7) ? true : false; // actual parameter is MemoryHandle to saved upscaled hires rect
+	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
-	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, upscaledHires);
+	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, upscaledHiresHandle);
 
 	return s->r_acc;
 }

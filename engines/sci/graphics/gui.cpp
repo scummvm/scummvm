@@ -367,11 +367,25 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 	_gfx->SetPort(oldPort);
 }
 
-void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool upscaledHires) {
-	if (!upscaledHires)
+void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, reg_t upscaledHiresHandle) {
+	if (upscaledHiresHandle.isNull()) {
 		_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
-	else
+	} else {
+		if ((leftPos == 0) && (topPos == 0)) {
+			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we need to get coordinates from upscaledHiresHandle
+			//  I'm not sure if this is what we are supposed to do or if there is some other bug that actually makes
+			//  coordinates to be 0 in the first place
+			byte *memoryPtr = NULL;
+			memoryPtr = kmem(_s->_segMan, upscaledHiresHandle);
+			if (memoryPtr) {
+				Common::Rect upscaledHiresRect;
+				_screen->bitsGetRect(memoryPtr, &upscaledHiresRect);
+				leftPos = upscaledHiresRect.left;
+				topPos = upscaledHiresRect.top;
+			}
+		}
 		_gfx->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+	}
 	_palette->setOnScreen();
 }
 
