@@ -202,6 +202,11 @@ public:
  * The same caveats apply to SubSeekableAudioStream as do to SeekableAudioStream.
  * 
  * Manipulating the parent stream directly /will/ mess up a substream.
+ *
+ * IMPORTANT:
+ * Note for engine authors. This object is currently under inspection. In case
+ * we need to revise the looping API we might drop this. So if you really need
+ * something like this object, please drop a mail to LordHoto.
  */
 class SubSeekableAudioStream : public SeekableAudioStream {
 public:
