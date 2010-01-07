@@ -152,9 +152,9 @@ private:
 };
 
 /**
- * A seekable audio stream. Subclasses of this class implement a
- * working seeking. The seeking itself is not required to be
- * working when the stream is being played by Mixer!
+ * A seekable audio stream. Subclasses of this class implement an
+ * interface for seeking. The seeking itself is not required to be
+ * working while the stream is being played by Mixer!
  */
 class SeekableAudioStream : public RewindableAudioStream {
 public:

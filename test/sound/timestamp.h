@@ -159,13 +159,16 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(a.secs(), (uint32)0);
 		TS_ASSERT_EQUALS(a.msecs(), (uint32)0);
 		TS_ASSERT_EQUALS(a.numberOfFrames(), 0);
+		TS_ASSERT_EQUALS(a.totalNumberOfFrames(), 0);
 
 		TS_ASSERT_EQUALS(b.secs(), (uint32)0);
 		TS_ASSERT_EQUALS(b.msecs(), (uint32)500);
 		TS_ASSERT_EQUALS(b.numberOfFrames(), 11025);
+		TS_ASSERT_EQUALS(b.totalNumberOfFrames(), 11025);
 
 		TS_ASSERT_EQUALS(c.secs(), (uint32)1);
 		TS_ASSERT_EQUALS(c.msecs(), (uint32)1500);
 		TS_ASSERT_EQUALS(c.numberOfFrames(), 11025);
+		TS_ASSERT_EQUALS(c.totalNumberOfFrames(), 33075);
 	}
 };

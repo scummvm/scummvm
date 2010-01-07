@@ -129,21 +129,34 @@ public:
 	int msecsDiff(const Timestamp &ts) const;
 
 	/**
-	 * Determines the time in milliseconds described by this timestamp,
+	 * Return the time in milliseconds described by this timestamp,
 	 * rounded down.
 	 */
 	uint32 msecs() const;
 
 	/**
-	 * Determines the time in seconds described by this timestamp,
+	 * Return the time in seconds described by this timestamp,
 	 * rounded down.
 	 */
-	inline uint32 secs() const { return _secs; }
+	inline uint32 secs() const {
+		return _secs;
+	}
 
 	/**
-	 * Determines the frames described by this timestamp.
+	 * Return the time in frames described by this timestamp.
 	 */
-	inline int numberOfFrames() const { return _numberOfFrames / _framerateFactor; }
+	inline int totalNumberOfFrames() const {
+		return _numberOfFrames / _framerateFactor + _secs * (_framerate / _framerateFactor);
+	}
+
+	/**
+	 * A timestamp consists of a number of seconds, plus a number
+	 * of frames, the latter describing a fraction of a second.
+	 * This method returns the latter number.
+	 */
+	inline int numberOfFrames() const {
+		return _numberOfFrames / _framerateFactor;
+	}
 
 	/** Return the framerate used by this timestamp. */
 	inline int framerate() const { return _framerate / _framerateFactor; }
