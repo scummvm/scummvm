@@ -163,7 +163,7 @@ static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSiz
 	return true;
 }
 
-static byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size, byte audioFlags, byte &flags) {
+static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size, byte audioFlags, byte &flags) {
 	byte *buffer;
 
 	// Convert the SOL stream flags to our own format
@@ -192,7 +192,7 @@ static byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	return buffer;
 }
 
-Audio::AudioStream* AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
+Audio::AudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
 	Audio::AudioStream *audioStream = 0;
 	uint32 size = 0;
 	byte *data = 0;
