@@ -264,7 +264,23 @@ void MixerImpl::playInputStream(
 	insertChannel(handle, chan);
 }
 
-void MixerImpl::playInputStreamLooping(
+void Mixer::playInputStreamLooping(
+			SoundType type,
+			SoundHandle *handle,
+			RewindableAudioStream *input,
+			uint loopCount,
+			int id, byte volume, int8 balance,
+			bool autofreeStream,
+			bool permanent,
+			bool reverseStereo) {
+
+	LoopingAudioStream *loopingStream = new LoopingAudioStream(input, loopCount, autofreeStream);
+	assert(loopingStream);
+
+	playInputStream(type, handle, loopingStream, id, volume, balance, true, permanent, reverseStereo);
+}
+
+void Mixer::playInputStreamLooping(
 			SoundType type,
 			SoundHandle *handle,
 			SeekableAudioStream *input,
@@ -275,20 +291,13 @@ void MixerImpl::playInputStreamLooping(
 			bool permanent,
 			bool reverseStereo) {
 
-	if (loopStart.msecs() != 0 || loopEnd.msecs() != 0) {
-		if (loopEnd.msecs() == 0)
-			loopEnd = input->getLength();
+	if (loopStart >= loopEnd)
+		return;
 
-		input = new SubSeekableAudioStream(input, loopStart, loopEnd, autofreeStream);
-		assert(input);
+	input = new SubSeekableAudioStream(input, loopStart, loopEnd, autofreeStream);
+	assert(input);
 
-		autofreeStream = true;
-	}
-
-	LoopingAudioStream *loopingStream = new LoopingAudioStream(input, loopCount, autofreeStream);
-	assert(loopingStream);
-
-	playInputStream(type, handle, loopingStream, id, volume, balance, true, permanent, reverseStereo);
+	playInputStreamLooping(type, handle, input, loopCount, id, volume, balance, true, permanent, reverseStereo);
 }
 
 void MixerImpl::mixCallback(byte *samples, uint len) {

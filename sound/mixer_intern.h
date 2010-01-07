@@ -90,17 +90,6 @@ public:
 		bool permanent,
 		bool reverseStereo);
 
-	virtual void playInputStreamLooping(
-		SoundType type,
-		SoundHandle *handle,
-		SeekableAudioStream *input,
-		uint loopCount,
-		Timestamp loopStart, Timestamp loopEnd,
-		int id, byte volume, int8 balance,
-		bool autofreeStream,
-		bool permanent,
-		bool reverseStereo);
-
 	virtual void stopAll();
 	virtual void stopID(int id);
 	virtual void stopHandle(SoundHandle handle);
