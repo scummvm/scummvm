@@ -329,35 +329,36 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 }
 
 // This one is the only one that updates screen!
-void Gfx::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
-	Common::Rect rect;
+	Common::Rect celRect;
 	
 	if (view) {
-		rect.left = leftPos;
-		rect.top = topPos;
-		rect.right = rect.left + view->getWidth(loopNo, celNo);
-		rect.bottom = rect.top + view->getHeight(loopNo, celNo);
+		celRect.left = leftPos;
+		celRect.top = topPos;
+		celRect.right = celRect.left + view->getWidth(loopNo, celNo);
+		celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
 
-		drawCel(view, loopNo, celNo, rect, priority, paletteNo, origHeight, scaleX, scaleY);
+		drawCel(view, loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY);
 
 		if (getSciVersion() >= SCI_VERSION_1_1) {
-			if (!_screen->_picNotValidSci11)
-				BitsShow(rect);
+			if (!_screen->_picNotValidSci11) {
+				BitsShow(celRect);
+			}
 		} else {
 			if (!_screen->_picNotValid)
-				BitsShow(rect);
+				BitsShow(celRect);
 		}
 	}
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
-	drawCel(getView(viewId), loopNo, celNo, celRect, priority, paletteNo, origHeight, scaleX, scaleY);
+void Gfx::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+	drawCel(getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -365,7 +366,38 @@ void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, b
 
 	Common::Rect clipRectTranslated = clipRect;
 	OffsetRect(clipRectTranslated);
-	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, origHeight, scaleX, scaleY);
+	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, false, scaleX, scaleY);
+}
+
+// This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen
+//  Hires-cels are available only SCI 1.1+
+void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+	View *view = getView(viewId);
+	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
+	
+	if (view) {
+		celRect.left = leftPos;
+		celRect.top = topPos;
+		celRect.right = celRect.left + view->getWidth(loopNo, celNo);
+		celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
+		// adjust curPort to upscaled hires
+		clipRect = celRect;
+		curPortRect = _curPort->rect;
+		curPortRect.top *= 2; curPortRect.bottom *= 2;
+		curPortRect.left *= 2; curPortRect.right *= 2;
+		clipRect.clip(curPortRect);
+		if (clipRect.isEmpty()) // nothing to draw
+			return;
+
+		clipRectTranslated = clipRect;
+		clipRectTranslated.top += curPortRect.top; clipRectTranslated.bottom += curPortRect.top;
+		clipRectTranslated.left += curPortRect.left; clipRectTranslated.right += curPortRect.left;
+
+		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true, scaleX, scaleY);
+		if (!_screen->_picNotValidSci11) {
+			_screen->copyDisplayRectToScreen(clipRectTranslated);
+		}
+	}
 }
 
 uint16 Gfx::onControl(uint16 screenMask, Common::Rect rect) {

@@ -368,7 +368,10 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 }
 
 void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
-	_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, origHeight);
+	if (origHeight == -1)
+		_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+	else
+		_gfx->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	_palette->setOnScreen();
 }
 

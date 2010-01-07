@@ -368,7 +368,7 @@ void SciGuiAnimate::drawCels() {
 			}
 
 			// draw corresponding cel
-			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, -1, scaleX, scaleY);
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, scaleX, scaleY);
 			listEntry->showBitsFlag = true;
 
 			if (signal & kSignalRemoveView) {

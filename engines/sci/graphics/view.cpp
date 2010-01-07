@@ -460,7 +460,7 @@ void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clear
 	}
 }
 
-void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, int16 origHeight, uint16 scaleX, uint16 scaleY) {
+void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleX, uint16 scaleY) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -487,7 +487,8 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 			for (x = 0; x < width; x++) {
 				color = bitmap[x];
 				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
-					if (origHeight == -1)	// HACK: this parameter is passed for already scaled views, but we're not actually using it
+					// UpscaledHires means view is hires and is supposed to get drawn onto lowres screen
+					if (!upscaledHires)
 						_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
 					else
 						_screen->putPixelOnDisplay(clipRectTranslated.left + x, clipRectTranslated.top + y, palette->mapping[color]);
