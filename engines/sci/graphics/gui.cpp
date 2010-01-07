@@ -367,8 +367,8 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 	_gfx->SetPort(oldPort);
 }
 
-void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, int16 origHeight) {
-	if (origHeight == -1)
+void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool upscaledHires) {
+	if (!upscaledHires)
 		_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	else
 		_gfx->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);

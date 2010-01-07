@@ -281,14 +281,8 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
-		warning("kGraph case 15 (%d, %d, %d, %d)", x, y, x1, y1);
-
-		// TODO: implement this properly. The code below crashes KQ6
-
-		// Save an area given in upscaled-hires coordinates, so that a hires control will be drawn over it
-		//kGraphCreateRect(x, y, x1, y1, &rect);
-		//return s->_gui->graphSaveUpscaledHiresBox(rect);
-		break;
+		kGraphCreateRect(x, y, x1, y1, &rect);
+		return s->_gui->graphSaveUpscaledHiresBox(rect);
 
 	default:
 		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
@@ -915,9 +909,9 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	int16 origHeight = (argc > 7) ? argv[7].toSint16() : -1;
+	bool upscaledHires = (argc > 7) ? true : false; // actual parameter is MemoryHandle to saved upscaled hires rect
 
-	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, origHeight);
+	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, upscaledHires);
 
 	return s->r_acc;
 }

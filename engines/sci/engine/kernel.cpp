@@ -201,7 +201,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*0e*/	DEFUN("NumCels", kNumCels, "o"),
 	/*0f*/	DEFUN("CelWide", kCelWide, "iOi*"),
 	/*10*/	DEFUN("CelHigh", kCelHigh, "iOi*"),
-	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiii*"),
+	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiiii*r*"),
 	/*12*/	DEFUN("AddToPic", kAddToPic, "Il*"),
 	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
 	/*13*/	DEFUN("NewWindow", kNewWindow, "*."),
@@ -658,6 +658,7 @@ int determine_reg_type(SegManager *segMan, reg_t reg) {
 	case SEG_TYPE_STACK:
 	case SEG_TYPE_SYS_STRINGS:
 	case SEG_TYPE_DYNMEM:
+	case SEG_TYPE_HUNK:
 #ifdef ENABLE_SCI32
 	case SEG_TYPE_ARRAY:
 	case SEG_TYPE_STRING:
