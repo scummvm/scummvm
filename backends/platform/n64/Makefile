@@ -15,7 +15,7 @@ AR = $(GCCN64PREFIX)ar cru
 RANLIB = $(GCCN64PREFIX)ranlib
 
 DEFINES += -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DENABLE_VKEYBD -DUSE_ZLIB
-LIBS += -lpakfs -ln64 -ln64utils -lromfs 
+LIBS += -lpakfs -lframfs -ln64 -ln64utils -lromfs 
 
 DEFINES += -D_ENABLE_DEBUG_
 
@@ -64,7 +64,7 @@ ENABLE_SCUMM=$(ENABLED)
 #ENABLE_MADE = $(ENABLED)
 #ENABLE_SAGA = $(ENABLED)
 
-OBJS :=	nintendo64.o osys_n64_base.o osys_n64_events.o osys_n64_utilities.o pakfs_save_manager.o
+OBJS :=	nintendo64.o osys_n64_base.o osys_n64_events.o osys_n64_utilities.o pakfs_save_manager.o framfs_save_manager.o
 
 include $(srcdir)/Makefile.common
 

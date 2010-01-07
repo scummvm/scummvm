@@ -20,109 +20,108 @@
  *
  */
 
-#ifndef __PAKFS_SAVE_MANAGER__
-#define __PAKFS_SAVE_MANAGER__
+#ifndef __FRAMFS_SAVE_MANAGER__
+#define __FRAMFS_SAVE_MANAGER__
 
 #include <common/savefile.h>
 #include <common/zlib.h>
 
-#include <pakfs.h> // N64 PakFS library
+#include <framfs.h> // N64 FramFS library
 
-bool pakfs_deleteSaveGame(const char *filename);
+bool fram_deleteSaveGame(const char *filename);
 
-class InPAKSave : public Common::InSaveFile {
+class InFRAMSave : public Common::InSaveFile {
 private:
-	PAKFILE *fd;
+	FRAMFILE *fd;
 
 	uint32 read(void *buf, uint32 cnt);
 	bool skip(uint32 offset);
 	bool seek(int32 offs, int whence);
 
 public:
-	InPAKSave() : fd(NULL) { }
+	InFRAMSave() : fd(NULL) { }
 
-	~InPAKSave() {
+	~InFRAMSave() {
 		if (fd != NULL)
-			pakfs_close(fd);
+			framfs_close(fd);
 	}
 
 	bool eos() const {
-		return pakfs_eof(fd);
+		return framfs_eof(fd);
 	}
 	void clearErr() {
-		pakfs_clearerr(fd);
+		framfs_clearerr(fd);
 	}
 	int32 pos() const {
-		return pakfs_tell(fd);
+		return framfs_tell(fd);
 	}
 	int32 size() const {
 		return fd->size;
 	}
 
 	bool readSaveGame(const char *filename) {
-		fd = pakfs_open(filename, "r");
+		fd = framfs_open(filename, "r");
 		return (fd != NULL);
 	}
 };
 
-class OutPAKSave : public Common::OutSaveFile {
+class OutFRAMSave : public Common::OutSaveFile {
 private:
-	PAKFILE *fd;
+	FRAMFILE *fd;
 
 public:
 	uint32 write(const void *buf, uint32 cnt);
 
-	OutPAKSave(const char *_filename) : fd(NULL) {
-		fd = pakfs_open(_filename, "w");
+	OutFRAMSave(const char *_filename) : fd(NULL) {
+		fd = framfs_open(_filename, "w");
 	}
 
-	~OutPAKSave() {
+	~OutFRAMSave() {
 		if (fd != NULL) {
 			finalize();
-			pakfs_close(fd);
-			flushCurrentPakData();
+			framfs_close(fd);
 		}
 	}
 
 	bool err() const {
 		if (fd)
-			return (pakfs_error(fd) == 1);
+			return (framfs_error(fd) == 1);
 		else
 			return true;
 	}
 	void clearErr() {
-		pakfs_clearerr(fd);
+		framfs_clearerr(fd);
 	}
 	void finalize() {
-		pakfs_flush(fd);
+		framfs_flush(fd);
 	}
 };
 
-class PAKSaveManager : public Common::SaveFileManager {
+class FRAMSaveManager : public Common::SaveFileManager {
 public:
 
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename) {
-		OutPAKSave *s = new OutPAKSave(filename.c_str());
+		OutFRAMSave *s = new OutFRAMSave(filename.c_str());
 		if (!s->err()) {
 			return Common::wrapCompressedWriteStream(s);
 		} else {
 			delete s;
-			return NULL;
+			return 0;
 		}
 	}
 
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename) {
-		InPAKSave *s = new InPAKSave();
+		InFRAMSave *s = new InFRAMSave();
 		if (s->readSaveGame(filename.c_str())) {
 			return Common::wrapCompressedReadStream(s);
 		} else {
 			delete s;
-			return NULL;
+			return 0;
 		}
 	}
 
 	virtual bool removeSavefile(const Common::String &filename) {
-		return ::pakfs_deleteSaveGame(filename.c_str());
+		return ::fram_deleteSaveGame(filename.c_str());
 	}
 
 	virtual Common::StringList listSavefiles(const Common::String &pattern);

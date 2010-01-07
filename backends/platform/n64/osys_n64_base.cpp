@@ -26,6 +26,7 @@
 
 #include "osys_n64.h"
 #include "pakfs_save_manager.h"
+#include "framfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
 
 extern uint8 _romfs; // Defined by linker (used to calculate position of romfs image)
@@ -54,19 +55,6 @@ OSystem_N64::OSystem_N64() {
 
 	// Init PI interface
 	PI_Init();
-
-	// Init Controller Pak
-	initPakFs();
-
-	// Use the first controller pak found
-	uint8 ctrl_num;
-	for (ctrl_num = 0; ctrl_num < 4; ctrl_num++) {
-		int8 pak_type = identifyPak(ctrl_num);
-		if (pak_type == 1) {
-			loadPakData(ctrl_num);
-			break;
-		}
-	}
 
 	// Screen size
 	_screenWidth = 320;
@@ -164,7 +152,27 @@ void OSystem_N64::initBackend() {
 	ConfMan.setBool("FM_medium_quality", true);
 	ConfMan.set("gui_theme", "modern"); // In case of modern theme being present, use it.
 
-	_savefile = new PAKSaveManager();
+	FRAM_Init();
+
+	if (FRAM_Detect()) { // Use FlashRAM
+		initFramFS();
+		_savefile = new FRAMSaveManager();
+	} else { // Use PakFS
+		// Init Controller Pak
+		initPakFs();
+
+		// Use the first controller pak found
+		uint8 ctrl_num;
+		for (ctrl_num = 0; ctrl_num < 4; ctrl_num++) {
+			int8 pak_type = identifyPak(ctrl_num);
+			if (pak_type == 1) {
+				loadPakData(ctrl_num);
+				break;
+			}
+		}
+
+		_savefile = new PAKSaveManager();
+	}
 
 	_mixer = new Audio::MixerImpl(this);
 	_mixer->setReady(false);
