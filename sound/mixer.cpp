@@ -40,12 +40,12 @@ namespace Audio {
 
 
 /**
- * Generic Channel interface used by the default Mixer implementation.
+ * Channel used by the default Mixer implementation.
  */
 class Channel {
 public:
-	Channel(Mixer *mixer, Mixer::SoundType type, int id, bool permanent);
-	virtual ~Channel() {}
+	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo, int id, bool permanent);
+	~Channel();
 
 	/**
 	 * Mixes the channel's samples into the given buffer.
@@ -55,12 +55,12 @@ public:
 	 *             10 means that the buffer contains twice 10 sample, each
 	 *             16 bits, for a total of 40 bytes.
 	 */
-	virtual void mix(int16 *data, uint len) = 0;
+	void mix(int16 *data, uint len);
 
 	/**
 	 * Queries whether the channel is still playing or not.
 	 */
-	virtual bool isFinished() const = 0;
+	bool isFinished() const { return _input->endOfStream(); }
 
 	/**
 	 * Queries whether the channel is a permanent channel.
@@ -143,17 +143,6 @@ private:
 	void updateChannelVolumes();
 	st_volume_t _volL, _volR;
 
-protected:
-	/**
-	 * Queries the volume of the left output channel.
-	 */
-	st_volume_t getLeftVolume() const { return _volL; }
-
-	/**
-	 * Queries the volume of the right output channel.
-	 */
-	st_volume_t getRightVolume() const { return _volR; }
-
 	Mixer *_mixer;
 
 	uint32 _samplesConsumed;
@@ -161,41 +150,10 @@ protected:
 	uint32 _mixerTimeStamp;
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
-};
 
-class SimpleChannel : public Channel {
-private:
 	bool _autofreeStream;
 	RateConverter *_converter;
 	AudioStream *_input;
-
-public:
-	SimpleChannel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo, int id, bool permanent);
-	~SimpleChannel();
-
-	void mix(int16 *data, uint len);
-
-	bool isFinished() const {
-		return _input->endOfStream();
-	}
-};
-
-class LoopingChannel : public Channel {
-public:
-	LoopingChannel(Mixer *mixer, Mixer::SoundType type, SeekableAudioStream *input, uint loopCount, Timestamp loopStart, Timestamp loopEnd, bool autofreeStream, bool reverseStereo, int id, bool permanent);
-	~LoopingChannel();
-
-	void mix(int16 *data, uint len);
-	bool isFinished() const;
-private:
-	uint _loopCount;
-	Timestamp _loopStart;
-	Timestamp _loopEnd;
-
-	bool _autofreeStream;
-	RateConverter *_converter;
-	SeekableAudioStream *_input;
-	Timestamp _pos;
 };
 
 #pragma mark -
@@ -300,7 +258,7 @@ void MixerImpl::playInputStream(
 	}
 
 	// Create the channel
-	Channel *chan = new SimpleChannel(this, type, input, autofreeStream, reverseStereo, id, permanent);
+	Channel *chan = new Channel(this, type, input, autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
@@ -316,34 +274,21 @@ void MixerImpl::playInputStreamLooping(
 			bool autofreeStream,
 			bool permanent,
 			bool reverseStereo) {
-	Common::StackLock lock(_mutex);
 
-	if (input == 0) {
-		warning("input stream is 0");
-		return;
+	if (loopStart.msecs() != 0 || loopEnd.msecs() != 0) {
+		if (loopEnd.msecs() == 0)
+			loopEnd = input->getLength();
+
+		input = new SubSeekableAudioStream(input, loopStart, loopEnd, autofreeStream);
+		assert(input);
+
+		autofreeStream = true;
 	}
 
-	// Prevent duplicate sounds
-	if (id != -1) {
-		for (int i = 0; i != NUM_CHANNELS; i++)
-			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				if (autofreeStream)
-					delete input;
-				return;
-			}
-	}
+	LoopingAudioStream *loopingStream = new LoopingAudioStream(input, loopCount, autofreeStream);
+	assert(loopingStream);
 
-	if (loopEnd.msecs() == 0)
-		loopEnd = input->getLength();
-
-	// Create the channel
-	Channel *chan = new LoopingChannel(this, type, input, loopCount,
-	                                   loopStart.convertToFramerate(getOutputRate()),
-	                                   loopEnd.convertToFramerate(getOutputRate()),
-	                                   autofreeStream, reverseStereo, id, permanent);
-	chan->setVolume(volume);
-	chan->setBalance(balance);
-	insertChannel(handle, chan);
+	playInputStream(type, handle, loopingStream, id, volume, balance, true, permanent, reverseStereo);
 }
 
 void MixerImpl::mixCallback(byte *samples, uint len) {
@@ -525,11 +470,23 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 #pragma mark --- Channel implementations ---
 #pragma mark -
 
-Channel::Channel(Mixer *mixer, Mixer::SoundType type, int id, bool permanent)
+Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
+                 bool autofreeStream, bool reverseStereo, int id, bool permanent)
     : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
       _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
-      _pauseStartTime(0), _pauseTime(0) {
-	updateChannelVolumes();
+      _pauseStartTime(0), _pauseTime(0), _autofreeStream(autofreeStream), _converter(0),
+      _input(input) {
+	assert(mixer);
+	assert(input);
+
+	// Get a rate converter instance
+	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
+}
+
+Channel::~Channel() {
+	delete _converter;
+	if (_autofreeStream)
+		delete _input;
 }
 
 void Channel::setVolume(const byte volume) {
@@ -611,24 +568,7 @@ uint32 Channel::getElapsedTime() {
 	return ts.msecs();
 }
 
-SimpleChannel::SimpleChannel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
-				bool autofreeStream, bool reverseStereo, int id, bool permanent)
-	: Channel(mixer, type, id, permanent), _autofreeStream(autofreeStream), _converter(0),
-	  _input(input) {
-	assert(mixer);
-	assert(input);
-
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
-}
-
-SimpleChannel::~SimpleChannel() {
-	delete _converter;
-	if (_autofreeStream)
-		delete _input;
-}
-
-void SimpleChannel::mix(int16 *data, uint len) {
+void Channel::mix(int16 *data, uint len) {
 	assert(_input);
 
 	if (_input->endOfData()) {
@@ -639,58 +579,8 @@ void SimpleChannel::mix(int16 *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
-		_samplesDecoded += _converter->flow(*_input, data, len, getLeftVolume(), getRightVolume());
+		_samplesDecoded += _converter->flow(*_input, data, len, _volL, _volR);
 	}
-}
-
-LoopingChannel::LoopingChannel(Mixer *mixer, Mixer::SoundType type, SeekableAudioStream *input, uint loopCount,
-                               Timestamp loopStart, Timestamp loopEnd, bool autofreeStream, bool reverseStereo,
-                               int id, bool permanent)
-    : Channel(mixer, type, id, permanent), _loopCount(loopCount), _loopStart(loopStart), _loopEnd(loopEnd),
-      _autofreeStream(autofreeStream), _converter(0), _input(input), _pos(loopStart) {
-	_input->seek(loopStart);
-	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
-}
-
-LoopingChannel::~LoopingChannel() {
-	delete _converter;
-	if (_autofreeStream)
-		delete _input;
-}
-
-void LoopingChannel::mix(int16 *data, uint len) {
-	Timestamp newPos = _pos.addFrames(len);
-	int frameDiff = newPos.frameDiff(_loopEnd);
-	bool needLoop = false;
-
-	assert(frameDiff <= (int)len);
-
-	if (frameDiff >= 0) {
-		len -= frameDiff;
-		needLoop = (_loopCount != 1);
-	}
-
-	_samplesConsumed = _samplesDecoded;
-	_mixerTimeStamp = g_system->getMillis();
-	_pauseTime = 0;
-	uint samplesRead = _converter->flow(*_input, data, len, getLeftVolume(), getRightVolume());
-	_samplesDecoded += samplesRead;
-	_pos = _pos.addFrames(samplesRead);
-
-	if (needLoop) {
-		if (_loopCount > 1)
-			--_loopCount;
-
-		_input->seek(_loopStart);
-		samplesRead = _converter->flow(*_input, data + len * 2, frameDiff, getLeftVolume(), getRightVolume());
-		_samplesDecoded += samplesRead;
-		_pos = _loopStart.addFrames(samplesRead);
-	}
-}
-
-bool LoopingChannel::isFinished() const {
-	return (_loopCount == 1) && (_pos == _loopEnd);
 }
 
 } // End of namespace Audio
