@@ -93,16 +93,7 @@ protected:
 	bool _isStereo;
 	int _rate;
 
-	uint _numLoops;			///< Number of loops to play
-	uint _numPlayedLoops;	///< Number of loops which have been played
-
-#ifdef USE_TREMOR
-	ogg_int64_t _startTime;
-	ogg_int64_t _endTime;
-#else
-	double _startTime;
-	double _endTime;
-#endif
+	Timestamp _length;
 
 	OggVorbis_File _ovFile;
 
@@ -112,7 +103,7 @@ protected:
 
 public:
 	// startTime / duration are in milliseconds
-	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime = 0, uint endTime = 0, uint numLoops = 1);
+	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose);
 	~VorbisInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -121,30 +112,16 @@ public:
 	bool isStereo() const		{ return _isStereo; }
 	int getRate() const			{ return _rate; }
 
-	void setNumLoops(uint numLoops) {
-		_numLoops = numLoops;
-		_numPlayedLoops = 0;
-	}
-	uint getNumPlayedLoops() { return _numPlayedLoops; }
-
 	bool seek(const Timestamp &where);
-	// TODO: Maybe we can have a more precise implementation of this
-	Timestamp getLength() const {
-#ifdef USE_TREMOR
-		return Timestamp(_endTime, getRate());
-#else
-		return Timestamp((uint32)(_endTime * 1000.0), getRate());
-#endif
-	}
-
+	Timestamp getLength() const { return _length; }
 protected:
 	bool refill();
 };
 
-VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime, uint endTime, uint numLoops) :
+VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
-	_numLoops(numLoops),
+	_length(0, 1000),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
 
 	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
@@ -155,40 +132,10 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 	}
 
 #ifdef USE_TREMOR
-	/* TODO: Symbian may have to use scumm_fixdfdi here? To quote:
-	 "SumthinWicked says: fixing "relocation truncated to fit: ARM_26 __fixdfdi" during linking on GCC, see portdefs.h"
-	*/
-
-	// In Tremor, the ov_time_seek() and ov_time_seek_page() calls take seeking
-	// positions in milliseconds as 64 bit integers, rather than in seconds as
-	// doubles as in Vorbisfile.
-	ogg_int64_t totalTime;
-	_startTime = startTime;
-	_endTime = endTime;
+	_length = Timestamp(ov_time_total(&_ovFile, -1), getRate());
 #else
-	double totalTime;
-	_startTime = startTime / 1000.0;
-	_endTime = endTime / 1000.0;
+	_length = Timestamp(ov_time_total(&_ovFile, -1) * 1000.0, getRate());
 #endif
-
-	// If endTime was 0, or is past the end of the file, set it to the maximal time possible
-	totalTime = ov_time_total(&_ovFile, -1);
-	if (_endTime == 0 || _endTime > totalTime)
-		_endTime = totalTime;
-
-	// If the specified time range is empty, abort early.
-	if (_startTime >= _endTime) {
-		_pos = _bufferEnd;
-		return;
-	}
-
-	// Seek to the start position
-	res = ov_time_seek(&_ovFile, _startTime);
-	if (res < 0) {
-		warning("Error seeking in Vorbis stream (%d)", res);
-		_pos = _bufferEnd;
-		return;
-	}
 
 	// Read in initial data
 	if (!refill())
@@ -206,7 +153,7 @@ VorbisInputStream::~VorbisInputStream() {
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	int res, samples = 0;
+	int samples = 0;
 	while (samples < numSamples && _pos < _bufferEnd) {
 		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
@@ -216,24 +163,6 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_pos >= _bufferEnd) {
 			if (!refill())
 				break;
-
-			// If we are still out of data, and also past the end of specified
-			// time range, check whether looping is enabled...
-			if (_pos >= _bufferEnd && ov_time_tell(&_ovFile) >= _endTime) {
-				++_numPlayedLoops;
-				// If looping is on and there are loops left, rewind to the start
-				if (!_numLoops || _numPlayedLoops < _numLoops) {
-					res = ov_time_seek(&_ovFile, _startTime);
-					if (res < 0) {
-						warning("Error seeking in Vorbis stream (%d)", res);
-						_pos = _bufferEnd;
-						break;
-					}
-
-					if (!refill())
-						break;
-				}
-			}
 		}
 	}
 	return samples;
@@ -252,26 +181,12 @@ bool VorbisInputStream::seek(const Timestamp &where) {
 
 bool VorbisInputStream::refill() {
 	// Read the samples
-	int res;
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
 
 	while (len_left > 0) {
-		if (ov_time_tell(&_ovFile) >= _endTime) {
-			// If looping is on and there are loops left, rewind to the start
-			if (_numLoops == 1)
-				break;	// Last loop, abort
-			if (_numLoops != 0)
-				_numLoops--;
-			res = ov_time_seek(&_ovFile, _startTime);
-			if (res < 0) {
-				warning("Error seeking in Vorbis stream (%d)", res);
-				_pos = _bufferEnd;
-				return false;
-			}
-		}
-
 		long result;
+
 #ifdef USE_TREMOR
 		// Tremor ov_read() always returns data as signed 16 bit interleaved PCM
 		// in host byte order. As such, it does not take arguments to request
@@ -297,9 +212,10 @@ bool VorbisInputStream::refill() {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
 		} else if (result == 0) {
-			warning("End of file while reading from Vorbis file");
-			_pos = _bufferEnd;
-			return false;
+			//warning("End of file while reading from Vorbis file");
+			//_pos = _bufferEnd;
+			//return false;
+			break;
 		} else if (result < 0) {
 			warning("Error reading from Vorbis stream (%d)", int(result));
 			_pos = _bufferEnd;
@@ -324,29 +240,36 @@ bool VorbisInputStream::refill() {
 #pragma mark -
 
 
-SeekableAudioStream *makeVorbisStream(
+AudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
 	uint32 startTime,
 	uint32 duration,
 	uint numLoops) {
 
-	uint32 endTime = duration ? (startTime + duration) : 0;
+	SeekableAudioStream *input = new VorbisInputStream(stream, disposeAfterUse);
+	assert(input);
 
-	VorbisInputStream *input = new VorbisInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
+	if (startTime || duration) {
+		Timestamp start(startTime, 1000), end(startTime + duration, 1000);
 
-	if (input->endOfData()) {
-		delete input;
-		return 0;
+		if (!duration)
+			end = input->getLength();
+
+		input = new SubSeekableAudioStream(input, start, end);
+		assert(input);
 	}
 
-	return input;
+	if (numLoops)
+		return new LoopingAudioStream(input, numLoops);
+	else
+		return input;
 }
 
 SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse) {
-	return makeVorbisStream(stream, disposeAfterUse, 0, 0, 1);
+	return new VorbisInputStream(stream, disposeAfterUse);
 }
 
 } // End of namespace Audio

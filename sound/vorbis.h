@@ -51,6 +51,7 @@ namespace Common {
 
 namespace Audio {
 
+class AudioStream;
 class SeekableAudioStream;
 
 /**
@@ -69,7 +70,7 @@ class SeekableAudioStream;
  * @param numLoops			how often the data shall be looped (0 = infinite)
  * @return	a new SeekableAudioStream, or NULL, if an error occured
  */
-SeekableAudioStream *makeVorbisStream(
+AudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
 	uint32 startTime,

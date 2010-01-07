@@ -43,7 +43,7 @@ enum {
 
 struct CompressedSoundFile {
 	const char *filename;
-	Audio::SeekableAudioStream *(*makeStream)(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops);
+	Audio::AudioStream *(*makeStream)(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops);
 };
 
 static const CompressedSoundFile compressedSoundFilesTable[] = {

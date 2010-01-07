@@ -59,15 +59,8 @@ protected:
 	uint _posInFrame;
 	State _state;
 
-	const mad_timer_t _startTime;
-	const mad_timer_t _endTime;
+	Timestamp _length;
 	mad_timer_t _totalTime;
-
-	int32 _totalPlayTime; // Length of one loop iteration
-	uint32 _length;       // Total length of the MP3 stream
-
-	uint _numLoops;			///< Number of loops to play
-	uint _numPlayedLoops;	///< Number of loops which have been played
 
 	mad_stream _stream;
 	mad_frame _frame;
@@ -82,10 +75,7 @@ protected:
 
 public:
 	MP3InputStream(Common::SeekableReadStream *inStream,
-	               bool dispose,
-	               mad_timer_t start = mad_timer_zero,
-	               mad_timer_t end = mad_timer_zero,
-	               uint numLoops = 1);
+	               bool dispose);
 	~MP3InputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -95,15 +85,7 @@ public:
 	int getRate() const			{ return _frame.header.samplerate; }
 
 	bool seek(const Timestamp &where);
-	// TODO: Maybe we can have a more precise implementation of this
-	Timestamp getLength() const { return Timestamp(_totalPlayTime, getRate()); }
-
-	void setNumLoops(uint numLoops) {
-		_numLoops = numLoops;
-		_numPlayedLoops = 0;
-	}
-	uint getNumPlayedLoops() { return _numPlayedLoops; }
-
+	Timestamp getLength() const { return _length; }
 protected:
 	void decodeMP3Data();
 	void readMP3Data();
@@ -113,18 +95,13 @@ protected:
 	void deinitStream();
 };
 
-MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispose, mad_timer_t start, mad_timer_t end, uint numLoops) :
+MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
-	_numLoops(numLoops),
 	_posInFrame(0),
 	_state(MP3_STATE_INIT),
-	_startTime(start),
-	_endTime(end),
+	_length(0, 1000),
 	_totalTime(mad_timer_zero) {
-
-	// Make sure that either start < end, or end is zero (indicating "play until end")
-	assert(mad_timer_compare(_startTime, _endTime) < 0 || mad_timer_sign(_endTime) == 0);
 
 	// The MAD_BUFFER_GUARD must always contain zeros (the reason
 	// for this is that the Layer III Huffman decoder of libMAD
@@ -137,32 +114,12 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 	while (_state != MP3_STATE_EOS)
 		readHeader();
 
-	_length = mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS);
+	_length = Timestamp(mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS), getRate());
 
 	deinitStream();
 
 	// Reinit stream
 	_state = MP3_STATE_INIT;
-
-	// Calculate play time
-	mad_timer_t length;
-
-	mad_timer_set(&length, 0, 0, 1000);
-	mad_timer_add(&length, start);
-	mad_timer_negate(&length);
-
-	if (mad_timer_sign(end) != 0) {
-		mad_timer_add(&length, end);
-	} else {
-		mad_timer_set(&_totalTime, _length / 1000, _length % 1000, 1000);
-		mad_timer_add(&length, _totalTime);
-		_totalTime = mad_timer_zero;
-	}
-
-	_totalPlayTime = mad_timer_count(length, MAD_UNITS_MILLISECONDS);
-
-	if (mad_timer_sign(length) < 0)
-		_totalPlayTime = 0;
 
 	// Decode the first chunk of data. This is necessary so that _frame
 	// is setup and isStereo() and getRate() return correct results.
@@ -189,17 +146,8 @@ void MP3InputStream::decodeMP3Data() {
 			readMP3Data();
 
 		while (_state == MP3_STATE_READY) {
+			// TODO: Do we need to use readHeader, when we do not do any seeking here?
 			readHeader();
-
-			// If we have not yet reached the start point, skip to the next frame
-			if (mad_timer_compare(_totalTime, _startTime) < 0)
-				continue;
-
-			// If an end time is specified and we are past it, stop
-			if (mad_timer_sign(_endTime) > 0 && mad_timer_compare(_totalTime, _endTime) >= 0) {
-				_state = MP3_STATE_EOS;
-				break;
-			}
 
 			// Decode the next frame
 			if (mad_frame_decode(&_frame, &_stream) == -1) {
@@ -222,18 +170,6 @@ void MP3InputStream::decodeMP3Data() {
 			_posInFrame = 0;
 			break;
 		}
-
-		if (_state == MP3_STATE_EOS) {
-			++_numPlayedLoops;
-			// If looping is on and there are loops left, rewind to the start
-			if (!_numLoops || _numPlayedLoops < _numLoops) {
-				deinitStream();
-
-				// Reset the decoder state to indicate we should start over
-				_state = MP3_STATE_INIT;
-			}
-		}
-
 	} while (_state != MP3_STATE_EOS && _stream.error == MAD_ERROR_BUFLEN);
 
 	if (_stream.error != MAD_ERROR_NONE)
@@ -271,14 +207,14 @@ void MP3InputStream::readMP3Data() {
 }
 
 bool MP3InputStream::seek(const Timestamp &where) {
-	const uint32 time = where.msecs();
-
-	if (time == _length) {
+	if (where == _length) {
 		_state = MP3_STATE_EOS;
 		return true;
-	} else if (time > _length) {
+	} else if (where > _length) {
 		return false;
 	}
+
+	const uint32 time = where.msecs();
 
 	mad_timer_t destination;
 	mad_timer_set(&destination, time / 1000, time % 1000, 1000);
@@ -402,33 +338,36 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark --- MP3 factory functions ---
 #pragma mark -
 
-SeekableAudioStream *makeMP3Stream(
+AudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse,
 	uint32 startTime,
 	uint32 duration,
 	uint numLoops) {
 
-	mad_timer_t start;
-	mad_timer_t end;
+	SeekableAudioStream *mp3 = new MP3InputStream(stream, disposeAfterUse);
+	assert(mp3);
 
-	// Both startTime and duration are given in milliseconds.
-	// Calculate the appropriate mad_timer_t values from them.
-	mad_timer_set(&start, startTime / 1000, startTime % 1000, 1000);
-	if (duration == 0) {
-		end = mad_timer_zero;
-	} else {
-		int endTime = startTime + duration;
-		mad_timer_set(&end, endTime / 1000, endTime % 1000, 1000);
+	if (startTime || duration) {
+		Timestamp start(startTime, 1000), end(startTime + duration, 1000);
+
+		if (!duration)
+			end = mp3->getLength();
+
+		mp3 = new SubSeekableAudioStream(mp3, start, end);
+		assert(mp3);
 	}
 
-	return new MP3InputStream(stream, disposeAfterUse, start, end, numLoops);
+	if (numLoops)
+		return new LoopingAudioStream(mp3, numLoops);
+	else
+		return mp3;
 }
 
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse) {
-	return makeMP3Stream(stream, disposeAfterUse, 0, 0, 1);
+	return new MP3InputStream(stream, disposeAfterUse);
 }
 
 } // End of namespace Audio
