@@ -724,30 +724,6 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 #pragma mark --- Flac factory functions ---
 #pragma mark -
 
-
-AudioStream *makeFlacStream(
-	Common::SeekableReadStream *stream,
-	bool disposeAfterUse,
-	uint32 startTime,
-	uint32 duration,
-	uint numLoops) {
-
-	SeekableAudioStream *input = new FlacInputStream(stream, disposeAfterUse);
-	assert(input);
-
-	if (startTime || duration) {
-		Timestamp start(startTime, 1000), end(startTime + duration, 1000);
-
-		if (!duration)
-			end = input->getLength();
-
-		input = new SubSeekableAudioStream(input, start, end);
-		assert(input);
-	}
-
-	return makeLoopingAudioStream(input, numLoops);
-}
-
 SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse) {

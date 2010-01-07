@@ -338,29 +338,6 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark --- MP3 factory functions ---
 #pragma mark -
 
-AudioStream *makeMP3Stream(
-	Common::SeekableReadStream *stream,
-	bool disposeAfterUse,
-	uint32 startTime,
-	uint32 duration,
-	uint numLoops) {
-
-	SeekableAudioStream *mp3 = new MP3InputStream(stream, disposeAfterUse);
-	assert(mp3);
-
-	if (startTime || duration) {
-		Timestamp start(startTime, 1000), end(startTime + duration, 1000);
-
-		if (!duration)
-			end = mp3->getLength();
-
-		mp3 = new SubSeekableAudioStream(mp3, start, end);
-		assert(mp3);
-	}
-
-	return makeLoopingAudioStream(mp3, numLoops);
-}
-
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse) {

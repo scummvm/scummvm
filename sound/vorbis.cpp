@@ -239,30 +239,6 @@ bool VorbisInputStream::refill() {
 #pragma mark --- Ogg Vorbis factory functions ---
 #pragma mark -
 
-
-AudioStream *makeVorbisStream(
-	Common::SeekableReadStream *stream,
-	bool disposeAfterUse,
-	uint32 startTime,
-	uint32 duration,
-	uint numLoops) {
-
-	SeekableAudioStream *input = new VorbisInputStream(stream, disposeAfterUse);
-	assert(input);
-
-	if (startTime || duration) {
-		Timestamp start(startTime, 1000), end(startTime + duration, 1000);
-
-		if (!duration)
-			end = input->getLength();
-
-		input = new SubSeekableAudioStream(input, start, end);
-		assert(input);
-	}
-
-	return makeLoopingAudioStream(input, numLoops);
-}
-
 SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	bool disposeAfterUse) {

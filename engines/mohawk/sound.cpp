@@ -448,7 +448,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	} else if (data_chunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, Common::DisposeAfterUse::YES);
-		return Audio::makeMP3Stream(dataStream, true, 0, 0, !loop);
+		return Audio::makeLoopingAudioStream(Audio::makeMP3Stream(dataStream, true), loop ? 0 : 1);
 #else
 		warning ("MAD library not included - unable to play MP2 audio");
 #endif
