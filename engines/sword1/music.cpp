@@ -215,7 +215,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.wav", fileBase);
 		if (_file.open(fileName))
-			_audioSource = Audio::makeWAVStream(&_file, false, loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeWAVStream(&_file, false), loop ? 0 : 1);
 	}
 
 	if (!_audioSource) {

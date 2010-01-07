@@ -44,7 +44,7 @@ namespace Common { class SeekableReadStream; }
 
 namespace Audio {
 
-class AudioStream;
+class RewindableAudioStream;
 
 /**
  * Try to load a WAVE from the given seekable stream. Returns true if
@@ -70,13 +70,11 @@ extern bool loadWAVFromStream(
  *
  * @param stream			the SeekableReadStream from which to read the WAVE data
  * @param disposeAfterUse	whether to delete the stream after use
- * @param loop				whether to loop the sound (infinitely)
- * @return	a new AudioStream, or NULL, if an error occured
+ * @return	a new RewindableAudioStream, or NULL, if an error occured
  */
-AudioStream *makeWAVStream(
+RewindableAudioStream *makeWAVStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse = false,
-	bool loop = false);
+	bool disposeAfterUse = false);
 
 } // End of namespace Audio
 

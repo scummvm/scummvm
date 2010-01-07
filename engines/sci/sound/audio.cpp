@@ -230,7 +230,7 @@ Audio::AudioStream* AudioPlayer::getAudioStream(uint32 number, uint32 volume, in
 			if (memcmp(audioRes->data, "RIFF", 4) == 0) {
 				// WAVE detected
 				Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, Common::DisposeAfterUse::NO);
-				audioStream = Audio::makeWAVStream(waveStream, true, false);
+				audioStream = Audio::makeWAVStream(waveStream, true);
 			}
 		}
 		if (!audioStream) {

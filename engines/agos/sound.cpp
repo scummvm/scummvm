@@ -783,12 +783,15 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, size);
-	Audio::AudioStream *sndStream = Audio::makeWAVStream(stream, true, loop);
+	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, true);
 
 	convertVolume(vol);
 	convertPan(pan);
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, sndStream, -1, vol, pan);
+	if (loop)
+		_mixer->playInputStreamLooping(Audio::Mixer::kSFXSoundType, handle, sndStream, 0, -1, vol, pan);
+	else
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, sndStream, -1, vol, pan);
 }
 
 void Sound::stopSfx5() {

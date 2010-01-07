@@ -604,7 +604,7 @@ Audio::AudioStream *AnimationSequencePlayer::loadSound(int index, AnimationSound
 			break;
 		case kAnimationSoundTypeWAV:
 		case kAnimationSoundTypeLoopingWAV:
-			stream = Audio::makeWAVStream(&f, true, type == kAnimationSoundTypeLoopingWAV);
+			stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(&f, true), type == kAnimationSoundTypeLoopingWAV ? 0 : 1);
 			break;
 		}
 		

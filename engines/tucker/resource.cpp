@@ -946,11 +946,12 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		snprintf(fileName, sizeof(fileName), fmt, num);
 		Common::File *f = new Common::File;
 		if (f->open(fileName)) {
-			stream = Audio::makeWAVStream(f, true, loop);
+			stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(f, true), loop ? 0 : 1);
 		} else {
 			delete f;
 		}
 	}
+
 	if (stream) {
 		_mixer->stopHandle(*handle);
 		_mixer->playInputStream(type, handle, stream, -1, scaleMixerVolume(volume, kMaxSoundVolume));

@@ -161,7 +161,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	return true;
 }
 
-AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfterUse, bool loop) {
+RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfterUse) {
 	int size, rate;
 	byte flags;
 	uint16 type;
@@ -174,9 +174,9 @@ AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfter
 	}
 
 	if (type == 17) // MS IMA ADPCM
-		return makeLoopingAudioStream(makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign), loop ? 0 : 1);
+		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 	else if (type == 2) // MS ADPCM
-		return makeLoopingAudioStream(makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign), loop ? 0 : 1);
+		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 	
 	// Raw PCM. Just read everything at once.
 	// TODO: More elegant would be to wrap the stream.
@@ -189,9 +189,6 @@ AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfter
 
 	// Since we allocated our own buffer for the data, we must set the autofree flag.
 	flags |= Audio::Mixer::FLAG_AUTOFREE;
-	
-	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
 
 	return makeLinearInputStream(data, size, rate, flags, 0, 0);
 }
