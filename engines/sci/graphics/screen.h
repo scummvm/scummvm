@@ -57,6 +57,7 @@ public:
 	void copyFromScreen(byte *buffer);
 	void syncWithFramebuffer();
 	void copyRectToScreen(const Common::Rect &rect);
+	void copyDisplayRectToScreen(const Common::Rect &rect);
 	void copyRectToScreen(const Common::Rect &rect, int16 x, int16 y);
 
 	byte getDrawingMask(byte color, byte prio, byte control);

@@ -33,6 +33,8 @@ public:
 	Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, Common::String resourceName);
 	~Portrait();
 
+	void draw(Common::Point position);
+
 private:
 	void init();
 
@@ -41,7 +43,17 @@ private:
 	SciPalette *_palette;
 
 	Common::String _resourceName;
-	byte *_resourceData;
+	Common::String _fileName;
+	byte *_fileData;
+	int32 _fileSize;
+
+	uint16 _height;
+	uint16 _width;
+	uint16 _animationCount;
+	uint16 _portraitPaletteSize;
+	Palette _portraitPalette;
+
+	byte *_mainBitmapData;
 };
 
 } // End of namespace Sci

@@ -106,6 +106,13 @@ void Screen::copyRectToScreen(const Common::Rect &rect) {
 	}
 }
 
+// This copies a rect to screen w/o scaling adjustment and is only meant to be used on hires graphics used in upscaled hires mode
+void Screen::copyDisplayRectToScreen(const Common::Rect &rect) {
+	if (!_upscaledHires)
+		error("copyDisplayRectToScreen: not in upscaled hires mode");
+	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+}
+
 void Screen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());

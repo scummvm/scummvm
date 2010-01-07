@@ -47,12 +47,13 @@ void Portrait::init() {
 	// .BIN files are loaded from actors directory and from .\ directory
 	// header:
 	// 3 bytes "WIN"
-	// 2 bytes main height (should be the same as first bitmap header height)
 	// 2 bytes main width (should be the same as first bitmap header width)
+	// 2 bytes main height (should be the same as first bitmap header height)
 	// 2 bytes animation count
 	// 2 bytes unknown
 	// 2 bytes unknown
 	// 4 bytes paletteSize (base 1)
+	//  -> 17 bytes
 	// paletteSize bytes paletteData
 	// 14 bytes bitmap header
 	//  -> 4 bytes unknown
@@ -61,6 +62,63 @@ void Portrait::init() {
 	//  -> 6 bytes unknown
 	// height * width bitmap data
 	// another animation count times bitmap header and data
+	Common::SeekableReadStream *file = 0;
+	_fileName = "actors/" + _resourceName + ".bin";
+	file = SearchMan.createReadStreamForMember(_fileName);
+	if (!file) {
+		_fileName = _resourceName + ".bin";
+		file = SearchMan.createReadStreamForMember(_fileName);
+		if (!file)
+			error("portrait %s.bin not found", _resourceName.c_str());
+	}
+	_fileSize = file->size();
+	_fileData = new byte[_fileSize];
+	file->read(_fileData, _fileSize);
+	delete file;
+
+	if (strncmp((char *)_fileData, "WIN", 3)) {
+		error("portrait %s doesn't have valid header", _resourceName.c_str());
+	}
+	_width = READ_LE_UINT16(_fileData + 3);
+	_height = READ_LE_UINT16(_fileData + 5);
+	_animationCount = READ_LE_UINT16(_fileData + 7);
+
+	_portraitPaletteSize = READ_LE_UINT16(_fileData + 13);
+	byte *data = _fileData + 17;
+	// Read palette
+	memset(&_portraitPalette, 0, sizeof(Palette));
+	uint16 palSize = 0, palNr = 0;
+	while (palSize < _portraitPaletteSize) {
+		_portraitPalette.colors[palNr].b = *data++;
+		_portraitPalette.colors[palNr].g = *data++;
+		_portraitPalette.colors[palNr].r = *data++;
+		_portraitPalette.colors[palNr].used = 1;
+		_portraitPalette.intensity[palNr] = 100;
+		palNr++; palSize += 3;
+	}
+
+	// Read main bitmap
+	assert(READ_LE_UINT16(data + 4) == _height);
+	assert(READ_LE_UINT16(data + 6) == _width);
+	data += 14; // Skip over bitmap header
+	_mainBitmapData = data;
+	data += _height * _width;
+	
+	// TODO: Read animation bitmaps
+}
+
+void Portrait::draw(Common::Point position) {
+	byte *data = _mainBitmapData;
+	_palette->set(&_portraitPalette, 1);
+	for (int y = 0; y < _height; y++) {
+		for (int x = 0; x < _width; x++) {
+			_screen->putPixelOnDisplay(position.x + x, position.y + y, _portraitPalette.mapping[*data++]);
+		}
+	}
+
+	Common::Rect mainBitmap = Common::Rect(_width, _height);
+	mainBitmap.moveTo(position.x, position.y);
+	_screen->copyDisplayRectToScreen(mainBitmap);
 }
 
 } // End of namespace Sci

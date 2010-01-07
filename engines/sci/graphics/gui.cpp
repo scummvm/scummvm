@@ -39,6 +39,7 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
+#include "sci/graphics/portrait.h"
 #include "sci/graphics/robot.h"
 #include "sci/graphics/text.h"
 #include "sci/graphics/transitions.h"
@@ -827,10 +828,15 @@ void SciGui::syncWithFramebuffer() {
 }
 
 reg_t SciGui::portraitLoad(Common::String resourceName) {
+	//Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, resourceName);
 	return NULL_REG;
 }
 
 void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+	Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, resourceName);
+	// TODO: cache portraits
+	myPortrait->draw(position);
+	delete myPortrait;
 }
 
 void SciGui::portraitUnload(uint16 portraitId) {
