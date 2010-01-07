@@ -333,17 +333,11 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 	}
 }
 
-AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
-	_musicStream = 0;
-}
 
-AmigaSoundMan_ns::~AmigaSoundMan_ns() {
-	stopMusic();
-	stopSfx(0);
-	stopSfx(1);
-	stopSfx(2);
-	stopSfx(3);
-}
+
+
+#pragma mark Amiga sound manager code
+
 
 #define AMIGABEEP_SIZE	16
 #define NUM_REPEATS		60
@@ -352,21 +346,37 @@ static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
 	0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20
 };
 
+AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
+	_musicStream = 0;
+
+	// initialize the waveform for the 'beep' sound
+	beepSoundBufferSize = AMIGABEEP_SIZE * NUM_REPEATS;
+	beepSoundBuffer = new int8[beepSoundBufferSize];
+	int8 *odata = beepSoundBuffer;
+	for (int i = 0; i < NUM_REPEATS; i++) {
+		memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
+		odata += AMIGABEEP_SIZE;
+	}
+
+}
+
+AmigaSoundMan_ns::~AmigaSoundMan_ns() {
+	stopMusic();
+	stopSfx(0);
+	stopSfx(1);
+	stopSfx(2);
+	stopSfx(3);
+
+	delete []beepSoundBuffer;
+}
+
 Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch, bool looping) {
 	Audio::AudioStream *input = 0;
 
 	if (!scumm_stricmp("beep", filename)) {
-		// TODO: make a permanent stream out of this
-		uint32 dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
-		int8 *data = (int8*)malloc(dataSize);
-		int8 *odata = data;
-		for (uint i = 0; i < NUM_REPEATS; i++) {
-			memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
-			odata += AMIGABEEP_SIZE;
-		}
 		int rate = 11934;
 		ch->volume = 160;
-		input = Audio::makeLinearInputStream((byte *)data, dataSize, rate, Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+		input = Audio::makeLinearInputStream((byte *)beepSoundBuffer, beepSoundBufferSize, rate, 0, 0, 0);
 	} else {
 		Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 		input = Audio::make8SVXStream(*stream, looping);

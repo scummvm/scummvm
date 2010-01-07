@@ -156,6 +156,9 @@ class AmigaSoundMan_ns : public SoundMan_ns {
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
 
+	uint32 	beepSoundBufferSize;
+	int8	*beepSoundBuffer;
+
 	Channel _channels[NUM_SFX_CHANNELS];
 
 	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
