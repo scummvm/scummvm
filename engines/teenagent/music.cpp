@@ -43,7 +43,7 @@ MusicPlayer::~MusicPlayer() {
 bool MusicPlayer::load(int id) {
 	Resources *res = Resources::instance();
 
-	Common::SeekableReadStream *stream	= res->mmm.getStream(id);
+	Common::SeekableReadStream *stream = res->mmm.getStream(id);
 	if (stream == NULL)
 		return false;
 
@@ -90,18 +90,24 @@ bool MusicPlayer::load(int id) {
 	while (!stream->eos()) {
 
 		byte cmd = stream->readByte();
+		debug(1, "cmd = %02x", cmd);
 
-		if ((cmd & 0xF0) == 0x50) {
-			row.channels[(cmd & 0x0F) - 1].sample = stream->readByte();
-		} else if ((cmd & 0xF0) == 0x40) {
-			row.channels[(cmd & 0x0F) - 1].volume = (stream->readByte() + 1) * 2;
-		} else {
+		if (cmd < 0x40) {
 			row.channels[0].note = cmd;
 			row.channels[1].note = stream->readByte();
 			row.channels[2].note = stream->readByte();
 			_rows.push_back(row);
+		} else if ((cmd & 0xF0) == 0x50) {
+			byte sample = stream->readByte();
+			//debug(1, "%02x: set sample %02x", cmd, sample);
+			row.channels[(cmd & 0x0F) - 1].sample = sample;
+		} else if ((cmd & 0xF0) == 0x40) {
+			byte vol = stream->readByte();
+			//debug(1, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
+			row.channels[(cmd & 0x0F) - 1].volume = vol;
+		} else {
+			debug(0, "unhandled music command %02x", cmd);
 		}
-
 	}
 	_currRow = 0;
 	_id = id;
