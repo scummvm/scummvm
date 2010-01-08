@@ -82,7 +82,7 @@ bool Inventory::has(byte item) const {
 }
 
 void Inventory::remove(byte item) {
-	debug(0, "removing %02x from inventory", item);
+	debug(0, "removing %u from inventory", item);
 	int i;
 	for (i = 0; i < 24; ++i) {
 		if (inventory[i] == item) {
@@ -109,14 +109,14 @@ void Inventory::clear() {
 void Inventory::add(byte item) {
 	if (has(item))
 		return;
-	debug(0, "adding %02x to inventory", item);
+	debug(0, "adding %u to inventory", item);
 	for (int i = 0; i < 24; ++i) {
 		if (inventory[i] == 0) {
 			inventory[i] = item;
 			return;
 		}
 	}
-	error("no room for item %02x", item);
+	error("no room for item %u", item);
 }
 
 bool Inventory::processEvent(const Common::Event &event) {
@@ -178,12 +178,15 @@ bool Inventory::processEvent(const Common::Event &event) {
 			    (id1 == table[0] && id2 == table[1]) ||
 			    (id2 == table[0] && id1 == table[1])
 			) {
-				remove(id1);
-				remove(id2);
-				debug(0, "adding object %u", table[2]);
-				add(table[2]);
+				byte new_obj = table[2];
+				if (new_obj != 0) {
+					remove(id1);
+					remove(id2);
+					debug(0, "adding object %u", new_obj);
+					add(new_obj);
+					_engine->playSoundNow(69);
+				}
 				uint16 msg = READ_LE_UINT16(table + 3);
-				_engine->playSoundNow(69);
 				_engine->displayMessage(msg);
 				activate(false);
 				resetSelectedObject();
