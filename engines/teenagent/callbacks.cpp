@@ -656,7 +656,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	return true;
 
 	case 0x4d94: //talking with fatso
-		//Dialog::show(scene, 0x33bd, 0, 666, 0xd1, 0xd0, 0, 2);
+		Dialog::show(scene, 0x33bd, 0, 666, 0xd1, 0xd0, 0, 2);
 		displayAsyncMessage(0x49ae, /*25060*/ 35000, 1, 10, 0xd0);
 		playSound(5, 3);
 		playAnimation(667, 1);
@@ -1704,6 +1704,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				moveRel(20, 0, 1);
 				displayMessage(0x458e);
 				moveTo(p, 3);
+				displayMessage(0x459f);
 				SET_FLAG(0xDBB4, 1);
 				break;
 			case 1:
@@ -2632,7 +2633,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(670, true);
 			waitAnimation();
 			//playAnimation(672, 1);
-			Dialog::show(scene, 0x2a00, 0, 672, 0xd1, 0xe5, 0, 2);
+			Dialog::show(scene, 0x2a00, 524, 672, 0xd1, 0xe5, 0, 2);
 			//playAnimation(672, 1);
 
 			playSound(83, 12);
@@ -2679,6 +2680,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(658, 0, true);
 		waitAnimation();
 
+		reloadLan();
 		playAnimation(659, 0);
 
 		inventory->remove(36);
@@ -3155,7 +3157,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x6c83:
-		Dialog::pop(scene, 0xdb2e, 0, 727, 0xd1, 0xef, 0, 1);
+		Dialog::pop(scene, 0xdb2e, 0, 0, 0xd1, 0xef, 0, 1);
 		scene->getObject(1)->setName((const char *)res->dseg.ptr(0xaa94));
 		SET_FLAG(0xDBD1, 1);
 		return true;
@@ -3342,6 +3344,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 		
 	case 0x77d5:
+		if (CHECK_FLAG(0xdbd7, 1) && !CHECK_FLAG(0xdbd8, 1)) { //disallow exiting through the first door until switch turned on, not present in original game
+			displayMessage(0x52cb);
+			return true;
+		}
 		playSound(89, 6);
 		playActorAnimation(978);
 		loadScene(31, 298, 177, 4);
@@ -3975,7 +3981,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayCutsceneMessage(0x580a, 30484);
 		processCallback(ptr);
 		playMusic(6);
-		if (scene->getId() == 11 && CHECK_FLAG(0xDBEC, 1))
+		if (CHECK_FLAG(0xDBEC, 1) && ptr == 0x9f3e)
 			return true;
 		//some effect
 		loadScene(id, scene->getPosition());
