@@ -202,7 +202,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				track->mixerFlags |= kFlagLittleEndian;
 #endif
 
-			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
+			track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
 
 			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
 			_mixer->pauseHandle(track->mixChanHandle, true);
@@ -344,7 +344,7 @@ void IMuseDigital::callback() {
 						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
-						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize);
+						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize, makeMixerFlags(track->mixerFlags));
 						track->regionOffset += curFeedSize;
 					} else
 						delete[] tmpSndBufferPtr;

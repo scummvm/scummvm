@@ -469,10 +469,10 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 					} while (--count);
 
 					if (!_IACTstream) {
-						_IACTstream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
+						_IACTstream = Audio::makeQueuingAudioStream(22050, true);
 						_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_IACTchannel, _IACTstream);
 					}
-					_IACTstream->queueBuffer(output_data, 0x1000);
+					_IACTstream->queueBuffer(output_data, 0x1000, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
 
 					bsize -= len;
 					d_src += len;

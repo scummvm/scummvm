@@ -44,7 +44,7 @@ private:
 		int id;
 		SmushChannel *chan;
 		Audio::SoundHandle handle;
-		Audio::AppendableAudioStream *stream;
+		Audio::QueuingAudioStream *stream;
 	} _channels[NUM_CHANNELS];
 
 	int _soundFrequency;

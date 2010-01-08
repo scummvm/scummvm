@@ -122,12 +122,12 @@ bool SmushMixer::handleFrame() {
 				if (_mixer->isReady()) {
 					// Stream the data
 					if (!_channels[i].stream) {
-						_channels[i].stream = Audio::makeAppendableAudioStream(_channels[i].chan->getRate(), flags);
+						_channels[i].stream = Audio::makeQueuingAudioStream(_channels[i].chan->getRate(), stereo);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
-					_channels[i].stream->queueBuffer(data, size);	// The stream will free the buffer for us
+					_channels[i].stream->queueBuffer(data, size, flags);	// The stream will free the buffer for us
 				} else
 					delete[] data;
 			}

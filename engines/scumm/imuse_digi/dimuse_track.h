@@ -76,7 +76,7 @@ struct Track {
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
 	Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
-	Audio::AppendableAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
+	Audio::QueuingAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
 
 	Track() : soundId(-1), used(false), stream(NULL) {
 	}
