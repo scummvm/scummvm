@@ -340,7 +340,9 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 
 	assert(input);
 
-	_vm->_mixer->playInputStreamLooping(soundType, handle, input, loop ? 0 : 1, -1, vol, pan, true, false, isReverseStereo());
+	_vm->_mixer->playInputStream(soundType, handle,
+	                             Audio::makeLoopingAudioStream(input, loop ? 0 : 1),
+	                             -1, vol, pan, true, false, isReverseStereo());
 
 	return RD_OK;
 }

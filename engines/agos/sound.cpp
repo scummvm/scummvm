@@ -788,7 +788,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	convertVolume(vol);
 	convertPan(pan);
 
-	_mixer->playInputStreamLooping(Audio::Mixer::kSFXSoundType, handle, sndStream, loop ? 0 : 1, -1, vol, pan);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
 }
 
 void Sound::stopSfx5() {

@@ -635,7 +635,8 @@ void AnimationSequencePlayer::updateSounds() {
 			break;
 		case 1:
 			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
-				_mixer->playInputStreamLooping(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, 0, -1, scaleMixerVolume(p->volume));
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
+				                        -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 2:

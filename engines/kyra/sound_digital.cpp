@@ -481,13 +481,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	if (type == Audio::Mixer::kSpeechSoundType && _vm->heliumMode())
 		use->stream->setRate(32765);
 
-	if (loop) {
-		Audio::Timestamp zero(0, 1000);
-		_mixer->playInputStreamLooping(type, &use->handle, use->stream, 0, zero, zero, -1, volume);
-	} else {
-		_mixer->playInputStream(type, &use->handle, use->stream, -1, volume);
-	}
-
+	_mixer->playInputStream(type, &use->handle, makeLoopingAudioStream(use->stream, loop ? 0 : 1), -1, volume);
 	return use - _sounds;
 }
 
