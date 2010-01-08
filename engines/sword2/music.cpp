@@ -66,7 +66,7 @@ public:
 };
 
 SafeSubReadStream::SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end)
-	: SeekableSubReadStream(parentStream, begin, end, Common::DisposeAfterUse::NO) {
+	: SeekableSubReadStream(parentStream, begin, end, DisposeAfterUse::NO) {
 	_previousPos = 0;
 }
 
@@ -302,7 +302,7 @@ Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
 
 	byte *buffer = (byte *)malloc(size);
 	file->read(buffer, size);
-	return new Audio::VagStream(new Common::MemoryReadStream(buffer, size, Common::DisposeAfterUse::YES));
+	return new Audio::VagStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES));
 }
 
 // ----------------------------------------------------------------------------

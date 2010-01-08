@@ -263,7 +263,7 @@ void MohawkEngine_LivingBooks::loadANI(uint16 resourceId) {
 
 Common::SeekableSubReadStreamEndian *MohawkEngine_LivingBooks::wrapStreamEndian(uint32 tag, uint16 id) {
 	Common::SeekableReadStream *dataStream = getRawData(tag, id);
-	return new Common::SeekableSubReadStreamEndian(dataStream, 0, dataStream->size(), isBigEndian(), Common::DisposeAfterUse::YES);
+	return new Common::SeekableSubReadStreamEndian(dataStream, 0, dataStream->size(), isBigEndian(), DisposeAfterUse::YES);
 }
 
 Common::String MohawkEngine_LivingBooks::getStringFromConfig(Common::String section, Common::String key) {

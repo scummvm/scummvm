@@ -78,7 +78,7 @@ Common::SeekableReadStream *PlainArchive::createReadStreamForMember(const Common
 	if (!parent)
 		return 0;
 
-	return new Common::SeekableSubReadStream(parent, fDesc->_value.offset, fDesc->_value.offset + fDesc->_value.size, Common::DisposeAfterUse::YES);
+	return new Common::SeekableSubReadStream(parent, fDesc->_value.offset, fDesc->_value.offset + fDesc->_value.size, DisposeAfterUse::YES);
 }
 
 // -> CachedArchive implementation
@@ -130,7 +130,7 @@ Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Commo
 	if (fDesc == _files.end())
 		return 0;
 
-	return new Common::MemoryReadStream(fDesc->_value.data, fDesc->_value.size, Common::DisposeAfterUse::NO);
+	return new Common::MemoryReadStream(fDesc->_value.data, fDesc->_value.size, DisposeAfterUse::NO);
 }
 
 // ResFileLoader implementations

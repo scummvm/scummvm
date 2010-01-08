@@ -26,7 +26,7 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "common/scummsys.h"
+#include "common/types.h"
 #include "common/endian.h"
 
 namespace Common {
@@ -390,10 +390,6 @@ public:
 	virtual String readLine();
 };
 
-
-namespace DisposeAfterUse {
-	enum Flag { NO, YES };
-}
 
 /**
  * SubReadStream provides access to a ReadStream restricted to the range

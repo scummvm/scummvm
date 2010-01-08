@@ -138,7 +138,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 	}
 
 	// Return a substream, skipping the metadata
-	Common::SeekableSubReadStream *sub = new Common::SeekableSubReadStream(savefile, metaDataSize, savefile->size(), Common::DisposeAfterUse::YES);
+	Common::SeekableSubReadStream *sub = new Common::SeekableSubReadStream(savefile, metaDataSize, savefile->size(), DisposeAfterUse::YES);
 
 	// Move to the beginning of the substream
 	sub->seek(0, SEEK_SET);

@@ -218,10 +218,10 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 	if (audioRes->headerSize > 0) {
 		// SCI1.1
-		Common::MemoryReadStream headerStream(audioRes->header, audioRes->headerSize, Common::DisposeAfterUse::NO);
+		Common::MemoryReadStream headerStream(audioRes->header, audioRes->headerSize, DisposeAfterUse::NO);
 
 		if (readSOLHeader(&headerStream, audioRes->headerSize, size, _audioRate, audioFlags)) {
-			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, Common::DisposeAfterUse::NO);
+			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 			data = readSOLAudio(&dataStream, size, audioFlags, flags);
 		}
 	} else {
@@ -229,7 +229,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		if (audioRes->size > 4) {
 			if (memcmp(audioRes->data, "RIFF", 4) == 0) {
 				// WAVE detected
-				Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, Common::DisposeAfterUse::NO);
+				Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 				audioStream = Audio::makeWAVStream(waveStream, true);
 			}
 		}

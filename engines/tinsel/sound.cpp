@@ -132,7 +132,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		Common::MemoryReadStream *compressedStream =
-			new Common::MemoryReadStream(sampleBuf, sampleLen, Common::DisposeAfterUse::YES);
+			new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 		Audio::AudioStream *sampleStream = 0;
 
 		// play it
@@ -283,7 +283,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	Common::MemoryReadStream *compressedStream =
-		new Common::MemoryReadStream(sampleBuf, sampleLen, Common::DisposeAfterUse::YES);
+		new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 	Audio::AudioStream *sampleStream = 0;
 
 	switch (_soundMode) {

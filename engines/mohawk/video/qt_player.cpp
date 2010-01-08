@@ -467,7 +467,7 @@ int QTPlayer::readCMOV(MOVatom atom) {
 	
 	// Load data into a new MemoryReadStream and assign _fd to be that
 	Common::SeekableReadStream *oldStream = _fd;
-	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, Common::DisposeAfterUse::YES);
+	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 	
 	// Read the contents of the uncompressed data
 	MOVatom a = { MKID_BE('moov'), 0, uncompressedSize };
@@ -1224,7 +1224,7 @@ void QTPlayer::updateAudioBuffer() {
 		}
 	
 		// Now queue the buffer
-		_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), Common::DisposeAfterUse::YES)));
+		_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
 		delete wStream;
 	}
 }

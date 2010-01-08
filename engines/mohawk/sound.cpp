@@ -441,13 +441,13 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			flags |= Audio::Mixer::FLAG_LOOP;
 		return Audio::makeLinearInputStream(data_chunk.audio_data, data_chunk.size, data_chunk.sample_rate, flags, data_chunk.loopStart, data_chunk.loopEnd);
 	} else if (data_chunk.encoding == kCodecADPCM) {
-		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, Common::DisposeAfterUse::YES);
+		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
 
 		return makeLoopingAudioStream(Audio::makeADPCMStream(dataStream, true, data_chunk.size, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign), loop ? 0 : 1);
 	} else if (data_chunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
-		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, Common::DisposeAfterUse::YES);
+		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		return Audio::makeLoopingAudioStream(Audio::makeMP3Stream(dataStream, true), loop ? 0 : 1);
 #else
 		warning ("MAD library not included - unable to play MP2 audio");

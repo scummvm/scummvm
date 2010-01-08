@@ -874,7 +874,7 @@ bool PCMMusicPlayer::getNextChunk() {
 				"offset %d (script %d.%d)", sampleCLength, sampleOffset,
 				_scriptNum, _scriptIndex - 1);
 
-		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, Common::DisposeAfterUse::YES);
+		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, DisposeAfterUse::YES);
 
 		delete _curChunk;
 		_curChunk = makeADPCMStream(sampleStream, true, sampleCLength,

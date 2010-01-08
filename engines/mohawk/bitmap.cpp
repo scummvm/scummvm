@@ -247,7 +247,7 @@ Common::SeekableReadStream *MohawkBitmap::decompressLZ(Common::SeekableReadStrea
 		}
 	}
 
-	return new Common::MemoryReadStream(outputData, uncompressedSize, Common::DisposeAfterUse::YES);
+	return new Common::MemoryReadStream(outputData, uncompressedSize, DisposeAfterUse::YES);
 }
 
 void MohawkBitmap::unpackLZ() {
@@ -316,7 +316,7 @@ void MohawkBitmap::unpackRiven() {
 	}
 
 	delete _data;
-	_data = new Common::MemoryReadStream(uncompressedData, _header.bytesPerRow * _header.height, Common::DisposeAfterUse::YES);
+	_data = new Common::MemoryReadStream(uncompressedData, _header.bytesPerRow * _header.height, DisposeAfterUse::YES);
 }
 
 static byte getLastTwoBits(byte c) {
