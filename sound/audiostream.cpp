@@ -144,6 +144,22 @@ AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops) {
 		return stream;
 }
 
+AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops) {
+	if (!start.totalNumberOfFrames() && (!end.totalNumberOfFrames() || end == stream->getLength())) {
+		return makeLoopingAudioStream(stream, loops);
+	} else {
+		if (!end.totalNumberOfFrames())
+			end = stream->getLength();
+
+		if (start > end) {
+			delete stream;
+			return 0;
+		}
+
+		return makeLoopingAudioStream(new SubSeekableAudioStream(stream, start, end), loops);
+	}
+}
+
 #pragma mark -
 #pragma mark --- SubSeekableAudioStream ---
 #pragma mark -

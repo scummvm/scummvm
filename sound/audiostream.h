@@ -197,6 +197,25 @@ public:
 };
 
 /**
+ * Wrapper functionallity to efficiently create a stream, which might be looped
+ * in a certain interval.
+ *
+ * This automatically starts the stream at time "start"!
+ *
+ * Note that this function does not return a LoopingAudioStream, because it does
+ * not create one, when the loop count is "1". This allows to keep the runtime
+ * overhead down, when the code does not require any functionallity only offered
+ * by LoopingAudioStream.
+ *
+ * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
+ * @param start Starttime of the stream interval to be looped
+ * @param end End of the stream interval to be looped (a zero time, means till end)
+ * @param loops How often to loop (0 = infinite)
+ * @return A new AudioStream, which offers the desired functionallity.
+ */
+AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops);
+
+/**
  * A SubSeekableAudioStream provides access to a SeekableAudioStream
  * just in the range [start, end).
  * The same caveats apply to SubSeekableAudioStream as do to SeekableAudioStream.
