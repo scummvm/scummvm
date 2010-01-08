@@ -803,7 +803,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	}
 
 	if (musicSlot->pStreamAud) {
-		// Update digital sound effect slots here
+		// Update digital sound effect slots
 		uint currentLoopCounter = 0;
 
 		if (musicSlot->pLoopStream)
@@ -825,20 +825,15 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->fadeSetVolume = false;
 		}
 	} else {
-		switch (musicSlot->signal) {
-			case 0:
-				if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
-					PUT_SEL32V(_segMan, obj, dataInc, musicSlot->dataInc);
-					PUT_SEL32V(_segMan, obj, signal, musicSlot->dataInc + 127);
-				}
-				break;
-			case SIGNAL_OFFSET:
-				PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
-				break;
-			default:
-				// Sync the signal of the sound object
-				PUT_SEL32V(_segMan, obj, signal, musicSlot->signal);
-				break;
+		// Update MIDI slots
+		if (musicSlot->signal == 0) {
+			if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
+				PUT_SEL32V(_segMan, obj, dataInc, musicSlot->dataInc);
+				PUT_SEL32V(_segMan, obj, signal, musicSlot->dataInc + 127);
+			}
+		} else {
+			// Sync the signal of the sound object
+			PUT_SEL32V(_segMan, obj, signal, musicSlot->signal);
 		}
 	}
 
