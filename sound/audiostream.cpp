@@ -231,6 +231,7 @@ protected:
 	const byte *_loopEnd;
 	const int _rate;
 	const byte *_origPtr;
+	const bool _disposeAfterUse;
 	const Timestamp _playtime;
 
 	uint _numLoops;			///< Number of loops to play
@@ -238,7 +239,8 @@ protected:
 
 public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
-		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate) {
+	    : _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _disposeAfterUse(autoFreeMemory),
+	      _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate) {
 
 		if (loopLen) {
 			_numLoops = 0;
@@ -249,10 +251,11 @@ public:
 		}
 		_numPlayedLoops = 0;
 
-		_origPtr = autoFreeMemory ? ptr : 0;
+		_origPtr = ptr;
 	}
 	virtual ~LinearMemoryStream() {
-		free(const_cast<byte *>(_origPtr));
+		if (_disposeAfterUse)
+			free(const_cast<byte *>(_origPtr));
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
 
