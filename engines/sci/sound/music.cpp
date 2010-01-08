@@ -67,6 +67,9 @@ void SciMusic::init() {
 	const MidiDriverDescription *md = MidiDriver::findMusicDriver(ConfMan.get("music_driver"));
 	_midiType = md ? md->id : MD_AUTO;
 
+	if (_midiType == MD_AUTO)
+		_midiType = MD_ADLIB;
+
 	switch (_midiType) {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
