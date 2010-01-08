@@ -886,7 +886,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *in = res->sam_sam.getStream(id);
 	if (in == NULL) {
-		debug(0, "skipping invalid sound %u", id);
+		warning("skipping invalid sound %u", id);
 		return;
 	}
 
