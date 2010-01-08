@@ -52,9 +52,9 @@ void enableAudioPlayback(void) {
 	OSystem_N64 *osys = (OSystem_N64*)g_system;
 	Audio::MixerImpl *_localmixer = (Audio::MixerImpl*)osys->getMixer();
 
-	uint32 samples = 4096; // 4096 bytes -> 2048 samples.
+	uint32 sampleBufferSize = 3072;
 
-	initAudioInterface(osys->_viClockRate, DEFAULT_SOUND_SAMPLE_RATE, 16, samples);
+	initAudioInterface(osys->_viClockRate, DEFAULT_SOUND_SAMPLE_RATE, 16, sampleBufferSize);
 	osys->_audioBufferSize = getAIBufferSize();
 
 	if (_firstRun) {
@@ -81,14 +81,11 @@ void vblCallback(void) {
 	// Switch display buffer
 	switchDisplayBuffer();
 
-#if 1
-	// If audio buffer got depleted, refill it.
+	// If audio buffer got depleted, ask for more slots to refill.
 	if (_audioEnabled && !AI_busy() && !_requiredSoundSlots) {
 		sndCallback();
 		sndCallback();
 	}
-#endif
-
 }
 
 void sndCallback() {
