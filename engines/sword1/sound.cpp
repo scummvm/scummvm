@@ -222,7 +222,7 @@ bool Sound::speechFinished() {
 
 void Sound::newScreen(uint32 screen) {
 	if (_currentCowFile != SwordEngine::_systemVars.currentCD) {
-		if (_currentCowFile)
+		if (_cowFile.isOpen())
 			closeCowSystem();
 		initCowSystem();
 	}
@@ -545,6 +545,9 @@ void Sound::stopSpeech() {
 }
 
 void Sound::initCowSystem() {
+	if (SwordEngine::_systemVars.currentCD == 0)
+		return;
+
 	char cowName[25];
 	/* look for speech1/2.clu in the data dir
 	   and speech/speech.clu (running from cd or using cd layout)
