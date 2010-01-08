@@ -151,7 +151,8 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 		if (!end.totalNumberOfFrames())
 			end = stream->getLength();
 
-		if (start > end) {
+		if (start >= end) {
+			warning("makeLoopingAudioStream: start (%d) >= end (%d)", start.msecs(), end.msecs());
 			delete stream;
 			return 0;
 		}
