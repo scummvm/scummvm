@@ -69,44 +69,10 @@ private:
 	Common::List<Chr> _chrs;
 
 public:
-	int getSoundFrequency() { return _soundFrequency; }
-	void setSoundFrequency(int soundFrequency) { _soundFrequency = soundFrequency; }
-
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
 	}
 
-	void setTextBounds(Common::Rect bounds) { _textBounds = new Common::Rect(bounds); }
-	
-	void setDirMessage(int dir, String message) { _messages[dir] = message; }
-	String getDirMessage(int dir) { return _messages[dir]; }
-
-	void setDirBlocked(int dir, bool blocked) { _blocked[dir] = blocked; }
-	bool isDirBlocked(int dir) { return _blocked[dir]; }
-
-	String getText() { return _text; }
-	void setText(String text) { _text = text; }
-
-	Script *getScript() { return _script; }
-	void setScript(Script *script) { _script = script; }
-
-	int getSoundType() { return _soundType; }
-	void setSoundType(int soundType) { _soundType = soundType; }
-
-	int getWorldX() { return _worldX; }
-	void setWorldX(int worldX) { _worldX = worldX; }
-
-	int getWorldY() { return _worldY; }
-	void setWorldY(int worldY) { _worldY = worldY; }
-
-	String getSoundName() { return _soundName; }
-	void setSoundName(String soundName) { _soundName = soundName; }
-
-	int getFontSize() { return _fontSize; }
-	void setFontSize(int fontSize) { _fontSize = fontSize; }
-
-	int getFontType() { return _fontType; }
- 
 #if 0
 	String getFontName() { 
 		String[] fonts = {
@@ -159,11 +125,6 @@ taliesin(24):Wingdings(Decorative)
 		return _"Unknown";
 	}
 #endif
-
-	void setFontType(int fontType) { _fontType = fontType; }
-
-	Common::List<Chr> getChrs() { return _chrs; }
-	Common::List<Obj> getObjs() { return _objs; }
 };
 
 } // End of namespace Wage

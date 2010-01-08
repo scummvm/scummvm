@@ -43,13 +43,6 @@ public:
 	Design *_design;
 	Common::Rect *_designBounds;
 
-	String getName() { return _name; }
-	void setName(String name) { _name = name; }
-	String toString() { return _name; }
-
-	Design *getDesign() { return _design; }
-	void setDesign(Design *design) { _design = design; }
-
 	Common::Rect *getDesignBounds() { 
 		return _designBounds == NULL ? NULL : new Common::Rect(*_designBounds);
 	}

@@ -34,7 +34,7 @@
 namespace Wage {
 
 World::World() {
-	_storageScene.setName(STORAGESCENE);
+	_storageScene._name = STORAGESCENE;
 	_orderedScenes.push_back(_storageScene);
 	_scenes[STORAGESCENE] = _storageScene;
 }

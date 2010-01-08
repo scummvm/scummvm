@@ -1,8 +1,15 @@
 MODULE := engines/wage
 
 MODULE_OBJS := \
+	design.o \
+	designed.o \
 	detection.o \
-	wage.o
+	macresman.o \
+	script.o \
+	sound.o \
+	util.o \
+	wage.o \
+	world.o
 
 MODULE_DIRS += \
 	engines/wage

@@ -34,13 +34,20 @@ namespace Wage {
 
 class Weapon {
 public:
-	virtual ~Weapon() {}
-	virtual String getOperativeVerb() = 0;
-	virtual int getType() = 0;
-	virtual int getAccuracy() = 0;
-	virtual int getDamage() = 0;
-	virtual String getSound() = 0;
-	virtual void decrementNumberOfUses() = 0;
+	int _accuracy;
+	String _operativeVerb;
+	int _type;
+	int _damage;
+	String _sound;
+	int _numberOfUses;
+
+	Weapon() : _numberOfUses(0) {}
+
+	void decrementNumberOfUses() { 
+		if (_numberOfUses != -1) {
+			_numberOfUses--;
+		}
+	}
 };
 
 class Design;
@@ -73,36 +80,27 @@ public:
 		FREEZES_OPPONENT = 6
 	};
 
-private:
+public:
 	int _index;
 	bool _namePlural;
-	int _type;
 	int _value;
-	int _damage;
-	int _accuracy;
 	int _attackType;
 	int _numberOfUses;
 	bool _returnToRandomScene;
 	String _sceneOrOwner;
 	String _clickMessage;
-	String _operativeVerb;
 	String _failureMessage;
 	String _useMessage;
-	String _sound;
 	
 	Scene *_currentScene;
 	Chr *_currentOwner;
 
 public:
-	Chr *getCurrentOwner() { return _currentOwner; }
-
 	void setCurrentOwner(Chr *currentOwner) {
 		_currentOwner = currentOwner;
 		if (currentOwner != NULL)
 			_currentScene = NULL;
 	}
-
-	Scene *getCurrentScene() { return _currentScene; }
 
 	void setCurrentScene(Scene *currentScene) {
 		_currentScene = currentScene;
@@ -110,55 +108,6 @@ public:
 			_currentOwner = NULL;
 	}
 
-	int getAccuracy() { return _accuracy; }
-	void setAccuracy(int accuracy) { _accuracy = accuracy; }
-
-	int getAttackType() { return _attackType; }
-	void setAttackType(int attackType) { _attackType = attackType; }
-
-	String getClickMessage() { return _clickMessage; }
-	void setClickMessage(String clickMessage) { _clickMessage = clickMessage; }
-
-	int getDamage() { return _damage; }
-	void setDamage(int damage) { _damage = damage; }
-
-	String getFailureMessage() { return _failureMessage; }
-	void setFailureMessage(String failureMessage) { _failureMessage = failureMessage; }
-
-	int getNumberOfUses() { return _numberOfUses; }
-	void setNumberOfUses(int numberOfUses) { _numberOfUses = numberOfUses; }
-	void decrementNumberOfUses() { 
-		if (_numberOfUses != -1) {
-			_numberOfUses--;
-		}
-	}
-
-	int getType() { return _type; }
-	void setType(int type) { _type = type; }
-
-	String getOperativeVerb() { return _operativeVerb; }
-	void setOperativeVerb(String operativeVerb) { _operativeVerb = operativeVerb; }
-
-	bool isReturnToRandomScene() { return _returnToRandomScene; }
-	void setReturnToRandomScene(bool returnToRandomScene) { _returnToRandomScene = returnToRandomScene; }
-
-	String getSceneOrOwner() { return _sceneOrOwner; }
-	void setSceneOrOwner(String sceneOrOwner) { _sceneOrOwner = sceneOrOwner; }
-
-	String getSound() { return _sound; }
-	void setSound(String sound) { _sound = sound; }
-
-	String getUseMessage() { return _useMessage; }
-	void setUseMessage(String useMessage) { _useMessage = useMessage; }
-
-	int getValue() { return _value; }
-	void setValue(int value) { _value = value; }
-
-	bool isNamePlural() { return _namePlural; }
-	void setNamePlural(bool namePlural) { _namePlural = namePlural; }
-
-	int getIndex() { return _index; }
-	void setIndex(int index) { _index = index; }
 };
 
 } // End of namespace Wage

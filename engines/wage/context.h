@@ -68,28 +68,11 @@ class Context {
 		SPIR_STR_CUR = 17
 	};
 
-private:
 	int16 _visits; // Number of scenes visited, including repeated visits
 	int16 _kills;  // Number of characters killed
 	int16 _experience;
 	int16 _userVariables[26 * 9];
 	int16 _statVariables[18];
-
-public:
-	int16 getUserVariable(int index) { return _userVariables[index]; }
-	void setUserVariable(int index, int16 value) { _userVariables[index] = value; }
-
-	int16 getVisits() { return _visits; }
-	void setVisits(int16 visits) { _visits = visits; }
-
-	int16 getKills() { return _kills; }
-	void setKills(int16 kills) { _kills = kills; }
-	
-	int16 getExperience() { return _experience; }
-	void setExperience(int16 experience) { _experience = experience; }
-
-	int16 getStatVariable(int index) { return _statVariables[index]; }
-	void setStatVariable(int index, int16 value) { _statVariables[index] = value; }
 };
 
 } // End of namespace Wage
