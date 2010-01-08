@@ -364,12 +364,15 @@ sciEvent SciEvent::get(unsigned int mask) {
 	if (event.type == SCI_EVENT_KEYBOARD) {
 		// Do we still have to translate the key?
 
-		// Scancodify if appropriate
-		if (event.modifiers & SCI_KEYMOD_ALT) {
-			event.character = altify(event.character);
-		} else if (event.modifiers & SCI_KEYMOD_CTRL) {
-			//event.character = event.data;
-			event.character = controlify(event.character);
+		if (getSciVersion() <= SCI_VERSION_1_MIDDLE) {
+			// TODO: find out if altify is also not needed for sci1late+, couldnt find any game that uses those keys
+			// Scancodify if appropriate
+			if (event.modifiers & SCI_KEYMOD_ALT) {
+				event.character = altify(event.character);
+			} else if (event.modifiers & SCI_KEYMOD_CTRL) {
+				//event.character = event.data;
+				event.character = controlify(event.character);
+			}
 		}
 
 		// Numlockify if appropriate
