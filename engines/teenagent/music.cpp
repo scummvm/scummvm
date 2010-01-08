@@ -95,7 +95,8 @@ bool MusicPlayer::load(int id) {
 		} else if ((cmd & 0xF0) == 0x40) {
 			byte vol = stream->readByte();
 			//debug(1, "%02x: set volume %02x -> %02x", cmd, row.channels[(cmd & 0x0F) - 1].volume, vol);
-			row.channels[(cmd & 0x0F) - 1].volume = vol;
+			//channel volume 0x40 * music volume 0x40 mixed with high bytes
+			row.channels[(cmd & 0x0F) - 1].volume = vol * 16;
 		} else {
 			debug(0, "unhandled music command %02x", cmd);
 		}
