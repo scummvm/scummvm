@@ -192,6 +192,11 @@ void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr)
 			if (tagPos && tagPos >= rightAlignedPos)
 				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
+			// - and + are used sometimes for volume control
+			if (itemEntry->textRightAligned == "-")
+				itemEntry->keyPress = '-';
+			if (itemEntry->textRightAligned == "+")
+				itemEntry->keyPress = '+';
 		}
 
 		if (tagPos) {
