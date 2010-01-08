@@ -362,7 +362,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 		//  us the actual key. My opinion is that windows is right, because under DOS the keys worked the same, anyway
 		//  we support the other case as well
 		if (event.modifiers & SCI_KEYMOD_ALT) {
-			if (event.character < 26)
+			if (event.character < 27)
 				event.character += 96; // 0x01 -> 'a'
 		}
 
@@ -372,7 +372,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 			if (event.modifiers & SCI_KEYMOD_ALT) {
 				event.character = altify(event.character);
 			} else if (event.modifiers & SCI_KEYMOD_CTRL) {
-				if (event.character < 26)
+				if (event.character < 27)
 					event.character += 96; // 0x01 -> 'a'
 			}
 		}
