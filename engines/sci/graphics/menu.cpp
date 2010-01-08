@@ -66,6 +66,7 @@ void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr)
 	int separatorCount;
 	int curPos, beginPos, endPos, tempPos;
 	int tagPos, rightAlignedPos, functionPos, altPos, controlPos;
+	const char *tempPtr;
 
 	// Sierra SCI starts with id 1, so we do so as well
 	_listCount++;
@@ -180,6 +181,14 @@ void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr)
 		} else {
 			EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK: needed for strSplit()
 			itemEntry->text = s->strSplit(Common::String(content.c_str() + beginPos, tempPos - beginPos).c_str());
+
+			// LSL6 uses "Ctrl-" prefix string instead of ^ like all the other games do
+			tempPtr = itemEntry->text.c_str();
+			tempPtr = strstr(tempPtr, "Ctrl-");
+			if (tempPtr) {
+				itemEntry->keyModifier = SCI_KEYMOD_CTRL;
+				itemEntry->keyPress = tolower(tempPtr[5]);
+			}
 		}
 		itemEntry->textVmPtr = contentVmPtr;
 		itemEntry->textVmPtr.offset += beginPos;
@@ -193,10 +202,11 @@ void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr)
 				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
 			// - and + are used sometimes for volume control
-			if (itemEntry->textRightAligned == "-")
+			if (itemEntry->textRightAligned == "-") {
 				itemEntry->keyPress = '-';
-			if (itemEntry->textRightAligned == "+")
+			} else if (itemEntry->textRightAligned == "+") {
 				itemEntry->keyPress = '+';
+			}
 		}
 
 		if (tagPos) {
