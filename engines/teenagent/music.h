@@ -50,7 +50,7 @@ protected:
 			byte sample;
 			byte volume;
 			byte note;
-			Channel(): sample(0), volume(0), note(0) {}
+			Channel(): sample(0), volume(0x40), note(0) {}
 		} channels[3];
 	};
 

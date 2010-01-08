@@ -79,14 +79,6 @@ bool MusicPlayer::load(int id) {
 	_rows.clear();
 
 	Row row;
-	row.channels[0].sample = 0;
-	row.channels[1].sample = 0;
-	row.channels[2].sample = 0;
-
-	row.channels[0].volume = 64;
-	row.channels[1].volume = 64;
-	row.channels[2].volume = 64;
-
 	while (!stream->eos()) {
 
 		byte cmd = stream->readByte();
