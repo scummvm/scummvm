@@ -66,31 +66,29 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 	if (src_rect.isEmpty()) {
 		src_rect = Common::Rect(0, 0, w, h);
 	}
-	{
-		int left = x + dx, right = left + src_rect.width();
-		int top = y + dy, bottom = top + src_rect.height();
-		if (left < 0) {
-			src_rect.left = -left;
-			dx = -x;
-		}
-		if (right > surface->w)
-			src_rect.right -= right - surface->w;
-		if (top < 0) {
-			src_rect.top -= top;
-			dy = -y;
-		}
-		if (bottom > surface->h)
-			src_rect.bottom -= bottom - surface->h;
-		if (src_rect.isEmpty())
-			return Common::Rect();
+	Common::Rect dst_rect(x + dx, y + dy, x + dx + zoom * src_rect.width() / 256, y + dy + zoom * src_rect.height() / 256);
+	if (dst_rect.left < 0) {
+		src_rect.left = -dst_rect.left;
+		dst_rect.left = 0;
 	}
+	if (dst_rect.right > surface->w) {
+		src_rect.right -= dst_rect.right - surface->w;
+		dst_rect.right = surface->w;
+	}
+	if (dst_rect.top < 0) {
+		src_rect.top -= dst_rect.top;
+		dst_rect.top = 0;
+	}
+	if (dst_rect.bottom > surface->h) {
+		src_rect.bottom -= dst_rect.bottom - surface->h;
+		dst_rect.bottom = surface->h;
+	}
+	if (src_rect.isEmpty() || dst_rect.isEmpty())
+		return Common::Rect();
 	
 	if (zoom == 256) {
-		assert(x + dx >= 0 && x + dx + src_rect.width() <= surface->w);
-		assert(y + dy >= 0 && y + dy + src_rect.height() <= surface->h);
-
 		byte *src = (byte *)getBasePtr(0, src_rect.top);
-		byte *dst_base = (byte *)surface->getBasePtr(dx + x, dy + y);
+		byte *dst_base = (byte *)surface->getBasePtr(dst_rect.left, dst_rect.top);
 
 		for (int i = src_rect.top; i < src_rect.bottom; ++i) {
 			byte *dst = dst_base;
@@ -104,30 +102,20 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 			dst_base += surface->pitch;
 			src += pitch;
 		}
-		src_rect.translate(x + dx, y + dy);
-		return src_rect;
 	} else {
-		Common::Rect dst_rect(src_rect);
-		dst_rect.right = (dst_rect.width() * zoom / 256) + dst_rect.left;
-		dst_rect.bottom = dst_rect.top + (dst_rect.height() * zoom / 256);
-
-		assert(x + dx + dst_rect.width() <= surface->w);
-		assert(y + dy + dst_rect.height() <= surface->h);
-
-		byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y + dst_rect.top - src_rect.top);
+		byte *dst = (byte *)surface->getBasePtr(dst_rect.left, dst_rect.top);
 		for(int i = 0; i < dst_rect.height(); ++i) {
 			for (int j = 0; j < dst_rect.width(); ++j) {
 				int px = j * 256 / zoom;
 				byte *src = (byte *)getBasePtr(src_rect.left + (mirror? w - px - 1: px), src_rect.top + i * 256 / zoom);
 				byte p = *src;
 				if (p != 0xff)
-					dst[j + dst_rect.left] = p;
+					dst[j] = p;
 			}
 			dst += surface->pitch;
 		}
-		dst_rect.translate(x + dx, y + dy);
-		return dst_rect;
 	}
+	return dst_rect;
 }
 
 } // End of namespace TeenAgent
