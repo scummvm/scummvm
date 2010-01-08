@@ -565,7 +565,7 @@ Common::Error TeenAgentEngine::run() {
 			}
 		}
 
-		inventory->render(surface);
+		inventory->render(surface, tick_game? 1: 0);
 
 		_system->unlockScreen();
 

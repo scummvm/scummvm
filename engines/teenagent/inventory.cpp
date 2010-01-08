@@ -246,7 +246,7 @@ void Inventory::Item::free() {
 	surface.free();
 }
 
-void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *dst) {
+void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *dst, int delta) {
 	Resources *res = Resources::instance();
 
 	rect.render(dst, hovered ? 233 : 234);
@@ -257,9 +257,9 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 			animation.load(inventory->items, Animation::kTypeInventory);
 		}
 		if (hovered) {
-			Surface *s = animation.currentFrame(1);
+			Surface *s = animation.currentFrame(delta);
 			if (animation.currentIndex() == 0)
-				s = animation.currentFrame(1);
+				s = animation.currentFrame(1); //force index to be 1 here
 			if (s != NULL)
 				s->render(dst, rect.left + 1, rect.top + 1);
 		} else {
@@ -290,7 +290,7 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 	}
 }
 
-void Inventory::render(Graphics::Surface *surface) {
+void Inventory::render(Graphics::Surface *surface, int delta) {
 	if (!_active)
 		return;
 
@@ -306,7 +306,7 @@ void Inventory::render(Graphics::Surface *surface) {
 			//debug(0, "%d,%d -> %u", x0, y0, item);
 
 			InventoryObject *obj = &objects[item];
-			graphics[idx].render(this, obj, surface);
+			graphics[idx].render(this, obj, surface, delta);
 		}
 	}
 }

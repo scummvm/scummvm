@@ -39,7 +39,7 @@ class TeenAgentEngine;
 class Inventory {
 public:
 	void init(TeenAgentEngine *engine);
-	void render(Graphics::Surface *surface);
+	void render(Graphics::Surface *surface, int delta);
 
 	void clear();
 	void add(byte item);
@@ -70,7 +70,7 @@ private:
 
 		Item() : hovered(false) {}
 		void free();
-		void render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *surface);
+		void render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *surface, int delta);
 	} graphics[24];
 
 	bool _active;
