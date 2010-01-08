@@ -90,7 +90,6 @@ bool MusicPlayer::load(int id) {
 	while (!stream->eos()) {
 
 		byte cmd = stream->readByte();
-		debug(1, "cmd = %02x", cmd);
 
 		if (cmd < 0x40) {
 			row.channels[0].note = cmd;
