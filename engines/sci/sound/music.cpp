@@ -72,6 +72,16 @@ void SciMusic::init() {
 
 	switch (_midiType) {
 	case MD_ADLIB:
+	case MD_PCJR:
+	case MD_PCSPK:
+		break;
+	default:
+		warning("Unhandled MIDI type, switching to default");
+		_midiType = MD_ADLIB;
+	}
+
+	switch (_midiType) {
+	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
 		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
 			_pMidiDrv = MidiPlayer_Amiga_create();
@@ -84,13 +94,8 @@ void SciMusic::init() {
 	case MD_PCSPK:
 		_pMidiDrv = new MidiPlayer_PCSpeaker();
 		break;
-	case MD_MT32:
-		// TODO
-	default:
-		warning("Unhandled MIDI type, switching to Adlib");
-		_midiType = MD_ADLIB;
-		_pMidiDrv = MidiPlayer_Adlib_create();
-		break;
+	//case MD_MT32:
+	// TODO
 	}
 
 	if (_pMidiDrv) {
