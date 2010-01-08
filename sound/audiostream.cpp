@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/list.h"
+#include "common/queue.h"
 #include "common/util.h"
 
 #include "sound/audiostream.h"
@@ -523,15 +524,15 @@ bool LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &
 			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
 
 SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd) {
-	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool autoFree   = (flags & Audio::Mixer::FLAG_AUTOFREE) != 0;
+	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool autoFree   = (flags & Mixer::FLAG_AUTOFREE) != 0;
 
 
 	uint loopOffset = 0, loopLen = 0;
-	if (flags & Audio::Mixer::FLAG_LOOP) {
+	if (flags & Mixer::FLAG_LOOP) {
 		if (loopEnd == 0)
 			loopEnd = len;
 		assert(loopStart <= loopEnd);
@@ -578,11 +579,11 @@ SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate
 
 
 SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks, int rate, byte flags, bool takeOwnership, uint loopStart, uint loopEnd) {
-	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool loop       = (flags & Audio::Mixer::FLAG_LOOP) != 0;
+	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool loop       = (flags & Mixer::FLAG_LOOP) != 0;
 
 	if (isStereo) {
 		if (isUnsigned) {
@@ -600,8 +601,6 @@ SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, Li
 }
 
 
-
-
 #pragma mark -
 #pragma mark --- Appendable audio stream ---
 #pragma mark -
@@ -617,16 +616,18 @@ struct Buffer {
 class BaseAppendableMemoryStream : public AppendableAudioStream {
 protected:
 
-	// A mutex to avoid access problems (causing e.g. corruption of
-	// the linked list) in thread aware environments.
+	/**
+	 * A mutex to avoid access problems (causing e.g. corruption of
+	 * the linked list) in thread aware environments.
+	 */
 	Common::Mutex _mutex;
 
 	// List of all queued buffers
 	Common::List<Buffer> _bufferQueue;
 
-	// Position in the front buffer, if any
 	bool _finalized;
 	const int _rate;
+	// Position in the front buffer, if any
 	byte *_pos;
 
 	inline bool eosIntern() const { return _bufferQueue.empty(); };
@@ -739,10 +740,10 @@ void BaseAppendableMemoryStream::queueBuffer(byte *data, uint32 size) {
 			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate)
 
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags) {
-	const bool isStereo = (_flags & Audio::Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit = (_flags & Audio::Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (_flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (_flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool isStereo = (_flags & Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit = (_flags & Mixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (_flags & Mixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (_flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
 
 	if (isStereo) {
 		if (isUnsigned) {
@@ -758,6 +759,124 @@ AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags) {
 		}
 	}
 }
+
+
+
+
+
+#pragma mark -
+#pragma mark --- Appendable audio stream ---
+#pragma mark -
+
+
+class QueuedAudioStreamImpl : public QueuedAudioStream {
+private:
+	/**
+	 * We queue a number of (pointers to) audio stream objects.
+	 * In addition, we need to remember for each stream whether
+	 * to dispose it after all data has been read from it.
+	 * Hence, we don't store pointers to stream objects directly,
+	 * but rather StreamHolder structs.
+	 */
+	struct StreamHolder {
+		AudioStream *_stream;
+		bool _disposeAfterUse;
+		StreamHolder(AudioStream *stream, bool disposeAfterUse)
+			: _stream(stream),
+			  _disposeAfterUse(disposeAfterUse) {}
+	};
+
+	/**
+	 * The sampling rate of this audio stream.
+	 */
+	const int _rate;
+
+	/**
+	 * Whether this audio stream is mono (=false) or stereo (=true).
+	 */
+	const int _stereo;
+
+	/**
+	 * This flag is set by the finish() method only. See there for more details.
+	 */
+	bool _finished;
+
+	/**
+	 * A mutex to avoid access problems (causing e.g. corruption of
+	 * the linked list) in thread aware environments.
+	 */
+	Common::Mutex _mutex;
+
+	/**
+	 * The queue of audio streams.
+	 */
+	Common::Queue<StreamHolder> _queue;
+
+public:
+	QueuedAudioStreamImpl(int rate, bool stereo)
+		: _rate(rate), _stereo(stereo), _finished(false) {}
+	~QueuedAudioStreamImpl();
+
+	// Implement the AudioStream API
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return _stereo; }
+	virtual int getRate() const { return _rate; }
+	virtual bool endOfData() const {
+		//Common::StackLock lock(_mutex);
+		return _queue.empty();
+	}
+	virtual bool endOfStream() const { return _finished; }
+
+	// Implement the QueuedAudioStream API
+	virtual void queueAudioStream(AudioStream *stream, bool disposeAfterUse);
+	virtual void finish() { _finished = true; }
+
+	uint32 numQueuedStreams() const {
+		//Common::StackLock lock(_mutex);
+		return _queue.size();
+	}
+};
+
+QueuedAudioStreamImpl::~QueuedAudioStreamImpl() {
+	while (!_queue.empty()) {
+		StreamHolder tmp = _queue.pop();
+		if (tmp._disposeAfterUse)
+			delete tmp._stream;
+	}
+}
+
+void QueuedAudioStreamImpl::queueAudioStream(AudioStream *stream, bool disposeAfterUse) {
+	if ((stream->getRate() != getRate()) || (stream->isStereo() != isStereo()))
+		error("QueuedAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
+
+	Common::StackLock lock(_mutex);
+	_queue.push(StreamHolder(stream, disposeAfterUse));
+}
+
+int QueuedAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock lock(_mutex);
+	int samplesDecoded = 0;
+
+	while (samplesDecoded < numSamples && !_queue.empty()) {
+		AudioStream *stream = _queue.front()._stream;
+		samplesDecoded += stream->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
+
+		if (stream->endOfData()	) {
+			StreamHolder tmp = _queue.pop();
+			if (tmp._disposeAfterUse)
+				delete stream;
+		}
+	}
+
+	return samplesDecoded;
+}
+
+
+
+QueuedAudioStream *makeQueuedAudioStream(int rate, bool stereo) {
+	return new QueuedAudioStreamImpl(rate, stereo);
+}
+
 
 
 } // End of namespace Audio

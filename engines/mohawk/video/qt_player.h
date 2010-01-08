@@ -46,31 +46,6 @@ namespace Common {
 
 namespace Mohawk {
 
-class QueuedAudioStream : public Audio::AudioStream {
-public:
-	QueuedAudioStream(int rate, int channels, bool autofree = true);
-	~QueuedAudioStream();
-
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _rate; }
-	bool endOfData() const { return _queue.empty(); }
-	bool endOfStream() const { return _finished; }
-
-	void queueAudioStream(Audio::AudioStream *audStream);
-	void finish() { _finished = true; }
-
-	uint32 streamsInQueue() { return _queue.size(); }
-
-private:
-	bool _autofree;
-	bool _finished;
-	int _rate;
-	int _channels;
-
-	Common::Queue<Audio::AudioStream*> _queue;
-};
-
 enum ScaleMode {
 	kScaleNormal = 1,
 	kScaleHalf = 2,
@@ -271,7 +246,7 @@ protected:
 	void resetInternal();
 	uint32 getFrameDuration();
 
-	QueuedAudioStream *_audStream;
+	Audio::QueuedAudioStream *_audStream;
 	int8 _videoStreamIndex;
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;

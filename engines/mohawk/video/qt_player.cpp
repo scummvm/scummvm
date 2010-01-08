@@ -51,47 +51,6 @@
 namespace Mohawk {
 
 ////////////////////////////////////////////
-// QueuedAudioStream 
-////////////////////////////////////////////
-
-QueuedAudioStream::QueuedAudioStream(int rate, int channels, bool autofree) {
-	_rate = rate;
-	_channels = channels;
-	_autofree = autofree;
-	_finished = false;
-}
-
-QueuedAudioStream::~QueuedAudioStream() {
-	if (_autofree)
-		while (!_queue.empty())
-			delete _queue.pop();
-	_queue.clear();
-}
-
-void QueuedAudioStream::queueAudioStream(Audio::AudioStream *audStream) {
-	if (audStream->getRate() != getRate() && audStream->isStereo() && isStereo())
-		error("QueuedAudioStream::queueAudioStream: audStream has mismatched parameters");
-		
-	_queue.push(audStream);
-}
-
-int QueuedAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samplesDecoded = 0;
-
-	while (samplesDecoded < numSamples && !_queue.empty()) {
-		samplesDecoded += _queue.front()->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
-
-		if (_queue.front()->endOfData()) {
-			Audio::AudioStream *temp = _queue.pop();
-			if (_autofree)
-				delete temp;
-		}
-	}
-
-	return samplesDecoded;
-}
-
-////////////////////////////////////////////
 // QTPlayer 
 ////////////////////////////////////////////
 
@@ -189,7 +148,7 @@ void QTPlayer::reset() {
 	stopAudio();
 	if (_audioStreamIndex >= 0) {
 		_curAudioChunk = 0;
-		_audStream = new QueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels);
+		_audStream = Audio::makeQueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
 	}
 	startAudio();
 }
@@ -345,7 +304,7 @@ bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
 	}
 	
 	if (_audioStreamIndex >= 0 && checkAudioCodecSupport(_streams[_audioStreamIndex]->codec_tag)) {
-		_audStream = new QueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels);
+		_audStream = Audio::makeQueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
 		_curAudioChunk = 0;
 	
 		// Make sure the bits per sample transfers to the sample size
@@ -1229,7 +1188,7 @@ void QTPlayer::updateAudioBuffer() {
 		return;
 
 	// Keep two streams in buffer so that when the first ends, it goes right into the next
-	for (; _audStream->streamsInQueue() < 2 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
+	for (; _audStream->numQueuedStreams() < 2 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
 		Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
 		
 		_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);

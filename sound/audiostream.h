@@ -319,6 +319,51 @@ public:
  */
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte flags);
 
+
+class QueuedAudioStream : public Audio::AudioStream {
+public:
+
+	/**
+	 * Queue an audio stream for playback. This stream will
+	 * play all queued streams, in the order they were queued.
+	 * If the disposeAfterUse is true, then the stream is
+	 * deleted after all data contained in it has been played.
+	 */
+	virtual void queueAudioStream(Audio::AudioStream *audStream,
+						bool disposeAfterUse = true) = 0;
+
+	/**
+	 * Queue a block of raw audio data for playback. This stream
+	 * will play all queued buffers, in the order they were
+	 * queued. After all data contained in them has been played,
+	 * the buffer will be delete[]'d (so make sure to allocate them
+	 * with new[], not with malloc).
+	 */
+	void queueBuffer(byte *data, uint32 size, byte flags) {
+		AudioStream *stream = makeLinearInputStream(data, size, getRate(), flags, 0, 0);
+		queueAudioStream(stream, true);
+	}
+
+	/**
+	 * Mark the stream as finished, that is, signal that no further data
+	 * will be appended to it. Only after this has been done can this
+	 * stream ever 'end'.
+	 */
+	virtual void finish() = 0;
+
+	/**
+	 * Return the number of streams still queued for playback (including
+	 * the currently playing stream).
+	 */
+	virtual uint32 numQueuedStreams() const = 0;
+};
+
+/**
+ * Factory function for an QueuedAudioStream.
+ */
+QueuedAudioStream *makeQueuedAudioStream(int rate, bool stereo);
+
+
 /**
  * Calculates the sample, which the timestamp describes in a
  * AudioStream with the given framerate.
