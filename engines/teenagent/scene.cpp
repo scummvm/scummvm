@@ -664,7 +664,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 		Common::List<Surface *>::iterator z_order_it;
 
 		Surface *mark = actor_animation.currentFrame(game_delta);
-		int horizon = mark != NULL? mark->y + mark->h: position.y;
+		int horizon = position.y;
 
 		for(z_order_it = z_order.begin(); z_order_it != z_order.end(); ++z_order_it) {
 			Surface *s = *z_order_it;
