@@ -53,7 +53,7 @@ bool Protracker::play(const char *fileName) {
 		return false;
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
-			_protrackerStream, -1, 255, 0, false);
+			_protrackerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	return true;
 }

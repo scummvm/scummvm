@@ -40,7 +40,7 @@ AdlibMusic::AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pDisk) {
 
 	_opl = makeAdlibOPL(_sampleRate);
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdlibMusic::~AdlibMusic() {

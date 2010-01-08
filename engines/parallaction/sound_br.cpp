@@ -536,7 +536,7 @@ void AmigaSoundMan_br::playMusic() {
 
 	debugC(3, kDebugAudio, "AmigaSoundMan_ns::playMusic(): created new music stream");
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, 255, 0, false, false);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 }
 
 void AmigaSoundMan_br::stopMusic() {

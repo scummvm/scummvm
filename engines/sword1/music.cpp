@@ -237,7 +237,7 @@ Music::Music(Audio::Mixer *pMixer) {
 	_converter[0] = NULL;
 	_converter[1] = NULL;
 	_volumeL = _volumeR = 192;
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Music::~Music() {

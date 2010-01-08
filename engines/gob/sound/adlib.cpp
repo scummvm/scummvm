@@ -75,7 +75,7 @@ void AdLib::init() {
 	setFreqs();
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
-			this, -1, 255, 0, false, true);
+			this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 int AdLib::readBuffer(int16 *buffer, const int numSamples) {

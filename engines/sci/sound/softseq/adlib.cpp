@@ -229,7 +229,7 @@ int MidiDriver_Adlib::open(bool isSCI0) {
 
 	MidiDriver_Emulated::open();
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, false);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	return 0;
 }

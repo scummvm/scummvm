@@ -388,11 +388,11 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                                                  );
 			_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
-			                         false);
+			                         DisposeAfterUse::NO);
 		} else {
 			_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
-			                         false);
+			                         DisposeAfterUse::NO);
 		}
 	} else {
 		_mutex.lock();

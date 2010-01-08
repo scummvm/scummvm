@@ -587,7 +587,7 @@ int MidiDriver_YM2612::open() {
 
 	MidiDriver_Emulated::open();
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 

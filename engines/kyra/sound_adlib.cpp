@@ -451,7 +451,7 @@ AdlibDriver::AdlibDriver(Audio::Mixer *mixer, bool v2) {
 	// is used by SFX or music, and then adjust the volume accordingly. Since Kyrandia 2 supports
 	// different volumes for SFX and music, looking at the disasm and checking how the original does it
 	// would be a good idea.
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
 	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;

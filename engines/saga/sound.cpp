@@ -103,7 +103,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 		}
 
 		if (stream != NULL)
-			_mixer->playInputStream(soundType, handle, stream, -1, volume, 0, true, false);
+			_mixer->playInputStream(soundType, handle, stream, -1, volume, 0, DisposeAfterUse::YES, false);
 	}
 }
 

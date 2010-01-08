@@ -918,7 +918,7 @@ int MidiDriver_ADLIB::open() {
 	adlib_write(0xBD, 0x00);
 	create_lookup_table();
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return 0;
 }

@@ -26,7 +26,7 @@
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
-#include "common/scummsys.h"
+#include "common/types.h"
 #include "common/mutex.h"
 
 #include "sound/timestamp.h"
@@ -166,7 +166,7 @@ public:
 		SoundHandle *handle,
 		AudioStream *input,
 		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
-		bool autofreeStream = true,
+		DisposeAfterUse::Flag autofreeStream = DisposeAfterUse::YES,
 		bool permanent = false,
 		bool reverseStereo = false) = 0;
 

@@ -67,7 +67,7 @@ void Infogrames::play() {
 	if (_song && !_mixer->isSoundHandleActive(_handle)) {
 		_song->restart();
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
-				&_handle, _song, -1, 255, 0, false);
+				&_handle, _song, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }
 

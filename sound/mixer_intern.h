@@ -86,7 +86,7 @@ public:
 		SoundHandle *handle,
 		AudioStream *input,
 		int id, byte volume, int8 balance,
-		bool autofreeStream,
+		DisposeAfterUse::Flag autofreeStream,
 		bool permanent,
 		bool reverseStereo);
 

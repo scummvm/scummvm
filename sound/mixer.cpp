@@ -44,7 +44,7 @@ namespace Audio {
  */
 class Channel {
 public:
-	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo, int id, bool permanent);
+	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent);
 	~Channel();
 
 	/**
@@ -151,7 +151,7 @@ private:
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
 
-	bool _autofreeStream;
+	DisposeAfterUse::Flag _autofreeStream;
 	RateConverter *_converter;
 	AudioStream *_input;
 };
@@ -229,7 +229,7 @@ void MixerImpl::playRaw(
 	AudioStream *input = makeLinearInputStream((byte *)sound, size, rate, flags, loopStart, loopEnd);
 
 	// Play it
-	playInputStream(type, handle, input, id, volume, balance, true, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));
+	playInputStream(type, handle, input, id, volume, balance, DisposeAfterUse::YES, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));
 }
 
 void MixerImpl::playInputStream(
@@ -237,7 +237,7 @@ void MixerImpl::playInputStream(
 			SoundHandle *handle,
 			AudioStream *input,
 			int id, byte volume, int8 balance,
-			bool autofreeStream,
+			DisposeAfterUse::Flag autofreeStream,
 			bool permanent,
 			bool reverseStereo) {
 	Common::StackLock lock(_mutex);
@@ -251,7 +251,7 @@ void MixerImpl::playInputStream(
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				if (autofreeStream)
+				if (autofreeStream == DisposeAfterUse::YES)
 					delete input;
 				return;
 			}
@@ -444,7 +444,7 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 #pragma mark -
 
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
-                 bool autofreeStream, bool reverseStereo, int id, bool permanent)
+                 DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent)
     : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
       _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
       _pauseStartTime(0), _pauseTime(0), _autofreeStream(autofreeStream), _converter(0),
@@ -458,7 +458,7 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 
 Channel::~Channel() {
 	delete _converter;
-	if (_autofreeStream)
+	if (_autofreeStream == DisposeAfterUse::YES)
 		delete _input;
 }
 

@@ -893,7 +893,7 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 		}
 	}
 	
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_V2CMS::~Player_V2CMS() {

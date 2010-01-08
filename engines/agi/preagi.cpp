@@ -118,7 +118,7 @@ void PreAgiEngine::initialize() {
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-							_speakerStream, -1, 255, 0, false, true);
+							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 
 	//_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);

@@ -154,7 +154,7 @@ void SoundAmiga::playTrack(uint8 track) {
 			_driver->setVolume(volume);
 			_driver->setTempo(tempo << 4);
 			if (!_mixer->isSoundHandleActive(_musicHandle))
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		}
 	} else if (track == 0)
 		_driver->stopMusic();
@@ -215,7 +215,7 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	if (_sfxEnabled && sfx) {
 		const bool success = _driver->playNote(sfx->note, sfx->patch, sfx->duration, sfx->volume, pan);
 		if (success && !_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }
 

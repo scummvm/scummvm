@@ -90,7 +90,7 @@ Sound::Sound(Sword2Engine *vm) {
 	_mixBuffer = NULL;
 	_mixBufferLen = 0;
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Sound::~Sound() {
@@ -342,7 +342,7 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 
 	_vm->_mixer->playInputStream(soundType, handle,
 	                             Audio::makeLoopingAudioStream(input, loop ? 0 : 1),
-	                             -1, vol, pan, true, false, isReverseStereo());
+	                             -1, vol, pan, DisposeAfterUse::YES, false, isReverseStereo());
 
 	return RD_OK;
 }

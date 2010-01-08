@@ -433,7 +433,7 @@ Common::Error TeenAgentEngine::run() {
 	syncSoundSettings();
 
 	music->load(1);
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, 255, 0, true, false);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 	music->start();
 
 	int load_slot = Common::ConfigManager::instance().getInt("save_slot");

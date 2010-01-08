@@ -45,8 +45,8 @@ namespace Gob {
 #define INTERSOUND_FLAG 0x0002
 #define SPEAKER_FLAG    0x0001
 
-#define NO    0
-#define YES   1
+//#define NO    0
+//#define YES   1
 #define UNDEF 2
 
 #define F1_KEY 0x3B00
