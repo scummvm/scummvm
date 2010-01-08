@@ -769,7 +769,7 @@ AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags) {
 #pragma mark -
 
 
-class QueuedAudioStreamImpl : public QueuedAudioStream {
+class QueuingAudioStreamImpl : public QueuingAudioStream {
 private:
 	/**
 	 * We queue a number of (pointers to) audio stream objects.
@@ -813,9 +813,9 @@ private:
 	Common::Queue<StreamHolder> _queue;
 
 public:
-	QueuedAudioStreamImpl(int rate, bool stereo)
+	QueuingAudioStreamImpl(int rate, bool stereo)
 		: _rate(rate), _stereo(stereo), _finished(false) {}
-	~QueuedAudioStreamImpl();
+	~QueuingAudioStreamImpl();
 
 	// Implement the AudioStream API
 	virtual int readBuffer(int16 *buffer, const int numSamples);
@@ -827,7 +827,7 @@ public:
 	}
 	virtual bool endOfStream() const { return _finished; }
 
-	// Implement the QueuedAudioStream API
+	// Implement the QueuingAudioStream API
 	virtual void queueAudioStream(AudioStream *stream, bool disposeAfterUse);
 	virtual void finish() { _finished = true; }
 
@@ -837,7 +837,7 @@ public:
 	}
 };
 
-QueuedAudioStreamImpl::~QueuedAudioStreamImpl() {
+QueuingAudioStreamImpl::~QueuingAudioStreamImpl() {
 	while (!_queue.empty()) {
 		StreamHolder tmp = _queue.pop();
 		if (tmp._disposeAfterUse)
@@ -845,15 +845,15 @@ QueuedAudioStreamImpl::~QueuedAudioStreamImpl() {
 	}
 }
 
-void QueuedAudioStreamImpl::queueAudioStream(AudioStream *stream, bool disposeAfterUse) {
+void QueuingAudioStreamImpl::queueAudioStream(AudioStream *stream, bool disposeAfterUse) {
 	if ((stream->getRate() != getRate()) || (stream->isStereo() != isStereo()))
-		error("QueuedAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
+		error("QueuingAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
 
 	Common::StackLock lock(_mutex);
 	_queue.push(StreamHolder(stream, disposeAfterUse));
 }
 
-int QueuedAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
+int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 	int samplesDecoded = 0;
 
@@ -873,8 +873,8 @@ int QueuedAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 
 
 
-QueuedAudioStream *makeQueuedAudioStream(int rate, bool stereo) {
-	return new QueuedAudioStreamImpl(rate, stereo);
+QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo) {
+	return new QueuingAudioStreamImpl(rate, stereo);
 }
 
 

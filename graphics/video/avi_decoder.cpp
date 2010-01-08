@@ -431,10 +431,10 @@ Codec *AviDecoder::createCodec() {
 	return NULL;
 }
 
-Audio::QueuedAudioStream *AviDecoder::createAudioStream() {
+Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
 
 	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM) {
-		return Audio::makeQueuedAudioStream(AUDIO_RATE, false);
+		return Audio::makeQueuingAudioStream(AUDIO_RATE, false);
 	}
 	
 	if (_wvInfo.tag != 0) // No sound

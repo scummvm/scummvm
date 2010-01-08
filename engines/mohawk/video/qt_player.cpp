@@ -148,7 +148,7 @@ void QTPlayer::reset() {
 	stopAudio();
 	if (_audioStreamIndex >= 0) {
 		_curAudioChunk = 0;
-		_audStream = Audio::makeQueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
+		_audStream = Audio::makeQueuingAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
 	}
 	startAudio();
 }
@@ -304,7 +304,7 @@ bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
 	}
 	
 	if (_audioStreamIndex >= 0 && checkAudioCodecSupport(_streams[_audioStreamIndex]->codec_tag)) {
-		_audStream = Audio::makeQueuedAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
+		_audStream = Audio::makeQueuingAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
 		_curAudioChunk = 0;
 	
 		// Make sure the bits per sample transfers to the sample size

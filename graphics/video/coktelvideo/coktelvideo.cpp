@@ -201,7 +201,7 @@ bool Imd::assessAudioProperties() {
 		_soundStage = 1;
 		_hasSound   = true;
 
-		_audioStream = Audio::makeQueuedAudioStream(_soundFreq, false);
+		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
 	} else
 		_frameLength = 1000 / _frameRate;
 
@@ -1276,7 +1276,7 @@ bool Vmd::assessAudioProperties() {
 
 	_soundStage = 1;
 
-	_audioStream = Audio::makeQueuedAudioStream(_soundFreq, _soundStereo != 0);
+	_audioStream = Audio::makeQueuingAudioStream(_soundFreq, _soundStereo != 0);
 
 	return true;
 }
@@ -1562,9 +1562,9 @@ void Vmd::seekFrame(int32 frame, int16 whence, bool restart) {
 		// FIXME: This code didn't check the stereo flag at all and always generated
 		// mono data. Is that on purpose? If so, just remove this comment.
 		// If it was by accident, remove the assert and replace "false" in the call
-		// to makeQueuedAudioStream() below by "_soundStereo > 0".
+		// to makeQueuingAudioStream() below by "_soundStereo > 0".
 		assert(_soundStereo == 0);
-		_audioStream = Audio::makeQueuedAudioStream(_soundFreq, false);
+		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
 	}
 
 	// Seek

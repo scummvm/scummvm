@@ -113,7 +113,7 @@ class BMVPlayer {
 
 	bool audioStarted;
 
-	Audio::QueuedAudioStream *_audioStream;
+	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
 	int nextMaintain;

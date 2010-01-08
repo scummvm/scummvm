@@ -50,7 +50,7 @@ protected:
 	MadeEngine *_vm;
 	Audio::Mixer *_mixer;
 	Common::File *_fd;
-	Audio::QueuedAudioStream *_audioStream;
+	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
 	byte _paletteRGB[768];
 	Graphics::Surface *_surface;

@@ -246,7 +246,7 @@ protected:
 	void resetInternal();
 	uint32 getFrameDuration();
 
-	Audio::QueuedAudioStream *_audStream;
+	Audio::QueuingAudioStream *_audStream;
 	int8 _videoStreamIndex;
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;

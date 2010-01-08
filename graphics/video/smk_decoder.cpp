@@ -465,7 +465,7 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
 
 		if (_header.audioInfo[i].hasAudio && i == 0) {
-			_audioStream = Audio::makeQueuedAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
+			_audioStream = Audio::makeQueuingAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
 		}
 	}
 
@@ -577,7 +577,7 @@ bool SmackerDecoder::decodeNextFrame() {
 					flags = flags | Audio::Mixer::FLAG_STEREO;
 
 				_audioStream->queueBuffer(soundBuffer, chunkSize, flags);
-				// The sound buffer will be deleted by QueuedAudioStream
+				// The sound buffer will be deleted by QueuingAudioStream
 			}
 
 			if (!_audioStarted) {
@@ -831,7 +831,7 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 	if (_header.audioInfo[0].isStereo)
 		flags = flags | Audio::Mixer::FLAG_STEREO;
 	_audioStream->queueBuffer(unpackedBuffer, unpackedSize, flags);
-	// unpackedBuffer will be deleted by QueuedAudioStream
+	// unpackedBuffer will be deleted by QueuingAudioStream
 }
 
 void SmackerDecoder::unpackPalette() {

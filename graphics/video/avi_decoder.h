@@ -216,8 +216,8 @@ private:
 	void handlePalChange();
 	
 	Audio::SoundHandle *_audHandle;
-	Audio::QueuedAudioStream *_audStream;
-	Audio::QueuedAudioStream *createAudioStream();
+	Audio::QueuingAudioStream *_audStream;
+	Audio::QueuingAudioStream *createAudioStream();
 
 	// Helper functions
 	static byte char2num(char c);

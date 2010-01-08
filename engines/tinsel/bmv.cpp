@@ -423,7 +423,7 @@ void BMVPlayer::MoviePalette(int paletteOffset) {
 }
 
 void BMVPlayer::InitialiseMovieSound() {
-	_audioStream = Audio::makeQueuedAudioStream(22050, true);
+	_audioStream = Audio::makeQueuingAudioStream(22050, true);
 	audioStarted = false;
 }
 

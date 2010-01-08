@@ -320,7 +320,7 @@ public:
 AppendableAudioStream *makeAppendableAudioStream(int rate, byte flags);
 
 
-class QueuedAudioStream : public Audio::AudioStream {
+class QueuingAudioStream : public Audio::AudioStream {
 public:
 
 	/**
@@ -359,9 +359,9 @@ public:
 };
 
 /**
- * Factory function for an QueuedAudioStream.
+ * Factory function for an QueuingAudioStream.
  */
-QueuedAudioStream *makeQueuedAudioStream(int rate, bool stereo);
+QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo);
 
 
 /**
