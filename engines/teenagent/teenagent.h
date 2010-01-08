@@ -134,6 +134,8 @@ private:
 	Audio::SoundHandle _musicHandle, _soundHandle;
 	const ADGameDescription *_gameDescription;
 	
+	uint _mark_delay, _game_delay;
+	
 	Common::Array<Common::Array<UseHotspot> > use_hotspots;
 };
 

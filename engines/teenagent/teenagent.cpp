@@ -156,6 +156,9 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 }
 
 void TeenAgentEngine::init() {
+	_mark_delay = 80;
+	_game_delay = 110;
+	
 	Resources * res = Resources::instance();
 	use_hotspots.resize(42);
 	byte *scene_hotspots = res->dseg.ptr(0xbb87);
@@ -448,11 +451,8 @@ Common::Error TeenAgentEngine::run() {
 
 	CursorMan.showMouse(true);
 
-	///\todo move game timers to the option dialog
-	const uint32 kGameDelay = 110, kMarkDelay = 80;
-
-	uint32 game_timer = kGameDelay;
-	uint32 mark_timer = kMarkDelay;
+	uint32 game_timer = 0;
+	uint32 mark_timer = 0;
 
 	Common::Event event;
 	Common::Point mouse;
@@ -477,9 +477,12 @@ Common::Error TeenAgentEngine::run() {
 				if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
 					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 					console->attach();
-				}
-				if (event.kbd.flags == 0 && event.kbd.keycode == Common::KEYCODE_F5)
+				} else if (event.kbd.flags == 0 && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
+				} if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+					_mark_delay = _mark_delay == 80? 40: 80;
+					debug(0, "mark_delay = %u", _mark_delay);
+				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (scene->getId() < 0)
@@ -519,13 +522,13 @@ Common::Error TeenAgentEngine::run() {
 
 		bool tick_game = game_timer <= delta;
 		if (tick_game)
-			game_timer = kGameDelay - ((delta - game_timer) % kGameDelay);
+			game_timer = _game_delay - ((delta - game_timer) % _game_delay);
 		else
 			game_timer -= delta;
 
 		bool tick_mark = mark_timer <= delta;
 		if (tick_mark)
-			mark_timer = kMarkDelay - ((delta - mark_timer) % kMarkDelay);
+			mark_timer = _mark_delay - ((delta - mark_timer) % _mark_delay);
 		else
 			mark_timer -= delta;
 
