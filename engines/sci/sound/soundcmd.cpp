@@ -834,6 +834,9 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		} else {
 			// Sync the signal of the sound object
 			PUT_SEL32V(_segMan, obj, signal, musicSlot->signal);
+			// We need to do this especially because state selector needs to get updated
+			if (musicSlot->signal == SIGNAL_OFFSET)
+				cmdStopSound(obj, 0);
 		}
 	}
 
