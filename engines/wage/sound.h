@@ -30,8 +30,11 @@ namespace Wage {
 
 class Sound {
 public:
-	Sound();
-	~Sound();
+	Sound(byte *data) : _data(data) {}
+	~Sound() { free(_data); }
+
+	String _name;
+	byte *_data;
 };
 
 } // End of namespace Wage

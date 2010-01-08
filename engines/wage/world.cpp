@@ -35,8 +35,8 @@ namespace Wage {
 
 World::World() {
 	_storageScene._name = STORAGESCENE;
-	_orderedScenes.push_back(_storageScene);
-	_scenes[STORAGESCENE] = _storageScene;
+	_orderedScenes.push_back(&_storageScene);
+	_scenes[STORAGESCENE] = &_storageScene;
 }
 
 bool World::loadWorld(MacResManager *resMan) {
@@ -48,9 +48,11 @@ bool World::loadWorld(MacResManager *resMan) {
 	if ((resArray = resMan->getResIDArray("GCOD")).size() == 0)
 		return false;
 
+	// Load global script
 	res = resMan->getResource("GCOD", resArray[0], &resSize);
 	_globalScript = new Script(res);
 
+	// Load main configuration
 	if ((resArray = resMan->getResIDArray("VERS")).size() == 0)
 		return false;
 
@@ -75,7 +77,13 @@ bool World::loadWorld(MacResManager *resMan) {
 	_soundLibrary1 = readPascalString(readS);
 	_soundLibrary2 = readPascalString(readS);
 
-	debug(0, "%s\n%s", _soundLibrary1.c_str(), _soundLibrary2.c_str());
+	// Load scenes
+	resArray = resMan->getResIDArray("ASCN");
+
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		
+	}
+	
 
 	return true;
 }

@@ -50,18 +50,50 @@ public:
 
 	bool _weaponMenuDisabled;
 	Script *_globalScript;
-	Common::HashMap<String, Scene> _scenes;
-	Common::HashMap<String, Obj> _objs;
-	Common::HashMap<String, Chr> _chrs;
-	Common::HashMap<String, Sound> _sounds;
-	Common::List<Scene> _orderedScenes;
-	Common::List<Obj> _orderedObjs;
-	Common::List<Chr> _orderedChrs;
-	Common::List<Sound> _orderedSounds;
+	Common::HashMap<String, Scene *> _scenes;
+	Common::HashMap<String, Obj *> _objs;
+	Common::HashMap<String, Chr *> _chrs;
+	Common::HashMap<String, Sound *> _sounds;
+	Common::List<Scene *> _orderedScenes;
+	Common::List<Obj *> _orderedObjs;
+	Common::List<Chr *> _orderedChrs;
+	Common::List<Sound *> _orderedSounds;
 	Common::List<byte *> _patterns;
 	Scene _storageScene;
 	Chr _player;
 	//List<MoveListener> moveListeners;
+
+	void addScene(Scene *room) {
+		if (room->_name.size() != 0) {
+			String s = room->_name;
+			s.toLowercase();
+			_scenes[s] = room;
+		}
+		_orderedScenes.push_back(room);
+	}
+
+	void addObj(Obj *obj) {
+		String s = obj->_name;
+		s.toLowercase();
+		_objs[s] = obj;
+		obj->_index = _orderedObjs.size();
+		_orderedObjs.push_back(obj);
+	}
+
+	void addChr(Chr *chr) {
+		String s = chr->_name;
+		s.toLowercase();
+		_chrs[s] = chr;
+		chr->_index = _orderedChrs.size();
+		_orderedChrs.push_back(chr);
+	}
+
+	void addSound(Sound *sound) {
+		String s = sound->_name;
+		s.toLowercase();
+		_sounds[s] = sound;
+		_orderedSounds.push_back(sound);
+	}
 };
  
 } // End of namespace Wage

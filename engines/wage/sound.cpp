@@ -28,10 +28,5 @@
 
 namespace Wage {
 
-Sound::Sound() {
-}
-
-Sound::~Sound() {
-}
 
 } // End of namespace Wage
