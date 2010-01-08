@@ -96,6 +96,8 @@ void SciMusic::init() {
 		break;
 	//case MD_MT32:
 	// TODO
+	default:
+		error("Unsupported _midiType setup %d", _midiType);
 	}
 
 	if (_pMidiDrv) {
