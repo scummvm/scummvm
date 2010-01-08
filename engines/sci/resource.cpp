@@ -1628,6 +1628,10 @@ ViewType ResourceManager::detectViewType() {
 				uint16 height = READ_LE_UINT16(res->data + offset);
 				offset += 6;
 
+				// To improve the heuristic, we skip very small views
+				if (height < 10)
+					continue;
+
 				// Check that the RLE data stays within bounds
 				int y;
 				for (y = 0; y < height; y++) {
