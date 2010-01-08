@@ -322,7 +322,14 @@ Surface *AviDecoder::getNextFrame() {
 		uint32 chunkSize = _fileStream->readUint32LE();
 		byte *data = new byte[chunkSize];
 		_fileStream->read(data, chunkSize);
-		_audStream->queueBuffer(data, chunkSize);
+
+		byte flags = Audio::Mixer::FLAG_AUTOFREE;
+		if (_audsHeader.sampleSize == 2)
+			flags |= Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		else
+			flags |= Audio::Mixer::FLAG_UNSIGNED;
+
+		_audStream->queueBuffer(data, chunkSize, flags);
 		_fileStream->skip(chunkSize & 1); // Alignment
 	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' || getStreamType(nextTag) == 'AM') {		
 		// Compressed Frame
@@ -424,16 +431,10 @@ Codec *AviDecoder::createCodec() {
 	return NULL;
 }
 
-Audio::AppendableAudioStream *AviDecoder::createAudioStream() {
-	byte flags = Audio::Mixer::FLAG_AUTOFREE;
+Audio::QueuedAudioStream *AviDecoder::createAudioStream() {
 
 	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM) {
-		if (_audsHeader.sampleSize == 2)
-			flags |= Audio::Mixer::FLAG_16BITS|Audio::Mixer::FLAG_LITTLE_ENDIAN;
-		else
-			flags |= Audio::Mixer::FLAG_UNSIGNED;
-
-		return Audio::makeAppendableAudioStream(AUDIO_RATE, flags);
+		return Audio::makeQueuedAudioStream(AUDIO_RATE, false);
 	}
 	
 	if (_wvInfo.tag != 0) // No sound

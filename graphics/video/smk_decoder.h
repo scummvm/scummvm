@@ -30,7 +30,7 @@
 #include "sound/mixer.h"
 
 namespace Audio {
-	class AppendableAudioStream;
+	class QueuedAudioStream;
 }
 
 namespace Graphics {
@@ -115,7 +115,7 @@ private:
 	Audio::Mixer::SoundType _soundType;
 	Audio::Mixer *_mixer;
 	bool _audioStarted;
-	Audio::AppendableAudioStream *_audioStream;
+	Audio::QueuedAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
 	BigHuffmanTree *_MMapTree;

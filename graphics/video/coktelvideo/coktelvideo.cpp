@@ -201,7 +201,7 @@ bool Imd::assessAudioProperties() {
 		_soundStage = 1;
 		_hasSound   = true;
 
-		_audioStream = Audio::makeAppendableAudioStream(_soundFreq, 0);
+		_audioStream = Audio::makeQueuedAudioStream(_soundFreq, false);
 	} else
 		_frameLength = 1000 / _frameRate;
 
@@ -605,7 +605,7 @@ void Imd::nextSoundSlice(bool hasNextCmd) {
 	_stream->read(soundBuf, _soundSliceSize);
 	unsignedToSigned(soundBuf, _soundSliceSize);
 
-	_audioStream->queueBuffer(soundBuf, _soundSliceSize);
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, 0);
 }
 
 bool Imd::initialSoundSlice(bool hasNextCmd) {
@@ -621,7 +621,7 @@ bool Imd::initialSoundSlice(bool hasNextCmd) {
 	_stream->read(soundBuf, dataLength);
 	unsignedToSigned(soundBuf, dataLength);
 
-	_audioStream->queueBuffer(soundBuf, dataLength);
+	_audioStream->queueBuffer(soundBuf, dataLength, 0);
 
 	return _soundStage == 1;
 }
@@ -634,7 +634,7 @@ void Imd::emptySoundSlice(bool hasNextCmd) {
 
 	memset(soundBuf, 0, _soundSliceSize);
 
-	_audioStream->queueBuffer(soundBuf, _soundSliceSize);
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, 0);
 }
 
 void Imd::videoData(uint32 size, State &state) {
@@ -1276,12 +1276,7 @@ bool Vmd::assessAudioProperties() {
 
 	_soundStage = 1;
 
-	uint32 flags = 0;
-
-	flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
-	flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
-
-	_audioStream = Audio::makeAppendableAudioStream(_soundFreq, flags);
+	_audioStream = Audio::makeQueuedAudioStream(_soundFreq, _soundStereo != 0);
 
 	return true;
 }
@@ -1564,8 +1559,12 @@ void Vmd::seekFrame(int32 frame, int16 whence, bool restart) {
 	// Restart sound
 	if (_hasSound && (frame == 0) && (_soundStage == 0) && !_audioStream) {
 		_soundStage = 1;
-		_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
-				(_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0);
+		// FIXME: This code didn't check the stereo flag at all and always generated
+		// mono data. Is that on purpose? If so, just remove this comment.
+		// If it was by accident, remove the assert and replace "false" in the call
+		// to makeQueuedAudioStream() below by "_soundStereo > 0".
+		assert(_soundStereo == 0);
+		_audioStream = Audio::makeQueuedAudioStream(_soundFreq, false);
 	}
 
 	// Seek
@@ -2188,8 +2187,13 @@ byte *Vmd::sound16bitADPCM(uint32 &size) {
 void Vmd::emptySoundSlice(uint32 size) {
 	byte *sound = soundEmpty(size);
 
-	if (sound)
-		_audioStream->queueBuffer(sound, size);
+	if (sound) {
+		uint32 flags = 0;
+		flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
+		flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
+
+		_audioStream->queueBuffer(sound, size, flags);
+	}
 }
 
 void Vmd::filledSoundSlice(uint32 size) {
@@ -2201,8 +2205,13 @@ void Vmd::filledSoundSlice(uint32 size) {
 	else if (_audioFormat == kAudioFormat16bitADPCM)
 		sound = sound16bitADPCM(size);
 
-	if (sound)
-		_audioStream->queueBuffer(sound, size);
+	if (sound) {
+		uint32 flags = 0;
+		flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
+		flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
+
+		_audioStream->queueBuffer(sound, size, flags);
+	}
 }
 
 uint8 Vmd::evaluateMask(uint32 mask, bool *fillInfo, uint8 &max) {

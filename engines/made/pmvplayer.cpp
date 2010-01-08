@@ -102,7 +102,7 @@ bool PmvPlayer::play(const char *filename) {
 	// TODO: Sound can still be a little choppy. A bug in the decoder or -
 	// perhaps more likely - do we have to implement double buffering to
 	// get it to work well?
-	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
+	_audioStream = Audio::makeQueuedAudioStream(soundFreq, false);
 
 	while (!_vm->shouldQuit() && !_aborted && !_fd->eos() && frameNumber < frameCount) {
 
@@ -140,7 +140,7 @@ bool PmvPlayer::play(const char *filename) {
 			soundSize = chunkCount * chunkSize;
 			soundData = new byte[soundSize];
 			decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
-			_audioStream->queueBuffer(soundData, soundSize);
+			_audioStream->queueBuffer(soundData, soundSize, Audio::Mixer::FLAG_UNSIGNED);
 		}
 
 		// Handle palette

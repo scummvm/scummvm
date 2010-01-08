@@ -465,15 +465,7 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
 
 		if (_header.audioInfo[i].hasAudio && i == 0) {
-			byte flags = 0;
-
-			if (_header.audioInfo[i].is16Bits)
-				flags = flags | Audio::Mixer::FLAG_16BITS;
-
-			if (_header.audioInfo[i].isStereo)
-				flags = flags | Audio::Mixer::FLAG_STEREO;
-
-			_audioStream = Audio::makeAppendableAudioStream(_header.audioInfo[i].sampleRate, flags);
+			_audioStream = Audio::makeQueuedAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
 		}
 	}
 
@@ -578,8 +570,14 @@ bool SmackerDecoder::decodeNextFrame() {
 				delete[] soundBuffer;
 			} else {
 				// Uncompressed audio (PCM)
-				_audioStream->queueBuffer(soundBuffer, chunkSize);
-				// The sound buffer will be deleted by AppendableAudioStream
+				byte flags = 0;
+				if (_header.audioInfo[0].is16Bits)
+					flags = flags | Audio::Mixer::FLAG_16BITS;
+				if (_header.audioInfo[0].isStereo)
+					flags = flags | Audio::Mixer::FLAG_STEREO;
+
+				_audioStream->queueBuffer(soundBuffer, chunkSize, flags);
+				// The sound buffer will be deleted by QueuedAudioStream
 			}
 
 			if (!_audioStarted) {
@@ -827,8 +825,13 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 	for (int k = 0; k < numBytes; k++)
 		delete audioTrees[k];
 
-	_audioStream->queueBuffer(unpackedBuffer, unpackedSize);
-	// unpackedBuffer will be deleted by AppendableAudioStream
+	byte flags = 0;
+	if (_header.audioInfo[0].is16Bits)
+		flags = flags | Audio::Mixer::FLAG_16BITS;
+	if (_header.audioInfo[0].isStereo)
+		flags = flags | Audio::Mixer::FLAG_STEREO;
+	_audioStream->queueBuffer(unpackedBuffer, unpackedSize, flags);
+	// unpackedBuffer will be deleted by QueuedAudioStream
 }
 
 void SmackerDecoder::unpackPalette() {

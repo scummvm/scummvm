@@ -341,7 +341,7 @@ protected:
 	uint8  _soundStage; // (0: no sound, 1: loaded, 2: playing)
 	uint32 _skipFrames;
 
-	Audio::AppendableAudioStream *_audioStream;
+	Audio::QueuedAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
 	// Current video state

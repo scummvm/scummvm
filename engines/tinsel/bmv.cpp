@@ -311,11 +311,11 @@ void BMVPlayer::InitBMV(byte *memoryBuffer) {
 	memset(memoryBuffer, 0, SCREEN_WIDE);
 	memset(memoryBuffer + SCREEN_WIDE * (SCREEN_HIGH + 1), 0, SCREEN_WIDE);
 
-	if (audioStream) {
-		_vm->_mixer->stopHandle(audioHandle);
+	if (_audioStream) {
+		_vm->_mixer->stopHandle(_audioHandle);
 
-		delete audioStream;
-		audioStream = 0;
+		delete _audioStream;
+		_audioStream = 0;
 	}
 
 	// Set the screen beginning to the second line (ie. past the off-screen line)
@@ -397,7 +397,7 @@ BMVPlayer::BMVPlayer() {
 	ScreenBeg = 0;
 	screenBuffer = 0;
 	audioStarted = 0;
-	audioStream = 0;
+	_audioStream = 0;
 	nextMaintain = 0;
 }
 
@@ -423,9 +423,7 @@ void BMVPlayer::MoviePalette(int paletteOffset) {
 }
 
 void BMVPlayer::InitialiseMovieSound() {
-	audioStream =
-		Audio::makeAppendableAudioStream(22050,
-				Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO);
+	_audioStream = Audio::makeQueuedAudioStream(22050, true);
 	audioStarted = false;
 }
 
@@ -433,11 +431,11 @@ void BMVPlayer::StartMovieSound() {
 }
 
 void BMVPlayer::FinishMovieSound() {
-	if (audioStream) {
-		_vm->_mixer->stopHandle(audioHandle);
+	if (_audioStream) {
+		_vm->_mixer->stopHandle(_audioHandle);
 
-		delete audioStream;
-		audioStream = 0;
+		delete _audioStream;
+		_audioStream = 0;
 	}
 }
 
@@ -455,12 +453,12 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 	else
 		memset(data, 0, blobs * 128);
 
-	audioStream->queueBuffer(data, blobs * 128);
+	_audioStream->queueBuffer(data, blobs * 128, Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO);
 
 	if (currentSoundFrame == ADVANCE_SOUND) {
 		if (!audioStarted) {
 			_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType,
-					&audioHandle, audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+					&_audioHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 			audioStarted = true;
 		}
 	}
@@ -1204,12 +1202,12 @@ bool BMVPlayer::MoviePlaying() {
  * Returns the audio lag in ms
  */
 int32 BMVPlayer::MovieAudioLag() {
-	if (!bMovieOn || !audioStream)
+	if (!bMovieOn || !_audioStream)
 		return 0;
 
 	// Calculate lag
 	int32 playLength = (movieTick - startTick - 1) * ((((uint32) 1000) << 10) / 24);
-	return (playLength - (((int32) _vm->_mixer->getSoundElapsedTime(audioHandle)) << 10)) >> 10;
+	return (playLength - (((int32) _vm->_mixer->getSoundElapsedTime(_audioHandle)) << 10)) >> 10;
 }
 
 uint32 BMVPlayer::NextMovieTime() {
