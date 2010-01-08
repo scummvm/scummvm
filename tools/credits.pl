@@ -872,7 +872,7 @@ begin_credits("Credits");
 		  add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
 		  add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
 		  add_person("", "segra", "Improved support for Apple II/C64 versions of MM");
-		  add_person("Andreas R&ouml;ver", "", "Broken Sword I & II MPEG2 cutscene support");
+		  add_person("Andreas R&ouml;ver", "", "Broken Sword I &amp; II MPEG2 cutscene support");
 		  add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
 		  add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
 		  add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
