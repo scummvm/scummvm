@@ -119,7 +119,6 @@ public:
 	sciEvent get(unsigned int mask);
 
 private:
-	int controlify (int ch);
 	int altify (int ch);
 	int shiftify (int c);
 	int numlockify (int c);

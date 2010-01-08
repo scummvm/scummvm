@@ -51,12 +51,6 @@ struct scancode_row {
 	{0x2c, "ZXCVBNM,./"}
 };
 
-int SciEvent::controlify(int ch) {
-	if (ch < 26)
-		ch += 96; // 0x01 -> 'a'
-	return ch;
-}
-
 int SciEvent::altify (int ch) {
 	// Calculates a PC keyboard scancode from a character */
 	int row;
@@ -369,7 +363,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 		//  we support the other case as well
 		if (event.modifiers & SCI_KEYMOD_ALT) {
 			if (event.character < 26)
-				event.character += 96;
+				event.character += 96; // 0x01 -> 'a'
 		}
 
 		if (getSciVersion() <= SCI_VERSION_1_MIDDLE) {
@@ -378,8 +372,8 @@ sciEvent SciEvent::get(unsigned int mask) {
 			if (event.modifiers & SCI_KEYMOD_ALT) {
 				event.character = altify(event.character);
 			} else if (event.modifiers & SCI_KEYMOD_CTRL) {
-				//event.character = event.data;
-				event.character = controlify(event.character);
+				if (event.character < 26)
+					event.character += 96; // 0x01 -> 'a'
 			}
 		}
 
