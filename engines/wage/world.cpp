@@ -81,7 +81,12 @@ bool World::loadWorld(MacResManager *resMan) {
 	resArray = resMan->getResIDArray("ASCN");
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		
+		res = resMan->getResource("ASCND", *iter, &resSize);
+		Scene *scene = new Scene(resMan->getResName("ASCN", *iter), res);
+
+		res = resMan->getResource("ACOD", *iter, &resSize);
+		if (res != NULL)
+			scene->_script = new Script(res);
 	}
 	
 

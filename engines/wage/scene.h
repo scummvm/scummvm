@@ -51,7 +51,6 @@ public:
 		RANDOM = 1
 	};
 
-private:
 	Script *_script;
 	String _text;
 	Common::Rect *_textBounds;
@@ -68,7 +67,9 @@ private:
 	Common::List<Obj> _objs;
 	Common::List<Chr> _chrs;
 
-public:
+	Scene() {}
+	Scene(String name, byte *data);
+
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
 	}

@@ -141,6 +141,26 @@ MacResIDArray MacResManager::getResIDArray(const char *typeID) {
 	return res;
 }
 
+char *MacResManager::getResName(const char *typeID, int16 resID) {
+	int i;
+	int typeNum = -1;
+
+	for (i = 0; i < _resMap.numTypes; i++)
+		if (strcmp(_resTypes[i].id, typeID) == 0) {
+			typeNum = i;
+			break;
+		}
+
+	if (typeNum == -1)
+		return NULL;
+
+	for (i = 0; i < _resTypes[typeNum].items; i++)
+		if (_resLists[typeNum][i].id == resID)
+			return _resLists[typeNum][i].name;
+
+	return NULL;
+}
+
 byte *MacResManager::getResource(const char *typeID, int16 resID, int *size) {
 	int i;
 	int typeNum = -1;
@@ -226,7 +246,7 @@ void MacResManager::readMap() {
 				_resFile.seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
 
 				len = _resFile.readByte();
-				_resLists[i][j].name = new byte[len + 1];
+				_resLists[i][j].name = new char[len + 1];
 				_resLists[i][j].name[len] = 0;
 				_resFile.read(_resLists[i][j].name, len);
 			}

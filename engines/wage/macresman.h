@@ -39,6 +39,7 @@ public:
 	MacResManager(Common::String fileName);
 	~MacResManager();
 	byte *getResource(const char *typeID, int16 resID, int *size);
+	char *getResName(const char *typeID, int16 resID);
 	void convertCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
 					  int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize);
 
@@ -69,7 +70,7 @@ private:
 		int16 nameOffset;
 		byte  attr;
 		int32 dataOffset;
-		byte  *name;
+		char  *name;
 	};
 
 	typedef Resource *ResPtr;

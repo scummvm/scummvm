@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	designed.o \
 	detection.o \
 	macresman.o \
+	scene.o \
 	script.o \
 	sound.o \
 	util.o \
