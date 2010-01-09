@@ -289,37 +289,6 @@ struct LinearDiskStreamAudioBlock {
 SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
 		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
 
-/**
- * An audio stream to which additional data can be appended on-the-fly.
- * Used by SMUSH, iMuseDigital, the Kyrandia 3 VQA player, etc.
- */
-class AppendableAudioStream : public Audio::AudioStream {
-public:
-
-	/**
-	 * Queue another audio data buffer for playback. The stream
-	 * will playback all queued buffers, in the order they were
-	 * queued. After all data contained in them has been played,
-	 * the buffer will be delete[]'d (so make sure to allocate them
-	 * with new[], not with malloc).
-	 */
-	virtual void queueBuffer(byte *data, uint32 size) = 0;
-
-	/**
-	 * Mark the stream as finished, that is, signal that no further data
-	 * will be appended to it. Only after this has been done can the
-	 * AppendableAudioStream ever 'end'
-	 */
-	virtual void finish() = 0;
-};
-
-/**
- * Factory function for an AppendableAudioStream. The rate and flags
- * parameters are analog to those used in makeLinearInputStream.
- */
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte flags);
-
-
 class QueuingAudioStream : public Audio::AudioStream {
 public:
 

@@ -292,7 +292,7 @@ bool VQAMovie::open(const char *filename) {
 				assert(_header.bits == 8);
 				assert(_header.channels == 1);
 
-				_stream = Audio::makeAppendableAudioStream(_header.freq, Audio::Mixer::FLAG_UNSIGNED);
+				_stream = Audio::makeQueuingAudioStream(_header.freq, false);
 			} else {
 				_stream = NULL;
 			}
@@ -422,7 +422,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 			inbuf = new byte[size];
 			_file->read(inbuf, size);
 			assert(_stream);
-			_stream->queueBuffer(inbuf, size);
+			_stream->queueBuffer(inbuf, size, Audio::Mixer::FLAG_UNSIGNED);
 			break;
 
 		case MKID_BE('SND1'):	// Compressed sound, almost like AUD
@@ -435,12 +435,12 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 			if (insize == outsize) {
 				assert(_stream);
-				_stream->queueBuffer(inbuf, insize);
+				_stream->queueBuffer(inbuf, insize, Audio::Mixer::FLAG_UNSIGNED);
 			} else {
 				outbuf = new byte[outsize];
 				decodeSND1(inbuf, insize, outbuf, outsize);
 				assert(_stream);
-				_stream->queueBuffer(outbuf, outsize);
+				_stream->queueBuffer(outbuf, outsize, Audio::Mixer::FLAG_UNSIGNED);
 				delete[] inbuf;
 			}
 			break;
@@ -612,7 +612,7 @@ void VQAMovie::play() {
 			case MKID_BE('SND0'):	// Uncompressed sound
 				inbuf = new byte[size];
 				_file->read(inbuf, size);
-				_stream->queueBuffer(inbuf, size);
+				_stream->queueBuffer(inbuf, size, Audio::Mixer::FLAG_UNSIGNED);
 				break;
 
 			case MKID_BE('SND1'):	// Compressed sound
@@ -623,11 +623,11 @@ void VQAMovie::play() {
 				_file->read(inbuf, insize);
 
 				if (insize == outsize) {
-					_stream->queueBuffer(inbuf, insize);
+					_stream->queueBuffer(inbuf, insize, Audio::Mixer::FLAG_UNSIGNED);
 				} else {
 					outbuf = new byte[outsize];
 					decodeSND1(inbuf, insize, outbuf, outsize);
-					_stream->queueBuffer(outbuf, outsize);
+					_stream->queueBuffer(outbuf, outsize, Audio::Mixer::FLAG_UNSIGNED);
 					delete[] inbuf;
 				}
 				break;

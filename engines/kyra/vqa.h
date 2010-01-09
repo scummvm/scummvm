@@ -33,7 +33,7 @@
 class OSystem;
 
 namespace Audio {
-class AppendableAudioStream;
+class QueuingAudioStream;
 } // End of namespace Audio
 
 namespace Common {
@@ -127,7 +127,7 @@ protected:
 
 	byte *_frame;
 
-	Audio::AppendableAudioStream *_stream;
+	Audio::QueuingAudioStream *_stream;
 	Audio::SoundHandle _sound;
 
 	uint32 readTag();

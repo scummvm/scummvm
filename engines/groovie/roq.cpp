@@ -516,11 +516,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 
 	// Initialize the audio stream if needed
 	if (!_audioStream) {
-		byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE;
-#ifdef SCUMM_LITTLE_ENDIAN
-		flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
-#endif
-		_audioStream = Audio::makeAppendableAudioStream(22050, flags);
+		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
@@ -544,7 +540,11 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 	}
 
 	// Queue the read buffer
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2);
+	byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE;
+#ifdef SCUMM_LITTLE_ENDIAN
+	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+#endif
+	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, flags);
 
 	return true;
 }
@@ -559,11 +559,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 
 	// Initialize the audio stream if needed
 	if (!_audioStream) {
-		byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_STEREO;
-#ifdef SCUMM_LITTLE_ENDIAN
-		flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
-#endif
-		_audioStream = Audio::makeAppendableAudioStream(22050, flags);
+		_audioStream = Audio::makeQueuingAudioStream(22050, true);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
@@ -600,7 +596,11 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 	}
 
 	// Queue the read buffer
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2);
+	byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+#endif
+	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, flags);
 
 	return true;
 }

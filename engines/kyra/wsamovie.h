@@ -26,12 +26,8 @@
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
-namespace Audio {
-class AppendableAudioStream;
-class SoundHandle;
-} // End of namespace Audio
-
 namespace Kyra {
+
 class KyraEngine_v1;
 class Screen_v2;
 class Palette;

@@ -52,7 +52,7 @@ protected:
 	OSystem *_syst;
 	Common::SeekableReadStream *_file;
 	uint16 _flags;
-	Audio::AppendableAudioStream *_audioStream;
+	Audio::QueuingAudioStream *_audioStream;
 
 private:
 	// Synchronization stuff

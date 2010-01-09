@@ -498,7 +498,7 @@ void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colours, uint16 imageWidth
 
 void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	if (!_audioStream) {
-		_audioStream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
+		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
@@ -506,7 +506,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	byte *data = new byte[60000];
 	int chunksize = in->read(data, 60000);
 	if (!Common::isDebugChannelEnabled(kGroovieDebugFast)) {
-		_audioStream->queueBuffer(data, chunksize);
+		_audioStream->queueBuffer(data, chunksize, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
 	}
 }
 
