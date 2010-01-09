@@ -253,7 +253,6 @@ int TeenAgentEngine::skipEvents() const {
 		switch(event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
-			debug(0, "quit or rtl recv-ed");
 			return -1;
 		case Common::EVENT_MAINMENU:
 		case Common::EVENT_LBUTTONDOWN:
@@ -464,7 +463,6 @@ Common::Error TeenAgentEngine::run() {
 
 		while (_event->pollEvent(event)) {
 			if (event.type == Common::EVENT_RTL) {
-				debug(0, "returning to launcher");
 				deinit();
 				return Common::kNoError;
 			}
