@@ -27,7 +27,6 @@
 
 namespace Sci {
 
-#define FREQUENCY 44100
 #define VOLUME_SHIFT 3
 
 #define BASE_NOTE 129	// A10
@@ -163,6 +162,7 @@ void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
 	int i;
 	int chan;
 	int freq[kMaxChannels];
+	int frequency = getRate();
 
 	for (chan = 0; chan < _channels_nr; chan++)
 		freq[chan] = get_freq(_notes[chan]);
@@ -176,20 +176,20 @@ void MidiDriver_PCJr::generateSamples(int16 *data, int len) {
 				             >> VOLUME_SHIFT;
 
 				_freq_count[chan] += freq[chan];
-				while (_freq_count[chan] >= (FREQUENCY << 1))
-					_freq_count[chan] -= (FREQUENCY << 1);
+				while (_freq_count[chan] >= (frequency << 1))
+					_freq_count[chan] -= (frequency << 1);
 
 				if (_freq_count[chan] - freq[chan] < 0) {
 					/* Unclean rising edge */
 					int l = volume << 1;
 					result += -volume + (l * _freq_count[chan]) / freq[chan];
-				} else if (_freq_count[chan] >= FREQUENCY
-				           && _freq_count[chan] - freq[chan] < FREQUENCY) {
+				} else if (_freq_count[chan] >= frequency
+				           && _freq_count[chan] - freq[chan] < frequency) {
 					/* Unclean falling edge */
 					int l = volume << 1;
-					result += volume - (l * (_freq_count[chan] - FREQUENCY)) / freq[chan];
+					result += volume - (l * (_freq_count[chan] - frequency)) / freq[chan];
 				} else {
-					if (_freq_count[chan] < FREQUENCY)
+					if (_freq_count[chan] < frequency)
 						result += volume;
 					else
 						result += -volume;
