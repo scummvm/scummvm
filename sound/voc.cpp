@@ -147,15 +147,21 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 		case 7:	// end of loop
 			assert(len == 0);
 			break;
-		case 8: // "Extended"
-			// This occures in the LoL Intro demo. This block can usually be used to create stereo
-			// sound, but the LoL intro has only an empty block, thus this dummy implementation will
-			// work.
+		case 8: { // "Extended"
+			// This occures in the LoL Intro demo. 
+			// This block overwrites the next parameters of a block 1 "Sound data".
+			// To assure we never get any bad data here, we will assert in case
+			// this tries to define a stereo sound block or tries to use something
+			// different than 8bit unsigned sound data.
+			// TODO: Actually we would need to check the frequency divisor (the
+			// first word) here too. It is used in the following equation:
+			// sampleRate = 256000000/(channels * (65536 - frequencyDivisor))
 			assert(len == 4);
 			stream.readUint16LE();
-			stream.readByte();
-			stream.readByte();
-			break;
+			uint8 codec = stream.readByte();
+			uint8 channels = stream.readByte() + 1;
+			assert(codec == 0 && channels == 1);
+			} break;
 		default:
 			warning("Unhandled code %d in VOC file (len %d)", code, len);
 			return ret_sound;
