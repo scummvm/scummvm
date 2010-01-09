@@ -54,7 +54,7 @@ public:
 	
 protected:
 	ToltecsEngine *_vm;
-	Audio::AppendableAudioStream *_audioStream;
+	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
 
 	uint32 _chunkCount, _frameCount, _lastPrefetchOfs;
