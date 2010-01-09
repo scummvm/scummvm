@@ -108,25 +108,67 @@ void Portrait::init() {
 	// TODO: Read animation bitmaps
 }
 
-void Portrait::setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	uint32 number = ((noun & 0xff) << 24) | ((verb & 0xff) << 16) | ((cond & 0xff) << 8) | (seq & 0xff);
+void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+	_position = position;
 
+	// Now init audio and sync resource
+	uint32 audioNumber = ((noun & 0xff) << 24) | ((verb & 0xff) << 16) | ((cond & 0xff) << 8) | (seq & 0xff);
+	ResourceId syncResourceId = ResourceId(kResourceTypeSync36, resourceId, noun, verb, cond, seq);
+	Resource *syncResource = _resMan->findResource(syncResourceId, true);
+	uint syncOffset = 0;
+
+	// Draw base bitmap
+	drawMainBitmap();
+
+	// Start playing audio...
 	_audio->stopAudio();
-	_audio->startAudio(resourceId, number);
+	_audio->startAudio(resourceId, audioNumber);
+
+	// Do animation depending on sync resource till audio is done playing
+	int16 syncCue;
+	int timerPosition, curPosition;
+
+	timerPosition = 0;
+	while (syncOffset < syncResource->size - 2) {
+		timerPosition += (int16)READ_LE_UINT16(syncResource->data + syncOffset);
+		syncOffset += 2;
+		if (syncOffset < syncResource->size - 2) {
+			syncCue = (int16)READ_LE_UINT16(syncResource->data + syncOffset);
+			syncOffset += 2;
+		} else {
+			syncCue = -1;
+		}
+		// Wait till syncTime passed, then show specific animation bitmap
+		do {
+			g_system->delayMillis(10);
+			curPosition = _audio->getAudioPosition();
+		} while ((curPosition != -1) && (curPosition < timerPosition));
+
+		if (syncCue >= 0) {
+			// Display animation bitmap
+			drawBitmap(syncCue);
+			warning("display animation %d", syncCue);
+		}
+	}
 }
 
-void Portrait::draw(Common::Point position) {
+void Portrait::drawMainBitmap() {
 	byte *data = _mainBitmapData;
 	_palette->set(&_portraitPalette, 1);
 	for (int y = 0; y < _height; y++) {
 		for (int x = 0; x < _width; x++) {
-			_screen->putPixelOnDisplay(position.x + x, position.y + y, _portraitPalette.mapping[*data++]);
+			_screen->putPixelOnDisplay(_position.x + x, _position.y + y, _portraitPalette.mapping[*data++]);
 		}
 	}
 
 	Common::Rect mainBitmap = Common::Rect(_width, _height);
-	mainBitmap.moveTo(position.x, position.y);
+	mainBitmap.moveTo(_position.x, _position.y);
 	_screen->copyDisplayRectToScreen(mainBitmap);
+	g_system->updateScreen();
+}
+
+void Portrait::drawBitmap(int16 bitmapNr) {
+	// 0 seems to be main bitmap
 }
 
 } // End of namespace Sci

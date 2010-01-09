@@ -850,15 +850,14 @@ reg_t SciGui::portraitLoad(Common::String resourceName) {
 	return NULL_REG;
 }
 
-void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
 	Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
 	position.x += _gfx->GetPort()->left; position.y += _gfx->GetPort()->top;
 	position.x *= 2; position.y *= 2;
-	myPortrait->setupAudio(resourceNum, noun, verb, cond, seq);
-	myPortrait->draw(position);
+	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
 	delete myPortrait;
 }
 

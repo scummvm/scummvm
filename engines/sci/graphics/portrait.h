@@ -34,10 +34,12 @@ public:
 	~Portrait();
 
 	void setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
-	void draw(Common::Point position);
+	void doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 
 private:
 	void init();
+	void drawMainBitmap();
+	void drawBitmap(int16 bitmapNr);
 
 	ResourceManager *_resMan;
 	Screen *_screen;
@@ -56,6 +58,8 @@ private:
 	Palette _portraitPalette;
 
 	byte *_mainBitmapData;
+
+	Common::Point _position;
 };
 
 } // End of namespace Sci
