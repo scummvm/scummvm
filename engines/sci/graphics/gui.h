@@ -167,6 +167,7 @@ public:
 
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
+	virtual bool debugEGAdrawingVisualize(bool state);
 
 	// FIXME: Don't store EngineState
 	virtual void resetEngineState(EngineState *s);

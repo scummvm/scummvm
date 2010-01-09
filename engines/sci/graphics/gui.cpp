@@ -964,4 +964,9 @@ bool SciGui::debugShowMap(int mapNo) {
 	return false;
 }
 
+bool SciGui::debugEGAdrawingVisualize(bool state) {
+	_gfx->setEGAdrawingVisualize(state);
+	return false;
+}
+
 } // End of namespace Sci

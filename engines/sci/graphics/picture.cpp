@@ -33,8 +33,8 @@
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId)
-	: _resMan(resMan), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId) {
+SciGuiPicture::SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
+	: _resMan(resMan), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -589,11 +589,11 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		default:
 			error("Unsupported pic-operation %X", pic_op);
 		}
-		//printf("picop %X\n", pic_op);
-		// for debug purposes
-		//_screen->copyToScreen();
-		//g_system->updateScreen();
-		//g_system->delayMillis(500);
+		if ((_EGAdrawingVisualize) && (isEGA)) {
+			_screen->copyToScreen();
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
 	}
 	error("picture vector data without terminator");
 }

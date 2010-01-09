@@ -90,6 +90,7 @@ private:
 	bool cmdDrawRobot(int argc, const char **argv);
 #endif
 	bool cmdUndither(int argc, const char **argv);
+	bool cmdPicVisualize(int argc, const char **argv);
 	bool cmdPlayVideo(int argc, const char **argv);
 	// Segments
 	bool cmdPrintSegmentTable(int argc, const char **argv);

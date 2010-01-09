@@ -83,6 +83,8 @@ public:
 	void BitsRestore(reg_t memoryHandle);
 	void BitsFree(reg_t memoryHandle);
 
+	void setEGAdrawingVisualize(bool state);
+
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
 	void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
@@ -124,6 +126,9 @@ private:
 	byte _priorityBands[200];
 
 	ViewCache _cachedViews;
+
+	// true means make EGA picture drawing visible
+	bool _EGAdrawingVisualize;
 };
 
 } // End of namespace Sci

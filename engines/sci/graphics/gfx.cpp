@@ -66,6 +66,8 @@ void Gfx::init(Text *text) {
 	_text->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->getWidth(), _screen->getHeight());
 	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
+
+	_EGAdrawingVisualize = false;
 }
 
 void Gfx::purgeCache() {
@@ -323,8 +325,12 @@ void Gfx::BitsFree(reg_t memoryHandle) {
 	}
 }
 
+void Gfx::setEGAdrawingVisualize(bool state) {
+	_EGAdrawingVisualize = state;
+}
+
 void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
-	SciGuiPicture *picture = new SciGuiPicture(_resMan, this, _screen, _palette, pictureId);
+	SciGuiPicture *picture = new SciGuiPicture(_resMan, this, _screen, _palette, pictureId, _EGAdrawingVisualize);
 
 	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag)

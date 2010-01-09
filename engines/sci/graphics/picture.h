@@ -34,7 +34,7 @@ namespace Sci {
 
 class SciGuiPicture {
 public:
-	SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId);
+	SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
@@ -75,6 +75,9 @@ private:
 	bool _addToFlag;
 	int16 _EGApaletteNo;
 	byte _priority;
+
+	// If true, we will show the whole EGA drawing process...
+	bool _EGAdrawingVisualize;
 };
 
 } // End of namespace Sci

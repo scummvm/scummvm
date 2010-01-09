@@ -115,6 +115,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("draw_robot",			WRAP_METHOD(Console, cmdDrawRobot));
 #endif
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
+	DCmd_Register("pic_visualize",		WRAP_METHOD(Console, cmdPicVisualize));
 	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
@@ -314,6 +315,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" set_palette - Sets a palette resource\n");
 	DebugPrintf(" draw_pic - Draws a pic resource\n");
 	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
+	DebugPrintf(" pic_visualize - Enables visualization of the drawing process of EGA pictures\n");
 	DebugPrintf(" undither - Enable/disable undithering\n");
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
@@ -1047,6 +1049,18 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	bool flag = atoi(argv[1]) ? true : false;
 
 	return _vm->_gamestate->_gui->debugUndither(flag);
+}
+
+bool Console::cmdPicVisualize(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Enable/disable picture visualization (EGA only)\n");
+		DebugPrintf("Usage: %s <0/1>\n", argv[0]);
+		return true;
+	}
+
+	bool state = atoi(argv[1]) ? true : false;
+
+	return _vm->_gamestate->_gui->debugEGAdrawingVisualize(state);
 }
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
