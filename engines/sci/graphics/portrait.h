@@ -28,6 +28,11 @@
 
 namespace Sci {
 
+struct PortraitBitmap {
+	int16 width, height;
+	byte *rawBitmap;
+};
+
 class Portrait {
 public:
 	Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName);
@@ -38,8 +43,7 @@ public:
 
 private:
 	void init();
-	void drawMainBitmap();
-	void drawBitmap(int16 bitmapNr);
+	void drawBitmap(uint16 bitmapNr);
 
 	ResourceManager *_resMan;
 	Screen *_screen;
@@ -53,11 +57,11 @@ private:
 
 	uint16 _height;
 	uint16 _width;
-	uint16 _animationCount;
 	uint16 _portraitPaletteSize;
 	Palette _portraitPalette;
 
-	byte *_mainBitmapData;
+	uint16 _bitmapCount;
+	PortraitBitmap *_bitmaps;
 
 	Common::Point _position;
 };

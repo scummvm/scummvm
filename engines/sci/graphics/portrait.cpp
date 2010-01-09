@@ -82,7 +82,8 @@ void Portrait::init() {
 	}
 	_width = READ_LE_UINT16(_fileData + 3);
 	_height = READ_LE_UINT16(_fileData + 5);
-	_animationCount = READ_LE_UINT16(_fileData + 7);
+	_bitmapCount = READ_LE_UINT16(_fileData + 7);
+	_bitmaps = new PortraitBitmap[_bitmapCount];
 
 	_portraitPaletteSize = READ_LE_UINT16(_fileData + 13);
 	byte *data = _fileData + 17;
@@ -98,14 +99,17 @@ void Portrait::init() {
 		palNr++; palSize += 3;
 	}
 
-	// Read main bitmap
-	assert(READ_LE_UINT16(data + 4) == _height);
-	assert(READ_LE_UINT16(data + 6) == _width);
-	data += 14; // Skip over bitmap header
-	_mainBitmapData = data;
-	data += _height * _width;
-	
-	// TODO: Read animation bitmaps
+	// Read all bitmaps
+	PortraitBitmap *curBitmap = _bitmaps;
+	uint16 bitmapNr;
+
+	for (bitmapNr = 0; bitmapNr < _bitmapCount; bitmapNr++) {
+		curBitmap->height = READ_LE_UINT16(data + 4);
+		curBitmap->width = READ_LE_UINT16(data + 6);
+		curBitmap->rawBitmap = data + 14;
+		data += 14 + (curBitmap->height * curBitmap->width);
+		curBitmap++;
+	}
 }
 
 void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
@@ -118,57 +122,61 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	uint syncOffset = 0;
 
 	// Draw base bitmap
-	drawMainBitmap();
+	_palette->set(&_portraitPalette, 1);
+	drawBitmap(0);
 
 	// Start playing audio...
 	_audio->stopAudio();
 	_audio->startAudio(resourceId, audioNumber);
 
 	// Do animation depending on sync resource till audio is done playing
-	int16 syncCue;
+	// TODO: This whole mess doesnt seem to be correct currently
+	uint16 syncCue;
 	int timerPosition, curPosition;
-
-	timerPosition = 0;
 	while (syncOffset < syncResource->size - 2) {
-		timerPosition += (int16)READ_LE_UINT16(syncResource->data + syncOffset);
+		timerPosition = (int16)READ_LE_UINT16(syncResource->data + syncOffset);
 		syncOffset += 2;
 		if (syncOffset < syncResource->size - 2) {
-			syncCue = (int16)READ_LE_UINT16(syncResource->data + syncOffset);
+			syncCue = READ_LE_UINT16(syncResource->data + syncOffset);
 			syncOffset += 2;
 		} else {
-			syncCue = -1;
+			syncCue = 0xFFFF;
 		}
+
+		if (syncCue != 0xFFFF) {
+			// Display animation bitmap
+			syncCue++; // TODO: Not sure if 0 means main bitmap or animation-frame 0
+			if (syncCue < _bitmapCount) {
+				drawBitmap(syncCue);
+			} else {
+				warning("kPortrait: sync information tried to draw non-existant %d", syncCue);
+			}
+		}
+
 		// Wait till syncTime passed, then show specific animation bitmap
 		do {
 			g_system->delayMillis(10);
 			curPosition = _audio->getAudioPosition();
 		} while ((curPosition != -1) && (curPosition < timerPosition));
-
-		if (syncCue >= 0) {
-			// Display animation bitmap
-			drawBitmap(syncCue);
-			warning("display animation %d", syncCue);
-		}
 	}
 }
 
-void Portrait::drawMainBitmap() {
-	byte *data = _mainBitmapData;
-	_palette->set(&_portraitPalette, 1);
-	for (int y = 0; y < _height; y++) {
-		for (int x = 0; x < _width; x++) {
+// TODO: coordinate offset is missing...can't find it in the bitmap header nor in the main header
+void Portrait::drawBitmap(uint16 bitmapNr) {
+	byte *data = _bitmaps[bitmapNr].rawBitmap;
+	uint16 bitmapHeight = _bitmaps[bitmapNr].height;
+	uint16 bitmapWidth = _bitmaps[bitmapNr].width;
+
+	for (int y = 0; y < bitmapHeight; y++) {
+		for (int x = 0; x < bitmapWidth; x++) {
 			_screen->putPixelOnDisplay(_position.x + x, _position.y + y, _portraitPalette.mapping[*data++]);
 		}
 	}
 
-	Common::Rect mainBitmap = Common::Rect(_width, _height);
-	mainBitmap.moveTo(_position.x, _position.y);
-	_screen->copyDisplayRectToScreen(mainBitmap);
+	Common::Rect bitmapRect = Common::Rect(bitmapWidth, bitmapHeight);
+	bitmapRect.moveTo(_position.x, _position.y);
+	_screen->copyDisplayRectToScreen(bitmapRect);
 	g_system->updateScreen();
-}
-
-void Portrait::drawBitmap(int16 bitmapNr) {
-	// 0 seems to be main bitmap
 }
 
 } // End of namespace Sci
