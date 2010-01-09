@@ -171,6 +171,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("music_mute", false);
 	ConfMan.registerDefault("sfx_mute", false);
 	ConfMan.registerDefault("speech_mute", false);
+	ConfMan.registerDefault("mute", false);
 
 	ConfMan.registerDefault("multi_midi", false);
 	ConfMan.registerDefault("native_mt32", false);
