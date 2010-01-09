@@ -140,6 +140,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// Draw base bitmap
 	_palette->set(&_portraitPalette, 1);
 	drawBitmap(0);
+	bitsShow();
 
 	// Start playing audio...
 	_audio->stopAudio();
@@ -161,9 +162,11 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 
 		if (syncCue != 0xFFFF) {
 			// Display animation bitmap
-			syncCue++; // TODO: Not sure if 0 means main bitmap or animation-frame 0
 			if (syncCue < _bitmapCount) {
+				if (syncCue)
+					drawBitmap(0); // Draw base bitmap first to get valid animation frame
 				drawBitmap(syncCue);
+				bitsShow();
 			} else {
 				warning("kPortrait: sync information tried to draw non-existant %d", syncCue);
 			}
@@ -179,7 +182,6 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	_resMan->unlockResource(syncResource);
 }
 
-// TODO: coordinate offset is missing...can't find it in the bitmap header nor in the main header
 void Portrait::drawBitmap(uint16 bitmapNr) {
 	byte *data = _bitmaps[bitmapNr].rawBitmap;
 	uint16 bitmapHeight = _bitmaps[bitmapNr].height;
@@ -195,9 +197,11 @@ void Portrait::drawBitmap(uint16 bitmapNr) {
 		}
 		data += _bitmaps[bitmapNr].extraBytesPerLine;
 	}
+}
 
-	Common::Rect bitmapRect = Common::Rect(bitmapWidth, bitmapHeight);
-	bitmapRect.moveTo(bitmapPosition.x, bitmapPosition.y);
+void Portrait::bitsShow() {
+	Common::Rect bitmapRect = Common::Rect(_width, _height);
+	bitmapRect.moveTo(_position.x, _position.y);
 	_screen->copyDisplayRectToScreen(bitmapRect);
 	g_system->updateScreen();
 }

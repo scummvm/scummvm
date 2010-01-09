@@ -46,6 +46,7 @@ public:
 private:
 	void init();
 	void drawBitmap(uint16 bitmapNr);
+	void bitsShow();
 
 	ResourceManager *_resMan;
 	Screen *_screen;
