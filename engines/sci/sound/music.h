@@ -214,7 +214,6 @@ protected:
 
 	Audio::Mixer *_pMixer;
 	MidiPlayer *_pMidiDrv;
-	MidiDriverType _midiType;
 
 	uint32 _dwTempo;
 	// Mixed Adlib/MIDI mode: when enabled from the ScummVM sound options screen,

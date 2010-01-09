@@ -63,23 +63,9 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	const MidiDriverDescription *md = MidiDriver::findMusicDriver(ConfMan.get("music_driver"));
-	_midiType = md ? md->id : MD_AUTO;
+	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
 
-	if (_midiType == MD_AUTO)
-		_midiType = MD_ADLIB;
-
-	switch (_midiType) {
-	case MD_ADLIB:
-	case MD_PCJR:
-	case MD_PCSPK:
-		break;
-	default:
-		warning("Unhandled MIDI type, switching to default");
-		_midiType = MD_ADLIB;
-	}
-
-	switch (_midiType) {
+	switch (midiType) {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
 		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
@@ -96,7 +82,7 @@ void SciMusic::init() {
 	//case MD_MT32:
 	// TODO
 	default:
-		error("Unsupported _midiType setup %d", _midiType);
+		error("Unsupported _midiType setup %d", midiType);
 	}
 
 	if (_pMidiDrv) {
