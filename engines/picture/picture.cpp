@@ -152,7 +152,7 @@ Common::Error PictureEngine::run() {
 
 	syncSoundSettings();
 
-#define TEST_MENU
+//#define TEST_MENU
 #ifdef TEST_MENU
 	_screen->registerFont(0, 0x0D);
 	_screen->registerFont(1, 0x0E);
@@ -169,9 +169,10 @@ Common::Error PictureEngine::run() {
 		updateScreen();
 	}
 	*/
+	return Common::kNoError;
 #endif
 
-#if 0
+#if 1
 	_script->loadScript(0, 0);
 	_script->runScript(0);
 #endif

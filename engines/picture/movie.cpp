@@ -80,7 +80,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_cameraX = 0;
 	_vm->_cameraY = 0;
 
-	_audioStream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_UNSIGNED);
+	_audioStream = Audio::makeQueuingAudioStream(22050, false);
 
 	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 
@@ -199,7 +199,7 @@ void MoviePlayer::fetchAudioChunks() {
 		if (chunkType == 4) {
 			byte *chunkBuffer = new byte[chunkSize];
 			_vm->_arc->read(chunkBuffer, chunkSize);
-			_audioStream->queueBuffer(chunkBuffer, chunkSize);
+			_audioStream->queueBuffer(chunkBuffer, chunkSize, Audio::Mixer::FLAG_UNSIGNED);
 			chunkBuffer = NULL;
 			prefetchChunkCount++;
 			_soundChunkFramesLeft += _framesPerSoundChunk;
