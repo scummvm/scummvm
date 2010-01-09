@@ -583,7 +583,7 @@ Common::Error TeenAgentEngine::run() {
 		if (next_tick > 0) {
 			_system->delayMillis(next_tick > 40? 40: next_tick);
 		}
-	} while (!_event->shouldQuit());
+	} while (!shouldQuit());
 
 	deinit();
 	return Common::kNoError;
