@@ -3810,6 +3810,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 					HotspotData *wayne = res.getHotspot(WAYNE_ID);
 
 					if ((player->roomNumber != 35) && (gwyn->roomNumber != 35) && (wayne->roomNumber != 35)) {
+						h.setAnimationIndex(EWAN_ANIM_INDEX);
 						if (rnd.getRandomNumber(1) == 1)
 							id = BG_EXTRA1 << 8;
 						else {
