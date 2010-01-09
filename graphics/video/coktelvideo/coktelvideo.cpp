@@ -1559,12 +1559,7 @@ void Vmd::seekFrame(int32 frame, int16 whence, bool restart) {
 	// Restart sound
 	if (_hasSound && (frame == 0) && (_soundStage == 0) && !_audioStream) {
 		_soundStage = 1;
-		// FIXME: This code didn't check the stereo flag at all and always generated
-		// mono data. Is that on purpose? If so, just remove this comment.
-		// If it was by accident, remove the assert and replace "false" in the call
-		// to makeQueuingAudioStream() below by "_soundStereo > 0".
-		assert(_soundStereo == 0);
-		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, false);
+		_audioStream = Audio::makeQueuingAudioStream(_soundFreq, _soundStereo != 0);
 	}
 
 	// Seek
