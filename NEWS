@@ -1,6 +1,10 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
+1.0.1 (2010-??-??)
+ Broken Sword 1:
+   - Fixed crash in the Macintosh demo.
+
 1.0.0 (2009-11-15)
  New Ports:
    - Added MotoEZX and MotoMAGX ports.
