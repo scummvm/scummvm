@@ -29,6 +29,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
@@ -36,8 +37,8 @@
 
 namespace Sci {
 
-Portrait::Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
+Portrait::Portrait(ResourceManager *resMan, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
+	: _resMan(resMan), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
 	init();
 }
 
@@ -160,6 +161,12 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			syncCue = 0xFFFF;
 		}
 
+		// Wait till syncTime passed, then show specific animation bitmap
+		do {
+			_gui->wait(1);
+			curPosition = _audio->getAudioPosition();
+		} while ((curPosition != -1) && (curPosition < timerPosition));
+
 		if (syncCue != 0xFFFF) {
 			// Display animation bitmap
 			if (syncCue < _bitmapCount) {
@@ -171,12 +178,6 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				warning("kPortrait: sync information tried to draw non-existant %d", syncCue);
 			}
 		}
-
-		// Wait till syncTime passed, then show specific animation bitmap
-		do {
-			g_system->delayMillis(10);
-			curPosition = _audio->getAudioPosition();
-		} while ((curPosition != -1) && (curPosition < timerPosition));
 	}
 
 	_resMan->unlockResource(syncResource);
