@@ -24,7 +24,6 @@
  */
 
 #include "sci/sound/softseq/mididriver.h"
-#include "sci/sound/softseq/pcjr.h"
 
 namespace Sci {
 
@@ -57,6 +56,43 @@ static inline int get_freq(int note) {
 
 	return freq;
 }
+
+class MidiDriver_PCJr : public MidiDriver_Emulated {
+public:
+	friend class MidiPlayer_PCJr;
+
+	enum {
+		kMaxChannels = 3
+	};
+
+	MidiDriver_PCJr(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { }
+	~MidiDriver_PCJr() { }
+
+	// MidiDriver
+	int open() { return open(kMaxChannels); }
+	void close();
+	void send(uint32 b);
+	MidiChannel *allocateChannel() { return NULL; }
+	MidiChannel *getPercussionChannel() { return NULL; }
+
+	// AudioStream
+	bool isStereo() const { return false; }
+	int getRate() const { return _mixer->getOutputRate(); }
+
+	// MidiDriver_Emulated
+	void generateSamples(int16 *buf, int len);
+
+	int open(int channels);
+private:
+	int _channels_nr;
+	int _global_volume; // Base volume
+	int _volumes[kMaxChannels];
+	int _notes[kMaxChannels]; // Current halftone, or 0 if off
+	int _freq_count[kMaxChannels];
+	int _channel_assigner;
+	int _channels_assigned;
+	int _chan_nrs[kMaxChannels];
+};
 
 void MidiDriver_PCJr::send(uint32 b) {
 	byte command = b & 0xff;
@@ -192,6 +228,16 @@ void MidiDriver_PCJr::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 }
 
+class MidiPlayer_PCJr : public MidiPlayer {
+public:
+	MidiPlayer_PCJr() { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
+	int open(ResourceManager *resMan) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
+	byte getPlayId(SciVersion soundVersion);
+	int getPolyphony() const { return 3; }
+	bool hasRhythmChannel() const { return false; }
+	void setVolume(byte volume) { static_cast<MidiDriver_PCJr *>(_driver)->_global_volume = volume; }
+};
+
 byte MidiPlayer_PCJr::getPlayId(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
@@ -203,6 +249,16 @@ byte MidiPlayer_PCJr::getPlayId(SciVersion soundVersion) {
 	}
 }
 
+MidiPlayer *MidiPlayer_PCJr_create() {
+	return new MidiPlayer_PCJr();
+}
+
+class MidiPlayer_PCSpeaker : public MidiPlayer_PCJr {
+public:
+	byte getPlayId(SciVersion soundVersion);
+	int getPolyphony() const { return 1; }
+};
+
 byte MidiPlayer_PCSpeaker::getPlayId(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
@@ -212,6 +268,10 @@ byte MidiPlayer_PCSpeaker::getPlayId(SciVersion soundVersion) {
 	default:
 		return 0x12;
 	}
+}
+
+MidiPlayer *MidiPlayer_PCSpeaker_create() {
+	return new MidiPlayer_PCSpeaker();
 }
 
 } // End of namespace Sci

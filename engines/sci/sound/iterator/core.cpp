@@ -32,8 +32,6 @@
 #include "sci/sound/iterator/iterator.h"
 #include "sci/sound/softseq/mididriver.h"
 
-#include "sci/sound/softseq/pcjr.h"
-
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -236,10 +234,10 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 			_mididrv = MidiPlayer_Adlib_create();
 		break;
 	case MD_PCJR:
-		_mididrv = new MidiPlayer_PCJr();
+		_mididrv = MidiPlayer_PCJr_create();
 		break;
 	case MD_PCSPK:
-		_mididrv = new MidiPlayer_PCSpeaker();
+		_mididrv = MidiPlayer_PCSpeaker_create();
 		break;
 	default:
 		break;

@@ -33,7 +33,6 @@
 #include "sci/engine/state.h"
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
-#include "sci/sound/softseq/pcjr.h"
 
 namespace Sci {
 
@@ -89,10 +88,10 @@ void SciMusic::init() {
 			_pMidiDrv = MidiPlayer_Adlib_create();
 		break;
 	case MD_PCJR:
-		_pMidiDrv = new MidiPlayer_PCJr();
+		_pMidiDrv = MidiPlayer_PCJr_create();
 		break;
 	case MD_PCSPK:
-		_pMidiDrv = new MidiPlayer_PCSpeaker();
+		_pMidiDrv = MidiPlayer_PCSpeaker_create();
 		break;
 	//case MD_MT32:
 	// TODO
