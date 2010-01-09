@@ -164,6 +164,8 @@ public:
 protected:
 
 	int cmp(const Timestamp &ts) const;
+
+	void addFramesIntern(int frames);
 };
 
 

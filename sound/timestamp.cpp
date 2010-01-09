@@ -43,7 +43,8 @@ Timestamp::Timestamp(uint32 ms, int fr) {
 	_framerateFactor = 1000 / gcd(1000, fr);
 	_framerate = fr * _framerateFactor;
 
-	_numberOfFrames = (ms % 1000) * _framerate / 1000;
+	// Note that _framerate is always divisible by 1000.
+	_numberOfFrames = (ms % 1000) * (_framerate / 1000);
 }
 
 Timestamp::Timestamp(uint s, int frames, int fr) {
@@ -53,7 +54,7 @@ Timestamp::Timestamp(uint s, int frames, int fr) {
 	_framerateFactor = 1000 / gcd(1000, fr);
 	_framerate = fr * _framerateFactor;
 	_numberOfFrames = 0;
-	*this = addFrames(frames);
+	addFramesIntern(frames * _framerateFactor);
 }
 
 Timestamp Timestamp::convertToFramerate(int newFramerate) const {
@@ -123,26 +124,33 @@ Timestamp Timestamp::addFrames(int frames) const {
 
 	// The frames are given in the original framerate, so we have to
 	// adjust by _framerateFactor accordingly.
-	ts._numberOfFrames += frames * _framerateFactor;
-
-	if (ts._numberOfFrames < 0) {
-		int secsub = 1 + (-ts._numberOfFrames / ts._framerate);
-
-		ts._numberOfFrames += ts._framerate * secsub;
-		ts._secs -= secsub;
-	}
-
-	ts._secs += (ts._numberOfFrames / ts._framerate);
-	ts._numberOfFrames %= ts._framerate;
+	ts.addFramesIntern(frames * _framerateFactor);
 
 	return ts;
 }
 
+void Timestamp::addFramesIntern(int frames) {
+	_numberOfFrames += frames;
+
+	if (_numberOfFrames < 0) {
+		int secsub = 1 + (-_numberOfFrames / _framerate);
+
+		_numberOfFrames += _framerate * secsub;
+		_secs -= secsub;
+	}
+
+	// Wrap around if necessary
+	_secs += (_numberOfFrames / _framerate);
+	_numberOfFrames %= _framerate;
+}
+
 Timestamp Timestamp::addMsecs(int ms) const {
+	assert(ms >= 0);
 	Timestamp ts(*this);
 	ts._secs += ms / 1000;
 	// Add the remaining frames. Note that _framerate is always divisible by 1000.
-	return ts.addFrames((ms % 1000) * (_framerate / 1000));
+	ts.addFramesIntern((ms % 1000) * (ts._framerate / 1000));
+	return ts;
 }
 
 int Timestamp::frameDiff(const Timestamp &ts) const {
@@ -174,6 +182,7 @@ int Timestamp::msecsDiff(const Timestamp &ts) const {
 }
 
 uint32 Timestamp::msecs() const {
+	// Note that _framerate is always divisible by 1000.
 	return _secs * 1000 + _numberOfFrames / (_framerate / 1000);
 }
 
