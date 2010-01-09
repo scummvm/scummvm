@@ -103,12 +103,27 @@ void Portrait::init() {
 	// Read all bitmaps
 	PortraitBitmap *curBitmap = _bitmaps;
 	uint16 bitmapNr;
+	uint16 bytesPerLine;
 
 	for (bitmapNr = 0; bitmapNr < _bitmapCount; bitmapNr++) {
+		curBitmap->width = READ_LE_UINT16(data + 2);
 		curBitmap->height = READ_LE_UINT16(data + 4);
-		curBitmap->width = READ_LE_UINT16(data + 6);
+		bytesPerLine = READ_LE_UINT16(data + 6);
+		if (bytesPerLine < curBitmap->width)
+			error("kPortrait: bytesPerLine larger than actual width");
+		curBitmap->extraBytesPerLine = bytesPerLine - curBitmap->width;
 		curBitmap->rawBitmap = data + 14;
-		data += 14 + (curBitmap->height * curBitmap->width);
+		data += 14 + (curBitmap->height * bytesPerLine);
+		curBitmap++;
+	}
+
+	// Offset table follows
+	curBitmap = _bitmaps;
+	data += 18;
+	for (bitmapNr = 0; bitmapNr < _bitmapCount; bitmapNr++) {
+		curBitmap->displaceX = READ_LE_UINT16(data);
+		curBitmap->displaceY = READ_LE_UINT16(data + 2);
+		data += 14;
 		curBitmap++;
 	}
 }
@@ -169,15 +184,20 @@ void Portrait::drawBitmap(uint16 bitmapNr) {
 	byte *data = _bitmaps[bitmapNr].rawBitmap;
 	uint16 bitmapHeight = _bitmaps[bitmapNr].height;
 	uint16 bitmapWidth = _bitmaps[bitmapNr].width;
+	Common::Point bitmapPosition = _position;
+
+	bitmapPosition.x += _bitmaps[bitmapNr].displaceX;
+	bitmapPosition.y += _bitmaps[bitmapNr].displaceY;
 
 	for (int y = 0; y < bitmapHeight; y++) {
 		for (int x = 0; x < bitmapWidth; x++) {
-			_screen->putPixelOnDisplay(_position.x + x, _position.y + y, _portraitPalette.mapping[*data++]);
+			_screen->putPixelOnDisplay(bitmapPosition.x + x, bitmapPosition.y + y, _portraitPalette.mapping[*data++]);
 		}
+		data += _bitmaps[bitmapNr].extraBytesPerLine;
 	}
 
 	Common::Rect bitmapRect = Common::Rect(bitmapWidth, bitmapHeight);
-	bitmapRect.moveTo(_position.x, _position.y);
+	bitmapRect.moveTo(bitmapPosition.x, bitmapPosition.y);
 	_screen->copyDisplayRectToScreen(bitmapRect);
 	g_system->updateScreen();
 }

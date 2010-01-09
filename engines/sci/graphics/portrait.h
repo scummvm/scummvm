@@ -30,6 +30,8 @@ namespace Sci {
 
 struct PortraitBitmap {
 	int16 width, height;
+	int16 extraBytesPerLine;
+	uint16 displaceX, displaceY;
 	byte *rawBitmap;
 };
 
