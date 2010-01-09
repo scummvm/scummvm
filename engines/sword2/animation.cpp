@@ -287,7 +287,8 @@ int32 DXADecoderWithSound::getAudioLag() {
 	int32 videoTime = _videoInfo.currentFrame * frameDelay;
 	int32 audioTime;
 
-	audioTime = (((int32) _mixer->getSoundElapsedTime(*_bgSoundHandle)) * 100);
+	const Audio::Timestamp ts = _mixer->getElapsedTime(*_bgSoundHandle);
+	audioTime = ts.convertToFramerate(100000).totalNumberOfFrames();
 
 	return videoTime - audioTime;
 }

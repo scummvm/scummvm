@@ -412,8 +412,10 @@ int32 AviDecoder::getAudioLag() {
 		*/
 
 		audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
-	} else
-		audioTime = (((int32)_mixer->getSoundElapsedTime(*_audHandle)) * 100);
+	} else {
+		const Audio::Timestamp ts = _mixer->getElapsedTime(*_audHandle);
+		audioTime = ts.convertToFramerate(100000).totalNumberOfFrames();
+	}
 
 	return videoTime - audioTime;
 }

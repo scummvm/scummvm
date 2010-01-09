@@ -266,6 +266,11 @@ public:
 	virtual uint32 getSoundElapsedTime(SoundHandle handle) = 0;
 
 	/**
+	 * Get approximation of for how long the channel has been playing.
+	 */
+	virtual Timestamp getElapsedTime(SoundHandle handle) = 0;
+
+	/**
 	 * Check whether any channel of the given sound type is active.
 	 * For example, this can be used to check whether any SFX sound
 	 * is currently playing, by checking for type kSFXSoundType.

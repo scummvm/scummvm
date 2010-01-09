@@ -108,10 +108,9 @@ public:
 	void notifyGlobalVolChange() { updateChannelVolumes(); }
 
 	/**
-	 * Queries how many milliseconds the channel has
-	 * been playing.
+	 * Queries how long the channel has been playing.
 	 */
-	uint32 getElapsedTime();
+	Timestamp getElapsedTime();
 
 	/**
 	 * Queries the channel's sound type.
@@ -342,11 +341,15 @@ void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 }
 
 uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
+	return getElapsedTime(handle).msecs();
+}
+
+Timestamp MixerImpl::getElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
-		return 0;
+		return Timestamp(0, _sampleRate);
 
 	return _channels[index]->getElapsedTime();
 }
@@ -513,12 +516,14 @@ void Channel::pause(bool paused) {
 	}
 }
 
-uint32 Channel::getElapsedTime() {
-	if (_mixerTimeStamp == 0)
-		return 0;
-
+Timestamp Channel::getElapsedTime() {
 	const uint32 rate = _mixer->getOutputRate();
 	uint32 delta = 0;
+
+	Audio::Timestamp ts(0, rate);
+
+	if (_mixerTimeStamp == 0)
+		return ts;
 
 	if (isPaused())
 		delta = _pauseStartTime - _mixerTimeStamp;
@@ -526,8 +531,6 @@ uint32 Channel::getElapsedTime() {
 		delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
 
 	// Convert the number of samples into a time duration.
-
-	Audio::Timestamp ts(0, rate);
 
 	ts = ts.addFrames(_samplesConsumed);
 	ts = ts.addMsecs(delta);
@@ -538,7 +541,7 @@ uint32 Channel::getElapsedTime() {
 	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
 	// isn't invoked at the regular intervals that I first imagined.
 
-	return ts.msecs();
+	return ts;
 }
 
 void Channel::mix(int16 *data, uint len) {

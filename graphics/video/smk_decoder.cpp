@@ -377,8 +377,10 @@ int32 SmackerDecoder::getAudioLag() {
 		*/
 
 		audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
-	} else
-		audioTime = (((int32) _mixer->getSoundElapsedTime(_audioHandle)) * 100);
+	} else {
+		const Audio::Timestamp ts = _mixer->getElapsedTime(_audioHandle);
+		audioTime = ts.convertToFramerate(100000).totalNumberOfFrames();
+	}
 
 	return videoTime - audioTime;
 }
