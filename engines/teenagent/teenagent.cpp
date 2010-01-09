@@ -253,6 +253,7 @@ int TeenAgentEngine::skipEvents() const {
 		switch(event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
+			debug(0, "quit or rtl recv-ed");
 			return -1;
 		case Common::EVENT_MAINMENU:
 		case Common::EVENT_LBUTTONDOWN:
