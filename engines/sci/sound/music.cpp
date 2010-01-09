@@ -303,30 +303,17 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	SoundResource::Track *track = NULL;
 	int channelFilterMask = 0;
 
-	switch (_midiType) {
-	case MD_PCSPK:
-		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_SPEAKER);
-		break;
-	case MD_PCJR:
-		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_TANDY);
-		break;
-	case MD_ADLIB:
-		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
-		break;
-	case MD_MT32:
-		track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_MT32);
-		break;
-	default:
-		// Should never occur
-		error("soundInitSnd: Unknown MIDI type");
-		break;
-	}
+	track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
 
 	if (track) {
 		// If MIDI device is selected but there is no digital track in sound resource
 		// try to use adlib's digital sample if possible
-		if (_bMultiMidi && pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB)->digitalChannelNr != -1)
-			track = pSnd->soundRes->getTrackByType(SoundResource::TRACKTYPE_ADLIB);
+		if (_bMultiMidi && (track->digitalChannelNr == -1)) {
+			SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
+			if (digital)
+				track = digital;
+		}
+
 		// Play digital sample
 		if (track->digitalChannelNr != -1) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
@@ -351,7 +338,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pauseCounter = 0;
 
 			// Find out what channels to filter for SCI0
-			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayMask(_soundVersion));
+			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(_soundVersion));
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
 			// Fast forward to the last position and perform associated events when loading

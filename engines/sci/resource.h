@@ -439,15 +439,6 @@ protected:
 
 class SoundResource {
 public:
-	enum TrackType {
-		TRACKTYPE_ADLIB = 0,
-		TRACKTYPE_GAMEBLASTER = 9,
-		TRACKTYPE_MT32 = 12,
-		TRACKTYPE_SPEAKER = 18,
-		TRACKTYPE_TANDY = 19,
-		TRACKTYPE_NONE = 255
-	};
-
 	struct Channel {
 		byte number;
 		byte poly;
@@ -459,7 +450,7 @@ public:
 	};
 
 	struct Track {
-		TrackType type;
+		byte type;
 		byte channelCount;
 		Channel *channels;
 		int16 digitalChannelNr;
@@ -472,7 +463,8 @@ public:
 #if 0
 	Track *getTrackByNumber(uint16 number);
 #endif
-	Track *getTrackByType(TrackType type);
+	Track *getTrackByType(byte type);
+	Track *getDigitalTrack();
 	int getChannelFilterMask(int hardwareMask);
 
 private:

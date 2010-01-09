@@ -666,20 +666,6 @@ SongIterator *Sci0SongIterator::clone(int delta) {
 /*-- SCI1 song iterators --*/
 /***************************/
 
-#define SCI01_INVALID_DEVICE 0xff
-
-/* Second index determines whether PCM output is supported */
-static const int sci0_to_sci1_device_map[][2] = {
-	{0x06, 0x0c}, /* MT-32 */
-	{0xff, 0xff}, /* YM FB-01 */
-	{0x00, 0x00}, /* CMS/Game Blaster-- we assume OPL/2 here... */
-	{0xff, 0xff}, /* Casio MT540/CT460 */
-	{0x13, 0x13}, /* Tandy 3-voice */
-	{0x12, 0x12}, /* PC speaker */
-	{0xff, 0xff},
-	{0xff, 0xff},
-}; /* Maps bit number to device ID */
-
 int Sci1SongIterator::initSample(const int offset) {
 	Sci1Sample sample;
 	int rate;
@@ -1008,16 +994,8 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 			if (msg.ID == ID) {
 				channel_mask = 0;
 
-				_deviceId
-				= sci0_to_sci1_device_map
-				  [sci_ffs(msg._arg.i & 0xff) - 1]
-				  [g_system->getMixer()->isReady()]
-				  ;
+				_deviceId = msg._arg.i;
 
-				if (_deviceId == 0xff) {
-					warning("[iterator] Device %d(%d) not supported",
-					          msg._arg.i & 0xff, g_system->getMixer()->isReady());
-				}
 				if (_initialised) {
 					int i;
 					int toffset = -1;

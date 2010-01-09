@@ -162,7 +162,7 @@ class MidiPlayer_Adlib : public MidiPlayer {
 public:
 	MidiPlayer_Adlib() { _driver = new MidiDriver_Adlib(g_system->getMixer()); }
 	int open(ResourceManager *resMan);
-	int getPlayMask(SciVersion soundVersion);
+	byte getPlayId(SciVersion soundVersion);
 	int getPolyphony() const { return MidiDriver_Adlib::kVoices; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_Adlib *>(_driver)->setVolume(volume); }
@@ -812,8 +812,15 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 	return static_cast<MidiDriver_Adlib *>(_driver)->open(getSciVersion() <= SCI_VERSION_0_LATE);
 }
 
-int MidiPlayer_Adlib::getPlayMask(SciVersion soundVersion) {
-	return (soundVersion == SCI_VERSION_0_EARLY) ? 0x01 : 0x04;
+byte MidiPlayer_Adlib::getPlayId(SciVersion soundVersion) {
+	switch (soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		return 0x01;
+	case SCI_VERSION_0_LATE:
+		return 0x04;
+	default:
+		return 0x00;
+	}
 }
 
 MidiPlayer *MidiPlayer_Adlib_create() {

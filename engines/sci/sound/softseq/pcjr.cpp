@@ -192,18 +192,26 @@ void MidiDriver_PCJr::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 }
 
-int MidiPlayer_PCJr::getPlayMask(SciVersion soundVersion) {
-	if (soundVersion == SCI_VERSION_0_EARLY)
-		return 0x10; // FIXME: Not correct
-
-	return 0x10;
+byte MidiPlayer_PCJr::getPlayId(SciVersion soundVersion) {
+	switch (soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		return 0x02;
+	case SCI_VERSION_0_LATE:
+		return 0x10;
+	default:
+		return 0x13;
+	}
 }
 
-int MidiPlayer_PCSpeaker::getPlayMask(SciVersion soundVersion) {
-	if (soundVersion == SCI_VERSION_0_EARLY)
-		return 0x02;
-
-	return 0x20;
+byte MidiPlayer_PCSpeaker::getPlayId(SciVersion soundVersion) {
+	switch (soundVersion) {
+	case SCI_VERSION_0_EARLY:
+		return 0x04;
+	case SCI_VERSION_0_LATE:
+		return 0x20;
+	default:
+		return 0x12;
+	}
 }
 
 } // End of namespace Sci

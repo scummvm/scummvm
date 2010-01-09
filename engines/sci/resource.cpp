@@ -1898,7 +1898,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		_trackCount = 1;
 		_tracks = new Track[_trackCount];
 		_tracks->digitalChannelNr = -1;
-		_tracks->type = TRACKTYPE_NONE;
+		_tracks->type = 0; // Not used for SCI0
 		_tracks->channelCount = 1;
 		// Digital sample data included? -> Add an additional channel
 		if (resource->data[0] == 2)
@@ -1957,7 +1957,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			// 0xFF:BYTE as terminator to end that track and begin with another track type
 			// Track type 0xFF is the marker signifying the end of the tracks
 
-			_tracks[trackNr].type = (TrackType) *data++;
+			_tracks[trackNr].type = *data++;
 			// Counting # of channels used
 			data2 = data;
 			_tracks[trackNr].channelCount = 0;
@@ -2028,12 +2028,20 @@ SoundResource::Track* SoundResource::getTrackByNumber(uint16 number) {
 }
 #endif
 
-SoundResource::Track* SoundResource::getTrackByType(TrackType type) {
+SoundResource::Track *SoundResource::getTrackByType(byte type) {
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		return &_tracks[0];
 
 	for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
 		if (_tracks[trackNr].type == type)
+			return &_tracks[trackNr];
+	}
+	return NULL;
+}
+
+SoundResource::Track *SoundResource::getDigitalTrack() {
+	for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
+		if (_tracks[trackNr].digitalChannelNr != -1)
 			return &_tracks[trackNr];
 	}
 	return NULL;

@@ -263,7 +263,7 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 
 Common::Error SfxPlayer::add_iterator(SongIterator *it, uint32 start_time) {
 	Common::StackLock lock(_mutex);
-	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayMask(_soundVersion)));
+	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayId(_soundVersion)));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(_mididrv->hasRhythmChannel()));
 
 	if (_iterator == NULL) {
