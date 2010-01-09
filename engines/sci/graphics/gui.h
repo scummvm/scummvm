@@ -54,7 +54,7 @@ class Transitions;
 
 class SciGui {
 public:
-	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor);
+	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor, AudioPlayer *audio);
 	SciGui();
 	virtual ~SciGui();
 
@@ -185,6 +185,7 @@ private:
 	virtual int getControlPicNotValid();
 
 	WindowMgr *_windowMgr;
+	AudioPlayer *_audio;
 	SciGuiAnimate *_animate;
 	Controls *_controls;
 	Menu *_menu;

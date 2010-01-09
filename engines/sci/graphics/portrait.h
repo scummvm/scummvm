@@ -30,9 +30,10 @@ namespace Sci {
 
 class Portrait {
 public:
-	Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, Common::String resourceName);
+	Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName);
 	~Portrait();
 
+	void setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	void draw(Common::Point position);
 
 private:
@@ -41,6 +42,7 @@ private:
 	ResourceManager *_resMan;
 	Screen *_screen;
 	SciPalette *_palette;
+	AudioPlayer *_audio;
 
 	Common::String _resourceName;
 	Common::String _fileName;

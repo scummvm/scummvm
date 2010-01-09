@@ -44,11 +44,12 @@
 #include "sci/graphics/text.h"
 #include "sci/graphics/transitions.h"
 #include "sci/graphics/view.h"
+#include "sci/sound/audio.h"
 
 namespace Sci {
 
-SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor)
-	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
+SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor, AudioPlayer *audio)
+	: _s(state), _screen(screen), _palette(palette), _cursor(cursor), _audio(audio) {
 
 	_gfx = new Gfx(_s->resMan, _s->_segMan, _s->_kernel, _screen, _palette);
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
@@ -850,12 +851,13 @@ reg_t SciGui::portraitLoad(Common::String resourceName) {
 }
 
 void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, resourceName);
+	Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
 	position.x += _gfx->GetPort()->left; position.y += _gfx->GetPort()->top;
 	position.x *= 2; position.y *= 2;
+	myPortrait->setupAudio(resourceNum, noun, verb, cond, seq);
 	myPortrait->draw(position);
 	delete myPortrait;
 }

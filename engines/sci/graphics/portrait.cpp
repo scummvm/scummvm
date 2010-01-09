@@ -32,11 +32,12 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
+#include "sci/sound/audio.h"
 
 namespace Sci {
 
-Portrait::Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, Common::String resourceName)
-	: _resMan(resMan), _screen(screen), _palette(palette), _resourceName(resourceName) {
+Portrait::Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
+	: _resMan(resMan), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
 	init();
 }
 
@@ -105,6 +106,13 @@ void Portrait::init() {
 	data += _height * _width;
 	
 	// TODO: Read animation bitmaps
+}
+
+void Portrait::setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+	uint32 number = ((noun & 0xff) << 24) | ((verb & 0xff) << 16) | ((cond & 0xff) << 8) | (seq & 0xff);
+
+	_audio->stopAudio();
+	_audio->startAudio(resourceId, number);
 }
 
 void Portrait::draw(Common::Point position) {

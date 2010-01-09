@@ -149,7 +149,7 @@ Common::Error SciEngine::run() {
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);
+	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
