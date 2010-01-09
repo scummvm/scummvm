@@ -42,6 +42,7 @@ Portrait::Portrait(ResourceManager *resMan, Screen *screen, SciPalette *palette,
 }
 
 Portrait::~Portrait() {
+	delete[] _bitmaps;
 }
 
 void Portrait::init() {
@@ -159,6 +160,8 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			curPosition = _audio->getAudioPosition();
 		} while ((curPosition != -1) && (curPosition < timerPosition));
 	}
+
+	_resMan->unlockResource(syncResource);
 }
 
 // TODO: coordinate offset is missing...can't find it in the bitmap header nor in the main header
