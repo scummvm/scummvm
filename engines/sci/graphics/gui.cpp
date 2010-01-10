@@ -369,7 +369,8 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animat
 }
 
 void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
-	if (!hiresMode) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
 		_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	} else {
 		_gfx->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
@@ -517,7 +518,8 @@ void SciGui::graphRestoreBox(reg_t handle) {
 }
 
 void SciGui::graphUpdateBox(Common::Rect rect, bool hiresMode) {
-	if (!hiresMode)
+	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+	if ((!hiresMode) || (!_screen->getUpscaledHires()))
 		_gfx->BitsShow(rect);
 	else
 		_gfx->BitsShowHires(rect);
