@@ -190,7 +190,7 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool di
 	// Since we allocated our own buffer for the data, we must set the autofree flag.
 	flags |= Audio::Mixer::FLAG_AUTOFREE;
 
-	return makeLinearInputStream(data, size, rate, flags, 0, 0);
+	return makeLinearInputStream(data, size, rate, flags);
 }
 
 } // End of namespace Audio

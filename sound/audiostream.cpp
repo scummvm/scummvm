@@ -162,6 +162,59 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 }
 
 #pragma mark -
+#pragma mark --- SubLoopingAudioStream ---
+#pragma mark -
+
+SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
+	                                         uint loops,
+	                                         const Timestamp loopStart,
+	                                         const Timestamp loopEnd,
+	                                         bool disposeAfterUse)
+    : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
+      _pos(0, getRate() * (isStereo() ? 2 : 1)),
+      _loopStart(loopStart.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
+      _loopEnd(loopEnd.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
+      _done(false) {
+	if (!_parent->rewind())
+		_done = true;
+}
+
+SubLoopingAudioStream::~SubLoopingAudioStream() {
+	if (_disposeAfterUse)
+		delete _parent;
+}
+
+int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int framesLeft = MIN(_loopEnd.frameDiff(_pos), numSamples);
+	int framesRead = _parent->readBuffer(buffer, framesLeft);
+	_pos = _pos.addFrames(framesRead);
+
+	if (framesLeft < numSamples || framesRead < framesLeft) {
+		if (_loops != 0) {
+			--_loops;
+			if (!_loops) {
+				_done = true;
+				return framesRead;
+			}
+		}
+
+		if (!_parent->seek(_loopStart)) {
+			_done = true;
+			return framesRead;
+		}
+
+		_pos = _loopStart;
+		framesLeft = numSamples - framesLeft;
+		framesRead += _parent->readBuffer(buffer + framesRead, framesLeft);
+
+		if (_parent->endOfStream())
+			_done = true;
+	}
+
+	return framesRead;
+}
+
+#pragma mark -
 #pragma mark --- SubSeekableAudioStream ---
 #pragma mark -
 
@@ -226,36 +279,23 @@ class LinearMemoryStream : public SeekableAudioStream {
 protected:
 	const byte *_ptr;
 	const byte *_end;
-	const byte *_loopPtr;
-	const byte *_loopEnd;
 	const int _rate;
 	const byte *_origPtr;
 	const bool _disposeAfterUse;
 	const Timestamp _playtime;
 
-	uint _numLoops;			///< Number of loops to play
-	uint _numPlayedLoops;	///< Number of loops which have been played
-
 public:
-	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
-	    : _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _disposeAfterUse(autoFreeMemory),
+	LinearMemoryStream(int rate, const byte *ptr, uint len, bool autoFreeMemory)
+	    : _ptr(ptr), _end(ptr+len), _rate(rate), _origPtr(ptr),
+	      _disposeAfterUse(autoFreeMemory),
 	      _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate) {
-
-		if (loopLen) {
-			_numLoops = 0;
-			_loopPtr = _ptr + loopOffset;
-			_loopEnd = _loopPtr + loopLen;
-		} else {
-			_numLoops = 1;
-		}
-		_numPlayedLoops = 0;
-
-		_origPtr = ptr;
 	}
+
 	virtual ~LinearMemoryStream() {
 		if (_disposeAfterUse)
 			free(const_cast<byte *>(_origPtr));
 	}
+
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const			{ return stereo; }
@@ -276,14 +316,6 @@ int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buf
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
 			_ptr += (is16Bit ? 2 : 1);
 		} while (--len);
-		// Loop, if looping was specified
-		// TODO: Handle non-infinite loops
-		if (_loopPtr && _ptr >= _end) {
-			_ptr = _loopPtr;
-			_end = _loopEnd;
-
-			_numPlayedLoops++;
-		}
 	}
 	return numSamples-samples;
 }
@@ -339,17 +371,10 @@ protected:
 	LinearDiskStreamAudioBlock *_audioBlock;	///< Audio block list
 	int _audioBlockCount;		///< Number of blocks in _audioBlock
 	int _currentBlock;		///< Current audio block number
-
-	int _beginLoop;			///< Loop start parameter
-	int _endLoop;			///< Loop end parameter, currently not implemented
-	bool _loop;				///< Determines if the stream should be looped when it finishes
-	uint _numLoops;			///< Number of loops to play
-	uint _numPlayedLoops;	///< Number of loops which have been played
-
 public:
-	LinearDiskStream(int rate, uint beginLoop, uint endLoop, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks, bool loop)
-		: _rate(rate), _playtime(0, rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
-		  _audioBlockCount(numBlocks), _loop(loop), _numLoops(loop ? 0 : 1), _numPlayedLoops(0) {
+	LinearDiskStream(int rate, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks)
+		: _rate(rate), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream),
+		  _audioBlockCount(numBlocks) {
 
 		assert(numBlocks > 0);
 
@@ -442,21 +467,11 @@ int LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffe
 			_bufferLeft = readAmount;
 			_diskLeft -= readAmount;
 			_ptr = (byte *)_buffer;
-			_filePos += readAmount * (is16Bit? 2: 1);
+			_filePos += readAmount * (is16Bit ? 2 : 1);
 
 			// Set this flag now we've used the file, it restores it's
 			// original position.
 			restoreFilePosition = true;
-		}
-
-		// Looping
-		if (_diskLeft == 0 && _loop) {
-			// Reset the stream
-			_currentBlock = 0;
-			_filePos = _audioBlock[_currentBlock].pos + _beginLoop;
-			_diskLeft = _audioBlock[_currentBlock].len;
-
-			_numPlayedLoops++;
 		}
 	}
 
@@ -496,7 +511,7 @@ bool LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &
 	} else {
 		const uint32 offset = seekSample - curSample;
 
-		_filePos = _audioBlock[_currentBlock].pos + offset * (is16Bit? 2: 1);
+		_filePos = _audioBlock[_currentBlock].pos + offset * (is16Bit ? 2 : 1);
 		_diskLeft = _audioBlock[_currentBlock].len - offset;
 
 		return true;
@@ -519,36 +534,24 @@ bool LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &
 #define MAKE_LINEAR(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new LinearMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, loopOffset, loopLen, autoFree); \
+				return new LinearMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, autoFree); \
 			else  \
-				return new LinearMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree); \
+				return new LinearMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, autoFree); \
 		} else \
-			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
+			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, autoFree)
 
-SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd) {
+SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags) {
 	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
 	const bool autoFree   = (flags & Mixer::FLAG_AUTOFREE) != 0;
 
-
-	uint loopOffset = 0, loopLen = 0;
-	if (flags & Mixer::FLAG_LOOP) {
-		if (loopEnd == 0)
-			loopEnd = len;
-		assert(loopStart <= loopEnd);
-		assert(loopEnd <= len);
-
-		loopOffset = loopStart;
-		loopLen = loopEnd - loopStart;
-	}
-
 	// Verify the buffer sizes are sane
 	if (is16Bit && isStereo) {
-		assert((len & 3) == 0 && (loopLen & 3) == 0);
+		assert((len & 3) == 0);
 	} else if (is16Bit || isStereo) {
-		assert((len & 1) == 0 && (loopLen & 1) == 0);
+		assert((len & 1) == 0);
 	}
 
 	if (isStereo) {
@@ -567,25 +570,55 @@ SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate
 }
 
 
+AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
+                                   byte flags, uint loopStart, uint loopEnd) {
+	SeekableAudioStream *stream = makeLinearInputStream(ptr, len, rate, flags);
+
+	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
+	const bool isLooping  = (flags & Mixer::FLAG_LOOP) != 0;
+
+	if (isLooping) {
+		uint loopOffset = 0, loopLen = 0;
+		if (loopEnd == 0)
+			loopEnd = len;
+		assert(loopStart <= loopEnd);
+		assert(loopEnd <= len);
+
+		loopOffset = loopStart;
+		loopLen = loopEnd - loopStart;
+
+		// Verify the buffer sizes are sane
+		if (is16Bit && isStereo)
+			assert((loopLen & 3) == 0 && (loopStart & 3) == 0 && (loopEnd & 3) == 0);
+		else if (is16Bit || isStereo)
+			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 3) == 0);
+
+		const uint32 extRate = stream->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
+
+		return new SubLoopingAudioStream(stream, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
+	} else {
+		return stream;
+	}
+}
 
 
 
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, takeOwnership, stream, block, numBlocks); \
 			else  \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, takeOwnership, stream, block, numBlocks); \
 		} else \
-			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop)
+			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, takeOwnership, stream, block, numBlocks)
 
 
-SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks, int rate, byte flags, bool takeOwnership, uint loopStart, uint loopEnd) {
+SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks, int rate, byte flags, bool takeOwnership) {
 	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool loop       = (flags & Mixer::FLAG_LOOP) != 0;
 
 	if (isStereo) {
 		if (isUnsigned) {
@@ -602,7 +635,39 @@ SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, Li
 	}
 }
 
+AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd) {
+	SeekableAudioStream *s = makeLinearDiskStream(stream, block, numBlocks, rate, flags, disposeStream);
 
+	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
+	const bool isLooping  = (flags & Mixer::FLAG_LOOP) != 0;
+
+	if (isLooping) {
+		uint loopOffset = 0, loopLen = 0;
+		const uint len = s->getLength().totalNumberOfFrames() / (is16Bit ? 2 : 1) / (isStereo ? 2 : 1);
+
+		if (loopEnd == 0)
+			loopEnd = len;
+		assert(loopStart <= loopEnd);
+		assert(loopEnd <= len);
+
+		loopOffset = loopStart;
+		loopLen = loopEnd - loopStart;
+
+		// Verify the buffer sizes are sane
+		if (is16Bit && isStereo)
+			assert((loopLen & 3) == 0 && (loopStart & 3) == 0 && (loopEnd & 3) == 0);
+		else if (is16Bit || isStereo)
+			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 3) == 0);
+
+		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
+
+		return new SubLoopingAudioStream(s, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
+	} else {
+		return s;
+	}
+}
 
 #pragma mark -
 #pragma mark --- Queueing audio stream ---

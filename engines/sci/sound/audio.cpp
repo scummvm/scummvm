@@ -243,10 +243,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		}
 	}
 
-	if (data) {
-		audioStream = Audio::makeLinearInputStream(data, size, _audioRate, 
-										flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-	}
+	if (data)
+		audioStream = Audio::makeLinearInputStream(data, size, _audioRate, flags | Audio::Mixer::FLAG_AUTOFREE);
+
 	if (audioStream) {
 		*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
 		return audioStream;

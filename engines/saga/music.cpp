@@ -292,7 +292,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				loopStart = 0;
 				// Fix ITE sunstatm/sunspot score
 				if (resourceId == MUSIC_SUNSPOT)
-					loopStart = 4 * 18727;
+					loopStart = 18727;
 
 				// Digital music
 				ResourceData *resData = _digitalMusicContext->getResourceData(resourceId - 9);
@@ -311,7 +311,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					Audio::LinearDiskStreamAudioBlock audioBlocks[1];
 					audioBlocks[0].pos = 0;
 					audioBlocks[0].len = resData->size / 2;	// 16-bit sound
-					audioStream = Audio::makeLinearDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, false, loopStart, 0);
+					audioStream = Audio::makeLinearDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, false);
 				} else {
 					// Read compressed header to determine compression type
 					musicFile->seek((uint32)resData->offset, SEEK_SET);
@@ -337,8 +337,16 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (audioStream) {
 		debug(2, "Playing digitized music");
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
-		                        Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
+		if (loopStart) {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
+			                        new Audio::SubLoopingAudioStream(audioStream,
+			                        (flags == MUSIC_LOOP ? 0 : 1),
+			                        Audio::Timestamp(0, loopStart, audioStream->getRate()),
+			                        audioStream->getLength()));
+		} else {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
+			                        Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
+		}
 		_digitalMusic = true;
 		return;
 	}

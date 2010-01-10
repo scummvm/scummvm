@@ -298,7 +298,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 	return currentBlock;
 }
 
-SeekableAudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
+AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
@@ -317,11 +317,31 @@ SeekableAudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte 
 
 	return audioStream;
 }
-	
+
+SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
+	const int MAX_AUDIO_BLOCKS = 256;
+
+	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
+	int rate, loops, begin_loop, end_loop;
+
+	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
+
+	SeekableAudioStream *audioStream = 0;
+
+	// Create an audiostream from the data. Note the numBlocks may be 0,
+	// e.g. when invalid data is encountered. See bug #2890038.
+	if (numBlocks)
+		audioStream = makeLinearDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership);
+
+	delete[] block;
+
+	return audioStream;
+}
+
 #endif
 
 
-SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, bool takeOwnershipOfStream) {
+AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, bool takeOwnershipOfStream) {
 #ifdef STREAM_AUDIO_FROM_DISK
 	return makeVOCDiskStream(stream, flags, takeOwnershipOfStream);
 #else
@@ -336,5 +356,19 @@ SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flag
 #endif
 }
 
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnershipOfStream) {
+#ifdef STREAM_AUDIO_FROM_DISK
+	return makeVOCDiskStreamNoLoop(stream, flags, takeOwnershipOfStream);
+#else
+	int size, rate;
+
+	byte *data = loadVOCFromStream(stream, size, rate);
+
+	if (!data)
+		return 0;
+
+	return makeLinearInputStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
+#endif
+}
 
 } // End of namespace Audio

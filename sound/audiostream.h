@@ -216,6 +216,42 @@ public:
 AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops);
 
 /**
+ * A looping audio stream, which features looping of a nested part of the
+ * stream.
+ *
+ * NOTE:
+ * Currently this implementation stops after the nested loop finished
+ * playback.
+ *
+ * IMPORTANT:
+ * This might be merged with SubSeekableAudioStream for playback purposes.
+ * (After extending it to accept a start time).
+ */
+class SubLoopingAudioStream : public AudioStream {
+public:
+	SubLoopingAudioStream(SeekableAudioStream *stream, uint loops,
+	                      const Timestamp loopStart,
+	                      const Timestamp loopEnd,
+	                      bool disposeAfterUse = true);
+	~SubLoopingAudioStream();
+
+	int readBuffer(int16 *buffer, const int numSamples);
+	bool endOfData() const { return _done; }
+
+	bool isStereo() const { return _parent->isStereo(); }
+	int getRate() const { return _parent->getRate(); }
+private:
+	SeekableAudioStream *_parent;
+	bool _disposeAfterUse;
+
+	uint _loops;
+	Timestamp _pos;
+	Timestamp _loopStart, _loopEnd;
+
+	bool _done;
+};
+
+/**
  * A SubSeekableAudioStream provides access to a SeekableAudioStream
  * just in the range [start, end).
  * The same caveats apply to SubSeekableAudioStream as do to SeekableAudioStream.
@@ -259,6 +295,8 @@ private:
 	Timestamp _pos, _length;
 };
 
+SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags);
+
 /**
  * Factory function for a raw linear AudioStream, which will simply treat all
  * data in the buffer described by ptr and len as raw sample data in the
@@ -267,8 +305,8 @@ private:
  * signed native endian). Optionally supports (infinite) looping of a portion
  * of the data.
  */
-SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
-		byte flags, uint loopStart, uint loopEnd);
+AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
+                                   byte flags, uint loopStart, uint loopEnd);
 
 
 /**
@@ -279,6 +317,8 @@ struct LinearDiskStreamAudioBlock {
 	int32 len;		///< Length of the block (in samples)
 };
 
+SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+		int numBlocks, int rate, byte flags, bool disposeStream);
 
 /**
  * Factory function for a Linear Disk Stream.  This can stream linear (PCM)
@@ -286,7 +326,7 @@ struct LinearDiskStreamAudioBlock {
  * LinearDiskStreamAudioBlock which defines the start position and length of
  * each block of uncompressed audio in the stream.
  */
-SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
 		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
 
 class QueuingAudioStream : public Audio::AudioStream {
