@@ -306,7 +306,7 @@ void MenuSystem::leaveItem(ItemID id) {
 }
 
 void MenuSystem::clickItem(ItemID id) {
-	Item *item = getItem(id);
+	//Item *item = getItem(id);
 	switch (id) {
 	// Main menu
 	case kItemIdSave:
