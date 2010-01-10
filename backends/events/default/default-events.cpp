@@ -140,8 +140,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					_vk->close(true);
 				} else {
 					// Check if the engine is already paused before pausing it again
-					// Fixes #2912148. Where opening the GMM and then the virtual keyboard
+					// Workaround for #2912148. Where opening the GMM and then the virtual keyboard
 					// and then closing them left the game mute.
+					// FIXME: Engines should really allow recursive pausing.
 					bool enginePaused = g_engine ? g_engine->isPaused() : true;
 					if (!enginePaused)
 						g_engine->pauseEngine(true);
