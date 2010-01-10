@@ -172,8 +172,10 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		do {
 			_gui->wait(1);
 			curEvent = _event->get(SCI_EVENT_ANY);
+			if (curEvent.type == SCI_EVENT_MOUSE_PRESS)
+				userAbort = true;
 			curPosition = _audio->getAudioPosition();
-		} while ((curPosition != -1) && (curPosition < timerPosition) && (curEvent.type == SCI_EVENT_NONE));
+		} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
 
 		if (syncCue != 0xFFFF) {
 			// Display animation bitmap
@@ -185,12 +187,6 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 			} else {
 				warning("kPortrait: sync information tried to draw non-existant %d", syncCue);
 			}
-		}
-
-		switch (curEvent.type) {
-		case SCI_EVENT_MOUSE_RELEASE:
-		case SCI_EVENT_MOUSE_PRESS:
-			userAbort = true;
 		}
 	}
 
