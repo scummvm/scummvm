@@ -1966,10 +1966,10 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 				_tracks[trackNr].channelCount++;
 			}
 			_tracks[trackNr].channels = new Channel[_tracks[trackNr].channelCount];
+			_tracks[trackNr].digitalChannelNr = -1; // No digital sound associated
+			_tracks[trackNr].digitalSampleRate = 0;
+			_tracks[trackNr].digitalSampleSize = 0;
 			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
-				_tracks[trackNr].digitalChannelNr = -1; // No digital sound associated
-				_tracks[trackNr].digitalSampleRate = 0;
-				_tracks[trackNr].digitalSampleSize = 0;
 				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
 					channel = &_tracks[trackNr].channels[channelNr];
 					channel->prio = READ_LE_UINT16(data);
