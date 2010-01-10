@@ -138,6 +138,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	Resource *syncResource = _resMan->findResource(syncResourceId, true);
 	uint syncOffset = 0;
 
+	if (!syncResource)
+		error("kPortrait: Could not open sync resource %d %X", resourceId, audioNumber);
+
 	// Draw base bitmap
 	_palette->set(&_portraitPalette, 1);
 	drawBitmap(0);
