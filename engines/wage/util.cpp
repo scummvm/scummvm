@@ -54,4 +54,15 @@ Common::String readPascalString(Common::SeekableReadStream &in) {
 	return s;
 }
 
+Common::Rect *readRect(Common::SeekableReadStream &in) {
+	int x1, y1, x2, y2;
+
+	y1 = in.readUint16LE();
+	x1 = in.readUint16LE();
+	y2 = in.readUint16LE() + 4;
+	x2 = in.readUint16LE() + 4;
+
+	return new Common::Rect(x1, y1, x2, y2);
+}
+
 } // End of namespace Wage

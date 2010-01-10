@@ -50,6 +50,8 @@ public:
 		SHIELD_ARMOR = 2
 	};
 	
+	Chr(String name, byte *data) {}
+
 	int _index;
 	String _initialScene;
 	int _gender;

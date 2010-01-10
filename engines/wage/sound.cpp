@@ -25,8 +25,12 @@
 
 #include "wage/wage.h"
 #include "wage/sound.h"
+#include "wage/world.h"
 
 namespace Wage {
+
+void World::loadExternalSounds(String fname) {
+}
 
 
 } // End of namespace Wage

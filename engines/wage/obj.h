@@ -57,6 +57,7 @@ class Chr;
 class Obj : public Weapon, public Designed {
 public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
+	Obj(String name, byte *data) : _currentOwner(NULL), _currentScene(NULL) {}
 
 	enum ObjectTypes {
 		REGULAR_WEAPON = 1,

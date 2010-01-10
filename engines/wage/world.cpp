@@ -77,18 +77,86 @@ bool World::loadWorld(MacResManager *resMan) {
 	_soundLibrary1 = readPascalString(readS);
 	_soundLibrary2 = readPascalString(readS);
 
+	free(res);
+
 	// Load scenes
 	resArray = resMan->getResIDArray("ASCN");
-
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
-		res = resMan->getResource("ASCND", *iter, &resSize);
+		res = resMan->getResource("ASCN", *iter, &resSize);
 		Scene *scene = new Scene(resMan->getResName("ASCN", *iter), res);
 
 		res = resMan->getResource("ACOD", *iter, &resSize);
 		if (res != NULL)
 			scene->_script = new Script(res);
+
+		res = resMan->getResource("ATXT", *iter, &resSize);
+		if (res != NULL) {
+			Common::MemoryReadStream readT(res, resSize);
+			scene->_textBounds = readRect(readT);
+			scene->_fontType = readT.readUint16LE();
+			scene->_fontSize = readT.readUint16LE();
+			
+			for (int i = 12; i < resSize; i++)
+				if (res[i] == 0x0d)
+					res[i] = '\n';
+			String text(&((char*)res)[12], resSize - 12);
+			scene->_text = text;
+
+			free(res);
+		}
+		addScene(scene);
 	}
 	
+	// Load Objects
+	resArray = resMan->getResIDArray("AOBJ");
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = resMan->getResource("AOBJ", *iter, &resSize);
+		addObj(new Obj(resMan->getResName("AOBJ", *iter), res));
+	}
+
+	// Load Characters
+	resArray = resMan->getResIDArray("ACHR");
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = resMan->getResource("ACHR", *iter, &resSize);
+		Chr *chr = new Chr(resMan->getResName("ACHR", *iter), res);
+
+		addChr(chr);
+		// TODO: What if there's more than one player character?
+		if (chr->_playerCharacter)
+			_player = chr;
+	}
+
+	// Load Sounds
+	resArray = resMan->getResIDArray("ASND");
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = resMan->getResource("ASND", *iter, &resSize);
+		Sound *sound = new Sound(res);
+		sound->_name = resMan->getResName("ASND", *iter);
+		addSound(sound);
+	}
+	
+	if (_soundLibrary1.size() > 0) {
+		loadExternalSounds(_soundLibrary1);
+	}
+	if (_soundLibrary2.size() > 0) {
+		loadExternalSounds(_soundLibrary2);
+	}
+
+	// Load Patterns
+	res = resMan->getResource("PAT#", 900, &resSize);
+	if (res != NULL) {
+		Common::MemoryReadStream readP(res, resSize);
+		int count = readP.readUint16LE();
+		for (int i = 0; i < count; i++) {
+			byte *pattern = (byte *)malloc(8);
+			for (int j = 0; j < 8; j++) {
+				pattern[j] = readP.readByte();
+				_patterns.push_back(pattern);
+			}
+		}
+		
+		free(res);
+	}
 
 	return true;
 }

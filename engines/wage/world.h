@@ -42,6 +42,7 @@ public:
 	~World();
  
 	bool loadWorld(MacResManager *resMan);
+	void loadExternalSounds(String fname);
 
 	String _name;
 	String _aboutMessage;
@@ -60,7 +61,7 @@ public:
 	Common::List<Sound *> _orderedSounds;
 	Common::List<byte *> _patterns;
 	Scene _storageScene;
-	Chr _player;
+	Chr *_player;
 	//List<MoveListener> moveListeners;
 
 	void addScene(Scene *room) {

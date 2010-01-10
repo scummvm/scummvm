@@ -30,6 +30,7 @@
 #include "common/debug.h"
 #include "gui/debugger.h"
 #include "common/endian.h"
+#include "common/rect.h"
 
 struct ADGameDescription;
 
@@ -50,6 +51,7 @@ enum {
 };
 
 Common::String readPascalString(Common::SeekableReadStream &in);
+Common::Rect *readRect(Common::SeekableReadStream &in);
 
 class WageEngine : public Engine {
 public:
