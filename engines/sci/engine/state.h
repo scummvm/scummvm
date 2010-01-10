@@ -65,19 +65,18 @@ struct GfxList;
 
 class DirSeeker {
 protected:
-	EngineState *_state;
 	reg_t _outbuffer;
 	Common::StringList _savefiles;
 	Common::StringList::const_iterator _iter;
 
 public:
-	DirSeeker(EngineState *s) : _state(s) {
+	DirSeeker() {
 		_outbuffer = NULL_REG;
 		_iter = _savefiles.begin();
 	}
 
-	reg_t firstFile(const Common::String &mask, reg_t buffer);
-	reg_t nextFile();
+	reg_t firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan);
+	reg_t nextFile(SegManager *segMan);
 };
 
 enum {

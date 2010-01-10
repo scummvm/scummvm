@@ -645,7 +645,7 @@ reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
-	reg_t viewObj = argv[0];
+	//reg_t viewObj = argv[0];
 
 	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
 	return NULL_REG;

@@ -33,7 +33,7 @@
 namespace Sci {
 
 EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio)
-: resMan(res), _kernel(kernel), _voc(voc), _segMan(segMan), _gui(gui), _audio(audio), _dirseeker(this) {
+: resMan(res), _kernel(kernel), _voc(voc), _segMan(segMan), _gui(gui), _audio(audio), _dirseeker() {
 
 	sfx_init_flags = 0;
 

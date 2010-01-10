@@ -652,7 +652,7 @@ enum {
 	K_FILEIO_WRITE_WORD     = 16
 };
 
-reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer) {
+reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
 		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask.c_str());
@@ -669,10 +669,10 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer) {
 
 	// Reset the list iterator and write the first match to the output buffer, if any.
 	_iter = _savefiles.begin();
-	return nextFile();
+	return nextFile(segMan);
 }
 
-reg_t DirSeeker::nextFile() {
+reg_t DirSeeker::nextFile(SegManager *segMan) {
 	if (_iter == _savefiles.end()) {
 		return NULL_REG;
 	}
@@ -683,7 +683,7 @@ reg_t DirSeeker::nextFile() {
 	Common::String string = ((Sci::SciEngine*)g_engine)->unwrapFilename(wrappedString);
 	if (string.size() > 12)
 		string = Common::String(string.c_str(), 12);
-	_state->_segMan->strcpy(_outbuffer, string.c_str());
+	segMan->strcpy(_outbuffer, string.c_str());
 
 	// Return the result and advance the list iterator :)
 	++_iter;
@@ -832,13 +832,13 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 //		if (mask == "*.*")
 //			mask = "*"; // For UNIX
 //#endif
-		s->r_acc = s->_dirseeker.firstFile(mask, buf);
+		s->r_acc = s->_dirseeker.firstFile(mask, buf, s->_segMan);
 
 		break;
 	}
 	case K_FILEIO_FIND_NEXT : {
 		debug(3, "K_FILEIO_FIND_NEXT()");
-		s->r_acc = s->_dirseeker.nextFile();
+		s->r_acc = s->_dirseeker.nextFile(s->_segMan);
 		break;
 	}
 	case K_FILEIO_FILE_EXISTS : {
