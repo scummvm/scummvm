@@ -658,7 +658,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 10) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
 			Common::Point position = Common::Point(argv[2].toUint16(), argv[3].toUint16());
-			uint resourceNum = argv[4].toUint16() & 0xff;
+			uint resourceNum = argv[4].toUint16();
 			uint noun = argv[5].toUint16() & 0xff;
 			uint verb = argv[6].toUint16() & 0xff;
 			uint cond = argv[7].toUint16() & 0xff;
