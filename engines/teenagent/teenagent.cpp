@@ -70,7 +70,7 @@ bool TeenAgentEngine::trySelectedObject() {
 			spot.dump();
 			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
 				moveTo(spot.actor_x, spot.actor_y, spot.orientation);
-			if (!processCallback(TO_LE_16(spot.callback)))
+			if (!processCallback(spot.callback))
 				debug(0, "fixme! display proper description");
 			inventory->resetSelectedObject();
 			return true;
