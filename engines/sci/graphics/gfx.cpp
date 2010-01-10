@@ -386,6 +386,7 @@ void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, b
 void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
 	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
+	Common::Point curPortPos;
 	
 	if (view) {
 		celRect.left = leftPos;
@@ -402,8 +403,9 @@ void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, u
 			return;
 
 		clipRectTranslated = clipRect;
-		clipRectTranslated.top += curPortRect.top; clipRectTranslated.bottom += curPortRect.top;
-		clipRectTranslated.left += curPortRect.left; clipRectTranslated.right += curPortRect.left;
+		curPortPos.x = _curPort->left * 2; curPortPos.y = _curPort->top * 2;
+		clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
+		clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
 
 		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true, scaleX, scaleY);
 		if (!_screen->_picNotValidSci11) {

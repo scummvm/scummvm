@@ -910,9 +910,10 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
+	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
-	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, upscaledHiresHandle);
+	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
 }
