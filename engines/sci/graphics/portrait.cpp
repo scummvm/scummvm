@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
@@ -37,8 +38,8 @@
 
 namespace Sci {
 
-Portrait::Portrait(ResourceManager *resMan, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
+Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
+	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
 	init();
 }
 
@@ -154,7 +155,10 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// TODO: This whole mess doesnt seem to be correct currently
 	uint16 syncCue;
 	int timerPosition, curPosition;
-	while (syncOffset < syncResource->size - 2) {
+	sciEvent curEvent;
+	bool userAbort = false;
+
+	while ((syncOffset < syncResource->size - 2) && (!userAbort)) {
 		timerPosition = (int16)READ_LE_UINT16(syncResource->data + syncOffset);
 		syncOffset += 2;
 		if (syncOffset < syncResource->size - 2) {
@@ -167,8 +171,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		// Wait till syncTime passed, then show specific animation bitmap
 		do {
 			_gui->wait(1);
+			curEvent = _event->get(SCI_EVENT_ANY);
 			curPosition = _audio->getAudioPosition();
-		} while ((curPosition != -1) && (curPosition < timerPosition));
+		} while ((curPosition != -1) && (curPosition < timerPosition) && (curEvent.type == SCI_EVENT_NONE));
 
 		if (syncCue != 0xFFFF) {
 			// Display animation bitmap
@@ -181,7 +186,16 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				warning("kPortrait: sync information tried to draw non-existant %d", syncCue);
 			}
 		}
+
+		switch (curEvent.type) {
+		case SCI_EVENT_MOUSE_RELEASE:
+		case SCI_EVENT_MOUSE_PRESS:
+			userAbort = true;
+		}
 	}
+
+	if (userAbort)
+		_audio->stopAudio();
 
 	_resMan->unlockResource(syncResource);
 }
