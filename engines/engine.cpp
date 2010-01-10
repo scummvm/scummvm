@@ -354,7 +354,7 @@ void Engine::pauseEngine(bool pause) {
 	else
 		_pauseLevel--;
 
-	if (_pauseLevel == 1) {
+	if (_pauseLevel == 1 && pause) {
 		pauseEngineIntern(true);
 	} else if (_pauseLevel == 0) {
 		pauseEngineIntern(false);
