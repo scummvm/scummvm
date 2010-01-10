@@ -78,6 +78,7 @@ public:
 	void OffsetLine(Common::Point &start, Common::Point &end);
 
 	void BitsShow(const Common::Rect &r);
+	void BitsShowHires(const Common::Rect &rect);
 	reg_t BitsSave(const Common::Rect &rect, byte screenFlags);
 	void BitsGetRect(reg_t memoryHandle, Common::Rect *destRect);
 	void BitsRestore(reg_t memoryHandle);

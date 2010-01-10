@@ -267,6 +267,10 @@ void Gfx::BitsShow(const Common::Rect &rect) {
 	_screen->copyRectToScreen(workerRect);
 }
 
+void Gfx::BitsShowHires(const Common::Rect &rect) {
+	_screen->copyDisplayRectToScreen(rect);
+}
+
 reg_t Gfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	reg_t memoryId;
 	byte *memoryPtr;

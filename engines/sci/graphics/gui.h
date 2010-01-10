@@ -104,7 +104,7 @@ public:
 	virtual reg_t graphSaveBox(Common::Rect rect, uint16 flags);
 	virtual reg_t graphSaveUpscaledHiresBox(Common::Rect rect);
 	virtual void graphRestoreBox(reg_t handle);
-	virtual void graphUpdateBox(Common::Rect rect);
+	virtual void graphUpdateBox(Common::Rect rect, bool hiresMode);
 	virtual void graphRedrawBox(Common::Rect rect);
 	virtual void graphAdjustPriority(int top, int bottom);
 

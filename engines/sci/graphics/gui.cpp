@@ -516,8 +516,11 @@ void SciGui::graphRestoreBox(reg_t handle) {
 	_gfx->BitsRestore(handle);
 }
 
-void SciGui::graphUpdateBox(Common::Rect rect) {
-	_gfx->BitsShow(rect);
+void SciGui::graphUpdateBox(Common::Rect rect, bool hiresMode) {
+	if (!hiresMode)
+		_gfx->BitsShow(rect);
+	else
+		_gfx->BitsShowHires(rect);
 }
 
 void SciGui::graphRedrawBox(Common::Rect rect) {

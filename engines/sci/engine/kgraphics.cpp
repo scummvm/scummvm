@@ -264,11 +264,13 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		s->_gui->graphFillBox(rect, colorMask, color, priority, control);
 		break;
 
-	case K_GRAPH_UPDATE_BOX:
+	case K_GRAPH_UPDATE_BOX: {
 		kGraphCreateRect(x, y, x1, y1, &rect);
+		bool hiresMode = (argc > 6) ? true : false;
 		// argc == 7 on upscaled hires
-		s->_gui->graphUpdateBox(rect);
+		s->_gui->graphUpdateBox(rect, hiresMode);
 		break;
+	}
 
 	case K_GRAPH_REDRAW_BOX:
 		kGraphCreateRect(x, y, x1, y1, &rect);
