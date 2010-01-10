@@ -223,11 +223,6 @@ void DraciEngine::handleEvents() {
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
-			_game->setQuit(true);
-			_script->endCurrentProgram(true);
-			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_RIGHT:
@@ -309,6 +304,12 @@ void DraciEngine::handleEvents() {
 		default:
 			_mouse->handleEvent(event);
 		}
+	}
+
+	// Handle EVENT_QUIT and EVENT_RTL.
+	if (shouldQuit()) {
+		_game->setQuit(true);
+		_script->endCurrentProgram(true);
 	}
 }
 

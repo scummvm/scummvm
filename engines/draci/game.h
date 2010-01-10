@@ -278,7 +278,7 @@ public:
 	LoopStatus getLoopStatus() const { return _loopStatus; }
 	LoopSubstatus getLoopSubstatus() const { return _loopSubstatus; }
 
-	bool shouldQuit() const { return _shouldQuit; }
+	bool gameShouldQuit() const { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
 	bool shouldExitLoop() const { return _shouldExitLoop; }
 	void setExitLoop(bool exit) { _shouldExitLoop = exit; }

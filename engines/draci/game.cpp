@@ -158,7 +158,7 @@ Game::Game(DraciEngine *vm) : _vm(vm), _walkingState(vm) {
 }
 
 void Game::start() {
-	while (!shouldQuit()) {
+	while (!gameShouldQuit()) {
 		// Reset the flag allowing to run the scripts.
 		_vm->_script->endCurrentProgram(false);
 
@@ -453,7 +453,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	}
 
 	// This returns true if we got a signal to quit the game
-	if (shouldQuit()) {
+	if (gameShouldQuit()) {
 		setExitLoop(true);
 	}
 
