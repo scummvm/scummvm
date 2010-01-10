@@ -2,12 +2,10 @@ MODULE := engines/wage
 
 MODULE_OBJS := \
 	design.o \
-	designed.o \
 	detection.o \
+	entities.o \
 	macresman.o \
-	scene.o \
 	script.o \
-	sound.o \
 	util.o \
 	wage.o \
 	world.o

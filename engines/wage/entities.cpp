@@ -24,7 +24,7 @@
  */
 
 #include "wage/wage.h"
-#include "wage/designed.h"
+#include "wage/entities.h"
 #include "wage/design.h"
 
 namespace Wage {
@@ -33,5 +33,9 @@ void Designed::setDesignBounds(Common::Rect bounds) {
 	_designBounds = new Common::Rect(bounds);
 	_design->setBounds(bounds);
 }
-	
+
+Scene::Scene(String name, byte *data) {
+}
+
+
 } // End of namespace Wage

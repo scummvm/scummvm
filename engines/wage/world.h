@@ -26,12 +26,6 @@
 #ifndef WAGE_WORLD_H
 #define WAGE_WORLD_H
 
-#include "wage/scene.h"
-#include "wage/script.h"
-#include "wage/obj.h"
-#include "wage/chr.h"
-#include "wage/sound.h"
-
 namespace Wage {
 
 #define STORAGESCENE "STORAGE@"

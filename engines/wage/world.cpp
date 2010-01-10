@@ -25,8 +25,8 @@
 
 #include "wage/wage.h"
 #include "wage/macresman.h"
+#include "wage/entities.h"
 #include "wage/script.h"
-#include "wage/obj.h"
 #include "wage/world.h"
 
 #include "common/stream.h"
@@ -159,6 +159,9 @@ bool World::loadWorld(MacResManager *resMan) {
 	}
 
 	return true;
+}
+
+void World::loadExternalSounds(String fname) {
 }
 
 } // End of namespace Wage

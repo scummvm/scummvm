@@ -32,6 +32,7 @@
  
 #include "wage/wage.h"
 #include "wage/macresman.h"
+#include "wage/entities.h"
 #include "wage/world.h"
  
 namespace Wage {
