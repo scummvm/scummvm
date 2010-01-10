@@ -383,12 +383,28 @@ void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, b
 
 // This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen
 //  Hires-cels are available only SCI 1.1+
-void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
 	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
 	Common::Point curPortPos;
+	bool upscaledHiresHack = false;
 	
 	if (view) {
+		if ((leftPos == 0) && (topPos == 0)) {
+			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we need to get coordinates from upscaledHiresHandle
+			//  I'm not sure if this is what we are supposed to do or if there is some other bug that actually makes
+			//  coordinates to be 0 in the first place
+			byte *memoryPtr = NULL;
+			memoryPtr = kmem(_segMan, upscaledHiresHandle);
+			if (memoryPtr) {
+				Common::Rect upscaledHiresRect;
+				_screen->bitsGetRect(memoryPtr, &upscaledHiresRect);
+				leftPos = upscaledHiresRect.left;
+				topPos = upscaledHiresRect.top;
+				upscaledHiresHack = true;
+			}
+		}
+
 		celRect.left = leftPos;
 		celRect.top = topPos;
 		celRect.right = celRect.left + view->getWidth(loopNo, celNo);
@@ -403,9 +419,11 @@ void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, u
 			return;
 
 		clipRectTranslated = clipRect;
-		curPortPos.x = _curPort->left * 2; curPortPos.y = _curPort->top * 2;
-		clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
-		clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
+		if (!upscaledHiresHack) {
+			curPortPos.x = _curPort->left * 2; curPortPos.y = _curPort->top * 2;
+			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
+			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
+		}
 
 		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true, scaleX, scaleY);
 		if (!_screen->_picNotValidSci11) {
