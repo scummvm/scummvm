@@ -295,9 +295,22 @@ private:
 	Timestamp _pos, _length;
 };
 
+/**
+ * Creates a audio stream, which plays the given raw data.
+ *
+ * @param ptr Data
+ * @param len Length of the data (in bytes!)
+ * @param rate The sample rate of the data.
+ * @param flags Flags combination.
+ * @see Mixer::RawFlags
+ * @return The new SeekableAudioStream (or 0 on failure).
+ */
 SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags);
 
 /**
+ * NOTE:
+ * This API is considered deprecated.
+ *
  * Factory function for a raw linear AudioStream, which will simply treat all
  * data in the buffer described by ptr and len as raw sample data in the
  * specified format. It will then simply pass this data directly to the mixer,
@@ -317,10 +330,27 @@ struct LinearDiskStreamAudioBlock {
 	int32 len;		///< Length of the block (in samples)
 };
 
+/**
+ * Creates a audio stream, which plays from given stream.
+ *
+ * @param stream Stream to play from
+ * @param block Pointer to an LinearDiskStreamAudioBlock array
+ * @see LinearDiskStreamAudioBlock
+ * @param numBlocks Number of blocks.
+ * @param rate The rate 
+ * @param len Length of the data (in bytes!)
+ * @param flags Flags combination.
+ * @see Mixer::RawFlags
+ * @param disposeStream Wheter the "stream" object should be destroyed after playback.
+ * @return The new SeekableAudioStream (or 0 on failure).
+ */
 SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
 		int numBlocks, int rate, byte flags, bool disposeStream);
 
 /**
+ * NOTE:
+ * This API is considered deprecated.
+ *
  * Factory function for a Linear Disk Stream.  This can stream linear (PCM)
  * audio from disk. The function takes an pointer to an array of
  * LinearDiskStreamAudioBlock which defines the start position and length of
