@@ -667,7 +667,6 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 
 			s->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
 			return SIGNAL_REG;
-			// TODO: implement this. Looks to be a modified version of kDoSync
 		} else {
 			warning("kPortrait(show) called with unsupported argc %d", argc);
 		}

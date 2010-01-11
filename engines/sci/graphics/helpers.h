@@ -32,6 +32,10 @@
 
 namespace Sci {
 
+// Cache limits
+#define MAX_CACHED_CURSORS 10
+#define MAX_CACHED_VIEWS 50
+
 #define SCI_SHAKE_DIRECTION_VERTICAL 1
 #define SCI_SHAKE_DIRECTION_HORIZONTAL 2
 

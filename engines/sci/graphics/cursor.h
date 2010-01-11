@@ -35,8 +35,6 @@ namespace Sci {
 
 #define SCI_CURSOR_SCI0_TRANSPARENCYCOLOR 1
 
-#define MAX_CACHED_CURSORS 10
-
 class View;
 class SciPalette;
 

@@ -36,8 +36,6 @@ namespace Sci {
 #define SCI_TEXT_ALIGNMENT_CENTER 1
 #define SCI_TEXT_ALIGNMENT_LEFT	0
 
-#define MAX_CACHED_VIEWS 50
-
 class Screen;
 class SciPalette;
 class Font;
