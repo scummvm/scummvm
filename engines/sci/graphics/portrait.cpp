@@ -39,15 +39,15 @@
 namespace Sci {
 
 Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
-	init();
+	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio) {
+	init(resourceName);
 }
 
 Portrait::~Portrait() {
 	delete[] _bitmaps;
 }
 
-void Portrait::init() {
+void Portrait::init(Common::String resourceName) {
 	// .BIN files are loaded from actors directory and from .\ directory
 	// header:
 	// 3 bytes "WIN"
@@ -66,14 +66,12 @@ void Portrait::init() {
 	//  -> 6 bytes unknown
 	// height * width bitmap data
 	// another animation count times bitmap header and data
-	Common::SeekableReadStream *file = 0;
-	_fileName = "actors/" + _resourceName + ".bin";
-	file = SearchMan.createReadStreamForMember(_fileName);
+	Common::SeekableReadStream *file = 
+		SearchMan.createReadStreamForMember("actors/" + resourceName + ".bin");
 	if (!file) {
-		_fileName = _resourceName + ".bin";
-		file = SearchMan.createReadStreamForMember(_fileName);
+		file = SearchMan.createReadStreamForMember(resourceName + ".bin");
 		if (!file)
-			error("portrait %s.bin not found", _resourceName.c_str());
+			error("portrait %s.bin not found", resourceName.c_str());
 	}
 	_fileSize = file->size();
 	_fileData = new byte[_fileSize];
@@ -81,19 +79,19 @@ void Portrait::init() {
 	delete file;
 
 	if (strncmp((char *)_fileData, "WIN", 3)) {
-		error("portrait %s doesn't have valid header", _resourceName.c_str());
+		error("portrait %s doesn't have valid header", resourceName.c_str());
 	}
 	_width = READ_LE_UINT16(_fileData + 3);
 	_height = READ_LE_UINT16(_fileData + 5);
 	_bitmapCount = READ_LE_UINT16(_fileData + 7);
 	_bitmaps = new PortraitBitmap[_bitmapCount];
 
-	_portraitPaletteSize = READ_LE_UINT16(_fileData + 13);
+	uint16 portraitPaletteSize = READ_LE_UINT16(_fileData + 13);
 	byte *data = _fileData + 17;
 	// Read palette
 	memset(&_portraitPalette, 0, sizeof(Palette));
 	uint16 palSize = 0, palNr = 0;
-	while (palSize < _portraitPaletteSize) {
+	while (palSize < portraitPaletteSize) {
 		_portraitPalette.colors[palNr].b = *data++;
 		_portraitPalette.colors[palNr].g = *data++;
 		_portraitPalette.colors[palNr].r = *data++;
@@ -128,6 +126,9 @@ void Portrait::init() {
 		data += 14;
 		curBitmap++;
 	}
+
+	// Set the portrait palette
+	_palette->set(&_portraitPalette, 1);
 }
 
 void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
@@ -143,7 +144,6 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		error("kPortrait: Could not open sync resource %d %X", resourceId, audioNumber);
 
 	// Draw base bitmap
-	_palette->set(&_portraitPalette, 1);
 	drawBitmap(0);
 	bitsShow();
 

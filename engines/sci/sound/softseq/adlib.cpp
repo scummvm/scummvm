@@ -827,8 +827,4 @@ MidiPlayer *MidiPlayer_Adlib_create() {
 	return new MidiPlayer_Adlib();
 }
 
-MidiDriver *MidiDriver_Adlib_create() {
-	return new MidiDriver_Adlib(g_system->getMixer());
-}
-
 } // End of namespace Sci
