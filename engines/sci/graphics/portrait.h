@@ -61,6 +61,8 @@ private:
 	uint16 _bitmapCount;
 	PortraitBitmap *_bitmaps;
 
+	byte *_fileData;
+
 	Common::Point _position;
 };
 
