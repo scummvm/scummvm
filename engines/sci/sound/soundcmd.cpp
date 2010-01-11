@@ -669,12 +669,13 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 		musicSlot->fadeTicker = 0;
 		break;
 
-	case 5: // Possibly SCI1?!
-	case 6: // SCI 1.1 TODO: find out what additional parameter is
+	case 5: // SCI01+
+	case 6: // SCI1+ (SCI1 late sound scheme), with fade and continue 
 		musicSlot->fadeTo = CLIP<uint16>(_argv[2].toUint16(), 0, MUSIC_VOLUME_MAX);
 		musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
 		musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
+		musicSlot->stopAfterFading = (_argc == 6) ? (_argv[5].toUint16() != 0) : false;
 		break;
 
 	default:
@@ -846,6 +847,8 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			cmdStopSound(obj, 0);
 		} else {
 			PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+			if (musicSlot->stopAfterFading)
+				cmdStopSound(obj, 0);
 		}
 	}
 

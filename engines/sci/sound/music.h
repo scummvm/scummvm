@@ -95,6 +95,7 @@ public:
 	uint32 fadeTickerStep;
 	bool fadeSetVolume;
 	bool fadeCompleted;
+	bool stopAfterFading;
 
 	SoundStatus status;
 
