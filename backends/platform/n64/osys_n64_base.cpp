@@ -72,7 +72,7 @@ OSystem_N64::OSystem_N64() {
 	_frameBufferWidth = 340;
 
 	// Pixels to skip
-	_offscrPixels = 15;
+	_offscrPixels = 16;
 
 	// Video clock
 	_viClockRate = VI_NTSC_CLOCK;
@@ -254,7 +254,7 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_frameBufferWidth = 340;
 		_screenWidth = 320;
 		_screenHeight = 240;
-		_offscrPixels = 15;
+		_offscrPixels = 16;
 		_graphicMode = OVERS_PAL_340X240;
 		enableAudioPlayback();
 		break;
@@ -280,7 +280,7 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_frameBufferWidth = 340;
 		_screenWidth = 320;
 		_screenHeight = 240;
-		_offscrPixels = 15;
+		_offscrPixels = 16;
 		_graphicMode = OVERS_MPAL_340X240;
 		enableAudioPlayback();
 		break;
@@ -307,7 +307,7 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_frameBufferWidth = 340;
 		_screenWidth = 320;
 		_screenHeight = 240;
-		_offscrPixels = 15;
+		_offscrPixels = 16;
 		_graphicMode = OVERS_NTSC_340X240;
 		enableAudioPlayback();
 		break;
@@ -470,6 +470,7 @@ void OSystem_N64::updateScreen() {
 
 	uint8 skip_lines = (_screenHeight - _gameHeight) / 4;
 	uint8 skip_pixels = (_screenWidth - _gameWidth) / 2; // Center horizontally the image
+	skip_pixels -= (skip_pixels % 8); // To keep aligned memory access
 
 	if (_dirtyPalette)
 		rebuildOffscreenGameBuffer();
@@ -479,7 +480,7 @@ void OSystem_N64::updateScreen() {
 	uint16 *overlay_framebuffer = (uint16*)_dc->conf.framebuffer; // Current screen framebuffer
 	uint16 *game_framebuffer = overlay_framebuffer + (_frameBufferWidth * skip_lines * 2); // Skip some lines to center the image vertically
 
-	uint16 currentHeight;
+	uint16 currentHeight, currentWidth;
 	uint16 *tmpDst;
 	uint16 *tmpSrc;
 
@@ -488,7 +489,11 @@ void OSystem_N64::updateScreen() {
 		tmpDst = game_framebuffer;
 		tmpSrc = _offscreen_hic + (_shakeOffset * _screenWidth);
 		for (currentHeight = _shakeOffset; currentHeight < _gameHeight; currentHeight++) {
-			memcpy((tmpDst + skip_pixels + _offscrPixels), tmpSrc, _screenWidth * 2);
+			uint64 *game_dest = (uint64*)(tmpDst + skip_pixels + _offscrPixels);
+			uint64 *game_src = (uint64*)tmpSrc;
+			for (currentWidth = 0; currentWidth < _gameWidth; currentWidth += 4) {
+				*game_dest++ = *game_src++;
+			}
 			tmpDst += _frameBufferWidth;
 			tmpSrc += _screenWidth;
 		}
@@ -502,7 +507,11 @@ void OSystem_N64::updateScreen() {
 		tmpDst = overlay_framebuffer;
 		tmpSrc = _overlayBuffer;
 		for (currentHeight = 0; currentHeight < _overlayHeight; currentHeight++) {
-			memcpy((tmpDst + _offscrPixels), tmpSrc, _overlayWidth * 2);
+			uint64 *over_dest = (uint64*)(tmpDst + _offscrPixels);
+			uint64 *over_src = (uint64*)tmpSrc;
+			for (currentWidth = 0; currentWidth < _overlayWidth; currentWidth += 4) {
+				*over_dest++ = *over_src++;
+			}
 			tmpDst += _frameBufferWidth;
 			tmpSrc += _overlayWidth;
 		}
@@ -511,10 +520,11 @@ void OSystem_N64::updateScreen() {
 	// Draw mouse cursor
 	if ((_mouseVisible || _overlayVisible) && _cursorHeight > 0 && _cursorWidth > 0) {
 		uint16 *mouse_framebuffer;
-		uint16 horiz_pix_skip = 0;
+		uint16 horiz_pix_skip;
 
 		if (_overlayVisible) {
 			mouse_framebuffer = overlay_framebuffer;
+			horiz_pix_skip = 0;
 		} else {
 			mouse_framebuffer = game_framebuffer;
 			horiz_pix_skip = skip_pixels;
