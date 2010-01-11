@@ -44,7 +44,7 @@ public:
 	void doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 
 private:
-	void init(Common::String resourceName);
+	void init(Common::String resourceName, SciPalette *palette);
 	void drawBitmap(uint16 bitmapNr);
 	void bitsShow();
 
@@ -52,11 +52,7 @@ private:
 	SciEvent *_event;
 	SciGui *_gui;
 	Screen *_screen;
-	SciPalette *_palette;
 	AudioPlayer *_audio;
-
-	byte *_fileData;
-	int32 _fileSize;
 
 	uint16 _height;
 	uint16 _width;
