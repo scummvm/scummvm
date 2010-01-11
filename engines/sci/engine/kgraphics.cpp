@@ -648,7 +648,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // load
 		if (argc == 2) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
-			return s->_gui->portraitLoad(resourceName);
+			s->r_acc = s->_gui->portraitLoad(resourceName);
 		} else {
 			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}

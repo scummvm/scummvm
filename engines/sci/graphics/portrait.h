@@ -35,6 +35,11 @@ struct PortraitBitmap {
 	byte *rawBitmap;
 };
 
+/**
+ * This class is used to handle all the hi-res portraits used in the Windows
+ * release of KQ6. These are all in external data files, and handled separately
+ * from the rest of the engine (originally, inside rave.dll)
+ */
 class Portrait {
 public:
 	Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName);
@@ -43,8 +48,10 @@ public:
 	void setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	void doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 
+	Common::String getResourceName() { return _resourceName; }
+
 private:
-	void init(Common::String resourceName);
+	void init();
 	void drawBitmap(uint16 bitmapNr);
 	void bitsShow();
 
@@ -61,6 +68,8 @@ private:
 
 	uint16 _bitmapCount;
 	PortraitBitmap *_bitmaps;
+
+	Common::String _resourceName;
 
 	byte *_fileData;
 

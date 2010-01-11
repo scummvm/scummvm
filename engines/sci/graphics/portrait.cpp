@@ -39,8 +39,8 @@
 namespace Sci {
 
 Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio) {
-	init(resourceName);
+	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
+	init();
 }
 
 Portrait::~Portrait() {
@@ -48,7 +48,7 @@ Portrait::~Portrait() {
 	delete _fileData;
 }
 
-void Portrait::init(Common::String resourceName) {
+void Portrait::init() {
 	// .BIN files are loaded from actors directory and from .\ directory
 	// header:
 	// 3 bytes "WIN"
@@ -69,11 +69,11 @@ void Portrait::init(Common::String resourceName) {
 	// another animation count times bitmap header and data
 	int32 fileSize = 0;
 	Common::SeekableReadStream *file = 
-		SearchMan.createReadStreamForMember("actors/" + resourceName + ".bin");
+		SearchMan.createReadStreamForMember("actors/" + _resourceName + ".bin");
 	if (!file) {
-		file = SearchMan.createReadStreamForMember(resourceName + ".bin");
+		file = SearchMan.createReadStreamForMember(_resourceName + ".bin");
 		if (!file)
-			error("portrait %s.bin not found", resourceName.c_str());
+			error("portrait %s.bin not found", _resourceName.c_str());
 	}
 	fileSize = file->size();
 	_fileData = new byte[fileSize];
@@ -81,7 +81,7 @@ void Portrait::init(Common::String resourceName) {
 	delete file;
 
 	if (strncmp((char *)_fileData, "WIN", 3)) {
-		error("portrait %s doesn't have valid header", resourceName.c_str());
+		error("portrait %s doesn't have valid header", _resourceName.c_str());
 	}
 	_width = READ_LE_UINT16(_fileData + 3);
 	_height = READ_LE_UINT16(_fileData + 5);
