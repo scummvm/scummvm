@@ -1000,6 +1000,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 1)
 		return NULL_REG;
 
+	s->_gui->hideCursor();
+
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
 	if (argv[0].toUint16() == 0) {
@@ -1039,6 +1041,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 	if (playedVideo)
 		s->_gui->syncWithFramebuffer();
+
+	s->_gui->showCursor();
 
 	return s->r_acc;
 }
