@@ -30,8 +30,8 @@ namespace Sci {
 
 struct CelInfo {
 	int16 width, height;
-	char displaceX;
-	byte displaceY;
+	int16 displaceX;
+	int16 displaceY;
 	byte clearKey;
 	uint16 offsetEGA;
 	uint16 offsetRLE;

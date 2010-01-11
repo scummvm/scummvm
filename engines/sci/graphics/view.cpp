@@ -143,7 +143,7 @@ void View::initData(GuiResourceId resourceId) {
 				cel = &_loop[loopNo].cel[celNo];
 				cel->width = READ_LE_UINT16(celData);
 				cel->height = READ_LE_UINT16(celData + 2);
-				cel->displaceX = celData[4];
+				cel->displaceX = (signed char)celData[4];
 				cel->displaceY = celData[5];
 				cel->clearKey = celData[6];
 				if (isEGA) {
