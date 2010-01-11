@@ -44,13 +44,14 @@ public:
 	void doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 
 private:
-	void init(Common::String resourceName, SciPalette *palette);
+	void init(Common::String resourceName);
 	void drawBitmap(uint16 bitmapNr);
 	void bitsShow();
 
 	ResourceManager *_resMan;
 	SciEvent *_event;
 	SciGui *_gui;
+	SciPalette *_palette;
 	Screen *_screen;
 	AudioPlayer *_audio;
 

@@ -39,8 +39,8 @@
 namespace Sci {
 
 Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _audio(audio) {
-	init(resourceName, palette);
+	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio) {
+	init(resourceName);
 }
 
 Portrait::~Portrait() {
@@ -48,7 +48,7 @@ Portrait::~Portrait() {
 	delete _fileData;
 }
 
-void Portrait::init(Common::String resourceName, SciPalette *palette) {
+void Portrait::init(Common::String resourceName) {
 	// .BIN files are loaded from actors directory and from .\ directory
 	// header:
 	// 3 bytes "WIN"
@@ -128,9 +128,6 @@ void Portrait::init(Common::String resourceName, SciPalette *palette) {
 		data += 14;
 		curBitmap++;
 	}
-
-	// Set the portrait palette
-	palette->set(&_portraitPalette, 1);
 }
 
 void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
@@ -145,6 +142,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	if (!syncResource)
 		error("kPortrait: Could not open sync resource %d %X", resourceId, audioNumber);
 
+	// Set the portrait palette
+	_palette->set(&_portraitPalette, 1);
+
 	// Draw base bitmap
 	drawBitmap(0);
 	bitsShow();
@@ -154,7 +154,6 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	_audio->startAudio(resourceId, audioNumber);
 
 	// Do animation depending on sync resource till audio is done playing
-	// TODO: This whole mess doesnt seem to be correct currently
 	uint16 syncCue;
 	int timerPosition, curPosition;
 	sciEvent curEvent;
@@ -174,7 +173,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		do {
 			_gui->wait(1);
 			curEvent = _event->get(SCI_EVENT_ANY);
-			if (curEvent.type == SCI_EVENT_MOUSE_PRESS)
+			if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
+				(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.data == SCI_KEY_ESC) ||
+				g_engine->shouldQuit())
 				userAbort = true;
 			curPosition = _audio->getAudioPosition();
 		} while ((curPosition != -1) && (curPosition < timerPosition) && (!userAbort));
