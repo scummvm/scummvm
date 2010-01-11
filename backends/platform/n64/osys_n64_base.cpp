@@ -90,6 +90,7 @@ OSystem_N64::OSystem_N64() {
 	_overlayBuffer = (uint16*)memalign(8, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
 
 	_cursor_pal = NULL;
+	_cursor_hic = NULL;
 
 	_cursorWidth = -1;
 	_cursorHeight = -1;
@@ -346,6 +347,9 @@ void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
 		colors += 4;
 	}
 
+	if (_cursorPaletteDisabled)
+		rebuildOffscreenMouseBuffer();
+
 	_dirtyPalette = true;
 	_dirtyOffscreen = true;
 }
@@ -372,6 +376,17 @@ void OSystem_N64::rebuildOffscreenGameBuffer(void) {
 		}
 }
 
+void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
+	uint16 width, height;
+	uint16 *_pal_src = _cursorPaletteDisabled ? _screenPalette : _cursorPalette;
+
+	for (height = 0; height < _cursorHeight; height++) {
+		for (width = 0; width < _cursorWidth; width++) {
+			_cursor_hic[(_cursorWidth * height) + width] = _pal_src[_cursor_pal[(_cursorWidth * height) + width]];
+		}
+	}
+}
+
 void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 	uint32 i;
 	uint16 color;
@@ -396,11 +411,16 @@ void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
+
+	rebuildOffscreenMouseBuffer();
+
 	_dirtyOffscreen = true;
 }
 
 void OSystem_N64::disableCursorPalette(bool disable) {
 	_cursorPaletteDisabled = disable;
+
+	rebuildOffscreenMouseBuffer();
 
 	_dirtyOffscreen = true;
 }
@@ -533,22 +553,24 @@ void OSystem_N64::updateScreen() {
 		int mX = _mouseX - _mouseHotspotX;
 		int mY = _mouseY - _mouseHotspotY;
 
-		uint16 *_cursorSource = _cursorPaletteDisabled ? _screenPalette : _cursorPalette;
 		for (int h = 0; h < _cursorHeight; h++)
 			for (int w = 0; w < _cursorWidth; w++) {
-				uint8 index = _cursor_pal[(h * _cursorWidth) + w];
-
 				// Draw pixel
-				if ((index != _cursorKeycolor) && ((mY + h) >= 0) && ((mY + h) < _mouseMaxY) && ((mX + w) >= 0) && ((mX + w) < _mouseMaxX))
-					mouse_framebuffer[((mY + h) * _frameBufferWidth) + ((mX + w) + _offscrPixels + horiz_pix_skip)] = _cursorSource[index];
+				if (((mY + h) >= 0) && ((mY + h) < _mouseMaxY) && ((mX + w) >= 0) && ((mX + w) < _mouseMaxX)) {
+					uint16 cursor_pixel_hic = _cursor_hic[(h * _cursorWidth) + w];
+					uint8 cursor_pixel_pal = _cursor_pal[(h * _cursorWidth) + w];
+
+					if (cursor_pixel_pal != _cursorKeycolor)
+						mouse_framebuffer[((mY + h) * _frameBufferWidth) + ((mX + w) + _offscrPixels + horiz_pix_skip)] = cursor_pixel_hic;
+				}
 			}
 	}
 
-#ifndef _ENABLE_DEBUG_
-	showDisplay(_dc);
-#else
+//#ifndef _ENABLE_DEBUG_
+//	showDisplay(_dc);
+//#else
 	showDisplayAndText(_dc);
-#endif
+//#endif
 
 	_dc = NULL;
 	_dirtyOffscreen = false;
@@ -723,11 +745,14 @@ void OSystem_N64::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 
 	if (_cursor_pal && ((w != _cursorWidth) || (h != _cursorHeight))) {
 		free(_cursor_pal);
+		free(_cursor_hic);
 		_cursor_pal = NULL;
+		_cursor_hic = NULL;
 	}
 
 	if (!_cursor_pal) {
 		_cursor_pal = (uint8*)malloc(w * h);
+		_cursor_hic = (uint16*)malloc(w * h * sizeof(uint16));
 	}
 
 	_cursorWidth = w;
@@ -736,6 +761,8 @@ void OSystem_N64::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	memcpy(_cursor_pal, buf, w * h); // Copy the palettized cursor
 
 	_cursorKeycolor = keycolor & 0xFF;
+
+	rebuildOffscreenMouseBuffer();
 
 	_dirtyOffscreen = true;
 

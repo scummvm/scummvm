@@ -101,6 +101,7 @@ protected:
 	int _shakeOffset;
 
 	uint8 *_cursor_pal; // Cursor buffer, palettized
+	uint16 *_cursor_hic; // Cursor buffer, 16bit
 	bool _cursorPaletteDisabled;
 	bool _dirtyPalette;
 
@@ -191,6 +192,7 @@ public:
 	FilesystemFactory *getFilesystemFactory();
 
 	void rebuildOffscreenGameBuffer(void);
+	void rebuildOffscreenMouseBuffer(void);
 	void switchGraphicModeId(int mode);
 
 	void setupMixer(void);
