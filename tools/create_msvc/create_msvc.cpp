@@ -501,6 +501,7 @@ int main(int argc, char *argv[]) {
 	projectWarnings["agi"] = "4510;4610";
 	projectWarnings["lure"] = "4189;4355";
 	projectWarnings["kyra"] = "4355";
+	projectWarnings["m4"] = "4355";
 
 	ProjectProvider *provider = NULL;
 
