@@ -31,7 +31,6 @@
 #include "common/fs.h"
  
 #include "wage/wage.h"
-#include "wage/macresman.h"
 #include "wage/entities.h"
 #include "wage/world.h"
  
@@ -63,7 +62,7 @@ Common::Error WageEngine::run() {
 	printf("WageEngine::init\n");
  
 	// Your main even loop should be (invoked from) here.
-	_resManager = new MacResManager(getGameFile());
+	_resManager = new Common::MacResManager(getGameFile());
 
 	_world = new World();
 

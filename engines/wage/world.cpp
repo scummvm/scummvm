@@ -24,7 +24,7 @@
  */
 
 #include "wage/wage.h"
-#include "wage/macresman.h"
+#include "common/macresman.h"
 #include "wage/entities.h"
 #include "wage/script.h"
 #include "wage/world.h"
@@ -39,11 +39,11 @@ World::World() {
 	_scenes[STORAGESCENE] = &_storageScene;
 }
 
-bool World::loadWorld(MacResManager *resMan) {
+bool World::loadWorld(Common::MacResManager *resMan) {
 	int resSize;
-	MacResIDArray resArray;
+	Common::MacResIDArray resArray;
 	byte *res;
-	MacResIDArray::const_iterator iter;
+	Common::MacResIDArray::const_iterator iter;
 
 	if ((resArray = resMan->getResIDArray("GCOD")).size() == 0)
 		return false;
@@ -169,13 +169,13 @@ void World::loadExternalSounds(String fname) {
 	}
 	in.close();
 
-	MacResManager *resMan;
-	resMan = new MacResManager(fname);
+	Common::MacResManager *resMan;
+	resMan = new Common::MacResManager(fname);
 
 	int resSize;
-	MacResIDArray resArray;
+	Common::MacResIDArray resArray;
 	byte *res;
-	MacResIDArray::const_iterator iter;
+	Common::MacResIDArray::const_iterator iter;
 
 	resArray = resMan->getResIDArray("ASND");
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {

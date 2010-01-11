@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	design.o \
 	detection.o \
 	entities.o \
-	macresman.o \
 	script.o \
 	util.o \
 	wage.o \

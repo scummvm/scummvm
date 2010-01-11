@@ -31,13 +31,13 @@
 #include "gui/debugger.h"
 #include "common/endian.h"
 #include "common/rect.h"
+#include "common/macresman.h"
 
 struct ADGameDescription;
 
 namespace Wage {
  
 class Console;
-class MacResManager;
 class World;
 
 using Common::String;
@@ -68,7 +68,7 @@ public:
 	const char *getGameFile() const;
 
 private:
-	bool loadWorld(MacResManager *resMan);
+	bool loadWorld(Common::MacResManager *resMan);
 
 private:
 	Console *_console;
@@ -78,7 +78,7 @@ private:
 
 	const ADGameDescription *_gameDescription;
 
-	MacResManager *_resManager;
+	Common::MacResManager *_resManager;
 
 	World *_world;
 };

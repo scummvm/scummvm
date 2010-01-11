@@ -35,7 +35,7 @@ public:
 	World();
 	~World();
  
-	bool loadWorld(MacResManager *resMan);
+	bool loadWorld(Common::MacResManager *resMan);
 	void loadExternalSounds(String fname);
 
 	String _name;
