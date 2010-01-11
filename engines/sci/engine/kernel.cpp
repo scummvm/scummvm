@@ -711,7 +711,6 @@ void kernel_sleep(SciEvent *event, uint32 msecs ) {
 		// let backend process events and update the screen
 		event->get(SCI_EVENT_PEEK);
 		// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
-		g_system->updateScreen();
 		time = g_system->getMillis();
 		if (time + 10 < wakeup_time) {
 			g_system->delayMillis(10);
