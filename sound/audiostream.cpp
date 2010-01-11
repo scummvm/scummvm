@@ -222,9 +222,8 @@ SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, cons
     : _parent(parent), _disposeAfterUse(disposeAfterUse),
       _start(start.convertToFramerate(getRate())),
        _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length(end.convertToFramerate(getRate())) {
-	// TODO: This really looks like Timestamp::operator-
-	_length = Timestamp(_length.secs() - _start.secs(), _length.numberOfFrames() - _start.numberOfFrames(), getRate());
+      _length((start - end).convertToFramerate(getRate())) {
+
 	_parent->seek(_start);
 }
 
@@ -247,8 +246,7 @@ bool SubSeekableAudioStream::seek(const Timestamp &where) {
 		return false;
 	}
 
-	// TODO: This really looks like Timestamp::operator+
-	if (_parent->seek(Timestamp(_pos.secs() + _start.secs(), _pos.numberOfFrames() + _start.numberOfFrames(), getRate()))) {
+	if (_parent->seek(_pos + _start)) {
 		return true;
 	} else {
 		_pos = _length;

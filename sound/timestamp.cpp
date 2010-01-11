@@ -36,7 +36,7 @@ static uint gcd(uint a, uint b) {
 	return b;
 }
 
-Timestamp::Timestamp(uint32 ms, int fr) {
+Timestamp::Timestamp(uint ms, uint fr) {
 	assert(fr > 0);
 
 	_secs = ms / 1000;
@@ -44,20 +44,21 @@ Timestamp::Timestamp(uint32 ms, int fr) {
 	_framerate = fr * _framerateFactor;
 
 	// Note that _framerate is always divisible by 1000.
-	_numberOfFrames = (ms % 1000) * (_framerate / 1000);
+	_numFrames = (ms % 1000) * (_framerate / 1000);
 }
 
-Timestamp::Timestamp(uint s, int frames, int fr) {
+Timestamp::Timestamp(uint s, uint frames, uint fr) {
 	assert(fr > 0);
 
 	_secs = s;
 	_framerateFactor = 1000 / gcd(1000, fr);
 	_framerate = fr * _framerateFactor;
-	_numberOfFrames = 0;
-	addFramesIntern(frames * _framerateFactor);
+	_numFrames = frames * _framerateFactor;
+
+	normalize();
 }
 
-Timestamp Timestamp::convertToFramerate(int newFramerate) const {
+Timestamp Timestamp::convertToFramerate(uint newFramerate) const {
 	Timestamp ts(*this);
 
 	if (ts.framerate() != newFramerate) {
@@ -72,13 +73,26 @@ Timestamp Timestamp::convertToFramerate(int newFramerate) const {
 		// We round to the nearest (as opposed to always
 		// rounding down), to minimize rounding errors during
 		// round trip conversions.
-		ts._numberOfFrames = (ts._numberOfFrames * q + p/2) / p;
+		ts._numFrames = (ts._numFrames * q + p/2) / p;
 
-		ts._secs += (ts._numberOfFrames / ts._framerate);
-		ts._numberOfFrames %= ts._framerate;
+		ts.normalize();
 	}
 
 	return ts;
+}
+
+void Timestamp::normalize() {
+	// Convert negative _numFrames values to positive ones by adjusting _secs
+	if (_numFrames < 0) {
+		int secsub = 1 + (-_numFrames / _framerate);
+
+		_numFrames += _framerate * secsub;
+		_secs -= secsub;
+	}
+
+	// Wrap around if necessary
+	_secs += (_numFrames / _framerate);
+	_numFrames %= _framerate;
 }
 
 bool Timestamp::operator==(const Timestamp &ts) const {
@@ -112,7 +126,7 @@ int Timestamp::cmp(const Timestamp &ts) const {
 		const uint p = _framerate / g;
 		const uint q = ts._framerate / g;
 
-		delta = (_numberOfFrames * q - ts._numberOfFrames * p);
+		delta = (_numFrames * q - ts._numFrames * p);
 	}
 
 	return delta;
@@ -124,45 +138,28 @@ Timestamp Timestamp::addFrames(int frames) const {
 
 	// The frames are given in the original framerate, so we have to
 	// adjust by _framerateFactor accordingly.
-	ts.addFramesIntern(frames * _framerateFactor);
+	ts._numFrames += frames * _framerateFactor;
+	ts.normalize();
 
 	return ts;
-}
-
-void Timestamp::addFramesIntern(int frames) {
-	_numberOfFrames += frames;
-
-	if (_numberOfFrames < 0) {
-		int secsub = 1 + (-_numberOfFrames / _framerate);
-
-		_numberOfFrames += _framerate * secsub;
-		_secs -= secsub;
-	}
-
-	// Wrap around if necessary
-	_secs += (_numberOfFrames / _framerate);
-	_numberOfFrames %= _framerate;
 }
 
 Timestamp Timestamp::addMsecs(int ms) const {
-	assert(ms >= 0);
 	Timestamp ts(*this);
 	ts._secs += ms / 1000;
 	// Add the remaining frames. Note that _framerate is always divisible by 1000.
-	ts.addFramesIntern((ms % 1000) * (ts._framerate / 1000));
+	ts._numFrames += (ms % 1000) * (ts._framerate / 1000);
+
+	ts.normalize();
+
 	return ts;
 }
 
-int Timestamp::frameDiff(const Timestamp &ts) const {
-
-	int delta = 0;
-	if (_secs != ts._secs)
-		delta = (long(_secs) - long(ts._secs)) * _framerate;
-
-	delta += _numberOfFrames;
+void Timestamp::addIntern(const Timestamp &ts) {
+	_secs += ts._secs;
 
 	if (_framerate == ts._framerate) {
-		delta -= ts._numberOfFrames;
+		_numFrames += ts._numFrames;
 	} else {
 		// We need to multiply by the quotient of the two framerates.
 		// We cancel the GCD in this fraction to reduce the risk of
@@ -171,19 +168,82 @@ int Timestamp::frameDiff(const Timestamp &ts) const {
 		const uint p = _framerate / g;
 		const uint q = ts._framerate / g;
 
-		delta -= (ts._numberOfFrames * p + q/2) / q;
+		_framerate *= q;
+		_numFrames = _numFrames * q + ts._numFrames * p;
 	}
 
-	return delta / _framerateFactor;
+	normalize();
+}
+
+Timestamp Timestamp::operator-() const {
+	Timestamp result(*this);
+	result._secs = -_secs;
+	result._numFrames = -_numFrames;
+	result.normalize();
+	return result;
+}
+
+Timestamp Timestamp::operator+(const Timestamp &ts) const {
+	Timestamp result(*this);
+	result.addIntern(ts);
+	return result;
+}
+
+Timestamp Timestamp::operator-(const Timestamp &ts) const {
+	Timestamp result(*this);
+	result.addIntern(-ts);
+	return result;
+}
+
+/*
+Timestamp &Timestamp::operator+=(const Timestamp &ts) {
+	addIntern(ts);
+	return *this;
+}
+
+Timestamp &Timestamp::operator-=(const Timestamp &ts) {
+	addIntern(-ts);
+	return *this;
+}
+*/
+
+/*
+int Timestamp::frameDiff(const Timestamp &ts) const {
+	return (*this - ts).totalNumberOfFrames();
+}
+*/
+
+int Timestamp::frameDiff(const Timestamp &ts) const {
+
+	int delta = 0;
+	if (_secs != ts._secs)
+		delta = (_secs - ts._secs) * _framerate;
+
+	delta += _numFrames;
+
+	if (_framerate == ts._framerate) {
+		delta -= ts._numFrames;
+	} else {
+		// We need to multiply by the quotient of the two framerates.
+		// We cancel the GCD in this fraction to reduce the risk of
+		// overflows.
+		const uint g = gcd(_framerate, ts._framerate);
+		const uint p = _framerate / g;
+		const uint q = ts._framerate / g;
+
+		delta -= ((long)ts._numFrames * p + q/2) / (long)q;
+	}
+
+	return delta / (int)_framerateFactor;
 }
 
 int Timestamp::msecsDiff(const Timestamp &ts) const {
-	return long(msecs()) - long(ts.msecs());
+	return msecs() - ts.msecs();
 }
 
-uint32 Timestamp::msecs() const {
+int Timestamp::msecs() const {
 	// Note that _framerate is always divisible by 1000.
-	return _secs * 1000 + _numberOfFrames / (_framerate / 1000);
+	return _secs * 1000 + _numFrames / (_framerate / 1000);
 }
 
 

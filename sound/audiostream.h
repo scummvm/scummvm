@@ -292,7 +292,8 @@ private:
 	bool _disposeAfterUse;
 
 	const Timestamp _start;
-	Timestamp _pos, _length;
+	const Timestamp _length;
+	Timestamp _pos;
 };
 
 /**

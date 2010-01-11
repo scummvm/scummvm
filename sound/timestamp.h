@@ -42,17 +42,21 @@ protected:
 	 * The seconds part of this timestamp.
 	 * The total time in seconds represented by this timestamp can be
 	 * computed as follows:
-	 *   _secs + (double)_numberOfFrames / _framerate
+	 *   _secs + (double)_numFrames / _framerate
 	 */
-	uint _secs;
+	int _secs;
 
 	/**
 	 * The number of frames which together with _secs encodes
 	 * the timestamp. The total number of frames represented
 	 * by this timestamp is computed as follows:
-	 *   _numberOfFrames + _secs * _framerate
+	 *   _numFrames + _secs * _framerate
+	 *
+	 * This is always a value greater or equal to zero.
+	 * The only reason this is an int and not an uint is to
+	 * allow intermediate negative values.
 	 */
-	int _numberOfFrames;
+	int _numFrames;
 
 	/**
 	 * The internal framerate, i.e. the number of frames per second.
@@ -61,13 +65,13 @@ protected:
 	 * This way, we ensure that we can store both frames and
 	 * milliseconds without any rounding losses.
 	 */
-	int _framerate;
+	uint _framerate;
 
 	/**
 	 * Factor by which the original framerate specified by the client
 	 * code was multipled to obtain the internal _framerate value.
 	 */
-	int _framerateFactor;
+	uint _framerateFactor;
 
 public:
 	/**
@@ -75,7 +79,7 @@ public:
 	 * @param msecs     starting time in milliseconds
 	 * @param framerate number of frames per second (must be > 0)
 	 */
-	Timestamp(uint32 msecs, int framerate);
+	Timestamp(uint msecs, uint framerate);
 
 	/**
 	 * Set up a timestamp with a given time, frames and framerate.
@@ -83,14 +87,14 @@ public:
 	 * @param frames    starting frames
 	 * @param framerate number of frames per second (must be > 0)
 	 */
-	Timestamp(uint secs, int frames, int framerate);
+	Timestamp(uint secs, uint frames, uint framerate);
 
 	/**
 	 * Return a timestamp which represents as closely as possible
 	 * the point in time describes by this timestamp, but with
 	 * a different framerate.
 	 */
-	Timestamp convertToFramerate(int newFramerate) const;
+	Timestamp convertToFramerate(uint newFramerate) const;
 
 	/**
 	 * Check whether to timestamps describe the exact same moment
@@ -118,6 +122,16 @@ public:
 	 */
 	Timestamp addMsecs(int msecs) const;
 
+
+	// unary minus
+	Timestamp operator-() const;
+
+	Timestamp operator+(const Timestamp &ts) const;
+	Timestamp operator-(const Timestamp &ts) const;
+
+//	Timestamp &operator+=(const Timestamp &ts);
+//	Timestamp &operator-=(const Timestamp &ts);
+
 	/**
 	 * Computes the number of frames between this timestamp and ts.
 	 * The frames are with respect to the framerate used by this
@@ -132,13 +146,13 @@ public:
 	 * Return the time in milliseconds described by this timestamp,
 	 * rounded down.
 	 */
-	uint32 msecs() const;
+	int msecs() const;
 
 	/**
 	 * Return the time in seconds described by this timestamp,
 	 * rounded down.
 	 */
-	inline uint32 secs() const {
+	inline int secs() const {
 		return _secs;
 	}
 
@@ -146,7 +160,7 @@ public:
 	 * Return the time in frames described by this timestamp.
 	 */
 	inline int totalNumberOfFrames() const {
-		return _numberOfFrames / _framerateFactor + _secs * (_framerate / _framerateFactor);
+		return _numFrames / (int)_framerateFactor + _secs * (int)(_framerate / _framerateFactor);
 	}
 
 	/**
@@ -155,17 +169,30 @@ public:
 	 * This method returns the latter number.
 	 */
 	inline int numberOfFrames() const {
-		return _numberOfFrames / _framerateFactor;
+		return _numFrames / (int)_framerateFactor;
 	}
 
 	/** Return the framerate used by this timestamp. */
-	inline int framerate() const { return _framerate / _framerateFactor; }
+	inline uint framerate() const { return _framerate / _framerateFactor; }
 
 protected:
 
+	/**
+	 * Compare this timestamp to another one and return
+	 * a value similar to strcmp.
+	 */
 	int cmp(const Timestamp &ts) const;
 
-	void addFramesIntern(int frames);
+	/**
+	 * Normalize this timestamp by making _numFrames non-negative
+	 * and reducing it modulo _framerate.
+	 */
+	void normalize();
+
+	/**
+	 * Add another timestamp to this one and normalize the result.
+	 */
+	void addIntern(const Timestamp &ts);
 };
 
 

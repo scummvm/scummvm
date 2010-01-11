@@ -59,8 +59,11 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		const Audio::Timestamp a(1234, 60);
 		const Audio::Timestamp b(5678, 60);
 
-		TS_ASSERT_EQUALS(a.msecs(), (uint32)1234);
-		TS_ASSERT_EQUALS(b.msecs(), (uint32)5678);
+		TS_ASSERT_EQUALS(a.msecs(), 1234);
+		TS_ASSERT_EQUALS(b.msecs(), 5678);
+
+		TS_ASSERT_EQUALS(a.secs(), 1);
+		TS_ASSERT_EQUALS(b.secs(), 5);
 
 		TS_ASSERT_EQUALS(a.msecsDiff(b), 1234 - 5678);
 		TS_ASSERT_EQUALS(b.msecsDiff(a), 5678 - 1234);
@@ -68,15 +71,15 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(a.frameDiff(b), (1234 - 5678) * 60 / 1000);
 		TS_ASSERT_EQUALS(b.frameDiff(a), (5678 - 1234) * 60 / 1000);
 
-		TS_ASSERT_EQUALS(a.addFrames(1).msecs(), (uint32)(1234 + 1000 * 1/60));
-		TS_ASSERT_EQUALS(a.addFrames(59).msecs(), (uint32)(1234 + 1000 * 59/60));
-		TS_ASSERT_EQUALS(a.addFrames(60).msecs(), (uint32)(1234 + 1000 * 60/60));
+		TS_ASSERT_EQUALS(a.addFrames(1).msecs(), (1234 + 1000 * 1/60));
+		TS_ASSERT_EQUALS(a.addFrames(59).msecs(), (1234 + 1000 * 59/60));
+		TS_ASSERT_EQUALS(a.addFrames(60).msecs(), (1234 + 1000 * 60/60));
 
 		// As soon as we go back even by only one frame, the msec value
 		// has to drop by at least one.
-		TS_ASSERT_EQUALS(a.addFrames(-1).msecs(), (uint32)(1234 - 1000 * 1/60 - 1));
-		TS_ASSERT_EQUALS(a.addFrames(-59).msecs(), (uint32)(1234 - 1000 * 59/60 - 1));
-		TS_ASSERT_EQUALS(a.addFrames(-60).msecs(), (uint32)(1234 - 1000 * 60/60));
+		TS_ASSERT_EQUALS(a.addFrames(-1).msecs(), (1234 - 1000 * 1/60 - 1));
+		TS_ASSERT_EQUALS(a.addFrames(-59).msecs(), (1234 - 1000 * 59/60 - 1));
+		TS_ASSERT_EQUALS(a.addFrames(-60).msecs(), (1234 - 1000 * 60/60));
 	}
 
 	void test_more_add_diff() {
@@ -88,6 +91,38 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		}
 	}
 
+	void test_negate() {
+		const Audio::Timestamp a = Audio::Timestamp(0, 60).addFrames(13);
+		const Audio::Timestamp b = -a;
+
+		TS_ASSERT_EQUALS(a.msecs() + 1, -b.msecs());
+		TS_ASSERT_EQUALS(a.totalNumberOfFrames(), -b.totalNumberOfFrames());
+		TS_ASSERT_EQUALS(a.numberOfFrames(), 60 - b.numberOfFrames());
+	}
+
+	void test_add_sub() {
+		const Audio::Timestamp a = Audio::Timestamp(0, 60).addFrames(13);
+		const Audio::Timestamp b = -a;
+		const Audio::Timestamp c = Audio::Timestamp(0, 60).addFrames(20);
+
+		TS_ASSERT_EQUALS((a+a).secs(), 0);
+		TS_ASSERT_EQUALS((a+a).numberOfFrames(), 2*13);
+
+		TS_ASSERT_EQUALS((a+b).secs(), 0);
+		TS_ASSERT_EQUALS((a+b).numberOfFrames(), 0);
+
+		TS_ASSERT_EQUALS((a+c).secs(), 0);
+		TS_ASSERT_EQUALS((a+c).numberOfFrames(), 13+20);
+
+		TS_ASSERT_EQUALS((a-a).secs(), 0);
+		TS_ASSERT_EQUALS((a-a).numberOfFrames(), 0);
+
+		TS_ASSERT_EQUALS((a-b).secs(), 0);
+		TS_ASSERT_EQUALS((a-b).numberOfFrames(), 2*13);
+
+		TS_ASSERT_EQUALS((a-c).secs(), -1);
+		TS_ASSERT_EQUALS((a-c).numberOfFrames(), 60 + (13 - 20));
+	}
 
 	void test_diff_with_conversion() {
 		const Audio::Timestamp a = Audio::Timestamp(10, 1000).addFrames(20);
@@ -188,18 +223,18 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		const Audio::Timestamp b = a.addFrames(11025);
 		const Audio::Timestamp c = Audio::Timestamp(1500, 22050);
 
-		TS_ASSERT_EQUALS(a.secs(), (uint32)0);
-		TS_ASSERT_EQUALS(a.msecs(), (uint32)0);
+		TS_ASSERT_EQUALS(a.secs(), 0);
+		TS_ASSERT_EQUALS(a.msecs(), 0);
 		TS_ASSERT_EQUALS(a.numberOfFrames(), 0);
 		TS_ASSERT_EQUALS(a.totalNumberOfFrames(), 0);
 
-		TS_ASSERT_EQUALS(b.secs(), (uint32)0);
-		TS_ASSERT_EQUALS(b.msecs(), (uint32)500);
+		TS_ASSERT_EQUALS(b.secs(), 0);
+		TS_ASSERT_EQUALS(b.msecs(), 500);
 		TS_ASSERT_EQUALS(b.numberOfFrames(), 11025);
 		TS_ASSERT_EQUALS(b.totalNumberOfFrames(), 11025);
 
-		TS_ASSERT_EQUALS(c.secs(), (uint32)1);
-		TS_ASSERT_EQUALS(c.msecs(), (uint32)1500);
+		TS_ASSERT_EQUALS(c.secs(), 1);
+		TS_ASSERT_EQUALS(c.msecs(), 1500);
 		TS_ASSERT_EQUALS(c.numberOfFrames(), 11025);
 		TS_ASSERT_EQUALS(c.totalNumberOfFrames(), 33075);
 	}
