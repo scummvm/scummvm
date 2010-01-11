@@ -83,7 +83,7 @@ bool World::loadWorld(MacResManager *resMan) {
 	resArray = resMan->getResIDArray("ASCN");
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource("ASCN", *iter, &resSize);
-		Scene *scene = new Scene(resMan->getResName("ASCN", *iter), res);
+		Scene *scene = new Scene(resMan->getResName("ASCN", *iter), res, resSize);
 
 		res = resMan->getResource("ACOD", *iter, &resSize);
 		if (res != NULL)
@@ -93,8 +93,8 @@ bool World::loadWorld(MacResManager *resMan) {
 		if (res != NULL) {
 			Common::MemoryReadStream readT(res, resSize);
 			scene->_textBounds = readRect(readT);
-			scene->_fontType = readT.readUint16LE();
-			scene->_fontSize = readT.readUint16LE();
+			scene->_fontType = readT.readUint16BE();
+			scene->_fontSize = readT.readUint16BE();
 			
 			for (int i = 12; i < resSize; i++)
 				if (res[i] == 0x0d)
@@ -111,14 +111,14 @@ bool World::loadWorld(MacResManager *resMan) {
 	resArray = resMan->getResIDArray("AOBJ");
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource("AOBJ", *iter, &resSize);
-		addObj(new Obj(resMan->getResName("AOBJ", *iter), res));
+		addObj(new Obj(resMan->getResName("AOBJ", *iter), res, resSize));
 	}
 
 	// Load Characters
 	resArray = resMan->getResIDArray("ACHR");
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource("ACHR", *iter, &resSize);
-		Chr *chr = new Chr(resMan->getResName("ACHR", *iter), res);
+		Chr *chr = new Chr(resMan->getResName("ACHR", *iter), res, resSize);
 
 		addChr(chr);
 		// TODO: What if there's more than one player character?
@@ -130,9 +130,7 @@ bool World::loadWorld(MacResManager *resMan) {
 	resArray = resMan->getResIDArray("ASND");
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource("ASND", *iter, &resSize);
-		Sound *sound = new Sound(res);
-		sound->_name = resMan->getResName("ASND", *iter);
-		addSound(sound);
+		addSound(new Sound(resMan->getResName("ASND", *iter), res, resSize));
 	}
 	
 	if (_soundLibrary1.size() > 0) {
@@ -146,7 +144,7 @@ bool World::loadWorld(MacResManager *resMan) {
 	res = resMan->getResource("PAT#", 900, &resSize);
 	if (res != NULL) {
 		Common::MemoryReadStream readP(res, resSize);
-		int count = readP.readUint16LE();
+		int count = readP.readUint16BE();
 		for (int i = 0; i < count; i++) {
 			byte *pattern = (byte *)malloc(8);
 			for (int j = 0; j < 8; j++) {
@@ -162,6 +160,28 @@ bool World::loadWorld(MacResManager *resMan) {
 }
 
 void World::loadExternalSounds(String fname) {
+	Common::File in;
+
+	in.open(fname);
+	if (!in.isOpen()) {
+		warning("Cannot load sound file <%s>", fname.c_str());
+		return;
+	}
+	in.close();
+
+	MacResManager *resMan;
+	resMan = new MacResManager(fname);
+
+	int resSize;
+	MacResIDArray resArray;
+	byte *res;
+	MacResIDArray::const_iterator iter;
+
+	resArray = resMan->getResIDArray("ASND");
+	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
+		res = resMan->getResource("ASND", *iter, &resSize);
+		addSound(new Sound(resMan->getResName("ASND", *iter), res, resSize));
+	}
 }
 
 } // End of namespace Wage

@@ -92,7 +92,7 @@ public:
 		return _designBounds == NULL ? NULL : new Common::Rect(*_designBounds);
 	}
 
-	void setDesignBounds(Common::Rect bounds);
+	void setDesignBounds(Common::Rect *bounds);
 };
 
 class Chr : public Designed {
@@ -115,7 +115,7 @@ public:
 		SHIELD_ARMOR = 2
 	};
 	
-	Chr(String name, byte *data) {}
+	Chr(String name, byte *data, int dataSize);
 
 	int _index;
 	String _initialScene;
@@ -249,7 +249,7 @@ public:
 
 class Weapon {
 public:
-	int _accuracy;
+	uint _accuracy;
 	String _operativeVerb;
 	int _type;
 	int _damage;
@@ -268,7 +268,7 @@ public:
 class Obj : public Weapon, public Designed {
 public:
 	Obj() : _currentOwner(NULL), _currentScene(NULL) {}
-	Obj(String name, byte *data) : _currentOwner(NULL), _currentScene(NULL) {}
+	Obj(String name, byte *data, int dataSize);
 
 	enum ObjectTypes {
 		REGULAR_WEAPON = 1,
@@ -295,7 +295,7 @@ public:
 public:
 	int _index;
 	bool _namePlural;
-	int _value;
+	uint _value;
 	int _attackType;
 	int _numberOfUses;
 	bool _returnToRandomScene;
@@ -353,7 +353,7 @@ public:
 	Common::List<Chr> _chrs;
 
 	Scene() {}
-	Scene(String name, byte *data);
+	Scene(String name, byte *data, int dataSize);
 
 	Common::Rect *getTextBounds() {
 		return _textBounds == NULL ? NULL : new Common::Rect(*_textBounds);
@@ -415,7 +415,7 @@ taliesin(24):Wingdings(Decorative)
 
 class Sound {
 public:
-	Sound(byte *data) : _data(data) {}
+  Sound(String name, byte *data, int dataSize) : _name(name), _data(data) {}
 	~Sound() { free(_data); }
 
 	String _name;

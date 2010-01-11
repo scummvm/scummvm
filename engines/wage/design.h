@@ -32,11 +32,11 @@ namespace Wage {
 
 class Design {
 public:
-	Design(byte *data);
+	Design(byte *data, int size);
 	~Design();
 
-	void setBounds(Common::Rect bounds) {
-		_bounds = new Common::Rect(bounds);
+	void setBounds(Common::Rect *bounds) {
+		_bounds = new Common::Rect(*bounds);
 	}
 	
 	Common::Rect *getBounds() {

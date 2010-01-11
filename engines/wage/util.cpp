@@ -57,10 +57,10 @@ Common::String readPascalString(Common::SeekableReadStream &in) {
 Common::Rect *readRect(Common::SeekableReadStream &in) {
 	int x1, y1, x2, y2;
 
-	y1 = in.readUint16LE();
-	x1 = in.readUint16LE();
-	y2 = in.readUint16LE() + 4;
-	x2 = in.readUint16LE() + 4;
+	y1 = in.readUint16BE();
+	x1 = in.readUint16BE();
+	y2 = in.readUint16BE() + 4;
+	x2 = in.readUint16BE() + 4;
 
 	return new Common::Rect(x1, y1, x2, y2);
 }

@@ -28,8 +28,8 @@
 
 namespace Wage {
 
-Design::Design(byte *data) {
-	int len = READ_UINT16(data);
+Design::Design(byte *data, int dataSize) {
+	int len = READ_BE_UINT16(data);
 
 	_data = (byte *)malloc(len);
 	memcpy(_data, data, len);
