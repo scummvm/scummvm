@@ -184,10 +184,10 @@ reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_gui->picNotValid(newPicNotValid));
 }
 
-void kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1, Common::Rect *destRect) {
+Common::Rect kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 	if (x > x1) SWAP(x, x1);
 	if (y > y1) SWAP(y, y1);
-	*destRect = Common::Rect(x, y, x1, y1);
+	return Common::Rect(x, y, x1, y1);
 }
 
 // Graph subfunctions
@@ -235,7 +235,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_SAVE_BOX:
-		kGraphCreateRect(x, y, x1, y1, &rect);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		screenMask = (argc > 5) ? argv[5].toUint16() : 0;
 		return s->_gui->graphSaveBox(rect, screenMask);
 
@@ -245,12 +245,12 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
-		kGraphCreateRect(x, y, x1, y1, &rect);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		s->_gui->graphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
-		kGraphCreateRect(x, y, x1, y1, &rect);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		s->_gui->graphFillBoxForeground(rect);
 		break;
 
@@ -260,12 +260,12 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		color = argv[6].toSint16();
 		colorMask = argv[5].toUint16();
 
-		rect = Common::Rect(x, y, x1, y1);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		s->_gui->graphFillBox(rect, colorMask, color, priority, control);
 		break;
 
 	case K_GRAPH_UPDATE_BOX: {
-		kGraphCreateRect(x, y, x1, y1, &rect);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		bool hiresMode = (argc > 6) ? true : false;
 		// argc == 7 on upscaled hires
 		s->_gui->graphUpdateBox(rect, hiresMode);
@@ -273,7 +273,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	case K_GRAPH_REDRAW_BOX:
-		kGraphCreateRect(x, y, x1, y1, &rect);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		s->_gui->graphRedrawBox(rect);
 		break;
 
@@ -284,7 +284,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
-		kGraphCreateRect(x, y, x1, y1, &rect);
+		rect = kGraphCreateRect(x, y, x1, y1);
 		return s->_gui->graphSaveUpscaledHiresBox(rect);
 
 	default:
@@ -708,7 +708,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	const char **listEntries = NULL;
 	bool isAlias = false;
 
-	kGraphCreateRect(x, y, GET_SEL32V(s->_segMan, controlObject, nsRight), GET_SEL32V(s->_segMan, controlObject, nsBottom), &rect);
+	rect = kGraphCreateRect(x, y, GET_SEL32V(s->_segMan, controlObject, nsRight), GET_SEL32V(s->_segMan, controlObject, nsBottom));
 
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
