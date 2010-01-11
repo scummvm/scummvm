@@ -26,6 +26,8 @@
 #ifndef SCUMM_HE_RESOURCE_HE_H
 #define SCUMM_HE_RESOURCE_HE_H
 
+#include "common/macresman.h"
+
 namespace Scumm {
 
 #define WINRES_ID_MAXLEN (256)
@@ -419,48 +421,13 @@ class MacResExtractor : public ResExtractor {
 public:
 	MacResExtractor(ScummEngine_v70he *scumm);
 	~MacResExtractor() { }
-	void setCursor(int id) ;
 
 private:
+	Common::MacResManager *_resMgr;
+
 	int extractResource(int id, byte **buf);
-	bool init(Common::File &in);
-	void readMap(Common::File &in);
-	byte *getResource(Common::File &in, const char *typeID, int16 resID, int *size);
 	int convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
 			 int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize);
-
-	struct ResMap {
-		int16 resAttr;
-		int16 typeOffset;
-		int16 nameOffset;
-		int16 numTypes;
-	};
-
-	struct ResType {
-		char  id[5];
-		int16 items;
-		int16 offset;
-	};
-
-	struct Resource {
-		int16 id;
-		int16 nameOffset;
-		byte  attr;
-		int32 dataOffset;
-		byte  *name;
-	};
-
-	typedef Resource *ResPtr;
-
-private:
-	int _resOffset;
-	int32 _dataOffset;
-	int32 _dataLength;
-	int32 _mapOffset;
-	int32 _mapLength;
-	ResMap _resMap;
-	ResType *_resTypes;
-	ResPtr  *_resLists;
 };
 
 } // End of namespace Scumm

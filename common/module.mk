@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	file.o \
 	fs.o \
 	hashmap.o \
+	macresman.o \
 	memorypool.o \
 	md5.o \
 	mutex.o \
