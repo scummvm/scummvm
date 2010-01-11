@@ -495,7 +495,66 @@ int main(int argc, char *argv[]) {
 	std::string globalWarnings;
 	std::map<std::string, std::string> projectWarnings;
 
+	////////////////////////////////////////////////////////////////////////////
 	// Initialize global & project-specific warnings
+	//
+	// Tracker reference:
+	// https://sourceforge.net/tracker/?func=detail&aid=2909981&group_id=37116&atid=418822
+	//
+	////////////////////////////////////////////////////////////////////////////
+	//
+	// 4068 (unknown pragma)
+	//   only used in scumm engine to mark code sections
+	//
+	// 4100 (unreferenced formal parameter)
+	//
+	// 4103 (alignment changed after including header, may be due to missing #pragma pack(pop))
+	//   used by pack-start / pack-end
+	//
+	// 4127 (conditional expression is constant)
+	//   used in a lot of engines
+	//
+	// 4244 ('conversion' conversion from 'type1' to 'type2', possible loss of data)
+	//   throws tons and tons of warnings, most of them false positives
+	//
+	// 4250 ('class1' : inherits 'class2::member' via dominance)
+	//   two or more members have the same name. Should be harmless
+	//
+	// 4310 (cast truncates constant value)
+	//   used in some engines
+	//
+	// 4351 (new behavior: elements of array 'array' will be default initialized)
+	//   a change in behavior in Visual Studio 2005. We want the new behavior, so it can be disabled
+	//
+	// 4512 ('class' : assignment operator could not be generated)
+	//   some classes use const items and the default assignment operator cannot be generated
+	//
+	// 4702 (unreachable code)
+	//   mostly thrown after error() calls (marked as NORETURN)
+	//
+	// 4706 (assignment within conditional expression)
+	//   used in a lot of engines
+	//
+	// 4800 ('type' : forcing value to bool 'true' or 'false' (performance warning))
+	//
+	// 4996 ('function': was declared deprecated)
+	//   disabling it removes all the non-standard unsafe functions warnings (strcpy_s, etc.)
+	//
+	////////////////////////////////////////////////////////////////////////////
+	//
+	// 4189 (local variable is initialized but not referenced)
+	//   false positive in lure engine
+	//
+	// 4355 ('this' : used in base member initializer list)
+	//   only disabled for specific engines where it is used in a safe way
+	//
+	// 4510 ('class' : default constructor could not be generated)
+	//
+	// 4610 (object 'class' can never be instantiated - user-defined constructor required)
+	//   "correct" but harmless (as is 4510)
+	//
+	////////////////////////////////////////////////////////////////////////////
+
 	globalWarnings = "4068;4100;4103;4127;4244;4250;4310;4351;4512;4702;4706;4800;4996";
 
 	projectWarnings["agi"] = "4510;4610";
