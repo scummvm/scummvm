@@ -507,6 +507,12 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 	}
 }
 
+uint16 View::getCelCount(int16 loopNo) {
+	if ((loopNo < 0) || (loopNo >= _loopCount))
+		return 0;
+	return _loop[loopNo].celCount;
+}
+
 Palette *View::getPalette() {
 	return _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 }

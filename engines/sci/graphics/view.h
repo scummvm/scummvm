@@ -62,7 +62,7 @@ public:
 	byte *getBitmap(int16 loopNo, int16 celNo);
 	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleX = 128, uint16 scaleY = 128);
 	uint16 getLoopCount() const { return _loopCount; }
-	uint16 getCelCount(int16 loopNo) { return _loop[loopNo].celCount; }
+	uint16 getCelCount(int16 loopNo);
 	Palette *getPalette();
 
 private:
