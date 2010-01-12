@@ -634,7 +634,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	uint16 newItemId = _curItemId;
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
 	GuiMenuItemEntry *newItemEntry = curItemEntry;
-	uint16 cursorX, curX = 0;
+	Common::Point mousePosition;
 
 	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
 	//  Also sierra sci didnt allow mouse interaction, when menu was activated via keyboard
@@ -711,36 +711,36 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 			break;
 
 		case SCI_EVENT_MOUSE_PRESS:
+			mousePosition = _cursor->getPosition();
 			if (_cursor->getPosition().y < 10) {
-				cursorX = _cursor->getPosition().x;
-				curX = 0;
-
-				for (GuiMenuList::iterator menuIterator = _list.begin(); menuIterator != _list.end(); menuIterator++) {
-					if (cursorX >= curX && cursorX <= curX + (*menuIterator)->textWidth) {
-						newMenuId = (*menuIterator)->id; newItemId = 1;
-						newItemEntry = interactiveGetItem(newMenuId, newItemId, newMenuId != curItemEntry->menuId);
-						break;
-					}
-
-					curX += (*menuIterator)->textWidth;
-				}
-
-				if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
-					// paint old and new
+				// Somewhere on the menubar
+				newMenuId = mouseFindMenuSelection(mousePosition);
+				if (newMenuId) {
+					newItemId = 1;
+					newItemEntry = interactiveGetItem(newMenuId, newItemId, newMenuId != curItemEntry->menuId);
 					if (newMenuId != curItemEntry->menuId) {
-						// Menu changed, remove cur menu and paint new menu
 						drawMenu(curItemEntry->menuId, newMenuId);
 					} else {
 						invertMenuSelection(curItemEntry->id);
 					}
 					invertMenuSelection(newItemId);
-
 					curItemEntry = newItemEntry;
+				} else {
+					newMenuId = curItemEntry->menuId;
 				}
+			} else {
+				// Somewhere below menubar
+				newItemId = mouseFindMenuItemSelection(mousePosition, newMenuId);
+				if (newItemId) {
+					newItemEntry = interactiveGetItem(newMenuId, newItemId, false);
+					if ((newItemEntry->enabled) && (!newItemEntry->separatorLine)) {
+						_curMenuId = newItemEntry->menuId; _curItemId = newItemEntry->id;
+						return newItemEntry;
+					}
+					newItemEntry = curItemEntry;
+				}
+				newItemId = curItemEntry->id;
 			}
-
-			// TODO: Handle mouse clicks for the menu items of each menu (i.e. when y >= 10)
-
 			break;
 		case SCI_EVENT_NONE:
 			kernel_sleep(_event, 2500 / 1000);
@@ -776,6 +776,8 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 		switch (curEvent.type) {
 		case SCI_EVENT_MOUSE_RELEASE:
 			if ((curMenuId == 0) || (curItemId == 0))
+				return NULL;
+			if ((!curItemEntry->enabled) || (curItemEntry->separatorLine))
 				return NULL;
 			return curItemEntry;
 
