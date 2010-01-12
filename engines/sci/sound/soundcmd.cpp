@@ -29,6 +29,7 @@
 #include "sci/sound/iterator/iterator.h"	// for SongIteratorStatus
 #endif
 
+#include "common/config-manager.h"
 #include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 
@@ -610,8 +611,13 @@ void SoundCommandParser::cmdMasterVolume(reg_t obj, int16 value) {
 	_acc = make_reg(0, _state->sfx_getVolume());
 #else
 	debugC(2, kDebugLevelSound, "cmdMasterVolume: %d", value);
-	if (_argc > 1)	// the first parameter is the sound command
-		_music->soundSetMasterVolume(obj.toSint16());
+	if (_argc > 1)	{ // the first parameter is the sound command
+		int vol = CLIP<int16>(obj.toSint16(), 0, kMaxSciVolume);
+		vol = vol * Audio::Mixer::kMaxMixerVolume / kMaxSciVolume;
+		ConfMan.setInt("music_volume", vol);
+		ConfMan.setInt("sfx_volume", vol);
+		g_engine->syncSoundSettings();
+	}
 	_acc = make_reg(0, _music->soundGetMasterVolume());
 #endif
 }
@@ -1087,6 +1093,12 @@ void SoundCommandParser::printPlayList(Console *con) {
 void SoundCommandParser::resetDriver() {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->resetDriver();
+#endif
+}
+
+void SoundCommandParser::setMasterVolume(int vol) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->soundSetMasterVolume(vol);
 #endif
 }
 

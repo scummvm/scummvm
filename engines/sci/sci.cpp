@@ -178,6 +178,8 @@ Common::Error SciEngine::run() {
 	}
 #endif
 
+	syncSoundSettings();
+
 	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
@@ -186,6 +188,8 @@ Common::Error SciEngine::run() {
 
 	game_exit(_gamestate);
 	script_free_breakpoints(_gamestate);
+
+	ConfMan.flushToDisk();
 
 	delete _gamestate->_soundCmd;
 	delete _gamestate->_gui;
@@ -279,6 +283,23 @@ void SciEngine::pauseEngineIntern(bool pause) {
 	_gamestate->_sound.sfx_suspend(pause);
 #endif
 	_mixer->pauseAll(pause);
+}
+
+void SciEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	int soundVolumeMusic = (mute ? 0 : ConfMan.getInt("music_volume"));
+
+	if (_gamestate && _gamestate->_soundCmd) {
+		int vol =  (soundVolumeMusic + 1) * SoundCommandParser::kMaxSciVolume / Audio::Mixer::kMaxMixerVolume;
+		_gamestate->_soundCmd->setMasterVolume(vol);
+	}
+#endif
 }
 
 } // End of namespace Sci

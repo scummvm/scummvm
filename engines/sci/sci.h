@@ -122,6 +122,7 @@ public:
 	Common::Error saveGameState(int slot, const char *desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
+	void syncSoundSettings();
 
 	const char* getGameID() const;
 	int getResourceVersion() const;

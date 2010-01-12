@@ -49,6 +49,10 @@ public:
 	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion soundVersion);
 	~SoundCommandParser();
 
+	enum {
+		kMaxSciVolume = 15
+	};
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	void updateSfxState(SfxState *newState) { _state = newState; }
 #endif
@@ -59,6 +63,7 @@ public:
 	void reconstructPlayList(int savegame_version);
 	void printPlayList(Console *con);
 	void resetDriver();
+	void setMasterVolume(int vol);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	/**

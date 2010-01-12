@@ -40,7 +40,7 @@ namespace Sci {
 #define DISABLE_VOLUME_FADING
 
 SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion), _soundOn(true) {
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -57,12 +57,6 @@ SciMusic::~SciMusic() {
 void SciMusic::init() {
 	// system init
 	_pMixer = g_system->getMixer();
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt(
-			"sfx_volume"));
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType,
-			ConfMan.getInt("speech_volume"));
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-			ConfMan.getInt("music_volume"));
 	// SCI sound init
 	_dwTempo = 0;
 
@@ -469,15 +463,16 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 }
 
 uint16 SciMusic::soundGetMasterVolume() {
-	return (_pMixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 8) * 0xF / Audio::Mixer::kMaxMixerVolume;
+	return _masterVolume;
 }
 
 void SciMusic::soundSetMasterVolume(uint16 vol) {
-	vol = vol & 0xF; // 0..15
-	vol = vol * Audio::Mixer::kMaxMixerVolume / 0xF;
-	// "master volume" is music and SFX only, speech (audio resources) are supposed to be unaffected
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
-	_pMixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
+	_masterVolume = vol;
+
+	Common::StackLock lock(_mutex);
+
+	if (_pMidiDrv)
+		_pMidiDrv->setVolume(vol);
 }
 
 void SciMusic::printPlayList(Console *con) {
