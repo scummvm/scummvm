@@ -590,7 +590,7 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
 		if (is16Bit && isStereo)
 			assert((loopLen & 3) == 0 && (loopStart & 3) == 0 && (loopEnd & 3) == 0);
 		else if (is16Bit || isStereo)
-			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 3) == 0);
+			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 1) == 0);
 
 		const uint32 extRate = stream->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
 
