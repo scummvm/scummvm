@@ -84,7 +84,8 @@ public:
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
 	SelectorCache _selectorCache; /**< Shortcut list for important selectors */
-	Common::Array<KernelFuncWithSignature> _kernelFuncs; /**< Table of kernel functions */
+	typedef Common::Array<KernelFuncWithSignature> KernelFuncsContainer;
+	KernelFuncsContainer _kernelFuncs; /**< Table of kernel functions */
 
 private:
 	/**

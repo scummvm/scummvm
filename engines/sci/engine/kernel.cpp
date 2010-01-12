@@ -392,11 +392,17 @@ Kernel::Kernel(ResourceManager *resMan, Common::String gameId) : _resMan(resMan)
 }
 
 Kernel::~Kernel() {
+	for (KernelFuncsContainer::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
+		// TODO: Doing a const_cast is not that nice actually... But since KernelFuncWithSignature
+		// keeps the signature member as "const char *" there is no way around it.
+		// Think of a clever way to avoid this.
+		free(const_cast<char *>(i->signature));
 }
 
 uint Kernel::getSelectorNamesSize() const {
 	return _selectorNames.size();
 }
+
 const Common::String &Kernel::getSelectorName(uint selector) const {
 	return _selectorNames[selector];
 }
@@ -404,6 +410,7 @@ const Common::String &Kernel::getSelectorName(uint selector) const {
 uint Kernel::getKernelNamesSize() const {
 	return _kernelNames.size();
 }
+
 const Common::String &Kernel::getKernelName(uint number) const {
 	// FIXME: The following check is a temporary workaround for
 	// an issue leading to crashes when using the debugger's backtrace
@@ -504,7 +511,7 @@ static void kernel_compile_signature(const char **s) {
 	if (!src)
 		return; // NULL signature: Nothing to do
 
-	result = (char*)malloc(strlen(*s) + 1);
+	result = (char *)malloc(strlen(*s) + 1);
 
 	while (*src) {
 		char c;
@@ -554,10 +561,9 @@ static void kernel_compile_signature(const char **s) {
 				ellipsis = 1;
 				break;
 
-			default: {
+			default:
 				error("INTERNAL ERROR when compiling kernel function signature '%s': (%02x) not understood (aka"
 				          " '%c')\n", *s, c, c);
-			}
 			}
 		} while (*src && (*src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
 
