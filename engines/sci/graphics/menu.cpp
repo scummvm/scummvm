@@ -571,6 +571,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	uint16 newItemId = _curItemId;
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
 	GuiMenuItemEntry *newItemEntry = curItemEntry;
+	uint16 cursorX, curX = 0;
 
 	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
 
@@ -586,6 +587,9 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	invertMenuSelection(curItemEntry->id);
 	_gfx->BitsShow(_gfx->_menuBarRect);
 	_gfx->BitsShow(_menuRect);
+
+	// Show mouse cursor when the menu appears
+	((SciEngine *)g_engine)->getEngineState()->_gui->showCursor();
 
 	while (true) {
 		curEvent = _event->get(SCI_EVENT_ANY);
@@ -645,6 +649,38 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 			}
 			break;
 
+		case SCI_EVENT_MOUSE_PRESS:
+			if (_cursor->getPosition().y < 10) {
+				cursorX = _cursor->getPosition().x;
+				curX = 0;
+
+				for (GuiMenuList::iterator menuIterator = _list.begin(); menuIterator != _list.end(); menuIterator++) {
+					if (cursorX >= curX && cursorX <= curX + (*menuIterator)->textWidth) {
+						newMenuId = (*menuIterator)->id; newItemId = 1;
+						newItemEntry = interactiveGetItem(newMenuId, newItemId, newMenuId != curItemEntry->menuId);
+						break;
+					}
+
+					curX += (*menuIterator)->textWidth;
+				}
+
+				if ((newMenuId != curItemEntry->menuId) || (newItemId != curItemEntry->id)) {
+					// paint old and new
+					if (newMenuId != curItemEntry->menuId) {
+						// Menu changed, remove cur menu and paint new menu
+						drawMenu(curItemEntry->menuId, newMenuId);
+					} else {
+						invertMenuSelection(curItemEntry->id);
+					}
+					invertMenuSelection(newItemId);
+
+					curItemEntry = newItemEntry;
+				}
+			}
+
+			// TODO: Handle mouse clicks for the menu items of each menu (i.e. when y >= 10)
+
+			break;
 		case SCI_EVENT_NONE:
 			kernel_sleep(_event, 2500 / 1000);
 			break;
@@ -655,7 +691,17 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 GuiMenuItemEntry *Menu::interactiveWithMouse() {
 	calculateTextWidth();
 
-	// TODO
+	int16 cursorX = _cursor->getPosition().x;
+	int16 curX = 0;
+
+	for (GuiMenuList::iterator menuIterator = _list.begin(); menuIterator != _list.end(); menuIterator++) {
+		if (cursorX >= curX && cursorX <= curX + (*menuIterator)->textWidth) {
+			_curMenuId = (*menuIterator)->id;
+			return interactiveWithKeyboard();
+		}
+
+		curX += (*menuIterator)->textWidth;
+	}
 
 	return NULL;
 }
