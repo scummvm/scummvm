@@ -41,8 +41,7 @@ Text::Text(ResourceManager *resMan, Gfx *gfx, Screen *screen)
 }
 
 Text::~Text() {
-	if (_font != NULL)
-		delete _font;
+	delete _font;
 }
 
 void Text::init() {
@@ -59,8 +58,7 @@ GuiResourceId Text::GetFontId() {
 
 Font *Text::GetFont() {
 	if ((_font == NULL) || (_font->getResourceId() != _gfx->_curPort->fontId)) {
-		if (_font != NULL)
-			delete _font;
+		delete _font;
 		_font = new Font(_resMan, _gfx->_curPort->fontId);
 	}
 
@@ -69,8 +67,7 @@ Font *Text::GetFont() {
 
 void Text::SetFont(GuiResourceId fontId) {
 	if ((_font == NULL) || (_font->getResourceId() != fontId)) {
-		if (_font != NULL)
-			delete _font;
+		delete _font;
 		_font = new Font(_resMan, fontId);
 	}
 
