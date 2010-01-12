@@ -360,7 +360,9 @@ reg_t Menu::select(reg_t eventObject) {
 		case 0:
 			break;
 		case SCI_KEY_ESC:
+			interactiveShowMouse();
 			itemEntry = interactiveWithKeyboard();
+			interactiveRestoreMouse();
 			forceClaimed = true;
 			break;
 		default:
@@ -396,7 +398,9 @@ reg_t Menu::select(reg_t eventObject) {
 	case SCI_EVENT_MOUSE_PRESS:
 		mousePosition = _cursor->getPosition();
 		if (mousePosition.y < 10) {
+			interactiveShowMouse();
 			itemEntry = interactiveWithMouse();
+			interactiveRestoreMouse();
 			forceClaimed = true;
 		}
 		break;
@@ -565,6 +569,34 @@ void Menu::invertMenuSelection(uint16 itemId) {
 	_gfx->BitsShow(itemRect);
 }
 
+void Menu::interactiveShowMouse() {
+	_mouseOldState = _cursor->isVisible();
+	_cursor->show();
+}
+
+void Menu::interactiveRestoreMouse() {
+	if (!_mouseOldState)
+		_cursor->hide();
+}
+
+uint16 Menu::mouseFindMenuSelection(Common::Point mousePosition) {
+	GuiMenuEntry *listEntry;
+	GuiMenuList::iterator listIterator;
+	GuiMenuList::iterator listEnd = _list.end();
+	uint16 curX = 8;
+
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		if (mousePosition.x >= curX && mousePosition.x < curX + listEntry->textWidth) {
+			return listEntry->id;
+		}
+		curX += listEntry->textWidth;
+		listIterator++;
+	}
+	return 0;
+}
+
 GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	sciEvent curEvent;
 	uint16 newMenuId = _curMenuId;
@@ -574,6 +606,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	uint16 cursorX, curX = 0;
 
 	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
+	//  Also sierra sci didnt allow mouse interaction, when menu was activated via keyboard
 
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
@@ -587,10 +620,6 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	invertMenuSelection(curItemEntry->id);
 	_gfx->BitsShow(_gfx->_menuBarRect);
 	_gfx->BitsShow(_menuRect);
-
-	// Show mouse cursor when the menu appears
-	// TODO: We need to save mouse state before changing it and changing it back when menu is done
-	((SciEngine *)g_engine)->getEngineState()->_gui->showCursor();
 
 	while (true) {
 		curEvent = _event->get(SCI_EVENT_ANY);
@@ -689,24 +718,69 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	}
 }
 
-// We don't follow sierra here - sierra sci actually does not mix keyboard and mouse interaction
-//  If menu is activated by mouse, then its not possible to select via keyboard
-//  If menu is activated by keyboard, then its not possible to select via mouse
+// Mouse button is currently pressed - we are now interpreting mouse coordinates till mouse button is released
+//  The menu item that is selected at that time is chosen. If no menu item is selected we cancel
+//  No keyboard interaction is allowed, cause that wouldnt make any sense at all
 GuiMenuItemEntry *Menu::interactiveWithMouse() {
+	sciEvent curEvent;
+	uint16 newMenuId = 0, newItemId = 0;
+	uint16 curMenuId = 0, curItemId = 0;
+	Common::Point mousePosition = _cursor->getPosition();
+	bool firstMenuChange = true;
+
 	calculateTextWidth();
+	_oldPort = _gfx->SetPort(_gfx->_menuPort);
+	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
 
-	int16 cursorX = _cursor->getPosition().x;
-	int16 curX = 0;
+	_gfx->PenColor(0);
+	_gfx->BackColor(_screen->getColorWhite());
 
-	for (GuiMenuList::iterator menuIterator = _list.begin(); menuIterator != _list.end(); menuIterator++) {
-		if (cursorX >= curX && cursorX <= curX + (*menuIterator)->textWidth) {
-			_curMenuId = (*menuIterator)->id;
-			return interactiveWithKeyboard();
+	drawBar();
+	_gfx->BitsShow(_gfx->_menuBarRect);
+
+	while (true) {
+		curEvent = _event->get(SCI_EVENT_ANY);
+
+		switch (curEvent.type) {
+		case SCI_EVENT_MOUSE_RELEASE:
+			if ((curMenuId == 0) || (curItemId == 0))
+				return NULL;
+			break;
+
+		case SCI_EVENT_NONE:
+			kernel_sleep(_event, 2500 / 1000);
+			break;
 		}
 
-		curX += (*menuIterator)->textWidth;
-	}
+		// Find out where mouse is currently pointing to
+		mousePosition = _cursor->getPosition();
+		if (mousePosition.y < 10) {
+			// Somewhere on the menubar
+			newMenuId = mouseFindMenuSelection(mousePosition);
+			newItemId = 0;
+		} else {
+			// Somewhere below menubar
+			// TODO: Find out if item is selected
+		}
 
+		if (newMenuId != curMenuId) {
+			// Menu changed, remove cur menu and paint new menu
+			drawMenu(curMenuId, newMenuId);
+			if (firstMenuChange) {
+				_gfx->BitsShow(_gfx->_menuBarRect);
+				firstMenuChange = false;
+			}
+			curMenuId = newMenuId;
+		} else {
+			if (newItemId != curItemId) {
+				// Item changed
+				invertMenuSelection(curItemId);
+				invertMenuSelection(newItemId);
+				curItemId = newItemId;
+			}
+		}
+
+	}
 	return NULL;
 }
 

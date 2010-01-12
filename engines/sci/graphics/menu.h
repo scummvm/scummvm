@@ -94,8 +94,11 @@ private:
 	void calculateTextWidth();
 	void drawMenu(uint16 oldMenuId, uint16 newMenuId);
 	void invertMenuSelection(uint16 itemId);
+	void interactiveShowMouse();
+	void interactiveRestoreMouse();
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
+	uint16 mouseFindMenuSelection(Common::Point mousePosition);
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
 	SciEvent *_event;
@@ -116,6 +119,8 @@ private:
 	reg_t _barSaveHandle;
 	reg_t _menuSaveHandle;
 	Common::Rect _menuRect;
+
+	bool _mouseOldState;
 };
 
 } // End of namespace Sci
