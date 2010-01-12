@@ -196,7 +196,6 @@ public:
 	void switchGraphicModeId(int mode);
 
 	void setupMixer(void);
-
 };
 
 #endif /* __OSYS_N64_H__ */

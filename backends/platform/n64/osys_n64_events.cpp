@@ -208,10 +208,10 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 		}
 
 		if (abs(analogX) > PAD_DEADZONE)
-			mx += analogX / (PAD_ACCELERATION - (abs(analogX) / 20));
+			mx += analogX / (PAD_ACCELERATION - (abs(analogX) / 16));
 
 		if (abs(analogY) > PAD_DEADZONE)
-			my -= analogY / (PAD_ACCELERATION - (abs(analogY) / 20));
+			my -= analogY / (PAD_ACCELERATION - (abs(analogY) / 16));
 
 		if (mx < 0)
 			mx = 0;
