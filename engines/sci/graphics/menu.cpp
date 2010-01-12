@@ -601,31 +601,16 @@ uint16 Menu::mouseFindMenuSelection(Common::Point mousePosition) {
 }
 
 uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId) {
-	GuiMenuEntry *listEntry;
-	GuiMenuList::iterator listIterator;
-	GuiMenuList::iterator listEnd = _list.end();
-	uint16 curXstart = 8;
-	uint16 curXend = curXstart;
 	GuiMenuItemEntry *listItemEntry;
 	GuiMenuItemList::iterator listItemIterator;
 	GuiMenuItemList::iterator listItemEnd = _itemList.end();
 	uint16 curYstart = 10;
-	int16 maxTextWidth = 0, maxTextRightAlignedWidth = 0;
 	uint16 itemId = 0;
 
 	if (!menuId)
 		error("No menu active, but mouseFindMenuItemSelection() called");
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		if (listEntry->id == menuId)
-			break;
-		curXstart += listEntry->textWidth;
-		listIterator++;
-	}
-
-	if (mousePosition.x < curXstart)
+	if ((mousePosition.x < _menuRect.left) || (mousePosition.x >= _menuRect.right))
 		return 0;
 
 	listItemIterator = _itemList.begin();
@@ -636,20 +621,10 @@ uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menu
 			// Found it
 			if ((!itemId) && (curYstart > mousePosition.y))
 				itemId = listItemEntry->id;
-			maxTextWidth = MAX<int16>(maxTextWidth, listItemEntry->textWidth);
-			maxTextRightAlignedWidth = MAX<int16>(maxTextRightAlignedWidth, listItemEntry->textRightAlignedWidth);
 		}
 
 		listItemIterator++;
 	}
-	curXend = curXstart + 16 + 4 + 2;
-	curXend += maxTextWidth + maxTextRightAlignedWidth;
-	if (!maxTextRightAlignedWidth)
-		_menuRect.right -= 5;
-
-	// Verify that horizontal position is correct
-	if (mousePosition.x >= curXend)
-		return 0;
 	return itemId;
 }
 
