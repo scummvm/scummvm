@@ -569,11 +569,11 @@ void OSystem_N64::updateScreen() {
 			}
 	}
 
-//#ifndef _ENABLE_DEBUG_
-//	showDisplay(_dc);
-//#else
+#ifndef _ENABLE_DEBUG_
+	showDisplay(_dc);
+#else
 	showDisplayAndText(_dc);
-//#endif
+#endif
 
 	_dc = NULL;
 	_dirtyOffscreen = false;
