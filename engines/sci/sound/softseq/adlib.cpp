@@ -161,7 +161,11 @@ private:
 class MidiPlayer_Adlib : public MidiPlayer {
 public:
 	MidiPlayer_Adlib() { _driver = new MidiDriver_Adlib(g_system->getMixer()); }
+	~MidiPlayer_Adlib() {}
+
 	int open(ResourceManager *resMan);
+	void close();
+
 	byte getPlayId(SciVersion soundVersion);
 	int getPolyphony() const { return MidiDriver_Adlib::kVoices; }
 	bool hasRhythmChannel() const { return false; }
@@ -810,6 +814,14 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 	}
 
 	return static_cast<MidiDriver_Adlib *>(_driver)->open(getSciVersion() <= SCI_VERSION_0_LATE);
+}
+
+void MidiPlayer_Adlib::close() {
+	if (_driver) {
+		_driver->close();
+		delete _driver;
+		_driver = 0;
+	}
 }
 
 byte MidiPlayer_Adlib::getPlayId(SciVersion soundVersion) {
