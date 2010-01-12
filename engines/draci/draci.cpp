@@ -133,7 +133,7 @@ int DraciEngine::init() {
 
 	_music = new MusicPlayer(_midiDriver, musicPathMask);
 	_music->setNativeMT32(native_mt32);
-	//_music->setAdlib(adlib);
+	//_music->setAdLib(adlib);
 
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);

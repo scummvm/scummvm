@@ -558,7 +558,7 @@ void MusicPlayerXMI::setTimbreAD(byte channel, const Timbre &timbre) {
 
 	// Prepare the AdLib Instrument array from the GTL entry
 	//
-	// struct AdlibInstrument used by our AdLib MIDI synth is 30 bytes.
+	// struct AdLibInstrument used by our AdLib MIDI synth is 30 bytes.
 	// Since we pass data + 2 for non percussion instruments we need to
 	// have a buffer of size 32, so there are no invalid memory reads,
 	// when setting up an AdLib instrument.

@@ -47,7 +47,7 @@
 #include "common/mutex.h"
 
 namespace Kyra {
-class AdlibDriver;
+class AdLibDriver;
 
 /**
  * AdLib implementation of the sound output device.
@@ -57,15 +57,15 @@ class AdlibDriver;
  * Kyrandia 1 are using exact the same format, the
  * one of Kyrandia 2 slightly differs.
  *
- * See AdlibDriver for more information.
- * @see AdlibDriver
+ * See AdLibDriver for more information.
+ * @see AdLibDriver
  */
-class SoundAdlibPC : public Sound {
+class SoundAdLibPC : public Sound {
 public:
-	SoundAdlibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	~SoundAdlibPC();
+	SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundAdLibPC();
 
-	kType getMusicType() const { return kAdlib; }
+	kType getMusicType() const { return kAdLib; }
 
 	bool init();
 	void process();
@@ -89,7 +89,7 @@ private:
 	void unk1();
 	void unk2();
 
-	AdlibDriver *_driver;
+	AdLibDriver *_driver;
 
 	bool _v2;
 	uint8 _trackEntries[500];

@@ -59,19 +59,19 @@ typedef struct {
 	uint8 tremoVibro;
 	uint8 freqOffset;
 	uint16 frequency;
-} AdlibChannelType;
+} AdLibChannelType;
 
-class AdlibChannel : public ChannelBase {
+class AdLibChannel : public ChannelBase {
 public:
-	AdlibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
-	virtual ~AdlibChannel();
+	AdLibChannel (FM_OPL *opl, uint8 *pMusicData, uint16 startOfData);
+	virtual ~AdLibChannel();
 	virtual uint8 process(uint16 aktTime);
 	virtual void updateVolume(uint16 pVolume);
 	virtual bool isActive();
 private:
 	FM_OPL *_opl;
 	uint8 *_musicData;
-	AdlibChannelType _channelData;
+	AdLibChannelType _channelData;
 
 	InstrumentStruct *_instruments;
 	uint16 *_frequenceTable;

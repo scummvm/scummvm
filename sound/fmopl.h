@@ -174,7 +174,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
  *
  * !You should not write any new code using the legacy API!
  */
-FM_OPL *makeAdlibOPL(int rate);
+FM_OPL *makeAdLibOPL(int rate);
 
 #endif
 

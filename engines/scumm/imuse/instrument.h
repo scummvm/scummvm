@@ -54,7 +54,7 @@ public:
 	enum {
 		itNone = 0,
 		itProgram = 1,
-		itAdlib = 2,
+		itAdLib = 2,
 		itRoland = 3
 	};
 

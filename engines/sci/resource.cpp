@@ -2057,14 +2057,14 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 	case SCI_VERSION_0_EARLY:
 		// TODO: MT32 driver uses no hardware mask at all and uses all channels
 		switch (hardwareMask) {
-		case 0x01: // Adlib needs an additional reverse check against bit 3
+		case 0x01: // AdLib needs an additional reverse check against bit 3
 			reverseHardwareMask = 0x08;
 			break;
 		}
 		data++; // Skip over digital sample flag
 		// Now all 16 channels follow. Each one is specified by a single byte
 		// Upper 4 bits of the byte is a voices count
-		// Lower 4 bits -> bit 0 means use as Adlib driver
+		// Lower 4 bits -> bit 0 means use as AdLib driver
 		//				   bit 1 means use as PCjr driver
 		//				   bit 3 means is control channel (bit 0 needs to be unset)
 		for (int channelNr = 0; channelNr < 16; channelNr++) {

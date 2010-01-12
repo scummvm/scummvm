@@ -51,7 +51,7 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 	_cdrom = 0;
 	_bgatmos = 0;
 
-	_hasAdLib = (!_vm->_noMusic && _vm->hasAdlib());
+	_hasAdLib = (!_vm->_noMusic && _vm->hasAdLib());
 
 	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga)) {
 		_infogrames = new Infogrames(*_vm->_mixer);
@@ -130,13 +130,13 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName,
 	return sndDesc->load(type, data, size);
 }
 
-void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdlib, int index) {
+void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdLib, int index) {
 	if (!sndDesc || sndDesc->empty())
 		return;
 
 	if (sndDesc->getType() == SOUND_ADL) {
 
-		if (noteAdlib) {
+		if (noteAdLib) {
 			if (_adlPlayer)
 				if ((index == -1) || (_adlPlayer->getIndex() == index))
 					_adlPlayer->stopPlay();
@@ -241,7 +241,7 @@ bool Sound::adlibLoadADL(const char *fileName) {
 	if (!_adlPlayer)
 		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
-	debugC(1, kDebugSound, "Adlib: Loading ADL data (\"%s\")", fileName);
+	debugC(1, kDebugSound, "AdLib: Loading ADL data (\"%s\")", fileName);
 
 	return _adlPlayer->load(fileName);
 }
@@ -253,7 +253,7 @@ bool Sound::adlibLoadADL(byte *data, uint32 size, int index) {
 	if (!_adlPlayer)
 		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
-	debugC(1, kDebugSound, "Adlib: Loading ADL data (%d)", index);
+	debugC(1, kDebugSound, "AdLib: Loading ADL data (%d)", index);
 
 	return _adlPlayer->load(data, size, index);
 }
@@ -262,7 +262,7 @@ void Sound::adlibUnload() {
 	if (!_hasAdLib)
 		return;
 
-	debugC(1, kDebugSound, "Adlib: Unloading data");
+	debugC(1, kDebugSound, "AdLib: Unloading data");
 
 	if (_adlPlayer)
 		_adlPlayer->unload();
@@ -277,7 +277,7 @@ bool Sound::adlibLoadMDY(const char *fileName) {
 	if (!_mdyPlayer)
 		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
 
-	debugC(1, kDebugSound, "Adlib: Loading MDY data (\"%s\")", fileName);
+	debugC(1, kDebugSound, "AdLib: Loading MDY data (\"%s\")", fileName);
 
 	if (!_vm->_dataIO->existData(fileName)) {
 		warning("Can't open MDY file \"%s\"", fileName);
@@ -305,7 +305,7 @@ bool Sound::adlibLoadTBR(const char *fileName) {
 		return false;
 	}
 
-	debugC(1, kDebugSound, "Adlib: Loading MDY instruments (\"%s\")", fileName);
+	debugC(1, kDebugSound, "AdLib: Loading MDY instruments (\"%s\")", fileName);
 
 	DataStream *stream = _vm->_dataIO->getDataStream(fileName);
 
@@ -326,7 +326,7 @@ void Sound::adlibPlayTrack(const char *trackname) {
 	if (_adlPlayer->isPlaying())
 		return;
 
-	debugC(1, kDebugSound, "Adlib: Playing ADL track \"%s\"", trackname);
+	debugC(1, kDebugSound, "AdLib: Playing ADL track \"%s\"", trackname);
 
 	_adlPlayer->unload();
 	_adlPlayer->load(trackname);
@@ -370,7 +370,7 @@ void Sound::adlibPlay() {
 	if (!_hasAdLib)
 		return;
 
-	debugC(1, kDebugSound, "Adlib: Starting playback");
+	debugC(1, kDebugSound, "AdLib: Starting playback");
 
 	if (_adlPlayer)
 		_adlPlayer->startPlay();
@@ -382,7 +382,7 @@ void Sound::adlibStop() {
 	if (!_hasAdLib)
 		return;
 
-	debugC(1, kDebugSound, "Adlib: Stopping playback");
+	debugC(1, kDebugSound, "AdLib: Stopping playback");
 
 	if (_adlPlayer)
 		_adlPlayer->stopPlay();

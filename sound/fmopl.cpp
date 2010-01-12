@@ -169,7 +169,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 	OPL->readBuffer(buffer, length);
 }
 
-FM_OPL *makeAdlibOPL(int rate) {
+FM_OPL *makeAdLibOPL(int rate) {
 	FM_OPL *opl = OPL::Config::create();
 
 	if (opl) {

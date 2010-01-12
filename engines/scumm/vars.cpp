@@ -702,7 +702,7 @@ void ScummEngine::resetScummVars() {
 		// 0 PC Speaker
 		// 1 Tandy
 		// 2 CMS
-		// 3 Adlib
+		// 3 AdLib
 		// 4 Roland
 		switch (_musicType) {
 		case MDT_NONE:

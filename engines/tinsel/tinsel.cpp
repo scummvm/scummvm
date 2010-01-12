@@ -861,7 +861,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_midiMusic = new MidiMusicPlayer(_driver);
 	_pcmMusic = new PCMMusicPlayer();
 	//_midiMusic->setNativeMT32(native_mt32);
-	//_midiMusic->setAdlib(adlib);
+	//_midiMusic->setAdLib(adlib);
 
 	_musicVolume = ConfMan.getInt("music_volume");
 

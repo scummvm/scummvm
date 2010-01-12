@@ -45,7 +45,7 @@ MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0),
 	_midiMusicData = NULL;
 
 	// TODO: Load cmf.ins with the instrument table.  It seems that an
-	// interface for such an operation is supported for Adlib.  Maybe for
+	// interface for such an operation is supported for AdLib.  Maybe for
 	// this card, setting instruments is necessary.
 }
 

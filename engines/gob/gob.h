@@ -121,7 +121,7 @@ enum Features {
 	kFeaturesNone    =      0,
 	kFeaturesCD      = 1 << 0,
 	kFeaturesEGA     = 1 << 1,
-	kFeaturesAdlib   = 1 << 2,
+	kFeaturesAdLib   = 1 << 2,
 	kFeatures640     = 1 << 3,
 	kFeaturesSCNDemo = 1 << 4,
 	kFeaturesBATDemo = 1 << 5,
@@ -208,7 +208,7 @@ public:
 	bool isCD() const;
 	bool isEGA() const;
 	bool is640() const;
-	bool hasAdlib() const;
+	bool hasAdLib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
 	bool is800x600() const;

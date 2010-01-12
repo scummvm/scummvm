@@ -78,7 +78,7 @@ const int PCSoundDriver::_noteTable[] = {
 
 const int PCSoundDriver::_noteTableCount = ARRAYSIZE(_noteTable);
 
-struct AdlibRegisterSoundInstrument {
+struct AdLibRegisterSoundInstrument {
 	uint8 vibrato;
 	uint8 attackDecay;
 	uint8 sustainRelease;
@@ -88,20 +88,20 @@ struct AdlibRegisterSoundInstrument {
 	uint8 freqMod;
 };
 
-struct AdlibSoundInstrument {
+struct AdLibSoundInstrument {
 	byte mode;
 	byte channel;
-	AdlibRegisterSoundInstrument regMod;
-	AdlibRegisterSoundInstrument regCar;
+	AdLibRegisterSoundInstrument regMod;
+	AdLibRegisterSoundInstrument regCar;
 	byte waveSelectMod;
 	byte waveSelectCar;
 	byte amDepth;
 };
 
-class AdlibSoundDriver : public PCSoundDriver, Audio::AudioStream {
+class AdLibSoundDriver : public PCSoundDriver, Audio::AudioStream {
 public:
-	AdlibSoundDriver(Audio::Mixer *mixer);
-	virtual ~AdlibSoundDriver();
+	AdLibSoundDriver(Audio::Mixer *mixer);
+	virtual ~AdLibSoundDriver();
 
 	// PCSoundDriver interface
 	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
@@ -117,8 +117,8 @@ public:
 	void initCard();
 	void update(int16 *buf, int len);
 	void setupInstrument(const byte *data, int channel);
-	void loadRegisterInstrument(const byte *data, AdlibRegisterSoundInstrument *reg);
-	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi) = 0;
+	void loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg);
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) = 0;
 
 protected:
 	FM_OPL *_opl;
@@ -128,7 +128,7 @@ protected:
 
 	byte _vibrato;
 	int _channelsVolumeTable[4];
-	AdlibSoundInstrument _instrumentsTable[4];
+	AdLibSoundInstrument _instrumentsTable[4];
 
 	static const int _freqTable[];
 	static const int _freqTableCount;
@@ -138,41 +138,41 @@ protected:
 	static const int _voiceOperatorsTableCount;
 };
 
-const int AdlibSoundDriver::_freqTable[] = {
+const int AdLibSoundDriver::_freqTable[] = {
 	0x157, 0x16C, 0x181, 0x198, 0x1B1, 0x1CB,
 	0x1E6, 0x203, 0x222, 0x243, 0x266, 0x28A
 };
 
-const int AdlibSoundDriver::_freqTableCount = ARRAYSIZE(_freqTable);
+const int AdLibSoundDriver::_freqTableCount = ARRAYSIZE(_freqTable);
 
-const int AdlibSoundDriver::_operatorsTable[] = {
+const int AdLibSoundDriver::_operatorsTable[] = {
 	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13,	16, 17, 18, 19, 20, 21
 };
 
-const int AdlibSoundDriver::_operatorsTableCount = ARRAYSIZE(_operatorsTable);
+const int AdLibSoundDriver::_operatorsTableCount = ARRAYSIZE(_operatorsTable);
 
-const int AdlibSoundDriver::_voiceOperatorsTable[] = {
+const int AdLibSoundDriver::_voiceOperatorsTable[] = {
 	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 16, 16, 14, 14, 17, 17, 13, 13
 };
 
-const int AdlibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperatorsTable);
+const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperatorsTable);
 
-// Future Wars Adlib driver
-class AdlibSoundDriverINS : public AdlibSoundDriver {
+// Future Wars AdLib driver
+class AdLibSoundDriverINS : public AdLibSoundDriver {
 public:
-	AdlibSoundDriverINS(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
+	AdLibSoundDriverINS(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".INS"; }
-	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
 	virtual void playSample(const byte *data, int size, int channel, int volume);
 };
 
-// Operation Stealth Adlib driver
-class AdlibSoundDriverADL : public AdlibSoundDriver {
+// Operation Stealth AdLib driver
+class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
-	AdlibSoundDriverADL(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
+	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
 	virtual const char *getInstrumentExtension() const { return ".ADL"; }
-	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
+	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
 	virtual void setChannelFrequency(int channel, int frequency);
 	virtual void playSample(const byte *data, int size, int channel, int volume);
 };
@@ -237,22 +237,22 @@ void PCSoundDriver::resetChannel(int channel) {
 	stopAll();
 }
 
-AdlibSoundDriver::AdlibSoundDriver(Audio::Mixer *mixer)
+AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 	: _mixer(mixer) {
 	_sampleRate = _mixer->getOutputRate();
-	_opl = makeAdlibOPL(_sampleRate);
+	_opl = makeAdLibOPL(_sampleRate);
 	memset(_channelsVolumeTable, 0, sizeof(_channelsVolumeTable));
 	memset(_instrumentsTable, 0, sizeof(_instrumentsTable));
 	initCard();
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
-AdlibSoundDriver::~AdlibSoundDriver() {
+AdLibSoundDriver::~AdLibSoundDriver() {
 	_mixer->stopHandle(_soundHandle);
 	OPLDestroy(_opl);
 }
 
-void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
+void AdLibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
 	assert(channel < 4);
 	if (data) {
 		if (volume > 80) {
@@ -269,9 +269,9 @@ void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrumen
 	}
 }
 
-void AdlibSoundDriver::stopChannel(int channel) {
+void AdLibSoundDriver::stopChannel(int channel) {
 	assert(channel < 4);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
+	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
 		channel = 6;
 	}
@@ -284,7 +284,7 @@ void AdlibSoundDriver::stopChannel(int channel) {
 	}
 }
 
-void AdlibSoundDriver::stopAll() {
+void AdLibSoundDriver::stopAll() {
 	int i;
 	for (i = 0; i < 18; ++i) {
 		OPLWriteReg(_opl, 0x40 | _operatorsTable[i], 63);
@@ -295,12 +295,12 @@ void AdlibSoundDriver::stopAll() {
 	OPLWriteReg(_opl, 0xBD, 0);
 }
 
-int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
+int AdLibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
 	update(buffer, numSamples);
 	return numSamples;
 }
 
-void AdlibSoundDriver::initCard() {
+void AdLibSoundDriver::initCard() {
 	_vibrato = 0x20;
 	OPLWriteReg(_opl, 0xBD, _vibrato);
 	OPLWriteReg(_opl, 0x08, 0x40);
@@ -324,7 +324,7 @@ void AdlibSoundDriver::initCard() {
 	OPLWriteReg(_opl, 1, 0);
 }
 
-void AdlibSoundDriver::update(int16 *buf, int len) {
+void AdLibSoundDriver::update(int16 *buf, int len) {
 	static int samplesLeft = 0;
 	while (len != 0) {
 		int count = samplesLeft;
@@ -344,13 +344,13 @@ void AdlibSoundDriver::update(int16 *buf, int len) {
 	}
 }
 
-void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
+void AdLibSoundDriver::setupInstrument(const byte *data, int channel) {
 	assert(channel < 4);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
+	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	loadInstrument(data, ins);
 
 	int mod, car, tmp;
-	const AdlibRegisterSoundInstrument *reg;
+	const AdLibRegisterSoundInstrument *reg;
 
 	if (ins->mode != 0)  {
 		mod = _operatorsTable[_voiceOperatorsTable[2 * ins->channel + 0]];
@@ -390,7 +390,7 @@ void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
 	OPLWriteReg(_opl, 0xE0 | car, ins->waveSelectCar);
 }
 
-void AdlibSoundDriver::loadRegisterInstrument(const byte *data, AdlibRegisterSoundInstrument *reg) {
+void AdLibSoundDriver::loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg) {
 	reg->vibrato = 0;
 	if (READ_LE_UINT16(data + 18)) { // amplitude vibrato
 		reg->vibrato |= 0x80;
@@ -422,7 +422,7 @@ void AdlibSoundDriver::loadRegisterInstrument(const byte *data, AdlibRegisterSou
 	reg->freqMod = READ_LE_UINT16(data + 24);
 }
 
-void AdlibSoundDriverINS::loadInstrument(const byte *data, AdlibSoundInstrument *asi) {
+void AdLibSoundDriverINS::loadInstrument(const byte *data, AdLibSoundInstrument *asi) {
 	asi->mode = *data++;
 	asi->channel = *data++;
 	loadRegisterInstrument(data, &asi->regMod); data += 26;
@@ -432,9 +432,9 @@ void AdlibSoundDriverINS::loadInstrument(const byte *data, AdlibSoundInstrument 
 	asi->amDepth = data[0]; data += 2;
 }
 
-void AdlibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
+void AdLibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 	assert(channel < 4);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
+	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
 		channel = 6;
 	}
@@ -458,12 +458,12 @@ void AdlibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 	}
 }
 
-void AdlibSoundDriverINS::playSample(const byte *data, int size, int channel, int volume) {
+void AdLibSoundDriverINS::playSample(const byte *data, int size, int channel, int volume) {
 	assert(channel < 4);
 	_channelsVolumeTable[channel] = 127;
 	resetChannel(channel);
 	setupInstrument(data + 257, channel);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
+	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
 		channel = 6;
 	}
@@ -483,7 +483,7 @@ void AdlibSoundDriverINS::playSample(const byte *data, int size, int channel, in
 	}
 }
 
-void AdlibSoundDriverADL::loadInstrument(const byte *data, AdlibSoundInstrument *asi) {
+void AdLibSoundDriverADL::loadInstrument(const byte *data, AdLibSoundInstrument *asi) {
 	asi->mode = *data++;
 	asi->channel = *data++;
 	asi->waveSelectMod = *data++ & 3;
@@ -494,9 +494,9 @@ void AdlibSoundDriverADL::loadInstrument(const byte *data, AdlibSoundInstrument 
 	loadRegisterInstrument(data, &asi->regCar); data += 26;
 }
 
-void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
+void AdLibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	assert(channel < 4);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
+	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0) {
 		channel = ins->channel;
 		if (channel == 9) {
@@ -527,11 +527,11 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	}
 }
 
-void AdlibSoundDriverADL::playSample(const byte *data, int size, int channel, int volume) {
+void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, int volume) {
 	assert(channel < 4);
 	_channelsVolumeTable[channel] = 127;
 	setupInstrument(data, channel);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
+	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
 		OPLWriteReg(_opl, 0xB0 | channel, 0);
 	}
@@ -723,9 +723,9 @@ void PCSoundFxPlayer::unload() {
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	: Sound(mixer, vm) {
 	if (_vm->getGameType() == GType_FW) {
-		_soundDriver = new AdlibSoundDriverINS(_mixer);
+		_soundDriver = new AdLibSoundDriverINS(_mixer);
 	} else {
-		_soundDriver = new AdlibSoundDriverADL(_mixer);
+		_soundDriver = new AdLibSoundDriverADL(_mixer);
 	}
 	_player = new PCSoundFxPlayer(_soundDriver);
 }

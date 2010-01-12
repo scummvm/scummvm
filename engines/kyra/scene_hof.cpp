@@ -117,7 +117,7 @@ void KyraEngine_HoF::enterNewScene(uint16 newScene, int facing, int unk1, int un
 	_sceneExit4 = scene.exit4;
 
 	if (newSoundFile) {
-		if (_sound->getMusicType() == Sound::kAdlib) {
+		if (_sound->getMusicType() == Sound::kAdLib) {
 			while (_sound->isPlaying())
 				_system->delayMillis(10);
 		} else {

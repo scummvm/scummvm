@@ -503,8 +503,8 @@ protected:
 	int setImuseMasterVolume(uint vol);
 
 	void reallocateMidiChannels(MidiDriver *midi);
-	void setGlobalAdlibInstrument(byte slot, byte *data);
-	void copyGlobalAdlibInstrument(byte slot, Instrument *dest);
+	void setGlobalAdLibInstrument(byte slot, byte *data);
+	void copyGlobalAdLibInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
 
 protected:

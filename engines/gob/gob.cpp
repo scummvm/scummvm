@@ -207,8 +207,8 @@ bool GobEngine::is640() const {
 	return (_features & kFeatures640) != 0;
 }
 
-bool GobEngine::hasAdlib() const {
-	return (_features & kFeaturesAdlib) != 0;
+bool GobEngine::hasAdLib() const {
+	return (_features & kFeaturesAdLib) != 0;
 }
 
 bool GobEngine::isSCNDemo() const {

@@ -130,7 +130,7 @@ void MidiPlayer::send(uint32 b) {
 		// If I understand it correctly, the current standard indicates
 		// that the volume should be reset, but the next revision will
 		// exclude it. On my system, both ALSA and FluidSynth seem to
-		// reset it, while Adlib does not. Let's follow the majority.
+		// reset it, while AdLib does not. Let's follow the majority.
 
 		_current->volume[channel] = 127;
 	}

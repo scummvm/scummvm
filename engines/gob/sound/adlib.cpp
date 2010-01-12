@@ -59,7 +59,7 @@ void AdLib::init() {
 
 	_rate = _mixer->getOutputRate();
 
-	_opl = makeAdlibOPL(_rate);
+	_opl = makeAdLibOPL(_rate);
 
 	_first = true;
 	_ended = false;

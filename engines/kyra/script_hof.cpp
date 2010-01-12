@@ -827,7 +827,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 
 int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playFireflyScore(%p) ()", (const void *)script);
-	if (_sound->getSfxType() == Sound::kAdlib || _sound->getSfxType() == Sound::kPCSpkr ||
+	if (_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr ||
 			_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
 		snd_playWanderScoreViaMap(86, 1);
 		return 1;
@@ -1329,7 +1329,7 @@ int KyraEngine_HoF::o2_midiSoundFadeout(EMCState *script) {
 
 int KyraEngine_HoF::o2_getSfxDriver(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getSfxDriver(%p) ()", (const void *)script);
-	if (_sound->getSfxType() == Sound::kAdlib)
+	if (_sound->getSfxType() == Sound::kAdLib)
 		return 1;
 	else if (_sound->getSfxType() == Sound::kPCSpkr)
 		return 4;
@@ -1349,7 +1349,7 @@ int KyraEngine_HoF::o2_getVocSupport(EMCState *script) {
 
 int KyraEngine_HoF::o2_getMusicDriver(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_getMusicDriver(%p) ()", (const void *)script);
-	if (_sound->getMusicType() == Sound::kAdlib)
+	if (_sound->getMusicType() == Sound::kAdLib)
 		return 1;
 	else if (_sound->getMusicType() == Sound::kPCSpkr)
 		return 4;

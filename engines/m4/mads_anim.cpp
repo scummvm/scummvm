@@ -577,7 +577,7 @@ void AnimviewView::readNextCommand() {
 	{
 		char buffer[100];
 		strcpy(buffer, aaFile.soundName.c_str());
-		buffer[0] = 'A';	// A for Adlib resource
+		buffer[0] = 'A';	// A for AdLib resource
 
 		/*Common::SeekableReadStream *stream = */_vm->_resourceManager->get(buffer);
 		

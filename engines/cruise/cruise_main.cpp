@@ -364,7 +364,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		 *	strcat(buffer, ".H32");
 		 *}
 		 * else
-		 * if (useAdlib)
+		 * if (useAdLib)
 		 * { */
 		 strcat(buffer,".ADL");
 		/* }

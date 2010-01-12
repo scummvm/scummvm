@@ -36,7 +36,7 @@
 
 namespace Queen {
 
-extern MidiDriver *C_Player_CreateAdlibMidiDriver(Audio::Mixer *);
+extern MidiDriver *C_Player_CreateAdLibMidiDriver(Audio::Mixer *);
 
 MidiMusic::MidiMusic(QueenEngine *vm)
 	: _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _buf(0) {
@@ -68,9 +68,9 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	if (_adlib) {
 //		int infoOffset = _numSongs * 4 + 2;
 //		if (READ_LE_UINT16(_musicData + 2) != infoOffset) {
-//			defaultAdlibVolume = _musicData[infoOffset];
+//			defaultAdLibVolume = _musicData[infoOffset];
 //		}
-		_driver = C_Player_CreateAdlibMidiDriver(vm->_mixer);
+		_driver = C_Player_CreateAdLibMidiDriver(vm->_mixer);
 	} else {
 		_driver = MidiDriver::createMidi(midiDriver);
 		if (_nativeMT32) {

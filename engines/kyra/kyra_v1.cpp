@@ -120,7 +120,7 @@ Common::Error KyraEngine_v1::init() {
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			_sound = new SoundAmiga(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
-			_sound = new SoundAdlibPC(this, _mixer);
+			_sound = new SoundAdLibPC(this, _mixer);
 		} else {
 			Sound::kType type;
 
@@ -149,9 +149,9 @@ Common::Error KyraEngine_v1::init() {
 
 			// Unlike some SCUMM games, it's not that the MIDI sounds are
 			// missing. It's just that at least at the time of writing they
-			// are decidedly inferior to the Adlib ones.
+			// are decidedly inferior to the AdLib ones.
 			if (ConfMan.getBool("multi_midi")) {
-				SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
+				SoundAdLibPC *adlib = new SoundAdLibPC(this, _mixer);
 				assert(adlib);
 
 				_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);

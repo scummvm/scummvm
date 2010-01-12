@@ -42,15 +42,15 @@ namespace Sci {
 // FIXME: We don't seem to be sending the polyphony init data, so disable this for now
 #define ADLIB_DISABLE_VOICE_MAPPING
 
-class MidiDriver_Adlib : public MidiDriver_Emulated {
+class MidiDriver_AdLib : public MidiDriver_Emulated {
 public:
 	enum {
 		kVoices = 9,
 		kRhythmKeys = 62
 	};
 
-	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0) { }
-	virtual ~MidiDriver_Adlib() { }
+	MidiDriver_AdLib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0) { }
+	virtual ~MidiDriver_AdLib() { }
 
 	// MidiDriver
 	int open(bool isSCI0);
@@ -77,7 +77,7 @@ private:
 		kRightChannel = 2
 	};
 
-	struct AdlibOperator {
+	struct AdLibOperator {
 		bool amplitudeMod;
 		bool vibrato;
 		bool envelopeType;
@@ -92,14 +92,14 @@ private:
 		byte waveForm;			// (0-3)
 	};
 
-	struct AdlibModulator {
+	struct AdLibModulator {
 		byte feedback;			// (0-7)
 		bool algorithm;
 	};
 
-	struct AdlibPatch {
-		AdlibOperator op[2];
-		AdlibModulator mod;
+	struct AdLibPatch {
+		AdLibOperator op[2];
+		AdLibModulator mod;
 	};
 
 	struct Channel {
@@ -116,7 +116,7 @@ private:
 					pitchWheel(8192), lastVoice(0), enableVelocity(false) { }
 	};
 
-	struct AdlibVoice {
+	struct AdLibVoice {
 		int8 channel;			// MIDI channel that this voice is assigned to or -1
 		int8 note;				// Currently playing MIDI note or -1
 		int patch;				// Currently playing patch or -1
@@ -124,7 +124,7 @@ private:
 		bool isSustained;		// Flag indicating a note that is being sustained by the hold pedal
 		uint16 age;				// Age of the current note
 
-		AdlibVoice() : channel(-1), note(-1), patch(-1), velocity(0), isSustained(false), age(0) { }
+		AdLibVoice() : channel(-1), note(-1), patch(-1), velocity(0), isSustained(false), age(0) { }
 	};
 
 	bool _stereo;
@@ -133,9 +133,9 @@ private:
 	bool _playSwitch;
 	int _masterVolume;
 	Channel _channels[MIDI_CHANNELS];
-	AdlibVoice _voices[kVoices];
+	AdLibVoice _voices[kVoices];
 	byte *_rhythmKeyMap;
-	Common::Array<AdlibPatch> _patches;
+	Common::Array<AdLibPatch> _patches;
 
 	void loadInstrument(const byte *ins);
 	void voiceOn(int voice, int note, int velocity);
@@ -143,7 +143,7 @@ private:
 	void setPatch(int voice, int patch);
 	void setNote(int voice, int note, bool key);
 	void setVelocity(int voice);
-	void setOperator(int oper, AdlibOperator &op);
+	void setOperator(int oper, AdLibOperator &op);
 	void setRegister(int reg, int value, int channels = kLeftChannel | kRightChannel);
 	void renewNotes(int channel, bool key);
 	void noteOn(int channel, int note, int velocity);
@@ -158,23 +158,23 @@ private:
 	int calcVelocity(int voice, int op);
 };
 
-class MidiPlayer_Adlib : public MidiPlayer {
+class MidiPlayer_AdLib : public MidiPlayer {
 public:
-	MidiPlayer_Adlib() { _driver = new MidiDriver_Adlib(g_system->getMixer()); }
-	~MidiPlayer_Adlib() {}
+	MidiPlayer_AdLib() { _driver = new MidiDriver_AdLib(g_system->getMixer()); }
+	~MidiPlayer_AdLib() {}
 
 	int open(ResourceManager *resMan);
 	void close();
 
 	byte getPlayId(SciVersion soundVersion);
-	int getPolyphony() const { return MidiDriver_Adlib::kVoices; }
+	int getPolyphony() const { return MidiDriver_AdLib::kVoices; }
 	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_Adlib *>(_driver)->setVolume(volume); }
-	void playSwitch(bool play) { static_cast<MidiDriver_Adlib *>(_driver)->playSwitch(play); }
+	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
+	void playSwitch(bool play) { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
 	void loadInstrument(int idx, byte *data);
 };
 
-static const byte registerOffset[MidiDriver_Adlib::kVoices] = {
+static const byte registerOffset[MidiDriver_AdLib::kVoices] = {
 	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11, 0x12
 };
 
@@ -206,7 +206,7 @@ static const int ym3812_note[13] = {
 	0x2ae
 };
 
-int MidiDriver_Adlib::open(bool isSCI0) {
+int MidiDriver_AdLib::open(bool isSCI0) {
 	int rate = _mixer->getOutputRate();
 
 	_stereo = STEREO;
@@ -238,20 +238,20 @@ int MidiDriver_Adlib::open(bool isSCI0) {
 	return 0;
 }
 
-void MidiDriver_Adlib::close() {
+void MidiDriver_AdLib::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	delete _opl;
 	delete[] _rhythmKeyMap;
 }
 
-void MidiDriver_Adlib::setVolume(byte volume) {
+void MidiDriver_AdLib::setVolume(byte volume) {
 	_masterVolume = volume;
 	renewNotes(-1, true);
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
-void MidiDriver_Adlib::send(uint32 b) {
+void MidiDriver_AdLib::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
@@ -321,7 +321,7 @@ void MidiDriver_Adlib::send(uint32 b) {
 	}
 }
 
-void MidiDriver_Adlib::generateSamples(int16 *data, int len) {
+void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
 	if (isStereo())
 		len <<= 1;
 	_opl->readBuffer(data, len);
@@ -333,8 +333,8 @@ void MidiDriver_Adlib::generateSamples(int16 *data, int len) {
 	}
 }
 
-void MidiDriver_Adlib::loadInstrument(const byte *ins) {
-	AdlibPatch patch;
+void MidiDriver_AdLib::loadInstrument(const byte *ins) {
+	AdLibPatch patch;
 
 	// Set data for the operators
 	for (int i = 0; i < 2; i++) {
@@ -361,7 +361,7 @@ void MidiDriver_Adlib::loadInstrument(const byte *ins) {
 	_patches.push_back(patch);
 }
 
-void MidiDriver_Adlib::voiceMapping(int channel, int voices) {
+void MidiDriver_AdLib::voiceMapping(int channel, int voices) {
 	int curVoices = 0;
 
 	for (int i = 0; i < kVoices; i++)
@@ -380,7 +380,7 @@ void MidiDriver_Adlib::voiceMapping(int channel, int voices) {
 	}
 }
 
-void MidiDriver_Adlib::assignVoices(int channel, int voices) {
+void MidiDriver_AdLib::assignVoices(int channel, int voices) {
 	assert(voices > 0);
 
 	for (int i = 0; i < kVoices; i++)
@@ -393,7 +393,7 @@ void MidiDriver_Adlib::assignVoices(int channel, int voices) {
 	_channels[channel].extraVoices += voices;
 }
 
-void MidiDriver_Adlib::releaseVoices(int channel, int voices) {
+void MidiDriver_AdLib::releaseVoices(int channel, int voices) {
 	if (_channels[channel].extraVoices >= voices) {
 		_channels[channel].extraVoices -= voices;
 		return;
@@ -420,7 +420,7 @@ void MidiDriver_Adlib::releaseVoices(int channel, int voices) {
 	}
 }
 
-void MidiDriver_Adlib::donateVoices() {
+void MidiDriver_AdLib::donateVoices() {
 	int freeVoices = 0;
 
 	for (int i = 0; i < kVoices; i++)
@@ -443,7 +443,7 @@ void MidiDriver_Adlib::donateVoices() {
 	}
 }
 
-void MidiDriver_Adlib::renewNotes(int channel, bool key) {
+void MidiDriver_AdLib::renewNotes(int channel, bool key) {
 	for (int i = 0; i < kVoices; i++) {
 		// Update all notes playing this channel
 		if ((channel == -1) || (_voices[i].channel == channel)) {
@@ -453,7 +453,7 @@ void MidiDriver_Adlib::renewNotes(int channel, bool key) {
 	}
 }
 
-void MidiDriver_Adlib::noteOn(int channel, int note, int velocity) {
+void MidiDriver_AdLib::noteOn(int channel, int note, int velocity) {
 	if (velocity == 0)
 		return noteOff(channel, note);
 
@@ -486,7 +486,7 @@ void MidiDriver_Adlib::noteOn(int channel, int note, int velocity) {
 }
 
 // FIXME: Temporary, see comment at top of file regarding ADLIB_DISABLE_VOICE_MAPPING
-int MidiDriver_Adlib::findVoiceBasic(int channel) {
+int MidiDriver_AdLib::findVoiceBasic(int channel) {
 	int voice = -1;
 	int oldestVoice = -1;
 	int oldestAge = -1;
@@ -521,7 +521,7 @@ int MidiDriver_Adlib::findVoiceBasic(int channel) {
 	return voice;
 }
 
-int MidiDriver_Adlib::findVoice(int channel) {
+int MidiDriver_AdLib::findVoice(int channel) {
 	int voice = -1;
 	int oldestVoice = -1;
 	uint32 oldestAge = 0;
@@ -558,7 +558,7 @@ int MidiDriver_Adlib::findVoice(int channel) {
 	return voice;
 }
 
-void MidiDriver_Adlib::noteOff(int channel, int note) {
+void MidiDriver_AdLib::noteOff(int channel, int note) {
 	for (int i = 0; i < kVoices; i++) {
 		if ((_voices[i].channel == channel) && (_voices[i].note == note)) {
 			if (_channels[channel].holdPedal)
@@ -570,7 +570,7 @@ void MidiDriver_Adlib::noteOff(int channel, int note) {
 	}
 }
 
-void MidiDriver_Adlib::voiceOn(int voice, int note, int velocity) {
+void MidiDriver_AdLib::voiceOn(int voice, int note, int velocity) {
 	int channel = _voices[voice].channel;
 	int patch;
 
@@ -590,14 +590,14 @@ void MidiDriver_Adlib::voiceOn(int voice, int note, int velocity) {
 	setNote(voice, note, true);
 }
 
-void MidiDriver_Adlib::voiceOff(int voice) {
+void MidiDriver_AdLib::voiceOff(int voice) {
 	_voices[voice].isSustained = false;
 	setNote(voice, _voices[voice].note, 0);
 	_voices[voice].note = -1;
 	_voices[voice].age = 0;
 }
 
-void MidiDriver_Adlib::setNote(int voice, int note, bool key) {
+void MidiDriver_AdLib::setNote(int voice, int note, bool key) {
 	int channel = _voices[voice].channel;
 	int n, fre, oct;
 	float delta;
@@ -636,8 +636,8 @@ void MidiDriver_Adlib::setNote(int voice, int note, bool key) {
 	setVelocity(voice);
 }
 
-void MidiDriver_Adlib::setVelocity(int voice) {
-	AdlibPatch &patch = _patches[_voices[voice].patch];
+void MidiDriver_AdLib::setVelocity(int voice) {
+	AdLibPatch &patch = _patches[_voices[voice].patch];
 	int pan = _channels[_voices[voice].channel].pan;
 	setVelocityReg(registerOffset[voice] + 3, calcVelocity(voice, 1), patch.op[1].kbScaleLevel, pan);
 
@@ -646,7 +646,7 @@ void MidiDriver_Adlib::setVelocity(int voice) {
 		setVelocityReg(registerOffset[voice], calcVelocity(voice, 0), patch.op[0].kbScaleLevel, pan);
 }
 
-int MidiDriver_Adlib::calcVelocity(int voice, int op) {
+int MidiDriver_AdLib::calcVelocity(int voice, int op) {
 	if (_isSCI0) {
 		int velocity = _masterVolume;
 
@@ -666,7 +666,7 @@ int MidiDriver_Adlib::calcVelocity(int voice, int op) {
 		// Early SCI0 does (velocity * (insVelocity / 15))
 		return velocity * insVelocity / 15;
 	} else {
-		AdlibOperator &oper = _patches[_voices[voice].patch].op[op];
+		AdLibOperator &oper = _patches[_voices[voice].patch].op[op];
 		int velocity = _channels[_voices[voice].channel].volume + 1;
 		velocity = velocity * (velocityMap1[_voices[voice].velocity] + 1) / 64;
 		velocity = velocity * (_masterVolume + 1) / 16;
@@ -678,7 +678,7 @@ int MidiDriver_Adlib::calcVelocity(int voice, int op) {
 	}
 }
 
-void MidiDriver_Adlib::setVelocityReg(int regOffset, int velocity, int kbScaleLevel, int pan) {
+void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLevel, int pan) {
 	if (!_playSwitch)
 		velocity = 0;
 
@@ -698,14 +698,14 @@ void MidiDriver_Adlib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 	}
 }
 
-void MidiDriver_Adlib::setPatch(int voice, int patch) {
+void MidiDriver_AdLib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
 		warning("ADLIB: Invalid patch %i requested", patch);
 		patch = 0;
 	}
 
 	_voices[voice].patch = patch;
-	AdlibModulator &mod = _patches[patch].mod;
+	AdLibModulator &mod = _patches[patch].mod;
 
 	// Set the common settings for both operators
 	setOperator(registerOffset[voice], _patches[patch].op[0]);
@@ -716,7 +716,7 @@ void MidiDriver_Adlib::setPatch(int voice, int patch) {
 	setRegister(0xC0 + voice, (mod.feedback << 1) | algorithm);
 }
 
-void MidiDriver_Adlib::setOperator(int reg, AdlibOperator &op) {
+void MidiDriver_AdLib::setOperator(int reg, AdLibOperator &op) {
 	setRegister(0x40 + reg, (op.kbScaleLevel << 6) | op.totalLevel);
 	setRegister(0x60 + reg, (op.attackRate << 4) | op.decayRate);
 	setRegister(0x80 + reg, (op.sustainLevel << 4) | op.releaseRate);
@@ -725,7 +725,7 @@ void MidiDriver_Adlib::setOperator(int reg, AdlibOperator &op) {
 	setRegister(0xE0 + reg, op.waveForm);
 }
 
-void MidiDriver_Adlib::setRegister(int reg, int value, int channels) {
+void MidiDriver_AdLib::setRegister(int reg, int value, int channels) {
 	if (channels & kLeftChannel) {
 		_opl->write(0x220, reg);
 		_opl->write(0x221, value);
@@ -739,12 +739,12 @@ void MidiDriver_Adlib::setRegister(int reg, int value, int channels) {
 	}
 }
 
-void MidiDriver_Adlib::playSwitch(bool play) {
+void MidiDriver_AdLib::playSwitch(bool play) {
 	_playSwitch = play;
 	renewNotes(-1, play);
 }
 
-bool MidiDriver_Adlib::loadResource(const byte *data, uint size) {
+bool MidiDriver_AdLib::loadResource(const byte *data, uint size) {
 	if ((size != 1344) && (size != 2690) && (size != 5382)) {
 		warning("ADLIB: Unsupported patch format (%i bytes)", size);
 		return false;
@@ -766,7 +766,7 @@ bool MidiDriver_Adlib::loadResource(const byte *data, uint size) {
 	return true;
 }
 
-uint32 MidiDriver_Adlib::property(int prop, uint32 param) {
+uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
 	switch(prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff)
@@ -779,7 +779,7 @@ uint32 MidiDriver_Adlib::property(int prop, uint32 param) {
 }
 
 
-int MidiPlayer_Adlib::open(ResourceManager *resMan) {
+int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 	assert(resMan != NULL);
 
 	// Load up the patch.003 file, parse out the instruments
@@ -787,7 +787,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 	bool ok = false;
 
 	if (res) {
-		ok = static_cast<MidiDriver_Adlib *>(_driver)->loadResource(res->data, res->size);
+		ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(res->data, res->size);
 	} else {
 		// Early SCI0 games have the sound bank embedded in the adlib driver
 
@@ -801,7 +801,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 				byte *buf = new byte[patchSize];
 
 				if (f.seek(0x45a) && (f.read(buf, patchSize) == patchSize))
-					ok = static_cast<MidiDriver_Adlib *>(_driver)->loadResource(buf, patchSize);
+					ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(buf, patchSize);
 
 				delete[] buf;
 			}
@@ -813,10 +813,10 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 		return -1;
 	}
 
-	return static_cast<MidiDriver_Adlib *>(_driver)->open(getSciVersion() <= SCI_VERSION_0_LATE);
+	return static_cast<MidiDriver_AdLib *>(_driver)->open(getSciVersion() <= SCI_VERSION_0_LATE);
 }
 
-void MidiPlayer_Adlib::close() {
+void MidiPlayer_AdLib::close() {
 	if (_driver) {
 		_driver->close();
 		delete _driver;
@@ -824,7 +824,7 @@ void MidiPlayer_Adlib::close() {
 	}
 }
 
-byte MidiPlayer_Adlib::getPlayId(SciVersion soundVersion) {
+byte MidiPlayer_AdLib::getPlayId(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
 		return 0x01;
@@ -835,8 +835,8 @@ byte MidiPlayer_Adlib::getPlayId(SciVersion soundVersion) {
 	}
 }
 
-MidiPlayer *MidiPlayer_Adlib_create() {
-	return new MidiPlayer_Adlib();
+MidiPlayer *MidiPlayer_AdLib_create() {
+	return new MidiPlayer_AdLib();
 }
 
 } // End of namespace Sci

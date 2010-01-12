@@ -237,7 +237,7 @@ Common::Error SagaEngine::run() {
 
 	_music = new Music(this, _mixer, _driver);
 	_music->setNativeMT32(native_mt32);
-	_music->setAdlib(adlib);
+	_music->setAdLib(adlib);
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return Common::kUnknownError;

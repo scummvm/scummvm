@@ -64,11 +64,11 @@ void SciMusic::init() {
 
 	switch (midiType) {
 	case MD_ADLIB:
-		// FIXME: There's no Amiga sound option, so we hook it up to Adlib
+		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
 			_pMidiDrv = MidiPlayer_Amiga_create();
 		else
-			_pMidiDrv = MidiPlayer_Adlib_create();
+			_pMidiDrv = MidiPlayer_AdLib_create();
 		break;
 	case MD_PCJR:
 		_pMidiDrv = MidiPlayer_PCJr_create();

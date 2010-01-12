@@ -152,7 +152,7 @@ bool IMuseInternal::isMT32(int sound) {
 	tag = READ_BE_UINT32(ptr + 4);
 	switch (tag) {
 	case MKID_BE('ADL '):
-	case MKID_BE('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID_BE('ASFX'): // Special AD class for old AdLib sound effects
 	case MKID_BE('SPK '):
 		return false;
 
@@ -199,7 +199,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	tag = READ_BE_UINT32(ptr + 4);
 	switch (tag) {
 	case MKID_BE('ADL '):
-	case MKID_BE('ASFX'): // Special AD class for old Adlib sound effects
+	case MKID_BE('ASFX'): // Special AD class for old AdLib sound effects
 	case MKID_BE('SPK '):
 		return false;
 
@@ -235,7 +235,7 @@ MidiDriver *IMuseInternal::getBestMidiDriver(int sound) {
 		if (_midi_native) {
 			driver = _midi_native;
 		} else {
-			// Route it through Adlib anyway.
+			// Route it through AdLib anyway.
 			driver = _midi_adlib;
 		}
 	} else {
@@ -1709,13 +1709,13 @@ void IMuseInternal::reallocateMidiChannels(MidiDriver *midi) {
 	}
 }
 
-void IMuseInternal::setGlobalAdlibInstrument(byte slot, byte *data) {
+void IMuseInternal::setGlobalAdLibInstrument(byte slot, byte *data) {
 	if (slot < 32) {
 		_global_adlib_instruments[slot].adlib(data);
 	}
 }
 
-void IMuseInternal::copyGlobalAdlibInstrument(byte slot, Instrument *dest) {
+void IMuseInternal::copyGlobalAdLibInstrument(byte slot, Instrument *dest) {
 	if (slot >= 32)
 		return;
 	_global_adlib_instruments[slot].copy_to(dest);

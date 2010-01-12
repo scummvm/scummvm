@@ -259,7 +259,7 @@ Common::Error SkyEngine::init() {
 	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
 	if (midiDriver == MD_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
-		_skyMusic = new AdlibMusic(_mixer, _skyDisk);
+		_skyMusic = new AdLibMusic(_mixer, _skyDisk);
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"))

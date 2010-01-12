@@ -30,13 +30,13 @@
 
 namespace Queen {
 
-class AdlibMidiChannel;
+class AdLibMidiChannel;
 
-class AdlibMidiDriver : public MidiDriver_Emulated {
+class AdLibMidiDriver : public MidiDriver_Emulated {
 public:
 
-	AdlibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {}
-	~AdlibMidiDriver() {}
+	AdLibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {}
+	~AdLibMidiDriver() {}
 
 	// MidiDriver
 	int open();
@@ -123,9 +123,9 @@ private:
 	static const int16 _midiNoteFreqTable[];
 };
 
-int AdlibMidiDriver::open() {
+int AdLibMidiDriver::open() {
 	MidiDriver_Emulated::open();
-	_opl = makeAdlibOPL(getRate());
+	_opl = makeAdLibOPL(getRate());
 	adlibSetupCard();
 	for (int i = 0; i < 11; ++i) {
 		_adlibChannelsVolume[i] = 0;
@@ -136,12 +136,12 @@ int AdlibMidiDriver::open() {
 	return 0;
 }
 
-void AdlibMidiDriver::close() {
+void AdLibMidiDriver::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 	OPLDestroy(_opl);
 }
 
-void AdlibMidiDriver::send(uint32 b) {
+void AdLibMidiDriver::send(uint32 b) {
 	int channel = b & 15;
 	int cmd = (b >> 4) & 7;
 	int param1 = (b >> 8) & 255;
@@ -168,7 +168,7 @@ void AdlibMidiDriver::send(uint32 b) {
 	}
 }
 
-void AdlibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
+void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 	int event = 0;
 	if (length > 4 && READ_BE_UINT32(data) == 0x3F00) {
 		event = data[4];
@@ -196,12 +196,12 @@ void AdlibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 	warning("Unhandled meta event %d len %d", event, length);
 }
 
-void AdlibMidiDriver::generateSamples(int16 *data, int len) {
+void AdLibMidiDriver::generateSamples(int16 *data, int len) {
 	memset(data, 0, sizeof(int16) * len);
 	YM3812UpdateOne(_opl, data, len);
 }
 
-void AdlibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8 *data) {
+void AdLibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8 *data) {
 	for (int i = 0; i < 28; ++i) {
 		_adlibMetaSequenceData[i] = data[i];
 	}
@@ -219,17 +219,17 @@ void AdlibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8
 	}
 }
 
-void AdlibMidiDriver::handleSequencerSpecificMetaEvent2(uint8 value) {
+void AdLibMidiDriver::handleSequencerSpecificMetaEvent2(uint8 value) {
 	_adlibRhythmEnabled = value;
 	_midiNumberOfChannels = _adlibRhythmEnabled ? 11 : 9;
 	adlibSetAmpVibratoRhythm();
 }
 
-void AdlibMidiDriver::handleSequencerSpecificMetaEvent3(uint8 value) {
+void AdLibMidiDriver::handleSequencerSpecificMetaEvent3(uint8 value) {
 	adlibSetNoteMul(value);
 }
 
-void AdlibMidiDriver::handleMidiEvent0x90_NoteOn(int channel, int param1, int param2) { // note, volume
+void AdLibMidiDriver::handleMidiEvent0x90_NoteOn(int channel, int param1, int param2) { // note, volume
 	if (param2 == 0) {
 		adlibTurnNoteOff(channel);
 		_adlibChannelsVolume[channel] = param2;
@@ -241,11 +241,11 @@ void AdlibMidiDriver::handleMidiEvent0x90_NoteOn(int channel, int param1, int pa
 	}
 }
 
-void AdlibMidiDriver::adlibWrite(uint8 port, uint8 value) {
+void AdLibMidiDriver::adlibWrite(uint8 port, uint8 value) {
 	OPLWriteReg(_opl, port, value);
 }
 
-void AdlibMidiDriver::adlibSetupCard() {
+void AdLibMidiDriver::adlibSetupCard() {
 	for (int i = 1; i <= 0xF5; ++i) {
 		adlibWrite(i, 0);
 	}
@@ -263,7 +263,7 @@ void AdlibMidiDriver::adlibSetupCard() {
 	adlibSetWaveformSelect(1);
 }
 
-void AdlibMidiDriver::adlibSetupChannels(int fl) {
+void AdLibMidiDriver::adlibSetupChannels(int fl) {
 	if (fl != 0) {
 		_midiChannelsNote1Table[8] = 24;
 		_midiChannelsNote2Table[8] = 8192;
@@ -282,7 +282,7 @@ void AdlibMidiDriver::adlibSetupChannels(int fl) {
 	adlibSetAmpVibratoRhythm();
 }
 
-void AdlibMidiDriver::adlibResetAmpVibratoRhythm(int am, int vib, int kso) {
+void AdLibMidiDriver::adlibResetAmpVibratoRhythm(int am, int vib, int kso) {
 	_adlibAMDepthEq48 = am;
 	_adlibVibratoDepthEq14 = vib;
 	_adlibKeyboardSplitOn = kso;
@@ -290,7 +290,7 @@ void AdlibMidiDriver::adlibResetAmpVibratoRhythm(int am, int vib, int kso) {
 	adlibSetCSMKeyboardSplit();
 }
 
-void AdlibMidiDriver::adlibResetChannels() {
+void AdLibMidiDriver::adlibResetChannels() {
 	for (int i = 0; i < 18; ++i) {
 		adlibSetupChannelFromSequence(i, _adlibChannelsNoFeedback[i] ? _adlibInitSequenceData2 : _adlibInitSequenceData1, 0);
 	}
@@ -304,7 +304,7 @@ void AdlibMidiDriver::adlibResetChannels() {
 	}
 }
 
-void AdlibMidiDriver::adlibSetAmpVibratoRhythm() {
+void AdLibMidiDriver::adlibSetAmpVibratoRhythm() {
 	uint8 value = 0;
 	if (_adlibAMDepthEq48) {
 		value |= 0x80;
@@ -318,12 +318,12 @@ void AdlibMidiDriver::adlibSetAmpVibratoRhythm() {
 	adlibWrite(0xBD, value | _adlibVibratoRhythm);
 }
 
-void AdlibMidiDriver::adlibSetCSMKeyboardSplit() {
+void AdLibMidiDriver::adlibSetCSMKeyboardSplit() {
 	uint8 value = _adlibKeyboardSplitOn ? 0x40 : 0;
 	adlibWrite(8, value);
 }
 
-void AdlibMidiDriver::adlibSetNoteMul(int mul) {
+void AdLibMidiDriver::adlibSetNoteMul(int mul) {
 	if (mul > 12) {
 		mul = 12;
 	} else if (mul < 1) {
@@ -332,7 +332,7 @@ void AdlibMidiDriver::adlibSetNoteMul(int mul) {
 	_adlibNoteMul = mul;
 }
 
-void AdlibMidiDriver::adlibSetWaveformSelect(int fl) {
+void AdLibMidiDriver::adlibSetWaveformSelect(int fl) {
 	_adlibWaveformSelect = fl ? 0x20 : 0;
 	for (int i = 0; i < 18; ++i) {
 		adlibWrite(0xE0 + _adlibChannelsMappingTable1[i], 0);
@@ -340,7 +340,7 @@ void AdlibMidiDriver::adlibSetWaveformSelect(int fl) {
 	adlibWrite(1, _adlibWaveformSelect);
 }
 
-void AdlibMidiDriver::adlibSetPitchBend(int channel, int range) {
+void AdLibMidiDriver::adlibSetPitchBend(int channel, int range) {
 	if ((_adlibRhythmEnabled && channel <= 6) || channel < 9) {
 		if (range > 16383) {
 			range = 16383;
@@ -350,11 +350,11 @@ void AdlibMidiDriver::adlibSetPitchBend(int channel, int range) {
 	}
 }
 
-void AdlibMidiDriver::adlibPlayNote(int channel) {
+void AdLibMidiDriver::adlibPlayNote(int channel) {
 	_midiChannelsFreqTable[channel] = adlibPlayNoteHelper(channel, _midiChannelsNote1Table[channel], _midiChannelsNote2Table[channel], _midiChannelsOctTable[channel]);
 }
 
-uint8 AdlibMidiDriver::adlibPlayNoteHelper(int channel, int note1, int note2, int oct) {
+uint8 AdLibMidiDriver::adlibPlayNoteHelper(int channel, int note1, int note2, int oct) {
 	int n = ((note2 * _midiChannelsNoteTable[channel]) >> 8) - 8192;
 	if (n != 0) {
 		n >>= 5;
@@ -383,7 +383,7 @@ uint8 AdlibMidiDriver::adlibPlayNoteHelper(int channel, int note1, int note2, in
 	return value;
 }
 
-void AdlibMidiDriver::adlibTurnNoteOff(int channel) {
+void AdLibMidiDriver::adlibTurnNoteOff(int channel) {
 	if ((_adlibRhythmEnabled && channel <= 6) || channel < 9) {
 		_midiChannelsOctTable[channel] = 0;
 		_midiChannelsFreqTable[channel] &= ~0x20;
@@ -394,7 +394,7 @@ void AdlibMidiDriver::adlibTurnNoteOff(int channel) {
 	}
 }
 
-void AdlibMidiDriver::adlibTurnNoteOn(int channel, int note) {
+void AdLibMidiDriver::adlibTurnNoteOn(int channel, int note) {
 	note -= 12;
 	if (note < 0) {
 		note = 0;
@@ -418,14 +418,14 @@ void AdlibMidiDriver::adlibTurnNoteOn(int channel, int note) {
 	}
 }
 
-void AdlibMidiDriver::adlibSetupChannelFromSequence(int channel, const uint8 *src, int fl) {
+void AdLibMidiDriver::adlibSetupChannelFromSequence(int channel, const uint8 *src, int fl) {
 	for (int i = 0; i < 13; ++i) {
 		_adlibSetupChannelSequence2[i] = src[i];
 	}
 	adlibSetupChannel(channel, _adlibSetupChannelSequence2, fl);
 }
 
-void AdlibMidiDriver::adlibSetupChannel(int channel, const uint16 *src, int fl) {
+void AdLibMidiDriver::adlibSetupChannel(int channel, const uint16 *src, int fl) {
 	for (int i = 0; i < 13; ++i) {
 		_adlibSetupChannelSequence1[14 * channel + i] = src[i];
 	}
@@ -433,7 +433,7 @@ void AdlibMidiDriver::adlibSetupChannel(int channel, const uint16 *src, int fl) 
 	adlibSetupChannelHelper(channel);
 }
 
-void AdlibMidiDriver::adlibSetNoteVolume(int channel, int volume) {
+void AdLibMidiDriver::adlibSetNoteVolume(int channel, int volume) {
 	if (_midiNumberOfChannels > channel) {
 		if (volume > 127) {
 			volume = 127;
@@ -452,7 +452,7 @@ void AdlibMidiDriver::adlibSetNoteVolume(int channel, int volume) {
 	}
 }
 
-void AdlibMidiDriver::adlibSetupChannelHelper(int channel) {
+void AdLibMidiDriver::adlibSetupChannelHelper(int channel) {
 	adlibSetAmpVibratoRhythm();
 	adlibSetCSMKeyboardSplit();
 	adlibSetChannel0x40(channel);
@@ -463,7 +463,7 @@ void AdlibMidiDriver::adlibSetupChannelHelper(int channel) {
 	adlibSetChannel0xE0(channel);
 }
 
-void AdlibMidiDriver::adlibSetChannel0x40(int channel) {
+void AdLibMidiDriver::adlibSetChannel0x40(int channel) {
 	int index, value, fl;
 
 	if (_adlibRhythmEnabled) {
@@ -488,7 +488,7 @@ void AdlibMidiDriver::adlibSetChannel0x40(int channel) {
 	adlibWrite(0x40 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::adlibSetChannel0xC0(int channel) {
+void AdLibMidiDriver::adlibSetChannel0xC0(int channel) {
 	if (_adlibChannelsNoFeedback[channel] == 0) {
 		const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 		uint8 value = p[2] << 1;
@@ -499,19 +499,19 @@ void AdlibMidiDriver::adlibSetChannel0xC0(int channel) {
 	}
 }
 
-void AdlibMidiDriver::adlibSetChannel0x60(int channel) {
+void AdLibMidiDriver::adlibSetChannel0x60(int channel) {
 	const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 	uint8 value = (p[3] << 4) | (p[6] & 15);
 	adlibWrite(0x60 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::adlibSetChannel0x80(int channel) {
+void AdLibMidiDriver::adlibSetChannel0x80(int channel) {
 	const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 	uint8 value = (p[4] << 4) | (p[7] & 15);
 	adlibWrite(0x80 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::adlibSetChannel0x20(int channel) {
+void AdLibMidiDriver::adlibSetChannel0x20(int channel) {
 	const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 	uint8 value = p[1] & 15;
 	if (p[9]) {
@@ -529,7 +529,7 @@ void AdlibMidiDriver::adlibSetChannel0x20(int channel) {
 	adlibWrite(0x20 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::adlibSetChannel0xE0(int channel) {
+void AdLibMidiDriver::adlibSetChannel0xE0(int channel) {
 	uint8 value = 0;
 	if (_adlibWaveformSelect) {
 		const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
@@ -538,71 +538,71 @@ void AdlibMidiDriver::adlibSetChannel0xE0(int channel) {
 	adlibWrite(0xE0 + _adlibChannelsMappingTable1[channel], value);
 }
 
-const uint8 AdlibMidiDriver::_adlibChannelsMappingTable1[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsMappingTable1[] = {
 	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
 };
 
-const uint8 AdlibMidiDriver::_adlibChannelsNoFeedback[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsNoFeedback[] = {
 	0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1
 };
 
-const uint8 AdlibMidiDriver::_adlibChannelsMappingTable2[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsMappingTable2[] = {
 	0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5, 6, 7, 8, 6, 7, 8
 };
 
-const uint8 AdlibMidiDriver::_adlibChannelsMappingTable3[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsMappingTable3[] = {
 	0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5, 6, 10, 8, 6, 7, 9
 };
 
-const uint8 AdlibMidiDriver::_adlibChannelsKeyScalingTable1[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsKeyScalingTable1[] = {
 	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 13, 16, 14, 17
 };
 
-const uint8 AdlibMidiDriver::_adlibChannelsKeyScalingTable2[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsKeyScalingTable2[] = {
 	0, 3, 1, 4, 2, 5, 6, 9, 7, 10, 8, 11, 12, 15, 16, 255, 14, 255, 17, 255, 13, 255
 };
 
-const uint8 AdlibMidiDriver::_adlibChannelsVolumeTable[] = {
+const uint8 AdLibMidiDriver::_adlibChannelsVolumeTable[] = {
 	128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData1[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData1[] = {
 	1, 1, 3, 15, 5, 0, 1, 3, 15, 0, 0, 0, 1, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData2[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData2[] = {
 	0, 1, 1, 15, 7, 0, 2, 4, 0, 0, 0, 1, 0, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData3[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData3[] = {
 	0, 0, 0, 10, 4, 0, 8, 12, 11, 0, 0, 0, 1, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData4[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData4[] = {
 	0, 0, 0, 13, 4, 0, 6, 15, 0, 0, 0, 0, 1, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData5[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData5[] = {
 	0, 12, 0, 15, 11, 0, 8, 5, 0, 0, 0, 0, 0, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData6[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData6[] = {
 	0, 4, 0, 15, 11, 0, 7, 5, 0, 0, 0, 0, 0, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData7[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData7[] = {
 	0, 1, 0, 15, 11, 0, 5, 5, 0, 0, 0, 0, 0, 0
 };
 
-const uint8 AdlibMidiDriver::_adlibInitSequenceData8[] = {
+const uint8 AdLibMidiDriver::_adlibInitSequenceData8[] = {
 	0, 1, 0, 15, 11, 0, 7, 5, 0, 0, 0, 0, 0, 0
 };
 
-const int16 AdlibMidiDriver::_midiChannelsNoteTable[] = {
+const int16 AdLibMidiDriver::_midiChannelsNoteTable[] = {
 	256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256
 };
 
-const int16 AdlibMidiDriver::_midiNoteFreqTable[] = {
+const int16 AdLibMidiDriver::_midiNoteFreqTable[] = {
 	 690,  692,  695,  697,  700,  702,  705,  707,  710,  713,  715,  718,
 	 720,  723,  726,  728,  731,  733,  736,  739,  741,  744,  747,  749,
 	 752,  755,  758,  760,  763,  766,  769,  771,  774,  777,  780,  783,
@@ -621,8 +621,8 @@ const int16 AdlibMidiDriver::_midiNoteFreqTable[] = {
 	-363, -361, -359, -356, -354, -351, -349, -347, -344, -342, -339, -337
 };
 
-MidiDriver *C_Player_CreateAdlibMidiDriver(Audio::Mixer *mixer) {
-	return new AdlibMidiDriver(mixer);
+MidiDriver *C_Player_CreateAdLibMidiDriver(Audio::Mixer *mixer) {
+	return new AdLibMidiDriver(mixer);
 }
 
 } // End of namespace Queen

@@ -103,7 +103,7 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 	case 2: // Start of song. Ignore for now.
 		break;
 
-	case 16: // Adlib instrument definition(Part)
+	case 16: // AdLib instrument definition(Part)
 		a = *p++ & 0x0F;
 		++p; // Skip hardware type
 		part = player->getPart(a);
@@ -118,11 +118,11 @@ void sysexHandler_Scumm(Player *player, const byte *msg, uint16 len) {
 		}
 		break;
 
-	case 17: // Adlib instrument definition(Global)
+	case 17: // AdLib instrument definition(Global)
 		p += 2; // Skip hardware type and... whatever came right before it
 		a = *p++;
 		player->decode_sysex_bytes(p, buf, len - 3);
-		se->setGlobalAdlibInstrument(a, buf);
+		se->setGlobalAdLibInstrument(a, buf);
 		break;
 
 	case 33: // Parameter adjust

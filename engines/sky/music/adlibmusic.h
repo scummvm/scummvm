@@ -33,10 +33,10 @@
 
 namespace Sky {
 
-class AdlibMusic : public Audio::AudioStream, public MusicBase {
+class AdLibMusic : public Audio::AudioStream, public MusicBase {
 public:
-	AdlibMusic(Audio::Mixer *pMixer, Disk *pDisk);
-	~AdlibMusic();
+	AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk);
+	~AdLibMusic();
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples);

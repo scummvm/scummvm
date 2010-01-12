@@ -109,8 +109,8 @@ public:
 	~Music();
 	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
 	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
-	void setAdlib(bool b)		{ _adlib = b; }
-	bool hasAdlib()			{ return _adlib; }
+	void setAdLib(bool b)		{ _adlib = b; }
+	bool hasAdLib()			{ return _adlib; }
 	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
 	bool isPlaying();
 	bool hasDigitalMusic() { return _digitalMusic; }

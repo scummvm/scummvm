@@ -58,9 +58,9 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	// Use music volume for plain sound types (At least the Adlib player uses a plain sound type
+	// Use music volume for plain sound types (At least the AdLib player uses a plain sound type
 	// so previously the music and sfx volume controls didn't affect it at all).
-	// FIXME: Make Adlib player differentiate between playing sound effects and music and remove this.
+	// FIXME: Make AdLib player differentiate between playing sound effects and music and remove this.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("music_volume"));
 
 	g_cine = this;

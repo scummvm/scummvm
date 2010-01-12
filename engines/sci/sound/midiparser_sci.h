@@ -32,7 +32,7 @@
 
 /*
  Sound drivers info: (from driver cmd0)
- Adlib/SB  : track 0 , voices 9 , patch 3	ah=1
+ AdLib/SB  : track 0 , voices 9 , patch 3	ah=1
  ProAudioSp: track 0 , voices 9 , patch 3	ah=17
  GenerlMIDI: track 7 , voices 32, patch 4	ah=1   SCI1.1
  Game Blast: track 9 , voices 12, patch 101	ah=1

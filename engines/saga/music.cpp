@@ -370,9 +370,9 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		// file, and I've tentatively reached the conclusion
 		// that they are both General MIDI. My guess is that
 		// the FM file has been reorchestrated to sound better
-		// on Adlib and other FM synths.
+		// on AdLib and other FM synths.
 		//
-		// Sev says the Adlib music does not sound like in the
+		// Sev says the AdLib music does not sound like in the
 		// original, but I still think assuming General MIDI is
 		// the right thing to do. Some music, like the End
 		// Title (song 0) sound absolutely atrocious when piped
@@ -391,7 +391,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		// Note that the IHNM demo has only got one music file
 		// (music.rsc). It is assumed that it contains FM music
 
-		if (hasAdlib() || _vm->getFeatures() & GF_IHNM_DEMO) {
+		if (hasAdLib() || _vm->getFeatures() & GF_IHNM_DEMO) {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		} else {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);

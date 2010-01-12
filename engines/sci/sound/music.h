@@ -42,7 +42,7 @@
 namespace Sci {
 
 enum TrackType {
-	kTrackAdlib = 0,
+	kTrackAdLib = 0,
 	kTrackGameBlaster = 9,
 	kTrackMT32 = 12,
 	kTrackSpeaker = 18,
@@ -217,8 +217,8 @@ protected:
 	MidiPlayer *_pMidiDrv;
 
 	uint32 _dwTempo;
-	// Mixed Adlib/MIDI mode: when enabled from the ScummVM sound options screen,
-	// and a sound has a digital track, the sound from the Adlib track is played
+	// Mixed AdLib/MIDI mode: when enabled from the ScummVM sound options screen,
+	// and a sound has a digital track, the sound from the AdLib track is played
 	bool _bMultiMidi;
 private:
 	static void miditimerCallback(void *p);

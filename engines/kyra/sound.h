@@ -51,7 +51,7 @@ public:
 	virtual ~Sound();
 
 	enum kType {
-		kAdlib,
+		kAdLib,
 		kMidiMT32,
 		kMidiGM,
 		kTowns,

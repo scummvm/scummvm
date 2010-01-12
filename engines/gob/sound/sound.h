@@ -55,7 +55,7 @@ public:
 	int sampleGetNextFreeSlot() const;
 
 	bool sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName, bool tryExist = true);
-	void sampleFree(SoundDesc *sndDesc, bool noteAdlib = false, int index = -1);
+	void sampleFree(SoundDesc *sndDesc, bool noteAdLib = false, int index = -1);
 
 
 	// SoundBlaster
