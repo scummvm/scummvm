@@ -154,8 +154,11 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 		} else {
 			// remove data relating to old resolution
 			_mode->bitmapName.clear();
-			delete _mode->image;
-			_mode->image = 0;
+			if (_mode->image) {
+				_mode->image->free();
+				delete _mode->image;
+				_mode->image = 0;
+			}
 			_mode->imageMap.removeAllAreas();
 			_mode->displayArea = Rect();
 		}
