@@ -589,6 +589,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	_gfx->BitsShow(_menuRect);
 
 	// Show mouse cursor when the menu appears
+	// TODO: We need to save mouse state before changing it and changing it back when menu is done
 	((SciEngine *)g_engine)->getEngineState()->_gui->showCursor();
 
 	while (true) {
@@ -688,6 +689,9 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	}
 }
 
+// We don't follow sierra here - sierra sci actually does not mix keyboard and mouse interaction
+//  If menu is activated by mouse, then its not possible to select via keyboard
+//  If menu is activated by keyboard, then its not possible to select via mouse
 GuiMenuItemEntry *Menu::interactiveWithMouse() {
 	calculateTextWidth();
 
