@@ -77,7 +77,8 @@ public:
 #endif
 
 private:
-	Common::Array<MusicEntryCommand*> _soundCommands;
+	typedef Common::Array<MusicEntryCommand *> SoundCommandContainer;
+	SoundCommandContainer _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 #ifdef USE_OLD_MUSIC_FUNCTIONS

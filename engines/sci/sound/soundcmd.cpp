@@ -206,6 +206,9 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 }
 
 SoundCommandParser::~SoundCommandParser() {
+	for (SoundCommandContainer::iterator i = _soundCommands.begin(); i != _soundCommands.end(); ++i)
+		delete *i;
+
 	delete _music;
 }
 
