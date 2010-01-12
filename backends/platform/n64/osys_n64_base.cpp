@@ -31,7 +31,7 @@
 
 extern uint8 _romfs; // Defined by linker (used to calculate position of romfs image)
 
-inline uint16 colBGR888toRGB555(byte r, byte g, byte b);
+inline uint16 colRGB888toBGR555(byte r, byte g, byte b);
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{ "320x240 (PAL) fix overscan", "340x240 PAL",  OVERS_PAL_340X240   },
@@ -343,10 +343,11 @@ int16 OSystem_N64::getWidth() {
 void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
 	for (int i = 0; i < num; ++i) {
 		uint8 c[4];
-		_screenPalette[start + i] = colBGR888toRGB555(colors[2], colors[1], colors[0]);
+		_screenPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
 		colors += 4;
 	}
 
+	// If cursor uses the game palette, we need to rebuild the hicolor buffer
 	if (_cursorPaletteDisabled)
 		rebuildOffscreenMouseBuffer();
 
@@ -405,12 +406,13 @@ void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
 
 void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 	for (int i = 0; i < num; ++i) {
-		_cursorPalette[start + i] = colBGR888toRGB555(colors[2], colors[1], colors[0]);
+		_cursorPalette[start + i] = colRGB888toBGR555(colors[2], colors[1], colors[0]);
 		colors += 4;
 	}
 
 	_cursorPaletteDisabled = false;
 
+	// Rebuild cursor hicolor buffer
 	rebuildOffscreenMouseBuffer();
 
 	_dirtyOffscreen = true;
@@ -419,6 +421,7 @@ void OSystem_N64::setCursorPalette(const byte *colors, uint start, uint num) {
 void OSystem_N64::disableCursorPalette(bool disable) {
 	_cursorPaletteDisabled = disable;
 
+	// Rebuild cursor hicolor buffer
 	rebuildOffscreenMouseBuffer();
 
 	_dirtyOffscreen = true;
@@ -494,6 +497,7 @@ void OSystem_N64::updateScreen() {
 	if (_dirtyPalette)
 		rebuildOffscreenGameBuffer();
 
+	// Obtain the framebuffer
 	while (!(_dc = lockDisplay()));
 
 	uint16 *overlay_framebuffer = (uint16*)_dc->conf.framebuffer; // Current screen framebuffer
@@ -765,6 +769,7 @@ void OSystem_N64::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 
 	_cursorKeycolor = keycolor & 0xFF;
 
+	// Regenerate cursor hicolor buffer
 	rebuildOffscreenMouseBuffer();
 
 	_dirtyOffscreen = true;
@@ -795,6 +800,7 @@ void OSystem_N64::delayMillis(uint msecs) {
 #endif
 }
 
+// As we don't have multi-threading, no need for mutexes
 OSystem::MutexRef OSystem_N64::createMutex(void) {
 	return NULL;
 }
@@ -861,7 +867,7 @@ void OSystem_N64::setupMixer(void) {
 	enableAudioPlayback();
 }
 
-inline uint16 colBGR888toRGB555(byte r, byte g, byte b) {
+inline uint16 colRGB888toBGR555(byte r, byte g, byte b) {
 	return ((r >> 3) << 1) | ((g >> 3) << 6) | ((b >> 3) << 11);
 }
 
