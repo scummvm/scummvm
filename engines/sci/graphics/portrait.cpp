@@ -139,9 +139,6 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	Resource *syncResource = _resMan->findResource(syncResourceId, true);
 	uint syncOffset = 0;
 
-	if (!syncResource)
-		error("kPortrait: Could not open sync resource %d %X", resourceId, audioNumber);
-
 	// Set the portrait palette
 	_palette->set(&_portraitPalette, 1);
 
@@ -152,6 +149,13 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// Start playing audio...
 	_audio->stopAudio();
 	_audio->startAudio(resourceId, audioNumber);
+
+	if (!syncResource) {
+		// Getting the book in the book shop calls kPortrait where no sync exists
+		// TODO: find out what to do then
+		warning("kPortrait: no sync resource %d %X", resourceId, audioNumber);
+		return;
+	}
 
 	// Do animation depending on sync resource till audio is done playing
 	uint16 syncCue;
