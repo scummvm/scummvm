@@ -356,24 +356,23 @@ void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
 
 void OSystem_N64::rebuildOffscreenGameBuffer(void) {
 	// Regenerate hi-color offscreen buffer
-	uint32 two_col_hi;
+	uint64 four_col_hi;
 	uint32 four_col_pal;
-	for (int h = 0; h < _gameHeight; h++)
+
+	for (int h = 0; h < _gameHeight; h++) {
 		for (int w = 0; w < _gameWidth; w += 4) {
 			four_col_pal = *(uint32*)(_offscreen_pal + ((h * _screenWidth) + w));
 
-			two_col_hi = 0;
-			two_col_hi = _screenPalette[((four_col_pal >> (8 * 3)) & 0xFF)] | (two_col_hi << (16 * 0));
-			two_col_hi = _screenPalette[((four_col_pal >> (8 * 2)) & 0xFF)] | (two_col_hi << (16 * 1));
+			four_col_hi = 0;
+			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 24) & 0xFF)] << 48;
+			four_col_hi |= (uint64)_screenPalette[((four_col_pal >> 16) & 0xFF)] << 32;
+			four_col_hi |= (uint64)_screenPalette[((four_col_pal >>  8) & 0xFF)] << 16;
+			four_col_hi |= (uint64)_screenPalette[((four_col_pal >>  0) & 0xFF)] <<  0;
 
-			*(uint32*)(_offscreen_hic + (h * _screenWidth) + w + 0) = two_col_hi;
-
-			two_col_hi = 0;
-			two_col_hi = _screenPalette[((four_col_pal >> (8 * 1)) & 0xFF)] | (two_col_hi << (16 * 0));
-			two_col_hi = _screenPalette[((four_col_pal >> (8 * 0)) & 0xFF)] | (two_col_hi << (16 * 1));
-
-			*(uint32*)(_offscreen_hic + (h * _screenWidth) + w + 2) = two_col_hi;
+			// Save the converted pixels into hicolor buffer
+			*(uint64*)((_offscreen_hic) + (h * _screenWidth) + w) = four_col_hi;
 		}
+	}
 }
 
 void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
@@ -511,6 +510,8 @@ void OSystem_N64::updateScreen() {
 		for (currentHeight = _shakeOffset; currentHeight < _gameHeight; currentHeight++) {
 			uint64 *game_dest = (uint64*)(tmpDst + skip_pixels + _offscrPixels);
 			uint64 *game_src = (uint64*)tmpSrc;
+
+			// With uint64 we copy 4 pixels at a time
 			for (currentWidth = 0; currentWidth < _gameWidth; currentWidth += 4) {
 				*game_dest++ = *game_src++;
 			}
@@ -529,6 +530,8 @@ void OSystem_N64::updateScreen() {
 		for (currentHeight = 0; currentHeight < _overlayHeight; currentHeight++) {
 			uint64 *over_dest = (uint64*)(tmpDst + _offscrPixels);
 			uint64 *over_src = (uint64*)tmpSrc;
+
+			// Copy 4 pixels at a time
 			for (currentWidth = 0; currentWidth < _overlayWidth; currentWidth += 4) {
 				*over_dest++ = *over_src++;
 			}
