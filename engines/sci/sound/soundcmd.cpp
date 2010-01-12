@@ -206,6 +206,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 }
 
 SoundCommandParser::~SoundCommandParser() {
+	delete _music;
 }
 
 reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
