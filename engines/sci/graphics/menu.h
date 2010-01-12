@@ -99,6 +99,7 @@ private:
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
 	uint16 mouseFindMenuSelection(Common::Point mousePosition);
+	uint16 mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId);
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
 	SciEvent *_event;

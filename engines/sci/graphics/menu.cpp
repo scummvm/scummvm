@@ -561,6 +561,9 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 void Menu::invertMenuSelection(uint16 itemId) {
 	Common::Rect itemRect = _menuRect;
 
+	if (itemId == 0)
+		return;
+
 	itemRect.top += (itemId - 1) * _gfx->_curPort->fontHeight;
 	itemRect.bottom = itemRect.top + _gfx->_curPort->fontHeight + 1;
 	itemRect.left++; itemRect.right--;
@@ -583,18 +586,71 @@ uint16 Menu::mouseFindMenuSelection(Common::Point mousePosition) {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
-	uint16 curX = 8;
+	uint16 curXstart = 8;
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
-		if (mousePosition.x >= curX && mousePosition.x < curX + listEntry->textWidth) {
+		if (mousePosition.x >= curXstart && mousePosition.x < curXstart + listEntry->textWidth) {
 			return listEntry->id;
 		}
-		curX += listEntry->textWidth;
+		curXstart += listEntry->textWidth;
 		listIterator++;
 	}
 	return 0;
+}
+
+uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId) {
+	GuiMenuEntry *listEntry;
+	GuiMenuList::iterator listIterator;
+	GuiMenuList::iterator listEnd = _list.end();
+	uint16 curXstart = 8;
+	uint16 curXend = curXstart;
+	GuiMenuItemEntry *listItemEntry;
+	GuiMenuItemList::iterator listItemIterator;
+	GuiMenuItemList::iterator listItemEnd = _itemList.end();
+	uint16 curYstart = 10;
+	int16 maxTextWidth = 0, maxTextRightAlignedWidth = 0;
+	uint16 itemId = 0;
+
+	if (!menuId)
+		error("No menu active, but mouseFindMenuItemSelection() called");
+
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		if (listEntry->id == menuId)
+			break;
+		curXstart += listEntry->textWidth;
+		listIterator++;
+	}
+
+	if (mousePosition.x < curXstart)
+		return 0;
+
+	listItemIterator = _itemList.begin();
+	while (listItemIterator != listItemEnd) {
+		listItemEntry = *listItemIterator;
+		if (listItemEntry->menuId == menuId) {
+			curYstart += _gfx->_curPort->fontHeight;
+			// Found it
+			if ((!itemId) && (curYstart > mousePosition.y))
+				itemId = listItemEntry->id;
+			maxTextWidth = MAX<int16>(maxTextWidth, listItemEntry->textWidth);
+			maxTextRightAlignedWidth = MAX<int16>(maxTextRightAlignedWidth, listItemEntry->textRightAlignedWidth);
+		}
+
+		listItemIterator++;
+	}
+	curXend = curXstart + 16 + 4 + 2;
+	curXend += maxTextWidth + maxTextRightAlignedWidth;
+	if (!maxTextRightAlignedWidth)
+		_menuRect.right -= 5;
+
+	// Verify that horizontal position is correct
+	if (mousePosition.x >= curXend)
+		return 0;
+	return itemId;
 }
 
 GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
@@ -727,6 +783,7 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 	uint16 curMenuId = 0, curItemId = 0;
 	Common::Point mousePosition = _cursor->getPosition();
 	bool firstMenuChange = true;
+	GuiMenuItemEntry *curItemEntry = NULL;
 
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
@@ -745,7 +802,7 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 		case SCI_EVENT_MOUSE_RELEASE:
 			if ((curMenuId == 0) || (curItemId == 0))
 				return NULL;
-			break;
+			return curItemEntry;
 
 		case SCI_EVENT_NONE:
 			kernel_sleep(_event, 2500 / 1000);
@@ -760,7 +817,8 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 			newItemId = 0;
 		} else {
 			// Somewhere below menubar
-			// TODO: Find out if item is selected
+			newItemId = mouseFindMenuItemSelection(mousePosition, newMenuId);
+			curItemEntry = interactiveGetItem(curMenuId, newItemId, false);
 		}
 
 		if (newMenuId != curMenuId) {
