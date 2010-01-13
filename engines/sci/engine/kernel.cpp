@@ -201,7 +201,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*0e*/	DEFUN("NumCels", kNumCels, "o"),
 	/*0f*/	DEFUN("CelWide", kCelWide, "iOi*"),
 	/*10*/	DEFUN("CelHigh", kCelHigh, "iOi*"),
-	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiiii*r*"),
+	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiii*i*r*"),
 	/*12*/	DEFUN("AddToPic", kAddToPic, "Il*"),
 	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
 	/*13*/	DEFUN("NewWindow", kNewWindow, "*."),
@@ -693,8 +693,10 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 				return false;
 			}
 
-			if (!(type & *sig))
+			if (!(type & *sig)) {
+				warning("kernel_matches_signature: %d args left, is %d, should be %d", argc, type, *sig);
 				return false;
+			}
 
 		}
 		if (!(*sig & KSIG_ELLIPSIS))
@@ -703,10 +705,14 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 		--argc;
 	}
 
-	if (argc)
+	if (argc) {
+		warning("kernel_matches_signature: too many arguments");
 		return false; // Too many arguments
-	else
-		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
+	}
+	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
+		return true;
+	warning("kernel_matches_signature: too few arguments");
+	return false;
 }
 
 void kernel_sleep(SciEvent *event, uint32 msecs ) {
