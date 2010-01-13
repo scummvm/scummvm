@@ -6,13 +6,10 @@ MODULE_OBJS := \
 	actor.o \
 	asylum.o \
 	barrier.o \
-	blowuppuzzle.o \
 	console.o \
 	cursor.o \
 	detection.o \
-	encounters.o \
 	graphics.o \
-	menu.o \
 	polygons.o \
 	respack.o \
 	scene.o \

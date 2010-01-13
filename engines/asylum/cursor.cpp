@@ -30,18 +30,25 @@ namespace Asylum {
 
 const uint32 CURSOR_UPDATE_TICKS = 100;
 
-Cursor::Cursor(ResourcePack *res) {
-	_resPack = res;
-	_mouseX  = 0;
-	_mouseY  = 0;
-	cursorLoaded = false;
+Cursor::Cursor() {
+	_pos.x = 0;
+	_pos.y = 0;
+	_cursorRes = 0;
+}
+
+Cursor::Cursor(ResourcePack *pack) {
+	_pack = pack;
+	_pos.x = 0;
+	_pos.y = 0;
+	_cursorRes = 0;
 }
 
 Cursor::~Cursor() {
-	if (cursorLoaded)
-		delete _cursorResource;
+	if (_cursorRes)
+		delete _cursorRes;
 }
 
+/*
 void Cursor::load(int32 index) {
 	if (cursorLoaded)
 		delete _cursorResource;
@@ -50,6 +57,24 @@ void Cursor::load(int32 index) {
 	_cursorStep		= 1;
 	_curFrame	    = 0;
 	cursorLoaded    = true;
+}
+*/
+
+void Cursor::create(Cursor *&cursor, ResourcePack *pack, uint32 id) {
+	// If the current cursor resource is already assigned
+	// to the id value we're sending, just return
+	// TODO this simplifies a lot of additional validation calls
+	// in Scene::handleMouseUpdate, but there may be a scenario
+	// where we WANT to reset the curor to the id supplied, even
+	// if it's the same as what's assigned ... investigate
+	if (cursor) {
+		if (cursor->grResId != id)
+			delete cursor;
+		else
+			return;
+	}
+	cursor = new Cursor(pack);
+	cursor->set(id, 0, 0);
 }
 
 void Cursor::hide() {
@@ -60,6 +85,33 @@ void Cursor::show() {
 	CursorMan.showMouse(true);
 }
 
+void Cursor::set(uint32 resId, int32 counter, int32 flags, int32 frames) {
+	if (_cursorRes)
+		delete _cursorRes;
+
+	_cursorRes = new GraphicResource(_pack, resId);
+
+	if (frames >= 0)
+		frameCount = frames;
+	else
+		frameCount = _cursorRes->getFrameCount();
+	this->flags   = flags;
+	this->counter = counter;
+	currentFrame = 0;
+	_cursor_byte_45756C = 1;
+
+	update();
+}
+
+void Cursor::update() {
+	GraphicFrame *fra = _cursorRes->getFrame(currentFrame);
+	CursorMan.replaceCursor((byte *)fra->surface.pixels,
+			fra->surface.w,
+			fra->surface.h,
+			0, 0, 0);
+}
+
+/*
 void Cursor::set(byte *data, byte width, byte height) {
 	CursorMan.replaceCursor(data, width, height, 0, 0, 0);
 }
@@ -73,12 +125,14 @@ void Cursor::set(int32 frame) {
 		_cursorStep = 1;
 	}
 }
+*/
 
-void Cursor::setCoords(int32 mouseX, int32 mouseY) {
-	_mouseX = mouseX;
-	_mouseY = mouseY;
+void Cursor::move(int16 x, int16 y) {
+	_pos.x = x;
+	_pos.y = y;
 }
 
+/*
 void Cursor::animate() {
 	_curFrame += _cursorStep;
 	if (_curFrame == 0)
@@ -88,7 +142,9 @@ void Cursor::animate() {
 
 	set(_curFrame);
 }
+*/
 
+/*
 void Cursor::update(WorldStats *ws, int32 currentAction) {
 	uint32 newCursor = 0;
 
@@ -125,5 +181,6 @@ void Cursor::update(WorldStats *ws, int32 currentAction) {
 	if (_cursorResource->getEntryNum() != newCursor && newCursor > 0)
 		load(newCursor);
 }
+*/
 
 } // end of namespace Asylum

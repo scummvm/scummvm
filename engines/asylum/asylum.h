@@ -31,12 +31,13 @@
 #include "asylum/staticres.h"
 #include "asylum/console.h"
 #include "asylum/scene.h"
-#include "asylum/menu.h"
+//#include "asylum/menu.h"
 #include "asylum/screen.h"
 #include "asylum/sound.h"
 #include "asylum/video.h"
-#include "asylum/blowuppuzzle.h"
-#include "asylum/encounters.h"
+//#include "asylum/blowuppuzzle.h"
+//#include "asylum/encounters.h"
+#include "asylum/text.h"
 
 namespace Asylum {
 
@@ -44,15 +45,15 @@ static int32 g_object_x;
 static int32 g_object_y;
 
 // XXX
-// If defined, this will play the scene title loading
+// If defined, this will play the scene title loading up
 // progress before the scene is entered. This is
 // just a convenience, as there's no need for the type
 // of pre-loading that was performed in the original
-//#define SHOW_SCENE_LOADING
+// #define SHOW_SCENE_LOADING
 
 // XXX If defined, this flag will prevent the intro movies
 // from being played whenever the engine is started
-//#define SKIP_INTRO
+#define SKIP_INTRO
 
 // XXX
 // I'm not sure if system endian-ness would have any
@@ -67,7 +68,7 @@ static int32 g_object_y;
 
 class Console;
 class Scene;
-class MainMenu;
+//class MainMenu;
 class Scene;
 class Screen;
 class Sound;
@@ -151,12 +152,12 @@ private:
 
 	Console   *_console;
 	Scene     *_scene;
-	MainMenu  *_mainMenu;
+	//MainMenu  *_mainMenu;
 	Screen    *_screen;
 	Sound     *_sound;
 	Video     *_video;
 	Text      *_text;
-	Encounter *_encounter;
+	//Encounter *_encounter;
 
 	int _gameFlags[1512];
 

@@ -26,12 +26,9 @@
 #ifndef ASYLUM_CURSOR_H_
 #define ASYLUM_CURSOR_H_
 
-#include "asylum/respack.h"
-#include "asylum/worldstats.h"
+#include "asylum/graphics.h"
 
 namespace Asylum {
-
-class WorldStats;
 
 /**
  * Asylum cursors are GraphicResources, and are stored in
@@ -39,30 +36,39 @@ class WorldStats;
  */
 class Cursor {
 public:
-	Cursor(ResourcePack *res);
+	Cursor();
+	Cursor(ResourcePack *pack);
+
 	virtual ~Cursor();
+
+	/**
+	 * Generate a new cursor instance from the resource id
+	 * within the resource pack provided.
+	 */
+	static void create(Cursor *&cursor, ResourcePack *pack, uint32 id);
+
 	/**
 	 * Show the current cursor
 	 */
 	void show();
+
 	/**
 	 * Hide the current cursor
 	 */
 	void hide();
-	/**
-	 * Load a GraphicResource at the position specified by
-	 * index from the buffered ResourcePack
+
+	/** .text:00435400
+	 * Set the current cursor instance to the graphic resource provide.
+	 * The frames parameter defaults to -1, which in this case means that the
+	 * frame count should be derived from the graphic resource as opposed to being
+	 * explicitely set.
 	 */
-	void load(int32 index);
-	/**
-	 * Set the current cursor to a specific frame
-	 * within the loaded cursorResource
-	 */
-	void set(int32 frame);
+	void set(uint32 resId, int32 counter, int32 flags, int32 frames = -1);
 	/**
 	 * Set the x/y coordinates of the cursor
 	 */
-	void setCoords(int32 mouseX, int32 mouseY);
+	void move(int16 x, int16 y);
+
 	/**
 	 * Scene-based update to the current cursor. This
 	 * checks whether the cursor should be updated depending
@@ -71,33 +77,19 @@ public:
 	 * TODO this probably doesn't belong here, but on the
 	 * scene, where it originally was
 	 */
-	void update(WorldStats *ws, int32 currentAction);
+	//void update(WorldStats *ws, int32 currentAction);
 	/**
 	 * Get the next logical frame from the currently loaded
 	 * cursorResource and draw it
 	 */
-	void animate();
+	//void animate();
+
+	void update();
 
 	/**
-	 * Get the X position of the cursor
+	 * Return the cursor's position on the screen
 	 */
-	int32 x() {
-		return _mouseX;
-	}
-	/**
-	 * get the Y position of the cursor
-	 */
-	int32 y() {
-		return _mouseY;
-	}
-	/**
-	 * Get the current frame number of the
-	 * loaded cursorResource
-	 */
-	uint32 currentFrame() {
-		return _curFrame;
-	}
-
+	Common::Point position() const { return _pos; }
 
 	// NOTE
 	// .text:00435060 contains a function that assigns global variables to a
@@ -107,27 +99,29 @@ public:
 
 	// typedef struct CursorInfo {
 	int32 grResId;
-	int32 field_4;
+	int32 currentFrame; // assuming field_4c is the current frame pointer
+	                    // since it's generally initialized to zero
 	int32 frameCount;
-	int32 field_C;
+	int32 counter; // cursor counter
 	byte  flags;
 	byte  field_11;
 	// } CursorInfo;
-private:
-	void set(byte *data, byte width, byte height);
 
-	ResourcePack	*_resPack;
-	GraphicResource *_cursorResource;
-	bool   cursorLoaded;
-	uint32 _curFrame;
-	int32  _cursorStep;
-	int32 _mouseX;
-	int32 _mouseY;
+private:
+	ResourcePack    *_pack;
+	GraphicResource *_cursorRes;
+
+	/** the point on the screen the cursor is at */
+	Common::Point _pos;
+
+	/** the point of the cursor that triggers click hits */
+	Common::Point _hotspot;
 
 	// The number of millis between
 	// cursor gfx updates
 	uint32 _cursorTicks;
 
+	byte _cursor_byte_45756C;
 }; // end of class Cursor
 
 } // end of namespace Asylum
