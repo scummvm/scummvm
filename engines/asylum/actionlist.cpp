@@ -616,10 +616,10 @@ int kShowActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 		actor = &scn->worldstats()->actors[cmd->param1];
 
 	actor->visible(true);
-	// TODO character_sub_401320
+	actor->updateActor_401320();
 	actor->tickValue1 = scn->vm()->getTick();
 
-	return -2;
+	return 0;
 }
 
 int kSetActorStats(Script *script, ScriptEntry *cmd, Scene *scn) {
