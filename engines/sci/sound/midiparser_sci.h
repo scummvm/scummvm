@@ -45,6 +45,12 @@
 
 namespace Sci {
 
+/**
+ * An extended standard MIDI (SMF) parser. Sierra used an extra channel
+ * with special commands for extended functionality and animation syncing.
+ * Refer to MidiParser_SMF() in /sound/midiparser_smf.cpp for the standard
+ * MIDI (SMF) parser functionality that the SCI MIDI parser is based on
+ */
 class MidiParser_SCI : public MidiParser {
 public:
 	MidiParser_SCI(SciVersion soundVersion);
