@@ -693,9 +693,9 @@ int kEnableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 }
 
 int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
-	int    barIdx = scn->worldstats()->getBarrierIndexById(cmd->param1);
+	int32 barIdx = scn->worldstats()->getBarrierIndexById(cmd->param1);
+	Barrier *bar = &scn->worldstats()->barriers[barIdx];
 	int32 sndIdx = cmd->param3;
-	int32 v59    = cmd->param2;
 
 	if (!script->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
 		// FIXME: I really don't understand what (sndIdx != 0) & 5 is supposed to be doing here,
@@ -705,22 +705,19 @@ int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
 		scn->vm()->sound()->playSound((sndIdx & 5) + 0x80120001, false, Config.sfxVolume, 0);
 	}
 
-	if (script->counter >= 3 * v59 - 1) {
+	if (script->counter >= (3 * cmd->param2 - 1)) {
 		script->counter = 0;
-		scn->worldstats()->barriers[barIdx].field_67C = 0;
+		bar->field_67C  = 0;
 		scn->actions()->processActionListSub02(script, cmd, 2);
-		scn->actions()->currentLoops = 1; // v4 = 1;
 	} else {
-		int v64;
-		int v62 = script->counter + 1;
-		script->counter = v62;
+		int v64; // XXX rename when processActionListSub02 is better implemented
+		script->counter += 1;
 		if (sndIdx) {
 			v64 = 1;
-			int v170 = 3 - v62 / v59;
-			scn->worldstats()->barriers[barIdx].field_67C = v170;
+			bar->field_67C = 3 - script->counter / cmd->param2;
 		} else {
 			v64 = 0;
-			scn->worldstats()->barriers[barIdx].field_67C = v62 / v59 + 1;
+			bar->field_67C = script->counter / cmd->param2 + 1;
 		}
 
 		scn->actions()->processActionListSub02(script, cmd, v64);
