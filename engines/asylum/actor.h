@@ -154,13 +154,11 @@ public:
 
 	void visible(bool value);
 
-	void setPosition(int32 targetX, int32 targetY);
-
-	/**
+	/** .text:0040A260
 	 * Initialize the x1/y1 values of the actor, update the active animation frame
 	 * and, if the current direction isn't 8, update the actor's direction
 	 */
-	void setPosition_40A260(int32 newX, int32 newY, int32 newDirection, int32 frame);
+	void setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame);
 
 	void faceTarget(int32 targetId, int32 targetType);
 
