@@ -1236,7 +1236,15 @@ echo "$_have_x86"
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
-	linux* | uclinux* | openbsd* | netbsd* | bsd* | sunos* | hpux*)
+	linux* | uclinux*)
+		# When not cross-compiling, enable large file support, but don't
+		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
+		if test -z "$_host"; then
+			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
+		fi
+		DEFINES="$DEFINES -DUNIX"
+		;;
+	openbsd* | netbsd* | bsd* | sunos* | hpux*)
 		DEFINES="$DEFINES -DUNIX"
 		;;
 	freebsd*)
