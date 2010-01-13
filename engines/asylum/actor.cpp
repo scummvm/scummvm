@@ -43,14 +43,6 @@ Actor::~Actor() {
 	// free _resources?
 }
 
-void Actor::setPosition(int32 targetX, int32 targetY) {
-	//boundingRect.left = targetX;
-	//boundingRect.top  = targetY;
-
-	x = targetX;
-	y = targetY;
-}
-
 void Actor::visible(bool value) {
 	if (value) //	TODO - enums for flags (0x01 is visible)
 		flags |= 0x01;
@@ -279,7 +271,7 @@ void Actor::walkTo(int32 curX, int32 curY) {
 	drawActor();
 }
 
-void Actor::setPosition_40A260(int32 newX, int32 newY, int32 newDirection, int32 frame) {
+void Actor::setPosition(int32 newX, int32 newY, int32 newDirection, int32 frame) {
 	x1 = newX - x2;
 	y1 = newY - y2;
 
