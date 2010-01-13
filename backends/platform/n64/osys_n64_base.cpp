@@ -135,6 +135,7 @@ OSystem_N64::OSystem_N64() {
 	_dirtyOffscreen = false;
 
 	_ctrlData = (controller_data_buttons*)memalign(8, sizeof(controller_data_buttons));
+	_controllerHasRumble = (identifyPak(0) == 2);
 
 	_fsFactory = new N64FilesystemFactory();
 
@@ -602,6 +603,11 @@ void OSystem_N64::unlockScreen() {
 }
 
 void OSystem_N64::setShakePos(int shakeOffset) {
+
+	// If a rumble pak is plugged in and screen shakes, rumble!
+	if(shakeOffset && _controllerHasRumble) rumblePakEnable(1, 0);
+	else if(!shakeOffset && _controllerHasRumble) rumblePakEnable(0, 0);
+
 	_shakeOffset = shakeOffset;
 	_dirtyOffscreen = true;
 

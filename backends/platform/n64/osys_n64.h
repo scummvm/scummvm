@@ -117,6 +117,7 @@ protected:
 	int _mouseHotspotX, _mouseHotspotY;
 
 	controller_data_buttons *_ctrlData; // Controller data read from the N64 serial interface
+	bool _controllerHasRumble;
 
 	bool _dirtyOffscreen;
 
