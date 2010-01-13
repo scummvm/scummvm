@@ -313,7 +313,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
-				pSnd->pMidiParser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 			}
 
 			pSnd->pauseCounter = 0;

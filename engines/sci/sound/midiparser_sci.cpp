@@ -84,13 +84,26 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 }
 
 void MidiParser_SCI::unloadMusic() {
-	allNotesOff();
 	resetTracking();
+	allNotesOff();
 	_num_tracks = 0;
+	_active_track = 255;
+
 	if (_mixedData) {
 		delete[] _mixedData;
 		_mixedData = NULL;
 	}
+
+	// Center the pitch wheels in preparation for the next piece of music
+	// TODO: We should monitor what channels are used by each song, and only
+	// reset these channels, not all of them!
+	if (_driver) {
+		for (int i = 0; i < 16; ++i) {
+			_driver->send(0xE0 | i, 0, 0x40);
+		}
+	}
+
+	// TODO: Reset hold pedal
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
