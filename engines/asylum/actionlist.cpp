@@ -32,7 +32,7 @@ ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
 		: _scene(scene) {
 	load(stream);
 
-    _currentScript    = 0;
+	_currentScript    = 0;
 	currentLine       = 0;
 	currentLoops      = 0;
 	delayedSceneIndex = -1;
@@ -375,9 +375,9 @@ int ActionList::process() {
 					_scene->getSceneIndex(),
 					currentLine);
 
-            if (!lineIncrement) {
-			    currentLine ++;
-            }
+			if (!lineIncrement) {
+				currentLine ++;
+			}
 
 		} // end while
 
@@ -596,16 +596,14 @@ int kMoveScenePosition(Script *script, ScriptEntry *cmd, Scene *scn) {
 
 int kHideActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	Actor *actor = 0;
-
-	// TODO better default actor handling
-	if (cmd->param1 == -1)
-		actor = scn->getActor();
-	else
-		actor = &scn->worldstats()->actors[cmd->param1];
+	actor = (cmd->param1 == -1) ?
+			scn->getActor() :
+			&scn->worldstats()->actors[cmd->param1];
 
 	actor->visible(false);
+	// TODO character_sub_401320(actor)
 
-	return -3;
+	return -2;
 }
 
 int kShowActor(Script *script, ScriptEntry *cmd, Scene *scn) {
@@ -648,14 +646,36 @@ int kSetSceneMotionStat(Script *script, ScriptEntry *cmd, Scene *scn) {
 }
 
 int kDisableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
-	int actorIndex = cmd->param1;
+	int32 actorIndex = (cmd->param1 == -1) ? 0 : cmd->param1;
+	Actor *act = scn->getActor(actorIndex);
 
-	if (actorIndex == -1)
-		actorIndex = scn->getActorIndex();
+	if (cmd->param5 != 2) {
+		if (act->updateType != 2 && act->updateType != 13) {
+			if (cmd->param2 != -1 || cmd->param3 != -1)
+				scn->updateActorDirection(actorIndex, cmd->param4);
+			else {
+				if ((act->x1 + act->x2) != cmd->param2 ||
+					(act->y1 + act->y2) != cmd->param3) {
+					; // TODO updatecharacter_sub_408910
+					// TODO if (cmd->param5)
+					// cmd->param5 = 2
+					// v245 = true
+				} else
+					scn->updateActorDirection(actorIndex, cmd->param4);
+			}
+		}
+		return -1;
+	}
 
-	scn->updateActorDirection(actorIndex, 5);
-
-	return 0;
+	if (act->updateType != 2 && act->updateType != 13) {
+		cmd->param5 = 1;
+		// v245 = false
+		if ((act->x1 + act->x2) != cmd->param2 ||
+			(act->y1 + act->y2) != cmd->param3) {
+			scn->updateActorDirection(actorIndex, cmd->param4);
+		}
+	}
+	return -1;
 }
 
 int kEnableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
@@ -920,9 +940,9 @@ int k_unk36(Script *script, ScriptEntry *cmd, Scene *scn) {
 int kRunBlowUpPuzzle(Script *script, ScriptEntry *cmd, Scene *scn) {
 	// FIXME: improve this to call other blowUpPuzzles than VCR
 	//int puzzleIdx = cmd->param1;
-
-	scn->setBlowUpPuzzle(new BlowUpPuzzleVCR(scn));
-	scn->getBlowUpPuzzle()->openBlowUp();
+	warning("kRunBlowUpPuzzle not implemented");
+	//scn->setBlowUpPuzzle(new BlowUpPuzzleVCR(scn));
+	//scn->getBlowUpPuzzle()->openBlowUp();
 
 	return -1;
 }
