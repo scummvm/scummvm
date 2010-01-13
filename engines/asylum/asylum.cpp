@@ -62,11 +62,11 @@ AsylumEngine::~AsylumEngine() {
 
 	delete _console;
 	delete _scene;
-	delete _mainMenu;
+	//delete _mainMenu;
 	delete _video;
 	delete _sound;
 	delete _screen;
-	delete _encounter;
+	//delete _encounter;
 	delete _text;
 }
 
@@ -88,9 +88,9 @@ Common::Error AsylumEngine::init() {
 	_video     = new Video(_mixer);
 	_console   = new Console(this);
 	_text      = new Text(_screen);
-	_mainMenu  = 0;
+	//_mainMenu  = 0;
 	_scene     = 0;
-    _encounter = 0;
+	//_encounter = 0;
 
 	_introPlaying = false;
 
@@ -115,14 +115,14 @@ Common::Error AsylumEngine::go() {
 #endif
 
     // Set up main menu
-	_mainMenu = new MainMenu(this);
+	//_mainMenu = new MainMenu(this);
 
 	// TODO: if savegame not exists on folder, than start game()
-    if(0) { //SearchMan.hasArchive
+    //if(0) { //SearchMan.hasArchive
         startGame();
-    } else {
-        _mainMenu->openMenu();
-    }
+    //} else {
+    //    _mainMenu->openMenu();
+    //}
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -162,10 +162,10 @@ void AsylumEngine::startGame() {
 	// in the processActionList() method when the necessary action is fired.
 	// Once the blowup puzzle testing is removed from checkForEvent(), this
 	// can be removed as well.
-	_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
+	//_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
 
 	// XXX Testing
-	_encounter = new Encounter(_scene);
+	//_encounter = new Encounter(_scene);
 
     // Enter first scene
     if(!_introPlaying)
@@ -228,6 +228,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 		if (ev.type == Common::EVENT_KEYDOWN) {
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				// Toggle menu
+				/* FIXME reimplement later
 				if (_mainMenu->isActive()) {
                     if (_scene) {
                         _mainMenu->closeMenu();
@@ -239,17 +240,18 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 					_scene->getBlowUpPuzzle()->closeBlowUp();
 					_scene->enterScene();
 				}
-
+				*/
 				return;
 			}
 
 			// XXX: TEST ONLY
+			/*
 			if (ev.kbd.keycode == Common::KEYCODE_b) {
                 if (_scene) {
 				    _scene->getBlowUpPuzzle()->openBlowUp();
                 }
 			}
-
+			*/
 			if (ev.kbd.flags == Common::KBD_CTRL) {
 				if (ev.kbd.keycode == Common::KEYCODE_d)
 					_console->attach();
@@ -259,7 +261,8 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	}
 
 	if (doUpdate) {
-		if (_mainMenu->isActive() || (_scene && _scene->isActive()) || (_scene && _scene->getBlowUpPuzzle()->isActive()))
+		if (_scene && _scene->isActive())
+		//if (_mainMenu->isActive() || (_scene && _scene->isActive()) || (_scene && _scene->getBlowUpPuzzle()->isActive()))
 			// Copy background image
 			_screen->copyBackBufferToScreen();
 
@@ -267,6 +270,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 			_console->onFrame();
 	}
 
+	/* FIXME reimplement
 	if (_mainMenu->isActive())
 		// Main menu active, pass events to it
 		_mainMenu->handleEvent(&ev, doUpdate);
@@ -276,6 +280,10 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	else if (_scene && _scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
+	*/
+	if (_scene && _scene->isActive())
+		// Pass events to the game
+		_scene->handleEvent(&ev, doUpdate);
 }
 
 void AsylumEngine::processDelayedEvents() {
@@ -287,9 +295,13 @@ void AsylumEngine::processDelayedEvents() {
 		_video->playVideo(videoIdx, kSubtitlesOn);
 		_scene->actions()->delayedVideoIndex = -1;
 
+		/* FIXME reimplement
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
 		else if (_scene->isActive())
+			_scene->enterScene();
+		*/
+		if (_scene->isActive())
 			_scene->enterScene();
 	}
 
