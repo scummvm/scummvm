@@ -232,7 +232,7 @@ int32 k_unk5A(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 k_unk5B(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 k_unk5C(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 k_unk5D(Script *script, ScriptEntry *cmd, Scene *scn);
-int32 k_unk5E(Script *script, ScriptEntry *cmd, Scene *scn);
+int32 kClearActorField970(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kSetBarrierLastFrameIdx(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 k_unk60_SET_OR_CLR_ACTIONAREA_FLAG(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 k_unk61(Script *script, ScriptEntry *cmd, Scene *scn);
