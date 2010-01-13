@@ -66,4 +66,21 @@ void Barrier::setNextFrame(int32 targetFlags) {
 		frameIdx = 0;
 }
 
+void Barrier::updateSoundItems(Sound *snd) {
+	for (int32 i = 0; i < 16; i++) {
+		SoundItem *item = &soundItems[i];
+		if (snd->isPlaying(item->resId)) {
+			if (item->field_4) {
+				snd->stopSound(item->resId);
+				item->resId   = 0;
+				item->field_4 = 0;
+			}
+		}
+	}
+
+	// FIXME Barrier::updateSoundItems needs to be followed by a
+	// call to Scene::stopSound(barIdx, 0). Since there aren't that
+	// many calls to this method, I'm leaving this comment as a reminder
+	// until all dependant methods are implemented
+}
 } // end of namespace Asylum
