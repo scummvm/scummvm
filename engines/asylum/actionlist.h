@@ -149,7 +149,7 @@ int32 kPlayAnimation(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kMoveScenePosition(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kHideActor(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kShowActor(Script *script, ScriptEntry *cmd, Scene *scn);
-int32 kSetActorStats(Script *script, ScriptEntry *cmd, Scene *scn);
+int32 kSetActorPosition(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kSetSceneMotionStat(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kDisableActor(Script *script, ScriptEntry *cmd, Scene *scn);
 int32 kEnableActor(Script *script, ScriptEntry *cmd, Scene *scn);

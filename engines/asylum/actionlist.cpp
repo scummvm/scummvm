@@ -71,7 +71,7 @@ static const AsylumFunction function_map[] = {
 	/*0x08*/ MAPFUNC("kMoveScenePosition", kMoveScenePosition),
 	/*0x09*/ MAPFUNC("kHideActor", kHideActor),
 	/*0x0A*/ MAPFUNC("kShowActor", kShowActor),
-	/*0x0B*/ MAPFUNC("kSetActorStats", kSetActorStats),
+	/*0x0B*/ MAPFUNC("kSetActorPosition", kSetActorPosition),
 	/*0x0C*/ MAPFUNC("kSetSceneMotionStat", kSetSceneMotionStat),
 	/*0x0D*/ MAPFUNC("kDisableActor", kDisableActor),
 	/*0x0E*/ MAPFUNC("kEnableActor", kEnableActor),
@@ -622,21 +622,11 @@ int kShowActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return 0;
 }
 
-int kSetActorStats(Script *script, ScriptEntry *cmd, Scene *scn) {
-	//WorldStats *ws = scn->worldstats();
+int kSetActorPosition(Script *script, ScriptEntry *cmd, Scene *scn) {
+	Actor *act = scn->getActor(cmd->param1);
+	act->setPosition(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
 
-	// TODO
-	// param1 == actorIndex. Implement when we've got more than one actor
-
-	// TODO This needs to be depreciated, but it's setting the actor's x/y
-	// and bounding rect top/left.
-	// This needs to be rolled into the proper place
-	scn->getActor()->setPosition(cmd->param2, cmd->param3);
-
-	scn->getActor()->setPosition_40A260(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
-
-	// XXX Returning -1 since the setPosition logic isn't fully implemented
-	return -1;
+	return 0;
 }
 
 int kSetSceneMotionStat(Script *script, ScriptEntry *cmd, Scene *scn) {
