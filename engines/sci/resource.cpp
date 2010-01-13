@@ -579,7 +579,6 @@ ResourceManager::~ResourceManager() {
 		itr ++;
 	}
 	freeResourceSources();
-	_resMap.empty();
 
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
 	while (it != _volumeFiles.end()) {
