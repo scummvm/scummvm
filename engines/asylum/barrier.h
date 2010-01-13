@@ -44,6 +44,12 @@ public:
 	// TODO document this function
 	void setNextFrame(int flags);
 
+	/** .text:0040D0E0
+	 * Check if any items in the barrier sound array are playing,
+	 * and based on their flag values, stop them accordingly
+	 */
+	void updateSoundItems(Sound *snd);
+
 	int32		   id;
 	uint32		   resId;
 	int32		   x;
@@ -59,7 +65,7 @@ public:
 	int32		   field_3C;
 	uint8		   name[52];
 	int32		   field_74; // XXX looks like fields
-	int32		   field_78; // 78 => 80 have something
+	int32		   field_78; // 74 => 80 have something
 	int32		   field_7C; // to do with calculating
 	int32		   field_80; // actor intersection
 	int32		   polyIdx;
