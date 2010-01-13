@@ -436,4 +436,14 @@ int32 Actor::getAngle(int32 ax1, int32 ay1, int32 ax2, int32 ay2) {
 	return result;
 }
 
+void Actor::updateActor_401320() {
+	if(field_970) {
+		// TODO
+		// This update is only ever done if action script 0x5D is called, and
+		// the resulting switch sets field_970. Investigate 401A30 for further
+		// details
+		warning("[updateActor_401320] logic not implemented");
+	}
+}
+
 } // end of namespace Asylum

@@ -164,6 +164,12 @@ public:
 
 	void faceTarget(int32 targetId, int32 targetType);
 
+	/** .text:00401320
+	 * TODO
+	 */
+	void updateActor_401320();
+
+
 	// FIXME
 	// I don't really like how this is used in the scene constructor
 	void setResourcePack(ResourcePack *res) { _resPack = res; }

@@ -154,7 +154,7 @@ static const AsylumFunction function_map[] = {
 	/*0x5B*/ MAPFUNC("k_unk5B", k_unk5B),
 	/*0x5C*/ MAPFUNC("k_unk5C", k_unk5C),
 	/*0x5D*/ MAPFUNC("k_unk5D", k_unk5D),
-	/*0x5E*/ MAPFUNC("k_unk5E", k_unk5E),
+	/*0x5E*/ MAPFUNC("kClearActorField970", kClearActorField970),
 	/*0x5F*/ MAPFUNC("kSetBarrierLastFrameIdx", kSetBarrierLastFrameIdx),
 	/*0x60*/ MAPFUNC("k_unk60_SET_OR_CLR_ACTIONAREA_FLAG", k_unk60_SET_OR_CLR_ACTIONAREA_FLAG),
 	/*0x61*/ MAPFUNC("k_unk61", k_unk61),
@@ -601,9 +601,9 @@ int kHideActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 			&scn->worldstats()->actors[cmd->param1];
 
 	actor->visible(false);
-	// TODO character_sub_401320(actor)
+	actor->updateActor_401320();
 
-	return -2;
+	return -1;
 }
 
 int kShowActor(Script *script, ScriptEntry *cmd, Scene *scn) {
@@ -1255,8 +1255,12 @@ int k_unk5C(Script *script, ScriptEntry *cmd, Scene *scn) {
 int k_unk5D(Script *script, ScriptEntry *cmd, Scene *scn) {
 	return -2;
 }
-int k_unk5E(Script *script, ScriptEntry *cmd, Scene *scn) {
-	return -2;
+
+int kClearActorField970(Script *script, ScriptEntry *cmd, Scene *scn) {
+	Actor *act = scn->getActor(cmd->param1);
+	act->field_970 = 0;
+
+	return 0;
 }
 
 int kSetBarrierLastFrameIdx(Script *script, ScriptEntry *cmd, Scene *scn) {
