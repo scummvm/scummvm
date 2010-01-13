@@ -309,7 +309,7 @@ Common::File *ResourceManager::getVolumeFile(const char *filename) {
 			}
 			return file;
 		}
-		it ++;
+		++it;
 	}
 	// adding a new file
 	file = new Common::File;
@@ -468,7 +468,7 @@ int ResourceManager::addInternalSources() {
 		else if (Common::File::exists("RESOURCE.AUD"))
 			addSource(src, kSourceAudioVolume, "RESOURCE.AUD", 0);
 
-		itr++;
+		++itr;
 	}
 
 	return 1;
@@ -576,14 +576,14 @@ ResourceManager::~ResourceManager() {
 	ResourceMap::iterator itr = _resMap.begin();
 	while (itr != _resMap.end()) {
 		delete itr->_value;
-		itr ++;
+		++itr;
 	}
 	freeResourceSources();
 
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
 	while (it != _volumeFiles.end()) {
 		delete *it;
-		it ++;
+		++it;
 	}
 }
 
@@ -622,8 +622,8 @@ void ResourceManager::printLRU() {
 		res = *it;
 		debug("\t%s: %d bytes", res->id.toString().c_str(), res->size);
 		mem += res->size;
-		entries ++;
-		it ++;
+		++entries;
+		++it;
 	}
 
 	debug("Total: %d entries, %d bytes (mgr says %d)", entries, mem, _memoryLRU);
@@ -648,7 +648,7 @@ Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int 
 	while (itr != _resMap.end()) {
 		if ((itr->_value->id.type == type) && ((mapNumber == -1) || (itr->_value->id.number == mapNumber)))
 			resources->push_back(itr->_value->id);
-		itr++;
+		++itr;
 	}
 
 	return resources;
@@ -984,7 +984,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
-	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
+	for (int i = kResourceTypeView; i < kResourceTypeInvalid; ++i) {
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
@@ -995,7 +995,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 		mask = "*.";
 		mask += resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
-		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			bool bAdd = false;
 			name = (*x)->getName();
 			// SCI1 scheme
@@ -1027,7 +1027,7 @@ void ResourceManager::readWaveAudioPatches() {
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "*.wav");
 
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String name = (*x)->getName();
 
 		if (isdigit(name[0])) {

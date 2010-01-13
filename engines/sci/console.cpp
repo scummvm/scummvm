@@ -766,7 +766,7 @@ bool Console::cmdList(int argc, const char **argv) {
 				if (++cnt % 4 == 0)
 					DebugPrintf("\n");
 			}
-			itr++;
+			++itr;
 		}
 		DebugPrintf("\n");
 
