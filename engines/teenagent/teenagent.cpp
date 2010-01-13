@@ -594,7 +594,7 @@ Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	    str[0] != 0 || str[1] != 0;
 	    ++str) {
 		char c = str[0];
-		message += c != 0 && c != -1 ? c : '\n';
+		message += c != 0 && (signed char)c != -1 ? c : '\n';
 	}
 	if (message.empty()) {
 		warning("empty message parsed for %04x", addr);
