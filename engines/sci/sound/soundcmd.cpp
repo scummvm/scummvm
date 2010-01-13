@@ -609,12 +609,14 @@ void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
 
 void SoundCommandParser::cmdMasterVolume(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
+	_acc = make_reg(0, _state->sfx_getVolume());
+
 	if (obj != SIGNAL_REG)
  		_state->sfx_setVolume(obj.toSint16());
-
-	_acc = make_reg(0, _state->sfx_getVolume());
 #else
 	debugC(2, kDebugLevelSound, "cmdMasterVolume: %d", value);
+	_acc = make_reg(0, _music->soundGetMasterVolume());
+
 	if (_argc > 1)	{ // the first parameter is the sound command
 		int vol = CLIP<int16>(obj.toSint16(), 0, kMaxSciVolume);
 		vol = vol * Audio::Mixer::kMaxMixerVolume / kMaxSciVolume;
@@ -622,7 +624,6 @@ void SoundCommandParser::cmdMasterVolume(reg_t obj, int16 value) {
 		ConfMan.setInt("sfx_volume", vol);
 		g_engine->syncSoundSettings();
 	}
-	_acc = make_reg(0, _music->soundGetMasterVolume());
 #endif
 }
 
