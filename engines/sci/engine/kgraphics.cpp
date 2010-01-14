@@ -922,7 +922,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 	int goner_nr = argv[0].toSint16();
 	bool reanimate = true;
-	if ((argc == 2) && (argv[1].isNull()))
+	if ((argc == 2) && (!argv[1].isNull()))
 		reanimate = false;
 
 	s->_gui->disposeWindow(goner_nr, reanimate);
