@@ -94,16 +94,15 @@ void MidiParser_SCI::unloadMusic() {
 		_mixedData = NULL;
 	}
 
-	// Center the pitch wheels in preparation for the next piece of music
+	// Center the pitch wheels and hold pedal in preparation for the next piece of music
 	// TODO: We should monitor what channels are used by each song, and only
 	// reset these channels, not all of them!
 	if (_driver) {
 		for (int i = 0; i < 16; ++i) {
-			_driver->send(0xE0 | i, 0, 0x40);
+			_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
+			_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
 		}
 	}
-
-	// TODO: Reset hold pedal
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
