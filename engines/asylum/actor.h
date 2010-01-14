@@ -233,15 +233,15 @@ public:
 	int32  field_934;
 	int32  field_938;
 	int32  soundResId; // field_93C
-	int32  field_940;
+	int32  numberValue01;
 	int32  field_944;
 	int32  field_948;
 	int32  field_94C;
-	int32  field_950;
+	int32  numberFlag01;
 	int32  field_954;
 	int32  field_958;
 	int32  field_95C;
-	int32  field_960;
+	char   numberString01[8];
 	int32  field_964;
 	int32  field_968;
 	int32  field_96C;
@@ -249,7 +249,15 @@ public:
 	int32  field_974;
 	int32  field_978;
 	int32  actionIdx1;
-	// TODO field_980 till field_9A0
+	int32  field_980;
+	int32  field_984;
+	int32  field_988;
+	int32  field_98C;
+	int32  field_990;
+	int32  field_994;
+	int32  field_998;
+	int32  field_99C;
+	int32  field_9A0;
 
 private:
 	Scene *_scene;
