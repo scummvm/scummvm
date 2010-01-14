@@ -106,6 +106,7 @@ extern MidiPlayer *MidiPlayer_AdLib_create();
 extern MidiPlayer *MidiPlayer_Amiga_create();
 extern MidiPlayer *MidiPlayer_PCJr_create();
 extern MidiPlayer *MidiPlayer_PCSpeaker_create();
+extern MidiPlayer *MidiPlayer_Midi_create();
 
 } // End of namespace Sci
 

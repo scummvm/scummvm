@@ -60,7 +60,7 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
+	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI);
 
 	switch (midiType) {
 	case MD_ADLIB:
@@ -76,10 +76,8 @@ void SciMusic::init() {
 	case MD_PCSPK:
 		_pMidiDrv = MidiPlayer_PCSpeaker_create();
 		break;
-	//case MD_MT32:
-	// TODO
 	default:
-		error("Unsupported _midiType setup %d", midiType);
+		_pMidiDrv = MidiPlayer_Midi_create();
 	}
 
 	if (_pMidiDrv) {

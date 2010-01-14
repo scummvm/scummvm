@@ -64,6 +64,7 @@ MODULE_OBJS := \
 	sound/softseq/adlib.o \
 	sound/softseq/amiga.o \
 	sound/softseq/pcjr.o \
+	sound/softseq/midi.o \
 	video/seq_decoder.o \
 	video/vmd_decoder.o
 	
