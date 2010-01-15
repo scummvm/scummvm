@@ -344,7 +344,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 				new_delta -= 240;
 			}
 			*outData++ = (byte)new_delta;
-			debugC(2, kDebugLevelSound, "%02X ", new_delta);
+			debugC(2, kDebugLevelSound, "%02X ", (uint32)new_delta);
 		}
 		// Write command
 		switch (command) {
