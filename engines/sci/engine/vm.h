@@ -190,6 +190,7 @@ struct SelectorCache {
 	Selector syncTime;
 
 	// SCI1.1 specific selectors
+	Selector scalesignal; // < Used by Animate() for cel scaling (SCI1.1+)
 	Selector scaleX, scaleY;	///< SCI1.1 view scaling
 
 	// Used for auto detection purposes

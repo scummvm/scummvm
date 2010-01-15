@@ -71,6 +71,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1, "cantBeHere",  57 },
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,  "topString", 101 },
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,      "flags", 102 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,"scalesignal", 103 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
