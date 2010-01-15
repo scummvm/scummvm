@@ -87,6 +87,9 @@ struct AnimateEntry {
 	int16 x, y, z;
 	int16 priority;
 	uint16 signal;
+	uint16 scaleSignal;
+	int16 scaleX;
+	int16 scaleY;
 	Common::Rect celRect;
 	bool showBitsFlag;
 	reg_t castHandle;

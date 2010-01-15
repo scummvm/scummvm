@@ -158,6 +158,16 @@ void SciGuiAnimate::makeSortedList(List *list) {
 		listEntry->z = GET_SEL32V(_s->_segMan, curObject, z);
 		listEntry->priority = GET_SEL32V(_s->_segMan, curObject, priority);
 		listEntry->signal = GET_SEL32V(_s->_segMan, curObject, signal);
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			// Cel scaling
+			listEntry->scaleSignal = GET_SEL32V(_s->_segMan, curObject, scalesignal);
+			listEntry->scaleX = GET_SEL32V(_s->_segMan, curObject, scaleX);
+			listEntry->scaleY = GET_SEL32V(_s->_segMan, curObject, scaleY);
+		} else {
+			listEntry->scaleSignal = 0;
+			listEntry->scaleX = 128;
+			listEntry->scaleY = 128;
+		}
 		// listEntry->celRect is filled in AnimateFill()
 		listEntry->showBitsFlag = false;
 
@@ -347,7 +357,6 @@ void SciGuiAnimate::drawCels() {
 	reg_t bitsHandle;
 	AnimateList::iterator listIterator;
 	AnimateList::iterator listEnd = _list.end();
-	uint16 scaleX = 128, scaleY = 128;	// no scaling
 	_lastCastCount = 0;
 
 	listIterator = _list.begin();
@@ -361,14 +370,8 @@ void SciGuiAnimate::drawCels() {
 			bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 			PUT_SEL32(_s->_segMan, curObject, underBits, bitsHandle);
 
-			if (getSciVersion() >= SCI_VERSION_1_1) {
-				// View scaling
-				scaleX = GET_SEL32V(_s->_segMan, curObject, scaleX);
-				scaleY = GET_SEL32V(_s->_segMan, curObject, scaleY);
-			}
-
 			// draw corresponding cel
-			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, scaleX, scaleY);
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
 			listEntry->showBitsFlag = true;
 
 			if (signal & kSignalRemoveView) {
