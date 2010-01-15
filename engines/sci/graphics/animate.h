@@ -50,6 +50,12 @@ enum ViewSignals {
 	kSignalDisposeMe     = 0x8000
 };
 
+enum ViewScaleSignals {
+	kScaleSignalDoScaling	= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
+	kScaleSignalUnknown1	= 0x0002, // seems to do something with a globalvar
+	kScaleSignalUnknown2	= 0x0004 // really unknown
+};
+
 class Gfx;
 class Screen;
 class SciPalette;

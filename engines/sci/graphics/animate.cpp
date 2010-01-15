@@ -161,8 +161,13 @@ void SciGuiAnimate::makeSortedList(List *list) {
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			// Cel scaling
 			listEntry->scaleSignal = GET_SEL32V(_s->_segMan, curObject, scaleSignal);
-			listEntry->scaleX = GET_SEL32V(_s->_segMan, curObject, scaleX);
-			listEntry->scaleY = GET_SEL32V(_s->_segMan, curObject, scaleY);
+			if (listEntry->scaleSignal & kScaleSignalDoScaling) {
+				listEntry->scaleX = GET_SEL32V(_s->_segMan, curObject, scaleX);
+				listEntry->scaleY = GET_SEL32V(_s->_segMan, curObject, scaleY);
+			} else {
+				listEntry->scaleX = 128;
+				listEntry->scaleY = 128;
+			}
 		} else {
 			listEntry->scaleSignal = 0;
 			listEntry->scaleX = 128;
