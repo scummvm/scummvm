@@ -293,8 +293,6 @@ void MidiDriver_AdLib::send(uint32 b) {
 #endif
 			break;
 		case 0x4e:
-			// FIXME: this flag should be set to 0 when a new song is started
-			debug(3, "ADLIB: Setting velocity control flag for channel %i to %i", channel, op2);
 			_channels[channel].enableVelocity = op2;
 			break;
 		case SCI_MIDI_CHANNEL_NOTES_OFF:

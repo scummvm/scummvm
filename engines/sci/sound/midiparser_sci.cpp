@@ -82,6 +82,11 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_loopTick = 0;
 	_channelsUsed = 0;
 
+	// Send a velocity off signal to all channels
+	for (int i = 0; i < 16; ++i) {
+		_driver->send(0xB0 | i, 0x4E, 0);	// Reset velocity
+	}
+
 	return true;
 }
 
