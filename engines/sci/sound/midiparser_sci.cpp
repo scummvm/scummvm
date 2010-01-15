@@ -80,6 +80,8 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_tracks[0] = _mixedData;
 	setTrack(0);
 	_loopTick = 0;
+	_channelsUsed = 0;
+
 	return true;
 }
 
@@ -95,17 +97,20 @@ void MidiParser_SCI::unloadMusic() {
 	}
 
 	// Center the pitch wheels and hold pedal in preparation for the next piece of music
-	// TODO: We should monitor what channels are used by each song, and only
-	// reset these channels, not all of them!
 	if (_driver) {
 		for (int i = 0; i < 16; ++i) {
-			_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
-			_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
+			if (_channelsUsed & (1 << i)) {
+				_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
+				_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
+			}
 		}
 	}
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
+	// Monitor which channels are used by this song
+	_channelsUsed |= (1 << info.channel());
+
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_signalSet) {
 		_signalSet = false;
@@ -186,7 +191,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			case 0x46: // LSL3 - binoculars
 			case 0x61: // Iceman (Adlib?)
 			case 0x73: // Hoyle
-			case 0xd1: // KQ4, when riding the unicorn
+			case 0xD1: // KQ4, when riding the unicorn
 				// Obscure SCI commands - ignored
 				break;
 			// Standard MIDI commands

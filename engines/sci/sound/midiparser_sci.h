@@ -84,6 +84,10 @@ protected:
 
 	bool _signalSet;
 	int16 _signalToSet;
+
+	// A 16-bit mask, containing the channels used
+	// by the currently parsed song
+	uint16 _channelsUsed;
 };
 
 } // End of namespace Sci
