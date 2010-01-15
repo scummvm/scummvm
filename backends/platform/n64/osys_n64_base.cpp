@@ -134,8 +134,10 @@ OSystem_N64::OSystem_N64() {
 
 	_dirtyOffscreen = false;
 
+	detectControllers();
+
 	_ctrlData = (controller_data_buttons*)memalign(8, sizeof(controller_data_buttons));
-	_controllerHasRumble = (identifyPak(0) == 2);
+	_controllerHasRumble = (identifyPak(_controllerNumber) == 2);
 
 	_fsFactory = new N64FilesystemFactory();
 
@@ -605,8 +607,8 @@ void OSystem_N64::unlockScreen() {
 void OSystem_N64::setShakePos(int shakeOffset) {
 
 	// If a rumble pak is plugged in and screen shakes, rumble!
-	if(shakeOffset && _controllerHasRumble) rumblePakEnable(1, 0);
-	else if(!shakeOffset && _controllerHasRumble) rumblePakEnable(0, 0);
+	if (shakeOffset && _controllerHasRumble) rumblePakEnable(1, _controllerNumber);
+	else if (!shakeOffset && _controllerHasRumble) rumblePakEnable(0, _controllerNumber);
 
 	_shakeOffset = shakeOffset;
 	_dirtyOffscreen = true;
@@ -871,6 +873,23 @@ void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
 
 void OSystem_N64::setupMixer(void) {
 	enableAudioPlayback();
+}
+
+/* Check all controller ports for a compatible input adapter. */
+void OSystem_N64::detectControllers(void) {
+	controller_data_status *ctrl_status = (controller_data_status*)memalign(8, sizeof(controller_data_status));
+	controller_Read_Status(ctrl_status);
+
+	_controllerNumber = 0; // Use first controller as default
+	for (uint8 ctrl_port = 0; ctrl_port < 4; ctrl_port++) {
+		// Found a standard pad, use this by default.
+		if (ctrl_status->c[ctrl_port].type == CTRL_PAD_STANDARD) {
+			_controllerNumber = ctrl_port;
+			break;
+		}
+	}
+
+	free(ctrl_status);
 }
 
 inline uint16 colRGB888toBGR555(byte r, byte g, byte b) {

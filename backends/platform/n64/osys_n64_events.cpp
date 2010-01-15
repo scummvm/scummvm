@@ -60,7 +60,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	controller_Read_Buttons(_ctrlData);
 
 	static uint16 oldButtons = 0; // old button data... used for button press/release
-	uint16 newButtons = _ctrlData->c[0].buttons; // Read from controller 0
+	uint16 newButtons = _ctrlData->c[_controllerNumber].buttons; // Read from controller
 
 	bool buttonPressed = false;
 	static bool left_digital = false;
@@ -68,8 +68,8 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	static bool up_digital = false;
 	static bool down_digital = false;
 
-	int8 analogX = (_ctrlData->c[0].throttle >> 8) & 0xFF;
-	int8 analogY = (_ctrlData->c[0].throttle >> 0) & 0xFF;
+	int8 analogX = (_ctrlData->c[_controllerNumber].throttle >> 8) & 0xFF;
+	int8 analogY = (_ctrlData->c[_controllerNumber].throttle >> 0) & 0xFF;
 
 	if (newButtons != oldButtons) {
 		if (DL_BUTTON(newButtons) && !DL_BUTTON(oldButtons)) // Pressed LEFT
