@@ -728,7 +728,7 @@ public:
 		//Common::StackLock lock(_mutex);
 		return _queue.empty();
 	}
-	virtual bool endOfStream() const { return _finished; }
+	virtual bool endOfStream() const { return _finished && _queue.empty(); }
 
 	// Implement the QueuingAudioStream API
 	virtual void queueAudioStream(AudioStream *stream, bool disposeAfterUse);
