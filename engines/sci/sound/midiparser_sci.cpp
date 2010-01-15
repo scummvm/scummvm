@@ -317,64 +317,71 @@ byte *MidiParser_SCI::midiMixChannels() {
 		totalSize += _track->channels[i].size;
 	}
 
-	byte *mixedData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
-	_mixedData = mixedData;
+	byte *outData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
+	_mixedData = outData;
 	long ticker = 0;
-	byte curr, delta;
-	byte cmd, par1, global_prev = 0;
+	byte curr, curDelta;
+	byte command = 0, par1, global_prev = 0;
 	long new_delta;
 	SoundResource::Channel *channel;
+
 	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still active channel
 		channel = &_track->channels[curr];
-		delta = *channel->data++;
-		channel->time += (delta == 0xF8 ? 240 : delta); // when the comamnd is supposed to occur
-		if (delta == 0xF8)
+		curDelta = *channel->data++;
+		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the comamnd is supposed to occur
+		if (curDelta == 0xF8)
 			continue;
 		new_delta = channel->time - ticker;
 		ticker += new_delta;
 
-		cmd = *channel->data++;
-		if (cmd != kEndOfTrack) {
-			// output new delta
+		command = *channel->data++;
+		if (command != kEndOfTrack) {
+			debugC(2, kDebugLevelSound, "\nDELTA ");
+			// Write delta
 			while (new_delta > 240) {
-				*mixedData++ = 0xF8;
+				*outData++ = 0xF8;
+				debugC(2, kDebugLevelSound, "F8 ");
 				new_delta -= 240;
 			}
-			*mixedData++ = (byte)new_delta;
+			*outData++ = (byte)new_delta;
+			debugC(2, kDebugLevelSound, "%02X ", new_delta);
 		}
-		switch (cmd) {
+		// Write command
+		switch (command) {
 		case 0xF0: // sysEx
-			*mixedData++ = cmd;
+			*outData++ = command;
+			debugC(2, kDebugLevelSound, "%02X ", command);
 			do {
 				par1 = *channel->data++;
-				*mixedData++ = par1; // out
+				*outData++ = par1; // out
 			} while (par1 != 0xF7);
 			break;
-		case kEndOfTrack: // end channel
+		case kEndOfTrack: // end of channel
 			channel->time = -1; // FIXME
 			break;
 		default: // MIDI command
-			if (cmd & 0x80)
+			if (command & 0x80)
 				par1 = *channel->data++;
 			else {// running status
-				par1 = cmd;
-				cmd = channel->prev;
+				par1 = command;
+				command = channel->prev;
 			}
-			if (cmd != global_prev)
-				*mixedData++ = cmd; // out cmd
-			*mixedData++ = par1;// pout par1
-			if (nMidiParams[(cmd >> 4) - 8] == 2)
-				*mixedData++ = *channel->data++; // out par2
-			channel->prev = cmd;
-			global_prev = cmd;
-		}// switch(cmd)
+			if (command != global_prev)
+				*outData++ = command; // out command
+			*outData++ = par1;// pout par1
+			if (nMidiParams[(command >> 4) - 8] == 2)
+				*outData++ = *channel->data++; // out par2
+			channel->prev = command;
+			global_prev = command;
+		}// switch(command)
 	}// while (curr)
-	// mixing finished. inserting stop event
-	*mixedData++ = 0;
-	*mixedData++ = 0xFF;
-	*mixedData++ = 0x2F;
-	*mixedData++ = 0x00;
-	*mixedData++ = 0x00;
+
+	// Insert stop event
+	*outData++ = 0;    // Delta
+	*outData++ = 0xFF; // Meta event
+	*outData++ = 0x2F; // End of track (EOT)
+	*outData++ = 0x00;
+	*outData++ = 0x00;
 
 	for (int channelNr = 0; channelNr < _track->channelCount; channelNr++)
 		_track->channels[channelNr].data = dataPtr[channelNr];
@@ -390,18 +397,13 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	SoundResource::Channel *channel = &_track->channels[0];
 	byte *channelData = channel->data;
 	byte *channelDataEnd = channel->data + channel->size;
-	byte *filterData = new byte[channel->size + 5];
-	byte curChannel, curByte, curDelta;
-	byte command, lastCommand;
+	byte *outData = new byte[channel->size + 5];
+	byte curChannel = 15, curByte, curDelta;
+	byte command = 0, lastCommand = 0;
 	int delta = 0;
-	//int dataLeft = channel->size;
-	int midiParamCount;
+	int midiParamCount = 0;
 
-	_mixedData = filterData;
-	command = 0;
-	midiParamCount = 0;
-	lastCommand = 0;
-	curChannel = 15;
+	_mixedData = outData;
 
 	while (channelData < channelDataEnd) {
 		curDelta = *channelData++;
@@ -430,22 +432,22 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 				debugC(2, kDebugLevelSound, "\nDELTA ");
 				// Write delta
 				while (delta > 240) {
-					*filterData++ = 0xF8;
+					*outData++ = 0xF8;
 					debugC(2, kDebugLevelSound, "F8 ");
 					delta -= 240;
 				}
-				*filterData++ = (byte)delta;
+				*outData++ = (byte)delta;
 				debugC(2, kDebugLevelSound, "%02X ", delta);
 				delta = 0;
 			}
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
-				*filterData++ = command;
+				*outData++ = command;
 				debugC(2, kDebugLevelSound, "%02X ", command);
 				do {
 					curByte = *channelData++;
-					*filterData++ = curByte; // out
+					*outData++ = curByte; // out
 				} while (curByte != 0xF7);
 				lastCommand = command;
 				break;
@@ -455,22 +457,22 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 			default: // MIDI command
 				if (lastCommand != command) {
-					*filterData++ = command;
+					*outData++ = command;
 					debugC(2, kDebugLevelSound, "%02X ", command);
 					lastCommand = command;
 				}
 				if (midiParamCount > 0) {
 					if (curByte & 0x80) {
 						debugC(2, kDebugLevelSound, "%02X ", *channelData);
-						*filterData++ = *channelData++;
+						*outData++ = *channelData++;
 					} else {
 						debugC(2, kDebugLevelSound, "%02X ", curByte);
-						*filterData++ = curByte;
+						*outData++ = curByte;
 					}
 				}
 				if (midiParamCount > 1) {
 					debugC(2, kDebugLevelSound, "%02X ", *channelData);
-					*filterData++ = *channelData++;
+					*outData++ = *channelData++;
 				}
 			}
 		} else {
@@ -481,12 +483,13 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			}
 		}
 	}
-	// Stop event
-	*filterData++ = 0;    // delta
-	*filterData++ = 0xFF; // Meta-Event
-	*filterData++ = 0x2F; // End-Of-Track
-	*filterData++ = 0x00;
-	*filterData++ = 0x00;
+
+	// Insert stop event
+	*outData++ = 0;    // Delta
+	*outData++ = 0xFF; // Meta event
+	*outData++ = 0x2F; // End of track (EOT)
+	*outData++ = 0x00;
+	*outData++ = 0x00;
 
 	return _mixedData;
 }
