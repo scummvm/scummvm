@@ -52,7 +52,7 @@ enum ViewSignals {
 
 enum ViewScaleSignals {
 	kScaleSignalDoScaling	= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
-	kScaleSignalUnknown1	= 0x0002, // seems to do something with a globalvar
+	kScaleSignalUnknown1	= 0x0002, // seems to do something with globalvar 2, sets scaleX/scaleY
 	kScaleSignalUnknown2	= 0x0004 // really unknown
 };
 
