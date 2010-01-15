@@ -214,9 +214,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*19*/	DEFUN("EditControl", kEditControl, "ZoZo"),
 	/*1a*/	DEFUN("TextSize", kTextSize, "rZrii*r*"),
 	/*1b*/	DEFUN("Display", kDisplay, ".*"),
-	// FIXME: signature check removed (set to .*) as kGetEvent is different in Mac versions
-	/*1c*/	DEFUN("GetEvent", kGetEvent, ".*"),
-	///*1c*/	DEFUN("GetEvent", kGetEvent, "io"),
+	/*1c*/	DEFUN("GetEvent", kGetEvent, "ioi*"),	// Mac versions pass an extra 3rd parameter (ignored - always 0?)
 	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "oo*"),
 	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "oo*"),
 	/*1f*/	DEFUN("MapKeyToDir", kMapKeyToDir, "o"),
@@ -291,9 +289,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*65*/	DEFUN("CoordPri", kCoordPri, "ii*"),
 	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),
 	/*67*/	DEFUN("DeviceInfo", kDeviceInfo, "i.*"),
-	// FIXME: signature check removed (set to .*), as this function accepts a parameter in SCI32 games
-	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ".*"),
-	///*68*/	DEFUN("GetSaveDir", kGetSaveDir, ""),
+	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ".*"),	// accepts a parameter in SCI2+ games
 	/*69*/	DEFUN("CheckSaveGame", kCheckSaveGame, ".*"),
 	/*6a*/	DEFUN("ShakeScreen", kShakeScreen, "ii*"),
 	/*6b*/	DEFUN("FlushResources", kFlushResources, "i"),
