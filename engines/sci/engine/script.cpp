@@ -235,7 +235,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(overlay);
 	FIND_SELECTOR(setCursor);
 	FIND_SELECTOR(topString);
-	FIND_SELECTOR(scalesignal);
+	FIND_SELECTOR(scaleSignal);
 	FIND_SELECTOR(scaleX);
 	FIND_SELECTOR(scaleY);
 
