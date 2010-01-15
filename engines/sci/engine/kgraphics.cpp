@@ -932,14 +932,14 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect1 (argv[1].toSint16(), argv[0].toSint16(), argv[3].toSint16(), argv[2].toSint16());
 	Common::Rect rect2;
-	int argextra = argc == 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games
+	int argextra = argc >= 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games, argc 13 for DOS argc 15 for mac
 	int	style = argv[5 + argextra].toSint16();
 	int	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
 	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
 	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
 	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
-	if (argc==13) {
+	if (argc>=13) {
 		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
 	}
 
