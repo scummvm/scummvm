@@ -137,9 +137,6 @@ public:
 	~SciMusic();
 
 	void init();
-#if 0
-	void loadPatch();
-#endif
 	void onTimer();
 	void clearPlayList();
 
@@ -205,11 +202,6 @@ public:
 protected:
 	byte findAudEntry(uint16 nAud, byte&oVolume, uint32& oOffset, uint32&oSize);
 	void sortPlayList();
-#if 0
-	void loadPatchMT32();
-	void patchSysEx(byte * addr, byte *pdata, int len);
-	void patchUpdateAddr(byte *addr, int len);
-#endif
 
 	SciVersion _soundVersion;
 
