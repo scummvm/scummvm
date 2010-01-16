@@ -501,7 +501,6 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 
-	// TODO: SCI1.1 view scaling
 	if (!_EGAmapping) {
 		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
@@ -538,8 +537,8 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 	int x, y;
 	uint16 scalingX[320];
 	uint16 scalingY[200];
-	uint16 scaledWidth, scaledHeight;
-	int16 pixelNo, scaledPixel;
+	int16 scaledWidth, scaledHeight;
+	int16 pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 	uint16 offsetX, offsetY;
 
 	if (_embeddedPal) {
@@ -552,35 +551,49 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 	scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
 	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
-	if ((scaleX > 128) || (scaleY > 128)) {
-		warning("upscaling doesnt work yet");
-		return;
-	}
+	// Do we really need to do this?!
+	memset(scalingX, 0, sizeof(scalingX));
+	memset(scalingY, 0, sizeof(scalingY));
 
 	// Create height scaling table
 	pixelNo = 0;
-	scaledPixel = 0;
+	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
 	while (pixelNo < celHeight) {
-		scalingY[scaledPixel >> 7] = pixelNo;
+		scaledPixelNo = scaledPixel >> 7;
+		if (prevScaledPixelNo < scaledPixelNo)
+			memset(&scalingY[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
+		scalingY[scaledPixelNo] = pixelNo;
+		prevScaledPixelNo = scaledPixelNo + 1;
 		pixelNo++;
 		scaledPixel += scaleY;
 	}
+	scaledPixelNo++;
+	memset(&scalingY[scaledPixelNo], pixelNo - 1, scaledHeight - scaledPixelNo);
 
 	// Create width scaling table
 	pixelNo = 0;
-	scaledPixel = 0;
+	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
 	while (pixelNo < celWidth) {
-		scalingX[scaledPixel >> 7] = pixelNo;
+		scaledPixelNo = scaledPixel >> 7;
+		if (prevScaledPixelNo < scaledPixelNo)
+			memset(&scalingX[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
+		scalingX[scaledPixelNo] = pixelNo;
+		prevScaledPixelNo = scaledPixelNo + 1;
 		pixelNo++;
 		scaledPixel += scaleX;
 	}
+	scaledPixelNo++;
+	memset(&scalingX[scaledPixelNo], pixelNo - 1, scaledWidth - scaledPixelNo);
+
+	scaledWidth = MIN(clipRect.width(), scaledWidth);
+	scaledHeight = MIN(clipRect.height(), scaledHeight);
 
 	offsetY = clipRect.top - rect.top;
 	offsetX = clipRect.left - rect.left;
 
 	for (y = 0; y < scaledHeight; y++) {
 		for (x = 0; x < scaledWidth; x++) {
-			color = bitmap[scalingY[y] * celWidth + scalingX[x]];
+			color = bitmap[scalingY[y + offsetY] * celWidth + scalingX[x + offsetX]];
 			if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
 				_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
 			}
