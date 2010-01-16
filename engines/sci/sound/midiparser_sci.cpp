@@ -55,6 +55,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 
 	_signalSet = false;
 	_signalToSet = 0;
+	_channelsUsed = 0;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
