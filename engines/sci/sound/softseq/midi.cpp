@@ -422,6 +422,7 @@ void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
 	memcpy(_keyShift, data + 0x80, 0x80);
 	memcpy(_volAdjust, data + 0x100, 0x80);
 	memcpy(_percussionMap, data + 0x180, 0x80);
+	_channels[MIDI_RHYTHM_CHANNEL].volAdjust = data[0x200];
 	memcpy(_velocityMapIdx, data + 0x201, 0x80);
 	memcpy(_velocityMap, data + 0x281, 0x200);
 
