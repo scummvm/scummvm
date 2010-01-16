@@ -382,7 +382,11 @@ void Gfx::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, b
 
 	Common::Rect clipRectTranslated = clipRect;
 	OffsetRect(clipRectTranslated);
-	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, false, scaleX, scaleY);
+	if (scaleX == 128 && scaleY == 128) {
+		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, false);
+	} else {
+		view->drawScaled(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, scaleX, scaleY);
+	}
 }
 
 // This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen
@@ -429,7 +433,7 @@ void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, u
 			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
 		}
 
-		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true, scaleX, scaleY);
+		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo, true);
 		if (!_screen->_picNotValidSci11) {
 			_screen->copyDisplayRectToScreen(clipRectTranslated);
 		}

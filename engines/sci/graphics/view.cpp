@@ -480,7 +480,7 @@ void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clear
 	}
 }
 
-void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleX, uint16 scaleY) {
+void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -522,6 +522,40 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 				color = EGAmapping[bitmap[x]];
 				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y))
 					_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, color, priority, 0);
+			}
+		}
+	}
+}
+
+void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
+	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
+	CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	byte *bitmap = getBitmap(loopNo, celNo);
+	int16 celHeight = celInfo->height, celWidth = celInfo->width;
+	int16 width, height;
+	byte clearKey = celInfo->clearKey;
+	byte color;
+	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
+	int x, y;
+
+	if (_embeddedPal) {
+		// Merge view palette in...
+		_palette->set(&_viewPalette, 1);
+	}
+
+	width = MIN(clipRect.width(), celWidth);
+	height = MIN(clipRect.height(), celHeight);
+
+	// Calculate scale table
+	// TODO
+
+	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
+
+	for (y = 0; y < height; y++, bitmap += celWidth) {
+		for (x = 0; x < width; x++) {
+			color = bitmap[x];
+			if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
+				_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
 			}
 		}
 	}

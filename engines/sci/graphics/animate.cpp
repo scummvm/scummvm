@@ -217,7 +217,11 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 		}
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+		if (listEntry->scaleSignal & kScaleSignalDoScaling) {
+			view->getCelScaledRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, listEntry->scaleX, listEntry->scaleY, &listEntry->celRect);
+		} else {
+			view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+		}
 		PUT_SEL32V(_s->_segMan, curObject, nsLeft, listEntry->celRect.left);
 		PUT_SEL32V(_s->_segMan, curObject, nsTop, listEntry->celRect.top);
 		PUT_SEL32V(_s->_segMan, curObject, nsRight, listEntry->celRect.right);
