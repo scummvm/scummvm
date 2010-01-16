@@ -86,6 +86,7 @@ private:
 	};
 
 	bool _isMt32;
+	bool _isOldPatchFormat;
 	bool _hasReverb;
 	bool _playSwitch;
 	int _masterVolume;
@@ -102,7 +103,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi() : _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false) {
+MidiPlayer_Midi::MidiPlayer_Midi() : _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(false) {
 	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_MIDI);
 	_driver = createMidi(midiType);
 
@@ -511,6 +512,13 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
 		if (!res)
 			warning("Failed to locate GM patch, attempting to load MT-32 patch");
+
+		// Detect the format of patch 1, so that we know what play mask to use
+		Resource *resPatch1 = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+		if (!resPatch1)
+			_isOldPatchFormat = false;
+		else
+			_isOldPatchFormat = !isMt32GmPatch(resPatch1->data, resPatch1->size);
 	}
 
 	if (!res) {
@@ -576,7 +584,7 @@ byte MidiPlayer_Midi::getPlayId(SciVersion soundVersion) {
 		if (_isMt32)
 			return 0x0c;
 		else
-			return 0x07;
+			return _isOldPatchFormat ? 0x0c : 0x07;
 	}
 }
 
