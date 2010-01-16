@@ -317,6 +317,12 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(_soundVersion));
+
+			// Enable rhythm channel when requested
+			channelFilterMask &= ~(1 << MIDI_RHYTHM_CHANNEL);
+			if (_pMidiDrv->hasRhythmChannel())
+				channelFilterMask |= (1 << MIDI_RHYTHM_CHANNEL);
+
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
 			// Fast forward to the last position and perform associated events when loading

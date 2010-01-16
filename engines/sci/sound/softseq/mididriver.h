@@ -67,7 +67,11 @@ enum {
 class MidiPlayer : public MidiDriver {
 protected:
 	MidiDriver *_driver;
+	byte _reverb;
+
 public:
+	MidiPlayer() : _reverb(0) { }
+
 	int open() {
 		ResourceManager *resMan = ((SciEngine *)g_engine)->getResourceManager();	// HACK
 		return open(resMan);
@@ -92,6 +96,9 @@ public:
 	virtual int getVolume() {
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
  	}
+
+	virtual byte getReverb() { return _reverb; }
+	virtual void setReverb(byte reverb) { _reverb = reverb; }
 
 	virtual void playSwitch(bool play) {
 		if (!play) {
