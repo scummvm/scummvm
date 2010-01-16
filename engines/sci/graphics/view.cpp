@@ -266,6 +266,26 @@ void View::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Comm
 	}
 }
 
+void View::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect *outRect) {
+	int16 scaledDisplaceX, scaledDisplaceY;
+	int16 scaledWidth, scaledHeight;
+	CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	if (celInfo) {
+		// Scaling displaceX/Y, Width/Height
+		scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
+		scaledDisplaceY = (celInfo->displaceY * scaleY) >> 7;
+		scaledWidth = (celInfo->width * scaleX) >> 7;
+		scaledHeight = (celInfo->height * scaleY) >> 7;
+		scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
+		scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
+
+		outRect->left = x + scaledDisplaceX - (scaledWidth >> 1);
+		outRect->right = outRect->left + scaledWidth;
+		outRect->bottom = y + scaledDisplaceY - z + 1;
+		outRect->top = outRect->bottom - scaledHeight;
+	}
+}
+
 void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount) {
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
