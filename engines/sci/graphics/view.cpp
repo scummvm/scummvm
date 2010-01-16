@@ -532,28 +532,55 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
-	int16 width, height;
 	byte clearKey = celInfo->clearKey;
 	byte color;
 	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
 	int x, y;
+	uint16 scalingX[320];
+	uint16 scalingY[200];
+	uint16 scaledWidth, scaledHeight;
+	int16 pixelNo, scaledPixel;
+	uint16 offsetX, offsetY;
 
 	if (_embeddedPal) {
 		// Merge view palette in...
 		_palette->set(&_viewPalette, 1);
 	}
 
-	width = MIN(clipRect.width(), celWidth);
-	height = MIN(clipRect.height(), celHeight);
+	scaledWidth = (celInfo->width * scaleX) >> 7;
+	scaledHeight = (celInfo->height * scaleY) >> 7;
+	scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
+	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
-	// Calculate scale table
-	// TODO
+	if ((scaleX > 128) || (scaleY > 128)) {
+		warning("upscaling doesnt work yet");
+		return;
+	}
 
-	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
+	// Create height scaling table
+	pixelNo = 0;
+	scaledPixel = 0;
+	while (pixelNo < celHeight) {
+		scalingY[scaledPixel >> 7] = pixelNo;
+		pixelNo++;
+		scaledPixel += scaleY;
+	}
 
-	for (y = 0; y < height; y++, bitmap += celWidth) {
-		for (x = 0; x < width; x++) {
-			color = bitmap[x];
+	// Create width scaling table
+	pixelNo = 0;
+	scaledPixel = 0;
+	while (pixelNo < celWidth) {
+		scalingX[scaledPixel >> 7] = pixelNo;
+		pixelNo++;
+		scaledPixel += scaleX;
+	}
+
+	offsetY = clipRect.top - rect.top;
+	offsetX = clipRect.left - rect.left;
+
+	for (y = 0; y < scaledHeight; y++) {
+		for (x = 0; x < scaledWidth; x++) {
+			color = bitmap[scalingY[y] * celWidth + scalingX[x]];
 			if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
 				_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
 			}
