@@ -155,7 +155,7 @@ Window *WindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *resto
 	}
 	
 	r = dims;
-	if (style == SCI_WINDOWMGR_STYLE_USER || !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
+	if ((style != SCI_WINDOWMGR_STYLE_USER) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 		r.grow(1);
 		if (style & SCI_WINDOWMGR_STYLE_TITLE) {
 			r.top -= 10;
