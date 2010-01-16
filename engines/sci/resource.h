@@ -473,7 +473,7 @@ public:
 #endif
 	Track *getTrackByType(byte type);
 	Track *getDigitalTrack();
-	int getChannelFilterMask(int hardwareMask);
+	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
 
 private:
 	SciVersion _soundVersion;

@@ -2077,7 +2077,7 @@ SoundResource::Track *SoundResource::getDigitalTrack() {
 }
 
 // Gets the filter mask for SCI0 sound resources
-int SoundResource::getChannelFilterMask(int hardwareMask) {
+int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 	byte *data = _innerResource->data;
 	int channelMask = 0;
 	int reverseHardwareMask = 0;
@@ -2130,6 +2130,11 @@ int SoundResource::getChannelFilterMask(int hardwareMask) {
 		}
 		// Play channel 15 at all times (control channel)
 		channelMask |= 0x8000;
+
+		channelMask &= ~(1 << 9);
+		if (wantsRhythm)
+			channelMask |= (1 << 9);
+
 		break;
 	default:
 		break;
