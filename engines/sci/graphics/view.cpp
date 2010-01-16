@@ -526,6 +526,8 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 	}
 }
 
+// We don't fully follow sierra sci here, I did the scaling algo myself and it's definitely not pixel-perfect
+//  with the one sierra is using. It shouldn't matter because the scaled cel rect is definitely the same as in sierra sci
 void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);

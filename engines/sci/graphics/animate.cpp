@@ -168,6 +168,12 @@ void SciGuiAnimate::makeSortedList(List *list) {
 				listEntry->scaleX = 128;
 				listEntry->scaleY = 128;
 			}
+			// TODO
+			// On scaleSignal bit 1 sierra sci does some stuff with global var 2, current Port
+			//  and some other stuff and sets scaleX/Y accordingly. It seems this functionality is needed in at
+			//  least sq5 right when starting the game before wilco exists the room. Currently we dont get scaling
+			//  but sierra sci does scaling there. I dont fully understand the code yet, that's why i didnt implement
+			//  anything.
 		} else {
 			listEntry->scaleSignal = 0;
 			listEntry->scaleX = 128;
