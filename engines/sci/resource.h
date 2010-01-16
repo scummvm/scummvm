@@ -274,6 +274,14 @@ public:
 	ViewType getViewType() const { return _viewType; }
 	const char *getMapVersionDesc() const { return versionDescription(_mapVersion); }
 	const char *getVolVersionDesc() const { return versionDescription(_volVersion); }
+	
+	/**
+	 * Adds the appropriate GM patch from the Sierra MIDI utility as 4.pat, without
+	 * requiring the user to rename the file to 4.pat. Thus, the original Sierra
+	 * archive can be extracted in the extras directory, and the GM patches can be
+	 * applied per game, if applicable
+	 */
+	void addNewGMPatch(Common::String gameId);
 
 protected:
 	// Maximum number of bytes to allow being allocated for resources

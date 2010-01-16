@@ -474,6 +474,36 @@ int ResourceManager::addInternalSources() {
 	return 1;
 }
 
+void ResourceManager::addNewGMPatch(Common::String gameId) {
+	Common::String gmPatchFile;
+
+	if (gameId == "ecoquest")
+		gmPatchFile = "ECO1GM.PAT";
+	else if (gameId == "hoyle3")
+		gmPatchFile = "HOY3GM.PAT";
+	else if (gameId == "hoyle3")
+		gmPatchFile = "HOY3GM.PAT";
+	else if (gameId == "lsl1sci")
+		gmPatchFile = "LL1_GM.PAT";
+	else if (gameId == "lsl5")
+		gmPatchFile = "LL5_GM.PAT";
+	else if (gameId == "longbow")
+		gmPatchFile = "ROBNGM.PAT";
+	else if (gameId == "sq1sci")
+		gmPatchFile = "SQ1_GM.PAT";
+	else if (gameId == "sq4")
+		gmPatchFile = "SQ4_GM.PAT";
+	else if (gameId == "fairytales")
+		gmPatchFile = "TALEGM.PAT";
+
+	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
+		ResourceSource *psrcPatch = new ResourceSource;
+		psrcPatch->source_type = kSourcePatch;
+		psrcPatch->location_name = gmPatchFile;
+		processPatch(psrcPatch, kResourceTypePatch, 4);
+	}
+}
+
 void ResourceManager::scanNewSources() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		ResourceSource *source = *it;

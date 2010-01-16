@@ -288,6 +288,8 @@ int game_init(EngineState *s) {
 	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
 	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags, s->resMan);
+	// Add the after market GM patches for the specified game, if they exist
+	s->resMan->addNewGMPatch(s->_gameId);
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameId.c_str(), PRINT_REG(s->_gameObj));
 
