@@ -405,7 +405,7 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 		loadTimbres(gtlName + ".ad");
 
 		// Setup the percussion channel
-		for (unsigned int i = 0; i < _timbres.size(); i++) {
+		for (uint i = 0; i < _timbres.size(); i++) {
 			if (_timbres[i].bank == 0x7F)
 				setTimbreAD(9, _timbres[i]);
 		}

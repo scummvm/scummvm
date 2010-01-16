@@ -573,8 +573,7 @@ void AnimviewView::readNextCommand() {
 		assert(_vm->_resourceManager->resourceExists(aaFile.filenames[seriesCtr].c_str()));
 
 	// Start sound
-	if (aaFile.flags & AA_HAS_SOUND)
-	{
+	if (aaFile.flags & AA_HAS_SOUND) {
 		char buffer[100];
 		strcpy(buffer, aaFile.soundName.c_str());
 		buffer[0] = 'A';	// A for AdLib resource
@@ -720,7 +719,7 @@ AAFile::AAFile(const char *resourceName, M4Engine* vm): MadsPack(resourceName, v
 	Common::MemoryReadStream stream2(*getItemStream(2));
 
 	Common::MemoryReadStream stream(*getItemStream(0));
-printf("ss %d %d %d\n", stream.size(), stream1.size(), stream2.size());
+
 	seriesCount = stream.readUint16LE();
 	frameCount = stream.readUint16LE();
 	frameEntryCount = stream.readUint16LE();
