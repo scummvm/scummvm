@@ -319,9 +319,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(_soundVersion));
 
 			// Enable rhythm channel when requested
-			channelFilterMask &= ~(1 << MIDI_RHYTHM_CHANNEL);
+			// FIXME: this causes crashes and/or oddities for newer games (SCI1+)
+			/*channelFilterMask &= ~(1 << MIDI_RHYTHM_CHANNEL);
 			if (_pMidiDrv->hasRhythmChannel())
-				channelFilterMask |= (1 << MIDI_RHYTHM_CHANNEL);
+				channelFilterMask |= (1 << MIDI_RHYTHM_CHANNEL);*/
 
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
