@@ -228,7 +228,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		if (pSnd->loop > 1) {
 			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
-			                                                  pSnd->loop, false
+			                                                  pSnd->loop, DisposeAfterUse::NO
 			                                                  );
 			_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pLoopStream, -1, pSnd->volume, 0,

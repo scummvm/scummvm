@@ -108,7 +108,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume)
 				delete mjmpStream;
 			}
 			
-			audStream = Audio::makeWAVStream(_vm->getRawData(ID_MSND, id), true);
+			audStream = Audio::makeWAVStream(_vm->getRawData(ID_MSND, id), DisposeAfterUse::YES);
 		} else
 			audStream = makeMohawkWaveStream(_vm->getRawData(ID_MSND, id));
 		break;
@@ -448,7 +448,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	} else if (data_chunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
-		return Audio::makeLoopingAudioStream(Audio::makeMP3Stream(dataStream, true), loop ? 0 : 1);
+		return Audio::makeLoopingAudioStream(Audio::makeMP3Stream(dataStream, DisposeAfterUse::YES), loop ? 0 : 1);
 #else
 		warning ("MAD library not included - unable to play MP2 audio");
 #endif

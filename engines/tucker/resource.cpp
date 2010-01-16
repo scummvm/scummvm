@@ -43,7 +43,7 @@ enum {
 
 struct CompressedSoundFile {
 	const char *filename;
-	Audio::SeekableAudioStream *(*makeStream)(Common::SeekableReadStream *stream, bool disposeAfterUse);
+	Audio::SeekableAudioStream *(*makeStream)(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 };
 
 static const CompressedSoundFile compressedSoundFilesTable[] = {
@@ -270,7 +270,7 @@ Audio::RewindableAudioStream *CompressedSound::load(CompressedSoundType type, in
 			_fCompressedSound.seek(dirOffset + dirSize * 8 + soundOffset);
 			Common::MemoryReadStream *tmp = _fCompressedSound.readStream(soundSize);
 			if (tmp) {
-				stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true);
+				stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, DisposeAfterUse::YES);
 			}
 		}
 	}
@@ -946,7 +946,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		snprintf(fileName, sizeof(fileName), fmt, num);
 		Common::File *f = new Common::File;
 		if (f->open(fileName)) {
-			stream = Audio::makeWAVStream(f, true);
+			stream = Audio::makeWAVStream(f, DisposeAfterUse::YES);
 		} else {
 			delete f;
 		}

@@ -47,7 +47,7 @@ struct CompressedSpeechFile {
 	const char *filename;
 	Audio::SeekableAudioStream *(*makeStream)(
 			Common::SeekableReadStream *stream,
-			bool disposeAfterUse);
+			DisposeAfterUse::Flag disposeAfterUse);
 };
 
 static const CompressedSpeechFile compressedSpeechFilesTable[] = {
@@ -667,7 +667,7 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 			_fSpeech[0].seek(offs);
 			Common::MemoryReadStream *tmp = _fSpeech[0].readStream(size);
 			if (tmp)
-				stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, true);
+				stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, DisposeAfterUse::YES);
 		}
 		if (stream) {
 			_speechPlaying = true;

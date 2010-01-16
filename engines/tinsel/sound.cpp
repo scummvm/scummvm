@@ -139,17 +139,17 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		switch (_soundMode) {
 		case kMP3Mode:
 			#ifdef USE_MAD
-			sampleStream = Audio::makeMP3Stream(compressedStream, true);
+			sampleStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
 			#endif
 			break;
 		case kVorbisMode:
 			#ifdef USE_VORBIS
-			sampleStream = Audio::makeVorbisStream(compressedStream, true);
+			sampleStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 			#endif
 			break;
 		case kFlacMode:
 			#ifdef USE_FLAC
-			sampleStream = Audio::makeFlacStream(compressedStream, true);
+			sampleStream = Audio::makeFlacStream(compressedStream, DisposeAfterUse::YES);
 			#endif
 			break;
 		default:
@@ -289,21 +289,21 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	switch (_soundMode) {
 	case kMP3Mode:
 		#ifdef USE_MAD
-		sampleStream = Audio::makeMP3Stream(compressedStream, true);
+		sampleStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
 		#endif
 		break;
 	case kVorbisMode:
 		#ifdef USE_VORBIS
-		sampleStream = Audio::makeVorbisStream(compressedStream, true);
+		sampleStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 		#endif
 		break;
 	case kFlacMode:
 		#ifdef USE_FLAC
-		sampleStream = Audio::makeFlacStream(compressedStream, true);
+		sampleStream = Audio::makeFlacStream(compressedStream, DisposeAfterUse::YES);
 		#endif
 		break;
 	default:
-		sampleStream = Audio::makeADPCMStream(compressedStream, true, sampleLen, Audio::kADPCMTinsel6, 22050, 1, 24);
+		sampleStream = Audio::makeADPCMStream(compressedStream, DisposeAfterUse::YES, sampleLen, Audio::kADPCMTinsel6, 22050, 1, 24);
 		break;
 	}
 

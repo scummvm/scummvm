@@ -371,7 +371,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeFlacStream(tmp, true), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeFlacStream(tmp, DisposeAfterUse::YES), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -384,7 +384,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeVorbisStream(tmp, true), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeVorbisStream(tmp, DisposeAfterUse::YES), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -397,7 +397,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeMP3Stream(tmp, true), SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, Audio::makeMP3Stream(tmp, DisposeAfterUse::YES), SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)

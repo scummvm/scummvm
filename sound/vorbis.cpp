@@ -88,7 +88,7 @@ static ov_callbacks g_stream_wrap = {
 class VorbisInputStream : public SeekableAudioStream {
 protected:
 	Common::SeekableReadStream *_inStream;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	bool _isStereo;
 	int _rate;
@@ -103,7 +103,7 @@ protected:
 
 public:
 	// startTime / duration are in milliseconds
-	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose);
+	VorbisInputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose);
 	~VorbisInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -118,7 +118,7 @@ protected:
 	bool refill();
 };
 
-VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose) :
+VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
 	_length(0, 1000),
@@ -148,7 +148,7 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 
 VorbisInputStream::~VorbisInputStream() {
 	ov_clear(&_ovFile);
-	if (_disposeAfterUse)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _inStream;
 }
 
@@ -241,7 +241,7 @@ bool VorbisInputStream::refill() {
 
 SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse) {
+	DisposeAfterUse::Flag disposeAfterUse) {
 	return new VorbisInputStream(stream, disposeAfterUse);
 }
 

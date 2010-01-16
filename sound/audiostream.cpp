@@ -55,7 +55,7 @@ struct StreamFileFormat {
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file).
 	 */
-	SeekableAudioStream *(*openStreamFile)(Common::SeekableReadStream *stream, bool disposeAfterUse);
+	SeekableAudioStream *(*openStreamFile)(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
@@ -83,7 +83,7 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {
 			// Create the stream object
-			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true);
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, DisposeAfterUse::YES);
 			fileHandle = 0;
 			break;
 		}
@@ -102,12 +102,12 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 #pragma mark --- LoopingAudioStream ---
 #pragma mark -
 
-LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, bool disposeAfterUse)
+LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops), _completeIterations(0) {
 }
 
 LoopingAudioStream::~LoopingAudioStream() {
-	if (_disposeAfterUse)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _parent;
 }
 
@@ -169,7 +169,7 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
 	                                         uint loops,
 	                                         const Timestamp loopStart,
 	                                         const Timestamp loopEnd,
-	                                         bool disposeAfterUse)
+	                                         DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
       _loopStart(loopStart.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
@@ -180,7 +180,7 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
 }
 
 SubLoopingAudioStream::~SubLoopingAudioStream() {
-	if (_disposeAfterUse)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _parent;
 }
 
@@ -218,7 +218,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark --- SubSeekableAudioStream ---
 #pragma mark -
 
-SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, bool disposeAfterUse)
+SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(parent), _disposeAfterUse(disposeAfterUse),
       _start(start.convertToFramerate(getRate())),
        _pos(0, getRate() * (isStereo() ? 2 : 1)),
@@ -279,18 +279,18 @@ protected:
 	const byte *_end;
 	const int _rate;
 	const byte *_origPtr;
-	const bool _disposeAfterUse;
+	const DisposeAfterUse::Flag _disposeAfterUse;
 	const Timestamp _playtime;
 
 public:
-	LinearMemoryStream(int rate, const byte *ptr, uint len, bool autoFreeMemory)
+	LinearMemoryStream(int rate, const byte *ptr, uint len, DisposeAfterUse::Flag autoFreeMemory)
 	    : _ptr(ptr), _end(ptr+len), _rate(rate), _origPtr(ptr),
 	      _disposeAfterUse(autoFreeMemory),
 	      _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate) {
 	}
 
 	virtual ~LinearMemoryStream() {
-		if (_disposeAfterUse)
+		if (_disposeAfterUse == DisposeAfterUse::YES)
 			free(const_cast<byte *>(_origPtr));
 	}
 
@@ -364,13 +364,13 @@ protected:
 	int32 _filePos;			///< Current position in stream
 	int32 _diskLeft;		///< Samples left in stream in current block not yet read to buffer
 	int32 _bufferLeft;		///< Samples left in buffer in current block
-	bool _disposeAfterUse;		///< If true, delete stream object when LinearDiskStream is destructed
+	const DisposeAfterUse::Flag _disposeAfterUse;		///< Indicates whether the stream object should be deleted when this LinearDiskStream is destructed
 
 	LinearDiskStreamAudioBlock *_audioBlock;	///< Audio block list
-	int _audioBlockCount;		///< Number of blocks in _audioBlock
+	const int _audioBlockCount;		///< Number of blocks in _audioBlock
 	int _currentBlock;		///< Current audio block number
 public:
-	LinearDiskStream(int rate, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks)
+	LinearDiskStream(int rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks)
 		: _rate(rate), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream),
 		  _audioBlockCount(numBlocks) {
 
@@ -407,7 +407,7 @@ public:
 
 
 	virtual ~LinearDiskStream() {
-		if (_disposeAfterUse) {
+		if (_disposeAfterUse == DisposeAfterUse::YES) {
 			delete _stream;
 		}
 
@@ -543,7 +543,7 @@ SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate
 	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool autoFree   = (flags & Mixer::FLAG_AUTOFREE) != 0;
+	const DisposeAfterUse::Flag autoFree   = (flags & Mixer::FLAG_AUTOFREE) != 0 ? DisposeAfterUse::YES : DisposeAfterUse::NO;
 
 	// Verify the buffer sizes are sane
 	if (is16Bit && isStereo) {
@@ -605,14 +605,15 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, takeOwnership, stream, block, numBlocks); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, disposeStream, stream, block, numBlocks); \
 			else  \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, takeOwnership, stream, block, numBlocks); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, disposeStream, stream, block, numBlocks); \
 		} else \
-			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, takeOwnership, stream, block, numBlocks)
+			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, disposeStream, stream, block, numBlocks)
 
 
-SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks, int rate, byte flags, bool takeOwnership) {
+SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks,
+					int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
 	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
@@ -634,7 +635,7 @@ SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, Li
 }
 
 AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
-		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd) {
+		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd) {
 	SeekableAudioStream *s = makeLinearDiskStream(stream, block, numBlocks, rate, flags, disposeStream);
 
 	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
@@ -683,8 +684,8 @@ private:
 	 */
 	struct StreamHolder {
 		AudioStream *_stream;
-		bool _disposeAfterUse;
-		StreamHolder(AudioStream *stream, bool disposeAfterUse)
+		DisposeAfterUse::Flag _disposeAfterUse;
+		StreamHolder(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse)
 			: _stream(stream),
 			  _disposeAfterUse(disposeAfterUse) {}
 	};
@@ -731,7 +732,7 @@ public:
 	virtual bool endOfStream() const { return _finished && _queue.empty(); }
 
 	// Implement the QueuingAudioStream API
-	virtual void queueAudioStream(AudioStream *stream, bool disposeAfterUse);
+	virtual void queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	virtual void finish() { _finished = true; }
 
 	uint32 numQueuedStreams() const {
@@ -743,12 +744,12 @@ public:
 QueuingAudioStreamImpl::~QueuingAudioStreamImpl() {
 	while (!_queue.empty()) {
 		StreamHolder tmp = _queue.pop();
-		if (tmp._disposeAfterUse)
+		if (tmp._disposeAfterUse == DisposeAfterUse::YES)
 			delete tmp._stream;
 	}
 }
 
-void QueuingAudioStreamImpl::queueAudioStream(AudioStream *stream, bool disposeAfterUse) {
+void QueuingAudioStreamImpl::queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	if ((stream->getRate() != getRate()) || (stream->isStereo() != isStereo()))
 		error("QueuingAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
 
@@ -766,7 +767,7 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 
 		if (stream->endOfData()	) {
 			StreamHolder tmp = _queue.pop();
-			if (tmp._disposeAfterUse)
+			if (tmp._disposeAfterUse == DisposeAfterUse::YES)
 				delete stream;
 		}
 	}

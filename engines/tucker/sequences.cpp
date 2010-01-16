@@ -603,7 +603,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 			}
 			break;
 		case kAnimationSoundTypeWAV:
-			stream = Audio::makeWAVStream(&f, false);
+			stream = Audio::makeWAVStream(&f, DisposeAfterUse::NO);
 			break;
 		}
 		

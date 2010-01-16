@@ -161,14 +161,14 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	return true;
 }
 
-RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfterUse) {
+RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	int size, rate;
 	byte flags;
 	uint16 type;
 	int blockAlign;
 
 	if (!loadWAVFromStream(*stream, size, rate, flags, &type, &blockAlign)) {
-		if (disposeAfterUse)
+		if (disposeAfterUse == DisposeAfterUse::YES)
 			delete stream;
 		return 0;
 	}
@@ -184,7 +184,7 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool di
 	assert(data);
 	stream->read(data, size);
 
-	if (disposeAfterUse)
+	if (disposeAfterUse == DisposeAfterUse::YES)
 		delete stream;
 
 	// Since we allocated our own buffer for the data, we must set the autofree flag.

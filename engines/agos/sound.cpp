@@ -248,7 +248,7 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
-	return Audio::makeWAVStream(_file, false);
+	return Audio::makeWAVStream(_file, DisposeAfterUse::NO);
 }
 
 void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -302,7 +302,7 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 
 	Common::MemoryReadStream *tmp = _file->readStream(size);
 	assert(tmp);
-	return Audio::makeMP3Stream(tmp, true);
+	return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 }
 
 void MP3Sound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -333,7 +333,7 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 
 	Common::MemoryReadStream *tmp = _file->readStream(size);
 	assert(tmp);
-	return Audio::makeVorbisStream(tmp, true);
+	return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 }
 
 void VorbisSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -364,7 +364,7 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 
 	Common::MemoryReadStream *tmp = _file->readStream(size);
 	assert(tmp);
-	return Audio::makeFlacStream(tmp, true);
+	return Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
 }
 
 void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -783,7 +783,7 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, size);
-	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, true);
+	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	convertVolume(vol);
 	convertPan(pan);

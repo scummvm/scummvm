@@ -726,7 +726,7 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 
 SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse) {
+	DisposeAfterUse::Flag disposeAfterUse) {
 	return new FlacInputStream(stream, disposeAfterUse);
 }
 

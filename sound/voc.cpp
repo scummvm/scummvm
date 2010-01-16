@@ -298,7 +298,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 	return currentBlock;
 }
 
-AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
+AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
@@ -318,7 +318,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, b
 	return audioStream;
 }
 
-SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
+SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
@@ -341,7 +341,7 @@ SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream,
 #endif
 
 
-AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, bool takeOwnershipOfStream) {
+AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, DisposeAfterUse::Flag takeOwnershipOfStream) {
 #ifdef STREAM_AUDIO_FROM_DISK
 	return makeVOCDiskStream(stream, flags, takeOwnershipOfStream);
 #else
@@ -356,7 +356,7 @@ AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint 
 #endif
 }
 
-SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnershipOfStream) {
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnershipOfStream) {
 #ifdef STREAM_AUDIO_FROM_DISK
 	return makeVOCDiskStreamNoLoop(stream, flags, takeOwnershipOfStream);
 #else

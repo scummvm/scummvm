@@ -41,6 +41,7 @@
 #ifndef SOUND_VORBIS_H
 #define SOUND_VORBIS_H
 
+#include "common/types.h"
 #include "common/scummsys.h"
 
 #ifdef USE_VORBIS
@@ -64,7 +65,7 @@ class SeekableAudioStream;
  */
 SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse);
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

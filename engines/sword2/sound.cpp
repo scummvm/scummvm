@@ -336,7 +336,7 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 	if (Sword2Engine::isPsx())
 		input = new Audio::VagStream(stream);
 	else
-		input = Audio::makeWAVStream(stream, true);
+		input = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	assert(input);
 

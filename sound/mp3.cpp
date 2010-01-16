@@ -54,7 +54,7 @@ protected:
 	};
 
 	Common::SeekableReadStream *_inStream;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	uint _posInFrame;
 	State _state;
@@ -75,7 +75,7 @@ protected:
 
 public:
 	MP3InputStream(Common::SeekableReadStream *inStream,
-	               bool dispose);
+	               DisposeAfterUse::Flag dispose);
 	~MP3InputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -95,7 +95,7 @@ protected:
 	void deinitStream();
 };
 
-MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispose) :
+MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
 	_posInFrame(0),
@@ -129,7 +129,7 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 MP3InputStream::~MP3InputStream() {
 	deinitStream();
 
-	if (_disposeAfterUse)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _inStream;
 }
 
@@ -340,7 +340,7 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse) {
+	DisposeAfterUse::Flag disposeAfterUse) {
 	return new MP3InputStream(stream, disposeAfterUse);
 }
 

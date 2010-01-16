@@ -62,7 +62,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.flac", fileBase);
 		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFlacStream(&_file, false), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFlacStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 			if (!_audioSource)
 				_file.close();
 		}
@@ -71,7 +71,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.fla", fileBase);
 		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFlacStream(&_file, false), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFlacStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 			if (!_audioSource)
 				_file.close();
 		}
@@ -81,7 +81,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.ogg", fileBase);
 		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeVorbisStream(&_file, false), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeVorbisStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 			if (!_audioSource)
 				_file.close();
 		}
@@ -91,7 +91,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.mp3", fileBase);
 		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(&_file, false), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeMP3Stream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 			if (!_audioSource)
 				_file.close();
 		}
@@ -100,7 +100,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.wav", fileBase);
 		if (_file.open(fileName))
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeWAVStream(&_file, false), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeWAVStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 	}
 
 	if (!_audioSource) {

@@ -41,6 +41,7 @@
 #ifndef SOUND_FLAC_H
 #define SOUND_FLAC_H
 
+#include "common/types.h"
 #include "common/scummsys.h"
 
 #ifdef USE_FLAC
@@ -64,7 +65,7 @@ class SeekableAudioStream;
  */
 SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse);
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

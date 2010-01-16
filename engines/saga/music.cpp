@@ -308,7 +308,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					Audio::LinearDiskStreamAudioBlock audioBlocks[1];
 					audioBlocks[0].pos = 0;
 					audioBlocks[0].len = resData->size / 2;	// 16-bit sound
-					audioStream = Audio::makeLinearDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, true);
+					audioStream = Audio::makeLinearDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, DisposeAfterUse::YES);
 				} else {
 					// Read compressed header to determine compression type
 					musicFile->seek((uint32)resData->offset, SEEK_SET);
@@ -316,15 +316,15 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 					if (identifier == 0) {		// MP3
 #ifdef USE_MAD
-						audioStream = Audio::makeMP3Stream(musicStream, true);
+						audioStream = Audio::makeMP3Stream(musicStream, DisposeAfterUse::YES);
 #endif
 					} else if (identifier == 1) {	// OGG
 #ifdef USE_VORBIS
-						audioStream = Audio::makeVorbisStream(musicStream, true);
+						audioStream = Audio::makeVorbisStream(musicStream, DisposeAfterUse::YES);
 #endif
 					} else if (identifier == 2) {	// FLAC
 #ifdef USE_FLAC
-						audioStream = Audio::makeFlacStream(musicStream, true);
+						audioStream = Audio::makeFlacStream(musicStream, DisposeAfterUse::YES);
 #endif
 					}
 				}

@@ -632,7 +632,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
 			assert(tmp);
-			input = Audio::makeMP3Stream(tmp, true);
+			input = Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 	#endif
 			break;
 		case kVorbisMode:
@@ -640,7 +640,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
 			assert(tmp);
-			input = Audio::makeVorbisStream(tmp, true);
+			input = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 	#endif
 			break;
 		case kFlacMode:
@@ -648,7 +648,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
 			assert(tmp);
-			input = Audio::makeFlacStream(tmp, true);
+			input = Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
 	#endif
 			break;
 		default:

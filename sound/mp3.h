@@ -41,6 +41,7 @@
 #ifndef SOUND_MP3_H
 #define SOUND_MP3_H
 
+#include "common/types.h"
 #include "common/scummsys.h"
 
 #ifdef USE_MAD
@@ -64,7 +65,7 @@ class SeekableAudioStream;
  */
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse);
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

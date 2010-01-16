@@ -38,6 +38,7 @@
 #ifndef SOUND_WAVE_H
 #define SOUND_WAVE_H
 
+#include "common/types.h"
 #include "common/scummsys.h"
 
 namespace Common { class SeekableReadStream; }
@@ -74,7 +75,7 @@ extern bool loadWAVFromStream(
  */
 RewindableAudioStream *makeWAVStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse = false);
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

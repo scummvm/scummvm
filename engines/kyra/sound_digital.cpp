@@ -460,7 +460,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 
 	strncpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
-	Audio::SeekableAudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, true);
+	Audio::SeekableAudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, DisposeAfterUse::YES);
 	if (!audioStream) {
 		warning("Couldn't create audio stream for file '%s'", filename);
 		return -1;
@@ -522,7 +522,7 @@ void SoundDigital::beginFadeOut(int channel, int ticks) {
 
 namespace {
 
-Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, bool disposeAfterUse) {
+Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	return new AUDStream(stream);
 }
 

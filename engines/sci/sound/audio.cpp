@@ -230,7 +230,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			if (memcmp(audioRes->data, "RIFF", 4) == 0) {
 				// WAVE detected
 				Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
-				audioStream = Audio::makeWAVStream(waveStream, true);
+				audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
 			}
 		}
 		if (!audioStream) {

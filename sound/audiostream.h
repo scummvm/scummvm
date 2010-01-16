@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/types.h"
 
 #include "sound/timestamp.h"
 
@@ -115,7 +116,7 @@ public:
 	 * @param loops How often to loop (0 = infinite)
 	 * @param disposeAfteruse Destroy the stream after the LoopingAudioStream has finished playback.
 	 */
-	LoopingAudioStream(RewindableAudioStream *stream, uint loops, bool disposeAfterUse = true);
+	LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	~LoopingAudioStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -131,7 +132,7 @@ public:
 	uint getCompleteIterations() const { return _completeIterations; }
 private:
 	RewindableAudioStream *_parent;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	uint _loops;
 	uint _completeIterations;
@@ -232,7 +233,7 @@ public:
 	SubLoopingAudioStream(SeekableAudioStream *stream, uint loops,
 	                      const Timestamp loopStart,
 	                      const Timestamp loopEnd,
-	                      bool disposeAfterUse = true);
+	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	~SubLoopingAudioStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -242,7 +243,7 @@ public:
 	int getRate() const { return _parent->getRate(); }
 private:
 	SeekableAudioStream *_parent;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	uint _loops;
 	Timestamp _pos;
@@ -271,9 +272,9 @@ public:
 	 * @param parent parent stream object.
 	 * @param start Start time.
 	 * @param end End time.
-	 * @param disposeAfterUse Whether the parent stream object should be destroied on desctruction of the SubSeekableAudioStream.
+	 * @param disposeAfterUse Whether the parent stream object should be destroyed on destruction of the SubSeekableAudioStream.
 	 */
-	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, bool disposeAfterUse = true);
+	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	~SubSeekableAudioStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -289,7 +290,7 @@ public:
 	Timestamp getLength() const { return _length; }
 private:
 	SeekableAudioStream *_parent;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
 	const Timestamp _start;
 	const Timestamp _length;
@@ -342,11 +343,11 @@ struct LinearDiskStreamAudioBlock {
  * @param len Length of the data (in bytes!)
  * @param flags Flags combination.
  * @see Mixer::RawFlags
- * @param disposeStream Wheter the "stream" object should be destroyed after playback.
+ * @param disposeStream Whether the "stream" object should be destroyed after playback.
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
-		int numBlocks, int rate, byte flags, bool disposeStream);
+		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream);
 
 /**
  * NOTE:
@@ -358,7 +359,7 @@ SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, Li
  * each block of uncompressed audio in the stream.
  */
 AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
-		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
+		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd);
 
 class QueuingAudioStream : public Audio::AudioStream {
 public:
@@ -370,7 +371,7 @@ public:
 	 * deleted after all data contained in it has been played.
 	 */
 	virtual void queueAudioStream(Audio::AudioStream *audStream,
-						bool disposeAfterUse = true) = 0;
+						DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) = 0;
 
 	/**
 	 * Queue a block of raw audio data for playback. This stream
@@ -381,7 +382,7 @@ public:
 	 */
 	void queueBuffer(byte *data, uint32 size, byte flags) {
 		AudioStream *stream = makeLinearInputStream(data, size, getRate(), flags, 0, 0);
-		queueAudioStream(stream, true);
+		queueAudioStream(stream, DisposeAfterUse::YES);
 	}
 
 	/**
