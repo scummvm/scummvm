@@ -568,7 +568,8 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 		scaledPixel += scaleY;
 	}
 	scaledPixelNo++;
-	memset(&scalingY[scaledPixelNo], pixelNo - 1, scaledHeight - scaledPixelNo);
+	if (scaledPixelNo < scaledHeight)
+		memset(&scalingY[scaledPixelNo], pixelNo - 1, scaledHeight - scaledPixelNo);
 
 	// Create width scaling table
 	pixelNo = 0;
@@ -583,7 +584,8 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 		scaledPixel += scaleX;
 	}
 	scaledPixelNo++;
-	memset(&scalingX[scaledPixelNo], pixelNo - 1, scaledWidth - scaledPixelNo);
+	if (scaledPixelNo < scaledWidth)
+		memset(&scalingX[scaledPixelNo], pixelNo - 1, scaledWidth - scaledPixelNo);
 
 	scaledWidth = MIN(clipRect.width(), scaledWidth);
 	scaledHeight = MIN(clipRect.height(), scaledHeight);
