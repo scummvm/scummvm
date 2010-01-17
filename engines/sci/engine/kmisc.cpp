@@ -56,6 +56,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
+	// WORKAROUND:
 	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
 	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
 	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
