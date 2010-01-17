@@ -61,7 +61,9 @@ private:
 	bool isMt32GmPatch(const byte *data, int size);
 	void readMt32GmPatch(const byte *data, int size);
 	void readMt32Patch(const byte *data, int size);
-	void sendMt32SysEx(const uint32 addr, Common::MemoryReadStream *str, int len, bool noDelay);
+	void readMt32DrvData();
+
+	void sendMt32SysEx(const uint32 addr, Common::SeekableReadStream *str, int len, bool noDelay);
 	void sendMt32SysEx(const uint32 addr, const byte *buf, int len, bool noDelay);
 	void setMt32Volume(byte volume);
 	void resetMt32();
@@ -240,6 +242,12 @@ void MidiPlayer_Midi::send(uint32 b) {
 	byte op1 = (b >> 8) & 0x7f;
 	byte op2 = (b >> 16) & 0x7f;
 
+	// In early SCI0, we may also get events for AdLib rhythm channels.
+	// While an MT-32 would ignore those with the default channel mapping,
+	// we filter these out for the benefit of other MIDI devices.
+	if (channel < 1 || channel > 9)
+		return;
+
 	switch (command) {
 	case 0x80:
 		noteOn(channel, op1, 0);
@@ -323,7 +331,7 @@ bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size)
 	return isMt32Gm;
 }
 
-void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::MemoryReadStream *str, int len, bool noDelay = false) {
+void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStream *str, int len, bool noDelay = false) {
 	if (len + 8 > kMaxSysExSize) {
 		warning("SysEx message exceed maximum size; ignoring");
 		return;
@@ -365,8 +373,8 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	// Save goodbye message
 	str->read(_goodbyeMsg, 20);
 
-	// Skip volume, we leave the MT-32 volume alone
-	str->seek(2, SEEK_CUR);
+	byte volume = CLIP<uint16>(str->readUint16LE(), 0, 100);
+	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
 	_reverb = str->readByte();
@@ -482,6 +490,55 @@ void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
 	}
 }
 
+void MidiPlayer_Midi::readMt32DrvData() {
+	Common::File f;
+
+	if (f.open("MT32.DRV")) {
+		int size = f.size();
+
+		assert(size >= 166);
+
+		// Send before-SysEx text
+		f.seek(0x59);
+
+		// Skip 2 extra 0 bytes in some drivers
+		if (f.readUint16LE() != 0)
+			f.seek(-2, SEEK_CUR);
+
+		sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+
+		// Send after-SysEx text (SSCI sends this before every song)
+		sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+
+		// Save goodbye message
+		f.read(_goodbyeMsg, 20);
+
+		// Set volume
+		byte volume = CLIP<uint16>(f.readUint16LE(), 0, 100);
+		setMt32Volume(volume);
+
+		byte reverbSysEx[13];
+		// This old driver should have a full reverb SysEx
+		if ((f.read(reverbSysEx, 13) != 13) || (reverbSysEx[0] != 0xf0) || (reverbSysEx[12] != 0xf7))
+			error("Error reading MT32.DRV");
+
+		// Send reverb SysEx
+		sysEx(reverbSysEx + 1, 11);
+		_hasReverb = false;
+
+		f.seek(0x29);
+
+		// Read AdLib->MT-32 patch map
+		for (int i = 0; i < 48; i++) {
+			_patchMap[i] = f.readByte();
+		}
+
+		f.close();
+	} else {
+		error("Failed to open MT32.DRV");
+	}
+}
+
 void MidiPlayer_Midi::setMt32Volume(byte volume) {
 	sendMt32SysEx(0x100016, &volume, 1);
 }
@@ -517,7 +574,6 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 	if (_isMt32) {
 		// MT-32
 		resetMt32();
-		setMt32Volume(80);
 
 		res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
 
@@ -529,8 +585,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 				readMt32Patch(res->data, res->size);
 			}
 		} else {
-			error("Failed to load MT-32 patch");
-			// TODO Load data from MT32.DRV
+			readMt32DrvData();
 		}
 	} else {
 		// General MIDI
