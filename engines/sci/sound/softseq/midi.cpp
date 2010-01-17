@@ -103,7 +103,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi() : _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(false) {
+MidiPlayer_Midi::MidiPlayer_Midi() : _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(true) {
 	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_MIDI);
 	_driver = createMidi(midiType);
 
@@ -502,50 +502,51 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		return retval;
 	}
 
-	if (_isMt32) {
-		resetMt32();
-		setMt32Volume(80);
+	// By default use no mapping
+	for (uint i = 0; i < 128; i++) {
+		_percussionMap[i] = i;
+		_patchMap[i] = i;
+		_velocityMap[0][i] = i;
+		_keyShift[i] = 0;
+		_volAdjust[i] = 0;
+		_velocityMapIdx[i] = 0;
 	}
 
 	Resource *res = NULL;
 
-	if (!_isMt32) {
-		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
-		if (!res)
-			warning("Failed to locate GM patch, attempting to load MT-32 patch");
+	if (_isMt32) {
+		// MT-32
+		resetMt32();
+		setMt32Volume(80);
 
-		// Detect the format of patch 1, so that we know what play mask to use
-		Resource *resPatch1 = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
-		if (!resPatch1)
-			_isOldPatchFormat = false;
-		else
-			_isOldPatchFormat = !isMt32GmPatch(resPatch1->data, resPatch1->size);
-	}
-
-	if (!res) {
 		res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
-		if (!res)
+
+		if (res) {
+			if (isMt32GmPatch(res->data, res->size)) {
+				readMt32GmPatch(res->data, res->size);
+				strncpy((char *)_goodbyeMsg, "      ScummVM       ", 20);
+			} else {
+				readMt32Patch(res->data, res->size);
+			}
+		} else {
 			error("Failed to load MT-32 patch");
-	}
-
-	if (isMt32GmPatch(res->data, res->size)) {
-		readMt32GmPatch(res->data, res->size);
-		strncpy((char *)_goodbyeMsg, "      ScummVM       ", 20);
-	} else {
-		if (!_isMt32) {
-			warning("MT-32 to GM translation not yet supported");
+			// TODO Load data from MT32.DRV
 		}
+	} else {
+		// General MIDI
+		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
 
-		readMt32Patch(res->data, res->size);
+		if (res) {
+			readMt32GmPatch(res->data, res->size);
 
-		// No mapping
-		for (uint i = 0; i < 128; i++) {
-			_percussionMap[i] = i;
-			_patchMap[i] = i;
-			_velocityMap[0][i] = i;
-			_keyShift[i] = 0;
-			_volAdjust[i] = 0;
-			_velocityMapIdx[i] = 0;
+			// Detect the format of patch 1, so that we know what play mask to use
+			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+			if (!res)
+				_isOldPatchFormat = false;
+			else
+				_isOldPatchFormat = !isMt32GmPatch(res->data, res->size);
+		} else {
+			warning("MT-32 to GM translation not yet supported");
 		}
 	}
 
@@ -578,7 +579,6 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 byte MidiPlayer_Midi::getPlayId(SciVersion soundVersion) {
 	switch (soundVersion) {
 	case SCI_VERSION_0_EARLY:
-		return 0x00; // TODO
 	case SCI_VERSION_0_LATE:
 		return 0x01;
 	default:
