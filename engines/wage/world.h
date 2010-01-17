@@ -74,11 +74,11 @@ public:
 	Common::HashMap<String, Obj *> _objs;
 	Common::HashMap<String, Chr *> _chrs;
 	Common::HashMap<String, Sound *> _sounds;
-	Common::List<Scene *> _orderedScenes;
-	Common::List<Obj *> _orderedObjs;
-	Common::List<Chr *> _orderedChrs;
-	Common::List<Sound *> _orderedSounds;
-	Common::List<byte *> _patterns;
+	Common::Array<Scene *> _orderedScenes;
+	Common::Array<Obj *> _orderedObjs;
+	Common::Array<Chr *> _orderedChrs;
+	Common::Array<Sound *> _orderedSounds;
+	Common::Array<byte *> _patterns;
 	Scene _storageScene;
 	Chr *_player;
 	//List<MoveListener> moveListeners;

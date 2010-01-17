@@ -59,6 +59,7 @@ class Scene;
 class Script;
 
 class Context {
+public:
 	enum StatVariables {
 	/** The base physical accuracy of the player. */
 		PHYS_ACC_BAS = 0,
@@ -118,6 +119,8 @@ public:
 	}
 
 	void setDesignBounds(Common::Rect *bounds);
+
+	String toString() { return _name; }
 };
 
 class Chr : public Designed {

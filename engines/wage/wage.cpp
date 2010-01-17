@@ -64,6 +64,8 @@ namespace Wage {
 WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	// Don't forget to register your random source
 	g_eventRec.registerRandomSource(_rnd, "wage");
+
+	_aim = -1;
  
 	printf("WageEngine::WageEngine\n");
 }

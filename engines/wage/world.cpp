@@ -75,7 +75,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	// Load global script
 	res = resMan->getResource("GCOD", resArray[0], &resSize);
-	_globalScript = new Script(res);
+	_globalScript = new Script(res, resSize);
 
 	// Load main configuration
 	if ((resArray = resMan->getResIDArray("VERS")).size() == 0)
@@ -112,7 +112,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource("ACOD", *iter, &resSize);
 		if (res != NULL)
-			scene->_script = new Script(res);
+			scene->_script = new Script(res, resSize);
 
 		res = resMan->getResource("ATXT", *iter, &resSize);
 		if (res != NULL) {

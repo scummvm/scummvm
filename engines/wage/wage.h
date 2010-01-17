@@ -64,6 +64,9 @@ namespace Wage {
  
 class Console;
 class World;
+class Scene;
+class Obj;
+class Chr;
 
 using Common::String;
  
@@ -95,17 +98,35 @@ public:
 private:
 	bool loadWorld(Common::MacResManager *resMan);
 
-private:
-	Console *_console;
- 
+public:
 	// We need random numbers
 	Common::RandomSource _rnd;
+
+	World *_world;
+
+	Scene *_lastScene;
+	//PrintStream out;
+	int _loopCount;
+	int _turn;
+	//Callbacks callbacks;
+	Chr *_monster;
+	Obj *_offer;
+	bool _commandWasQuick;
+	int _aim;
+	bool _temporarilyHidden;
+
+	void playSound(String soundName) {}
+	void setMenu(String soundName) {}
+	void appendText(String str) {}
+
+
+private:
+	Console *_console;
 
 	const ADGameDescription *_gameDescription;
 
 	Common::MacResManager *_resManager;
 
-	World *_world;
 };
  
 // Example console class

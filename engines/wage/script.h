@@ -55,11 +55,94 @@ namespace Wage {
 
 class Script {
 public:
-	Script(byte *data) : _data(data) {}
+	Script(byte *data, int dataSize) : _data(data), _dataSize(dataSize) {}
 	~Script();
 
 private:
 	byte *_data;
+	int _dataSize;
+
+	WageEngine *_callbacks;
+	World *_world;
+	int _loopCount;
+	String *_inputText;
+	Designed *_inputClick;
+	int _index;
+	bool _evalResult;
+	bool _handled;
+
+	class Operand {
+	public:
+		enum OperandTypes {
+			OBJ = 0,
+			CHR = 1,
+			SCENE = 2,
+			NUMBER = 3,
+			STRING = 4,
+			CLICK_INPUT = 5,
+			TEXT_INPUT = 6
+		};
+		
+		union {
+			Obj *obj;
+			Chr *chr;
+			Scene *scene;
+			int16 number;
+			String *string;
+			Designed *inputClick;
+		} _value;
+		OperandTypes _type;
+		String _str;
+		
+		Operand(Obj *value, OperandTypes type) {
+			_value.obj = value;
+			_str = value->toString();
+			_type = type;
+		}
+
+		Operand(Chr *value, OperandTypes type) {
+			_value.chr = value;
+			_str = value->toString();
+			_type = type;
+		}
+
+		Operand(Scene *value, OperandTypes type) {
+			_value.scene = value;
+			_str = value->toString();
+			_type = type;
+		}
+
+		Operand(int value, OperandTypes type) {
+			char buf[30];
+			_value.number = value;
+			snprintf(buf, 30, "%d", value);
+			_str = value;
+			_type = type;
+		}
+
+		Operand(String *value, OperandTypes type) {
+			_value.string = value;
+			_str = *value;
+			_type = type;
+		}
+
+		Operand(Designed *value, OperandTypes type) {
+			_value.inputClick = value;
+			_str = value->toString();
+			_type = type;
+		}
+	};
+
+
+	bool execute(World *world, int loopCount, String *inputText, Designed *inputClick, WageEngine *callbacks);
+	Operand *readOperand();
+	Operand *readStringOperand();
+	void processIf();
+	void processMove();
+	void processLet();
+
+	void appendText(String str);
+
 };
 
 } // End of namespace Wage
