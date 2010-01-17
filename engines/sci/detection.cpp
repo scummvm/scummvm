@@ -273,7 +273,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	if (gameViews == kViewUnknown) {
 		SearchMan.remove("SCI_detection");
 		delete resMan;
-		return (const ADGameDescription *)&s_fallbackDesc;
+		// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
+		//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
+		return 0;
 	}
 
 #ifndef ENABLE_SCI32

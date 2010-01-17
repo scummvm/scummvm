@@ -575,6 +575,11 @@ void ResourceManager::init() {
 	debugC(1, kDebugLevelResMan, "resMan: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
 	debugC(1, kDebugLevelResMan, "resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
+	if ((_mapVersion == kResVersionUnknown) && (_volVersion == kResVersionUnknown)) {
+		_viewType = kViewUnknown;
+		return;
+	}
+
 	scanNewSources();
 	addInternalSources();
 	scanNewSources();
