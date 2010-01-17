@@ -96,7 +96,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	readS.skip(3);
 	_aboutMessage = readPascalString(readS);
 
-	if (!stricmp(resMan->getFileName().c_str(), "Scepters"))
+	if (!scumm_stricmp(resMan->getFileName().c_str(), "Scepters"))
 		readS.skip(1); // ????
 
 	_soundLibrary1 = readPascalString(readS);
