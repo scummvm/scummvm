@@ -2080,64 +2080,60 @@ SoundResource::Track *SoundResource::getDigitalTrack() {
 int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 	byte *data = _innerResource->data;
 	int channelMask = 0;
-	int reverseHardwareMask = 0;
 
-	switch (_soundVersion) {
-	case SCI_VERSION_0_EARLY:
-		// TODO: MT32 driver uses no hardware mask at all and uses all channels
-		switch (hardwareMask) {
-		case 0x01: // AdLib needs an additional reverse check against bit 3
-			reverseHardwareMask = 0x08;
+	if (_soundVersion > SCI_VERSION_0_LATE)
+		return 0;
+
+	data++; // Skip over digital sample flag
+
+	for (int channelNr = 0; channelNr < 16; channelNr++) {
+		channelMask = channelMask >> 1;
+
+		byte flags;
+
+		if (_soundVersion == SCI_VERSION_0_EARLY) {
+			// Each channel is specified by a single byte
+			// Upper 4 bits of the byte is a voices count
+			// Lower 4 bits -> bit 0 set: use for AdLib
+			//				   bit 1 set: use for PCjr
+			//				   bit 2 set: use for PC speaker
+			//				   bit 3 set and bit 0 clear: control channel (15)
+			//				   bit 3 set and bit 0 set: rhythm channel (9)
+			flags = *data++;
+
+			// Get device bits
+			flags &= 0x7;
+		} else {
+			// Each channel is specified by 2 bytes
+			// 1st byte is voices count
+			// 2nd byte is play mask, which specifies if the channel is supposed to be played
+			// by the corresponding hardware
+
+			// Skip voice count
+			data++;
+
+			flags = *data++;
+		}
+
+		bool play;
+		switch (channelNr) {
+		case 15:
+			// Always play control channel
+			play = true;
 			break;
+		case 9:
+			// Play rhythm channel when requested
+			play = wantsRhythm;
+			break;
+		default:
+			// Otherwise check for flag
+			play = flags & hardwareMask;
 		}
-		data++; // Skip over digital sample flag
-		// Now all 16 channels follow. Each one is specified by a single byte
-		// Upper 4 bits of the byte is a voices count
-		// Lower 4 bits -> bit 0 means use as AdLib driver
-		//				   bit 1 means use as PCjr driver
-		//				   bit 3 means is control channel (bit 0 needs to be unset)
-		for (int channelNr = 0; channelNr < 16; channelNr++) {
-			channelMask = channelMask >> 1;
-			if (*data & hardwareMask) {
-				if ((reverseHardwareMask == 0) || ((*data & reverseHardwareMask) == 0)) {
-					// This Channel is supposed to get played for hardware
-					channelMask |= 0x8000;
-				}
-			}
-			if ((*data & 0x08) && ((*data & 0x01) == 0)) {
-				// This channel is control channel, so don't filter it
-				channelMask |= 0x8000;
-				// TODO: We need to accept this channel in parseNextEvent() for events
-			}
-			data++;
+
+		if (play) {
+			// This Channel is supposed to be played by the hardware
+			channelMask |= 0x8000;
 		}
-		break;
-
-	case SCI_VERSION_0_LATE:
-		data++; // Skip over digital sample flag
-		// Now all 16 channels follow. Each one is specified by 2 bytes
-		// 1st byte is voices count
-		// 2nd byte is play mask, which specifies if the channel is supposed to be played
-		// by the corresponding hardware
-		for (int channelNr = 0; channelNr < 16; channelNr++) {
-			data++;
-			channelMask = channelMask >> 1;
-			if (*data & hardwareMask) {
-				// This Channel is supposed to be played by the hardware
-				channelMask |= 0x8000;
-			}
-			data++;
-		}
-		// Play channel 15 at all times (control channel)
-		channelMask |= 0x8000;
-
-		channelMask &= ~(1 << 9);
-		if (wantsRhythm)
-			channelMask |= (1 << 9);
-
-		break;
-	default:
-		break;
 	}
 
 	return channelMask;
