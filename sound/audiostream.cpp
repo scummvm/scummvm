@@ -222,7 +222,7 @@ SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, cons
     : _parent(parent), _disposeAfterUse(disposeAfterUse),
       _start(start.convertToFramerate(getRate())),
        _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length((start - end).convertToFramerate(getRate())) {
+      _length((end - start).convertToFramerate(getRate())) {
 
 	_parent->seek(_start);
 }
