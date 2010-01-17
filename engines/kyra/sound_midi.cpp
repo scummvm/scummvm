@@ -66,7 +66,6 @@ private:
 	OSystem *_system;
 	MidiDriver *_output;
 
-	uint32 _lastSysEx;
 	bool _isMT32;
 	bool _defaultMT32;
 
@@ -113,7 +112,7 @@ private:
 	} _sources[4];
 };
 
-MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32) : _system(system), _output(output), _lastSysEx(0) {
+MidiOutput::MidiOutput(OSystem *system, MidiDriver *output, bool isMT32, bool defaultMT32) : _system(system), _output(output) {
 	_isMT32 = isMT32;
 	_defaultMT32 = defaultMT32;
 
@@ -269,14 +268,15 @@ void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, c
 }
 
 void MidiOutput::sysEx(const byte *msg, uint16 length) {
-	uint32 curTime = _system->getMillis();
+	// Wait the time it takes to send the SysEx data
+	uint32 delay = (length + 2) * 1000 / 3125;
 
-	if (_lastSysEx + 45 > curTime)
-		_system->delayMillis(_lastSysEx + 45 - curTime);
+	// Plus an additional delay for the MT-32 rev00
+	if (_isMT32)
+		delay += 40;
 
 	_output->sysEx(msg, length);
-
-	_lastSysEx = _system->getMillis();
+	_system->delayMillis(delay);
 }
 
 void MidiOutput::sendSysEx(const byte p1, const byte p2, const byte p3, const byte *buffer, const int size) {
