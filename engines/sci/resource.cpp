@@ -2099,6 +2099,8 @@ int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 			//				   bit 2 set: use for PC speaker
 			//				   bit 3 set and bit 0 clear: control channel (15)
 			//				   bit 3 set and bit 0 set: rhythm channel (9)
+			// Note: control channel is dynamically assigned inside the drivers,
+			// but seems to be fixed at 15 in the song data.
 			flags = *data++;
 
 			// Get device bits
