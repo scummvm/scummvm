@@ -675,6 +675,9 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	_animate->updateScreen(old_picNotValid);
 	_animate->restoreAndDelete(argc, argv);
 
+	if (_animate->getLastCastCount() > 1)
+		_s->_throttleTrigger = true;
+
 	_gfx->SetPort(oldPort);
 }
 

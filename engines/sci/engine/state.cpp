@@ -71,8 +71,9 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	successor = 0;
 
-	_lastAnimateCounter = 0;
-	_lastAnimateTime = 0;
+	_throttleCounter = 0;
+	_throttleLastTime = 0;
+	_throttleTrigger = false;
 
 	_setCursorType = SCI_VERSION_NONE;
 	_doSoundType = SCI_VERSION_NONE;
