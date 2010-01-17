@@ -92,7 +92,7 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 	delete fileHandle;
 
 	if (stream == NULL) {
-		debug(1, "AudioStream: Could not open compressed AudioFile %s", basename.c_str());
+		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.c_str());
 	}
 
 	return stream;
