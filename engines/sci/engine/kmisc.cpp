@@ -56,9 +56,16 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
-	// Some games seem to get the duration of main loop initially and then switch of animations for the whole game
-	//  based on that (qfg2, iceman). We are now running full speed initially to avoid that.
+	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
+	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
+	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
+	if (s->_gameId == "lsl3" && s->currentRoomNumber() == 290)
+		s->_throttleTrigger = true;
+
 	if (s->_throttleTrigger) {
+		// Some games seem to get the duration of main loop initially and then switch of animations for the whole game
+		//  based on that (qfg2, iceman). We are now running full speed initially to avoid that.
+		// It seems like we dont need to do that anymore
 		//if (s->_throttleCounter < 50) {
 		//	s->_throttleCounter++;
 		//	return s->r_acc;
