@@ -576,6 +576,7 @@ void ResourceManager::init() {
 	debugC(1, kDebugLevelResMan, "resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
 	if ((_mapVersion == kResVersionUnknown) && (_volVersion == kResVersionUnknown)) {
+		warning("Volume and map version not detected, assuming that this is not a sci game");
 		_viewType = kViewUnknown;
 		return;
 	}
