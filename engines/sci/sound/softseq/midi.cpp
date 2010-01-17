@@ -591,7 +591,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		// General MIDI
 		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
 
-		if (res) {
+		if (res && isMt32GmPatch(res->data, res->size)) {
 			readMt32GmPatch(res->data, res->size);
 
 			// Detect the format of patch 1, so that we know what play mask to use
