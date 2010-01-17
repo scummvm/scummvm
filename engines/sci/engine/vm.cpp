@@ -1199,10 +1199,28 @@ void run_vm(EngineState *s, int restoring) {
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
 			break;
 
-		case 0x36: // dpToa
+		case 0x36: { // dpToa
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
+#if 0
+			// Speed throttling is possible here as well
+			// although this opens other issues like mud wrestling in lsl5 uses another local variable for delays
+			Object *var_container = obj;
+			if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
+				var_container = s->_segMan->getObject(obj->getSuperClassSelector());
+			uint16 varSelector = var_container->getVarSelector(opparams[0] >> 1);
+//			printf("%X\n", varSelector);
+//			printf("%s\n", s->_kernel->getSelectorName(varSelector).c_str());
+			if ((varSelector == 0x84) || (varSelector == 0x92))) {
+				// selectors cycles, cycleCnt from lsl5 hardcoded
+				uint32 curTime = g_system->getMillis();
+				if (s->_lastAnimateTime + 30 > curTime)
+					break;
+				s->_lastAnimateTime = curTime;
+			}
+#endif
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
 			break;
+		}
 
 		case 0x37: // ipTos
 			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
