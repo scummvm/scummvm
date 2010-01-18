@@ -238,7 +238,7 @@ void MystGraphics::changeCursor(uint16 cursor) {
 		CursorMan.replaceCursor((byte *)data->_surface->pixels, data->_surface->w, data->_surface->h, hotspotX, hotspotY, 0);
 		CursorMan.replaceCursorPalette(data->_palette, 0, 256);
 	} else
-		CursorMan.replaceCursor((byte *)data->_surface->pixels, data->_surface->w, data->_surface->h, hotspotX, hotspotY, 0xFFFFFFFF, 1, &_pixelFormat);
+		CursorMan.replaceCursor((byte *)data->_surface->pixels, data->_surface->w, data->_surface->h, hotspotX, hotspotY, _pixelFormat.RGBToColor(255, 255, 255), 1, &_pixelFormat);
 
 	_vm->_needsUpdate = true;
 }
