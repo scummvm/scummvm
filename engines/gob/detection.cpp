@@ -4302,6 +4302,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi4",
+			"Adi 4.0",
+			AD_ENTRY1s("intro.stk", "29374c0e3c10b17dd8463b06a55ad093", 6012072),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
 			"Adi 4.0 Limited Edition",
 			AD_ENTRY1s("intro.stk", "ebbbc5e28a4adb695535ed989c1b8d66", 5929644),
 			FR_FRA,
