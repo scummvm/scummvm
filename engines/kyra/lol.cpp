@@ -519,6 +519,8 @@ Common::Error LoLEngine::init() {
 	_automapShapes = new const uint8*[109];
 	_mapOverlay = new uint8[256];
 
+	memset(_availableSpells, -1, 8);
+
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castSpark));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castHeal));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castIce));
@@ -891,7 +893,6 @@ void LoLEngine::startupNew() {
 	_inventory[1] = makeItem(217, 0, 0);
 	_inventory[2] = makeItem(218, 0, 0);
 
-	memset(_availableSpells, -1, 8);
 	_availableSpells[0] = 0;
 	setupScreenDims();
 
