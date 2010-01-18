@@ -891,7 +891,7 @@ void LoLEngine::startupNew() {
 	_inventory[1] = makeItem(217, 0, 0);
 	_inventory[2] = makeItem(218, 0, 0);
 
-	memset(_availableSpells, -1, 7);
+	memset(_availableSpells, -1, 8);
 	_availableSpells[0] = 0;
 	setupScreenDims();
 

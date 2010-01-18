@@ -1390,7 +1390,7 @@ private:
 	void inflictMagicalDamageForBlock(int block, int attacker, int damage, int index);
 
 	ActiveSpell _activeSpell;
-	int8 _availableSpells[7];
+	int8 _availableSpells[8];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;
 	int _spellPropertiesSize;

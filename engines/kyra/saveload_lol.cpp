@@ -267,6 +267,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	gui_drawPlayField();
 	timerSpecialCharacterUpdate(0);
 	_flagsTable[73] |= 0x08;
+	_availableSpells[7] = -1;
 
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
