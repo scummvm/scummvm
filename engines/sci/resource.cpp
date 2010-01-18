@@ -872,7 +872,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 		}
 	}
 	if (!fileStream) {
-		error("Failed to open volume file");
+		error("Failed to open volume file - if you got resource.p01/resource.p02/etc. files, merge them together into resource.000");
 		return kResVersionUnknown;
 	}
 
