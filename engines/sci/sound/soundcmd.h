@@ -46,7 +46,7 @@ struct MusicEntryCommand {
 
 class SoundCommandParser {
 public:
-	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion soundVersion);
+	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion);
 	~SoundCommandParser();
 
 	enum {
@@ -81,6 +81,7 @@ private:
 	SoundCommandContainer _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
+	Kernel *_kernel;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState *_state;
 	int _midiCmd, _controller, _param;

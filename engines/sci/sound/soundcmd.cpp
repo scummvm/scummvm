@@ -126,8 +126,8 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 }
 
 #endif
-SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, AudioPlayer *audio, SciVersion soundVersion) : 
-	_resMan(resMan), _segMan(segMan), _audio(audio), _soundVersion(soundVersion) {
+SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) : 
+	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	// The following hack is needed to ease the change from old to new sound code (because the new sound code does not use SfxState)
@@ -840,7 +840,8 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		// Update MIDI slots
 		if (musicSlot->signal == 0) {
 			if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, dataInc)) {
-				PUT_SEL32V(_segMan, obj, dataInc, musicSlot->dataInc);
+				if (_kernel->_selectorCache.dataInc > -1)
+					PUT_SEL32V(_segMan, obj, dataInc, musicSlot->dataInc);
 				PUT_SEL32V(_segMan, obj, signal, musicSlot->dataInc + 127);
 			}
 		} else {

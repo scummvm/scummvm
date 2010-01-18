@@ -165,7 +165,7 @@ Common::Error SciEngine::run() {
 
 	SciVersion soundVersion = _gamestate->detectDoSoundType();
 
-	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _audio, soundVersion);
+	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("undither", "true");
