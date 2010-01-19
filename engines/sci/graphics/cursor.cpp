@@ -128,7 +128,7 @@ void Cursor::setShape(GuiResourceId resourceId) {
 	}
 
 	CursorMan.replaceCursor(rawBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
-	CursorMan.showMouse(true);
+	show();
 
 	delete[] rawBitmap;
 }
