@@ -598,7 +598,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 				uint8 *sampleData = (uint8 *)malloc(size);
 				if (sampleData) {
 					f.read(sampleData, size);
-					stream = Audio::makeLinearInputStream(sampleData, size, rate, flags);
+					stream = Audio::makeRawMemoryStream(sampleData, size, rate, flags);
 				}
 			}
 			break;

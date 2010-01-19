@@ -225,7 +225,7 @@ void MixerImpl::playRaw(
 			uint32 loopStart, uint32 loopEnd) {
 
 	// Create the input stream
-	AudioStream *input = makeLinearInputStream((byte *)sound, size, rate, flags, loopStart, loopEnd);
+	AudioStream *input = makeRawMemoryStream((byte *)sound, size, rate, flags, loopStart, loopEnd);
 
 	// Play it
 	playInputStream(type, handle, input, id, volume, balance, DisposeAfterUse::YES, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));

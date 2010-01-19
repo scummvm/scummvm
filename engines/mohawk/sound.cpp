@@ -439,7 +439,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			flags |= Audio::Mixer::FLAG_STEREO;
 		if (data_chunk.loop == 0xFFFF || loop)
 			flags |= Audio::Mixer::FLAG_LOOP;
-		return Audio::makeLinearInputStream(data_chunk.audio_data, data_chunk.size, data_chunk.sample_rate, flags, data_chunk.loopStart, data_chunk.loopEnd);
+		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, data_chunk.sample_rate, flags, data_chunk.loopStart, data_chunk.loopEnd);
 	} else if (data_chunk.encoding == kCodecADPCM) {
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
@@ -485,7 +485,7 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
 	
-	return Audio::makeLinearInputStream(data, size, rate, flags, 0, 0);
+	return Audio::makeRawMemoryStream(data, size, rate, flags, 0, 0);
 }
 
 SndHandle *Sound::getHandle() {

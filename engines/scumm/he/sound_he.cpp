@@ -659,8 +659,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 			flags |= Audio::Mixer::FLAG_AUTOFREE;
 			
-			// makeADPCMStream returns a stream in native endianness, but LinearInputStream (and playRaw)
-			// is defaulted to Big Endian. If we're on a Little Endian system, set the LE flag.
+			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream (and playRaw)
+			// defaults to big endian. If we're on a little endian system, set the LE flag.
 #ifdef SCUMM_LITTLE_ENDIAN
 			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif

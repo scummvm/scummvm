@@ -65,7 +65,7 @@ class Mixer {
 public:
 	/**
 	 * Various flags which can be bit-ORed and then passed to
-	 * Mixer::playRaw resp. makeLinearInputStream to control their
+	 * Mixer::playRaw resp. makeRawMemoryStream to control their
 	 * behavior.
 	 *
 	 * Engine authors are advised not to rely on a certain value or
@@ -131,7 +131,7 @@ public:
 	/**
 	 * Start playing the given raw sound data.
 	 * Internally, this simply creates an audio input stream wrapping the data
-	 * (using the makeLinearInputStream factory function), which is then
+	 * (using the makeRawMemoryStream factory function), which is then
 	 * passed on to playInputStream.
 	 */
 	virtual void playRaw(

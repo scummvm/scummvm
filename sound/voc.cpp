@@ -179,7 +179,7 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
 
 #ifdef STREAM_AUDIO_FROM_DISK
 
-int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBlock* block, int &rate, int &loops, int &begin_loop, int &end_loop) {
+int parseVOCFormat(Common::SeekableReadStream& stream, RawDiskStreamAudioBlock* block, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	VocFileHeader fileHeader;
 	int currentBlock = 0;
 	int size = 0;
@@ -301,7 +301,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBloc
 AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
-	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
+	RawDiskStreamAudioBlock *block = new RawDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
 	int rate, loops, begin_loop, end_loop;
 
 	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
@@ -311,7 +311,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, D
 	// Create an audiostream from the data. Note the numBlocks may be 0,
 	// e.g. when invalid data is encountered. See bug #2890038.
 	if (numBlocks)
-		audioStream = makeLinearDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
+		audioStream = makeRawDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
 
 	delete[] block;
 
@@ -321,7 +321,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, D
 SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
-	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
+	RawDiskStreamAudioBlock *block = new RawDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
 	int rate, loops, begin_loop, end_loop;
 
 	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
@@ -331,7 +331,7 @@ SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream,
 	// Create an audiostream from the data. Note the numBlocks may be 0,
 	// e.g. when invalid data is encountered. See bug #2890038.
 	if (numBlocks)
-		audioStream = makeLinearDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership);
+		audioStream = makeRawDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership);
 
 	delete[] block;
 
@@ -352,7 +352,7 @@ AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint 
 	if (!data)
 		return 0;
 
-	return makeLinearInputStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, loopStart, loopEnd);
+	return makeRawMemoryStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, loopStart, loopEnd);
 #endif
 }
 
@@ -367,7 +367,7 @@ SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flag
 	if (!data)
 		return 0;
 
-	return makeLinearInputStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
+	return makeRawMemoryStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE);
 #endif
 }
 

@@ -307,27 +307,27 @@ private:
  * @see Mixer::RawFlags
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-SeekableAudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags);
+SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate, byte flags);
 
 /**
  * NOTE:
  * This API is considered deprecated.
  *
- * Factory function for a raw linear AudioStream, which will simply treat all
+ * Factory function for a raw PCM AudioStream, which will simply treat all
  * data in the buffer described by ptr and len as raw sample data in the
  * specified format. It will then simply pass this data directly to the mixer,
  * after converting it to the sample format used by the mixer (i.e. 16 bit
  * signed native endian). Optionally supports (infinite) looping of a portion
  * of the data.
  */
-AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
+AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate,
                                    byte flags, uint loopStart, uint loopEnd);
 
 
 /**
- * Struct used to define the audio data to be played by a LinearDiskStream.
+ * Struct used to define the audio data to be played by a RawDiskStream.
  */
-struct LinearDiskStreamAudioBlock {
+struct RawDiskStreamAudioBlock {
 	int32 pos;		///< Position in stream of the block
 	int32 len;		///< Length of the block (in samples)
 };
@@ -336,8 +336,8 @@ struct LinearDiskStreamAudioBlock {
  * Creates a audio stream, which plays from given stream.
  *
  * @param stream Stream to play from
- * @param block Pointer to an LinearDiskStreamAudioBlock array
- * @see LinearDiskStreamAudioBlock
+ * @param block Pointer to an RawDiskStreamAudioBlock array
+ * @see RawDiskStreamAudioBlock
  * @param numBlocks Number of blocks.
  * @param rate The rate 
  * @param len Length of the data (in bytes!)
@@ -346,19 +346,19 @@ struct LinearDiskStreamAudioBlock {
  * @param disposeStream Whether the "stream" object should be destroyed after playback.
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-SeekableAudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block,
 		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream);
 
 /**
  * NOTE:
  * This API is considered deprecated.
  *
- * Factory function for a Linear Disk Stream.  This can stream linear (PCM)
- * audio from disk. The function takes an pointer to an array of
- * LinearDiskStreamAudioBlock which defines the start position and length of
+ * Factory function for a Raw Disk Stream.  This can stream raw PCM
+ * audio data from disk. The function takes an pointer to an array of
+ * RawDiskStreamAudioBlock which defines the start position and length of
  * each block of uncompressed audio in the stream.
  */
-AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block,
 		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd);
 
 class QueuingAudioStream : public Audio::AudioStream {
@@ -381,7 +381,7 @@ public:
 	 * with new[], not with malloc).
 	 */
 	void queueBuffer(byte *data, uint32 size, byte flags) {
-		AudioStream *stream = makeLinearInputStream(data, size, getRate(), flags, 0, 0);
+		AudioStream *stream = makeRawMemoryStream(data, size, getRate(), flags, 0, 0);
 		queueAudioStream(stream, DisposeAfterUse::YES);
 	}
 

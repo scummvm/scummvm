@@ -551,7 +551,7 @@ static Audio::AudioStream *makeStream(byte *data, int size, int rate) {
 
 	// Convert stream format flags
 	int flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
-	return Audio::makeLinearInputStream(sound, size, rate, flags, 0, 0);
+	return Audio::makeRawMemoryStream(sound, size, rate, flags, 0, 0);
 }
 
 Audio::AudioStream *Sci0SongIterator::getAudioStream() {

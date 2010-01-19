@@ -305,10 +305,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				if (!_digitalMusicContext->isCompressed()) {
 					byte musicFlags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_STEREO | 
 										Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
-					Audio::LinearDiskStreamAudioBlock audioBlocks[1];
+					Audio::RawDiskStreamAudioBlock audioBlocks[1];
 					audioBlocks[0].pos = 0;
 					audioBlocks[0].len = resData->size / 2;	// 16-bit sound
-					audioStream = Audio::makeLinearDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, DisposeAfterUse::YES);
+					audioStream = Audio::makeRawDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, DisposeAfterUse::YES);
 				} else {
 					// Read compressed header to determine compression type
 					musicFile->seek((uint32)resData->offset, SEEK_SET);
