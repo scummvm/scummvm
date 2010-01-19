@@ -270,9 +270,9 @@ void Sound::playSample(QueueElement *elem) {
 							flags = Audio::FLAG_UNSIGNED;
 						if (READ_LE_UINT16(sampleData + 0x16) == 2)
 							flags |= Audio::FLAG_STEREO;
-						if (_fxList[elem->id].type == FX_LOOP)
-							flags |= Audio::FLAG_LOOP;
-						Audio::AudioStream *stream = Audio::makeRawMemoryStream(sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, 0, 0);
+						Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+									Audio::makeRawMemoryStream(sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags),
+									(_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
 					}
 			}

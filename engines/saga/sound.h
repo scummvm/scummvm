@@ -87,7 +87,7 @@ public:
 
  private:
 
-	void playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
+	void playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop);
 
 	SndHandle *getHandle();

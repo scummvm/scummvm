@@ -680,7 +680,7 @@ bool Intro::doIntro(bool floppyIntro) {
 
 bool Intro::nextPart(uint16 *&data) {
 	uint8 *vData = NULL;
-	Audio::AudioStream *stream = 0;
+	Audio::RewindableAudioStream *stream = 0;
 
 	// return false means cancel intro
 	uint16 command = *data++;
@@ -757,8 +757,8 @@ bool Intro::nextPart(uint16 *&data) {
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
 		stream = Audio::makeRawMemoryStream(_bgBuf + 256, _bgSize - 768, DisposeAfterUse::YES,
-				11025, Audio::FLAG_UNSIGNED | Audio::FLAG_LOOP, 0, 0);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
+				11025, Audio::FLAG_UNSIGNED);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, Audio::makeLoopingAudioStream(stream, 0), SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);

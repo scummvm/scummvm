@@ -64,19 +64,18 @@ SndHandle *Sound::getHandle() {
 	return NULL;	// for compilers that don't support NORETURN
 }
 
-void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
+void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
 	Audio::AudioStream *stream = 0;
-
-	if (loop)
-		buffer.flags |= Audio::FLAG_LOOP;
 
 	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {
-		stream = Audio::makeRawMemoryStream(buffer.buffer, buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags, 0, 0);
+		stream = Audio::makeLoopingAudioStream(
+						Audio::makeRawMemoryStream(buffer.buffer, buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags),
+						loop ? 0 : 1);
 	} else {
 
 		// TODO / FIXME: It seems we don't loop compressed audio at all, but do loop uncompressed data.

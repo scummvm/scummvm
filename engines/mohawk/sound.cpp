@@ -481,12 +481,9 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	stream->read(data, size);
 	delete stream;
 	
-	byte flags = Audio::FLAG_UNSIGNED;
-	
-	if (loop)
-		flags |= Audio::FLAG_LOOP;
-	
-	return Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, flags, 0, 0);
+	return Audio::makeLoopingAudioStream(
+			Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED),
+			loop ? 0 : 1);
 }
 
 SndHandle *Sound::getHandle() {

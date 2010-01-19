@@ -197,14 +197,13 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 
 	byte flags = Audio::FLAG_UNSIGNED;
 
-	if (loop)
-		flags |= Audio::FLAG_LOOP;
-
 	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	// Don't use DisposeAfterUse::YES, because our caching system deletes samples by itself.
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer._data, buffer._length, DisposeAfterUse::NO, buffer._frequency, flags, 0, 0);
+	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+			Audio::makeRawMemoryStream(buffer._data, buffer._length, DisposeAfterUse::NO, buffer._frequency, flags),
+			loop ? 0 : 1);
 	_mixer->playInputStream(soundType, handle, stream, -1, volume);
 }
 

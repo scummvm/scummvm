@@ -70,7 +70,6 @@ bool Sound::isHandleActive(SndHandle *handle) {
 }
 
 void Sound::playSound(const char *soundName, int volume, bool loop, int channel) {
-	byte flags;
 	Common::SeekableReadStream *soundStream = _vm->res()->get(soundName);
 	SndHandle *handle;
 	if (channel < 0) {
@@ -90,15 +89,13 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_vm->res()->toss(soundName);
 
 	handle->type = kEffectHandle;
-	flags = Audio::FLAG_UNSIGNED;
-
-	if (loop)
-		flags |= Audio::FLAG_LOOP;
 
 	_vm->res()->toss(soundName);
 
 	// Sound format is 8bit mono, unsigned, 11025kHz
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, bufferSize, DisposeAfterUse::YES, 11025, flags, 0, 0);
+	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+				Audio::makeRawMemoryStream(buffer, bufferSize, DisposeAfterUse::YES, 11025, Audio::FLAG_UNSIGNED),
+				loop ? 0 : 1);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
@@ -137,7 +134,6 @@ void Sound::stopSound(int channel) {
 }
 
 void Sound::playVoice(const char *soundName, int volume) {
-	byte flags;
 	Common::SeekableReadStream *soundStream = _vm->res()->get(soundName);
 	SndHandle *handle = getHandle();
 	byte *buffer;
@@ -146,12 +142,11 @@ void Sound::playVoice(const char *soundName, int volume) {
 	soundStream->read(buffer, soundStream->size());
 
 	handle->type = kEffectHandle;
-	flags = Audio::FLAG_UNSIGNED;
 
 	_vm->res()->toss(soundName);
 
 	// Voice format is 8bit mono, unsigned, 11025kHz
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, soundStream->size(), DisposeAfterUse::YES, 11025, flags);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, soundStream->size(), DisposeAfterUse::YES, 11025, Audio::FLAG_UNSIGNED);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
@@ -246,14 +241,9 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 		return;
 	}
 
-	byte flags;
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
-	flags = Audio::FLAG_UNSIGNED;
-
-	if (loop)
-		flags |= Audio::FLAG_LOOP;
 
 	// Get sound data
 	FabDecompressor fab;
@@ -268,9 +258,11 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 				   buffer, _dsrFile.dsrEntries[soundIndex]->uncompSize);
 
 	// Play sound
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer,
+	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
+				Audio::makeRawMemoryStream(buffer,
 					_dsrFile.dsrEntries[soundIndex]->uncompSize, DisposeAfterUse::YES,
-					_dsrFile.dsrEntries[soundIndex]->frequency, flags, 0, 0);
+					_dsrFile.dsrEntries[soundIndex]->frequency, Audio::FLAG_UNSIGNED),
+				loop ? 0 : 1);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 
 	/*

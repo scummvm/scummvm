@@ -528,7 +528,7 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 }
 
 void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
-	Audio::AudioStream *stream = 0;
+	Audio::RewindableAudioStream *stream = 0;
 	byte *ptr, *spoolPtr;
 	int size = -1;
 	int priority, rate;
@@ -636,7 +636,6 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		// TODO: Extra sound flags
 		if (heFlags & 1) {
-			flags |= Audio::FLAG_LOOP;
 			_heChannel[heChannel].timer = 0;
 		} else {
 			_heChannel[heChannel].timer = size * 1000 / rate;
@@ -668,11 +667,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 #ifdef SCUMM_LITTLE_ENDIAN
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-			stream = Audio::makeRawMemoryStream(sound + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, 0, 0);
+			stream = Audio::makeRawMemoryStream(sound + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags);
 		} else {
-			stream = Audio::makeRawMemoryStream(ptr + memStream.pos() + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, 0, 0);
+			stream = Audio::makeRawMemoryStream(ptr + memStream.pos() + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags);
 		}
-		_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
+		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
+						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
@@ -722,7 +722,6 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		// TODO: Extra sound flags
 		if (heFlags & 1) {
-			flags |= Audio::FLAG_LOOP;
 			_heChannel[heChannel].timer = 0;
 		} else {
 			_heChannel[heChannel].timer = size * 1000 / rate;
@@ -730,8 +729,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 
-		stream = Audio::makeRawMemoryStream(ptr + heOffset + 8, size, DisposeAfterUse::NO, rate, flags, 0, 0);
-		_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
+		stream = Audio::makeRawMemoryStream(ptr + heOffset + 8, size, DisposeAfterUse::NO, rate, flags);
+		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
+						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {

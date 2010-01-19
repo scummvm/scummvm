@@ -261,11 +261,13 @@ void SoundResource::load(byte *source, int size) {
 }
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
-	byte flags = Audio::FLAG_UNSIGNED;
-	if (loop)
-		flags |= Audio::FLAG_LOOP;
+	Audio::RewindableAudioStream *stream =
+			Audio::makeRawMemoryStream(_soundData, _soundSize, DisposeAfterUse::NO, soundRate, Audio::FLAG_UNSIGNED);
 
-	return Audio::makeRawMemoryStream(_soundData, _soundSize, DisposeAfterUse::NO, soundRate, flags, 0, 0);
+	if (loop)
+		return Audio::makeLoopingAudioStream(stream, 0);
+	else
+		return stream;
 }
 
 void SoundResourceV1::load(byte *source, int size) {
