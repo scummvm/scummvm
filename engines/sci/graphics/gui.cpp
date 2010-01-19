@@ -57,7 +57,7 @@ SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *
 	_text = new Text(_s->resMan, _gfx, _screen);
 	_windowMgr = new WindowMgr(this, _screen, _gfx, _text);
 	_controls = new Controls(_s->_segMan, _gfx, _text);
-	_menu = new Menu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
+	_menu = new Menu(_s->_event, _s->_segMan, this, _gfx, _text, _screen, _cursor);
 }
 
 SciGui::SciGui() {
@@ -337,7 +337,7 @@ void SciGui::drawMenuBar(bool clear) {
 
 void SciGui::menuReset() {
 	delete _menu;
-	_menu = new Menu(_s->_event, _s->_segMan, _gfx, _text, _screen, _cursor);
+	_menu = new Menu(_s->_event, _s->_segMan, this, _gfx, _text, _screen, _cursor);
 }
 
 void SciGui::menuAdd(Common::String title, Common::String content, reg_t contentVmPtr) {

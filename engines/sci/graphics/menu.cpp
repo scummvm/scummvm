@@ -32,6 +32,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/gfx.h"
+#include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/text.h"
@@ -40,8 +41,8 @@
 
 namespace Sci {
 
-Menu::Menu(SciEvent *event, SegManager *segMan, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor)
-	: _event(event), _segMan(segMan), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
+Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor)
+	: _event(event), _segMan(segMan), _gui(gui), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
 	// We actually set active item in here and remember last selection of the user
@@ -408,9 +409,8 @@ reg_t Menu::select(reg_t eventObject) {
 
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
-		_gfx->BitsShow(_menuRect);
+		_gui->graphRedrawBox(_menuRect);
 		_menuSaveHandle = NULL_REG;
-		// TODO: Change to ReAnimate()
 	}
 	if (!_barSaveHandle.isNull()) {
 		_gfx->BitsRestore(_barSaveHandle);
@@ -472,8 +472,7 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	// Remove menu, if one is displayed
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
-		_gfx->BitsShow(_menuRect);
-		// TODO: Change to ReAnimate()
+		_gui->graphRedrawBox(_menuRect);
 	}
 
 	// First calculate rect of menu and also invert old and new menu text
