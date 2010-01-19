@@ -33,6 +33,7 @@
 #include "sky/sound.h"
 #include "sky/struc.h"
 
+#include "sound/audiostream.h"
 #include "sound/raw.h"
 
 namespace Sky {
@@ -1043,7 +1044,9 @@ void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *h
 	memcpy(buffer, sound+sizeof(DataFileHeader), size);
 
 	_mixer->stopID(id);
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, DisposeAfterUse::YES, 11025, flags, id);
+
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 11025, flags);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, id);
 }
 
 void Sound::loadSection(uint8 pSection) {
@@ -1245,7 +1248,9 @@ bool Sound::startSpeech(uint16 textNum) {
 		rate = 11025;
 
 	_mixer->stopID(SOUND_SPEECH);
-	_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_ingameSpeech, playBuffer, speechSize, DisposeAfterUse::YES, rate, Audio::Mixer::FLAG_UNSIGNED, SOUND_SPEECH);
+
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(playBuffer, speechSize, DisposeAfterUse::YES, rate, Audio::Mixer::FLAG_UNSIGNED);
+	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_ingameSpeech, stream, SOUND_SPEECH);
 	return true;
 }
 

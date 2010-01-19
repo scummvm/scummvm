@@ -38,6 +38,9 @@
 #include "sky/struc.h"
 #include "sky/text.h"
 
+#include "sound/audiostream.h"
+#include "sound/raw.h"
+
 namespace Sky {
 
 #define SHOWSCREEN		 0
@@ -677,6 +680,8 @@ bool Intro::doIntro(bool floppyIntro) {
 
 bool Intro::nextPart(uint16 *&data) {
 	uint8 *vData = NULL;
+	Audio::AudioStream *stream = 0;
+
 	// return false means cancel intro
 	uint16 command = *data++;
 	switch (command) {
@@ -730,11 +735,13 @@ bool Intro::nextPart(uint16 *&data) {
 			return false;
 		vData = _skyDisk->loadFile(*data++);
 		// HACK: Fill the header with silence. We should
-		// probably use _skySound instead of calling playRaw()
+		// probably use _skySound instead of calling playInputStream()
 		// directly, but this will have to do for now.
 		memset(vData, 127, sizeof(DataFileHeader));
-		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_voice, vData, _skyDisk->_lastLoadedFileSize, DisposeAfterUse::YES,
-				11025, Audio::Mixer::FLAG_UNSIGNED, SOUND_VOICE);
+
+		stream = Audio::makeRawMemoryStream(vData, _skyDisk->_lastLoadedFileSize, DisposeAfterUse::YES,
+				11025, Audio::Mixer::FLAG_UNSIGNED);
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_voice, stream, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
 		while (_mixer->isSoundHandleActive(_voice))
@@ -749,13 +756,15 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_bgSfx, _bgBuf + 256, _bgSize - 768, DisposeAfterUse::YES,
-				11025, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LOOP, SOUND_BG);
+		stream = Audio::makeRawMemoryStream(_bgBuf + 256, _bgSize - 768, DisposeAfterUse::YES,
+				11025, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LOOP, 0, 0);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_bgSfx, _bgBuf + 256, _bgSize - 768, DisposeAfterUse::YES,
-				11025, Audio::Mixer::FLAG_UNSIGNED, SOUND_BG);
+		stream = Audio::makeRawMemoryStream(_bgBuf + 256, _bgSize - 768, DisposeAfterUse::YES,
+				11025, Audio::Mixer::FLAG_UNSIGNED);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
 		return true;
 	case STOPBG:
 		_mixer->stopID(SOUND_BG);

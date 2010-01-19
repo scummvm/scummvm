@@ -39,6 +39,7 @@
 #include "sound/flac.h"
 #include "sound/mididrv.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/vorbis.h"
 
 #define	SB_HEADER_SIZE_V104 110
@@ -328,7 +329,9 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	if (sound) {
 		f->read(sound, size);
 		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
-		_mixer->playRaw(type, soundHandle, sound, size, DisposeAfterUse::YES, 11840, Audio::Mixer::FLAG_UNSIGNED);
+
+		Audio::AudioStream *stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, 11840, Audio::Mixer::FLAG_UNSIGNED);
+		_mixer->playInputStream(type, soundHandle, stream);
 	}
 }
 
@@ -610,7 +613,9 @@ void AmigaSound::playSound(const char *base) {
 		uint8 *soundData = (uint8 *)malloc(soundSize);
 		if (soundData) {
 			f->read(soundData, soundSize);
-			_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_sfxHandle, soundData, soundSize, DisposeAfterUse::YES, 11025, 0);
+
+			Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundData, soundSize, DisposeAfterUse::YES, 11025, 0);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
 		}
 	}
 }

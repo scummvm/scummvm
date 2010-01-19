@@ -41,6 +41,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
@@ -527,6 +528,7 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 }
 
 void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
+	Audio::AudioStream *stream = 0;
 	byte *ptr, *spoolPtr;
 	int size = -1;
 	int priority, rate;
@@ -572,7 +574,8 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			_mixer->playRaw(type, &_heSoundChannels[heChannel], spoolPtr, size, DisposeAfterUse::NO, 11025, flags, soundID);
+			stream = Audio::makeRawMemoryStream(spoolPtr, size, DisposeAfterUse::NO, 11025, flags);
+			_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
 			return;
 		}
 	}
@@ -591,7 +594,6 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF') || READ_BE_UINT32(ptr) == MKID_BE('WSOU')) {
 		uint16 compType;
 		int blockAlign;
-		char *sound;
 		int codeOffs = -1;
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
@@ -613,9 +615,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			ptr += 8;
 
 		size = READ_LE_UINT32(ptr + 4);
-		Common::MemoryReadStream stream(ptr, size);
+		Common::MemoryReadStream memStream(ptr, size);
 
-		if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign)) {
+		if (!Audio::loadWAVFromStream(memStream, size, rate, flags, &compType, &blockAlign)) {
 			error("playHESound: Not a valid WAV file (%d)", soundID);
 		}
 
@@ -642,9 +644,13 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		if (compType == 17) {
-			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&memStream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
-			sound = (char *)malloc(size * 4);
+			// FIXME: Get rid of this crude hack to turn a ADPCM stream into a raw stream.
+			// It seems it is only there to allow looping -- if that is true, we certainly
+			// can do without it, using a LoopingAudioStream.
+
+			byte *sound = (byte *)malloc(size * 4);
 			/* On systems where it matters, malloc will return
 			 * even addresses, so the use of (void *) in the
 			 * following cast shuts the compiler from warning
@@ -657,16 +663,16 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			if (_heChannel[heChannel].timer)
 				_heChannel[heChannel].timer = size * 1000 / rate;
 
-			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream (and playRaw)
+			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
 			// defaults to big endian. If we're on a little endian system, set the LE flag.
 #ifdef SCUMM_LITTLE_ENDIAN
 			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
-
-			_mixer->playRaw(type, &_heSoundChannels[heChannel], sound + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, soundID);
+			stream = Audio::makeRawMemoryStream(sound + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, 0, 0);
 		} else {
-			_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + stream.pos() + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, soundID);
+			stream = Audio::makeRawMemoryStream(ptr + memStream.pos() + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, 0, 0);
 		}
+		_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
 	}
 	// Support for sound in Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('DIGI') || READ_BE_UINT32(ptr) == MKID_BE('TALK')) {
@@ -723,7 +729,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + heOffset + 8, size, DisposeAfterUse::NO, rate, flags, soundID);
+
+		stream = Audio::makeRawMemoryStream(ptr + heOffset + 8, size, DisposeAfterUse::NO, rate, flags, 0, 0);
+		_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
@@ -741,7 +749,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_mixer->playRaw(Audio::Mixer::kMusicSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, 0, soundID);
+
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, 0);
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, NULL, stream, soundID);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {

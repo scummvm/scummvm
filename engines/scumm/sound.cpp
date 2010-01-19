@@ -203,7 +203,9 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
+
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// WORKAROUND bug # 1311447
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
@@ -225,7 +227,8 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
@@ -296,7 +299,8 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
 

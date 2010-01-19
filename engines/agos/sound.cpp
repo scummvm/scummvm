@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/file.h"
 #include "common/util.h"
 
@@ -35,6 +33,7 @@
 #include "sound/flac.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
@@ -277,7 +276,9 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 	byte *buffer = (byte *)malloc(size);
 	assert(buffer);
 	_file->read(buffer, size);
-	_mixer->playRaw(type, handle, buffer, size, DisposeAfterUse::YES, 22050, flags);
+
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 22050, flags);
+	_mixer->playInputStream(type, handle, stream);
 }
 
 #ifdef USE_MAD
@@ -743,7 +744,9 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	byte flags = 0;
 	if (_vm->getPlatform() == Common::kPlatformPC)
 		flags = Audio::Mixer::FLAG_UNSIGNED;
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, DisposeAfterUse::YES, freq, flags);
+
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, freq, flags);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_effectsHandle, stream);
 }
 
 // Feeble Files specific

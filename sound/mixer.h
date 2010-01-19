@@ -65,8 +65,8 @@ class Mixer {
 public:
 	/**
 	 * Various flags which can be bit-ORed and then passed to
-	 * Mixer::playRaw resp. makeRawMemoryStream to control their
-	 * behavior.
+	 * makeRawMemoryStream and some other AudioStream factories
+	 * to control their behavior.
 	 *
 	 * Engine authors are advised not to rely on a certain value or
 	 * order of these flags (in particular, do not store them verbatim
@@ -120,24 +120,6 @@ public:
 	 */
 	virtual bool isReady() const = 0;
 
-
-
-	/**
-	 * Start playing the given raw sound data.
-	 * Internally, this simply creates an audio input stream wrapping the data
-	 * (using the makeRawMemoryStream factory function), which is then
-	 * passed on to playInputStream.
-	 */
-	virtual void playRaw(
-		SoundType type,
-		SoundHandle *handle,
-		void *sound, uint32 size,
-		DisposeAfterUse::Flag autofreeBuffer,
-		uint rate,
-		byte flags,
-		int id = -1,
-		byte volume = kMaxChannelVolume,
-		int8 balance = 0) = 0;
 
 	/**
 	 * Start playing the given audio input stream.

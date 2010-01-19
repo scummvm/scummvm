@@ -217,22 +217,6 @@ void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 		*handle = chanHandle;
 }
 
-void MixerImpl::playRaw(
-			SoundType type,
-			SoundHandle *handle,
-			void *sound,
-			uint32 size,
-			DisposeAfterUse::Flag autofreeBuffer,
-			uint rate, byte flags,
-			int id, byte volume, int8 balance) {
-
-	// Create the audio stream
-	AudioStream *stream = makeRawMemoryStream((byte *)sound, size, autofreeBuffer, rate, flags, 0, 0);
-
-	// Play it
-	playInputStream(type, handle, stream, id, volume, balance, DisposeAfterUse::YES, false, false);
-}
-
 void MixerImpl::playInputStream(
 			SoundType type,
 			SoundHandle *handle,
