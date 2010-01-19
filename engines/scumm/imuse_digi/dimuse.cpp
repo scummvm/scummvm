@@ -35,6 +35,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 namespace Scumm {
 
@@ -78,13 +79,13 @@ IMuseDigital::~IMuseDigital() {
 int32 IMuseDigital::makeMixerFlags(int32 flags) {
 	int32 mixerFlags = 0;
 	if (flags & kFlagUnsigned)
-		mixerFlags |= Audio::Mixer::FLAG_UNSIGNED;
+		mixerFlags |= Audio::FLAG_UNSIGNED;
 	if (flags & kFlag16Bits)
-		mixerFlags |= Audio::Mixer::FLAG_16BITS;
+		mixerFlags |= Audio::FLAG_16BITS;
 	if (flags & kFlagLittleEndian)
-		mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		mixerFlags |= Audio::FLAG_LITTLE_ENDIAN;
 	if (flags & kFlagStereo)
-		mixerFlags |= Audio::Mixer::FLAG_STEREO;
+		mixerFlags |= Audio::FLAG_STEREO;
 	return mixerFlags;
 }
 

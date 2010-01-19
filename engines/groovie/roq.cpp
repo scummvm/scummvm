@@ -36,6 +36,7 @@
 #include "graphics/conversion.h"
 #endif
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 namespace Groovie {
 
@@ -540,9 +541,9 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 	}
 
 	// Queue the read buffer
-	byte flags = Audio::Mixer::FLAG_16BITS;
+	byte flags = Audio::FLAG_16BITS;
 #ifdef SCUMM_LITTLE_ENDIAN
-	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
 	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
 
@@ -596,9 +597,9 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 	}
 
 	// Queue the read buffer
-	byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO;
+	byte flags = Audio::FLAG_16BITS | Audio::FLAG_STEREO;
 #ifdef SCUMM_LITTLE_ENDIAN
-	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
 	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
 

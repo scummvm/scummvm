@@ -35,8 +35,9 @@
 #include "common/stream.h"
 #include "common/system.h"
 
-#include "sound/mixer.h"
 #include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/raw.h"
 
 namespace Graphics {
 
@@ -574,9 +575,9 @@ bool SmackerDecoder::decodeNextFrame() {
 				// Uncompressed audio (PCM)
 				byte flags = 0;
 				if (_header.audioInfo[0].is16Bits)
-					flags = flags | Audio::Mixer::FLAG_16BITS;
+					flags = flags | Audio::FLAG_16BITS;
 				if (_header.audioInfo[0].isStereo)
-					flags = flags | Audio::Mixer::FLAG_STEREO;
+					flags = flags | Audio::FLAG_STEREO;
 
 				_audioStream->queueBuffer(soundBuffer, chunkSize, DisposeAfterUse::YES, flags);
 				// The sound buffer will be deleted by QueuingAudioStream
@@ -829,9 +830,9 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 	byte flags = 0;
 	if (_header.audioInfo[0].is16Bits)
-		flags = flags | Audio::Mixer::FLAG_16BITS;
+		flags = flags | Audio::FLAG_16BITS;
 	if (_header.audioInfo[0].isStereo)
-		flags = flags | Audio::Mixer::FLAG_STEREO;
+		flags = flags | Audio::FLAG_STEREO;
 	_audioStream->queueBuffer(unpackedBuffer, unpackedSize, DisposeAfterUse::YES, flags);
 	// unpackedBuffer will be deleted by QueuingAudioStream
 }

@@ -1038,7 +1038,7 @@ Sound::~Sound() {
 
 void Sound::playSound(uint32 id, byte *sound, uint32 size, Audio::SoundHandle *handle) {
 	byte flags = 0;
-	flags |= Audio::Mixer::FLAG_UNSIGNED;
+	flags |= Audio::FLAG_UNSIGNED;
 	size -= sizeof(DataFileHeader);
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, sound+sizeof(DataFileHeader), size);
@@ -1111,13 +1111,13 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	uint32 dataLoop = READ_BE_UINT16(_sfxInfo + (sound << 3) + 6);
 	dataOfs += _sfxBaseOfs;
 
-	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+	byte flags = Audio::FLAG_UNSIGNED;
 
 	uint32 loopSta = 0, loopEnd = 0;
 	if (dataLoop) {
 		loopSta = dataSize - dataLoop;
 		loopEnd = dataSize;
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 	}
 
 
@@ -1249,7 +1249,7 @@ bool Sound::startSpeech(uint16 textNum) {
 
 	_mixer->stopID(SOUND_SPEECH);
 
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(playBuffer, speechSize, DisposeAfterUse::YES, rate, Audio::Mixer::FLAG_UNSIGNED);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(playBuffer, speechSize, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED);
 	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_ingameSpeech, stream, SOUND_SPEECH);
 	return true;
 }

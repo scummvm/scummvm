@@ -63,32 +63,6 @@ public:
  */
 class Mixer {
 public:
-	/**
-	 * Various flags which can be bit-ORed and then passed to
-	 * makeRawMemoryStream and some other AudioStream factories
-	 * to control their behavior.
-	 *
-	 * Engine authors are advised not to rely on a certain value or
-	 * order of these flags (in particular, do not store them verbatim
-	 * in savestates).
-	 */
-	enum RawFlags {
-		/** unsigned samples (default: signed) */
-		FLAG_UNSIGNED = 1 << 0,
-
-		/** sound is 16 bits wide (default: 8bit) */
-		FLAG_16BITS = 1 << 1,
-
-		/** samples are little endian (default: big endian) */
-		FLAG_LITTLE_ENDIAN = 1 << 2,
-
-		/** sound is in stereo (default: mono) */
-		FLAG_STEREO = 1 << 3,
-
-		/** loop the audio */
-		FLAG_LOOP = 1 << 6
-	};
-
 	enum SoundType {
 		kPlainSoundType = 0,
 

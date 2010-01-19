@@ -31,6 +31,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 #include "graphics/video/avi_decoder.h"
 
@@ -325,9 +326,9 @@ Surface *AviDecoder::getNextFrame() {
 
 		byte flags = 0;
 		if (_audsHeader.sampleSize == 2)
-			flags |= Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+			flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 		else
-			flags |= Audio::Mixer::FLAG_UNSIGNED;
+			flags |= Audio::FLAG_UNSIGNED;
 
 		_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
 		_fileStream->skip(chunkSize & 1); // Alignment

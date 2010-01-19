@@ -331,10 +331,10 @@ bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &whe
 SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 		DisposeAfterUse::Flag autoFree,
 		int rate, byte flags) {
-	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
 
 	// Verify the buffer sizes are sane
 	if (is16Bit && isStereo) {
@@ -365,9 +365,9 @@ AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 		uint loopStart, uint loopEnd) {
 	SeekableAudioStream *stream = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
 
-	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
-	const bool isLooping  = (flags & Mixer::FLAG_LOOP) != 0;
+	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isLooping  = (flags & Audio::FLAG_LOOP) != 0;
 
 	if (isLooping) {
 		uint loopOffset = 0, loopLen = 0;
@@ -407,10 +407,10 @@ AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 
 SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block, int numBlocks,
 					int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
-	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
 
 	if (isStereo) {
 		if (isUnsigned) {
@@ -431,9 +431,9 @@ AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStream
 		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd) {
 	SeekableAudioStream *s = makeRawDiskStream(stream, block, numBlocks, rate, flags, disposeStream);
 
-	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
-	const bool isLooping  = (flags & Mixer::FLAG_LOOP) != 0;
+	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isLooping  = (flags & Audio::FLAG_LOOP) != 0;
 
 	if (isLooping) {
 		uint loopOffset = 0, loopLen = 0;

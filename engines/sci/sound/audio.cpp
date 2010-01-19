@@ -170,10 +170,10 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	// Convert the SOL stream flags to our own format
 	flags = 0;
 	if (audioFlags & kSolFlag16Bit)
-		flags |= Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		flags |= Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
 	if (!(audioFlags & kSolFlagIsSigned))
-		flags |= Audio::Mixer::FLAG_UNSIGNED;
+		flags |= Audio::FLAG_UNSIGNED;
 
 	if (audioFlags & kSolFlagCompressed) {
 		buffer = (byte *)malloc(size * 2);
@@ -240,7 +240,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			data = (byte *)malloc(size);
 			assert(data);
 			memcpy(data, audioRes->data, size);
-			flags = Audio::Mixer::FLAG_UNSIGNED;
+			flags = Audio::FLAG_UNSIGNED;
 		}
 	}
 
@@ -248,7 +248,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		audioStream = Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, _audioRate, flags);
 
 	if (audioStream) {
-		*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
+		*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
 		return audioStream;
 	}
 

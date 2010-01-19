@@ -37,6 +37,7 @@
 #include "common/system.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 #include "kyra/sound.h"
 #include "kyra/screen.h"
@@ -422,7 +423,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 			inbuf = (byte *)malloc(size);
 			_file->read(inbuf, size);
 			assert(_stream);
-			_stream->queueBuffer(inbuf, size, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+			_stream->queueBuffer(inbuf, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			break;
 
 		case MKID_BE('SND1'):	// Compressed sound, almost like AUD
@@ -435,12 +436,12 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 			if (insize == outsize) {
 				assert(_stream);
-				_stream->queueBuffer(inbuf, insize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+				_stream->queueBuffer(inbuf, insize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			} else {
 				outbuf = (byte *)malloc(outsize);
 				decodeSND1(inbuf, insize, outbuf, outsize);
 				assert(_stream);
-				_stream->queueBuffer(outbuf, outsize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+				_stream->queueBuffer(outbuf, outsize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 				free(inbuf);
 			}
 			break;
@@ -612,7 +613,7 @@ void VQAMovie::play() {
 			case MKID_BE('SND0'):	// Uncompressed sound
 				inbuf = (byte *)malloc(size);
 				_file->read(inbuf, size);
-				_stream->queueBuffer(inbuf, size, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+				_stream->queueBuffer(inbuf, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 				break;
 
 			case MKID_BE('SND1'):	// Compressed sound
@@ -623,11 +624,11 @@ void VQAMovie::play() {
 				_file->read(inbuf, insize);
 
 				if (insize == outsize) {
-					_stream->queueBuffer(inbuf, insize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+					_stream->queueBuffer(inbuf, insize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 				} else {
 					outbuf = (byte *)malloc(outsize);
 					decodeSND1(inbuf, insize, outbuf, outsize);
-					_stream->queueBuffer(outbuf, outsize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+					_stream->queueBuffer(outbuf, outsize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 					free(inbuf);
 				}
 				break;

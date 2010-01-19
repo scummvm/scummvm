@@ -261,9 +261,9 @@ void SoundResource::load(byte *source, int size) {
 }
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
-	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+	byte flags = Audio::FLAG_UNSIGNED;
 	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 
 	return Audio::makeRawMemoryStream(_soundData, _soundSize, DisposeAfterUse::NO, soundRate, flags, 0, 0);
 }

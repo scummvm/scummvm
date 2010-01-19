@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "common/stream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 #include "sound/wave.h"
 
 #include "gob/sound/sounddesc.h"
@@ -120,7 +121,7 @@ void SoundDesc::convToSigned() {
 	if (!_data || !_dataPtr)
 		return;
 
-	if (_mixerFlags & Audio::Mixer::FLAG_16BITS) {
+	if (_mixerFlags & Audio::FLAG_16BITS) {
 		byte *data = _dataPtr;
 		for (uint32 i = 0; i < _size; i++, data += 2)
 			WRITE_LE_UINT16(data, READ_LE_UINT16(data) ^ 0x8000);
@@ -163,12 +164,12 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 	if (!Audio::loadWAVFromStream(stream, wavSize, wavRate, wavFlags, &wavtype, 0))
 		return false;
 
-	if (wavFlags & Audio::Mixer::FLAG_16BITS) {
-		_mixerFlags |= Audio::Mixer::FLAG_16BITS;
+	if (wavFlags & Audio::FLAG_16BITS) {
+		_mixerFlags |= Audio::FLAG_16BITS;
 		wavSize >>= 1;
 	}
 
-	if (wavFlags & Audio::Mixer::FLAG_STEREO) {
+	if (wavFlags & Audio::FLAG_STEREO) {
 		warning("TODO: SoundDesc::loadWAV() - stereo");
 		return false;
 	}
@@ -178,7 +179,7 @@ bool SoundDesc::loadWAV(byte *data, uint32 dSize) {
 	_size = wavSize;
 	_frequency = wavRate;
 
-	if (wavFlags & Audio::Mixer::FLAG_UNSIGNED)
+	if (wavFlags & Audio::FLAG_UNSIGNED)
 		convToSigned();
 
 	return true;

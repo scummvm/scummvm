@@ -252,7 +252,7 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 
 void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
 }
 
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
@@ -263,7 +263,7 @@ Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
 	convertVolume(vol);
 	_flags = flags;
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -308,7 +308,7 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 
 void MP3Sound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
 }
 #endif
 
@@ -339,7 +339,7 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 
 void VorbisSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
 }
 #endif
 
@@ -370,7 +370,7 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 
 void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
 }
 #endif
 
@@ -616,13 +616,13 @@ void Sound::playVoice(uint sound) {
 	_mixer->stopHandle(_voiceHandle);
 	if (_vm->getGameType() == GType_PP) {
 		if (sound < 11)
-			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, Audio::Mixer::FLAG_LOOP, -1500);
+			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, Audio::FLAG_LOOP, -1500);
 		else
-			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, Audio::Mixer::FLAG_LOOP);
+			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, Audio::FLAG_LOOP);
 	} else if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
 		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, 0);
 	} else {
-		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, Audio::Mixer::FLAG_UNSIGNED);
+		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, Audio::FLAG_UNSIGNED);
 	}
 }
 
@@ -635,7 +635,7 @@ void Sound::playEffects(uint sound) {
 
 	if (_vm->getGameType() == GType_SIMON1)
 		_mixer->stopHandle(_effectsHandle);
-	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
+	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::FLAG_UNSIGNED);
 }
 
 void Sound::playAmbient(uint sound) {
@@ -651,7 +651,7 @@ void Sound::playAmbient(uint sound) {
 		return;
 
 	_mixer->stopHandle(_ambientHandle);
-	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_ambientHandle, Audio::Mixer::FLAG_LOOP | Audio::Mixer::FLAG_UNSIGNED);
+	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_ambientHandle, Audio::FLAG_LOOP | Audio::FLAG_UNSIGNED);
 }
 
 bool Sound::hasVoice() const {
@@ -743,7 +743,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 
 	byte flags = 0;
 	if (_vm->getPlatform() == Common::kPlatformPC)
-		flags = Audio::Mixer::FLAG_UNSIGNED;
+		flags = Audio::FLAG_UNSIGNED;
 
 	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, freq, flags);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_effectsHandle, stream);

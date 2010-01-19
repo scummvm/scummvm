@@ -38,7 +38,10 @@
 #include "common/array.h"
 #include "graphics/dither.h"
 #include "sound/mixer.h"
-#include "sound/audiostream.h"
+
+namespace Audio {
+	class QueuingAudioStream;
+}
 
 namespace Graphics {
 

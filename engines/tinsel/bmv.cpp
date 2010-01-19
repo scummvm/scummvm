@@ -42,6 +42,8 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h"
 
+#include "sound/raw.h"
+
 namespace Tinsel {
 
 //----------------- LOCAL DEFINES ----------------------------
@@ -453,7 +455,7 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 	else
 		memset(data, 0, blobs * 128);
 
-	_audioStream->queueBuffer(data, blobs * 128, DisposeAfterUse::YES, Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO);
+	_audioStream->queueBuffer(data, blobs * 128, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_STEREO);
 
 	if (currentSoundFrame == ADVANCE_SOUND) {
 		if (!audioStarted) {

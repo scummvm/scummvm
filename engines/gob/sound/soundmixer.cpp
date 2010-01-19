@@ -26,6 +26,8 @@
 #include "gob/sound/soundmixer.h"
 #include "gob/sound/sounddesc.h"
 
+#include "sound/raw.h"
+
 namespace Gob {
 
 SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type) : _mixer(&mixer) {
@@ -105,7 +107,7 @@ void SoundMixer::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	sndDesc._repCount = repCount - 1;
 	sndDesc._frequency = frequency;
 
-	_16bit = (sndDesc._mixerFlags & Audio::Mixer::FLAG_16BITS) != 0;
+	_16bit = (sndDesc._mixerFlags & Audio::FLAG_16BITS) != 0;
 
 	_data = sndDesc.getData();
 

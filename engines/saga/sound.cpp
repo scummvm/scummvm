@@ -70,7 +70,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	Audio::AudioStream *stream = 0;
 
 	if (loop)
-		buffer.flags |= Audio::Mixer::FLAG_LOOP;
+		buffer.flags |= Audio::FLAG_LOOP;
 
 	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;

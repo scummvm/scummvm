@@ -154,7 +154,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			#endif
 			break;
 		default:
-			sampleStream = Audio::makeRawMemoryStream(sampleBuf, sampleLen, DisposeAfterUse::YES, 22050, Audio::Mixer::FLAG_UNSIGNED);
+			sampleStream = Audio::makeRawMemoryStream(sampleBuf, sampleLen, DisposeAfterUse::YES, 22050, Audio::FLAG_UNSIGNED);
 			break;
 		}
 		if (sampleStream) {

@@ -196,18 +196,18 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 		case kTypeS8:
 			break;
 		case kTypeU8:
-			flags |= Audio::Mixer::FLAG_UNSIGNED;
+			flags |= Audio::FLAG_UNSIGNED;
 			break;
 		case kTypeS16LH:
-			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+			flags |= Audio::FLAG_LITTLE_ENDIAN;
 		case kTypeS16HL:
-			flags |= Audio::Mixer::FLAG_16BITS;
+			flags |= Audio::FLAG_16BITS;
 			break;
 		case kTypeU16LH:
-			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+			flags |= Audio::FLAG_LITTLE_ENDIAN;
 		case kTypeU16HL:
-			flags |= Audio::Mixer::FLAG_16BITS;
-			flags |= Audio::Mixer::FLAG_UNSIGNED;
+			flags |= Audio::FLAG_16BITS;
+			flags |= Audio::FLAG_UNSIGNED;
 			break;
 		case kTypeWAV:
 			// TODO: Perhaps implement this if we find WAV Shorten encoded files
@@ -426,16 +426,16 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 				}
 
 				if (curChannel == channels - 1) {
-					int dataSize = (flags & Audio::Mixer::FLAG_16BITS) ? 2 : 1;
-					int limit = (flags & Audio::Mixer::FLAG_16BITS) ? 32767 : 127;
-					limit = (flags & Audio::Mixer::FLAG_UNSIGNED) ? limit * 2 + 1 : limit;
+					int dataSize = (flags & Audio::FLAG_16BITS) ? 2 : 1;
+					int limit = (flags & Audio::FLAG_16BITS) ? 32767 : 127;
+					limit = (flags & Audio::FLAG_UNSIGNED) ? limit * 2 + 1 : limit;
 
 					prevSize = size;
 					size += (blockSize * dataSize);
 					unpackedBuffer = (byte *) realloc(unpackedBuffer, size);
 					pBuf = unpackedBuffer + prevSize;
 
-					if (flags & Audio::Mixer::FLAG_16BITS) {
+					if (flags & Audio::FLAG_16BITS) {
 						for (i = 0; i < blockSize; i++) {
 							for (j = 0; j < channels; j++) {
 								int16 val = (int16)(MIN<int32>(buffer[j][i], limit) & 0xFFFF);

@@ -28,6 +28,7 @@
 #include "groovie/vdx.h"
 
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 #define TILE_SIZE 4			// Size of each tile on the image: only ever seen 4 so far
 #define VDX_IDENT 0x9267	// 37479
@@ -506,7 +507,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 	byte *data = (byte *)malloc(60000);
 	int chunksize = in->read(data, 60000);
 	if (!Common::isDebugChannelEnabled(kGroovieDebugFast)) {
-		_audioStream->queueBuffer(data, chunksize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+		_audioStream->queueBuffer(data, chunksize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 	}
 }
 

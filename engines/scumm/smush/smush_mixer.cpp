@@ -33,6 +33,7 @@
 #include "scumm/imuse/imuse.h"
 
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 
 namespace Scumm {
@@ -112,11 +113,11 @@ bool SmushMixer::handleFrame() {
 				int32 size = _channels[i].chan->getAvailableSoundDataSize();
 				byte *data = _channels[i].chan->getSoundData();
 
-				byte flags = stereo ? Audio::Mixer::FLAG_STEREO : 0;
+				byte flags = stereo ? Audio::FLAG_STEREO : 0;
 				if (is_16bit) {
-					flags |= Audio::Mixer::FLAG_16BITS;
+					flags |= Audio::FLAG_16BITS;
 				} else {
-					flags |= Audio::Mixer::FLAG_UNSIGNED;
+					flags |= Audio::FLAG_UNSIGNED;
 				}
 
 				if (_mixer->isReady()) {

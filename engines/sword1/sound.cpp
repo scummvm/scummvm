@@ -46,7 +46,7 @@
 namespace Sword1 {
 
 #define SOUND_SPEECH_ID 1
-#define SPEECH_FLAGS (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN)
+#define SPEECH_FLAGS (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN)
 
 Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
 	g_eventRec.registerRandomSource(_rnd, "sword1sound");
@@ -265,13 +265,13 @@ void Sound::playSample(QueueElement *elem) {
 						uint32 size = READ_LE_UINT32(sampleData + 0x28);
 						uint8 flags;
 						if (READ_LE_UINT16(sampleData + 0x22) == 16)
-							flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+							flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 						else
-							flags = Audio::Mixer::FLAG_UNSIGNED;
+							flags = Audio::FLAG_UNSIGNED;
 						if (READ_LE_UINT16(sampleData + 0x16) == 2)
-							flags |= Audio::Mixer::FLAG_STEREO;
+							flags |= Audio::FLAG_STEREO;
 						if (_fxList[elem->id].type == FX_LOOP)
-							flags |= Audio::Mixer::FLAG_LOOP;
+							flags |= Audio::FLAG_LOOP;
 						Audio::AudioStream *stream = Audio::makeRawMemoryStream(sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, 0, 0);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
 					}

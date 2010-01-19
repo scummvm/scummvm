@@ -591,9 +591,9 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 		case kAnimationSoundType16BitsRAW:
 			size = f.size();
 			rate = 22050;
-			flags = Audio::Mixer::FLAG_UNSIGNED;
+			flags = Audio::FLAG_UNSIGNED;
 			if (type == kAnimationSoundType16BitsRAW) 
-				flags = Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_16BITS;
+				flags = Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS;
 			
 			if (size != 0) {
 				uint8 *sampleData = (uint8 *)malloc(size);

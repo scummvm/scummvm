@@ -90,10 +90,10 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_vm->res()->toss(soundName);
 
 	handle->type = kEffectHandle;
-	flags = Audio::Mixer::FLAG_UNSIGNED;
+	flags = Audio::FLAG_UNSIGNED;
 
 	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 
 	_vm->res()->toss(soundName);
 
@@ -146,7 +146,7 @@ void Sound::playVoice(const char *soundName, int volume) {
 	soundStream->read(buffer, soundStream->size());
 
 	handle->type = kEffectHandle;
-	flags = Audio::Mixer::FLAG_UNSIGNED;
+	flags = Audio::FLAG_UNSIGNED;
 
 	_vm->res()->toss(soundName);
 
@@ -250,10 +250,10 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
-	flags = Audio::Mixer::FLAG_UNSIGNED;
+	flags = Audio::FLAG_UNSIGNED;
 
 	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 
 	// Get sound data
 	FabDecompressor fab;

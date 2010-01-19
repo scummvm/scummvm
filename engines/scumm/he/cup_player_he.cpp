@@ -169,10 +169,10 @@ void CUP_Player::updateSfx() {
 			uint8 *soundData = _sfxBuffer + offset;
 			if (READ_BE_UINT32(soundData) == MKID_BE('DATA')) {
 				uint32 soundSize = READ_BE_UINT32(soundData + 4);
-				uint32 flags = Audio::Mixer::FLAG_UNSIGNED;
+				uint32 flags = Audio::FLAG_UNSIGNED;
 				uint32 loopEnd = 0;
 				if (sfx->flags & kSfxFlagLoop) {
-					flags |= Audio::Mixer::FLAG_LOOP;
+					flags |= Audio::FLAG_LOOP;
 					loopEnd = soundSize - 8;
 				}
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &sfxChannel->handle,

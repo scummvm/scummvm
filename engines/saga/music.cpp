@@ -304,8 +304,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 							(uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
 
 				if (!_digitalMusicContext->isCompressed()) {
-					byte musicFlags = Audio::Mixer::FLAG_STEREO | 
-										Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+					byte musicFlags = Audio::FLAG_STEREO | 
+										Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 					Audio::RawDiskStreamAudioBlock audioBlocks[1];
 					audioBlocks[0].pos = 0;
 					audioBlocks[0].len = resData->size / 2;	// 16-bit sound

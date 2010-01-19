@@ -330,7 +330,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 		f->read(sound, size);
 		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
-		Audio::AudioStream *stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, 11840, Audio::Mixer::FLAG_UNSIGNED);
+		Audio::AudioStream *stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, 11840, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(type, soundHandle, stream);
 	}
 }

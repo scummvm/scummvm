@@ -551,7 +551,7 @@ static Audio::AudioStream *makeStream(byte *data, int size, int rate) {
 	memcpy(sound, data, size);
 
 	// Convert stream format flags
-	int flags = Audio::Mixer::FLAG_UNSIGNED;
+	int flags = Audio::FLAG_UNSIGNED;
 	return Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags, 0, 0);
 }
 

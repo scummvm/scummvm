@@ -186,7 +186,7 @@ void DrasculaEngine::playFile(const char *fname) {
 			memset(soundData, 0x80, soundSize); // Mute speech but keep the pause
 
 		Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundData, soundSize - 64, DisposeAfterUse::YES,
-						11025, Audio::Mixer::FLAG_UNSIGNED);
+						11025, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
 	} else
 		warning("playFile: Could not open %s", fname);

@@ -26,6 +26,8 @@
 #include "made/pmvplayer.h"
 #include "made/screen.h"
 
+#include "sound/raw.h"
+
 namespace Made {
 
 PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(NULL), _vm(vm), _mixer(mixer) {
@@ -140,7 +142,7 @@ bool PmvPlayer::play(const char *filename) {
 			soundSize = chunkCount * chunkSize;
 			soundData = (byte *)malloc(soundSize);
 			decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
-			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 		}
 
 		// Handle palette

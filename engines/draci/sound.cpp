@@ -195,10 +195,10 @@ SndHandle *Sound::getHandle() {
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
-	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+	byte flags = Audio::FLAG_UNSIGNED;
 
 	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 
 	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;

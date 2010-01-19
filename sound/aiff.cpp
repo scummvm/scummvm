@@ -150,9 +150,9 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 
 	flags = 0;
 	if (bitsPerSample == 16)
-		flags |= Audio::Mixer::FLAG_16BITS;
+		flags |= Audio::FLAG_16BITS;
 	if (numChannels == 2)
-		flags |= Audio::Mixer::FLAG_STEREO;
+		flags |= Audio::FLAG_STEREO;
 
 	stream.seek(soundOffset);
 

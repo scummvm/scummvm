@@ -34,14 +34,15 @@
 
 #include "common/file.h"
 
-#include "sound/voc.h"
-#include "sound/wave.h"
+#include "sound/audiostream.h"
 #include "sound/adpcm.h"
 #include "sound/aiff.h"
 #ifdef ENABLE_SAGA2
 #include "sound/shorten.h"
 #endif
-#include "sound/audiostream.h"
+#include "sound/raw.h"
+#include "sound/voc.h"
+#include "sound/wave.h"
 
 namespace Saga {
 
@@ -268,12 +269,12 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	buffer.soundType = resourceType;
 	buffer.originalSize = 0;
 	// Set default flags and frequency for PCM, VOC and VOX files, which got no header
-	buffer.flags = Audio::Mixer::FLAG_16BITS;
+	buffer.flags = Audio::FLAG_16BITS;
 	buffer.frequency = 22050;
 	if (_vm->getGameId() == GID_ITE) {
 		if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
-			buffer.flags |= Audio::Mixer::FLAG_UNSIGNED;
-			buffer.flags &= ~Audio::Mixer::FLAG_16BITS;
+			buffer.flags |= Audio::FLAG_UNSIGNED;
+			buffer.flags &= ~Audio::FLAG_16BITS;
 		} else {
 			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded
 			if (!scumm_stricmp(context->fileName(), "voicesd.rsc"))
@@ -284,9 +285,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	// Check for LE sounds
 	if (!context->isBigEndian())
-		buffer.flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
 	if ((context->fileType() & GAME_VOICEFILE) && (_vm->getFeatures() & GF_LE_VOICES))
-		buffer.flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
 
 	// Older Mac versions of ITE were Macbinary packed
 	int soundOffset = (context->fileType() & GAME_MACBINARY) ? 36 : 0;
@@ -329,7 +330,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			result = (data != 0);
 			if (onlyHeader)
 				free(data);
-			buffer.flags |= Audio::Mixer::FLAG_UNSIGNED;
+			buffer.flags |= Audio::FLAG_UNSIGNED;
 		}
 
 		if (result) {
@@ -355,9 +356,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		buffer.frequency = readS.readUint16LE();
 		buffer.originalSize = readS.readUint32LE();
 		if (readS.readByte() == 8)	// read sample bits
-			buffer.flags &= ~Audio::Mixer::FLAG_16BITS;
+			buffer.flags &= ~Audio::FLAG_16BITS;
 		if (readS.readByte() != 0)	// read stereo flag
-			buffer.flags |= Audio::Mixer::FLAG_STEREO;
+			buffer.flags |= Audio::FLAG_STEREO;
 
 		buffer.size = soundResourceLength;
 		buffer.soundType = resourceType;
@@ -404,10 +405,10 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 	else
 		msDouble = (double)buffer.originalSize;
 
-	if (buffer.flags & Audio::Mixer::FLAG_16BITS)
+	if (buffer.flags & Audio::FLAG_16BITS)
 		msDouble /= 2.0;
 
-	if (buffer.flags & Audio::Mixer::FLAG_STEREO)
+	if (buffer.flags & Audio::FLAG_STEREO)
 		msDouble /= 2.0;
 
 	msDouble = msDouble / buffer.frequency * 1000.0;

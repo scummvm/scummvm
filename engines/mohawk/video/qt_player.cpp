@@ -1161,11 +1161,11 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
 		if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('raw '))
-			flags |= Audio::Mixer::FLAG_UNSIGNED;
+			flags |= Audio::FLAG_UNSIGNED;
 		if (_streams[_audioStreamIndex]->channels == 2)
-			flags |= Audio::Mixer::FLAG_STEREO;
+			flags |= Audio::FLAG_STEREO;
 		if (_streams[_audioStreamIndex]->bits_per_sample == 16)
-			flags |= Audio::Mixer::FLAG_16BITS;
+			flags |= Audio::FLAG_16BITS;
 		uint32 dataSize = stream->size();
 		byte *data = (byte *)malloc(dataSize);
 		stream->read(data, dataSize);

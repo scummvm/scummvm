@@ -33,6 +33,9 @@
 #include "graphics/dither.h"
 #include "graphics/video/coktelvideo/indeo3.h"
 
+#include "sound/audiostream.h"
+#include "sound/raw.h"
+
 namespace Graphics {
 
 Imd::Imd() {
@@ -2184,8 +2187,8 @@ void Vmd::emptySoundSlice(uint32 size) {
 
 	if (sound) {
 		uint32 flags = 0;
-		flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
-		flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
+		flags |= (_soundBytesPerSample == 2) ? Audio::FLAG_16BITS : 0;
+		flags |= (_soundStereo > 0) ? Audio::FLAG_STEREO : 0;
 
 		_audioStream->queueBuffer(sound, size, DisposeAfterUse::YES, flags);
 	}
@@ -2202,8 +2205,8 @@ void Vmd::filledSoundSlice(uint32 size) {
 
 	if (sound) {
 		uint32 flags = 0;
-		flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
-		flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
+		flags |= (_soundBytesPerSample == 2) ? Audio::FLAG_16BITS : 0;
+		flags |= (_soundStereo > 0) ? Audio::FLAG_STEREO : 0;
 
 		_audioStream->queueBuffer(sound, size, DisposeAfterUse::YES, flags);
 	}

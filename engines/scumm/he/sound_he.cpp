@@ -532,7 +532,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 	byte *ptr, *spoolPtr;
 	int size = -1;
 	int priority, rate;
-	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+	byte flags = Audio::FLAG_UNSIGNED;
 
 	Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType;
 	if (soundID > _vm->_numSounds)
@@ -636,7 +636,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		// TODO: Extra sound flags
 		if (heFlags & 1) {
-			flags |= Audio::Mixer::FLAG_LOOP;
+			flags |= Audio::FLAG_LOOP;
 			_heChannel[heChannel].timer = 0;
 		} else {
 			_heChannel[heChannel].timer = size * 1000 / rate;
@@ -644,7 +644,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		if (compType == 17) {
-			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&memStream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&memStream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			// FIXME: Get rid of this crude hack to turn a ADPCM stream into a raw stream.
 			// It seems it is only there to allow looping -- if that is true, we certainly
@@ -666,7 +666,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
 			// defaults to big endian. If we're on a little endian system, set the LE flag.
 #ifdef SCUMM_LITTLE_ENDIAN
-			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+			flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
 			stream = Audio::makeRawMemoryStream(sound + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, 0, 0);
 		} else {
@@ -722,7 +722,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		// TODO: Extra sound flags
 		if (heFlags & 1) {
-			flags |= Audio::Mixer::FLAG_LOOP;
+			flags |= Audio::FLAG_LOOP;
 			_heChannel[heChannel].timer = 0;
 		} else {
 			_heChannel[heChannel].timer = size * 1000 / rate;

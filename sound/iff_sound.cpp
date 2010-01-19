@@ -96,7 +96,7 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 		// repeatHiSamples fields
 		loopStart = 0;
 		loopEnd = loader._header.oneShotHiSamples + loader._header.repeatHiSamples;
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 	}
 
 	return Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, DisposeAfterUse::YES, loader._header.samplesPerSec, flags, loopStart, loopEnd);

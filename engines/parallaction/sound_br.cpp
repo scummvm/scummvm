@@ -416,11 +416,11 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 	int rate = 11025;
 
 	uint32 loopStart = 0, loopEnd = 0;
-	uint32 flags = Audio::Mixer::FLAG_UNSIGNED;
+	uint32 flags = Audio::FLAG_UNSIGNED;
 
 	if (looping) {
 		loopEnd = dataSize;
-		flags |= Audio::Mixer::FLAG_LOOP;
+		flags |= Audio::FLAG_LOOP;
 	}
 
 	ch->stream = Audio::makeRawMemoryStream((byte *)data, dataSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);

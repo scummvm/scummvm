@@ -119,18 +119,18 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 
 	flags = 0;
 	if (bitsPerSample == 8)		// 8 bit data is unsigned
-		flags |= Audio::Mixer::FLAG_UNSIGNED;
+		flags |= Audio::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
-		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
+		flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
 	else if (bitsPerSample == 4 && (type == 2 || type == 17))
-		flags |= Audio::Mixer::FLAG_16BITS;
+		flags |= Audio::FLAG_16BITS;
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
 		return false;
 	}
 
 	if (numChannels == 2)
-		flags |= Audio::Mixer::FLAG_STEREO;
+		flags |= Audio::FLAG_STEREO;
 	else if (numChannels != 1) {
 		warning("getWavInfo: unsupported number of channels %d", numChannels);
 		return false;
@@ -175,9 +175,9 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, Dispose
 	}
 
 	if (type == 17) // MS IMA ADPCM
-		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
 	else if (type == 2) // MS ADPCM
-		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
 	
 	// Raw PCM. Just read everything at once.
 	// TODO: More elegant would be to wrap the stream.

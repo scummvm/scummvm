@@ -164,7 +164,7 @@ void Sound::playSound(int soundID) {
 	Audio::AudioStream *stream;
 	int size = -1;
 	int rate;
-	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+	byte flags = Audio::FLAG_UNSIGNED;
 
 	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
 		if (soundID >= 13 && soundID <= 32) {
@@ -351,7 +351,7 @@ void Sound::playSound(int soundID) {
 				size -= waveSize;
 
 				if (loopEnd > 0)
-					flags |= Audio::Mixer::FLAG_LOOP;
+					flags |= Audio::FLAG_LOOP;
 
 				stream = Audio::makeRawMemoryStream(sound, waveSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
@@ -442,7 +442,7 @@ void Sound::playSound(int soundID) {
 			// so maybe this is not really a problem.
 			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
 			loopEnd = READ_BE_UINT16(ptr + 14);
-			flags |= Audio::Mixer::FLAG_LOOP;
+			flags |= Audio::FLAG_LOOP;
 		}
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
@@ -659,7 +659,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 	#endif
 			break;
 		default:
-			input = Audio::makeVOCStream(*_sfxFile, Audio::Mixer::FLAG_UNSIGNED);
+			input = Audio::makeVOCStream(*_sfxFile, Audio::FLAG_UNSIGNED);
 			break;
 		}
 
