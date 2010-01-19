@@ -540,6 +540,7 @@ uint32 MohawkEngine_Riven::getCurCardRMAP() {
 	Common::SeekableReadStream *rmapStream = getRawData(ID_RMAP, 1);
 	rmapStream->seek(_curCard * 4);
 	uint32 rmapCode = rmapStream->readUint32BE();
+	delete rmapStream;
 	return rmapCode;
 }
 
