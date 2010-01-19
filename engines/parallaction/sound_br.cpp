@@ -406,7 +406,7 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 
 	uint32 dataSize = stream->size();
-	int8 *data = (int8*)malloc(dataSize);
+	byte *data = (byte *)malloc(dataSize);
 	if (stream->read(data, dataSize) != dataSize)
 		error("DosSoundMan_br::loadChannelData: Read failed");
 
@@ -423,7 +423,7 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 		flags |= Audio::FLAG_LOOP;
 	}
 
-	ch->stream = Audio::makeRawMemoryStream((byte *)data, dataSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+	ch->stream = Audio::makeRawMemoryStream(data, dataSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
 	return ch->stream;
 }
 
