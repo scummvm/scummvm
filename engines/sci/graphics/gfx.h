@@ -94,6 +94,8 @@ public:
 
 	void PriorityBandsInit(int16 bandCount, int16 top, int16 bottom);
 	void PriorityBandsInit(byte *data);
+	void PriorityBandsRemember(byte *data);
+	void PriorityBandsRecall();
 	byte CoordinateToPriority(int16 y);
 	int16 PriorityToCoordinate(byte priority);
 
@@ -128,6 +130,9 @@ private:
 
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;
+
+	byte priorityBandsMemory[14];
+	bool priorityBandsMemoryActive;
 };
 
 } // End of namespace Sci

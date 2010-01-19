@@ -68,6 +68,8 @@ void Gfx::init(Text *text) {
 	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
 
 	_EGAdrawingVisualize = false;
+
+	priorityBandsMemoryActive = false;
 }
 
 void Gfx::purgeCache() {
@@ -517,6 +519,24 @@ void Gfx::PriorityBandsInit(byte *data) {
 	}
 	while (i < 200)
 		_priorityBands[i++] = inx;
+}
+
+// Gets used by picture class to remember priority bands data from sci1.1 pictures that need to get applied when
+//  transitioning to that picture
+void Gfx::PriorityBandsRemember(byte *data) {
+	int bandNo;
+	for (bandNo = 0; bandNo < 14; bandNo++) {
+		priorityBandsMemory[bandNo] = READ_LE_UINT16(data);
+		data += 2;
+	}
+	priorityBandsMemoryActive = true;
+}
+
+void Gfx::PriorityBandsRecall() {
+	if (priorityBandsMemoryActive) {
+		PriorityBandsInit((byte *)&priorityBandsMemory);
+		priorityBandsMemoryActive = false;
+	}
 }
 
 byte Gfx::CoordinateToPriority(int16 y) {

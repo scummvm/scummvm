@@ -634,6 +634,9 @@ void SciGui::animateShowPic() {
 	_transitions->doit(picRect);
 	if (previousCursorState)
 		_cursor->show();
+
+	// We set SCI1.1 priority band information here
+	_gfx->PriorityBandsRecall();
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {

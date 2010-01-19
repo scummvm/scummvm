@@ -111,6 +111,9 @@ void SciGuiPicture::drawSci11Vga() {
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
+
+	// Remember priority band information for later
+	_gfx->PriorityBandsRemember(inbuffer + 40);
 }
 
 #ifdef ENABLE_SCI32
