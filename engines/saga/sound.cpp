@@ -66,6 +66,8 @@ SndHandle *Sound::getHandle() {
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
+	Audio::AudioStream *stream = 0;
+
 	if (loop)
 		buffer.flags |= Audio::Mixer::FLAG_LOOP;
 
@@ -73,11 +75,11 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {
-		_mixer->playRaw(soundType, handle, buffer.buffer,
-				buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags, -1, volume);
+		stream = Audio::makeRawMemoryStream(buffer.buffer, buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags, 0, 0);
 	} else {
-		Audio::AudioStream *stream = 0;
 
+		// TODO / FIXME: It seems we don't loop compressed audio at all, but do loop uncompressed data.
+		// Is that intentional? Seems odd...
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
@@ -99,10 +101,10 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 				warning("Unknown compression, ignoring sound");
 				break;
 		}
-
-		if (stream != NULL)
-			_mixer->playInputStream(soundType, handle, stream, -1, volume, 0, DisposeAfterUse::YES, false);
 	}
+
+	if (stream != NULL)
+		_mixer->playInputStream(soundType, handle, stream, -1, volume);
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {
