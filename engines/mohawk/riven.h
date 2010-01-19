@@ -157,6 +157,7 @@ public:
 	uint16 getCurCard() { return _curCard; }
 	uint16 getCurStack() { return _curStack; }
 	uint16 matchRMAPToCard(uint32);
+	uint32 getCurCardRMAP();
 
 	Common::Point _mousePos;
 	RivenHotspot *_hotspots;

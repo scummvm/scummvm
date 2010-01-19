@@ -581,11 +581,8 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
-	Common::SeekableReadStream *rmapStream = _vm->getRawData(ID_RMAP, 1);
-	rmapStream->seek(_vm->getCurCard() * 4);
-	DebugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapStream->readUint32BE());
-	delete rmapStream;
-
+	uint32 rmapCode = _vm->getCurCardRMAP();
+	DebugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapCode);
 	return true;
 }
 

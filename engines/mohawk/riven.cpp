@@ -536,6 +536,13 @@ uint16 MohawkEngine_Riven::matchRMAPToCard(uint32 rmapCode) {
 	return index - 1;
 }
 
+uint32 MohawkEngine_Riven::getCurCardRMAP() {
+	Common::SeekableReadStream *rmapStream = getRawData(ID_RMAP, 1);
+	rmapStream->seek(_curCard * 4);
+	uint32 rmapCode = rmapStream->readUint32BE();
+	return rmapCode;
+}
+
 void MohawkEngine_Riven::runCardScript(uint16 scriptType) {
 	assert(_cardData.hasData);
 	for (uint16 i = 0; i < _cardData.scripts.size(); i++)

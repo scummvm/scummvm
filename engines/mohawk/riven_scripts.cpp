@@ -542,7 +542,7 @@ void RivenScript::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 	// WORKAROUND: Disable the SLST that is played during Riven's intro.
 	// Riven X does this too (spoke this over with Jeff)
-	if (_vm->getCurStack() == tspit && _vm->getCurCard() == 155 && argv[0] == 2)
+	if (_vm->getCurStack() == tspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
 		return;
 
 	_vm->_sound->playSLST(argv[0], _vm->getCurCard());
