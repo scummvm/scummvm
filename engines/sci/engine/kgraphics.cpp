@@ -231,6 +231,10 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		control = (argc > 7) ? argv[7].toSint16() : -1;
 		color = argv[5].toSint16();
 
+		// TODO: Find out why we get >15 for color in EGA
+		if (!s->resMan->isVGA())
+			color &= 0x0F;
+
 		s->_gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
 		break;
 
@@ -909,7 +913,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = argv[2].toSint16();
 	uint16 x = argv[3].toUint16();
 	uint16 y = argv[4].toUint16();
-	int16 priority = (argc > 5) ? argv[5].toSint16()  : -1;
+	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
