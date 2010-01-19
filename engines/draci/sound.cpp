@@ -35,6 +35,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 namespace Draci {
 
@@ -203,8 +204,8 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	// Don't use DisposeAfterUse::YES, because our caching system deletes samples by itself.
-	_mixer->playRaw(soundType, handle, buffer._data,
-			buffer._length, DisposeAfterUse::NO, buffer._frequency, flags, -1, volume);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer._data, buffer._length, DisposeAfterUse::NO, buffer._frequency, flags, 0, 0);
+	_mixer->playInputStream(soundType, handle, stream, -1, volume);
 }
 
 void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {

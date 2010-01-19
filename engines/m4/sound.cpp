@@ -27,9 +27,11 @@
 #include "m4/sound.h"
 #include "m4/compression.h"
 
+#include "common/stream.h"
+
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "common/stream.h"
+#include "sound/raw.h"
 
 namespace M4 {
 
@@ -96,7 +98,8 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_vm->res()->toss(soundName);
 
 	// Sound format is 8bit mono, unsigned, 11025kHz
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, bufferSize, DisposeAfterUse::YES, 11025, flags, -1, volume);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, bufferSize, DisposeAfterUse::YES, 11025, flags, 0, 0);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
 void Sound::pauseSound() {
@@ -139,7 +142,7 @@ void Sound::playVoice(const char *soundName, int volume) {
 	SndHandle *handle = getHandle();
 	byte *buffer;
 
-	buffer = new byte[soundStream->size()];
+	buffer = (byte *)malloc(soundStream->size());
 	soundStream->read(buffer, soundStream->size());
 
 	handle->type = kEffectHandle;
@@ -148,7 +151,8 @@ void Sound::playVoice(const char *soundName, int volume) {
 	_vm->res()->toss(soundName);
 
 	// Voice format is 8bit mono, unsigned, 11025kHz
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, soundStream->size(), DisposeAfterUse::YES, 11025, flags, -1, volume);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, soundStream->size(), DisposeAfterUse::YES, 11025, flags);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
 void Sound::pauseVoice() {
@@ -264,9 +268,10 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 				   buffer, _dsrFile.dsrEntries[soundIndex]->uncompSize);
 
 	// Play sound
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer,
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer,
 					_dsrFile.dsrEntries[soundIndex]->uncompSize, DisposeAfterUse::YES,
-					_dsrFile.dsrEntries[soundIndex]->frequency, flags, -1, volume);
+					_dsrFile.dsrEntries[soundIndex]->frequency, flags, 0, 0);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 
 	/*
 	// Dump the sound file

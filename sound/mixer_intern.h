@@ -80,8 +80,7 @@ public:
 		void *sound, uint32 size,
 		DisposeAfterUse::Flag autofreeBuffer,
 		uint rate, byte flags,
-		int id, byte volume, int8 balance,
-		uint32 loopStart, uint32 loopEnd);
+		int id, byte volume, int8 balance);
 
 	virtual void playInputStream(
 		SoundType type,

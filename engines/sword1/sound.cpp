@@ -38,6 +38,7 @@
 
 #include "sound/flac.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
 #include "sound/vag.h"
@@ -271,7 +272,8 @@ void Sound::playSample(QueueElement *elem) {
 							flags |= Audio::Mixer::FLAG_STEREO;
 						if (_fxList[elem->id].type == FX_LOOP)
 							flags |= Audio::Mixer::FLAG_LOOP;
-						_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, elem->id, volume, pan, 0, 0);
+						Audio::AudioStream *stream = Audio::makeRawMemoryStream(sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, 0, 0);
+						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
 					}
 			}
 		} else

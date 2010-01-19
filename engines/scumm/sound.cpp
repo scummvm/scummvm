@@ -41,6 +41,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
@@ -159,7 +160,8 @@ void Sound::processSoundQueues() {
 
 void Sound::playSound(int soundID) {
 	byte *ptr;
-	char *sound;
+	byte *sound;
+	Audio::AudioStream *stream;
 	int size = -1;
 	int rate;
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
@@ -199,7 +201,7 @@ void Sound::playSound(int soundID) {
 		ptr += 0x72;
 
 		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
+		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
 	}
@@ -221,7 +223,7 @@ void Sound::playSound(int soundID) {
 		ptr += 0x26;
 
 		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
+		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
 	}
@@ -292,7 +294,7 @@ void Sound::playSound(int soundID) {
 		assert(voc_block_hdr.pack == 0);
 
 		// Allocate a sound buffer, copy the data into it, and play
-		sound = (char *)malloc(size);
+		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
 	}
@@ -334,9 +336,9 @@ void Sound::playSound(int soundID) {
 					warning("Wrong wave size in sound #%i: %i", soundID, waveSize);
 					waveSize = size;
 				}
-				sound = (char *)malloc(waveSize);
+				sound = (byte *)malloc(waveSize);
 				for (int x = 0; x < waveSize; x++) {
-					int b = *ptr++;
+					byte b = *ptr++;
 					if (b < 0x80)
 						sound[x] = 0x7F - b;
 					else
@@ -347,7 +349,8 @@ void Sound::playSound(int soundID) {
 				if (loopEnd > 0)
 					flags |= Audio::Mixer::FLAG_LOOP;
 
-				_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, waveSize, DisposeAfterUse::YES, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				stream = Audio::makeRawMemoryStream(sound, waveSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
 		case 1:
@@ -424,7 +427,7 @@ void Sound::playSound(int soundID) {
 		assert(size);
 		
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
-		sound = (char *)malloc(size);
+		sound = (byte *)malloc(size);
 		int vol = ptr[24] * 4;
 		int loopStart = 0, loopEnd = 0;
 		int loopcount = ptr[27];
@@ -439,8 +442,8 @@ void Sound::playSound(int soundID) {
 		}
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate,
-				flags, soundID, vol, 0, loopStart, loopEnd);
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, vol, 0);
 	}
 	else {
 

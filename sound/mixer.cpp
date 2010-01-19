@@ -224,14 +224,13 @@ void MixerImpl::playRaw(
 			uint32 size,
 			DisposeAfterUse::Flag autofreeBuffer,
 			uint rate, byte flags,
-			int id, byte volume, int8 balance,
-			uint32 loopStart, uint32 loopEnd) {
+			int id, byte volume, int8 balance) {
 
-	// Create the input stream
-	AudioStream *input = makeRawMemoryStream((byte *)sound, size, autofreeBuffer, rate, flags, loopStart, loopEnd);
+	// Create the audio stream
+	AudioStream *stream = makeRawMemoryStream((byte *)sound, size, autofreeBuffer, rate, flags, 0, 0);
 
 	// Play it
-	playInputStream(type, handle, input, id, volume, balance, DisposeAfterUse::YES, false, false);
+	playInputStream(type, handle, stream, id, volume, balance, DisposeAfterUse::YES, false, false);
 }
 
 void MixerImpl::playInputStream(

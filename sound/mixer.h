@@ -133,9 +133,11 @@ public:
 		SoundHandle *handle,
 		void *sound, uint32 size,
 		DisposeAfterUse::Flag autofreeBuffer,
-		uint rate, byte flags,
-		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
-		uint32 loopStart = 0, uint32 loopEnd = 0) = 0;
+		uint rate,
+		byte flags,
+		int id = -1,
+		byte volume = kMaxChannelVolume,
+		int8 balance = 0) = 0;
 
 	/**
 	 * Start playing the given audio input stream.
@@ -161,7 +163,9 @@ public:
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,
-		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
+		int id = -1,
+		byte volume = kMaxChannelVolume,
+		int8 balance = 0,
 		DisposeAfterUse::Flag autofreeStream = DisposeAfterUse::YES,
 		bool permanent = false,
 		bool reverseStereo = false) = 0;
