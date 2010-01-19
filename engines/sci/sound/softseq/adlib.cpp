@@ -161,7 +161,10 @@ private:
 class MidiPlayer_AdLib : public MidiPlayer {
 public:
 	MidiPlayer_AdLib() { _driver = new MidiDriver_AdLib(g_system->getMixer()); }
-	~MidiPlayer_AdLib() {}
+	~MidiPlayer_AdLib() {
+		delete _driver;
+		_driver = 0;
+	}
 
 	int open(ResourceManager *resMan);
 	void close();
@@ -817,8 +820,6 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 void MidiPlayer_AdLib::close() {
 	if (_driver) {
 		_driver->close();
-		delete _driver;
-		_driver = 0;
 	}
 }
 

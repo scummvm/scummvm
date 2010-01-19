@@ -146,6 +146,8 @@ void SciMusic::setReverb(byte reverb) {
 void SciMusic::resetDriver() {
 	Common::StackLock lock(_mutex);
 
+	// TODO/FIXME: is there any better way to reset the driver?
+
 	_pMidiDrv->close();
 	_pMidiDrv->open();
 	_pMidiDrv->setTimerCallback(this, &miditimerCallback);
