@@ -283,7 +283,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, int32 sou
 	// enums for kMusicSoundType and kSpeechSoundType.
 	//
 	// Investigate how this can effect ... anything :P
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, -1, vol, pan);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, DisposeAfterUse::YES, rate, flags, -1, vol, pan);
 }
 
 } // end of namespace Asylum
