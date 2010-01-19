@@ -199,7 +199,7 @@ void MoviePlayer::fetchAudioChunks() {
 		if (chunkType == 4) {
 			byte *chunkBuffer = new byte[chunkSize];
 			_vm->_arc->read(chunkBuffer, chunkSize);
-			_audioStream->queueBuffer(chunkBuffer, chunkSize, Audio::Mixer::FLAG_UNSIGNED);
+			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 			chunkBuffer = NULL;
 			prefetchChunkCount++;
 			_soundChunkFramesLeft += _framesPerSoundChunk;

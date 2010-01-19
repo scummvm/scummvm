@@ -35,6 +35,7 @@
 #include "graphics/cursorman.h"
 
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 #include "picture/picture.h"
 #include "picture/palette.h"
@@ -153,7 +154,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			// Background sounds
 			if (type == kChannelTypeBackground)
 				flags |= Audio::Mixer::FLAG_LOOP;
-			Audio::AudioStream *stream = Audio::makeLinearInputStream(soundResource->data, soundResource->size, 22050, flags, 0, 0);
+			Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundResource->data, soundResource->size, DisposeAfterUse::YES, 22050, flags, 0, 0);
 
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;
