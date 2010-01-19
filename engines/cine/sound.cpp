@@ -32,6 +32,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
+#include "sound/raw.h"
 #include "sound/mods/soundfx.h"
 
 namespace Cine {
@@ -844,7 +845,8 @@ void PaulaSound::update() {
 void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume) {
 	assert(frequency > 0);
 	frequency = PAULA_FREQ / frequency;
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], data, size, DisposeAfterUse::YES, frequency, 0);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, frequency, 0);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], stream);
 	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 

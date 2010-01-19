@@ -43,6 +43,7 @@
 #include "sound/vag.h"
 #include "sound/flac.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/vorbis.h"
 
 #include "gui/message.h"
@@ -153,8 +154,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			#endif
 			break;
 		default:
-			_vm->_mixer->playRaw(type, &curChan.handle, sampleBuf, sampleLen, DisposeAfterUse::YES, 22050,
-				Audio::Mixer::FLAG_UNSIGNED);
+			sampleStream = Audio::makeRawMemoryStream(sampleBuf, sampleLen, DisposeAfterUse::YES, 22050, Audio::Mixer::FLAG_UNSIGNED);
 			break;
 		}
 		if (sampleStream) {

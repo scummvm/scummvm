@@ -23,9 +23,12 @@
  *
  */
 
-#include "sound/mixer.h"
-#include "sound/voc.h"
 #include "sound/audiocd.h"
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/raw.h"
+#include "sound/voc.h"
+
 #include "common/config-manager.h"
 
 #include "drascula/drascula.h"
@@ -182,8 +185,9 @@ void DrasculaEngine::playFile(const char *fname) {
 		if (ConfMan.getBool("speech_mute"))
 			memset(soundData, 0x80, soundSize); // Mute speech but keep the pause
 
-		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_soundHandle, soundData, soundSize - 64, DisposeAfterUse::YES,
+		Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundData, soundSize - 64, DisposeAfterUse::YES,
 						11025, Audio::Mixer::FLAG_UNSIGNED);
+		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
 	} else
 		warning("playFile: Could not open %s", fname);
 }

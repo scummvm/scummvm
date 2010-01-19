@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "engines/advancedDetector.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 #include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
 #include "teenagent/console.h"
@@ -893,11 +894,12 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	}
 
 	uint size = in->size();
-	char *data = new char[size];
+	byte *data = (byte *)malloc(size);
 	in->read(data, size);
 	//debug(0, "playing %u samples...", size);
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, data, size, DisposeAfterUse::YES, 11025, 0);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, 11025, 0);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 }
 
 
