@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 #include "scumm/scumm.h"
 #include "scumm/util.h"
 #include "scumm/he/intern_he.h"

@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	mpu401.o \
 	musicplugin.o \
 	null.o \
+	raw.o \
 	shorten.o \
 	timestamp.o \
 	vag.o \

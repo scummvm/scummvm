@@ -24,6 +24,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/endian.h"
 #include "sci/sound/softseq/mididriver.h"
 #include "sci/sound/seq/instrument-map.h"
 

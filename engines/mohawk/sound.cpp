@@ -29,6 +29,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/wave.h"
 
 

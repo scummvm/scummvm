@@ -26,6 +26,7 @@
 #include "common/system.h"
 
 #include "sound/audiostream.h"
+#include "sound/raw.h"
 #include "sound/wave.h"
 
 #include "tucker/tucker.h"

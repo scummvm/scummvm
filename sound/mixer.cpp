@@ -30,6 +30,7 @@
 #include "sound/rate.h"
 #include "sound/audiostream.h"
 #include "sound/timestamp.h"
+#include "sound/raw.h"
 
 
 namespace Audio {

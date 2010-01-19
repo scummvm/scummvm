@@ -40,6 +40,7 @@
 
 // Audio codecs
 #include "sound/adpcm.h"
+#include "sound/raw.h"
 #include "mohawk/video/qdm2.h"
 
 // Video codecs

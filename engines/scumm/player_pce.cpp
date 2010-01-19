@@ -33,6 +33,7 @@
 
 #include <math.h>
 #include "player_pce.h"
+#include "common/endian.h"
 
 // PCE sound engine is only used by Loom, which requires 16bit color support
 #ifdef USE_RGB_COLOR

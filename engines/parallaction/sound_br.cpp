@@ -31,6 +31,7 @@
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mods/protracker.h"
+#include "sound/raw.h"
 
 #include "parallaction/disk.h"
 #include "parallaction/parallaction.h"

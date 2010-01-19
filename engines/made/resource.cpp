@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 #include "made/resource.h"
 #include "made/graphics.h"

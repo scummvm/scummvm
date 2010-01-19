@@ -31,6 +31,7 @@
 #include "sound/mixer.h"
 #include "sound/wave.h"
 #include "sound/adpcm.h"
+#include "sound/raw.h"
 
 namespace Audio {
 

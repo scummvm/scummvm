@@ -26,6 +26,7 @@
 #include "sound/iff_sound.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 #include "common/func.h"
 
 namespace Audio {

@@ -38,6 +38,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 namespace Audio {
 

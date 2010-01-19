@@ -32,6 +32,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/audiocd.h"
+#include "sound/raw.h"
 #include "sound/wave.h"
 
 namespace Sci {
