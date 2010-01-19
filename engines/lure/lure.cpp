@@ -134,8 +134,10 @@ Common::Error LureEngine::go() {
 			CopyProtectionDialog *dialog = new CopyProtectionDialog();
 			bool result = dialog->show();
 			delete dialog;
-			if (shouldQuit())
+			if (shouldQuit()) {
+				delete gameInstance;
 				return Common::kNoError;
+			}
 
 			if (!result)
 				error("Sorry - copy protection failed");

@@ -106,6 +106,8 @@ void M4Surface::loadCodesMads(Common::SeekableReadStream *source) {
 				*ptr++ = 0;
 		}
 	}
+
+	delete[] walkMap;
 }
 
 // Sprite related methods

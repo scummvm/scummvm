@@ -75,7 +75,7 @@ char *SaveConverter_v3::getDescription(Common::SeekableReadStream &save) const {
 
 	// Read the description
 	if (save.read(desc, kSlotNameLength) != kSlotNameLength) {
-		delete desc;
+		delete[] desc;
 		return 0;
 	}
 

@@ -887,7 +887,7 @@ const int8 *Tfmx::loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &
 		sampleAlloc[0] = sampleAlloc[1] = sampleAlloc[2] = sampleAlloc[3] = 0;
 		sampleLen = sampleSize;
 	} else {
-		delete sampleAlloc;
+		delete[] sampleAlloc;
 		warning("Tfmx: Encountered IO-Error");
 		return 0;
 	}
@@ -994,7 +994,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 		resource->mdatData = mdatAlloc - mdatOffset;
 		resource->mdatLen = mdatSize;
 	} else {
-		delete mdatAlloc;
+		delete[] mdatAlloc;
 		warning("Tfmx: Encountered IO-Error");
 		delete resource;
 		return 0;

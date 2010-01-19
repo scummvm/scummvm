@@ -69,7 +69,7 @@ void CEException::dumpContext(HANDLE file, HANDLE hProcess, CONTEXT *context) {
 	if (ReadProcessMemory(hProcess, (LPCVOID)(context->Pc - (sizeof(memoryDump) / 2)), memoryDump, sizeof(memoryDump), &size)) {
 		for (i=0; i<size; i+=8) {
 			int j;
-			char digit[3];
+			char digit[4];
 			int max;
 			max = size - i;
 			if (max > 8)
