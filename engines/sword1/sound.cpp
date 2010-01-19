@@ -271,7 +271,7 @@ void Sound::playSample(QueueElement *elem) {
 							flags |= Audio::Mixer::FLAG_STEREO;
 						if (_fxList[elem->id].type == FX_LOOP)
 							flags |= Audio::Mixer::FLAG_LOOP;
-						_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, elem->id, volume, pan);
+						_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, elem->id, volume, pan, 0, 0);
 					}
 			}
 		} else
