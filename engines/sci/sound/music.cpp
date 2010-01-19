@@ -178,7 +178,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 		if (track->digitalChannelNr != -1) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
 			delete pSnd->pStreamAud;
-			pSnd->pStreamAud = Audio::makeRawMemoryStream(channelData, track->digitalSampleSize, track->digitalSampleRate, Audio::Mixer::FLAG_UNSIGNED);
+			pSnd->pStreamAud = Audio::makeRawMemoryStream(channelData, track->digitalSampleSize, DisposeAfterUse::NO, track->digitalSampleRate, Audio::Mixer::FLAG_UNSIGNED);
 			delete pSnd->pLoopStream;
 			pSnd->pLoopStream = 0;
 			pSnd->soundType = Audio::Mixer::kSFXSoundType;

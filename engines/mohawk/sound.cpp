@@ -435,12 +435,12 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	// The sound in the CD version of Riven is encoded in Intel DVI ADPCM
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
 	if (data_chunk.encoding == kCodecRaw) {
-		byte flags = Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
+		byte flags = Audio::Mixer::FLAG_UNSIGNED;
 		if (data_chunk.channels == 2)
 			flags |= Audio::Mixer::FLAG_STEREO;
 		if (data_chunk.loop == 0xFFFF || loop)
 			flags |= Audio::Mixer::FLAG_LOOP;
-		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, data_chunk.sample_rate, flags, data_chunk.loopStart, data_chunk.loopEnd);
+		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES, data_chunk.sample_rate, flags, data_chunk.loopStart, data_chunk.loopEnd);
 	} else if (data_chunk.encoding == kCodecADPCM) {
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
@@ -481,12 +481,12 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	stream->read(data, size);
 	delete stream;
 	
-	byte flags = Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
+	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 	
 	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
 	
-	return Audio::makeRawMemoryStream(data, size, rate, flags, 0, 0);
+	return Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, flags, 0, 0);
 }
 
 SndHandle *Sound::getHandle() {

@@ -88,9 +88,6 @@ public:
 		/** reverse the left and right stereo channel */
 		FLAG_REVERSE_STEREO = 1 << 4,
 
-		/** sound buffer is freed automagically at the end of playing */
-		FLAG_AUTOFREE = 1 << 5,
-
 		/** loop the audio */
 		FLAG_LOOP = 1 << 6
 	};
@@ -137,7 +134,9 @@ public:
 	virtual void playRaw(
 		SoundType type,
 		SoundHandle *handle,
-		void *sound, uint32 size, uint rate, byte flags,
+		void *sound, uint32 size,
+		DisposeAfterUse::Flag autofreeBuffer,
+		uint rate, byte flags,
 		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
 		uint32 loopStart = 0, uint32 loopEnd = 0) = 0;
 

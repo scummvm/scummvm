@@ -328,12 +328,13 @@ bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &whe
 		} else \
 			return new RawMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, autoFree)
 
-SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate, byte flags) {
+SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
+		DisposeAfterUse::Flag autoFree,
+		int rate, byte flags) {
 	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const DisposeAfterUse::Flag autoFree   = (flags & Mixer::FLAG_AUTOFREE) != 0 ? DisposeAfterUse::YES : DisposeAfterUse::NO;
 
 	// Verify the buffer sizes are sane
 	if (is16Bit && isStereo) {
@@ -358,9 +359,11 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate, 
 }
 
 
-AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate,
-                                   byte flags, uint loopStart, uint loopEnd) {
-	SeekableAudioStream *stream = makeRawMemoryStream(ptr, len, rate, flags);
+AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
+		DisposeAfterUse::Flag autoFree,
+		int rate, byte flags,
+		uint loopStart, uint loopEnd) {
+	SeekableAudioStream *stream = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
 
 	const bool isStereo   = (flags & Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Mixer::FLAG_16BITS) != 0;

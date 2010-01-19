@@ -437,7 +437,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 					_IACTpos += bsize;
 					bsize = 0;
 				} else {
-					byte *output_data = new byte[4096];
+					byte *output_data = (byte *)malloc(4096);
 
 					memcpy(_IACToutput + _IACTpos, d_src, len);
 					byte *dst = output_data;
@@ -472,7 +472,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 						_IACTstream = Audio::makeQueuingAudioStream(22050, true);
 						_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_IACTchannel, _IACTstream);
 					}
-					_IACTstream->queueBuffer(output_data, 0x1000, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
+					_IACTstream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
 
 					bsize -= len;
 					d_src += len;

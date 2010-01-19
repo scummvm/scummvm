@@ -162,7 +162,7 @@ void Sound::playSound(int soundID) {
 	char *sound;
 	int size = -1;
 	int rate;
-	byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
 		if (soundID >= 13 && soundID <= 32) {
@@ -201,7 +201,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
 	}
 	// WORKAROUND bug # 1311447
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
@@ -223,7 +223,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr, size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
@@ -294,7 +294,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (char *)malloc(size);
 		memcpy(sound, ptr + 6, size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, flags, soundID);
 	}
 	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
 
@@ -347,7 +347,7 @@ void Sound::playSound(int soundID) {
 				if (loopEnd > 0)
 					flags |= Audio::Mixer::FLAG_LOOP;
 
-				_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, waveSize, rate, flags, soundID, 255, 0, loopStart, loopEnd);
+				_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, waveSize, DisposeAfterUse::YES, rate, flags, soundID, 255, 0, loopStart, loopEnd);
 			}
 			break;
 		case 1:
@@ -419,7 +419,7 @@ void Sound::playSound(int soundID) {
 		// offset 26: ?  if != 0: stop current sound?
 		// offset 27: ?  loopcount? 0xff == -1 for infinite?
 
-		flags = Audio::Mixer::FLAG_AUTOFREE;
+		flags = 0;
 		size = READ_BE_UINT16(ptr + 12);
 		assert(size);
 		
@@ -439,7 +439,7 @@ void Sound::playSound(int soundID) {
 		}
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate,
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, DisposeAfterUse::YES, rate,
 				flags, soundID, vol, 0, loopStart, loopEnd);
 	}
 	else {

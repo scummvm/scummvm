@@ -88,8 +88,7 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_vm->res()->toss(soundName);
 
 	handle->type = kEffectHandle;
-	flags = Audio::Mixer::FLAG_AUTOFREE;
-	flags |= Audio::Mixer::FLAG_UNSIGNED;
+	flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
@@ -97,7 +96,7 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_vm->res()->toss(soundName);
 
 	// Sound format is 8bit mono, unsigned, 11025kHz
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, bufferSize, 11025, flags, -1, volume);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, bufferSize, DisposeAfterUse::YES, 11025, flags, -1, volume);
 }
 
 void Sound::pauseSound() {
@@ -144,13 +143,12 @@ void Sound::playVoice(const char *soundName, int volume) {
 	soundStream->read(buffer, soundStream->size());
 
 	handle->type = kEffectHandle;
-	flags = Audio::Mixer::FLAG_AUTOFREE;
-	flags |= Audio::Mixer::FLAG_UNSIGNED;
+	flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	_vm->res()->toss(soundName);
 
 	// Voice format is 8bit mono, unsigned, 11025kHz
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, soundStream->size(), 11025, flags, -1, volume);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer, soundStream->size(), DisposeAfterUse::YES, 11025, flags, -1, volume);
 }
 
 void Sound::pauseVoice() {
@@ -248,8 +246,7 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
-	flags = Audio::Mixer::FLAG_AUTOFREE;
-	flags |= Audio::Mixer::FLAG_UNSIGNED;
+	flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	if (loop)
 		flags |= Audio::Mixer::FLAG_LOOP;
@@ -268,7 +265,7 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 
 	// Play sound
 	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &handle->handle, buffer,
-					_dsrFile.dsrEntries[soundIndex]->uncompSize,
+					_dsrFile.dsrEntries[soundIndex]->uncompSize, DisposeAfterUse::YES,
 					_dsrFile.dsrEntries[soundIndex]->frequency, flags, -1, volume);
 
 	/*

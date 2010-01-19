@@ -562,14 +562,14 @@ bool SmackerDecoder::decodeNextFrame() {
 
 		if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
 			// If it's track 0, play the audio data
-			byte *soundBuffer = new byte[chunkSize];
+			byte *soundBuffer = (byte *)malloc(chunkSize);
 
 			_fileStream->read(soundBuffer, chunkSize);
 
 			if (_header.audioInfo[i].isCompressed) {
 				// Compressed audio (Huffman DPCM encoded)
 				queueCompressedBuffer(soundBuffer, chunkSize, dataSizeUnpacked, i);
-				delete[] soundBuffer;
+				free(soundBuffer);
 			} else {
 				// Uncompressed audio (PCM)
 				byte flags = 0;
@@ -578,7 +578,7 @@ bool SmackerDecoder::decodeNextFrame() {
 				if (_header.audioInfo[0].isStereo)
 					flags = flags | Audio::Mixer::FLAG_STEREO;
 
-				_audioStream->queueBuffer(soundBuffer, chunkSize, flags);
+				_audioStream->queueBuffer(soundBuffer, chunkSize, DisposeAfterUse::YES, flags);
 				// The sound buffer will be deleted by QueuingAudioStream
 			}
 
@@ -767,7 +767,7 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 
 	int numBytes = 1 * (isStereo ? 2 : 1) * (is16Bits ? 2 : 1);
 
-	byte *unpackedBuffer = new byte[unpackedSize];
+	byte *unpackedBuffer = (byte *)malloc(unpackedSize);
 	byte *curPointer = unpackedBuffer;
 	uint32 curPos = 0;
 
@@ -832,7 +832,7 @@ void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
 		flags = flags | Audio::Mixer::FLAG_16BITS;
 	if (_header.audioInfo[0].isStereo)
 		flags = flags | Audio::Mixer::FLAG_STEREO;
-	_audioStream->queueBuffer(unpackedBuffer, unpackedSize, flags);
+	_audioStream->queueBuffer(unpackedBuffer, unpackedSize, DisposeAfterUse::YES, flags);
 	// unpackedBuffer will be deleted by QueuingAudioStream
 }
 

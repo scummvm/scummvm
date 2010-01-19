@@ -176,7 +176,7 @@ void CUP_Player::updateSfx() {
 					loopEnd = soundSize - 8;
 				}
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &sfxChannel->handle,
-						Audio::makeRawMemoryStream(soundData + 8, soundSize - 8, 11025, flags, 0, loopEnd));
+						Audio::makeRawMemoryStream(soundData + 8, soundSize - 8, DisposeAfterUse::NO, 11025, flags, 0, loopEnd));
 			}
 		} else {
 			warning("Unable to find a free channel to play sound %d", sfx->num);

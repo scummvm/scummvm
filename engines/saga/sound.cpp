@@ -66,8 +66,6 @@ SndHandle *Sound::getHandle() {
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
-	buffer.flags |= Audio::Mixer::FLAG_AUTOFREE;
-
 	if (loop)
 		buffer.flags |= Audio::Mixer::FLAG_LOOP;
 
@@ -76,7 +74,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 
 	if (!buffer.isCompressed) {
 		_mixer->playRaw(soundType, handle, buffer.buffer,
-				buffer.size, buffer.frequency, buffer.flags, -1, volume);
+				buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = 0;
 

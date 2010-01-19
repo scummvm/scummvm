@@ -277,7 +277,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 	byte *buffer = (byte *)malloc(size);
 	assert(buffer);
 	_file->read(buffer, size);
-	_mixer->playRaw(type, handle, buffer, size, 22050, flags | Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(type, handle, buffer, size, DisposeAfterUse::YES, 22050, flags);
 }
 
 #ifdef USE_MAD
@@ -740,10 +740,10 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	byte *buffer = (byte *)malloc(size);
 	memcpy(buffer, soundData, size);
 
+	byte flags = 0;
 	if (_vm->getPlatform() == Common::kPlatformPC)
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, freq, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
-	else
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, freq, Audio::Mixer::FLAG_AUTOFREE);
+		flags = Audio::Mixer::FLAG_UNSIGNED;
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_effectsHandle, buffer, size, DisposeAfterUse::YES, freq, flags);
 }
 
 // Feeble Files specific

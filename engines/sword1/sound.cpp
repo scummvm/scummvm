@@ -45,7 +45,7 @@
 namespace Sword1 {
 
 #define SOUND_SPEECH_ID 1
-#define SPEECH_FLAGS (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_LITTLE_ENDIAN)
+#define SPEECH_FLAGS (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN)
 
 Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
 	g_eventRec.registerRandomSource(_rnd, "sword1sound");
@@ -271,7 +271,7 @@ void Sound::playSample(QueueElement *elem) {
 							flags |= Audio::Mixer::FLAG_STEREO;
 						if (_fxList[elem->id].type == FX_LOOP)
 							flags |= Audio::Mixer::FLAG_LOOP;
-						_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, 11025, flags, elem->id, volume, pan);
+						_mixer->playRaw(Audio::Mixer::kSFXSoundType, &elem->handle, sampleData + 0x2C, size, DisposeAfterUse::NO, 11025, flags, elem->id, volume, pan);
 					}
 			}
 		} else
@@ -356,7 +356,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			uint32 size;
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data)
-				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, data, size, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
+				_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_speechHandle, data, size, DisposeAfterUse::YES, 11025, SPEECH_FLAGS, SOUND_SPEECH_ID, speechVol, speechPan);
 		} else if (_cowMode == CowPSX && sampleSize != 0xffffffff) {
 			_cowFile.seek(index * 2048);
 			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, new Audio::VagStream(_cowFile.readStream(sampleSize)), SOUND_SPEECH_ID, speechVol, speechPan);

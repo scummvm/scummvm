@@ -3925,8 +3925,8 @@ void SoundTowns::playSoundEffect(uint8 track) {
 
 	uint32 outputRate = uint32(11025 * calculatePhaseStep(note, sfxRootNoteOffs, sfxRate, 11025, 0x2000));
 
-	_currentSFX = Audio::makeRawMemoryStream(sfxPlaybackBuffer, playbackBufferSize,
-		outputRate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+	_currentSFX = Audio::makeRawMemoryStream(sfxPlaybackBuffer, playbackBufferSize, DisposeAfterUse::YES,
+		outputRate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN, 0, 0);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 }
 
@@ -4297,8 +4297,8 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 
 	uint32 outputRate = uint32(11025 * SoundTowns::calculatePhaseStep(0x3c, 0x3c, sfxRate, 11025, 0x2000));
 
-	_currentSFX = Audio::makeRawMemoryStream(sfx, outsize, outputRate,
-		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+	_currentSFX = Audio::makeRawMemoryStream(sfx, outsize, DisposeAfterUse::YES, outputRate,
+		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN, 0, 0);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h], _currentSFX);
 	if (handle)
 		*handle = _soundChannels[h];

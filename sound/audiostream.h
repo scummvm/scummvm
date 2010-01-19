@@ -315,7 +315,7 @@ public:
 	 * the buffer will be delete[]'d (so make sure to allocate them
 	 * with new[], not with malloc).
 	 */
-	void queueBuffer(byte *data, uint32 size, byte flags);
+	void queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags);
 
 	/**
 	 * Mark the stream as finished, that is, signal that no further data

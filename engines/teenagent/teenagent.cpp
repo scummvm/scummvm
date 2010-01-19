@@ -897,7 +897,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	in->read(data, size);
 	//debug(0, "playing %u samples...", size);
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, data, size, 11025, Audio::Mixer::FLAG_AUTOFREE);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, data, size, DisposeAfterUse::YES, 11025, 0);
 }
 
 

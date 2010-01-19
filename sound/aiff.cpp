@@ -172,10 +172,8 @@ SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream &stream) {
 	assert(data);
 	stream.read(data, size);
 
-	// Since we allocated our own buffer for the data, we must set the autofree flag.
-	flags |= Audio::Mixer::FLAG_AUTOFREE;
-
-	return makeRawMemoryStream(data, size, rate, flags);
+	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
+	return makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, flags);
 }
 
 } // End of namespace Audio

@@ -655,11 +655,11 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 	if ((soundDesc->bundle) && (!soundDesc->compressed)) {
 		size = soundDesc->bundle->decompressSampleByCurIndex(start + offset, size, buf, header_size, header_outside);
 	} else if (soundDesc->resPtr) {
-		*buf = new byte[size];
+		*buf = (byte *)malloc(size);
 		assert(*buf);
 		memcpy(*buf, soundDesc->resPtr + start + offset + header_size, size);
 	} else if ((soundDesc->bundle) && (soundDesc->compressed)) {
-		*buf = new byte[size];
+		*buf = (byte *)malloc(size);
 		assert(*buf);
 		char fileName[24];
 		int offsetMs = (((offset * 8 * 10) / soundDesc->bits) / (soundDesc->channels * soundDesc->freq)) * 100;

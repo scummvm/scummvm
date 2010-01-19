@@ -416,14 +416,14 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 	int rate = 11025;
 
 	uint32 loopStart = 0, loopEnd = 0;
-	uint32 flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+	uint32 flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	if (looping) {
 		loopEnd = dataSize;
 		flags |= Audio::Mixer::FLAG_LOOP;
 	}
 
-	ch->stream = Audio::makeRawMemoryStream((byte *)data, dataSize, rate, flags, loopStart, loopEnd);
+	ch->stream = Audio::makeRawMemoryStream((byte *)data, dataSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
 	return ch->stream;
 }
 
@@ -483,7 +483,7 @@ Audio::AudioStream *AmigaSoundMan_br::loadChannelData(const char *filename, Chan
 
 		// TODO: Confirm sound rate
 		int rate = 11025;
-		input = Audio::makeRawMemoryStream((byte *)data, dataSize, rate, Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+		input = Audio::makeRawMemoryStream((byte *)data, dataSize, DisposeAfterUse::YES, rate, 0, 0, 0);
 	} else {
 		input = Audio::make8SVXStream(*stream, looping);
 	}

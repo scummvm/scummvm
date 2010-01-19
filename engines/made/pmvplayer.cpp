@@ -138,9 +138,9 @@ bool PmvPlayer::play(const char *filename) {
 			debug(1, "chunkCount = %d; chunkSize = %d; total = %d\n", chunkCount, chunkSize, chunkCount * chunkSize);
 
 			soundSize = chunkCount * chunkSize;
-			soundData = new byte[soundSize];
+			soundData = (byte *)malloc(soundSize);
 			decompressSound(audioData + 8, soundData, chunkSize, chunkCount);
-			_audioStream->queueBuffer(soundData, soundSize, Audio::Mixer::FLAG_UNSIGNED);
+			_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 		}
 
 		// Handle palette

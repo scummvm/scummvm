@@ -299,7 +299,7 @@ void IMuseDigital::callback() {
 						int tmpFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpPtr, tmpOffset, tmpFeedSize12Bits);
 						curFeedSize = BundleCodecs::decode12BitsSample(tmpPtr, &tmpSndBufferPtr, tmpFeedSize);
 
-						delete[] tmpPtr;
+						free(tmpPtr);
 					} else if (bits == 16) {
 						curFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 1) {
@@ -313,7 +313,7 @@ void IMuseDigital::callback() {
 						if (_radioChatterSFX && track->soundId == 10000) {
 							if (curFeedSize > feedSize)
 								curFeedSize = feedSize;
-							byte *buf = new byte[curFeedSize];
+							byte *buf = (byte *)malloc(curFeedSize);
 							int index = 0;
 							int count = curFeedSize - 4;
 							byte *ptr_1 = tmpSndBufferPtr;
@@ -332,7 +332,7 @@ void IMuseDigital::callback() {
 							buf[curFeedSize - 2] = 0x80;
 							buf[curFeedSize - 3] = 0x80;
 							buf[curFeedSize - 4] = 0x80;
-							delete[] tmpSndBufferPtr;
+							free(tmpSndBufferPtr);
 							tmpSndBufferPtr = buf;
 						}
 						if (channels == 2) {
@@ -344,10 +344,10 @@ void IMuseDigital::callback() {
 						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
-						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize, makeMixerFlags(track->mixerFlags));
+						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize, DisposeAfterUse::YES, makeMixerFlags(track->mixerFlags));
 						track->regionOffset += curFeedSize;
 					} else
-						delete[] tmpSndBufferPtr;
+						free(tmpSndBufferPtr);
 
 					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);

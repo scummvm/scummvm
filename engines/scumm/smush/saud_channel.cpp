@@ -130,16 +130,16 @@ bool SaudChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 	}
 	if (_tbuffer) {
 		byte *old = _tbuffer;
-		_tbuffer = new byte[_tbufferSize + size];
+		_tbuffer = (byte *)malloc(_tbufferSize + size);
 		if (!_tbuffer)
 			error("saud_channel failed to allocate memory");
 		memcpy(_tbuffer, old, _tbufferSize);
-		delete[] old;
+		free(old);
 		b.read(_tbuffer + _tbufferSize, size);
 		_tbufferSize += size;
 	} else {
 		_tbufferSize = size;
-		_tbuffer = new byte[_tbufferSize];
+		_tbuffer = (byte *)malloc(_tbufferSize);
 		if (!_tbuffer)
 			error("saud_channel failed to allocate memory");
 		b.read(_tbuffer, _tbufferSize);

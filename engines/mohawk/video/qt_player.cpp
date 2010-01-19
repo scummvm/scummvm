@@ -1159,7 +1159,7 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 		
 	if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('twos') || _streams[_audioStreamIndex]->codec_tag == MKID_BE('raw ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
-		uint16 flags = Audio::Mixer::FLAG_AUTOFREE;
+		uint16 flags = 0;
 		if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('raw '))
 			flags |= Audio::Mixer::FLAG_UNSIGNED;
 		if (_streams[_audioStreamIndex]->channels == 2)
@@ -1170,7 +1170,7 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 		byte *data = (byte *)malloc(dataSize);
 		stream->read(data, dataSize);
 		delete stream;
-		return Audio::makeRawMemoryStream(data, dataSize, _streams[_audioStreamIndex]->sample_rate, flags, 0, 0);
+		return Audio::makeRawMemoryStream(data, dataSize, DisposeAfterUse::YES, _streams[_audioStreamIndex]->sample_rate, flags, 0, 0);
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('ima4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return Audio::makeADPCMStream(stream, true, stream->size(), Audio::kADPCMApple, _streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels, 34);

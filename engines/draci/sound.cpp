@@ -194,7 +194,6 @@ SndHandle *Sound::getHandle() {
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
-	// Don't use FLAG_AUTOFREE, because our caching system deletes samples by itself.
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	if (loop)
@@ -203,8 +202,9 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
+	// Don't use DisposeAfterUse::YES, because our caching system deletes samples by itself.
 	_mixer->playRaw(soundType, handle, buffer._data,
-			buffer._length, buffer._frequency, flags, -1, volume);
+			buffer._length, DisposeAfterUse::NO, buffer._frequency, flags, -1, volume);
 }
 
 void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {

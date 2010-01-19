@@ -522,7 +522,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 	}
 
 	// Create the audio buffer
-	int16 *buffer = new int16[blockHeader.size];
+	int16 *buffer = (int16 *)malloc(blockHeader.size * 2);
 
 	// Initialize the prediction with the block parameter
 	int16 prediction = blockHeader.param ^ 0x8000;
@@ -540,11 +540,11 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 	}
 
 	// Queue the read buffer
-	byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE;
+	byte flags = Audio::Mixer::FLAG_16BITS;
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, flags);
+	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
 
 	return true;
 }
@@ -565,7 +565,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 	}
 
 	// Create the audio buffer
-	int16 *buffer = new int16[blockHeader.size];
+	int16 *buffer = (int16 *)malloc(blockHeader.size * 2);
 
 	// Initialize the prediction with the block parameter
 	int16 predictionLeft = (blockHeader.param & 0xFF00) ^ 0x8000;
@@ -596,11 +596,11 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 	}
 
 	// Queue the read buffer
-	byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_STEREO;
+	byte flags = Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO;
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, flags);
+	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
 
 	return true;
 }

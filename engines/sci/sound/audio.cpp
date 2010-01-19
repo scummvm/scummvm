@@ -245,7 +245,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	}
 
 	if (data)
-		audioStream = Audio::makeRawMemoryStream(data, size, _audioRate, flags | Audio::Mixer::FLAG_AUTOFREE);
+		audioStream = Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, _audioRate, flags);
 
 	if (audioStream) {
 		*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;

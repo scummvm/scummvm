@@ -182,8 +182,8 @@ void DrasculaEngine::playFile(const char *fname) {
 		if (ConfMan.getBool("speech_mute"))
 			memset(soundData, 0x80, soundSize); // Mute speech but keep the pause
 
-		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_soundHandle, soundData, soundSize - 64,
-						11025, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
+		_mixer->playRaw(Audio::Mixer::kSpeechSoundType, &_soundHandle, soundData, soundSize - 64, DisposeAfterUse::YES,
+						11025, Audio::Mixer::FLAG_UNSIGNED);
 	} else
 		warning("playFile: Could not open %s", fname);
 }

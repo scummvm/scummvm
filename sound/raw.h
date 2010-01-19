@@ -48,7 +48,9 @@ class SeekableAudioStream;
  * @see Mixer::RawFlags
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate, byte flags);
+SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
+		DisposeAfterUse::Flag autofreeBuffer,
+		int rate, byte flags);
 
 /**
  * NOTE:
@@ -61,8 +63,10 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate, 
  * signed native endian). Optionally supports (infinite) looping of a portion
  * of the data.
  */
-AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len, int rate,
-                                   byte flags, uint loopStart, uint loopEnd);
+AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
+		DisposeAfterUse::Flag autofreeBuffer,
+		int rate, byte flags,
+		uint loopStart, uint loopEnd);
 
 
 /**
@@ -87,8 +91,10 @@ struct RawDiskStreamAudioBlock {
  * @param disposeStream Whether the "stream" object should be destroyed after playback.
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block,
-		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream);
+SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream,
+		RawDiskStreamAudioBlock *block, int numBlocks,
+		int rate, byte flags,
+		DisposeAfterUse::Flag disposeStream);
 
 /**
  * NOTE:
@@ -99,8 +105,11 @@ SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDi
  * RawDiskStreamAudioBlock which defines the start position and length of
  * each block of uncompressed audio in the stream.
  */
-AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block,
-		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd);
+AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream,
+		RawDiskStreamAudioBlock *block, int numBlocks,
+		int rate, byte flags,
+		DisposeAfterUse::Flag disposeStream,
+		uint loopStart, uint loopEnd);
 
 
 } // End of namespace Audio

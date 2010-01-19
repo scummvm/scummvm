@@ -77,7 +77,9 @@ public:
 	virtual void playRaw(
 		SoundType type,
 		SoundHandle *handle,
-		void *sound, uint32 size, uint rate, byte flags,
+		void *sound, uint32 size,
+		DisposeAfterUse::Flag autofreeBuffer,
+		uint rate, byte flags,
 		int id, byte volume, int8 balance,
 		uint32 loopStart, uint32 loopEnd);
 

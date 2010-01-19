@@ -33,7 +33,7 @@ namespace BundleCodecs {
 uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 	uint32 loop_size = size / 3;
 	uint32 s_size = loop_size * 4;
-	byte *ptr = *dst = new byte[s_size];
+	byte *ptr = *dst = (byte *)malloc(s_size);
 	assert(ptr);
 
 	uint32 tmp;

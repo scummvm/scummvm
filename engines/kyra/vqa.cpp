@@ -419,10 +419,10 @@ void VQAMovie::displayFrame(uint frameNum) {
 		switch (tag) {
 		case MKID_BE('SND0'):	// Uncompressed sound
 			foundSound = true;
-			inbuf = new byte[size];
+			inbuf = (byte *)malloc(size);
 			_file->read(inbuf, size);
 			assert(_stream);
-			_stream->queueBuffer(inbuf, size, Audio::Mixer::FLAG_UNSIGNED);
+			_stream->queueBuffer(inbuf, size, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 			break;
 
 		case MKID_BE('SND1'):	// Compressed sound, almost like AUD
@@ -430,18 +430,18 @@ void VQAMovie::displayFrame(uint frameNum) {
 			outsize = _file->readUint16LE();
 			insize = _file->readUint16LE();
 
-			inbuf = new byte[insize];
+			inbuf = (byte *)malloc(insize);
 			_file->read(inbuf, insize);
 
 			if (insize == outsize) {
 				assert(_stream);
-				_stream->queueBuffer(inbuf, insize, Audio::Mixer::FLAG_UNSIGNED);
+				_stream->queueBuffer(inbuf, insize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 			} else {
-				outbuf = new byte[outsize];
+				outbuf = (byte *)malloc(outsize);
 				decodeSND1(inbuf, insize, outbuf, outsize);
 				assert(_stream);
-				_stream->queueBuffer(outbuf, outsize, Audio::Mixer::FLAG_UNSIGNED);
-				delete[] inbuf;
+				_stream->queueBuffer(outbuf, outsize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+				free(inbuf);
 			}
 			break;
 
@@ -610,25 +610,25 @@ void VQAMovie::play() {
 
 			switch (tag) {
 			case MKID_BE('SND0'):	// Uncompressed sound
-				inbuf = new byte[size];
+				inbuf = (byte *)malloc(size);
 				_file->read(inbuf, size);
-				_stream->queueBuffer(inbuf, size, Audio::Mixer::FLAG_UNSIGNED);
+				_stream->queueBuffer(inbuf, size, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 				break;
 
 			case MKID_BE('SND1'):	// Compressed sound
 				outsize = _file->readUint16LE();
 				insize = _file->readUint16LE();
 
-				inbuf = new byte[insize];
+				inbuf = (byte *)malloc(insize);
 				_file->read(inbuf, insize);
 
 				if (insize == outsize) {
-					_stream->queueBuffer(inbuf, insize, Audio::Mixer::FLAG_UNSIGNED);
+					_stream->queueBuffer(inbuf, insize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 				} else {
-					outbuf = new byte[outsize];
+					outbuf = (byte *)malloc(outsize);
 					decodeSND1(inbuf, insize, outbuf, outsize);
-					_stream->queueBuffer(outbuf, outsize, Audio::Mixer::FLAG_UNSIGNED);
-					delete[] inbuf;
+					_stream->queueBuffer(outbuf, outsize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+					free(inbuf);
 				}
 				break;
 

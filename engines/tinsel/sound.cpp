@@ -153,8 +153,8 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			#endif
 			break;
 		default:
-			_vm->_mixer->playRaw(type, &curChan.handle, sampleBuf, sampleLen, 22050,
-				Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
+			_vm->_mixer->playRaw(type, &curChan.handle, sampleBuf, sampleLen, DisposeAfterUse::YES, 22050,
+				Audio::Mixer::FLAG_UNSIGNED);
 			break;
 		}
 		if (sampleStream) {

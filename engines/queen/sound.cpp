@@ -327,9 +327,8 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	uint8 *sound = (uint8 *)malloc(size);
 	if (sound) {
 		f->read(sound, size);
-		byte flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
 		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
-		_mixer->playRaw(type, soundHandle, sound, size, 11840, flags);
+		_mixer->playRaw(type, soundHandle, sound, size, DisposeAfterUse::YES, 11840, Audio::Mixer::FLAG_UNSIGNED);
 	}
 }
 
@@ -611,8 +610,7 @@ void AmigaSound::playSound(const char *base) {
 		uint8 *soundData = (uint8 *)malloc(soundSize);
 		if (soundData) {
 			f->read(soundData, soundSize);
-			byte flags = Audio::Mixer::FLAG_AUTOFREE;
-			_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_sfxHandle, soundData, soundSize, 11025, flags);
+			_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_sfxHandle, soundData, soundSize, DisposeAfterUse::YES, 11025, 0);
 		}
 	}
 }

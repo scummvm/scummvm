@@ -591,7 +591,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 		case kAnimationSoundType16BitsRAW:
 			size = f.size();
 			rate = 22050;
-			flags = Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
+			flags = Audio::Mixer::FLAG_UNSIGNED;
 			if (type == kAnimationSoundType16BitsRAW) 
 				flags = Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_16BITS;
 			
@@ -599,7 +599,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 				uint8 *sampleData = (uint8 *)malloc(size);
 				if (sampleData) {
 					f.read(sampleData, size);
-					stream = Audio::makeRawMemoryStream(sampleData, size, rate, flags);
+					stream = Audio::makeRawMemoryStream(sampleData, size, DisposeAfterUse::YES, rate, flags);
 				}
 			}
 			break;

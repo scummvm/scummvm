@@ -127,7 +127,7 @@ bool SmushMixer::handleFrame() {
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);
-					_channels[i].stream->queueBuffer(data, size, flags);	// The stream will free the buffer for us
+					_channels[i].stream->queueBuffer(data, size, DisposeAfterUse::YES, flags);	// The stream will free the buffer for us
 				} else
 					delete[] data;
 			}

@@ -600,12 +600,12 @@ void Imd::nextSoundSlice(bool hasNextCmd) {
 		return;
 	}
 
-	byte *soundBuf = new byte[_soundSliceSize];
+	byte *soundBuf = (byte *)malloc(_soundSliceSize);
 
 	_stream->read(soundBuf, _soundSliceSize);
 	unsignedToSigned(soundBuf, _soundSliceSize);
 
-	_audioStream->queueBuffer(soundBuf, _soundSliceSize, 0);
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
 }
 
 bool Imd::initialSoundSlice(bool hasNextCmd) {
@@ -616,12 +616,12 @@ bool Imd::initialSoundSlice(bool hasNextCmd) {
 		return false;
 	}
 
-	byte *soundBuf = new byte[dataLength];
+	byte *soundBuf = (byte *)malloc(dataLength);
 
 	_stream->read(soundBuf, dataLength);
 	unsignedToSigned(soundBuf, dataLength);
 
-	_audioStream->queueBuffer(soundBuf, dataLength, 0);
+	_audioStream->queueBuffer(soundBuf, dataLength, DisposeAfterUse::YES, 0);
 
 	return _soundStage == 1;
 }
@@ -630,11 +630,11 @@ void Imd::emptySoundSlice(bool hasNextCmd) {
 	if (hasNextCmd || !_soundEnabled)
 		return;
 
-	byte *soundBuf = new byte[_soundSliceSize];
+	byte *soundBuf = (byte *)malloc(_soundSliceSize);
 
 	memset(soundBuf, 0, _soundSliceSize);
 
-	_audioStream->queueBuffer(soundBuf, _soundSliceSize, 0);
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
 }
 
 void Imd::videoData(uint32 size, State &state) {
@@ -2022,7 +2022,7 @@ byte *Vmd::deDPCM(const byte *data, uint32 &size, int32 init[2]) {
 	uint32 inSize  = size;
 	uint32 outSize = size + channels;
 
-	int16 *out   = new int16[outSize];
+	int16 *out   = (int16 *)malloc(outSize * 2);
 	byte  *sound = (byte *) out;
 
 	int channel = 0;
@@ -2056,7 +2056,7 @@ byte *Vmd::deADPCM(const byte *data, uint32 &size, int32 init, int32 index) {
 
 	uint32 outSize = size * 2;
 
-	int16 *out   = new int16[outSize];
+	int16 *out   = (int16 *)malloc(outSize * 2);
 	byte  *sound = (byte *) out;
 
 	index = CLIP<int32>(index, 0, 88);
@@ -2110,7 +2110,7 @@ byte *Vmd::soundEmpty(uint32 &size) {
 	if (!_audioStream)
 		return 0;
 
-	byte *soundBuf = new byte[size];
+	byte *soundBuf = (byte *)malloc(size);
 	memset(soundBuf, 0, size);
 
 	return soundBuf;
@@ -2122,7 +2122,7 @@ byte *Vmd::sound8bitDirect(uint32 &size) {
 		return 0;
 	}
 
-	byte *soundBuf = new byte[size];
+	byte *soundBuf = (byte *)malloc(size);
 	_stream->read(soundBuf, size);
 	unsignedToSigned(soundBuf, size);
 
@@ -2187,7 +2187,7 @@ void Vmd::emptySoundSlice(uint32 size) {
 		flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
 		flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
 
-		_audioStream->queueBuffer(sound, size, flags);
+		_audioStream->queueBuffer(sound, size, DisposeAfterUse::YES, flags);
 	}
 }
 
@@ -2205,7 +2205,7 @@ void Vmd::filledSoundSlice(uint32 size) {
 		flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
 		flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
 
-		_audioStream->queueBuffer(sound, size, flags);
+		_audioStream->queueBuffer(sound, size, DisposeAfterUse::YES, flags);
 	}
 }
 

@@ -446,14 +446,14 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 	if (audioOffset == 0 && blobs == 0)
 		blobs = 57;
 
-	byte *data = new byte[blobs * 128];
+	byte *data = (byte *)malloc(blobs * 128);
 
 	if (audioOffset != 0)
 		PrepAudio(bigBuffer+audioOffset, blobs, data);
 	else
 		memset(data, 0, blobs * 128);
 
-	_audioStream->queueBuffer(data, blobs * 128, Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO);
+	_audioStream->queueBuffer(data, blobs * 128, DisposeAfterUse::YES, Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO);
 
 	if (currentSoundFrame == ADVANCE_SOUND) {
 		if (!audioStarted) {

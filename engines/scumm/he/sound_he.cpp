@@ -572,7 +572,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			_mixer->playRaw(type, &_heSoundChannels[heChannel], spoolPtr, size, 11025, flags, soundID);
+			_mixer->playRaw(type, &_heSoundChannels[heChannel], spoolPtr, size, DisposeAfterUse::NO, 11025, flags, soundID);
 			return;
 		}
 	}
@@ -657,17 +657,15 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			if (_heChannel[heChannel].timer)
 				_heChannel[heChannel].timer = size * 1000 / rate;
 
-			flags |= Audio::Mixer::FLAG_AUTOFREE;
-			
 			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream (and playRaw)
 			// defaults to big endian. If we're on a little endian system, set the LE flag.
 #ifdef SCUMM_LITTLE_ENDIAN
 			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 #endif
-			
-			_mixer->playRaw(type, &_heSoundChannels[heChannel], sound + heOffset, size - heOffset, rate, flags, soundID);
+
+			_mixer->playRaw(type, &_heSoundChannels[heChannel], sound + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, soundID);
 		} else {
-			_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + stream.pos() + heOffset, size - heOffset, rate, flags, soundID);
+			_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + stream.pos() + heOffset, size - heOffset, DisposeAfterUse::YES, rate, flags, soundID);
 		}
 	}
 	// Support for sound in Humongous Entertainment games
@@ -725,7 +723,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
-		_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + heOffset + 8, size, rate, flags, soundID);
+		_mixer->playRaw(type, &_heSoundChannels[heChannel], ptr + heOffset + 8, size, DisposeAfterUse::NO, rate, flags, soundID);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MRAW')) {
@@ -738,13 +736,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		assert(READ_BE_UINT32(ptr) == MKID_BE('SDAT'));
 		size = READ_BE_UINT32(ptr + 4) - 8;
 
-		flags = Audio::Mixer::FLAG_AUTOFREE;
 		byte *sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 8, size);
 
 		_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_mixer->playRaw(Audio::Mixer::kMusicSoundType, NULL, sound, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kMusicSoundType, NULL, sound, size, DisposeAfterUse::YES, rate, 0, soundID);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {

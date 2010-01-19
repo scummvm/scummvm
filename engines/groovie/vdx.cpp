@@ -503,10 +503,10 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 		g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
 	}
 
-	byte *data = new byte[60000];
+	byte *data = (byte *)malloc(60000);
 	int chunksize = in->read(data, 60000);
 	if (!Common::isDebugChannelEnabled(kGroovieDebugFast)) {
-		_audioStream->queueBuffer(data, chunksize, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE);
+		_audioStream->queueBuffer(data, chunksize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
 	}
 }
 

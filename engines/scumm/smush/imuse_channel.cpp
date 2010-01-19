@@ -69,7 +69,7 @@ bool ImuseChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 		size -= 8;
 		_tbufferSize = size;
 		assert(_tbufferSize);
-		_tbuffer = new byte[_tbufferSize];
+		_tbuffer = (byte *)malloc(_tbufferSize);
 		if (!_tbuffer)
 			error("imuse_channel failed to allocate memory");
 		b.read(_tbuffer, size);
@@ -78,16 +78,16 @@ bool ImuseChannel::appendData(Common::SeekableReadStream &b, int32 size) {
 		if (_tbuffer) {
 			byte *old = _tbuffer;
 			int32 new_size = size + _tbufferSize;
-			_tbuffer = new byte[new_size];
+			_tbuffer = (byte *)malloc(new_size);
 			if (!_tbuffer)
 				error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
-			delete[] old;
+			free(old);
 			b.read(_tbuffer + _tbufferSize, size);
 			_tbufferSize += size;
 		} else {
 			_tbufferSize = size;
-			_tbuffer = new byte[_tbufferSize];
+			_tbuffer = (byte *)malloc(_tbufferSize);
 			if (!_tbuffer)
 				error("imuse_channel failed to allocate memory");
 			b.read(_tbuffer, size);
@@ -152,7 +152,7 @@ void ImuseChannel::decode() {
 		_srbufferSize -= remaining_size;
 		assert(_inData);
 		if (_tbuffer == 0) {
-			_tbuffer = new byte[remaining_size];
+			_tbuffer = (byte *)malloc(remaining_size);
 			memcpy(_tbuffer, _sbuffer + _sbufferSize - remaining_size, remaining_size);
 			_tbufferSize = remaining_size;
 			_sbufferSize -= remaining_size;
@@ -161,11 +161,11 @@ void ImuseChannel::decode() {
 				(const void *)this, _dataSize, _inData, _tbuffer, _tbufferSize, _sbuffer, _sbufferSize, _srbufferSize);
 			byte *old = _tbuffer;
 			int new_size = remaining_size + _tbufferSize;
-			_tbuffer = new byte[new_size];
+			_tbuffer = (byte *)malloc(new_size);
 			if (!_tbuffer)
 				error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
-			delete[] old;
+			free(old);
 			memcpy(_tbuffer + _tbufferSize, _sbuffer + _sbufferSize - remaining_size, remaining_size);
 			_tbufferSize += remaining_size;
 		}
@@ -177,7 +177,7 @@ void ImuseChannel::decode() {
 	int new_size = loop_size * 4;
 	byte *keep, *decoded;
 	uint32 value;
-	keep = decoded = new byte[new_size];
+	keep = decoded = (byte *)malloc(new_size);
 	assert(keep);
 	unsigned char * source = _sbuffer;
 
@@ -190,7 +190,7 @@ void ImuseChannel::decode() {
 		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;
 		WRITE_BE_UINT16(decoded, value); decoded += 2;
 	}
-	delete[] _sbuffer;
+	free(_sbuffer);
 	_sbuffer = (byte *)keep;
 	_sbufferSize = new_size;
 }

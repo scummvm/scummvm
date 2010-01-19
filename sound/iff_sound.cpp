@@ -99,9 +99,7 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 		flags |= Audio::Mixer::FLAG_LOOP;
 	}
 
-	flags |= Audio::Mixer::FLAG_AUTOFREE;
-
-	return Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, loader._header.samplesPerSec, flags, loopStart, loopEnd);
+	return Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, DisposeAfterUse::YES, loader._header.samplesPerSec, flags, loopStart, loopEnd);
 }
 
 }

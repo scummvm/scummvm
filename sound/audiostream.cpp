@@ -252,8 +252,8 @@ bool SubSeekableAudioStream::seek(const Timestamp &where) {
 #pragma mark -
 
 
-void QueuingAudioStream::queueBuffer(byte *data, uint32 size, byte flags) {
-	AudioStream *stream = makeRawMemoryStream(data, size, getRate(), flags, 0, 0);
+void QueuingAudioStream::queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags) {
+	AudioStream *stream = makeRawMemoryStream(data, size, disposeAfterUse, getRate(), flags, 0, 0);
 	queueAudioStream(stream, DisposeAfterUse::YES);
 }
 
