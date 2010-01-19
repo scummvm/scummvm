@@ -1334,25 +1334,42 @@ void MystScriptParser::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			while (_vm->_mixer->isSoundHandleActive(*handle))
 				_vm->_system->delayMillis(10);
 
-			// Play Flyby Entry Movie on Masterpiece Edition..
+			// Play Flyby Entry Movie on Masterpiece Edition. The Macintosh version is currently hooked
+			// up to the Cinepak versions of the video (the 'c' suffix) until the SVQ1 decoder is completed.
 			if ((_vm->getFeatures() & GF_ME)) {
 				switch (stack_map[_vm->_varStore->getVar(var)]) {
 				case kSeleniticStack:
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("selenitic flyby", kMasterpieceOnly));
+					if (_vm->getPlatform() == Common::kPlatformMacintosh)
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_SEc", kMasterpieceOnly));
+					else
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("selenitic flyby", kMasterpieceOnly));
 					break;
 				case kStoneshipStack:
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("stoneship flyby", kMasterpieceOnly));
+					if (_vm->getPlatform() == Common::kPlatformMacintosh)
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_STc", kMasterpieceOnly));
+					else
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("stoneship flyby", kMasterpieceOnly));
 					break;
 				// Myst Flyby Movie not used in Original Masterpiece Edition Engine
 				case kMystStack:
-					if (_vm->_tweaksEnabled)
-						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("myst flyby", kMasterpieceOnly));
+					if (_vm->_tweaksEnabled) {
+						if (_vm->getPlatform() == Common::kPlatformMacintosh)
+							_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_MYc", kMasterpieceOnly));
+						else
+							_vm->_video->playMovieCentered(_vm->wrapMovieFilename("myst flyby", kMasterpieceOnly));
+					}
 					break;
 				case kMechanicalStack:
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mech age flyby", kMasterpieceOnly));
+					if (_vm->getPlatform() == Common::kPlatformMacintosh)
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_MEc", kMasterpieceOnly));
+					else
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mech age flyby", kMasterpieceOnly));
 					break;
 				case kChannelwoodStack:
-					_vm->_video->playMovieCentered(_vm->wrapMovieFilename("channelwood flyby", kMasterpieceOnly));
+					if (_vm->getPlatform() == Common::kPlatformMacintosh)
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("FLY_CHc", kMasterpieceOnly));
+					else
+						_vm->_video->playMovieCentered(_vm->wrapMovieFilename("channelwood flyby", kMasterpieceOnly));
 					break;
 				default:
 					break;

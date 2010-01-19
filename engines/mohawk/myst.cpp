@@ -118,6 +118,10 @@ static const char *mystFiles[] = {
 // qtw/myst/libelev.mov:	libup.mov is basically the same with sound
 
 Common::String MohawkEngine_Myst::wrapMovieFilename(Common::String movieName, uint16 stack) {
+	// The Macintosh release of Myst ME stores its videos in a different folder
+	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
+		return Common::String("CD Data/m/") + movieName + ".mov";
+
 	const char* prefix;
 	
 	switch (stack) {
@@ -150,9 +154,6 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(Common::String movieName, ui
 		prefix = ""; // Masterpiece Edition Only Movies
 		break;
 	}
-
-	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
-		return Common::String("CD Data/m/") + movieName + ".mov";
 
 	return Common::String("qtw/") + prefix + movieName + ".mov";
 }
