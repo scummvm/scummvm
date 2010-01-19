@@ -1885,8 +1885,6 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			game_init(s);
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 			s->_sound.sfx_reset_player();
-#else
-			s->_soundCmd->resetDriver();
 #endif
 			_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play);
 

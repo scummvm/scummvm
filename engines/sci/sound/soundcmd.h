@@ -62,7 +62,6 @@ public:
 	void syncPlayList(Common::Serializer &s);
 	void reconstructPlayList(int savegame_version);
 	void printPlayList(Console *con);
-	void resetDriver();
 	void setMasterVolume(int vol);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS

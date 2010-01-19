@@ -187,8 +187,6 @@ public:
 
 	void setReverb(byte reverb);
 
-	void resetDriver();
-
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 #endif

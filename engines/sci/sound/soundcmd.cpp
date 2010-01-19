@@ -1065,8 +1065,6 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	Common::StackLock lock(_music->_mutex);
 
-	_music->resetDriver();
-
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		if (savegame_version < 14) {
@@ -1093,12 +1091,6 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 void SoundCommandParser::printPlayList(Console *con) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->printPlayList(con);
-#endif
-}
-
-void SoundCommandParser::resetDriver() {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	_music->resetDriver();
 #endif
 }
 

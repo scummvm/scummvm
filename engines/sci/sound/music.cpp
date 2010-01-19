@@ -91,8 +91,6 @@ void SciMusic::init() {
 }
 
 void SciMusic::clearPlayList() {
-	_pMixer->stopAll();
-
 	_mutex.lock();
 	while (!_playList.empty()) {
 		soundStop(_playList[0]);
@@ -134,23 +132,10 @@ MusicEntry *SciMusic::getSlot(reg_t obj) {
 }
 
 void SciMusic::setReverb(byte reverb) {
+	Common::StackLock lock(_mutex);
 	_reverb = reverb;
 
-	// TODO: actually set reverb for MT-32
-
-	// A good test case for this are the first two rooms in Longbow:
-	// reverb is set for the first room (the cave) and is subsequently
-	// cleared when Robin exits the cave
-}
-
-void SciMusic::resetDriver() {
-	Common::StackLock lock(_mutex);
-
-	// TODO/FIXME: is there any better way to reset the driver?
-
-	_pMidiDrv->close();
-	_pMidiDrv->open();
-	_pMidiDrv->setTimerCallback(this, &miditimerCallback);
+	_pMidiDrv->setReverb(reverb);
 }
 
 static int f_compare(const void *arg1, const void *arg2) {
