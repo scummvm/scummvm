@@ -257,7 +257,7 @@ void Sound::playSample(QueueElement *elem) {
 					int8 pan = (volR - volL) / 2;
 					uint8 volume = (volR + volL) / 2;
 
-					if (SwordEngine::isPsx()) { ;
+					if (SwordEngine::isPsx()) { 
 						uint32 size = READ_LE_UINT32(sampleData);
 						Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(new Audio::VagStream(new Common::MemoryReadStream(sampleData + 4, size-4)), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
