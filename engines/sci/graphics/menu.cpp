@@ -409,6 +409,10 @@ reg_t Menu::select(reg_t eventObject) {
 
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
+		// Display line inbetween menubar and actual menu
+		Common::Rect menuLine = _menuRect;
+		menuLine.bottom = menuLine.top + 1;
+		_gfx->BitsShow(menuLine);
 		_gui->graphRedrawBox(_menuRect);
 		_menuSaveHandle = NULL_REG;
 	}
@@ -472,6 +476,10 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	// Remove menu, if one is displayed
 	if (!_menuSaveHandle.isNull()) {
 		_gfx->BitsRestore(_menuSaveHandle);
+		// Display line inbetween menubar and actual menu
+		Common::Rect menuLine = _menuRect;
+		menuLine.bottom = menuLine.top + 1;
+		_gfx->BitsShow(menuLine);
 		_gui->graphRedrawBox(_menuRect);
 	}
 
