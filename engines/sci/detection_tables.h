@@ -1191,6 +1191,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// Laura Bow 2 v1.1 - French DOS Floppy (from Hkz)
+	{"laurabow2", "", {
+		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
+		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
+		{"resource.msg", 0, "0fceedfbdd85a4bc7851fdd9dd2d2f19", 278253},
+		{NULL, 0, NULL, 0}},
+		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Laura Bow 2 v1.1 - German DOS Floppy (from Tobis87, updated info from  markcoolio in bug report #2723787, updated info from #2797962))
 	// Executable scanning reports "2.000.274"
 	{"laurabow2", "", {
