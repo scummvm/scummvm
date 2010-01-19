@@ -176,7 +176,7 @@ enum BarPlaceResult {BP_KEEP_TRYING, BP_GOT_THERE, BP_FAIL};
 
 struct DestStructure {
 	uint8 counter;
-	Point position;
+	Common::Point position;
 };
 
 
@@ -487,8 +487,8 @@ public:
 
 class HotspotList: public Common::List<Common::SharedPtr<Hotspot> > {
 public:
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 } // End of namespace Lure

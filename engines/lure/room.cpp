@@ -445,8 +445,8 @@ void Room::update() {
 	}
 
 	// Handle second layer (layer 1) - do in order of Y axis
-	List<Hotspot *> tempList;
-	List<Hotspot *>::iterator iTemp;
+	Common::List<Hotspot *> tempList;
+	Common::List<Hotspot *>::iterator iTemp;
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
 		Hotspot *h = (i.operator*()).get();
 		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) ||
@@ -526,7 +526,7 @@ void Room::update() {
 					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
 //				} else if (v == 0xffff) {
 				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
-					s.fillRect(Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
+					s.fillRect(Common::Rect(xctr * 8, yctr * 8 + 8, xctr * 8 + 7, yctr * 8 + 15), 255);
 				}
 			}
 		}

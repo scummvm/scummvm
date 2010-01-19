@@ -32,8 +32,6 @@
 #include "lure/disk.h"
 #include "lure/luredefs.h"
 
-using namespace Common;
-
 namespace Lure {
 
 #define DEFAULT_TEXT_COLOUR -1

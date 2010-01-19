@@ -45,12 +45,12 @@ Common::Platform LureEngine::getPlatform() const { return _gameDescription->desc
 
 LureLanguage LureEngine::getLureLanguage() const {
 	switch (_gameDescription->desc.language) {
-	case IT_ITA: return LANG_IT_ITA;
-	case FR_FRA: return LANG_FR_FRA;
-	case DE_DEU: return LANG_DE_DEU;
-	case ES_ESP: return LANG_ES_ESP;
-	case EN_ANY: return LANG_EN_ANY;
-	case UNK_LANG: return LANG_UNKNOWN;
+	case Common::IT_ITA: return LANG_IT_ITA;
+	case Common::FR_FRA: return LANG_FR_FRA;
+	case Common::DE_DEU: return LANG_DE_DEU;
+	case Common::ES_ESP: return LANG_ES_ESP;
+	case Common::EN_ANY: return LANG_EN_ANY;
+	case Common::UNK_LANG: return LANG_UNKNOWN;
 	default:
 		error("Unknown game language");
 	}

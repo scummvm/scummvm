@@ -349,7 +349,7 @@ void Game::playerChangeRoom() {
 
 	uint16 roomNum = fields.playerNewPos().roomNumber;
 	fields.playerNewPos().roomNumber = 0;
-	Point &newPos = fields.playerNewPos().position;
+	Common::Point &newPos = fields.playerNewPos().position;
 
 	delayList.clear();
 
@@ -991,9 +991,9 @@ bool Game::getYN() {
 
 	Common::Language l = LureEngine::getReference().getLanguage();
 	Common::KeyCode y = Common::KEYCODE_y;
-	if (l == FR_FRA) y = Common::KEYCODE_o;
-	else if ((l == DE_DEU) || (l == NL_NLD)) y = Common::KEYCODE_j;
-	else if ((l == ES_ESP) || (l == IT_ITA)) y = Common::KEYCODE_s;
+	if (l == Common::FR_FRA) y = Common::KEYCODE_o;
+	else if ((l == Common::DE_DEU) || (l == Common::NL_NLD)) y = Common::KEYCODE_j;
+	else if ((l == Common::ES_ESP) || (l == Common::IT_ITA)) y = Common::KEYCODE_s;
 
 	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
 	if (!vKbdFlag)
@@ -1055,12 +1055,12 @@ bool Game::isMenuAvailable() {
 	return true;
 }
 
-void Game::saveToStream(WriteStream *stream) {
+void Game::saveToStream(Common::WriteStream *stream) {
 	stream->writeByte(_fastTextFlag);
 	stream->writeByte(_soundFlag);
 }
 
-void Game::loadFromStream(ReadStream *stream) {
+void Game::loadFromStream(Common::ReadStream *stream) {
 	Menu &menu = Menu::getReference();
 	StringList &sl = Resources::getReference().stringList();
 

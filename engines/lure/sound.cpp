@@ -93,7 +93,7 @@ SoundManager::~SoundManager() {
 	g_system->deleteMutex(_soundMutex);
 }
 
-void SoundManager::saveToStream(WriteStream *stream) {
+void SoundManager::saveToStream(Common::WriteStream *stream) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::saveToStream");
 	SoundListIterator i;
 
@@ -104,7 +104,7 @@ void SoundManager::saveToStream(WriteStream *stream) {
 	stream->writeByte(0xff);
 }
 
-void SoundManager::loadFromStream(ReadStream *stream) {
+void SoundManager::loadFromStream(Common::ReadStream *stream) {
 	// Stop any existing sounds playing
 	killSounds();
 

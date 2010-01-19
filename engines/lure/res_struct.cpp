@@ -281,7 +281,7 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 
 // Room data class
 
-void RoomDataList::saveToStream(WriteStream *stream) {
+void RoomDataList::saveToStream(Common::WriteStream *stream) {
 	RoomDataList::iterator i;
 
 	for (i = begin(); i != end(); ++i) {
@@ -292,7 +292,7 @@ void RoomDataList::saveToStream(WriteStream *stream) {
 	}
 }
 
-void RoomDataList::loadFromStream(ReadStream *stream) {
+void RoomDataList::loadFromStream(Common::ReadStream *stream) {
 	RoomDataList::iterator i;
 	byte data[ROOM_PATHS_HEIGHT * ROOM_PATHS_WIDTH];
 
@@ -320,7 +320,7 @@ RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
 	blocked = rec->blocked;
 }
 
-void RoomExitJoinList::saveToStream(WriteStream *stream) {
+void RoomExitJoinList::saveToStream(Common::WriteStream *stream) {
 	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
 		RoomExitJoinData *rec = (*i).get();
 
@@ -337,7 +337,7 @@ void RoomExitJoinList::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(0xffff);
 }
 
-void RoomExitJoinList::loadFromStream(ReadStream *stream) {
+void RoomExitJoinList::loadFromStream(Common::ReadStream *stream) {
 	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
 		RoomExitJoinData *rec = (*i).get();
 
@@ -438,7 +438,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	npcScheduleId = READ_LE_UINT16(&rec->npcSchedule);
 }
 
-void HotspotData::saveToStream(WriteStream *stream) {
+void HotspotData::saveToStream(Common::WriteStream *stream) {
 	// Write out the basic fields
 	stream->writeUint16LE(nameId);
 	stream->writeUint16LE(descId);
@@ -484,7 +484,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(talkOverride);
 }
 
-void HotspotData::loadFromStream(ReadStream *stream) {
+void HotspotData::loadFromStream(Common::ReadStream *stream) {
 	// Read in the basic fields
 	nameId = stream->readUint16LE();
 	descId = stream->readUint16LE();
@@ -537,7 +537,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 
 // Hotspot data list
 
-void HotspotDataList::saveToStream(WriteStream *stream) {
+void HotspotDataList::saveToStream(Common::WriteStream *stream) {
 	iterator i;
 	for (i = begin(); i != end(); ++i) {
 		HotspotData *hotspot = (*i).get();
@@ -547,7 +547,7 @@ void HotspotDataList::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(0);
 }
 
-void HotspotDataList::loadFromStream(ReadStream *stream) {
+void HotspotDataList::loadFromStream(Common::ReadStream *stream) {
 	Resources &res = Resources::getReference();
 	uint16 hotspotId = stream->readUint16LE();
 	while (hotspotId != 0) {
@@ -702,7 +702,7 @@ TalkEntryData *TalkData::getResponse(int index) {
 
 // The following class acts as a container for all the NPC conversations
 
-void TalkDataList::saveToStream(WriteStream *stream) {
+void TalkDataList::saveToStream(Common::WriteStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = (*i).get();
@@ -715,7 +715,7 @@ void TalkDataList::saveToStream(WriteStream *stream) {
 	}
 }
 
-void TalkDataList::loadFromStream(ReadStream *stream) {
+void TalkDataList::loadFromStream(Common::ReadStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = (*i).get();
@@ -815,7 +815,7 @@ void SequenceDelayList::clear(bool forceClear) {
 	}
 }
 
-void SequenceDelayList::saveToStream(WriteStream *stream) {
+void SequenceDelayList::saveToStream(Common::WriteStream *stream) {
 	SequenceDelayList::iterator i;
 
 	for (i = begin(); i != end(); ++i) {
@@ -828,7 +828,7 @@ void SequenceDelayList::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(0);
 }
 
-void SequenceDelayList::loadFromStream(ReadStream *stream) {
+void SequenceDelayList::loadFromStream(Common::ReadStream *stream) {
 	clear(true);
 	uint16 seqOffset;
 
@@ -1374,7 +1374,7 @@ void CurrentActionEntry::setSupportData(uint16 entryId) {
 	setSupportData(newEntry);
 }
 
-void CurrentActionEntry::saveToStream(WriteStream *stream) {
+void CurrentActionEntry::saveToStream(Common::WriteStream *stream) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action entry dyn=%d id=%d",
 		hasSupportData(), hasSupportData() ? supportData().id() : 0);
 	stream->writeByte((uint8) _action);
@@ -1397,7 +1397,7 @@ void CurrentActionEntry::saveToStream(WriteStream *stream) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action entry");
 }
 
-CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
+CurrentActionEntry *CurrentActionEntry::loadFromStream(Common::ReadStream *stream) {
 	Resources &res = Resources::getReference();
 	uint8 actionNum = stream->readByte();
 	if (actionNum == 0xff) return NULL;
@@ -1503,7 +1503,7 @@ void CurrentActionStack::list(char *buffer) {
 	}
 }
 
-void CurrentActionStack::saveToStream(WriteStream *stream) {
+void CurrentActionStack::saveToStream(Common::WriteStream *stream) {
 	ActionsList::iterator i;
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
@@ -1519,7 +1519,7 @@ void CurrentActionStack::saveToStream(WriteStream *stream) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action stack");
 }
 
-void CurrentActionStack::loadFromStream(ReadStream *stream) {
+void CurrentActionStack::loadFromStream(Common::ReadStream *stream) {
 	CurrentActionEntry *rec;
 
 	_actions.clear();

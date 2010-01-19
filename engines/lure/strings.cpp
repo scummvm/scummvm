@@ -235,7 +235,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 
 		// WORKAROUND: Italian version had an unterminated Look description for Prisoner after cutting sack
 		if ((charOffset == 0x1a08) && (charBitMask == 1) &&
-			(LureEngine::getReference().getLanguage() == IT_ITA))
+			(LureEngine::getReference().getLanguage() == Common::IT_ITA))
 			// Hardcode for end of string
 			ch = '\0';
 		else

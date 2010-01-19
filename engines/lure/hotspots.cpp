@@ -375,7 +375,7 @@ void Hotspot::copyTo(Surface *dest) {
 	uint16 hWidth = _frameWidth;
 	uint16 hHeight = _height;
 
-	Rect r(_frameNumber * hWidth, 0, (_frameNumber + 1) * hWidth - 1, hHeight - 1);
+	Common::Rect r(_frameNumber * hWidth, 0, (_frameNumber + 1) * hWidth - 1, hHeight - 1);
 	if (_frameStartsUsed) {
 		assert(_frameNumber < MAX_NUM_FRAMES);
 		r.left = _frameStarts[_frameNumber];
@@ -1153,7 +1153,7 @@ bool Hotspot::doorCloseCheck(uint16 doorId) {
 		return true;
 	}
 
-	Rect bounds(doorHotspot->x(), doorHotspot->y() + doorHotspot->heightCopy()
+	Common::Rect bounds(doorHotspot->x(), doorHotspot->y() + doorHotspot->heightCopy()
 		- doorHotspot->yCorrection() - doorHotspot->charRectY(),
 		doorHotspot->x() + doorHotspot->widthCopy(),
 		doorHotspot->y() + doorHotspot->heightCopy() + doorHotspot->charRectY());
@@ -2226,7 +2226,7 @@ uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	Resources &res = Resources::getReference();
 	uint16 talkIndex;
 	TalkHeaderData *headerEntry;
-	bool isEnglish = LureEngine::getReference().getLanguage() == EN_ANY;
+	bool isEnglish = LureEngine::getReference().getLanguage() == Common::EN_ANY;
 
 	// If the hotspot has a talk data override, return it
 	if (charHotspot->talkOverride != 0) {
@@ -3397,7 +3397,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	TalkEntryList &entries = data->entries;
 	Hotspot *charHotspot;
 	char buffer[MAX_DESC_SIZE];
-	Rect r;
+	Common::Rect r;
 	int lineNum, numLines;
 	int selectedLine, responseNumber;
 	bool showSelections, keepTalkingFlag;
@@ -4518,7 +4518,7 @@ void PathFinder::loadFromStream(Common::ReadStream *stream) {
 int Support::findIntersectingCharacters(Hotspot &h, uint16 *charList, int16 xp, int16 yp, int roomNumber) {
 	int numImpinging = 0;
 	Resources &res = Resources::getReference();
-	Rect r;
+	Common::Rect r;
 	uint16 hotspotY;
 
 	// If a specific x/y/room isn't provided, use the specified hotspot's current location
@@ -4658,7 +4658,7 @@ bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 	return false;
 }
 
-void HotspotList::saveToStream(WriteStream *stream) {
+void HotspotList::saveToStream(Common::WriteStream *stream) {
 	HotspotList::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		Hotspot *hotspot = (*i).get();
@@ -4674,7 +4674,7 @@ void HotspotList::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(0);
 }
 
-void HotspotList::loadFromStream(ReadStream *stream) {
+void HotspotList::loadFromStream(Common::ReadStream *stream) {
 	Resources &res = Resources::getReference();
 	Hotspot *hotspot;
 

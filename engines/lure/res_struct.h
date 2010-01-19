@@ -33,8 +33,6 @@
 
 namespace Lure {
 
-using namespace Common;
-
 /*-------------------------------------------------------------------------*/
 /* Structure definitions                                                   */
 /*                                                                         */
@@ -337,8 +335,8 @@ public:
 
 class RoomDataList: public Common::List<Common::SharedPtr<RoomData> > {
 public:
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 struct RoomExitJoinStruct {
@@ -360,8 +358,8 @@ public:
 
 class RoomExitJoinList: public Common::List<Common::SharedPtr<RoomExitJoinData> > {
 public:
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 class HotspotActionData {
@@ -451,8 +449,8 @@ public:
 	}
 	void setSupportData(uint16 entryId);
 
-	void saveToStream(WriteStream *stream);
-	static CurrentActionEntry *loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	static CurrentActionEntry *loadFromStream(Common::ReadStream *stream);
 };
 
 class CurrentActionStack {
@@ -500,8 +498,8 @@ public:
 		validateStack();
 	}
 
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 	void copyFrom(CurrentActionStack &stack);
 };
 
@@ -564,14 +562,14 @@ public:
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
 	Direction nonVisualDirection() { return (Direction) scriptLoadFlag; }
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 class HotspotDataList: public Common::List<Common::SharedPtr<HotspotData> > {
 public:
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 class HotspotOverrideData {
@@ -658,8 +656,8 @@ public:
 
 class TalkDataList: public Common::List<Common::SharedPtr<TalkData> > {
 public:
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 struct RoomExitCoordinateData {
@@ -717,8 +715,8 @@ public:
 	void tick();
 	void clear(bool forceClear = false);
 
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 };
 
 // The following classes holds the data for NPC schedules
@@ -739,7 +737,7 @@ public:
 	CharacterScheduleEntry *getEntry(uint16 id, CharacterScheduleSet *currentSet = NULL);
 };
 
-typedef List<uint16> CharacterScheduleOffsets;
+typedef Common::List<uint16> CharacterScheduleOffsets;
 
 // The follow classes are used to store the NPC schedule Ids for the random actions a follower can do in each room
 
@@ -889,7 +887,7 @@ enum FieldName {
 };
 
 struct PlayerNewPosition {
-	Point position;
+	Common::Point position;
 	uint16 roomNumber;
 };
 

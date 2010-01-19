@@ -133,8 +133,8 @@ public:
 	SoundManager();
 	~SoundManager();
 
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 
 	void loadSection(uint16 sectionId);
 	void killSounds();

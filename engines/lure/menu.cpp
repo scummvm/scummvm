@@ -72,12 +72,12 @@ const char *MenuRecord::getEntry(uint8 index) {
 static Menu *int_menu = NULL;
 
 const MenuRecordLanguage menuList[] = {
-	{EN_ANY, {{40, 87, 3, 7}, {127, 179, 13, 12}, {224, 281, 27, 10}}},
-	{IT_ITA, {{40, 98, 4, 6}, {120, 195, 14, 11}, {208, 281, 24, 13}}},
-	{FR_FRA, {{40, 90, 3, 7}, {120, 195, 13, 11}, {232, 273, 23, 13}}},
-	{DE_DEU, {{44, 95, 1, 11}, {135, 178, 8, 23}, {232, 273, 22, 15}}},
-	{ES_ESP, {{40, 90, 3, 8}, {120, 195, 11, 13}, {208, 281, 17, 18}}},
-	{UNK_LANG, {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}}
+	{Common::EN_ANY, {{40, 87, 3, 7}, {127, 179, 13, 12}, {224, 281, 27, 10}}},
+	{Common::IT_ITA, {{40, 98, 4, 6}, {120, 195, 14, 11}, {208, 281, 24, 13}}},
+	{Common::FR_FRA, {{40, 90, 3, 7}, {120, 195, 13, 11}, {232, 273, 23, 13}}},
+	{Common::DE_DEU, {{44, 95, 1, 11}, {135, 178, 8, 23}, {232, 273, 22, 15}}},
+	{Common::ES_ESP, {{40, 90, 3, 8}, {120, 195, 11, 13}, {208, 281, 17, 18}}},
+	{Common::UNK_LANG, {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}}
 };
 
 Menu::Menu() {
@@ -91,9 +91,9 @@ Menu::Menu() {
 	delete data;
 
 	const MenuRecordLanguage *rec = &menuList[0];
-	while ((rec->language != UNK_LANG) && (rec->language != language))
+	while ((rec->language != Common::UNK_LANG) && (rec->language != language))
 		++rec;
-	if (rec->language == UNK_LANG)
+	if (rec->language == Common::UNK_LANG)
 		error("Unknown language encountered in top line handler");
 
 	_menus[0] = new MenuRecord(&rec->menus[0], 1, sl.getString(S_CREDITS));
@@ -473,7 +473,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	Mouse &mouse = Mouse::getReference();
 	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
-	Rect r;
+	Common::Rect r;
 	bool isEGA = LureEngine::getReference().isEGA();
 	byte bgColour = isEGA ? EGA_DIALOG_BG_COLOUR : 0;
 	byte textColour = isEGA ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;

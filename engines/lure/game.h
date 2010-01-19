@@ -75,8 +75,8 @@ public:
 
 	static bool isCreated();
 	static Game &getReference();
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
 
 	void tick();
 	void tickCheck();

@@ -53,7 +53,7 @@ void Surface::initialise() {
 	int_font = disk.getEntry(FONT_RESOURCE_ID);
 	int_dialog_frame = disk.getEntry(DIALOG_RESOURCE_ID);
 
-	if (LureEngine::getReference().getLanguage() == IT_ITA) {
+	if (LureEngine::getReference().getLanguage() == Common::IT_ITA) {
 		Common::copy(&char8A[0], &char8A[8], int_font->data() + (0x8A - 32) * 8);
 		Common::copy(&char8D[0], &char8D[8], int_font->data() + (0x8D - 32) * 8);
 		Common::copy(&char95[0], &char95[8], int_font->data() + (0x95 - 32) * 8);
@@ -189,7 +189,7 @@ void Surface::vgaCreateDialog(bool blackFlag) {
 
 	// Final processing - if black flag set, clear dialog inside area
 	if (blackFlag) {
-		Rect r = Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH,
+		Common::Rect r = Common::Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH,
 			_width - VGA_DIALOG_EDGE_WIDTH, _height-VGA_DIALOG_EDGE_WIDTH);
 		fillRect(r, 0);
 	}
@@ -304,14 +304,14 @@ void Surface::copyTo(Surface *dest, uint16 x, uint16 y) {
 		dest->data().copyFrom(_data, 0, y * _width, dataSize);
 	} else {
 		// Use slower transfer
-		Rect rect;
+		Common::Rect rect;
 		rect.left = 0; rect.top = 0;
 		rect.right = _width-1; rect.bottom = _height-1;
 		copyTo(dest, rect, x, y);
 	}
 }
 
-void Surface::copyTo(Surface *dest, const Rect &srcBounds,
+void Surface::copyTo(Surface *dest, const Common::Rect &srcBounds,
 					 uint16 destX, uint16 destY, int transparentColour) {
 	int numBytes = srcBounds.right - srcBounds.left + 1;
 	if (destX + numBytes > dest->width())
@@ -349,7 +349,7 @@ void Surface::copyFrom(MemoryBlock *src, uint32 destOffset) {
 // fillRect
 // Fills a rectangular area with a colour
 
-void Surface::fillRect(const Rect &r, uint8 colour) {
+void Surface::fillRect(const Common::Rect &r, uint8 colour) {
 	for (int yp = r.top; yp <= r.bottom; ++yp) {
 		byte *const addr = _data->data() + (yp * _width) + r.left;
 		memset(addr, colour, r.width());
@@ -465,7 +465,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 
 Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength,
 							int colour, bool squashedLines) {
-	Point size;
+	Common::Point size;
 	Surface::getDialogBounds(size, 0, numLines, squashedLines);
 
 	Surface *s = new Surface(width, size.y);
@@ -511,7 +511,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
 	uint8 bgColour = *(screen.screen().data().data() + (y * FULL_SCREEN_WIDTH) + x);
-	String newLine(line);
+	Common::String newLine(line);
 	bool abortFlag = false;
 	bool refreshFlag = false;
 
@@ -545,7 +545,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 					if ((keycode == Common::KEYCODE_RETURN) || (keycode == Common::KEYCODE_KP_ENTER)) {
 						// Return character
 						screen.screen().fillRect(
-							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						newLine.deleteLastChar();
 						line = newLine;
@@ -556,7 +556,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 					else if (keycode == Common::KEYCODE_ESCAPE) {
 						// Escape character
 						screen.screen().fillRect(
-							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						screen.update();
 						abortFlag = true;
 					} else if (keycode == Common::KEYCODE_BACKSPACE) {
@@ -564,14 +564,14 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 						if (newLine.size() == 1) continue;
 
 						screen.screen().fillRect(
-							Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+							Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 						newLine.deleteChar(newLine.size() - 2);
 						refreshFlag = true;
 
 					} else if ((ch >= ' ') && (stringSize + 8 < maxSize)) {
 						if (((ch >= '0') && (ch <= '9')) || !isNumeric) {
 							screen.screen().fillRect(
-								Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
+								Common::Rect(x, y, x + maxSize - 1, y + FONT_HEIGHT), bgColour);
 							newLine.insertChar(ch, newLine.size() - 1);
 							refreshFlag = true;
 						}
@@ -663,7 +663,7 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 	Common::Language language = LureEngine::getReference().getLanguage();
 	int id = objId & 0xe000;
 
-	if (language == DE_DEU) {
+	if (language == Common::DE_DEU) {
 		// Special handling for German language
 
 		for (int sectionIndex = 0; sectionIndex < 4; ++sectionIndex) {
@@ -689,7 +689,7 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 
 		return 0;
 
-	} else if (language == ES_ESP) {
+	} else if (language == Common::ES_ESP) {
 		// Special handling for Spanish langugae
 		const uint16 *tlData = (msgId == 158) ? spanish_pre_e1_type_tl : spanish_others_tl;
 
@@ -928,7 +928,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	int index;
 
 	// Figure out a list of present savegames
-	String **saveNames = (String **)Memory::alloc(sizeof(String *) * MAX_SAVEGAME_SLOTS);
+	Common::String **saveNames = (Common::String **)Memory::alloc(sizeof(Common::String *) * MAX_SAVEGAME_SLOTS);
 	int numSaves = 0;
 	while ((numSaves < MAX_SAVEGAME_SLOTS) &&
 		((saveNames[numSaves] = engine.detectSave(numSaves + 1)) != NULL))
@@ -937,7 +937,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	// For the save dialog, if all the slots have not been used up, create a
 	// blank entry for a new savegame
 	if (saveDialog && (numSaves < MAX_SAVEGAME_SLOTS))
-		saveNames[numSaves++] = new String();
+		saveNames[numSaves++] = new Common::String();
 
 	// For the restore dialog, if there are no savegames, return immediately
 	if (!saveDialog && (numSaves == 0)) {
@@ -1114,9 +1114,9 @@ struct RestartRecord {
 };
 
 static const RestartRecord buttonBounds[] = {
-	{ EN_ANY, 48, 14, { 118, 152 }, { 168, 152 } },
-	{ DE_DEU, 48, 14, { 106, 152 }, { 168, 152 } },
-	{ UNK_LANG, 48, 14, { 112, 152 }, { 168, 152 } }
+	{ Common::EN_ANY, 48, 14, { 118, 152 }, { 168, 152 } },
+	{ Common::DE_DEU, 48, 14, { 106, 152 }, { 168, 152 } },
+	{ Common::UNK_LANG, 48, 14, { 112, 152 }, { 168, 152 } }
 };
 
 
@@ -1132,7 +1132,7 @@ bool RestartRestoreDialog::show() {
 	mouse.setCursorNum(CURSOR_ARROW);
 
 	// See if there are any savegames that can be restored
-	String *firstSave = engine.detectSave(1);
+	Common::String *firstSave = engine.detectSave(1);
 	bool restartFlag = (firstSave == NULL);
 	int highlightedButton = -1;
 
@@ -1142,7 +1142,7 @@ bool RestartRestoreDialog::show() {
 		// Get the correct button bounds record to use
 		const RestartRecord *btnRecord = &buttonBounds[0];
 		while ((btnRecord->Language != engine.getLanguage()) &&
-			   (btnRecord->Language != UNK_LANG))
+			   (btnRecord->Language != Common::UNK_LANG))
 			++btnRecord;
 
 		// Fade out the screen
@@ -1256,21 +1256,21 @@ struct ItemDesc {
 #define NUMBER_HEADER 0x1842
 
 static const ItemDesc copyProtectElements[] = {
-	{UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
-	{UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
+	{Common::UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
+	{Common::UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
 
-	{EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{DE_DEU, 39, 30, 240, 53, WORDING_HEADER, 32},
-	{NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{Common::EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{Common::FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{Common::DE_DEU, 39, 30, 240, 53, WORDING_HEADER, 32},
+	{Common::NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{Common::ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{Common::IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
 
-	{UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
-	{UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},
-	{UNK_LANG, 164, 168, 16, 8, NUMBER_HEADER, 32},
-	{UNK_LANG, 171, 168, 16, 8, NUMBER_HEADER, 32},
-	{UNK_LANG, 0, 0, 0, 0, 0, 0}
+	{Common::UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
+	{Common::UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},
+	{Common::UNK_LANG, 164, 168, 16, 8, NUMBER_HEADER, 32},
+	{Common::UNK_LANG, 171, 168, 16, 8, NUMBER_HEADER, 32},
+	{Common::UNK_LANG, 0, 0, 0, 0, 0, 0}
 };
 
 int pageNumbers[20] = {
@@ -1282,7 +1282,7 @@ CopyProtectionDialog::CopyProtectionDialog() {
 
 	const ItemDesc *ptr = &copyProtectElements[0];
 	while ((ptr->width != 0) || (ptr->height != 0)) {
-		if ((ptr->language == UNK_LANG) || (ptr->language == engine.getLanguage())) {
+		if ((ptr->language == Common::UNK_LANG) || (ptr->language == engine.getLanguage())) {
 			Hotspot *h = new Hotspot();
 			h->setPosition(ptr->x, ptr->y);
 			h->setSize(ptr->width, ptr->height);

@@ -126,7 +126,7 @@ public:
 		return loadGame(slot) ? Common::kReadingFailed : Common::kNoError;
 	}
 	virtual Common::Error saveGameState(int slot, const char *desc) {
-		String s(desc);
+		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kReadingFailed : Common::kNoError;
 	}
 	virtual bool canLoadGameStateCurrently() {
