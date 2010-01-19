@@ -90,7 +90,10 @@ void SciGui::initPriorityBands() {
 	if (_usesOldGfxFunctions) {
 		_gfx->PriorityBandsInit(15, 42, 200);
 	} else {
-		_gfx->PriorityBandsInit(14, 42, 190);
+		if (getSciVersion() >= SCI_VERSION_1_1)
+			_gfx->PriorityBandsInit(14, 0, 190);
+		else
+			_gfx->PriorityBandsInit(14, 42, 190);
 	}
 }
 

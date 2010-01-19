@@ -536,8 +536,6 @@ void Gfx::PriorityBandsRecall() {
 	if (priorityBandsMemoryActive) {
 		PriorityBandsInit((byte *)&priorityBandsMemory);
 		priorityBandsMemoryActive = false;
-		// Don't limit priority bands in SCI1.1
-		_priorityTop = 0; _priorityBottom = 200;
 	}
 }
 
