@@ -85,8 +85,6 @@ int32 IMuseDigital::makeMixerFlags(int32 flags) {
 		mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 	if (flags & kFlagStereo)
 		mixerFlags |= Audio::Mixer::FLAG_STEREO;
-	if (flags & kFlagReverseStereo)
-		mixerFlags |= Audio::Mixer::FLAG_REVERSE_STEREO;
 	return mixerFlags;
 }
 
@@ -202,9 +200,10 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				track->mixerFlags |= kFlagLittleEndian;
 #endif
 
-			track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
+			track->stream = Audio::makeQueuingAudioStream(freq, (track->mixerFlags & kFlagStereo) != 0);
 
-			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
+			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(),
+							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagReverseStereo) != 0);
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}

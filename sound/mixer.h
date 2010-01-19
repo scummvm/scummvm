@@ -85,9 +85,6 @@ public:
 		/** sound is in stereo (default: mono) */
 		FLAG_STEREO = 1 << 3,
 
-		/** reverse the left and right stereo channel */
-		FLAG_REVERSE_STEREO = 1 << 4,
-
 		/** loop the audio */
 		FLAG_LOOP = 1 << 6
 	};

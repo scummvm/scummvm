@@ -112,7 +112,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->souStreamUsed = (input != 0);
 
 	if (track->souStreamUsed) {
-		_mixer->playInputStream(track->getType(), &track->mixChanHandle, input, -1, track->getVol(), track->getPan());
+		_mixer->playInputStream(track->getType(), &track->mixChanHandle, input, -1, track->getVol(), track->getPan(),
+							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagReverseStereo) != 0);
 	} else {
 		strcpy(track->soundName, soundName);
 		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
@@ -173,7 +174,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		}
 
 		track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
-		_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
+		_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(),
+							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagReverseStereo) != 0);
 	}
 
 	track->used = true;
@@ -373,7 +375,8 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	// Create an appendable output buffer
 	fadeTrack->stream = Audio::makeQueuingAudioStream(_sound->getFreq(fadeTrack->soundDesc), track->mixerFlags & kFlagStereo);
-	_mixer->playInputStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
+	_mixer->playInputStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan(),
+							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagReverseStereo) != 0);
 	fadeTrack->used = true;
 
 	debug(5, "cloneToFadeOutTrack() - end of func, soundId %d, fade soundId %d", track->soundId, fadeTrack->soundId);
