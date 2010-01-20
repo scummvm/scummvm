@@ -89,7 +89,7 @@ static const StarkGameDescription gameDescriptions[] = {
 
 	// The Longest Journey
 	// English DVD
-	/*{
+	{
 		{
 			"tlj",
 			"DVD",
@@ -109,7 +109,7 @@ static const StarkGameDescription gameDescriptions[] = {
 		{
 			"tlj",
 			"",
-			AD_ENTRY1("x.xarc", ""),
+			AD_ENTRY1("x.xarc", "97abc1bb9239dee4c208e533f3c97e1c"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS
@@ -117,7 +117,23 @@ static const StarkGameDescription gameDescriptions[] = {
 		GID_TLJ,
 		GF_DEMO,
 		0,
-	},*/
+	},
+	
+	// The Longest Journey
+	// English DVD Demo
+	{
+		{
+			"tlj",
+			"",
+			AD_ENTRY1("x.xarc", "61093bcd499b386ed5c0345c52f48909"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS
+		},
+		GID_TLJ,
+		GF_DVD | GF_DEMO,
+		0,
+	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
