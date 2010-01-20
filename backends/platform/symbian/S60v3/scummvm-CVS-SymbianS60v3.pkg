@@ -62,6 +62,7 @@
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\data\scummvm\drascula.dat"
 "..\..\..\..\dists\engine-data\m4.dat"-"c:\data\scummvm\m4.dat"
+"..\..\..\..\dists\engine-data\teenagent.dat"-"c:\data\scummvm\teenagent.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\data\scummvm\vkeybd_default.zip"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
