@@ -46,7 +46,7 @@ public:
 	void DisposeWindow(Window *pWnd, bool reanimate);
 	void UpdateWindow(Window *wnd);
 
-	Port *getPortById(uint16 id) const { return _windowsById[id]; }
+	Port *getPortById(uint16 id);
 
 	Port *_wmgrPort;
 	Window *_picWind;

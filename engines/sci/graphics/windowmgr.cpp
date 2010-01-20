@@ -283,4 +283,10 @@ void WindowMgr::UpdateWindow(Window *wnd) {
 	}
 }
 
+Port *WindowMgr::getPortById(uint16 id) {
+	if (id > _windowsById.size())
+		error("getPortById() received invalid id");
+	return _windowsById[id];
+}
+
 } // End of namespace Sci
