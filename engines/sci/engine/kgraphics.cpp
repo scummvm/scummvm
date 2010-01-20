@@ -918,9 +918,11 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
-	// WORKAROUND for script/VM issue in Freddy Pharkas - priority is taken from local variable and that is 8250h in sierra sci
-	//				and 0h in our sci. It seems as some interpreter issue.
 	if (s->_gameId == "freddypharkas") {
+		// WORKAROUND
+		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
+		//  is not set. in Sierra sci this happens to be 8250h. In our sci temporary variables are initialized thus we would
+		//  get 0 here resulting in broken menus.
 		if ((viewId == 995) && (x == 0x33) && (y == 0x26)) // game menu
 			priority = 15;
 		if ((viewId == 992) && (x == 48) && (y == 24)) // quit game
