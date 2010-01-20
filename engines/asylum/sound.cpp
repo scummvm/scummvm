@@ -162,7 +162,7 @@ void Sound::playSound(ResourcePack *pack, int32 resId, int32 volume, bool loopin
 }
 
 void Sound::playSound(ResourceEntry *resource, bool looping, int32 volume, int32 panning) {
-	playSoundData(&_soundHandle, resource->data, resource->size, looping, volume, panning);
+	playSoundData(Audio::Mixer::kSFXSoundType, &_soundHandle, resource->data, resource->size, looping, volume, panning);
 }
 
 void Sound::playSound(ResourcePack *pack, int32 resId, bool looping, int32 volume, int32 panning) {
@@ -176,7 +176,7 @@ void Sound::playSound(ResourcePack *pack, int32 resId, bool looping, int32 volum
 			debugC(kDebugLevelSound, "playSound: handle for resId %d already active", resId);
 		} else {
 			ResourceEntry *ent = _soundPack->getResource(resId);
-			playSoundData(&snd.handle, ent->data, ent->size, looping, volume, panning);
+			playSoundData(Audio::Mixer::kSFXSoundType, &snd.handle, ent->data, ent->size, looping, volume, panning);
             addToSoundBuffer(resId);
 		}
 	}
@@ -228,7 +228,7 @@ void Sound::playSpeech(int32 resId) {
 	ResourceEntry *ent = _speechPack->getResource(resId);
 
 	_mixer->stopHandle(_speechHandle);
-	playSoundData(&_speechHandle, ent->data, ent->size, false, 0, 0);
+	playSoundData(Audio::Mixer::kSpeechSoundType, &_speechHandle, ent->data, ent->size, false, 0, 0);
 }
 
 void Sound::playMusic(int32 resId) {
@@ -241,7 +241,7 @@ void Sound::playMusic(ResourcePack *pack, int32 resId) {
 	stopMusic();
 
 	ResourceEntry *resource = pack->getResource(resId);
-	playSoundData(&_musicHandle, resource->data, resource->size, true, Config.musicVolume, 0);
+	playSoundData(Audio::Mixer::kMusicSoundType, &_musicHandle, resource->data, resource->size, true, Config.musicVolume, 0);
 }
 
 void Sound::stopMusic() {
@@ -249,41 +249,14 @@ void Sound::stopMusic() {
 }
 
 // from engines/agos/sound.cpp
-void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop, int32 vol, int32 pan) {
-	byte   *buffer, flags;
-	uint16 compType;
-	int32    blockAlign, rate;
+void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop, int32 vol, int32 pan) {
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, soundDataLength);
+	Audio::RewindableAudioStream *sndStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
-	// TODO: Use makeWAVStream() in future, when makeADPCMStream() allows sound looping
-	int32 size = soundDataLength;
-	Common::MemoryReadStream stream(soundData, size);
-	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
-		error("playSoundData: Not valid WAV data");
+	// FIXME need to convert the volume properly
+	vol = Audio::Mixer::kMaxChannelVolume;
 
-	convertVolume(vol);
-	convertPan(pan);
-
-	if (loop == true)
-		flags |= Audio::Mixer::FLAG_LOOP;
-
-	if (compType == 2) {
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-		buffer = (byte *)malloc(size * 4);
-		size   = sndStream->readBuffer((int16*)buffer, size * 2);
-		size  *= 2; // 16bits.
-		delete sndStream;
-	} else {
-		buffer = (byte *)malloc(size);
-		memcpy(buffer, soundData + stream.pos(), size);
-	}
-
-	// TODO
-	// All asylum audio data is being filtered through the playSoundData()
-	// method. As such, they're all using kSFXSoundType. There are also
-	// enums for kMusicSoundType and kSpeechSoundType.
-	//
-	// Investigate how this can effect ... anything :P
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, DisposeAfterUse::YES, rate, flags, -1, vol, pan);
+	_mixer->playInputStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
 }
 
 } // end of namespace Asylum

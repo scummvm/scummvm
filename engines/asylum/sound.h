@@ -140,7 +140,7 @@ private:
 	 * sound sample with provided id.
 	 */
 	int32  getBufferPosition(int32 resId);
-	void playSoundData(Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
+	void playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte *soundData, int32 soundDataLength, bool loop = false, int32 vol = 0, int32 pan = 0);
 };
 
 } // end of namespace Asylum
