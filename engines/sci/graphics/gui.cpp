@@ -445,9 +445,9 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 		_gfx->BitsShow(rect);
 }
 
-void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 style, bool hilite) {
+void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
 	if (!hilite) {
-		_gfx->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
+		_gfx->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, priority, 0);
 		if (style & 0x20) {
 			_gfx->FrameRect(rect);
 		}
