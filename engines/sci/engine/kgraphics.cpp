@@ -918,6 +918,15 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
+	// WORKAROUND for script/VM issue in Freddy Pharkas - priority is taken from local variable and that is 8250h in sierra sci
+	//				and 0h in our sci. It seems as some interpreter issue.
+	if (s->_gameId == "freddypharkas") {
+		if ((viewId == 995) && (x == 0x33) && (y == 0x26)) // game menu
+			priority = 15;
+		if ((viewId == 992) && (x == 48) && (y == 24)) // quit game
+			priority = 15;
+	}
+
 	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
