@@ -2055,6 +2055,7 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		ptr = _res->createResource(rtSound, idx, ro_size + 2);
 		memcpy(ptr, "RO", 2); ptr += 2;
 		memcpy(ptr, src_ptr, ro_size - 4); ptr += ro_size - 4;
+		free(src_ptr);
 		return 1;
 	} else if (_game.features & GF_OLD_BUNDLE) {
 		wa_offs = _fileHandle->pos();
