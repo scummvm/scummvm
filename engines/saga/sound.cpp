@@ -67,44 +67,42 @@ SndHandle *Sound::getHandle() {
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
-	Audio::AudioStream *stream = 0;
+	Audio::RewindableAudioStream *stream = 0;
 
 	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {
-		stream = Audio::makeLoopingAudioStream(
-						Audio::makeRawMemoryStream(buffer.buffer, buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags),
-						loop ? 0 : 1);
+		stream = Audio::makeRawMemoryStream(buffer.buffer, buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags);
 	} else {
+		Common::SeekableReadStream *memStream = new Common::MemoryReadStream(buffer.buffer, buffer.size, DisposeAfterUse::YES);
 
-		// TODO / FIXME: It seems we don't loop compressed audio at all, but do loop uncompressed data.
-		// Is that intentional? Seems odd...
 		switch (buffer.soundType) {
 #ifdef USE_MAD
-			case kSoundMP3:
-				stream = Audio::makeMP3Stream(new Common::MemoryReadStream(buffer.buffer, buffer.size, DisposeAfterUse::YES), DisposeAfterUse::YES);
-				break;
+		case kSoundMP3:
+			stream = Audio::makeMP3Stream(memStream, DisposeAfterUse::YES);
+			break;
 #endif
 #ifdef USE_VORBIS
-			case kSoundOGG:
-				stream = Audio::makeVorbisStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, DisposeAfterUse::YES), DisposeAfterUse::YES);
-				break;
+		case kSoundOGG:
+			stream = Audio::makeVorbisStream(memStream, DisposeAfterUse::YES);
+			break;
 #endif
 #ifdef USE_FLAC
-			case kSoundFLAC:
-				stream = Audio::makeFlacStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, DisposeAfterUse::YES), DisposeAfterUse::YES);
-				break;
+		case kSoundFLAC:
+			stream = Audio::makeFlacStream(memStream, DisposeAfterUse::YES);
+			break;
 #endif
-			default:
-				// Unknown compression, ignore sample
-				warning("Unknown compression, ignoring sound");
-				break;
+		default:
+			// Unknown compression, ignore sample
+			delete memStream;
+			warning("Unknown compression, ignoring sound");
+			break;
 		}
 	}
 
 	if (stream != NULL)
-		_mixer->playInputStream(soundType, handle, stream, -1, volume);
+		_mixer->playInputStream(soundType, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1), -1, volume);
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {
