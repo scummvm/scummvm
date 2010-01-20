@@ -75,7 +75,7 @@ DSSaveFile::~DSSaveFile() {
 		DSSaveFileManager::instance()->flushToSaveRAM();
 	}
 	if (ownsData) {
-		delete saveData;
+		delete[] saveData;
 	}
 }
 
@@ -98,7 +98,7 @@ bool DSSaveFile::loadFromSaveRAM(vu8* address) {
 			((char *) (saveData))[t] = *(address + t + sizeof(newSave));
 		}
 
-		if (ownsData) delete this->saveData;
+		if (ownsData) delete[] this->saveData;
 		save = newSave;
 		saveCompressed = true;
 		this->saveData = saveData;
@@ -119,7 +119,7 @@ void DSSaveFile::compress() {
 
 
 
-		delete saveData;
+		delete[] saveData;
 
 		// Make the save smaller
 		saveData = (u8 *) realloc(compBuffer, save.compressedSize);
@@ -282,7 +282,7 @@ void DSSaveFile::clearData() {
 
 	if (saveCompressed) {
 		if (ownsData) {
-			delete saveData;
+			delete[] saveData;
 			DSSaveFileManager::instance()->addBytesFree(getRamUsage());
 		}
 		saveData = new unsigned char[DS_MAX_SAVE_SIZE];
@@ -296,7 +296,7 @@ void DSSaveFile::deleteFile() {
 	if (isValid()) {
 		if (ownsData) {
 			DSSaveFileManager::instance()->addBytesFree(getRamUsage());
-			delete saveData;
+			delete[] saveData;
 			saveData = NULL;
 		}
 		ptr = 0;
