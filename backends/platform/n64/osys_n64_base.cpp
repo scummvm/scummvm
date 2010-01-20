@@ -137,7 +137,7 @@ OSystem_N64::OSystem_N64() {
 	detectControllers();
 
 	_ctrlData = (controller_data_buttons*)memalign(8, sizeof(controller_data_buttons));
-	_controllerHasRumble = (identifyPak(_controllerNumber) == 2);
+	_controllerHasRumble = (identifyPak(_controllerPort) == 2);
 
 	_fsFactory = new N64FilesystemFactory();
 
@@ -607,8 +607,8 @@ void OSystem_N64::unlockScreen() {
 void OSystem_N64::setShakePos(int shakeOffset) {
 
 	// If a rumble pak is plugged in and screen shakes, rumble!
-	if (shakeOffset && _controllerHasRumble) rumblePakEnable(1, _controllerNumber);
-	else if (!shakeOffset && _controllerHasRumble) rumblePakEnable(0, _controllerNumber);
+	if (shakeOffset && _controllerHasRumble) rumblePakEnable(1, _controllerPort);
+	else if (!shakeOffset && _controllerHasRumble) rumblePakEnable(0, _controllerPort);
 
 	_shakeOffset = shakeOffset;
 	_dirtyOffscreen = true;
@@ -880,12 +880,14 @@ void OSystem_N64::detectControllers(void) {
 	controller_data_status *ctrl_status = (controller_data_status*)memalign(8, sizeof(controller_data_status));
 	controller_Read_Status(ctrl_status);
 
-	_controllerNumber = 0; // Use first controller as default
-	for (uint8 ctrl_port = 0; ctrl_port < 4; ctrl_port++) {
+	_controllerPort = 0; // Use first controller as default
+	_mousePort = -1; // Default no mouse
+	for (int8 ctrl_port = 3; ctrl_port >= 0; ctrl_port--) {
 		// Found a standard pad, use this by default.
 		if (ctrl_status->c[ctrl_port].type == CTRL_PAD_STANDARD) {
-			_controllerNumber = ctrl_port;
-			break;
+			_controllerPort = ctrl_port;
+		} else if (ctrl_status->c[ctrl_port].type == CTRL_N64_MOUSE) {
+			_mousePort = ctrl_port;
 		}
 	}
 

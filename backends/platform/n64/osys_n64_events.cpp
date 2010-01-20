@@ -45,6 +45,7 @@
 #define CU_BUTTON(a)    (a & 0x0008)
 #define CD_BUTTON(a)    (a & 0x0004)
 
+#define MOUSE_DEADZONE 0
 #define PAD_DEADZONE 5
 #define PAD_ACCELERATION 10
 #define PAD_CHECK_TIME 40
@@ -60,7 +61,13 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	controller_Read_Buttons(_ctrlData);
 
 	static uint16 oldButtons = 0; // old button data... used for button press/release
-	uint16 newButtons = _ctrlData->c[_controllerNumber].buttons; // Read from controller
+	static uint16 oldMouseButtons = 0;
+
+	uint16 newButtons = _ctrlData->c[_controllerPort].buttons; // Read from controller
+	uint16 newMouseButtons = 0;
+
+	if (_mousePort >= 0)
+		newMouseButtons = _ctrlData->c[_mousePort].buttons;
 
 	bool buttonPressed = false;
 	static bool left_digital = false;
@@ -68,10 +75,18 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	static bool up_digital = false;
 	static bool down_digital = false;
 
-	int8 analogX = (_ctrlData->c[_controllerNumber].throttle >> 8) & 0xFF;
-	int8 analogY = (_ctrlData->c[_controllerNumber].throttle >> 0) & 0xFF;
+	int8 analogX = (_ctrlData->c[_controllerPort].throttle >> 8) & 0xFF;
+	int8 analogY = (_ctrlData->c[_controllerPort].throttle >> 0) & 0xFF;
 
-	if (newButtons != oldButtons) {
+	int8 mouseX = 0;
+	int8 mouseY = 0;
+
+	if (_mousePort >= 0) { // If mouse is present, read movement values
+		mouseX = (_ctrlData->c[_mousePort].throttle >> 8) & 0xFF;
+		mouseY = (_ctrlData->c[_mousePort].throttle >> 0) & 0xFF;
+	}
+
+	if (newButtons != oldButtons) { // Check PAD button press
 		if (DL_BUTTON(newButtons) && !DL_BUTTON(oldButtons)) // Pressed LEFT
 			left_digital = true;
 		else if (!DL_BUTTON(newButtons) && DL_BUTTON(oldButtons)) // Released LEFT
@@ -187,6 +202,30 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 		}
 	}
 
+	if (newMouseButtons != oldMouseButtons) { // Check mouse button press
+		if (B_BUTTON(newMouseButtons) && !B_BUTTON(oldMouseButtons)) { // Pressed Right Mouse Button
+			buttonPressed = true;
+			event.type = Common::EVENT_RBUTTONDOWN;
+		} else if (!B_BUTTON(newMouseButtons) && B_BUTTON(oldMouseButtons)) { // Released RMB
+			buttonPressed = true;
+			event.type = Common::EVENT_RBUTTONUP;
+		} else if (A_BUTTON(newMouseButtons) && !A_BUTTON(oldMouseButtons)) { // Pressed Left Mouse Button
+			buttonPressed = true;
+			event.type = Common::EVENT_LBUTTONDOWN;
+		} else if (!A_BUTTON(newMouseButtons) && A_BUTTON(oldMouseButtons)) { // Released LMB
+			buttonPressed = true;
+			event.type = Common::EVENT_LBUTTONUP;
+		}
+
+		oldMouseButtons = newMouseButtons; // Save current button status
+
+		if (buttonPressed) {
+			event.mouse.x = _mouseX;
+			event.mouse.y = _mouseY;
+			return true;
+		}
+	}
+
 	static uint32 _lastPadCheck = 0;
 	uint32 curTime = getMillis();
 
@@ -212,6 +251,11 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 
 		if (abs(analogY) > PAD_DEADZONE)
 			my -= analogY / (PAD_ACCELERATION - (abs(analogY) / 16));
+
+		if (abs(mouseX) > MOUSE_DEADZONE)
+			mx += mouseX;
+		if (abs(mouseY) > MOUSE_DEADZONE)
+			my -= mouseY;
 
 		if (mx < 0)
 			mx = 0;

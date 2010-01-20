@@ -52,7 +52,7 @@ void enableAudioPlayback(void) {
 	OSystem_N64 *osys = (OSystem_N64*)g_system;
 	Audio::MixerImpl *_localmixer = (Audio::MixerImpl*)osys->getMixer();
 
-	uint32 sampleBufferSize = 3072;
+	uint32 sampleBufferSize = 2048;
 
 	initAudioInterface(osys->_viClockRate, DEFAULT_SOUND_SAMPLE_RATE, 16, sampleBufferSize);
 	osys->_audioBufferSize = getAIBufferSize();
