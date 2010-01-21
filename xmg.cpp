@@ -29,10 +29,6 @@
 
 namespace Stark {
 
-#define Y2R(Y, Cb, Cr) (byte)(Y + 1.402 * (Cr - 128))
-#define Y2G(Y, Cb, Cr) (byte)(Y - 0.344136 * (Cb - 128) - 0.714136 * (Cr - 128))
-#define Y2B(Y, Cb, Cr) (byte)(Y + 1.772 * (Cb - 128))
-
 Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 
 	_stream = stream;
@@ -47,42 +43,6 @@ Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	header.unknown2 = stream->readUint32LE();
 	header.unknown3 = stream->readUint32LE();
 
-	/*if (stream->readUint16BE() != 'BM') {
-		warning ("Not a valid XMG!");
-		return NULL;
-	}
-	
-	// The actual bitmap header is meaningless to me :P
-	stream->readUint32LE(); // Size (useless)
-	stream->readUint16LE(); // Res1 (useless)
-	stream->readUint16LE(); // Res2 (useless)
-	uint32 imageOffset = stream->readUint32LE();
-
-	info.size = stream->readUint32LE();
-	
-	if (info.size != 40) {
-		warning ("Unsupported XMG format %d!", info.size);
-		return NULL;
-	}
-	
-	info.width = stream->readUint32LE();
-	info.height = stream->readUint32LE();
-	info.planes = stream->readUint16LE();
-	info.bitsPerPixel = stream->readUint16LE();
-	info.compression = stream->readUint32LE();
-	info.imageSize = stream->readUint32LE();
-	info.pixelsPerMeterX = stream->readUint32LE();
-	info.pixelsPerMeterY = stream->readUint32LE();
-	info.colorsUsed = stream->readUint32LE();
-	info.colorsImportant = stream->readUint32LE();
-	
-	if (info.compression != 0 || info.bitsPerPixel != 24) {
-		warning ("Unsupported XMG compression!");
-		return NULL;
-	}
-
-	stream->seek(imageOffset);
-*/
 	Surface *surface = new Surface(header.width, header.height);
 	_width = header.width;
 
@@ -136,8 +96,7 @@ Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 		}	
 		
 	}
-	//assert(_currY < header.height);
-//	_pixels = surface->pixels;
+
 	_pixels = 0;
 	return surface;
 }

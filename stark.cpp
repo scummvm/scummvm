@@ -55,59 +55,26 @@ StarkEngine::~StarkEngine() {
 }
 
 Common::Error StarkEngine::run() {
-	// Load in the main archive
-	/*
-	if (getGameID() == GID_TLJ) {
-		if (!_xArchive.open("45/00/00.xarc")) {
-			printf("Could not open x.xarc!\n");
-			return Common::kNoError;
-		}
-		/*XRCFile *xrc = new XRCFile(_graphArchive.getRawData(0));
-		delete xrc;* /
-
-		Audio::SoundHandle *s = new Audio::SoundHandle();
-		Common::File _f;
-		_f.open("45/xarc/00000003.iss");
-		Common::SeekableReadStream *dat = _f.readStream(_f.size());
-
-		ISS *sound = new ISS(dat);
-		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, s, sound->_stream);
-
-		g_system->delayMillis(100000);
-		
-	} else {
-		
-	}
-	*/
 	bool fullscreen = false;//(tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 
-	////if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL))
-		//error("gfx backend doesn't support hardware rendering");
+//#ifdef USE_OPENGL
+	//else
+//#else
+	//else
+//		error("gfx backend doesn't support hardware rendering");
+//#endif
 
-	//if (_softRenderer)
+	if (g_system->hasFeature(OSystem::kFeatureOpenGL))
 		g_driver = new GfxOpenGL();
-/*#ifdef USE_OPENGL
 	else
-		g_driver = new GfxOpenGL();
-#else
-	else
-		error("gfx backend doesn't support hardware rendering");
-#endif*/
+		error("Only OpenGL hardware rendering at the moment");
 
+	// Get the screen prepared
 	g_driver->setupScreen(640, 480, fullscreen);
 
-	/*Bitmap *splash_bm = NULL;
-	if (!(_gameFlags & GF_DEMO))
-		splash_bm = g_resourceloader->loadBitmap("splash.bm");
-*/
 	g_driver->clearScreen();
-/*
-	if (!(_gameFlags & GF_DEMO))
-		splash_bm->draw();
 
-	g_driver->flipBuffer();*/
-
-	//g_stark->setMode(ENGINE_MODE_NORMAL);
+	// Start running
 	g_stark->mainLoop();
 
 	return Common::kNoError;
@@ -147,6 +114,7 @@ void StarkEngine::updateDisplayScene(){
 	g_driver->clearScreen();
 
 	// Draw bg
+
 	// Draw other things
 	XMGDecoder *xmg = new XMGDecoder();
 	Common::File _f;
@@ -168,20 +136,9 @@ void StarkEngine::updateDisplayScene(){
 	// setup lights
 
 	// draw actors
-	/*
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 1.0f, 0.0f);
-	glVertex2f(0.0f, 0.0f);
-	glColor3f(0.5f, 0.5f, 1.0f);
-	glVertex2f(.5f, .5f);
-	glColor3f(0.0f, .3f, .8f);
-	glVertex2f(1.0f, -.75f);
-	glEnd();
-*/
+
 	// draw overlay
 
-//	g_driver->storeDisplay();
-	//drawPrimitives
 }
 
 void StarkEngine::doFlip() {
