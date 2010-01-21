@@ -112,11 +112,11 @@ protected:
 	bool	_overlayVisible;
 
 	bool _mouseVisible;
-	int _mouseX, _mouseY;
-	int _mouseMaxX, _mouseMaxY;
+	volatile int _mouseX, _mouseY;
+	volatile int _tempMouseX, _tempMouseY;
+	volatile int _mouseMaxX, _mouseMaxY;
 	int _mouseHotspotX, _mouseHotspotY;
 
-	controller_data_buttons *_ctrlData; // Controller data read from the N64 serial interface
 	uint8 _controllerPort;
 	int8 _mousePort;
 	bool _controllerHasRumble;
@@ -201,6 +201,7 @@ public:
 	void setupMixer(void);
 
 	void detectControllers(void);
+	void readControllerAnalogInput(void); // read controller analog nub position
 };
 
 #endif /* __OSYS_N64_H__ */

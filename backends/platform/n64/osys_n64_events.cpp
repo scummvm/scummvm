@@ -46,9 +46,60 @@
 #define CD_BUTTON(a)    (a & 0x0004)
 
 #define MOUSE_DEADZONE 0
-#define PAD_DEADZONE 5
-#define PAD_ACCELERATION 10
+#define PAD_DEADZONE 0
+#define PAD_ACCELERATION 15
 #define PAD_CHECK_TIME 40
+
+static controller_data_buttons _ctrlData;
+
+void OSystem_N64::readControllerAnalogInput(void) {
+	int8 pad_analogX, pad_analogY;
+	int8 pad_mouseX, pad_mouseY;
+
+	// Read current controller status
+	controller_Read_Buttons(&_ctrlData);
+
+	pad_analogX = (_ctrlData.c[_controllerPort].throttle >> 8) & 0xFF;
+	pad_analogY = (_ctrlData.c[_controllerPort].throttle >> 0) & 0xFF;
+
+	pad_mouseX = 0;
+	pad_mouseY = 0;
+
+	if (_mousePort >= 0) { // If mouse is present, read movement values
+		pad_mouseX = (_ctrlData.c[_mousePort].throttle >> 8) & 0xFF;
+		pad_mouseY = (_ctrlData.c[_mousePort].throttle >> 0) & 0xFF;
+	}
+
+	int32 mx = _tempMouseX;
+	int32 my = _tempMouseY;
+
+	if (abs(pad_analogX) > PAD_DEADZONE)
+		mx += pad_analogX / (PAD_ACCELERATION - (abs(pad_analogX) / 20));
+
+	if (abs(pad_analogY) > PAD_DEADZONE)
+		my -= pad_analogY / (PAD_ACCELERATION - (abs(pad_analogY) / 20));
+
+	if (abs(pad_mouseX) > MOUSE_DEADZONE)
+		mx += pad_mouseX;
+
+	if (abs(pad_mouseY) > MOUSE_DEADZONE)
+		my -= pad_mouseY;
+
+	if (mx < 0)
+		mx = 0;
+
+	if (mx >= _mouseMaxX)
+		mx = _mouseMaxX - 1;
+
+	if (my < 0)
+		my = 0;
+
+	if (my >= _mouseMaxY)
+		my = _mouseMaxY - 1;
+
+	_tempMouseX = mx;
+	_tempMouseY = my;
+}
 
 bool OSystem_N64::pollEvent(Common::Event &event) {
 	// Check Timers. Not the best place, but checking in interrupts proved to be unsafe
@@ -58,33 +109,22 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	refillAudioBuffers();
 
 	// Read current controller status
-	controller_Read_Buttons(_ctrlData);
+	controller_Read_Buttons(&_ctrlData);
 
 	static uint16 oldButtons = 0; // old button data... used for button press/release
 	static uint16 oldMouseButtons = 0;
 
-	uint16 newButtons = _ctrlData->c[_controllerPort].buttons; // Read from controller
+	uint16 newButtons = _ctrlData.c[_controllerPort].buttons; // Read from controller
 	uint16 newMouseButtons = 0;
 
 	if (_mousePort >= 0)
-		newMouseButtons = _ctrlData->c[_mousePort].buttons;
+		newMouseButtons = _ctrlData.c[_mousePort].buttons;
 
 	bool buttonPressed = false;
 	static bool left_digital = false;
 	static bool right_digital = false;
 	static bool up_digital = false;
 	static bool down_digital = false;
-
-	int8 analogX = (_ctrlData->c[_controllerPort].throttle >> 8) & 0xFF;
-	int8 analogY = (_ctrlData->c[_controllerPort].throttle >> 0) & 0xFF;
-
-	int8 mouseX = 0;
-	int8 mouseY = 0;
-
-	if (_mousePort >= 0) { // If mouse is present, read movement values
-		mouseX = (_ctrlData->c[_mousePort].throttle >> 8) & 0xFF;
-		mouseY = (_ctrlData->c[_mousePort].throttle >> 0) & 0xFF;
-	}
 
 	if (newButtons != oldButtons) { // Check PAD button press
 		if (DL_BUTTON(newButtons) && !DL_BUTTON(oldButtons)) // Pressed LEFT
@@ -232,30 +272,19 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	if ((curTime - _lastPadCheck) > PAD_CHECK_TIME) {
 		_lastPadCheck = curTime;
 
-		int32 mx = _mouseX;
-		int32 my = _mouseY;
+		int32 mx = _tempMouseX;
+		int32 my = _tempMouseY;
 
 		if (left_digital || right_digital || up_digital || down_digital) {
 			if (left_digital)
-				mx -= 5;
+				mx -= 2;
 			else if (right_digital)
-				mx += 5;
+				mx += 2;
 			if (up_digital)
-				my -= 5;
+				my -= 2;
 			else if (down_digital)
-				my += 5;
+				my += 2;
 		}
-
-		if (abs(analogX) > PAD_DEADZONE)
-			mx += analogX / (PAD_ACCELERATION - (abs(analogX) / 16));
-
-		if (abs(analogY) > PAD_DEADZONE)
-			my -= analogY / (PAD_ACCELERATION - (abs(analogY) / 16));
-
-		if (abs(mouseX) > MOUSE_DEADZONE)
-			mx += mouseX;
-		if (abs(mouseY) > MOUSE_DEADZONE)
-			my -= mouseY;
 
 		if (mx < 0)
 			mx = 0;
@@ -272,8 +301,8 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 		if ((mx != _mouseX) || (my != _mouseY)) {
 
 			event.type = Common::EVENT_MOUSEMOVE;
-			event.mouse.x = _mouseX = mx;
-			event.mouse.y = _mouseY = my;
+			event.mouse.x = _tempMouseX = _mouseX = mx;
+			event.mouse.y = _tempMouseY = _mouseY = my;
 
 			_dirtyOffscreen = true;
 

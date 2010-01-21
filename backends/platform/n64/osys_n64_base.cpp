@@ -118,13 +118,12 @@ OSystem_N64::OSystem_N64() {
 	// Initialize ROMFS access interface
 	initRomFSmanager((uint8*)(((uint32)&_romfs + (uint32)0xc00) | (uint32)0xB0000000));
 
-	// Register vblank callback
-	registerVIhandler(vblCallback);
-
 	_mouseVisible = false;
 
 	_mouseX = _overlayWidth  / 2;
 	_mouseY = _overlayHeight / 2;
+	_tempMouseX = _mouseX;
+	_tempMouseY = _mouseY;
 	_mouseMaxX = _overlayWidth;
 	_mouseMaxY = _overlayHeight;
 
@@ -136,11 +135,12 @@ OSystem_N64::OSystem_N64() {
 
 	detectControllers();
 
-	_ctrlData = (controller_data_buttons*)memalign(8, sizeof(controller_data_buttons));
 	_controllerHasRumble = (identifyPak(_controllerPort) == 2);
 
 	_fsFactory = new N64FilesystemFactory();
 
+	// Register vblank callback (this MUST be done at the END of init).
+	registerVIhandler(vblCallback);
 }
 
 OSystem_N64::~OSystem_N64() {

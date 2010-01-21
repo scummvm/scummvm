@@ -86,6 +86,8 @@ void vblCallback(void) {
 		sndCallback();
 		sndCallback();
 	}
+
+	((OSystem_N64*)g_system)->readControllerAnalogInput();
 }
 
 void sndCallback() {
