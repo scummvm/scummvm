@@ -148,8 +148,9 @@ static void drawProgress(float progress) {
 	r.grow(-1);
 	r.right = r.left + (uint16)(r.width() * progress);
 	surf.fillRect(r, fillColor);
-	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, x, y, surf.w, surf.h);
-	g_system->updateScreen();
+	// TODO implement in Residual
+	//g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, x, y, surf.w, surf.h);
+	//g_system->updateScreen();
 	free(surf.pixels);
 }
 
@@ -164,8 +165,8 @@ static void drawMessage(int offset, const Common::String &text) {
 	surf.pixels = calloc(surf.w, surf.h);
 	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
 	int y = g_system->getHeight() / 2 - font.getFontHeight() / 2 + offset * (font.getFontHeight() + 1);
-	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
-	g_system->updateScreen();
+	//g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
+	//g_system->updateScreen();
 	free(surf.pixels);
 }
 
@@ -191,7 +192,8 @@ static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
 static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *reportData) {
 	switch (type) {
 	case MT32Emu::ReportType_lcdMessage:
-		g_system->displayMessageOnOSD((const char *)reportData);
+		// FIXME implament in Residual
+//		g_system->displayMessageOnOSD((const char *)reportData);
 		break;
 	case MT32Emu::ReportType_errorControlROM:
 		error("Failed to load MT32_CONTROL.ROM");
@@ -280,13 +282,14 @@ int MidiDriver_MT32::open() {
 		171, 0, 0, 0
 	};
 
-	g_system->setPalette(dummy_palette, 0, 5);
+	// FIXME
+	//g_system->setPalette(dummy_palette, 0, 5);
 	drawMessage(-1, "Initialising MT-32 Emulator");
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
 	_initialising = false;
-	g_system->fillScreen(0);
-	g_system->updateScreen();
+	//g_system->fillScreen(0);
+	//g_system->updateScreen();
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
