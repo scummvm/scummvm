@@ -158,7 +158,7 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n"
 				"| name               | l | t | r | b |  type  |  flag  |\n"
 				"+--------------------+---+---+---+---+--------+--------+\n");
-	for ( ; b != e; b++) {
+	for ( ; b != e; ++b) {
 		ZonePtr z = *b;
 		z->getRect(r);
 		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, r.left, r.top, r.right, r.bottom, z->_type, z->_flags );
@@ -237,7 +237,7 @@ bool Debugger::Cmd_Animations(int argc, const char **argv) {
 	DebugPrintf("+--------------------+----+----+----+---+--------+----------------------------------------+\n"
 				"| name               | x  | y  | z  | f |  type  |                 flags                  | \n"
 				"+--------------------+----+----+----+---+--------+----------------------------------------+\n");
-	for ( ; b != e; b++) {
+	for ( ; b != e; ++b) {
 		AnimationPtr a = *b;
 		flags = decodeZoneFlags(a->_flags);
 		DebugPrintf("|%-20s|%4i|%4i|%4i|%3i|%8x|%-40s|\n", a->_name, a->getX(), a->getY(), a->getZ(), a->getF(), a->_type, flags.c_str() );
@@ -260,7 +260,7 @@ bool Debugger::Cmd_GfxObjects(int argc, const char **argv) {
 	GfxObjArray::iterator e = _vm->_gfx->_sceneObjects.end();
 	Common::Rect r;
 
-	for ( ; b != e; b++) {
+	for ( ; b != e; ++b) {
 		GfxObj *obj = *b;
 		obj->getRect(obj->frame, r);
 		DebugPrintf("|%-20s|%5i|%5i|%5i|%5i|%5i|%7i|%5i|%8s|\n", obj->getName(), r.left, r.top, r.width(), r.height(),

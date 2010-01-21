@@ -538,8 +538,11 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				unwindRaw16(tempBuf2, tempBuf, (s->w * (s->h / 2)), s->colourTable);
 				sprite = (byte *)malloc(s->w * s->h);
 
-				if (!sprite)
+				if (!sprite) {
+					free(tempBuf2);
+					free(tempBuf);
 					return RDERR_OUTOFMEMORY;
+				}
 
 				resizePsxSprite(sprite, tempBuf2, s->w, s->h);
 

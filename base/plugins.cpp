@@ -234,7 +234,7 @@ PluginList FilePluginProvider::getPlugins() {
 		pluginDirs.push_back(Common::FSNode(pluginsPath));
 
 	Common::FSList::const_iterator dir;
-	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); dir++) {
+	for (dir = pluginDirs.begin(); dir != pluginDirs.end(); ++dir) {
 		// Load all plugins.
 		// Scan for all plugins in this directory
 		Common::FSList files;

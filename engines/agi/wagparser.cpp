@@ -213,7 +213,7 @@ bool WagFileParser::parse(const Common::FSNode &node) {
 }
 
 const WagProperty *WagFileParser::getProperty(const WagProperty::WagPropertyCode code) const {
-	for (PropertyList::const_iterator iter = _propList.begin(); iter != _propList.end(); iter++)
+	for (PropertyList::const_iterator iter = _propList.begin(); iter != _propList.end(); ++iter)
 		if (iter->getCode() == code) return iter;
 	return NULL;
 }

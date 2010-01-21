@@ -428,7 +428,7 @@ void SoundMgr::stopSound() {
 
 void IIgsSoundMgr::stopSounds() {
 	// Stops all sounds on all MIDI channels
-	for (iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
+	for (iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); ++iter)
 		iter->stopSounds();
 }
 
@@ -445,7 +445,7 @@ bool IIgsSoundMgr::playSampleSound(const IIgsSampleHeader &sampleHeader, const i
 
 void IIgsMidiChannel::stopSounds() {
 	// Stops all sounds on this single MIDI channel
-	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); ++iter)
 		iter->stop();
 
 	_gsChannels.clear();
@@ -690,7 +690,7 @@ void IIgsSoundMgr::setProgramChangeMapping(const MidiProgramChangeMapping *mappi
 }
 
 void IIgsSoundMgr::removeStoppedSounds() {
-	for (Common::Array<IIgsMidiChannel>::iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
+	for (Common::Array<IIgsMidiChannel>::iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); ++iter)
 		iter->removeStoppedSounds();
 }
 
@@ -703,7 +703,7 @@ void IIgsMidiChannel::removeStoppedSounds() {
 uint IIgsSoundMgr::activeSounds() const {
 	uint result = 0;
 
-	for (Common::Array<IIgsMidiChannel>::const_iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
+	for (Common::Array<IIgsMidiChannel>::const_iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); ++iter)
 		result += iter->activeSounds();
 
 	return result;
@@ -712,7 +712,7 @@ uint IIgsSoundMgr::activeSounds() const {
 uint IIgsMidiChannel::activeSounds() const {
 	uint result = 0;
 
-	for (const_iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+	for (const_iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); ++iter)
 		if (!iter->end)
 			result++;
 
@@ -724,7 +724,7 @@ void IIgsMidiChannel::setInstrument(const IIgsInstrumentHeader *instrument, cons
 	_sample = sample;
 
 	// Set program on each Apple IIGS channel playing on this MIDI channel
-	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); ++iter)
 		iter->setInstrument(instrument, sample);
 }
 
@@ -732,14 +732,14 @@ void IIgsMidiChannel::setVolume(uint8 volume) {
 	_volume = volume;
 
 	// Set volume on each Apple IIGS channel playing on this MIDI channel
-	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); ++iter)
 		iter->setChannelVolume(volume);
 }
 
 void IIgsMidiChannel::noteOff(uint8 note, uint8 velocity) {
 	// Go through all the notes playing on this MIDI channel
 	// and turn off the ones that are playing the given note
-	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
+	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); ++iter)
 		if (iter->origNote == note)
 			iter->noteOff(velocity);
 }
@@ -1195,7 +1195,7 @@ struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::F
 	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
 	bool operator()(const Common::FSNode &param) const {
-		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
+		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); ++iter)
 			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
 		return false;

@@ -257,7 +257,7 @@ bool Console::Cmd_BT(int argc, const char **argv) {
 	int num;
 	Common::Array<ScriptPos>::iterator it;
 
-	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); it++) {
+	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); ++it) {
 		code = _vm->_game.logics[it->script].data;
 		op = code[it->curIP];
 		num = logicNamesCmd[op].numArgs;
