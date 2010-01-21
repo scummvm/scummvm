@@ -95,7 +95,7 @@ public:
 
 	virtual int getVolume() {
 		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
- 	}
+	}
 
 	virtual byte getReverb() { return _reverb; }
 	virtual void setReverb(byte reverb) { _reverb = reverb; }

@@ -100,7 +100,7 @@ private:
 	int _masterVolume;
 
 	byte _reverbConfig[kReverbConfigNr][3];
-	Channel _channels[16];	
+	Channel _channels[16];
 	uint8 _percussionMap[128];
 	int8 _keyShift[128];
 	int8 _volAdjust[128];
@@ -620,8 +620,9 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xabcd)) {
 		patches = 96;
 		pos += 2 + 8 * 48;
-	} else
+	} else {
 		patches = 48;
+	}
 
 	debugC(kDebugLevelSound, "[MT32-to-GM] %d MT-32 Patches detected", patches);
 	debugC(kDebugLevelSound, "[MT32-to-GM] %d MT-32 Memory Timbres", memtimbres);
