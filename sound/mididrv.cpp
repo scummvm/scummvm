@@ -140,7 +140,7 @@ const MidiDriverDescription *MidiDriver::findMusicDriver(const Common::String &s
 		// Compare the string passed to us with the current table entry.
 		// We ignore any characters following an (optional) colon ':'
 		// contained in str.
-		if (!strnicmp(md->name, s, len)) {
+		if (!strncasecmp(md->name, s, len)) {
 			return md;
 		}
 		md++;
