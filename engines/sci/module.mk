@@ -58,9 +58,6 @@ MODULE_OBJS := \
 	sound/iterator/core.o \
 	sound/iterator/iterator.o \
 	sound/iterator/songlib.o \
-	sound/seq/gm.o \
-	sound/seq/instrument-map.o \
-	sound/seq/map-mt32-to-gm.o \
 	sound/softseq/adlib.o \
 	sound/softseq/amiga.o \
 	sound/softseq/pcjr.o \
