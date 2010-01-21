@@ -30,6 +30,10 @@
 
 #include "engines/grim/imuse/imuse.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/raw.h"
+
 namespace Grim {
 
 Imuse *g_imuse = NULL;
@@ -139,8 +143,10 @@ void Imuse::restoreState(SaveGame *savedState) {
 		if (channels == 2)
 			track->mixerFlags |= kFlagStereo | kFlagReverseStereo;
 
-		track->stream = Audio::makeAppendableAudioStream(freq,  makeMixerFlags(track->mixerFlags));
-		g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(), track->getPan());
+		track->stream = Audio::makeQueuingAudioStream(freq, (track->mixerFlags & kFlagStereo) != 0);
+		g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(),
+											track->getPan(), DisposeAfterUse::YES, false,
+											(track->mixerFlags & kFlagReverseStereo) != 0);
 		g_system->getMixer()->pauseHandle(track->handle, true);
 	}
 	savedState->endSection();
@@ -188,14 +194,14 @@ void Imuse::saveState(SaveGame *savedState) {
 
 int32 Imuse::makeMixerFlags(int32 flags) {
 	int32 mixerFlags = 0;
+	if (flags & kFlagUnsigned)
+		mixerFlags |= Audio::FLAG_UNSIGNED;
 	if (flags & kFlag16Bits)
-		mixerFlags |= Audio::Mixer::FLAG_16BITS;
+		mixerFlags |= Audio::FLAG_16BITS;
 	if (flags & kFlagLittleEndian)
-		mixerFlags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+		mixerFlags |= Audio::FLAG_LITTLE_ENDIAN;
 	if (flags & kFlagStereo)
-		mixerFlags |= Audio::Mixer::FLAG_STEREO;
-	if (flags & kFlagReverseStereo)
-		mixerFlags |= Audio::Mixer::FLAG_REVERSE_STEREO;
+		mixerFlags |= Audio::FLAG_STEREO;
 	return mixerFlags;
 }
 
@@ -301,7 +307,7 @@ void Imuse::callback() {
 					result = mixer_size;
 
 				if (g_system->getMixer()->isReady()) {
-					track->stream->queueBuffer(data, result);
+					track->stream->queueBuffer(data, result, DisposeAfterUse::YES, makeMixerFlags(track->mixerFlags));
 					track->regionOffset += result;
 				} else
 					delete[] data;

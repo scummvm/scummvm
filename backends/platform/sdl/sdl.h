@@ -89,6 +89,25 @@ public:
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
+protected:
+	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
+
+	// Handlers for specific SDL events, called by pollEvent.
+	// This way, if a backend inherits fromt the SDL backend, it can
+	// change the behavior of only a single event, without having to override all
+	// of pollEvent.
+	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+
+public:
+
+
 	// Define all hardware keys for keymapper
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 
@@ -116,7 +135,7 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
-	virtual void getTimeAndDate(struct tm &t) const;
+	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling
@@ -232,7 +251,7 @@ protected:
 
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 
-	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
+	bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
 };
 
 #endif

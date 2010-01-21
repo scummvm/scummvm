@@ -31,10 +31,11 @@
 #include "common/fs.h"
 #include "common/unzip.h"
 
-#include "graphics/surface.h"
 #include "graphics/colormasks.h"
-#include "graphics/imagedec.h"
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
+#include "graphics/imagedec.h"
+#include "graphics/surface.h"
 #include "graphics/VectorRenderer.h"
 
 #include "gui/launcher.h"
@@ -154,10 +155,10 @@ protected:
  *	Data definitions for theme engine elements
  *********************************************************/
 struct DrawDataInfo {
-	DrawData id;		//!< The actual ID of the DrawData item.
-	const char *name;	//!< The name of the DrawData item as it appears in the Theme Description files
-	bool buffer;		//!< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
-	DrawData parent;	//!< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
+	DrawData id;		///< The actual ID of the DrawData item.
+	const char *name;	///< The name of the DrawData item as it appears in the Theme Description files
+	bool buffer;		///< Sets whether this item is buffered on the backbuffer or drawn directly to the screen.
+	DrawData parent;	///< Parent DrawData item, for items that overlay. E.g. kButtonIdle -> kButtonHover
 };
 
 /**
@@ -696,7 +697,7 @@ bool ThemeEngine::loadDefaultXML() {
 #include "themes/default.inc"
 	;
 
-	if (!_parser->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
+	if (!_parser->loadBuffer((const byte*)defaultXML, strlen(defaultXML)))
 		return false;
 
 	_themeName = "ScummVM Classic Theme (Builtin Version)";
@@ -849,7 +850,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 		dd = kDDButtonDisabled;
 
 	queueDD(dd, r, 0, hints & WIDGET_CLEARBG);
-	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, true, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
@@ -1204,7 +1205,7 @@ void ThemeEngine::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
 
-	Common::List<Common::Rect>::iterator i, j;
+	Common::List<Common::Rect>::iterator i;
 	for (i = _dirtyScreen.begin(); i != _dirtyScreen.end(); ++i) {
 		_vectorRenderer->copyFrame(_system, *i);
 	}
@@ -1641,4 +1642,4 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 }
 
 
-} // end of namespace GUI.
+} // End of namespace GUI.

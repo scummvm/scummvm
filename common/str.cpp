@@ -37,13 +37,6 @@
 
 namespace Common {
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-const String String::emptyString;
-#else
-const char *String::emptyString = "";
-#endif
-
-
 MemoryPool *g_refCountPool = 0;	// FIXME: This is never freed right now
 
 static uint32 computeCapacity(uint32 len) {
@@ -464,6 +457,7 @@ String String::printf(const char *fmt, ...) {
 			len = vsnprintf(output._str, size, fmt, va);
 			va_end(va);
 		} while (len == -1 || len >= size);
+		output._size = len;
 	} else if (len < (int)_builtinCapacity) {
 		// vsnprintf succeeded
 		output._size = len;

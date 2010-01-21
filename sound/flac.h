@@ -24,6 +24,7 @@
  */
 
 /**
+ * @file
  * Sound decoder used in engines:
  *  - agos
  *  - kyra
@@ -40,6 +41,7 @@
 #ifndef SOUND_FLAC_H
 #define SOUND_FLAC_H
 
+#include "common/types.h"
 #include "common/sys.h"
 
 #ifdef USE_FLAC
@@ -51,26 +53,19 @@ namespace Common {
 namespace Audio {
 
 class AudioStream;
+class SeekableAudioStream;
 
 /**
- * Create a new AudioStream from the FLAC data in the given stream.
- * Allows for looping (which is why we require a SeekableReadStream),
- * and specifying only a portion of the data to be played, based
- * on time offsets.
+ * Create a new SeekableAudioStream from the FLAC data in the given stream.
+ * Allows for seeking (which is why we require a SeekableReadStream).
  *
  * @param stream			the SeekableReadStream from which to read the FLAC data
  * @param disposeAfterUse	whether to delete the stream after use
- * @param startTime			the (optional) time offset in milliseconds from which to start playback
- * @param duration			the (optional) time in milliseconds specifying how long to play
- * @param numLoops			how often the data shall be looped (0 = infinite)
- * @return	a new AudioStream, or NULL, if an error occured
+ * @return	a new SeekableAudioStream, or NULL, if an error occured
  */
-AudioStream *makeFlacStream(
+SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse,
-	uint32 startTime = 0,
-	uint32 duration = 0,
-	uint numLoops = 1);
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

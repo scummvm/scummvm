@@ -20,40 +20,8 @@
  *
  * $URL$
  * $Id$
- *
  */
 
-#ifdef ENABLE_VKEYBD
-
-#include "backends/vkeybd/polygon.h"
-
-namespace Common {
-
-bool Polygon::contains(int16 x, int16 y) const {
-	int yflag0;
-	int yflag1;
-	bool inside_flag = false;
-	unsigned int pt;
-
-	const Point *vtx0 = &_points[_points.size() - 1];
-	const Point *vtx1 = &_points[0];
-
-	yflag0 = (vtx0->y >= y);
-	for (pt = 0; pt < _points.size(); pt++, vtx1++) {
-		yflag1 = (vtx1->y >= y);
-		if (yflag0 != yflag1) {
-			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
-				inside_flag = !inside_flag;
-			}
-		}
-		yflag0 = yflag1;
-		vtx0 = vtx1;
-	}
-
-	return inside_flag;
-}
-
-} // End of namespace Common
-
-#endif // #ifdef ENABLE_VKEYBD
+#if defined(SCUMMVM_USE_PRAGMA_PACK)
+  #pragma pack(1)
+#endif

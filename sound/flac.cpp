@@ -82,26 +82,21 @@ namespace Audio {
 static const uint MAX_OUTPUT_CHANNELS = 2;
 
 
-class FlacInputStream : public AudioStream {
+class FlacInputStream : public SeekableAudioStream {
 protected:
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
-
-	uint _numLoops;
 
 	::FLAC__SeekableStreamDecoder *_decoder;
 
 	/** Header of the stream */
 	FLAC__StreamMetadata_StreamInfo _streaminfo;
 
-	/** index of the first sample to be played */
-	FLAC__uint64 _firstSample;
-
-	/** index + 1(!) of the last sample to be played - 0 is end of stream */
+	/** index + 1(!) of the last sample to be played */
 	FLAC__uint64 _lastSample;
 
 	/** total play time */
-	int32 _totalPlayTime;
+	Timestamp _length;
 
 	/** true if the last sample was decoded from the FLAC-API - there might still be data in the buffer */
 	bool _lastSampleWritten;
@@ -129,7 +124,7 @@ protected:
 
 
 public:
-	FlacInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime = 0, uint endTime = 0, uint numLoops = 1);
+	FlacInputStream(Common::SeekableReadStream *inStream, bool dispose);
 	virtual ~FlacInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -142,10 +137,10 @@ public:
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
-	int32 getTotalPlayTime() const { return _totalPlayTime; }
+	bool seek(const Timestamp &where);
+	Timestamp getLength() const { return _length; }
 
 	bool isStreamDecoderReady() const { return getStreamDecoderState() == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC ; }
-
 protected:
 	uint getChannels() const { return MIN<uint>(_streaminfo.channels, MAX_OUTPUT_CHANNELS); }
 
@@ -184,7 +179,7 @@ private:
 	static void convertBuffersMono8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits);
 };
 
-FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime, uint endTime, uint numLoops)
+FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool dispose)
 #ifdef LEGACY_FLAC
 			:	_decoder(::FLAC__seekable_stream_decoder_new()),
 #else
@@ -192,8 +187,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 #endif
 		_inStream(inStream),
 		_disposeAfterUse(dispose),
-		_numLoops(numLoops),
-		_firstSample(0), _lastSample(0),
+		_length(0, 1000), _lastSample(0),
 		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(false),
 		_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
 {
@@ -234,34 +228,9 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 #endif
 	if (success) {
 		if (processUntilEndOfMetadata() && _streaminfo.channels > 0) {
-			// Compute the start/end sample (we use floating point arithmetics here to
-			// avoid overflows).
-			_firstSample = (FLAC__uint64)(startTime * (_streaminfo.sample_rate / 1000.0));
-			_lastSample = (FLAC__uint64)(endTime * (_streaminfo.sample_rate / 1000.0));
-
-			if (_firstSample == 0 || seekAbsolute(_firstSample)) {
-				int32 samples = kUnknownPlayTime;
-
-				if (!_lastSample) {
-					if (_streaminfo.total_samples)
-						samples = _streaminfo.total_samples - _firstSample;
-				} else {
-					samples = _lastSample - _firstSample - 1;
-				}
-
-				if (samples != kUnknownPlayTime && samples >= 0 && numLoops) {
-					const int32 rate = _streaminfo.sample_rate;
-
-					int32 seconds = samples / rate;
-					int32 milliseconds = (1000 * (samples % rate)) / rate;
-
-					_totalPlayTime = (seconds * 1000 + milliseconds) * numLoops;
-				} else {
-					_totalPlayTime = kUnknownPlayTime;
-				}
-
-				return; // no error occured
-			}
+			_lastSample = _streaminfo.total_samples + 1;
+			_length = Timestamp(0, _lastSample - 1, getRate());
+			return; // no error occured
 		}
 	}
 
@@ -322,6 +291,12 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 	return result;
 }
 
+bool FlacInputStream::seek(const Timestamp &where) {
+	_sampleCache.bufFill = 0;
+	_sampleCache.bufReadPos = NULL;
+	return seekAbsolute((FLAC__uint64)calculateSampleOffset(where, _streaminfo.sample_rate));
+}
+
 int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	const uint numChannels = getChannels();
 
@@ -365,17 +340,8 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		processSingleBlock();
 		state = getStreamDecoderState();
 
-		if (state == FLAC__STREAM_DECODER_END_OF_STREAM) {
+		if (state == FLAC__STREAM_DECODER_END_OF_STREAM)
 			_lastSampleWritten = true;
-		}
-
-		// If we reached the end of the stream, and looping is enabled: Try to rewind
-		if (_lastSampleWritten && _numLoops != 1) {
-			if (_numLoops != 0)
-				_numLoops--;
-			seekAbsolute(_firstSample);
-			state = getStreamDecoderState();
-		}
 	}
 
 	// Error handling
@@ -758,22 +724,10 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 #pragma mark --- Flac factory functions ---
 #pragma mark -
 
-
-AudioStream *makeFlacStream(
+SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse,
-	uint32 startTime,
-	uint32 duration,
-	uint numLoops) {
-
-	uint32 endTime = duration ? (startTime + duration) : 0;
-
-	FlacInputStream *input = new FlacInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
-	if (!input->isStreamDecoderReady()) {
-		delete input;
-		return 0;
-	}
-	return input;
+	DisposeAfterUse::Flag disposeAfterUse) {
+	return new FlacInputStream(stream, disposeAfterUse);
 }
 
 } // End of namespace Audio

@@ -319,7 +319,7 @@ static void io_write() {
 }
 
 static void io_date() {
-	tm t;
+	TimeDate t;
 	char b[BUFSIZ];
 
 	g_system->getTimeAndDate(t);

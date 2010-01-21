@@ -36,13 +36,13 @@ namespace Common {
  * Simple class for handling both 2D position and size.
  */
 struct Point {
-	int16 x;	//!< The horizontal part of the point
-	int16 y;	//!< The vertical part of the point
+	int16 x;	///< The horizontal part of the point
+	int16 y;	///< The vertical part of the point
 
 	Point() : x(0), y(0) {}
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
-	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
-	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
+	bool operator==(const Point &p) const { return x == p.x && y == p.y; };
+	bool operator!=(const Point &p) const { return x != p.x || y != p.y; };
 
 	/**
 	 * Return the square of the distance between this point and the point p.
@@ -50,7 +50,7 @@ struct Point {
 	 * @param p		the other point
 	 * @return the distance between this and p
 	 */
-	uint sqrDist(const Point & p) const {
+	uint sqrDist(const Point &p) const {
 		int diffx = ABS(p.x - x);
 		if (diffx >= 0x1000)
 			return 0xFFFFFF;
@@ -59,7 +59,7 @@ struct Point {
 		if (diffy >= 0x1000)
 			return 0xFFFFFF;
 
-		return uint(diffx*diffx + diffy*diffy);
+		return uint(diffx * diffx + diffy * diffy);
 	}
 };
 
@@ -82,8 +82,8 @@ struct Point {
  * When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
-	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
-	int16 bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
+	int16 top, left;		///< The point at the top left of the rectangle (part of the rect).
+	int16 bottom, right;	///< The point at the bottom right of the rectangle (not part of the rect).
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
 	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
@@ -198,7 +198,7 @@ struct Rect {
 		else if (right < r.left) right = r.left;
 	}
 
-	void clip(int maxw, int maxh) {
+	void clip(int16 maxw, int16 maxh) {
 		clip(Rect(0, 0, maxw, maxh));
 	}
 

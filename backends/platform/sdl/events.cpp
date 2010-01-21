@@ -174,8 +174,6 @@ static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 
 bool OSystem_SDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
-	int axis;
-	byte b = 0;
 
 	handleKbdMouse();
 /* Residual doesn't support this
@@ -188,277 +186,306 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 */
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
-
-		switch (ev.type) {
-		case SDL_KEYDOWN:{
-			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
-
-/* Residual doesn't support this
-			// Alt-Return and Alt-Enter toggle full screen mode
-			if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
-			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-				beginGFXTransaction();
-					setFullscreenMode(!_videoMode.fullscreen);
-				endGFXTransaction();
-#ifdef USE_OSD
-				if (_videoMode.fullscreen)
-					displayMessageOnOSD("Fullscreen mode");
-				else
-					displayMessageOnOSD("Windowed mode");
-#endif
-
-				break;
-			}
-
-			// Alt-S: Create a screenshot
-			if (b == Common::KBD_ALT && ev.key.keysym.sym == 's') {
-				char filename[20];
-
-				for (int n = 0;; n++) {
-					SDL_RWops *file;
-
-					sprintf(filename, "scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename, "r");
-					if (!file)
-						break;
-					SDL_RWclose(file);
-				}
-				if (saveScreenshot(filename))
-					printf("Saved '%s'\n", filename);
-				else
-					printf("Could not save screenshot!\n");
-				break;
-			}
-*/
-			// Ctrl-m toggles mouse capture
-			if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
-				toggleMouseGrab();
-				break;
-			}
-
-#if defined(MACOSX)
-			// On Macintosh', Cmd-Q quits
-			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
-				event.type = Common::EVENT_QUIT;
-				return true;
-			}
-#elif defined(UNIX)
-			// On other unices, Control-Q quits
-			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-				event.type = Common::EVENT_QUIT;
-				return true;
-			}
-#else
-			// Ctrl-z and Alt-X quit
-			if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
-				event.type = Common::EVENT_QUIT;
-				return true;
-			}
-#endif
-
-			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
-				event.type = Common::EVENT_MUTE;
-				return true;
-			}
-/* Residual doesn't support this
-			// Ctrl-Alt-<key> will change the GFX mode
-			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-
-				handleScalerHotkeys(ev.key);
-				break;
-			}*/
-			const bool event_complete = remapKey(ev, event);
-
-			if (event_complete)
-				return true;
-
-			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
+		if (dispatchSDLEvent(ev, event))
 			return true;
-			}
-		case SDL_KEYUP:
-			{
-			const bool event_complete = remapKey(ev,event);
-
-			if (event_complete)
-				return true;
-
-			event.type = Common::EVENT_KEYUP;
-			event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-			event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
-
-			// Ctrl-Alt-<key> will change the GFX mode
-			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-				// Swallow these key up events
-				break;
-			}
-
-			return true;
-			}
-		case SDL_MOUSEMOTION:
-			event.type = Common::EVENT_MOUSEMOVE;
-			fillMouseEvent(event, ev.motion.x, ev.motion.y);
-
-			//setMousePos(event.mouse.x, event.mouse.y);
-			return true;
-
-		case SDL_MOUSEBUTTONDOWN:
-			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = Common::EVENT_LBUTTONDOWN;
-			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
-			else if (ev.button.button == SDL_BUTTON_WHEELUP)
-				event.type = Common::EVENT_WHEELUP;
-			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-				event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
-			else if (ev.button.button == SDL_BUTTON_MIDDLE)
-				event.type = Common::EVENT_MBUTTONDOWN;
-#endif
-			else
-				break;
-
-			fillMouseEvent(event, ev.button.x, ev.button.y);
-
-			return true;
-
-		case SDL_MOUSEBUTTONUP:
-			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = Common::EVENT_LBUTTONUP;
-			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = Common::EVENT_RBUTTONUP;
-#if defined(SDL_BUTTON_MIDDLE)
-			else if (ev.button.button == SDL_BUTTON_MIDDLE)
-				event.type = Common::EVENT_MBUTTONUP;
-#endif
-			else
-				break;
-			fillMouseEvent(event, ev.button.x, ev.button.y);
-
-			return true;
-
-		case SDL_JOYBUTTONDOWN:
-			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event.type = Common::EVENT_LBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event.type = Common::EVENT_RBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else {
-				event.type = Common::EVENT_KEYDOWN;
-				switch (ev.jbutton.button) {
-				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = Common::KEYCODE_ESCAPE;
-					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_PERIOD:
-					event.kbd.keycode = Common::KEYCODE_PERIOD;
-					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_SPACE:
-					event.kbd.keycode = Common::KEYCODE_SPACE;
-					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_F5:
-					event.kbd.keycode = Common::KEYCODE_F5;
-					event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-					break;
-				}
-			}
-			return true;
-
-		case SDL_JOYBUTTONUP:
-			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event.type = Common::EVENT_LBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event.type = Common::EVENT_RBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else {
-				event.type = Common::EVENT_KEYUP;
-				switch (ev.jbutton.button) {
-				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = Common::KEYCODE_ESCAPE;
-					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_PERIOD:
-					event.kbd.keycode = Common::KEYCODE_PERIOD;
-					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_SPACE:
-					event.kbd.keycode = Common::KEYCODE_SPACE;
-					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_F5:
-					event.kbd.keycode = Common::KEYCODE_F5;
-					event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-					break;
-				}
-			}
-			return true;
-
-		case SDL_JOYAXISMOTION:
-			axis = ev.jaxis.value;
-			if ( axis > JOY_DEADZONE) {
-				axis -= JOY_DEADZONE;
-				event.type = Common::EVENT_MOUSEMOVE;
-			} else if ( axis < -JOY_DEADZONE ) {
-				axis += JOY_DEADZONE;
-				event.type = Common::EVENT_MOUSEMOVE;
-			} else
-				axis = 0;
-
-			if ( ev.jaxis.axis == JOY_XAXIS) {
-#ifdef JOY_ANALOG
-				_km.x_vel = axis/2000;
-				_km.x_down_count = 0;
-#else
-				if (axis != 0) {
-					_km.x_vel = (axis > 0) ? 1:-1;
-					_km.x_down_count = 1;
-				} else {
-					_km.x_vel = 0;
-					_km.x_down_count = 0;
-				}
-#endif
-
-			} else if (ev.jaxis.axis == JOY_YAXIS) {
-#ifndef JOY_INVERT_Y
-				axis = -axis;
-#endif
-#ifdef JOY_ANALOG
-				_km.y_vel = -axis / 2000;
-				_km.y_down_count = 0;
-#else
-				if (axis != 0) {
-					_km.y_vel = (-axis > 0) ? 1: -1;
-					_km.y_down_count = 1;
-				} else {
-					_km.y_vel = 0;
-					_km.y_down_count = 0;
-				}
-#endif
-			}
-
-			fillMouseEvent(event, _km.x, _km.y);
-
-			return true;
-
-		case SDL_VIDEOEXPOSE:
-			event.type = Common::EVENT_SCREEN_CHANGED; // this two lines are Residual change
-			return true;
-
-		case SDL_QUIT:
-			event.type = Common::EVENT_QUIT;
-			return true;
-		}
 	}
 	return false;
+}
+
+bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
+	switch (ev.type) {
+	case SDL_KEYDOWN:
+		return handleKeyDown(ev, event);
+	case SDL_KEYUP:
+		return handleKeyUp(ev, event);
+	case SDL_MOUSEMOTION:
+		return handleMouseMotion(ev, event);
+	case SDL_MOUSEBUTTONDOWN:
+		return handleMouseButtonDown(ev, event);
+	case SDL_MOUSEBUTTONUP:
+		return handleMouseButtonUp(ev, event);
+	case SDL_JOYBUTTONDOWN:
+		return handleJoyButtonDown(ev, event);
+	case SDL_JOYBUTTONUP:
+		return handleJoyButtonUp(ev, event);
+	case SDL_JOYAXISMOTION:
+		return handleJoyAxisMotion(ev, event);
+
+	case SDL_VIDEOEXPOSE:
+		//_forceFull = true;
+		break;
+
+	case SDL_QUIT:
+		event.type = Common::EVENT_QUIT;
+		return true;
+
+	}
+	
+	return false;
+}
+
+
+bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+	byte b = 0;
+	b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
+
+/* Residual doesn't support this
+	// Alt-Return and Alt-Enter toggle full screen mode
+	if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
+					  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
+		beginGFXTransaction();
+			setFullscreenMode(!_videoMode.fullscreen);
+		endGFXTransaction();
+#ifdef USE_OSD
+		if (_videoMode.fullscreen)
+			displayMessageOnOSD("Fullscreen mode");
+		else
+			displayMessageOnOSD("Windowed mode");
+#endif
+
+		return false;
+	}
+
+	// Alt-S: Create a screenshot
+	if (b == Common::KBD_ALT && ev.key.keysym.sym == 's') {
+		char filename[20];
+
+		for (int n = 0;; n++) {
+			SDL_RWops *file;
+
+			sprintf(filename, "residual%05d.bmp", n);
+			file = SDL_RWFromFile(filename, "r");
+			if (!file)
+				break;
+			SDL_RWclose(file);
+		}
+		if (saveScreenshot(filename))
+			printf("Saved '%s'\n", filename);
+		else
+			printf("Could not save screenshot!\n");
+		return false;
+	}
+*/
+	// Ctrl-m toggles mouse capture
+	if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
+		toggleMouseGrab();
+		return false;
+	}
+
+#if defined(MACOSX)
+	// On Macintosh', Cmd-Q quits
+	if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+#elif defined(UNIX)
+	// On other unices, Control-Q quits
+	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+#else
+	// Ctrl-z and Alt-X quit
+	if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+#endif
+
+	if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
+		event.type = Common::EVENT_MUTE;
+		return true;
+	}
+/* Residual doesn't support this
+	// Ctrl-Alt-<key> will change the GFX mode
+	if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+		if (handleScalerHotkeys(ev.key))
+			return false;
+	}*/
+
+	if (remapKey(ev, event))
+		return true;
+
+	event.type = Common::EVENT_KEYDOWN;
+	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+
+	return true;
+}
+
+bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+	if (remapKey(ev, event))
+		return true;
+
+	event.type = Common::EVENT_KEYUP;
+	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+
+	// Ctrl-Alt-<key> will change the GFX mode
+	byte b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
+	if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+		// Swallow these key up events
+		return false;
+	}
+
+	return true;
+}
+
+bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
+	event.type = Common::EVENT_MOUSEMOVE;
+	fillMouseEvent(event, ev.motion.x, ev.motion.y);
+
+	//setMousePos(event.mouse.x, event.mouse.y);
+	return true;
+}
+
+bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+	if (ev.button.button == SDL_BUTTON_LEFT)
+		event.type = Common::EVENT_LBUTTONDOWN;
+	else if (ev.button.button == SDL_BUTTON_RIGHT)
+		event.type = Common::EVENT_RBUTTONDOWN;
+#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
+	else if (ev.button.button == SDL_BUTTON_WHEELUP)
+		event.type = Common::EVENT_WHEELUP;
+	else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+		event.type = Common::EVENT_WHEELDOWN;
+#endif
+#if defined(SDL_BUTTON_MIDDLE)
+	else if (ev.button.button == SDL_BUTTON_MIDDLE)
+		event.type = Common::EVENT_MBUTTONDOWN;
+#endif
+	else
+		return false;
+
+	fillMouseEvent(event, ev.button.x, ev.button.y);
+
+	return true;
+}
+
+bool OSystem_SDL::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+	if (ev.button.button == SDL_BUTTON_LEFT)
+		event.type = Common::EVENT_LBUTTONUP;
+	else if (ev.button.button == SDL_BUTTON_RIGHT)
+		event.type = Common::EVENT_RBUTTONUP;
+#if defined(SDL_BUTTON_MIDDLE)
+	else if (ev.button.button == SDL_BUTTON_MIDDLE)
+		event.type = Common::EVENT_MBUTTONUP;
+#endif
+	else
+		return false;
+	fillMouseEvent(event, ev.button.x, ev.button.y);
+
+	return true;
+}
+
+bool OSystem_SDL::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
+		event.type = Common::EVENT_LBUTTONDOWN;
+		fillMouseEvent(event, _km.x, _km.y);
+	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
+		event.type = Common::EVENT_RBUTTONDOWN;
+		fillMouseEvent(event, _km.x, _km.y);
+	} else {
+		event.type = Common::EVENT_KEYDOWN;
+		switch (ev.jbutton.button) {
+		case JOY_BUT_ESCAPE:
+			event.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			break;
+		case JOY_BUT_PERIOD:
+			event.kbd.keycode = Common::KEYCODE_PERIOD;
+			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			break;
+		case JOY_BUT_SPACE:
+			event.kbd.keycode = Common::KEYCODE_SPACE;
+			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			break;
+		case JOY_BUT_F5:
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			break;
+		}
+	}
+	return true;
+}
+
+bool OSystem_SDL::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
+		event.type = Common::EVENT_LBUTTONUP;
+		fillMouseEvent(event, _km.x, _km.y);
+	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
+		event.type = Common::EVENT_RBUTTONUP;
+		fillMouseEvent(event, _km.x, _km.y);
+	} else {
+		event.type = Common::EVENT_KEYUP;
+		switch (ev.jbutton.button) {
+		case JOY_BUT_ESCAPE:
+			event.kbd.keycode = Common::KEYCODE_ESCAPE;
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			break;
+		case JOY_BUT_PERIOD:
+			event.kbd.keycode = Common::KEYCODE_PERIOD;
+			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			break;
+		case JOY_BUT_SPACE:
+			event.kbd.keycode = Common::KEYCODE_SPACE;
+			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			break;
+		case JOY_BUT_F5:
+			event.kbd.keycode = Common::KEYCODE_F5;
+			event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			break;
+		}
+	}
+	return true;
+}
+
+bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+	int axis = ev.jaxis.value;
+	if ( axis > JOY_DEADZONE) {
+		axis -= JOY_DEADZONE;
+		event.type = Common::EVENT_MOUSEMOVE;
+	} else if ( axis < -JOY_DEADZONE ) {
+		axis += JOY_DEADZONE;
+		event.type = Common::EVENT_MOUSEMOVE;
+	} else
+		axis = 0;
+
+	if ( ev.jaxis.axis == JOY_XAXIS) {
+#ifdef JOY_ANALOG
+		_km.x_vel = axis/2000;
+		_km.x_down_count = 0;
+#else
+		if (axis != 0) {
+			_km.x_vel = (axis > 0) ? 1:-1;
+			_km.x_down_count = 1;
+		} else {
+			_km.x_vel = 0;
+			_km.x_down_count = 0;
+		}
+#endif
+
+	} else if (ev.jaxis.axis == JOY_YAXIS) {
+#ifndef JOY_INVERT_Y
+		axis = -axis;
+#endif
+#ifdef JOY_ANALOG
+		_km.y_vel = -axis / 2000;
+		_km.y_down_count = 0;
+#else
+		if (axis != 0) {
+			_km.y_vel = (-axis > 0) ? 1: -1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = 0;
+			_km.y_down_count = 0;
+		}
+#endif
+	}
+
+	fillMouseEvent(event, _km.x, _km.y);
+
+	return true;
 }
 
 bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {

@@ -72,17 +72,44 @@ protected:
 
 	virtual void reflowLayout();
 
+	/**
+	 * Fill the list widget with all currently configured targets, and trigger
+	 * a redraw.
+	 */
 	void updateListing();
+
 	void updateButtons();
 
 	void open();
 	void close();
+
+	/**
+	 * Handle "Add game..." button.
+	 */
 	virtual void addGame();
+
+	/**
+	 * Handle "Remove game..." button.
+	 */
 	void removeGame(int item);
+
+	/**
+	 * Handle "Edit game..." button.
+	 */
 	void editGame(int item);
+
+	/**
+	 * Handle "Load..." button.
+	 */
 	void loadGame(int item);
 
-	void selectGame(const String &name);
+	/**
+	 * Select the target with the given name in the launcher game list.
+	 * Also scrolls the list so that the newly selected item is visible.
+	 *
+	 * @target	name of target to select
+	 */
+	void selectTarget(const String &target);
 };
 
 } // End of namespace GUI

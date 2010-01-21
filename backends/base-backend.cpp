@@ -46,13 +46,15 @@ Common::EventManager *BaseBackend::getEventManager() {
 }
 
 #if defined(UNIX)
-#ifdef MACOSX
-#define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
+#if defined(SAMSUNGTV)
+#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"
 #else
 #define DEFAULT_CONFIG_FILE ".residualrc"
 #endif
-#else
-#define DEFAULT_CONFIG_FILE "residual.ini"
+#endif
+
+#if !defined(UNIX)
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
 Common::SeekableReadStream *BaseBackend::createConfigReadStream() {

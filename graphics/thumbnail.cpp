@@ -166,5 +166,5 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	return true;
 }
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 

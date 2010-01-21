@@ -172,7 +172,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 		_nProt = pExd->Protection;
 		if (EXD_IS_DIRECTORY(pExd)) {
 			_bIsDirectory = true;
-			_pFileLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);;
+			_pFileLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
 			_bIsValid = (_pFileLock != 0);
 
 			// Add a trailing slash if it is needed

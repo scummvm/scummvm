@@ -37,6 +37,7 @@
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
 	PLUGIN_TYPE_ENGINE_VERSION,
+	PLUGIN_TYPE_MUSIC_VERSION,
 };
 
 
@@ -296,4 +297,15 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 
 const EnginePlugin::List &EngineManager::getPlugins() const {
 	return (const EnginePlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+}
+
+
+// Music plugins
+
+#include "sound/musicplugin.h"
+
+DECLARE_SINGLETON(MusicManager);
+
+const MusicPlugin::List &MusicManager::getPlugins() const {
+	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }

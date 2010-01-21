@@ -26,23 +26,15 @@
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/list.h"
+#include "common/queue.h"
 #include "common/util.h"
 
 #include "sound/audiostream.h"
+#include "sound/flac.h"
 #include "sound/mixer.h"
 #include "sound/mp3.h"
+#include "sound/raw.h"
 #include "sound/vorbis.h"
-#include "sound/flac.h"
-
-
-// This used to be an inline template function, but
-// buggy template function handling in MSVC6 forced
-// us to go with the macro approach. So far this is
-// the only template function that MSVC6 seemed to
-// compile incorrectly. Knock on wood.
-#define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
-	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
 
 namespace Audio {
@@ -55,8 +47,7 @@ struct StreamFileFormat {
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file).
 	 */
-	AudioStream* (*openStreamFile)(Common::SeekableReadStream *stream, bool disposeAfterUse,
-					uint32 startTime, uint32 duration, uint numLoops);
+	SeekableAudioStream *(*openStreamFile)(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
@@ -75,8 +66,8 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	{ NULL, NULL, NULL } // Terminator
 };
 
-AudioStream* AudioStream::openStreamFile(const Common::String &basename, uint32 startTime, uint32 duration, uint numLoops) {
-	AudioStream* stream = NULL;
+SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {
+	SeekableAudioStream *stream = NULL;
 	Common::File *fileHandle = new Common::File();
 
 	for (int i = 0; i < ARRAYSIZE(STREAM_FILEFORMATS)-1 && stream == NULL; ++i) {
@@ -84,7 +75,7 @@ AudioStream* AudioStream::openStreamFile(const Common::String &basename, uint32 
 		fileHandle->open(filename);
 		if (fileHandle->isOpen()) {
 			// Create the stream object
-			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, true, startTime, duration, numLoops);
+			stream = STREAM_FILEFORMATS[i].openStreamFile(fileHandle, DisposeAfterUse::YES);
 			fileHandle = 0;
 			break;
 		}
@@ -93,507 +84,288 @@ AudioStream* AudioStream::openStreamFile(const Common::String &basename, uint32 
 	delete fileHandle;
 
 	if (stream == NULL) {
-		debug(1, "AudioStream: Could not open compressed AudioFile %s", basename.c_str());
+		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.c_str());
 	}
 
 	return stream;
 }
 
 #pragma mark -
-#pragma mark --- LinearMemoryStream ---
+#pragma mark --- LoopingAudioStream ---
 #pragma mark -
 
-inline int32 calculatePlayTime(int rate, int samples) {
-	int32 seconds = samples / rate;
-	int32 milliseconds = (1000 * (samples % rate)) / rate;
-	return seconds * 1000 + milliseconds;
+LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
+    : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops), _completeIterations(0) {
 }
 
-/**
- * A simple raw audio stream, purely memory based. It operates on a single
- * block of data, which is passed to it upon creation.
- * Optionally supports looping the sound.
- *
- * Design note: This code tries to be as efficient as possible (without
- * resorting to assembly, that is). To this end, it is written as a template
- * class. This way the compiler can create optimized code for each special
- * case. This results in a total of 12 versions of the code being generated.
- */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class LinearMemoryStream : public AudioStream {
-protected:
-	const byte *_ptr;
-	const byte *_end;
-	const byte *_loopPtr;
-	const byte *_loopEnd;
+LoopingAudioStream::~LoopingAudioStream() {
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete _parent;
+}
+
+int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int samplesRead = _parent->readBuffer(buffer, numSamples);
+
+	if (_parent->endOfStream()) {
+		++_completeIterations;
+		if (_completeIterations == _loops)
+			return samplesRead;
+
+		int remainingSamples = numSamples - samplesRead;
+
+		if (!_parent->rewind()) {
+			// TODO: Properly indicate error
+			_loops = _completeIterations = 1;
+			return samplesRead;
+		}
+
+		samplesRead += _parent->readBuffer(buffer + samplesRead, remainingSamples);
+	}
+
+	return samplesRead;
+}
+
+bool LoopingAudioStream::endOfData() const {
+	return (_loops != 0 && (_completeIterations == _loops));
+}
+
+AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops) {
+	if (loops != 1)
+		return new LoopingAudioStream(stream, loops);
+	else
+		return stream;
+}
+
+AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops) {
+	if (!start.totalNumberOfFrames() && (!end.totalNumberOfFrames() || end == stream->getLength())) {
+		return makeLoopingAudioStream(stream, loops);
+	} else {
+		if (!end.totalNumberOfFrames())
+			end = stream->getLength();
+
+		if (start >= end) {
+			warning("makeLoopingAudioStream: start (%d) >= end (%d)", start.msecs(), end.msecs());
+			delete stream;
+			return 0;
+		}
+
+		return makeLoopingAudioStream(new SubSeekableAudioStream(stream, start, end), loops);
+	}
+}
+
+#pragma mark -
+#pragma mark --- SubLoopingAudioStream ---
+#pragma mark -
+
+SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
+	                                         uint loops,
+	                                         const Timestamp loopStart,
+	                                         const Timestamp loopEnd,
+	                                         DisposeAfterUse::Flag disposeAfterUse)
+    : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
+      _pos(0, getRate() * (isStereo() ? 2 : 1)),
+      _loopStart(loopStart.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
+      _loopEnd(loopEnd.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
+      _done(false) {
+	if (!_parent->rewind())
+		_done = true;
+}
+
+SubLoopingAudioStream::~SubLoopingAudioStream() {
+	if (_disposeAfterUse == DisposeAfterUse::YES)
+		delete _parent;
+}
+
+int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int framesLeft = MIN(_loopEnd.frameDiff(_pos), numSamples);
+	int framesRead = _parent->readBuffer(buffer, framesLeft);
+	_pos = _pos.addFrames(framesRead);
+
+	if (framesLeft < numSamples || framesRead < framesLeft) {
+		if (_loops != 0) {
+			--_loops;
+			if (!_loops) {
+				_done = true;
+				return framesRead;
+			}
+		}
+
+		if (!_parent->seek(_loopStart)) {
+			_done = true;
+			return framesRead;
+		}
+
+		_pos = _loopStart;
+		framesLeft = numSamples - framesLeft;
+		framesRead += _parent->readBuffer(buffer + framesRead, framesLeft);
+
+		if (_parent->endOfStream())
+			_done = true;
+	}
+
+	return framesRead;
+}
+
+#pragma mark -
+#pragma mark --- SubSeekableAudioStream ---
+#pragma mark -
+
+SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
+    : _parent(parent), _disposeAfterUse(disposeAfterUse),
+      _start(start.convertToFramerate(getRate())),
+       _pos(0, getRate() * (isStereo() ? 2 : 1)),
+      _length((end - start).convertToFramerate(getRate() * (isStereo() ? 2 : 1))) {
+
+	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
+	_parent->seek(_start);
+}
+
+SubSeekableAudioStream::~SubSeekableAudioStream() {
+	if (_disposeAfterUse)
+		delete _parent;
+}
+
+int SubSeekableAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	int framesLeft = MIN(_length.frameDiff(_pos), numSamples);
+	int framesRead = _parent->readBuffer(buffer, framesLeft);
+	_pos = _pos.addFrames(framesRead);
+	return framesRead;
+}
+
+bool SubSeekableAudioStream::seek(const Timestamp &where) {
+	_pos = where.convertToFramerate(getRate());
+	if (_pos > _length) {
+		_pos = _length;
+		return false;
+	}
+
+	if (_parent->seek(_pos + _start)) {
+		return true;
+	} else {
+		_pos = _length;
+		return false;
+	}
+}
+
+#pragma mark -
+#pragma mark --- Queueing audio stream ---
+#pragma mark -
+
+
+void QueuingAudioStream::queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags) {
+	AudioStream *stream = makeRawMemoryStream(data, size, disposeAfterUse, getRate(), flags, 0, 0);
+	queueAudioStream(stream, DisposeAfterUse::YES);
+}
+
+
+class QueuingAudioStreamImpl : public QueuingAudioStream {
+private:
+	/**
+	 * We queue a number of (pointers to) audio stream objects.
+	 * In addition, we need to remember for each stream whether
+	 * to dispose it after all data has been read from it.
+	 * Hence, we don't store pointers to stream objects directly,
+	 * but rather StreamHolder structs.
+	 */
+	struct StreamHolder {
+		AudioStream *_stream;
+		DisposeAfterUse::Flag _disposeAfterUse;
+		StreamHolder(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse)
+			: _stream(stream),
+			  _disposeAfterUse(disposeAfterUse) {}
+	};
+
+	/**
+	 * The sampling rate of this audio stream.
+	 */
 	const int _rate;
-	const byte *_origPtr;
-	const int32 _playtime;
 
-public:
-	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
-		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate), _playtime(calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1))) {
-
-		if (loopLen) {
-			_loopPtr = _ptr + loopOffset;
-			_loopEnd = _loopPtr + loopLen;
-		}
-
-		_origPtr = autoFreeMemory ? ptr : 0;
-	}
-	virtual ~LinearMemoryStream() {
-		free(const_cast<byte *>(_origPtr));
-	}
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const			{ return stereo; }
-	bool endOfData() const			{ return _ptr >= _end; }
-
-	int getRate() const				{ return _rate; }
-	int32 getTotalPlayTime() const	{ return _playtime; }
-};
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = numSamples;
-	while (samples > 0 && _ptr < _end) {
-		int len = MIN(samples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
-		samples -= len;
-		do {
-			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
-			_ptr += (is16Bit ? 2 : 1);
-		} while (--len);
-		// Loop, if looping was specified
-		if (_loopPtr && _ptr >= _end) {
-			_ptr = _loopPtr;
-			_end = _loopEnd;
-		}
-	}
-	return numSamples-samples;
-}
-
-
-
-#pragma mark -
-#pragma mark --- LinearDiskStream ---
-#pragma mark -
-
-
-
-/**
- *  LinearDiskStream.  This can stream linear (PCM) audio from disk.  The
- *  function takes an pointer to an array of LinearDiskStreamAudioBlock which defines the
- *  start position and length of each block of uncompressed audio in the stream.
- */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class LinearDiskStream : public AudioStream {
-
-// Allow backends to override buffer size
-#ifdef CUSTOM_AUDIO_BUFFER_SIZE
-	static const int32 BUFFER_SIZE = CUSTOM_AUDIO_BUFFER_SIZE;
-#else
-	static const int32 BUFFER_SIZE = 16384;
-#endif
-
-protected:
-	byte* _buffer;			///< Streaming buffer
-	const byte *_ptr;		///< Pointer to current position in stream buffer
-	const int _rate;		///< Sample rate of stream
-
-	int32 _playtime;		///< Calculated total play time
-	Common::SeekableReadStream *_stream;	///< Stream to read data from
-	int32 _filePos;			///< Current position in stream
-	int32 _diskLeft;		///< Samples left in stream in current block not yet read to buffer
-	int32 _bufferLeft;		///< Samples left in buffer in current block
-	bool _disposeAfterUse;		///< If true, delete stream object when LinearDiskStream is destructed
-
-	LinearDiskStreamAudioBlock *_audioBlock;	///< Audio block list
-	int _audioBlockCount;		///< Number of blocks in _audioBlock
-	int _currentBlock;		///< Current audio block number
-
-	int _beginLoop;			///< Loop start parameter
-	int _endLoop;			///< Loop end parameter, currently not implemented
-	bool _loop;				///< Determines if the stream should be looped when it finishes
-
-public:
-	LinearDiskStream(int rate, uint beginLoop, uint endLoop, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks, bool loop)
-		: _rate(rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
-		  _audioBlockCount(numBlocks), _loop(loop) {
-
-		// Allocate streaming buffer
-		if (is16Bit) {
-			_buffer = (byte *)malloc(BUFFER_SIZE * sizeof(int16));
-		} else {
-			_buffer = (byte *)malloc(BUFFER_SIZE * sizeof(byte));
-		}
-
-		_ptr = _buffer;
-		_bufferLeft = 0;
-
-		// Copy audio block data to our buffer
-		// TODO: Replace this with a Common::Array or Common::List to
-		// make it a little friendlier.
-		_audioBlock = new LinearDiskStreamAudioBlock[numBlocks];
-		memcpy(_audioBlock, block, numBlocks * sizeof(LinearDiskStreamAudioBlock));
-
-		// Set current buffer state, playing first block
-		_currentBlock = 0;
-		_filePos = _audioBlock[_currentBlock].pos;
-		_diskLeft = _audioBlock[_currentBlock].len;
-
-		// Add up length of all blocks in order to caluclate total play time
-		int len = 0;
-		for (int r = 0; r < _audioBlockCount; r++) {
-			len += _audioBlock[r].len;
-		}
-		_playtime = calculatePlayTime(rate, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1));
-	}
-
-
-	virtual ~LinearDiskStream() {
-		if (_disposeAfterUse) {
-			delete _stream;
-		}
-
-		delete[] _audioBlock;
-		free(_buffer);
-	}
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const			{ return stereo; }
-	bool endOfData() const			{ return (_currentBlock == _audioBlockCount - 1) && (_diskLeft == 0) && (_bufferLeft == 0); }
-
-	int getRate() const			{ return _rate; }
-	int32 getTotalPlayTime() const	{ return _playtime; }
-};
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	int oldPos = _stream->pos();
-	bool restoreFilePosition = false;
-
-	int samples = numSamples;
-
-	while (samples > 0 && ((_diskLeft > 0 || _bufferLeft > 0) || (_currentBlock != _audioBlockCount - 1))  ) {
-
-		// Output samples in the buffer to the output		
-		int len = MIN<int>(samples, _bufferLeft);
-		samples -= len;
-		_bufferLeft -= len;
-
-		while (len > 0) {
-			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
-			_ptr += (is16Bit ? 2 : 1);
-			len--;
-		}
-
-		// Have we now finished this block?  If so, read the next block
-		if ((_bufferLeft == 0) && (_diskLeft == 0) && (_currentBlock != _audioBlockCount - 1)) {
-			// Next block
-			_currentBlock++;
-
-			_filePos = _audioBlock[_currentBlock].pos;
-			_diskLeft = _audioBlock[_currentBlock].len;
-		}
-			
-		// Now read more data from disk if there is more to be read
-		if ((_bufferLeft == 0) && (_diskLeft > 0)) {
-			int32 readAmount = MIN(_diskLeft, BUFFER_SIZE);
-
-			_stream->seek(_filePos, SEEK_SET);
-			_stream->read(_buffer, readAmount * (is16Bit? 2: 1));
-
-			// Amount of data in buffer is now the amount read in, and
-			// the amount left to read on disk is decreased by the same amount
-			_bufferLeft = readAmount;
-			_diskLeft -= readAmount;
-			_ptr = (byte *)_buffer;
-			_filePos += readAmount * (is16Bit? 2: 1);
-
-			// Set this flag now we've used the file, it restores it's
-			// original position.
-			restoreFilePosition = true;
-		}
-
-		// Looping
-		if (_diskLeft == 0 && _loop) {
-			// Reset the stream
-			_currentBlock = 0;
-			_filePos = _audioBlock[_currentBlock].pos + _beginLoop;
-			_diskLeft = _audioBlock[_currentBlock].len;
-		}
-	}
-
-	// In case calling code relies on the position of this stream staying 
-	// constant, I restore the location if I've changed it.  This is probably
-	// not necessary.	
-	if (restoreFilePosition) {
-		_stream->seek(oldPos, SEEK_SET);
-	}
-
-	return numSamples-samples;
-}
-
-
-
-#pragma mark -
-#pragma mark --- Input stream factory ---
-#pragma mark -
-
-/* In the following, we use preprocessor / macro tricks to simplify the code
- * which instantiates the input streams. We used to use template functions for
- * this, but MSVC6 / EVC 3-4 (used for WinCE builds) are extremely buggy when it
- * comes to this feature of C++... so as a compromise we use macros to cut down
- * on the (source) code duplication a bit.
- * So while normally macro tricks are said to make maintenance harder, in this
- * particular case it should actually help it :-)
- */
-
-#define MAKE_LINEAR(STEREO, UNSIGNED) \
-		if (is16Bit) { \
-			if (isLE) \
-				return new LinearMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, loopOffset, loopLen, autoFree); \
-			else  \
-				return new LinearMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree); \
-		} else \
-			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
-
-AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd) {
-	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool autoFree   = (flags & Audio::Mixer::FLAG_AUTOFREE) != 0;
-
-
-	uint loopOffset = 0, loopLen = 0;
-	if (flags & Audio::Mixer::FLAG_LOOP) {
-		if (loopEnd == 0)
-			loopEnd = len;
-		assert(loopStart <= loopEnd);
-		assert(loopEnd <= len);
-
-		loopOffset = loopStart;
-		loopLen = loopEnd - loopStart;
-	}
-
-	// Verify the buffer sizes are sane
-	if (is16Bit && isStereo) {
-		assert((len & 3) == 0 && (loopLen & 3) == 0);
-	} else if (is16Bit || isStereo) {
-		assert((len & 1) == 0 && (loopLen & 1) == 0);
-	}
-
-	if (isStereo) {
-		if (isUnsigned) {
-			MAKE_LINEAR(true, true);
-		} else {
-			MAKE_LINEAR(true, false);
-		}
-	} else {
-		if (isUnsigned) {
-			MAKE_LINEAR(false, true);
-		} else {
-			MAKE_LINEAR(false, false);
-		}
-	}
-}
-
-
-
-
-
-#define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
-		if (is16Bit) { \
-			if (isLE) \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop); \
-			else  \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop); \
-		} else \
-			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop)
-
-
-AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks, int rate, byte flags, bool takeOwnership, uint loopStart, uint loopEnd) {
-	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool loop       = (flags & Audio::Mixer::FLAG_LOOP) != 0;
-
-	if (isStereo) {
-		if (isUnsigned) {
-			MAKE_LINEAR_DISK(true, true);
-		} else {
-			MAKE_LINEAR_DISK(true, false);
-		}
-	} else {
-		if (isUnsigned) {
-			MAKE_LINEAR_DISK(false, true);
-		} else {
-			MAKE_LINEAR_DISK(false, false);
-		}
-	}
-}
-
-
-
-
-#pragma mark -
-#pragma mark --- Appendable audio stream ---
-#pragma mark -
-
-struct Buffer {
-	byte *start;
-	byte *end;
-};
-
-/**
- * Wrapped memory stream.
- */
-class BaseAppendableMemoryStream : public AppendableAudioStream {
-protected:
-
-	// A mutex to avoid access problems (causing e.g. corruption of
-	// the linked list) in thread aware environments.
+	/**
+	 * Whether this audio stream is mono (=false) or stereo (=true).
+	 */
+	const int _stereo;
+
+	/**
+	 * This flag is set by the finish() method only. See there for more details.
+	 */
+	bool _finished;
+
+	/**
+	 * A mutex to avoid access problems (causing e.g. corruption of
+	 * the linked list) in thread aware environments.
+	 */
 	Common::Mutex _mutex;
 
-	// List of all queued buffers
-	Common::List<Buffer> _bufferQueue;
+	/**
+	 * The queue of audio streams.
+	 */
+	Common::Queue<StreamHolder> _queue;
 
-	// Position in the front buffer, if any
-	bool _finalized;
-	const int _rate;
-	byte *_pos;
-
-	inline bool eosIntern() const { return _bufferQueue.empty(); };
 public:
-	BaseAppendableMemoryStream(int rate);
-	~BaseAppendableMemoryStream();
+	QueuingAudioStreamImpl(int rate, bool stereo)
+		: _rate(rate), _stereo(stereo), _finished(false) {}
+	~QueuingAudioStreamImpl();
 
-	bool endOfStream() const	{ return _finalized && eosIntern(); }
-	bool endOfData() const		{ return eosIntern(); }
+	// Implement the AudioStream API
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return _stereo; }
+	virtual int getRate() const { return _rate; }
+	virtual bool endOfData() const {
+		//Common::StackLock lock(_mutex);
+		return _queue.empty();
+	}
+	virtual bool endOfStream() const { return _finished && _queue.empty(); }
 
-	int getRate() const			{ return _rate; }
+	// Implement the QueuingAudioStream API
+	virtual void queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+	virtual void finish() { _finished = true; }
 
-	void finish()				{ _finalized = true; }
-
-	void queueBuffer(byte *data, uint32 size);
+	uint32 numQueuedStreams() const {
+		//Common::StackLock lock(_mutex);
+		return _queue.size();
+	}
 };
 
-/**
- * Wrapped memory stream.
- */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class AppendableMemoryStream : public BaseAppendableMemoryStream {
-public:
-	AppendableMemoryStream(int rate) : BaseAppendableMemoryStream(rate) {}
-
-	bool isStereo() const		{ return stereo; }
-
-	int readBuffer(int16 *buffer, const int numSamples);
-};
-
-BaseAppendableMemoryStream::BaseAppendableMemoryStream(int rate)
- : _finalized(false), _rate(rate), _pos(0) {
-
+QueuingAudioStreamImpl::~QueuingAudioStreamImpl() {
+	while (!_queue.empty()) {
+		StreamHolder tmp = _queue.pop();
+		if (tmp._disposeAfterUse == DisposeAfterUse::YES)
+			delete tmp._stream;
+	}
 }
 
-BaseAppendableMemoryStream::~BaseAppendableMemoryStream() {
-	// Clear the queue
-	Common::List<Buffer>::iterator iter;
-	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
-		delete[] iter->start;
-}
+void QueuingAudioStreamImpl::queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	if ((stream->getRate() != getRate()) || (stream->isStereo() != isStereo()))
+		error("QueuingAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
 
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
-	int samples = numSamples;
-	while (samples > 0 && !eosIntern()) {
-		Buffer buf = *_bufferQueue.begin();
-		if (_pos == 0)
-			_pos = buf.start;
-
-		assert(buf.start <= _pos && _pos <= buf.end);
-		const int samplesLeftInCurBuffer = buf.end - _pos;
-		if (samplesLeftInCurBuffer == 0) {
-			delete[] buf.start;
-			_bufferQueue.erase(_bufferQueue.begin());
-			_pos = 0;
-			continue;
-		}
-
-		int len = MIN(samples, samplesLeftInCurBuffer / (is16Bit ? 2 : 1));
-		samples -= len;
-		do {
-			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
-			_pos += (is16Bit ? 2 : 1);
-		} while (--len);
-	}
-
-	return numSamples - samples;
+	_queue.push(StreamHolder(stream, disposeAfterUse));
 }
 
-void BaseAppendableMemoryStream::queueBuffer(byte *data, uint32 size) {
+int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
+	int samplesDecoded = 0;
 
-/*
-	// Verify the buffer size is sane
-	if (is16Bit && stereo) {
-		assert((size & 3) == 0);
-	} else if (is16Bit || stereo) {
-		assert((size & 1) == 0);
+	while (samplesDecoded < numSamples && !_queue.empty()) {
+		AudioStream *stream = _queue.front()._stream;
+		samplesDecoded += stream->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
+
+		if (stream->endOfData()	) {
+			StreamHolder tmp = _queue.pop();
+			if (tmp._disposeAfterUse == DisposeAfterUse::YES)
+				delete stream;
+		}
 	}
-*/
-	// Verify that the stream has not yet been finalized (by a call to finish())
-	assert(!_finalized);
 
-	// Queue the buffer
-	Buffer buf = {data, data+size};
-	_bufferQueue.push_back(buf);
-
-
-#if 0
-	// Output some stats
-	uint totalSize = 0;
-	Common::List<Buffer>::iterator iter;
-	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
-		totalSize += iter->end - iter->start;
-	printf("AppendableMemoryStream::queueBuffer: added a %d byte buf, a total of %d bytes are queued\n",
-				size, totalSize);
-#endif
+	return samplesDecoded;
 }
 
 
-#define MAKE_WRAPPED(STEREO, UNSIGNED) \
-		if (is16Bit) { \
-			if (isLE) \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate); \
-			else  \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate); \
-		} else \
-			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate)
 
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags) {
-	const bool isStereo = (_flags & Audio::Mixer::FLAG_STEREO) != 0;
-	const bool is16Bit = (_flags & Audio::Mixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (_flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (_flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-
-	if (isStereo) {
-		if (isUnsigned) {
-			MAKE_WRAPPED(true, true);
-		} else {
-			MAKE_WRAPPED(true, false);
-		}
-	} else {
-		if (isUnsigned) {
-			MAKE_WRAPPED(false, true);
-		} else {
-			MAKE_WRAPPED(false, false);
-		}
-	}
+QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo) {
+	return new QueuingAudioStreamImpl(rate, stereo);
 }
+
 
 
 } // End of namespace Audio

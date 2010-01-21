@@ -53,6 +53,7 @@ namespace ListInternal {
 		typedef Node<T> *	NodePtr;
 		typedef T &			ValueRef;
 		typedef T *			ValuePtr;
+		typedef T			ValueType;
 
 		NodeBase *_node;
 

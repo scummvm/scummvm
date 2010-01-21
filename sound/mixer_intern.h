@@ -74,23 +74,14 @@ public:
 
 	virtual bool isReady() const { return _mixerReady; }
 
-	virtual void playRaw(
-		SoundType type,
-		SoundHandle *handle,
-		void *sound, uint32 size, uint rate, byte flags,
-		int id = -1, byte volume = 255, int8 balance = 0,
-		uint32 loopStart = 0, uint32 loopEnd = 0);
-
 	virtual void playInputStream(
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,
-		int id = -1, byte volume = 255, int8 balance = 0,
-		bool autofreeStream = true,
-		bool permanent = false,
-		bool reverseStereo = false);
-
-
+		int id, byte volume, int8 balance,
+		DisposeAfterUse::Flag autofreeStream,
+		bool permanent,
+		bool reverseStereo);
 
 	virtual void stopAll();
 	virtual void stopID(int id);
@@ -109,6 +100,7 @@ public:
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);
 
 	virtual uint32 getSoundElapsedTime(SoundHandle handle);
+	virtual Timestamp getElapsedTime(SoundHandle handle);
 
 	virtual bool hasActiveChannelOfType(SoundType type);
 

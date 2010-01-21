@@ -72,8 +72,7 @@ void EventDispatcher::dispatch() {
 }
 
 void EventDispatcher::registerMapper(EventMapper *mapper) {
-	if (_mapper)
-		delete _mapper;
+	delete _mapper;
 	_mapper = mapper;
 }
 
@@ -134,5 +133,5 @@ void EventDispatcher::dispatchEvent(const Event &event) {
 	}
 }
 
-} // end of namespace Common
+} // End of namespace Common
 

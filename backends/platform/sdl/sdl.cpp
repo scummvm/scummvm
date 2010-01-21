@@ -68,6 +68,8 @@
 #if defined(UNIX)
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/Residual Preferences"
+#elif defined(SAMSUNGTV)
+#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.residualrc"
 #else
 #define DEFAULT_CONFIG_FILE ".residualrc"
 #endif
@@ -177,7 +179,7 @@ OSystem_SDL::OSystem_SDL()
 	_cdrom(0),
 
 	_joystick(0),
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
@@ -223,9 +225,15 @@ void OSystem_SDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void OSystem_SDL::getTimeAndDate(struct tm &t) const {
+void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 	time_t curTime = time(0);
-	t = *localtime(&curTime);
+	struct tm t = *localtime(&curTime);
+	td.tm_sec = t.tm_sec;
+	td.tm_min = t.tm_min;
+	td.tm_hour = t.tm_hour;
+	td.tm_mday = t.tm_mday;
+	td.tm_mon = t.tm_mon;
+	td.tm_year = t.tm_year;
 }
 
 Common::TimerManager *OSystem_SDL::getTimerManager() {
@@ -398,6 +406,7 @@ void OSystem_SDL::quit() {
 	}
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
+
 	SDL_ShowCursor(SDL_ENABLE);
 
 	SDL_RemoveTimer(_timerID);
@@ -412,6 +421,10 @@ void OSystem_SDL::quit() {
 	// recorded events
 	delete getEventManager();
 	delete _savefile;
+
+#if !defined(SAMSUNGTV)
+	exit(0);
+#endif
 }
 
 void OSystem_SDL::setupIcon() {
@@ -466,7 +479,7 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-OSystem::MutexRef OSystem_SDL::createMutex(void) {
+OSystem::MutexRef OSystem_SDL::createMutex() {
 	return (MutexRef) SDL_CreateMutex();
 }
 
@@ -486,7 +499,7 @@ void OSystem_SDL::deleteMutex(MutexRef mutex) {
 #pragma mark --- Audio ---
 #pragma mark -
 
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 
 void OSystem_SDL::mixerProducerThread() {
 	byte nextSoundBuffer;
@@ -636,7 +649,7 @@ void OSystem_SDL::setupMixer() {
 		_mixer->setOutputRate(_samplesPerSec);
 		_mixer->setReady(true);
 
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 		initThreadedMixer(_mixer, _obtainedRate.samples * 4);
 #endif
 
@@ -654,7 +667,7 @@ void OSystem_SDL::closeMixer() {
 	delete _mixer;
 	_mixer = 0;
 
-#ifdef MIXER_DOUBLE_BUFFERING
+#if MIXER_DOUBLE_BUFFERING
 	deinitThreadedMixer();
 #endif
 

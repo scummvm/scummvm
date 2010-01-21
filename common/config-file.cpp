@@ -98,7 +98,8 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 		} else if (line[0] == '#') {
 			// Accumulate comments here. Once we encounter either the start
 			// of a new section, or a key-value-pair, we associate the value
-			// of the 'comment' variable with that entity.
+			// of the 'comment' variable with that entity. The semicolon
+			// comment is used for Living Books games in Mohawk.
 			comment += line;
 #ifdef _WIN32
 			comment += "\r\n";
@@ -124,8 +125,9 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			const char *p = line.c_str() + 1;
 			// Get the section name, and check whether it's valid (that
 			// is, verify that it only consists of alphanumerics,
-			// dashes and underscores).
-			while (*p && (isalnum(*p) || *p == '-' || *p == '_'))
+			// periods, dashes and underscores). Mohawk Living Books games
+			// can have periods in their section names.
+			while (*p && (isalnum(*p) || *p == '-' || *p == '_' || *p == '.'))
 				p++;
 
 			if (*p == '\0')

@@ -25,14 +25,12 @@
 #include "common/util.h"
 #include "common/system.h"
 #include "common/config-manager.h"
-#include "gui/debugger.h"
-#include "engines/engine.h"
 
 #include <stdarg.h>	// For va_list etc.
 
 #ifdef _WIN32_WCE
 // This is required for the debugger attachment
-extern bool isSmartphone(void);
+extern bool isSmartphone();
 #endif
 
 #ifdef __PLAYSTATION2__
@@ -41,22 +39,14 @@ extern bool isSmartphone(void);
 	typedef signed long	int64;
 	#include "backends/platform/ps2/fileio.h"
 
-	#define fprintf				ps2_fprintf
 	#define fputs(str, file)	ps2_fputs(str, file)
-	#define fflush(a)			ps2_fflush(a)
 #endif
 
 #ifdef __DS__
 	#include "backends/fs/ds/ds-fs.h"
 
-	void	std_fprintf(FILE* handle, const char* fmt, ...);
-	void	std_fflush(FILE* handle);
-
-	#define fprintf(file, fmt, ...)				do { char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); } while(0)
-	#define fputs(str, file)					DS::std_fwrite(str, strlen(str), 1, file)
-	#define fflush(file)						DS::std_fflush(file)
+	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
 #endif
-
 
 namespace Common {
 
@@ -150,7 +140,7 @@ String tag2string(uint32 tag) {
 	str[4] = '\0';
 	// Replace non-printable chars by dot
 	for (int i = 0; i < 4; ++i) {
-		if (!isprint(str[i]))
+		if (!isprint((unsigned char)str[i]))
 			str[i] = '.';
 	}
 	return Common::String(str);
@@ -178,7 +168,7 @@ uint RandomSource::getRandomNumber(uint max) {
 	return _randSeed % (max + 1);
 }
 
-uint RandomSource::getRandomBit(void) {
+uint RandomSource::getRandomBit() {
 	_randSeed = 0xDEADBF03 * (_randSeed + 1);
 	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
 	return _randSeed & 1;
@@ -193,6 +183,7 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 
 
 const LanguageDescription g_languages[] = {
+	{"zh-cn", "Chinese (China)", ZH_CNA},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
 	{"cz", "Czech", CZ_CZE},
 	{"nl", "Dutch", NL_NLD},
@@ -203,6 +194,7 @@ const LanguageDescription g_languages[] = {
 	{"de", "German", DE_DEU},
 	{"gr", "Greek", GR_GRE},
 	{"hb", "Hebrew", HB_ISR},
+	{"hu", "Hungarian", HU_HUN},
 	{"it", "Italian", IT_ITA},
 	{"jp", "Japanese", JA_JPN},
 	{"kr", "Korean", KO_KOR},
@@ -212,7 +204,6 @@ const LanguageDescription g_languages[] = {
 	{"ru", "Russian", RU_RUS},
 	{"es", "Spanish", ES_ESP},
 	{"se", "Swedish", SE_SWE},
-	{"hu", "Hungarian", HU_HUN},
 	{0, 0, UNK_LANG}
 };
 
@@ -252,7 +243,7 @@ const char *getLanguageDescription(Language id) {
 
 
 const PlatformDescription g_platforms[] = {
-	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS},
 	{"3do", "3do", "3do", "3DO", kPlatform3DO},
 	{"acorn", "acorn", "acorn", "Acorn", kPlatformAcorn},
 	{"amiga", "ami", "amiga", "Amiga", kPlatformAmiga},
@@ -270,12 +261,12 @@ const PlatformDescription g_platforms[] = {
 
 	{"linux", "linux", "linux", "Linux", kPlatformLinux},
 	{"macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh},
-	{"pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
+	{"pce", "pce", "pce", "PC-Engine", kPlatformPCEngine},
 	{"nes", "nes", "nes", "NES", kPlatformNES},
 	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "win", "Windows", kPlatformWindows},
 	{"playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX},
-
+	{"cdi", "cdi", "cdi", "Phillips CD-i", kPlatformCDi},
 
 	{0, 0, 0, "Default", kPlatformUnknown}
 };
@@ -430,106 +421,3 @@ void updateGameGUIOptions(const uint32 options) {
 }
 
 }	// End of namespace Common
-
-
-
-#ifndef DISABLE_TEXT_CONSOLE
-
-void warning(const char *s, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
-	va_end(va);
-
-#if !defined (__SYMBIAN32__)
-	fprintf(stderr, "WARNING: %s!\n", buf);
-#endif
-
-#if defined( USE_WINDBG )
-	strcat(buf, "\n");
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
-}
-
-#endif
-
-void NORETURN error(const char *s, ...) {
-	char buf_input[STRINGBUFLEN];
-	char buf_output[STRINGBUFLEN];
-	va_list va;
-
-	// Generate the full error message
-	va_start(va, s);
-	vsnprintf(buf_input, STRINGBUFLEN, s, va);
-	va_end(va);
-
-
-	// Next, give the active engine (if any) a chance to augment the message
-	if (g_engine) {
-		g_engine->errorString(buf_input, buf_output, STRINGBUFLEN);
-	} else {
-		strncpy(buf_output, buf_input, STRINGBUFLEN);
-	}
-
-	buf_output[STRINGBUFLEN-3] = '\0';
-	buf_output[STRINGBUFLEN-2] = '\0';
-	buf_output[STRINGBUFLEN-1] = '\0';
-	strcat(buf_output, "!\n");
-
-
-	// Print the error message to stderr
-	fputs(buf_output, stderr);
-
-	// Unless this error -originated- within the debugger itself, we
-	// now invoke the debugger, if available / supported.
-	if (g_engine) {
-		GUI::Debugger *debugger = g_engine->getDebugger();
-#ifdef _WIN32_WCE
-		if (isSmartphone())
-			debugger = 0;
-#endif
-		if (debugger && !debugger->isAttached()) {
-			debugger->attach(buf_output);
-			debugger->onFrame();
-		}
-	}
-
-
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_output_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
-	OutputDebugString(buf_output_unicode);
-#ifndef DEBUG
-	drawError(buf_output);
-#else
-	int cmon_break_into_the_debugger_if_you_please = *(int *)(buf_output + 1);	// bus error
-	printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
-#endif
-#else
-	OutputDebugString(buf_output);
-#endif
-#endif
-
-#ifdef PALMOS_MODE
-	extern void PalmFatalError(const char *err);
-	PalmFatalError(buf_output);
-#endif
-
-#ifdef __SYMBIAN32__
-	Symbian::FatalError(buf_output);
-#endif
-	// Finally exit. quit() will terminate the program if g_system is present
-	if (g_system)
-		g_system->quit();
-
-	exit(1);
-}

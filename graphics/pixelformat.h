@@ -27,7 +27,6 @@
 #define GRAPHICS_PIXELFORMAT_H
 
 #include "common/sys.h"
-#include "common/list.h"
 
 namespace Graphics {
 
@@ -148,26 +147,6 @@ struct PixelFormat {
 	}
 };
 
-/**
- * Determines the first matching format between two lists.
- *
- * @param backend	The higher priority list, meant to be a list of formats supported by the backend
- * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
- * @return			The first item on the backend list that also occurs on the frontend list
- *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
- */
-inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
-#ifdef USE_RGB_COLOR
-	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
-		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
-			if (*i == *j)
-				return *i;
-		}
-	}
-#endif
-	return PixelFormat::createFormatCLUT8();
-}
-
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif

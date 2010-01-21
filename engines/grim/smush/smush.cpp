@@ -28,6 +28,10 @@
 #include "common/file.h"
 #include "common/events.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/raw.h"
+
 #include "engines/grim/smush/smush.h"
 #include "engines/grim/grim.h"
 
@@ -127,16 +131,16 @@ void Smush::handleWave(const byte *src, uint32 size) {
 	int16 *dst = new int16[size * _channels];
 	decompressVima(src, dst, size * _channels * 2, smushDestTable);
 
-	int flags = Audio::Mixer::FLAG_16BITS;
+	int flags = Audio::FLAG_16BITS;
 	if (_channels == 2)
-		flags |= Audio::Mixer::FLAG_STEREO;
+		flags |= Audio::FLAG_STEREO;
 
 	if (!_stream) {
-		_stream = Audio::makeAppendableAudioStream(_freq, flags);
+		_stream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
 		g_system->getMixer()->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
 	}
 	if (g_system->getMixer()->isReady()) {
-		_stream->queueBuffer((byte *)dst, size * _channels * 2);
+		_stream->queueBuffer((byte *)dst, size * _channels * 2, DisposeAfterUse::YES, flags);
 	} else {
 		delete[] dst;
 	}
@@ -297,10 +301,10 @@ void Smush::handleIACT(const byte *src, int32 size) {
 				} while (--count);
 
 				if (!_stream) {
-					_stream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
+					_stream = Audio::makeQueuingAudioStream(22050, true);
 					g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream);
 				}
-				_stream->queueBuffer(output_data, 0x1000);
+				_stream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::FLAG_STEREO | Audio::FLAG_16BITS);
 
 				bsize -= len;
 				d_src += len;
@@ -571,7 +575,7 @@ bool zlibFile::setPos(struct SavePos *pos) {
 		return false;
 	}
 	_handle->seek(pos->filePos, SEEK_SET);
-	if (_handle->ioFailed()) {
+	if (_handle->err()) {
 		warning("Unable to rewind SMUSH movie (seek failed)");
 		return false;
 	}

@@ -32,13 +32,19 @@ enum {
 	INITIAL_CHUNKS_PER_PAGE = 8
 };
 
-
-MemoryPool::MemoryPool(size_t chunkSize) {
+static size_t adjustChunkSize(size_t chunkSize) {
 	// You must at least fit the pointer in the node (technically unneeded considering the next rounding statement)
-	_chunkSize = MAX(chunkSize, sizeof(void*));
+	chunkSize = MAX(chunkSize, sizeof(void*));
 	// There might be an alignment problem on some platforms when trying to load a void* on a non natural boundary
 	// so we round to the next sizeof(void*)
-	_chunkSize = (_chunkSize + sizeof(void*) - 1) & (~(sizeof(void*) - 1));
+	chunkSize = (chunkSize + sizeof(void*) - 1) & (~(sizeof(void*) - 1));
+
+	return chunkSize;
+}
+
+
+MemoryPool::MemoryPool(size_t chunkSize)
+	: _chunkSize(adjustChunkSize(chunkSize)) {
 
 	_next = NULL;
 

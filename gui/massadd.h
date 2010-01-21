@@ -44,6 +44,12 @@ public:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 	void handleTickle();
 
+	Common::String getFirstAddedTarget() const {
+		if (!_games.empty())
+			return _games.front().gameid();
+		return Common::String();
+	}
+
 private:
 	Common::Stack<Common::FSNode>  _scanStack;
 	GameList _games;

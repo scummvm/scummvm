@@ -25,6 +25,7 @@
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "engines/engine.h"
 
@@ -37,7 +38,6 @@
 	typedef signed long	int64;
 	#include "backends/platform/ps2/fileio.h"
 
-	#define fprintf				ps2_fprintf
 	#define fputs(str, file)	ps2_fputs(str, file)
 	#define fflush(a)			ps2_fflush(a)
 #endif
@@ -45,13 +45,13 @@
 #ifdef __DS__
 	#include "backends/fs/ds/ds-fs.h"
 
-	void	std_fprintf(FILE* handle, const char* fmt, ...);
-	void	std_fflush(FILE* handle);
-
-	#define fprintf(file, fmt, ...)				do { char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); } while(0)
-	#define fputs(str, file)					DS::std_fwrite(str, strlen(str), 1, file)
-	#define fflush(file)						DS::std_fflush(file)
+	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
+	#define fflush(file)		DS::std_fflush(file)
 #endif
+
+// TODO: Move gDebugLevel into namespace Common.
+int gDebugLevel = -1;
+
 
 
 namespace Common {
@@ -142,10 +142,15 @@ bool isDebugChannelEnabled(const String &name) {
 }
 
 
+
+static OutputFormatter s_debugOutputFormatter = 0;
+
+void setDebugOutputFormatter(OutputFormatter f) {
+	s_debugOutputFormatter = f;
+}
+
 }	// End of namespace Common
 
-
-int gDebugLevel = -1;
 
 #ifndef DISABLE_TEXT_CONSOLE
 
@@ -156,8 +161,8 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 
 	// Next, give the active engine (if any) a chance to augment the message,
 	// but only if not used from debugN.
-	if (g_engine && caret) {
-		g_engine->errorString(in_buf, buf, STRINGBUFLEN);
+	if (Common::s_debugOutputFormatter) {
+		(*Common::s_debugOutputFormatter)(buf, in_buf, STRINGBUFLEN);
 	} else {
 		strncpy(buf, in_buf, STRINGBUFLEN);
 	}

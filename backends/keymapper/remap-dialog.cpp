@@ -94,7 +94,7 @@ void RemapDialog::open() {
 	if (_globalKeymaps) {
 		if (divider)
 			_kmPopUp->appendEntry("");
-		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); it++) {
+		for (it = _globalKeymaps->begin(); it != _globalKeymaps->end(); ++it) {
 			_kmPopUp->appendEntry(it->_value->getName() + " (Global)", idx);
 			_keymapTable[idx++] = it->_value;
 		}
@@ -104,7 +104,7 @@ void RemapDialog::open() {
 	if (_gameKeymaps) {
 		if (divider)
 			_kmPopUp->appendEntry("");
-		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); it++) {
+		for (it = _gameKeymaps->begin(); it != _gameKeymaps->end(); ++it) {
 			_kmPopUp->appendEntry(it->_value->getName() + " (Game)", idx);
 			_keymapTable[idx++] = it->_value;
 		}
@@ -317,7 +317,7 @@ void RemapDialog::loadKeymap() {
 
 		List<Action*>::iterator it;
 
-		for (it = km->getActions().begin(); it != km->getActions().end(); it++) {
+		for (it = km->getActions().begin(); it != km->getActions().end(); ++it) {
 			ActionInfo info = {*it, false, (*it)->description};
 
 			_currentActions.push_back(info);
@@ -380,6 +380,6 @@ void RemapDialog::refreshKeymap() {
 }
 
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER

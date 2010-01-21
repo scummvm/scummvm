@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 #include <windows.h>
 #include <direct.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
@@ -31,11 +31,13 @@
 
 #include "engines/engine.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "gui/debugger.h"
 #include "gui/message.h"
 #include "gui/GuiManager.h"
 #include "sound/mixer.h"
@@ -43,11 +45,37 @@
 #include "engines/metaengine.h"
 
 #ifdef _WIN32_WCE
-extern bool isSmartphone(void);
+extern bool isSmartphone();
 #endif
 
 // FIXME: HACK for MidiEmu & error()
 Engine *g_engine = 0;
+
+// Output formatter for debug() and error() which invokes
+// the errorString method of the active engine, if any.
+static void defaultOutputFormatter(char *dst, const char *src, size_t dstSize) {
+	if (g_engine) {
+		g_engine->errorString(src, dst, dstSize);
+	} else {
+		strncpy(dst, src, dstSize);
+	}
+}
+
+static void defaultErrorHandler(const char *msg) {
+	// Unless this error -originated- within the debugger itself, we
+	// now invoke the debugger, if available / supported.
+	if (g_engine) {
+		GUI::Debugger *debugger = g_engine->getDebugger();
+#ifdef _WIN32_WCE
+		if (isSmartphone())
+			debugger = 0;
+#endif
+		if (debugger && !debugger->isAttached()) {
+			debugger->attach(msg);
+			debugger->onFrame();
+		}
+	}
+}
 
 
 Engine::Engine(OSystem *syst)
@@ -62,6 +90,9 @@ Engine::Engine(OSystem *syst)
 		_mainMenuDialog(NULL) {
 
 	g_engine = this;
+	Common::setDebugOutputFormatter(defaultOutputFormatter);
+	Common::setErrorOutputFormatter(defaultOutputFormatter);
+	Common::setErrorHandler(defaultErrorHandler);
 
 	// FIXME: Get rid of the following again. It is only here temporarily.
 	// We really should never run with a non-working Mixer, so ought to handle
@@ -91,7 +122,7 @@ void GUIErrorMessage(const Common::String msg) {
 }
 
 void Engine::checkCD() {
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
 	// if this appears to be the case and issue a warning.
@@ -177,7 +208,7 @@ void Engine::pauseEngine(bool pause) {
 	else
 		_pauseLevel--;
 
-	if (_pauseLevel == 1) {
+	if (_pauseLevel == 1 && pause) {
 		pauseEngineIntern(true);
 	} else if (_pauseLevel == 0) {
 		pauseEngineIntern(false);

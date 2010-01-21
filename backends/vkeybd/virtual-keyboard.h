@@ -121,7 +121,13 @@ protected:
 		OverlayColor		displayFontColor;
 
 		Mode() : image(0) {}
-		~Mode() { delete image; }
+		~Mode() { 
+			if (image) {
+				image->free();
+				delete image;
+				image = 0;
+			}
+		}
 	};
 
 	typedef HashMap<String, Mode, IgnoreCase_Hash, IgnoreCase_EqualTo> ModeMap;

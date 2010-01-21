@@ -63,6 +63,7 @@ iphonebundle: iphone
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	#cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+	ldid -S residual
 	cp residual $(bundle_name)/Residual
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -96,6 +97,10 @@ ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
+ifdef USE_ZLIB
+OSX_ZLIB ?= -lz
+endif
+
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
@@ -103,7 +108,8 @@ residual-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residual-static $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
-		-lSystemStubs -lz
+		$(OSX_ZLIB) \
+		-lSystemStubs
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
@@ -210,3 +216,8 @@ endif
 ifdef USE_ARM_SOUND_ASM
 DEFINES += -DUSE_ARM_SOUND_ASM
 endif
+
+ifdef USE_ARM_GFX_ASM
+DEFINES += -DUSE_ARM_GFX_ASM
+endif
+

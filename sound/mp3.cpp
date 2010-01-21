@@ -45,7 +45,7 @@ namespace Audio {
 #pragma mark -
 
 
-class MP3InputStream : public AudioStream {
+class MP3InputStream : public SeekableAudioStream {
 protected:
 	enum State {
 		MP3_STATE_INIT,	// Need to init the decoder
@@ -54,17 +54,13 @@ protected:
 	};
 
 	Common::SeekableReadStream *_inStream;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 
-	uint _numLoops;
 	uint _posInFrame;
 	State _state;
 
-	const mad_timer_t _startTime;
-	const mad_timer_t _endTime;
+	Timestamp _length;
 	mad_timer_t _totalTime;
-
-	int32 _totalPlayTime;
 
 	mad_stream _stream;
 	mad_frame _frame;
@@ -79,10 +75,7 @@ protected:
 
 public:
 	MP3InputStream(Common::SeekableReadStream *inStream,
-	               bool dispose,
-	               mad_timer_t start = mad_timer_zero,
-	               mad_timer_t end = mad_timer_zero,
-	               uint numLoops = 1);
+	               DisposeAfterUse::Flag dispose);
 	~MP3InputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -90,97 +83,43 @@ public:
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
 	bool isStereo() const		{ return MAD_NCHANNELS(&_frame.header) == 2; }
 	int getRate() const			{ return _frame.header.samplerate; }
-	int32 getTotalPlayTime() const { return _totalPlayTime; }
 
+	bool seek(const Timestamp &where);
+	Timestamp getLength() const { return _length; }
 protected:
 	void decodeMP3Data();
 	void readMP3Data();
+
+	void initStream();
+	void readHeader();
+	void deinitStream();
 };
 
-MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispose, mad_timer_t start, mad_timer_t end, uint numLoops) :
+MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
-	_numLoops(numLoops),
 	_posInFrame(0),
 	_state(MP3_STATE_INIT),
-	_startTime(start),
-	_endTime(end),
+	_length(0, 1000),
 	_totalTime(mad_timer_zero) {
-
-	// Make sure that either start < end, or end is zero (indicating "play until end")
-	assert(mad_timer_compare(_startTime, _endTime) < 0 || mad_timer_sign(_endTime) == 0);
 
 	// The MAD_BUFFER_GUARD must always contain zeros (the reason
 	// for this is that the Layer III Huffman decoder of libMAD
 	// may read a few bytes beyond the end of the input buffer).
 	memset(_buf + BUFFER_SIZE, 0, MAD_BUFFER_GUARD);
 
-	// Calculate play time
-	mad_timer_t length;
+	// Calculate the length of the stream
+	initStream();
 
-	mad_timer_set(&length, 0, 0, 1000);
-	mad_timer_add(&length, start);
-	mad_timer_negate(&length);
+	while (_state != MP3_STATE_EOS)
+		readHeader();
 
-	if (mad_timer_sign(end) != 0) {
-		mad_timer_add(&length, end);
-	} else {
-		mad_stream_init(&_stream);
-		mad_frame_init(&_frame);
+	_length = Timestamp(mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS), getRate());
 
-		// Reset the stream data
-		_inStream->seek(0, SEEK_SET);
+	deinitStream();
 
-		// Update state
-		_state = MP3_STATE_READY;
-
-		// Read the first few sample bytes
-		readMP3Data();
-
-		do {
-			// If necessary, load more data into the stream decoder
-			if (_stream.error == MAD_ERROR_BUFLEN)
-				readMP3Data();
-
-			while (_state == MP3_STATE_READY) {
-				_stream.error = MAD_ERROR_NONE;
-
-				// Decode the next header. Note: mad_frame_decode would do this for us, too.
-				// However, for seeking we don't want to decode the full frame (else it would
-				// be far too slow).
-				if (mad_header_decode(&_frame.header, &_stream) == -1) {
-					if (_stream.error == MAD_ERROR_BUFLEN) {
-						break; // Read more data
-					} else if (MAD_RECOVERABLE(_stream.error)) {
-						debug(6, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
-						continue;
-					} else {
-						warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
-						break;
-					}
-				}
-
-				// Sum up the total playback time so far
-				mad_timer_add(&length, _frame.header.duration);
-			}
-		} while (_state != MP3_STATE_EOS);
-
-		mad_synth_finish(&_synth);
-		mad_frame_finish(&_frame);
-
-		// Reinit stream
-		_state = MP3_STATE_INIT;
-
-		// Reset the stream data
-		_inStream->seek(0, SEEK_SET);
-	}
-
-	_totalPlayTime = mad_timer_count(length, MAD_UNITS_MILLISECONDS);
-
-	if (numLoops && mad_timer_sign(length) >= 0)
-		_totalPlayTime *= numLoops;
-	else
-		_totalPlayTime = kUnknownPlayTime;
+	// Reinit stream
+	_state = MP3_STATE_INIT;
 
 	// Decode the first chunk of data. This is necessary so that _frame
 	// is setup and isStereo() and getRate() return correct results.
@@ -188,37 +127,16 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, bool dispos
 }
 
 MP3InputStream::~MP3InputStream() {
-	if (_state != MP3_STATE_INIT) {
-		// Deinit MAD
-		mad_synth_finish(&_synth);
-		mad_frame_finish(&_frame);
-		mad_stream_finish(&_stream);
-	}
+	deinitStream();
 
-	if (_disposeAfterUse)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _inStream;
 }
 
 void MP3InputStream::decodeMP3Data() {
-
 	do {
-		if (_state == MP3_STATE_INIT) {
-			// Init MAD
-			mad_stream_init(&_stream);
-			mad_frame_init(&_frame);
-			mad_synth_init(&_synth);
-
-			// Reset the stream data
-			_inStream->seek(0, SEEK_SET);
-			_totalTime = mad_timer_zero;
-			_posInFrame = 0;
-
-			// Update state
-			_state = MP3_STATE_READY;
-
-			// Read the first few sample bytes
-			readMP3Data();
-		}
+		if (_state == MP3_STATE_INIT)
+			initStream();
 
 		if (_state == MP3_STATE_EOS)
 			return;
@@ -228,35 +146,8 @@ void MP3InputStream::decodeMP3Data() {
 			readMP3Data();
 
 		while (_state == MP3_STATE_READY) {
-			_stream.error = MAD_ERROR_NONE;
-
-			// Decode the next header. Note: mad_frame_decode would do this for us, too.
-			// However, for seeking we don't want to decode the full frame (else it would
-			// be far too slow). Hence we perform this explicitly in a separate step.
-			if (mad_header_decode(&_frame.header, &_stream) == -1) {
-				if (_stream.error == MAD_ERROR_BUFLEN) {
-					break; // Read more data
-				} else if (MAD_RECOVERABLE(_stream.error)) {
-					debug(6, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
-					continue;
-				} else {
-					warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
-					break;
-				}
-			}
-
-			// Sum up the total playback time so far
-			mad_timer_add(&_totalTime, _frame.header.duration);
-
-			// If we have not yet reached the start point, skip to the next frame
-			if (mad_timer_compare(_totalTime, _startTime) < 0)
-				continue;
-
-			// If an end time is specified and we are past it, stop
-			if (mad_timer_sign(_endTime) > 0 && mad_timer_compare(_totalTime, _endTime) >= 0) {
-				_state = MP3_STATE_EOS;
-				break;
-			}
+			// TODO: Do we need to use readHeader, when we do not do any seeking here?
+			readHeader();
 
 			// Decode the next frame
 			if (mad_frame_decode(&_frame, &_stream) == -1) {
@@ -279,21 +170,6 @@ void MP3InputStream::decodeMP3Data() {
 			_posInFrame = 0;
 			break;
 		}
-
-		if (_state == MP3_STATE_EOS && _numLoops != 1) {
-			// If looping is on and there are loops left, rewind to the start
-			if (_numLoops != 0)
-				_numLoops--;
-
-			// Deinit MAD
-			mad_synth_finish(&_synth);
-			mad_frame_finish(&_frame);
-			mad_stream_finish(&_stream);
-
-			// Reset the decoder state to indicate we should start over
-			_state = MP3_STATE_INIT;
-		}
-
 	} while (_state != MP3_STATE_EOS && _stream.error == MAD_ERROR_BUFLEN);
 
 	if (_stream.error != MAD_ERROR_NONE)
@@ -330,6 +206,96 @@ void MP3InputStream::readMP3Data() {
 	mad_stream_buffer(&_stream, _buf, size + remaining);
 }
 
+bool MP3InputStream::seek(const Timestamp &where) {
+	if (where == _length) {
+		_state = MP3_STATE_EOS;
+		return true;
+	} else if (where > _length) {
+		return false;
+	}
+
+	const uint32 time = where.msecs();
+
+	mad_timer_t destination;
+	mad_timer_set(&destination, time / 1000, time % 1000, 1000);
+
+	if (_state != MP3_STATE_READY || mad_timer_compare(destination, _totalTime) < 0)
+		initStream();
+
+	while (mad_timer_compare(destination, _totalTime) > 0 && _state != MP3_STATE_EOS)
+		readHeader();
+
+	return (_state != MP3_STATE_EOS);
+}
+
+void MP3InputStream::initStream() {
+	if (_state != MP3_STATE_INIT)
+		deinitStream();
+
+	// Init MAD
+	mad_stream_init(&_stream);
+	mad_frame_init(&_frame);
+	mad_synth_init(&_synth);
+
+	// Reset the stream data
+	_inStream->seek(0, SEEK_SET);
+	_totalTime = mad_timer_zero;
+	_posInFrame = 0;
+
+	// Update state
+	_state = MP3_STATE_READY;
+
+	// Read the first few sample bytes
+	readMP3Data();
+}
+
+void MP3InputStream::readHeader() {
+	if (_state != MP3_STATE_READY)
+		return;
+
+	// If necessary, load more data into the stream decoder
+	if (_stream.error == MAD_ERROR_BUFLEN)
+		readMP3Data();
+
+	while (_state != MP3_STATE_EOS) {
+		_stream.error = MAD_ERROR_NONE;
+
+		// Decode the next header. Note: mad_frame_decode would do this for us, too.
+		// However, for seeking we don't want to decode the full frame (else it would
+		// be far too slow). Hence we perform this explicitly in a separate step.
+		if (mad_header_decode(&_frame.header, &_stream) == -1) {
+			if (_stream.error == MAD_ERROR_BUFLEN) {
+				readMP3Data();  // Read more data
+				continue;
+			} else if (MAD_RECOVERABLE(_stream.error)) {
+				debug(6, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+				continue;
+			} else {
+				warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+				break;
+			}
+		}
+
+		// Sum up the total playback time so far
+		mad_timer_add(&_totalTime, _frame.header.duration);
+		break;
+	}
+
+	if (_stream.error != MAD_ERROR_NONE)
+		_state = MP3_STATE_EOS;
+}
+
+void MP3InputStream::deinitStream() {
+	if (_state == MP3_STATE_INIT)
+		return;
+
+	// Deinit MAD
+	mad_synth_finish(&_synth);
+	mad_frame_finish(&_frame);
+	mad_stream_finish(&_stream);
+
+	_state = MP3_STATE_EOS;
+}
 
 static inline int scale_sample(mad_fixed_t sample) {
 	// round
@@ -372,28 +338,10 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark --- MP3 factory functions ---
 #pragma mark -
 
-
-AudioStream *makeMP3Stream(
+SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse,
-	uint32 startTime,
-	uint32 duration,
-	uint numLoops) {
-
-	mad_timer_t start;
-	mad_timer_t end;
-
-	// Both startTime and duration are given in milliseconds.
-	// Calculate the appropriate mad_timer_t values from them.
-	mad_timer_set(&start, startTime / 1000, startTime % 1000, 1000);
-	if (duration == 0) {
-		end = mad_timer_zero;
-	} else {
-		int endTime = startTime + duration;
-		mad_timer_set(&end, endTime / 1000, endTime % 1000, 1000);
-	}
-
-	return new MP3InputStream(stream, disposeAfterUse, start, end, numLoops);
+	DisposeAfterUse::Flag disposeAfterUse) {
+	return new MP3InputStream(stream, disposeAfterUse);
 }
 
 } // End of namespace Audio

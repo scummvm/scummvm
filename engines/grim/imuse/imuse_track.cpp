@@ -137,8 +137,10 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 		track->regionOffset = otherTrack->regionOffset;
 	}
 
-	track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
-	g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(), track->getPan());
+	track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
+	g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1,
+											track->getVol(), track->getPan(), DisposeAfterUse::YES,
+											false, (track->mixerFlags & kFlagReverseStereo) != 0);
 	track->used = true;
 
 	return true;
@@ -374,8 +376,10 @@ Track *Imuse::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack->volFadeUsed = true;
 
 	// Create an appendable output buffer
-	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
-	g_system->getMixer()->playInputStream(track->getType(), &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
+	fadeTrack->stream = Audio::makeQueuingAudioStream(_sound->getFreq(fadeTrack->soundDesc), track->mixerFlags & kFlagStereo);
+	g_system->getMixer()->playInputStream(track->getType(), &fadeTrack->handle, fadeTrack->stream, -1, fadeTrack->getVol(),
+											fadeTrack->getPan(), DisposeAfterUse::YES, false,
+											(track->mixerFlags & kFlagReverseStereo) != 0);
 	fadeTrack->used = true;
 
 	return fadeTrack;

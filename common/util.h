@@ -26,11 +26,9 @@
 #define COMMON_UTIL_H
 
 #include "common/sys.h"
+#include "common/textconsole.h"
 #include "common/str.h"
 
-#if defined(WIN32)
-#include <windows.h>
-#endif
 
 /**
  * Check whether a given pointer is aligned correctly.
@@ -89,15 +87,15 @@ public:
 	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
 	 */
 	StringTokenizer(const String &str, const String &delimiters = " \t\r\n\f\v");
-	void reset();       //!< Resets the tokenizer to its initial state
-	bool empty() const; //!< Returns true if there are no more tokens left in the string, false otherwise
-	String nextToken(); //!< Returns the next token from the string (Or an empty string if there are no more tokens)
+	void reset();       ///< Resets the tokenizer to its initial state
+	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
+	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
 
 private:
-	const String _str;        //!< The string to be tokenized
-	const String _delimiters; //!< String containing all the delimiter characters
-	uint         _tokenBegin; //!< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
-	uint         _tokenEnd;   //!< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
+	const String _str;        ///< The string to be tokenized
+	const String _delimiters; ///< String containing all the delimiter characters
+	uint         _tokenBegin; ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
+	uint         _tokenEnd;   ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
 };
 
 /**
@@ -149,7 +147,7 @@ public:
 	 * Identical to getRandomNumber(1), but faster, hopefully.
 	 * @return	a random bit, either 0 or 1
 	 */
-	uint getRandomBit(void);
+	uint getRandomBit();
 	/**
 	 * Generates a random unsigned integer in the interval [min, max].
 	 * @param min	the lower bound
@@ -163,6 +161,7 @@ public:
  * List of game language.
  */
 enum Language {
+	ZH_CNA,
 	ZH_TWN,
 	CZ_CZE,
 	NL_NLD,
@@ -173,6 +172,7 @@ enum Language {
 	DE_DEU,
 	GR_GRE,
 	HB_ISR,
+	HU_HUN,
 	IT_ITA,
 	JA_JPN,
 	KO_KOR,
@@ -182,7 +182,6 @@ enum Language {
 	RU_RUS,
 	ES_ESP,
 	SE_SWE,
-	HU_HUN,
 
 	UNK_LANG = -1	// Use default language (i.e. none specified)
 };
@@ -222,11 +221,11 @@ enum Platform {
 	kPlatformSegaCD,
 	kPlatform3DO,
 	kPlatformPCEngine,
-
 	kPlatformApple2GS,
 	kPlatformPC98,
 	kPlatformWii,
 	kPlatformPSX,
+	kPlatformCDi,
 
 	kPlatformUnknown = -1
 };
@@ -302,29 +301,5 @@ String getGameGUIOptionsDescription(uint32 options);
 void updateGameGUIOptions(const uint32 options);
 
 }	// End of namespace Common
-
-
-#if defined(__GNUC__)
-void error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
-#else
-void NORETURN error(const char *s, ...);
-#endif
-
-#ifdef DISABLE_TEXT_CONSOLE
-
-inline int printf(const char *s, ...) { return 0; }
-
-inline void warning(const char *s, ...) {}
-
-#else
-
-/**
- * Print a warning message to the text console (stderr).
- * Automatically prepends the text "WARNING: " and appends
- * an exclamation mark and a newline.
- */
-void warning(const char *s, ...) GCC_PRINTF(1, 2);
-
-#endif
 
 #endif

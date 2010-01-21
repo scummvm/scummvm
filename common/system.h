@@ -56,6 +56,24 @@ namespace Common {
 class FilesystemFactory;
 
 /**
+ * A structure describing time and date. This is a clone of struct tm
+ * from time.h. We roll our own since not all systems provide time.h.
+ * We also do not imitate all files of struct tm, only those we
+ * actually need.
+ *
+ * @note For now, the members are named exactly as in struct tm to ease
+ * the transition.
+ */
+struct TimeDate {
+	int tm_sec;     ///< seconds (0 - 60)
+	int tm_min;     ///< minutes (0 - 59)
+	int tm_hour;    ///< hours (0 - 23)
+	int tm_mday;    ///< day of month (1 - 31)
+	int tm_mon;     ///< month of year (0 - 11)
+	int tm_year;    ///< year - 1900
+};
+
+/**
  * Interface for Residual backends.
  */
 class OSystem : Common::NonCopyable {
@@ -183,6 +201,8 @@ public:
 	 */
 	virtual void launcherInitSize(uint width, uint height) = 0;
 
+	virtual int getScreenChangeID() const { return 0; }
+
 	/**
 	 * Set the size of the screen.
 
@@ -192,8 +212,6 @@ public:
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
-
-	int getScreenChangeID() const { return 0; }
 
 	/**
 	 * Returns the currently set virtual screen height.
@@ -300,7 +318,18 @@ public:
 	 */
 	//@{
 
-	/** Show or hide the mouse cursor. */
+	/**
+	 * Show or hide the mouse cursor.
+	 *
+	 * Currently the backend is not required to immediately draw the
+	 * mouse cursor on showMouse(true).
+	 *
+	 * TODO: We might want to reconsider this fact,
+	 * check Graphics::CursorManager::showMouse for some details about
+	 * this.
+	 *
+	 * @see Graphics::CursorManager::showMouse
+	 */
 	virtual bool showMouse(bool visible) = 0;
 
 	/**
@@ -314,16 +343,18 @@ public:
 	/**
 	 * Set the bitmap used for drawing the cursor.
 	 *
-	 * @param buf				the pixmap data to be used (8bit/pixel)
+	 * @param buf				the pixmap data to be used
 	 * @param w					width of the mouse cursor
 	 * @param h					height of the mouse cursor
 	 * @param hotspotX			horizontal offset from the left side to the hotspot
 	 * @param hotspotY			vertical offset from the top side to the hotspot
-	 * @param keycolor			transparency color index
+	 * @param keycolor			transparency color value. This should not exceed the maximum color value of the specified format.
+	 *                          In case it does the behavior is undefined. The backend might just error out or simply ignore the
+	 *                          value. (The SDL backend will just assert to prevent abuse of this).
 	 * @param cursorTargetScale	scale factor which cursor is designed for
-	 * @param format			pointer to the pixel format which cursor graphic uses
+	 * @param format			pointer to the pixel format which cursor graphic uses (0 means CLUT8)
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
 
 	//@}
 
@@ -343,7 +374,7 @@ public:
 	 * Corresponds on many systems to the combination of time()
 	 * and localtime().
 	 */
-	virtual void getTimeAndDate(struct tm &t) const = 0;
+	virtual void getTimeAndDate(TimeDate &t) const = 0;
 
 	/**
 	 * Return the timer manager singleton. For more information, refer

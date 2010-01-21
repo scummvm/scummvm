@@ -26,9 +26,10 @@
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
-#include "common/sys.h"
+#include "common/types.h"
 #include "common/mutex.h"
 
+#include "sound/timestamp.h"
 
 class OSystem;
 
@@ -36,6 +37,8 @@ class OSystem;
 namespace Audio {
 
 class AudioStream;
+class RewindableAudioStream;
+class SeekableAudioStream;
 class Channel;
 class Mixer;
 class MixerImpl;
@@ -60,38 +63,6 @@ public:
  */
 class Mixer {
 public:
-	/**
-	 * Various flags which can be bit-ORed and then passed to
-	 * Mixer::playRaw resp. makeLinearInputStream to control their
-	 * behavior.
-	 *
-	 * Engine authors are advised not to rely on a certain value or
-	 * order of these flags (in particular, do not store them verbatim
-	 * in savestates).
-	 */
-	enum RawFlags {
-		/** unsigned samples (default: signed) */
-		FLAG_UNSIGNED = 1 << 0,
-
-		/** sound is 16 bits wide (default: 8bit) */
-		FLAG_16BITS = 1 << 1,
-
-		/** samples are little endian (default: big endian) */
-		FLAG_LITTLE_ENDIAN = 1 << 2,
-
-		/** sound is in stereo (default: mono) */
-		FLAG_STEREO = 1 << 3,
-
-		/** reverse the left and right stereo channel */
-		FLAG_REVERSE_STEREO = 1 << 4,
-
-		/** sound buffer is freed automagically at the end of playing */
-		FLAG_AUTOFREE = 1 << 5,
-
-		/** loop the audio */
-		FLAG_LOOP = 1 << 6
-	};
-
 	enum SoundType {
 		kPlainSoundType = 0,
 
@@ -124,20 +95,6 @@ public:
 	virtual bool isReady() const = 0;
 
 
-
-	/**
-	 * Start playing the given raw sound data.
-	 * Internally, this simply creates an audio input stream wrapping the data
-	 * (using the makeLinearInputStream factory function), which is then
-	 * passed on to playInputStream.
-	 */
-	virtual void playRaw(
-		SoundType type,
-		SoundHandle *handle,
-		void *sound, uint32 size, uint rate, byte flags,
-		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
-		uint32 loopStart = 0, uint32 loopEnd = 0) = 0;
-
 	/**
 	 * Start playing the given audio input stream.
 	 *
@@ -162,12 +119,12 @@ public:
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,
-		int id = -1, byte volume = kMaxChannelVolume, int8 balance = 0,
-		bool autofreeStream = true,
+		int id = -1,
+		byte volume = kMaxChannelVolume,
+		int8 balance = 0,
+		DisposeAfterUse::Flag autofreeStream = DisposeAfterUse::YES,
 		bool permanent = false,
 		bool reverseStereo = false) = 0;
-
-
 
 	/**
 	 * Stop all currently playing sounds.
@@ -263,6 +220,11 @@ public:
 	 * Get approximation of for how long the channel has been playing.
 	 */
 	virtual uint32 getSoundElapsedTime(SoundHandle handle) = 0;
+
+	/**
+	 * Get approximation of for how long the channel has been playing.
+	 */
+	virtual Timestamp getElapsedTime(SoundHandle handle) = 0;
 
 	/**
 	 * Check whether any channel of the given sound type is active.

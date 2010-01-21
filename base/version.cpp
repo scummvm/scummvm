@@ -93,5 +93,9 @@ const char *gResidualFeatures = ""
 #ifdef USE_ZLIB
 	"zLib "
 #endif
+
+#ifdef USE_FLUIDSYNTH
+	"FluidSynth "
+#endif
 	;
 

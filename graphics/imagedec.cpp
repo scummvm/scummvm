@@ -175,4 +175,4 @@ Surface *ImageDecoder::loadFile(Common::SeekableReadStream &stream, const PixelF
 
 	return decoder->decodeImage(stream, format);
 }
-} // end of namespace Graphics
+} // End of namespace Graphics

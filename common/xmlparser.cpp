@@ -48,7 +48,7 @@ bool XMLParser::loadFile(const FSNode &node) {
 	return true;
 }
 
-bool XMLParser::loadBuffer(const byte *buffer, uint32 size, bool disposable) {
+bool XMLParser::loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Flag disposable) {
 	_stream = new MemoryReadStream(buffer, size, disposable);
 	_fileName = "Memory Stream";
 	return true;

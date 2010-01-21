@@ -265,7 +265,7 @@ protected:
 	bool parseRectAsPolygon(Polygon &poly, const String& coords);
 };
 
-} // end of namespace GUI
+} // End of namespace GUI
 
 #endif // #ifdef ENABLE_VKEYBD
 

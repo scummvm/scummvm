@@ -20,76 +20,10 @@
  *
  * $URL$
  * $Id$
+ *
  */
 
 #include "backends/fs/stdiostream.h"
-
-#include <errno.h>
-
-#if defined(MACOSX) || defined(IPHONE)
-#include "CoreFoundation/CoreFoundation.h"
-#endif
-
-
-#ifdef __PLAYSTATION2__
-	// for those replaced fopen/fread/etc functions
-	typedef unsigned long	uint64;
-	typedef signed long	int64;
-	#include "backends/platform/ps2/fileio.h"
-
-	#define fopen(a, b)			ps2_fopen(a, b)
-	#define fclose(a)			ps2_fclose(a)
-	#define fseek(a, b, c)		ps2_fseek(a, b, c)
-	#define ftell(a)			ps2_ftell(a)
-	#define feof(a)				ps2_feof(a)
-	#define fread(a, b, c, d)	ps2_fread(a, b, c, d)
-	#define fwrite(a, b, c, d)	ps2_fwrite(a, b, c, d)
-
-	#define fprintf				ps2_fprintf  // used in common/util.cpp
-	#define fflush(a)			ps2_fflush(a)  // used in common/util.cpp
-	#define ferror(a)			ps2_ferror(a)
-	#define clearerr(a)			ps2_clearerr(a)
-
-	//#define fgetc(a)			ps2_fgetc(a)	// not used
-	//#define fgets(a, b, c)	ps2_fgets(a, b, c)	// not used
-	//#define fputc(a, b)		ps2_fputc(a, b)	// not used
-	//#define fputs(a, b)		ps2_fputs(a, b)	// not used
-
-	//#define fsize(a)			ps2_fsize(a)	// not used -- and it is not a standard function either
-#endif
-
-#ifdef __DS__
-
-	// These functions replace the standard library functions of the same name.
-	// As this header is included after the standard one, I have the chance to #define
-	// all of these to my own code.
-	//
-	// A #define is the only way, as redefinig the functions would cause linker errors.
-
-	// These functions need to be #undef'ed, as their original definition
-	// in devkitarm is done with #includes (ugh!)
-	#undef feof
-	#undef clearerr
-	//#undef getc
-	//#undef ferror
-
-	#include "backends/fs/ds/ds-fs.h"
-
-
-	// Only functions used in the ScummVM source have been defined here!
-	#define fopen(name, mode)					DS::std_fopen(name, mode)
-	#define fclose(handle)						DS::std_fclose(handle)
-	#define fread(ptr, size, items, file)		DS::std_fread(ptr, size, items, file)
-	#define fwrite(ptr, size, items, file)		DS::std_fwrite(ptr, size, items, file)
-	#define feof(handle)						DS::std_feof(handle)
-	#define ftell(handle)						DS::std_ftell(handle)
-	#define fseek(handle, offset, whence)		DS::std_fseek(handle, offset, whence)
-	#define clearerr(handle)					DS::std_clearerr(handle)
-	#define fflush(file)						DS::std_fflush(file)
-	#undef ferror
-	#define ferror(handle)						DS::std_ferror(handle)
-
-#endif
 
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);

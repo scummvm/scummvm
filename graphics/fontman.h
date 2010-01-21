@@ -83,6 +83,7 @@ public:
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	FontManager();
+	~FontManager();
 
 	Common::HashMap<Common::String, const Font *> _fontMap;
 };

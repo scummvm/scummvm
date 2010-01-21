@@ -314,6 +314,8 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	// Cache dir data
 	ensureCached();
 
+	// need to match lowercase key, since all entries in our file cache are
+	// stored as lowercase.
 	String lowercasePattern(pattern);
 	lowercasePattern.toLowercase();
 

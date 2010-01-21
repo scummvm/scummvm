@@ -86,6 +86,13 @@ _vorbis=auto
 _tremor=auto
 _flac=auto
 _mad=auto
+_alsa=auto
+_fluidsynth=auto
+# Default option behaviour yes/no
+_debug_build=auto
+_release_build=auto
+_text_console=no
+_mt32emu=yes
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -198,7 +205,7 @@ add_to_config_mk_if_no() {
 #
 # Determine sdl-config
 #
-# TODO: small bit of code to test sdl useability
+# TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
@@ -248,7 +255,7 @@ get_system_exe_extension() {
 	gp2x-linux)
 		_exeext=".gp2x"
 		;;	
-	dreamcast | wii | gamecube | nds | psp)
+	dreamcast | wii | gamecube | nds | psp | ps2)
 		_exeext=".elf"
 		;;
 	*)
@@ -504,7 +511,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, wii, wince, linuxmoto, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, ps2, wii, wince, linuxmoto, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing Residual [/usr/local]
@@ -518,11 +525,12 @@ Special configuration feature:
                          special targets: linupy for Yopy PDA
                                           dreamcast for Sega Dreamcast
                                           wii for Nintendo Wii
-                                          gamecube for Nintendo Gamecube
+                                          gamecube for Nintendo GameCube
                                           nds for Nintendo DS
                                           iphone for Apple iPhone
                                           wince for Windows CE
                                           psp for PlayStation Portable 
+                                          ps2 for PlayStation 2
 
 Game engines:
   --enable-all-engines     enable all engines
@@ -533,11 +541,16 @@ Optional Features:
   --enable-Werror          treat warnings as errors
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
+  --disable-mt32emu        don't enable the integrated MT-32 emulator
   --enable-profiling       enable building with gprof profile information
   --enable-release         set flags to build release binary
+  --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build process
 
 Optional Libraries:
+  --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
+  --disable-alsa           disable ALSA midi sound support [autodetect]
+
   --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
   --with-vorbis-prefix=DIR Prefix where libvorbis is installed (optional)
   --disable-vorbis         disable Ogg Vorbis support [autodetect]
@@ -552,6 +565,8 @@ Optional Libraries:
   --disable-flac           disable FLAC support [autodetect]
 
   --with-zlib-prefix=DIR   Prefix where zlib is installed (optional)
+  --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
+  --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
 
@@ -574,6 +589,8 @@ DEBFLAGS="-g"
 
 for ac_option in $@; do
 	case "$ac_option" in
+	--enable-alsa)            _alsa=yes       ;;
+	--disable-alsa)           _alsa=no        ;;
 	--enable-vorbis)          _vorbis=yes     ;;
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
@@ -583,13 +600,28 @@ for ac_option in $@; do
 	--enable-mad)             _mad=yes        ;;
 	--disable-mad)            _mad=no         ;;
 
+	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
+	--enable-mt32emu)         _mt32emu=yes    ;;
+	--disable-mt32emu)        _mt32emu=no     ;;
 	--enable-vkeybd)          _vkeybd=yes     ;;
 	--disable-vkeybd)         _vkeybd=no      ;;
 	--enable-keymapper)       _keymapper=yes  ;;
 	--disable-keymapper)      _keymapper=no   ;;
+	--enable-text-console)    _text_console=yes ;;
+	--disable-text-console)   _text_console=no ;;
+	--with-fluidsynth-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FLUIDSYNTH_CFLAGS="-I$arg/include"
+		FLUIDSYNTH_LIBS="-L$arg/lib"
+		;;
+	--with-alsa-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ALSA_CFLAGS="-I$arg/include"
+		ALSA_LIBS="-L$arg/lib"
+		;;
 	--with-ogg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		OGG_CFLAGS="-I$arg/include"
@@ -703,6 +735,11 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
+samsungtv)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnueabi
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -765,7 +802,28 @@ psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
+	if test -z "$PSPDEV"; then
+		PSPDEV=$(psp-config --pspdev-path)
+	fi
+	if test -d "$PSPDEV/psp/lib"; then
+		LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
+	fi
 	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
+	;;
+ps2)
+	_host_os=ps2
+	_host_cpu=mips64r5900el
+	_host_alias=ee
+	if test "$_debug_build" = auto; then
+		# Disable debug mode by default. The resulting binaries are far too big in general,
+		# and one has to disable multiple engines to make it usable.
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
 	;;
 *)
 	if test -n "$_host"; then
@@ -824,8 +882,15 @@ wii | gamecube | nds)
 	fi
 	;;
 psp)
-	if test -z "$PSPDEV"; then
-		echo "Please set PSPDEV in your environment. export PSPDEV=<path to psp toolchain>"
+	PSPSDK=$(psp-config --pspsdk-path)
+	if test -z "$PSPSDK"; then
+		echo "Please set the path to PSPSDK in your environment."
+		exit 1
+	fi
+	;;
+ps2)
+	if test -z "$PS2SDK"; then
+		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
 		exit 1
 	fi
 	;;
@@ -849,7 +914,7 @@ EOF
 
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT -c tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
 	else
 		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.dSYM tmp_cxx_compiler.cpp
 	fi
@@ -881,6 +946,9 @@ if test -z "$CXX"; then
 	echo "none found!"
 	exit 1
 fi
+
+# By default, use the C++ compiler as linker
+LD=$CXX
 
 #
 # Determine the compiler version
@@ -1096,9 +1164,19 @@ echo "$_have_x86"
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
-	linux* | uclinux* | openbsd* | netbsd* | bsd* | sunos* | hpux*)
+	linux* | uclinux*)
+		# When not cross-compiling, enable large file support, but don't
+		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
+		if test -z "$_host"; then
+			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
+		fi
 		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		;;
+	openbsd* | netbsd* | bsd* | sunos* | hpux*)
+		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
+		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+
 		;;
 	freebsd*)
 		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
@@ -1108,42 +1186,46 @@ case $_host_os in
 		;;
 	beos*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		# Needs -lbind -lsocket for the timidity MIDI driver
 		LDFLAGS="-L/boot/home/config/lib"
 		CFLAGS="-I/boot/home/config/include"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
-		type_1_byte='char'
-		type_2_byte='short'
-		type_4_byte='long'
+		LIBS="$LIBS -lbind -lsocket"
+		# FIXME: Please document why 'long' has to be used instead of int
+		#type_4_byte='long'
 		;;
 	haiku*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		# Needs -lnetwork for the timidity MIDI driver
+		LIBS="$LIBS -lnetwork"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
-		type_1_byte='char'
-		type_2_byte='short'
-		type_4_byte='long'
+		# FIXME: Please document why 'long' has to be used instead of int
+		#type_4_byte='long'
 		;;
 	solaris*)
 		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		LIBS="$LIBS -lnsl"
+		# Needs -lbind -lsocket for the timidity MIDI driver
+		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	irix*)
 		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		LIBS="$LIBS -lmd"
+		LIBS="$LIBS -lmd -lfastm -lm"
 		_ranlib=:
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX -DUSE_OPENGL"
-		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework OpenGL \
+		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL \
 		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+		add_line_to_config_mk 'MACOSX = 1'
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0 -DUSE_OPENGL"
-		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
+		LIBS="$LIBS -lmingw32 -lwinmm -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
 		;;
 	cygwin*)
 		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
-		exit 0
+		exit 1
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1156,8 +1238,8 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 		LIBS="$LIBS -lGL -lGLU"
-		type_1_byte='char'
-		type_2_byte='short'
+		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
 		;;
 	dreamcast)
@@ -1177,13 +1259,20 @@ case $_host_os in
 		;;
 	nds)
 		# TODO nds
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 		;;
 	psp)
-		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
+		;;
+	ps2)
+		# TODO ps2
+		CXXFLAGS="$CXXFLAGS -G2"
+		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
 	wince)
-		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
-		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__="
+		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
+		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
 	# given this is a shell script assume some type of unix
 	*)
@@ -1194,29 +1283,38 @@ esac
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
+	echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	case "$_host" in
 		linupy|arm-riscos)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX"
-			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
-			_endian=little
+			DEFINES="$DEFINES -DUNIX -DLINUPY"
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
+			;;
+		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
+			DEFINES="$DEFINES -DUNIX"
+			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
-		motoezx)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
-			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+		samsungtv)
+			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			_endian=little
+			HOSTEXEEXT=".so"
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="samsungtv"
+			_mt32emu="no"
+			_build_scalers="yes"
+			_build_hq_scalers="yes"
+			_vkeybd="yes"
+			;;
+		motoezx)
+			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1225,23 +1323,22 @@ if test -n "$_host"; then
 			_backend="linuxmoto"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		motomagx)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOMAGX"
-			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="linuxmoto"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		bfin*)
@@ -1252,127 +1349,103 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			;;
 		gp2xwiz)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="gp2xwiz"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			;;	
 		gp2x)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="gp2x"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			;;
 		neuros)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend='null'
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		ppc-amigaos)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='long'
+			# FIXME: Please document why 'long' has to be used instead of int
+			#type_4_byte='long'
 			;;
 		m68k-atari-mint)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='long'
+			# FIXME: Please document why 'long' has to be used instead of int
+			#type_4_byte='long'
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			;;
 		*mingw32*)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			_endian=little
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
 			;;
 		iphone)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DIPHONE -DUNIX"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
+			_build_hq_scalers="no"
 			;;
 		wince)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_TREMOLO = 1'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="wince"
 			_mt32emu="no"
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
 		dreamcast)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="dc"
+			_build_scalers="no"
+			_build_hq_scalers="no"
 			_mad="yes"
 			_zlib="yes"
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
 			;;
 		wii)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="wii"
+			_build_scalers="no"
+			_build_hq_scalers="no"
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
@@ -1383,13 +1456,12 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
 		gamecube)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="wii"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
 			add_line_to_config_h '#define GAMECUBE'
@@ -1398,19 +1470,13 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			;;
 		nds)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
-			DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="nds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1420,17 +1486,45 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		psp)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="psp"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
+		ps2)
+			# TODO: complete this
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+			_need_memalign=yes
+			_backend="ps2"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
+			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
+			# libtremor, while our code later on expects it to be called libvorbisidec.
+			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
+			_mad="yes"
+			_zlib="yes"
+			# HACK to fix compilation of C source files for now.
+			add_line_to_config_mk 'CC = ee-gcc'
+			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
+			LD=ee-gcc
+
+			if test "$_debug_build" = yes; then
+				# TODO: Setup debug build properly
+				DEFINES="$DEFINES -D__PS2_DEBUG__"
+				#INCLUDES="$INCLUDES -I$(PS2GDB)/ee"
+				#LDFLAGS="$LDFLAGS -L$(PS2GDB)/lib"
+				LDFLAGS="$LDFLAGS -lps2gdbStub -lps2ip -ldebug"
+			else
+				# If not building for debug mode, strip binaries.
+				CXXFLAGS="$CXXFLAGS -s"
+			fi
+			;;
 		*)
-			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
+			echo "WARNING: Unknown target, continuing with auto-detected values"
 			;;
 	esac
 
@@ -1623,6 +1717,23 @@ PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
 		;;
+	psp)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS		+= -DDYNAMIC_MODULES
+LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
 	*)
 		_dynamic_modules=no
 		_mak_plugins=
@@ -1632,6 +1743,16 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 	echo "$_dynamic_modules"
 fi
 
+
+#
+# Check whether integrated MT-32 emulator support is requested
+#
+if test "$_mt32emu" = no ; then
+	_def_mt32emu='#undef USE_MT32EMU'
+else
+	_def_mt32emu='#define USE_MT32EMU'
+fi
+add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 
 #
 # Check for math lib
@@ -1746,6 +1867,27 @@ add_to_config_mk_if_yes "$_mad" 'USE_MAD = 1'
 echo "$_mad"
 
 #
+# Check for ALSA
+#
+echocheck "ALSA >= 0.9"
+if test "$_alsa" = auto ; then
+	_alsa=no
+	cat > $TMPC << EOF
+#include <alsa/asoundlib.h>
+int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
+fi
+if test "$_alsa" = yes ; then
+	_def_alsa='#define USE_ALSA'
+	LIBS="$LIBS $ALSA_LIBS -lasound"
+	INCLUDES="$INCLUDES $ALSA_CFLAGS"
+else
+	_def_alsa='#undef USE_ALSA'
+fi
+echo "$_alsa"
+
+#
 # Check for ZLib
 #
 echocheck "zlib"
@@ -1771,6 +1913,78 @@ fi
 add_to_config_mk_if_yes "$_zlib" 'USE_ZLIB = 1'
 echo "$_zlib"
 
+#
+# Check for libfluidsynth
+#
+echocheck "libfluidsynth"
+if test "$_fluidsynth" = auto ; then
+	_fluidsynth=no
+	cat > $TMPC << EOF
+#include <fluidsynth.h>
+int main(void) { return 0; }
+EOF
+	cc_check $LDFLAGS $CXXFLAGS $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
+fi
+if test "$_fluidsynth" = yes ; then
+	_def_fluidsynth='#define USE_FLUIDSYNTH'
+	case $_host_os in
+		mingw*)
+			LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth -ldsound -lwinmm"
+		;;
+		*)
+			LIBS="$LIBS $FLUIDSYNTH_LIBS -lfluidsynth"
+		;;
+	esac
+	INCLUDES="$INCLUDES $FLUIDSYNTH_CFLAGS"
+else
+	_def_fluidsynth='#undef USE_FLUIDSYNTH'
+fi
+echo "$_fluidsynth"
+rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
+
+#
+# Check for readline if text_console is enabled
+#
+echocheck "readline"
+if test "$_text_console" = yes ; then
+	_READLINE_LIBS="-lreadline"
+	if test "$_readline" = auto ; then
+		_readline=no
+		cat > $TMPC << EOF
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int main(void) {
+	char *x = readline("");
+}
+EOF
+		cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		if test "$_readline" = no ; then
+			_READLINE_LIBS="-lreadline -ltermcap"
+			cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		fi
+	fi
+	echo "$_readline"
+	rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
+else
+	_readline=no
+	echo "skipping (text console disabled)"
+fi
+
+if test "$_readline" = yes ; then
+	_def_readline='#define USE_READLINE'
+	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
+	INCLUDES="$INCLUDES $READLINE_CFLAGS"
+else
+	_def_readline='#undef USE_READLINE'
+fi
+
+if test "$_text_console" = yes ; then
+	_def_text_console='#define USE_TEXT_CONSOLE'
+else
+	_def_text_console='#undef USE_TEXT_CONSOLE'
+fi
 
 rm -rf $TMPC $TMPO$EXEEXT $TMPO.dSYM
 
@@ -1799,6 +2013,14 @@ DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/residual\\\""
 echo_n "Backend... "
 echo_n "$_backend"
 echo
+if test "$_mt32emu" = yes ; then
+	echo_n ", MT-32 emu"
+fi
+
+if test "$_text_console" = yes ; then
+	echo_n ", text console"
+fi
+
 if test "$_vkeybd" = yes ; then
 	echo_n ", virtual keyboard"
 fi
@@ -1824,6 +2046,15 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
+		;;
+	samsungtv)
+		_sdlconfig="arm-linux-gnueabi-sdl-config"
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
+		LIBS="$LIBS `$_sdlconfig --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
+		LDFLAGS="$LDFLAGS -shared -fpic -Wl,-whole-archive"
+		MODULES="$MODULES backends/platform/sdl"
 		;;
 	gp2x)
 		find_sdlconfig
@@ -1869,7 +2100,21 @@ case $_backend in
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
-		LIBS="$LIBS -lSDL"
+		LIBS="$LIBS -lpng -lSDL -Wl,-Map,mapfile.txt"
+		SDLLIBS=$($PSPDEV/psp/bin/sdl-config --libs)
+		
+		if `echo "$SDLLIBS" | grep ".*-lGL.*" 1>/dev/null 2>&1`
+		then
+			LIBS="$LIBS -lGL"
+		fi
+		;;
+	ps2)
+		# TODO ps2
+		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
+		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
+		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
@@ -1879,7 +2124,7 @@ esac
 MODULES="$MODULES backends/platform/$_backend"
 
 #
-# Do CXXFLAGS now we know the compiler version
+# Do CXXFLAGS now that we know the compiler version
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
@@ -1919,6 +2164,9 @@ esac
 _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
+
+echo "dynamic modules = $_dynamic_modules"
+echo "plugins default = $_plugins_default"
 
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
@@ -2021,7 +2269,14 @@ $_def_vorbis
 $_def_tremor
 $_def_flac
 $_def_mad
+$_def_alsa
 $_def_zlib
+$_def_fluidsynth
+$_def_readline
+
+/* Options */
+$_def_text_console
+$_def_mt32emu
 
 /* Plugin settings */
 $_def_plugin
@@ -2035,6 +2290,7 @@ cat > config.mk << EOF
 
 CXX := $CXX
 CXXFLAGS := $CXXFLAGS
+LD := $LD
 LIBS += $LIBS
 RANLIB := $_ranlib
 STRIP := $_strip
@@ -2082,7 +2338,7 @@ EOF
 # Create a custom Makefile when building outside the source tree
 # TODO: Add a better check than just looking for 'Makefile'
 #
-if test ! -f Makefile ; then
+if test ! -f Makefile.common ; then
 echo "Creating Makefile"
 
 cat > Makefile << EOF
@@ -2092,6 +2348,7 @@ vpath %.h \$(srcdir)
 vpath %.cpp \$(srcdir)
 vpath %.c \$(srcdir)
 vpath %.m \$(srcdir)
+vpath %.mm \$(srcdir)
 vpath %.asm \$(srcdir)
 vpath %.s \$(srcdir)
 vpath %.S \$(srcdir)

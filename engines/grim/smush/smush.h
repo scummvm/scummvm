@@ -80,7 +80,7 @@ private:
 	zlibFile _file;
 	Common::File _f;
 	Audio::SoundHandle _soundHandle;
-	Audio::AppendableAudioStream *_stream;
+	Audio::QueuingAudioStream *_stream;
 
 	int32 _frame;
 	bool _updateNeeded;

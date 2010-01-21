@@ -66,7 +66,7 @@ struct Track {
 
 	ImuseSndMgr::SoundDesc *soundDesc;
 	Audio::SoundHandle handle;
-	Audio::AppendableAudioStream *stream;
+	Audio::QueuingAudioStream *stream;
 
 	Track() : used(false), stream(NULL) {
 		soundName[0] = 0;

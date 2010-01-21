@@ -90,12 +90,6 @@ protected:
 	}
 
 public:
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	static const String emptyString;
-#else
-	static const char *emptyString;
-#endif
-
 	/** Construct a new empty string. */
 	String() : _size(0), _str(_storage) { _storage[0] = 0; }
 

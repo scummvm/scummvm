@@ -60,24 +60,26 @@ void AudioCDManager::play(int track, int numLoops, int startFrame, int duration,
 		char trackName[2][16];
 		sprintf(trackName[0], "track%d", track);
 		sprintf(trackName[1], "track%02d", track);
-		Audio::AudioStream *stream = 0;
+		Audio::SeekableAudioStream *stream = 0;
 
-		for (int i = 0; !stream && i < 2; ++i) {
-			/*
-			FIXME: Seems numLoops == 0 and numLoops == 1 both indicate a single repetition,
-			while all other positive numbers indicate precisely the number of desired
-			repetitions. Finally, -1 means infinitely many
-			*/
-			// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
-			stream = AudioStream::openStreamFile(trackName[i], startFrame * 40 / 3, duration * 40 / 3, (numLoops < 1) ? numLoops + 1 : numLoops);
-		}
+		for (int i = 0; !stream && i < 2; ++i)
+			stream = SeekableAudioStream::openStreamFile(trackName[i]);
 
 		// Stop any currently playing emulated track
 		_mixer->stopHandle(_handle);
 
 		if (stream != 0) {
+			Timestamp start = Timestamp(0, startFrame, 75);
+			Timestamp end = duration ? Timestamp(0, startFrame + duration, 75) : stream->getLength();
+
+			/*
+			FIXME: Seems numLoops == 0 and numLoops == 1 both indicate a single repetition,
+			while all other positive numbers indicate precisely the number of desired
+			repetitions. Finally, -1 means infinitely many
+			*/
 			_emulating = true;
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle, stream);
+			_mixer->playInputStream(Mixer::kMusicSoundType, &_handle,
+			                        makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 		} else {
 			_emulating = false;
 			if (!only_emulate)

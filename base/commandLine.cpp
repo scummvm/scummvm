@@ -32,6 +32,8 @@
 #include "common/system.h"
 #include "common/fs.h"
 
+#include "sound/mididrv.h"
+
 #include "gui/ThemeEngine.h"
 
 #define DETECTOR_TESTING_HACK
@@ -69,6 +71,7 @@ static const char HELP_STRING[] =
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
+	"  -e, --music-driver=MODE  Select music driver\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-127 (default: 127)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
@@ -78,8 +81,15 @@ static const char HELP_STRING[] =
 	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
+	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
+	"                           supported by some MIDI drivers)\n"
+	"  --multi-midi             Enable combination AdLib and native MIDI\n"
+	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
+	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
+	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
+
 	"\n"
 ;
 #endif
@@ -114,6 +124,11 @@ void registerDefaults() {
 	ConfMan.registerDefault("sfx_volume", 127);
 	ConfMan.registerDefault("speech_volume", 127);
 	ConfMan.registerDefault("speech_mode", "3");
+
+	ConfMan.registerDefault("multi_midi", false);
+	ConfMan.registerDefault("native_mt32", false);
+	ConfMan.registerDefault("enable_gs", false);
+	ConfMan.registerDefault("midi_gain", 100);
 
 	ConfMan.registerDefault("path", ".");
 
@@ -260,10 +275,18 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("debugflags")
 			END_OPTION
 
+			DO_OPTION('e', "music-driver")
+				if (MidiDriver::findMusicDriver(option) == 0)
+					usage("Unrecognized music driver '%s'", option);
+			END_OPTION
+
 			DO_LONG_OPTION_INT("output-rate")
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
+			END_OPTION
+
+			DO_LONG_OPTION("opl-driver")
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")
@@ -289,6 +312,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION_INT('r', "speech-volume")
 			END_OPTION
 
+			DO_LONG_OPTION_INT("midi-gain")
+			END_OPTION
+
 			DO_LONG_OPTION_INT("cdrom")
 			END_OPTION
 
@@ -303,10 +329,31 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("soft-renderer")
 			END_OPTION
 
+			DO_LONG_OPTION("soundfont")
+				Common::FSNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent soundfont path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable soundfont path '%s'", option);
+				}
+			END_OPTION
+
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
 			END_OPTION
 
 			DO_LONG_OPTION("engine-speed")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("multi-midi")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("native-mt32")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("enable-gs")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("aspect-ratio")
 			END_OPTION
 
 			DO_LONG_OPTION("gamma")

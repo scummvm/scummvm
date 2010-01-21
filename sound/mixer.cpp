@@ -29,6 +29,7 @@
 #include "sound/mixer_intern.h"
 #include "sound/rate.h"
 #include "sound/audiostream.h"
+#include "sound/timestamp.h"
 
 
 namespace Audio {
@@ -39,70 +40,120 @@ namespace Audio {
 
 
 /**
- * Channels used by the sound mixer.
+ * Channel used by the default Mixer implementation.
  */
 class Channel {
 public:
-	const Mixer::SoundType	_type;
-	SoundHandle _handle;
+	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent);
+	~Channel();
+
+	/**
+	 * Mixes the channel's samples into the given buffer.
+	 *
+	 * @param data buffer where to mix the data
+	 * @param len  number of sample *pairs*. So a value of
+	 *             10 means that the buffer contains twice 10 sample, each
+	 *             16 bits, for a total of 40 bytes.
+	 */
+	void mix(int16 *data, uint len);
+
+	/**
+	 * Queries whether the channel is still playing or not.
+	 */
+	bool isFinished() const { return _input->endOfStream(); }
+
+	/**
+	 * Queries whether the channel is a permanent channel.
+	 * A permanent channel is not affected by a Mixer::stopAll
+	 * call.
+	 */
+	bool isPermanent() const { return _permanent; }
+
+	/**
+	 * Returns the id of the channel.
+	 */
+	int getId() const { return _id; }
+
+	/**
+	 * Pauses or unpaused the channel in a recursive fashion.
+	 *
+	 * @param paused true, when the channel should be paused.
+	 *               false when it should be unpaused.
+	 */
+	void pause(bool paused);
+
+	/**
+	 * Queries whether the channel is currently paused.
+	 */
+	bool isPaused() const { return (_pauseLevel != 0); }
+
+	/**
+	 * Sets the channel's own volume.
+	 *
+	 * @param volume new volume
+	 */
+	void setVolume(const byte volume);
+
+	/**
+	 * Sets the channel's balance setting.
+	 *
+	 * @param balance new balance
+	 */
+	void setBalance(const int8 balance);
+
+	/**
+	 * Notifies the channel that the global sound type
+	 * volume settings changed.
+	 */
+	void notifyGlobalVolChange() { updateChannelVolumes(); }
+
+	/**
+	 * Queries how long the channel has been playing.
+	 */
+	Timestamp getElapsedTime();
+
+	/**
+	 * Queries the channel's sound type.
+	 */
+	Mixer::SoundType getType() const { return _type; }
+
+	/**
+	 * Sets the channel's sound handle.
+	 *
+	 * @param handle new handle
+	 */
+	void setHandle(const SoundHandle handle) { _handle = handle; }
+
+	/**
+	 * Queries the channel's sound handle.
+	 */
+	SoundHandle getHandle() const { return _handle; }
+
 private:
-	Mixer *_mixer;
-	bool _autofreeStream;
+	const Mixer::SoundType _type;
+	SoundHandle _handle;
 	bool _permanent;
-	byte _volume;
-	int8 _balance;
 	int _pauseLevel;
 	int _id;
+
+	byte _volume;
+	int8 _balance;
+
+	void updateChannelVolumes();
+	st_volume_t _volL, _volR;
+
+	Mixer *_mixer;
+
 	uint32 _samplesConsumed;
 	uint32 _samplesDecoded;
 	uint32 _mixerTimeStamp;
 	uint32 _pauseStartTime;
 	uint32 _pauseTime;
 
-protected:
+	DisposeAfterUse::Flag _autofreeStream;
 	RateConverter *_converter;
 	AudioStream *_input;
-
-public:
-	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, bool autofreeStream, bool reverseStereo = false, int id = -1, bool permanent = false);
-	virtual ~Channel();
-
-	void mix(int16 *data, uint len);
-
-	bool isPermanent() const {
-		return _permanent;
-	}
-	bool isFinished() const {
-		return _input->endOfStream();
-	}
-	void pause(bool paused) {
-		//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
-
-		if (paused)
-			_pauseLevel++;
-		else if (_pauseLevel > 0)
-			_pauseLevel--;
-
-		if (_pauseLevel > 0)
-			_pauseStartTime = g_system->getMillis();
-		else
-			_pauseTime += (g_system->getMillis() - _pauseStartTime);
-	}
-	bool isPaused() {
-		return _pauseLevel != 0;
-	}
-	void setVolume(const byte volume) {
-		_volume = volume;
-	}
-	void setBalance(const int8 balance) {
-		_balance = balance;
-	}
-	int getId() const {
-		return _id;
-	}
-	uint32 getElapsedTime();
 };
-
 
 #pragma mark -
 #pragma mark --- Mixer ---
@@ -141,7 +192,6 @@ void MixerImpl::setOutputRate(uint sampleRate) {
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
-
 	int index = -1;
 	for (int i = 0; i != NUM_CHANNELS; i++) {
 		if (_channels[i] == 0) {
@@ -156,26 +206,14 @@ void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 	}
 
 	_channels[index] = chan;
-	 chan->_handle._val = index + (_handleSeed * NUM_CHANNELS);
+
+	SoundHandle chanHandle;
+	chanHandle._val = index + (_handleSeed * NUM_CHANNELS);
+
+	chan->setHandle(chanHandle);
 	_handleSeed++;
-	if (handle) {
-		*handle = chan->_handle;
-	}
-}
-
-void MixerImpl::playRaw(
-			SoundType type,
-			SoundHandle *handle,
-			void *sound,
-			uint32 size, uint rate, byte flags,
-			int id, byte volume, int8 balance,
-			uint32 loopStart, uint32 loopEnd) {
-
-	// Create the input stream
-	AudioStream *input = makeLinearInputStream((byte *)sound, size, rate, flags, loopStart, loopEnd);
-
-	// Play it
-	playInputStream(type, handle, input, id, volume, balance, true, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));
+	if (handle)
+		*handle = chanHandle;
 }
 
 void MixerImpl::playInputStream(
@@ -183,7 +221,7 @@ void MixerImpl::playInputStream(
 			SoundHandle *handle,
 			AudioStream *input,
 			int id, byte volume, int8 balance,
-			bool autofreeStream,
+			DisposeAfterUse::Flag autofreeStream,
 			bool permanent,
 			bool reverseStereo) {
 	Common::StackLock lock(_mutex);
@@ -197,7 +235,7 @@ void MixerImpl::playInputStream(
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
-				if (autofreeStream)
+				if (autofreeStream == DisposeAfterUse::YES)
 					delete input;
 				return;
 			}
@@ -260,7 +298,7 @@ void MixerImpl::stopHandle(SoundHandle handle) {
 
 	// Simply ignore stop requests for handles of sounds that already terminated
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	delete _channels[index];
@@ -271,7 +309,7 @@ void MixerImpl::setChannelVolume(SoundHandle handle, byte volume) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	_channels[index]->setVolume(volume);
@@ -281,18 +319,22 @@ void MixerImpl::setChannelBalance(SoundHandle handle, int8 balance) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	_channels[index]->setBalance(balance);
 }
 
 uint32 MixerImpl::getSoundElapsedTime(SoundHandle handle) {
+	return getElapsedTime(handle).msecs();
+}
+
+Timestamp MixerImpl::getElapsedTime(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
-		return 0;
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
+		return Timestamp(0, _sampleRate);
 
 	return _channels[index]->getElapsedTime();
 }
@@ -321,7 +363,7 @@ void MixerImpl::pauseHandle(SoundHandle handle, bool paused) {
 
 	// Simply ignore (un)pause requests for sounds that already terminated
 	const int index = handle._val % NUM_CHANNELS;
-	if (!_channels[index] || _channels[index]->_handle._val != handle._val)
+	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
 		return;
 
 	_channels[index]->pause(paused);
@@ -338,7 +380,7 @@ bool MixerImpl::isSoundIDActive(int id) {
 int MixerImpl::getSoundID(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
-	if (_channels[index] && _channels[index]->_handle._val == handle._val)
+	if (_channels[index] && _channels[index]->getHandle()._val == handle._val)
 		return _channels[index]->getId();
 	return 0;
 }
@@ -346,13 +388,13 @@ int MixerImpl::getSoundID(SoundHandle handle) {
 bool MixerImpl::isSoundHandleActive(SoundHandle handle) {
 	Common::StackLock lock(_mutex);
 	const int index = handle._val % NUM_CHANNELS;
-	return _channels[index] && _channels[index]->_handle._val == handle._val;
+	return _channels[index] && _channels[index]->getHandle()._val == handle._val;
 }
 
 bool MixerImpl::hasActiveChannelOfType(SoundType type) {
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i != NUM_CHANNELS; i++)
-		if (_channels[i] && _channels[i]->_type == type)
+		if (_channels[i] && _channels[i]->getType() == type)
 			return true;
 	return false;
 }
@@ -369,7 +411,13 @@ void MixerImpl::setVolumeForSoundType(SoundType type, int volume) {
 	// TODO: Maybe we should do logarithmic (not linear) volume
 	// scaling? See also Player_V2::setMasterVolume
 
+	Common::StackLock lock(_mutex);
 	_volumeForSoundType[type] = volume;
+
+	for (int i = 0; i != NUM_CHANNELS; ++i) {
+		if (_channels[i] && _channels[i]->getType() == type)
+			_channels[i]->notifyGlobalVolChange();
+	}
 }
 
 int MixerImpl::getVolumeForSoundType(SoundType type) const {
@@ -383,13 +431,12 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 #pragma mark --- Channel implementations ---
 #pragma mark -
 
-
 Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
-				bool autofreeStream, bool reverseStereo, int id, bool permanent)
-	: _type(type), _mixer(mixer), _autofreeStream(autofreeStream),
-	  _volume(Mixer::kMaxChannelVolume), _balance(0), _pauseLevel(0), _id(id), _samplesConsumed(0),
-	  _samplesDecoded(0), _mixerTimeStamp(0), _pauseStartTime(0), _pauseTime(0), _converter(0),
-	  _input(input), _permanent(permanent) {
+                 DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent)
+    : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
+      _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
+      _pauseStartTime(0), _pauseTime(0), _autofreeStream(autofreeStream), _converter(0),
+      _input(input) {
 	assert(mixer);
 	assert(input);
 
@@ -399,14 +446,89 @@ Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
 
 Channel::~Channel() {
 	delete _converter;
-	if (_autofreeStream)
+	if (_autofreeStream == DisposeAfterUse::YES)
 		delete _input;
 }
 
-/* len indicates the number of sample *pairs*. So a value of
-   10 means that the buffer contains twice 10 sample, each
-   16 bits, for a total of 40 bytes.
- */
+void Channel::setVolume(const byte volume) {
+	_volume = volume;
+	updateChannelVolumes();
+}
+
+void Channel::setBalance(const int8 balance) {
+	_balance = balance;
+	updateChannelVolumes();
+}
+
+void Channel::updateChannelVolumes() {
+	// From the channel balance/volume and the global volume, we compute
+	// the effective volume for the left and right channel. Note the
+	// slightly odd divisor: the 255 reflects the fact that the maximal
+	// value for _volume is 255, while the 127 is there because the
+	// balance value ranges from -127 to 127.  The mixer (music/sound)
+	// volume is in the range 0 - kMaxMixerVolume.
+	// Hence, the vol_l/vol_r values will be in that range, too
+
+	int vol = _mixer->getVolumeForSoundType(_type) * _volume;
+
+	if (_balance == 0) {
+		_volL = vol / Mixer::kMaxChannelVolume;
+		_volR = vol / Mixer::kMaxChannelVolume;
+	} else if (_balance < 0) {
+		_volL = vol / Mixer::kMaxChannelVolume;
+		_volR = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+	} else {
+		_volL = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
+		_volR = vol / Mixer::kMaxChannelVolume;
+	}
+}
+
+void Channel::pause(bool paused) {
+	//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
+
+	if (paused) {
+		_pauseLevel++;
+
+		if (_pauseLevel == 1)
+			_pauseStartTime = g_system->getMillis();
+	} else if (_pauseLevel > 0) {
+		_pauseLevel--;
+
+		if (!_pauseLevel) {
+			_pauseTime = (g_system->getMillis() - _pauseStartTime);
+			_pauseStartTime = 0;
+		}
+	}
+}
+
+Timestamp Channel::getElapsedTime() {
+	const uint32 rate = _mixer->getOutputRate();
+	uint32 delta = 0;
+
+	Audio::Timestamp ts(0, rate);
+
+	if (_mixerTimeStamp == 0)
+		return ts;
+
+	if (isPaused())
+		delta = _pauseStartTime - _mixerTimeStamp;
+	else
+		delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
+
+	// Convert the number of samples into a time duration.
+
+	ts = ts.addFrames(_samplesConsumed);
+	ts = ts.addMsecs(delta);
+
+	// In theory it would seem like a good idea to limit the approximation
+	// so that it never exceeds the theoretical upper bound set by
+	// _samplesDecoded. Meanwhile, back in the real world, doing so makes
+	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
+	// isn't invoked at the regular intervals that I first imagined.
+
+	return ts;
+}
+
 void Channel::mix(int16 *data, uint len) {
 	assert(_input);
 
@@ -415,60 +537,11 @@ void Channel::mix(int16 *data, uint len) {
 	} else {
 		assert(_converter);
 
-		// From the channel balance/volume and the global volume, we compute
-		// the effective volume for the left and right channel. Note the
-		// slightly odd divisor: the 255 reflects the fact that the maximal
-		// value for _volume is 255, while the 127 is there because the
-		// balance value ranges from -127 to 127.  The mixer (music/sound)
-		// volume is in the range 0 - kMaxMixerVolume.
-		// Hence, the vol_l/vol_r values will be in that range, too
-
-		int vol = _mixer->getVolumeForSoundType(_type) * _volume;
-		st_volume_t vol_l, vol_r;
-
-		if (_balance == 0) {
-			vol_l = vol / Mixer::kMaxChannelVolume;
-			vol_r = vol / Mixer::kMaxChannelVolume;
-		} else if (_balance < 0) {
-			vol_l = vol / Mixer::kMaxChannelVolume;
-			vol_r = ((127 + _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
-		} else {
-			vol_l = ((127 - _balance) * vol) / (Mixer::kMaxChannelVolume * 127);
-			vol_r = vol / Mixer::kMaxChannelVolume;
-		}
-
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
-
-		_converter->flow(*_input, data, len, vol_l, vol_r);
-
-		_samplesDecoded += len;
+		_samplesDecoded += _converter->flow(*_input, data, len, _volL, _volR);
 	}
 }
-
-uint32 Channel::getElapsedTime() {
-	if (_mixerTimeStamp == 0)
-		return 0;
-
-	// Convert the number of samples into a time duration. To avoid
-	// overflow, this has to be done in a somewhat non-obvious way.
-
-	uint32 rate = _mixer->getOutputRate();
-
-	uint32 seconds = _samplesConsumed / rate;
-	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;
-
-	uint32 delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
-
-	// In theory it would seem like a good idea to limit the approximation
-	// so that it never exceeds the theoretical upper bound set by
-	// _samplesDecoded. Meanwhile, back in the real world, doing so makes
-	// the Broken Sword cutscenes noticeably jerkier. I guess the mixer
-	// isn't invoked at the regular intervals that I first imagined.
-
-	return 1000 * seconds + milliseconds + delta;
-}
-
 
 } // End of namespace Audio

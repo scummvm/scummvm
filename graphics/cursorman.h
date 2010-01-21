@@ -67,7 +67,8 @@ public:
 	 * @param h			the height
 	 * @param hotspotX	the hotspot X coordinate
 	 * @param hotspotY	the hotspot Y coordinate
-	 * @param keycolor	the index for the transparent color
+	 * @param keycolor	the color value for the transparent color. This may not exceed
+	 *                  the maximum color value as defined by format.
 	 * @param targetScale	the scale for which the cursor is designed
 	 * @param format	a pointer to the pixel format which the cursor graphic uses, 
 	 *					CLUT8 will be used if this is NULL or not specified.
@@ -75,7 +76,7 @@ public:
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
+	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -93,12 +94,13 @@ public:
 	 * @param h		the height
 	 * @param hotspotX	the hotspot X coordinate
 	 * @param hotspotY	the hotspot Y coordinate
-	 * @param keycolor	the index for the transparent color
+	 * @param keycolor	the color value for the transparent color. This may not exceed
+	 *                  the maximum color value as defined by format.
 	 * @param targetScale	the scale for which the cursor is designed
 	 * @param format	a pointer to the pixel format which the cursor graphic uses,
 	 *					CLUT8 will be used if this is NULL or not specified.
 	 */
-	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
+	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
@@ -164,7 +166,11 @@ public:
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
-	CursorManager();
+	// Even though this is basically the default constructor we implement it
+	// ourselves, so it is private and thus there is no way to create this class
+	// except from the Singleton code.
+	CursorManager() {}
+	~CursorManager();
 
 	struct Cursor {
 		byte *_data;
@@ -175,35 +181,12 @@ private:
 		int _hotspotY;
 		uint32 _keycolor;
 		Graphics::PixelFormat _format;
-		byte _targetScale;
+		int _targetScale;
 
 		uint _size;
-		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {
-#ifdef USE_RGB_COLOR
-			if (!format)
-				_format = Graphics::PixelFormat::createFormatCLUT8();
-			 else 
-				_format = *format;
-			_size = w * h * _format.bytesPerPixel;
-			_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);
-#else
-			_format = Graphics::PixelFormat::createFormatCLUT8();
-			_size = w * h;
-			_keycolor = keycolor & 0xFF;
-#endif
-			_data = new byte[_size];
-			if (data && _data)
-				memcpy(_data, data, _size);
-			_width = w;
-			_height = h;
-			_hotspotX = hotspotX;
-			_hotspotY = hotspotY;
-			_targetScale = targetScale;
-		}
 
-		~Cursor() {
-			delete[] _data;
-		}
+		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
+		~Cursor();
 	};
 
 	struct Palette {
@@ -214,24 +197,8 @@ private:
 
 		bool _disabled;
 
-		Palette(const byte *colors, uint start, uint num) {
-			_start = start;
-			_num = num;
-			_size = 4 * num;
-
-			if (num) {
-				_data = new byte[_size];
-				memcpy(_data, colors, _size);
-			} else {
-				_data = NULL;
-			}
-
-			_disabled = false;
-		}
-
-		~Palette() {
-			delete[] _data;
-		}
+		Palette(const byte *colors, uint start, uint num);
+		~Palette();
 	};
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;

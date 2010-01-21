@@ -424,13 +424,18 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
 		_cursorFormat = *format;
-	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+
+	if (_cursorFormat.bytesPerPixel < 4)
+		assert(keycolor < (uint)(1 << (_cursorFormat.bytesPerPixel << 3)));
 #else
-	keycolor &= 0xFF;
+	assert(keycolor <= 0xFF);
 #endif
 
 	if (w == 0 || h == 0)
 		return;
+
+	
+	
 /* Residual doesn't support this
 	_mouseCurState.hotX = hotspot_x;
 	_mouseCurState.hotY = hotspot_y;
@@ -439,6 +444,22 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 
 	_cursorTargetScale = cursorTargetScale;
 
+	_mouseTextureId = new GLuint[1];
+	glGenTextures(1, _mouseTextureId);
+	glBindTexture(GL_TEXTURE_2D, _overlayTexIds[i]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
+	glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _mouseWidth, _mouseHeight, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (byte *)buf + (y * 2 * _mouseWidth) + (2 * x));
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+
 	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
 		_mouseCurState.w = w;
 		_mouseCurState.h = h;
@@ -446,10 +467,9 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 		if (_mouseOrigSurface)
 			SDL_FreeSurface(_mouseOrigSurface);
 
-		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
 		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.w + 2,
-						_mouseCurState.h + 2,
+						_mouseCurState.w,
+						_mouseCurState.h,
 						16,
 						_hwscreen->format->Rmask,
 						_hwscreen->format->Gmask,

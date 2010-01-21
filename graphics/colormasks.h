@@ -116,10 +116,18 @@ struct ColorMasks<555> {
 		kGreenBits  = 5,
 		kBlueBits   = 5,
 
+#ifdef __N64__
+		/* Nintendo 64 uses a BGR555 color format for 16bit display */
+		kAlphaShift = 0,
+		kRedShift   = kBlueBits+kGreenBits+1,
+		kGreenShift = kBlueBits + 1,
+		kBlueShift  = 1,
+#else   /* RGB555 */
 		kAlphaShift = 0,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
+#endif
 
 		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
 		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,
@@ -321,6 +329,6 @@ PixelFormat createPixelFormat() {
 }
 
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif

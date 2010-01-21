@@ -79,9 +79,6 @@
 //    - Define this on a big endian target
 // SYSTEM_NEED_ALIGNMENT
 //    - Define this if your system has problems reading e.g. an int32 from an odd address
-// SYSTEM_USE_LONG_INT
-//    - Define this if your port needs to use 'long' for the int32 datatype
-//      (i.e. an integer with exactly 32 bits).
 // SYSTEM_DONT_DEFINE_TYPES
 //    - Define this if you need to provide your own typedefs, e.g. because your
 //      system headers conflict with our typenames, or because you have odd
@@ -95,6 +92,20 @@
 #ifdef HAVE_CONFIG_H
 #define SYSTEM_DONT_DEFINE_TYPES
 #endif
+
+
+//
+// By default we try to use pragma push/pop to ensure various structs we use
+// are "packed". If your compiler doesn't support this pragma, you are in for
+// a problem. If you are lucky, there is a compiler switch, or another pragma,
+// doing the same thing -- in that case, try to modify common/pack-begin.h and
+// common/pack-end.h accordingly. Or maybe your port simply *always* packs
+// everything, in which case you could #undefine SCUMMVM_USE_PRAGMA_PACK.
+//
+// If neither is possible, tough luck. Try to contact the team, maybe we can
+// come up with a solution, though I wouldn't hold my breath on it :-/.
+//
+#define SYSTEM_USE_PRAGMA_PACK
 
 
 #if defined(__SYMBIAN32__)
@@ -127,16 +138,16 @@
 	#define snprintf _snprintf
 
 	#define SYSTEM_LITTLE_ENDIAN
-	#define SYSTEM_NEED_ALIGNMENT
+
+	#ifndef __GNUC__
+		#define FORCEINLINE __forceinline
+		#define NORETURN_PRE __declspec(noreturn)
+	#endif
+	#define PLUGIN_EXPORT __declspec(dllexport)
 
 	#if _WIN32_WCE < 300
 	#define SMALL_SCREEN_DEVICE
 	#endif
-
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
 
 #elif defined(_MSC_VER)
 
@@ -145,21 +156,18 @@
 
 	#define SYSTEM_LITTLE_ENDIAN
 
-	typedef signed char int8_t;
-	typedef signed short int16_t;
-	typedef unsigned char uint8_t;
-	typedef unsigned short uint16_t;
+	#define FORCEINLINE __forceinline
+	#define NORETURN_PRE __declspec(noreturn)
+	#define PLUGIN_EXPORT __declspec(dllexport)
 
-//	#if !defined(SDL_COMPILEDVERSION) || (SDL_COMPILEDVERSION < 1210)
-//	typedef signed long int32_t;
-//	typedef unsigned long uint32_t;
-//	#endif
 
 #elif defined(__MINGW32__)
 
 	#define strcasecmp stricmp
 
 	#define SYSTEM_LITTLE_ENDIAN
+
+	#define PLUGIN_EXPORT __declspec(dllexport)
 
 #elif defined(UNIX)
 
@@ -233,6 +241,30 @@
 
 	#define SYSTEM_LITTLE_ENDIAN
 	#define SYSTEM_NEED_ALIGNMENT
+#elif defined(__N64__)
+
+	#define scumm_stricmp strcasecmp
+	#define scumm_strnicmp strncasecmp
+
+	#define SCUMM_BIG_ENDIAN
+	#define SCUMM_NEED_ALIGNMENT
+
+	#define STRINGBUFLEN 256
+
+	#define SCUMMVM_DONT_DEFINE_TYPES
+	typedef unsigned char byte;
+
+	typedef unsigned char uint8;
+	typedef signed char int8;
+
+	typedef unsigned short int uint16;
+	typedef signed short int int16;
+
+	typedef unsigned int uint32;
+	typedef signed int int32;
+
+	typedef unsigned long long uint64;
+	typedef signed long long int64;
 
 #elif defined(__PSP__)
 
@@ -268,6 +300,7 @@
 
 #endif
 
+
 //
 // GCC specific stuff
 //
@@ -291,8 +324,12 @@
 #define PLUGIN_EXPORT
 #endif
 
-#ifndef NORETURN
-#define NORETURN
+#ifndef NORETURN_PRE
+#define	NORETURN_PRE
+#endif
+
+#ifndef NORETURN_POST
+#define	NORETURN_POST
 #endif
 
 #ifndef STRINGBUFLEN
@@ -303,32 +340,20 @@
 #define MAXPATHLEN 256
 #endif
 
-#ifndef NORETURN
-#define	NORETURN
-#endif
 
 //
 // Typedef our system types unless SYSTEM_DONT_DEFINE_TYPES is set.
 //
 #ifndef SYSTEM_DONT_DEFINE_TYPES
-
 	typedef unsigned char byte;
-
 	typedef unsigned char uint8;
 	typedef signed char int8;
-
 	typedef unsigned short uint16;
 	typedef signed short int16;
-
-	#ifdef SYSTEM_USE_LONG_INT
-	typedef unsigned long uint32;
-	typedef signed long int32;
-	typedef unsigned long uint;
-	#else
 	typedef unsigned int uint32;
 	typedef signed int int32;
 	typedef unsigned int uint;
-	#endif
 #endif
+
 
 #endif // COMMON_SYS_H

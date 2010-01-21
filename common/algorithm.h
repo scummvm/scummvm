@@ -26,6 +26,7 @@
 #define COMMON_ALGORITHM_H
 
 #include "common/sys.h"
+#include "common/func.h"
 
 namespace Common {
 
@@ -145,57 +146,81 @@ Op for_each(In first, In last, Op f) {
 	return f;
 }
 
-/**
- * Simple sort function, modeled after std::sort.
- * Use it like this: sort(container.begin(), container.end()).
- * Also works on plain old i.e. int arrays etc. For comperance
- * operator < is used.
- */
-template<class T>
-void sort(T first, T last) {
-	if (first == last)
-		return;
+template<typename T>
+unsigned int distance(T *first, T *last) {
+	return last - first;
+}
 
-	// Simple selection sort
-	T i(first);
-	for (; i != last; ++i) {
-		T minElem(i);
-		T j(i);
-		++j;
-		for (; j != last; ++j)
-			if (*j < *minElem)
-				minElem = j;
-		if (minElem != i)
-			SWAP(*minElem, *i);
+template<typename T>
+unsigned int distance(T first, T last) {
+	unsigned int n = 0;
+	while (first != last) {
+		++n;
+		++first;
 	}
+	return n;
+}
+
+template<typename T>
+T *sortChoosePivot(T *first, T *last) {
+	return first + distance(first, last) / 2;
+}
+
+template<typename T>
+T sortChoosePivot(T first, T last) {
+	unsigned int n = distance(first, last);
+	n /= 2;
+	while (n--)
+		++first;
+	return first;
+}
+
+template<typename T, class StrictWeakOrdering>
+T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
+	--last;
+	SWAP(*pivot, *last);
+
+	T sorted;
+	for (sorted = first; first != last; ++first) {
+		if (!comp(*last, *first)) {
+			if (first != sorted)
+				SWAP(*first, *sorted);
+			++sorted;
+		}
+	}
+
+	SWAP(*last, *sorted);
+	return sorted;
 }
 
 /**
  * Simple sort function, modeled after std::sort.
  * It compares data with the given comparator object comp.
- *
- * Note: Using this with: Common::Less from common/func.h
- * will give the same results as the plain sort function.
  */
-template<class T, class StrictWeakOrdering>
+template<typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
 	if (first == last)
 		return;
 
-	// Simple selection sort
-	T i(first);
-	for (; i != last; ++i) {
-		T minElem(i);
-		T j(i);
-		++j;
-		for (; j != last; ++j)
-			if (comp(*j, *minElem))
-				minElem = j;
-		if (minElem != i)
-			SWAP(*minElem, *i);
-	}
+	T pivot = sortChoosePivot(first, last);
+	pivot = sortPartition(first, last, pivot, comp);
+	sort<T, StrictWeakOrdering>(first, pivot, comp);
+	sort<T, StrictWeakOrdering>(++pivot, last, comp);
 }
 
-} // end of namespace Common
+/**
+ * Simple sort function, modeled after std::sort.
+ */
+template<typename T>
+void sort(T *first, T *last) {
+	sort(first, last, Common::Less<T>());
+}
+
+template<class T>
+void sort(T first, T last) {
+	sort(first, last, Common::Less<typename T::ValueType>());
+}
+
+} // End of namespace Common
 #endif
 

@@ -101,7 +101,7 @@ SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate
 
 /*
  * Processed signed long samples from ibuf to obuf.
- * Return number of samples processed.
+ * Return number of sample pairs processed.
  */
 template<bool stereo, bool reverseStereo>
 int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
@@ -119,7 +119,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				inPtr = inBuf;
 				inLen = input.readBuffer(inBuf, ARRAYSIZE(inBuf));
 				if (inLen <= 0)
-					return ST_EOF;
+					return (obuf - ostart) / 2;
 			}
 			inLen -= (stereo ? 2 : 1);
 			opos--;
@@ -143,7 +143,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 		obuf += 2;
 	}
-	return ST_SUCCESS;
+	return (obuf - ostart) / 2;
 }
 
 /**
@@ -210,7 +210,7 @@ LinearRateConverter<stereo, reverseStereo>::LinearRateConverter(st_rate_t inrate
 
 /*
  * Processed signed long samples from ibuf to obuf.
- * Return number of samples processed.
+ * Return number of sample pairs processed.
  */
 template<bool stereo, bool reverseStereo>
 int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_sample_t *obuf, st_size_t osamp, st_volume_t vol_l, st_volume_t vol_r) {
@@ -228,7 +228,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 				inPtr = inBuf;
 				inLen = input.readBuffer(inBuf, ARRAYSIZE(inBuf));
 				if (inLen <= 0)
-					return ST_EOF;
+					return (obuf - ostart) / 2;
 			}
 			inLen -= (stereo ? 2 : 1);
 			ilast0 = icur0;
@@ -262,7 +262,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 			opos += opos_inc;
 		}
 	}
-	return ST_SUCCESS;
+	return (obuf - ostart) / 2;
 }
 
 
@@ -287,6 +287,8 @@ public:
 
 		st_sample_t *ptr;
 		st_size_t len;
+
+		st_sample_t *ostart = obuf;
 
 		if (stereo)
 			osamp *= 2;
@@ -316,7 +318,7 @@ public:
 
 			obuf += 2;
 		}
-		return ST_SUCCESS;
+		return (obuf - ostart) / 2;
 	}
 
 	virtual int drain(st_sample_t *obuf, st_size_t osamp, st_volume_t vol) {

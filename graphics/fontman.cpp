@@ -29,37 +29,33 @@ DECLARE_SINGLETON(Graphics::FontManager);
 
 namespace Graphics {
 
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-const ScummFont g_scummfont;
-extern const NewFont g_sysfont;
-extern const NewFont g_sysfont_big;
-extern const NewFont g_consolefont;
+const ScummFont *g_scummfont = 0;
+FORWARD_DECLARE_FONT(g_sysfont)
+FORWARD_DECLARE_FONT(g_sysfont_big)
+FORWARD_DECLARE_FONT(g_consolefont)
 
 FontManager::FontManager() {
+	// This assert should *never* trigger, because
+	// FontManager is a singleton, thus there is only
+	// one instance of it per time. (g_scummfont gets
+	// reset to 0 in the desctructor of this class).
+	assert(g_scummfont == 0);
+	g_scummfont = new ScummFont;
+	INIT_FONT(g_sysfont)
+	INIT_FONT(g_sysfont_big)
+	INIT_FONT(g_consolefont)
 }
 
-#else
-const ScummFont *g_scummfont;
-extern const NewFont *g_sysfont;
-extern const NewFont *g_sysfont_big;
-extern const NewFont *g_consolefont;
-
-static bool g_initialized = false;
-void initfonts() {
-	if (!g_initialized) {
-		// FIXME : this need to be freed
-		g_initialized = true;
-		g_scummfont = new ScummFont;
-		INIT_FONT(g_sysfont)
-		INIT_FONT(g_sysfont_big)
-		INIT_FONT(g_consolefont)
-	}
+FontManager::~FontManager() {
+	delete g_scummfont;
+	g_scummfont = 0;
+	delete g_sysfont;
+	g_sysfont = 0;
+	delete g_sysfont_big;
+	g_sysfont_big = 0;
+	delete g_consolefont;
+	g_consolefont = 0;
 }
-
-FontManager::FontManager() {
-	initfonts();
-}
-#endif
 
 const Font *FontManager::getFontByName(const Common::String &name) const {
 	if (!_fontMap.contains(name))
@@ -69,16 +65,6 @@ const Font *FontManager::getFontByName(const Common::String &name) const {
 
 const Font *FontManager::getFontByUsage(FontUsage usage) const {
 	switch (usage) {
-#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	case kOSDFont:
-		return &g_scummfont;
-	case kConsoleFont:
-		return &g_consolefont;
-	case kGUIFont:
-		return &g_sysfont;
-	case kBigGUIFont:
-		return &g_sysfont_big;
-#else
 	case kOSDFont:
 		return g_scummfont;
 	case kConsoleFont:
@@ -87,7 +73,6 @@ const Font *FontManager::getFontByUsage(FontUsage usage) const {
 		return g_sysfont;
 	case kBigGUIFont:
 		return g_sysfont_big;
-#endif
 	}
 
 	return 0;

@@ -198,9 +198,9 @@ public:
 	virtual ~EventObserver() {}
 
 	/**
-	 * Notifies the source of an incoming event.
+	 * Notifies the observer of an incoming event.
 	 *
-	 * An obeser is supposed to eat the event, with returning true, when
+	 * An observer is supposed to eat the event, with returning true, when
 	 * it might want prevent other observers from preventing to receive
 	 * the event. An usage example here is the keymapper:
 	 * If it processes an Event, it should 'eat' it and create a new

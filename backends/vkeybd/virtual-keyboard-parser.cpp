@@ -154,8 +154,11 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 		} else {
 			// remove data relating to old resolution
 			_mode->bitmapName.clear();
-			delete _mode->image;
-			_mode->image = 0;
+			if (_mode->image) {
+				_mode->image->free();
+				delete _mode->image;
+				_mode->image = 0;
+			}
 			_mode->imageMap.removeAllAreas();
 			_mode->displayArea = Rect();
 		}
@@ -371,6 +374,6 @@ bool VirtualKeyboardParser::parseRectAsPolygon(Polygon &poly, const String& coor
 	return true;
 }
 
-} // end of namespace GUI
+} // End of namespace GUI
 
 #endif // #ifdef ENABLE_VKEYBD

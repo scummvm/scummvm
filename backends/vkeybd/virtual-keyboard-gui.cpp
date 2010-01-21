@@ -443,7 +443,7 @@ void VirtualKeyboardGUI::setupCursor() {
 	};
 
 	CursorMan.pushCursorPalette(palette, 0, 4);
-	CursorMan.pushCursor(NULL, 0, 0, 0, 0);
+	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
 	CursorMan.showMouse(true);
 }
 
@@ -457,7 +457,7 @@ void VirtualKeyboardGUI::animateCursor() {
 			}
 		}
 
-		CursorMan.replaceCursor(_cursor, 16, 16, 7, 7);
+		CursorMan.replaceCursor(_cursor, 16, 16, 7, 7, 255);
 
 		_cursorAnimateTimer = time;
 		_cursorAnimateCounter = (_cursorAnimateCounter + 1) % 4;
@@ -469,6 +469,6 @@ void VirtualKeyboardGUI::removeCursor() {
 	CursorMan.popCursorPalette();
 }
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif // #ifdef ENABLE_VKEYBD

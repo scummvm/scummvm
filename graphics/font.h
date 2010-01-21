@@ -37,9 +37,9 @@ namespace Graphics {
 /** Text alignment modes */
 enum TextAlign {
 	kTextAlignInvalid,
-	kTextAlignLeft,		//!< Text should be aligned to the left
-	kTextAlignCenter,	//!< Text should be centered
-	kTextAlignRight		//!< Text should be aligned to the right
+	kTextAlignLeft,		///< Text should be aligned to the left
+	kTextAlignCenter,	///< Text should be centered
+	kTextAlignRight		///< Text should be aligned to the right
 };
 
 /**
@@ -140,17 +140,18 @@ public:
 	static NewFont *loadFromCache(Common::SeekableReadStream &stream);
 };
 
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-#	define DEFINE_FONT(n) \
-		const NewFont *n;	\
+#define DEFINE_FONT(n) \
+		const NewFont *n = 0;	\
 		void create_##n() {	\
 			n = new NewFont(desc);	\
 		}
 
-#	define INIT_FONT(n) \
-		extern void create_##n(); \
+#define FORWARD_DECLARE_FONT(n) \
+		extern const NewFont *n; \
+		extern void create_##n();
+
+#define INIT_FONT(n) \
 		create_##n();
-#endif
 
 } // End of namespace Graphics
 

@@ -1889,7 +1889,7 @@ static void TextFileGetLine() {
 	int pos = (int)lua_getnumber(posObj);
 	file->seek(pos, SEEK_SET);
 	memset(textBuf, 0, 1000);
-	file->readLine_NEW(textBuf, 1000);
+	file->readLine(textBuf, 1000);
 	delete file;
 
 	lua_pushstring(textBuf);
@@ -1923,7 +1923,7 @@ static void TextFileGetLineCount() {
 		int pos = file->pos();
 		lua_pushnumber(pos);
 		lua_settable();
-		file->readLine_NEW(textBuf, 1000);
+		file->readLine(textBuf, 1000);
 		line++;
 	}
 	delete file;

@@ -29,21 +29,15 @@
 
 namespace Common {
 
-class FSNode;
 class ReadStream;
 
-bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
-bool md5_file(const FSNode &file, uint8 digest[16], uint32 length = 0);
 bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length = 0);
 
-// The following two methods work similar to the above two, but
-// instead of computing the binary MD5 digest, they produce
+// The following method work similar to the above one, but
+// instead of computing the binary MD5 digest, it produces
 // a human readable lowercase hexstring representing the digest.
 // The md5str parameter must point to a buffer of 32+1 chars.
-bool md5_file_string(const char *name, char *md5str, uint32 length = 0);
-bool md5_file_string(const FSNode &file, char *md5str, uint32 length = 0);
 bool md5_file_string(ReadStream &stream, char *md5str, uint32 length = 0);
-
 
 } // End of namespace Common
 

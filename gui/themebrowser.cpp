@@ -116,5 +116,5 @@ void ThemeBrowser::updateListing() {
 	draw();
 }
 
-} // end of namespace GUI
+} // End of namespace GUI
 
