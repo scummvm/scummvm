@@ -385,7 +385,10 @@ void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
 
 	for (height = 0; height < _cursorHeight; height++) {
 		for (width = 0; width < _cursorWidth; width++) {
-			_cursor_hic[(_cursorWidth * height) + width] = _pal_src[_cursor_pal[(_cursorWidth * height) + width]];
+			uint8 pix = _cursor_pal[(_cursorWidth * height) + width];
+
+			// Enable alpha bit in cursor buffer if pixel should be invisible
+			_cursor_hic[(_cursorWidth * height) + width] = (pix != _cursorKeycolor) ? _pal_src[pix] : 0x0001;
 		}
 	}
 }
@@ -568,9 +571,8 @@ void OSystem_N64::updateScreen() {
 				// Draw pixel
 				if (((mY + h) >= 0) && ((mY + h) < _mouseMaxY) && ((mX + w) >= 0) && ((mX + w) < _mouseMaxX)) {
 					uint16 cursor_pixel_hic = _cursor_hic[(h * _cursorWidth) + w];
-					uint8 cursor_pixel_pal = _cursor_pal[(h * _cursorWidth) + w];
 
-					if (cursor_pixel_pal != _cursorKeycolor)
+					if (!(cursor_pixel_hic & 0x00001))
 						mouse_framebuffer[((mY + h) * _frameBufferWidth) + ((mX + w) + _offscrPixels + horiz_pix_skip)] = cursor_pixel_hic;
 				}
 			}
