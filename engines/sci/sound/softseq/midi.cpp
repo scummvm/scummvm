@@ -31,6 +31,7 @@
 
 #include "sci/resource.h"
 #include "sci/sound/softseq/mididriver.h"
+#include "sci/sound/softseq/map-mt32-to-gm.h"
 
 namespace Sci {
 
@@ -63,6 +64,11 @@ private:
 	void readMt32Patch(const byte *data, int size);
 	void readMt32DrvData();
 
+	void mapMt32ToGm(byte *data, size_t size);
+	uint8 lookupGmInstrument(const char *iname);
+	uint8 lookupGmRhythmKey(const char *iname);
+	uint8 getGmInstrument(const Mt32ToGmMap &Mt32Ins);
+
 	void sendMt32SysEx(const uint32 addr, Common::SeekableReadStream *str, int len, bool noDelay);
 	void sendMt32SysEx(const uint32 addr, const byte *buf, int len, bool noDelay);
 	void setMt32Volume(byte volume);
@@ -83,7 +89,7 @@ private:
 		uint8 hold;
 		uint8 volume;
 
-		Channel() : mappedPatch(0xff), patch(0xff), velocityMapIdx(0), playing(false),
+		Channel() : mappedPatch(MIDI_UNMAPPED), patch(MIDI_UNMAPPED), velocityMapIdx(0), playing(false),
 			keyShift(0), volAdjust(0), pan(0x80), hold(0), volume(0x7f) { }
 	};
 
@@ -101,6 +107,11 @@ private:
 	uint8 _patchMap[128];
 	uint8 _velocityMapIdx[128];
 	uint8 _velocityMap[4][128];
+
+	// These are extensions used for our own MT-32 to GM mapping
+	uint8 _pitchBendRange[128];
+	uint8 _percussionVelocityScale[128];
+
 	byte _goodbyeMsg[20];
 	byte _sysExBuf[kMaxSysExSize];
 };
@@ -123,14 +134,28 @@ MidiPlayer_Midi::~MidiPlayer_Midi() {
 }
 
 void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
+	uint8 patch = _channels[channel].mappedPatch;
+
 	if (channel == MIDI_RHYTHM_CHANNEL) {
-		note = _percussionMap[note];
-		if (note == 0xff)
+		if (_percussionMap[note] == MIDI_UNMAPPED) {
+			debugC(kDebugLevelSound, "[Midi] Percussion instrument %i is unmapped", note);
 			return;
-	} else {
-		if (_channels[channel].mappedPatch == 0xff)
+		}
+
+		note = _percussionMap[note];
+		// Scale velocity;
+		velocity = velocity * _percussionVelocityScale[note] / 127;
+	} else if (patch >= 128) {
+		if (patch == MIDI_UNMAPPED)
 			return;
 
+		// Map to rhythm
+		channel = MIDI_RHYTHM_CHANNEL;
+		note = patch - 128;
+
+		// Scale velocity;
+		velocity = velocity * _percussionVelocityScale[note] / 127;
+	} else {
 		int8 keyshift = _keyShift[channel];
 
 		int shiftNote = note + keyshift;
@@ -210,12 +235,13 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 	_channels[channel].patch = patch;
 	_channels[channel].velocityMapIdx = _velocityMapIdx[patch];
 
-	if (_channels[channel].mappedPatch == 0xff)
+	if (_channels[channel].mappedPatch == MIDI_UNMAPPED)
 		resetVol = true;
 
 	_channels[channel].mappedPatch = _patchMap[patch];
 
-	if (_patchMap[patch] == 0xff) {
+	if (_patchMap[patch] == MIDI_UNMAPPED) {
+		debugC(kDebugLevelSound, "[Midi] Channel %i set to unmapped patch %i", channel, patch);
 		_driver->send(0xb0 | channel, 0x7b, 0);
 		_driver->send(0xb0 | channel, 0x40, 0);
 		return;
@@ -232,6 +258,10 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 		_channels[channel].volAdjust = _volAdjust[patch];
 		controlChange(channel, 0x07, _channels[channel].volume);
 	}
+
+	uint8 bendRange = _pitchBendRange[patch];
+	if (bendRange != MIDI_UNMAPPED)
+		_driver->setPitchBendRange(channel, bendRange);
 
 	_driver->send(0xc0 | channel, _patchMap[patch], 0);
 }
@@ -539,6 +569,151 @@ void MidiPlayer_Midi::readMt32DrvData() {
 	}
 }
 
+byte MidiPlayer_Midi::lookupGmInstrument(const char *iname) {
+	int i = 0;
+
+	while (Mt32MemoryTimbreMaps[i].name) {
+		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
+			return getGmInstrument(Mt32MemoryTimbreMaps[i]);
+		i++;
+	}
+	return MIDI_UNMAPPED;
+}
+
+byte MidiPlayer_Midi::lookupGmRhythmKey(const char *iname) {
+	int i = 0;
+
+	while (Mt32MemoryTimbreMaps[i].name) {
+		if (scumm_strnicmp(iname, Mt32MemoryTimbreMaps[i].name, 10) == 0)
+			return Mt32MemoryTimbreMaps[i].gmRhythmKey;
+		i++;
+	}
+	return MIDI_UNMAPPED;
+}
+
+uint8 MidiPlayer_Midi::getGmInstrument(const Mt32ToGmMap &Mt32Ins) {
+	if (Mt32Ins.gmInstr == MIDI_MAPPED_TO_RHYTHM)
+		return Mt32Ins.gmRhythmKey + 0x80;
+	else
+		return Mt32Ins.gmInstr;
+}
+
+void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
+	// FIXME: Clean this up
+	int memtimbres, patches;
+	uint8 group, number, keyshift, finetune, bender_range;
+	uint8 *patchpointer;
+	uint32 pos;
+	int i;
+
+	for (i = 0; i < 128; i++) {
+		_patchMap[i] = getGmInstrument(Mt32PresetTimbreMaps[i]);
+		_pitchBendRange[i] = 12;
+	}
+
+	for (i = 0; i < 128; i++)
+		_percussionMap[i] = Mt32PresetRhythmKeymap[i];
+
+	memtimbres = *(data + 0x1eb);
+	pos = 0x1ec + memtimbres * 0xf6;
+
+	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xabcd)) {
+		patches = 96;
+		pos += 2 + 8 * 48;
+	} else
+		patches = 48;
+
+	debugC(kDebugLevelSound, "[MT32-to-GM] %d MT-32 Patches detected", patches);
+	debugC(kDebugLevelSound, "[MT32-to-GM] %d MT-32 Memory Timbres", memtimbres);
+
+	debugC(kDebugLevelSound, "\n[MT32-to-GM] Mapping patches..");
+
+	for (i = 0; i < patches; i++) {
+		char name[11];
+
+		if (i < 48)
+			patchpointer = data + 0x6b + 8 * i;
+		else
+			patchpointer = data + 0x1ec + 8 * (i - 48) + memtimbres * 0xf6 + 2;
+
+		group = *patchpointer;
+		number = *(patchpointer + 1);
+		keyshift = *(patchpointer + 2);
+		finetune = *(patchpointer + 3);
+		bender_range = *(patchpointer + 4);
+
+		debugCN(kDebugLevelSound, "  [%03d] ", i);
+
+		switch (group) {
+		case 1:
+			number += 64;
+			// Fall through
+		case 0:
+			_patchMap[i] = getGmInstrument(Mt32PresetTimbreMaps[number]);
+			debugCN(kDebugLevelSound, "%s -> ", Mt32PresetTimbreMaps[number].name);
+			break;
+		case 2:
+			strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
+			name[10] = 0;
+			_patchMap[i] = lookupGmInstrument(name);
+			debugCN(kDebugLevelSound, "%s -> ", name);
+			break;
+		case 3:
+			_patchMap[i] = getGmInstrument(Mt32RhythmTimbreMaps[number]);
+			debugCN(kDebugLevelSound, "%s -> ", Mt32RhythmTimbreMaps[number].name);
+			break;
+		default:
+			break;
+		}
+
+		if (_patchMap[i] == MIDI_UNMAPPED) {
+			debugC(kDebugLevelSound, "[Unmapped]");
+		} else {
+			if (_patchMap[i] >= 128) {
+				debugC(kDebugLevelSound, "%s [Rhythm]", GmPercussionNames[_patchMap[i] - 128]);
+			} else {
+				debugC(kDebugLevelSound, "%s", GmInstrumentNames[_patchMap[i]]);
+			}
+		}
+
+		_keyShift[i] = CLIP<uint8>(keyshift, 0, 48) - 24;
+		_pitchBendRange[i] = CLIP<uint8>(bender_range, 0, 24);
+	}
+
+	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xdcba)) {
+		debugC(kDebugLevelSound, "\n[MT32-to-GM] Mapping percussion..");
+
+		for (i = 0; i < 64 ; i++) {
+			number = *(data + pos + 4 * i + 2);
+
+			debugCN(kDebugLevelSound, "  [%03d] ", i + 23);
+
+			if (number < 64) {
+				char name[11];
+				strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
+				name[10] = 0;
+				debugCN(kDebugLevelSound, "%s -> ", name);
+				_percussionMap[i + 23] = lookupGmRhythmKey(name);
+			} else {
+				if (number < 94) {
+					debugCN(kDebugLevelSound, "%s -> ", Mt32RhythmTimbreMaps[number - 64].name);
+					_percussionMap[i + 23] = Mt32RhythmTimbreMaps[number - 64].gmRhythmKey;
+				} else {
+					debugCN(kDebugLevelSound, "[Key  %03i] -> ", number);
+					_percussionMap[i + 23] = MIDI_UNMAPPED;
+				}
+			}
+
+			if (_percussionMap[i + 23] == MIDI_UNMAPPED)
+				debugC(kDebugLevelSound, "[Unmapped]");
+			else
+				debugC(kDebugLevelSound, "%s", GmPercussionNames[_percussionMap[i + 23]]);
+
+			_percussionVelocityScale[i + 23] = *(data + pos + 4 * i + 3) * 127 / 100;
+		}
+	}
+}
+
 void MidiPlayer_Midi::setMt32Volume(byte volume) {
 	sendMt32SysEx(0x100016, &volume, 1);
 }
@@ -567,6 +742,8 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		_keyShift[i] = 0;
 		_volAdjust[i] = 0;
 		_velocityMapIdx[i] = 0;
+		_pitchBendRange[i] = MIDI_UNMAPPED;
+		_percussionVelocityScale[i] = 127;
 	}
 
 	Resource *res = NULL;
@@ -592,6 +769,7 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
 
 		if (res && isMt32GmPatch(res->data, res->size)) {
+			// There is a GM patch
 			readMt32GmPatch(res->data, res->size);
 
 			// Detect the format of patch 1, so that we know what play mask to use
@@ -601,7 +779,37 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 			else
 				_isOldPatchFormat = !isMt32GmPatch(res->data, res->size);
 		} else {
-			warning("MT-32 to GM translation not yet supported");
+			// No GM patch found, map instruments using MT-32 patch
+
+			warning("Game has no native support for General MIDI, applying auto-mapping");
+
+			// Modify velocity map to make low velocity notes a little louder
+			for (uint i = 1; i < 0x40; i++)
+				_velocityMap[0][i] = 0x20 + (i - 1) / 2;
+
+			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+
+			if (res) {
+				if (!isMt32GmPatch(res->data, res->size))
+					mapMt32ToGm(res->data, res->size);
+				else
+					error("MT-32 patch has wrong type");
+			} else {
+				// No MT-32 patch present, try to read from MT32.DRV
+				Common::File f;
+
+				if (f.open("MT32.DRV")) {
+					int size = f.size();
+
+					assert(size >= 70);
+
+					f.seek(0x29);
+
+					// Read AdLib->MT-32 patch map
+					for (int i = 0; i < 48; i++)
+						_patchMap[i] = getGmInstrument(Mt32PresetTimbreMaps[f.readByte() & 0x7f]);
+				}
+			}
 		}
 	}
 
