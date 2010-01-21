@@ -7,8 +7,6 @@ MODULE_OBJS := \
 	fmopl.o \
 	mididrv.o \
 	midiparser.o \
-	midiparser_smf.o \
-	midiparser_xmidi.o \
 	mixer.o \
 	mp3.o \
 	mpu401.o \
