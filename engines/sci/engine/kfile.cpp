@@ -583,15 +583,19 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->_segMan->getString(argv[0]);
+	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
 	int savedir_nr = argv[1].toUint16();
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savedir_nr);
 
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
+	if (!argv[0].isNull()) {
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
 
-	savedir_nr = saves[savedir_nr].id;
+		savedir_nr = saves[savedir_nr].id;
+	} else {
+		// Loading from GMM, no change necessary
+	}
 
 	if (savedir_nr > -1) {
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();

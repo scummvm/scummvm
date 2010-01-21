@@ -25,6 +25,7 @@
 
 #include "common/debug.h"
 #include "common/stack.h"
+#include "common/config-manager.h"
 
 #include "sci/sci.h"
 #include "sci/console.h"
@@ -549,6 +550,11 @@ void run_vm(EngineState *s, int restoring) {
 	reg_t r_temp; // Temporary register
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
+	bool loadFromGMM = ConfMan.hasKey("save_slot") ? true : false;
+	if (loadFromGMM) {
+		if (ConfMan.getInt("save_slot") < 0)
+			loadFromGMM = false;	// already loaded
+	}
 
 	scriptState.restAdjust = s->restAdjust;
 	// &rest adjusts the parameter count by this value
@@ -984,8 +990,24 @@ void run_vm(EngineState *s, int restoring) {
 
 						//warning("callk %s", kfun.orig_name.c_str());
 
-						// Call kernel function
-						s->r_acc = kfun.fun(s, argc, argv);
+						// TODO: SCI2/SCI2.1+ equivalent, once saving/loading works in SCI2/SCI2.1+
+						if (loadFromGMM && opparams[0] == 0x8) {
+							// A game is being loaded from GMM, and kDisplay is called, all initialization has taken
+							// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
+							// here, instead of the requested function
+							int saveSlot = ConfMan.getInt("save_slot");
+							ConfMan.setInt("save_slot", -1);	// invalidate slot
+							loadFromGMM = false;
+
+							if (saveSlot < 0)
+								error("Requested to load invalid save slot");	// should never happen, really
+
+							reg_t argv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special GMM call (argv[0] is NULL)
+							kRestoreGame(s, 2, argv);
+						} else {
+							// Call kernel function
+							s->r_acc = kfun.fun(s, argc, argv);
+						}
 
 						// Remove callk stack frame again
 						s->_executionStack.pop_back();
