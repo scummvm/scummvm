@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	mutex.o \
 	str.o \
 	stream.o \
+	textconsole.o \
 	util.o \
 	system.o \
 	unzip.o \

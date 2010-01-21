@@ -13,6 +13,15 @@ MODULE_OBJS := \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
 	keymapper/remap-dialog.o \
+	midi/alsa.o \
+	midi/camd.o \
+	midi/coreaudio.o \
+	midi/coremidi.o \
+	midi/seq.o \
+	midi/stmidi.o \
+	midi/timidity.o \
+	midi/dmedia.o \
+	midi/windows.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
