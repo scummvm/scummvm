@@ -30,7 +30,7 @@
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sound/iterator/iterator.h"
-#include "sci/sound/softseq/mididriver.h"
+#include "sci/sound/drivers/mididriver.h"
 
 #include "common/array.h"
 #include "common/list.h"

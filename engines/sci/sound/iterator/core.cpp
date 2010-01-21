@@ -30,7 +30,7 @@
 
 #include "sci/sound/iterator/core.h"
 #include "sci/sound/iterator/iterator.h"
-#include "sci/sound/softseq/mididriver.h"
+#include "sci/sound/drivers/mididriver.h"
 
 #include "common/system.h"
 #include "common/timer.h"

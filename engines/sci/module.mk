@@ -58,10 +58,10 @@ MODULE_OBJS := \
 	sound/iterator/core.o \
 	sound/iterator/iterator.o \
 	sound/iterator/songlib.o \
-	sound/softseq/adlib.o \
-	sound/softseq/amiga.o \
-	sound/softseq/pcjr.o \
-	sound/softseq/midi.o \
+	sound/drivers/adlib.o \
+	sound/drivers/amiga.o \
+	sound/drivers/pcjr.o \
+	sound/drivers/midi.o \
 	video/seq_decoder.o \
 	video/vmd_decoder.o
 	

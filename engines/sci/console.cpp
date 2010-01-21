@@ -41,7 +41,7 @@
 #else
 #include "sci/sound/music.h"
 #endif
-#include "sci/sound/softseq/mididriver.h"
+#include "sci/sound/drivers/mididriver.h"
 #include "sci/vocabulary.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/cursor.h"

@@ -31,7 +31,7 @@
 #include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/softseq/mididriver.h"
+#include "sci/sound/drivers/mididriver.h"
 
 namespace Audio {
 	class AudioStream;
