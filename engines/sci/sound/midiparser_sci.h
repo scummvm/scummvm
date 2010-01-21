@@ -84,6 +84,8 @@ protected:
 
 	bool _signalSet;
 	int16 _signalToSet;
+	bool _dataincAdd;
+	int16 _dataincToAdd;
 
 	// A 16-bit mask, containing the channels used
 	// by the currently parsed song

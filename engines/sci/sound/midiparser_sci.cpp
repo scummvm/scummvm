@@ -55,6 +55,8 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 
 	_signalSet = false;
 	_signalToSet = 0;
+	_dataincAdd = false;
+	_dataincToAdd = 0;
 	_channelsUsed = 0;
 }
 
@@ -118,6 +120,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	_channelsUsed |= (1 << info.channel());
 
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
+	if (_dataincAdd) {
+		_dataincAdd = false;
+		_pSnd->dataInc += _dataincToAdd;
+		_pSnd->signal = 0x7f + _pSnd->dataInc;
+		debugC(2, kDebugLevelSound, "datainc %04x", _dataincToAdd);
+	}
 	if (_signalSet) {
 		_signalSet = false;
 		_pSnd->signal = _signalToSet;
@@ -178,16 +186,15 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					jumpToTick(_loopTick, false, false);
 				break;
 			case kUpdateCue:
+				_dataincAdd = true;
 				switch (_soundVersion) {
 				case SCI_VERSION_0_EARLY:
 				case SCI_VERSION_0_LATE:
-					_pSnd->dataInc += info.basic.param2;
-					_signalSet = true;
-					_signalToSet = 0x7f + _pSnd->dataInc;
+					_dataincToAdd = info.basic.param2;
 					break;
 				case SCI_VERSION_1_EARLY:
 				case SCI_VERSION_1_LATE:
-					_pSnd->dataInc++;
+					_dataincToAdd = 1;
 					break;
 				default:
 					break;
