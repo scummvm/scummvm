@@ -23,55 +23,59 @@
  *
  */
 
-#ifndef STARK_H
-#define STARK_H
+#ifndef STARK_GFX_OPENGL_H
+#define STARK_GFX_OPENGL_H
 
-#include "engines/engine.h"
+#include "engines/stark/gfx_base.h"
 
-#include "engines/stark/archive.h"
-#include "engines/stark/xrc.h"
+#ifdef USE_OPENGL
+
+#ifdef SDL_BACKEND
+#include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 
 namespace Stark {
 
-enum StarkGameID {
-	GID_TLJ = 0,
-	GID_DREAM
-};
-
-enum StarkGameFeatures {
-	GF_DEMO = (1 << 0),
-	GF_DVD =  (1 << 1)
-};
-
-struct StarkGameDescription;
-
-class StarkEngine : public Engine {
+class GfxOpenGL : public GfxBase {
 public:
-	StarkEngine(OSystem *syst, const StarkGameDescription *gameDesc);
-	virtual ~StarkEngine();
+	GfxOpenGL();
+	virtual ~GfxOpenGL();
 
-	void updateDisplayScene();
-	void doFlip();
+byte *setupScreen(int screenW, int screenH, bool fullscreen);
 
-	int getGameID() const;
-	uint16 getVersion() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	const char *getVideoDeviceName();
 
-	const StarkGameDescription *_gameDescription;
+	void setupCamera(float fov, float nclip, float fclip, float roll);
+	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
 
-	void mainLoop();
-	
+	void clearScreen();
+	void flipBuffer();
+
+	bool isHardwareAccelerated();
+
+	void set3DMode();
+
+	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpointFinish();
+
+	void drawBitmap(Surface* bmp);
+
 protected:
-	// Engine APIs
-	virtual Common::Error run();
-	
-private:
-	XARCArchive _xArchive;
 
+private:
+	GLuint _emergFont;
+	int _smushNumTex;
+	GLuint *_smushTexIds;
+	int _smushWidth;
+	int _smushHeight;
+	byte *_storedDisplay;
 };
 
 } // end of namespace Stark
+
+#endif
 
 #endif

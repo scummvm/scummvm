@@ -18,58 +18,45 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
- * $URL$
- * $Id$
+ * $URL: https://residual.svn.sourceforge.net/svnroot/residual/residual/trunk/engines/grim/color.h $
+ * $Id: color.h 1360 2009-05-26 14:13:08Z aquadran $
  *
  */
 
-#ifndef STARK_H
-#define STARK_H
+#ifndef STARK_COLOR_H
+#define STARK_COLOR_H
 
-#include "engines/engine.h"
-
-#include "engines/stark/archive.h"
-#include "engines/stark/xrc.h"
+#include "common/sys.h"
 
 namespace Stark {
 
-enum StarkGameID {
-	GID_TLJ = 0,
-	GID_DREAM
-};
-
-enum StarkGameFeatures {
-	GF_DEMO = (1 << 0),
-	GF_DVD =  (1 << 1)
-};
-
-struct StarkGameDescription;
-
-class StarkEngine : public Engine {
+class Color {
 public:
-	StarkEngine(OSystem *syst, const StarkGameDescription *gameDesc);
-	virtual ~StarkEngine();
+	byte _vals[3];
 
-	void updateDisplayScene();
-	void doFlip();
+	Color() {}
+	Color(byte r, byte g, byte b) {
+		_vals[0] = r; _vals[1] = g; _vals[2] = b;
+	}
+	Color(const Color& c) {
+		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
+	}
+	byte &red() { return _vals[0]; }
+	byte red() const { return _vals[0]; }
+	byte &green() { return _vals[1]; }
+	byte green() const { return _vals[1]; }
+	byte &blue() { return _vals[2]; }
+	byte blue() const { return _vals[2]; }
 
-	int getGameID() const;
-	uint16 getVersion() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	Color& operator =(const Color &c) {
+		_vals[0] = c._vals[0]; _vals[1] = c._vals[1]; _vals[2] = c._vals[2];
+		return *this;
+	}
 
-	const StarkGameDescription *_gameDescription;
-
-	void mainLoop();
-	
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	
-private:
-	XARCArchive _xArchive;
-
+	Color& operator =(Color *c) {
+		_vals[0] = c->_vals[0]; _vals[1] = c->_vals[1]; _vals[2] = c->_vals[2];
+		return *this;
+	}
 };
 
 } // end of namespace Stark
