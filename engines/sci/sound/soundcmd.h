@@ -63,6 +63,7 @@ public:
 	void reconstructPlayList(int savegame_version);
 	void printPlayList(Console *con);
 	void setMasterVolume(int vol);
+	void pauseAll(bool pause);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	/**

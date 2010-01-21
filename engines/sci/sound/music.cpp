@@ -91,12 +91,21 @@ void SciMusic::init() {
 }
 
 void SciMusic::clearPlayList() {
-	_mutex.lock();
+	Common::StackLock lock(_mutex);
+
 	while (!_playList.empty()) {
 		soundStop(_playList[0]);
 		soundKill(_playList[0]);
 	}
-	_mutex.unlock();
+}
+
+void SciMusic::pauseAll(bool pause) {
+	Common::StackLock lock(_mutex);
+
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		soundToggle(*i, pause);
+	}
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -324,6 +333,13 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 	if (pSnd->status != kSoundPaused)
 		return;
 	soundPlay(pSnd);
+}
+
+void SciMusic::soundToggle(MusicEntry *pSnd, bool pause) {
+	if (pause)
+		soundPause(pSnd);
+	else
+		soundResume(pSnd);
 }
 
 uint16 SciMusic::soundGetMasterVolume() {

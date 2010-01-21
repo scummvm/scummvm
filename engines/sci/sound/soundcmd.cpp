@@ -530,51 +530,29 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 		changeSoundStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
 #else
 
-	MusicEntry *musicSlot = NULL;
-	MusicList::iterator slotLoop = NULL;
-	MusicList::iterator listEnd = NULL;
-
-	if (!obj.segment) {
+	if (!obj.segment) {		// pause the whole playlist
 		// Pausing/Resuming the whole playlist was introduced 
 		// in the SCI1 late sound scheme
 		if (_soundVersion <= SCI_VERSION_1_EARLY)
 			return;
-		_music->_mutex.lock();
-		slotLoop = _music->getPlayListStart();
-		listEnd = _music->getPlayListEnd();
-		musicSlot = *slotLoop;
-		_music->_mutex.unlock();
-	} else {
-		_music->_mutex.lock();
-		musicSlot = _music->getSlot(obj);
-		_music->_mutex.unlock();
+
+		_music->pauseAll(value);
+	} else {	// pause a playlist slot
+		Common::StackLock lock(_music->_mutex);
+		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
 			warning("cmdPauseSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
 			return;
 		}
-	}
 
-	do {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			// Always pause the sound in SCI0 games. It's resumed in cmdResumeSound()
 			PUT_SEL32V(_segMan, musicSlot->soundObj, state, kSoundPaused);
 			_music->soundPause(musicSlot);
 		} else {
-			if (value)
-				_music->soundPause(musicSlot);
-			else
-				_music->soundResume(musicSlot);
+			_music->soundToggle(musicSlot, value);
 		}
-
-		if (slotLoop) {
-			if (slotLoop == listEnd) {
-				break;
-			} else {
-				_music->_mutex.lock();
-				musicSlot = *(slotLoop++);
-				_music->_mutex.unlock();
-			}
-		}
-	} while (slotLoop);
+	}
 
 #endif
 }
@@ -1097,6 +1075,12 @@ void SoundCommandParser::printPlayList(Console *con) {
 void SoundCommandParser::setMasterVolume(int vol) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->soundSetMasterVolume(vol);
+#endif
+}
+
+void SoundCommandParser::pauseAll(bool pause) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->pauseAll(pause);
 #endif
 }
 

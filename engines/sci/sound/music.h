@@ -139,6 +139,7 @@ public:
 	void init();
 	void onTimer();
 	void clearPlayList();
+	void pauseAll(bool pause);
 
 	// sound and midi functions
 	void soundInitSnd(MusicEntry *pSnd);
@@ -147,6 +148,7 @@ public:
 	void soundKill(MusicEntry *pSnd);
 	void soundPause(MusicEntry *pSnd);
 	void soundResume(MusicEntry *pSnd);
+	void soundToggle(MusicEntry *pSnd, bool pause);
 	void soundSetVolume(MusicEntry *pSnd, byte volume);
 	void soundSetPriority(MusicEntry *pSnd, byte prio);
 	uint16 soundGetMasterVolume();
