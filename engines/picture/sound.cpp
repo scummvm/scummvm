@@ -150,11 +150,11 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 
 			Resource *soundResource = _vm->_res->load(resIndex);
 
-			byte flags = Audio::Mixer::FLAG_UNSIGNED;
+			byte flags = Audio::FLAG_UNSIGNED;
 			// Background sounds
 			if (type == kChannelTypeBackground)
-				flags |= Audio::Mixer::FLAG_LOOP;
-			Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundResource->data, soundResource->size, DisposeAfterUse::YES, 22050, flags, 0, 0);
+				flags |= Audio::FLAG_LOOP;
+			Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundResource->data, soundResource->size, DisposeAfterUse::YES/*CHECKME*/, 22050, flags, 0, 0);
 
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;

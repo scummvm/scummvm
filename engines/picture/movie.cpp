@@ -33,6 +33,7 @@
 #include "base/version.h"
 
 #include "sound/mixer.h"
+#include "sound/raw.h"
 
 #include "picture/picture.h"
 #include "picture/movie.h"
@@ -199,7 +200,7 @@ void MoviePlayer::fetchAudioChunks() {
 		if (chunkType == 4) {
 			byte *chunkBuffer = new byte[chunkSize];
 			_vm->_arc->read(chunkBuffer, chunkSize);
-			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::Mixer::FLAG_UNSIGNED);
+			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			chunkBuffer = NULL;
 			prefetchChunkCount++;
 			_soundChunkFramesLeft += _framesPerSoundChunk;
