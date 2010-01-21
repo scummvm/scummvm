@@ -1002,8 +1002,8 @@ void run_vm(EngineState *s, int restoring) {
 							if (saveSlot < 0)
 								error("Requested to load invalid save slot");	// should never happen, really
 
-							reg_t argv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special GMM call (argv[0] is NULL)
-							kRestoreGame(s, 2, argv);
+							reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special GMM call (argv[0] is NULL)
+							kRestoreGame(s, 2, restoreArgv);
 						} else {
 							// Call kernel function
 							s->r_acc = kfun.fun(s, argc, argv);
