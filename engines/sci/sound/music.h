@@ -217,7 +217,6 @@ private:
 
 	MusicList _playList;
 	bool _soundOn;
-	byte _reverb;
 	byte _masterVolume;
 };
 

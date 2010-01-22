@@ -37,7 +37,8 @@ enum SciMidiCommands {
 	kEndOfTrack = 0xFC,
 	kSetReverb = 0x50,
 	kMidiHold = 0x52,
-	kUpdateCue = 0x60
+	kUpdateCue = 0x60,
+	kResetOnPause = 0x4C
 };
 
 //  MidiParser_SCI
@@ -57,6 +58,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 	_signalToSet = 0;
 	_dataincAdd = false;
 	_dataincToAdd = 0;
+	_resetOnPause = false;
 	_channelsUsed = 0;
 }
 
@@ -176,7 +178,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			// Also, sci/sound/iterator/iterator.cpp, function BaseSongIterator::parseMidiCommand()
 			switch (info.basic.param1) {
 			case kSetReverb:
-				// TODO: Not implemented yet
+				((MidiPlayer *)_driver)->setReverb(info.basic.param2);
 				break;
 			case kMidiHold:
 				// Check if the hold ID marker is the same as the hold ID
@@ -199,6 +201,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				default:
 					break;
 				}
+				break;
+			case kResetOnPause:
+				_resetOnPause = info.basic.param2;
 				break;
 			// Unhandled SCI commands
 			case 0x46: // LSL3 - binoculars

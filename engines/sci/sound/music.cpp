@@ -142,8 +142,6 @@ MusicEntry *SciMusic::getSlot(reg_t obj) {
 
 void SciMusic::setReverb(byte reverb) {
 	Common::StackLock lock(_mutex);
-	_reverb = reverb;
-
 	_pMidiDrv->setReverb(reverb);
 }
 

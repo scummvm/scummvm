@@ -572,26 +572,27 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 
 	int songcount = 0;
 	byte masterVolume = soundGetMasterVolume();
+	byte reverb = _pMidiDrv->getReverb();
 
 	if (s.isSaving()) {
 		s.syncAsByte(_soundOn);
 		s.syncAsByte(masterVolume);
-		s.syncAsByte(_reverb, VER(17));
+		s.syncAsByte(reverb, VER(17));
 	} else if (s.isLoading()) {
 		if (s.getVersion() >= 15) {
 			s.syncAsByte(_soundOn);
 			s.syncAsByte(masterVolume);
-			_reverb = 0;
-			s.syncAsByte(_reverb, VER(17));
+			reverb = 0;
+			s.syncAsByte(reverb, VER(17));
 		} else {
 			_soundOn = true;
 			masterVolume = 15;
-			_reverb = 0;
+			reverb = 0;
 		}
 
 		soundSetSoundOn(_soundOn);
 		soundSetMasterVolume(masterVolume);
-		setReverb(_reverb);
+		setReverb(reverb);
 	}
 
 	if (s.isSaving())

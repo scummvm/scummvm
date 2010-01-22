@@ -67,6 +67,8 @@ public:
 	}
 	void pause() {
 		allNotesOff();
+		if (_resetOnPause)
+			jumpToTick(0);
 	}
 
 protected:
@@ -86,6 +88,7 @@ protected:
 	int16 _signalToSet;
 	bool _dataincAdd;
 	int16 _dataincToAdd;
+	bool _resetOnPause;
 
 	// A 16-bit mask, containing the channels used
 	// by the currently parsed song
