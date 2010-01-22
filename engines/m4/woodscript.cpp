@@ -328,7 +328,7 @@ void WoodScript::update() {
 		}
 	}
 
-	for (Common::Array<Sequence*>::iterator it = _layers.begin(); it != _layers.end(); it++) {
+	for (Common::Array<Sequence*>::iterator it = _layers.begin(); it != _layers.end(); ++it) {
 		Sequence *sequence = *it;
 
 		// TODO: Use correct clipRect etc.
@@ -341,7 +341,7 @@ void WoodScript::update() {
 
 	// Handle end-of-sequence requests
 	if (_endOfSequenceRequestList.size() > 0) {
-		for (Common::Array<Sequence*>::iterator it = _endOfSequenceRequestList.begin(); it != _endOfSequenceRequestList.end(); it++) {
+		for (Common::Array<Sequence*>::iterator it = _endOfSequenceRequestList.begin(); it != _endOfSequenceRequestList.end(); ++it) {
 			Sequence *sequence = *it;
 
 			EndOfSequenceRequestItem endOfSequenceRequestItem = sequence->getEndOfSequenceRequestItem();
@@ -354,11 +354,11 @@ void WoodScript::update() {
 
 void WoodScript::clear() {
 
-	for (Common::Array<Sequence*>::iterator it = _sequences.begin(); it != _sequences.end(); it++)
+	for (Common::Array<Sequence*>::iterator it = _sequences.begin(); it != _sequences.end(); ++it)
 		delete *it;
 	_sequences.clear();
 
-	for (Common::Array<Machine*>::iterator it = _machines.begin(); it != _machines.end(); it++)
+	for (Common::Array<Machine*>::iterator it = _machines.begin(); it != _machines.end(); ++it)
 		delete *it;
 	_machines.clear();
 

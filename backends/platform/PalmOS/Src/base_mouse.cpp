@@ -55,11 +55,8 @@ void OSystem_PalmBase::setMouseCursor(const byte *buf, uint w, uint h, int hotsp
 		_mouseCurState.w = w;
 		_mouseCurState.h = h;
 
-		if (_mouseDataP)
-			free(_mouseDataP);
-
-		if (_mouseBackupP)
-			free(_mouseBackupP);
+		free(_mouseDataP);
+		free(_mouseBackupP);
 
 		_mouseDataP = (byte *)malloc(w * h);
 		_mouseBackupP = (byte *)malloc(w * h * 2); // if 16bit = *2

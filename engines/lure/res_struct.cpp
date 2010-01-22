@@ -787,7 +787,7 @@ void SequenceDelayList::tick() {
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d",
 		g_system->getMillis());
 
-	for (i = begin(); i != end(); i++) {
+	for (i = begin(); i != end(); ++i) {
 		SequenceDelayData *entry = (*i).get();
 		debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check %xh at time %d", entry->sequenceOffset, entry->timeoutCtr);
 

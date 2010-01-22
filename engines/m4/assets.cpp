@@ -221,7 +221,7 @@ void SpriteAsset::loadMadsSpriteAsset(M4Engine *vm, Common::SeekableReadStream* 
 }
 
 SpriteAsset::~SpriteAsset() {
-	for (Common::Array<SpriteAssetFrame>::iterator it = _frames.begin(); it != _frames.end(); it++) {
+	for (Common::Array<SpriteAssetFrame>::iterator it = _frames.begin(); it != _frames.end(); ++it) {
 		delete (*it).frame;
 	}
 }

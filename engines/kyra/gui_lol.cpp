@@ -2622,7 +2622,7 @@ int GUI_LoL::getInput() {
 	if (_currentMenu == &_savenameMenu) {
 		_vm->updateInput();
 
-		for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); evt++) {
+		for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); ++evt) {
 			if (evt->event.type == Common::EVENT_KEYDOWN)
 				_keyPressed = evt->event.kbd;
 		}

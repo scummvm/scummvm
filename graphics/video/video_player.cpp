@@ -167,7 +167,7 @@ void VideoPlayer::processVideoEvents(Common::List<Common::Event> &stopEvents) {
 			_skipVideo = true;
 		}
 
-		for (Common::List<Common::Event>::const_iterator iter = stopEvents.begin(); iter != stopEvents.end(); iter++) {
+		for (Common::List<Common::Event>::const_iterator iter = stopEvents.begin(); iter != stopEvents.end(); ++iter) {
 			if (curEvent.type == iter->type) {
 				if (iter->type == Common::EVENT_KEYDOWN || iter->type == Common::EVENT_KEYUP) {
 					if (curEvent.kbd.keycode == iter->kbd.keycode) {

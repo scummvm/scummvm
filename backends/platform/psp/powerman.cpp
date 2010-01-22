@@ -359,7 +359,7 @@ int PowerManager::suspend() {
 	// Iterate
 	Common::List<Suspendable *>::iterator i = _suspendList.begin();
 
-	for (; i != _suspendList.end(); i++) {
+	for (; i != _suspendList.end(); ++i) {
 		(*i)->suspend();
 	}
 	
@@ -402,7 +402,7 @@ int PowerManager::resume() {
 	// Iterate
 	Common::List<Suspendable *>::iterator i = _suspendList.begin();
 
-	for (; i != _suspendList.end(); i++) {
+	for (; i != _suspendList.end(); ++i) {
 		(*i)->resume();
 	}
 	

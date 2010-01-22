@@ -57,8 +57,7 @@ namespace CEGUI {
 	}
 
 	ItemSwitch::~ItemSwitch() {
-		if (_backgroundFalse)
-			delete _backgroundFalse;
+		delete _backgroundFalse;
 	}
 
 	bool ItemSwitch::action(int x, int y, bool pushed) {

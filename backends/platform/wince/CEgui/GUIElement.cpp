@@ -120,8 +120,7 @@ namespace CEGUI {
 	}
 
 	GUIElement::~GUIElement() {
-		if (_background)
-			delete _background;
+		delete _background;
 	}
 
 }

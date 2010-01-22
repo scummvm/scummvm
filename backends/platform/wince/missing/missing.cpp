@@ -288,8 +288,7 @@ struct dirent* readdir(DIR* dir) {
 		}
 		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
 
-		if (dir->dd_dir.d_name)
-			free(dir->dd_dir.d_name);
+		free(dir->dd_dir.d_name);
 
 		dir->dd_dir.d_name = strdup(nameFound);
 		dir->dd_dir.d_namlen = strlen(nameFound);
@@ -307,8 +306,7 @@ int closedir(DIR* dir) {
 	if (dir->dd_handle)
 		FindClose((HANDLE)dir->dd_handle);
 
-	if (dir->dd_dir.d_name)
-		free(dir->dd_dir.d_name);
+	free(dir->dd_dir.d_name);
 	free(dir);
 	return 1;
 }
