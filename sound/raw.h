@@ -68,6 +68,11 @@ enum RawFlags {
 /**
  * Creates a audio stream, which plays the given raw data.
  *
+ * The data pointer is assumed to have been allocated with malloc().
+ * In particular, if autofreeBuffer is set to DisposeAfterUse::YES,
+ * then this buffer will be deallocated using free(). So do not
+ * use a buffer allocated with new[]!
+ *
  * @param ptr Data
  * @param len Length of the data (in bytes!)
  * @param rate The sample rate of the data.

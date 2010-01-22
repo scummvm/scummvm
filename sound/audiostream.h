@@ -313,8 +313,8 @@ public:
 	 * Queue a block of raw audio data for playback. This stream
 	 * will play all queued buffers, in the order they were
 	 * queued. After all data contained in them has been played,
-	 * the buffer will be delete[]'d (so make sure to allocate them
-	 * with new[], not with malloc).
+	 * the buffer will be released using free(). So make sure to
+	 * allocate them with malloc(), not with new[]).
 	 */
 	void queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags);
 
