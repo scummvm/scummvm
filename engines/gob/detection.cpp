@@ -76,8 +76,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"geisha", "Geisha"},
 	{"adi2", "ADI 2"},
 	{"adi4", "ADI 4"},
-	{"adibou2","Adibou 2"},
-	{"adibouunknown", "Adibou unknown"},
+	{"adibou2", "Adibou 2"},
+	{"adibou1", "Adibou 1"},
 	{0, 0}
 };
 
@@ -4455,43 +4455,15 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"adibouunknown",
-			"",
-			AD_ENTRY1s("intro.stk", "904a93f46687617bb34e672020fc17a4", 248724),
-			FR_FRA,
-			kPlatformAtariST,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		0, "base.tot", 0
-	},
-	{
-		{
-			"adibouunknown",
-			"",
-			AD_ENTRY1s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134),
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		0, 0, 0
-	},
-	{
-		{
-			"adibou2",
-			"ADIBOU 1",
+			"adibou1",
+			"ADIBOU 1 Environnement 4-7 ans",
 			AD_ENTRY1s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou2,
+		kGameTypeAdibou1,
 		kFeaturesNone,
 		0, 0, 0
 	},
@@ -4542,6 +4514,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"adibou2",
 			"ADIBOU 2.11 Environnement",
 			AD_ENTRY1s("intro.stk", "7b1f1f6f6477f54401e95d913f75e333", 8736904),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"ADIBOU 2.12 Environnement",
+			AD_ENTRY1s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
@@ -4606,24 +4592,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeAdibou2,
 		kFeaturesNone,
 		0, 0, 0
-	},
-	{
-		{
-			"adibouunknown",
-				"ADIB\xD9 prima elementare : Imparo a leggere e a contare",
-			{
-				{"intro.stk", 0, "092707829555f27706920e4cacf1fada", 8737958},
-				{"appbou2.itk", 0, "f7bf045f6bdce5a7607c720e36704f33", 200005632},
-				{0, 0, 0, 0}
-			},
-			IT_ITA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		"adibou.stk", "intro.tot", 0
 	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
 };

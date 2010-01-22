@@ -114,7 +114,7 @@ enum GameType {
 	kGameTypeAdi2,
 	kGameTypeAdi4,
 	kGameTypeAdibou2,
-	kGameTypeAdibouUnknown
+	kGameTypeAdibou1
 };
 
 enum Features {
