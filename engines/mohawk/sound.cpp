@@ -87,13 +87,13 @@ void Sound::initMidi() {
 	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
 
-Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume) {
+Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume, bool loop) {
 	debug (0, "Playing sound %d", id);
 	
 	SndHandle *handle = getHandle();
 	handle->type = kUsedHandle;
 	
-	Audio::AudioStream* audStream = NULL;
+	Audio::AudioStream *audStream = NULL;
 
 	switch (_vm->getGameType()) {
 	case GType_MYST:
@@ -136,6 +136,10 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume)
 	}
 	
 	if (audStream) {
+		// Set the stream to loop here if it's requested
+		if (loop)
+			audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
+	
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
 		return &handle->handle;
 	}
@@ -292,7 +296,11 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	sndHandle.id = id;
 	_currentSLSTSounds.push_back(sndHandle);
 	
-	Audio::AudioStream *audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id), loop);
+	Audio::AudioStream *audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id));
+	
+	// Loop here if necessary
+	if (loop)
+		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
 	
 	// The max mixer volume is 255 and the max Riven volume is 256. Just change it to 255.
 	if (volume == 256)
@@ -329,7 +337,7 @@ Audio::AudioStream *Sound::getCSAmtrakMusic(uint16 id) {
 	return audStream;
 }
 
-Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream, bool loop) {
+Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream) {
 	bool foundData = false;
 	uint32 tag = 0;
 	ADPC_Chunk adpc;
@@ -419,6 +427,12 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			data_chunk.loopStart = stream->readUint32BE();
 			data_chunk.loopEnd = stream->readUint32BE();
 
+			// NOTE: We currently ignore all of the loop parameters here. Myst uses the loop
+			// variable but the loopStart and loopEnd are always 0 and the size of the sample.
+			// Myst ME doesn't use the Mohawk Sound format and just standard WAVE files and
+			// therefore does not contain any of this metadata and we have to specify whether
+			// or not to loop elsewhere.
+
 			data_chunk.audio_data = (byte *)malloc(data_chunk.size);
 			stream->read(data_chunk.audio_data, data_chunk.size);
 			foundData = true;
@@ -436,20 +450,19 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
 	if (data_chunk.encoding == kCodecRaw) {
 		byte flags = Audio::FLAG_UNSIGNED;
+
 		if (data_chunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
-		if (data_chunk.loop == 0xFFFF || loop)
-			flags |= Audio::FLAG_LOOP;
-		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES, data_chunk.sample_rate, flags, data_chunk.loopStart, data_chunk.loopEnd);
+
+		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES, data_chunk.sample_rate, flags);
 	} else if (data_chunk.encoding == kCodecADPCM) {
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
-
-		return makeLoopingAudioStream(Audio::makeADPCMStream(dataStream, true, data_chunk.size, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign), loop ? 0 : 1);
+		return Audio::makeADPCMStream(dataStream, true, data_chunk.size, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign);
 	} else if (data_chunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
-		return Audio::makeLoopingAudioStream(Audio::makeMP3Stream(dataStream, DisposeAfterUse::YES), loop ? 0 : 1);
+		return Audio::makeMP3Stream(dataStream, DisposeAfterUse::YES);
 #else
 		warning ("MAD library not included - unable to play MP2 audio");
 #endif
@@ -460,7 +473,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	return NULL;
 }
 
-Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *stream, bool loop) {
+Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *stream) {
 	uint16 header = stream->readUint16BE();
 	uint16 rate = 0;
 	uint32 size = 0;
@@ -481,9 +494,7 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	stream->read(data, size);
 	delete stream;
 	
-	return Audio::makeLoopingAudioStream(
-			Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED),
-			loop ? 0 : 1);
+	return Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED);
 }
 
 SndHandle *Sound::getHandle() {

@@ -397,7 +397,10 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 		_sound->stopSound();
 		// TODO: Need to keep sound handle and add function to change volume of
 		// looped running sound for kMystSoundActionChangeVolume type
-		_sound->playSound(soundAction, true, soundActionVolume);
+
+		// NOTE: All sounds are looped when played via the sound section of the
+		// VIEW resources.
+		_sound->playSound(soundAction, true, soundActionVolume, true);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}
