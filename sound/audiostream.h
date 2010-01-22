@@ -113,7 +113,7 @@ public:
 	 *
 	 * @param stream Stream to loop
 	 * @param loops How often to loop (0 = infinite)
-	 * @param disposeAfteruse Destroy the stream after the LoopingAudioStream has finished playback.
+	 * @param disposeAfterUse Destroy the stream after the LoopingAudioStream has finished playback.
 	 */
 	LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	~LoopingAudioStream();
@@ -138,16 +138,16 @@ private:
 };
 
 /**
- * Wrapper functionallity to efficiently create a stream, which might be looped.
+ * Wrapper functionality to efficiently create a stream, which might be looped.
  *
  * Note that this function does not return a LoopingAudioStream, because it does
  * not create one, when the loop count is "1". This allows to keep the runtime
- * overhead down, when the code does not require any functionallity only offered
+ * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
  * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
  * @param loops How often to loop (0 = infinite)
- * @return A new AudioStream, which offers the desired functionallity.
+ * @return A new AudioStream, which offers the desired functionality.
  */
 AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops);
 
@@ -197,14 +197,14 @@ public:
 };
 
 /**
- * Wrapper functionallity to efficiently create a stream, which might be looped
+ * Wrapper functionality to efficiently create a stream, which might be looped
  * in a certain interval.
  *
  * This automatically starts the stream at time "start"!
  *
  * Note that this function does not return a LoopingAudioStream, because it does
  * not create one, when the loop count is "1". This allows to keep the runtime
- * overhead down, when the code does not require any functionallity only offered
+ * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
  * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
