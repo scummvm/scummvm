@@ -602,6 +602,9 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	if (_effects)
 		_effects->close();
 
+	// FIXME: _effects is leaked here! However, we can't just
+	// delete it, because this would delete the gameFile object,
+	// held by the current _effects object.
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		_effects = new WavSound(_mixer, gameFile, base);
 	else
