@@ -36,7 +36,7 @@
 namespace Stark {
 
 ISS::ISS(Common::SeekableReadStream *str){
-	Common::String codec = Common::String::emptyString;
+	Common::String codec = "";
 	uint16 blockSize, channels, freq;
 	uint32 size;
 	

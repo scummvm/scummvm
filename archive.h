@@ -67,7 +67,7 @@ public:
 	Common::SeekableReadStream *getRawData(uint32 fileNum);
 	
 	inline static Common::String readString(Common::SeekableReadStream *stream) {
-		Common::String ret = Common::String::emptyString;
+		Common::String ret = "";
 		byte ch;
 		while ((ch = stream->readByte()) != 0x20)
 			ret += ch;
