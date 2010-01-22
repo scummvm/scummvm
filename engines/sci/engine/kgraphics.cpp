@@ -707,7 +707,6 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	GuiResourceId viewId;
 	int16 loopNo;
 	int16 celNo;
-	int16 priority;
 	reg_t listSeeker;
 	Common::String *listStrings = NULL;
 	const char **listEntries = NULL;
@@ -745,10 +744,9 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			loopNo = (l & 0x80) ? l - 256 : l;
 			int c = GET_SEL32V(s->_segMan, controlObject, cel);
 			celNo = (c & 0x80) ? c - 256 : c;
-			priority = GET_SEL32V(s->_segMan, controlObject, priority);
 		}
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y - 1);
-		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
+		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_LIST:
