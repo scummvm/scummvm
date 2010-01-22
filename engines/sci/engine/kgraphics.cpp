@@ -185,6 +185,14 @@ reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 }
 
 Common::Rect kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
+	// TODO: find out what to do when just one coordinate is wrong - if we should fix it the same way as in jones
+	//        needs some serious work
+	if ((x > x1) && (y > y1)) {
+		// We get this in jones when challenging jones -> upper left is right, lower right is 0, 0
+		//  If we "fix this" we will draw a box that isnt supposed to be there and also draw the button to the wrong
+		//  space
+		return Common::Rect(x, y, x, y);
+	}
 	if (x > x1) SWAP(x, x1);
 	if (y > y1) SWAP(y, y1);
 	return Common::Rect(x, y, x1, y1);
