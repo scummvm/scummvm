@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>scummvm</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.1.0svn, Copyright 2001-2008 The ScummVM team</string>
+	<string>1.1.0svn, Copyright 2001-2010 The ScummVM team</string>
 	<key>CFBundleIconFile</key>
 	<string>scummvm.icns</string>
 	<key>CFBundleIdentifier</key>
