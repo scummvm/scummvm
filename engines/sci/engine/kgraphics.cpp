@@ -707,6 +707,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	GuiResourceId viewId;
 	int16 loopNo;
 	int16 celNo;
+	int16 priority;
 	reg_t listSeeker;
 	Common::String *listStrings = NULL;
 	const char **listEntries = NULL;
@@ -744,9 +745,17 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			loopNo = (l & 0x80) ? l - 256 : l;
 			int c = GET_SEL32V(s->_segMan, controlObject, cel);
 			celNo = (c & 0x80) ? c - 256 : c;
+			// Game-specific: *ONLY* the jones EGA/VGA sierra interpreter contain code using priority selector
+			//  ALL other games use a hardcoded -1 (madness!)
+			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
+			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
+			if (s->_gameId == "jones")
+				priority = GET_SEL32V(s->_segMan, controlObject, priority);
+			else
+				priority = -1;
 		}
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y - 1);
-		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, style, hilite);
+		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_LIST:
