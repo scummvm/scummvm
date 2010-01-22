@@ -35,13 +35,10 @@ namespace Stark {
 
 GfxOpenGL::GfxOpenGL() {
 	_storedDisplay = NULL;
-	_emergFont = 0;
 }
 
 GfxOpenGL::~GfxOpenGL() {
 	delete[] _storedDisplay;
-	if (_emergFont && glIsList(_emergFont))
-		glDeleteLists(_emergFont, 128);
 }
 
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
@@ -172,11 +169,11 @@ void GfxOpenGL::translateViewpointFinish() {
 	glPopMatrix();
 }
 
-void GfxOpenGL::drawBitmap(Surface* bmp) {
+void GfxOpenGL::drawSurface(Graphics::Surface* surface) {
 	glPixelZoom(1.0f, -1.0f);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glRasterPos2f(-1.0f, 0.75f);
-	glDrawPixels(bmp->_width, bmp->_height, GL_RGB, GL_UNSIGNED_BYTE, bmp->_pixels);
+	glDrawPixels(surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
 }
 
 } // end of namespace Stark

@@ -120,11 +120,11 @@ void StarkEngine::updateDisplayScene(){
 	Common::File _f;
 	_f.open("house_layercenter.xmg");
 	Common::SeekableReadStream *dat = _f.readStream(_f.size());
-	Surface *bmp;
-	bmp = xmg->decodeImage(dat);
-	g_driver->drawBitmap(bmp);
+	Graphics::Surface *surf;
+	surf = xmg->decodeImage(dat);
+	g_driver->drawSurface(surf);
 	delete xmg;
-	delete bmp;
+	delete surf;
 	delete dat;
 
 	_f.close();

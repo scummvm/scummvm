@@ -27,8 +27,8 @@
 #define STARK_GFX_BASE_H
 
 #include "engines/stark/color.h"
+#include "graphics/surface.h"
 #include "graphics/vector3d.h"
-#include "engines/stark/gfx.h"
 
 namespace Stark {
 
@@ -63,7 +63,7 @@ public:
 	virtual void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawBitmap(Surface* bmp) = 0;
+	virtual void drawSurface(Graphics::Surface* surface) = 0;
 
 /*
 	virtual void disableLights() = 0;

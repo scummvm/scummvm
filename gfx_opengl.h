@@ -61,16 +61,11 @@ byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 
-	void drawBitmap(Surface* bmp);
+	void drawSurface(Graphics::Surface* bmp);
 
 protected:
 
 private:
-	GLuint _emergFont;
-	int _smushNumTex;
-	GLuint *_smushTexIds;
-	int _smushWidth;
-	int _smushHeight;
 	byte *_storedDisplay;
 };
 

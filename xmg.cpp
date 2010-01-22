@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
+Graphics::Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 
 	_stream = stream;
 
@@ -43,10 +43,12 @@ Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	header.unknown2 = stream->readUint32LE();
 	header.unknown3 = stream->readUint32LE();
 
-	Surface *surface = new Surface(header.width, header.height);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->create(header.width, header.height, 3);
+
 	_width = header.width;
 
-	_pixels = surface->_pixels;
+	_pixels = (byte *)surface->pixels;
 	_currX = 0;
 	_currY = 0;
 
@@ -55,7 +57,7 @@ Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 		if (_currX >= header.width) {
 			_currX -= 640;
 			_currY += 2;
-			_pixels = surface->_pixels + (3 * (_width * _currY + _currX));
+			_pixels = (byte *)surface->getBasePtr(_currX, _currY);
 			if (_currY >= header.height)
 				break;
 		}

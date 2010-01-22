@@ -29,7 +29,7 @@
 #include "common/sys.h"
 #include "common/stream.h"
 
-#include "engines/stark/gfx.h"
+#include "graphics/surface.h"
 
 namespace Stark {
 
@@ -55,7 +55,7 @@ public:
 	XMGDecoder() {}
 	~XMGDecoder() {}
 	
-	Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 
 private:
 	void processYCrCb(uint16 count);
