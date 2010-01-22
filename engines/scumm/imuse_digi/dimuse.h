@@ -87,7 +87,6 @@ private:
 	int _stopingSequence;
 	bool _radioChatterSFX;
 
-	int32 makeMixerFlags(int32 flags);
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(Track *track);

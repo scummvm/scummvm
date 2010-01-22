@@ -76,14 +76,18 @@ IMuseDigital::~IMuseDigital() {
 	free(_audioNames);
 }
 
-int32 IMuseDigital::makeMixerFlags(int32 flags) {
+static int32 makeMixerFlags(Track *track) {
+	const int32 flags = track->mixerFlags;
 	int32 mixerFlags = 0;
 	if (flags & kFlagUnsigned)
 		mixerFlags |= Audio::FLAG_UNSIGNED;
 	if (flags & kFlag16Bits)
 		mixerFlags |= Audio::FLAG_16BITS;
-	if (flags & kFlagLittleEndian)
+
+#ifdef SCUMM_LITTLE_ENDIAN
+	if (track->sndDataExtComp)
 		mixerFlags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
 	if (flags & kFlagStereo)
 		mixerFlags |= Audio::FLAG_STEREO;
 	return mixerFlags;
@@ -186,7 +190,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			track->feedSize = freq * channels;
 			track->mixerFlags = 0;
 			if (channels == 2)
-				track->mixerFlags = kFlagStereo | kFlagReverseStereo;
+				track->mixerFlags = kFlagStereo;
 
 			if ((bits == 12) || (bits == 16)) {
 				track->mixerFlags |= kFlag16Bits;
@@ -196,15 +200,10 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			} else
 				error("IMuseDigital::saveOrLoad(): Can't handle %d bit samples", bits);
 
-#ifdef SCUMM_LITTLE_ENDIAN
-			if (track->sndDataExtComp)
-				track->mixerFlags |= kFlagLittleEndian;
-#endif
-
 			track->stream = Audio::makeQueuingAudioStream(freq, (track->mixerFlags & kFlagStereo) != 0);
 
 			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(),
-							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagReverseStereo) != 0);
+							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagStereo) != 0);
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}
@@ -344,7 +343,7 @@ void IMuseDigital::callback() {
 						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
-						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize, DisposeAfterUse::YES, makeMixerFlags(track->mixerFlags));
+						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize, DisposeAfterUse::YES, makeMixerFlags(track));
 						track->regionOffset += curFeedSize;
 					} else
 						free(tmpSndBufferPtr);

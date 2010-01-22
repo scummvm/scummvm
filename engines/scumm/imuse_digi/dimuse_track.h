@@ -38,13 +38,7 @@ namespace Scumm {
 enum {
 	kFlagUnsigned = 1 << 0,
 	kFlag16Bits = 1 << 1,
-	kFlagLittleEndian = 1 << 2,
-	kFlagStereo = 1 << 3,
-	kFlagReverseStereo = 1 << 4
-
-	// Not used by Digital iMUSE
-	// kFlagAutoFree = 1 << 5,
-	// kFlagLoop = 1 << 6
+	kFlagStereo = 1 << 3
 };
 
 struct Track {
@@ -72,7 +66,7 @@ struct Track {
 	int32 soundType;	// type of sound data (kSpeechSoundType, kSFXSoundType, kMusicSoundType)
 	int32 feedSize;		// size of sound data needed to be filled at each callback iteration
 	int32 dataMod12Bit;	// value used between all callback to align 12 bit source of data
-	int32 mixerFlags;	// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagReverseStereo, kFlagUnsigned, kFlagLittleEndian)
+	int32 mixerFlags;	// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagUnsigned)
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
 	Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
