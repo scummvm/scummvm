@@ -100,6 +100,7 @@ void MidiParser_SCI::unloadMusic() {
 	allNotesOff();
 	_num_tracks = 0;
 	_active_track = 255;
+	_resetOnPause = false;
 
 	if (_mixedData) {
 		delete[] _mixedData;
