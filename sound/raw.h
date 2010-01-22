@@ -60,7 +60,7 @@ enum RawFlags {
 	/** sound is in stereo (default: mono) */
 	FLAG_STEREO = 1 << 3,
 
-	/** loop the audio */
+	/** loop the audio (deprecated) */
 	FLAG_LOOP = 1 << 6
 };
 
