@@ -618,7 +618,7 @@ uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menu
 	uint16 itemId = 0;
 
 	if (!menuId)
-		error("No menu active, but mouseFindMenuItemSelection() called");
+		return 0;
 
 	if ((mousePosition.x < _menuRect.left) || (mousePosition.x >= _menuRect.right))
 		return 0;
