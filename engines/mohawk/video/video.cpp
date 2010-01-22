@@ -23,7 +23,7 @@
  *
  */
 
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 #include "mohawk/video/video.h"
 #include "mohawk/video/qt_player.h"
 

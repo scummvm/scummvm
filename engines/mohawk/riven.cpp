@@ -83,7 +83,7 @@ Common::Error MohawkEngine_Riven::run() {
 
 	// Open extras.mhk for common images (non-existant in the demo)
 	if (!(getFeatures() & GF_DEMO)) {
-		_extrasFile = new MohawkFile();
+		_extrasFile = new MohawkArchive();
 		_extrasFile->open("extras.mhk");
 	}
 
@@ -230,7 +230,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
 		Common::String filename = Common::String(prefix) + endings[i];
 		if (Common::File::exists(filename)) {
-			MohawkFile *mhk = new MohawkFile();
+			MohawkArchive *mhk = new MohawkArchive();
 			mhk->open(filename);
 			_mhk.push_back(mhk);
 		}

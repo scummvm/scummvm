@@ -29,7 +29,7 @@
 #include "common/savefile.h"
 #include "common/str.h"
 
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -53,7 +53,7 @@ public:
 private:
 	MohawkEngine_Riven *_vm;
 	Common::SaveFileManager *_saveFileMan;
-	MohawkFile *_loadFile;
+	MohawkArchive *_loadFile;
 		
 	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genNAMESection();

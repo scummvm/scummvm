@@ -23,19 +23,19 @@
  *
  */
 
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 
 #include "common/util.h"
 
 namespace Mohawk {
 
-MohawkFile::MohawkFile() {
+MohawkArchive::MohawkArchive() {
 	_mhk = NULL;
 	_types = NULL;
 	_fileTable = NULL;
 }
 
-void MohawkFile::open(Common::String filename) {
+void MohawkArchive::open(Common::String filename) {
 	Common::File *file = new Common::File();
 	if (!file->open(filename.c_str()))
 		error ("Could not open file \'%s\'", filename.c_str());
@@ -45,7 +45,7 @@ void MohawkFile::open(Common::String filename) {
 	open(file);
 }
 
-void MohawkFile::close() {
+void MohawkArchive::close() {
 	delete _mhk; _mhk = NULL;	
 	delete[] _types; _types = NULL;
 	delete[] _fileTable; _fileTable = NULL;
@@ -53,7 +53,7 @@ void MohawkFile::close() {
 	_curFile.clear();
 }
 
-void MohawkFile::open(Common::SeekableReadStream *stream) {
+void MohawkArchive::open(Common::SeekableReadStream *stream) {
 	// Make sure no other file is open...
 	close();
 	_mhk = stream;
@@ -167,7 +167,7 @@ void MohawkFile::open(Common::SeekableReadStream *stream) {
 	}
 }
 
-bool MohawkFile::hasResource(uint32 tag, uint16 id) {
+bool MohawkArchive::hasResource(uint32 tag, uint16 id) {
 	if (!_mhk)
 		return false;
 
@@ -179,7 +179,7 @@ bool MohawkFile::hasResource(uint32 tag, uint16 id) {
 	return (getIdIndex(typeIndex, id) >= 0);
 }
 
-uint32 MohawkFile::getOffset(uint32 tag, uint16 id) {
+uint32 MohawkArchive::getOffset(uint32 tag, uint16 id) {
 	assert(_mhk);
 
 	int16 typeIndex = getTypeIndex(tag);
@@ -191,9 +191,9 @@ uint32 MohawkFile::getOffset(uint32 tag, uint16 id) {
 	return _fileTable[_types[typeIndex].resTable.entries[idIndex].index - 1].offset;
 }
 
-Common::SeekableReadStream *MohawkFile::getRawData(uint32 tag, uint16 id) {
+Common::SeekableReadStream *MohawkArchive::getRawData(uint32 tag, uint16 id) {
 	if (!_mhk)
-		error ("MohawkFile::getRawData - No File in Use");
+		error ("MohawkArchive::getRawData - No File in Use");
 
 	int16 typeIndex = getTypeIndex(tag);
 
@@ -222,7 +222,7 @@ Common::SeekableReadStream *MohawkFile::getRawData(uint32 tag, uint16 id) {
 	return new Common::SeekableSubReadStream(_mhk, _fileTable[fileTableIndex].offset, _fileTable[fileTableIndex].offset + _fileTable[fileTableIndex].dataSize);
 }
 
-void OldMohawkFile::open(Common::SeekableReadStream *stream) {
+void LivingBooksArchive_v1::open(Common::SeekableReadStream *stream) {
 	close();
 	_mhk = stream;
 	
@@ -308,7 +308,7 @@ void OldMohawkFile::open(Common::SeekableReadStream *stream) {
 
 }
 
-uint32 OldMohawkFile::getOffset(uint32 tag, uint16 id) {
+uint32 LivingBooksArchive_v1::getOffset(uint32 tag, uint16 id) {
 	assert(_mhk);
 
 	int16 typeIndex = getTypeIndex(tag);
@@ -320,9 +320,9 @@ uint32 OldMohawkFile::getOffset(uint32 tag, uint16 id) {
 	return _types[typeIndex].resTable.entries[idIndex].offset;
 }
 
-Common::SeekableReadStream *OldMohawkFile::getRawData(uint32 tag, uint16 id) {
+Common::SeekableReadStream *LivingBooksArchive_v1::getRawData(uint32 tag, uint16 id) {
 	if (!_mhk)
-		error ("OldMohawkFile::getRawData - No File in Use");
+		error ("LivingBooksArchive_v1::getRawData - No File in Use");
 
 	int16 typeIndex = getTypeIndex(tag);
 

@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	dialogs.o \
-	file.o \
 	graphics.o \
 	livingbooks.o \
 	mohawk.o \
@@ -15,6 +14,7 @@ MODULE_OBJS = \
 	myst_vars.o \
 	myst_saveload.o \
 	myst_scripts.o \
+	resource.o \
 	riven.o \
 	riven_external.o \
 	riven_saveload.o \

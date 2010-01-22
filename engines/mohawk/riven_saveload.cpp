@@ -31,7 +31,7 @@
 namespace Mohawk {
 	
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
-	_loadFile = new MohawkFile();
+	_loadFile = new MohawkArchive();
 }
 
 RivenSaveLoad::~RivenSaveLoad() {

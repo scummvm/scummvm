@@ -68,7 +68,7 @@ void Sound::loadRivenSounds(uint16 stack) {
 	static const char prefixes[] = { 'a', 'b', 'g', 'j', 'o', 'p', 'r', 't' };
 
 	if (!_rivenSoundFile)
-		_rivenSoundFile = new MohawkFile();
+		_rivenSoundFile = new MohawkArchive();
 	
 	_rivenSoundFile->open(Common::String(prefixes[stack]) + "_Sounds.mhk");
 }
@@ -128,7 +128,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume)
 		else
 			audStream = getCSAmtrakMusic(id);
 		break;
-	case GType_OLDLIVINGBOOKS:
+	case GType_LIVINGBOOKSV1:
 		audStream = makeOldMohawkWaveStream(_vm->getRawData(ID_WAV, id));
 		break;
 	default:
@@ -322,7 +322,7 @@ void Sound::resumeSLST() {
 Audio::AudioStream *Sound::getCSAmtrakMusic(uint16 id) {
 	char filename[18];
 	sprintf(filename, "MUSIC/MUSIC%02d.MHK", id);
-	MohawkFile *file = new MohawkFile();
+	MohawkArchive *file = new MohawkArchive();
 	file->open(filename);
 	Audio::AudioStream *audStream = makeMohawkWaveStream(file->getRawData(ID_TWAV, 2000 + id));
 	delete file;

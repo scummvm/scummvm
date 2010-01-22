@@ -30,8 +30,8 @@
 
 #include "mohawk/sound.h"
 
-#ifndef MOHAWK_FILE_H
-#define MOHAWK_FILE_H
+#ifndef MOHAWK_RESOURCE_H
+#define MOHAWK_RESOURCE_H
 
 namespace Mohawk {
 
@@ -173,10 +173,10 @@ struct RSRC_Header {
 	uint16 file_table_size;
 };
 
-class MohawkFile {
+class MohawkArchive {
 public:
-	MohawkFile();
-	virtual ~MohawkFile() { close(); }
+	MohawkArchive();
+	virtual ~MohawkArchive() { close(); }
 	
 	void open(Common::String filename);
 	virtual void open(Common::SeekableReadStream *stream);
@@ -216,10 +216,10 @@ private:
 	}
 };
 
-class OldMohawkFile : public MohawkFile {
+class LivingBooksArchive_v1 : public MohawkArchive {
 public:
-	OldMohawkFile() : MohawkFile() {}
-	~OldMohawkFile() {}
+	LivingBooksArchive_v1() : MohawkArchive() {}
+	~LivingBooksArchive_v1() {}
 	
 	void open(Common::SeekableReadStream *stream);
 	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);

@@ -581,7 +581,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_NEWLIVINGBOOKS,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -597,7 +597,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_NEWLIVINGBOOKS,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -660,7 +660,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -675,7 +675,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -690,7 +690,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		0,
 		0
 	},
@@ -705,7 +705,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -720,7 +720,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -735,7 +735,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -750,7 +750,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -765,7 +765,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -780,7 +780,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -795,7 +795,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -810,7 +810,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -825,7 +825,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			Common::GUIO_NONE
 		},
-		GType_OLDLIVINGBOOKS,
+		GType_LIVINGBOOKSV1,
 		GF_DEMO,
 		0
 	},
@@ -840,7 +840,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_NEWLIVINGBOOKS,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -856,7 +856,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE
 		},
-		GType_NEWLIVINGBOOKS,
+		GType_LIVINGBOOKSV3,
 		0,
 		0
 	},
@@ -1047,8 +1047,8 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Mohawk::GType_RIVEN:
 			*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
 			break;
-		case Mohawk::GType_OLDLIVINGBOOKS:
-		case Mohawk::GType_NEWLIVINGBOOKS:
+		case Mohawk::GType_LIVINGBOOKSV1:
+		case Mohawk::GType_LIVINGBOOKSV3:
 			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
 			break;
 		case Mohawk::GType_ZOOMBINI:

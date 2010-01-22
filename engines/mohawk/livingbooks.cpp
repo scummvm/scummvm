@@ -24,7 +24,7 @@
  */
 
 #include "mohawk/livingbooks.h"
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 
 #include "common/events.h"
 
@@ -148,9 +148,9 @@ void MohawkEngine_LivingBooks::loadIntro() {
 		filename = getFileNameFromConfig("Intro", "Page1.r");
 
 	if (!filename.empty() && Common::File::exists(filename)) {
-		MohawkFile *introFile = createMohawkFile();
-		introFile->open(filename);
-		_mhk.push_back(introFile);
+		MohawkArchive *introArchive = createMohawkArchive();
+		introArchive->open(filename);
+		_mhk.push_back(introArchive);
 	}
 
 	filename = getFileNameFromConfig("Intro", "Page2");
@@ -159,9 +159,9 @@ void MohawkEngine_LivingBooks::loadIntro() {
 		filename = getFileNameFromConfig("Intro", "Page2.r");
 	
 	if (!filename.empty() && Common::File::exists(filename)) {
-		MohawkFile *coverFile = createMohawkFile();
-		coverFile->open(filename);
-		_mhk.push_back(coverFile);
+		MohawkArchive *coverArchive = createMohawkArchive();
+		coverArchive->open(filename);
+		_mhk.push_back(coverArchive);
 	}
 }
 
@@ -323,8 +323,8 @@ Common::String MohawkEngine_LivingBooks::convertWinFileName(Common::String strin
 	return filename;
 }
 
-MohawkFile *MohawkEngine_LivingBooks::createMohawkFile() const {
-	return (getGameType() == GType_NEWLIVINGBOOKS) ? new MohawkFile() : new OldMohawkFile();
+MohawkArchive *MohawkEngine_LivingBooks::createMohawkArchive() const {
+	return (getGameType() == GType_LIVINGBOOKSV1) ? new LivingBooksArchive_v1() : new MohawkArchive();
 }
 
 } // End of namespace Mohawk

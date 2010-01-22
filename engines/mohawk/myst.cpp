@@ -30,7 +30,7 @@
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_saveload.h"
 #include "mohawk/dialogs.h"
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 #include "mohawk/video/video.h"
 
 namespace Mohawk {
@@ -223,7 +223,7 @@ Common::Error MohawkEngine_Myst::run() {
 
 	// Load Help System (Masterpiece Edition Only)
 	if (getFeatures() & GF_ME) {
-		MohawkFile *mhk = new MohawkFile();
+		MohawkArchive *mhk = new MohawkArchive();
 		mhk->open("help.dat");
 		_mhk.push_back(mhk);
 	}
@@ -316,10 +316,10 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 	// If the array is empty, add a new one. Otherwise, delete the first
 	// entry which is the stack file (the second, if there, is the help file).
 	if (_mhk.empty())
-		_mhk.push_back(new MohawkFile());
+		_mhk.push_back(new MohawkArchive());
 	else {
 		delete _mhk[0];
-		_mhk[0] = new MohawkFile();
+		_mhk[0] = new MohawkArchive();
 	}
 
 	_mhk[0]->open(mystFiles[_curStack]);

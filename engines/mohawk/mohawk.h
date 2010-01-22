@@ -47,8 +47,8 @@ enum MohawkGameType {
 	GType_TREEHOUSE,
 	GType_1STDEGREE,
 	GType_CSUSA,
-	GType_OLDLIVINGBOOKS,
-	GType_NEWLIVINGBOOKS
+	GType_LIVINGBOOKSV1,
+	GType_LIVINGBOOKSV3
 };
 
 enum MohawkGameFeatures {
@@ -61,7 +61,7 @@ enum MohawkGameFeatures {
 struct MohawkGameDescription;
 class Sound;
 class PauseDialog;
-class MohawkFile;
+class MohawkArchive;
 class VideoManager;
 
 class MohawkEngine : public ::Engine {
@@ -98,7 +98,7 @@ private:
 
 protected:
 	// An array holding the main Mohawk archives require by the games
-	Common::Array<MohawkFile *> _mhk;
+	Common::Array<MohawkArchive *> _mhk;
 };
 
 } // End of namespace Mohawk

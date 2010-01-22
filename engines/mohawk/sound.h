@@ -36,7 +36,7 @@
 #include "sound/mixer.h"
 
 #include "mohawk/mohawk.h"
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -134,7 +134,7 @@ public:
 
 private:
 	MohawkEngine *_vm;
-	MohawkFile *_rivenSoundFile;
+	MohawkArchive *_rivenSoundFile;
 	MidiDriver *_midiDriver;
 	MidiParser *_midiParser;
 

@@ -85,8 +85,8 @@ private:
 	Common::String getFileNameFromConfig(Common::String section, Common::String key);
 	
 	// Platform/Version functions
-	bool isBigEndian() const { return getGameType() == GType_NEWLIVINGBOOKS || getPlatform() == Common::kPlatformMacintosh; }
-	MohawkFile *createMohawkFile() const;
+	bool isBigEndian() const { return getGameType() == GType_LIVINGBOOKSV3 || getPlatform() == Common::kPlatformMacintosh; }
+	MohawkArchive *createMohawkArchive() const;
 };
 
 } // End of namespace Mohawk

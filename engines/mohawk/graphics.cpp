@@ -23,7 +23,7 @@
  *
  */
 
-#include "mohawk/file.h"
+#include "mohawk/resource.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst.h"
 #include "mohawk/riven.h"
@@ -671,7 +671,7 @@ void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 }
 
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm) : _vm(vm) {
-	_bmpDecoder = (_vm->getGameType() == GType_OLDLIVINGBOOKS) ? new OldMohawkBitmap() : new MohawkBitmap();
+	_bmpDecoder = (_vm->getGameType() == GType_LIVINGBOOKSV1) ? new OldMohawkBitmap() : new MohawkBitmap();
 	_palette = new byte[256 * 4];
 	memset(_palette, 0, 256 * 4);
 }
@@ -682,7 +682,7 @@ LBGraphics::~LBGraphics() {
 }
 
 void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
-	if (_vm->getGameType() == GType_OLDLIVINGBOOKS) {
+	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
 		// Drawing images in the old format isn't supported (yet)
 		ImageData *imageData = _bmpDecoder->decodeImage(_vm->wrapStreamEndian(ID_BMAP, image));
 		delete imageData;
@@ -708,7 +708,7 @@ void LBGraphics::setPalette(uint16 id) {
 	// Old Living Books gamnes use the old CTBL-style palette format while newer
 	// games use the better tPAL format which can store partial palettes.
 
-	if (_vm->getGameType() == GType_OLDLIVINGBOOKS) {
+	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
 		Common::SeekableSubReadStreamEndian *ctblStream = _vm->wrapStreamEndian(ID_CTBL, id);
 		uint16 colorCount = ctblStream->readUint16();
 	

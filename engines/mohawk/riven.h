@@ -34,7 +34,7 @@
 namespace Mohawk {
 
 struct MohawkGameDescription;
-class MohawkFile;
+class MohawkArchive;
 class RivenGraphics;
 class RivenExternal;
 class RivenConsole;
@@ -120,7 +120,7 @@ public:
 	bool hasFeature(EngineFeature f) const;
 
 private:
-	MohawkFile *_extrasFile; // We need a separate handle for the extra data
+	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
 	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
 	GUI::SaveLoadChooser *_loadDialog;

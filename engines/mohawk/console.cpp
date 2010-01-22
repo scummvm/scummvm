@@ -630,11 +630,11 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 		return true;
 	}
 
-	if (_vm->getGameType() == GType_OLDLIVINGBOOKS)
+	if (_vm->getGameType() == GType_LIVINGBOOKSV1)
 		DebugPrintf("This isn't supported in the old Living Books games (yet)!\n");
 
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]));
-	return _vm->getGameType() != GType_OLDLIVINGBOOKS;
+	return _vm->getGameType() != GType_LIVINGBOOKSV1;
 }
 
 } // End of namespace Mohawk
