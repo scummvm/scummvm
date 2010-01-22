@@ -66,6 +66,8 @@ void Gfx::init(Text *text) {
 	_text->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->getWidth(), _screen->getHeight());
 	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
+	_menuRect = Common::Rect(0, 0, _screen->getWidth(), 10);
+	_menuLine = Common::Rect(0, 9, _screen->getWidth(), 10);
 
 	_EGAdrawingVisualize = false;
 

@@ -105,6 +105,8 @@ public:
 
 	Port *_menuPort;
 	Common::Rect _menuBarRect;
+	Common::Rect _menuRect;
+	Common::Rect _menuLine;
 	Port *_curPort;
 
 	View *getView(GuiResourceId viewNum);

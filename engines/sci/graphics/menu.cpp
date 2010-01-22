@@ -300,8 +300,9 @@ void Menu::drawBar() {
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
 
-	// Hardcoded black on white
+	// Hardcoded black on white and a black line afterwards
 	_gfx->FillRect(_gfx->_menuBarRect, 1, _screen->getColorWhite());
+	_gfx->FillRect(_gfx->_menuLine, 1, 0);
 	_gfx->PenColor(0);
 	_gfx->MoveTo(8, 1);
 
@@ -418,7 +419,7 @@ reg_t Menu::select(reg_t eventObject) {
 	}
 	if (!_barSaveHandle.isNull()) {
 		_gfx->BitsRestore(_barSaveHandle);
-		_gfx->BitsShow(_gfx->_menuBarRect);
+		_gfx->BitsShow(_gfx->_menuRect);
 		_barSaveHandle = NULL_REG;
 	}
 	if (_oldPort)
@@ -559,6 +560,8 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	}
 	_gfx->TextGreyedOutput(false);
 
+	// Draw the black line again
+	_gfx->FillRect(_gfx->_menuLine, 1, 0);
 
 	_menuRect.left -= 8;
 	_menuRect.left--; _menuRect.right++; _menuRect.bottom++;
@@ -571,8 +574,8 @@ void Menu::invertMenuSelection(uint16 itemId) {
 	if (itemId == 0)
 		return;
 
-	itemRect.top += (itemId - 1) * _gfx->_curPort->fontHeight;
-	itemRect.bottom = itemRect.top + _gfx->_curPort->fontHeight + 1;
+	itemRect.top += (itemId - 1) * _gfx->_curPort->fontHeight + 1;
+	itemRect.bottom = itemRect.top + _gfx->_curPort->fontHeight;
 	itemRect.left++; itemRect.right--;
 
 	_gfx->InvertRect(itemRect);
@@ -648,7 +651,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
-	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
+	_barSaveHandle = _gfx->BitsSave(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
 
 	_gfx->PenColor(0);
 	_gfx->BackColor(_screen->getColorWhite());
@@ -656,7 +659,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	drawBar();
 	drawMenu(0, curItemEntry->menuId);
 	invertMenuSelection(curItemEntry->id);
-	_gfx->BitsShow(_gfx->_menuBarRect);
+	_gfx->BitsShow(_gfx->_menuRect);
 	_gfx->BitsShow(_menuRect);
 
 	while (true) {
@@ -769,13 +772,13 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 
 	calculateTextWidth();
 	_oldPort = _gfx->SetPort(_gfx->_menuPort);
-	_barSaveHandle = _gfx->BitsSave(_gfx->_menuBarRect, SCI_SCREEN_MASK_VISUAL);
+	_barSaveHandle = _gfx->BitsSave(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
 
 	_gfx->PenColor(0);
 	_gfx->BackColor(_screen->getColorWhite());
 
 	drawBar();
-	_gfx->BitsShow(_gfx->_menuBarRect);
+	_gfx->BitsShow(_gfx->_menuRect);
 
 	while (true) {
 		curEvent = _event->get(SCI_EVENT_ANY);
