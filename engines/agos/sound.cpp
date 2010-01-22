@@ -574,7 +574,8 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 	}
 }
 
-void Sound::readSfxFile(const char *filename) {
+// This method is only used by Simon1 Amiga Talkie & Windows
+void Sound::readSfxFile(const Common::String &filename) {
 	if (_hasEffectsFile)
 		return;
 
@@ -584,7 +585,7 @@ void Sound::readSfxFile(const char *filename) {
 	file->open(filename);
 
 	if (file->isOpen() == false) {
-		error("readSfxFile: Can't load sfx file %s", filename);
+		error("readSfxFile: Can't load sfx file %s", filename.c_str());
 	}
 
 	delete _effects;
@@ -594,6 +595,7 @@ void Sound::readSfxFile(const char *filename) {
 		_effects = new WavSound(_mixer, file);
 }
 
+// This method is only used by Simon2
 void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
@@ -606,14 +608,15 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 		_effects = new VocSound(_mixer, gameFile, base);
 }
 
-void Sound::readVoiceFile(const char *filename) {
+// This method is only used by Simon1 Amiga Talkie
+void Sound::readVoiceFile(const Common::String &filename) {
 	_mixer->stopHandle(_voiceHandle);
 
 	File *file = new File();
 	file->open(filename);
 
 	if (file->isOpen() == false)
-		error("readVoiceFile: Can't load voice file %s", filename);
+		error("readVoiceFile: Can't load voice file %s", filename.c_str());
 
 	delete _voice;
 	_voice = new RawSound(_mixer, file, 0, SOUND_BIG_ENDIAN);

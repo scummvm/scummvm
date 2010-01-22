@@ -78,12 +78,14 @@ public:
 		TYPE_SFX5    = 1 << 2
 	};
 
+protected:
 	void loadVoiceFile(const GameSpecificSettings *gss);
 	void loadSfxFile(const GameSpecificSettings *gss);
 
-	void readSfxFile(const char *filename);
+public:
+	void readSfxFile(const Common::String &filename);
 	void loadSfxTable(Common::File *gameFile, uint32 base);
-	void readVoiceFile(const char *filename);
+	void readVoiceFile(const Common::String &filename);
 
 	void playVoice(uint sound);
 	void playEffects(uint sound);
