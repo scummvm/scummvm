@@ -46,7 +46,7 @@ public:
 
 	/**
 	 * Fill the given buffer with up to numSamples samples. Returns the actual
-	 * number of samples read, or -1 if a critical error occured (note: you
+	 * number of samples read, or -1 if a critical error occurred (note: you
 	 * *must* check if this value is less than what you requested, this can
 	 * happen when the stream is fully used up).
 	 *
@@ -86,7 +86,7 @@ public:
 };
 
 /**
- * A rewindable audio stream. This allows for restting the AudioStream
+ * A rewindable audio stream. This allows for reseting the AudioStream
  * to its initial state. Note that rewinding itself is not required to
  * be working when the stream is being played by Mixer!
  */
@@ -101,7 +101,7 @@ public:
 };
 
 /**
- * A looping audio stream. This object does nothing beides using
+ * A looping audio stream. This object does nothing besides using
  * a RewindableAudioStream to play a stream in a loop.
  */
 class LoopingAudioStream : public AudioStream {
@@ -141,7 +141,7 @@ private:
  * Wrapper functionality to efficiently create a stream, which might be looped.
  *
  * Note that this function does not return a LoopingAudioStream, because it does
- * not create one, when the loop count is "1". This allows to keep the runtime
+ * not create one when the loop count is "1". This allows to keep the runtime
  * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
@@ -161,7 +161,7 @@ public:
 	/**
 	 * Tries to load a file by trying all available formats.
 	 * In case of an error, the file handle will be closed, but deleting
-	 * it is still the responsibilty of the caller.
+	 * it is still the responsibility of the caller.
 	 * @param basename	a filename without an extension
 	 * @return	an SeekableAudioStream ready to use in case of success;
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
@@ -203,7 +203,7 @@ public:
  * This automatically starts the stream at time "start"!
  *
  * Note that this function does not return a LoopingAudioStream, because it does
- * not create one, when the loop count is "1". This allows to keep the runtime
+ * not create one when the loop count is "1". This allows to keep the runtime
  * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
@@ -211,7 +211,7 @@ public:
  * @param start Starttime of the stream interval to be looped
  * @param end End of the stream interval to be looped (a zero time, means till end)
  * @param loops How often to loop (0 = infinite)
- * @return A new AudioStream, which offers the desired functionallity.
+ * @return A new AudioStream, which offers the desired functionality.
  */
 AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops);
 
@@ -250,6 +250,7 @@ private:
 
 	bool _done;
 };
+
 
 /**
  * A SubSeekableAudioStream provides access to a SeekableAudioStream

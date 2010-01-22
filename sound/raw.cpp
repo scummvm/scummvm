@@ -363,7 +363,7 @@ AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 		DisposeAfterUse::Flag autoFree,
 		int rate, byte flags,
 		uint loopStart, uint loopEnd) {
-	SeekableAudioStream *stream = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
+	SeekableAudioStream *s = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
 
 	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
@@ -385,11 +385,11 @@ AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 		else if (is16Bit || isStereo)
 			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 1) == 0);
 
-		const uint32 extRate = stream->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
+		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
 
-		return new SubLoopingAudioStream(stream, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
+		return new SubLoopingAudioStream(s, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
 	} else {
-		return stream;
+		return s;
 	}
 }
 
@@ -436,9 +436,9 @@ AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStream
 	const bool isLooping  = (flags & Audio::FLAG_LOOP) != 0;
 
 	if (isLooping) {
-		uint loopOffset = 0, loopLen = 0;
 		const uint len = s->getLength().totalNumberOfFrames() / (is16Bit ? 2 : 1) / (isStereo ? 2 : 1);
 
+		uint loopOffset = 0, loopLen = 0;
 		if (loopEnd == 0)
 			loopEnd = len;
 		assert(loopStart <= loopEnd);
@@ -460,7 +460,6 @@ AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStream
 		return s;
 	}
 }
-
 
 
 } // End of namespace Audio
