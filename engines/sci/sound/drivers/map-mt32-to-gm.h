@@ -172,55 +172,55 @@ static const char *GmPercussionNames[] = {
 	/*00*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*20*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	/*30*/  0, 0, 0, 0,
+	/*30*/  0, 0, 0, 0, 0,
 	/* The preceeding percussions are not covered by the GM standard */
-	/*34*/  "Acoustic Bass Drum",
-	/*35*/  "Bass Drum 1",
-	/*36*/  "Side Stick",
-	/*37*/  "Acoustic Snare",
-	/*38*/  "Hand Clap",
-	/*39*/  "Electric Snare",
-	/*40*/  "Low Floor Tom",
-	/*41*/  "Closed Hi-Hat",
-	/*42*/  "High Floor Tom",
-	/*43*/  "Pedal Hi-Hat",
-	/*44*/  "Low Tom",
-	/*45*/  "Open Hi-Hat",
-	/*46*/  "Low-Mid Tom",
-	/*47*/  "Hi-Mid Tom",
-	/*48*/  "Crash Cymbal 1",
-	/*49*/  "High Tom",
-	/*50*/  "Ride Cymbal 1",
-	/*51*/  "Chinese Cymbal",
-	/*52*/  "Ride Bell",
-	/*53*/  "Tambourine",
-	/*54*/  "Splash Cymbal",
-	/*55*/  "Cowbell",
-	/*56*/  "Crash Cymbal 2",
-	/*57*/  "Vibraslap",
-	/*58*/  "Ride Cymbal 2",
-	/*59*/  "Hi Bongo",
-	/*60*/  "Low Bongo",
-	/*61*/  "Mute Hi Conga",
-	/*62*/  "Open Hi Conga",
-	/*63*/  "Low Conga",
-	/*64*/  "High Timbale",
-	/*65*/  "Low Timbale",
-	/*66*/  "High Agogo",
-	/*67*/  "Low Agogo",
-	/*68*/  "Cabasa",
-	/*69*/  "Maracas",
-	/*70*/  "Short Whistle",
-	/*71*/  "Long Whistle",
-	/*72*/  "Short Guiro",
-	/*73*/  "Long Guiro",
-	/*74*/  "Claves",
-	/*75*/  "Hi Wood Block",
-	/*76*/  "Low Wood Block",
-	/*77*/  "Mute Cuica",
-	/*78*/  "Open Cuica",
-	/*79*/  "Mute Triangle",
-	/*80*/  "Open Triangle"
+	/*35*/  "Acoustic Bass Drum",
+	/*36*/  "Bass Drum 1",
+	/*37*/  "Side Stick",
+	/*38*/  "Acoustic Snare",
+	/*39*/  "Hand Clap",
+	/*40*/  "Electric Snare",
+	/*41*/  "Low Floor Tom",
+	/*42*/  "Closed Hi-Hat",
+	/*43*/  "High Floor Tom",
+	/*44*/  "Pedal Hi-Hat",
+	/*45*/  "Low Tom",
+	/*46*/  "Open Hi-Hat",
+	/*47*/  "Low-Mid Tom",
+	/*48*/  "Hi-Mid Tom",
+	/*49*/  "Crash Cymbal 1",
+	/*50*/  "High Tom",
+	/*51*/  "Ride Cymbal 1",
+	/*52*/  "Chinese Cymbal",
+	/*53*/  "Ride Bell",
+	/*54*/  "Tambourine",
+	/*55*/  "Splash Cymbal",
+	/*56*/  "Cowbell",
+	/*57*/  "Crash Cymbal 2",
+	/*58*/  "Vibraslap",
+	/*59*/  "Ride Cymbal 2",
+	/*60*/  "Hi Bongo",
+	/*61*/  "Low Bongo",
+	/*62*/  "Mute Hi Conga",
+	/*63*/  "Open Hi Conga",
+	/*64*/  "Low Conga",
+	/*65*/  "High Timbale",
+	/*66*/  "Low Timbale",
+	/*67*/  "High Agogo",
+	/*68*/  "Low Agogo",
+	/*69*/  "Cabasa",
+	/*70*/  "Maracas",
+	/*71*/  "Short Whistle",
+	/*72*/  "Long Whistle",
+	/*73*/  "Short Guiro",
+	/*74*/  "Long Guiro",
+	/*75*/  "Claves",
+	/*76*/  "Hi Wood Block",
+	/*77*/  "Low Wood Block",
+	/*78*/  "Mute Cuica",
+	/*79*/  "Open Cuica",
+	/*80*/  "Mute Triangle",
+	/*81*/  "Open Triangle"
 };
 
 /*******************************************
@@ -343,12 +343,12 @@ static const Mt32ToGmMap Mt32PresetTimbreMaps[] = {
 	/*111*/  {"BreathPipe", 121, MIDI_UNMAPPED},
 	/*112*/  {"Timpani   ", 47, MIDI_UNMAPPED},
 	/*113*/  {"MelodicTom", 117, MIDI_UNMAPPED},
-	/*114*/  {"Deep Snare", MIDI_MAPPED_TO_RHYTHM, 37},
+	/*114*/  {"Deep Snare", MIDI_MAPPED_TO_RHYTHM, 38},
 	/*115*/  {"Elec Perc1", 115, MIDI_UNMAPPED}, /* ? */
 	/*116*/  {"Elec Perc2", 118, MIDI_UNMAPPED}, /* ? */
 	/*117*/  {"Taiko     ", 116, MIDI_UNMAPPED},
 	/*118*/  {"Taiko Rim ", 118, MIDI_UNMAPPED},
-	/*119*/  {"Cymbal    ", MIDI_MAPPED_TO_RHYTHM, 50},
+	/*119*/  {"Cymbal    ", MIDI_MAPPED_TO_RHYTHM, 51},
 	/*120*/  {"Castanets ", MIDI_UNMAPPED, MIDI_UNMAPPED},
 	/*121*/  {"Triangle  ", 112, MIDI_UNMAPPED},
 	/*122*/  {"Orche Hit ", 55, MIDI_UNMAPPED},
@@ -360,47 +360,47 @@ static const Mt32ToGmMap Mt32PresetTimbreMaps[] = {
 };
 
 static const Mt32ToGmMap Mt32RhythmTimbreMaps[] = {
-	/*00*/  {"Acou BD   ", MIDI_MAPPED_TO_RHYTHM, 34},
-	/*01*/  {"Acou SD   ", MIDI_MAPPED_TO_RHYTHM, 37},
-	/*02*/  {"Acou HiTom", 117, 49},
-	/*03*/  {"AcouMidTom", 117, 46},
-	/*04*/  {"AcouLowTom", 117, 40},
-	/*05*/  {"Elec SD   ", MIDI_MAPPED_TO_RHYTHM, 39},
-	/*06*/  {"Clsd HiHat", MIDI_MAPPED_TO_RHYTHM, 41},
-	/*07*/  {"OpenHiHat1", MIDI_MAPPED_TO_RHYTHM, 45},
-	/*08*/  {"Crash Cym ", MIDI_MAPPED_TO_RHYTHM, 48},
-	/*09*/  {"Ride Cym  ", MIDI_MAPPED_TO_RHYTHM, 50},
-	/*10*/  {"Rim Shot  ", MIDI_MAPPED_TO_RHYTHM, 36},
-	/*11*/  {"Hand Clap ", MIDI_MAPPED_TO_RHYTHM, 38},
-	/*12*/  {"Cowbell   ", MIDI_MAPPED_TO_RHYTHM, 55},
-	/*13*/  {"Mt HiConga", MIDI_MAPPED_TO_RHYTHM, 61},
-	/*14*/  {"High Conga", MIDI_MAPPED_TO_RHYTHM, 62},
-	/*15*/  {"Low Conga ", MIDI_MAPPED_TO_RHYTHM, 63},
-	/*16*/  {"Hi Timbale", MIDI_MAPPED_TO_RHYTHM, 64},
-	/*17*/  {"LowTimbale", MIDI_MAPPED_TO_RHYTHM, 65},
-	/*18*/  {"High Bongo", MIDI_MAPPED_TO_RHYTHM, 59},
-	/*19*/  {"Low Bongo ", MIDI_MAPPED_TO_RHYTHM, 60},
-	/*20*/  {"High Agogo", 113, 66},
-	/*21*/  {"Low Agogo ", 113, 67},
-	/*22*/  {"Tambourine", MIDI_MAPPED_TO_RHYTHM, 53},
-	/*23*/  {"Claves    ", MIDI_MAPPED_TO_RHYTHM, 74},
-	/*24*/  {"Maracas   ", MIDI_MAPPED_TO_RHYTHM, 69},
-	/*25*/  {"SmbaWhis L", 78, 71},
-	/*26*/  {"SmbaWhis S", 78, 70},
-	/*27*/  {"Cabasa    ", MIDI_MAPPED_TO_RHYTHM, 68},
-	/*28*/  {"Quijada   ", MIDI_MAPPED_TO_RHYTHM, 72},
-	/*29*/  {"OpenHiHat2", MIDI_MAPPED_TO_RHYTHM, 43}
+	/*00*/  {"Acou BD   ", MIDI_MAPPED_TO_RHYTHM, 35},
+	/*01*/  {"Acou SD   ", MIDI_MAPPED_TO_RHYTHM, 38},
+	/*02*/  {"Acou HiTom", 117, 50},
+	/*03*/  {"AcouMidTom", 117, 47},
+	/*04*/  {"AcouLowTom", 117, 41},
+	/*05*/  {"Elec SD   ", MIDI_MAPPED_TO_RHYTHM, 40},
+	/*06*/  {"Clsd HiHat", MIDI_MAPPED_TO_RHYTHM, 42},
+	/*07*/  {"OpenHiHat1", MIDI_MAPPED_TO_RHYTHM, 46},
+	/*08*/  {"Crash Cym ", MIDI_MAPPED_TO_RHYTHM, 49},
+	/*09*/  {"Ride Cym  ", MIDI_MAPPED_TO_RHYTHM, 51},
+	/*10*/  {"Rim Shot  ", MIDI_MAPPED_TO_RHYTHM, 37},
+	/*11*/  {"Hand Clap ", MIDI_MAPPED_TO_RHYTHM, 39},
+	/*12*/  {"Cowbell   ", MIDI_MAPPED_TO_RHYTHM, 56},
+	/*13*/  {"Mt HiConga", MIDI_MAPPED_TO_RHYTHM, 62},
+	/*14*/  {"High Conga", MIDI_MAPPED_TO_RHYTHM, 63},
+	/*15*/  {"Low Conga ", MIDI_MAPPED_TO_RHYTHM, 64},
+	/*16*/  {"Hi Timbale", MIDI_MAPPED_TO_RHYTHM, 65},
+	/*17*/  {"LowTimbale", MIDI_MAPPED_TO_RHYTHM, 66},
+	/*18*/  {"High Bongo", MIDI_MAPPED_TO_RHYTHM, 60},
+	/*19*/  {"Low Bongo ", MIDI_MAPPED_TO_RHYTHM, 61},
+	/*20*/  {"High Agogo", 113, 67},
+	/*21*/  {"Low Agogo ", 113, 68},
+	/*22*/  {"Tambourine", MIDI_MAPPED_TO_RHYTHM, 54},
+	/*23*/  {"Claves    ", MIDI_MAPPED_TO_RHYTHM, 75},
+	/*24*/  {"Maracas   ", MIDI_MAPPED_TO_RHYTHM, 70},
+	/*25*/  {"SmbaWhis L", 78, 72},
+	/*26*/  {"SmbaWhis S", 78, 71},
+	/*27*/  {"Cabasa    ", MIDI_MAPPED_TO_RHYTHM, 69},
+	/*28*/  {"Quijada   ", MIDI_MAPPED_TO_RHYTHM, 73},
+	/*29*/  {"OpenHiHat2", MIDI_MAPPED_TO_RHYTHM, 44}
 };
 
 static const uint8 Mt32PresetRhythmKeymap[] = {
 	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
 	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
 	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
-	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, 34, 34, 36, 37, 38, 39,
+	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, 35, 36, 37, 38, 39,
 	40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-	50, MIDI_UNMAPPED, MIDI_UNMAPPED, 53, MIDI_UNMAPPED, 55, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, 59,
+	50, 51, MIDI_UNMAPPED, MIDI_UNMAPPED, 54, MIDI_UNMAPPED, 56, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
 	60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
-	70, 71, 72, MIDI_UNMAPPED, 74, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
+	70, 71, 72, 73, MIDI_UNMAPPED, 75, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
 	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
 	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
 	MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED, MIDI_UNMAPPED,
@@ -417,8 +417,8 @@ static const uint8 Mt32PresetRhythmKeymap[] = {
    R   - Rhythm... */
 static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
 	{"AccPnoKA2 ", 1, MIDI_UNMAPPED},     /* ++ (KQ1) */
-	{"Acou BD   ", MIDI_MAPPED_TO_RHYTHM, 34},   /* R (PQ2) */
-	{"Acou SD   ", MIDI_MAPPED_TO_RHYTHM, 37},   /* R (PQ2) */
+	{"Acou BD   ", MIDI_MAPPED_TO_RHYTHM, 35},   /* R (PQ2) */
+	{"Acou SD   ", MIDI_MAPPED_TO_RHYTHM, 38},   /* R (PQ2) */
 	{"AcouPnoKA ", 0, MIDI_UNMAPPED},     /* ++ (KQ1) */
 	{"BASS      ", 32, MIDI_UNMAPPED},    /* + (LSL3) */
 	{"BASSOONPCM", 70, MIDI_UNMAPPED},    /* + (CB) */
@@ -432,26 +432,26 @@ static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
 	{"Bird Tweet", 123, MIDI_UNMAPPED},
 	{"BrsSect MS", 61, MIDI_UNMAPPED},    /* +++ (iceMan) */
 	{"CLAPPING  ", 126, MIDI_UNMAPPED},   /* ++ (LSL3) */
-	{"Cabasa    ", MIDI_MAPPED_TO_RHYTHM, 68},   /* R (HBoG) */
+	{"Cabasa    ", MIDI_MAPPED_TO_RHYTHM, 69},   /* R (HBoG) */
 	{"Calliope  ", 82, MIDI_UNMAPPED},    /* +++ (HQ) */
 	{"CelticHarp", 46, MIDI_UNMAPPED},    /* ++ (CoC) */
 	{"Chicago MS", 1, MIDI_UNMAPPED},     /* ++ (iceMan) */
 	{"Chop      ", 117, MIDI_UNMAPPED},
 	{"Chorale MS", 52, MIDI_UNMAPPED},    /* + (CoC) */
 	{"ClarinetMS", 71, MIDI_UNMAPPED},
-	{"Claves    ", MIDI_MAPPED_TO_RHYTHM, 74},   /* R (PQ2) */
+	{"Claves    ", MIDI_MAPPED_TO_RHYTHM, 75},   /* R (PQ2) */
 	{"Claw    MS", 118, MIDI_UNMAPPED},    /* + (HQ) */
 	{"ClockBell ", 14, MIDI_UNMAPPED},    /* + (CB) */
-	{"ConcertCym", MIDI_MAPPED_TO_RHYTHM, 54},   /* R ? (KQ1) */
-	{"Conga   MS", MIDI_MAPPED_TO_RHYTHM, 63},   /* R (HQ) */
+	{"ConcertCym", MIDI_MAPPED_TO_RHYTHM, 55},   /* R ? (KQ1) */
+	{"Conga   MS", MIDI_MAPPED_TO_RHYTHM, 64},   /* R (HQ) */
 	{"CoolPhone ", 124, MIDI_UNMAPPED},   /* ++ (LSL3) */
 	{"CracklesMS", 115, MIDI_UNMAPPED}, /* ? (CoC, HQ) */
 	{"CreakyD MS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ??? (KQ1) */
 	{"Cricket   ", 120, MIDI_UNMAPPED}, /* ? (CB) */
-	{"CrshCymbMS", MIDI_MAPPED_TO_RHYTHM, 56},   /* R +++ (iceMan) */
+	{"CrshCymbMS", MIDI_MAPPED_TO_RHYTHM, 57},   /* R +++ (iceMan) */
 	{"CstlGateMS", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (HQ) */
-	{"CymSwellMS", MIDI_MAPPED_TO_RHYTHM, 54},   /* R ? (CoC, HQ) */
-	{"CymbRollKA", MIDI_MAPPED_TO_RHYTHM, 56},   /* R ? (KQ1) */
+	{"CymSwellMS", MIDI_MAPPED_TO_RHYTHM, 55},   /* R ? (CoC, HQ) */
+	{"CymbRollKA", MIDI_MAPPED_TO_RHYTHM, 57},   /* R ? (KQ1) */
 	{"Cymbal Lo ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* R ? (LSL3) */
 	{"card      ", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (HBoG) */
 	{"DirtGtr MS", 30, MIDI_UNMAPPED},    /* + (iceMan) */
@@ -496,7 +496,7 @@ static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
 	{"Ocean   MS", 122, MIDI_UNMAPPED},   /* + (iceMan) */
 	{"PPG 2.3 MS", 75, MIDI_UNMAPPED},    /* ? (iceMan) */
 	{"PianoCrank", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (CB) */
-	{"PicSnareMS", MIDI_MAPPED_TO_RHYTHM, 39},   /* R ? (iceMan) */
+	{"PicSnareMS", MIDI_MAPPED_TO_RHYTHM, 40},   /* R ? (iceMan) */
 	{"PiccoloKA ", 72, MIDI_UNMAPPED},    /* +++ (KQ1) */
 	{"PinkBassMS", 39, MIDI_UNMAPPED},
 	{"Pizz2     ", 45, MIDI_UNMAPPED},    /* ++ (CB) */
@@ -509,12 +509,12 @@ static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
 	{"ReedPipMS ", 20, MIDI_UNMAPPED},    /* +++ (Coc) */
 	{"RevCymb MS", 119, MIDI_UNMAPPED},
 	{"RifleShot ", 127, MIDI_UNMAPPED},   /* + (CB) */
-	{"RimShot MS", MIDI_MAPPED_TO_RHYTHM, 36},   /* R */
+	{"RimShot MS", MIDI_MAPPED_TO_RHYTHM, 37},   /* R */
 	{"SHOWER    ", 52, MIDI_UNMAPPED},    /* ? (LSL3) */
 	{"SQ Bass MS", 32, MIDI_UNMAPPED},    /* + (SQ3) */
 	{"ShakuVibMS", 79, MIDI_UNMAPPED},    /* + (iceMan) */
 	{"SlapBassMS", 36, MIDI_UNMAPPED},    /* +++ (iceMan) */
-	{"Snare   MS", MIDI_MAPPED_TO_RHYTHM, 37},   /* R (HQ) */
+	{"Snare   MS", MIDI_MAPPED_TO_RHYTHM, 38},   /* R (HQ) */
 	{"Some Birds", 123, MIDI_UNMAPPED},   /* + (CB) */
 	{"Sonar   MS", 78, MIDI_UNMAPPED},    /* ? (iceMan) */
 	{"Soundtrk2 ", 97, MIDI_UNMAPPED},    /* +++ (CB) */
@@ -529,15 +529,15 @@ static const Mt32ToGmMap Mt32MemoryTimbreMaps[] = {
 	{"SynBass MS", 38, MIDI_UNMAPPED},
 	{"SwmpBackgr", 120, MIDI_UNMAPPED},    /* ?? (CB,HQ) */
 	{"T-Bone2 MS", 57, MIDI_UNMAPPED},    /* +++ (HQ) */
-	{"Taiko     ", 116, 34},      /* +++ (Coc) */
-	{"Taiko Rim ", 118, 36},      /* +++ (LSL3) */
+	{"Taiko     ", 116, 35},      /* +++ (Coc) */
+	{"Taiko Rim ", 118, 37},      /* +++ (LSL3) */
 	{"Timpani1  ", 47, MIDI_UNMAPPED},    /* +++ (CB) */
-	{"Tom     MS", 117, 47},      /* +++ (iceMan) */
-	{"Toms    MS", 117, 47},      /* +++ (CoC, HQ) */
+	{"Tom     MS", 117, 48},      /* +++ (iceMan) */
+	{"Toms    MS", 117, 48},      /* +++ (CoC, HQ) */
 	{"Tpt1prtl  ", 56, MIDI_UNMAPPED},    /* +++ (KQ1) */
-	{"TriangleMS", 112, 80},      /* R (CoC) */
+	{"TriangleMS", 112, 81},      /* R (CoC) */
 	{"Trumpet 1 ", 56, MIDI_UNMAPPED},    /* +++ (CoC) */
-	{"Type    MS", 114, MIDI_UNMAPPED},   /* ? (iceMan) */
+	{"Type    MS", MIDI_MAPPED_TO_RHYTHM, 39},   /* + (iceMan) */
 	{"WaterBells", 98, MIDI_UNMAPPED},    /* + (PQ2) */
 	{"WaterFallK", MIDI_UNMAPPED, MIDI_UNMAPPED}, /* ? (KQ1) */
 	{"Whiporill ", 123, MIDI_UNMAPPED},   /* + (CB) */

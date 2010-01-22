@@ -247,6 +247,11 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 		return;
 	}
 
+	if (_patchMap[patch] >= 128) {
+		// Mapped to rhythm, don't send channel commands
+		return;
+	}
+
 	if (_channels[channel].keyShift != _keyShift[patch]) {
 		_channels[channel].keyShift = _keyShift[patch];
 		_driver->send(0xb0 | channel, 0x7b, 0);
@@ -677,7 +682,8 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 			}
 		}
 
-		_keyShift[i] = CLIP<uint8>(keyshift, 0, 48) - 24;
+		// This is commented out as it seems to do more harm than good
+		// _keyShift[i] = CLIP<uint8>(keyshift, 0, 48) - 24;
 		_pitchBendRange[i] = CLIP<uint8>(bender_range, 0, 24);
 	}
 
@@ -686,31 +692,32 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 
 		for (i = 0; i < 64 ; i++) {
 			number = *(data + pos + 4 * i + 2);
+			byte ins = i + 24;
 
-			debugCN(kDebugLevelSound, "  [%03d] ", i + 23);
+			debugCN(kDebugLevelSound, "  [%03d] ", ins);
 
 			if (number < 64) {
 				char name[11];
 				strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
 				name[10] = 0;
 				debugCN(kDebugLevelSound, "%s -> ", name);
-				_percussionMap[i + 23] = lookupGmRhythmKey(name);
+				_percussionMap[ins] = lookupGmRhythmKey(name);
 			} else {
 				if (number < 94) {
 					debugCN(kDebugLevelSound, "%s -> ", Mt32RhythmTimbreMaps[number - 64].name);
-					_percussionMap[i + 23] = Mt32RhythmTimbreMaps[number - 64].gmRhythmKey;
+					_percussionMap[ins] = Mt32RhythmTimbreMaps[number - 64].gmRhythmKey;
 				} else {
 					debugCN(kDebugLevelSound, "[Key  %03i] -> ", number);
-					_percussionMap[i + 23] = MIDI_UNMAPPED;
+					_percussionMap[ins] = MIDI_UNMAPPED;
 				}
 			}
 
-			if (_percussionMap[i + 23] == MIDI_UNMAPPED)
+			if (_percussionMap[ins] == MIDI_UNMAPPED)
 				debugC(kDebugLevelSound, "[Unmapped]");
 			else
-				debugC(kDebugLevelSound, "%s", GmPercussionNames[_percussionMap[i + 23]]);
+				debugC(kDebugLevelSound, "%s", GmPercussionNames[_percussionMap[ins]]);
 
-			_percussionVelocityScale[i + 23] = *(data + pos + 4 * i + 3) * 127 / 100;
+			_percussionVelocityScale[ins] = *(data + pos + 4 * i + 3) * 127 / 100;
 		}
 	}
 }
