@@ -248,9 +248,6 @@
 	#define SYSTEM_NEED_ALIGNMENT
 #elif defined(__N64__)
 
-	#define strcasecmp strcasecmp
-	#define strncasecmp strncasecmp
-
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
 
