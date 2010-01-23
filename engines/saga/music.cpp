@@ -403,6 +403,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		// Load the external music file for Mac IHNM
+#if 0
 		Common::File musicFile;
 		char musicFileName[40];
 		sprintf(musicFileName, "Music/Music%02x", resourceId);
@@ -414,6 +415,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 		// TODO: The Mac music format is unsupported (QuickTime MIDI)
 		// so stop here
+#endif
 		return;
 	} else {
 		_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize);
