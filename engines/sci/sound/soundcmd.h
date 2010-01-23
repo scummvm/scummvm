@@ -58,12 +58,23 @@ public:
 #endif
 
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
+
+	// Functions used for game state loading
 	void clearPlayList();
 	void syncPlayList(Common::Serializer &s);
 	void reconstructPlayList(int savegame_version);
-	void printPlayList(Console *con);
+
+	// Functions used for the ScummVM menus
 	void setMasterVolume(int vol);
 	void pauseAll(bool pause);
+
+	// Debug console functions
+	void playSound(reg_t obj) { cmdPlaySound(obj, 0); }
+	void stopSound(reg_t obj) { cmdStopSound(obj, 0); }
+	void startNewSound(int number);
+	void stopAllSounds();
+	void printPlayList(Console *con);
+	void printSongInfo(reg_t obj, Console *con);
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	/**

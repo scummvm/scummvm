@@ -248,7 +248,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	if (!obj.segment)
 		return;
 
-	int number = obj.segment ? GET_SEL32V(_segMan, obj, number) : 0;
+	int number = GET_SEL32V(_segMan, obj, number);
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 
@@ -1069,6 +1069,32 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 void SoundCommandParser::printPlayList(Console *con) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->printPlayList(con);
+#endif
+}
+
+void SoundCommandParser::printSongInfo(reg_t obj, Console *con) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->printSongInfo(obj, con);
+#endif
+}
+
+void SoundCommandParser::stopAllSounds() {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->stopAll();
+#endif
+}
+
+void SoundCommandParser::startNewSound(int number) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	Common::StackLock lock(_music->_mutex);
+
+	// Overwrite the first sound in the playlist
+	MusicEntry *song = *_music->getPlayListStart();
+	reg_t soundObj = song->soundObj;
+	cmdDisposeSound(soundObj, 0);
+	PUT_SEL32V(_segMan, soundObj, number, number);
+	cmdInitSound(soundObj, 0);
+	cmdPlaySound(soundObj, 0);
 #endif
 }
 

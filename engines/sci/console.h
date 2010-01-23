@@ -104,10 +104,13 @@ private:
 	bool cmdGCNormalize(int argc, const char **argv);
 	// Music/SFX
 	bool cmdSongLib(int argc, const char **argv);
+	bool cmdSongInfo(int argc, const char **argv);
 	bool cmdIsSample(int argc, const char **argv);
+	bool cmdStartSound(int argc, const char **argv);
+	bool cmdToggleSound(int argc, const char **argv);
+	bool cmdStopAllSounds(int argc, const char **argv);
 	bool cmdSfx01Header(int argc, const char **argv);
 	bool cmdSfx01Track(int argc, const char **argv);
-	bool cmdStopSfx(int argc, const char **argv);
 	// Script
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);

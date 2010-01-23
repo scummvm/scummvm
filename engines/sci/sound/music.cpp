@@ -108,6 +108,16 @@ void SciMusic::pauseAll(bool pause) {
 	}
 }
 
+void SciMusic::stopAll() {
+	Common::StackLock lock(_mutex);
+
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		soundStop(*i);
+	}
+}
+
+
 void SciMusic::miditimerCallback(void *p) {
 	SciMusic *aud = (SciMusic *)p;
 
@@ -154,10 +164,8 @@ void SciMusic::sortPlayList() {
 	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
 }
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
-	SoundResource::Track *track = NULL;
 	int channelFilterMask = 0;
-
-	track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
+	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
 
 	if (track) {
 		// If MIDI device is selected but there is no digital track in sound resource
@@ -223,8 +231,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		if (pSnd->loop > 1) {
 			pSnd->pLoopStream = new Audio::LoopingAudioStream(pSnd->pStreamAud,
-			                                                  pSnd->loop, DisposeAfterUse::NO
-			                                                  );
+			                                                  pSnd->loop, DisposeAfterUse::NO);
 			_pMixer->playInputStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
 			                         DisposeAfterUse::NO);
@@ -358,12 +365,53 @@ void SciMusic::printPlayList(Console *con) {
 
 	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
 
+	for (uint32 i = 0; i < _playList.size(); i++) {
+		MusicEntry *song = _playList[i];
+		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i, 
+						PRINT_REG(song->soundObj), song->resnum,
+						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
+	}
+}
+
+void SciMusic::printSongInfo(reg_t obj, Console *con) {
+	Common::StackLock lock(_mutex);
+
+	const char *musicStatus[] = { "Stopped", "Initialized", "Paused", "Playing" };
+
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
-		con->DebugPrintf("%d: %04x:%04x, priority: %d, status: %s\n", i, 
-						PRINT_REG((*i)->soundObj), (*i)->prio,
-						musicStatus[(*i)->status]);
+		MusicEntry *song = *i;
+		if (song->soundObj == obj) {
+			con->DebugPrintf("Resource id: %d, status: %s\n", song->resnum, musicStatus[song->status]);
+			con->DebugPrintf("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
+			con->DebugPrintf("signal: %d, priority: %d\n", song->signal, song->prio);
+			con->DebugPrintf("ticker: %d, volume: %d\n", song->ticker, song->volume);
+
+			if (song->pMidiParser) {
+				con->DebugPrintf("Type: MIDI\n");
+				if (song->soundRes) {
+					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
+					con->DebugPrintf("Channels: %d\n", track->channelCount);
+				}
+			} else if (song->pStreamAud || song->pLoopStream) {
+				con->DebugPrintf("Type: digital audio (%s), sound active: %s\n",
+					song->pStreamAud ? "non looping" : "looping",
+					_pMixer->isSoundHandleActive(song->hCurrentAud) ? "yes" : "no");
+				if (song->soundRes) {
+					con->DebugPrintf("Sound resource information:\n");
+					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
+					if (track && track->digitalChannelNr != -1) {
+						con->DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n", 
+							track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
+					}
+				}
+			}
+
+			return;
+		}
 	}
+
+	con->DebugPrintf("Song object not found in playlist");
 }
 
 MusicEntry::MusicEntry() {

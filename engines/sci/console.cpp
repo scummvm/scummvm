@@ -132,10 +132,13 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("gc_normalize",		WRAP_METHOD(Console, cmdGCNormalize));
 	// Music/SFX
 	DCmd_Register("songlib",			WRAP_METHOD(Console, cmdSongLib));
+	DCmd_Register("songinfo",			WRAP_METHOD(Console, cmdSongInfo));
 	DCmd_Register("is_sample",			WRAP_METHOD(Console, cmdIsSample));
+	DCmd_Register("startsound",			WRAP_METHOD(Console, cmdStartSound));
+	DCmd_Register("togglesound",		WRAP_METHOD(Console, cmdToggleSound));
+	DCmd_Register("stopallsounds",		WRAP_METHOD(Console, cmdStopAllSounds));
 	DCmd_Register("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
 	DCmd_Register("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
-	DCmd_Register("stop_sfx",			WRAP_METHOD(Console, cmdStopSfx));
 	// Script
 	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -1380,6 +1383,165 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdSongInfo(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Shows information about a given song in the playlist\n");
+		DebugPrintf("Usage: %s <song object>\n", argv[0]);
+		return true;
+	}
+
+	reg_t addr;
+	
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	_vm->getEngineState()->_soundCmd->printSongInfo(addr, this);
+
+	return true;
+}
+
+bool Console::cmdStartSound(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Adds the requested sound resource to the playlist, and starts playing it\n");
+		DebugPrintf("Usage: %s <sound resource id>\n", argv[0]);
+		return true;
+	}
+
+	int16 number = atoi(argv[1]);
+
+	if (!_vm->getResourceManager()->testResource(ResourceId(kResourceTypeSound, number))) {
+		DebugPrintf("Unable to load this sound resource, most probably it has an equivalent audio resource (SCI1.1)\n");
+		return true;
+	}
+
+	_vm->getEngineState()->_soundCmd->startNewSound(number);
+
+	return false;
+}
+
+bool Console::cmdToggleSound(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Plays or stops the specified sound in the playlist\n");
+		DebugPrintf("Usage: %s <address> <state>\n", argv[0]);
+		DebugPrintf("Where:\n");
+		DebugPrintf("- <address> is the address of the sound to play or stop.\n");
+		DebugPrintf("- <state> is the new state (play or stop).\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t id;
+	
+	if (parse_reg_t(_vm->_gamestate, argv[1], &id, false)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+	int handle = id.segment << 16 | id.offset;	// frobnicate handle
+
+	if (id.segment) {
+		SegManager *segMan = _vm->_gamestate->_segMan;	// for PUT_SEL32V
+		_vm->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+		_vm->_gamestate->_sound.sfx_remove_song(handle);
+		PUT_SEL32V(segMan, id, signal, SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, id, nodePtr, 0);
+		PUT_SEL32V(segMan, id, handle, 0);
+	}
+#else
+
+	Common::String newState = argv[2];
+	newState.toLowercase();
+
+	if (newState == "play")
+		_vm->_gamestate->_soundCmd->playSound(id);
+	else if (newState == "stop")
+		_vm->_gamestate->_soundCmd->stopSound(id);
+	else
+		DebugPrintf("New state can either be 'play' or 'stop'");
+#endif
+
+	return true;
+}
+
+bool Console::cmdStopAllSounds(int argc, const char **argv) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_vm->_gamestate->_soundCmd->stopAllSounds();
+#endif
+
+	DebugPrintf("All sounds have been stopped\n");
+	return true;
+}
+
+bool Console::cmdIsSample(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Tests whether a given sound resource is a PCM sample, \n");
+		DebugPrintf("and displays information on it if it is.\n");
+		DebugPrintf("Usage: %s <sample id>\n", argv[0]);
+		return true;
+	}
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+	Resource *song = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	SongIterator *songit;
+	Audio::AudioStream *data;
+
+	if (!song) {
+		DebugPrintf("Not a sound resource!\n");
+		return true;
+	}
+
+	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
+
+	if (!songit) {
+		DebugPrintf("Could not convert to song iterator!\n");
+		return true;
+	}
+
+	if ((data = songit->getAudioStream())) {
+		// TODO
+/*
+		DebugPrintf("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
+		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
+*/
+		delete data;
+	} else
+		DebugPrintf("Valid song, but not a sample.\n");
+
+	delete songit;
+#else
+	int16 number = atoi(argv[1]);
+
+	if (!_vm->getResourceManager()->testResource(ResourceId(kResourceTypeSound, number))) {
+		DebugPrintf("Unable to load this sound resource, most probably it has an equivalent audio resource (SCI1.1)\n");
+		return true;
+	}
+
+	SoundResource *soundRes = new SoundResource(number, _vm->getResourceManager(), _vm->getEngineState()->detectDoSoundType());
+
+	if (!soundRes) {
+		DebugPrintf("Not a sound resource!\n");
+		return true;
+	}
+
+	SoundResource::Track *track = soundRes->getDigitalTrack();
+	if (!track || track->digitalChannelNr == -1) {
+		DebugPrintf("Valid song, but not a sample.\n");
+		delete soundRes;
+		return true;
+	}
+
+	DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n", 
+			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
+#endif
+
+	return true;
+}
+
 bool Console::cmdGCInvoke(int argc, const char **argv) {
 	DebugPrintf("Performing garbage collection...\n");
 	run_gc(_vm->_gamestate);
@@ -2278,47 +2440,6 @@ bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdIsSample(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Tests whether a given sound resource is a PCM sample, \n");
-		DebugPrintf("and displays information on it if it is.\n");
-		DebugPrintf("Usage: %s <sample id>\n", argv[0]);
-		return true;
-	}
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	Resource *song = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
-	SongIterator *songit;
-	Audio::AudioStream *data;
-
-	if (!song) {
-		DebugPrintf("Not a sound resource!\n");
-		return true;
-	}
-
-	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
-
-	if (!songit) {
-		DebugPrintf("Could not convert to song iterator!\n");
-		return true;
-	}
-
-	if ((data = songit->getAudioStream())) {
-		// TODO
-/*
-		DebugPrintf("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
-		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
-*/
-		delete data;
-	} else
-		DebugPrintf("Valid song, but not a sample.\n");
-
-	delete songit;
-#endif
-
-	return true;
-}
-
 bool Console::cmdSfx01Header(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Dumps the header of a SCI01 song\n");
@@ -2501,39 +2622,6 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 	}
 
 	midi_hexdump(song->data + offset, song->size, offset);
-
-	return true;
-}
-
-bool Console::cmdStopSfx(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Stops a playing sound\n");
-		DebugPrintf("Usage: %s <address>\n", argv[0]);
-		DebugPrintf("Where <address> is the address of the sound to stop.\n");
-		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
-		return true;
-	}
-
-	reg_t id;
-	
-	if (parse_reg_t(_vm->_gamestate, argv[1], &id, false)) {
-		DebugPrintf("Invalid address passed.\n");
-		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
-		return true;
-	}
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	int handle = id.segment << 16 | id.offset;	// frobnicate handle
-
-	if (id.segment) {
-		SegManager *segMan = _vm->_gamestate->_segMan;	// for PUT_SEL32V
-		_vm->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		_vm->_gamestate->_sound.sfx_remove_song(handle);
-		PUT_SEL32V(segMan, id, signal, SIGNAL_OFFSET);
-		PUT_SEL32V(segMan, id, nodePtr, 0);
-		PUT_SEL32V(segMan, id, handle, 0);
-	}
-#endif
 
 	return true;
 }

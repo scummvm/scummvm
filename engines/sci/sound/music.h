@@ -140,6 +140,7 @@ public:
 	void onTimer();
 	void clearPlayList();
 	void pauseAll(bool pause);
+	void stopAll();
 
 	// sound and midi functions
 	void soundInitSnd(MusicEntry *pSnd);
@@ -176,6 +177,7 @@ public:
 	}
 
 	void printPlayList(Console *con);
+	void printSongInfo(reg_t obj, Console *con);
 
 	// The following two methods are NOT thread safe - make sure that
 	// the mutex is always locked before calling them
