@@ -112,7 +112,7 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 	if (loop) {
 		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
 		// repeatHiSamples fields
-		loopStart = 0;
+		loopStart = loader._header.oneShotHiSamples;
 		loopEnd = loader._header.oneShotHiSamples + loader._header.repeatHiSamples;
 		flags |= Audio::FLAG_LOOP;
 	}
