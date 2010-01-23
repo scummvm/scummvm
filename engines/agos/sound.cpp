@@ -271,6 +271,7 @@ void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+// This class is only used by speech in Simon1 Amiga CD32
 class RawSound : public BaseSound {
 	const byte _flags;
 public:
@@ -295,10 +296,8 @@ Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
-	// FIXME: We ignore loopSound and vol. Is this on purpose?
+	// Sound looping and volume are ignored.
 	_mixer->playInputStream(type, handle, makeAudioStream(sound));
-//	convertVolume(vol);
-//	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
