@@ -415,15 +415,9 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 	// TODO: Confirm sound rate
 	int rate = 11025;
 
-	uint32 loopStart = 0, loopEnd = 0;
-	uint32 flags = Audio::FLAG_UNSIGNED;
-
-	if (looping) {
-		loopEnd = dataSize;
-		flags |= Audio::FLAG_LOOP;
-	}
-
-	ch->stream = Audio::makeRawMemoryStream(data, dataSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+	ch->stream = Audio::makeLoopingAudioStream(
+			Audio::makeRawMemoryStream(data, dataSize, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED),
+			looping ? 0 : 1);
 	return ch->stream;
 }
 

@@ -169,14 +169,12 @@ void CUP_Player::updateSfx() {
 			uint8 *soundData = _sfxBuffer + offset;
 			if (READ_BE_UINT32(soundData) == MKID_BE('DATA')) {
 				uint32 soundSize = READ_BE_UINT32(soundData + 4);
-				uint32 flags = Audio::FLAG_UNSIGNED;
-				uint32 loopEnd = 0;
-				if (sfx->flags & kSfxFlagLoop) {
-					flags |= Audio::FLAG_LOOP;
-					loopEnd = soundSize - 8;
-				}
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &sfxChannel->handle,
-						Audio::makeRawMemoryStream(soundData + 8, soundSize - 8, DisposeAfterUse::NO, 11025, flags, 0, loopEnd));
+							Audio::makeLoopingAudioStream(
+								Audio::makeRawMemoryStream(soundData + 8, soundSize - 8, DisposeAfterUse::NO, 11025, Audio::FLAG_UNSIGNED),
+								(sfx->flags & kSfxFlagLoop) ? 0 : 1
+							)
+						);
 			}
 		} else {
 			warning("Unable to find a free channel to play sound %d", sfx->num);
