@@ -30,7 +30,6 @@
 #include "sci/debug.h"
 #include "sci/event.h"
 #include "sci/resource.h"
-#include "sci/vocabulary.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
@@ -42,9 +41,10 @@
 #include "sci/sound/music.h"
 #endif
 #include "sci/sound/drivers/mididriver.h"
-#include "sci/vocabulary.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/cursor.h"
+
+#include "sci/parser/vocabulary.h"
 
 #include "graphics/video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"

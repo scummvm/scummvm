@@ -31,7 +31,6 @@
 #include "common/rect.h"
 
 #include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
-#include "sci/vocabulary.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
 

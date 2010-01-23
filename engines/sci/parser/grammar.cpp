@@ -28,7 +28,7 @@
  * that grammar, writing an appropriate node tree if successful.
  */
 
-#include "sci/vocabulary.h"
+#include "sci/parser/vocabulary.h"
 #include "sci/console.h"
 #include "common/array.h"
 

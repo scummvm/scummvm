@@ -7,10 +7,8 @@ MODULE_OBJS := \
 	event.o \
 	resource.o \
 	sci.o \
-	vocabulary.o \
 	engine/game.o \
 	engine/gc.o \
-	engine/grammar.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \
@@ -20,6 +18,7 @@ MODULE_OBJS := \
 	engine/kmenu.o \
 	engine/kmisc.o \
 	engine/kmovement.o \
+	engine/kparse.o \
 	engine/kpathing.o \
 	engine/kscripts.o \
 	engine/ksound.o \
@@ -51,6 +50,9 @@ MODULE_OBJS := \
 	graphics/transitions.o \
 	graphics/view.o \
 	graphics/windowmgr.o \
+	parser/grammar.o \
+	parser/said.o \
+	parser/vocabulary.o \
 	sound/audio.o \
 	sound/midiparser_sci.o \
 	sound/music.o \
