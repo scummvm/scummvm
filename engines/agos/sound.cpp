@@ -403,6 +403,32 @@ void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType ty
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+static BaseSound *makeCompressedSound(Audio::Mixer *mixer, File *file, const Common::String &basename) {
+#ifdef USE_FLAC
+	file->open(basename + ".fla");
+	if (file->isOpen()) {
+		return new FlacSound(mixer, file);
+	}
+#endif
+#ifdef USE_VORBIS
+	file->open(basename + ".ogg");
+	if (file->isOpen()) {
+		return new VorbisSound(mixer, file);
+	}
+#endif
+#ifdef USE_MAD
+	file->open(basename + ".mp3");
+	if (file->isOpen()) {
+		return new MP3Sound(mixer, file);
+	}
+#endif
+	return 0;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 Sound::Sound(AGOSEngine *vm, const GameSpecificSettings *gss, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer) {
 	_voice = 0;
@@ -451,36 +477,10 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	char filename[16];
 	File *file = new File();
 
-#ifdef USE_FLAC
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s.fla", gss->speech_filename);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasVoiceFile = true;
-			_voice = new FlacSound(_mixer, file);
-		}
+		_voice = makeCompressedSound(_mixer, file, gss->speech_filename);
+		_hasVoiceFile = (_voice != 0);
 	}
-#endif
-#ifdef USE_VORBIS
-	if (!_hasVoiceFile) {
-		sprintf(filename, "%s.ogg", gss->speech_filename);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasVoiceFile = true;
-			_voice = new VorbisSound(_mixer, file);
-		}
-	}
-#endif
-#ifdef USE_MAD
-	if (!_hasVoiceFile) {
-		sprintf(filename, "%s.mp3", gss->speech_filename);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasVoiceFile = true;
-			_voice = new MP3Sound(_mixer, file);
-		}
-	}
-#endif
 	if (!_hasVoiceFile && _vm->getGameType() == GType_SIMON2) {
 		// for simon2 mac/amiga, only read index file
 		file->open("voices.idx");
@@ -532,36 +532,10 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 	char filename[16];
 	File *file = new File();
 
-#ifdef USE_FLAC
 	if (!_hasEffectsFile) {
-		sprintf(filename, "%s.fla", gss->effects_filename);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasEffectsFile = true;
-			_effects = new FlacSound(_mixer, file);
-		}
+		_effects = makeCompressedSound(_mixer, file, gss->effects_filename);
+		_hasEffectsFile = (_effects != 0);
 	}
-#endif
-#ifdef USE_VORBIS
-	if (!_hasEffectsFile) {
-		sprintf(filename, "%s.ogg", gss->effects_filename);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasEffectsFile = true;
-			_effects = new VorbisSound(_mixer, file);
-		}
-	}
-#endif
-#ifdef USE_MAD
-	if (!_hasEffectsFile) {
-		sprintf(filename, "%s.mp3", gss->effects_filename);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasEffectsFile = true;
-			_effects = new MP3Sound(_mixer, file);
-		}
-	}
-#endif
 
 	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
 
@@ -859,36 +833,11 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 	char filename[16];
 	File *file = new File();
 
-#ifdef USE_FLAC
 	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.fla", gss->speech_filename, disc);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasVoiceFile = true;
-			_voice = new FlacSound(_mixer, file);
-		}
+		sprintf(filename, "%s%d", gss->speech_filename, disc);
+		_voice = makeCompressedSound(_mixer, file, filename);
+		_hasVoiceFile = (_voice != 0);
 	}
-#endif
-#ifdef USE_VORBIS
-	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.ogg", gss->speech_filename, disc);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasVoiceFile = true;
-			_voice = new VorbisSound(_mixer, file);
-		}
-	}
-#endif
-#ifdef USE_MAD
-	if (!_hasVoiceFile) {
-		sprintf(filename, "%s%d.mp3", gss->speech_filename, disc);
-		file->open(filename);
-		if (file->isOpen()) {
-			_hasVoiceFile = true;
-			_voice = new MP3Sound(_mixer, file);
-		}
-	}
-#endif
 	if (!_hasVoiceFile) {
 		sprintf(filename, "%s%d.wav", gss->speech_filename, disc);
 		file->open(filename);
