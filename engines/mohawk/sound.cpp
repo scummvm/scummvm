@@ -454,7 +454,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		if (data_chunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
 
-		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES, data_chunk.sample_rate, flags);
+		return Audio::makeRawMemoryStream(data_chunk.audio_data, data_chunk.size, data_chunk.sample_rate, flags);
 	} else if (data_chunk.encoding == kCodecADPCM) {
 		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
@@ -494,7 +494,7 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	stream->read(data, size);
 	delete stream;
 	
-	return Audio::makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED);
+	return Audio::makeRawMemoryStream(data, size, rate, Audio::FLAG_UNSIGNED);
 }
 
 SndHandle *Sound::getHandle() {

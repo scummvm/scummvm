@@ -73,7 +73,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffe
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {
-		stream = Audio::makeRawMemoryStream(buffer.buffer, buffer.size, DisposeAfterUse::YES, buffer.frequency, buffer.flags);
+		stream = Audio::makeRawMemoryStream(buffer.buffer, buffer.size, buffer.frequency, buffer.flags);
 	} else {
 		Common::SeekableReadStream *memStream = new Common::MemoryReadStream(buffer.buffer, buffer.size, DisposeAfterUse::YES);
 

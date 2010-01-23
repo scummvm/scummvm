@@ -70,16 +70,18 @@ enum RawFlags {
  * then this buffer will be deallocated using free(). So do not
  * use a buffer allocated with new[]!
  *
- * @param ptr Data
- * @param len Length of the data (in bytes!)
- * @param rate The sample rate of the data.
- * @param flags Flags combination.
+ * @param ptr 	pointer to a buffer containing audio data
+ * @param len	length of the buffer in bytes
+ * @param rate	sample rate of the data
+ * @param flags	audio format flags combination
  * @see Mixer::RawFlags
+ * @param autofreeBuffer	whether the data buffer should be destroyed after playback
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
-		DisposeAfterUse::Flag autofreeBuffer,
-		int rate, byte flags);
+		int rate, byte flags,
+		DisposeAfterUse::Flag autofreeBuffer = DisposeAfterUse::YES
+		);
 
 /**
  * NOTE:
@@ -93,9 +95,10 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
  * of the data.
  */
 AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
-		DisposeAfterUse::Flag autofreeBuffer,
 		int rate, byte flags,
-		uint loopStart, uint loopEnd);
+		uint loopStart, uint loopEnd,
+		DisposeAfterUse::Flag autofreeBuffer = DisposeAfterUse::YES
+		);
 
 
 /**

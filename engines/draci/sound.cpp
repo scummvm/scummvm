@@ -202,7 +202,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 
 	// Don't use DisposeAfterUse::YES, because our caching system deletes samples by itself.
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-			Audio::makeRawMemoryStream(buffer._data, buffer._length, DisposeAfterUse::NO, buffer._frequency, flags),
+			Audio::makeRawMemoryStream(buffer._data, buffer._length, buffer._frequency, flags, DisposeAfterUse::NO),
 			loop ? 0 : 1);
 	_mixer->playInputStream(soundType, handle, stream, -1, volume);
 }

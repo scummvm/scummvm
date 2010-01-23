@@ -185,7 +185,7 @@ void DrasculaEngine::playFile(const char *fname) {
 		if (ConfMan.getBool("speech_mute"))
 			memset(soundData, 0x80, soundSize); // Mute speech but keep the pause
 
-		Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundData, soundSize - 64, DisposeAfterUse::YES,
+		Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundData, soundSize - 64,
 						11025, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
 	} else

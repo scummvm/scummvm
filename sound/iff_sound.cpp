@@ -108,7 +108,7 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 	A8SVXLoader loader;
 	loader.load(input);
 
-	SeekableAudioStream *stream = Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, DisposeAfterUse::YES, loader._header.samplesPerSec, 0);
+	SeekableAudioStream *stream = Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, loader._header.samplesPerSec, 0);
 
 	uint32 loopStart = 0, loopEnd = 0;
 	if (loop) {

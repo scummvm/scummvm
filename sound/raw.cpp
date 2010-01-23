@@ -329,8 +329,9 @@ bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &whe
 			return new RawMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, autoFree)
 
 SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
-		DisposeAfterUse::Flag autoFree,
-		int rate, byte flags) {
+		int rate, byte flags,
+		DisposeAfterUse::Flag autoFree
+		) {
 	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
@@ -360,10 +361,11 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 
 
 AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
-		DisposeAfterUse::Flag autoFree,
 		int rate, byte flags,
-		uint loopStart, uint loopEnd) {
-	SeekableAudioStream *s = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
+		uint loopStart, uint loopEnd,
+		DisposeAfterUse::Flag autoFree
+	) {
+	SeekableAudioStream *s = makeRawMemoryStream(ptr, len, rate, flags, autoFree);
 
 	if (loopStart != loopEnd) {
 		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;

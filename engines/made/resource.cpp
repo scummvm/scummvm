@@ -262,7 +262,7 @@ void SoundResource::load(byte *source, int size) {
 
 Audio::AudioStream *SoundResource::getAudioStream(int soundRate, bool loop) {
 	Audio::RewindableAudioStream *stream =
-			Audio::makeRawMemoryStream(_soundData, _soundSize, DisposeAfterUse::NO, soundRate, Audio::FLAG_UNSIGNED);
+			Audio::makeRawMemoryStream(_soundData, _soundSize, soundRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 
 	if (loop)
 		return Audio::makeLoopingAudioStream(stream, 0);

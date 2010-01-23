@@ -552,7 +552,7 @@ static Audio::AudioStream *makeStream(byte *data, int size, int rate) {
 
 	// Convert stream format flags
 	int flags = Audio::FLAG_UNSIGNED;
-	return Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags, 0, 0);
+	return Audio::makeRawMemoryStream(sound, size, rate, flags);
 }
 
 Audio::AudioStream *Sci0SongIterator::getAudioStream() {
