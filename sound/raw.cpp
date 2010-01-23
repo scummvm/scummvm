@@ -365,25 +365,20 @@ AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 		uint loopStart, uint loopEnd) {
 	SeekableAudioStream *s = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
 
-	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-	const bool isLooping  = (flags & Audio::FLAG_LOOP) != 0;
+	if ((flags & Audio::FLAG_LOOP) != 0) {
+		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 
-	if (isLooping) {
-		uint loopOffset = 0, loopLen = 0;
 		if (loopEnd == 0)
 			loopEnd = len;
 		assert(loopStart <= loopEnd);
 		assert(loopEnd <= len);
 
-		loopOffset = loopStart;
-		loopLen = loopEnd - loopStart;
-
 		// Verify the buffer sizes are sane
 		if (is16Bit && isStereo)
-			assert((loopLen & 3) == 0 && (loopStart & 3) == 0 && (loopEnd & 3) == 0);
+			assert((loopStart & 3) == 0 && (loopEnd & 3) == 0);
 		else if (is16Bit || isStereo)
-			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 1) == 0);
+			assert((loopStart & 1) == 0 && (loopEnd & 1) == 0);
 
 		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
 
@@ -431,27 +426,22 @@ AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStream
 		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd) {
 	SeekableAudioStream *s = makeRawDiskStream(stream, block, numBlocks, rate, flags, disposeStream);
 
-	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-	const bool isLooping  = (flags & Audio::FLAG_LOOP) != 0;
+	if ((flags & Audio::FLAG_LOOP) != 0) {
+		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 
-	if (isLooping) {
 		const uint len = s->getLength().totalNumberOfFrames() / (is16Bit ? 2 : 1) / (isStereo ? 2 : 1);
 
-		uint loopOffset = 0, loopLen = 0;
 		if (loopEnd == 0)
 			loopEnd = len;
 		assert(loopStart <= loopEnd);
 		assert(loopEnd <= len);
 
-		loopOffset = loopStart;
-		loopLen = loopEnd - loopStart;
-
 		// Verify the buffer sizes are sane
 		if (is16Bit && isStereo)
-			assert((loopLen & 3) == 0 && (loopStart & 3) == 0 && (loopEnd & 3) == 0);
+			assert((loopStart & 3) == 0 && (loopEnd & 3) == 0);
 		else if (is16Bit || isStereo)
-			assert((loopLen & 1) == 0 && (loopStart & 1) == 0 && (loopEnd & 3) == 0);
+			assert((loopStart & 1) == 0 && (loopEnd & 1) == 0);
 
 		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
 
