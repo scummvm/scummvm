@@ -2012,7 +2012,7 @@ DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/residual\\\""
 
 echo_n "Backend... "
 echo_n "$_backend"
-echo
+
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emu"
 fi
