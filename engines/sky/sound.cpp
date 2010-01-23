@@ -1121,7 +1121,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	}
 
 
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(_soundData + dataOfs, dataSize, DisposeAfterUse::NO, sampleRate, flags, loopSta, loopEnd);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream_OLD(_soundData + dataOfs, dataSize, DisposeAfterUse::NO, sampleRate, flags, loopSta, loopEnd);
 
 	if (channel == 0)
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_ingameSound0, stream, SOUND_CH0, volume, 0);

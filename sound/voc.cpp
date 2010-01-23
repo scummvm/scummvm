@@ -353,7 +353,7 @@ AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint 
 	if (!data)
 		return 0;
 
-	return makeRawMemoryStream(data, size, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+	return makeRawMemoryStream_OLD(data, size, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
 #endif
 }
 

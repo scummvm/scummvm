@@ -353,7 +353,7 @@ void Sound::playSound(int soundID) {
 				if (loopEnd > 0)
 					flags |= Audio::FLAG_LOOP;
 
-				stream = Audio::makeRawMemoryStream(sound, waveSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+				stream = Audio::makeRawMemoryStream_OLD(sound, waveSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
@@ -446,7 +446,7 @@ void Sound::playSound(int soundID) {
 		}
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+		stream = Audio::makeRawMemoryStream_OLD(sound, size, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, vol, 0);
 	}
 	else {

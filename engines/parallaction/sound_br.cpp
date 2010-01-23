@@ -477,7 +477,7 @@ Audio::AudioStream *AmigaSoundMan_br::loadChannelData(const char *filename, Chan
 
 		// TODO: Confirm sound rate
 		int rate = 11025;
-		input = Audio::makeRawMemoryStream((byte *)data, dataSize, DisposeAfterUse::YES, rate, 0, 0, 0);
+		input = Audio::makeRawMemoryStream((byte *)data, dataSize, DisposeAfterUse::YES, rate, 0);
 	} else {
 		input = Audio::make8SVXStream(*stream, looping);
 	}

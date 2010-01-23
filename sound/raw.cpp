@@ -359,7 +359,7 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 }
 
 
-AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
+AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
 		DisposeAfterUse::Flag autoFree,
 		int rate, byte flags,
 		uint loopStart, uint loopEnd) {
@@ -421,35 +421,5 @@ SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDi
 		}
 	}
 }
-
-AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block,
-		int numBlocks, int rate, byte flags, DisposeAfterUse::Flag disposeStream, uint loopStart, uint loopEnd) {
-	SeekableAudioStream *s = makeRawDiskStream(stream, block, numBlocks, rate, flags, disposeStream);
-
-	if ((flags & Audio::FLAG_LOOP) != 0) {
-		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-
-		const uint len = s->getLength().totalNumberOfFrames() / (is16Bit ? 2 : 1) / (isStereo ? 2 : 1);
-
-		if (loopEnd == 0)
-			loopEnd = len;
-		assert(loopStart <= loopEnd);
-		assert(loopEnd <= len);
-
-		// Verify the buffer sizes are sane
-		if (is16Bit && isStereo)
-			assert((loopStart & 3) == 0 && (loopEnd & 3) == 0);
-		else if (is16Bit || isStereo)
-			assert((loopStart & 1) == 0 && (loopEnd & 1) == 0);
-
-		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
-
-		return new SubLoopingAudioStream(s, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
-	} else {
-		return s;
-	}
-}
-
 
 } // End of namespace Audio

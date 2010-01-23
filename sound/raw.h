@@ -95,7 +95,7 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
  * signed native endian). Optionally supports (infinite) looping of a portion
  * of the data.
  */
-AudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
+AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
 		DisposeAfterUse::Flag autofreeBuffer,
 		int rate, byte flags,
 		uint loopStart, uint loopEnd);
@@ -127,21 +127,6 @@ SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream,
 		RawDiskStreamAudioBlock *block, int numBlocks,
 		int rate, byte flags,
 		DisposeAfterUse::Flag disposeStream);
-
-/**
- * NOTE:
- * This API is considered deprecated.
- *
- * Factory function for a Raw Disk Stream.  This can stream raw PCM
- * audio data from disk. The function takes an pointer to an array of
- * RawDiskStreamAudioBlock which defines the start position and length of
- * each block of uncompressed audio in the stream.
- */
-AudioStream *makeRawDiskStream(Common::SeekableReadStream *stream,
-		RawDiskStreamAudioBlock *block, int numBlocks,
-		int rate, byte flags,
-		DisposeAfterUse::Flag disposeStream,
-		uint loopStart, uint loopEnd);
 
 
 } // End of namespace Audio
