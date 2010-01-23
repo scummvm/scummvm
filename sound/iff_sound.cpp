@@ -108,16 +108,21 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 	A8SVXLoader loader;
 	loader.load(input);
 
-	uint32 loopStart = 0, loopEnd = 0, flags = 0;
+	SeekableAudioStream *stream = Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, DisposeAfterUse::YES, loader._header.samplesPerSec, 0);
+
+	uint32 loopStart = 0, loopEnd = 0;
 	if (loop) {
 		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
 		// repeatHiSamples fields
 		loopStart = loader._header.oneShotHiSamples;
 		loopEnd = loader._header.oneShotHiSamples + loader._header.repeatHiSamples;
-		flags |= Audio::FLAG_LOOP;
+
+		return new SubLoopingAudioStream(stream, 0,
+					Timestamp(0, loopStart, loader._header.samplesPerSec),
+					Timestamp(0, loopEnd, loader._header.samplesPerSec));
 	}
 
-	return Audio::makeRawMemoryStream((byte *)loader._data, loader._dataSize, DisposeAfterUse::YES, loader._header.samplesPerSec, flags, loopStart, loopEnd);
+	return stream;
 }
 
 }
