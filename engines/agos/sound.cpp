@@ -254,9 +254,10 @@ void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 #pragma mark -
 
 class VocSound : public BaseSound {
-	byte _flags;
+	const byte _flags;
 public:
-	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian), _flags(0) {}
+	VocSound(Audio::Mixer *mixer, File *file, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
+		: BaseSound(mixer, file, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
@@ -268,7 +269,7 @@ Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 
 void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
 	convertVolume(vol);
-	_flags = flags;
+	assert( _flags == (flags & ~Audio::FLAG_LOOP) );
 	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
 }
 
@@ -276,8 +277,10 @@ void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 #pragma mark -
 
 class RawSound : public BaseSound {
+	const byte _flags;
 public:
-	RawSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {}
+	RawSound(Audio::Mixer *mixer, File *file, bool isUnsigned)
+		: BaseSound(mixer, file, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
@@ -291,6 +294,8 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 	byte *buffer = (byte *)malloc(size);
 	assert(buffer);
 	_file->read(buffer, size);
+
+	assert( _flags == (flags & ~Audio::FLAG_LOOP) );
 
 	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 22050, flags);
 	_mixer->playInputStream(type, handle, stream);
@@ -445,6 +450,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 	if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32)
 		return;
 
+
 	char filename[16];
 	File *file = new File();
 
@@ -501,12 +507,15 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 			_voice = new WavSound(_mixer, file);
 		}
 	}
+
+	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP);
+
 	if (!_hasVoiceFile) {
 		sprintf(filename, "%s.voc", gss->speech_filename);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasVoiceFile = true;
-			_voice = new VocSound(_mixer, file);
+			_voice = new VocSound(_mixer, file, dataIsUnsigned);
 		}
 	}
 	if (!_hasVoiceFile) {
@@ -517,7 +526,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 			if (_vm->getGameType() == GType_PP)
 				_voice = new WavSound(_mixer, file);
 			else
-				_voice = new VocSound(_mixer, file);
+				_voice = new VocSound(_mixer, file, dataIsUnsigned);
 		}
 	}
 }
@@ -556,12 +565,15 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 		}
 	}
 #endif
+
+	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
+
 	if (!_hasEffectsFile) {
 		sprintf(filename, "%s.voc", gss->effects_filename);
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
-			_effects = new VocSound(_mixer, file);
+			_effects = new VocSound(_mixer, file, dataIsUnsigned);
 		}
 	}
 	if (!_hasEffectsFile) {
@@ -569,7 +581,7 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 		file->open(filename);
 		if (file->isOpen()) {
 			_hasEffectsFile = true;
-			_effects = new VocSound(_mixer, file);
+			_effects = new VocSound(_mixer, file, dataIsUnsigned);
 		}
 	}
 }
@@ -588,9 +600,11 @@ void Sound::readSfxFile(const Common::String &filename) {
 		error("readSfxFile: Can't load sfx file %s", filename.c_str());
 	}
 
+	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
+
 	delete _effects;
 	if (_vm->getGameId() == GID_SIMON1CD32) {
-		_effects = new VocSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
+		_effects = new VocSound(_mixer, file, dataIsUnsigned, 0, SOUND_BIG_ENDIAN);
 	} else
 		_effects = new WavSound(_mixer, file);
 }
@@ -605,10 +619,12 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	// FIXME: _effects is leaked here! However, we can't just
 	// delete it, because this would delete the gameFile object,
 	// held by the current _effects object.
+
+	const bool dataIsUnsigned = false;
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		_effects = new WavSound(_mixer, gameFile, base);
 	else
-		_effects = new VocSound(_mixer, gameFile, base);
+		_effects = new VocSound(_mixer, gameFile, dataIsUnsigned, base);
 }
 
 // This method is only used by Simon1 Amiga Talkie
@@ -621,8 +637,10 @@ void Sound::readVoiceFile(const Common::String &filename) {
 	if (file->isOpen() == false)
 		error("readVoiceFile: Can't load voice file %s", filename.c_str());
 
+	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
+
 	delete _voice;
-	_voice = new RawSound(_mixer, file, 0, SOUND_BIG_ENDIAN);
+	_voice = new RawSound(_mixer, file, dataIsUnsigned);
 }
 
 void Sound::playVoice(uint sound) {
