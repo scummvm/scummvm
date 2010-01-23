@@ -258,6 +258,7 @@ public:
 };
 
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
+	assert(_offsets);
 	_file->seek(_offsets[sound], SEEK_SET);
 	return Audio::makeVOCStream(*_file, _flags);
 }
@@ -303,109 +304,83 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-#ifdef USE_MAD
-class MP3Sound : public BaseSound {
+class CompressedSound : public BaseSound {
 public:
-	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
+	CompressedSound(Audio::Mixer *mixer, File *file, uint32 base) : BaseSound(mixer, file, base, false) {}
+
+	Common::MemoryReadStream *loadStream(uint sound) const {
+		if (_offsets == NULL)
+			return NULL;
+
+		_file->seek(_offsets[sound], SEEK_SET);
+
+		int i = 1;
+		while (_offsets[sound + i] == _offsets[sound])
+			i++;
+
+		uint32 size = _offsets[sound + i] - _offsets[sound];
+
+		return _file->readStream(size);
+	}
+
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) {
+		convertVolume(vol);
+		_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
+	}
 };
 
-Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
-	if (_offsets == NULL)
-		return NULL;
+///////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 
-	_file->seek(_offsets[sound], SEEK_SET);
-
-	int i = 1;
-	while (_offsets[sound + i] == _offsets[sound])
-		i++;
-
-	uint32 size = _offsets[sound + i] - _offsets[sound];
-
-	Common::MemoryReadStream *tmp = _file->readStream(size);
-	assert(tmp);
-	return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
-}
-
-void MP3Sound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
-	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
-}
+#ifdef USE_MAD
+class MP3Sound : public CompressedSound {
+public:
+	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	Audio::AudioStream *makeAudioStream(uint sound) {
+		Common::MemoryReadStream *tmp = loadStream(sound);
+		if (!tmp)
+			return NULL;
+		return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
+	}
+};
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 #ifdef USE_VORBIS
-class VorbisSound : public BaseSound {
+class VorbisSound : public CompressedSound {
 public:
-	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
+	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	Audio::AudioStream *makeAudioStream(uint sound) {
+		Common::MemoryReadStream *tmp = loadStream(sound);
+		if (!tmp)
+			return NULL;
+		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
+	}
 };
-
-Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
-	if (_offsets == NULL)
-		return NULL;
-
-	_file->seek(_offsets[sound], SEEK_SET);
-
-	int i = 1;
-	while (_offsets[sound + i] == _offsets[sound])
-		i++;
-
-	uint32 size = _offsets[sound + i] - _offsets[sound];
-
-	Common::MemoryReadStream *tmp = _file->readStream(size);
-	assert(tmp);
-	return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
-}
-
-void VorbisSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
-	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
-}
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 #ifdef USE_FLAC
-class FlacSound : public BaseSound {
+class FlacSound : public CompressedSound {
 public:
-	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
+	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	Audio::AudioStream *makeAudioStream(uint sound) {
+		Common::MemoryReadStream *tmp = loadStream(sound);
+		if (!tmp)
+			return NULL;
+		return Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
+	}
 };
-
-Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
-	if (_offsets == NULL)
-		return NULL;
-
-	_file->seek(_offsets[sound], SEEK_SET);
-
-	int i = 1;
-	while (_offsets[sound + i] == _offsets[sound])
-		i++;
-
-	uint32 size = _offsets[sound + i] - _offsets[sound];
-
-	Common::MemoryReadStream *tmp = _file->readStream(size);
-	assert(tmp);
-	return Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
-}
-
-void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
-	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
-}
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-static BaseSound *makeCompressedSound(Audio::Mixer *mixer, File *file, const Common::String &basename) {
+static CompressedSound *makeCompressedSound(Audio::Mixer *mixer, File *file, const Common::String &basename) {
 #ifdef USE_FLAC
 	file->open(basename + ".fla");
 	if (file->isOpen()) {
