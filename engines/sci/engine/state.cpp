@@ -35,7 +35,9 @@ namespace Sci {
 EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio)
 : resMan(res), _kernel(kernel), _voc(voc), _segMan(segMan), _gui(gui), _audio(audio), _dirseeker() {
 
+#ifdef USE_OLD_MUSIC_FUNCTIONS
 	sfx_init_flags = 0;
+#endif
 
 	restarting_flags = 0;
 

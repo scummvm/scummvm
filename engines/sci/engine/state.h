@@ -149,9 +149,9 @@ public:
 	AudioPlayer *_audio;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState _sound; /**< sound subsystem */
+	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 #endif
 	SoundCommandParser *_soundCmd;
-	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 
 	byte restarting_flags; /**< Flags used for restarting */
 
