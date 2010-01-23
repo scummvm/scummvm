@@ -863,6 +863,39 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 void SciGui::portraitUnload(uint16 portraitId) {
 }
 
+void SciGui::startPalVary(uint16 paletteId, uint16 ticks) {
+	if (_palVaryId >= 0)	// another palvary is taking place, return
+		return;
+
+	_palVaryId = paletteId;
+	_palVaryStart = g_system->getMillis();
+	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
+	((SciEngine*)g_engine)->getTimerManager()->installTimerProc(&palVaryCallback, 1000 / 60, this);
+}
+
+void SciGui::togglePalVary(bool pause) {
+	// this call is actually counting states, so calling this 3 times with true will require calling it later
+	// 3 times with false to actually remove pause
+
+	// TODO
+}
+
+void SciGui::stopPalVary() {
+	((SciEngine*)g_engine)->getTimerManager()->removeTimerProc(&palVaryCallback);
+	_palVaryId = -1;	// invalidate the target palette
+
+	// HACK: just set the target palette
+	_palette->setFromResource(_palVaryId, 2);
+}
+
+void SciGui::palVaryCallback(void *refCon) {
+	((SciGui *)refCon)->doPalVary();
+}
+
+void SciGui::doPalVary() {
+	// TODO: do palette transition here...
+}
+
 #ifdef ENABLE_SCI32
 void SciGui::addScreenItem(reg_t object) {
 	_screenItems.push_back(object);

@@ -604,7 +604,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 3) {
 			paletteId = argv[1].toUint16();
 			time = argv[2].toUint16();
-			// forward call to SciGui
+			s->_gui->startPalVary(paletteId, time);
 		} else {
 			warning("kPalVary(init) called with unsupported argc %d", argc);
 		}
@@ -612,7 +612,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 3: { // DeInit
 		if (argc == 1) {
-			// forward call to SciGui
+			s->_gui->stopPalVary();
 		} else {
 			warning("kPalVary(deinit) called with unsupported argc %d", argc);
 		}
@@ -622,9 +622,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		bool pauseState;
 		if (argc == 2) {
 			pauseState = argv[1].isNull() ? false : true;
-			// this call is actually counting states, so calling this 3 times with true will require calling it later
-			//  3 times with false to actually remove pause
-			// forward call to SciGui
+			s->_gui->togglePalVary(pauseState);
 		} else {
 			warning("kPalVary(pause) called with unsupported argc %d", argc);
 		}

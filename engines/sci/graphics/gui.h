@@ -151,6 +151,10 @@ public:
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);
 
+	void startPalVary(uint16 paletteId, uint16 ticks);
+	void togglePalVary(bool pause);
+	void stopPalVary();
+
 #ifdef ENABLE_SCI32
 	// SCI32
 	virtual void addScreenItem(reg_t object);
@@ -183,6 +187,8 @@ private:
 	virtual void initPriorityBands();
 	virtual void addToPicSetPicNotValid();
 	virtual int getControlPicNotValid();
+	static void palVaryCallback(void *refCon);
+	void doPalVary();
 
 	WindowMgr *_windowMgr;
 	AudioPlayer *_audio;
@@ -191,6 +197,9 @@ private:
 	Menu *_menu;
 	Text *_text;
 	Transitions *_transitions;
+	int16 _palVaryId;
+	uint32 _palVaryStart;
+	uint32 _palVaryEnd;
 
 	bool _usesOldGfxFunctions;
 
