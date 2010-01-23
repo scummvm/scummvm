@@ -763,12 +763,10 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 		break;
 
 	case SCI_VERSION_1_1:
-		// In SCI1.1, this kernel function is empty, apart from KQ6CD,
-		// where it has been replaced with kPortrait
+		// In KQ6CD, the empty kSetSynonyms function has been replaced
+		// with kPortrait
 		if (gameId == "kq6")
 			_kernelNames[0x26] = "Portrait";
-		else
-			_kernelNames[0x26] = "Dummy";
 		_kernelNames[0x71] = "PalVary";
 		_kernelNames[0x7c] = "Message";
 		break;
