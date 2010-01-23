@@ -231,7 +231,10 @@ void WindowMgr::DrawWindow(Window *pWnd) {
 			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
 				_gfx->FrameRect(r);
 				r.grow(-1);
-				_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, 0);
+				if (getSciVersion() <= SCI_VERSION_0_LATE)
+					_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, 8); // grey titlebar for SCI0
+				else
+					_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, 0); // black titlebar for SCI01+
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = _gfx->GetPort()->penClr;
 					_gfx->PenColor(255);
