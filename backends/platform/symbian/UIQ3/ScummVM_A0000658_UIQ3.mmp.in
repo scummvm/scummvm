@@ -1,8 +1,12 @@
-/* ScummVM - Scumm Interpreter
+/* ScummVM - Graphic Adventure Engine
  * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
  * Copyright (C) 2003-2009 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
  * Copyright (C) 2009 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
- * Copyright (C) 2005-2009 The ScummVM project
+ * Copyright (C) 2005-2010 The ScummVM project
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL: $
+ * $Id: scummvm-CVS-SymbianUIQ3.pkg 47404 2010-01-20 12:22:53Z anotherguest $
  *
  */
 

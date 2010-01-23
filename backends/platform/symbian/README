@@ -1,11 +1,12 @@
 
  ScummVM - ScummVM ported to EPOC/SymbianOS
 
- Copyright (C) 2008 ScummVM Team
+ Copyright (C) 2008-2010 ScummVM Team
  Copyright (C) 2003-2008 Lars 'AnotherGuest' Persson
- Copyright (C) 2002008 Jurgen 'SumthinWicked' Braam
+ Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
 
  Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson
+ $URL$
  $Id$
 
 Using parts of snprintf.c by 
