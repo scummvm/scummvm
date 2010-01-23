@@ -242,4 +242,57 @@ reg_t kRespondsTo(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_segMan->isHeapObject(obj) && lookup_selector(s->_segMan, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
+reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
+	SegManager *segMan = s->_segMan;
+	reg_t object = argv[0];
+	List *list;
+	Node *node;
+	int script;
+	int numSynonyms = 0;
+
+	list = s->_segMan->lookupList(GET_SEL32(segMan, object, elements));
+	node = s->_segMan->lookupNode(list->first);
+
+	while (node) {
+		reg_t objpos = node->value;
+		int seg;
+
+		script = GET_SEL32V(segMan, objpos, number);
+		seg = s->_segMan->getScriptSegment(script);
+
+		if (seg > 0)
+			numSynonyms = s->_segMan->getScript(seg)->getSynonymsNr();
+
+		if (numSynonyms) {
+			byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
+
+			if (synonyms) {
+				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
+				          numSynonyms, script);
+
+				if (numSynonyms > 16384) {
+					error("Segtable corruption: script.%03d has %d synonyms",
+					         script, numSynonyms);
+					/* We used to reset the corrupted value here. I really don't think it's appropriate.
+					 * Lars */
+				} else
+					for (int i = 0; i < numSynonyms; i++) {
+						synonym_t tmp;
+						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
+						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
+						s->_voc->addSynonym(tmp);
+					}
+			} else
+				warning("Synonyms of script.%03d were requested, but script is not available", script);
+
+		}
+
+		node = s->_segMan->lookupNode(node->succ);
+	}
+
+	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", numSynonyms);
+
+	return s->r_acc;
+}
+
 } // End of namespace Sci

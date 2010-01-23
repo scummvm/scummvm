@@ -170,11 +170,6 @@ public:
 
 	DirSeeker _dirseeker;
 
-	/* Parser data: */
-	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
-	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
-	bool parserIsValid; /**< If something has been correctly parsed */
-
 	/* VM Information */
 
 	Common::List<ExecStack> _executionStack; /**< The execution stack */

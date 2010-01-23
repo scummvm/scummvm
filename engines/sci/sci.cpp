@@ -137,7 +137,8 @@ Common::Error SciEngine::run() {
 	_console = new Console(this);
 
 	_kernel = new Kernel(_resMan, getGameID());
-	_vocabulary = new Vocabulary(_resMan);
+	// Only SCI0 and SCI01 games used a parser
+	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
 	_audio = new AudioPlayer(_resMan);
 
 	SegManager *segMan = new SegManager(_resMan);

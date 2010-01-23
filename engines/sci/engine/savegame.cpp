@@ -898,7 +898,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// static parser information:
 
-	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
+	if (retval->_voc)
+		retval->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	// Copy breakpoint information from current game instance
 	retval->have_bp = s->have_bp;

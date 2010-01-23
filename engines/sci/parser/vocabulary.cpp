@@ -108,6 +108,10 @@ Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 		debug(2, "Assuming that this game does not use a parser.");
 		_parserRules = NULL;
 	}
+
+	parser_base = NULL_REG;
+	parser_event = NULL_REG;
+	parserIsValid = false;
 }
 
 Vocabulary::~Vocabulary() {

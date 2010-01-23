@@ -2446,7 +2446,7 @@ int said(EngineState *s, byte *spec, bool verbose) {
 
 	parse_tree_node_t *parse_tree_ptr = s->_voc->_parserNodes;
 
-	if (s->parserIsValid) {
+	if (s->_voc->parserIsValid) {
 		if (said_parse_spec(spec)) {
 			printf("Offending spec was: ");
 			s->_voc->decipherSaidBlock(spec);

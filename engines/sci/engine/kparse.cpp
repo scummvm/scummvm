@@ -62,7 +62,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		s->_voc->decipherSaidBlock(said_block);
 #endif
 
-	if (s->parser_event.isNull() || (GET_SEL32V(s->_segMan, s->parser_event, claimed))) {
+	if (s->_voc->parser_event.isNull() || (GET_SEL32V(s->_segMan, s->_voc->parser_event, claimed))) {
 		return NULL_REG;
 	}
 
@@ -76,71 +76,13 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 		if (new_lastmatch != SAID_PARTIAL_MATCH)
-			PUT_SEL32V(s->_segMan, s->parser_event, claimed, 1);
+			PUT_SEL32V(s->_segMan, s->_voc->parser_event, claimed, 1);
 
 	} else {
 		return NULL_REG;
 	}
 	return s->r_acc;
 }
-
-
-reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	reg_t object = argv[0];
-	List *list;
-	Node *node;
-	int script;
-	int numSynonyms = 0;
-
-	s->_voc->clearSynonyms();
-
-	list = s->_segMan->lookupList(GET_SEL32(segMan, object, elements));
-	node = s->_segMan->lookupNode(list->first);
-
-	while (node) {
-		reg_t objpos = node->value;
-		int seg;
-
-		script = GET_SEL32V(segMan, objpos, number);
-		seg = s->_segMan->getScriptSegment(script);
-
-		if (seg > 0)
-			numSynonyms = s->_segMan->getScript(seg)->getSynonymsNr();
-
-		if (numSynonyms) {
-			byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
-
-			if (synonyms) {
-				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
-				          numSynonyms, script);
-
-				if (numSynonyms > 16384) {
-					error("Segtable corruption: script.%03d has %d synonyms",
-					         script, numSynonyms);
-					/* We used to reset the corrupted value here. I really don't think it's appropriate.
-					 * Lars */
-				} else
-					for (int i = 0; i < numSynonyms; i++) {
-						synonym_t tmp;
-						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
-						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
-						s->_voc->addSynonym(tmp);
-					}
-			} else
-				warning("Synonyms of script.%03d were requested, but script is not available", script);
-
-		}
-
-		node = s->_segMan->lookupNode(node->succ);
-	}
-
-	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", numSynonyms);
-
-	return s->r_acc;
-}
-
-
 
 reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
@@ -151,10 +93,10 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	reg_t event = argv[1];
 	Vocabulary *voc = s->_voc;
 
-	s->parser_event = event;
+	s->_voc->parser_event = event;
 
 	bool res = voc->tokenizeString(words, string.c_str(), &error);
-	s->parserIsValid = false; /* not valid */
+	s->_voc->parserIsValid = false; /* not valid */
 
 	if (res && !words.empty()) {
 		s->_voc->synonymizeTokens(words);
@@ -174,13 +116,13 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			s->r_acc = make_reg(0, 1);
 			PUT_SEL32V(segMan, event, claimed, 1);
 
-			invoke_selector(INV_SEL(s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, s->parser_base, stringpos);
+			invoke_selector(INV_SEL(s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
 			/* Issue warning */
 
 			debugC(2, kDebugLevelParser, "Tree building failed\n");
 
 		} else {
-			s->parserIsValid = true;
+			s->_voc->parserIsValid = true;
 			PUT_SEL32V(segMan, event, claimed, 0);
 
 #ifdef DEBUG_PARSER
@@ -193,11 +135,11 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 0);
 		PUT_SEL32V(segMan, event, claimed, 1);
 		if (error) {
-			s->_segMan->strcpy(s->parser_base, error);
+			s->_segMan->strcpy(s->_voc->parser_base, error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s\n", error);
 			/* Issue warning: */
 
-			invoke_selector(INV_SEL(s->_gameObj, wordFail, kStopOnInvalidSelector), 2, s->parser_base, stringpos);
+			invoke_selector(INV_SEL(s->_gameObj, wordFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
 			free(error);
 			return make_reg(0, 1); /* Tell them that it didn't work */
 		}

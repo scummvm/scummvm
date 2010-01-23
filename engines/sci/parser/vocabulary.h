@@ -32,6 +32,7 @@
 #include "common/list.h"
 
 #include "sci/sci.h"
+#include "sci/engine/vm_types.h"
 
 namespace Sci {
 
@@ -313,6 +314,11 @@ private:
 public:
 	// Accessed by said()
 	parse_tree_node_t _parserNodes[VOCAB_TREE_NODES]; /**< The parse tree */
+
+	// Parser data:
+	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
+	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
+	bool parserIsValid; /**< If something has been correctly parsed */
 };
 
 /**

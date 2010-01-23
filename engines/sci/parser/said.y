@@ -802,7 +802,7 @@ int said(EngineState *s, byte *spec, bool verbose) {
 
 	parse_tree_node_t *parse_tree_ptr = s->_voc->_parser_nodes;
 
-	if (s->parserIsValid) {
+	if (s->_voc->parserIsValid) {
 		if (said_parse_spec(s, spec)) {
 			warning("Offending spec was: ");
 			s->_voc->decipherSaidBlock(spec);
@@ -830,7 +830,7 @@ int main (int argc, char *argv) {
 	byte block[] = {0x01, 0x00, 0xf8, 0xf5, 0x02, 0x01, 0xf6, 0xf2, 0x02, 0x01, 0xf2, 0x01, 0x03, 0xff};
 	EngineState s;
 
-	s.parser_valid = 1;
+	s._voc->parser_valid = 1;
 	said(&s, block);
 }
 #endif

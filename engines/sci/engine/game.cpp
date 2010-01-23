@@ -263,8 +263,11 @@ int game_init(EngineState *s) {
 		return 1;
 	}
 
-	s->parserIsValid = false; // Invalidate parser
-	s->parser_event = NULL_REG; // Invalidate parser event
+	if (s->_voc) {
+		s->_voc->parserIsValid = false; // Invalidate parser
+		s->_voc->parser_event = NULL_REG; // Invalidate parser event
+		s->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
+	}
 
 	// Initialize menu TODO: Actually this should be another init()
 	s->_gui->menuReset();
@@ -275,8 +278,6 @@ int game_init(EngineState *s) {
 	str->_name = "parser-base";
 	str->_maxSize = MAX_PARSER_BASE;
 	str->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
-
-	s->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;

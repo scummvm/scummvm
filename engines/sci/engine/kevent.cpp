@@ -61,7 +61,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	oldy = mousePos.y;
 	curEvent = s->_event->get(mask);
 
-	s->parser_event = NULL_REG; // Invalidate parser event
+	if (s->_voc)
+		s->_voc->parser_event = NULL_REG; // Invalidate parser event
 
 	PUT_SEL32V(segMan, obj, x, mousePos.x);
 	PUT_SEL32V(segMan, obj, y, mousePos.y);

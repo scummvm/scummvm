@@ -56,16 +56,12 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	stack_base = 0;
 	stack_top = 0;
 
-	parser_base = NULL_REG;
-	parser_event = NULL_REG;
 	script_000 = 0;
 
 	bp_list = 0;
 	have_bp = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
-
-	parserIsValid = false;
 
 	_gameObj = NULL_REG;
 
