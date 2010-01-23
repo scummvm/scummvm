@@ -57,10 +57,10 @@ public:
 	virtual ~BaseSound();
 	void close();
 
-	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0) {
-		playSound(sound, sound, type, handle, flags, vol);
+	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) {
+		playSound(sound, sound, type, handle, loop, vol);
 	}
-	virtual void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0) = 0;
+	virtual void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) = 0;
 	virtual Audio::AudioStream *makeAudioStream(uint sound) { return NULL; }
 };
 
@@ -234,7 +234,7 @@ public:
 	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
 	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
 Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
@@ -245,9 +245,9 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 	return Audio::makeWAVStream(_file, DisposeAfterUse::NO);
 }
 
-void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ public:
 	VocSound(Audio::Mixer *mixer, File *file, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
 		: BaseSound(mixer, file, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
@@ -267,10 +267,9 @@ Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 	return Audio::makeVOCStream(*_file, _flags);
 }
 
-void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	assert( _flags == (flags & ~Audio::FLAG_LOOP) );
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,10 +280,10 @@ class RawSound : public BaseSound {
 public:
 	RawSound(Audio::Mixer *mixer, File *file, bool isUnsigned)
 		: BaseSound(mixer, file, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
-void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	if (_offsets == NULL)
 		return;
 
@@ -295,9 +294,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 	assert(buffer);
 	_file->read(buffer, size);
 
-	assert( _flags == (flags & ~Audio::FLAG_LOOP) );
-
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 22050, flags);
+	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 22050, _flags);
 	_mixer->playInputStream(type, handle, stream);
 }
 
@@ -309,7 +306,7 @@ class MP3Sound : public BaseSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
 Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
@@ -329,9 +326,9 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 	return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
 }
 
-void MP3Sound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+void MP3Sound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 #endif
 
@@ -343,7 +340,7 @@ class VorbisSound : public BaseSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
 Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
@@ -363,9 +360,9 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 	return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 }
 
-void VorbisSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+void VorbisSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 #endif
 
@@ -377,7 +374,7 @@ class FlacSound : public BaseSound {
 public:
 	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
 Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
@@ -397,9 +394,9 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 	return Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
 }
 
-void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::FLAG_LOOP) != 0), -1, vol);
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 #endif
 
@@ -667,13 +664,13 @@ void Sound::playVoice(uint sound) {
 	_mixer->stopHandle(_voiceHandle);
 	if (_vm->getGameType() == GType_PP) {
 		if (sound < 11)
-			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, Audio::FLAG_LOOP, -1500);
+			_voice->playSound(sound, sound + 1, Audio::Mixer::kMusicSoundType, &_voiceHandle, true, -1500);
 		else
-			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, Audio::FLAG_LOOP);
+			_voice->playSound(sound, sound, Audio::Mixer::kMusicSoundType, &_voiceHandle, true);
 	} else if (_vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32) {
-		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, 0);
+		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
 	} else {
-		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, Audio::FLAG_UNSIGNED);
+		_voice->playSound(sound, Audio::Mixer::kSpeechSoundType, &_voiceHandle, false);
 	}
 }
 
@@ -686,7 +683,7 @@ void Sound::playEffects(uint sound) {
 
 	if (_vm->getGameType() == GType_SIMON1)
 		_mixer->stopHandle(_effectsHandle);
-	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::FLAG_UNSIGNED);
+	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, false);
 }
 
 void Sound::playAmbient(uint sound) {
@@ -702,7 +699,7 @@ void Sound::playAmbient(uint sound) {
 		return;
 
 	_mixer->stopHandle(_ambientHandle);
-	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_ambientHandle, Audio::FLAG_LOOP | Audio::FLAG_UNSIGNED);
+	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_ambientHandle, true);
 }
 
 bool Sound::hasVoice() const {
