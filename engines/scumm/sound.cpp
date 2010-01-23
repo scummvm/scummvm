@@ -164,7 +164,6 @@ void Sound::playSound(int soundID) {
 	Audio::AudioStream *stream;
 	int size = -1;
 	int rate;
-	byte flags = Audio::FLAG_UNSIGNED;
 
 	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine) {
 		if (soundID >= 13 && soundID <= 32) {
@@ -204,7 +203,7 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
 
-		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags);
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// WORKAROUND bug # 1311447
@@ -227,7 +226,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
-		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags);
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
@@ -299,7 +298,7 @@ void Sound::playSound(int soundID) {
 		// Allocate a sound buffer, copy the data into it, and play
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
-		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, flags);
+		stream = Audio::makeRawMemoryStream(sound, size, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
@@ -350,10 +349,7 @@ void Sound::playSound(int soundID) {
 				}
 				size -= waveSize;
 
-				if (loopEnd > 0)
-					flags |= Audio::FLAG_LOOP;
-
-				stream = Audio::makeRawMemoryStream_OLD(sound, waveSize, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+				stream = Audio::makeRawMemoryStream_OLD(sound, waveSize, DisposeAfterUse::YES, rate, Audio::FLAG_UNSIGNED, loopStart, loopEnd);
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
@@ -426,7 +422,6 @@ void Sound::playSound(int soundID) {
 		// offset 26: ?  if != 0: stop current sound?
 		// offset 27: ?  loopcount? 0xff == -1 for infinite?
 
-		flags = 0;
 		size = READ_BE_UINT16(ptr + 12);
 		assert(size);
 		
@@ -442,11 +437,10 @@ void Sound::playSound(int soundID) {
 			// so maybe this is not really a problem.
 			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
 			loopEnd = READ_BE_UINT16(ptr + 14);
-			flags |= Audio::FLAG_LOOP;
 		}
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		stream = Audio::makeRawMemoryStream_OLD(sound, size, DisposeAfterUse::YES, rate, flags, loopStart, loopEnd);
+		stream = Audio::makeRawMemoryStream_OLD(sound, size, DisposeAfterUse::YES, rate, 0, loopStart, loopEnd);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, vol, 0);
 	}
 	else {

@@ -95,7 +95,7 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 	_channels[i].pan = pan;
 	_channels[i].freq = rate;
 	_channels[i].ctr = 0;
-	_channels[i].input = Audio::makeRawMemoryStream_OLD((const byte*)data, size, DisposeAfterUse::YES, rate, (loopStart != loopEnd ? Audio::FLAG_LOOP : 0), loopStart, loopEnd);
+	_channels[i].input = Audio::makeRawMemoryStream_OLD((const byte*)data, size, DisposeAfterUse::YES, rate, 0, loopStart, loopEnd);
 	// read the first sample
 	_channels[i].input->readBuffer(&_channels[i].pos, 1);
 }

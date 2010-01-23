@@ -365,7 +365,7 @@ AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
 		uint loopStart, uint loopEnd) {
 	SeekableAudioStream *s = makeRawMemoryStream(ptr, len, autoFree, rate, flags);
 
-	if ((flags & Audio::FLAG_LOOP) != 0) {
+	if (loopStart != loopEnd) {
 		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 
