@@ -772,7 +772,7 @@ void HistoryPlayer::play() {
 	char tempWsaFilename[16];
 	char voiceFilename[13];
 	// the 'a' *has* to be lowercase
-	strncpy(voiceFilename, "PS_1a", sizeof(voiceFilename));
+	strcpy(voiceFilename, "PS_1a");
 
 	int part = 0;
 	Sound *sound = _vm->sound();

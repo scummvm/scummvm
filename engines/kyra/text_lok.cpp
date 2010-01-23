@@ -349,6 +349,7 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 void KyraEngine_LoK::updateSentenceCommand(const char *str1, const char *str2, int color) {
 	char sentenceCommand[500];
 	strncpy(sentenceCommand, str1, 500);
+	sentenceCommand[499] = 0;
 	if (str2)
 		strncat(sentenceCommand, str2, 500 - strlen(sentenceCommand));
 

@@ -34,8 +34,10 @@ TextDisplayer_MR::TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen)
 }
 
 char *TextDisplayer_MR::preprocessString(const char *str) {
-	if (_talkBuffer != str)
-		strncpy(_talkBuffer, str, sizeof(_talkBuffer));
+	if (_talkBuffer != str) {
+		assert(strlen(str) < sizeof(_talkBuffer) - 1);
+		strcpy(_talkBuffer, str);
+	}
 
 	char *p = _talkBuffer;
 	while (*p) {

@@ -749,6 +749,7 @@ int GUI_LoK::saveGame(Button *button) {
 		for (int i = 0; i < 5; i++) {
 			if (_menu[2].item[i].saveSlot == _vm->_gameToLoad) {
 				strncpy(_savegameName, _menu[2].item[i].itemString, 31);
+				_savegameName[30] = 0;
 				break;
 			}
 		}
@@ -757,7 +758,7 @@ int GUI_LoK::saveGame(Button *button) {
 
 	_screen->setFont(cf);
 
-	while (_displaySubMenu && !_vm->shouldQuit()) {		
+	while (_displaySubMenu && !_vm->shouldQuit()) {
 		checkTextfieldInput();
 		cf = _screen->setFont(Screen::FID_8_FNT);
 		updateSavegameString();

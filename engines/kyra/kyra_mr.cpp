@@ -1319,6 +1319,7 @@ int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 	uint32 size = 0;
 	char nBuf[32];
 	strncpy(nBuf, file, 32);
+	nBuf[31] = 0;
 	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
 
 	return buffer ? size : 0 ;
