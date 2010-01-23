@@ -61,12 +61,11 @@ public:
 		playSound(sound, sound, type, handle, loop, vol);
 	}
 	virtual void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) = 0;
-	virtual Audio::AudioStream *makeAudioStream(uint sound) { return NULL; }
+	virtual Audio::AudioStream *makeAudioStream(uint sound) = 0;
 };
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian) {
-	_mixer = mixer;
-	_file = file;
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian)
+	: _mixer(mixer), _file(file) {
 
 	uint res = 0;
 	uint32 size;
@@ -99,9 +98,9 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndia
 	_offsets[res] = _file->size();
 }
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets) {
-	_mixer = mixer;
-	_file = file;
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets)
+	: _mixer(mixer), _file(file) {
+
 	_offsets = offsets;
 	_freeOffsets = false;
 }
@@ -280,12 +279,13 @@ class RawSound : public BaseSound {
 public:
 	RawSound(Audio::Mixer *mixer, File *file, bool isUnsigned)
 		: BaseSound(mixer, file, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
+	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
 
-void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
+Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
 	if (_offsets == NULL)
-		return;
+		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
 
@@ -294,8 +294,14 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 	assert(buffer);
 	_file->read(buffer, size);
 
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 22050, _flags);
-	_mixer->playInputStream(type, handle, stream);
+	return Audio::makeRawMemoryStream(buffer, size, DisposeAfterUse::YES, 22050, _flags);
+}
+
+void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
+	// FIXME: We ignore loopSound and vol. Is this on purpose?
+	_mixer->playInputStream(type, handle, makeAudioStream(sound));
+//	convertVolume(vol);
+//	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
