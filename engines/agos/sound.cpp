@@ -50,12 +50,12 @@ protected:
 	uint32 *_offsets;
 	Audio::Mixer *_mixer;
 	bool _freeOffsets;
+	DisposeAfterUse::Flag _disposeFile;
 
 public:
-	BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian);
-	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets);
+	BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
+	BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
 	virtual ~BaseSound();
-	void close();
 
 	void playSound(uint sound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) {
 		playSound(sound, sound, type, handle, loop, vol);
@@ -64,8 +64,8 @@ public:
 	virtual Audio::AudioStream *makeAudioStream(uint sound) = 0;
 };
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian)
-	: _mixer(mixer), _file(file) {
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse)
+	: _mixer(mixer), _file(file), _disposeFile(disposeFileAfterUse) {
 
 	uint res = 0;
 	uint32 size;
@@ -98,23 +98,18 @@ BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 base, bool bigEndia
 	_offsets[res] = _file->size();
 }
 
-BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets)
-	: _mixer(mixer), _file(file) {
+BaseSound::BaseSound(Audio::Mixer *mixer, File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse)
+	: _mixer(mixer), _file(file), _disposeFile(disposeFileAfterUse) {
 
 	_offsets = offsets;
 	_freeOffsets = false;
 }
 
-void BaseSound::close() {
-	if (_freeOffsets) {
-		free(_offsets);
-	}
-}
-
 BaseSound::~BaseSound() {
 	if (_freeOffsets)
 		free(_offsets);
-	delete _file;
+	if (_disposeFile == DisposeAfterUse::YES)
+		delete _file;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -230,7 +225,8 @@ static void convertPan(int &pan) {
 
 class WavSound : public BaseSound {
 public:
-	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : BaseSound(mixer, file, base, false) {}
+	WavSound(Audio::Mixer *mixer, File *file, uint32 base = 0, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES)
+		: BaseSound(mixer, file, base, false, disposeFileAfterUse) {}
 	WavSound(Audio::Mixer *mixer, File *file, uint32 *offsets) : BaseSound(mixer, file, offsets) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
@@ -255,8 +251,8 @@ void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 class VocSound : public BaseSound {
 	const byte _flags;
 public:
-	VocSound(Audio::Mixer *mixer, File *file, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
-		: BaseSound(mixer, file, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
+	VocSound(Audio::Mixer *mixer, File *file, bool isUnsigned, uint32 base = 0, bool bigEndian = false, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES)
+		: BaseSound(mixer, file, base, bigEndian, disposeFileAfterUse), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
 	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
 };
@@ -590,18 +586,12 @@ void Sound::readSfxFile(const Common::String &filename) {
 void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
-	if (_effects)
-		_effects->close();
-
-	// FIXME: _effects is leaked here! However, we can't just
-	// delete it, because this would delete the gameFile object,
-	// held by the current _effects object.
-
+	delete _effects;
 	const bool dataIsUnsigned = false;
 	if (_vm->getPlatform() == Common::kPlatformWindows)
-		_effects = new WavSound(_mixer, gameFile, base);
+		_effects = new WavSound(_mixer, gameFile, base, DisposeAfterUse::NO);
 	else
-		_effects = new VocSound(_mixer, gameFile, dataIsUnsigned, base);
+		_effects = new VocSound(_mixer, gameFile, dataIsUnsigned, base, DisposeAfterUse::NO);
 }
 
 // This method is only used by Simon1 Amiga Talkie
