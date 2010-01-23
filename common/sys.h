@@ -248,12 +248,12 @@
 	#define SYSTEM_NEED_ALIGNMENT
 #elif defined(__N64__)
 
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
+	#define SYSTEM_BIG_ENDIAN
+	#define SYSTEM_NEED_ALIGNMENT
 
 	#define STRINGBUFLEN 256
 
-	#define SCUMMVM_DONT_DEFINE_TYPES
+	#define SYSTEM_DONT_DEFINE_TYPES
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
