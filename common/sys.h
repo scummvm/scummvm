@@ -135,6 +135,7 @@
 #elif defined(_WIN32_WCE)
 
 	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 	#define snprintf _snprintf
 
 	#define SYSTEM_LITTLE_ENDIAN
@@ -152,6 +153,7 @@
 #elif defined(_MSC_VER)
 
 	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 	#define snprintf _snprintf
 
 	#define SYSTEM_LITTLE_ENDIAN
@@ -164,6 +166,7 @@
 #elif defined(__MINGW32__)
 
 	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 
 	#define SYSTEM_LITTLE_ENDIAN
 
@@ -200,6 +203,7 @@
 	#define SYSTEM_LITTLE_ENDIAN
 
 	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 
 	#define SYSTEM_NEED_ALIGNMENT
 	#define STRINGBUFLEN 256
@@ -220,6 +224,7 @@
 #elif defined(__GP32__)
 
 	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 
 	#define SYSTEM_LITTLE_ENDIAN
 	#define SYSTEM_NEED_ALIGNMENT
@@ -243,8 +248,8 @@
 	#define SYSTEM_NEED_ALIGNMENT
 #elif defined(__N64__)
 
-	#define scumm_stricmp strcasecmp
-	#define scumm_strnicmp strncasecmp
+	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 
 	#define SCUMM_BIG_ENDIAN
 	#define SCUMM_NEED_ALIGNMENT
@@ -279,6 +284,7 @@
 #elif defined (__DS__)
 
 	#define strcasecmp stricmp
+	#define strncasecmp strnicmp
 
 	#define SYSTEM_NEED_ALIGNMENT
 	#define SYSTEM_LITTLE_ENDIAN
