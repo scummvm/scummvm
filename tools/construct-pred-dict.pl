@@ -1,6 +1,6 @@
 #!perl
 #
-# ScummVM - Scumm Interpreter
+# ScummVM - Graphic Adventure Engine
 #
 # ScummVM is the legal property of its developers, whose names
 # are too numerous to list here. Please refer to the COPYRIGHT
