@@ -482,7 +482,7 @@ void Sound::loadVoiceFile(const GameSpecificSettings *gss) {
 		}
 	}
 
-	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP);
+	const bool dataIsUnsigned = true;
 
 	if (!_hasVoiceFile) {
 		sprintf(filename, "%s.voc", gss->speech_filename);
@@ -514,7 +514,7 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 		_hasEffectsFile = (_effects != 0);
 	}
 
-	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
+	const bool dataIsUnsigned = true;
 
 	if (!_hasEffectsFile) {
 		sprintf(filename, "%s.voc", gss->effects_filename);
@@ -534,7 +534,7 @@ void Sound::loadSfxFile(const GameSpecificSettings *gss) {
 	}
 }
 
-// This method is only used by Simon1 Amiga Talkie & Windows
+// This method is only used by Simon1 Amiga CD32 & Windows
 void Sound::readSfxFile(const Common::String &filename) {
 	if (_hasEffectsFile)
 		return;
@@ -548,7 +548,7 @@ void Sound::readSfxFile(const Common::String &filename) {
 		error("readSfxFile: Can't load sfx file %s", filename.c_str());
 	}
 
-	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
+	const bool dataIsUnsigned = (_vm->getGameId() != GID_SIMON1CD32);
 
 	delete _effects;
 	if (_vm->getGameId() == GID_SIMON1CD32) {
@@ -562,14 +562,14 @@ void Sound::loadSfxTable(File *gameFile, uint32 base) {
 	stopAll();
 
 	delete _effects;
-	const bool dataIsUnsigned = false;
+	const bool dataIsUnsigned = true;
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		_effects = new WavSound(_mixer, gameFile, base, DisposeAfterUse::NO);
 	else
-		_effects = new VocSound(_mixer, gameFile, dataIsUnsigned, base, DisposeAfterUse::NO);
+		_effects = new VocSound(_mixer, gameFile, dataIsUnsigned, base, false, DisposeAfterUse::NO);
 }
 
-// This method is only used by Simon1 Amiga Talkie
+// This method is only used by Simon1 Amiga CD32
 void Sound::readVoiceFile(const Common::String &filename) {
 	_mixer->stopHandle(_voiceHandle);
 
@@ -579,7 +579,7 @@ void Sound::readVoiceFile(const Common::String &filename) {
 	if (file->isOpen() == false)
 		error("readVoiceFile: Can't load voice file %s", filename.c_str());
 
-	const bool dataIsUnsigned = (_vm->getGameType() == GType_PP || _vm->getGameType() == GType_FF || _vm->getGameId() == GID_SIMON1CD32);
+	const bool dataIsUnsigned = false;
 
 	delete _voice;
 	_voice = new RawSound(_mixer, file, dataIsUnsigned);
