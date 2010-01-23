@@ -32,29 +32,15 @@
 #ifndef SOUND_IFF_H
 #define SOUND_IFF_H
 
-#include "common/iff_container.h"
-#include "sound/audiostream.h"
+namespace Common {
+	class ReadStream;
+}
 
 namespace Audio {
 
-struct Voice8Header {
-	uint32	oneShotHiSamples;
-	uint32	repeatHiSamples;
-	uint32	samplesPerHiCycle;
-	uint16	samplesPerSec;
-	byte	octaves;
-	byte	compression;
-	uint32	volume;
-
-	Voice8Header() {
-		memset(this, 0, sizeof(Voice8Header));
-	}
-
-	void load(Common::ReadStream &stream);
-};
+class AudioStream;
 
 AudioStream *make8SVXStream(Common::ReadStream &stream, bool loop);
-
 
 }
 

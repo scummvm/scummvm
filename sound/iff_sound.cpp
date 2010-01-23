@@ -27,17 +27,35 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/raw.h"
+#include "common/iff_container.h"
 #include "common/func.h"
 
 namespace Audio {
 
+struct Voice8Header {
+	uint32	oneShotHiSamples;
+	uint32	repeatHiSamples;
+	uint32	samplesPerHiCycle;
+	uint16	samplesPerSec;
+	byte	octaves;
+	byte	compression;
+	uint32	volume;
+
+	Voice8Header() {
+		memset(this, 0, sizeof(Voice8Header));
+	}
+
+	void load(Common::ReadStream &stream);
+};
+
 void Voice8Header::load(Common::ReadStream &stream) {
-	stream.read(this, sizeof(Voice8Header));
-	oneShotHiSamples = FROM_BE_32(oneShotHiSamples);
-	repeatHiSamples = FROM_BE_32(repeatHiSamples);
-	samplesPerHiCycle = FROM_BE_32(samplesPerHiCycle);
-	samplesPerSec = FROM_BE_16(samplesPerSec);
-	volume = FROM_BE_32(volume);
+	oneShotHiSamples = stream.readUint32BE();
+	repeatHiSamples = stream.readUint32BE();
+	samplesPerHiCycle = stream.readUint32BE();
+	samplesPerSec = stream.readUint16BE();
+	octaves = stream.readByte();
+	compression = stream.readByte();
+	volume = stream.readUint32BE();
 }
 
 
