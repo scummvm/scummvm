@@ -935,7 +935,7 @@ uint16 executePlayerInput() {
 
 				objIdx = getObjectUnderCursor(mouseX, mouseY);
 
-				if (commandVar2 != objIdx) {
+				if (g_cine->getGameType() == Cine::GType_OS || commandVar2 != objIdx) {
 					if (objIdx != -1) {
 						renderer->setCommand(commandBuffer + " " + objectTable[objIdx].name);
 					} else {
