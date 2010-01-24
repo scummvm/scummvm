@@ -113,6 +113,24 @@ void SciPalette::createFromData(byte *data, Palette *paletteOut) {
 	}
 }
 
+static const byte EGApalette[16][3] = {
+	{ 0x000, 0x000, 0x000 },
+	{ 0x000, 0x000, 0x0AA },
+	{ 0x000, 0x0AA, 0x000 },
+	{ 0x000, 0x0AA, 0x0AA },
+	{ 0x0AA, 0x000, 0x000 },
+	{ 0x0AA, 0x000, 0x0AA },
+	{ 0x0AA, 0x055, 0x000 },
+	{ 0x0AA, 0x0AA, 0x0AA },
+	{ 0x055, 0x055, 0x055 },
+	{ 0x055, 0x055, 0x0FF },
+	{ 0x055, 0x0FF, 0x055 },
+	{ 0x055, 0x0FF, 0x0FF },
+	{ 0x0FF, 0x055, 0x055 },
+	{ 0x0FF, 0x055, 0x0FF },
+	{ 0x0FF, 0x0FF, 0x055 },
+	{ 0x0FF, 0x0FF, 0x0FF }
+};
 
 // Will try to set amiga palette by using "spal" file. If not found, we return false
 bool SciPalette::setAmiga() {
@@ -132,40 +150,42 @@ bool SciPalette::setAmiga() {
 		}
 		file.close();
 		setOnScreen();
+
+		// Create EGA to amiga table
+		for (curColor = 0; curColor < 16; curColor++) {
+			_amigaEGAtable[curColor] = matchColor(&_sysPalette, EGApalette[curColor][0], EGApalette[curColor][1], EGApalette[curColor][2]);
+		}
 		return true;
 	}
 	return false;
 }
 
+// On amiga the scripts send us an EGA color, we need to match it to the active amiga palette
+int16 SciPalette::mapAmigaColor(int16 color) {
+	// TODO: not sure what pq3 means by using color 31
+	if (color > 15)
+		return color;
+	//color = CLIP<int16>(color, 0, 15);
+	return _amigaEGAtable[color];
+}
+
 void SciPalette::setEGA() {
-	int i;
+	int curColor;
 	byte color1, color2;
-	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
-	_sysPalette.colors[2].r  = 0x000; _sysPalette.colors[2].g  = 0x0AA; _sysPalette.colors[2].b  = 0x000;
-	_sysPalette.colors[3].r  = 0x000; _sysPalette.colors[3].g  = 0x0AA; _sysPalette.colors[3].b  = 0x0AA;
-	_sysPalette.colors[4].r  = 0x0AA; _sysPalette.colors[4].g  = 0x000; _sysPalette.colors[4].b  = 0x000;
-	_sysPalette.colors[5].r  = 0x0AA; _sysPalette.colors[5].g  = 0x000; _sysPalette.colors[5].b  = 0x0AA;
-	_sysPalette.colors[6].r  = 0x0AA; _sysPalette.colors[6].g  = 0x055; _sysPalette.colors[6].b  = 0x000;
-	_sysPalette.colors[7].r  = 0x0AA; _sysPalette.colors[7].g  = 0x0AA; _sysPalette.colors[7].b  = 0x0AA;
-	_sysPalette.colors[8].r  = 0x055; _sysPalette.colors[8].g  = 0x055; _sysPalette.colors[8].b  = 0x055;
-	_sysPalette.colors[9].r  = 0x055; _sysPalette.colors[9].g  = 0x055; _sysPalette.colors[9].b  = 0x0FF;
-	_sysPalette.colors[10].r = 0x055; _sysPalette.colors[10].g = 0x0FF; _sysPalette.colors[10].b = 0x055;
-	_sysPalette.colors[11].r = 0x055; _sysPalette.colors[11].g = 0x0FF; _sysPalette.colors[11].b = 0x0FF;
-	_sysPalette.colors[12].r = 0x0FF; _sysPalette.colors[12].g = 0x055; _sysPalette.colors[12].b = 0x055;
-	_sysPalette.colors[13].r = 0x0FF; _sysPalette.colors[13].g = 0x055; _sysPalette.colors[13].b = 0x0FF;
-	_sysPalette.colors[14].r = 0x0FF; _sysPalette.colors[14].g = 0x0FF; _sysPalette.colors[14].b = 0x055;
-	_sysPalette.colors[15].r = 0x0FF; _sysPalette.colors[15].g = 0x0FF; _sysPalette.colors[15].b = 0x0FF;
-	for (i = 0; i <= 15; i++) {
-		_sysPalette.colors[i].used = 1;
+	for (curColor = 0; curColor <= 15; curColor++) {
+		_sysPalette.colors[curColor].used = 1;
+		_sysPalette.colors[curColor].r = EGApalette[curColor][0];
+		_sysPalette.colors[curColor].g = EGApalette[curColor][1];
+		_sysPalette.colors[curColor].b = EGApalette[curColor][2];
 	}
 	// Now setting colors 16-254 to the correct mix colors that occur when not doing a dithering run on
 	//  finished pictures
-	for (i = 0x10; i <= 0xFE; i++) {
-		_sysPalette.colors[i].used = 1;
-		color1 = i & 0x0F; color2 = i >> 4;
-		_sysPalette.colors[i].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
-		_sysPalette.colors[i].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
-		_sysPalette.colors[i].b = (_sysPalette.colors[color1].b >> 1) + (_sysPalette.colors[color2].b >> 1);
+	for (curColor = 0x10; curColor <= 0xFE; curColor++) {
+		_sysPalette.colors[curColor].used = curColor;
+		color1 = curColor & 0x0F; color2 = curColor >> 4;
+		_sysPalette.colors[curColor].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
+		_sysPalette.colors[curColor].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
+		_sysPalette.colors[curColor].b = (_sysPalette.colors[color1].b >> 1) + (_sysPalette.colors[color2].b >> 1);
 	}
 	setOnScreen();
 }

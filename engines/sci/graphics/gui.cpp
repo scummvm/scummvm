@@ -176,6 +176,11 @@ int16 SciGui::priorityToCoordinate(int16 priority) {
 reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	Window *wnd = NULL;
 
+	if (_s->resMan->getViewType() == kViewAmiga) {
+		colorPen = _palette->mapAmigaColor(colorPen);
+		colorBack = _palette->mapAmigaColor(colorBack);
+	}
+
 	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
 		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, false);
 	else
@@ -206,7 +211,7 @@ void SciGui::disposeWindow(uint16 windowPtr, bool reanimate) {
 void SciGui::display(const char *text, int argc, reg_t *argv) {
 	int displayArg;
 	TextAlignment alignment = SCI_TEXT_ALIGNMENT_LEFT;
-	int16 bgcolor = -1, width = -1, bRedraw = 1;
+	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
 	bool doSaveUnder = false;
 	Common::Rect rect;
 
@@ -231,11 +236,16 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETPENCOLOR:
-			_gfx->PenColor(argv[0].toUint16());
+			colorPen = argv[0].toUint16();
+			if (_s->resMan->getViewType() == kViewAmiga)
+				colorPen = _palette->mapAmigaColor(colorPen);
+			_gfx->PenColor(colorPen);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETBACKGROUNDCOLOR:
-			bgcolor = argv[0].toUint16();
+			colorBack = argv[0].toUint16();
+			if (_s->resMan->getViewType() == kViewAmiga)
+				colorBack = _palette->mapAmigaColor(colorBack);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETGREYEDOUTPUT:
@@ -280,8 +290,8 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 
 	if (doSaveUnder)
 		_s->r_acc = _gfx->BitsSave(rect, SCI_SCREEN_MASK_VISUAL);
-	if (bgcolor != -1)
-		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, bgcolor, 0, 0);
+	if (colorBack != -1)
+		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, colorBack, 0, 0);
 	_text->Box(text, 0, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		_gfx->BitsShow(rect);
@@ -313,6 +323,11 @@ void SciGui::textColors(int argc, reg_t *argv) {
 
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	Port *oldPort = _gfx->SetPort(_gfx->_menuPort);
+
+	if (_s->resMan->getViewType() == kViewAmiga) {
+		colorPen = _palette->mapAmigaColor(colorPen);
+		colorBack = _palette->mapAmigaColor(colorBack);
+	}
 
 	_gfx->FillRect(_gfx->_menuBarRect, 1, colorBack);
 	_gfx->PenColor(colorPen);
@@ -491,17 +506,23 @@ void SciGui::graphFillBoxBackground(Common::Rect rect) {
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
+	if (_s->resMan->getViewType() == kViewAmiga)
+		color = _palette->mapAmigaColor(color);
 	_gfx->FillRect(rect, colorMask, color, priority, control);
 }
 
 void SciGui::graphFrameBox(Common::Rect rect, int16 color) {
 	int16 oldColor = _gfx->GetPort()->penClr;
+	if (_s->resMan->getViewType() == kViewAmiga)
+		color = _palette->mapAmigaColor(color);
 	_gfx->PenColor(color);
 	_gfx->FrameRect(rect);
 	_gfx->PenColor(oldColor);
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
+	if (_s->resMan->getViewType() == kViewAmiga)
+		color = _palette->mapAmigaColor(color);
 	_gfx->OffsetLine(startPoint, endPoint);
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
