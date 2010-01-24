@@ -114,7 +114,8 @@ private:
 	void backupPage0();
 	void restorePage0();
 
-	void setupSavegameNames(Menu &menu, int num);
+	void setupSaveMenuSlots(Menu &menu, int num);
+	void updateSavegameList();
 
 	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags);
 	int getMenuCenterStringX(const char *str, int x1, int x2);
@@ -173,6 +174,10 @@ private:
 
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;
+
+	char **_savegameList;
+	int _savegameListSize;
+	bool _savegameListUpdateNeeded;
 };
 
 } // End of namespace Kyra

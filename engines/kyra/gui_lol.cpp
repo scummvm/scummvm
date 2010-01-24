@@ -1921,6 +1921,8 @@ GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_mouseClick = 0;
 	_sliderSfx = 11;
 	_buttonListChanged = false;
+	_savegameList = 0;
+	_savegameListSize = 0;
 }
 
 void GUI_LoL::processButton(Button *button) {
@@ -2295,14 +2297,14 @@ int GUI_LoL::runMenu(Menu &menu) {
 	// Instead, the respevtive struct entry is used to determine whether
 	// a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
+	_savegameListUpdateNeeded = true;
 
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
 		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu || _currentMenu == &_deleteMenu) {
-			updateSaveList(true);
-			Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
-			setupSavegameNames(*_currentMenu, 4);
+			updateSavegameList();
+			setupSaveMenuSlots(*_currentMenu, 4);
 		}
 
 		hasSpecialButtons = _currentMenu->highlightedItem;
@@ -2523,6 +2525,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 		_newMenu = 0;
 	}
 
+	if (_savegameList) {
+		for (int i = 0; i < _savegameListSize; i++)
+			delete[] _savegameList[i];
+		delete[] _savegameList;
+		_savegameList = 0;
+	}
+
 	return _menuResult;
 }
 
@@ -2554,7 +2563,7 @@ void GUI_LoL::restorePage0() {
 	_screen->updateScreen();
 }
 
-void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
+void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 	char *s = (char *)_vm->_tempBuffer5120;
 
 	for (int i = 0; i < num; ++i) {
@@ -2571,20 +2580,14 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
-	KyraEngine_v1::SaveHeader header;
-	Common::InSaveFile *in;
-	for (int i = startSlot; i < num && uint(_savegameOffset + i - slotOffs) < _saveSlots.size(); ++i) {
-		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset - slotOffs]), header)) != 0) {
-			strncpy(s, header.description.c_str(), 80);
+	for (int i = startSlot; i < num && uint(_savegameOffset + i - slotOffs) < _savegameListSize; ++i) {
+		if (_savegameList[_saveSlots[i + _savegameOffset - slotOffs]]) {
+			strncpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
 			s[79] = 0;
-
-			Util::convertISOToDOS(s);
-
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];
 			menu.item[i].enabled = true;
-			delete in;
 		}
 	}
 
@@ -2595,6 +2598,47 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 			menu.item[0].saveSlot = -3;
 			menu.item[0].enabled = true;
 		}
+	}
+}
+
+void GUI_LoL::updateSavegameList() {
+	if (!_savegameListUpdateNeeded)
+		return;
+
+	_savegameListUpdateNeeded = false;
+
+	if (_savegameList) {
+		for (int i = 0; i < _savegameListSize; i++)
+			delete[] _savegameList[i];
+		delete[] _savegameList;
+	}
+
+	updateSaveList(true);
+	_savegameListSize = _saveSlots.size();
+
+	if (_savegameListSize) {
+		Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
+
+		KyraEngine_v1::SaveHeader header;
+		Common::InSaveFile *in;
+		
+		_savegameList = new char*[_savegameListSize];
+		
+		for (int i = 0; i < _savegameListSize; i++) {
+			in = _vm->openSaveForReading(_vm->getSavegameFilename(i), header);
+			if (in) {
+				_savegameList[i] = new char[header.description.size() + 1];
+				strncpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
+				Util::convertISOToDOS(_savegameList[i]);
+				delete in;
+			} else {
+				_savegameList[i] = 0;
+				error("GUI_LoL::updateSavegameList(): Unexpected missing save file for slot: %d.", i);
+			}
+		}
+
+	} else {
+		_savegameList = 0;
 	}
 }
 
@@ -2900,6 +2944,7 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 				_vm->_saveFileMan->renameSavefile(oldName, newName);
 			}
 			_newMenu = &_mainMenu;
+			_savegameListUpdateNeeded = true;
 		}
 	} else if (button->arg == _choiceMenu.item[1].itemId) {
 		_newMenu = &_mainMenu;
