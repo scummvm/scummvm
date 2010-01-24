@@ -394,9 +394,9 @@ void Screen::setPalette(Palette*pal) {
 	for (int16 i = 0; i < 256; i++) {
 		if (!pal->colors[i].used)
 			continue;
-		bpal[i * 4] = pal->colors[i].r * pal->intensity[i] / 100;
-		bpal[i * 4 + 1] = pal->colors[i].g * pal->intensity[i] / 100;
-		bpal[i * 4 + 2] = pal->colors[i].b * pal->intensity[i] / 100;
+		bpal[i * 4] = CLIP(pal->colors[i].r * pal->intensity[i] / 100, 0, 255);
+		bpal[i * 4 + 1] = CLIP(pal->colors[i].g * pal->intensity[i] / 100, 0, 255);
+		bpal[i * 4 + 2] = CLIP(pal->colors[i].b * pal->intensity[i] / 100, 0, 255);
 		bpal[i * 4 + 3] = 100;
 	}
 	g_system->setPalette(bpal, 0, 256);
