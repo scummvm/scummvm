@@ -53,6 +53,8 @@ SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPale
 	_sysPalette.colors[255].g = 255;
 	_sysPalette.colors[255].b = 255;
 
+	memset(&_amigaEGAtable, 0, sizeof(_amigaEGAtable));
+
 	if (autoSetPalette) {
 		if (_resMan->getViewType() == kViewEga)
 			setEGA();
@@ -152,9 +154,10 @@ bool SciPalette::setAmiga() {
 		setOnScreen();
 
 		// Create EGA to amiga table
-		for (curColor = 0; curColor < 16; curColor++) {
+		for (curColor = 1; curColor < 15; curColor++) {
 			_amigaEGAtable[curColor] = matchColor(&_sysPalette, EGApalette[curColor][0], EGApalette[curColor][1], EGApalette[curColor][2]);
 		}
+		_amigaEGAtable[15] = _screen->getColorWhite();
 		return true;
 	}
 	return false;
