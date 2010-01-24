@@ -2580,7 +2580,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
-	for (int i = startSlot; i < num && uint(_savegameOffset + i - slotOffs) < _savegameListSize; ++i) {
+	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[_saveSlots[i + _savegameOffset - slotOffs]]) {
 			strncpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
 			s[79] = 0;
