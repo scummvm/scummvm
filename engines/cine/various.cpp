@@ -849,7 +849,7 @@ uint16 executePlayerInput() {
 	}
 
 	if (allowPlayerInput) { // Player input is allowed
-		if (g_cine->getGameType() == Cine::GType_FW && isDrawCommandEnabled) {
+		if (isDrawCommandEnabled) {
 			renderer->setCommand(commandBuffer);
 		}
 		isDrawCommandEnabled = 0;
