@@ -838,6 +838,7 @@ uint16 executePlayerInput() {
 	uint16 mouseX, mouseY, mouseButton;
 	uint16 currentEntry = 0;
 	uint16 di = 0;
+	bool limitMouseCheckCount = false;
 
 	canUseOnObject = 0;
 
@@ -848,29 +849,36 @@ uint16 executePlayerInput() {
 	}
 
 	if (allowPlayerInput) { // Player input is allowed
-		if (isDrawCommandEnabled) {
+		if (g_cine->getGameType() == Cine::GType_FW && isDrawCommandEnabled) {
 			renderer->setCommand(commandBuffer);
-			isDrawCommandEnabled = 0;
 		}
+		isDrawCommandEnabled = 0;
+		limitMouseCheckCount = true;
+	}
 
+	// Get mouse position and button states
+	di = 0;
+	currentEntry = 0;
+	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
+
+	while (mouseButton && (!limitMouseCheckCount || currentEntry < 200) && !g_cine->shouldQuit()) {
+		di |= (mouseButton & (kLeftMouseButton | kRightMouseButton));
+		manageEvents();
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
+		currentEntry++;
+	}
 
-		while (mouseButton && currentEntry < 200) {
-			di |= (mouseButton & (kLeftMouseButton | kRightMouseButton));
-			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
-			currentEntry++;
-		}
+	if (di) {
+		mouseButton = di;
+	}
 
-		if (di) {
-			mouseButton = di;
-		}
-
+	if ((mouseButton & kLeftMouseButton) && (mouseButton & kRightMouseButton)) {
+		// Left and right mouse buttons are down
+		g_cine->makeSystemMenu();
+	} else if (allowPlayerInput) { // Player input is allowed
 		if (playerCommand != -1) { // A player command is given
 			if (mouseButton & kLeftMouseButton) { // Left mouse button is down
-				if (mouseButton & kRightMouseButton) { // Right mouse button is down
-					// A player command is given, left and right mouse buttons are down
-					g_cine->makeSystemMenu();
-				} else { // Right mouse button is up
+				if (!(mouseButton & kRightMouseButton)) { // Right mouse button is up
 					// A player command is given, left mouse button is down, right mouse button is up
 					int16 si;
 					do {
@@ -953,9 +961,6 @@ uint16 executePlayerInput() {
 					}
 
 					makeCommandLine();
-				} else { // Left mouse button is down
-					// No player command is given, left and right mouse buttons are down
-					g_cine->makeSystemMenu();
 				}
 			} else { // Right mouse button is up
 				if (mouseButton & kLeftMouseButton) { // Left mouse button is down
@@ -984,24 +989,6 @@ uint16 executePlayerInput() {
 					}
 				}
 			}
-		}
-	} else { // Player input is not allowed
-		di = 0;
-		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
-
-		while (mouseButton && !g_cine->shouldQuit()) {
-			di |= (mouseButton & (kLeftMouseButton | kRightMouseButton));
-			manageEvents();
-			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
-		}
-
-		if (di) {
-			mouseButton = di;
-		}
-
-		if ((mouseButton & kLeftMouseButton) && (mouseButton & kRightMouseButton)) {
-			// Player input is not allowed, left and right mouse buttons are down
-			g_cine->makeSystemMenu();
 		}
 	}
 
