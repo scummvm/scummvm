@@ -399,7 +399,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 
 	// Drawing
 	while (curPos < dataSize) {
-		//warning("%X at %d", data[curPos], curPos);
+		warning("%X at %d", data[curPos], curPos);
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
 			pic_color = data[curPos++];
@@ -555,12 +555,17 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					}
 					break;
 				case PIC_OPX_VGA_SET_PALETTE:
-					curPos += 256 + 4; // Skip over mapping and timestamp
-					for (i = 0; i < 256; i++) {
-						palette.colors[i].used = data[curPos++];
-						palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
+					if (_resMan->getViewType() == kViewAmiga) {
+						// TODO: Implement amiga palette loading
+						curPos += 32; // Skip over palette
+					} else {
+						curPos += 256 + 4; // Skip over mapping and timestamp
+						for (i = 0; i < 256; i++) {
+							palette.colors[i].used = data[curPos++];
+							palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
+						}
+						_palette->set(&palette, 2);
 					}
-					_palette->set(&palette, 2);
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
