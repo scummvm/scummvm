@@ -80,11 +80,12 @@ static const StarkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("x.xarc", "a0559457126caadab0cadac02d35f26f"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 		GID_TLJ,
 		0,
-		0,
+		0
 	},
 
 	// The Longest Journey
@@ -96,11 +97,12 @@ static const StarkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("x.xarc", "de8327850d7bba90b690b141eaa23f61"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 		GID_TLJ,
 		GF_DVD,
-		0,
+		0
 	},
 	
 	// The Longest Journey
@@ -112,11 +114,12 @@ static const StarkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("x.xarc", "97abc1bb9239dee4c208e533f3c97e1c"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 		GID_TLJ,
 		GF_DEMO,
-		0,
+		0
 	},
 	
 	// The Longest Journey
@@ -128,11 +131,12 @@ static const StarkGameDescription gameDescriptions[] = {
 			AD_ENTRY1("x.xarc", "61093bcd499b386ed5c0345c52f48909"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 		GID_TLJ,
 		GF_DVD | GF_DEMO,
-		0,
+		0
 	},
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
@@ -156,7 +160,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// GUI Options
+	Common::GUIO_NOMIDI
 };
 
 class StarkMetaEngine : public AdvancedMetaEngine {
