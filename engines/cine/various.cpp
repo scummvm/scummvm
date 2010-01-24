@@ -93,6 +93,16 @@ uint16 musicIsPlaying;
 
 byte isInPause = 0;
 
+/*! \brief Bit masks for mouse buttons' states
+ * Bit on = mouse button down
+ * Bit off = mouse button up
+ */
+enum MouseButtonState
+{
+	kLeftMouseButton  = (1 << 0),
+	kRightMouseButton = (1 << 1)
+};
+
 /*! \brief Values used by the xMoveKeyb variable */
 enum xMoveKeybEnums {
 	kKeybMoveCenterX = 0,
@@ -846,16 +856,8 @@ uint16 executePlayerInput() {
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && currentEntry < 200) {
-			if (mouseButton & 1) {
-				di |= 1;
-			}
-
-			if (mouseButton & 2) {
-				di |= 2;
-			}
-
+			di |= (mouseButton & (kLeftMouseButton | kRightMouseButton));
 			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
-
 			currentEntry++;
 		}
 
@@ -864,8 +866,8 @@ uint16 executePlayerInput() {
 		}
 
 		if (playerCommand != -1) {
-			if (mouseButton & 1) {
-				if (mouseButton & 2) {
+			if (mouseButton & kLeftMouseButton) {
+				if (mouseButton & kRightMouseButton) {
 					g_cine->makeSystemMenu();
 				} else {
 					int16 si;
@@ -913,8 +915,8 @@ uint16 executePlayerInput() {
 						globalVars[VAR_MOUSE_Y_POS] = mouseY;
 					}
 				}
-			} else if (mouseButton & 2) {
-				if (mouseButton & 1) {
+			} else if (mouseButton & kRightMouseButton) {
+				if (mouseButton & kLeftMouseButton) {
 					g_cine->makeSystemMenu();
 				}
 
@@ -936,8 +938,8 @@ uint16 executePlayerInput() {
 				commandVar2 = objIdx;
 			}
 		} else {
-			if (mouseButton & 2) {
-				if (!(mouseButton & 1)) {
+			if (mouseButton & kRightMouseButton) {
+				if (!(mouseButton & kLeftMouseButton)) {
 					if (g_cine->getGameType() == Cine::GType_OS) {
 						playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
 
@@ -954,8 +956,8 @@ uint16 executePlayerInput() {
 					g_cine->makeSystemMenu();
 				}
 			} else {
-				if (mouseButton & 1) {
-					if (!(mouseButton & 2)) {
+				if (mouseButton & kLeftMouseButton) {
+					if (!(mouseButton & kRightMouseButton)) {
 						int16 objIdx;
 						int16 relEntry;
 
@@ -989,14 +991,7 @@ uint16 executePlayerInput() {
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		while (mouseButton && !g_cine->shouldQuit()) {
-			if (mouseButton & 1) {
-				di |= 1;
-			}
-
-			if (mouseButton & 2) {
-				di |= 2;
-			}
-
+			di |= (mouseButton & (kLeftMouseButton | kRightMouseButton));
 			manageEvents();
 			getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 		}
@@ -1005,7 +1000,7 @@ uint16 executePlayerInput() {
 			mouseButton = di;
 		}
 
-		if ((mouseButton & 1) && (mouseButton & 2)) {
+		if ((mouseButton & kLeftMouseButton) && (mouseButton & kRightMouseButton)) {
 			g_cine->makeSystemMenu();
 		}
 	}
@@ -1636,10 +1631,10 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 		getMouseData(0, &mouseButton, &mouseX, &mouseY);
 
-		if ((mouseButton & 2) || g_cine->shouldQuit())
-			quit = 2;
-		else if (mouseButton & 1)
-			quit = 1;
+		if ((mouseButton & kRightMouseButton) || g_cine->shouldQuit())
+			quit = kRightMouseButton;
+		else if (mouseButton & kLeftMouseButton)
+			quit = kLeftMouseButton;
 
 		switch (keycode) {
 		case Common::KEYCODE_BACKSPACE:
@@ -1704,7 +1699,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	renderer->popMenu();
 	delete inputBox;
 
-	if (quit == 2)
+	if (quit == kRightMouseButton)
 		return false;
 
 	return true;
