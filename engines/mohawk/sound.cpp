@@ -170,7 +170,7 @@ void Sound::playMidi(uint16 id) {
 	// Read the MThd Data
 	midi->read(midiData, 14);
 	
-	// Skip the unknown Prg# section
+	// TODO: Load patches from the Prg# section... skip it for now.
 	idTag = midi->readUint32BE();
 	assert(idTag == ID_PRG);
 	midi->skip(midi->readUint32BE());
@@ -363,20 +363,25 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		case ID_ADPC:
 			debug(2, "Found Tag ADPC");
 			// Riven ADPCM Sound Only
-			// NOTE: This is completely useless for us. All of this
-			// is already in the ADPCM decoder in /sound.
-			adpc.size = stream->readUint32BE();
-			adpc.u0 = stream->readUint16BE();
-			adpc.channels = stream->readUint16BE();
-			adpc.u1 = stream->readUint32BE();
+			// NOTE: We completely ignore the contents of this chunk on purpose. In the original
+			// engine this held the status for the ADPCM decoder, while in ScummVM we store this data
+			// in the ADPCM decoder itself. The code is here for reference only.
 
-			for (uint16 i = 0; i < adpc.channels; i++)
-				adpc.u2[i] = stream->readUint32BE();
-			if (adpc.u0 == 2) {
-				adpc.u3 = stream->readUint32BE();
-				for (uint16 i = 0; i < adpc.channels; i++)
-					adpc.u4[i] = stream->readUint32BE();
+			adpc.size = stream->readUint32BE();
+			adpc.itemCount = stream->readUint16BE();
+			adpc.channels = stream->readUint16BE();
+			adpc.statusItems = new ADPC_Chunk::StatusItem[adpc.itemCount];
+			
+			assert(adpc.channels <= 2);
+
+			for (uint16 i = 0; i < adpc.itemCount; i++) {
+				adpc.statusItems[i].sampleFrame = stream->readUint32BE();
+
+				for (uint16 j = 0; j < adpc.channels; j++)
+					adpc.statusItems[i].channelStatus[j] = stream->readUint32BE();
 			}
+			
+			delete[] adpc.statusItems;
 			break;
 		case ID_CUE:
 			debug(2, "Found Tag Cue#");

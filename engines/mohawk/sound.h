@@ -72,16 +72,15 @@ struct SLSTSndHandle {
 	uint16 id;
 };
 
-struct ADPC_Chunk {            // Appears to only exist if there isn't MPEG-2 Audio
+struct ADPC_Chunk {            // Holds ADPCM status data, but is irrelevant for us.
 	uint32 size;
-	uint16 u0;                 // Unknown (2 when there's a Cue# Chunk, 1 when there's not)
+	uint16 itemCount;
 	uint16 channels;
-	uint32 u1;                 // Unknown (always 0)
-	uint32 u2[MAX_CHANNELS];   // Unknown (0x00400000 for both channels)
-
-	// If there is a Cue# chunk, there can be two more variables:
-	uint32 u3;
-	uint32 u4[MAX_CHANNELS];
+	
+	struct StatusItem {
+		uint32 sampleFrame;
+		uint32 channelStatus[MAX_CHANNELS];
+	} *statusItems;
 };
 
 struct Cue_Chunk {
