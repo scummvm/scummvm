@@ -505,8 +505,7 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 
 		listIterator++;
 	}
-	if (oldMenuId != 0)
-		_gfx->BitsShow(_gfx->_menuBarRect);
+	_gfx->BitsShow(_gfx->_menuBarRect);
 
 	_menuRect.bottom = _menuRect.top + 2;
 	listItemIterator = _itemList.begin();
