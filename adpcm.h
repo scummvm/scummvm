@@ -33,8 +33,6 @@
 
 namespace Stark {
 
-class Audio::AudioStream;
-
 // There are several types of ADPCM encoding, only some are supported here
 // For all the different encodings, refer to:
 // http://wiki.multimedia.cx/index.php?title=Category:ADPCM_Audio_Codecs
