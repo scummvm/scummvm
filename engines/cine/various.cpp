@@ -1059,24 +1059,24 @@ uint16 executePlayerInput() {
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		switch (var_2 - 59) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
+		case 0: // F1 = EXAMINE
+		case 1: // F2 = TAKE
+		case 2: // F3 = INVENTORY
+		case 3: // F4 = USE
+		case 4: // F5 = OPERATE
+		case 5: // F6 = SPEAK
 			if (allowPlayerInput) {
 				playerCommand = var_2 - 59;
 				makeCommandLine();
 			}
 			break;
-		case 6:
-		case 7:
-		case 8:
-		case 23:
+		case 6: // F7
+		case 7: // F8
+		case 8: // F9
+		case 23: // Keypad-0/Ins
 			break;
-		case 9:
-		case 24:
+		case 9: // F10
+		case 24: // Keypad-./Del
 			g_cine->makeSystemMenu();
 			break;
 		default:
