@@ -779,8 +779,11 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			// Games from early SCI1 onwards use topString
 			upperOffset = GET_SEL32V(s->_segMan, controlObject, topString);
 		} else {
-			// Earlier games use lsTop
-			upperOffset = GET_SEL32V(s->_segMan, controlObject, lsTop);
+			// Earlier games use lsTop or brTop
+			if (lookup_selector(s->_segMan, controlObject, s->_kernel->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
+				upperOffset = GET_SEL32V(s->_segMan, controlObject, brTop);
+			else
+				upperOffset = GET_SEL32V(s->_segMan, controlObject, lsTop);
 		}
 
 		// Count string entries in NULL terminated string list
