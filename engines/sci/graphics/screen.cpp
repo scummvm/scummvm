@@ -59,6 +59,9 @@ Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaled
 	_unditherState = true;
 
 	if (_resMan->isVGA() || (_resMan->getViewType() == kViewAmiga)) {
+		// It's not 100% accurate to set white to be 255 for amiga games
+		//  The problem is: there are 16-color and 32-color amiga games, so we would need to jump around
+		//  255 is defined as white in our sci at all times, so it doesnt matter
 		_colorWhite = 255;
 		if (getSciVersion() >= SCI_VERSION_1_1)
 			_colorDefaultVectorData = 255;
