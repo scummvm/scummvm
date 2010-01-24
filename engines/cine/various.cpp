@@ -885,13 +885,12 @@ uint16 executePlayerInput() {
 				if (!(mouseButton & kRightMouseButton)) { // Right mouse button is up
 					// A player command is given, left mouse button is down, right mouse button is up
 					int16 si;
-					do {
+					while (mouseButton && !g_cine->shouldQuit()) {
 						manageEvents();
 						getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-					} while (mouseButton && !g_cine->shouldQuit());
+					}
 
-					si = getObjectUnderCursor(mouseX,
-					    mouseY);
+					si = getObjectUnderCursor(mouseX, mouseY);
 
 					if (si != -1) {
 						commandVar3[commandVar1] = si;
@@ -899,7 +898,6 @@ uint16 executePlayerInput() {
 
 						commandBuffer += " ";
 						commandBuffer += objectTable[si].name;
-
 
 						isDrawCommandEnabled = 1;
 
@@ -922,11 +920,27 @@ uint16 executePlayerInput() {
 
 							commandVar1 = 0;
 							commandBuffer = "";
-							renderer->setCommand(commandBuffer);
+						} else if (g_cine->getGameType() == Cine::GType_OS) {
+							isDrawCommandEnabled = 1;
+							commandBuffer += commandPrepositionTable[playerCommand];
 						}
+
+						renderer->setCommand(commandBuffer);
 					} else {
 						globalVars[VAR_MOUSE_X_POS] = mouseX;
+						if (!mouseX) {
+							globalVars[VAR_MOUSE_X_POS]++;
+						}
+
 						globalVars[VAR_MOUSE_Y_POS] = mouseY;
+
+						if (g_cine->getGameType() == Cine::GType_OS) {
+							if (!mouseY) {
+								globalVars[VAR_MOUSE_Y_POS]++;
+							}
+							globalVars[VAR_MOUSE_X_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+							globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+						}
 					}
 				}
 			} else if (!(mouseButton & kRightMouseButton)) { // Right mouse button is up
