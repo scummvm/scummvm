@@ -179,12 +179,6 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 #define ALIGN_LEFT -1
 #define ALIGN_CENTRE 2
 
-#define CHECK_OVERFLOW1(pt, size, rv) \
-	if (((pt) - (targetbuf)) + (size) > maxsize) { \
-		error("String expansion exceeded heap boundaries"); \
-		return rv;\
-	}
-
 /*  Format(targ_address, textresnr, index_inside_res, ...)
 ** or
 **  Format(targ_address, heap_text_addr, ...)
@@ -229,7 +223,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	while ((xfer = *source++)) {
 		if (xfer == '%') {
 			if (mode == 1) {
-				CHECK_OVERFLOW1(target, 2, NULL_REG);
+				assert((target - targetbuf) + 2 <= maxsize);
 				*target++ = '%'; /* Literal % by using "%%" */
 				mode = 0;
 			} else {
@@ -274,7 +268,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			} else
 				str_leng = 0;
 
-			CHECK_OVERFLOW1(target, str_leng + 1, NULL_REG);
+			assert((target - targetbuf) + str_leng + 1 <= maxsize);
 
 			switch (xfer) {
 			case 's': { /* Copy string */
@@ -283,7 +277,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
 				int extralen = str_leng - slen;
-				CHECK_OVERFLOW1(target, extralen, NULL_REG);
+				assert((target - targetbuf) + extralen <= maxsize);
 				if (extralen < 0)
 					extralen = 0;
 
@@ -336,7 +330,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			break;
 
 			case 'c': { /* insert character */
-				CHECK_OVERFLOW1(target, 2, NULL_REG);
+				assert((target - targetbuf) + 2 <= maxsize);
 				if (align >= 0)
 					while (str_leng-- > 1)
 						*target++ = ' '; /* Format into the text */
@@ -362,7 +356,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				target += sprintf(target, format_string, val);
 				paramindex++;
-				CHECK_OVERFLOW1(target, 0, NULL_REG);
+				assert((target - targetbuf) <= maxsize);
 
 				unsigned_var = 0;
 
@@ -406,8 +400,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 	return dest; /* Return target addr */
 }
-
-#undef CHECK_OVERFLOW1
 
 reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_segMan->strlen(argv[0]));
