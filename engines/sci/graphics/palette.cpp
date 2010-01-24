@@ -151,7 +151,8 @@ bool SciPalette::setAmiga() {
 			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 		}
 		file.close();
-		setOnScreen();
+		// Directly set the palette, because setOnScreen() wont do a thing for amiga
+		_screen->setPalette(&_sysPalette);
 
 		// Create EGA to amiga table
 		for (curColor = 1; curColor < 16; curColor++) {
@@ -294,6 +295,9 @@ void SciPalette::getSys(Palette *pal) {
 void SciPalette::setOnScreen() {
 //	if (pal != &_sysPalette)
 //		memcpy(&_sysPalette,pal,sizeof(Palette));
+	// We dont change palette at all times for amiga
+	if (_resMan->getViewType() == kViewAmiga)
+		return;
 	_screen->setPalette(&_sysPalette);
 }
 
