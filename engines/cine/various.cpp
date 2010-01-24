@@ -939,7 +939,7 @@ uint16 executePlayerInput() {
 								globalVars[VAR_MOUSE_Y_POS]++;
 							}
 							globalVars[VAR_MOUSE_X_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
-							globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+							globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_Y_POS];
 						}
 					}
 				}
@@ -978,7 +978,7 @@ uint16 executePlayerInput() {
 							globalVars[VAR_MOUSE_Y_POS]++;
 						}
 						globalVars[VAR_MOUSE_X_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
-						globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+						globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_Y_POS];
 					}
 
 					objIdx = getObjectUnderCursor(mouseX, mouseY);
