@@ -335,10 +335,13 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Music/SFX:\n");
 	DebugPrintf(" songlib - Shows the song library\n");
+	DebugPrintf(" songinfo - Shows information about a specified song in the song library\n");
+	DebugPrintf(" togglesound - Starts/stops a sound in the song library\n");
+	DebugPrintf(" stopallsounds - Stops all sounds in the playlist\n");
+	DebugPrintf(" startsound - Starts the specified sound resource, replacing the first song in the song library\n");
 	DebugPrintf(" is_sample - Shows information on a given sound resource, if it's a PCM sample\n");
 	DebugPrintf(" sfx01_header - Dumps the header of a SCI01 song\n");
 	DebugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
-	DebugPrintf(" stop_sfx - Stops a playing sound\n");
 	DebugPrintf("\n");
 	DebugPrintf("Script:\n");
 	DebugPrintf(" addresses - Provides information on how to pass addresses\n");
