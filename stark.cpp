@@ -40,7 +40,7 @@ namespace Stark {
 StarkEngine *g_stark = NULL;
 GfxBase *g_driver = NULL;
 
-StarkEngine::StarkEngine(OSystem *syst, const StarkGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));

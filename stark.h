@@ -26,6 +26,7 @@
 #ifndef STARK_H
 #define STARK_H
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
 #include "engines/stark/archive.h"
@@ -33,33 +34,24 @@
 
 namespace Stark {
 
+/*
 enum StarkGameID {
 	GID_TLJ = 0,
 	GID_DREAM
 };
+*/
 
 enum StarkGameFeatures {
-	GF_DEMO = (1 << 0),
-	GF_DVD =  (1 << 1)
+	GF_DVD =  (1 << 31)
 };
-
-struct StarkGameDescription;
 
 class StarkEngine : public Engine {
 public:
-	StarkEngine(OSystem *syst, const StarkGameDescription *gameDesc);
+	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~StarkEngine();
 
 	void updateDisplayScene();
 	void doFlip();
-
-	int getGameID() const;
-	uint16 getVersion() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
-
-	const StarkGameDescription *_gameDescription;
 
 	void mainLoop();
 	
@@ -68,8 +60,9 @@ protected:
 	virtual Common::Error run();
 	
 private:
-	XARCArchive _xArchive;
+	const ADGameDescription *_gameDescription;
 
+	XARCArchive _xArchive;
 };
 
 } // end of namespace Stark

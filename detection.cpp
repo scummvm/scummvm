@@ -23,43 +23,10 @@
  *
  */
 
-#include "base/plugins.h"
-#include "engines/advancedDetector.h"
-
 #include "engines/stark/stark.h"
 
 
 namespace Stark {
-
-struct StarkGameDescription {
-	ADGameDescription desc;
-
-	uint8 gameType;
-	uint32 features;
-	uint16 version;
-};
-
-uint32 StarkEngine::getFeatures() const {
-	return _gameDescription->features;
-}
-
-Common::Platform StarkEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-uint16 StarkEngine::getVersion() const {
-	return _gameDescription->version;
-}
-
-int StarkEngine::getGameID() const {
-	return _gameDescription->gameType;
-}
-
-Common::Language StarkEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-} // End of Namespace Stark
 
 static const PlainGameDescriptor starkGames[] = {
 	{"stark", "Stark Game"},
@@ -67,88 +34,59 @@ static const PlainGameDescriptor starkGames[] = {
 	{0, 0}
 };
 
-
-namespace Stark {
-
-static const StarkGameDescription gameDescriptions[] = {
+static const ADGameDescription gameDescriptions[] = {
 	// The Longest Journey
 	// English 4CD
 	{
-		{
-			"tlj",
-			"",
-			AD_ENTRY1("x.xarc", "a0559457126caadab0cadac02d35f26f"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GID_TLJ,
-		0,
-		0
+		"tlj", "",
+		AD_ENTRY1("x.xarc", "a0559457126caadab0cadac02d35f26f"),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
 	},
 
 	// The Longest Journey
 	// English DVD
 	{
-		{
-			"tlj",
-			"DVD",
-			AD_ENTRY1("x.xarc", "de8327850d7bba90b690b141eaa23f61"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GID_TLJ,
+		"tlj", "DVD",
+		AD_ENTRY1("x.xarc", "de8327850d7bba90b690b141eaa23f61"),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
 		GF_DVD,
-		0
+		Common::GUIO_NONE
 	},
 	
 	// The Longest Journey
 	// English Demo
 	{
-		{
-			"tlj",
-			"",
-			AD_ENTRY1("x.xarc", "97abc1bb9239dee4c208e533f3c97e1c"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GID_TLJ,
-		GF_DEMO,
-		0
+		"tlj", "",
+		AD_ENTRY1("x.xarc", "97abc1bb9239dee4c208e533f3c97e1c"),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		Common::GUIO_NONE
 	},
 	
 	// The Longest Journey
 	// English DVD Demo
 	{
-		{
-			"tlj",
-			"",
-			AD_ENTRY1("x.xarc", "61093bcd499b386ed5c0345c52f48909"),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		GID_TLJ,
-		GF_DVD | GF_DEMO,
-		0
+		"tlj", "DVD",
+		AD_ENTRY1("x.xarc", "61093bcd499b386ed5c0345c52f48909"),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO | GF_DVD,
+		Common::GUIO_NONE
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0, 0 }
+	AD_TABLE_END_MARKER
 };
-
-} // End of namespace Stark
 
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Stark::gameDescriptions,
+	(const byte *)gameDescriptions,
 	// Size of that superset structure
-	sizeof(Stark::StarkGameDescription),
+	sizeof(ADGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
@@ -181,16 +119,16 @@ public:
 };
 
 bool StarkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Stark::StarkGameDescription *gd = (const Stark::StarkGameDescription *)desc;
+	if (desc) 
+		*engine = new StarkEngine(syst, desc);
 	
-	if (gd) 
-		*engine = new Stark::StarkEngine(syst, gd);
-	
-	return gd != 0;
+	return desc != 0;
 }
 
+} // End of namespace Stark
+
 #if PLUGIN_ENABLED_DYNAMIC(STARK)
-	REGISTER_PLUGIN_DYNAMIC(STARK, PLUGIN_TYPE_ENGINE, StarkMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(STARK, PLUGIN_TYPE_ENGINE, Stark::StarkMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(STARK, PLUGIN_TYPE_ENGINE, StarkMetaEngine);
+	REGISTER_PLUGIN_STATIC(STARK, PLUGIN_TYPE_ENGINE, Stark::StarkMetaEngine);
 #endif
