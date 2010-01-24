@@ -538,8 +538,7 @@ bool DLObject::load(int fd) {
 	if (ret && (relocateRels(fd, &ehdr, shdr) == false))
 		ret = false;
 
-	if (shdr)
-		free(shdr);
+	free(shdr);
 
 	return ret;
 }
@@ -644,7 +643,7 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 	Common::List<Segment *>::iterator i;
 
 	// Find a block that fits, starting from the beginning
-	for (i = _list.begin(); i != _list.end(); i++) {
+	for (i = _list.begin(); i != _list.end(); ++i) {
 		char *currAddress = (*i)->getStart();
 
 		if ((int)(currAddress - lastAddress) >= size) break;
