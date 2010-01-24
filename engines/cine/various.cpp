@@ -959,6 +959,14 @@ uint16 executePlayerInput() {
 
 					globalVars[VAR_MOUSE_Y_POS] = mouseY;
 
+					if (g_cine->getGameType() == Cine::GType_OS) {
+						if (!mouseY) {
+							globalVars[VAR_MOUSE_Y_POS]++;
+						}
+						globalVars[VAR_MOUSE_X_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+						globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+					}
+
 					objIdx = getObjectUnderCursor(mouseX, mouseY);
 
 					if (objIdx != -1) {
