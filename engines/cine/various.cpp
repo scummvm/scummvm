@@ -1145,14 +1145,6 @@ uint16 executePlayerInput() {
 
 	renderer->clearMenuStack();
 
-	// Update Operation Stealth specific global variables.
-	// This fixes swimming at the bottom of the ocean after
-	// having been thrown into it with the girl.
-	if (g_cine->getGameType() == Cine::GType_OS) {
-		globalVars[VAR_MOUSE_X_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
-		globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_Y_POS];
-	}
-
 	return var_5E;
 }
 
