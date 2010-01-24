@@ -79,6 +79,17 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::GUIO_NONE
 	},
 
+	// The Longest Journey
+	// Spanish 4CD
+	{
+		"tlj", "",
+		AD_ENTRY1s("x.xarc", "a0559457126caadab0cadac02d35f26f", 3032),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 
