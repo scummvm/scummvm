@@ -1006,7 +1006,51 @@ uint16 executePlayerInput() {
 		var_2 = 0;
 	}
 
-	if (egoMovedWithKeyboard && allowPlayerInput) {	// use keyboard
+	if (g_cine->getGameType() == Cine::GType_OS) { // OS: Move using keyboard
+		// Handle possible horizontal movement by keyboard
+		if (xMoveKeyb != kKeybMoveCenterX && allowPlayerInput) {
+			if (xMoveKeyb == kKeybMoveRight) { // moving right
+				const int16 playerFrame = objectTable[1].frame;
+				const int16 playerX = objectTable[1].x;
+				// TODO: Check if multiplying _width by two here is correct or not
+				const int16 newX = animDataTable[playerFrame]._width * 2 + playerX + 8;
+				globalVars[VAR_MOUSE_X_POS] = globalVars[VAR_MOUSE_X_POS_2ND] = newX;
+			} else { // moving left
+				const int16 playerX = objectTable[1].x;
+				const int16 newX = playerX - 8;
+				globalVars[VAR_MOUSE_X_POS] = globalVars[VAR_MOUSE_X_POS_2ND] = newX;
+			}
+
+			// Restrain horizontal position to range 0-319
+			if (globalVars[VAR_MOUSE_X_POS] < 0) {
+				globalVars[VAR_MOUSE_X_POS] = globalVars[VAR_MOUSE_X_POS_2ND] = 0;
+			} else if (globalVars[VAR_MOUSE_X_POS] > 319) {
+				globalVars[VAR_MOUSE_X_POS] = globalVars[VAR_MOUSE_X_POS_2ND] = 319;
+			}
+		}
+
+		// Handle possible vertical movement by keyboard
+		if (yMoveKeyb != kKeybMoveCenterY && allowPlayerInput) {
+			if (yMoveKeyb == kKeybMoveDown) { // moving down
+				const int16 playerFrame = objectTable[1].frame;
+				const int16 playerY = objectTable[1].y;
+				// TODO: Check if multiplying _height by two here is correct or not
+				const int16 newY = animDataTable[playerFrame]._height * 2 + playerY - 1;
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[VAR_MOUSE_Y_POS_2ND] = newY;
+			} else { // moving up
+				const int16 playerY = objectTable[1].y;
+				const int16 newY = playerY - 8;
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[VAR_MOUSE_Y_POS_2ND] = newY;
+			}
+
+			// Restrain vertical position to range 0-199
+			if (globalVars[VAR_MOUSE_Y_POS] < 0) {
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[VAR_MOUSE_Y_POS_2ND] = 0;
+			} else if (globalVars[VAR_MOUSE_Y_POS] > 199) {
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[VAR_MOUSE_Y_POS_2ND] = 199;
+			}
+		}
+	} else if (egoMovedWithKeyboard && allowPlayerInput) { // FW: Move using keyboard
 		egoMovedWithKeyboard = false;
 
 		switch (globalVars[VAR_MOUSE_X_MODE]) {
@@ -1061,7 +1105,9 @@ uint16 executePlayerInput() {
 		}
 
 		bgVar0 = var_5E;
-	} else {		// don't use keyboard for move -> shortcuts to commands
+	}
+	
+	if (g_cine->getGameType() == Cine::GType_OS || !(egoMovedWithKeyboard && allowPlayerInput)) {
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 		switch (var_2 - 59) {
