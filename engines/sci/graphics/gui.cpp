@@ -585,6 +585,10 @@ int16 SciGui::paletteFind(uint16 r, uint16 g, uint16 b) {
 }
 
 void SciGui::paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
+	// we are also called on Amiga as well, but for colors above 32, so it doesnt make sense
+	if (!_s->resMan->isVGA())
+		return;
+
 	_palette->setIntensity(fromColor, toColor, intensity, setPalette);
 }
 
