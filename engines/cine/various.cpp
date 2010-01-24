@@ -1119,6 +1119,7 @@ uint16 executePlayerInput() {
 		case 5: // F6 = SPEAK
 			if (allowPlayerInput) {
 				playerCommand = var_2 - 59;
+				// TODO: Operation Stealth uses shift key here for handling canUseOnObject differently... investigate and implement.
 				makeCommandLine();
 			}
 			break;
@@ -1126,13 +1127,18 @@ uint16 executePlayerInput() {
 		case 7: // F8
 		case 8: // F9
 		case 23: // Keypad-0/Ins
+			// TODO: Restrict this case only to F7 for Operation Stealth
+			if (allowPlayerInput) {
+				makeActionMenu();
+				makeCommandLine();
+			}
 			break;
 		case 9: // F10
 		case 24: // Keypad-./Del
+			// TODO: Restrict this case only to F10 for Operation Stealth
 			g_cine->makeSystemMenu();
 			break;
 		default:
-			//  printf("Unhandled case %d in last part of executePlayerInput\n",var2-59);
 			break;
 		}
 	}
