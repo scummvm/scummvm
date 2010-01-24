@@ -664,7 +664,7 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	3e48298920fab9b7aec5a971e1bd1fab	-1	gb	Windows	-	Demo	-	eriktorbjorn
 	cf90b4db5486ef798db78fe6fbf897e5	-1	us	Windows	-	Demo	-	khalek
 
-pjgames	Pajama Sam: Games to Play On Any Day
+pjgames	Pajama Sam: Games to Play on Any Day
 	8a484262363a8e18be87112454f1456b	-1	us	All	-	-	-	Kirben
 
 lost	Pajama Sam's Lost & Found
