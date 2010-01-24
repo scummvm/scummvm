@@ -213,9 +213,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 
 	arguments = (uint16 *)malloc(sizeof(uint16) * argc);
-#ifdef SATISFY_PURIFY
 	memset(arguments, 0, sizeof(uint16) * argc);
-#endif
 
 	for (i = startarg; i < argc; i++)
 		arguments[i-startarg] = argv[i].toUint16(); /* Parameters are copied to prevent overwriting */
