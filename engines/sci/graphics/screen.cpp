@@ -58,7 +58,7 @@ Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaled
 	_picNotValidSci11 = 0;
 	_unditherState = true;
 
-	if (_resMan->isVGA()) {
+	if (_resMan->isVGA() || (_resMan->getViewType() == kViewAmiga)) {
 		_colorWhite = 255;
 		if (getSciVersion() >= SCI_VERSION_1_1)
 			_colorDefaultVectorData = 255;
