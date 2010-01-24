@@ -247,28 +247,17 @@ bool LocalVariables::isValidOffset(uint16 offset) const {
 }
 
 SegmentRef LocalVariables::dereference(reg_t pointer) {
-	// FIXME: The following doesn't seem to be endian safe.
-	// To fix this, we'd have to always treat the reg_t
-	// values stored here as in the little endian format.
-	// Anyway, generate a warning for now to see if this ever
-	// happens.
-	// One has to wonder whether we return the right value anyway.
-	// Here are three potential options:
-	//   1:  ((byte *)&_locals[0]) + pointer.offset
-	//   2:  ((byte *)&_locals[pointer.offset/2]) + (pointer.offset % 2)
-	//   3:  ((byte *)&_locals[pointer.offset])
-	// So which one is correct? :)
 	if (pointer.offset & 1)
 		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
 
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
-	ret.maxSize = (_locals.size() - pointer.offset/2) * 2;
+	ret.maxSize = (_locals.size() - pointer.offset / 2) * 2;
 	if (ret.maxSize > 0) {
-		ret.raw = (byte *)&_locals[pointer.offset/2];
+		ret.reg = &_locals[pointer.offset / 2];
 	} else {
 		warning("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
-		ret.raw = 0;
+		ret.reg = 0;
 	}
 	return ret;
 }
@@ -280,11 +269,11 @@ bool DataStack::isValidOffset(uint16 offset) const {
 SegmentRef DataStack::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
-	ret.maxSize = (_capacity - pointer.offset/2) * 2;
-	// FIXME: Is this correct? See comment in LocalVariables::dereference
+	ret.maxSize = (_capacity - pointer.offset / 2) * 2;
+
 	if (pointer.offset & 1)
 		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
-	ret.raw = (byte *)&_entries[pointer.offset/2];
+	ret.reg = &_entries[pointer.offset / 2];
 	return ret;
 }
 

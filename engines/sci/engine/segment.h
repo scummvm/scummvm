@@ -47,7 +47,7 @@ struct SegmentRef {
 
 	SegmentRef() : isRaw(true), raw(0), maxSize(0) {}
 
-	bool isValid() const { return raw != 0; }
+	bool isValid() const { return (isRaw ? raw != 0 : reg != 0); }
 };
 
 
