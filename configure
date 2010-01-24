@@ -92,7 +92,7 @@ _fluidsynth=auto
 _debug_build=auto
 _release_build=auto
 _text_console=no
-_mt32emu=yes
+_mt32emu=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
