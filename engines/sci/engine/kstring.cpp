@@ -241,15 +241,10 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				if (xfer == '0')
 					fillchar = '0';
-				else
-
-					if (xfer == '=') {
-						align = ALIGN_CENTRE;
-						source++;
-					} else
-
-						if (isdigit(xfer))
-							source--; /* Stepped over length argument */
+				else if (xfer == '=')
+					align = ALIGN_CENTRE;
+				else if (isdigit(xfer) || (xfer == '-'))
+					source--; // Go to start of length argument
 
 				str_leng = strtol(source, &destp, 10);
 
