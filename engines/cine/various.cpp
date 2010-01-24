@@ -823,7 +823,7 @@ void makeActionMenu() {
 
 		if (playerCommand >= 8000) {
 			playerCommand -= 8000;
-			canUseOnObject = 1;
+			canUseOnObject = canUseOnItemTable[playerCommand];
 		}
 	} else {
 		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
@@ -876,7 +876,11 @@ uint16 executePlayerInput() {
 		// Left and right mouse buttons are down
 		g_cine->makeSystemMenu();
 	} else if (allowPlayerInput) { // Player input is allowed
-		if (playerCommand != -1) { // A player command is given
+		if (!(mouseButton & kLeftMouseButton) && (mouseButton & kRightMouseButton)) {
+			// Player input is allowed, left mouse button is up, right mouse button is down
+			makeActionMenu();
+			makeCommandLine();
+		} else if (playerCommand != -1) { // A player command is given
 			if (mouseButton & kLeftMouseButton) { // Left mouse button is down
 				if (!(mouseButton & kRightMouseButton)) { // Right mouse button is up
 					// A player command is given, left mouse button is down, right mouse button is up
@@ -925,11 +929,7 @@ uint16 executePlayerInput() {
 						globalVars[VAR_MOUSE_Y_POS] = mouseY;
 					}
 				}
-			} else if (mouseButton & kRightMouseButton) { // Right mouse button is down
-				// A player command is given, left mouse button is up, right mouse button is down
-				makeActionMenu();
-				makeCommandLine();
-			} else { // Left and right mouse buttons are up
+			} else if (!(mouseButton & kRightMouseButton)) { // Right mouse button is up
 				// A player command is given, left and right mouse buttons are up
 				int16 objIdx;
 
@@ -946,23 +946,7 @@ uint16 executePlayerInput() {
 				commandVar2 = objIdx;
 			}
 		} else { // No player command is given
-			if (mouseButton & kRightMouseButton) { // Right mouse button is down
-				if (!(mouseButton & kLeftMouseButton)) { // Left mouse button is up
-					// No player command is given, left mouse button is up, right mouse button is down
-					if (g_cine->getGameType() == Cine::GType_OS) {
-						playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
-
-						if (playerCommand >= 8000) {
-							playerCommand -= 8000;
-							canUseOnObject = 1;
-						}
-					} else {
-						playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
-					}
-
-					makeCommandLine();
-				}
-			} else { // Right mouse button is up
+			if (!(mouseButton & kRightMouseButton)) { // Right mouse button is up
 				if (mouseButton & kLeftMouseButton) { // Left mouse button is down
 					// No player command is given, left mouse button is down, right mouse button is up
 					int16 objIdx;
