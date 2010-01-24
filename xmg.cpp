@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/util.h"
-
 #include "engines/stark/xmg.h"
 
 namespace Stark {
@@ -63,47 +61,46 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
 		}
 		op1 = stream->readByte();
 		switch (op1 & 0xC0) {
+		case 0x00:
+			// YCrCb
+			processYCrCb(op1 & 0x3F);
+			break;
+		case 0x40:
+			// Trans
+			processTrans(op1 & 0x3F);
+			break;
+		case 0x80:
+			// RGB
+			processRGB(op1 & 0x3F);
+			break;
+		case 0xC0:
+			op2 = stream->readByte();
+			switch (op1 & 0x30) {
 			case 0x00:
-				//YCrCb
-				processYCrCb(op1 & 0x3F);
+				// YCrCb
+				processYCrCb(((op1 & 0x0F) << 8) + op2);
 				break;
-			case 0x40:
-				//Trans
-				processTrans(op1 & 0x3F);
+			case 0x10:
+				// Trans
+				processTrans(((op1 & 0x0F) << 8) + op2);
 				break;
-			case 0x80:
+			case 0x20:
 				// RGB
-				processRGB(op1 & 0x3F);
+				processRGB(((op1 & 0x0F) << 8) + op2);
 				break;
-			case 0xC0:
-				op2 = stream->readByte();
-				switch (op1 & 0x30) {
-					case 0x00:
-						//YCrCb
-						processYCrCb(((op1 & 0x0F) << 8) + op2);
-						break;
-					case 0x10:
-						//Trans
-						processTrans(((op1 & 0x0F) << 8) + op2);
-						break;
-					case 0x20:
-						// RGB
-						processRGB(((op1 & 0x0F) << 8) + op2);
-						break;
-					case 0x30:
-						error("Unsupported colour mode");
-						break;
-				}	
+			case 0x30:
+				error("Unsupported colour mode");
 				break;
-		}	
-		
+			}
+			break;
+		}
 	}
 
 	_pixels = 0;
 	return surface;
 }
 
-void XMGDecoder::processYCrCb(uint16 count){
+void XMGDecoder::processYCrCb(uint16 count) {
 	byte y0, y1, y2, y3;
 	byte cr, cb;
 	for (int i = 0; i < count; i++) {
@@ -125,11 +122,10 @@ void XMGDecoder::processYCrCb(uint16 count){
 		_pixels += 6;
 	}
 	_currX += 2 * count;
-	
 }
 
-void XMGDecoder::processTrans(uint16 count){
-	for (int i = 0; i < count; i++){
+void XMGDecoder::processTrans(uint16 count) {
+	for (int i = 0; i < count; i++) {
 		byte r, g, b;
 		r = (header.transColor >> 16);
 		g = (header.transColor >> 8) & 0xFF;
@@ -159,8 +155,8 @@ void XMGDecoder::processTrans(uint16 count){
 	_currX += 2 * count;
 }
 
-void XMGDecoder::processRGB(uint16 count){
-	for (int i = 0; i < count; i++){
+void XMGDecoder::processRGB(uint16 count) {
+	for (int i = 0; i < count; i++) {
 		byte r, g, b;
 
 		r = _stream->readByte();
@@ -200,4 +196,4 @@ void XMGDecoder::processRGB(uint16 count){
 	_currX += 2 * count;
 }
 
-} // end of namespace Stark
+} // End of namespace Stark

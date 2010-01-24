@@ -30,13 +30,6 @@
 
 #ifdef USE_OPENGL
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 namespace Stark {
 
 class GfxOpenGL : public GfxBase {
@@ -44,7 +37,7 @@ public:
 	GfxOpenGL();
 	virtual ~GfxOpenGL();
 
-byte *setupScreen(int screenW, int screenH, bool fullscreen);
+	byte *setupScreen(int screenW, int screenH, bool fullscreen);
 
 	const char *getVideoDeviceName();
 
@@ -61,16 +54,14 @@ byte *setupScreen(int screenW, int screenH, bool fullscreen);
 	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 
-	void drawSurface(Graphics::Surface* bmp);
-
-protected:
+	void drawSurface(Graphics::Surface *bmp);
 
 private:
 	byte *_storedDisplay;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // USE_OPENGL
 
-#endif
+#endif // STARK_GFX_OPENGL_H

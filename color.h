@@ -59,6 +59,6 @@ public:
 	}
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_COLOR_H

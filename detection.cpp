@@ -56,7 +56,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GF_DVD,
 		Common::GUIO_NONE
 	},
-	
+
 	// The Longest Journey
 	// English Demo
 	{
@@ -67,7 +67,7 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		Common::GUIO_NONE
 	},
-	
+
 	// The Longest Journey
 	// English DVD Demo
 	{
@@ -117,12 +117,12 @@ static const ADParams detectionParams = {
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	StarkMetaEngine() : AdvancedMetaEngine(detectionParams) {}
-	
+
 	virtual const char *getName() const {
 		return "Stark Engine";
 	}
-	
-	virtual const char *getOriginalCopyright() const { 
+
+	virtual const char *getOriginalCopyright() const {
 		return "(C) Funcom";
 	}
 
@@ -130,9 +130,9 @@ public:
 };
 
 bool StarkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) 
+	if (desc)
 		*engine = new StarkEngine(syst, desc);
-	
+
 	return desc != 0;
 }
 

@@ -22,17 +22,14 @@
  * $Id$
  *
  */
- 
+
 #ifndef STARK_ARCHIVE_H
 #define STARK_ARCHIVE_H
 
-#include "common/array.h"
 #include "common/file.h"
-#include "common/str.h"
-#include "common/stream.h"
 
 namespace Stark {
-	
+
 class StarkArchive {
 public:
 	StarkArchive() {}
@@ -40,14 +37,14 @@ public:
 
 	virtual bool open(Common::String filename) = 0;
 	virtual void close() = 0;
-	
+
 	virtual Common::SeekableReadStream *getRawData(uint32 fileNum) { return NULL; }
 
 	// TODO: Some get data function or something
-	
+
 protected:
 	Common::File _file;
-	
+
 	struct FileEntry {
 		Common::String filename;
 		uint32 offset;
@@ -63,9 +60,9 @@ public:
 
 	bool open(Common::String filename);
 	void close();
-	
+
 	Common::SeekableReadStream *getRawData(uint32 fileNum);
-	
+
 	inline static Common::String readString(Common::SeekableReadStream *stream) {
 		Common::String ret = "";
 		byte ch;
@@ -80,6 +77,6 @@ private:
 	uint32 *_offsets;
 };
 
-}
+} // End of namespace Stark
 
-#endif
+#endif // STARK_ARCHIVE_H

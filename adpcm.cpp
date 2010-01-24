@@ -27,7 +27,6 @@
 
 #include "engines/stark/adpcm.h"
 
-#include "common/endian.h"
 #include "sound/audiostream.h"
 
 
@@ -127,7 +126,7 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 		error("ADPCMInputStream(): blockAlign isn't specified for Tinsel 6-bit ADPCM");
 	if (type == kADPCMTinsel8 && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specified for Tinsel 8-bit ADPCM");
-		
+
 	if (type == kADPCMISS && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specified for ISS IMA ADPCM");
 
@@ -259,9 +258,9 @@ int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 
 int ADPCMInputStream::readBufferISS(int16 *buffer, const int numSamples) {
 	int samples;
-	
+
 	assert(numSamples % 2 == 0);
-	
+
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 		if (_blockPos == _blockAlign) {
 			// read block header
@@ -271,13 +270,13 @@ int ADPCMInputStream::readBufferISS(int16 *buffer, const int numSamples) {
 			}
 			_blockPos = 4 * _channels;
 		}
-	
+
 		byte data = _stream->readByte();
 		buffer[samples] = decodeIMA((data >> 4) & 0x0f);
 		buffer[samples + 1] = decodeIMA(data & 0x0f, _channels == 2 ? 1 : 0);
 		_blockPos++;
 	}
-	
+
 	return samples;
 }
 

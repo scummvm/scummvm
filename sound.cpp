@@ -25,53 +25,46 @@
 
 #include "engines/stark/sound.h"
 #include "engines/stark/adpcm.h"
-
 #include "engines/stark/archive.h"
-
-#include "sound/audiostream.h"
-#include "common/debug.h"
-#include "common/endian.h"
-#include "common/util.h"
 
 namespace Stark {
 
-ISS::ISS(Common::SeekableReadStream *str){
+ISS::ISS(Common::SeekableReadStream *str) {
 	Common::String codec = "";
 	uint16 blockSize, channels, freq;
 	uint32 size;
-	
+
 	codec = XARCArchive::readString(str);
 
-		if (codec.equals("IMA_ADPCM_Sound")) {
+	if (codec.equals("IMA_ADPCM_Sound")) {
 
-			codec = XARCArchive::readString(str);
-			blockSize = (uint16)strtol(codec.c_str(), 0, 10);
-			
-			XARCArchive::readString(str);
-			// name ?
+		codec = XARCArchive::readString(str);
+		blockSize = (uint16)strtol(codec.c_str(), 0, 10);
 
-			XARCArchive::readString(str);
-			// ?
+		XARCArchive::readString(str);
+		// name ?
 
-			codec = XARCArchive::readString(str);
-			channels = (uint16)strtol(codec.c_str(), 0, 10) + 1;
+		XARCArchive::readString(str);
+		// ?
 
-			XARCArchive::readString(str);
-			// ?
+		codec = XARCArchive::readString(str);
+		channels = (uint16)strtol(codec.c_str(), 0, 10) + 1;
 
-			codec = XARCArchive::readString(str);
-			freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
-			
-			XARCArchive::readString(str);
+		XARCArchive::readString(str);
+		// ?
 
-			XARCArchive::readString(str);
+		codec = XARCArchive::readString(str);
+		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
 
-			codec = XARCArchive::readString(str);
-			size = (uint32)strtol(codec.c_str(), 0, 10);
+		XARCArchive::readString(str);
 
-			_stream = Stark::makeADPCMStream(str, true, size, Stark::kADPCMISS, freq, channels, blockSize);
-		}
+		XARCArchive::readString(str);
 
+		codec = XARCArchive::readString(str);
+		size = (uint32)strtol(codec.c_str(), 0, 10);
+
+		_stream = Stark::makeADPCMStream(str, true, size, Stark::kADPCMISS, freq, channels, blockSize);
+	}
 }
 
 } // End of namespace Stark

@@ -36,8 +36,8 @@ struct Shadow;
 
 class GfxBase {
 public:
-	GfxBase() { ; }
-	virtual ~GfxBase() { ; }
+	GfxBase() { }
+	virtual ~GfxBase() { }
 
 	struct TextObjectHandle {
 		uint16 *bitmapData;
@@ -102,6 +102,6 @@ protected:
 
 extern GfxBase *g_driver;
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_GFX_BASE_H

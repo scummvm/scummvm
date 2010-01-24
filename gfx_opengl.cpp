@@ -23,13 +23,18 @@
  *
  */
 
-#include "common/endian.h"
+#include "engines/stark/gfx_opengl.h"
+
 #include "common/system.h"
 
-#include "engines/stark/gfx_opengl.h"
-#include "engines/stark/stark.h"
-
 #ifdef USE_OPENGL
+
+#ifdef SDL_BACKEND
+#include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 
 namespace Stark {
 
@@ -176,6 +181,6 @@ void GfxOpenGL::drawSurface(Graphics::Surface* surface) {
 	glDrawPixels(surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
 }
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // USE_OPENGL

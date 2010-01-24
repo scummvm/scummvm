@@ -22,12 +22,10 @@
  * $Id$
  *
  */
- 
+
 #ifndef STARK_XRC_H
 #define STARK_XRC_H
 
-#include "common/array.h"
-#include "common/file.h"
 #include "common/str.h"
 #include "common/stream.h"
 
@@ -55,10 +53,8 @@ private:
 	} *_xrcRoot;
 
 	void readEntry(Common::SeekableReadStream *stream, xrcEntry *parent);
-
-protected:
 };
 
-}
+} // End of namespace Stark
 
-#endif
+#endif // STARK_XRC_H

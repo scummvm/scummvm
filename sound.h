@@ -22,32 +22,24 @@
  * $Id$
  *
  */
- 
+
 #ifndef STARK_SOUND_H
 #define STARK_SOUND_H
 
-#include "common/array.h"
-#include "common/file.h"
-#include "common/str.h"
 #include "common/stream.h"
 
 #include "sound/audiostream.h"
 
 namespace Stark {
 
-class ISS{
+class ISS {
 public:
 	ISS(Common::SeekableReadStream *str);
-	~ISS(){ }
+	~ISS() { }
 
 	Audio::AudioStream *_stream;
-
-private:
-
-
-protected:
 };
 
-}
+} // End of namespace Stark
 
-#endif
+#endif // STARK_SOUND_H

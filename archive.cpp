@@ -26,8 +26,6 @@
 #include "engines/stark/archive.h"
 
 #include "common/debug.h"
-#include "common/endian.h"
-#include "common/util.h"
 
 namespace Stark {
 
@@ -36,14 +34,14 @@ bool XARCArchive::open(Common::String filename) {
 		warning("Could not open file \'%s\'", filename.c_str());
 		return false;
 	}
-	
+
 	_file.readUint32LE();
 	uint32 files = _file.readUint32LE();
 	uint32 base = _file.readUint32LE();
 
 	_fileEntries = new FileEntry[files];
 
-	for (uint32 i = 0; i < files; i++){
+	for (uint32 i = 0; i < files; i++) {
 		char ch;
 		while ((ch = (char)_file.readByte()) != 0)
 			_fileEntries[i].filename += ch;
@@ -52,13 +50,13 @@ bool XARCArchive::open(Common::String filename) {
 		base += _fileEntries[i].length;
 		_file.readUint32LE();
 	}
-	
+
 	return true;
 }
 
-Common::SeekableReadStream *XARCArchive::getRawData(uint32 fileNum){
+Common::SeekableReadStream *XARCArchive::getRawData(uint32 fileNum) {
 	_file.seek(_fileEntries[fileNum].offset);
-	
+
 	return _file.readStream(_fileEntries[fileNum].length);
 }
 
@@ -67,6 +65,5 @@ void XARCArchive::close() {
 }
 
 //inline Common::String XARCArchive::readString(Common::SeekableReadStream *stream){
-	
 
 } // End of namespace Stark

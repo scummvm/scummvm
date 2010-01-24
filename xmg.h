@@ -26,7 +26,6 @@
 #ifndef STARK_XMG_H
 #define STARK_XMG_H
 
-#include "common/sys.h"
 #include "common/stream.h"
 
 #include "graphics/surface.h"
@@ -54,7 +53,7 @@ class XMGDecoder {
 public:
 	XMGDecoder() {}
 	~XMGDecoder() {}
-	
+
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 
 private:
@@ -71,7 +70,6 @@ private:
 	uint32 _currX, _currY;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
-
+#endif // STARK_XMG_H

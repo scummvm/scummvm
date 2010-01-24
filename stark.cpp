@@ -23,21 +23,16 @@
  *
  */
 
-#include "common/events.h"
-#include "common/config-manager.h"
-
-#include "engines/stark/gfx_opengl.h"
-
 #include "engines/stark/stark.h"
-#include "engines/stark/adpcm.h"
-#include "engines/stark/sound.h"
+#include "engines/stark/gfx_opengl.h"
 #include "engines/stark/xmg.h"
 
+#include "common/config-manager.h"
+#include "common/events.h"
 #include "sound/mixer.h"
 
 namespace Stark {
 
-StarkEngine *g_stark = NULL;
 GfxBase *g_driver = NULL;
 
 StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
@@ -45,9 +40,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
-	g_stark = this;
-
 }
 
 StarkEngine::~StarkEngine() {
@@ -75,13 +67,13 @@ Common::Error StarkEngine::run() {
 	g_driver->clearScreen();
 
 	// Start running
-	g_stark->mainLoop();
+	mainLoop();
 
 	return Common::kNoError;
 }
 
-void StarkEngine::mainLoop(){
-	for(;;){
+void StarkEngine::mainLoop() {
+	for (;;) {
 		// Process events
 		Common::Event e;
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -110,7 +102,7 @@ void StarkEngine::mainLoop(){
 	}
 }
 
-void StarkEngine::updateDisplayScene(){
+void StarkEngine::updateDisplayScene() {
 	g_driver->clearScreen();
 
 	// Draw bg
@@ -144,4 +136,5 @@ void StarkEngine::updateDisplayScene(){
 void StarkEngine::doFlip() {
 	g_driver->flipBuffer();
 }
-} // end of namespace Stark
+
+} // End of namespace Stark

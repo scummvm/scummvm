@@ -26,12 +26,10 @@
 #include "engines/stark/xrc.h"
 
 #include "common/debug.h"
-#include "common/endian.h"
-#include "common/util.h"
 
 namespace Stark {
 
-XRCFile::XRCFile(Common::SeekableReadStream *stream){
+XRCFile::XRCFile(Common::SeekableReadStream *stream) {
 	debug(1, "Opening XRC Archive");
 	_xrcRoot = new xrcEntry[0];
 	readEntry(stream, _xrcRoot);
@@ -39,11 +37,11 @@ XRCFile::XRCFile(Common::SeekableReadStream *stream){
 	delete stream;
 }
 
-XRCFile::~XRCFile(){
+XRCFile::~XRCFile() {
 	delete _xrcRoot;
 }
 
-void XRCFile::readEntry(Common::SeekableReadStream *stream, xrcEntry *parent){
+void XRCFile::readEntry(Common::SeekableReadStream *stream, xrcEntry *parent) {
 	debug(2, " Entry");
 	parent->dataType = stream->readByte();
 	parent->unknown1 = stream->readByte();

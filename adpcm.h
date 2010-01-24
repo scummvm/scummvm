@@ -26,7 +26,6 @@
 #ifndef SOUND_ADPCM_H
 #define SOUND_ADPCM_H
 
-#include "common/sys.h"
 #include "common/stream.h"
 
 #include "sound/audiostream.h"
@@ -75,4 +74,4 @@ Audio::AudioStream *makeADPCMStream(
 
 } // End of namespace Audio
 
-#endif
+#endif // SOUND_ADPCM_H

@@ -30,7 +30,6 @@
 #include "engines/engine.h"
 
 #include "engines/stark/archive.h"
-#include "engines/stark/xrc.h"
 
 namespace Stark {
 
@@ -50,21 +49,21 @@ public:
 	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~StarkEngine();
 
+protected:
+	// Engine APIs
+	virtual Common::Error run();
+
+private:
 	void updateDisplayScene();
 	void doFlip();
 
 	void mainLoop();
-	
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	
-private:
+
 	const ADGameDescription *_gameDescription;
 
 	XARCArchive _xArchive;
 };
 
-} // end of namespace Stark
+} // End of namespace Stark
 
-#endif
+#endif // STARK_H
