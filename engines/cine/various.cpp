@@ -1110,6 +1110,7 @@ uint16 executePlayerInput() {
 	if (g_cine->getGameType() == Cine::GType_OS || !(egoMovedWithKeyboard && allowPlayerInput)) {
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
+		// TODO: Investigate why some of these buttons don't work (Maybe main_loop.cpp's processEvent has something to do with it?)
 		switch (var_2 - 59) {
 		case 0: // F1 = EXAMINE
 		case 1: // F2 = TAKE
