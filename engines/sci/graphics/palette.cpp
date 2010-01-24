@@ -154,10 +154,9 @@ bool SciPalette::setAmiga() {
 		setOnScreen();
 
 		// Create EGA to amiga table
-		for (curColor = 1; curColor < 15; curColor++) {
+		for (curColor = 1; curColor < 16; curColor++) {
 			_amigaEGAtable[curColor] = matchColor(&_sysPalette, EGApalette[curColor][0], EGApalette[curColor][1], EGApalette[curColor][2]);
 		}
-		_amigaEGAtable[15] = _screen->getColorWhite();
 		return true;
 	}
 	return false;
@@ -168,7 +167,6 @@ int16 SciPalette::mapAmigaColor(int16 color) {
 	// TODO: not sure what pq3 means by using color 31
 	if (color > 15)
 		return color;
-	//color = CLIP<int16>(color, 0, 15);
 	return _amigaEGAtable[color];
 }
 
