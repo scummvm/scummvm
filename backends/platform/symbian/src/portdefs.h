@@ -124,7 +124,9 @@
 #ifndef __WINS__
 #define USE_ARM_GFX_ASM
 #define USE_ARM_SMUSH_ASM
+#ifdef COSTUME_IS_NOT_BROKEN_ANYMORE
 #define USE_ARM_COSTUME_ASM
+#endif
 #define USE_ARM_SOUND_ASM
 #endif
 // This is not really functioning yet.
