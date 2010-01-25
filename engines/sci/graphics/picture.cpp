@@ -399,7 +399,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 
 	// Drawing
 	while (curPos < dataSize) {
-		warning("%X at %d", data[curPos], curPos);
+		//warning("%X at %d", data[curPos], curPos);
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
 			pic_color = data[curPos++];
@@ -556,8 +556,13 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					break;
 				case PIC_OPX_VGA_SET_PALETTE:
 					if (_resMan->getViewType() == kViewAmiga) {
-						// TODO: Implement amiga palette loading
-						curPos += 32; // Skip over palette
+						if ((data[curPos] == 0x00) && (data[curPos + 1] == 0x01) && ((data[curPos + 32] & 0xF0) != 0xF0)) {
+							// Left-Over VGA palette, we simply ignore it
+							curPos += 256 + 4 + 768;
+						} else {
+							// Some sort of 32 byte amiga palette, TODO: Find out whats in there
+							curPos += 32;
+						}
 					} else {
 						curPos += 256 + 4; // Skip over mapping and timestamp
 						for (i = 0; i < 256; i++) {
