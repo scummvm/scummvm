@@ -234,9 +234,12 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 		break;
 	case kDetectSetCursorType:
 		objName = "Game";
-		// We need to check the overridden game object here. Fixes KQ5CD setCursor detection,
-		// as KQ5CD overrides the default setCursor selector of the Game object
-		objAddr = _gameObj;
+		objAddr = _segMan->findObjectByName(objName);
+		// KQ5CD overrides the default setCursor selector of the Game object,
+		// so we need to handle this separately
+		// KQ5 PC floppy is early SCI1, Amiga middle SCI1, and CD late SCI1
+		if (_gameId == "kq5" && getSciVersion() == SCI_VERSION_1_LATE)
+			objAddr = _gameObj;
 		slc = _kernel->_selectorCache.setCursor;
 		break;
 	case kDetectLofsType:
