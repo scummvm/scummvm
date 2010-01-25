@@ -36,7 +36,11 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 
+#include "graphics/scaler.h"
+
+#include "sound/mididrv.h"
 #include "sound/mixer.h"
+#include "sound/fmopl.h"
 
 namespace GUI {
 
@@ -153,6 +157,18 @@ void OptionsDialog::open() {
 #endif // SMALL_SCREEN_DEVICE
 	}
 
+	// Audio options
+	if (_midiPopUp) {
+		// Music driver
+		MidiDriverType id = MidiDriver::parseMusicDriver(ConfMan.get("music_driver", _domain));
+		_midiPopUp->setSelectedTag(id);
+	}
+
+	if (_oplPopUp) {
+		OPL::Config::DriverId id = MAX<OPL::Config::DriverId>(OPL::Config::parse(ConfMan.get("opl_driver", _domain)), 0);
+		_oplPopUp->setSelectedTag(id);
+	}
+
 	if (_outputRatePopUp) {
 		_outputRatePopUp->setSelected(1);
 		int value = ConfMan.getInt("output_rate", _domain);
@@ -160,6 +176,34 @@ void OptionsDialog::open() {
 			if (value == outputRateValues[i])
 				_outputRatePopUp->setSelected(i);
 		}
+	}
+
+	if (_multiMidiCheckbox) {
+
+		// Multi midi setting
+		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
+
+		// Native mt32 setting
+		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
+
+		// GS extensions setting
+		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
+
+		String soundFont(ConfMan.get("soundfont", _domain));
+		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
+			_soundFont->setLabel("None");
+			_soundFontClearButton->setEnabled(false);
+		} else {
+			_soundFont->setLabel(soundFont);
+			_soundFontClearButton->setEnabled(true);
+		}
+
+		// MIDI gain setting
+		char buf[10];
+
+		_midiGainSlider->setValue(ConfMan.getInt("midi_gain", _domain));
+		sprintf(buf, "%.2f", (double)_midiGainSlider->getValue() / 100.0);
+		_midiGainLabel->setLabel(buf);
 	}
 
 	// Volume options
@@ -205,6 +249,36 @@ void OptionsDialog::close() {
 			}
 		}
 
+		// Audio options
+		if (_midiPopUp) {
+			if (_enableAudioSettings) {
+				const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
+				while (md->name && md->id != (int)_midiPopUp->getSelectedTag())
+					md++;
+				if (md->name)
+					ConfMan.set("music_driver", md->name, _domain);
+				else
+					ConfMan.removeKey("music_driver", _domain);
+			} else {
+				ConfMan.removeKey("music_driver", _domain);
+			}
+		}
+
+		if (_oplPopUp) {
+			if (_enableAudioSettings) {
+				const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
+				while (ed->name && ed->id != (int)_oplPopUp->getSelectedTag())
+					++ed;
+
+				if (ed->name)
+					ConfMan.set("opl_driver", ed->name, _domain);
+				else
+					ConfMan.removeKey("opl_driver", _domain);
+			} else {
+				ConfMan.removeKey("opl_driver", _domain);
+			}
+		}
+
 		if (_outputRatePopUp) {
 			if (_enableAudioSettings) {
 				if (_outputRatePopUp->getSelectedTag() != 0)
@@ -216,6 +290,27 @@ void OptionsDialog::close() {
 			}
 		}
 
+		// MIDI options
+		if (_multiMidiCheckbox) {
+			if (_enableMIDISettings) {
+				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
+				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
+				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
+				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
+
+				String soundFont(_soundFont->getLabel());
+				if (!soundFont.empty() && (soundFont != "None"))
+					ConfMan.set("soundfont", soundFont, _domain);
+				else
+					ConfMan.removeKey("soundfont", _domain);
+			} else {
+				ConfMan.removeKey("multi_midi", _domain);
+				ConfMan.removeKey("native_mt32", _domain);
+				ConfMan.removeKey("enable_gs", _domain);
+				ConfMan.removeKey("midi_gain", _domain);
+				ConfMan.removeKey("soundfont", _domain);
+			}
+		}
 		// Save config file
 		ConfMan.flushToDisk();
 	}
@@ -285,6 +380,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
+	_midiPopUpDesc->setEnabled(enabled);
+	_midiPopUp->setEnabled(enabled);
+	_oplPopUpDesc->setEnabled(enabled);
+	_oplPopUp->setEnabled(enabled);
 	_outputRatePopUpDesc->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
 }
@@ -368,6 +467,28 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
+	// The MIDI mode popup & a label
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", "Music driver:");
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
+
+	// Populate it
+	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
+	while (md->name) {
+		_midiPopUp->appendEntry(md->description, md->id);
+		md++;
+	}
+
+	// The OPL emulator popup & a label
+	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", "AdLib emulator:");
+	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup");
+
+	// Populate it
+	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
+	while (ed->name) {
+		_oplPopUp->appendEntry(ed->description, ed->id);
+		++ed;
+	}
+
 	// Sample rate settings
 	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", "Output rate:");
 	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup");
@@ -380,6 +501,28 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 }
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
+	// SoundFont
+	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
+	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", kClearSoundFontCmd, 0);
+
+	// Multi midi setting
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed AdLib/MIDI mode", 0, 0);
+
+	// Native mt32 setting
+	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", "True Roland MT-32 (disable GM emulation)", 0, 0);
+
+	// GS Extensions setting
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", "Enable Roland GS Mode", 0, 0);
+
+	// MIDI gain setting (FluidSynth uses this)
+	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", "MIDI gain:");
+	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", kMidiGainChanged);
+	_midiGainSlider->setMinValue(0);
+	_midiGainSlider->setMaxValue(1000);
+	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
+
+	_enableMIDISettings = true;
 }
 
 // The function has an extra slider range parameter, since both the launcher and SCUMM engine
@@ -475,6 +618,12 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	addVolumeControls(tab, "GlobalOptions_Volume.");
 
 	// TODO: cd drive setting
+
+	//
+	// 3) The MIDI tab
+	//
+	tab->addTab("MIDI");
+	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
 	// 4) The miscellaneous tab
