@@ -86,7 +86,7 @@ public:
 	 * Is the mixer ready and setup? This may not be the case on systems which
 	 * don't support digital sound output. In that case, the mixer proc may
 	 * never be called. That in turn can cause breakage in games which try to
-	 * sync with an audio stream. In particular, the Adlib MIDI emulation...
+	 * sync with an audio stream. In particular, the AdLib MIDI emulation...
 	 *
 	 * @return whether the mixer is ready and setup
 	 *

@@ -823,7 +823,7 @@ void LauncherDialog::editGame(int item) {
 	// default set nothing and use the global ScummVM settings. E.g. the user
 	// can set here an optional alternate music volume, or for specific games
 	// a different music driver etc.
-	// This is useful because e.g. MonkeyVGA needs Adlib music to have decent
+	// This is useful because e.g. MonkeyVGA needs AdLib music to have decent
 	// music support etc.
 	assert(item >= 0);
 	String gameId(ConfMan.get("gameid", _domains[item]));

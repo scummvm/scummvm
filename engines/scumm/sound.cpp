@@ -1278,7 +1278,7 @@ int ScummEngine::readSoundResource(int idx) {
 	return 0;
 }
 
-// Adlib MIDI-SYSEX to set MIDI instruments for small header games.
+// AdLib MIDI-SYSEX to set MIDI instruments for small header games.
 static const byte ADLIB_INSTR_MIDI_HACK[95] = {
 	0x00, 0xf0, 0x14, 0x7d, 0x00,  // sysex 00: part on/off
 	0x00, 0x00, 0x03,              // part/channel  (offset  5)

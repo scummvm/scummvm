@@ -208,7 +208,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				break;
 			// Unhandled SCI commands
 			case 0x46: // LSL3 - binoculars
-			case 0x61: // Iceman (Adlib?)
+			case 0x61: // Iceman (AdLib?)
 			case 0x73: // Hoyle
 			case 0xD1: // KQ4, when riding the unicorn
 				// Obscure SCI commands - ignored

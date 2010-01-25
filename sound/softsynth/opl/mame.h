@@ -173,7 +173,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v);
 void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 
 // Factory method
-FM_OPL *makeAdlibOPL(int rate);
+FM_OPL *makeAdLibOPL(int rate);
 
 // OPL API implementation
 class OPL : public ::OPL::OPL {
