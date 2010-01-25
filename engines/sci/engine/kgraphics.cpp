@@ -234,7 +234,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		color = argv[5].toSint16();
 
 		// TODO: Find out why we get >15 for color in EGA
-		if (!s->resMan->isVGA())
+		if (!s->resMan->isVGA() && !s->resMan->isAmiga32color())
 			color &= 0x0F;
 
 		s->_gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
