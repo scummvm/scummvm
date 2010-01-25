@@ -226,8 +226,8 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 
 	if (_isRoland)
 		newEntry->volume = rec.volume;
-	else /* resource volumes do not seem to work well with our adlib emu */
-		newEntry->volume = 240; /* 255 causes clipping with adlib */
+	else /* resource volumes do not seem to work well with our AdLib emu */
+		newEntry->volume = 240; /* 255 causes clipping with AdLib */
 
 	_activeSounds.push_back(SoundList::value_type(newEntry));
 

@@ -311,7 +311,7 @@ void MidiDriver_AdLib::send(uint32 b) {
 	case 0xc0:
 		_channels[channel].patch = op1;
 		break;
-	// The original adlib driver from sierra ignores aftertouch completely, so should we
+	// The original AdLib driver from sierra ignores aftertouch completely, so should we
 	case 0xa0: // Polyphonic key pressure (aftertouch)
 	case 0xd0: // Channel pressure (aftertouch)
 		break;
@@ -790,7 +790,7 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 	if (res) {
 		ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(res->data, res->size);
 	} else {
-		// Early SCI0 games have the sound bank embedded in the adlib driver
+		// Early SCI0 games have the sound bank embedded in the AdLib driver
 
 		Common::File f;
 

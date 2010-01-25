@@ -78,7 +78,7 @@ int AdLibMusic::readBuffer(int16 *data, const int numSamples) {
 
 void AdLibMusic::setupPointers() {
 	if (SkyEngine::_systemVars.gameVersion == 109) {
-		// disk demo uses a different adlib driver version, some offsets have changed
+		// disk demo uses a different AdLib driver version, some offsets have changed
 		//_musicDataLoc = (_musicData[0x11CC] << 8) | _musicData[0x11CB];
 		//_initSequence = _musicData + 0xEC8;
 
