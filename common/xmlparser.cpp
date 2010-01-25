@@ -247,9 +247,11 @@ bool XMLParser::closeKey() {
 }
 
 bool XMLParser::parse() {
-
 	if (_stream == 0)
 		return parserError("XML stream not ready for reading.");
+
+	// Make sure we are at the start of the stream.
+	_stream->seek(0, SEEK_SET);
 
 	if (_XMLkeys == 0)
 		buildLayout();

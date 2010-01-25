@@ -207,7 +207,7 @@ void VirtualKeyboard::switchMode(Mode *newMode) {
 	_currentMode = newMode;
 }
 
-void VirtualKeyboard::switchMode(const String& newMode) {
+void VirtualKeyboard::switchMode(const String &newMode) {
 	if (!_modes.contains(newMode)) {
 		warning("Keyboard mode '%s' unknown", newMode.c_str());
 	} else {
