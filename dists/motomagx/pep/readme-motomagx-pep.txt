@@ -28,4 +28,4 @@ keymap_gui_CLIK=BACKSPACE
 keymap_global_PAUS=TAB
 keymap_global_SKLI=2
 keymap_gui_VIRT=F9
-keymap_gui_REMP=SPACE 
+keymap_gui_REMP=SPACE

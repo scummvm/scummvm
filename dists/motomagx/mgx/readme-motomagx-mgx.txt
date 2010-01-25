@@ -11,7 +11,7 @@ Unpack lib folder to /mmc/mmca1/games
 
 for Motorola U9, ZN5
 zn5, u9 libpack - http://www.mediafire.com/download.php?nmqzc5lizuy
-Unpack lib folder to /mmc/mmca1/games 
+Unpack lib folder to /mmc/mmca1/games
 
 
 2. Game Control:
@@ -20,8 +20,8 @@ Unpack lib folder to /mmc/mmca1/games
 use internal scummvm keymapper
 after first start scummvm keys assingned randomly
 for remapping key, must edited file
-games/.scummvmrc 
-after line [keymapper] 
+games/.scummvmrc
+after line [keymapper]
 
 KeyMap setting tested with Motorola Z6 (pep build) by Pantamorph
 
@@ -35,14 +35,14 @@ keymap_gui_CLIK=BACKSPACE
 keymap_global_PAUS=TAB
 keymap_global_SKLI=2
 keymap_gui_VIRT=F9
-keymap_gui_REMP=SPACE 
+keymap_gui_REMP=SPACE
 
 (mgx)  U9, ZN5 (motomagx)
 use internal scummvm keymapper
 after first start scummvm keys assingned randomly
 for remapping key, must edited file
-games/.scummvmrc 
-after line [keymapper] 
+games/.scummvmrc
+after line [keymapper]
 
 KeyMap setting tested with Motorola ZN5 (mgx build) by Junior Passos
 

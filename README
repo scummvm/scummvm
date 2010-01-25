@@ -1616,7 +1616,7 @@ command as described earlier in this section.
 
 7.6.2) Playing sound with IRIX dmedia sequencer:                 [UNIX ONLY]
 ---- ------------------------------------------
-If you are using IRIX,  driver with the sequencer support, you can 
+If you are using IRIX,  driver with the sequencer support, you can
 set the environment variable SCUMMVM_PORT or the config file parameter
 dmedia_port to your sequencer port. The default is to use the first port.
 
@@ -1632,7 +1632,7 @@ instead of the default "Serial Port 2" by adding a line
 
    dmedia_port=Software Synth
 
-to your configuration file in the section [scummvm], or setting 
+to your configuration file in the section [scummvm], or setting
 SCUMMVM_PORT=Software Synth in your environment.
 
 

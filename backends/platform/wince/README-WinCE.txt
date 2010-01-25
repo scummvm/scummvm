@@ -14,7 +14,7 @@ be a speed improvement when using these scalers.
 
 Also new is the aspect 2x upscaling mode, which is auto detected and used
 when the scaler is set to (normal) 2x mode and the panel is hidden. Hence,
-a 320x200 game running on a VGA or higher resolution device will be 
+a 320x200 game running on a VGA or higher resolution device will be
 aspect scaled to fill the 640x480 screen.
 
 Be aware that Discworld 2 tries to allocate a big chunk of memory (10 MB)
@@ -192,8 +192,8 @@ The following actions are available :
   * Right click    : acts as a right mouse button click
   * Cursor         : hide or display the mouse cursor
   * Free look      : go in or out of free-look mode. In this mode, you can tap
-                     the screen to look for interesting locations without 
-                     walking. Click a second time near the pointer's location 
+                     the screen to look for interesting locations without
+                     walking. Click a second time near the pointer's location
                      equals to a left click.
   * Zoom up        : magnify the upper part of the screen for 640x480 games
                      rendered on a QVGA device.
@@ -299,10 +299,10 @@ Game specific sections (f.e. [monkey2]) - performance options
  *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if
                                     set.  The default is 11 kHz.
                                     If you have a fast device, you can set this
-                                    to true to enjoy better sound effects and 
+                                    to true to enjoy better sound effects and
                                     music.
  *  FM_high_quality        bool     Desktop quality FM synthesis if set. Lower
-                                    quality otherwise. The default is low 
+                                    quality otherwise. The default is low
                                     quality. You can change this if you have a
                                     fast device.
  *  sound_thread_priority  int      Set the priority of the sound thread (0, 1,
@@ -315,14 +315,14 @@ Game specific sections (f.e. [monkey2]) - performance options
 
 Game specific sections (f.e. [monkey2]) - game options
 
- *  landscape                int    0: Portrait, 1: Landscape, 
+ *  landscape                int    0: Portrait, 1: Landscape,
                                     2: Inverse Landscape.
                                     You can also use this in the [scummvm]
                                     section to display the launcher in landscape
                                     for example, at startup.
- *  no_doubletap_rightclick  int    1: Turn off the default behavior of 
+ *  no_doubletap_rightclick  int    1: Turn off the default behavior of
                                     simulating a right-click when the screen is
-                                    double-tapped. 
+                                    double-tapped.
 
 
 [scummvm] section - keys definition
@@ -372,7 +372,7 @@ Game specific questions
 I need to press a special key
 -----------------------------
 
-Bring up the virtual keyboard. On Smartphones take a look at the Keyboard 
+Bring up the virtual keyboard. On Smartphones take a look at the Keyboard
 action above. On Pocket PCs it's easier to double-tap at the top of the screen.
 
 The panel is obscuring the playfield area
@@ -600,7 +600,7 @@ as this interferes with the game's controls. This setting can be overridden
 -- Discworld 2 --
 -----------------
 
-Crashes at startup of this game are usually due to the high memory 
+Crashes at startup of this game are usually due to the high memory
 requirements of this game.
 
 -------------------------
@@ -665,7 +665,7 @@ with file name scummvm1.exe, includes support for the following engines:
  - scumm, sword1, sword2, queen, sky, lure, agi, touche
 while the second, with file name scummvm2.exe:
  - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker
-The user must make sure to execute the correct file for a game. All 
+The user must make sure to execute the correct file for a game. All
 previously detected games will be shown in the launcher. Trying to launch
 a gob engine game with scummvm1.exe will not work.
 Detection also works as implied: scummvm1.exe will detect only the games

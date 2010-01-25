@@ -7,7 +7,7 @@ Its advantages over existing alternatives are that it:
  - Doesn't require RTTI
  - Doesn't require member template functions
  - Doesn't require exception handling
- - Doesn't require any external libraries (including memory management, 
+ - Doesn't require any external libraries (including memory management,
    file/console I/O, graphics libraries)
 
 This makes it extremely portable and usable.
@@ -23,7 +23,7 @@ Simple user's guide
 MyTest.h:
   #include <cxxtest/TestSuite.h>
 
-  class MyTestSuite : public CxxTest::TestSuite 
+  class MyTestSuite : public CxxTest::TestSuite
   {
   public:
       void testAddition( void )

@@ -10,7 +10,7 @@ memory built into the processor (called 'cache'). Access to the upper 32MB can
 be sped up by Squidge's MMU hack. The easiest way to use the MMU hack is to add
 and load the MMU hack kernel module into your program.
 
-Note: Building this module requries a GP2X 'kernel' toolchain (i.e. GCC 2.95.* 
+Note: Building this module requries a GP2X 'kernel' toolchain (i.e. GCC 2.95.*
 for the GP2X stock, 3.* for Open2X).
 
 You can't build this module with the GCC 4 based application toolchains.
@@ -78,7 +78,7 @@ else
 If the above call succeeded, you are all done.
 I recommend to unload the module when your program exits, because the other
 program may want to load a different mmuhack.o and may fail, because you left
-your mmuhack.o loaded (it does not get unloaded automatically on exit). 
+your mmuhack.o loaded (it does not get unloaded automatically on exit).
 
 system("/sbin/rmmod mmuhack");
 
