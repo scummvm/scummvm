@@ -4,7 +4,7 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula 
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 sci draci teenagent
+		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk
 	);
 	
 	@WorkingEngines_1st = qw(
@@ -23,7 +23,7 @@
 		 
 	);
 
-	@BrokenEngines = qw(				
+	@BrokenEngines = qw(	
 	);
 
 	@EnablableEngines = (@WorkingEngines, @TestingEngines);
@@ -35,6 +35,8 @@
 		lol
 		agos2
 	);
+
+	#disabled subengines lol saga2 personal nightmare
 
 	%UseableFeatures = (
 		'zlib'		=> 'zlib.lib', 

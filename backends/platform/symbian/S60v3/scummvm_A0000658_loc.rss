@@ -8,7 +8,7 @@ RESOURCE LOCALISABLE_APP_INFO
 		CAPTION_AND_ICON_INFO
 			{
 			// The caption text is defined in the rls file
-			caption = "ScummVM Pt2";
+			caption = "ScummVM 2";
 			// Icons are used to represent applications in the
 			// application launcher and application title bar.
 			// The number_of_icons value identifies how many icons
