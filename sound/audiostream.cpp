@@ -41,8 +41,8 @@ namespace Audio {
 
 struct StreamFileFormat {
 	/** Decodername */
-	const char* decoderName;
-	const char* fileExtension;
+	const char *decoderName;
+	const char *fileExtension;
 	/**
 	 * Pointer to a function which tries to open a file of type StreamFormat.
 	 * Return NULL in case of an error (invalid/nonexisting file).
@@ -51,16 +51,16 @@ struct StreamFileFormat {
 };
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
-	/* decoderName,		fileExt, openStreamFuntion */
+	/* decoderName,  fileExt, openStreamFuntion */
 #ifdef USE_FLAC
-	{ "Flac",			".flac", makeFlacStream },
-	{ "Flac",			".fla",  makeFlacStream },
+	{ "Flac",         ".flac", makeFlacStream },
+	{ "Flac",         ".fla",  makeFlacStream },
 #endif
 #ifdef USE_VORBIS
-	{ "Ogg Vorbis",		".ogg",  makeVorbisStream },
+	{ "Ogg Vorbis",   ".ogg",  makeVorbisStream },
 #endif
 #ifdef USE_MAD
-	{ "MPEG Layer 3",	".mp3",  makeMP3Stream },
+	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
 
 	{ NULL, NULL, NULL } // Terminator
@@ -271,8 +271,8 @@ private:
 		AudioStream *_stream;
 		DisposeAfterUse::Flag _disposeAfterUse;
 		StreamHolder(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse)
-			: _stream(stream),
-			  _disposeAfterUse(disposeAfterUse) {}
+		    : _stream(stream),
+		      _disposeAfterUse(disposeAfterUse) {}
 	};
 
 	/**
@@ -303,7 +303,7 @@ private:
 
 public:
 	QueuingAudioStreamImpl(int rate, bool stereo)
-		: _rate(rate), _stereo(stereo), _finished(false) {}
+	    : _rate(rate), _stereo(stereo), _finished(false) {}
 	~QueuingAudioStreamImpl();
 
 	// Implement the AudioStream API
@@ -360,12 +360,8 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 	return samplesDecoded;
 }
 
-
-
 QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo) {
 	return new QueuingAudioStreamImpl(rate, stereo);
 }
-
-
 
 } // End of namespace Audio
