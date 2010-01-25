@@ -882,7 +882,7 @@ void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
 				// wouldn't be visible anymore.
 				r.drawPlainBox(charX, lineY, _width - 8, FONT_HEIGHT, top ? r._messageBg/*2*/ : 18);
 			} else {
-				r.drawPlainBox(charX, lineY, _width - 8, 9, r._messageBg);
+				r.drawPlainBox(charX, lineY, _width - 8, 9, 0);
 			}
 		}
 
