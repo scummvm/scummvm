@@ -561,6 +561,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 							curPos += 256 + 4 + 768;
 						} else {
 							// Some sort of 32 byte amiga palette, TODO: Find out whats in there
+							_palette->modifyAmigaPalette(&data[curPos]);
 							curPos += 32;
 						}
 					} else {

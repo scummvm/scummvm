@@ -171,6 +171,21 @@ int16 SciPalette::mapAmigaColor(int16 color) {
 	return _amigaEGAtable[color];
 }
 
+// Called from picture class, some amiga sci1 games set half of the palette
+void SciPalette::modifyAmigaPalette(byte *data) {
+	int16 curColor, curPos = 0;
+	byte byte1, byte2;
+	for (curColor = 0; curColor < 16; curColor++) {
+		byte1 = data[curPos++];
+		byte2 = data[curPos++];
+		_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
+		_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
+		_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+	}
+	_screen->setPalette(&_sysPalette);
+	// TODO: when games do this it seems the EGAmapping isnt used anymore, at least the colors are wrong in any case
+}
+
 void SciPalette::setEGA() {
 	int curColor;
 	byte color1, color2;
