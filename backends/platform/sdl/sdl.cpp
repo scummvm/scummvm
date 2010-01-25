@@ -715,12 +715,12 @@ void OSystem_SDL::setupMixer() {
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/16th of a second. Note that it must be a power of two.
-	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
+	// at least 1/16th of a second (though at maximum 8192 samples). Note
+	// that it must be a power of two. So e.g. at 22050 Hz, we request a
+	// sample buffer size of 2048.
 	int samples = 8192;
-	while (16 * samples >= _samplesPerSec) {
+	while (samples * 16 > _samplesPerSec * 2)
 		samples >>= 1;
-	}
 
 	memset(&desired, 0, sizeof(desired));
 	desired.freq = _samplesPerSec;
