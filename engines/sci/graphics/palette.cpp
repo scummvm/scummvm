@@ -53,8 +53,6 @@ SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPale
 	_sysPalette.colors[255].g = 255;
 	_sysPalette.colors[255].b = 255;
 
-	memset(&_amigaEGAtable, 0, sizeof(_amigaEGAtable));
-
 	if (autoSetPalette) {
 		if (_resMan->getViewType() == kViewEga)
 			setEGA();
@@ -153,22 +151,9 @@ bool SciPalette::setAmiga() {
 		file.close();
 		// Directly set the palette, because setOnScreen() wont do a thing for amiga
 		_screen->setPalette(&_sysPalette);
-
-		// Create EGA to amiga table
-		for (curColor = 1; curColor < 16; curColor++) {
-			_amigaEGAtable[curColor] = matchColor(&_sysPalette, EGApalette[curColor][0], EGApalette[curColor][1], EGApalette[curColor][2]);
-		}
 		return true;
 	}
 	return false;
-}
-
-// On amiga the scripts send us an EGA color, we need to match it to the active amiga palette
-int16 SciPalette::mapAmigaColor(int16 color) {
-	// TODO: not sure what pq3 means by using color 31
-	if (color > 15)
-		return color;
-	return _amigaEGAtable[color];
 }
 
 // Called from picture class, some amiga sci1 games set half of the palette
@@ -183,7 +168,6 @@ void SciPalette::modifyAmigaPalette(byte *data) {
 		_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 	}
 	_screen->setPalette(&_sysPalette);
-	// TODO: when games do this it seems the EGAmapping isnt used anymore, at least the colors are wrong in any case
 }
 
 void SciPalette::setEGA() {

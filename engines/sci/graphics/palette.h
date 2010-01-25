@@ -38,7 +38,6 @@ public:
 
 	void createFromData(byte *data, Palette *paletteOut);
 	bool setAmiga();
-	int16 mapAmigaColor(int16 color);
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
 	bool setFromResource(GuiResourceId resourceId, uint16 flag);
@@ -61,8 +60,6 @@ private:
 	ResourceManager *_resMan;
 
 	Common::Array<PalSchedule> _schedules;
-
-	byte _amigaEGAtable[16];
 };
 
 } // End of namespace Sci

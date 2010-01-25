@@ -176,11 +176,6 @@ int16 SciGui::priorityToCoordinate(int16 priority) {
 reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	Window *wnd = NULL;
 
-	if (_s->resMan->isAmiga32color()) {
-		colorPen = _palette->mapAmigaColor(colorPen);
-		colorBack = _palette->mapAmigaColor(colorBack);
-	}
-
 	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
 		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, false);
 	else
@@ -237,15 +232,11 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			break;
 		case SCI_DISPLAY_SETPENCOLOR:
 			colorPen = argv[0].toUint16();
-			if (_s->resMan->isAmiga32color())
-				colorPen = _palette->mapAmigaColor(colorPen);
 			_gfx->PenColor(colorPen);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETBACKGROUNDCOLOR:
 			colorBack = argv[0].toUint16();
-			if (_s->resMan->isAmiga32color())
-				colorBack = _palette->mapAmigaColor(colorBack);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETGREYEDOUTPUT:
@@ -323,11 +314,6 @@ void SciGui::textColors(int argc, reg_t *argv) {
 
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	Port *oldPort = _gfx->SetPort(_gfx->_menuPort);
-
-	if (_s->resMan->isAmiga32color()) {
-		colorPen = _palette->mapAmigaColor(colorPen);
-		colorBack = _palette->mapAmigaColor(colorBack);
-	}
 
 	_gfx->FillRect(_gfx->_menuBarRect, 1, colorBack);
 	_gfx->PenColor(colorPen);
@@ -506,23 +492,17 @@ void SciGui::graphFillBoxBackground(Common::Rect rect) {
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
-	if (_s->resMan->isAmiga32color())
-		color = _palette->mapAmigaColor(color);
 	_gfx->FillRect(rect, colorMask, color, priority, control);
 }
 
 void SciGui::graphFrameBox(Common::Rect rect, int16 color) {
 	int16 oldColor = _gfx->GetPort()->penClr;
-	if (_s->resMan->isAmiga32color())
-		color = _palette->mapAmigaColor(color);
 	_gfx->PenColor(color);
 	_gfx->FrameRect(rect);
 	_gfx->PenColor(oldColor);
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
-	if (_s->resMan->isAmiga32color())
-		color = _palette->mapAmigaColor(color);
 	_gfx->OffsetLine(startPoint, endPoint);
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }

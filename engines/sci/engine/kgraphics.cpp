@@ -223,7 +223,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toSint16()) {
 	case K_GRAPH_GET_COLORS_NR:
-		return make_reg(0, !s->resMan->isVGA() ? 0x10 : 0x100);
+		if (s->resMan->isAmiga32color())
+			return make_reg(0, 32);
+		return make_reg(0, !s->resMan->isVGA() ? 16 : 256);
 		break;
 
 	case K_GRAPH_DRAW_LINE:
