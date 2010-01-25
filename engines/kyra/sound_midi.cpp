@@ -531,10 +531,6 @@ bool SoundMidiPC::init() {
 				if (_vm->gameFlags().useAltShapeHeader) {
 					// Intro demo
 					pakFile = "INTROVOC.PAK";
-
-					// HACK: To prevent "Exc. Buffer overflow"
-					// we delay some time here.
-					_vm->_system->delayMillis(1000);
 				} else {
 					// Kyra2 SEQ player based demo
 					pakFile = "GENERAL.PAK";
