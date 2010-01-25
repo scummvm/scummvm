@@ -63,9 +63,9 @@ void WindowMgr::init(Common::String gameId) {
 	//				will work, but some scripts seem to check for 0 and initialize the variable again in that case
 	//				resulting in problems.
 
-	// Jones sierra sci was called with parameter -Nw 0 0 200 320
-	//  this actually meant not skipping the first 10 pixellines in windowMgrPort
-	if (gameId == "jones")
+	// Jones, Slater and Hoyle 3 were called with parameter -Nw 0 0 200 320.
+	// This actually meant not skipping the first 10 pixellines in windowMgrPort
+	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3")
 		offTop = 0;
 
 	_gfx->OpenPort(_wmgrPort);
