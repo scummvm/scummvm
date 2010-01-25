@@ -125,9 +125,9 @@ indy3	Indiana Jones and the Last Crusade
 	330f631502e381a4e199a3f7cb483c20	-1	de	Amiga	EGA	EGA	-	dhewg
 	df03ee021aa9b81d90cab9c26da07614	-1	it	Amiga	EGA	EGA	-	Andrea Petrucci
 	62b8c16b6db226ba95aaa8be73f9885c	-1	es	Amiga	EGA	EGA	-	
-	157367c3c21e0d03a0cba44361b4cf65	-1	en	Atari	No Adlib	EGA	-	Andreas Bylund
-	0f9c7a76657f0840b8f7ccb5bffeb9f4	-1	fr	Atari	No Adlib	EGA	-	Andreas Bylund
-	aaa7f36a253f277dd29dd1c051b0e4b9	-1	de	Atari	No Adlib	EGA	-	Jimmy Kohl
+	157367c3c21e0d03a0cba44361b4cf65	-1	en	Atari	No AdLib	EGA	-	Andreas Bylund
+	0f9c7a76657f0840b8f7ccb5bffeb9f4	-1	fr	Atari	No AdLib	EGA	-	Andreas Bylund
+	aaa7f36a253f277dd29dd1c051b0e4b9	-1	de	Atari	No AdLib	EGA	-	Jimmy Kohl
 	5fbe557049892eb4b709d90916ec97ca	5361	en	DOS	EGA	EGA	v1.0, 7/09/89	Fingolfin
 	6b3ec67da214f558dc5ceaa2acd47453	-1	en	DOS	EGA	EGA	v1.3, 14 Aug 89	tsuteiuQ, Andrea Petrucci, Peter Eckerlein
 	6508fd55530e6915507e1cc37f7f045d	-1	en	DOS	EGA	EGA	v1.3, 8/14/89 (5.25\")	Zer02
@@ -139,7 +139,7 @@ indy3	Indiana Jones and the Last Crusade
 	d62d248c3df6ec177405e2cb23d923b2	-1	it	DOS	EGA	EGA	v1.4 from 25 Nov 89	Andrea Petrucci, Peter Eckerlein
 	86be8ada36371d4fdc35659d0e912a26	-1	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	Andrea Petrucci, Peter Eckerlein
 	ce7fd0c382389a6791fc3e199c117ef4	-1	es	DOS	EGA	EGA	?? v1.4b from 7 May 90	abnog, Peter Eckerlein
-	1dd7aa088e09f96d06818aa9a9deabe0	5361	en	Mac	No Adlib	EGA	v1.7, 8/17/90	Fingolfin
+	1dd7aa088e09f96d06818aa9a9deabe0	5361	en	Mac	No AdLib	EGA	v1.7, 8/17/90	Fingolfin
 
 	1875b90fade138c9253a8e967007031a	6295	en	DOS	VGA	VGA	IBM 256 color v2.0 from 3 May 90	Peter Eckerlein, Fingolfin
 	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
@@ -157,9 +157,9 @@ loom	Loom
 	2fe369ad70f52a8cf7ad6077ee64f81a	-1	de	Amiga	EGA	EGA	-	Norbert Lange
 	39cb9dec16fa16f38d79acd80effb059	-1	it	Amiga	EGA	EGA	same as FR?!?	Andrea Petrucci
 	48b9f04b348bc5013327753f0d12a144	-1	es	Amiga	EGA	EGA	-	VooD
-	a0a7dea72003933b8b3f8b99b9f7ddeb	-1	en	Atari	No Adlib	EGA	-	
-	0e9b01430e31d9fcd94071d433bbc6bf	-1	fr	Atari	No Adlib	EGA	-	
-	c24c490373aeb48fbd54caa8e7ae376d	-1	de	Atari	No Adlib	EGA	-	Andreas Bylund
+	a0a7dea72003933b8b3f8b99b9f7ddeb	-1	en	Atari	No AdLib	EGA	-	
+	0e9b01430e31d9fcd94071d433bbc6bf	-1	fr	Atari	No AdLib	EGA	-	
+	c24c490373aeb48fbd54caa8e7ae376d	-1	de	Atari	No AdLib	EGA	-	Andreas Bylund
 	28ef68ee3ed76d7e2ee8ee13c15fbd5b	5748	en	DOS	EGA	EGA	v1.0 from 8 Mar 90	Peter Eckerlein, Fingolfin
 	73e5ab7dbb9a8061cc6d25df02dbd1e7	-1	en	DOS	EGA	EGA	v1.0 alt	Andrea Petrucci
 	37f56ceb13e401a7ac7d9e6b37fecaf7	5748	en	DOS	EGA	EGA	v1.1 from 16 Mar 90	Kirben, Andrea Petrucci, Peter Eckerlein
@@ -173,7 +173,7 @@ loom	Loom
 	c3df37df9d3b481b45f75283a9907c47	-1	it	DOS	EGA	EGA	-	Andrea Petrucci
 	0be88565f734b1e9e77ccaaf3bb14b29	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	George Kormend
 	2a208ffbcd0e83e86f4356e6f64aa6e1	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
-	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No Adlib	EGA	v1.2 25 Jan 91	Fingolfin
+	6f0be328c64d689bb606d22a389e1b0f	5748	en	Mac	No AdLib	EGA	v1.2 25 Jan 91	Fingolfin
 
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
 
@@ -187,10 +187,10 @@ loom	Loom
 	a00554c31d623fdb9fcb0f924b89b42b	-1	en	DOS	EGA	EGA Demo	non-interactive	Adrian C. Fruehwirth
 
 monkey	The Secret of Monkey Island
-	c666a998af90d81db447eccba9f72c8d	-1	en	Atari	No Adlib	EGA	-	
-	9e5e0fb43bd22f4628719b7501adb717	-1	fr	Atari	No Adlib	EGA	-	Andreas Bylund
-	927a764615c7fcdd72f591355e089d8c	-1	de	Atari	No Adlib	EGA	-	Joachim Eberhard
-	0a41311d462b6639fc45297b9044bf16	-1	es	Atari	No Adlib	EGA	-	
+	c666a998af90d81db447eccba9f72c8d	-1	en	Atari	No AdLib	EGA	-	
+	9e5e0fb43bd22f4628719b7501adb717	-1	fr	Atari	No AdLib	EGA	-	Andreas Bylund
+	927a764615c7fcdd72f591355e089d8c	-1	de	Atari	No AdLib	EGA	-	Joachim Eberhard
+	0a41311d462b6639fc45297b9044bf16	-1	es	Atari	No AdLib	EGA	-	
 
 	49210e124e4c2b30f1290a9ef6306301	8357	en	DOS	EGA	EGA	8 disk v1.0, 9/18/90	Fingolfin
 	1dd3c11ea4439adfe681e4e405b624e1	-1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
