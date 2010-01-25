@@ -560,7 +560,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 							// Left-Over VGA palette, we simply ignore it
 							curPos += 256 + 4 + 768;
 						} else {
-							// Some sort of 32 byte amiga palette, TODO: Find out whats in there
+							// Setting half of the amiga palette
 							_palette->modifyAmigaPalette(&data[curPos]);
 							curPos += 32;
 						}
