@@ -23,48 +23,44 @@
  *
  */
 
-#ifndef STARK_H
-#define STARK_H
+#ifndef STARK_GFX_OPENGL_H
+#define STARK_GFX_OPENGL_H
 
-#include "engines/advancedDetector.h"
-#include "engines/engine.h"
+#ifdef USE_OPENGL
 
-#include "engines/stark/archive.h"
 #include "engines/stark/gfx/driver.h"
 
 namespace Stark {
 
-/*
-enum StarkGameID {
-	GID_TLJ = 0,
-	GID_DREAM
-};
-*/
-
-enum StarkGameFeatures {
-	GF_DVD =  (1 << 31)
-};
-
-class StarkEngine : public Engine {
+class OpenGLGfxDriver : public GfxDriver {
 public:
-	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~StarkEngine();
+	OpenGLGfxDriver();
+	~OpenGLGfxDriver();
 
-protected:
-	// Engine APIs
-	virtual Common::Error run();
+	const char *getVideoDeviceName();
 
-private:
-	void mainLoop();
-	void updateDisplayScene();
+	void setupScreen(int screenW, int screenH, bool fullscreen);
 
-	GfxDriver *_gfx;
+	void clearScreen();
+	void flipBuffer();
 
-	const ADGameDescription *_gameDescription;
+	void drawSurface(Graphics::Surface *surface);
 
-	XARCArchive _xArchive;
+/*
+	bool isHardwareAccelerated();
+
+	void set3DMode();
+
+	void setupCamera(float fov, float nclip, float fclip, float roll);
+	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
+
+	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpointFinish();
+*/
 };
 
 } // End of namespace Stark
 
-#endif // STARK_H
+#endif // USE_OPENGL
+
+#endif // STARK_GFX_OPENGL_H

@@ -23,55 +23,66 @@
  *
  */
 
-#include "engines/stark/gfx_opengl.h"
+#ifdef USE_OPENGL
+
+#include "engines/stark/gfx/opengl.h"
 
 #include "common/system.h"
-
-#ifdef USE_OPENGL
 
 #ifdef SDL_BACKEND
 #include <SDL_opengl.h>
 #else
 #include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/glu.h>
 #endif
 
 namespace Stark {
 
-GfxOpenGL::GfxOpenGL() {
-	_storedDisplay = NULL;
+OpenGLGfxDriver::OpenGLGfxDriver() {
 }
 
-GfxOpenGL::~GfxOpenGL() {
-	delete[] _storedDisplay;
+OpenGLGfxDriver::~OpenGLGfxDriver() {
 }
 
-byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+const char *OpenGLGfxDriver::getVideoDeviceName() {
+	return "OpenGL Renderer";
+}
+
+void OpenGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->setupScreen(screenW, screenH, fullscreen, true);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_screenBPP = 24;
+	/*
 	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 
 	char GLDriver[1024];
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	g_system->setWindowCaption(GLDriver);
 
-	_storedDisplay = new byte[_screenWidth * _screenHeight * 4];
-	memset(_storedDisplay, 0, _screenWidth * _screenHeight * 4);
-
 	GLfloat ambientSource[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
-
-	return NULL;
+	*/
 }
 
-const char *GfxOpenGL::getVideoDeviceName() {
-	return "OpenGL Renderer";
+void OpenGLGfxDriver::clearScreen() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void OpenGLGfxDriver::flipBuffer() {
+	g_system->updateScreen();
+}
+
+void OpenGLGfxDriver::drawSurface(Graphics::Surface *surface) {
+	glPixelZoom(1.0f, -1.0f);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glRasterPos2f(-1.0f, 0.75f);
+	glDrawPixels(surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
+}
+
+/*
+void OpenGLGfxDriver::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -84,7 +95,7 @@ void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glRotatef(roll, 0, 0, -1);
 }
 
-void GfxOpenGL::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
+void OpenGLGfxDriver::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
 	Graphics::Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
@@ -93,15 +104,7 @@ void GfxOpenGL::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d intere
 	gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
 
-void GfxOpenGL::clearScreen() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void GfxOpenGL::flipBuffer() {
-	g_system->updateScreen();
-}
-
-bool GfxOpenGL::isHardwareAccelerated() {
+bool OpenGLGfxDriver::isHardwareAccelerated() {
 	return true;
 }
 
@@ -154,13 +157,13 @@ static void glShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plan
 	glMultMatrixf((GLfloat *)mat);
 }
 
-void GfxOpenGL::set3DMode() {
+void OpenGLGfxDriver::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
 
-void GfxOpenGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
+void OpenGLGfxDriver::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
@@ -170,16 +173,10 @@ void GfxOpenGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, flo
 	glRotatef(roll, 0, 1, 0);
 }
 
-void GfxOpenGL::translateViewpointFinish() {
+void OpenGLGfxDriver::translateViewpointFinish() {
 	glPopMatrix();
 }
-
-void GfxOpenGL::drawSurface(Graphics::Surface* surface) {
-	glPixelZoom(1.0f, -1.0f);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glRasterPos2f(-1.0f, 0.75f);
-	glDrawPixels(surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
-}
+*/
 
 } // End of namespace Stark
 

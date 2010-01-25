@@ -4,7 +4,9 @@ MODULE_OBJS := \
 	adpcm.o \
 	archive.o \
 	detection.o \
-	gfx_opengl.o \
+	gfx/driver.o \
+	gfx/opengl.o \
+	gfx/tinygl.o \
 	sound.o \
 	stark.o \
 	xmg.o \

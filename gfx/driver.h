@@ -23,49 +23,41 @@
  *
  */
 
-#ifndef STARK_GFX_BASE_H
-#define STARK_GFX_BASE_H
+#ifndef STARK_GFX_DRIVER_H
+#define STARK_GFX_DRIVER_H
 
-#include "engines/stark/color.h"
+//#include "engines/stark/color.h"
 #include "graphics/surface.h"
-#include "graphics/vector3d.h"
+//#include "graphics/vector3d.h"
 
 namespace Stark {
 
-struct Shadow;
-
-class GfxBase {
+class GfxDriver {
 public:
-	GfxBase() { }
-	virtual ~GfxBase() { }
+	static GfxDriver *create();
 
-	struct TextObjectHandle {
-		uint16 *bitmapData;
-		void *surface;
-		int numTex;
-		void *texIds;
-		int width;
-		int height;
-	};
+	virtual ~GfxDriver() {}
 
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
+	virtual const char *getVideoDeviceName() = 0;
 
-	virtual bool isHardwareAccelerated() = 0;
-
-	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
-	virtual void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) = 0;
+	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;
 
+	virtual void drawSurface(Graphics::Surface *surface) = 0;
+
+	/*
+	virtual bool isHardwareAccelerated() = 0;
+
 	virtual void set3DMode() = 0;
+
+	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
+	virtual void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) = 0;
 
 	virtual void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) = 0;
 	virtual void translateViewpointFinish() = 0;
 
-	virtual void drawSurface(Graphics::Surface* surface) = 0;
-
-/*
 	virtual void disableLights() = 0;
 	virtual void setupLight(Scene::Light *light, int lightId) = 0;
 
@@ -84,24 +76,20 @@ public:
 	virtual void copyStoredToDisplay() = 0;
 	virtual void dimScreen() = 0;
 	virtual void dimRegion(int x, int y, int w, int h, float level) = 0;
-*/
-/*	virtual void drawRectangle(PrimitiveObject *primitive) = 0;
+
+	virtual void drawRectangle(PrimitiveObject *primitive) = 0;
 	virtual void drawLine(PrimitiveObject *primitive) = 0;
 	virtual void drawPolygon(PrimitiveObject *primitive) = 0;
 
 	virtual void prepareSmushFrame(int width, int height, byte *bitmap) = 0;
 	virtual void drawSmushFrame(int offsetX, int offsetY) = 0;
 	virtual void releaseSmushFrame() = 0;
-*/
-	virtual const char *getVideoDeviceName() = 0;
+	*/
 
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
-	bool _isFullscreen;
 };
-
-extern GfxBase *g_driver;
 
 } // End of namespace Stark
 
-#endif // STARK_GFX_BASE_H
+#endif // STARK_GFX_DRIVER_H

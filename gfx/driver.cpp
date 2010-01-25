@@ -23,45 +23,29 @@
  *
  */
 
-#ifndef STARK_GFX_OPENGL_H
-#define STARK_GFX_OPENGL_H
-
-#include "engines/stark/gfx_base.h"
-
-#ifdef USE_OPENGL
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/opengl.h"
+#include "engines/stark/gfx/tinygl.h"
 
 namespace Stark {
 
-class GfxOpenGL : public GfxBase {
-public:
-	GfxOpenGL();
-	virtual ~GfxOpenGL();
+GfxDriver *GfxDriver::create() {
+	GfxDriver *driver = NULL;
 
-	byte *setupScreen(int screenW, int screenH, bool fullscreen);
-
-	const char *getVideoDeviceName();
-
-	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
-
-	void clearScreen();
-	void flipBuffer();
-
-	bool isHardwareAccelerated();
-
-	void set3DMode();
-
-	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
-	void translateViewpointFinish();
-
-	void drawSurface(Graphics::Surface *bmp);
-
-private:
-	byte *_storedDisplay;
-};
-
-} // End of namespace Stark
-
+#ifdef USE_OPENGL
+	// OpenGL
+	driver = new OpenGLGfxDriver();
+	if (driver)
+		return driver;
 #endif // USE_OPENGL
 
-#endif // STARK_GFX_OPENGL_H
+	// TinyGL
+	driver = new TinyGLGfxDriver();
+	if (driver)
+		return driver;
+
+	error("Couldn't instance any graphics driver");
+	return NULL;
+}
+
+} // End of namespace Stark

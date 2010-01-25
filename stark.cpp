@@ -24,7 +24,6 @@
  */
 
 #include "engines/stark/stark.h"
-#include "engines/stark/gfx_opengl.h"
 #include "engines/stark/xmg.h"
 
 #include "common/config-manager.h"
@@ -33,9 +32,7 @@
 
 namespace Stark {
 
-GfxBase *g_driver = NULL;
-
-StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _gfx(NULL) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -47,24 +44,10 @@ StarkEngine::~StarkEngine() {
 }
 
 Common::Error StarkEngine::run() {
-	bool fullscreen = false;//(tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
-
-//#ifdef USE_OPENGL
-	//else
-//#else
-	//else
-//		error("gfx backend doesn't support hardware rendering");
-//#endif
-
-	if (g_system->hasFeature(OSystem::kFeatureOpenGL))
-		g_driver = new GfxOpenGL();
-	else
-		error("Only OpenGL hardware rendering at the moment");
+	_gfx = GfxDriver::create();
 
 	// Get the screen prepared
-	g_driver->setupScreen(640, 480, fullscreen);
-
-	g_driver->clearScreen();
+	_gfx->setupScreen(640, 480, ConfMan.getBool("fullscreen"));
 
 	// Start running
 	mainLoop();
@@ -97,13 +80,12 @@ void StarkEngine::mainLoop() {
 		}
 
 		updateDisplayScene();
-		doFlip();
 		g_system->delayMillis(50);
 	}
 }
 
 void StarkEngine::updateDisplayScene() {
-	g_driver->clearScreen();
+	_gfx->clearScreen();
 
 	// Draw bg
 
@@ -114,7 +96,7 @@ void StarkEngine::updateDisplayScene() {
 	Common::SeekableReadStream *dat = _f.readStream(_f.size());
 	Graphics::Surface *surf;
 	surf = xmg->decodeImage(dat);
-	g_driver->drawSurface(surf);
+	_gfx->drawSurface(surf);
 	delete xmg;
 	delete surf;
 	delete dat;
@@ -123,7 +105,7 @@ void StarkEngine::updateDisplayScene() {
 
 	// setup cam
 
-	g_driver->set3DMode();
+	//_gfx->set3DMode();
 
 	// setup lights
 
@@ -131,10 +113,8 @@ void StarkEngine::updateDisplayScene() {
 
 	// draw overlay
 
-}
-
-void StarkEngine::doFlip() {
-	g_driver->flipBuffer();
+	// Swap buffers
+	_gfx->flipBuffer();
 }
 
 } // End of namespace Stark
