@@ -212,10 +212,10 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		const Audio::Timestamp c = Audio::Timestamp(500, 100);
 		const Audio::Timestamp d = Audio::Timestamp(500, 44100);
 
-		TS_ASSERT_EQUALS(a.framerate(), 1000);
-		TS_ASSERT_EQUALS(b.framerate(), 67);
-		TS_ASSERT_EQUALS(c.framerate(), 100);
-		TS_ASSERT_EQUALS(d.framerate(), 44100);
+		TS_ASSERT_EQUALS(a.framerate(), (uint)1000);
+		TS_ASSERT_EQUALS(b.framerate(), (uint)67);
+		TS_ASSERT_EQUALS(c.framerate(), (uint)100);
+		TS_ASSERT_EQUALS(d.framerate(), (uint)44100);
 	}
 
 	void test_direct_query() {
