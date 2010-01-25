@@ -40,19 +40,19 @@ class MystScriptParser {
 public:
 	MystScriptParser(MohawkEngine_Myst *vm);
 	~MystScriptParser();
-	
+
 	void runScript(uint16 scriptCount, MystScriptEntry *scripts, MystResource* invokingResource = NULL);
 	void runOpcode(uint16 op, uint16 var = 0, uint16 argc = 0, uint16 *argv = NULL);
 	const char *getOpcodeDesc(uint16 op);
-	
+
 	void disableInitOpcodes();
 	void runPersistentOpcodes();
 
 private:
 	MohawkEngine_Myst *_vm;
-	
+
 	typedef void (MystScriptParser::*OpcodeProcMyst)(uint16 op, uint16 var, uint16 argc, uint16* argv);
-	
+
 	struct MystOpcode {
 		uint16 op;
 		OpcodeProcMyst proc;

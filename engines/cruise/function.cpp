@@ -256,7 +256,7 @@ int16 Op_FreqFX() {
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
 		int freq = Period(freq2 * 1000);
-		
+
 		_vm->sound().startNote(channelNum, volume, freq);
 	}
 
@@ -1389,7 +1389,7 @@ int16 Op_SongSize() {
 
 	if (_vm->sound().songLoaded()) {
 		oldSize = _vm->sound().numOrders();
-		
+
 		size = popVar();
 		if ((size >= 1) && (size < 128))
 			_vm->sound().setNumOrders(size);

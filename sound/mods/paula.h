@@ -56,11 +56,11 @@ public:
 	void setTimerBaseValue( uint32 ticksPerSecond ) { _timerBase = ticksPerSecond; }
 	uint32 getTimerBaseValue() { return _timerBase; }
 	void setSingleInterrupt(uint sampleDelay) { assert(sampleDelay < _intFreq); _curInt = sampleDelay; }
-	void setSingleInterruptUnscaled(uint timerDelay) { 
+	void setSingleInterruptUnscaled(uint timerDelay) {
 		setSingleInterrupt((uint)(((double)timerDelay * getRate()) / _timerBase));
 	}
 	void setInterruptFreq(uint sampleDelay) { _intFreq = sampleDelay; _curInt = 0; }
-	void setInterruptFreqUnscaled(uint timerDelay) { 
+	void setInterruptFreqUnscaled(uint timerDelay) {
 		setInterruptFreq((uint)(((double)timerDelay * getRate()) / _timerBase));
 	}
 	void clearVoice(byte voice);

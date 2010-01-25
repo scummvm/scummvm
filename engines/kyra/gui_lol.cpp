@@ -212,7 +212,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 			if (c && !b)
 				b = 1;
 		}
-		
+
 		if (_flags.use16ColorMode)
 			gui_drawBarGraph(154, 66 + i * 8, 34, 5, b, e, 0x88, 0);
 		else
@@ -251,7 +251,7 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 			col = 158;
 			if (redraw)
 				_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
-		}		
+		}
 	} else {
 		//skills
 		int s = index - 2;
@@ -650,7 +650,7 @@ int LoLEngine::gui_enableControls() {
 
 	int start = 74;
 	int end = 83;
-	
+
 	if (_flags.isTalkie) {
 		start = 76;
 		end = 85;
@@ -676,7 +676,7 @@ int LoLEngine::gui_disableControls(int controlMode) {
 	int start = 74;
 	int end = 83;
 	int swtch = 76;
-	
+
 	if (_flags.isTalkie) {
 		start = 76;
 		end = 85;
@@ -846,7 +846,7 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 		for (Common::HashMap<int, int16>::const_iterator c = _keyMap.begin(); c != _keyMap.end(); ++c) {
 			if (c->_value == eventType)
 				evt.kbd.keycode = (Common::KeyCode) c->_key;
-		}		
+		}
 	}
 
 	removeInputTop();
@@ -2621,9 +2621,9 @@ void GUI_LoL::updateSavegameList() {
 
 		KyraEngine_v1::SaveHeader header;
 		Common::InSaveFile *in;
-		
+
 		_savegameList = new char*[_savegameListSize];
-		
+
 		for (int i = 0; i < _savegameListSize; i++) {
 			in = _vm->openSaveForReading(_vm->getSavegameFilename(i), header);
 			if (in) {
@@ -2790,7 +2790,7 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 	case 0xfff9:
 		_vm->_configMusic ^= 1;
 		_vm->sound()->enableMusic(_vm->_configMusic);
-		
+
 		if (_vm->_configMusic)
 			_vm->snd_playTrack(_vm->_curMusicTheme);
 		else

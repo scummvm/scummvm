@@ -68,7 +68,7 @@ class KyraMetaEngine;
  * Kyrandia 1 Russian (no feature request)
  * Kyrandia 2 Russian (no feature request)
  * Kyrandia 3 Russian (feature request #2812792 "Kyrandia3 Russian")
- * 
+ *
  * The primary maintainer for the engine is LordHoto, although some parts are maintained by _athrxx.
  * If you have questions about parts of the code, the following rough description might help in
  * determining who you should ask:

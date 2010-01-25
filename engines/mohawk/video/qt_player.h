@@ -74,13 +74,13 @@ public:
 	 * @return the amount of frames in the video
 	 */
 	uint32 getFrameCount();
-	
+
 	/**
 	 * Returns the bits per pixel of the video
 	 * @return the bits per pixel of the video
 	 */
 	byte getBitsPerPixel();
-	
+
 	/**
 	 * Returns the codec tag of the video
 	 * @return the codec tag of the video
@@ -97,26 +97,26 @@ public:
 	 * Close a QuickTime encoded video file
 	 */
 	void closeFile();
-	
+
 	/**
 	 * Returns the downscale mode of the video
 	 * @return the downscale mode of the video
 	 */
 	ScaleMode getScaleMode();
-	
+
 	/**
 	 * Returns the palette of the video
 	 * @return the palette of the video
 	 */
 	byte *getPalette() { return _palette; }
-	
+
 	/**
 	 * Set the beginning offset of the video so we can modify the offsets in the stco
 	 * atom of videos inside the Mohawk archives
 	 * @param the beginning offset of the video
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
-	
+
 	int32 getCurFrame() { return _curFrame; }
 	void addPauseTime(uint32 p) { _lastFrameStart += p; _nextFrameStart += p; }
 	Graphics::Surface *getNextFrame();
@@ -251,7 +251,7 @@ protected:
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
 	uint32 _beginOffset;
-	
+
 	Graphics::Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
 	Graphics::Codec *_videoCodec;
 	bool _noCodecFound;

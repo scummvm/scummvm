@@ -53,7 +53,7 @@ public:
 	void setUpdateCallback(UpdateCallback upCb, void *ref);
 	void resetChannel(int channel);
 	void findNote(int freq, int *note, int *oct) const;
-	
+
 
 protected:
 	UpdateCallback _upCb;

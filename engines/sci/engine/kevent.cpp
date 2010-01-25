@@ -88,7 +88,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 		// track left buttton clicks, if requested
 		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
-			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
+			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n",
 						mousePos.x, mousePos.y);
 		}
 

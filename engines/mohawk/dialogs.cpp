@@ -36,7 +36,7 @@ namespace Mohawk {
 // This used to have GUI::Dialog("MohawkDummyDialog"), but that doesn't work with the gui branch merge :P (Sorry, Tanoku!)
 InfoDialog::InfoDialog(MohawkEngine *vm, Common::String message) : _vm(vm), GUI::Dialog(0, 0, 1, 1), _message(message) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
-	
+
 	_text = new GUI::StaticTextWidget(this, 4, 4, 10, 10, _message, Graphics::kTextAlignCenter);
 }
 
@@ -48,15 +48,15 @@ void InfoDialog::setInfoText(Common::String message) {
 void InfoDialog::reflowLayout() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
+
 	int width = g_gui.getStringWidth(_message) + 16;
 	int height = g_gui.getFontHeight() + 8;
-	
+
 	_w = width;
 	_h = height;
 	_x = (screenW - width) / 2;
 	_y = (screenH - height) / 2;
-	
+
 	_text->setSize(_w - 8, _h);
 }
 
@@ -77,7 +77,7 @@ enum {
 	kWaterCmd = 'WATR'
 };
 
-MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {	
+MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
 	_transistionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Transistions Enabled", kTransCmd, 'T');
 
@@ -111,7 +111,7 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	}
 }
 
-RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {	
+RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Water Effect Enabled", kWaterCmd, 'W');
 

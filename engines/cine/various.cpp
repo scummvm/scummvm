@@ -1106,7 +1106,7 @@ uint16 executePlayerInput() {
 
 		bgVar0 = var_5E;
 	}
-	
+
 	if (g_cine->getGameType() == Cine::GType_OS || !(egoMovedWithKeyboard && allowPlayerInput)) {
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 

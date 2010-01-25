@@ -256,7 +256,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		// The existence of 7.pat indicates a Mac game
 		if (filename.contains("7.pat"))
 			s_fallbackDesc.platform = Common::kPlatformMacintosh;
-	
+
 		// The data files for Atari ST versions are the same as their DOS counterparts
 	}
 
@@ -317,7 +317,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Where XXXX is the English string, #Y a separator indicating the language
 	// (e.g. #G for German) and ZZZZ is the translated text
 	// NOTE: This doesn't work for games which use message instead of text resources
-	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas). 
+	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas).
 	// As far as we know, these games store the messages of each language in separate
 	// resources, and it's not possible to detect that easily
 	// Also look for "%J" which is used in japanese games

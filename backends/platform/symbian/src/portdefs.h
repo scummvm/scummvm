@@ -127,9 +127,9 @@
 #define USE_ARM_COSTUME_ASM
 #define USE_ARM_SOUND_ASM
 #endif
-// This is not really functioning yet. 
+// This is not really functioning yet.
 // Default SDL keys should map to standard keys I think!
-//#define ENABLE_KEYMAPPER  
+//#define ENABLE_KEYMAPPER
 
 // Symbian bsearch implementation is flawed
 void *scumm_bsearch(const void *key, const void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));

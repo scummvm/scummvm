@@ -242,7 +242,7 @@ int RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, 
 			_filePos = _audioBlock[_currentBlock].pos;
 			_diskLeft = _audioBlock[_currentBlock].len;
 		}
-			
+
 		// Now read more data from disk if there is more to be read
 		if ((_bufferLeft == 0) && (_diskLeft > 0)) {
 			int32 readAmount = MIN(_diskLeft, BUFFER_SIZE);
@@ -263,7 +263,7 @@ int RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, 
 		}
 	}
 
-	// In case calling code relies on the position of this stream staying 
+	// In case calling code relies on the position of this stream staying
 	// constant, I restore the location if I've changed it.  This is probably
 	// not necessary.
 	if (restoreFilePosition) {

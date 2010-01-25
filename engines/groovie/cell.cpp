@@ -264,7 +264,7 @@ void CellGame::resetMove() {
 
 void CellGame::takeCells(uint16 whereTo, int8 color) {
 	int cellN;
-	const int8 *str;	
+	const int8 *str;
 
 	str = possibleMoves[whereTo];
 	while (1) {
@@ -304,7 +304,7 @@ void CellGame::countAllCells() {
 }
 
 int CellGame::countCellsOnTempBoard(int8 color) {
-	const int8 *str;	
+	const int8 *str;
 	int res = 0;
 	int i;
 
@@ -626,7 +626,7 @@ int8 CellGame::calcBestWeight(int8 color1, int8 color2, uint16 depth, int bestWe
 		} else {
 			canMove = canMoveFunc3(curColor);
 		}
-		
+
 		if (!canMove)
 			break;
 		if (_flag1) {

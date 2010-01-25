@@ -55,10 +55,10 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	}
 	case kSciAudioStop:
 		s->_audio->audioCdStop();
-		
+
 		if (getSciVersion() == SCI_VERSION_1_1)
 			return make_reg(0, 1);
-			
+
 		break;
 	case kSciAudioPause:
 		warning("Can't pause CD Audio");
@@ -178,7 +178,7 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		s->_audio->setSoundSync(id, argv[1], segMan);
 		break;
 	}
-	case kSciAudioSyncNext: 
+	case kSciAudioSyncNext:
 		s->_audio->doSoundSync(argv[1], segMan);
 		break;
 	case kSciAudioSyncStop:

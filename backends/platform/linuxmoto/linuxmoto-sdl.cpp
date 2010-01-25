@@ -28,7 +28,7 @@
 void OSystem_LINUXMOTO::preprocessEvents(SDL_Event *event) {
 	if (event->type == SDL_ACTIVEEVENT) {
 		if (event->active.state == SDL_APPINPUTFOCUS && !event->active.gain) {
-			suspendAudio(); 
+			suspendAudio();
 			for (;;) {
 				if (!SDL_WaitEvent(event)) {
 					SDL_Delay(10);
@@ -61,7 +61,7 @@ int OSystem_LINUXMOTO::resumeAudio() {
 	SDL_PauseAudio(0);
 	_audioSuspended = false;
 	return 0;
-} 
+}
 
 void OSystem_LINUXMOTO::setupMixer() {
 	OSystem_SDL::setupMixer();

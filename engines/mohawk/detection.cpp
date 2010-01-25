@@ -81,14 +81,14 @@ bool MohawkEngine::hasFeature(EngineFeature f) const {
 }
 
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
-	return 
+	return
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
 		|| (f == kSupportsSavingDuringRuntime);
 }
 
 bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
-	return 
+	return
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
 		|| (f == kSupportsSavingDuringRuntime);
@@ -142,7 +142,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	// Myst Demo
 	// English Windows 3.11
 	// From CD-ROM Today July, 1994
@@ -178,7 +178,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	// Myst
 	// German Windows 3.11
 	// From LordHoto
@@ -196,7 +196,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	// Myst
 	// Spanish Windows ?
 	// From jvprat
@@ -214,7 +214,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	// Myst
 	// Japanese Windows 3.11
 	// From clone2727
@@ -268,7 +268,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	// Making of Myst
 	// Japanese Windows 3.11
 	// From clone2727
@@ -304,7 +304,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_ME,
 		0,
 	},
-	
+
 	// Myst Masterpiece Edition
 	// English Windows
 	// From clone2727
@@ -322,7 +322,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_ME,
 		0,
 	},
-	
+
 	// Myst Masterpiece Edition
 	// German Windows
 	// From DrMcCoy (Included in "Myst: Die Trilogie")
@@ -358,7 +358,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-	
+
 	// Riven: The Sequel to Myst
 	// Version 1.03 (5CD)
 	// From ST
@@ -397,7 +397,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	// Riven: The Sequel to Myst
 	// Version 1.? (DVD, From "Myst 10th Anniversary Edition")
-	// From Clone2727 
+	// From Clone2727
 	{
 		{
 			"riven",
@@ -412,7 +412,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DVD,
 		0,
 	},
-	
+
 	// Riven: The Sequel to Myst
 	// Version 1.0 (DVD, From "Myst: Die Trilogie")
 	// From DrMcCoy
@@ -448,7 +448,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0,
 	},
-	
+
 #ifdef DETECT_BRODERBUND_TITLES
 	{
 		{
@@ -464,7 +464,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_HASMIDI,
 		0
 	},
-	
+
 	{
 		{
 			"csworld",
@@ -479,7 +479,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	{
 		{
 			"csworld",
@@ -494,7 +494,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	{
 		{
 			"csamtrak",
@@ -509,7 +509,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	{
 		{
 			"maggiess",
@@ -524,7 +524,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	{
 		{
 			"jamesmath",
@@ -539,7 +539,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_HASMIDI,
 		0
 	},
-	
+
 	// This is in the NEWDATA folder, so I assume it's a newer version ;)
 	{
 		{
@@ -570,7 +570,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_HASMIDI,
 		0
 	},
-	
+
 	{
 		{
 			"greeneggs",
@@ -585,7 +585,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	// 32-bit version of the previous entry
 	{
 		{
@@ -601,7 +601,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	{
 		{
 			"1stdegree",
@@ -664,7 +664,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"tortoise",
@@ -679,7 +679,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"arthur",
@@ -694,7 +694,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	{
 		{
 			"arthur",
@@ -709,7 +709,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"arthur",
@@ -724,7 +724,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"grandma",
@@ -739,7 +739,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"grandma",
@@ -754,7 +754,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"grandma",
@@ -769,7 +769,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"ruff",
@@ -784,7 +784,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"ruff",
@@ -799,7 +799,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"newkid",
@@ -814,7 +814,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"newkid",
@@ -829,7 +829,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		GF_DEMO,
 		0
 	},
-	
+
 	{
 		{
 			"arthurrace",
@@ -844,7 +844,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
-	
+
 	// 32-bit version of the previous entry
 	{
 		{
@@ -998,7 +998,7 @@ public:
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return 
+	return
 		(f == kSupportsListSaves)
 		|| (f == kSupportsLoadingDuringStartup)
 		|| (f == kSupportsDeleteSave);
@@ -1011,16 +1011,16 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	// Loading games is only supported in Myst/Riven currently.
 	if (strstr(target, "myst")) {
 		filenames = g_system->getSavefileManager()->listSavefiles("*.mys");
-	
+
 		for (uint32 i = 0; i < filenames.size(); i++)
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
 	} else if (strstr(target, "riven")) {
 		filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
-	
+
 		for (uint32 i = 0; i < filenames.size(); i++)
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
-	} 
-			
+	}
+
 	return saveList;
 }
 
@@ -1037,7 +1037,7 @@ void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 
 bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Mohawk::MohawkGameDescription *gd = (const Mohawk::MohawkGameDescription *)desc;
-	
+
 	if (gd) {
 		switch (gd->gameType) {
 		case Mohawk::GType_MYST:

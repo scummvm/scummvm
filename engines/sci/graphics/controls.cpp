@@ -192,7 +192,7 @@ void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character
 					// we check, if there is space left for this character
-					
+
 					text.insertChar(eventKey, cursorPos++);
 					textChanged = true;
 				}

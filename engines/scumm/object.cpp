@@ -326,7 +326,7 @@ int ScummEngine::whereIsObjectInventory(int object) {
 	_v0ObjectInInventory = true;
 	res = whereIsObject(object);
 	_v0ObjectInInventory = false;
-	
+
 	return res;
 }
 

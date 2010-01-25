@@ -109,7 +109,7 @@ Common::Error SciEngine::run() {
 	}
 
 	// Scale the screen, if needed
-	bool upscaledHires = (!strcmp(getGameID(), "kq6") 
+	bool upscaledHires = (!strcmp(getGameID(), "kq6")
 #ifdef ENABLE_SCI32
 							|| getSciVersion() == SCI_VERSION_2
 #endif
@@ -121,7 +121,7 @@ Common::Error SciEngine::run() {
 
 	// Initialize graphics-related parts
 	Screen *screen = 0;
-	
+
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
 		screen = new Screen(_resMan, 640, 480, false);	// invokes initGraphics()

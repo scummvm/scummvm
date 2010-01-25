@@ -63,7 +63,7 @@ enum SegmentType {
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
 	SEG_TYPE_STRING_FRAG = 10,	// obsolete, we keep it to be able to load old saves
-	
+
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,
 	SEG_TYPE_STRING = 12,
@@ -681,7 +681,7 @@ public:
 		_size = 0;
 		_actualSize = 0;
 	}
-	
+
 	SciArray(const SciArray<T> &array) {
 		_type = array._type;
 		_size = array._size;
@@ -689,8 +689,8 @@ public:
 		_data = new T[_actualSize];
 		assert(_data);
 		memcpy(_data, array._data, _size * sizeof(T));
-	} 
-	
+	}
+
 	SciArray<T>& operator=(const SciArray<T> &array) {
 		if (this == &array)
 			return *this;
@@ -709,7 +709,7 @@ public:
 	virtual ~SciArray() {
 		destroy();
 	}
-	
+
 	virtual void destroy() {
 		delete[] _data;
 		_data = NULL;
@@ -723,7 +723,7 @@ public:
 
 		_type = type;
 	}
-	
+
 	void setSize(uint32 size) {
 		if (_type < 0)
 			error("SciArray::setSize(): No type set");
@@ -757,21 +757,21 @@ public:
 		_data = newArray;
 		_size = _actualSize = size;
 	}
-	
+
 	T getValue(uint16 index) {
 		if (index >= _size)
 			error("SciArray::getValue(): %d is out of bounds (%d)", index, _size);
 
 		return _data[index];
 	}
-	
+
 	void setValue(uint16 index, T value) {
 		if (index >= _size)
 			error("SciArray::setValue(): %d is out of bounds (%d)", index, _size);
 
 		_data[index] = value;
 	}
-	
+
 	byte getType() { return _type; }
 	uint32 getSize() { return _size; }
 	T *getRawData() { return _data; }
@@ -786,10 +786,10 @@ protected:
 class SciString : public SciArray<char> {
 public:
 	SciString() : SciArray<char>() { setType(3); }
-	
+
 	// We overload destroy to ensure the string type is 3 after destroying
 	void destroy() { _type = 3; }
-	
+
 	Common::String toString();
 	void fromString(Common::String string);
 };

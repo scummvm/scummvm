@@ -59,10 +59,10 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_curCard = 0;
 	_needsUpdate = false;
 	_curResource = -1;
-	
+
 	_cursorHintCount = 0;
 	_cursorHints = NULL;
-	
+
 	_view.conditionalImageCount = 0;
 	_view.conditionalImages = NULL;
 	_view.soundList = NULL;
@@ -123,7 +123,7 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(Common::String movieName, ui
 		return Common::String("CD Data/m/") + movieName + ".mov";
 
 	const char* prefix;
-	
+
 	switch (stack) {
 	case kIntroStack:
 		prefix = "intro/";
@@ -267,7 +267,7 @@ Common::Error MohawkEngine_Myst::run() {
 					debug(2, "Sending mouse up event to resource %d\n", _curResource);
 					_resources[_curResource]->handleMouseDown();
 				}
-				break;	
+				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_d:
@@ -326,7 +326,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 
 	if (getPlatform() == Common::kPlatformMacintosh)
 		_gfx->loadExternalPictureFile(_curStack);
-	
+
 	_runExitScript = false;
 }
 
@@ -334,7 +334,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	debug(2, "changeToCard(%d)", card);
 
 	_scriptParser->disableInitOpcodes();
-	
+
 	_video->stopVideos();
 
 	// Run exit script from last card (if present)
@@ -342,7 +342,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 		runExitScript();
 
 	_runExitScript = true;
-	
+
 	unloadCard();
 
 	_curCard = card;
@@ -379,11 +379,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 		soundAction = _view.sound;
 		soundActionVolume = _view.soundVolume;
 	}
-	
-	// NOTE: Mixer only has 8-bit channel volume granularity, 
+
+	// NOTE: Mixer only has 8-bit channel volume granularity,
 	// Myst uses 16-bit? Or is part of this balance?
 	soundActionVolume = (byte)(soundActionVolume / 255);
-	
+
 	if (soundAction == kMystSoundActionContinue)
 		debug(2, "Continuing with current sound");
 	else if (soundAction == kMystSoundActionChangeVolume) {
@@ -409,7 +409,7 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 
 	// Run the entrance script (if present)
 	runInitScript();
-	
+
 	// Make sure we have the right cursor showing
 	_curResource = -1;
 	checkCurrentResource();
@@ -697,7 +697,7 @@ void MohawkEngine_Myst::runExitScript() {
 	delete exitStream;
 
 	_scriptParser->runScript(scriptCount, scripts);
-	
+
 	for (uint16 i = 0; i < scriptCount; i++)
 		delete[] scripts[i].values;
 	delete[] scripts;
@@ -707,7 +707,7 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 	// The original version did not have the help system
 	if (!(getFeatures() & GF_ME))
 		return;
-	
+
 	// TODO: Help File contains 5 cards i.e. VIEW, RLST, etc.
 	//       in addition to HELP resources.
 	//       These are Ids 9930 to 9934
@@ -722,14 +722,14 @@ void MohawkEngine_Myst::loadHelp(uint16 id) {
 	uint16 count = helpStream->readUint16LE();
 	uint16 *u0 = new uint16[count];
 	Common::String helpText;
-	
+
 	debugC(kDebugHelp, "\tcount: %d", count);
-	
+
 	for (uint16 i = 0; i < count; i++) {
 		u0[i] = helpStream->readUint16LE();
 		debugC(kDebugHelp, "\tu0[%d]: %d", i, u0[i]);
 	}
-	
+
 	// TODO: Previous values i.e. u0[0] to u0[count - 2]
 	// appear to be resource ids in the help.dat file..
 	if (u0[count - 1] != count)
@@ -896,7 +896,7 @@ void MohawkEngine_Myst::loadResources() {
 MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) {
 	_vm = vm;
 	_parent = parent;
-	
+
 	if (parent == NULL) {
 		_flags = rlstStream->readUint16LE();
 		_rect.left = rlstStream->readSint16LE();
@@ -925,7 +925,7 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 	debugC(kDebugResource, "\tright: %d", _rect.right);
 	debugC(kDebugResource, "\tbottom: %d", _rect.bottom);
 	debugC(kDebugResource, "\tdest: %d", _dest);
-	
+
 	// Default Enable based on flags...
 	if (_vm->_zipMode)
 		_enabled = (_flags & kMystZipModeEnableFlag) != 0 ||
@@ -992,7 +992,7 @@ Common::String MystResourceType6::convertMystVideoName(Common::String name) {
 
 MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType5(vm, rlstStream, parent) {
 	char c = 0;
-	
+
 	do {
 		c = rlstStream->readByte();
 		_videoFile += c;
@@ -1265,7 +1265,7 @@ void MystResourceType8::drawDataToScreen() {
 		if (_subImages[subImageId].rect.left == -1)
 			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _rect, _rect);
 			//vm->_gfx->copyImageToScreen(imageToDraw, Common::Rect(0, 0, 544, 333));
-		// TODO: Think this is the case when the image is full screen.. need to modify graphics to add functions for returning size of image.			
+		// TODO: Think this is the case when the image is full screen.. need to modify graphics to add functions for returning size of image.
 		// This is not right either...
 		//else if (_rect.width() != _subImages[draw_subimage_id].rect.width() || _rect.height() != _subImages[draw_subimage_id].rect.height())
 		// HACK: Hardcode cases of this until general rule can be ascertained
@@ -1518,7 +1518,7 @@ void MystResourceType13::handleMouseLeave() {
 
 void MystResourceType13::handleMouseUp() {
 	// Type 13 Resources do nothing on Mouse Clicks.
-	// This is required to override the inherited default 
+	// This is required to override the inherited default
 	// i.e. MystResource::handleMouseUp
 }
 
@@ -1538,9 +1538,9 @@ Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 Common::Error MohawkEngine_Myst::saveGameState(int slot, const char *desc) {
 	Common::StringList saveList = _saveLoad->generateSaveGameList();
 
-	if ((uint)slot < saveList.size()) 
+	if ((uint)slot < saveList.size())
 		_saveLoad->deleteSave(saveList[slot]);
-	
+
 	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
 }
 

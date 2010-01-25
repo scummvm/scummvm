@@ -41,9 +41,9 @@ class MystJPEG {
 public:
 	MystJPEG();
 	~MystJPEG() { delete _jpeg; }
-	
+
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	
+
 private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::JPEG *_jpeg;

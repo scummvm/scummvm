@@ -94,7 +94,7 @@ protected:
 	Common::TimerManager *_timer;
 
 	Common::KeyCode getDpadEvent(int x, int y);
-	
+
 public:
 	OSystem_PSP();
 	virtual ~OSystem_PSP();

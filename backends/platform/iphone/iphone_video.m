@@ -423,7 +423,7 @@ uint getSizeNextPOT(uint size) {
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDragged], @"type",
@@ -432,13 +432,13 @@ uint getSizeNextPOT(uint size) {
 			  nil
 			  ]
 			 ];
-			
+
 		} else if (touch == _secondTouch) {
 
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDragged], @"type",
@@ -447,7 +447,7 @@ uint getSizeNextPOT(uint size) {
 			  nil
 			  ]
 			 ];
-			
+
 		}
 	}
 }

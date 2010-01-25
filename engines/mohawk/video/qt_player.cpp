@@ -52,7 +52,7 @@
 namespace Mohawk {
 
 ////////////////////////////////////////////
-// QTPlayer 
+// QTPlayer
 ////////////////////////////////////////////
 
 QTPlayer::QTPlayer() {
@@ -73,35 +73,35 @@ QTPlayer::~QTPlayer() {
 uint16 QTPlayer::getWidth() {
 	if (_videoStreamIndex < 0)
 		return 0;
-	
+
 	return _streams[_videoStreamIndex]->width;
 }
 
 uint16 QTPlayer::getHeight() {
 	if (_videoStreamIndex < 0)
 		return 0;
-	
+
 	return _streams[_videoStreamIndex]->height;
 }
 
 uint32 QTPlayer::getFrameCount() {
 	if (_videoStreamIndex < 0)
 		return 0;
-	
+
 	return _streams[_videoStreamIndex]->nb_frames;
 }
 
 byte QTPlayer::getBitsPerPixel() {
 	if (_videoStreamIndex < 0)
 		return 0;
-	
+
 	return _streams[_videoStreamIndex]->bits_per_sample & 0x1F;
 }
 
 uint32 QTPlayer::getCodecTag() {
 	if (_videoStreamIndex < 0)
 		return 0;
-	
+
 	return _streams[_videoStreamIndex]->codec_tag;
 }
 
@@ -115,7 +115,7 @@ ScaleMode QTPlayer::getScaleMode() {
 uint32 QTPlayer::getFrameDuration() {
 	if (_videoStreamIndex < 0)
 		return 0;
-	
+
 	uint32 curFrameIndex = 0;
 	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count; i++) {
 		curFrameIndex += _streams[_videoStreamIndex]->stts_data[i].count;
@@ -124,7 +124,7 @@ uint32 QTPlayer::getFrameDuration() {
 			return _streams[_videoStreamIndex]->stts_data[i].duration * 1000 * 100 / _streams[_videoStreamIndex]->time_scale;
 		}
 	}
-	
+
 	// This should never occur
 	error ("Cannot find duration for frame %d", _curFrame);
 	return 0;
@@ -132,10 +132,10 @@ uint32 QTPlayer::getFrameDuration() {
 
 void QTPlayer::stop() {
 	stopAudio();
-	
+
 	if (!_noCodecFound)
 		delete _videoCodec;
-	
+
 	closeFile();
 }
 
@@ -182,14 +182,14 @@ Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
 	} else {
 		warning ("Unsupported codec \'%s\'", tag2str(codecTag));
 	}
-	
+
 	return NULL;
 }
 
 void QTPlayer::startAudio() {
 	if (!_audStream) // No audio/audio not supported
 		return;
-	
+
 	g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
 }
 
@@ -205,19 +205,19 @@ void QTPlayer::stopAudio() {
 	g_system->getMixer()->stopHandle(_audHandle);
 }
 
-Graphics::Surface *QTPlayer::getNextFrame() {	
+Graphics::Surface *QTPlayer::getNextFrame() {
 	if (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1)
 		return NULL;
-		
+
 	if (_nextFrameStart == 0)
 		_nextFrameStart = g_system->getMillis() * 100;
-		
+
 	_lastFrameStart = _nextFrameStart;
 	_curFrame++;
 	_nextFrameStart = getFrameDuration() + _lastFrameStart;
-	
+
 	Common::SeekableReadStream *frameData = getNextFramePacket();
-	
+
 	if (!_videoCodec) {
 		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
 		// If we don't get it still, the codec is unsupported ;)
@@ -261,7 +261,7 @@ bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
 
 	MOVatom atom = { 0, 0, 0xffffffff };
 
-	if (readDefault(atom) < 0 || (!_foundMOOV && !_foundMDAT)) 
+	if (readDefault(atom) < 0 || (!_foundMOOV && !_foundMDAT))
 		return false;
 
 	debug(0, "on_parse_exit_offset=%d", _fd->pos());
@@ -297,22 +297,22 @@ bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
 
 		sc->ffindex = i;
 		sc->is_ff_stream = 1;
-		
+
 		if (sc->codec_type == CODEC_TYPE_VIDEO && _videoStreamIndex < 0)
 			_videoStreamIndex = i;
 		else if (sc->codec_type == CODEC_TYPE_AUDIO && _audioStreamIndex < 0)
 			_audioStreamIndex = i;
 	}
-	
+
 	if (_audioStreamIndex >= 0 && checkAudioCodecSupport(_streams[_audioStreamIndex]->codec_tag)) {
 		_audStream = Audio::makeQueuingAudioStream(_streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels == 2);
 		_curAudioChunk = 0;
-	
+
 		// Make sure the bits per sample transfers to the sample size
 		if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('raw ') || _streams[_audioStreamIndex]->codec_tag == MKID_BE('twos'))
 			_streams[_audioStreamIndex]->sample_size = (_streams[_audioStreamIndex]->bits_per_sample / 8) * _streams[_audioStreamIndex]->channels;
 	}
-	
+
 	return true;
 }
 
@@ -359,29 +359,29 @@ int QTPlayer::readDefault(MOVatom atom) {
 	while(((total_size + 8) < atom.size) && !_fd->eos() && !err) {
 		a.size = atom.size;
 		a.type = 0;
-		
+
 		if (atom.size >= 8) {
 			a.size = _fd->readUint32BE();
 			a.type = _fd->readUint32BE();
 		}
-		
+
 		total_size += 8;
 		a.offset += 8;
 		debug(4, "type: %08x  %.4s  sz: %x %x %x", a.type, tag2str(a.type), a.size, atom.size, total_size);
-		
+
 		if (a.size == 1) { // 64 bit extended size
 			warning("64 bit extended size is not supported in QuickTime");
 			return -1;
 		}
-		
+
 		if (a.size == 0) {
 			a.size = atom.size - total_size;
 			if (a.size <= 8)
 				break;
 		}
-		
+
 		uint32 i = 0;
-		
+
 		for (; _parseTable[i].type != 0 && _parseTable[i].type != a.type; i++)
 			// empty;
 
@@ -397,9 +397,9 @@ int QTPlayer::readDefault(MOVatom atom) {
 		} else {
 			uint32 start_pos = _fd->pos();
 			err = (this->*_parseTable[i].func)(a);
-			
+
 			uint32 left = a.size - _fd->pos() + start_pos;
-				
+
 			if (left > 0) // skip garbage at atom end
 				_fd->seek(left, SEEK_CUR);
 		}
@@ -445,40 +445,40 @@ int QTPlayer::readCMOV(MOVatom atom) {
 		warning("Unknown cmov compression type");
 		return -1;
 	}
-	
+
 	// Read in the cmvd atom
 	uint32 compressedSize = _fd->readUint32BE() - 12;
 	if (_fd->readUint32BE() != MKID_BE('cmvd'))
 		return -1;
 	uint32 uncompressedSize = _fd->readUint32BE();
-	
+
 	// Read in data
 	byte *compressedData = (byte *)malloc(compressedSize);
 	_fd->read(compressedData, compressedSize);
-	
+
 	// Create uncompressed stream
 	byte *uncompressedData = (byte *)malloc(uncompressedSize);
-	
+
 	// Uncompress the data
 	unsigned long dstLen = uncompressedSize;
 	if (!Common::uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
 		return -1;
 	}
-	
+
 	// Load data into a new MemoryReadStream and assign _fd to be that
 	Common::SeekableReadStream *oldStream = _fd;
 	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
-	
+
 	// Read the contents of the uncompressed data
 	MOVatom a = { MKID_BE('moov'), 0, uncompressedSize };
 	int err = readDefault(a);
-	
+
 	// Assign the file handle back to the original handle
 	free(compressedData);
 	delete _fd;
 	_fd = oldStream;
-	
+
 	return err;
 #else
 	warning ("zlib not found, cannot read QuickTime cmov atom");
@@ -498,7 +498,7 @@ int QTPlayer::readMVHD(MOVatom atom) {
 		_fd->readUint32BE(); // creation time
 		_fd->readUint32BE(); // modification time
 	}
-	
+
 	_timeScale = _fd->readUint32BE(); // time scale
 	debug(0, "time scale = %i\n", _timeScale);
 
@@ -593,7 +593,7 @@ int QTPlayer::readTKHD(MOVatom atom) {
 		_fd->readUint32BE(); // creation time
 		_fd->readUint32BE(); // modification time
 	}
-	
+
 	/* st->id = */_fd->readUint32BE(); // track id (NOT 0 !)
 	_fd->readUint32BE(); // reserved
 	//st->start_time = 0; // check
@@ -605,7 +605,7 @@ int QTPlayer::readTKHD(MOVatom atom) {
 	_fd->readUint16BE(); // alternate group
 	_fd->readUint16BE(); // volume
 	_fd->readUint16BE(); // reserved
-	
+
 	// We only need the two values from the displacement matrix for a track.
 	// See readMVHD() for more information.
 	uint32 xMod = _fd->readUint32BE();
@@ -643,9 +643,9 @@ int QTPlayer::readELST(MOVatom atom) {
 		_fd->readUint32BE(); // Media time
 		_fd->readUint32BE(); // Media rate
 	}
-	
+
 	debug(0, "track[%i].edit_count = %i", _numStreams - 1, _streams[_numStreams - 1]->edit_count);
-	
+
 	if (editCount != 1)
 		warning("Multiple edit list entries. Things may go awry");
 
@@ -743,7 +743,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 
 		if (st->codec_type == CODEC_TYPE_VIDEO) {
 			debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
-				
+
 			_fd->readUint16BE(); // version
 			_fd->readUint16BE(); // revision level
 			_fd->readUint32BE(); // vendor
@@ -804,7 +804,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 #if 0
 					byte *color_table;
 					byte  r, g, b;
-	
+
 					if (colorDepth == 2)
 						color_table = ff_qt_default_palette_4;
 					else if (colorDepth == 4)
@@ -846,7 +846,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 				st->palettized = false;
 		} else if (st->codec_type == CODEC_TYPE_AUDIO) {
 			debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
-			
+
 			st->stsd_version = _fd->readUint16BE();
 			_fd->readUint16BE(); // revision level
 			_fd->readUint32BE(); // vendor
@@ -877,7 +877,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 				warning("Unsupported QuickTime STSD audio version %d", st->stsd_version);
 				return 1;
 			}
-			
+
 			// Version 0 videos (such as the Riven ones) don't have this set,
 			// but we need it later on. Add it in here.
 			if (format == MKID_BE('ima4')) {
@@ -888,7 +888,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 			// other codec type, just skip (rtp, mp4s, tmcd ...)
 			_fd->seek(size - (_fd->pos() - start_pos), SEEK_CUR);
 		}
-		
+
 		// this will read extra atoms at the end (wave, alac, damr, avcC, SMI ...)
 		a.size = size - (_fd->pos() - start_pos);
 		if (a.size > 8)
@@ -924,7 +924,7 @@ int QTPlayer::readSTSC(MOVatom atom) {
 		st->sample_to_chunk[i].id = _fd->readUint32BE();
 		//printf ("Sample to Chunk[%d]: First = %d, Count = %d\n", i, st->sample_to_chunk[i].first, st->sample_to_chunk[i].count);
 	}
-	
+
 	return 0;
 }
 
@@ -974,7 +974,7 @@ int QTPlayer::readSTSZ(MOVatom atom) {
 		st->sample_sizes[i] = _fd->readUint32BE();
 		debug(6, "sample_sizes[%d] = %d", i, st->sample_sizes[i]);
 	}
-	
+
 	return 0;
 }
 
@@ -990,7 +990,7 @@ int QTPlayer::readSTTS(MOVatom atom) {
 
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
-	
+
 	st->stts_count = _fd->readUint32BE();
 	st->stts_data = new MOVstts[st->stts_count];
 
@@ -1031,7 +1031,7 @@ int QTPlayer::readSTCO(MOVatom atom) {
 
 	st->chunk_count = _fd->readUint32BE();
 	st->chunk_offsets = new uint32[st->chunk_count];
-	
+
 	if (!st->chunk_offsets)
 		return -1;
 
@@ -1053,7 +1053,7 @@ int QTPlayer::readSTCO(MOVatom atom) {
 				_ni = 1;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -1062,7 +1062,7 @@ int QTPlayer::readWAVE(MOVatom atom) {
 		return 0;
 
 	MOVStreamContext *st = _streams[_numStreams - 1];
-	
+
 	if (atom.size > (1 << 30))
 		return -1;
 
@@ -1079,50 +1079,50 @@ int QTPlayer::readWAVE(MOVatom atom) {
 void QTPlayer::closeFile() {
 	for (uint32 i = 0; i < _numStreams; i++)
 		delete _streams[i];
-		
+
 	delete _fd;
-	
+
 	// The audio stream is deleted automatically
 	_audStream = NULL;
 }
 
 void QTPlayer::resetInternal() {
-	
+
 }
 
 Common::SeekableReadStream *QTPlayer::getNextFramePacket() {
 	if (_videoStreamIndex < 0)
 		return NULL;
-		
+
 	// First, we have to track down which chunk holds the sample and which sample in the chunk contains the frame we are looking for.
 	int32 totalSampleCount = 0;
 	int32 sampleInChunk = 0;
 	int32 actualChunk = -1;
-	
+
 	for (uint32 i = 0; i < _streams[_videoStreamIndex]->chunk_count; i++) {
 		int32 sampleToChunkIndex = -1;
-	
+
 		for (uint32 j = 0; j < _streams[_videoStreamIndex]->sample_to_chunk_sz; j++)
 			if (i >= _streams[_videoStreamIndex]->sample_to_chunk[j].first - 1)
 				sampleToChunkIndex = j;
-		
+
 		if (sampleToChunkIndex < 0)
 			error("This chunk (%d) is imaginary", sampleToChunkIndex);
-		
+
 		totalSampleCount += _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].count;
-		
+
 		if (totalSampleCount > getCurFrame()) {
 			actualChunk = i;
 			sampleInChunk = _streams[_videoStreamIndex]->sample_to_chunk[sampleToChunkIndex].count - totalSampleCount + getCurFrame();
 			break;
 		}
 	}
-	
+
 	if (actualChunk < 0) {
 		warning ("Could not find data for frame %d", getCurFrame());
 		return NULL;
 	}
-		
+
 	// Next seek to that frame
 	_fd->seek(_streams[_videoStreamIndex]->chunk_offsets[actualChunk]);
 
@@ -1136,10 +1136,10 @@ Common::SeekableReadStream *QTPlayer::getNextFramePacket() {
 
 	// Finally, read in the raw data for the frame
 	//printf ("Frame Data[%d]: Offset = %d, Size = %d\n", getCurFrame(), _fd->pos(), _streams[_videoStreamIndex]->sample_sizes[getCurFrame()]);
-	
+
 	if (_streams[_videoStreamIndex]->sample_size != 0)
 		return _fd->readStream(_streams[_videoStreamIndex]->sample_size);
-	
+
 	return _fd->readStream(_streams[_videoStreamIndex]->sample_sizes[getCurFrame()]);
 }
 
@@ -1156,7 +1156,7 @@ bool QTPlayer::checkAudioCodecSupport(uint32 tag) {
 Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stream) {
 	if (!stream || _audioStreamIndex < 0)
 		return NULL;
-		
+
 	if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('twos') || _streams[_audioStreamIndex]->codec_tag == MKID_BE('raw ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
@@ -1178,9 +1178,9 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 		// Several Myst ME videos use this codec
 		return new QDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
 	}
-	
+
 	error("Unsupported audio codec");
-	
+
 	return NULL;
 }
 
@@ -1191,20 +1191,20 @@ void QTPlayer::updateAudioBuffer() {
 	// Keep two streams in buffer so that when the first ends, it goes right into the next
 	for (; _audStream->numQueuedStreams() < 2 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
 		Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
-		
+
 		_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
-		
+
 		// First, we have to get the sample count
 		uint32 sampleCount = 0;
 		for (uint32 j = 0; j < _streams[_audioStreamIndex]->sample_to_chunk_sz; j++)
 			if (_curAudioChunk >= (_streams[_audioStreamIndex]->sample_to_chunk[j].first - 1))
 				sampleCount = _streams[_audioStreamIndex]->sample_to_chunk[j].count;
 		assert(sampleCount);
-		
+
 		// Then calculate the right sizes
 		while (sampleCount > 0) {
 			uint32 samples = 0, size = 0;
-			
+
 			if (_streams[_audioStreamIndex]->samples_per_frame >= 160) {
 				samples = _streams[_audioStreamIndex]->samples_per_frame;
 				size = _streams[_audioStreamIndex]->bytes_per_frame;
@@ -1215,7 +1215,7 @@ void QTPlayer::updateAudioBuffer() {
 				samples = MIN<uint32>(1024, sampleCount);
 				size = samples * _streams[_audioStreamIndex]->sample_size;
 			}
-			
+
 			// Now, we read in the data for this data and output it
 			byte *data = (byte *)malloc(size);
 			_fd->read(data, size);
@@ -1223,7 +1223,7 @@ void QTPlayer::updateAudioBuffer() {
 			free(data);
 			sampleCount -= samples;
 		}
-	
+
 		// Now queue the buffer
 		_audStream->queueAudioStream(createAudioStream(new Common::MemoryReadStream(wStream->getData(), wStream->size(), DisposeAfterUse::YES)));
 		delete wStream;

@@ -22,14 +22,14 @@
  * $Id$
  *
  */
- 
+
 #ifndef GRAPHICS_MSVIDEO1_H
 #define GRAPHICS_MSVIDEO1_H
- 
+
 #include "graphics/video/codecs/codec.h"
- 
+
 namespace Graphics {
- 
+
 class MSVideo1Decoder : public Codec {
 public:
 	MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel);
@@ -39,9 +39,9 @@ public:
 
 private:
 	byte _bitsPerPixel;
-	
+
 	Surface *_surface;
-	
+
 	void decode8(Common::SeekableReadStream *stream);
 	//void decode16(Common::SeekableReadStream *stream);
 };

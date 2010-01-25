@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 // Based off ffmpeg's SMC decoder
 
 #include "mohawk/video/smc.h"
@@ -357,7 +357,7 @@ Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
 			}
 			break;
 
-		// 16-color block encoding (every pixel is a different color) 
+		// 16-color block encoding (every pixel is a different color)
 		case 0xE0:
 			numBlocks = (opcode & 0x0F) + 1;
 

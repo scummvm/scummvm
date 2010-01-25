@@ -50,12 +50,12 @@ MystVarEntry introVars[] = {
 
 MystVarEntry seleniticVars[] = {
 	{   0, 0, "Sound Pickup At Windy Tunnel" }, // 0 to 1 // TODO: Multiple Uses of Var 0?
-	{   1, 0, "Sound Pickup At Volcanic Crack" }, // 0 to 1 
-	{   2, 0, "Sound Pickup At Clock" }, // 0 to 1 
-	{   3, 0, "Sound Pickup At Water Pool" }, // 0 to 1 
-	{   4, 0, "Sound Pickup At Crystal Rocks" }, // 0 to 1 
-	{   5, 0, "Sound Receiver Doors" }, // 0 to 1 
-	{   6, 0, "Windy Tunnel Lights" }, // 0 to 1 
+	{   1, 0, "Sound Pickup At Volcanic Crack" }, // 0 to 1
+	{   2, 0, "Sound Pickup At Clock" }, // 0 to 1
+	{   3, 0, "Sound Pickup At Water Pool" }, // 0 to 1
+	{   4, 0, "Sound Pickup At Crystal Rocks" }, // 0 to 1
+	{   5, 0, "Sound Receiver Doors" }, // 0 to 1
+	{   6, 0, "Windy Tunnel Lights" }, // 0 to 1
 	{   7, 0, "Maze Runner Porthole View" }, // 0 to 3
 	{   8, 0, "Sound Receiver Screen (Control Variable?)" },
 	{   9, 0, "Sound Receiver Water Pool Button Selected" },
@@ -309,8 +309,8 @@ MystVarEntry channelwoodVars[] = {
 	{   5, 0, "Lower Walkway to Upper Walkway Spiral Stair Lower Door Open" }, // 0 to 1
 	{   6, 0, "Pipe Bridge Extended" }, // 0 to 1
 	{   7, 0, "Bridge Pump Running" }, // 0 to 1
-	{   8, 0, "Water Tank Valve State" },  // 0 to 1 
-	{   9, 0, "First Water Valve State" },  // 0 to 1 
+	{   8, 0, "Water Tank Valve State" },  // 0 to 1
+	{   9, 0, "First Water Valve State" },  // 0 to 1
 	{  10, 0, "Second (L) Water Valve State" },  // 0 to 1
 	{  11, 0, "Third (L, R) Water Valve State" },  // 0 to 1
 	{  12, 0, "Fourth (L, R, R) Water Valve State" }, // 0 to 1
@@ -365,7 +365,7 @@ uint16 MystVar::saveGetVar(uint16 stack, uint16 v) {
 	MystVarEntry unknownVar = { v, 0, "Unknown" };
 	const char *desc = NULL;
 	uint16 i;
-	
+
 	switch (stack) {
 	case kIntroStack:
 		for (i = 0; i < ARRAYSIZE(introVars); i++) {
@@ -443,7 +443,7 @@ uint16 MystVar::saveGetVar(uint16 stack, uint16 v) {
 	default:
 		break;
 	}
-	
+
 	if (desc == NULL) {
 		for (i = 0; i < _unknown.size(); i++) {
 			if (_unknown[i].refNum == v) {
@@ -454,7 +454,7 @@ uint16 MystVar::saveGetVar(uint16 stack, uint16 v) {
 		}
 
 		if (desc == NULL) {
-			warning("MystVar::getVar(%d): Unknown variable reference", v);			
+			warning("MystVar::getVar(%d): Unknown variable reference", v);
 			_unknown.push_back(unknownVar);
 			desc = _unknown.back().description;
 		}
@@ -469,7 +469,7 @@ void MystVar::loadSetVar(uint16 stack, uint16 v, uint16 value) {
 	const char *desc = NULL;
 	MystVarEntry unknownVar = { v, value, "Unknown" };
 	uint16 i;
-	
+
 	switch (stack) {
 	case kIntroStack:
 		for (i = 0; i < ARRAYSIZE(introVars); i++) {

@@ -394,7 +394,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			"CD",
 			{
 				{"dw.scn", 0, "cfc40a8d5d476a1c9d3abf826fa46f8c", 1265532},
-				{"english.smp", 0, NULL, -1},				
+				{"english.smp", 0, NULL, -1},
 				{NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,

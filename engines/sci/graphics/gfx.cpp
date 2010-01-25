@@ -352,7 +352,7 @@ void Gfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredF
 void Gfx::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	View *view = getView(viewId);
 	Common::Rect celRect;
-	
+
 	if (view) {
 		celRect.left = leftPos;
 		celRect.top = topPos;
@@ -400,7 +400,7 @@ void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, u
 	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
 	Common::Point curPortPos;
 	bool upscaledHiresHack = false;
-	
+
 	if (view) {
 		if ((leftPos == 0) && (topPos == 0)) {
 			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we need to get coordinates from upscaledHiresHandle
@@ -542,7 +542,7 @@ void Gfx::PriorityBandsRecall() {
 }
 
 byte Gfx::CoordinateToPriority(int16 y) {
-	if (y < _priorityTop) 
+	if (y < _priorityTop)
 		return _priorityBands[_priorityTop];
 	if (y > _priorityBottom)
 		return _priorityBands[_priorityBottom];

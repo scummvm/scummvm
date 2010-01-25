@@ -167,7 +167,7 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 	uint16 getDest() { return _dest; }
 	virtual uint16 getType8Var() { return 0xFFFF; }
-	
+
 	// Mouse interface
 	virtual void handleMouseUp();
 	virtual void handleMouseDown() {}
@@ -370,7 +370,7 @@ public:
 	void setResourceEnabled(uint16 resourceId, bool enable);
 
 	GUI::Debugger *getDebugger() { return _console; }
-	
+
 	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
 	bool canSaveGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
 	Common::Error loadGameState(int slot);

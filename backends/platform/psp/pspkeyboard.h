@@ -68,15 +68,15 @@ private:
 		u32		paletteSize;
 	};
 
-	
+
 // structures used for drawing the keyboard
 	struct Vertex {
 		float u, v;
 		unsigned int color;
 		float x,y,z;
 	};
-	
-	void surface_draw_offset(struct gu_surface* surface, 
+
+	void surface_draw_offset(struct gu_surface* surface,
 				int screenX, int screenY, int offsetX, int offsetY, int intWidth, int intHeight);
 	void block_copy(gu_surface* surface, u8 *texture);
 	int load_png_image(Common::SeekableReadStream *, unsigned char *ImageBuffer, uint32 *palette);
@@ -85,7 +85,7 @@ private:
 	void flipNibbles(gu_surface* surface);		// Convert to PSP 4-bit format
 	void increaseKeyboardLocationX(int amount);		// Move keyboard onscreen
 	void increaseKeyboardLocationY(int amount);
-			
+
 	static short _modeChar[MODE_COUNT][5][6];
 	static const char *_guiStrings[];
 	bool _init;
@@ -96,10 +96,10 @@ private:
 	int _moved_y;
 	bool _moved;				// whether the keyboard was moved
 	gu_surface	_keyTextures[guiStringsSize];
-		
+
 	State _state;				// State of keyboard Keyboard state machine
 	State _lastState;
-		
+
 	enum Cursor {
 		kUp = 0,
 		kRight,
@@ -107,7 +107,7 @@ private:
 		kLeft,
 		kCenter
 	};
-	
+
 	Cursor _oldCursor;			// Point to place of last cursor
 
 };

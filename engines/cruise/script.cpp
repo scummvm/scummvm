@@ -628,8 +628,8 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		opcodeType = getByteFromScript();
 
 		debugC(5, kCruiseDebugScript, "Script %s/%d ip=%d opcode=%d",
-			overlayTable[currentScriptPtr->overlayNumber].overlayName, 
-			currentScriptPtr->scriptNumber, 
+			overlayTable[currentScriptPtr->overlayNumber].overlayName,
+			currentScriptPtr->scriptNumber,
 			currentScriptPtr->scriptOffset,
 			(opcodeType & 0xFB) >> 3);
 

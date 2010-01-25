@@ -61,7 +61,7 @@ RGBList::~RGBList() {
 
 void RGBList::setRange(int start, int count, const RGB8 *src) {
 	assert((start + count) <= _size);
-	
+
 	Common::copy(&src[0], &src[count], &_data[start]);
 }
 

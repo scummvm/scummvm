@@ -212,7 +212,7 @@ void Inter_Fascination::oFascin_closeWin() {
 	int16 id;
 	_vm->_game->_script->evalExpr(&id);
 	_vm->_draw->activeWin(id);
-	_vm->_draw->closeWin(id);	
+	_vm->_draw->closeWin(id);
 }
 
 void Inter_Fascination::oFascin_activeWin() {

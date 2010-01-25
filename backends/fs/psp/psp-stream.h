@@ -48,12 +48,12 @@ protected:
 
 	int _errorSuspend;
 	mutable int _errorSource;
-	
-#ifdef __PSP_DEBUG_SUSPEND__	
+
+#ifdef __PSP_DEBUG_SUSPEND__
 	int _errorPos;
-	void * _errorHandle;			
+	void * _errorHandle;
 	int _suspendCount;
-#endif /* __PSP_DEBUG_SUSPEND__ */	
+#endif /* __PSP_DEBUG_SUSPEND__ */
 
 public:
 	/**

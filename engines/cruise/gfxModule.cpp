@@ -238,7 +238,7 @@ void gfxModuleData_flipScreen() {
 }
 
 void gfxModuleData_addDirtyRect(const Common::Rect &r) {
-	_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0), 
+	_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0),
 		MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
 }
 
@@ -319,7 +319,7 @@ void flip() {
 	// Copy any modified areas
 	for (dr = _dirtyRects.begin(); dr != _dirtyRects.end(); ++dr) {
 		Common::Rect &r = *dr;
-		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320, 
+		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320,
 			r.left, r.top, r.width(), r.height());
 	}
 
@@ -355,7 +355,7 @@ void switchBackground(const byte *newBg) {
 	}
 
 	/* For an optimisation, any changes are stored as a series of slices than have a height of a single
-	 * line each. It is left up to the screen redraw code to automatically merge these together 
+	 * line each. It is left up to the screen redraw code to automatically merge these together
 	 */
 
 	for (int yp = 0; yp < 200; ++yp) {

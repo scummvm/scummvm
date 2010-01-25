@@ -191,7 +191,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 		weight = 255;
 
 	const uint8 *srt = srcPal.getData();
-	
+
 	uint16 r = srt[opColor * 3];
 	uint16 g = srt[opColor * 3 + 1];
 	uint16 b = srt[opColor * 3 + 2];
@@ -848,7 +848,7 @@ void Screen_LoL::fadeToPalette1(int delay) {
 void Screen_LoL::loadSpecialColors(Palette &dst) {
 	if (_use16ColorMode)
 		return;
-	
+
 	dst.copy(*_screenPalette, 192, 4);
 }
 
@@ -941,9 +941,9 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 
 Palette **Screen_LoL::generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs) {
 	int len = _use16ColorMode ? 48 : 768;
-	if (!src1) 
+	if (!src1)
 		src1 = _screenPalette;
-	
+
 	uint8 *p1 = (*dst++)->getData();
 	uint8 *p2 = src1->getData();
 	uint8 *p3 = src2->getData();

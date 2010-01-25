@@ -77,7 +77,7 @@ static const char *sci2_default_knames[] = {
 	/*0x27*/ "TextColors",
 	/*0x28*/ "TextFonts",
 	/*0x29*/ "Dummy",
-	/*0x2a*/ "SetQuitStr",		 
+	/*0x2a*/ "SetQuitStr",
 	/*0x2b*/ "EditText",
 	/*0x2c*/ "InputText",
 	/*0x2d*/ "CreateTextBitmap",
@@ -174,7 +174,7 @@ static const char *sci2_default_knames[] = {
 	/*0x88*/ "MarkMemory",
 	/*0x89*/ "TextWidth",
 	/*0x8a*/ "PointSize",
-	
+
 	// GK2 Demo only kernel functions
 	/*0x8b*/ "AddLine",
 	/*0x8c*/ "DeleteLine",
@@ -491,16 +491,16 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	case 9: // Getdata
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
-	
+
 		return GET_SEL32(s->_segMan, argv[1], data);
 	default:
 		error("Unknown kArray subop %d", argv[0].toUint16());
 	}
-	
+
 	return NULL_REG;
 }
 
-reg_t kString(EngineState *s, int argc, reg_t *argv) {	
+reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case 0: { // New
 		reg_t stringHandle;
@@ -580,7 +580,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 7: { // Cmp
 		Common::String string1 = argv[1].isNull() ? "" : s->_segMan->getString(argv[1]);
 		Common::String string2 = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
-			
+
 		if (argc == 4) // Strncmp
 			return make_reg(0, strncmp(string1.c_str(), string2.c_str(), argv[3].toUint16()));
 		else           // Strcmp
@@ -591,10 +591,10 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		reg_t stringHandle;
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 		dupString->setSize(string.size() + 1);
-		
+
 		for (uint32 i = 0; i < string.size(); i++)
 			dupString->setValue(i, string.c_str()[i]);
-			
+
 		dupString->setValue(dupString->getSize() - 1, 0);
 
 		return stringHandle;
@@ -602,7 +602,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 9: // Getdata
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
-	
+
 		return GET_SEL32(s->_segMan, argv[1], data);
 	case 10: // Stringlen
 		return make_reg(0, s->_segMan->strlen(argv[1]));
@@ -655,7 +655,7 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 
 	s->_gui->deleteScreenItem(viewObj);
-	
+
 	/*
 	reg_t viewObj = argv[0];
 	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
@@ -706,7 +706,7 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
-	// This kernel call likely seems to be doing the screen updates, 
+	// This kernel call likely seems to be doing the screen updates,
 	// as its called right after a view is updated
 
 	// TODO

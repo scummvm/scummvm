@@ -160,8 +160,8 @@ public:
 	int16 _winVarArrayHeight;
 	int16 _winVarArrayStatus;
 	int16 _winVarArrayLimitsX;
-	int16 _winVarArrayLimitsY;	
-	
+	int16 _winVarArrayLimitsY;
+
 
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated();
@@ -273,7 +273,7 @@ public:
 	virtual ~Draw_Playtoons() {}
 	virtual void spriteOperation(int16 operation);
 };
-	
+
 // Draw operations
 
 #define DRAW_BLITSURF	0

@@ -69,7 +69,7 @@ private:
 //		byte type;
 	} _sfxSlots[4];
 
-	int8 _initState; // < 0: failed, 0: uninitialised, > 0: initialised  
+	int8 _initState; // < 0: failed, 0: uninitialised, > 0: initialised
 
 	int getSfxChan(int id) const {
 		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i)

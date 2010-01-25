@@ -507,7 +507,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderAmiga:
-		if ((_game.version >= 4 && !(_game.features & GF_16COLOR) 
+		if ((_game.version >= 4 && !(_game.features & GF_16COLOR)
 			&& !(_game.platform == Common::kPlatformAmiga && _renderMode == Common::kRenderEGA))
 			|| (_game.features & GF_OLD256))
 			_renderMode = Common::kRenderDefault;

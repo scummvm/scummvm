@@ -2146,7 +2146,7 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 }
 
 void Screen::convertAmigaGfx(uint8 *data, int w, int h, int depth, bool wsa, int bytesPerPlane) {
-	const int planeWidth = (bytesPerPlane == -1) ? (w + 7) / 8 : bytesPerPlane; 
+	const int planeWidth = (bytesPerPlane == -1) ? (w + 7) / 8 : bytesPerPlane;
 	const int planeSize = planeWidth * h;
 	const uint imageSize = planeSize * depth;
 
@@ -3365,7 +3365,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	if (_is16Color) {
 		// PC98 16 color games specify a color value which is for the
 		// PC98 text mode palette, thus we need to remap it.
-		color1 = ((_colorMap[1] >> 5) & 0x7) + 16; 
+		color1 = ((_colorMap[1] >> 5) & 0x7) + 16;
 		color2 = ((_colorMap[0] >> 5) & 0x7) + 16;
 	} else {
 		color1 = _colorMap[1];

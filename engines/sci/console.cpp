@@ -1394,7 +1394,7 @@ bool Console::cmdSongInfo(int argc, const char **argv) {
 	}
 
 	reg_t addr;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1437,7 +1437,7 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	}
 
 	reg_t id;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &id, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1538,7 +1538,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n", 
+	DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 #endif
 
@@ -1578,7 +1578,7 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 	}
 
 	reg_t addr;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1607,7 +1607,7 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 	}
 
 	reg_t addr;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1637,7 +1637,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 	}
 
 	reg_t addr;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1760,7 +1760,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 	}
 
 	reg_t val;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &val, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1798,7 +1798,7 @@ bool Console::cmdViewListNode(int argc, const char **argv) {
 	}
 
 	reg_t addr;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1928,7 +1928,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 	}
 
 	reg_t addr;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &addr, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -1969,7 +1969,7 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 	}
 
 	reg_t val;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &val, false)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
@@ -2219,13 +2219,13 @@ bool Console::cmdSend(int argc, const char **argv) {
 	}
 
 	reg_t object;
-	
+
 	if (parse_reg_t(_vm->_gamestate, argv[1], &object, false)) {
 		DebugPrintf("Invalid address \"%s\" passed.\n", argv[1]);
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
-	
+
 	const char *selector_name = argv[2];
 	int selector_id = _vm->getKernel()->findSelector(selector_name);
 

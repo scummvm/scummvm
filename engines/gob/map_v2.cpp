@@ -71,7 +71,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 					_passMap[i] += READ_VARO_UINT8(var + i);
 				break;
 			case 65532:
-				for (int i = 0; i < _mapWidth * _mapHeight; i++) 
+				for (int i = 0; i < _mapWidth * _mapHeight; i++)
 					WRITE_VARO_UINT8(var + i, 0x00);
 				break;
 			case 65533:

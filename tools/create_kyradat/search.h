@@ -102,7 +102,7 @@ public:
 	struct ResultData {
 		SearchData data;
 		uint32 offset;
-		
+
 		ResultData() : data(), offset() {}
 		ResultData(SearchData d, uint32 o) : data(d), offset(o) {}
 	};

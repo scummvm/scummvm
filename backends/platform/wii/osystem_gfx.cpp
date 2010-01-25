@@ -364,7 +364,7 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 			printf("could not init the mouse texture\n");
 			::abort();
 		}
-	
+
 		gfx_tex_set_bilinear_filter(&_texMouse, _bilinearFilter);
 	}
 

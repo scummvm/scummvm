@@ -381,7 +381,7 @@ void PSPKeyboard::moveTo(const int newX, const int newY) {
 /* move the position the keyboard is currently drawn at */
 void PSPKeyboard::increaseKeyboardLocationX(int amount) {
 	int newX = _moved_x + amount;
-	
+
 	if (newX > PSP_SCREEN_WIDTH - 5 || newX < 0 - 140)	// clamp
 		return;
 	_moved_x = newX;
@@ -390,7 +390,7 @@ void PSPKeyboard::increaseKeyboardLocationX(int amount) {
 /* move the position the keyboard is currently drawn at */
 void PSPKeyboard::increaseKeyboardLocationY(int amount) {
 	int newY = _moved_y + amount;
-	
+
 	if (newY > PSP_SCREEN_HEIGHT - 5 || newY < 0 - 140)	// clamp
 		return;
 	_moved_y = newY;

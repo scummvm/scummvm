@@ -40,7 +40,7 @@
 
 namespace Common {
 
-// The sgi IRIX MIPSpro Compiler has difficulties with nested templates. 
+// The sgi IRIX MIPSpro Compiler has difficulties with nested templates.
 // This and the other __sgi conditionals below work around these problems.
 #ifdef __sgi
 template<class T> class IteratorImpl;

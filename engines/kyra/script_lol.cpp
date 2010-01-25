@@ -2151,7 +2151,7 @@ int LoLEngine::olol_paletteFlash(EMCState *script) {
 		uint8 *d = p2.getData();
 
 		for (int i = 0; i < 16; i++)
-			d[i * 3] = 0x3f;			
+			d[i * 3] = 0x3f;
 
 		_screen->setScreenPalette(p2);
 		_screen->updateScreen();
@@ -2164,7 +2164,7 @@ int LoLEngine::olol_paletteFlash(EMCState *script) {
 
 		_screen->updateScreen();
 
-	} else {		
+	} else {
 		Palette &p2 = _screen->getPalette(3);
 
 		uint8 ovl[256];
@@ -2653,8 +2653,8 @@ int LoLEngine::tlol_fadeInPalette(const TIM *tim, const uint16 *param) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->copyPage(2, 0);
 	}
-	
-	_screen->fadePalette(pal, param[1]);	
+
+	_screen->fadePalette(pal, param[1]);
 
 	return 1;
 }

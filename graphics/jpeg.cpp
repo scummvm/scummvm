@@ -137,7 +137,7 @@ bool JPEG::read(Common::SeekableReadStream *str) {
 			ok = false;
 			break;
 		}
-		
+
 		while (marker == 0xFF && !_str->eos())
 			marker = _str->readByte();
 
@@ -309,7 +309,7 @@ bool JPEG::readDHT() {
 			cur++;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -349,7 +349,7 @@ bool JPEG::readSOS() {
 				_scanComp[c] = &_components[i];
 			}
 		}
-		
+
 		if (!found) {
 			warning("JPEG: Invalid component");
 			return false;
@@ -427,12 +427,12 @@ bool JPEG::readDQT() {
 	debug(5, "JPEG: readDQT");
 	uint16 size = _str->readUint16BE() - 2;
 	uint32 pos = _str->pos();
-	
-	while ((uint32)_str->pos() < (pos + size)) {	
+
+	while ((uint32)_str->pos() < (pos + size)) {
 		// Read the table precision and id
 		uint8 tableId = _str->readByte();
 		bool highPrecision = (tableId & 0xF0) != 0;
-		
+
 		// Validate the table id
 		tableId &= 0xF;
 		if (tableId > JPEG_MAX_QUANT_TABLES) {
@@ -448,7 +448,7 @@ bool JPEG::readDQT() {
 		for (int i = 0; i < 64; i++)
 			_quant[tableId][i] = highPrecision ? _str->readUint16BE() : _str->readByte();
 	}
-	
+
 	return true;
 }
 
@@ -471,10 +471,10 @@ float JPEG::idct(int x, int y, int weight, int fx, int fy) {
 	byte vx_in = ((int32)((2 * x) + 1) * fx) % 32;
 	byte vy_in = ((int32)((2 * y) + 1) * fy) % 32;
 	float ret = (float)weight * _cosine_32[vx_in] * _cosine_32[vy_in];
-	
+
 	if (fx == 0)
 		ret /= _sqrt_2;
-		
+
 	if (fy == 0)
 		ret /= _sqrt_2;
 
@@ -523,7 +523,7 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	// Divide by 4 is final part of IDCT
 	for (int i = 0; i < 64; i++) {
 		result[i] = result[i] / 4 + 128;
-		
+
 		if (result[i] < 0)
 			result[i] = 0;
 

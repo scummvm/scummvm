@@ -112,7 +112,7 @@ bool PSPFilesystemNode::exists() const {
 
 	ret = access(_path.c_str(), F_OK);
 	PowerMan.endCriticalSection();
-	
+
 	return ret == 0;
 }
 
@@ -124,7 +124,7 @@ bool PSPFilesystemNode::isReadable() const {
 
 	ret = access(_path.c_str(), R_OK);
 	PowerMan.endCriticalSection();
-	
+
 	return ret == 0;
 }
 
@@ -136,7 +136,7 @@ bool PSPFilesystemNode::isWritable() const {
 
 	ret = access(_path.c_str(), W_OK);
 	PowerMan.endCriticalSection();
-	
+
 	return ret == 0;
 }
 

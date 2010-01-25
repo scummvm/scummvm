@@ -177,7 +177,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	if (y + clipHeight > clipInfo.clipRect.bottom) {
 		clipHeight = clipInfo.clipRect.bottom - y;
 	}
-	
+
 	source = (byte*)sourceSurface->getBasePtr(0, startY);
 	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
 	if (_vm->getGameID() != GID_RTZ)

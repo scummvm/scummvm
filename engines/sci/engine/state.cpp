@@ -78,7 +78,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_lofsType = SCI_VERSION_NONE;
 	_gfxFunctionsType = SCI_VERSION_NONE;
 	_moveCountType = kMoveCountUninitialized;
-	
+
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 
 	_soundCmd = 0;
@@ -221,7 +221,7 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 		objName = "Rm";
 		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.overlay;
-		break;			
+		break;
 	case kDetectMoveCountType:
 		objName = "Motion";
 		objAddr = _segMan->findObjectByName(objName);
@@ -580,7 +580,7 @@ SciVersion EngineState::detectGfxFunctionsType() {
 			if (_kernel->_selectorCache.overlay == -1) {
 				// No overlay selector found, check if any method of the Rm object
 				// is calling kDrawPic, as the overlay selector might be missing in demos
-				
+
 				Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
 				for (uint m = 0; m < obj->getMethodCount(); m++) {
 					found = autoDetectFeature(kDetectGfxFunctions, m);

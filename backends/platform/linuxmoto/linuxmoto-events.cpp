@@ -110,7 +110,7 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 		ev.key.keysym.sym = SDLK_RIGHTBRACKET;
 	}
 	//  mod+vol'-' -> volume'-'
-	else if (ev.key.keysym.sym == SDLK_d) {	
+	else if (ev.key.keysym.sym == SDLK_d) {
 		ev.key.keysym.sym = SDLK_LEFTBRACKET;
 	}
 #endif
@@ -175,33 +175,33 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 		fillMouseEvent(event, _km.x, _km.y);
 
 		return true;
-	} else if (ev.key.keysym.sym == SDLK_RETURN) { 
-		// Joystick center to pressing Left Mouse	
+	} else if (ev.key.keysym.sym == SDLK_RETURN) {
+		// Joystick center to pressing Left Mouse
 		if (ev.key.type == SDL_KEYDOWN) {
 			event.type = Common::EVENT_LBUTTONDOWN;
 		} else {
-			event.type = Common::EVENT_LBUTTONUP;			
+			event.type = Common::EVENT_LBUTTONUP;
 		}
 
 		fillMouseEvent(event, _km.x, _km.y);
 
 		return true;
-	} else if (ev.key.keysym.sym == SDLK_PLUS) { 
+	} else if (ev.key.keysym.sym == SDLK_PLUS) {
 		// Volume Up to pressing Right Mouse
 		if (ev.key.type == SDL_KEYDOWN ) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 		} else {
-			event.type = Common::EVENT_RBUTTONUP;			
+			event.type = Common::EVENT_RBUTTONUP;
 		}
 		fillMouseEvent(event, _km.x, _km.y);
 
 		return true;
-	} else if (ev.key.keysym.sym == SDLK_MINUS) { 
-		// Volume Down to pressing Left Mouse	
+	} else if (ev.key.keysym.sym == SDLK_MINUS) {
+		// Volume Down to pressing Left Mouse
 		if (ev.key.type == SDL_KEYDOWN) {
 			event.type = Common::EVENT_LBUTTONDOWN;
 		} else {
-			event.type = Common::EVENT_LBUTTONUP;		
+			event.type = Common::EVENT_LBUTTONUP;
 		}
 
 		fillMouseEvent(event, _km.x, _km.y);
@@ -214,7 +214,7 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-	} 
+	}
 
 	return false;
 }

@@ -411,7 +411,7 @@ void ScummEngine_v0::decodeParseString() {
 void ScummEngine_v0::drawSentenceWord(int object, bool usePrep, bool objInInventory) {
 	const byte *temp;
 	int sentencePrep = 0;
-	
+
 	// If object not in inventory, we except an index
 	if (!objInInventory)
 		_v0ObjectIndex = true;
@@ -497,7 +497,7 @@ void ScummEngine_v0::drawSentence() {
 		else
 			inventoryFirst = true;
 	}
-		
+
 
 	// Draw the inventory?
 	if (_activeInventory > 0 && _activeObject2 == 0) {
@@ -511,8 +511,8 @@ void ScummEngine_v0::drawSentence() {
 			} else // Room based
 				drawSentenceWord(_activeObjectIndex, inventoryFirst, false);
 		}
-	
-	// Draw the 2nd active object 
+
+	// Draw the 2nd active object
 	} else if (_activeObject2) {
 
 		// 2nd Object is in inventory
@@ -527,7 +527,7 @@ void ScummEngine_v0::drawSentence() {
 	// Draw the active actor
 	if (_activeActor) {
 		Actor *a = derefActor(_activeActor, "");
-		
+
 		strcat(_sentenceBuf, " ");
 		strcat(_sentenceBuf, (const char*)a->getActorName());
 	}
@@ -780,7 +780,7 @@ void ScummEngine_v0::o_pickupObject() {
 
 	if (whereIsObjectInventory(_activeObject2) == WIO_INVENTORY)	/* Don't take an */
 		return;					/* object twice */
-	
+
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
@@ -803,7 +803,7 @@ void ScummEngine_v0::o_setActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
-	
+
 	// 0x63ED
 	if (act >= _numActors)
 		return;

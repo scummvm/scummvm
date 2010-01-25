@@ -52,7 +52,7 @@ Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
 bool Player_V4A::init() {
 	if (_vm->_game.id != GID_MONKEY_VGA)
 		error("player_v4a - unknown game");
-	
+
 	Common::File fileMdat, fileSample;
 
 	if (fileMdat.open("music.dat") && fileSample.open("sample.dat")) {
@@ -63,7 +63,7 @@ bool Player_V4A::init() {
 		}
 	} else
 		warning("player_v4a: couldnt load one of the music resources: music.dat, sample.dat");
-	
+
 	return false;
 }
 
@@ -81,7 +81,7 @@ void Player_V4A::stopAllSounds() {
 	debug(5, "player_v4a: stopAllSounds");
 	if (_initState > 0) {
 		_tfmxMusic.stopSong();
-		_signal = 0;		
+		_signal = 0;
 		_musicId = 0;
 
 		_tfmxSfx.stopSong();
@@ -164,7 +164,7 @@ void Player_V4A::startSound(int nr) {
 		_tfmxMusic.doSong(index);
 		_signal = 2;
 
-		// the Tfmx-player never "ends" the output by itself, so this should be threadsafe 
+		// the Tfmx-player never "ends" the output by itself, so this should be threadsafe
 		if (!_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &_tfmxMusic, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_musicId = nr;
@@ -176,7 +176,7 @@ int Player_V4A::getMusicTimer() {
 	if (_initState < 0)
 		return 2000;
 	if (_musicId) {
-		// The titlesong (and a few others) is running with ~70 ticks per second and the scale seems to be based on that. 
+		// The titlesong (and a few others) is running with ~70 ticks per second and the scale seems to be based on that.
 		// The Game itself doesnt get the timing from the Tfmx Player however, so we just use the elapsed time
 		// 357 ~ 1000 * 25 * (1 / 70)
 		return _mixer->getSoundElapsedTime(_musicHandle) / 357;

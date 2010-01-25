@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) : 
+Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) :
 	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
 
 	_pixels = _width * _height;

@@ -67,7 +67,7 @@ TimAnimator::~TimAnimator() {
 void TimAnimator::init(int animIndex, Movie *wsa, int x, int y, int wsaCopyParams, int frameDelay) {
 	Animation *anim = &_animations[animIndex];
 	anim->wsa = wsa;
-	anim->x = x;	
+	anim->x = x;
 	anim->y = y;
 	anim->wsaCopyParams = wsaCopyParams;
 	anim->frameDelay = frameDelay;
@@ -123,7 +123,7 @@ void TimAnimator::setupPart(int animIndex, int part, int firstFrame, int lastFra
 
 void TimAnimator::start(int animIndex, int part) {
 	if (!_vm || !_system || !_screen)
-		return;		
+		return;
 
 	Animation *anim = &_animations[animIndex];
 	anim->curPart = part;

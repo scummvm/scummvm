@@ -294,10 +294,10 @@ get_system_exe_extension() {
 		;;
 	gp2xwiz-linux)
 		_exeext=".wiz"
-		;;	
+		;;
 	gp2x-linux)
 		_exeext=".gp2x"
-		;;	
+		;;
 	dreamcast | wii | gamecube | nds | psp | ps2)
 		_exeext=".elf"
 		;;
@@ -590,7 +590,7 @@ Special configuration feature:
                                           nds for Nintendo DS
                                           iphone for Apple iPhone
                                           wince for Windows CE
-                                          psp for PlayStation Portable 
+                                          psp for PlayStation Portable
                                           ps2 for PlayStation 2
 
 Game engines:
@@ -851,7 +851,7 @@ gp2xwiz)
 	_host_os=gp2xwiz-linux
 	_host_cpu=arm
 	_host_alias=arm-open2x-linux
-	;;	
+	;;
 gp2x)
 	_host_os=gp2x-linux
 	_host_cpu=arm
@@ -964,7 +964,7 @@ fi
 #
 # Determine extension used for executables
 #
-get_system_exe_extension $_host_os 
+get_system_exe_extension $_host_os
 HOSTEXEEXT=$_exeext
 
 #
@@ -1129,7 +1129,7 @@ else
 					;;
 			esac
 			;;
-		*) 
+		*)
 			cxx_version="$cxx_version, bad"
 			cxx_verc_fail=yes
 			;;
@@ -1428,7 +1428,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_vkeybd="yes"
-			;;	
+			;;
 		gp2x)
 			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
@@ -1772,7 +1772,7 @@ _def_plugin='
 '
 _mak_plugins='
 DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := 
+PLUGIN_PREFIX :=
 PLUGIN_SUFFIX := .plugin
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
 CXXFLAGS        += -DDYNAMIC_MODULES
@@ -1782,7 +1782,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
-		;;	
+		;;
 	dreamcast)
 _def_plugin='
 #define PLUGIN_PREFIX	""
@@ -2290,7 +2290,7 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		LDFLAGS="$LDFLAGS"
 		CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
-		;;		
+		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
@@ -2323,7 +2323,7 @@ case $_backend in
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
 		LIBS="$LIBS -lpng -lSDL -Wl,-Map,mapfile.txt"
 		SDLLIBS=$($PSPDEV/psp/bin/sdl-config --libs)
-		
+
 		if `echo "$SDLLIBS" | grep ".*-lGL.*" 1>/dev/null 2>&1`
 		then
 			LIBS="$LIBS -lGL"
@@ -2350,7 +2350,7 @@ MODULES="$MODULES backends/platform/$_backend"
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
 		case $_host_os in
-		# newlib-based system include files suppress non-C89 function 
+		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
 		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos*)
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"

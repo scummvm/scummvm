@@ -387,32 +387,32 @@ static void removeLeadingAndTrailingSpaces(char *dst, size_t dstSize, const char
 		dst[0] = '\0';
 		return;
 	}
-	
+
 	size_t firstNonSpaceIndex;
 	for (firstNonSpaceIndex = 0; firstNonSpaceIndex < srcLen; ++firstNonSpaceIndex) {
 		if (src[firstNonSpaceIndex] != ' ')
-			break;		
+			break;
 	}
 	if (firstNonSpaceIndex == srcLen) {
 		dst[0] = '\0';
 		return;
 	}
-	
+
 	size_t lastNonSpaceIndex = srcLen - 1;
 	while (src[lastNonSpaceIndex] == ' ')
 		--lastNonSpaceIndex;
-	
+
 	size_t newLen = lastNonSpaceIndex - firstNonSpaceIndex + 1;
 	assert(newLen < dstSize);
 	for (size_t i = 0; i < newLen; ++i) {
 		dst[i] = src[firstNonSpaceIndex + i];
 	}
-	dst[newLen] = '\0';	
+	dst[newLen] = '\0';
 }
 
 void Journal::drawPanelText(int y, const char *text) {
 	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);
-	
+
 	char s[128];
 	removeLeadingAndTrailingSpaces(s, 128, text); // necessary for spanish version
 

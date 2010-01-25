@@ -208,7 +208,7 @@ int m_first_Y;
 int m_scaleValue;
 int m_color;
 
-/* 
+/*
    FIXME: Whether intentional or not, the game often seems to use negative indexing
    of one or more of the arrays below and expects(?) to end up in the preceding one.
    This "worked" on many platforms so far, but on OSX apparently the buffers don't

@@ -64,7 +64,7 @@ public:
 			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Greater<int>()), true);
 		}
 	}
-	
+
 	void test_container_sort() {
 		const int n = 1000;
 

@@ -52,7 +52,7 @@ bool TeenAgentEngine::trySelectedObject() {
 
 	Resources *res = Resources::instance();
 	debug(0, "checking active object %u on %u", inv->id, dst_object->id);
-	
+
 	//mouse time challenge hack:
 	if (
 		(res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
@@ -98,14 +98,14 @@ void TeenAgentEngine::processObject() {
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
-		if (callback == 0 || !processCallback(callback)) 
+		if (callback == 0 || !processCallback(callback))
 			displayMessage(dst_object->description);
 	}
 	break;
 	case kActionUse: {
 		if (trySelectedObject())
 			break;
-		
+
 		byte *dcall = res->dseg.ptr(0xb89c);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
@@ -159,7 +159,7 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 void TeenAgentEngine::init() {
 	_mark_delay = 80;
 	_game_delay = 110;
-	
+
 	Resources * res = Resources::instance();
 	use_hotspots.resize(42);
 	byte *scene_hotspots = res->dseg.ptr(0xbb87);
@@ -275,14 +275,14 @@ bool TeenAgentEngine::showLogo() {
 
 	byte bg[0xfa00];
 	byte palette[0x400];
-		
+
 	Common::SeekableReadStream *frame = logo.getStream(1);
 	if (frame == NULL)
 		return true;
 
 	frame->read(bg, sizeof(bg));
 	memset(palette, 0, sizeof(palette));
-	
+
 	for(uint c = 0; c < 0x100; ++c) {
 		uint idx = c * 4;
 		frame->read(palette + idx, 3);
@@ -293,7 +293,7 @@ bool TeenAgentEngine::showLogo() {
 	_system->setPalette(palette, 0, 0x100);
 
 	uint n = logo.files_count();
-	for(uint f = 0; f < 4; ++f) 
+	for(uint f = 0; f < 4; ++f)
 		for(uint i = 2; i <= n; ++i) {
 			{
 				int r = skipEvents();
@@ -301,7 +301,7 @@ bool TeenAgentEngine::showLogo() {
 					return r > 0? true: false;
 			}
 			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
-	
+
 			frame = logo.getStream(i);
 			if (frame == NULL)
 				return true;
@@ -323,9 +323,9 @@ bool TeenAgentEngine::showLogo() {
 bool TeenAgentEngine::showMetropolis() {
 	_system->fillScreen(0);
 	_system->updateScreen();
-	
+
 	Resources *res = Resources::instance();
-	
+
 	byte palette[0x400];
 	memset(palette, 0, sizeof(palette));
 	{
@@ -338,13 +338,13 @@ bool TeenAgentEngine::showMetropolis() {
 			palette[idx + 2] *= 4;
 		}
 	}
-	
+
 	_system->setPalette(palette, 0, 0x100);
-	
+
 	byte varia_6[21760], varia_9[18302];
 	res->varia.read(6, varia_6, sizeof(varia_6));
 	res->varia.read(9, varia_9, sizeof(varia_9));
-	
+
 	byte colors[56 * 160 * 2];
 	memset(colors, 0, sizeof(colors));
 
@@ -360,7 +360,7 @@ bool TeenAgentEngine::showMetropolis() {
 		if (logo_y > 0) {
 			surface->fillRect(Common::Rect(0, 0, 320, logo_y), 0);
 		}
-		
+
 		{
 			//generate colors matrix
 			memmove(colors + 320, colors + 480, 8480);
@@ -373,9 +373,9 @@ bool TeenAgentEngine::showMetropolis() {
 			for(uint y = 1; y < 56; ++y) {
 				for(uint x = 1; x < 160; ++x) {
 					uint offset = y * 160 + x;
-					uint v = 
-						(uint)colors[offset - 161] + colors[offset - 160] + colors[offset - 159] + 
-						(uint)colors[offset - 1] + colors[offset + 1] + 
+					uint v =
+						(uint)colors[offset - 161] + colors[offset - 160] + colors[offset - 159] +
+						(uint)colors[offset - 1] + colors[offset + 1] +
 						(uint)colors[offset + 161] + colors[offset + 160] + colors[offset + 159];
 					v >>= 3;
 					colors[offset + 8960] = v;
@@ -390,21 +390,21 @@ bool TeenAgentEngine::showMetropolis() {
 			for(uint x = 0; x < 320; ++x) {
 				if (*src++ == 1) {
 					*dst++ = colors[19 * 160 + y / 2 * 160 + x / 2];
-				} else 
+				} else
 					++dst;
 			}
 		}
 		_system->unlockScreen();
-		
+
 		_system->copyRectToScreen(
-			varia_9 + (logo_y < 0? -logo_y * 320: 0), 320, 
-			0, logo_y >= 0? logo_y: 0, 
+			varia_9 + (logo_y < 0? -logo_y * 320: 0), 320,
+			0, logo_y >= 0? logo_y: 0,
 			320, logo_y >= 0? 57: 57 + logo_y);
 
 		if (logo_y < 82 - 57)
 			++logo_y;
-		
-		
+
+
 		_system->updateScreen();
 		_system->delayMillis(100);
 	}
@@ -426,7 +426,7 @@ Common::Error TeenAgentEngine::run() {
 
 	scene->init(this, _system);
 	inventory->init(this);
-	
+
 	init();
 
 	CursorMan.pushCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
@@ -708,7 +708,7 @@ void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 position) {
 	event.dst.x = position % 320;
 	event.dst.y = position / 320;
 	event.lan = 7;
-	
+
 	scene->push(event);
 }
 
@@ -768,7 +768,7 @@ void TeenAgentEngine::loadScene(byte id, const Common::Point &pos, byte o) {
 void TeenAgentEngine::loadScene(byte id, uint16 x, uint16 y, byte o) {
 	if (scene->last_event_type() != SceneEvent::kCreditsMessage)
 		fadeOut();
-	
+
 	SceneEvent event(SceneEvent::kLoadScene);
 	event.scene = id;
 	event.dst.x = x;
@@ -855,7 +855,7 @@ void TeenAgentEngine::waitLanAnimationFrame(byte slot, uint16 frame) {
 	SceneEvent event(SceneEvent::kWaitLanAnimationFrame);
 	if (frame > 0)
 		--frame;
-	
+
 	event.slot = slot - 1;
 	event.animation = frame;
 	scene->push(event);

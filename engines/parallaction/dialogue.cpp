@@ -480,7 +480,7 @@ void Parallaction::exitDialogueMode() {
 	/* Since the current instance of _dialogueMan must be destroyed before the
 	   zone commands are executed, as they may create a new instance of _dialogueMan that
 	   would overwrite the current, we need to save the references to the command lists.
-    */ 
+    */
 	CommandList *_cmdList = _dialogueMan->_cmdList;
 	ZonePtr z = _dialogueMan->_z;
 

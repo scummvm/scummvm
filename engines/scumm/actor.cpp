@@ -528,11 +528,11 @@ void Actor_v2::walkActor() {
 		new_dir = updateActorDirection(false);
 		// FIXME: is this correct?
 		if (_facing != new_dir) {
-			
+
 			// Actor never stops walking when an object has been selected without this
 			if (_vm->_game.version ==0)
 				_moving = 0;
-			
+
 			setDirection(new_dir);
 
 		} else
@@ -572,9 +572,9 @@ void Actor_v2::walkActor() {
 
 				_walkdata.curbox = next_box;
 
-				// WORKAROUND: The route of the meteor landing in the introduction isn't correct. 
+				// WORKAROUND: The route of the meteor landing in the introduction isn't correct.
 				// MM V0 in contrast to MM V2 uses two walkboxes instead of just one. Hence a route
-				// from walkbox 1 to 0 is calculated first. This causes the meteor to fly on a 
+				// from walkbox 1 to 0 is calculated first. This causes the meteor to fly on a
 				// horizontal line to walkbox 0 then vertically to the ground.
 				// To fix this problem, the box-to-box routing has been disabled in room 33.
 				if (_vm->_game.version == 0 && _vm->_currentRoom == 33) {
@@ -1444,7 +1444,7 @@ void ScummEngine::processActors() {
 	Actor** end = _sortedActors + numactors;
 	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
-		
+
 		// V0 MM: 0x057B
 		if (_game.version == 0) {
 			ActorC64 *A = (ActorC64*) a;

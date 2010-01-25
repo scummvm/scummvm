@@ -296,7 +296,7 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 	if (getSciVersion() == SCI_VERSION_1_1) {
 		// King's Quest VI CD Audio format
 		_audioCdStart = g_system->getMillis();
-		
+
 		// Subtract one from track. KQ6 starts at track 1, while ScummVM
 		// ignores the data track and considers track 2 to be track 1.
 		AudioCD.play(track - 1, 1, start, duration);
@@ -306,11 +306,11 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 		uint32 length = 0;
 
 		audioCdStop();
-	
+
 		Common::File audioMap;
 		if(!audioMap.open("cdaudio.map"))
 			error("Could not open cdaudio.map");
-	
+
 		while (audioMap.pos() < audioMap.size()) {
 			uint16 res = audioMap.readUint16LE();
 			uint32 startFrame = audioMap.readUint16LE();
@@ -327,7 +327,7 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 				break;
 			}
 		}
-	
+
 		audioMap.close();
 
 		return length * 60 / 75; // return sample length in ticks
@@ -347,7 +347,7 @@ int AudioPlayer::audioCdPosition() {
 	// Return -1 if the sample is done playing. Converting to frames to compare.
 	if (((g_system->getMillis() - _audioCdStart) * 75 / 1000) >= (uint32)AudioCD.getStatus().duration)
 		return -1;
-		
+
 	// Return the position otherwise (in ticks).
 	return (g_system->getMillis() - _audioCdStart) * 60 / 1000;
 }

@@ -2796,7 +2796,7 @@ void KyraEngine_HoF::seq_init() {
 			{ 0xd8, 0xda, 0xd9, 0xd8 },
 			(_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT, 240
 		};
-		
+
 		_menu = new MainMenu(this);
 		_menu->init(data, MainMenu::Animation());
 	}

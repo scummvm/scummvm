@@ -179,7 +179,7 @@ void ScummEngine_v70he::setDefaultCursor() {
 	static const byte palette[] = {0,    0,    0,    0,
 								   0xff, 0xff, 0xff, 0,
 								   0,    0,    0,    0};
-	
+
 	if (_bytesPerPixel == 2) {
 		for (i = 0; i < 1024; i++)
 			WRITE_UINT16(_grabbedCursor + i * 2, 5);

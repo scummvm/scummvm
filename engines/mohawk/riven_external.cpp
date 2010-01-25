@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
@@ -31,7 +31,7 @@
 
 #include "common/EventRecorder.h"
 #include "gui/message.h"
- 
+
 namespace Mohawk {
 
 RivenExternal::RivenExternal(MohawkEngine_Riven *vm) : _vm(vm) {
@@ -42,10 +42,10 @@ RivenExternal::RivenExternal(MohawkEngine_Riven *vm) : _vm(vm) {
 
 RivenExternal::~RivenExternal() {
 	delete _rnd;
-	
+
 	for (uint32 i = 0; i < _externalCommands.size(); i++)
 		delete _externalCommands[i];
-	
+
 	_externalCommands.clear();
 }
 
@@ -150,7 +150,7 @@ void RivenExternal::setupCommands() {
 	COMMAND(xogehnbookprevpage);
 	COMMAND(xogehnbooknextpage);
 	COMMAND(xgwatch);
-	
+
 	// pspit (Prison Island) external commands
 	COMMAND(xpisland990_elevcombo);
 	COMMAND(xpscpbtn);
@@ -185,21 +185,21 @@ void RivenExternal::setupCommands() {
 	COMMAND(xtisland5056_slidermd);
 	COMMAND(xtisland5056_slidermw);
 	COMMAND(xtatboundary);
-	
+
 	// Common external commands
 	COMMAND(xflies);
 }
 
 void RivenExternal::runCommand(uint16 argc, uint16 *argv) {
 	Common::String externalCommandName = _vm->getName(ExternalCommandNames, argv[0]);
-		
+
 	for (uint16 i = 0; i < _externalCommands.size(); i++)
 		if (externalCommandName == _externalCommands[i]->desc) {
 			debug(0, "Running Riven External Command \'%s\'", externalCommandName.c_str());
 			(this->*(_externalCommands[i]->proc)) (argv[1], argv[1] ? argv + 2 : NULL);
 			return;
 		}
-		
+
 	error("Unknown external command \'%s\'", externalCommandName.c_str());
 }
 
@@ -212,7 +212,7 @@ void RivenExternal::runDemoBoundaryDialog() {
 void RivenExternal::runEndGame(uint16 video) {
 	_vm->_sound->stopAllSLST();
 	_vm->_video->playMovieBlocking(video);
-	
+
 	// TODO: Play until the last frame and then run the credits
 	_vm->_gameOver = true;
 }
@@ -234,7 +234,7 @@ void RivenExternal::xasetupcomplete(uint16 argc, uint16 *argv) {
 void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 	// Get the variable
 	uint32 page = *_vm->matchVarToString("aatruspage");
-	
+
 	// Set hotspots depending on the page
 	if (page == 1) {
 		_vm->_hotspots[1].enabled = false;
@@ -245,7 +245,7 @@ void RivenExternal::xaatrusopenbook(uint16 argc, uint16 *argv) {
 		_vm->_hotspots[2].enabled = true;
 		_vm->_hotspots[3].enabled = false;
 	}
-	
+
 	// Draw the image of the page
 	_vm->_gfx->drawPLST(page);
 }
@@ -259,14 +259,14 @@ void RivenExternal::xaatrusbookback(uint16 argc, uint16 *argv) {
 void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 *page = _vm->matchVarToString("aatruspage");
-	
+
 	// Decrement the page if it's not the first page
 	if (*page == 1)
 		return;
 	(*page)--;
-	
+
 	// TODO: Play the page turning sound
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -274,14 +274,14 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 *page = _vm->matchVarToString("aatruspage");
-	
+
 	// Increment the page if it's not the last page
 	if (((_vm->getFeatures() & GF_DEMO) && *page == 6) || *page == 10)
 		return;
 	(*page)++;
-	
+
 	// TODO: Play the page turning sound
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -300,16 +300,16 @@ void RivenExternal::xacathopenbook(uint16 argc, uint16 *argv) {
 		_vm->_hotspots[2].enabled = true;
 		_vm->_hotspots[3].enabled = false;
 	}
-	
+
 	// Draw the image of the page
 	_vm->_gfx->drawPLST(page);
-	
+
 	// Draw the white page edges
 	if (page > 1 && page < 5)
 		_vm->_gfx->drawPLST(50);
 	else if (page > 5)
 		_vm->_gfx->drawPLST(51);
-	
+
 	if (page == 28) {
 		// TODO: Draw telescope combination
 	}
@@ -324,12 +324,12 @@ void RivenExternal::xacathbookback(uint16 argc, uint16 *argv) {
 void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the variable
 	uint32 *page = _vm->matchVarToString("acathpage");
-	
+
 	// Increment the page if it's not the first page
 	if (*page == 1)
 		return;
 	(*page)--;
-	
+
 	// TODO: Play the page turning sound
 
 	// Now update the screen :)
@@ -339,14 +339,14 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the variable
 	uint32 *page = _vm->matchVarToString("acathpage");
-	
+
 	// Increment the page if it's not the last page
 	if (*page == 49)
 		return;
 	(*page)++;
-	
+
 	// TODO: Play the page turning sound
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -410,7 +410,7 @@ void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 
 	// Draw the image of the page based on the blabbook variable
 	_vm->_gfx->drawPLST(page);
-	
+
 	// TODO: Draw the dome combo
 	if (page == 14) {
 		warning ("Need to draw dome combo");
@@ -420,12 +420,12 @@ void RivenExternal::xblabopenbook(uint16 argc, uint16 *argv) {
 void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 *page = _vm->matchVarToString("blabbook");
-	
+
 	// Decrement the page if it's not the first page
 	if (*page == 1)
 		return;
 	(*page)--;
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -433,12 +433,12 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 *page = _vm->matchVarToString("blabbook");
-	
+
 	// Increment the page if it's not the last page
 	if (*page == 22)
 		return;
 	(*page)++;
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -446,7 +446,7 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 void RivenExternal::xsoundplug(uint16 argc, uint16 *argv) {
 	uint32 heat = *_vm->matchVarToString("bheat");
 	uint32 boilerInactive = *_vm->matchVarToString("bcratergg");
-	
+
 	if (heat != 0)
 		_vm->_sound->playSLST(1, _vm->getCurCard());
 	else if (boilerInactive != 0)
@@ -492,7 +492,7 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 	} else if (argv[0] == 3) {
 		if (platform == 0) {
 			if (water == 0) {
-				_vm->_video->activateMLST(11, _vm->getCurCard());	
+				_vm->_video->activateMLST(11, _vm->getCurCard());
 			} else {
 				if (heat == 0)
 					_vm->_video->activateMLST(17, _vm->getCurCard());
@@ -501,7 +501,7 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 			}
 		} else {
 			if (water == 0) {
-				_vm->_video->activateMLST(9, _vm->getCurCard());	
+				_vm->_video->activateMLST(9, _vm->getCurCard());
 			} else {
 				if (heat == 0)
 					_vm->_video->activateMLST(14, _vm->getCurCard());
@@ -510,19 +510,19 @@ void RivenExternal::xbchangeboiler(uint16 argc, uint16 *argv) {
 			}
 		}
 	}
-	
+
 	if (argc > 1)
 		_vm->_sound->playSLST(argv[1], _vm->getCurCard());
 	else if (argv[0] == 2)
 		_vm->_sound->playSLST(1, _vm->getCurCard());
-	
+
 	_vm->_video->playMovie(11);
 }
 
 void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	uint32 heat = *_vm->matchVarToString("bheat");
 	uint32 platform = *_vm->matchVarToString("bblrgrt");
-	
+
 	if (heat) {
 		if (platform == 0) {
 			_vm->_video->activateMLST(7, _vm->getCurCard());
@@ -534,7 +534,7 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	} else {
 		// TODO: Stop MLST's 7 and 8
 	}
-	
+
 	_vm->changeToCard();
 }
 
@@ -546,10 +546,10 @@ void RivenExternal::xbcheckcatch(uint16 argc, uint16 *argv) {
 	// TODO: Check if we've caught a Ytram
 }
 
-void RivenExternal::xbait(uint16 argc, uint16 *argv) {	
+void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 	// Set the cursor to the pellet
 	_vm->_gfx->changeCursor(kRivenPelletCursor);
-	
+
 	// Loop until the player lets go (or quits)
 	Common::Event event;
 	bool mouseDown = true;
@@ -562,13 +562,13 @@ void RivenExternal::xbait(uint16 argc, uint16 *argv) {
 			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
 				return;
 		}
-		
+
 		_vm->_system->delayMillis(10); // Take it easy on the CPU
 	}
-	
+
 	// Set back the cursor
 	_vm->_gfx->changeCursor(kRivenMainCursor);
-	
+
 	// Set the bait if we put it on the plate
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		*_vm->matchVarToString("bbait") = 1;
@@ -588,7 +588,7 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 	_vm->_gfx->drawPLST(3);
 	_vm->_gfx->updateScreen();
 	_vm->_gfx->changeCursor(kRivenPelletCursor);
-	
+
 	// Loop until the player lets go (or quits)
 	Common::Event event;
 	bool mouseDown = true;
@@ -601,13 +601,13 @@ void RivenExternal::xbaitplate(uint16 argc, uint16 *argv) {
 			else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL)
 				return;
 		}
-		
+
 		_vm->_system->delayMillis(10); // Take it easy on the CPU
 	}
-	
+
 	// Set back the cursor
 	_vm->_gfx->changeCursor(kRivenMainCursor);
-	
+
 	// Set the bait if we put it on the plate, remove otherwise
 	if (_vm->_hotspots[9].rect.contains(_vm->_system->getEventManager()->getMousePos())) {
 		*_vm->matchVarToString("bbait") = 1;
@@ -649,15 +649,15 @@ void RivenExternal::xbisland_domecheck(uint16 argc, uint16 *argv) {
 void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	// Get the variable for the valve
 	uint32 *valve = _vm->matchVarToString("bvalve");
-	
+
 	Common::Event event;
 	int changeX = 0;
 	int changeY = 0;
-	
+
 	// Set the cursor to the closed position
 	_vm->_gfx->changeCursor(2004);
 	_vm->_system->updateScreen();
-	
+
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -814,7 +814,7 @@ static byte countDepressedIcons(uint32 iconOrderVar) {
 	else if (iconOrderVar >= (1 << 1))
 		return 1;
 	else
-		return 0; 
+		return 0;
 }
 
 void RivenExternal::xicon(uint16 argc, uint16 *argv) {
@@ -843,7 +843,7 @@ void RivenExternal::xtoggleicon(uint16 argc, uint16 *argv) {
 	// Get the variables
 	uint32 *iconsDepressed = _vm->matchVarToString("jicons");
 	uint32 *iconOrderVar = _vm->matchVarToString("jiconorder");
-	
+
 	if (*iconsDepressed & (1 << (argv[0] - 1))) {
 		// The icon is depressed, now unpress it
 		*iconsDepressed &= ~(1 << (argv[0] - 1));
@@ -853,7 +853,7 @@ void RivenExternal::xtoggleicon(uint16 argc, uint16 *argv) {
 		*iconsDepressed |= 1 << (argv[0] - 1);
 		*iconOrderVar = (*iconOrderVar << 5) + argv[0];
 	}
-	
+
 	// Check if the puzzle is complete now and assign 1 to jrbook if the puzzle is complete.
 	if (*iconOrderVar == *_vm->matchVarToString("jiconcorrectorder"))
 		*_vm->matchVarToString("jrbook") = 1;
@@ -862,7 +862,7 @@ void RivenExternal::xtoggleicon(uint16 argc, uint16 *argv) {
 void RivenExternal::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
-	
+
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 0))
 		_vm->_gfx->drawPLST(2);
@@ -883,7 +883,7 @@ void RivenExternal::xjtunnel103_pictfix(uint16 argc, uint16 *argv) {
 void RivenExternal::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
-	
+
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 9))
 		_vm->_gfx->drawPLST(2);
@@ -906,7 +906,7 @@ void RivenExternal::xjtunnel104_pictfix(uint16 argc, uint16 *argv) {
 void RivenExternal::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
-	
+
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 3))
 		_vm->_gfx->drawPLST(2);
@@ -927,7 +927,7 @@ void RivenExternal::xjtunnel105_pictfix(uint16 argc, uint16 *argv) {
 void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 	// Get the jicons variable which contains which of the stones are depressed in the rebel tunnel puzzle
 	uint32 iconsDepressed = *_vm->matchVarToString("jicons");
-	
+
 	// Now, draw which icons are depressed based on the bits of the variable
 	if (iconsDepressed & (1 << 16))
 		_vm->_gfx->drawPLST(2);
@@ -949,7 +949,7 @@ void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	// TODO: This function is supposed to do a lot more, something like this (pseudocode):
-	
+
 	// Show level pull movie
 	// Set transition up
 	// Change to up card
@@ -970,8 +970,8 @@ void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
 	//		show movie of carriage ascending only
 	// else
 	//	show movie of carriage ascending only
-	
-	
+
+
 	// For now, if the gallows base is closed, assume ascension and move to that card.
 	if (*_vm->matchVarToString("jgallows") == 0)
 		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));
@@ -1000,7 +1000,7 @@ void RivenExternal::xjisland3500_domecheck(uint16 argc, uint16 *argv) {
 int RivenExternal::jspitElevatorLoop() {
 	Common::Event event;
 	int changeLevel = 0;
-	
+
 	_vm->_gfx->changeCursor(2004);
 	_vm->_system->updateScreen();
 	for (;;) {
@@ -1025,21 +1025,21 @@ int RivenExternal::jspitElevatorLoop() {
 			}
 		}
 		_vm->_system->delayMillis(10);
-	}	
+	}
 }
 
-void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {	
+void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
-	
+
 	if (changeLevel == -1) {
 		// TODO: Run movie
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
 
-void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {	
+void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
-	
+
 	if (changeLevel == 1) {
 		// TODO: Run movie
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
@@ -1048,7 +1048,7 @@ void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
-	
+
 	if (changeLevel == 1) {
 		// TODO: Run movie
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e597));
@@ -1126,7 +1126,7 @@ void RivenExternal::xorollcredittime(uint16 argc, uint16 *argv) {
 
 	// You used the trap book... why? What were you thinking?
 	uint32 *gehnState = _vm->matchVarToString("agehn");
-	
+
 	if (*gehnState == 0)		// Gehn who?
 		runEndGame(1);
 	else if (*gehnState == 4)	// You freed him? Are you kidding me?
@@ -1178,14 +1178,14 @@ void RivenExternal::xogehnopenbook(uint16 argc, uint16 *argv) {
 void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 *page = _vm->matchVarToString("ogehnpage");
-	
+
 	// Decrement the page if it's not the first page
 	if (*page == 1)
 		return;
 	(*page)--;
-	
+
 	// TODO: Play the page turning sound
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -1193,14 +1193,14 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	// Get the page variable
 	uint32 *page = _vm->matchVarToString("ogehnpage");
-	
+
 	// Increment the page if it's not the last page
 	if (*page == 13)
 		return;
 	(*page)++;
-	
+
 	// TODO: Play the page turning sound
-	
+
 	// Now update the screen :)
 	_vm->_gfx->updateScreen();
 }
@@ -1249,7 +1249,7 @@ void RivenExternal::xpisland25_slidermw(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xrcredittime(uint16 argc, uint16 *argv) {
 	// Nice going, you used the trap book on Tay.
-	
+
 	// The game chooses what ending based on agehn for us,
 	// so we just have to play the video and credits.
 	// For the record, when agehn == 4, Gehn will thank you for
@@ -1326,9 +1326,9 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		}
 	} else {
 		// We're not at the bottom, and we can move down again
-		
+
 		// TODO: Down movie, it involves playing a chunk of a movie
-		
+
 		// Now move the telescope down a position and refresh
 		*telescopePos -= 1;
 		_vm->changeToCard();
@@ -1352,7 +1352,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	}
 
 	// TODO: Up movie, it involves playing a chunk of a movie
-	
+
 	// Now move the telescope up a position and refresh
 	*telescopePos += 1;
 	_vm->changeToCard();
@@ -1361,16 +1361,16 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {
 	// Called when clicking the telescope cover buttons. button is the button number (1...5).
 	uint32 *pressedButtons = _vm->matchVarToString("tcovercombo");
-	
+
 	// We pressed a button! Yay! Add it to the queue.
 	*pressedButtons *= 10;
 	*pressedButtons += argv[0];
-	
+
 	if (*pressedButtons == *_vm->matchVarToString("tcorrectorder")) {
 		_vm->_hotspots[9].enabled = true;
 	} else {
 		_vm->_hotspots[9].enabled = false;
-		
+
 		// Set the buttons to the last one pressed if we've
 		// pressed more than 5 buttons.
 		if (*pressedButtons > 55555)
@@ -1383,14 +1383,14 @@ void RivenExternal::xtatrusgivesbooks(uint16 argc, uint16 *argv) {
 	// Give the player Atrus' Journal and the Trap book
 	*_vm->matchVarToString("aatrusbook") = 1;
 	*_vm->matchVarToString("atrapbook") = 1;
-	
+
 	// Randomize the telescope combination
 	uint32 *teleCombo = _vm->matchVarToString("tcorrectorder");
 	for (byte i = 0; i < 5; i++) {
 		*teleCombo *= 10;
 		*teleCombo += _rnd->getRandomNumberRng(1, 5);
 	}
-	
+
 	// TODO: Randomize Dome Combination
 }
 
@@ -1410,7 +1410,7 @@ void RivenExternal::xt7500_checkmarbles(uint16 argc, uint16 *argv) {
 	// TODO: Lots of stuff to do here, eventually we have to check each individual
 	// marble position and set apower based on that. The game handles the video playing
 	// so we don't have to. For the purposes of making the game progress further, we'll
-	// just turn the power on for now. 
+	// just turn the power on for now.
 	*_vm->matchVarToString("apower") = 1;
 }
 

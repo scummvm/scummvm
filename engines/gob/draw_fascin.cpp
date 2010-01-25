@@ -72,7 +72,7 @@ void Draw_Fascination::spriteOperation(int16 operation) {
 	if (_renderFlags & 0x20) {
 		if (_destSurface == 21 || (operation == 0 && _sourceSurface == 21)) {
 			winDraw(operation);
-			return; 
+			return;
 		}
 	}
 

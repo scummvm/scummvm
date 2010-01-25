@@ -66,7 +66,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	loadIntro();
 
 	debug(1, "Stack Version: %d", getResourceVersion());
-	
+
 	_gfx->setPalette(1000);
 	loadSHP(1000);
 	loadANI(1000);
@@ -129,7 +129,7 @@ void MohawkEngine_LivingBooks::loadBookInfo(Common::String filename) {
 	_screenWidth = getIntFromConfig("BookInfo", "xRes");
 	_screenHeight = getIntFromConfig("BookInfo", "yRes");
 	// nColors is here too, but it's always 256 anyway...
-	
+
 	// The later Living Books games add some more options:
 	//     - fNeedPalette                (always true?)
 	//     - fUse254ColorPalette         (always true?)
@@ -154,10 +154,10 @@ void MohawkEngine_LivingBooks::loadIntro() {
 	}
 
 	filename = getFileNameFromConfig("Intro", "Page2");
-	
+
 	if (filename.empty())
 		filename = getFileNameFromConfig("Intro", "Page2.r");
-	
+
 	if (!filename.empty() && Common::File::exists(filename)) {
 		MohawkArchive *coverArchive = createMohawkArchive();
 		coverArchive->open(filename);

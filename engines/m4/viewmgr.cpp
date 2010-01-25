@@ -63,7 +63,7 @@ int RectList::find(const Common::Point &pt) {
 		if (this->operator [](idx).contains(pt.x, pt.y))
 			return idx;
 	}
-	return -1;	
+	return -1;
 }
 
 //--------------------------------------------------------------------------

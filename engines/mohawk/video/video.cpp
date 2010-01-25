@@ -30,11 +30,11 @@
 #include "common/events.h"
 
 namespace Mohawk {
-	
+
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
 	_pauseStart = 0;
 }
-	
+
 VideoManager::~VideoManager() {
 	_mlstRecords.clear();
 	stopVideos();
@@ -51,7 +51,7 @@ void VideoManager::resumeVideos() {
 		_videoStreams[i]->addPauseTime(_vm->_system->getMillis() * 100 - _pauseStart);
 		_videoStreams[i]->resumeAudio();
 	}
-	
+
 	_pauseStart = 0;
 }
 
@@ -110,18 +110,18 @@ void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) 
 	entry.loop = false;
 	playMovie(entry);
 }
-	
+
 void VideoManager::playMovie(VideoEntry videoEntry) {
 	// Add video to the list
 	_videoStreams.push_back(videoEntry);
-	
+
 	bool continuePlaying = true;
 	videoEntry->startAudio();
-	
+
 	while (!videoEntry->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
 		if (updateBackgroundMovies())
 			_vm->_system->updateScreen();
-		
+
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -144,11 +144,11 @@ void VideoManager::playMovie(VideoEntry videoEntry) {
 				break;
 			}
 		}
-		
+
 		// Cut down on CPU usage
 		_vm->_system->delayMillis(10);
 	}
-	
+
 	videoEntry->stop();
 
 	_videoStreams.clear();
@@ -161,24 +161,24 @@ void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y
 
 	VideoEntry entry;
 	entry.video = new QTPlayer();
-	
+
 	if (!entry.video)
 		return;
-	
+
 	entry->loadFile(file);
-	
+
 	// Center x if requested
 	if (x < 0)
 		x = (_vm->_system->getWidth() - entry->getWidth()) / 2;
-	
+
 	// Center y if requested
 	if (y < 0)
 		y = (_vm->_system->getHeight() - entry->getHeight()) / 2;
-		
+
 	entry.x = x;
 	entry.y = y;
 	entry.loop = loop;
-	
+
 	entry->startAudio();
 	_videoStreams.push_back(entry);
 }
@@ -204,16 +204,16 @@ bool VideoManager::updateBackgroundMovies() {
 			Graphics::Surface *frame = _videoStreams[i]->getNextFrame();
 			bool deleteFrame = false;
 
-			if (frame) {			
+			if (frame) {
 				// Convert from 8bpp to the current screen format if necessary
 				if (frame->bytesPerPixel == 1) {
 					Graphics::Surface *newFrame = new Graphics::Surface();
 					Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 					byte *palette = _videoStreams[i]->getPalette();
 					assert(palette);
-					
+
 					newFrame->create(frame->w, frame->h, pixelFormat.bytesPerPixel);
-					
+
 					for (uint16 j = 0; j < frame->h; j++) {
 						for (uint16 k = 0; k < frame->w; k++) {
 							byte palIndex = *((byte *)frame->getBasePtr(k, j));
@@ -226,12 +226,12 @@ bool VideoManager::updateBackgroundMovies() {
 								*((uint32 *)newFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
 						}
 					}
-					
+
 					frame = newFrame;
 					deleteFrame = true;
 				}
 
-				// Check if we're drawing at a 2x or 4x resolution (because of 
+				// Check if we're drawing at a 2x or 4x resolution (because of
 				// evil QuickTime scaling it first).
 				if (_videoStreams[i]->getScaleMode() == kScaleHalf || _videoStreams[i]->getScaleMode() == kScaleQuarter) {
 					byte scaleFactor = (_videoStreams[i]->getScaleMode() == kScaleHalf) ? 2 : 4;
@@ -254,7 +254,7 @@ bool VideoManager::updateBackgroundMovies() {
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;
-				
+
 				// Delete the frame if we're using the buffer from the 8bpp conversion
 				if (deleteFrame) {
 					frame->free();
@@ -289,7 +289,7 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 
 		if (mlstStream->readUint16BE() != 0xFFFF)
 			warning("u0[2] in MLST not 0xFFFF");
-		
+
 		mlstRecord.loop = mlstStream->readUint16BE();
 		mlstRecord.volume = mlstStream->readUint16BE();
 		mlstRecord.u1 = mlstStream->readUint16BE();
@@ -305,7 +305,7 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 			break;
 		}
 	}
-	
+
 	delete mlstStream;
 }
 
@@ -336,7 +336,7 @@ void VideoManager::playMovieBlocking(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			warning("STUB: Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
-			
+
 			// TODO: See if a non-blocking movie has been activated with the same id,
 			// and if so, block input until that movie is finished.
 			QTPlayer *qtPlayer = new QTPlayer();

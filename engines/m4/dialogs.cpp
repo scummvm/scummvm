@@ -65,7 +65,7 @@ void Dialog::incLine() {
 	_lineX = 0;
 	_widthX = 0;
 
-	_lines.push_back(*new DialogLine());	
+	_lines.push_back(*new DialogLine());
 	assert(_lines.size() <= 20);
 }
 
@@ -227,7 +227,7 @@ bool Dialog::handleNounSuffix(char *destP, int nounNum, const char *srcP) {
 	if (*srcP != '\0')
 		++srcP;
 
-	// 
+	//
 	char var_FC[40];
 	char tempLine[40];
 	strcpy(var_FC, srcP);
@@ -236,7 +236,7 @@ bool Dialog::handleNounSuffix(char *destP, int nounNum, const char *srcP) {
 
 	uint16 _vocabIds[2] = {1, 1}; // FIXME/TODO: Proper vocab ids
 	getVocab(_vocabIds[nounNum], &tmpP);
-	
+
 	if ((*(tmpP - 1) != 'S') && (*(tmpP - 1) != 's')) {
 		// Singular object
 		tmpP = &var_FC[0];
@@ -452,7 +452,7 @@ void Dialog::draw() {
 	// Ask position
 	//int askY = (_vm->_font->getHeight() + 1) * _askPosition.y + 3;
 
-	// Set up the dialog 
+	// Set up the dialog
 	fillRect(Common::Rect(0, 0, width(), height()), 3);
 	setColour(2);
 	hLine(1, width() - 1, height() - 2);	// Bottom edge
@@ -471,7 +471,7 @@ void Dialog::draw() {
 			seed += 0x181D;
 			v = ROR16(v, 9);
 			seed = (seed ^ v) + ROR16(v, 3);
-			
+
 			*destP++ = ((seed & 0x10) != 0) ? 1 : 0;
 		}
 	}
@@ -495,7 +495,7 @@ void Dialog::draw() {
 
 			if (_lines[lineCtr].underline)
 				// Underline needed
-				hLine(pt.x, pt.x + _vm->_font->getWidth(_lines[lineCtr].data, DIALOG_SPACING), 
+				hLine(pt.x, pt.x + _vm->_font->getWidth(_lines[lineCtr].data, DIALOG_SPACING),
 					pt.y + _vm->_font->getHeight());
 		}
 	}

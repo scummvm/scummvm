@@ -195,7 +195,7 @@ static uint8 testSaid(uint8 nwords, uint8 *cc) {
 		case 9999:	// rest of line (empty string counts to...)
 			nwords = 1;
 			break;
-		case 1:	// any word 
+		case 1:	// any word
 			break;
 		default:
 			if (game.egoWords[c].id != z)

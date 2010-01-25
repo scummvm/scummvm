@@ -29,7 +29,7 @@
 #include "common/util.h"
 
 namespace Mohawk {
-	
+
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 	_loadFile = new MohawkArchive();
 }
@@ -138,11 +138,11 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 
 	uint16 stackID = 0;
 	uint16 cardID = 0;
-		
+
 	for (uint32 i = 0; i < rawVariables.size() && i < namesCount && !names->eos(); i++) {
 		names->seek(curNamesPos);
 		names->seek(stringOffsets[i], SEEK_CUR);
-			
+
 		Common::String name;
 		char c = (char)names->readByte();
 
@@ -150,11 +150,11 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			name += c;
 			c = (char)names->readByte();
 		}
-			
+
 		uint32 *var = _vm->matchVarToString(name);
-			
+
 		*var = rawVariables[i];
-				
+
 		if (!scumm_stricmp(name.c_str(), "CurrentStackID"))
 			stackID = mapOldStackIDToNew(rawVariables[i]);
 		else if (!scumm_stricmp(name.c_str(), "CurrentCardID"))
@@ -162,16 +162,16 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		else if (!scumm_stricmp(name.c_str(), "ReturnStackID"))
 			*var = mapOldStackIDToNew(rawVariables[i]);
 	}
-		
+
 	_vm->changeToStack(stackID);
 	_vm->changeToCard(cardID);
 
 	delete names;
 	delete[] stringOffsets;
-		
+
 	// Reset zip mode data
 	_vm->_zipModeData.clear();
-		
+
 	// Finally, we load in zip mode data.
 	Common::SeekableReadStream *zips = _loadFile->getRawData(ID_ZIPS, 1);
 	uint16 zipsRecordCount = zips->readUint16BE();
@@ -184,12 +184,12 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		_vm->_zipModeData.push_back(zip);
 	}
 	delete zips;
-		
+
 	delete _loadFile;
 	_loadFile = NULL;
 	return true;
 }
-	
+
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
 	if (_vm->getFeatures() & GF_DVD)
@@ -198,10 +198,10 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 		stream->writeUint32BE(kCDSaveGameVersion);
 	return stream;
 }
-	
+
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
-		
+
 	for (uint32 i = 0; i < _vm->getVarCount(); i++) {
 		stream->writeUint32BE(0); // Unknown
 		stream->writeUint32BE(0); // Unknown
@@ -210,55 +210,55 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
 
 	return stream;
 }
-	
+
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
-		
+
 	stream->writeUint16BE((uint16)_vm->getVarCount());
-		
+
 	uint16 curPos = 0;
 	for (uint16 i = 0; i < _vm->getVarCount(); i++) {
 		stream->writeUint16BE(curPos);
 		curPos += _vm->getGlobalVarName(i).size() + 1;
 	}
-		
+
 	for (uint16 i = 0; i < _vm->getVarCount(); i++)
 		stream->writeUint16BE(i);
-			
+
 	for (uint16 i = 0; i < _vm->getVarCount(); i++) {
 		stream->write(_vm->getGlobalVarName(i).c_str(), _vm->getGlobalVarName(i).size());
 		stream->writeByte(0);
 	}
-		
+
 	return stream;
 }
-	
+
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
-		
+
 	stream->writeUint16BE(_vm->_zipModeData.size());
-		
+
 	for (uint16 i = 0; i < _vm->_zipModeData.size(); i++) {
 		stream->writeUint16BE(_vm->_zipModeData[i].name.size());
 		stream->write(_vm->_zipModeData[i].name.c_str(), _vm->_zipModeData[i].name.size());
 		stream->writeUint16BE(_vm->_zipModeData[i].id);
 	}
-		
+
 	return stream;
 }
 
 bool RivenSaveLoad::saveGame(Common::String filename) {
 	// Note, this code is still WIP. It works quite well for now.
-	
+
 	// Make sure we have the right extension
 	if (!filename.hasSuffix(".rvn") && !filename.hasSuffix(".RVN"))
 		filename += ".rvn";
-		
+
 	// Convert class variables to variable numbers
 	*_vm->matchVarToString("currentstackid") = mapNewStackIDToOld(_vm->getCurStack());
 	*_vm->matchVarToString("currentcardid") = _vm->getCurCard();
 	*_vm->matchVarToString("returnstackid") = mapNewStackIDToOld(*_vm->matchVarToString("returnstackid"));
-	
+
 	Common::OutSaveFile *saveFile;
 	if (!(saveFile = _saveFileMan->openForSaving(filename.c_str())))
 		return false;
@@ -279,7 +279,7 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 	fileSize += 4; // Type Table Header
 	fileSize += 4 * 8; // Type Table Entries
 	fileSize += 2; // Pseudo-Name entries
-		
+
 	// IFF Header
 	saveFile->writeUint32BE(ID_MHWK);
 	saveFile->writeUint32BE(fileSize);
@@ -291,7 +291,7 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 	saveFile->writeUint32BE(28); // IFF + RSRC
 	saveFile->writeUint16BE(62); // File Table Offset
 	saveFile->writeUint16BE(44); // 4 + 4 * 10
-	
+
 	//Type Table
 	saveFile->writeUint16BE(36); // After the Type Table Entries
 	saveFile->writeUint16BE(4); // 4 Type Table Entries

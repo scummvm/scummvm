@@ -51,15 +51,15 @@ namespace {
 namespace Audio {
 
 Tfmx::Tfmx(int rate, bool stereo)
-	: Paula(stereo, rate), 
-	  _resource(), 
-	  _resourceSample(), 
+	: Paula(stereo, rate),
+	  _resource(),
+	  _resourceSample(),
 	  _playerCtx(),
 	  _deleteResource(false) {
 
 	_playerCtx.stopWithLastPattern = false;
 
-	for (int i = 0; i < kNumVoices; ++i) 
+	for (int i = 0; i < kNumVoices; ++i)
 		_channelCtx[i].paulaChannel = (byte)i;
 
 	_playerCtx.volume = 0x40;
@@ -485,7 +485,7 @@ startPatterns:
 						break;
 				}
 
-			} else 
+			} else
 				--pattern.wait;
 
 		} else if (pattCmd == 0xFE) {	// Stop voice in pattern.expose
@@ -519,7 +519,7 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 					doWait = true;
 				}
 				noteCmd &= 0x3F;
-			}	// else Portamento 
+			}	// else Portamento
 			noteCommand(noteCmd, patternPtr[1], patternPtr[2], param3);
 			if (doWait)
 				return false;
@@ -685,10 +685,10 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 
 	if (note == 0xFC) {	// Lock command
 		channel.sfxLocked = (param1 != 0);
-		channel.sfxLockTime = param3; // only 1 byte read! 
+		channel.sfxLockTime = param3; // only 1 byte read!
 
 	} else if (channel.sfxLocked) {	// Channel still locked, do nothing
-	
+
 	} else if (note < 0xC0) {	// Play Note - Parameters: note, macro, relVol | channel, finetune
 
 		channel.prevNote = channel.note;
@@ -903,7 +903,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 		musicData.read(buf, 10);
 		hasHeader = memcmp(buf, "TFMX-SONG ", 10) == 0;
 	}
-	
+
 	if (!hasHeader) {
 		warning("Tfmx: File is not a Tfmx Module");
 		return 0;
@@ -957,7 +957,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 	}
 
 	// TODO: if a File is packed it could have for Ex only 2 Patterns/Macros
-	// the following loops could then read beyond EOF. 
+	// the following loops could then read beyond EOF.
 	// To correctly handle this it would be necessary to sort the pointers and
 	// figure out the number of Macros/Patterns
 	// We could also analyze pointers if they are correct offsets,
@@ -981,7 +981,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 	// TODO: we can skip everything thats already stored in the resource-structure.
 	const int32 mdatOffset = offTrackstep ? 0x200 : 0x600;	// 0x200 is very conservative
 	const uint32 allocSize = (uint32)mdatSize - mdatOffset;
-	
+
 	byte *mdatAlloc = new byte[allocSize];
 	if (!mdatAlloc) {
 		warning("Tfmx: Could not allocate Memory: %dKB", allocSize / 1024);

@@ -76,7 +76,7 @@ struct sciEvent {
 #define SCI_KEY_UP (72 << 8)		// 8
 #define SCI_KEY_PGUP (73 << 8)	// 9
 //
-#define SCI_KEY_LEFT (75 << 8)	// 4 
+#define SCI_KEY_LEFT (75 << 8)	// 4
 #define SCI_KEY_CENTER (76 << 8)	// 5
 #define SCI_KEY_RIGHT (77 << 8)	// 6
 //

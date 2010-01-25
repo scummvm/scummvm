@@ -91,7 +91,7 @@ void Cursor::setShape(GuiResourceId resourceId) {
 		delete[] rawBitmap;
 		return;
 	}
-	
+
 	// Load cursor resource...
 	resource = _resMan->findResource(ResourceId(kResourceTypeCursor, resourceId), false);
 	if (!resource)
@@ -112,7 +112,7 @@ void Cursor::setShape(GuiResourceId resourceId) {
 	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
 	colorMapping[3] = _palette->matchColor(&_palette->_sysPalette, 170, 170, 170); // Grey
-	
+
 	// Seek to actual data
 	resourceData += 4;
 
@@ -190,7 +190,7 @@ void Cursor::setPosition(Common::Point pos) {
 
 Common::Point Cursor::getPosition() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	
+
 	if (_upscaledHires) {
 		mousePos.x /= 2;
 		mousePos.y /= 2;

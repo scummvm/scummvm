@@ -60,9 +60,9 @@ void Object::load(byte * src) {
 
 	id = *src++;
 
-	rect.load(src); 
+	rect.load(src);
 	src += 8;
-	actor_rect.load(src); 
+	actor_rect.load(src);
 	src += 8;
 
 	actor_orientation = *src++;
@@ -141,8 +141,8 @@ void UseHotspot::load(byte *src) {
 }
 
 void UseHotspot::dump(int level) const {
-	debug(level, 
-		"hotspot: inv_id: %02x, obj_id: %02x, orientation?: %02x, actor position: (%d,%d), callback: %04x", 
+	debug(level,
+		"hotspot: inv_id: %02x, obj_id: %02x, orientation?: %02x, actor position: (%d,%d), callback: %04x",
 		inventory_id, object_id, orientation, actor_x, actor_y, callback
 	);
 }

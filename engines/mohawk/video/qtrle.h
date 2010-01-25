@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef MOHAWK_QTRLE_H
 #define MOHAWK_QTRLE_H
 
@@ -40,10 +40,10 @@ public:
 
 private:
 	byte _bitsPerPixel;
-	
+
 	Graphics::Surface *_surface;
 	Graphics::PixelFormat _pixelFormat;
-	
+
 	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
 	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
 	void decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);

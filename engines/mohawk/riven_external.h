@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef RIVEN_EXTERNAL_H
 #define RIVEN_EXTERNAL_H
 
@@ -36,9 +36,9 @@ class RivenExternal {
 public:
 	RivenExternal(MohawkEngine_Riven *vm);
 	~RivenExternal();
-	
+
 	void runCommand(uint16 argc, uint16 *argv);
-	
+
 private:
 	MohawkEngine_Riven *_vm;
 	Common::RandomSource *_rnd;
@@ -50,10 +50,10 @@ private:
 		const char *desc;
 		ExternalCmd proc;
 	};
-	
+
 	Common::Array<RivenExternalCmd*> _externalCommands;
 	void setupCommands();
-	
+
 	// Supplementary Functions
 	int jspitElevatorLoop();
 	void runDemoBoundaryDialog();
@@ -77,7 +77,7 @@ private:
 	// Trap Book
 	void xtrapbookback(uint16 argc, uint16 *argv);
 	void xatrapbookclose(uint16 argc, uint16 *argv);
-	void xatrapbookopen(uint16 argc, uint16 *argv);	
+	void xatrapbookopen(uint16 argc, uint16 *argv);
 	// aspit DVD-specific commands
 	void xarestoregame(uint16 argc, uint16 *argv);
 	// aspit Demo-specific commands
@@ -103,15 +103,15 @@ private:
 	void xbaitplate(uint16 argc, uint16 *argv);
 	// Dome
 	void xbisland190_opencard(uint16 argc, uint16 *argv);
-	void xbisland190_resetsliders(uint16 argc, uint16 *argv);	
+	void xbisland190_resetsliders(uint16 argc, uint16 *argv);
 	void xbisland190_slidermd(uint16 argc, uint16 *argv);
-	void xbisland190_slidermw(uint16 argc, uint16 *argv);	
+	void xbisland190_slidermw(uint16 argc, uint16 *argv);
 	void xbscpbtn(uint16 argc, uint16 *argv);
-	void xbisland_domecheck(uint16 argc, uint16 *argv);	
+	void xbisland_domecheck(uint16 argc, uint16 *argv);
 	// Water Control
 	void xvalvecontrol(uint16 argc, uint16 *argv);
 	// Run the Wood Chipper
-	void xbchipper(uint16 argc, uint16 *argv);	
+	void xbchipper(uint16 argc, uint16 *argv);
 
 	// -----------------------------------------------------
 	// gspit (Garden Island) external commands
@@ -200,12 +200,12 @@ private:
 	// Prison Elevator
 	void xpisland990_elevcombo(uint16 argc, uint16 *argv);	// Param1: button
 	// Dome
-	void xpscpbtn(uint16 argc, uint16 *argv);	
-	void xpisland290_domecheck(uint16 argc, uint16 *argv);	
-	void xpisland25_opencard(uint16 argc, uint16 *argv);	
-	void xpisland25_resetsliders(uint16 argc, uint16 *argv);	
-	void xpisland25_slidermd(uint16 argc, uint16 *argv);	
-	void xpisland25_slidermw(uint16 argc, uint16 *argv);	
+	void xpscpbtn(uint16 argc, uint16 *argv);
+	void xpisland290_domecheck(uint16 argc, uint16 *argv);
+	void xpisland25_opencard(uint16 argc, uint16 *argv);
+	void xpisland25_resetsliders(uint16 argc, uint16 *argv);
+	void xpisland25_slidermd(uint16 argc, uint16 *argv);
+	void xpisland25_slidermw(uint16 argc, uint16 *argv);
 
 	// -----------------------------------------------------
 	// rspit (Rebel Age / Tay) external commands
@@ -241,12 +241,12 @@ private:
 	void xtisland5056_slidermw(uint16 argc, uint16 *argv);
 	// tspit Demo-specific commands
 	void xtatboundary(uint16 argc, uint16 *argv);
-	
+
 	// -----------------------------------------------------
 	// Common external commands
 	void xflies(uint16 argc, uint16 *argv); // Start the "flies" realtime effect. u0 seems always 0, u1 is a small number (< 10).
 };
-	
+
 } // End of namespace Mohawk
 
 #endif

@@ -46,14 +46,14 @@ RivenScript::~RivenScript() {
 
 RivenScriptList RivenScript::readScripts(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream) {
 	RivenScriptList scriptList;
-	
+
 	uint16 scriptCount = stream->readUint16BE();
 	for (uint16 i = 0; i < scriptCount; i++) {
 		uint16 scriptType = stream->readUint16BE();
 		uint32 scriptSize = calculateScriptSize(stream);
 		scriptList.push_back(Common::SharedPtr<RivenScript>(new RivenScript(vm, stream->readStream(scriptSize), scriptType)));
 	}
-	
+
 	return scriptList;
 }
 
@@ -66,7 +66,7 @@ uint32 RivenScript::calculateCommandSize(Common::SeekableReadStream* script) {
 		script->readUint16BE();								// variable to check against
 		uint16 logicBlockCount = script->readUint16BE();	// number of logic blocks
 		commandSize += 6;									// 2 + variable + logicBlocks
-		
+
 		for (uint16 i = 0; i < logicBlockCount; i++) {
 			script->readUint16BE(); // Block variable
 			uint16 logicBlockLength = script->readUint16BE();
@@ -82,7 +82,7 @@ uint32 RivenScript::calculateCommandSize(Common::SeekableReadStream* script) {
 			commandSize += 2;
 		}
 	}
-	
+
 	return commandSize;
 }
 
@@ -90,10 +90,10 @@ uint32 RivenScript::calculateScriptSize(Common::SeekableReadStream* script) {
 	uint32 oldPos = script->pos();
 	uint16 commandCount = script->readUint16BE();
 	uint16 scriptSize = 2; // 2 for command count
-	
+
 	for (uint16 i = 0; i < commandCount; i++)
 		scriptSize += calculateCommandSize(script);
-	
+
 	script->seek(oldPos);
 	return scriptSize;
 }
@@ -175,17 +175,17 @@ static void printTabs(byte tabs) {
 void RivenScript::dumpScript(Common::StringList varNames, Common::StringList xNames, byte tabs) {
 	if (_stream->pos() != 0)
 		_stream->seek(0);
-		
+
 	printTabs(tabs); printf ("Stream Type %d:\n", _scriptType);
 	dumpCommands(varNames, xNames, tabs + 1);
 }
 
 void RivenScript::dumpCommands(Common::StringList varNames, Common::StringList xNames, byte tabs) {
 	uint16 commandCount = _stream->readUint16BE();
-	
+
 	for (uint16 i = 0; i < commandCount; i++) {
 		uint16 command = _stream->readUint16BE();
-		
+
 		if (command == 8) { // "Switch" Statement
 			if (_stream->readUint16BE() != 2)
 				warning ("if-then-else unknown value is not 2");
@@ -194,7 +194,7 @@ void RivenScript::dumpCommands(Common::StringList varNames, Common::StringList x
 			uint16 logicBlockCount = _stream->readUint16BE();
 			for (uint16 j = 0; j < logicBlockCount; j++) {
 				uint16 varCheck = _stream->readUint16BE();
-				printTabs(tabs + 1); 
+				printTabs(tabs + 1);
 				if (varCheck == 0xFFFF)
 					printf("default:\n");
 				else
@@ -269,7 +269,7 @@ void RivenScript::processCommands(bool runCommands) {
 				// And don't run it if another block has already evaluated to true (needed for the default case)
 				runBlock = (*_vm->getLocalVar(var) == checkValue || checkValue == 0xffff) && runCommands && !anotherBlockEvaluated;
 				processCommands(runBlock);
-				
+
 				if (runBlock)
 					anotherBlockEvaluated = true;
 			}
@@ -305,7 +305,7 @@ void RivenScript::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
 		// Copy the image to a certain part of the screen
 		_vm->_gfx->copyImageToScreen(argv[0], argv[1], argv[2], argv[3], argv[4]);
 	}
-	
+
 	// Now, update the screen
 	_vm->_gfx->updateScreen();
 }
@@ -330,9 +330,9 @@ void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
 		slstRecord.sound_ids[j] = argv[offset++];
 	slstRecord.fade_flags = argv[offset++];
 	slstRecord.loop = argv[offset++];
-	slstRecord.global_volume = argv[offset++]; 
-	slstRecord.u0 = argv[offset++]; 
-	slstRecord.u1 = argv[offset++]; 
+	slstRecord.global_volume = argv[offset++];
+	slstRecord.u0 = argv[offset++];
+	slstRecord.u1 = argv[offset++];
 
 	slstRecord.volumes = new uint16[slstRecord.sound_count];
 	slstRecord.balances = new int16[slstRecord.sound_count];
@@ -454,7 +454,7 @@ void RivenScript::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 	Common::String stackName = _vm->getName(StackNames, argv[0]);
 	int8 index = -1;
-	
+
 	for (byte i = 0; i < 8; i++)
 		if (!scumm_stricmp(_vm->getStackName(i).c_str(), stackName.c_str())) {
 			index = i;
@@ -463,7 +463,7 @@ void RivenScript::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 
 	if (index == -1)
 		error ("\'%s\' is not a stack name!", stackName.c_str());
-	
+
 	_vm->changeToStack(index);
 	uint32 rmapCode = (argv[1] << 16) + argv[2];
 	uint16 cardID = _vm->matchRMAPToCard(rmapCode);
@@ -512,7 +512,7 @@ void RivenScript::unk_36(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 37: fade ambient sounds
 void RivenScript::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
-	warning("STUB: fadeAmbientSounds()");	
+	warning("STUB: fadeAmbientSounds()");
 }
 
 // Command 38: Play a movie with extra parameters (movie id, delay high, delay low, record type, record id)
@@ -532,7 +532,7 @@ void RivenScript::complexPlayMovie(uint16 op, uint16 argc, uint16 *argv) {
 // Command 39: activate PLST record (card picture lists)
 void RivenScript::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_gfx->drawPLST(argv[0]);
-	
+
 	// An update is automatically sent here as long as it's not a load or update script and updates are enabled.
 	if (_scriptType != kCardLoadScript && _scriptType != kCardUpdateScript)
 		_vm->_gfx->updateScreen();
@@ -560,18 +560,18 @@ void RivenScript::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 	Common::SeekableReadStream* blst = _vm->getRawData(ID_BLST, _vm->getCurCard());
 	uint16 recordCount = blst->readUint16BE();
-	
+
 	for (uint16 i = 0; i < recordCount; i++) {
 		uint16 index = blst->readUint16BE();	// record index
 		uint16 enabled = blst->readUint16BE();
 		uint16 hotspotID = blst->readUint16BE();
-		
+
 		if (argv[0] == index)
 			for (uint16 j = 0; j < _vm->getHotspotCount(); j++)
 				if (_vm->_hotspots[j].blstID == hotspotID)
 					_vm->_hotspots[j].enabled = (enabled == 1);
 	}
-	
+
 	delete blst;
 }
 
@@ -579,13 +579,13 @@ void RivenScript::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
 	Common::SeekableReadStream* flst = _vm->getRawData(ID_FLST, _vm->getCurCard());
 	uint16 recordCount = flst->readUint16BE();
-	
+
 	for (uint16 i = 0; i < recordCount; i++) {
 		uint16 index = flst->readUint16BE();
 		uint16 sfxeID = flst->readUint16BE();
 		if(flst->readUint16BE() != 0)
 			warning("FLST u0 non-zero");
-		
+
 		if (index == argv[0]) {
 			_vm->_gfx->scheduleWaterEffect(sfxeID);
 			break;
@@ -599,7 +599,7 @@ void RivenScript::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
 void RivenScript::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 	// Check the ZIPS records to see if we have a match to the hotspot name
 	Common::String hotspotName = _vm->getHotspotName(_vm->getCurHotspot());
-	
+
 	for (uint16 i = 0; i < _vm->_zipModeData.size(); i++)
 		if (_vm->_zipModeData[i].name == hotspotName) {
 			_vm->changeToCard(_vm->_zipModeData[i].id);

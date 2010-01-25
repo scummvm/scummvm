@@ -91,7 +91,7 @@ public:
 	bool endOfData() const { return false; }
 	int getRate() const { return _sample_rate; }
 
-private:	
+private:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
@@ -118,7 +118,7 @@ private:
 	void updateSound();
 	void procA731(channel_t *channel);
 	void processSoundData(channel_t *channel);
-	void procA9F3(int x);	
+	void procA9F3(int x);
 	void procAA62(channel_t *channel, int a);
 	uint16 procAAF6(int x);
 	void procAB7F(channel_t *channel);

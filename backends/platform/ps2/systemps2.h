@@ -119,7 +119,7 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-	virtual Graphics::PixelFormat getOverlayFormat() const; 
+	virtual Graphics::PixelFormat getOverlayFormat() const;
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 

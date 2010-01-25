@@ -731,7 +731,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 				// HACK: In this way we won't get a screen with dirty side strips when
 				// loading a narrow room in a full screen room.
-				if (width == 224 && height == 240 && x == 16) { 
+				if (width == 224 && height == 240 && x == 16) {
 					char blackbuf[16 * 240];
 					memset(blackbuf, 0, 16 * 240); // Prepare a buffer 16px wide and 240px high, to fit on a lateral strip
 
@@ -2645,7 +2645,7 @@ void readOffsetTable(const byte *ptr, uint16 **table, int *count) {
 	for (int i = 0; i < *count; i++) {
 		(*table)[i] = READ_LE_UINT16(ptr + pos) + pos + 2;
 		pos += 2;
-	}	
+	}
 }
 
 void decodeTileColor(byte cmd, byte *colors, int *rowIndex, int numRows) {
@@ -2657,7 +2657,7 @@ void decodeTileColor(byte cmd, byte *colors, int *rowIndex, int numRows) {
 void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint16 *masks, int numRows, bool isObject) {
 	int loopCnt;
 	uint16 lastTileData;
-	
+
 	/*
 	 * read tiles indices
 	 */
@@ -2670,34 +2670,34 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 		tiles[numRows - 1] = 0;
 		loopCnt = numRows - 1;
 	}
-	
+
 	while (true) {
 		uint16 cmd = READ_LE_UINT16(ptr);
 		ptr += 2;
 		if (cmd & 0x8000) {
 			tiles[rowIndex - 1] = cmd  & 0x0FFF;
 		} else if (cmd & 0x4000) {
-			tiles[numRows - 1] = cmd & 0x0FFF;		
+			tiles[numRows - 1] = cmd & 0x0FFF;
 		} else {
 			tiles[rowIndex++] = cmd;
 			lastTileData = cmd;
 			break;
 		}
-	}	
-	
+	}
+
 	while (rowIndex < loopCnt) {
 		byte cmd = *ptr++;
 		int cnt = cmd & 0x1F;
-		
+
 		if (cmd & 0x80) {
 			for (int i = 0; i < cnt; ++i) {
 				tiles[rowIndex++] = lastTileData;
-			}			
+			}
 		} else if (cmd & 0x40) {
 			for (int i = 0; i < cnt; ++i) {
 				++lastTileData;
 				tiles[rowIndex++] = lastTileData;
-			}						
+			}
 		} else {
 			for (int i = 0; i < cnt; ++i) {
 				lastTileData = READ_LE_UINT16(ptr);
@@ -2710,8 +2710,8 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 	/*
 	 * read palette data
 	 */
-	
-	rowIndex = 0;		
+
+	rowIndex = 0;
 	byte cmd = *ptr++;
 	if (cmd == 0xFE) {
 		while (rowIndex < numRows) {
@@ -2736,11 +2736,11 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 			}
 		}
 	}
-	
+
 	/*
 	 * read mask indices
 	 */
-	
+
 	if (_distaff || _PCE.maskIDSize == 0 || numRows > 18) {
 		return;
 	}
@@ -2770,7 +2770,7 @@ void GdiPCEngine::decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint
 					masks[rowIndex++] = READ_LE_UINT16(ptr);
 					ptr += 2;
 				}
-			}				
+			}
 		}
 	}
 }
@@ -2787,14 +2787,14 @@ void GdiPCEngine::decodePCEngineGfx(const byte *room) {
 	int numRows = *smap_ptr++;
 	_PCE.maskIDSize = *smap_ptr++;
 	*smap_ptr++; // unknown
-	
+
 	memset(_PCE.nametable, 0, sizeof(_PCE.nametable));
 	memset(_PCE.colortable, 0, sizeof(_PCE.colortable));
 	readOffsetTable(smap_ptr, &stripOffsets, &numStrips);
 	for (int i = 0; i < numStrips; ++i) {
-		const byte *tilePtr = smap_ptr + stripOffsets[i];		
-		decodeStrip(tilePtr, 
-			&_PCE.nametable[i * numRows], 
+		const byte *tilePtr = smap_ptr + stripOffsets[i];
+		decodeStrip(tilePtr,
+			&_PCE.nametable[i * numRows],
 			&_PCE.colortable[i * numRows],
 			&_PCE.masktable[i * numRows],
 			numRows,
@@ -2813,10 +2813,10 @@ void GdiPCEngine::decodePCEngineObject(const byte *ptr, int xpos, int ypos, int 
 	readOffsetTable(ptr, &stripOffsets, &numStrips);
 	for (int i = 0; i < numStrips; ++i) {
 		const byte *tilePtr = ptr + stripOffsets[i];
-		decodeStrip(tilePtr, 
-			&_PCE.nametableObj[i * numRows], 
-			&_PCE.colortableObj[i * numRows], 
-			&_PCE.masktableObj[i * numRows], 
+		decodeStrip(tilePtr,
+			&_PCE.nametableObj[i * numRows],
+			&_PCE.colortableObj[i * numRows],
+			&_PCE.masktableObj[i * numRows],
 			numRows,
 			true);
 	}
@@ -2831,7 +2831,7 @@ void setTileData(byte *tile, int index, byte byte0, byte byte1) {
 		plane02Bit = (byte0 >> (7-col)) & 0x1; // plane=0: bit0, plane=2: bit2
 		plane13Bit = (byte1 >> (7-col)) & 0x1; // plane=0: bit1, plane=2: bit3
 		tile[row * 8 + col] |= plane02Bit << (plane + 0);
-		tile[row * 8 + col] |= plane13Bit << (plane + 1);		
+		tile[row * 8 + col] |= plane13Bit << (plane + 1);
 	}
 }
 
@@ -2842,7 +2842,7 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 	byte byte0, byte1;
 
 	readOffsetTable(ptr, &tileOffsets, &_PCE.numTiles);
-	
+
 	if (_distaff) {
 		free(_PCE.staffTiles);
 		_PCE.staffTiles = (byte*)calloc(_PCE.numTiles * 8 * 8, sizeof(byte));

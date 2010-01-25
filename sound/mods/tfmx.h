@@ -58,7 +58,7 @@ public:
 	 */
 	void doSong(int songPos, bool stopAudio = false);
 	/**
-	 * plays an effect from the sfx-table, does not start audio-playback. 
+	 * plays an effect from the sfx-table, does not start audio-playback.
 	 *
 	 * @param sfxIndex	index of effect to play
 	 * @param unlockChannel	overwrite higher priority effects
@@ -74,7 +74,7 @@ public:
 	void stopMacroEffect(int channel);
 
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
-	int getTicks() const { return _playerCtx.tickCount; } 
+	int getTicks() const { return _playerCtx.tickCount; }
 	int getSongIndex() const { return _playerCtx.song; }
 	void setSignalPtr(uint16 *ptr, uint16 numSignals) { _playerCtx.signal = ptr; _playerCtx.numSignals = numSignals; }
 	void freeResources() { _deleteResource = true; freeResourceDataImpl(); }
@@ -191,7 +191,7 @@ private:
 		uint16	savedStep;
 
 		uint8	command;
-		int8	expose; 
+		int8	expose;
 		uint8	loopCount;
 		uint8	wait;	///< how many ticks to wait before next Command
 	} _patternCtx[kNumChannels];
@@ -269,7 +269,7 @@ private:
 	void initFadeCommand(const uint8 fadeTempo, const int8 endVol);
 	void setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true);
 	static const MdatResource *loadMdatFile(Common::SeekableReadStream &musicData);
-	static const int8 *loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &sampleStream);	
+	static const int8 *loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &sampleStream);
 	void freeResourceDataImpl();
 	void effects(ChannelContext &channel);
 	void macroRun(ChannelContext &channel);

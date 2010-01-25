@@ -332,7 +332,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
 	DEFUN("Portrait", kPortrait, ".*"),
-	
+
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
 	DEFUN("IsHiRes", kIsHiRes, ""),
@@ -436,7 +436,7 @@ void Kernel::loadSelectorNames() {
 		// Check if we have a table for this game
 		// Some demos do not have a selector table
 		Common::StringList staticSelectorTable = checkStaticSelectorNames();
-		
+
 		if (staticSelectorTable.empty())
 			error("Kernel: Could not retrieve selector names");
 		else
@@ -447,7 +447,7 @@ void Kernel::loadSelectorNames() {
 			if (oldScriptHeader)
 				_selectorNames.push_back(staticSelectorTable[i]);
 		}
-			
+
 		return;
 	}
 
@@ -627,7 +627,7 @@ void Kernel::mapFunctions() {
 		}
 	} // for all functions requesting to be mapped
 
-	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n", 
+	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n",
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
@@ -648,7 +648,7 @@ int determine_reg_type(SegManager *segMan, reg_t reg) {
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
-		if (reg.offset <= (*(Script *)mobj)._bufSize && 
+		if (reg.offset <= (*(Script *)mobj)._bufSize &&
 			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
 		    RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
 			return ((Script *)mobj)->getObject(reg.offset) ? KSIG_OBJECT : KSIG_REF;
@@ -779,7 +779,7 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 
 bool Kernel::loadKernelNames(Common::String gameId) {
 	_kernelNames.clear();
-	
+
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
 		setKernelNamesSci21(gameId);

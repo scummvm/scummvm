@@ -389,7 +389,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 	*target = 0; /* Terminate string */
 
-	s->_segMan->strcpy(dest, targetbuf);	
+	s->_segMan->strcpy(dest, targetbuf);
 
 	return dest; /* Return target addr */
 }
@@ -448,7 +448,7 @@ reg_t kGetMessage(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	uint func = argv[0].toUint16();
-	
+
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// In complete weirdness, SCI32 bumps up subops 3-8 to 4-9 and stubs off subop 3.

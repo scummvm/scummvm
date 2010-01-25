@@ -99,7 +99,7 @@ void LoLEngine::loadLevel(int index) {
 	setMouseCursorToItemInHand();
 
 	if (_flags.use16ColorMode)
-		_screen->fadeToPalette1(10);	
+		_screen->fadeToPalette1(10);
 
 	snd_playTrack(_curMusicTheme);
 }
@@ -415,7 +415,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		}
 
 		v += 384;
-	}	
+	}
 
 	if (_currentLevel == 11) {
 		if (_flags.use16ColorMode) {

@@ -181,7 +181,7 @@ void MidiPlayer::stopMusic() {
 	if (_parser) {
 		_parser->unloadMusic();
 	}
-	
+
 	if (_midiData) {
 		free(_midiData);
 		_midiData = NULL;

@@ -139,12 +139,12 @@ const int fragment10_size = 6;
 
 const WorkaroundEntry workaroundList[] = {
 	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
-	// In the GRA version, it was global 373, and was reset when he is returned to the past, but 
+	// In the GRA version, it was global 373, and was reset when he is returned to the past, but
 	// was forgotten in the SCN version, so this ensures the flag is properly reset
 	{TINSEL_V1, true, 427942095, 1, fragment1_size, fragment1},
 
 	// DW1-GRA: Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
-	// into walkable areas, saving and restoring the game, it will error if you try to move. 
+	// into walkable areas, saving and restoring the game, it will error if you try to move.
 	// This fragment turns off NPC blocking for the Outside Inn rooms so that the luggage won't block
 	// Past Outside Inn
 	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
@@ -523,7 +523,7 @@ static int32 Fetch(byte opcode, const byte *code, const WorkaroundEntry* &wkEntr
 		return GetBytes(code, wkEntry, ip, 1);
 	else if (opcode & OPSIZE16)
 		return GetBytes(code, wkEntry, ip, 2);
-	
+
 	return GetBytes(code, wkEntry, ip, 4);
 }
 
@@ -539,7 +539,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		if (wkEntry == NULL) {
 			// Check to see if a workaround fragment needs to be executed
 			for (wkEntry = workaroundList; wkEntry->script != NULL; ++wkEntry) {
-				if ((wkEntry->version == TinselVersion) && 
+				if ((wkEntry->version == TinselVersion) &&
 					(wkEntry->hCode == ic->hCode) &&
 					(wkEntry->ip == ip) &&
 					(!TinselV1 || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {

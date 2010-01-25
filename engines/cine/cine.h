@@ -66,7 +66,7 @@
  * French variant of the game which heared to be completable.
  * Later the work was renewed as part of GSoC'08, by Kari Salminen, but it has not
  * yet been finished. The game is not completable.
- * 
+ *
  *
  * Supported games:
  *

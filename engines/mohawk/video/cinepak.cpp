@@ -31,7 +31,7 @@
 // Code here partially based off of ffmpeg ;)
 
 namespace Mohawk {
-	
+
 #define PUT_PIXEL(offset, lum, u, v) \
 	Graphics::CPYUV2RGB(lum, u, v, r, g, b); \
 	if (_pixelFormat.bytesPerPixel == 2) \
@@ -68,7 +68,7 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 		_curFrame.strips = new CinepakStrip[_curFrame.stripCount];
 
 	debug (4, "Cinepak Frame: Width = %d, Height = %d, Strip Count = %d", _curFrame.width, _curFrame.height, _curFrame.stripCount);
-	
+
 #if 0
 	// Borrowed from FFMPEG. This should cut out the extra data Cinepak for Sega has (which is useless).
 	// The theory behind this is that this is here to confuse standard Cinepak decoders. But, we won't let that happen! ;)
@@ -146,7 +146,7 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 
 		_y = _curFrame.strips[i].rect.bottom;
 	}
-	
+
 	return _curFrame.surface;
 }
 

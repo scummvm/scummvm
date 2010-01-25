@@ -38,13 +38,13 @@ bool Console::enableObject(int argc, const char **argv) {
 		DebugPrintf("usage: %s object_id [scene_id]\n", argv[0]);
 		return true;
 	}
-	
+
 	int id = atoi(argv[1]);
 	if (id < 0) {
 		DebugPrintf("object id %d is invalid\n", id);
 		return true;
 	}
-	
+
 	int scene_id = 0;
 	if (argc > 2) {
 		scene_id = atoi(argv[2]);
@@ -53,12 +53,12 @@ bool Console::enableObject(int argc, const char **argv) {
 			return true;
 		}
 	}
-	
+
 	if (strcmp(argv[0], "disable_object") == 0)
 		_engine->disableObject(id, scene_id);
 	else
 		_engine->enableObject(id, scene_id);
-	
+
 	return true;
 }
 
@@ -67,13 +67,13 @@ bool Console::setOns(int argc, const char **argv) {
 		DebugPrintf("usage: %s index(0-3) value [scene_id]\n", argv[0]);
 		return true;
 	}
-	
+
 	int index = atoi(argv[1]);
 	if (index < 0 || index > 3) {
 		DebugPrintf("index %d is invalid\n", index);
 		return true;
 	}
-	
+
 	int value = 0;
 	value = atoi(argv[2]);
 	if (value < 0) {
@@ -89,9 +89,9 @@ bool Console::setOns(int argc, const char **argv) {
 			return true;
 		}
 	}
-	
+
 	_engine->setOns(index, value, scene_id);
-	
+
 	return true;
 }
 

@@ -533,7 +533,7 @@ public:
 	static const uint32 kPropsSize = 3921;
 	/** Index. kSlotCount * kSlotNameLength bytes. */
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
-	
+
 	SaveLoad_Playtoons(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_Playtoons();
 

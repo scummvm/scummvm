@@ -55,7 +55,7 @@ struct CinepakFrame {
 	uint16 height;
 	uint16 stripCount;
 	CinepakStrip *strips;
-	
+
 	Graphics::Surface *surface;
 };
 
@@ -70,7 +70,7 @@ private:
 	CinepakFrame _curFrame;
 	int32 _y;
 	Graphics::PixelFormat _pixelFormat;
-	
+
 	void loadCodebook(Common::SeekableReadStream *stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
 	void decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize);
 };

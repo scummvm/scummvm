@@ -76,7 +76,7 @@ struct ADPC_Chunk {            // Holds ADPCM status data, but is irrelevant for
 	uint32 size;
 	uint16 itemCount;
 	uint16 channels;
-	
+
 	struct StatusItem {
 		uint32 sampleFrame;
 		uint32 channelStatus[MAX_CHANNELS];
@@ -118,7 +118,7 @@ class Sound {
 public:
 	Sound(MohawkEngine*);
 	~Sound();
-	
+
 	void loadRivenSounds(uint16 stack);
 	Audio::SoundHandle *playSound(uint16 id, bool mainSoundFile = true, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
 	void playMidi(uint16 id);
@@ -144,7 +144,7 @@ private:
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	
+
 	// Riven specific
 	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);
 	void stopSLSTSound(uint16 id, bool fade);

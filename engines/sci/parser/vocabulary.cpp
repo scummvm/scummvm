@@ -126,7 +126,7 @@ bool Vocabulary::loadParserWords() {
 
 	// First try to load the SCI0 vocab resource.
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB), 0);
- 
+
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
 		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB), 0);
@@ -206,7 +206,7 @@ const char *Vocabulary::getAnyWordFromGroup(int group) {
 bool Vocabulary::loadSuffixes() {
 	// Determine if we can find a SCI1 suffix vocabulary first
 	Resource* resource = NULL;
-	
+
 	if (_vocabVersion == kVocabularySCI0)
 		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 1);
 	else
@@ -245,12 +245,12 @@ bool Vocabulary::loadSuffixes() {
 
 void Vocabulary::freeSuffixes() {
 	Resource* resource = NULL;
-	
+
 	if (_vocabVersion == kVocabularySCI0)
 		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 0);
 	else
 		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 0);
-	
+
 	if (resource)
 		_resMan->unlockResource(resource);
 

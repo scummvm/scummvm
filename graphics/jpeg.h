@@ -61,7 +61,7 @@ private:
 		uint8 DCentropyTableSelector;
 		uint8 ACentropyTableSelector;
 		int16 DCpredictor;
-		
+
 		// Result image for this component
 		Surface surface;
 	} *_components;
@@ -105,7 +105,7 @@ private:
 	uint8 readBit();
 	uint8 _bitsData;
 	uint8 _bitsNumber;
-	
+
 	float _sqrt_2;
 	float _cosine_32[32];
 	// Discrete Cosine Transformation

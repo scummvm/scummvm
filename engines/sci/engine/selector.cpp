@@ -53,7 +53,7 @@ void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_
 		*address.getPointer(segMan) = value;
 }
 
-int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, 
+int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
 	StackPtr k_argp, int k_argc, int argc, ...) {
 	va_list argp;
 	int i;
@@ -75,7 +75,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 		return 1;
 	}
 	if (slc_type == kSelectorVariable) {
-		warning("Attempting to invoke variable selector %s of object %04x:%04x", 
+		warning("Attempting to invoke variable selector %s of object %04x:%04x",
 			s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 		return 0;
 	}
@@ -136,7 +136,7 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 		selector_id &= ~1;
 
 	if (!obj) {
-		error("lookup_selector(): Attempt to send to non-object or invalid script. Address was %04x:%04x", 
+		error("lookup_selector(): Attempt to send to non-object or invalid script. Address was %04x:%04x",
 				PRINT_REG(obj_location));
 	}
 

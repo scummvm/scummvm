@@ -106,14 +106,14 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 		clutEntry = READ_LE_UINT16(psxClut + (sizeof(uint16) * j));
 		if (clutEntry) {
 			if (clutEntry == 0x7EC0) { // This is an already known value, used by the in-game text
-				mapperTable[j] = 232; 
+				mapperTable[j] = 232;
 				continue;
 			}
-			
+
 			// Check for correspondent color
 			for (uint i = 0; (i < FROM_LE_32(pal->numColours)) && !colorFound; i++) {
 				// get R G B values in the same way as psx format converters
-				uint16 psxEquivalent = TINSEL_PSX_RGB(TINSEL_GetRValue(pal->palRGB[i]) >> 3, TINSEL_GetGValue(pal->palRGB[i]) >> 3, TINSEL_GetBValue(pal->palRGB[i]) >> 3); 
+				uint16 psxEquivalent = TINSEL_PSX_RGB(TINSEL_GetRValue(pal->palRGB[i]) >> 3, TINSEL_GetGValue(pal->palRGB[i]) >> 3, TINSEL_GetBValue(pal->palRGB[i]) >> 3);
 
 				if (psxEquivalent == clutEntry) {
 					mapperTable[j] = i + 1; // Add entry in the table for the found color

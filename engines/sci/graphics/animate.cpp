@@ -211,7 +211,7 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 
 		// Get the corresponding view
 		view = _gfx->getView(listEntry->viewId);
-		
+
 		// adjust loop and cel, if any of those is invalid
 		if (listEntry->loopNo >= view->getLoopCount()) {
 			listEntry->loopNo = 0;
@@ -240,7 +240,7 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 			listEntry->priority = _gfx->CoordinateToPriority(listEntry->y);
 			PUT_SEL32V(_s->_segMan, curObject, priority, listEntry->priority);
 		}
-		
+
 		if (signal & kSignalNoUpdate) {
 			if (signal & (kSignalForceUpdate | kSignalViewUpdated)
 				|| (signal & kSignalHidden && !(signal & kSignalRemoveView))
@@ -311,7 +311,7 @@ void SciGuiAnimate::update() {
 			signal &= 0xFFFF ^ (kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
-				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
+				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
 				_gfx->FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 			listEntry->signal = signal;
@@ -356,7 +356,7 @@ void SciGuiAnimate::update() {
 
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
-				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
+				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
 				_gfx->FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}

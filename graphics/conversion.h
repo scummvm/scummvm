@@ -68,10 +68,10 @@ inline static void CPYUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) 
  * @return			true if conversion completes successfully,
  *					false if there is an error.
  *
- * @note This implementation currently arbitrarily requires that the 
- *		 destination's format have at least as high a bytedepth as 
+ * @note This implementation currently arbitrarily requires that the
+ *		 destination's format have at least as high a bytedepth as
  *		 the source's.
- * @note This can convert a rectangle in place, if the source and 
+ * @note This can convert a rectangle in place, if the source and
  *		 destination format have the same bytedepth.
  *
  */

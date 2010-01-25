@@ -424,7 +424,7 @@ void Sound::playSound(int soundID) {
 
 		size = READ_BE_UINT16(ptr + 12);
 		assert(size);
-		
+
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (byte *)malloc(size);
 		int vol = ptr[24] * 4;
@@ -2113,7 +2113,7 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 		if (_game.features & GF_OLD_BUNDLE) {
 			_fileHandle->seek(wa_offs + wa_size + 6, SEEK_SET);
 			byte musType = _fileHandle->readByte();
-		
+
 			if (musType == 0x80) {
 				_fileHandle->seek(ad_offs, SEEK_SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, ad_size), ad_size);

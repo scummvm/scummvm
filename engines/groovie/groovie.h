@@ -40,7 +40,7 @@
  * This is the namespace of the Groovie engine.
  *
  * Status of this engine: This engine supports both versions of the Groovie
- * game engine.  The 7th Guest uses the first revision of Groovie, and is 
+ * game engine.  The 7th Guest uses the first revision of Groovie, and is
  * now fully completable.  All remaining Groovie games use V2 of the engine,
  * which is under slow development.
  *

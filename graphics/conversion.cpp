@@ -39,7 +39,7 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 
 	// Don't perform unnecessary conversion
 	if (srcFmt == dstFmt) {
-		if (dst == src) 
+		if (dst == src)
 			return true;
 		if (dstpitch == srcpitch && ((w * dstFmt.bytesPerPixel) == dstpitch)) {
 			memcpy(dst,src,dstpitch * h);

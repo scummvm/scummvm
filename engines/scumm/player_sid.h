@@ -189,7 +189,7 @@ private:
 	// never read
 	//uint8 vec19[7];
 	// never read (needed by scumm engine?)
-	//bool curChannelActive;	
+	//bool curChannelActive;
 
 	uint8* vec20[7];
 
@@ -232,10 +232,10 @@ private:
 
 	bool pulseWidthSwapped;
 	bool swapPrepared;
-	
+
 	// never read
 	//uint8 var5163;
-	
+
 	bool filterSwapped;
 	uint8 SIDReg24_HiNibble;
 	bool keepSwapVars;

@@ -86,7 +86,7 @@ void View::initData(GuiResourceId resourceId) {
 	case kViewAmiga: // View-format Amiga (32 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
-		
+
 		_loopCount = _resourceData[0];
 		// bit 0x8000 of _resourceData[1] means palette is set
 		if (_resourceData[1] & 0x40)

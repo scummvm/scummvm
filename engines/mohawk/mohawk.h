@@ -80,7 +80,7 @@ public:
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
-	
+
 	bool hasFeature(EngineFeature f) const;
 
 	Sound *_sound;

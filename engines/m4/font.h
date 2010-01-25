@@ -65,7 +65,7 @@ public:
 	void setColor(uint8 color);
 	void setColors(uint8 alt1, uint8 alt2, uint8 foreground);
 	void setColour(uint8 colour) { setColor(colour); }
-	void setColours(uint8 alt1, uint8 alt2, uint8 foreground) { setColors(alt1, alt2, foreground); } 
+	void setColours(uint8 alt1, uint8 alt2, uint8 foreground) { setColors(alt1, alt2, foreground); }
 
 	int32 getWidth(const char *text, int spaceWidth = -1);
 	int32 getHeight() const { return _maxHeight; }

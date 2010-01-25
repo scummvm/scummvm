@@ -266,7 +266,7 @@ public:
 	bool hasSoundFile(uint file) const { return _music->hasSoundFile(file) && _sfx->hasSoundFile(file); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 	void loadSoundFile(Common::String file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
-	
+
 	void loadSfxFile(Common::String file) { _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }

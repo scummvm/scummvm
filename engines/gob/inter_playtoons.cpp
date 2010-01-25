@@ -116,10 +116,10 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 		_vm->_draw->_transparency = 1;
 	}
 
-// colMod is read from conf file (_off_=xxx). 
-// in Playtoons, it's not present in the conf file, thus always equal to the default value (0). 
+// colMod is read from conf file (_off_=xxx).
+// in Playtoons, it's not present in the conf file, thus always equal to the default value (0).
 // Maybe used in ADIs...
-//	if (!_vm->_draw->_transparency) 
+//	if (!_vm->_draw->_transparency)
 //		_vm->_draw->_backColor += colMod;
 //	_vm->_draw->_frontColor += colMod;
 
@@ -173,7 +173,7 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
 			_vm->_draw->_transparency = oldTransparency;
 			i = 0;
-		} else 
+		} else
 			i = strlen(buf);
 	} while (_vm->_game->_script->peekByte() != 200);
 
@@ -231,9 +231,9 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 
 	char *file = _vm->_game->_script->getResultStr();
 
-	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD). 
+	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD).
 	// In this case, "@:\" is replaced by the CD drive letter.
-	// As the files are copied on the HDD, those characters are skipped. 
+	// As the files are copied on the HDD, those characters are skipped.
 	if (strncmp(file, "@:\\", 3) == 0) {
 		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 3, file);
 		file += 3;
@@ -286,9 +286,9 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 
 	char *file = _vm->_game->_script->getResultStr();
 
-	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD). 
+	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD).
 	// In this case, "@:\" is replaced by the CD drive letter.
-	// As the files are copied on the HDD, those characters are skipped. 
+	// As the files are copied on the HDD, those characters are skipped.
 	if (strncmp(file, "@:\\", 3) == 0) {
 		debugC(2, kDebugFileIO, "oPlaytoons_readData: \"%s\" instead of \"%s\"", file + 3, file);
 		file += 3;
@@ -442,7 +442,7 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	} else
 		_vm->_dataIO->openDataFile(fileName, true);
 	// All the other checks are meant to verify (if not found at the first try)
-	// if the file is present on the CD or not. As everything is supposed to 
+	// if the file is present on the CD or not. As everything is supposed to
 	// be copied, those checks are skipped
 }
 

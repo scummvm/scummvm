@@ -42,12 +42,12 @@ static void extract(FILE * fout, FILE *fin, size_t pos, size_t size, const char 
 		perror(what);
 		exit(1);
 	}
-	
+
 	if (fread(buf, size, 1, fin) != 1) {
 		perror(what);
 		exit(1);
 	}
-	
+
 	if (fwrite(buf, size, 1, fout) != 1) {
 		perror(what);
 		exit(1);
@@ -60,18 +60,18 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	const char * fname = argv[1];
-	
+
 	uint8 digest[16];
 	if (!md5_file(fname, digest, 0)) {
 		fprintf(stderr, "cannot calculate md5 for %s", fname);
 		exit(1);
 	}
-	
-	const uint8 ethalon[16] = { 
-		0x51, 0xb6, 0xd6, 0x47, 0x21, 0xf7, 0xc4, 0xb4, 
-		0x98, 0xbf, 0xc0, 0xf3, 0x23, 0x01, 0x3e, 0x36, 
+
+	const uint8 ethalon[16] = {
+		0x51, 0xb6, 0xd6, 0x47, 0x21, 0xf7, 0xc4, 0xb4,
+		0x98, 0xbf, 0xc0, 0xf3, 0x23, 0x01, 0x3e, 0x36,
 	};
-	
+
 	if (memcmp(digest, ethalon, 16) != 0) {
 		fprintf(stderr, "cannot extract data, your md5: ");
 		print_hex(stderr, digest, 16);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
 		perror("opening input file");
 		exit(1);
 	}
-	
+
 	const char * dat_name = "teenagent.dat";
 	FILE *fout = fopen(dat_name, "wb");
 	if (fout == NULL) {
@@ -96,11 +96,11 @@ int main(int argc, char *argv[]) {
 	extract(fout, fin, 0x00200, 0xb3b0, "extracting code segment");
 	extract(fout, fin, 0x0b5b0, 0xe790, "extracting data segment");
 	extract(fout, fin, 0x1c890, 0x8be2, "extracting second data segment");
-	
+
 	fclose(fin);
 	fclose(fout);
-	
+
 	fprintf(stderr, "please run \"gzip -n %s\"\n", dat_name);
-	
+
 	return 0;
 }

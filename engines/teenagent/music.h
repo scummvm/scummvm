@@ -67,10 +67,10 @@ protected:
 				size = s;
 			}
 		}
-		void clear() { 
-			delete[] data; 
-			data = 0; 
-			size = 0; 
+		void clear() {
+			delete[] data;
+			data = 0;
+			size = 0;
 		}
 	} _samples[256];
 	byte sampleCount;

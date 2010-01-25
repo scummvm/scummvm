@@ -205,7 +205,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction() {
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
 		internUpdateScreen();
-	} 
+	}
 
 	_transactionMode = kTransactionNone;
 	return (TransactionError)errors;
@@ -255,10 +255,10 @@ Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	if (_hwscreen) {
 		// Get our currently set hardware format
-		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel, 
-			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss, 
-			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss, 
-			_hwscreen->format->Rshift, _hwscreen->format->Gshift, 
+		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel,
+			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss,
+			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss,
+			_hwscreen->format->Rshift, _hwscreen->format->Gshift,
 			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
 
 		// Workaround to MacOSX SDL not providing an accurate Aloss value.
@@ -482,7 +482,7 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 
 	if (desiredAspectRatio.isAuto())
 		return;
-	
+
 	int kw = desiredAspectRatio.kw();
 	int kh = desiredAspectRatio.kh();
 
@@ -545,8 +545,8 @@ bool OSystem_SDL::loadGFXMode() {
 	// Create the surface that contains the 8 bit game data
 	//
 #ifdef USE_RGB_COLOR
-	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 
-						_screenFormat.bytesPerPixel << 3, 
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
+						_screenFormat.bytesPerPixel << 3,
 						((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
 						((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
 						((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,

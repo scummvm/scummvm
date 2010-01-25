@@ -170,13 +170,13 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 					_destSpriteY - 1, _destSpriteX + 2,
 					_destSpriteY + 2, _frontColor);
 			break;
-		default: 
+		default:
 			_vm->_video->putPixel(_destSpriteX, _destSpriteY, _frontColor, *_spritesArray[_destSurface]);
 			break;
 		}
 		dirtiedRect(_destSurface, _destSpriteX - (_pattern / 2),
-			                      _destSpriteY - (_pattern / 2), 
-								  _destSpriteX + (_pattern + 1) / 2, 
+			                      _destSpriteY - (_pattern / 2),
+								  _destSpriteX + (_pattern + 1) / 2,
 								  _destSpriteY + (_pattern + 1) / 2);
 		break;
 	case DRAW_FILLRECT:
@@ -187,7 +187,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		case 4:
 			warning("oPlaytoons_spriteOperation: operation DRAW_FILLRECT, pattern %d", _pattern & 0xFF);
 			break;
-		case 0: 
+		case 0:
 			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX,
 					_destSpriteY, _destSpriteX + _spriteRight - 1,
 					_destSpriteY + _spriteBottom - 1, _backColor);
@@ -195,7 +195,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
 			break;
-		default: 
+		default:
 			warning("oPlaytoons_spriteOperation: operation DRAW_FILLRECT, unexpected pattern %d", _pattern & 0xFF);
 			break;
 		}
@@ -218,17 +218,17 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 					_spriteRight + 1, _spriteBottom + 1, _frontColor);
 		} else {
 			switch (_pattern & 0xFF) {
-			case 0: 
+			case 0:
 				_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 
 				break;
-			default: 
+			default:
 				warning("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw %d lines", (_pattern & 0xFF) * (_pattern & 0xFF));
 				for (int16 i = 0; i <= _pattern ; i++)
 					for (int16 j = 0; j <= _pattern ; j++)
-						_vm->_video->drawLine(*_spritesArray[_destSurface], 
+						_vm->_video->drawLine(*_spritesArray[_destSurface],
 								_destSpriteX  - (_pattern / 2) + i,
 								_destSpriteY  - (_pattern / 2) + j,
 								_spriteRight  - (_pattern / 2) + i,
@@ -237,14 +237,14 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 				break;
 			}
 		}
-		dirtiedRect(_destSurface, MIN(_destSpriteX, _spriteRight)  - _pattern, 
-								  MIN(_destSpriteY, _spriteBottom) - _pattern, 
-								  MAX(_destSpriteX, _spriteRight)  + _pattern + 1, 
+		dirtiedRect(_destSurface, MIN(_destSpriteX, _spriteRight)  - _pattern,
+								  MIN(_destSpriteY, _spriteBottom) - _pattern,
+								  MAX(_destSpriteX, _spriteRight)  + _pattern + 1,
 								  MAX(_destSpriteY, _spriteBottom) + _pattern + 1);
 		break;
 
 	case DRAW_INVALIDATE:
-		if ((_pattern & 0xFF) != 0)			
+		if ((_pattern & 0xFF) != 0)
 			warning("oPlaytoons_spriteOperation: operation DRAW_INVALIDATE, pattern %d", _pattern & 0xFF);
 
 		_vm->_video->drawCircle(*_spritesArray[_destSurface], _destSpriteX,
@@ -388,7 +388,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
 		break;
 
-	default: 
+	default:
 		warning ("oPlaytoons_spriteOperation: Unhandled operation %d", operation);
 		break;
 	}

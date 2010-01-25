@@ -1473,7 +1473,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 		mask = _vm->findWrappedBlock(MKID_BE('WIZD'), maskPtr, maskState, 0);
 		assert(mask);
-	}		
+	}
 
 	if (flags & kWIFHasPalette) {
 		uint8 *pal = _vm->findWrappedBlock(MKID_BE('RGBS'), dataPtr, state, 0);

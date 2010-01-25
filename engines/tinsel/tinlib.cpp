@@ -3833,7 +3833,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 	bool bQuick = hold != 0;
 	PMOVER pMover = GetMover(actor);
-	
+
 	assert(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);

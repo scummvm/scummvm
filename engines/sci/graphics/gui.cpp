@@ -829,7 +829,7 @@ Common::Point SciGui::getCursorPos() {
 void SciGui::moveCursor(Common::Point pos) {
 	pos.y += _windowMgr->_picWind->rect.top;
 	pos.x += _windowMgr->_picWind->rect.left;
-	
+
 	pos.y = CLIP<int16>(pos.y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
 	pos.x = CLIP<int16>(pos.x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
 
@@ -963,7 +963,7 @@ void SciGui::frameOut() {
 
 		if (priority == -1)
 			continue;
-	
+
 		// FIXME: This code doesn't currently work properly because of the way we set up the
 		// view port. We are starting at 10 pixels from the top automatically. The offset should
 		// be based on the plane's top in SCI32 instead. Here we would be adding 10 to 10 and
@@ -989,16 +989,16 @@ void SciGui::frameOut() {
 				//topPos += planeTop;
 
 				// Theoretically, leftPos and topPos should be sane
-				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that 
+				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that
 				// the hack underneath does not try and draw cels outside the screen coordinates
 				if (leftPos >= _screen->getWidth()) {
 					continue;
 				}
-	
+
 				if (topPos >= _screen->getHeight()) {
 					continue;
 				}
-	
+
 				if (viewId != 0xffff)
 					drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 			}

@@ -8,13 +8,13 @@
 # This file is dual licensed, with permission by the original author
 # TyRaNiD, under both the Academic Free License version 2.0 and the GNU
 # General Public License version 2 or later.
-# 
+#
 # This means you can choose whether to use this code under the terms of
 # the Academic Free License version 2.0, or under the terms of the GNU
 # General Public License version 2 or later. As long as you comply to the
 # terms of at least one of these, you are allowed to use the code as
 # permitted by the respective license.
-# 
+#
 # $Id$
 # USB Keyboard Driver for PS2
 */

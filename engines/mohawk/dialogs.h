@@ -49,19 +49,19 @@ protected:
 
 public:
 	InfoDialog(MohawkEngine *vm, Common::String message);
-	
+
 	void setInfoText(Common::String message);
-	
+
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		setResult(0);
 		close();
 	}
-	
+
 	virtual void handleKeyDown(Common::KeyState state) {
 		setResult(state.ascii);
 		close();
 	}
-	
+
 	virtual void reflowLayout();
 };
 
@@ -76,7 +76,7 @@ public:
 	MystOptionsDialog(MohawkEngine_Myst *vm);
 	~MystOptionsDialog();
 	void open();
-	
+
 	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
 private:
 	MohawkEngine_Myst *_vm;
@@ -89,7 +89,7 @@ public:
 	RivenOptionsDialog(MohawkEngine_Riven *vm);
 	~RivenOptionsDialog();
 	void open();
-	
+
 	virtual void handleCommand(GUI::CommandSender*, uint32, uint32);
 private:
 	MohawkEngine_Riven *_vm;

@@ -1160,7 +1160,7 @@ void LoLEngine::showCredits() {
 			_outroShapeTable[i] = (i << 4) | i;
 	else
 		_outroShapeTable[255] = 0;
-	
+
 	_sound->haltTrack();
 	_sound->loadSoundFile("LOREFINL");
 	_sound->playTrack(4);
@@ -1474,7 +1474,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 			curShapeFile = curShapeFile % 28;
 
 			loadOutroShapes(curShapeFile, shapes);
-			
+
 			if (!_flags.use16ColorMode) {
 				_screen->getPalette(0).copy(monsterPal, curShapeFile * 40, 40, 88);
 				_screen->setScreenPalette(_screen->getPalette(0));

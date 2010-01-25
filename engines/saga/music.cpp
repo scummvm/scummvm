@@ -300,11 +300,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				Common::File *musicFile = _digitalMusicContext->getFile(resData);
 				int offs = (_digitalMusicContext->isCompressed()) ? 9 : 0;
 
-				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile, 
+				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile,
 							(uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
 
 				if (!_digitalMusicContext->isCompressed()) {
-					byte musicFlags = Audio::FLAG_STEREO | 
+					byte musicFlags = Audio::FLAG_STEREO |
 										Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 					Audio::RawDiskStreamAudioBlock audioBlocks[1];
 					audioBlocks[0].pos = 0;

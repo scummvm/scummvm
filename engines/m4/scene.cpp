@@ -113,7 +113,7 @@ void Scene::loadScene(int sceneNumber) {
 	} else {
 		// Set system palette entries
 		_vm->_palette->blockRange(0, 7);
-		RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0}, 
+		RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
 			{0x00<<2, 0x10<<2, 0x16<<2, 0}};
 		_vm->_palette->setPalette(&sysColors[0], 4, 3);
 
@@ -701,7 +701,7 @@ void Scene::setAction(int action, int objectId) {
 	// Set up the new action
 	strcpy(statusText, _vm->_globals->getVocab(action));
 	statusText[0] = toupper(statusText[0]);	// capitalize first letter
-	
+
 	if (objectId != -1) {
 		MadsObject *obj = _vm->_globals->getObject(objectId);
 		sprintf(statusText + strlen(statusText), " %s", _vm->_globals->getVocab(obj->descId));
@@ -735,7 +735,7 @@ MadsInterfaceView::MadsInterfaceView(M4Engine *vm): View(vm, Common::Rect(0, MAD
 	for (int i = 0; i < 10; ++i)
 		_screenObjects.addRect((i / 5) * 32 + 1, (i % 5) * 8 + MADS_SURFACE_HEIGHT + 2,
 			((i / 5) + 1) * 32 + 3, ((i % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 2);
-	
+
 	// Scroller elements (up arrow, scroller, down arrow)
 	_screenObjects.addRect(73, 160, 82, 167);
 	_screenObjects.addRect(73, 168, 82, 190);
@@ -744,7 +744,7 @@ MadsInterfaceView::MadsInterfaceView(M4Engine *vm): View(vm, Common::Rect(0, MAD
 	// Inventory object names
 	for (int i = 0; i < 5; ++i)
 		_screenObjects.addRect(89, 158 + i * 8, 160, 166 + i * 8);
-	
+
 	// Full rectangle area for all vocab actions
 	for (int i = 0; i < 5; ++i)
 		_screenObjects.addRect(239, 158 + i * 8, 320, 166 + i * 8);
@@ -805,7 +805,7 @@ void MadsInterfaceView::setSelectedObject(int objectNumber) {
 		_topIndex = idx;
 	else if (idx >= (_topIndex + 5))
 		_topIndex = MAX(0, idx - 4);
-	
+
 	_selectedObject = objectNumber;
 	sprintf(resName, "*OB%.3dI.SS", objectNumber);
 
@@ -843,7 +843,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		for (int y = 0; y < 5; ++y, ++actionIndex) {
 			// Determine the font colour depending on whether an item is selected. Note that the first action,
 			// 'Look', is always 'selected', even when another action is clicked on
-			setFontMode((_highlightedElement == actionIndex) ? ITEM_HIGHLIGHTED : 
+			setFontMode((_highlightedElement == actionIndex) ? ITEM_HIGHLIGHTED :
 				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
 
 			// Get the verb action and capitalise it
@@ -864,7 +864,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		destSurface->frameRect(r, 5);
 	}
 
-	// Draw the horizontal line in the scroller representing the current top selected 
+	// Draw the horizontal line in the scroller representing the current top selected
 	const Common::Rect scroller(_screenObjects[SCROLL_SCROLLER]);
 	int yP = (_inventoryList.size() < 2) ? 0 : (scroller.height() - 5) * _topIndex / (_inventoryList.size() - 1);
 	destSurface->setColor(4);
@@ -881,7 +881,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
 		const Common::Rect r(_screenObjects[INVLIST_START + i]);
-	
+
 		// Set the highlighting of the inventory item
 		if (_highlightedElement == (int)(INVLIST_START + i)) setFontMode(ITEM_HIGHLIGHTED);
 		else if (_selectedObject == _inventoryList[_topIndex + i]) setFontMode(ITEM_SELECTED);
@@ -915,7 +915,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 			const char *descStr = _vm->_globals->getVocab(obj->vocabList[i].vocabId);
 			strcpy(buffer, descStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-		
+
 			// Set the highlighting and display the entry
 			setFontMode((i == yIndex) ? ITEM_HIGHLIGHTED : ITEM_NORMAL);
 			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
@@ -942,7 +942,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 		_highlightedElement = _screenObjects.find(Common::Point(x, y));
 
 		return true;
-	
+
 	case MEVENT_LEFT_CLICK:
 		// Left mouse click
 		// Check if an inventory object was selected
@@ -1017,7 +1017,7 @@ bool MadsInterfaceView::handleCheatKey(int32 keycode) {
 	{
 		// Teleport to room
 		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
-		
+
 
 		return true;
 	}

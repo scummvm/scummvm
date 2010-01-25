@@ -224,7 +224,7 @@ private:
 
 	uint8 _subPacket; // 0 to 15
 	int _noiseIdx; // index for dithering noise table
-	
+
 	byte _emptyBuffer[FF_INPUT_BUFFER_PADDING_SIZE];
 
 	VLC _vlcTabLevel;
@@ -253,7 +253,7 @@ private:
 
 	float _noiseSamples[128];
 	void initNoiseSamples(void);
-	
+
 	RDFTContext _rdftCtx;
 
 	void average_quantized_coeffs(void);
@@ -272,7 +272,7 @@ private:
 	void process_subpacket_12(QDM2SubPNode *node, int length);
 	void process_synthesis_subpackets(QDM2SubPNode *list);
 	void qdm2_decode_super_block(void);
-	void qdm2_fft_init_coefficient(int sub_packet, int offset, int duration, 
+	void qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
 	                               int channel, int exp, int phase);
 	void qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b);
 	void qdm2_decode_fft_packets(void);

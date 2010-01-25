@@ -68,7 +68,7 @@ M4EventType Events::handleEvents() {
 			// if it's the first key pressed after the Ctrl key is held down
 			if ((_event.kbd.keycode == Common::KEYCODE_LCTRL) || (_event.kbd.keycode == Common::KEYCODE_RCTRL))
 				_ctrlFlag = true;
-			
+
 			else if (_event.kbd.flags == Common::KBD_CTRL) {
 				if ((_event.kbd.keycode == Common::KEYCODE_d) && _ctrlFlag) {
 					_console->attach();
@@ -77,7 +77,7 @@ M4EventType Events::handleEvents() {
 				_ctrlFlag = false;
 			}
 			_keyCode = (int32)_event.kbd.keycode | (_event.kbd.flags << 24);
-			
+
 
 			break;
 		case Common::EVENT_LBUTTONDOWN:

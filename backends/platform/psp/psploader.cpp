@@ -138,7 +138,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 				firstHi16 = i;						// Keep the first Hi16 we saw
 				seenHi16 = true;
 				ahl = (*target & 0xffff) << 16;		// Take lower 16 bits shifted up
-				
+
 				lastHiSymVal = sym->st_value;
 				hi16InShorts = (ShortsMan.inGeneralSegment((char *)sym->st_value)); // Fix for problem with switching btw segments
 				if (debugRelocs[0]++ < DEBUG_NUM)	// Print only a set number
@@ -154,7 +154,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 					free(rel);
 					return false;
 				}
-				
+
 				// Fix: bug in gcc makes LO16s connect to wrong HI16s sometimes (shorts and regular segment)
 				// Note that we can check the entire shorts segment because the executable's shorts don't belong to this plugin section
 				//	and will be screened out above
@@ -165,12 +165,12 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 					ahl -= (lastHiSymVal & 0xffff0000);		// We assume gcc meant the same offset
 					ahl += (sym->st_value & 0xffff0000);
 				}
-				
+
 				ahl &= 0xffff0000;				// Clean lower 16 bits for repeated LO16s
 				a = *target & 0xffff;			// Take lower 16 bits of the target
 				a = (a << 16) >> 16;			// Sign extend them
 				ahl += a;						// Add lower 16 bits. AHL is now complete
-				
+
 				// Fix: we can have LO16 access to the short segment sometimes
 				if (lo16InShorts) {
 					relocation = ahl + _shortsSegment->getOffset();		// Add in the short segment offset
@@ -243,7 +243,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 		case R_MIPS_32:									// Absolute addressing
 			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
 				a = *target;							// Get full 32 bits of addend
-				
+
 				if (ShortsMan.inGeneralSegment((char *)sym->st_value)) // Check if we're in the shorts segment
 					relocation = a + _shortsSegment->getOffset();	   // Shift by shorts offset
 				else												   // We're in the main section

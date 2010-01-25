@@ -713,7 +713,7 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 	int newDpadX = 0, newDpadY = 0;
 	event.kbd.ascii = 0;
 	event.kbd.flags = 0;
-	
+
 	if (pad.Buttons & PSP_CTRL_UP) {
 		newDpadY += 1;
 		if (pad.Buttons & PSP_CTRL_RTRIGGER)
@@ -740,7 +740,7 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = getDpadEvent(newDpadX, newDpadY);
 			event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-			_dpadX = newDpadX; 
+			_dpadX = newDpadX;
 			_dpadY = newDpadY;
 		}
 		else if (newDpadX == 0 && newDpadY == 0) {// We unpressed dpad
@@ -756,11 +756,11 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 			_dpadX = 0; // so that we'll pick up a new dpad movement
 			_dpadY = 0;
 		}
-		
+
 		_prevButtons = pad.Buttons;
 		return true;
-	
-	} else if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | 
+
+	} else if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START |
 						PSP_CTRL_SELECT | PSP_CTRL_SQUARE | PSP_CTRL_TRIANGLE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
@@ -769,7 +769,7 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 		} else {
 			//any of the other buttons.
 			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
-			
+
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
 				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
@@ -894,7 +894,7 @@ inline Common::KeyCode OSystem_PSP::getDpadEvent(int x, int y) {
 		else /* y == 1 */
 			key = Common::KEYCODE_KP9;
 	}
-	
+
 	return key;
 }
 

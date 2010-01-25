@@ -688,7 +688,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 void GUI_LoK::redrawTextfield() {
 	_screen->fillRect(38, 91, 287, 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
 	_text->printText(_savegameName, 38, 92, 253, 0, 0);
-	
+
 	_screen->_charWidth = -2;
 	int width = _screen->getTextWidth(_savegameName);
 	_screen->fillRect(39 + width, 93, 45 + width, 100, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
@@ -742,7 +742,7 @@ int GUI_LoK::saveGame(Button *button) {
 	_cancelSubMenu = false;
 
 	Screen::FontId cf = _screen->setFont(Screen::FID_8_FNT);
-	
+
 	if (_savegameOffset == 0 && _vm->_gameToLoad == 0) {
 		_savegameName[0] = 0;
 	} else {

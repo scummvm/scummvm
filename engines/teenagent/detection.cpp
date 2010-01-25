@@ -51,7 +51,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"mmm.res", 0, NULL, -1},
 			{"sam_mmm.res", 0, NULL, -1},
 			{"sam_sam.res", 0, NULL, -1},
-			{"unlogic.res", 0, NULL, -1}, 
+			{"unlogic.res", 0, NULL, -1},
 			{NULL, 0, NULL, 0}
 		},
 		Common::EN_ANY,
@@ -137,7 +137,7 @@ public:
 					buf[24] = 0;
 					Common::String description = buf;
 					saveList.push_back(SaveStateDescriptor(slot, description));
-					
+
 					delete in;
 				}
 			}

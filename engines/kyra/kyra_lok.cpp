@@ -339,7 +339,7 @@ Common::Error KyraEngine_LoK::go() {
 void KyraEngine_LoK::startup() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
-	
+
 	_sound->setSoundList(&_soundData[kMusicIngame]);
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSoundFile("SE.DAT");

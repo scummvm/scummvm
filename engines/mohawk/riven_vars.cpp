@@ -29,7 +29,7 @@
 
 namespace Mohawk {
 
-// The Riven variable system is complex. The scripts of each stack give a number, but the number has to be matched 
+// The Riven variable system is complex. The scripts of each stack give a number, but the number has to be matched
 // to a variable name defined in NAME resource 4.
 
 static const char *variableNames[] = {
@@ -51,7 +51,7 @@ static const char *variableNames[] = {
 	"atrapbook",
 	"auservolume",
 	"azip",
-	
+
 	// bspit
 	"bbacklock",
 	"bbait",
@@ -94,7 +94,7 @@ static const char *variableNames[] = {
 	"bytramtime",
 	"bytrap",
 	"bytrapped",
-	
+
 	// gspit
 	"gbook",
 	"gcathtime",
@@ -126,7 +126,7 @@ static const char *variableNames[] = {
 	"gupmoov",
 	"gwhark",
 	"gwharktime",
-	
+
 	// jspit
 	"jwmagcar",
 	"jbeetle",
@@ -175,7 +175,7 @@ static const char *variableNames[] = {
 	"jwmouth",
 	"jwmagcar",
 	"jymagcar",
-	
+
 	// ospit
 	"oambient",
 	"obutton",
@@ -185,7 +185,7 @@ static const char *variableNames[] = {
 	"omusicplayer",
 	"ostanddrawer",
 	"ostove",
-	
+
 	// pspit
 	"pbook",
 	"pcage",
@@ -200,13 +200,13 @@ static const char *variableNames[] = {
 	"prightpos",
 	"ptemp",
 	"pwharkpos",
-	
+
 	// rspit
 	"rrebel",
 	"rrebelview",
 	"rrichard",
 	"rvillagetime",
-	
+
 	// tspit
 	"tbars",
 	"tbeetle",
@@ -248,7 +248,7 @@ static const char *variableNames[] = {
 	"twabrvalve",
 	"twaffle",
 	"tyellow",
-	
+
 	// Miscellaneous
 	"elevbtn1",
 	"elevbtn2",
@@ -298,11 +298,11 @@ void MohawkEngine_Riven::initVars() {
 	_varCount = ARRAYSIZE(variableNames);
 
 	_vars = new uint32[_varCount];
-	
+
 	// Temporary:
 	for (uint32 i = 0; i < _varCount; i++)
 		_vars[i] = 0;
-	
+
 	// Init Variables to their correct starting state.
 	*matchVarToString("ttelescope") = 5;
 	*matchVarToString("tgatestate") = 1;

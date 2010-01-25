@@ -18,7 +18,7 @@
 	.byte	0x0F	@32KiB	@ Log [base-2] of the size of this driver in bytes.
 	.byte	0x00			@ Sections to fix
 	.byte 	0x0F	@32KiB	@ Log [base-2] of the allocated space in bytes.
-	
+
 @---------------------------------------------------------------------------------
 @ Text identifier - can be anything up to 47 chars + terminating null -- 16 bytes
 	.align	4
@@ -42,13 +42,13 @@ _dldi_driver_name:
 _io_dldi:
 	.ascii	"DLDI"					@ ioType
 	.word	0x00000000				@ Features
-	.word	_DLDI_startup			@ 
-	.word	_DLDI_isInserted		@ 
+	.word	_DLDI_startup			@
+	.word	_DLDI_isInserted		@
 	.word	_DLDI_readSectors		@   Function pointers to standard device driver functions
-	.word	_DLDI_writeSectors		@ 
-	.word	_DLDI_clearStatus		@ 
-	.word	_DLDI_shutdown			@ 
-	
+	.word	_DLDI_writeSectors		@
+	.word	_DLDI_clearStatus		@
+	.word	_DLDI_shutdown			@
+
 @---------------------------------------------------------------------------------
 
 _DLDI_startup:

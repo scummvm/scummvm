@@ -258,7 +258,7 @@ void AgiEngine::processEvents() {
 			break;
 
 		case Common::EVENT_KEYUP:
-			if (_egoHoldKey)	
+			if (_egoHoldKey)
 				_game.viewTable[0].direction = 0;
 
 		default:

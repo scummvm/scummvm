@@ -181,7 +181,7 @@ extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
                                          int     width,
                                          int     height,
                                          uint32  mask);
-                                   
+
 void Normal2xAspect(const uint8  *srcPtr,
                           uint32  srcPitch,
                           uint8  *dstPtr,

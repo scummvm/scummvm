@@ -571,7 +571,7 @@ void ScriptFunctions::stopSound() {
 		_vm->_res->freeResource(_soundResource);
 		_soundStarted = false;
 	}
-		
+
 }
 
 

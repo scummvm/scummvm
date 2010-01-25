@@ -230,7 +230,7 @@ CursorManager::Cursor::Cursor(const byte *data, uint w, uint h, int hotspotX, in
 #ifdef USE_RGB_COLOR
 	if (!format)
 		_format = Graphics::PixelFormat::createFormatCLUT8();
-	 else 
+	 else
 		_format = *format;
 	_size = w * h * _format.bytesPerPixel;
 	_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);

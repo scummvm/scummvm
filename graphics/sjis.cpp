@@ -282,7 +282,7 @@ bool FontSjisSVM::loadData() {
 	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("SJIS.FNT");
 	if (!data)
 		return false;
-	
+
 	uint32 magic1 = data->readUint32BE();
 	uint32 magic2 = data->readUint32BE();
 
@@ -314,7 +314,7 @@ bool FontSjisSVM::loadData() {
 	delete data;
 	return retValue;
 }
- 
+
 const uint8 *FontSjisSVM::getCharData(uint16 c) const {
 	const uint8 fB = c & 0xFF;
 	const uint8 sB = c >> 8;

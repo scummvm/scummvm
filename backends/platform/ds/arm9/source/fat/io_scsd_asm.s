@@ -1,22 +1,22 @@
     .TEXT
 @--------------------------------sd data--------------------------------
 .equ sd_comadd,0x9800000
-.equ sd_dataadd,0x9000000  
+.equ sd_dataadd,0x9000000
 .equ sd_dataradd,0x9100000
 @-----------------viod sd_data_write_s(u16 *buff,u16* crc16buff)-------------------
     .ALIGN
-    .GLOBAL sd_data_write_s	
+    .GLOBAL sd_data_write_s
     .CODE 32
 sd_data_write_s:
 	stmfd   r13!,{r4-r5}
 	mov	r5,#512
 	mov	r2,#sd_dataadd
 sd_data_write_busy:
-	ldrh	r3,[r2]   
+	ldrh	r3,[r2]
 	tst	r3,#0x100
 	beq	sd_data_write_busy
 
-	ldrh	r3,[r2]   
+	ldrh	r3,[r2]
 
 	mov	r3,#0 @star bit
 	strh	r3,[r2]
@@ -24,10 +24,10 @@ sd_data_write_loop:
 	ldrh	r3,[r0],#2
 	add	r3,r3,r3,lsl #20
 	mov	r4,r3,lsl #8
-	stmia   r2,{r3-r4}  
- 
-        subs    r5, r5, #2                 
-        bne     sd_data_write_loop  
+	stmia   r2,{r3-r4}
+
+        subs    r5, r5, #2
+        bne     sd_data_write_loop
 
 	cmp	r1,#0
 	movne	r0,r1
@@ -38,11 +38,11 @@ sd_data_write_loop:
 	mov	r3,#0xff @end bit
 	strh	r3,[r2]
 sd_data_write_loop2:
-	ldrh	r3,[r2]   
+	ldrh	r3,[r2]
 	tst	r3,#0x100
 	bne	sd_data_write_loop2
 
-	ldmia   r2,{r3-r4} 
+	ldmia   r2,{r3-r4}
 
 	ldmfd	r13!,{r4-r5}
 	bx      r14
@@ -50,7 +50,7 @@ sd_data_write_loop2:
 
 @----------void sd_data_read_s(u16 *buff)-------------
     .ALIGN
-    .GLOBAL sd_data_read_s	
+    .GLOBAL sd_data_read_s
     .CODE 32
 sd_data_read_s:
 	stmfd   r13!,{r4}
@@ -61,62 +61,62 @@ sd_data_read_loop1:
 	bne	sd_data_read_loop1
 	mov	r2,#512
 sd_data_read_loop:
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-	ldmia	r1,{r3-r4} 
+	ldmia	r1,{r3-r4}
 	mov	r3,r4,lsr #16
 	strh	r3 ,[r0],#2
 
-        subs    r2, r2, #16                
-        bne     sd_data_read_loop 
+        subs    r2, r2, #16
+        bne     sd_data_read_loop
 
 	ldmia	r1,{r3-r4} @crc 16
-	ldmia	r1,{r3-r4}  
-	ldmia	r1,{r3-r4}  
-	ldmia	r1,{r3-r4}  
+	ldmia	r1,{r3-r4}
+	ldmia	r1,{r3-r4}
+	ldmia	r1,{r3-r4}
 	ldrh	r3,[r1]    @end bit
-	ldmfd	r13!,{r4}  
+	ldmfd	r13!,{r4}
 	bx      r14
 @----------end sd_data_read_s-------------
 
 @------void sd_com_crc16_s(u16* buff,u16 num,u16* crc16buff)
     .ALIGN
-    .GLOBAL	sd_crc16_s 
+    .GLOBAL	sd_crc16_s
     .CODE 32
 sd_crc16_s:
 	stmfd   r13!,{r4-r9}
 	mov	r9,r2
 
-	mov	r3,#0  
-	mov	r4,#0  
-	mov	r5,#0  
-	mov	r6,#0  
+	mov	r3,#0
+	mov	r4,#0
+	mov	r5,#0
+	mov	r6,#0
 
 	ldr	r7,=0x80808080
 	ldr	r8,=0x1021
@@ -131,19 +131,19 @@ sd_crc16_loop:
 	eorne	r3,r3,r8
 	tst	r2,r7,lsr #24
 	eorne	r3,r3,r8
-	
+
 	mov	r4,r4,lsl #1
 	tst	r4,#0x10000
 	eorne	r4,r4,r8
 	tst	r2,r7,lsr #25
 	eorne	r4,r4,r8
-	
+
 	mov	r5,r5,lsl #1
 	tst	r5,#0x10000
 	eorne	r5,r5,r8
 	tst	r2,r7,lsr #26
 	eorne	r5,r5,r8
-	
+
 	mov	r6,r6,lsl #1
 	tst	r6,#0x10000
 	eorne	r6,r6,r8
@@ -152,7 +152,7 @@ sd_crc16_loop:
 
 	mov	r7,r7,ror #4
 	subs	r1,r1,#4
-        bne     sd_crc16_loop 
+        bne     sd_crc16_loop
 
 	mov	r2,r9
 	mov	r8,#16
@@ -184,7 +184,7 @@ sd_crc16_write_data:
 
 @--------------u8 sd_crc7_s(u16* buff,u16 num)----------------------------
     .ALIGN
-    .GLOBAL	sd_crc7_s 
+    .GLOBAL	sd_crc7_s
     .CODE 32
 sd_crc7_s:
 	stmfd   r13!,{r4}
@@ -206,7 +206,7 @@ sd_crc7_loop:
 
 	mov	r4,r4,ror #1
 	subs	r1,r1,#1
-        bne     sd_crc7_loop 
+        bne     sd_crc7_loop
 
 	mov	r3,r3,lsl #1
 	add	r0,r3,#1
@@ -216,7 +216,7 @@ sd_crc7_loop:
 
 @--------------sd_com_read_s(u16* buff,u32 num)------------------
 		.ALIGN
-		.GLOBAL	 sd_com_read_s 
+		.GLOBAL	 sd_com_read_s
 		.CODE 32
 
 sd_com_read_s:
@@ -229,8 +229,8 @@ sd_com_read_loop1:
 
 sd_com_read_loop:
 	ldmia   r2,{r3-r6}
-        subs    r1, r1, #1                  
-        bne     sd_com_read_loop  
+        subs    r1, r1, #1
+        bne     sd_com_read_loop
 	ldmfd	r13!,{r4-r6}
 	bx      r14
 @--------------end sd_com_read_s------------------
@@ -242,14 +242,14 @@ sd_com_read_loop:
 		.CODE 32
 sd_com_write_s:
 	stmfd   r13!,{r4-r6}
-	
+
 	mov	r2,#sd_comadd
 sd_com_write_busy:
-	ldrh	r3,[r2]   
+	ldrh	r3,[r2]
 	tst	r3,#0x1
 	beq	sd_com_write_busy
 
-	ldrh	r3,[r2]  
+	ldrh	r3,[r2]
 
 sd_com_write_loop:
         ldrb   r3,[r0],#1
@@ -257,9 +257,9 @@ sd_com_write_loop:
 	mov	r4,r3,lsl #2
 	mov	r5,r4,lsl #2
 	mov	r6,r5,lsl #2
-        stmia   r2,{r3-r6}  
-        subs    r1, r1, #1                  
-        bne     sd_com_write_loop  
+        stmia   r2,{r3-r6}
+        subs    r1, r1, #1
+        bne     sd_com_write_loop
 	ldmfd   r13!,{r4-r6}
 
 	bx      r14
@@ -267,7 +267,7 @@ sd_com_write_loop:
 
 @-----------------void send_clk(u32 num)---------
 		.ALIGN
-		.GLOBAL	 send_clk 
+		.GLOBAL	 send_clk
 		.CODE 32
 
 send_clk:
@@ -281,7 +281,7 @@ send_clk_loop1:
 
 @---------------------------void SDCommand(u8 command,u8 num,u32 sector)--------------------
 		.ALIGN
-		.GLOBAL	 SDCommand 
+		.GLOBAL	 SDCommand
 		.CODE 32
 @void SDCommand(u8 command,u8 num,u32 sector )
 @{
@@ -338,12 +338,12 @@ SDCommand:
 @	register u16 i,j;
 @	i=readnum;
 @	sectno<<=9;
-@	SDCommand(18,0,sector); 
+@	SDCommand(18,0,sector);
 @	for (j=0;j<i ; j++)
 @	{
 @		sd_data_read_s((u32)buff+j*512);
 @	}
-@	SDCommand(12,0,0); 
+@	SDCommand(12,0,0);
 @	get_resp();
 @	send_clk(0x10);
 @
@@ -363,7 +363,7 @@ beginforj_ReadSector:
 	cmp	r6,r5
 	bge	endforj_ReadSector
 	mov	r0,r4
-	add	r0,r0,r6,lsl #9 
+	add	r0,r0,r6,lsl #9
 	bl	sd_data_read_s
 	add	r6,r6,#1
 	b	beginforj_ReadSector
@@ -408,17 +408,17 @@ get_resp:
 @
 @	sectno<<=9;
 @
-@	SDCommand(25,0,sector); 
+@	SDCommand(25,0,sector);
 @	get_resp();
-@	send_clk(0x10); 
+@	send_clk(0x10);
 @
 @	for (j=0;j<i ; j++)
 @	{
 @		sd_crc16_s((u32)(u32)buff+j*512,512,(u32)crc16);
 @		sd_data_write_s((u32)buff+j*512,(u32)crc16);
-@		send_clk(0x10); 
+@		send_clk(0x10);
 @	}
-@	SDCommand(12,0,0); 
+@	SDCommand(12,0,0);
 @	get_resp();
 @	send_clk(0x10);
 @	while((*(u16*)sd_dataadd &0x0100)==0);
@@ -451,7 +451,7 @@ beginforj_WriteSector:
 	add	r2,r13,#4
 	bl	sd_crc16_s
 	mov	r0,r4
-	add	r0,r0,r6,lsl #9 
+	add	r0,r0,r6,lsl #9
 	add	r1,r13,#4
 	bl	sd_data_write_s
 	mov	r0,#0x10
@@ -481,7 +481,7 @@ beginwhile_WriteSector:
 		.GLOBAL	 InitSCMode
 		.CODE 32
 InitSCMode:
-	mvn     r0,#0x0F6000000 
+	mvn     r0,#0x0F6000000
 	sub     r0,r0,#0x01
 	mov     r1,#0x0A500
 	add     r1,r1,#0x5A

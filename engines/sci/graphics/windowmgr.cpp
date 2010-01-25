@@ -143,17 +143,17 @@ Window *WindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *resto
 	pwnd->rect = dims;
 	if (restoreRect)
 		pwnd->restoreRect = *restoreRect;
-	
+
 	pwnd->wndStyle = style;
 	pwnd->hSaved1 = pwnd->hSaved2 = NULL_REG;
 	pwnd->bDrawn = false;
 	if ((style & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0)
 		pwnd->saveScreenMask = (priority == -1 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY);
-	
+
 	if (title && (style & SCI_WINDOWMGR_STYLE_TITLE)) {
 		pwnd->title = title;
 	}
-	
+
 	r = dims;
 	if ((style != SCI_WINDOWMGR_STYLE_USER) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 		r.grow(1);
@@ -165,23 +165,23 @@ Window *WindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *resto
 
 	// FIXME: it seems as if shadows may result in the window getting moved one upwards
 	//         so that the shadow is visible (lsl5)
-	
+
 	pwnd->dims = r;
 	const Common::Rect *wmprect = &_wmgrPort->rect;
 	int16 oldtop = pwnd->dims.top;
 	int16 oldleft = pwnd->dims.left;
 	if (wmprect->top > pwnd->dims.top)
 		pwnd->dims.moveTo(pwnd->dims.left, wmprect->top);
-	
+
 	if (wmprect->bottom < pwnd->dims.bottom)
 		pwnd->dims.moveTo(pwnd->dims.left, wmprect->bottom - pwnd->dims.bottom + pwnd->dims.top);
-	
+
 	if (wmprect->right < pwnd->dims.right)
 		pwnd->dims.moveTo(wmprect->right + pwnd->dims.left - pwnd->dims.right, pwnd->dims.top);
-	
+
 	if (wmprect->left > pwnd->dims.left)
 		pwnd->dims.moveTo(wmprect->left, pwnd->dims.top);
-	
+
 	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft, pwnd->rect.top + pwnd->dims.top - oldtop);
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
@@ -192,7 +192,7 @@ Window *WindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *resto
 		pwnd->restoreRect.bottom++;
 		pwnd->restoreRect.right++;
 	}
-	
+
 	if (draw)
 		DrawWindow(pwnd);
 	_gfx->SetPort((Port *)pwnd);
@@ -218,7 +218,7 @@ void WindowMgr::DrawWindow(Window *pWnd) {
 				_gfx->FillRect(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY, 0, 15);
 		}
 	}
-	
+
 	// drawing frame,shadow and title
 	if (!(wndStyle & SCI_WINDOWMGR_STYLE_USER)) {
 		r = pWnd->dims;
@@ -241,14 +241,14 @@ void WindowMgr::DrawWindow(Window *pWnd) {
 					_text->Box(pWnd->title.c_str(), 1, r, SCI_TEXT_ALIGNMENT_CENTER, 0);
 					_gfx->PenColor(oldcolor);
 				}
-				
+
 				r = pWnd->dims;
 				r.top += 9;
 			}
-			
+
 			r.grow(-1);
 		}
-		
+
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
 			_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, pWnd->backClr);
 

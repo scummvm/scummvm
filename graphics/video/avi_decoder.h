@@ -32,10 +32,10 @@
 #include "sound/mixer.h"
 
 namespace Graphics {
-	
+
 #define UNKNOWN_HEADER(a) error("Unknown header found -- \'%s\'", tag2str(a))
 #define AUDIO_RATE (_audsHeader.rate / _audsHeader.scale)
-	
+
 // IDs used throughout the AVI files
 // that will be handled by this player
 #define ID_RIFF MKID_BE('RIFF')
@@ -107,7 +107,7 @@ struct AVIOLDINDEX {
 		uint32 size;
 	} *indices;
 };
-	
+
 // Index Flags
 enum IndexFlags {
 	AVIIF_INDEX = 0x10
@@ -143,7 +143,7 @@ struct AVIHeader {
 	uint32 width;
 	uint32 height;
 };
-	
+
 // Flags from the AVIHeader
 enum AviFlags {
 	AVIF_HASINDEX = 0x00000010,
@@ -153,7 +153,7 @@ enum AviFlags {
 	AVIF_WASCAPTUREFILE = 0x00010000,
 	AVIF_WASCOPYRIGHTED = 0x00020000
 };
-	
+
 struct AVIStreamHeader {
 	uint32 size;
 	uint32 streamType;
@@ -202,19 +202,19 @@ private:
 	AVIStreamHeader _vidsHeader;
 	AVIStreamHeader _audsHeader;
 	byte _palette[3 * 256];
-	
+
 	bool _decodedHeader;
-	
+
 	Codec *_videoCodec;
 	Codec *createCodec();
-	
+
 	Audio::Mixer::SoundType _soundType;
 
 	void runHandle(uint32 tag);
 	void handleList();
 	void handleStreamHeader();
 	void handlePalChange();
-	
+
 	Audio::SoundHandle *_audHandle;
 	Audio::QueuingAudioStream *_audStream;
 	Audio::QueuingAudioStream *createAudioStream();

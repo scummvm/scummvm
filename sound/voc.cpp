@@ -149,7 +149,7 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 			assert(len == 0);
 			break;
 		case 8: { // "Extended"
-			// This occures in the LoL Intro demo. 
+			// This occures in the LoL Intro demo.
 			// This block overwrites the next parameters of a block 1 "Sound data".
 			// To assure we never get any bad data here, we will assert in case
 			// this tries to define a stereo sound block or tries to use something
@@ -251,7 +251,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawDiskStreamAudioBlock* 
 			}
 			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 			if (packing == 0) {
-				
+
 				// Found a data block - so add it to the block list
 				block[currentBlock].pos = stream.pos();
 				block[currentBlock].len = len;

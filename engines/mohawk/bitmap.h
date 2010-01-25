@@ -91,7 +91,7 @@ public:
 	void drawRaw();
 	void drawRLE8();
 	void drawRLE();
-	
+
 protected:
 	BitmapHeader _header;
 	byte getBitsPerPixel();
@@ -122,7 +122,7 @@ public:
 
 	ImageData *decodeImage(Common::SeekableReadStream *stream);
 
-private:	
+private:
 	struct BitmapHeader {
 		uint16 type;
 		uint32 size;

@@ -39,12 +39,12 @@ Sound::Sound(MohawkEngine* vm) : _vm(vm) {
 	_rivenSoundFile = NULL;
 	_midiDriver = NULL;
 	_midiParser = NULL;
-	
+
 	for (uint32 i = 0; i < _handles.size(); i++) {
 		_handles[i].handle = Audio::SoundHandle();
 		_handles[i].type = kFreeHandle;
 	}
-	
+
 	initMidi();
 }
 
@@ -52,12 +52,12 @@ Sound::~Sound() {
 	stopSound();
 	stopAllSLST();
 	delete _rivenSoundFile;
-	
+
 	if (_midiDriver) {
 		_midiDriver->close();
 		delete _midiDriver;
 	}
-	
+
 	if (_midiParser) {
 		_midiParser->unloadMusic();
 		delete _midiParser;
@@ -69,18 +69,18 @@ void Sound::loadRivenSounds(uint16 stack) {
 
 	if (!_rivenSoundFile)
 		_rivenSoundFile = new MohawkArchive();
-	
+
 	_rivenSoundFile->open(Common::String(prefixes[stack]) + "_Sounds.mhk");
 }
 
 void Sound::initMidi() {
 	if (!(_vm->getFeatures() & GF_HASMIDI))
 		return;
-		
+
 	// Let's get our MIDI parser/driver
 	_midiParser = MidiParser::createParser_SMF();
 	_midiDriver = MidiDriver::createMidi(MidiDriver::detectMusicDriver(MDT_ADLIB|MDT_MIDI));
-	
+
 	// Set up everything!
 	_midiDriver->open();
 	_midiParser->setMidiDriver(_midiDriver);
@@ -89,10 +89,10 @@ void Sound::initMidi() {
 
 Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume, bool loop) {
 	debug (0, "Playing sound %d", id);
-	
+
 	SndHandle *handle = getHandle();
 	handle->type = kUsedHandle;
-	
+
 	Audio::AudioStream *audStream = NULL;
 
 	switch (_vm->getGameType()) {
@@ -108,7 +108,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume,
 				id = mjmpStream->readUint16LE();
 				delete mjmpStream;
 			}
-			
+
 			audStream = Audio::makeWAVStream(_vm->getRawData(ID_MSND, id), DisposeAfterUse::YES);
 		} else
 			audStream = makeMohawkWaveStream(_vm->getRawData(ID_MSND, id));
@@ -134,16 +134,16 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume,
 	default:
 		audStream = makeMohawkWaveStream(_vm->getRawData(ID_TWAV, id));
 	}
-	
+
 	if (audStream) {
 		// Set the stream to loop here if it's requested
 		if (loop)
 			audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
-	
+
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
 		return &handle->handle;
 	}
-	
+
 	return NULL;
 }
 
@@ -155,36 +155,36 @@ void Sound::playMidi(uint16 id) {
 	}
 
 	assert(_midiDriver && _midiParser);
-	
+
 	_midiParser->unloadMusic();
 	Common::SeekableReadStream *midi = _vm->getRawData(ID_TMID, id);
-	
+
 	idTag = midi->readUint32BE();
 	assert(idTag == ID_MHWK);
 	midi->readUint32BE(); // Skip size
 	idTag = midi->readUint32BE();
 	assert(idTag == ID_MIDI);
-	
+
 	byte *midiData = (byte *)malloc(midi->size() - 12); // Enough to cover MThd/Prg#/MTrk
-	
+
 	// Read the MThd Data
 	midi->read(midiData, 14);
-	
+
 	// TODO: Load patches from the Prg# section... skip it for now.
 	idTag = midi->readUint32BE();
 	assert(idTag == ID_PRG);
 	midi->skip(midi->readUint32BE());
-	
+
 	// Read the MTrk Data
 	uint32 mtrkSize = midi->size() - midi->pos();
 	midi->read(midiData + 14, mtrkSize);
-	
+
 	delete midi;
 
 	// Now, play it :)
 	if (!_midiParser->loadMusic(midiData, 14 + mtrkSize))
 		error ("Could not play MIDI music from tMID %04x\n", id);
-		
+
 	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
 }
 
@@ -192,7 +192,7 @@ void Sound::playSLST(uint16 index, uint16 card) {
 	Common::SeekableReadStream *slstStream = _vm->getRawData(ID_SLST, card);
 	SLSTRecord slstRecord;
 	uint16 recordCount = slstStream->readUint16BE();
-	
+
 	for (uint16 i = 0; i < recordCount; i++) {
 		slstRecord.index = slstStream->readUint16BE();
 		slstRecord.sound_count = slstStream->readUint16BE();
@@ -236,13 +236,13 @@ void Sound::playSLST(uint16 index, uint16 card) {
 			delete slstStream;
 			return;
 		}
-		
+
 		delete[] slstRecord.sound_ids;
 		delete[] slstRecord.volumes;
 		delete[] slstRecord.balances;
 		delete[] slstRecord.u2;
 	}
-	
+
 	delete slstStream;
 	// No matching records, assume we need to stop all SLST's
 	stopAllSLST();
@@ -258,7 +258,7 @@ void Sound::playSLST(SLSTRecord slstRecord) {
 		if (noLongerPlay)
 			stopSLSTSound(i, (slstRecord.fade_flags & 1) != 0);
 	}
-	
+
 	// Start new sounds
 	for (uint16 i = 0; i < slstRecord.sound_count; i++) {
 		bool alreadyPlaying = false;
@@ -295,24 +295,24 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 	sndHandle.handle = new Audio::SoundHandle();
 	sndHandle.id = id;
 	_currentSLSTSounds.push_back(sndHandle);
-	
+
 	Audio::AudioStream *audStream = makeMohawkWaveStream(_rivenSoundFile->getRawData(ID_TWAV, id));
-	
+
 	// Loop here if necessary
 	if (loop)
 		audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
-	
+
 	// The max mixer volume is 255 and the max Riven volume is 256. Just change it to 255.
 	if (volume == 256)
 		volume = 255;
-	
+
 	// TODO: Handle fading, possibly just raise the volume of the channel in increments?
-	
+
 	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, volume, convertBalance(balance));
 }
 
 void Sound::stopSLSTSound(uint16 index, bool fade) {
-	// TODO: Fade out, mixer needs to be extended to get volume on a handle	
+	// TODO: Fade out, mixer needs to be extended to get volume on a handle
 	_vm->_mixer->stopHandle(*_currentSLSTSounds[index].handle);
 	_currentSLSTSounds.remove_at(index);
 }
@@ -371,7 +371,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			adpc.itemCount = stream->readUint16BE();
 			adpc.channels = stream->readUint16BE();
 			adpc.statusItems = new ADPC_Chunk::StatusItem[adpc.itemCount];
-			
+
 			assert(adpc.channels <= 2);
 
 			for (uint16 i = 0; i < adpc.itemCount; i++) {
@@ -380,7 +380,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 				for (uint16 j = 0; j < adpc.channels; j++)
 					adpc.statusItems[i].channelStatus[j] = stream->readUint32BE();
 			}
-			
+
 			delete[] adpc.statusItems;
 			break;
 		case ID_CUE:
@@ -398,7 +398,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			// chunk are for looping. Since it was only used in Myst, it was
 			// always 10 0's, Tito just thought it was useless. I'm still not
 			// sure what purpose this has.
-		
+
 			cue.size = stream->readUint32BE();
 			cue.point_count = stream->readUint16BE();
 
@@ -446,7 +446,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			error ("Unknown tag found in 'tWAV' chunk -- \'%s\'", tag2str(tag));
 		}
 	}
-	
+
 	// makeMohawkWaveStream always takes control of the original stream
 	delete stream;
 
@@ -482,7 +482,7 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	uint16 header = stream->readUint16BE();
 	uint16 rate = 0;
 	uint32 size = 0;
-	
+
 	if (header == 'Wv') { // Big Endian
 		rate = stream->readUint16BE();
 		stream->skip(10); // Loop chunk, like the newer format?
@@ -493,12 +493,12 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 		size = stream->readUint32LE();
 	} else
 		error("Could not find Old Mohawk Sound header");
-		
+
 	assert(size);
 	byte *data = (byte *)malloc(size);
 	stream->read(data, size);
 	delete stream;
-	
+
 	return Audio::makeRawMemoryStream(data, size, rate, Audio::FLAG_UNSIGNED);
 }
 

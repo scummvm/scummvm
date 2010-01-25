@@ -29,7 +29,7 @@
 #include "sci/engine/kernel.h"
 
 namespace Sci {
-	
+
 struct SelectorRemap {
 	SciVersion minVersion;
 	SciVersion maxVersion;
@@ -113,5 +113,5 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 
 	return names;
 }
-	
+
 } // End of namespace Sci

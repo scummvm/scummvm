@@ -124,7 +124,7 @@ public:
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
 
-	/** 
+	/**
 	 * Returns number of loops the stream has played.
 	 * @param numLoops number of loops to play, 0 - infinite
 	 */
@@ -256,7 +256,7 @@ private:
  * A SubSeekableAudioStream provides access to a SeekableAudioStream
  * just in the range [start, end).
  * The same caveats apply to SubSeekableAudioStream as do to SeekableAudioStream.
- * 
+ *
  * Manipulating the parent stream directly /will/ mess up a substream.
  *
  * IMPORTANT:

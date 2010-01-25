@@ -529,7 +529,7 @@ void SfxState::updateSingleSong() {
 		}
 
 		debugC(2, kDebugLevelSound, "%s", debugMessage.c_str());
-				
+
 		_song = newsong;
 		thawTime(); /* Recover song delay time */
 
@@ -556,7 +556,7 @@ void SfxState::updateMultiSong() {
 
 	// WORKAROUND: sometimes, newsong can be NULL (e.g. in SQ4).
 	// Handle this here, so that we avoid a crash
-	if (!newsong) {	
+	if (!newsong) {
 		// Iterators should get freed when there's only one song left playing
 		if(oldfirst && oldfirst->_status == SOUND_STATUS_STOPPED) {
 			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx\n", oldfirst->_handle);
@@ -579,7 +579,7 @@ void SfxState::updateMultiSong() {
 		oldseeker->_nextStopping = oldseeker->_nextPlaying;
 		oldseeker->_nextPlaying = &not_playing_anymore;
 
-		if (oldseeker == oldseeker->_nextPlaying) { 
+		if (oldseeker == oldseeker->_nextPlaying) {
 			error("updateMultiSong() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		}
 	}
@@ -588,7 +588,7 @@ void SfxState::updateMultiSong() {
 	for (newseeker = newsong; newseeker; newseeker = newseeker->_nextPlaying) {
 		newseeker->_nextPlaying = _songlib.findNextActive(newseeker);
 
-		if (newseeker == newseeker->_nextPlaying) { 
+		if (newseeker == newseeker->_nextPlaying) {
 			error("updateMultiSong() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		}
 	}

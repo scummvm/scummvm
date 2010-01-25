@@ -245,12 +245,12 @@ void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
 	byte charsetR, charsetG, charsetB;
 
 	int paletteOffset = *ptr++;
-	int numPalettes = *ptr++;	
+	int numPalettes = *ptr++;
 
 	int firstIndex = paletteOffset * 16;
 	int numcolor = numPalettes * 16;
 
-	// the only color over which a background sprite 
+	// the only color over which a background sprite
 	// (bit 7 of the sprite attributes) will be visible
 	colorPCEToRGB(READ_LE_UINT16(ptr), &bgSpriteR, &bgSpriteG, &bgSpriteB);
 	ptr += 2;

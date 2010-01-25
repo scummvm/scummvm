@@ -229,7 +229,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		_playList.push_back(pSnd);
 		sortPlayList();
 	}
-	
+
 	_mutex.unlock();	// unlock to perform mixer-related calls
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
@@ -371,7 +371,7 @@ void SciMusic::printPlayList(Console *con) {
 
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
-		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i, 
+		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i,
 						PRINT_REG(song->soundObj), song->resnum,
 						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
 	}
@@ -405,7 +405,7 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 					con->DebugPrintf("Sound resource information:\n");
 					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
 					if (track && track->digitalChannelNr != -1) {
-						con->DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n", 
+						con->DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 							track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 					}
 				}

@@ -53,7 +53,7 @@ SegManager::SegManager(ResourceManager *resMan) {
 	Lists_seg_id = 0;
 	Nodes_seg_id = 0;
 	Hunks_seg_id = 0;
-	
+
 #ifdef ENABLE_SCI32
 	Arrays_seg_id = 0;
 	String_seg_id = 0;

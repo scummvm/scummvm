@@ -507,14 +507,14 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 	}
 
 	// Workaround for "Missing Red Dragon in square" bug in Discworld 1 PSX, act IV.
-	// This happens with the original interpreter on PSX too: the red dragon in Act IV 
+	// This happens with the original interpreter on PSX too: the red dragon in Act IV
 	// doesn't show up inside the square at the right time. Original game required the
 	// player to go in and out the square until the dragon appears (wasting hours).
 	// I'm forcing the load of the right scene by checking that the player has (or has not) the
 	// right items: player must have Mambo the swamp dragon, and mustn't have fireworks (used on
 	// the swamp dragon previously to "load it up").
 	if (TinselV1PSX && NextScene.scene == 0x1800000 && NextScene.entry == 2) {
-		if ((IsInInventory(261, INV_1) || IsInInventory(261, INV_2)) && 
+		if ((IsInInventory(261, INV_1) || IsInInventory(261, INV_2)) &&
 			(!IsInInventory(232, INV_1) && !IsInInventory(232, INV_2)))
 			NextScene.entry = 1;
 	}
@@ -669,7 +669,7 @@ bool ChangeScene(bool bReset) {
 		} else if (--CountOut == 0) {
 			if (!TinselV2)
 				ClearScreen();
-		
+
 			StartNewScene(NextScene.scene, NextScene.entry);
 			NextScene.scene = 0;
 
@@ -835,7 +835,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	// Add DW2 subfolder to search path in case user is running directly from the CDs
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "dw2");
 
-	// Add subfolders needed for psx versions of Discworld 1	
+	// Add subfolders needed for psx versions of Discworld 1
 	if (TinselV1PSX)
 		SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 3, true);
 

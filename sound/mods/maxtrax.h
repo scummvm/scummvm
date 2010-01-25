@@ -51,7 +51,7 @@ public:
 	void stopMusic();
 	/**
 	 * Set a callback function for sync-events.
-	 * @param callback Callback function, will be called synchronously, so DONT modify the player 
+	 * @param callback Callback function, will be called synchronously, so DONT modify the player
 	 *		directly in response
 	 */
 	void setSignalCallback(void (*callback) (int));

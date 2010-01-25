@@ -62,7 +62,7 @@ class AudioPlayer {
 public:
 	AudioPlayer(ResourceManager *resMan);
 	~AudioPlayer();
-		
+
 	void setAudioRate(uint16 rate) { _audioRate = rate; }
 	Audio::SoundHandle *getAudioHandle() { return &_audioHandle; }
 	Audio::RewindableAudioStream *getAudioStream(uint32 number, uint32 volume, int *sampleLen);

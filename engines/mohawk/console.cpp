@@ -71,7 +71,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 
 	return false;
 }
-	
+
 bool MystConsole::Cmd_CurCard(int argc, const char **argv) {
 	DebugPrintf("Current Card: %d\n", _vm->getCurCard());
 	return true;
@@ -82,12 +82,12 @@ bool MystConsole::Cmd_Var(int argc, const char **argv) {
 		DebugPrintf("Usage: var <var> (<value>)\n");
 		return true;
 	}
-	
+
 	if (argc > 2)
 		_vm->_varStore->setVar((uint16)atoi(argv[1]), (uint32)atoi(argv[2]));
 
 	DebugPrintf("%d = %d\n", (uint16)atoi(argv[1]), _vm->_varStore->getVar((uint16)atoi(argv[1])));
-	
+
 	return true;
 }
 
@@ -135,10 +135,10 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 			DebugPrintf(" %s\n", mystStackNames[i]);
 
 		DebugPrintf("\n");
-		
+
 		return true;
 	}
-	
+
 	byte stackNum = 0;
 
 	for (byte i = 1; i <= ARRAYSIZE(mystStackNames); i++)
@@ -151,7 +151,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 		DebugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
-	
+
 	// We need to stop any playing sound when we change the stack
 	// as the next card could continue playing it if it.
 	_vm->_sound->stopSound();
@@ -178,7 +178,7 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 		rect = Common::Rect(0, 0, 544, 333);
 	else
 		rect = Common::Rect((uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4]), (uint16)atoi(argv[5]));
-	
+
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]), rect);
 	return false;
 }
@@ -230,7 +230,7 @@ bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
 		DebugPrintf("NOTE: The movie will play *once* in the background.\n");
 		return true;
 	}
-	
+
 	int8 stackNum = 0;
 
 	if (argc == 3 || argc > 4) {
@@ -312,26 +312,26 @@ bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 
 	return false;
 }
-	
+
 bool RivenConsole::Cmd_CurCard(int argc, const char **argv) {
 	DebugPrintf("Current Card: %d\n", _vm->getCurCard());
 
 	return true;
 }
-	
+
 bool RivenConsole::Cmd_Var(int argc, const char **argv) {
 	if (argc == 1) {
 		DebugPrintf("Usage: var <var name> (<value>)\n");
 		return true;
 	}
-	
+
 	uint32 *globalVar = _vm->matchVarToString(argv[1]);
-	
+
 	if (!globalVar) {
 		DebugPrintf("Unknown variable \'%s\'\n", argv[1]);
 		return true;
 	}
-	
+
 	if (argc > 2)
 		*globalVar = (uint32)atoi(argv[2]);
 
@@ -350,9 +350,9 @@ bool RivenConsole::Cmd_PlaySound(int argc, const char **argv) {
 
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
-	
+
 	bool mainSoundFile = (argc < 3) || (scumm_stricmp(argv[2], "false") != 0);
-	
+
 	_vm->_sound->playSound((uint16)atoi(argv[1]), mainSoundFile);
 
 	return false;
@@ -367,12 +367,12 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
-	
+
 	uint16 card = _vm->getCurCard();
-	
+
 	if (argc == 3)
 		card = (uint16)atoi(argv[2]);
-	
+
 	_vm->_sound->playSLST((uint16)atoi(argv[1]), card);
 
 	return false;
@@ -404,10 +404,10 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 			DebugPrintf(" %s\n", _vm->getStackName(i).c_str());
 
 		DebugPrintf("\n");
-		
+
 		return true;
 	}
-	
+
 	byte stackNum = 0;
 
 	for (i = 1; i <= tspit + 1; i++)
@@ -445,9 +445,9 @@ bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
 			DebugPrintf("enabled)\n");
 		else
 			DebugPrintf("disabled)\n");
-			
+
 		DebugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
-	}	
+	}
 
 	return true;
 }
@@ -467,9 +467,9 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		DebugPrintf("Usage: dumpScript <stack> <CARD or HSPT> <card>\n");
 		return true;
 	}
-	
+
 	uint16 oldStack = _vm->getCurStack();
-	
+
 	byte newStack = 0;
 
 	for (byte i = 1; i <= tspit + 1; i++)
@@ -482,52 +482,52 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		DebugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
-	
+
 	newStack--;
 	_vm->changeToStack(newStack);
-	
+
 	// Load in Variable Names
 	Common::SeekableReadStream *nameStream = _vm->getRawData(ID_NAME, VariableNames);
 	Common::StringList varNames;
-	
+
 	uint16 namesCount = nameStream->readUint16BE();
 	uint16 *stringOffsets = new uint16[namesCount];
 	for (uint16 i = 0; i < namesCount; i++)
 		stringOffsets[i] = nameStream->readUint16BE();
 	nameStream->seek(namesCount * 2, SEEK_CUR);
 	int32 curNamesPos = nameStream->pos();
-	
+
 	for (uint32 i = 0; i < namesCount; i++) {
 		nameStream->seek(curNamesPos + stringOffsets[i]);
-			
+
 		Common::String name;
 		for (char c = nameStream->readByte(); c; c = nameStream->readByte())
 			name += c;
 		varNames.push_back(name);
 	}
 	delete nameStream;
-	
+
 	// Load in External Command Names
 	nameStream = _vm->getRawData(ID_NAME, ExternalCommandNames);
 	Common::StringList xNames;
-	
+
 	namesCount = nameStream->readUint16BE();
 	stringOffsets = new uint16[namesCount];
 	for (uint16 i = 0; i < namesCount; i++)
 		stringOffsets[i] = nameStream->readUint16BE();
 	nameStream->seek(namesCount * 2, SEEK_CUR);
 	curNamesPos = nameStream->pos();
-	
+
 	for (uint32 i = 0; i < namesCount; i++) {
 		nameStream->seek(curNamesPos + stringOffsets[i]);
-			
+
 		Common::String name;
 		for (char c = nameStream->readByte(); c; c = nameStream->readByte())
 			name += c;
 		xNames.push_back(name);
 	}
 	delete nameStream;
-	
+
 	// Get CARD/HSPT data and dump their scripts
 	if (!scumm_stricmp(argv[2], "CARD")) {
 		printf ("\n\nDumping scripts for %s\'s card %d!\n", argv[1], (uint16)atoi(argv[3]));
@@ -541,11 +541,11 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	} else if (!scumm_stricmp(argv[2], "HSPT")) {
 		printf ("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
 		printf ("===========================================\n\n");
-		
+
 		Common::SeekableReadStream *hsptStream = _vm->getRawData(MKID_BE('HSPT'), (uint16)atoi(argv[3]));
-		
+
 		uint16 hotspotCount = hsptStream->readUint16BE();
-		
+
 		for (uint16 i = 0; i < hotspotCount; i++) {
 			printf ("Hotspot %d:\n", i);
 			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
@@ -553,18 +553,18 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 			for (uint32 j = 0; j < scriptList.size(); j++)
 				scriptList[j]->dumpScript(varNames, xNames, 1);
 		}
-		
+
 		delete hsptStream;
 	} else {
 		DebugPrintf("%s doesn't have any scripts!\n", argv[2]);
 	}
-	
+
 	printf("\n\n");
-	
+
 	_vm->changeToStack(oldStack);
-	
+
 	DebugPrintf("Script dump complete.\n");
-	
+
 	return true;
 }
 
@@ -576,7 +576,7 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 		for (uint32 i = 0; i < _vm->_zipModeData.size(); i++)
 			DebugPrintf("ID = %d, Name = %s\n", _vm->_zipModeData[i].id, _vm->_zipModeData[i].name.c_str());
 	}
-	
+
 	return true;
 }
 

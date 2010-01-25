@@ -877,7 +877,7 @@ public:
 	~CmpVocDecoder();
 	uint8 *process(uint8 *src, uint32 insize, uint32 *outsize, bool disposeInput = true);
 
-private:		
+private:
 	void decodeHelper(int p);
 
 	int32 *_vtbl;
@@ -1028,7 +1028,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						newEntry.size = outsize;
 						newEntry.name = entryStr;
 					}
-					
+
 					fileList.push_back(newEntry);
 				}
 				pos++;
@@ -1187,7 +1187,7 @@ CmpVocDecoder::~CmpVocDecoder() {
 uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool disposeInput) {
 	*outsize = 0;
 	uint8 *outTemp = new uint8[insize];
-	
+
 	uint8 *inPosH = src;
 	uint8 *outPosH = outTemp;
 	uint8 *outPosD = outTemp + READ_LE_UINT32(src);
@@ -1221,7 +1221,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 
 		uint8 *vocPtr = src + offset;
 		uint32 vocLen = (vocPtr[27] | (vocPtr[28] << 8) | (vocPtr[29] << 16)) - 2;
-		
+
 		uint8 *vocOutEnd = outPosD + vocLen + 32;
 		uint8 *vocInEnd = src + offset + fileSize;
 		memcpy(outPosD, vocPtr, 32);
@@ -1235,7 +1235,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 			uint32 readSize = MIN<uint32>(8192, vocInEnd - vocPtr);
 			memcpy(_sndArray, vocPtr, readSize);
 			vocPtr += readSize;
-		
+
 			for (int i = -128; i < 128; i++)
 				_stTbl[i + 128] = (int32)((float)i / t + 0.5f);
 
@@ -1255,7 +1255,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 			memcpy(dst, _sndArray, numBytesOut);
 			dst += numBytesOut;
 		}
-		
+
 		*dst++ = 0;
 		memcpy(outPosH, spos, headerEntryLen);
 		WRITE_LE_UINT32(outPosH, outPosD - outTemp);
@@ -1287,7 +1287,7 @@ void CmpVocDecoder::decodeHelper(int p1) {
 
 	int d = 3;
 	int s = 1;
-	
+
 	while (s < p2) {
 		fi2 = _floatArray[s];
 		fi1 = _floatArray[s + 1];

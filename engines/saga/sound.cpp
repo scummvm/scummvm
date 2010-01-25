@@ -69,7 +69,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffe
 
 	Audio::RewindableAudioStream *stream = 0;
 
-	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
+	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {

@@ -167,7 +167,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 	victim_obj->markAsFreed();
-	
+
 	return s->r_acc;
 }
 

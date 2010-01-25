@@ -45,7 +45,7 @@ void Pack::close() {
 bool Pack::open(const Common::String &filename) {
 	if (!file.open(filename))
 		return false;
-	
+
 	count = file.readUint32LE();
 	debug(0, "opened %s, found %u entries", filename.c_str(), count);
 	offsets = new uint32[count + 1];

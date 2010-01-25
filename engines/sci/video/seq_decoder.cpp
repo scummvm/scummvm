@@ -134,7 +134,7 @@ bool SeqDecoder::decodeNextFrame() {
 
 	if (frameType == kSeqFrameFull) {
 		byte *dst = _videoFrameBuffer + frameTop * SCREEN_WIDTH + frameLeft;
-		
+
 		byte *linebuf = new byte[frameWidth];
 
 		do {

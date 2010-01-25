@@ -44,7 +44,7 @@ public:
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 
-private:	
+private:
 	Graphics::Surface *_surface;
 
 	// SMC color tables

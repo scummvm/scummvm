@@ -38,14 +38,14 @@ class MystConsole : public GUI::Debugger {
 public:
 	MystConsole(MohawkEngine_Myst *vm);
 	virtual ~MystConsole(void);
-	
+
 protected:
 	virtual void preEnter();
 	virtual void postEnter();
-	
+
 private:
 	MohawkEngine_Myst *_vm;
-	
+
 	bool Cmd_ChangeCard(int argc, const char **argv);
 	bool Cmd_CurCard(int argc, const char **argv);
 	bool Cmd_Var(int argc, const char **argv);
@@ -71,7 +71,7 @@ protected:
 
 private:
 	MohawkEngine_Riven *_vm;
-		
+
 	bool Cmd_ChangeCard(int argc, const char **argv);
 	bool Cmd_CurCard(int argc, const char **argv);
 	bool Cmd_Var(int argc, const char **argv);

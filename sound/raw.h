@@ -116,7 +116,7 @@ struct RawDiskStreamAudioBlock {
  * @param block Pointer to an RawDiskStreamAudioBlock array
  * @see RawDiskStreamAudioBlock
  * @param numBlocks Number of blocks.
- * @param rate The rate 
+ * @param rate The rate
  * @param len Length of the data (in bytes!)
  * @param flags Flags combination.
  * @see Mixer::RawFlags

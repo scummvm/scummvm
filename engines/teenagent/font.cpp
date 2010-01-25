@@ -55,7 +55,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) 
 	int h = glyph[0], w = glyph[1];
 	if (surface == NULL || surface->pixels == NULL || y + h <= 0 || y >= 200 || x + w <= 0 || x >= 320)
 		return w - width_pack;
-	
+
 	int i0 = 0, j0 = 0;
 	if (x < 0) {
 		j0 = -x;

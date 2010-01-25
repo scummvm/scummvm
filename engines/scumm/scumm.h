@@ -994,7 +994,7 @@ protected:
 
 	// HACK Double the array size to handle 16-bit images.
 	// this should be dynamically allocated based on game depth instead.
-	byte _grabbedCursor[16384]; 
+	byte _grabbedCursor[16384];
 	byte _currentCursor;
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
@@ -1039,7 +1039,7 @@ protected:
 
 	void setPaletteFromTable(const byte *ptr, int numcolor, int firstIndex = 0);
 	void resetPalette();
-	
+
 	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);
 	void setPCEPaletteFromPtr(const byte *ptr);

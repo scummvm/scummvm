@@ -1026,7 +1026,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *monsterPalette, int x, 
 	if (_flags.use16ColorMode) {
 		if (_currentLevel != 22)
 			flg &= 0xdfff;
-		
+
 	} else {
 		if (_currentLevel == 22) {
 			if (brightnessOverlay)

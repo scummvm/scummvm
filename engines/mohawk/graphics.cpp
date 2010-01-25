@@ -39,7 +39,7 @@ Graphics::Surface *ImageData::getSurface() {
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_surface->w, _surface->h, pixelFormat.bytesPerPixel);
-	
+
 	if (_surface->bytesPerPixel == 1) {
 		assert(_palette);
 
@@ -57,32 +57,32 @@ Graphics::Surface *ImageData::getSurface() {
 		}
 	} else
 		memcpy(surface->pixels, _surface->pixels, _surface->w * _surface->h * _surface->bytesPerPixel);
-	
+
 	return surface;
 }
 
 MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
 	_bmpDecoder = new MystBitmap();
-	
+
 	// The original version of Myst could run in 8bpp color too.
 	// However, it dithered videos to 8bpp and they looked considerably
 	// worse (than they already did :P). So we're not even going to
 	// support 8bpp mode in Myst (Myst ME required >8bpp anyway).
 	initGraphics(544, 333, true, NULL); // What an odd screen size!
-	
+
 	_pixelFormat = _vm->_system->getScreenFormat();
-	
+
 	if (_pixelFormat.bytesPerPixel == 1)
 		error("Myst requires greater than 256 colors to run");
-	
-	if (_vm->getFeatures() & GF_ME) {		
+
+	if (_vm->getFeatures() & GF_ME) {
 		_jpegDecoder = new MystJPEG();
 		_pictDecoder = new MystPICT(_jpegDecoder);
 	} else {
 		_jpegDecoder = NULL;
 		_pictDecoder = NULL;
 	}
-	
+
 	_pictureFile.entries = NULL;
 }
 
@@ -107,20 +107,20 @@ static const char* picFileNames[] = {
 void MystGraphics::loadExternalPictureFile(uint16 stack) {
 	if (_vm->getPlatform() != Common::kPlatformMacintosh)
 		return;
-		
+
 	if (_pictureFile.picFile.isOpen())
 		_pictureFile.picFile.close();
 	delete[] _pictureFile.entries;
-		
+
 	if (!scumm_stricmp(picFileNames[stack], ""))
 		return;
-	
+
 	if (!_pictureFile.picFile.open(picFileNames[stack]))
 		error ("Could not open external picture file \'%s\'", picFileNames[stack]);
-		
+
 	_pictureFile.pictureCount = _pictureFile.picFile.readUint32BE();
 	_pictureFile.entries = new PictureFile::PictureEntry[_pictureFile.pictureCount];
-	
+
 	for (uint32 i = 0; i < _pictureFile.pictureCount; i++) {
 		_pictureFile.entries[i].offset = _pictureFile.picFile.readUint32BE();
 		_pictureFile.entries[i].size = _pictureFile.picFile.readUint32BE();
@@ -138,7 +138,7 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 
 	dest.right = CLIP<int>(dest.right, 0, _vm->_system->getWidth());
 	dest.bottom = CLIP<int>(dest.bottom, 0, _vm->_system->getHeight());
-	
+
 	Graphics::Surface *surface = NULL;
 
 
@@ -190,15 +190,15 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 			delete imageData;
 		}
 	}
-	
+
 	debug(3, "Image Blit:");
-	debug(3, "src.x: %d", src.left); 
+	debug(3, "src.x: %d", src.left);
 	debug(3, "src.y: %d", src.top);
 	debug(3, "dest.x: %d", dest.left);
 	debug(3, "dest.y: %d", dest.top);
 	debug(3, "width: %d", src.width());
 	debug(3, "height: %d", src.height());
-	
+
 	if (surface) {
 		uint16 width = MIN<int>(surface->w, dest.width());
 		uint16 height = MIN<int>(surface->h, dest.height());
@@ -206,7 +206,7 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 		surface->free();
 		delete surface;
 	}
-	
+
 	// FIXME: Remove this and update only at certain points
 	_vm->_system->updateScreen();
 }
@@ -254,7 +254,7 @@ void MystGraphics::drawRect(Common::Rect rect, bool active) {
 		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
 	else
 		screen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
-	
+
 	_vm->_system->unlockScreen();
 }
 
@@ -264,15 +264,15 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : _vm(vm) {
 	// Give me the best you've got!
 	initGraphics(608, 436, true, NULL);
 	_pixelFormat = _vm->_system->getScreenFormat();
-	
+
 	if (_pixelFormat.bytesPerPixel == 1)
 		error("Riven requires greater than 256 colors to run");
-	
+
 	// The actual game graphics only take up the first 392 rows. The inventory
 	// occupies the rest of the screen and we don't use the buffer to hold that.
 	_mainScreen = new Graphics::Surface();
 	_mainScreen->create(608, 392, _pixelFormat.bytesPerPixel);
-	
+
 	_updatesEnabled = true;
 	_scheduledTransition = -1;	// no transition
 	_dirtyScreen = false;
@@ -290,17 +290,17 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getRawData(ID_TBMP, image));
 	Graphics::Surface *surface = imageData->getSurface();
 	delete imageData;
-	
+
 	// Clip the width to fit on the screen. Fixes some images.
 	if (left + surface->w > 608)
 		surface->w = 608 - left;
-		
+
 	for (uint16 i = 0; i < surface->h; i++)
 		memcpy(_mainScreen->getBasePtr(left, i + top), surface->getBasePtr(0, i), surface->w * surface->bytesPerPixel);
-		
+
 	surface->free();
 	delete surface;
-	
+
 	_dirtyScreen = true;
 }
 
@@ -308,7 +308,7 @@ void RivenGraphics::drawPLST(uint16 x) {
 	Common::SeekableReadStream* plst = _vm->getRawData(ID_PLST, _vm->getCurCard());
 	uint16 index, id, left, top, right, bottom;
 	uint16 recordCount = plst->readUint16BE();
-	
+
 	for (uint16 i = 0; i < recordCount; i++) {
 		index = plst->readUint16BE();
 		id = plst->readUint16BE();
@@ -336,16 +336,16 @@ void RivenGraphics::drawPLST(uint16 x) {
 void RivenGraphics::updateScreen() {
 	if (_updatesEnabled) {
 		_vm->runUpdateScreenScript();
-		
+
 		if (_dirtyScreen) {
 			_activatedPLSTs.clear();
-			
+
 			// Copy to screen if there's no transition. Otherwise transition. ;)
 			if (_scheduledTransition < 0)
 				_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
 			else
 				runScheduledTransition();
-			
+
 			// Finally, update the screen.
 			_vm->_system->updateScreen();
 			_dirtyScreen = false;
@@ -358,7 +358,7 @@ void RivenGraphics::scheduleWaterEffect(uint16 sfxeID) {
 
 	if (sfxeStream->readUint16BE() != 'SL')
 		error ("Unknown sfxe tag");
-	
+
 	// Read in header info
 	SFXERecord sfxeRecord;
 	sfxeRecord.frameCount = sfxeStream->readUint16BE();
@@ -369,22 +369,22 @@ void RivenGraphics::scheduleWaterEffect(uint16 sfxeID) {
 	sfxeRecord.rect.bottom = sfxeStream->readUint16BE();
 	sfxeRecord.speed = sfxeStream->readUint16BE();
 	// Skip the rest of the fields...
-	
+
 	// Read in offsets
 	sfxeStream->seek(offsetTablePosition);
 	uint32 *frameOffsets = new uint32[sfxeRecord.frameCount];
 	for (uint16 i = 0; i < sfxeRecord.frameCount; i++)
 		frameOffsets[i] = sfxeStream->readUint32BE();
 	sfxeStream->seek(frameOffsets[0]);
-	
+
 	// Read in the scripts
-	for (uint16 i = 0; i < sfxeRecord.frameCount; i++) 
+	for (uint16 i = 0; i < sfxeRecord.frameCount; i++)
 		sfxeRecord.frameScripts.push_back(sfxeStream->readStream((i == sfxeRecord.frameCount - 1) ? sfxeStream->size() - frameOffsets[i] : frameOffsets[i + 1] - frameOffsets[i]));
-	
+
 	// Set it to the first frame
 	sfxeRecord.curFrame = 0;
 	sfxeRecord.lastFrameTime = 0;
-	
+
 	delete[] frameOffsets;
 	delete sfxeStream;
 	_waterEffects.push_back(sfxeRecord);
@@ -400,18 +400,18 @@ bool RivenGraphics::runScheduledWaterEffects() {
 		return false;
 
 	Graphics::Surface *screen = NULL;
-		
+
 	for (uint16 i = 0; i < _waterEffects.size(); i++) {
 		if (_vm->_system->getMillis() > _waterEffects[i].lastFrameTime + 1000 / _waterEffects[i].speed) {
 			// Lock the screen!
 			if (!screen)
 				screen = _vm->_system->lockScreen();
-				
+
 			// Make sure the script is at the starting point
 			Common::SeekableReadStream *script = _waterEffects[i].frameScripts[_waterEffects[i].curFrame];
 			if (script->pos() != 0)
 				script->seek(0);
-				
+
 			// Run script
 			uint16 curRow = 0;
 			for (uint16 op = script->readUint16BE(); op != 4; op = script->readUint16BE()) {
@@ -427,23 +427,23 @@ bool RivenGraphics::runScheduledWaterEffects() {
 					error ("Unknown SFXE opcode %d", op);
 				}
 			}
-			
+
 			// Increment frame
 			_waterEffects[i].curFrame++;
 			if (_waterEffects[i].curFrame == _waterEffects[i].frameCount)
 				_waterEffects[i].curFrame = 0;
-				
+
 			// Set the new time
 			_waterEffects[i].lastFrameTime = _vm->_system->getMillis();
 		}
 	}
-	
+
 	// Unlock the screen if it has been locked and return true to update the screen
 	if (screen) {
 		_vm->_system->unlockScreen();
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -455,9 +455,9 @@ void RivenGraphics::scheduleTransition(uint16 id, Common::Rect rect) {
 void RivenGraphics::runScheduledTransition() {
 	if (_scheduledTransition < 0) // No transition is scheduled
 		return;
-		
+
 	// TODO: There's a lot to be done here...
-	
+
 	// Note: Transitions 0-11 are actual transitions, but none are used in-game.
 	// There's no point in implementing them if they're not used. These extra
 	// transitions were found by hacking scripts.
@@ -485,7 +485,7 @@ void RivenGraphics::runScheduledTransition() {
 		else
 			error ("Found unknown transition %d", _scheduledTransition);
 	}
-	
+
 	// For now, just copy the image to screen without doing any transition.
 	_vm->_system->copyRectToScreen((byte *)_mainScreen->pixels, _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
 	_vm->_system->updateScreen();
@@ -583,34 +583,34 @@ void RivenGraphics::changeCursor(uint16 num) {
 	default:
 		error ("Cursor %d does not exist!", num);
 	}
-	
+
 	if (num != 9000) // Show Cursor
 		CursorMan.showMouse(true);
-	
+
 	// Should help in cases where we need to hide the cursor immediately.
 	_vm->_system->updateScreen();
 }
-	
+
 void RivenGraphics::showInventory() {
 	// Don't redraw the inventory
 	if (_inventoryDrawn)
 		return;
-	
+
 	// Clear the inventory area
 	clearInventoryArea();
-	
+
 	// The demo doesn't have the inventory system and we don't want
 	// to show the inventory on setup screens or in other journals.
 	if (_vm->getFeatures() & GF_DEMO || _vm->getCurStack() == aspit)
 		return;
-		
+
 	// There are three books and three vars. However, there's only
 	// a possible two combinations. Either you have only Atrus'
 	// journal or you have all three books.
 	// bool hasAtrusBook = *_vm->matchVarToString("aatrusbook") != 0;
 	bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
 	// bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
-	
+
 	if (!hasCathBook) {
 		drawInventoryImage(101, atrusJournalRectSolo);
 	} else {
@@ -618,19 +618,19 @@ void RivenGraphics::showInventory() {
 		drawInventoryImage(102, cathJournalRect);
 		drawInventoryImage(100, trapBookRect);
 	}
-	
+
 	_vm->_system->updateScreen();
 	_inventoryDrawn = true;
 }
-	
+
 void RivenGraphics::hideInventory() {
 	// Don't hide the inventory twice
 	if (!_inventoryDrawn)
 		return;
-		
+
 	// Clear the area
 	clearInventoryArea();
-	
+
 	_inventoryDrawn = false;
 }
 
@@ -643,7 +643,7 @@ void RivenGraphics::clearInventoryArea() {
 
 	// Fill the inventory area with black
 	screen->fillRect(inventoryRect, _pixelFormat.RGBToColor(0, 0, 0));
-		
+
 	_vm->_system->unlockScreen();
 }
 
@@ -661,12 +661,12 @@ void RivenGraphics::drawInventoryImage(uint16 id, Common::Rect rect) {
 void RivenGraphics::drawRect(Common::Rect rect, bool active) {
 	// Useful with debugging. Shows where hotspots are on the screen and whether or not they're active.
 	Graphics::Surface *screen = _vm->_system->lockScreen();
-	
+
 	if (active)
 		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
 	else
 		screen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
-	
+
 	_vm->_system->unlockScreen();
 }
 
@@ -692,13 +692,13 @@ void LBGraphics::copyImageToScreen(uint16 image, uint16 left, uint16 right) {
 		Graphics::Surface *surface = imageData->getSurface();
 		imageData->_palette = NULL; // Unset the palette so it doesn't get deleted
 		delete imageData;
-	
+
 		uint16 width = MIN<int>(surface->w, 640);
 		uint16 height = MIN<int>(surface->h, 480);
 		_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, left, right, width, height);
 		surface->free();
 		delete surface;
-		
+
 		// FIXME: Remove this and update only at certain points
 		_vm->_system->updateScreen();
 	}
@@ -711,14 +711,14 @@ void LBGraphics::setPalette(uint16 id) {
 	if (_vm->getGameType() == GType_LIVINGBOOKSV1) {
 		Common::SeekableSubReadStreamEndian *ctblStream = _vm->wrapStreamEndian(ID_CTBL, id);
 		uint16 colorCount = ctblStream->readUint16();
-	
+
 		for (uint16 i = 0; i < colorCount; i++) {
 			_palette[i * 4] = ctblStream->readByte();
 			_palette[i * 4 + 1] = ctblStream->readByte();
 			_palette[i * 4 + 2] = ctblStream->readByte();
 			_palette[i * 4 + 3] = ctblStream->readByte();
 		}
-		
+
 		delete ctblStream;
 	} else {
 		Common::SeekableReadStream *tpalStream = _vm->getRawData(ID_TPAL, id);
@@ -731,7 +731,7 @@ void LBGraphics::setPalette(uint16 id) {
 			_palette[i * 4 + 2] = tpalStream->readByte();
 			_palette[i * 4 + 3] = tpalStream->readByte();
 		}
-	
+
 		delete tpalStream;
 	}
 }

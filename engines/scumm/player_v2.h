@@ -178,7 +178,7 @@ public:
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
 	int getRate() const { return _sample_rate; }
-	
+
 protected:
 
 #include "common/pack-start.h"	// START STRUCT PACKING
@@ -192,12 +192,12 @@ protected:
 		int16 vibrato2;
 		int16 noise;
 	} PACKED_STRUCT;
-	
+
 	struct Voice2 {
 		byte *amplitudeOutput;
 		byte *freqOutput;
 		byte *octaveOutput;
-		
+
 		uint8 channel;
 		int8 sustainLevel;
 		int8 attackRate;
@@ -208,7 +208,7 @@ protected:
 		int8 releaseTime;
 		int8 vibratoRate;
 		int8 vibratoDepth;
-		
+
 		int8 curVibratoRate;
 		int8 curVibratoUnk;
 
@@ -230,7 +230,7 @@ protected:
 
 		byte chanNumber;
 	} PACKED_STRUCT;
-	
+
 	struct MusicChip {
 		byte ampl[4];
 		byte freq[4];
@@ -241,7 +241,7 @@ protected:
 	Voice _cmsVoicesBase[16];
 	Voice2 _cmsVoices[8];
 	MusicChip _cmsChips[2];
-	
+
 	int8 _tempo;
 	int8 _tempoSum;
 	byte _looping;
@@ -251,35 +251,35 @@ protected:
 	byte _midiChannelUse[16];
 	byte *_midiData;
 	byte *_midiSongBegin;
-	
+
 	int _loadedMidiSong;
-	
+
 	byte _lastMidiCommand;
 	uint _outputTableReady;
 	byte _clkFrequenz;
 	byte _restart;
 	byte _curSno;
-	
+
 	void loadMidiData(byte *data, int sound);
 	void play();
-	
+
 	void processChannel(Voice2 *channel);
 	void processRelease(Voice2 *channel);
 	void processAttack(Voice2 *channel);
 	void processDecay(Voice2 *channel);
 	void processSustain(Voice2 *channel);
 	void processVibrato(Voice2 *channel);
-	
+
 	void playMusicChips(const MusicChip *table);
 	void playNote(byte *&data);
 	void clearNote(byte *&data);
 	void offAllChannels();
 	void playVoice();
 	void processMidiData(uint ticks);
-	
+
 	Voice2 *getFreeVoice();
 	Voice2 *getPlayVoice(byte param);
-	
+
 	// from Player_V2
 protected:
 	bool _isV3Game;

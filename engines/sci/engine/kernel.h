@@ -102,13 +102,13 @@ private:
 	 * Sets the default kernel function names, based on the SCI version used
 	 */
 	void setDefaultKernelNames(Common::String gameId);
-	
+
 #ifdef ENABLE_SCI32
 	/**
 	 * Sets the default kernel function names to the SCI2 kernel functions
 	 */
 	void setKernelNamesSci2();
-	
+
 	/**
 	 * Sets the default kernel function names to the SCI2.1 kernel functions
 	 */
@@ -119,7 +119,7 @@ private:
 	 * Loads the kernel selector names.
 	 */
 	void loadSelectorNames();
-	
+
 	/**
 	 * Check for any hardcoded selector table we might have that can be used
 	 * if a game is missing the selector names.
@@ -229,7 +229,7 @@ int _find_view_priority(EngineState *s, int y);
  * Determines the now-seen rectangle of a view object
  * @param s The state to use
  * @param object The object to check
- * @param clip Flag to determine wheter priority band clipping 
+ * @param clip Flag to determine wheter priority band clipping
  * should be performed
  * @return The absolute rectangle describing the now-seen area.
  */
@@ -240,7 +240,7 @@ extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
 /******************** Misc functions ********************/
 
 /**
- * Get all sound events, apply their changes to the heap 
+ * Get all sound events, apply their changes to the heap
  */
 void process_sound_events(EngineState *s);
 

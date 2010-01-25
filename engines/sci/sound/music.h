@@ -126,7 +126,7 @@ public:
 
 typedef Common::Array<MusicEntry *> MusicList;
 
-class SciMusic 
+class SciMusic
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	: public Common::Serializable
 #endif

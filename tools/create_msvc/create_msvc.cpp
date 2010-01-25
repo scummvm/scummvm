@@ -484,7 +484,7 @@ int main(int argc, char *argv[]) {
 	setup.defines = getEngineDefines(setup.engines);
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
-	
+
 	setup.libraries = getFeatureLibraries(setup.features);
 
 	setup.libraries.push_back("winmm.lib");
@@ -1160,7 +1160,7 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 		if (compareName.empty()) {
 			if (i->size() >= dir.size() + 1 && i->at(dir.size()) == '/')
 				return true;
-			else 
+			else
 				continue;
 		}
 

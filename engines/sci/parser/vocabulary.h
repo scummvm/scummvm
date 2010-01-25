@@ -251,13 +251,13 @@ public:
 	 * Adds a new synonym to the list
 	 */
 	void addSynonym(synonym_t syn) { _synonyms.push_back(syn); }
-	
+
 	/**
 	 * Clears the list of synonyms
 	 */
 	void clearSynonyms() { _synonyms.clear(); }
-	
-	/** 
+
+	/**
 	 * Synonymizes a token list
 	 * Parameters: (ResultWordList &) words: The word list to synonymize
 	 */

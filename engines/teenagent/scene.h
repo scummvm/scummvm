@@ -198,7 +198,7 @@ private:
 	bool actor_talking;
 
 	bool findPath(Path &p, const Common::Point &src, const Common::Point &dst) const;
-	
+
 	Common::Array<Common::Array<Object> > objects;
 	Common::Array<Common::Array<Walkbox> > walkboxes;
 	Common::Array<Common::Array<FadeType> > fades;
@@ -215,9 +215,9 @@ private:
 	EventList events;
 	SceneEvent current_event;
 	bool hide_actor;
-	
+
 	uint16 callback, callback_timer;
-	
+
 	int _fade_timer;
 	int _fade_type;
 	uint _idle_timer;
@@ -228,18 +228,18 @@ private:
 	};
 	typedef Common::List<Sound> Sounds;
 	Sounds sounds;
-	
+
 	struct DebugFeatures {
-		enum { 
+		enum {
 			kShowBack,
 			kShowLan,
 			kShowOns,
-			kShowOn, 
-			kHidePath, 
+			kShowOn,
+			kHidePath,
 			kMax
 		};
 		bool feature[kMax];
-		
+
 		DebugFeatures() {
 			for(uint i = 0; i < kMax; ++i) {
 				feature[i] = true;

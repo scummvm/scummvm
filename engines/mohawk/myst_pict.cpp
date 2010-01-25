@@ -28,7 +28,7 @@
 #include "mohawk/myst_pict.h"
 
 namespace Mohawk {
-	
+
 // The PICT code is based off of the QuickDraw specs:
 // http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-461.html
 
@@ -43,16 +43,16 @@ Graphics::Surface *MystPICT::decodeImage(Common::SeekableReadStream *stream) {
 
 	// Read in the first part of the header
 	/* uint16 fileSize = */ stream->readUint16BE();
-	
+
 	_imageRect.top = stream->readUint16BE();
 	_imageRect.left = stream->readUint16BE();
 	_imageRect.bottom = stream->readUint16BE();
 	_imageRect.right = stream->readUint16BE();
 	_imageRect.debugPrint(0, "PICT Rect:");
-	
+
 	Graphics::Surface *image = new Graphics::Surface();
 	image->create(_imageRect.width(), _imageRect.height(), _pixelFormat.bytesPerPixel);
-	
+
 	// NOTE: This is only a subset of the full PICT format.
 	//     - Only V2 Images Supported
 	//     - JPEG Chunks are Supported
@@ -60,12 +60,12 @@ Graphics::Surface *MystPICT::decodeImage(Common::SeekableReadStream *stream) {
 	for (uint32 opNum = 0; !stream->eos() && !stream->err() && stream->pos() < stream->size(); opNum++) {
 		uint16 opcode = stream->readUint16BE();
 		debug(2, "Found PICT opcode %04x", opcode);
-		
+
 		if (opNum == 0 && opcode != 0x0011)
 			error ("Cannot find PICT version opcode");
 		else if (opNum == 1 && opcode != 0x0C00)
 			error ("Cannot find PICT header opcode");
-		
+
 		if (opcode == 0x0001) {		   // Clip
 			// Ignore
 			uint16 clipSize = stream->readUint16BE();
@@ -107,7 +107,7 @@ Graphics::Surface *MystPICT::decodeImage(Common::SeekableReadStream *stream) {
 			error ("Unknown PICT opcode %04x", opcode);
 		}
 	}
-	
+
 	return image;
 }
 
@@ -142,7 +142,7 @@ void MystPICT::decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics
 	buffer.create(image->w, image->h, 2);
 
 	DirectBitsRectData directBitsData;
-	
+
 	directBitsData.pixMap.baseAddr = stream->readUint32BE();
 	directBitsData.pixMap.rowBytes = stream->readUint16BE();
 	directBitsData.pixMap.bounds.top = stream->readUint16BE();
@@ -170,10 +170,10 @@ void MystPICT::decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics
 	directBitsData.dstRect.bottom = stream->readUint16BE();
 	directBitsData.dstRect.right = stream->readUint16BE();
 	directBitsData.mode = stream->readUint16BE();
-	
+
 	if (directBitsData.pixMap.pixelSize != 16)
 		error("Unhandled directBitsRect bitsPerPixel %d", directBitsData.pixMap.pixelSize);
-	
+
 	// Read in amount of data per row
 	for (uint16 i = 0; i < directBitsData.pixMap.bounds.height(); i++) {
 		if (directBitsData.pixMap.packType == 1 || directBitsData.pixMap.rowBytes < 8) { // Unpacked, Pad-Byte
@@ -187,7 +187,7 @@ void MystPICT::decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics
 			decodeDirectBitsLine((byte *)buffer.getBasePtr(0, i), directBitsData.pixMap.rowBytes, stream->readStream(byteCount));
 		}
 	}
-	
+
 	// Convert from 16-bit to whatever surface we need
 	for (uint16 y = 0; y < buffer.h; y++) {
 		for (uint16 x = 0; x < buffer.w; x++) {
@@ -203,7 +203,7 @@ void MystPICT::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableRe
 	uint32 dataDecoded = 0;
 	while (data->pos() < data->size() && dataDecoded < length) {
 		byte op = data->readByte();
-		
+
 		if (op & 0x80) {
 			uint32 runSize = (op ^ 255) + 2;
 			byte value1 = data->readByte();
@@ -220,13 +220,13 @@ void MystPICT::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableRe
 			dataDecoded += runSize;
 		}
 	}
-	
+
 	if (length != dataDecoded)
 		warning("Mismatched DirectBits read");
 	delete data;
 }
-	
-// Compressed QuickTime details can be found here: 
+
+// Compressed QuickTime details can be found here:
 // http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
 // http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 // I'm just ignoring that because Myst ME uses none of that extra stuff. The offset is always the same.
@@ -234,12 +234,12 @@ void MystPICT::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableRe
 void MystPICT::decodeCompressedQuickTime(Common::SeekableReadStream *stream, Graphics::Surface *image) {
 	uint32 dataSize = stream->readUint32BE();
 	uint32 startPos = stream->pos();
-	
+
 	Graphics::Surface *jpegImage = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(stream, stream->pos() + 156, stream->pos() + dataSize));
 	stream->seek(startPos + dataSize);
-	
+
 	image->copyFrom(*jpegImage);
-	
+
 	jpegImage->free();
 	delete jpegImage;
 }

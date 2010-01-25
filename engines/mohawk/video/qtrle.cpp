@@ -25,15 +25,15 @@
 
 // QuickTime RLE Decoder
 // Based off ffmpeg's QuickTime RLE decoder (written by Mike Melanson)
- 
+
 #include "mohawk/video/qtrle.h"
- 
+
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
- 
+
 namespace Mohawk {
 
 QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Graphics::Codec() {
@@ -83,7 +83,7 @@ void QTRLEDecoder::decode1(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 			pixelPtr += 2 * skip;
 
 		if (rleCode < 0) {
-			// decode the run length code 
+			// decode the run length code
 			rleCode = -rleCode;
 			// get the next 2 bytes from the stream, treat them as groups of 8 pixels, and output them rleCode times */
 			CHECK_STREAM_PTR(2);
@@ -287,7 +287,7 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 				CHECK_PIXEL_PTR(rleCode);
 
-				while (rleCode--) 
+				while (rleCode--)
 					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
 			} else {
 				CHECK_STREAM_PTR(rleCode * 3);
@@ -333,7 +333,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 				CHECK_PIXEL_PTR(rleCode);
 
-				while (rleCode--) 
+				while (rleCode--)
 					rgb[pixelPtr++] = _pixelFormat.ARGBToColor(a, r, g, b);
 			} else {
 				CHECK_STREAM_PTR(rleCode * 4);

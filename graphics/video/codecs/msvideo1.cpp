@@ -22,9 +22,9 @@
  * $Id$
  *
  */
- 
+
  // Based off ffmpeg's msvideo.cpp
- 
+
 #include "graphics/video/codecs/msvideo1.h"
 
 namespace Graphics {
@@ -34,7 +34,7 @@ namespace Graphics {
 	warning ("MS Video-1: Stream out of bounds (%d >= %d)", stream->pos() + n, stream->size()); \
     return; \
   }
-  
+
 MSVideo1Decoder::MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, (bitsPerPixel == 8) ? 1 : 2);

@@ -279,7 +279,7 @@ sciEvent SciEvent::getFromScummVM() {
 				case Common::KEYCODE_KP3:	// pagedown
 					if (!(_modifierStates & SCI_KEYMOD_NUMLOCK))
 						input.data = SCI_KEY_PGDOWN;
-					break;					
+					break;
 				default:
 					input.type = SCI_EVENT_NONE;
 					break;

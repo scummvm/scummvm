@@ -192,7 +192,7 @@ void MaxTrax::interrupt() {
 						_playerCtx.tempoTicks = 0;
 					}
 					break;
-				
+
 				case 0xC0:	// PROGRAM
 					channel.patch = &_patch[curEvent->stopTime & (kNumPatches - 1)];
 					break;
@@ -463,7 +463,7 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		else
 			channel.flags &= ~ChannelContext::kFlagPortamento;
 		break;
-	case 0x50:	// Microtonal off/on 
+	case 0x50:	// Microtonal off/on
 		if ((data & 0x40) != 0)
 			channel.flags |= ChannelContext::kFlagMicrotonal;
 		else
@@ -567,7 +567,7 @@ void MaxTrax::advanceSong(int advance) {
 		const Event *cev = _playerCtx.nextEvent;
 		if (cev) {
 			for (; advance > 0; --advance) {
-				// TODO - check for boundaries 
+				// TODO - check for boundaries
 				for (; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
 					; // no end_command or special_command + end
 			}
@@ -619,7 +619,7 @@ int8 MaxTrax::pickvoice(uint pick, int16 pri) {
 		const uint16 voiceVal = voice->status << 8 | voice->lastVolume;
 		const uint16 altVal = alternate->status << 8 | alternate->lastVolume;
 
-		if (voiceVal + voice->tieBreak > altVal 
+		if (voiceVal + voice->tieBreak > altVal
 			|| voice->isBlocked > alternate->isBlocked) {
 
 			// this is somewhat different to the original player,
@@ -682,7 +682,7 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 			const uint8 sineIndex = sineByte & 0x7F;
 			const int16 modVal = ((uint32)(uint16)(tableSine[sineIndex] + (sineIndex ? 1 : 0)) * channel.modulation) >> 8;
 			bend = (sineByte < 0x80) ? bend + modVal : bend - modVal;
-		} 
+		}
 	}
 #endif
 
@@ -726,7 +726,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			voice->endNote = channel.lastNote = note;
 			return voiceNum;
 		}
-	}	
+	}
 
 	if (voiceNum >= 0) {
 		VoiceContext &voice = _voiceCtx[voiceNum];
@@ -758,7 +758,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			}
 			channel.lastNote = note;
 		}
-		
+
 		voice.lastPeriod = calcNote(voice);
 
 		voice.priority = (byte)pri;
@@ -866,7 +866,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 	const char *errorMsg = 0;
 	// 0x0000: 4 Bytes Header "MXTX"
 	// 0x0004: uint16 tempo
-	// 0x0006: uint16 flags. bit0 = lowpassfilter, bit1 = attackvolume, bit15 = microtonal	
+	// 0x0006: uint16 flags. bit0 = lowpassfilter, bit1 = attackvolume, bit15 = microtonal
 	if (musicData.size() < 10 || musicData.readUint32BE() != 0x4D585458) {
 		warning("Maxtrax: File is not a Maxtrax Module");
 		return false;
@@ -905,7 +905,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		if (!curScore)
 			goto allocError;
 		_scores = curScore;
-		
+
 		for (scoresLoaded = 0; scoresLoaded < tempScores; ++scoresLoaded, ++curScore) {
 			const uint32 numEvents = musicData.readUint32BE();
 			Event *curEvent = new Event[numEvents];

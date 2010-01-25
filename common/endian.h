@@ -44,7 +44,7 @@
  *  FROM_??_??(a)         - convert LE/BE value v to native
  *  CONSTANT_??_??(a)     - convert LE/BE value v to native, implemented as macro.
  *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
- *                              Unlike most other functions these can be used for eg. switch-case labels 
+ *                              Unlike most other functions these can be used for eg. switch-case labels
  */
 
 // Sanity check
@@ -103,7 +103,7 @@
 	}
 
 // generic fallback
-#else 
+#else
 
 	inline uint32 SWAP_BYTES_32(uint32 a) {
 		const uint16 low = (uint16)a, high = (uint16)(a >> 16);
@@ -184,7 +184,7 @@
 		*(uint32 *)(ptr) = value;
 	}
 
-// test for GCC >= 4.0. these implementations will automatically use CPU-specific 
+// test for GCC >= 4.0. these implementations will automatically use CPU-specific
 // instructions for unaligned data when they are available (eg. MIPS)
 #elif defined(__GNUC__) && (__GNUC__ >= 4)
 
@@ -326,7 +326,7 @@
 		inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
 			WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 		}
-	
+
 #	endif	// if defined(SCUMM_NEED_ALIGNMENT)
 
 #elif defined(SCUMM_BIG_ENDIAN)
@@ -394,7 +394,7 @@
 	inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
 		WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 	}
-	
+
 #	endif	// if defined(SCUMM_NEED_ALIGNMENT)
 
 #endif	// if defined(SCUMM_LITTLE_ENDIAN)

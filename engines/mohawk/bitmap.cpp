@@ -34,17 +34,17 @@ namespace Mohawk {
 
 #define PACK_COMPRESSION (_header.format & kPackMASK)
 #define DRAW_COMPRESSION (_header.format & kDrawMASK)
-	
+
 MohawkBitmap::MohawkBitmap() {
 }
-	
+
 MohawkBitmap::~MohawkBitmap() {
 }
 
 ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	_data = stream;
 	_header.colorTable.palette = NULL;
-	
+
 	// NOTE: Only the bottom 12 bits of width/height/bytesPerRow are
 	// considered valid and bytesPerRow has to be an even number.
 	_header.width = _data->readUint16BE() & 0x3FFF;
@@ -56,7 +56,7 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 
 	if (getBitsPerPixel() != 8)
 		error ("Unhandled bpp %d", getBitsPerPixel());
-	
+
 	// Read in the palette if it's here.
 	if (_header.format & kBitmapHasCLUT || (PACK_COMPRESSION == kPackRiven && getBitsPerPixel() == 8)) {
 		_header.colorTable.tableSize = _data->readUint16BE();
@@ -74,7 +74,7 @@ ImageData *MohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 
 	_surface = new Graphics::Surface();
 	_surface->create(_header.width, _header.height, getBitsPerPixel() >> 3);
-	
+
 	unpackImage();
 	drawImage();
 	delete _data;
@@ -97,7 +97,7 @@ byte MohawkBitmap::getBitsPerPixel() {
 	default:
 		error ("Unknown bits per pixel");
 	}
-	
+
 	return 0;
 }
 
@@ -113,12 +113,12 @@ static const CompressionInfo packTable[] = {
 	{ kPackLZ1, "LZ1", &MohawkBitmap::unpackLZ1 },
 	{ kPackRiven, "Riven", &MohawkBitmap::unpackRiven }
 };
-	
+
 const char *MohawkBitmap::getPackName() {
 	for (uint32 i = 0; i < ARRAYSIZE(packTable); i++)
 		if (PACK_COMPRESSION == packTable[i].flag)
 			return packTable[i].name;
-			
+
 	return "Unknown";
 }
 
@@ -128,7 +128,7 @@ void MohawkBitmap::unpackImage() {
 			(this->*packTable[i].func)();
 			return;
 		}
-		
+
 	warning("Unknown Pack Compression");
 }
 
@@ -142,7 +142,7 @@ const char *MohawkBitmap::getDrawName() {
 	for (uint32 i = 0; i < ARRAYSIZE(drawTable); i++)
 		if (DRAW_COMPRESSION == drawTable[i].flag)
 			return drawTable[i].name;
-			
+
 	return "Unknown";
 }
 
@@ -152,7 +152,7 @@ void MohawkBitmap::drawImage() {
 			(this->*drawTable[i].func)();
 			return;
 		}
-		
+
 	warning("Unknown Draw Compression");
 }
 
@@ -254,11 +254,11 @@ void MohawkBitmap::unpackLZ() {
 	uint32 uncompressedSize = _data->readUint32BE();
 	/* uint32 compressedSize = */ _data->readUint32BE();
 	uint16 dictSize = _data->readUint16BE();
-	
+
 	// We only support the buffer size of 0x400
 	if (dictSize != CBUFFERSIZE)
 		error("Unsupported dictionary size of %04x", dictSize);
-	
+
 	// Now go and decompress the data
 	Common::SeekableReadStream *decompressedData = decompressLZ(_data, uncompressedSize);
 	delete _data;
@@ -278,8 +278,8 @@ void MohawkBitmap::unpackLZ1() {
 //////////////////////////////////////////
 
 void MohawkBitmap::unpackRiven() {
-	_data->readUint32BE(); // Unknown, the number is close to bytesPerRow * height. Could be bufSize. 
-	
+	_data->readUint32BE(); // Unknown, the number is close to bytesPerRow * height. Could be bufSize.
+
 	byte *uncompressedData = (byte *)malloc(_header.bytesPerRow * _header.height);
 	byte *dst = uncompressedData;
 
@@ -468,9 +468,9 @@ void MohawkBitmap::handleRivenSubcommandStream(byte count, byte *&dst) {
 			byte pattern = _data->readByte();
 			B_LASTDUPLET_MINUS(pattern >> 4);
 			B_LASTDUPLET_MINUS(getLastFourBits(pattern));
-		
+
 		// Repeat operations
-		// Repeat n duplets from relative position -m (given in pixels, not duplets). 
+		// Repeat n duplets from relative position -m (given in pixels, not duplets).
 		// If r is 0, another byte follows and the last pixel is set to that value
 		} else if (cmd >= 0xa4 && cmd <= 0xa7) {
 			B_NDUPLETS(3);
@@ -541,24 +541,24 @@ void MohawkBitmap::drawRaw() {
 void MohawkBitmap::drawRLE8() {
 	// A very simple RLE8 scheme is used as a secondary compression on
 	// most images in non-Riven tBMP's.
-	
+
 	for (uint16 i = 0; i < _header.height; i++) {
 		uint16 rowByteCount = _data->readUint16BE();
 		int32 startPos = _data->pos();
 		byte *dst = (byte *)_surface->pixels + i * _header.width;
 		int16 remaining = _header.width;
-		
+
 		// HACK: It seems only the bottom 9 bits are valid for images
 		// TODO: Verify if this is still needed after the buffer clearing fix.
 		rowByteCount &= 0x1ff;
-		
+
 		while (remaining > 0) {
 			byte code = _data->readByte();
 			uint16 runLen = (code & 0x7F) + 1;
-			
+
 			if (runLen > remaining)
 				runLen = remaining;
-				
+
 			if (code & 0x80) {
 				byte val = _data->readByte();
 				for (uint16 j = 0; j < runLen; j++)
@@ -567,10 +567,10 @@ void MohawkBitmap::drawRLE8() {
 				for (uint16 j = 0; j < runLen; j++)
 					*dst++ = _data->readByte();
 			}
-			
+
 			remaining -= runLen;
 		}
-		
+
 		_data->seek(startPos + rowByteCount);
 	}
 }
@@ -591,7 +591,7 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	uint32 uncompressedSize = stream->readUint32LE();
 	Common::SeekableReadStream* bmpStream = decompressLZ(stream, uncompressedSize);
 	delete stream;
-	
+
 	_header.type = bmpStream->readUint16BE();
 
 	if (_header.type != 'BM')
@@ -602,7 +602,7 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	_header.res1 = bmpStream->readUint16LE();
 	_header.res2 = bmpStream->readUint16LE();
 	_header.imageOffset = bmpStream->readUint32LE();
-	
+
 	_info.size = bmpStream->readUint32LE();
 
 	if (_info.size != 40)
@@ -618,34 +618,34 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	_info.pixelsPerMeterY = bmpStream->readUint32LE();
 	_info.colorsUsed = bmpStream->readUint32LE();
 	_info.colorsImportant = bmpStream->readUint32LE();
-	
+
 	if (_info.compression != 0)
 		error("Unhandled BMP compression %d", _info.compression);
-	
+
 	if (_info.colorsUsed == 0)
 		_info.colorsUsed = 256;
-		
+
 	if (_info.bitsPerPixel != 8 && _info.bitsPerPixel != 24)
 		error("%dbpp Bitmaps not supported", _info.bitsPerPixel);
-		
+
 	byte *palData = NULL;
-	
+
 	if (_info.bitsPerPixel == 8) {
 		palData = (byte *)malloc(256 * 4);
-		for (uint16 i = 0; i < _info.colorsUsed; i++) {			
+		for (uint16 i = 0; i < _info.colorsUsed; i++) {
 			palData[i * 4 + 2] = bmpStream->readByte();
 			palData[i * 4 + 1] = bmpStream->readByte();
-			palData[i * 4] = bmpStream->readByte();			
+			palData[i * 4] = bmpStream->readByte();
 			palData[i * 4 + 3] = bmpStream->readByte();
 		}
 	}
-	
+
 	bmpStream->seek(_header.imageOffset);
-	
+
 	Graphics::Surface *surface = new Graphics::Surface();
 	int srcPitch = _info.width * (_info.bitsPerPixel >> 3);
 	const int extraDataLength = (srcPitch % 4) ? 4 - (srcPitch % 4) : 0;
-	
+
 	if (_info.bitsPerPixel == 8) {
 		surface->create(_info.width, _info.height, 1);
 		byte *dst = (byte *)surface->pixels;
@@ -657,30 +657,30 @@ ImageData* MystBitmap::decodeImage(Common::SeekableReadStream* stream) {
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 		surface->create(_info.width, _info.height, pixelFormat.bytesPerPixel);
-		
+
 		byte *dst = (byte *)surface->pixels + (surface->h - 1) * surface->pitch;
-		
+
 		for (uint32 i = 0; i < _info.height; i++) {
 			for (uint32 j = 0; j < _info.width; j++) {
 				byte b = bmpStream->readByte();
 				byte g = bmpStream->readByte();
 				byte r = bmpStream->readByte();
-				
+
 				if (pixelFormat.bytesPerPixel == 2)
 					*((uint16 *)dst) = pixelFormat.RGBToColor(r, g, b);
-				else 
+				else
 					*((uint32 *)dst) = pixelFormat.RGBToColor(r, g, b);
-				
+
 				dst += pixelFormat.bytesPerPixel;
 			}
-			
+
 			bmpStream->skip(extraDataLength);
 			dst -= surface->pitch * 2;
 		}
 	}
-		
+
 	delete bmpStream;
-	
+
 	return new ImageData(surface, palData);
 }
 
@@ -695,7 +695,7 @@ ImageData *OldMohawkBitmap::decodeImage(Common::SeekableReadStream *stream) {
 	_header.format = endianStream->readUint16();
 
 	debug(2, "Decoding Old Mohawk Bitmap (%dx%d, %04x Format)", _header.width, _header.height, _header.format);
-	
+
 	warning("Unhandled old Mohawk Bitmap decoding");
 
 	delete stream;

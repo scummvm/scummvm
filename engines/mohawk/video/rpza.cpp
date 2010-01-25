@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
  // Based off ffmpeg's RPZA decoder
 
 #include "mohawk/video/rpza.h"
@@ -43,7 +43,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Graphics::Codec() {
 	debug(2, "RPZA corrected width: %d", width);
 
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, _pixelFormat.bytesPerPixel);	
+	_surface->create(width, height, _pixelFormat.bytesPerPixel);
 }
 
 #define ADVANCE_BLOCK() \

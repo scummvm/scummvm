@@ -54,7 +54,7 @@ private:
 	MohawkEngine_Riven *_vm;
 	Common::SaveFileManager *_saveFileMan;
 	MohawkArchive *_loadFile;
-		
+
 	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genNAMESection();
 	Common::MemoryWriteStreamDynamic *genVARSSection();

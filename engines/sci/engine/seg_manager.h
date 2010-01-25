@@ -87,12 +87,12 @@ public:
 	void reconstructScripts(EngineState *s);
 
 	/**
-	 * Validate whether the specified public function is exported by 
+	 * Validate whether the specified public function is exported by
 	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
-	 * @param seg			Segment ID of the script the check is to 
+	 * @param seg			Segment ID of the script the check is to
 	 * 						be performed for
-	 * @return				NULL if the public function is invalid, its 
+	 * @return				NULL if the public function is invalid, its
 	 * 						offset into the script's segment otherwise
 	 */
 	uint16 validateExportFunc(int pubfunct, SegmentId seg);
@@ -124,7 +124,7 @@ public:
 
 	/**
 	 * Return a pointer to the specified script.
-	 * If the id is invalid, does not refer to a script or the script is 
+	 * If the id is invalid, does not refer to a script or the script is
 	 * not loaded, this will invoke error().
 	 * @param seg	ID of the script segment to check for
 	 * @return		A pointer to the Script object
@@ -134,7 +134,7 @@ public:
 
 	/**
 	 * Return a pointer to the specified script.
-	 * If the id is invalid, does not refer to a script, or 
+	 * If the id is invalid, does not refer to a script, or
 	 * the script is not loaded, this will return NULL
 	 * @param seg	ID of the script segment to check for
 	 * @return		A pointer to the Script object, or NULL
@@ -200,7 +200,7 @@ public:
 	 * See also sys_string_acquire();
 	 * @param[in] segid	Segment ID of the stack
 	 * @returns			The physical stack
-	 */            
+	 */
 	SystemStrings *allocateSysStrings(SegmentId *segid);
 
 
@@ -242,7 +242,7 @@ public:
 	/**
 	 * Allocate a fresh chunk of the hunk
 	 * @param[in] size		Number of bytes to allocate for the hunk entry
-	 * @param[in] hunk_type	A descriptive string for the hunk entry, for 
+	 * @param[in] hunk_type	A descriptive string for the hunk entry, for
 	 *	 					debugging purposes
 	 * @param[out] addr		The offset of the freshly allocated hunk entry
 	 * @return				Reference to the memory allocated for the hunk
@@ -264,7 +264,7 @@ public:
 	 * @param[in]  size			Number of bytes to allocate
 	 * @param[in]  description	A descriptive string for debugging purposes
 	 * @param[out] addr			The offset of the freshly allocated X
-	 * @return					Raw pointer into the allocated dynamic 
+	 * @return					Raw pointer into the allocated dynamic
 	 * 							memory
 	 */
 	byte *allocDynmem(int size, const char *description, reg_t *addr);
@@ -440,7 +440,7 @@ public:
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
 	Common::Array<Class> _classtable; /**< Table of all classes */
-	
+
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);
 	SciArray<reg_t> *lookupArray(reg_t addr);

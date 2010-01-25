@@ -155,8 +155,8 @@ bool Hotspots::Hotspot::isDisabled() const {
 }
 
 bool Hotspots::Hotspot::isIn(uint16 x, uint16 y) const {
-	// FIXME: the cast to int16 is a hack, to fix handling of Gob2 problems related to 
-	// hotspots with negative offset (to temporary disable them). 
+	// FIXME: the cast to int16 is a hack, to fix handling of Gob2 problems related to
+	// hotspots with negative offset (to temporary disable them).
 	if ((int16) x < (int16) left)
 		return false;
 	if ((int16) x > (int16) right)
@@ -523,23 +523,23 @@ void Hotspots::leave(uint16 index) {
 }
 
 int16 Hotspots::curWindow(int16 &dx, int16 &dy) const {
-	if ((_vm->_draw->_renderFlags & 0x80)==0) 
+	if ((_vm->_draw->_renderFlags & 0x80)==0)
 		return(0);
 	for (int i = 0; i < 10; i++)
 		if (_vm->_draw->_fascinWin[i].id != -1)
-			if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left && 
-				_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width && 
-				_vm->_global->_inter_mouseY >= _vm->_draw->_fascinWin[i].top && 
+			if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left &&
+				_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width &&
+				_vm->_global->_inter_mouseY >= _vm->_draw->_fascinWin[i].top &&
 				_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + _vm->_draw->_fascinWin[i].height)
 				if (_vm->_draw->_fascinWin[i].id == _vm->_draw->_winCount-1) {
 					dx = _vm->_draw->_fascinWin[i].left;
 					dy = _vm->_draw->_fascinWin[i].top;
-					if (_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + 12 && 
-						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top  + 12 && 
+					if (_vm->_global->_inter_mouseX < _vm->_draw->_fascinWin[i].left + 12 &&
+						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top  + 12 &&
 						(VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 2))
 						return(5);
-					if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width - 12 && 
-						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + 12 && 
+					if (_vm->_global->_inter_mouseX >= _vm->_draw->_fascinWin[i].left + _vm->_draw->_fascinWin[i].width - 12 &&
+						_vm->_global->_inter_mouseY < _vm->_draw->_fascinWin[i].top + 12 &&
 						(VAR((_vm->_draw->_winVarArrayStatus / 4) + i) & 4))
 						return(6);
 					return(-i);
@@ -785,9 +785,9 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 						enter(_currentIndex);
 				} else {
 					WRITE_VAR(16, (int32) i);
-					if (id) 
+					if (id)
 						id=0;
-					if (index) 
+					if (index)
 						index=0;
 					return(0);
 				}
@@ -1608,7 +1608,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 
 	int16 deltax = 0;
 	int16 deltay = 0;
-	
+
 	if ( _vm->getGameType() == kGameTypeFascination ) {
 		cursor = curWindow(deltax, deltay);
 	}
@@ -1647,9 +1647,9 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 					if (spot.isIn(x - deltax, y - deltay)) {
 						if (spot.getType() < kTypeInput1NoLeave)
 							cursor = 1;
-						else 
+						else
 							cursor = 3;
-						break; 
+						break;
 					}
 			}
 		}
@@ -1682,17 +1682,17 @@ void Hotspots::oPlaytoons_F_1B() {
 	var4 = _vm->_game->_script->readValExpr();
 
 //  this variable is always set to 0 in Playtoons
-//	var_4 += unk_var; 
+//	var_4 += unk_var;
 
 	for (int i = 0; i < kHotspotCount; i++) {
 		if (_hotspots[i].isEnd()) {
 			return;
 		}
-		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) || 
+		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) ||
 			(_hotspots[i].id == 0x4000 + shortId)) {
 			longId = _hotspots[i].id;
 			warning("oPlaytoons_F_1B: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
-			
+
 			left = _hotspots[i].left;
 			top = _hotspots[i].top;
 			right = _hotspots[i].right;

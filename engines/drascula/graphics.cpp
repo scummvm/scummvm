@@ -546,7 +546,7 @@ int DrasculaEngine::playFrameSSN() {
 				mixVideo(screenBuffer, screenSurface);
 			else
 				memcpy(screenBuffer, screenSurface, 64000);
-			
+
 			_system->unlockScreen();
 			_system->updateScreen();
 			FrameSSN++;

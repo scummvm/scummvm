@@ -115,7 +115,7 @@ int freeOverlay(int overlayIdx) {
 	MemFree(ovlDataPtr->arrayNameObj);
 	MemFree(ovlDataPtr->arrayRelocGlob);
 	MemFree(ovlDataPtr->arrayNameRelocGlob);
-	
+
 	MemFree(ovlDataPtr);
 	overlayTable[overlayIdx].ovlData = NULL;
 

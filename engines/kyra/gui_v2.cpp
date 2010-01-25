@@ -748,7 +748,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 	int x2 = x, y2 = y;
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_text->printText(buffer, x, y, c1, c2, c2);
-	
+
 	for (int i = 0; i < curPos; ++i)
 		x2 += getCharWidth(buffer[i]);
 

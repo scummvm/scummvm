@@ -61,7 +61,7 @@ private:
 	bool cmdSuffixes(int argc, const char **argv);
 	bool cmdParseGrammar(int argc, const char **argv);
 	bool cmdParserNodes(int argc, const char **argv);
-	bool cmdParserWords(int argc, const char **argv);	
+	bool cmdParserWords(int argc, const char **argv);
 	bool cmdSentenceFragments(int argc, const char **argv);
 	bool cmdParse(int argc, const char **argv);
 	bool cmdSetParseNodes(int argc, const char **argv);

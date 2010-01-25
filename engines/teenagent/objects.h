@@ -61,10 +61,10 @@ struct Rect {
 	inline void clear() {
 		left = top = right = bottom = 0;
 	}
-	
+
 	void load(byte *src); //8 bytes
 	void save() const;
-	
+
 	inline bool intersects_hline(int x1, int x2, int y) const {
 		if (x1 > x2)
 			SWAP(x1, x2);
@@ -76,22 +76,22 @@ struct Rect {
 			SWAP(y1, y2);
 		return x >= left && x <= right && y1 <= bottom && y2 >= top;
 	}
-	
+
 	inline bool contains(const Rect & rect) const {
 		return rect.left >= left && rect.right <= right && rect.top >= top && rect.bottom <= bottom;
 	}
-	
+
 	static inline bool inside(int x, int a, int b) {
 		if (a > b)
 			SWAP(a, b);
 		return x >= a && x <= b;
 	}
-	
+
 	int intersects_line(const Common::Point &a, const Common::Point &b) const {
 		int dy = b.y - a.y, dx = b.x - a.x;
 
 		int mask = 0; //orientation bitmask: 1 - top, 2 - right, 3 - bottom, 4 - left
-		
+
 		if (dx != 0) {
 			int yl = (left - a.x) * dy / dx + a.y;
 			if (yl > top && yl < bottom && inside(yl, a.y, b.y) && inside(left, a.x, b.x)) {
@@ -103,8 +103,8 @@ struct Rect {
 				//c[idx++] = Common::Point(right, yr);
 				mask |= 2;
 			}
-		} 
-		
+		}
+
 		if (dy != 0) {
 			int xt = (top - a.y) * dx / dy + a.x;
 			if (xt > left && xt < right && inside(xt, a.x, b.x) && inside(top, a.y, b.y)) {
@@ -121,7 +121,7 @@ struct Rect {
 		}
 		return mask;
 	}
-	
+
 	void side(Common::Point &p1, Common::Point &p2, int o, const Common::Point &nearest) const {
 		switch(o) {
 		case kActorLeft:
@@ -143,12 +143,12 @@ struct Rect {
 			p1 = Common::Point(left, bottom);
 			p2 = Common::Point(right, bottom);
 			break;
-		
+
 		default:
 			p1 = Common::Point();
 			p2 = Common::Point();
 		}
-		if (p1.sqrDist(nearest) >= p2.sqrDist(nearest)) 
+		if (p1.sqrDist(nearest) >= p2.sqrDist(nearest))
 			SWAP(p1, p2);
 	}
 
@@ -171,7 +171,7 @@ struct Object {
 	void setName(const Common::String &name);
 	void load(byte *addr);
 	void save() const;
-	
+
 	static Common::String parse_description(const char *name);
 
 protected:
@@ -182,7 +182,7 @@ struct InventoryObject {
 	byte id;
 	byte animated;
 	Common::String name, description;
-	
+
 	InventoryObject(): id(0), animated(0), _base(0) {}
 	void load(byte *addr);
 

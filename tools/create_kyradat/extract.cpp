@@ -29,7 +29,7 @@
 
 namespace {
 
-// Extraction function prototypes 
+// Extraction function prototypes
 
 bool extractRaw(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);

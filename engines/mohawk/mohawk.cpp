@@ -92,12 +92,12 @@ Common::SeekableReadStream *MohawkEngine::getRawData(uint32 tag, uint16 id) {
 	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
 	return 0;
 }
-	
+
 bool MohawkEngine::hasResource(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id))
 			return true;
-	
+
 	return false;
 }
 
@@ -105,7 +105,7 @@ uint32 MohawkEngine::getResourceOffset(uint32 tag, uint16 id) {
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id))
 			return _mhk[i]->getOffset(tag, id);
-	
+
 	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
 	return 0;
 }

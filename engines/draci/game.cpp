@@ -197,7 +197,7 @@ void Game::init() {
 	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
 
 	_objUnderCursor = NULL;
-        
+
 	// Set the inventory to empty initially
 	memset(_inventory, 0, kInventorySlots * sizeof(GameItem *));
 
@@ -571,7 +571,7 @@ void Game::handleStatusChangeByMouse() {
 	if (!wantsChange) {
 		// Turn off the timer, but enable switching.
 		_mouseChangeTick = kMouseEnableSwitching;
-	
+
 	// Otherwise the mouse signalizes that the mode should be changed.
 	} else if (_mouseChangeTick == kMouseEnableSwitching) {
 		// If the timer is currently disabled, this is the first time
@@ -1181,7 +1181,7 @@ void Game::deleteObjectAnimations() {
 		GameObject *obj = &_objects[i];
 		obj->deleteAnims();
 	}
-	
+
 	// WORKAROUND
 	//
 	// An absolutely horrible hack follows.  The current memory management

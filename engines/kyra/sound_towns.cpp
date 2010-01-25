@@ -3562,7 +3562,7 @@ void TownsPC98_OpnDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 
 void TownsPC98_OpnDriver::reset() {
 	Common::StackLock lock(_mutex);
-	
+
 	_musicPlaying = false;
 	_sfxPlaying = false;
 	_fading = false;

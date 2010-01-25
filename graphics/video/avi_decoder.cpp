@@ -60,14 +60,14 @@ AviDecoder::~AviDecoder() {
 	closeFile();
 	delete _audHandle;
 }
-	
+
 void AviDecoder::runHandle(uint32 tag) {
 	assert (_fileStream);
 	if (_fileStream->eos())
 		return;
 
 	debug (3, "Decoding tag %s", tag2str(tag));
-		
+
 	switch (tag) {
 		case ID_RIFF:
 			/*_filesize = */_fileStream->readUint32LE();
@@ -118,24 +118,24 @@ void AviDecoder::runHandle(uint32 tag) {
 			error ("Unknown tag \'%s\' found", tag2str(tag));
 	}
 }
-	
+
 void AviDecoder::handleList() {
 	uint32 listSize = _fileStream->readUint32LE() - 4; // Subtract away listType's 4 bytes
 	uint32 listType = _fileStream->readUint32BE();
 	uint32 curPos = _fileStream->pos();
-	
+
 	debug (0, "Found LIST of type %s", tag2str(listType));
-	
+
 	while ((_fileStream->pos() - curPos) < listSize)
 		runHandle(_fileStream->readUint32BE());
-	
+
 	// We now have all the header data
 	if (listType == ID_HDRL)
 		_decodedHeader = true;
 }
-	
+
 void AviDecoder::handleStreamHeader() {
-	AVIStreamHeader sHeader;	
+	AVIStreamHeader sHeader;
 	sHeader.size = _fileStream->readUint32LE();
 	sHeader.streamType = _fileStream->readUint32BE();
 	if (sHeader.streamType == ID_MIDS || sHeader.streamType == ID_TXTS)
@@ -156,19 +156,19 @@ void AviDecoder::handleStreamHeader() {
 	sHeader.frame.top = _fileStream->readSint16LE();
 	sHeader.frame.right = _fileStream->readSint16LE();
 	sHeader.frame.bottom = _fileStream->readSint16LE();
-		
+
 	if (_fileStream->readUint32BE() != ID_STRF)
 		error("Could not find STRF tag");
 	/* uint32 strfSize = */ _fileStream->readUint32LE();
-	
+
 	if (sHeader.streamType == ID_VIDS) {
 		_vidsHeader = sHeader;
-		
+
 		_bmInfo.size = _fileStream->readUint32LE();
 		_bmInfo.width = _fileStream->readUint32LE();
 		assert (_header.width == _bmInfo.width);
 		_bmInfo.height = _fileStream->readUint32LE();
-		assert (_header.height == _bmInfo.height);	
+		assert (_header.height == _bmInfo.height);
 		_bmInfo.planes = _fileStream->readUint16LE();
 		_bmInfo.bitCount = _fileStream->readUint16LE();
 		_bmInfo.compression = _fileStream->readUint32BE();
@@ -177,23 +177,23 @@ void AviDecoder::handleStreamHeader() {
 		_bmInfo.yPelsPerMeter = _fileStream->readUint32LE();
 		_bmInfo.clrUsed = _fileStream->readUint32LE();
 		_bmInfo.clrImportant = _fileStream->readUint32LE();
-		
+
 		if (_bmInfo.bitCount == 8) {
 			if (_bmInfo.clrUsed == 0)
 				_bmInfo.clrUsed = 256;
-					
+
 			for (uint32 i = 0; i < _bmInfo.clrUsed; i++) {
 				_palette[i * 3 + 2] = _fileStream->readByte();
 				_palette[i * 3 + 1] = _fileStream->readByte();
 				_palette[i * 3] = _fileStream->readByte();
 				/*_palette[i * 4 + 3] = */_fileStream->readByte();
 			}
-			
+
 			setPalette(_palette);
 		}
 	} else if (sHeader.streamType == ID_AUDS) {
 		_audsHeader = sHeader;
-		
+
 		_wvInfo.tag = _fileStream->readUint16LE();
 		_wvInfo.channels = _fileStream->readUint16LE();
 		_wvInfo.samplesPerSec = _fileStream->readUint32LE();
@@ -209,27 +209,27 @@ bool AviDecoder::loadFile(const char *fileName) {
 	_fileStream = SearchMan.createReadStreamForMember(fileName);
 	if (!_fileStream)
 		return false;
-	
+
 	_decodedHeader = false;
 	// Seek to the first frame
 	_videoInfo.currentFrame = 0;
-	
+
 
 	// Read chunks until we have decoded the header
 	while (!_decodedHeader)
 		runHandle(_fileStream->readUint32BE());
-		
+
 	_videoFrameBuffer = new byte[_header.width * _header.height];
 	memset(_videoFrameBuffer, 0, _header.width * _header.height);
 
 	uint32 nextTag = _fileStream->readUint32BE();
-	
+
 	// Throw out any JUNK section
 	if (nextTag == ID_JUNK) {
 		runHandle(ID_JUNK);
 		nextTag = _fileStream->readUint32BE();
 	}
-	
+
 	// Ignore the 'movi' LIST
 	if (nextTag == ID_LIST) {
 		_fileStream->readUint32BE(); // Skip size
@@ -237,7 +237,7 @@ bool AviDecoder::loadFile(const char *fileName) {
 			error ("Expected 'movi' LIST");
 	} else
 		error ("Expected 'movi' LIST");
-		
+
 	// Now, create the codec
 	_videoCodec = createCodec();
 
@@ -245,7 +245,7 @@ bool AviDecoder::loadFile(const char *fileName) {
 	_audStream = createAudioStream();
 	if (_audStream)
 		_mixer->playInputStream(_soundType, _audHandle, _audStream);
-			
+
 	debug (0, "Frames = %d, Dimensions = %d x %d", _header.totalFrames, _header.width, _header.height);
 	debug (0, "Frame Rate = %d", getFrameRate());
 	if ((_audsHeader.scale != 0) && (_header.flags & AVIF_ISINTERLEAVED))
@@ -308,7 +308,7 @@ Surface *AviDecoder::getNextFrame() {
 
 		if (_fileStream->readUint32BE() != ID_REC)
 			error ("Expected 'rec ' LIST");
-		
+
 		// Decode chunks in the list and see if we get a frame
 		Surface *frame = NULL;
 		while (_fileStream->pos() < startPos + (int32)listSize) {
@@ -332,14 +332,14 @@ Surface *AviDecoder::getNextFrame() {
 
 		_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
 		_fileStream->skip(chunkSize & 1); // Alignment
-	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' || getStreamType(nextTag) == 'AM') {		
+	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' || getStreamType(nextTag) == 'AM') {
 		// Compressed Frame
 		_videoInfo.currentFrame++;
 		uint32 chunkSize = _fileStream->readUint32LE();
 
 		if (chunkSize == 0) // Keep last frame on screen
 			return NULL;
-		
+
 		Common::SeekableReadStream *frameData = _fileStream->readStream(chunkSize);
 		Graphics::Surface *surface = _videoCodec->decodeImage(frameData);
 		delete frameData;
@@ -351,18 +351,18 @@ Surface *AviDecoder::getNextFrame() {
 		byte firstEntry = _fileStream->readByte();
 		uint16 numEntries = _fileStream->readByte();
 		_fileStream->readUint16LE(); // Reserved
-		
+
 		// 0 entries means all colors are going to be changed
 		if (numEntries == 0)
 			numEntries = 256;
-			
+
 		for (uint16 i = firstEntry; i < numEntries + firstEntry; i++) {
 			_palette[i * 3] = _fileStream->readByte();
 			_palette[i * 3 + 1] = _fileStream->readByte();
 			_palette[i * 3 + 2] = _fileStream->readByte();
 			_fileStream->readByte(); // Flags that don't serve us any purpose
 		}
-		
+
 		setPalette(_palette);
 
 		// No alignment necessary. It's always even.
@@ -376,17 +376,17 @@ Surface *AviDecoder::getNextFrame() {
 	return NULL;
 }
 
-bool AviDecoder::decodeNextFrame() {	
+bool AviDecoder::decodeNextFrame() {
 	if (_videoInfo.currentFrame == 0)
 		_videoInfo.startTime = g_system->getMillis();
 
 	Surface *surface = NULL;
-	
+
 	uint32 curFrame = _videoInfo.currentFrame;
 
 	while (!surface && _videoInfo.currentFrame < _videoInfo.frameCount && !_fileStream->eos())
 		surface = getNextFrame();
-	
+
 	if (curFrame == _videoInfo.currentFrame) {
 		warning("No video frame found");
 		_videoInfo.currentFrame++;
@@ -430,7 +430,7 @@ Codec *AviDecoder::createCodec() {
 		default:
 			warning ("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}
-	
+
 	return NULL;
 }
 
@@ -439,17 +439,17 @@ Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
 	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM) {
 		return Audio::makeQueuingAudioStream(AUDIO_RATE, false);
 	}
-	
+
 	if (_wvInfo.tag != 0) // No sound
 		warning ("Unsupported AVI audio format %d", _wvInfo.tag);
 
 	return NULL;
 }
-	
+
 byte AviDecoder::char2num(char c) {
 	return (c >= 48 && c <= 57) ? c - 48 : 0;
 }
-	
+
 byte AviDecoder::getStreamNum(uint32 tag) {
 	return char2num((char)(tag >> 24)) * 16 + char2num((char)(tag >> 16));
 }

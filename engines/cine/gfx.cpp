@@ -714,7 +714,7 @@ void FWRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	byte buf[kLowPalNumBytes];
 
 	// Make sure the active palette has the correct format and color count
-	assert(_activePal.colorFormat() == kLowPalFormat);	
+	assert(_activePal.colorFormat() == kLowPalFormat);
 	assert(_activePal.colorCount() == kLowPalNumColors);
 
 	// Make sure the backup palette has the correct format and color count

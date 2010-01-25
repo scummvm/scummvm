@@ -219,7 +219,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	}
-	
+
 	return false;
 }
 

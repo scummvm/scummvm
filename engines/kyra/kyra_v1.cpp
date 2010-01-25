@@ -363,7 +363,7 @@ void KyraEngine_v1::setupKeyMap() {
 
 	static const int16 keyCodesDOS[] = { 61, 43, 96, 96, 102, 102, 98, 98, 97, 92, 92, 91, 91, 101, 101, 112, 113, 114, 25, 20, 55, 110};
 	static const int16 keyCodesPC98[] = { 53, 29, 68, 68, 73, 73, 76, 76, 72, 71, 71, 67, 67, 69, 69, 99, 100, 101, 25, 20, 55, 1 };
-	
+
 	const int16 *keyCodes = _flags.platform == Common::kPlatformPC98 ? keyCodesPC98 : keyCodesDOS;
 	_keyMap.clear();
 

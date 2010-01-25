@@ -91,14 +91,14 @@ class MystGraphics {
 public:
 	MystGraphics(MohawkEngine_Myst*);
 	~MystGraphics();
-	
+
 	void loadExternalPictureFile(uint16 stack);
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
 	void showCursor(void);
 	void hideCursor(void);
 	void changeCursor(uint16);
-	
+
 	void drawRect(Common::Rect rect, bool active);
 private:
 	MohawkEngine_Myst *_vm;
@@ -106,7 +106,7 @@ private:
 	MystPICT *_pictDecoder;
 	MystJPEG *_jpegDecoder;
 	Graphics::PixelFormat _pixelFormat;
-	
+
 	struct PictureFile {
 		uint32 pictureCount;
 		struct PictureEntry {
@@ -128,7 +128,7 @@ struct SFXERecord {
 	Common::Rect rect;
 	uint16 speed;
 	Common::Array<Common::SeekableReadStream*> frameScripts;
-	
+
 	// Cur frame
 	uint16 curFrame;
 	uint32 lastFrameTime;
@@ -138,7 +138,7 @@ class RivenGraphics {
 public:
 	RivenGraphics(MohawkEngine_Riven *vm);
 	~RivenGraphics();
-	
+
 	void copyImageToScreen(uint16, uint32, uint32, uint32, uint32);
 	void updateScreen();
 	bool _updatesEnabled;
@@ -151,11 +151,11 @@ public:
 	void scheduleWaterEffect(uint16);
 	void clearWaterEffects();
 	bool runScheduledWaterEffects();
-	
+
 	// Transitions
 	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
-	
+
 	// Inventory
 	void showInventory();
 	void hideInventory();
@@ -166,16 +166,16 @@ private:
 
 	// Water Effects
 	Common::Array<SFXERecord> _waterEffects;
-	
+
 	// Transitions
 	int16 _scheduledTransition;
 	Common::Rect _transitionRect;
-	
+
 	// Inventory
 	void clearInventoryArea();
 	void drawInventoryImage(uint16 id, Common::Rect rect);
 	bool _inventoryDrawn;
-	
+
 	// Screen Related
 	Graphics::Surface *_mainScreen;
 	bool _dirtyScreen;

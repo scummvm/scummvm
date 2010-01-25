@@ -51,7 +51,7 @@ void PSPSaveFileManager::checkPath(const Common::FSNode &dir) {
 	clearError();
 
 	PowerMan.beginCriticalSection();
-	
+
 	//check if the save directory exists
 	SceUID fd = sceIoDopen(savePath);
 	if (fd < 0) {
@@ -61,7 +61,7 @@ void PSPSaveFileManager::checkPath(const Common::FSNode &dir) {
 		//it exists, so close it again.
 		sceIoDclose(fd);
 	}
-	
+
 	PowerMan.endCriticalSection();
 }
 #endif

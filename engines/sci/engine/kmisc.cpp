@@ -71,7 +71,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		//	s->_throttleCounter++;
 		//	return s->r_acc;
 		//}
-	
+
 		uint32 curTime = g_system->getMillis();
 		uint32 duration = curTime - s->_throttleLastTime;
 		uint32 neededSleep = 30;
@@ -268,7 +268,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 0 && getSciVersion() < SCI_VERSION_2) {
 		// This is called in KQ5CD with no parameters, where it seems to do some graphics
 		// driver check. This kernel function didn't have subfunctions then. If 0 is
-		// returned, the game functions normally, otherwise all the animations show up 
+		// returned, the game functions normally, otherwise all the animations show up
 		// like a slideshow (e.g. in the intro). So we return 0. However, the behavior
 		// changed for kPlatform with no parameters in SCI32.
 		return NULL_REG;

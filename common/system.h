@@ -374,11 +374,11 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
 
 	/**
-	 * Returns a list of all pixel formats supported by the backend. 
-	 * The first item in the list must be directly supported by hardware, 
-	 * and provide the largest color space of those formats with direct 
-	 * hardware support. It is also strongly recommended that remaining 
-	 * formats should be placed in order of descending preference for the 
+	 * Returns a list of all pixel formats supported by the backend.
+	 * The first item in the list must be directly supported by hardware,
+	 * and provide the largest color space of those formats with direct
+	 * hardware support. It is also strongly recommended that remaining
+	 * formats should be placed in order of descending preference for the
 	 * backend to use.
 	 *
 	 * EG: a backend that supports 32-bit ABGR and 16-bit 555 BGR in hardware
@@ -391,7 +391,7 @@ public:
 	 *
 	 * @see Graphics::PixelFormat
 	 *
-	 * @note Backends supporting RGB color should accept game data in RGB color 
+	 * @note Backends supporting RGB color should accept game data in RGB color
 	 *       order, even if hardware uses BGR or some other color order.
 	 */
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;

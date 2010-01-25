@@ -374,9 +374,9 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 			ptr += 4;
 		}
 	}
-	
-	
-	
+
+
+
 }
 
 void Cursor_v2::enable() {

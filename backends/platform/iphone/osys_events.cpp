@@ -294,7 +294,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 
 	int vecX = (x - _gestureStartX);
 	int vecY = (y - _gestureStartY);
-	
+
 	int absX = abs(vecX);
 	int absY = abs(vecY);
 
@@ -315,7 +315,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			_needEventRestPeriod = true;
 			return true;
 		}
-		
+
 		if (absX < kMaxDeviation && -vecY >= kNeededLength) {
 			// Swipe up
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
@@ -329,7 +329,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			dialog.runModal();
 			return false;
 		}
-		
+
 		if (absY < kMaxDeviation && vecX >= kNeededLength) {
 			// Swipe right
 			_touchpadModeEnabled = !_touchpadModeEnabled;
@@ -343,7 +343,7 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			return false;
 
 		}
-		
+
 		if (absY < kMaxDeviation && -vecX >= kNeededLength) {
 			// Swipe left
 			return false;

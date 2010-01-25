@@ -164,7 +164,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 #ifdef USE_RGB_COLOR
 		if (format)
 			g_system->initSize(width, height, format);
-		else { 
+		else {
 			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
 			g_system->initSize(width, height, &bestFormat);
 		}
@@ -406,7 +406,7 @@ void Engine::flipMute() {
 	if (ConfMan.hasKey("mute")) {
 		mute = !ConfMan.getBool("mute");
 	}
-	
+
 	ConfMan.setBool("mute", mute);
 
 	syncSoundSettings();

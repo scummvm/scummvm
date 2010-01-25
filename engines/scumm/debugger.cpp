@@ -858,17 +858,17 @@ bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 		int args[16];
 		memset(args, 0, sizeof(args));
 		args[0] = _vm->_bootParam;
-	
+
 		_vm->runScript(61, 0, 0, args);
-		
+
 		if (_vm->_bootParam != _vm->_scummVars[411]){
 			DebugPrintf("Invalid Passcode\n");
 			return true;
 		}
-		
-		_vm->_bootParam = 0;	
+
+		_vm->_bootParam = 0;
 		_detach_now = true;
-		
+
 	} else {
 		DebugPrintf("Use 'passcode <SEGA CD Passcode>'\n");
 		return true;

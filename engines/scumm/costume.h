@@ -84,7 +84,7 @@ protected:
 	void actorSpeak(ActorC64 *a, int &cmd);
 	int dirToDirStop(int oldDir);
 	void frameUpdate(ActorC64 *A, int cmd);
-	
+
 };
 
 class ClassicCostumeRenderer : public BaseCostumeRenderer {

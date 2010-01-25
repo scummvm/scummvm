@@ -25,7 +25,7 @@
 
  #ifndef BACKENDS_ELF_H
  #define BACKENDS_ELF_H
- 
+
  /* ELF stuff */
 
 typedef unsigned short Elf32_Half, Elf32_Section;
@@ -209,6 +209,6 @@ typedef struct
 	unsigned int __valgp;	\
 	__asm__ ("add %0, $gp, $0" : "=r"(__valgp) : ); \
 	__valgp; \
-}) 
- 
+})
+
  #endif /* BACKENDS_ELF_H */

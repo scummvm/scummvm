@@ -68,7 +68,7 @@ static reg_t &validate_property(Object *obj, int index) {
 	}
 
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
-		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n", 
+		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n",
 			index, obj->getVarCount());
 		return dummyReg;
 	}
@@ -80,7 +80,7 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
 
-	error("[VM] Stack index %d out of valid range [%d..%d]", 
+	error("[VM] Stack index %d out of valid range [%d..%d]",
 		(int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
 	return 0;
 }
@@ -111,7 +111,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 
 	if (index < 0 || index >= max) {
 		Common::String txt = Common::String::printf(
-							"[VM] Attempt to use invalid %s variable %04x ", 
+							"[VM] Attempt to use invalid %s variable %04x ",
 							names[type], index);
 		if (max == 0)
 			txt += "(variable type invalid)";
@@ -398,7 +398,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
 				sendCalls.push(call);
 			}
-			
+
 			break;
 
 		case kSelectorMethod:
@@ -941,7 +941,7 @@ void run_vm(EngineState *s, int restoring) {
 
 			xs_new = add_exec_stack_entry(s, make_reg(scriptState.xs->addr.pc.segment,
 											scriptState.xs->addr.pc.offset + opparams[0]),
-											scriptState.xs->sp, scriptState.xs->objp, 
+											scriptState.xs->sp, scriptState.xs->objp,
 											(validate_arithmetic(*call_base)) + scriptState.restAdjust,
 											call_base, NULL_SELECTOR, scriptState.xs->objp,
 											s->_executionStack.size()-1, scriptState.xs->local_segment);
@@ -1012,9 +1012,9 @@ void run_vm(EngineState *s, int restoring) {
 						// Remove callk stack frame again
 						s->_executionStack.pop_back();
 					} else {
-						Common::String warningMsg = "Dummy function " + kfun.orig_name + 
+						Common::String warningMsg = "Dummy function " + kfun.orig_name +
 													Common::String::printf("[0x%x]", opparams[0]) +
-													" invoked - ignoring. Params: " + 
+													" invoked - ignoring. Params: " +
 													Common::String::printf("%d", argc) + " (";
 
 						for (int i = 0; i < argc; i++) {

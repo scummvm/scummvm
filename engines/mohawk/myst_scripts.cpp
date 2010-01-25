@@ -63,10 +63,10 @@ MystScriptParser::MystScriptParser(MohawkEngine_Myst *vm) : _vm(vm) {
 	setupOpcodes();
 	_invokingResource = NULL;
 }
-	
+
 MystScriptParser::~MystScriptParser() {
 }
-	
+
 void MystScriptParser::setupOpcodes() {
 	// "invalid" opcodes do not exist or have not been observed
 	// "unknown" opcodes exist, but their meaning is unknown
@@ -172,7 +172,7 @@ void MystScriptParser::setupOpcodes() {
 		OPCODE(197, opcode_197), // Demo only
 		OPCODE(198, opcode_198),
 		OPCODE(199, opcode_199),
-		
+
 		// "Init" Opcodes
 		OPCODE(200, opcode_200),
 		OPCODE(201, opcode_201),
@@ -200,7 +200,7 @@ void MystScriptParser::setupOpcodes() {
 		// TODO: Opcodes 223 to 297 Not Present
 		OPCODE(298, opcode_298), // Demo only
 		OPCODE(299, opcode_299), // Demo only
-		
+
 		// "Exit" Opcodes
 		OPCODE(300, opcode_300),
 		OPCODE(301, opcode_301),
@@ -218,7 +218,7 @@ void MystScriptParser::setupOpcodes() {
 
 		OPCODE(0xFFFF, NOP)
 	};
-	
+
 	_opcodes = myst_opcodes;
 	_opcodeCount = ARRAYSIZE(myst_opcodes);
 }
@@ -263,14 +263,14 @@ void MystScriptParser::runScript(uint16 scriptCount, MystScriptEntry *scripts, M
 
 void MystScriptParser::runOpcode(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	bool ranOpcode = false;
-		
+
 	for (uint16 i = 0; i < _opcodeCount; i++)
 		if (_opcodes[i].op == op) {
 			(this->*(_opcodes[i].proc)) (op, var, argc, argv);
 			ranOpcode = true;
 			break;
 		}
-		
+
 	if (!ranOpcode)
 		error ("Trying to run invalid opcode %d", op);
 }
@@ -284,7 +284,7 @@ const char *MystScriptParser::getOpcodeDesc(uint16 op) {
 	return "";
 }
 
-// NOTE: Check to be used on Opcodes where var is thought 
+// NOTE: Check to be used on Opcodes where var is thought
 // not to be used. This emits a warning if var is nonzero.
 // It is possible that the opcode does use var 0 in this case,
 // but this will catch the majority of missed cases.
@@ -346,7 +346,7 @@ void MystScriptParser::altDest(uint16 op, uint16 var, uint16 argc, uint16 *argv)
 			_vm->changeToCard(_invokingResource->getDest());
 		else
 			warning("Missing invokingResource in altDest call");
-	} else 
+	} else
 		unknown(op, var, argc, argv);
 }
 
@@ -406,7 +406,7 @@ void MystScriptParser::opcode_6(uint16 op, uint16 var, uint16 argc, uint16 *argv
 			_vm->changeToCard(_invokingResource->getDest());
 		else
 			warning("Opcode %d: Missing invokingResource", op);
-	} else 
+	} else
 		unknown(op, var, argc, argv);
 }
 
@@ -422,7 +422,7 @@ void MystScriptParser::opcode_7(uint16 op, uint16 var, uint16 argc, uint16 *argv
 			_vm->changeToCard(_invokingResource->getDest());
 		else
 			warning("Opcode %d: Missing invokingResource", op);
-	} else 
+	} else
 		unknown(op, var, argc, argv);
 }
 
@@ -437,7 +437,7 @@ void MystScriptParser::opcode_8(uint16 op, uint16 var, uint16 argc, uint16 *argv
 			_vm->changeToCard(_invokingResource->getDest());
 		else
 			warning("Opcode %d: Missing invokingResource", op);
-	} else 
+	} else
 		unknown(op, var, argc, argv);
 }
 
@@ -457,8 +457,8 @@ void MystScriptParser::opcode_9(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		// more...
 		if (!((_vm->getCurStack() == kStoneshipStack && _vm->getCurCard() == 2197) ||
 		      (_vm->getCurStack() == kStoneshipStack && _vm->getCurCard() == 2138)))
-			warning("TODO: Opcode 9 on this card - Check function is consistent");			
-	} else 
+			warning("TODO: Opcode 9 on this card - Check function is consistent");
+	} else
 		unknown(op, var, argc, argv);
 }
 
@@ -471,7 +471,7 @@ void MystScriptParser::opcode_14(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		// Function looks like it changes the Var8 of the invoking resource to argument value..
 		// Most calls seem to have var = 0, but used in Myst Card 4500 (Execute Button)
 		// with Var 105..
-	} else 
+	} else
 		unknown(op, var, argc, argv);
 }
 
@@ -499,7 +499,7 @@ void MystScriptParser::opcode_16(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		debugC(kDebugScript, "\tcardId: %d", cardId);
 		debugC(kDebugScript, "\tu0: %d", u0);
 
-		// TODO: Finish Implementation... 
+		// TODO: Finish Implementation...
 		_vm->changeToCard(cardId);
 	} else
 		unknown(op, var, argc, argv);
@@ -606,12 +606,12 @@ void MystScriptParser::opcode_21(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		Common::Rect rect1 = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
 		uint16 u0 = argv[4];
 		uint16 u1 = argv[5];
-		
+
 		debugC(kDebugScript, "\trect1.left: %d", rect1.left);
 		debugC(kDebugScript, "\trect1.top: %d", rect1.top);
 		debugC(kDebugScript, "\trect1.right: %d", rect1.right);
 		debugC(kDebugScript, "\trect1.bottom: %d", rect1.bottom);
-		
+
 		debugC(kDebugScript, "\tu0: %d", u0);
 		debugC(kDebugScript, "\tu1: %d", u1);
 
@@ -828,7 +828,7 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 
 			debugC(kDebugScript, "\tcondVar: %d = %d", condVar, condVarValue);
 			debugC(kDebugScript, "\tcondCount: %d", condCount);
-			
+
 			soundList = new int16[condCount];
 			soundListVolume = new uint16[condCount];
 
@@ -850,7 +850,7 @@ void MystScriptParser::opcode_30(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			}
 		}
 
-		// NOTE: Mixer only has 8-bit channel volume granularity, 
+		// NOTE: Mixer only has 8-bit channel volume granularity,
 		// Myst uses 16-bit? Or is part of this balance?
 		soundVolume = (byte)(soundVolume / 255);
 
@@ -958,7 +958,7 @@ void MystScriptParser::opcode_35(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(delay * 100);
-		_vm->changeToCard(cardId);	
+		_vm->changeToCard(cardId);
 	} else
 		unknown(op, var, argc, argv);
 }
@@ -969,7 +969,7 @@ void MystScriptParser::changeCursor(uint16 op, uint16 var, uint16 argc, uint16 *
 	if (argc == 1) {
 		debugC(kDebugScript, "Opcode %d: Change Cursor", op);
 		debugC(kDebugScript, "Cursor: %d", argv[0]);
-		
+
 		// TODO: Not sure if this needs to change mainCursor or similar...
 		_vm->_gfx->changeCursor(argv[0]);
 	} else
@@ -1108,7 +1108,7 @@ void MystScriptParser::opcode_41(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		debugC(kDebugScript, "\tregion.right: %d", region.right);
 		debugC(kDebugScript, "\tregion.bottom: %d", region.bottom);
 		debugCN(kDebugScript, "\tupdateDirection: %d = ", updateDirection);
-		
+
 		switch (updateDirection) {
 		case 0:
 			debugC(kDebugScript, "Left to Right");
@@ -1126,7 +1126,7 @@ void MystScriptParser::opcode_41(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			warning("Unknown Update Direction");
 			break;
 		}
-		
+
 		debugC(kDebugScript, "\tu2: %d", u2); // TODO: Speed / Delay of Update?
 
 		// 10 Argument version Used in:
@@ -1142,7 +1142,7 @@ void MystScriptParser::opcode_41(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			debugC(kDebugScript, "\tregion2.right: %d", region2.right);
 			debugC(kDebugScript, "\tregion2.bottom: %d", region2.bottom);
 			debugCN(kDebugScript, "\tupdateDirection2: %d = ", updateDirection2);
-			 
+
 			switch (updateDirection2) {
 			case 0:
 				debugC(kDebugScript, "Left to Right");
@@ -1160,7 +1160,7 @@ void MystScriptParser::opcode_41(uint16 op, uint16 var, uint16 argc, uint16 *arg
 				warning("Unknown Update Direction");
 				break;
 			}
-			
+
 			debugC(kDebugScript, "\tu3: %d", u3); // TODO: Speed / Delay of Update?
 		}
 
@@ -1205,7 +1205,7 @@ void MystScriptParser::opcode_42(uint16 op, uint16 var, uint16 argc, uint16 *arg
 		debugC(kDebugScript, "\tregion.right: %d", region.right);
 		debugC(kDebugScript, "\tregion.bottom: %d", region.bottom);
 		debugCN(kDebugScript, "\tupdateDirection: %d = ", updateDirection);
-		
+
 		switch (updateDirection) {
 		case 0:
 			debugC(kDebugScript, "Left to Right");
@@ -1223,7 +1223,7 @@ void MystScriptParser::opcode_42(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			warning("Unknown Update Direction");
 			break;
 		}
-		
+
 		debugC(kDebugScript, "\tu2: %d", u2); // TODO: Speed / Delay of Update?
 
 		// 9 Argument version Used in:
@@ -1239,7 +1239,7 @@ void MystScriptParser::opcode_42(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			debugC(kDebugScript, "\tregion2.right: %d", region2.right);
 			debugC(kDebugScript, "\tregion2.bottom: %d", region2.bottom);
 			debugCN(kDebugScript, "\tupdateDirection2: %d = ", updateDirection2);
-			
+
 			switch (updateDirection2) {
 			case 0:
 				debugC(kDebugScript, "Left to Right");
@@ -1257,7 +1257,7 @@ void MystScriptParser::opcode_42(uint16 op, uint16 var, uint16 argc, uint16 *arg
 				warning("Unknown Update Direction");
 				break;
 			}
-			
+
 			debugC(kDebugScript, "\tu3: %d", u3); // TODO: Speed / Delay of Update?
 		}
 
@@ -1324,7 +1324,7 @@ void MystScriptParser::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		debugC(kDebugScript, "Opcode %d: ChangeStack", op);
 		debugC(kDebugScript, "\tvar: %d", var);
 
-		// TODO: Merge with changeStack (Opcode 40) Implementation? 
+		// TODO: Merge with changeStack (Opcode 40) Implementation?
 		if (_vm->_varStore->getVar(var) == 5 || _vm->_varStore->getVar(var) > 7) {
 			// TODO: Dead Book i.e. Released Sirrus/Achenar
 		} else {
@@ -1687,7 +1687,7 @@ void MystScriptParser::opcode_104(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			Common::Rect rect = _invokingResource->getRect();
 
 			// TODO: Need to load the image ids from Script Resources structure of VIEW
-			for (uint16 imageId = 3595; imageId <= 3601; imageId++) { 
+			for (uint16 imageId = 3595; imageId <= 3601; imageId++) {
 				_vm->_gfx->copyImageToScreen(imageId, rect);
 				_vm->_system->delayMillis(50);
 			}
@@ -1934,7 +1934,7 @@ void MystScriptParser::opcode_111(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			// Used by Drawers Hotspots...
 
 			debugC(kDebugScript, "Opcode %d: Unknown Function", op);
-				
+
 			uint16 u0 = argv[0];
 			debugC(kDebugScript, "\tu0: %d", u0);
 
@@ -1955,11 +1955,11 @@ void MystScriptParser::opcode_112(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		// Used for Card 2013 (Achenar's Rose-Skull Hologram)
 		if (argc == 3) {
 			debugC(kDebugScript, "Opcode %d: Rose-Skull Hologram Playback", op);
-				
+
 			uint16 varValue = _vm->_varStore->getVar(var);
 
 			debugC(kDebugScript, "\tVar: %d = %d", var, varValue);
-				
+
 			uint16 startPoint = argv[0];
 			uint16 endPoint = argv[1];
 			uint16 u0 = argv[2];
@@ -1986,7 +1986,7 @@ void MystScriptParser::opcode_113(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		// Used on Myst 4143 (Dock near Marker Switch)
 		if (argc == 9) {
 			uint16 soundId = argv[0];
-				
+
 			uint16 u0 = argv[1];
 			uint16 u1 = argv[2];
 
@@ -1994,7 +1994,7 @@ void MystScriptParser::opcode_113(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 			uint16 updateDirection = argv[7];
 			uint16 u2 = argv[8];
-				
+
 			debugC(kDebugScript, "Opcode %d: Vault Open Logic", op);
 			debugC(kDebugScript, "\tsoundId: %d", soundId);
 			debugC(kDebugScript, "\tu0: %d", u0);
@@ -2039,7 +2039,7 @@ void MystScriptParser::opcode_114(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		// Used on Myst 4143 (Dock near Marker Switch)
 		if (argc == 9) {
 			uint16 soundId = argv[0];
-				
+
 			uint16 u0 = argv[1];
 			uint16 u1 = argv[2];
 
@@ -2047,7 +2047,7 @@ void MystScriptParser::opcode_114(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 			uint16 updateDirection = argv[7];
 			uint16 u2 = argv[8];
-			
+
 			debugC(kDebugScript, "Opcode %d: Vault Close Logic", op);
 			debugC(kDebugScript, "\tsoundId: %d", soundId);
 			debugC(kDebugScript, "\tu0: %d", u0);
@@ -2154,7 +2154,7 @@ void MystScriptParser::opcode_115(uint16 op, uint16 var, uint16 argc, uint16 *ar
 				_vm->changeToCard(cardIdLose);
 			} else
 				_vm->changeToCard(cardIdBookCover);
-	
+
 			// TODO: Is this logic here?
 			//       i.e. If was holding page, wait then auto open and play book...
 		} else
@@ -2211,7 +2211,7 @@ void MystScriptParser::opcode_116(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 				// TODO: Play only 1st half of movie i.e. gears rise up
 				_vm->_video->playMovie(_vm->wrapMovieFilename("gears", kMystStack), 305, 36);
-					
+
 				bridgeState = 1;
 				_vm->_varStore->setVar(12, bridgeState);
 			} else if (bridgeState && currentTime != correctTime) {
@@ -2449,7 +2449,7 @@ void MystScriptParser::opcode_120(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		// Used for Card 4297 (Generator Puzzle Buttons)
 		debugC(kDebugScript, "Opcode %d: Toggle Var8 of Invoking Resource", op);
 		_top = _invokingResource;
-			
+
 		while(_top->_parent != NULL)
 			_top = _top->_parent;
 
@@ -2472,7 +2472,7 @@ void MystScriptParser::opcode_121(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kMystStack:
 		// Used on Card 4100 (Cabin Safe Buttons)
-		// Correct Solution (724) -> Var 67=2, 68=7, 69=5 
+		// Correct Solution (724) -> Var 67=2, 68=7, 69=5
 		// Jump to Card 4103 when solution correct and handle pulled...
 		if (argc == 0) {
 			uint16 varValue = _vm->_varStore->getVar(var);
@@ -2779,7 +2779,7 @@ void MystScriptParser::opcode_133(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 			// TODO: Function to change variables controlling telescope view
 			//       etc.
-				
+
 			// TODO: Sound seems to be stuck looping?
 			_vm->_sound->playSound(soundId);
 		} else
@@ -3011,7 +3011,7 @@ void MystScriptParser::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	case kMystStack:
 		if (argc == 0) {
 			debugC(kDebugScript, "Opcode %d: Myst Imager Control Execute Button Logic", op);
-				
+
 			uint16 numericSelection = (_vm->_varStore->getVar(36) + 1) % 10;
 			numericSelection += ((_vm->_varStore->getVar(35) + 1) % 10) * 10;
 
@@ -3157,7 +3157,7 @@ void MystScriptParser::opcode_200_run() {
 			break;
 		case kCreditsStack:
 			curImageIndex = _vm->_varStore->getVar(g_opcode200Parameters.var);
-			
+
 			if (_vm->_system->getMillis() - g_opcode200Parameters.lastCardTime >= 7 * 1000) {
 				// After the 6th image has shown, it's time to quit
 				if (curImageIndex == 7)
@@ -3175,7 +3175,7 @@ void MystScriptParser::opcode_200_run() {
 			// g_opcode200Parameters.var == 0 for Achenar
 			// g_opcode200Parameters.var == 1 for Sirrus
 
-			// TODO: Fill in Function... 
+			// TODO: Fill in Function...
 			// Variable indicates that this is related to Secret Panel State
 			break;
 		case kDemoStack:
@@ -3201,7 +3201,7 @@ void MystScriptParser::opcode_200_disable() {
 	g_opcode200Parameters.soundIncrement = 0;
 }
 
-void MystScriptParser::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {	
+void MystScriptParser::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
 	case kIntroStack:
 		varUnusedCheck(op, var);
@@ -3280,7 +3280,7 @@ void MystScriptParser::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			g_opcode200Parameters.lastCardTime = _vm->_system->getMillis();
 			g_opcode200Parameters.enabled = true;
 
-			_vm->_varStore->setVar(var, 1);				
+			_vm->_varStore->setVar(var, 1);
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -3586,7 +3586,7 @@ void MystScriptParser::opcode_202_run(void) {
 				_vm->_varStore->setVar(7, 1);
 			} else {
 				// No water into Valve
-				_vm->_varStore->setVar(31, 1); // Background 
+				_vm->_varStore->setVar(31, 1); // Background
 				_vm->_varStore->setVar(7, 0);
 			}
 
@@ -3604,7 +3604,7 @@ void MystScriptParser::opcode_202_run(void) {
 				_vm->_varStore->setVar(4, 1);
 			} else {
 				// No water into Valve
-				_vm->_varStore->setVar(32, 1); // Background 
+				_vm->_varStore->setVar(32, 1); // Background
 				_vm->_varStore->setVar(4, 0);
 			}
 			break;
@@ -3829,10 +3829,10 @@ void MystScriptParser::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		if (false) {
 			// Card 4134
 			_vm->_video->playMovie(_vm->wrapMovieFilename("birds1", kMystStack), 416, 0);
-			
+
 			// Card 4149
 			_vm->_video->playMovie(_vm->wrapMovieFilename("birds2", kMystStack), 433, 0);
-			
+
 			// Unsure...
 			_vm->_video->playMovie(_vm->wrapMovieFilename("birds3", kMystStack), 0, 0);
 		}
@@ -4087,7 +4087,7 @@ static struct {
 
 void MystScriptParser::opcode_209_run(void) {
 	static bool enabledLast;
-	
+
 	if (g_opcode209Parameters.enabled) {
 		switch (_vm->getCurStack()) {
 		case kStoneshipStack:
@@ -4226,7 +4226,7 @@ void MystScriptParser::opcode_210_run(void) {
 			else {
 				// Blow Generator Room Breaker...
 				_vm->_varStore->setVar(93, 1);
-				// TODO: I think Logic For Blowing Other Breaker etc. 
+				// TODO: I think Logic For Blowing Other Breaker etc.
 				// is done in process on Breaker Cards.
 
 				rocketPowerVoltage = 0;
@@ -4626,7 +4626,7 @@ void MystScriptParser::opcode_298(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		// TODO: Fill in logic.
 		// Start Voice Over... which controls book opening
 		_vm->_sound->playSound(3001);
-			
+
 		// then link to Myst - Trigger of Hotspot? then opcode 199/196/197 for voice over continue?
 		// TODO: Sync Voice and Actions to Original
 		// TODO: Flash Library Red
@@ -4670,7 +4670,7 @@ void MystScriptParser::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		break;
 	case kDemoPreviewStack:
 	case kMystStack:
-		// Used in Card 4371 (Blue Book) Var = 101 
+		// Used in Card 4371 (Blue Book) Var = 101
 		//     and Card 4363 (Red Book)  Var = 100
 		// TODO: Fill in Logic
 		debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);

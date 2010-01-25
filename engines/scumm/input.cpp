@@ -597,16 +597,16 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				// the menu screen.
 				switch (lastKeyHit.keycode) {
 				case Common::KEYCODE_UP:
-					_mouseAndKeyboardStat = 328; 
+					_mouseAndKeyboardStat = 328;
 					break;
-				case Common::KEYCODE_DOWN: 
-					_mouseAndKeyboardStat = 336; 
+				case Common::KEYCODE_DOWN:
+					_mouseAndKeyboardStat = 336;
 					break;
-				case Common::KEYCODE_LEFT: 
-					_mouseAndKeyboardStat = 331; 
+				case Common::KEYCODE_LEFT:
+					_mouseAndKeyboardStat = 331;
 					break;
-				case Common::KEYCODE_RIGHT: 
-					_mouseAndKeyboardStat = 333; 
+				case Common::KEYCODE_RIGHT:
+					_mouseAndKeyboardStat = 333;
 					break;
 				default:
 					break;

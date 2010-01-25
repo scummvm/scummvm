@@ -196,7 +196,7 @@ struct SelectorCache {
 	// Used for auto detection purposes
 	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
 	Selector setCursor; ///< For cursor semantics autodetection
-	
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
@@ -295,7 +295,7 @@ struct Breakpoint {
 };
 
 /**
- * Set this to 1 to abort script execution immediately. Aborting will 
+ * Set this to 1 to abort script execution immediately. Aborting will
  * leave the debug exec stack intact.
  * Set it to 2 to force a replay afterwards.
  */
@@ -326,7 +326,7 @@ extern int script_step_counter;
  * @param[in] argp			Pointer to the first supplied argument
  * @return					A pointer to the new exec stack TOS entry
  */
-ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, 
+ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct,
 		StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp);
 
 
@@ -336,13 +336,13 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct,
  * @param[in] send_obj	Heap address of the object to send to
  * @param[in] work_obj	Heap address of the object initiating the send
  * @param[in] sp		Stack pointer position
- * @param[in] framesize	Size of the send as determined by the "send" 
+ * @param[in] framesize	Size of the send as determined by the "send"
  * 						operation
- * @param[in] argp		Pointer to the beginning of the heap block 
- * 						containing the data to be sent. This area is a 
- * 						succession of one or more sequences of 
+ * @param[in] argp		Pointer to the beginning of the heap block
+ * 						containing the data to be sent. This area is a
+ * 						succession of one or more sequences of
  * 						[selector_number][argument_counter] and then
- * 						"argument_counter" word entries with the 
+ * 						"argument_counter" word entries with the
  * 						parameter values.
  * @return				A pointer to the new execution stack TOS entry
  */
@@ -363,17 +363,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
  * @param[in] argp			Heap pointer to the first parameter
  * @param[in] selector		The selector by which it was called or
  *							NULL_SELECTOR if n.a. For debugging.
- * @param[in] sendp			Pointer to the object which the message was 
+ * @param[in] sendp			Pointer to the object which the message was
  * 							sent to. Equal to objp for anything but super.
  * @param[in] origin		Number of the execution stack element this
- * 							entry was created by (usually the current TOS 
+ * 							entry was created by (usually the current TOS
  * 							number, except for multiple sends).
  * @param[in] local_segment	The segment to use for local variables,
  *							or SCI_XS_CALLEE_LOCALS to use obj's segment.
  * @return 					A pointer to the new exec stack TOS entry
  */
-ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, 
-		reg_t objp, int argc, StackPtr argp, Selector selector, 
+ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp,
+		reg_t objp, int argc, StackPtr argp, Selector selector,
 		reg_t sendp, int origin, SegmentId local_segment);
 
 
@@ -390,12 +390,12 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp,
  * @return 				Pointer to the new exec-TOS element
  */
 ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc,
-		StackPtr argp, Selector selector, const ObjVarRef& address, 
+		StackPtr argp, Selector selector, const ObjVarRef& address,
 		int origin);
 
 /**
  * This function executes SCI bytecode
- * It executes the code on s->heap[pc] until it hits a 'ret' operation 
+ * It executes the code on s->heap[pc] until it hits a 'ret' operation
  * while (stack_base == stack_pos). Requires s to be set up correctly.
  * @param[in] s			The state to use
  * @param[in] restoring	1 if s has just been restored, 0 otherwise
@@ -430,7 +430,7 @@ int script_init_engine(EngineState *);
  * 							fptr is written to iff it is non-NULL and the
  * 							selector indicates a member function of that
  * 							object.
- * @return					kSelectorNone if the selector was not found in 
+ * @return					kSelectorNone if the selector was not found in
  * 							the object or its superclasses.
  * 							kSelectorVariable if the selector represents an
  * 							object-relative variable.
@@ -442,9 +442,9 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj, Selector selectorid,
 
 /**
  * Makes sure that a script and its superclasses get loaded to the heap.
- * If the script already has been loaded, only the number of lockers is 
+ * If the script already has been loaded, only the number of lockers is
  * increased. All scripts containing superclasses of this script are loaded
- * recursively as well, unless 'recursive' is set to zero. The 
+ * recursively as well, unless 'recursive' is set to zero. The
  * complementary function is "script_uninstantiate()" below.
  * @param[in] resMan		The resource manager
  * @param[in] segMan	The segment manager
@@ -455,8 +455,8 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_n
 
 /**
  * Decreases the numer of lockers of a script and unloads it if that number
- * reaches zero. 
- * This function will recursively unload scripts containing its 
+ * reaches zero.
+ * This function will recursively unload scripts containing its
  * superclasses, if those aren't locked by other scripts as well.
  * @param[in] segMan	The segment manager
  * @param[in] version		The SCI version to use

@@ -256,7 +256,7 @@ void WiiOptionsDialog::revert() {
 
 void WiiOptionsDialog::load() {
 	int i;
-	
+
 	i = ConfMan.getInt(_strUnderscanX,
 							Common::ConfigManager::kApplicationDomain);
 	_sliderUnderscanX->setValue(i);

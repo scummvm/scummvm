@@ -126,7 +126,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 }
 
 #endif
-SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) : 
+SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -223,7 +223,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 	if (argc == 6) {	// cmdSendMidi
 		byte channel = argv[2].toUint16() & 0xf;
 		byte midiCmd = argv[3].toUint16() & 0xff;
-		
+
 		uint16 controller = argv[4].toUint16();
 		uint16 param = argv[5].toUint16();
 
@@ -531,7 +531,7 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 #else
 
 	if (!obj.segment) {		// pause the whole playlist
-		// Pausing/Resuming the whole playlist was introduced 
+		// Pausing/Resuming the whole playlist was introduced
 		// in the SCI1 late sound scheme
 		if (_soundVersion <= SCI_VERSION_1_EARLY)
 			return;
@@ -659,7 +659,7 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 		break;
 
 	case 5: // SCI01+
-	case 6: // SCI1+ (SCI1 late sound scheme), with fade and continue 
+	case 6: // SCI1+ (SCI1 late sound scheme), with fade and continue
 		musicSlot->fadeTo = CLIP<uint16>(_argv[2].toUint16(), 0, MUSIC_VOLUME_MAX);
 		musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
 		musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
@@ -917,7 +917,7 @@ void SoundCommandParser::cmdSetSoundVolume(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		// Do not throw a warning if the sound can't be found, as in some games 
+		// Do not throw a warning if the sound can't be found, as in some games
 		// this is called before the actual sound is loaded (e.g. SQ4CD, with the
 		// drum sounds of the energizer bunny at the beginning), so this is normal
 		// behavior

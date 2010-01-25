@@ -78,12 +78,12 @@ private:
 	Common::String removeQuotesFromString(Common::String string);
 	Common::String convertMacFileName(Common::String string);
 	Common::String convertWinFileName(Common::String string);
-	
+
 	// Configuration File Functions
 	Common::String getStringFromConfig(Common::String section, Common::String key);
 	int getIntFromConfig(Common::String section, Common::String key);
 	Common::String getFileNameFromConfig(Common::String section, Common::String key);
-	
+
 	// Platform/Version functions
 	bool isBigEndian() const { return getGameType() == GType_LIVINGBOOKSV3 || getPlatform() == Common::kPlatformMacintosh; }
 	MohawkArchive *createMohawkArchive() const;

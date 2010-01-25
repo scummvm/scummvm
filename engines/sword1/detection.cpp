@@ -49,7 +49,7 @@ static const PlainGameDescriptorGUIOpts sword1PSXSettings =
 	{"sword1psx", "Broken Sword: The Shadow of the Templars (PlayStation)", Common::GUIO_NOMIDI};
 static const PlainGameDescriptorGUIOpts sword1PSXDemoSettings =
 	{"sword1psxdemo", "Broken Sword: The Shadow of the Templars (PlayStation demo)", Common::GUIO_NOMIDI};
- 
+
 
 // check these subdirectories (if present)
 static const char *g_dirNames[] = {	"clusters",	"speech", "english", "italian"};
@@ -57,7 +57,7 @@ static const char *g_dirNames[] = {	"clusters",	"speech", "english", "italian"};
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
 #define NUM_MAC_FILES_TO_CHECK 4
-#define NUM_PSX_FILES_TO_CHECK 1 
+#define NUM_PSX_FILES_TO_CHECK 1
 #define NUM_PSX_DEMO_FILES_TO_CHECK 2
 #define NUM_DEMO_FILES_TO_CHECK 1
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1

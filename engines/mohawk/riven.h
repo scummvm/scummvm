@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef MOHAWK_RIVEN_H
 #define MOHAWK_RIVEN_H
 
@@ -80,7 +80,7 @@ struct RivenHotspot {
 	int16 u1;
 	int16 zipModeHotspot;
 	RivenScriptList scripts;
-	
+
 	bool enabled;
 };
 
@@ -96,7 +96,7 @@ struct ZipMode {
 	uint16 id;
 	bool operator== (const ZipMode& z) const;
 };
- 
+
 class MohawkEngine_Riven : public MohawkEngine {
 protected:
 	Common::Error run();
@@ -104,15 +104,15 @@ protected:
 public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Riven();
-	
+
 	RivenGraphics *_gfx;
 	RivenExternal *_externalScriptHandler;
 
 	Card _cardData;
 	bool _gameOver;
-	
+
 	GUI::Debugger *getDebugger();
-	
+
 	bool canLoadGameStateCurrently() { return true; }
 	bool canSaveGameStateCurrently() { return true; }
 	Common::Error loadGameState(int slot);
@@ -138,7 +138,7 @@ private:
 	void checkInventoryClick();
 	bool _showHotspots;
 	void updateZipMode();
-	
+
 	// Variables
 	uint32 *_vars;
 	uint32 _varCount;
@@ -147,7 +147,7 @@ public:
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
 	bool _activatedSLST;
 	void runLoadDialog();
-	
+
 	void changeToCard(uint16 = 0);
 	void changeToStack(uint16);
 	Common::String getName(uint16 nameResource, uint16 nameID);
@@ -167,7 +167,7 @@ public:
 	void runHotspotScript(uint16 hotspot, uint16 scriptType);
 	int32 getCurHotspot() { return _curHotspot; }
 	Common::String getHotspotName(uint16 hotspot);
-	
+
 	void initVars();
 	uint32 getVarCount() { return _varCount; }
 	uint32 getGlobalVar(uint32 index);

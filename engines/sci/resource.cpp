@@ -240,7 +240,7 @@ bool ResourceManager::loadFromWaveFile(Resource *res, Common::File &file) {
 		error("Read %d bytes from %s but expected %d", really_read, res->id.toString().c_str(), res->size);
 
 	res->status = kResStatusAllocated;
-	return true;	
+	return true;
 }
 
 bool ResourceManager::loadFromAudioVolumeSCI11(Resource *res, Common::File &file) {
@@ -341,7 +341,7 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 	file->seek(res->file_offset, SEEK_SET);
-	
+
 	if (res->source->source_type == kSourceWave && loadFromWaveFile(res, *file))
 		return;
 
@@ -1061,7 +1061,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 		}
 	}
 }
-	
+
 void ResourceManager::readWaveAudioPatches() {
 	// Here we do check for SCI1.1+ so we can patch wav files in as audio resources
 	Common::ArchiveMemberList files;

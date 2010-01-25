@@ -342,13 +342,13 @@ void SaveLoad_ns::renameOldSavefiles() {
 		oldName = oldFilenames[i];
 		int e = sscanf(oldName.c_str(), "game.%u", &id);
 		if (e != 1) {
-			// this wasn't a savefile, so adjust numOldSaves accordingly				
+			// this wasn't a savefile, so adjust numOldSaves accordingly
 			--numOldSaves;
 			continue;
 		}
 
 		if (!rename) {
-			rename = askRenameOldSavefiles();			
+			rename = askRenameOldSavefiles();
 		}
 		if (!rename) {
 			// return immediately if the user doesn't want to rename the files

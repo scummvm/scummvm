@@ -137,7 +137,7 @@ class IntegerList: public Common::Array<int> {
 public:
 	int indexOf(int v) {
 		for (uint i = 0; i < size(); ++i)
-			if (operator [](i) == v) 
+			if (operator [](i) == v)
 				return i;
 		return -1;
 	}
@@ -151,7 +151,7 @@ private:
 	int _topIndex;
 	uint32 _nextScrollerTicks;
 	int _cheatKeyCtr;
-	
+
 	// Object display fields
 	int _selectedObject;
 	SpriteAsset *_objectSprites;

@@ -652,8 +652,8 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 					maskbit = revBitMask((v1.x + xPos) % 8);
 
 					pcolor = block[row][col];
-					masked = (v1.y + yPos < 0 || v1.y + yPos >= _out.h) || 
-					         (v1.x + xPos < 0 || v1.x + xPos >= _out.w) || 
+					masked = (v1.y + yPos < 0 || v1.y + yPos >= _out.h) ||
+					         (v1.x + xPos < 0 || v1.x + xPos >= _out.w) ||
 							 (v1.mask_ptr && (mask[0] & maskbit));
 
 					if (pcolor && !masked) {
@@ -1178,7 +1178,7 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 		_draw_top = 200;
 		_draw_bottom = 0;
 	}
-	
+
 	bool flipped = (a->_cost.start[limb] & 0x80) != 0;
 	byte frameStart = _loaded._frameOffsets[a->_cost.frame[limb]];
 	byte frame = _loaded._frameOffsets[frameStart + a->_cost.curpos[limb]];
@@ -1297,7 +1297,7 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 	for (int limb = 0, pos = 0; limb < 8; ++limb, pos = 0) {
 		// get a limb frames ptr from the costume command
 		limbFrames = ((_animCmds + cmd)[limb]);
-		
+
 		// Dont change limb if entry is invalid
 		if (limbFrames == 0xFF)
 			continue;
@@ -1320,13 +1320,13 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 			// Each animation-frame until we find end
 			if (frame == 0xFF)
 				break;
-			
+
 			byte ptrLow = _baseptr[frame];
 			byte ptrHigh = ptrLow + _dataOffsets[4];
 			int  frameOffset = (_baseptr[ptrHigh] << 8) + _baseptr[ptrLow + 2];			// 0x23EF / 0x2400
 
 			const byte *data = _baseptr + frameOffset;
-			
+
 			if (data[3] > _maxHeight)
 				_maxHeight = data[3] + 1;
 
@@ -1367,8 +1367,8 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	ActorC64 *A = (ActorC64 *)a;
 	int dir = newDirToOldDir(a->getFacing());
 	int command = dir;
-	
-	loadCostume(a->_costume); 
+
+	loadCostume(a->_costume);
 
 	// Enable/Disable speaking flag
 	if (frame == a->_talkStartFrame) {
@@ -1382,7 +1382,7 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	// Different command for stand frame
 	if (frame == a->_standFrame)
-		command = dirToDirStop(dir);	
+		command = dirToDirStop(dir);
 
 	// Update the limb frames
 	frameUpdate(A, command);
@@ -1403,7 +1403,7 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 byte C64CostumeLoader::increaseAnims(Actor *a) {
 	ActorC64 *A = (ActorC64 *)a;
-	
+
 	// check if the actor speak flag has changed since last frame increase
 	if (A->_speaking != A->_speakingPrev) {
 		int cmd = A->_costCommand;

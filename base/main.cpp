@@ -87,7 +87,7 @@ static const EnginePlugin *detectPlugin() {
 	assert(!gameid.empty());
 	if (ConfMan.hasKey("gameid")) {
 		gameid = ConfMan.get("gameid");
-		
+
 		// Set last selected game, that the game will be highlighted
 		// on RTL
 		ConfMan.set("lastselectedgame", ConfMan.getActiveDomainName(), Common::ConfigManager::kApplicationDomain);

@@ -274,9 +274,9 @@ DECLARE_COMMAND_OPCODE(swap) {
 
 
 DECLARE_COMMAND_OPCODE(give) {
-	warning("Parallaction_br::cmdOp_give not yet implemented");	
+	warning("Parallaction_br::cmdOp_give not yet implemented");
 
-	/* NOTE: the following code is disabled until I deal with _inventory and 
+	/* NOTE: the following code is disabled until I deal with _inventory and
 	 * _charInventories not being public
 	 */
 /*  int item = ctxt._cmd->_object;

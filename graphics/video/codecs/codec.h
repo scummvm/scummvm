@@ -30,7 +30,7 @@
 #include "graphics/surface.h"
 
 namespace Graphics {
-	
+
 class Codec {
 public:
 	Codec() {}

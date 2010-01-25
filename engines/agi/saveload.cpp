@@ -342,7 +342,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 			debug(0, "Your game is \"%s\" and save is \"%s\".", getGameMD5(), md5);
 		}
 	}
-	
+
 	for (i = 0; i < MAX_FLAGS; i++)
 		_game.flags[i] = in->readByte();
 	for (i = 0; i < MAX_VARS; i++)

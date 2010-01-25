@@ -29,11 +29,11 @@
 #include "mohawk/myst_jpeg.h"
 
 namespace Mohawk {
-	
+
 MystJPEG::MystJPEG() {
 	_jpeg = new Graphics::JPEG();
 	_pixelFormat = g_system->getScreenFormat();
-	
+
 	// We're going to have to dither if we're running in 8bpp.
 	// We'll take RGBA8888 for best color performance in this case.
 	if (_pixelFormat.bytesPerPixel == 1)
@@ -45,10 +45,10 @@ Graphics::Surface *MystJPEG::decodeImage(Common::SeekableReadStream* stream) {
 	Graphics::Surface *ySurface = _jpeg->getComponent(1);
 	Graphics::Surface *uSurface = _jpeg->getComponent(2);
 	Graphics::Surface *vSurface = _jpeg->getComponent(3);
-	
+
 	Graphics::Surface *finalSurface = new Graphics::Surface();
 	finalSurface->create(ySurface->w, ySurface->h, _pixelFormat.bytesPerPixel);
-	
+
 	for (uint16 i = 0; i < finalSurface->h; i++) {
 		for (uint16 j = 0; j < finalSurface->w; j++) {
 			byte r = 0, g = 0, b = 0;
@@ -59,7 +59,7 @@ Graphics::Surface *MystJPEG::decodeImage(Common::SeekableReadStream* stream) {
 				*((uint32 *)finalSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
 		}
 	}
-	
+
 	return finalSurface;
 }
 

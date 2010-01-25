@@ -962,7 +962,7 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 
 	for (h = 0; h < 19; h++) {
 		for (w = 0; w < 16; w++) {
-			if (src[w]) 
+			if (src[w])
 				dst[w] = src[w] + 16;
 		}
 

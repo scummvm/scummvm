@@ -1589,7 +1589,7 @@ void LoLEngine::initDialogueSequence(int controlMode, int pageNum) {
 		} else {
 			_screen->fillRect(0, 128, 319, 199, 1);
 			gui_drawBox(0, 129, 320, 71, 136, 251, -1);
-			gui_drawBox(1, 130, 318, 69, 136, 251, 252);			
+			gui_drawBox(1, 130, 318, 69, 136, 251, 252);
 		}
 
 		_screen->modifyScreenDim(5, 8, 131, 306, 66);
@@ -1721,7 +1721,7 @@ void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int 
 			modifier = 0;
 		else if (modifier < 0 || modifier > 7 || !(_flagsTable[31] & 0x08))
 			modifier = 8;
-		
+
 		modifier >>= 1;
 		if (modifier)
 			modifier--;
@@ -1780,7 +1780,7 @@ void LoLEngine::createTransparencyTables() {
 		_res->loadFileToBuf("LOL.NOL", tpal, 48);
 
 		for (int i = 15; i > -1; i--) {
-			int s = colTbl[i << 1] * 3;	
+			int s = colTbl[i << 1] * 3;
 			tpal[s] = tpal[i * 3];
 			tpal[s + 1] = tpal[i * 3 + 1];
 			tpal[s + 2] = tpal[i * 3 + 2];
@@ -2173,7 +2173,7 @@ int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 				SWAP(dst[s + 2], dst[i + 2]);
 			}
 		}
-		
+
 		_screen->generateGrayOverlay(tpal, _healOverlay, 52, 22, 20, 0, 256, true);
 	}
 
@@ -2311,7 +2311,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 		_screen->loadPalette("LOLICE.NOL", swampCol);
 		for (int i = 1; i < 16; i++) {
 			uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
-			tpal[i * 3] = 0;			
+			tpal[i * 3] = 0;
 			tpal[i * 3 + 1] = v;
 			tpal[i * 3 + 2] = v << 1;
 
@@ -2319,11 +2319,11 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 				tpal[i * 3 + 2] = 29;
 		}
 
-	} else {	
+	} else {
 		_screen->loadPalette("SWAMPICE.COL", swampCol);
 		tpal.copy(s, 128);
 		swampCol.copy(s, 128);
-		
+
 		for (int i = 1; i < 128; i++) {
 			tpal[i * 3] = 0;
 			uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
@@ -2544,7 +2544,7 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			} else {
 				if (_flags.use16ColorMode)
 					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 4, sW, sH);
-				else				
+				else
 					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _transparencyTable1, _transparencyTable2, sW, sH);
 			}
 
@@ -2883,7 +2883,7 @@ int LoLEngine::processMagicVaelansCube() {
 			tmpPal2[i * 3 + 2] = (a > 60) ? 60 : a;
 		}
 	}
-	
+
 	snd_playSoundEffect(146, -1);
 
 	uint32 ctime = _system->getMillis();
@@ -4013,10 +4013,10 @@ void LoLEngine::displayAutomap() {
 		static const uint8 ovlSrc[] = { 0x00, 0xEE, 0xCC, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0x22, 0x11, 0xDD, 0xEE, 0xCC };
 		memset(_mapOverlay, 0, 256);
 		for (int i = 0; i < 16; i++)
-			_mapOverlay[(i << 4) | i] = ovlSrc[i];		
+			_mapOverlay[(i << 4) | i] = ovlSrc[i];
 	} else
 		_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
-	
+
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6PN.FNT");
 

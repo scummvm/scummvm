@@ -197,7 +197,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 
 	byte flags = Audio::FLAG_UNSIGNED;
 
-	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
+	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	// Don't use DisposeAfterUse::YES, because our caching system deletes samples by itself.

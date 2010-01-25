@@ -25,12 +25,12 @@
 
 #ifndef POWERMAN_H
 #define POWERMAN_H
- 
+
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
 #include "common/singleton.h"
 #include "common/list.h"
- 
+
  /*
   *  Implement this class (interface) if you want to use PowerManager's suspend callback functionality
   *
@@ -41,11 +41,11 @@
 	virtual int suspend() = 0;
 	virtual int resume() = 0;
  };
- 
- /****************************************************************************************************** 
+
+ /******************************************************************************************************
  *
  *  This class will call a Suspendable when the PSP goes to suspend/resumes. It also provides the ability to block
- *  a thread when the PSP is going to suspend/suspending, and to wake it up when the PSP is resumed. 
+ *  a thread when the PSP is going to suspend/suspending, and to wake it up when the PSP is resumed.
  *	This ability is very useful for managing the PSPIoStream class, but may be found useful by other classes as well.
  *
  *******************************************************************************************************/
@@ -61,13 +61,13 @@ public:
 	int resume();									/* callback to have all items in list resume */
 	// Functions for pausing the engine
 	void pollPauseEngine();							/* Poll whether the engine should be paused */
-	
+
 	enum {
 		Error = -1,
 		NotBlocked = 0,
 		Blocked = 1
 	};
-	
+
 	enum PauseState {
 		Unpaused = 0,
 		PauseEvent,
@@ -75,7 +75,7 @@ public:
 		Pausing,
 		Paused
 	};
-	
+
  private:
 	friend class Common::Singleton<PowerManager>;
 	PowerManager();
@@ -94,10 +94,10 @@ public:
 	SDL_cond *_condPM;								/* signal to wake up the PM from a critical section */
 	volatile int _criticalCounter;					/* Counter of how many threads are in a critical section */
 	int _error;										/* error code - PM can't talk to us. For debugging */
-	
+
 	// States for PM to be in (used for debugging)
 	enum PMState {
-		kInitDone = 1 , 
+		kInitDone = 1 ,
 		kDestroyPM,
 		kWaitForClientPause,
 		kWaitForClientToFinishPausing,
@@ -117,22 +117,22 @@ public:
 		kSignalSuspendedThreadsResume,
 		kDoneSignallingSuspendedThreadsResume,
 		kDoneResume
-	};	
+	};
 #ifdef __PSP_DEBUG_SUSPEND__
 
 	volatile int _listCounter;						/* How many people are in the list - just for debugging */
-	
+
 	void debugPM();									/* print info about the PM */
 	void PMStatusSet(PMState s) { _PMStatus = s; }
 	volatile int _PMStatus;							/* What the PM is doing */
-	
+
  public:
  	int getPMStatus() { return _PMStatus; }
- 
-#endif /* __PSP_DEBUG_SUSPEND__ */		
-			
+
+#endif /* __PSP_DEBUG_SUSPEND__ */
+
  };
- 
+
  // For easy access
 #define PowerMan	PowerManager::instance()
 

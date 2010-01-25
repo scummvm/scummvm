@@ -1814,16 +1814,16 @@ void createFile(const char *outFilename) {
 	outputFile.seek(6 + 5 * (langIndex - 1));
 
 	switch (language) {
-	case IT_ITA: 
+	case IT_ITA:
 		outputFile.writeByte(LANG_IT_ITA);
 		break;
-	case FR_FRA: 
+	case FR_FRA:
 		outputFile.writeByte(LANG_FR_FRA);
 		break;
-	case DE_DEU: 
+	case DE_DEU:
 		outputFile.writeByte(LANG_DE_DEU);
 		break;
-	case ES_ESP: 
+	case ES_ESP:
 		outputFile.writeByte(LANG_ES_ESP);
 		break;
 	case EN_ANY:
@@ -1833,7 +1833,7 @@ void createFile(const char *outFilename) {
 		printf("Unknown language encountered\n");
 		exit(1);
 	}
-	
+
 	outputFile.writeLong(outputStart);
 
 	// Write out start header

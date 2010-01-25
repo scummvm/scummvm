@@ -177,7 +177,7 @@ x_loop:
 	SUBS	r6,r6,#16		@ width -= 16
 	STRH	r12,[r9],#2		@ store dA
 	BGT	x_loop
-	
+
 	ADD	r0, r0, r8		@ srcPtr += srcSpan
 	ADD	r2, r2, r3		@ dstPtr += dstSpan
 	SUBS	r7, r7, #1

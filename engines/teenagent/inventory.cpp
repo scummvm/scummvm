@@ -54,7 +54,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 	for (byte i = 0; i <= 92; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
-		if (obj_addr != 0) 
+		if (obj_addr != 0)
 			io.load(res->dseg.ptr(obj_addr));
 		objects.push_back(io);
 	}
@@ -155,10 +155,10 @@ bool Inventory::processEvent(const Common::Event &event) {
 		//check combine
 		if (!_active)
 			return false;
-			
+
 		if (hovered_obj == NULL)
 			return true;
-			
+
 		debug(0, "lclick on %u:%s", hovered_obj->id, hovered_obj->name.c_str());
 
 		if (selected_obj == NULL) {

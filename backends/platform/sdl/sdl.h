@@ -75,9 +75,9 @@ class AspectRatio {
 public:
 	AspectRatio() { _kw = _kh = 0; }
 	AspectRatio(int w, int h);
- 
+
 	bool isAuto() const { return (_kw | _kh) == 0; }
-	
+
 	int kw() const { return _kw; }
 	int kh() const { return _kh; }
 };

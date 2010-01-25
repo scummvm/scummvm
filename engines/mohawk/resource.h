@@ -140,7 +140,7 @@ struct Type {
 	uint32 tag;
 	uint16 resource_table_offset;
 	uint16 name_table_offset;
-		
+
 	struct ResourceTable {
 		uint16 resources;
 		struct Entries {
@@ -148,7 +148,7 @@ struct Type {
 			uint16 index;
 		} *entries;
 	} resTable;
-		
+
 	struct NameTable {
 		uint16 num;
 		struct Entries {
@@ -177,11 +177,11 @@ class MohawkArchive {
 public:
 	MohawkArchive();
 	virtual ~MohawkArchive() { close(); }
-	
+
 	void open(Common::String filename);
 	virtual void open(Common::SeekableReadStream *stream);
 	void close();
-	
+
 	bool hasResource(uint32 tag, uint16 id);
 	virtual Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
 	virtual uint32 getOffset(uint32 tag, uint16 id);
@@ -190,7 +190,7 @@ protected:
 	Common::SeekableReadStream *_mhk;
 	TypeTable _typeTable;
 	Common::String _curFile;
-	
+
 private:
 	bool _hasData;
 	uint32 _fileSize;
@@ -220,11 +220,11 @@ class LivingBooksArchive_v1 : public MohawkArchive {
 public:
 	LivingBooksArchive_v1() : MohawkArchive() {}
 	~LivingBooksArchive_v1() {}
-	
+
 	void open(Common::SeekableReadStream *stream);
 	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id);
-	
+
 private:
 	struct OldType {
 		uint32 tag;
@@ -238,14 +238,14 @@ private:
 			} *entries;
 		} resTable;
 	} *_types;
-	
+
 	int16 getTypeIndex(uint32 tag) {
 		for (uint16 i = 0; i < _typeTable.resource_types; i++)
 			if (_types[i].tag == tag)
 				return i;
 		return -1;	// not found
 	}
-	
+
 	int16 getIdIndex(int16 typeIndex, uint16 id) {
 		for (uint16 i = 0; i < _types[typeIndex].resTable.resources; i++)
 			if (_types[typeIndex].resTable.entries[i].id == id)

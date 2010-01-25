@@ -274,7 +274,7 @@ public:
 	ViewType getViewType() const { return _viewType; }
 	const char *getMapVersionDesc() const { return versionDescription(_mapVersion); }
 	const char *getVolVersionDesc() const { return versionDescription(_volVersion); }
-	
+
 	/**
 	 * Adds the appropriate GM patch from the Sierra MIDI utility as 4.pat, without
 	 * requiring the user to rename the file to 4.pat. Thus, the original Sierra
@@ -326,7 +326,7 @@ protected:
 	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const char *filename,
 	                          int number);
 
-	ResourceSource *addSource(ResourceSource *map, ResSourceType type, 
+	ResourceSource *addSource(ResourceSource *map, ResSourceType type,
 								const Common::FSNode *resFile, int number);
 
 	/**
@@ -418,7 +418,7 @@ protected:
 	 */
 	void readResourcePatches(ResourceSource *source);
 	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
-	
+
 	/**
 	 * Process wave files as patches for Audio resources
 	 */

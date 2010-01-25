@@ -103,13 +103,13 @@ SymbianActions::SymbianActions()
 
 void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 	int i;
-	
+
 	// Need to do this since all old mappings are reset after engineDone
 	_initialized = false;
 	Actions::initInstanceMain(mainSystem);
 
 	// Disable all mappings before setting main mappings again
-	for (i = 0; i < ACTION_LAST; i++) {		
+	for (i = 0; i < ACTION_LAST; i++) {
 		_action_enabled[i] = false;
 	}
 

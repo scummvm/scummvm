@@ -507,7 +507,7 @@ void SciString::fromString(Common::String string) {
 
 	if (string.size() > _size)
 		setSize(string.size());
-		
+
 	for (uint32 i = 0; i < string.size(); i++)
 		_data[i] = string[i];
 }

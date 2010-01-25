@@ -326,7 +326,7 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		if (bh & PADS_UP) {
 			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5,
 						Common::KBD_CTRL);
-		
+
 			if (bd & PADS_R) {
 				_consoleVisible = !_consoleVisible;
 				return false;

@@ -132,7 +132,7 @@ MacResIDArray MacResManager::getResIDArray(const char *typeID) {
 
 	if (typeNum == -1)
 		return res;
-	
+
 	res.resize(_resTypes[typeNum].items);
 
 	for (int i = 0; i < _resTypes[typeNum].items; i++)

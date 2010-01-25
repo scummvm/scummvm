@@ -38,9 +38,9 @@ namespace TeenAgent {
 Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
 		_id(0), ons(0),
-		orientation(kActorRight), actor_talking(false), 
-		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL), 
-		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0), 
+		orientation(kActorRight), actor_talking(false),
+		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
+		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0),
 		_fade_timer(0), _fade_type(0), _idle_timer(0) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
@@ -55,7 +55,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
 	if (dst.x < 0 || dst.x > 319 || dst.y < 0 || dst.y > 199)
 		return false;
-	
+
 	debug(1, "findPath %d,%d -> %d,%d", src.x, src.y, dst.x, dst.y);
 	p.clear();
 	p.push_back(src);
@@ -67,16 +67,16 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 		if (!w.rect.in(src) && !w.rect.in(dst))
 			boxes.push_back(i);
 	}
-	
+
 	for(Path::iterator i = p.begin(); i != p.end() && !boxes.empty(); ) {
 		Path::iterator next = i;
 		++next;
 		if (next == p.end())
 			break;
-			
+
 		const Common::Point &p1 = *i, &p2 = *next;
 		debug(1, "%d,%d -> %d,%d", p1.x, p1.y, p2.x, p2.y);
-		
+
 		Common::List<uint>::iterator wi;
 		for(wi = boxes.begin(); wi != boxes.end(); ++wi) {
 			const Walkbox & w = scene_walkboxes[*wi];
@@ -84,7 +84,7 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 			if (mask == 0) {
 				continue;
 			}
-			
+
 			w.dump(1);
 			debug(1, "%u: intersection mask 0x%04x, searching hints", *wi, mask);
 			int dx = p2.x - p1.x, dy = p2.y - p1.y;
@@ -182,7 +182,7 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 		path.push_back(point);
 		return;
 	}
-	
+
 	if (!findPath(path, position, point)) {
 		_engine->cancel();
 		return;
@@ -195,12 +195,12 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_engine = engine;
 	_system = system;
-	
+
 	_fade_timer = 0;
 	_fade_type = 0;
 
 	memset(palette, 0, sizeof(palette));
-	
+
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *s = res->varia.getStream(1);
 	if (s == NULL)
@@ -217,7 +217,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	teenagent_idle.load(s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
-	
+
 	loadObjectData();
 }
 
@@ -228,11 +228,11 @@ void Scene::loadObjectData() {
 	objects.resize(42);
 	walkboxes.resize(42);
 	fades.resize(42);
-	
+
 	for (byte i = 0; i < 42; ++i) {
 		Common::Array<Object> &scene_objects = objects[i];
 		scene_objects.clear();
-		
+
 		uint16 scene_table = res->dseg.get_word(0x7254 + i * 2);
 		uint16 object_addr;
 		while ((object_addr = res->dseg.get_word(scene_table)) != 0) {
@@ -271,9 +271,9 @@ void Scene::loadObjectData() {
 Object *Scene::findObject(const Common::Point &point) {
 	if (_id == 0)
 		return NULL;
-	
+
 	Common::Array<Object> &scene_objects = objects[_id - 1];
-	
+
 	for (uint i = 0; i < scene_objects.size(); ++i) {
 		Object &obj = scene_objects[i];
 		if (obj.enabled != 0 && obj.rect.in(point))
@@ -358,7 +358,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	debug(0, "init(%d)", id);
 	_id = id;
 	sounds.clear();
-	for (byte i = 0; i < 4; ++i) 
+	for (byte i = 0; i < 4; ++i)
 		custom_animation[i].free();
 
 	if (background.pixels == NULL)
@@ -386,7 +386,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	int sub_hack = 0;
 	if (id == 7) { //something patched in the captains room
 		switch(res->dseg.get_byte(0xdbe6)) {
-			case 2: 
+			case 2:
 				break;
 			case 1:
 				sub_hack = 1;
@@ -406,7 +406,7 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	if (now_playing != res->dseg.get_byte(0xDB90))
 		_engine->music->load(res->dseg.get_byte(0xDB90));
-	
+
 	_system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
 }
@@ -468,13 +468,13 @@ bool Scene::processEvent(const Common::Event &event) {
 				sounds.clear();
 				current_event.clear();
 				message_color = 0xd1;
-				for (int i = 0; i < 4; ++i) 
+				for (int i = 0; i < 4; ++i)
 					custom_animation[i].free();
 				_engine->playMusic(4);
 				_engine->loadScene(10, Common::Point(136, 153));
 				return true;
 			}
-		
+
 			if (!message.empty() && message_first_frame == 0) {
 				clearMessage();
 				nextEvent();
@@ -519,7 +519,7 @@ struct ZOrderCmp {
 int Scene::lookupZoom(uint y) const {
 	Resources *res = Resources::instance();
 	for(byte *zoom_table = res->dseg.ptr(res->dseg.get_word(0x70f4 + (_id - 1) * 2));
-		zoom_table[0] != 0xff && zoom_table[1] != 0xff; 
+		zoom_table[0] != 0xff && zoom_table[1] != 0xff;
 		zoom_table += 2
 	) {
 		//debug(0, "%d %d->%d", y, zoom_table[0], zoom_table[1]);
@@ -542,7 +542,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 	do {
 		restart = false;
 		busy = processEventQueue();
-		
+
 		if (_fade_timer && game_delta != 0) {
 			if (_fade_timer > 0) {
 				_fade_timer -= game_delta;
@@ -552,7 +552,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 				setPalette(_fade_timer + 4);
 			}
 		}
-		
+
 		switch(current_event.type) {
 		case SceneEvent::kCredits: {
 			_system->fillScreen(0);
@@ -586,7 +586,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 				res->font8.render(surface, current_event.dst.x, current_event.dst.y, message, current_event.color);
 			} else {
 				res->font7.render(surface, current_event.dst.x, current_event.dst.y, message, 0xd1);
-			} 
+			}
 			_system->unlockScreen();
 			return true;
 		}
@@ -607,14 +607,14 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 					s->render(surface);
 			}
 		}
-		
+
 		Common::List<Surface *> z_order;
-		
+
 		for (byte i = 0; i < 4; ++i) {
 			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame(game_delta);
 			if (s != NULL) {
-				if (!a->ignore) 
+				if (!a->ignore)
 					busy = true;
 				if (!a->paused && !a->loop)
 					got_any_animation = true;
@@ -627,7 +627,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 				}
 				s = a->currentFrame(game_delta);
 			}
-			
+
 			if (current_event.type == SceneEvent::kWaitLanAnimationFrame && current_event.slot == i) {
 				if (s == NULL) {
 					restart |= nextEvent();
@@ -639,10 +639,10 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 					restart |= nextEvent();
 				}
 			}
-			
+
 			if (s == NULL)
 				continue;
-			
+
 			if (debug_features.feature[DebugFeatures::kShowLan])
 				z_order.push_back(s);
 
@@ -675,9 +675,9 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 
 		if (mark != NULL) {
 			actor_animation_position = mark->render(surface);
-			if (!actor_animation.ignore) 
+			if (!actor_animation.ignore)
 				busy = true;
-			else 
+			else
 				busy = false;
 			got_any_animation = true;
 		} else if (!hide_actor) {
@@ -702,13 +702,13 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 						speed_x = 1;
 					if (speed_y == 0)
 						speed_y = 1;
-				
+
 					position.y += (ABS(dp.y) < speed_y? dp.y: SIGN(dp.y) * speed_y);
-					position.x += (o == kActorDown || o == kActorUp)? 
+					position.x += (o == kActorDown || o == kActorUp)?
 						(ABS(dp.x) < speed_y? dp.x: SIGN(dp.x) * speed_y):
 						(ABS(dp.x) < speed_x? dp.x: SIGN(dp.x) * speed_x);
 				}
-				
+
 				_idle_timer = 0;
 				teenagent_idle.resetIndex();
 				actor_animation_position = teenagent.render(surface, position, o, mark_delta, false, zoom);
@@ -730,7 +730,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 				_idle_timer += mark_delta;
 				if (_idle_timer < 50)
 					actor_animation_position = teenagent.render(surface, position, orientation, 0, actor_talking, zoom);
-				else 
+				else
 					actor_animation_position = teenagent_idle.renderIdle(surface, position, orientation, mark_delta, zoom);
 			}
 		}
@@ -761,13 +761,13 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 					visible = false;
 				}
 			}
-			
+
 			if (visible) {
 				res->font7.render(surface, message_pos.x, message_pos.y, message, message_color);
 				busy = true;
 			}
 		}
-		
+
 		if (!busy && !restart && callback_timer) {
 			if (--callback_timer == 0) {
 				if (_engine->inventory->active())
@@ -784,7 +784,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 			for (uint i = 0; i < scene_walkboxes.size(); ++i) {
 				scene_walkboxes[i].rect.render(surface, 0xd0 + i);
 			}
-		
+
 			Common::Point last_p = position;
 			for(Path::const_iterator p = path.begin(); p != path.end(); ++p) {
 				const Common::Point dp(p->x - last_p.x, p->y - last_p.y);
@@ -899,7 +899,7 @@ bool Scene::processEventQueue() {
 						message_animation = custom_animation + (current_event.slot - 1);
 						//else if (!animation[current_event.slot].empty())
 						//	message_animation = animation + current_event.slot;
-					} else 
+					} else
 						message_animation = &actor_animation;
 					debug(0, "async message %d-%d (slot %u)", message_first_frame, message_last_frame, current_event.slot);
 				} else {
@@ -908,7 +908,7 @@ bool Scene::processEventQueue() {
 				}
 				Common::Point p;
 				if (current_event.dst.x == 0 && current_event.dst.y == 0) {
-					p = Common::Point((actor_animation_position.left + actor_animation_position.right) / 2, 
+					p = Common::Point((actor_animation_position.left + actor_animation_position.right) / 2,
 					actor_animation_position.top);
 				} else {
 					p = current_event.dst;
@@ -924,12 +924,12 @@ bool Scene::processEventQueue() {
 					if (s != NULL) {
 						p.x = s->x + s->w / 2;
 						p.y = s->y;
-					} else 
+					} else
 						warning("no animation in slot %u", message_slot);
 				}
 				message_pos = messagePosition(message, p);
 				message_color = current_event.color;
-	
+
 				if (message_first_frame)
 					current_event.clear(); //async message, clearing event
 			}
@@ -1018,7 +1018,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kWaitLanAnimationFrame:
 			debug(0, "waiting for the frame %d in slot %d", current_event.animation, current_event.slot);
 			break;
-			
+
 		case SceneEvent::kTimer:
 			callback = current_event.callback;
 			callback_timer = current_event.timer;
@@ -1056,7 +1056,7 @@ bool Scene::processEventQueue() {
 			debug(0, "quit!");
 			_engine->quitGame();
 			break;
-			
+
 		default:
 			error("empty/unhandler event[%d]", (int)current_event.type);
 		}
@@ -1082,18 +1082,18 @@ void Scene::setPalette(unsigned mul) {
 
 Object *Scene::getObject(int id, int scene_id) {
 	assert(id > 0);
-	
+
 	if (scene_id == 0)
 		scene_id = _id;
 
 	if (scene_id == 0)
 		return NULL;
-	
+
 	Common::Array<Object> &scene_objects = objects[scene_id - 1];
 	--id;
 	if (id >= (int)scene_objects.size())
 		return NULL;
-	
+
 	return &scene_objects[id];
 }
 
@@ -1131,7 +1131,7 @@ uint Scene::messageDuration(const Common::String &str) {
 	if (speed < 0)
 		speed = 60;
 	uint delay_delta = 1 + (255 - speed) * 99 / 255;
-	
+
 	uint delay = 60 + (total_width * delay_delta) / 8;
 	//debug(0, "delay = %u, delta: %u", delay, delay_delta);
 	return delay * 10;

@@ -22,10 +22,10 @@
  * $Id$
  *
  */
- 
+
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/keyboard.h" 
+#include "common/keyboard.h"
 
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
@@ -114,13 +114,13 @@ Common::Error MohawkEngine_Riven::run() {
 			case Common::EVENT_MOUSEMOVE:
 				_mousePos = event.mouse;
 				checkHotspotChange();
-					
+
 				// Check to show the inventory
 				if (_mousePos.y >= 392)
 					_gfx->showInventory();
 				else
 					_gfx->hideInventory();
-					
+
 				needsUpdate = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -189,7 +189,7 @@ Common::Error MohawkEngine_Riven::run() {
 				changeToCard(12);
 				_eventMan->resetRTL();
 				continue;
-			}			
+			}
 			return Common::kNoError;
 		}
 
@@ -215,7 +215,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 	// Don't change stack to the current stack (if the files are loaded)
 	if (_curStack == n && !_mhk.empty())
 		return;
-		
+
 	_curStack = n;
 
 	// Clear the old stack files out
@@ -225,7 +225,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Get the prefix character for the destination stack
 	char prefix = getStackName(_curStack)[0];
-	
+
 	// Load any file that fits the patterns
 	for (int i = 0; i < ARRAYSIZE(endings); i++) {
 		Common::String filename = Common::String(prefix) + endings[i];
@@ -235,11 +235,11 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 			_mhk.push_back(mhk);
 		}
 	}
-	
+
 	// Make sure we have loaded files
 	if (_mhk.empty())
 		error("Could not load stack %s", getStackName(_curStack).c_str());
-	
+
 	// Stop any currently playing sounds and load the new sound file too
 	_sound->stopAllSLST();
 	_sound->loadRivenSounds(_curStack);
@@ -289,30 +289,30 @@ void MohawkEngine_Riven::changeToCard(uint16 n) {
 
 		loadCard(_curCard);
 	}
-	
+
 	// We need to reload hotspots when refreshing, however
 	loadHotspots(_curCard);
-	
+
 	_gfx->_updatesEnabled = true;
 	_gfx->clearWaterEffects();
 	_gfx->_activatedPLSTs.clear();
 	_video->_mlstRecords.clear();
 	_gfx->drawPLST(1);
 	_activatedSLST = false;
-	
+
 	runCardScript(kCardLoadScript);
 	_gfx->updateScreen();
 	runCardScript(kCardOpenScript);
-	
+
 	// Activate the first sound list if none have been activated
 	if (!_activatedSLST)
 		_sound->playSLST(1, _curCard);
-	
+
 	if (_showHotspots) {
 		for (uint16 i = 0; i < _hotspotCount; i++)
 			_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
 	}
-	
+
 	// Now we need to redraw the cursor if necessary and handle mouse over scripts
 	_curHotspot = -1;
 	checkHotspotChange();
@@ -356,12 +356,12 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 
 		_hotspots[i].blstID = inStream->readUint16BE();
 		_hotspots[i].name_resource = inStream->readSint16BE();
-		
+
 		int16 left = inStream->readSint16BE();
 		int16 top = inStream->readSint16BE();
 		int16 right = inStream->readSint16BE();
 		int16 bottom = inStream->readSint16BE();
-		
+
 		// Riven has some weird hotspots, disable them here
 		if (left >= right || top >= bottom) {
 			left = top = right = bottom = 0;
@@ -369,7 +369,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		}
 
 		_hotspots[i].rect = Common::Rect(left, top, right, bottom);
-		
+
 		_hotspots[i].u0 = inStream->readUint16BE();
 
 		if (_hotspots[i].u0 != 0)
@@ -383,7 +383,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 			warning("Hotspot %d u1 not -1", i);
 
 		_hotspots[i].zipModeHotspot = inStream->readUint16BE();
-		
+
 		// Read in the scripts now
 		_hotspots[i].scripts = RivenScript::readScripts(this, inStream);
 	}
@@ -425,7 +425,7 @@ void MohawkEngine_Riven::checkHotspotChange() {
 			foundHotspot = true;
 			hotspotIndex = i;
 		}
-		
+
 	if (foundHotspot) {
 		if (_curHotspot != hotspotIndex) {
 			_curHotspot = hotspotIndex;
@@ -439,7 +439,7 @@ void MohawkEngine_Riven::checkHotspotChange() {
 
 Common::String MohawkEngine_Riven::getHotspotName(uint16 hotspot) {
 	assert(hotspot < _hotspotCount);
-	
+
 	if (_hotspots[hotspot].name_resource < 0)
 		return Common::String();
 
@@ -450,19 +450,19 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	// Don't even bother. We're not in the inventory portion of the screen.
 	if (_mousePos.y < 392)
 		return;
-		
+
 	// No inventory in the demo or opening screens.
 	if (getFeatures() & GF_DEMO || _curStack == aspit)
 		return;
-		
+
 	// Set the return stack/card id's.
 	*matchVarToString("returnstackid") = _curStack;
 	*matchVarToString("returncardid") = _curCard;
-	
+
 	// See RivenGraphics::showInventory() for an explanation
 	// of why only this variable is used.
 	bool hasCathBook = *matchVarToString("acathbook") != 0;
-	
+
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
 		if (atrusJournalRectSolo.contains(_mousePos)) {
@@ -503,7 +503,7 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 			stringOffsets[i] = nameStream->readUint16BE();
 		for (uint16 i = 0; i < fieldCount; i++)
 			nameStream->readUint16BE();	// Skip unknown values
-	
+
 		nameStream->seek(stringOffsets[nameID], SEEK_CUR);
 		c = (char)nameStream->readByte();
 
@@ -573,9 +573,9 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const char *desc) {
 	Common::StringList saveList = _saveLoad->generateSaveGameList();
 
-	if ((uint)slot < saveList.size()) 
+	if ((uint)slot < saveList.size())
 		_saveLoad->deleteSave(saveList[slot]);
-	
+
 	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
 }
 

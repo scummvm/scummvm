@@ -522,7 +522,7 @@ void AnimviewView::updateState() {
 			scriptDone();
 			return;
 		}
-		
+
 		readNextCommand();
 
 		// FIXME: Replace flag with proper animation end check
@@ -553,7 +553,7 @@ void AnimviewView::readNextCommand() {
 
 			cStart = strchr(_currentLine, '-');
 		}
-	
+
 		// If there's something left, presume it's a resource name to process
 		if (_currentLine[0])
 			break;
@@ -579,10 +579,10 @@ void AnimviewView::readNextCommand() {
 		buffer[0] = 'A';	// A for AdLib resource
 
 		/*Common::SeekableReadStream *stream = */_vm->_resourceManager->get(buffer);
-		
+
 		_vm->_resourceManager->toss(buffer);
 	}
-	
+
 
 	char artFile[80];
 	sprintf(artFile, "rm%d.art", aaFile.roomNumber);

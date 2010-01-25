@@ -68,7 +68,7 @@ void Portrait::init() {
 	// height * width bitmap data
 	// another animation count times bitmap header and data
 	int32 fileSize = 0;
-	Common::SeekableReadStream *file = 
+	Common::SeekableReadStream *file =
 		SearchMan.createReadStreamForMember("actors/" + _resourceName + ".bin");
 	if (!file) {
 		file = SearchMan.createReadStreamForMember(_resourceName + ".bin");

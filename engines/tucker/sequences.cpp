@@ -592,9 +592,9 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 			size = f.size();
 			rate = 22050;
 			flags = Audio::FLAG_UNSIGNED;
-			if (type == kAnimationSoundType16BitsRAW) 
+			if (type == kAnimationSoundType16BitsRAW)
 				flags = Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS;
-			
+
 			if (size != 0) {
 				uint8 *sampleData = (uint8 *)malloc(size);
 				if (sampleData) {
@@ -607,7 +607,7 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 			stream = Audio::makeWAVStream(&f, DisposeAfterUse::NO);
 			break;
 		}
-		
+
 	}
 	return stream;
 }

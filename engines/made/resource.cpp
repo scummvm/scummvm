@@ -531,7 +531,7 @@ bool ResourceReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &siz
 
 ResourceSlot *ResourceReader::getResourceSlot(uint32 resType, uint index) {
 	ResourceSlots *slots = _resSlots[resType];
-	
+
 	if (!slots)
 		return NULL;
 
@@ -577,7 +577,7 @@ void ResourceReader::purgeCache() {
 				slot->res = NULL;
 				slot->refCount = 0;
 				_cacheCount--;
-			}			
+			}
 		}
 	}
 }

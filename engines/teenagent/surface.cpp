@@ -85,7 +85,7 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 	}
 	if (src_rect.isEmpty() || dst_rect.isEmpty())
 		return Common::Rect();
-	
+
 	if (zoom == 256) {
 		byte *src = (byte *)getBasePtr(0, src_rect.top);
 		byte *dst_base = (byte *)surface->getBasePtr(dst_rect.left, dst_rect.top);

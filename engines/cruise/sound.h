@@ -59,7 +59,7 @@ public:
 
 	virtual void playSound(const uint8 *data, int size, int volume);
 	virtual void stopSound(int channel);
-	
+
 	void doSync(Common::Serializer &s);
 	const char *musicName();
 	void stopChannel(int channel);

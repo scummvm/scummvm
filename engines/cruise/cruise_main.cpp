@@ -93,7 +93,7 @@ void MemoryFree(void *v) {
 
 		memList.remove(p);
 		free(p - 8 - 64);
-	} else 
+	} else
 		free(v);
 }
 
@@ -1163,7 +1163,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 				} else if (pHeader->type == RT_MSG) {
 
 					if (pHeader->obj2Number >= 0) {
-						if ((pHeader->trackX !=-1) && (pHeader->trackY !=-1) && 
+						if ((pHeader->trackX !=-1) && (pHeader->trackY !=-1) &&
 								(pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
 							x = pHeader->trackX - 100;
 							y = pHeader->trackY - 150;
@@ -1192,7 +1192,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 					userWait = 1;
 					autoOvl = ovlIdx;
 					autoMsg = pHeader->id;
-				
+
 					if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
 						actorStruct *pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
 
@@ -1888,7 +1888,7 @@ void CruiseEngine::mainLoop() {
 
 			// Disable any mouse click used to end the user wait
 			currentMouseButton = 0;
-		} 
+		}
 
 		manageScripts(&relHead);
 		manageScripts(&procHead);

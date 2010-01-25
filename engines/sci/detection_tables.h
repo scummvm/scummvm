@@ -1018,7 +1018,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
-	
+
 	// King's Quest 6 - English Windows CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
@@ -1039,7 +1039,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NONE	},
 
 #ifdef ENABLE_SCI32
-	
+
 
 	// King's Quest 7 - English Windows (from abevi)
 	// VERSION 1.65c
@@ -2225,7 +2225,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH
 	},
-	
+
 	// Quest for Glory 3 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "1.001.021", VERSION file reports "1.000, 0.001.059, 6.12.92"
 	{"qfg3", "Demo", {

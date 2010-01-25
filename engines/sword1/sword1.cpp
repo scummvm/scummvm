@@ -139,7 +139,7 @@ Common::Error SwordEngine::init() {
 
 	_systemVars.playSpeech = 1;
 	_mouseState = 0;
-	
+
 	// Some Mac versions use big endian for the speech files but not all of them.
 	if (_systemVars.platform == Common::kPlatformMacintosh)
 		_sound->checkSpeechFileEndianness();

@@ -410,7 +410,7 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 
 	_vm->_draw->_backColor = _vm->_game->_script->getResultInt() & 0xFFFF;
-	
+
 	_vm->_draw->_pattern = _vm->_game->_script->getResultInt() >> 16;
 
 	if (_vm->_draw->_pattern != 0)

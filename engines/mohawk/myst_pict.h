@@ -41,7 +41,7 @@ public:
 	MystPICT(MystJPEG *jpegDecoder);
 	~MystPICT() {}
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	
+
 private:
 	MystJPEG *_jpegDecoder;
 	Common::Rect _imageRect;

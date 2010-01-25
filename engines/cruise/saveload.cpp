@@ -568,7 +568,7 @@ static void syncPerso(Common::Serializer &s, persoStruct &p) {
 		s.syncAsSint16LE(p.solution[i][0]);
 		s.syncAsSint16LE(p.solution[i][1]);
 	}
-	
+
 	s.syncAsSint16LE(p.inc_jo1);
 	s.syncAsSint16LE(p.inc_jo2);
 	s.syncAsSint16LE(p.dir_perso);
@@ -902,7 +902,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 				ASSERT(0);
 				//loadFileMode1(filesDatabase[j].subData.name,filesDatabase[j].subData.var4);
 			} else */
-			if (strlen(filesDatabase[i].subData.name) > 0) { 
+			if (strlen(filesDatabase[i].subData.name) > 0) {
 				loadFileRange(filesDatabase[i].subData.name, filesDatabase[i].subData.index, i, j - i);
 			} else {
 				filesDatabase[i].subData.ptr = NULL;

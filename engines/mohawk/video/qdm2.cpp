@@ -147,9 +147,9 @@ static inline void skipBits(GetBitContext *s, int n) {
 static int splitRadixPermutation(int i, int n, int inverse) {
 	if (n <= 2)
 		return i & 1;
-		
+
 	int m = n >> 1;
-	
+
 	if(!(i & m))
 		return splitRadixPermutation(i, m, inverse) * 2;
 
@@ -547,10 +547,10 @@ int fftInit(FFTContext *s, int nbits, int inverse) {
 		// compute bit reverse table
 		for (i = 0; i < n; i++) {
 			m = 0;
-			
+
 			for (j = 0; j < nbits; j++)
 				m |= ((i >> j) & 1) << (nbits - j - 1);
-			
+
 			s->revtab[i] = m;
 		}
 	}
@@ -616,7 +616,7 @@ void rdftCalc(RDFTContext *s, float *data) {
 	ev.re = data[0];
 	data[0] = ev.re + data[1];
 	data[1] = ev.re - data[1];
-	
+
 	int i;
 
 	for (i = 1; i < n >> 2; i++) {
@@ -843,7 +843,7 @@ static void dct32(int32 *out, int32 *tab) {
 	// pass 1
 	BF( 7, 24, COS0_7 , 1);
 	BF( 8, 23, COS0_8 , 1);
-	// pass 2 
+	// pass 2
 	BF( 7,  8, COS1_7 , 4);
 	BF(23, 24,-COS1_7 , 4);
 	// pass 3
@@ -854,7 +854,7 @@ static void dct32(int32 *out, int32 *tab) {
 	// pass 1
 	BF( 3, 28, COS0_3 , 1);
 	BF(12, 19, COS0_12, 2);
-	// pass 2 
+	// pass 2
 	BF( 3, 12, COS1_3 , 1);
 	BF(19, 28,-COS1_3 , 1);
 	// pass 1
@@ -1537,12 +1537,12 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 		warning("QDM2Stream::QDM2Stream() extraSize mismatch - Expected %d", (extraData->size() - extraData->pos()) / 4 + 1);
 	if (tmp_s < 12)
 		error("QDM2Stream::QDM2Stream() Insufficient extraData");
-	
+
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraTag: %d", tmp);
 	if (tmp != MKID_BE('frma'))
 		warning("QDM2Stream::QDM2Stream() extraTag mismatch");
-	
+
 	tmp = extraData->readUint32BE();
 	debug(1, "QDM2Stream::QDM2Stream() extraType: %d", tmp);
 	if (tmp == MKID_BE('QDMC'))
@@ -2609,7 +2609,7 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 // ****************************************************************
 }
 
-void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int duration, 
+void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
                                            int channel, int exp, int phase) {
 	if (_fftCoefsMinIndex[duration] < 0)
 	    _fftCoefsMinIndex[duration] = _fftCoefsIndex;
@@ -2904,7 +2904,7 @@ void QDM2Stream::qdm2_calculate_fft(int channel) {
 	//debug(1, "QDM2Stream::qdm2_calculate_fft _fft.complex[channel][0].im: %lf", _fft.complex[channel][0].im);
 
 	rdftCalc(&_rdftCtx, (float *)_fft.complex[channel]);
-	
+
 	// add samples to output buffer
 	for (i = 0; i < ((_fftFrameSize + 15) & ~15); i++)
 		_outputBuffer[_channels * i + channel] += ((float *) _fft.complex[channel])[i] * gain;
