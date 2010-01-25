@@ -555,7 +555,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					}
 					break;
 				case PIC_OPX_VGA_SET_PALETTE:
-					if (_resMan->getViewType() == kViewAmiga) {
+					if (_resMan->isAmiga32color()) {
 						if ((data[curPos] == 0x00) && (data[curPos + 1] == 0x01) && ((data[curPos + 32] & 0xF0) != 0xF0)) {
 							// Left-Over VGA palette, we simply ignore it
 							curPos += 256 + 4 + 768;

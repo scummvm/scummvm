@@ -58,7 +58,7 @@ SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPale
 	if (autoSetPalette) {
 		if (_resMan->getViewType() == kViewEga)
 			setEGA();
-		else if (_resMan->getViewType() == kViewAmiga)
+		else if (_resMan->isAmiga32color())
 			setAmiga();
 		else
 			setFromResource(999, 2);
@@ -311,7 +311,7 @@ void SciPalette::setOnScreen() {
 //	if (pal != &_sysPalette)
 //		memcpy(&_sysPalette,pal,sizeof(Palette));
 	// We dont change palette at all times for amiga
-	if (_resMan->getViewType() == kViewAmiga)
+	if (_resMan->isAmiga32color())
 		return;
 	_screen->setPalette(&_sysPalette);
 }

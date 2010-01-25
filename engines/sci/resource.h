@@ -271,6 +271,7 @@ public:
 
 	void setAudioLanguage(int language);
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
+	bool isAmiga32color() const { return _viewType == kViewAmiga; }
 	ViewType getViewType() const { return _viewType; }
 	const char *getMapVersionDesc() const { return versionDescription(_mapVersion); }
 	const char *getVolVersionDesc() const { return versionDescription(_volVersion); }

@@ -307,7 +307,7 @@ void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount)
 
 	rlePtr = _resourceData + celInfo->offsetRLE;
 	if (!celInfo->offsetLiteral) { // no additional literal data
-		if (_resMan->getViewType() == kViewAmiga) {
+		if (_resMan->isAmiga32color()) {
 			// decompression for amiga views
 			while (pixelNo < pixelCount) {
 				pixel = *rlePtr++;
