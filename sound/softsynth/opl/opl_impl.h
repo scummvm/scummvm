@@ -56,7 +56,7 @@ static const fltype frqmul_tab[16] = {
 	0.5,1,2,3,4,5,6,7,8,9,10,10,12,12,15,15
 };
 // calculated frequency multiplication values (depend on sampling rate)
-static float frqmul[16];
+static fltype frqmul[16];
 
 // key scale levels
 static Bit8u kslev[8][16];
@@ -125,8 +125,18 @@ static Bit32u wavestart[8] = {
 };
 
 // envelope generator function constants
-static fltype attackconst[4] = {1/2.82624,1/2.25280,1/1.88416,1/1.59744};
-static fltype decrelconst[4] = {1/39.28064,1/31.41608,1/26.17344,1/22.44608};
+static fltype attackconst[4] = {
+	(fltype)(1/2.82624),
+	(fltype)(1/2.25280),
+	(fltype)(1/1.88416),
+	(fltype)(1/1.59744)
+};
+static fltype decrelconst[4] = {
+	(fltype)(1/39.28064),
+	(fltype)(1/31.41608),
+	(fltype)(1/26.17344),
+	(fltype)(1/22.44608)
+};
 
 
 void operator_advance(op_type* op_pt, Bit32s vib) {
@@ -274,9 +284,9 @@ void operator_attack(op_type* op_pt) {
 				op_pt->amp = 1.0;
 				op_pt->step_amp = 1.0;
 			}
-			op_pt->step_skip_pos <<= 1;
-			if (op_pt->step_skip_pos==0) op_pt->step_skip_pos = 1;
-			if (op_pt->step_skip_pos & op_pt->env_step_skip_a) {	// check if required to skip next step
+			op_pt->step_skip_pos_a <<= 1;
+			if (op_pt->step_skip_pos_a==0) op_pt->step_skip_pos_a = 1;
+			if (op_pt->step_skip_pos_a & op_pt->env_step_skip_a) {	// check if required to skip next step
 				op_pt->step_amp = op_pt->amp;
 			}
 		}
@@ -487,7 +497,7 @@ void adlib_init(Bit32u samplerate) {
 		op[i].env_step_a = 0;
 		op[i].env_step_d = 0;
 		op[i].env_step_r = 0;
-		op[i].step_skip_pos = 0;
+		op[i].step_skip_pos_a = 0;
 		op[i].env_step_skip_a = 0;
 
 #if defined(OPLTYPE_IS_OPL3)
@@ -504,7 +514,7 @@ void adlib_init(Bit32u samplerate) {
 	}
 
 	status = 0;
-	index = 0;
+	opl_index = 0;
 
 
 	// create vibrato table
@@ -552,9 +562,9 @@ void adlib_init(Bit32u samplerate) {
 			wavtable[(i<<1)  +WAVEPREC]	= (Bit16s)(16384*sin((fltype)((i<<1)  )*PI*2/WAVEPREC));
 			wavtable[(i<<1)+1+WAVEPREC]	= (Bit16s)(16384*sin((fltype)((i<<1)+1)*PI*2/WAVEPREC));
 			wavtable[i]					= wavtable[(i<<1)  +WAVEPREC];
-			// table to be verified, alternative: (zero-less)
-/*			wavtable[(i<<1)  +WAVEPREC]	= (Bit16s)(16384*sin((fltype)(((i*2+1)<<1)-1)*PI/WAVEPREC));
-			wavtable[(i<<1)+1+WAVEPREC]	= (Bit16s)(16384*sin((fltype)(((i*2+1)<<1)  )*PI/WAVEPREC));
+			// alternative: (zero-less)
+/*			wavtable[(i<<1)  +WAVEPREC]	= (Bit16s)(16384*sin((fltype)((i<<2)+1)*PI/WAVEPREC));
+			wavtable[(i<<1)+1+WAVEPREC]	= (Bit16s)(16384*sin((fltype)((i<<2)+3)*PI/WAVEPREC));
 			wavtable[i]					= wavtable[(i<<1)-1+WAVEPREC]; */
 		}
 		for (i=0;i<(WAVEPREC>>3);i++) {
@@ -901,11 +911,11 @@ Bitu adlib_reg_read(Bitu port) {
 }
 
 void adlib_write_index(Bitu port, Bit8u val) {
-	index = val;
+	opl_index = val;
 #if defined(OPLTYPE_IS_OPL3)
 	if ((port&3)!=0) {
 		// possibly second set
-		if (((adlibreg[0x105]&1)!=0) || (index==5)) index |= ARC_SECONDSET;
+		if (((adlibreg[0x105]&1)!=0) || (opl_index==5)) opl_index |= ARC_SECONDSET;
 	}
 #endif
 }

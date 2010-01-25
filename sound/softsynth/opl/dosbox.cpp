@@ -177,7 +177,7 @@ struct Handler : public DOSBox::Handler {
 
 	uint32 writeAddr(uint32 port, uint8 val) {
 		adlib_write_index(port, val);
-		return index;
+		return opl_index;
 	}
 
 	void generate(int16 *chan, uint samples) {
