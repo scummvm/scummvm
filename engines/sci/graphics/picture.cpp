@@ -558,7 +558,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					if (_resMan->isAmiga32color()) {
 						if ((data[curPos] == 0x00) && (data[curPos + 1] == 0x01) && ((data[curPos + 32] & 0xF0) != 0xF0)) {
 							// Left-Over VGA palette, we simply ignore it
-							curPos += 256 + 4 + 768;
+							curPos += 256 + 4 + 1024;
 						} else {
 							// Setting half of the amiga palette
 							_palette->modifyAmigaPalette(&data[curPos]);
