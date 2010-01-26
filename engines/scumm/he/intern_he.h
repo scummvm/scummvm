@@ -344,6 +344,7 @@ protected:
 	byte VAR_POLYGONS_ONLY;
 
 	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();
+	byte VAR_PLATFORM;
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {
@@ -385,7 +386,6 @@ protected:
 	void o80_drawLine();
 	void o80_pickVarRandom();
 
-	byte VAR_PLATFORM;
 	byte VAR_PLATFORM_VERSION;
 	byte VAR_CURRENT_CHARSET;
 	byte VAR_KEY_STATE;

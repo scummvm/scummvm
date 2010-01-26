@@ -287,8 +287,10 @@ static const GameSettings gameVariantsTable[] = {
 
 	// Changed o_getResourceSize to cover all resource types
 	{"farm", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
-	{"jungle", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 	{"puttzoo", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
+
+	// Added VAR_PLATFORM variable
+	{"jungle", "", 0, GID_HEGAME, 6, 74, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
 	{"freddi2", "", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
@@ -382,6 +384,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"", "HE 71",   0, GID_HEGAME, 6,  71, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 	{"", "HE 72",   0, GID_HEGAME, 6,  72, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 	{"", "HE 73",   0, GID_HEGAME, 6,  73, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
+	{"", "HE 74",   0, GID_HEGAME, 6,  74, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 	{"", "HE 80",   0, GID_HEGAME, 6,  80, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 	{"", "HE 85",   0, GID_HEGAME, 6,  85, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},
 	{"", "HE 90",   0, GID_HEGAME, 6,  90, MDT_NONE, GF_USE_KEY, UNK, GUIO_NOMIDI},

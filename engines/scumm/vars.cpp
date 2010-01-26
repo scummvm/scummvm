@@ -298,12 +298,15 @@ void ScummEngine_v72he::setupScummVars() {
 	if (_game.heversion <= 73) {
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
+
+	if (_game.heversion >= 74) {
+		VAR_PLATFORM = 78;
+	}
 }
 
 void ScummEngine_v80he::setupScummVars() {
 	ScummEngine_v72he::setupScummVars();
 
-	VAR_PLATFORM = 78;
 	VAR_PLATFORM_VERSION = 79;
 	VAR_CURRENT_CHARSET = 80;
 	VAR_SOUNDCODE_TMR = 84;
@@ -650,6 +653,15 @@ void ScummEngine_v72he::resetScummVars() {
 	VAR(VAR_NUM_IMAGES) = _numImages - 1;
 	VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
 	VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+
+	if (_game.heversion == 74) {
+		// Uses different values, compared to later HE80+ games.
+		if (_game.platform == Common::kPlatformMacintosh) {
+			VAR(VAR_PLATFORM) = 3;
+		} else {
+			VAR(VAR_PLATFORM) = 2;
+		}
+	}
 }
 
 void ScummEngine_v80he::resetScummVars() {

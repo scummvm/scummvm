@@ -798,6 +798,7 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
 	VAR_NUM_CHARSETS = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_MOUSE_STATE = 0xFF;
+	VAR_PLATFORM = 0xFF;
 }
 
 ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
@@ -808,7 +809,6 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 	_sndTmrOffs = 0;
 	_sndDataSize = 0;
 
-	VAR_PLATFORM = 0xFF;
 	VAR_PLATFORM_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
 	VAR_KEY_STATE = 0xFF;
