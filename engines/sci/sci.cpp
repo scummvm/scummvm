@@ -101,6 +101,10 @@ SciEngine::~SciEngine() {
 Common::Error SciEngine::run() {
 	// FIXME/TODO: Move some of the stuff below to init()
 
+	// Assign default values to the config manager, in case settings are missing
+	ConfMan.registerDefault("undither", "true");
+	ConfMan.registerDefault("enable_fb01", "false");
+
 	_resMan = new ResourceManager();
 
 	if (!_resMan) {
@@ -168,8 +172,6 @@ Common::Error SciEngine::run() {
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
 
-	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("undither", "true");
 	screen->unditherSetState(ConfMan.getBool("undither"));
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS

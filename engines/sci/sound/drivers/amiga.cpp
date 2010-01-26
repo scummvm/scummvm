@@ -653,8 +653,8 @@ void MidiDriver_Amiga::generateSamples(int16 *data, int len) {
 
 class MidiPlayer_Amiga : public MidiPlayer {
 public:
-	MidiPlayer_Amiga() { _driver = new MidiDriver_Amiga(g_system->getMixer()); }
-	byte getPlayId(SciVersion soundVersion);
+	MidiPlayer_Amiga(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_Amiga(g_system->getMixer()); }
+	byte getPlayId();
 	int getPolyphony() const { return MidiDriver_Amiga::kVoices; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_Amiga *>(_driver)->setVolume(volume); }
@@ -662,12 +662,12 @@ public:
 	void loadInstrument(int idx, byte *data);
 };
 
-MidiPlayer *MidiPlayer_Amiga_create() {
-	return new MidiPlayer_Amiga();
+MidiPlayer *MidiPlayer_Amiga_create(SciVersion version) {
+	return new MidiPlayer_Amiga(version);
 }
 
-byte MidiPlayer_Amiga::getPlayId(SciVersion soundVersion) {
-	if (soundVersion != SCI_VERSION_0_LATE)
+byte MidiPlayer_Amiga::getPlayId() {
+	if (_version != SCI_VERSION_0_LATE)
 		error("Amiga sound support not available for this SCI version");
 
 	return 0x40;

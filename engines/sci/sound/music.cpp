@@ -67,18 +67,21 @@ void SciMusic::init() {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
-			_pMidiDrv = MidiPlayer_Amiga_create();
+			_pMidiDrv = MidiPlayer_Amiga_create(_soundVersion);
 		else
-			_pMidiDrv = MidiPlayer_AdLib_create();
+			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
 	case MD_PCJR:
-		_pMidiDrv = MidiPlayer_PCJr_create();
+		_pMidiDrv = MidiPlayer_PCJr_create(_soundVersion);
 		break;
 	case MD_PCSPK:
-		_pMidiDrv = MidiPlayer_PCSpeaker_create();
+		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
 	default:
-		_pMidiDrv = MidiPlayer_Midi_create();
+		if (ConfMan.getBool("enable_fb01"))
+			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
+		else
+			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
 	}
 
 	if (_pMidiDrv) {
@@ -165,7 +168,7 @@ void SciMusic::sortPlayList() {
 }
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
-	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
+	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
 	if (track) {
 		// If MIDI device is selected but there is no digital track in sound resource
@@ -202,7 +205,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			pSnd->pauseCounter = 0;
 
 			// Find out what channels to filter for SCI0
-			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(_soundVersion), _pMidiDrv->hasRhythmChannel());
+			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
 			// Fast forward to the last position and perform associated events when loading
@@ -394,7 +397,7 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 			if (song->pMidiParser) {
 				con->DebugPrintf("Type: MIDI\n");
 				if (song->soundRes) {
-					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
+					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 					con->DebugPrintf("Channels: %d\n", track->channelCount);
 				}
 			} else if (song->pStreamAud || song->pLoopStream) {
@@ -403,7 +406,7 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 					_pMixer->isSoundHandleActive(song->hCurrentAud) ? "yes" : "no");
 				if (song->soundRes) {
 					con->DebugPrintf("Sound resource information:\n");
-					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId(_soundVersion));
+					SoundResource::Track *track = song->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 					if (track && track->digitalChannelNr != -1) {
 						con->DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 							track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);

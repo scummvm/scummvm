@@ -43,7 +43,7 @@ public:
 		kMaxSysExSize = 264
 	};
 
-	MidiPlayer_Midi();
+	MidiPlayer_Midi(SciVersion version);
 	virtual ~MidiPlayer_Midi();
 
 	int open(ResourceManager *resMan);
@@ -51,7 +51,7 @@ public:
 	void send(uint32 b);
 	void sysEx(const byte *msg, uint16 length);
 	bool hasRhythmChannel() const { return true; }
-	byte getPlayId(SciVersion soundVersion);
+	byte getPlayId();
 	int getPolyphony() const { return kVoices; }
 	void setVolume(byte volume);
 	int getVolume();
@@ -116,7 +116,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi() : _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(true) {
 	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_MIDI);
 	_driver = createMidi(midiType);
 
@@ -847,8 +847,8 @@ void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	g_system->updateScreen();
 }
 
-byte MidiPlayer_Midi::getPlayId(SciVersion soundVersion) {
-	switch (soundVersion) {
+byte MidiPlayer_Midi::getPlayId() {
+	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
 		return 0x01;
@@ -860,8 +860,8 @@ byte MidiPlayer_Midi::getPlayId(SciVersion soundVersion) {
 	}
 }
 
-MidiPlayer *MidiPlayer_Midi_create() {
-	return new MidiPlayer_Midi();
+MidiPlayer *MidiPlayer_Midi_create(SciVersion version) {
+	return new MidiPlayer_Midi(version);
 }
 
 } // End of namespace Sci

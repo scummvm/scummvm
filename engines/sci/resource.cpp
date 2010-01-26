@@ -2152,4 +2152,18 @@ int SoundResource::getChannelFilterMask(int hardwareMask, bool wantsRhythm) {
 	return channelMask;
 }
 
+byte SoundResource::getInitialVoiceCount(byte channel) {
+	byte *data = _innerResource->data;
+
+	if (_soundVersion > SCI_VERSION_0_LATE)
+		return 0; // TODO
+
+	data++; // Skip over digital sample flag
+
+	if (_soundVersion == SCI_VERSION_0_EARLY)
+		return data[channel] >> 4;
+	else
+		return data[channel * 2];
+}
+
 } // End of namespace Sci

@@ -160,7 +160,7 @@ private:
 
 class MidiPlayer_AdLib : public MidiPlayer {
 public:
-	MidiPlayer_AdLib() { _driver = new MidiDriver_AdLib(g_system->getMixer()); }
+	MidiPlayer_AdLib(SciVersion soundVersion) : MidiPlayer(soundVersion) { _driver = new MidiDriver_AdLib(g_system->getMixer()); }
 	~MidiPlayer_AdLib() {
 		delete _driver;
 		_driver = 0;
@@ -169,7 +169,7 @@ public:
 	int open(ResourceManager *resMan);
 	void close();
 
-	byte getPlayId(SciVersion soundVersion);
+	byte getPlayId();
 	int getPolyphony() const { return MidiDriver_AdLib::kVoices; }
 	bool hasRhythmChannel() const { return false; }
 	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
@@ -814,7 +814,7 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 		return -1;
 	}
 
-	return static_cast<MidiDriver_AdLib *>(_driver)->open(getSciVersion() <= SCI_VERSION_0_LATE);
+	return static_cast<MidiDriver_AdLib *>(_driver)->open(_version <= SCI_VERSION_0_LATE);
 }
 
 void MidiPlayer_AdLib::close() {
@@ -823,8 +823,8 @@ void MidiPlayer_AdLib::close() {
 	}
 }
 
-byte MidiPlayer_AdLib::getPlayId(SciVersion soundVersion) {
-	switch (soundVersion) {
+byte MidiPlayer_AdLib::getPlayId() {
+	switch (_version) {
 	case SCI_VERSION_0_EARLY:
 		return 0x01;
 	case SCI_VERSION_0_LATE:
@@ -834,8 +834,8 @@ byte MidiPlayer_AdLib::getPlayId(SciVersion soundVersion) {
 	}
 }
 
-MidiPlayer *MidiPlayer_AdLib_create() {
-	return new MidiPlayer_AdLib();
+MidiPlayer *MidiPlayer_AdLib_create(SciVersion _soundVersion) {
+	return new MidiPlayer_AdLib(_soundVersion);
 }
 
 } // End of namespace Sci

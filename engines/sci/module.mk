@@ -61,8 +61,9 @@ MODULE_OBJS := \
 	sound/iterator/songlib.o \
 	sound/drivers/adlib.o \
 	sound/drivers/amiga.o \
-	sound/drivers/pcjr.o \
+	sound/drivers/fb01.o \
 	sound/drivers/midi.o \
+	sound/drivers/pcjr.o \
 	video/seq_decoder.o \
 	video/vmd_decoder.o
 	

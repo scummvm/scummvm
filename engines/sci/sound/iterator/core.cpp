@@ -229,15 +229,15 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
-			_mididrv = MidiPlayer_Amiga_create();
+			_mididrv = MidiPlayer_Amiga_create(_soundVersion);
 		else
-			_mididrv = MidiPlayer_AdLib_create();
+			_mididrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
 	case MD_PCJR:
-		_mididrv = MidiPlayer_PCJr_create();
+		_mididrv = MidiPlayer_PCJr_create(_soundVersion);
 		break;
 	case MD_PCSPK:
-		_mididrv = MidiPlayer_PCSpeaker_create();
+		_mididrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
 	default:
 		break;
@@ -261,7 +261,7 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 
 Common::Error SfxPlayer::add_iterator(SongIterator *it, uint32 start_time) {
 	Common::StackLock lock(_mutex);
-	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayId(_soundVersion)));
+	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayId()));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(_mididrv->hasRhythmChannel()));
 
 	if (_iterator == NULL) {

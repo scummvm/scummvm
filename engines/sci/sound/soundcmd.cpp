@@ -209,7 +209,9 @@ SoundCommandParser::~SoundCommandParser() {
 	for (SoundCommandContainer::iterator i = _soundCommands.begin(); i != _soundCommands.end(); ++i)
 		delete *i;
 
+#ifndef USE_OLD_MUSIC_FUNCTIONS
 	delete _music;
+#endif
 }
 
 reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {

@@ -41,14 +41,6 @@
 
 namespace Sci {
 
-enum TrackType {
-	kTrackAdLib = 0,
-	kTrackGameBlaster = 9,
-	kTrackMT32 = 12,
-	kTrackSpeaker = 18,
-	kTrackTandy = 19
-};
-
 enum SoundStatus {
 	kSoundStopped = 0,
 	kSoundInitialized = 1,

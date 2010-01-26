@@ -41,8 +41,6 @@ struct ADGameDescription;
  */
 namespace Sci {
 
-// Uncomment this to include old graphics code
-//#define INCLUDE_OLDGFX
 // Uncomment this to use old music functions
 //#define USE_OLD_MUSIC_FUNCTIONS
 // Uncomment this to use old pathfinding code

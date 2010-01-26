@@ -87,6 +87,16 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_loopTick = 0;
 	_channelsUsed = 0;
 
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
+		// Set initial voice count
+		for (int i = 0; i < 16; ++i) {
+			byte voiceCount = 0;
+			if (channelFilterMask & (1 << i))
+				voiceCount = psnd->soundRes->getInitialVoiceCount(i);
+			_driver->send(0xB0 | i, 0x4B, voiceCount);
+		}
+	}
+
 	// Send a velocity off signal to all channels
 	for (int i = 0; i < 16; ++i) {
 		_driver->send(0xB0 | i, 0x4E, 0);	// Reset velocity

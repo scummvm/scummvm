@@ -475,6 +475,7 @@ public:
 	Track *getTrackByType(byte type);
 	Track *getDigitalTrack();
 	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
+	byte getInitialVoiceCount(byte channel);
 
 private:
 	SciVersion _soundVersion;

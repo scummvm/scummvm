@@ -70,7 +70,7 @@ protected:
 	byte _reverb;
 
 public:
-	MidiPlayer() : _reverb(0) { }
+	MidiPlayer(SciVersion version) : _reverb(0), _version(version) { }
 
 	int open() {
 		ResourceManager *resMan = ((SciEngine *)g_engine)->getResourceManager();	// HACK
@@ -83,9 +83,9 @@ public:
 	virtual bool hasRhythmChannel() const = 0;
 	MidiChannel *allocateChannel() { return _driver->allocateChannel(); }
 	MidiChannel *getPercussionChannel() { return _driver->getPercussionChannel(); }
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
+	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }
 
-	virtual byte getPlayId(SciVersion soundVersion) = 0;
+	virtual byte getPlayId() = 0;
 	virtual int getPolyphony() const = 0;
 
 	virtual void setVolume(byte volume) {
@@ -107,13 +107,17 @@ public:
 				_driver->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
 		}
 	}
+
+protected:
+	SciVersion _version;
 };
 
-extern MidiPlayer *MidiPlayer_AdLib_create();
-extern MidiPlayer *MidiPlayer_Amiga_create();
-extern MidiPlayer *MidiPlayer_PCJr_create();
-extern MidiPlayer *MidiPlayer_PCSpeaker_create();
-extern MidiPlayer *MidiPlayer_Midi_create();
+extern MidiPlayer *MidiPlayer_AdLib_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_Amiga_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_PCJr_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_PCSpeaker_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_Midi_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_Fb01_create(SciVersion version);
 
 } // End of namespace Sci
 
