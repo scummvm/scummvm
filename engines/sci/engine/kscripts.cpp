@@ -73,11 +73,18 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
-	int restype = argv[0].toUint16();
-	reg_t resnr = argv[1];
+	if (argc >= 2) {
+		int restype = argv[0].toUint16();
+		reg_t resnr = argv[1];
 
-	if (restype == kResourceTypeMemory)
-		kfree(s->_segMan, resnr);
+		if (restype == kResourceTypeMemory)
+			kfree(s->_segMan, resnr);
+
+		if (argc > 2)
+			warning("kUnload called with more than 2 parameters (%d)", argc);
+	} else {
+		warning("kUnload called with %d arguments - ignoring", argc);
+	}
 
 	return s->r_acc;
 }
