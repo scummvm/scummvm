@@ -210,46 +210,60 @@ void SciPalette::set(Palette *sciPal, uint16 flag) {
 void SciPalette::merge(Palette *pFrom, Palette *pTo, uint16 flag) {
 	uint16 res;
 	int i,j;
-	// colors 0 (black) and 255 (white) are not affected by merging
-	for (i = 1 ; i < 255; i++) {
-		if (!pFrom->colors[i].used)// color is not used - so skip it
-			continue;
-		// forced palette merging or dest color is not used yet or bit 1 of new color is set
-		if (flag == 2 || (!pTo->colors[i].used) || (pFrom->colors[i].used & 2)) {
-			pTo->colors[i].used = pFrom->colors[i].used;
-			pTo->colors[i].r = pFrom->colors[i].r;
-			pTo->colors[i].g = pFrom->colors[i].g;
-			pTo->colors[i].b = pFrom->colors[i].b;
-			pFrom->mapping[i] = i;
-			continue;
-		}
-		// is the same color already at the same position? -> match it directly w/o lookup
-		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
-		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-		if ((pTo->colors[i].r == pFrom->colors[i].r) && (pTo->colors[i].g == pFrom->colors[i].g) && (pTo->colors[i].b == pFrom->colors[i].b)) {
-			pFrom->mapping[i] = i;
-			continue;
-		}
-		// check if exact color could be matched
-		res = matchColor(pTo, pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
-		if (res & 0x8000) { // exact match was found
-			pFrom->mapping[i] = res & 0xFF;
-			continue;
-		}
-		// no exact match - see if there is an unused color
-		for (j = 1; j < 256; j++)
-			if (!pTo->colors[j].used) {
-				pTo->colors[j].used = pFrom->colors[i].used;
-				pTo->colors[j].r = pFrom->colors[i].r;
-				pTo->colors[j].g = pFrom->colors[i].g;
-				pTo->colors[j].b = pFrom->colors[i].b;
-				pFrom->mapping[i] = j;
-				break;
+
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
+		for (i = 1; i < 255; i++) {
+			if (pFrom->colors[i].used) {
+				pTo->colors[i].used = pFrom->colors[i].used;
+				pTo->colors[i].r = pFrom->colors[i].r;
+				pTo->colors[i].g = pFrom->colors[i].g;
+				pTo->colors[i].b = pFrom->colors[i].b;
+				pFrom->mapping[i] = i;
 			}
-		// if still no luck - set an approximate color
-		if (j == 256) {
-			pFrom->mapping[i] = res & 0xFF;
-			pTo->colors[res & 0xFF].used |= 0x10;
+		}
+	} else {
+		// colors 0 (black) and 255 (white) are not affected by merging
+		for (i = 1 ; i < 255; i++) {
+			if (!pFrom->colors[i].used)// color is not used - so skip it
+				continue;
+			// forced palette merging or dest color is not used yet or bit 1 of new color is set
+			if (flag == 2 || (!pTo->colors[i].used) || (pFrom->colors[i].used & 2)) {
+				pTo->colors[i].used = pFrom->colors[i].used;
+				pTo->colors[i].r = pFrom->colors[i].r;
+				pTo->colors[i].g = pFrom->colors[i].g;
+				pTo->colors[i].b = pFrom->colors[i].b;
+				pFrom->mapping[i] = i;
+				continue;
+			}
+			// is the same color already at the same position? -> match it directly w/o lookup
+			//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
+			//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
+			if ((pTo->colors[i].r == pFrom->colors[i].r) && (pTo->colors[i].g == pFrom->colors[i].g) && (pTo->colors[i].b == pFrom->colors[i].b)) {
+				pFrom->mapping[i] = i;
+				continue;
+			}
+			// check if exact color could be matched
+			res = matchColor(pTo, pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
+			if (res & 0x8000) { // exact match was found
+				pFrom->mapping[i] = res & 0xFF;
+				continue;
+			}
+			// no exact match - see if there is an unused color
+			for (j = 1; j < 256; j++)
+				if (!pTo->colors[j].used) {
+					pTo->colors[j].used = pFrom->colors[i].used;
+					pTo->colors[j].r = pFrom->colors[i].r;
+					pTo->colors[j].g = pFrom->colors[i].g;
+					pTo->colors[j].b = pFrom->colors[i].b;
+					pFrom->mapping[i] = j;
+					break;
+				}
+			// if still no luck - set an approximate color
+			if (j == 256) {
+				pFrom->mapping[i] = res & 0xFF;
+				pTo->colors[res & 0xFF].used |= 0x10;
+			}
 		}
 	}
 	pTo->timestamp = g_system->getMillis() * 60 / 1000;
