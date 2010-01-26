@@ -140,7 +140,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	uint syncOffset = 0;
 
 	// Set the portrait palette
-	_palette->set(&_portraitPalette, 1);
+	_palette->set(&_portraitPalette, 1, true);
 
 	// Draw base bitmap
 	drawBitmap(0);

@@ -197,21 +197,21 @@ bool SciPalette::setFromResource(GuiResourceId resourceId, uint16 flag) {
 	return false;
 }
 
-void SciPalette::set(Palette *sciPal, uint16 flag) {
+void SciPalette::set(Palette *sciPal, uint16 flag, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 	if (flag == 2 || sciPal->timestamp != systime) {
-		merge(sciPal, &_sysPalette, flag);
+		merge(sciPal, &_sysPalette, flag, forceRealMerge);
 		sciPal->timestamp = _sysPalette.timestamp;
 		if (_screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
 			setOnScreen();
 	}
 }
 
-void SciPalette::merge(Palette *pFrom, Palette *pTo, uint16 flag) {
+void SciPalette::merge(Palette *pFrom, Palette *pTo, uint16 flag, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
 
-	if (getSciVersion() >= SCI_VERSION_1_1) {
+	if ((!forceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
 		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
 		for (i = 1; i < 255; i++) {
 			if (pFrom->colors[i].used) {
