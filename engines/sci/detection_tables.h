@@ -25,6 +25,9 @@
 
 namespace Sci {
 
+// SCI3 games have a different script format (in CSC files) and are currently unsupported
+//#define ENABLE_SCI3_GAMES
+
 #define FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, lang) \
 	{"sci-fanmade", name, { \
 		{"resource.map", 0, resMapMd5, resMapSize}, \
@@ -1623,6 +1626,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NONE	},
 
+#ifdef ENABLE_SCI3_GAMES
 	// Larry 7 - English DOS CD (from spookypeanut)
 	// SCI interpreter version 3.000.000
 	{"lsl7", "", {
@@ -1706,6 +1710,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.002", 0, "3c8d627c555b0e3e4f1d9955bc0f0df4", 94631127},
 		{NULL, 0, NULL, 0}},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+#endif	// ENABLE_SCI3_GAMES
 
 #endif // ENABLE_SCI32
 
@@ -1815,6 +1820,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+#ifdef ENABLE_SCI3_GAMES
 	// Phantasmagoria 2 - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "001.0.06"
 	{"phantasmagoria2", "", {
@@ -1830,6 +1836,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.005", 0, "05f9fe2bee749659acb3cd2c90252fc5", 67905112},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
+#endif	// ENABLE_SCI3_GAMES
+
 #endif // ENABLE_SCI32
 
 	// Pepper's Adventure In Time 1.000 English
@@ -2361,6 +2369,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE
 	},
 
+#ifdef ENABLE_SCI3_GAMES
 	// RAMA - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.100.000"
 	{"rama", "", {
@@ -2394,6 +2403,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::IT_ITA, Common::kPlatformWindows, 0, GUIO_NONE
 	},
+#endif	// ENABLE_SCI3_GAMES
 
 	// Shivers - English Windows (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.02"
@@ -2421,6 +2431,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE
 	},
 
+#ifdef ENABLE_SCI3_GAMES
+
 	// Shivers2 - English Windows Demo
 	// Executable scanning reports "3.000.000"
 	{"shivers2", "Demo", {
@@ -2437,6 +2449,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.001", 0, "a4804d436d90c4ec2e46b537f5e954db", 6268},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
+
+#endif //ENABLE_SCI3_GAMES
+
 #endif // ENABLE_SCI32
 
 	// Slater & Charlie Go Camping - English DOS Demo
