@@ -113,25 +113,6 @@ void SciPalette::createFromData(byte *data, Palette *paletteOut) {
 	}
 }
 
-static const byte EGApalette[16][3] = {
-	{ 0x000, 0x000, 0x000 },
-	{ 0x000, 0x000, 0x0AA },
-	{ 0x000, 0x0AA, 0x000 },
-	{ 0x000, 0x0AA, 0x0AA },
-	{ 0x0AA, 0x000, 0x000 },
-	{ 0x0AA, 0x000, 0x0AA },
-	{ 0x0AA, 0x055, 0x000 },
-	{ 0x0AA, 0x0AA, 0x0AA },
-	{ 0x055, 0x055, 0x055 },
-	{ 0x055, 0x055, 0x0FF },
-	{ 0x055, 0x0FF, 0x055 },
-	{ 0x055, 0x0FF, 0x0FF },
-	{ 0x0FF, 0x055, 0x055 },
-	{ 0x0FF, 0x055, 0x0FF },
-	{ 0x0FF, 0x0FF, 0x055 },
-	{ 0x0FF, 0x0FF, 0x0FF }
-};
-
 // Will try to set amiga palette by using "spal" file. If not found, we return false
 bool SciPalette::setAmiga() {
 	Common::File file;
@@ -173,11 +154,24 @@ void SciPalette::modifyAmigaPalette(byte *data) {
 void SciPalette::setEGA() {
 	int curColor;
 	byte color1, color2;
+
+	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
+	_sysPalette.colors[2].r  = 0x000; _sysPalette.colors[2].g  = 0x0AA; _sysPalette.colors[2].b  = 0x000;
+	_sysPalette.colors[3].r  = 0x000; _sysPalette.colors[3].g  = 0x0AA; _sysPalette.colors[3].b  = 0x0AA;
+	_sysPalette.colors[4].r  = 0x0AA; _sysPalette.colors[4].g  = 0x000; _sysPalette.colors[4].b  = 0x000;
+	_sysPalette.colors[5].r  = 0x0AA; _sysPalette.colors[5].g  = 0x000; _sysPalette.colors[5].b  = 0x0AA;
+	_sysPalette.colors[6].r  = 0x0AA; _sysPalette.colors[6].g  = 0x055; _sysPalette.colors[6].b  = 0x000;
+	_sysPalette.colors[7].r  = 0x0AA; _sysPalette.colors[7].g  = 0x0AA; _sysPalette.colors[7].b  = 0x0AA;
+	_sysPalette.colors[8].r  = 0x055; _sysPalette.colors[8].g  = 0x055; _sysPalette.colors[8].b  = 0x055;
+	_sysPalette.colors[9].r  = 0x055; _sysPalette.colors[9].g  = 0x055; _sysPalette.colors[9].b  = 0x0FF;
+	_sysPalette.colors[10].r = 0x055; _sysPalette.colors[10].g = 0x0FF; _sysPalette.colors[10].b = 0x055;
+	_sysPalette.colors[11].r = 0x055; _sysPalette.colors[11].g = 0x0FF; _sysPalette.colors[11].b = 0x0FF;
+	_sysPalette.colors[12].r = 0x0FF; _sysPalette.colors[12].g = 0x055; _sysPalette.colors[12].b = 0x055;
+	_sysPalette.colors[13].r = 0x0FF; _sysPalette.colors[13].g = 0x055; _sysPalette.colors[13].b = 0x0FF;
+	_sysPalette.colors[14].r = 0x0FF; _sysPalette.colors[14].g = 0x0FF; _sysPalette.colors[14].b = 0x055;
+	_sysPalette.colors[15].r = 0x0FF; _sysPalette.colors[15].g = 0x0FF; _sysPalette.colors[15].b = 0x0FF;
 	for (curColor = 0; curColor <= 15; curColor++) {
 		_sysPalette.colors[curColor].used = 1;
-		_sysPalette.colors[curColor].r = EGApalette[curColor][0];
-		_sysPalette.colors[curColor].g = EGApalette[curColor][1];
-		_sysPalette.colors[curColor].b = EGApalette[curColor][2];
 	}
 	// Now setting colors 16-254 to the correct mix colors that occur when not doing a dithering run on
 	//  finished pictures
