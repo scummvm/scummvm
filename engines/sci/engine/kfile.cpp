@@ -225,7 +225,11 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		error("fgets_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
 		return;
 	}
-	f->_in->readLine(dest, maxsize);
+	if (maxsize > 1)
+		f->_in->readLine(dest, maxsize);
+	else
+		*dest = f->_in->readByte();
+
 	// The returned string must not have an ending LF
 	int strSize = strlen(dest);
 	if (strSize > 0) {
