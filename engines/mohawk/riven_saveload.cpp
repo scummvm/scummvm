@@ -286,7 +286,8 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 
 	// RSRC Header
 	saveFile->writeUint32BE(ID_RSRC);
-	saveFile->writeUint32BE(16); // Size of RSRC
+	saveFile->writeUint16BE(0x100); // Resource Version (1.0)
+	saveFile->writeUint16BE(0); // No compaction
 	saveFile->writeUint32BE(fileSize + 8); // Add on the 8 from the IFF header
 	saveFile->writeUint32BE(28); // IFF + RSRC
 	saveFile->writeUint16BE(62); // File Table Offset

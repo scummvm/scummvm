@@ -66,7 +66,12 @@ void MohawkArchive::open(Common::SeekableReadStream *stream) {
 	if (_mhk->readUint32BE() != ID_RSRC)
 		error ("Could not find tag \'RSRC\'");
 
-	_rsrc.size = _mhk->readUint32BE();
+	_rsrc.version = _mhk->readUint16BE();
+	
+	if (_rsrc.version != 0x100)
+		error("Unsupported Mohawk resource version %d.%d", (_rsrc.version >> 8) & 0xff, _rsrc.version & 0xff);
+	
+	_rsrc.compaction = _mhk->readUint16BE(); // Only used in creation, not in reading
 	_rsrc.filesize = _mhk->readUint32BE();
 	_rsrc.abs_offset = _mhk->readUint32BE();
 	_rsrc.file_table_offset = _mhk->readUint16BE();

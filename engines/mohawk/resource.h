@@ -166,7 +166,8 @@ struct TypeTable {
 };
 
 struct RSRC_Header {
-	uint32 size;
+	uint16 version;
+	uint16 compaction;
 	uint32 filesize;
 	uint32 abs_offset;
 	uint16 file_table_offset;
