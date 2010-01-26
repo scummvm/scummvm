@@ -474,15 +474,13 @@ void MusicEntry::doFade() {
 	if (fadeTicker)
 		fadeTicker--;
 	else {
-		int16 fadeVolume = volume;
 		fadeTicker = fadeTickerStep;
-		fadeVolume += fadeStep;
-		if (((fadeStep > 0) && (fadeVolume >= fadeTo)) || ((fadeStep < 0) && (fadeVolume <= fadeTo))) {
-			fadeVolume = fadeTo;
+		volume += fadeStep;
+		if (((fadeStep > 0) && (volume >= fadeTo)) || ((fadeStep < 0) && (volume <= fadeTo))) {
+			volume = fadeTo;
 			fadeStep = 0;
 			fadeCompleted = true;
 		}
-		volume = fadeVolume;
 
 		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser)
