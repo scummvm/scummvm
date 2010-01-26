@@ -772,10 +772,6 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			isAlias = true;
 
 		maxChars = GET_SEL32V(s->_segMan, controlObject, x); // max chars per entry
-		// NOTE: most types of pointer dereferencing don't like odd offsets
-		if (maxChars & 1) {
-			warning("List control with odd maxChars %d. This is not yet implemented for all types of segments", maxChars);
-		}
 		cursorOffset = GET_SEL32V(s->_segMan, controlObject, cursor);
 		if (s->_kernel->_selectorCache.topString != -1) {
 			// Games from early SCI1 onwards use topString

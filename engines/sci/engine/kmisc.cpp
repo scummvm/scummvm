@@ -219,8 +219,11 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		}
 		if (ref.isRaw)
 			return make_reg(0, (int16)READ_LE_UINT16(ref.raw));
-		else
+		else {
+			if (ref.skipByte)
+				error("Attempt to peek memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
 			return *(ref.reg);
+		}
 		break;
 	}
 	case K_MEMORY_POKE : {
@@ -237,8 +240,11 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 				return s->r_acc;
 			}
 			WRITE_LE_UINT16(ref.raw, argv[2].offset);
-		} else
+		} else {
+			if (ref.skipByte)
+				error("Attempt to poke memory at odd offset %04X:%04X", PRINT_REG(argv[1]));
 			*(ref.reg) = argv[2];
+		}
 		break;
 	}
 	}

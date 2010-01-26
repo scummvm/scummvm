@@ -260,7 +260,7 @@ struct PathfindingState {
 
 static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	SegmentRef list_r = segMan->dereference(list);
-	if (!list_r.isValid()) {
+	if (!list_r.isValid() || list_r.skipByte) {
 		warning("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
 	}
 	Common::Point point;
@@ -1740,7 +1740,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	// Allocate memory for path, plus 3 extra for appended point, prepended point and sentinel
 	output = allocateOutputArray(s->_segMan, path_len + 3);
 	SegmentRef arrayRef = s->_segMan->dereference(output);
-	assert(arrayRef.isValid());
+	assert(arrayRef.isValid() && !arrayRef.skipByte);
 
 	if (unreachable) {
 		// If pathfinding failed we only return the path up to vertex_start
@@ -1860,7 +1860,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			printf("[avoidpath] Returning direct path from start point to end point\n");
 			output = allocateOutputArray(s->_segMan, 3);
 			SegmentRef arrayRef = s->_segMan->dereference(output);
-			assert(arrayRef.isValid());
+			assert(arrayRef.isValid() && !arrayRef.skipByte);
 
 			writePoint(arrayRef, 0, start);
 			writePoint(arrayRef, 1, end);

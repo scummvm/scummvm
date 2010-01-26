@@ -115,7 +115,7 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	SegmentRef dest_r = s->_segMan->dereference(argv[0]);
-	if (!dest_r.raw) {
+	if (!dest_r.isValid()) {
 		warning("Attempt to StrAt at invalid pointer %04x:%04x", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
@@ -133,11 +133,15 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
+	// FIXME: Move this to segman
 	if (dest_r.isRaw) {
 		value = dest_r.raw[offset];
 		if (argc > 2) /* Request to modify this char */
 			dest_r.raw[offset] = newvalue;
 	} else {
+		if (dest_r.skipByte)
+			offset++;
+
 		reg_t &tmp = dest_r.reg[offset / 2];
 		if (!(offset & 1)) {
 			value = tmp.offset & 0x00ff;

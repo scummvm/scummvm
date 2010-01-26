@@ -39,13 +39,17 @@ struct SegmentRef {
 		reg_t *reg;
 	};
 	int maxSize;	///< number of available bytes
+
+	// FIXME: Perhaps a generic 'offset' is more appropriate here
+	bool skipByte; ///< true if referencing the 2nd data byte of *reg, false otherwise
+
 	// TODO: Add this?
 	//reg_t pointer;	// Original pointer
 
 	// TODO: Add this?
 	//SegmentType type;
 
-	SegmentRef() : isRaw(true), raw(0), maxSize(0) {}
+	SegmentRef() : isRaw(true), raw(0), maxSize(0), skipByte(false) {}
 
 	bool isValid() const { return (isRaw ? raw != 0 : reg != 0); }
 };

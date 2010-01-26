@@ -247,12 +247,15 @@ bool LocalVariables::isValidOffset(uint16 offset) const {
 }
 
 SegmentRef LocalVariables::dereference(reg_t pointer) {
-	if (pointer.offset & 1)
-		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
-
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
 	ret.maxSize = (_locals.size() - pointer.offset / 2) * 2;
+
+	if (pointer.offset & 1) {
+		ret.maxSize -= 1;
+		ret.skipByte = true;
+	}
+
 	if (ret.maxSize > 0) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
@@ -271,8 +274,11 @@ SegmentRef DataStack::dereference(reg_t pointer) {
 	ret.isRaw = false;	// reg_t based data!
 	ret.maxSize = (_capacity - pointer.offset / 2) * 2;
 
-	if (pointer.offset & 1)
-		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
+	if (pointer.offset & 1) {
+		ret.maxSize -= 1;
+		ret.skipByte = true;
+	}
+
 	ret.reg = &_entries[pointer.offset / 2];
 	return ret;
 }

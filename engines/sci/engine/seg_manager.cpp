@@ -923,12 +923,20 @@ static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int 
 			wantRaw ? "raw" : "not raw");
 	}
 
+	if (!wantRaw && ret.skipByte) {
+		warning("Unaligned pointer read: %04x:%04x expected with word alignment", PRINT_REG(pointer));
+		return NULL;
+	}
+
 	if (entries > ret.maxSize) {
 		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
 		return NULL;
 	}
-	return ret.raw;
 
+	if (ret.isRaw)
+		return ret.raw;
+	else
+		return ret.reg;
 }
 
 byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
@@ -936,23 +944,38 @@ byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
-#ifdef ENABLE_SCI32
-	// HACK: Due to a limitation in the SegManager, we don't know if the pointer needs to be
-	// word aligned. If it's a new style array, then it is just accessing the arrays from a
-	// table and this doesn't need to be true.
-	if (pointer.offset & 1 && pointer.segment != Arrays_seg_id) {
-#else
-	if (pointer.offset & 1) {
-#endif
-		warning("Unaligned pointer read: %04x:%04x expected with word alignment", PRINT_REG(pointer));
-		return NULL;
-	}
-
 	return (reg_t *)_kernel_dereference_pointer(this, pointer, 2*entries, false);
 }
 
 char *SegManager::derefString(reg_t pointer, int entries) {
 	return (char *)_kernel_dereference_pointer(this, pointer, entries, true);
+}
+
+// Helper functions for getting/setting characters in string fragments
+static inline char getChar(const SegmentRef &ref, uint offset) {
+	if (ref.skipByte)
+		offset++;
+
+	reg_t val = ref.reg[offset / 2];
+
+	if (val.segment != 0)
+		warning("Attempt to read character from non-raw data");
+
+	return (offset & 1 ? val.offset >> 8 : val.offset & 0xff);
+}
+
+static inline void setChar(const SegmentRef &ref, uint offset, char value) {
+	if (ref.skipByte)
+		offset++;
+
+	reg_t *val = ref.reg + offset / 2;
+
+	val->segment = 0;
+
+	if (offset & 1)
+		val->offset = (val->offset & 0x00ff) | (value << 8);
+	else
+		val->offset = (val->offset & 0xff00) | value;
 }
 
 // TODO: memcpy, strcpy and strncpy could maybe be folded into a single function
@@ -966,27 +989,15 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 	if (dest_r.isRaw) {
 		// raw -> raw
 		if (n == 0xFFFFFFFFU)
-			::strcpy((char*)dest_r.raw, src);
+			::strcpy((char *)dest_r.raw, src);
 		else
-			::strncpy((char*)dest_r.raw, src, n);
+			::strncpy((char *)dest_r.raw, src, n);
 	} else {
 		// raw -> non-raw
-		reg_t* d = dest_r.reg;
-		while (n > 0) {
-			d->segment = 0; // STRINGFRAG_SEGMENT?
-			if (n > 1 && src[0]) {
-				d->offset = (src[0] & 0x00ff)  | (src[1] << 8);
-			} else {
-				d->offset &= 0xff00;
-				d->offset |= src[0] & 0x00ff;
+		for (uint i = 0; i < n; i++) {
+			setChar(dest_r, i, src[i]);
+			if (!src[i])
 				break;
-			}
-
-			if (!src[1])
-				break;
-			src += 2;
-			n -= 2;
-			d++;
 		}
 	}
 }
@@ -1014,38 +1025,19 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 		strncpy(dest, (const char*)src_r.raw, n);
 	} else if (dest_r.isRaw && !src_r.isRaw) {
 		// non-raw -> raw
-		const reg_t* s = src_r.reg;
-		char *d = (char*)dest_r.raw;
-		reg_t x;
-		while (n > 0) {
-			x = *s++;
-			*d++ = x.offset & 0x00ff;
-			if (n > 1 && x.offset & 0x00ff) {
-				*d++ = x.offset >> 8;
-			} else {
+		for (uint i = 0; i < n; i++) {
+			char c = getChar(src_r, i);
+			dest_r.raw[i] = c;
+			if (!c)
 				break;
-			}
-			if (!(x.offset >> 8))
-				break;
-			n -= 2;
 		}
 	} else {
 		// non-raw -> non-raw
-		const reg_t* s = src_r.reg;
-		reg_t* d = dest_r.reg;
-		reg_t x;
-		while (n > 0) {
-			x = *s++;
-			if (n > 1 && x.offset & 0x00ff) {
-				*d++ = x;
-			} else {
-				d->offset &= 0xff00;
-				d->offset |= x.offset & 0x00ff;
+		for (uint i = 0; i < n; i++) {
+			char c = getChar(src_r, i);
+			setChar(dest_r, i, c);
+			if (!c)
 				break;
-			}
-			if (!(x.offset & 0xff00))
-				break;
-			n -= 2;
 		}
 	}
 }
@@ -1074,20 +1066,8 @@ void SegManager::memcpy(reg_t dest, const byte* src, size_t n) {
 		::memcpy((char*)dest_r.raw, src, n);
 	} else {
 		// raw -> non-raw
-		reg_t* d = dest_r.reg;
-		while (n > 0) {
-			d->segment = 0; // STRINGFRAG_SEGMENT?
-			if (n > 1) {
-				d->offset = (src[0] & 0x00ff) | (src[1] << 8);
-			} else {
-				d->offset &= 0xff00;
-				d->offset |= src[0] & 0x00ff;
-				break;
-			}
-			src += 2;
-			n -= 2;
-			d++;
-		}
+		for (uint i = 0; i < n; i++)
+			setChar(dest_r, i, src[i]);
 	}
 }
 
@@ -1119,19 +1099,9 @@ void SegManager::memcpy(reg_t dest, reg_t src, size_t n) {
 		memcpy(dest_r.raw, src, n);
 	} else {
 		// non-raw -> non-raw
-		const reg_t* s = src_r.reg;
-		reg_t* d = dest_r.reg;
-		reg_t x;
-		while (n > 0) {
-			x = *s++;
-			if (n > 1) {
-				*d++ = x;
-			} else {
-				d->offset &= 0xff00;
-				d->offset |= x.offset & 0x00ff;
-				break;
-			}
-			n -= 2;
+		for (uint i = 0; i < n; i++) {
+			char c = getChar(src_r, i);
+			setChar(dest_r, i, c);
 		}
 	}
 }
@@ -1152,17 +1122,9 @@ void SegManager::memcpy(byte *dest, reg_t src, size_t n) {
 		::memcpy(dest, src_r.raw, n);
 	} else {
 		// non-raw -> raw
-		const reg_t* s = src_r.reg;
-		reg_t x;
-		while (n > 0) {
-			x = *s++;
-			*dest++ = x.offset & 0x00ff;
-			if (n > 1) {
-				*dest++ = x.offset >> 8;
-			} else {
-				break;
-			}
-			n -= 2;
+		for (uint i = 0; i < n; i++) {
+			char c = getChar(src_r, i);
+			dest[i] = c;
 		}
 	}
 }
@@ -1175,17 +1137,12 @@ size_t SegManager::strlen(reg_t str) {
 	}
 
 	if (str_r.isRaw) {
-		return ::strlen((const char*)str_r.raw);
+		return ::strlen((const char *)str_r.raw);
 	} else {
-		const reg_t* s = str_r.reg;
-		size_t n = 0;
-		while ((s->offset & 0x00ff) && (s->offset >> 8)) {
-			++s;
-			n += 2;
-		}
-		if (s->offset & 0x00ff)
-			n++;
-		return n;
+		int i = 0;
+		while (getChar(str_r, i))
+			i++;
+		return i;
 	}
 }
 
@@ -1202,21 +1159,18 @@ Common::String SegManager::getString(reg_t pointer, int entries) {
 		return ret;
 	}
 	if (src_r.isRaw)
-		ret = (char*)src_r.raw;
+		ret = (char *)src_r.raw;
 	else {
-		const reg_t* s = src_r.reg;
-		char c;
-		do {
-			c = s->offset & 0x00ff;
-			if (c) {
-				ret += c;
-				c = s->offset >> 8;
-				if (c) {
-					ret += c;
-					s++;
-				}
-			}
-		} while (c);
+		uint i = 0;
+		for (;;) {
+			char c = getChar(src_r, i);
+
+			if (!c)
+				break;
+
+			i++;
+			ret += c;
+		};
 	}
 	return ret;
 }
