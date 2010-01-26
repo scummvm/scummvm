@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/vorbis.h"
+#include "sound/decoders/vorbis.h"
 
 #ifdef USE_VORBIS
 

@@ -34,7 +34,7 @@
 #include "graphics/video/coktelvideo/indeo3.h"
 
 #include "sound/audiostream.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 namespace Graphics {
 

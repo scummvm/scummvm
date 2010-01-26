@@ -31,7 +31,7 @@
 #include "scumm/he/resource_he.h"
 #include "scumm/he/sound_he.h"
 
-#include "sound/wave.h"
+#include "sound/decoders/wave.h"
 #include "graphics/cursorman.h"
 
 #include "common/archive.h"

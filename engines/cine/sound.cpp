@@ -32,7 +32,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/fmopl.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 #include "sound/mods/soundfx.h"
 
 namespace Cine {

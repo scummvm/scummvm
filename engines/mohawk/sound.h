@@ -30,7 +30,7 @@
 #include "common/str.h"
 
 #include "sound/audiostream.h"
-#include "sound/adpcm.h"
+#include "sound/decoders/adpcm.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"

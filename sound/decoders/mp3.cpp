@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/mp3.h"
+#include "sound/decoders/mp3.h"
 
 #ifdef USE_MAD
 

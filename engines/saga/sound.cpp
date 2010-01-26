@@ -30,8 +30,8 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/adpcm.h"
-#include "sound/raw.h"
+#include "sound/decoders/adpcm.h"
+#include "sound/decoders/raw.h"
 
 namespace Saga {
 

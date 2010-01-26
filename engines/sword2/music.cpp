@@ -35,12 +35,12 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/flac.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/vorbis.h"
+#include "sound/decoders/flac.h"
+#include "sound/decoders/wave.h"
+#include "sound/decoders/vag.h"
 #include "sound/rate.h"
-#include "sound/wave.h"
-#include "sound/vag.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"

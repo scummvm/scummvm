@@ -36,11 +36,11 @@
 #include "queen/resource.h"
 
 #include "sound/audiostream.h"
-#include "sound/flac.h"
+#include "sound/decoders/flac.h"
 #include "sound/mididrv.h"
-#include "sound/mp3.h"
-#include "sound/raw.h"
-#include "sound/vorbis.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/raw.h"
+#include "sound/decoders/vorbis.h"
 
 #define	SB_HEADER_SIZE_V104 110
 #define	SB_HEADER_SIZE_V110 122

@@ -46,8 +46,8 @@
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 
-#include "sound/wave.h"
-#include "sound/vag.h"
+#include "sound/decoders/wave.h"
+#include "sound/decoders/vag.h"
 
 namespace Sword2 {
 

@@ -34,7 +34,7 @@
 #include "kyra/util.h"
 #include "kyra/debugger.h"
 
-#include "sound/voc.h"
+#include "sound/decoders/voc.h"
 #include "sound/audiostream.h"
 
 #include "common/config-manager.h"

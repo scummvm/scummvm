@@ -26,8 +26,8 @@
 #include "common/util.h"
 #include "common/stream.h"
 #include "sound/mixer.h"
-#include "sound/raw.h"
-#include "sound/wave.h"
+#include "sound/decoders/raw.h"
+#include "sound/decoders/wave.h"
 
 #include "gob/sound/sounddesc.h"
 #include "gob/resources.h"

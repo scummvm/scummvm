@@ -35,14 +35,14 @@
 #include "common/file.h"
 
 #include "sound/audiostream.h"
-#include "sound/adpcm.h"
-#include "sound/aiff.h"
+#include "sound/decoders/adpcm.h"
+#include "sound/decoders/aiff.h"
 #ifdef ENABLE_SAGA2
-#include "sound/shorten.h"
+#include "sound/decoders/shorten.h"
 #endif
-#include "sound/raw.h"
-#include "sound/voc.h"
-#include "sound/wave.h"
+#include "sound/decoders/raw.h"
+#include "sound/decoders/voc.h"
+#include "sound/decoders/wave.h"
 
 namespace Saga {
 

@@ -40,7 +40,7 @@
 #include "agos/agos.h"
 
 #include "sound/audiostream.h"
-#include "sound/wave.h"
+#include "sound/decoders/wave.h"
 
 #include "gui/message.h"
 

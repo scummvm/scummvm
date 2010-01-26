@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/vag.h"
+#include "sound/decoders/vag.h"
 
 namespace Audio {
 

@@ -24,7 +24,7 @@
  */
 
 #include "sound/audiostream.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 #include "common/config-manager.h"
 
 #include "sci/sci.h"

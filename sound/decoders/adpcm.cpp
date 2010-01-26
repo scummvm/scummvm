@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 
-#include "sound/adpcm.h"
+#include "sound/decoders/adpcm.h"
 #include "sound/audiostream.h"
 
 

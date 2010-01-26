@@ -25,12 +25,12 @@
 
 
 
-#include "sound/flac.h"
+#include "sound/decoders/flac.h"
 #include "sound/mixer.h"
-#include "sound/mp3.h"
-#include "sound/voc.h"
-#include "sound/vorbis.h"
-#include "sound/raw.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/voc.h"
+#include "sound/decoders/vorbis.h"
+#include "sound/decoders/raw.h"
 #include "sound/audiostream.h"
 
 #include "touche/midi.h"

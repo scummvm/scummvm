@@ -32,13 +32,13 @@
 #include "sword1/sword1.h"
 #include "sword1/music.h"
 
-#include "sound/aiff.h"
-#include "sound/flac.h"
 #include "sound/mixer.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/wave.h"
-#include "sound/vag.h"
+#include "sound/decoders/aiff.h"
+#include "sound/decoders/flac.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/vorbis.h"
+#include "sound/decoders/wave.h"
+#include "sound/decoders/vag.h"
 
 #define SMP_BUFSIZE 8192
 

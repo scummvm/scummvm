@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/flac.h"
+#include "sound/decoders/flac.h"
 
 #ifdef USE_FLAC
 

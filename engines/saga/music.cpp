@@ -33,7 +33,7 @@
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 

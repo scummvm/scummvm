@@ -37,7 +37,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 namespace Graphics {
 

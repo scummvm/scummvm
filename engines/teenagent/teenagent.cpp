@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "engines/advancedDetector.h"
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 #include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
 #include "teenagent/console.h"

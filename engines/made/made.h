@@ -40,7 +40,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/voc.h"
+#include "sound/decoders/voc.h"
 #include "sound/audiocd.h"
 
 #include "engines/engine.h"

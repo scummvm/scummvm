@@ -42,7 +42,7 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h"
 
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 namespace Tinsel {
 

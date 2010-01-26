@@ -30,9 +30,9 @@
 
 #include "common/file.h"
 #include "sound/mixer.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/flac.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/vorbis.h"
+#include "sound/decoders/flac.h"
 
 namespace Saga {
 

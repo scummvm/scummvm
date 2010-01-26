@@ -23,10 +23,10 @@
  *
  */
 
-#include "sound/iff_sound.h"
+#include "sound/decoders/iff_sound.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 #include "common/iff_container.h"
 #include "common/func.h"
 

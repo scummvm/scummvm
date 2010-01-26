@@ -28,7 +28,7 @@
 #include "sword1/sword1.h"
 #include "sword1/animation.h"
 #include "sword1/text.h"
-#include "sound/vorbis.h"
+#include "sound/decoders/vorbis.h"
 
 #include "common/config-manager.h"
 #include "common/endian.h"

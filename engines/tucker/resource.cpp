@@ -26,10 +26,10 @@
 #include "common/file.h"
 
 #include "sound/audiostream.h"
-#include "sound/flac.h"
-#include "sound/mp3.h"
-#include "sound/vorbis.h"
-#include "sound/wave.h"
+#include "sound/decoders/flac.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/vorbis.h"
+#include "sound/decoders/wave.h"
 
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"

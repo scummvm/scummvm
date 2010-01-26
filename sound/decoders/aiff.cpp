@@ -35,10 +35,10 @@
 #include "common/util.h"
 #include "common/stream.h"
 
-#include "sound/aiff.h"
+#include "sound/decoders/aiff.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 namespace Audio {
 

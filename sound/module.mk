@@ -1,29 +1,29 @@
 MODULE := sound
 
 MODULE_OBJS := \
-	adpcm.o \
-	aiff.o \
 	audiocd.o \
 	audiostream.o \
-	iff_sound.o \
-	flac.o \
 	fmopl.o \
 	mididrv.o \
-	midiparser.o \
 	midiparser_smf.o \
 	midiparser_xmidi.o \
+	midiparser.o \
 	mixer.o \
-	mp3.o \
 	mpu401.o \
 	musicplugin.o \
 	null.o \
-	raw.o \
-	shorten.o \
 	timestamp.o \
-	vag.o \
-	voc.o \
-	vorbis.o \
-	wave.o \
+	decoders/adpcm.o \
+	decoders/aiff.o \
+	decoders/flac.o \
+	decoders/iff_sound.o \
+	decoders/mp3.o \
+	decoders/raw.o \
+	decoders/shorten.o \
+	decoders/vag.o \
+	decoders/voc.o \
+	decoders/vorbis.o \
+	decoders/wave.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \
 	mods/module.o \

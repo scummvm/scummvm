@@ -30,7 +30,7 @@
 #include "sound/mixer.h"
 #include "sound/midiparser.h"
 #include "sound/mods/protracker.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 #include "parallaction/sound.h"
 #include "parallaction/parallaction.h"

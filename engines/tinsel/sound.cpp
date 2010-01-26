@@ -39,12 +39,12 @@
 #include "common/system.h"
 
 #include "sound/mixer.h"
-#include "sound/adpcm.h"
-#include "sound/vag.h"
-#include "sound/flac.h"
-#include "sound/mp3.h"
-#include "sound/raw.h"
-#include "sound/vorbis.h"
+#include "sound/decoders/adpcm.h"
+#include "sound/decoders/flac.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/raw.h"
+#include "sound/decoders/vag.h"
+#include "sound/decoders/vorbis.h"
 
 #include "gui/message.h"
 

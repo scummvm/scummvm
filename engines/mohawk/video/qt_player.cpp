@@ -39,8 +39,8 @@
 #include "common/zlib.h"
 
 // Audio codecs
-#include "sound/adpcm.h"
-#include "sound/raw.h"
+#include "sound/decoders/adpcm.h"
+#include "sound/decoders/raw.h"
 #include "mohawk/video/qdm2.h"
 
 // Video codecs

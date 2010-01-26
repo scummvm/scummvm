@@ -30,7 +30,7 @@
 #include "common/mutex.h"
 
 #include "sound/audiostream.h"
-#include "sound/iff_sound.h"
+#include "sound/decoders/iff_sound.h"
 #include "sound/mixer.h"
 #include "sound/mididrv.h"
 

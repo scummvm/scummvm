@@ -33,7 +33,7 @@
 #include "scumm/imuse/imuse.h"
 
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 
 namespace Scumm {

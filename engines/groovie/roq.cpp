@@ -36,7 +36,7 @@
 #include "graphics/conversion.h"
 #endif
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 namespace Groovie {
 
