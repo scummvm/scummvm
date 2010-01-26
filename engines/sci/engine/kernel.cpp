@@ -185,7 +185,7 @@ struct SciKernelFunction {
 
 SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
-	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),
+	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),	// Work around SQ1 bug, when exiting the Ulence flats bar
 	/*02*/	DEFUN("ScriptID", kScriptID, "Ioi*"),
 	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oii*"), // Work around QfG1 bug
 	/*04*/	DEFUN("Clone", kClone, "o"),
