@@ -44,7 +44,7 @@ namespace AGOS {
 
 #define SOUND_BIG_ENDIAN true
 
-class BaseSound {
+class BaseSound : Common::NonCopyable {
 protected:
 	File *_file;
 	uint32 *_offsets;
