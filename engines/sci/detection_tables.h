@@ -2048,6 +2048,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Police Quest: SWAT - English Windows (from the Police Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
+	// Original DOS/Windows release VERSION file reports "1.000" is the same
 	{"pqswat", "", {
 		{"resmap.001", 0, "de5ea1beb3d9490737aa5fd398fe9765", 6937},
 		{"ressci.001", 0, "7cd5414f54748f90904a46123a52472f", 29467363},
