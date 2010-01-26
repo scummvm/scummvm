@@ -102,7 +102,7 @@ void SciGuiPicture::drawSci11Vga() {
 
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
-	_palette->set(&palette, 2);
+	_palette->set(&palette, true);
 
 	// display Cel-data
 	if (has_cel) {
@@ -130,7 +130,7 @@ void SciGuiPicture::drawSci32Vga() {
 
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
-	_palette->set(&palette, 2);
+	_palette->set(&palette, true);
 
 	while (celCount > 0) {
 		cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
@@ -570,7 +570,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 							palette.colors[i].used = data[curPos++];
 							palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
 						}
-						_palette->set(&palette, 2);
+						_palette->set(&palette, true);
 					}
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel

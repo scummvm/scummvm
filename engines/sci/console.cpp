@@ -994,7 +994,7 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_vm->_gamestate->_gui->paletteSet(resourceId, 2);
+	_vm->_gamestate->_gui->paletteSet(resourceId, true);
 	return true;
 }
 

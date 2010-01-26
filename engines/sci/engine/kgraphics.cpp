@@ -524,8 +524,8 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	case 1: // Set resource palette
 		if (argc==3) {
 			GuiResourceId resourceId = argv[1].toUint16();
-			uint16 flags = argv[2].toUint16();
-			s->_gui->paletteSet(resourceId, flags);
+			bool force = argv[2].toUint16() == 2 ? true : false;
+			s->_gui->paletteSet(resourceId, force);
 		}
 		break;
 	case 2: { // Set palette-flag(s)

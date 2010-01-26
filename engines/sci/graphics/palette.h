@@ -40,9 +40,9 @@ public:
 	bool setAmiga();
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
-	bool setFromResource(GuiResourceId resourceId, uint16 flag);
-	void set(Palette *sciPal, uint16 flag, bool forceRealMerge = false);
-	void merge(Palette *pFrom, Palette *pTo, uint16 flag, bool forceRealMerge);
+	bool setFromResource(GuiResourceId resourceId, bool force);
+	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
+	void merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge);
 	uint16 matchColor(Palette *pPal, byte r, byte g, byte b);
 	void getSys(Palette *pal);
 

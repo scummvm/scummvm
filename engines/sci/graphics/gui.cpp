@@ -566,11 +566,11 @@ int16 SciGui::picNotValid(int16 newPicNotValid) {
 }
 
 
-void SciGui::paletteSet(GuiResourceId resourceId, uint16 flags) {
+void SciGui::paletteSet(GuiResourceId resourceId, bool force) {
 	// we are also called on EGA games as well, this doesnt make sense. doing this would actually break the system EGA palette
 	if (!_s->resMan->isVGA())
 		return;
-   _palette->setFromResource(resourceId, flags);
+   _palette->setFromResource(resourceId, force);
 }
 
 void SciGui::paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
@@ -890,7 +890,7 @@ void SciGui::stopPalVary() {
 	_palVaryId = -1;	// invalidate the target palette
 
 	// HACK: just set the target palette
-	_palette->setFromResource(_palVaryId, 2);
+	_palette->setFromResource(_palVaryId, true);
 }
 
 void SciGui::palVaryCallback(void *refCon) {

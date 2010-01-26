@@ -493,7 +493,7 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 
 	if (_embeddedPal) {
 		// Merge view palette in...
-		_palette->set(&_viewPalette, 1);
+		_palette->set(&_viewPalette, false);
 	}
 
 	width = MIN(clipRect.width(), celWidth);
@@ -545,7 +545,7 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 
 	if (_embeddedPal) {
 		// Merge view palette in...
-		_palette->set(&_viewPalette, 1);
+		_palette->set(&_viewPalette, false);
 	}
 
 	scaledWidth = (celInfo->width * scaleX) >> 7;

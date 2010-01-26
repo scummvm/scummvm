@@ -59,7 +59,7 @@ SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPale
 		else if (_resMan->isAmiga32color())
 			setAmiga();
 		else
-			setFromResource(999, 2);
+			setFromResource(999, true);
 	}
 }
 
@@ -185,29 +185,29 @@ void SciPalette::setEGA() {
 	setOnScreen();
 }
 
-bool SciPalette::setFromResource(GuiResourceId resourceId, uint16 flag) {
+bool SciPalette::setFromResource(GuiResourceId resourceId, bool force) {
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
 	Palette palette;
 
 	if (palResource) {
 		createFromData(palResource->data, &palette);
-		set(&palette, 2);
+		set(&palette, true);
 		return true;
 	}
 	return false;
 }
 
-void SciPalette::set(Palette *sciPal, uint16 flag, bool forceRealMerge) {
+void SciPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
-	if (flag == 2 || sciPal->timestamp != systime) {
-		merge(sciPal, &_sysPalette, flag, forceRealMerge);
+	if (force || sciPal->timestamp != systime) {
+		merge(sciPal, &_sysPalette, force, forceRealMerge);
 		sciPal->timestamp = _sysPalette.timestamp;
 		if (_screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
 			setOnScreen();
 	}
 }
 
-void SciPalette::merge(Palette *pFrom, Palette *pTo, uint16 flag, bool forceRealMerge) {
+void SciPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
 
@@ -228,7 +228,7 @@ void SciPalette::merge(Palette *pFrom, Palette *pTo, uint16 flag, bool forceReal
 			if (!pFrom->colors[i].used)// color is not used - so skip it
 				continue;
 			// forced palette merging or dest color is not used yet or bit 1 of new color is set
-			if (flag == 2 || (!pTo->colors[i].used) || (pFrom->colors[i].used & 2)) {
+			if (force || (!pTo->colors[i].used) || (pFrom->colors[i].used & 2)) {
 				pTo->colors[i].used = pFrom->colors[i].used;
 				pTo->colors[i].r = pFrom->colors[i].r;
 				pTo->colors[i].g = pFrom->colors[i].g;
