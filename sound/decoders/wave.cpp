@@ -188,7 +188,6 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, Dispose
 	if (disposeAfterUse == DisposeAfterUse::YES)
 		delete stream;
 
-	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
 	return makeRawMemoryStream(data, size, rate, flags);
 }
 
