@@ -83,7 +83,7 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 		if (argc > 2)
 			warning("kUnload called with more than 2 parameters (%d)", argc);
 	} else {
-		warning("kUnload called with %d arguments - ignoring", argc);
+		warning("kUnload called with less than 2 parameters (%d) - ignoring", argc);
 	}
 
 	return s->r_acc;
