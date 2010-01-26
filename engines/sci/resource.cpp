@@ -1714,6 +1714,7 @@ void ResourceManager::detectSciVersion() {
 	if (viewCompression == kCompDCL
 #ifdef ENABLE_SCI32
 		|| viewCompression == kCompSTACpack
+		|| _volVersion == kResVersionSci32 // kq7
 #endif
 		) {
 		// SCI1.1 VGA views
