@@ -39,6 +39,57 @@ namespace Sci {
 struct Node;	// from segment.h
 struct List;	// from segment.h
 
+/**
+ * Information about vocabulary resources in SCI:
+ *
+ * vocab.999 / 999.voc (unneeded) contains names of the kernel functions which
+ * are implemented by the interpreter. In Sierra SCI, they are used exclusively
+ * by the debugger, which is why keeping the file up to date was less important.
+ * This resource is notoriously unreliable, and should not be used. Fortunately,
+ * kernel names are the same in major SCI revisions, which is why we have them
+ * hardcoded.
+ *
+ * vocab.998 / 998.voc (unneeded) contains opcode names. Opcodes have remained
+ * the same from SCI0 to SCI2.1, and have changed in SCI3, so this is only used
+ * on demand for debugging purposes, for showing the opcode names
+ *
+ * vocab.997 / 997.voc (usually needed) contains the names of every selector in
+ * the class hierarchy. Each method and property '''name''' consumes one id, but
+ * if a name is shared between classes, one id will do. Some demos do not contain
+ * a selector vocabulary, but the selectors used by the engine have stayed more or
+ * less static, so we add the selectors we need inside static_selectors.cpp
+ * The SCI engine loads vocab.997 on startup, and fills in an internal structure
+ * that allows interpreter code to access these selectors via #defined macros. It
+ * does not use the file after this initial stage.
+ *
+ * vocab.996 / 996.voc (required) contains the classes which are used in each
+ * script, and is required by the segment manager
+ *
+ * vocab.995 / 995.voc (unneeded) contains strings for the embedded SCI debugger
+ *
+ * vocab.994 / 994.voc (unneeded) contains offsets into certain classes of certain
+ * properties. This enables the interpreter to update these properties in O(1) time,
+ * which was important in the era when SCI was initially conceived. In SCI, we
+ * figured out what '''property''' a certain offset refers to (which requires one to
+ * guess what class a pointer points to) and then simply use the property name and
+ * vocab.997. This results in much more readable code. Thus, this vocabulary isn't
+ * used at all.
+ *
+ * SCI0 parser vocabularies:
+ * - vocab.901 / 901.voc - suffix vocabulary
+ * - vocab.900 / 900.vo1 - parse tree branches
+ * - vocab.0 / 0.voc - main vocabulary, containing words and their attributes
+ *                     (e.g. "onto" - "position")
+ *
+ * SCI01 parser vocabularies:
+ * - vocab.902 / 902.voc - suffix vocabulary
+ * - vocab.901 / 901.vo1 - parse tree branches
+ * - vocab.900 / 900.voc - main vocabulary, containing words and their attributes
+ *                        (e.g. "onto" - "position")
+ *
+ */
+
+
 //#define DEBUG_PARSER	// enable for parser debugging
 //#define DISABLE_VALIDATIONS	// enable to stop validation checks
 
