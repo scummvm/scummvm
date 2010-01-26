@@ -1047,22 +1047,23 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if (savegame_version < 14) {
-			(*i)->dataInc = GET_SEL32V(_segMan, (*i)->soundObj, dataInc);
-			(*i)->signal = GET_SEL32V(_segMan, (*i)->soundObj, signal);
-
-			if (_soundVersion >= SCI_VERSION_1_LATE)
-				(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
-		}
-
 		if ((*i)->resnum && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resnum))) {
 			(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
 			_music->soundInitSnd(*i);
 		} else {
 			(*i)->soundRes = 0;
 		}
-		if ((*i)->status == kSoundPlaying)
+		if ((*i)->status == kSoundPlaying) {
+			if (savegame_version < 14) {
+				(*i)->dataInc = GET_SEL32V(_segMan, (*i)->soundObj, dataInc);
+				(*i)->signal = GET_SEL32V(_segMan, (*i)->soundObj, signal);
+
+				if (_soundVersion >= SCI_VERSION_1_LATE)
+					(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, vol);
+			}
+
 			cmdPlaySound((*i)->soundObj, 0);
+		}
 	}
 
 #endif
