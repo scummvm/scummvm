@@ -312,7 +312,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" restart_game - Restarts the game\n");
 	DebugPrintf(" version - Shows the resource and interpreter versions\n");
 	DebugPrintf(" room - Gets or sets the current room number\n");
-	DebugPrintf(" exit - Exits the game\n");
+	DebugPrintf(" quit - Quits the game\n");
 	DebugPrintf("\n");
 	DebugPrintf("Graphics:\n");
 	DebugPrintf(" set_palette - Sets a palette resource\n");
