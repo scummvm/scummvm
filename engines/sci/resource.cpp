@@ -2069,13 +2069,6 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			}
 			data++; // Skipping 0xFF that closes channels list
 		}
-		/*
-		Digital track ->ptr points to header:
-		[w] sample rate
-		[w] size
-		[w] ? 00 00  maybe compression flag
-		[w] ? size again - decompressed size maybe
-		*/
 		break;
 
 	default:
