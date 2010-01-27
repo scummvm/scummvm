@@ -190,7 +190,7 @@ static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 	}
 
 	if ((handle >= s->_fileHandles.size()) || !s->_fileHandles[handle].isOpen()) {
-		error("Attempt to use invalid/unused file handle %d", handle);
+		warning("Attempt to use invalid/unused file handle %d", handle);
 		return 0;
 	}
 
@@ -210,7 +210,11 @@ reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
 reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	Common::String data = s->_segMan->getString(argv[1]);
-	getFileFromHandle(s, handle)->_out->write(data.c_str(), data.size());
+	
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		f->_out->write(data.c_str(), data.size());
+
 	return s->r_acc;
 }
 
@@ -743,8 +747,13 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		char *buf = new char[size];
 		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
 
-		s->r_acc = make_reg(0, getFileFromHandle(s, handle)->_in->read(buf, size));
-		s->_segMan->memcpy(argv[2], (const byte*)buf, size);
+		
+		FileHandle *f = getFileFromHandle(s, handle);
+		if (f) {
+			s->r_acc = make_reg(0, f->_in->read(buf, size));
+			s->_segMan->memcpy(argv[2], (const byte*)buf, size);
+		}
+
 		delete[] buf;
 		break;
 	}
@@ -755,7 +764,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->memcpy((byte*)buf, argv[2], size);
 		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
 
-		getFileFromHandle(s, handle)->_out->write(buf, size);
+		FileHandle *f = getFileFromHandle(s, handle);
+		if (f)
+			f->_out->write(buf, size);
+
 		delete[] buf;
 		break;
 	}
@@ -811,7 +823,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		// In the LSL5 password protection it is zero, and we should
 		// then write a full string. (Not sure if it should write the
 		// terminating zero.)
-		getFileFromHandle(s, handle)->_out->write(str.c_str(), str.size());
+		
+		FileHandle *f = getFileFromHandle(s, handle);
+		if (f)
+			f->_out->write(str.c_str(), str.size());
 		break;
 	}
 	case K_FILEIO_SEEK : {
@@ -819,8 +834,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int offset = argv[2].toUint16();
 		int whence = argv[3].toUint16();
 		debug(3, "K_FILEIO_SEEK(%d,%d,%d)", handle, offset, whence);
-
-		s->r_acc = make_reg(0, getFileFromHandle(s, handle)->_in->seek(offset, whence));
+		
+		FileHandle *f = getFileFromHandle(s, handle);
+		if (f)
+			s->r_acc = make_reg(0, f->_in->seek(offset, whence));
 		break;
 	}
 	case K_FILEIO_FIND_FIRST : {
@@ -899,17 +916,33 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			return SIGNAL_REG;
 	}
 #ifdef ENABLE_SCI32
-	case K_FILEIO_READ_BYTE:
+	case K_FILEIO_READ_BYTE: {
 		// Read the byte into the low byte of the accumulator
-		return make_reg(0, (s->r_acc.toUint16() & 0xff00) | getFileFromHandle(s, argv[1].toUint16())->_in->readByte());
-	case K_FILEIO_WRITE_BYTE:
-		getFileFromHandle(s, argv[1].toUint16())->_out->writeByte(argv[2].toUint16() & 0xff);
+		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
+		if (!f)
+			return NULL_REG;
+		
+		return make_reg(0, (s->r_acc.toUint16() & 0xff00) | f->_in->readByte());
+	}
+	case K_FILEIO_WRITE_BYTE: {
+		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
+		if (f)
+			f->_out->writeByte(argv[2].toUint16() & 0xff);
 		break;
-	case K_FILEIO_READ_WORD:
-		return make_reg(0, getFileFromHandle(s, argv[1].toUint16())->_in->readUint16LE());
-	case K_FILEIO_WRITE_WORD:
-		getFileFromHandle(s, argv[1].toUint16())->_out->writeUint16LE(argv[2].toUint16());
+	}
+	case K_FILEIO_READ_WORD: {
+		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
+		if (!f)
+			return NULL_REG;
+	
+		return make_reg(0, f->_in->readUint16LE());
+	}
+	case K_FILEIO_WRITE_WORD: {
+		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
+		if (f)
+			f->_out->writeUint16LE(argv[2].toUint16());
 		break;
+	}
 #endif
 	default:
 		error("Unknown FileIO() sub-command: %d", func_nr);
