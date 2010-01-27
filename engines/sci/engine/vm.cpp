@@ -763,7 +763,7 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x02: // sub
 			r_temp = POP32();
-			if (r_temp.segment || s->r_acc.segment) {
+			if (r_temp.segment != s->r_acc.segment) {
 				reg_t r_ptr = NULL_REG;
 				int offset;
 				// Pointer arithmetics!
@@ -783,8 +783,11 @@ void run_vm(EngineState *s, int restoring) {
 
 				s->r_acc = pointer_add(s, r_ptr, -offset);
 
-			} else
+			} else {
+				// We can subtract numbers, or pointers with the same segment,
+				// an operation which will yield a number like in C
 				s->r_acc = make_reg(0, r_temp.offset - s->r_acc.offset);
+			}
 			break;
 
 		case 0x03: // mul
