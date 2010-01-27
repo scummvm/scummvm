@@ -1819,6 +1819,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		//{"ressci.007", 0, "3aae6559aa1df273bc542d5ac6330d75", 25859038},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		
+	// Phantasmagoria - English DOS Demo
+	// Executable scanning reports "2.100.002"
+	{"phantasmagoria", "Demo", {
+		{"resmap.001", 0, "416138651ea828219ca454cae18341a3", 11518},
+		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 #ifdef ENABLE_SCI3_GAMES
 	// Phantasmagoria 2 - English Windows (from jvprat)

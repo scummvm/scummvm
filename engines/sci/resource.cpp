@@ -114,7 +114,7 @@ void Resource::unalloc() {
 
 // Resource source list management
 
-ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
+ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volume_nr) {
 	ResourceSource *newsrc = new ResourceSource();
 
 	newsrc->source_type = kSourceExtMap;
@@ -122,6 +122,7 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
 	newsrc->resourceFile = 0;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
+	newsrc->volume_number = volume_nr;
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -135,6 +136,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile) {
 	newsrc->resourceFile = mapFile;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
+	newsrc->volume_number = 0;
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -380,37 +382,56 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 }
 
 int ResourceManager::addAppropriateSources() {
-	ResourceSource *map;
-
-	if (Common::File::exists("RESOURCE.MAP"))
-		map = addExternalMap("RESOURCE.MAP");
-#ifdef ENABLE_SCI32
-	else if (Common::File::exists("RESMAP.000"))
-		map = addExternalMap("RESMAP.000");
-	else if (Common::File::exists("RESMAP.001"))
-		map = addExternalMap("RESMAP.001");
-#endif
-	else
-		return 0;
-
-
 	Common::ArchiveMemberList files;
-	SearchMan.listMatchingMembers(files, "RESOURCE.0??");
 
+	if (Common::File::exists("RESOURCE.MAP")) {
+		// SCI0-SCI2 file naming scheme
+		ResourceSource *map = addExternalMap("RESOURCE.MAP");
+
+		SearchMan.listMatchingMembers(files, "RESOURCE.0??");
+
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+			const Common::String name = (*x)->getName();
+			const char *dot = strrchr(name.c_str(), '.');
+			int number = atoi(dot + 1);
+
+			addSource(map, kSourceVolume, name.c_str(), number);
+		}
 #ifdef ENABLE_SCI32
-	SearchMan.listMatchingMembers(files, "RESSCI.0??");
+	} else {
+		// SCI2.1-SCI3 file naming scheme
+		Common::ArchiveMemberList mapFiles;
+		SearchMan.listMatchingMembers(mapFiles, "RESMAP.0??");
+		SearchMan.listMatchingMembers(files, "RESSCI.0??");
+
+		// We need to have the same number of maps as resource archives
+		if (mapFiles.empty() || files.empty() || mapFiles.size() != files.size())
+			return 0;
+
+		Common::ArchiveMemberList::const_iterator fileIterator = files.begin();
+		Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin();
+
+		while (fileIterator != files.end()) {
+			Common::String mapName = (*mapIterator)->getName();
+			Common::String resName = (*fileIterator)->getName();
+
+			const char *dot = strrchr(mapName.c_str(), '.');
+			int number = atoi(dot + 1);
+
+			addSource(addExternalMap(mapName.c_str(), number), kSourceVolume, resName.c_str(), number);
+			++fileIterator;
+			++mapIterator;
+		}
+	}
+#else
+	} else
+		return 0;
 #endif
 
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String name = (*x)->getName();
-		const char *dot = strrchr(name.c_str(), '.');
-		int number = atoi(dot + 1);
-
-		addSource(map, kSourceVolume, name.c_str(), number);
-	}
 	addPatchDir(".");
 	if (Common::File::exists("MESSAGE.MAP"))
 		addSource(addExternalMap("MESSAGE.MAP"), kSourceVolume, "RESOURCE.MSG", 0);
+
 	return 1;
 }
 
@@ -425,6 +446,8 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
+		// TODO: Load the SCI2.1+ maps (resmap.*) in concurrence with the volumes to
+		// get the proper volume numbers from the maps.
 		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
 			map = addExternalMap(file);
 			break;
@@ -1211,7 +1234,12 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				res = new Resource;
 				_resMap.setVal(resId, res);
 				res->id = resId;
-				res->source = getVolume(map, volume_nr);
+				
+				// NOTE: We add the map's volume number here to the specified volume number
+				// for SCI2.1 and SCI3 maps that are not RESMAP.000. The RESMAP.* files' numbers
+				// need to be used in concurrence with the volume specified in the map to get
+				// the actual resource file.
+				res->source = getVolume(map, volume_nr + map->volume_number);
 				res->file_offset = off;
 			}
 		}

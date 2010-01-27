@@ -211,7 +211,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
+		if (filename.contains("resource.map") || filename.contains("resmap.00")) {
 			// HACK: resource.map is located in the same directory as the other resource files,
 			// therefore add the directory here, so that the game files can be opened later on
 			// We now add the parent directory temporary to our SearchMan so the engine code
