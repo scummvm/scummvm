@@ -2050,8 +2050,15 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 						_tracks[trackNr].digitalChannelNr = channelNr;
 						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
 						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-						assert(READ_LE_UINT16(channel->data + 4) == 0); // Possibly a compression flag
-						//assert(READ_LE_UINT16(channelData + 6) == size);
+						uint16 unk2 = READ_LE_UINT16(channel->data + 4);
+						uint16 unkSize = READ_LE_UINT16(channel->data + 6);
+						if (unk2 != 0)
+							warning("Unknown sound field isn't 0 (it's %d), "
+									"sound might be compressed. Sound size: %d, "
+									"unknown size: %d", unk2, _tracks[trackNr].digitalSampleSize, unkSize);
+
+						//assert(READ_LE_UINT16(channel->data + 4) == 0); // Possibly a compression flag
+						//assert(READ_LE_UINT16(channelData + 6) == size - 1);
 						channel->data += 8; // Skip over header
 						channel->size -= 8;
 					}
