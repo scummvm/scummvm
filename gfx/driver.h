@@ -45,7 +45,7 @@ public:
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;
 
-	virtual void drawSurface(Graphics::Surface *surface) = 0;
+	virtual void drawSurface(const Graphics::Surface *surface, Common::Point dest = Common::Point(), Common::Rect rect = Common::Rect()) = 0;
 
 	/*
 	virtual bool isHardwareAccelerated() = 0;

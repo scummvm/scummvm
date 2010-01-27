@@ -74,11 +74,62 @@ void OpenGLGfxDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-void OpenGLGfxDriver::drawSurface(Graphics::Surface *surface) {
+void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {
+	// Draw the whole surface by default
+	if (rect.isEmpty())
+		rect = Common::Rect(surface->w, surface->h);
+
+	start2DMode();
+
+	float rasterX = (2 * (float)dest.x / (float)_screenWidth);
+	float rasterY = (2 * (float)dest.y / (float)_screenHeight);
+	glRasterPos2f(-1.0f + rasterX, 1.0f - rasterY);
+	glDrawPixels(surface->w, surface->h, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+	//glBegin(GL_QUADS); glVertex3i(-1, -1, -1); glVertex3i(1, -1, -1); glVertex3i(1, 1, -1); glVertex3i(-1, 1, -1); glEnd();
+
+	end2DMode();
+}
+
+
+void OpenGLGfxDriver::start2DMode() {
+/*
+	// Load the ModelView matrix with the identity
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Load the Projection matrix with the identity
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+*/
+
+	// Enable alpha blending
+	glEnable(GL_BLEND);
+	//glBlendEquation(GL_FUNC_ADD); // It's the default
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Flip the Y component
 	glPixelZoom(1.0f, -1.0f);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glRasterPos2f(-1.0f, 0.75f);
-	glDrawPixels(surface->w, surface->h, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
+
+	// Required by RGB sources, but not by RGBA
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+}
+
+void OpenGLGfxDriver::end2DMode() {
+	// Disable alpha blending
+	glDisable(GL_BLEND);
+
+/*
+	// Pop the identity Projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	
+	// Pop the identity ModelView matrix
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+*/
 }
 
 /*

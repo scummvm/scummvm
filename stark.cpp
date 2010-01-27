@@ -56,14 +56,14 @@ Common::Error StarkEngine::run() {
 }
 
 void StarkEngine::mainLoop() {
-	for (;;) {
+	while (!shouldQuit()) {
 		// Process events
 		Common::Event e;
 		while (g_system->getEventManager()->pollEvent(e)) {
 			// Handle any buttons, keys and joystick operations
 			if (e.type == Common::EVENT_KEYDOWN) {
 				if (e.kbd.ascii == 'q') {
-					/*handleExit();*/
+					quitGame();
 					break;
 				} else {
 					//handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
@@ -73,8 +73,8 @@ void StarkEngine::mainLoop() {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 			}*/
 			// Check for "Hard" quit"
-			if (e.type == Common::EVENT_QUIT)
-				return;
+			//if (e.type == Common::EVENT_QUIT)
+			//	return;
 			/*if (event.type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;*/
 		}
@@ -84,24 +84,35 @@ void StarkEngine::mainLoop() {
 	}
 }
 
+void renderXMG(GfxDriver *gfx, const Common::String &name, int x, int y) {
+	Common::File f;
+	f.open(name);
+
+	Graphics::Surface *surf;
+	surf = XMGDecoder::decode(&f);
+
+	gfx->drawSurface(surf, Common::Point(x, y));
+
+	surf->free();
+	delete surf;
+	f.close();
+}
+
 void StarkEngine::updateDisplayScene() {
 	_gfx->clearScreen();
 
 	// Draw bg
+	renderXMG(_gfx, "house_layercenter.xmg", 0, 0);
+	//renderXMG(_gfx, "vista-scapehaze-more-fog3-final.xmg", 0, 0);
 
 	// Draw other things
-	XMGDecoder *xmg = new XMGDecoder();
-	Common::File _f;
-	_f.open("house_layercenter.xmg");
-	Common::SeekableReadStream *dat = _f.readStream(_f.size());
-	Graphics::Surface *surf;
-	surf = xmg->decodeImage(dat);
-	_gfx->drawSurface(surf);
-	delete xmg;
-	delete surf;
-	delete dat;
-
-	_f.close();
+	renderXMG(_gfx, "house_prop01_pillow.xmg", 384, 267);
+	renderXMG(_gfx, "house_prop02_pillow.xmg", 324, 299);
+	renderXMG(_gfx, "house_prop03_pillow.xmg", 141, 312);
+	renderXMG(_gfx, "house_prop4_armrest.xmg", 171, 184);
+	renderXMG(_gfx, "house_prop5_chair.xmg", 170, 164);
+	renderXMG(_gfx, "house_prop6_wall.xmg", 0, 0);
+	renderXMG(_gfx, "house_prop8_pillar.xmg", 534, 0);
 
 	// setup cam
 

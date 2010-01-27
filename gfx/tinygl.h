@@ -44,7 +44,7 @@ public:
 	void clearScreen();
 	void flipBuffer();
 
-	void drawSurface(Graphics::Surface *surface);
+	void drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect);
 
 	/*
 	bool isHardwareAccelerated();

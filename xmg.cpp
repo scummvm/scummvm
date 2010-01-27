@@ -27,173 +27,163 @@
 
 namespace Stark {
 
-Graphics::Surface *XMGDecoder::decodeImage(Common::SeekableReadStream *stream) {
+Graphics::Surface *XMGDecoder::decode(Common::ReadStream *stream) {
+	XMGDecoder dec;
+	return dec.decodeImage(stream);
+}
 
+// TODO: fix color handling in BE machines?
+Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	_stream = stream;
 
-	header.version = stream->readUint32LE();
-	header.transColor = (stream->readByte() << 16);
-	header.transColor += stream->readUint16LE();
-	header.unknown = stream->readByte();
-	header.width = stream->readUint32LE();
-	header.height = stream->readUint32LE();
-	header.scanLen = stream->readUint32LE();
-	header.unknown2 = stream->readUint32LE();
-	header.unknown3 = stream->readUint32LE();
+	// Read the file version
+	uint32 version = stream->readUint32LE();
+	if (version != 3) {
+		warning("Stark::XMG: File version unknown: %d", version);
+	}
 
+	// Read the transparency color (RGBA)
+	_transColor = stream->readUint32LE();
+
+	// Read the image size
+	uint32 width = stream->readUint32LE();
+	uint32 height = stream->readUint32LE();
+	_scanLen = stream->readUint32LE();
+	if (_scanLen != 3 * width) {
+		warning("Stark::XMG: The scan length (%d) doesn't match the width bytes (%d)", _scanLen, 3 * width);
+	}
+	// We're using RGBA instead of RGB, so we use our own scanlength
+	_scanLen = width;
+
+	// Unknown
+	uint32 unknown2 = stream->readUint32LE();
+	debug("Stark::XMG: unknown2 = %08x = %d", unknown2, unknown2);
+	uint32 unknown3 = stream->readUint32LE();
+	debug("Stark::XMG: unknown3 = %08x = %d", unknown3, unknown3);
+
+	// Create the destination surface
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(header.width, header.height, 3);
+	if (!surface)
+		return NULL;
+	surface->create(width, height, 4);
 
-	_width = header.width;
-
-	_pixels = (byte *)surface->pixels;
-	_currX = 0;
-	_currY = 0;
-
-	byte op1, op2;
-	while (stream->pos() < stream->size()) {
-		if (_currX >= header.width) {
-			_currX -= 640;
-			_currY += 2;
-			_pixels = (byte *)surface->getBasePtr(_currX, _currY);
-			if (_currY >= header.height)
+	_pixels = (uint32 *)surface->pixels;
+	uint32 currX = 0, currY = 0;
+	while (!stream->eos()) {
+		// TODO: Handle odd-sized images
+		if (currX >= width) {
+			//assert (currX == width);
+			currX -= width;
+			currY += 2;
+			_pixels += _scanLen;
+			if (currY + 1 >= height)
 				break;
 		}
-		op1 = stream->readByte();
-		switch (op1 & 0xC0) {
-		case 0x00:
-			// YCrCb
-			processYCrCb(op1 & 0x3F);
-			break;
-		case 0x40:
-			// Trans
-			processTrans(op1 & 0x3F);
-			break;
-		case 0x80:
-			// RGB
-			processRGB(op1 & 0x3F);
-			break;
-		case 0xC0:
-			op2 = stream->readByte();
-			switch (op1 & 0x30) {
+
+		// Read the number and mode of the tiles
+		byte op = stream->readByte();
+		uint16 count;
+		if ((op & 0xC0) != 0xC0) {
+			count = op & 0x3F;
+		} else {
+			count = ((op & 0xF) << 8) + stream->readByte();
+			op <<= 4;
+		}
+		op &= 0xC0;
+
+		// Process the current serie
+		for (int i = 0; i < count; i++) {
+			switch (op) {
 			case 0x00:
 				// YCrCb
-				processYCrCb(((op1 & 0x0F) << 8) + op2);
+				processYCrCb();
 				break;
-			case 0x10:
+			case 0x40:
 				// Trans
-				processTrans(((op1 & 0x0F) << 8) + op2);
+				processTrans();
 				break;
-			case 0x20:
+			case 0x80:
 				// RGB
-				processRGB(((op1 & 0x0F) << 8) + op2);
+				processRGB();
 				break;
-			case 0x30:
+			case 0xC0:
 				error("Unsupported colour mode");
 				break;
 			}
-			break;
+			_pixels += 2;
 		}
+		currX += 2 * count;
 	}
 
-	_pixels = 0;
 	return surface;
 }
 
-void XMGDecoder::processYCrCb(uint16 count) {
+inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
+	r = CLIP<int>(y + ((1357 * (v - 128)) >> 10), 0, 255);
+	g = CLIP<int>(y - (( 691 * (v - 128)) >> 10) - ((333 * (u - 128)) >> 10), 0, 255);
+	b = CLIP<int>(y + ((1715 * (u - 128)) >> 10), 0, 255);
+}
+
+void XMGDecoder::processYCrCb() {
 	byte y0, y1, y2, y3;
 	byte cr, cb;
-	for (int i = 0; i < count; i++) {
-		y0 = _stream->readByte();
-		y1 = _stream->readByte();
-		y2 = _stream->readByte();
-		y3 = _stream->readByte();
-		cr = _stream->readByte();
-		cb = _stream->readByte();
 
-		YUV2RGB(y0, cb, cr, *_pixels, *(_pixels + 1), *(_pixels + 2));
-		YUV2RGB(y1, cb, cr, *(_pixels + 3), *(_pixels + 4), *(_pixels + 5));
+	y0 = _stream->readByte();
+	y1 = _stream->readByte();
+	y2 = _stream->readByte();
+	y3 = _stream->readByte();
+	cr = _stream->readByte();
+	cb = _stream->readByte();
 
-		_pixels += _width * 3;
-		YUV2RGB(y2, cb, cr, *_pixels, *(_pixels + 1), *(_pixels + 2));
-		YUV2RGB(y3, cb, cr, *(_pixels + 3), *(_pixels + 4), *(_pixels + 5));
+	byte r, g, b;
 
-		_pixels -= _width * 3;
-		_pixels += 6;
-	}
-	_currX += 2 * count;
+	YUV2RGB(y0, cb, cr, r, g, b);
+	_pixels[0] = (255 << 24) + (b << 16) + (g << 8) + r;
+
+	YUV2RGB(y1, cb, cr, r, g, b);
+	_pixels[1] = (255 << 24) + (b << 16) + (g << 8) + r;
+
+	YUV2RGB(y2, cb, cr, r, g, b);
+	_pixels[_scanLen + 0] = (255 << 24) + (b << 16) + (g << 8) + r;
+
+	YUV2RGB(y3, cb, cr, r, g, b);
+	_pixels[_scanLen + 1] = (255 << 24) + (b << 16) + (g << 8) + r;
 }
 
-void XMGDecoder::processTrans(uint16 count) {
-	for (int i = 0; i < count; i++) {
-		byte r, g, b;
-		r = (header.transColor >> 16);
-		g = (header.transColor >> 8) & 0xFF;
-		b = (header.transColor & 0xFF);
-		*_pixels = r;
-		*(_pixels + 1) = g;
-		*(_pixels + 2) = b;
+void XMGDecoder::processTrans() {
+	_pixels[0] = _transColor;
+	_pixels[1] = _transColor;
 
-		*(_pixels + 3) = r;
-		*(_pixels + 4) = g;
-		*(_pixels + 5) = b;
-
-		_pixels += _width * 3;
-
-		*_pixels = r;
-		*(_pixels + 1) = g;
-		*(_pixels + 2) = b;
-
-		*(_pixels + 3) = r;
-		*(_pixels + 4) = g;
-		*(_pixels + 5) = b;
-
-		_pixels -= _width * 3;
-		_pixels += 6;
-
-	}
-	_currX += 2 * count;
+	_pixels[_scanLen + 0] = _transColor;
+	_pixels[_scanLen + 1] = _transColor;
 }
 
-void XMGDecoder::processRGB(uint16 count) {
-	for (int i = 0; i < count; i++) {
-		byte r, g, b;
+void XMGDecoder::processRGB() {
+	uint32 color;
 
-		r = _stream->readByte();
-		g = _stream->readByte();
-		b = _stream->readByte();
-		*_pixels = r;
-		*(_pixels + 1) = g;
-		*(_pixels + 2) = b;
+	color = _stream->readUint16LE();
+	color += _stream->readByte() << 16;
+	if (color != _transColor)
+		color += 255 << 24;
+	_pixels[0] = color;
 
-		r = _stream->readByte();
-		g = _stream->readByte();
-		b = _stream->readByte();
-		*(_pixels + 3) = r;
-		*(_pixels + 4) = g;
-		*(_pixels + 5) = b;
+	color = _stream->readUint16LE();
+	color += _stream->readByte() << 16;
+	if (color != _transColor)
+		color += 255 << 24;
+	_pixels[1] = color;
 
-		_pixels += _width * 3;
+	color = _stream->readUint16LE();
+	color += _stream->readByte() << 16;
+	if (color != _transColor)
+		color += 255 << 24;
+	_pixels[_scanLen + 0] = color;
 
-		r = _stream->readByte();
-		g = _stream->readByte();
-		b = _stream->readByte();
-		*_pixels = r;
-		*(_pixels + 1) = g;
-		*(_pixels + 2) = b;
-
-		r = _stream->readByte();
-		g = _stream->readByte();
-		b = _stream->readByte();
-		*(_pixels + 3) = r;
-		*(_pixels + 4) = g;
-		*(_pixels + 5) = b;
-
-		_pixels -= _width * 3;
-
-		_pixels += 6;
-	}
-	_currX += 2 * count;
+	color = _stream->readUint16LE();
+	color += _stream->readByte() << 16;
+	if (color != _transColor)
+		color += 255 << 24;
+	_pixels[_scanLen + 1] = color;
 }
 
 } // End of namespace Stark

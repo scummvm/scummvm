@@ -44,7 +44,7 @@ public:
 	void clearScreen();
 	void flipBuffer();
 
-	void drawSurface(Graphics::Surface *surface);
+	void drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect);
 
 /*
 	bool isHardwareAccelerated();
@@ -57,6 +57,9 @@ public:
 	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpointFinish();
 */
+private:
+	void start2DMode();
+	void end2DMode();
 };
 
 } // End of namespace Stark

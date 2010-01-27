@@ -32,42 +32,24 @@
 
 namespace Stark {
 
-inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
-	r = CLIP<int>(y + ((1357 * (v - 128)) >> 10), 0, 255);
-	g = CLIP<int>(y - (( 691 * (v - 128)) >> 10) - ((333 * (u - 128)) >> 10), 0, 255);
-	b = CLIP<int>(y + ((1715 * (u - 128)) >> 10), 0, 255);
-}
-
-struct XMGHeader {
-	uint32 version;
-	uint32 transColor;
-	uint8  unknown;
-	uint32 width;
-	uint32 height;
-	uint32 scanLen;
-	uint32 unknown2;
-	uint32 unknown3;
-};
-
 class XMGDecoder {
 public:
-	XMGDecoder() {}
-	~XMGDecoder() {}
-
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	static Graphics::Surface *decode(Common::ReadStream *stream);
 
 private:
-	void processYCrCb(uint16 count);
-	void processTrans(uint16 count);
-	void processRGB(uint16 count);
+	XMGDecoder() {}
 
-	byte *_pixels;
-	uint32 _width;
-	Common::SeekableReadStream *_stream;
+	Graphics::Surface *decodeImage(Common::ReadStream *stream);
 
-	XMGHeader header;
+	void processYCrCb();
+	void processTrans();
+	void processRGB();
 
-	uint32 _currX, _currY;
+	uint32 *_pixels;
+	Common::ReadStream *_stream;
+
+	uint32 _transColor;
+	uint32 _scanLen;
 };
 
 } // End of namespace Stark

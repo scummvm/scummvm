@@ -87,7 +87,11 @@ void TinyGLGfxDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-void TinyGLGfxDriver::drawSurface(Graphics::Surface *surface) {
+void TinyGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {
+	// Draw the whole surface by default
+	if (rect.isEmpty())
+		rect = Common::Rect(surface->w, surface->h);
+
 	for (int i = 0; i < surface->w * surface->h; i++) {
 		byte *pixel = (byte *)surface->pixels + (i * 3);
 		byte r = pixel[0];
