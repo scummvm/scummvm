@@ -2001,6 +2001,8 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			//Offset 14 in the header contains the frequency as a short integer. Offset 32 contains the sample length, also as a short integer.
 			_tracks->digitalSampleRate = READ_LE_UINT16(sampleChannel->data + 14);
 			_tracks->digitalSampleSize = READ_LE_UINT16(sampleChannel->data + 32);
+			_tracks->digitalSampleStart = 0;
+			_tracks->digitalSampleEnd = 0;
 			sampleChannel->data += 44; // Skip over header
 			sampleChannel->size -= 44;
 		}
@@ -2037,6 +2039,8 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			_tracks[trackNr].digitalChannelNr = -1; // No digital sound associated
 			_tracks[trackNr].digitalSampleRate = 0;
 			_tracks[trackNr].digitalSampleSize = 0;
+			_tracks[trackNr].digitalSampleStart = 0;
+			_tracks[trackNr].digitalSampleEnd = 0;
 			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
 				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
 					channel = &_tracks[trackNr].channels[channelNr];
@@ -2050,15 +2054,8 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 						_tracks[trackNr].digitalChannelNr = channelNr;
 						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
 						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-						uint16 unk2 = READ_LE_UINT16(channel->data + 4);
-						uint16 unkSize = READ_LE_UINT16(channel->data + 6);
-						if (unk2 != 0)
-							warning("Unknown sound field isn't 0 (it's %d), "
-									"sound might be compressed. Sound size: %d, "
-									"unknown size: %d", unk2, _tracks[trackNr].digitalSampleSize, unkSize);
-
-						//assert(READ_LE_UINT16(channel->data + 4) == 0); // Possibly a compression flag
-						//assert(READ_LE_UINT16(channelData + 6) == size - 1);
+						_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
+						_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
 						channel->data += 8; // Skip over header
 						channel->size -= 8;
 					}

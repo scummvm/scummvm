@@ -187,7 +187,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			// Amiga SCI1 games had signed sound data
 			if (_soundVersion >= SCI_VERSION_1_EARLY && ((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
 				flags = 0;
-			pSnd->pStreamAud = Audio::makeRawMemoryStream(channelData, track->digitalSampleSize, track->digitalSampleRate, flags, DisposeAfterUse::NO);
+			int endPart = track->digitalSampleEnd > 0 ? (track->digitalSampleSize - track->digitalSampleEnd) : 0;
+			pSnd->pStreamAud = Audio::makeRawMemoryStream(channelData + track->digitalSampleStart, 
+								track->digitalSampleSize - track->digitalSampleStart - endPart, 
+								track->digitalSampleRate, flags, DisposeAfterUse::NO);
 			delete pSnd->pLoopStream;
 			pSnd->pLoopStream = 0;
 			pSnd->soundType = Audio::Mixer::kSFXSoundType;

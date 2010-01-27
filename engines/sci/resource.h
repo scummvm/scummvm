@@ -464,8 +464,10 @@ public:
 		byte channelCount;
 		Channel *channels;
 		int16 digitalChannelNr;
-		int digitalSampleRate;
-		uint32 digitalSampleSize;
+		uint16 digitalSampleRate;
+		uint16 digitalSampleSize;
+		uint16 digitalSampleStart;
+		uint16 digitalSampleEnd;
 	};
 public:
 	SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion);
