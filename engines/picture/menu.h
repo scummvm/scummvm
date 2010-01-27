@@ -39,11 +39,6 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"
-#include "sound/voc.h"
-#include "sound/audiocd.h"
-
 #include "engines/engine.h"
 
 namespace Picture {

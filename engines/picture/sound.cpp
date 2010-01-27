@@ -35,7 +35,7 @@
 #include "graphics/cursorman.h"
 
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 #include "picture/picture.h"
 #include "picture/palette.h"

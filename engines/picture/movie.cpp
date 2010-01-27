@@ -33,7 +33,7 @@
 #include "base/version.h"
 
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 #include "picture/picture.h"
 #include "picture/movie.h"
