@@ -169,7 +169,7 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool VorbisInputStream::seek(const Timestamp &where) {
-	int res = ov_pcm_seek(&_ovFile, calculateSampleOffset(where, getRate()));
+	int res = ov_pcm_seek(&_ovFile, convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames());
 	if (res) {
 		warning("Error seeking in Vorbis stream (%d)", res);
 		_pos = _bufferEnd;

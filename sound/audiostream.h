@@ -162,9 +162,9 @@ public:
 	 * Tries to load a file by trying all available formats.
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibility of the caller.
-	 * @param basename	a filename without an extension
-	 * @return	an SeekableAudioStream ready to use in case of success;
-	 *			NULL in case of an error (e.g. invalid/nonexisting file)
+	 * @param basename  a filename without an extension
+	 * @return  an SeekableAudioStream ready to use in case of success;
+	 *          NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
 	static SeekableAudioStream *openStreamFile(const Common::String &basename);
 
@@ -337,16 +337,15 @@ public:
  */
 QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo);
 
-
 /**
- * Calculates the sample, which the timestamp describes in a
- * AudioStream with the given framerate.
+ * Converts a point in time to a precise sample offset
+ * with the given parameters.
  *
- * @param where point in time
- * @param rate rate of the AudioStream
- * @return sample index
+ * @param where Point in time.
+ * @param rate Rate of the stream.
+ * @param isStereo Is the stream a stereo stream?
  */
-uint32 calculateSampleOffset(const Timestamp &where, int rate);
+Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo);
 
 } // End of namespace Audio
 

@@ -356,7 +356,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 }
 
 bool AUDStream::seek(const Audio::Timestamp &where) {
-	const uint32 seekSample = Audio::calculateSampleOffset(where, getRate());
+	const uint32 seekSample = Audio::convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
 
 	_stream->seek(_streamStart);
 	_processedSize = 0;

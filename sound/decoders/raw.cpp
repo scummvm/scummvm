@@ -41,13 +41,6 @@ namespace Audio {
 	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
 
-// TODO: Get rid of this
-uint32 calculateSampleOffset(const Timestamp &where, int rate) {
-	return where.convertToFramerate(rate).totalNumberOfFrames();
-}
-
-
-
 #pragma mark -
 #pragma mark --- RawMemoryStream ---
 #pragma mark -
@@ -110,7 +103,7 @@ int RawMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 bool RawMemoryStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
-	const uint8 *ptr = _origPtr + calculateSampleOffset(where, getRate()) * (is16Bit ? 2 : 1) * (stereo ? 2 : 1);
+	const uint8 *ptr = _origPtr + convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames() * (is16Bit ? 2 : 1);
 	if (ptr > _end) {
 		_ptr = _end;
 		return false;
@@ -275,7 +268,7 @@ int RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, 
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
-	const uint32 seekSample = calculateSampleOffset(where, getRate()) * (stereo ? 2 : 1);
+	const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
 	uint32 curSample = 0;
 
 	// Search for the disk block in which the specific sample is placed

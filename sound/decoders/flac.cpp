@@ -294,7 +294,7 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 bool FlacInputStream::seek(const Timestamp &where) {
 	_sampleCache.bufFill = 0;
 	_sampleCache.bufReadPos = NULL;
-	return seekAbsolute((FLAC__uint64)calculateSampleOffset(where, _streaminfo.sample_rate));
+	return seekAbsolute((FLAC__uint64)convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames());
 }
 
 int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {

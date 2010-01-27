@@ -164,8 +164,8 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
 	                                         DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _loopStart(loopStart.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
-      _loopEnd(loopEnd.convertToFramerate(getRate() * (isStereo() ? 2 : 1))),
+      _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
+      _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
       _done(false) {
 	if (!_parent->rewind())
 		_done = true;
@@ -212,9 +212,9 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(parent), _disposeAfterUse(disposeAfterUse),
-      _start(start.convertToFramerate(getRate())),
+      _start(convertTimeToStreamPos(start, getRate(), isStereo())),
        _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length((end - start).convertToFramerate(getRate() * (isStereo() ? 2 : 1))) {
+      _length(convertTimeToStreamPos(end - start, getRate(), isStereo())) {
 
 	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
 	_parent->seek(_start);
@@ -233,7 +233,7 @@ int SubSeekableAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool SubSeekableAudioStream::seek(const Timestamp &where) {
-	_pos = where.convertToFramerate(getRate());
+	_pos = convertTimeToStreamPos(where, getRate(), isStereo());
 	if (_pos > _length) {
 		_pos = _length;
 		return false;
@@ -362,6 +362,17 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 
 QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo) {
 	return new QueuingAudioStreamImpl(rate, stereo);
+}
+
+Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo) {
+	Timestamp result(where.convertToFramerate(rate * (isStereo ? 2 : 1)));
+
+	// When the Stream is a stereo stream, we have to assure
+	// that the sample position is an even number.
+	if (isStereo && (result.totalNumberOfFrames() & 1))
+		return result.addFrames(-1); // We cut off one sample here.
+	else
+		return result;
 }
 
 } // End of namespace Audio
