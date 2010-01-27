@@ -33,7 +33,7 @@
 #include "graphics/cursorman.h"
 
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/palette.h"

@@ -31,7 +31,7 @@
 #include "base/version.h"
 
 #include "sound/mixer.h"
-#include "sound/raw.h"
+#include "sound/decoders/raw.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/movie.h"

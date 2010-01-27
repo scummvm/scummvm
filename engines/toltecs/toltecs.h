@@ -36,7 +36,7 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "sound/voc.h"
+#include "sound/decoders/voc.h"
 #include "sound/audiocd.h"
 
 #include "engines/engine.h"
@@ -56,6 +56,8 @@ class ScriptInterpreter;
 class Screen;
 class SegmentMap;
 class Sound;
+
+// TODO/FIXME: The includes of the Toltecs engine need serious clean-up
 
 class ToltecsEngine : public ::Engine {
 	Common::KeyState _keyPressed;
