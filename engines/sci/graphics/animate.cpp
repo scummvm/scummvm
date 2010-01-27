@@ -305,7 +305,7 @@ void SciGuiAnimate::update() {
 
 		if (signal & kSignalAlwaysUpdate) {
 			// draw corresponding cel
-			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
 			listEntry->showBitsFlag = true;
 
 			signal &= 0xFFFF ^ (kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
@@ -351,7 +351,7 @@ void SciGuiAnimate::update() {
 
 		if (signal & kSignalNoUpdate && !(signal & kSignalHidden)) {
 			// draw corresponding cel
-			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
 			listEntry->showBitsFlag = true;
 
 			if ((signal & kSignalIgnoreActor) == 0) {
@@ -501,7 +501,7 @@ void SciGuiAnimate::reAnimate(Common::Rect rect) {
 		lastCastCount = _lastCastCount;
 		while (lastCastCount > 0) {
 			lastCastEntry->castHandle = _gfx->BitsSave(lastCastEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
-			_gfx->drawCel(lastCastEntry->viewId, lastCastEntry->loopNo, lastCastEntry->celNo, lastCastEntry->celRect, lastCastEntry->priority, lastCastEntry->paletteNo);
+			_gfx->drawCel(lastCastEntry->viewId, lastCastEntry->loopNo, lastCastEntry->celNo, lastCastEntry->celRect, lastCastEntry->priority, lastCastEntry->paletteNo, lastCastEntry->scaleX, lastCastEntry->scaleY);
 			lastCastEntry++; lastCastCount--;
 		}
 		_gfx->BitsShow(rect);
