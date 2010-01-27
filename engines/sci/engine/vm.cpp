@@ -848,22 +848,40 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x0f: // gt?
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((int16)POP() > (int16)/*acc*/);
+			r_temp = POP32();
+			if (r_temp.segment && s->r_acc.segment) {
+				// Signed pointer comparison. We do unsigned comparison instead, as that is probably what was intended.
+				// FIXME: Add a warning when pointers in different segments are compared
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
+			} else
+				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() > (int16)/*acc*/);
 			break;
 
 		case 0x10: // ge?
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((int16)POP() >= (int16)/*acc*/);
+			r_temp = POP32();
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() >= (int16)/*acc*/);
 			break;
 
 		case 0x11: // lt?
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((int16)POP() < (int16)/*acc*/);
+			r_temp = POP32();
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() < (int16)/*acc*/);
 			break;
 
 		case 0x12: // le?
 			s->r_prev = s->r_acc;
-			s->r_acc = ACC_ARITHMETIC_L((int16)POP() <= (int16)/*acc*/);
+			r_temp = POP32();
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() <= (int16)/*acc*/);
 			break;
 
 		case 0x13: // ugt?
