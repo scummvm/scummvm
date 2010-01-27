@@ -669,7 +669,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 #endif
 			stream = Audio::makeRawMemoryStream(sound + heOffset, size - heOffset, rate, flags);
 		} else {
-			stream = Audio::makeRawMemoryStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags);
+			stream = Audio::makeRawMemoryStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
 		}
 		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
