@@ -471,6 +471,8 @@ reg_t kList(EngineState *s, int argc, reg_t *argv);
 
 #endif
 
+//@}
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_KERNEL_H
