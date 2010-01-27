@@ -538,14 +538,14 @@ void Draw::activeWin(int16 id) {
 	if (_fascinWin[id].id == -1)
 		return;
 
-	warning("swap screen ?");
+	blitInvalidated();
 
-	forceBlit();
-	_vm->_video->dirtyRectsAll();
+//	_vm->_video->dirtyRectsAll();
+
 	for (int i = 0; i < 10; i++) {
 		t[i]  = -1;
 		t2[i] = -1;
-		// oldSrf[i] = 0;
+		oldSrf[i].reset();
 	}
 
 	for (int i = 0; i < 10; i++)
@@ -555,91 +555,95 @@ void Draw::activeWin(int16 id) {
 		}
 
 	if (found) {
-		for (int j = 10 - 1; j >= 0; j--)
-			if (t[j] != -1) {
+		for (int i = 9; i >= 0; i--) {
+			if (t[i] != -1) {
 				if (nextId != -1)
-					_vm->_video->drawSprite(*_spritesArray[_destSurface], *_fascinWin[nextId].savedSurface,
-											_fascinWin[t[j]].left, _fascinWin[t[j]].top,
-											_fascinWin[t[j]].left + _fascinWin[t[j]].width  - 1,
-											_fascinWin[t[j]].top  + _fascinWin[t[j]].height - 1,
-											_fascinWin[t[j]].left & 15, 0, 0);
-				t2[j] = nextId;
-				restoreWin(t[j]);
-				nextId = t[j];
+					_vm->_video->drawSprite(*_backSurface, *_fascinWin[nextId].savedSurface,
+											_fascinWin[t[i]].left, _fascinWin[t[i]].top,
+											_fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
+											_fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1,
+											_fascinWin[t[i]].left & 7, 0, 0);
+				t2[i] = nextId;
+				restoreWin(t[i]);
+				nextId = t[i];
 			}
+		}
 
-			oldId = nextId;
-			_vm->_video->drawSprite(*_spritesArray[_destSurface], *_fascinWin[nextId].savedSurface,
-									 _fascinWin[id].left, _fascinWin[id].top,
-									 _fascinWin[id].left + _fascinWin[id].width  - 1,
-									 _fascinWin[id].top  + _fascinWin[id].height - 1,
-									 _fascinWin[id].left & 15, 0, 0);
-			restoreWin(id);
-			nextId = id;
+		oldId = nextId;
+		_vm->_video->drawSprite(*_backSurface, *_fascinWin[nextId].savedSurface,
+								 _fascinWin[id].left, _fascinWin[id].top,
+								 _fascinWin[id].left + _fascinWin[id].width  - 1,
+								 _fascinWin[id].top  + _fascinWin[id].height - 1,
+								 _fascinWin[id].left & 7, 0, 0);
+		restoreWin(id);
+		nextId = id;
 
-			for (int j = 0; j < 10; j++)
-				if (t[j] != -1) {
-					_vm->_video->drawSprite(*_spritesArray[_destSurface], *_fascinWin[nextId].savedSurface,
-											_fascinWin[t[j]].left, _fascinWin[t[j]].top,
-											_fascinWin[t[j]].left + _fascinWin[t[j]].width  - 1,
-											_fascinWin[t[j]].top  + _fascinWin[t[j]].height - 1,
-											_fascinWin[t[j]].left & 15, 0, 0);
-					oldSrf[t[j]] = _fascinWin[nextId].savedSurface;
-					if (t2[j] != -1)
-						_vm->_video->drawSprite(*_fascinWin[t2[j]].savedSurface, *_spritesArray[_destSurface],
-												 _fascinWin[t[j]].left & 15, 0,
-												(_fascinWin[t[j]].left & 15) + _fascinWin[t[j]].width - 1,
-												 _fascinWin[t[j]].height - 1, _fascinWin[t[j]].left,
-												 _fascinWin[t[j]].top, 0);
-					else {
-						// Shift skipped as always set to zero (?)
-						_vm->_video->drawSprite(*_spritesArray[_destSurface], *_spritesArray[_destSurface],
-												 _fascinWin[t[j]].left, _fascinWin[t[j]].top,
-												 _fascinWin[t[j]].left + _fascinWin[t[j]].width  - 1,
-												 _fascinWin[t[j]].top  + _fascinWin[t[j]].height - 1,
-												 _fascinWin[t[j]].left, _fascinWin[t[j]].top, 0);
-					}
-					dirtiedRect(_destSurface, _fascinWin[t[j]].left, _fascinWin[t[j]].top,
-								_fascinWin[t[j]].left + _fascinWin[t[j]].width  - 1,
-								_fascinWin[t[j]].top  + _fascinWin[t[j]].height - 1);
-					nextId = t2[j];
+		for (int i = 0; i < 10; i++) {
+			if (t[i] != -1) {
+				_vm->_video->drawSprite(*_backSurface, *_fascinWin[nextId].savedSurface,
+										_fascinWin[t[i]].left, _fascinWin[t[i]].top,
+										_fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
+										_fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1,
+										_fascinWin[t[i]].left & 7, 0, 0);
+				oldSrf[t[i]] = _fascinWin[nextId].savedSurface;
+				if (t2[i] != -1)
+					_vm->_video->drawSprite(*_fascinWin[t2[i]].savedSurface, *_backSurface,
+											 _fascinWin[t[i]].left & 7, 0,
+											(_fascinWin[t[i]].left & 7) + _fascinWin[t[i]].width - 1,
+											 _fascinWin[t[i]].height - 1, _fascinWin[t[i]].left,
+											 _fascinWin[t[i]].top, 0);
+				else {
+					// Shift skipped as always set to zero (?)
+					_vm->_video->drawSprite(*_frontSurface, *_backSurface,
+											 _fascinWin[t[i]].left, _fascinWin[t[i]].top,
+											 _fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
+											 _fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1,
+											 _fascinWin[t[i]].left, _fascinWin[t[i]].top, 0);
 				}
+				invalidateRect(_fascinWin[t[i]].left, _fascinWin[t[i]].top,
+							_fascinWin[t[i]].left + _fascinWin[t[i]].width  - 1,
+							_fascinWin[t[i]].top  + _fascinWin[t[i]].height - 1);
+				nextId = t2[i];
+			}
+		}
 
-			tempSrf = _vm->_video->initSurfDesc(_vm->_global->_videoMode, _winMaxWidth + 15, _winMaxHeight, 0);
-			_vm->_video->drawSprite(*_spritesArray[_destSurface], *tempSrf,
-									 _fascinWin[id].left, _fascinWin[id].top,
-									 _fascinWin[id].left + _fascinWin[id].width  - 1,
-									 _fascinWin[id].top  + _fascinWin[id].height - 1,
-									 _fascinWin[id].left & 15, 0, 0);
-			_vm->_video->drawSprite(*_fascinWin[oldId].savedSurface, *_spritesArray[_destSurface],
-									 _fascinWin[id].left & 15, 0,
-									(_fascinWin[id].left & 15) + _fascinWin[id].width - 1,
-									 _fascinWin[id].height - 1,
-									 _fascinWin[id].left, _fascinWin[id].top, 0);
+		tempSrf = _vm->_video->initSurfDesc(_vm->_global->_videoMode, _winMaxWidth + 7, _winMaxHeight, 0);
+		_vm->_video->drawSprite(*_backSurface, *tempSrf,
+								 _fascinWin[id].left, _fascinWin[id].top,
+								 _fascinWin[id].left + _fascinWin[id].width  - 1,
+								 _fascinWin[id].top  + _fascinWin[id].height - 1,
+								 _fascinWin[id].left & 7, 0, 0);
+		_vm->_video->drawSprite(*_fascinWin[oldId].savedSurface, *_backSurface,
+								 _fascinWin[id].left & 7, 0,
+								(_fascinWin[id].left & 7) + _fascinWin[id].width - 1,
+								 _fascinWin[id].height - 1,
+								 _fascinWin[id].left, _fascinWin[id].top, 0);
 
-			_fascinWin[oldId].savedSurface.reset();
-			_fascinWin[oldId].savedSurface = tempSrf;
-			oldSrf[id] = _fascinWin[oldId].savedSurface;
+		_fascinWin[oldId].savedSurface.reset();
+		_fascinWin[oldId].savedSurface = tempSrf;
+		oldSrf[id] = _fascinWin[oldId].savedSurface;
 
-			// NOTE: Strangerke not sure concerning the use of _destSurface
-			dirtiedRect(_destSurface, _fascinWin[id].left, _fascinWin[id].top,
-						_fascinWin[id].left + _fascinWin[id].width  - 1,
-						_fascinWin[id].top  + _fascinWin[id].height - 1);
-			nextId = id;
+		invalidateRect(_fascinWin[id].left, _fascinWin[id].top,
+					_fascinWin[id].left + _fascinWin[id].width  - 1,
+					_fascinWin[id].top  + _fascinWin[id].height - 1);
+		nextId = id;
 
-			for (int j = 0; j < 10; j++)
-				if (oldSrf[j])
-					_fascinWin[j].savedSurface = oldSrf[j];
+		for (int j = 0; j < 10; j++) {
+			if (oldSrf[j]!=0)
+				_fascinWin[j].savedSurface = oldSrf[j];
+		}
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++) {
 		if ((i != id) && (_fascinWin[i].id > _fascinWin[id].id))
 			_fascinWin[i].id--;
+	}
 
 	_fascinWin[id].id = _winCount - 1;
 }
 
 bool Draw::winOverlap(int16 idWin1, int16 idWin2) {
+	warning("winOverlap %d %d", idWin1, idWin2);
 	if ((_fascinWin[idWin1].left + _fascinWin[idWin1].width  <= _fascinWin[idWin2].left) ||
 		(_fascinWin[idWin2].left + _fascinWin[idWin2].width  <= _fascinWin[idWin1].left) ||
 		(_fascinWin[idWin1].top  + _fascinWin[idWin1].height <= _fascinWin[idWin2].top ) ||
@@ -670,7 +674,7 @@ int16 Draw::openWin(int16 id) {
 	_fascinWin[id].top    = VAR((_winVarArrayTop    / 4) + id);
 	_fascinWin[id].width  = VAR((_winVarArrayWidth  / 4) + id);
 	_fascinWin[id].height = VAR((_winVarArrayHeight / 4) + id);
-	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, _winMaxWidth + 15, _winMaxHeight, 0);
+	_fascinWin[id].savedSurface = _vm->_video->initSurfDesc(_vm->_global->_videoMode, _winMaxWidth + 7, _winMaxHeight, 0);
 
 	warning("Draw::openWin id %d- left %d top %d l %d h%d", id, _fascinWin[id].left, _fascinWin[id].top, _fascinWin[id].width, _fascinWin[id].height);
 
@@ -682,25 +686,25 @@ int16 Draw::openWin(int16 id) {
 
 void Draw::restoreWin(int16 i) {
 	warning("restoreWin");
-	_vm->_video->drawSprite(*_fascinWin[i].savedSurface, *_spritesArray[_destSurface],
-							 _fascinWin[i].left & 15, 0,
-							(_fascinWin[i].left & 15) + _fascinWin[i].width - 1, _fascinWin[i].height - 1,
+	_vm->_video->drawSprite(*_fascinWin[i].savedSurface, *_backSurface,
+							 _fascinWin[i].left & 7, 0,
+							(_fascinWin[i].left & 7) + _fascinWin[i].width - 1, _fascinWin[i].height - 1,
 							 _fascinWin[i].left, _fascinWin[i].top, 0);
-	dirtiedRect(_fascinWin[i].savedSurface, _fascinWin[i].left, _fascinWin[i].top,
+	invalidateRect(_fascinWin[i].left, _fascinWin[i].top,
 				_fascinWin[i].left + _fascinWin[i].width  - 1,
 				_fascinWin[i].top  + _fascinWin[i].height - 1);
 }
 
 void Draw::saveWin(int16 id) {
 	warning("saveWin");
-	_vm->_video->drawSprite(*_spritesArray[_destSurface], *_fascinWin[id].savedSurface,
+	_vm->_video->drawSprite(*_backSurface, *_fascinWin[id].savedSurface, 
 							_fascinWin[id].left,  _fascinWin[id].top,
 							_fascinWin[id].left + _fascinWin[id].width  - 1,
 							_fascinWin[id].top  + _fascinWin[id].height - 1,
-							_fascinWin[id].left & 15, 0, 0);
-	dirtiedRect(_destSurface, _fascinWin[id].left, 0,
-				_fascinWin[id].left + _fascinWin[id].width  - 1,
-				_fascinWin[id].top  + _fascinWin[id].height - 1);
+							_fascinWin[id].left & 7, 0, 0);
+//	dirtiedRect(_destSurface, _fascinWin[id].left, 0,
+//				_fascinWin[id].left + _fascinWin[id].width  - 1,
+//				_fascinWin[id].top  + _fascinWin[id].height - 1);
 }
 
 void Draw::winMove(int16 id) {
@@ -718,31 +722,37 @@ void Draw::winMove(int16 id) {
 	saveWin(id);
 
 	// Shift skipped as always set to zero (?)
-	_vm->_video->drawSprite(*_frontSurface, *_spritesArray[_destSurface],
+	_vm->_video->drawSprite(*_frontSurface, *_backSurface,
 							oldLeft, oldTop,
 							oldLeft + _fascinWin[id].width  - 1,
 							oldTop  + _fascinWin[id].height - 1,
 							_fascinWin[id].left, _fascinWin[id].top, 0);
-	dirtiedRect(_frontSurface, _fascinWin[id].left, _fascinWin[id].top,
-				_fascinWin[id].left + _fascinWin[id].width  - 1,
-				_fascinWin[id].top  + _fascinWin[id].height - 1);
+	invalidateRect(_fascinWin[id].left, _fascinWin[id].top,
+				   _fascinWin[id].left + _fascinWin[id].width  - 1,
+				   _fascinWin[id].top  + _fascinWin[id].height - 1);
 }
 
 void Draw::winTrace(int16 left, int16 top, int16 width, int16 height) {
-	// TODO: Implement correct the trace of the Window. In short,
+	// TODO: Implement proper behavior for the trace of the Window. In short,
 	//  - drawline currently use the wrong surface, to be fixed
-	//  - dirtiedRect should be put after the 4 drawlines when the surface is fixed
-	//  - drawline should be replaced by a drawline with palette inversion
+	//  - dirtiedRect should be put after the 4 drawlines when the surface is fixed <- Not in 256 col version
+	//  - drawline should be replaced by a drawline with palette inversion 
+	//  - Shift skipped as always set to zero (?)
 
 	int16 right, bottom;
 
 	right  = left + width  - 1;
 	bottom = top  + height - 1;
 
-	_vm->_video->drawLine(*_backSurface, left,  top,    right, top,    0);
-	_vm->_video->drawLine(*_backSurface, left,  top,    left,  bottom, 0);
-	_vm->_video->drawLine(*_backSurface, left,  bottom, right, bottom, 0);
-	_vm->_video->drawLine(*_backSurface, right, top,    right, bottom, 0);
+// To be fixed : either wrong surface, r anything else, but crappy look.
+//	_vm->_video->drawLine(*_frontSurface, left,  top,    right, top,    0);
+//	_vm->_video->drawLine(*_frontSurface, left,  top,    left,  bottom, 0);
+//	_vm->_video->drawLine(*_frontSurface, left,  bottom, right, bottom, 0);
+//	_vm->_video->drawLine(*_frontSurface, right, top,    right, bottom, 0);
+
+// Not in 256 col version
+	_vm->_video->dirtyRectsAll();
+
 }
 
 void Draw::handleWinBorder(int16 id) {
@@ -750,8 +760,7 @@ void Draw::handleWinBorder(int16 id) {
 	int16 maxX = 320;
 	int16 minY = 0;
 	int16 maxY = 200;
-
-	warning("handleWinBorder");
+	warning("handleWinBorder %d", id);
 
 	if (VAR((_winVarArrayStatus / 4) + id) & 8)
 		minX = (int16)(VAR((_winVarArrayLimitsX / 4) + id) >> 16L);
@@ -775,6 +784,7 @@ void Draw::handleWinBorder(int16 id) {
 	do {
 		// TODO: Usage of checkKeys to be confirmed. A simple refresh of the mouse buttons is required
 		_vm->_game->checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 1);
+//		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
 		if (_vm->_global->_inter_mouseX != _cursorX || _vm->_global->_inter_mouseY != _cursorY) {
 			if (_vm->_global->_inter_mouseX < minX) {
@@ -806,9 +816,7 @@ void Draw::handleWinBorder(int16 id) {
 			_cursorX = _vm->_global->_inter_mouseX;
 			_cursorY = _vm->_global->_inter_mouseY;
 		}
-
 	} while (_vm->_game->_mouseButtons);
-
 	winTrace(_cursorX, _cursorY, _fascinWin[id].width, _fascinWin[id].height);
 	_cursorX = _vm->_global->_inter_mouseX;
 	_cursorY = _vm->_global->_inter_mouseY;
@@ -822,8 +830,8 @@ int16 Draw::handleCurWin() {
 	if ((_vm->_game->_mouseButtons != 1) || ((_vm->_draw->_renderFlags & 128) == 0))
 		return 0;
 
-	for (int i = 0; i < 10; i++)
-		if (_fascinWin[i].id != -1)
+	for (int i = 0; i < 10; i++) 
+		if (_fascinWin[i].id != -1) {
 			if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left) &&
 			    (_vm->_global->_inter_mouseX <  _fascinWin[i].left + _fascinWin[i].width) &&
 			    (_vm->_global->_inter_mouseY >= _fascinWin[i].top) &&
@@ -850,7 +858,7 @@ int16 Draw::handleCurWin() {
 						blitCursor();
 						handleWinBorder(i);
 						winMove(i);
-						_vm->_global->_inter_mouseX = _fascinWin[i].left + _fascinWin[i].width - 12 + 1;
+						_vm->_global->_inter_mouseX = _fascinWin[i].left + _fascinWin[i].width - 11;
 						_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 						return -i;
 					}
@@ -863,8 +871,9 @@ int16 Draw::handleCurWin() {
 						matchNum = i;
 					}
 			}
-
+		}
 	if (bestMatch != -1) {
+		warning("handleCurWin - activeWin %d", matchNum);
 		blitCursor();
 		activeWin(matchNum);
 	}
@@ -876,6 +885,7 @@ void Draw::winDecomp(int16 x, int16 y, SurfaceDescPtr bmp) {
 	// TODO: Implementation to be confirmed (used cut and paste from another part of the code)
 	Resource *resource;
 
+	warning("winDecomp");
 	resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
 	                                               &_spriteRight, &_spriteBottom);
 
@@ -899,11 +909,12 @@ void Draw::winDraw(int16 fct) {
 	int16 width;
 	int16 height;
 
-	bool found = false;
-	int len;
-	Resource *resource;
-	int table[10];
-	SurfaceDescPtr tempSrf;
+ warning("winDraw %d", fct);
+ bool found = false;
+ int len;
+ Resource *resource;
+ int table[10];
+ SurfaceDescPtr tempSrf;
 
 	if (_destSurface == 21) {
 
@@ -973,8 +984,11 @@ void Draw::winDraw(int16 fct) {
 		resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
 				&_spriteRight, &_spriteBottom);
 
-		if (!resource)
+		if (!resource) {
+			width  = 0;
+			height = 0;
 			break;
+		}
 
 		_vm->_video->drawPackedSprite(resource->getData(),
 				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
@@ -1005,7 +1019,9 @@ void Draw::winDraw(int16 fct) {
 		break;
 
 	default:
-		warning("Unexpected fct value");
+		width  = 0;
+		height = 0;
+		warning("Unexpected fct value %d", fct);
 		break;
 	}
 

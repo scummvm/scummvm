@@ -435,7 +435,6 @@ void Inter_v1::o1_initMult() {
 	animDataVar = _vm->_game->_script->readVarIndex();
 
 	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
-
 		warning("Initializing new objects without having "
 				"cleaned up the old ones at first");
 
