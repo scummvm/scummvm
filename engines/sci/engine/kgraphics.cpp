@@ -945,6 +945,13 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 			priority = 15;
 	}
 
+	if (s->_gameId == "laurabow2") {
+		// WORKAROUND
+		// see the one above
+		if ((viewId == 995) && (priority == 0))
+			priority = 15;
+	}
+
 	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
