@@ -294,7 +294,9 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 bool FlacInputStream::seek(const Timestamp &where) {
 	_sampleCache.bufFill = 0;
 	_sampleCache.bufReadPos = NULL;
-	return seekAbsolute((FLAC__uint64)convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames());
+	// FLAC uses the sample pair number, thus we always use "false" for the isStereo parameter
+	// of the convertTimeToStreamPos helper.
+	return seekAbsolute((FLAC__uint64)convertTimeToStreamPos(where, getRate(), false).totalNumberOfFrames());
 }
 
 int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
