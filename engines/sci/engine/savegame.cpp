@@ -688,7 +688,7 @@ static void load_script(EngineState *s, Script *scr) {
 	Resource *script = s->resMan->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
 	assert(script != 0);
 
-	assert(scr->_bufSize <= script->size);
+	assert(scr->_bufSize >= script->size);
 	memcpy(scr->_buf, script->data, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
