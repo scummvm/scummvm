@@ -19,7 +19,6 @@ MODULE_OBJS := \
 	decoders/iff_sound.o \
 	decoders/mp3.o \
 	decoders/raw.o \
-	decoders/shorten.o \
 	decoders/vag.o \
 	decoders/voc.o \
 	decoders/vorbis.o \

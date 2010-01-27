@@ -37,12 +37,12 @@
 #include "sound/audiostream.h"
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/aiff.h"
-#ifdef ENABLE_SAGA2
-#include "sound/decoders/shorten.h"
-#endif
 #include "sound/decoders/raw.h"
 #include "sound/decoders/voc.h"
 #include "sound/decoders/wave.h"
+#ifdef ENABLE_SAGA2
+#include "saga/shorten.h"
+#endif
 
 namespace Saga {
 
@@ -323,7 +323,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			result = Audio::loadAIFFFromStream(readS, size, rate, buffer.flags);
 #ifdef ENABLE_SAGA2
 		} else if (resourceType == kSoundShorten) {
-			result = Audio::loadShortenFromStream(readS, size, rate, buffer.flags);
+			result = loadShortenFromStream(readS, size, rate, buffer.flags);
 #endif
 		} else if (resourceType == kSoundVOC) {
 			data = Audio::loadVOCFromStream(readS, size, rate);

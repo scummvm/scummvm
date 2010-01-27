@@ -25,11 +25,7 @@
 
 // The code in this file is currently only used in SAGA2.
 // So when it is disabled, we will skip compiling it.
-// We also enable this code for ScummVM builds including support
-// for dynamic engine plugins.
-// If you plan to use this code in another engine, you will have
-// to add the proper define check here.
-#if !(defined(ENABLE_SAGA2) || defined(DYNAMIC_MODULES))
+#if !(defined(ENABLE_SAGA2))
 
 #else
 
@@ -37,12 +33,11 @@
 #define SOUND_SHORTEN_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
-namespace Common { class ReadStream; }
+#include "sound/audiostream.h"
 
-namespace Audio {
-
-class AudioStream;
+namespace Saga {
 
 /**
  * Try to load a Shorten file from the given stream. Returns true if
@@ -58,7 +53,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
  *
  * This function uses loadShortenFromStream() internally.
  */
-AudioStream *makeShortenStream(Common::ReadStream &stream);
+Audio::AudioStream *makeShortenStream(Common::ReadStream &stream);
 
 } // End of namespace Audio
 

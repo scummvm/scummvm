@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/decoders/shorten.h"
+#include "saga/shorten.h"
 
 #ifdef SOUND_SHORTEN_H
 
@@ -34,13 +34,11 @@
 
 #include "common/endian.h"
 #include "common/util.h"
-#include "common/stream.h"
 
-#include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 
-namespace Audio {
+namespace Saga {
 
 #define MASKTABSIZE 33
 #define MAX_SUPPORTED_VERSION 3
@@ -515,7 +513,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 	return unpackedBuffer;
 }
 
-AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
+Audio::AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
 	int size, rate;
 	byte *data, flags;
 	data = loadShortenFromStream(stream, size, rate, flags);
@@ -524,7 +522,7 @@ AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
 		return 0;
 
 	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
-	return makeRawMemoryStream(data, size, rate, flags);
+	return Audio::makeRawMemoryStream(data, size, rate, flags);
 }
 
 } // End of namespace Audio
