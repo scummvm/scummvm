@@ -1030,7 +1030,11 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 1)
 		return NULL_REG;
 
-	s->_gui->hideCursor();
+	// Hide the cursor if it's showing and then show it again if it was
+	// previously visible.
+	bool reshowCursor = s->_gui->isCursorVisible();
+	if (reshowCursor)
+		s->_gui->hideCursor();
 
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
@@ -1072,7 +1076,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (playedVideo)
 		s->_gui->syncWithFramebuffer();
 
-	s->_gui->showCursor();
+	if (reshowCursor)
+		s->_gui->showCursor();
 
 	return s->r_acc;
 }

@@ -788,6 +788,10 @@ void SciGui::showCursor() {
 	_cursor->show();
 }
 
+bool SciGui::isCursorVisible() {
+	return _cursor->isVisible();
+}
+
 void SciGui::setCursorShape(GuiResourceId cursorId) {
 	_cursor->setShape(cursorId);
 }
