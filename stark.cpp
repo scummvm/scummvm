@@ -25,7 +25,7 @@
 
 #include "engines/stark/stark.h"
 #include "engines/stark/archive.h"
-#include "engines/stark/xmg.h"
+#include "engines/stark/debug.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -33,14 +33,20 @@
 
 namespace Stark {
 
-StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _gfx(NULL) {
+StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc), _gfx(NULL), _scene(NULL) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+
+	// Add the available debug channels
+	Common::addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
+	Common::addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
+	Common::addDebugChannel(kDebugUnknown, "Unknown", "Debug unknown values on the data");
 }
 
 StarkEngine::~StarkEngine() {
+	delete _scene;
 }
 
 Common::Error StarkEngine::run() {
@@ -56,6 +62,9 @@ Common::Error StarkEngine::run() {
 }
 
 void StarkEngine::mainLoop() {
+	// Load the initial scene
+	_scene = new Scene(_gfx);
+
 	while (!shouldQuit()) {
 		// Process events
 		Common::Event e;
@@ -84,54 +93,12 @@ void StarkEngine::mainLoop() {
 	}
 }
 
-// HACK
-void renderXMG(GfxDriver *gfx, const Common::String &name, int x, int y) {
-	// Open the scene archive
-	XARCArchive xarc;
-	if (!xarc.open("45/00/00.xarc"))
-		warning("couldn't open archive");
-
-	// Open the resource
-	Common::SeekableReadStream *res = xarc.createReadStreamForMember(name);
-
-	// Decode the XMG
-	Graphics::Surface *surf;
-	surf = XMGDecoder::decode(res);
-	delete res;
-
-	// Draw the surface
-	gfx->drawSurface(surf, Common::Point(x, y));
-
-	// Free the surface
-	surf->free();
-	delete surf;
-}
-
 void StarkEngine::updateDisplayScene() {
+	// Clear the screen
 	_gfx->clearScreen();
 
-	// Draw bg
-	renderXMG(_gfx, "house_layercenter.xmg", 0, 0);
-	//renderXMG(_gfx, "vista-scapehaze-more-fog3-final.xmg", 0, 0);
-
-	// Draw other things
-	renderXMG(_gfx, "house_prop01_pillow.xmg", 384, 267);
-	renderXMG(_gfx, "house_prop02_pillow.xmg", 324, 299);
-	renderXMG(_gfx, "house_prop03_pillow.xmg", 141, 312);
-	renderXMG(_gfx, "house_prop4_armrest.xmg", 171, 184);
-	renderXMG(_gfx, "house_prop5_chair.xmg", 170, 164);
-	renderXMG(_gfx, "house_prop6_wall.xmg", 0, 0);
-	renderXMG(_gfx, "house_prop8_pillar.xmg", 534, 0);
-
-	// setup cam
-
-	//_gfx->set3DMode();
-
-	// setup lights
-
-	// draw actors
-
-	// draw overlay
+	// Render the current scene
+	_scene->render();
 
 	// Swap buffers
 	_gfx->flipBuffer();

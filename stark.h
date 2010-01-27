@@ -29,7 +29,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
-#include "engines/stark/gfx/driver.h"
+#include "engines/stark/scene.h"
 
 namespace Stark {
 
@@ -60,6 +60,8 @@ private:
 	GfxDriver *_gfx;
 
 	const ADGameDescription *_gameDescription;
+
+	Scene *_scene;
 };
 
 } // End of namespace Stark

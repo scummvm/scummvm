@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/tinygl.o \
+	scene.o \
 	sound.o \
 	stark.o \
 	xmg.o \

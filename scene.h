@@ -23,30 +23,25 @@
  *
  */
 
-#ifndef STARK_XMG_H
-#define STARK_XMG_H
+#ifndef STARK_SCENE_H
+#define STARK_SCENE_H
 
 #include "engines/stark/sceneelement.h"
 
-#include "common/archive.h"
-
 namespace Stark {
 
-class SceneElementXMG : public SceneElement {
-private:
-	SceneElementXMG();
-
+class Scene {
 public:
-	~SceneElementXMG();
-	static SceneElementXMG *load(const Common::Archive *archive, const Common::String &name, uint16 x, uint16 y);
+	Scene(GfxDriver *gfx);
+	~Scene();
 
-	void render(GfxDriver *gfx);
+	void render();
 
 private:
-	Graphics::Surface *_surface;
-	uint16 _x, _y;
+	GfxDriver *_gfx;
+	Common::Array<SceneElement *> _elements;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_XMG_H
+#endif // STARK_SCENE_H
