@@ -1742,6 +1742,7 @@ void ResourceManager::detectSciVersion() {
 
 	// Set view type
 	if (viewCompression == kCompDCL
+		|| _volVersion == kResVersionSci11 // pq4demo
 #ifdef ENABLE_SCI32
 		|| viewCompression == kCompSTACpack
 		|| _volVersion == kResVersionSci32 // kq7
