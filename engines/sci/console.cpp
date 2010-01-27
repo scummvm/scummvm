@@ -103,7 +103,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
-	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
+	DCmd_Register("quit",				WRAP_METHOD(Console, cmdQuit));
 	DCmd_Register("list_saves",			WRAP_METHOD(Console, cmdListSaves));
 	// Screen
 	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
@@ -2629,7 +2629,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdExit(int argc, const char **argv) {
+bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("%s game - exit gracefully\n", argv[0]);
 		DebugPrintf("%s now - exit ungracefully\n", argv[0]);
