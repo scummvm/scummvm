@@ -854,7 +854,7 @@ void run_vm(EngineState *s, int restoring) {
 				// FIXME: Add a warning when pointers in different segments are compared
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			} else
-				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() > (int16)/*acc*/);
+				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) > (int16)/*acc*/);
 			break;
 
 		case 0x10: // ge?
@@ -863,7 +863,7 @@ void run_vm(EngineState *s, int restoring) {
 			if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
 			else
-				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() >= (int16)/*acc*/);
+				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) >= (int16)/*acc*/);
 			break;
 
 		case 0x11: // lt?
@@ -872,7 +872,7 @@ void run_vm(EngineState *s, int restoring) {
 			if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			else
-				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() < (int16)/*acc*/);
+				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) < (int16)/*acc*/);
 			break;
 
 		case 0x12: // le?
@@ -881,7 +881,7 @@ void run_vm(EngineState *s, int restoring) {
 			if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
 			else
-				s->r_acc = ACC_ARITHMETIC_L(r_temp.toSint16() <= (int16)/*acc*/);
+				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) <= (int16)/*acc*/);
 			break;
 
 		case 0x13: // ugt?
