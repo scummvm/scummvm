@@ -87,8 +87,10 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
+		// When using a pointer in number arithmetic, we substitute a large value as
+		// some scripts rely on this (cf. Hoyle hack in kAbs).
 		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		return 0;
+		return 0x3e9;
 	}
 
 	return reg.offset;
@@ -97,7 +99,7 @@ static int validate_arithmetic(reg_t reg) {
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		return 0;
+		return 0x3e9;
 	}
 
 	if (reg.offset & 0x8000)
@@ -890,25 +892,37 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x13: // ugt?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) > /*acc*/);
 			break;
 
 		case 0x14: // uge?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) >= /*acc*/);
 			break;
 
 		case 0x15: // ult?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) < /*acc*/);
 			break;
 
 		case 0x16: // ule?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
+			if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) <= /*acc*/);
 			break;
 
 		case 0x17: // bt
