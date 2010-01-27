@@ -168,7 +168,6 @@ void View::initData(GuiResourceId resourceId) {
 		break;
 
 	case kViewVga11: // View-format SCI1.1
-		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 		// HeaderSize:WORD LoopCount:BYTE Unknown:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
 		headerSize = READ_LE_UINT16(_resourceData + 0);
 		_loopCount = _resourceData[2];
