@@ -996,8 +996,13 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	patch_data_offset = file.readByte();
 
 	if (patchtype != restype) {
-		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
-		return;
+		// audio and audio36 resources got the same extension, so don't try and load them twice
+		if (patchtype == kResourceTypeAudio && restype == kResourceTypeAudio36) {
+			return;	// don't throw a warning, the relevant audio resource has already been patched
+		} else {
+			debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
+			return;
+		}
 	}
 
 	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
