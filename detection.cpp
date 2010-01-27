@@ -35,10 +35,12 @@ static const PlainGameDescriptor starkGames[] = {
 };
 
 static const ADGameDescription gameDescriptions[] = {
+	// Mobygames lists taiwanese, russian and polish titles (not listed here yet)
+
 	// The Longest Journey
 	// English 4CD
 	{
-		"tlj", "",
+		"tlj", "4 CD",
 		AD_ENTRY1("x.xarc", "a0559457126caadab0cadac02d35f26f"),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -58,10 +60,13 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
-	// English Demo
+	// English Old Demo
 	{
-		"tlj", "",
-		AD_ENTRY1("x.xarc", "97abc1bb9239dee4c208e533f3c97e1c"),
+		"tlj", "Old Demo", {
+			{"x.xarc", 0, "97abc1bb9239dee4c208e533f3c97e1c", 98},
+			{"chapters.ini", 0, "5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485},
+			{NULL, 0, NULL, 0}
+		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO,
@@ -69,10 +74,10 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
-	// English DVD Demo
+	// English v1.61 Demo
 	{
-		"tlj", "DVD",
-		AD_ENTRY1("x.xarc", "61093bcd499b386ed5c0345c52f48909"),
+		"tlj", "v1.61 Demo",
+		AD_ENTRY1s("x.xarc", "61093bcd499b386ed5c0345c52f48909", 98),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | GF_DVD,
@@ -80,13 +85,58 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// French Demo
+	{
+		"tlj", "Demo", {
+			{"x.xarc", 0, "97abc1bb9239dee4c208e533f3c97e1c", 98},
+			{"chapters.ini", 0, "e54f6370dca06496069790840409cf95", 506},
+			{NULL, 0, NULL, 0}
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		Common::GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Norwegian Demo
+	{
+		"tlj", "Demo", {
+			{"x.xarc", 0, "97abc1bb9239dee4c208e533f3c97e1c", 98},
+			{"chapters.ini", 0, "f358f604abd1aa1476ed05d6d271ac70", 473},
+			{NULL, 0, NULL, 0}
+		},
+		Common::NB_NOR,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		Common::GUIO_NONE
+	},
+
+	// The Longest Journey
 	// Spanish 4CD
 	{
-		"tlj", "",
-		AD_ENTRY1s("x.xarc", "a0559457126caadab0cadac02d35f26f", 3032),
+		"tlj", "4 CD", {
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "3640df6d536b186bff228337284d9631", 525},
+			{NULL, 0, NULL, 0}
+		},
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Swedish Demo
+	{
+		"tlj", "Demo", {
+			{"x.xarc", 0, "97abc1bb9239dee4c208e533f3c97e1c", 98},
+			{"chapters.ini", 0, "f6a2007300209492b7b90b4c0467832d", 462},
+			{NULL, 0, NULL, 0}
+		},
+		Common::SE_SWE,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
 		Common::GUIO_NONE
 	},
 
