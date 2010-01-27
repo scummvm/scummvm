@@ -23,33 +23,15 @@
  *
  */
 
-#ifndef STARK_ARCHIVE_H
-#define STARK_ARCHIVE_H
+#ifndef STARK_DEBUG_H
+#define STARK_DEBUG_H
 
-#include "common/archive.h"
+#include "common/debug.h"
 
-namespace Stark {
-
-class XARCMember;
-
-class XARCArchive : public Common::Archive {
-public:
-	bool open(const Common::String &filename);
-
-	// Archive API
-	bool hasFile(const Common::String &name);
-	int listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-
-	Common::SeekableReadStream *createReadStreamForMember(const XARCMember *member) const;
-
-private:
-	Common::String _filename;
-	Common::ArchiveMemberList _members;
+enum {
+	kDebugArchive = 1 << 0,
+	kDebugXMG = 1 << 1,
+	kDebugUnknown = 1 << 2
 };
 
-} // End of namespace Stark
-
-#endif // STARK_ARCHIVE_H
+#endif // STARK_DEBUG_H

@@ -24,6 +24,7 @@
  */
 
 #include "engines/stark/xmg.h"
+#include "engines/stark/debug.h"
 
 namespace Stark {
 
@@ -48,6 +49,9 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	// Read the image size
 	uint32 width = stream->readUint32LE();
 	uint32 height = stream->readUint32LE();
+	debugC(10, kDebugXMG, "Stark::XMG: Version=%d, TransparencyColor=0x%08x, size=%dx%d", version, _transColor, width, height);
+
+	// Read the scan length
 	_scanLen = stream->readUint32LE();
 	if (_scanLen != 3 * width) {
 		warning("Stark::XMG: The scan length (%d) doesn't match the width bytes (%d)", _scanLen, 3 * width);
@@ -57,9 +61,9 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 
 	// Unknown
 	uint32 unknown2 = stream->readUint32LE();
-	debug("Stark::XMG: unknown2 = %08x = %d", unknown2, unknown2);
+	debugC(kDebugUnknown, "Stark::XMG: unknown2 = %08x = %d", unknown2, unknown2);
 	uint32 unknown3 = stream->readUint32LE();
-	debug("Stark::XMG: unknown3 = %08x = %d", unknown3, unknown3);
+	debugC(kDebugUnknown, "Stark::XMG: unknown3 = %08x = %d", unknown3, unknown3);
 
 	// Create the destination surface
 	Graphics::Surface *surface = new Graphics::Surface();

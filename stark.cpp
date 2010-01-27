@@ -24,6 +24,7 @@
  */
 
 #include "engines/stark/stark.h"
+#include "engines/stark/archive.h"
 #include "engines/stark/xmg.h"
 
 #include "common/config-manager.h"
@@ -40,7 +41,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 }
 
 StarkEngine::~StarkEngine() {
-	_xArchive.close();
 }
 
 Common::Error StarkEngine::run() {
@@ -84,18 +84,27 @@ void StarkEngine::mainLoop() {
 	}
 }
 
+// HACK
 void renderXMG(GfxDriver *gfx, const Common::String &name, int x, int y) {
-	Common::File f;
-	f.open(name);
+	// Open the scene archive
+	XARCArchive xarc;
+	if (!xarc.open("45/00/00.xarc"))
+		warning("couldn't open archive");
 
+	// Open the resource
+	Common::SeekableReadStream *res = xarc.createReadStreamForMember(name);
+
+	// Decode the XMG
 	Graphics::Surface *surf;
-	surf = XMGDecoder::decode(&f);
+	surf = XMGDecoder::decode(res);
+	delete res;
 
+	// Draw the surface
 	gfx->drawSurface(surf, Common::Point(x, y));
 
+	// Free the surface
 	surf->free();
 	delete surf;
-	f.close();
 }
 
 void StarkEngine::updateDisplayScene() {

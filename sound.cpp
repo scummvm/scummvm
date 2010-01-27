@@ -29,38 +29,47 @@
 
 namespace Stark {
 
+inline static Common::String readString(Common::SeekableReadStream *stream) {
+	Common::String ret = "";
+	byte ch;
+	while ((ch = stream->readByte()) != 0x20)
+		ret += ch;
+
+	return ret;
+}
+
 ISS::ISS(Common::SeekableReadStream *str) {
 	Common::String codec = "";
 	uint16 blockSize, channels, freq;
 	uint32 size;
 
-	codec = XARCArchive::readString(str);
+	codec = readString(str);
 
 	if (codec.equals("IMA_ADPCM_Sound")) {
 
-		codec = XARCArchive::readString(str);
+		codec = readString(str);
 		blockSize = (uint16)strtol(codec.c_str(), 0, 10);
 
-		XARCArchive::readString(str);
+		readString(str);
 		// name ?
 
-		XARCArchive::readString(str);
+		readString(str);
 		// ?
 
-		codec = XARCArchive::readString(str);
+		codec = readString(str);
 		channels = (uint16)strtol(codec.c_str(), 0, 10) + 1;
 
-		XARCArchive::readString(str);
+		readString(str);
 		// ?
 
-		codec = XARCArchive::readString(str);
+		codec = readString(str);
 		freq = 44100 / (uint16)strtol(codec.c_str(), 0, 10);
 
-		XARCArchive::readString(str);
+		readString(str);
 
-		XARCArchive::readString(str);
+		readString(str);
 
-		codec = XARCArchive::readString(str);
+		codec = readString(str);
 		size = (uint32)strtol(codec.c_str(), 0, 10);
 
 		_stream = Stark::makeADPCMStream(str, true, size, Stark::kADPCMISS, freq, channels, blockSize);
