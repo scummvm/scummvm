@@ -286,6 +286,11 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 
 #else
 
+	// Check if a track with the same sound object is already playing
+	MusicEntry *oldSound = _music->getSlot(obj);
+	if (oldSound)
+		cmdDisposeSound(obj, value);
+
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resnum = number;
 	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
@@ -298,11 +303,6 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	newSound->prio = GET_SEL32V(_segMan, obj, pri) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_LATE)
 		newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, vol), 0, MUSIC_VOLUME_MAX);
-
-	// Check if a track with the same sound object is already playing
-	MusicEntry *oldSound = _music->getSlot(obj);
-	if (oldSound)
-		cmdDisposeSound(obj, value);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized

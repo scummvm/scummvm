@@ -170,15 +170,15 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
-	if (track) {
-		// If MIDI device is selected but there is no digital track in sound resource
-		// try to use adlib's digital sample if possible
-		if (_bMultiMidi && (track->digitalChannelNr == -1)) {
-			SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
-			if (digital)
-				track = digital;
-		}
+	// If MIDI device is selected but there is no digital track in sound resource
+	// try to use adlib's digital sample if possible
+	if (_bMultiMidi && (!track || track->digitalChannelNr == -1)) {
+		SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
+		if (digital)
+			track = digital;
+	}
 
+	if (track) {
 		// Play digital sample
 		if (track->digitalChannelNr != -1) {
 			byte *channelData = track->channels[track->digitalChannelNr].data;
