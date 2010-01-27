@@ -408,19 +408,19 @@ int ResourceManager::addAppropriateSources() {
 		if (mapFiles.empty() || files.empty() || mapFiles.size() != files.size())
 			return 0;
 
-		Common::ArchiveMemberList::const_iterator fileIterator = files.begin();
-		Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin();
-
-		while (fileIterator != files.end()) {
+		for (Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin(); mapIterator != mapFiles.end(); ++mapIterator) {
 			Common::String mapName = (*mapIterator)->getName();
-			Common::String resName = (*fileIterator)->getName();
+			int mapNumber = atoi(strrchr(mapName.c_str(), '.') + 1);
 
-			const char *dot = strrchr(mapName.c_str(), '.');
-			int number = atoi(dot + 1);
+			for (Common::ArchiveMemberList::const_iterator fileIterator = files.begin(); fileIterator != files.end(); ++fileIterator) {
+				Common::String resName = (*fileIterator)->getName();
+				int resNumber = atoi(strrchr(resName.c_str(), '.') + 1);
 
-			addSource(addExternalMap(mapName.c_str(), number), kSourceVolume, resName.c_str(), number);
-			++fileIterator;
-			++mapIterator;
+				if (mapNumber == resNumber) {
+					addSource(addExternalMap(mapName.c_str(), mapNumber), kSourceVolume, resName.c_str(), mapNumber);
+					break;
+				}
+			}
 		}
 	}
 #else
