@@ -40,7 +40,7 @@ struct Node;	// from segment.h
 struct List;	// from segment.h
 
 /**
- * Information about vocabulary resources in SCI:
+ * @defgroup VocabularyResources	Vocabulary resources in SCI
  *
  * vocab.999 / 999.voc (unneeded) contains names of the kernel functions which
  * are implemented by the interpreter. In Sierra SCI, they are used exclusively
@@ -88,7 +88,7 @@ struct List;	// from segment.h
  *                        (e.g. "onto" - "position")
  *
  */
-
+//@{
 
 //#define DEBUG_PARSER	// enable for parser debugging
 //#define DISABLE_VALIDATIONS	// enable to stop validation checks
