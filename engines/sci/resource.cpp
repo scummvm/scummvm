@@ -996,13 +996,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	patch_data_offset = file.readByte();
 
 	if (patchtype != restype) {
-		// audio and audio36 resources got the same extension, so don't try and load them twice
-		if (patchtype == kResourceTypeAudio && restype == kResourceTypeAudio36) {
-			return;	// don't throw a warning, the relevant audio resource has already been patched
-		} else {
-			debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
-			return;
-		}
+		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
 	}
 
 	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
@@ -1052,7 +1046,10 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
-	for (int i = kResourceTypeView; i < kResourceTypeInvalid; ++i) {
+	// Do not try and patch files for resource types greater or
+	// equal to audio36 (i.e. audio36, sync36, robot etc), as these won't work
+	// with this patch scheme
+	for (int i = kResourceTypeView; i < kResourceTypeAudio36; ++i) {
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
