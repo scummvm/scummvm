@@ -868,7 +868,7 @@ void GrimEngine::mainLoop() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any buttons, keys and joystick operations
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_mode != ENGINE_MODE_DRAW && (event.kbd.ascii == 'q')) {
+				if (_mode != ENGINE_MODE_DRAW && _mode != ENGINE_MODE_SMUSH && (event.kbd.ascii == 'q')) {
 					handleExit();
 					break;
 				} else {
