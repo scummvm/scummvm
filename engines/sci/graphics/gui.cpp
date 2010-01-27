@@ -275,7 +275,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	_text->Size(rect, text, -1, width);
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 	if (getSciVersion() >= SCI_VERSION_1_LATE) {
-		_gfx->Move(rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right, rect.bottom <= _screen->getHeight() ? 0 : _screen->getWidth() - rect.bottom);
+		_gfx->Move(rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right, rect.bottom <= _screen->getHeight() ? 0 : _screen->getHeight() - rect.bottom);
 		rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 	}
 
