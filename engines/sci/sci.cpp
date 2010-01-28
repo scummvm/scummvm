@@ -113,7 +113,17 @@ Common::Error SciEngine::run() {
 	}
 
 	// Scale the screen, if needed
-	bool upscaledHires = (!strcmp(getGameID(), "kq6")) && getPlatform() == Common::kPlatformWindows;
+	bool upscaledHires = false;
+
+	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able to provide that under DOS as well, but as
+	//  gk1/floppy does support upscaled hires scriptswise, but doesn't actually have the hires content we need to limit
+	//  it to platform windows.
+	if (getPlatform() == Common::kPlatformWindows) {
+		if (!strcmp(getGameID(), "kq6"))
+			upscaledHires = true;
+		if (!strcmp(getGameID(), "gk1"))
+			upscaledHires = true;
+	}
 
 	// Japanese versions of games use hi-res font on upscaled version of the game
 	if ((getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
