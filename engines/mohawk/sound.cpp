@@ -344,6 +344,8 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 	Cue_Chunk cue;
 	Data_Chunk data_chunk;
 
+	memset(&data_chunk, 0, sizeof(Data_Chunk));
+
 	if (stream->readUint32BE() == ID_MHWK) // MHWK tag again
 		debug(2, "Found Tag MHWK");
 	else
