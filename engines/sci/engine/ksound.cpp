@@ -106,10 +106,12 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 2) {
 			module = 65535;
 			number = argv[1].toUint16();
-		} else if (argc == 6) {
+		} else if (argc == 6 || argc == 8) {
 			module = argv[1].toUint16();
 			number = ((argv[2].toUint16() & 0xff) << 24) | ((argv[3].toUint16() & 0xff) << 16) |
 					 ((argv[4].toUint16() & 0xff) <<  8) | (argv[5].toUint16() & 0xff);
+			if (argc == 8)
+				warning("kDoAudio: Play called with SQ6 extra parameters");
 		} else {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 			return NULL_REG;
