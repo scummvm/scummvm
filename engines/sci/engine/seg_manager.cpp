@@ -1281,24 +1281,24 @@ SciString *SegManager::allocateString(reg_t *addr) {
 
 SciString *SegManager::lookupString(reg_t addr) {
 	if (_heap[addr.segment]->getType() != SEG_TYPE_STRING)
-		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+		error("lookupString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
 	StringTable *stringTable = (StringTable *)_heap[addr.segment];
 
 	if (!stringTable->isValidEntry(addr.offset))
-		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+		error("lookupString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
 	return &(stringTable->_table[addr.offset]);
 }
 
 void SegManager::freeString(reg_t addr) {
 	if (_heap[addr.segment]->getType() != SEG_TYPE_STRING)
-		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+		error("freeString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
 	StringTable *stringTable = (StringTable *)_heap[addr.segment];
 
 	if (!stringTable->isValidEntry(addr.offset))
-		error("Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
+		error("freeString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
 
 	stringTable->_table[addr.offset].destroy();
 	stringTable->freeEntry(addr.offset);
