@@ -113,11 +113,7 @@ Common::Error SciEngine::run() {
 	}
 
 	// Scale the screen, if needed
-	bool upscaledHires = (!strcmp(getGameID(), "kq6")
-#ifdef ENABLE_SCI32
-							|| getSciVersion() == SCI_VERSION_2
-#endif
-							) && getPlatform() == Common::kPlatformWindows;
+	bool upscaledHires = (!strcmp(getGameID(), "kq6")) && getPlatform() == Common::kPlatformWindows;
 
 	// Japanese versions of games use hi-res font on upscaled version of the game
 	if ((getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
