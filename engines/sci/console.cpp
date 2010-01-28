@@ -91,6 +91,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("parse",				WRAP_METHOD(Console, cmdParse));
 	DCmd_Register("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
 	// Resources
+	DCmd_Register("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
 	DCmd_Register("resource_size",		WRAP_METHOD(Console, cmdResourceSize));
@@ -298,6 +299,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" set_parse_nodes - Sets the contents of all parse nodes\n");
 	DebugPrintf("\n");
 	DebugPrintf("Resources:\n");
+	DebugPrintf(" diskdump - Dumps the specified resource to disk as a patch file\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
 	DebugPrintf(" resource_id - Identifies a resource number by splitting it up in resource type and resource number\n");
 	DebugPrintf(" resource_size - Shows the size of a resource\n");
@@ -563,6 +565,41 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdDiskDump(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Dumps the specified resource to disk as a patch file\n");
+		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
+		cmdResourceTypes(argc, argv);
+		return true;
+	}
+
+	int resNum = atoi(argv[2]);
+	ResourceType res = parseResourceType(argv[1]);
+
+	if (res == kResourceTypeInvalid)
+		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
+	else {
+		Resource *resource = _vm->getResourceManager()->findResource(ResourceId(res, resNum), 0);
+		if (resource) {
+			char outFileName[50];
+			sprintf(outFileName, "%s.%03d", getResourceTypeName(res), resNum);
+			Common::DumpFile *outFile = new Common::DumpFile();
+			outFile->open(outFileName);
+			outFile->writeByte(res);
+			outFile->writeByte(0);
+			outFile->write(resource->data, resource->size);
+			outFile->finalize();
+			outFile->close();
+			delete outFile;
+			DebugPrintf("Resource %s.%03d has been dumped to disk\n", argv[1], resNum);
+		} else {
+			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
+		}
+	}
+
+	return true;
+}
+
 bool Console::cmdHexDump(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Dumps the specified resource to standard output\n");
@@ -808,6 +845,12 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	// TODO: enable custom descriptions? force filename into a specific format?
 	if (gamestate_save(_vm->_gamestate, out, "debugging", version)) {
 		DebugPrintf("Saving the game state to '%s' failed\n", argv[1]);
+	} else {
+		out->finalize();
+		if (out->err()) {
+			warning("Writing the savegame failed.");
+		}
+		delete out;
 	}
 
 	return true;
