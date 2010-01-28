@@ -28,59 +28,89 @@
 
 namespace Sci {
 
-static int sane_nodep(EngineState *s, reg_t addr) {
-	int have_prev = 0;
+static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
+	bool havePrev = false;
 	reg_t prev = addr;
 
 	do {
-		Node *node = s->_segMan->lookupNode(addr);
+		Node *node = segMan->lookupNode(addr);
 
-		if (!node)
-			return 0;
+		if (!node) {
+			warning("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
+			return false;
+		}
 
-		if ((have_prev) && node->pred != prev)
-			return 0;
+		if (havePrev && node->pred != prev) {
+			warning("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
+					PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
+
+			node->pred = prev;	// fix the problem in the node
+
+			return false;
+		}
 
 		prev = addr;
 		addr = node->succ;
-		have_prev = 1;
+		havePrev = true;
 	} while (!addr.isNull());
 
-	return 1;
+	return true;
 }
 
-int sane_listp(EngineState *s, reg_t addr) {
-	List *l = s->_segMan->lookupList(addr);
-	int empties = 0;
+static void checkListPointer(SegManager *segMan, reg_t addr) {
+	List *l = segMan->lookupList(addr);
 
-	if (l->first.isNull())
-		++empties;
-	if (l->last.isNull())
-		++empties;
-
-	// Either none or both must be set
-	if (empties == 1)
-		return 0;
-
-	if (!empties) {
-		Node *node_a, *node_z;
-
-		node_a = s->_segMan->lookupNode(l->first);
-		node_z = s->_segMan->lookupNode(l->last);
-
-		if (!node_a || !node_z)
-			return 0;
-
-		if (!node_a->pred.isNull())
-			return 0;
-
-		if (!node_z->succ.isNull())
-			return 0;
-
-		return sane_nodep(s, l->first);
+	if (!l) {
+		warning("isSaneListPointer (list %04x:%04x): The requested list wasn't found",
+				PRINT_REG(addr));
+		return;
 	}
 
-	return 1; // Empty list is fine
+	if (l->first.isNull() && l->last.isNull()) {
+		// Empty list is fine
+	} else if (!l->first.isNull() && !l->last.isNull()) {
+		// Normal list
+		Node *node_a = segMan->lookupNode(l->first);
+		Node *node_z = segMan->lookupNode(l->last);
+
+		if (!node_a) {
+			warning("isSaneListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
+			return;
+		}
+
+		if (!node_z) {
+			warning("isSaneListPointer (list %04x:%04x): missing last node", PRINT_REG(addr));
+			return;
+		}
+
+		if (!node_a->pred.isNull()) {
+			warning("isSaneListPointer (list %04x:%04x): First node of the list points to a predecessor node",
+					PRINT_REG(addr));
+
+			node_a->pred = NULL_REG;	// fix the problem in the node
+
+			return;
+		}
+
+		if (!node_z->succ.isNull()) {
+			warning("isSaneListPointer (list %04x:%04x): Last node of the list points to a successor node",
+					PRINT_REG(addr));
+
+			node_z->succ = NULL_REG;	// fix the problem in the node
+
+			return;
+		}
+
+		isSaneNodePointer(segMan, l->first);
+	} else {
+		// Not sane list... it's missing pointers to the first or last element
+		if (l->first.isNull())
+			warning("isSaneListPointer (list %04x:%04x): missing pointer to first element",
+					PRINT_REG(addr));
+		if (l->last.isNull())
+			warning("isSaneListPointer (list %04x:%04x): missing pointer to last element",
+					PRINT_REG(addr));
+	}
 }
 
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
@@ -102,21 +132,27 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (!sane_listp(s, argv[0]))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
+	checkListPointer(s->_segMan, argv[0]);
 
-/*	if (!l->first.isNull()) {
+	if (!l->first.isNull()) {
 		reg_t n_addr = l->first;
 
 		while (!n_addr.isNull()) { // Free all nodes
 			Node *n = s->_segMan->lookupNode(n_addr);
-			s->_segMan->free_Node(n_addr);
 			n_addr = n->succ;
+
+			//s->_segMan->free_Node(n_addr);	// TODO
+
+			// Clear the node
+			n->key = NULL_REG;
+			n->pred = NULL_REG;
+			n->succ = NULL_REG;
+			n->value = NULL_REG;
 		}
 	}
 
-	s->_segMan->free_list(argv[0]);
-*/
+	//s->_segMan->free_list(argv[0]);	// TODO
+
 	return s->r_acc;
 }
 
@@ -147,34 +183,37 @@ reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
+
 	List *l = s->_segMan->lookupList(argv[0]);
 
-	if (l && !sane_listp(s, argv[0]))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
-
-	if (l)
+	if (l) {
+		checkListPointer(s->_segMan, argv[0]);
 		return l->first;
-	else
+	} else {
 		return NULL_REG;
+	}
 }
 
 reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
+	if (argv[0].isNull())
+		return NULL_REG;
+
 	List *l = s->_segMan->lookupList(argv[0]);
 
-	if (l && !sane_listp(s, argv[0]))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
-
-	if (l)
+	if (l) {
+		checkListPointer(s->_segMan, argv[0]);
 		return l->last;
-	else
+	} else {
 		return NULL_REG;
+	}
 }
 
 reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
-	List *l = s->_segMan->lookupList(argv[0]);
+	if (argv[0].isNull())
+		return NULL_REG;
 
-	if (!l || !sane_listp(s, argv[0]))
-		warning("List at %04x:%04x is invalid or not sane anymore", PRINT_REG(argv[0]));
+	List *l = s->_segMan->lookupList(argv[0]);
+	checkListPointer(s->_segMan, argv[0]);
 
 	return make_reg(0, ((l) ? l->first.isNull() : 0));
 }
@@ -188,8 +227,7 @@ void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
 		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
-	if (!l || !sane_listp(s, listbase))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(listbase));
+	checkListPointer(s->_segMan, listbase);
 
 	new_n->succ = l->first;
 	new_n->pred = NULL_REG;
@@ -212,8 +250,7 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
 		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
-	if (!l || !sane_listp(s, listbase))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(listbase));
+	checkListPointer(s->_segMan, listbase);
 
 	new_n->succ = NULL_REG;
 	new_n->pred = l->last;
@@ -229,30 +266,24 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 
 reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
-	if (!sane_nodep(s, argv[0])) {
-		warning("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
+	if (!isSaneNodePointer(s->_segMan, argv[0]))
 		return NULL_REG;
-	}
 
 	return n->succ;
 }
 
 reg_t kPrevNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
-	if (!sane_nodep(s, argv[0])) {
-		warning("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
+	if (!isSaneNodePointer(s->_segMan, argv[0]))
 		return NULL_REG;
-	}
 
 	return n->pred;
 }
 
 reg_t kNodeValue(EngineState *s, int argc, reg_t *argv) {
 	Node *n = s->_segMan->lookupNode(argv[0]);
-	if (!sane_nodep(s, argv[0])) {
-		warning("List node at %04x:%04x is not sane", PRINT_REG(argv[0]));
+	if (!isSaneNodePointer(s->_segMan, argv[0]))
 		return NULL_REG;
-	}
 
 	return n->value;
 }
@@ -267,8 +298,7 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 	Node *firstnode = argv[1].isNull() ? NULL : s->_segMan->lookupNode(argv[1]);
 	Node *newnode = s->_segMan->lookupNode(argv[2]);
 
-	if (!l || !sane_listp(s, argv[0]))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
+	checkListPointer(s->_segMan, argv[0]);
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!newnode) {
@@ -313,8 +343,7 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelNodes, "Looking for key %04x:%04x in list %04x:%04x\n", PRINT_REG(key), PRINT_REG(list_pos));
 
-	if (!sane_listp(s, list_pos))
-		warning("List at %04x:%04x is not sane anymore", PRINT_REG(list_pos));
+	checkListPointer(s->_segMan, argv[0]);
 
 	node_pos = s->_segMan->lookupList(list_pos)->first;
 
@@ -341,7 +370,7 @@ reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (node_pos.isNull())
-		return NULL_REG; // Signal falure
+		return NULL_REG; // Signal failure
 
 	n = s->_segMan->lookupNode(node_pos);
 	if (l->first == node_pos)
@@ -354,7 +383,7 @@ reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	if (!n->succ.isNull())
 		s->_segMan->lookupNode(n->succ)->pred = n->pred;
 
-	//s->_segMan->free_Node(node_pos);
+	//s->_segMan->free_Node(node_pos);	// TODO
 
 	return make_reg(0, 1); // Signal success
 }
