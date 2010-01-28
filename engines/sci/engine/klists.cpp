@@ -44,7 +44,8 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 			warning("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
 					PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
 
-			node->pred = prev;	// fix the problem in the node
+			//node->pred = prev;	// fix the problem in the node
+			return false;
 		}
 
 		prev = addr;
@@ -85,7 +86,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 			warning("isSaneListPointer (list %04x:%04x): First node of the list points to a predecessor node",
 					PRINT_REG(addr));
 
-			node_a->pred = NULL_REG;	// fix the problem in the node
+			//node_a->pred = NULL_REG;	// fix the problem in the node
 
 			return;
 		}
@@ -94,7 +95,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 			warning("isSaneListPointer (list %04x:%04x): Last node of the list points to a successor node",
 					PRINT_REG(addr));
 
-			node_z->succ = NULL_REG;	// fix the problem in the node
+			//node_z->succ = NULL_REG;	// fix the problem in the node
 
 			return;
 		}
