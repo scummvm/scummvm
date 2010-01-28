@@ -125,7 +125,8 @@ Common::Error SciEngine::run() {
 	bool isHires = _resMan->detectHires();
 
 #ifdef ENABLE_SCI32
-	// If SCI2.1+ games are lowres (e.g. qfg4/cd), switch to upscaled hires mode
+	// If SCI2 games are lowres (e.g. gk, qfg4/cd), switch to upscaled hires mode
+	// TODO: change SCI_VERSION_2_1 to SCI_VERSION_2, currently gk doesnt like us using upscaled hires mode
 	if ((!isHires) && (getSciVersion() >= SCI_VERSION_2_1))
 		upscaledHires = true;
 #endif
