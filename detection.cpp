@@ -35,13 +35,15 @@ static const PlainGameDescriptor starkGames[] = {
 };
 
 static const ADGameDescription gameDescriptions[] = {
-	// Mobygames lists taiwanese, russian and polish titles (not listed here yet)
-
 	// The Longest Journey
 	// English 4CD
 	{
-		"tlj", "4 CD",
-		AD_ENTRY1("x.xarc", "a0559457126caadab0cadac02d35f26f"),
+		"tlj", "4 CD", {
+			// TODO: Fill file sizes and chapters.ini's MD5
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", -1},
+			{"chapters.ini", 0, "", -1},
+			{NULL, 0, NULL, 0}
+		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -51,8 +53,12 @@ static const ADGameDescription gameDescriptions[] = {
 	// The Longest Journey
 	// English DVD
 	{
-		"tlj", "DVD",
-		AD_ENTRY1("x.xarc", "de8327850d7bba90b690b141eaa23f61"),
+		"tlj", "DVD", {
+			// TODO: Fill file sizes and chapters.ini's MD5
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", -1},
+			{"chapters.ini", 0, "", -1},
+			{NULL, 0, NULL, 0}
+		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		GF_DVD,
@@ -76,8 +82,11 @@ static const ADGameDescription gameDescriptions[] = {
 	// The Longest Journey
 	// English v1.61 Demo
 	{
-		"tlj", "v1.61 Demo",
-		AD_ENTRY1s("x.xarc", "61093bcd499b386ed5c0345c52f48909", 98),
+		"tlj", "v1.61 Demo", {
+			{"x.xarc", 0, "61093bcd499b386ed5c0345c52f48909", 98},
+			{"chapters.ini", 0, "5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485},
+			{NULL, 0, NULL, 0}
+		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_DEMO | GF_DVD,
@@ -143,6 +152,24 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+// File based fallback game description
+static const ADGameDescription fallbackDescription = {
+	"tlj", "Unknown", {
+		{"x.xarc", 0, NULL, -1},
+		{"chapters.ini", 0, NULL, -1},
+		{NULL, 0, NULL, 0}
+	},
+	Common::UNK_LANG,
+	Common::kPlatformWindows,
+	ADGF_NO_FLAGS,
+	Common::GUIO_NONE
+};
+
+static const ADFileBasedFallback fileBasedFallback[] = {
+	{&fallbackDescription, {"x.xarc", "chapters.ini", "w_world.ini", NULL}},
+	{NULL, {NULL}}
+};
+
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)gameDescriptions,
@@ -157,7 +184,7 @@ static const ADParams detectionParams = {
 	// Name of single gameid (optional)
 	"stark",
 	// List of files for file-based fallback detection (optional)
-	0,
+	fileBasedFallback,
 	// Flags
 	0,
 	// GUI Options
