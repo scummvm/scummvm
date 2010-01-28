@@ -634,6 +634,10 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	case 2: // GetSaveDir
 		// Yay! Reusing the old kernel function!
 		return kGetSaveDir(s, argc - 1, argv + 1);
+	case 8:
+		// TODO
+		// This function has to return something other than 0 to proceed
+		return s->r_acc;
 	default:
 		warning("Unknown/unhandled kSave subop %d", argv[0].toUint16());
 	}

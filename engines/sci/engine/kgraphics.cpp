@@ -1089,6 +1089,36 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
+
+	int16 subop = argv[0].toUint16();
+
+	switch (subop) {
+		case 0: { // init
+			int id = argv[1].toUint16();
+			reg_t obj = argv[2];
+			int16 flag = argv[3].toSint16();
+			int16 x = argv[4].toUint16();
+			int16 y = argv[5].toUint16();
+			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
+			}
+			break;
+		case 4: {	// start
+				int id = argv[1].toUint16();
+				warning("kRobot(start), id %d", id);
+			}
+			break;
+		case 8: // sync
+			//warning("kRobot(sync), obj %04x:%04x", PRINT_REG(argv[1]));
+			break;
+		default:
+			warning("kRobot(%d)", subop);
+			break;
+	}
+
+	return s->r_acc;
+}
+
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 	// This call is used for KQ6's intro. It has one parameter, which is
 	// 1 when the intro begins, and 0 when it ends. It is suspected that

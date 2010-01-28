@@ -357,6 +357,9 @@ SciKernelFunction kfunct_mappers[] = {
 	// SCI2.1 Kernel Functions
 	DEFUN("Save", kSave, ".*"),
 	DEFUN("List", kList, ".*"),
+	DEFUN("Robot", kRobot, ".*"),
+	DEFUN("IsOnMe", kOnMe, "iio.*"),	// TODO: this seems right, but verify...
+
 #endif
 
 	// its a stub, but its needed for Pharkas to work
