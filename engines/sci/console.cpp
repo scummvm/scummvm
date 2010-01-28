@@ -586,7 +586,9 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 			Common::DumpFile *outFile = new Common::DumpFile();
 			outFile->open(outFileName);
 			outFile->writeByte(res);
-			outFile->writeByte(0);
+			outFile->writeByte(resource->headerSize);
+			if (resource->headerSize > 0)
+				outFile->write(resource->header, resource->headerSize);
 			outFile->write(resource->data, resource->size);
 			outFile->finalize();
 			outFile->close();
