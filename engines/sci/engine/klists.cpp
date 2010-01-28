@@ -45,8 +45,6 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 					PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
 
 			node->pred = prev;	// fix the problem in the node
-
-			return false;
 		}
 
 		prev = addr;
