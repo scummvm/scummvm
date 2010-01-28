@@ -379,12 +379,9 @@ SciKernelFunction kfunct_mappers[] = {
 	{NULL, NULL, NULL} // Terminator
 };
 
-Kernel::Kernel(ResourceManager *resMan, Common::String gameId) : _resMan(resMan) {
+Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
-
-	loadKernelNames(gameId);
-	mapFunctions();      // Map the kernel functions
 }
 
 Kernel::~Kernel() {
@@ -777,17 +774,19 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 	}
 }
 
-bool Kernel::loadKernelNames(Common::String gameId) {
+bool Kernel::loadKernelNames(Common::String gameId, EngineState *s) {
 	_kernelNames.clear();
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
-		setKernelNamesSci21(gameId);
+		setKernelNamesSci21(s);
 	else if (getSciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else
 #endif
 		setDefaultKernelNames(gameId);
+
+	mapFunctions();
 	return true;
 }
 

@@ -110,7 +110,8 @@ enum FeatureDetection {
 	kDetectMoveCountType = 1,
 	kDetectSoundType = 2,
 	kDetectSetCursorType = 3,
-	kDetectLofsType = 4
+	kDetectLofsType = 4,
+	kDetectSci21KernelTable = 5
 };
 
 class FileHandle {
@@ -227,6 +228,14 @@ public:
 	 * @return Graphics functions type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
 	 */
 	SciVersion detectGfxFunctionsType();
+	
+#ifdef ENABLE_SCI32
+	/**
+	 * Autodetects the kernel functions used in SCI2.1
+	 * @return Graphics functions type, SCI_VERSION_2 / SCI_VERSION_2_1
+	 */
+	SciVersion detectSci21KernelType();
+#endif
 
 	/**
 	 * Applies to all versions before 0.000.502
@@ -270,6 +279,10 @@ private:
 	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
+#ifdef ENABLE_SCI32
+	SciVersion _sci21KernelType;
+#endif
+
 	MoveCountType _moveCountType;
 	kLanguage charToLanguage(const char c) const;
 	bool _usesCdTrack;

@@ -112,7 +112,7 @@ public:
 	/**
 	 * Initializes the SCI kernel
 	 */
-	Kernel(ResourceManager *resMan, Common::String gameId);
+	Kernel(ResourceManager *resMan);
 	~Kernel();
 
 	uint getSelectorNamesSize() const;
@@ -120,6 +120,17 @@ public:
 
 	uint getKernelNamesSize() const;
 	const Common::String &getKernelName(uint number) const;
+
+	/**
+	 * Loads the kernel function names.
+	 *
+	 * This function reads the kernel function name table from resource_map,
+	 * and fills the _kernelNames array with them.
+	 * The resulting list has the same format regardless of the format of the
+	 * name table of the resource (the format changed between version 0 and 1).
+	 * @return true on success, false on failure
+	 */
+	bool loadKernelNames(Common::String gameId, EngineState *s);
 
 	/**
 	 * Determines the selector ID of a selector by its name
@@ -139,17 +150,6 @@ public:
 
 private:
 	/**
-	 * Loads the kernel function names.
-	 *
-	 * This function reads the kernel function name table from resource_map,
-	 * and fills the _kernelNames array with them.
-	 * The resulting list has the same format regardless of the format of the
-	 * name table of the resource (the format changed between version 0 and 1).
-	 * @return true on success, false on failure
-	 */
-	bool loadKernelNames(Common::String gameId);
-
-	/**
 	 * Sets the default kernel function names, based on the SCI version used
 	 */
 	void setDefaultKernelNames(Common::String gameId);
@@ -163,7 +163,7 @@ private:
 	/**
 	 * Sets the default kernel function names to the SCI2.1 kernel functions
 	 */
-	void setKernelNamesSci21(Common::String gameId);
+	void setKernelNamesSci21(EngineState *s);
 #endif
 
 	/**

@@ -78,6 +78,10 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_lofsType = SCI_VERSION_NONE;
 	_gfxFunctionsType = SCI_VERSION_NONE;
 	_moveCountType = kMoveCountUninitialized;
+	
+#ifdef ENABLE_SCI32
+	_sci21KernelType = SCI_VERSION_NONE;
+#endif
 
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 
@@ -246,6 +250,13 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 		objName = "Game";
 		objAddr = _segMan->findObjectByName(objName);
 		break;
+#ifdef ENABLE_SCI32
+	case kDetectSci21KernelTable:
+		objName = "Sound";
+		objAddr = _segMan->findObjectByName(objName);
+		slc = _kernel->_selectorCache.play;
+		break;
+#endif
 	default:
 		warning("autoDetectFeature: invalid featureDetection value %x", featureDetection);
 		return false;
@@ -422,6 +433,17 @@ bool EngineState::autoDetectFeature(FeatureDetection featureDetection, int metho
 							return true;
 						}
 						break;
+#ifdef ENABLE_SCI32
+					case kDetectSci21KernelTable:
+							if (kFuncNum == 0x40) {
+								_sci21KernelType = SCI_VERSION_2;
+								return true;
+							} else if (kFuncNum == 0x75) {
+								_sci21KernelType = SCI_VERSION_2_1;
+								return true;
+							}
+						break;
+#endif
 					default:
 						break;
 					}
@@ -628,6 +650,18 @@ SciVersion EngineState::detectGfxFunctionsType() {
 
 	return _gfxFunctionsType;
 }
+
+#ifdef ENABLE_SCI32
+SciVersion EngineState::detectSci21KernelType() {
+	if (_sci21KernelType == SCI_VERSION_NONE)
+		if (!autoDetectFeature(kDetectSci21KernelTable))
+			error("Could not detect the SCI2.1 kernel table type");
+
+	debugC(1, kDebugLevelVM, "Detected SCI2.1 kernel type: %s", getSciVersionDesc(_sci21KernelType).c_str());
+
+	return _sci21KernelType;
+}
+#endif
 
 MoveCountType EngineState::detectMoveCountType() {
 	if (_moveCountType == kMoveCountUninitialized) {

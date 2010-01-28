@@ -140,7 +140,7 @@ Common::Error SciEngine::run() {
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 
-	_kernel = new Kernel(_resMan, getGameID());
+	_kernel = new Kernel(_resMan);
 	// Only SCI0 and SCI01 games used a parser
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
 	_audio = new AudioPlayer(_resMan);
@@ -163,6 +163,7 @@ Common::Error SciEngine::run() {
 	}
 
 	script_adjust_opcode_formats(_gamestate);
+	_kernel->loadKernelNames(getGameID(), _gamestate);
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)

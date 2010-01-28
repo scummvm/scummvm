@@ -198,7 +198,7 @@ struct SelectorCache {
 	Selector setCursor; ///< For cursor semantics autodetection
 
 #ifdef ENABLE_SCI32
-	Selector data; // Used by Array()
+	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
 
 	Selector plane;

@@ -372,11 +372,15 @@ void Kernel::setKernelNamesSci2() {
 	_kernelNames = Common::StringList(sci2_default_knames, kKernelEntriesSci2);
 }
 
-void Kernel::setKernelNamesSci21(Common::String gameId) {
-	// The Gabriel Knight 2 demo uses a different kernel function set. It's pretty much a cross between
-	// the SCI2 and SCI2.1 set. Strangely, the GK2 executable still has the 2.100.002 version string,
-	// even though it wouldn't be compatible with the other 2.100.002 games...
-	if (gameId == "gk2" && ((SciEngine *)g_engine)->isDemo()) {
+void Kernel::setKernelNamesSci21(EngineState *s) {
+	// Some SCI games use a modified SCI2 kernel table instead of the SCI2.1/SCI3 kernel table.
+	// The GK2 demo does this as well as at least one version of KQ7. We detect which version
+	// to use based on where kDoSound is called from Sound::play().
+	
+	// This is interesting because they all have the same interpreter version (2.100.002), yet
+	// they would not be compatible with other games of the same interpreter.
+
+	if (s->detectSci21KernelType() == SCI_VERSION_2) {
 		_kernelNames = Common::StringList(sci2_default_knames, kKernelEntriesGk2Demo);
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
