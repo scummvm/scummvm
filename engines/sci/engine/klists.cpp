@@ -123,6 +123,10 @@ reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
+	// This function is not needed in ScummVM. The garbage collector
+	// cleans up unused objects automatically
+
+#if 0
 	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (!l) {
@@ -141,16 +145,11 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 			n_addr = n->succ;
 
 			//s->_segMan->free_Node(n_addr);	// TODO
-
-			// Clear the node
-			n->key = NULL_REG;
-			n->pred = NULL_REG;
-			n->succ = NULL_REG;
-			n->value = NULL_REG;
 		}
 	}
 
 	//s->_segMan->free_list(argv[0]);	// TODO
+#endif
 
 	return s->r_acc;
 }
