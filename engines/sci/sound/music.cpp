@@ -172,7 +172,9 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 	// If MIDI device is selected but there is no digital track in sound resource
 	// try to use adlib's digital sample if possible
-	if (_bMultiMidi && (!track || track->digitalChannelNr == -1)) {
+	// Also, if the track couldn't be found, load the digital track, as some games
+	// depend on this (e.g. the Longbow demo)
+	if (!track || (_bMultiMidi && track->digitalChannelNr == -1)) {
 		SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
 		if (digital)
 			track = digital;
