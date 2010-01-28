@@ -181,10 +181,8 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 					IrxReference *pos = resModules;
 					while (pos < curModule) {
 						if ((pos->fileRef->flags & TYPEMASK) == (irxFiles[i].flags & TYPEMASK)) {
-							if (pos->path)
-								free(pos->path);
-							if (pos->buffer)
-								free(pos->buffer);
+							free(pos->path);
+							free(pos->buffer);
 
 							IrxReference *copyPos = pos;
 							while (copyPos < curModule) {

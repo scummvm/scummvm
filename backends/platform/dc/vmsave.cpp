@@ -278,8 +278,7 @@ public:
 
   ~InVMSave()
   {
-    if (buffer != NULL)
-      delete[] buffer;
+    delete[] buffer;
   }
 
   bool eos() const { return _eos; }

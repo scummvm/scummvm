@@ -320,8 +320,7 @@ void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
 	break;
   _mouseFormat = i;
 
-  if (_ms_buf)
-    free(_ms_buf);
+  free(_ms_buf);
 
   if (_mouseFormat != 0)
     w <<= 1;
