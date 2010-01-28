@@ -535,18 +535,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 				write_selector(s->_segMan, curObject, slc, argv[2]);
 			}
 		} else {
-			// FIXME: Yes, this is an ugly hack...
-			if (argc == 2) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
-			} else if (argc == 3) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
-			} else if (argc == 4) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
-			} else if (argc == 5) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
-			} else {
-				warning("kListEachElementDo: called with %d params", argc);
-			}
+			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, argc - 2, argv + 2);
 		}
 
 		// Lookup node again, since the nodetable it was in may have been reallocated
@@ -555,7 +544,6 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 		curAddress = curNode->succ;
 		curNode = s->_segMan->lookupNode(curAddress);
 	}
-
 
 	return s->r_acc;
 }
@@ -580,18 +568,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 			// Can this happen with variable selectors?
 			warning("kListFirstTrue: Attempted to access a variable selector");
 		} else {
-			// FIXME: Yes, this is an ugly hack...
-			if (argc == 2) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
-			} else if (argc == 3) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
-			} else if (argc == 4) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
-			} else if (argc == 5) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
-			} else {
-				warning("kListFirstTrue: called with %d params", argc);
-			}
+			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, argc - 2, argv + 2);
 
 			// Check if the result is true
 			if (!s->r_acc.isNull())
@@ -629,18 +606,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 			// Can this happen with variable selectors?
 			warning("kListAllTrue: Attempted to access a variable selector");
 		} else {
-			// FIXME: Yes, this is an ugly hack...
-			if (argc == 2) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 0);
-			} else if (argc == 3) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 1, argv[2]);
-			} else if (argc == 4) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 2, argv[2], argv[3]);
-			} else if (argc == 5) {
-				invoke_selector(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, 3, argv[2], argv[3], argv[4]);
-			} else {
-				warning("kListAllTrue: called with %d params", argc);
-			}
+			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, argc - 2, argv + 2);
 
 			// Check if the result isn't true
 			if (s->r_acc.isNull())

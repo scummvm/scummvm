@@ -53,9 +53,8 @@ void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_
 		*address.getPointer(segMan) = value;
 }
 
-int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
-	StackPtr k_argp, int k_argc, int argc, ...) {
-	va_list argp;
+int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
+	StackPtr k_argp, int k_argc, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
 	reg_t address;
@@ -80,12 +79,8 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 		return 0;
 	}
 
-	va_start(argp, argc);
-	for (i = 0; i < argc; i++) {
-		reg_t arg = va_arg(argp, reg_t);
-		stackframe[2 + i] = arg; // Write each argument
-	}
-	va_end(argp);
+	for (i = 0; i < argc; i++)
+		stackframe[2 + i] = argv[i]; // Write each argument
 
 	ExecStack *xstack;
 
@@ -98,6 +93,22 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	run_vm(s, 0); // Start a new vm
 
 	return 0;
+}
+
+int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
+	StackPtr k_argp, int k_argc, int argc, ...) {
+	va_list argp;
+	reg_t *args = new reg_t[argc];
+
+	va_start(argp, argc);
+	for (int i = 0; i < argc; i++)
+		args[i] = va_arg(argp, reg_t);
+	va_end(argp);
+
+	int retval = invoke_selector_argv(s, object, selector_id, noinvalid, k_argp, k_argc, argc, args);
+
+	delete[] args;
+	return retval;
 }
 
 static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc) {

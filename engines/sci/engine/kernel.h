@@ -239,6 +239,8 @@ reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id);
 void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value);
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
 	StackPtr k_argp, int k_argc, int argc, ...);
+int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
+	StackPtr k_argp, int k_argc, int argc, const reg_t *argv);
 
 
 /******************** Text functionality ********************/
