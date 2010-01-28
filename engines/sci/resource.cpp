@@ -1054,7 +1054,9 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	// Do not try and patch files for resource types greater or
 	// equal to audio36 (i.e. audio36, sync36, robot etc), as these won't work
 	// with this patch scheme
-	for (int i = kResourceTypeView; i < kResourceTypeAudio36; ++i) {
+	for (int i = kResourceTypeView; i <= kResourceTypeRobot; ++i) {
+		if (i == kResourceTypeAudio36)
+			i = kResourceTypeRobot; // m_kiewitz: i need robot files for testing :) TODO: remove when RE complete
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
