@@ -171,7 +171,11 @@ reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 }
 
 reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = _k_new_node(s, argv[0], argv[1]);
+
+	if (argc == 1)
+		s->r_acc = _k_new_node(s, argv[0], argv[0]);
+	else
+		s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
 	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x\n", PRINT_REG(s->r_acc));
 
