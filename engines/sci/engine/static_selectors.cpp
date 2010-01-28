@@ -68,7 +68,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,    "nodePtr",  44 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1, "cantBeHere",  57 },
+	{     SCI_VERSION_1_LATE,        SCI_VERSION_1_1, "cantBeHere",  57 },
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,  "topString", 101 },
 	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,      "flags", 102 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,"scaleSignal", 103 },
