@@ -962,7 +962,7 @@ BaseScummFile *Sound::openSfxFile() {
 			tmp = basename[0] + "tlk";
 		}
 
-		if (file->open(tmp) && _vm->_game.heversion <= 73)
+		if (file->open(tmp) && _vm->_game.heversion <= 74)
 			file->setEnc(0x69);
 		_soundMode = kVOCMode;
 	} else {

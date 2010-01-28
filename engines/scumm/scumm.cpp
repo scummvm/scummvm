@@ -742,7 +742,7 @@ ScummEngine_v60he::~ScummEngine_v60he() {
 
 ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v60he(syst, dr) {
-	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 73))
+	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 74))
 		_resExtractor = new MacResExtractor(this);
 	else
 		_resExtractor = new Win32ResExtractor(this);

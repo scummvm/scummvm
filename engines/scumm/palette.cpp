@@ -317,7 +317,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 
 		// Only SCUMM 5/6 games use 6/6/6 style palettes
 		if (_game.version >= 5 && _game.version <= 6) {
-			if ((_game.heversion <= 73 && i < 15) || i == 15 || r < 252 || g < 252 || b < 252) {
+			if ((_game.heversion <= 74 && i < 15) || i == 15 || r < 252 || g < 252 || b < 252) {
 				*dest++ = r;
 				*dest++ = g;
 				*dest++ = b;

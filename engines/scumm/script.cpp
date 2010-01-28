@@ -620,8 +620,8 @@ void ScummEngine::writeVar(uint var, int value) {
 		assertRange(0, var, _numVariables - 1, "variable (writing)");
 
 		if (VAR_SUBTITLES != 0xFF && var == VAR_SUBTITLES) {
-			// Ignore default setting in HE72-73 games
-			if (_game.heversion <= 73 && vm.slot[_currentScript].number == 1)
+			// Ignore default setting in HE72-74 games
+			if (_game.heversion <= 74 && vm.slot[_currentScript].number == 1)
 				return;
 			assert(value == 0 || value == 1);
 			ConfMan.setBool("subtitles", (value != 0));
