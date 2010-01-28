@@ -84,6 +84,10 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 	const SelectorRemap *selectorRemap = sciSelectorRemap;
 	int i;
 
+	if (getSciVersion() >= SCI_VERSION_2) {
+		error("SCI2+ static selector table is not implemented yet");
+	}
+
 	// Resize the list of selector names and fill in the SCI 0 names.
 	names.resize(count);
 	for (i = 0; i < offset; i++)
@@ -105,7 +109,7 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 			names.resize(selectorRemap->slot + 1);
 		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
 			// The SCI1 selectors we use exist in SCI1.1 too, offset by 3
-			if (selectorRemap->minVersion == SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
+			if (selectorRemap->minVersion >= SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
 				slot -= 3;
 			names[slot] = selectorRemap->name;
 		}
