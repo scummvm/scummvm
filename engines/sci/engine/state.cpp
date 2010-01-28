@@ -492,10 +492,13 @@ SciVersion EngineState::detectSetCursorType() {
 		if (getSciVersion() <= SCI_VERSION_01) {
 			// SCI0/SCI01 games never use cursor views
 			_setCursorType = SCI_VERSION_0_EARLY;
+		} else if (getSciVersion() >= SCI_VERSION_1_EARLY && getSciVersion() <= SCI_VERSION_1_MIDDLE) {
+			// SCI1 early/SCI1 middle games never use cursor views
+			_setCursorType = SCI_VERSION_0_EARLY;
 		} else if (getSciVersion() >= SCI_VERSION_1_1) {
 			// SCI1.1 games always use cursor views
 			_setCursorType = SCI_VERSION_1_1;
-		} else {
+		} else {	// SCI1 late game, detect cursor semantics
 			bool found = false;
 
 			if (_kernel->_selectorCache.setCursor == -1) {
