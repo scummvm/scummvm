@@ -146,9 +146,6 @@ void MP3InputStream::decodeMP3Data() {
 			readMP3Data();
 
 		while (_state == MP3_STATE_READY) {
-			// TODO: Do we need to use readHeader, when we do not do any seeking here?
-			readHeader();
-
 			// Decode the next frame
 			if (mad_frame_decode(&_frame, &_stream) == -1) {
 				if (_stream.error == MAD_ERROR_BUFLEN) {
