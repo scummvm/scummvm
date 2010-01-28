@@ -49,7 +49,7 @@ enum ScriptObjectTypes {
 	SCI_OBJ_LOCALVARS
 };
 
-/* Opcode formats as used by script.c */
+// Opcode formats
 enum opcode_format {
 	Script_Invalid = -1,
 	Script_None = 0,
@@ -69,7 +69,7 @@ enum opcode_format {
 	Script_End
 };
 
-enum sci_opcodes { /* FIXME */
+enum sci_opcodes {
 	op_bnot     = 0x00,	// 000
 	op_add      = 0x01,	// 001
 	op_sub      = 0x02,	// 002
@@ -83,7 +83,7 @@ enum sci_opcodes { /* FIXME */
 	op_or       = 0x0a,	// 010
 	op_neg      = 0x0b,	// 011
 	op_not      = 0x0c,	// 012
-	op_eq       = 0x0d,	// 013
+	op_eq_      = 0x0d,	// 013
 	op_ne_      = 0x0e,	// 014
 	op_gt_      = 0x0f,	// 015
 	op_ge_      = 0x10,	// 016
@@ -138,14 +138,14 @@ enum sci_opcodes { /* FIXME */
 	op_lal      = 0x41,	// 065
 	op_lat      = 0x42,	// 066
 	op_lap      = 0x43,	// 067
-	op_lagi     = 0x44,	// 068
-	op_lali     = 0x45,	// 069
-	op_lati     = 0x46,	// 070
-	op_lapi     = 0x47,	// 071
-	op_lsg      = 0x48,	// 072
-	op_lsl      = 0x49,	// 073
-	op_lst      = 0x4a,	// 074
-	op_lsp      = 0x4b,	// 075
+	op_lsg      = 0x44,	// 068
+	op_lsl      = 0x45,	// 069
+	op_lst      = 0x46,	// 070
+	op_lsp      = 0x47,	// 071
+	op_lagi     = 0x48,	// 072
+	op_lali     = 0x49,	// 073
+	op_lati     = 0x4a,	// 074
+	op_lapi     = 0x4b,	// 075
 	op_lsgi     = 0x4c,	// 076
 	op_lsli     = 0x4d,	// 077
 	op_lsti     = 0x4e,	// 078
@@ -154,14 +154,14 @@ enum sci_opcodes { /* FIXME */
 	op_sal      = 0x51,	// 081
 	op_sat      = 0x52,	// 082
 	op_sap      = 0x53,	// 083
-	op_sagi     = 0x54,	// 084
-	op_sali     = 0x55,	// 085
-	op_sati     = 0x56,	// 086
-	op_sapi     = 0x57,	// 087
-	op_ssg      = 0x58,	// 088
-	op_ssl      = 0x59,	// 089
-	op_sst      = 0x5a,	// 090
-	op_ssp      = 0x5b,	// 091
+	op_ssg      = 0x54,	// 084
+	op_ssl      = 0x55,	// 085
+	op_sst      = 0x56,	// 086
+	op_ssp      = 0x57,	// 087
+	op_sagi     = 0x58,	// 088
+	op_sali     = 0x59,	// 089
+	op_sati     = 0x5a,	// 090
+	op_sapi     = 0x5b,	// 091
 	op_ssgi     = 0x5c,	// 092
 	op_ssli     = 0x5d,	// 093
 	op_ssti     = 0x5e,	// 094
@@ -170,14 +170,14 @@ enum sci_opcodes { /* FIXME */
 	op_plusal   = 0x61,	// 097
 	op_plusat   = 0x62,	// 098
 	op_plusap   = 0x63,	// 099
-	op_plusagi  = 0x64,	// 100
-	op_plusali  = 0x65,	// 101
-	op_plusati  = 0x66,	// 102
-	op_plusapi  = 0x67,	// 103
-	op_plussg   = 0x68,	// 104
-	op_plussl   = 0x69,	// 105
-	op_plusst   = 0x6a,	// 106
-	op_plussp   = 0x6b,	// 107
+	op_plussg   = 0x64,	// 100
+	op_plussl   = 0x65,	// 101
+	op_plusst   = 0x66,	// 102
+	op_plussp   = 0x67,	// 103
+	op_plusagi  = 0x68,	// 104
+	op_plusali  = 0x69,	// 105
+	op_plusati  = 0x6a,	// 106
+	op_plusapi  = 0x6b,	// 107
 	op_plussgi  = 0x6c,	// 108
 	op_plussli  = 0x6d,	// 109
 	op_plussti  = 0x6e,	// 110
@@ -186,14 +186,14 @@ enum sci_opcodes { /* FIXME */
 	op_minusal  = 0x71,	// 113
 	op_minusat  = 0x72,	// 114
 	op_minusap  = 0x73,	// 115
-	op_minusagi = 0x74,	// 116
-	op_minusali = 0x75,	// 117
-	op_minusati = 0x76,	// 118
-	op_minusapi = 0x77,	// 119
-	op_minussg  = 0x78,	// 120
-	op_minussl  = 0x79,	// 121
-	op_minusst  = 0x7a,	// 122
-	op_minussp  = 0x7b,	// 123
+	op_minussg  = 0x74,	// 116
+	op_minussl  = 0x75,	// 117
+	op_minusst  = 0x76,	// 118
+	op_minussp  = 0x77,	// 119
+	op_minusagi = 0x78,	// 120
+	op_minusali = 0x79,	// 121
+	op_minusati = 0x7a,	// 122
+	op_minusapi = 0x7b,	// 123
 	op_minussgi = 0x7c,	// 124
 	op_minussli = 0x7d,	// 125
 	op_minussti = 0x7e,	// 126
