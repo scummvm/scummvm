@@ -121,8 +121,10 @@ Common::Error SciEngine::run() {
 	if (getPlatform() == Common::kPlatformWindows) {
 		if (!strcmp(getGameID(), "kq6"))
 			upscaledHires = true;
+#ifdef ENABLE_SCI32
 		if (!strcmp(getGameID(), "gk1"))
 			upscaledHires = true;
+#endif
 	}
 
 	// Japanese versions of games use hi-res font on upscaled version of the game
@@ -132,17 +134,8 @@ Common::Error SciEngine::run() {
 	// Initialize graphics-related parts
 	Screen *screen = 0;
 
-	bool isHires = _resMan->detectHires();
-
-#ifdef ENABLE_SCI32
-	// If SCI2 games are lowres (e.g. gk, qfg4/cd), switch to upscaled hires mode
-	// TODO: change SCI_VERSION_2_1 to SCI_VERSION_2, currently gk doesnt like us using upscaled hires mode
-	if ((!isHires) && (getSciVersion() >= SCI_VERSION_2_1))
-		upscaledHires = true;
-#endif
-
 	// invokes initGraphics()
-	if (isHires)
+	if (_resMan->detectHires())
 		screen = new Screen(_resMan, 640, 480, false);
 	else
 		screen = new Screen(_resMan, 320, 200, upscaledHires);
