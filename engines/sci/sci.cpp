@@ -126,13 +126,19 @@ Common::Error SciEngine::run() {
 	// Initialize graphics-related parts
 	Screen *screen = 0;
 
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1)
-		screen = new Screen(_resMan, 640, 480, false);	// invokes initGraphics()
-	else
-#endif
-		screen = new Screen(_resMan, 320, 200, upscaledHires);	// invokes initGraphics()
+	bool isHires = _resMan->detectHires();
 
+#ifdef ENABLE_SCI32
+	// If SCI2.1+ games are lowres (e.g. qfg4/cd), switch to upscaled hires mode
+	if ((!isHires) && (getSciVersion() >= SCI_VERSION_2_1))
+		upscaledHires = true;
+#endif
+
+	// invokes initGraphics()
+	if (isHires)
+		screen = new Screen(_resMan, 640, 480, false);
+	else
+		screen = new Screen(_resMan, 320, 200, upscaledHires);
 
 	SciPalette *palette = new SciPalette(_resMan, screen);
 	Cursor *cursor = new Cursor(_resMan, palette, screen);

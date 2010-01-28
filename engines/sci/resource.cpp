@@ -1859,6 +1859,35 @@ void ResourceManager::detectSciVersion() {
 	}
 }
 
+bool ResourceManager::detectHires() {
+	// SCI 1.1 and prior is never hires
+	if (getSciVersion() <= SCI_VERSION_1_1)
+		return false;
+
+#ifdef ENABLE_SCI32
+	for (int i = 0; i < 32768; i++) {
+		Resource *res = findResource(ResourceId(kResourceTypePic, i), 0);
+
+		if (res) {
+			if (READ_LE_UINT16(res->data) == 0x0e) {
+				// SCI32 picture
+				uint16 width = READ_LE_UINT16(res->data + 14);
+				uint16 height = READ_LE_UINT16(res->data + 16);
+				if ((width == 320) && ((height == 190) || (height == 200)))
+					return false;
+				if ((width >= 600) || (height >= 400))
+					return true;
+			}
+		}
+	}
+
+	warning("resMan: Couldn't detect hires");
+	return false;
+#else
+	error("no sci32 support");
+#endif
+}
+
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)
 bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);

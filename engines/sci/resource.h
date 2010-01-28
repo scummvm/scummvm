@@ -284,6 +284,8 @@ public:
 	 */
 	void addNewGMPatch(Common::String gameId);
 
+	bool detectHires();
+
 protected:
 	// Maximum number of bytes to allow being allocated for resources
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
