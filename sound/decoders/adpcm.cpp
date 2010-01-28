@@ -332,6 +332,12 @@ int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
 	int nibble;
 	byte k;
 
+	// TODO: Currently this implementation only supports
+	// reading a multiple of 16 samples at once. We might
+	// consider changing that so it could read an arbitrary
+	// sample pair count.
+	assert(numSamples % 16 == 0);
+
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos;) {
 		for (int channel = 0; channel < 2; channel++) {
 			data = _stream->readUint32LE();
