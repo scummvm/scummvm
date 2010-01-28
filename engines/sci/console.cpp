@@ -201,7 +201,8 @@ void Console::preEnter() {
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(true);
 #endif
-	_vm->getEngineState()->_soundCmd->pauseAll(true);
+	if (_vm->getEngineState() && _vm->getEngineState()->_soundCmd)
+		_vm->getEngineState()->_soundCmd->pauseAll(true);
 }
 
 void Console::postEnter() {
@@ -209,7 +210,8 @@ void Console::postEnter() {
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(false);
 #endif
-	_vm->getEngineState()->_soundCmd->pauseAll(false);
+	if (_vm->getEngineState() && _vm->getEngineState()->_soundCmd)
+		_vm->getEngineState()->_soundCmd->pauseAll(false);
 
 	if (!_videoFile.empty()) {
 		_vm->_gamestate->_gui->hideCursor();
