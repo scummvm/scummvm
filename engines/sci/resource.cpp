@@ -422,6 +422,11 @@ int ResourceManager::addAppropriateSources() {
 				}
 			}
 		}
+
+		// SCI2.1 resource patches
+		if (Common::File::exists("RESMAP.PAT") && Common::File::exists("RESSCI.PAT")) {
+			addSource(addExternalMap("RESMAP.PAT", 65535), kSourceVolume, "RESSCI.PAT", 65535);
+		}
 	}
 #else
 	} else
