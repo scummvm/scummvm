@@ -133,7 +133,7 @@ enum sci_opcodes {
 	op_push1    = 0x3c,	// 060
 	op_push2    = 0x3d,	// 061
 	op_pushSelf = 0x3e,	// 062
-	// dummy      0x3f,	// 063
+	op_line     = 0x3f,	// 063
 	op_lag      = 0x40,	// 064
 	op_lal      = 0x41,	// 065
 	op_lat      = 0x42,	// 066

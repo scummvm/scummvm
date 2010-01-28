@@ -1354,11 +1354,16 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case op_pushSelf: // 0x3e (62)
-			PUSH32(scriptState.xs->objp);
+			if (!(opcode & 1)) {
+				PUSH32(scriptState.xs->objp);
+			} else {
+				// Debug opcode op_file, skip null-terminated string (file name)
+				while (GET_OP_BYTE()) ;
+			}
 			break;
 
-		case 0x3f: // (63)
-			error("Dummy opcode 0x%x called", opnumber);	// should never happen
+		case op_line: // 0x3f (63)
+			// Debug opcode (line number)
 			break;
 
 		case op_lag: // 0x40 (64)

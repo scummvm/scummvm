@@ -64,7 +64,7 @@ opcode_format g_opcode_formats[128][4] = {
 	/*38*/
 	{Script_Property, END}, {Script_SRelative, END}, {Script_SRelative, END}, {Script_None},
 	/*3C*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_Invalid},
+	{Script_None}, {Script_None}, {Script_None}, {Script_Word},
 	/*40-4F*/
 	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
 	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
