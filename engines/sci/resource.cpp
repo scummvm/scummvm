@@ -398,6 +398,13 @@ int ResourceManager::addAppropriateSources() {
 			addSource(map, kSourceVolume, name.c_str(), number);
 		}
 #ifdef ENABLE_SCI32
+
+		/*
+		// TODO: not working yet
+		if (Common::File::exists("RESOURCE.ALT")) {	// GK1CD hires content
+			addSource(addExternalMap("RESOURCE.MAP", 10), kSourceVolume, "RESOURCE.ALT", 10);
+		}
+		*/
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles;
@@ -425,7 +432,8 @@ int ResourceManager::addAppropriateSources() {
 
 		// SCI2.1 resource patches
 		if (Common::File::exists("RESMAP.PAT") && Common::File::exists("RESSCI.PAT")) {
-			addSource(addExternalMap("RESMAP.PAT", 65535), kSourceVolume, "RESSCI.PAT", 65535);
+			// We add this resource with a map which surely won't exist
+			addSource(addExternalMap("RESMAP.PAT", 100), kSourceVolume, "RESSCI.PAT", 100);
 		}
 	}
 #else
