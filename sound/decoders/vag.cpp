@@ -24,8 +24,31 @@
  */
 
 #include "sound/decoders/vag.h"
+#include "sound/audiostream.h"
+#include "common/stream.h"
 
 namespace Audio {
+
+class VagStream : public Audio::RewindableAudioStream {
+public:
+	VagStream(Common::SeekableReadStream *stream, int rate);
+	~VagStream();
+
+	bool isStereo() const { return false; }
+	bool endOfData() const { return _stream->pos() == _stream->size(); }
+	int getRate() const { return _rate; }
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool rewind();
+private:
+	Common::SeekableReadStream *_stream;
+
+	byte _predictor;
+	double _samples[28];
+	byte _samplesRemaining;
+	int _rate;
+	double _s1, _s2;
+};
 
 VagStream::VagStream(Common::SeekableReadStream *stream, int rate) : _stream(stream) {
 	_samplesRemaining = 0;
@@ -118,6 +141,10 @@ bool VagStream::rewind() {
 	_s1 = _s2 = 0.0;
 
 	return true;
+}
+
+RewindableAudioStream *makeVagStream(Common::SeekableReadStream *stream, int rate) {
+	return new VagStream(stream, rate);
 }
 
 }

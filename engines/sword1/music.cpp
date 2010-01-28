@@ -33,6 +33,7 @@
 #include "sword1/music.h"
 
 #include "sound/mixer.h"
+#include "sound/audiostream.h"
 #include "sound/decoders/aiff.h"
 #include "sound/decoders/flac.h"
 #include "sound/decoders/mp3.h"
@@ -137,7 +138,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 	// not over file size
 	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
 		_file.seek(offset, SEEK_SET);
-		_audioSource = Audio::makeLoopingAudioStream(new Audio::VagStream(_file.readStream(size)), loop ? 0 : 1);
+		_audioSource = Audio::makeLoopingAudioStream(Audio::makeVagStream(_file.readStream(size)), loop ? 0 : 1);
 		fadeUp();
 	} else {
 		_audioSource = NULL;

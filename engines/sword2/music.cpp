@@ -302,7 +302,7 @@ Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
 
 	byte *buffer = (byte *)malloc(size);
 	file->read(buffer, size);
-	return new Audio::VagStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES));
+	return Audio::makeVagStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES));
 }
 
 // ----------------------------------------------------------------------------

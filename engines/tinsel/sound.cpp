@@ -109,7 +109,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 	if (TinselV1PSX) {
 		// Read the stream and create a VAG Audio stream
-		Audio::AudioStream *vagStream = new Audio::VagStream(_sampleStream.readStream(sampleLen), 44100);
+		Audio::AudioStream *vagStream = Audio::makeVagStream(_sampleStream.readStream(sampleLen), 44100);
 
 		// FIXME: Should set this in a different place ;)
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);

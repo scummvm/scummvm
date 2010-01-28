@@ -334,7 +334,7 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 	Audio::RewindableAudioStream *input = 0;
 
 	if (Sword2Engine::isPsx())
-		input = new Audio::VagStream(stream);
+		input = Audio::makeVagStream(stream);
 	else
 		input = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 

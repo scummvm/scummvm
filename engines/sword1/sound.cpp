@@ -36,6 +36,7 @@
 #include "sword1/logic.h"
 #include "sword1/sword1.h"
 
+#include "sound/audiostream.h"
 #include "sound/decoders/flac.h"
 #include "sound/decoders/mp3.h"
 #include "sound/decoders/raw.h"
@@ -259,7 +260,7 @@ void Sound::playSample(QueueElement *elem) {
 
 					if (SwordEngine::isPsx()) {
 						uint32 size = READ_LE_UINT32(sampleData);
-						Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(new Audio::VagStream(new Common::MemoryReadStream(sampleData + 4, size-4)), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
+						Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(Audio::makeVagStream(new Common::MemoryReadStream(sampleData + 4, size-4)), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
 					} else {
 						uint32 size = READ_LE_UINT32(sampleData + 0x28);
@@ -367,7 +368,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index * 2048);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
-			stream = new Audio::VagStream(tmp);
+			stream = Audio::makeVagStream(tmp);
 			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.

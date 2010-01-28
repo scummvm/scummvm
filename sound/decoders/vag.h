@@ -34,31 +34,26 @@
 #ifndef SOUND_VAG_H
 #define SOUND_VAG_H
 
-#include "sound/audiostream.h"
-#include "common/stream.h"
+namespace Common {
+	class SeekableReadStream;
+}
 
 namespace Audio {
 
-class VagStream : public Audio::RewindableAudioStream {
-public:
-	VagStream(Common::SeekableReadStream *stream, int rate = 11025);
-	~VagStream();
+class AudioStream;
+class RewindableAudioStream;
 
-	bool isStereo() const { return false; }
-	bool endOfData() const { return _stream->pos() == _stream->size(); }
-	int getRate() const { return _rate; }
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool rewind();
-private:
-	Common::SeekableReadStream *_stream;
-
-	byte _predictor;
-	double _samples[28];
-	byte _samplesRemaining;
-	int _rate;
-	double _s1, _s2;
-};
+/**
+ * Takes an input stream containing Vag sound data and creates
+ * an RewindableAudioStream from that.
+ *
+ * @param stream            the SeekableReadStream from which to read the ADPCM data
+ * @param rate              the sampling rate
+ * @return   a new RewindableAudioStream, or NULL, if an error occured
+ */
+RewindableAudioStream *makeVagStream(
+	Common::SeekableReadStream *stream,
+	int rate = 11025);
 
 } // End of namespace Sword1
 
