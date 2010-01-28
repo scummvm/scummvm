@@ -28,6 +28,8 @@
 
 namespace Sci {
 
+#define ROBOT_FILE_STARTOFDATA 58
+
 #ifdef ENABLE_SCI32
 class Robot {
 public:
@@ -48,6 +50,8 @@ private:
 
 	uint16 _width;
 	uint16 _height;
+	uint16 _frameCount;
+	uint32 _frameSize; // is width * height (pixelCount)
 };
 #endif
 

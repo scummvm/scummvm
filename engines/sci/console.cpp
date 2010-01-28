@@ -1079,15 +1079,15 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 #ifdef ENABLE_SCI32
 bool Console::cmdDrawRobot(int argc, const char **argv) {
 	if (argc < 2) {
-		DebugPrintf("Draws a frame from a robot resource\n");
+		DebugPrintf("Draws frames from a robot resource\n");
 		DebugPrintf("Usage: %s <resourceId>\n", argv[0]);
 		DebugPrintf("where <resourceId> is the id of the robot resource to draw\n");
 		return true;
 	}
 
-	//uint16 resourceId = atoi(argv[1]);
+	uint16 resourceId = atoi(argv[1]);
 
-	_vm->_gamestate->_gui->drawRobot();
+	_vm->_gamestate->_gui->drawRobot(resourceId);
 	return true;
 }
 #endif

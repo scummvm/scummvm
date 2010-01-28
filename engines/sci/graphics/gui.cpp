@@ -992,9 +992,10 @@ void SciGui::frameOut() {
 	}
 }
 
-void SciGui::drawRobot() {
-	Robot *test = new Robot(_s->resMan, _screen, 91);
+void SciGui::drawRobot(GuiResourceId robotId) {
+	Robot *test = new Robot(_s->resMan, _screen, robotId);
 	test->draw();
+	delete test;
 }
 #endif
 

@@ -167,7 +167,7 @@ public:
 	virtual void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
 	virtual void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
 
-	virtual void drawRobot();
+	virtual void drawRobot(GuiResourceId robotId);
 #endif
 
 	virtual bool debugUndither(bool flag);
