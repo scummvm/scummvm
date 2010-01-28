@@ -1111,19 +1111,24 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	uint32 dataLoop = READ_BE_UINT16(_sfxInfo + (sound << 3) + 6);
 	dataOfs += _sfxBaseOfs;
 
-	uint32 loopSta = 0, loopEnd = 0;
+	Audio::SeekableAudioStream *stream = Audio::makeRawMemoryStream(_soundData + dataOfs, dataSize, sampleRate,
+	                                                                Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+
+	Audio::AudioStream *output = 0;
 	if (dataLoop) {
-		loopSta = dataSize - dataLoop;
-		loopEnd = dataSize;
+		uint32 loopSta = dataSize - dataLoop;
+		uint32 loopEnd = dataSize;
+
+		output = Audio::makeLoopingAudioStream(stream, Audio::Timestamp(0, loopSta, sampleRate),
+		                                       Audio::Timestamp(0, loopEnd, sampleRate), 0);
+	} else {
+		output = stream;
 	}
 
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream_OLD(_soundData + dataOfs, dataSize, sampleRate,
-									Audio::FLAG_UNSIGNED, loopSta, loopEnd, DisposeAfterUse::NO);
-
 	if (channel == 0)
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_ingameSound0, stream, SOUND_CH0, volume, 0);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_ingameSound0, output, SOUND_CH0, volume, 0);
 	else
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_ingameSound1, stream, SOUND_CH1, volume, 0);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_ingameSound1, output, SOUND_CH1, volume, 0);
 }
 
 void Sound::fnStartFx(uint32 sound, uint8 channel) {
