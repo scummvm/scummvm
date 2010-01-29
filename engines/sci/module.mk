@@ -43,7 +43,6 @@ MODULE_OBJS := \
 	graphics/palette.o \
 	graphics/picture.o \
 	graphics/portrait.o \
-	graphics/robot.o \
 	graphics/screen.o \
 	graphics/text.o \
 	graphics/transitions.o \
@@ -64,13 +63,15 @@ MODULE_OBJS := \
 	sound/drivers/fb01.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
-	video/seq_decoder.o \
-	video/vmd_decoder.o
+	video/seq_decoder.o
+	
 	
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	engine/kernel32.o \
-	graphics/gui32.o
+	graphics/gui32.o \
+	graphics/robot.o \
+	video/vmd_decoder.o
 endif
 
 # This module can be built as a plugin

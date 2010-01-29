@@ -78,10 +78,13 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 		else loopNo = -1;
 	}
 
-	if (s->_gui)
-		maxLoops = s->_gui->getLoopCount(viewId);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		maxLoops = s->_gui32->getLoopCount(viewId);
+	else
+#endif
+		maxLoops = s->_gui->getLoopCount(viewId);
+		
 
 	if ((loopNo > 1) && (maxLoops < 4))
 		return;
@@ -116,10 +119,12 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		switch (argv[0].toSint16()) {
 		case 0:
-			if (s->_gui)
-				s->_gui->hideCursor();
-			else
+#ifdef ENABLE_SCI32
+			if (s->_gui32)
 				s->_gui32->hideCursor();
+			else
+#endif
+				s->_gui->hideCursor();
 			break;
 		case -1:
 			// TODO: Special case at least in kq6, check disassembly
@@ -128,19 +133,24 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			// TODO: Special case at least in kq6, check disassembly
 			break;
 		default:
-			if (s->_gui)
-				s->_gui->showCursor();
-			else
+#ifdef ENABLE_SCI32
+			if (s->_gui32)
 				s->_gui32->showCursor();
+			else
+#endif
+				s->_gui->showCursor();
 			break;
 		}
 	case 2:
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
-		if (s->_gui)
-			s->_gui->setCursorPos(pos);
-		else
+		
+#ifdef ENABLE_SCI32
+		if (s->_gui32)
 			s->_gui32->setCursorPos(pos);
+		else
+#endif
+			s->_gui->setCursorPos(pos);
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();
@@ -150,10 +160,12 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
-			if (s->_gui)
-				s->_gui->setCursorZone(rect);
-			else
+#ifdef ENABLE_SCI32
+			if (s->_gui32)
 				s->_gui32->setCursorZone(rect);
+			else
+#endif
+				s->_gui->setCursorZone(rect);
 		} else {
 			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
 		}
@@ -164,10 +176,12 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		if (s->_gui)
-			s->_gui->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
-		else
+#ifdef ENABLE_SCI32
+		if (s->_gui32)
 			s->_gui32->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		else
+#endif
+			s->_gui->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		break;
 	default :
 		warning("kSetCursor: Unhandled case: %d arguments given", argc);
@@ -343,12 +357,15 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
-	if (s->_gui)
-		s->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
-	else
+	
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		s->_gui32->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+	else
+#endif
+		s->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+	
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text.c_str(), textWidth, textHeight);
-
 	dest[2] = make_reg(0, textHeight);
 	dest[3] = make_reg(0, textWidth);
 	return s->r_acc;
@@ -402,10 +419,14 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	bool canBeHere;
-	if (s->_gui)
-		canBeHere = s->_gui->canBeHere(curObject, listReference);
-	else
+	
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		canBeHere = s->_gui32->canBeHere(curObject, listReference);
+	else
+#endif
+		canBeHere = s->_gui->canBeHere(curObject, listReference);
+		
 	return make_reg(0, canBeHere);
 }
 
@@ -414,10 +435,14 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	bool canBeHere;
-	if (s->_gui)
-		canBeHere = s->_gui->canBeHere(curObject, listReference);
-	else
+	
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		canBeHere = s->_gui32->canBeHere(curObject, listReference);
+	else
+#endif
+		canBeHere = s->_gui->canBeHere(curObject, listReference);
+
 	return make_reg(0, !canBeHere);
 }
 
@@ -439,10 +464,13 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 	int16 celHeight;
 
-	if (s->_gui)
-		celHeight = s->_gui->getCelHeight(viewId, loopNo, celNo);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		celHeight = s->_gui32->getCelHeight(viewId, loopNo, celNo);
+	else
+#endif
+		celHeight = s->_gui->getCelHeight(viewId, loopNo, celNo);
+
 	return make_reg(0, celHeight);
 }
 
@@ -454,10 +482,13 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 	int16 celWidth;
 
-	if (s->_gui)
-		celWidth = s->_gui->getCelWidth(viewId, loopNo, celNo);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		celWidth = s->_gui32->getCelWidth(viewId, loopNo, celNo);
+	else
+#endif
+		celWidth = s->_gui->getCelWidth(viewId, loopNo, celNo);
+
 	return make_reg(0, celWidth);
 }
 
@@ -466,10 +497,12 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
 	int16 loopCount;
 
-	if (s->_gui)
-		loopCount = s->_gui->getLoopCount(viewId);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		loopCount = s->_gui32->getLoopCount(viewId);
+	else
+#endif
+		loopCount = s->_gui->getLoopCount(viewId);
 
 	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", viewId, loopCount);
 
@@ -482,10 +515,12 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = GET_SEL32V(s->_segMan, object, loop);
 	int16 celCount;
 
-	if (s->_gui)
-		celCount = s->_gui->getCelCount(viewId, loopNo);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		celCount = s->_gui32->getCelCount(viewId, loopNo);
+	else
+#endif
+		celCount = s->_gui->getCelCount(viewId, loopNo);
 
 	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", viewId, loopNo, celCount);
 
@@ -553,10 +588,12 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
-	if (s->_gui)
-		s->_gui->baseSetter(object);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		s->_gui32->baseSetter(object);
+	else
+#endif
+		s->_gui->baseSetter(object);
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
@@ -569,10 +606,13 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
-	if (s->_gui)
-		s->_gui->setNowSeen(argv[0]);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		s->_gui32->setNowSeen(argv[0]);
+	else
+#endif
+		s->_gui->setNowSeen(argv[0]);
+
 	return s->r_acc;
 }
 
@@ -1070,10 +1110,13 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	int16 shakeCount = (argc > 0) ? argv[0].toUint16() : 1;
 	int16 directions = (argc > 1) ? argv[1].toUint16() : 1;
 
-	if (s->_gui)
-		s->_gui->shakeScreen(shakeCount, directions);
-	else
+#ifdef ENABLE_SCI32
+	if (s->_gui32)
 		s->_gui32->shakeScreen(shakeCount, directions);
+	else
+#endif
+		s->_gui->shakeScreen(shakeCount, directions);
+
 	return s->r_acc;
 }
 
@@ -1106,15 +1149,20 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// Hide the cursor if it's showing and then show it again if it was
 	// previously visible.
 	bool reshowCursor;
-	if (s->_gui) {
-		reshowCursor = s->_gui->isCursorVisible();
-		if (reshowCursor)
-			s->_gui->hideCursor();
-	} else {
+	
+#ifdef ENABLE_SCI32
+	if (s->_gui32) {
 		reshowCursor = s->_gui32->isCursorVisible();
 		if (reshowCursor)
 			s->_gui32->hideCursor();
+	} else {
+#endif
+		reshowCursor = s->_gui->isCursorVisible();
+		if (reshowCursor)
+			s->_gui->hideCursor();
+#ifdef ENABLE_SCI32
 	}
+#endif
 
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
@@ -1154,22 +1202,27 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (playedVideo) {
-		if (s->_gui)
-			s->_gui->syncWithFramebuffer();
-		else
+#ifdef ENABLE_SCI32
+		if (s->_gui32)
 			s->_gui32->syncWithFramebuffer();
+		else
+#endif
+			s->_gui->syncWithFramebuffer();
 	}
 
 	if (reshowCursor) {
-		if (s->_gui)
-			s->_gui->showCursor();
-		else
+#ifdef ENABLE_SCI32
+		if (s->_gui32)
 			s->_gui32->showCursor();
+		else
+#endif
+			s->_gui->showCursor();
 	}
 
 	return s->r_acc;
 }
 
+#ifdef ENABLE_SCI32
 reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	int16 subop = argv[0].toUint16();
@@ -1199,6 +1252,7 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+#endif
 
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 	// This call is used for KQ6's intro. It has one parameter, which is

@@ -52,10 +52,13 @@ namespace Sci {
 class SciEvent;
 class Menubar;
 class SciGui;
-class SciGui32;
 class Cursor;
 class MessageState;
 class SoundCommandParser;
+
+#ifdef ENABLE_SCI32
+class SciGui32;
+#endif
 
 struct GfxState;
 struct GfxPort;
@@ -145,7 +148,10 @@ public:
 	/* Non-VM information */
 
 	SciGui *_gui; /* Currently active Gui */
-	SciGui32 *_gui32;
+
+#ifdef ENABLE_SCI32
+	SciGui32 *_gui32; // GUI for SCI32 games
+#endif
 
 	SciEvent *_event; // Event handling
 

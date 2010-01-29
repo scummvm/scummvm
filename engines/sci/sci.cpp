@@ -40,10 +40,13 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
+
+#ifdef ENABLE_SCI32
+#include "sci/graphics/gui32.h"
+#endif
 
 namespace Sci {
 
@@ -163,10 +166,13 @@ Common::Error SciEngine::run() {
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
-	if (getSciVersion() <= SCI_VERSION_1_1)
-		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
-	else
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2)
 		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cursor);
+	else
+#endif
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
+		
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
@@ -196,10 +202,12 @@ Common::Error SciEngine::run() {
 
 	syncSoundSettings();
 
-	if (_gamestate->_gui)
-		_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
-	else
+#ifdef ENABLE_SCI32
+	if (_gamestate->_gui32)
 		_gamestate->_gui32->init();
+	else
+#endif
+		_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 
