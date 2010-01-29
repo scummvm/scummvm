@@ -88,10 +88,8 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		// When using a pointer in number arithmetic, we substitute a large value as
-		// some scripts rely on this (cf. Hoyle hack in kAbs).
 		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		return 0x3e9;
+		return 0;
 	}
 
 	return reg.offset;
@@ -100,7 +98,7 @@ static int validate_arithmetic(reg_t reg) {
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		return 0x3e9;
+		return 0;
 	}
 
 	if (reg.offset & 0x8000)
