@@ -1941,6 +1941,10 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 static EngineState *_game_run(EngineState *&s, int restoring) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
+
+	if (Common::isDebugChannelEnabled(kDebugLevelOnStartup))
+		((Sci::SciEngine*)g_engine)->getSciDebugger()->attach();
+
 	do {
 		s->_executionStackPosChanged = false;
 		run_vm(s, (successor || restoring) ? 1 : 0);

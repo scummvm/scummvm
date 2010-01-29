@@ -77,7 +77,8 @@ enum kDebugLevels {
 	kDebugLevelScripts    = 1 << 19,
 	kDebugLevelGC         = 1 << 20,
 	kDebugLevelSci0Pic    = 1 << 21,
-	kDebugLevelResMan     = 1 << 22
+	kDebugLevelResMan     = 1 << 22,
+	kDebugLevelOnStartup  = 1 << 23
 };
 
 extern const char *versionNames[];
