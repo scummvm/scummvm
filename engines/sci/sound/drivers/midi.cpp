@@ -659,10 +659,15 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 			debugCN(kDebugLevelSound, "%s -> ", Mt32PresetTimbreMaps[number].name);
 			break;
 		case 2:
-			strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
-			name[10] = 0;
-			_patchMap[i] = lookupGmInstrument(name);
-			debugCN(kDebugLevelSound, "%s -> ", name);
+			if (number < memtimbres) {
+				strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
+				name[10] = 0;
+				_patchMap[i] = lookupGmInstrument(name);
+				debugCN(kDebugLevelSound, "%s -> ", name);
+			} else {
+				_patchMap[i] = 0xff;
+				debugCN(kDebugLevelSound, "[Invalid]  -> ");
+			}
 			break;
 		case 3:
 			_patchMap[i] = getGmInstrument(Mt32RhythmTimbreMaps[number]);
