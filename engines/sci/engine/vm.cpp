@@ -896,7 +896,9 @@ void run_vm(EngineState *s, int restoring) {
 		case op_uge_: // 0x14 (20)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
+			if (s->r_acc == make_reg(0, 0x3e8))
+				s->r_acc = make_reg(0, r_temp.segment);
+			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
 			else
 				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) >= /*acc*/);
@@ -905,7 +907,9 @@ void run_vm(EngineState *s, int restoring) {
 		case op_ult_: // 0x15 (21)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
+			if (s->r_acc == make_reg(0, 0x3e8))
+				s->r_acc = make_reg(0, !r_temp.segment);
+			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			else
 				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) < /*acc*/);
