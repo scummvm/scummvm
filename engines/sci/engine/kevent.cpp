@@ -31,6 +31,7 @@
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/gui32.h"
 #include "sci/graphics/cursor.h"
 
 namespace Sci {
@@ -44,7 +45,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
-	const Common::Point mousePos = s->_gui->getCursorPos();
+	Common::Point mousePos;
+
+	if (s->_gui)
+		mousePos = s->_gui->getCursorPos();
+	else
+		mousePos = s->_gui32->getCursorPos();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -215,11 +221,13 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 		int16 y = GET_SEL32V(segMan, obj, y);
 
 #ifdef ENABLE_SCI32
-		if (argc > 1)
-			s->_gui->globalToLocal(&x, &y, argv[1]);
-		else
+	if (s->_gui)
 #endif
-			s->_gui->globalToLocal(&x, &y);
+		s->_gui->globalToLocal(&x, &y);
+#ifdef ENABLE_SCI32
+	else
+		s->_gui32->globalToLocal(&x, &y, argv[1]);
+#endif
 
 		PUT_SEL32V(segMan, obj, x, x);
 		PUT_SEL32V(segMan, obj, y, y);
@@ -238,11 +246,13 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 		int16 y = GET_SEL32V(segMan, obj, y);
 
 #ifdef ENABLE_SCI32
-		if (argc > 1)
-			s->_gui->localToGlobal(&x, &y, argv[1]);
-		else
+	if (s->_gui)
 #endif
 		s->_gui->localToGlobal(&x, &y);
+#ifdef ENABLE_SCI32
+	else
+		s->_gui32->localToGlobal(&x, &y, argv[1]);
+#endif
 
 		PUT_SEL32V(segMan, obj, x, x);
 		PUT_SEL32V(segMan, obj, y, y);

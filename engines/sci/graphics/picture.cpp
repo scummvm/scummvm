@@ -265,11 +265,20 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 		memcpy(celBitmap, rlePtr, pixelCount);
 	}
 
-	// Set initial vertical coordinate by using current port
-	y = callerY + _gfx->GetPort()->top;
-	lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom + _gfx->GetPort()->top);
-	leftX = callerX + _gfx->GetPort()->left;
-	rightX = MIN<int16>(width + leftX, _gfx->GetPort()->rect.right + _gfx->GetPort()->left);
+	if (_gfx) {
+		// Set initial vertical coordinate by using current port
+		y = callerY + _gfx->GetPort()->top;
+		lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom + _gfx->GetPort()->top);
+		leftX = callerX + _gfx->GetPort()->left;
+		rightX = MIN<int16>(width + leftX, _gfx->GetPort()->rect.right + _gfx->GetPort()->left);
+	} else {
+		y = callerY + 10; // TODO: Implement plane support for SCI32
+		lastY = y + height;
+		if (lastY > _screen->getHeight())
+			lastY = _screen->getHeight();
+		leftX = callerX;
+		rightX = leftX + width;
+	}
 
 	// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
 	//  but white and that wont matter because the screen is supposed to be already white. It seems that most (if not all)

@@ -41,7 +41,6 @@
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
 #include "sci/graphics/portrait.h"
-#include "sci/graphics/robot.h"
 #include "sci/graphics/text.h"
 #include "sci/graphics/transitions.h"
 #include "sci/graphics/view.h"
@@ -59,9 +58,6 @@ SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *
 	_windowMgr = new WindowMgr(this, _screen, _gfx, _text);
 	_controls = new Controls(_s->_segMan, _gfx, _text);
 	_menu = new Menu(_s->_event, _s->_segMan, this, _gfx, _text, _screen, _cursor);
-}
-
-SciGui::SciGui() {
 }
 
 SciGui::~SciGui() {
@@ -151,20 +147,6 @@ void SciGui::localToGlobal(int16 *x, int16 *y) {
 	*x = *x + curPort->left;
 	*y = *y + curPort->top;
 }
-
-#ifdef ENABLE_SCI32
-
-void SciGui::globalToLocal(int16 *x, int16 *y, reg_t planeObj) {
-	*x = *x - GET_SEL32V(_s->_segMan, planeObj, left);
-	*y = *y - GET_SEL32V(_s->_segMan, planeObj, top);
-}
-
-void SciGui::localToGlobal(int16 *x, int16 *y, reg_t planeObj) {
-	*x = *x + GET_SEL32V(_s->_segMan, planeObj, left);
-	*y = *y + GET_SEL32V(_s->_segMan, planeObj, top);
-}
-
-#endif
 
 int16 SciGui::coordinateToPriority(int16 y) {
 	return _gfx->CoordinateToPriority(y);
@@ -624,9 +606,13 @@ void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
 
 uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
+	Common::Rect adjustedRect(rect.left, rect.top, rect.right, rect.bottom);
 	uint16 result;
 
-	result = _gfx->onControl(screenMask, rect);
+	adjustedRect.clip(_gfx->GetPort()->rect);
+	_gfx->OffsetRect(adjustedRect);
+	result = _gfx->onControl(screenMask, adjustedRect);
+
 	_gfx->SetPort(oldPort);
 	return result;
 }
@@ -728,6 +714,7 @@ void SciGui::setNowSeen(reg_t objectReference) {
 bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
 	Common::Rect checkRect;
+	Common::Rect adjustedRect;
 	uint16 signal, controlMask;
 	bool result;
 
@@ -735,9 +722,14 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.top = GET_SEL32V(_s->_segMan, curObject, brTop);
 	checkRect.right = GET_SEL32V(_s->_segMan, curObject, brRight);
 	checkRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
+
+	adjustedRect = checkRect;
+	adjustedRect.clip(_gfx->GetPort()->rect);
+	_gfx->OffsetRect(adjustedRect);
+
 	signal = GET_SEL32V(_s->_segMan, curObject, signal);
 	controlMask = GET_SEL32V(_s->_segMan, curObject, illegalBits);
-	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
+	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
 	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _s->_segMan->lookupList(listReference);
 		if (!list)
@@ -907,128 +899,6 @@ void SciGui::palVaryCallback(void *refCon) {
 void SciGui::doPalVary() {
 	// TODO: do palette transition here...
 }
-
-#ifdef ENABLE_SCI32
-void SciGui::addScreenItem(reg_t object) {
-	_screenItems.push_back(object);
-}
-
-void SciGui::deleteScreenItem(reg_t object) {
-	for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
-		if (_screenItems[itemNr] == object) {
-			_screenItems.remove_at(itemNr);
-			return;
-		}
-	}
-}
-
-void SciGui::addPlane(reg_t object) {
-	_planes.push_back(object);
-}
-
-void SciGui::updatePlane(reg_t object) {
-	int16 picNum = GET_SEL32V(_s->_segMan, object, picture);
-	if (picNum > -1) {
-		drawPicture(picNum, 100, false, false, false, 0);
-		animateShowPic();
-	}
-}
-
-void SciGui::deletePlane(reg_t object) {
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		if (_planes[planeNr] == object) {
-			_planes.remove_at(planeNr);
-			return;
-		}
-	}
-}
-
-void SciGui::frameOut() {
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		reg_t planeObj = _planes[planeNr];
-		int16 priority = GET_SEL32V(_s->_segMan, planeObj, priority);
-
-		if (priority == -1)
-			continue;
-
-	int16 picNum = GET_SEL32V(_s->_segMan, planeObj, picture);
-	if (picNum > -1) {
-		drawPicture(picNum, 100, false, false, false, 0);
-	}
-
-		// FIXME: This code doesn't currently work properly because of the way we set up the
-		// view port. We are starting at 10 pixels from the top automatically. The offset should
-		// be based on the plane's top in SCI32 instead. Here we would be adding 10 to 10 and
-		// therefore drawing too low. We would need to draw each picture at the correct offset
-		// which doesn't currently happen.
-		//int16 planeTop = GET_SEL32V(_s->_segMan, planeObj, top);
-		//int16 planeLeft = GET_SEL32V(_s->_segMan, planeObj, left);
-
-		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
-			reg_t viewObj = _screenItems[itemNr];
-			reg_t planeOfItem = GET_SEL32(_s->_segMan, viewObj, plane);
-			if (planeOfItem == _planes[planeNr]) {
-				uint16 viewId = GET_SEL32V(_s->_segMan, viewObj, view);
-				uint16 loopNo = GET_SEL32V(_s->_segMan, viewObj, loop);
-				uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
-				uint16 x = GET_SEL32V(_s->_segMan, viewObj, x);
-				uint16 y = GET_SEL32V(_s->_segMan, viewObj, y);
-				uint16 z = GET_SEL32V(_s->_segMan, viewObj, z);
-				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
-				uint16 scaleX = GET_SEL32V(_s->_segMan, viewObj, scaleX);
-				uint16 scaleY = GET_SEL32V(_s->_segMan, viewObj, scaleY);
-				//int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
-
-				// FIXME: See above
-				//leftPos += planeLeft;
-				//topPos += planeTop;
-
-				// Theoretically, leftPos and topPos should be sane
-				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that
-				// the hack underneath does not try and draw cels outside the screen coordinates
-				if (x >= _screen->getWidth()) {
-					continue;
-				}
-
-				if (y >= _screen->getHeight()) {
-					continue;
-				}
-
-				if (viewId != 0xffff) {
-					Common::Rect celRect;
-					View *view = _gfx->getView(viewId);
-					// Sometimes x,y are bottom right
-					view->getCelRect(loopNo, celNo, x, y, z, &celRect);
-//					leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
-//					topPos = GET_SEL32V(_s->_segMan, viewObj, y);
-//					celRect.left = leftPos;
-//					celRect.top = topPos;
-//					celRect.right = leftPos + view->getWidth(loopNo, celNo);
-//					celRect.bottom = topPos + view->getHeight(loopNo, celNo);
-//					warning("view %d, loop %d, cel %d", viewId, loopNo, celNo);
-
-//void View::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
-					//celRect.right = leftPos;
-					//celRect.bottom = topPos; 
-					//celRect.left = celRect.right - view->getWidth(loopNo, celNo);;
-					//celRect.top = celRect.bottom - view->getHeight(loopNo, celNo);
-					celRect.clip(_gfx->_curPort->rect);
-					_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0, scaleX, scaleY);
-				}
-					//drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
-			}
-		}
-	}
-	_screen->copyToScreen();
-	//animateShowPic();
-}
-
-void SciGui::drawRobot(GuiResourceId robotId) {
-	Robot *test = new Robot(_s->resMan, _screen, robotId);
-	test->draw();
-	delete test;
-}
-#endif
 
 bool SciGui::debugUndither(bool flag) {
 	_screen->unditherSetState(flag);

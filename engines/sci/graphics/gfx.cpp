@@ -446,24 +446,21 @@ void Gfx::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, u
 }
 
 uint16 Gfx::onControl(uint16 screenMask, Common::Rect rect) {
-	Common::Rect outRect(rect.left, rect.top, rect.right, rect.bottom);
 	int16 x, y;
 	uint16 result = 0;
 
-	outRect.clip(_curPort->rect);
-	if (outRect.isEmpty()) // nothing to control
+	if (rect.isEmpty())
 		return 0;
-	OffsetRect(outRect);
 
 	if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
-		for (y = outRect.top; y < outRect.bottom; y++) {
-			for (x = outRect.left; x < outRect.right; x++) {
+		for (y = rect.top; y < rect.bottom; y++) {
+			for (x = rect.left; x < rect.right; x++) {
 				result |= 1 << _screen->getPriority(x, y);
 			}
 		}
 	} else {
-		for (y = outRect.top; y < outRect.bottom; y++) {
-			for (x = outRect.left; x < outRect.right; x++) {
+		for (y = rect.top; y < rect.bottom; y++) {
+			for (x = rect.left; x < rect.right; x++) {
 				result |= 1 << _screen->getControl(x, y);
 			}
 		}

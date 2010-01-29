@@ -34,6 +34,7 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/vm.o \
 	graphics/gui.o \
+	graphics/gui32.o \
 	graphics/animate.o \
 	graphics/controls.o \
 	graphics/cursor.o \

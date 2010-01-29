@@ -55,7 +55,6 @@ class Transitions;
 class SciGui {
 public:
 	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor, AudioPlayer *audio);
-	SciGui();
 	virtual ~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);
@@ -156,20 +155,6 @@ public:
 	void togglePalVary(bool pause);
 	void stopPalVary();
 
-#ifdef ENABLE_SCI32
-	// SCI32
-	virtual void addScreenItem(reg_t object);
-	virtual void deleteScreenItem(reg_t object);
-	virtual void addPlane(reg_t object);
-	virtual void updatePlane(reg_t object);
-	virtual void deletePlane(reg_t object);
-	virtual void frameOut();
-	virtual void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
-	virtual void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
-
-	virtual void drawRobot(GuiResourceId robotId);
-#endif
-
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 	virtual bool debugEGAdrawingVisualize(bool state);
@@ -203,11 +188,6 @@ private:
 	uint32 _palVaryEnd;
 
 	bool _usesOldGfxFunctions;
-
-#ifdef ENABLE_SCI32
-	Common::Array<reg_t> _screenItems;
-	Common::Array<reg_t> _planes;
-#endif
 };
 
 } // End of namespace Sci

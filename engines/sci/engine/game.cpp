@@ -270,7 +270,8 @@ int game_init(EngineState *s) {
 	}
 
 	// Initialize menu TODO: Actually this should be another init()
-	s->_gui->menuReset();
+	if (s->_gui)
+		s->_gui->menuReset();
 
 	s->successor = NULL; // No successor
 

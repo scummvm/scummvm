@@ -30,6 +30,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/gui32.h"
 
 namespace Sci {
 
@@ -649,7 +650,7 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 
-	s->_gui->addScreenItem(viewObj);
+	s->_gui32->addScreenItem(viewObj);
 	return NULL_REG;
 }
 
@@ -663,7 +664,7 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 
-	s->_gui->deleteScreenItem(viewObj);
+	s->_gui32->deleteScreenItem(viewObj);
 
 	/*
 	reg_t viewObj = argv[0];
@@ -685,7 +686,7 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	s->_gui->addPlane(planeObj);
+	s->_gui32->addPlane(planeObj);
 	warning("kAddPlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
@@ -693,7 +694,7 @@ reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	s->_gui->deletePlane(planeObj);
+	s->_gui32->deletePlane(planeObj);
 	warning("kDeletePlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
@@ -701,7 +702,7 @@ reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	s->_gui->updatePlane(planeObj);
+	s->_gui32->updatePlane(planeObj);
 	return s->r_acc;
 }
 
@@ -719,7 +720,7 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	// as its called right after a view is updated
 
 	// TODO
-	s->_gui->frameOut();
+	s->_gui32->frameOut();
 
 	return NULL_REG;
 }

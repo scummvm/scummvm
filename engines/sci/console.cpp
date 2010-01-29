@@ -43,6 +43,7 @@
 #endif
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/gui32.h"
 #include "sci/graphics/cursor.h"
 
 #include "sci/parser/vocabulary.h"
@@ -1112,7 +1113,7 @@ bool Console::cmdDrawRobot(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_vm->_gamestate->_gui->drawRobot(resourceId);
+	_vm->_gamestate->_gui32->drawRobot(resourceId);
 	return true;
 }
 #endif

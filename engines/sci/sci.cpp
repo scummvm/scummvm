@@ -40,6 +40,7 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/gui32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
@@ -162,7 +163,10 @@ Common::Error SciEngine::run() {
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
+	if (getSciVersion() <= SCI_VERSION_1_1)
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
+	else
+		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cursor);
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
@@ -192,7 +196,10 @@ Common::Error SciEngine::run() {
 
 	syncSoundSettings();
 
-	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
+	if (_gamestate->_gui)
+		_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
+	else
+		_gamestate->_gui32->init();
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 
