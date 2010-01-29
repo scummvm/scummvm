@@ -951,6 +951,11 @@ void SciGui::frameOut() {
 		if (priority == -1)
 			continue;
 
+	int16 picNum = GET_SEL32V(_s->_segMan, planeObj, picture);
+	if (picNum > -1) {
+		drawPicture(picNum, 100, false, false, false, 0);
+	}
+
 		// FIXME: This code doesn't currently work properly because of the way we set up the
 		// view port. We are starting at 10 pixels from the top automatically. The offset should
 		// be based on the plane's top in SCI32 instead. Here we would be adding 10 to 10 and
@@ -991,6 +996,7 @@ void SciGui::frameOut() {
 			}
 		}
 	}
+	animateShowPic();
 }
 
 void SciGui::drawRobot(GuiResourceId robotId) {
