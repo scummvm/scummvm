@@ -996,10 +996,15 @@ void SciGui::frameOut() {
 				if (viewId != 0xffff) {
 					Common::Rect celRect;
 					View *view = _gfx->getView(viewId);
+					// Sometimes x,y are bottom right
 					celRect.left = leftPos;
 					celRect.top = topPos;
-					celRect.right = celRect.left + view->getWidth(loopNo, celNo);
-					celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
+					celRect.right = leftPos + view->getWidth(loopNo, celNo);
+					celRect.bottom = topPos + view->getHeight(loopNo, celNo);
+					//celRect.right = leftPos;
+					//celRect.bottom = topPos; 
+					//celRect.left = celRect.right - view->getWidth(loopNo, celNo);;
+					//celRect.top = celRect.bottom - view->getHeight(loopNo, celNo);
 					celRect.clip(_gfx->_curPort->rect);
 					_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0, scaleX, scaleY);
 				}
@@ -1007,7 +1012,8 @@ void SciGui::frameOut() {
 			}
 		}
 	}
-	animateShowPic();
+	_screen->copyToScreen();
+	//animateShowPic();
 }
 
 void SciGui::drawRobot(GuiResourceId robotId) {
