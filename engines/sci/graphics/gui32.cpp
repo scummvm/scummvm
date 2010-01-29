@@ -294,11 +294,11 @@ void SciGui32::frameOut() {
 				// Theoretically, leftPos and topPos should be sane
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that
 				// the hack underneath does not try and draw cels outside the screen coordinates
-				if (y < 0 || x >= _screen->getWidth()) {
+				if (x >= _screen->getWidth()) {
 					continue;
 				}
 
-				if (y < 0 || y >= _screen->getHeight()) {
+				if (y >= _screen->getHeight()) {
 					continue;
 				}
 

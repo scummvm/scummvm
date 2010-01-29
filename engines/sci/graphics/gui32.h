@@ -57,9 +57,9 @@ public:
 	bool isCursorVisible();
 	void setCursorShape(GuiResourceId cursorId);
 	void setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot);
-	virtual void setCursorPos(Common::Point pos);
+	void setCursorPos(Common::Point pos);
 	Common::Point getCursorPos();
-	virtual void moveCursor(Common::Point pos);
+	void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 
 	int16 getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);

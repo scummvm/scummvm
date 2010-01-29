@@ -34,7 +34,6 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/vm.o \
 	graphics/gui.o \
-	graphics/gui32.o \
 	graphics/animate.o \
 	graphics/controls.o \
 	graphics/cursor.o \
@@ -70,7 +69,8 @@ MODULE_OBJS := \
 	
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
-	engine/kernel32.o 
+	engine/kernel32.o \
+	graphics/gui32.o
 endif
 
 # This module can be built as a plugin
