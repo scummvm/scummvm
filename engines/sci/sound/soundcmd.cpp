@@ -512,7 +512,7 @@ void SoundCommandParser::cmdStopSound(reg_t obj, int16 value) {
 	}
 
 	// Don't modify the objects of sound slots that are already stopped,
-	// as the associated objects could have been disposed
+	// as the associated objects could be disposed by the game scripts
 	if (musicSlot->status != kSoundStopped) {
 		PUT_SEL32V(_segMan, obj, handle, 0);
 		if (_soundVersion <= SCI_VERSION_0_LATE)
@@ -908,7 +908,7 @@ void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Don't modify the objects of sound slots that are already stopped,
-		// as the associated objects could have been disposed
+		// as the associated objects could be disposed by the game scripts
 		if ((*i)->status != kSoundStopped) {
 			if (_soundVersion <= SCI_VERSION_0_LATE)
 				PUT_SEL32V(_segMan, (*i)->soundObj, state, kSoundStopped);
