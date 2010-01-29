@@ -35,6 +35,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/script.h"
 #include "sci/engine/gc.h"
 
 namespace Sci {

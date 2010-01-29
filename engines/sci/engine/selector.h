@@ -30,6 +30,7 @@
 
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
+#include "sci/engine/kernel.h"		// for Kernel::_selectorCache
 
 namespace Sci {
 

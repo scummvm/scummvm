@@ -35,6 +35,7 @@
 
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/script.h"	// for script_adjust_opcode_formats & script_free_breakpoints
 
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"

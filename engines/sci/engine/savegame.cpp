@@ -36,6 +36,7 @@
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/vm_types.h"
+#include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/gui.h"
 #include "sci/sound/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -702,6 +703,7 @@ static void load_script(EngineState *s, Script *scr) {
 	}
 }
 
+// TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
 	SegmentObj *mobj;

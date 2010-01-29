@@ -29,6 +29,8 @@
 #include "sci/console.h"
 #include "sci/debug.h"
 #include "sci/engine/state.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/script.h"
 
 namespace Sci {
 
