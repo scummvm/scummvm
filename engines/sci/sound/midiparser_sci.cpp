@@ -524,6 +524,8 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 }
 
 void MidiParser_SCI::setVolume(byte volume) {
+	// FIXME: This receives values > 127, so it has been disabled for now
+#if 0
 	assert(volume <= MUSIC_VOLUME_MAX);
 	if (_volume != volume) {
 		_volume = volume;
@@ -548,6 +550,7 @@ void MidiParser_SCI::setVolume(byte volume) {
 			error("MidiParser_SCI::setVolume: Unsupported soundVersion");
 		}
 	}
+#endif
 }
 
 } // End of namespace Sci
