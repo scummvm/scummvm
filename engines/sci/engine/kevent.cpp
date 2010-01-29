@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key

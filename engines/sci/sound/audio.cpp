@@ -24,6 +24,7 @@
  */
 
 #include "sci/resource.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/sound/audio.h"

@@ -29,6 +29,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/graphics/gfx.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/font.h"

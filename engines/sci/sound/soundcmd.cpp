@@ -33,6 +33,8 @@
 #include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 
+#include "sci/engine/selector.h"
+
 namespace Sci {
 
 #define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */

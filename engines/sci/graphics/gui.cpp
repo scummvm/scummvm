@@ -30,6 +30,7 @@
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/event.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"

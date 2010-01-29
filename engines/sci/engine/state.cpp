@@ -26,6 +26,7 @@
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
 
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/script.h"
 #include "sci/engine/message.h"

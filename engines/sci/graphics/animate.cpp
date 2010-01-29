@@ -29,6 +29,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/graphics/gfx.h"
 #include "sci/graphics/view.h"
@@ -91,7 +92,7 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 		signal = GET_SEL32V(_s->_segMan, curObject, signal);
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
-			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, 0);
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argc, argv, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
 		}
@@ -486,7 +487,7 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 
 		if (signal & kSignalDisposeMe) {
 			// Call .delete_ method of that object
-			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, 0);
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argc, argv, 0);
 		}
 		listIterator--;
 	}

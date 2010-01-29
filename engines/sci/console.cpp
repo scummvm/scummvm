@@ -32,6 +32,7 @@
 #include "sci/resource.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel_types.h"	// for determine_reg_type
 #ifdef USE_OLD_MUSIC_FUNCTIONS

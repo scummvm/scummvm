@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 
 namespace Sci {
 
@@ -54,7 +55,7 @@ void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_
 }
 
 int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
-	StackPtr k_argp, int k_argc, int argc, const reg_t *argv) {
+	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
 	reg_t address;
@@ -96,7 +97,7 @@ int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, Selector
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
-	StackPtr k_argp, int k_argc, int argc, ...) {
+	int k_argc, StackPtr k_argp, int argc, ...) {
 	va_list argp;
 	reg_t *args = new reg_t[argc];
 
@@ -105,7 +106,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 		args[i] = va_arg(argp, reg_t);
 	va_end(argp);
 
-	int retval = invoke_selector_argv(s, object, selector_id, noinvalid, k_argp, k_argc, argc, args);
+	int retval = invoke_selector_argv(s, object, selector_id, noinvalid, k_argc, k_argp, argc, args);
 
 	delete[] args;
 	return retval;

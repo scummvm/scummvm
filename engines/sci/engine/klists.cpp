@@ -24,6 +24,7 @@
  */
 
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 
 namespace Sci {
@@ -535,7 +536,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 				write_selector(s->_segMan, curObject, slc, argv[2]);
 			}
 		} else {
-			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, argc - 2, argv + 2);
+			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 		}
 
 		// Lookup node again, since the nodetable it was in may have been reallocated
@@ -568,7 +569,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 			// Can this happen with variable selectors?
 			warning("kListFirstTrue: Attempted to access a variable selector");
 		} else {
-			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, argc - 2, argv + 2);
+			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result is true
 			if (!s->r_acc.isNull())
@@ -606,7 +607,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 			// Can this happen with variable selectors?
 			warning("kListAllTrue: Attempted to access a variable selector");
 		} else {
-			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argv, argc, argc - 2, argv + 2);
+			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result isn't true
 			if (s->r_acc.isNull())

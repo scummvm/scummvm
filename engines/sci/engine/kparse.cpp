@@ -27,6 +27,7 @@
 
 #include "sci/resource.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 
