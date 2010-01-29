@@ -2144,7 +2144,7 @@ bool TownsPC98_OpnChannel::control_fc_decOutLevel(uint8 para) {
 
 bool TownsPC98_OpnChannel::control_fd_jump(uint8 para) {
 	uint8 *tmp = _drv->_trackPtr + READ_LE_UINT16(_dataPtr - 1);
-	_dataPtr = (tmp[1] == 1) ? tmp : ++_dataPtr;
+	_dataPtr = (tmp[1] == 1) ? tmp : (_dataPtr + 1);
 	return true;
 }
 

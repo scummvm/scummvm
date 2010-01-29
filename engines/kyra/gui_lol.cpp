@@ -1059,7 +1059,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 		return 0;
 
 	gui_toggleButtonDisplayMode(_flags.isTalkie ? 79 : 77, 1);
-	_currentDirection = (--_currentDirection) & 3;
+	_currentDirection = (_currentDirection - 1) & 3;
 
 	_sceneDefaultUpdate = 1;
 
@@ -1081,7 +1081,7 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 		return 0;
 
 	gui_toggleButtonDisplayMode(_flags.isTalkie ? 81 : 79, 1);
-	_currentDirection = (++_currentDirection) & 3;
+	_currentDirection = (_currentDirection + 1) & 3;
 
 	_sceneDefaultUpdate = 1;
 
@@ -2801,7 +2801,7 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 		_vm->sound()->enableSFX(_vm->_configSounds);
 		break;
 	case 0xfff7:
-		_vm->_monsterDifficulty = ++_vm->_monsterDifficulty % 3;
+		_vm->_monsterDifficulty = (_vm->_monsterDifficulty + 1) % 3;
 		break;
 	case 0xfff6:
 		_vm->_smoothScrollingEnabled ^= true;

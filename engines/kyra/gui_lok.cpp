@@ -1008,7 +1008,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 int GUI_LoK::controlsChangeMusic(Button *button) {
 	updateMenuButton(button);
 
-	_vm->_configMusic = ++_vm->_configMusic % ((_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 3 : 2);
+	_vm->_configMusic = (_vm->_configMusic + 1) % ((_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 3 : 2);
 	setupControls(_menu[5]);
 	return 0;
 }
@@ -1024,7 +1024,7 @@ int GUI_LoK::controlsChangeSounds(Button *button) {
 int GUI_LoK::controlsChangeWalk(Button *button) {
 	updateMenuButton(button);
 
-	_vm->_configWalkspeed = ++_vm->_configWalkspeed % 5;
+	_vm->_configWalkspeed = (_vm->_configWalkspeed + 1) % 5;
 	_vm->setWalkspeed(_vm->_configWalkspeed);
 	setupControls(_menu[5]);
 	return 0;
@@ -1033,7 +1033,7 @@ int GUI_LoK::controlsChangeWalk(Button *button) {
 int GUI_LoK::controlsChangeText(Button *button) {
 	updateMenuButton(button);
 
-	_vm->_configTextspeed = ++_vm->_configTextspeed % 4;
+	_vm->_configTextspeed = (_vm->_configTextspeed + 1) % 4;
 	setupControls(_menu[5]);
 	return 0;
 }
@@ -1041,7 +1041,7 @@ int GUI_LoK::controlsChangeText(Button *button) {
 int GUI_LoK::controlsChangeVoice(Button *button) {
 	updateMenuButton(button);
 
-	_vm->_configVoice = ++_vm->_configVoice % 3;
+	_vm->_configVoice = (_vm->_configVoice + 1) % 3;
 	setupControls(_menu[5]);
 	return 0;
 }

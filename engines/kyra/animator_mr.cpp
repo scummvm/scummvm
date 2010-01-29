@@ -193,7 +193,7 @@ void KyraEngine_MR::updateItemAnimations() {
 
 	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
 	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
-	_nextAnimItem = ++_nextAnimItem % 10;
+	_nextAnimItem = (_nextAnimItem + 1) % 10;
 
 	uint32 ctime = _system->getMillis();
 	if (ctime < a->nextFrame)
@@ -232,7 +232,7 @@ void KyraEngine_MR::updateItemAnimations() {
 
 	if (nextFrame) {
 		a->nextFrame = _system->getMillis() + (s->frames[a->currentFrame].delay * _tickLength);
-		a->currentFrame = ++a->currentFrame % s->numFrames;
+		a->currentFrame = (a->currentFrame + 1) % s->numFrames;
 	}
 }
 

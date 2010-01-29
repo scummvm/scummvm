@@ -270,7 +270,7 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 	if (monster->x != x || monster->y != y) {
 		monster->x = x;
 		monster->y = y;
-		monster->currentSubFrame = (++monster->currentSubFrame) & 3;
+		monster->currentSubFrame = (monster->currentSubFrame + 1) & 3;
 	}
 
 	if (monster->block == 0)
@@ -1115,7 +1115,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 
 	if ((monster->mode != 11) && (monster->mode != 14)) {
 		if (!(_rnd.getRandomNumber(255) & 3)) {
-			monster->shiftStep = (++monster->shiftStep) & 0x0f;
+			monster->shiftStep = (monster->shiftStep + 1) & 0x0f;
 			checkSceneUpdateNeed(monster->block);
 		}
 	}
