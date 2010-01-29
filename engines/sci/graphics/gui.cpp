@@ -971,8 +971,9 @@ void SciGui::frameOut() {
 				uint16 viewId = GET_SEL32V(_s->_segMan, viewObj, view);
 				uint16 loopNo = GET_SEL32V(_s->_segMan, viewObj, loop);
 				uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
-				uint16 leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
-				uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
+				uint16 x = GET_SEL32V(_s->_segMan, viewObj, x);
+				uint16 y = GET_SEL32V(_s->_segMan, viewObj, y);
+				uint16 z = GET_SEL32V(_s->_segMan, viewObj, z);
 				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
 				uint16 scaleX = GET_SEL32V(_s->_segMan, viewObj, scaleX);
 				uint16 scaleY = GET_SEL32V(_s->_segMan, viewObj, scaleY);
@@ -985,11 +986,11 @@ void SciGui::frameOut() {
 				// Theoretically, leftPos and topPos should be sane
 				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that
 				// the hack underneath does not try and draw cels outside the screen coordinates
-				if (leftPos >= _screen->getWidth()) {
+				if (x >= _screen->getWidth()) {
 					continue;
 				}
 
-				if (topPos >= _screen->getHeight()) {
+				if (y >= _screen->getHeight()) {
 					continue;
 				}
 
@@ -997,10 +998,16 @@ void SciGui::frameOut() {
 					Common::Rect celRect;
 					View *view = _gfx->getView(viewId);
 					// Sometimes x,y are bottom right
-					celRect.left = leftPos;
-					celRect.top = topPos;
-					celRect.right = leftPos + view->getWidth(loopNo, celNo);
-					celRect.bottom = topPos + view->getHeight(loopNo, celNo);
+					view->getCelRect(loopNo, celNo, x, y, z, &celRect);
+//					leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
+//					topPos = GET_SEL32V(_s->_segMan, viewObj, y);
+//					celRect.left = leftPos;
+//					celRect.top = topPos;
+//					celRect.right = leftPos + view->getWidth(loopNo, celNo);
+//					celRect.bottom = topPos + view->getHeight(loopNo, celNo);
+//					warning("view %d, loop %d, cel %d", viewId, loopNo, celNo);
+
+//void View::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
 					//celRect.right = leftPos;
 					//celRect.bottom = topPos; 
 					//celRect.left = celRect.right - view->getWidth(loopNo, celNo);;
