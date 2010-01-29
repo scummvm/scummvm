@@ -492,6 +492,30 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 	DebugPrintf("\n");
 
+#if 0
+	// For debug/development
+
+	// If we ever need to modify static_selectors.cpp, this code will print the selectors
+	// in a ready to use format
+	Common::DumpFile *outFile = new Common::DumpFile();
+	outFile->open("selectors.txt");
+	char buf[50];
+	Common::String selName;
+	uint totalSize = _vm->getKernel()->getSelectorNamesSize();
+	uint seeker = 0;
+	while (seeker < totalSize) {
+		selName = "\"" + _vm->getKernel()->getSelectorName(seeker) + "\"";
+		sprintf(buf, "%15s, ", selName.c_str());
+		outFile->writeString(buf);
+
+		if (!((seeker + 1) % 5) && seeker)
+			outFile->writeByte('\n');
+		seeker++;
+	}
+	outFile->finalize();
+	outFile->close();
+#endif
+
 	return true;
 }
 

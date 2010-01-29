@@ -63,6 +63,37 @@ static const char * const sci1Selectors[] = {
           "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
 };
 
+static const char * const sci2Selectors[] = {
+        "plane",           "x",           "y",            "z",     "scaleX", //  0 -  4
+       "scaleY",    "maxScale",    "priority",  "fixPriority",     "inLeft", //  5 -  9
+        "inTop",     "inRight",    "inBottom", "useInsetRect",       "view", // 10 - 14
+         "loop",         "cel",      "bitmap",       "nsLeft",      "nsTop", // 15 - 19
+      "nsRight",    "nsBottom",      "lsLeft",        "lsTop",    "lsRight", // 20 - 25
+     "lsBottom",      "signal", "illegalBits",       "brLeft",      "brTop", // 25 - 29
+      "brRight",    "brBottom",        "name",          "key",       "time", // 30 - 34
+         "text",    "elements",        "fore",         "back",       "mode", // 35 - 39
+        "style",       "state",        "font",         "type",     "window", // 40 - 44
+       "cursor",         "max",        "mark",          "who",    "message", // 45 - 49
+         "edit",        "play",      "number",      "nodePtr",     "client", // 50 - 54
+           "dx",          "dy",   "b-moveCnt",         "b-i1",       "b-i2", // 55 - 59
+         "b-di",     "b-xAxis",      "b-incr",        "xStep",      "yStep", // 60 - 64
+    "moveSpeed",  "cantBeHere",     "heading",        "mover",       "doit", // 65 - 69
+    "isBlocked",      "looper",   "modifiers",       "replay",     "setPri", // 70 - 74
+           "at",        "next",        "done",        "width", "pragmaFail", // 75 - 79
+      "claimed",       "value",        "save",      "restore",      "title", // 80 - 84
+       "button",        "icon",        "draw",       "delete",  "printLang", // 85 - 89
+         "size",      "points",     "palette",      "dataInc",     "handle", // 90 - 94
+          "min",         "sec",       "frame",          "vol",    "perform", // 95 - 99
+     "moveDone",   "topString",       "flags",     "quitGame",    "restart", // 100 - 104
+         "hide", "scaleSignal",  "vanishingX",   "vanishingY",    "picture", // 105 - 109
+         "resX",        "resY",   "coordType",         "data",       "skip", // 110 - 104
+       "center",         "all",        "show",     "textLeft",    "textTop", // 115 - 119
+    "textRight",  "textBottom", "borderColor",    "titleFore",  "titleBack", // 120 - 124
+    "titleFont",      "dimmed",    "frameOut",      "lastKey",  "magnifier", // 125 - 129
+     "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134 
+         "left",       "right",         "top",       "bottom",   "numLines"  // 135 - 139
+};
+
 static const SelectorRemap sciSelectorRemap[] = {
     {    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
@@ -80,39 +111,43 @@ static const SelectorRemap sciSelectorRemap[] = {
 Common::StringList Kernel::checkStaticSelectorNames() {
 	Common::StringList names;
 	const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
-	const int count = ARRAYSIZE(sci0Selectors) + offset;
+	const int count = (getSciVersion() <= SCI_VERSION_1_1) ? ARRAYSIZE(sci0Selectors) + offset : ARRAYSIZE(sci2Selectors);
 	const SelectorRemap *selectorRemap = sciSelectorRemap;
 	int i;
-
-	if (getSciVersion() >= SCI_VERSION_2) {
-		error("SCI2+ static selector table is not implemented yet");
-	}
 
 	// Resize the list of selector names and fill in the SCI 0 names.
 	names.resize(count);
 	for (i = 0; i < offset; i++)
 		names[i].clear();
-	for (i = offset; i < count; i++)
-		names[i] = sci0Selectors[i - offset];
 
-	if (getSciVersion() > SCI_VERSION_01) {
-		// Several new selectors were added in SCI 1 and later.
-		int count2 = ARRAYSIZE(sci1Selectors);
-		names.resize(count + count2);
-		for (i = count; i < count + count2; i++)
-			names[i] = sci1Selectors[i - count];
-	}
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		// SCI0 - SCI11
+		for (i = offset; i < count; i++)
+			names[i] = sci0Selectors[i - offset];
 
-	for (; selectorRemap->slot; ++selectorRemap) {
-		uint32 slot = selectorRemap->slot;
-		if (selectorRemap->slot >= names.size())
-			names.resize(selectorRemap->slot + 1);
-		if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
-			// The SCI1 selectors we use exist in SCI1.1 too, offset by 3
-			if (selectorRemap->minVersion >= SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
-				slot -= 3;
-			names[slot] = selectorRemap->name;
+		if (getSciVersion() > SCI_VERSION_01) {
+			// Several new selectors were added in SCI 1 and later.
+			int count2 = ARRAYSIZE(sci1Selectors);
+			names.resize(count + count2);
+			for (i = count; i < count + count2; i++)
+				names[i] = sci1Selectors[i - count];
 		}
+
+		for (; selectorRemap->slot; ++selectorRemap) {
+			uint32 slot = selectorRemap->slot;
+			if (selectorRemap->slot >= names.size())
+				names.resize(selectorRemap->slot + 1);
+			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
+				// The SCI1 selectors we use exist in SCI1.1 too, offset by 3
+				if (selectorRemap->minVersion >= SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
+					slot -= 3;
+				names[slot] = selectorRemap->name;
+			}
+		}
+	} else {
+		// SCI2+
+		for (i = 0; i < count; i++)
+			names[i] = sci2Selectors[i];
 	}
 
 	return names;
