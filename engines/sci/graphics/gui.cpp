@@ -974,6 +974,8 @@ void SciGui::frameOut() {
 				uint16 leftPos = GET_SEL32V(_s->_segMan, viewObj, x);
 				uint16 topPos = GET_SEL32V(_s->_segMan, viewObj, y);
 				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
+				uint16 scaleX = GET_SEL32V(_s->_segMan, viewObj, scaleX);
+				uint16 scaleY = GET_SEL32V(_s->_segMan, viewObj, scaleY);
 				//int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
 
 				// FIXME: See above
@@ -991,8 +993,17 @@ void SciGui::frameOut() {
 					continue;
 				}
 
-				if (viewId != 0xffff)
-					drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
+				if (viewId != 0xffff) {
+					Common::Rect celRect;
+					View *view = _gfx->getView(viewId);
+					celRect.left = leftPos;
+					celRect.top = topPos;
+					celRect.right = celRect.left + view->getWidth(loopNo, celNo);
+					celRect.bottom = celRect.top + view->getHeight(loopNo, celNo);
+					celRect.clip(_gfx->_curPort->rect);
+					_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0, scaleX, scaleY);
+				}
+					//drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, 0);
 			}
 		}
 	}
