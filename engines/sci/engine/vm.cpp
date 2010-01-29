@@ -896,6 +896,17 @@ void run_vm(EngineState *s, int restoring) {
 		case op_uge_: // 0x14 (20)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
+
+			// SCI0/SCI1 scripts use this to check whether a
+			// parameter is a pointer or a far text
+			// reference. It is used e.g. by the standard library
+			// Print function to distinguish two ways of calling it:
+			//
+			// (Print "foo") // Pointer to a string
+			// (Print 420 5) // Reference to the fifth message in text resource 420
+
+			// It works because in those games, the maximum resource number is 999, 
+			// so any parameter value above that threshold must be a pointer. 
 			if (s->r_acc == make_reg(0, 0x3e8))
 				s->r_acc = make_reg(0, r_temp.segment);
 			else if (r_temp.segment && s->r_acc.segment)
@@ -907,6 +918,8 @@ void run_vm(EngineState *s, int restoring) {
 		case op_ult_: // 0x15 (21)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
+
+			// See above
 			if (s->r_acc == make_reg(0, 0x3e8))
 				s->r_acc = make_reg(0, !r_temp.segment);
 			else if (r_temp.segment && s->r_acc.segment)
