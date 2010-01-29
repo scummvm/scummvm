@@ -212,8 +212,8 @@ void View::initData(GuiResourceId resourceId) {
 				cel->displaceY = READ_LE_UINT16(celData + 6);
 				cel->clearKey = celData[8];
 				cel->offsetEGA = 0;
-				cel->offsetRLE = READ_LE_UINT16(celData + 24);
-				cel->offsetLiteral = READ_LE_UINT16(celData + 28);
+				cel->offsetRLE = READ_LE_UINT32(celData + 24);
+				cel->offsetLiteral = READ_LE_UINT32(celData + 28);
 				cel->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
 					cel->displaceX = -cel->displaceX;

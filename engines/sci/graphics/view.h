@@ -34,8 +34,8 @@ struct CelInfo {
 	int16 displaceY;
 	byte clearKey;
 	uint16 offsetEGA;
-	uint16 offsetRLE;
-	uint16 offsetLiteral;
+	uint32 offsetRLE;
+	uint32 offsetLiteral;
 	byte *rawBitmap;
 };
 
