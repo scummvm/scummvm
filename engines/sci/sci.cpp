@@ -167,12 +167,17 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
+	if (getSciVersion() >= SCI_VERSION_2) {
+		_gamestate->_gui = 0;
 		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cursor);
-	else
-#endif
+	} else {
 		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
-		
+		_gamestate->_gui32 = 0;
+	}
+#else
+	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
+	_gamestate->_gui32 = 0;
+#endif
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
