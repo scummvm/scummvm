@@ -227,8 +227,8 @@ void SciPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 		for (i = 1 ; i < 255; i++) {
 			if (!pFrom->colors[i].used)// color is not used - so skip it
 				continue;
-			// forced palette merging or dest color is not used yet or bit 1 of new color is set
-			if (force || (!pTo->colors[i].used) || (pFrom->colors[i].used & 2)) {
+			// forced palette merging or dest color is not used yet
+			if (force || (!pTo->colors[i].used)) {
 				pTo->colors[i].used = pFrom->colors[i].used;
 				pTo->colors[i].r = pFrom->colors[i].r;
 				pTo->colors[i].g = pFrom->colors[i].g;
