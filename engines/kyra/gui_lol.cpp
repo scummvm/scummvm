@@ -2810,7 +2810,7 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 		_vm->_floatingCursorsEnabled ^= true;
 		break;
 	case 0xfff4:
-		_vm->_lang = ++_vm->_lang % 3;
+		_vm->_lang = (_vm->_lang + 1) % 3;
 		break;
 	case 0xfff3:
 		_vm->_configVoice ^= 3;
