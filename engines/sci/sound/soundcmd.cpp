@@ -511,11 +511,15 @@ void SoundCommandParser::cmdStopSound(reg_t obj, int16 value) {
 		return;
 	}
 
-	PUT_SEL32V(_segMan, obj, handle, 0);
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, state, kSoundStopped);
-	else
-		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+	// Don't modify the objects of sound slots that are already stopped,
+	// as the associated objects could have been disposed
+	if (musicSlot->status != kSoundStopped) {
+		PUT_SEL32V(_segMan, obj, handle, 0);
+		if (_soundVersion <= SCI_VERSION_0_LATE)
+			PUT_SEL32V(_segMan, obj, state, kSoundStopped);
+		else
+			PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
+	}
 
 	musicSlot->dataInc = 0;
 	musicSlot->signal = 0;
@@ -903,10 +907,14 @@ void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(_segMan, (*i)->soundObj, state, kSoundStopped);
-		else
-			PUT_SEL32V(_segMan, (*i)->soundObj, signal, SIGNAL_OFFSET);
+		// Don't modify the objects of sound slots that are already stopped,
+		// as the associated objects could have been disposed
+		if ((*i)->status != kSoundStopped) {
+			if (_soundVersion <= SCI_VERSION_0_LATE)
+				PUT_SEL32V(_segMan, (*i)->soundObj, state, kSoundStopped);
+			else
+				PUT_SEL32V(_segMan, (*i)->soundObj, signal, SIGNAL_OFFSET);
+		}
 
 		(*i)->dataInc = 0;
 		_music->soundStop(*i);
