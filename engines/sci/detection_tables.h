@@ -586,6 +586,30 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// Gabriel Knight - English Windows CD (from jvprat)
+	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
+	{"gk1", "CD", {
+		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
+		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE	},
+
+	// Gabriel Knight - German Windows CD (from Tobis87)
+	// SCI interpreter version 2.000.000
+	{"gk1", "CD", {
+		{"resource.map", 0, "a7d3e55114c65647310373cb390815ba", 11392},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13400497},
+		{NULL, 0, NULL, 0}},
+		Common::DE_DEU, Common::kPlatformWindows, 0, GUIO_NONE	},
+
+	// Gabriel Knight - Spanish Windows CD (from jvprat)
+	// Executable scanning reports "2.000.000", VERSION file reports "1.000.000, April 13, 1995"
+	{"gk1", "CD", {
+		{"resource.map", 0, "7cb6e9bba15b544ec7a635c45bde9953", 11404},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13381599},
+		{NULL, 0, NULL, 0}},
+		Common::ES_ESP, Common::kPlatformWindows, 0, GUIO_NONE	},
+
 	// Gabriel Knight 2 - English Windows Non-Interactive Demo
 	// Executable scanning reports "2.100.002"
 	{"gk2", "Demo", {
