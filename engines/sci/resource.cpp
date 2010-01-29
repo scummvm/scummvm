@@ -399,12 +399,10 @@ int ResourceManager::addAppropriateSources() {
 		}
 #ifdef ENABLE_SCI32
 
-		/*
-		// TODO: not working yet
-		if (Common::File::exists("RESOURCE.ALT")) {	// GK1CD hires content
-			addSource(addExternalMap("RESOURCE.MAP", 10), kSourceVolume, "RESOURCE.ALT", 10);
+		// GK1CD hires content
+		if (Common::File::exists("ALT.MAP") && Common::File::exists("RESOURCE.ALT")) {
+			addSource(addExternalMap("ALT.MAP", 10), kSourceVolume, "RESOURCE.ALT", 10);
 		}
-		*/
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles;
