@@ -46,6 +46,8 @@ public:
 
 	void textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
 
+	void shakeScreen(uint16 shakeCount, uint16 directions);
+
 	uint16 onControl(byte screenMask, Common::Rect rect);
 	void setNowSeen(reg_t objectReference);
 	bool canBeHere(reg_t curObject, reg_t listReference);
