@@ -97,9 +97,6 @@ Common::Error MohawkEngine_Riven::run() {
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
 		_saveLoad->loadGame(savedGamesList[gameToLoad]);
-		// HACK: The save_slot variable is saved to the disk! We don't want this!
-		ConfMan.removeKey("save_slot", ConfMan.getActiveDomainName());
-		ConfMan.flushToDisk();
 	} else { // Otherwise, start us off at aspit's card 1
         changeToStack(aspit);
 		changeToCard(1);

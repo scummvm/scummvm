@@ -216,9 +216,6 @@ Common::Error MohawkEngine_Myst::run() {
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
 		_saveLoad->loadGame(savedGamesList[gameToLoad]);
-		// HACK: The save_slot variable is saved to the disk! We don't want this!
-		ConfMan.removeKey("save_slot", ConfMan.getActiveDomainName());
-		ConfMan.flushToDisk();
 	}
 
 	// Load Help System (Masterpiece Edition Only)
