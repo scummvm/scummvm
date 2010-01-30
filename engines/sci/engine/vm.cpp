@@ -119,14 +119,14 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 		else
 			txt += Common::String::printf("(out of range [%d..%d])", 0, max - 1);
 
-		warning("%s", txt.c_str());
-
 		if (type == VAR_PARAM || type == VAR_TEMP) {
 			int total_offset = r - stack_base;
 			if (total_offset < 0 || total_offset >= VM_STACK_SIZE) {
+				warning("%s", txt.c_str());
 				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
 				return false;
 			} else {
+				debugC(2, kDebugLevelVM, txt.c_str());
 				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.\n");
 				return true;
 			}
