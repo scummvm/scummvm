@@ -617,8 +617,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		warning("kString(Printf)");
 		break;
 	case 12: // Printf Buf
-		// TODO: Store a formatted string in a specified string
-		warning("kString(PrintfBuf)");
+		return kFormat(s, argc - 1, argv + 1);
 		break;
 	case 13: { // atoi
 		Common::String string = s->_segMan->getString(argv[1]);
