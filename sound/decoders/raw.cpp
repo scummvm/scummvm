@@ -370,29 +370,31 @@ AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
 	}
 }
 
-
-
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new RawDiskStream<STEREO, true, UNSIGNED, true>(rate, disposeStream, stream, blocks); \
+				return new RawDiskStream<STEREO, true, UNSIGNED, true>(rate, disposeAfterUse, stream, blockList); \
 			else  \
-				return new RawDiskStream<STEREO, true, UNSIGNED, false>(rate, disposeStream, stream, blocks); \
+				return new RawDiskStream<STEREO, true, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList); \
 		} else \
-			return new RawDiskStream<STEREO, false, UNSIGNED, false>(rate, disposeStream, stream, blocks)
+			return new RawDiskStream<STEREO, false, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList)
 
-
-SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block, int numBlocks,
-					int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
+SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
+                                   const RawStreamBlockList &blockList,
+                                   int rate,
+                                   byte flags,
+                                   DisposeAfterUse::Flag disposeAfterUse) {
 	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
 
-	assert(numBlocks > 0);
-	RawStreamBlockList blocks;
-	for (int i = 0; i < numBlocks; ++i)
-		blocks.push_back(block[i]);
+	if (blockList.empty()) {
+		warning("Empty block list passed to makeRawStream");
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
+		return 0;
+	}
 
 	if (isStereo) {
 		if (isUnsigned) {
@@ -407,6 +409,31 @@ SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream, RawDi
 			MAKE_LINEAR_DISK(false, false);
 		}
 	}
+}
+
+SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
+                                   int rate, byte flags,
+                                   DisposeAfterUse::Flag disposeAfterUse) {
+	RawStreamBlockList blocks;
+	RawDiskStreamAudioBlock block;
+	block.pos = 0;
+
+	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+
+	block.len = stream->size() / (is16Bit ? 2 : 1);
+	blocks.push_back(block);
+
+	return makeRawStream(stream, blocks, rate, flags, disposeAfterUse);
+}
+
+SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block, int numBlocks,
+                                       int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
+	assert(numBlocks > 0);
+	RawStreamBlockList blocks;
+	for (int i = 0; i < numBlocks; ++i)
+		blocks.push_back(block[i]);
+
+	return makeRawStream(stream, blocks, rate, flags, disposeStream);
 }
 
 } // End of namespace Audio

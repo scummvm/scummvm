@@ -76,7 +76,7 @@ enum RawFlags {
  * @param len	length of the buffer in bytes
  * @param rate	sample rate of the data
  * @param flags	audio format flags combination
- * @see Mixer::RawFlags
+ * @see RawFlags
  * @param autofreeBuffer	whether the data buffer should be destroyed after playback
  * @return The new SeekableAudioStream (or 0 on failure).
  */
@@ -108,15 +108,53 @@ AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
  */
 struct RawDiskStreamAudioBlock {
 	int32 pos;   ///< Position in stream of the block (in bytes of course!)
-	int32 len;   ///< Length of the block (in samples)
+	int32 len;   ///< Length of the block (in sample (pairs))
 };
 
 /**
  * List containing all blocks of a raw stream.
+ * @see RawDiskStreamAudioBlock
  */
 typedef Common::List<RawDiskStreamAudioBlock> RawStreamBlockList;
 
 /**
+ * Creates an audio stream, which plays from the given stream.
+ *
+ * @param stream Stream object to play from.
+ * @param size   Size of the buffer.
+ * @param rate   Rate of the sound data.
+ * @param flags  Audio flags combination.
+ * @see RawFlags
+ * @param disposeAfterUse Whether to delete the stream after use.
+ * @return The new SeekableAudioStream (or 0 on failure).
+ */
+SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
+                                   int rate, byte flags,
+                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+/**
+ * Creates an audio stream, which plays from the given stream.
+ *
+ * @param stream Stream object to play from.
+ * @param blockList List of blocks to play.
+ * @see RawDiskStreamAudioBlock
+ * @see RawStreamBlockList
+ * @param rate Rate of the sound data.
+ * @param flags Audio flags combination.
+ * @see RawFlags
+ * @param disposeAfterUse Whether to delete the stream after use.
+ * @return The new SeekableAudioStream (or 0 on failure).
+ */
+SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
+                                   const RawStreamBlockList &blockList,
+                                   int rate,
+                                   byte flags,
+                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+/**
+ * NOTE:
+ * This API is considered deprecated.
+ *
  * Creates a audio stream, which plays from given stream.
  *
  * @param stream Stream to play from
@@ -125,11 +163,11 @@ typedef Common::List<RawDiskStreamAudioBlock> RawStreamBlockList;
  * @param numBlocks Number of blocks.
  * @param rate The rate
  * @param flags Flags combination.
- * @see Mixer::RawFlags
+ * @see RawFlags
  * @param disposeStream Whether the "stream" object should be destroyed after playback.
  * @return The new SeekableAudioStream (or 0 on failure).
  */
-SeekableAudioStream *makeRawDiskStream(Common::SeekableReadStream *stream,
+SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
 		RawDiskStreamAudioBlock *block, int numBlocks,
 		int rate, byte flags,
 		DisposeAfterUse::Flag disposeStream);

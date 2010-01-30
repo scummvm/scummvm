@@ -312,7 +312,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, D
 	// Create an audiostream from the data. Note the numBlocks may be 0,
 	// e.g. when invalid data is encountered. See bug #2890038.
 	if (numBlocks)
-		audioStream = makeRawDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
+		audioStream = makeRawDiskStream_OLD(&stream, block, numBlocks, rate, flags, takeOwnership/*, begin_loop, end_loop*/);
 
 	delete[] block;
 
@@ -332,7 +332,7 @@ SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream,
 	// Create an audiostream from the data. Note the numBlocks may be 0,
 	// e.g. when invalid data is encountered. See bug #2890038.
 	if (numBlocks)
-		audioStream = makeRawDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership);
+		audioStream = makeRawDiskStream_OLD(&stream, block, numBlocks, rate, flags, takeOwnership);
 
 	delete[] block;
 
