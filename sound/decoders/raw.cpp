@@ -155,6 +155,9 @@ int RawAudioStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer,
 		if (_bufferLeft == 0 && _diskLeft > 0) {
 			int32 readAmount = MIN(_diskLeft, BUFFER_SIZE);
 
+			// TODO: We should check for both seek and read to success.
+			// If that is not the case, we should probably stop the
+			// stream playback.
 			_stream->seek(_filePos, SEEK_SET);
 			_stream->read(_buffer, readAmount * (is16Bit? 2: 1));
 
