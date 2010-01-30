@@ -284,7 +284,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*60*/	DEFUN("SetMenu", kSetMenu, "i.*"),
 	/*61*/	DEFUN("GetSaveFiles", kGetSaveFiles, "rrr"),
 	/*62*/	DEFUN("GetCWD", kGetCWD, "r"),
-	/*63*/	DEFUN("CheckFreeSpace", kCheckFreeSpace, "r"),
+	/*63*/	DEFUN("CheckFreeSpace", kCheckFreeSpace, "r.*"),
 	/*64*/	DEFUN("ValidPath", kValidPath, "r"),
 	/*65*/	DEFUN("CoordPri", kCoordPri, "ii*"),
 	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),

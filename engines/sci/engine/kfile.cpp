@@ -425,6 +425,12 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
+#ifdef ENABLE_SCI32
+	// TODO: SCI32 uses a parameter here.
+	if (argc > 1)
+		warning("kCheckFreeSpace called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[1]));
+#endif
+
 	Common::String path = s->_segMan->getString(argv[0]);
 
 	debug(3, "kCheckFreeSpace(%s)", path.c_str());

@@ -46,6 +46,10 @@
 #include "sci/sound/music.h"
 #endif
 
+#ifdef ENABLE_SCI32
+#include "sci/graphics/gui32.h"
+#endif
+
 namespace Sci {
 
 
@@ -356,10 +360,11 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
 
-	if (s.getVersion() >= 13) {
+	if (s.getVersion() >= 13 && _gui) {
 		// Save/Load picPort as well (cause sierra sci also does this)
 		int16 picPortTop, picPortLeft;
 		Common::Rect picPortRect;
+
 		if (s.isSaving())
 			picPortRect = _gui->getPortPic(picPortTop, picPortLeft);
 
@@ -421,6 +426,72 @@ void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 	sync_reg_t(s, obj.key);
 	sync_reg_t(s, obj.value);
 }
+
+#ifdef ENABLE_SCI32
+template <>
+void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &obj) {
+	s.syncAsSint32LE(obj.next_free);
+
+	byte type = 0;
+	uint32 size = 0;
+	
+	if (s.isSaving()) {
+		type = (byte)obj.getType();
+		size = obj.getSize();
+		s.syncAsByte(type);
+		s.syncAsUint32LE(size);
+	} else {
+		s.syncAsByte(type);
+		s.syncAsUint32LE(size);
+		obj.setType((int8)type);
+
+		// HACK: Skip arrays that have a negative type
+		if ((int8)type < 0)
+			return;
+
+		obj.setSize(size);
+	}
+
+	for (uint32 i = 0; i < size; i++) {
+		reg_t value;
+		
+		if (s.isSaving())
+			value = obj.getValue(i);
+
+		sync_reg_t(s, value);
+
+		if (s.isLoading())
+			obj.setValue(i, value);
+	}
+}
+
+template <>
+void syncWithSerializer(Common::Serializer &s, Table<SciString>::Entry &obj) {
+	s.syncAsSint32LE(obj.next_free);
+
+	uint32 size = 0;
+	
+	if (s.isSaving()) {
+		size = obj.getSize();
+		s.syncAsUint32LE(size);
+	} else {
+		s.syncAsUint32LE(size);
+		obj.setSize(size);
+	}
+
+	for (uint32 i = 0; i < size; i++) {
+		char value;
+		
+		if (s.isSaving())
+			value = obj.getValue(i);
+
+		s.syncAsByte(value);
+
+		if (s.isLoading())
+			obj.setValue(i, value);
+	}
+}
+#endif
 
 template <typename T>
 void sync_Table(Common::Serializer &s, T &obj) {
@@ -613,6 +684,22 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 			_playList[i]->saveLoadWithSerializer(s);
 		}
 	}
+}
+#endif
+
+#ifdef ENABLE_SCI32
+void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.getVersion() < 18)
+		return;
+
+	sync_Table<ArrayTable>(ser, *this);
+}
+
+void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.getVersion() < 18)
+		return;
+
+	sync_Table<StringTable>(ser, *this);
 }
 #endif
 
@@ -861,6 +948,12 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Create a new EngineState object
 	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_gui, s->_audio);
 	retval->_event = new SciEvent();
+	
+#ifdef ENABLE_SCI32
+	// Copy the Gui32 pointer over to the new EngineState, if it exists
+	if (s->_gui32)
+		retval->_gui32 = s->_gui32;
+#endif
 
 	// Copy some old data
 	retval->_soundCmd = s->_soundCmd;
@@ -923,8 +1016,17 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Message state:
 	retval->_msgState = new MessageState(retval->_segMan);
 
-	retval->_gui->resetEngineState(retval);
-	retval->_gui->init(retval->usesOldGfxFunctions());
+#ifdef ENABLE_SCI32
+	if (retval->_gui32) {
+		retval->_gui32->resetEngineState(retval);
+		retval->_gui32->init();
+	} else {
+#endif
+		retval->_gui->resetEngineState(retval);
+		retval->_gui->init(retval->usesOldGfxFunctions());
+#ifdef ENABLE_SCI32
+	}
+#endif
 
 	return retval;
 }
