@@ -173,7 +173,7 @@ enum FadeType {FT_TO_GREY, FT_TO_COLOR, FT_TO_BLOCK};
 
 class Palette {
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	bool _colorsChanged;
 	bool _fading_in_progress;
 	byte _originalPalette[256 * 4];
@@ -182,7 +182,7 @@ private:
 
 	void reset();
 public:
-	Palette(M4Engine *vm);
+	Palette(MadsM4Engine *vm);
 
 	void setPalette(const byte *colors, uint start, uint num);
 	void setPalette(const RGB8 *colors, uint start, uint num);

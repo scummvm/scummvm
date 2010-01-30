@@ -212,12 +212,12 @@ enum MenuObjectState {OS_GREYED = 0, OS_NORMAL = 1, OS_MOUSEOVER = 2, OS_PRESSED
 
 class DialogView: public View {
 public:
-	DialogView(M4Engine *Vm, const Common::Rect &viewBounds, bool transparent = false):
+	DialogView(MadsM4Engine *Vm, const Common::Rect &viewBounds, bool transparent = false):
 		View(Vm, viewBounds, transparent) {};
-	DialogView(M4Engine *Vm, int x = 0, int y = 0, bool transparent = false):
+	DialogView(MadsM4Engine *Vm, int x = 0, int y = 0, bool transparent = false):
 		View(Vm, x, y, transparent) {};
 
-	M4Engine *vm() { return _vm; }
+	MadsM4Engine *vm() { return _vm; }
 	virtual SpriteAsset *sprites() = 0;
 	virtual MenuType getMenuType() = 0;
 	virtual MenuObject *getItem(int objectId) { return NULL; }

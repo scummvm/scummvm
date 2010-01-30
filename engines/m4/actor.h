@@ -61,7 +61,7 @@ enum WalkerDirection {
 
 class Actor {
 public:
-	Actor(M4Engine *vm);
+	Actor(MadsM4Engine *vm);
 	~Actor();
 	void placeWalkerSpriteAt(int spriteNum, int x, int y);
 	void setWalkerScaling(int scaling) { _scaling = scaling; }
@@ -72,7 +72,7 @@ public:
 	int getWalkerWidth();
 	int getWalkerHeight();
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	int _scaling;
 	uint8 _direction;
 	Common::Array<SpriteAsset*> _walkerSprites;
@@ -90,7 +90,7 @@ private:
 // the normal strcmp method instead
 class Inventory {
 public:
-	Inventory(M4Engine *vm);
+	Inventory(MadsM4Engine *vm);
 	~Inventory();
 	void clear();
 	void registerObject(char* name, int32 scene, int32 icon);
@@ -107,7 +107,7 @@ public:
 	int getTotalItems() { return _inventory.size(); }
 
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Common::Array<InventoryObject *> _inventory;
 };
 

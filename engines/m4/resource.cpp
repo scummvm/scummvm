@@ -409,7 +409,7 @@ bool MADSResourceManager::resourceExists(const char *resourceName) {
 
 //--------------------------------------------------------------------------
 
-M4ResourceManager::M4ResourceManager(M4Engine *vm): ResourceManager(vm) {
+M4ResourceManager::M4ResourceManager(MadsM4Engine *vm): ResourceManager(vm) {
 	_hfs = new FileSystem(_vm->getGameFile(kFileTypeHash));
 }
 

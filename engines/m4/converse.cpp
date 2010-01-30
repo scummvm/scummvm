@@ -75,7 +75,7 @@ namespace M4 {
 #define CHUNK_WPRL MKID_BE('WPRL')		// weighted preply chunk
 
 
-ConversationView::ConversationView(M4Engine *vm): View(vm, Common::Rect(0,
+ConversationView::ConversationView(MadsM4Engine *vm): View(vm, Common::Rect(0,
 		vm->_screen->height() - INTERFACE_HEIGHT, vm->_screen->width(), vm->_screen->height())) {
 
 	_screenType = VIEWID_CONVERSATION;

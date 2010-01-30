@@ -43,7 +43,7 @@
 
 namespace M4 {
 
-class M4Engine;
+class MadsM4Engine;
 class WoodScript;
 class Machine;
 class Sequence;
@@ -278,7 +278,7 @@ protected:
 class WoodScript {
 public:
 
-	WoodScript(M4Engine *vm);
+	WoodScript(MadsM4Engine *vm);
 	~WoodScript();
 
 	Machine *createMachine(int32 machineHash, Sequence *parentSeq, int32 dataHash, int32 dataRowIndex, int callbackHandler, const char *machineName);
@@ -323,7 +323,7 @@ public:
 	byte *getInverseColorTable() const { return _inverseColorTable; }
 
 protected:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	AssetManager *_assets;
 
 	Common::Array<Sequence*> _sequences, _layers;

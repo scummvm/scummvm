@@ -68,7 +68,7 @@ class SpriteAsset;
 
 class Events {
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Common::Event _event;
 	M4MouseState _mouseState;
 	int32 _keyCode;
@@ -77,7 +77,7 @@ private:
 	bool _ctrlFlag;
 public:
 	bool quitFlag;
-	Events(M4Engine *vm);
+	Events(MadsM4Engine *vm);
 
 	Common::Event &event() { return _event; }
 	Common::EventType type() { return _event.type; }
@@ -92,7 +92,7 @@ public:
 
 class Mouse {
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	int _currentCursor, _lockedCursor;
 	bool _locked;
 	bool _cursorOn;
@@ -105,7 +105,7 @@ private:
 	bool inHideArea();
 	friend class Events;
 public:
-	Mouse(M4Engine *vm);
+	Mouse(MadsM4Engine *vm);
 	~Mouse();
 
 	bool init(const char *seriesName, RGB8 *palette);

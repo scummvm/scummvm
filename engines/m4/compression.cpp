@@ -47,7 +47,7 @@ MadsPack::MadsPack(Common::SeekableReadStream *stream) {
 	initialise(stream);
 }
 
-MadsPack::MadsPack(const char *resourceName, M4Engine* vm) {
+MadsPack::MadsPack(const char *resourceName, MadsM4Engine* vm) {
 	Common::SeekableReadStream *stream = vm->_resourceManager->get(resourceName);
 	initialise(stream);
 	vm->_resourceManager->toss(resourceName);

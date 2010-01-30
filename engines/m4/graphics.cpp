@@ -718,7 +718,7 @@ static void makeTranslationList(RGB8 *palData, byte transList[NUM_GREENS]) {
 
 // Support function for fading in or out
 
-static void fadeRange(M4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex, int endIndex,
+static void fadeRange(MadsM4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex, int endIndex,
 					 int numSteps, uint delayAmount) {
 	RGB8 tempPal[256];
 
@@ -746,7 +746,7 @@ static void fadeRange(M4Engine *vm, RGB8 *srcPal, RGB8 *destPal,  int startIndex
 	vm->_palette->setPalette(&destPal[startIndex], startIndex, endIndex - startIndex + 1);
 }
 
-Palette::Palette(M4Engine *vm) : _vm(vm) {
+Palette::Palette(MadsM4Engine *vm) : _vm(vm) {
 	reset();
 	_fading_in_progress = false;
 	Common::set_to(&_usageCount[0], &_usageCount[256], 0);

@@ -32,7 +32,7 @@
 
 namespace M4 {
 
-MidiPlayer::MidiPlayer(M4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false) {
+MidiPlayer::MidiPlayer(MadsM4Engine *vm, MidiDriver *driver) : _vm(vm), _midiData(NULL), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
 	_parser = MidiParser::createParser_SMF();

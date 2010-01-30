@@ -35,7 +35,7 @@
 
 namespace M4 {
 
-Sound::Sound(M4Engine *vm, Audio::Mixer *mixer, int volume) :
+Sound::Sound(MadsM4Engine *vm, Audio::Mixer *mixer, int volume) :
 	_vm(vm), _mixer(mixer) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)

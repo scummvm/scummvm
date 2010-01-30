@@ -30,14 +30,13 @@
 
 namespace M4 {
 
-class M4Engine;
+class MadsM4Engine;
+class MadsEngine;
 
-class Console : public GUI::Debugger {
-public:
-	Console(M4Engine *vm);
-	virtual ~Console();
-
+class Console: public GUI::Debugger {
 private:
+	MadsM4Engine *_vm;
+
 	bool cmdLoadScene(int argc, const char **argv);
 	bool cmdStartingScene(int argc, const char **argv);
 	bool cmdSceneInfo(int argc, const char **argv);
@@ -53,11 +52,27 @@ private:
 	bool cmdShowTextview(int argc, const char **argv);
 	bool cmdShowAnimview(int argc, const char **argv);
 	bool cmdPlayAnimation(int argc, const char **argv);
+
+public:
+	Console(MadsM4Engine *vm);
+	virtual ~Console();
+};
+
+class MadsConsole: public Console {
+private:
+	MadsEngine *_vm;
+
 	bool cmdObject(int argc, const char **argv);
 	bool cmdMessage(int argc, const char **argv);
+public:
+	MadsConsole(MadsEngine *vm);
+	virtual ~MadsConsole() {};
+};
 
-private:
-	M4Engine *_vm;
+class M4Console: public Console {
+public:
+	M4Console(MadsM4Engine *vm): Console(vm) {};
+	virtual ~M4Console() {};
 };
 
 } // End of namespace M4

@@ -39,10 +39,10 @@ struct M4GameDescription {
 	uint32 features;
 };
 
-int M4Engine::getGameType() const { return _gameDescription->gameType; }
-uint32 M4Engine::getFeatures() const { return _gameDescription->features; }
-Common::Language M4Engine::getLanguage() const { return _gameDescription->desc.language; }
-Common::Platform M4Engine::getPlatform() const { return _gameDescription->desc.platform; }
+int MadsM4Engine::getGameType() const { return _gameDescription->gameType; }
+uint32 MadsM4Engine::getFeatures() const { return _gameDescription->features; }
+Common::Language MadsM4Engine::getLanguage() const { return _gameDescription->desc.language; }
+Common::Platform MadsM4Engine::getPlatform() const { return _gameDescription->desc.platform; }
 
 }
 
@@ -60,7 +60,7 @@ static const PlainGameDescriptor m4Games[] = {
 
 namespace M4 {
 
-const char *M4Engine::getGameFile(int fileType) {
+const char *MadsM4Engine::getGameFile(int fileType) {
 	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName; i++) {
 		if (_gameDescription->desc.filesDescriptions[i].fileType == fileType)
 			return _gameDescription->desc.filesDescriptions[i].fileName;
@@ -421,7 +421,10 @@ public:
 bool M4MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const M4::M4GameDescription *gd = (const M4::M4GameDescription *)desc;
 	if (gd) {
-		*engine = new M4::M4Engine(syst, gd);
+		if ((gd->gameType == M4::GType_Burger) || (gd->gameType == M4::GType_Riddle))
+			*engine = new M4::M4Engine(syst, gd);
+		else
+			*engine = new M4::MadsEngine(syst, gd);
 	}
 	return gd != 0;
 }

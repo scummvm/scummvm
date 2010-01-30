@@ -153,7 +153,7 @@ bool Bytecode::decodeArgument(int32 format, int32 data, long *&arg, long &value)
 	return true;
 }
 
-WoodScript::WoodScript(M4Engine *vm) {
+WoodScript::WoodScript(MadsM4Engine *vm) {
 	_vm = vm;
 	_machineId = 0;
 	_assets = new AssetManager(vm);

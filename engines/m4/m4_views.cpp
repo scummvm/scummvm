@@ -31,7 +31,7 @@
 
 namespace M4 {
 
-GUIInventory::GUIInventory(View *owner, M4Engine *vm, const Common::Rect &bounds, int horizCells,
+GUIInventory::GUIInventory(View *owner, MadsM4Engine *vm, const Common::Rect &bounds, int horizCells,
 		   int vertCells, int cellWidth, int cellHeight, int tag): GUIRect(owner, bounds, tag) {
 
     _vm = vm;
@@ -218,7 +218,7 @@ const char *INTERFACE_SERIES = "999intr";
 
 #define SPR(x) _sprites->getFrame(x)
 
-GameInterfaceView::GameInterfaceView(M4Engine *vm):
+GameInterfaceView::GameInterfaceView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, vm->_screen->height() - INTERFACE_HEIGHT,
 				vm->_screen->width(), vm->_screen->height())),
 		_statusText(GUITextField(this, Common::Rect(200, 1, 450, 21))),

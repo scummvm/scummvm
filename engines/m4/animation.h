@@ -43,7 +43,7 @@ struct AnimationFrame {
 
 class Animation {
     public:
-		Animation(M4Engine *vm);
+		Animation(MadsM4Engine *vm);
         ~Animation();
 
         void load(const char *filename);
@@ -54,7 +54,7 @@ class Animation {
 
     private:
 		bool _playing;
-		M4Engine *_vm;
+		MadsM4Engine *_vm;
         int _seriesCount;
         int _frameCount;
         int _frameEntryCount;

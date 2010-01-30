@@ -59,7 +59,7 @@ namespace M4 {
 
 class Font {
 public:
-	Font(M4Engine *vm);
+	Font(MadsM4Engine *vm);
 	~Font();
 	void setFont(const char *filename);
 	void setColor(uint8 color);
@@ -79,7 +79,7 @@ private:
 	void setFontM4(const char *filename);
 	void setFontMads(const char *filename);
 
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	uint8 _maxWidth, _maxHeight;
 	uint8 *_charWidths;
 	uint16 *_charOffs;

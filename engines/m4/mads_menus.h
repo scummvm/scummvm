@@ -49,7 +49,7 @@ private:
 	int getHighlightedItem(int x, int y);
 	void handleAction(MadsGameAction action);
 public:
-	RexMainMenuView(M4Engine *vm);
+	RexMainMenuView(MadsM4Engine *vm);
 	~RexMainMenuView();
 
 	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
@@ -71,7 +71,7 @@ private:
 	int getHighlightedItem(int x, int y);
 	void handleAction(MadsGameAction action);
 public:
-	DragonMainMenuView(M4Engine *vm);
+	DragonMainMenuView(MadsM4Engine *vm);
 	~DragonMainMenuView();
 
 	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
@@ -80,7 +80,7 @@ public:
 
 class MadsMainMenuView: public View {
 public:
-	MadsMainMenuView(M4Engine *vm);
+	MadsMainMenuView(MadsM4Engine *vm);
 
 	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	void updateState();

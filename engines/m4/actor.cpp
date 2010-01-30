@@ -33,7 +33,7 @@ namespace M4 {
 
 #define WALKER_BURGER "Wilbur0%i"	// wilbur, with a number denoting his current direction
 
-Actor::Actor(M4Engine *vm) : _vm(vm) {
+Actor::Actor(MadsM4Engine *vm) : _vm(vm) {
 	_scaling = 100;
 	_direction = 5;
 	_walkerSprites.resize(10);
@@ -104,7 +104,7 @@ void Actor::setWalkerPalette() {
 							  _walkerSprites[kFacingSouthEast]->getColorCount());
 }
 
-Inventory::Inventory(M4Engine *vm) : _vm(vm) {
+Inventory::Inventory(MadsM4Engine *vm) : _vm(vm) {
 }
 
 Inventory::~Inventory() {

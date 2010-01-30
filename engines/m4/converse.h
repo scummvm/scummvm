@@ -137,7 +137,7 @@ typedef Common::HashMap<Common::String,int32,Common::IgnoreCase_Hash,Common::Ign
 
 class ConversationView: public View {
 public:
-	ConversationView(M4Engine *vm);
+	ConversationView(MadsM4Engine *vm);
 	~ConversationView();
 	void setNode(int32 nodeIndex);
 
@@ -162,7 +162,7 @@ private:
 class Converse {
 
 public:
-	Converse(M4Engine *vm) : _vm(vm) {}
+	Converse(MadsM4Engine *vm) : _vm(vm) {}
 	~Converse() {}
 
 	void startConversation(const char *convName, bool showConversebox = true, ConverseStyle style = CONVSTYLE_EARTH );
@@ -179,7 +179,7 @@ public:
 	void play();
 	*/
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Common::Array<ConvEntry*>_convNodes;
 	Common::Array<MessageEntry*>_madsMessageList;
 	Common::Array<char *>_convStrings;

@@ -34,7 +34,7 @@
 
 namespace M4 {
 
-Kernel::Kernel(M4Engine *vm) : _vm(vm) {
+Kernel::Kernel(MadsM4Engine *vm) : _vm(vm) {
 	daemonTriggerAvailable = true;
 	firstFadeColorIndex = 0;
 	paused = false;
@@ -267,10 +267,10 @@ void Kernel::unpauseEngines() {
 
 //--------------------------------------------------------------------------
 
-Globals::Globals(M4Engine *vm): _vm(vm) {
+MadsGlobals::MadsGlobals(MadsM4Engine *vm): _vm(vm) {
 }
 
-Globals::~Globals() {
+MadsGlobals::~MadsGlobals() {
 	uint32 i;
 
 	for (i = 0; i < _madsVocab.size(); i++)
@@ -284,11 +284,11 @@ Globals::~Globals() {
 	_madsMessages.clear();
 }
 
-bool Globals::isInterfaceVisible() {
+bool MadsGlobals::isInterfaceVisible() {
 	return _vm->_interfaceView->isVisible();
 }
 
-void Globals::loadMadsVocab() {
+void MadsGlobals::loadMadsVocab() {
 	Common::SeekableReadStream *vocabS = _vm->res()->get("vocab.dat");
 	int curPos = 0;
 
@@ -311,7 +311,7 @@ void Globals::loadMadsVocab() {
 	_vm->res()->toss("vocab.dat");
 }
 
-void Globals::loadMadsQuotes() {
+void MadsGlobals::loadMadsQuotes() {
 	Common::SeekableReadStream *quoteS = _vm->res()->get("quotes.dat");
 	int curPos = 0;
 
@@ -334,7 +334,7 @@ void Globals::loadMadsQuotes() {
 	_vm->res()->toss("quotes.dat");
 }
 
-void Globals::loadMadsMessagesInfo() {
+void MadsGlobals::loadMadsMessagesInfo() {
 	Common::SeekableReadStream *messageS = _vm->res()->get("messages.dat");
 
 	int16 count = messageS->readUint16LE();
@@ -359,7 +359,7 @@ void Globals::loadMadsMessagesInfo() {
 	_vm->res()->toss("messages.dat");
 }
 
-void Globals::loadMadsObjects() {
+void MadsGlobals::loadMadsObjects() {
 	Common::SeekableReadStream *objList = _vm->res()->get("objects.dat");
 	int numObjects = objList->readUint16LE();
 
@@ -369,7 +369,7 @@ void Globals::loadMadsObjects() {
 	_vm->res()->toss("objects.dat");
 }
 
-int Globals::messageIndexOf(uint32 messageId) {
+int MadsGlobals::messageIndexOf(uint32 messageId) {
 	for (uint i = 0; i < _madsMessages.size(); ++i)
 	{
 		if (_madsMessages[i]->id == messageId)
@@ -378,7 +378,7 @@ int Globals::messageIndexOf(uint32 messageId) {
 	return -1;
 }
 
-const char *Globals::loadMessage(uint index) {
+const char *MadsGlobals::loadMessage(uint index) {
 	if (index > _madsMessages.size() - 1) {
 		warning("Invalid message index: %i", index);
 		return NULL;
@@ -404,7 +404,7 @@ const char *Globals::loadMessage(uint index) {
 
 //--------------------------------------------------------------------------
 
-Player::Player(M4Engine *vm) : _vm(vm) {
+Player::Player(MadsM4Engine *vm) : _vm(vm) {
 	commandsAllowed = true;
 	needToWalk = false;
 	readyToWalk = false;

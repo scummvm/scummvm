@@ -38,12 +38,12 @@ typedef SaveGameList::iterator SaveGameIterator;
 
 class SaveLoad {
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	bool _emulateOriginal;
 
 	const char *generateSaveName(int slotNumber);
 public:
-	SaveLoad(M4Engine *vm);
+	SaveLoad(MadsM4Engine *vm);
 
 	bool hasSaves();
 	SaveGameList *getSaves();

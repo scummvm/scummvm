@@ -1191,7 +1191,7 @@ bool GUIButton::onEvent(M4EventType eventType, int32 param, int x, int y, GUIObj
 				_buttonState = BUTTON_PRESSED;
 			}
 
-			_vm->_globals->invSuppressClickSound = false;
+			_madsVm->_globals->invSuppressClickSound = false;
 		} else {
 			// Button isn't pressed
 			if (_tracking)

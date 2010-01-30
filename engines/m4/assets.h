@@ -44,21 +44,21 @@ namespace M4 {
 #define CELS__PAL MKID_BE(' PAL')	//' PAL'
 #define CELS___SS MKID_BE('  SS')	//'  SS'
 
-class M4Engine;
+class MadsM4Engine;
 
 class BaseAsset {
 public:
-	BaseAsset(M4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	BaseAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
 	~BaseAsset();
 	const Common::String getName() const { return _name; }
 protected:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Common::String _name;
 };
 
 class MachineAsset : public BaseAsset {
 public:
-	MachineAsset(M4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	MachineAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
 	~MachineAsset();
 	void getCode(byte *&code, uint32 &codeSize);
 	uint32 getStateOffset(uint32 state);
@@ -70,7 +70,7 @@ protected:
 
 class SequenceAsset : public BaseAsset {
 public:
-	SequenceAsset(M4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	SequenceAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
 	~SequenceAsset();
 	void getCode(byte *&code, uint32 &codeSize);
 	int localVarCount() const { return _localVarCount; }
@@ -82,7 +82,7 @@ protected:
 
 class DataAsset : public BaseAsset {
 public:
-	DataAsset(M4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	DataAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
 	~DataAsset();
 	int getCount() const { return _recCount; }
 	long *getRow(int index);
@@ -101,10 +101,10 @@ struct SpriteAssetFrame {
 
 class SpriteAsset : public BaseAsset {
 public:
-	SpriteAsset(M4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream = false);
+	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream = false);
 	~SpriteAsset();
-	void loadM4SpriteAsset(M4Engine *vm, Common::SeekableReadStream* stream, bool asStream);
-	void loadMadsSpriteAsset(M4Engine *vm, Common::SeekableReadStream* stream);
+	void loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, bool asStream);
+	void loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream);
 	int32 getCount() { return _frameCount; }
 	int32 getFrameRate() const { return _frameRate; }
 	int32 getPixelSpeed() const { return _pixelSpeed; }
@@ -149,7 +149,7 @@ enum CallbackHandlers {
 class AssetManager {
 public:
 
-	AssetManager(M4Engine *vm);
+	AssetManager(MadsM4Engine *vm);
 	~AssetManager();
 
 	bool clearAssets(AssetType assetType, int32 minHash, int32 maxHash);
@@ -168,7 +168,7 @@ public:
 
 protected:
 	// TODO: Check if we need _vm
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 
 	MachineAsset *_MACH[256];
 	SequenceAsset *_SEQU[256];

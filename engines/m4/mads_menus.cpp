@@ -45,7 +45,7 @@ static Common::Point dragonMenuItemPosList[6] = {
 #define DRAGON_MENU_BUTTON_W = 45
 #define DRAGON_MENU_BUTTON_H = 11
 
-RexMainMenuView::RexMainMenuView(M4Engine *vm):
+RexMainMenuView::RexMainMenuView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
 
 	_screenType = VIEWID_MAINMENU;
@@ -295,7 +295,7 @@ int RexMainMenuView::getHighlightedItem(int x, int y) {
 }
 
 void RexMainMenuView::handleAction(MadsGameAction action) {
-	M4Engine *vm = _vm;
+	MadsM4Engine *vm = _vm;
 	vm->_mouse->cursorOff();
 	vm->_viewManager->deleteView(this);
 
@@ -344,7 +344,7 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 
 //--------------------------------------------------------------------------
 
-MadsMainMenuView::MadsMainMenuView(M4Engine *vm):
+MadsMainMenuView::MadsMainMenuView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
 
 }
@@ -359,7 +359,7 @@ void MadsMainMenuView::updateState() {
 
 //--------------------------------------------------------------------------
 
-DragonMainMenuView::DragonMainMenuView(M4Engine *vm):
+DragonMainMenuView::DragonMainMenuView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
 
 	_screenType = VIEWID_MAINMENU;
@@ -548,7 +548,7 @@ int DragonMainMenuView::getHighlightedItem(int x, int y) {
 }
 
 void DragonMainMenuView::handleAction(MadsGameAction action) {
-	M4Engine *vm = _vm;
+	MadsM4Engine *vm = _vm;
 	vm->_mouse->cursorOff();
 	vm->_viewManager->deleteView(this);
 

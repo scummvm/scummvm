@@ -64,16 +64,18 @@
 namespace M4 {
 
 // FIXME: remove global
-M4Engine *_vm;
+MadsM4Engine *_vm;
+MadsEngine *_madsVm;
+M4Engine *_m4Vm;
 
-void escapeHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
+void escapeHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 	// For now, simply exit the game
 	vm->_events->quitFlag = true;
 }
 
 // Temporary hotkey handler for use in testing the TextviewView class
 
-void textviewHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
+void textviewHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 	// Deactivate the scene if it's currently active
 	View *sceneView = vm->_viewManager->getView(VIEWID_SCENE);
 	if (sceneView != NULL)
@@ -86,38 +88,40 @@ void textviewHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
 	textView->setScript("quotes", NULL);
 }
 
-void saveGameHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
+void saveGameHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 	// TODO: See CreateF2SaveMenu - save menu should only be activated when
 	// certain conditions are met, such as player_commands_allowed, and isInterfaceVisible
 	vm->loadMenu(SAVE_MENU, true);
 }
 
-void loadGameHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
+void loadGameHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 	// TODO: See CreateF3LoadMenu - save menu should only be activated when
 	// certain conditions are met, such as player_commands_allowed, and isInterfaceVisible
 	vm->loadMenu(LOAD_MENU, true);
 }
 
-void gameMenuHotkeyHandler(M4Engine *vm, View *view, uint32 key) {
+void gameMenuHotkeyHandler(MadsM4Engine *vm, View *view, uint32 key) {
 	vm->loadMenu(GAME_MENU);
 }
 
-M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
+MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc) {
 
 	// FIXME
 	_vm = this;
+	_madsVm = NULL;
 
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "goodstuf");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "resource");
 
 	Common::addDebugChannel(kDebugScript, "script", "Script debug level");
 	Common::addDebugChannel(kDebugConversations, "conversations", "Conversations debugging");
+
+	_resourceManager = NULL;
 }
 
 
-M4Engine::~M4Engine() {
-	delete _globals;
+MadsM4Engine::~MadsM4Engine() {
 	delete _midi;
 	delete _saveLoad;
 	delete _kernel;
@@ -138,16 +142,10 @@ M4Engine::~M4Engine() {
 	delete _random;
 	delete _animation;
 	delete _palette;
-	delete _resourceManager;
 }
 
-Common::Error M4Engine::run() {
+Common::Error MadsM4Engine::run() {
 	// Initialize backend
-	if (isM4())
-		initGraphics(640, 480, true);
-	else
-		initGraphics(320, 200, false);
-
 	_screen = new M4Surface(true); // Special form for creating screen reference
 
 	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -161,11 +159,6 @@ Common::Error M4Engine::run() {
 	_midi->setGM(true);
 	_midi->setNativeMT32(native_mt32);
 
-	_globals = new Globals(this);
-	if (isM4())
-		_resourceManager = new M4ResourceManager(this);
-	else
-		_resourceManager = new MADSResourceManager(this);
 	_saveLoad = new SaveLoad(this);
 	_palette = new Palette(this);
 	_mouse = new Mouse(this);
@@ -194,13 +187,10 @@ Common::Error M4Engine::run() {
 	_random = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_random, "m4");
 
-	if (isM4())
-		return goM4();
-	else
-		return goMADS();
+	return Common::kNoError;
 }
 
-void M4Engine::eventHandler() {
+void MadsM4Engine::eventHandler() {
 	M4EventType event;
 	uint32 keycode = 0;
 
@@ -213,7 +203,7 @@ void M4Engine::eventHandler() {
 		_viewManager->handleKeyboardEvents(keycode);
 }
 
-bool M4Engine::delay(int duration, bool keyAborts, bool clickAborts) {
+bool MadsM4Engine::delay(int duration, bool keyAborts, bool clickAborts) {
 	uint32 endTime = g_system->getMillis() + duration;
 	M4EventType event;
 	uint32 keycode = 0;
@@ -234,7 +224,7 @@ bool M4Engine::delay(int duration, bool keyAborts, bool clickAborts) {
 	return false;
 }
 
-void M4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool calledFromMainMenu) {
+void MadsM4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool calledFromMainMenu) {
 	if (isM4() && (menuType != MAIN_MENU)) {
 		bool menuActive = _viewManager->getView(VIEWID_MENU) != NULL;
 
@@ -272,87 +262,58 @@ void M4Engine::loadMenu(MenuType menuType, bool loadSaveFromHotkey, bool calledF
 	_viewManager->moveToFront(view);
 }
 
-Common::Error M4Engine::goMADS() {
-	_palette->setMadsSystemPalette();
+void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
+	Common::SeekableReadStream *fileS = res()->get(filename);
+	byte buffer[256];
+	FILE *destFile = fopen(filename, "wb");
+	int bytesRead = 0;
+	printf("Dumping %s, size: %i\n", filename, fileS->size());
 
-	_mouse->init("cursor.ss", NULL);
-	_mouse->setCursorNum(0);
-
-	// Load MADS data files
-	_globals->loadMadsVocab();			// vocab.dat
-	_globals->loadMadsQuotes();			// quotes.dat
-	_globals->loadMadsMessagesInfo();	// messages.dat
-	_globals->loadMadsObjects();
-
-	// Setup globals
-	_vm->_globals->easyMouse = true;
-	_vm->_globals->invObjectsStill = false;
-	_vm->_globals->textWindowStill = false;
-	_vm->_globals->storyMode = 0;
-
-	// Test code to dump all messages to the console
-	//for (int i = 0; i < _globals->getMessagesSize(); i++)
-	//printf("%s\n----------\n", _globals->loadMessage(i));
-
-	if ((getGameType() == GType_RexNebular) || (getGameType() == GType_DragonSphere)) {
-		loadMenu(MAIN_MENU);
-
+	if (!uncompress) {
+		while (!fileS->eos()) {
+			bytesRead = fileS->read(buffer, 256);
+			fwrite(buffer, bytesRead, 1, destFile);
+		}
 	} else {
-		if (getGameType() == GType_DragonSphere) {
-			_scene->loadScene(FIRST_SCENE);
-		} else if (getGameType() == GType_Phantom) {
-			//_scene->loadScene(FIRST_SCENE);
-			_scene->loadScene(106);		// a more interesting scene
+		MadsPack packData(fileS);
+		Common::MemoryReadStream *sourceUnc;
+		for (int i = 0; i < packData.getCount(); i++) {
+			sourceUnc = packData.getItemStream(i);
+			printf("Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());
+			while (!sourceUnc->eos()) {
+				bytesRead = sourceUnc->read(buffer, 256);
+				fwrite(buffer, bytesRead, 1, destFile);
+			}
+			delete sourceUnc;
 		}
-
-		_scene->show();
-
-		_font->setFont(FONT_MAIN_MADS);
-		_font->setColors(2, 1, 3);
-		_font->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
-		_font->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
-
-		if (getGameType() == GType_DragonSphere) {
-			//_scene->showMADSV2TextBox("Test", 10, 10, NULL);
-		}
-
-		_mouse->cursorOn();
 	}
 
-	_viewManager->systemHotkeys().add(Common::KEYCODE_ESCAPE, &escapeHotkeyHandler);
-	_viewManager->systemHotkeys().add(Common::KEYCODE_KP_MULTIPLY, &textviewHotkeyHandler);
-
-	// Load the general game SFX/voices
-	if (getGameType() == GType_RexNebular) {
-		_sound->loadDSRFile("rex009.dsr");
-	} else if (getGameType() == GType_Phantom) {
-		_sound->loadDSRFile("phan009.dsr");
-	} else if (getGameType() == GType_DragonSphere) {
-		_sound->loadDSRFile("drag009.dsr");
-	}
-
-	uint32 nextFrame = g_system->getMillis();
-	while (!_events->quitFlag) {
-		eventHandler();
-
-		_animation->updateAnim();
-
-		// Call the updateState method of all views
-		_viewManager->updateState();
-
-		if (g_system->getMillis() >= nextFrame) {
-
-			_viewManager->refreshAll();
-			nextFrame = g_system->getMillis();// + GAME_FRAME_DELAY;
-		}
-
-		g_system->delayMillis(10);
-	}
-
-	return Common::kNoError;
+	fclose(destFile);
+	res()->toss(filename);
+	res()->purge();
 }
 
-Common::Error M4Engine::goM4() {
+/*--------------------------------------------------------------------------*/
+
+M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4Engine(syst, gameDesc) {
+	// FIXME
+	_m4Vm = this;
+}
+
+M4Engine::~M4Engine() {
+	delete _resourceManager;
+}
+
+Common::Error M4Engine::run() {
+	// Set up the graphics mode
+	initGraphics(640, 480, true);
+
+	// Necessary pre-initialisation
+	_resourceManager = new M4ResourceManager(this);
+
+	// Set up needed common functionality
+	MadsM4Engine::run();
+
 
 	_script->open("m4.dat");
 
@@ -521,35 +482,108 @@ Common::Error M4Engine::goM4() {
 	return Common::kNoError;
 }
 
-void M4Engine::dumpFile(const char* filename, bool uncompress) {
-	Common::SeekableReadStream *fileS = res()->get(filename);
-	byte buffer[256];
-	FILE *destFile = fopen(filename, "wb");
-	int bytesRead = 0;
-	printf("Dumping %s, size: %i\n", filename, fileS->size());
+/*--------------------------------------------------------------------------*/
 
-	if (!uncompress) {
-		while (!fileS->eos()) {
-			bytesRead = fileS->read(buffer, 256);
-			fwrite(buffer, bytesRead, 1, destFile);
-		}
+MadsEngine::MadsEngine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4Engine(syst, gameDesc) {
+	// FIXME
+	_madsVm = this;
+
+	_globals = new MadsGlobals(this);
+}
+
+MadsEngine::~MadsEngine() {
+	delete _globals;
+	delete _resourceManager;
+}
+
+Common::Error MadsEngine::run() {
+	// Set up the graphics mode
+	initGraphics(320, 200, false);
+
+	// Necessary pre-initialisation
+	_resourceManager = new MADSResourceManager(this);
+
+	// Set up needed common functionality
+	MadsM4Engine::run();
+
+	_palette->setMadsSystemPalette();
+
+	_mouse->init("cursor.ss", NULL);
+	_mouse->setCursorNum(0);
+
+	// Load MADS data files
+	_globals->loadMadsVocab();			// vocab.dat
+	_globals->loadMadsQuotes();			// quotes.dat
+	_globals->loadMadsMessagesInfo();	// messages.dat
+	_globals->loadMadsObjects();
+
+	// Setup globals
+	_madsVm->_globals->easyMouse = true;
+	_madsVm->_globals->invObjectsStill = false;
+	_madsVm->_globals->textWindowStill = false;
+	_madsVm->_globals->storyMode = 0;
+
+	// Test code to dump all messages to the console
+	//for (int i = 0; i < _globals->getMessagesSize(); i++)
+	//printf("%s\n----------\n", _globals->loadMessage(i));
+
+	if ((getGameType() == GType_RexNebular) || (getGameType() == GType_DragonSphere)) {
+		loadMenu(MAIN_MENU);
+
 	} else {
-		MadsPack packData(fileS);
-		Common::MemoryReadStream *sourceUnc;
-		for (int i = 0; i < packData.getCount(); i++) {
-			sourceUnc = packData.getItemStream(i);
-			printf("Dumping compressed chunk %i of %i, size is %i\n", i + 1, packData.getCount(), sourceUnc->size());
-			while (!sourceUnc->eos()) {
-				bytesRead = sourceUnc->read(buffer, 256);
-				fwrite(buffer, bytesRead, 1, destFile);
-			}
-			delete sourceUnc;
+		if (getGameType() == GType_DragonSphere) {
+			_scene->loadScene(FIRST_SCENE);
+		} else if (getGameType() == GType_Phantom) {
+			//_scene->loadScene(FIRST_SCENE);
+			_scene->loadScene(106);		// a more interesting scene
 		}
+
+		_scene->show();
+
+		_font->setFont(FONT_MAIN_MADS);
+		_font->setColors(2, 1, 3);
+		_font->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
+		_font->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
+
+		if (getGameType() == GType_DragonSphere) {
+			//_scene->showMADSV2TextBox("Test", 10, 10, NULL);
+		}
+
+		_mouse->cursorOn();
 	}
 
-	fclose(destFile);
-	res()->toss(filename);
-	res()->purge();
+	_viewManager->systemHotkeys().add(Common::KEYCODE_ESCAPE, &escapeHotkeyHandler);
+	_viewManager->systemHotkeys().add(Common::KEYCODE_KP_MULTIPLY, &textviewHotkeyHandler);
+
+	// Load the general game SFX/voices
+	if (getGameType() == GType_RexNebular) {
+		_sound->loadDSRFile("rex009.dsr");
+	} else if (getGameType() == GType_Phantom) {
+		_sound->loadDSRFile("phan009.dsr");
+	} else if (getGameType() == GType_DragonSphere) {
+		_sound->loadDSRFile("drag009.dsr");
+	}
+
+	uint32 nextFrame = g_system->getMillis();
+	while (!_events->quitFlag) {
+		eventHandler();
+
+		_animation->updateAnim();
+
+		// Call the updateState method of all views
+		_viewManager->updateState();
+
+		if (g_system->getMillis() >= nextFrame) {
+
+			_viewManager->refreshAll();
+			nextFrame = g_system->getMillis();// + GAME_FRAME_DELAY;
+		}
+
+		g_system->delayMillis(10);
+	}
+
+	return Common::kNoError;
 }
+
 
 } // End of namespace M4

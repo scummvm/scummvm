@@ -42,6 +42,8 @@ public:
 	DialogLine() { data[0] = '\0'; xp = 0; underline = barLine = false; }
 };
 
+typedef void (*GetValueFn)(MadsM4Engine *vm, int result);
+
 class Dialog: public View {
 private:
 	Common::Array<DialogLine> _lines;
@@ -63,13 +65,15 @@ private:
 	void addBarLine();
 	void getVocab(int vocabId, char **line);
 	bool handleNounSuffix(char *destP, int nounNum, const char *srcP);
+	void setupInputArea();
 	void draw();
 public:
-	Dialog(M4Engine *vm, const char *msgData, const char *title = NULL);
-	Dialog(M4Engine *vm, int widthChars, const char **descEntries);
+	Dialog(MadsM4Engine *vm, const char *msgData, const char *title = NULL);
+	Dialog(MadsM4Engine *vm, int widthChars);
 	virtual ~Dialog();
 
-	static void display(M4Engine *vm, int widthChars, const char **descEntries);
+	static void display(MadsM4Engine *vm, int widthChars, const char **descEntries);
+	static void getValue(MadsM4Engine *vm, const char *title, const char *text, int numChars, int currentValue);
 
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };

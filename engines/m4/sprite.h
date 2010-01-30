@@ -106,8 +106,8 @@ public:
 	int xOffset, yOffset;
 	uint8 encoding;
 
-	M4Sprite(M4Engine *vm): M4Surface() {}
-	M4Sprite(M4Engine *vm, int widthVal, int heightVal): M4Surface(widthVal, heightVal), xOffset(0), yOffset(0) {}
+	M4Sprite(MadsM4Engine *vm): M4Surface() {}
+	M4Sprite(MadsM4Engine *vm, int widthVal, int heightVal): M4Surface(widthVal, heightVal), xOffset(0), yOffset(0) {}
 	// Loads a sprite from the given stream, and optionally decompresses the RLE-encoded data
 	M4Sprite(Common::SeekableReadStream* source, int xOfs, int yOfs, int widthVal, int heightVal, bool decodeRle = true, uint8 encodingVal = 0);
 	// Loads an RLE compressed sprite; the surface must have been created before

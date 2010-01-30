@@ -34,7 +34,7 @@ namespace M4 {
 #define TV_NUM_FADE_STEPS 40
 #define TV_FADE_DELAY_MILLI 50
 
-TextviewView::TextviewView(M4Engine *vm):
+TextviewView::TextviewView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())),
 		_bgSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT),
 		_textSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT + vm->_font->getHeight() +
@@ -235,7 +235,7 @@ void TextviewView::updateState() {
 
 void TextviewView::scriptDone() {
 	TextviewCallback fn = _callback;
-	M4Engine *vm = _vm;
+	MadsM4Engine *vm = _vm;
 
 	// Remove this view from manager and destroy it
 	_vm->_viewManager->deleteView(this);
@@ -439,7 +439,7 @@ void TextviewView::processText() {
 
 //--------------------------------------------------------------------------
 
-AnimviewView::AnimviewView(M4Engine *vm):
+AnimviewView::AnimviewView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())),
 		_bgSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT) {
 
@@ -642,7 +642,7 @@ void AnimviewView::readNextCommand() {
 
 void AnimviewView::scriptDone() {
 	AnimviewCallback fn = _callback;
-	M4Engine *vm = _vm;
+	MadsM4Engine *vm = _vm;
 
 	// Remove this view from manager and destroy it
 	_vm->_viewManager->deleteView(this);
@@ -714,7 +714,7 @@ void AnimviewView::processCommand() {
 	}
 }
 
-AAFile::AAFile(const char *resourceName, M4Engine* vm): MadsPack(resourceName, vm) {
+AAFile::AAFile(const char *resourceName, MadsM4Engine* vm): MadsPack(resourceName, vm) {
 	Common::MemoryReadStream stream1(*getItemStream(1));
 	Common::MemoryReadStream stream2(*getItemStream(2));
 

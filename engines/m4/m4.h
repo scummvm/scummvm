@@ -128,7 +128,7 @@ inline void str_upper(char *s) { while (*s) { *s = toupper(*s); s++; } }
 inline long FixedMul(long a, long b) { return (long)(((float)a * (float)b) / 65536.0); }
 inline long FixedDiv(long a, long b) { return (long)(((float)a / (float)b) * 65536.0); }
 
-class M4Engine : public Engine {
+class MadsM4Engine : public Engine {
 private:
 	Common::Error goMADS();
 	Common::Error goM4();
@@ -142,8 +142,8 @@ protected:
 	MidiPlayer *_midi;
 
 public:
-	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
-	virtual ~M4Engine();
+	MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc);
+	virtual ~MadsM4Engine();
 
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -179,7 +179,6 @@ public:
 	ViewManager *_viewManager;
 	Palette *_palette;
 	Kernel *_kernel;
-	Globals *_globals;
 	Player *_player;
 	Mouse *_mouse;
 	Events *_events;
@@ -200,8 +199,28 @@ public:
 	Common::RandomSource *_random;
 };
 
-// FIXME: remove global
-extern M4Engine *_vm;
+class MadsEngine: public MadsM4Engine {
+public:
+	MadsEngine(OSystem *syst, const M4GameDescription *gameDesc);
+	virtual ~MadsEngine();
+
+	virtual Common::Error run();
+
+	MadsGlobals *_globals;
+};
+
+class M4Engine: public MadsM4Engine {
+public:
+	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
+	virtual ~M4Engine();
+
+	virtual Common::Error run();
+};
+
+// FIXME: remove globals
+extern MadsM4Engine *_vm;
+extern MadsEngine *_madsVm;
+extern M4Engine *_m4Vm;
 
 } // End of namespace M4
 

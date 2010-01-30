@@ -36,7 +36,7 @@ namespace M4 {
 
 class MidiPlayer : public MidiDriver {
 public:
-	MidiPlayer(M4Engine *vm, MidiDriver *driver);
+	MidiPlayer(MadsM4Engine *vm, MidiDriver *driver);
 	~MidiPlayer();
 
 	bool isPlaying() { return _isPlaying; }
@@ -69,7 +69,7 @@ public:
 protected:
 	static void onTimer(void *data);
 
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	byte *_midiData;
 
 	MidiChannel *_channel[16];

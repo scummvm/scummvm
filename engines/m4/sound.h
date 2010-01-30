@@ -68,12 +68,12 @@ struct DSRFile {
 	Common::Array<DSREntry *> dsrEntries;
 };
 
-class M4Engine;
+class MadsM4Engine;
 
 class Sound {
 public:
 
-	Sound(M4Engine *vm, Audio::Mixer *mixer, int volume);
+	Sound(MadsM4Engine *vm, Audio::Mixer *mixer, int volume);
 	~Sound();
 
 	void playSound(const char *soundName, int volume, bool loop, int channel = -1);
@@ -99,7 +99,7 @@ public:
 
  private:
 
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Audio::Mixer *_mixer;
 	SndHandle _handles[SOUND_HANDLES];
 

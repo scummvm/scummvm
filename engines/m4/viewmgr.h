@@ -89,7 +89,7 @@ public:
 
 struct Hotkey {
 public:
-	typedef void (*Callback)(M4Engine *vm, View *view, uint32 key);
+	typedef void (*Callback)(MadsM4Engine *vm, View *view, uint32 key);
 	Hotkey(uint32 keyVal, Hotkey::Callback callbackFn) : key(keyVal), callback(callbackFn) {};
 	uint32 key;
 	Hotkey::Callback callback;
@@ -109,8 +109,8 @@ private:
 
 class View: public M4Surface {
 public:
-	View(M4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
-	View(M4Engine *vm, int x = 0, int y = 0, bool transparent = false);
+	View(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
+	View(MadsM4Engine *vm, int x = 0, int y = 0, bool transparent = false);
 	virtual ~View() {}
 
 	void getCoordinates(Common::Rect &rect);
@@ -139,7 +139,7 @@ public:
 	virtual void updateState() {};
 
 protected:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Common::Rect _coords;
 	HotkeyList _hotkeys;
 	int _screenType;
@@ -149,7 +149,7 @@ protected:
 
 class ViewManager {
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	HotkeyList _systemHotkeys;
 	Common::List<View *> _views;
 	View *_captureScreen;
@@ -157,7 +157,7 @@ private:
 public:
 	typedef Common::List<View *>::iterator ListIterator;
 
-	ViewManager(M4Engine *vm);
+	ViewManager(MadsM4Engine *vm);
 	~ViewManager();
 
 	void addView(View *view);

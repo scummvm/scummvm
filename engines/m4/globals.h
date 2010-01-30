@@ -35,7 +35,7 @@
 
 namespace M4 {
 
-class M4Engine;
+class MadsM4Engine;
 class ScriptInterpreter;
 class ScriptFunction;
 
@@ -100,14 +100,14 @@ enum KernelTriggerType {
 
 class Kernel {
 private:
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	ScriptFunction *_globalDaemonFn, *_globalParserFn;
 	ScriptFunction *_sectionInitFn, *_sectionDaemonFn, *_sectionParserFn;
 	ScriptFunction *_roomInitFn, *_roomDaemonFn, *_roomPreParserFn, *_roomParserFn;
 	void pauseEngines();
 	void unpauseEngines();
 public:
-	Kernel(M4Engine *vm);
+	Kernel(MadsM4Engine *vm);
 
 	// TODO: Move to some palette/fading class
 	int fadeUpDuration, firstFadeColorIndex;
@@ -183,7 +183,7 @@ public:
 
 typedef Common::Array<Common::SharedPtr<MadsObject> > MadsObjectArray;
 
-class Globals {
+class MadsGlobals {
 private:
 	struct MessageItem {
 		uint32 id;
@@ -192,14 +192,14 @@ private:
 		uint16 compSize;
 	};
 
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 	Common::Array<char* > _madsVocab;
 	Common::Array<char* > _madsQuotes;
 	Common::Array<MessageItem* > _madsMessages;
 	MadsObjectArray _madsObjects;
 public:
-	Globals(M4Engine *vm);
-	~Globals();
+	MadsGlobals(MadsM4Engine *vm);
+	~MadsGlobals();
 	bool isInterfaceVisible();
 
 	// M4 variables
@@ -236,7 +236,7 @@ public:
 
 class Player {
 public:
-	Player(M4Engine *vm);
+	Player(MadsM4Engine *vm);
 	void setCommandsAllowed(bool value);
 
 	// Variables
@@ -265,7 +265,7 @@ public:
 		const char *word8, const char *word9, const char *word10);
 
 private:
-	 M4Engine *_vm;
+	 MadsM4Engine *_vm;
 };
 
 } // End of namespace M4

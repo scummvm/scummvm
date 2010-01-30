@@ -31,7 +31,7 @@
 
 namespace M4 {
 
-void returnToMainMenuFn(M4Engine *vm) {
+void returnToMainMenuFn(MadsM4Engine *vm) {
 	vm->_palette->resetColorCounts();
 	vm->_palette->setMadsSystemPalette();
 
@@ -105,14 +105,14 @@ bool HotkeyList::call(uint32 key) {
 
 // View constructor
 
-View::View(M4Engine *vm, const Common::Rect &viewBounds, bool transparent)
+View::View(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent)
 	: M4Surface(viewBounds.width(), viewBounds.height()), _hotkeys(this), _vm(vm) {
 	SCREEN_FLAGS_DEFAULT;
 	_coords = viewBounds;
 	_transparent = transparent;
 }
 
-View::View(M4Engine *vm, int x, int y, bool transparent)
+View::View(MadsM4Engine *vm, int x, int y, bool transparent)
 	: M4Surface(), _hotkeys(this), _vm(vm) {
 	SCREEN_FLAGS_DEFAULT;
 	_coords.left = x;
@@ -194,7 +194,7 @@ void View::onRefresh(RectList *rects, M4Surface *destSurface) {
 
 //--------------------------------------------------------------------------
 
-ViewManager::ViewManager(M4Engine *vm): _systemHotkeys(HotkeyList(NULL)), _vm(vm) {
+ViewManager::ViewManager(MadsM4Engine *vm): _systemHotkeys(HotkeyList(NULL)), _vm(vm) {
 	_captureScreen = NULL;
 	_captureEvents = false;
 }

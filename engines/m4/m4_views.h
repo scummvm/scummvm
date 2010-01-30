@@ -58,9 +58,9 @@ private:
 	int _scrollPosition;
 	int _highlightedIndex;
 	int _selectedIndex;
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 public:
-	GUIInventory(View *owner, M4Engine *vm, const Common::Rect &bounds,
+	GUIInventory(View *owner, MadsM4Engine *vm, const Common::Rect &bounds,
 				 int horizCells, int vertCells, int cellWidth, int cellHeight, int tag);
 
 	void onRefresh();
@@ -100,7 +100,7 @@ public:
 private:
 	void setHighlightedButton(int index);
 public:
-	GameInterfaceView(M4Engine *vm);
+	GameInterfaceView(MadsM4Engine *vm);
 	~GameInterfaceView();
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);

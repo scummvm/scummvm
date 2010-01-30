@@ -79,7 +79,7 @@ class MadsInterfaceView;
 
 class Scene: public View {
 public:
-	Scene(M4Engine *vm);
+	Scene(MadsM4Engine *vm);
 	~Scene();
 
 	// TODO: perhaps move playIntro() someplace else?
@@ -162,7 +162,7 @@ private:
 	bool handleCheatKey(int32 keycode);
 	bool handleKeypress(int32 keycode);
 public:
-	MadsInterfaceView(M4Engine *vm);
+	MadsInterfaceView(MadsM4Engine *vm);
 	~MadsInterfaceView();
 
 	void initialise();

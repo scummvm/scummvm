@@ -44,13 +44,17 @@ bool please_hyperwalk = false;
  * Implements an interface to the event system								*
  *--------------------------------------------------------------------------*/
 
-Events::Events(M4Engine *vm) : _vm(vm) {
+Events::Events(MadsM4Engine *vm) : _vm(vm) {
 	_mouseState = MSTATE_NO_EVENT;
 	quitFlag = false;
 	_keyCode = 0;
-	_console = new Console(_vm);
 	_mouseButtons = 0;
 	_ctrlFlag = false;
+
+	if (_vm->isM4())
+		_console = new M4Console(_vm);
+	else
+		_console = new MadsConsole(_madsVm);
 }
 
 M4EventType Events::handleEvents() {
@@ -177,7 +181,7 @@ bool Events::kbdCheck(uint32 &keyCode) {
  * Implements an interface to the mouse										*
  *--------------------------------------------------------------------------*/
 
-Mouse::Mouse(M4Engine *vm) : _vm(vm) {
+Mouse::Mouse(MadsM4Engine *vm) : _vm(vm) {
 	_locked = false;
 	_cursorOn = false;
 	_cursor = NULL;

@@ -191,7 +191,7 @@ void Dialog::addBarLine() {
  */
 void Dialog::getVocab(int vocabId, char **line) {
 	assert(vocabId > 0);
-	const char *vocabStr = _vm->_globals->getVocab(vocabId);
+	const char *vocabStr = _madsVm->_globals->getVocab(vocabId);
 	strcpy(*line, vocabStr);
 
 	if (_commandCase)
@@ -253,6 +253,16 @@ bool Dialog::handleNounSuffix(char *destP, int nounNum, const char *srcP) {
 }
 
 /**
+ * Sets up an area within the dialog for textual input
+ */
+void Dialog::setupInputArea() {
+	_askPosition.x = _lineX + 1;
+	_askPosition.y = _lines.size();
+
+	incLine();
+}
+
+/**
  * Checks whether the start of an extracted command matches a specified given command constant
  */
 bool Dialog::matchCommand(const char *s1, const char *s2) {
@@ -261,7 +271,7 @@ bool Dialog::matchCommand(const char *s1, const char *s2) {
 	return result;
 }
 
-Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, Common::Rect(0, 0, 0, 0)) {
+Dialog::Dialog(MadsM4Engine *vm, const char *msgData, const char *title): View(vm, Common::Rect(0, 0, 0, 0)) {
 	assert(msgData);
 	_vm->_font->setFont(FONT_INTERFACE_MADS);
 
@@ -325,23 +335,8 @@ Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, C
 			cmdFlag = false;
 			strToUpper(cmdText);
 
-			if (matchCommand(cmdText, "TITLE")) {
-				// Title command - specifies the dialog width in number of characters
-				skipLine = true;
-				crFlag = true;
-				underline = true;
-
-				int id = atoi(cmdText + 5);
-				if (id > 0) {
-					// Suffix provided - specifies the dialog width in number of chars
-					_widthChars = id * 2;
-					_dialogWidth = id * (_vm->_font->getMaxWidth() + DIALOG_SPACING) + 10;
-				}
-			} else if (matchCommand(cmdText, "SENTENCE")) {
-				// Sentence command - loads the title into the line buffer
-				strcpy(dialogLine, title);
-				strToUpper(dialogLine);
-				lineP += strlen(dialogLine) + 1;
+			if (matchCommand(cmdText, "ASK")) {
+				setupInputArea();
 
 			} else if (matchCommand(cmdText, "BAR")) {
 				// Adds a full-width line instead of normal text
@@ -368,9 +363,28 @@ Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, C
 				// Noun command 2
 				handleNounSuffix(lineP, 2, cmdText + 5);
 
+			} else if (matchCommand(cmdText, "SENTENCE")) {
+				// Sentence command - loads the title into the line buffer
+				strcpy(dialogLine, title);
+				strToUpper(dialogLine);
+				lineP += strlen(dialogLine) + 1;
+
 			} else if (matchCommand(cmdText, "TAB")) {
 				// Specifies the X offset for the current line
 				_lines[_lines.size() - 1].xp = atoi(cmdText + 3);
+
+			} else if (matchCommand(cmdText, "TITLE")) {
+				// Title command - specifies the dialog width in number of characters
+				skipLine = true;
+				crFlag = true;
+				underline = true;
+
+				int id = atoi(cmdText + 5);
+				if (id > 0) {
+					// Suffix provided - specifies the dialog width in number of chars
+					_widthChars = id * 2;
+					_dialogWidth = id * (_vm->_font->getMaxWidth() + DIALOG_SPACING) + 10;
+				}
 
 			} else if (matchCommand(cmdText, "UNDER")) {
 				// Underline command
@@ -382,9 +396,6 @@ Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, C
 				getVocab(verbId, &lineP);
 
 
-
-			} else if (matchCommand(cmdText, "ASK")) {
-				// doAsk();
 			} else if (matchCommand(cmdText, "INDEX")) {
 				// Index command
 				_dialogIndex = atoi(cmdText + 5);
@@ -402,25 +413,15 @@ Dialog::Dialog(M4Engine *vm, const char *msgData, const char *title): View(vm, C
 	draw();
 }
 
-Dialog::Dialog(M4Engine *vm, int widthChars, const char **descEntries): View(vm, Common::Rect(0, 0, 0, 0)) {
+Dialog::Dialog(MadsM4Engine *vm, int widthChars): View(vm, Common::Rect(0, 0, 0, 0)) {
 	_vm->_font->setFont(FONT_INTERFACE_MADS);
 	_widthChars = widthChars * 2;
 	_dialogWidth = widthChars * (_vm->_font->getMaxWidth() + DIALOG_SPACING) + 10;
 	_screenType = LAYER_DIALOG;
 	_lineX = 0;
 	_widthX = 0;
-
-	while (*descEntries != NULL) {
-		incLine();
-		writeChars(*descEntries);
-
-		int lineWidth = _vm->_font->getWidth(*descEntries, DIALOG_SPACING);
-		_lines[_lines.size() - 1].xp = (_dialogWidth - 10 - lineWidth) / 2;
-		++descEntries;
-	}
-
-	_lines[0].underline = true;
-	draw();
+	_askPosition.x = 0;
+	_askPosition.y = 0;
 }
 
 Dialog::~Dialog() {
@@ -449,9 +450,6 @@ void Dialog::draw() {
 	_coords.right = dialogX + dlgWidth + 1;
 	_coords.bottom = dialogY + dlgHeight + 1;
 
-	// Ask position
-	//int askY = (_vm->_font->getHeight() + 1) * _askPosition.y + 3;
-
 	// Set up the dialog
 	fillRect(Common::Rect(0, 0, width(), height()), 3);
 	setColour(2);
@@ -474,6 +472,11 @@ void Dialog::draw() {
 
 			*destP++ = ((seed & 0x10) != 0) ? 1 : 0;
 		}
+	}
+
+	// If an ask position is set, create the input area frame
+	if (_askPosition.y > 0) {
+
 	}
 
 	// Handle drawing the text contents
@@ -518,10 +521,42 @@ bool Dialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &ca
 	return true;
 }
 
-void Dialog::display(M4Engine *vm, int widthChars, const char **descEntries) {
-	Dialog *dlg = new Dialog(vm, widthChars, descEntries);
+void Dialog::display(MadsM4Engine *vm, int widthChars, const char **descEntries) {
+	Dialog *dlg = new Dialog(vm, widthChars);
+
+	while (*descEntries != NULL) {
+		dlg->incLine();
+		dlg->writeChars(*descEntries);
+
+		int lineWidth = vm->_font->getWidth(*descEntries, DIALOG_SPACING);
+		dlg->_lines[dlg->_lines.size() - 1].xp = (dlg->_dialogWidth - 10 - lineWidth) / 2;
+		++descEntries;
+	}
+
+	dlg->_lines[0].underline = true;
+	
+	dlg->draw();
 	vm->_viewManager->addView(dlg);
 	vm->_viewManager->moveToFront(dlg);
+}
+
+void Dialog::getValue(MadsM4Engine *vm, const char *title, const char *text, int numChars, int currentValue) {
+	int titleLen = strlen(title);
+	Dialog *dlg = new Dialog(vm, titleLen + 4);
+
+	dlg->addLine(title, true);
+	dlg->writeChars("\n");
+
+	dlg->writeChars(text);
+	dlg->setupInputArea();
+	dlg->writeChars("\n");
+
+	dlg->draw();
+	vm->_viewManager->addView(dlg);
+	vm->_viewManager->moveToFront(dlg);
+
+	// TODO: How to wait until the dialog is closed
+	
 }
 
 } // End of namespace M4

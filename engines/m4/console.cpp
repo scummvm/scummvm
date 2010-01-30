@@ -31,7 +31,7 @@
 
 namespace M4 {
 
-Console::Console(M4Engine *vm) : GUI::Debugger() {
+Console::Console(MadsM4Engine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	DCmd_Register("scene",			WRAP_METHOD(Console, cmdLoadScene));
@@ -49,8 +49,6 @@ Console::Console(M4Engine *vm) : GUI::Debugger() {
 	DCmd_Register("textview",		WRAP_METHOD(Console, cmdShowTextview));
 	DCmd_Register("animview",		WRAP_METHOD(Console, cmdShowAnimview));
 	DCmd_Register("anim",			WRAP_METHOD(Console, cmdPlayAnimation));
-	DCmd_Register("object",			WRAP_METHOD(Console, cmdObject));
-	DCmd_Register("message",		WRAP_METHOD(Console, cmdMessage));
 }
 
 Console::~Console() {
@@ -299,10 +297,17 @@ bool Console::cmdPlayAnimation(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdObject(int argc, const char **argv) {
-	if (_vm->isM4()) {
-		DebugPrintf("Command not implemented for M4 games\n");
-	} else if (argc == 1) {
+/*--------------------------------------------------------------------------*/
+
+MadsConsole::MadsConsole(MadsEngine *vm): Console(vm) {
+	_vm = vm;
+
+	DCmd_Register("object",			WRAP_METHOD(MadsConsole, cmdObject));
+	DCmd_Register("message",		WRAP_METHOD(MadsConsole, cmdMessage));
+}
+
+bool MadsConsole::cmdObject(int argc, const char **argv) {
+	if (argc == 1) {
 		DebugPrintf("Usage: object ['list' | '#objnum' | 'add #objnum']\n");
 	} else if (!strcmp(argv[1], "list")) {
 		// List of objects
@@ -358,7 +363,7 @@ bool Console::cmdObject(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdMessage(int argc, const char **argv) {
+bool MadsConsole::cmdMessage(int argc, const char **argv) {
 	VALIDATE_MADS;
 
 	if (argc == 1)

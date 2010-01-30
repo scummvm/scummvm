@@ -276,7 +276,7 @@ enum ScriptKernelVariable {
 
 class ScriptInterpreter {
 public:
-	ScriptInterpreter(M4Engine *vm);
+	ScriptInterpreter(MadsM4Engine *vm);
 	~ScriptInterpreter();
 	/* Opens a M4 program file */
 	void open(const char *filename);
@@ -322,7 +322,7 @@ public:
 
 protected:
 
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 
 	typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FunctionNameMap;
 	Common::File *_scriptFile;

@@ -44,7 +44,7 @@ enum SceneTransition {
 	kTransitionCircleIn = 9
 };
 
-typedef void (*TextviewCallback)(M4Engine *vm);
+typedef void (*TextviewCallback)(MadsM4Engine *vm);
 
 class TextviewView: public View {
 private:
@@ -74,7 +74,7 @@ private:
 	void processText();
 	int getParameter(char **paramP);
 public:
-	TextviewView(M4Engine *vm);
+	TextviewView(MadsM4Engine *vm);
 	~TextviewView();
 
 	void setScript(const char *resourceName, TextviewCallback callback);
@@ -85,11 +85,11 @@ public:
 	void updateState();
 };
 
-typedef void (*AnimviewCallback)(M4Engine *vm);
+typedef void (*AnimviewCallback)(MadsM4Engine *vm);
 
 class AAFile: public MadsPack {
 public:
-	AAFile(const char *resourceName, M4Engine* vm);
+	AAFile(const char *resourceName, MadsM4Engine* vm);
 
 	uint16 seriesCount;
 	uint16 frameCount;
@@ -122,7 +122,7 @@ private:
 	void readNextCommand();
 	void processCommand();
 public:
-	AnimviewView(M4Engine *vm);
+	AnimviewView(MadsM4Engine *vm);
 	~AnimviewView();
 
 	void setScript(const char *resourceName, AnimviewCallback callback);

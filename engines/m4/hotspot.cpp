@@ -274,10 +274,10 @@ void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int ho
 			currentHotSpot->setVerb("");
 
 			if (currentHotSpot->getVocabID() > 0)
-				currentHotSpot->setVocab(_vm->_globals->getVocab(currentHotSpot->getVocabID()));
+				currentHotSpot->setVocab(_madsVm->_globals->getVocab(currentHotSpot->getVocabID()));
 
 			if (currentHotSpot->getVerbID() > 0)
-				currentHotSpot->setVerb(_vm->_globals->getVocab(currentHotSpot->getVerbID()));
+				currentHotSpot->setVerb(_madsVm->_globals->getVocab(currentHotSpot->getVerbID()));
 		}
 	}
 }

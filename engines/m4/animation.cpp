@@ -31,7 +31,7 @@ namespace M4 {
 
 // TODO: this code needs cleanup
 
-Animation::Animation(M4Engine *vm) {
+Animation::Animation(MadsM4Engine *vm) {
 	_vm = vm;
 	_playing = false;
 }

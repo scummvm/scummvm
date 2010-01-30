@@ -44,7 +44,7 @@ static const int INVENTORY_Y = 159;
 static const int SCROLLER_DELAY = 200;
 
 
-Scene::Scene(M4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
+Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
 	_screenType = VIEWID_SCENE;
 
 	_sceneResources.hotspots = new HotSpotList();
@@ -393,7 +393,7 @@ void Scene::checkHotspotAtMousePosMads(int x, int y) {
 		if (verbId == kVerbNone)
 			verbId = kVerbWalkTo;
 
-		sprintf(statusText, "%s %s\n", _vm->_globals->getVocab(verbId), currentHotSpot->getVocab());
+		sprintf(statusText, "%s %s\n", _madsVm->_globals->getVocab(verbId), currentHotSpot->getVocab());
 
 		statusText[0] = toupper(statusText[0]);	// capitalize first letter
 		setMADSStatusText(statusText);
@@ -535,7 +535,7 @@ bool Scene::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &cap
 					if (currentHotSpot->getVerbID() != 0) {
 						sprintf(statusText, "%s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
 					} else {
-						sprintf(statusText, "%s %s\n", _vm->_globals->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
+						sprintf(statusText, "%s %s\n", _madsVm->_globals->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
 					}
 
 					statusText[0] = toupper(statusText[0]);	// capitalize first letter
@@ -550,8 +550,8 @@ bool Scene::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &cap
 			_vm->_interfaceView->_inventory.clearSelected();
 		} else {
 			// ***DEBUG*** - sample dialog display
-			int idx = 3; //_vm->_globals->messageIndexOf(0x277a);
-			const char *msg = _vm->_globals->loadMessage(idx);
+			int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
+			const char *msg = _madsVm->_globals->loadMessage(idx);
 			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 			_vm->_viewManager->addView(dlg);
 			_vm->_viewManager->moveToFront(dlg);
@@ -699,12 +699,12 @@ void Scene::setAction(int action, int objectId) {
 	// a second object can be selected, as in 'use gun to shoot person', with requires a target
 
 	// Set up the new action
-	strcpy(statusText, _vm->_globals->getVocab(action));
+	strcpy(statusText, _madsVm->_globals->getVocab(action));
 	statusText[0] = toupper(statusText[0]);	// capitalize first letter
 
 	if (objectId != -1) {
-		MadsObject *obj = _vm->_globals->getObject(objectId);
-		sprintf(statusText + strlen(statusText), " %s", _vm->_globals->getVocab(obj->descId));
+		MadsObject *obj = _madsVm->_globals->getObject(objectId);
+		sprintf(statusText + strlen(statusText), " %s", _madsVm->_globals->getVocab(obj->descId));
 	} else {
 		_currentAction = action;
 	}
@@ -719,7 +719,7 @@ void Scene::setAction(int action, int objectId) {
  *--------------------------------------------------------------------------
  */
 
-MadsInterfaceView::MadsInterfaceView(M4Engine *vm): View(vm, Common::Rect(0, MADS_SURFACE_HEIGHT,
+MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): View(vm, Common::Rect(0, MADS_SURFACE_HEIGHT,
 														 vm->_screen->width(), vm->_screen->height())) {
 	_screenType = VIEWID_INTERFACE;
 	_highlightedElement = -1;
@@ -772,8 +772,8 @@ void MadsInterfaceView::initialise() {
 	// Build up the inventory list
 	_inventoryList.clear();
 
-	for (uint i = 0; i < _vm->_globals->getObjectsSize(); ++i) {
-		MadsObject *obj = _vm->_globals->getObject(i);
+	for (uint i = 0; i < _madsVm->_globals->getObjectsSize(); ++i) {
+		MadsObject *obj = _madsVm->_globals->getObject(i);
 		if (obj->roomNumber == PLAYER_INVENTORY)
 			_inventoryList.push_back(i);
 	}
@@ -823,7 +823,7 @@ void MadsInterfaceView::setSelectedObject(int objectNumber) {
 
 void MadsInterfaceView::addObjectToInventory(int objectNumber) {
 	if (_inventoryList.indexOf(objectNumber) == -1) {
-		_vm->_globals->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
+		_madsVm->_globals->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
 		_inventoryList.push_back(objectNumber);
 	}
 
@@ -847,7 +847,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
 
 			// Get the verb action and capitalise it
-			const char *verbStr = _vm->_globals->getVocab(kVerbLook + actionIndex);
+			const char *verbStr = _madsVm->_globals->getVocab(kVerbLook + actionIndex);
 			strcpy(buffer, verbStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
@@ -875,7 +875,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		if ((_topIndex + i) >= _inventoryList.size())
 			break;
 
-		const char *descStr = _vm->_globals->getVocab(_vm->_globals->getObject(
+		const char *descStr = _madsVm->_globals->getVocab(_madsVm->_globals->getObject(
 			_inventoryList[_topIndex + i])->descId);
 		strcpy(buffer, descStr);
 		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
@@ -898,21 +898,21 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
 		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
 
-		if (!_vm->_globals->invObjectsStill && !dialogVisible) {
+		if (!_madsVm->_globals->invObjectsStill && !dialogVisible) {
 			// If objetcs are to animated, move to the next frame
 			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
 				_objectFrameNumber = 0;
 		}
 
 		// List the vocab actions for the currently selected object
-		MadsObject *obj = _vm->_globals->getObject(_selectedObject);
+		MadsObject *obj = _madsVm->_globals->getObject(_selectedObject);
 		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
 
 		for (int i = 0; i < obj->vocabCount; ++i) {
 			const Common::Rect r(_screenObjects[VOCAB_START + i]);
 
 			// Get the vocab description and capitalise it
-			const char *descStr = _vm->_globals->getVocab(obj->vocabList[i].vocabId);
+			const char *descStr = _madsVm->_globals->getVocab(obj->vocabList[i].vocabId);
 			strcpy(buffer, descStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
@@ -958,7 +958,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 			_vm->_scene->setAction(kVerbLook + (_highlightedElement - ACTIONS_START));
 		} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
 			// A vocab action was selected
-			MadsObject *obj = _vm->_globals->getObject(_selectedObject);
+			MadsObject *obj = _madsVm->_globals->getObject(_selectedObject);
 			int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
 			if (vocabIndex >= 0)
 				_vm->_scene->setAction(obj->vocabList[vocabIndex].vocabId, _selectedObject);

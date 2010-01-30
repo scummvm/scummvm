@@ -217,7 +217,7 @@ uint32 ScriptFunction::readUint32() {
 }
 
 
-ScriptInterpreter::ScriptInterpreter(M4Engine *vm) : _scriptFile(NULL), _vm(vm) {
+ScriptInterpreter::ScriptInterpreter(MadsM4Engine *vm) : _scriptFile(NULL), _vm(vm) {
 	initScriptKernel();
 	_dataCache = new ScriptDataCache(this);
 	_runningFunction = NULL;

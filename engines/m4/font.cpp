@@ -29,7 +29,7 @@
 
 namespace M4 {
 
-Font::Font(M4Engine *vm) : _vm(vm) {
+Font::Font(MadsM4Engine *vm) : _vm(vm) {
 	_sysFont = true;
 	_filename = NULL;
 	//TODO: System font

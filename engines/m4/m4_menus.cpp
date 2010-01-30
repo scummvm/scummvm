@@ -306,7 +306,7 @@ void OrionCallbacks::saveLoadReturnFn(OrionMenuView *view) {
 
 //--------------------------------------------------------------------------
 
-OrionMenuView::OrionMenuView(M4Engine *Vm, int x, int y, MenuType menuType, bool calledFromMainMenu,
+OrionMenuView::OrionMenuView(MadsM4Engine *Vm, int x, int y, MenuType menuType, bool calledFromMainMenu,
 		bool loadSaveFromHotkey): DialogView(Vm, x, y, true) {
 	_menuType = menuType;
 	_screenType = VIEWID_MENU;
@@ -512,7 +512,7 @@ M4Surface *OrionMenuView::createThumbnail() {
 }
 
 void OrionMenuView::destroyView() {
-	M4Engine *engine = _vm;
+	MadsM4Engine *engine = _vm;
 	bool interfaceVisible = _interfaceWasVisible;
 	engine->_viewManager->deleteView(this);
 

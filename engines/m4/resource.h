@@ -90,11 +90,11 @@ protected:
 	typedef Common::List<Common::SharedPtr<Resource> > ResourceList;
 	typedef ResourceList::iterator ResourceIterator;
 	ResourceList _resources;
-	M4Engine *_vm;
+	MadsM4Engine *_vm;
 
 	virtual Common::SeekableReadStream *loadResource(const char *resourceName, bool loadFlag) = 0;
 public:
-	ResourceManager(M4Engine *vm): _vm(vm) {};
+	ResourceManager(MadsM4Engine *vm): _vm(vm) {};
 	virtual ~ResourceManager();
 
 	Common::SeekableReadStream *get(const char *resourceName, bool loadFlag = true);
@@ -119,7 +119,7 @@ private:
 protected:
 	Common::SeekableReadStream *loadResource(const char *resourceName, bool loadFlag);
 public:
-	MADSResourceManager(M4Engine *vm): ResourceManager(vm) {};
+	MADSResourceManager(MadsM4Engine *vm): ResourceManager(vm) {};
 	bool resourceExists(const char *resourceName);
 };
 
@@ -127,7 +127,7 @@ class M4ResourceManager: public ResourceManager {
 protected:
 	Common::SeekableReadStream *loadResource(const char *resourceName, bool loadFlag);
 public:
-	M4ResourceManager(M4Engine *vm);
+	M4ResourceManager(MadsM4Engine *vm);
 	~M4ResourceManager();
 	bool resourceExists(const char *resourceName);
 

@@ -59,7 +59,7 @@ private:
 	M4Surface *createThumbnail();
 	void destroyView();
 public:
-	OrionMenuView(M4Engine *vm, int x, int y, MenuType menuType, bool calledFromMainMenu,
+	OrionMenuView(MadsM4Engine *vm, int x, int y, MenuType menuType, bool calledFromMainMenu,
 		bool loadSaveFromHotkey);
 	~OrionMenuView();
 	MenuType getMenuType() { return _menuType; }
