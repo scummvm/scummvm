@@ -145,17 +145,19 @@ void SciGui32::baseSetter(reg_t object) {
 		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
 		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
 
-		View *tmpView = _gfx->getView(viewId);
-		Common::Rect celRect;
+		if (viewId != SIGNAL_OFFSET) {
+			View *tmpView = _gfx->getView(viewId);
+			Common::Rect celRect;
 
-		tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
-		celRect.bottom = y + 1;
-		celRect.top = celRect.bottom - yStep;
+			tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
+			celRect.bottom = y + 1;
+			celRect.top = celRect.bottom - yStep;
 
-		PUT_SEL32V(_s->_segMan, object, brLeft, celRect.left);
-		PUT_SEL32V(_s->_segMan, object, brRight, celRect.right);
-		PUT_SEL32V(_s->_segMan, object, brTop, celRect.top);
-		PUT_SEL32V(_s->_segMan, object, brBottom, celRect.bottom);
+			PUT_SEL32V(_s->_segMan, object, brLeft, celRect.left);
+			PUT_SEL32V(_s->_segMan, object, brRight, celRect.right);
+			PUT_SEL32V(_s->_segMan, object, brTop, celRect.top);
+			PUT_SEL32V(_s->_segMan, object, brBottom, celRect.bottom);
+		}
 	}
 }
 
