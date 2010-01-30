@@ -42,16 +42,15 @@ namespace Audio {
 
 
 #pragma mark -
-#pragma mark --- RawDiskStream ---
+#pragma mark --- RawAudioStream ---
 #pragma mark -
 
 /**
- *  RawDiskStream.  This can stream raw PCM audio data from disk.  The
- *  function takes an pointer to an array of RawDiskStreamAudioBlock which defines the
- *  start position and length of each block of uncompressed audio in the stream.
+ * This is a stream, which allows for playing raw PCM data from a stream.
+ * It also features playback of multiple blocks from a given stream.
  */
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class RawDiskStream : public SeekableAudioStream {
+class RawAudioStream : public SeekableAudioStream {
 
 // Allow backends to override buffer size
 #ifdef CUSTOM_AUDIO_BUFFER_SIZE
@@ -70,12 +69,12 @@ protected:
 	int32 _filePos;                                ///< Current position in stream
 	int32 _diskLeft;                               ///< Samples left in stream in current block not yet read to buffer
 	int32 _bufferLeft;                             ///< Samples left in buffer in current block
-	const DisposeAfterUse::Flag _disposeAfterUse;  ///< Indicates whether the stream object should be deleted when this RawDiskStream is destructed
+	const DisposeAfterUse::Flag _disposeAfterUse;  ///< Indicates whether the stream object should be deleted when this RawAudioStream is destructed
 
 	const RawStreamBlockList _blocks;              ///< Audio block list
 	RawStreamBlockList::const_iterator _curBlock;  ///< Current audio block number
 public:
-	RawDiskStream(int rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
+	RawAudioStream(int rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
 		: _rate(rate), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(_blocks.begin()) {
 
 		assert(_blocks.size() > 0);
@@ -101,7 +100,7 @@ public:
 	}
 
 
-	virtual ~RawDiskStream() {
+	virtual ~RawAudioStream() {
 		if (_disposeAfterUse == DisposeAfterUse::YES)
 			delete _stream;
 
@@ -120,7 +119,7 @@ public:
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
+int RawAudioStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	int oldPos = _stream->pos();
 	bool restoreFilePosition = false;
 
@@ -179,7 +178,7 @@ int RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, 
 }
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
+bool RawAudioStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 	const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
 	uint32 curSample = 0;
 
@@ -225,11 +224,11 @@ bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &whe
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new RawDiskStream<STEREO, true, UNSIGNED, true>(rate, disposeAfterUse, stream, blockList); \
+				return new RawAudioStream<STEREO, true, UNSIGNED, true>(rate, disposeAfterUse, stream, blockList); \
 			else  \
-				return new RawDiskStream<STEREO, true, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList); \
+				return new RawAudioStream<STEREO, true, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList); \
 		} else \
-			return new RawDiskStream<STEREO, false, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList)
+			return new RawAudioStream<STEREO, false, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList)
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    const RawStreamBlockList &blockList,
@@ -267,7 +266,7 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    int rate, byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse) {
 	RawStreamBlockList blocks;
-	RawDiskStreamAudioBlock block;
+	RawAudioStreamBlock block;
 	block.pos = 0;
 
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
@@ -284,7 +283,7 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
 	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
 }
 
-SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block, int numBlocks,
+SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawAudioStreamBlock *block, int numBlocks,
                                        int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
 	assert(numBlocks > 0);
 	RawStreamBlockList blocks;
