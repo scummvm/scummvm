@@ -126,7 +126,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
 				return false;
 			} else {
-				debugC(2, kDebugLevelVM, txt.c_str());
+				debugC(2, kDebugLevelVM, "%s\n", txt.c_str());
 				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.\n");
 				return true;
 			}
