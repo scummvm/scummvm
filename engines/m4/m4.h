@@ -175,6 +175,8 @@ public:
 	//
 
 	ResourceManager *_resourceManager;
+	Globals *_globals;
+
 	SaveLoad *_saveLoad;
 	ViewManager *_viewManager;
 	Palette *_palette;
@@ -206,7 +208,8 @@ public:
 
 	virtual Common::Error run();
 
-	MadsGlobals *_globals;
+	MadsGlobals *globals() { return (MadsGlobals *)_globals; };
+	MadsScene *scene() { return (MadsScene *)_scene; };
 };
 
 class M4Engine: public MadsM4Engine {
@@ -215,6 +218,9 @@ public:
 	virtual ~M4Engine();
 
 	virtual Common::Error run();
+
+	M4Globals *globals() { return (M4Globals *)_globals; };
+	M4Scene *scene() { return (M4Scene *)_scene; };
 };
 
 // FIXME: remove globals

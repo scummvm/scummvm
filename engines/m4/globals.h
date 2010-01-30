@@ -36,6 +36,8 @@
 namespace M4 {
 
 class MadsM4Engine;
+class M4Engine;
+class MadsEngine;
 class ScriptInterpreter;
 class ScriptFunction;
 
@@ -183,7 +185,28 @@ public:
 
 typedef Common::Array<Common::SharedPtr<MadsObject> > MadsObjectArray;
 
-class MadsGlobals {
+class Globals {
+private:
+	MadsM4Engine *_vm;
+public:
+	Globals(MadsM4Engine *vm);
+	virtual ~Globals() {};
+
+	bool isInterfaceVisible();
+
+};
+
+class M4Globals: public Globals {
+private:
+	M4Engine *_vm;
+public:
+	M4Globals(M4Engine *vm);
+	virtual ~M4Globals() {};
+
+	bool invSuppressClickSound;
+};
+
+class MadsGlobals: public Globals {
 private:
 	struct MessageItem {
 		uint32 id;
@@ -192,18 +215,15 @@ private:
 		uint16 compSize;
 	};
 
-	MadsM4Engine *_vm;
+	MadsEngine *_vm;
 	Common::Array<char* > _madsVocab;
 	Common::Array<char* > _madsQuotes;
 	Common::Array<MessageItem* > _madsMessages;
 	MadsObjectArray _madsObjects;
 public:
-	MadsGlobals(MadsM4Engine *vm);
+	MadsGlobals(MadsEngine *vm);
 	~MadsGlobals();
-	bool isInterfaceVisible();
 
-	// M4 variables
-	bool invSuppressClickSound;
 	// MADS variables
 	bool easyMouse;
 	bool invObjectsStill;

@@ -75,57 +75,96 @@ struct SceneResources {
 	int32 railNodeCount;	// # of rails
 };
 
-class MadsInterfaceView;
+class M4Engine;
+class MadsEngine;
+class InterfaceView;
 
 class Scene: public View {
-public:
-	Scene(MadsM4Engine *vm);
-	~Scene();
-
-	// TODO: perhaps move playIntro() someplace else?
-	void playIntro();
-	void show();
-	void loadScene(int sceneNumber);
-	void loadSceneResources(int sceneNumber);
-	void loadSceneHotSpotsMads(int sceneNumber);
-	void loadSceneCodes(int sceneNumber, int index = 0);
-	void loadSceneInverseColorTable(int sceneNumber);
-	void loadSceneSprites(int sceneNumber);
-	void loadSceneSpriteCodes(int sceneNumber);
-	void showSprites();
-	void checkHotspotAtMousePos(int x, int y);
-	void checkHotspotAtMousePosMads(int x, int y);
-	void showHotSpots();
-	void showCodes();
-	int getCurrentScene() { return _currentScene; }
-	SceneResources getSceneResources() { return _sceneResources; }
-	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
-	byte *getInverseColorTable() const { return _inverseColorTable; }
-	MadsInterfaceView *getMadsInterface() { return _madsInterfaceSurface; }
-	void setAction(int action, int objectId = -1);
-	void update();
-	void setMADSStatusText(const char *text) { strcpy(_statusText, text); }
-	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
-
-	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
-
 private:
+	byte *_inverseColorTable;
+	HotSpotList _sceneHotspots;
+	char _statusText[100];
+protected:
 	int _currentScene;
+	InterfaceView *_interfaceSurface;
 	M4Surface *_backgroundSurface;
 	M4Surface *_codeSurface;
-	MadsInterfaceView *_madsInterfaceSurface;
-	byte *_inverseColorTable;
 	RGBList *_palData;
 	RGBList *_interfacePal;
 	SceneResources _sceneResources;
-	HotSpotList _sceneHotspots;
+public:
+	Scene(MadsM4Engine *vm);
+	virtual ~Scene();
+
+	// Methods that differ between engines
+	virtual void loadScene(int sceneNumber);
+	virtual void loadSceneCodes(int sceneNumber, int index = 0) = 0;
+	virtual void show();
+	virtual void checkHotspotAtMousePos(int x, int y) = 0;
+	virtual void leftClick(int x, int y) = 0;
+	virtual void rightClick(int x, int y) = 0;
+	virtual void setAction(int action, int objectId = -1) = 0;
+
+	// TODO: perhaps move playIntro() someplace else?
+	void playIntro();
+	void loadSceneResources(int sceneNumber);
+	void loadSceneHotSpotsMads(int sceneNumber);
+	void loadSceneInverseColorTable(int sceneNumber);
+	void loadSceneSpriteCodes(int sceneNumber);
+	void showSprites();
+	void showHotSpots();
+	void showCodes();
+	int getCurrentScene() { return _currentScene; }
+	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
+	byte *getInverseColorTable() const { return _inverseColorTable; }
+	void update();
+	void setMADSStatusText(const char *text) { strcpy(_statusText, text); }
+	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
+	InterfaceView *getInterface() { return _interfaceSurface; }
+	SceneResources getSceneResources() { return _sceneResources; }
+
+	void onRefresh(RectList *rects, M4Surface *destSurface);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
+};
+
+class M4Scene: public Scene {
+private:
+	M4Engine *_vm;
 	SpriteAsset *_sceneSprites;
 	SpriteAsset *_walkerSprite;
-	int _currentAction;
-	char _statusText[100];
 
+	void loadSceneSprites(int sceneNumber);
 	void nextCommonCursor();
+public:
+	M4Scene(M4Engine *vm);
+	virtual ~M4Scene();
+
+	// Methods that differ between engines
+	virtual void loadScene(int sceneNumber);
+	virtual void loadSceneCodes(int sceneNumber, int index = 0);
+	virtual void checkHotspotAtMousePos(int x, int y);
+	virtual void leftClick(int x, int y);
+	virtual void rightClick(int x, int y);
+	virtual void setAction(int action, int objectId = -1);
+};
+
+class MadsScene: public Scene {
+private:
+	MadsEngine *_vm;
+
+	int _currentAction;
+public:
+	MadsScene(MadsEngine *vm);
+	virtual ~MadsScene() {};
+
+	// Methods that differ between engines
+	virtual void loadScene(int sceneNumber);
+	virtual void loadSceneCodes(int sceneNumber, int index = 0);
+	virtual void show();
+	virtual void checkHotspotAtMousePos(int x, int y);
+	virtual void leftClick(int x, int y);
+	virtual void rightClick(int x, int y);
+	virtual void setAction(int action, int objectId = -1);
 };
 
 enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
@@ -143,7 +182,17 @@ public:
 	}
 };
 
-class MadsInterfaceView: public View {
+class InterfaceView: public View {
+public:
+	InterfaceView(MadsM4Engine *vm, const Common::Rect &bounds): View(vm, bounds) {};
+	~InterfaceView() {};
+
+	virtual void initialise() {};
+	virtual void setSelectedObject(int objectNumber) {};
+	virtual void addObjectToInventory(int objectNumber) {};
+};
+
+class MadsInterfaceView: public InterfaceView {
 private:
 	IntegerList _inventoryList;
 	RectList _screenObjects;
@@ -165,9 +214,9 @@ public:
 	MadsInterfaceView(MadsM4Engine *vm);
 	~MadsInterfaceView();
 
-	void initialise();
-	void setSelectedObject(int objectNumber);
-	void addObjectToInventory(int objectNumber);
+	virtual void initialise();
+	virtual void setSelectedObject(int objectNumber);
+	virtual void addObjectToInventory(int objectNumber);
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);

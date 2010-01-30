@@ -118,6 +118,7 @@ MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	Common::addDebugChannel(kDebugConversations, "conversations", "Conversations debugging");
 
 	_resourceManager = NULL;
+	_globals = NULL;
 }
 
 
@@ -174,7 +175,6 @@ Common::Error MadsM4Engine::run() {
 		_actor = NULL;
 	}
 	_rails = new Rails();	// needs to be initialized before _scene
-	_scene = new Scene(this);
 	_dialogs = new Dialogs();
 	_viewManager = new ViewManager(this);
 	_inventory = new Inventory(this);
@@ -298,10 +298,13 @@ void MadsM4Engine::dumpFile(const char* filename, bool uncompress) {
 M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4Engine(syst, gameDesc) {
 	// FIXME
 	_m4Vm = this;
+
+	_globals = new M4Globals(this);
 }
 
 M4Engine::~M4Engine() {
 	delete _resourceManager;
+	delete _globals;
 }
 
 Common::Error M4Engine::run() {
@@ -314,7 +317,7 @@ Common::Error M4Engine::run() {
 	// Set up needed common functionality
 	MadsM4Engine::run();
 
-
+	_scene = new M4Scene(this);
 	_script->open("m4.dat");
 
 #ifdef SCRIPT_TEST
@@ -506,22 +509,24 @@ Common::Error MadsEngine::run() {
 	// Set up needed common functionality
 	MadsM4Engine::run();
 
+	_scene = new MadsScene(this);
 	_palette->setMadsSystemPalette();
 
 	_mouse->init("cursor.ss", NULL);
 	_mouse->setCursorNum(0);
 
 	// Load MADS data files
-	_globals->loadMadsVocab();			// vocab.dat
-	_globals->loadMadsQuotes();			// quotes.dat
-	_globals->loadMadsMessagesInfo();	// messages.dat
-	_globals->loadMadsObjects();
+	MadsGlobals *globals = (MadsGlobals *)_globals;
+	globals->loadMadsVocab();			// vocab.dat
+	globals->loadMadsQuotes();			// quotes.dat
+	globals->loadMadsMessagesInfo();	// messages.dat
+	globals->loadMadsObjects();
 
 	// Setup globals
-	_madsVm->_globals->easyMouse = true;
-	_madsVm->_globals->invObjectsStill = false;
-	_madsVm->_globals->textWindowStill = false;
-	_madsVm->_globals->storyMode = 0;
+	globals->easyMouse = true;
+	globals->invObjectsStill = false;
+	globals->textWindowStill = false;
+	globals->storyMode = 0;
 
 	// Test code to dump all messages to the console
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)

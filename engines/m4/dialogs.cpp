@@ -191,7 +191,7 @@ void Dialog::addBarLine() {
  */
 void Dialog::getVocab(int vocabId, char **line) {
 	assert(vocabId > 0);
-	const char *vocabStr = _madsVm->_globals->getVocab(vocabId);
+	const char *vocabStr = _madsVm->globals()->getVocab(vocabId);
 	strcpy(*line, vocabStr);
 
 	if (_commandCase)

@@ -52,14 +52,12 @@ Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width()
 	_sceneResources.props = new HotSpotList();
 	_backgroundSurface = new M4Surface();
 	_codeSurface = new M4Surface();
-	_madsInterfaceSurface = new MadsInterfaceView(vm);
-	_sceneSprites = NULL;
 	_palData = NULL;
 	_interfacePal = NULL;
+	_interfaceSurface = NULL;
 	_inverseColorTable = NULL;
 	strcpy(_statusText, "");
 	_vm->_rails->setCodeSurface(_codeSurface);
-	_currentAction = kVerbNone;
 }
 
 Scene::~Scene() {
@@ -73,7 +71,6 @@ Scene::~Scene() {
 
 	delete _backgroundSurface;
 	delete _codeSurface;
-	delete _sceneSprites;
 
 //	_vm->_palette->deleteAllRanges();
 
@@ -85,17 +82,6 @@ Scene::~Scene() {
 void Scene::loadScene(int sceneNumber) {
 	_currentScene = sceneNumber;
 
-	// Close the menu if it's active
-	if (!_vm->isM4()) {
-		View *mainMenu = _vm->_viewManager->getView(VIEWID_MAINMENU);
-		if (mainMenu != NULL) {
-			_vm->_viewManager->deleteView(mainMenu);
-		}
-	}
-
-	// TODO: Check if we were loading a game
-
-
 	// Load scene background and set palette
 	if (_palData) {
 		_vm->_palette->deleteRange(_palData);
@@ -106,79 +92,10 @@ void Scene::loadScene(int sceneNumber) {
 		_vm->_palette->deleteRange(_interfacePal);
 		delete _interfacePal;
 	}
+}
 
-	if (_vm->isM4()) {
-		_backgroundSurface->loadBackground(sceneNumber);
-		_palData = NULL;
-	} else {
-		// Set system palette entries
-		_vm->_palette->blockRange(0, 7);
-		RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
-			{0x00<<2, 0x10<<2, 0x16<<2, 0}};
-		_vm->_palette->setPalette(&sysColors[0], 4, 3);
-
-		_backgroundSurface->loadBackground(sceneNumber, &_palData);
-		_vm->_palette->addRange(_palData);
-		_backgroundSurface->translate(_palData);
-
-		if (sceneNumber < 900) {
-			/*_backgroundSurface->fillRect(Common::Rect(0, MADS_SURFACE_HEIGHT,
-				_backgroundSurface->width(), _backgroundSurface->height()),
-				_vm->_palette->BLACK);*/
-			// TODO: interface palette
-			_madsInterfaceSurface->madsloadInterface(0, &_interfacePal);
-			_vm->_palette->addRange(_interfacePal);
-			_madsInterfaceSurface->translate(_interfacePal);
-			_backgroundSurface->copyFrom(_madsInterfaceSurface, Common::Rect(0, 0, 320, 44), 0, 200 - 44);
-
-			_madsInterfaceSurface->initialise();
-		}
-	}
-
-	if (_vm->getGameType() == GType_Burger &&
-		sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER)
-		_vm->_interfaceView->setStatusText("");
-
-	// Load scene def file (*.CHK)
-	if (_vm->isM4()) {
-		loadSceneResources(sceneNumber);
-		loadSceneInverseColorTable(sceneNumber);
-	} else {
-		// Don't load other screen resources for system screens
-		if (sceneNumber >= 900)
-			return;
-
-		loadSceneHotSpotsMads(sceneNumber);
-	}
-
-	// TODO: set walker scaling
-	// TODO: destroy woodscript buffer
-
-	// Load scene walk path file (*.COD/*.WW?)
-	loadSceneCodes(sceneNumber);
-
-	// Load inverse color table file (*.IPL)
-	loadSceneInverseColorTable(sceneNumber);
-
-	if (_vm->isM4()) {
-
-		if (_vm->getGameType() != GType_Burger) {
-			// Load scene sprites file (*.SSB)
-			loadSceneSprites(sceneNumber);
-
-			// Load scene sprite codes file (*.SSC)
-			loadSceneSpriteCodes(sceneNumber);
-		}
-
-
-		if (sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER) {
-			_vm->_interfaceView->show();
-			showSprites();
-		}
-	}
-
-	// Purge resources
-	_vm->res()->purge();
+void Scene::show() {
+	_vm->_viewManager->addView(this);
 }
 
 void Scene::loadSceneResources(int sceneNumber) {
@@ -248,27 +165,6 @@ void Scene::loadSceneHotSpotsMads(int sceneNumber) {
 	delete hotspotStream;
 }
 
-void Scene::loadSceneCodes(int sceneNumber, int index) {
-	char filename[kM4MaxFilenameSize];
-	Common::SeekableReadStream *sceneS;
-
-	if (_vm->isM4()) {
-		sprintf(filename, "%i.cod", sceneNumber);
-		sceneS = _vm->res()->openFile(filename);
-		_codeSurface->loadCodesM4(sceneS);
-		_vm->res()->toss(filename);
-	} else if (_vm->getGameType() == GType_Phantom || _vm->getGameType() == GType_DragonSphere) {
-		sprintf(filename, "rm%i.ww%i", sceneNumber, index);
-		MadsPack walkData(filename, _vm);
-		sceneS = walkData.getItemStream(0);
-		_codeSurface->loadCodesMads(sceneS);
-		_vm->res()->toss(filename);
-	} else if (_vm->getGameType() == GType_RexNebular) {
-		// TODO
-		return;
-	}
-}
-
 void Scene::loadSceneInverseColorTable(int sceneNumber) {
 	char filename[kM4MaxFilenameSize];
 	Common::SeekableReadStream *iplS;
@@ -285,18 +181,6 @@ void Scene::loadSceneInverseColorTable(int sceneNumber) {
 		return;
 	}
 
-}
-
-
-void Scene::loadSceneSprites(int sceneNumber) {
-	char filename[kM4MaxFilenameSize];
-	sprintf(filename, "%i.ssb", sceneNumber);
-
-	Common::SeekableReadStream *sceneS = _vm->res()->get(filename);
-	_sceneSprites = new SpriteAsset(_vm, sceneS, sceneS->size(), filename);
-	_vm->res()->toss(filename);
-
-	printf("Scene has %d sprites, each one having %d colors\n", _sceneSprites->getCount(), _sceneSprites->getColorCount());
 }
 
 void Scene::loadSceneSpriteCodes(int sceneNumber) {
@@ -349,60 +233,6 @@ void Scene::showSprites() {
 	// TODO
 }
 
-void Scene::checkHotspotAtMousePos(int x, int y) {
-	if (_vm->getGameType() == GType_Riddle)
-		return;
-
-	// TODO: loads of things to do here, only the mouse cursor and the status
-	// text is changed for now
-
-	// Only scene hotspots are checked for now, not parallax/props, as the
-	// latter ones are not used by Orion Burger
-	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
-	if (currentHotSpot != NULL && currentHotSpot->getActive()) {
-		if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
-			_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
-			_vm->_mouse->getCursorNum() != CURSOR_USE &&
-			_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
-			_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
-		}
-		_vm->_interfaceView->setStatusText(currentHotSpot->getPrep());
-	} else {
-		if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
-			_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
-			_vm->_mouse->getCursorNum() != CURSOR_USE &&
-			_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
-			_vm->_mouse->setCursorNum(0);
-		} else {
-
-		}
-	}
-}
-
-void Scene::checkHotspotAtMousePosMads(int x, int y) {
-	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
-	if (currentHotSpot != NULL) {
-		_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
-
-		// This is the "easy" interface, which updates the status text when the mouse is moved
-		// TODO: toggle this code for easy/normal interface mode
-		char statusText[50];
-		int verbId = _currentAction;
-		if (verbId == kVerbNone)
-			verbId = currentHotSpot->getVerbID();
-		if (verbId == kVerbNone)
-			verbId = kVerbWalkTo;
-
-		sprintf(statusText, "%s %s\n", _madsVm->_globals->getVocab(verbId), currentHotSpot->getVocab());
-
-		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setMADSStatusText(statusText);
-	} else {
-		_vm->_mouse->setCursorNum(0);
-		setMADSStatusText("");
-	}
-}
-
 // Test function, shows all scene hotspots
 void Scene::showHotSpots() {
 	int i = 0;
@@ -450,11 +280,6 @@ void Scene::playIntro() {
 
 }
 
-void Scene::show() {
-	_vm->_viewManager->addView(this);
-	_vm->_viewManager->addView(_madsInterfaceSurface);
-}
-
 void Scene::update() {
 	// TODO: Needs a proper implementation
 	// NOTE: Don't copy the background when in M4 mode or WoodScript anims won't be shown
@@ -473,7 +298,7 @@ void Scene::update() {
 			_vm->_font->writeString(this, _statusText, (width() - _vm->_font->getWidth(_statusText)) / 2, 142, 0);
 		}
 
-		_madsInterfaceSurface->copyTo(this, 0, this->height() - _madsInterfaceSurface->height());
+		_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
 	}
 }
 
@@ -492,105 +317,19 @@ bool Scene::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &cap
 
 	switch (eventType) {
 	case MEVENT_LEFT_CLICK:
-		{
-			if (_vm->getGameType() == GType_Burger) {
-				// Place a Wilbur sprite with the correct facing
-				HotSpot	*currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
-				if (currentHotSpot != NULL && currentHotSpot->getActive()) {
-					update();
-					_vm->_actor->setWalkerDirection(currentHotSpot->getFacing());
-					/*
-					int posX = currentHotSpot->getFeetX();
-					int posY = currentHotSpot->getFeetY() -
-							   scaleValue(_vm->_actor->getWalkerHeight(), _vm->_actor->getWalkerScaling(), 0);
-					//_vm->_actor->placeWalkerSpriteAt(0, posX, posY);
-					*/
-
-					// Player said.... (for scene scripts)
-					printf("Player said: %s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
-
-					// FIXME: This should be moved somewhere else, and is incomplete
-					if (_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
-						if (_vm->_mouse->getVerb() == NULL) {
-							strcpy(_vm->_player->verb, currentHotSpot->getVerb());
-						} else {
-							strcpy(_vm->_player->verb, _vm->_mouse->getVerb());
-						}
-					} else {
-						strcpy(_vm->_player->verb, _vm->_interfaceView->_inventory.getSelectedObjectName());
-					}
-					strcpy(_vm->_player->noun, currentHotSpot->getVocab());
-					strcpy(_vm->_player->object, "");
-					_vm->_player->commandReady = true;
-
-					printf("## Player said: %s %s\n", _vm->_player->verb, _vm->_player->noun);
-
-				}
-			}
-
-			if (!_vm->isM4()) {
-				HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
-				if (currentHotSpot != NULL) {
-					char statusText[50];
-					if (currentHotSpot->getVerbID() != 0) {
-						sprintf(statusText, "%s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
-					} else {
-						sprintf(statusText, "%s %s\n", _madsVm->_globals->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
-					}
-
-					statusText[0] = toupper(statusText[0]);	// capitalize first letter
-					setMADSStatusText(statusText);
-				}
-			}
-		}
+		leftClick(x, y);
 		break;
 	case MEVENT_RIGHT_CLICK:
-		if (_vm->getGameType() == GType_Burger) {
-			nextCommonCursor();
-			_vm->_interfaceView->_inventory.clearSelected();
-		} else {
-			// ***DEBUG*** - sample dialog display
-			int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
-			const char *msg = _madsVm->_globals->loadMessage(idx);
-			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
-			_vm->_viewManager->addView(dlg);
-			_vm->_viewManager->moveToFront(dlg);
-		}
+		rightClick(x, y);
 		break;
 	case MEVENT_MOVE:
-		if (_vm->isM4())
-			checkHotspotAtMousePos(x, y);
-		else
-			checkHotspotAtMousePosMads(x, y);
+		checkHotspotAtMousePos(x, y);
 		break;
 	default:
 		return false;
 	}
 
 	return true;
-}
-
-void Scene::nextCommonCursor() {
-	int cursorIndex = _vm->_mouse->getCursorNum();
-
-	switch (cursorIndex) {
-	case CURSOR_ARROW:
-		cursorIndex = CURSOR_LOOK;
-		break;
-	case CURSOR_LOOK:
-		cursorIndex = CURSOR_TAKE;
-		break;
-	case CURSOR_TAKE:
-		cursorIndex = CURSOR_USE;
-		break;
-	case CURSOR_USE:
-		cursorIndex = CURSOR_ARROW;
-		break;
-	default:
-		cursorIndex = CURSOR_ARROW;
-	}
-
-	_vm->_mouse->setCursorNum(cursorIndex);
 }
 
 enum boxSprites {
@@ -691,7 +430,313 @@ void Scene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
 }
 
-void Scene::setAction(int action, int objectId) {
+/*--------------------------------------------------------------------------*/
+
+M4Scene::M4Scene(M4Engine *vm): Scene(vm) {
+	_vm = vm;
+	_sceneSprites = NULL;
+}
+
+M4Scene::~M4Scene() {
+	delete _sceneSprites;
+}
+
+void M4Scene::loadSceneSprites(int sceneNumber) {
+	char filename[kM4MaxFilenameSize];
+	sprintf(filename, "%i.ssb", sceneNumber);
+
+	Common::SeekableReadStream *sceneS = _vm->res()->get(filename);
+	_sceneSprites = new SpriteAsset(_vm, sceneS, sceneS->size(), filename);
+	_vm->res()->toss(filename);
+
+	printf("Scene has %d sprites, each one having %d colors\n", _sceneSprites->getCount(), _sceneSprites->getColorCount());
+}
+
+void M4Scene::loadScene(int sceneNumber) {
+	Scene::loadScene(sceneNumber);
+
+	_backgroundSurface->loadBackground(sceneNumber);
+	_palData = NULL;
+
+	if (_vm->getGameType() == GType_Burger &&
+			sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER)
+		_vm->_interfaceView->setStatusText("");
+
+	// Load scene def file (*.CHK)
+	loadSceneResources(sceneNumber);
+	loadSceneInverseColorTable(sceneNumber);
+
+	// TODO: set walker scaling
+	// TODO: destroy woodscript buffer
+
+	// Load scene walk path file (*.COD/*.WW?)
+	loadSceneCodes(sceneNumber);
+
+	// Load inverse color table file (*.IPL)
+	loadSceneInverseColorTable(sceneNumber);
+
+	if (_vm->getGameType() != GType_Burger) {
+		// Load scene sprites file (*.SSB)
+		loadSceneSprites(sceneNumber);
+
+		// Load scene sprite codes file (*.SSC)
+		loadSceneSpriteCodes(sceneNumber);
+	}
+
+
+	if (sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER) {
+		_vm->_interfaceView->show();
+		showSprites();
+	}
+
+	// Purge resources
+	_vm->res()->purge();
+}
+
+void M4Scene::loadSceneCodes(int sceneNumber, int index) {
+	char filename[kM4MaxFilenameSize];
+	Common::SeekableReadStream *sceneS;
+
+	sprintf(filename, "%i.cod", sceneNumber);
+	sceneS = _vm->res()->openFile(filename);
+	_codeSurface->loadCodesM4(sceneS);
+	_vm->res()->toss(filename);
+}
+
+void M4Scene::checkHotspotAtMousePos(int x, int y) {
+	if (_vm->getGameType() == GType_Riddle)
+		return;
+
+	// TODO: loads of things to do here, only the mouse cursor and the status
+	// text is changed for now
+
+	// Only scene hotspots are checked for now, not parallax/props, as the
+	// latter ones are not used by Orion Burger
+	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
+	if (currentHotSpot != NULL && currentHotSpot->getActive()) {
+		if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
+			_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
+			_vm->_mouse->getCursorNum() != CURSOR_USE &&
+			_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+			_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
+		}
+		_vm->_interfaceView->setStatusText(currentHotSpot->getPrep());
+	} else {
+		if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
+			_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
+			_vm->_mouse->getCursorNum() != CURSOR_USE &&
+			_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+			_vm->_mouse->setCursorNum(0);
+		} else {
+
+		}
+	}
+}
+
+void M4Scene::leftClick(int x, int y) {
+	if (_vm->getGameType() == GType_Burger) {
+		// Place a Wilbur sprite with the correct facing
+		HotSpot	*currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
+		if (currentHotSpot != NULL && currentHotSpot->getActive()) {
+			update();
+			_vm->_actor->setWalkerDirection(currentHotSpot->getFacing());
+			/*
+			int posX = currentHotSpot->getFeetX();
+			int posY = currentHotSpot->getFeetY() -
+					   scaleValue(_vm->_actor->getWalkerHeight(), _vm->_actor->getWalkerScaling(), 0);
+			//_vm->_actor->placeWalkerSpriteAt(0, posX, posY);
+			*/
+
+			// Player said.... (for scene scripts)
+			printf("Player said: %s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
+
+			// FIXME: This should be moved somewhere else, and is incomplete
+			if (_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+				if (_vm->_mouse->getVerb() == NULL) {
+					strcpy(_vm->_player->verb, currentHotSpot->getVerb());
+				} else {
+					strcpy(_vm->_player->verb, _vm->_mouse->getVerb());
+				}
+			} else {
+				strcpy(_vm->_player->verb, _vm->_interfaceView->_inventory.getSelectedObjectName());
+			}
+			strcpy(_vm->_player->noun, currentHotSpot->getVocab());
+			strcpy(_vm->_player->object, "");
+			_vm->_player->commandReady = true;
+
+			printf("## Player said: %s %s\n", _vm->_player->verb, _vm->_player->noun);
+
+		}
+	}
+}
+
+void M4Scene::rightClick(int x, int y) {
+	if (_vm->getGameType() == GType_Burger) {
+		nextCommonCursor();
+		_vm->_interfaceView->_inventory.clearSelected();
+	}
+}
+
+void M4Scene::setAction(int action, int objectId) {
+}
+
+void M4Scene::nextCommonCursor() {
+	int cursorIndex = _vm->_mouse->getCursorNum();
+
+	switch (cursorIndex) {
+	case CURSOR_ARROW:
+		cursorIndex = CURSOR_LOOK;
+		break;
+	case CURSOR_LOOK:
+		cursorIndex = CURSOR_TAKE;
+		break;
+	case CURSOR_TAKE:
+		cursorIndex = CURSOR_USE;
+		break;
+	case CURSOR_USE:
+		cursorIndex = CURSOR_ARROW;
+		break;
+	default:
+		cursorIndex = CURSOR_ARROW;
+	}
+
+	_vm->_mouse->setCursorNum(cursorIndex);
+}
+
+/*--------------------------------------------------------------------------*/
+
+MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
+	_vm = vm;
+
+	_interfaceSurface = new MadsInterfaceView(vm);
+	_currentAction = kVerbNone;
+}
+
+void MadsScene::loadScene(int sceneNumber) {
+	// Close the menu if it's active
+	View *mainMenu = _vm->_viewManager->getView(VIEWID_MAINMENU);
+	if (mainMenu != NULL) {
+		_vm->_viewManager->deleteView(mainMenu);
+	}
+
+	// Handle common scene setting
+	Scene::loadScene(sceneNumber);
+
+
+	// TODO: Check if we were loading a game
+
+
+	// Set system palette entries
+	_vm->_palette->blockRange(0, 7);
+	RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
+		{0x00<<2, 0x10<<2, 0x16<<2, 0}};
+	_vm->_palette->setPalette(&sysColors[0], 4, 3);
+
+	_backgroundSurface->loadBackground(sceneNumber, &_palData);
+	_vm->_palette->addRange(_palData);
+	_backgroundSurface->translate(_palData);
+
+	if (sceneNumber < 900) {
+		/*_backgroundSurface->fillRect(Common::Rect(0, MADS_SURFACE_HEIGHT,
+			_backgroundSurface->width(), _backgroundSurface->height()),
+			_vm->_palette->BLACK);*/
+		// TODO: interface palette
+		_interfaceSurface->madsloadInterface(0, &_interfacePal);
+		_vm->_palette->addRange(_interfacePal);
+		_interfaceSurface->translate(_interfacePal);
+		_backgroundSurface->copyFrom(_interfaceSurface, Common::Rect(0, 0, 320, 44), 0, 200 - 44);
+
+		_interfaceSurface->initialise();
+	}
+
+	// Don't load other screen resources for system screens
+	if (sceneNumber >= 900)
+		return;
+
+	loadSceneHotSpotsMads(sceneNumber);
+
+	// TODO: set walker scaling
+	// TODO: destroy woodscript buffer
+
+	// Load scene walk path file (*.COD/*.WW?)
+	loadSceneCodes(sceneNumber);
+
+	// Load inverse color table file (*.IPL)
+	loadSceneInverseColorTable(sceneNumber);
+
+	// Purge resources
+	_vm->res()->purge();
+}
+
+void MadsScene::show() {
+	Scene::show();
+	_vm->_viewManager->addView(_interfaceSurface);
+}
+
+void MadsScene::loadSceneCodes(int sceneNumber, int index) {
+	char filename[kM4MaxFilenameSize];
+	Common::SeekableReadStream *sceneS;
+
+	if (_vm->getGameType() == GType_Phantom || _vm->getGameType() == GType_DragonSphere) {
+		sprintf(filename, "rm%i.ww%i", sceneNumber, index);
+		MadsPack walkData(filename, _vm);
+		sceneS = walkData.getItemStream(0);
+		_codeSurface->loadCodesMads(sceneS);
+		_vm->res()->toss(filename);
+	} else if (_vm->getGameType() == GType_RexNebular) {
+		// TODO
+	}
+}
+
+void MadsScene::checkHotspotAtMousePos(int x, int y) {
+	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
+	if (currentHotSpot != NULL) {
+		_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
+
+		// This is the "easy" interface, which updates the status text when the mouse is moved
+		// TODO: toggle this code for easy/normal interface mode
+		char statusText[50];
+		int verbId = _currentAction;
+		if (verbId == kVerbNone)
+			verbId = currentHotSpot->getVerbID();
+		if (verbId == kVerbNone)
+			verbId = kVerbWalkTo;
+
+		sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(verbId), currentHotSpot->getVocab());
+
+		statusText[0] = toupper(statusText[0]);	// capitalize first letter
+		setMADSStatusText(statusText);
+	} else {
+		_vm->_mouse->setCursorNum(0);
+		setMADSStatusText("");
+	}
+}
+
+void MadsScene::leftClick(int x, int y) {
+	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
+	if (currentHotSpot != NULL) {
+		char statusText[50];
+		if (currentHotSpot->getVerbID() != 0) {
+			sprintf(statusText, "%s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
+		} else {
+			sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
+		}
+
+		statusText[0] = toupper(statusText[0]);	// capitalize first letter
+		setMADSStatusText(statusText);
+	}
+}
+
+void MadsScene::rightClick(int x, int y) {
+	// ***DEBUG*** - sample dialog display
+	int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
+	const char *msg = _madsVm->globals()->loadMessage(idx);
+	Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
+	_vm->_viewManager->addView(dlg);
+	_vm->_viewManager->moveToFront(dlg);
+}
+
+void MadsScene::setAction(int action, int objectId) {
 	VALIDATE_MADS;
 	char statusText[50];
 
@@ -699,12 +744,12 @@ void Scene::setAction(int action, int objectId) {
 	// a second object can be selected, as in 'use gun to shoot person', with requires a target
 
 	// Set up the new action
-	strcpy(statusText, _madsVm->_globals->getVocab(action));
+	strcpy(statusText, _madsVm->globals()->getVocab(action));
 	statusText[0] = toupper(statusText[0]);	// capitalize first letter
 
 	if (objectId != -1) {
-		MadsObject *obj = _madsVm->_globals->getObject(objectId);
-		sprintf(statusText + strlen(statusText), " %s", _madsVm->_globals->getVocab(obj->descId));
+		MadsObject *obj = _madsVm->globals()->getObject(objectId);
+		sprintf(statusText + strlen(statusText), " %s", _madsVm->globals()->getVocab(obj->descId));
 	} else {
 		_currentAction = action;
 	}
@@ -712,14 +757,13 @@ void Scene::setAction(int action, int objectId) {
 	setMADSStatusText(statusText);
 }
 
-
 /*--------------------------------------------------------------------------
  * MadsInterfaceView handles the user interface section at the bottom of
  * game screens in MADS games
  *--------------------------------------------------------------------------
  */
 
-MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): View(vm, Common::Rect(0, MADS_SURFACE_HEIGHT,
+MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): InterfaceView(vm, Common::Rect(0, MADS_SURFACE_HEIGHT,
 														 vm->_screen->width(), vm->_screen->height())) {
 	_screenType = VIEWID_INTERFACE;
 	_highlightedElement = -1;
@@ -772,8 +816,8 @@ void MadsInterfaceView::initialise() {
 	// Build up the inventory list
 	_inventoryList.clear();
 
-	for (uint i = 0; i < _madsVm->_globals->getObjectsSize(); ++i) {
-		MadsObject *obj = _madsVm->_globals->getObject(i);
+	for (uint i = 0; i < _madsVm->globals()->getObjectsSize(); ++i) {
+		MadsObject *obj = _madsVm->globals()->getObject(i);
 		if (obj->roomNumber == PLAYER_INVENTORY)
 			_inventoryList.push_back(i);
 	}
@@ -823,7 +867,7 @@ void MadsInterfaceView::setSelectedObject(int objectNumber) {
 
 void MadsInterfaceView::addObjectToInventory(int objectNumber) {
 	if (_inventoryList.indexOf(objectNumber) == -1) {
-		_madsVm->_globals->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
+		_madsVm->globals()->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
 		_inventoryList.push_back(objectNumber);
 	}
 
@@ -847,7 +891,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
 
 			// Get the verb action and capitalise it
-			const char *verbStr = _madsVm->_globals->getVocab(kVerbLook + actionIndex);
+			const char *verbStr = _madsVm->globals()->getVocab(kVerbLook + actionIndex);
 			strcpy(buffer, verbStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
@@ -875,7 +919,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		if ((_topIndex + i) >= _inventoryList.size())
 			break;
 
-		const char *descStr = _madsVm->_globals->getVocab(_madsVm->_globals->getObject(
+		const char *descStr = _madsVm->globals()->getVocab(_madsVm->globals()->getObject(
 			_inventoryList[_topIndex + i])->descId);
 		strcpy(buffer, descStr);
 		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
@@ -898,21 +942,21 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
 		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
 
-		if (!_madsVm->_globals->invObjectsStill && !dialogVisible) {
+		if (!_madsVm->globals()->invObjectsStill && !dialogVisible) {
 			// If objetcs are to animated, move to the next frame
 			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
 				_objectFrameNumber = 0;
 		}
 
 		// List the vocab actions for the currently selected object
-		MadsObject *obj = _madsVm->_globals->getObject(_selectedObject);
+		MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
 		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
 
 		for (int i = 0; i < obj->vocabCount; ++i) {
 			const Common::Rect r(_screenObjects[VOCAB_START + i]);
 
 			// Get the vocab description and capitalise it
-			const char *descStr = _madsVm->_globals->getVocab(obj->vocabList[i].vocabId);
+			const char *descStr = _madsVm->globals()->getVocab(obj->vocabList[i].vocabId);
 			strcpy(buffer, descStr);
 			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
 
@@ -958,7 +1002,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 			_vm->_scene->setAction(kVerbLook + (_highlightedElement - ACTIONS_START));
 		} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
 			// A vocab action was selected
-			MadsObject *obj = _madsVm->_globals->getObject(_selectedObject);
+			MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
 			int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
 			if (vocabIndex >= 0)
 				_vm->_scene->setAction(obj->vocabList[vocabIndex].vocabId, _selectedObject);
@@ -1049,6 +1093,5 @@ bool MadsInterfaceView::handleKeypress(int32 keycode) {
 
 	return false;
 }
-
 
 } // End of namespace M4

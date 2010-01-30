@@ -311,12 +311,12 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 		DebugPrintf("Usage: object ['list' | '#objnum' | 'add #objnum']\n");
 	} else if (!strcmp(argv[1], "list")) {
 		// List of objects
-		for (uint objStart = 0; objStart < _vm->_globals->getObjectsSize(); objStart += 5) {
+		for (uint objStart = 0; objStart < _vm->globals()->getObjectsSize(); objStart += 5) {
 			DebugPrintf("%2d - ", objStart);
-			for (uint objId = objStart; objId < MIN<uint>(_vm->_globals->getObjectsSize(), objStart + 5); ++objId) {
+			for (uint objId = objStart; objId < MIN<uint>(_vm->globals()->getObjectsSize(), objStart + 5); ++objId) {
 				if (objId != objStart) DebugPrintf(", ");
-				uint16 descId = _vm->_globals->getObject(objId)->descId;
-				DebugPrintf("%s", _vm->_globals->getVocab(descId));
+				uint16 descId = _vm->globals()->getObject(objId)->descId;
+				DebugPrintf("%s", _vm->globals()->getVocab(descId));
 			}
 
 			DebugPrintf("\n");
@@ -327,12 +327,12 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 		// Add the specified object to the player's inventory
 		int objNum = strToInt(argv[2]);
 
-		if ((objNum < 0) || (objNum >= (int)_vm->_globals->getObjectsSize()))
+		if ((objNum < 0) || (objNum >= (int)_vm->globals()->getObjectsSize()))
 			DebugPrintf("Invalid object specified\n");
 		else if (_vm->isM4())
 			DebugPrintf("Not implemented for M4 games\n");
 		else {
-			_vm->_scene->getMadsInterface()->addObjectToInventory(objNum);
+			_vm->_scene->getInterface()->addObjectToInventory(objNum);
 			return false;
 		}
 
@@ -340,19 +340,19 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 		// Print the details of a specific object
 		int objNum = strToInt(argv[1]);
 
-		if ((objNum < 0) || (objNum >= (int)_vm->_globals->getObjectsSize()))
+		if ((objNum < 0) || (objNum >= (int)_vm->globals()->getObjectsSize()))
 			DebugPrintf("Invalid object specified\n");
 		else {
-			const MadsObject *obj = _vm->_globals->getObject(objNum);
+			const MadsObject *obj = _vm->globals()->getObject(objNum);
 
-			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", objNum, _vm->_globals->getVocab(obj->descId),
+			DebugPrintf("Object #%d (%s) room=%d article=%d/%s vocabs=%d", objNum, _vm->globals()->getVocab(obj->descId),
 				obj->roomNumber, (int)obj->article, englishMADSArticleList[obj->article], obj->vocabCount);
 
 			if (obj->vocabCount > 0) {
 				DebugPrintf(" - ");
 				for (int i = 0; i < obj->vocabCount; ++i) {
 					if (i != 0) DebugPrintf(", ");
-					DebugPrintf("%s (%d)/%d", _vm->_globals->getVocab(obj->vocabList[i].vocabId),
+					DebugPrintf("%s (%d)/%d", _vm->globals()->getVocab(obj->vocabList[i].vocabId),
 						obj->vocabList[i].vocabId, obj->vocabList[i].unk);
 				}
 			}
@@ -371,13 +371,13 @@ bool MadsConsole::cmdMessage(int argc, const char **argv) {
 	else {
 		int messageIdx = strToInt(argv[1]);
 		if ((argc == 3) && !strcmp(argv[2], "id"))
-			messageIdx = _vm->_globals->messageIndexOf(messageIdx);
+			messageIdx = _vm->globals()->messageIndexOf(messageIdx);
 
 		if (messageIdx == -1)
 			DebugPrintf("Unknown message");
 		else
 		{
-			const char *msg = _vm->_globals->loadMessage(messageIdx);
+			const char *msg = _vm->globals()->loadMessage(messageIdx);
 			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 
 			_vm->_viewManager->addView(dlg);

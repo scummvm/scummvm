@@ -265,9 +265,19 @@ void Kernel::unpauseEngines() {
 	// TODO: A proper implementation of game unpausing
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
 
-MadsGlobals::MadsGlobals(MadsM4Engine *vm): _vm(vm) {
+Globals::Globals(MadsM4Engine *vm): _vm(vm) {
+}
+
+bool Globals::isInterfaceVisible() {
+	return _vm->_interfaceView->isVisible();
+}
+
+/*--------------------------------------------------------------------------*/
+
+MadsGlobals::MadsGlobals(MadsEngine *vm): Globals(vm) {
+	_vm = vm;
 }
 
 MadsGlobals::~MadsGlobals() {
@@ -282,10 +292,6 @@ MadsGlobals::~MadsGlobals() {
 	_madsQuotes.clear();
 
 	_madsMessages.clear();
-}
-
-bool MadsGlobals::isInterfaceVisible() {
-	return _vm->_interfaceView->isVisible();
 }
 
 void MadsGlobals::loadMadsVocab() {
@@ -402,7 +408,13 @@ const char *MadsGlobals::loadMessage(uint index) {
 	return (char*)buffer;
 }
 
-//--------------------------------------------------------------------------
+/*--------------------------------------------------------------------------*/
+
+M4Globals::M4Globals(M4Engine *vm): Globals(vm) {
+	_vm = vm;
+}
+
+/*--------------------------------------------------------------------------*/
 
 Player::Player(MadsM4Engine *vm) : _vm(vm) {
 	commandsAllowed = true;
