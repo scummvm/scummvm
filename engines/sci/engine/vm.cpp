@@ -543,10 +543,10 @@ void run_vm(EngineState *s, int restoring) {
 	reg_t r_temp; // Temporary register
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
-	bool loadFromGMM = ConfMan.hasKey("save_slot") ? true : false;
-	if (loadFromGMM) {
+	bool loadFromLauncher = ConfMan.hasKey("save_slot") ? true : false;
+	if (loadFromLauncher) {
 		if (ConfMan.getInt("save_slot") < 0)
-			loadFromGMM = false;	// already loaded
+			loadFromLauncher = false;	// already loaded
 	}
 
 	scriptState.restAdjust = s->restAdjust;
@@ -1042,18 +1042,18 @@ void run_vm(EngineState *s, int restoring) {
 						//warning("callk %s", kfun.orig_name.c_str());
 
 						// TODO: SCI2/SCI2.1+ equivalent, once saving/loading works in SCI2/SCI2.1+
-						if (loadFromGMM && opparams[0] == 0x8) {
-							// A game is being loaded from GMM, and kDisplay is called, all initialization has taken
+						if (loadFromLauncher && opparams[0] == 0x8) {
+							// A game is being loaded from the launcher, and kDisplay is called, all initialization has taken
 							// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
-							// here, instead of the requested function
+							// here, instead of the requested function.
 							int saveSlot = ConfMan.getInt("save_slot");
 							ConfMan.setInt("save_slot", -1);	// invalidate slot
-							loadFromGMM = false;
+							loadFromLauncher = false;
 
 							if (saveSlot < 0)
 								error("Requested to load invalid save slot");	// should never happen, really
 
-							reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special GMM call (argv[0] is NULL)
+							reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
 							kRestoreGame(s, 2, restoreArgv);
 						} else {
 							// Call kernel function

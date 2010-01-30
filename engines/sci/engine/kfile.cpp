@@ -608,7 +608,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 
 		savedir_nr = saves[savedir_nr].id;
 	} else {
-		// Loading from GMM, no change necessary
+		// Loading from launcher, no change necessary
 	}
 
 	if (savedir_nr > -1) {
