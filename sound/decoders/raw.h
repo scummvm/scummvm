@@ -29,6 +29,8 @@
 #include "common/scummsys.h"
 #include "common/types.h"
 
+#include "common/list.h"
+
 
 namespace Common { class SeekableReadStream; }
 
@@ -105,9 +107,14 @@ AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
  * Struct used to define the audio data to be played by a RawDiskStream.
  */
 struct RawDiskStreamAudioBlock {
-	int32 pos;		///< Position in stream of the block
-	int32 len;		///< Length of the block (in samples)
+	int32 pos;   ///< Position in stream of the block (in bytes of course!)
+	int32 len;   ///< Length of the block (in samples)
 };
+
+/**
+ * List containing all blocks of a raw stream.
+ */
+typedef Common::List<RawDiskStreamAudioBlock> RawStreamBlockList;
 
 /**
  * Creates a audio stream, which plays from given stream.
