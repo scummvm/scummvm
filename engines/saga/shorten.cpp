@@ -522,7 +522,7 @@ Audio::AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
 		return 0;
 
 	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
-	return Audio::makeRawMemoryStream(data, size, rate, flags);
+	return Audio::makeRawStream(data, size, rate, flags);
 }
 
 } // End of namespace Audio

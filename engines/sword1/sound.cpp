@@ -272,7 +272,7 @@ void Sound::playSample(QueueElement *elem) {
 						if (READ_LE_UINT16(sampleData + 0x16) == 2)
 							flags |= Audio::FLAG_STEREO;
 						Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-									Audio::makeRawMemoryStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
+									Audio::makeRawStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
 									(_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
 						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
 					}
@@ -361,7 +361,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			uint32 size;
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data) {
-				stream = Audio::makeRawMemoryStream((byte *)data, size, 11025, SPEECH_FLAGS);
+				stream = Audio::makeRawStream((byte *)data, size, 11025, SPEECH_FLAGS);
 				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			}
 		} else if (_cowMode == CowPSX && sampleSize != 0xffffffff) {

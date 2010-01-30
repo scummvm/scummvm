@@ -171,7 +171,7 @@ void CUP_Player::updateSfx() {
 				uint32 soundSize = READ_BE_UINT32(soundData + 4);
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &sfxChannel->handle,
 							Audio::makeLoopingAudioStream(
-								Audio::makeRawMemoryStream(soundData + 8, soundSize - 8,
+								Audio::makeRawStream(soundData + 8, soundSize - 8,
 										11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO),
 								(sfx->flags & kSfxFlagLoop) ? 0 : 1
 							)

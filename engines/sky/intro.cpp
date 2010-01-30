@@ -739,7 +739,7 @@ bool Intro::nextPart(uint16 *&data) {
 		// directly, but this will have to do for now.
 		memset(vData, 127, sizeof(DataFileHeader));
 
-		stream = Audio::makeRawMemoryStream(vData, _skyDisk->_lastLoadedFileSize, 11025, Audio::FLAG_UNSIGNED);
+		stream = Audio::makeRawStream(vData, _skyDisk->_lastLoadedFileSize, 11025, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_voice, stream, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
@@ -755,12 +755,12 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
-		stream = Audio::makeRawMemoryStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED);
+		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, Audio::makeLoopingAudioStream(stream, 0), SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);
-		stream = Audio::makeRawMemoryStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED);
+		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
 		return true;
 	case STOPBG:

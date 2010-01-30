@@ -898,7 +898,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	in->read(data, size);
 	//debug(0, "playing %u samples...", size);
 
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(data, size, 11025, 0);
+	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 }
 

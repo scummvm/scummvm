@@ -292,7 +292,7 @@ Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
 	assert(buffer);
 	_file->read(buffer, size);
 
-	return Audio::makeRawMemoryStream(buffer, size, 22050, _flags);
+	return Audio::makeRawStream(buffer, size, 22050, _flags);
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
@@ -737,7 +737,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	if (_vm->getPlatform() == Common::kPlatformPC)
 		flags = Audio::FLAG_UNSIGNED;
 
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(buffer, size, freq, flags);
+	Audio::AudioStream *stream = Audio::makeRawStream(buffer, size, freq, flags);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_effectsHandle, stream);
 }
 

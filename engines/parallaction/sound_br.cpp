@@ -416,7 +416,7 @@ Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channe
 	int rate = 11025;
 
 	ch->stream = Audio::makeLoopingAudioStream(
-			Audio::makeRawMemoryStream(data, dataSize, rate, Audio::FLAG_UNSIGNED),
+			Audio::makeRawStream(data, dataSize, rate, Audio::FLAG_UNSIGNED),
 			looping ? 0 : 1);
 	return ch->stream;
 }
@@ -477,7 +477,7 @@ Audio::AudioStream *AmigaSoundMan_br::loadChannelData(const char *filename, Chan
 
 		// TODO: Confirm sound rate
 		int rate = 11025;
-		input = Audio::makeRawMemoryStream((byte *)data, dataSize, rate, 0);
+		input = Audio::makeRawStream((byte *)data, dataSize, rate, 0);
 	} else {
 		input = Audio::make8SVXStream(*stream, looping);
 	}

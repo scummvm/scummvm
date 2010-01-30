@@ -252,7 +252,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	}
 
 	if (data)
-		audioStream = Audio::makeRawMemoryStream(data, size, _audioRate, flags);
+		audioStream = Audio::makeRawStream(data, size, _audioRate, flags);
 
 	if (audioStream) {
 		*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;

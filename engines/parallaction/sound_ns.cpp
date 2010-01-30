@@ -377,7 +377,7 @@ Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Chan
 	if (!scumm_stricmp("beep", filename)) {
 		int rate = 11934;
 		ch->volume = 160;
-		input = Audio::makeRawMemoryStream((byte *)beepSoundBuffer, beepSoundBufferSize, rate, 0, DisposeAfterUse::NO);
+		input = Audio::makeRawStream((byte *)beepSoundBuffer, beepSoundBufferSize, rate, 0, DisposeAfterUse::NO);
 	} else {
 		Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 		input = Audio::make8SVXStream(*stream, looping);

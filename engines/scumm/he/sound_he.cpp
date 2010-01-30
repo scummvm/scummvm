@@ -574,7 +574,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		musicFile.close();
 
 		if (_vm->_game.heversion == 70) {
-			stream = Audio::makeRawMemoryStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
+			stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
 			_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
 			return;
 		}
@@ -667,9 +667,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 #ifdef SCUMM_LITTLE_ENDIAN
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-			stream = Audio::makeRawMemoryStream(sound + heOffset, size - heOffset, rate, flags);
+			stream = Audio::makeRawStream(sound + heOffset, size - heOffset, rate, flags);
 		} else {
-			stream = Audio::makeRawMemoryStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
+			stream = Audio::makeRawStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
 		}
 		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
@@ -729,7 +729,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 
-		stream = Audio::makeRawMemoryStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
+		stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
 		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
@@ -750,7 +750,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
 
-		stream = Audio::makeRawMemoryStream(sound, size, rate, 0);
+		stream = Audio::makeRawStream(sound, size, rate, 0);
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, NULL, stream, soundID);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {

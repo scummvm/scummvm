@@ -845,7 +845,7 @@ void PaulaSound::update() {
 void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume) {
 	assert(frequency > 0);
 	frequency = PAULA_FREQ / frequency;
-	Audio::AudioStream *stream = Audio::makeRawMemoryStream(data, size, frequency, 0);
+	Audio::AudioStream *stream = Audio::makeRawStream(data, size, frequency, 0);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], stream);
 	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
 }

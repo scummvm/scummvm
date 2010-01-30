@@ -330,7 +330,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 		f->read(sound, size);
 		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
-		Audio::AudioStream *stream = Audio::makeRawMemoryStream(sound, size, 11840, Audio::FLAG_UNSIGNED);
+		Audio::AudioStream *stream = Audio::makeRawStream(sound, size, 11840, Audio::FLAG_UNSIGNED);
 		_mixer->playInputStream(type, soundHandle, stream);
 	}
 }
@@ -614,7 +614,7 @@ void AmigaSound::playSound(const char *base) {
 		if (soundData) {
 			f->read(soundData, soundSize);
 
-			Audio::AudioStream *stream = Audio::makeRawMemoryStream(soundData, soundSize, 11025, 0);
+			Audio::AudioStream *stream = Audio::makeRawStream(soundData, soundSize, 11025, 0);
 			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
 		}
 	}

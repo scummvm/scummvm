@@ -3925,7 +3925,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 
 	uint32 outputRate = uint32(11025 * calculatePhaseStep(note, sfxRootNoteOffs, sfxRate, 11025, 0x2000));
 
-	_currentSFX = Audio::makeRawMemoryStream(sfxPlaybackBuffer, playbackBufferSize,
+	_currentSFX = Audio::makeRawStream(sfxPlaybackBuffer, playbackBufferSize,
 							outputRate, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 }
@@ -4297,7 +4297,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 
 	uint32 outputRate = uint32(11025 * SoundTowns::calculatePhaseStep(0x3c, 0x3c, sfxRate, 11025, 0x2000));
 
-	_currentSFX = Audio::makeRawMemoryStream(sfx, outsize, outputRate,
+	_currentSFX = Audio::makeRawStream(sfx, outsize, outputRate,
 							Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h], _currentSFX);
 	if (handle)
