@@ -50,6 +50,8 @@
 
 namespace Sci {
 
+extern int g_loadFromLauncher;
+
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
@@ -214,6 +216,13 @@ Common::Error SciEngine::run() {
 		_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
+
+	// Check whether loading a savestate was requested
+	if (ConfMan.hasKey("save_slot")) {
+		g_loadFromLauncher = ConfMan.getInt("save_slot");
+	} else {
+		g_loadFromLauncher = -1;
+	}
 
 	game_run(&_gamestate); // Run the game
 
