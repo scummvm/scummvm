@@ -617,7 +617,14 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		warning("kString(Printf)");
 		break;
 	case 12: // Printf Buf
-		return kFormat(s, argc - 1, argv + 1);
+		if (argc == 3)
+			return kFormat(s, argc - 1, argv + 1);
+		else
+			// TODO
+			// For some reason, argc > 3 crashes, e.g. in Torin full (there's a format
+			// string %s%s, but the string passed for the first %s is invalid). Perhaps
+			// a list is passed in this case?
+			warning("kString(PrintBuf) - parameter count %d not supported", argc);
 		break;
 	case 13: { // atoi
 		Common::String string = s->_segMan->getString(argv[1]);
