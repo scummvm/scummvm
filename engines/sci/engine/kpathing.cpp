@@ -37,7 +37,6 @@ namespace Sci {
 
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
-//#define DEBUG_AVOIDPATH	//enable for avoidpath debugging
 
 // SCI-defined polygon types
 enum {
@@ -286,8 +285,6 @@ static void writePoint(SegmentRef ref, int offset, const Common::Point &point) {
 	}
 }
 
-#ifdef DEBUG_AVOIDPATH
-
 static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type, int width, int height) {
 	// Colors for polygon debugging.
 	// Green: Total access
@@ -383,8 +380,6 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 	}
 }
 
-#endif	// DEBUG_AVOIDPATH
-
 static void print_polygon(SegManager *segMan, reg_t polygon) {
 	reg_t points = GET_SEL32(segMan, polygon, points);
 
@@ -398,24 +393,24 @@ static void print_polygon(SegManager *segMan, reg_t polygon) {
 	int i;
 	Common::Point point;
 
-	printf("%i:", type);
+	debugN(-1, "%i:", type);
 
 	for (i = 0; i < size; i++) {
 		point = read_point(segMan, points, i);
-		printf(" (%i, %i)", point.x, point.y);
+		debugN(-1, " (%i, %i)", point.x, point.y);
 	}
 
 	point = read_point(segMan, points, 0);
-	printf(" (%i, %i);\n", point.x, point.y);
+	debug(" (%i, %i);", point.x, point.y);
 }
 
 static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	List *list;
 	Node *node;
 
-	printf("Start point: (%i, %i)\n", start.x, start.y);
-	printf("End point: (%i, %i)\n", end.x, end.y);
-	printf("Optimization level: %i\n", opt);
+	debug("Start point: (%i, %i)", start.x, start.y);
+	debug("End point: (%i, %i)", end.x, end.y);
+	debug("Optimization level: %i", opt);
 
 	if (!poly_list.segment)
 		return;
@@ -427,7 +422,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 		return;
 	}
 
-	printf("Polygons:\n");
+	debug("Polygons:");
 	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
@@ -1775,14 +1770,14 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	// Sentinel
 	writePoint(arrayRef, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
-#ifdef DEBUG_AVOIDPATH
-	printf("[avoidpath] Returning path:");
-	for (int i = 0; i < offset; i++) {
-		Common::Point pt = read_point(s->_segMan, output, i);
-		printf(" (%i, %i)", pt.x, pt.y);
+	if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+		debug("\nReturning path:");
+		for (int i = 0; i < offset; i++) {
+			Common::Point pt = read_point(s->_segMan, output, i);
+			debugN(-1, " (%i, %i)", pt.x, pt.y);
+		}
+		debug(";\n");
 	}
-	printf("\n");
-#endif
 
 	return output;
 }
@@ -1831,19 +1826,21 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 				opt = argv[6].toUint16();
 		}
 
-#ifdef DEBUG_AVOIDPATH
-		printf("[avoidpath] Pathfinding input:\n");
-		draw_point(s, start, 1, width, height);
-		draw_point(s, end, 0, width, height);
+		if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+			assert(s->_gui);
 
-		if (poly_list.segment) {
-			print_input(s, poly_list, start, end, opt);
-			draw_input(s, poly_list, start, end, opt, width, height);
+			debug("[avoidpath] Pathfinding input:");
+			draw_point(s, start, 1, width, height);
+			draw_point(s, end, 0, width, height);
+
+			if (poly_list.segment) {
+				print_input(s, poly_list, start, end, opt);
+				draw_input(s, poly_list, start, end, opt, width, height);
+			}
+
+			// Update the whole screen
+			s->_gui->graphUpdateBox(Common::Rect(0, 0, width - 1, height - 1), width > 320);
 		}
-
-		// Update the whole screen
-		s->_gui->graphUpdateBox(Common::Rect(0, 0, width - 1, height - 1));
-#endif
 
 		PathfindingState *p = convert_polygon_set(s, poly_list, start, end, width, height, opt);
 
@@ -1856,9 +1853,9 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 		if (!p) {
-			printf("[avoidpath] Error: pathfinding failed for following input:\n");
+			warning("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
-			printf("[avoidpath] Returning direct path from start point to end point\n");
+			warning("[avoidpath] Returning direct path from start point to end point\n");
 			output = allocateOutputArray(s->_segMan, 3);
 			SegmentRef arrayRef = s->_segMan->dereference(output);
 			assert(arrayRef.isValid() && !arrayRef.skipByte);
