@@ -176,7 +176,6 @@ Common::Error SciEngine::run() {
 	}
 #else
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
-	_gamestate->_gui32 = 0;
 #endif
 
 	if (game_init(_gamestate)) { /* Initialize */
