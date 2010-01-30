@@ -559,7 +559,7 @@ void SfxState::updateMultiSong() {
 	if (!newsong) {
 		// Iterators should get freed when there's only one song left playing
 		if(oldfirst && oldfirst->_status == SOUND_STATUS_STOPPED) {
-			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx\n", oldfirst->_handle);
+			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx", oldfirst->_handle);
 			if (_player && oldfirst->_it)
 				_player->iterator_message(SongIterator::Message(oldfirst->_it->ID, SIMSG_STOP));
 		}
@@ -602,7 +602,7 @@ void SfxState::updateMultiSong() {
 	        oldseeker = oldseeker->_nextStopping)
 		if (oldseeker->_nextPlaying == &not_playing_anymore) {
 			setSongStatus(oldseeker, SOUND_STATUS_SUSPENDED);
-			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx\n", oldseeker->_handle);
+			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx", oldseeker->_handle);
 
 			if (_player && oldseeker->_it)
 				_player->iterator_message(SongIterator::Message(oldseeker->_it->ID, SIMSG_STOP));
@@ -611,7 +611,7 @@ void SfxState::updateMultiSong() {
 
 	for (newseeker = newsong; newseeker; newseeker = newseeker->_nextPlaying) {
 		if (newseeker->_status != SOUND_STATUS_PLAYING && _player) {
-			debugC(2, kDebugLevelSound, "[SFX] Adding song %lx\n", newseeker->_it->ID);
+			debugC(2, kDebugLevelSound, "[SFX] Adding song %lx", newseeker->_it->ID);
 
 			SongIterator *clonesong = newseeker->_it->clone(newseeker->_delay);
 			_player->add_iterator(clonesong, g_system->getMillis());

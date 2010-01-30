@@ -121,7 +121,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
+	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x", PRINT_REG(parent_addr));
 
 	clone_obj = s->_segMan->allocateClone(&clone_addr);
 

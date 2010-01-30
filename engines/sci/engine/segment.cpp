@@ -322,9 +322,9 @@ reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) {
 
 void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
 	/*
-		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
+		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x", PRINT_REG(addr));
 		if (_localsSegment)
-			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000\n", _localsSegment);
+			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000", _localsSegment);
 	*/
 
 	if (_markedAsDeleted)
@@ -374,7 +374,7 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
 	(*note)(param, clone->getPos());
-	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
+	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
 }
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {

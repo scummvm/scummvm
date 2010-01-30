@@ -38,7 +38,7 @@ struct WorklistManager {
 		if (!reg.segment) // No numbers
 			return;
 
-		debugC(2, kDebugLevelGC, "[GC] Adding %04x:%04x\n", PRINT_REG(reg));
+		debugC(2, kDebugLevelGC, "[GC] Adding %04x:%04x", PRINT_REG(reg));
 
 		if (_map.contains(reg))
 			return; // already dealt with it
@@ -127,14 +127,14 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			}
 		}
 
-	debugC(2, kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set\n");
+	debugC(2, kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 
 	// Run Worklist Algorithm
 	while (!wm._worklist.empty()) {
 		reg_t reg = wm._worklist.back();
 		wm._worklist.pop_back();
 		if (reg.segment != s->stack_segment) { // No need to repeat this one
-			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x\n", PRINT_REG(reg));
+			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
 			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment])
 				segMan->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs);
 		}
@@ -164,7 +164,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 		// Not found -> we can free it
 		deallocator->mobj->freeAtAddress(deallocator->segMan, addr);
 #ifdef DEBUG_GC
-		debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x\n", PRINT_REG(addr));
+		debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
 		deallocator->segcount[deallocator->mobj->getType()]++;
 #endif
 	}
@@ -177,7 +177,7 @@ void run_gc(EngineState *s) {
 	SegManager *segMan = s->_segMan;
 
 #ifdef DEBUG_GC
-	debugC(2, kDebugLevelGC, "[GC] Running...\n");
+	debugC(2, kDebugLevelGC, "[GC] Running...");
 	memset(&(deallocator.segcount), 0, sizeof(int) * (SEG_TYPE_MAX + 1));
 #endif
 
@@ -199,10 +199,10 @@ void run_gc(EngineState *s) {
 #ifdef DEBUG_GC
 	{
 		int i;
-		debugC(2, kDebugLevelGC, "[GC] Summary:\n");
+		debugC(2, kDebugLevelGC, "[GC] Summary:");
 		for (i = 0; i <= SEG_TYPE_MAX; i++)
 			if (deallocator.segcount[i])
-				debugC(2, kDebugLevelGC, "\t%d\t* %s\n", deallocator.segcount[i], deallocator.segnames[i]);
+				debugC(2, kDebugLevelGC, "\t%d\t* %s", deallocator.segcount[i], deallocator.segnames[i]);
 	}
 #endif
 }

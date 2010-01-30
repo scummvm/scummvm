@@ -64,12 +64,12 @@ static reg_t &validate_property(Object *obj, int index) {
 	static reg_t dummyReg = NULL_REG;
 
 	if (!obj) {
-		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!\n");
+		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!");
 		return dummyReg;
 	}
 
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
-		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n",
+		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
 			index, obj->getVarCount());
 		return dummyReg;
 	}
@@ -126,8 +126,8 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
 				return false;
 			} else {
-				debugC(2, kDebugLevelVM, "%s\n", txt.c_str());
-				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.\n");
+				debugC(2, kDebugLevelVM, "%s", txt.c_str());
+				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.");
 				return true;
 			}
 		}
@@ -1952,7 +1952,7 @@ void script_uninstantiate(SegManager *segMan, int script_nr) {
 	// Explanation: I'm starting to believe that this work is done by SCI itself.
 	scr->markDeleted();
 
-	debugC(kDebugLevelScripts, "Unloaded script 0x%x.\n", script_nr);
+	debugC(kDebugLevelScripts, "Unloaded script 0x%x.", script_nr);
 
 	return;
 }
@@ -1998,7 +1998,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 				s = successor;
 
 				if (script_abort_flag == 2) {
-					debugC(2, kDebugLevelVM, "Restarting with replay()\n");
+					debugC(2, kDebugLevelVM, "Restarting with replay()");
 					s->_executionStack.clear(); // Restart with replay
 
 					_init_stack_base_with_selector(s, s->_kernel->_selectorCache.replay);
@@ -2019,7 +2019,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
-	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameId.c_str());
+	debugC(2, kDebugLevelVM, "Calling %s::play()", s->_gameId.c_str());
 	_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
@@ -2032,7 +2032,7 @@ int game_run(EngineState **_s) {
 	// and ENGAGE!
 	_game_run(*_s, 0);
 
-	debugC(2, kDebugLevelVM, "Game::play() finished.\n");
+	debugC(2, kDebugLevelVM, "Game::play() finished.");
 
 	return 0;
 }

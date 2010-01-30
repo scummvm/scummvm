@@ -319,7 +319,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	case K_GRAPH_ADJUST_PRIORITY:
 		// Seems to be only implemented for SCI0/SCI01 games
-		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toUint16(), argv[2].toUint16());
+		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)", argv[1].toUint16(), argv[2].toUint16());
 		s->_gui->graphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
 		break;
 
@@ -352,7 +352,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 
 	if (text.empty() || !dest) { // Empty text
 		dest[2] = dest[3] = make_reg(0, 0);
-		debugC(2, kDebugLevelStrings, "GetTextSize: Empty string\n");
+		debugC(2, kDebugLevelStrings, "GetTextSize: Empty string");
 		return s->r_acc;
 	}
 
@@ -365,7 +365,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 #endif
 		s->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	
-	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text.c_str(), textWidth, textHeight);
+	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
 	dest[2] = make_reg(0, textHeight);
 	dest[3] = make_reg(0, textWidth);
 	return s->r_acc;
@@ -504,7 +504,7 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 #endif
 		loopCount = s->_gui->getLoopCount(viewId);
 
-	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", viewId, loopCount);
+	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
 	return make_reg(0, loopCount);
 }
@@ -522,7 +522,7 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 #endif
 		celCount = s->_gui->getCelCount(viewId, loopNo);
 
-	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", viewId, loopNo, celCount);
+	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 
 	return make_reg(0, celCount);
 }
@@ -831,13 +831,13 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
-		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y);
+		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
 		s->_gui->drawControlButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = GET_SEL32V(s->_segMan, controlObject, mode);
-		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
+		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
@@ -845,7 +845,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		mode = GET_SEL32V(s->_segMan, controlObject, mode);
 		maxChars = GET_SEL32V(s->_segMan, controlObject, max);
 		cursorPos = GET_SEL32V(s->_segMan, controlObject, cursor);
-		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d\n", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
+		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		s->_gui->drawControlTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
@@ -865,7 +865,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			else
 				priority = -1;
 		}
-		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y - 1);
+		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y - 1);
 		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
 		return;
 
@@ -913,7 +913,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			}
 		}
 
-		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d\n", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
+		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
 		s->_gui->drawControlList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		free(listEntries);
 		delete[] listStrings;

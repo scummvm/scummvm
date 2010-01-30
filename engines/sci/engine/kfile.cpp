@@ -219,7 +219,7 @@ reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 }
 
 static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
-	debugC(2, kDebugLevelFile, "FGets'ing %d bytes from handle %d\n", maxsize, handle);
+	debugC(2, kDebugLevelFile, "FGets'ing %d bytes from handle %d", maxsize, handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
@@ -241,7 +241,7 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 			dest[strSize - 1] = 0;
 	}
 
-	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"\n", dest);
+	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"", dest);
 }
 
 static int _savegame_index_struct_compare(const void *a, const void *b) {

@@ -122,7 +122,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	// POST: (dx != 0)  ==>  abs(tmp) > abs(dx)
 	// POST: (dx != 0)  ==>  abs(tmp) ~>=~ abs(dy)
 
-	debugC(2, kDebugLevelBresen, "c: %d, tmp: %d\n", c, tmp);
+	debugC(2, kDebugLevelBresen, "c: %d, tmp: %d", c, tmp);
 
 	// Compute x step
 	if (tmp != 0)
@@ -154,8 +154,8 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	// Always force vy to be upwards
 	vy = -abs(vy);
 
-	debugC(2, kDebugLevelBresen, "SetJump for object at %04x:%04x\n", PRINT_REG(object));
-	debugC(2, kDebugLevelBresen, "xStep: %d, yStep: %d\n", vx, vy);
+	debugC(2, kDebugLevelBresen, "SetJump for object at %04x:%04x", PRINT_REG(object));
+	debugC(2, kDebugLevelBresen, "xStep: %d, yStep: %d", vx, vy);
 
 	PUT_SEL32V(segMan, object, xStep, vx);
 	PUT_SEL32V(segMan, object, yStep, vy);
@@ -209,8 +209,8 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 	PUT_SEL32V(segMan, mover, dx, deltax_step);
 	PUT_SEL32V(segMan, mover, dy, deltay_step);
 
-	debugC(2, kDebugLevelBresen, "Init bresen for mover %04x:%04x: d=(%d,%d)\n", PRINT_REG(mover), deltax, deltay);
-	debugC(2, kDebugLevelBresen, "    steps=%d, mv=(%d, %d), i1= %d, i2=%d\n",
+	debugC(2, kDebugLevelBresen, "Init bresen for mover %04x:%04x: d=(%d,%d)", PRINT_REG(mover), deltax, deltay);
+	debugC(2, kDebugLevelBresen, "    steps=%d, mv=(%d, %d), i1= %d, i2=%d",
 	          numsteps, deltax_step, deltay_step, i1, bdi*2);
 
 	//PUT_SEL32V(segMan, mover, b_movCnt, numsteps); // Needed for HQ1/Ogre?
@@ -306,13 +306,13 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		y = desty;
 		completed = 1;
 
-		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x\n", PRINT_REG(mover));
+		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x", PRINT_REG(mover));
 	}
 
 	PUT_SEL32V(segMan, client, x, x);
 	PUT_SEL32V(segMan, client, y, y);
 
-	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
+	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
 	if (s->_kernel->_selectorCache.cantBeHere != -1) {
 		invoke_selector(INV_SEL(client, cantBeHere, kStopOnInvalidSelector), 0);
@@ -328,7 +328,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		PUT_SEL32V(segMan, client, y, oldy);
 		PUT_SEL32V(segMan, client, signal, (signal | kSignalHitObstacle));
 
-		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision\n", PRINT_REG(mover));
+		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
 		completed = 1;
 	}
 
@@ -397,7 +397,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	destx = GET_SEL32V(segMan, mover, x);
 	desty = GET_SEL32V(segMan, mover, y);
 
-	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)\n", PRINT_REG(avoider), destx, desty);
+	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)", PRINT_REG(avoider), destx, desty);
 
 	if (invoke_selector(INV_SEL(mover, doit, kContinueOnInvalidSelector) , 0)) {
 		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector", PRINT_REG(mover), PRINT_REG(avoider));
@@ -418,7 +418,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	dy = desty - GET_SEL32V(segMan, client, y);
 	angle = getAngle(dx, dy);
 
-	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked\n", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
+	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { // isBlocked() returned non-zero
 		int rotation = (rand() & 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
@@ -428,7 +428,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		int ystep = GET_SEL32V(segMan, client, yStep);
 		int moves;
 
-		debugC(2, kDebugLevelBresen, " avoider %04x:%04x\n", PRINT_REG(avoider));
+		debugC(2, kDebugLevelBresen, " avoider %04x:%04x", PRINT_REG(avoider));
 
 		for (moves = 0; moves < 8; moves++) {
 			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
@@ -437,7 +437,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			PUT_SEL32V(segMan, client, x, oldx + move_x);
 			PUT_SEL32V(segMan, client, y, oldy + move_y);
 
-			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)\n", oldx, oldy, angle, move_x, move_y);
+			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)", oldx, oldy, angle, move_x, move_y);
 
 			if (invoke_selector(INV_SEL(client, canBeHere, kContinueOnInvalidSelector) , 0)) {
 				error("Client %04x:%04x of avoider %04x:%04x doesn't"
@@ -449,7 +449,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			PUT_SEL32V(segMan, client, y, oldy);
 
 			if (s->r_acc.offset) { // We can be here
-				debugC(2, kDebugLevelBresen, "Success\n");
+				debugC(2, kDebugLevelBresen, "Success");
 				PUT_SEL32V(segMan, client, heading, angle);
 
 				return make_reg(0, angle);

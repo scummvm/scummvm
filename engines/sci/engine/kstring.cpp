@@ -214,7 +214,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	Common::String source_str = kernel_lookup_text(s, position, index);
 	const char* source = source_str.c_str();
 
-	debugC(2, kDebugLevelStrings, "Formatting \"%s\"\n", source);
+	debugC(2, kDebugLevelStrings, "Formatting \"%s\"", source);
 
 
 	arguments = (uint16 *)malloc(sizeof(uint16) * argc);

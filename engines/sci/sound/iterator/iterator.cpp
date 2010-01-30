@@ -247,7 +247,7 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 			channel->state = SI_STATE_DELTA_TIME;
 			channel->total_timepos = channel->loop_timepos;
 			channel->last_cmd = 0xfe;
-			debugC(2, kDebugLevelSound, "Looping song iterator %08lx.\n", ID);
+			debugC(2, kDebugLevelSound, "Looping song iterator %08lx.", ID);
 			return SI_LOOP;
 		} else {
 			channel->state = SI_STATE_FINISHED;
@@ -402,7 +402,7 @@ int BaseSongIterator::processMidi(byte *buf, int *result,
 		channel->state = SI_STATE_FINISHED;
 		delay = (size * 50 + rate - 1) / rate; /* number of ticks to completion*/
 
-		debugC(2, kDebugLevelSound, "delaying %d ticks\n", delay);
+		debugC(2, kDebugLevelSound, "delaying %d ticks", delay);
 		return delay;
 	}
 
@@ -544,7 +544,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 }
 
 static Audio::AudioStream *makeStream(byte *data, int size, int rate) {
-	debugC(2, kDebugLevelSound, "Playing PCM data of size %d, rate %d\n", size, rate);
+	debugC(2, kDebugLevelSound, "Playing PCM data of size %d, rate %d", size, rate);
 
 	// Duplicate the data
 	byte *sound = (byte *)malloc(size);
@@ -573,7 +573,7 @@ SongIterator *Sci0SongIterator::handleMessage(Message msg) {
 
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg._arg.i, ID);
-			debugC(2, kDebugLevelSound, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
+			debugC(2, kDebugLevelSound, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d",
 			        _deviceId, _numActiveChannels, _data.size(), _loops);
 			break;
 
@@ -973,7 +973,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 				playmask |= _channels[i].playmask;
 
 			print_tabs_id(msg._arg.i, ID);
-			debugC(2, kDebugLevelSound, "SCI1: chan-nr=%d, playmask=%04x\n",
+			debugC(2, kDebugLevelSound, "SCI1: chan-nr=%d, playmask=%04x",
 			        _numChannels, playmask);
 		}
 		break;
@@ -1126,7 +1126,7 @@ public:
 SongIterator *CleanupSongIterator::handleMessage(Message msg) {
 	if (msg._class == _SIMSG_BASEMSG_PRINT && msg._type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg._arg.i, ID);
-		debugC(2, kDebugLevelSound, "CLEANUP\n");
+		debugC(2, kDebugLevelSound, "CLEANUP");
 	}
 
 	return NULL;
@@ -1208,7 +1208,7 @@ SongIterator *FastForwardSongIterator::handleMessage(Message msg) {
 
 	if (msg._class == _SIMSG_BASE && msg._type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg._arg.i, ID);
-		debugC(2, kDebugLevelSound, "FASTFORWARD:\n");
+		debugC(2, kDebugLevelSound, "FASTFORWARD:");
 		msg._arg.i++;
 	}
 
@@ -1511,7 +1511,7 @@ SongIterator *TeeSongIterator::handleMessage(Message msg) {
 
 	if (msg._class == _SIMSG_BASE && msg._type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg._arg.i, ID);
-		debugC(2, kDebugLevelSound, "TEE:\n");
+		debugC(2, kDebugLevelSound, "TEE:");
 		msg._arg.i++;
 	}
 
@@ -1555,15 +1555,15 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 	do {
 		retval = (*it)->nextCommand(buf, result);
 		if (retval == SI_MORPH) {
-			debugC(2, kDebugLevelSound, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
+			debugC(2, kDebugLevelSound, "  Morphing %p (stored at %p)", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
 				error("SI_MORPH failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 			} else
-				debugC(2, kDebugLevelSound, "SI_MORPH successful\n");
+				debugC(2, kDebugLevelSound, "SI_MORPH successful");
 		}
 
 		if (retval == SI_FINISHED)
-			debugC(2, kDebugLevelSound, "[song-iterator] Song finished. mask = %04x, cm=%04x\n",
+			debugC(2, kDebugLevelSound, "[song-iterator] Song finished. mask = %04x, cm=%04x",
 			        mask, (*it)->channel_mask);
 		if (retval == SI_FINISHED
 		        && (mask & IT_READER_MAY_CLEAN)

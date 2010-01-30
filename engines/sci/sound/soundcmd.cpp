@@ -95,26 +95,26 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		switch (result) {
 
 		case SI_LOOP:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)",
 			          PRINT_REG(obj), cue);
 			/*			PUT_SEL32V(segMan, obj, loops, GET_SEL32V(segMan, obj, loop) - 1);*/
 			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_RELATIVE_CUE:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d",
 			          PRINT_REG(obj), cue);
 			PUT_SEL32V(segMan, obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d",
 			          PRINT_REG(obj), cue);
 			PUT_SEL32V(segMan, obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished",
 			          PRINT_REG(obj));
 			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			PUT_SEL32V(segMan, obj, state, kSoundStopped);
@@ -389,7 +389,7 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 					PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 					return;
 				}
-				debugC(2, kDebugLevelSound, "Initializing song number %d\n", songNumber);
+				debugC(2, kDebugLevelSound, "Initializing song number %d", songNumber);
 				_state->sfx_add_song(build_iterator(_resMan, songNumber, SCI_SONG_ITERATOR_TYPE_SCI1,
 				                          handle), 0, handle, songNumber);
 			}
@@ -734,21 +734,21 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	switch (result) {
 	case SI_ABSOLUTE_CUE:
-		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
+		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d",
 		          PRINT_REG(obj), signal);
-		debugC(2, kDebugLevelSound, "abs-signal %04X\n", signal);
+		debugC(2, kDebugLevelSound, "abs-signal %04X", signal);
 		PUT_SEL32V(_segMan, obj, signal, signal);
 		break;
 
 	case SI_RELATIVE_CUE:
-		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Relative Cue: %d\n",
+		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Relative Cue: %d",
 		          PRINT_REG(obj), signal);
 
 		/* FIXME to match commented-out semantics
 		 * below, with proper storage of dataInc and
 		 * signal in the iterator code. */
 		PUT_SEL32V(_segMan, obj, dataInc, signal);
-		debugC(2, kDebugLevelSound, "rel-signal %04X\n", signal);
+		debugC(2, kDebugLevelSound, "rel-signal %04X", signal);
 		if (_soundVersion == SCI_VERSION_1_EARLY)
 			PUT_SEL32V(_segMan, obj, signal, signal);
 		else
@@ -756,7 +756,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		break;
 
 	case SI_FINISHED:
-		debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
+		debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x", PRINT_REG(obj));
 		PUT_SEL32V(_segMan, obj, signal, SIGNAL_OFFSET);
 		break;
 

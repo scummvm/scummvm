@@ -105,10 +105,10 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 #ifdef DEBUG_PARSER
-			debugC(2, kDebugLevelParser, "Parsed to the following blocks:\n", 0);
+			debugC(2, kDebugLevelParser, "Parsed to the following blocks:", 0);
 
 			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]", i->_class, i->_group);
 #endif
 
 		int syntax_fail = voc->parseGNF(words);
@@ -120,7 +120,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			invoke_selector(INV_SEL(s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
 			/* Issue warning */
 
-			debugC(2, kDebugLevelParser, "Tree building failed\n");
+			debugC(2, kDebugLevelParser, "Tree building failed");
 
 		} else {
 			s->_voc->parserIsValid = true;
@@ -137,7 +137,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		PUT_SEL32V(segMan, event, claimed, 1);
 		if (error) {
 			s->_segMan->strcpy(s->_voc->parser_base, error);
-			debugC(2, kDebugLevelParser, "Word unknown: %s\n", error);
+			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 
 			invoke_selector(INV_SEL(s->_gameObj, wordFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
@@ -180,7 +180,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 			byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
 
 			if (synonyms) {
-				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
+				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d",
 				          numSynonyms, script);
 
 				if (numSynonyms > 16384) {
@@ -203,7 +203,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 		node = s->_segMan->lookupNode(node->succ);
 	}
 
-	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", numSynonyms);
+	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.", numSynonyms);
 
 	return s->r_acc;
 }

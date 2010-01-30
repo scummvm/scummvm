@@ -118,7 +118,7 @@ reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 	List *l;
 	l = s->_segMan->allocateList(&listbase);
 	l->first = l->last = NULL_REG;
-	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x\n", PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x", PRINT_REG(listbase));
 
 	return listbase; // Return list base address
 }
@@ -178,7 +178,7 @@ reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 	else
 		s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
-	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x\n", PRINT_REG(s->r_acc));
+	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x", PRINT_REG(s->r_acc));
 
 	return s->r_acc;
 }
@@ -225,7 +225,7 @@ void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = s->_segMan->lookupList(listbase);
 	Node *new_n = s->_segMan->lookupNode(nodebase);
 
-	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
@@ -248,7 +248,7 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = s->_segMan->lookupList(listbase);
 	Node *new_n = s->_segMan->lookupNode(nodebase);
 
-	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
@@ -344,26 +344,26 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 	reg_t key = argv[1];
 	reg_t list_pos = argv[0];
 
-	debugC(2, kDebugLevelNodes, "Looking for key %04x:%04x in list %04x:%04x\n", PRINT_REG(key), PRINT_REG(list_pos));
+	debugC(2, kDebugLevelNodes, "Looking for key %04x:%04x in list %04x:%04x", PRINT_REG(key), PRINT_REG(list_pos));
 
 	checkListPointer(s->_segMan, argv[0]);
 
 	node_pos = s->_segMan->lookupList(list_pos)->first;
 
-	debugC(2, kDebugLevelNodes, "First node at %04x:%04x\n", PRINT_REG(node_pos));
+	debugC(2, kDebugLevelNodes, "First node at %04x:%04x", PRINT_REG(node_pos));
 
 	while (!node_pos.isNull()) {
 		Node *n = s->_segMan->lookupNode(node_pos);
 		if (n->key == key) {
-			debugC(2, kDebugLevelNodes, " Found key at %04x:%04x\n", PRINT_REG(node_pos));
+			debugC(2, kDebugLevelNodes, " Found key at %04x:%04x", PRINT_REG(node_pos));
 			return node_pos;
 		}
 
 		node_pos = n->succ;
-		debugC(2, kDebugLevelNodes, "NextNode at %04x:%04x\n", PRINT_REG(node_pos));
+		debugC(2, kDebugLevelNodes, "NextNode at %04x:%04x", PRINT_REG(node_pos));
 	}
 
-	debugC(2, kDebugLevelNodes, "Looking for key without success\n");
+	debugC(2, kDebugLevelNodes, "Looking for key without success");
 	return NULL_REG;
 }
 

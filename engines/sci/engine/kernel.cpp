@@ -423,7 +423,7 @@ int Kernel::findSelector(const char *selectorName) const {
 			return pos;
 	}
 
-	debugC(2, kDebugLevelVM, "Could not map '%s' to any selector\n", selectorName);
+	debugC(2, kDebugLevelVM, "Could not map '%s' to any selector", selectorName);
 
 	return -1;
 }
@@ -473,7 +473,7 @@ reg_t kalloc(SegManager *segMan, const char *type, int space) {
 	reg_t reg;
 
 	segMan->allocateHunkEntry(type, space, &reg);
-	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
+	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)", space, PRINT_REG(reg), type);
 
 	return reg;
 }
@@ -627,7 +627,7 @@ void Kernel::mapFunctions() {
 		}
 	} // for all functions requesting to be mapped
 
-	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n",
+	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.",
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
