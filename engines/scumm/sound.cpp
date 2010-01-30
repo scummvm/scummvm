@@ -440,7 +440,7 @@ void Sound::playSound(int soundID) {
 			loopEnd = READ_BE_UINT16(ptr + 14);
 
 			// TODO: Currently we will only ever play till "loopEnd", even when we only have
-			// a finite repition count.
+			// a finite repetition count.
 			stream = Audio::makeLoopingAudioStream(plainStream, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate), loopcount == 255 ? 0 : loopcount);
 		} else {
 			stream = plainStream;
