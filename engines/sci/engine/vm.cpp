@@ -45,7 +45,7 @@ const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 
 //#define VM_DEBUG_SEND
 
-ScriptState scriptState;
+ScriptState scriptState;	// FIXME: Avoid non-const global vars
 
 int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
