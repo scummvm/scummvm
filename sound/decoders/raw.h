@@ -118,10 +118,24 @@ struct RawDiskStreamAudioBlock {
 typedef Common::List<RawDiskStreamAudioBlock> RawStreamBlockList;
 
 /**
+ * Creates an audio stream, which plays from the given buffer.
+ *
+ * @param buffer Buffer to play from.
+ * @param size   Size of the buffer in bytes.
+ * @param rate   Rate of the sound data.
+ * @param flags  Audio flags combination.
+ * @see RawFlags
+ * @param disposeAfterUse Whether to free the buffer after use (with free!).
+ * @return The new SeekableAudioStream (or 0 on failure).
+ */
+SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
+                                   int rate, byte flags,
+                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+/**
  * Creates an audio stream, which plays from the given stream.
  *
  * @param stream Stream object to play from.
- * @param size   Size of the buffer.
  * @param rate   Rate of the sound data.
  * @param flags  Audio flags combination.
  * @see RawFlags

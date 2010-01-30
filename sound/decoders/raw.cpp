@@ -426,6 +426,12 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	return makeRawStream(stream, blocks, rate, flags, disposeAfterUse);
 }
 
+SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
+                                   int rate, byte flags,
+                                   DisposeAfterUse::Flag disposeAfterUse) {
+	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
+}
+
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawDiskStreamAudioBlock *block, int numBlocks,
                                        int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
 	assert(numBlocks > 0);
