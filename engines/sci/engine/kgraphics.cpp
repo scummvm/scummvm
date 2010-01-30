@@ -1167,8 +1167,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
 	if (argv[0].toUint16() == 0) {
-		// Windows
-
+		// Windows (SCI1.1/SCI2)
 		Common::String filename = s->_segMan->getString(argv[1]);
 
 		Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
@@ -1182,9 +1181,34 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		aviDecoder->closeFile();
 		delete player;
 		delete aviDecoder;
+#ifdef ENABLE_SCI32
+	} else if (argv[0].toUint16() == 1) {
+		// Windows (SCI2.1)
+		
+		// TODO: This appears to be some sort of subop. case 0 contains the string
+		// for the video, so we'll just play it from there for now.
+		switch (argv[1].toUint16()) {
+		case 0: {
+			Common::String filename = s->_segMan->getString(argv[2]);
+			Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
+			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
+			if (aviDecoder->loadFile(filename.c_str())) {
+				player->playVideo();
+				playedVideo = true;
+			} else {
+				warning("Failed to open movie file %s", filename.c_str());
+			}
+			aviDecoder->closeFile();
+			delete player;
+			delete aviDecoder;
+			break;
+		}
+		default:
+			warning("Unhandled SCI2.1 kShowMovie subop %d", argv[1].toUint16());
+		}
+#endif
 	} else {
 		// DOS
-
 		Common::String filename = s->_segMan->getString(argv[0]);
 		int delay = argv[1].toUint16(); // Time between frames in ticks
 
