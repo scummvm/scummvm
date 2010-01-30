@@ -608,267 +608,6 @@ static int inside(const Common::Point &p, Vertex *vertex) {
 	return 0;
 }
 
-#ifdef OLD_PATHFINDING
-
-/**
- * Checks whether two polygons are equal
- */
-static bool polygons_equal(SegManager *segMan, reg_t p1, reg_t p2) {
-	// Check for same type
-	if (GET_SEL32(segMan, p1, type).toUint16() != GET_SEL32(segMan, p2, type).toUint16())
-		return false;
-
-	int size = GET_SEL32(segMan, p1, size).toUint16();
-
-	// Check for same number of points
-	if (size != GET_SEL32(segMan, p2, size).toUint16())
-		return false;
-
-	reg_t p1_points = GET_SEL32(segMan, p1, points);
-	reg_t p2_points = GET_SEL32(segMan, p2, points);
-
-	// Check for the same points
-	for (int i = 0; i < size; i++) {
-		if (read_point(segMan, p1_points, i) != read_point(segMan, p2_points, i))
-			return false;
-	}
-
-	return true;
-}
-
-static bool left_on(const Common::Point &a, const Common::Point &b, const Common::Point &c) {
-	// Determines whether or not a point is to the left of or collinear with a
-	// directed line
-	// Parameters: (const Common::Point &) a, b: The directed line (a, b)
-	//             (const Common::Point &) c: The query point
-	// Returns   : (int) true if c is to the left of or collinear with (a, b), false
-	//                   otherwise
-	return area(a, b, c) >= 0;
-}
-
-static Vertex *s_vertex_cur = 0;	// FIXME: Avoid non-const global vars
-
-static int vertex_compare(const void *a, const void *b) {
-	// Compares two vertices by angle (first) and distance (second) in relation
-	// to s_vertex_cur. The angle is relative to the horizontal line extending
-	// right from s_vertex_cur, and increases clockwise
-	// Parameters: (const void *) a, b: The vertices
-	// Returns   : (int) -1 if a is smaller than b, 1 if a is larger than b, and
-	//                   0 if a and b are equal
-	const Common::Point &p0 = s_vertex_cur->v;
-	const Common::Point &p1 = (*(const Vertex **) a)->v;
-	const Common::Point &p2 = (*(const Vertex **) b)->v;
-
-	if (p1 == p2)
-		return 0;
-
-	// Points above p0 have larger angle than points below p0
-	if ((p1.y < p0.y) && (p2.y >= p0.y))
-		return 1;
-
-	if ((p2.y < p0.y) && (p1.y >= p0.y))
-		return -1;
-
-	// Handle case where all points have the same y coordinate
-	if ((p0.y == p1.y) && (p0.y == p2.y)) {
-		// Points left of p0 have larger angle than points right of p0
-		if ((p1.x < p0.x) && (p2.x >= p0.x))
-			return 1;
-		if ((p1.x >= p0.x) && (p2.x < p0.x))
-			return -1;
-	}
-
-	if (collinear(p0, p1, p2)) {
-		// At this point collinear points must have the same angle,
-		// so compare distance to p0
-		if (abs(p1.x - p0.x) < abs(p2.x - p0.x))
-			return -1;
-		if (abs(p1.y - p0.y) < abs(p2.y - p0.y))
-			return -1;
-
-		return 1;
-	}
-
-	// If p2 is left of the directed line (p0, p1) then p1 has greater angle
-	if (left(p0, p1, p2))
-		return 1;
-
-	return -1;
-}
-
-static void clockwise(const Vertex *vertex_cur, const Vertex *v, const Common::Point *&p1, const Common::Point *&p2) {
-	// Orders the points of an edge clockwise around vertex_cur. If all three
-	// points are collinear the original order is used
-	// Parameters: (const Vertex *) v: The first vertex of the edge
-	// Returns   : ()
-	//             (const Common::Point *&) p1: The first point in clockwise order
-	//             (const Common::Point *&) p2: The second point in clockwise order
-	Vertex *w = CLIST_NEXT(v);
-
-	if (left_on(vertex_cur->v, w->v, v->v)) {
-		p1 = &v->v;
-		p2 = &w->v;
-	} else {
-		p1 = &w->v;
-		p2 = &v->v;
-	}
-}
-
-/**
- * Compares two edges that are intersected by the sweeping line by distance from vertex_cur
- * @param a				the first edge
- * @param b				the second edge
- * @return true if a is closer to vertex_cur than b, false otherwise
- */
-static bool edgeIsCloser(const Vertex *vertex_cur, const Vertex *a, const Vertex *b) {
-	const Common::Point *v1, *v2, *w1, *w2;
-
-	// Check for comparison of the same edge
-	if (a == b)
-		return false;
-
-	// We can assume that the sweeping line intersects both edges and
-	// that the edges do not properly intersect
-
-	// Order vertices clockwise so we know vertex_cur is to the right of
-	// directed edges (v1, v2) and (w1, w2)
-	clockwise(vertex_cur, a, v1, v2);
-	clockwise(vertex_cur, b, w1, w2);
-
-	// At this point we know that one edge must lie entirely to one side
-	// of the other, as the edges are not collinear and cannot intersect
-	// other than possibly sharing a vertex.
-
-	return ((left_on(*v1, *v2, *w1) && left_on(*v1, *v2, *w2)) || (left_on(*w2, *w1, *v1) && left_on(*w2, *w1, *v2)));
-}
-
-/**
- * Determines whether or not a vertex is visible from vertex_cur.
- * @param vertex_cur	the base vertex
- * @param vertex		the vertex
- * @param vertex_prev	the previous vertex in the sort order, or NULL
- * @param visible		true if vertex_prev is visible, false otherwise
- * @param intersected	the list of edges intersected by the sweeping line
- * @return true if vertex is visible from vertex_cur, false otherwise
- */
-static bool visible(Vertex *vertex_cur, Vertex *vertex, Vertex *vertex_prev, bool visible, const VertexList &intersected) {
-	const Common::Point &p = vertex_cur->v;
-	const Common::Point &w = vertex->v;
-
-	// Check if sweeping line intersects the interior of the polygon
-	// locally at vertex
-	if (inside(p, vertex))
-		return false;
-
-	// If vertex_prev is on the sweeping line, then vertex is invisible
-	// if vertex_prev is invisible
-	if (vertex_prev && !visible && between(p, w, vertex_prev->v))
-		return false;
-
-	if (intersected.empty()) {
-		// No intersected edges
-		return true;
-	}
-
-	// Look for the intersected edge that is closest to vertex_cur
-	VertexList::const_iterator it = intersected.begin();
-	const Vertex *edge = *it++;
-
-	for (; it != intersected.end(); ++it) {
-		if (edgeIsCloser(vertex_cur, *it, edge))
-			edge = *it;
-	}
-
-	const Common::Point *p1, *p2;
-
-	// Check for intersection with sweeping line before vertex
-	clockwise(vertex_cur, edge, p1, p2);
-	if (left(*p2, *p1, p) && left(*p1, *p2, w))
-		return false;
-
-	return true;
-}
-
-/**
- * Returns a list of all vertices that are visible from a particular vertex.
- * @param s				the pathfinding state
- * @param vertex_cur	the vertex
- * @return list of vertices that are visible from vert
- */
-static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
-	// List of edges intersected by the sweeping line
-	VertexList intersected;
-	VertexList *visVerts = new VertexList();
-	const Common::Point &p = vertex_cur->v;
-
-	// Sort vertices by angle (first) and distance (second)
-	s_vertex_cur = vertex_cur;
-	qsort(s->vertex_index, s->vertices, sizeof(Vertex *), vertex_compare);
-
-	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
-		Polygon *polygon = *it;
-		Vertex *vertex;
-		vertex = polygon->vertices.first();
-
-		// Check that there is more than one vertex.
-		if (VERTEX_HAS_EDGES(vertex)) {
-			CLIST_FOREACH(vertex, &polygon->vertices) {
-				const Common::Point *high, *low;
-
-				// Add edges that intersect the initial position of the sweeping line
-				clockwise(vertex_cur, vertex, high, low);
-
-				if ((high->y < p.y) && (low->y >= p.y) && (*low != p))
-					intersected.push_front(vertex);
-			}
-		}
-	}
-
-	int is_visible = 1;
-
-	// The first vertex will be s_vertex_cur, so we skip it
-	for (int i = 1; i < s->vertices; i++) {
-		Vertex *v1;
-
-		// Compute visibility of vertex_index[i]
-		assert(vertex_cur == s_vertex_cur);	// FIXME: We should be able to replace s_vertex_cur by vertex_cur
-		is_visible = visible(s_vertex_cur, s->vertex_index[i], s->vertex_index[i - 1], is_visible, intersected);
-
-		// Update visibility matrix
-		if (is_visible)
-			visVerts->push_front(s->vertex_index[i]);
-
-		// Delete anti-clockwise edges from list
-		v1 = CLIST_PREV(s->vertex_index[i]);
-		if (left(p, s->vertex_index[i]->v, v1->v))
-			intersected.remove(v1);
-
-		v1 = CLIST_NEXT(s->vertex_index[i]);
-		if (left(p, s->vertex_index[i]->v, v1->v))
-			intersected.remove(s->vertex_index[i]);
-
-		// Add clockwise edges of collinear vertices when sweeping line moves
-		if ((i < s->vertices - 1) && !collinear(p, s->vertex_index[i]->v, s->vertex_index[i + 1]->v)) {
-			int j;
-			for (j = i; (j >= 1) && collinear(p, s->vertex_index[i]->v, s->vertex_index[j]->v); j--) {
-				v1 = CLIST_PREV(s->vertex_index[j]);
-				if (left(s->vertex_index[j]->v, p, v1->v))
-					intersected.push_front(v1);
-
-				v1 = CLIST_NEXT(s->vertex_index[j]);
-				if (left(s->vertex_index[j]->v, p, v1->v))
-					intersected.push_front(s->vertex_index[j]);
-			}
-		}
-	}
-
-	s_vertex_cur = 0;
-
-	return visVerts;
-}
-
-#else
-
 /**
  * Returns a list of all vertices that are visible from a particular vertex.
  * @param s				the pathfinding state
@@ -910,8 +649,6 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 
 	return visVerts;
 }
-
-#endif // OLD_PATHFINDING
 
 bool PathfindingState::pointOnScreenBorder(const Common::Point &p) {
 	// Determines if a point lies on the screen border
@@ -1322,51 +1059,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		}
 	}
 
-#ifdef OLD_PATHFINDING
-	// WORKAROUND: self-intersecting polygons in ECO, rooms 221, 280 and 300
-	if ((size == 11) && (s->_gameId == "ecoquest")) {
-		if ((s->currentRoomNumber() == 300)
-		&& (read_point(segMan, points, 10) == Common::Point(221, 0))) {
-			debug(1, "Applying fix for self-intersecting polygon in ECO, room 300");
-			size = 10;
-		}
-	}
-	if ((size == 12) && (s->_gameId == "ecoquest")) {
-		if ((s->currentRoomNumber() == 280)
-		&& (read_point(segMan, points, 11) == Common::Point(238, 189))) {
-			debug(1, "Applying fix for self-intersecting polygon in ECO, room 280");
-			size = 10;
-		}
-	}
-	if ((size == 16) && (s->_gameId == "ecoquest")) {
-		if ((s->currentRoomNumber() == 221)
-		&& (read_point(segMan, points, 1) == Common::Point(419, 175))) {
-			debug(1, "Applying fix for self-intersecting polygon in ECO, room 221");
-			// Swap the first two points
-			poly->vertices.insertHead(new Vertex(read_point(segMan, points, 1)));
-			poly->vertices.insertHead(new Vertex(read_point(segMan, points, 0)));
-			skip = 2;
-		}
-	}
-#endif
-
 	for (i = skip; i < size; i++) {
-#ifdef OLD_PATHFINDING
-		if (size == 35 && (i == 20 || i == 21) && s->_gameId == "sq1sci" &&
-			s->currentRoomNumber() == 66) {
-			if (i == 20 && read_point(segMan, points, 20) == Common::Point(0, 104)) {
-				debug(1, "Applying fix for self-intersecting polygon in SQ1, room 66");
-				Vertex *vertex = new Vertex(Common::Point(1, 104));
-				poly->vertices.insertHead(vertex);
-				continue;
-			} else if (i == 21 && read_point(segMan, points, 21) == Common::Point(0, 110)) {
-				debug(1, "Applying fix for self-intersecting polygon in SQ1, room 66");
-				Vertex *vertex = new Vertex(Common::Point(1, 110));
-				poly->vertices.insertHead(vertex);
-				continue;
-			}
-		}
-#endif
 		Vertex *vertex = new Vertex(read_point(segMan, points, i));
 		poly->vertices.insertHead(vertex);
 	}
@@ -1375,58 +1068,6 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	return poly;
 }
-
-#ifdef OLD_PATHFINDING
-// WORKAROUND: intersecting polygons in Longbow, room 210.
-static void fixLongbowRoom210(PathfindingState *s, const Common::Point &start, const Common::Point &end) {
-	Polygon *barred = NULL;
-	Polygon *total = NULL;
-
-	// Find the intersecting polygons
-	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
-		Polygon *polygon = *it;
-		assert(polygon);
-
-		if ((polygon->type == POLY_BARRED_ACCESS) && (polygon->vertices.size() == 11)
-		&& (polygon->vertices.first()->v == Common::Point(319, 161)))
-			barred = polygon;
-		else if ((polygon->type == POLY_TOTAL_ACCESS) && (polygon->vertices.size() == 8)
-		&& (polygon->vertices.first()->v == Common::Point(313, 58)))
-			total = polygon;
-	}
-
-	if (!barred || !total)
-		return;
-
-	debug(1, "[avoidpath] Applying fix for intersecting polygons in Longbow, room 210");
-
-	// If the start or end point is contained in the total access polygon, removing that
-	// polygon is sufficient. Otherwise we merge the total and barred access polygons.
-	bool both_outside = (contained(start, total) == CONT_OUTSIDE) && (contained(end, total) == CONT_OUTSIDE);
-
-	s->polygons.remove(total);
-	delete total;
-
-	if (both_outside) {
-		int points[28] = {
-			224, 159, 223, 162 ,194, 173 ,107, 173, 74, 162, 67, 156, 2, 58,
-			63, 160, 0, 160, 0, 0, 319, 0, 319, 161, 228, 161, 313, 58
-		};
-
-		s->polygons.remove(barred);
-		delete barred;
-
-		barred = new Polygon(POLY_BARRED_ACCESS);
-
-		for (int i = 0; i < 14; i++) {
-			Vertex *vertex = new Vertex(Common::Point(points[i * 2], points[i * 2 + 1]));
-			barred->vertices.insertHead(vertex);
-		}
-
-		s->polygons.push_front(barred);
-	}
-}
-#endif
 
 static void change_polygons_opt_0(PathfindingState *s) {
 	// Changes the polygon list for optimization level 0 (used for keyboard
@@ -1471,27 +1112,11 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		Node *node = s->_segMan->lookupNode(list->first);
 
 		while (node) {
-			Node *dup = s->_segMan->lookupNode(list->first);
+			polygon = convert_polygon(s, node->value);
 
-			// Workaround for game bugs that put a polygon in the list more than once
-			while (dup != node) {
-#ifdef OLD_PATHFINDING
-				if (polygons_equal(s->_segMan, node->value, dup->value)) {
-					warning("[avoidpath] Ignoring duplicate polygon");
-					break;
-				}
-#endif
-				dup = s->_segMan->lookupNode(dup->succ);
-			}
-
-			if (dup == node) {
-				// Polygon is not a duplicate, so convert it
-				polygon = convert_polygon(s, node->value);
-
-				if (polygon) {
-					pf_s->polygons.push_back(polygon);
-					count += GET_SEL32(segMan, node->value, size).toUint16();
-				}
+			if (polygon) {
+				pf_s->polygons.push_back(polygon);
+				count += GET_SEL32(segMan, node->value, size).toUint16();
 			}
 
 			node = s->_segMan->lookupNode(node->succ);
@@ -1550,11 +1175,6 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			new_start = new Common::Point(77, 107);
 		}
 
-#ifdef OLD_PATHFINDING
-		if (s->_gameId == "longbow" && s->currentRoomNumber() == 210)
-				fixLongbowRoom210(pf_s, *new_start, *new_end);
-#endif
-
 		// Merge start and end points into polygon set
 		pf_s->vertex_start = merge_point(pf_s, *new_start);
 		pf_s->vertex_end = merge_point(pf_s, *new_end);
@@ -1581,47 +1201,6 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 	return pf_s;
 }
-
-#ifdef OLD_PATHFINDING
-static bool intersect(const Common::Point &a, const Common::Point &b, const Common::Point &c, const Common::Point &d) {
-	// Determines whether or not two line segments intersect
-	// Parameters: (const Common::Point &) a, b: The line segment (a, b)
-	//             (const Common::Point &) c, d: The line segment (c, d)
-	// Returns   : (int) true if (a, b) intersects (c, d), false otherwise
-	if (intersect_proper(a, b, c, d))
-		return true;
-
-	return between(a, b, c) || between(a, b, d) || between(c, d, a) || between(c, d, b);
-}
-
-static int intersecting_polygons(PathfindingState *s) {
-	// Detects (self-)intersecting polygons
-	// Parameters: (PathfindingState *) s: The pathfinding state
-	// Returns   : (int) 1 if s contains (self-)intersecting polygons, 0 otherwise
-	int i, j;
-
-	for (i = 0; i < s->vertices; i++) {
-		Vertex *v1 = s->vertex_index[i];
-		if (!VERTEX_HAS_EDGES(v1))
-			continue;
-		for (j = i + 1; j < s->vertices; j++) {
-			Vertex *v2 = s->vertex_index[j];
-			if (!VERTEX_HAS_EDGES(v2))
-				continue;
-
-			// Skip neighbouring edges
-			if ((CLIST_NEXT(v1) == v2) || CLIST_PREV(v1) == v2)
-				continue;
-
-			if (intersect(v1->v, CLIST_NEXT(v1)->v,
-			              v2->v, CLIST_NEXT(v2)->v))
-				return 1;
-		}
-	}
-
-	return 0;
-}
-#endif
 
 /**
  * Computes a shortest path from vertex_start to vertex_end. The caller can
@@ -1841,14 +1420,6 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		PathfindingState *p = convert_polygon_set(s, poly_list, start, end, width, height, opt);
-
-#ifdef OLD_PATHFINDING
-		if (p && intersecting_polygons(p)) {
-			warning("[avoidpath] input set contains (self-)intersecting polygons");
-			delete p;
-			p = NULL;
-		}
-#endif
 
 		if (!p) {
 			warning("[avoidpath] Error: pathfinding failed for following input:\n");
