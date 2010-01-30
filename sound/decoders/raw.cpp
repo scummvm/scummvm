@@ -94,8 +94,11 @@ public:
 
 		// Add up length of all blocks in order to caluclate total play time
 		int32 len = 0;
-		for (RawStreamBlockList::const_iterator i = _blocks.begin(); i != _blocks.end(); ++i)
+		for (RawStreamBlockList::const_iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
+			assert(i->len % (stereo ? 2 : 1) == 0);
 			len += i->len;
+		}
+
 		_playtime = Timestamp(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate);
 	}
 
@@ -269,7 +272,10 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	RawAudioStreamBlock block;
 	block.pos = 0;
 
+	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+
+	assert(stream->size() % ((is16Bit ? 2 : 1) * (isStereo ? 2 : 1)) == 0);
 
 	block.len = stream->size() / (is16Bit ? 2 : 1);
 	blocks.push_back(block);
