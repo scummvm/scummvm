@@ -25,6 +25,8 @@
 
 #include "osys_n64.h"
 
+#include <math.h>
+
 // Pad buttons
 #define START_BUTTON(a) (a & 0x1000)
 #define A_BUTTON(a)     (a & 0x8000)
@@ -48,7 +50,7 @@
 #define CD_BUTTON(a)    (a & 0x0004)
 
 #define MOUSE_DEADZONE 0
-#define PAD_DEADZONE 0
+#define PAD_DEADZONE 1
 #define PAD_ACCELERATION 15
 #define PAD_CHECK_TIME 40
 
@@ -72,14 +74,20 @@ void OSystem_N64::readControllerAnalogInput(void) {
 		pad_mouseY = (_ctrlData.c[_mousePort].throttle >> 0) & 0xFF;
 	}
 
-	int32 mx = _tempMouseX;
-	int32 my = _tempMouseY;
+	float mx = _tempMouseX;
+	float my = _tempMouseY;
+
+	if (pad_analogX > 60) pad_analogX = 60;
+	else if (pad_analogX < -60) pad_analogX = -60;
+
+	if (pad_analogY > 60) pad_analogY = 60;
+	else if (pad_analogY < -60) pad_analogY = -60;
 
 	if (abs(pad_analogX) > PAD_DEADZONE)
-		mx += pad_analogX / (PAD_ACCELERATION - (abs(pad_analogX) / 20));
+		mx += tan(pad_analogX * (PI / 140));
 
 	if (abs(pad_analogY) > PAD_DEADZONE)
-		my -= pad_analogY / (PAD_ACCELERATION - (abs(pad_analogY) / 20));
+		my -= tan(pad_analogY * (PI / 140));
 
 	if (abs(pad_mouseX) > MOUSE_DEADZONE)
 		mx += pad_mouseX;
@@ -274,8 +282,8 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	if ((curTime - _lastPadCheck) > PAD_CHECK_TIME) {
 		_lastPadCheck = curTime;
 
-		int32 mx = _tempMouseX;
-		int32 my = _tempMouseY;
+		float mx = _tempMouseX;
+		float my = _tempMouseY;
 
 		if (left_digital || right_digital || up_digital || down_digital) {
 			if (left_digital)
@@ -303,8 +311,8 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 		if ((mx != _mouseX) || (my != _mouseY)) {
 
 			event.type = Common::EVENT_MOUSEMOVE;
-			event.mouse.x = _tempMouseX = _mouseX = mx;
-			event.mouse.y = _tempMouseY = _mouseY = my;
+			event.mouse.x = _mouseX = _tempMouseX = mx;
+			event.mouse.y = _mouseY = _tempMouseY = my;
 
 			_dirtyOffscreen = true;
 

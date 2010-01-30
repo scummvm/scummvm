@@ -34,7 +34,7 @@ endif
 
 LIBS += -lm -lstdc++ -lc -lgcc -lz -lnosys 
 
-CXXFLAGS = -g -mno-extern-sdata -O2 -fomit-frame-pointer -march=vr4300 -mtune=vr4300 -fno-rtti -fno-exceptions -Wno-multichar -Wshadow -I$(LIBN64PATH) -I$(TOOLPATH)/include -I./ -I$(srcdir) -I$(srcdir)/engines
+CXXFLAGS = -g -mno-extern-sdata -O2 -fomit-frame-pointer -march=vr4300 -mtune=vr4300 -mhard-float -fno-rtti -fno-exceptions -Wno-multichar -Wshadow -I$(LIBN64PATH) -I$(TOOLPATH)/include -I./ -I$(srcdir) -I$(srcdir)/engines
 LDFLAGS = -g -march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0 -L$(LIBN64PATH) -L$(TOOLPATH)/lib $(LIBS) -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map
 
 TARGET = scummvm

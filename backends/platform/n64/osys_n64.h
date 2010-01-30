@@ -115,7 +115,7 @@ protected:
 
 	bool _mouseVisible;
 	volatile int _mouseX, _mouseY;
-	volatile int _tempMouseX, _tempMouseY;
+	volatile float _tempMouseX, _tempMouseY;
 	volatile int _mouseMaxX, _mouseMaxY;
 	int _mouseHotspotX, _mouseHotspotY;
 
