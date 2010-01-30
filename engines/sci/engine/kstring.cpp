@@ -271,10 +271,12 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			switch (xfer) {
 			case 's': { /* Copy string */
 				reg_t reg = argv[startarg + paramindex];
-				if (s->_segMan->isObject(reg)) {
-					Selector slc = s->_kernel->findSelector("data");	// TODO: place in selector table
-					reg = read_selector(s->_segMan, reg, slc);
-				}
+
+#ifdef ENABLE_SCI32
+				// If the string is a string object, get to the actual string in the data selector
+				if (s->_segMan->isObject(reg)) 
+					reg = GET_SEL32(s->_segMan, reg, data);
+#endif
 
 				Common::String tempsource = (reg == NULL_REG) ? "" : kernel_lookup_text(s, reg,
 				                                  arguments[paramindex + 1]);
@@ -398,6 +400,14 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	free(arguments);
 
 	*target = 0; /* Terminate string */
+	
+#ifdef ENABLE_SCI32
+	// Resize SCI32 strings if necessary
+	if (getSciVersion() >= SCI_VERSION_2) {
+		SciString *string = s->_segMan->lookupString(dest);
+		string->setSize(strlen(targetbuf) + 1);
+	}
+#endif
 
 	s->_segMan->strcpy(dest, targetbuf);
 

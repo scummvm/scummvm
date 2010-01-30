@@ -612,10 +612,18 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return GET_SEL32(s->_segMan, argv[1], data);
 	case 10: // Stringlen
 		return make_reg(0, s->_segMan->strlen(argv[1]));
-	case 11: // Printf
-		// TODO: Return a new formatting string
-		warning("kString(Printf)");
-		break;
+	case 11: { // Printf
+		reg_t stringHandle;
+		s->_segMan->allocateString(&stringHandle);
+
+		reg_t *adjustedArgs = new reg_t[argc];
+		adjustedArgs[0] = stringHandle;
+		memcpy(&adjustedArgs[1], argv + 1, argc - 1);
+		
+		kFormat(s, argc, adjustedArgs);
+		delete[] adjustedArgs;
+		return stringHandle;
+		}
 	case 12: // Printf Buf
 		return kFormat(s, argc - 1, argv + 1);
 	case 13: { // atoi
