@@ -23,9 +23,9 @@
  *
  */
 
-#include "osys_n64.h"
+#include <math.h> // Needed for "tan()" function
 
-#include <math.h>
+#include "osys_n64.h"
 
 // Pad buttons
 #define START_BUTTON(a) (a & 0x1000)
@@ -77,21 +77,23 @@ void OSystem_N64::readControllerAnalogInput(void) {
 	float mx = _tempMouseX;
 	float my = _tempMouseY;
 
+	// Limit the analog range for pad.
+	// When moving in diagonal the max/min of 128/-128 was not reached
+	// yielding weird results for the tangent acceleration function
 	if (pad_analogX > 60) pad_analogX = 60;
 	else if (pad_analogX < -60) pad_analogX = -60;
-
 	if (pad_analogY > 60) pad_analogY = 60;
 	else if (pad_analogY < -60) pad_analogY = -60;
 
+	// Gamepad
 	if (abs(pad_analogX) > PAD_DEADZONE)
 		mx += tan(pad_analogX * (PI / 140));
-
 	if (abs(pad_analogY) > PAD_DEADZONE)
 		my -= tan(pad_analogY * (PI / 140));
 
+	// Mouse
 	if (abs(pad_mouseX) > MOUSE_DEADZONE)
 		mx += pad_mouseX;
-
 	if (abs(pad_mouseY) > MOUSE_DEADZONE)
 		my -= pad_mouseY;
 
