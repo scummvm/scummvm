@@ -1629,9 +1629,8 @@ static int intersecting_polygons(PathfindingState *s) {
  * vertex_end back to vertex_start. If no path exists vertex_end->path_prev
  * will be NULL
  * Parameters: (PathfindingState *) s: The pathfinding state
- *             (bool) avoidScreenEdge: Avoid screen edges (default behavior)
  */
-static void AStar(PathfindingState *s, bool avoidScreenEdge) {
+static void AStar(PathfindingState *s) {
 	// Vertices of which the shortest path is known
 	VertexList closedSet;
 
@@ -1674,11 +1673,10 @@ static void AStar(PathfindingState *s, bool avoidScreenEdge) {
 			if (closedSet.contains(vertex))
 				continue;
 
-			if (avoidScreenEdge) {
-				// Avoid plotting path along screen edge
-				if ((vertex != s->vertex_end) && s->pointOnScreenBorder(vertex->v))
+			// Avoid plotting path along screen edge
+			if ((vertex_min != s->vertex_start) || (vertex != s->vertex_end))
+				if (s->pointOnScreenBorder(vertex_min->v) && s->pointOnScreenBorder(vertex->v))
 					continue;
-			}
 
 			if (!openSet.contains(vertex))
 				openSet.push_front(vertex);
@@ -1867,8 +1865,8 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			return output;
 		}
 
-		// Apply Dijkstra, avoiding screen edges
-		AStar(p, true);
+		// Apply Dijkstra
+		AStar(p);
 
 		output = output_path(p, s);
 		delete p;
