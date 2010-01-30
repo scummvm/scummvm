@@ -29,8 +29,8 @@
 
 #include "common/stream.h"
 #include "sound/audiostream.h"
-#include "sound/adpcm.h"
-#include "sound/wave.h"
+#include "sound/decoders/adpcm.h"
+#include "sound/decoders/wave.h"
 
 namespace Asylum {
 
