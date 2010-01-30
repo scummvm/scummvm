@@ -885,15 +885,6 @@ void run_vm(EngineState *s, int restoring) {
 		case op_ugt_: // 0x13 (19)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
-				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) > /*acc*/);
-			break;
-
-		case op_uge_: // 0x14 (20)
-			s->r_prev = s->r_acc;
-			r_temp = POP32();
 
 			// SCI0/SCI1 scripts use this to check whether a
 			// parameter is a pointer or a far text
@@ -905,8 +896,21 @@ void run_vm(EngineState *s, int restoring) {
 
 			// It works because in those games, the maximum resource number is 999, 
 			// so any parameter value above that threshold must be a pointer. 
-			if (s->r_acc == make_reg(0, 0x3e8))
-				s->r_acc = make_reg(0, r_temp.segment);
+			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+				s->r_acc = make_reg(0, 1);
+			else if (r_temp.segment && s->r_acc.segment)
+				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
+			else
+				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) > /*acc*/);
+			break;
+
+		case op_uge_: // 0x14 (20)
+			s->r_prev = s->r_acc;
+			r_temp = POP32();
+
+			// See above
+			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
 			else
@@ -918,8 +922,8 @@ void run_vm(EngineState *s, int restoring) {
 			r_temp = POP32();
 
 			// See above
-			if (s->r_acc == make_reg(0, 0x3e8))
-				s->r_acc = make_reg(0, !r_temp.segment);
+			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			else
@@ -929,7 +933,11 @@ void run_vm(EngineState *s, int restoring) {
 		case op_ule_: // 0x16 (22)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
+
+			// See above
+			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+				s->r_acc = NULL_REG;
+			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
 			else
 				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) <= /*acc*/);
