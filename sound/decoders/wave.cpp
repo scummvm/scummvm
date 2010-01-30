@@ -188,7 +188,7 @@ RewindableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, Dispose
 	if (disposeAfterUse == DisposeAfterUse::YES)
 		delete stream;
 
-	return makeRawMemoryStream(data, size, rate, flags);
+	return makeRawStream(data, size, rate, flags);
 }
 
 } // End of namespace Audio

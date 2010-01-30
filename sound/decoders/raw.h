@@ -65,27 +65,6 @@ enum RawFlags {
 
 
 /**
- * Creates a audio stream, which plays the given raw data.
- *
- * The data pointer is assumed to have been allocated with malloc().
- * In particular, if autofreeBuffer is set to DisposeAfterUse::YES,
- * then this buffer will be deallocated using free(). So do not
- * use a buffer allocated with new[]!
- *
- * @param ptr 	pointer to a buffer containing audio data
- * @param len	length of the buffer in bytes
- * @param rate	sample rate of the data
- * @param flags	audio format flags combination
- * @see RawFlags
- * @param autofreeBuffer	whether the data buffer should be destroyed after playback
- * @return The new SeekableAudioStream (or 0 on failure).
- */
-SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
-		int rate, byte flags,
-		DisposeAfterUse::Flag autofreeBuffer = DisposeAfterUse::YES
-		);
-
-/**
  * Struct used to define the audio data to be played by a RawDiskStream.
  */
 struct RawDiskStreamAudioBlock {

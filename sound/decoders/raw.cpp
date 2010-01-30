@@ -42,85 +42,8 @@ namespace Audio {
 
 
 #pragma mark -
-#pragma mark --- RawMemoryStream ---
-#pragma mark -
-
-/**
- * A simple raw audio stream, purely memory based. It operates on a single
- * block of data, which is passed to it upon creation.
- * Optionally supports looping the sound.
- *
- * Design note: This code tries to be as efficient as possible (without
- * resorting to assembly, that is). To this end, it is written as a template
- * class. This way the compiler can create optimized code for each special
- * case. This results in a total of 12 versions of the code being generated.
- */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class RawMemoryStream : public SeekableAudioStream {
-protected:
-	const byte *_ptr;
-	const byte *_end;
-	const int _rate;
-	const byte *_origPtr;
-	const DisposeAfterUse::Flag _disposeAfterUse;
-	const Timestamp _playtime;
-
-public:
-	RawMemoryStream(int rate, const byte *ptr, uint len, DisposeAfterUse::Flag autoFreeMemory)
-	    : _ptr(ptr), _end(ptr+len), _rate(rate), _origPtr(ptr),
-	      _disposeAfterUse(autoFreeMemory),
-	      _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate) {
-	}
-
-	virtual ~RawMemoryStream() {
-		if (_disposeAfterUse == DisposeAfterUse::YES)
-			free(const_cast<byte *>(_origPtr));
-	}
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const			{ return stereo; }
-	bool endOfData() const			{ return _ptr >= _end; }
-
-	int getRate() const				{ return _rate; }
-	bool seek(const Timestamp &where);
-	Timestamp getLength() const { return _playtime; }
-};
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int RawMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = numSamples;
-	while (samples > 0 && _ptr < _end) {
-		int len = MIN(samples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
-		samples -= len;
-		do {
-			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
-			_ptr += (is16Bit ? 2 : 1);
-		} while (--len);
-	}
-	return numSamples-samples;
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-bool RawMemoryStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
-	const uint8 *ptr = _origPtr + convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames() * (is16Bit ? 2 : 1);
-	if (ptr > _end) {
-		_ptr = _end;
-		return false;
-	} else if (ptr == _end) {
-		_ptr = _end;
-		return true;
-	} else {
-		_ptr = ptr;
-		return true;
-	}
-}
-
-#pragma mark -
 #pragma mark --- RawDiskStream ---
 #pragma mark -
-
-
 
 /**
  *  RawDiskStream.  This can stream raw PCM audio data from disk.  The
@@ -153,7 +76,7 @@ protected:
 	RawStreamBlockList::const_iterator _curBlock;  ///< Current audio block number
 public:
 	RawDiskStream(int rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
-		: _rate(rate), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(blocks.begin()) {
+		: _rate(rate), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(_blocks.begin()) {
 
 		assert(_blocks.size() > 0);
 
@@ -298,46 +221,6 @@ bool RawDiskStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &whe
  * So while normally macro tricks are said to make maintenance harder, in this
  * particular case it should actually help it :-)
  */
-
-#define MAKE_LINEAR(STEREO, UNSIGNED) \
-		if (is16Bit) { \
-			if (isLE) \
-				return new RawMemoryStream<STEREO, true, UNSIGNED, true>(rate, ptr, len, autoFree); \
-			else  \
-				return new RawMemoryStream<STEREO, true, UNSIGNED, false>(rate, ptr, len, autoFree); \
-		} else \
-			return new RawMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, autoFree)
-
-SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
-		int rate, byte flags,
-		DisposeAfterUse::Flag autoFree
-		) {
-	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
-
-	// Verify the buffer sizes are sane
-	if (is16Bit && isStereo) {
-		assert((len & 3) == 0);
-	} else if (is16Bit || isStereo) {
-		assert((len & 1) == 0);
-	}
-
-	if (isStereo) {
-		if (isUnsigned) {
-			MAKE_LINEAR(true, true);
-		} else {
-			MAKE_LINEAR(true, false);
-		}
-	} else {
-		if (isUnsigned) {
-			MAKE_LINEAR(false, true);
-		} else {
-			MAKE_LINEAR(false, false);
-		}
-	}
-}
 
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \

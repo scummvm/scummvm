@@ -390,7 +390,7 @@ SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flag
 	if (!data)
 		return 0;
 
-	return makeRawMemoryStream(data, size, rate, flags);
+	return makeRawStream(data, size, rate, flags);
 #endif
 }
 
