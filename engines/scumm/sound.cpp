@@ -350,7 +350,7 @@ void Sound::playSound(int soundID) {
 				size -= waveSize;
 
 				Audio::SeekableAudioStream *s = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
-				stream = Audio::makeLoopingAudioStream(s, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate), 0);
+				stream = new Audio::SubLoopingAudioStream(s, 0, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate));
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
@@ -441,7 +441,7 @@ void Sound::playSound(int soundID) {
 
 			// TODO: Currently we will only ever play till "loopEnd", even when we only have
 			// a finite repetition count.
-			stream = Audio::makeLoopingAudioStream(plainStream, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate), loopcount == 255 ? 0 : loopcount);
+			stream = new Audio::SubLoopingAudioStream(plainStream, loopcount == 255 ? 0 : loopcount, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate));
 		} else {
 			stream = plainStream;
 		}

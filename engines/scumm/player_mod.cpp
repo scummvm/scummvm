@@ -97,7 +97,11 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 	_channels[i].ctr = 0;
 
 	Audio::SeekableAudioStream *stream = Audio::makeRawStream((const byte *)data, size, rate, 0);
-	_channels[i].input = Audio::makeLoopingAudioStream(stream, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate), loopStart == loopEnd ? 1 : 0);
+	if (loopStart != loopEnd) {
+		_channels[i].input = new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate));
+	} else {
+		_channels[i].input = stream;
+	}
 
 	// read the first sample
 	_channels[i].input->readBuffer(&_channels[i].pos, 1);
