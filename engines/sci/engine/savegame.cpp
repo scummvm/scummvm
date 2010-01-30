@@ -951,8 +951,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	
 #ifdef ENABLE_SCI32
 	// Copy the Gui32 pointer over to the new EngineState, if it exists
-	if (s->_gui32)
-		retval->_gui32 = s->_gui32;
+	retval->_gui32 = s->_gui32;
 #endif
 
 	// Copy some old data

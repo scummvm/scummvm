@@ -1043,6 +1043,7 @@ void run_vm(EngineState *s, int restoring) {
 							// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
 							// here, instead of the requested function.
 							int saveSlot = g_loadFromLauncher;
+							g_loadFromLauncher = -1;	// invalidate slot, so that we don't load again
 
 							if (saveSlot < 0)
 								error("Requested to load invalid save slot");	// should never happen, really
