@@ -86,24 +86,6 @@ SeekableAudioStream *makeRawMemoryStream(const byte *ptr, uint32 len,
 		);
 
 /**
- * NOTE:
- * This API is considered deprecated.
- *
- * Factory function for a raw PCM AudioStream, which will simply treat all
- * data in the buffer described by ptr and len as raw sample data in the
- * specified format. It will then simply pass this data directly to the mixer,
- * after converting it to the sample format used by the mixer (i.e. 16 bit
- * signed native endian). Optionally supports (infinite) looping of a portion
- * of the data.
- */
-AudioStream *makeRawMemoryStream_OLD(const byte *ptr, uint32 len,
-		int rate, byte flags,
-		uint loopStart, uint loopEnd,
-		DisposeAfterUse::Flag autofreeBuffer = DisposeAfterUse::YES
-		);
-
-
-/**
  * Struct used to define the audio data to be played by a RawDiskStream.
  */
 struct RawDiskStreamAudioBlock {

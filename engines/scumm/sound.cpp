@@ -349,7 +349,8 @@ void Sound::playSound(int soundID) {
 				}
 				size -= waveSize;
 
-				stream = Audio::makeRawMemoryStream_OLD(sound, waveSize, rate, Audio::FLAG_UNSIGNED, loopStart, loopEnd);
+				Audio::SeekableAudioStream *s = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
+				stream = Audio::makeLoopingAudioStream(s, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate), 0);
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
@@ -430,17 +431,21 @@ void Sound::playSound(int soundID) {
 		int vol = ptr[24] * 4;
 		int loopStart = 0, loopEnd = 0;
 		int loopcount = ptr[27];
-		if (loopcount > 1) {
-			// TODO: We can only loop once, or infinitely many times, but
-			// have no support for a finite number of repetitions.
-			// So far, I have seen only 1 and 255 (for infinite repetitions),
-			// so maybe this is not really a problem.
-			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
-			loopEnd = READ_BE_UINT16(ptr + 14);
-		}
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		stream = Audio::makeRawMemoryStream_OLD(sound, size, rate, 0, loopStart, loopEnd);
+		Audio::SeekableAudioStream *plainStream = Audio::makeRawStream(sound, size, rate, 0);
+
+		if (loopcount > 1) {
+			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
+			loopEnd = READ_BE_UINT16(ptr + 14);
+
+			// TODO: Currently we will only ever play till "loopEnd", even when we only have
+			// a finite repition count.
+			stream = Audio::makeLoopingAudioStream(plainStream, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate), loopcount == 255 ? 0 : loopcount);
+		} else {
+			stream = plainStream;
+		}
+
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, vol, 0);
 	}
 	else {

@@ -353,7 +353,29 @@ AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint 
 	if (!data)
 		return 0;
 
-	return makeRawMemoryStream_OLD(data, size, rate, flags, loopStart, loopEnd);
+	SeekableAudioStream *s = Audio::makeRawStream(data, size, rate, flags);
+
+	if (loopStart != loopEnd) {
+		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+
+		if (loopEnd == 0)
+			loopEnd = size;
+		assert(loopStart <= loopEnd);
+		assert(loopEnd <= (uint)size);
+
+		// Verify the buffer sizes are sane
+		if (is16Bit && isStereo)
+			assert((loopStart & 3) == 0 && (loopEnd & 3) == 0);
+		else if (is16Bit || isStereo)
+			assert((loopStart & 1) == 0 && (loopEnd & 1) == 0);
+
+		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
+
+		return new SubLoopingAudioStream(s, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
+	} else {
+		return s;
+	}
 #endif
 }
 
