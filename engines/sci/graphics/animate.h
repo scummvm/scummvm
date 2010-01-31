@@ -65,7 +65,7 @@ class Transitions;
 class GfxAnimate {
 public:
 	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, Transitions *transitions);
-	~GfxAnimate();
+	virtual ~GfxAnimate();
 
 	// FIXME: Don't store EngineState
 	void resetEngineState(EngineState *newState) { _s = newState; }
