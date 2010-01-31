@@ -153,7 +153,11 @@ Common::String EngineState::getLanguageString(const char *str, kLanguage lang) c
 }
 
 kLanguage EngineState::getLanguage() {
-	kLanguage lang = K_LANG_ENGLISH;
+	kLanguage lang = (kLanguage)resMan->getAudioLanguage();
+	if (lang != K_LANG_NONE)
+		return lang;
+
+	lang = K_LANG_ENGLISH;
 
 	if (_kernel->_selectorCache.printLang != -1) {
 		lang = (kLanguage)GET_SEL32V(_segMan, _gameObj, printLang);

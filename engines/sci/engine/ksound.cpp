@@ -149,7 +149,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			if (language != -1)
 				s->resMan->setAudioLanguage(language);
 
-			return make_reg(0, s->resMan->getAudioLanguage());
+			return make_reg(0, s->getLanguage());
 		}
 		break;
 	case kSciAudioCD:
