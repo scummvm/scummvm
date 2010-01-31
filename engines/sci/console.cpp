@@ -46,6 +46,7 @@
 #include "sci/graphics/gui32.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/palette.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -1059,7 +1060,7 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_vm->_gamestate->_gui->paletteSet(resourceId, true);
+	_vm->_gamestate->_gfxPalette->kernelSetFromResource(resourceId, true);
 	return true;
 }
 
@@ -1074,7 +1075,7 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 	uint16 resourceId = atoi(argv[1]);
 
 	_vm->_gamestate->_gui->drawPicture(resourceId, 100, false, false, false, 0);
-	_vm->_gamestate->_screen->copyToScreen();
+	_vm->_gamestate->_gfxScreen->copyToScreen();
 	return true;
 }
 

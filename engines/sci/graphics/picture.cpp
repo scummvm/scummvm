@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
+SciGuiPicture::SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
 	: _resMan(resMan), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);

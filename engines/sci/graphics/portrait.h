@@ -42,7 +42,7 @@ struct PortraitBitmap {
  */
 class Portrait {
 public:
-	Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName);
+	Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName);
 	~Portrait();
 
 	void setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
@@ -58,8 +58,8 @@ private:
 	ResourceManager *_resMan;
 	SciEvent *_event;
 	SciGui *_gui;
-	SciPalette *_palette;
-	Screen *_screen;
+	GfxPalette *_palette;
+	GfxScreen *_screen;
 	AudioPlayer *_audio;
 
 	uint16 _height;

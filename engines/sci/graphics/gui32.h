@@ -39,7 +39,7 @@ class Text;
 
 class SciGui32 {
 public:
-	SciGui32(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor);
+	SciGui32(EngineState *s, GfxScreen *screen, GfxPalette *palette, Cursor *cursor);
 	~SciGui32();
 
 	void init();
@@ -91,8 +91,8 @@ public:
 protected:
 	Cursor *_cursor;
 	EngineState *_s;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 	GfxCache *_cache;
 	GfxCompare *_compare;
 

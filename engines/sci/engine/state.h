@@ -53,7 +53,8 @@ class SciEvent;
 class Menubar;
 class GfxAnimate;
 class GfxPorts;
-class Screen;
+class GfxScreen;
+class GfxPalette;
 class SciGui;
 class Cursor;
 class MessageState;
@@ -152,7 +153,8 @@ public:
 
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
-	Screen *_screen; // gfx screen
+	GfxScreen *_gfxScreen;
+	GfxPalette *_gfxPalette;
 	SciGui *_gui; /* Currently active Gui */
 
 #ifdef ENABLE_SCI32

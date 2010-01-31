@@ -50,7 +50,7 @@
 
 namespace Sci {
 
-SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio)
+SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio)
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor), _ports(ports), _audio(audio) {
 
 	_cache = new GfxCache(_s->resMan, _screen, _palette);
@@ -507,45 +507,6 @@ int16 SciGui::picNotValid(int16 newPicNotValid) {
 }
 
 
-void SciGui::paletteSet(GuiResourceId resourceId, bool force) {
-	// we are also called on EGA games as well, this doesnt make sense. doing this would actually break the system EGA palette
-	if (!_s->resMan->isVGA())
-		return;
-   _palette->setFromResource(resourceId, force);
-}
-
-void SciGui::paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
-	_palette->setFlag(fromColor, toColor, flag);
-}
-
-void SciGui::paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
-	_palette->unsetFlag(fromColor, toColor, flag);
-}
-
-int16 SciGui::paletteFind(uint16 r, uint16 g, uint16 b) {
-	return _palette->matchColor(&_palette->_sysPalette, r, g, b) & 0xFF;
-}
-
-void SciGui::paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
-	// we are also called on Amiga as well, but for colors above 32, so it doesnt make sense
-	if (!_s->resMan->isVGA())
-		return;
-
-	_palette->setIntensity(fromColor, toColor, intensity, setPalette);
-}
-
-bool SciGui::paletteAnimate(uint16 fromColor, uint16 toColor, int16 speed) {
-	// we are also called on Amiga as well, but for colors above 32, so it doesnt make sense
-	if (!_s->resMan->isVGA())
-		return false;
-
-	return _palette->animate(fromColor, toColor, speed);
-}
-
-void SciGui::paletteAnimateSet() {
-	_palette->setOnScreen();
-}
-
 void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
 	while (shakeCount--) {
 		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
@@ -755,7 +716,7 @@ void SciGui::stopPalVary() {
 	_palVaryId = -1;	// invalidate the target palette
 
 	// HACK: just set the target palette
-	_palette->setFromResource(_palVaryId, true);
+	_palette->kernelSetFromResource(_palVaryId, true);
 }
 
 void SciGui::palVaryCallback(void *refCon) {

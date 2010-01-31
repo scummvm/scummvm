@@ -42,7 +42,7 @@ enum {
 };
 
 class Screen;
-class SciPalette;
+class GfxPalette;
 class Cursor;
 class GfxCache;
 class GfxCompare;
@@ -57,23 +57,16 @@ class Transitions;
 
 class SciGui {
 public:
-	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
+	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
 	virtual ~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);
 
 	virtual void wait(int16 ticks);
-	// virtual void setPort(uint16 portPtr);
-	// virtual Common::Rect getPortPic(int16 &picTop, int16 &picLeft);
-	// virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag);
-	// virtual reg_t getPort();
 	virtual void globalToLocal(int16 *x, int16 *y);
 	virtual void localToGlobal(int16 *x, int16 *y);
 	virtual int16 coordinateToPriority(int16 y);
 	virtual int16 priorityToCoordinate(int16 priority);
-
-	// virtual reg_t newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
-	// virtual void disposeWindow(uint16 windowPtr, bool reanimate);
 
 	virtual void display(const char *text, int argc, reg_t *argv);
 
@@ -111,14 +104,6 @@ public:
 	virtual void graphAdjustPriority(int top, int bottom);
 
 	virtual int16 picNotValid(int16 newPicNotValid);
-
-	virtual void paletteSet(GuiResourceId resourceNo, bool force);
-	virtual void paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
-	virtual void paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
-	virtual int16 paletteFind(uint16 r, uint16 g, uint16 b);
-	virtual void paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	virtual bool paletteAnimate(uint16 fromColor, uint16 toColor, int16 speed);
-	virtual void paletteAnimateSet();
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
@@ -164,8 +149,8 @@ public:
 protected:
 	Cursor *_cursor;
 	EngineState *_s;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 	GfxCache *_cache;
 	GfxCompare *_compare;
 	GfxPorts *_ports;

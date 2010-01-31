@@ -41,10 +41,10 @@ namespace Sci {
 
 #define SCI_SCREEN_UNDITHERMEMORIAL_SIZE 256
 
-class Screen {
+class GfxScreen {
 public:
-	Screen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
-	~Screen();
+	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
+	~GfxScreen();
 
 	uint16 getWidth() { return _width; };
 	uint16 getHeight() { return _height; };

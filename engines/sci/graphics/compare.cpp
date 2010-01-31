@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-GfxCompare::GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, Screen *screen)
+GfxCompare::GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen)
 	: _segMan(segMan), _kernel(kernel), _cache(cache), _screen(screen) {
 }
 

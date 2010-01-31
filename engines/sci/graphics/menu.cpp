@@ -43,7 +43,7 @@
 
 namespace Sci {
 
-Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, Text *text, Screen *screen, Cursor *cursor)
+Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, Text *text, GfxScreen *screen, Cursor *cursor)
 	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;

@@ -38,7 +38,7 @@ class Screen;
 class Font;
 class Text {
 public:
-	Text(ResourceManager *_resMan, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen);
+	Text(ResourceManager *_resMan, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);
 	~Text();
 
 	GuiResourceId GetFontId();
@@ -72,7 +72,7 @@ private:
 	ResourceManager *_resMan;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
-	Screen *_screen;
+	GfxScreen *_screen;
 
 	int _codeFontsCount;
 	GuiResourceId *_codeFonts;

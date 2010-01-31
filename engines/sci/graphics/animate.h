@@ -64,7 +64,7 @@ class SciPalette;
 class Transitions;
 class GfxAnimate {
 public:
-	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen, SciPalette *palette, Cursor *cursor, Transitions *transitions);
+	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, Transitions *transitions);
 	~GfxAnimate();
 
 	// FIXME: Don't store EngineState
@@ -98,8 +98,8 @@ private:
 	GfxCache *_cache;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 	Cursor *_cursor;
 	Transitions *_transitions;
 

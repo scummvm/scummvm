@@ -36,7 +36,7 @@
 
 namespace Sci {
 
-Cursor::Cursor(ResourceManager *resMan, SciPalette *palette, Screen *screen)
+Cursor::Cursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen)
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	_upscaledHires = _screen->getUpscaledHires();

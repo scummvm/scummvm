@@ -39,7 +39,7 @@ typedef Common::HashMap<int, View *> ViewCache;
 
 class GfxCache {
 public:
-	GfxCache(ResourceManager *resMan, Screen *screen, SciPalette *palette);
+	GfxCache(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette);
 	~GfxCache();
 
 	View *getView(GuiResourceId viewNum);
@@ -48,8 +48,8 @@ private:
 	void purgeCache();
 
 	ResourceManager *_resMan;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 
 	ViewCache _cachedViews;
 };

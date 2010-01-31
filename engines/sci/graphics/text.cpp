@@ -36,7 +36,7 @@
 
 namespace Sci {
 
-Text::Text(ResourceManager *resMan, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen)
+Text::Text(ResourceManager *resMan, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
 	: _resMan(resMan), _ports(ports), _paint16(paint16), _screen(screen) {
 	init();
 }

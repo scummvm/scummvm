@@ -39,6 +39,7 @@
 #include "sci/graphics/ports.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
 
@@ -618,7 +619,9 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
-	if (!s->_gui)
+	// we are called on EGA/amiga games as well, this doesnt make sense.
+	//  doing this would actually break the system EGA/amiga palette
+	if (!s->resMan->isVGA())
 		return s->r_acc;
 
 	switch (argv[0].toUint16()) {
@@ -626,21 +629,21 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		if (argc==3) {
 			GuiResourceId resourceId = argv[1].toUint16();
 			bool force = argv[2].toUint16() == 2 ? true : false;
-			s->_gui->paletteSet(resourceId, force);
+			s->_gfxPalette->kernelSetFromResource(resourceId, force);
 		}
 		break;
 	case 2: { // Set palette-flag(s)
 		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
 		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
 		uint16 flags = argv[3].toUint16();
-		s->_gui->paletteSetFlag(fromColor, toColor, flags);
+		s->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
 		break;
 	}
 	case 3:	{ // Remove palette-flag(s)
 		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
 		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
 		uint16 flags = argv[3].toUint16();
-		s->_gui->paletteUnsetFlag(fromColor, toColor, flags);
+		s->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
 		break;
 	}
 	case 4:	{ // Set palette intensity
@@ -652,7 +655,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			uint16 intensity = argv[3].toUint16();
 			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
 
-			s->_gui->paletteSetIntensity(fromColor, toColor, intensity, setPalette);
+			s->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 			break;
 		}
 		default:
@@ -665,7 +668,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		uint16 g = argv[2].toUint16();
 		uint16 b = argv[3].toUint16();
 
-		return make_reg(0, s->_gui->paletteFind(r, g, b));
+		return make_reg(0, s->_gfxPalette->kernelFind(r, g, b));
 	}
 	case 6: { // Animate
 		int16 argNr;
@@ -674,11 +677,11 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			uint16 fromColor = argv[argNr].toUint16();
 			uint16 toColor = argv[argNr + 1].toUint16();
 			int16 speed = argv[argNr + 2].toSint16();
-			if (s->_gui->paletteAnimate(fromColor, toColor, speed))
+			if (s->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
 				paletteChanged = true;
 		}
 		if (paletteChanged)
-			s->_gui->paletteAnimateSet();
+			s->_gfxPalette->kernelAnimateSet();
 		break;
 	}
 	case 7: { // Save palette to heap

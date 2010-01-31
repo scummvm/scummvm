@@ -43,7 +43,7 @@
 
 namespace Sci {
 
-GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, Screen *screen, SciPalette *palette)
+GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette)
 	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _screen(screen), _palette(palette) {
 }
 

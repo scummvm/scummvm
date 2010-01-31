@@ -141,15 +141,15 @@ Common::Error SciEngine::run() {
 		upscaledHires = true;
 
 	// Initialize graphics-related parts
-	Screen *screen = 0;
+	GfxScreen *screen = 0;
 
 	// invokes initGraphics()
 	if (_resMan->detectHires())
-		screen = new Screen(_resMan, 640, 480, false);
+		screen = new GfxScreen(_resMan, 640, 480, false);
 	else
-		screen = new Screen(_resMan, 320, 200, upscaledHires);
+		screen = new GfxScreen(_resMan, 320, 200, upscaledHires);
 
-	SciPalette *palette = new SciPalette(_resMan, screen);
+	GfxPalette *palette = new GfxPalette(_resMan, screen);
 	Cursor *cursor = new Cursor(_resMan, palette, screen);
 
 	// Create debugger console. It requires GFX to be initialized
@@ -184,7 +184,8 @@ Common::Error SciEngine::run() {
 	_gamestate->_ports = new GfxPorts(_segMan, _screen);
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
 #endif
-	_gamestate->_screen = screen;
+	_gamestate->_gfxPalette = palette;
+	_gamestate->_gfxScreen = screen;
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");

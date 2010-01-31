@@ -31,16 +31,15 @@
 namespace Sci {
 
 class Screen;
-class SciPalette {
+class GfxPalette {
 public:
-	SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPalette = true);
-	~SciPalette();
+	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette = true);
+	~GfxPalette();
 
 	void createFromData(byte *data, Palette *paletteOut);
 	bool setAmiga();
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
-	bool setFromResource(GuiResourceId resourceId, bool force);
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
 	void merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge);
 	uint16 matchColor(Palette *pPal, byte r, byte g, byte b);
@@ -48,15 +47,18 @@ public:
 
 	void setOnScreen();
 
-	void setFlag(uint16 fromColor, uint16 toColor, uint16 flag);
-	void unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
-	void setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	bool animate(byte fromColor, byte toColor, int speed);
+	bool kernelSetFromResource(GuiResourceId resourceId, bool force);
+	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
+	void kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
+	void kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
+	int16 GfxPalette::kernelFind(uint16 r, uint16 g, uint16 b);
+	bool kernelAnimate(byte fromColor, byte toColor, int speed);
+	void kernelAnimateSet();
 
 	Palette _sysPalette;
 
 private:
-	Screen *_screen;
+	GfxScreen *_screen;
 	ResourceManager *_resMan;
 
 	Common::Array<PalSchedule> _schedules;

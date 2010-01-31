@@ -42,7 +42,7 @@ typedef Common::HashMap<int, View *> CursorCache;
 
 class Cursor {
 public:
-	Cursor(ResourceManager *resMan, SciPalette *palette, Screen *screen);
+	Cursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~Cursor();
 
 	void show();
@@ -65,8 +65,8 @@ private:
 	void purgeCache();
 
 	ResourceManager *_resMan;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 
 	bool _upscaledHires;
 

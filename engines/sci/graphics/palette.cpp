@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPalette)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -59,17 +59,17 @@ SciPalette::SciPalette(ResourceManager *resMan, Screen *screen, bool autoSetPale
 		else if (_resMan->isAmiga32color())
 			setAmiga();
 		else
-			setFromResource(999, true);
+			kernelSetFromResource(999, true);
 	}
 }
 
-SciPalette::~SciPalette() {
+GfxPalette::~GfxPalette() {
 }
 
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void SciPalette::createFromData(byte *data, Palette *paletteOut) {
+void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 	int palFormat = 0;
 	int palOffset = 0;
 	int palColorStart = 0;
@@ -114,7 +114,7 @@ void SciPalette::createFromData(byte *data, Palette *paletteOut) {
 }
 
 // Will try to set amiga palette by using "spal" file. If not found, we return false
-bool SciPalette::setAmiga() {
+bool GfxPalette::setAmiga() {
 	Common::File file;
 	int curColor, byte1, byte2;
 
@@ -138,7 +138,7 @@ bool SciPalette::setAmiga() {
 }
 
 // Called from picture class, some amiga sci1 games set half of the palette
-void SciPalette::modifyAmigaPalette(byte *data) {
+void GfxPalette::modifyAmigaPalette(byte *data) {
 	int16 curColor, curPos = 0;
 	byte byte1, byte2;
 	for (curColor = 0; curColor < 16; curColor++) {
@@ -151,7 +151,7 @@ void SciPalette::modifyAmigaPalette(byte *data) {
 	_screen->setPalette(&_sysPalette);
 }
 
-void SciPalette::setEGA() {
+void GfxPalette::setEGA() {
 	int curColor;
 	byte color1, color2;
 
@@ -185,19 +185,7 @@ void SciPalette::setEGA() {
 	setOnScreen();
 }
 
-bool SciPalette::setFromResource(GuiResourceId resourceId, bool force) {
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
-	Palette palette;
-
-	if (palResource) {
-		createFromData(palResource->data, &palette);
-		set(&palette, true);
-		return true;
-	}
-	return false;
-}
-
-void SciPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
+void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 	if (force || sciPal->timestamp != systime) {
 		merge(sciPal, &_sysPalette, force, forceRealMerge);
@@ -207,7 +195,7 @@ void SciPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	}
 }
 
-void SciPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
+void GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
 
@@ -269,7 +257,7 @@ void SciPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 	pTo->timestamp = g_system->getMillis() * 60 / 1000;
 }
 
-uint16 SciPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {
+uint16 GfxPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {
 	byte found = 0xFF;
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
@@ -294,12 +282,12 @@ uint16 SciPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {
 	return found;
 }
 
-void SciPalette::getSys(Palette *pal) {
+void GfxPalette::getSys(Palette *pal) {
 	if (pal != &_sysPalette)
 		memcpy(pal, &_sysPalette,sizeof(Palette));
 }
 
-void SciPalette::setOnScreen() {
+void GfxPalette::setOnScreen() {
 //	if (pal != &_sysPalette)
 //		memcpy(&_sysPalette,pal,sizeof(Palette));
 	// We dont change palette at all times for amiga
@@ -308,28 +296,44 @@ void SciPalette::setOnScreen() {
 	_screen->setPalette(&_sysPalette);
 }
 
-void SciPalette::setFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
+	Palette palette;
+
+	if (palResource) {
+		createFromData(palResource->data, &palette);
+		set(&palette, true);
+		return true;
+	}
+	return false;
+}
+
+void GfxPalette::kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
 	uint16 colorNr;
 	for (colorNr = fromColor; colorNr < toColor; colorNr++) {
 		_sysPalette.colors[colorNr].used |= flag;
 	}
 }
 
-void SciPalette::unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+void GfxPalette::kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
 	uint16 colorNr;
 	for (colorNr = fromColor; colorNr < toColor; colorNr++) {
 		_sysPalette.colors[colorNr].used &= ~flag;
 	}
 }
 
-void SciPalette::setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
+void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
 	memset(&_sysPalette.intensity[0] + fromColor, intensity, toColor - fromColor);
 	if (setPalette)
 		setOnScreen();
 }
 
+int16 GfxPalette::kernelFind(uint16 r, uint16 g, uint16 b) {
+	return matchColor(&_sysPalette, r, g, b) & 0xFF;
+}
+
 // Returns true, if palette got changed
-bool SciPalette::animate(byte fromColor, byte toColor, int speed) {
+bool GfxPalette::kernelAnimate(byte fromColor, byte toColor, int speed) {
 	Color col;
 	//byte colorNr;
 	int16 colorCount;
@@ -381,6 +385,10 @@ bool SciPalette::animate(byte fromColor, byte toColor, int speed) {
 		}
 	}
 	return false;
+}
+
+void GfxPalette::kernelAnimateSet() {
+	setOnScreen();
 }
 
 // palVary

@@ -38,7 +38,7 @@ class Text;
 
 class GfxPorts {
 public:
-	GfxPorts(SegManager *segMan, Screen *screen);
+	GfxPorts(SegManager *segMan, GfxScreen *screen);
 	~GfxPorts();
 
 	void init(SciGui *gui, GfxPaint16 *paint16, Text *text, Common::String gameId);
@@ -97,7 +97,7 @@ private:
 	SegManager *_segMan;
 	SciGui *_gui;
 	GfxPaint16 *_paint16;
-	Screen *_screen;
+	GfxScreen *_screen;
 	Text *_text;
 
 	/** The list of open 'windows' (and ports), in visual order. */

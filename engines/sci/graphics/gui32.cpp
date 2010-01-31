@@ -44,7 +44,7 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor)
+SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, Cursor *cursor)
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
 	_cache = new GfxCache(_s->resMan, _screen, _palette);

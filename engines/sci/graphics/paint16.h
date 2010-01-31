@@ -41,7 +41,7 @@ class View;
 
 class GfxPaint16 {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, Screen *screen, SciPalette *palette);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette);
 	~GfxPaint16();
 
 	void init(Text *text);
@@ -74,8 +74,8 @@ private:
 	Kernel *_kernel;
 	GfxCache *_cache;
 	GfxPorts *_ports;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 	Text *_text;
 
 	// true means make EGA picture drawing visible

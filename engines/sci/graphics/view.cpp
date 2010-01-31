@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-View::View(ResourceManager *resMan, Screen *screen, SciPalette *palette, GuiResourceId resourceId)
+View::View(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);

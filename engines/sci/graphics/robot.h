@@ -33,7 +33,7 @@ namespace Sci {
 #ifdef ENABLE_SCI32
 class Robot {
 public:
-	Robot(ResourceManager *resMan, Screen *screen, GuiResourceId resourceId);
+	Robot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
 	~Robot();
 
 	void draw();
@@ -42,7 +42,7 @@ private:
 	void initData(GuiResourceId resourceId);
 
 	ResourceManager *_resMan;
-	Screen *_screen;
+	GfxScreen *_screen;
 
 	GuiResourceId _resourceId;
 	Resource *_resource;

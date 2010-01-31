@@ -36,7 +36,7 @@
 
 namespace Sci {
 
-GfxCache::GfxCache(ResourceManager *resMan, Screen *screen, SciPalette *palette)
+GfxCache::GfxCache(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette)
 	: _resMan(resMan), _screen(screen), _palette(palette) {
 }
 

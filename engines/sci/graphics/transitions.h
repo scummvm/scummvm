@@ -62,7 +62,7 @@ enum {
 class Screen;
 class Transitions {
 public:
-	Transitions(SciGui *gui, Screen *screen, SciPalette *palette, bool isVGA);
+	Transitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA);
 	~Transitions();
 
 	void setup(int16 number, bool blackoutFlag);
@@ -90,8 +90,8 @@ private:
 	void updateScreenAndWait(int msec);
 
 	SciGui *_gui;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 
 	bool _isVGA;
 	const GuiTransitionTranslateEntry *_translationTable;

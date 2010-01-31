@@ -44,7 +44,7 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
-GfxPorts::GfxPorts(SegManager *segMan, Screen *screen)
+GfxPorts::GfxPorts(SegManager *segMan, GfxScreen *screen)
 	: _segMan(segMan), _screen(screen) {
 }
 

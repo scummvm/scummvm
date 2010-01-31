@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, Screen *screen, SciPalette *palette, AudioPlayer *audio, Common::String resourceName)
+Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName)
 	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
 	init();
 }

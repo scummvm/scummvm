@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-Transitions::Transitions(SciGui *gui, Screen *screen, SciPalette *palette, bool isVGA)
+Transitions::Transitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA)
 	: _gui(gui), _screen(screen), _palette(palette), _isVGA(isVGA) {
 	init();
 }
@@ -292,7 +292,7 @@ void Transitions::fadeIn() {
 	int16 stepNr;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		_palette->setIntensity(1, 255, stepNr, true);
+		_palette->kernelSetIntensity(1, 255, stepNr, true);
 		_gui->wait(2);
 	}
 }

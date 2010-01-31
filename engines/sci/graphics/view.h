@@ -53,7 +53,7 @@ class SciPalette;
 
 class View {
 public:
-	View(ResourceManager *resMan, Screen *screen, SciPalette *palette, GuiResourceId resourceId);
+	View(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId);
 	~View();
 
 	GuiResourceId getResourceId();
@@ -76,8 +76,8 @@ private:
 	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 
 	GuiResourceId _resourceId;
 	Resource *_resource;

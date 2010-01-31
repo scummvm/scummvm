@@ -38,7 +38,7 @@ class SciPalette;
 
 class SciGuiPicture {
 public:
-	SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
+	SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
@@ -68,8 +68,8 @@ private:
 
 	ResourceManager *_resMan;
 	GfxPorts *_ports;
-	Screen *_screen;
-	SciPalette *_palette;
+	GfxScreen *_screen;
+	GfxPalette *_palette;
 
 	int16 _resourceId;
 	Resource *_resource;

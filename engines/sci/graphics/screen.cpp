@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) :
+GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) :
 	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
 
 	_pixels = _width * _height;
@@ -75,32 +75,32 @@ Screen::Screen(ResourceManager *resMan, int16 width, int16 height, bool upscaled
 	initGraphics(_displayWidth, _displayHeight, _displayWidth > 320);
 }
 
-Screen::~Screen() {
+GfxScreen::~GfxScreen() {
 	free(_visualScreen);
 	free(_priorityScreen);
 	free(_controlScreen);
 	free(_displayScreen);
 }
 
-void Screen::copyToScreen() {
+void GfxScreen::copyToScreen() {
 	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }
 
-void Screen::copyFromScreen(byte *buffer) {
+void GfxScreen::copyFromScreen(byte *buffer) {
 	Graphics::Surface *screen;
 	screen = g_system->lockScreen();
 	memcpy(buffer, screen->pixels, _displayWidth * _displayHeight);
 	g_system->unlockScreen();
 }
 
-void Screen::syncWithFramebuffer() {
+void GfxScreen::syncWithFramebuffer() {
 	Graphics::Surface *screen = g_system->lockScreen();
 
 	memcpy(_displayScreen, screen->pixels, _displayPixels);
 	g_system->unlockScreen();
 }
 
-void Screen::copyRectToScreen(const Common::Rect &rect) {
+void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
 	} else {
@@ -109,13 +109,13 @@ void Screen::copyRectToScreen(const Common::Rect &rect) {
 }
 
 // This copies a rect to screen w/o scaling adjustment and is only meant to be used on hires graphics used in upscaled hires mode
-void Screen::copyDisplayRectToScreen(const Common::Rect &rect) {
+void GfxScreen::copyDisplayRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)
 		error("copyDisplayRectToScreen: not in upscaled hires mode");
 	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
 }
 
-void Screen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
+void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
 	} else {
@@ -123,7 +123,7 @@ void Screen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	}
 }
 
-byte Screen::getDrawingMask(byte color, byte prio, byte control) {
+byte GfxScreen::getDrawingMask(byte color, byte prio, byte control) {
 	byte flag = 0;
 	if (color != 255)
 		flag |= SCI_SCREEN_MASK_VISUAL;
@@ -134,7 +134,7 @@ byte Screen::getDrawingMask(byte color, byte prio, byte control) {
 	return flag;
 }
 
-void Screen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
+void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
@@ -157,14 +157,14 @@ void Screen::putPixel(int x, int y, byte drawMask, byte color, byte priority, by
 
 // This will just change a pixel directly on displayscreen. Its supposed to get only used on upscaled-Hires games where
 //  hires content needs to get drawn ONTO the upscaled display screen (like japanese fonts, hires portraits, etc.)
-void Screen::putPixelOnDisplay(int x, int y, byte color) {
+void GfxScreen::putPixelOnDisplay(int x, int y, byte color) {
 	int offset = y * _displayWidth + x;
 	_displayScreen[offset] = color;
 }
 
 // Sierra's Bresenham line drawing
 // WARNING: Do not just blindly replace this with Graphics::drawLine(), as it seems to create issues with flood fill
-void Screen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
 	int16 left = startPoint.x;
 	int16 top = startPoint.y;
 	int16 right = endPoint.x;
@@ -226,19 +226,19 @@ void Screen::drawLine(Common::Point startPoint, Common::Point endPoint, byte col
 	}
 }
 
-byte Screen::getVisual(int x, int y) {
+byte GfxScreen::getVisual(int x, int y) {
 	return _visualScreen[y * _width + x];
 }
 
-byte Screen::getPriority(int x, int y) {
+byte GfxScreen::getPriority(int x, int y) {
 	return _priorityScreen[y * _width + x];
 }
 
-byte Screen::getControl(int x, int y) {
+byte GfxScreen::getControl(int x, int y) {
 	return _controlScreen[y * _width + x];
 }
 
-byte Screen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con) {
+byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con) {
 	int offset = y * _width + x;
 	byte match = 0;
 
@@ -251,7 +251,7 @@ byte Screen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t
 	return match;
 }
 
-int Screen::bitsGetDataSize(Common::Rect rect, byte mask) {
+int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
@@ -277,7 +277,7 @@ int Screen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	return byteCount;
 }
 
-void Screen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
+void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&rect, sizeof(rect)); memoryPtr += sizeof(rect);
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
@@ -298,7 +298,7 @@ void Screen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	}
 }
 
-void Screen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr) {
+void GfxScreen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr) {
 	int width = rect.width();
 	int y;
 
@@ -310,7 +310,7 @@ void Screen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth,
 	}
 }
 
-void Screen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
+void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	byte *screen = _displayScreen;
 	int width = rect.width();
 	int y;
@@ -329,11 +329,11 @@ void Screen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void Screen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
+void GfxScreen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
 	memcpy((void *)destRect, memoryPtr, sizeof(Common::Rect));
 }
 
-void Screen::bitsRestore(byte *memoryPtr) {
+void GfxScreen::bitsRestore(byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
 
@@ -357,7 +357,7 @@ void Screen::bitsRestore(byte *memoryPtr) {
 	}
 }
 
-void Screen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen, uint16 screenWidth) {
+void GfxScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen, uint16 screenWidth) {
 	int width = rect.width();
 	int y;
 
@@ -369,7 +369,7 @@ void Screen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen
 	}
 }
 
-void Screen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
+void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	byte *screen = _displayScreen;
 	int width = rect.width();
 	int y;
@@ -388,7 +388,7 @@ void Screen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void Screen::setPalette(Palette*pal) {
+void GfxScreen::setPalette(Palette*pal) {
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back
@@ -404,14 +404,14 @@ void Screen::setPalette(Palette*pal) {
 	g_system->setPalette(bpal, 0, 256);
 }
 
-void Screen::setVerticalShakePos(uint16 shakePos) {
+void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 	if (!_upscaledHires)
 		g_system->setShakePos(shakePos);
 	else
 		g_system->setShakePos(shakePos * 2);
 }
 
-void Screen::dither(bool addToFlag) {
+void GfxScreen::dither(bool addToFlag) {
 	int y, x;
 	byte color, ditheredColor;
 	byte *visualPtr = _visualScreen;
@@ -477,18 +477,18 @@ void Screen::dither(bool addToFlag) {
 	}
 }
 
-void Screen::unditherSetState(bool flag) {
+void GfxScreen::unditherSetState(bool flag) {
 	_unditherState = flag;
 }
 
-int16 *Screen::unditherGetMemorial() {
+int16 *GfxScreen::unditherGetMemorial() {
 	if (_unditherState)
 		return (int16 *)&_unditherMemorial;
 	else
 		return NULL;
 }
 
-void Screen::debugShowMap(int mapNo) {
+void GfxScreen::debugShowMap(int mapNo) {
 	// We cannot really support changing maps when in upscaledHires mode
 	if (_upscaledHires)
 		return;
@@ -510,7 +510,7 @@ void Screen::debugShowMap(int mapNo) {
 	copyToScreen();
 }
 
-void Screen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
+void GfxScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
 	int newWidth = srcWidth * 2;
 	byte *srcPtr = src;
 

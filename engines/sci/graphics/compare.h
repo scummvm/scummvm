@@ -36,7 +36,7 @@ class Screen;
 
 class GfxCompare {
 public:
-	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, Screen *screen);
+	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen);
 	~GfxCompare();
 
 	uint16 onControl(uint16 screenMask, Common::Rect rect);
@@ -47,7 +47,7 @@ private:
 	SegManager *_segMan;
 	Kernel *_kernel;
 	GfxCache *_cache;
-	Screen *_screen;
+	GfxScreen *_screen;
 };
 
 } // End of namespace Sci

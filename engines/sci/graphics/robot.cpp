@@ -31,7 +31,7 @@
 namespace Sci {
 
 #ifdef ENABLE_SCI32
-Robot::Robot(ResourceManager *resMan, Screen *screen, GuiResourceId resourceId)
+Robot::Robot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
