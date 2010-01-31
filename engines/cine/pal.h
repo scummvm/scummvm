@@ -132,7 +132,7 @@ public:
 	 * \param rotationAmount Amount to rotate the sub-palette to the right. Only values 0 and 1 are currently supported!
 	 */
 	Palette &rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount = 1);
-	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b) const;
+	Palette &saturatedAddColor(Palette &output, byte firstIndex, byte lastIndex, signed r, signed g, signed b) const;
 
 	/*! \brief Saturated add an RGB color in given color format to current palette's subset and save the modified colors in the given output palette.
 	 * \param output The output palette (Only this palette is modified)
@@ -145,7 +145,7 @@ public:
 	 * \note This function basically converts the given color to the palette's internal color format
 	 * and adds that using the normal saturatedAddColor-function.
 	 */
-	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) const;
+	Palette &saturatedAddColor(Palette &output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) const;
 
 	/*! \brief Saturated add a normalized gray value to current palette's subset and save the modified colors in the given output palette.
 	 * \param output The output palette (Only this palette is modified)
@@ -156,7 +156,7 @@ public:
 	 * \note The normalized gray value (i.e. in range [-1, +1]) is given as a fractional number
 	 * (i.e. the normalized gray value is calculated by dividing grayDividend by grayDenominator).
 	 */
-	Palette &saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, signed grayDividend, signed grayDenominator) const;
+	Palette &saturatedAddNormalizedGray(Palette &output, byte firstIndex, byte lastIndex, signed grayDividend, signed grayDenominator) const;
 
 	bool empty() const;
 	uint colorCount() const;
@@ -186,7 +186,7 @@ public:
 
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
-	Cine::Palette::Color &saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
+	Color &saturatedAddColor(Color baseColor, signed r, signed g, signed b) const;
 
 private:
 	Graphics::PixelFormat _format; ///< The used source color format
