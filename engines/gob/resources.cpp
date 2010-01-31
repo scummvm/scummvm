@@ -159,6 +159,16 @@ bool Resources::load(const Common::String &fileName) {
 	bool hasTOTRes = loadTOTResourceTable();
 	bool hasEXTRes = loadEXTResourceTable();
 
+	if (!hasTOTRes) {
+		delete _totResourceTable;
+		_totResourceTable = 0;
+	}
+
+	if (!hasEXTRes) {
+		delete _extResourceTable;
+		_extResourceTable = 0;
+	}
+
 	if (!hasTOTRes && !hasEXTRes)
 		return false;
 
@@ -610,9 +620,10 @@ bool Resources::dumpResource(const Resource &resource, uint16 id,
 }
 
 Resource *Resources::getTOTResource(uint16 id) const {
-	if (id >= _totResourceTable->itemsCount) {
+	if (!_totResourceTable || (id >= _totResourceTable->itemsCount)) {
 		warning("Trying to load non-existent TOT resource (%s, %d/%d)",
-				_totFile.c_str(), id, _totResourceTable->itemsCount - 1);
+				_totFile.c_str(), id,
+				_totResourceTable ? (_totResourceTable->itemsCount - 1) : -1);
 		return 0;
 	}
 
@@ -643,7 +654,7 @@ Resource *Resources::getEXTResource(uint16 id) const {
 		return 0;
 	}
 
-	assert(_totResourceTable->items);
+	assert(_extResourceTable->items);
 
 	EXTResourceItem &extItem = _extResourceTable->items[id];
 
