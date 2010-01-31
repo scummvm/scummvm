@@ -58,7 +58,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
 	_s->_gfxAnimate = _animate;
-	_text = new Text(_s->resMan, _ports, _paint16, _screen);
+	_text = new Text(_s->resMan, _cache, _ports, _paint16, _screen);
 	_controls = new Controls(_s->_segMan, _ports, _paint16, _text);
 	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text, _screen, _cursor);
 }

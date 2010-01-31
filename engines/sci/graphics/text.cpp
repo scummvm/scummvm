@@ -29,6 +29,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
@@ -36,8 +37,8 @@
 
 namespace Sci {
 
-Text::Text(ResourceManager *resMan, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
-	: _resMan(resMan), _ports(ports), _paint16(paint16), _screen(screen) {
+Text::Text(ResourceManager *resMan, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
+	: _resMan(resMan), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen) {
 	init();
 }
 
@@ -58,19 +59,15 @@ GuiResourceId Text::GetFontId() {
 }
 
 Font *Text::GetFont() {
-	if ((_font == NULL) || (_font->getResourceId() != _ports->_curPort->fontId)) {
-		delete _font;
-		_font = new Font(_resMan, _screen, _ports->_curPort->fontId);
-	}
+	if ((_font == NULL) || (_font->getResourceId() != _ports->_curPort->fontId))
+		_font = _cache->getFont(_ports->_curPort->fontId);
 
 	return _font;
 }
 
 void Text::SetFont(GuiResourceId fontId) {
-	if ((_font == NULL) || (_font->getResourceId() != fontId)) {
-		delete _font;
-		_font = new Font(_resMan, _screen, fontId);
-	}
+	if ((_font == NULL) || (_font->getResourceId() != fontId))
+		_font = _cache->getFont(fontId);
 
 	_ports->_curPort->fontId = _font->getResourceId();
 	_ports->_curPort->fontHeight = _font->getHeight();

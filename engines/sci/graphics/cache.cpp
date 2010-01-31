@@ -41,10 +41,20 @@ GfxCache::GfxCache(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palet
 }
 
 GfxCache::~GfxCache() {
-	purgeCache();
+	purgeFontCache();
+	purgeViewCache();
 }
 
-void GfxCache::purgeCache() {
+void GfxCache::purgeFontCache() {
+	for (FontCache::iterator iter = _cachedFonts.begin(); iter != _cachedFonts.end(); ++iter) {
+		delete iter->_value;
+		iter->_value = 0;
+	}
+
+	_cachedFonts.clear();
+}
+
+void GfxCache::purgeViewCache() {
 	for (ViewCache::iterator iter = _cachedViews.begin(); iter != _cachedViews.end(); ++iter) {
 		delete iter->_value;
 		iter->_value = 0;
@@ -53,9 +63,19 @@ void GfxCache::purgeCache() {
 	_cachedViews.clear();
 }
 
+Font *GfxCache::getFont(GuiResourceId fontId) {
+	if (_cachedFonts.size() >= MAX_CACHED_FONTS)
+		purgeFontCache();
+
+	if (!_cachedViews.contains(fontId))
+		_cachedFonts[fontId] = new Font(_resMan, _screen, fontId);
+
+	return _cachedFonts[fontId];
+}
+
 View *GfxCache::getView(GuiResourceId viewId) {
 	if (_cachedViews.size() >= MAX_CACHED_VIEWS)
-		purgeCache();
+		purgeViewCache();
 
 	if (!_cachedViews.contains(viewId))
 		_cachedViews[viewId] = new View(_resMan, _screen, _palette, viewId);
