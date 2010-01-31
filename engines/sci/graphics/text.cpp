@@ -105,23 +105,6 @@ void Text::ClearChar(int16 chr) {
 	_paint16->eraseRect(rect);
 }
 
-void Text::DrawChar(int16 chr) {
-	chr = chr & 0xFF;
-	ClearChar(chr);
-	StdChar(chr);
-	_ports->_curPort->curLeft += GetFont()->getCharWidth(chr);
-}
-
-void Text::StdChar(int16 chr) {
-#if 0
-	CResFont*res = getResFont();
-	if (res)
-		res->Draw(chr, _curPort->top + _curPort->curTop, _curPort->left
-				+ _curPort->curLeft, _vSeg, 320, _curPort->penClr,
-				_curPort->textFace);
-#endif
-}
-
 // This internal function gets called as soon as a '|' is found in a text
 //  It will process the encountered code and set new font/set color
 //  We only support one-digit codes currently, don't know if multi-digit codes are possible
