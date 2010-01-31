@@ -270,6 +270,7 @@ public:
 	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
 
 	void setAudioLanguage(int language);
+	int getAudioLanguage() const { return (_audioMapSCI1 ? _audioMapSCI1->volume_number : 0); }
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
 	bool isAmiga32color() const { return _viewType == kViewAmiga; }
 	ViewType getViewType() const { return _viewType; }

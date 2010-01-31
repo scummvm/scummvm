@@ -143,8 +143,14 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		// In SCI1.1: tests for digital audio support
 		if (getSciVersion() == SCI_VERSION_1_1)
 			return make_reg(0, 1);
-		else
-			s->resMan->setAudioLanguage(argv[1].toSint16());
+		else {
+			int16 language = argv[1].toSint16();
+
+			if (language != -1)
+				s->resMan->setAudioLanguage(language);
+
+			return make_reg(0, s->resMan->getAudioLanguage());
+		}
 		break;
 	case kSciAudioCD:
 		return kDoCdAudio(s, argc - 1, argv + 1);
