@@ -2986,6 +2986,9 @@ int Console::printObject(reg_t pos) {
 		reg_t val = obj->getVariable(i);
 		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
+		if (!val.segment)
+			DebugPrintf(" (%d)", val.offset);
+
 		Object *ref = s->_segMan->getObject(val);
 		if (ref)
 			DebugPrintf(" (%s)", s->_segMan->getObjectName(val));
