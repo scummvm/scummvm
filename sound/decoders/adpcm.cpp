@@ -54,7 +54,7 @@ protected:
 		int16 sample2;
 	};
 
-	struct adpcmStatus {
+	struct {
 		// OKI/IMA
 		struct {
 			int32 last;
@@ -159,6 +159,35 @@ int Oki_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	}
 	return samples;
 }
+
+static const int16 okiStepSize[49] = {
+	   16,   17,   19,   21,   23,   25,   28,   31,
+	   34,   37,   41,   45,   50,   55,   60,   66,
+	   73,   80,   88,   97,  107,  118,  130,  143,
+	  157,  173,  190,  209,  230,  253,  279,  307,
+	  337,  371,  408,  449,  494,  544,  598,  658,
+	  724,  796,  876,  963, 1060, 1166, 1282, 1411,
+	 1552
+};
+
+// Decode Linear to ADPCM
+int16 Oki_ADPCMStream::decodeOKI(byte code) {
+	int16 diff, E, samp;
+
+	E = (2 * (code & 0x7) + 1) * okiStepSize[_status.ima_ch[0].stepIndex] / 8;
+	diff = (code & 0x08) ? -E : E;
+	samp = _status.ima_ch[0].last + diff;
+	// Clip the values to +/- 2^11 (supposed to be 12 bits)
+	samp = CLIP<int16>(samp, -2048, 2047);
+
+	_status.ima_ch[0].last = samp;
+	_status.ima_ch[0].stepIndex += stepAdjust(code);
+	_status.ima_ch[0].stepIndex = CLIP<int32>(_status.ima_ch[0].stepIndex, 0, ARRAYSIZE(okiStepSize) - 1);
+
+	// * 16 effectively converts 12-bit input to 16-bit output
+	return samp * 16;
+}
+
 
 #pragma mark -
 
@@ -355,6 +384,12 @@ static const int MSADPCMAdaptCoeff2[] = {
 	0, -256, 0, 64, 0, -208, -232
 };
 
+static const int MSADPCMAdaptationTable[] = {
+	230, 230, 230, 230, 307, 409, 512, 614,
+	768, 614, 512, 409, 307, 230, 230, 230
+};
+
+
 class MS_ADPCMStream : public ADPCMStream {
 public:
 	MS_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
@@ -368,6 +403,24 @@ public:
 protected:
 	int16 decodeMS(ADPCMChannelStatus *c, byte);
 };
+
+int16 MS_ADPCMStream::decodeMS(ADPCMChannelStatus *c, byte code) {
+	int32 predictor;
+
+	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
+	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
+
+	predictor = CLIP<int32>(predictor, -32768, 32767);
+
+	c->sample2 = c->sample1;
+	c->sample1 = predictor;
+	c->delta = (MSADPCMAdaptationTable[(int)code] * c->delta) >> 8;
+
+	if (c->delta < 16)
+		c->delta = 16;
+
+	return (int16)predictor;
+}
 
 int MS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples;
@@ -410,6 +463,7 @@ int MS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	return samples;
 }
+
 
 
 #pragma mark -
@@ -462,6 +516,19 @@ void Tinsel_ADPCMStream::readBufferTinselHeader() {
 
 	_status.K0 = TinselFilterTable[filterVal][0];
 	_status.K1 = TinselFilterTable[filterVal][1];
+}
+
+int16 Tinsel_ADPCMStream::decodeTinsel(int16 code, double eVal) {
+	double sample;
+
+	sample = (double) code;
+	sample *= eVal * _status.predictor;
+	sample += (_status.d0 * _status.K0) + (_status.d1 * _status.K1);
+
+	_status.d1 = _status.d0;
+	_status.d0 = sample;
+
+	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
 }
 
 class Tinsel4_ADPCMStream : public Tinsel_ADPCMStream {
@@ -585,63 +652,11 @@ int Tinsel8_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 #pragma mark -
 
 
-static const int MSADPCMAdaptationTable[] = {
-	230, 230, 230, 230, 307, 409, 512, 614,
-	768, 614, 512, 409, 307, 230, 230, 230
-};
-
-
-int16 MS_ADPCMStream::decodeMS(ADPCMChannelStatus *c, byte code) {
-	int32 predictor;
-
-	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
-	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
-
-	predictor = CLIP<int32>(predictor, -32768, 32767);
-
-	c->sample2 = c->sample1;
-	c->sample1 = predictor;
-	c->delta = (MSADPCMAdaptationTable[(int)code] * c->delta) >> 8;
-
-	if (c->delta < 16)
-		c->delta = 16;
-
-	return (int16)predictor;
-}
-
 // adjust the step for use on the next sample.
 int16 ADPCMStream::stepAdjust(byte code) {
 	static const int16 adjusts[] = {-1, -1, -1, -1, 2, 4, 6, 8};
 
 	return adjusts[code & 0x07];
-}
-
-static const int16 okiStepSize[49] = {
-	   16,   17,   19,   21,   23,   25,   28,   31,
-	   34,   37,   41,   45,   50,   55,   60,   66,
-	   73,   80,   88,   97,  107,  118,  130,  143,
-	  157,  173,  190,  209,  230,  253,  279,  307,
-	  337,  371,  408,  449,  494,  544,  598,  658,
-	  724,  796,  876,  963, 1060, 1166, 1282, 1411,
-	 1552
-};
-
-// Decode Linear to ADPCM
-int16 Oki_ADPCMStream::decodeOKI(byte code) {
-	int16 diff, E, samp;
-
-	E = (2 * (code & 0x7) + 1) * okiStepSize[_status.ima_ch[0].stepIndex] / 8;
-	diff = (code & 0x08) ? -E : E;
-	samp = _status.ima_ch[0].last + diff;
-	// Clip the values to +/- 2^11 (supposed to be 12 bits)
-	samp = CLIP<int16>(samp, -2048, 2047);
-
-	_status.ima_ch[0].last = samp;
-	_status.ima_ch[0].stepIndex += stepAdjust(code);
-	_status.ima_ch[0].stepIndex = CLIP<int32>(_status.ima_ch[0].stepIndex, 0, ARRAYSIZE(okiStepSize) - 1);
-
-	// * 16 effectively converts 12-bit input to 16-bit output
-	return samp * 16;
 }
 
 static const uint16 imaStepTable[89] = {
@@ -669,19 +684,6 @@ int16 ADPCMStream::decodeIMA(byte code, int channel) {
 	_status.ima_ch[channel].stepIndex = CLIP<int32>(_status.ima_ch[channel].stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
 
 	return samp;
-}
-
-int16 Tinsel_ADPCMStream::decodeTinsel(int16 code, double eVal) {
-	double sample;
-
-	sample = (double) code;
-	sample *= eVal * _status.predictor;
-	sample += (_status.d0 * _status.K0) + (_status.d1 * _status.K1);
-
-	_status.d1 = _status.d0;
-	_status.d0 = sample;
-
-	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
 }
 
 RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
