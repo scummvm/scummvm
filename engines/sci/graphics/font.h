@@ -32,7 +32,7 @@ namespace Sci {
 
 class Font {
 public:
-	Font(ResourceManager *resMan, GuiResourceId resourceId);
+	Font(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
 	~Font();
 
 	GuiResourceId getResourceId();
@@ -40,10 +40,11 @@ public:
 	byte getCharWidth(byte chr);
 	byte getCharHeight(byte chr);
 	byte *getCharData(byte chr);
-	void draw(GfxScreen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput);
+	void draw(int16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 
 private:
 	ResourceManager *_resMan;
+	GfxScreen *_screen;
 
 	Resource *_resource;
 	GuiResourceId _resourceId;

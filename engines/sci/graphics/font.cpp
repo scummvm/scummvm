@@ -30,8 +30,8 @@
 
 namespace Sci {
 
-Font::Font(ResourceManager *resMan, GuiResourceId resourceId)
-	: _resourceId(resourceId), _resMan(resMan) {
+Font::Font(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
+	: _resourceId(resourceId), _screen(screen), _resMan(resMan) {
 	assert(resourceId != -1);
 
 	// Workaround: lsl1sci mixes its own internal fonts with the global
@@ -78,9 +78,9 @@ byte *Font::getCharData(byte chr) {
 	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;
 }
 
-void Font::draw(GfxScreen *screen, int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
-	int charWidth = MIN<int>(getCharWidth(chr), screen->getWidth() - left);
-	int charHeight = MIN<int>(getCharHeight(chr), screen->getHeight() - top);
+void Font::draw(int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
+	int charWidth = MIN<int>(getCharWidth(chr), _screen->getWidth() - left);
+	int charHeight = MIN<int>(getCharHeight(chr), _screen->getHeight() - top);
 	byte b = 0, mask = 0xFF;
 	int y = top;
 
@@ -92,7 +92,7 @@ void Font::draw(GfxScreen *screen, int16 chr, int16 top, int16 left, byte color,
 			if ((done & 7) == 0) // fetching next data byte
 				b = *(pIn++) & mask;
 			if (b & 0x80) // if MSB is set - paint it
-				screen->putPixel(left + done, y, 1, color, 0, 0);
+				_screen->putPixel(left + done, y, 1, color, 0, 0);
 			b = b << 1;
 		}
 	}

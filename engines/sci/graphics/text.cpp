@@ -60,7 +60,7 @@ GuiResourceId Text::GetFontId() {
 Font *Text::GetFont() {
 	if ((_font == NULL) || (_font->getResourceId() != _ports->_curPort->fontId)) {
 		delete _font;
-		_font = new Font(_resMan, _ports->_curPort->fontId);
+		_font = new Font(_resMan, _screen, _ports->_curPort->fontId);
 	}
 
 	return _font;
@@ -69,7 +69,7 @@ Font *Text::GetFont() {
 void Text::SetFont(GuiResourceId fontId) {
 	if ((_font == NULL) || (_font->getResourceId() != fontId)) {
 		delete _font;
-		_font = new Font(_resMan, fontId);
+		_font = new Font(_resMan, _screen, fontId);
 	}
 
 	_ports->_curPort->fontId = _font->getResourceId();
@@ -336,7 +336,7 @@ void Text::Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId
 				_paint16->eraseRect(rect);
 			}
 			// CharStd
-			_font->draw(_screen, curChar, _ports->_curPort->top + _ports->_curPort->curTop, _ports->_curPort->left + _ports->_curPort->curLeft, _ports->_curPort->penClr, _ports->_curPort->greyedOutput);
+			_font->draw(curChar, _ports->_curPort->top + _ports->_curPort->curTop, _ports->_curPort->left + _ports->_curPort->curLeft, _ports->_curPort->penClr, _ports->_curPort->greyedOutput);
 			_ports->_curPort->curLeft += charWidth;
 		}
 	}
