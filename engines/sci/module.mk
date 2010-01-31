@@ -36,7 +36,7 @@ MODULE_OBJS := \
 	graphics/gui.o \
 	graphics/ports.o \
 	graphics/paint16.o \
-	graphics/compare.o \
+	graphics/cache.o \
 	graphics/animate.o \
 	graphics/compare.o \
 	graphics/controls.o \
