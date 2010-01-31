@@ -1410,16 +1410,23 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 }
 
 // AUDIOnnn.MAP contains 10-byte entries:
+// Early format:
+// w 5 bits resource type and 11 bits resource number
+// dw 7 bits volume number and 25 bits offset
+// dw size
+// Later format:
 // w nEntry
 // dw offset+volume (as in resource.map)
 // dw size
 // ending with 10 0xFFs
-
 int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 	Common::File file;
 
 	if (!file.open(map->location_name))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
+
+	bool oldFormat = (file.readUint16LE() >> 11) == kResourceTypeAudio;
+	file.seek(0);
 
 	while (1) {
 		uint16 n = file.readUint16LE();
@@ -1434,8 +1441,16 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 		if (n == 0xffff)
 			break;
 
-		byte volume_nr = offset >> 28; // most significant 4 bits
-		offset &= 0x0fffffff; // least significant 28 bits
+		byte volume_nr;
+
+		if (oldFormat) {
+			n &= 0x07ff; // Mask out resource type
+			volume_nr = offset >> 25; // most significant 7 bits
+			offset &= 0x01ffffff; // least significant 25 bits
+		} else {
+			volume_nr = offset >> 28; // most significant 4 bits
+			offset &= 0x0fffffff; // least significant 28 bits
+		}
 
 		ResourceSource *src = getVolume(map, volume_nr);
 
