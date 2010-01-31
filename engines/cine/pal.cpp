@@ -244,7 +244,7 @@ Palette &Palette::saturatedAddColor(Palette &output, byte firstIndex, byte lastI
 		// For more information about this gcc specific problem, you can read up on the following bug
 		// report: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36043
 		const Color src = _colors[i];
-		output._colors[i] = saturatedAddColor(src, r, g, b);
+		saturatedAddColor(output._colors[i], src, r, g, b);
 	}
 
 	return output;
@@ -269,12 +269,10 @@ Palette &Palette::saturatedAddNormalizedGray(Palette &output, byte firstIndex, b
 }
 
 // a.k.a. transformColor
-Palette::Color &Palette::saturatedAddColor(Color baseColor, signed r, signed g, signed b) const {
-	Cine::Palette::Color result;
+void Palette::saturatedAddColor(Color &result, Color baseColor, signed r, signed g, signed b) const {
 	result.r = CLIP<int>(baseColor.r + r, 0, _format.rMax());
 	result.g = CLIP<int>(baseColor.g + g, 0, _format.gMax());
 	result.b = CLIP<int>(baseColor.b + b, 0, _format.bMax());
-	return result;
 }
 
 Palette::Palette(const Graphics::PixelFormat format, const uint numColors) : _format(format), _colors() {

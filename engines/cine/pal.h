@@ -186,7 +186,12 @@ public:
 
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
-	Color &saturatedAddColor(Color baseColor, signed r, signed g, signed b) const;
+
+	// WORKAROUND: Using a reference to a result here instead of returning an Color object.
+	// This is needed because when using a Color as return value, this would crash Chrilith's
+	// compiler for PalmOS.
+	// TODO: Add more information about the compiler.
+	void saturatedAddColor(Color &result, Color baseColor, signed r, signed g, signed b) const;
 
 private:
 	Graphics::PixelFormat _format; ///< The used source color format
