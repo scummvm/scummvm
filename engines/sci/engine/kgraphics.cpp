@@ -973,7 +973,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		if (argv[0].isNull())
 			return s->r_acc;
-		s->_gui->addToPicList(argv[0], argc, argv);
+		s->_gfxAnimate->kernelAddToPicList(argv[0], argc, argv);
 		break;
 	case 7:
 		viewId = argv[0].toUint16();
@@ -983,7 +983,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 		topPos = argv[4].toSint16();
 		priority = argv[5].toSint16();
 		control = argv[6].toSint16();
-		s->_gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+		s->_gfxAnimate->kernelAddToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 		break;
 	default:
 		error("kAddToPic with unsupported parameter count %d", argc);
@@ -1102,7 +1102,7 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// Take care of incoming events (kAnimate is called semi-regularly)
 	process_sound_events(s);
 #endif
-	s->_gui->animate(castListReference, cycle, argc, argv);
+	s->_gfxAnimate->kernelAnimate(castListReference, cycle, argc, argv);
 
 	return s->r_acc;
 }

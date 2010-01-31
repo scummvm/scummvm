@@ -32,6 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/cursor.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/view.h"
@@ -41,17 +42,17 @@
 
 namespace Sci {
 
-SciGuiAnimate::SciGuiAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen, SciPalette *palette)
-	: _s(state), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette) {
+GfxAnimate::GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen, SciPalette *palette, Cursor *cursor, Transitions *transitions)
+	: _s(state), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
 	init();
 }
 
-SciGuiAnimate::~SciGuiAnimate() {
+GfxAnimate::~GfxAnimate() {
 	free(_listData);
 	free(_lastCastData);
 }
 
-void SciGuiAnimate::init() {
+void GfxAnimate::init() {
 	_listData = NULL;
 	_listCount = 0;
 	_lastCastData = NULL;
@@ -67,11 +68,11 @@ void SciGuiAnimate::init() {
 		_ignoreFastCast = true;
 }
 
-void SciGuiAnimate::disposeLastCast() {
+void GfxAnimate::disposeLastCast() {
 	_lastCastCount = 0;
 }
 
-bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
+bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
@@ -108,7 +109,7 @@ bool sortHelper(const AnimateEntry* entry1, const AnimateEntry* entry2) {
 	return (entry1->y == entry2->y) ? (entry1->z < entry2->z) : (entry1->y < entry2->y);
 }
 
-void SciGuiAnimate::makeSortedList(List *list) {
+void GfxAnimate::makeSortedList(List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
@@ -199,7 +200,7 @@ void SciGuiAnimate::makeSortedList(List *list) {
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
-void SciGuiAnimate::fill(byte &old_picNotValid) {
+void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	uint16 signal;
@@ -262,7 +263,7 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 	}
 }
 
-void SciGuiAnimate::update() {
+void GfxAnimate::update() {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	uint16 signal;
@@ -367,7 +368,7 @@ void SciGuiAnimate::update() {
 	}
 }
 
-void SciGuiAnimate::drawCels() {
+void GfxAnimate::drawCels() {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	AnimateEntry *lastCastEntry = _lastCastData;
@@ -405,7 +406,7 @@ void SciGuiAnimate::drawCels() {
 	}
 }
 
-void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
+void GfxAnimate::updateScreen(byte oldPicNotValid) {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	uint16 signal;
@@ -454,7 +455,7 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 	// _screen->copyToScreen();
 }
 
-void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
+void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	uint16 signal;
@@ -495,7 +496,7 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	}
 }
 
-void SciGuiAnimate::reAnimate(Common::Rect rect) {
+void GfxAnimate::reAnimate(Common::Rect rect) {
 	AnimateEntry *lastCastEntry;
 	uint16 lastCastCount;
 
@@ -542,7 +543,7 @@ void SciGuiAnimate::reAnimate(Common::Rect rect) {
 	*/
 }
 
-void SciGuiAnimate::addToPicDrawCels() {
+void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	View *view = NULL;
@@ -574,13 +575,104 @@ void SciGuiAnimate::addToPicDrawCels() {
 	}
 }
 
-void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	View *view = _cache->getView(viewId);
 	Common::Rect celRect;
 
 	// Create rect according to coordinates and given cel
 	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
 	_paint16->drawCel(view, loopNo, celNo, celRect, priority, 0);
+}
+
+
+void GfxAnimate::animateShowPic() {
+	Port *picPort = _ports->_picWind;
+	Common::Rect picRect = picPort->rect;
+	bool previousCursorState = _cursor->isVisible();
+
+	if (previousCursorState)
+		_cursor->hide();
+	// Adjust picRect to become relative to screen
+	picRect.translate(picPort->left, picPort->top);
+	_transitions->doit(picRect);
+	if (previousCursorState)
+		_cursor->show();
+
+	// We set SCI1.1 priority band information here
+	_ports->priorityBandsRecall();
+}
+
+void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
+	byte old_picNotValid = _screen->_picNotValid;
+
+	if (listReference.isNull()) {
+		disposeLastCast();
+		if (_screen->_picNotValid)
+			animateShowPic();
+		return;
+	}
+
+	List *list = _s->_segMan->lookupList(listReference);
+	if (!list)
+		error("kAnimate called with non-list as parameter");
+
+	if (cycle) {
+		if (!invoke(list, argc, argv))
+			return;
+	}
+
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
+	disposeLastCast();
+
+	makeSortedList(list);
+	fill(old_picNotValid);
+
+	if (old_picNotValid) {
+		_ports->beginUpdate(_ports->_picWind);
+		update();
+		_ports->endUpdate(_ports->_picWind);
+	}
+
+	drawCels();
+
+	if (_screen->_picNotValid)
+		animateShowPic();
+
+	updateScreen(old_picNotValid);
+	restoreAndDelete(argc, argv);
+
+	if (getLastCastCount() > 1)
+		_s->_throttleTrigger = true;
+
+	_ports->setPort(oldPort);
+}
+
+void GfxAnimate::addToPicSetPicNotValid() {
+	if (getSciVersion() <= SCI_VERSION_1_EARLY)
+		_screen->_picNotValid = 1;
+	else
+		_screen->_picNotValid = 2;
+}
+
+void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) {
+	List *list;
+
+	_ports->setPort((Port *)_ports->_picWind);
+
+	list = _s->_segMan->lookupList(listReference);
+	if (!list)
+		error("kAddToPic called with non-list as parameter");
+
+	makeSortedList(list);
+	addToPicDrawCels();
+
+	addToPicSetPicNotValid();
+}
+
+void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+	_ports->setPort((Port *)_ports->_picWind);
+	addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+	addToPicSetPicNotValid();
 }
 
 } // End of namespace Sci

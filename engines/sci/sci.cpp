@@ -172,6 +172,7 @@ Common::Error SciEngine::run() {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		_gamestate->_gfxPorts = 0;
+		_gamestate->_gfxAnimate = 0;
 		_gamestate->_gui = 0;
 		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cursor);
 	} else {
@@ -183,6 +184,7 @@ Common::Error SciEngine::run() {
 	_gamestate->_ports = new GfxPorts(_segMan, _screen);
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
 #endif
+	_gamestate->_screen = screen;
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");

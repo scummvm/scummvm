@@ -123,10 +123,6 @@ public:
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
 	virtual uint16 onControl(byte screenMask, Common::Rect rect);
-	virtual void animateShowPic();
-	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
-	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
-	virtual void addToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 	virtual bool canBeHere(reg_t curObject, reg_t listReference);
 	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
@@ -177,13 +173,12 @@ protected:
 
 private:
 	virtual void initPriorityBands();
-	virtual void addToPicSetPicNotValid();
 	virtual int getControlPicNotValid();
 	static void palVaryCallback(void *refCon);
 	void doPalVary();
 
 	AudioPlayer *_audio;
-	SciGuiAnimate *_animate;
+	GfxAnimate *_animate;
 	Controls *_controls;
 	Menu *_menu;
 	Text *_text;

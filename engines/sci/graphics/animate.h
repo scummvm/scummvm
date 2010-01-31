@@ -62,10 +62,10 @@ class GfxPaint16;
 class Screen;
 class SciPalette;
 class Transitions;
-class SciGuiAnimate {
+class GfxAnimate {
 public:
-	SciGuiAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen, SciPalette *palette);
-	~SciGuiAnimate();
+	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen, SciPalette *palette, Cursor *cursor, Transitions *transitions);
+	~GfxAnimate();
 
 	// FIXME: Don't store EngineState
 	void resetEngineState(EngineState *newState) { _s = newState; }
@@ -84,8 +84,15 @@ public:
 
 	uint16 getLastCastCount() { return _lastCastCount; };
 
+	virtual void kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv);
+	virtual void kernelAddToPicList(reg_t listReference, int argc, reg_t *argv);
+	virtual void kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+
 private:
 	void init();
+
+	void addToPicSetPicNotValid();
+	void animateShowPic();
 
 	EngineState *_s;
 	GfxCache *_cache;
@@ -93,6 +100,8 @@ private:
 	GfxPaint16 *_paint16;
 	Screen *_screen;
 	SciPalette *_palette;
+	Cursor *_cursor;
+	Transitions *_transitions;
 
 	uint16 _listCount;
 	AnimateEntry *_listData;

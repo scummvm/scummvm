@@ -45,6 +45,7 @@
 #include "sci/graphics/gui.h"
 #include "sci/graphics/gui32.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/screen.h"
 
 #include "sci/parser/vocabulary.h"
 
@@ -1073,7 +1074,7 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 	uint16 resourceId = atoi(argv[1]);
 
 	_vm->_gamestate->_gui->drawPicture(resourceId, 100, false, false, false, 0);
-	_vm->_gamestate->_gui->animateShowPic();
+	_vm->_gamestate->_screen->copyToScreen();
 	return true;
 }
 

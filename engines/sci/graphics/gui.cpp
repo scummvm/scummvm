@@ -57,7 +57,8 @@ SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette);
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
-	_animate = new SciGuiAnimate(_s, _cache, _ports, _paint16, _screen, _palette);
+	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
+	_s->_gfxAnimate = _animate;
 	_text = new Text(_s->resMan, _ports, _paint16, _screen);
 	_controls = new Controls(_s->_segMan, _ports, _paint16, _text);
 	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text, _screen, _cursor);
@@ -570,96 +571,6 @@ uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 
 	_ports->setPort(oldPort);
 	return result;
-}
-
-void SciGui::animateShowPic() {
-	Port *picPort = _ports->_picWind;
-	Common::Rect picRect = picPort->rect;
-	bool previousCursorState = _cursor->isVisible();
-
-	if (previousCursorState)
-		_cursor->hide();
-	// Adjust picRect to become relative to screen
-	picRect.translate(picPort->left, picPort->top);
-	_transitions->doit(picRect);
-	if (previousCursorState)
-		_cursor->show();
-
-	// We set SCI1.1 priority band information here
-	_ports->priorityBandsRecall();
-}
-
-void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
-	byte old_picNotValid = _screen->_picNotValid;
-
-	if (listReference.isNull()) {
-		_animate->disposeLastCast();
-		if (_screen->_picNotValid)
-			animateShowPic();
-		return;
-	}
-
-	List *list = _s->_segMan->lookupList(listReference);
-	if (!list)
-		error("kAnimate called with non-list as parameter");
-
-	if (cycle) {
-		if (!_animate->invoke(list, argc, argv))
-			return;
-	}
-
-	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
-	_animate->disposeLastCast();
-
-	_animate->makeSortedList(list);
-	_animate->fill(old_picNotValid);
-
-	if (old_picNotValid) {
-		_ports->beginUpdate(_ports->_picWind);
-		_animate->update();
-		_ports->endUpdate(_ports->_picWind);
-	}
-
-	_animate->drawCels();
-
-	if (_screen->_picNotValid)
-		animateShowPic();
-
-	_animate->updateScreen(old_picNotValid);
-	_animate->restoreAndDelete(argc, argv);
-
-	if (_animate->getLastCastCount() > 1)
-		_s->_throttleTrigger = true;
-
-	_ports->setPort(oldPort);
-}
-
-void SciGui::addToPicSetPicNotValid() {
-	if (getSciVersion() <= SCI_VERSION_1_EARLY)
-		_screen->_picNotValid = 1;
-	else
-		_screen->_picNotValid = 2;
-}
-
-void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
-	List *list;
-
-	_ports->setPort((Port *)_ports->_picWind);
-
-	list = _s->_segMan->lookupList(listReference);
-	if (!list)
-		error("kAddToPic called with non-list as parameter");
-
-	_animate->makeSortedList(list);
-	_animate->addToPicDrawCels();
-
-	addToPicSetPicNotValid();
-}
-
-void SciGui::addToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
-	_ports->setPort((Port *)_ports->_picWind);
-	_animate->addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
-	addToPicSetPicNotValid();
 }
 
 void SciGui::setNowSeen(reg_t objectReference) {
