@@ -186,6 +186,9 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
+	// Add the after market GM patches for the specified game, if they exist
+	_resMan->addNewGMPatch(_gamestate->_gameId);
+
 	script_adjust_opcode_formats(_gamestate);
 	_kernel->loadKernelNames(getGameID(), _gamestate);
 
