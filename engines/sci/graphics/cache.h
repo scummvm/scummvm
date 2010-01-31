@@ -43,6 +43,10 @@ public:
 	~GfxCache();
 
 	View *getView(GuiResourceId viewNum);
+	int16 kernelViewGetCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);
+	int16 kernelViewGetCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo);
+	int16 kernelViewGetLoopCount(GuiResourceId viewId);
+	int16 kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo);
 
 private:
 	void purgeCache();

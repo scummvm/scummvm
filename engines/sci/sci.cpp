@@ -44,6 +44,7 @@
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/cache.h"
 
 #ifdef ENABLE_SCI32
 #include "sci/graphics/gui32.h"
@@ -150,6 +151,7 @@ Common::Error SciEngine::run() {
 		screen = new GfxScreen(_resMan, 320, 200, upscaledHires);
 
 	GfxPalette *palette = new GfxPalette(_resMan, screen);
+	GfxCache *cache = new GfxCache(_resMan, screen, palette);
 	Cursor *cursor = new Cursor(_resMan, palette, screen);
 
 	// Create debugger console. It requires GFX to be initialized
@@ -174,10 +176,10 @@ Common::Error SciEngine::run() {
 		_gamestate->_gfxPorts = 0;
 		_gamestate->_gfxAnimate = 0;
 		_gamestate->_gui = 0;
-		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cursor);
+		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cache, cursor);
 	} else {
 		_gamestate->_gfxPorts = new GfxPorts(segMan, screen);
-		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _gamestate->_gfxPorts, _audio);
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gamestate->_gfxPorts, _audio);
 		_gamestate->_gui32 = 0;
 	}
 #else
@@ -186,6 +188,7 @@ Common::Error SciEngine::run() {
 #endif
 	_gamestate->_gfxPalette = palette;
 	_gamestate->_gfxScreen = screen;
+	_gamestate->_gfxCache = cache;
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");

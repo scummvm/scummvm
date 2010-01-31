@@ -53,14 +53,30 @@ void GfxCache::purgeCache() {
 	_cachedViews.clear();
 }
 
-View *GfxCache::getView(GuiResourceId viewNum) {
+View *GfxCache::getView(GuiResourceId viewId) {
 	if (_cachedViews.size() >= MAX_CACHED_VIEWS)
 		purgeCache();
 
-	if (!_cachedViews.contains(viewNum))
-		_cachedViews[viewNum] = new View(_resMan, _screen, _palette, viewNum);
+	if (!_cachedViews.contains(viewId))
+		_cachedViews[viewId] = new View(_resMan, _screen, _palette, viewId);
 
-	return _cachedViews[viewNum];
+	return _cachedViews[viewId];
+}
+
+int16 GfxCache::kernelViewGetCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
+	return getView(viewId)->getCelInfo(loopNo, celNo)->width;
+}
+
+int16 GfxCache::kernelViewGetCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
+	return getView(viewId)->getCelInfo(loopNo, celNo)->height;
+}
+
+int16 GfxCache::kernelViewGetLoopCount(GuiResourceId viewId) {
+	return getView(viewId)->getLoopCount();
+}
+
+int16 GfxCache::kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo) {
+	return getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
 } // End of namespace Sci

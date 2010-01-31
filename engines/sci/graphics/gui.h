@@ -57,8 +57,8 @@ class Transitions;
 
 class SciGui {
 public:
-	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
-	virtual ~SciGui();
+	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
+	~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);
 
@@ -122,12 +122,6 @@ public:
 	Common::Point getCursorPos();
 	virtual void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
-
-	virtual int16 getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);
-	virtual int16 getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo);
-
-	virtual int16 getLoopCount(GuiResourceId viewId);
-	virtual int16 getCelCount(GuiResourceId viewId, int16 loopNo);
 
 	virtual void syncWithFramebuffer();
 

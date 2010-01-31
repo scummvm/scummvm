@@ -38,6 +38,7 @@
 #include "sci/graphics/gui32.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/animate.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
@@ -80,12 +81,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 		else loopNo = -1;
 	}
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		maxLoops = s->_gui32->getLoopCount(viewId);
-	else
-#endif
-		maxLoops = s->_gui->getLoopCount(viewId);
+	maxLoops = s->_gfxCache->kernelViewGetLoopCount(viewId);
 		
 
 	if ((loopNo > 1) && (maxLoops < 4))
@@ -466,12 +462,7 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 	int16 celHeight;
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		celHeight = s->_gui32->getCelHeight(viewId, loopNo, celNo);
-	else
-#endif
-		celHeight = s->_gui->getCelHeight(viewId, loopNo, celNo);
+	celHeight = s->_gfxCache->kernelViewGetCelHeight(viewId, loopNo, celNo);
 
 	return make_reg(0, celHeight);
 }
@@ -484,12 +475,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 	int16 celWidth;
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		celWidth = s->_gui32->getCelWidth(viewId, loopNo, celNo);
-	else
-#endif
-		celWidth = s->_gui->getCelWidth(viewId, loopNo, celNo);
+	celWidth = s->_gfxCache->kernelViewGetCelWidth(viewId, loopNo, celNo);
 
 	return make_reg(0, celWidth);
 }
@@ -499,12 +485,7 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
 	int16 loopCount;
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		loopCount = s->_gui32->getLoopCount(viewId);
-	else
-#endif
-		loopCount = s->_gui->getLoopCount(viewId);
+	loopCount = s->_gfxCache->kernelViewGetLoopCount(viewId);
 
 	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
@@ -517,12 +498,7 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = GET_SEL32V(s->_segMan, object, loop);
 	int16 celCount;
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		celCount = s->_gui32->getCelCount(viewId, loopNo);
-	else
-#endif
-		celCount = s->_gui->getCelCount(viewId, loopNo);
+	celCount = s->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
 
 	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 

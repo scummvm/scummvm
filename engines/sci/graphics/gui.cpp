@@ -50,10 +50,9 @@
 
 namespace Sci {
 
-SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio)
-	: _s(state), _screen(screen), _palette(palette), _cursor(cursor), _ports(ports), _audio(audio) {
+SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio)
+	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _ports(ports), _audio(audio) {
 
-	_cache = new GfxCache(_s->resMan, _screen, _palette);
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette);
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
@@ -653,22 +652,6 @@ void SciGui::moveCursor(Common::Point pos) {
 
 void SciGui::setCursorZone(Common::Rect zone) {
 	_cursor->setMoveZone(zone);
-}
-
-int16 SciGui::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->width;
-}
-
-int16 SciGui::getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->height;
-}
-
-int16 SciGui::getLoopCount(GuiResourceId viewId) {
-	return _cache->getView(viewId)->getLoopCount();
-}
-
-int16 SciGui::getCelCount(GuiResourceId viewId, int16 loopNo) {
-	return _cache->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
 void SciGui::syncWithFramebuffer() {

@@ -55,6 +55,7 @@ class GfxAnimate;
 class GfxPorts;
 class GfxScreen;
 class GfxPalette;
+class GfxCache;
 class SciGui;
 class Cursor;
 class MessageState;
@@ -155,6 +156,7 @@ public:
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
 	GfxPalette *_gfxPalette;
+	GfxCache *_gfxCache;
 	SciGui *_gui; /* Currently active Gui */
 
 #ifdef ENABLE_SCI32

@@ -44,10 +44,9 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, Cursor *cursor)
-	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
+SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor)
+	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
-	_cache = new GfxCache(_s->resMan, _screen, _palette);
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 }
 
@@ -215,22 +214,6 @@ void SciGui32::moveCursor(Common::Point pos) {
 
 void SciGui32::setCursorZone(Common::Rect zone) {
 	_cursor->setMoveZone(zone);
-}
-
-int16 SciGui32::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->width;
-}
-
-int16 SciGui32::getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->height;
-}
-
-int16 SciGui32::getLoopCount(GuiResourceId viewId) {
-	return _cache->getView(viewId)->getLoopCount();
-}
-
-int16 SciGui32::getCelCount(GuiResourceId viewId, int16 loopNo) {
-	return _cache->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
 void SciGui32::syncWithFramebuffer() {

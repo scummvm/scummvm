@@ -39,7 +39,7 @@ class Text;
 
 class SciGui32 {
 public:
-	SciGui32(EngineState *s, GfxScreen *screen, GfxPalette *palette, Cursor *cursor);
+	SciGui32(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor);
 	~SciGui32();
 
 	void init();
@@ -63,12 +63,6 @@ public:
 	Common::Point getCursorPos();
 	void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
-
-	int16 getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);
-	int16 getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo);
-
-	int16 getLoopCount(GuiResourceId viewId);
-	int16 getCelCount(GuiResourceId viewId, int16 loopNo);
 
 	void syncWithFramebuffer();
 
