@@ -1454,4 +1454,9 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
+	warning("Intersections() called");
+	return NULL_REG;
+}
+
 } // End of namespace Sci

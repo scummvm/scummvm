@@ -149,7 +149,7 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x6e*/ "ShiftScreen",
 	/*0x6f*/ "Palette",
 	/*0x70*/ "MemorySegment",
-	/*0x71*/ "MoveCursor",
+	/*0x71*/ "Intersections",
 	/*0x72*/ "Memory",
 	/*0x73*/ "ListOps",
 	/*0x74*/ "FileIO",
@@ -325,6 +325,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("DoAudio", kDoAudio, ".*"),
 	DEFUN("DoSync", kDoSync, ".*"),
 	DEFUN("MemorySegment", kMemorySegment, "iri*"),
+	DEFUN("Intersections", kIntersections, ".*"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 	DEFUN("ShowMovie", kShowMovie, "..*"),
@@ -760,6 +761,10 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 
 		// Cut off unused functions
 		_kernelNames.resize(0x79);
+		break;
+
+	case SCI_VERSION_1_LATE:
+		_kernelNames[0x71] = "MoveCursor";
 		break;
 
 	case SCI_VERSION_1_1:
