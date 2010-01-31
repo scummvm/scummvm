@@ -306,7 +306,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	case kSoundVOX:
 		buffer.size = soundResourceLength * 4;
 		if (!onlyHeader) {
-			voxStream = Audio::makeADPCMStream(&readS, false, soundResourceLength, Audio::kADPCMOki);
+			voxStream = Audio::makeADPCMStream(&readS, DisposeAfterUse::NO, soundResourceLength, Audio::kADPCMOki);
 			buffer.buffer = (byte *)malloc(buffer.size);
 			voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
 			delete voxStream;

@@ -75,7 +75,7 @@ enum typesADPCM {
  */
 RewindableAudioStream *makeADPCMStream(
     Common::SeekableReadStream *stream,
-    bool disposeAfterUse,
+    DisposeAfterUse::Flag disposeAfterUse,
     uint32 size, typesADPCM type,
     int rate = 22050,
     int channels = 2,

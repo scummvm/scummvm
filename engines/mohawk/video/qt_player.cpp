@@ -1173,7 +1173,7 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 		return Audio::makeRawStream(data, dataSize, _streams[_audioStreamIndex]->sample_rate, flags);
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('ima4')) {
 		// Riven uses this codec (as do some Myst ME videos)
-		return Audio::makeADPCMStream(stream, true, stream->size(), Audio::kADPCMApple, _streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels, 34);
+		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, _streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels, 34);
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('QDM2')) {
 		// Several Myst ME videos use this codec
 		return new QDM2Stream(stream, _streams[_audioStreamIndex]->extradata);

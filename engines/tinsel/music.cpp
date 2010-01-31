@@ -877,7 +877,7 @@ bool PCMMusicPlayer::getNextChunk() {
 		sampleStream = new Common::MemoryReadStream(buffer, sampleCLength, DisposeAfterUse::YES);
 
 		delete _curChunk;
-		_curChunk = makeADPCMStream(sampleStream, true, sampleCLength,
+		_curChunk = makeADPCMStream(sampleStream, DisposeAfterUse::YES, sampleCLength,
 				Audio::kADPCMTinsel8, 22050, 1, 32);
 
 		_state = S_MID;

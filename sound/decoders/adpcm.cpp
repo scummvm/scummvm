@@ -34,7 +34,7 @@ namespace Audio {
 class ADPCMInputStream : public RewindableAudioStream {
 private:
 	Common::SeekableReadStream *_stream;
-	bool _disposeAfterUse;
+	DisposeAfterUse::Flag _disposeAfterUse;
 	int32 _startpos;
 	int32 _endpos;
 	int _channels;
@@ -82,7 +82,7 @@ private:
 	int16 decodeTinsel(int16, double);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign);
+	ADPCMInputStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign);
 	~ADPCMInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -114,7 +114,7 @@ public:
 // In addition, also MS IMA ADPCM is supported. See
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign)
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign)
 	: _stream(stream), _disposeAfterUse(disposeAfterUse), _channels(channels), _type(type), _blockAlign(blockAlign), _rate(rate) {
 
 	if (type == kADPCMMSIma && blockAlign == 0)
@@ -142,7 +142,7 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disp
 }
 
 ADPCMInputStream::~ADPCMInputStream() {
-	if (_disposeAfterUse)
+	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _stream;
 }
 
@@ -626,7 +626,7 @@ int16 ADPCMInputStream::decodeTinsel(int16 code, double eVal) {
 	return (int16) CLIP<double>(sample, -32768.0, 32767.0);
 }
 
-RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
+RewindableAudioStream *makeADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
 	return new ADPCMInputStream(stream, disposeAfterUse, size, type, rate, channels, blockAlign);
 }
 
