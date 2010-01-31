@@ -269,7 +269,7 @@ Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, b
 }
 
 // a.k.a. transformColor
-Cine::Palette::Color Palette::saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const {
+Cine::Palette::Color &Palette::saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const {
 	Cine::Palette::Color result;
 	result.r = CLIP<int>(baseColor.r + r, 0, _format.rMax());
 	result.g = CLIP<int>(baseColor.g + g, 0, _format.gMax());

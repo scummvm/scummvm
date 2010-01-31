@@ -186,7 +186,7 @@ public:
 
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
-	Cine::Palette::Color saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
+	Cine::Palette::Color &saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const;
 
 private:
 	Graphics::PixelFormat _format; ///< The used source color format
