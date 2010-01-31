@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	m4_views.o \
 	mads_anim.o \
 	mads_menus.o \
+	mads_views.o \
 	midi.o \
 	rails.o \
 	resource.o \

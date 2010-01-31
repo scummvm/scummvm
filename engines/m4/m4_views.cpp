@@ -127,7 +127,7 @@ bool GUIInventory::onEvent(M4EventType eventType, int32 param, int x, int y, GUI
 			if (result) {
 				for (int i = 0; i < overIndex + _scrollPosition; i++)
 					++curItem;
-				_vm->_interfaceView->setStatusText(curItem->get()->name);
+				_m4Vm->scene()->getInterface()->setStatusText(curItem->get()->name);
 			}
 		}
 
@@ -218,8 +218,8 @@ const char *INTERFACE_SERIES = "999intr";
 
 #define SPR(x) _sprites->getFrame(x)
 
-GameInterfaceView::GameInterfaceView(MadsM4Engine *vm):
-		View(vm, Common::Rect(0, vm->_screen->height() - INTERFACE_HEIGHT,
+M4InterfaceView::M4InterfaceView(MadsM4Engine *vm): 
+		GameInterfaceView(vm, Common::Rect(0, vm->_screen->height() - INTERFACE_HEIGHT,
 				vm->_screen->width(), vm->_screen->height())),
 		_statusText(GUITextField(this, Common::Rect(200, 1, 450, 21))),
 		_inventory(GUIInventory(this, vm, Common::Rect(188, 22, 539, 97), 9, 1, 39, 75, 3)) {
@@ -256,11 +256,11 @@ GameInterfaceView::GameInterfaceView(MadsM4Engine *vm):
 
 #undef SPR
 
-GameInterfaceView::~GameInterfaceView() {
+M4InterfaceView::~M4InterfaceView() {
 	delete _sprites;
 }
 
-void GameInterfaceView::setHighlightedButton(int index) {
+void M4InterfaceView::setHighlightedButton(int index) {
 	if (index == _highlightedIndex)
 		return;
 
@@ -268,7 +268,7 @@ void GameInterfaceView::setHighlightedButton(int index) {
 	_highlightedIndex = index;
 }
 
-bool GameInterfaceView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
+bool M4InterfaceView::onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) {
 	static bool selectionFlag = false;
 	if (eventType == MEVENT_LEFT_RELEASE)
 		selectionFlag = false;
@@ -287,7 +287,7 @@ bool GameInterfaceView::onEvent(M4EventType eventType, int32 param, int x, int y
 	if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
 		_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
 		_vm->_mouse->getCursorNum() != CURSOR_USE &&
-		_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+		_m4Vm->scene()->getInterface()->_inventory.getSelectedIndex() == -1) {
 		if (_vm->_mouse->getCursorNum() != 0)
 			_vm->_mouse->setCursorNum(0);
 	}
@@ -330,7 +330,7 @@ bool GameInterfaceView::onEvent(M4EventType eventType, int32 param, int x, int y
 	return true;
 }
 
-void GameInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
+void M4InterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	clear();
 
 	_statusText.onRefresh();

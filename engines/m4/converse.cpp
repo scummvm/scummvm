@@ -343,7 +343,7 @@ void Converse::startConversation(const char *convName, bool showConverseBox, Con
 
 	_playerCommandsAllowed = _vm->_player->commandsAllowed;
 	if (_vm->isM4())	// TODO: remove (interface not implemented yet in MADS games)
-		_interfaceWasVisible = _vm->_interfaceView->isVisible();
+		_interfaceWasVisible = _m4Vm->scene()->getInterface()->isVisible();
 	_vm->_player->setCommandsAllowed(false);
 	_style = style;
 
@@ -352,7 +352,7 @@ void Converse::startConversation(const char *convName, bool showConverseBox, Con
 		_vm->_mouse->lockCursor(CURSOR_ARROW);
 
 		if (_interfaceWasVisible)
-			_vm->_interfaceView->hide();
+			_m4Vm->scene()->getInterface()->hide();
 
 		_vm->_conversationView->setNode(0);
 		_vm->_conversationView->show();
@@ -368,7 +368,7 @@ void Converse::endConversation() {
 	_offsetMap.clear();
 	_vm->_player->setCommandsAllowed(_playerCommandsAllowed);
 	if (_interfaceWasVisible)
-		_vm->_interfaceView->show();
+		_m4Vm->scene()->getInterface()->show();
 }
 
 void Converse::loadConversation(const char *convName) {

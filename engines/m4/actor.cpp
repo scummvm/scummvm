@@ -149,11 +149,11 @@ void Inventory::moveObject(char* name, int32 scene) {
 }
 
 void Inventory::addToBackpack(uint32 objectIndex) {
-	_vm->_interfaceView->inventoryAdd(_inventory[objectIndex]->name, "", _inventory[objectIndex]->icon);
+	_m4Vm->scene()->getInterface()->inventoryAdd(_inventory[objectIndex]->name, "", _inventory[objectIndex]->icon);
 }
 
 void Inventory::removeFromBackpack(uint32 objectIndex) {
-	_vm->_interfaceView->inventoryRemove(_inventory[objectIndex]->name);
+	_m4Vm->scene()->getInterface()->inventoryRemove(_inventory[objectIndex]->name);
 }
 
 bool Inventory::isInCurrentScene(char* name) {

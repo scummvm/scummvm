@@ -87,7 +87,7 @@ public:
 	void setVisible(bool value) { _visible = value; }
 };
 
-class GameInterfaceView: public View {
+class M4InterfaceView: public GameInterfaceView {
 	typedef Common::List<Common::SharedPtr<GUIButton> > ButtonList;
 	typedef ButtonList::iterator ButtonsIterator;
 public:
@@ -100,8 +100,8 @@ public:
 private:
 	void setHighlightedButton(int index);
 public:
-	GameInterfaceView(MadsM4Engine *vm);
-	~GameInterfaceView();
+	M4InterfaceView(MadsM4Engine *vm);
+	~M4InterfaceView();
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);

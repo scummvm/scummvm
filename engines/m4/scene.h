@@ -32,6 +32,9 @@ class View;
 #include "m4/hotspot.h"
 #include "m4/graphics.h"
 #include "m4/viewmgr.h"
+#include "m4/gui.h"
+#include "m4/m4_views.h"
+#include "m4/mads_views.h"
 
 namespace M4 {
 
@@ -83,10 +86,9 @@ class Scene: public View {
 private:
 	byte *_inverseColorTable;
 	HotSpotList _sceneHotspots;
-	char _statusText[100];
 protected:
 	int _currentScene;
-	InterfaceView *_interfaceSurface;
+	GameInterfaceView *_interfaceSurface;
 	M4Surface *_backgroundSurface;
 	M4Surface *_codeSurface;
 	RGBList *_palData;
@@ -104,6 +106,8 @@ public:
 	virtual void leftClick(int x, int y) = 0;
 	virtual void rightClick(int x, int y) = 0;
 	virtual void setAction(int action, int objectId = -1) = 0;
+	virtual void setStatusText(const char *text) = 0;
+	virtual void update() = 0;
 
 	// TODO: perhaps move playIntro() someplace else?
 	void playIntro();
@@ -117,11 +121,11 @@ public:
 	int getCurrentScene() { return _currentScene; }
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
 	byte *getInverseColorTable() const { return _inverseColorTable; }
-	void update();
-	void setMADSStatusText(const char *text) { strcpy(_statusText, text); }
+	void showInterface();
+	void hideInterface();
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
-	InterfaceView *getInterface() { return _interfaceSurface; }
-	SceneResources getSceneResources() { return _sceneResources; }
+	GameInterfaceView *getInterface() { return _interfaceSurface; };
+	SceneResources getSceneResources() { return _sceneResources; };
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
@@ -142,10 +146,15 @@ public:
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
+	virtual void show();
 	virtual void checkHotspotAtMousePos(int x, int y);
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void setAction(int action, int objectId = -1);
+	virtual void setStatusText(const char *text);
+	virtual void update();
+
+	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 };
 
 class MadsScene: public Scene {
@@ -153,6 +162,7 @@ private:
 	MadsEngine *_vm;
 
 	int _currentAction;
+	char _statusText[100];
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene() {};
@@ -165,61 +175,10 @@ public:
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void setAction(int action, int objectId = -1);
-};
+	virtual void setStatusText(const char *text);
+	virtual void update();
 
-enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
-
-enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
-		INVLIST_START = 13, VOCAB_START = 18};
-
-class IntegerList: public Common::Array<int> {
-public:
-	int indexOf(int v) {
-		for (uint i = 0; i < size(); ++i)
-			if (operator [](i) == v)
-				return i;
-		return -1;
-	}
-};
-
-class InterfaceView: public View {
-public:
-	InterfaceView(MadsM4Engine *vm, const Common::Rect &bounds): View(vm, bounds) {};
-	~InterfaceView() {};
-
-	virtual void initialise() {};
-	virtual void setSelectedObject(int objectNumber) {};
-	virtual void addObjectToInventory(int objectNumber) {};
-};
-
-class MadsInterfaceView: public InterfaceView {
-private:
-	IntegerList _inventoryList;
-	RectList _screenObjects;
-	int _highlightedElement;
-	int _topIndex;
-	uint32 _nextScrollerTicks;
-	int _cheatKeyCtr;
-
-	// Object display fields
-	int _selectedObject;
-	SpriteAsset *_objectSprites;
-	RGBList *_objectPalData;
-	int _objectFrameNumber;
-
-	void setFontMode(InterfaceFontMode newMode);
-	bool handleCheatKey(int32 keycode);
-	bool handleKeypress(int32 keycode);
-public:
-	MadsInterfaceView(MadsM4Engine *vm);
-	~MadsInterfaceView();
-
-	virtual void initialise();
-	virtual void setSelectedObject(int objectNumber);
-	virtual void addObjectToInventory(int objectNumber);
-
-	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
+	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
 };
 
 } // End of namespace M4

@@ -271,7 +271,7 @@ Globals::Globals(MadsM4Engine *vm): _vm(vm) {
 }
 
 bool Globals::isInterfaceVisible() {
-	return _vm->_interfaceView->isVisible();
+	return _m4Vm->scene()->getInterface()->isVisible();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -434,7 +434,7 @@ void Player::setCommandsAllowed(bool value) {
 	if (value) {
 		// Player commands are enabled again
 		_vm->_mouse->lockCursor(CURSOR_ARROW);
-		//_vm->_interfaceView->cancelSentence();
+		//_m4Vm->scene()->getInterface()->cancelSentence();
 	} else {
 		// Player commands are disabled, so show hourglass cursor
 		_vm->_mouse->lockCursor(CURSOR_HOURGLASS);

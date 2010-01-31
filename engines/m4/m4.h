@@ -80,7 +80,7 @@ class Scene;
 class ViewManager;
 class View;
 class Inventory;
-class GameInterfaceView;
+class M4InterfaceView;
 class ConversationView;
 class Actor;
 class Converse;
@@ -190,7 +190,6 @@ public:
 	Dialogs *_dialogs;
 	M4Surface *_screen;
 	Inventory *_inventory;
-	GameInterfaceView *_interfaceView;
 	ConversationView *_conversationView;
 	Sound *_sound;
 	Rails *_rails;
@@ -199,6 +198,8 @@ public:
 	WoodScript *_ws;
 	Animation *_animation;
 	Common::RandomSource *_random;
+
+	Scene *scene() { return _scene; };
 };
 
 class MadsEngine: public MadsM4Engine {

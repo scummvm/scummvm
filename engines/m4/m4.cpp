@@ -169,7 +169,6 @@ Common::Error MadsM4Engine::run() {
 	_font = new Font(this);
 	if (getGameType() == GType_Burger) {
 		_actor = new Actor(this);
-		_interfaceView = new GameInterfaceView(this);
 		_conversationView = new ConversationView(this);
 	} else {
 		_actor = NULL;
@@ -352,8 +351,6 @@ Common::Error M4Engine::run() {
 									   burger_inventory[i].icon);
 			_inventory->addToBackpack(i);	// debug: this adds ALL objects to the player's backpack
 		}
-
-		_viewManager->addView(_interfaceView);
 	}
 
 	// Show intro
@@ -419,6 +416,8 @@ Common::Error M4Engine::run() {
 			_kernel->loadRoomScriptFunctions();
 
 			_kernel->roomInit();
+
+			_scene->show();
 
 #ifdef INTRO_TEST
 			if (_kernel->currentRoom == 951) {
@@ -516,17 +515,17 @@ Common::Error MadsEngine::run() {
 	_mouse->setCursorNum(0);
 
 	// Load MADS data files
-	MadsGlobals *globals = (MadsGlobals *)_globals;
-	globals->loadMadsVocab();			// vocab.dat
-	globals->loadMadsQuotes();			// quotes.dat
-	globals->loadMadsMessagesInfo();	// messages.dat
-	globals->loadMadsObjects();
+	MadsGlobals *globs = (MadsGlobals *)_globals;
+	globs->loadMadsVocab();			// vocab.dat
+	globs->loadMadsQuotes();			// quotes.dat
+	globs->loadMadsMessagesInfo();	// messages.dat
+	globs->loadMadsObjects();
 
 	// Setup globals
-	globals->easyMouse = true;
-	globals->invObjectsStill = false;
-	globals->textWindowStill = false;
-	globals->storyMode = 0;
+	globs->easyMouse = true;
+	globs->invObjectsStill = false;
+	globs->textWindowStill = false;
+	globs->storyMode = 0;
 
 	// Test code to dump all messages to the console
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)

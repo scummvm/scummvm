@@ -33,16 +33,11 @@
 #include "m4/rails.h"
 #include "m4/font.h"
 #include "m4/m4_views.h"
+#include "m4/mads_views.h"
 #include "m4/compression.h"
 #include "m4/staticres.h"
 
 namespace M4 {
-
-static const int INV_ANIM_FRAME_SPEED = 8;
-static const int INVENTORY_X = 160;
-static const int INVENTORY_Y = 159;
-static const int SCROLLER_DELAY = 200;
-
 
 Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
 	_screenType = VIEWID_SCENE;
@@ -56,7 +51,6 @@ Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width()
 	_interfacePal = NULL;
 	_interfaceSurface = NULL;
 	_inverseColorTable = NULL;
-	strcpy(_statusText, "");
 	_vm->_rails->setCodeSurface(_codeSurface);
 }
 
@@ -96,6 +90,14 @@ void Scene::loadScene(int sceneNumber) {
 
 void Scene::show() {
 	_vm->_viewManager->addView(this);
+}
+
+void Scene::showInterface() {
+	_vm->_viewManager->addView(_interfaceSurface);
+}
+
+void Scene::hideInterface() {
+	_vm->_viewManager->deleteView(_interfaceSurface);
 }
 
 void Scene::loadSceneResources(int sceneNumber) {
@@ -280,28 +282,6 @@ void Scene::playIntro() {
 
 }
 
-void Scene::update() {
-	// TODO: Needs a proper implementation
-	// NOTE: Don't copy the background when in M4 mode or WoodScript anims won't be shown
-	if (!_vm->isM4()) {
-		_backgroundSurface->copyTo(this);
-
-		// Handle display of any status text
-		if (_statusText[0]) {
-			// Text colors are inverted in Dragonsphere
-			if (_vm->getGameType() == GType_DragonSphere)
-				_vm->_font->setColors(_vm->_palette->BLACK, _vm->_palette->WHITE, _vm->_palette->BLACK);
-			else
-				_vm->_font->setColors(_vm->_palette->WHITE, _vm->_palette->BLACK, _vm->_palette->BLACK);
-
-			_vm->_font->setFont(FONT_MAIN_MADS);
-			_vm->_font->writeString(this, _statusText, (width() - _vm->_font->getWidth(_statusText)) / 2, 142, 0);
-		}
-
-		_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
-	}
-}
-
 void Scene::onRefresh(RectList *rects, M4Surface *destSurface) {
 	update();
 	View::onRefresh(rects, destSurface);
@@ -435,6 +415,7 @@ void Scene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 M4Scene::M4Scene(M4Engine *vm): Scene(vm) {
 	_vm = vm;
 	_sceneSprites = NULL;
+	_interfaceSurface = new M4InterfaceView(vm);
 }
 
 M4Scene::~M4Scene() {
@@ -460,7 +441,7 @@ void M4Scene::loadScene(int sceneNumber) {
 
 	if (_vm->getGameType() == GType_Burger &&
 			sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER)
-		_vm->_interfaceView->setStatusText("");
+		setStatusText("");
 
 	// Load scene def file (*.CHK)
 	loadSceneResources(sceneNumber);
@@ -485,7 +466,7 @@ void M4Scene::loadScene(int sceneNumber) {
 
 
 	if (sceneNumber != TITLE_SCENE_BURGER && sceneNumber != MAINMENU_SCENE_BURGER) {
-		_vm->_interfaceView->show();
+		_m4Vm->scene()->getInterface()->show();
 		showSprites();
 	}
 
@@ -503,6 +484,11 @@ void M4Scene::loadSceneCodes(int sceneNumber, int index) {
 	_vm->res()->toss(filename);
 }
 
+void M4Scene::show() {
+	Scene::show();
+	_vm->_viewManager->addView(_interfaceSurface);
+}
+
 void M4Scene::checkHotspotAtMousePos(int x, int y) {
 	if (_vm->getGameType() == GType_Riddle)
 		return;
@@ -517,15 +503,15 @@ void M4Scene::checkHotspotAtMousePos(int x, int y) {
 		if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
 			_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
 			_vm->_mouse->getCursorNum() != CURSOR_USE &&
-			_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+			_m4Vm->scene()->getInterface()->_inventory.getSelectedIndex() == -1) {
 			_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
 		}
-		_vm->_interfaceView->setStatusText(currentHotSpot->getPrep());
+		_m4Vm->scene()->getInterface()->setStatusText(currentHotSpot->getPrep());
 	} else {
 		if (_vm->_mouse->getCursorNum() != CURSOR_LOOK &&
 			_vm->_mouse->getCursorNum() != CURSOR_TAKE &&
 			_vm->_mouse->getCursorNum() != CURSOR_USE &&
-			_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+			_m4Vm->scene()->getInterface()->_inventory.getSelectedIndex() == -1) {
 			_vm->_mouse->setCursorNum(0);
 		} else {
 
@@ -551,14 +537,14 @@ void M4Scene::leftClick(int x, int y) {
 			printf("Player said: %s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
 
 			// FIXME: This should be moved somewhere else, and is incomplete
-			if (_vm->_interfaceView->_inventory.getSelectedIndex() == -1) {
+			if (_m4Vm->scene()->getInterface()->_inventory.getSelectedIndex() == -1) {
 				if (_vm->_mouse->getVerb() == NULL) {
 					strcpy(_vm->_player->verb, currentHotSpot->getVerb());
 				} else {
 					strcpy(_vm->_player->verb, _vm->_mouse->getVerb());
 				}
 			} else {
-				strcpy(_vm->_player->verb, _vm->_interfaceView->_inventory.getSelectedObjectName());
+				strcpy(_vm->_player->verb, _m4Vm->scene()->getInterface()->_inventory.getSelectedObjectName());
 			}
 			strcpy(_vm->_player->noun, currentHotSpot->getVocab());
 			strcpy(_vm->_player->object, "");
@@ -573,11 +559,19 @@ void M4Scene::leftClick(int x, int y) {
 void M4Scene::rightClick(int x, int y) {
 	if (_vm->getGameType() == GType_Burger) {
 		nextCommonCursor();
-		_vm->_interfaceView->_inventory.clearSelected();
+		_m4Vm->scene()->getInterface()->_inventory.clearSelected();
 	}
 }
 
 void M4Scene::setAction(int action, int objectId) {
+}
+
+void M4Scene::setStatusText(const char *text) {
+	getInterface()->setStatusText(text);
+}
+
+void M4Scene::update() {
+
 }
 
 void M4Scene::nextCommonCursor() {
@@ -608,6 +602,7 @@ void M4Scene::nextCommonCursor() {
 MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
 	_vm = vm;
 
+	strcpy(_statusText, "");
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_currentAction = kVerbNone;
 }
@@ -705,10 +700,10 @@ void MadsScene::checkHotspotAtMousePos(int x, int y) {
 		sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(verbId), currentHotSpot->getVocab());
 
 		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setMADSStatusText(statusText);
+		setStatusText(statusText);
 	} else {
 		_vm->_mouse->setCursorNum(0);
-		setMADSStatusText("");
+		setStatusText("");
 	}
 }
 
@@ -723,7 +718,7 @@ void MadsScene::leftClick(int x, int y) {
 		}
 
 		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setMADSStatusText(statusText);
+		setStatusText(statusText);
 	}
 }
 
@@ -754,344 +749,29 @@ void MadsScene::setAction(int action, int objectId) {
 		_currentAction = action;
 	}
 
-	setMADSStatusText(statusText);
+	setStatusText(statusText);
 }
 
-/*--------------------------------------------------------------------------
- * MadsInterfaceView handles the user interface section at the bottom of
- * game screens in MADS games
- *--------------------------------------------------------------------------
- */
-
-MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): InterfaceView(vm, Common::Rect(0, MADS_SURFACE_HEIGHT,
-														 vm->_screen->width(), vm->_screen->height())) {
-	_screenType = VIEWID_INTERFACE;
-	_highlightedElement = -1;
-	_topIndex = 0;
-	_selectedObject = -1;
-	_cheatKeyCtr = 0;
-
-	_objectSprites = NULL;
-	_objectPalData = NULL;
-
-	/* Set up the rect list for screen elements */
-	// Actions
-	for (int i = 0; i < 10; ++i)
-		_screenObjects.addRect((i / 5) * 32 + 1, (i % 5) * 8 + MADS_SURFACE_HEIGHT + 2,
-			((i / 5) + 1) * 32 + 3, ((i % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 2);
-
-	// Scroller elements (up arrow, scroller, down arrow)
-	_screenObjects.addRect(73, 160, 82, 167);
-	_screenObjects.addRect(73, 168, 82, 190);
-	_screenObjects.addRect(73, 191, 82, 198);
-
-	// Inventory object names
-	for (int i = 0; i < 5; ++i)
-		_screenObjects.addRect(89, 158 + i * 8, 160, 166 + i * 8);
-
-	// Full rectangle area for all vocab actions
-	for (int i = 0; i < 5; ++i)
-		_screenObjects.addRect(239, 158 + i * 8, 320, 166 + i * 8);
+void MadsScene::setStatusText(const char *text) {
+	strcpy(_statusText, text);
 }
 
-MadsInterfaceView::~MadsInterfaceView() {
-	delete _objectSprites;
-}
+void MadsScene::update() {
+	_backgroundSurface->copyTo(this);
 
-void MadsInterfaceView::setFontMode(InterfaceFontMode newMode) {
-	switch (newMode) {
-	case ITEM_NORMAL:
-		_vm->_font->setColors(4, 4, 0xff);
-		break;
-	case ITEM_HIGHLIGHTED:
-		_vm->_font->setColors(5, 5, 0xff);
-		break;
-	case ITEM_SELECTED:
-		_vm->_font->setColors(6, 6, 0xff);
-		break;
-	}
-}
+	// Handle display of any status text
+	if (_statusText[0]) {
+		// Text colors are inverted in Dragonsphere
+		if (_vm->getGameType() == GType_DragonSphere)
+			_vm->_font->setColors(_vm->_palette->BLACK, _vm->_palette->WHITE, _vm->_palette->BLACK);
+		else
+			_vm->_font->setColors(_vm->_palette->WHITE, _vm->_palette->BLACK, _vm->_palette->BLACK);
 
-void MadsInterfaceView::initialise() {
-	// Build up the inventory list
-	_inventoryList.clear();
-
-	for (uint i = 0; i < _madsVm->globals()->getObjectsSize(); ++i) {
-		MadsObject *obj = _madsVm->globals()->getObject(i);
-		if (obj->roomNumber == PLAYER_INVENTORY)
-			_inventoryList.push_back(i);
+		_vm->_font->setFont(FONT_MAIN_MADS);
+		_vm->_font->writeString(this, _statusText, (width() - _vm->_font->getWidth(_statusText)) / 2, 142, 0);
 	}
 
-	// If the inventory has at least one object, select it
-	if (_inventoryList.size() > 0)
-		setSelectedObject(_inventoryList[0]);
-}
-
-void MadsInterfaceView::setSelectedObject(int objectNumber) {
-	char resName[80];
-
-	// Load inventory resource
-	if (_objectSprites) {
-		_vm->_palette->deleteRange(_objectPalData);
-		delete _objectSprites;
-	}
-
-	// Check to make sure the object is in the inventory, and also visible on-screen
-	int idx = _inventoryList.indexOf(objectNumber);
-	if (idx == -1) {
-		// Object wasn't found, so return
-		_selectedObject = -1;
-		return;
-	}
-
-	// Found the object
-	if (idx < _topIndex)
-		_topIndex = idx;
-	else if (idx >= (_topIndex + 5))
-		_topIndex = MAX(0, idx - 4);
-
-	_selectedObject = objectNumber;
-	sprintf(resName, "*OB%.3dI.SS", objectNumber);
-
-	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	_objectSprites = new SpriteAsset(_vm, data, data->size(), resName);
-	_vm->res()->toss(resName);
-
-	// Slot it into available palette space
-	_objectPalData = _objectSprites->getRgbList();
-	_vm->_palette->addRange(_objectPalData);
-	_objectSprites->translate(_objectPalData, true);
-
-	_objectFrameNumber = 0;
-}
-
-void MadsInterfaceView::addObjectToInventory(int objectNumber) {
-	if (_inventoryList.indexOf(objectNumber) == -1) {
-		_madsVm->globals()->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
-		_inventoryList.push_back(objectNumber);
-	}
-
-	setSelectedObject(objectNumber);
-}
-
-void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
-	_vm->_font->setFont(FONT_INTERFACE_MADS);
-	char buffer[100];
-
-	// Check to see if any dialog is currently active
-	bool dialogVisible = _vm->_viewManager->getView(LAYER_DIALOG) != NULL;
-
-	// Highlighting logic for action list
-	int actionIndex = 0;
-	for (int x = 0; x < 2; ++x) {
-		for (int y = 0; y < 5; ++y, ++actionIndex) {
-			// Determine the font colour depending on whether an item is selected. Note that the first action,
-			// 'Look', is always 'selected', even when another action is clicked on
-			setFontMode((_highlightedElement == actionIndex) ? ITEM_HIGHLIGHTED :
-				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
-
-			// Get the verb action and capitalise it
-			const char *verbStr = _madsVm->globals()->getVocab(kVerbLook + actionIndex);
-			strcpy(buffer, verbStr);
-			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-
-			// Display the verb
-			const Common::Rect r(_screenObjects[actionIndex]);
-			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
-		}
-	}
-
-	// Check for highlighting of the scrollbar controls
-	if ((_highlightedElement == SCROLL_UP) || (_highlightedElement == SCROLL_SCROLLER) || (_highlightedElement == SCROLL_DOWN)) {
-		// Highlight the control's borders
-		const Common::Rect r(_screenObjects[_highlightedElement]);
-		destSurface->frameRect(r, 5);
-	}
-
-	// Draw the horizontal line in the scroller representing the current top selected
-	const Common::Rect scroller(_screenObjects[SCROLL_SCROLLER]);
-	int yP = (_inventoryList.size() < 2) ? 0 : (scroller.height() - 5) * _topIndex / (_inventoryList.size() - 1);
-	destSurface->setColor(4);
-	destSurface->hLine(scroller.left + 2, scroller.right - 3, scroller.top + 2 + yP);
-
-	// List inventory items
-	for (uint i = 0; i < 5; ++i) {
-		if ((_topIndex + i) >= _inventoryList.size())
-			break;
-
-		const char *descStr = _madsVm->globals()->getVocab(_madsVm->globals()->getObject(
-			_inventoryList[_topIndex + i])->descId);
-		strcpy(buffer, descStr);
-		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-
-		const Common::Rect r(_screenObjects[INVLIST_START + i]);
-
-		// Set the highlighting of the inventory item
-		if (_highlightedElement == (int)(INVLIST_START + i)) setFontMode(ITEM_HIGHLIGHTED);
-		else if (_selectedObject == _inventoryList[_topIndex + i]) setFontMode(ITEM_SELECTED);
-		else setFontMode(ITEM_NORMAL);
-
-		// Write out it's description
-		_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
-	}
-
-	// Handle the display of any currently selected object
-	if (_objectSprites) {
-		// Display object sprite. Note that the frame number isn't used directly, because it would result
-		// in too fast an animation
-		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
-		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
-
-		if (!_madsVm->globals()->invObjectsStill && !dialogVisible) {
-			// If objetcs are to animated, move to the next frame
-			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
-				_objectFrameNumber = 0;
-		}
-
-		// List the vocab actions for the currently selected object
-		MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
-
-		for (int i = 0; i < obj->vocabCount; ++i) {
-			const Common::Rect r(_screenObjects[VOCAB_START + i]);
-
-			// Get the vocab description and capitalise it
-			const char *descStr = _madsVm->globals()->getVocab(obj->vocabList[i].vocabId);
-			strcpy(buffer, descStr);
-			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-
-			// Set the highlighting and display the entry
-			setFontMode((i == yIndex) ? ITEM_HIGHLIGHTED : ITEM_NORMAL);
-			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
-		}
-	}
-}
-
-bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
-	// If the mouse isn't being held down, then reset the repeated scroll timer
-	if (eventType != MEVENT_LEFT_HOLD)
-		_nextScrollerTicks = 0;
-
-	// Handle various event types
-	switch (eventType) {
-	case MEVENT_MOVE:
-		// If the cursor isn't in "wait mode", don't do any processing
-		if (_vm->_mouse->getCursorNum() == CURSOR_WAIT)
-			return true;
-
-		// Ensure the cursor is the standard arrow
-		_vm->_mouse->setCursorNum(CURSOR_ARROW);
-
-		// Check if any interface element is currently highlighted
-		_highlightedElement = _screenObjects.find(Common::Point(x, y));
-
-		return true;
-
-	case MEVENT_LEFT_CLICK:
-		// Left mouse click
-		// Check if an inventory object was selected
-		if ((_highlightedElement >= INVLIST_START) && (_highlightedElement < (INVLIST_START + 5))) {
-			// Ensure there is an inventory item listed in that cell
-			uint idx = _highlightedElement - INVLIST_START;
-			if ((_topIndex + idx) < _inventoryList.size()) {
-				// Set the selected object
-				setSelectedObject(_inventoryList[_topIndex + idx]);
-			}
-		} else if ((_highlightedElement >= ACTIONS_START) && (_highlightedElement < (ACTIONS_START + 10))) {
-			// A standard action was selected
-			_vm->_scene->setAction(kVerbLook + (_highlightedElement - ACTIONS_START));
-		} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
-			// A vocab action was selected
-			MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-			int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
-			if (vocabIndex >= 0)
-				_vm->_scene->setAction(obj->vocabList[vocabIndex].vocabId, _selectedObject);
-		}
-
-		return true;
-
-	case MEVENT_LEFT_HOLD:
-		// Left mouse hold
-		// Handle the scroller - the up/down buttons allow for multiple actions whilst the mouse is held down
-		if ((_highlightedElement == SCROLL_UP) || (_highlightedElement == SCROLL_DOWN)) {
-			if ((_nextScrollerTicks == 0) || (g_system->getMillis() >= _nextScrollerTicks)) {
-				// Handle scroll up/down action
-				_nextScrollerTicks = g_system->getMillis() + SCROLLER_DELAY;
-
-				if ((_highlightedElement == SCROLL_UP) && (_topIndex > 0))
-					--_topIndex;
-				if ((_highlightedElement == SCROLL_DOWN) && (_topIndex < (int)(_inventoryList.size() - 1)))
-					++_topIndex;
-			}
-		}
-		return true;
-
-	case MEVENT_LEFT_DRAG:
-		// Left mouse drag
-		// Handle the the the scroller area that can be dragged to adjust the top displayed index
-		if (_highlightedElement == SCROLL_SCROLLER) {
-			// Calculate the new top index based on the Y position
-			const Common::Rect r(_screenObjects[SCROLL_SCROLLER]);
-			_topIndex = CLIP((int)(_inventoryList.size() - 1) * (y - r.top - 2) / (r.height() - 5),
-				0, (int)_inventoryList.size() - 1);
-		}
-		return true;
-
-	case KEVENT_KEY:
-		if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
-			handleCheatKey(param1);
-		handleKeypress(param1);
-		return true;
-
-	default:
-		break;
-	}
-
-	return false;
-}
-
-bool MadsInterfaceView::handleCheatKey(int32 keycode) {
-	switch (keycode) {
-	case Common::KEYCODE_SPACE:
-		// TODO: Move player to current destination
-		return true;
-
-	case Common::KEYCODE_t | (Common::KEYCODE_LALT):
-	case Common::KEYCODE_t | (Common::KEYCODE_RALT):
-	{
-		// Teleport to room
-		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
-
-
-		return true;
-	}
-
-	default:
-		break;
-	}
-
-	return false;
-}
-
-const char *CHEAT_SEQUENCE = "widepipe";
-
-bool MadsInterfaceView::handleKeypress(int32 keycode) {
-	int flags = keycode >> 24;
-	int kc = keycode & 0xffff;
-
-	// Capitalise the letter if necessary
-	if (_cheatKeyCtr < CHEAT_SEQUENCE_MAX) {
-		if ((flags == Common::KBD_CTRL) && (kc == CHEAT_SEQUENCE[_cheatKeyCtr])) {
-			++_cheatKeyCtr;
-			if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
-				Dialog::display(_vm, 22, cheatingEnabledDesc);
-			return true;
-		} else {
-			_cheatKeyCtr = 0;
-		}
-	}
-
-	return false;
+	_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
 }
 
 } // End of namespace M4

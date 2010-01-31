@@ -328,9 +328,9 @@ OrionMenuView::OrionMenuView(MadsM4Engine *Vm, int x, int y, MenuType menuType, 
 	_calledFromMainMenu = calledFromMainMenu;
 	_loadSaveFromHotkey = loadSaveFromHotkey;
 
-	_interfaceWasVisible = _vm->_interfaceView->isVisible();
+	_interfaceWasVisible = _m4Vm->scene()->getInterface()->isVisible();
 	if (_interfaceWasVisible)
-		_vm->_interfaceView->hide();
+		_m4Vm->scene()->getInterface()->hide();
 
 	_vm->_mouse->setCursorNum(CURSOR_ARROW);
 
@@ -496,11 +496,11 @@ M4Surface *OrionMenuView::createThumbnail() {
 	// Translate the game interface view - since it's using standard colors that can't be
 	// averaged, simply take the top left pixel of every 3x3 pixel block
 
-	_vm->_interfaceView->onRefresh(NULL, &srcSurface);
-	destP = result->getBasePtr(0, 0) + (_vm->_screen->width() / 3) * (_vm->_interfaceView->bounds().top / 3);
+	_m4Vm->scene()->getInterface()->onRefresh(NULL, &srcSurface);
+	destP = result->getBasePtr(0, 0) + (_vm->_screen->width() / 3) * (_m4Vm->scene()->getInterface()->bounds().top / 3);
 
-	int yStart = _vm->_interfaceView->bounds().top;
-	int yEnd = MIN(_vm->_screen->height() - 1, (int) _vm->_interfaceView->bounds().bottom - 1);
+	int yStart = _m4Vm->scene()->getInterface()->bounds().top;
+	int yEnd = MIN(_vm->_screen->height() - 1, (int) _m4Vm->scene()->getInterface()->bounds().bottom - 1);
 	for (int yCtr = yStart; yCtr <= yEnd; yCtr += 3) {
 		srcP = (byte *)srcSurface.getBasePtr(0, yCtr) + (yCtr * _vm->_screen->width());
 
@@ -526,7 +526,7 @@ void OrionMenuView::destroyView() {
 		engine->_palette->fadeFromGreen(M4_DIALOG_FADE_STEPS, M4_DIALOG_FADE_DELAY, fadeToBlack);
 
 		if (interfaceVisible)
-			engine->_interfaceView->show();
+			engine->scene()->showInterface();
 	}
 }
 
