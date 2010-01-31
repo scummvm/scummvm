@@ -33,13 +33,13 @@ namespace Sci {
 class Screen;
 class SciPalette;
 class Cursor;
-class Gfx;
+class GfxCache;
+class GfxCompare;
 class Text;
 
 class SciGui32 {
 public:
 	SciGui32(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor);
-	SciGui32();
 	~SciGui32();
 
 	void init();
@@ -93,7 +93,8 @@ protected:
 	EngineState *_s;
 	Screen *_screen;
 	SciPalette *_palette;
-	Gfx *_gfx;
+	GfxCache *_cache;
+	GfxCompare *_compare;
 
 private:
 	Common::Array<reg_t> _screenItems;

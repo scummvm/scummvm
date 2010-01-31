@@ -38,6 +38,7 @@
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/gui.h"
+#include "sci/graphics/ports.h"
 #include "sci/sound/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sound/iterator/core.h"
@@ -366,7 +367,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		Common::Rect picPortRect;
 
 		if (s.isSaving())
-			picPortRect = _gui->getPortPic(picPortTop, picPortLeft);
+			picPortRect = _gfxPorts->kernelGetPicWindow(picPortTop, picPortLeft);
 
 		s.syncAsSint16LE(picPortRect.top);
 		s.syncAsSint16LE(picPortRect.left);

@@ -40,6 +40,7 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
@@ -170,13 +171,16 @@ Common::Error SciEngine::run() {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
+		_gamestate->_gfxPorts = 0;
 		_gamestate->_gui = 0;
 		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cursor);
 	} else {
-		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
+		_gamestate->_gfxPorts = new GfxPorts(segMan, screen);
+		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _gamestate->_gfxPorts, _audio);
 		_gamestate->_gui32 = 0;
 	}
 #else
+	_gamestate->_ports = new GfxPorts(_segMan, _screen);
 	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
 #endif
 

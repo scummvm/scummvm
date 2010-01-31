@@ -51,6 +51,7 @@ namespace Sci {
 
 class SciEvent;
 class Menubar;
+class GfxPorts;
 class SciGui;
 class Cursor;
 class MessageState;
@@ -147,6 +148,7 @@ public:
 
 	/* Non-VM information */
 
+	GfxPorts *_gfxPorts; // Port managment for 16-bit gui
 	SciGui *_gui; /* Currently active Gui */
 
 #ifdef ENABLE_SCI32

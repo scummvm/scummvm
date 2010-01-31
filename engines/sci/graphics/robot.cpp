@@ -25,7 +25,6 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gfx.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/robot.h"
 

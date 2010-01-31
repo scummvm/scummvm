@@ -32,12 +32,13 @@ namespace Sci {
 #define SCI_TEXT_ALIGNMENT_CENTER 1
 #define SCI_TEXT_ALIGNMENT_LEFT	0
 
-class Gfx;
+class GfxPorts;
+class GfxPaint16;
 class Screen;
 class Font;
 class Text {
 public:
-	Text(ResourceManager *_resMan, Gfx *gfx, Screen *screen);
+	Text(ResourceManager *_resMan, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen);
 	~Text();
 
 	GuiResourceId GetFontId();
@@ -69,7 +70,8 @@ private:
 	void init();
 
 	ResourceManager *_resMan;
-	Gfx *_gfx;
+	GfxPorts *_ports;
+	GfxPaint16 *_paint16;
 	Screen *_screen;
 
 	int _codeFontsCount;

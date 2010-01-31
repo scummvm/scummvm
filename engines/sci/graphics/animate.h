@@ -56,13 +56,15 @@ enum ViewScaleSignals {
 	kScaleSignalUnknown2	= 0x0004 // really unknown
 };
 
-class Gfx;
+class GfxCache;
+class GfxPorts;
+class GfxPaint16;
 class Screen;
 class SciPalette;
 class Transitions;
 class SciGuiAnimate {
 public:
-	SciGuiAnimate(EngineState *state, Gfx *gfx, Screen *screen, SciPalette *palette);
+	SciGuiAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, Screen *screen, SciPalette *palette);
 	~SciGuiAnimate();
 
 	// FIXME: Don't store EngineState
@@ -86,7 +88,9 @@ private:
 	void init();
 
 	EngineState *_s;
-	Gfx *_gfx;
+	GfxCache *_cache;
+	GfxPorts *_ports;
+	GfxPaint16 *_paint16;
 	Screen *_screen;
 	SciPalette *_palette;
 

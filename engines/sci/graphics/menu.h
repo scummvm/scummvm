@@ -78,7 +78,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
 class Menu {
 public:
-	Menu(SciEvent *event, SegManager *segMan, SciGui *gui, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor);
+	Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, Text *text, Screen *screen, Cursor *cursor);
 	~Menu();
 
 	void reset();
@@ -105,7 +105,8 @@ private:
 	SciEvent *_event;
 	SegManager *_segMan;
 	SciGui *_gui;
-	Gfx *_gfx;
+	GfxPorts *_ports;
+	GfxPaint16 *_paint16;
 	Text *_text;
 	Screen *_screen;
 	Cursor *_cursor;

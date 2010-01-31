@@ -28,13 +28,13 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
-#include "sci/graphics/gfx.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/picture.h"
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
-	: _resMan(resMan), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
+SciGuiPicture::SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
+	: _resMan(resMan), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -81,7 +81,7 @@ void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, i
 
 void SciGuiPicture::reset() {
 	int16 x, y;
-	for (y = _gfx->GetPort()->top; y < _screen->getHeight(); y++) {
+	for (y = _ports->getPort()->top; y < _screen->getHeight(); y++) {
 		for (x = 0; x < _screen->getWidth(); x++) {
 			_screen->putPixel(x, y, SCI_SCREEN_MASK_ALL, 255, 0, 0);
 		}
@@ -113,7 +113,7 @@ void SciGuiPicture::drawSci11Vga() {
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
 
 	// Remember priority band information for later
-	_gfx->PriorityBandsRemember(inbuffer + 40);
+	_ports->priorityBandsRemember(inbuffer + 40);
 }
 
 #ifdef ENABLE_SCI32
@@ -265,12 +265,12 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 		memcpy(celBitmap, rlePtr, pixelCount);
 	}
 
-	if (_gfx) {
+	if (_ports) {
 		// Set initial vertical coordinate by using current port
-		y = callerY + _gfx->GetPort()->top;
-		lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom + _gfx->GetPort()->top);
-		leftX = callerX + _gfx->GetPort()->left;
-		rightX = MIN<int16>(width + leftX, _gfx->GetPort()->rect.right + _gfx->GetPort()->left);
+		y = callerY + _ports->getPort()->top;
+		lastY = MIN<int16>(height + y, _ports->getPort()->rect.bottom + _ports->getPort()->top);
+		leftX = callerX + _ports->getPort()->left;
+		rightX = MIN<int16>(width + leftX, _ports->getPort()->rect.right + _ports->getPort()->left);
 	} else {
 		y = callerY + 10; // TODO: Implement plane support for SCI32
 		lastY = y + height;
@@ -445,7 +445,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				vectorGetRelCoords(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
-				_gfx->OffsetLine(startPoint, endPoint);
+				_ports->offsetLine(startPoint, endPoint);
 				_screen->drawLine(startPoint, endPoint, pic_color, pic_priority, pic_control);
 			}
 			break;
@@ -456,7 +456,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				vectorGetRelCoordsMed(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
-				_gfx->OffsetLine(startPoint, endPoint);
+				_ports->offsetLine(startPoint, endPoint);
 				_screen->drawLine(startPoint, endPoint, pic_color, pic_priority, pic_control);
 			}
 			break;
@@ -467,7 +467,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				vectorGetAbsCoords(data, curPos, x, y);
 				Common::Point startPoint(oldx, oldy);
 				Common::Point endPoint(x, y);
-				_gfx->OffsetLine(startPoint, endPoint);
+				_ports->offsetLine(startPoint, endPoint);
 				_screen->drawLine(startPoint, endPoint, pic_color, pic_priority, pic_control);
 			}
 			break;
@@ -550,7 +550,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
-					_gfx->PriorityBandsInit(data + curPos);
+					_ports->priorityBandsInit(data + curPos);
 					curPos += 14;
 					break;
 				default:
@@ -590,11 +590,11 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
-					_gfx->PriorityBandsInit(-1, READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
+					_ports->priorityBandsInit(-1, READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
 					curPos += 4;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EXPLICIT:
-					_gfx->PriorityBandsInit(data + curPos);
+					_ports->priorityBandsInit(data + curPos);
 					curPos += 14;
 					break;
 				default:
@@ -677,7 +677,7 @@ void SciGuiPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 patte
 
 // Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
 void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
-	Port *curPort = _gfx->GetPort();
+	Port *curPort = _ports->getPort();
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 	byte screenMask = _screen->getDrawingMask(color, priority, control);
@@ -979,7 +979,7 @@ void SciGuiPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, b
 
 	rect.top = y; rect.left = x;
 	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
-	_gfx->OffsetRect(rect);
+	_ports->offsetRect(rect);
 	rect.clip(_screen->getWidth(), _screen->getHeight());
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {

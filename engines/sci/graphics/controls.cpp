@@ -31,15 +31,16 @@
 #include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/gfx.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/text.h"
 #include "sci/graphics/controls.h"
 
 namespace Sci {
 
-Controls::Controls(SegManager *segMan, Gfx *gfx, Text *text)
-	: _segMan(segMan), _gfx(gfx), _text(text) {
+Controls::Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, Text *text)
+	: _segMan(segMan), _ports(ports), _paint16(paint16), _text(text) {
 	init();
 }
 
@@ -56,7 +57,7 @@ const char controlListDownArrow[2]	= { 0x19, 0 };
 void Controls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = _text->GetFontId();
-	int16 oldPenColor = _gfx->_curPort->penClr;
+	int16 oldPenColor = _ports->_curPort->penClr;
 	uint16 fontSize = 0;
 	int16 i;
 	const char *listEntry;
@@ -64,9 +65,9 @@ void Controls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int
 	int16 lastYpos;
 
 	// draw basic window
-	_gfx->EraseRect(workerRect);
+	_paint16->eraseRect(workerRect);
 	workerRect.grow(1);
-	_gfx->FrameRect(workerRect);
+	_paint16->frameRect(workerRect);
 
 	// draw UP/DOWN arrows
 	//  we draw UP arrow one pixel lower than sierra did, because it looks nicer. Also the DOWN arrow has one pixel
@@ -79,25 +80,25 @@ void Controls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int
 	// Draw inner lines
 	workerRect.top = rect.top + 9;
 	workerRect.bottom -= 10;
-	_gfx->FrameRect(workerRect);
+	_paint16->frameRect(workerRect);
 	workerRect.grow(-1);
 
 	_text->SetFont(fontId);
-	fontSize = _gfx->_curPort->fontHeight;
-	_gfx->PenColor(_gfx->_curPort->penClr); _gfx->BackColor(_gfx->_curPort->backClr);
+	fontSize = _ports->_curPort->fontHeight;
+	_ports->penColor(_ports->_curPort->penClr); _ports->backColor(_ports->_curPort->backClr);
 	workerRect.bottom = workerRect.top + 9;
 	lastYpos = rect.bottom - fontSize;
 
 	// Write actual text
 	for (i = upperPos; i < count; i++) {
-		_gfx->EraseRect(workerRect);
+		_paint16->eraseRect(workerRect);
 		listEntry = entries[i];
 		if (listEntry[0]) {
-			_gfx->MoveTo(workerRect.left, workerRect.top);
+			_ports->moveTo(workerRect.left, workerRect.top);
 			listEntryLen = strlen(listEntry);
 			_text->Draw(listEntry, 0, MIN(maxChars, listEntryLen), oldFontId, oldPenColor);
 			if ((!isAlias) && (i == cursorPos)) {
-				_gfx->InvertRect(workerRect);
+				_paint16->invertRect(workerRect);
 			}
 		}
 		workerRect.translate(0, fontSize);
@@ -119,8 +120,8 @@ void Controls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 cu
 		_texteditCursorRect.top = rect.top;
 		_texteditCursorRect.bottom = _texteditCursorRect.top + _text->_font->getHeight();
 		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _text->_font->getCharWidth(text[curPos]));
-		_gfx->InvertRect(_texteditCursorRect);
-		_gfx->BitsShow(_texteditCursorRect);
+		_paint16->invertRect(_texteditCursorRect);
+		_paint16->bitsShow(_texteditCursorRect);
 		_texteditCursorVisible = true;
 		TexteditSetBlinkTime();
 	}
@@ -128,8 +129,8 @@ void Controls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 cu
 
 void Controls::TexteditCursorErase() {
 	if (_texteditCursorVisible) {
-		_gfx->InvertRect(_texteditCursorRect);
-		_gfx->BitsShow(_texteditCursorRect);
+		_paint16->invertRect(_texteditCursorRect);
+		_paint16->bitsShow(_texteditCursorRect);
 		_texteditCursorVisible = false;
 	}
 	TexteditSetBlinkTime();
@@ -209,9 +210,9 @@ void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, nsLeft), GET_SEL32V(_segMan, controlObject, nsTop),
 							  GET_SEL32V(_segMan, controlObject, nsRight), GET_SEL32V(_segMan, controlObject, nsBottom));
 		TexteditCursorErase();
-		_gfx->EraseRect(rect);
+		_paint16->eraseRect(rect);
 		_text->Box(text.c_str(), 0, rect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
-		_gfx->BitsShow(rect);
+		_paint16->bitsShow(rect);
 		_text->SetFont(fontId);
 		TexteditCursorDraw(rect, text.c_str(), cursorPos);
 		_text->SetFont(oldFontId);
@@ -219,8 +220,8 @@ void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		_segMan->strcpy(textReference, text.c_str());
 	} else {
 		if (g_system->getMillis() >= _texteditBlinkTime) {
-			_gfx->InvertRect(_texteditCursorRect);
-			_gfx->BitsShow(_texteditCursorRect);
+			_paint16->invertRect(_texteditCursorRect);
+			_paint16->bitsShow(_texteditCursorRect);
 			_texteditCursorVisible = !_texteditCursorVisible;
 			TexteditSetBlinkTime();
 		}

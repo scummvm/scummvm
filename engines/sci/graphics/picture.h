@@ -32,9 +32,13 @@ namespace Sci {
 #define SCI_PATTERN_CODE_USE_TEXTURE 0x20
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
+class GfxPorts;
+class Screen;
+class SciPalette;
+
 class SciGuiPicture {
 public:
-	SciGuiPicture(ResourceManager *resMan, Gfx *gfx, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
+	SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, Screen *screen, SciPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
@@ -63,7 +67,7 @@ private:
 	void vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture);
 
 	ResourceManager *_resMan;
-	Gfx *_gfx;
+	GfxPorts *_ports;
 	Screen *_screen;
 	SciPalette *_palette;
 

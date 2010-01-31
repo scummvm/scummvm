@@ -44,7 +44,10 @@ enum {
 class Screen;
 class SciPalette;
 class Cursor;
-class Gfx;
+class GfxCache;
+class GfxCompare;
+class GfxPorts;
+class GfxPaint16;
 class WindowMgr;
 class SciGuiAnimate;
 class Controls;
@@ -54,23 +57,23 @@ class Transitions;
 
 class SciGui {
 public:
-	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor, AudioPlayer *audio);
+	SciGui(EngineState *s, Screen *screen, SciPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
 	virtual ~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);
 
 	virtual void wait(int16 ticks);
-	virtual void setPort(uint16 portPtr);
-	virtual Common::Rect getPortPic(int16 &picTop, int16 &picLeft);
-	virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag);
-	virtual reg_t getPort();
+	// virtual void setPort(uint16 portPtr);
+	// virtual Common::Rect getPortPic(int16 &picTop, int16 &picLeft);
+	// virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag);
+	// virtual reg_t getPort();
 	virtual void globalToLocal(int16 *x, int16 *y);
 	virtual void localToGlobal(int16 *x, int16 *y);
 	virtual int16 coordinateToPriority(int16 y);
 	virtual int16 priorityToCoordinate(int16 priority);
 
-	virtual reg_t newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
-	virtual void disposeWindow(uint16 windowPtr, bool reanimate);
+	// virtual reg_t newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
+	// virtual void disposeWindow(uint16 windowPtr, bool reanimate);
 
 	virtual void display(const char *text, int argc, reg_t *argv);
 
@@ -167,7 +170,10 @@ protected:
 	EngineState *_s;
 	Screen *_screen;
 	SciPalette *_palette;
-	Gfx *_gfx;
+	GfxCache *_cache;
+	GfxCompare *_compare;
+	GfxPorts *_ports;
+	GfxPaint16 *_paint16;
 
 private:
 	virtual void initPriorityBands();
@@ -176,7 +182,6 @@ private:
 	static void palVaryCallback(void *refCon);
 	void doPalVary();
 
-	WindowMgr *_windowMgr;
 	AudioPlayer *_audio;
 	SciGuiAnimate *_animate;
 	Controls *_controls;

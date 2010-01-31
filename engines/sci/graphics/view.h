@@ -48,6 +48,9 @@ struct LoopInfo {
 #define SCI_VIEW_EGAMAPPING_SIZE 16
 #define SCI_VIEW_EGAMAPPING_COUNT 8
 
+class Screen;
+class SciPalette;
+
 class View {
 public:
 	View(ResourceManager *resMan, Screen *screen, SciPalette *palette, GuiResourceId resourceId);

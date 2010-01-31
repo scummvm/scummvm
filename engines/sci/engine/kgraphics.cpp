@@ -36,6 +36,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/gui32.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
@@ -991,19 +992,19 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetPort(EngineState *s, int argc, reg_t *argv) {
-	return s->_gui->getPort();
+	return s->_gfxPorts->kernelGetActive();
 }
 
 reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
-	uint16 portPtr;
+	uint16 portId;
 	Common::Rect picRect;
 	int16 picTop, picLeft;
 	bool initPriorityBandsFlag = false;
 
 	switch (argc) {
 	case 1:
-		portPtr = argv[0].toSint16();
-		s->_gui->setPort(portPtr);
+		portId = argv[0].toSint16();
+		s->_gfxPorts->kernelSetActive(portId);
 		break;
 
 	case 7:
@@ -1016,7 +1017,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 		picRect.right = argv[3].toSint16();
 		picTop = (argc >= 6) ? argv[4].toSint16() : 0;
 		picLeft = (argc >= 6) ? argv[5].toSint16() : 0;
-		s->_gui->setPortPic(picRect, picTop, picLeft, initPriorityBandsFlag);
+		s->_gfxPorts->kernelSetPicWindow(picRect, picTop, picLeft, initPriorityBandsFlag);
 		break;
 
 	default:
@@ -1061,12 +1062,12 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
-	int goner_nr = argv[0].toSint16();
+	int windowId = argv[0].toSint16();
 	bool reanimate = false;
 	if ((argc != 2) || (argv[1].isNull()))
 		reanimate = true;
 
-	s->_gui->disposeWindow(goner_nr, reanimate);
+	s->_gfxPorts->kernelDisposeWindow(windowId, reanimate);
 	return s->r_acc;
 }
 
@@ -1090,7 +1091,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 		title = s->strSplit(title.c_str(), NULL);
 	}
 
-	return s->_gui->newWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
+	return s->_gfxPorts->kernelNewWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
 }
 
 reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {

@@ -31,8 +31,9 @@
 #include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/helpers.h"
-#include "sci/graphics/gfx.h"
+#include "sci/graphics/gui.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/font.h"
@@ -42,8 +43,8 @@
 
 namespace Sci {
 
-Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, Gfx *gfx, Text *text, Screen *screen, Cursor *cursor)
-	: _event(event), _segMan(segMan), _gui(gui), _gfx(gfx), _text(text), _screen(screen), _cursor(cursor) {
+Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, Text *text, Screen *screen, Cursor *cursor)
+	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text(text), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
 	// We actually set active item in here and remember last selection of the user
@@ -302,10 +303,10 @@ void Menu::drawBar() {
 	GuiMenuList::iterator listEnd = _list.end();
 
 	// Hardcoded black on white and a black line afterwards
-	_gfx->FillRect(_gfx->_menuBarRect, 1, _screen->getColorWhite());
-	_gfx->FillRect(_gfx->_menuLine, 1, 0);
-	_gfx->PenColor(0);
-	_gfx->MoveTo(8, 1);
+	_paint16->fillRect(_ports->_menuBarRect, 1, _screen->getColorWhite());
+	_paint16->fillRect(_ports->_menuLine, 1, 0);
+	_ports->penColor(0);
+	_ports->moveTo(8, 1);
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
@@ -410,21 +411,21 @@ reg_t Menu::select(reg_t eventObject) {
 	}
 
 	if (!_menuSaveHandle.isNull()) {
-		_gfx->BitsRestore(_menuSaveHandle);
+		_paint16->bitsRestore(_menuSaveHandle);
 		// Display line inbetween menubar and actual menu
 		Common::Rect menuLine = _menuRect;
 		menuLine.bottom = menuLine.top + 1;
-		_gfx->BitsShow(menuLine);
+		_paint16->bitsShow(menuLine);
 		_gui->graphRedrawBox(_menuRect);
 		_menuSaveHandle = NULL_REG;
 	}
 	if (!_barSaveHandle.isNull()) {
-		_gfx->BitsRestore(_barSaveHandle);
-		_gfx->BitsShow(_gfx->_menuRect);
+		_paint16->bitsRestore(_barSaveHandle);
+		_paint16->bitsShow(_ports->_menuRect);
 		_barSaveHandle = NULL_REG;
 	}
 	if (_oldPort)
-		_gfx->SetPort(_oldPort);
+		_ports->setPort(_oldPort);
 
 	if ((itemEntry) || (forceClaimed))
 		PUT_SEL32(_segMan, eventObject, claimed, make_reg(0, 1));
@@ -477,18 +478,18 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 
 	// Remove menu, if one is displayed
 	if (!_menuSaveHandle.isNull()) {
-		_gfx->BitsRestore(_menuSaveHandle);
+		_paint16->bitsRestore(_menuSaveHandle);
 		// Display line inbetween menubar and actual menu
 		Common::Rect menuLine = _menuRect;
 		menuLine.bottom = menuLine.top + 1;
-		_gfx->BitsShow(menuLine);
+		_paint16->bitsShow(menuLine);
 		_gui->graphRedrawBox(_menuRect);
 	}
 
 	// First calculate rect of menu and also invert old and new menu text
-	_menuRect.top = _gfx->_menuBarRect.bottom;
-	menuTextRect.top = _gfx->_menuBarRect.top;
-	menuTextRect.bottom = _gfx->_menuBarRect.bottom;
+	_menuRect.top = _ports->_menuBarRect.bottom;
+	menuTextRect.top = _ports->_menuBarRect.top;
+	menuTextRect.bottom = _ports->_menuBarRect.bottom;
 	menuTextRect.left = menuTextRect.right = 7;
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
@@ -500,20 +501,20 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 			_menuRect.left = menuTextRect.left;
 		if ((listNr == newMenuId) || (listNr == oldMenuId)) {
 			menuTextRect.translate(1, 0);
-			_gfx->InvertRect(menuTextRect);
+			_paint16->invertRect(menuTextRect);
 			menuTextRect.translate(-1, 0);
 		}
 
 		listIterator++;
 	}
-	_gfx->BitsShow(_gfx->_menuBarRect);
+	_paint16->bitsShow(_ports->_menuBarRect);
 
 	_menuRect.bottom = _menuRect.top + 2;
 	listItemIterator = _itemList.begin();
 	while (listItemIterator != listItemEnd) {
 		listItemEntry = *listItemIterator;
 		if (listItemEntry->menuId == newMenuId) {
-			_menuRect.bottom += _gfx->_curPort->fontHeight;
+			_menuRect.bottom += _ports->_curPort->fontHeight;
 			maxTextWidth = MAX<int16>(maxTextWidth, listItemEntry->textWidth);
 			maxTextRightAlignedWidth = MAX<int16>(maxTextRightAlignedWidth, listItemEntry->textRightAlignedWidth);
 		}
@@ -525,12 +526,12 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		_menuRect.right -= 5;
 
 	// Save background
-	_menuSaveHandle = _gfx->BitsSave(_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_menuSaveHandle = _paint16->bitsSave(_menuRect, SCI_SCREEN_MASK_VISUAL);
 
 	// Do the drawing
-	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, 0);
+	_paint16->fillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, 0);
 	_menuRect.left++; _menuRect.right--; _menuRect.bottom--;
-	_gfx->FillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, _screen->getColorWhite());
+	_paint16->fillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, _screen->getColorWhite());
 
 	_menuRect.left += 8;
 	topPos = _menuRect.top + 1;
@@ -539,33 +540,33 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		listItemEntry = *listItemIterator;
 		if (listItemEntry->menuId == newMenuId) {
 			if (!listItemEntry->separatorLine) {
-				_gfx->TextGreyedOutput(listItemEntry->enabled ? false : true);
-				_gfx->MoveTo(_menuRect.left, topPos);
+				_ports->textGreyedOutput(listItemEntry->enabled ? false : true);
+				_ports->moveTo(_menuRect.left, topPos);
 				_text->Draw_String(listItemEntry->text.c_str());
-				_gfx->MoveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
+				_ports->moveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
 				_text->Draw_String(listItemEntry->textRightAligned.c_str());
 			} else {
 				// We dont 100% follow sierra here, we draw the line from left to right. Looks better
 				// BTW. SCI1.1 seems to put 2 pixels and then skip one, we don't do this at all (lsl6)
-				pixelPos.y = topPos + (_gfx->_curPort->fontHeight >> 1) - 1;
+				pixelPos.y = topPos + (_ports->_curPort->fontHeight >> 1) - 1;
 				pixelPos.x = _menuRect.left - 7;
 				while (pixelPos.x < (_menuRect.right - 1)) {
 					_screen->putPixel(pixelPos.x, pixelPos.y, SCI_SCREEN_MASK_VISUAL, 0, 0, 0);
 					pixelPos.x += 2;
 				}
 			}
-			topPos += _gfx->_curPort->fontHeight;
+			topPos += _ports->_curPort->fontHeight;
 		}
 		listItemIterator++;
 	}
-	_gfx->TextGreyedOutput(false);
+	_ports->textGreyedOutput(false);
 
 	// Draw the black line again
-	_gfx->FillRect(_gfx->_menuLine, 1, 0);
+	_paint16->fillRect(_ports->_menuLine, 1, 0);
 
 	_menuRect.left -= 8;
 	_menuRect.left--; _menuRect.right++; _menuRect.bottom++;
-	_gfx->BitsShow(_menuRect);
+	_paint16->bitsShow(_menuRect);
 }
 
 void Menu::invertMenuSelection(uint16 itemId) {
@@ -574,12 +575,12 @@ void Menu::invertMenuSelection(uint16 itemId) {
 	if (itemId == 0)
 		return;
 
-	itemRect.top += (itemId - 1) * _gfx->_curPort->fontHeight + 1;
-	itemRect.bottom = itemRect.top + _gfx->_curPort->fontHeight;
+	itemRect.top += (itemId - 1) * _ports->_curPort->fontHeight + 1;
+	itemRect.bottom = itemRect.top + _ports->_curPort->fontHeight;
 	itemRect.left++; itemRect.right--;
 
-	_gfx->InvertRect(itemRect);
-	_gfx->BitsShow(itemRect);
+	_paint16->invertRect(itemRect);
+	_paint16->bitsShow(itemRect);
 }
 
 void Menu::interactiveShowMouse() {
@@ -627,7 +628,7 @@ uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menu
 	while (listItemIterator != listItemEnd) {
 		listItemEntry = *listItemIterator;
 		if (listItemEntry->menuId == menuId) {
-			curYstart += _gfx->_curPort->fontHeight;
+			curYstart += _ports->_curPort->fontHeight;
 			// Found it
 			if ((!itemId) && (curYstart > mousePosition.y))
 				itemId = listItemEntry->id;
@@ -650,17 +651,17 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 	//  Also sierra sci didnt allow mouse interaction, when menu was activated via keyboard
 
 	calculateTextWidth();
-	_oldPort = _gfx->SetPort(_gfx->_menuPort);
-	_barSaveHandle = _gfx->BitsSave(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_oldPort = _ports->setPort(_ports->_menuPort);
+	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, SCI_SCREEN_MASK_VISUAL);
 
-	_gfx->PenColor(0);
-	_gfx->BackColor(_screen->getColorWhite());
+	_ports->penColor(0);
+	_ports->backColor(_screen->getColorWhite());
 
 	drawBar();
 	drawMenu(0, curItemEntry->menuId);
 	invertMenuSelection(curItemEntry->id);
-	_gfx->BitsShow(_gfx->_menuRect);
-	_gfx->BitsShow(_menuRect);
+	_paint16->bitsShow(_ports->_menuRect);
+	_paint16->bitsShow(_menuRect);
 
 	while (true) {
 		curEvent = _event->get(SCI_EVENT_ANY);
@@ -771,14 +772,14 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 	GuiMenuItemEntry *curItemEntry = NULL;
 
 	calculateTextWidth();
-	_oldPort = _gfx->SetPort(_gfx->_menuPort);
-	_barSaveHandle = _gfx->BitsSave(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_oldPort = _ports->setPort(_ports->_menuPort);
+	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, SCI_SCREEN_MASK_VISUAL);
 
-	_gfx->PenColor(0);
-	_gfx->BackColor(_screen->getColorWhite());
+	_ports->penColor(0);
+	_ports->backColor(_screen->getColorWhite());
 
 	drawBar();
-	_gfx->BitsShow(_gfx->_menuRect);
+	_paint16->bitsShow(_ports->_menuRect);
 
 	while (true) {
 		curEvent = _event->get(SCI_EVENT_ANY);
@@ -812,7 +813,7 @@ GuiMenuItemEntry *Menu::interactiveWithMouse() {
 			// Menu changed, remove cur menu and paint new menu
 			drawMenu(curMenuId, newMenuId);
 			if (firstMenuChange) {
-				_gfx->BitsShow(_gfx->_menuBarRect);
+				_paint16->bitsShow(_ports->_menuBarRect);
 				firstMenuChange = false;
 			}
 			curMenuId = newMenuId;

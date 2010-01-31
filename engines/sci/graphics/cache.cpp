@@ -23,40 +23,44 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_CONTROLS_H
-#define SCI_GRAPHICS_CONTROLS_H
+#include "common/util.h"
+#include "common/stack.h"
+#include "graphics/primitives.h"
+
+#include "sci/sci.h"
+#include "sci/engine/state.h"
+#include "sci/engine/selector.h"
+#include "sci/graphics/cache.h"
+#include "sci/graphics/font.h"
+#include "sci/graphics/view.h"
 
 namespace Sci {
 
-class GfxPorts;
-class GfxPaint16;
-class Font;
-class Text;
-class Controls {
-public:
-	Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, Text *text);
-	~Controls();
+GfxCache::GfxCache(ResourceManager *resMan, Screen *screen, SciPalette *palette)
+	: _resMan(resMan), _screen(screen), _palette(palette) {
+}
 
-	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
-	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
-	void TexteditCursorErase();
-	void TexteditChange(reg_t controlObject, reg_t eventObject);
+GfxCache::~GfxCache() {
+	purgeCache();
+}
 
-private:
-	void init();
-	void TexteditSetBlinkTime();
+void GfxCache::purgeCache() {
+	for (ViewCache::iterator iter = _cachedViews.begin(); iter != _cachedViews.end(); ++iter) {
+		delete iter->_value;
+		iter->_value = 0;
+	}
 
-	SegManager *_segMan;
-	GfxPorts *_ports;
-	GfxPaint16 *_paint16;
-	Text *_text;
+	_cachedViews.clear();
+}
 
-	// Textedit-Control related
-	Common::Rect _texteditCursorRect;
-	bool _texteditCursorVisible;
-	uint32 _texteditBlinkTime;
-};
+View *GfxCache::getView(GuiResourceId viewNum) {
+	if (_cachedViews.size() >= MAX_CACHED_VIEWS)
+		purgeCache();
+
+	if (!_cachedViews.contains(viewNum))
+		_cachedViews[viewNum] = new View(_resMan, _screen, _palette, viewNum);
+
+	return _cachedViews[viewNum];
+}
 
 } // End of namespace Sci
-
-#endif

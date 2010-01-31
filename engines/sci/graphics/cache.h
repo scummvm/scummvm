@@ -23,47 +23,35 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_WINDOWMGR_H
-#define SCI_GRAPHICS_WINDOWMGR_H
+#ifndef SCI_GRAPHICS_CACHE_H
+#define SCI_GRAPHICS_CACHE_H
 
-#include "common/list.h"
-#include "common/array.h"
+#include "sci/graphics/gui.h"
+
+#include "common/hashmap.h"
 
 namespace Sci {
 
-class WindowMgr {
+class Font;
+class View;
+
+typedef Common::HashMap<int, View *> ViewCache;
+
+class GfxCache {
 public:
-	WindowMgr(SciGui *gui, Screen *screen, Gfx *gfx, Text *text);
-	~WindowMgr();
+	GfxCache(ResourceManager *resMan, Screen *screen, SciPalette *palette);
+	~GfxCache();
 
-	void init(Common::String gameId);
-
-	int16 isFrontWindow(Window *wnd);
-	void BeginUpdate(Window *wnd);
-	void EndUpdate(Window *wnd);
-	Window *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
-	void DrawWindow(Window *wnd);
-	void DisposeWindow(Window *pWnd, bool reanimate);
-	void UpdateWindow(Window *wnd);
-
-	Port *getPortById(uint16 id);
-
-	Port *_wmgrPort;
-	Window *_picWind;
+	View *getView(GuiResourceId viewNum);
 
 private:
-	typedef Common::List<Port *> PortList;
+	void purgeCache();
 
-	SciGui *_gui;
+	ResourceManager *_resMan;
 	Screen *_screen;
-	Gfx *_gfx;
-	Text *_text;
+	SciPalette *_palette;
 
-	/** The list of open 'windows' (and ports), in visual order. */
-	PortList _windowList;
-
-	/** The list of all open 'windows' (and ports), ordered by their id. */
-	Common::Array<Port *> _windowsById;
+	ViewCache _cachedViews;
 };
 
 } // End of namespace Sci

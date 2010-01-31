@@ -23,38 +23,31 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_CONTROLS_H
-#define SCI_GRAPHICS_CONTROLS_H
+#ifndef SCI_GRAPHICS_GFX_H
+#define SCI_GRAPHICS_GFX_H
+
+#include "sci/graphics/gui.h"
+
+#include "common/hashmap.h"
 
 namespace Sci {
 
-class GfxPorts;
-class GfxPaint16;
-class Font;
-class Text;
-class Controls {
-public:
-	Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, Text *text);
-	~Controls();
+class Screen;
 
-	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
-	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
-	void TexteditCursorErase();
-	void TexteditChange(reg_t controlObject, reg_t eventObject);
+class GfxCompare {
+public:
+	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, Screen *screen);
+	~GfxCompare();
+
+	uint16 onControl(uint16 screenMask, Common::Rect rect);
+	bool CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list);
+	void SetNowSeen(reg_t objectReference);
 
 private:
-	void init();
-	void TexteditSetBlinkTime();
-
 	SegManager *_segMan;
-	GfxPorts *_ports;
-	GfxPaint16 *_paint16;
-	Text *_text;
-
-	// Textedit-Control related
-	Common::Rect _texteditCursorRect;
-	bool _texteditCursorVisible;
-	uint32 _texteditBlinkTime;
+	Kernel *_kernel;
+	GfxCache *_cache;
+	Screen *_screen;
 };
 
 } // End of namespace Sci

@@ -35,8 +35,10 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/gfx.h"
-#include "sci/graphics/windowmgr.h"
+#include "sci/graphics/ports.h"
+#include "sci/graphics/paint16.h"
+#include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
@@ -48,26 +50,29 @@
 
 namespace Sci {
 
-SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor, AudioPlayer *audio)
-	: _s(state), _screen(screen), _palette(palette), _cursor(cursor), _audio(audio) {
+SciGui::SciGui(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio)
+	: _s(state), _screen(screen), _palette(palette), _cursor(cursor), _ports(ports), _audio(audio) {
 
-	_gfx = new Gfx(_s->resMan, _s->_segMan, _s->_kernel, _screen, _palette);
+	_cache = new GfxCache(_s->resMan, _screen, _palette);
+	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
+	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette);
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
-	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
-	_text = new Text(_s->resMan, _gfx, _screen);
-	_windowMgr = new WindowMgr(this, _screen, _gfx, _text);
-	_controls = new Controls(_s->_segMan, _gfx, _text);
-	_menu = new Menu(_s->_event, _s->_segMan, this, _gfx, _text, _screen, _cursor);
+	_animate = new SciGuiAnimate(_s, _cache, _ports, _paint16, _screen, _palette);
+	_text = new Text(_s->resMan, _ports, _paint16, _screen);
+	_controls = new Controls(_s->_segMan, _ports, _paint16, _text);
+	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text, _screen, _cursor);
 }
 
 SciGui::~SciGui() {
 	delete _menu;
 	delete _controls;
-	delete _windowMgr;
 	delete _text;
 	delete _animate;
 	delete _transitions;
-	delete _gfx;
+	delete _paint16;
+	delete _ports;
+	delete _compare;
+	delete _cache;
 }
 
 void SciGui::resetEngineState(EngineState *s) {
@@ -78,19 +83,19 @@ void SciGui::resetEngineState(EngineState *s) {
 void SciGui::init(bool usesOldGfxFunctions) {
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 
-	_gfx->init(_text);
-	_windowMgr->init(_s->_gameId);
+	_ports->init(this, _paint16, _text, _s->_gameId);
+	_paint16->init(_text);
 	initPriorityBands();
 }
 
 void SciGui::initPriorityBands() {
 	if (_usesOldGfxFunctions) {
-		_gfx->PriorityBandsInit(15, 42, 200);
+		_ports->priorityBandsInit(15, 42, 200);
 	} else {
 		if (getSciVersion() >= SCI_VERSION_1_1)
-			_gfx->PriorityBandsInit(14, 0, 190);
+			_ports->priorityBandsInit(14, 0, 190);
 		else
-			_gfx->PriorityBandsInit(14, 42, 190);
+			_ports->priorityBandsInit(14, 42, 190);
 	}
 }
 
@@ -105,74 +110,24 @@ void SciGui::wait(int16 ticks) {
 	kernel_sleep(_s->_event, ticks * 1000 / 60);
 }
 
-void SciGui::setPort(uint16 portPtr) {
-	switch (portPtr) {
-	case 0:
-		_gfx->SetPort(_windowMgr->_wmgrPort);
-		break;
-	case 0xFFFF:
-		_gfx->SetPort(_gfx->_menuPort);
-		break;
-	default:
-		_gfx->SetPort(_windowMgr->getPortById(portPtr));
-	};
-}
-
-Common::Rect SciGui::getPortPic(int16 &picTop, int16 &picLeft) {
-	picTop = _windowMgr->_picWind->top;
-	picLeft = _windowMgr->_picWind->left;
-	return _windowMgr->_picWind->rect;
-}
-
-void SciGui::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag) {
-	_windowMgr->_picWind->rect = rect;
-	_windowMgr->_picWind->top = picTop;
-	_windowMgr->_picWind->left = picLeft;
-	if (initPriorityBandsFlag)
-		initPriorityBands();
-}
-
-reg_t SciGui::getPort() {
-	return make_reg(0, _gfx->GetPort()->id);
-}
-
 void SciGui::globalToLocal(int16 *x, int16 *y) {
-	Port *curPort = _gfx->GetPort();
+	Port *curPort = _ports->getPort();
 	*x = *x - curPort->left;
 	*y = *y - curPort->top;
 }
 
 void SciGui::localToGlobal(int16 *x, int16 *y) {
-	Port *curPort = _gfx->GetPort();
+	Port *curPort = _ports->getPort();
 	*x = *x + curPort->left;
 	*y = *y + curPort->top;
 }
 
 int16 SciGui::coordinateToPriority(int16 y) {
-	return _gfx->CoordinateToPriority(y);
+	return _ports->coordinateToPriority(y);
 }
 
 int16 SciGui::priorityToCoordinate(int16 priority) {
-	return _gfx->PriorityToCoordinate(priority);
-}
-
-reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
-	Window *wnd = NULL;
-
-	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
-		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, false);
-	else
-		wnd = _windowMgr->NewWindow(dims, NULL, title, style, priority, false);
-	wnd->penClr = colorPen;
-	wnd->backClr = colorBack;
-	_windowMgr->DrawWindow(wnd);
-
-	return make_reg(0, wnd->id);
-}
-
-void SciGui::disposeWindow(uint16 windowPtr, bool reanimate) {
-	Window *wnd = (Window *)_windowMgr->getPortById(windowPtr);
-	_windowMgr->DisposeWindow(wnd, reanimate);
+	return _ports->priorityToCoordinate(priority);
 }
 
 #define SCI_DISPLAY_MOVEPEN				100
@@ -194,19 +149,19 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	Common::Rect rect;
 
 	// Make a "backup" of the port settings
-	Port oldPort = *_gfx->GetPort();
+	Port oldPort = *_ports->getPort();
 
 	// setting defaults
-	_gfx->PenMode(0);
-	_gfx->PenColor(0);
-	_gfx->TextGreyedOutput(false);
+	_ports->penMode(0);
+	_ports->penColor(0);
+	_ports->textGreyedOutput(false);
 	// processing codes in argv
 	while (argc > 0) {
 		displayArg = argv[0].toUint16();
 		argc--; argv++;
 		switch (displayArg) {
 		case SCI_DISPLAY_MOVEPEN:
-			_gfx->MoveTo(argv[0].toUint16(), argv[1].toUint16());
+			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
 			argc -= 2; argv += 2;
 			break;
 		case SCI_DISPLAY_SETALIGNMENT:
@@ -215,7 +170,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			break;
 		case SCI_DISPLAY_SETPENCOLOR:
 			colorPen = argv[0].toUint16();
-			_gfx->PenColor(colorPen);
+			_ports->penColor(colorPen);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETBACKGROUNDCOLOR:
@@ -223,7 +178,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETGREYEDOUTPUT:
-			_gfx->TextGreyedOutput(argv[0].isNull() ? false : true);
+			_ports->textGreyedOutput(argv[0].isNull() ? false : true);
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETFONT:
@@ -238,9 +193,9 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			doSaveUnder = true;
 			break;
 		case SCI_DISPLAY_RESTOREUNDER:
-			_gfx->BitsGetRect(argv[0], &rect);
-			rect.translate(-_gfx->GetPort()->left, -_gfx->GetPort()->top);
-			_gfx->BitsRestore(argv[0]);
+			_paint16->bitsGetRect(argv[0], &rect);
+			rect.translate(-_ports->getPort()->left, -_ports->getPort()->top);
+			_paint16->bitsRestore(argv[0]);
 			graphRedrawBox(rect);
 			// finishing loop
 			argc = 0;
@@ -256,23 +211,23 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 
 	// now drawing the text
 	_text->Size(rect, text, -1, width);
-	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
+	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
 	if (getSciVersion() >= SCI_VERSION_1_LATE) {
 		int16 leftPos = rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right;
 		int16 topPos = rect.bottom <= _screen->getHeight() ? 0 : _screen->getHeight() - rect.bottom;
-		_gfx->Move(leftPos, topPos);
-		rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
+		_ports->move(leftPos, topPos);
+		rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
 	}
 
 	if (doSaveUnder)
-		_s->r_acc = _gfx->BitsSave(rect, SCI_SCREEN_MASK_VISUAL);
+		_s->r_acc = _paint16->bitsSave(rect, SCI_SCREEN_MASK_VISUAL);
 	if (colorBack != -1)
-		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, colorBack, 0, 0);
+		_paint16->fillRect(rect, SCI_SCREEN_MASK_VISUAL, colorBack, 0, 0);
 	_text->Box(text, 0, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
-		_gfx->BitsShow(rect);
+		_paint16->bitsShow(rect);
 	// restoring port and cursor pos
-	Port *currport = _gfx->GetPort();
+	Port *currport = _ports->getPort();
 	uint16 tTop = currport->curTop;
 	uint16 tLeft = currport->curLeft;
 	*currport = oldPort;
@@ -298,22 +253,22 @@ void SciGui::textColors(int argc, reg_t *argv) {
 }
 
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
-	Port *oldPort = _gfx->SetPort(_gfx->_menuPort);
+	Port *oldPort = _ports->setPort(_ports->_menuPort);
 
-	_gfx->FillRect(_gfx->_menuBarRect, 1, colorBack);
-	_gfx->PenColor(colorPen);
-	_gfx->MoveTo(0, 1);
+	_paint16->fillRect(_ports->_menuBarRect, 1, colorBack);
+	_ports->penColor(colorPen);
+	_ports->moveTo(0, 1);
 	_text->Draw_String(text);
-	_gfx->BitsShow(_gfx->_menuBarRect);
-	_gfx->SetPort(oldPort);
+	_paint16->bitsShow(_ports->_menuBarRect);
+	_ports->setPort(oldPort);
 }
 
 void SciGui::drawMenuBar(bool clear) {
 	if (!clear) {
-		Port *oldPort = _gfx->SetPort(_gfx->_menuPort);
+		Port *oldPort = _ports->setPort(_ports->_menuPort);
 		_menu->drawBar();
-		_gfx->BitsShow(_gfx->_menuBarRect);
-		_gfx->SetPort(oldPort);
+		_paint16->bitsShow(_ports->_menuBarRect);
+		_ports->setPort(oldPort);
 	} else {
 		drawStatus("", 0, 0);
 	}
@@ -321,7 +276,7 @@ void SciGui::drawMenuBar(bool clear) {
 
 void SciGui::menuReset() {
 	delete _menu;
-	_menu = new Menu(_s->_event, _s->_segMan, this, _gfx, _text, _screen, _cursor);
+	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text, _screen, _cursor);
 }
 
 void SciGui::menuAdd(Common::String title, Common::String content, reg_t contentVmPtr) {
@@ -341,26 +296,26 @@ reg_t SciGui::menuSelect(reg_t eventObject) {
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
 
-	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
+	if (_ports->isFrontWindow(_ports->_picWind)) {
 		_screen->_picNotValid = 1;
-		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		_paint16->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 		_transitions->setup(animationNr, animationBlackoutFlag);
 	} else {
-		_windowMgr->BeginUpdate(_windowMgr->_picWind);
-		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
-		_windowMgr->EndUpdate(_windowMgr->_picWind);
+		_ports->beginUpdate(_ports->_picWind);
+		_paint16->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		_ports->endUpdate(_ports->_picWind);
 	}
-	_gfx->SetPort(oldPort);
+	_ports->setPort(oldPort);
 }
 
 void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
 	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
-		_gfx->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+		_paint16->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	} else {
-		_gfx->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
+		_paint16->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
 	}
 	_palette->setOnScreen();
 }
@@ -374,40 +329,40 @@ int SciGui::getControlPicNotValid() {
 void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
 	if (!hilite) {
 		rect.grow(1);
-		_gfx->EraseRect(rect);
-		_gfx->FrameRect(rect);
+		_paint16->eraseRect(rect);
+		_paint16->frameRect(rect);
 		rect.grow(-2);
-		_gfx->TextGreyedOutput(style & 1 ? false : true);
+		_ports->textGreyedOutput(style & 1 ? false : true);
 		_text->Box(text, 0, rect, SCI_TEXT_ALIGNMENT_CENTER, fontId);
-		_gfx->TextGreyedOutput(false);
+		_ports->textGreyedOutput(false);
 		rect.grow(1);
 		if (style & 8) // selected
-			_gfx->FrameRect(rect);
+			_paint16->frameRect(rect);
 		if (!getControlPicNotValid()) {
 			rect.grow(1);
-			_gfx->BitsShow(rect);
+			_paint16->bitsShow(rect);
 		}
 	} else {
-		_gfx->InvertRect(rect);
-		_gfx->BitsShow(rect);
+		_paint16->invertRect(rect);
+		_paint16->bitsShow(rect);
 	}
 }
 
 void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
 	if (!hilite) {
 		rect.grow(1);
-		_gfx->EraseRect(rect);
+		_paint16->eraseRect(rect);
 		rect.grow(-1);
 		_text->Box(text, 0, rect, alignment, fontId);
 		if (style & 8) { // selected
-			_gfx->FrameRect(rect);
+			_paint16->frameRect(rect);
 		}
 		rect.grow(1);
 		if (!getControlPicNotValid())
-			_gfx->BitsShow(rect);
+			_paint16->bitsShow(rect);
 	} else {
-		_gfx->InvertRect(rect);
-		_gfx->BitsShow(rect);
+		_paint16->invertRect(rect);
+		_paint16->bitsShow(rect);
 	}
 }
 
@@ -417,9 +372,9 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 
 	rect.grow(1);
 	_controls->TexteditCursorErase();
-	_gfx->EraseRect(rect);
+	_paint16->eraseRect(rect);
 	_text->Box(text, 0, textRect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
-	_gfx->FrameRect(rect);
+	_paint16->frameRect(rect);
 	if (style & 8) {
 		_text->SetFont(fontId);
 		rect.grow(-1);
@@ -428,20 +383,20 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 		rect.grow(1);
 	}
 	if (!getControlPicNotValid())
-		_gfx->BitsShow(rect);
+		_paint16->bitsShow(rect);
 }
 
 void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
 	if (!hilite) {
-		_gfx->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, priority, 0);
+		_paint16->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, priority, 0);
 		if (style & 0x20) {
-			_gfx->FrameRect(rect);
+			_paint16->frameRect(rect);
 		}
 		if (!getControlPicNotValid())
-			_gfx->BitsShow(rect);
+			_paint16->bitsShow(rect);
 	} else {
-		_gfx->InvertRect(rect);
-		_gfx->BitsShow(rect);
+		_paint16->invertRect(rect);
+		_paint16->bitsShow(rect);
 	}
 }
 
@@ -450,10 +405,10 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 		_controls->drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
 		rect.grow(1);
 		if (isAlias && (style & 8)) {
-			_gfx->FrameRect(rect);
+			_paint16->frameRect(rect);
 		}
 		if (!getControlPicNotValid())
-			_gfx->BitsShow(rect);
+			_paint16->bitsShow(rect);
 	}
 }
 
@@ -469,66 +424,66 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 }
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
-	_gfx->PaintRect(rect);
+	_paint16->paintRect(rect);
 }
 
 void SciGui::graphFillBoxBackground(Common::Rect rect) {
-	_gfx->EraseRect(rect);
+	_paint16->eraseRect(rect);
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
-	_gfx->FillRect(rect, colorMask, color, priority, control);
+	_paint16->fillRect(rect, colorMask, color, priority, control);
 }
 
 void SciGui::graphFrameBox(Common::Rect rect, int16 color) {
-	int16 oldColor = _gfx->GetPort()->penClr;
-	_gfx->PenColor(color);
-	_gfx->FrameRect(rect);
-	_gfx->PenColor(oldColor);
+	int16 oldColor = _ports->getPort()->penClr;
+	_ports->penColor(color);
+	_paint16->frameRect(rect);
+	_ports->penColor(oldColor);
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
-	_gfx->OffsetLine(startPoint, endPoint);
+	_ports->offsetLine(startPoint, endPoint);
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
 
 reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 screenMask) {
-	return _gfx->BitsSave(rect, screenMask);
+	return _paint16->bitsSave(rect, screenMask);
 }
 
 reg_t SciGui::graphSaveUpscaledHiresBox(Common::Rect rect) {
-	return _gfx->BitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
+	return _paint16->bitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
 }
 
 void SciGui::graphRestoreBox(reg_t handle) {
-	_gfx->BitsRestore(handle);
+	_paint16->bitsRestore(handle);
 }
 
 void SciGui::graphUpdateBox(Common::Rect rect, bool hiresMode) {
 	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires()))
-		_gfx->BitsShow(rect);
+		_paint16->bitsShow(rect);
 	else
-		_gfx->BitsShowHires(rect);
+		_paint16->bitsShowHires(rect);
 }
 
 void SciGui::graphRedrawBox(Common::Rect rect) {
 	localToGlobal(&rect.left, &rect.top);
 	localToGlobal(&rect.right, &rect.bottom);
-	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
 	globalToLocal(&rect.left, &rect.top);
 	globalToLocal(&rect.right, &rect.bottom);
 
 	_animate->reAnimate(rect);
 
-	_gfx->SetPort(oldPort);
+	_ports->setPort(oldPort);
 }
 
 void SciGui::graphAdjustPriority(int top, int bottom) {
 	if (_usesOldGfxFunctions) {
-		_gfx->PriorityBandsInit(15, top, bottom);
+		_ports->priorityBandsInit(15, top, bottom);
 	} else {
-		_gfx->PriorityBandsInit(14, top, bottom);
+		_ports->priorityBandsInit(14, top, bottom);
 	}
 }
 
@@ -605,20 +560,20 @@ void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
 }
 
 uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
-	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
 	Common::Rect adjustedRect(rect.left, rect.top, rect.right, rect.bottom);
 	uint16 result;
 
-	adjustedRect.clip(_gfx->GetPort()->rect);
-	_gfx->OffsetRect(adjustedRect);
-	result = _gfx->onControl(screenMask, adjustedRect);
+	adjustedRect.clip(_ports->getPort()->rect);
+	_ports->offsetRect(adjustedRect);
+	result = _compare->onControl(screenMask, adjustedRect);
 
-	_gfx->SetPort(oldPort);
+	_ports->setPort(oldPort);
 	return result;
 }
 
 void SciGui::animateShowPic() {
-	Port *picPort = _windowMgr->_picWind;
+	Port *picPort = _ports->_picWind;
 	Common::Rect picRect = picPort->rect;
 	bool previousCursorState = _cursor->isVisible();
 
@@ -631,7 +586,7 @@ void SciGui::animateShowPic() {
 		_cursor->show();
 
 	// We set SCI1.1 priority band information here
-	_gfx->PriorityBandsRecall();
+	_ports->priorityBandsRecall();
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
@@ -653,16 +608,16 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 			return;
 	}
 
-	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
 	_animate->disposeLastCast();
 
 	_animate->makeSortedList(list);
 	_animate->fill(old_picNotValid);
 
 	if (old_picNotValid) {
-		_windowMgr->BeginUpdate(_windowMgr->_picWind);
+		_ports->beginUpdate(_ports->_picWind);
 		_animate->update();
-		_windowMgr->EndUpdate(_windowMgr->_picWind);
+		_ports->endUpdate(_ports->_picWind);
 	}
 
 	_animate->drawCels();
@@ -676,7 +631,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	if (_animate->getLastCastCount() > 1)
 		_s->_throttleTrigger = true;
 
-	_gfx->SetPort(oldPort);
+	_ports->setPort(oldPort);
 }
 
 void SciGui::addToPicSetPicNotValid() {
@@ -689,7 +644,7 @@ void SciGui::addToPicSetPicNotValid() {
 void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
 
-	_gfx->SetPort((Port *)_windowMgr->_picWind);
+	_ports->setPort((Port *)_ports->_picWind);
 
 	list = _s->_segMan->lookupList(listReference);
 	if (!list)
@@ -702,17 +657,17 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 }
 
 void SciGui::addToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
-	_gfx->SetPort((Port *)_windowMgr->_picWind);
+	_ports->setPort((Port *)_ports->_picWind);
 	_animate->addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 	addToPicSetPicNotValid();
 }
 
 void SciGui::setNowSeen(reg_t objectReference) {
-	_gfx->SetNowSeen(objectReference);
+	_compare->SetNowSeen(objectReference);
 }
 
 bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
-	Port *oldPort = _gfx->SetPort((Port *)_windowMgr->_picWind);
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
 	Common::Rect checkRect;
 	Common::Rect adjustedRect;
 	uint16 signal, controlMask;
@@ -724,25 +679,25 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
 
 	adjustedRect = checkRect;
-	adjustedRect.clip(_gfx->GetPort()->rect);
-	_gfx->OffsetRect(adjustedRect);
+	adjustedRect.clip(_ports->getPort()->rect);
+	_ports->offsetRect(adjustedRect);
 
 	signal = GET_SEL32V(_s->_segMan, curObject, signal);
 	controlMask = GET_SEL32V(_s->_segMan, curObject, illegalBits);
-	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
+	result = (_compare->onControl(SCI_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
 	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _s->_segMan->lookupList(listReference);
 		if (!list)
 			error("kCanBeHere called with non-list as parameter");
 
-		result = _gfx->CanBeHereCheckRectList(curObject, checkRect, list);
+		result = _compare->CanBeHereCheckRectList(curObject, checkRect, list);
 	}
-	_gfx->SetPort(oldPort);
+	_ports->setPort(oldPort);
 	return result;
 }
 
 bool SciGui::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
-	View *tmpView = _gfx->getView(viewId);
+	View *tmpView = _cache->getView(viewId);
 	CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
@@ -761,7 +716,7 @@ void SciGui::baseSetter(reg_t object) {
 		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
 		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
 
-		View *tmpView = _gfx->getView(viewId);
+		View *tmpView = _cache->getView(viewId);
 		Common::Rect celRect;
 
 		tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
@@ -796,8 +751,8 @@ void SciGui::setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Comm
 }
 
 void SciGui::setCursorPos(Common::Point pos) {
-	pos.y += _gfx->GetPort()->top;
-	pos.x += _gfx->GetPort()->left;
+	pos.y += _ports->getPort()->top;
+	pos.x += _ports->getPort()->left;
 	moveCursor(pos);
 }
 
@@ -806,11 +761,11 @@ Common::Point SciGui::getCursorPos() {
 }
 
 void SciGui::moveCursor(Common::Point pos) {
-	pos.y += _windowMgr->_picWind->rect.top;
-	pos.x += _windowMgr->_picWind->rect.left;
+	pos.y += _ports->_picWind->rect.top;
+	pos.x += _ports->_picWind->rect.left;
 
-	pos.y = CLIP<int16>(pos.y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
-	pos.x = CLIP<int16>(pos.x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
+	pos.y = CLIP<int16>(pos.y, _ports->_picWind->rect.top, _ports->_picWind->rect.bottom - 1);
+	pos.x = CLIP<int16>(pos.x, _ports->_picWind->rect.left, _ports->_picWind->rect.right - 1);
 
 	if (pos.x > _screen->getWidth() || pos.y > _screen->getHeight()) {
 		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
@@ -829,19 +784,19 @@ void SciGui::setCursorZone(Common::Rect zone) {
 }
 
 int16 SciGui::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _gfx->getView(viewId)->getCelInfo(loopNo, celNo)->width;
+	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->width;
 }
 
 int16 SciGui::getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _gfx->getView(viewId)->getCelInfo(loopNo, celNo)->height;
+	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->height;
 }
 
 int16 SciGui::getLoopCount(GuiResourceId viewId) {
-	return _gfx->getView(viewId)->getLoopCount();
+	return _cache->getView(viewId)->getLoopCount();
 }
 
 int16 SciGui::getCelCount(GuiResourceId viewId, int16 loopNo) {
-	return _gfx->getView(viewId)->getLoopInfo(loopNo)->celCount;
+	return _cache->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
 void SciGui::syncWithFramebuffer() {
@@ -858,7 +813,7 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
-	position.x += _gfx->GetPort()->left; position.y += _gfx->GetPort()->top;
+	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
 	position.x *= 2; position.y *= 2;
 	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
 	delete myPortrait;
@@ -911,7 +866,7 @@ bool SciGui::debugShowMap(int mapNo) {
 }
 
 bool SciGui::debugEGAdrawingVisualize(bool state) {
-	_gfx->setEGAdrawingVisualize(state);
+	_paint16->setEGAdrawingVisualize(state);
 	return false;
 }
 

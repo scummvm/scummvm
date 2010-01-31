@@ -35,7 +35,8 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
-#include "sci/graphics/gfx.h"
+#include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/robot.h"
 #include "sci/graphics/text.h"
@@ -46,11 +47,13 @@ namespace Sci {
 SciGui32::SciGui32(EngineState *state, Screen *screen, SciPalette *palette, Cursor *cursor)
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
-	_gfx = new Gfx(_s->resMan, _s->_segMan, _s->_kernel, _screen, _palette);
+	_cache = new GfxCache(_s->resMan, _screen, _palette);
+	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 }
 
 SciGui32::~SciGui32() {
-	delete _gfx;
+	delete _compare;
+	delete _cache;
 }
 
 void SciGui32::resetEngineState(EngineState *s) {
@@ -95,12 +98,12 @@ uint16 SciGui32::onControl(byte screenMask, Common::Rect rect) {
 
 	adjustedRect.translate(0, 10);
 
-	result = _gfx->onControl(screenMask, rect);
+	result = _compare->onControl(screenMask, rect);
 	return result;
 }
 
 void SciGui32::setNowSeen(reg_t objectReference) {
-	_gfx->SetNowSeen(objectReference);
+	_compare->SetNowSeen(objectReference);
 }
 
 bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
@@ -114,19 +117,19 @@ bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
 	signal = GET_SEL32V(_s->_segMan, curObject, signal);
 	controlMask = GET_SEL32V(_s->_segMan, curObject, illegalBits);
-	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
+	result = (_compare->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
 	if ((result)) { // gui16 && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _s->_segMan->lookupList(listReference);
 		if (!list)
 			error("kCanBeHere called with non-list as parameter");
 
-		result = _gfx->CanBeHereCheckRectList(curObject, checkRect, list);
+		result = _compare->CanBeHereCheckRectList(curObject, checkRect, list);
 	}
 	return result;
 }
 
 bool SciGui32::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
-	View *tmpView = _gfx->getView(viewId);
+	View *tmpView = _cache->getView(viewId);
 	CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
@@ -146,7 +149,7 @@ void SciGui32::baseSetter(reg_t object) {
 		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
 
 		if (viewId != SIGNAL_OFFSET) {
-			View *tmpView = _gfx->getView(viewId);
+			View *tmpView = _cache->getView(viewId);
 			Common::Rect celRect;
 
 			tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
@@ -215,19 +218,19 @@ void SciGui32::setCursorZone(Common::Rect zone) {
 }
 
 int16 SciGui32::getCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _gfx->getView(viewId)->getCelInfo(loopNo, celNo)->width;
+	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->width;
 }
 
 int16 SciGui32::getCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return _gfx->getView(viewId)->getCelInfo(loopNo, celNo)->height;
+	return _cache->getView(viewId)->getCelInfo(loopNo, celNo)->height;
 }
 
 int16 SciGui32::getLoopCount(GuiResourceId viewId) {
-	return _gfx->getView(viewId)->getLoopCount();
+	return _cache->getView(viewId)->getLoopCount();
 }
 
 int16 SciGui32::getCelCount(GuiResourceId viewId, int16 loopNo) {
-	return _gfx->getView(viewId)->getLoopInfo(loopNo)->celCount;
+	return _cache->getView(viewId)->getLoopInfo(loopNo)->celCount;
 }
 
 void SciGui32::syncWithFramebuffer() {
@@ -320,7 +323,7 @@ void SciGui32::frameOut() {
 
 				if (viewId != 0xffff) {
 					Common::Rect celRect;
-					View *view = _gfx->getView(viewId);
+					View *view = _cache->getView(viewId);
 
 					view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
