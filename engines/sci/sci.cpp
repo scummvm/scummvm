@@ -178,14 +178,14 @@ Common::Error SciEngine::run() {
 		_gamestate->_gui = 0;
 		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cache, cursor);
 	} else {
+#endif
 		_gamestate->_gfxPorts = new GfxPorts(segMan, screen);
 		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gamestate->_gfxPorts, _audio);
+#ifdef ENABLE_SCI32
 		_gamestate->_gui32 = 0;
 	}
-#else
-	_gamestate->_ports = new GfxPorts(_segMan, _screen);
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor, _audio);
 #endif
+
 	_gamestate->_gfxPalette = palette;
 	_gamestate->_gfxScreen = screen;
 	_gamestate->_gfxCache = cache;
