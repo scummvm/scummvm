@@ -41,71 +41,79 @@ namespace Sci {
 static const PlainGameDescriptor SciGameTitles[] = {
 	{"sci",             "Sierra SCI Game"},
 	{"sci-fanmade",     "Fanmade SCI Game"},
+	// === SCI0 games =========================================================
 	{"astrochicken",    "Astro Chicken"},
 	{"christmas1988",   "Christmas Card 1988"},
-	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
-	{"christmas1992",   "Christmas Card 1992"},
-	{"castlebrain",     "Castle of Dr. Brain"},
 	{"iceman",          "Codename: Iceman"},
 	{"camelot",         "Conquests of Camelot: King Arthur, Quest for the Grail"},
-	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
+	{"funseeker",       "Fun Seeker's Guide"},
+	{"hoyle1",          "Hoyle Official Book of Games: Volume 1"},
+	{"hoyle2",          "Hoyle Official Book of Games: Volume 2"},
+	{"kq4sci",          "King's Quest IV: The Perils of Rosella, SCI Remake"},
+	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
+	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
+	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
+	{"pq2",             "Police Quest II: The Vengeance"},
+	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},	// EGA is SCI0, VGA SCI1.1
+	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
+	// === SCI01 games ========================================================
+	{"qfg2",            "Quest for Glory II: Trial by Fire"},
+	{"kq1sci",          "King's Quest I: Quest for the Crown, SCI Remake"},
+	// === SCI1 games =========================================================
+	{"castlebrain",     "Castle of Dr. Brain"},
+	{"christmas1990",   "Christmas Card 1990: The Seasoned Professional"},
 	{"cnick-lsl",       "Crazy Nick's Software Picks: Leisure Suit Larry's Casino"},
 	{"cnick-kq",        "Crazy Nick's Software Picks: King Graham's Board Game Challenge"},
 	{"cnick-laurabow",  "Crazy Nick's Software Picks: Parlor Games with Laura Bow"},
 	{"cnick-longbow",   "Crazy Nick's Software Picks: Robin Hood's Game of Skill and Chance"},
 	{"cnick-sq",        "Crazy Nick's Software Picks: Roger Wilco's Spaced Out Game Pack"},
-	{"ecoquest",        "EcoQuest: The Search for Cetus"},
+	{"ecoquest",        "EcoQuest: The Search for Cetus"},	// floppy is SCI1, CD SCI1.1
+	{"fairytales",      "Mixed-up Fairy Tales"},
+	{"hoyle3",          "Hoyle Official Book of Games: Volume 3"},
+	{"jones",           "Jones in the Fast Lane"},
+	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
+	{"longbow",         "Conquests of the Longbow: The Adventures of Robin Hood"},
+	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
+	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
+	{"msastrochicken",  "Ms. Astro Chicken"},
+	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},
+	{"pq3",             "Police Quest III: The Kindred"},
+	{"sq1sci",          "Space Quest I: The Sarien Encounter"},
+	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},	// floppy is SCI1, CD SCI1.1
+	// === SCI1.1 games =======================================================
+	{"christmas1992",   "Christmas Card 1992"},
 	{"ecoquest2",       "EcoQuest II: Lost Secret of the Rainforest"},
 	{"freddypharkas",   "Freddy Pharkas: Frontier Pharmacist"},
-	{"funseeker",       "Fun Seeker's Guide"},
-	{"hoyle1",          "Hoyle Official Book of Games: Volume 1"},
-	{"hoyle2",          "Hoyle Official Book of Games: Volume 2"},
-	{"hoyle3",          "Hoyle Official Book of Games: Volume 3"},
 	{"hoyle4",          "Hoyle Classic Card Games"},
-	{"jones",           "Jones in the Fast Lane"},
-	{"kq1sci",          "King's Quest I: Quest for the Crown, SCI Remake"},
-	{"kq4sci",          "King's Quest IV: The Perils of Rosella, SCI Remake"},
-	{"kq5",             "King's Quest V: Absence Makes the Heart Go Yonder"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
-	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
-	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
-	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
-	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
-	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
-	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"fairytales",      "Mixed-up Fairy Tales"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},
-	{"msastrochicken",  "Ms. Astro Chicken"},
-	{"pepper",          "Pepper's Adventure in Time"},
-	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},
-	{"pq2",             "Police Quest II: The Vengeance"},
-	{"pq3",             "Police Quest III: The Kindred"},
-	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
-	{"qfg2",            "Quest for Glory II: Trial by Fire"},
 	{"qfg3",            "Quest for Glory III: Wages of War"},
-	{"slater",          "Slater & Charlie Go Camping"},
-	{"sq1sci",          "Space Quest I: The Sarien Encounter"},
-	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
-	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
-	// SCI32 games
+	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
+	{"mothergoose",     "Mixed-Up Mother Goose"},	// floppy is SCI1.1, CD SCI2.1
+	{"pepper",          "Pepper's Adventure in Time"},
+	{"slater",          "Slater & Charlie Go Camping"},
+	// === SCI2 games =========================================================
 	{"gk1",             "Gabriel Knight: Sins of the Fathers"},	// demo is SCI11, full version SCI32
+	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
+	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},	// floppy is SCI2, CD SCI2.1
+	// === SCI2.1 games ========================================================
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
+	// TODO: Inside The Chest/Behind the Developer's Shield
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
-	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
-	{"lighthouse",      "Lighthouse: The Dark Being"},
+	// TODO: King's Questions
 	{"phantasmagoria",  "Phantasmagoria"},
-	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
-	{"pq4",             "Police Quest IV: Open Season"},
 	{"pqswat",          "Police Quest: SWAT"},
-	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},
-	{"rama",            "RAMA"},
 	{"shivers",         "Shivers"},
-	{"shivers2",        "Shivers II: Harvest of Souls"},
 	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},
+	// === SCI3 games =========================================================
+	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
+	{"lighthouse",      "Lighthouse: The Dark Being"},
+	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
+	{"shivers2",        "Shivers II: Harvest of Souls"},
+	{"rama",            "RAMA"},
 	{0, 0}
 };
 
@@ -494,8 +502,6 @@ Common::Error SciEngine::loadGameState(int slot) {
 }
 
 Common::Error SciEngine::saveGameState(int slot, const char *desc) {
-	// TODO: Savegames created from the GMM are still problematic
-#if 0
 	Common::String fileName = Common::String::printf("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);
@@ -507,10 +513,17 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 
 	if (gamestate_save(_gamestate, out, desc, version)) {
 		warning("Saving the game state to '%s' failed", fileName);
-		return Common::kUnknownError;
+		return Common::kWritingFailed;
+	} else {
+		out->finalize();
+		if (out->err()) {
+			warning("Writing the savegame failed.");
+			return Common::kWritingFailed;
+		}
+		delete out;
 	}
-#endif
-	return Common::kNoError;	// TODO: return success/failure
+
+	return Common::kNoError;
 }
 
 bool SciEngine::canLoadGameStateCurrently() {
