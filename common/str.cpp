@@ -37,7 +37,7 @@
 
 namespace Common {
 
-MemoryPool *g_refCountPool = 0;	// FIXME: This is never freed right now
+MemoryPool *g_refCountPool = 0; // FIXME: This is never freed right now
 
 static uint32 computeCapacity(uint32 len) {
 	// By default, for the capacity we use the next multiple of 32
@@ -84,7 +84,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 }
 
 String::String(const String &str)
- : _size(str._size) {
+    : _size(str._size) {
 	if (str.isStorageIntern()) {
 		// String in internal storage: just copy it
 		memcpy(_storage, str._storage, _builtinCapacity);
@@ -100,7 +100,7 @@ String::String(const String &str)
 }
 
 String::String(char c)
-: _size(0), _str(_storage) {
+    : _size(0), _str(_storage) {
 
 	_storage[0] = c;
 	_storage[1] = 0;
@@ -219,7 +219,7 @@ void String::decRefCount(int *oldRefCount) {
 	}
 }
 
-String& String::operator  =(const char *str) {
+String &String::operator=(const char *str) {
 	uint32 len = strlen(str);
 	ensureCapacity(len, false);
 	_size = len;
@@ -227,7 +227,7 @@ String& String::operator  =(const char *str) {
 	return *this;
 }
 
-String &String::operator  =(const String &str) {
+String &String::operator=(const String &str) {
 	if (&str == this)
 		return *this;
 
@@ -249,7 +249,7 @@ String &String::operator  =(const String &str) {
 	return *this;
 }
 
-String& String::operator  =(char c) {
+String &String::operator=(char c) {
 	decRefCount(_extern._refCount);
 	_str = _storage;
 	_size = 1;
@@ -258,7 +258,7 @@ String& String::operator  =(char c) {
 	return *this;
 }
 
-String &String::operator +=(const char *str) {
+String &String::operator+=(const char *str) {
 	if (_str <= str && str <= _str + _size)
 		return operator+=(Common::String(str));
 
@@ -272,7 +272,7 @@ String &String::operator +=(const char *str) {
 	return *this;
 }
 
-String &String::operator +=(const String &str) {
+String &String::operator+=(const String &str) {
 	if (&str == this)
 		return operator+=(Common::String(str));
 
@@ -286,7 +286,7 @@ String &String::operator +=(const String &str) {
 	return *this;
 }
 
-String &String::operator +=(char c) {
+String &String::operator+=(char c) {
 	ensureCapacity(_size + 1, true);
 
 	_str[_size++] = c;
@@ -363,7 +363,7 @@ void String::deleteChar(uint32 p) {
 
 	makeUnique();
 	while (p++ < _size)
-		_str[p-1] = _str[p];
+		_str[p - 1] = _str[p];
 	_size--;
 }
 
@@ -388,7 +388,7 @@ void String::insertChar(char c, uint32 p) {
 	ensureCapacity(_size + 1, true);
 	_size++;
 	for (uint32 i = _size; i > p; --i)
-		_str[i] = _str[i-1];
+		_str[i] = _str[i - 1];
 	_str[p] = c;
 }
 
@@ -411,8 +411,8 @@ void String::trim() {
 	makeUnique();
 
 	// Trim trailing whitespace
-	while (_size >= 1 && isspace(_str[_size-1]))
-		_size--;
+	while (_size >= 1 && isspace(_str[_size - 1]))
+		--_size;
 	_str[_size] = 0;
 
 	// Trim leading whitespace
@@ -449,7 +449,7 @@ String String::printf(const char *fmt, ...) {
 		int size = _builtinCapacity;
 		do {
 			size *= 2;
-			output.ensureCapacity(size-1, false);
+			output.ensureCapacity(size - 1, false);
 			assert(!output.isStorageIntern());
 			size = output._extern._capacity;
 
@@ -477,16 +477,16 @@ String String::printf(const char *fmt, ...) {
 
 #pragma mark -
 
-bool String::operator ==(const String &x) const {
+bool String::operator==(const String &x) const {
 	return equals(x);
 }
 
-bool String::operator ==(const char *x) const {
+bool String::operator==(const char *x) const {
 	assert(x != 0);
 	return equals(x);
 }
 
-bool String::operator !=(const String &x) const {
+bool String::operator!=(const String &x) const {
 	return !equals(x);
 }
 
@@ -495,29 +495,29 @@ bool String::operator !=(const char *x) const {
 	return !equals(x);
 }
 
-bool String::operator < (const String &x) const {
+bool String::operator<(const String &x) const {
 	return compareTo(x) < 0;
 }
 
-bool String::operator <= (const String &x) const {
+bool String::operator<=(const String &x) const {
 	return compareTo(x) <= 0;
 }
 
-bool String::operator > (const String &x) const {
+bool String::operator>(const String &x) const {
 	return compareTo(x) > 0;
 }
 
-bool String::operator >= (const String &x) const {
+bool String::operator>=(const String &x) const {
 	return compareTo(x) >= 0;
 }
 
 #pragma mark -
 
-bool operator == (const char* y, const String &x) {
+bool operator==(const char* y, const String &x) {
 	return (x == y);
 }
 
-bool operator != (const char* y, const String &x) {
+bool operator!=(const char* y, const String &x) {
 	return x != y;
 }
 
@@ -561,31 +561,31 @@ int String::compareToIgnoreCase(const char *x) const {
 
 #pragma mark -
 
-String operator +(const String &x, const String &y) {
+String operator+(const String &x, const String &y) {
 	String temp(x);
 	temp += y;
 	return temp;
 }
 
-String operator +(const char *x, const String &y) {
+String operator+(const char *x, const String &y) {
 	String temp(x);
 	temp += y;
 	return temp;
 }
 
-String operator +(const String &x, const char *y) {
+String operator+(const String &x, const char *y) {
 	String temp(x);
 	temp += y;
 	return temp;
 }
 
-String operator +(char x, const String &y) {
+String operator+(char x, const String &y) {
 	String temp(x);
 	temp += y;
 	return temp;
 }
 
-String operator +(const String &x, char y) {
+String operator+(const String &x, char y) {
 	String temp(x);
 	temp += y;
 	return temp;

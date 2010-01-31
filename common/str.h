@@ -54,20 +54,20 @@ protected:
 	 * than 8 makes no sense, since that's the size of member _extern
 	 * (on 32 bit machines; 12 bytes on systems with 64bit pointers).
 	 */
-	static const uint32 _builtinCapacity = 32 - sizeof(uint32) - sizeof(char*);
+	static const uint32 _builtinCapacity = 32 - sizeof(uint32) - sizeof(char *);
 
 	/**
 	 * Length of the string. Stored to avoid having to call strlen
 	 * a lot. Yes, we limit ourselves to strings shorter than 4GB --
 	 * on purpose :-).
 	 */
-	uint32		_size;
+	uint32 _size;
 
 	/**
 	 * Pointer to the actual string storage. Either points to _storage,
 	 * or to a block allocated on the heap via malloc.
 	 */
-	char		*_str;
+	char  *_str;
 
 
 	union {
@@ -81,7 +81,7 @@ protected:
 		 */
 		struct {
 			mutable int *_refCount;
-			uint32		_capacity;
+			uint32       _capacity;
 		} _extern;
 	};
 
@@ -110,32 +110,32 @@ public:
 
 	~String();
 
-	String &operator  =(const char *str);
-	String &operator  =(const String &str);
-	String &operator  =(char c);
-	String &operator +=(const char *str);
-	String &operator +=(const String &str);
-	String &operator +=(char c);
+	String &operator=(const char *str);
+	String &operator=(const String &str);
+	String &operator=(char c);
+	String &operator+=(const char *str);
+	String &operator+=(const String &str);
+	String &operator+=(char c);
 
-	bool operator ==(const String &x) const;
-	bool operator ==(const char *x) const;
-	bool operator !=(const String &x) const;
-	bool operator !=(const char *x) const;
+	bool operator==(const String &x) const;
+	bool operator==(const char *x) const;
+	bool operator!=(const String &x) const;
+	bool operator!=(const char *x) const;
 
-	bool operator <(const String &x) const;
-	bool operator <=(const String &x) const;
-	bool operator >(const String &x) const;
-	bool operator >=(const String &x) const;
+	bool operator<(const String &x) const;
+	bool operator<=(const String &x) const;
+	bool operator>(const String &x) const;
+	bool operator>=(const String &x) const;
 
 	bool equals(const String &x) const;
 	bool equalsIgnoreCase(const String &x) const;
-	int compareTo(const String &x) const;	// strcmp clone
-	int compareToIgnoreCase(const String &x) const;	// stricmp clone
+	int compareTo(const String &x) const;           // strcmp clone
+	int compareToIgnoreCase(const String &x) const; // stricmp clone
 
 	bool equals(const char *x) const;
 	bool equalsIgnoreCase(const char *x) const;
-	int compareTo(const char *x) const;	// strcmp clone
-	int compareToIgnoreCase(const char *x) const;	// stricmp clone
+	int compareTo(const char *x) const;             // strcmp clone
+	int compareToIgnoreCase(const char *x) const;   // stricmp clone
 
 	bool hasSuffix(const String &x) const;
 	bool hasSuffix(const char *x) const;
@@ -152,15 +152,15 @@ public:
 	 * Taken from exult/files/listfiles.cc
 	 *
 	 * Token meaning:
-	 *		"*": any character, any amount of times.
-	 *		"?": any character, only once.
+	 *      "*": any character, any amount of times.
+	 *      "?": any character, only once.
 	 *
 	 * Example strings/patterns:
-	 *		String: monkey.s01	 Pattern: monkey.s??	=> true
-	 *		String: monkey.s101	 Pattern: monkey.s??	=> false
-	 *		String: monkey.s99	 Pattern: monkey.s?1	=> false
-	 *		String: monkey.s101	 Pattern: monkey.s*		=> true
-	 *		String: monkey.s99	 Pattern: monkey.s*1	=> false
+	 *      String: monkey.s01   Pattern: monkey.s??    => true
+	 *      String: monkey.s101  Pattern: monkey.s??    => false
+	 *      String: monkey.s99   Pattern: monkey.s?1    => false
+	 *      String: monkey.s101  Pattern: monkey.s*     => true
+	 *      String: monkey.s99   Pattern: monkey.s*1    => false
 	 *
 	 * @param str Text to be matched against the given pattern.
 	 * @param pat Glob pattern.
@@ -173,11 +173,11 @@ public:
 	bool matchString(const String &pat, bool ignoreCase = false, bool pathMode = false) const;
 
 
-	inline const char *c_str() const		{ return _str; }
-	inline uint size() const				{ return _size; }
+	inline const char *c_str() const { return _str; }
+	inline uint size() const         { return _size; }
 
-	inline bool empty() const	{ return (_size == 0); }
-	char lastChar() const	{ return (_size > 0) ? _str[_size-1] : 0; }
+	inline bool empty() const { return (_size == 0); }
+	char lastChar() const     { return (_size > 0) ? _str[_size - 1] : 0; }
 
 	char operator[](int idx) const {
 		assert(_str && idx >= 0 && idx < (int)_size);
@@ -222,19 +222,19 @@ public:
 	typedef char *        iterator;
 	typedef const char *  const_iterator;
 
-	iterator		begin() {
+	iterator begin() {
 		return _str;
 	}
 
-	iterator		end() {
+	iterator end() {
 		return begin() + size();
 	}
 
-	const_iterator	begin() const {
+	const_iterator begin() const {
 		return _str;
 	}
 
-	const_iterator	end() const {
+	const_iterator end() const {
 		return begin() + size();
 	}
 
@@ -247,17 +247,17 @@ protected:
 };
 
 // Append two strings to form a new (temp) string
-String operator +(const String &x, const String &y);
+String operator+(const String &x, const String &y);
 
-String operator +(const char *x, const String &y);
-String operator +(const String &x, const char *y);
+String operator+(const char *x, const String &y);
+String operator+(const String &x, const char *y);
 
-String operator +(const String &x, char y);
-String operator +(char x, const String &y);
+String operator+(const String &x, char y);
+String operator+(char x, const String &y);
 
 // Some useful additional comparison operators for Strings
-bool operator == (const char *x, const String &y);
-bool operator != (const char *x, const String &y);
+bool operator==(const char *x, const String &y);
+bool operator!=(const char *x, const String &y);
 
 // Utility functions to remove leading and trailing whitespaces
 extern char *ltrim(char *t);
@@ -269,9 +269,9 @@ extern char *trim(char *t);
  * Returns the last component of a given path.
  *
  * Examples:
- *			/foo/bar.txt would return 'bar.txt'
- *			/foo/bar/    would return 'bar'
- *			/foo/./bar//    would return 'bar'
+ *          /foo/bar.txt    would return 'bar.txt'
+ *          /foo/bar/       would return 'bar'
+ *          /foo/./bar//    would return 'bar'
  *
  * @param path the path of which we want to know the last component
  * @param sep character used to separate path components
@@ -287,9 +287,9 @@ Common::String lastPathComponent(const Common::String &path, const char sep);
  *
  * @todo remove double dot components:  /foo/baz/../bar -> /foo/bar
  *
- * @param path	the path to normalize
- * @param sep	the separator token (usually '/' on Unix-style systems, or '\\' on Windows based stuff)
- * @return	the normalized path
+ * @param path  the path to normalize
+ * @param sep   the separator token (usually '/' on Unix-style systems, or '\\' on Windows based stuff)
+ * @return      the normalized path
  */
 Common::String normalizePath(const Common::String &path, const char sep);
 
@@ -299,15 +299,15 @@ Common::String normalizePath(const Common::String &path, const char sep);
  * Taken from exult/files/listfiles.cc
  *
  * Token meaning:
- *		"*": any character, any amount of times.
- *		"?": any character, only once.
+ *      "*": any character, any amount of times.
+ *      "?": any character, only once.
  *
  * Example strings/patterns:
- *		String: monkey.s01	 Pattern: monkey.s??	=> true
- *		String: monkey.s101	 Pattern: monkey.s??	=> false
- *		String: monkey.s99	 Pattern: monkey.s?1	=> false
- *		String: monkey.s101	 Pattern: monkey.s*		=> true
- *		String: monkey.s99	 Pattern: monkey.s*1	=> false
+ *      String: monkey.s01   Pattern: monkey.s??    => true
+ *      String: monkey.s101  Pattern: monkey.s??    => false
+ *      String: monkey.s99   Pattern: monkey.s?1    => false
+ *      String: monkey.s101  Pattern: monkey.s*     => true
+ *      String: monkey.s99   Pattern: monkey.s*1    => false
  *
  * @param str Text to be matched against the given pattern.
  * @param pat Glob pattern.
@@ -321,6 +321,6 @@ bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool
 
 typedef Array<String> StringList;
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif
