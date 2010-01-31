@@ -1957,7 +1957,7 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 	s->stack_base[1] = NULL_REG;
 }
 
-static EngineState *_game_run(EngineState *&s, int restoring) {
+static EngineState *_game_run(EngineState *&s) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
 
@@ -1966,7 +1966,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 
 	do {
 		s->_executionStackPosChanged = false;
-		run_vm(s, (successor || restoring) ? 1 : 0);
+		run_vm(s, successor ? 1 : 0);
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
 			successor = NULL;
 			s->_executionStack.clear();
@@ -2025,7 +2025,7 @@ int game_run(EngineState **_s) {
 		return 1;
 	}
 	// and ENGAGE!
-	_game_run(*_s, 0);
+	_game_run(*_s);
 
 	debugC(2, kDebugLevelVM, "Game::play() finished.");
 
