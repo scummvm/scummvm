@@ -111,20 +111,19 @@ void Inter_Fascination::setupOpcodesGob() {
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 	warning("funcPlayImd with parameter : 'tirb.imd'");
 
-	if (_vm->_vidPlayer->primaryOpen("tirb.imd")) {
+	if (_vm->_vidPlayer->primaryOpen("tirb", 128, 80)) {
 		_vm->_vidPlayer->primaryPlay();
 		_vm->_vidPlayer->primaryClose();
 	}
-	_vm->_draw->closeScreen();
 }
 
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
 	warning("funcPlayImd with parameter : 'tira.imd'");
-	if (_vm->_vidPlayer->primaryOpen("tira.imd")) {
+
+	if (_vm->_vidPlayer->primaryOpen("tira", 128, 80)) {
 		_vm->_vidPlayer->primaryPlay();
 		_vm->_vidPlayer->primaryClose();
 	}
-	_vm->_draw->closeScreen();
 }
 
 void Inter_Fascination::oFascin_loadExtasy(OpGobParams &params) {
