@@ -1057,7 +1057,7 @@ void ProjectProvider::createScummVMSolution(const BuildSetup &setup) {
 	            "\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\n"
 	            "\t\tDebug|Win32 = Debug|Win32\n"
 	            "\t\tRelease|Win32 = Release|Win32\n"
-	             "\t\tDebug|x64 = Debug|x64\n"
+	            "\t\tDebug|x64 = Debug|x64\n"
 	            "\t\tRelease|x64 = Release|x64\n"
 	            "\tEndGlobalSection\n"
 	            "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\n";
