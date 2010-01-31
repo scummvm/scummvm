@@ -222,6 +222,7 @@ void SciGui32::syncWithFramebuffer() {
 
 void SciGui32::addScreenItem(reg_t object) {
 	_screenItems.push_back(object);
+	warning("addScreenItem %X:%X (%s)", object.segment, object.offset, _s->_segMan->getObjectName(object));
 }
 
 void SciGui32::deleteScreenItem(reg_t object) {
