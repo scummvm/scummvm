@@ -202,7 +202,7 @@ public:
 	Scene *scene() { return _scene; };
 };
 
-class MadsEngine: public MadsM4Engine {
+class MadsEngine : public MadsM4Engine {
 public:
 	MadsEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~MadsEngine();
@@ -213,7 +213,7 @@ public:
 	MadsScene *scene() { return (MadsScene *)_scene; };
 };
 
-class M4Engine: public MadsM4Engine {
+class M4Engine : public MadsM4Engine {
 public:
 	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~M4Engine();

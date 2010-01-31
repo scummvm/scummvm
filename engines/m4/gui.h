@@ -210,7 +210,7 @@ enum TextColors {
 
 enum MenuObjectState {OS_GREYED = 0, OS_NORMAL = 1, OS_MOUSEOVER = 2, OS_PRESSED = 3};
 
-class DialogView: public View {
+class DialogView : public View {
 public:
 	DialogView(MadsM4Engine *Vm, const Common::Rect &viewBounds, bool transparent = false):
 		View(Vm, viewBounds, transparent) {};
@@ -245,7 +245,7 @@ public:
 	virtual void onRefresh() {}
 };
 
-class MenuObject: public GUIObject {
+class MenuObject : public GUIObject {
 public:
 	typedef void (*Callback)(DialogView *view, MenuObject *item);
 protected:
@@ -271,7 +271,7 @@ public:
 	virtual bool onEvent(M4EventType event, int32 param, int x, int y, MenuObject *&currentItem) { return false; }
 };
 
-class MenuButton: public MenuObject {
+class MenuButton : public MenuObject {
 public:
 	MenuButton(DialogView *owner, int buttonId, int xs, int ys, int width, int height,
 		Callback callbackFn = NULL, bool greyed = false, bool transparent = false,
@@ -285,7 +285,7 @@ public:
 enum MenuHorizSliderState {HSLIDER_THUMB_NORMAL = 0, HSLIDER_THUMB_MOUSEOVER = 1, HSLIDER_THUMB_PRESSED = 2};
 #define SLIDER_BAR_COLOR 129
 
-class MenuHorizSlider: public MenuObject {
+class MenuHorizSlider : public MenuObject {
 protected:
 	MenuHorizSliderState _sliderState;
 	Common::Point _thumbSize;
@@ -310,7 +310,7 @@ enum MenuVertSliderState {
 	VSLIDER_DOWN      = 0x0050
 };
 
-class MenuVertSlider: public MenuObject {
+class MenuVertSlider : public MenuObject {
 protected:
 	MenuVertSliderState _sliderState;
 	Common::Point _thumbSize;
@@ -332,14 +332,14 @@ public:
 	void setPercentage(int value);
 };
 
-class MenuMessage: public MenuObject {
+class MenuMessage : public MenuObject {
 public:
 	MenuMessage(DialogView *owner, int objectId, int x, int y, int w, int h, bool transparent = false);
 
 	void onRefresh();
 };
 
-class MenuImage: public MenuObject {
+class MenuImage : public MenuObject {
 private:
 	M4Surface *_sprite;
 public:
@@ -354,7 +354,7 @@ public:
 	}
 };
 
-class MenuSaveLoadText: public MenuButton {
+class MenuSaveLoadText : public MenuButton {
 private:
 	bool _loadFlag;
 	const char *_displayText;
@@ -375,7 +375,7 @@ public:
 	void setVisible(bool value);
 };
 
-class MenuTextField: public MenuObject {
+class MenuTextField : public MenuObject {
 private:
 	int _displayValue;
 	char _displayText[MAX_SAVEGAME_NAME];
@@ -395,7 +395,7 @@ public:
 
 };
 
-class GUIRect: public GUIObject {
+class GUIRect : public GUIObject {
 private:
 	int _tag;
 public:
@@ -407,7 +407,7 @@ public:
 
 enum GUIButtonState {BUTTON_NORMAL, BUTTON_MOUSEOVER, BUTTON_PRESSED};
 
-class GUIButton: public GUIRect {
+class GUIButton : public GUIRect {
 protected:
 	M4Surface *_normalSprite, *_mouseOverSprite, *_pressedSprite;
 	GUIButtonState _buttonState;
@@ -422,7 +422,7 @@ public:
 	GUIButtonState getState() const { return _buttonState; }
 };
 
-class GUITextField: public GUIRect {
+class GUITextField : public GUIRect {
 private:
 	Common::String _text;
 public:
@@ -441,7 +441,7 @@ public:
 	void keyMouseCollision() {}
 };
 
-class GameInterfaceView: public View {
+class GameInterfaceView : public View {
 public:
 	GameInterfaceView(MadsM4Engine *vm, const Common::Rect &rect): View(vm, rect) {};
 	~GameInterfaceView() {};

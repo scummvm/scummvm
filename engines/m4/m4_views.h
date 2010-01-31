@@ -46,7 +46,7 @@ public:
 	}
 };
 
-class GUIInventory: public GUIRect {
+class GUIInventory : public GUIRect {
 	typedef Common::List<Common::SharedPtr<GUIInventoryItem> > InventoryList;
 	typedef InventoryList::iterator ItemsIterator;
 private:
@@ -87,7 +87,7 @@ public:
 	void setVisible(bool value) { _visible = value; }
 };
 
-class M4InterfaceView: public GameInterfaceView {
+class M4InterfaceView : public GameInterfaceView {
 	typedef Common::List<Common::SharedPtr<GUIButton> > ButtonList;
 	typedef ButtonList::iterator ButtonsIterator;
 public:

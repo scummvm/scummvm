@@ -112,7 +112,7 @@ public:
 enum ResourceType {RESTYPE_ROOM, RESTYPE_SC, RESTYPE_TEXT, RESTYPE_QUO, RESTYPE_I,
 	RESTYPE_OB, RESTYPE_FONT, RESTYPE_SOUND, RESTYPE_SPEECH, RESTYPE_HAS_EXT, RESTYPE_NO_EXT};
 
-class MADSResourceManager: public ResourceManager {
+class MADSResourceManager : public ResourceManager {
 private:
 	ResourceType getResourceType(const char *resourceName);
 	const char *getResourceFilename(const char *resourceName);
@@ -123,7 +123,7 @@ public:
 	bool resourceExists(const char *resourceName);
 };
 
-class M4ResourceManager: public ResourceManager {
+class M4ResourceManager : public ResourceManager {
 protected:
 	Common::SeekableReadStream *loadResource(const char *resourceName, bool loadFlag);
 public:

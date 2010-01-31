@@ -82,7 +82,7 @@ class M4Engine;
 class MadsEngine;
 class InterfaceView;
 
-class Scene: public View {
+class Scene : public View {
 private:
 	byte *_inverseColorTable;
 	HotSpotList _sceneHotspots;
@@ -131,7 +131,7 @@ public:
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
-class M4Scene: public Scene {
+class M4Scene : public Scene {
 private:
 	M4Engine *_vm;
 	SpriteAsset *_sceneSprites;
@@ -157,7 +157,7 @@ public:
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 };
 
-class MadsScene: public Scene {
+class MadsScene : public Scene {
 private:
 	MadsEngine *_vm;
 

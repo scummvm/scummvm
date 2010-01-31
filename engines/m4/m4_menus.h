@@ -41,7 +41,7 @@ namespace M4 {
 
 typedef Common::List<MenuObject *> MenuObjectList;
 
-class OrionMenuView: public DialogView {
+class OrionMenuView : public DialogView {
 	typedef MenuObjectList::iterator MenuObjectsIterator;
 private:
 	MenuType _menuType;

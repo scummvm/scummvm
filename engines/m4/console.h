@@ -33,7 +33,7 @@ namespace M4 {
 class MadsM4Engine;
 class MadsEngine;
 
-class Console: public GUI::Debugger {
+class Console : public GUI::Debugger {
 private:
 	MadsM4Engine *_vm;
 
@@ -58,7 +58,7 @@ public:
 	virtual ~Console();
 };
 
-class MadsConsole: public Console {
+class MadsConsole : public Console {
 private:
 	MadsEngine *_vm;
 
@@ -69,7 +69,7 @@ public:
 	virtual ~MadsConsole() {};
 };
 
-class M4Console: public Console {
+class M4Console : public Console {
 public:
 	M4Console(MadsM4Engine *vm): Console(vm) {};
 	virtual ~M4Console() {};

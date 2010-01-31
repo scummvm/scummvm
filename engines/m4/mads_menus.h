@@ -34,7 +34,7 @@ namespace M4 {
 
 enum MadsGameAction {START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT};
 
-class RexMainMenuView: public View {
+class RexMainMenuView : public View {
 private:
 	M4Surface *_bgSurface;
 	RGBList *_bgPalData;
@@ -56,7 +56,7 @@ public:
 	void updateState();
 };
 
-class DragonMainMenuView: public View {
+class DragonMainMenuView : public View {
 private:
 	//M4Surface *_bgSurface;
 	RGBList *_bgPalData;
@@ -78,7 +78,7 @@ public:
 	void updateState();
 };
 
-class MadsMainMenuView: public View {
+class MadsMainMenuView : public View {
 public:
 	MadsMainMenuView(MadsM4Engine *vm);
 

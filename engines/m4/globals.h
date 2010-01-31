@@ -196,7 +196,7 @@ public:
 
 };
 
-class M4Globals: public Globals {
+class M4Globals : public Globals {
 private:
 	M4Engine *_vm;
 public:
@@ -206,7 +206,7 @@ public:
 	bool invSuppressClickSound;
 };
 
-class MadsGlobals: public Globals {
+class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
 		uint32 id;

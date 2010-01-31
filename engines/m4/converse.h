@@ -135,7 +135,7 @@ enum ConverseStyle {CONVSTYLE_EARTH, CONVSTYLE_SPACE};
 typedef Common::HashMap<Common::String,EntryInfo,Common::IgnoreCase_Hash,Common::IgnoreCase_EqualTo> OffsetHashMap;
 typedef Common::HashMap<Common::String,int32,Common::IgnoreCase_Hash,Common::IgnoreCase_EqualTo> ConvVarHashMap;
 
-class ConversationView: public View {
+class ConversationView : public View {
 public:
 	ConversationView(MadsM4Engine *vm);
 	~ConversationView();

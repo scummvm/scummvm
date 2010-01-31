@@ -46,7 +46,7 @@ enum SceneTransition {
 
 typedef void (*TextviewCallback)(MadsM4Engine *vm);
 
-class TextviewView: public View {
+class TextviewView : public View {
 private:
 	bool _animating;
 
@@ -87,7 +87,7 @@ public:
 
 typedef void (*AnimviewCallback)(MadsM4Engine *vm);
 
-class AAFile: public MadsPack {
+class AAFile : public MadsPack {
 public:
 	AAFile(const char *resourceName, MadsM4Engine* vm);
 
@@ -106,7 +106,7 @@ public:
 
 enum AAFlags {AA_HAS_FONT = 0x20, AA_HAS_SOUND = 0x8000};
 
-class AnimviewView: public View {
+class AnimviewView : public View {
 private:
 	char _resourceName[80];
 	Common::SeekableReadStream *_script;

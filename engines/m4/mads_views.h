@@ -34,7 +34,7 @@
 
 namespace M4 {
 
-class IntegerList: public Common::Array<int> {
+class IntegerList : public Common::Array<int> {
 public:
 	int indexOf(int v) {
 		for (uint i = 0; i < size(); ++i)
@@ -49,7 +49,7 @@ enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
 enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
 		INVLIST_START = 13, VOCAB_START = 18};
 
-class MadsInterfaceView: public GameInterfaceView {
+class MadsInterfaceView : public GameInterfaceView {
 private:
 	IntegerList _inventoryList;
 	RectList _screenObjects;

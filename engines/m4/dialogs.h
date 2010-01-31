@@ -44,7 +44,7 @@ public:
 
 typedef void (*GetValueFn)(MadsM4Engine *vm, int result);
 
-class Dialog: public View {
+class Dialog : public View {
 private:
 	Common::Array<DialogLine> _lines;
 	int _widthChars;

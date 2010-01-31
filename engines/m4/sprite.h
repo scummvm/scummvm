@@ -100,7 +100,7 @@ struct SpriteFrameHeader {
 	uint32 reserved8;
 };
 
-class M4Sprite: public M4Surface {
+class M4Sprite : public M4Surface {
 public:
 	int x, y;
 	int xOffset, yOffset;

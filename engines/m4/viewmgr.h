@@ -76,7 +76,7 @@ struct ScreenFlags {
 	_screenFlags.get = SCREVENT_ALL; _screenFlags.blocks = SCREVENT_ALL; \
 	_screenFlags.visible = true;
 
-class RectList: public Common::Array<Common::Rect> {
+class RectList : public Common::Array<Common::Rect> {
 public:
 	RectList();
 	~RectList();
@@ -107,7 +107,7 @@ private:
 	View *_view;
 };
 
-class View: public M4Surface {
+class View : public M4Surface {
 public:
 	View(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
 	View(MadsM4Engine *vm, int x = 0, int y = 0, bool transparent = false);
