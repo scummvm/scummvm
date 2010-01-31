@@ -52,10 +52,11 @@ namespace Sci {
 class SciEvent;
 class Menubar;
 class GfxAnimate;
+class GfxCache;
+class GfxControls;
+class GfxPalette;
 class GfxPorts;
 class GfxScreen;
-class GfxPalette;
-class GfxCache;
 class SciGui;
 class Cursor;
 class MessageState;
@@ -157,10 +158,11 @@ public:
 	/* Non-VM information */
 
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
+	GfxCache *_gfxCache;
+	GfxControls *_gfxControls; // Controls for 16-bit gfx
+	GfxPalette *_gfxPalette;
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
-	GfxPalette *_gfxPalette;
-	GfxCache *_gfxCache;
 	SciGui *_gui; /* Currently active Gui */
 
 #ifdef ENABLE_SCI32

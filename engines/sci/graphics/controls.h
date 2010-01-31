@@ -32,24 +32,33 @@ class GfxPorts;
 class GfxPaint16;
 class Font;
 class GfxText16;
-class Controls {
+class GfxScreen;
+class GfxControls {
 public:
-	Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16);
-	~Controls();
+	GfxControls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen);
+	~GfxControls();
 
-	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
-	void TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
-	void TexteditCursorErase();
-	void TexteditChange(reg_t controlObject, reg_t eventObject);
+	void kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
+	void kernelDrawText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 alignment, int16 style, bool hilite);
+	void kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite);
+	void kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite);
+	void kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite);
+	void kernelTexteditChange(reg_t controlObject, reg_t eventObject);
 
 private:
 	void init();
-	void TexteditSetBlinkTime();
+	void texteditSetBlinkTime();
+
+	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
+	void texteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos);
+	void texteditCursorErase();
+	int getPicNotValid();
 
 	SegManager *_segMan;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
 	GfxText16 *_text16;
+	GfxScreen *_screen;
 
 	// Textedit-Control related
 	Common::Rect _texteditCursorRect;

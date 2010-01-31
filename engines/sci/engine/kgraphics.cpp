@@ -36,11 +36,12 @@
 #include "sci/engine/kernel.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/gui32.h"
-#include "sci/graphics/ports.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/controls.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
 
@@ -812,13 +813,13 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
-		s->_gui->drawControlButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
+		s->_gfxControls->kernelDrawButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = GET_SEL32V(s->_segMan, controlObject, mode);
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
-		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		s->_gfxControls->kernelDrawText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -826,7 +827,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		maxChars = GET_SEL32V(s->_segMan, controlObject, max);
 		cursorPos = GET_SEL32V(s->_segMan, controlObject, cursor);
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
-		s->_gui->drawControlTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
+		s->_gfxControls->kernelDrawTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
@@ -846,7 +847,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 				priority = -1;
 		}
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y - 1);
-		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
+		s->_gfxControls->kernelDrawIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_LIST:
@@ -894,7 +895,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		}
 
 		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
-		s->_gui->drawControlList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
+		s->_gfxControls->kernelDrawList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		free(listEntries);
 		delete[] listStrings;
 		return;
@@ -934,8 +935,15 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t controlObject = argv[0];
 	reg_t eventObject = argv[1];
 
-	if (!controlObject.isNull())
-		s->_gui->editControl(controlObject, eventObject);
+	if (!controlObject.isNull()) {
+		int16 controlType = GET_SEL32V(s->_segMan, controlObject, type);
+
+		switch (controlType) {
+		case SCI_CONTROLS_TYPE_TEXTEDIT:
+			// Only process textedit controls in here
+			s->_gfxControls->kernelTexteditChange(controlObject, eventObject);
+		}
+	}
 	return s->r_acc;
 }
 

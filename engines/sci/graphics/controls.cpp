@@ -34,27 +34,28 @@
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/controls.h"
 
 namespace Sci {
 
-Controls::Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16)
-	: _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16) {
+GfxControls::GfxControls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen)
+	: _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen) {
 	init();
 }
 
-Controls::~Controls() {
+GfxControls::~GfxControls() {
 }
 
-void Controls::init() {
+void GfxControls::init() {
 	_texteditCursorVisible = false;
 }
 
 const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
-void Controls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
+void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = _text16->GetFontId();
 	int16 oldPenColor = _ports->_curPort->penClr;
@@ -109,7 +110,7 @@ void Controls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int
 	_text16->SetFont(oldFontId);
 }
 
-void Controls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
+void GfxControls::texteditCursorDraw(Common::Rect rect, const char *text, uint16 curPos) {
 	int16 textWidth, i;
 	if (!_texteditCursorVisible) {
 		textWidth = 0;
@@ -123,24 +124,24 @@ void Controls::TexteditCursorDraw(Common::Rect rect, const char *text, uint16 cu
 		_paint16->invertRect(_texteditCursorRect);
 		_paint16->bitsShow(_texteditCursorRect);
 		_texteditCursorVisible = true;
-		TexteditSetBlinkTime();
+		texteditSetBlinkTime();
 	}
 }
 
-void Controls::TexteditCursorErase() {
+void GfxControls::texteditCursorErase() {
 	if (_texteditCursorVisible) {
 		_paint16->invertRect(_texteditCursorRect);
 		_paint16->bitsShow(_texteditCursorRect);
 		_texteditCursorVisible = false;
 	}
-	TexteditSetBlinkTime();
+	texteditSetBlinkTime();
 }
 
-void Controls::TexteditSetBlinkTime() {
+void GfxControls::texteditSetBlinkTime() {
 	_texteditBlinkTime = g_system->getMillis() + (30 * 1000 / 60);
 }
 
-void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
+void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 cursorPos = GET_SEL32V(_segMan, controlObject, cursor);
 	uint16 maxChars = GET_SEL32V(_segMan, controlObject, max);
 	reg_t textReference = GET_SEL32(_segMan, controlObject, text);
@@ -209,12 +210,12 @@ void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, font);
 		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, nsLeft), GET_SEL32V(_segMan, controlObject, nsTop),
 							  GET_SEL32V(_segMan, controlObject, nsRight), GET_SEL32V(_segMan, controlObject, nsBottom));
-		TexteditCursorErase();
+		texteditCursorErase();
 		_paint16->eraseRect(rect);
 		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
 		_paint16->bitsShow(rect);
 		_text16->SetFont(fontId);
-		TexteditCursorDraw(rect, text.c_str(), cursorPos);
+		texteditCursorDraw(rect, text.c_str(), cursorPos);
 		_text16->SetFont(oldFontId);
 		// Write back string
 		_segMan->strcpy(textReference, text.c_str());
@@ -223,11 +224,103 @@ void Controls::TexteditChange(reg_t controlObject, reg_t eventObject) {
 			_paint16->invertRect(_texteditCursorRect);
 			_paint16->bitsShow(_texteditCursorRect);
 			_texteditCursorVisible = !_texteditCursorVisible;
-			TexteditSetBlinkTime();
+			texteditSetBlinkTime();
 		}
 	}
 
 	PUT_SEL32V(_segMan, controlObject, cursor, cursorPos);
+}
+
+int GfxControls::getPicNotValid() {
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		return _screen->_picNotValidSci11;
+	return _screen->_picNotValid;
+}
+
+void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
+	if (!hilite) {
+		rect.grow(1);
+		_paint16->eraseRect(rect);
+		_paint16->frameRect(rect);
+		rect.grow(-2);
+		_ports->textGreyedOutput(style & 1 ? false : true);
+		_text16->Box(text, 0, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
+		_ports->textGreyedOutput(false);
+		rect.grow(1);
+		if (style & 8) // selected
+			_paint16->frameRect(rect);
+		if (!getPicNotValid()) {
+			rect.grow(1);
+			_paint16->bitsShow(rect);
+		}
+	} else {
+		_paint16->invertRect(rect);
+		_paint16->bitsShow(rect);
+	}
+}
+
+void GfxControls::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
+	if (!hilite) {
+		rect.grow(1);
+		_paint16->eraseRect(rect);
+		rect.grow(-1);
+		_text16->Box(text, 0, rect, alignment, fontId);
+		if (style & 8) { // selected
+			_paint16->frameRect(rect);
+		}
+		rect.grow(1);
+		if (!getPicNotValid())
+			_paint16->bitsShow(rect);
+	} else {
+		_paint16->invertRect(rect);
+		_paint16->bitsShow(rect);
+	}
+}
+
+void GfxControls::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
+	Common::Rect textRect = rect;
+	uint16 oldFontId = _text16->GetFontId();
+
+	rect.grow(1);
+	texteditCursorErase();
+	_paint16->eraseRect(rect);
+	_text16->Box(text, 0, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
+	_paint16->frameRect(rect);
+	if (style & 8) {
+		_text16->SetFont(fontId);
+		rect.grow(-1);
+		texteditCursorDraw(rect, text, cursorPos);
+		_text16->SetFont(oldFontId);
+		rect.grow(1);
+	}
+	if (!getPicNotValid())
+		_paint16->bitsShow(rect);
+}
+
+void GfxControls::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
+	if (!hilite) {
+		_paint16->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, priority, 0);
+		if (style & 0x20) {
+			_paint16->frameRect(rect);
+		}
+		if (!getPicNotValid())
+			_paint16->bitsShow(rect);
+	} else {
+		_paint16->invertRect(rect);
+		_paint16->bitsShow(rect);
+	}
+}
+
+void GfxControls::kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
+	if (!hilite) {
+		drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
+		rect.grow(1);
+		if (isAlias && (style & 8)) {
+			_paint16->frameRect(rect);
+		}
+		if (!getPicNotValid())
+			_paint16->bitsShow(rect);
+	}
 }
 
 } // End of namespace Sci

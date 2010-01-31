@@ -59,7 +59,8 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
 	_s->_gfxAnimate = _animate;
 	_text16 = new GfxText16(_s->resMan, _cache, _ports, _paint16, _screen);
-	_controls = new Controls(_s->_segMan, _ports, _paint16, _text16);
+	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
+	_s->_gfxControls = _controls;
 	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
 }
 
@@ -318,109 +319,6 @@ void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 lef
 		_paint16->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
 	}
 	_palette->setOnScreen();
-}
-
-int SciGui::getControlPicNotValid() {
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		return _screen->_picNotValidSci11;
-	return _screen->_picNotValid;
-}
-
-void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
-	if (!hilite) {
-		rect.grow(1);
-		_paint16->eraseRect(rect);
-		_paint16->frameRect(rect);
-		rect.grow(-2);
-		_ports->textGreyedOutput(style & 1 ? false : true);
-		_text16->Box(text, 0, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
-		_ports->textGreyedOutput(false);
-		rect.grow(1);
-		if (style & 8) // selected
-			_paint16->frameRect(rect);
-		if (!getControlPicNotValid()) {
-			rect.grow(1);
-			_paint16->bitsShow(rect);
-		}
-	} else {
-		_paint16->invertRect(rect);
-		_paint16->bitsShow(rect);
-	}
-}
-
-void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
-	if (!hilite) {
-		rect.grow(1);
-		_paint16->eraseRect(rect);
-		rect.grow(-1);
-		_text16->Box(text, 0, rect, alignment, fontId);
-		if (style & 8) { // selected
-			_paint16->frameRect(rect);
-		}
-		rect.grow(1);
-		if (!getControlPicNotValid())
-			_paint16->bitsShow(rect);
-	} else {
-		_paint16->invertRect(rect);
-		_paint16->bitsShow(rect);
-	}
-}
-
-void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
-	Common::Rect textRect = rect;
-	uint16 oldFontId = _text16->GetFontId();
-
-	rect.grow(1);
-	_controls->TexteditCursorErase();
-	_paint16->eraseRect(rect);
-	_text16->Box(text, 0, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
-	_paint16->frameRect(rect);
-	if (style & 8) {
-		_text16->SetFont(fontId);
-		rect.grow(-1);
-		_controls->TexteditCursorDraw(rect, text, cursorPos);
-		_text16->SetFont(oldFontId);
-		rect.grow(1);
-	}
-	if (!getControlPicNotValid())
-		_paint16->bitsShow(rect);
-}
-
-void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
-	if (!hilite) {
-		_paint16->drawCelAndShow(viewId, loopNo, celNo, rect.left, rect.top, priority, 0);
-		if (style & 0x20) {
-			_paint16->frameRect(rect);
-		}
-		if (!getControlPicNotValid())
-			_paint16->bitsShow(rect);
-	} else {
-		_paint16->invertRect(rect);
-		_paint16->bitsShow(rect);
-	}
-}
-
-void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
-	if (!hilite) {
-		_controls->drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
-		rect.grow(1);
-		if (isAlias && (style & 8)) {
-			_paint16->frameRect(rect);
-		}
-		if (!getControlPicNotValid())
-			_paint16->bitsShow(rect);
-	}
-}
-
-void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
-	int16 controlType = GET_SEL32V(_s->_segMan, controlObject, type);
-
-	switch (controlType) {
-	case SCI_CONTROLS_TYPE_TEXTEDIT:
-		// Only process textedit controls in here
-		_controls->TexteditChange(controlObject, eventObject);
-		return;
-	}
 }
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
