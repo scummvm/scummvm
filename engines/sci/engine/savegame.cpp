@@ -952,6 +952,10 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Copy some old data
 	retval->_soundCmd = s->_soundCmd;
 
+	// Copy memory segment
+	retval->_memorySegmentSize = s->_memorySegmentSize;
+	memcpy(retval->_memorySegment, s->_memorySegment, s->_memorySegmentSize);
+
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS

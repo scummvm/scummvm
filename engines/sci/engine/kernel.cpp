@@ -324,6 +324,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("GetMessage", kGetMessage, "iiir"),
 	DEFUN("DoAudio", kDoAudio, ".*"),
 	DEFUN("DoSync", kDoSync, ".*"),
+	DEFUN("MemorySegment", kMemorySegment, "iri*"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 	DEFUN("ShowMovie", kShowMovie, "..*"),
@@ -370,7 +371,6 @@ SciKernelFunction kfunct_mappers[] = {
 	// Stub functions
 	/*09*/	DEFUN("Show", kShow, "i"),
 	DEFUN("ShiftScreen", kShiftScreen, ".*"),
-	DEFUN("MemorySegment", kMemorySegment, ".*"),
 	DEFUN("ListOps", kListOps, ".*"),
 	DEFUN("ATan", kATan, ".*"),
 	DEFUN("MergePoly", kMergePoly, ".*"),

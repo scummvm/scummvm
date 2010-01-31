@@ -84,6 +84,8 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_sci21KernelType = SCI_VERSION_NONE;
 #endif
 
+	_memorySegmentSize = 0;
+
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 
 	_soundCmd = 0;

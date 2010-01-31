@@ -121,6 +121,43 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+enum kMemorySegmentFunc {
+	K_MEMORYSEGMENT_SAVE_DATA = 0,
+	K_MEMORYSEGMENT_RESTORE_DATA = 1
+};
+
+reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv) {
+	// MemorySegment provides access to a 256-byte block of memory that remains
+	// intact across restarts and restores
+
+	switch (argv[0].toUint16()) {
+	case K_MEMORYSEGMENT_SAVE_DATA: {
+		if (argc < 3)
+			error("Insufficient number of arguments passed to MemorySegment");
+		uint16 size = argv[2].toUint16();
+
+		if (!size)
+			size = s->_segMan->strlen(argv[1]) + 1;
+
+		if (size > EngineState::kMemorySegmentMax)
+			size = EngineState::kMemorySegmentMax;
+
+		s->_memorySegmentSize = size;
+
+		// We assume that this won't be called on pointers
+		s->_segMan->memcpy(s->_memorySegment, argv[1], size);
+		break;
+	}
+	case K_MEMORYSEGMENT_RESTORE_DATA:
+		s->_segMan->memcpy(argv[1], s->_memorySegment, s->_memorySegmentSize);
+		break;
+	default:
+		error("Unknown MemorySegment operation %04x", argv[0].toUint16());
+	}
+
+	return argv[1];
+}
+
 reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
 	run_gc(s);
 	debugC(2, kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());

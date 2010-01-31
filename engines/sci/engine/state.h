@@ -140,6 +140,10 @@ public:
 	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio);
 	virtual ~EngineState();
 
+	enum {
+		kMemorySegmentMax = 256
+	};
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	kLanguage getLanguage();
@@ -286,6 +290,9 @@ public:
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
 	MessageState *_msgState;
+
+	uint _memorySegmentSize;
+	byte _memorySegment[kMemorySegmentMax];
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
