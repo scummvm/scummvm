@@ -42,7 +42,7 @@ bool OSystem_PalmBase::showMouse(bool visible) {
 	return last;
 }
 
-void OSystem_PalmBase::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
+void OSystem_PalmBase::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	if (w == 0 || h == 0)
 		return;
 
@@ -55,8 +55,11 @@ void OSystem_PalmBase::setMouseCursor(const byte *buf, uint w, uint h, int hotsp
 		_mouseCurState.w = w;
 		_mouseCurState.h = h;
 
-		free(_mouseDataP);
-		free(_mouseBackupP);
+		if (_mouseDataP)
+			free(_mouseDataP);
+
+		if (_mouseBackupP)
+			free(_mouseBackupP);
 
 		_mouseDataP = (byte *)malloc(w * h);
 		_mouseBackupP = (byte *)malloc(w * h * 2); // if 16bit = *2

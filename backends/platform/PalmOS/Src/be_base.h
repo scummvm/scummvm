@@ -212,7 +212,7 @@ public:
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 
-	void initSize(uint w, uint h);
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format);
 	int16 getWidth() { return _screenWidth; }
 	int16 getHeight() { return _screenHeight; }
 
@@ -222,7 +222,7 @@ public:
 
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
 
 	virtual void showOverlay() = 0;
 	virtual void hideOverlay() = 0;
@@ -239,7 +239,8 @@ public:
 
 	bool pollEvent(Common::Event &event);
 
-	void getTimeAndDate(TimeDate &t) const;
+
+	void getTimeAndDate(TimeDate& td) const;
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 

@@ -73,7 +73,7 @@ bool OSystem_PalmBase::setGraphicsMode(int mode) {
  *
  */
 
-void OSystem_PalmBase::initSize(uint w, uint h) {
+void OSystem_PalmBase::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	_screenWidth	= w;
 	_screenHeight	= h;
 
