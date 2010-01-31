@@ -2976,7 +2976,7 @@ int Console::printObject(reg_t pos) {
 		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->getVarCount(); i++) {
-		printf("    ");
+		DebugPrintf("    ");
 		if (i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
 			DebugPrintf("[%03x] %s = ", varSelector, selector_name(s, varSelector));
