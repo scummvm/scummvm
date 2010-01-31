@@ -555,6 +555,8 @@ TextItem *Resources::getTextItem(uint16 id) const {
 	if (id >= _totTextTable->itemsCount)
 		return 0;
 
+	assert(_totTextTable->items);
+
 	TOTTextItem &totItem = _totTextTable->items[id];
 
 	if ((totItem.offset == 0xFFFF) || (totItem.size == 0))
@@ -614,6 +616,8 @@ Resource *Resources::getTOTResource(uint16 id) const {
 		return 0;
 	}
 
+	assert(_totResourceTable->items);
+
 	TOTResourceItem &totItem = _totResourceTable->items[id];
 
 	byte *data = 0;
@@ -638,6 +642,8 @@ Resource *Resources::getEXTResource(uint16 id) const {
 				_extResourceTable ? (_extResourceTable->itemsCount - 1) : -1);
 		return 0;
 	}
+
+	assert(_totResourceTable->items);
 
 	EXTResourceItem &extItem = _extResourceTable->items[id];
 
