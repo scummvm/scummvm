@@ -293,10 +293,10 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Red : Barred access
 	// Yellow: Contained access
 	int poly_colors[4] = {
-		s->_gfxPalette->kernelFind(0, 255, 0),	// green
-		s->_gfxPalette->kernelFind(0, 0, 255),	// blue
-		s->_gfxPalette->kernelFind(255, 0, 0),	// red
-		s->_gfxPalette->kernelFind(255, 255, 0)	// yellow
+		s->_gfxPalette->kernelFindColor(0, 255, 0),	// green
+		s->_gfxPalette->kernelFindColor(0, 0, 255),	// blue
+		s->_gfxPalette->kernelFindColor(255, 0, 0),	// red
+		s->_gfxPalette->kernelFindColor(255, 255, 0)	// yellow
 	};
 
 	// Clip
@@ -315,8 +315,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	// Green: End point
 	// Blue: Starting point
 	int point_colors[2] = {
-		s->_gfxPalette->kernelFind(0, 255, 0),	// green
-		s->_gfxPalette->kernelFind(0, 0, 255)		// blue
+		s->_gfxPalette->kernelFindColor(0, 255, 0),	// green
+		s->_gfxPalette->kernelFindColor(0, 0, 255)		// blue
 	};
 
 	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);

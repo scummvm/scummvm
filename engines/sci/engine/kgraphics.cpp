@@ -668,7 +668,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		uint16 g = argv[2].toUint16();
 		uint16 b = argv[3].toUint16();
 
-		return make_reg(0, s->_gfxPalette->kernelFind(r, g, b));
+		return make_reg(0, s->_gfxPalette->kernelFindColor(r, g, b));
 	}
 	case 6: { // Animate
 		int16 argNr;

@@ -328,7 +328,7 @@ void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 int
 		setOnScreen();
 }
 
-int16 GfxPalette::kernelFind(uint16 r, uint16 g, uint16 b) {
+int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b) {
 	return matchColor(&_sysPalette, r, g, b) & 0xFF;
 }
 
