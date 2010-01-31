@@ -85,8 +85,9 @@ void GfxPorts::init(SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common:
 	//				resulting in problems.
 
 	// Jones, Slater and Hoyle 3 were called with parameter -Nw 0 0 200 320.
+	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
-	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3")
+	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3" || (gameId == "mothergoose" && getSciVersion() == SCI_VERSION_1_EARLY))
 		offTop = 0;
 
 	openPort(_wmgrPort);
