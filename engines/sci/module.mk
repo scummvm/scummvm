@@ -34,11 +34,14 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/vm.o \
 	graphics/gui.o \
+	graphics/ports.o \
+	graphics/paint16.o \
+	graphics/compare.o \
 	graphics/animate.o \
+	graphics/compare.o \
 	graphics/controls.o \
 	graphics/cursor.o \
 	graphics/font.o \
-	graphics/gfx.o \
 	graphics/menu.o \
 	graphics/palette.o \
 	graphics/picture.o \
@@ -47,7 +50,6 @@ MODULE_OBJS := \
 	graphics/text.o \
 	graphics/transitions.o \
 	graphics/view.o \
-	graphics/windowmgr.o \
 	parser/grammar.o \
 	parser/said.o \
 	parser/vocabulary.o \
