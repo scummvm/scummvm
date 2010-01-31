@@ -507,12 +507,12 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);
 	const char *version = "";
 	if (!out) {
-		warning("Opening savegame \"%s\" for writing failed", fileName);
+		warning("Opening savegame \"%s\" for writing failed", fileName.c_str());
 		return Common::kWritingFailed;
 	}
 
 	if (gamestate_save(_gamestate, out, desc, version)) {
-		warning("Saving the game state to '%s' failed", fileName);
+		warning("Saving the game state to '%s' failed", fileName.c_str());
 		return Common::kWritingFailed;
 	} else {
 		out->finalize();
