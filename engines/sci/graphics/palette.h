@@ -51,7 +51,7 @@ public:
 	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
-	int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b);
+	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
 
