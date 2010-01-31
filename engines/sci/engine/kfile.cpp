@@ -346,6 +346,7 @@ enum {
 	K_DEVICE_INFO_GET_CURRENT_DEVICE = 1,
 	K_DEVICE_INFO_PATHS_EQUAL = 2,
 	K_DEVICE_INFO_IS_FLOPPY = 3,
+	K_DEVICE_INFO_GET_CONFIG_DISK = 5,
 	K_DEVICE_INFO_GET_SAVECAT_NAME = 7,
 	K_DEVICE_INFO_GET_SAVEFILE_NAME = 8
 };
@@ -379,6 +380,10 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		Common::String input_str = s->_segMan->getString(argv[1]);
 		debug(3, "K_DEVICE_INFO_IS_FLOPPY(%s)", input_str.c_str());
 		return NULL_REG; /* Never */
+	}
+	case K_DEVICE_INFO_GET_CONFIG_DISK: {
+		// Return drive that resource.cfg was loaded from
+		return make_reg(0, 'C');
 	}
 	/* SCI uses these in a less-than-portable way to delete savegames.
 	** Read http://www-plan.cs.colorado.edu/creichen/freesci-logs/2005.10/log20051019.html
