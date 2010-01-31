@@ -180,6 +180,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 		error("generateFilenameForDetection: Unsupported genMethod");
 	}
 
+	buf[sizeof(buf) - 1] = 0;
 	return buf;
 }
 

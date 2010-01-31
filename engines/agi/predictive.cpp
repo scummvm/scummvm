@@ -73,6 +73,7 @@ void bringWordtoTop(char *str, int wordnum) {
 	if (!str)
 		return;
 	strncpy(buf, str, MAXLINELEN);
+	buf[MAXLINELEN - 1] = 0;
 	char *word = strtok(buf, " ");
 	if (!word) {
 		debug("Invalid dictionary line");
@@ -415,6 +416,7 @@ bool AgiEngine::predictiveDialog() {
 							_wordNumber = (_wordNumber + 1) % numMatchingWords;
 							char tmp[MAXLINELEN];
 							strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
+							tmp[MAXLINELEN - 1] = 0;
 							char *tok = strtok(tmp, " ");
 							for (uint8 i = 0; i <= _wordNumber; i++)
 								tok = strtok(NULL, " ");
@@ -590,6 +592,7 @@ bool AgiEngine::matchWord() {
 		_predictiveDictActLine = _predictiveDictLine[line];
 		char tmp[MAXLINELEN];
 		strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
+		tmp[MAXLINELEN - 1] = 0;
 		char *tok = strtok(tmp, " ");
 		tok = strtok(NULL, " ");
 		_currentWord = String(tok, _currentCode.size());
