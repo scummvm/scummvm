@@ -58,7 +58,7 @@ class Transitions;
 class SciGui {
 public:
 	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
-	~SciGui();
+	virtual ~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);
 
