@@ -123,8 +123,6 @@ public:
 	virtual void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 
-	virtual void syncWithFramebuffer();
-
 	virtual reg_t portraitLoad(Common::String resourceName);
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);

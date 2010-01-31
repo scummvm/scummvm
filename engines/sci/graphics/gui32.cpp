@@ -215,10 +215,6 @@ void SciGui32::setCursorZone(Common::Rect zone) {
 	_cursor->setMoveZone(zone);
 }
 
-void SciGui32::syncWithFramebuffer() {
-	_screen->syncWithFramebuffer();
-}
-
 void SciGui32::addScreenItem(reg_t object) {
 	_screenItems.push_back(object);
 	warning("addScreenItem %X:%X (%s)", object.segment, object.offset, _s->_segMan->getObjectName(object));

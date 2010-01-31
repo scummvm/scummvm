@@ -64,8 +64,6 @@ public:
 	void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 
-	void syncWithFramebuffer();
-
 	void addScreenItem(reg_t object);
 	void deleteScreenItem(reg_t object);
 	void addPlane(reg_t object);

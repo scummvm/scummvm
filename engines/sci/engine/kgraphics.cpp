@@ -1206,12 +1206,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (playedVideo) {
-#ifdef ENABLE_SCI32
-		if (s->_gui32)
-			s->_gui32->syncWithFramebuffer();
-		else
-#endif
-			s->_gui->syncWithFramebuffer();
+		s->_gfxScreen->kernelSyncWithFramebuffer();
 	}
 
 	if (reshowCursor) {

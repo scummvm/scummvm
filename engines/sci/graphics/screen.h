@@ -55,7 +55,7 @@ public:
 
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);
-	void syncWithFramebuffer();
+	void kernelSyncWithFramebuffer();
 	void copyRectToScreen(const Common::Rect &rect);
 	void copyDisplayRectToScreen(const Common::Rect &rect);
 	void copyRectToScreen(const Common::Rect &rect, int16 x, int16 y);

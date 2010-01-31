@@ -93,7 +93,7 @@ void GfxScreen::copyFromScreen(byte *buffer) {
 	g_system->unlockScreen();
 }
 
-void GfxScreen::syncWithFramebuffer() {
+void GfxScreen::kernelSyncWithFramebuffer() {
 	Graphics::Surface *screen = g_system->lockScreen();
 
 	memcpy(_displayScreen, screen->pixels, _displayPixels);

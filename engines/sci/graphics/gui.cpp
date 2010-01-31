@@ -654,10 +654,6 @@ void SciGui::setCursorZone(Common::Rect zone) {
 	_cursor->setMoveZone(zone);
 }
 
-void SciGui::syncWithFramebuffer() {
-	_screen->syncWithFramebuffer();
-}
-
 reg_t SciGui::portraitLoad(Common::String resourceName) {
 	//Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, resourceName);
 	return NULL_REG;
