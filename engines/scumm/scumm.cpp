@@ -71,12 +71,6 @@
 
 #include "sound/mixer.h"
 
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-namespace Graphics {
-	extern void initfonts();
-}
-#endif
-
 using Common::File;
 
 namespace Scumm {
@@ -1227,10 +1221,6 @@ void ScummEngine::setupScumm() {
 	}
 
 	_res->setHeapThreshold(400000, maxHeapThreshold);
-
-#if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
-	Graphics::initfonts();
-#endif
 
 	if (_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) {
 		free(_fmtownsBuf);
