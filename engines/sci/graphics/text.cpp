@@ -43,7 +43,6 @@ Text::Text(ResourceManager *resMan, GfxCache *cache, GfxPorts *ports, GfxPaint16
 }
 
 Text::~Text() {
-	delete _font;
 }
 
 void Text::init() {
