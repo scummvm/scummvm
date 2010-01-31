@@ -903,28 +903,21 @@ static void reconstruct_sounds(EngineState *s) {
 }
 #endif
 
-EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
+void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	EngineState *retval;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongLibrary temp;
 #endif
-
-/*
-	if (s->sound_server) {
-		if ((s->sound_server->restore)(s, dirname)) {
-			warning("Restoring failed for the sound subsystem");
-			return NULL;
-		}
-	}
-*/
 
 	SavegameMetadata meta;
 
 	Common::Serializer ser(fh, 0);
 	sync_SavegameMetadata(ser, meta);
 
-	if (fh->eos())
-		return false;
+	if (fh->eos()) {
+		s->r_acc = make_reg(0, 1);	// signal failure
+		return;
+	}
 
 	if ((meta.savegame_version < MINIMUM_SAVEGAME_VERSION) ||
 	    (meta.savegame_version > CURRENT_SAVEGAME_VERSION)) {
@@ -933,7 +926,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		else
 			warning("Savegame version is %d- maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
 
-		return NULL;
+		s->r_acc = make_reg(0, 1);	// signal failure
+		return;
 	}
 
 	if (meta.savegame_version >= 12) {
@@ -1027,7 +1021,10 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 #endif
 
-	return retval;
+
+	s->successor = retval; // Set successor
+	script_abort_flag = 2; // Abort current game with replay
+	shrink_execution_stack(s, s->execution_stack_base + 1);
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

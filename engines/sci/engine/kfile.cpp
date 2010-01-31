@@ -618,17 +618,9 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		if ((in = saveFileMan->openForLoading(filename))) {
 			// found a savegame file
 
-			EngineState *newstate = gamestate_restore(s, in);
+			gamestate_restore(s, in);
 			delete in;
 
-			if (newstate) {
-				s->successor = newstate;
-				script_abort_flag = 2; // Abort current game with replay
-				shrink_execution_stack(s, s->execution_stack_base + 1);
-			} else {
-				s->r_acc = make_reg(0, 1);
-				warning("Restoring failed (game_id = '%s')", game_id.c_str());
-			}
 			return s->r_acc;
 		}
 	}

@@ -475,23 +475,17 @@ void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 Common::Error SciEngine::loadGameState(int slot) {
-	EngineState *newstate = NULL;
 	Common::String fileName = Common::String::printf("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::SeekableReadStream *in = saveFileMan->openForLoading(fileName);
 
 	if (in) {
 		// found a savegame file
-		newstate = gamestate_restore(_gamestate, in);
+		gamestate_restore(_gamestate, in);
 		delete in;
 	}
 
-	if (newstate) {
-		_gamestate->successor = newstate; // Set successor
-
-		script_abort_flag = 2; // Abort current game with replay
-
-		shrink_execution_stack(_gamestate, _gamestate->execution_stack_base + 1);
+	if (_gamestate->r_acc != make_reg(0, 1)) {
 		return Common::kNoError;
 	} else {
 		warning("Restoring gamestate '%s' failed", fileName.c_str());

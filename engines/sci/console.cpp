@@ -893,26 +893,17 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		return true;
 	}
 
-	EngineState *newstate = NULL;
-
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::SeekableReadStream *in = saveFileMan->openForLoading(argv[1]);
 	if (in) {
 		// found a savegame file
-		newstate = gamestate_restore(_vm->_gamestate, in);
+		gamestate_restore(_vm->_gamestate, in);
 		delete in;
 	}
 
-	if (newstate) {
-		_vm->_gamestate->successor = newstate; // Set successor
-
-		script_abort_flag = 2; // Abort current game with replay
-
-		shrink_execution_stack(_vm->_gamestate, _vm->_gamestate->execution_stack_base + 1);
-		return 0;
-	} else {
+	if (_vm->_gamestate->r_acc == make_reg(0, 1)) {
 		DebugPrintf("Restoring gamestate '%s' failed.\n", argv[1]);
-		return 1;
+		return true;
 	}
 
 	return false;

@@ -63,9 +63,8 @@ int gamestate_save(EngineState *s, Common::WriteStream *save, const char *savena
  * Restores a game state from a directory.
  * @param s			An older state from the same game
  * @param dirname	The subdirectory to restore from
- * @return NULL on failure, a pointer to a valid EngineState otherwise
  */
-EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
+void gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
 
 /**
  * Read the header from a savegame.
