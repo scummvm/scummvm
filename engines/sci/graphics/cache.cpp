@@ -67,7 +67,7 @@ Font *GfxCache::getFont(GuiResourceId fontId) {
 	if (_cachedFonts.size() >= MAX_CACHED_FONTS)
 		purgeFontCache();
 
-	if (!_cachedViews.contains(fontId))
+	if (!_cachedFonts.contains(fontId))
 		_cachedFonts[fontId] = new Font(_resMan, _screen, fontId);
 
 	return _cachedFonts[fontId];
