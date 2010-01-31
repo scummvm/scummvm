@@ -52,7 +52,7 @@ class WindowMgr;
 class SciGuiAnimate;
 class Controls;
 class Menu;
-class Text;
+class GfxText16;
 class Transitions;
 
 class SciGui {
@@ -160,7 +160,7 @@ private:
 	GfxAnimate *_animate;
 	Controls *_controls;
 	Menu *_menu;
-	Text *_text;
+	GfxText16 *_text16;
 	Transitions *_transitions;
 	int16 _palVaryId;
 	uint32 _palVaryStart;

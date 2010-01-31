@@ -47,7 +47,7 @@ MODULE_OBJS := \
 	graphics/portrait.o \
 	graphics/ports.o \
 	graphics/screen.o \
-	graphics/text.o \
+	graphics/text16.o \
 	graphics/transitions.o \
 	graphics/view.o \
 	parser/grammar.o \

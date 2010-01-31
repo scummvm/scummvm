@@ -39,7 +39,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
-#include "sci/graphics/text.h"
+#include "sci/graphics/text16.h"
 
 namespace Sci {
 
@@ -50,8 +50,8 @@ GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kern
 GfxPaint16::~GfxPaint16() {
 }
 
-void GfxPaint16::init(Text *text) {
-	_text = text;
+void GfxPaint16::init(GfxText16 *text16) {
+	_text16 = text16;
 
 	_EGAdrawingVisualize = false;
 }

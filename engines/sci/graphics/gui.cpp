@@ -43,7 +43,7 @@
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
 #include "sci/graphics/portrait.h"
-#include "sci/graphics/text.h"
+#include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
 #include "sci/graphics/view.h"
 #include "sci/sound/audio.h"
@@ -58,15 +58,15 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
 	_s->_gfxAnimate = _animate;
-	_text = new Text(_s->resMan, _cache, _ports, _paint16, _screen);
-	_controls = new Controls(_s->_segMan, _ports, _paint16, _text);
-	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text, _screen, _cursor);
+	_text16 = new GfxText16(_s->resMan, _cache, _ports, _paint16, _screen);
+	_controls = new Controls(_s->_segMan, _ports, _paint16, _text16);
+	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
 }
 
 SciGui::~SciGui() {
 	delete _menu;
 	delete _controls;
-	delete _text;
+	delete _text16;
 	delete _animate;
 	delete _transitions;
 	delete _paint16;
@@ -83,8 +83,8 @@ void SciGui::resetEngineState(EngineState *s) {
 void SciGui::init(bool usesOldGfxFunctions) {
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 
-	_ports->init(this, _paint16, _text, _s->_gameId);
-	_paint16->init(_text);
+	_ports->init(this, _paint16, _text16, _s->_gameId);
+	_paint16->init(_text16);
 	initPriorityBands();
 }
 
@@ -143,7 +143,7 @@ int16 SciGui::priorityToCoordinate(int16 priority) {
 
 void SciGui::display(const char *text, int argc, reg_t *argv) {
 	int displayArg;
-	TextAlignment alignment = SCI_TEXT_ALIGNMENT_LEFT;
+	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
 	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
 	bool doSaveUnder = false;
 	Common::Rect rect;
@@ -182,7 +182,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETFONT:
-			_text->SetFont(argv[0].toUint16());
+			_text16->SetFont(argv[0].toUint16());
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_WIDTH:
@@ -210,7 +210,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	}
 
 	// now drawing the text
-	_text->Size(rect, text, -1, width);
+	_text16->Size(rect, text, -1, width);
 	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
 	if (getSciVersion() >= SCI_VERSION_1_LATE) {
 		int16 leftPos = rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right;
@@ -223,7 +223,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 		_s->r_acc = _paint16->bitsSave(rect, SCI_SCREEN_MASK_VISUAL);
 	if (colorBack != -1)
 		_paint16->fillRect(rect, SCI_SCREEN_MASK_VISUAL, colorBack, 0, 0);
-	_text->Box(text, 0, rect, alignment, -1);
+	_text16->Box(text, 0, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		_paint16->bitsShow(rect);
 	// restoring port and cursor pos
@@ -237,19 +237,19 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 
 void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
 	Common::Rect rect(0, 0, *textWidth, *textHeight);
-	_text->Size(rect, text, font, maxWidth);
+	_text16->Size(rect, text, font, maxWidth);
 	*textWidth = rect.width();
 	*textHeight = rect.height();
 }
 
 // Used SCI1+ for text codes
 void SciGui::textFonts(int argc, reg_t *argv) {
-	_text->CodeSetFonts(argc, argv);
+	_text16->CodeSetFonts(argc, argv);
 }
 
 // Used SCI1+ for text codes
 void SciGui::textColors(int argc, reg_t *argv) {
-	_text->CodeSetColors(argc, argv);
+	_text16->CodeSetColors(argc, argv);
 }
 
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
@@ -258,7 +258,7 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_paint16->fillRect(_ports->_menuBarRect, 1, colorBack);
 	_ports->penColor(colorPen);
 	_ports->moveTo(0, 1);
-	_text->Draw_String(text);
+	_text16->Draw_String(text);
 	_paint16->bitsShow(_ports->_menuBarRect);
 	_ports->setPort(oldPort);
 }
@@ -276,7 +276,7 @@ void SciGui::drawMenuBar(bool clear) {
 
 void SciGui::menuReset() {
 	delete _menu;
-	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text, _screen, _cursor);
+	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
 }
 
 void SciGui::menuAdd(Common::String title, Common::String content, reg_t contentVmPtr) {
@@ -333,7 +333,7 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		_paint16->frameRect(rect);
 		rect.grow(-2);
 		_ports->textGreyedOutput(style & 1 ? false : true);
-		_text->Box(text, 0, rect, SCI_TEXT_ALIGNMENT_CENTER, fontId);
+		_text16->Box(text, 0, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
 		_ports->textGreyedOutput(false);
 		rect.grow(1);
 		if (style & 8) // selected
@@ -353,7 +353,7 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 		rect.grow(1);
 		_paint16->eraseRect(rect);
 		rect.grow(-1);
-		_text->Box(text, 0, rect, alignment, fontId);
+		_text16->Box(text, 0, rect, alignment, fontId);
 		if (style & 8) { // selected
 			_paint16->frameRect(rect);
 		}
@@ -368,18 +368,18 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 
 void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
 	Common::Rect textRect = rect;
-	uint16 oldFontId = _text->GetFontId();
+	uint16 oldFontId = _text16->GetFontId();
 
 	rect.grow(1);
 	_controls->TexteditCursorErase();
 	_paint16->eraseRect(rect);
-	_text->Box(text, 0, textRect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
+	_text16->Box(text, 0, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
 	_paint16->frameRect(rect);
 	if (style & 8) {
-		_text->SetFont(fontId);
+		_text16->SetFont(fontId);
 		rect.grow(-1);
 		_controls->TexteditCursorDraw(rect, text, cursorPos);
-		_text->SetFont(oldFontId);
+		_text16->SetFont(oldFontId);
 		rect.grow(1);
 	}
 	if (!getControlPicNotValid())

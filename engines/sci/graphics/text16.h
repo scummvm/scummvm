@@ -23,23 +23,23 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_TEXT_H
-#define SCI_GRAPHICS_TEXT_H
+#ifndef SCI_GRAPHICS_TEXT16_H
+#define SCI_GRAPHICS_TEXT16_H
 
 namespace Sci {
 
-#define SCI_TEXT_ALIGNMENT_RIGHT -1
-#define SCI_TEXT_ALIGNMENT_CENTER 1
-#define SCI_TEXT_ALIGNMENT_LEFT	0
+#define SCI_TEXT16_ALIGNMENT_RIGHT -1
+#define SCI_TEXT16_ALIGNMENT_CENTER 1
+#define SCI_TEXT16_ALIGNMENT_LEFT	0
 
 class GfxPorts;
 class GfxPaint16;
-class Screen;
+class GfxScreen;
 class Font;
-class Text {
+class GfxText16 {
 public:
-	Text(ResourceManager *_resMan, GfxCache *fonts, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);
-	~Text();
+	GfxText16(ResourceManager *_resMan, GfxCache *fonts, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);
+	~GfxText16();
 
 	GuiResourceId GetFontId();
 	Font *GetFont();

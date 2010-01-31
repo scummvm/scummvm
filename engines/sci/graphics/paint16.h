@@ -44,7 +44,7 @@ public:
 	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette);
 	~GfxPaint16();
 
-	void init(Text *text);
+	void init(GfxText16 *text16);
 
 	void setEGAdrawingVisualize(bool state);
 
@@ -76,7 +76,7 @@ private:
 	GfxPorts *_ports;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
-	Text *_text;
+	GfxText16 *_text16;
 
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;

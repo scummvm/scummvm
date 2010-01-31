@@ -39,7 +39,6 @@
 #include "sci/graphics/compare.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/robot.h"
-#include "sci/graphics/text.h"
 #include "sci/graphics/view.h"
 
 namespace Sci {

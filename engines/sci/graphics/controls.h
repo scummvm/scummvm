@@ -31,10 +31,10 @@ namespace Sci {
 class GfxPorts;
 class GfxPaint16;
 class Font;
-class Text;
+class GfxText16;
 class Controls {
 public:
-	Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, Text *text);
+	Controls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16);
 	~Controls();
 
 	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
@@ -49,7 +49,7 @@ private:
 	SegManager *_segMan;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
-	Text *_text;
+	GfxText16 *_text16;
 
 	// Textedit-Control related
 	Common::Rect _texteditCursorRect;

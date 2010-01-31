@@ -37,14 +37,14 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/font.h"
-#include "sci/graphics/text.h"
+#include "sci/graphics/text16.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/menu.h"
 
 namespace Sci {
 
-Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, Text *text, GfxScreen *screen, Cursor *cursor)
-	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text(text), _screen(screen), _cursor(cursor) {
+Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, Cursor *cursor)
+	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
 	// We actually set active item in here and remember last selection of the user
@@ -311,7 +311,7 @@ void Menu::drawBar() {
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
-		_text->Draw_String(listEntry->text.c_str());
+		_text16->Draw_String(listEntry->text.c_str());
 
 		listIterator++;
 	}
@@ -330,7 +330,7 @@ void Menu::calculateTextWidth() {
 	menuIterator = _list.begin();
 	while (menuIterator != menuEnd) {
 		menuEntry = *menuIterator;
-		_text->StringWidth(menuEntry->text.c_str(), 0, menuEntry->textWidth, dummyHeight);
+		_text16->StringWidth(menuEntry->text.c_str(), 0, menuEntry->textWidth, dummyHeight);
 
 		menuIterator++;
 	}
@@ -338,8 +338,8 @@ void Menu::calculateTextWidth() {
 	itemIterator = _itemList.begin();
 	while (itemIterator != itemEnd) {
 		itemEntry = *itemIterator;
-		_text->StringWidth(itemEntry->text.c_str(), 0, itemEntry->textWidth, dummyHeight);
-		_text->StringWidth(itemEntry->textRightAligned.c_str(), 0, itemEntry->textRightAlignedWidth, dummyHeight);
+		_text16->StringWidth(itemEntry->text.c_str(), 0, itemEntry->textWidth, dummyHeight);
+		_text16->StringWidth(itemEntry->textRightAligned.c_str(), 0, itemEntry->textRightAlignedWidth, dummyHeight);
 
 		itemIterator++;
 	}
@@ -542,9 +542,9 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 			if (!listItemEntry->separatorLine) {
 				_ports->textGreyedOutput(listItemEntry->enabled ? false : true);
 				_ports->moveTo(_menuRect.left, topPos);
-				_text->Draw_String(listItemEntry->text.c_str());
+				_text16->Draw_String(listItemEntry->text.c_str());
 				_ports->moveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
-				_text->Draw_String(listItemEntry->textRightAligned.c_str());
+				_text16->Draw_String(listItemEntry->textRightAligned.c_str());
 			} else {
 				// We dont 100% follow sierra here, we draw the line from left to right. Looks better
 				// BTW. SCI1.1 seems to put 2 pixels and then skip one, we don't do this at all (lsl6)

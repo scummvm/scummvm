@@ -30,7 +30,7 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
-#include "sci/graphics/text.h"
+#include "sci/graphics/text16.h"
 #include "sci/graphics/ports.h"
 
 namespace Sci {
@@ -54,12 +54,12 @@ GfxPorts::~GfxPorts() {
 	delete _menuPort;
 }
 
-void GfxPorts::init(SciGui *gui, GfxPaint16 *paint16, Text *text, Common::String gameId) {
+void GfxPorts::init(SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common::String gameId) {
 	int16 offTop = 10;
 
 	_gui = gui;
 	_paint16 = paint16;
-	_text = text;
+	_text16 = text16;
 
 	// _mainPort is not known to windowmanager, that's okay according to sierra sci
 	//  its not even used currently in our engine
@@ -70,7 +70,7 @@ void GfxPorts::init(SciGui *gui, GfxPaint16 *paint16, Text *text, Common::String
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
 	_menuPort = new Port(0xFFFF);
 	openPort(_menuPort);
-	_text->SetFont(0);
+	_text16->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->getWidth(), _screen->getHeight());
 	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
 	_menuRect = Common::Rect(0, 0, _screen->getWidth(), 10);
@@ -312,7 +312,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = getPort()->penClr;
 					penColor(255);
-					_text->Box(pWnd->title.c_str(), 1, r, SCI_TEXT_ALIGNMENT_CENTER, 0);
+					_text16->Box(pWnd->title.c_str(), 1, r, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 					penColor(oldcolor);
 				}
 
@@ -399,7 +399,7 @@ void GfxPorts::openPort(Port *port) {
 
 	Port *tmp = _curPort;
 	_curPort = port;
-	_text->SetFont(port->fontId);
+	_text16->SetFont(port->fontId);
 	_curPort = tmp;
 
 	port->top = 0;

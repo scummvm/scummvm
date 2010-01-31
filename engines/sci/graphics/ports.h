@@ -33,15 +33,15 @@ namespace Sci {
 
 class SciGui;
 class GfxPaint16;
-class Screen;
-class Text;
+class GfxScreen;
+class GfxText16;
 
 class GfxPorts {
 public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);
 	~GfxPorts();
 
-	void init(SciGui *gui, GfxPaint16 *paint16, Text *text, Common::String gameId);
+	void init(SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common::String gameId);
 
 	void kernelSetActive(uint16 portId);
 	Common::Rect kernelGetPicWindow(int16 &picTop, int16 &picLeft);
@@ -98,7 +98,7 @@ private:
 	SciGui *_gui;
 	GfxPaint16 *_paint16;
 	GfxScreen *_screen;
-	Text *_text;
+	GfxText16 *_text16;
 
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;
