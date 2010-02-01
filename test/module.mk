@@ -6,12 +6,12 @@
 ######################################################################
 
 TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/sound/*.h
-TEST_LIBS    := common/libcommon.a sound/libsound.a
+TEST_LIBS    := sound/libsound.a common/libcommon.a
 
 #
 TEST_FLAGS   := --runner=StdioPrinter
 TEST_CFLAGS  := -I$(srcdir)/test/cxxtest
-TEST_LDFLAGS :=
+TEST_LDFLAGS := $(LIBS)
 
 ifdef HAVE_GCC3
 # In test/common/str.h, we test a zero length format string. This causes GCC
