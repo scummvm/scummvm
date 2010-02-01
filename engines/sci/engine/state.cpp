@@ -162,7 +162,7 @@ kLanguage EngineState::getLanguage() {
 	if (_kernel->_selectorCache.printLang != -1) {
 		lang = (kLanguage)GET_SEL32V(_segMan, _gameObj, printLang);
 
-		if ((getSciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
+		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
 			// SSCI reads this from resource.cfg (early games do not have a language
 			// setting in resource.cfg, but instead have the secondary language number
