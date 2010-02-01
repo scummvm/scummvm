@@ -468,8 +468,10 @@ void ConsoleDialog::specialKeys(int keycode) {
 void ConsoleDialog::killChar() {
 	for (int i = _currentPos; i < _promptEndPos; i++)
 		buffer(i) = buffer(i + 1);
-	buffer(_promptEndPos) = ' ';
-	_promptEndPos--;
+	if (_promptEndPos > _promptStartPos) {
+		buffer(_promptEndPos) = ' ';
+		_promptEndPos--;
+	}
 }
 
 void ConsoleDialog::killLine() {
@@ -493,8 +495,10 @@ void ConsoleDialog::killLastWord() {
 
 	for (int i = _currentPos; i < _promptEndPos; i++)
 		buffer(i) = buffer(i + cnt);
-	buffer(_promptEndPos) = ' ';
-	_promptEndPos -= cnt;
+	if (_promptEndPos > _promptStartPos) {
+		buffer(_promptEndPos) = ' ';
+		_promptEndPos -= cnt;
+	}
 }
 
 void ConsoleDialog::addToHistory(const char *str) {
