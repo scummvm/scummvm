@@ -386,21 +386,17 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		draw();
 		break;
 	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
 		historyScroll(+1);
 		break;
 	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
 		historyScroll(-1);
 		break;
 	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
 		if (_currentPos < _promptEndPos)
 			_currentPos++;
 		drawLine(pos2line(_currentPos));
 		break;
 	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
 		if (_currentPos > _promptStartPos)
 			_currentPos--;
 		drawLine(pos2line(_currentPos));
