@@ -1279,11 +1279,14 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 		Resource *res = _resMap.getVal(resId);
 
 		if (res->source->source_type == kSourceAudioVolume) {
-			if (res->lockers == 0) {
+			if (res->status == kResStatusLocked) {
+				warning("Failed to remove resource %s (still in use)", resId.toString().c_str());
+			} else {
+				if (res->status == kResStatusEnqueued)
+					removeFromLRU(res);
+
 				_resMap.erase(resId);
 				delete res;
-			} else {
-				warning("Failed to remove resource %s (still in use)", resId.toString().c_str());
 			}
 		}
 	}
