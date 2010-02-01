@@ -1076,21 +1076,29 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
 
-	// King's Quest 7 - English DOS (from the King's Quest Collection)
+	// King's Quest 7 - English Windows (from the King's Quest Collection)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.4"
 	{"kq7", "", {
 		{"resource.map", 0, "2be9ab94429c721af8e05c507e048a15", 18697},
 		{"resource.000", 0, "eb63ea3a2c2469dc2d777d351c626404", 203882535},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
 
 	// King's Quest 7 - English DOS (from FRG)
-	// SCI interpreter version 2.100.002
+	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
 	{"kq7", "", {
 		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// King's Quest 7 - English Windows (from FRG)
+	// SCI interpreter version 2.100.002, VERSION file reports "2.00b"
+	{"kq7", "", {
+		{"resource.map", 0, "8676b0fbbd7362989a029fe72fea14c6", 18709},
+		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH	},
 
 	// King's Quest 7 - German Windows (supplied by markcoolio in bug report #2727402)
 	// SCI interpreter version 2.100.002

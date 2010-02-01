@@ -320,8 +320,6 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 
 	switch (operation) {
-	case kPlatformUnk0:
-		return make_reg(0, !isWindows);
 	case kPlatformCDSpeed:
 		// TODO: Returns CD Speed?
 		warning("STUB: kPlatform(CDSpeed)");
@@ -333,6 +331,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		// TODO: Some sort of CD check?
 		warning("STUB: kPlatform(CDCheck)");
 		break;
+	case kPlatformUnk0:
 	case kPlatformGetPlatform:
 		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
 	case kPlatformUnk5:
