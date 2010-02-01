@@ -69,6 +69,7 @@ public:
 	void addPlane(reg_t object);
 	void updatePlane(reg_t object);
 	void deletePlane(reg_t object);
+	byte getHighPlanePri() { return _highPlanePri; }
 	void frameOut();
 	void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
 	void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
@@ -91,6 +92,7 @@ protected:
 private:
 	Common::Array<reg_t> _screenItems;
 	Common::Array<reg_t> _planes;
+	byte _highPlanePri;
 };
 
 } // End of namespace Sci

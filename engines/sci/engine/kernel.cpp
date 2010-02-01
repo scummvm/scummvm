@@ -348,6 +348,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("DeletePlane", kDeletePlane, "o"),
 	DEFUN("UpdatePlane", kUpdatePlane, "o"),
 	DEFUN("RepaintPlane", kRepaintPlane, "o"),
+	DEFUN("GetHighPlanePri", kGetHighPlanePri, ""),
 	DEFUN("FrameOut", kFrameOut, ""),
 	DEFUN("ListEachElementDo", kListEachElementDo, "li.*"),
 	DEFUN("ListFirstTrue", kListFirstTrue, "li.*"),

@@ -44,7 +44,7 @@
 namespace Sci {
 
 SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor)
-	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
+	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _highPlanePri(0) {
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 }
@@ -231,6 +231,9 @@ void SciGui32::deleteScreenItem(reg_t object) {
 
 void SciGui32::addPlane(reg_t object) {
 	_planes.push_back(object);
+	byte planePri = GET_SEL32V(_s->_segMan, object, priority) & 0xF;
+	if (planePri > _highPlanePri)
+		_highPlanePri = planePri;
 }
 
 void SciGui32::updatePlane(reg_t object) {
@@ -240,8 +243,17 @@ void SciGui32::deletePlane(reg_t object) {
 	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
 		if (_planes[planeNr] == object) {
 			_planes.remove_at(planeNr);
-			return;
+			break;
 		}
+	}
+
+	// Recalculate highPlanePri
+	_highPlanePri = 0;
+
+	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
+		byte planePri = GET_SEL32V(_s->_segMan, _planes[planeNr], priority) & 0xF;
+		if (planePri > _highPlanePri)
+			_highPlanePri = planePri;
 	}
 }
 

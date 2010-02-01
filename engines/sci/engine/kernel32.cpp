@@ -721,6 +721,11 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
+	warning("kGetHighPlanePri: %d", s->_gui32->getHighPlanePri());
+	return make_reg(0, s->_gui32->getHighPlanePri());
+}
+
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	// This kernel call likely seems to be doing the screen updates,
 	// as its called right after a view is updated
