@@ -295,9 +295,14 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
 				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+
 			x++;
+
 			if (x >= rightX) {
-				x = leftX; y++;
+				if (width > rightX - leftX) // Skip extra pixels at the end of the row
+					ptr += width - (rightX - leftX);
+				x = leftX;
+				y++;
 			}
 		}
 	} else {
@@ -307,12 +312,18 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
 				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+			
 			if (x == leftX) {
-				x = rightX; y++;
+				if (width > rightX - leftX) // Skip extra pixels at the end of the row
+					ptr += width - (rightX - leftX);
+				x = rightX;
+				y++;
 			}
+
 			x--;
 		}
 	}
+
 	delete[] celBitmap;
 }
 
