@@ -943,6 +943,14 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Create a new EngineState object
 	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_gui, s->_audio);
 	retval->_event = new SciEvent();
+
+	retval->_gfxAnimate = s->_gfxAnimate;
+	retval->_gfxCache = s->_gfxCache;
+	retval->_gfxControls = s->_gfxControls;
+	retval->_gfxMenu = s->_gfxMenu;
+	retval->_gfxPalette = s->_gfxPalette;
+	retval->_gfxPorts = s->_gfxPorts;
+	retval->_gfxScreen = s->_gfxScreen;
 	
 #ifdef ENABLE_SCI32
 	// Copy the Gui32 pointer over to the new EngineState, if it exists

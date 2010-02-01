@@ -50,10 +50,10 @@ namespace Common {
 namespace Sci {
 
 class SciEvent;
-class Menubar;
 class GfxAnimate;
 class GfxCache;
 class GfxControls;
+class GfxMenu;
 class GfxPalette;
 class GfxPorts;
 class GfxScreen;
@@ -160,6 +160,7 @@ public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxCache *_gfxCache;
 	GfxControls *_gfxControls; // Controls for 16-bit gfx
+	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette;
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;

@@ -43,7 +43,7 @@
 
 namespace Sci {
 
-Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, Cursor *cursor)
+GfxMenu::GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, Cursor *cursor)
 	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
 
 	_listCount = 0;
@@ -57,11 +57,11 @@ Menu::Menu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, Gf
 	_oldPort = NULL;
 }
 
-Menu::~Menu() {
+GfxMenu::~GfxMenu() {
 	// TODO: deallocate _list and _itemList
 }
 
-void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr) {
+void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t contentVmPtr) {
 	GuiMenuEntry *menuEntry;
 	uint16 itemCount = 0;
 	GuiMenuItemEntry *itemEntry;
@@ -225,7 +225,7 @@ void Menu::add(Common::String title, Common::String content, reg_t contentVmPtr)
 	} while (curPos < contentSize);
 }
 
-GuiMenuItemEntry *Menu::findItem(uint16 menuId, uint16 itemId) {
+GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 	GuiMenuItemList::iterator listIterator;
 	GuiMenuItemList::iterator listEnd = _itemList.end();
 	GuiMenuItemEntry *listEntry;
@@ -241,7 +241,7 @@ GuiMenuItemEntry *Menu::findItem(uint16 menuId, uint16 itemId) {
 	return NULL;
 }
 
-void Menu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
+void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
 	EngineState *s = ((SciEngine *)g_engine)->getEngineState();	// HACK: needed for strSplit()
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
@@ -273,7 +273,7 @@ void Menu::setAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t 
 	}
 }
 
-reg_t Menu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
+reg_t GfxMenu::kernelGetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
 		error("Tried to getAttribute() on non-existant menu-item %d:%d", menuId, itemId);
@@ -297,7 +297,7 @@ reg_t Menu::getAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
 	return NULL_REG;
 }
 
-void Menu::drawBar() {
+void GfxMenu::drawBar() {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
@@ -318,7 +318,7 @@ void Menu::drawBar() {
 }
 
 // This helper calculates all text widths for all menus/items
-void Menu::calculateTextWidth() {
+void GfxMenu::calculateTextWidth() {
 	GuiMenuList::iterator menuIterator;
 	GuiMenuList::iterator menuEnd = _list.end();
 	GuiMenuEntry *menuEntry;
@@ -345,7 +345,7 @@ void Menu::calculateTextWidth() {
 	}
 }
 
-reg_t Menu::select(reg_t eventObject) {
+reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 	int16 eventType = GET_SEL32V(_segMan, eventObject, type);
 	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
@@ -434,7 +434,7 @@ reg_t Menu::select(reg_t eventObject) {
 	return NULL_REG;
 }
 
-GuiMenuItemEntry *Menu::interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged) {
+GuiMenuItemEntry *GfxMenu::interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged) {
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
 	GuiMenuItemList::iterator itemEnd = _itemList.end();
 	GuiMenuItemEntry *itemEntry;
@@ -463,7 +463,7 @@ GuiMenuItemEntry *Menu::interactiveGetItem(uint16 menuId, uint16 itemId, bool me
 	return firstItemEntry;
 }
 
-void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
+void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
@@ -569,7 +569,7 @@ void Menu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	_paint16->bitsShow(_menuRect);
 }
 
-void Menu::invertMenuSelection(uint16 itemId) {
+void GfxMenu::invertMenuSelection(uint16 itemId) {
 	Common::Rect itemRect = _menuRect;
 
 	if (itemId == 0)
@@ -583,17 +583,17 @@ void Menu::invertMenuSelection(uint16 itemId) {
 	_paint16->bitsShow(itemRect);
 }
 
-void Menu::interactiveShowMouse() {
+void GfxMenu::interactiveShowMouse() {
 	_mouseOldState = _cursor->isVisible();
 	_cursor->show();
 }
 
-void Menu::interactiveRestoreMouse() {
+void GfxMenu::interactiveRestoreMouse() {
 	if (!_mouseOldState)
 		_cursor->hide();
 }
 
-uint16 Menu::mouseFindMenuSelection(Common::Point mousePosition) {
+uint16 GfxMenu::mouseFindMenuSelection(Common::Point mousePosition) {
 	GuiMenuEntry *listEntry;
 	GuiMenuList::iterator listIterator;
 	GuiMenuList::iterator listEnd = _list.end();
@@ -611,7 +611,7 @@ uint16 Menu::mouseFindMenuSelection(Common::Point mousePosition) {
 	return 0;
 }
 
-uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId) {
+uint16 GfxMenu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId) {
 	GuiMenuItemEntry *listItemEntry;
 	GuiMenuItemList::iterator listItemIterator;
 	GuiMenuItemList::iterator listItemEnd = _itemList.end();
@@ -639,7 +639,7 @@ uint16 Menu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menu
 	return itemId;
 }
 
-GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
+GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	sciEvent curEvent;
 	uint16 newMenuId = _curMenuId;
 	uint16 newItemId = _curItemId;
@@ -763,7 +763,7 @@ GuiMenuItemEntry *Menu::interactiveWithKeyboard() {
 // Mouse button is currently pressed - we are now interpreting mouse coordinates till mouse button is released
 //  The menu item that is selected at that time is chosen. If no menu item is selected we cancel
 //  No keyboard interaction is allowed, cause that wouldnt make any sense at all
-GuiMenuItemEntry *Menu::interactiveWithMouse() {
+GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	sciEvent curEvent;
 	uint16 newMenuId = 0, newItemId = 0;
 	uint16 curMenuId = 0, curItemId = 0;

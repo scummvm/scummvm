@@ -61,7 +61,8 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_text16 = new GfxText16(_s->resMan, _cache, _ports, _paint16, _screen);
 	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
 	_s->_gfxControls = _controls;
-	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
+	_menu = new GfxMenu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
+	_s->_gfxMenu = _menu;
 }
 
 SciGui::~SciGui() {
@@ -277,23 +278,8 @@ void SciGui::drawMenuBar(bool clear) {
 
 void SciGui::menuReset() {
 	delete _menu;
-	_menu = new Menu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
-}
-
-void SciGui::menuAdd(Common::String title, Common::String content, reg_t contentVmPtr) {
-	_menu->add(title, content, contentVmPtr);
-}
-
-void SciGui::menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
-	_menu->setAttribute(menuId, itemId, attributeId, value);
-}
-
-reg_t SciGui::menuGet(uint16 menuId, uint16 itemId, uint16 attributeId) {
-	return _menu->getAttribute(menuId, itemId, attributeId);
-}
-
-reg_t SciGui::menuSelect(reg_t eventObject) {
-	return _menu->select(eventObject);
+	_menu = new GfxMenu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
+	_s->_gfxMenu = _menu;
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

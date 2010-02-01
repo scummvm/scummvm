@@ -50,7 +50,7 @@ class GfxPorts;
 class GfxPaint16;
 class GfxAnimate;
 class GfxControls;
-class Menu;
+class GfxMenu;
 class GfxText16;
 class Transitions;
 
@@ -76,10 +76,6 @@ public:
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawMenuBar(bool clear);
 	virtual void menuReset();
-	virtual void menuAdd(Common::String title, Common::String content, reg_t contentVmPtr);
-	virtual void menuSet(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value);
-	virtual reg_t menuGet(uint16 menuId, uint16 itemId, uint16 attributeId);
-	virtual reg_t menuSelect(reg_t eventObject);
 
 	virtual void drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	virtual void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode = false, reg_t upscaledHiresHandle = NULL_REG);
@@ -149,7 +145,7 @@ private:
 	AudioPlayer *_audio;
 	GfxAnimate *_animate;
 	GfxControls *_controls;
-	Menu *_menu;
+	GfxMenu *_menu;
 	GfxText16 *_text16;
 	Transitions *_transitions;
 	int16 _palVaryId;

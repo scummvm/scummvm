@@ -29,6 +29,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/cursor.h"
+#include "sci/graphics/menu.h"
 
 namespace Sci {
 
@@ -36,7 +37,7 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	Common::String title = s->strSplit(s->_segMan->getString(argv[0]).c_str());
 	Common::String content = s->_segMan->getString(argv[1]);
 
-	s->_gui->menuAdd(title, content, argv[1]);
+	s->_gfxMenu->kernelAddEntry(title, content, argv[1]);
 	return s->r_acc;
 }
 
@@ -51,7 +52,7 @@ reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
 		attributeId = argv[argPos].toUint16();
 		if ((argPos + 1) >= argc)
 			error("Too few parameters for kSetMenu");
-		s->_gui->menuSet(menuId, itemId, attributeId, argv[argPos + 1]);
+		s->_gfxMenu->kernelSetAttribute(menuId, itemId, attributeId, argv[argPos + 1]);
 		argPos += 2;
 	}
 	return s->r_acc;
@@ -62,7 +63,7 @@ reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 	uint16 itemId = argv[0].toUint16() & 0xFF;
 	uint16 attributeId = argv[1].toUint16();
 
-	return s->_gui->menuGet(menuId, itemId, attributeId);
+	return s->_gfxMenu->kernelGetAttribute(menuId, itemId, attributeId);
 }
 
 
@@ -93,7 +94,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	//bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : false;
 
 	// TODO: pauseSound implementation
-	return s->_gui->menuSelect(eventObject);
+	return s->_gfxMenu->kernelSelect(eventObject);
 }
 
 } // End of namespace Sci
