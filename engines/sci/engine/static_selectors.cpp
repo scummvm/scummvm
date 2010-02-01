@@ -63,6 +63,7 @@ static const char * const sci1Selectors[] = {
           "frame",        "vol",          "pri",    "perform",  "moveDone"  // 93 - 97
 };
 
+#ifdef ENABLE_SCI32
 static const char * const sci2Selectors[] = {
         "plane",           "x",           "y",            "z",     "scaleX", //  0 -  4
        "scaleY",    "maxScale",    "priority",  "fixPriority",     "inLeft", //  5 -  9
@@ -93,6 +94,7 @@ static const char * const sci2Selectors[] = {
      "magPower",    "mirrored",       "pitch",         "roll",        "yaw", // 130 - 134 
          "left",       "right",         "top",       "bottom",   "numLines"  // 135 - 139
 };
+#endif
 
 static const SelectorRemap sciSelectorRemap[] = {
     {    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
@@ -111,29 +113,32 @@ static const SelectorRemap sciSelectorRemap[] = {
 Common::StringList Kernel::checkStaticSelectorNames() {
 	Common::StringList names;
 	const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
+
+#ifdef ENABLE_SCI32
 	const int count = (getSciVersion() <= SCI_VERSION_1_1) ? ARRAYSIZE(sci0Selectors) + offset : ARRAYSIZE(sci2Selectors);
-	const SelectorRemap *selectorRemap = sciSelectorRemap;
-	int i;
+#else
+	const int count = ARRAYSIZE(sci0Selectors) + offset;
+#endif
 
 	// Resize the list of selector names and fill in the SCI 0 names.
 	names.resize(count);
-	for (i = 0; i < offset; i++)
+	for (int i = 0; i < offset; i++)
 		names[i].clear();
 
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		// SCI0 - SCI11
-		for (i = offset; i < count; i++)
+		for (int i = offset; i < count; i++)
 			names[i] = sci0Selectors[i - offset];
 
 		if (getSciVersion() > SCI_VERSION_01) {
 			// Several new selectors were added in SCI 1 and later.
 			int count2 = ARRAYSIZE(sci1Selectors);
 			names.resize(count + count2);
-			for (i = count; i < count + count2; i++)
+			for (int i = count; i < count + count2; i++)
 				names[i] = sci1Selectors[i - count];
 		}
 
-		for (; selectorRemap->slot; ++selectorRemap) {
+		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
 			uint32 slot = selectorRemap->slot;
 			if (selectorRemap->slot >= names.size())
 				names.resize(selectorRemap->slot + 1);
@@ -144,10 +149,12 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 				names[slot] = selectorRemap->name;
 			}
 		}
+#ifdef ENABLE_SCI32
 	} else {
 		// SCI2+
-		for (i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 			names[i] = sci2Selectors[i];
+#endif
 	}
 
 	return names;
