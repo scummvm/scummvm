@@ -304,7 +304,10 @@ void SciGui32::frameOut() {
 					Common::Rect celRect;
 					View *view = _cache->getView(viewId);
 
-					view->getCelRect(loopNo, celNo, x, y, z, &celRect);
+					if ((scaleX == 128) && (scaleY == 128))
+						view->getCelRect(loopNo, celNo, x, y, z, &celRect);
+					else
+						view->getCelScaledRect(loopNo, celNo, x, y, z, scaleX, scaleY, &celRect);
 
 					if (celRect.top < 0 || celRect.top >= _screen->getHeight())
 						continue;
