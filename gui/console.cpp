@@ -341,8 +341,10 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		break;
 	}
 	case Common::KEYCODE_DELETE:
-		killChar();
-		drawLine(pos2line(_currentPos));
+		if (_currentPos < _promptEndPos) {
+			killChar();
+			drawLine(pos2line(_currentPos));
+		}
 		break;
 	case Common::KEYCODE_PAGEUP:
 		if (state.flags == Common::KBD_SHIFT) {
