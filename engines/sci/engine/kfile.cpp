@@ -712,7 +712,9 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	switch (func_nr) {
 	case K_FILEIO_OPEN : {
 		Common::String name = s->_segMan->getString(argv[1]);
-		int mode = argv[2].toUint16();
+
+		// SCI32 can call K_FILEIO_OPEN with only two arguments. It seems to just be checking if it exists.
+		int mode = (argc < 3) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[2].toUint16();
 
 		// SQ4 floppy prepends /\ to the filenames
 		if (name.hasPrefix("/\\")) {
