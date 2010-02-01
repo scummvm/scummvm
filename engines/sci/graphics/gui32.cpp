@@ -231,7 +231,7 @@ void SciGui32::deleteScreenItem(reg_t object) {
 
 void SciGui32::addPlane(reg_t object) {
 	_planes.push_back(object);
-	byte planePri = GET_SEL32V(_s->_segMan, object, priority) & 0xF;
+	byte planePri = GET_SEL32V(_s->_segMan, object, priority) & 0xFF;
 	if (planePri > _highPlanePri)
 		_highPlanePri = planePri;
 }
@@ -251,7 +251,7 @@ void SciGui32::deletePlane(reg_t object) {
 	_highPlanePri = 0;
 
 	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		byte planePri = GET_SEL32V(_s->_segMan, _planes[planeNr], priority) & 0xF;
+		byte planePri = GET_SEL32V(_s->_segMan, _planes[planeNr], priority) & 0xFF;
 		if (planePri > _highPlanePri)
 			_highPlanePri = planePri;
 	}
