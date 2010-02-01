@@ -618,7 +618,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 
 		reg_t *adjustedArgs = new reg_t[argc];
 		adjustedArgs[0] = stringHandle;
-		memcpy(&adjustedArgs[1], argv + 1, argc - 1);
+		memcpy(&adjustedArgs[1], argv + 1, (argc - 1) * sizeof(reg_t));
 		
 		kFormat(s, argc, adjustedArgs);
 		delete[] adjustedArgs;
