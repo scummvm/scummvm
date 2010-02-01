@@ -35,6 +35,7 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/message.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/menu.h"
 #include "sci/sound/music.h"
 
 namespace Sci {
@@ -270,8 +271,8 @@ int game_init(EngineState *s) {
 	}
 
 	// Initialize menu TODO: Actually this should be another init()
-	if (s->_gui)
-		s->_gui->menuReset();
+	if (s->_gfxMenu)
+		s->_gfxMenu->reset();
 
 	s->successor = NULL; // No successor
 

@@ -276,12 +276,6 @@ void SciGui::drawMenuBar(bool clear) {
 	}
 }
 
-void SciGui::menuReset() {
-	delete _menu;
-	_menu = new GfxMenu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
-	_s->_gfxMenu = _menu;
-}
-
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
 

@@ -59,6 +59,12 @@ GfxMenu::GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *por
 
 GfxMenu::~GfxMenu() {
 	// TODO: deallocate _list and _itemList
+	reset();
+}
+
+void GfxMenu::reset() {
+	_list.clear();
+	_itemList.clear();
 }
 
 void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t contentVmPtr) {
