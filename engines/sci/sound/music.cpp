@@ -84,12 +84,13 @@ void SciMusic::init() {
 			_pMidiDrv = MidiPlayer_Midi_create(_soundVersion);
 	}
 
-	if (_pMidiDrv) {
-		_pMidiDrv->open();
+	if (_pMidiDrv && !_pMidiDrv->open()) {
 		_pMidiDrv->setTimerCallback(this, &miditimerCallback);
 		_dwTempo = _pMidiDrv->getBaseTempo();
-	} else
-		warning("Can't initialise music driver");
+	} else {
+		error("Failed to initialize sound driver");
+	}
+
 	_bMultiMidi = ConfMan.getBool("multi_midi");
 }
 
