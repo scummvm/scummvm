@@ -532,7 +532,7 @@ int Scene::lookupZoom(uint y) const {
 }
 
 
-bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
+bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 	Resources *res = Resources::instance();
 	bool busy;
 	bool restart;
@@ -570,12 +570,12 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 		}
 
 		if (!message.empty() && message_timer != 0) {
-			if (message_timer <= message_delta) {
+			if (message_timer <= delta) {
 				clearMessage();
 				nextEvent();
 				continue;
 			} else
-				message_timer -= message_delta;
+				message_timer -= delta;
 		}
 
 		if (current_event.type == SceneEvent::kCreditsMessage) {
@@ -798,6 +798,17 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 message_delta) {
 		}
 
 		_system->unlockScreen();
+
+		if (current_event.type == SceneEvent::kWait) {
+			if (current_event.timer > delta) {
+				busy = true;
+				current_event.timer -= delta;
+			}
+
+			if (current_event.timer <= delta)
+				restart |= nextEvent();
+
+		}
 
 		if (!restart && current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
 			debug(0, "no animations, nextevent");
@@ -1046,6 +1057,10 @@ bool Scene::processEventQueue() {
 				}
 			}
 			current_event.clear();
+			break;
+
+		case SceneEvent::kWait:
+			debug(0, "wait %u", current_event.timer);
 			break;
 
 		case SceneEvent::kCredits:

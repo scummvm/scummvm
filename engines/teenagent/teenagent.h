@@ -112,6 +112,7 @@ public:
 	void displayCredits();
 	void fadeIn();
 	void fadeOut();
+	void wait(uint16 frames);
 
 	Common::RandomSource random;
 

@@ -885,6 +885,12 @@ void TeenAgentEngine::fadeOut() {
 	scene->push(event);
 }
 
+void TeenAgentEngine::wait(uint16 frames) {
+	SceneEvent event(SceneEvent::kWait);
+	event.timer = frames * 10;
+	scene->push(event);
+}
+
 void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *in = res->sam_sam.getStream(id);
@@ -910,7 +916,6 @@ void TeenAgentEngine::setMusic(byte id) {
 	*Resources::instance()->dseg.ptr(0xDB90) = id;
 	music->start();
 }
-
 
 bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 	switch (f) {

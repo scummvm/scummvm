@@ -61,6 +61,7 @@ struct SceneEvent {
 		kTimer,
 		kEffect,
 		kFade,
+		kWait,
 		kQuit
 	} type;
 
