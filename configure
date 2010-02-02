@@ -2386,9 +2386,6 @@ _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
 
-echo "dynamic modules = $_dynamic_modules"
-echo "plugins default = $_plugins_default"
-
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
 		# It's a main engine
