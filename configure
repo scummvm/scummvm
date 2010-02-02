@@ -286,20 +286,20 @@ find_sdlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	mingw* | *os2-emx | wince)
-		_exeext=".exe"
-		;;
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	gp2xwiz-linux)
-		_exeext=".wiz"
+	dreamcast | gamecube | nds | ps2 | psp | wii)
+		_exeext=".elf"
 		;;
 	gp2x-linux)
 		_exeext=".gp2x"
 		;;
-	dreamcast | wii | gamecube | nds | psp | ps2)
-		_exeext=".elf"
+	gp2xwiz-linux)
+		_exeext=".wiz"
+		;;
+	mingw* | *os2-emx | wince)
+		_exeext=".exe"
 		;;
 	*)
 		_exeext=""
@@ -572,7 +572,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, ps2, wii, wince, linuxmoto, null) [sdl]
+  --backend=BACKEND      backend to build (dc, gp2x, gp2xwiz, iphone, linuxmoto, morphos, nds, null, ps2, psp, sdl, wii, wince) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -583,15 +583,15 @@ Installation directories:
 
 Special configuration feature:
   --host=HOST            cross-compile to target HOST (arm-linux, ...)
-                         special targets: linupy for Yopy PDA
-                                          dreamcast for Sega Dreamcast
-                                          wii for Nintendo Wii
+                         special targets: dreamcast for Sega Dreamcast
                                           gamecube for Nintendo GameCube
-                                          nds for Nintendo DS
                                           iphone for Apple iPhone
-                                          wince for Windows CE
-                                          psp for PlayStation Portable
+                                          linupy for Yopy PDA
+                                          nds for Nintendo DS
                                           ps2 for PlayStation 2
+                                          psp for PlayStation Portable
+                                          wii for Nintendo Wii
+                                          wince for Windows CE
 
 Game engines:
   --enable-all-engines     enable all engines
@@ -820,6 +820,41 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
+arm-riscos)
+	_host_os=riscos
+	_host_cpu=arm
+	;;
+dreamcast)
+	_host_os=dreamcast
+	_host_cpu=sh
+	_host_alias=sh-elf
+	CXXFLAGS="$CXXFLAGS -ml -m4-single-only"
+	LDFLAGS="$LDFLAGS -ml -m4-single-only"
+	;;
+gamecube)
+	_host_os=gamecube
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
+gp2x)
+	_host_os=gp2x-linux
+	_host_cpu=arm
+	_host_alias=arm-open2x-linux
+	;;
+gp2xwiz)
+	_host_os=gp2xwiz-linux
+	_host_cpu=arm
+	_host_alias=arm-open2x-linux
+	;;
+i586-mingw32msvc)
+	_host_os=mingw32msvc
+	_host_cpu=i586
+	;;
+iphone)
+	_host_os=iphone
+	_host_cpu=arm
+	_host_alias=arm-apple-darwin9
+	;;
 linupy)
 	_host_os=linux
 	_host_cpu=arm
@@ -834,80 +869,18 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-samsungtv)
-	_host_os=linux
-	_host_cpu=arm
-	_host_alias=arm-SamyGO-linux-gnueabi
-	;;
-arm-riscos)
-	_host_os=riscos
-	_host_cpu=arm
-	;;
-ppc-amigaos)
-	_host_os=amigaos
-	_host_cpu=ppc
-	;;
-gp2xwiz)
-	_host_os=gp2xwiz-linux
-	_host_cpu=arm
-	_host_alias=arm-open2x-linux
-	;;
-gp2x)
-	_host_os=gp2x-linux
-	_host_cpu=arm
-	_host_alias=arm-open2x-linux
-	;;
-i586-mingw32msvc)
-	_host_os=mingw32msvc
-	_host_cpu=i586
-	;;
-iphone)
-	_host_os=iphone
-	_host_cpu=arm
-	_host_alias=arm-apple-darwin9
-	;;
-wince)
-	_host_os=wince
-	_host_cpu=arm
-	_host_alias=arm-wince-mingw32ce
-	;;
-neuros)
-	_host_os=linux
-	_host_cpu=arm
-	;;
-dreamcast)
-	_host_os=dreamcast
-	_host_cpu=sh
-	_host_alias=sh-elf
-	CXXFLAGS="$CXXFLAGS -ml -m4-single-only"
-	LDFLAGS="$LDFLAGS -ml -m4-single-only"
-	;;
-wii)
-	_host_os=wii
-	_host_cpu=ppc
-	_host_alias=powerpc-gekko
-	;;
-gamecube)
-	_host_os=gamecube
-	_host_cpu=ppc
-	_host_alias=powerpc-gekko
-	;;
 nds)
 	_host_os=nds
 	_host_cpu=arm
 	_host_alias=arm-eabi
 	;;
-psp)
-	_host_os=psp
-	_host_cpu=mipsallegrexel
-	_host_alias=psp
-	if test -z "$PSPDEV"; then
-		PSPDEV=$(psp-config --pspdev-path)
-	fi
-	if test -d "$PSPDEV/psp/lib"; then
-		LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
-	fi
-	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
+neuros)
+	_host_os=linux
+	_host_cpu=arm
+	;;
+ppc-amigaos)
+	_host_os=amigaos
+	_host_cpu=ppc
 	;;
 ps2)
 	_host_os=ps2
@@ -923,6 +896,33 @@ ps2)
 		# Enable release build by default.
 		_release_build=yes
 	fi
+	;;
+psp)
+	_host_os=psp
+	_host_cpu=mipsallegrexel
+	_host_alias=psp
+	if test -z "$PSPDEV"; then
+		PSPDEV=$(psp-config --pspdev-path)
+	fi
+	if test -d "$PSPDEV/psp/lib"; then
+		LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
+	fi
+	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
+	;;
+samsungtv)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-SamyGO-linux-gnueabi
+	;;
+wii)
+	_host_os=wii
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
+wince)
+	_host_os=wince
+	_host_cpu=arm
+	_host_alias=arm-wince-mingw32ce
 	;;
 *)
 	if test -n "$_host"; then
@@ -983,9 +983,15 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-wii | gamecube | nds)
+gamecube | nds | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+ps2)
+	if test -z "$PS2SDK"; then
+		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
 		exit 1
 	fi
 	;;
@@ -993,12 +999,6 @@ psp)
 	PSPSDK=$(psp-config --pspsdk-path)
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
-		exit 1
-	fi
-	;;
-ps2)
-	if test -z "$PS2SDK"; then
-		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
 		exit 1
 	fi
 	;;
@@ -1236,21 +1236,12 @@ echo "$_have_x86"
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
-	linux* | uclinux*)
-		# When not cross-compiling, enable large file support, but don't
-		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
-		if test -z "$_host"; then
-			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
-		fi
-		DEFINES="$DEFINES -DUNIX"
-		;;
-	openbsd* | netbsd* | bsd* | sunos* | hpux*)
-		DEFINES="$DEFINES -DUNIX"
-		;;
-	freebsd*)
-		DEFINES="$DEFINES -DUNIX"
-		LDFLAGS="$LDFLAGS -L/usr/local/lib"
-		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
+	amigaos*)
+		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
+		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
+		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
 		;;
 	beos*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1262,6 +1253,32 @@ case $_host_os in
 		# FIXME: Please document why 'long' has to be used instead of int
 		#type_4_byte='long'
 		;;
+	bsd* | hpux* | netbsd* | openbsd* | sunos*)
+		DEFINES="$DEFINES -DUNIX"
+		;;
+	cygwin*)
+		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
+		exit 1
+		;;
+	darwin*)
+		DEFINES="$DEFINES -DUNIX -DMACOSX"
+		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		add_line_to_config_mk 'MACOSX = 1'
+		;;
+	dreamcast)
+		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
+		;;
+	freebsd*)
+		DEFINES="$DEFINES -DUNIX"
+		LDFLAGS="$LDFLAGS -L/usr/local/lib"
+		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
+		;;
+	gamecube)
+		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib"
+		;;
 	haiku*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lnetwork for the timidity MIDI driver
@@ -1270,69 +1287,52 @@ case $_host_os in
 		# FIXME: Please document why 'long' has to be used instead of int
 		#type_4_byte='long'
 		;;
-	solaris*)
-		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		# Needs -lbind -lsocket for the timidity MIDI driver
-		LIBS="$LIBS -lnsl -lsocket"
-		;;
 	irix*)
 		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		LIBS="$LIBS -lmd -lfastm -lm"
 		_ranlib=:
 		;;
-	darwin*)
-		DEFINES="$DEFINES -DUNIX -DMACOSX"
-		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
-		add_line_to_config_mk 'MACOSX = 1'
+	linux* | uclinux*)
+		# When not cross-compiling, enable large file support, but don't
+		# care if getconf doesn't exist or doesn't recognize LFS_CFLAGS.
+		if test -z "$_host"; then
+			CXXFLAGS="$CXXFLAGS $(getconf LFS_CFLAGS 2>/dev/null)"
+		fi
+		DEFINES="$DEFINES -DUNIX"
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
-	cygwin*)
-		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
-		exit 1
+	mint*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		;;
+	nds)
+		# TODO nds
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
 		;;
-	mint*)
-		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+	ps2)
+		# TODO ps2
+		CXXFLAGS="$CXXFLAGS -G2"
+		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
-	amigaos*)
-		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
-		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
-		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
+	psp)
+		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
 		;;
-	dreamcast)
-		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
+	solaris*)
+		DEFINES="$DEFINES -DUNIX -DSOLARIS -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		# Needs -lbind -lsocket for the timidity MIDI driver
+		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/wii/include"
 		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib"
-		;;
-	gamecube)
-		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
-		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib"
-		;;
-	nds)
-		# TODO nds
-		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
-		;;
-	psp)
-		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
-		;;
-	ps2)
-		# TODO ps2
-		CXXFLAGS="$CXXFLAGS -G2"
-		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
@@ -1350,31 +1350,102 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	case "$_host" in
-		linupy|arm-riscos)
-			DEFINES="$DEFINES -DUNIX -DLINUPY"
-			_need_memalign=yes
-			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
 			DEFINES="$DEFINES -DUNIX"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
-		samsungtv)
-			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
-			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			HOSTEXEEXT=".so"
+		arm-riscos|linupy)
+			DEFINES="$DEFINES -DUNIX -DLINUPY"
+			_need_memalign=yes
+			;;
+		bfin*)
+			_need_memalign=yes
+			;;
+		*darwin*)
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			;;
+		dreamcast)
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
+			_need_memalign=yes
+			_backend="dc"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mad="yes"
+			_zlib="yes"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
+			;;
+		gamecube)
+			_endian=big
+			_need_memalign=yes
+			_backend="wii"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			_port_mk="backends/platform/wii/wii.mk"
+			add_line_to_config_mk 'GAMECUBE = 1'
+			add_line_to_config_h '#define GAMECUBE'
+			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
+			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			;;
+		gp2x)
+			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
+			CXXFLAGS="$CXXFLAGS -march=armv4t"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			LDFLAGS="$LDFLAGS -static"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="samsungtv"
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			_backend="gp2x"
+			_build_hq_scalers="no"
 			_mt32emu="no"
-			_build_scalers="yes"
-			_build_hq_scalers="yes"
 			_vkeybd="yes"
+			;;
+		gp2xwiz)
+			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
+			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			LDFLAGS="$LDFLAGS"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			_backend="gp2xwiz"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			_vkeybd="yes"
+			;;
+		iphone)
+			DEFINES="$DEFINES -DIPHONE -DUNIX"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_backend="iphone"
+			_build_hq_scalers="no"
+			;;
+		m68k-atari-mint)
+			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+			_endian=big
+			_need_memalign=yes
+			# FIXME: Please document why 'long' has to be used instead of int
+			#type_4_byte='long'
+			_ranlib=m68k-atari-mint-ranlib
+			_ar="m68k-atari-mint-ar cru"
+			;;
+		*mingw32*)
+			_sdlconfig=$_host-sdl-config
+			_windres=$_host-windres
+			_ar="$_host-ar cru"
+			_ranlib=$_host-ranlib
 			;;
 		motoezx)
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
@@ -1406,134 +1477,6 @@ if test -n "$_host"; then
 			_vkeybd="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
-		bfin*)
-			_need_memalign=yes
-			;;
-		*darwin*)
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			;;
-		gp2xwiz)
-			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
-			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
-			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
-			LDFLAGS="$LDFLAGS"
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			_backend="gp2xwiz"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
-			;;
-		gp2x)
-			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
-			CXXFLAGS="$CXXFLAGS -march=armv4t"
-			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
-			LDFLAGS="$LDFLAGS -static"
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			_backend="gp2x"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
-			;;
-		neuros)
-			DEFINES="$DEFINES -DUNIX -DNEUROS"
-			_need_memalign=yes
-			_backend='null'
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			;;
-		ppc-amigaos)
-			_endian=big
-			_need_memalign=yes
-			# FIXME: Please document why 'long' has to be used instead of int
-			#type_4_byte='long'
-			;;
-		m68k-atari-mint)
-			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_endian=big
-			_need_memalign=yes
-			# FIXME: Please document why 'long' has to be used instead of int
-			#type_4_byte='long'
-			_ranlib=m68k-atari-mint-ranlib
-			_ar="m68k-atari-mint-ar cru"
-			;;
-		*mingw32*)
-			_sdlconfig=$_host-sdl-config
-			_windres=$_host-windres
-			_ar="$_host-ar cru"
-			_ranlib=$_host-ranlib
-			;;
-		iphone)
-			DEFINES="$DEFINES -DIPHONE -DUNIX"
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			_backend="iphone"
-			_build_hq_scalers="no"
-			;;
-		wince)
-			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_TREMOLO = 1'
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="wince"
-			_mt32emu="no"
-			_port_mk="backends/platform/wince/wince.mk"
-			;;
-		dreamcast)
-			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
-			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
-			_need_memalign=yes
-			_backend="dc"
-			_build_scalers="no"
-			_build_hq_scalers="no"
-			_mad="yes"
-			_zlib="yes"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
-			;;
-		wii)
-			_endian=big
-			_need_memalign=yes
-			_backend="wii"
-			_build_scalers="no"
-			_build_hq_scalers="no"
-			_port_mk="backends/platform/wii/wii.mk"
-			add_line_to_config_mk 'GAMECUBE = 0'
-			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
-			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
-			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
-			add_line_to_config_h "#define USE_WII_DI"
-			add_line_to_config_h "#define USE_WII_SMB"
-			add_line_to_config_h "#define USE_WII_KBD"
-			;;
-		gamecube)
-			_endian=big
-			_need_memalign=yes
-			_backend="wii"
-			_build_scalers="no"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_port_mk="backends/platform/wii/wii.mk"
-			add_line_to_config_mk 'GAMECUBE = 1'
-			add_line_to_config_h '#define GAMECUBE'
-			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
-			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
-			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
-			;;
 		nds)
 			# TODO: complete this
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
@@ -1550,13 +1493,18 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
-		psp)
+		neuros)
+			DEFINES="$DEFINES -DUNIX -DNEUROS"
 			_need_memalign=yes
-			_backend="psp"
-			_build_scalers="no"
+			_backend='null'
 			_build_hq_scalers="no"
 			_mt32emu="no"
-			_port_mk="backends/platform/psp/psp.mk"
+			;;
+		ppc-amigaos)
+			_endian=big
+			_need_memalign=yes
+			# FIXME: Please document why 'long' has to be used instead of int
+			#type_4_byte='long'
 			;;
 		ps2)
 			# TODO: complete this
@@ -1588,6 +1536,58 @@ if test -n "$_host"; then
 				CXXFLAGS="$CXXFLAGS -s"
 			fi
 			;;
+		psp)
+			_need_memalign=yes
+			_backend="psp"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			_port_mk="backends/platform/psp/psp.mk"
+			;;
+		samsungtv)
+			DEFINES="$DEFINES -DUNIX -DSAMSUNGTV -DDISABLE_COMMAND_LINE"
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			HOSTEXEEXT=".so"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="samsungtv"
+			_mt32emu="no"
+			_build_scalers="yes"
+			_build_hq_scalers="yes"
+			_vkeybd="yes"
+			;;
+		wii)
+			_endian=big
+			_need_memalign=yes
+			_backend="wii"
+			_build_scalers="no"
+			_build_hq_scalers="no"
+			_port_mk="backends/platform/wii/wii.mk"
+			add_line_to_config_mk 'GAMECUBE = 0'
+			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
+			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
+			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			add_line_to_config_h "#define USE_WII_DI"
+			add_line_to_config_h "#define USE_WII_SMB"
+			add_line_to_config_h "#define USE_WII_KBD"
+			;;
+		wince)
+			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_TREMOLO = 1'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="wince"
+			_mt32emu="no"
+			_port_mk="backends/platform/wince/wince.mk"
+			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
 			;;
@@ -1599,21 +1599,21 @@ else
 	#
 	echo_n "Alignment required... "
 	case $_host_cpu in
-		arm*)
-			_need_memalign=yes
-			;;
 		alpha*)
 			# Hardcode alignment requirements for Alpha processsors
 			_need_memalign=yes
 			;;
-		sh*)
-			# Hardcode alignment requirements for SH processsors.
-			# While these can emulate unaligned memory access, this
-			# emulation is rather slow.
+		arm*)
 			_need_memalign=yes
 			;;
 		mips*)
 			# Hardcode alignment requirements for MIPS processsors.
+			# While these can emulate unaligned memory access, this
+			# emulation is rather slow.
+			_need_memalign=yes
+			;;
+		sh*)
+			# Hardcode alignment requirements for SH processsors.
 			# While these can emulate unaligned memory access, this
 			# emulation is rather slow.
 			_need_memalign=yes
@@ -1645,7 +1645,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	sdl | wii | dreamcast | samsungtv)
+	dreamcast | samsungtv | sdl | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -1697,41 +1697,6 @@ _def_plugin="/* -> plugins disabled */"
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
-	linux*)
-_def_plugin='
-#define PLUGIN_PREFIX	"lib"
-#define PLUGIN_SUFFIX	".so"
-'
-_mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := lib
-PLUGIN_SUFFIX := .so
-PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -DDYNAMIC_MODULES
-CXXFLAGS        += -fpic
-PLUGIN_LDFLAGS  += -shared
-PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
-POST_OBJS_FLAGS := -Wl,-no-whole-archive
-LIBS            += -ldl
-'
-		;;
-	freebsd*)
-_def_plugin='
-#define PLUGIN_PREFIX	"lib"
-#define PLUGIN_SUFFIX	".so"
-'
-_mak_plugins='
-DYNAMIC_MODULES := 1
-PLUGIN_PREFIX := lib
-PLUGIN_SUFFIX := .so
-PLUGIN_EXTRA_DEPS =
-CXXFLAGS        += -DDYNAMIC_MODULES
-CXXFLAGS        += -fpic
-PLUGIN_LDFLAGS  += -shared
-PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
-POST_OBJS_FLAGS := -Wl,-no-whole-archive
-'
-		;;
 	darwin*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
@@ -1749,20 +1714,37 @@ POST_OBJS_FLAGS :=
 LIBS            += -ldl
 '
 		;;
-	*mingw32*)
+	dreamcast)
 _def_plugin='
 #define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".dll"
+#define PLUGIN_SUFFIX	".plg"
 '
 _mak_plugins='
 DYNAMIC_MODULES		:= 1
 PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .dll
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
+PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
+	freebsd*)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS =
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	gp2xwiz*)
@@ -1783,20 +1765,38 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	dreamcast)
+	linux*)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS =
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
+'
+		;;
+	*mingw32*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
-#define PLUGIN_SUFFIX	".plg"
+#define PLUGIN_SUFFIX	".dll"
 '
 _mak_plugins='
 DYNAMIC_MODULES		:= 1
 PLUGIN_PREFIX		:=
-PLUGIN_SUFFIX		:= .plg
-PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE)
+PLUGIN_SUFFIX		:= .dll
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib
+PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
-POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
 		;;
 	psp)
@@ -2253,29 +2253,10 @@ fi
 # Backend related stuff
 #
 case $_backend in
-	null)
-		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
-		;;
-	sdl)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		;;
-	linuxmoto)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
-		;;
-	samsungtv)
-		_sdlconfig="arm-SamyGO-linux-gnueabi-sdl-config"
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
-		LIBS="$LIBS `$_sdlconfig --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
-		LDFLAGS="$LDFLAGS -shared -fpic -Wl,-whole-archive"
-		MODULES="$MODULES backends/platform/sdl"
+	dc)
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
+		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
+		LIBS="$LIBS -lronin -lm"
 		;;
 	gp2x)
 		find_sdlconfig
@@ -2295,28 +2276,25 @@ case $_backend in
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
-	wince)
-		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
-		LIBS="$LIBS -static -lSDL"
-		;;
-	dc)
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
-		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
-		LIBS="$LIBS -lronin -lm"
-		;;
-	wii)
-		DEFINES="$DEFINES -D__WII__ -DGEKKO"
-		case $_host_os in
-		gamecube)
-			LIBS="$LIBS -lgxflux -lfat -logc -ldb"
-			;;
-		*)
-			LIBS="$LIBS -lgxflux -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
-			;;
-		esac
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
 		;;
 	nds)
 		# TODO nds
+		;;
+	null)
+		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
+		;;
+	ps2)
+		# TODO ps2
+		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
+		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
+		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
@@ -2329,13 +2307,35 @@ case $_backend in
 			LIBS="$LIBS -lGL"
 		fi
 		;;
-	ps2)
-		# TODO ps2
-		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
-		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
-		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
-		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
-		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
+	samsungtv)
+		_sdlconfig="arm-SamyGO-linux-gnueabi-sdl-config"
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
+		LIBS="$LIBS `$_sdlconfig --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DSAMSUNGTV"
+		LDFLAGS="$LDFLAGS -shared -fpic -Wl,-whole-archive"
+		MODULES="$MODULES backends/platform/sdl"
+		;;
+	sdl)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	wii)
+		DEFINES="$DEFINES -D__WII__ -DGEKKO"
+		case $_host_os in
+		gamecube)
+			LIBS="$LIBS -lgxflux -lfat -logc -ldb"
+			;;
+		*)
+			LIBS="$LIBS -lgxflux -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			;;
+		esac
+		;;
+	wince)
+		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
+		LIBS="$LIBS -static -lSDL"
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
@@ -2372,7 +2372,7 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
-wii | gamecube | psp)
+gamecube | psp | wii)
 	;;
 *)
 	CXXFLAGS="$CXXFLAGS -pedantic"
