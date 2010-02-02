@@ -30,12 +30,12 @@
 
 namespace Sci {
 
-class Screen;
-class SciPalette;
 class Cursor;
+class GfxScreen;
+class GfxPalette;
 class GfxCache;
 class GfxCompare;
-class Text;
+class GfxFrameout;
 
 class SciGui32 {
 public:
@@ -69,7 +69,7 @@ public:
 	void addPlane(reg_t object);
 	void updatePlane(reg_t object);
 	void deletePlane(reg_t object);
-	byte getHighPlanePri() { return _highPlanePri; }
+	int16 getHighPlanePri();
 	void frameOut();
 	void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
 	void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
@@ -88,11 +88,9 @@ protected:
 	GfxPalette *_palette;
 	GfxCache *_cache;
 	GfxCompare *_compare;
+	GfxFrameout *_frameout;
 
 private:
-	Common::Array<reg_t> _screenItems;
-	Common::Array<reg_t> _planes;
-	byte _highPlanePri;
 };
 
 } // End of namespace Sci

@@ -39,6 +39,7 @@ MODULE_OBJS := \
 	graphics/controls.o \
 	graphics/cursor.o \
 	graphics/font.o \
+	graphics/frameout.o \
 	graphics/gui.o \
 	graphics/menu.o \
 	graphics/paint16.o \

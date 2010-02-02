@@ -44,13 +44,15 @@ public:
 	GuiResourceId getResourceId();
 	void draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 
+#ifdef ENABLE_SCI32
+	int16 getSci32celCount();
+	void drawSci32Vga(int16 celNo = -1);
+#endif
+
 private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-#ifdef ENABLE_SCI32
-	void drawSci32Vga();
-#endif
 	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte pixel);

@@ -117,7 +117,12 @@ void SciGuiPicture::drawSci11Vga() {
 }
 
 #ifdef ENABLE_SCI32
-void SciGuiPicture::drawSci32Vga() {
+int16 SciGuiPicture::getSci32celCount() {
+	byte *inbuffer = _resource->data;
+	return inbuffer[2];
+}
+
+void SciGuiPicture::drawSci32Vga(int16 celNo) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_LE_UINT16(inbuffer);
@@ -128,9 +133,19 @@ void SciGuiPicture::drawSci32Vga() {
 	int cel_relXpos, cel_relYpos;
 	Palette palette;
 
-	// Create palette and set it
-	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
-	_palette->set(&palette, true);
+	// HACK
+	_mirroredFlag = false;
+	_addToFlag = false;
+
+	if ((celNo == -1) || (celNo == 0)) {
+		// Create palette and set it
+		_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+		_palette->set(&palette, true);
+	}
+	if (celNo != -1) {
+		cel_headerPos += 42 * celNo;
+		celCount = 1;
+	}
 
 	while (celCount > 0) {
 		cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);

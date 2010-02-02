@@ -37,6 +37,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
+#include "sci/graphics/frameout.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/robot.h"
 #include "sci/graphics/view.h"
@@ -44,9 +45,10 @@
 namespace Sci {
 
 SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor)
-	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _highPlanePri(0) {
+	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
+	_frameout = new GfxFrameout(_s->_segMan, _s->resMan, _cache, _screen, _palette);
 }
 
 SciGui32::~SciGui32() {
@@ -214,128 +216,32 @@ void SciGui32::moveCursor(Common::Point pos) {
 void SciGui32::setCursorZone(Common::Rect zone) {
 	_cursor->setMoveZone(zone);
 }
-
 void SciGui32::addScreenItem(reg_t object) {
-	_screenItems.push_back(object);
-	warning("addScreenItem %X:%X (%s)", object.segment, object.offset, _s->_segMan->getObjectName(object));
+	_frameout->kernelAddScreenItem(object);
 }
 
 void SciGui32::deleteScreenItem(reg_t object) {
-	for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
-		if (_screenItems[itemNr] == object) {
-			_screenItems.remove_at(itemNr);
-			return;
-		}
-	}
+	_frameout->kernelDeleteScreenItem(object);
 }
 
 void SciGui32::addPlane(reg_t object) {
-	_planes.push_back(object);
-	byte planePri = GET_SEL32V(_s->_segMan, object, priority) & 0xFF;
-	if (planePri > _highPlanePri)
-		_highPlanePri = planePri;
+	_frameout->kernelAddPlane(object);
 }
 
 void SciGui32::updatePlane(reg_t object) {
+	_frameout->kernelUpdatePlane(object);
 }
 
 void SciGui32::deletePlane(reg_t object) {
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		if (_planes[planeNr] == object) {
-			_planes.remove_at(planeNr);
-			break;
-		}
-	}
+	_frameout->kernelDeletePlane(object);
+}
 
-	// Recalculate highPlanePri
-	_highPlanePri = 0;
-
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		byte planePri = GET_SEL32V(_s->_segMan, _planes[planeNr], priority) & 0xFF;
-		if (planePri > _highPlanePri)
-			_highPlanePri = planePri;
-	}
+int16 SciGui32::getHighPlanePri() {
+	return _frameout->kernelGetHighPlanePri();
 }
 
 void SciGui32::frameOut() {
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		reg_t planeObj = _planes[planeNr];
-		int16 priority = GET_SEL32V(_s->_segMan, planeObj, priority);
-
-		if (priority == -1)
-			continue;
-
-		int16 picNum = GET_SEL32V(_s->_segMan, planeObj, picture);
-		if (picNum > -1) {
-			SciGuiPicture *picture = new SciGuiPicture(_s->resMan, 0, _screen, _palette, picNum, false);
-
-			picture->draw(100, false, false, 0);
-			delete picture;
-			//_gfx->drawPicture(picNum, 100, false, false, 0);
-		}
-
-		// FIXME: This code doesn't currently work properly because of the way we set up the
-		// view port. We are starting at 10 pixels from the top automatically. The offset should
-		// be based on the plane's top in SCI32 instead. Here we would be adding 10 to 10 and
-		// therefore drawing too low. We would need to draw each picture at the correct offset
-		// which doesn't currently happen.
-		int16 planeTop = GET_SEL32V(_s->_segMan, planeObj, top);
-		int16 planeLeft = GET_SEL32V(_s->_segMan, planeObj, left);
-
-		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
-			reg_t viewObj = _screenItems[itemNr];
-			reg_t planeOfItem = GET_SEL32(_s->_segMan, viewObj, plane);
-			if (planeOfItem == _planes[planeNr]) {
-				uint16 viewId = GET_SEL32V(_s->_segMan, viewObj, view);
-				uint16 loopNo = GET_SEL32V(_s->_segMan, viewObj, loop);
-				uint16 celNo = GET_SEL32V(_s->_segMan, viewObj, cel);
-				uint16 x = GET_SEL32V(_s->_segMan, viewObj, x);
-				uint16 y = GET_SEL32V(_s->_segMan, viewObj, y);
-				uint16 z = GET_SEL32V(_s->_segMan, viewObj, z);
-				priority = GET_SEL32V(_s->_segMan, viewObj, priority);
-				uint16 scaleX = GET_SEL32V(_s->_segMan, viewObj, scaleX);
-				uint16 scaleY = GET_SEL32V(_s->_segMan, viewObj, scaleY);
-				//int16 signal = GET_SEL32V(_s->_segMan, viewObj, signal);
-
-				// FIXME: See above
-				x += planeLeft;
-				y += planeTop;
-
-				// Theoretically, leftPos and topPos should be sane
-				// Apparently, sometimes they're not, therefore I'm adding some sanity checks here so that
-				// the hack underneath does not try and draw cels outside the screen coordinates
-				if (x >= _screen->getWidth()) {
-					continue;
-				}
-
-				if (y >= _screen->getHeight()) {
-					continue;
-				}
-
-				if (viewId != 0xffff) {
-					Common::Rect celRect;
-					View *view = _cache->getView(viewId);
-
-					if ((scaleX == 128) && (scaleY == 128))
-						view->getCelRect(loopNo, celNo, x, y, z, &celRect);
-					else
-						view->getCelScaledRect(loopNo, celNo, x, y, z, scaleX, scaleY, &celRect);
-
-					if (celRect.top < 0 || celRect.top >= _screen->getHeight())
-						continue;
-
-					if (celRect.left < 0 || celRect.left >= _screen->getWidth())
-						continue;
-
-					if ((scaleX == 128) && (scaleY == 128))
-						view->draw(celRect, celRect, celRect, loopNo, celNo, 255, 0, false);
-					else
-						view->drawScaled(celRect, celRect, celRect, loopNo, celNo, 255, scaleX, scaleY);
-					//_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0, scaleX, scaleY);
-				}
-			}
-		}
-	}
+	_frameout->kernelFrameout();
 	_screen->copyToScreen();
 }
 
