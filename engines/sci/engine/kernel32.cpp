@@ -411,15 +411,15 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		array->setType(argv[2].toUint16());
 		array->setSize(argv[1].toUint16());
 		return arrayHandle;
-		}
+	}
 	case 1: { // Size
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 		return make_reg(0, array->getSize());
-		}
+	}
 	case 2: { // At (return value at an index)
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 		return array->getValue(argv[2].toUint16());
-		}
+	}
 	case 3: { // Atput (put value at an index)
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
 
@@ -436,7 +436,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			array->setValue(i + index, argv[i + 3]);
 
 		return argv[1]; // We also have to return the handle
-		}
+	}
 	case 4: // Free
 		if (!argv[1].isNull())
 			s->_segMan->freeArray(argv[1]);
@@ -456,7 +456,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			array->setValue(i + index, argv[4]);
 
 		return argv[1];
-		}
+	}
 	case 6: { // Cpy
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
 		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
@@ -477,7 +477,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			array1->setValue(i + index1, array2->getValue(i + index2));
 
 		return argv[1];
-		}
+	}
 	case 7: // Cmp
 		// Not implemented in SSCI
 		return s->r_acc;
@@ -493,7 +493,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 			dupArray->setValue(i, array->getValue(i));
 
 		return arrayHandle;
-		}
+	}
 	case 9: // Getdata
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
@@ -539,7 +539,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			string->setValue(i + index, argv[i + 3].toUint16());
 
 		return argv[1]; // We also have to return the handle
-		}
+	}
 	case 4: // Free
 		if (!argv[1].isNull())
 			s->_segMan->freeString(argv[1]);
@@ -559,9 +559,8 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			string->setValue(i + index, argv[4].toUint16());
 
 		return argv[1];
-		}
+	}
 	case 6: { // Cpy
-		SciString *string1 = s->_segMan->lookupString(argv[1]);
 		Common::String string2 = s->_segMan->getString(argv[3]);
 		uint32 index1 = argv[2].toUint16();
 		uint32 index2 = argv[4].toUint16();
@@ -572,17 +571,31 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 
 		// A count of -1 means fill the rest of the array
 		uint32 count = argv[5].toSint16() == -1 ? string2.size() - index2 + 1 : argv[5].toUint16();
+	
+		// We have a special case here for argv[1] being a system string
+		if (argv[1].segment == s->sys_strings_segment) {
+			// Resize if necessary
+			if ((uint32)s->sys_strings->_strings[argv[1].toUint16()]._maxSize < index1 + count) {
+				delete[] s->sys_strings->_strings[argv[1].toUint16()]._value;
+				s->sys_strings->_strings[argv[1].toUint16()]._maxSize = index1 + count;
+				s->sys_strings->_strings[argv[1].toUint16()]._value = new char[index1 + count];
+				memset(s->sys_strings->_strings[argv[1].toUint16()]._value, 0, index1 + count);
+			}
 
-		if (string1->getSize() < index1 + count)
-			string1->setSize(index1 + count);
+			strncpy(s->sys_strings->_strings[argv[1].toUint16()]._value + index1, string2.c_str() + index2, count);
+		} else {
+			SciString *string1 = s->_segMan->lookupString(argv[1]);
 
-		// Note: We're accessing from c_str() here because the string's size ignores
-		// the trailing 0 and therefore triggers an assert when doing string2[i + index2].
-		for (uint16 i = 0; i < count; i++)
-			string1->setValue(i + index1, string2.c_str()[i + index2]);
+			if (string1->getSize() < index1 + count)
+				string1->setSize(index1 + count);
 
-		return argv[1];
+			// Note: We're accessing from c_str() here because the string's size ignores
+			// the trailing 0 and therefore triggers an assert when doing string2[i + index2].
+			for (uint16 i = 0; i < count; i++)
+				string1->setValue(i + index1, string2.c_str()[i + index2]);
 		}
+		
+	} return argv[1];
 	case 7: { // Cmp
 		Common::String string1 = argv[1].isNull() ? "" : s->_segMan->getString(argv[1]);
 		Common::String string2 = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
@@ -591,7 +604,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, strncmp(string1.c_str(), string2.c_str(), argv[3].toUint16()));
 		else           // Strcmp
 			return make_reg(0, strcmp(string1.c_str(), string2.c_str()));
-		}
+	}
 	case 8: { // Dup
 		Common::String string = s->_segMan->getString(argv[1]);
 		reg_t stringHandle;
@@ -604,7 +617,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		dupString->setValue(dupString->getSize() - 1, 0);
 
 		return stringHandle;
-		}
+	}
 	case 9: // Getdata
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
@@ -629,7 +642,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 13: { // atoi
 		Common::String string = s->_segMan->getString(argv[1]);
 		return make_reg(0, (uint16)atoi(string.c_str()));
-		}
+	}
 	default:
 		error("Unknown kString subop %d", argv[0].toUint16());
 	}

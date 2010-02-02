@@ -949,6 +949,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			f->_out->writeUint16LE(argv[2].toUint16());
 		break;
 	}
+	case 19:
+		// TODO: Torin's Passage uses this early on in the Sierra logo
+		warning("kFileIO(19)");
+		break;
 #endif
 	default:
 		error("Unknown FileIO() sub-command: %d", func_nr);
