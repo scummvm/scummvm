@@ -21,7 +21,7 @@ install: all
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/scummvm/"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/scummvm/"
-	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/scummvm/"
+	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(LIBDIR)/scummvm/"
 endif
 
 uninstall:

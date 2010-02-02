@@ -261,7 +261,4 @@ ifdef ENABLE_AGI
 DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
 endif
 
-# Plugin files
-DIST_FILES_PLUGINS:=$(addprefix $(srcdir)/,$(PLUGINS))
-
 .PHONY: all clean distclean plugins dist-src
