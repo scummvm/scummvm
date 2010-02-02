@@ -242,17 +242,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x4267:
+		hideActor();
 		playSound(23, 8);
 		playSound(24, 13);
 		setOns(1, 0);
 		playActorAnimation(841);
 		setOns(1, 0x61);
 		setOns(2, 0);
-		wait(100);
 		playSound(63, 12);
 		playSound(5, 26);
 		playActorAnimation(842);
-		hideActor();
 		wait(100);
 		//shown in different positions
 		displayMessage(0x5656, 0xd1, 0x5510);
