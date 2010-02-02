@@ -28,6 +28,12 @@
 
 namespace Sci {
 
+enum controlStateFlags {
+	kControlStateEnabled      = 0x0001,  ///< 0001 - enabled buttons
+	kControlStateDisabled     = 0x0004,  ///< 0010 - grayed out buttons
+	kControlStateFramed       = 0x0008,  ///< 1000 - widgets surrounded by a frame
+};
+
 class GfxPorts;
 class GfxPaint16;
 class Font;

@@ -79,24 +79,6 @@ struct Window : public Port {
 	}
 };
 
-struct AnimateEntry {
-	reg_t object;
-	GuiResourceId viewId;
-	int16 loopNo;
-	int16 celNo;
-	int16 paletteNo;
-	int16 x, y, z;
-	int16 priority;
-	uint16 signal;
-	uint16 scaleSignal;
-	int16 scaleX;
-	int16 scaleY;
-	Common::Rect celRect;
-	bool showBitsFlag;
-	reg_t castHandle;
-};
-typedef Common::List<AnimateEntry *> AnimateList;
-
 struct Color {
 	byte used;
 	byte r, g, b;
@@ -112,14 +94,6 @@ struct Palette {
 struct PalSchedule {
 	byte from;
 	uint32 schedule;
-};
-
-/** Button and frame control flags. */
-enum controlStateFlags {
-	kControlStateEnabled      = 0x0001,  ///< 0001 - enabled buttons (used by the interpreter)
-	kControlStateDisabled     = 0x0004,  ///< 0010 - grayed out buttons (used by the interpreter)
-	kControlStateFramed       = 0x0008,  ///< 1000 - widgets surrounded by a frame (used by the interpreter)
-	kControlStateDitherFramed = 0x1000   ///< 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
 };
 
 enum ViewType {
