@@ -101,7 +101,7 @@ void GfxFrameout::kernelFrameout() {
 	reg_t planeObject;
 	GuiResourceId planePictureNr;
 	SciGuiPicture *planePicture = 0;
-	int16 planePictureCels;
+	int16 planePictureCels = 0;
 	int16 planePictureCel;
 	int16 planePriority;
 	int16 planeTop, planeLeft;
