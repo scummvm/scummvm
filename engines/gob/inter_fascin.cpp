@@ -132,7 +132,9 @@ void Inter_Fascination::oFascin_loadExtasy(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_adlibPlay(OpGobParams &params) {
+#ifdef ENABLE_FASCIN_ADLIB
 	_vm->_sound->adlibPlay();
+#endif
 }
 
 void Inter_Fascination::oFascin_adlibStop(OpGobParams &params) {
