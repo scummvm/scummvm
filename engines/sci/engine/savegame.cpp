@@ -1003,8 +1003,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		retval->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	// Copy breakpoint information from current game instance
-	retval->have_bp = s->have_bp;
-	retval->bp_list = s->bp_list;
+	retval->_breakpoints = s->_breakpoints;
+	retval->_activeBreakpointTypes = s->_activeBreakpointTypes;
 
 	retval->successor = NULL;
 	retval->_gameId = s->_gameId;

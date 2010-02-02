@@ -280,8 +280,8 @@ public:
 	bool usesCdTrack() { return _usesCdTrack; }
 
 	/* Debugger data: */
-	Breakpoint *bp_list;   /**< List of breakpoints */
-	int have_bp;  /**< Bit mask specifying which types of breakpoints are used in bp_list */
+	Common::List<Breakpoint> _breakpoints;   /**< List of breakpoints */
+	int _activeBreakpointTypes;  /**< Bit mask specifying which types of breakpoints are active */
 
 	/* System strings */
 	SegmentId sys_strings_segment;

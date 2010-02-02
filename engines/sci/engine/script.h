@@ -204,8 +204,6 @@ extern opcode_format g_opcode_formats[128][4];
 
 void script_adjust_opcode_formats(EngineState *s);
 
-void script_free_breakpoints(EngineState *s);
-
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_SCRIPT_H

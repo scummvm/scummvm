@@ -218,8 +218,8 @@ int script_init_engine(EngineState *s) {
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 
-	s->bp_list = NULL; // No breakpoints defined
-	s->have_bp = 0;
+	s->_breakpoints.clear(); // No breakpoints defined
+	s->_activeBreakpointTypes = 0;
 
 	if (s->detectLofsType() == SCI_VERSION_1_MIDDLE)
 		s->_segMan->setExportAreWide(true);
@@ -229,22 +229,6 @@ int script_init_engine(EngineState *s) {
 	debug(2, "Engine initialized");
 
 	return 0;
-}
-
-void script_free_breakpoints(EngineState *s) {
-	Breakpoint *bp, *bp_next;
-
-	// Free breakpoint list
-	bp = s->bp_list;
-	while (bp) {
-		bp_next = bp->next;
-		if (bp->type == BREAK_SELECTOR)
-			free(bp->data.name);
-		free(bp);
-		bp = bp_next;
-	}
-
-	s->bp_list = NULL;
 }
 
 /*************************************************************/

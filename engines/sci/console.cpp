@@ -205,8 +205,8 @@ void Console::preEnter() {
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(true);
 #endif
-	if (_vm->getEngineState() && _vm->getEngineState()->_soundCmd)
-		_vm->getEngineState()->_soundCmd->pauseAll(true);
+	if (_vm->_gamestate && _vm->_gamestate->_soundCmd)
+		_vm->_gamestate->_soundCmd->pauseAll(true);
 }
 
 void Console::postEnter() {
@@ -214,8 +214,8 @@ void Console::postEnter() {
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(false);
 #endif
-	if (_vm->getEngineState() && _vm->getEngineState()->_soundCmd)
-		_vm->getEngineState()->_soundCmd->pauseAll(false);
+	if (_vm->_gamestate && _vm->_gamestate->_soundCmd)
+		_vm->_gamestate->_soundCmd->pauseAll(false);
 
 	if (!_videoFile.empty()) {
 		_vm->_gamestate->_gui->hideCursor();
@@ -409,7 +409,7 @@ const char *selector_name(EngineState *s, int selector) {
 bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
 
-	EngineState *s = _vm->getEngineState();
+	EngineState *s = _vm->_gamestate;
 	bool hasVocab997 = s->resMan->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 
 	DebugPrintf("Game ID: %s\n", s->_gameId.c_str());
@@ -693,7 +693,7 @@ bool Console::cmdRoomNumber(int argc, const char **argv) {
 	} else {
 		Common::String roomNumberStr = argv[1];
 		int roomNumber = strtol(roomNumberStr.c_str(), NULL, roomNumberStr.hasSuffix("h") ? 16 : 10);
-		_vm->getEngineState()->setRoomNumber(roomNumber);
+		_vm->_gamestate->setRoomNumber(roomNumber);
 		DebugPrintf("Room number changed to %d (%x in hex)\n", roomNumber, roomNumber);
 	}
 
@@ -1446,7 +1446,7 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 	} while (seeker);
 	DebugPrintf("\n");
 #else
-	_vm->getEngineState()->_soundCmd->printPlayList(this);
+	_vm->_gamestate->_soundCmd->printPlayList(this);
 #endif
 
 	return true;
@@ -1467,7 +1467,7 @@ bool Console::cmdSongInfo(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->getEngineState()->_soundCmd->printSongInfo(addr, this);
+	_vm->_gamestate->_soundCmd->printSongInfo(addr, this);
 
 	return true;
 }
@@ -1486,7 +1486,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->getEngineState()->_soundCmd->startNewSound(number);
+	_vm->_gamestate->_soundCmd->startNewSound(number);
 
 	return false;
 }
@@ -1590,7 +1590,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	SoundResource *soundRes = new SoundResource(number, _vm->getResourceManager(), _vm->getEngineState()->detectDoSoundType());
+	SoundResource *soundRes = new SoundResource(number, _vm->getResourceManager(), _vm->_gamestate->detectDoSoundType());
 
 	if (!soundRes) {
 		DebugPrintf("Not a sound resource!\n");
@@ -2367,25 +2367,25 @@ bool Console::cmdGo(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointList(int argc, const char **argv) {
-	Breakpoint *bp = _vm->_gamestate->bp_list;
 	int i = 0;
 	int bpdata;
 
 	DebugPrintf("Breakpoint list:\n");
 
-	while (bp) {
+	Common::List<Breakpoint>::const_iterator bp = _vm->_gamestate->_breakpoints.begin();
+	Common::List<Breakpoint>::const_iterator end = _vm->_gamestate->_breakpoints.end();
+	for (; bp != end; ++bp) {
 		DebugPrintf("  #%i: ", i);
 		switch (bp->type) {
 		case BREAK_SELECTOR:
-			DebugPrintf("Execute %s\n", bp->data.name);
+			DebugPrintf("Execute %s\n", bp->name.c_str());
 			break;
 		case BREAK_EXPORT:
-			bpdata = bp->data.address;
+			bpdata = bp->address;
 			DebugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
 			break;
 		}
 
-		bp = bp->next;
 		i++;
 	}
 
@@ -2399,45 +2399,30 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 		return true;
 	}
 
-	Breakpoint *bp, *bp_next, *bp_prev;
-	int i = 0, found = 0;
-	int type;
-	int idx = atoi(argv[1]);
+	const int idx = atoi(argv[1]);
 
-	// Find breakpoint with given index
-	bp_prev = NULL;
-	bp = _vm->_gamestate->bp_list;
-	while (bp && i < idx) {
-		bp_prev = bp;
-		bp = bp->next;
-		i++;
+	// Find the breakpoint at index idx.
+	Common::List<Breakpoint>::iterator bp = _vm->_gamestate->_breakpoints.begin();
+	const Common::List<Breakpoint>::iterator end = _vm->_gamestate->_breakpoints.end();
+	for (int i = 0; bp != end && i < idx; ++bp, ++i) {
+		// do nothing
 	}
-	if (!bp) {
+
+	if (bp == end) {
 		DebugPrintf("Invalid breakpoint index %i\n", idx);
 		return true;
 	}
 
 	// Delete it
-	bp_next = bp->next;
-	type = bp->type;
-	if (type == BREAK_SELECTOR) free(bp->data.name);
-	free(bp);
-	if (bp_prev)
-		bp_prev->next = bp_next;
-	else
-		_vm->_gamestate->bp_list = bp_next;
+	_vm->_gamestate->_breakpoints.erase(bp);
 
-	// Check if there are more breakpoints of the same type. If not, clear
-	// the respective bit in s->have_bp.
-	for (bp = _vm->_gamestate->bp_list; bp; bp = bp->next) {
-		if (bp->type == type) {
-			found = 1;
-			break;
-		}
+	// Update EngineState::_activeBreakpointTypes.
+	int type = 0;
+	for (bp = _vm->_gamestate->_breakpoints.begin(); bp != end; ++bp) {
+		type |= bp->type;
 	}
 
-	if (!found)
-		_vm->_gamestate->have_bp &= ~type;
+	_vm->_gamestate->_activeBreakpointTypes = type;
 
 	return true;
 }
@@ -2455,24 +2440,12 @@ bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
-	Breakpoint *bp;
-	if (_vm->_gamestate->bp_list) {
-		// List exists, append the breakpoint to the end
-		bp = _vm->_gamestate->bp_list;
-		while (bp->next)
-			bp = bp->next;
-		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = bp->next;
-	} else {
-		// No list, so create the list head
-		_vm->_gamestate->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = _vm->_gamestate->bp_list;
-	}
-	bp->next = NULL;
-	bp->type = BREAK_SELECTOR;
-	bp->data.name = (char *)malloc(strlen(argv[1]) + 1);
-	strcpy(bp->data.name, argv[1]);
-	_vm->_gamestate->have_bp |= BREAK_SELECTOR;
+	Breakpoint bp;
+	bp.type = BREAK_SELECTOR;
+	bp.name = argv[1];
+
+	_vm->_gamestate->_breakpoints.push_back(bp);
+	_vm->_gamestate->_activeBreakpointTypes |= BREAK_SELECTOR;
 
 	return true;
 }
@@ -2488,23 +2461,12 @@ bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
-	Breakpoint *bp;
-	if (_vm->_gamestate->bp_list) {
-		// List exists, append the breakpoint to the end
-		bp = _vm->_gamestate->bp_list;
-		while (bp->next)
-			bp = bp->next;
-		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = bp->next;
-	} else {
-		// No list, so create the list head
-		_vm->_gamestate->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = _vm->_gamestate->bp_list;
-	}
-	bp->next = NULL;
-	bp->type = BREAK_EXPORT;
-	bp->data.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
-	_vm->_gamestate->have_bp |= BREAK_EXPORT;
+	Breakpoint bp;
+	bp.type = BREAK_EXPORT;
+	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
+
+	_vm->_gamestate->_breakpoints.push_back(bp);
+	_vm->_gamestate->_activeBreakpointTypes |= BREAK_EXPORT;
 
 	return true;
 }

@@ -35,7 +35,7 @@
 
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/script.h"	// for script_adjust_opcode_formats & script_free_breakpoints
+#include "sci/engine/script.h"	// for script_adjust_opcode_formats
 
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
@@ -242,7 +242,6 @@ Common::Error SciEngine::run() {
 	game_run(&_gamestate); // Run the game
 
 	game_exit(_gamestate);
-	script_free_breakpoints(_gamestate);
 
 	ConfMan.flushToDisk();
 

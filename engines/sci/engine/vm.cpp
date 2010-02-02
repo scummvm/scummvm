@@ -52,7 +52,7 @@ int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a r
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
-static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
+static bool breakpointWasHit = false;	// FIXME: Avoid non-const global vars
 
 // validation functionality
 
@@ -241,22 +241,20 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	}
 
 	// Check if a breakpoint is set on this method
-	if (s->have_bp & BREAK_EXPORT) {
-		Breakpoint *bp;
+	if (s->_activeBreakpointTypes & BREAK_EXPORT) {
 		uint32 bpaddress;
 
 		bpaddress = (script << 16 | pubfunct);
 
-		bp = s->bp_list;
-		while (bp) {
-			if (bp->type == BREAK_EXPORT && bp->data.address == bpaddress) {
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = s->_breakpoints.begin(); bp != s->_breakpoints.end(); ++bp) {
+			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
 				Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				g_debugState.debugging = true;
-				breakpointFlag = true;
+				breakpointWasHit = true;
 				break;
 			}
-			bp = bp->next;
 		}
 	}
 
@@ -322,32 +320,30 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 		// Check if a breakpoint is set on this method
-		if (s->have_bp & BREAK_SELECTOR) {
-			Breakpoint *bp;
-			char method_name [256];
+		if (s->_activeBreakpointTypes & BREAK_SELECTOR) {
+			char method_name[256];
 
 			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), s->_kernel->getSelectorName(selector).c_str());
 
-			bp = s->bp_list;
-			while (bp) {
-				int cmplen = strlen(bp->data.name);
-				if (bp->data.name[cmplen - 1] != ':')
+			Common::List<Breakpoint>::const_iterator bp;
+			for (bp = s->_breakpoints.begin(); bp != s->_breakpoints.end(); ++bp) {
+				int cmplen = bp->name.size();
+				if (bp->name.lastChar() != ':')
 					cmplen = 256;
 
-				if (bp->type == BREAK_SELECTOR && !strncmp(bp->data.name, method_name, cmplen)) {
+				if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
 					Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					print_send_action = 1;
-					breakpointFlag = true;
+					breakpointWasHit = true;
 					g_debugState.debugging = true;
 					break;
 				}
-				bp = bp->next;
 			}
 		}
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
+		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, ((SciEngine *)g_engine)->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
@@ -651,8 +647,8 @@ void run_vm(EngineState *s, int restoring) {
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
 		if (g_debugState.debugging /* sci_debug_flags*/) {
-			script_debug(s, breakpointFlag);
-			breakpointFlag = false;
+			script_debug(s, breakpointWasHit);
+			breakpointWasHit = false;
 		}
 		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 		if (con->isAttached()) {

@@ -59,8 +59,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	script_000 = 0;
 
-	bp_list = 0;
-	have_bp = 0;
+	_activeBreakpointTypes = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
 
