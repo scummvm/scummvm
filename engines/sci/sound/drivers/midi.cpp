@@ -156,7 +156,7 @@ void MidiPlayer_Midi::noteOn(int channel, int note, int velocity) {
 		// Scale velocity;
 		velocity = velocity * _percussionVelocityScale[note] / 127;
 	} else {
-		int8 keyshift = _keyShift[channel];
+		int8 keyshift = _channels[channel].keyShift;
 
 		int shiftNote = note + keyshift;
 
@@ -687,8 +687,7 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 			}
 		}
 
-		// This is commented out as it seems to do more harm than good
-		// _keyShift[i] = CLIP<uint8>(keyshift, 0, 48) - 24;
+		_keyShift[i] = CLIP<uint8>(keyshift, 0, 48) - 24;
 		_pitchBendRange[i] = CLIP<uint8>(bender_range, 0, 24);
 	}
 
