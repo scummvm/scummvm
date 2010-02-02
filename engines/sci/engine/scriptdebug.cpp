@@ -428,4 +428,241 @@ void script_debug(EngineState *s, bool bp) {
 	con->attach();
 }
 
+void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
+	int selectors, overloads, selectorsize;
+	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
+	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
+	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
+	int i = 0;
+
+	printf("Object\n");
+
+	Common::hexdump((unsigned char *) data + seeker, objsize - 4, 16, seeker);
+	//-4 because the size includes the two-word header
+
+	printf("Name: %s\n", namepos ? ((char *)(data + namepos)) : "<unknown>");
+	printf("Superclass: %x\n", superclass);
+	printf("Species: %x\n", species);
+	printf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *) data + 12 + seeker) & 0xffff);
+
+	printf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *) data + seeker + 4));
+	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *) data + seeker + 6)));
+
+	seeker += 8;
+
+	while (selectors--) {
+		printf("  [#%03x] = 0x%x\n", i++, (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
+		seeker += 2;
+	}
+
+	printf("Overridden functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
+
+	seeker += 2;
+
+	if (overloads < 100)
+		while (overloads--) {
+			int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker));
+
+			printf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>");
+			printf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
+
+			seeker += 2;
+		}
+}
+
+void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
+	int selectors, overloads, selectorsize;
+	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
+	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
+	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
+
+	printf("Class\n");
+
+	Common::hexdump((unsigned char *) data + seeker, objsize - 4, 16, seeker);
+
+	printf("Name: %s\n", namepos ? ((char *)data + namepos) : "<unknown>");
+	printf("Superclass: %x\n", superclass);
+	printf("Species: %x\n", species);
+	printf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *)data + 12 + seeker) & 0xffff);
+
+	printf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + 4));
+	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *)data + seeker + 6)));
+
+	seeker += 8;
+	selectorsize <<= 1;
+
+	while (selectors--) {
+		int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker) + selectorsize);
+
+		printf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>",
+		          (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
+
+		seeker += 2;
+	}
+
+	seeker += selectorsize;
+
+	printf("Overloaded functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
+
+	seeker += 2;
+
+	while (overloads--) {
+		int selector = (int16)READ_LE_UINT16((unsigned char *)data + (seeker));
+		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, _selectorNames.size());
+		printf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ?
+		          _selectorNames[selector].c_str() : "<?>");
+		printf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
+
+		seeker += 2;
+	}
+}
+
+void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
+	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	unsigned int _seeker = 0;
+	Resource *script = _resMan->findResource(ResourceId(kResourceTypeScript, scriptNumber), 0);
+
+	if (!script) {
+		warning("dissectScript(): Script not found!\n");
+		return;
+	}
+
+	while (_seeker < script->size) {
+		int objtype = (int16)READ_LE_UINT16(script->data + _seeker);
+		int objsize;
+		unsigned int seeker = _seeker + 4;
+
+		if (!objtype) {
+			printf("End of script object (#0) encountered.\n");
+			printf("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
+			          objectctr[6], objectctr[1], objectctr[7], objectctr[10]);
+			return;
+		}
+
+		printf("\n");
+
+		objsize = (int16)READ_LE_UINT16(script->data + _seeker + 2);
+
+		printf("Obj type #%x, size 0x%x: ", objtype, objsize);
+
+		_seeker += objsize;
+
+		objectctr[objtype]++;
+
+		switch (objtype) {
+		case SCI_OBJ_OBJECT:
+			dumpScriptObject((char *)script->data, seeker, objsize);
+			break;
+
+		case SCI_OBJ_CODE: {
+			printf("Code\n");
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
+		};
+		break;
+
+		case 3: {
+			printf("<unknown>\n");
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
+		};
+		break;
+
+		case SCI_OBJ_SAID: {
+			printf("Said\n");
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
+
+			printf("%04x: ", seeker);
+			while (seeker < _seeker) {
+				unsigned char nextitem = script->data [seeker++];
+				if (nextitem == 0xFF)
+					printf("\n%04x: ", seeker);
+				else if (nextitem >= 0xF0) {
+					switch (nextitem) {
+					case 0xf0:
+						printf(", ");
+						break;
+					case 0xf1:
+						printf("& ");
+						break;
+					case 0xf2:
+						printf("/ ");
+						break;
+					case 0xf3:
+						printf("( ");
+						break;
+					case 0xf4:
+						printf(") ");
+						break;
+					case 0xf5:
+						printf("[ ");
+						break;
+					case 0xf6:
+						printf("] ");
+						break;
+					case 0xf7:
+						printf("# ");
+						break;
+					case 0xf8:
+						printf("< ");
+						break;
+					case 0xf9:
+						printf("> ");
+						break;
+					}
+				} else {
+					nextitem = nextitem << 8 | script->data [seeker++];
+					printf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
+				}
+			}
+			printf("\n");
+		}
+		break;
+
+		case SCI_OBJ_STRINGS: {
+			printf("Strings\n");
+			while (script->data [seeker]) {
+				printf("%04x: %s\n", seeker, script->data + seeker);
+				seeker += strlen((char *)script->data + seeker) + 1;
+			}
+			seeker++; // the ending zero byte
+		};
+		break;
+
+		case SCI_OBJ_CLASS:
+			dumpScriptClass((char *)script->data, seeker, objsize);
+			break;
+
+		case SCI_OBJ_EXPORTS: {
+			printf("Exports\n");
+			Common::hexdump((unsigned char *)script->data + seeker, objsize - 4, 16, seeker);
+		};
+		break;
+
+		case SCI_OBJ_POINTERS: {
+			printf("Pointers\n");
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
+		};
+		break;
+
+		case 9: {
+			printf("<unknown>\n");
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
+		};
+		break;
+
+		case SCI_OBJ_LOCALVARS: {
+			printf("Local vars\n");
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
+		};
+		break;
+
+		default:
+			printf("Unsupported!\n");
+			return;
+		}
+
+	}
+
+	printf("Script ends without terminator\n");
+}
+
 } // End of namespace Sci

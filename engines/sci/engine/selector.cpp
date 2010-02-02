@@ -29,6 +29,145 @@
 
 namespace Sci {
 
+#if 1
+
+#define FIND_SELECTOR(_slc_) _selectorCache._slc_ = findSelector(#_slc_)
+#define FIND_SELECTOR2(_slc_, _slcstr_) _selectorCache._slc_ = findSelector(_slcstr_)
+
+#else
+
+// The defines below can be used to construct static selector tables for games which don't have
+// a vocab.997 resource, by dumping the selector table from other similar versions or games
+#define FIND_SELECTOR(_slc_) _selectorCache._slc_ = findSelector(#_slc_); \
+	printf("\t{ \"%s\", %d },\n", #_slc_, _selectorCache._slc_)
+
+#define FIND_SELECTOR2(_slc_, _slcstr_) _selectorCache._slc_ = findSelector(_slcstr_); \
+	printf("\t{ \"%s\", %d },\n", _slcstr_, _selectorCache._slc_)
+
+#endif
+
+void Kernel::mapSelectors() {
+	// species
+	// superClass
+	// -info-
+	FIND_SELECTOR(y);
+	FIND_SELECTOR(x);
+	FIND_SELECTOR(view);
+	FIND_SELECTOR(loop);
+	FIND_SELECTOR(cel);
+	FIND_SELECTOR(underBits);
+	FIND_SELECTOR(nsTop);
+	FIND_SELECTOR(nsLeft);
+	FIND_SELECTOR(nsBottom);
+	FIND_SELECTOR(lsTop);
+	FIND_SELECTOR(lsLeft);
+	FIND_SELECTOR(lsBottom);
+	FIND_SELECTOR(lsRight);
+	FIND_SELECTOR(nsRight);
+	FIND_SELECTOR(signal);
+	FIND_SELECTOR(illegalBits);
+	FIND_SELECTOR(brTop);
+	FIND_SELECTOR(brLeft);
+	FIND_SELECTOR(brBottom);
+	FIND_SELECTOR(brRight);
+	// name
+	// key
+	// time
+	FIND_SELECTOR(text);
+	FIND_SELECTOR(elements);
+	// color
+	// back
+	FIND_SELECTOR(mode);
+	// style
+	FIND_SELECTOR(state);
+	FIND_SELECTOR(font);
+	FIND_SELECTOR(type);
+	// window
+	FIND_SELECTOR(cursor);
+	FIND_SELECTOR(max);
+	// mark
+	// who
+	FIND_SELECTOR(message);
+	// edit
+	FIND_SELECTOR(play);
+	FIND_SELECTOR(number);
+	FIND_SELECTOR(handle);	// nodePtr
+	FIND_SELECTOR(client);
+	FIND_SELECTOR(dx);
+	FIND_SELECTOR(dy);
+	FIND_SELECTOR2(b_movCnt, "b-moveCnt");
+	FIND_SELECTOR2(b_i1, "b-i1");
+	FIND_SELECTOR2(b_i2, "b-i2");
+	FIND_SELECTOR2(b_di, "b-di");
+	FIND_SELECTOR2(b_xAxis, "b-xAxis");
+	FIND_SELECTOR2(b_incr, "b-incr");
+	FIND_SELECTOR(xStep);
+	FIND_SELECTOR(yStep);
+	FIND_SELECTOR(moveSpeed);
+	FIND_SELECTOR(canBeHere);	// cantBeHere
+	FIND_SELECTOR(heading);
+	FIND_SELECTOR(mover);
+	FIND_SELECTOR(doit);
+	FIND_SELECTOR(isBlocked);
+	FIND_SELECTOR(looper);
+	FIND_SELECTOR(priority);
+	FIND_SELECTOR(modifiers);
+	FIND_SELECTOR(replay);
+	// setPri
+	// at
+	// next
+	// done
+	// width
+	FIND_SELECTOR(wordFail);
+	FIND_SELECTOR(syntaxFail);
+	// semanticFail
+	// pragmaFail
+	// said
+	FIND_SELECTOR(claimed);
+	// value
+	// save
+	// restore
+	// title
+	// button
+	// icon
+	// draw
+	FIND_SELECTOR2(delete_, "delete");
+	FIND_SELECTOR(z);
+	// -----------------------------
+	FIND_SELECTOR(size);
+	FIND_SELECTOR(moveDone);
+	FIND_SELECTOR(vol);
+	FIND_SELECTOR(pri);
+	FIND_SELECTOR(min);
+	FIND_SELECTOR(sec);
+	FIND_SELECTOR(frame);
+	FIND_SELECTOR(dataInc);
+	FIND_SELECTOR(palette);
+	FIND_SELECTOR(cantBeHere);
+	FIND_SELECTOR(nodePtr);
+	FIND_SELECTOR(flags);
+	FIND_SELECTOR(points);
+	FIND_SELECTOR(syncCue);
+	FIND_SELECTOR(syncTime);
+	FIND_SELECTOR(printLang);
+	FIND_SELECTOR(subtitleLang);
+	FIND_SELECTOR(parseLang);
+	FIND_SELECTOR(overlay);
+	FIND_SELECTOR(setCursor);
+	FIND_SELECTOR(topString);
+	FIND_SELECTOR(scaleSignal);
+	FIND_SELECTOR(scaleX);
+	FIND_SELECTOR(scaleY);
+
+#ifdef ENABLE_SCI32
+	FIND_SELECTOR(data);
+	FIND_SELECTOR(picture);
+	FIND_SELECTOR(plane);
+	FIND_SELECTOR(top);
+	FIND_SELECTOR(left);
+#endif
+}
+
 reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id) {
 	ObjVarRef address;
 
