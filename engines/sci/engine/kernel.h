@@ -408,6 +408,8 @@ reg_t kString(EngineState *s, int argc, reg_t *argv);
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv);
+// Text
+reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv);
 // "Planes" in SCI32 are pictures
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv);
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv);

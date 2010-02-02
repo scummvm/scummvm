@@ -761,6 +761,15 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
 	return kAvoidPath(s, argc, argv);
 }
 
+reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
+	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
+	reg_t object = argv[3];
+	Common::String text = s->_segMan->getString(GET_SEL32(s->_segMan, object, text));
+	debug("%s\n", text.c_str());
+
+	return NULL_REG;
+}
+
 } // End of namespace Sci
 
 #endif	// ENABLE_SCI32
