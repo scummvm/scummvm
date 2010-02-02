@@ -551,6 +551,22 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 	id    = 0;
 	index = 0;
 
+	int16 dx = 0;
+	int16 dy = 0;
+	int16 winId = -1;
+
+	if (_vm->getGameType() == kGameTypeFascination)
+		winId = _vm->_draw->isOverWin(dx, dy);
+
+	warning("checkmouse %d - %d %d",winId, dx, dy);
+
+	if (winId < 0) {
+		winId = 0;
+		dx = 0;
+		dy = 0;
+	} else
+		winId *= 256;
+
 	if (type == kTypeMove) {
 		// Check where the mouse was moved to
 
@@ -561,6 +577,10 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Only consider enabled hotspots
 				continue;
 
+//Strangerke, for Fascination
+			if ((spot.flags & 0xFF00) != winId)
+				continue;
+
 			if (spot.getType() > kTypeMove)
 				// Only consider click and move hotspots
 				continue;
@@ -569,7 +589,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Only check the main window
 				continue;
 
-			if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+			if (!spot.isIn(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy))
 				// If we're not in it, ignore it
 				continue;
 
@@ -591,6 +611,10 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Only consider enabled hotspots
 				continue;
 
+//Strangerke, for Fascination
+			if ((spot.flags & 0xFF00) != winId)
+				continue;
+
 			if (spot.getWindow() != 0)
 				// Only check the main window
 				continue;
@@ -599,7 +623,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Only consider hotspots that can be clicked
 				continue;
 
-			if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+			if (!spot.isIn(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy))
 				// If we're not in it, ignore it
 				continue;
 

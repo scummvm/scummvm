@@ -744,7 +744,7 @@ void Draw::winTrace(int16 left, int16 top, int16 width, int16 height) {
 	right  = left + width  - 1;
 	bottom = top  + height - 1;
 
-// To be fixed : either wrong surface, r anything else, but crappy look.
+// To be fixed : either wrong surface, or anything else, but crappy look.
 //	_vm->_video->drawLine(*_frontSurface, left,  top,    right, top,    0);
 //	_vm->_video->drawLine(*_frontSurface, left,  top,    left,  bottom, 0);
 //	_vm->_video->drawLine(*_frontSurface, left,  bottom, right, bottom, 0);
@@ -1284,6 +1284,35 @@ void Draw::winDraw(int16 fct) {
 	}
 }
 
+int16 Draw::isOverWin(int16 &dx, int16 &dy) {
+	int16 bestMatch = -1;
+
+	warning("isOverWin");
+	if ((_vm->_draw->_renderFlags & 128) == 0)
+		return -1;
+
+	for (int i = 0; i < 10; i++) 
+		if (_fascinWin[i].id != -1) {
+			if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left) &&
+			    (_vm->_global->_inter_mouseX <  _fascinWin[i].left + _fascinWin[i].width) &&
+			    (_vm->_global->_inter_mouseY >= _fascinWin[i].top) &&
+			    (_vm->_global->_inter_mouseY <  _fascinWin[i].top  + _fascinWin[i].height)) {
+
+				if (_fascinWin[i].id == _winCount - 1) {
+					dx = _fascinWin[i].left;
+					dy = _fascinWin[i].top;
+					return(i);
+				} else 
+					if (_fascinWin[i].id > bestMatch)
+						bestMatch = _fascinWin[i].id;
+			}
+		}
+
+	if (bestMatch != -1) 
+		return(0);
+	else 
+		return(-1);
+}
 int32 Draw::getSpriteRectSize(int16 index) {
 	if (!_spritesArray[index])
 		return 0;
