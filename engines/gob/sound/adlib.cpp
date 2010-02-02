@@ -697,7 +697,7 @@ void MDYPlayer::interpret() {
 	if (_wait == 0xF8) {
 		_wait = 0xF0;
 		if (*_playPos != 0xF8)
-			_wait += *(_playPos++);
+			_wait += *(_playPos++) & 0x0F;
 	}
 //		_playPos++;
 	_samplesTillPoll = _wait * (_rate / 1000);
