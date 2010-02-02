@@ -433,7 +433,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	// Load the opcode table from vocab.998 if it exists, to obtain the opcode names
-	Resource* r = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
+	Resource *r = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
 
 	// If the resource couldn't be loaded, leave
 	if (!r) {
@@ -450,7 +450,7 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 		int len = READ_LE_UINT16(r->data + offset) - 2;
 		int type = READ_LE_UINT16(r->data + offset + 2);
 		// QFG3 has empty opcodes
-		Common::String name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
+		Common::String name = len > 0 ? Common::String((const char *)r->data + offset + 4, len) : "Dummy";
 		DebugPrintf("%03x: %03x %20s | ", i, type, name.c_str());
 		if ((i % 3) == 2)
 			DebugPrintf("\n");
@@ -769,7 +769,8 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	}
 
 	for (; resNumber <= resMax; resNumber++) {
-		if ((script = _vm->getResourceManager()->findResource(ResourceId(restype, resNumber), 0))) {
+		script = _vm->getResourceManager()->findResource(ResourceId(restype, resNumber), 0);
+		if (script) {
 			unsigned int seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
@@ -1571,7 +1572,8 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	if ((data = songit->getAudioStream())) {
+	data = songit->getAudioStream();
+	if (data) {
 		// TODO
 /*
 		DebugPrintf("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
