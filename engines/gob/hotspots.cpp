@@ -585,9 +585,9 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Only consider click and move hotspots
 				continue;
 
-			if (spot.getWindow() != 0)
+//			if (spot.getWindow() != 0)
 				// Only check the main window
-				continue;
+//				continue;
 
 			if (!spot.isIn(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy))
 				// If we're not in it, ignore it
@@ -615,9 +615,9 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 			if ((spot.flags & 0xFF00) != winId)
 				continue;
 
-			if (spot.getWindow() != 0)
+//			if (spot.getWindow() != 0)
 				// Only check the main window
-				continue;
+//				continue;
 
 			if (spot.getType() < kTypeMove)
 				// Only consider hotspots that can be clicked
