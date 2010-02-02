@@ -61,7 +61,14 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI);
+	MidiDriverType midiType;
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2)
+		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
+	else
+#endif
+		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI);
 
 	switch (midiType) {
 	case MD_ADLIB:
