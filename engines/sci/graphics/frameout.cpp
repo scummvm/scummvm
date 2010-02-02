@@ -124,7 +124,7 @@ void GfxFrameout::kernelFrameout() {
 			continue;
 
 		planePictureNr = GET_SEL32V(_segMan, planeObject, picture);
-		if (planePictureNr != 0xFFFF) {
+		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
 			planePicture = new SciGuiPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
 			planePictureCels = planePicture->getSci32celCount();
 		}
