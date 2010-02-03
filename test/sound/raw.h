@@ -224,4 +224,19 @@ public:
 		delete[] buffer;
 		delete s;
 	}
+
+	void test_length() {
+		const int sampleRate = 11025;
+		const int time = 4;
+
+		Audio::SeekableAudioStream *s = 0;
+
+		s = createSineStream<int8>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		s = createSineStream<uint16>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+	}
 };
