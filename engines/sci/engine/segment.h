@@ -200,7 +200,9 @@ public:
 };
 
 /** Clone has been marked as 'freed' */
-#define OBJECT_FLAG_FREED (1 << 0)
+enum {
+	OBJECT_FLAG_FREED = (1 << 0)
+};
 
 class Object {
 public:
@@ -517,8 +519,10 @@ public:
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-#define CLONE_USED -1
-#define CLONE_NONE -1
+enum {
+	CLONE_USED = -1,
+	CLONE_NONE = -1
+};
 
 typedef Object Clone;
 
