@@ -338,6 +338,7 @@ int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
+	// TODO: Properly check whether creating the MP3 stream succeeded.
 	return new MP3InputStream(stream, disposeAfterUse);
 }
 

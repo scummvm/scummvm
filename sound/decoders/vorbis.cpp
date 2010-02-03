@@ -244,7 +244,13 @@ bool VorbisInputStream::refill() {
 SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	return new VorbisInputStream(stream, disposeAfterUse);
+	SeekableAudioStream *s = new VorbisInputStream(stream, disposeAfterUse);
+	if (s && s->endOfData()) {
+		delete s;
+		return 0;
+	} else {
+		return s;
+	}
 }
 
 } // End of namespace Audio

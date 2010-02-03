@@ -729,7 +729,13 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	return new FlacInputStream(stream, disposeAfterUse);
+	SeekableAudioStream *s = new FlacInputStream(stream, disposeAfterUse);
+	if (s && s->endOfData()) {
+		delete s;
+		return 0;
+	} else {
+		return s;
+	}
 }
 
 } // End of namespace Audio
