@@ -148,7 +148,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			sampleStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
-		case kFlacMode:
+		case kFLACMode:
 #ifdef USE_FLAC
 			sampleStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
 #endif
@@ -297,7 +297,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		sampleStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 #endif
 		break;
-	case kFlacMode:
+	case kFLACMode:
 #ifdef USE_FLAC
 		sampleStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
 #endif
@@ -522,7 +522,7 @@ void SoundManager::openSampleFiles() {
 
 		case MKID_BE('FLAC'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
-			_soundMode = kFlacMode;
+			_soundMode = kFLACMode;
 			break;
 
 		default:

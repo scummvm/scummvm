@@ -56,7 +56,7 @@ enum {
 	kCLUMode = 1,
 	kMP3Mode,
 	kVorbisMode,
-	kFlacMode
+	kFLACMode
 };
 
 enum {

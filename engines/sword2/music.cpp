@@ -97,15 +97,15 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 			const char *ext;
 			int mode;
 		} file_types[] = {
-	#ifdef USE_FLAC
-			{ "clf", kFlacMode },
-	#endif
-	#ifdef USE_VORBIS
+#ifdef USE_FLAC
+			{ "clf", kFLACMode },
+#endif
+#ifdef USE_VORBIS
 			{ "clg", kVorbisMode },
-	#endif
-	#ifdef USE_MAD
+#endif
+#ifdef USE_MAD
 			{ "cl3", kMP3Mode },
-	#endif
+#endif
 			{ "clu", kCLUMode }
 		};
 
@@ -207,7 +207,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 #endif
 #ifdef USE_FLAC
-	case kFlacMode:
+	case kFLACMode:
 		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 #endif

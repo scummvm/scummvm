@@ -377,7 +377,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_waveVolPos = 0;
 		}
 #ifdef USE_FLAC
-		else if (_cowMode == CowFlac) {
+		else if (_cowMode == CowFLAC) {
 			_cowFile.seek(index);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
@@ -405,7 +405,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		}
 #endif
 #ifdef USE_MAD
-		else if (_cowMode == CowMp3) {
+		else if (_cowMode == CowMP3) {
 			_cowFile.seek(index);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
@@ -570,8 +570,8 @@ void Sound::initCowSystem() {
 		sprintf(cowName, "SPEECH%d.CLF", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);
 		if (_cowFile.isOpen()) {
-			debug(1, "Using Flac compressed Speech Cluster");
-			_cowMode = CowFlac;
+			debug(1, "Using FLAC compressed Speech Cluster");
+			_cowMode = CowFLAC;
 		}
 	}
 #endif
@@ -591,7 +591,7 @@ void Sound::initCowSystem() {
 		_cowFile.open(cowName);
 		if (_cowFile.isOpen()) {
 			debug(1, "Using MP3 compressed Speech Cluster");
-			_cowMode = CowMp3;
+			_cowMode = CowMP3;
 		}
 	}
 #endif

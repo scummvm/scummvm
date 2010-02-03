@@ -76,7 +76,7 @@ typedef FLAC__StreamDecoder FLAC__SeekableStreamDecoder;
 namespace Audio {
 
 #pragma mark -
-#pragma mark --- Flac stream ---
+#pragma mark --- FLAC stream ---
 #pragma mark -
 
 static const uint MAX_OUTPUT_CHANNELS = 2;
@@ -723,7 +723,7 @@ void FLACStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder, ::F
 
 
 #pragma mark -
-#pragma mark --- Flac factory functions ---
+#pragma mark --- FLAC factory functions ---
 #pragma mark -
 
 SeekableAudioStream *makeFLACStream(

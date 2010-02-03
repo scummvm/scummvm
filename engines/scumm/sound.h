@@ -54,7 +54,7 @@ public:
 		kVOCMode,
 		kMP3Mode,
 		kVorbisMode,
-		kFlacMode
+		kFLACMode
 	};
 
 protected:

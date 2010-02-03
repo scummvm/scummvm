@@ -62,7 +62,7 @@ protected:
 		kVOCMode,
 		kMP3Mode,
 		kVorbisMode,
-		kFlacMode
+		kFLACMode
 	};
 
 	struct Channel {

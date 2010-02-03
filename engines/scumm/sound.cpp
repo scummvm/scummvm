@@ -649,7 +649,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			input = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
 #endif
 			break;
-		case kFlacMode:
+		case kFLACMode:
 #ifdef USE_FLAC
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
@@ -929,15 +929,15 @@ BaseScummFile *Sound::openSfxFile() {
 
 	static const SoundFileExtensions extensions[] = {
 		{ "sou", kVOCMode },
-	#ifdef USE_FLAC
-		{ "sof", kFlacMode },
-	#endif
-	#ifdef USE_VORBIS
+#ifdef USE_FLAC
+		{ "sof", kFLACMode },
+#endif
+#ifdef USE_VORBIS
 		{ "sog", kVorbisMode },
-	#endif
-	#ifdef USE_MAD
+#endif
+#ifdef USE_MAD
 		{ "so3", kMP3Mode },
-	#endif
+#endif
 		{ 0, kVOCMode }
 	};
 
