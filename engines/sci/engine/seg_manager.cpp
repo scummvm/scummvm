@@ -30,21 +30,11 @@
 namespace Sci {
 
 
-/**
- * Verify the the given condition is true, output the message if condition is false, and exit.
- * @param cond	condition to be verified
- * @param msg	the message to be printed if condition fails
- */
-#define VERIFY( cond, msg ) if (!(cond)) {\
-		error("%s, line, %d, %s", __FILE__, __LINE__, msg); \
-	}
-
-
-#define DEFAULT_SCRIPTS 32
-#define DEFAULT_OBJECTS 8	    // default # of objects per script
-#define DEFAULT_OBJECTS_INCREMENT 4 // Number of additional objects to instantiate if we're running out of them
-
-#undef DEBUG_segMan // Define to turn on debugging
+enum {
+	DEFAULT_SCRIPTS = 32,
+	DEFAULT_OBJECTS = 8,			///< default number of objects per script
+	DEFAULT_OBJECTS_INCREMENT = 4	///< Number of additional objects to instantiate if we're running out of them
+};
 
 SegManager::SegManager(ResourceManager *resMan) {
 	_heap.push_back(0);
@@ -145,42 +135,6 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	_scriptSegMap[script_nr] = *segid;
 
 	return (Script *)mem;
-}
-
-void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	_scriptSize = script->size;
-	_heapSize = 0; // Set later
-
-	if (!script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
-		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
-	}
-	if (oldScriptHeader) {
-		_bufSize = script->size + READ_LE_UINT16(script->data) * 2;
-		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (getSciVersion() < SCI_VERSION_1_1) {
-		_bufSize = script->size;
-	} else {
-		_bufSize = script->size + heap->size;
-		_heapSize = heap->size;
-
-		// Ensure that the start of the heap resource can be word-aligned.
-		if (script->size & 2) {
-			_bufSize++;
-			_scriptSize++;
-		}
-
-		if (_bufSize > 65535) {
-			error("Script and heap sizes combined exceed 64K."
-			          "This means a fundamental design bug was made in SCI\n"
-			          "regarding SCI1.1 games.\nPlease report this so it can be"
-			          "fixed in the next major version");
-			return;
-		}
-	}
 }
 
 int SegManager::deallocate(SegmentId seg, bool recursive) {
@@ -386,128 +340,6 @@ void SegManager::setExportAreWide(bool flag) {
 	_exportsAreWide = flag;
 }
 
-int Script::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
-	int rel = location - block_location;
-
-	if (rel < 0)
-		return 0;
-
-	uint idx = rel >> 1;
-
-	if (idx >= block.size())
-		return 0;
-
-	if (rel & 1) {
-		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
-		return 0;
-	}
-	block[idx].segment = segment; // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		block[idx].offset += _scriptSize;
-
-	return 1;
-}
-
-int Script::relocateLocal(SegmentId segment, int location) {
-	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location);
-	else
-		return 0; // No hands, no cookies
-}
-
-int Script::relocateObject(Object &obj, SegmentId segment, int location) {
-	return relocateBlock(obj._variables, obj.getPos().offset, segment, location);
-}
-
-void Script::scriptAddCodeBlock(reg_t location) {
-	CodeBlock cb;
-	cb.pos = location;
-	cb.size = READ_LE_UINT16(_buf + location.offset - 2);
-	_codeBlocks.push_back(cb);
-}
-
-void Script::scriptRelocate(reg_t block) {
-	VERIFY(block.offset < (uint16)_bufSize && READ_LE_UINT16(_buf + block.offset) * 2 + block.offset < (uint16)_bufSize,
-	       "Relocation block outside of script\n");
-
-	int count = READ_LE_UINT16(_buf + block.offset);
-
-	for (int i = 0; i <= count; i++) {
-		int pos = READ_LE_UINT16(_buf + block.offset + 2 + (i * 2));
-		if (!pos)
-			continue; // FIXME: A hack pending investigation
-
-		if (!relocateLocal(block.segment, pos)) {
-			bool done = false;
-			uint k;
-
-			ObjMap::iterator it;
-			const ObjMap::iterator end = _objects.end();
-			for (it = _objects.begin(); !done && it != end; ++it) {
-				if (relocateObject(it->_value, block.segment, pos))
-					done = true;
-			}
-
-			for (k = 0; !done && k < _codeBlocks.size(); k++) {
-				if (pos >= _codeBlocks[k].pos.offset &&
-				        pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
-					done = true;
-			}
-
-			if (!done) {
-				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (_localsBlock)
-					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
-				else
-					printf("- No locals\n");
-				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
-				// SQ3 script 71 has broken relocation entries.
-				printf("Trying to continue anyway...\n");
-			}
-		}
-	}
-}
-
-void Script::heapRelocate(reg_t block) {
-	VERIFY(block.offset < (uint16)_heapSize && READ_LE_UINT16(_heapStart + block.offset) * 2 + block.offset < (uint16)_bufSize,
-	       "Relocation block outside of script\n");
-
-	if (_relocated)
-		return;
-	_relocated = true;
-	int count = READ_LE_UINT16(_heapStart + block.offset);
-
-	for (int i = 0; i < count; i++) {
-		int pos = READ_LE_UINT16(_heapStart + block.offset + 2 + (i * 2)) + _scriptSize;
-
-		if (!relocateLocal(block.segment, pos)) {
-			bool done = false;
-			uint k;
-
-			ObjMap::iterator it;
-			const ObjMap::iterator end = _objects.end();
-			for (it = _objects.begin(); !done && it != end; ++it) {
-				if (relocateObject(it->_value, block.segment, pos))
-					done = true;
-			}
-
-			if (!done) {
-				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (_localsBlock)
-					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
-				else
-					printf("- No locals\n");
-				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
-				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
-			}
-		}
-	}
-}
-
 // return the seg if script_id is valid and in the map, else 0
 SegmentId SegManager::getScriptSegment(int script_id) const {
 	return _scriptSegMap.getVal(script_id, 0);
@@ -526,55 +358,6 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 			getScript(segment)->incrementLockers();
 	}
 	return segment;
-}
-
-reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
-	if (classnr == 0xffff)
-		return NULL_REG;
-
-	if (classnr < 0 || (int)_classtable.size() <= classnr || _classtable[classnr].script < 0) {
-		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classtable.size());
-		return NULL_REG;
-	} else {
-		Class *the_class = &_classtable[classnr];
-		if (!the_class->reg.segment) {
-			getScriptSegment(the_class->script, lock);
-
-			if (!the_class->reg.segment) {
-				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
-				          " Entering debugger.", classnr, the_class->script, the_class->script);
-				return NULL_REG;
-			}
-		} else
-			if (caller.segment != the_class->reg.segment)
-				getScript(the_class->reg.segment)->incrementLockers();
-
-		return the_class->reg;
-	}
-}
-
-Object *Script::scriptObjInit(reg_t obj_pos) {
-	Object *obj;
-
-	if (getSciVersion() < SCI_VERSION_1_1)
-		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
-
-	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
-
-	obj = allocateObject(obj_pos.offset);
-
-	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
-
-	obj->init(_buf, obj_pos);
-
-	return obj;
-}
-
-void Script::scriptObjRemove(reg_t obj_pos) {
-	if (getSciVersion() < SCI_VERSION_1_1)
-		obj_pos.offset += 8;
-
-	_objects.erase(obj_pos.toUint16());
 }
 
 LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
@@ -601,127 +384,6 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 	}
 }
 
-void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
-	Script *scr = getScript(seg);
-
-	scr->_localsOffset = -count * 2; // Make sure it's invalid
-
-	allocLocalsSegment(scr, count);
-}
-
-void SegManager::scriptInitialiseLocals(reg_t location) {
-	Script *scr = getScript(location.segment);
-	unsigned int count;
-
-	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
-
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		count = READ_LE_UINT16(scr->_buf + location.offset - 2);
-	else
-		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
-	// half block size
-
-	scr->_localsOffset = location.offset;
-
-	if (!(location.offset + count * 2 + 1 < scr->_bufSize)) {
-		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->_bufSize);
-		count = (scr->_bufSize - location.offset) >> 1;
-	}
-
-	LocalVariables *locals = allocLocalsSegment(scr, count);
-	if (locals) {
-		uint i;
-		byte *base = (byte *)(scr->_buf + location.offset);
-
-		for (i = 0; i < count; i++)
-			locals->_locals[i].offset = READ_LE_UINT16(base + i * 2);
-	}
-}
-
-void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
-	Script *scr = getScript(seg);
-	for (int i = 0; i < scr->_numExports; i++) {
-		/* We are forced to use an ugly heuristic here to distinguish function
-		   exports from object/class exports. The former kind points into the
-		   script resource, the latter into the heap resource.  */
-		uint16 location = READ_LE_UINT16((byte *)(scr->_exportTable + i));
-		if ((location < scr->_heapSize - 1) && (READ_LE_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
-			WRITE_LE_UINT16((byte *)(scr->_exportTable + i), location + scr->_heapStart - scr->_buf);
-		} else {
-			// Otherwise it's probably a function export,
-			// and we don't need to do anything.
-		}
-	}
-}
-
-void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
-	Script *scr = getScript(seg);
-	byte *seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
-
-	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
-			int classpos = seeker - scr->_buf;
-			int species = READ_LE_UINT16(seeker + 10);
-
-			if (species < 0 || species >= (int)_classtable.size()) {
-				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
-				          species, species, _classtable.size(), scr->_nr);
-				return;
-			}
-
-			_classtable[species].reg.segment = seg;
-			_classtable[species].reg.offset = classpos;
-		}
-		seeker += READ_LE_UINT16(seeker + 2) * 2;
-	}
-
-	seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
-	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		reg_t reg;
-		Object *obj;
-
-		reg.segment = seg;
-		reg.offset = seeker - scr->_buf;
-		obj = scr->scriptObjInit(reg);
-
-#if 0
-		if (obj->_variables[5].offset != 0xffff) {
-			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			baseObj = getObject(obj->_variables[5]);
-			obj->variable_names_nr = baseObj->variables_nr;
-			obj->_baseObj = baseObj->_baseObj;
-		}
-#endif
-
-		// Copy base from species class, as we need its selector IDs
-		obj->setSuperClassSelector(
-			getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
-
-		// Set the -classScript- selector to the script number.
-		// FIXME: As this selector is filled in at run-time, it is likely
-		// that it is supposed to hold a pointer. The Obj::isKindOf method
-		// uses this selector together with -propDict- to compare classes.
-		// For the purpose of Obj::isKindOf, using the script number appears
-		// to be sufficient.
-		obj->setClassScriptSelector(make_reg(0, scr->_nr));
-
-		seeker += READ_LE_UINT16(seeker + 2) * 2;
-	}
-}
-
-/*
-static char *SegManager::dynprintf(char *msg, ...) {
-	va_list argp;
-	char *buf = (char *)malloc(strlen(msg) + 100);
-
-	va_start(argp, msg);
-	vsprintf(buf, msg, argp);
-	va_end(argp);
-
-	return buf;
-}
-*/
-
 DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 	SegmentObj *mobj = allocSegment(new DataStack(), segid);
 	DataStack *retval = (DataStack *)mobj;
@@ -734,21 +396,6 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 
 SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
 	return (SystemStrings *)allocSegment(new SystemStrings(), segid);
-}
-
-uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
-	Script *scr = getScript(seg);
-	if (scr->_numExports <= pubfunct) {
-		warning("validateExportFunc(): pubfunct is invalid");
-		return 0;
-	}
-
-	if (_exportsAreWide)
-		pubfunct *= 2;
-	uint16 offset = READ_LE_UINT16((byte *)(scr->_exportTable + pubfunct));
-	VERIFY(offset < scr->_bufSize, "invalid export function pointer");
-
-	return offset;
 }
 
 void SegManager::freeHunkEntry(reg_t addr) {
@@ -912,7 +559,7 @@ SegmentRef SegManager::dereference(reg_t pointer) {
 	return mobj->dereference(pointer);
 }
 
-static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, bool wantRaw) {
+static void *derefPtr(SegManager *segMan, reg_t pointer, int entries, bool wantRaw) {
 	SegmentRef ret = segMan->dereference(pointer);
 
 	if (!ret.isValid())
@@ -942,15 +589,15 @@ static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int 
 }
 
 byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
-	return (byte *)_kernel_dereference_pointer(this, pointer, entries, true);
+	return (byte *)derefPtr(this, pointer, entries, true);
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
-	return (reg_t *)_kernel_dereference_pointer(this, pointer, 2*entries, false);
+	return (reg_t *)derefPtr(this, pointer, 2*entries, false);
 }
 
 char *SegManager::derefString(reg_t pointer, int entries) {
-	return (char *)_kernel_dereference_pointer(this, pointer, entries, true);
+	return (char *)derefPtr(this, pointer, entries, true);
 }
 
 // Helper functions for getting/setting characters in string fragments
@@ -1204,25 +851,6 @@ int SegManager::freeDynmem(reg_t addr) {
 	deallocate(addr.segment, true);
 
 	return 0; // OK
-}
-
-void SegManager::createClassTable() {
-	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
-
-	if (!vocab996)
-		error("SegManager: failed to open vocab 996");
-
-	int totalClasses = vocab996->size >> 2;
-	_classtable.resize(totalClasses);
-
-	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
-		uint16 scriptNr = READ_LE_UINT16(vocab996->data + classNr * 4 + 2);
-
-		_classtable[classNr].reg = NULL_REG;
-		_classtable[classNr].script = scriptNr;
-	}
-
-	_resMan->unlockResource(vocab996);
 }
 
 #ifdef ENABLE_SCI32

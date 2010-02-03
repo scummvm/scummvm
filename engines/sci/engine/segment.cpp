@@ -121,9 +121,6 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 
 	_buf = (byte *)malloc(_bufSize);
 
-#ifdef DEBUG_segMan
-	printf("_buf = %p ", _buf);
-#endif
 	if (!_buf) {
 		freeScript();
 		warning("Not enough memory space for script size");
@@ -149,6 +146,42 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 	return true;
 }
 
+void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+	_scriptSize = script->size;
+	_heapSize = 0; // Set later
+
+	if (!script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
+		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
+	}
+	if (oldScriptHeader) {
+		_bufSize = script->size + READ_LE_UINT16(script->data) * 2;
+		//locals_size = READ_LE_UINT16(script->data) * 2;
+	} else if (getSciVersion() < SCI_VERSION_1_1) {
+		_bufSize = script->size;
+	} else {
+		_bufSize = script->size + heap->size;
+		_heapSize = heap->size;
+
+		// Ensure that the start of the heap resource can be word-aligned.
+		if (script->size & 2) {
+			_bufSize++;
+			_scriptSize++;
+		}
+
+		if (_bufSize > 65535) {
+			error("Script and heap sizes combined exceed 64K."
+			          "This means a fundamental design bug was made in SCI\n"
+			          "regarding SCI1.1 games.\nPlease report this so it can be"
+			          "fixed in the next major version");
+			return;
+		}
+	}
+}
+
 Object *Script::allocateObject(uint16 offset) {
 	return &_objects[offset];
 }
@@ -158,6 +191,152 @@ Object *Script::getObject(uint16 offset) {
 		return &_objects[offset];
 	else
 		return 0;
+}
+
+Object *Script::scriptObjInit(reg_t obj_pos) {
+	Object *obj;
+
+	if (getSciVersion() < SCI_VERSION_1_1)
+		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
+
+	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
+
+	obj = allocateObject(obj_pos.offset);
+
+	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
+
+	obj->init(_buf, obj_pos);
+
+	return obj;
+}
+
+void Script::scriptObjRemove(reg_t obj_pos) {
+	if (getSciVersion() < SCI_VERSION_1_1)
+		obj_pos.offset += 8;
+
+	_objects.erase(obj_pos.toUint16());
+}
+
+int Script::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
+	int rel = location - block_location;
+
+	if (rel < 0)
+		return 0;
+
+	uint idx = rel >> 1;
+
+	if (idx >= block.size())
+		return 0;
+
+	if (rel & 1) {
+		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
+		return 0;
+	}
+	block[idx].segment = segment; // Perform relocation
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		block[idx].offset += _scriptSize;
+
+	return 1;
+}
+
+int Script::relocateLocal(SegmentId segment, int location) {
+	if (_localsBlock)
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location);
+	else
+		return 0; // No hands, no cookies
+}
+
+int Script::relocateObject(Object &obj, SegmentId segment, int location) {
+	return relocateBlock(obj._variables, obj.getPos().offset, segment, location);
+}
+
+void Script::scriptAddCodeBlock(reg_t location) {
+	CodeBlock cb;
+	cb.pos = location;
+	cb.size = READ_LE_UINT16(_buf + location.offset - 2);
+	_codeBlocks.push_back(cb);
+}
+
+void Script::scriptRelocate(reg_t block) {
+	VERIFY(block.offset < (uint16)_bufSize && READ_LE_UINT16(_buf + block.offset) * 2 + block.offset < (uint16)_bufSize,
+	       "Relocation block outside of script\n");
+
+	int count = READ_LE_UINT16(_buf + block.offset);
+
+	for (int i = 0; i <= count; i++) {
+		int pos = READ_LE_UINT16(_buf + block.offset + 2 + (i * 2));
+		if (!pos)
+			continue; // FIXME: A hack pending investigation
+
+		if (!relocateLocal(block.segment, pos)) {
+			bool done = false;
+			uint k;
+
+			ObjMap::iterator it;
+			const ObjMap::iterator end = _objects.end();
+			for (it = _objects.begin(); !done && it != end; ++it) {
+				if (relocateObject(it->_value, block.segment, pos))
+					done = true;
+			}
+
+			for (k = 0; !done && k < _codeBlocks.size(); k++) {
+				if (pos >= _codeBlocks[k].pos.offset &&
+				        pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
+					done = true;
+			}
+
+			if (!done) {
+				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
+				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
+				if (_localsBlock)
+					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
+				else
+					printf("- No locals\n");
+				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
+					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
+				// SQ3 script 71 has broken relocation entries.
+				printf("Trying to continue anyway...\n");
+			}
+		}
+	}
+}
+
+void Script::heapRelocate(reg_t block) {
+	VERIFY(block.offset < (uint16)_heapSize && READ_LE_UINT16(_heapStart + block.offset) * 2 + block.offset < (uint16)_bufSize,
+	       "Relocation block outside of script\n");
+
+	if (_relocated)
+		return;
+	_relocated = true;
+	int count = READ_LE_UINT16(_heapStart + block.offset);
+
+	for (int i = 0; i < count; i++) {
+		int pos = READ_LE_UINT16(_heapStart + block.offset + 2 + (i * 2)) + _scriptSize;
+
+		if (!relocateLocal(block.segment, pos)) {
+			bool done = false;
+			uint k;
+
+			ObjMap::iterator it;
+			const ObjMap::iterator end = _objects.end();
+			for (it = _objects.begin(); !done && it != end; ++it) {
+				if (relocateObject(it->_value, block.segment, pos))
+					done = true;
+			}
+
+			if (!done) {
+				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
+				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
+				if (_localsBlock)
+					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
+				else
+					printf("- No locals\n");
+				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
+					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
+				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
+			}
+		}
+	}
 }
 
 void Script::incrementLockers() {
@@ -185,6 +364,26 @@ void Script::setExportTableOffset(int offset) {
 		_exportTable = NULL;
 		_numExports = 0;
 	}
+}
+
+// TODO: This method should be Script method. The only reason
+// that it isn't is that it uses _exportsAreWide, which is true if
+// detectLofsType() == SCI_VERSION_1_MIDDLE
+// Maybe _exportsAreWide should become a Script member var, e.g. set
+// by setExportTableOffset?
+uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
+	Script *scr = getScript(seg);
+	if (scr->_numExports <= pubfunct) {
+		warning("validateExportFunc(): pubfunct is invalid");
+		return 0;
+	}
+
+	if (_exportsAreWide)
+		pubfunct *= 2;
+	uint16 offset = READ_LE_UINT16((byte *)(scr->_exportTable + pubfunct));
+	VERIFY(offset < scr->_bufSize, "invalid export function pointer");
+
+	return offset;
 }
 
 void Script::setSynonymsOffset(int offset) {

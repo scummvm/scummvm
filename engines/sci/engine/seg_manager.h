@@ -36,6 +36,17 @@ namespace Sci {
 #define GET_SEGMENT(mgr, index, rtype) (((mgr).getSegmentType(index) == (rtype))? (mgr)._heap[index] : NULL)
 
 /**
+ * Verify the the given condition is true, output the message if condition is false, and exit.
+ * @param cond	condition to be verified
+ * @param msg	the message to be printed if condition fails
+ */
+#define VERIFY( cond, msg ) if (!(cond)) {\
+		error("%s, line, %d, %s", __FILE__, __LINE__, msg); \
+	}
+
+
+
+/**
  * Parameters for getScriptSegment().
  */
 enum ScriptLoadType {
@@ -488,4 +499,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_SEGMAN
+#endif // SCI_ENGINE_SEGMAN_H

@@ -116,6 +116,161 @@ void script_adjust_opcode_formats(EngineState *s) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->getClassAddress(id, SCRIPT_GET_LOCK, reg))
 
+
+void SegManager::createClassTable() {
+	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
+
+	if (!vocab996)
+		error("SegManager: failed to open vocab 996");
+
+	int totalClasses = vocab996->size >> 2;
+	_classtable.resize(totalClasses);
+
+	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
+		uint16 scriptNr = READ_LE_UINT16(vocab996->data + classNr * 4 + 2);
+
+		_classtable[classNr].reg = NULL_REG;
+		_classtable[classNr].script = scriptNr;
+	}
+
+	_resMan->unlockResource(vocab996);
+}
+
+reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
+	if (classnr == 0xffff)
+		return NULL_REG;
+
+	if (classnr < 0 || (int)_classtable.size() <= classnr || _classtable[classnr].script < 0) {
+		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classtable.size());
+		return NULL_REG;
+	} else {
+		Class *the_class = &_classtable[classnr];
+		if (!the_class->reg.segment) {
+			getScriptSegment(the_class->script, lock);
+
+			if (!the_class->reg.segment) {
+				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
+				          " Entering debugger.", classnr, the_class->script, the_class->script);
+				return NULL_REG;
+			}
+		} else
+			if (caller.segment != the_class->reg.segment)
+				getScript(the_class->reg.segment)->incrementLockers();
+
+		return the_class->reg;
+	}
+}
+
+void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
+	Script *scr = getScript(seg);
+
+	scr->_localsOffset = -count * 2; // Make sure it's invalid
+
+	allocLocalsSegment(scr, count);
+}
+
+void SegManager::scriptInitialiseLocals(reg_t location) {
+	Script *scr = getScript(location.segment);
+	unsigned int count;
+
+	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
+
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		count = READ_LE_UINT16(scr->_buf + location.offset - 2);
+	else
+		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
+	// half block size
+
+	scr->_localsOffset = location.offset;
+
+	if (!(location.offset + count * 2 + 1 < scr->_bufSize)) {
+		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->_bufSize);
+		count = (scr->_bufSize - location.offset) >> 1;
+	}
+
+	LocalVariables *locals = allocLocalsSegment(scr, count);
+	if (locals) {
+		uint i;
+		byte *base = (byte *)(scr->_buf + location.offset);
+
+		for (i = 0; i < count; i++)
+			locals->_locals[i].offset = READ_LE_UINT16(base + i * 2);
+	}
+}
+
+void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
+	Script *scr = getScript(seg);
+	for (int i = 0; i < scr->_numExports; i++) {
+		/* We are forced to use an ugly heuristic here to distinguish function
+		   exports from object/class exports. The former kind points into the
+		   script resource, the latter into the heap resource.  */
+		uint16 location = READ_LE_UINT16((byte *)(scr->_exportTable + i));
+		if ((location < scr->_heapSize - 1) && (READ_LE_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
+			WRITE_LE_UINT16((byte *)(scr->_exportTable + i), location + scr->_heapStart - scr->_buf);
+		} else {
+			// Otherwise it's probably a function export,
+			// and we don't need to do anything.
+		}
+	}
+}
+
+void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
+	Script *scr = getScript(seg);
+	byte *seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
+
+	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
+			int classpos = seeker - scr->_buf;
+			int species = READ_LE_UINT16(seeker + 10);
+
+			if (species < 0 || species >= (int)_classtable.size()) {
+				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
+				          species, species, _classtable.size(), scr->_nr);
+				return;
+			}
+
+			_classtable[species].reg.segment = seg;
+			_classtable[species].reg.offset = classpos;
+		}
+		seeker += READ_LE_UINT16(seeker + 2) * 2;
+	}
+
+	seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
+	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		reg_t reg;
+		Object *obj;
+
+		reg.segment = seg;
+		reg.offset = seeker - scr->_buf;
+		obj = scr->scriptObjInit(reg);
+
+#if 0
+		if (obj->_variables[5].offset != 0xffff) {
+			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
+			baseObj = getObject(obj->_variables[5]);
+			obj->variable_names_nr = baseObj->variables_nr;
+			obj->_baseObj = baseObj->_baseObj;
+		}
+#endif
+
+		// Copy base from species class, as we need its selector IDs
+		obj->setSuperClassSelector(
+			getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+
+		// Set the -classScript- selector to the script number.
+		// FIXME: As this selector is filled in at run-time, it is likely
+		// that it is supposed to hold a pointer. The Obj::isKindOf method
+		// uses this selector together with -propDict- to compare classes.
+		// For the purpose of Obj::isKindOf, using the script number appears
+		// to be sufficient.
+		obj->setClassScriptSelector(make_reg(0, scr->_nr));
+
+		seeker += READ_LE_UINT16(seeker + 2) * 2;
+	}
+}
+
+
+
 int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, Resource **script, Resource **heap, int *was_new) {
 	*was_new = 1;
 
