@@ -65,8 +65,10 @@ public:
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
 
+		bool fine = true;
 		for (int i = 0; i < sampleRate * time; ++i)
-			TS_ASSERT_EQUALS(buffer[i], sine[i] << 8);
+			fine &= (buffer[i] == (sine[i] << 8));
+		TS_ASSERT_EQUALS(fine, true);
 
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
@@ -84,8 +86,10 @@ public:
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
 
+		bool fine = true;
 		for (int i = 0; i < sampleRate * time; ++i)
-			TS_ASSERT_EQUALS(buffer[i], (int16)READ_BE_UINT16(&sine[i]));
+			fine &= (buffer[i] == (int16)READ_BE_UINT16(&sine[i]));
+		TS_ASSERT_EQUALS(fine, true);
 
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
@@ -103,8 +107,10 @@ public:
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
 
+		bool fine = true;
 		for (int i = 0; i < sampleRate * time; ++i)
-			TS_ASSERT_EQUALS(buffer[i], (int16)READ_LE_UINT16(&sine[i]));
+			fine &= (buffer[i] == (int16)READ_LE_UINT16(&sine[i]));
+		TS_ASSERT_EQUALS(fine, true);
 
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
