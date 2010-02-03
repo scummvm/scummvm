@@ -347,49 +347,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 	StackPtr sp, int framesize, StackPtr argp);
 
 
-#define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
-
-/**
- * Adds an entry to the top of the execution stack.
- *
- * @param[in] s				The state with which to execute
- * @param[in] pc			The initial program counter
- * @param[in] sp			The initial stack pointer
- * @param[in] objp			Pointer to the beginning of the current object
- * @param[in] argc			Number of parameters to call with
- * @param[in] argp			Heap pointer to the first parameter
- * @param[in] selector		The selector by which it was called or
- *							NULL_SELECTOR if n.a. For debugging.
- * @param[in] sendp			Pointer to the object which the message was
- * 							sent to. Equal to objp for anything but super.
- * @param[in] origin		Number of the execution stack element this
- * 							entry was created by (usually the current TOS
- * 							number, except for multiple sends).
- * @param[in] local_segment	The segment to use for local variables,
- *							or SCI_XS_CALLEE_LOCALS to use obj's segment.
- * @return 					A pointer to the new exec stack TOS entry
- */
-ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp,
-		reg_t objp, int argc, StackPtr argp, Selector selector,
-		reg_t sendp, int origin, SegmentId local_segment);
-
-
-/**
- * Adds one varselector access to the execution stack.
- * This function is called from send_selector only.
- * @param[in] s			The EngineState to use
- * @param[in] objp		Pointer to the object owning the selector
- * @param[in] argc		1 for writing, 0 for reading
- * @param[in] argp		Pointer to the address of the data to write -2
- * @param[in] selector	Selector name
- * @param[in] address	Heap address of the selector
- * @param[in] origin	Stack frame which the access originated from
- * @return 				Pointer to the new exec-TOS element
- */
-ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc,
-		StackPtr argp, Selector selector, const ObjVarRef& address,
-		int origin);
-
 /**
  * This function executes SCI bytecode
  * It executes the code on s->heap[pc] until it hits a 'ret' operation

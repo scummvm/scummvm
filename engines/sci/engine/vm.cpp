@@ -54,6 +54,53 @@ int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME
 
 static bool breakpointWasHit = false;	// FIXME: Avoid non-const global vars
 
+
+#define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
+
+/**
+ * Adds an entry to the top of the execution stack.
+ *
+ * @param[in] s				The state with which to execute
+ * @param[in] pc			The initial program counter
+ * @param[in] sp			The initial stack pointer
+ * @param[in] objp			Pointer to the beginning of the current object
+ * @param[in] argc			Number of parameters to call with
+ * @param[in] argp			Heap pointer to the first parameter
+ * @param[in] selector		The selector by which it was called or
+ *							NULL_SELECTOR if n.a. For debugging.
+ * @param[in] sendp			Pointer to the object which the message was
+ * 							sent to. Equal to objp for anything but super.
+ * @param[in] origin		Number of the execution stack element this
+ * 							entry was created by (usually the current TOS
+ * 							number, except for multiple sends).
+ * @param[in] local_segment	The segment to use for local variables,
+ *							or SCI_XS_CALLEE_LOCALS to use obj's segment.
+ * @return 					A pointer to the new exec stack TOS entry
+ */
+static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp,
+		reg_t objp, int argc, StackPtr argp, Selector selector,
+		reg_t sendp, int origin, SegmentId local_segment);
+
+
+/**
+ * Adds one varselector access to the execution stack.
+ * This function is called from send_selector only.
+ * @param[in] s			The EngineState to use
+ * @param[in] objp		Pointer to the object owning the selector
+ * @param[in] argc		1 for writing, 0 for reading
+ * @param[in] argp		Pointer to the address of the data to write -2
+ * @param[in] selector	Selector name
+ * @param[in] address	Heap address of the selector
+ * @param[in] origin	Stack frame which the access originated from
+ * @return 				Pointer to the new exec-TOS element
+ */
+static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc,
+		StackPtr argp, Selector selector, const ObjVarRef& address,
+		int origin);
+
+
+
+
 // validation functionality
 
 #ifndef DISABLE_VALIDATIONS
@@ -258,7 +305,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		}
 	}
 
-	return add_exec_stack_entry(s, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, calling_obj, s->_executionStack.size()-1, seg);
+	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, calling_obj, s->_executionStack.size()-1, seg);
 }
 
 
@@ -431,10 +478,10 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	while (!sendCalls.empty()) {
 		CallsStruct call = sendCalls.pop();
 		if (call.type == EXEC_STACK_TYPE_VARSELECTOR) // Write/read variable?
-			add_exec_stack_varselector(s, work_obj, call.argc, call.argp,
+			add_exec_stack_varselector(s->_executionStack, work_obj, call.argc, call.argp,
 			                                    call.selector, call.address.var, origin);
 		else
-			add_exec_stack_entry(s, call.address.func, call.sp, work_obj,
+			add_exec_stack_entry(s->_executionStack, call.address.func, call.sp, work_obj,
 			                         call.argc, call.argp,
 			                         call.selector, send_obj, origin, SCI_XS_CALLEE_LOCALS);
 	}
@@ -446,8 +493,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	return &(s->_executionStack.back());
 }
 
-ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(s, NULL_REG, 0, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
+static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
+	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
 	xstack->addr.varp = address;
@@ -456,7 +503,7 @@ ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, Stac
 	return xstack;
 }
 
-ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t objp, int argc,
+static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp, reg_t objp, int argc,
 								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId _localsSegment) {
 	// Returns new TOS element for the execution stack
 	// _localsSegment may be -1 if derived from the called object
@@ -486,8 +533,8 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 
 	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
 
-	s->_executionStack.push_back(xstack);
-	return &(s->_executionStack.back());
+	execStack.push_back(xstack);
+	return &(execStack.back());
 }
 
 #ifdef DISABLE_VALIDATIONS
@@ -982,7 +1029,7 @@ void run_vm(EngineState *s, bool restoring) {
 			StackPtr call_base = scriptState.xs->sp - argc;
 			scriptState.xs->sp[1].offset += scriptState.restAdjust;
 
-			xs_new = add_exec_stack_entry(s, make_reg(scriptState.xs->addr.pc.segment,
+			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(scriptState.xs->addr.pc.segment,
 											scriptState.xs->addr.pc.offset + opparams[0]),
 											scriptState.xs->sp, scriptState.xs->objp,
 											(validate_arithmetic(*call_base)) + scriptState.restAdjust,
@@ -1026,7 +1073,7 @@ void run_vm(EngineState *s, bool restoring) {
 						// This is useful in debugger backtraces if this
 						// kernel function calls a script itself.
 						ExecStack *xstack;
-						xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
+						xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
 	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 						xstack->selector = opparams[0];
 						xstack->type = EXEC_STACK_TYPE_KERNEL;
