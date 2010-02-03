@@ -198,9 +198,13 @@ class Apple_ADPCMStream : public Ima_ADPCMStream {
 protected:
 	// Apple QuickTime IMA ADPCM
 	int32 _streamPos[2];
+	int16 _buffer[2][2];
+	uint8 _chunkPos[2];
 
 	void reset() {
 		Ima_ADPCMStream::reset();
+		_chunkPos[0] = 0;
+		_chunkPos[1] = 0;
 		_streamPos[0] = 0;
 		_streamPos[1] = _blockAlign;
 	}
@@ -208,6 +212,8 @@ protected:
 public:
 	Apple_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+		_chunkPos[0] = 0;
+		_chunkPos[1] = 0;
 		_streamPos[0] = 0;
 		_streamPos[1] = _blockAlign;
 	}
@@ -217,15 +223,11 @@ public:
 };
 
 int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	// Need to write 2 samples per channel
-	assert(numSamples % (2 * _channels) == 0);
+	// Need to write at least one samples per channel
+	assert((numSamples % _channels) == 0);
 
 	// Current sample positions
-	int    samples[2] = {   0,    0};
-	// Current data bytes
-	byte      data[2] = {   0,    0};
-	// Current nibble selectors
-	bool lowNibble[2] = {true, true};
+	int samples[2] = { 0, 0};
 
 	// Number of samples per channel
 	int chanSamples = numSamples / _channels;
@@ -235,7 +237,7 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		while ((samples[i] < chanSamples) &&
 		       // Last byte read and a new one needed
-		       !((_stream->eos() || (_stream->pos() >= _endpos)) && lowNibble[i])) {
+		       !((_stream->eos() || (_stream->pos() >= _endpos)) && (_chunkPos[i] == 0))) {
 
 			if (_blockPos[i] == _blockAlign) {
 				// 2 byte header per block
@@ -252,27 +254,23 @@ int Apple_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
 				_blockPos[i] = 2;
 			}
 
-			// First decode the lower nibble, then the upper
-			if (lowNibble[i])
-				data[i] = _stream->readByte();
-
-			int16 sample;
-			if (lowNibble[i])
-				sample = decodeIMA(data[i] &  0x0F, i);
-			else
-				sample = decodeIMA(data[i] >>    4, i);
+			if (_chunkPos[i] == 0) {
+				// Decode data
+				byte data = _stream->readByte();
+				_buffer[i][0] = decodeIMA(data &  0x0F, i);
+				_buffer[i][1] = decodeIMA(data >>    4, i);
+			}
 
 			// The original is interleaved block-wise, we want it sample-wise
-			buffer[_channels * samples[i] + i] = sample;
+			buffer[_channels * samples[i] + i] = _buffer[i][_chunkPos[i]];
+
+			if (++_chunkPos[i] > 1) {
+				// We're about to decode the next byte, so advance the block position
+				_chunkPos[i] = 0;
+				_blockPos[i]++;
+			}
 
 			samples[i]++;
-
-			// Different nibble
-			lowNibble[i] = !lowNibble[i];
-
-			// We're about to decode a new lower nibble again, so advance the block position
-			if (lowNibble[i])
-				_blockPos[i]++;
 
 			if (_channels == 2)
 				if (_blockPos[i] == _blockAlign)
