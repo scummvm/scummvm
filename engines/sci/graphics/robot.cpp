@@ -49,17 +49,41 @@ void Robot::initData(GuiResourceId resourceId) {
 	_resourceData = _resource->data;
 
 // sample data:
-// DWORD:Sample Size - 2 needs to be subtracted (??!!)
+//  Header - 14 bytes
+//   DWORD:Sample Size - 2 needs to be subtracted (??!!)
+//   ???
+//  Actual samples following
+
+// version may be 3, 4 and 5
+//  version 3 has a different header (unknown to this point)
+//
+// main header (56 bytes + 2 bytes resource id)
+//  followed by sample data if hasSound == 1
+//
 
 // 90.rbt (640x390, 22050, 1 16, ADPCM) 67 frames
 // 00000000: 16 00 53 4f 4c 00 05 00-ad 08 00 00 f0 00 43 00  ..SOL.........C.
-//                                                     ^ frames
-// 00000010: b0 04 00 a0 00 00 00 00-01 01 00 00 0a 00 01 00  ................
-// 00000020: 03 00 01 00 00 cf 03 00-00 00 00 00 00 00 00 00  ................
-//                       ^ pixel count
-// 00000030: 00 00 00 00 00 00 00 00-00 00 00 00 f2 9f 00 00  ................
-//                                               ^ data begin (sample)
-// 00000040: 00 00 d2 4d 00 00 20 52-00 00 a5 11 04 02 85 90  ...M.. R........
+//                 ^ signature ^ version   ^     ^     ^ frames
+//                                   ^ 2221
+// 00000010: b0 04 00 a0 00 00 00 00-01 01 00 00 0a 00 01 00
+//           ^     ^     ^     ^     ^  ^  ^     ^     ^
+//                                      hasSound
+// 00000020: 03 00 01 00 00 cf 03 00-00 00 00 00 00 00 00 00
+//           ^     ^     ^ pixel count           ^
+//                                   ^
+// 00000030: 00 00 00 00 00 00 00 00-00 00 00 00 
+//           ^           ^
+// Sample-Data (Header):
+//  compression must be 0 for now
+// 0000003c: f2 9f 00 00 00 00 d2 4d 00 00 20 52-00 00
+//           ^                       ^     ^
+//           byte count              compression
+//           40946
+// Actual Samples following
+// a5 11 04 02 85 90  ...M.. R........
+//
+// Offset 41020
+// Palette
 
 // 91.rbt (320x240, 22050, 1 16, ADPCM) 90 frames
 // 00000000: 16 00 53 4f 4c 00 05 00-ad 08 00 00 f0 00 5a 00  ..SOL.........Z.
