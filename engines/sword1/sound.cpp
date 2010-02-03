@@ -381,7 +381,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			_cowFile.seek(index);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
-			stream = Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
+			stream = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.

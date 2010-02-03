@@ -59,11 +59,11 @@ class SeekableAudioStream;
  * Create a new SeekableAudioStream from the FLAC data in the given stream.
  * Allows for seeking (which is why we require a SeekableReadStream).
  *
- * @param stream			the SeekableReadStream from which to read the FLAC data
- * @param disposeAfterUse	whether to delete the stream after use
- * @return	a new SeekableAudioStream, or NULL, if an error occured
+ * @param stream            the SeekableReadStream from which to read the FLAC data
+ * @param disposeAfterUse   whether to delete the stream after use
+ * @return   a new SeekableAudioStream, or NULL, if an error occured
  */
-SeekableAudioStream *makeFlacStream(
+SeekableAudioStream *makeFLACStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 

@@ -531,7 +531,7 @@ Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, Di
 
 const SoundDigital::AudioCodecs SoundDigital::_supportedCodecs[] = {
 #ifdef USE_FLAC
-	{ ".FLA", Audio::makeFlacStream },
+	{ ".FLA", Audio::makeFLACStream },
 #endif // USE_FLAC
 #ifdef USE_VORBIS
 	{ ".OGG", Audio::makeVorbisStream },

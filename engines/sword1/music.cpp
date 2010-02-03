@@ -63,7 +63,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.flac", fileBase);
 		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFlacStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFLACStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 			if (!_audioSource)
 				_file.close();
 		}
@@ -72,7 +72,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.fla", fileBase);
 		if (_file.open(fileName)) {
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFlacStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeFLACStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 			if (!_audioSource)
 				_file.close();
 		}

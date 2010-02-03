@@ -53,8 +53,8 @@ struct StreamFileFormat {
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	/* decoderName,  fileExt, openStreamFuntion */
 #ifdef USE_FLAC
-	{ "Flac",         ".flac", makeFlacStream },
-	{ "Flac",         ".fla",  makeFlacStream },
+	{ "FLAC",         ".flac", makeFLACStream },
+	{ "FLAC",         ".fla",  makeFLACStream },
 #endif
 #ifdef USE_VORBIS
 	{ "Ogg Vorbis",   ".ogg",  makeVorbisStream },

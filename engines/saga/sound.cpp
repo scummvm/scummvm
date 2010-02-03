@@ -90,7 +90,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffe
 #endif
 #ifdef USE_FLAC
 		case kSoundFLAC:
-			stream = Audio::makeFlacStream(memStream, DisposeAfterUse::YES);
+			stream = Audio::makeFLACStream(memStream, DisposeAfterUse::YES);
 			break;
 #endif
 		default:

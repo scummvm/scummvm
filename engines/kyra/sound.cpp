@@ -273,8 +273,8 @@ const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 #endif // USE_VORBIS
 
 #ifdef USE_FLAC
-	{ ".VOF", Audio::makeFlacStream },
-	{ ".FLA", Audio::makeFlacStream },
+	{ ".VOF", Audio::makeFLACStream },
+	{ ".FLA", Audio::makeFLACStream },
 #endif // USE_FLAC
 
 	{ 0, 0 }

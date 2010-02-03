@@ -209,7 +209,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 #ifdef USE_FLAC
 	case kFlacMode:
 		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
-		return Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
+		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 #endif
 	default:
 		return NULL;

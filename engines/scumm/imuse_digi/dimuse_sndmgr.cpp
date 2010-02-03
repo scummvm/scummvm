@@ -704,7 +704,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				assert(tmp);
 #ifdef USE_FLAC
 				if (soundMode == 3)
-					soundDesc->compressedStream = Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
+					soundDesc->compressedStream = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 #endif
 #ifdef USE_VORBIS
 				if (soundMode == 2)

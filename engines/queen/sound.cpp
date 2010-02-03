@@ -147,7 +147,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFlacStream(tmp, DisposeAfterUse::YES)));
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFLACStream(tmp, DisposeAfterUse::YES)));
 	}
 };
 #endif // #ifdef USE_FLAC

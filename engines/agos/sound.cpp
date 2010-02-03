@@ -364,14 +364,14 @@ public:
 #pragma mark -
 
 #ifdef USE_FLAC
-class FlacSound : public CompressedSound {
+class FLACSound : public CompressedSound {
 public:
-	FlacSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
+	FLACSound(Audio::Mixer *mixer, File *file, uint32 base = 0) : CompressedSound(mixer, file, base) {}
 	Audio::AudioStream *makeAudioStream(uint sound) {
 		Common::MemoryReadStream *tmp = loadStream(sound);
 		if (!tmp)
 			return NULL;
-		return Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
+		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
 	}
 };
 #endif
@@ -383,7 +383,7 @@ static CompressedSound *makeCompressedSound(Audio::Mixer *mixer, File *file, con
 #ifdef USE_FLAC
 	file->open(basename + ".fla");
 	if (file->isOpen()) {
-		return new FlacSound(mixer, file);
+		return new FLACSound(mixer, file);
 	}
 #endif
 #ifdef USE_VORBIS

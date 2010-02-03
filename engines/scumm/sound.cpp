@@ -634,28 +634,28 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 		switch (_soundMode) {
 		case kMP3Mode:
-	#ifdef USE_MAD
+#ifdef USE_MAD
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
 			assert(tmp);
 			input = Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
-	#endif
+#endif
 			break;
 		case kVorbisMode:
-	#ifdef USE_VORBIS
+#ifdef USE_VORBIS
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
 			assert(tmp);
 			input = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
-	#endif
+#endif
 			break;
 		case kFlacMode:
-	#ifdef USE_FLAC
+#ifdef USE_FLAC
 			assert(size > 0);
 			tmp = _sfxFile->readStream(size);
 			assert(tmp);
-			input = Audio::makeFlacStream(tmp, DisposeAfterUse::YES);
-	#endif
+			input = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
+#endif
 			break;
 		default:
 			input = Audio::makeVOCStream(*_sfxFile, Audio::FLAG_UNSIGNED);

@@ -322,7 +322,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 #endif
 					} else if (identifier == 2) {	// FLAC
 #ifdef USE_FLAC
-						audioStream = Audio::makeFlacStream(musicStream, DisposeAfterUse::YES);
+						audioStream = Audio::makeFLACStream(musicStream, DisposeAfterUse::YES);
 #endif
 					}
 				}

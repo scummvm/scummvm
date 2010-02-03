@@ -48,7 +48,7 @@ struct CompressedSoundFile {
 
 static const CompressedSoundFile compressedSoundFilesTable[] = {
 #ifdef USE_FLAC
-	{ "TUCKER.SOF", Audio::makeFlacStream },
+	{ "TUCKER.SOF", Audio::makeFLACStream },
 #endif
 #ifdef USE_VORBIS
 	{ "TUCKER.SOG", Audio::makeVorbisStream },
