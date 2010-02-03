@@ -12,7 +12,7 @@ class RawStreamTestSuite : public CxxTest::TestSuite
 {
 public:
 	template<typename T>
-	T *createSine(int sampleRate, int time) {
+	static T *createSine(int sampleRate, int time) {
 		T *sine = (T *)malloc(sizeof(T) * time * sampleRate);
 
 		const T maxValue = std::numeric_limits<T>::max();
@@ -30,7 +30,7 @@ public:
 	}
 
 	template<typename T>
-	Audio::SeekableAudioStream *createSineStream(int sampleRate, int time, const T **sineP) {
+	static Audio::SeekableAudioStream *createSineStream(int sampleRate, int time, const T **sineP) {
 		T *sine = createSine<T>(sampleRate, time);
 
 		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sizeof(T) * sampleRate * time, DisposeAfterUse::YES);
@@ -61,7 +61,7 @@ public:
 		delete s;
 	}
 
-	void test_read_buffer_16_bit_mono() {
+	void test_read_buffer_16_bit_be_mono() {
 		const int sampleRate = 11025;
 		const int time = 2;
 
