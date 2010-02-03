@@ -239,7 +239,7 @@ int game_init(EngineState *s) {
 	// FIXME Use new VM instantiation code all over the place
 	DataStack *stack;
 
-	stack = s->_segMan->allocateStack(VM_STACK_SIZE, &s->stack_segment);
+	stack = s->_segMan->allocateStack(VM_STACK_SIZE, NULL);
 	s->stack_base = stack->_entries;
 	s->stack_top = stack->_entries + stack->_capacity;
 

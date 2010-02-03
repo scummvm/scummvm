@@ -113,34 +113,36 @@ SegmentId SegManager::findFreeSegment() const {
 
 SegmentObj *SegManager::allocSegment(SegmentObj *mem, SegmentId *segid) {
 	// Find a free segment
-	*segid = findFreeSegment();
+	SegmentId id = findFreeSegment();
+	if (segid)
+		*segid = id;
 
 	if (!mem)
 		error("SegManager: invalid mobj");
 
 	// ... and put it into the (formerly) free segment.
-	if (*segid >= (int)_heap.size()) {
-		assert(*segid == (int)_heap.size());
+	if (id >= (int)_heap.size()) {
+		assert(id == (int)_heap.size());
 		_heap.push_back(0);
 	}
-	_heap[*segid] = mem;
+	_heap[id] = mem;
 
 	return mem;
 }
 
-Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
+Script *SegManager::allocateScript(int script_nr, SegmentId *segid) {
 	// Check if the script already has an allocated segment. If it
 	// does, return that segment.
-	*seg_id = _scriptSegMap.getVal(script_nr, 0);
-	if (*seg_id > 0) {
-		return (Script *)_heap[*seg_id];
+	*segid = _scriptSegMap.getVal(script_nr, 0);
+	if (*segid > 0) {
+		return (Script *)_heap[*segid];
 	}
 
 	// allocate the SegmentObj
-	SegmentObj *mem = allocSegment(new Script(), seg_id);
+	SegmentObj *mem = allocSegment(new Script(), segid);
 
 	// Add the script to the "script id -> segment id" hashmap
-	_scriptSegMap[script_nr] = *seg_id;
+	_scriptSegMap[script_nr] = *segid;
 
 	return (Script *)mem;
 }

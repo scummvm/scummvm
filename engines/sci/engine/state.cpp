@@ -53,7 +53,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	restAdjust = 0;
 	r_prev = NULL_REG;
 
-	stack_segment = 0;
 	stack_base = 0;
 	stack_top = 0;
 

@@ -130,10 +130,11 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	debugC(2, kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 
 	// Run Worklist Algorithm
+	SegmentId stack_seg = segMan->findSegmentByType(SEG_TYPE_STACK);
 	while (!wm._worklist.empty()) {
 		reg_t reg = wm._worklist.back();
 		wm._worklist.pop_back();
-		if (reg.segment != s->stack_segment) { // No need to repeat this one
+		if (reg.segment != stack_seg) { // No need to repeat this one
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
 			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment])
 				segMan->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs);

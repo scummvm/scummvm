@@ -765,7 +765,6 @@ static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	DataStack *stack = (DataStack *)(retval->_segMan->_heap[stack_seg]);
 
-	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->_entries;
 	retval->stack_top = stack->_entries + stack->_capacity;
 }

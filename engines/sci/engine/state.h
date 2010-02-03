@@ -205,7 +205,6 @@ public:
 	int16 restAdjust; /**< &rest register (only used for save games) */
 	reg_t r_prev; /**< previous comparison result */
 
-	SegmentId stack_segment; /**< Heap area for the stack to use */
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
 
