@@ -153,6 +153,7 @@ protected:
 	struct SaveFile {
 		const char *sourceName;
 		SaveMode mode;
+		int slot;
 		SaveHandler *handler;
 		const char *description;
 	};
@@ -160,7 +161,7 @@ protected:
 	/** Handles the save slots. */
 	class GameHandler : public SaveHandler {
 	public:
-		GameHandler(GobEngine *vm, const char *target);
+		GameHandler(GobEngine *vm, const char *target, int slot, byte *index, bool *hasIndex);
 		~GameHandler();
 
 		int32 getSize();
@@ -178,17 +179,20 @@ protected:
 			int getSlotRemainder(int32 offset) const;
 		};
 
-		byte _index[kIndexSize];
-		bool _hasIndex;
+		byte *_index;
+		bool *_hasIndex;
+		int _slot;
 
 		File *_slotFile;
 
 		void buildIndex(byte *buffer) const;
 	};
 
+	byte _index[kIndexSize];
+	bool _hasIndex;
+
 	static SaveFile _saveFiles[];
 
-	GameHandler *_gameHandler;
 	NotesHandler *_notesHandler;
 	TempSpriteHandler *_tempSpriteHandler;
 

@@ -378,8 +378,7 @@ bool GobEngine::initGameParts() {
 		_map      = new Map_v2(this);
 		_goblin   = new Goblin_v2(this);
 		_scenery  = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
-//		_saveLoad = new SaveLoad_Fascination(this, _targetName.c_str());
+		_saveLoad = new SaveLoad_Fascination(this, _targetName.c_str());
 		break;
 
 	case kGameTypeWeen:
