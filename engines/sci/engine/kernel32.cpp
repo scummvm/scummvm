@@ -778,7 +778,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
 	reg_t object = argv[3];
 	Common::String text = s->_segMan->getString(GET_SEL32(s->_segMan, object, text));
-	debug("%s", text.c_str());
+	debug("kCreateTextBitmap: %s", text.c_str());
 
 	return NULL_REG;
 }

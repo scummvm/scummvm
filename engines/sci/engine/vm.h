@@ -204,6 +204,9 @@ struct SelectorCache {
 	Selector plane;
 	Selector top;
 	Selector left;
+
+	Selector fore;
+	Selector dimmed;
 #endif
 };
 
