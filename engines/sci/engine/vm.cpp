@@ -571,7 +571,7 @@ void run_vm(EngineState *s, int restoring) {
 	scriptState.variables_seg[VAR_TEMP] = scriptState.variables_seg[VAR_PARAM] = s->stack_segment;
 	scriptState.variables_base[VAR_TEMP] = scriptState.variables_base[VAR_PARAM] = s->stack_base;
 
-	// SCI code reads the zeroeth argument to determine argc
+	// SCI code reads the zeroth argument to determine argc
 	if (s->script_000->_localsBlock)
 		scriptState.variables_base[VAR_GLOBAL] = scriptState.variables[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.begin();
 	else

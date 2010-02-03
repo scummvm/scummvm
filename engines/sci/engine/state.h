@@ -141,15 +141,11 @@ public:
 	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio);
 	virtual ~EngineState();
 
-	enum {
-		kMemorySegmentMax = 256
-	};
-
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
-	kLanguage getLanguage();
 public:
 	ResourceManager *resMan; /**< The resource manager */
+	SegManager *_segMan; /**< The segment manager */
 	Kernel *_kernel;
 	Vocabulary *_voc;
 
@@ -194,6 +190,7 @@ public:
 
 	DirSeeker _dirseeker;
 
+public:
 	/* VM Information */
 
 	Common::List<ExecStack> _executionStack; /**< The execution stack */
@@ -217,6 +214,34 @@ public:
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
 
+	/* Debugger data: */
+	Common::List<Breakpoint> _breakpoints;   /**< List of breakpoints */
+	int _activeBreakpointTypes;  /**< Bit mask specifying which types of breakpoints are active */
+
+	/* System strings */
+	SegmentId sys_strings_segment;
+	SystemStrings *sys_strings;
+
+	reg_t _gameObj; /**< Pointer to the game object */
+
+	int gc_countdown; /**< Number of kernel calls until next gc */
+
+public:
+	MessageState *_msgState;
+
+	// MemorySegment provides access to a 256-byte block of memory that remains
+	// intact across restarts and restores
+	enum {
+		kMemorySegmentMax = 256
+	};
+	uint _memorySegmentSize;
+	byte _memorySegment[kMemorySegmentMax];
+
+	EngineState *successor; /**< Successor of this state: Used for restoring */
+
+
+public:
+
 	/**
 	 * Processes a multilanguage string based on the current language settings and
 	 * returns a string that is ready to be displayed.
@@ -226,6 +251,19 @@ public:
 	 * @return processed string
 	 */
 	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
+
+	kLanguage getLanguage();
+
+	Common::String getLanguageString(const char *str, kLanguage lang) const;
+
+private:
+	kLanguage charToLanguage(const char c) const;
+
+
+public:
+	// TODO: The following methods and member variables deal with (detecting)
+	// features and capabilities the active game expects to find in the engine.
+	// It should likely be moved to a separate class.
 
 	/**
 	 * Autodetects the DoSound type
@@ -279,28 +317,6 @@ public:
 
 	bool usesCdTrack() { return _usesCdTrack; }
 
-	/* Debugger data: */
-	Common::List<Breakpoint> _breakpoints;   /**< List of breakpoints */
-	int _activeBreakpointTypes;  /**< Bit mask specifying which types of breakpoints are active */
-
-	/* System strings */
-	SegmentId sys_strings_segment;
-	SystemStrings *sys_strings;
-
-	reg_t _gameObj; /**< Pointer to the game object */
-
-	SegManager *_segMan;
-	int gc_countdown; /**< Number of kernel calls until next gc */
-
-	MessageState *_msgState;
-
-	uint _memorySegmentSize;
-	byte _memorySegment[kMemorySegmentMax];
-
-	EngineState *successor; /**< Successor of this state: Used for restoring */
-
-	Common::String getLanguageString(const char *str, kLanguage lang) const;
-
 private:
 	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
 
@@ -310,7 +326,6 @@ private:
 #endif
 
 	MoveCountType _moveCountType;
-	kLanguage charToLanguage(const char c) const;
 	bool _usesCdTrack;
 };
 
