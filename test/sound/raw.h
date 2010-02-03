@@ -164,4 +164,23 @@ public:
 		delete[] buffer;
 		delete s;
 	}
+
+	void test_rewind() {
+		const int sampleRate = 11025;
+		const int time = 2;
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, 0, false);
+		int16 *buffer = new int16[sampleRate * time];
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		s->rewind();
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] buffer;
+		delete s;
+	}
 };
