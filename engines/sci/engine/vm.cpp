@@ -529,7 +529,7 @@ static void gc_countdown(EngineState *s) {
 
 static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 
-void run_vm(EngineState *s, int restoring) {
+void run_vm(EngineState *s, bool restoring) {
 	assert(s);
 
 #ifndef DISABLE_VALIDATIONS
@@ -1613,7 +1613,7 @@ static EngineState *_game_run(EngineState *&s) {
 
 	do {
 		s->_executionStackPosChanged = false;
-		run_vm(s, successor ? 1 : 0);
+		run_vm(s, successor ? true : false);
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
 			successor = NULL;
 			s->_executionStack.clear();

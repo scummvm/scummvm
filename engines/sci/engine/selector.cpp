@@ -230,7 +230,7 @@ int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, Selector
 	xstack->sp += argc + 2;
 	xstack->fp += argc + 2;
 
-	run_vm(s, 0); // Start a new vm
+	run_vm(s, false); // Start a new vm
 
 	return 0;
 }
