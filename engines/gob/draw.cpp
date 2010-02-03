@@ -653,7 +653,7 @@ bool Draw::winOverlap(int16 idWin1, int16 idWin2) {
  return true;
 }
 
-void Draw::closeWin (int16 i) {
+void Draw::closeWin(int16 i) {
 	warning("closeWin %d", i);
 	if (_fascinWin[i].id == -1)
 		return;
@@ -663,6 +663,13 @@ void Draw::closeWin (int16 i) {
 	_fascinWin[i].id = -1;
 	_fascinWin[i].savedSurface.reset();
 	_winCount--;
+}
+
+void Draw::closeAllWin() {
+	for (int i = 0; i < 10; i++){
+		activeWin(i);
+		closeWin(i);
+	}
 }
 
 int16 Draw::openWin(int16 id) {

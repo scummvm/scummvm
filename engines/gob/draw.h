@@ -193,6 +193,7 @@ public:
 	void winDecomp(int16 x, int16 y, SurfaceDescPtr bmp);
 	void activeWin(int16 id);
 	void closeWin(int16 id);
+	void closeAllWin();
 	void restoreWin(int16 i);
 	void saveWin(int16 id);
 	void winMove(int16 id);

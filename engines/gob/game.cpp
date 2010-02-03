@@ -352,6 +352,8 @@ void Game::playTot(int16 skipPlay) {
 				}
 			}
 
+			if (_vm->getGameType() == kGameTypeFascination)
+				_vm->_draw->closeAllWin();
 			if (_totToLoad[0] == 0)
 				break;
 
