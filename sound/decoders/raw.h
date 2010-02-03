@@ -65,18 +65,18 @@ enum RawFlags {
 
 
 /**
- * Struct used to define the audio data to be played by a RawAudioStream.
+ * Struct used to define the audio data to be played by a RawStream.
  */
-struct RawAudioStreamBlock {
+struct RawStreamBlock {
 	int32 pos;   ///< Position in stream of the block (in bytes of course!)
 	int32 len;   ///< Length of the block (in sample (pairs))
 };
 
 /**
  * List containing all blocks of a raw stream.
- * @see RawAudioStreamBlock
+ * @see RawStreamBlock
  */
-typedef Common::List<RawAudioStreamBlock> RawStreamBlockList;
+typedef Common::List<RawStreamBlock> RawStreamBlockList;
 
 /**
  * Creates an audio stream, which plays from the given buffer.
@@ -133,8 +133,8 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
  * Creates a audio stream, which plays from given stream.
  *
  * @param stream Stream to play from
- * @param block Pointer to an RawAudioStreamBlock array
- * @see RawAudioStreamBlock
+ * @param block Pointer to an RawStreamBlock array
+ * @see RawStreamBlock
  * @param numBlocks Number of blocks.
  * @param rate The rate
  * @param flags Flags combination.
@@ -143,7 +143,7 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
-		RawAudioStreamBlock *block, int numBlocks,
+		RawStreamBlock *block, int numBlocks,
 		int rate, byte flags,
 		DisposeAfterUse::Flag disposeStream);
 

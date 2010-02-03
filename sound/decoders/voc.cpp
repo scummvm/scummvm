@@ -180,7 +180,7 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
 
 #ifdef STREAM_AUDIO_FROM_DISK
 
-int parseVOCFormat(Common::SeekableReadStream& stream, RawDiskStreamAudioBlock* block, int &rate, int &loops, int &begin_loop, int &end_loop) {
+int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, int &rate, int &loops, int &begin_loop, int &end_loop) {
 	VocFileHeader fileHeader;
 	int currentBlock = 0;
 	int size = 0;
@@ -302,7 +302,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawDiskStreamAudioBlock* 
 AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
-	RawDiskStreamAudioBlock *block = new RawDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
+	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
 	int rate, loops, begin_loop, end_loop;
 
 	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
@@ -322,7 +322,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, D
 SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
-	RawDiskStreamAudioBlock *block = new RawDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
+	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
 	int rate, loops, begin_loop, end_loop;
 
 	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
