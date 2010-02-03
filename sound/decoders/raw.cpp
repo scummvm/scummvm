@@ -99,7 +99,7 @@ public:
 			len += i->len;
 		}
 
-		_playtime = Timestamp(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate);
+		_playtime = Timestamp(0, len / (stereo ? 2 : 1), rate);
 	}
 
 

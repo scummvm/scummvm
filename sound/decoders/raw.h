@@ -69,7 +69,7 @@ enum RawFlags {
  */
 struct RawStreamBlock {
 	int32 pos;   ///< Position in stream of the block (in bytes of course!)
-	int32 len;   ///< Length of the block (in sample (pairs))
+	int32 len;   ///< Length of the block (in raw samples, not sample pairs!)
 };
 
 /**
