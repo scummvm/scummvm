@@ -223,7 +223,7 @@ void Inter_Fascination::oFascin_activeWin() {
 }
 
 void Inter_Fascination::oFascin_openWin() {
-	int16 retVal,id;
+	int16 retVal, id;
 	_vm->_game->_script->evalExpr(&id);
 	retVal = _vm->_game->_script->readVarIndex();
 	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));

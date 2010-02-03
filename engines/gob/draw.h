@@ -200,7 +200,7 @@ public:
 	void handleWinBorder(int16 id);
 	void winDraw(int16 fct);
 	void winTrace(int16 left, int16 top, int16 width, int16 height);
-    int16 isOverWin(int16 &dx, int16 &dy);
+	int16 isOverWin(int16 &dx, int16 &dy);
 
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);

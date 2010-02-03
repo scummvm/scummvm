@@ -650,7 +650,7 @@ bool Draw::winOverlap(int16 idWin1, int16 idWin2) {
 		(_fascinWin[idWin2].top  + _fascinWin[idWin2].height <= _fascinWin[idWin1].top ))
 		return false;
 
- return true;
+	return true;
 }
 
 void Draw::closeWin(int16 i) {
@@ -704,7 +704,7 @@ void Draw::restoreWin(int16 i) {
 
 void Draw::saveWin(int16 id) {
 	warning("saveWin");
-	_vm->_video->drawSprite(*_backSurface, *_fascinWin[id].savedSurface, 
+	_vm->_video->drawSprite(*_backSurface, *_fascinWin[id].savedSurface,
 							_fascinWin[id].left,  _fascinWin[id].top,
 							_fascinWin[id].left + _fascinWin[id].width  - 1,
 							_fascinWin[id].top  + _fascinWin[id].height - 1,
@@ -743,7 +743,7 @@ void Draw::winTrace(int16 left, int16 top, int16 width, int16 height) {
 	// TODO: Implement proper behavior for the trace of the Window. In short,
 	//  - drawline currently use the wrong surface, to be fixed
 	//  - dirtiedRect should be put after the 4 drawlines when the surface is fixed <- Not in 256 col version
-	//  - drawline should be replaced by a drawline with palette inversion 
+	//  - drawline should be replaced by a drawline with palette inversion
 	//  - Shift skipped as always set to zero (?)
 
 	int16 right, bottom;
@@ -818,7 +818,7 @@ void Draw::handleWinBorder(int16 id) {
 					_vm->_util->setMousePos(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY);
 			}
 
-			winTrace(_cursorX,_cursorY, _fascinWin[id].width, _fascinWin[id].height);
+			winTrace(_cursorX, _cursorY, _fascinWin[id].width, _fascinWin[id].height);
 			winTrace(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY, _fascinWin[id].width, _fascinWin[id].height);
 			_cursorX = _vm->_global->_inter_mouseX;
 			_cursorY = _vm->_global->_inter_mouseY;
@@ -837,7 +837,7 @@ int16 Draw::handleCurWin() {
 	if ((_vm->_game->_mouseButtons != 1) || ((_vm->_draw->_renderFlags & 128) == 0))
 		return 0;
 
-	for (int i = 0; i < 10; i++) 
+	for (int i = 0; i < 10; i++)
 		if (_fascinWin[i].id != -1) {
 			if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left) &&
 			    (_vm->_global->_inter_mouseX <  _fascinWin[i].left + _fascinWin[i].width) &&
@@ -916,12 +916,12 @@ void Draw::winDraw(int16 fct) {
 	int16 width;
 	int16 height;
 
- warning("winDraw %d", fct);
- bool found = false;
- int len;
- Resource *resource;
- int table[10];
- SurfaceDescPtr tempSrf;
+	warning("winDraw %d", fct);
+	bool found = false;
+	int len;
+	Resource *resource;
+	int table[10];
+	SurfaceDescPtr tempSrf;
 
 	if (_destSurface == 21) {
 
@@ -1298,7 +1298,7 @@ int16 Draw::isOverWin(int16 &dx, int16 &dy) {
 	if ((_vm->_draw->_renderFlags & 128) == 0)
 		return -1;
 
-	for (int i = 0; i < 10; i++) 
+	for (int i = 0; i < 10; i++)
 		if (_fascinWin[i].id != -1) {
 			if ((_vm->_global->_inter_mouseX >= _fascinWin[i].left) &&
 			    (_vm->_global->_inter_mouseX <  _fascinWin[i].left + _fascinWin[i].width) &&
@@ -1309,15 +1309,15 @@ int16 Draw::isOverWin(int16 &dx, int16 &dy) {
 					dx = _fascinWin[i].left;
 					dy = _fascinWin[i].top;
 					return(i);
-				} else 
+				} else
 					if (_fascinWin[i].id > bestMatch)
 						bestMatch = _fascinWin[i].id;
 			}
 		}
 
-	if (bestMatch != -1) 
+	if (bestMatch != -1)
 		return(0);
-	else 
+	else
 		return(-1);
 }
 int32 Draw::getSpriteRectSize(int16 index) {

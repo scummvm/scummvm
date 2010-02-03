@@ -95,7 +95,7 @@ private:
 	uint32 _size;
 	byte *_vars;
 
-  void clear();
+	void clear();
 };
 
 class VariablesLE : public Variables {

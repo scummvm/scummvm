@@ -621,7 +621,7 @@ void Video::initOSD() {
 		171, 0, 0, 0
 	};
 
-  g_system->setPalette(palOSD, 0, 5);
+	g_system->setPalette(palOSD, 0, 5);
 }
 
 void Video::drawOSDText(const char *text) {

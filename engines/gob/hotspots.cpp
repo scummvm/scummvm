@@ -558,7 +558,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 	if (_vm->getGameType() == kGameTypeFascination)
 		winId = _vm->_draw->isOverWin(dx, dy);
 
-	warning("checkmouse %d - %d %d",winId, dx, dy);
+	warning("checkmouse %d - %d %d", winId, dx, dy);
 
 	if (winId < 0) {
 		winId = 0;

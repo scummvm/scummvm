@@ -614,7 +614,7 @@ void MDYPlayer::interpret() {
 	}
 	do {
 		instr = *_playPos;
-		debugC(6, kDebugSound,"MDYPlayer::interpret instr 0x%X", instr);
+		debugC(6, kDebugSound, "MDYPlayer::interpret instr 0x%X", instr);
 		switch (instr) {
 		case 0xF8:
 			_wait = *(_playPos++);
@@ -627,7 +627,7 @@ void MDYPlayer::interpret() {
 			_playPos++;
 			ctrlByte1 = *(_playPos++);
 			ctrlByte2 = *(_playPos++);
-			debugC(6, kDebugSound,"MDYPlayer::interpret ctrlBytes 0x%X 0x%X", ctrlByte1, ctrlByte2);
+			debugC(6, kDebugSound, "MDYPlayer::interpret ctrlBytes 0x%X 0x%X", ctrlByte1, ctrlByte2);
 			if (ctrlByte1 != 0x7F || ctrlByte2 != 0) {
 				_playPos -= 2;
 				while (*(_playPos++) != 0xF7)
