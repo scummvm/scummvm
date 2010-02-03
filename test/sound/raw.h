@@ -20,21 +20,34 @@ public:
 		for (int i = 0; i < time * sampleRate; ++i)
 			sine[i] = (T)(sin((double)i / sampleRate * 2 * PI) * maxValue);
 
-		// Convert to BE
-		if (sizeof(T) == 2) {
-			for (int i = 0; i < time * sampleRate; ++i)
-				WRITE_BE_UINT16(&sine[i], sine[i]);
-		}
-
 		return sine;
 	}
 
-	template<typename T>
-	static Audio::SeekableAudioStream *createSineStream(int sampleRate, int time, const T **sineP) {
-		T *sine = createSine<T>(sampleRate, time);
+	static Audio::SeekableAudioStream *createSineStream8Bit(int sampleRate, int time, const int8 **sineP) {
+		int8 *sine = createSine<int8>(sampleRate, time);
 
-		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sizeof(T) * sampleRate * time, DisposeAfterUse::YES);
-		Audio::SeekableAudioStream *s = Audio::makeRawStream(sD, sampleRate, (sizeof(T) == 2) ? Audio::FLAG_16BITS : 0);
+		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sampleRate * time, DisposeAfterUse::YES);
+		Audio::SeekableAudioStream *s = Audio::makeRawStream(sD, sampleRate, 0);
+
+		if (sineP)
+			*sineP = sine;
+
+		return s;
+	}
+
+	static Audio::SeekableAudioStream *createSineStream16Bit(int sampleRate, int time, bool le, const int16 **sineP) {
+		int16 *sine = createSine<int16>(sampleRate, time);
+
+		if (le) {
+			for (int i = 0; i < sampleRate * time; ++i)
+				WRITE_LE_UINT16(&sine[i], sine[i]);
+		} else {
+			for (int i = 0; i < sampleRate * time; ++i)
+				WRITE_BE_UINT16(&sine[i], sine[i]);
+		}
+
+		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sizeof(int16) * sampleRate * time, DisposeAfterUse::YES);
+		Audio::SeekableAudioStream *s = Audio::makeRawStream(sD, sampleRate, Audio::FLAG_16BITS | (le ? Audio::FLAG_LITTLE_ENDIAN : 0));
 
 		if (sineP)
 			*sineP = sine;
@@ -46,8 +59,8 @@ public:
 		const int sampleRate = 11025;
 		const int time = 2;
 
-		const int8 *sine = 0;
-		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine);
+		const int8 *sine;
+		Audio::SeekableAudioStream *s = createSineStream8Bit(sampleRate, time, &sine);
 
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
@@ -66,13 +79,32 @@ public:
 		const int time = 2;
 
 		const int16 *sine = 0;
-		Audio::SeekableAudioStream *s = createSineStream<int16>(sampleRate, time, &sine);
+		Audio::SeekableAudioStream *s = createSineStream16Bit(sampleRate, time, false, &sine);
 
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
 
 		for (int i = 0; i < sampleRate * time; ++i)
 			TS_ASSERT_EQUALS(buffer[i], (int16)READ_BE_UINT16(&sine[i]));
+
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] buffer;
+		delete s;
+	}
+
+	void test_read_buffer_16_bit_le_mono() {
+		const int sampleRate = 11025;
+		const int time = 2;
+
+		const int16 *sine = 0;
+		Audio::SeekableAudioStream *s = createSineStream16Bit(sampleRate, time, true, &sine);
+
+		int16 *buffer = new int16[sampleRate * time];
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+
+		for (int i = 0; i < sampleRate * time; ++i)
+			TS_ASSERT_EQUALS(buffer[i], (int16)READ_LE_UINT16(&sine[i]));
 
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
