@@ -85,7 +85,7 @@ public:
 	 * Wrapper to easily init an OPL chip, without specifing an emulator.
 	 * By default it will try to initialize an OPL2 emulator, thus an AdLib card.
 	 */
-	static OPL *create(OplType type = kOpl2) { return create(detect(type), type); }
+	static OPL *create(OplType type = kOpl2);
 
 private:
 	static const EmulatorDescription _drivers[];
