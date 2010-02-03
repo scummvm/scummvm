@@ -165,6 +165,47 @@ public:
 		delete s;
 	}
 
+	void test_partial_read() {
+		const int sampleRate = 11025;
+		const int time = 4;
+
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine, false);
+		int16 *buffer = new int16[sampleRate * time];
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate), sampleRate);
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sampleRate), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * 2), sampleRate * 2);
+		TS_ASSERT_EQUALS(memcmp(sine + sampleRate, buffer, sampleRate * 2), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate), sampleRate);
+		TS_ASSERT_EQUALS(memcmp(sine + sampleRate * 3, buffer, sampleRate), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] sine;
+		delete[] buffer;
+		delete s;
+	}
+
+	void test_read_after_end() {
+		const int sampleRate = 11025;
+		const int time = 1;
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, 0, false);
+		int16 *buffer = new int16[sampleRate * time];
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] buffer;
+		delete s;
+	}
+
 	void test_rewind() {
 		const int sampleRate = 11025;
 		const int time = 2;
