@@ -65,7 +65,7 @@ static int seek_stream_wrap(void *datasource, ogg_int64_t offset, int whence) {
 }
 
 static int close_stream_wrap(void *datasource) {
-	// Do nothing -- we leave it up to the VorbisInputStream to free memory as appropriate.
+	// Do nothing -- we leave it up to the VorbisStream to free memory as appropriate.
 	return 0;
 }
 
@@ -85,7 +85,7 @@ static ov_callbacks g_stream_wrap = {
 #pragma mark -
 
 
-class VorbisInputStream : public SeekableAudioStream {
+class VorbisStream : public SeekableAudioStream {
 protected:
 	Common::SeekableReadStream *_inStream;
 	DisposeAfterUse::Flag _disposeAfterUse;
@@ -103,8 +103,8 @@ protected:
 
 public:
 	// startTime / duration are in milliseconds
-	VorbisInputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose);
-	~VorbisInputStream();
+	VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose);
+	~VorbisStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -118,7 +118,7 @@ protected:
 	bool refill();
 };
 
-VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
+VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
 	_length(0, 1000),
@@ -146,13 +146,13 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, Dispo
 #endif
 }
 
-VorbisInputStream::~VorbisInputStream() {
+VorbisStream::~VorbisStream() {
 	ov_clear(&_ovFile);
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _inStream;
 }
 
-int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
+int VorbisStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	while (samples < numSamples && _pos < _bufferEnd) {
 		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
@@ -168,7 +168,7 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-bool VorbisInputStream::seek(const Timestamp &where) {
+bool VorbisStream::seek(const Timestamp &where) {
 	// Vorbisfile uses the sample pair number, thus we always use "false" for the isStereo parameter
 	// of the convertTimeToStreamPos helper.
 	int res = ov_pcm_seek(&_ovFile, convertTimeToStreamPos(where, getRate(), false).totalNumberOfFrames());
@@ -181,7 +181,7 @@ bool VorbisInputStream::seek(const Timestamp &where) {
 	return refill();
 }
 
-bool VorbisInputStream::refill() {
+bool VorbisStream::refill() {
 	// Read the samples
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
@@ -244,7 +244,7 @@ bool VorbisInputStream::refill() {
 SeekableAudioStream *makeVorbisStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	SeekableAudioStream *s = new VorbisInputStream(stream, disposeAfterUse);
+	SeekableAudioStream *s = new VorbisStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;
 		return 0;

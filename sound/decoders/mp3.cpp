@@ -45,7 +45,7 @@ namespace Audio {
 #pragma mark -
 
 
-class MP3InputStream : public SeekableAudioStream {
+class MP3Stream : public SeekableAudioStream {
 protected:
 	enum State {
 		MP3_STATE_INIT,	// Need to init the decoder
@@ -74,9 +74,9 @@ protected:
 	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
 
 public:
-	MP3InputStream(Common::SeekableReadStream *inStream,
+	MP3Stream(Common::SeekableReadStream *inStream,
 	               DisposeAfterUse::Flag dispose);
-	~MP3InputStream();
+	~MP3Stream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -95,7 +95,7 @@ protected:
 	void deinitStream();
 };
 
-MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
+MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
 	_inStream(inStream),
 	_disposeAfterUse(dispose),
 	_posInFrame(0),
@@ -126,14 +126,14 @@ MP3InputStream::MP3InputStream(Common::SeekableReadStream *inStream, DisposeAfte
 	decodeMP3Data();
 }
 
-MP3InputStream::~MP3InputStream() {
+MP3Stream::~MP3Stream() {
 	deinitStream();
 
 	if (_disposeAfterUse == DisposeAfterUse::YES)
 		delete _inStream;
 }
 
-void MP3InputStream::decodeMP3Data() {
+void MP3Stream::decodeMP3Data() {
 	do {
 		if (_state == MP3_STATE_INIT)
 			initStream();
@@ -154,10 +154,10 @@ void MP3InputStream::decodeMP3Data() {
 					// Note: we will occasionally see MAD_ERROR_BADDATAPTR errors here.
 					// These are normal and expected (caused by our frame skipping (i.e. "seeking")
 					// code above).
-					debug(6, "MP3InputStream: Recoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
+					debug(6, "MP3Stream: Recoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
 					continue;
 				} else {
-					warning("MP3InputStream: Unrecoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
+					warning("MP3Stream: Unrecoverable error in mad_frame_decode (%s)", mad_stream_errorstr(&_stream));
 					break;
 				}
 			}
@@ -173,7 +173,7 @@ void MP3InputStream::decodeMP3Data() {
 		_state = MP3_STATE_EOS;
 }
 
-void MP3InputStream::readMP3Data() {
+void MP3Stream::readMP3Data() {
 	uint32 remaining = 0;
 
 	// Give up immediately if we already used up all data in the stream
@@ -203,7 +203,7 @@ void MP3InputStream::readMP3Data() {
 	mad_stream_buffer(&_stream, _buf, size + remaining);
 }
 
-bool MP3InputStream::seek(const Timestamp &where) {
+bool MP3Stream::seek(const Timestamp &where) {
 	if (where == _length) {
 		_state = MP3_STATE_EOS;
 		return true;
@@ -225,7 +225,7 @@ bool MP3InputStream::seek(const Timestamp &where) {
 	return (_state != MP3_STATE_EOS);
 }
 
-void MP3InputStream::initStream() {
+void MP3Stream::initStream() {
 	if (_state != MP3_STATE_INIT)
 		deinitStream();
 
@@ -246,7 +246,7 @@ void MP3InputStream::initStream() {
 	readMP3Data();
 }
 
-void MP3InputStream::readHeader() {
+void MP3Stream::readHeader() {
 	if (_state != MP3_STATE_READY)
 		return;
 
@@ -265,10 +265,10 @@ void MP3InputStream::readHeader() {
 				readMP3Data();  // Read more data
 				continue;
 			} else if (MAD_RECOVERABLE(_stream.error)) {
-				debug(6, "MP3InputStream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+				debug(6, "MP3Stream: Recoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
 				continue;
 			} else {
-				warning("MP3InputStream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
+				warning("MP3Stream: Unrecoverable error in mad_header_decode (%s)", mad_stream_errorstr(&_stream));
 				break;
 			}
 		}
@@ -282,7 +282,7 @@ void MP3InputStream::readHeader() {
 		_state = MP3_STATE_EOS;
 }
 
-void MP3InputStream::deinitStream() {
+void MP3Stream::deinitStream() {
 	if (_state == MP3_STATE_INIT)
 		return;
 
@@ -308,7 +308,7 @@ static inline int scale_sample(mad_fixed_t sample) {
 	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
-int MP3InputStream::readBuffer(int16 *buffer, const int numSamples) {
+int MP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 	int samples = 0;
 	// Keep going as long as we have input available
 	while (samples < numSamples && _state != MP3_STATE_EOS) {
@@ -339,7 +339,7 @@ SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
 	// TODO: Properly check whether creating the MP3 stream succeeded.
-	return new MP3InputStream(stream, disposeAfterUse);
+	return new MP3Stream(stream, disposeAfterUse);
 }
 
 } // End of namespace Audio

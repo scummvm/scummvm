@@ -82,7 +82,7 @@ namespace Audio {
 static const uint MAX_OUTPUT_CHANNELS = 2;
 
 
-class FlacInputStream : public SeekableAudioStream {
+class FlacStream : public SeekableAudioStream {
 protected:
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
@@ -124,8 +124,8 @@ protected:
 
 
 public:
-	FlacInputStream(Common::SeekableReadStream *inStream, bool dispose);
-	virtual ~FlacInputStream();
+	FlacStream(Common::SeekableReadStream *inStream, bool dispose);
+	virtual ~FlacStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -179,7 +179,7 @@ private:
 	static void convertBuffersMono8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits);
 };
 
-FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool dispose)
+FlacStream::FlacStream(Common::SeekableReadStream *inStream, bool dispose)
 #ifdef LEGACY_FLAC
 			:	_decoder(::FLAC__seekable_stream_decoder_new()),
 #else
@@ -189,7 +189,7 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 		_disposeAfterUse(dispose),
 		_length(0, 1000), _lastSample(0),
 		_outBuffer(NULL), _requestedSamples(0), _lastSampleWritten(false),
-		_methodConvertBuffers(&FlacInputStream::convertBuffersGeneric)
+		_methodConvertBuffers(&FlacStream::convertBuffersGeneric)
 {
 	assert(_inStream);
 	memset(&_streaminfo, 0, sizeof(_streaminfo));
@@ -197,32 +197,32 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 	_sampleCache.bufReadPos = NULL;
 	_sampleCache.bufFill = 0;
 
-	_methodConvertBuffers = &FlacInputStream::convertBuffersGeneric;
+	_methodConvertBuffers = &FlacStream::convertBuffersGeneric;
 
 	bool success;
 #ifdef LEGACY_FLAC
-	::FLAC__seekable_stream_decoder_set_read_callback(_decoder, &FlacInputStream::callWrapRead);
-	::FLAC__seekable_stream_decoder_set_seek_callback(_decoder, &FlacInputStream::callWrapSeek);
-	::FLAC__seekable_stream_decoder_set_tell_callback(_decoder, &FlacInputStream::callWrapTell);
-	::FLAC__seekable_stream_decoder_set_length_callback(_decoder, &FlacInputStream::callWrapLength);
-	::FLAC__seekable_stream_decoder_set_eof_callback(_decoder, &FlacInputStream::callWrapEOF);
-	::FLAC__seekable_stream_decoder_set_write_callback(_decoder, &FlacInputStream::callWrapWrite);
-	::FLAC__seekable_stream_decoder_set_metadata_callback(_decoder, &FlacInputStream::callWrapMetadata);
-	::FLAC__seekable_stream_decoder_set_error_callback(_decoder, &FlacInputStream::callWrapError);
+	::FLAC__seekable_stream_decoder_set_read_callback(_decoder, &FlacStream::callWrapRead);
+	::FLAC__seekable_stream_decoder_set_seek_callback(_decoder, &FlacStream::callWrapSeek);
+	::FLAC__seekable_stream_decoder_set_tell_callback(_decoder, &FlacStream::callWrapTell);
+	::FLAC__seekable_stream_decoder_set_length_callback(_decoder, &FlacStream::callWrapLength);
+	::FLAC__seekable_stream_decoder_set_eof_callback(_decoder, &FlacStream::callWrapEOF);
+	::FLAC__seekable_stream_decoder_set_write_callback(_decoder, &FlacStream::callWrapWrite);
+	::FLAC__seekable_stream_decoder_set_metadata_callback(_decoder, &FlacStream::callWrapMetadata);
+	::FLAC__seekable_stream_decoder_set_error_callback(_decoder, &FlacStream::callWrapError);
 	::FLAC__seekable_stream_decoder_set_client_data(_decoder, (void*)this);
 
 	success = (::FLAC__seekable_stream_decoder_init(_decoder) == FLAC__SEEKABLE_STREAM_DECODER_OK);
 #else
 	success = (::FLAC__stream_decoder_init_stream(
 		_decoder,
-		&FlacInputStream::callWrapRead,
-		&FlacInputStream::callWrapSeek,
-		&FlacInputStream::callWrapTell,
-		&FlacInputStream::callWrapLength,
-		&FlacInputStream::callWrapEOF,
-		&FlacInputStream::callWrapWrite,
-		&FlacInputStream::callWrapMetadata,
-		&FlacInputStream::callWrapError,
+		&FlacStream::callWrapRead,
+		&FlacStream::callWrapSeek,
+		&FlacStream::callWrapTell,
+		&FlacStream::callWrapLength,
+		&FlacStream::callWrapEOF,
+		&FlacStream::callWrapWrite,
+		&FlacStream::callWrapMetadata,
+		&FlacStream::callWrapError,
 		(void*)this
 	) == FLAC__STREAM_DECODER_INIT_STATUS_OK);
 #endif
@@ -234,10 +234,10 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 		}
 	}
 
-	warning("FlacInputStream: could not create audio stream");
+	warning("FlacStream: could not create audio stream");
 }
 
-FlacInputStream::~FlacInputStream() {
+FlacStream::~FlacStream() {
 	if (_decoder != NULL) {
 #ifdef LEGACY_FLAC
 		(void) ::FLAC__seekable_stream_decoder_finish(_decoder);
@@ -251,7 +251,7 @@ FlacInputStream::~FlacInputStream() {
 		delete _inStream;
 }
 
-inline FLAC__StreamDecoderState FlacInputStream::getStreamDecoderState() const {
+inline FLAC__StreamDecoderState FlacStream::getStreamDecoderState() const {
 	assert(_decoder != NULL);
 #ifdef LEGACY_FLAC
 	return ::FLAC__seekable_stream_decoder_get_stream_decoder_state(_decoder);
@@ -260,7 +260,7 @@ inline FLAC__StreamDecoderState FlacInputStream::getStreamDecoderState() const {
 #endif
 }
 
-inline bool FlacInputStream::processSingleBlock() {
+inline bool FlacStream::processSingleBlock() {
 	assert(_decoder != NULL);
 #ifdef LEGACY_FLAC
 	return 0 != ::FLAC__seekable_stream_decoder_process_single(_decoder);
@@ -269,7 +269,7 @@ inline bool FlacInputStream::processSingleBlock() {
 #endif
 }
 
-inline bool FlacInputStream::processUntilEndOfMetadata() {
+inline bool FlacStream::processUntilEndOfMetadata() {
 	assert(_decoder != NULL);
 #ifdef LEGACY_FLAC
 	return 0 != ::FLAC__seekable_stream_decoder_process_until_end_of_metadata(_decoder);
@@ -278,7 +278,7 @@ inline bool FlacInputStream::processUntilEndOfMetadata() {
 #endif
 }
 
-bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
+bool FlacStream::seekAbsolute(FLAC__uint64 sample) {
 	assert(_decoder != NULL);
 #ifdef LEGACY_FLAC
 	const bool result = (0 != ::FLAC__seekable_stream_decoder_seek_absolute(_decoder, sample));
@@ -291,7 +291,7 @@ bool FlacInputStream::seekAbsolute(FLAC__uint64 sample) {
 	return result;
 }
 
-bool FlacInputStream::seek(const Timestamp &where) {
+bool FlacStream::seek(const Timestamp &where) {
 	_sampleCache.bufFill = 0;
 	_sampleCache.bufReadPos = NULL;
 	// FLAC uses the sample pair number, thus we always use "false" for the isStereo parameter
@@ -299,11 +299,11 @@ bool FlacInputStream::seek(const Timestamp &where) {
 	return seekAbsolute((FLAC__uint64)convertTimeToStreamPos(where, getRate(), false).totalNumberOfFrames());
 }
 
-int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
+int FlacStream::readBuffer(int16 *buffer, const int numSamples) {
 	const uint numChannels = getChannels();
 
 	if (numChannels == 0) {
-		warning("FlacInputStream: Stream not sucessfully initialised, cant playback");
+		warning("FlacStream: Stream not sucessfully initialised, cant playback");
 		return -1; // streaminfo wasnt read!
 	}
 
@@ -355,7 +355,7 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		break;
 	default:
 		decoderOk = false;
-		warning("FlacInputStream: An error occured while decoding. DecoderState is: %s",
+		warning("FlacStream: An error occured while decoding. DecoderState is: %s",
 			FLAC__StreamDecoderStateString[getStreamDecoderState()]);
 	}
 
@@ -369,7 +369,7 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return decoderOk ? samples : -1;
 }
 
-inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLAC__byte buffer[], FLAC_size_t *bytes) {
+inline ::FLAC__SeekableStreamDecoderReadStatus FlacStream::callbackRead(FLAC__byte buffer[], FLAC_size_t *bytes) {
 	if (*bytes == 0) {
 #ifdef LEGACY_FLAC
 		return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR; /* abort to avoid a deadlock */
@@ -396,8 +396,8 @@ inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLA
 #endif
 }
 
-void FlacInputStream::setBestConvertBufferMethod() {
-	PFCONVERTBUFFERS tempMethod = &FlacInputStream::convertBuffersGeneric;
+void FlacStream::setBestConvertBufferMethod() {
+	PFCONVERTBUFFERS tempMethod = &FlacStream::convertBuffersGeneric;
 
 	const uint numChannels = getChannels();
 	const uint8 numBits = (uint8)_streaminfo.bits_per_sample;
@@ -407,21 +407,21 @@ void FlacInputStream::setBestConvertBufferMethod() {
 
 	if (numChannels == 1) {
 		if (numBits == 8)
-			tempMethod = &FlacInputStream::convertBuffersMono8Bit;
+			tempMethod = &FlacStream::convertBuffersMono8Bit;
 		if (numBits == BUFTYPE_BITS)
-			tempMethod = &FlacInputStream::convertBuffersMonoNS;
+			tempMethod = &FlacStream::convertBuffersMonoNS;
 	} else if (numChannels == 2) {
 		if (numBits == 8)
-			tempMethod = &FlacInputStream::convertBuffersStereo8Bit;
+			tempMethod = &FlacStream::convertBuffersStereo8Bit;
 		if (numBits == BUFTYPE_BITS)
-			tempMethod = &FlacInputStream::convertBuffersStereoNS;
+			tempMethod = &FlacStream::convertBuffersStereoNS;
 	} /* else ... */
 
 	_methodConvertBuffers = tempMethod;
 }
 
 // 1 channel, no scaling
-void FlacInputStream::convertBuffersMonoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
+void FlacStream::convertBuffersMonoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 1);
 	assert(numBits == BUFTYPE_BITS);
 
@@ -446,7 +446,7 @@ void FlacInputStream::convertBuffersMonoNS(SampleType* bufDestination, const FLA
 }
 
 // 1 channel, scaling from 8Bit
-void FlacInputStream::convertBuffersMono8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
+void FlacStream::convertBuffersMono8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 1);
 	assert(numBits == 8);
 	assert(8 < BUFTYPE_BITS);
@@ -472,7 +472,7 @@ void FlacInputStream::convertBuffersMono8Bit(SampleType* bufDestination, const F
 }
 
 // 2 channels, no scaling
-void FlacInputStream::convertBuffersStereoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
+void FlacStream::convertBuffersStereoNS(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 2);
 	assert(numBits == BUFTYPE_BITS);
 	assert(numSamples % 2 == 0); // must be integral multiply of channels
@@ -505,7 +505,7 @@ void FlacInputStream::convertBuffersStereoNS(SampleType* bufDestination, const F
 }
 
 // 2 channels, scaling from 8Bit
-void FlacInputStream::convertBuffersStereo8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
+void FlacStream::convertBuffersStereo8Bit(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numChannels == 2);
 	assert(numBits == 8);
 	assert(numSamples % 2 == 0); // must be integral multiply of channels
@@ -538,7 +538,7 @@ void FlacInputStream::convertBuffersStereo8Bit(SampleType* bufDestination, const
 }
 
 // all Purpose-conversion - slowest of em all
-void FlacInputStream::convertBuffersGeneric(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
+void FlacStream::convertBuffersGeneric(SampleType* bufDestination, const FLAC__int32 *inChannels[], uint numSamples, const uint numChannels, const uint8 numBits) {
 	assert(numSamples % numChannels == 0); // must be integral multiply of channels
 
 	if (numBits < BUFTYPE_BITS) {
@@ -565,7 +565,7 @@ void FlacInputStream::convertBuffersGeneric(SampleType* bufDestination, const FL
 	assert(numSamples == 0); // dint copy too many samples
 }
 
-inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]) {
+inline ::FLAC__StreamDecoderWriteStatus FlacStream::callbackWrite(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]) {
 	assert(frame->header.channels == _streaminfo.channels);
 	assert(frame->header.sample_rate == _streaminfo.sample_rate);
 	assert(frame->header.bits_per_sample == _streaminfo.bits_per_sample);
@@ -625,7 +625,7 @@ inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::F
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-inline ::FLAC__SeekableStreamDecoderSeekStatus FlacInputStream::callbackSeek(FLAC__uint64 absoluteByteOffset) {
+inline ::FLAC__SeekableStreamDecoderSeekStatus FlacStream::callbackSeek(FLAC__uint64 absoluteByteOffset) {
 	_inStream->seek(absoluteByteOffset, SEEK_SET);
 	const bool result = (absoluteByteOffset == (FLAC__uint64)_inStream->pos());
 
@@ -636,7 +636,7 @@ inline ::FLAC__SeekableStreamDecoderSeekStatus FlacInputStream::callbackSeek(FLA
 #endif
 }
 
-inline ::FLAC__SeekableStreamDecoderTellStatus FlacInputStream::callbackTell(FLAC__uint64 *absoluteByteOffset) {
+inline ::FLAC__SeekableStreamDecoderTellStatus FlacStream::callbackTell(FLAC__uint64 *absoluteByteOffset) {
 	*absoluteByteOffset = static_cast<FLAC__uint64>(_inStream->pos());
 #ifdef LEGACY_FLAC
 	return FLAC__SEEKABLE_STREAM_DECODER_TELL_STATUS_OK;
@@ -645,7 +645,7 @@ inline ::FLAC__SeekableStreamDecoderTellStatus FlacInputStream::callbackTell(FLA
 #endif
 }
 
-inline ::FLAC__SeekableStreamDecoderLengthStatus FlacInputStream::callbackLength(FLAC__uint64 *streamLength) {
+inline ::FLAC__SeekableStreamDecoderLengthStatus FlacStream::callbackLength(FLAC__uint64 *streamLength) {
 	*streamLength = static_cast<FLAC__uint64>(_inStream->size());
 #ifdef LEGACY_FLAC
 	return FLAC__SEEKABLE_STREAM_DECODER_LENGTH_STATUS_OK;
@@ -654,69 +654,69 @@ inline ::FLAC__SeekableStreamDecoderLengthStatus FlacInputStream::callbackLength
 #endif
 }
 
-inline bool FlacInputStream::callbackEOF() {
+inline bool FlacStream::callbackEOF() {
 	return _inStream->eos();
 }
 
 
-inline void FlacInputStream::callbackMetadata(const ::FLAC__StreamMetadata *metadata) {
+inline void FlacStream::callbackMetadata(const ::FLAC__StreamMetadata *metadata) {
 	assert(_decoder != NULL);
 	assert(metadata->type == FLAC__METADATA_TYPE_STREAMINFO); // others arent really interesting
 
 	_streaminfo = metadata->data.stream_info;
 	setBestConvertBufferMethod(); // should be set after getting stream-information. FLAC always parses the info first
 }
-inline void FlacInputStream::callbackError(::FLAC__StreamDecoderErrorStatus status) {
+inline void FlacStream::callbackError(::FLAC__StreamDecoderErrorStatus status) {
 	// some of these are non-critical-Errors
-	debug(1, "FlacInputStream: An error occured while decoding. DecoderState is: %s",
+	debug(1, "FlacStream: An error occured while decoding. DecoderState is: %s",
 			FLAC__StreamDecoderErrorStatusString[status]);
 }
 
 /* Static Callback Wrappers */
-::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callWrapRead(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__byte buffer[], FLAC_size_t *bytes, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+::FLAC__SeekableStreamDecoderReadStatus FlacStream::callWrapRead(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__byte buffer[], FLAC_size_t *bytes, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	return instance->callbackRead(buffer, bytes);
 }
 
-::FLAC__SeekableStreamDecoderSeekStatus FlacInputStream::callWrapSeek(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 absoluteByteOffset, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+::FLAC__SeekableStreamDecoderSeekStatus FlacStream::callWrapSeek(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 absoluteByteOffset, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	return instance->callbackSeek(absoluteByteOffset);
 }
 
-::FLAC__SeekableStreamDecoderTellStatus FlacInputStream::callWrapTell(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absoluteByteOffset, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+::FLAC__SeekableStreamDecoderTellStatus FlacStream::callWrapTell(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *absoluteByteOffset, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	return instance->callbackTell(absoluteByteOffset);
 }
 
-::FLAC__SeekableStreamDecoderLengthStatus FlacInputStream::callWrapLength(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *streamLength, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+::FLAC__SeekableStreamDecoderLengthStatus FlacStream::callWrapLength(const ::FLAC__SeekableStreamDecoder *decoder, FLAC__uint64 *streamLength, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	return instance->callbackLength(streamLength);
 }
 
-FLAC__bool FlacInputStream::callWrapEOF(const ::FLAC__SeekableStreamDecoder *decoder, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+FLAC__bool FlacStream::callWrapEOF(const ::FLAC__SeekableStreamDecoder *decoder, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	return instance->callbackEOF();
 }
 
-::FLAC__StreamDecoderWriteStatus FlacInputStream::callWrapWrite(const ::FLAC__SeekableStreamDecoder *decoder, const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+::FLAC__StreamDecoderWriteStatus FlacStream::callWrapWrite(const ::FLAC__SeekableStreamDecoder *decoder, const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	return instance->callbackWrite(frame, buffer);
 }
 
-void FlacInputStream::callWrapMetadata(const ::FLAC__SeekableStreamDecoder *decoder, const ::FLAC__StreamMetadata *metadata, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+void FlacStream::callWrapMetadata(const ::FLAC__SeekableStreamDecoder *decoder, const ::FLAC__StreamMetadata *metadata, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	instance->callbackMetadata(metadata);
 }
 
-void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder, ::FLAC__StreamDecoderErrorStatus status, void *clientData) {
-	FlacInputStream *instance = (FlacInputStream *)clientData;
+void FlacStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder, ::FLAC__StreamDecoderErrorStatus status, void *clientData) {
+	FlacStream *instance = (FlacStream *)clientData;
 	assert(0 != instance);
 	instance->callbackError(status);
 }
@@ -729,7 +729,7 @@ void FlacInputStream::callWrapError(const ::FLAC__SeekableStreamDecoder *decoder
 SeekableAudioStream *makeFlacStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	SeekableAudioStream *s = new FlacInputStream(stream, disposeAfterUse);
+	SeekableAudioStream *s = new FlacStream(stream, disposeAfterUse);
 	if (s && s->endOfData()) {
 		delete s;
 		return 0;
