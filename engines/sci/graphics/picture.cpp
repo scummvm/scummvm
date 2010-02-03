@@ -148,8 +148,8 @@ void SciGuiPicture::drawSci32Vga(int16 celNo) {
 	}
 
 	while (celCount > 0) {
-		cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
-		cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
+		cel_RlePos = READ_LE_UINT32(inbuffer + cel_headerPos + 24);
+		cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
 		cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
 		cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
 		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos, true);
