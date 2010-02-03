@@ -335,4 +335,155 @@ public:
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 	}
+
+	void test_seek_mono() {
+		const int sampleRate = 11025;
+		const int time = 2;
+		const bool isStereo = false;
+		const int totalFrames = sampleRate * time * (isStereo ? 2 : 1);
+		int readData = 0, offset = 0;
+
+		int16 *buffer = new int16[totalFrames];
+		Audio::SeekableAudioStream *s = 0;
+		int16 *sine = 0;
+
+		s = createSineStream<int8>(sampleRate, time, &sine, false, isStereo);
+
+		// Seek to 500ms
+		const Audio::Timestamp a(0, 1, 2);
+		offset = Audio::convertTimeToStreamPos(a, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(a), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Seek to 3/4 of a second
+		const Audio::Timestamp b(0, 3, 4);
+		offset = Audio::convertTimeToStreamPos(b, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(b), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Seek to the start of the stream
+		TS_ASSERT_EQUALS(s->seek(0), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+
+		// Seek to the mid of the stream
+		const Audio::Timestamp c(time * 1000 / 2, 1000);
+		offset = Audio::convertTimeToStreamPos(c, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(c), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Seek to the 1/4th of the last second of the stream
+		const Audio::Timestamp d(time - 1, 1, 4);
+		offset = Audio::convertTimeToStreamPos(d, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(d), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Try to seek after the end of the stream
+		TS_ASSERT_EQUALS(s->seek(Audio::Timestamp(time * 1000, 1, 100000)), false);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Try to seek exactly at the end of the stream
+		TS_ASSERT_EQUALS(s->seek(Audio::Timestamp(time * 1000, 1000)), true);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] sine;
+		delete s;
+		delete[] buffer;
+	}
+
+	// TODO: Apart from the "isStereo" bit this is exactly the same functionality
+	// as test_seek_mono. We should consider merging those too. Maybe a template
+	// would do and then call it from two different tests?
+	void test_seek_stereo() {
+		const int sampleRate = 11025;
+		const int time = 2;
+		const bool isStereo = true;
+		const int totalFrames = sampleRate * time * (isStereo ? 2 : 1);
+		int readData = 0, offset = 0;
+
+		int16 *buffer = new int16[totalFrames];
+		Audio::SeekableAudioStream *s = 0;
+		int16 *sine = 0;
+
+		s = createSineStream<int8>(sampleRate, time, &sine, false, isStereo);
+
+		// Seek to 500ms
+		const Audio::Timestamp a(0, 1, 2);
+		offset = Audio::convertTimeToStreamPos(a, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(a), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Seek to 3/4 of a second
+		const Audio::Timestamp b(0, 3, 4);
+		offset = Audio::convertTimeToStreamPos(b, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(b), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Seek to the start of the stream
+		TS_ASSERT_EQUALS(s->seek(0), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+
+		// Seek to the mid of the stream
+		const Audio::Timestamp c(time * 1000 / 2, 1000);
+		offset = Audio::convertTimeToStreamPos(c, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(c), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Seek to the 1/4th of the last second of the stream
+		const Audio::Timestamp d(time - 1, 1, 4);
+		offset = Audio::convertTimeToStreamPos(d, 11025, isStereo).totalNumberOfFrames();
+		readData = totalFrames - offset;
+
+		TS_ASSERT_EQUALS(s->seek(d), true);
+		TS_ASSERT_EQUALS(s->endOfData(), false);
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, readData), readData);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + offset, readData * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Try to seek after the end of the stream
+		TS_ASSERT_EQUALS(s->seek(Audio::Timestamp(time * 1000, 1, 100000)), false);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		// Try to seek exactly at the end of the stream
+		TS_ASSERT_EQUALS(s->seek(Audio::Timestamp(time * 1000, 1000)), true);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] sine;
+		delete s;
+		delete[] buffer;
+	}
 };

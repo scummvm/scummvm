@@ -26,6 +26,10 @@ public:
 		// for 11kHz and mono
 		const Audio::Timestamp d = Audio::convertTimeToStreamPos(Audio::Timestamp(0, 50, 75), 11025, false);
 		TS_ASSERT_EQUALS(d.totalNumberOfFrames(), 50 * 11025 / 75);
+
+		// Some misc test
+		const Audio::Timestamp e = Audio::convertTimeToStreamPos(Audio::Timestamp(1, 1, 4), 11025, false);
+		TS_ASSERT_EQUALS(e.totalNumberOfFrames(), 5 * 11025 / 4);
 	}
 };
 
