@@ -24,7 +24,6 @@
  */
 
 #include "engines/stark/stark.h"
-#include "engines/stark/archive.h"
 #include "engines/stark/debug.h"
 
 #include "common/config-manager.h"
@@ -42,6 +41,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	// Add the available debug channels
 	Common::addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
 	Common::addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
+	Common::addDebugChannel(kDebugXRC, "XRC", "Debug the loading of XRC resource trees");
 	Common::addDebugChannel(kDebugUnknown, "Unknown", "Debug unknown values on the data");
 }
 

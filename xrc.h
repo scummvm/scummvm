@@ -31,28 +31,30 @@
 
 namespace Stark {
 
-class XRCFile {
-public:
-
-	XRCFile(Common::SeekableReadStream *stream);
-	~XRCFile();
-
+class XRCNode {
 private:
+	XRCNode();
 
-	struct xrcEntry{
-		byte dataType;
-		byte unknown1;
-		uint16 unknown2;	// Scene ID? Maps to corresponding XARC in sub folders specific to the scene/room
-		uint16 nameLength;
-		Common::String name;
-		uint32 dataLength;
-		byte *data;
-		uint16 numChildren;
-		uint16 unknown3;
-		xrcEntry *children;
-	} *_xrcRoot;
+public:
+	~XRCNode();
 
-	void readEntry(Common::SeekableReadStream *stream, xrcEntry *parent);
+	static XRCNode *read(Common::ReadStream *stream);
+
+	Common::String getName() const { return _name; }
+	const byte *getData() const { return _data; }
+	Common::Array<XRCNode *> getChildren() const { return _children; }
+
+protected:
+	bool readInternal(Common::ReadStream *stream);
+
+	byte _dataType;
+	byte _unknown1;
+	uint16 _unknown2;	// Scene ID? Maps to corresponding XARC in sub folders specific to the scene/room
+	Common::String _name;
+	uint32 _dataLength;
+	byte *_data;
+	Common::Array<XRCNode *> _children;
+	uint16 _unknown3;
 };
 
 } // End of namespace Stark
