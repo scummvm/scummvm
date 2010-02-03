@@ -499,12 +499,16 @@ void MusicEntry::doFade() {
 		}
 
 		// Only process MIDI streams in this thread, not digital sound effects
-		if (pMidiParser)
-#ifndef DISABLE_VOLUME_FADING
-			pMidiParser->setVolume(volume);
-#else
-			pMidiParser->setVolume(fadeTo);
+		if (pMidiParser) {
+#ifdef DISABLE_VOLUME_FADING
+			// Signal fading to stop...
+			volume = fadeTo;
+			fadeStep = 0;
+			fadeCompleted = true;
 #endif
+			pMidiParser->setVolume(volume);
+		}
+
 		fadeSetVolume = true; // set flag so that SoundCommandParser::cmdUpdateCues will set the volume of the stream
 	}
 }
