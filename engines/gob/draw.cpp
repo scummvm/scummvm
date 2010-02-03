@@ -540,8 +540,6 @@ void Draw::activeWin(int16 id) {
 
 	blitInvalidated();
 
-//	_vm->_video->dirtyRectsAll();
-
 	for (int i = 0; i < 10; i++) {
 		t[i]  = -1;
 		t2[i] = -1;
@@ -643,7 +641,6 @@ void Draw::activeWin(int16 id) {
 }
 
 bool Draw::winOverlap(int16 idWin1, int16 idWin2) {
-	warning("winOverlap %d %d", idWin1, idWin2);
 	if ((_fascinWin[idWin1].left + _fascinWin[idWin1].width  <= _fascinWin[idWin2].left) ||
 		(_fascinWin[idWin2].left + _fascinWin[idWin2].width  <= _fascinWin[idWin1].left) ||
 		(_fascinWin[idWin1].top  + _fascinWin[idWin1].height <= _fascinWin[idWin2].top ) ||
@@ -654,7 +651,6 @@ bool Draw::winOverlap(int16 idWin1, int16 idWin2) {
 }
 
 void Draw::closeWin(int16 i) {
-	warning("closeWin %d", i);
 	if (_fascinWin[i].id == -1)
 		return;
 
@@ -709,9 +705,6 @@ void Draw::saveWin(int16 id) {
 							_fascinWin[id].left + _fascinWin[id].width  - 1,
 							_fascinWin[id].top  + _fascinWin[id].height - 1,
 							_fascinWin[id].left & 7, 0, 0);
-//	dirtiedRect(_destSurface, _fascinWin[id].left, 0,
-//				_fascinWin[id].left + _fascinWin[id].width  - 1,
-//				_fascinWin[id].top  + _fascinWin[id].height - 1);
 }
 
 void Draw::winMove(int16 id) {
@@ -789,9 +782,7 @@ void Draw::handleWinBorder(int16 id) {
 	_cursorY = _vm->_global->_inter_mouseY;
 
 	do {
-		// TODO: Usage of checkKeys to be confirmed. A simple refresh of the mouse buttons is required
 		_vm->_game->checkKeys(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 1);
-//		_vm->_util->getMouseState(&_vm->_global->_inter_mouseX, &_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
 
 		if (_vm->_global->_inter_mouseX != _cursorX || _vm->_global->_inter_mouseY != _cursorY) {
 			if (_vm->_global->_inter_mouseX < minX) {
@@ -833,7 +824,6 @@ int16 Draw::handleCurWin() {
 	int8 matchNum = 0;
 	int16 bestMatch = -1;
 
-	warning("handleCurWin");
 	if ((_vm->_game->_mouseButtons != 1) || ((_vm->_draw->_renderFlags & 128) == 0))
 		return 0;
 
@@ -1294,7 +1284,6 @@ void Draw::winDraw(int16 fct) {
 int16 Draw::isOverWin(int16 &dx, int16 &dy) {
 	int16 bestMatch = -1;
 
-	warning("isOverWin");
 	if ((_vm->_draw->_renderFlags & 128) == 0)
 		return -1;
 
