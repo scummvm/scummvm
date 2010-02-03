@@ -226,11 +226,43 @@ public:
 	}
 
 	void test_length() {
-		const int sampleRate = 11025;
+		int sampleRate = 0;
 		const int time = 4;
 
 		Audio::SeekableAudioStream *s = 0;
 
+		// 11025 Hz tests
+		sampleRate = 11025;
+		s = createSineStream<int8>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		s = createSineStream<uint16>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		// 48000 Hz tests
+		sampleRate = 48000;
+		s = createSineStream<int8>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		s = createSineStream<uint16>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		// 11840 Hz tests
+		sampleRate = 11840;
+		s = createSineStream<int8>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		s = createSineStream<uint16>(sampleRate, time, 0, false);
+		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
+		delete s;
+
+		// 11111 Hz tests
+		sampleRate = 11111;
 		s = createSineStream<int8>(sampleRate, time, 0, false);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
