@@ -575,10 +575,6 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				// Only consider enabled hotspots
 				continue;
 
-//Strangerke, for Fascination
-//			if ((spot.flags & 0xFF00) != winId)
-//				continue;
-
 			if (spot.getType() > kTypeMove)
 				// Only consider click and move hotspots
 				continue;
@@ -608,10 +604,6 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 			if (spot.isDisabled())
 				// Only consider enabled hotspots
 				continue;
-
-//Strangerke, for Fascination
-//			if ((spot.flags & 0xFF00) != winId)
-//				continue;
 
 			if (spot.getWindow() != winId)
 				// Only check the active window
