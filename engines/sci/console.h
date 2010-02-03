@@ -40,7 +40,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 class Console : public GUI::Debugger {
 public:
-	Console(SciEngine *vm);
+	Console(SciEngine *engine);
 	virtual ~Console();
 	void preEnter();
 	void postEnter();
@@ -149,7 +149,7 @@ private:
 	int printNode(reg_t addr);
 
 private:
-	SciEngine *_vm;
+	SciEngine *_engine;
 	bool _mouseVisible;
 	Common::String _videoFile;
 	int _videoFrameDelay;
