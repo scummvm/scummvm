@@ -338,8 +338,13 @@ int MP3Stream::readBuffer(int16 *buffer, const int numSamples) {
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
-	// TODO: Properly check whether creating the MP3 stream succeeded.
-	return new MP3Stream(stream, disposeAfterUse);
+	SeekableAudioStream *s = new MP3Stream(stream, disposeAfterUse);
+	if (s && s->endOfData()) {
+		delete s;
+		return 0;
+	} else {
+		return s;
+	}
 }
 
 } // End of namespace Audio
