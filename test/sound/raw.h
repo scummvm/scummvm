@@ -12,108 +12,155 @@ class RawStreamTestSuite : public CxxTest::TestSuite
 {
 public:
 	template<typename T>
-	static T *createSine(int sampleRate, int time) {
+	static T *createSine(const int sampleRate, const int time) {
 		T *sine = (T *)malloc(sizeof(T) * time * sampleRate);
 
-		const T maxValue = std::numeric_limits<T>::max();
+		const bool isUnsigned = !std::numeric_limits<T>::is_signed;
+		const T xorMask = isUnsigned ? (1 << (std::numeric_limits<T>::digits - 1)) : 0;
+		const T maxValue = std::numeric_limits<T>::max() ^ xorMask;
 
 		for (int i = 0; i < time * sampleRate; ++i)
-			sine[i] = (T)(sin((double)i / sampleRate * 2 * PI) * maxValue);
+			sine[i] = ((T)(sin((double)i / sampleRate * 2 * PI) * maxValue)) ^ xorMask;
 
 		return sine;
 	}
 
-	static Audio::SeekableAudioStream *createSineStream8Bit(int sampleRate, int time, const int8 **sineP) {
-		int8 *sine = createSine<int8>(sampleRate, time);
+	template<typename T>
+	static Audio::SeekableAudioStream *createSineStream(const int sampleRate, const int time, int16 **comp, bool le) {
+		T *sine = createSine<T>(sampleRate, time);
 
-		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sampleRate * time, DisposeAfterUse::YES);
-		Audio::SeekableAudioStream *s = Audio::makeRawStream(sD, sampleRate, 0);
+		const bool isUnsigned = !std::numeric_limits<T>::is_signed;
+		const T xorMask = isUnsigned ? (1 << (std::numeric_limits<T>::digits - 1)) : 0;
+		const bool is16Bits = (sizeof(T) == 2);
+		assert(sizeof(T) == 2 || sizeof(T) == 1);
 
-		if (sineP)
-			*sineP = sine;
-
-		return s;
-	}
-
-	static Audio::SeekableAudioStream *createSineStream16Bit(int sampleRate, int time, bool le, const int16 **sineP) {
-		int16 *sine = createSine<int16>(sampleRate, time);
-
-		if (le) {
-			for (int i = 0; i < sampleRate * time; ++i)
-				WRITE_LE_UINT16(&sine[i], sine[i]);
-		} else {
-			for (int i = 0; i < sampleRate * time; ++i)
-				WRITE_BE_UINT16(&sine[i], sine[i]);
+		if (comp) {
+			*comp = new int16[sampleRate * time];
+			for (int i = 0; i < sampleRate * time; ++i) {
+				if (is16Bits)
+					(*comp)[i] = sine[i] ^ xorMask;
+				else
+					(*comp)[i] = (sine[i] ^ xorMask) << 8;
+			}
 		}
 
-		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sizeof(int16) * sampleRate * time, DisposeAfterUse::YES);
-		Audio::SeekableAudioStream *s = Audio::makeRawStream(sD, sampleRate, Audio::FLAG_16BITS | (le ? Audio::FLAG_LITTLE_ENDIAN : 0));
+		if (is16Bits) {
+			if (le) {
+				for (int i = 0; i < sampleRate * time; ++i)
+					WRITE_LE_UINT16(&sine[i], sine[i]);
+			} else {
+				for (int i = 0; i < sampleRate * time; ++i)
+					WRITE_BE_UINT16(&sine[i], sine[i]);
+			}
+		}
 
-		if (sineP)
-			*sineP = sine;
+		Common::SeekableReadStream *sD = new Common::MemoryReadStream((const byte *)sine, sizeof(T) * sampleRate * time, DisposeAfterUse::YES);
+		Audio::SeekableAudioStream *s = Audio::makeRawStream(sD, sampleRate,
+		                                                     (is16Bits ? Audio::FLAG_16BITS : 0)
+		                                                     | (isUnsigned ? Audio::FLAG_UNSIGNED : 0)
+		                                                     | (le ? Audio::FLAG_LITTLE_ENDIAN : 0));
 
 		return s;
 	}
 
-	void test_read_buffer_8_bit_mono() {
+	void test_read_buffer_8_bit_signed_mono() {
 		const int sampleRate = 11025;
 		const int time = 2;
 
-		const int8 *sine;
-		Audio::SeekableAudioStream *s = createSineStream8Bit(sampleRate, time, &sine);
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine, false);
 
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
-
-		bool fine = true;
-		for (int i = 0; i < sampleRate * time; ++i)
-			fine &= (buffer[i] == (sine[i] << 8));
-		TS_ASSERT_EQUALS(fine, true);
-
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sizeof(int16) * sampleRate * time), 0);
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
+		delete[] sine;
 		delete[] buffer;
 		delete s;
 	}
 
-	void test_read_buffer_16_bit_be_mono() {
+	void test_read_buffer_8_bit_unsigned_mono() {
 		const int sampleRate = 11025;
 		const int time = 2;
 
-		const int16 *sine = 0;
-		Audio::SeekableAudioStream *s = createSineStream16Bit(sampleRate, time, false, &sine);
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<uint8>(sampleRate, time, &sine, false);
 
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
-
-		bool fine = true;
-		for (int i = 0; i < sampleRate * time; ++i)
-			fine &= (buffer[i] == (int16)READ_BE_UINT16(&sine[i]));
-		TS_ASSERT_EQUALS(fine, true);
-
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sizeof(int16) * sampleRate * time), 0);
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
+		delete[] sine;
 		delete[] buffer;
 		delete s;
 	}
 
-	void test_read_buffer_16_bit_le_mono() {
+	void test_read_buffer_16_bit_signed_be_mono() {
 		const int sampleRate = 11025;
 		const int time = 2;
 
-		const int16 *sine = 0;
-		Audio::SeekableAudioStream *s = createSineStream16Bit(sampleRate, time, true, &sine);
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<int16>(sampleRate, time, &sine, false);
 
 		int16 *buffer = new int16[sampleRate * time];
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
-
-		bool fine = true;
-		for (int i = 0; i < sampleRate * time; ++i)
-			fine &= (buffer[i] == (int16)READ_LE_UINT16(&sine[i]));
-		TS_ASSERT_EQUALS(fine, true);
-
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sizeof(int16) * sampleRate * time), 0);
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
+		delete[] sine;
+		delete[] buffer;
+		delete s;
+	}
+
+	void test_read_buffer_16_bit_unsigned_be_mono() {
+		const int sampleRate = 11025;
+		const int time = 2;
+
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<uint16>(sampleRate, time, &sine, false);
+
+		int16 *buffer = new int16[sampleRate * time];
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sizeof(int16) * sampleRate * time), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] sine;
+		delete[] buffer;
+		delete s;
+	}
+
+	void test_read_buffer_16_bit_signed_le_mono() {
+		const int sampleRate = 11025;
+		const int time = 2;
+
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<int16>(sampleRate, time, &sine, true);
+
+		int16 *buffer = new int16[sampleRate * time];
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sizeof(int16) * sampleRate * time), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] sine;
+		delete[] buffer;
+		delete s;
+	}
+
+	void test_read_buffer_16_bit_unsigned_le_mono() {
+		const int sampleRate = 11025;
+		const int time = 2;
+
+		int16 *sine;
+		Audio::SeekableAudioStream *s = createSineStream<uint16>(sampleRate, time, &sine, true);
+
+		int16 *buffer = new int16[sampleRate * time];
+		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
+		TS_ASSERT_EQUALS(memcmp(sine, buffer, sizeof(int16) * sampleRate * time), 0);
+		TS_ASSERT_EQUALS(s->endOfData(), true);
+
+		delete[] sine;
 		delete[] buffer;
 		delete s;
 	}
