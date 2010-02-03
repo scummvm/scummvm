@@ -85,8 +85,8 @@ MouseButtons Hotspots::Hotspot::getButton() const {
 	return kMouseButtonsNone;
 }
 
-uint8 Hotspots::Hotspot::getWindow() const {
-	return (flags & 0x0F00) >> 8;
+uint16 Hotspots::Hotspot::getWindow() const {
+	return (flags & 0x0F00);
 }
 
 uint8 Hotspots::Hotspot::getCursor() const {
@@ -576,16 +576,16 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				continue;
 
 //Strangerke, for Fascination
-			if ((spot.flags & 0xFF00) != winId)
-				continue;
+//			if ((spot.flags & 0xFF00) != winId)
+//				continue;
 
 			if (spot.getType() > kTypeMove)
 				// Only consider click and move hotspots
 				continue;
 
-//			if (spot.getWindow() != 0)
-				// Only check the main window
-//				continue;
+			if (spot.getWindow() != winId)
+				// Only check the current window
+				continue;
 
 			if (!spot.isIn(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy))
 				// If we're not in it, ignore it
@@ -610,12 +610,12 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 				continue;
 
 //Strangerke, for Fascination
-			if ((spot.flags & 0xFF00) != winId)
-				continue;
-
-//			if (spot.getWindow() != 0)
-				// Only check the main window
+//			if ((spot.flags & 0xFF00) != winId)
 //				continue;
+
+			if (spot.getWindow() != winId)
+				// Only check the active window
+				continue;
 
 			if (spot.getType() < kTypeMove)
 				// Only consider hotspots that can be clicked
@@ -1665,6 +1665,8 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 			cursor = 0;
 			for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 				const Hotspot &spot = _hotspots[i];
+				// this check is /really/ Fascination specific. 
+				// It's illogical, so if it's to be reused in Adi games... Be careful!
 				if ((spot.flags & 0xFF00) == curType)
 					if (spot.isIn(x - deltax, y - deltay)) {
 						if (spot.getType() < kTypeInput1NoLeave)

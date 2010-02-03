@@ -128,7 +128,7 @@ private:
 
 		Type         getType  () const;
 		MouseButtons getButton() const;
-		uint8        getWindow() const;
+		uint16       getWindow() const;
 		uint8        getCursor() const;
 		uint8        getState () const;
 
