@@ -221,7 +221,7 @@ int script_init_engine(EngineState *s) {
 	s->_breakpoints.clear(); // No breakpoints defined
 	s->_activeBreakpointTypes = 0;
 
-	if (s->detectLofsType() == SCI_VERSION_1_MIDDLE)
+	if (s->_features->detectLofsType() == SCI_VERSION_1_MIDDLE)
 		s->_segMan->setExportAreWide(true);
 	else
 		s->_segMan->setExportAreWide(false);
@@ -280,7 +280,7 @@ int game_init(EngineState *s) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
-		game_init_sound(s, 0, s->detectDoSoundType());
+		game_init_sound(s, 0, s->_features->detectDoSoundType());
 #endif
 
 	// Load game language into printLang property of game object
@@ -296,7 +296,7 @@ int game_exit(EngineState *s) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state
-		game_init_sound(s, SFX_STATE_FLAG_NOSOUND, s->detectDoSoundType());
+		game_init_sound(s, SFX_STATE_FLAG_NOSOUND, s->_features->detectDoSoundType());
 #else
 		s->_audio->stopAllAudio();
 		s->_soundCmd->clearPlayList();

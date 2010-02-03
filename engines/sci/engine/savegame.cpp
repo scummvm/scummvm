@@ -976,7 +976,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	temp = retval->_sound._songlib;
-	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags, s->detectDoSoundType());
+	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags, s->_features->detectDoSoundType());
 	retval->sfx_init_flags = s->sfx_init_flags;
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
@@ -1008,6 +1008,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->successor = NULL;
 	retval->_gameId = s->_gameId;
 
+	retval->_features->setGameInfo(retval->_gameObj, retval->_gameId);
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	retval->_sound._it = NULL;
 	retval->_sound._flags = s->_sound._flags;
@@ -1028,7 +1030,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	} else {
 #endif
 		retval->_gui->resetEngineState(retval);
-		retval->_gui->init(retval->usesOldGfxFunctions());
+		retval->_gui->init(retval->_features->usesOldGfxFunctions());
 #ifdef ENABLE_SCI32
 	}
 #endif

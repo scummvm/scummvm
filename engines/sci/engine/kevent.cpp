@@ -151,7 +151,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	if (s->detectDoSoundType() <= SCI_VERSION_0_LATE) {
+	if (s->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
 		// If we're running a SCI0 game, update the sound cues, to compensate
 		// for the fact that SCI0 does not poll to update the sound cues itself,
 		// like SCI01 and later do with cmdUpdateSoundCues. kGetEvent is called

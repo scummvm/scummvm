@@ -190,7 +190,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
-	switch (s->detectSetCursorType()) {
+	switch (s->_features->detectSetCursorType()) {
 	case SCI_VERSION_0_EARLY:
 		return kSetCursorSci0(s, argc, argv);
 	case SCI_VERSION_1_1:
@@ -553,7 +553,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 3) {
 		if (!argv[2].isNull())
 			addToFlag = true;
-		if (!s->usesOldGfxFunctions())
+		if (!s->_features->usesOldGfxFunctions())
 			addToFlag = !addToFlag;
 	}
 	if (argc >= 4)

@@ -37,6 +37,7 @@ namespace Common {
 
 #include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/seg_manager.h"
 
 #include "sci/parser/vocabulary.h"
@@ -113,15 +114,6 @@ enum kLanguage {
 	K_LANG_PORTUGUESE = 351
 };
 
-enum FeatureDetection {
-	kDetectGfxFunctions = 0,
-	kDetectMoveCountType = 1,
-	kDetectSoundType = 2,
-	kDetectSetCursorType = 3,
-	kDetectLofsType = 4,
-	kDetectSci21KernelTable = 5
-};
-
 class FileHandle {
 public:
 	Common::String _name;
@@ -150,6 +142,8 @@ public:
 	Vocabulary *_voc;
 
 	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */
+
+	GameFeatures *_features;
 
 	/* Non-VM information */
 
@@ -257,75 +251,6 @@ public:
 
 private:
 	kLanguage charToLanguage(const char c) const;
-
-
-public:
-	// TODO: The following methods and member variables deal with (detecting)
-	// features and capabilities the active game expects to find in the engine.
-	// It should likely be moved to a separate class.
-
-	/**
-	 * Autodetects the DoSound type
-	 * @return DoSound type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE /
-	 *                       SCI_VERSION_1_EARLY / SCI_VERSION_1_LATE
-	 */
-	SciVersion detectDoSoundType();
-
-	/**
-	 * Autodetects the SetCursor type
-	 * @return SetCursor type, SCI_VERSION_0_EARLY / SCI_VERSION_1_1
-	 */
-	SciVersion detectSetCursorType();
-
-	/**
-	 * Autodetects the Lofs type
-	 * @return Lofs type, SCI_VERSION_0_EARLY / SCI_VERSION_1_MIDDLE / SCI_VERSION_1_1
-	 */
-	SciVersion detectLofsType();
-
-	/**
-	 * Autodetects the graphics functions used
-	 * @return Graphics functions type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
-	 */
-	SciVersion detectGfxFunctionsType();
-	
-#ifdef ENABLE_SCI32
-	/**
-	 * Autodetects the kernel functions used in SCI2.1
-	 * @return Graphics functions type, SCI_VERSION_2 / SCI_VERSION_2_1
-	 */
-	SciVersion detectSci21KernelType();
-#endif
-
-	/**
-	 * Applies to all versions before 0.000.502
-	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
-	 * with the opposite default value (obviously).
-	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
-	 * zones from 42 to 190.
-	 */
-	bool usesOldGfxFunctions() { return detectGfxFunctionsType() == SCI_VERSION_0_EARLY; }
-
-	/**
-	 * Autodetects the Bresenham routine used in the actor movement functions
-	 * @return Move count type, kIncrementMoveCnt / kIgnoreMoveCnt
-	 */
-	MoveCountType detectMoveCountType();
-
-	bool handleMoveCount() { return detectMoveCountType() == kIncrementMoveCount; }
-
-	bool usesCdTrack() { return _usesCdTrack; }
-
-private:
-	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
-
-	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
-#ifdef ENABLE_SCI32
-	SciVersion _sci21KernelType;
-#endif
-
-	MoveCountType _moveCountType;
-	bool _usesCdTrack;
 };
 
 } // End of namespace Sci

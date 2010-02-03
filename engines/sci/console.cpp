@@ -417,11 +417,11 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Detected features:\n");
 	DebugPrintf("------------------\n");
-	DebugPrintf("Sound type: %s\n", getSciVersionDesc(s->detectDoSoundType()).c_str());
-	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(s->detectGfxFunctionsType()).c_str());
-	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(s->detectLofsType()).c_str());
-	DebugPrintf("Move count type: %s\n", (s->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
-	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(s->detectSetCursorType()).c_str());
+	DebugPrintf("Sound type: %s\n", getSciVersionDesc(s->_features->detectDoSoundType()).c_str());
+	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(s->_features->detectGfxFunctionsType()).c_str());
+	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(s->_features->detectLofsType()).c_str());
+	DebugPrintf("Move count type: %s\n", (s->_features->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
+	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(s->_features->detectSetCursorType()).c_str());
 	DebugPrintf("View type: %s\n", viewTypeDesc[s->resMan->getViewType()]);
 	DebugPrintf("Resource volume version: %s\n", s->resMan->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", s->resMan->getMapVersionDesc());
@@ -1592,7 +1592,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	SoundResource *soundRes = new SoundResource(number, _engine->getResourceManager(), _engine->_gamestate->detectDoSoundType());
+	SoundResource *soundRes = new SoundResource(number, _engine->getResourceManager(), _engine->_gamestate->_features->detectDoSoundType());
 
 	if (!soundRes) {
 		DebugPrintf("Not a sound resource!\n");

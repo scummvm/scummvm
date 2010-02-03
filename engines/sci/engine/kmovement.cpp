@@ -267,7 +267,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
-	if (s->handleMoveCount()) {
+	if (s->_features->handleMoveCount()) {
 		if (max_movcnt > movcnt) {
 			++movcnt;
 			PUT_SEL32V(segMan, mover, b_movCnt, movcnt); // Needed for HQ1/Ogre?

@@ -90,7 +90,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	// JonesCD uses different functions based on the cdaudio.map file
 	// to use red book tracks.
-	if (s->usesCdTrack())
+	if (s->_features->usesCdTrack())
 		return kDoCdAudio(s, argc, argv);
 
 	Audio::Mixer *mixer = g_system->getMixer();
