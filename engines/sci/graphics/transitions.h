@@ -30,7 +30,7 @@
 
 namespace Sci {
 
-struct GuiTransitionTranslateEntry {
+struct GfxTransitionTranslateEntry {
 	int16 orgId;
 	int16 newId;
 	bool blackoutFlag;
@@ -60,17 +60,17 @@ enum {
 };
 
 class Screen;
-class Transitions {
+class GfxTransitions {
 public:
-	Transitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA);
-	~Transitions();
+	GfxTransitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA);
+	~GfxTransitions();
 
 	void setup(int16 number, bool blackoutFlag);
 	void doit(Common::Rect picRect);
 
 private:
 	void init();
-	const GuiTransitionTranslateEntry *translateNumber(int16 number, const GuiTransitionTranslateEntry *tablePtr);
+	const GfxTransitionTranslateEntry *translateNumber(int16 number, const GfxTransitionTranslateEntry *tablePtr);
 	void doTransition(int16 number, bool blackout);
 	void setNewPalette(bool blackoutFlag);
 	void setNewScreen(bool blackoutFlag);
@@ -94,7 +94,7 @@ private:
 	GfxPalette *_palette;
 
 	bool _isVGA;
-	const GuiTransitionTranslateEntry *_translationTable;
+	const GfxTransitionTranslateEntry *_translationTable;
 	int16 _number;
 	bool _blackoutFlag;
 	Common::Rect _picRect;

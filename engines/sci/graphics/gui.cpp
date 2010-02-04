@@ -54,7 +54,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _ports(ports), _audio(audio) {
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
-	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
+	_transitions = new GfxTransitions(this, _screen, _palette, _s->resMan->isVGA());
 	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette, _transitions);
 	_s->_gfxPaint = _paint16;
 	_s->_gfxPaint16 = _paint16;

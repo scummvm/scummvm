@@ -77,12 +77,12 @@ typedef Common::List<AnimateEntry *> AnimateList;
 class GfxCache;
 class GfxPorts;
 class GfxPaint16;
-class Screen;
-class SciPalette;
-class Transitions;
+class GfxScreen;
+class GfxPalette;
+class GfxTransitions;
 class GfxAnimate {
 public:
-	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, Transitions *transitions);
+	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
 
 	// FIXME: Don't store EngineState
@@ -119,7 +119,7 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	Cursor *_cursor;
-	Transitions *_transitions;
+	GfxTransitions *_transitions;
 
 	uint16 _listCount;
 	AnimateEntry *_listData;

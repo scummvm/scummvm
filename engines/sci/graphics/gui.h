@@ -41,7 +41,7 @@ enum {
 	SCI_CONTROLS_TYPE_DUMMY			= 10
 };
 
-class Screen;
+class GfxScreen;
 class GfxPalette;
 class Cursor;
 class GfxCache;
@@ -52,7 +52,7 @@ class GfxAnimate;
 class GfxControls;
 class GfxMenu;
 class GfxText16;
-class Transitions;
+class GfxTransitions;
 
 class SciGui {
 public:
@@ -132,7 +132,7 @@ private:
 	GfxControls *_controls;
 	GfxMenu *_menu;
 	GfxText16 *_text16;
-	Transitions *_transitions;
+	GfxTransitions *_transitions;
 	int16 _palVaryId;
 	uint32 _palVaryStart;
 	uint32 _palVaryEnd;

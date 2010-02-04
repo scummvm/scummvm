@@ -34,15 +34,15 @@
 namespace Sci {
 
 class GfxPorts;
-class Screen;
-class SciPalette;
+class GfxScreen;
+class GfxPalette;
 class Font;
 class SciGuiPicture;
 class View;
 
 class GfxPaint16 : public GfxPaint {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, Transitions *transitions);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions);
 	~GfxPaint16();
 
 	void init(GfxText16 *text16);
@@ -91,7 +91,7 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxText16 *_text16;
-	Transitions *_transitions;
+	GfxTransitions *_transitions;
 
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;
