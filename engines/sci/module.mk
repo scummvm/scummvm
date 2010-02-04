@@ -43,7 +43,6 @@ MODULE_OBJS := \
 	graphics/gui.o \
 	graphics/menu.o \
 	graphics/paint16.o \
-	graphics/paint32.o \
 	graphics/palette.o \
 	graphics/picture.o \
 	graphics/portrait.o \
@@ -75,6 +74,7 @@ MODULE_OBJS += \
 	engine/kernel32.o \
 	graphics/frameout.o \
 	graphics/gui32.o \
+	graphics/paint32.o \
 	graphics/robot.o \
 	video/vmd_decoder.o
 endif
