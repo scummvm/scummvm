@@ -2412,6 +2412,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"fascination",
+			"",
+			AD_ENTRY1s("disk0.stk", "aff9fcc619f4dd19eae228affd0d34c8", 189964),
+			EN_ANY,
+			kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeFascination,
+		kFeaturesNone,
+		"disk0.stk", 0, 0
+	},
+	{
+		{
 			"geisha",
 			"",
 			AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
