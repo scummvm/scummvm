@@ -526,4 +526,22 @@ void GfxScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
 	}
 }
 
+int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
+	int16 oldPicNotValid;
+
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		oldPicNotValid = _picNotValidSci11;
+
+		if (newPicNotValid != -1)
+			_picNotValidSci11 = newPicNotValid;
+	} else {
+		oldPicNotValid = _picNotValid;
+
+		if (newPicNotValid != -1)
+			_picNotValid = newPicNotValid;
+	}
+
+	return oldPicNotValid;
+}
+
 } // End of namespace Sci

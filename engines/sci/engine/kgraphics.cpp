@@ -215,7 +215,7 @@ reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	int16 newPicNotValid = (argc > 0) ? argv[0].toUint16() : -1;
 
-	return make_reg(0, s->_gui->picNotValid(newPicNotValid));
+	return make_reg(0, s->_gfxScreen->kernelPicNotValid(newPicNotValid));
 }
 
 Common::Rect kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1) {

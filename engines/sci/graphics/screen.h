@@ -95,6 +95,8 @@ public:
 	int _picNotValid; // possible values 0, 1 and 2
 	int _picNotValidSci11; // another variable that is used by kPicNotValid in sci1.1
 
+	int16 kernelPicNotValid(int16 newPicNotValid);
+
 private:
 	uint16 _width;
 	uint16 _height;

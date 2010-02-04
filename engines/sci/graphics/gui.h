@@ -79,8 +79,6 @@ public:
 	virtual void graphRedrawBox(Common::Rect rect);
 	virtual void graphAdjustPriority(int top, int bottom);
 
-	virtual int16 picNotValid(int16 newPicNotValid);
-
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
 	virtual uint16 onControl(byte screenMask, Common::Rect rect);

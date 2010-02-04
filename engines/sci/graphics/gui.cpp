@@ -296,25 +296,6 @@ void SciGui::graphAdjustPriority(int top, int bottom) {
 	}
 }
 
-int16 SciGui::picNotValid(int16 newPicNotValid) {
-	int16 oldPicNotValid;
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		oldPicNotValid = _screen->_picNotValidSci11;
-
-		if (newPicNotValid != -1)
-			_screen->_picNotValidSci11 = newPicNotValid;
-	} else {
-		oldPicNotValid = _screen->_picNotValid;
-
-		if (newPicNotValid != -1)
-			_screen->_picNotValid = newPicNotValid;
-	}
-
-	return oldPicNotValid;
-}
-
-
 void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
 	while (shakeCount--) {
 		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
