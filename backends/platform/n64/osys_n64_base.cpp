@@ -795,7 +795,6 @@ uint32 OSystem_N64::getMillis() {
 }
 
 void OSystem_N64::delayMillis(uint msecs) {
-#ifndef _NORMAL_N64_DELAY_
 	// In some cases a game might hang waiting for audio being
 	// played. This is a workaround for all the situations i
 	// found (kyra 1 & 2 DOS).
@@ -804,13 +803,11 @@ void OSystem_N64::delayMillis(uint msecs) {
 	refillAudioBuffers();
 	uint32 pastMillis = (getMilliTick() - oldTime);
 
-	if (pastMillis >= msecs)
+	if (pastMillis >= msecs) {
 		return;
-	else
+	} else {
 		delay(msecs - pastMillis);
-#else
-	delay(msecs);
-#endif
+	}
 }
 
 // As we don't have multi-threading, no need for mutexes
