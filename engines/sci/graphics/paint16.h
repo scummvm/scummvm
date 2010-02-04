@@ -38,7 +38,7 @@ class GfxScreen;
 class GfxPalette;
 class Font;
 class SciGuiPicture;
-class View;
+class GfxView;
 
 class GfxPaint16 : public GfxPaint {
 public:
