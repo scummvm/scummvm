@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_PAINT16_H
-#define SCI_GRAPHICS_PAINT16_H
+#ifndef SCI_GRAPHICS_PAINT32_H
+#define SCI_GRAPHICS_PAINT32_H
 
 #include "sci/graphics/gui.h"
 
