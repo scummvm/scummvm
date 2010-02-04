@@ -41,7 +41,7 @@ Scene::Scene() : intro(false), _engine(NULL),
 		orientation(kActorRight), actor_talking(false),
 		message_timer(0), message_first_frame(0), message_last_frame(0), message_animation(NULL),
 		current_event(SceneEvent::kNone), hide_actor(false), callback(0), callback_timer(0),
-		_fade_timer(0), _fade_type(0), _idle_timer(0) {}
+		_fade_timer(0), _idle_timer(0) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
@@ -197,7 +197,6 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_system = system;
 
 	_fade_timer = 0;
-	_fade_type = 0;
 
 	memset(palette, 0, sizeof(palette));
 
@@ -532,6 +531,30 @@ int Scene::lookupZoom(uint y) const {
 }
 
 
+void Scene::paletteEffect(byte step) {
+	Resources *res = Resources::instance();
+	byte *src = res->dseg.ptr(0x6609);
+	byte *dst = palette + 3 * 0xf2;
+	for(byte i = 0; i < 0xd; ++i) {
+		for(byte c = 0; c < 3; ++c, ++src) 
+			*dst++ = *src > step? *src - step: 0;
+	}
+}
+
+byte Scene::findFade() const {
+	if (_id <= 0)
+		return 0;
+
+	const Common::Array<FadeType> &scene_fades = fades[_id - 1];
+	for(uint i = 0; i < scene_fades.size(); ++i) {
+		const FadeType &fade = scene_fades[i];
+		if (fade.rect.in(position)) {
+			return fade.value;
+		}
+	}
+	return 0;
+}
+
 bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 	Resources *res = Resources::instance();
 	bool busy;
@@ -683,6 +706,16 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		} else if (!hide_actor) {
 			actor_animation.free();
 			uint zoom = lookupZoom(position.y);
+			{
+				byte fade = findFade();
+				static byte old_fade = 0;
+				if (fade != old_fade) {
+					old_fade = fade;
+					paletteEffect(fade);
+					if (_fade_timer == 0)
+						setPalette(4);
+				}
+			}
 
 			if (!path.empty()) {
 				const Common::Point &destination = path.front();
@@ -1044,18 +1077,6 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kFade:
 			_fade_timer = current_event.orientation != 0? 5: -5;
-			_fade_type = 0;
-			if (_id > 0) {
-				Common::Array<FadeType> &scene_fades = fades[_id - 1];
-				for(uint i = 0; i < scene_fades.size(); ++i) {
-					const FadeType &fade = scene_fades[i];
-					if (fade.rect.in(position)) {
-						debug(0, "found fade type %u", fade.value);
-						_fade_type = fade.value;
-						break;
-					}
-				}
-			}
 			current_event.clear();
 			break;
 
@@ -1084,6 +1105,7 @@ bool Scene::processEventQueue() {
 }
 
 void Scene::setPalette(unsigned mul) {
+	//debug(0, "setPalette(%u)", mul);
 	byte p[1024];
 
 	memset(p, 0, 1024);

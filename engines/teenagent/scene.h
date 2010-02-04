@@ -169,6 +169,9 @@ private:
 	void playActorAnimation(uint id, bool loop, bool ignore);
 
 	byte palette[768];
+	void paletteEffect(byte step);
+	byte findFade() const;
+
 	static Common::Point messagePosition(const Common::String &str, Common::Point position);
 	static uint messageDuration(const Common::String &str);
 
@@ -220,7 +223,6 @@ private:
 	uint16 callback, callback_timer;
 
 	int _fade_timer;
-	int _fade_type;
 	uint _idle_timer;
 
 	struct Sound {
