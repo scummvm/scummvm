@@ -165,6 +165,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(plane);
 	FIND_SELECTOR(top);
 	FIND_SELECTOR(left);
+	FIND_SELECTOR(resY);
+	FIND_SELECTOR(resX);
 	FIND_SELECTOR(dimmed);
 	FIND_SELECTOR(fore);
 #endif
