@@ -1044,7 +1044,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 			priority = 15;
 	}
 
-	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
+	s->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
 }

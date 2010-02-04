@@ -1093,7 +1093,7 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	uint16 loopNo = atoi(argv[2]);
 	uint16 celNo = atoi(argv[3]);
 
-	_engine->_gamestate->_gui->drawCel(resourceId, loopNo, celNo, 50, 50, 0, 0);
+	_engine->_gamestate->_gfxPaint->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, false, NULL_REG);
 	return true;
 }
 

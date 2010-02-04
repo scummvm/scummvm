@@ -276,16 +276,6 @@ void SciGui::drawMenuBar(bool clear) {
 	}
 }
 
-void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
-	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
-		_paint16->drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
-	} else {
-		_paint16->drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
-	}
-	_palette->setOnScreen();
-}
-
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_paint16->paintRect(rect);
 }

@@ -76,8 +76,6 @@ public:
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawMenuBar(bool clear);
 
-	virtual void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode = false, reg_t upscaledHiresHandle = NULL_REG);
-
 	virtual void graphFillBoxForeground(Common::Rect rect);
 	virtual void graphFillBoxBackground(Common::Rect rect);
 	virtual void graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control);

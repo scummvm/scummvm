@@ -346,4 +346,14 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 	_ports->setPort(oldPort);
 }
 
+void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
+		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+	} else {
+		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
+	}
+	_palette->setOnScreen();
+}
+
 } // End of namespace Sci
