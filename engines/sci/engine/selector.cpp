@@ -171,6 +171,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(resX);
 	FIND_SELECTOR(dimmed);
 	FIND_SELECTOR(fore);
+	FIND_SELECTOR(back);
 #endif
 }
 

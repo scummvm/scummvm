@@ -210,6 +210,7 @@ struct SelectorCache {
 	Selector resY;
 
 	Selector fore;
+	Selector back;
 	Selector dimmed;
 #endif
 };
