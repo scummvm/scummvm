@@ -55,11 +55,21 @@ public:
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
 
+	void startPalVary(uint16 paletteId, uint16 ticks);
+	void togglePalVary(bool pause);
+	void stopPalVary();
+
 	Palette _sysPalette;
 
 private:
+	static void palVaryCallback(void *refCon);
+	void doPalVary();
+
 	GfxScreen *_screen;
 	ResourceManager *_resMan;
+	int16 _palVaryId;
+	uint32 _palVaryStart;
+	uint32 _palVaryEnd;
 
 	Common::Array<PalSchedule> _schedules;
 };

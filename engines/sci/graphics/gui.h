@@ -101,10 +101,6 @@ public:
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);
 
-	void startPalVary(uint16 paletteId, uint16 ticks);
-	void togglePalVary(bool pause);
-	void stopPalVary();
-
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 	virtual bool debugEGAdrawingVisualize(bool state);
@@ -124,8 +120,6 @@ protected:
 
 private:
 	virtual void initPriorityBands();
-	static void palVaryCallback(void *refCon);
-	void doPalVary();
 
 	AudioPlayer *_audio;
 	GfxAnimate *_animate;
@@ -133,9 +127,6 @@ private:
 	GfxMenu *_menu;
 	GfxText16 *_text16;
 	GfxTransitions *_transitions;
-	int16 _palVaryId;
-	uint32 _palVaryStart;
-	uint32 _palVaryEnd;
 
 	bool _usesOldGfxFunctions;
 };

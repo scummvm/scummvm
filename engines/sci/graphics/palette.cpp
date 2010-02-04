@@ -417,4 +417,37 @@ void GfxPalette::kernelAnimateSet() {
 // Saving/restoring
 //         need to save start and target-palette, when palVaryOn = true
 
+void GfxPalette::startPalVary(uint16 paletteId, uint16 ticks) {
+	if (_palVaryId >= 0)	// another palvary is taking place, return
+		return;
+
+	_palVaryId = paletteId;
+	_palVaryStart = g_system->getMillis();
+	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
+	((SciEngine*)g_engine)->getTimerManager()->installTimerProc(&palVaryCallback, 1000 / 60, this);
+}
+
+void GfxPalette::togglePalVary(bool pause) {
+	// this call is actually counting states, so calling this 3 times with true will require calling it later
+	// 3 times with false to actually remove pause
+
+	// TODO
+}
+
+void GfxPalette::stopPalVary() {
+	((SciEngine*)g_engine)->getTimerManager()->removeTimerProc(&palVaryCallback);
+	_palVaryId = -1;	// invalidate the target palette
+
+	// HACK: just set the target palette
+	kernelSetFromResource(_palVaryId, true);
+}
+
+void GfxPalette::palVaryCallback(void *refCon) {
+	((GfxPalette *)refCon)->doPalVary();
+}
+
+void GfxPalette::doPalVary() {
+	// TODO: do palette transition here...
+}
+
 } // End of namespace Sci

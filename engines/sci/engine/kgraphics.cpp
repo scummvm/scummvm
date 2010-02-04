@@ -691,7 +691,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 3) {
 			paletteId = argv[1].toUint16();
 			time = argv[2].toUint16();
-			s->_gui->startPalVary(paletteId, time);
+			s->_gfxPalette->startPalVary(paletteId, time);
 		} else {
 			warning("kPalVary(init) called with unsupported argc %d", argc);
 		}
@@ -699,7 +699,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 3: { // DeInit
 		if (argc == 1) {
-			s->_gui->stopPalVary();
+			s->_gfxPalette->stopPalVary();
 		} else {
 			warning("kPalVary(deinit) called with unsupported argc %d", argc);
 		}
@@ -709,7 +709,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		bool pauseState;
 		if (argc == 2) {
 			pauseState = argv[1].isNull() ? false : true;
-			s->_gui->togglePalVary(pauseState);
+			s->_gfxPalette->togglePalVary(pauseState);
 		} else {
 			warning("kPalVary(pause) called with unsupported argc %d", argc);
 		}
