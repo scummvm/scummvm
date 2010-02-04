@@ -1714,7 +1714,7 @@ static void GetVisibleThings() {
 	lua_Object result = lua_createtable();
 
 	// TODO verify code below
-	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); i++) {
+	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i) {
 		if (!(*i)->inSet(g_grim->sceneName()))
 			continue;
 		// Consider the active actor visible
@@ -2715,7 +2715,7 @@ void GetControlState() {
 }
 
 static void killBitmapPrimitives(Bitmap *bitmap) {
-	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); i++) {
+	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
 		PrimitiveObject *p = *i;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
 			g_grim->killPrimitiveObject(p);
@@ -2987,11 +2987,11 @@ static void GetTextObjectDimensions() {
 
 static void ExpireText() {
 	// Expire all the text objects
-	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); i++)
+	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); ++i)
 		(*i)->setDisabled(true);
 
 	// Cleanup actor references to deleted text objects
-	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); i++)
+	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); ++i)
 		(*i)->lineCleanup();
 }
 
@@ -3232,7 +3232,7 @@ static void ChangePrimitive() {
 
 	psearch = static_cast<PrimitiveObject *>(lua_getuserdata(param1));
 
-	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); i++) {
+	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); ++i) {
 		PrimitiveObject *p = *i;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
 				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {

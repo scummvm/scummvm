@@ -405,7 +405,7 @@ void GfxTinyGL::drawShadowPlanes() {
 
 	tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
 	_currentShadowArray->planeList.begin();
-	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = *i;
 		tglBegin(TGL_POLYGON);
 		for (int k = 0; k < shadowSector->getNumVertices(); k++) {

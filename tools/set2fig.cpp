@@ -105,4 +105,5 @@ int main(int argc, char *argv[]) {
 
 		numRead++;
 	} while (numRead < numSectors);
+	fclose(in);
 }

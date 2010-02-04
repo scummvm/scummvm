@@ -149,7 +149,7 @@ public:
 		std::string str(text->str);
 		if (translateStrings)
 			str = g_localizer->localize(str.c_str()).c_str();
-		for (std::string::iterator i = str.begin(); i != str.end(); i++) {
+		for (std::string::iterator i = str.begin(); i != str.end(); ++i) {
 			unsigned char c = *i;
 			if (strchr(specials, c)) {
 				int i = strchr(specials, c) - specials;
@@ -272,7 +272,7 @@ public:
 		os << " }";
 	}
 	~ArrayExpr() {
-		for (mapping_list::iterator i = mappings.begin(); i != mappings.end(); i++) {
+		for (mapping_list::iterator i = mappings.begin(); i != mappings.end(); ++i) {
 			delete i->first;
 			delete i->second;
 		}

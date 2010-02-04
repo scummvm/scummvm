@@ -31,9 +31,7 @@ int32 luaM_growaux(void **block, int32 nelems, int32 size, const char *errormsg,
 */
 void *luaM_realloc(void *block, int32 size) {
 	if (size == 0) {
-		if (block) {
-			free(block);
-		}
+		free(block);
 		return NULL;
 	}
 	block = block ? realloc(block, size) : malloc(size);

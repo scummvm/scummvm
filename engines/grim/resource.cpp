@@ -81,12 +81,12 @@ ResourceLoader::ResourceLoader() {
 }
 
 ResourceLoader::~ResourceLoader() {
-	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
+	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
 		delete *i;
 }
 
 const Lab *ResourceLoader::getLab(const char *filename) const {
-	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
+	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); ++i)
 		if ((*i)->fileExists(filename))
 			return *i;
 

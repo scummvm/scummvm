@@ -139,8 +139,7 @@ static void res_close(struct mspack_file *file) {
 	struct mspack_file_p *handle = (struct mspack_file_p *)file;
 
 	if (handle) {
-		if (handle->CodeTable)
-			free(handle->CodeTable);
+		free(handle->CodeTable);
 		fclose(handle->fh);
 		free(handle);
 	}

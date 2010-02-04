@@ -307,10 +307,10 @@ GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
-	for (SceneListType::const_iterator i = _scenes.begin(); i != _scenes.end(); i++)
+	for (SceneListType::const_iterator i = _scenes.begin(); i != _scenes.end(); ++i)
 		delete (*i);
 
-	for (ActorListType::const_iterator i = _actors.begin(); i != _actors.end(); i++)
+	for (ActorListType::const_iterator i = _actors.begin(); i != _actors.end(); ++i)
 		delete (*i);
 
 	killPrimitiveObjects();
@@ -663,12 +663,12 @@ static void cameraPostChangeHandle(int num) {
 
 void GrimEngine::drawPrimitives() {
 	// Draw Primitives
-	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
+	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
 		(*i)->draw();
 	}
 
 	// Draw text
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
 		(*i)->draw();
 	}
 }
@@ -774,7 +774,7 @@ void GrimEngine::updateDisplayScene() {
 		_currScene->setupLights();
 
 		// Update actor costumes & sets
-		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 			Actor *a = *i;
 
 			// Update the actor's costumes & chores
@@ -788,7 +788,7 @@ void GrimEngine::updateDisplayScene() {
 		g_currentUpdatedActor = NULL;
 
 		// Draw actors
-		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+		for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 			Actor *a = *i;
 			if (a->inSet(_currScene->name()) && a->visible())
 				a->draw();
@@ -1051,7 +1051,7 @@ void GrimEngine::saveActors(SaveGame *state) {
 	state->beginSection('ACTR');
 
 	state->writeLESint32(_actors.size());
-	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); ++i) {
 		Actor *a = *i;
 		PointerId ptr = makeIdFromPointer(a);
 		state->writeLEUint32(ptr.low);
@@ -1066,7 +1066,7 @@ void GrimEngine::saveFonts(SaveGame *state) {
 	state->beginSection('FONT');
 
 	state->writeLESint32(_fonts.size());
-	for (Common::List<Font *>::iterator i = _fonts.begin(); i != _fonts.end(); i++) {
+	for (Common::List<Font *>::iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
 		Font *f = *i;
 		PointerId ptr = makeIdFromPointer(f);
 		state->writeLEUint32(ptr.low);
@@ -1098,7 +1098,7 @@ void GrimEngine::saveTextObjects(SaveGame *state) {
 	state->writeLESint32(sayLineDefaults.y);
 
 	state->writeLESint32(_textObjects.size());
-	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); ++i) {
 		TextObject *t = *i;
 		ptr = makeIdFromPointer(t);
 		state->writeLEUint32(ptr.low);
@@ -1113,7 +1113,7 @@ void GrimEngine::saveScenes(SaveGame *state) {
 	state->beginSection('SET ');
 
 	state->writeLESint32(_scenes.size());
-	for (SceneListType::iterator i = _scenes.begin(); i != _scenes.end(); i++) {
+	for (SceneListType::iterator i = _scenes.begin(); i != _scenes.end(); ++i) {
 		Scene *s = *i;
 		s->saveState(state);
 	}
@@ -1127,7 +1127,7 @@ void GrimEngine::savePrimitives(SaveGame *state) {
 	state->beginSection('PRIM');
 
 	state->writeLESint32(_primitiveObjects.size());
-	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
+	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); ++i) {
 		PrimitiveObject *p = *i;
 		ptr = makeIdFromPointer(p);
 		state->writeLEUint32(ptr.low);
@@ -1168,7 +1168,7 @@ void GrimEngine::savegameCallback() {
 
 Scene *GrimEngine::findScene(const char *name) {
 	// Find scene object
-	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); i++) {
+	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); ++i) {
 		if (!strcmp((*i)->name(), name))
 			return *i;
 	}

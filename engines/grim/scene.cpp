@@ -108,11 +108,9 @@ Scene::Scene(const char *sceneName, const char *buf, int len) :
 Scene::~Scene() {
 	delete[] _cmaps;
 	delete[] _setups;
-	if (_lights)
-		delete[] _lights;
-	if (_sectors)
-		delete[] _sectors;
-	for (StateList::iterator i = _states.begin(); i != _states.end(); i++)
+	delete[] _lights;
+	delete[] _sectors;
+	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i)
 		delete (*i);
 }
 
@@ -126,7 +124,7 @@ void Scene::saveState(SaveGame *savedState) {
 	savedState->writeLEUint32(_maxVolume);
 
 	savedState->writeLEUint32(_numObjectStates);
-	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
+	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
 //		ObjectState *s = *i;
 	}
 }
@@ -240,7 +238,7 @@ void Scene::setSetup(int num) {
 }
 
 void Scene::drawBitmaps(ObjectState::Position stage) {
-	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
+	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
 		if ((*i)->pos() == stage && _currSetup == _setups + (*i)->setupID())
 			(*i)->draw();
 	}
@@ -282,7 +280,7 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 
 ObjectState *Scene::findState(const char *filename) {
 	// Check the different state objects for the bitmap
-	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
+	for (StateList::iterator i = _states.begin(); i != _states.end(); ++i) {
 		const char *file = (*i)->bitmapFilename();
 
 		if (strcmp(file, filename) == 0)

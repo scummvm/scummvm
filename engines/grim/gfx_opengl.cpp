@@ -301,7 +301,7 @@ void GfxOpenGL::drawShadowPlanes() {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE);
 	_currentShadowArray->planeList.begin();
-	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
+	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); ++i) {
 		Sector *shadowSector = *i;
 		glBegin(GL_POLYGON);
 		for (int k = 0; k < shadowSector->getNumVertices(); k++) {

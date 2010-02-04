@@ -264,5 +264,8 @@ int main(int /* argc */, char *argv[]) {
 		delete[] sourceBuffer;
 	}
 
+	delete[] blocks;
+	delete[] codecs;
+	fclose(f);
 	return 0;
 }

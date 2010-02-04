@@ -58,9 +58,9 @@ VirtualKeyboard::~VirtualKeyboard() {
 void VirtualKeyboard::deleteEvents() {
 	ModeMap::iterator it_m;
 	VKEventMap::iterator it_e;
-	for (it_m = _modes.begin(); it_m != _modes.end(); it_m++) {
+	for (it_m = _modes.begin(); it_m != _modes.end(); ++it_m) {
 		VKEventMap *evt = &(it_m->_value.events);
-		for (it_e = evt->begin(); it_e != evt->end(); it_e++)
+		for (it_e = evt->begin(); it_e != evt->end(); ++it_e)
 			delete it_e->_value;
 	}
 }

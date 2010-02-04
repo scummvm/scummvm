@@ -91,8 +91,11 @@ int main(int argc, char **argv) {
 		fread(buf, 1, READ_LE_UINT32(&entries[i].size), infile);
 		fwrite(buf, 1, READ_LE_UINT32(&entries[i].size), outfile);
 		fclose(outfile);
+		free(buf);
 	}
 
 	fclose(infile);
+	free(str_table);
+	free(entries);
 	return 0;
 }
