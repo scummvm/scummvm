@@ -140,6 +140,8 @@ void GfxFrameout::kernelFrameout() {
 
 		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
+		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
+		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
 
 		// Fill our itemlist for this plane
 		itemCount = 0;
