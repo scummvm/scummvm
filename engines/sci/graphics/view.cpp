@@ -284,11 +284,11 @@ void View::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z
 	}
 }
 
-void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount) {
+void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
-	uint16 pixelNo = 0, runLength;
+	uint32 pixelNo = 0, runLength;
 	byte pixel;
 
 	if (celInfo->offsetEGA) {
@@ -297,7 +297,7 @@ void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount)
 		while (pixelNo < pixelCount) {
 			pixel = *literalPtr++;
 			runLength = pixel >> 4;
-			memset(outPtr + pixelNo, pixel & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNo));
+			memset(outPtr + pixelNo, pixel & 0x0F, MIN<uint32>(runLength, pixelCount - pixelNo));
 			pixelNo += runLength;
 		}
 		return;
@@ -332,7 +332,7 @@ void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount)
 						outPtr[pixelNo++] = *rlePtr++;
 					break;
 				case 0x80: // fill with color
-					memset(outPtr + pixelNo, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
+					memset(outPtr + pixelNo, *rlePtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
 					pixelNo += runLength;
 					break;
 				case 0xC0: // fill with transparent
@@ -355,7 +355,7 @@ void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount)
 						outPtr[pixelNo++] = *literalPtr++;
 					break;
 				case 0x80: // fill with color
-					memset(outPtr + pixelNo, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
+					memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
 					pixelNo += runLength;
 					break;
 				case 0xC0: // fill with transparent

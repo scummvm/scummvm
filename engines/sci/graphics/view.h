@@ -72,7 +72,7 @@ public:
 
 private:
 	void initData(GuiResourceId resourceId);
-	void unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint16 pixelCount);
+	void unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount);
 	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;
