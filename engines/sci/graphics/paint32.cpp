@@ -74,4 +74,8 @@ void GfxPaint32::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, 
 	_screen->copyRectToScreen(celRect);
 }
 
+void GfxPaint32::kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
+	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
+}
+
 } // End of namespace Sci

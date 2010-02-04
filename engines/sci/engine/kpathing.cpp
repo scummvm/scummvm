@@ -29,6 +29,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
 
 #include "common/list.h"
 
@@ -307,7 +308,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	p2.y = CLIP<int16>(p2.y, 0, height - 1);
 
 	assert(type >= 0 && type <= 3);
-	s->_gfxPaint16->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+	s->_gfxPaint->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start, int width, int height) {
@@ -328,7 +329,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	rect.right = CLIP<int16>(rect.right, 0, width - 1);
 
 	assert(start >= 0 && start <= 1);
-	s->_gfxPaint16->kernelGraphFrameBox(rect, point_colors[start]);
+	if (s->_gfxPaint16)
+		s->_gfxPaint16->kernelGraphFrameBox(rect, point_colors[start]);
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
@@ -1405,8 +1407,6 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
-			assert(s->_gui);
-
 			debug("[avoidpath] Pathfinding input:");
 			draw_point(s, start, 1, width, height);
 			draw_point(s, end, 0, width, height);
@@ -1417,7 +1417,10 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			// Update the whole screen
-			s->_gfxPaint16->kernelGraphUpdateBox(Common::Rect(0, 0, width - 1, height - 1), width > 320);
+			s->_gfxScreen->copyToScreen();
+			g_system->updateScreen();
+			if (!s->_gfxPaint16)
+				g_system->delayMillis(2500);
 		}
 
 		PathfindingState *p = convert_polygon_set(s, poly_list, start, end, width, height, opt);

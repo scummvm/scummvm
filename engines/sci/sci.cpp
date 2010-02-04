@@ -176,6 +176,7 @@ Common::Error SciEngine::run() {
 		_gamestate->_gfxAnimate = 0;
 		_gamestate->_gfxControls = 0;
 		_gamestate->_gfxMenu = 0;
+		_gamestate->_gfxPaint16 = 0;
 		_gamestate->_gfxPorts = 0;
 		_gamestate->_gui = 0;
 		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cache, cursor);
