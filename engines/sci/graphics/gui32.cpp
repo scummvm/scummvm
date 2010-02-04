@@ -55,8 +55,9 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 }
 
 SciGui32::~SciGui32() {
+	delete _frameout;
+	delete _paint32;
 	delete _compare;
-	delete _cache;
 }
 
 void SciGui32::resetEngineState(EngineState *s) {

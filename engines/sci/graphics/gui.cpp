@@ -72,11 +72,9 @@ SciGui::~SciGui() {
 	delete _controls;
 	delete _text16;
 	delete _animate;
-	delete _transitions;
 	delete _paint16;
-	delete _ports;
+	delete _transitions;
 	delete _compare;
-	delete _cache;
 }
 
 void SciGui::resetEngineState(EngineState *s) {

@@ -250,11 +250,14 @@ Common::Error SciEngine::run() {
 
 	delete _gamestate->_soundCmd;
 	delete _gamestate->_gui;
+	delete _gamestate->_gui32;
+	delete _gamestate->_gfxPorts;
+	delete _gamestate->_gfxCache;
+	delete _gamestate->_gfxPalette;
+	delete cursor;
+	delete _gamestate->_gfxScreen;
 	delete _gamestate->_event;
 	delete segMan;
-	delete cursor;
-	delete palette;
-	delete screen;
 	delete _gamestate;
 
 	return Common::kNoError;
