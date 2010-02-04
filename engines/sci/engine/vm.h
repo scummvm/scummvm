@@ -204,6 +204,8 @@ struct SelectorCache {
 	Selector plane;
 	Selector top;
 	Selector left;
+	Selector bottom;
+	Selector right;
 	Selector resX;
 	Selector resY;
 
