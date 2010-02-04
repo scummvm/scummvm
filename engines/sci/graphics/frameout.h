@@ -35,6 +35,7 @@ struct FrameoutEntry {
 	int16 celNo;
 	int16 x, y, z;
 	int16 priority;
+	uint16 signal;
 	uint16 scaleSignal;
 	int16 scaleX;
 	int16 scaleY;

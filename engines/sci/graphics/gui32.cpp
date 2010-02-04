@@ -64,13 +64,21 @@ void SciGui32::init() {
 }
 
 void SciGui32::globalToLocal(int16 *x, int16 *y, reg_t planeObj) {
-	*x = *x - GET_SEL32V(_s->_segMan, planeObj, left);
-	*y = *y - GET_SEL32V(_s->_segMan, planeObj, top);
+	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, resY);
+	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, resX);
+	//*x = ( *x * _screen->getWidth()) / resX;
+	//*y = ( *y * _screen->getHeight()) / resY;
+	*x -= GET_SEL32V(_s->_segMan, planeObj, left);
+	*y -= GET_SEL32V(_s->_segMan, planeObj, top);
 }
 
 void SciGui32::localToGlobal(int16 *x, int16 *y, reg_t planeObj) {
-	*x = *x + GET_SEL32V(_s->_segMan, planeObj, left);
-	*y = *y + GET_SEL32V(_s->_segMan, planeObj, top);
+	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, resY);
+	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, resX);
+	*x += GET_SEL32V(_s->_segMan, planeObj, left);
+	*y += GET_SEL32V(_s->_segMan, planeObj, top);
+	//*x = ( *x * resX) / _screen->getWidth();
+	//*y = ( *y * resY) / _screen->getHeight();
 }
 
 void SciGui32::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {

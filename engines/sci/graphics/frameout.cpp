@@ -106,6 +106,7 @@ void GfxFrameout::kernelFrameout() {
 	int16 planePictureCel;
 	int16 planePriority;
 	int16 planeTop, planeLeft;
+	int16 planeResY, planeResX;
 
 	reg_t itemObject;
 	reg_t itemPlane;
@@ -132,6 +133,8 @@ void GfxFrameout::kernelFrameout() {
 
 		planeTop = GET_SEL32V(_segMan, planeObject, top);
 		planeLeft = GET_SEL32V(_segMan, planeObject, left);
+		planeResY = GET_SEL32V(_segMan, planeObject, resY);
+		planeResX = GET_SEL32V(_segMan, planeObject, resX);
 
 		// Fill our itemlist for this plane
 		itemCount = 0;
@@ -148,12 +151,18 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = GET_SEL32V(_segMan, itemObject, y);
 				itemEntry->z = GET_SEL32V(_segMan, itemObject, z);
 				itemEntry->priority = GET_SEL32V(_segMan, itemObject, priority);
+				itemEntry->signal = GET_SEL32V(_segMan, itemObject, signal);
 				itemEntry->scaleX = GET_SEL32V(_segMan, itemObject, scaleX);
 				itemEntry->scaleY = GET_SEL32V(_segMan, itemObject, scaleY);
 				itemEntry->object = itemObject;
 
-				itemEntry->x += planeLeft;
 				itemEntry->y += planeTop;
+				itemEntry->x += planeLeft;
+				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
+				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
+
+				if (itemEntry->priority == 0)
+					itemEntry->priority = itemEntry->y;
 
 				itemList.push_back(itemEntry);
 				itemEntry++;
@@ -181,9 +190,9 @@ void GfxFrameout::kernelFrameout() {
 			if (itemEntry->viewId != 0xFFFF) {
 				View *view = _cache->getView(itemEntry->viewId);
 
-				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128)) {
 					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, &itemEntry->celRect);
-				else
+				} else
 					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, &itemEntry->celRect);
 
 				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= _screen->getHeight()) {
