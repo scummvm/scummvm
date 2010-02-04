@@ -33,10 +33,10 @@
 namespace Sci {
 
 class Font;
-class View;
+class GfxView;
 
 typedef Common::HashMap<int, Font *> FontCache;
-typedef Common::HashMap<int, View *> ViewCache;
+typedef Common::HashMap<int, GfxView *> ViewCache;
 
 class GfxCache {
 public:
@@ -45,7 +45,7 @@ public:
 
 	Font *getFont(GuiResourceId fontId);
 
-	View *getView(GuiResourceId viewId);
+	GfxView *getView(GuiResourceId viewId);
 	int16 kernelViewGetCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);
 	int16 kernelViewGetCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo);
 	int16 kernelViewGetLoopCount(GuiResourceId viewId);

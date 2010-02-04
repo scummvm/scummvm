@@ -31,13 +31,13 @@
 
 namespace Sci {
 
-View::View(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
+GfxView::GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
-View::~View() {
+GfxView::~GfxView() {
 	// Iterate through the loops
 	for (uint16 loopNum = 0; loopNum < _loopCount; loopNum++) {
 		// and through the cells of each loop
@@ -55,7 +55,7 @@ static const byte EGAmappingStraight[SCI_VIEW_EGAMAPPING_SIZE] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
 
-void View::initData(GuiResourceId resourceId) {
+void GfxView::initData(GuiResourceId resourceId) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), true);
 	if (!_resource) {
 		error("view resource %d not found", resourceId);
@@ -227,34 +227,34 @@ void View::initData(GuiResourceId resourceId) {
 	}
 }
 
-GuiResourceId View::getResourceId() {
+GuiResourceId GfxView::getResourceId() {
 	return _resourceId;
 }
 
-int16 View::getWidth(int16 loopNo, int16 celNo) {
+int16 GfxView::getWidth(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
 }
 
-int16 View::getHeight(int16 loopNo, int16 celNo) {
+int16 GfxView::getHeight(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
 }
 
-CelInfo *View::getCelInfo(int16 loopNo, int16 celNo) {
+CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
 }
 
-LoopInfo *View::getLoopInfo(int16 loopNo) {
+LoopInfo *GfxView::getLoopInfo(int16 loopNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loopCount ? &_loop[loopNo] : NULL;
 }
 
-void View::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
+void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	if (celInfo) {
 		outRect->left = x + celInfo->displaceX - (celInfo->width >> 1);
@@ -264,7 +264,7 @@ void View::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Comm
 	}
 }
 
-void View::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect *outRect) {
+void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect *outRect) {
 	int16 scaledDisplaceX, scaledDisplaceY;
 	int16 scaledWidth, scaledHeight;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
@@ -284,7 +284,7 @@ void View::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z
 	}
 }
 
-void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
+void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
@@ -372,7 +372,7 @@ void View::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount)
 	error("Unable to decompress view");
 }
 
-byte *View::getBitmap(int16 loopNo, int16 celNo) {
+byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
@@ -405,7 +405,7 @@ byte *View::getBitmap(int16 loopNo, int16 celNo) {
 
 // Called after unpacking an EGA cel, this will try to undither (parts) of the cel if the dithering in here
 //  matches dithering used by the current picture
-void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
+void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
 	int16 *unditherMemorial = _screen->unditherGetMemorial();
 
 	// It makes no sense to go further, if no memorial data from current picture is available
@@ -478,7 +478,7 @@ void View::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clear
 	}
 }
 
-void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
+void GfxView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -526,7 +526,7 @@ void View::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectT
 
 // We don't fully follow sierra sci here, I did the scaling algo myself and it's definitely not pixel-perfect
 //  with the one sierra is using. It shouldn't matter because the scaled cel rect is definitely the same as in sierra sci
-void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
+void GfxView::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
@@ -603,13 +603,13 @@ void View::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 	}
 }
 
-uint16 View::getCelCount(int16 loopNo) {
+uint16 GfxView::getCelCount(int16 loopNo) {
 	if ((loopNo < 0) || (loopNo >= _loopCount))
 		return 0;
 	return _loop[loopNo].celCount;
 }
 
-Palette *View::getPalette() {
+Palette *GfxView::getPalette() {
 	return _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 }
 

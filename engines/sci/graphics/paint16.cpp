@@ -74,7 +74,7 @@ void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mi
 
 // This one is the only one that updates screen!
 void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
-	View *view = _cache->getView(viewId);
+	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect;
 
 	if (view) {
@@ -102,7 +102,7 @@ void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_ports->_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -120,7 +120,7 @@ void GfxPaint16::drawCel(View *view, int16 loopNo, int16 celNo, Common::Rect cel
 // This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen
 //  Hires-cels are available only SCI 1.1+
 void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX, uint16 scaleY) {
-	View *view = _cache->getView(viewId);
+	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
 	Common::Point curPortPos;
 	bool upscaledHiresHack = false;

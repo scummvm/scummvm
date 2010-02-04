@@ -35,10 +35,10 @@ namespace Sci {
 
 #define SCI_CURSOR_SCI0_TRANSPARENCYCOLOR 1
 
-class View;
-class SciPalette;
+class GfxView;
+class GfxPalette;
 
-typedef Common::HashMap<int, View *> CursorCache;
+typedef Common::HashMap<int, GfxView *> CursorCache;
 
 class Cursor {
 public:

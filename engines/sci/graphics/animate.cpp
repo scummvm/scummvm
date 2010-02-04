@@ -204,7 +204,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
 	AnimateEntry *listEntry;
 	uint16 signal;
-	View *view = NULL;
+	GfxView *view = NULL;
 	AnimateList::iterator listIterator;
 	AnimateList::iterator listEnd = _list.end();
 
@@ -546,7 +546,7 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
 	AnimateEntry *listEntry;
-	View *view = NULL;
+	GfxView *view = NULL;
 	AnimateList::iterator listIterator;
 	AnimateList::iterator listEnd = _list.end();
 
@@ -576,7 +576,7 @@ void GfxAnimate::addToPicDrawCels() {
 }
 
 void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
-	View *view = _cache->getView(viewId);
+	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect;
 
 	// Create rect according to coordinates and given cel

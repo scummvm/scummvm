@@ -48,13 +48,13 @@ struct LoopInfo {
 #define SCI_VIEW_EGAMAPPING_SIZE 16
 #define SCI_VIEW_EGAMAPPING_COUNT 8
 
-class Screen;
-class SciPalette;
+class GfxScreen;
+class GfxPalette;
 
-class View {
+class GfxView {
 public:
-	View(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId);
-	~View();
+	GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId);
+	~GfxView();
 
 	GuiResourceId getResourceId();
 	int16 getWidth(int16 loopNo, int16 celNo);

@@ -202,7 +202,7 @@ void GfxFrameout::kernelFrameout() {
 				}
 			}
 			if (itemEntry->viewId != 0xFFFF) {
-				View *view = _cache->getView(itemEntry->viewId);
+				GfxView *view = _cache->getView(itemEntry->viewId);
 
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128)) {
 					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, &itemEntry->celRect);

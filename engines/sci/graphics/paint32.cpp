@@ -65,7 +65,7 @@ void GfxPaint32::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 
 // This is "hacked" together, because its only used by debug command
 void GfxPaint32::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
-	View *view = _cache->getView(viewId);
+	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect(50, 50, 50, 50);
 	Common::Rect translatedRect;
 	celRect.bottom += view->getHeight(loopNo, celNo);

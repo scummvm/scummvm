@@ -138,9 +138,9 @@ void Cursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Poi
 		purgeCache();
 
 	if (!_cachedCursors.contains(viewNum))
-		_cachedCursors[viewNum] = new View(_resMan, _screen, _palette, viewNum);
+		_cachedCursors[viewNum] = new GfxView(_resMan, _screen, _palette, viewNum);
 
-	View *cursorView = _cachedCursors[viewNum];
+	GfxView *cursorView = _cachedCursors[viewNum];
 
 	CelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
 	int16 width = celInfo->width;

@@ -141,7 +141,7 @@ bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 }
 
 bool SciGui32::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
-	View *tmpView = _cache->getView(viewId);
+	GfxView *tmpView = _cache->getView(viewId);
 	CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
@@ -161,7 +161,7 @@ void SciGui32::baseSetter(reg_t object) {
 		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
 
 		if (viewId != SIGNAL_OFFSET) {
-			View *tmpView = _cache->getView(viewId);
+			GfxView *tmpView = _cache->getView(viewId);
 			Common::Rect celRect;
 
 			tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);

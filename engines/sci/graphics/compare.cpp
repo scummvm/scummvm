@@ -104,7 +104,7 @@ bool GfxCompare::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRec
 }
 
 void GfxCompare::SetNowSeen(reg_t objectReference) {
-	View *view = NULL;
+	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, view);
 	int16 loopNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, loop));

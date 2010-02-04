@@ -73,12 +73,12 @@ Font *GfxCache::getFont(GuiResourceId fontId) {
 	return _cachedFonts[fontId];
 }
 
-View *GfxCache::getView(GuiResourceId viewId) {
+GfxView *GfxCache::getView(GuiResourceId viewId) {
 	if (_cachedViews.size() >= MAX_CACHED_VIEWS)
 		purgeViewCache();
 
 	if (!_cachedViews.contains(viewId))
-		_cachedViews[viewId] = new View(_resMan, _screen, _palette, viewId);
+		_cachedViews[viewId] = new GfxView(_resMan, _screen, _palette, viewId);
 
 	return _cachedViews[viewId];
 }
