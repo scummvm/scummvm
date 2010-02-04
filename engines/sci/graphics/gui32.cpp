@@ -38,6 +38,7 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/paint32.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/robot.h"
 #include "sci/graphics/view.h"
@@ -48,7 +49,8 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
-	_frameout = new GfxFrameout(_s->_segMan, _s->resMan, _cache, _screen, _palette);
+	_paint32 = new GfxPaint32(_s->resMan, _s->_segMan, _s->_kernel, _cache, _screen, _palette);
+	_frameout = new GfxFrameout(_s->_segMan, _s->resMan, _cache, _screen, _palette, _paint32);
 }
 
 SciGui32::~SciGui32() {

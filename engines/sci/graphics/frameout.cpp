@@ -35,13 +35,14 @@
 #include "sci/graphics/font.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/paint32.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/frameout.h"
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCache *cache, GfxScreen *screen, GfxPalette *palette)
-	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette) {
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
+	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -107,6 +108,7 @@ void GfxFrameout::kernelFrameout() {
 	int16 planePriority;
 	Common::Rect planeRect;
 	int16 planeResY, planeResX;
+	byte planeBack;
 
 	reg_t itemObject;
 	reg_t itemPlane;
@@ -125,12 +127,6 @@ void GfxFrameout::kernelFrameout() {
 		if (planePriority == -1) // Plane currently not meant to be shown
 			continue;
 
-		planePictureNr = GET_SEL32V(_segMan, planeObject, picture);
-		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
-			planePicture = new SciGuiPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
-			planePictureCels = planePicture->getSci32celCount();
-		}
-
 		planeRect.top = GET_SEL32V(_segMan, planeObject, top);
 		planeRect.left = GET_SEL32V(_segMan, planeObject, left);
 		planeRect.bottom = GET_SEL32V(_segMan, planeObject, bottom);
@@ -142,6 +138,17 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
+
+		planeBack = GET_SEL32V(_segMan, planeObject, back);
+		if (planeBack) {
+			_paint32->fillRect(planeRect, planeBack);
+		}
+
+		planePictureNr = GET_SEL32V(_segMan, planeObject, picture);
+		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
+			planePicture = new SciGuiPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
+			planePictureCels = planePicture->getSci32celCount();
+		}
 
 		// Fill our itemlist for this plane
 		itemCount = 0;

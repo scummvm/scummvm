@@ -23,52 +23,31 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_FRAMEOUT_H
-#define SCI_GRAPHICS_FRAMEOUT_H
+#ifndef SCI_GRAPHICS_PAINT16_H
+#define SCI_GRAPHICS_PAINT16_H
+
+#include "sci/graphics/gui.h"
+
+#include "common/hashmap.h"
 
 namespace Sci {
 
-struct FrameoutEntry {
-	reg_t object;
-	GuiResourceId viewId;
-	int16 loopNo;
-	int16 celNo;
-	int16 x, y, z;
-	int16 priority;
-	uint16 signal;
-	uint16 scaleSignal;
-	int16 scaleX;
-	int16 scaleY;
-	Common::Rect celRect;
-};
-typedef Common::List<FrameoutEntry *> FrameoutList;
+class GfxPorts;
 
-class GfxCache;
-class GfxPaint32;
-class GfxFrameout {
+class GfxPaint32 {
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32);
-	~GfxFrameout();
+	GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxPalette *palette);
+	~GfxPaint32();
 
-	void kernelAddPlane(reg_t object);
-	void kernelUpdatePlane(reg_t object);
-	void kernelDeletePlane(reg_t object);
-	void kernelAddScreenItem(reg_t object);
-	void kernelDeleteScreenItem(reg_t object);
-	int16 kernelGetHighPlanePri();
-	void kernelFrameout();
+	void fillRect(Common::Rect rect, byte color);
 
 private:
-	SegManager *_segMan;
 	ResourceManager *_resMan;
+	SegManager *_segMan;
+	Kernel *_kernel;
 	GfxCache *_cache;
-	GfxPalette *_palette;
 	GfxScreen *_screen;
-	GfxPaint32 *_paint32;
-
-	Common::Array<reg_t> _screenItems;
-	Common::Array<reg_t> _planes;
-	int16 _highPlanePri;
+	GfxPalette *_palette;
 };
 
 } // End of namespace Sci

@@ -36,6 +36,7 @@ class GfxPalette;
 class GfxCache;
 class GfxCompare;
 class GfxFrameout;
+class GfxPaint32;
 
 class SciGui32 {
 public:
@@ -89,6 +90,7 @@ protected:
 	GfxCache *_cache;
 	GfxCompare *_compare;
 	GfxFrameout *_frameout;
+	GfxPaint32 *_paint32;
 
 private:
 };

@@ -204,16 +204,16 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen
 				for (x = r.left; x < r.right; x++) {
 					curVisual = _screen->getVisual(x, y);
 					if (curVisual == clrPen) {
-						_screen->putPixel(x, y, 1, clrBack, 0, 0);
+						_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, clrBack, 0, 0);
 					} else if (curVisual == clrBack) {
-						_screen->putPixel(x, y, 1, clrPen, 0, 0);
+						_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, clrPen, 0, 0);
 					}
 				}
 			}
 		} else { // just fill rect with ClrPen
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					_screen->putPixel(x, y, 1, clrPen, 0, 0);
+					_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, clrPen, 0, 0);
 				}
 			}
 		}
