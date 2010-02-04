@@ -356,4 +356,48 @@ void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, 
 	_palette->setOnScreen();
 }
 
+void GfxPaint16::kernelGraphFillBoxForeground(Common::Rect rect) {
+	paintRect(rect);
+}
+
+void GfxPaint16::kernelGraphFillBoxBackground(Common::Rect rect) {
+	eraseRect(rect);
+}
+
+void GfxPaint16::kernelGraphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
+	fillRect(rect, colorMask, color, priority, control);
+}
+
+void GfxPaint16::kernelGraphFrameBox(Common::Rect rect, int16 color) {
+	int16 oldColor = _ports->getPort()->penClr;
+	_ports->penColor(color);
+	frameRect(rect);
+	_ports->penColor(oldColor);
+}
+
+void GfxPaint16::kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
+	_ports->offsetLine(startPoint, endPoint);
+	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
+}
+
+reg_t GfxPaint16::kernelGraphSaveBox(Common::Rect rect, uint16 screenMask) {
+	return bitsSave(rect, screenMask);
+}
+
+reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(Common::Rect rect) {
+	return bitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
+}
+
+void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
+	bitsRestore(handle);
+}
+
+void GfxPaint16::kernelGraphUpdateBox(Common::Rect rect, bool hiresMode) {
+	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+	if ((!hiresMode) || (!_screen->getUpscaledHires()))
+		bitsShow(rect);
+	else
+		bitsShowHires(rect);
+}
+
 } // End of namespace Sci

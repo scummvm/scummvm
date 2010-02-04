@@ -72,6 +72,16 @@ public:
 	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle);
 
+	void kernelGraphFillBoxForeground(Common::Rect rect);
+	void kernelGraphFillBoxBackground(Common::Rect rect);
+	void kernelGraphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control);
+	void kernelGraphFrameBox(Common::Rect rect, int16 color);
+	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
+	reg_t kernelGraphSaveBox(Common::Rect rect, uint16 flags);
+	reg_t kernelGraphSaveUpscaledHiresBox(Common::Rect rect);
+	void kernelGraphRestoreBox(reg_t handle);
+	void kernelGraphUpdateBox(Common::Rect rect, bool hiresMode);
+
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;

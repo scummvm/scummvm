@@ -76,15 +76,6 @@ public:
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawMenuBar(bool clear);
 
-	virtual void graphFillBoxForeground(Common::Rect rect);
-	virtual void graphFillBoxBackground(Common::Rect rect);
-	virtual void graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control);
-	virtual void graphFrameBox(Common::Rect rect, int16 color);
-	virtual void graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
-	virtual reg_t graphSaveBox(Common::Rect rect, uint16 flags);
-	virtual reg_t graphSaveUpscaledHiresBox(Common::Rect rect);
-	virtual void graphRestoreBox(reg_t handle);
-	virtual void graphUpdateBox(Common::Rect rect, bool hiresMode);
 	virtual void graphRedrawBox(Common::Rect rect);
 	virtual void graphAdjustPriority(int top, int bottom);
 

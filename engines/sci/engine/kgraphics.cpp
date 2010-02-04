@@ -271,27 +271,27 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		if (!s->resMan->isVGA() && !s->resMan->isAmiga32color())
 			color &= 0x0F;
 
-		s->_gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
+		s->_gfxPaint16->kernelGraphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
 		break;
 
 	case K_GRAPH_SAVE_BOX:
 		rect = kGraphCreateRect(x, y, x1, y1);
 		screenMask = (argc > 5) ? argv[5].toUint16() : 0;
-		return s->_gui->graphSaveBox(rect, screenMask);
+		return s->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
 
 	case K_GRAPH_RESTORE_BOX:
 		// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
-		s->_gui->graphRestoreBox(argv[1]);
+		s->_gfxPaint16->kernelGraphRestoreBox(argv[1]);
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gui->graphFillBoxBackground(rect);
+		s->_gfxPaint16->kernelGraphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gui->graphFillBoxForeground(rect);
+		s->_gfxPaint16->kernelGraphFillBoxForeground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_ANY:
@@ -301,14 +301,14 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		colorMask = argv[5].toUint16();
 
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gui->graphFillBox(rect, colorMask, color, priority, control);
+		s->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 		break;
 
 	case K_GRAPH_UPDATE_BOX: {
 		rect = kGraphCreateRect(x, y, x1, y1);
 		bool hiresMode = (argc > 6) ? true : false;
 		// argc == 7 on upscaled hires
-		s->_gui->graphUpdateBox(rect, hiresMode);
+		s->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
 		break;
 	}
 
@@ -325,7 +325,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		return s->_gui->graphSaveUpscaledHiresBox(rect);
+		return s->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
 
 	default:
 		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());

@@ -276,50 +276,6 @@ void SciGui::drawMenuBar(bool clear) {
 	}
 }
 
-void SciGui::graphFillBoxForeground(Common::Rect rect) {
-	_paint16->paintRect(rect);
-}
-
-void SciGui::graphFillBoxBackground(Common::Rect rect) {
-	_paint16->eraseRect(rect);
-}
-
-void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
-	_paint16->fillRect(rect, colorMask, color, priority, control);
-}
-
-void SciGui::graphFrameBox(Common::Rect rect, int16 color) {
-	int16 oldColor = _ports->getPort()->penClr;
-	_ports->penColor(color);
-	_paint16->frameRect(rect);
-	_ports->penColor(oldColor);
-}
-
-void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
-	_ports->offsetLine(startPoint, endPoint);
-	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
-}
-
-reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 screenMask) {
-	return _paint16->bitsSave(rect, screenMask);
-}
-
-reg_t SciGui::graphSaveUpscaledHiresBox(Common::Rect rect) {
-	return _paint16->bitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
-}
-
-void SciGui::graphRestoreBox(reg_t handle) {
-	_paint16->bitsRestore(handle);
-}
-
-void SciGui::graphUpdateBox(Common::Rect rect, bool hiresMode) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
-	if ((!hiresMode) || (!_screen->getUpscaledHires()))
-		_paint16->bitsShow(rect);
-	else
-		_paint16->bitsShowHires(rect);
-}
-
 void SciGui::graphRedrawBox(Common::Rect rect) {
 	localToGlobal(&rect.left, &rect.top);
 	localToGlobal(&rect.right, &rect.bottom);
