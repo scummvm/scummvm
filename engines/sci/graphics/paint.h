@@ -23,34 +23,23 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_PAINT32_H
-#define SCI_GRAPHICS_PAINT32_H
+#ifndef SCI_GRAPHICS_PAINT_H
+#define SCI_GRAPHICS_PAINT_H
 
 #include "sci/graphics/gui.h"
-#include "sci/graphics/paint.h"
 
 #include "common/hashmap.h"
 
 namespace Sci {
 
-class GfxPorts;
-
-class GfxPaint32 : public GfxPaint {
+class GfxPaint {
 public:
-	GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxPalette *palette);
-	~GfxPaint32();
+	GfxPaint();
+	virtual ~GfxPaint();
 
-	void fillRect(Common::Rect rect, byte color);
-
-	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
+	virtual void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 
 private:
-	ResourceManager *_resMan;
-	SegManager *_segMan;
-	Kernel *_kernel;
-	GfxCache *_cache;
-	GfxScreen *_screen;
-	GfxPalette *_palette;
 };
 
 } // End of namespace Sci

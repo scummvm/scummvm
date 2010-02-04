@@ -30,37 +30,17 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/cache.h"
-#include "sci/graphics/paint32.h"
-#include "sci/graphics/font.h"
-#include "sci/graphics/picture.h"
-#include "sci/graphics/view.h"
-#include "sci/graphics/screen.h"
-#include "sci/graphics/palette.h"
+#include "sci/graphics/paint.h"
 
 namespace Sci {
 
-GfxPaint32::GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _screen(screen), _palette(palette) {
+GfxPaint::GfxPaint() {
 }
 
-GfxPaint32::~GfxPaint32() {
+GfxPaint::~GfxPaint() {
 }
 
-void GfxPaint32::fillRect(Common::Rect rect, byte color) {
-	int16 y, x;
-	for (y = rect.top; y < rect.bottom; y++) {
-		for (x = rect.left; x < rect.right; x++) {
-			_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, color, 0, 0);
-		}
-	}
-}
-
-void GfxPaint32::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	SciGuiPicture *picture = new SciGuiPicture(_resMan, 0, _screen, _palette, pictureId, false);
-
-	picture->draw(animationNr, mirroredFlag, addToFlag, EGApaletteNo);
-	delete picture;
+void GfxPaint::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 }
 
 } // End of namespace Sci

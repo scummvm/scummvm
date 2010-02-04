@@ -55,6 +55,9 @@ class GfxAnimate;
 class GfxCache;
 class GfxControls;
 class GfxMenu;
+class GfxPaint;
+class GfxPaint16;
+class GfxPaint32;
 class GfxPalette;
 class GfxPorts;
 class GfxScreen;
@@ -152,6 +155,8 @@ public:
 	GfxControls *_gfxControls; // Controls for 16-bit gfx
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette;
+	GfxPaint *_gfxPaint;
+	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
 	SciGui *_gui; /* Currently active Gui */

@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	graphics/font.o \
 	graphics/gui.o \
 	graphics/menu.o \
+	graphics/paint.o \
 	graphics/paint16.o \
 	graphics/palette.o \
 	graphics/picture.o \

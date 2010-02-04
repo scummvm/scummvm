@@ -40,11 +40,12 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/text16.h"
+#include "sci/graphics/transitions.h"
 
 namespace Sci {
 
-GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _screen(screen), _palette(palette) {
+GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, Transitions *transitions)
+	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _screen(screen), _palette(palette), _transitions(transitions) {
 }
 
 GfxPaint16::~GfxPaint16() {
@@ -328,6 +329,21 @@ void GfxPaint16::bitsFree(reg_t memoryHandle) {
 	if (!memoryHandle.isNull()) {
 		kfree(_segMan, memoryHandle);
 	}
+}
+
+void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
+
+	if (_ports->isFrontWindow(_ports->_picWind)) {
+		_screen->_picNotValid = 1;
+		drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		_transitions->setup(animationNr, animationBlackoutFlag);
+	} else {
+		_ports->beginUpdate(_ports->_picWind);
+		drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		_ports->endUpdate(_ports->_picWind);
+	}
+	_ports->setPort(oldPort);
 }
 
 } // End of namespace Sci

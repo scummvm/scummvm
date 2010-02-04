@@ -54,8 +54,10 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _ports(ports), _audio(audio) {
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
-	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette);
 	_transitions = new Transitions(this, _screen, _palette, _s->resMan->isVGA());
+	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette, _transitions);
+	_s->_gfxPaint = _paint16;
+	_s->_gfxPaint16 = _paint16;
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
 	_s->_gfxAnimate = _animate;
 	_text16 = new GfxText16(_s->resMan, _cache, _ports, _paint16, _screen);
@@ -274,21 +276,6 @@ void SciGui::drawMenuBar(bool clear) {
 	} else {
 		drawStatus("", 0, 0);
 	}
-}
-
-void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
-
-	if (_ports->isFrontWindow(_ports->_picWind)) {
-		_screen->_picNotValid = 1;
-		_paint16->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
-		_transitions->setup(animationNr, animationBlackoutFlag);
-	} else {
-		_ports->beginUpdate(_ports->_picWind);
-		_paint16->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
-		_ports->endUpdate(_ports->_picWind);
-	}
-	_ports->setPort(oldPort);
 }
 
 void SciGui::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {

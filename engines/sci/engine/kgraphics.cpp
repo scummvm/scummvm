@@ -41,6 +41,7 @@
 #include "sci/graphics/controls.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/paint16.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
@@ -559,7 +560,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
 
-	s->_gui->drawPicture(pictureId, animationNr, animationBlackoutFlag, mirroredFlag, addToFlag, EGApaletteNo);
+	s->_gfxPaint16->kernelDrawPicture(pictureId, animationNr, animationBlackoutFlag, mirroredFlag, addToFlag, EGApaletteNo);
 
 	return s->r_acc;
 }

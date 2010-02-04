@@ -27,6 +27,7 @@
 #define SCI_GRAPHICS_PAINT16_H
 
 #include "sci/graphics/gui.h"
+#include "sci/graphics/paint.h"
 
 #include "common/hashmap.h"
 
@@ -39,9 +40,9 @@ class Font;
 class SciGuiPicture;
 class View;
 
-class GfxPaint16 {
+class GfxPaint16 : public GfxPaint {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, Transitions *transitions);
 	~GfxPaint16();
 
 	void init(GfxText16 *text16);
@@ -68,6 +69,8 @@ public:
 	void bitsRestore(reg_t memoryHandle);
 	void bitsFree(reg_t memoryHandle);
 
+	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
+
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;
@@ -77,6 +80,7 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxText16 *_text16;
+	Transitions *_transitions;
 
 	// true means make EGA picture drawing visible
 	bool _EGAdrawingVisualize;

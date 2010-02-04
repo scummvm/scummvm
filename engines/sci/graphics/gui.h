@@ -76,7 +76,6 @@ public:
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawMenuBar(bool clear);
 
-	virtual void drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	virtual void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode = false, reg_t upscaledHiresHandle = NULL_REG);
 
 	virtual void graphFillBoxForeground(Common::Rect rect);

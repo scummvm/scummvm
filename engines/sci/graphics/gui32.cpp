@@ -50,6 +50,7 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 	_paint32 = new GfxPaint32(_s->resMan, _s->_segMan, _s->_kernel, _cache, _screen, _palette);
+	_s->_gfxPaint = _paint32;
 	_frameout = new GfxFrameout(_s->_segMan, _s->resMan, _cache, _screen, _palette, _paint32);
 }
 
