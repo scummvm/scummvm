@@ -105,7 +105,7 @@ void GfxFrameout::kernelFrameout() {
 	int16 planePictureCels = 0;
 	int16 planePictureCel;
 	int16 planePriority;
-	int16 planeTop, planeLeft;
+	Common::Rect planeRect;
 	int16 planeResY, planeResX;
 
 	reg_t itemObject;
@@ -131,10 +131,15 @@ void GfxFrameout::kernelFrameout() {
 			planePictureCels = planePicture->getSci32celCount();
 		}
 
-		planeTop = GET_SEL32V(_segMan, planeObject, top);
-		planeLeft = GET_SEL32V(_segMan, planeObject, left);
+		planeRect.top = GET_SEL32V(_segMan, planeObject, top);
+		planeRect.left = GET_SEL32V(_segMan, planeObject, left);
+		planeRect.bottom = GET_SEL32V(_segMan, planeObject, bottom);
+		planeRect.right = GET_SEL32V(_segMan, planeObject, right);
 		planeResY = GET_SEL32V(_segMan, planeObject, resY);
 		planeResX = GET_SEL32V(_segMan, planeObject, resX);
+
+		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
+		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 
 		// Fill our itemlist for this plane
 		itemCount = 0;
@@ -156,10 +161,10 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->scaleY = GET_SEL32V(_segMan, itemObject, scaleY);
 				itemEntry->object = itemObject;
 
-				itemEntry->y += planeTop;
-				itemEntry->x += planeLeft;
 				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
 				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
+				itemEntry->y += planeRect.top;
+				itemEntry->x += planeRect.left;
 
 				if (itemEntry->priority == 0)
 					itemEntry->priority = itemEntry->y;
@@ -205,10 +210,14 @@ void GfxFrameout::kernelFrameout() {
 					continue;
 				}
 
+				Common::Rect clipRect;
+				clipRect = itemEntry->celRect;
+				clipRect.clip(planeRect);
+
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-					view->draw(itemEntry->celRect, itemEntry->celRect, itemEntry->celRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, false);
+					view->draw(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, false);
 				else
-					view->drawScaled(itemEntry->celRect, itemEntry->celRect, itemEntry->celRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
+					view->drawScaled(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 			} else {
 				// Most likely a text entry
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
