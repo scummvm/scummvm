@@ -69,13 +69,6 @@ uint16 GfxCompare::isOnControl(uint16 screenMask, const Common::Rect &rect) {
 	return result;
 }
 
-static inline int sign_extend_byte(int value) {
-	if (value & 0x80)
-		return value - 256;
-	else
-		return value;
-}
-
 bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _segMan->lookupNode(curAddress);
@@ -123,8 +116,8 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, SELECTOR(view));
-	int16 loopNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, SELECTOR(loop)));
-	int16 celNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, SELECTOR(cel)));
+	int8 loopNo = (int8)GET_SEL32V(_segMan, objectReference, SELECTOR(loop));
+	int8 celNo = (int8)GET_SEL32V(_segMan, objectReference, SELECTOR(cel));
 	int16 x = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(x));
 	int16 y = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(y));
 	int16 z = 0;
