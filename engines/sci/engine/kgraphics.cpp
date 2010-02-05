@@ -1115,11 +1115,6 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	bool playedVideo = false;
 
-	// KQ6 Windows calls this with one argument. It doesn't seem
-	// to have a purpose...
-	if (argc == 1)
-		return NULL_REG;
-
 	// Hide the cursor if it's showing and then show it again if it was
 	// previously visible.
 	bool reshowCursor;
@@ -1128,51 +1123,9 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (reshowCursor)
 		s->_gfxCursor->kernelHide();
 
-	// The Windows and DOS versions use different video format as well
-	// as a different argument set.
-	if (argv[0].toUint16() == 0) {
-		// Windows (SCI1.1/SCI2)
-		Common::String filename = s->_segMan->getString(argv[1]);
-
-		Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
-		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
-		if (aviDecoder->loadFile(filename.c_str())) {
-			player->playVideo();
-			playedVideo = true;
-		} else {
-			warning("Failed to open movie file %s", filename.c_str());
-		}
-		aviDecoder->closeFile();
-		delete player;
-		delete aviDecoder;
-#ifdef ENABLE_SCI32
-	} else if (argv[0].toUint16() == 1) {
-		// Windows (SCI2.1)
-		
-		// TODO: This appears to be some sort of subop. case 0 contains the string
-		// for the video, so we'll just play it from there for now.
-		switch (argv[1].toUint16()) {
-		case 0: {
-			Common::String filename = s->_segMan->getString(argv[2]);
-			Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
-			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
-			if (aviDecoder->loadFile(filename.c_str())) {
-				player->playVideo();
-				playedVideo = true;
-			} else {
-				warning("Failed to open movie file %s", filename.c_str());
-			}
-			aviDecoder->closeFile();
-			delete player;
-			delete aviDecoder;
-			break;
-		}
-		default:
-			warning("Unhandled SCI2.1 kShowMovie subop %d", argv[1].toUint16());
-		}
-#endif
-	} else {
-		// DOS
+	if (argv[0].segment != 0) {
+		// DOS SEQ
+		// SEQ's are called with no subops, just the string and delay
 		Common::String filename = s->_segMan->getString(argv[0]);
 		int delay = argv[1].toUint16(); // Time between frames in ticks
 
@@ -1187,11 +1140,44 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		seqDecoder->closeFile();
 		delete player;
 		delete seqDecoder;
+	} else {
+		// Windows AVI (Macintosh QuickTime? Need to check KQ6 Macintosh)
+		// TODO: This appears to be some sort of subop. case 0 contains the string
+		// for the video, so we'll just play it from there for now.
+
+#ifdef ENABLE_SCI32
+		if (getSciVersion() >= SCI_VERSION_2_1) {
+			// SCI2.1 always has argv[0] as 1, the rest of the arguments seem to
+			// follow SCI1.1/2.
+			if (argv[0].toUint16() != 1)
+				error("SCI2.1 kShowMovie argv[0] not 1");
+			argv++;
+			argc--;
+		}
+#endif
+		switch (argv[0].toUint16()) {
+		case 0: {
+			Common::String filename = s->_segMan->getString(argv[1]);
+			Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
+			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
+			if (aviDecoder->loadFile(filename.c_str())) {
+				player->playVideo();
+				playedVideo = true;
+			} else {
+				warning("Failed to open movie file %s", filename.c_str());
+			}
+			aviDecoder->closeFile();
+			delete player;
+			delete aviDecoder;
+			break;
+		}
+		default:
+			warning("Unhandled SCI kShowMovie subop %d", argv[1].toUint16());
+		}
 	}
 
-	if (playedVideo) {
+	if (playedVideo)
 		s->_gfxScreen->kernelSyncWithFramebuffer();
-	}
 
 	if (reshowCursor)
 		s->_gfxCursor->kernelShow();
