@@ -322,7 +322,7 @@ Surface *AviDecoder::getNextFrame() {
 	} else if (getStreamType(nextTag) == 'wb') {
 		// Audio Chunk
 		uint32 chunkSize = _fileStream->readUint32LE();
-		byte *data = new byte[chunkSize];
+		byte *data = (byte *)malloc(chunkSize);
 		_fileStream->read(data, chunkSize);
 
 		byte flags = 0;
