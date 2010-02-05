@@ -95,7 +95,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "sfx");	// music/sound files in WAV format
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "robot");	// robot files
 
-	// Add the patches directory, except in KQ6; KQ6 comes with broken patches.
+	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
+	// is for the demo of Phantasmagoria, included in the disk
 	if (strcmp(getGameID(), "kq6"))
 		SearchMan.addSubDirectoryMatching(_gameDataDir, "patches");	// resource patches
 }
