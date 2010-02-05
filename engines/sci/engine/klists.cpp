@@ -415,11 +415,11 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];
 
-	int input_size = (int16)GET_SEL32V(segMan, source, size);
+	int input_size = (int16)GET_SEL32V(segMan, source, SELECTOR(size));
 	int i;
 
-	reg_t input_data = GET_SEL32(segMan, source, elements);
-	reg_t output_data = GET_SEL32(segMan, dest, elements);
+	reg_t input_data = GET_SEL32(segMan, source, SELECTOR(elements));
+	reg_t output_data = GET_SEL32(segMan, dest, SELECTOR(elements));
 
 	List *list;
 	Node *node;
@@ -430,10 +430,10 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	if (output_data.isNull()) {
 		list = s->_segMan->allocateList(&output_data);
 		list->first = list->last = NULL_REG;
-		PUT_SEL32(segMan, dest, elements, output_data);
+		PUT_SEL32(segMan, dest, SELECTOR(elements), output_data);
 	}
 
-	PUT_SEL32V(segMan, dest, size, input_size);
+	PUT_SEL32V(segMan, dest, SELECTOR(size), input_size);
 
 	list = s->_segMan->lookupList(input_data);
 	node = s->_segMan->lookupNode(list->first);

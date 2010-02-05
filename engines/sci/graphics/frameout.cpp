@@ -52,7 +52,7 @@ GfxFrameout::~GfxFrameout() {
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	_planes.push_back(object);
-	int16 planePri = GET_SEL32V(_segMan, object, priority) & 0xFFFF;
+	int16 planePri = GET_SEL32V(_segMan, object, SELECTOR(priority)) & 0xFFFF;
 	if (planePri > _highPlanePri)
 		_highPlanePri = planePri;
 }
@@ -72,7 +72,7 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 	_highPlanePri = 0;
 
 	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		int16 planePri = GET_SEL32V(_segMan, _planes[planeNr], priority) & 0xFFFF;
+		int16 planePri = GET_SEL32V(_segMan, _planes[planeNr], SELECTOR(priority)) & 0xFFFF;
 		if (planePri > _highPlanePri)
 			_highPlanePri = planePri;
 	}
@@ -124,29 +124,29 @@ void GfxFrameout::kernelFrameout() {
 
 	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
 		planeObject = _planes[planeNr];
-		planePriority = GET_SEL32V(_segMan, planeObject, priority);
+		planePriority = GET_SEL32V(_segMan, planeObject, SELECTOR(priority));
 
 		if (planePriority == -1) // Plane currently not meant to be shown
 			continue;
 
-		planeRect.top = GET_SEL32V(_segMan, planeObject, top);
-		planeRect.left = GET_SEL32V(_segMan, planeObject, left);
-		planeRect.bottom = GET_SEL32V(_segMan, planeObject, bottom);
-		planeRect.right = GET_SEL32V(_segMan, planeObject, right);
-		planeResY = GET_SEL32V(_segMan, planeObject, resY);
-		planeResX = GET_SEL32V(_segMan, planeObject, resX);
+		planeRect.top = GET_SEL32V(_segMan, planeObject, SELECTOR(top));
+		planeRect.left = GET_SEL32V(_segMan, planeObject, SELECTOR(left));
+		planeRect.bottom = GET_SEL32V(_segMan, planeObject, SELECTOR(bottom));
+		planeRect.right = GET_SEL32V(_segMan, planeObject, SELECTOR(right));
+		planeResY = GET_SEL32V(_segMan, planeObject, SELECTOR(resY));
+		planeResX = GET_SEL32V(_segMan, planeObject, SELECTOR(resX));
 
 		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
 
-		planeBack = GET_SEL32V(_segMan, planeObject, back);
+		planeBack = GET_SEL32V(_segMan, planeObject, SELECTOR(back));
 		if (planeBack) {
 			_paint32->fillRect(planeRect, planeBack);
 		}
 
-		planePictureNr = GET_SEL32V(_segMan, planeObject, picture);
+		planePictureNr = GET_SEL32V(_segMan, planeObject, SELECTOR(picture));
 		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
 			planePicture = new GfxPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
 			planePictureCels = planePicture->getSci32celCount();
@@ -157,19 +157,19 @@ void GfxFrameout::kernelFrameout() {
 		itemEntry = itemData;
 		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
 			itemObject = _screenItems[itemNr];
-			itemPlane = GET_SEL32(_segMan, itemObject, plane);
+			itemPlane = GET_SEL32(_segMan, itemObject, SELECTOR(plane));
 			if (planeObject == itemPlane) {
 				// Found an item on current plane
-				itemEntry->viewId = GET_SEL32V(_segMan, itemObject, view);
-				itemEntry->loopNo = GET_SEL32V(_segMan, itemObject, loop);
-				itemEntry->celNo = GET_SEL32V(_segMan, itemObject, cel);
-				itemEntry->x = GET_SEL32V(_segMan, itemObject, x);
-				itemEntry->y = GET_SEL32V(_segMan, itemObject, y);
-				itemEntry->z = GET_SEL32V(_segMan, itemObject, z);
-				itemEntry->priority = GET_SEL32V(_segMan, itemObject, priority);
-				itemEntry->signal = GET_SEL32V(_segMan, itemObject, signal);
-				itemEntry->scaleX = GET_SEL32V(_segMan, itemObject, scaleX);
-				itemEntry->scaleY = GET_SEL32V(_segMan, itemObject, scaleY);
+				itemEntry->viewId = GET_SEL32V(_segMan, itemObject, SELECTOR(view));
+				itemEntry->loopNo = GET_SEL32V(_segMan, itemObject, SELECTOR(loop));
+				itemEntry->celNo = GET_SEL32V(_segMan, itemObject, SELECTOR(cel));
+				itemEntry->x = GET_SEL32V(_segMan, itemObject, SELECTOR(x));
+				itemEntry->y = GET_SEL32V(_segMan, itemObject, SELECTOR(y));
+				itemEntry->z = GET_SEL32V(_segMan, itemObject, SELECTOR(z));
+				itemEntry->priority = GET_SEL32V(_segMan, itemObject, SELECTOR(priority));
+				itemEntry->signal = GET_SEL32V(_segMan, itemObject, SELECTOR(signal));
+				itemEntry->scaleX = GET_SEL32V(_segMan, itemObject, SELECTOR(scaleX));
+				itemEntry->scaleY = GET_SEL32V(_segMan, itemObject, SELECTOR(scaleY));
 				itemEntry->object = itemObject;
 
 				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
@@ -235,11 +235,11 @@ void GfxFrameout::kernelFrameout() {
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
 				Kernel *kernel = ((SciEngine *)g_engine)->getKernel();
 				if (lookup_selector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
-					Common::String text = _segMan->getString(GET_SEL32(_segMan, itemEntry->object, text));
-					int16 fontRes = GET_SEL32V(_segMan, itemEntry->object, font);
+					Common::String text = _segMan->getString(GET_SEL32(_segMan, itemEntry->object, SELECTOR(text)));
+					int16 fontRes = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(font));
 					GfxFont *font = new GfxFont(_resMan, _screen, fontRes);
-					bool dimmed = GET_SEL32V(_segMan, itemEntry->object, dimmed);
-					uint16 foreColor = GET_SEL32V(_segMan, itemEntry->object, fore);
+					bool dimmed = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(dimmed));
+					uint16 foreColor = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(fore));
 					uint16 curX = itemEntry->x;
 					uint16 curY = itemEntry->y;
 					for (uint32 i = 0; i < text.size(); i++) {

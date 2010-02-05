@@ -1519,9 +1519,9 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 		SegManager *segMan = _engine->_gamestate->_segMan;	// for PUT_SEL32V
 		_engine->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		_engine->_gamestate->_sound.sfx_remove_song(handle);
-		PUT_SEL32V(segMan, id, signal, SIGNAL_OFFSET);
-		PUT_SEL32V(segMan, id, nodePtr, 0);
-		PUT_SEL32V(segMan, id, handle, 0);
+		PUT_SEL32V(segMan, id, SELECTOR(signal), SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, id, SELECTOR(nodePtr), 0);
+		PUT_SEL32V(segMan, id, SELECTOR(handle), 0);
 	}
 #else
 

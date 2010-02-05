@@ -142,9 +142,9 @@ void GfxControls::texteditSetBlinkTime() {
 }
 
 void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
-	uint16 cursorPos = GET_SEL32V(_segMan, controlObject, cursor);
-	uint16 maxChars = GET_SEL32V(_segMan, controlObject, max);
-	reg_t textReference = GET_SEL32(_segMan, controlObject, text);
+	uint16 cursorPos = GET_SEL32V(_segMan, controlObject, SELECTOR(cursor));
+	uint16 maxChars = GET_SEL32V(_segMan, controlObject, SELECTOR(max));
+	reg_t textReference = GET_SEL32(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
 	uint16 textSize, eventType, eventKey;
 	bool textChanged = false;
@@ -156,14 +156,14 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (!eventObject.isNull()) {
 		textSize = text.size();
-		eventType = GET_SEL32V(_segMan, eventObject, type);
+		eventType = GET_SEL32V(_segMan, eventObject, SELECTOR(type));
 
 		switch (eventType) {
 		case SCI_EVENT_MOUSE_PRESS:
 			// TODO: Implement mouse support for cursor change
 			break;
 		case SCI_EVENT_KEYBOARD:
-			eventKey = GET_SEL32V(_segMan, eventObject, message);
+			eventKey = GET_SEL32V(_segMan, eventObject, SELECTOR(message));
 			switch (eventKey) {
 			case SCI_KEY_BACKSPACE:
 				if (cursorPos > 0) {
@@ -207,9 +207,9 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (textChanged) {
 		GuiResourceId oldFontId = _text16->GetFontId();
-		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, font);
-		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, nsLeft), GET_SEL32V(_segMan, controlObject, nsTop),
-							  GET_SEL32V(_segMan, controlObject, nsRight), GET_SEL32V(_segMan, controlObject, nsBottom));
+		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, SELECTOR(font));
+		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, SELECTOR(nsLeft)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsTop)),
+							  GET_SEL32V(_segMan, controlObject, SELECTOR(nsRight)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsBottom)));
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
 		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
@@ -228,7 +228,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
-	PUT_SEL32V(_segMan, controlObject, cursor, cursorPos);
+	PUT_SEL32V(_segMan, controlObject, SELECTOR(cursor), cursorPos);
 }
 
 int GfxControls::getPicNotValid() {

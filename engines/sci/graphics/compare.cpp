@@ -86,14 +86,17 @@ bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, Common::Rect checkRec
 	while (curNode) {
 		curObject = curNode->value;
 		if (curObject != checkObject) {
-			signal = GET_SEL32V(_segMan, curObject, signal);
+			signal = GET_SEL32V(_segMan, curObject, SELECTOR(signal));
 			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
-				curRect.left = GET_SEL32V(_segMan, curObject, brLeft);
-				curRect.top = GET_SEL32V(_segMan, curObject, brTop);
-				curRect.right = GET_SEL32V(_segMan, curObject, brRight);
-				curRect.bottom = GET_SEL32V(_segMan, curObject, brBottom);
+				curRect.left = GET_SEL32V(_segMan, curObject, SELECTOR(brLeft));
+				curRect.top = GET_SEL32V(_segMan, curObject, SELECTOR(brTop));
+				curRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
+				curRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
 				// Check if curRect is within checkRect
-				if (curRect.right > checkRect.left && curRect.left < checkRect.right && curRect.bottom > checkRect.top && curRect.top < checkRect.bottom) {
+				if (curRect.right > checkRect.left &&
+				    curRect.left < checkRect.right &&
+				    curRect.bottom > checkRect.top &&
+				    curRect.top < checkRect.bottom) {
 					return false;
 				}
 			}
@@ -114,14 +117,14 @@ uint16 GfxCompare::kernelOnControl(byte screenMask, Common::Rect rect) {
 void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
-	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, view);
-	int16 loopNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, loop));
-	int16 celNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, cel));
-	int16 x = (int16)GET_SEL32V(_segMan, objectReference, x);
-	int16 y = (int16)GET_SEL32V(_segMan, objectReference, y);
+	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, SELECTOR(view));
+	int16 loopNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, SELECTOR(loop)));
+	int16 celNo = sign_extend_byte((int16)GET_SEL32V(_segMan, objectReference, SELECTOR(cel)));
+	int16 x = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(x));
+	int16 y = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(y));
 	int16 z = 0;
 	if (_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(_segMan, objectReference, z);
+		z = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(z));
 
 	// now get cel rectangle
 	view = _cache->getView(viewId);
@@ -129,10 +132,10 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 
 	// TODO: sometimes loop is negative. Check what it means
 	if (lookup_selector(_segMan, objectReference, _kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
-		PUT_SEL32V(_segMan, objectReference, nsLeft, celRect.left);
-		PUT_SEL32V(_segMan, objectReference, nsRight, celRect.right);
-		PUT_SEL32V(_segMan, objectReference, nsTop, celRect.top);
-		PUT_SEL32V(_segMan, objectReference, nsBottom, celRect.bottom);
+		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
+		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsRight), celRect.right);
+		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsTop), celRect.top);
+		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsBottom), celRect.bottom);
 	}
 }
 
@@ -142,15 +145,15 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	uint16 signal, controlMask;
 	bool result;
 
-	checkRect.left = GET_SEL32V(_segMan, curObject, brLeft);
-	checkRect.top = GET_SEL32V(_segMan, curObject, brTop);
-	checkRect.right = GET_SEL32V(_segMan, curObject, brRight);
-	checkRect.bottom = GET_SEL32V(_segMan, curObject, brBottom);
+	checkRect.left = GET_SEL32V(_segMan, curObject, SELECTOR(brLeft));
+	checkRect.top = GET_SEL32V(_segMan, curObject, SELECTOR(brTop));
+	checkRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
+	checkRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
 
 	adjustedRect = _coordAdjuster->onControl(checkRect);
 
-	signal = GET_SEL32V(_segMan, curObject, signal);
-	controlMask = GET_SEL32V(_segMan, curObject, illegalBits);
+	signal = GET_SEL32V(_segMan, curObject, SELECTOR(signal));
+	controlMask = GET_SEL32V(_segMan, curObject, SELECTOR(illegalBits));
 	result = (isOnControl(SCI_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
 	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _segMan->lookupList(listReference);
@@ -174,13 +177,13 @@ bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo,
 
 void GfxCompare::kernelBaseSetter(reg_t object) {
 	if (lookup_selector(_segMan, object, _kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
-		int16 x = GET_SEL32V(_segMan, object, x);
-		int16 y = GET_SEL32V(_segMan, object, y);
-		int16 z = (_kernel->_selectorCache.z > -1) ? GET_SEL32V(_segMan, object, z) : 0;
-		int16 yStep = GET_SEL32V(_segMan, object, yStep);
-		GuiResourceId viewId = GET_SEL32V(_segMan, object, view);
-		int16 loopNo = GET_SEL32V(_segMan, object, loop);
-		int16 celNo = GET_SEL32V(_segMan, object, cel);
+		int16 x = GET_SEL32V(_segMan, object, SELECTOR(x));
+		int16 y = GET_SEL32V(_segMan, object, SELECTOR(y));
+		int16 z = (_kernel->_selectorCache.z > -1) ? GET_SEL32V(_segMan, object, SELECTOR(z)) : 0;
+		int16 yStep = GET_SEL32V(_segMan, object, SELECTOR(yStep));
+		GuiResourceId viewId = GET_SEL32V(_segMan, object, SELECTOR(view));
+		int16 loopNo = GET_SEL32V(_segMan, object, SELECTOR(loop));
+		int16 celNo = GET_SEL32V(_segMan, object, SELECTOR(cel));
 
 		GfxView *tmpView = _cache->getView(viewId);
 		Common::Rect celRect;
@@ -189,10 +192,10 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		celRect.bottom = y + 1;
 		celRect.top = celRect.bottom - yStep;
 
-		PUT_SEL32V(_segMan, object, brLeft, celRect.left);
-		PUT_SEL32V(_segMan, object, brRight, celRect.right);
-		PUT_SEL32V(_segMan, object, brTop, celRect.top);
-		PUT_SEL32V(_segMan, object, brBottom, celRect.bottom);
+		PUT_SEL32V(_segMan, object, SELECTOR(brLeft), celRect.left);
+		PUT_SEL32V(_segMan, object, SELECTOR(brRight), celRect.right);
+		PUT_SEL32V(_segMan, object, SELECTOR(brTop), celRect.top);
+		PUT_SEL32V(_segMan, object, SELECTOR(brBottom), celRect.bottom);
 	}
 }
 

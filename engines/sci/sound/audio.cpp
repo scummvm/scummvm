@@ -267,11 +267,11 @@ void AudioPlayer::setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *seg
 	_syncOffset = 0;
 
 	if (_syncResource) {
-		PUT_SEL32V(segMan, syncObjAddr, syncCue, 0);
+		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncCue), 0);
 	} else {
 		warning("setSoundSync: failed to find resource %s", id.toString().c_str());
 		// Notify the scripts to stop sound sync
-		PUT_SEL32V(segMan, syncObjAddr, syncCue, SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncCue), SIGNAL_OFFSET);
 	}
 }
 
@@ -287,8 +287,8 @@ void AudioPlayer::doSoundSync(reg_t syncObjAddr, SegManager *segMan) {
 			_syncOffset += 2;
 		}
 
-		PUT_SEL32V(segMan, syncObjAddr, syncTime, syncTime);
-		PUT_SEL32V(segMan, syncObjAddr, syncCue, syncCue);
+		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncTime), syncTime);
+		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncCue), syncCue);
 	}
 }
 

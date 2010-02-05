@@ -352,7 +352,7 @@ void GfxMenu::calculateTextWidth() {
 }
 
 reg_t GfxMenu::kernelSelect(reg_t eventObject) {
-	int16 eventType = GET_SEL32V(_segMan, eventObject, type);
+	int16 eventType = GET_SEL32V(_segMan, eventObject, SELECTOR(type));
 	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
@@ -364,8 +364,8 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
-		keyPress = GET_SEL32V(_segMan, eventObject, message);
-		keyModifier = GET_SEL32V(_segMan, eventObject, modifiers);
+		keyPress = GET_SEL32V(_segMan, eventObject, SELECTOR(message));
+		keyModifier = GET_SEL32V(_segMan, eventObject, SELECTOR(modifiers));
 		switch (keyPress) {
 		case 0:
 			break;
@@ -434,7 +434,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 		_ports->setPort(_oldPort);
 
 	if ((itemEntry) || (forceClaimed))
-		PUT_SEL32(_segMan, eventObject, claimed, make_reg(0, 1));
+		PUT_SEL32(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));
 	if (itemEntry)
 		return make_reg(0, (itemEntry->menuId << 8) | (itemEntry->id));
 	return NULL_REG;

@@ -92,7 +92,7 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			}
 		}
 
-		signal = GET_SEL32V(_s->_segMan, curObject, signal);
+		signal = GET_SEL32V(_s->_segMan, curObject, SELECTOR(signal));
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argc, argv, 0);
@@ -153,21 +153,21 @@ void GfxAnimate::makeSortedList(List *list) {
 		listEntry->object = curObject;
 
 		// Get data from current object
-		listEntry->viewId = GET_SEL32V(_s->_segMan, curObject, view);
-		listEntry->loopNo = GET_SEL32V(_s->_segMan, curObject, loop);
-		listEntry->celNo = GET_SEL32V(_s->_segMan, curObject, cel);
-		listEntry->paletteNo = GET_SEL32V(_s->_segMan, curObject, palette);
-		listEntry->x = GET_SEL32V(_s->_segMan, curObject, x);
-		listEntry->y = GET_SEL32V(_s->_segMan, curObject, y);
-		listEntry->z = GET_SEL32V(_s->_segMan, curObject, z);
-		listEntry->priority = GET_SEL32V(_s->_segMan, curObject, priority);
-		listEntry->signal = GET_SEL32V(_s->_segMan, curObject, signal);
+		listEntry->viewId = GET_SEL32V(_s->_segMan, curObject, SELECTOR(view));
+		listEntry->loopNo = GET_SEL32V(_s->_segMan, curObject, SELECTOR(loop));
+		listEntry->celNo = GET_SEL32V(_s->_segMan, curObject, SELECTOR(cel));
+		listEntry->paletteNo = GET_SEL32V(_s->_segMan, curObject, SELECTOR(palette));
+		listEntry->x = GET_SEL32V(_s->_segMan, curObject, SELECTOR(x));
+		listEntry->y = GET_SEL32V(_s->_segMan, curObject, SELECTOR(y));
+		listEntry->z = GET_SEL32V(_s->_segMan, curObject, SELECTOR(z));
+		listEntry->priority = GET_SEL32V(_s->_segMan, curObject, SELECTOR(priority));
+		listEntry->signal = GET_SEL32V(_s->_segMan, curObject, SELECTOR(signal));
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			// Cel scaling
-			listEntry->scaleSignal = GET_SEL32V(_s->_segMan, curObject, scaleSignal);
+			listEntry->scaleSignal = GET_SEL32V(_s->_segMan, curObject, SELECTOR(scaleSignal));
 			if (listEntry->scaleSignal & kScaleSignalDoScaling) {
-				listEntry->scaleX = GET_SEL32V(_s->_segMan, curObject, scaleX);
-				listEntry->scaleY = GET_SEL32V(_s->_segMan, curObject, scaleY);
+				listEntry->scaleX = GET_SEL32V(_s->_segMan, curObject, SELECTOR(scaleX));
+				listEntry->scaleY = GET_SEL32V(_s->_segMan, curObject, SELECTOR(scaleY));
 			} else {
 				listEntry->scaleX = 128;
 				listEntry->scaleY = 128;
@@ -219,11 +219,11 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		// adjust loop and cel, if any of those is invalid
 		if (listEntry->loopNo >= view->getLoopCount()) {
 			listEntry->loopNo = 0;
-			PUT_SEL32V(_s->_segMan, curObject, loop, listEntry->loopNo);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(loop), listEntry->loopNo);
 		}
 		if (listEntry->celNo >= view->getCelCount(listEntry->loopNo)) {
 			listEntry->celNo = 0;
-			PUT_SEL32V(_s->_segMan, curObject, cel, listEntry->celNo);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(cel), listEntry->celNo);
 		}
 
 		// Create rect according to coordinates and given cel
@@ -232,17 +232,17 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		} else {
 			view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
 		}
-		PUT_SEL32V(_s->_segMan, curObject, nsLeft, listEntry->celRect.left);
-		PUT_SEL32V(_s->_segMan, curObject, nsTop, listEntry->celRect.top);
-		PUT_SEL32V(_s->_segMan, curObject, nsRight, listEntry->celRect.right);
-		PUT_SEL32V(_s->_segMan, curObject, nsBottom, listEntry->celRect.bottom);
+		PUT_SEL32V(_s->_segMan, curObject, SELECTOR(nsLeft), listEntry->celRect.left);
+		PUT_SEL32V(_s->_segMan, curObject, SELECTOR(nsTop), listEntry->celRect.top);
+		PUT_SEL32V(_s->_segMan, curObject, SELECTOR(nsRight), listEntry->celRect.right);
+		PUT_SEL32V(_s->_segMan, curObject, SELECTOR(nsBottom), listEntry->celRect.bottom);
 
 		signal = listEntry->signal;
 
 		// Calculate current priority according to y-coordinate
 		if (!(signal & kSignalFixedPriority)) {
 			listEntry->priority = _ports->kernelCoordinateToPriority(listEntry->y);
-			PUT_SEL32V(_s->_segMan, curObject, priority, listEntry->priority);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(priority), listEntry->priority);
 		}
 
 		if (signal & kSignalNoUpdate) {
@@ -282,14 +282,14 @@ void GfxAnimate::update() {
 
 		if (signal & kSignalNoUpdate) {
 			if (!(signal & kSignalRemoveView)) {
-				bitsHandle = GET_SEL32(_s->_segMan, curObject, underBits);
+				bitsHandle = GET_SEL32(_s->_segMan, curObject, SELECTOR(underBits));
 				if (_screen->_picNotValid != 1) {
 					_paint16->bitsRestore(bitsHandle);
 					listEntry->showBitsFlag = true;
 				} else	{
 					_paint16->bitsFree(bitsHandle);
 				}
-				PUT_SEL32V(_s->_segMan, curObject, underBits, 0);
+				PUT_SEL32V(_s->_segMan, curObject, SELECTOR(underBits), 0);
 			}
 			signal &= 0xFFFF ^ kSignalForceUpdate;
 			signal &= signal & kSignalViewUpdated ? 0xFFFF ^ (kSignalViewUpdated | kSignalNoUpdate) : 0xFFFF;
@@ -339,7 +339,7 @@ void GfxAnimate::update() {
 					bitsHandle = _paint16->bitsSave(listEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = _paint16->bitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
-				PUT_SEL32(_s->_segMan, curObject, underBits, bitsHandle);
+				PUT_SEL32(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
 			}
 			listEntry->signal = signal;
 		}
@@ -387,7 +387,7 @@ void GfxAnimate::drawCels() {
 		if (!(signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate))) {
 			// Save background
 			bitsHandle = _paint16->bitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
-			PUT_SEL32(_s->_segMan, curObject, underBits, bitsHandle);
+			PUT_SEL32(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
 
 			// draw corresponding cel
 			_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
@@ -423,10 +423,10 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 
 		if (listEntry->showBitsFlag || !(signal & (kSignalRemoveView | kSignalNoUpdate) ||
 										(!(signal & kSignalRemoveView) && (signal & kSignalNoUpdate) && oldPicNotValid))) {
-			lsRect.left = GET_SEL32V(_s->_segMan, curObject, lsLeft);
-			lsRect.top = GET_SEL32V(_s->_segMan, curObject, lsTop);
-			lsRect.right = GET_SEL32V(_s->_segMan, curObject, lsRight);
-			lsRect.bottom = GET_SEL32V(_s->_segMan, curObject, lsBottom);
+			lsRect.left = GET_SEL32V(_s->_segMan, curObject, SELECTOR(lsLeft));
+			lsRect.top = GET_SEL32V(_s->_segMan, curObject, SELECTOR(lsTop));
+			lsRect.right = GET_SEL32V(_s->_segMan, curObject, SELECTOR(lsRight));
+			lsRect.bottom = GET_SEL32V(_s->_segMan, curObject, SELECTOR(lsBottom));
 
 			workerRect = lsRect;
 			workerRect.clip(listEntry->celRect);
@@ -438,10 +438,10 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 				_paint16->bitsShow(lsRect);
 				workerRect = listEntry->celRect;
 			}
-			PUT_SEL32V(_s->_segMan, curObject, lsLeft, workerRect.left);
-			PUT_SEL32V(_s->_segMan, curObject, lsTop, workerRect.top);
-			PUT_SEL32V(_s->_segMan, curObject, lsRight, workerRect.right);
-			PUT_SEL32V(_s->_segMan, curObject, lsBottom, workerRect.bottom);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(lsLeft), workerRect.left);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(lsTop), workerRect.top);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(lsRight), workerRect.right);
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(lsBottom), workerRect.bottom);
 			_paint16->bitsShow(workerRect);
 
 			if (signal & kSignalHidden) {
@@ -472,7 +472,7 @@ void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 		signal = listEntry->signal;
 
 		// Finally update signal
-		PUT_SEL32V(_s->_segMan, curObject, signal, signal);
+		PUT_SEL32V(_s->_segMan, curObject, SELECTOR(signal), signal);
 		listIterator++;
 	}
 
@@ -481,11 +481,11 @@ void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 		listEntry = *listIterator;
 		curObject = listEntry->object;
 		// We read out signal here again, this is not by accident but to ensure that we got an up-to-date signal
-		signal = GET_SEL32V(_s->_segMan, curObject, signal);
+		signal = GET_SEL32V(_s->_segMan, curObject, SELECTOR(signal));
 
 		if ((signal & (kSignalNoUpdate | kSignalRemoveView)) == 0) {
-			_paint16->bitsRestore(GET_SEL32(_s->_segMan, curObject, underBits));
-			PUT_SEL32V(_s->_segMan, curObject, underBits, 0);
+			_paint16->bitsRestore(GET_SEL32(_s->_segMan, curObject, SELECTOR(underBits)));
+			PUT_SEL32V(_s->_segMan, curObject, SELECTOR(underBits), 0);
 		}
 
 		if (signal & kSignalDisposeMe) {

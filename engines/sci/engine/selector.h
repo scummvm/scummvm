@@ -42,16 +42,23 @@ enum SelectorInvocation {
 	kContinueOnInvalidSelector = 1
 };
 
+
+/**
+ * Map a selector name to a selector id. Shortcut for accessing the selector cache.
+ */
+#define SELECTOR(_slc_)		(((SciEngine *)g_engine)->getKernel()->_selectorCache._slc_)
+//#define SELECTOR(_slc_)		_slc_
+
 /**
  * Retrieves a selector from an object.
  * @param segMan	the segment mananger
  * @param _obj_		the address of the object which the selector should be read from
- * @param _slc_		the selector to read
+ * @param _slc_		the selector to refad
  * @return			the selector value as a reg_t
  * This macro halts on error. 'selector' must be a selector name registered in vm.h's
  * SelectorCache and mapped in script.cpp.
  */
-#define GET_SEL32(segMan, _obj_, _slc_) read_selector(segMan, _obj_, ((SciEngine *)g_engine)->getKernel()->_selectorCache._slc_)
+#define GET_SEL32(segMan, _obj_, _slc_) read_selector(segMan, _obj_, _slc_)
 #define GET_SEL32V(segMan, _obj_, _slc_) (GET_SEL32(segMan, _obj_, _slc_).offset)
 
 /**
@@ -63,7 +70,7 @@ enum SelectorInvocation {
  * This macro halts on error. 'selector' must be a selector name registered in vm.h's
  * SelectorCache and mapped in script.cpp.
  */
-#define PUT_SEL32(segMan, _obj_, _slc_, _val_) write_selector(segMan, _obj_, ((SciEngine *)g_engine)->getKernel()->_selectorCache._slc_, _val_)
+#define PUT_SEL32(segMan, _obj_, _slc_, _val_) write_selector(segMan, _obj_, _slc_, _val_)
 #define PUT_SEL32V(segMan, _obj_, _slc_, _val_) PUT_SEL32(segMan, _obj_, _slc_, make_reg(0, _val_))
 
 

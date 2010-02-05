@@ -87,18 +87,18 @@ GfxCoordAdjuster32::~GfxCoordAdjuster32() {
 }
 
 void GfxCoordAdjuster32::kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject) {
-	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, resY);
-	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, resX);
+	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, SELECTOR(resY));
+	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, SELECTOR(resX));
 	//*x = ( *x * _screen->getWidth()) / resX;
 	//*y = ( *y * _screen->getHeight()) / resY;
-	x -= GET_SEL32V(_segMan, planeObject, left);
-	y -= GET_SEL32V(_segMan, planeObject, top);
+	x -= GET_SEL32V(_segMan, planeObject, SELECTOR(left));
+	y -= GET_SEL32V(_segMan, planeObject, SELECTOR(top));
 }
 void GfxCoordAdjuster32::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject) {
-	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, resY);
-	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, resX);
-	x += GET_SEL32V(_segMan, planeObject, left);
-	y += GET_SEL32V(_segMan, planeObject, top);
+	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, SELECTOR(resY));
+	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, SELECTOR(resX));
+	x += GET_SEL32V(_segMan, planeObject, SELECTOR(left));
+	y += GET_SEL32V(_segMan, planeObject, SELECTOR(top));
 	//*x = ( *x * resX) / _screen->getWidth();
 	//*y = ( *y * resY) / _screen->getHeight();
 }

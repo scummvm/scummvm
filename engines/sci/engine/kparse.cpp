@@ -63,7 +63,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		s->_voc->decipherSaidBlock(said_block);
 #endif
 
-	if (s->_voc->parser_event.isNull() || (GET_SEL32V(s->_segMan, s->_voc->parser_event, claimed))) {
+	if (s->_voc->parser_event.isNull() || (GET_SEL32V(s->_segMan, s->_voc->parser_event, SELECTOR(claimed)))) {
 		return NULL_REG;
 	}
 
@@ -77,7 +77,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 		if (new_lastmatch != SAID_PARTIAL_MATCH)
-			PUT_SEL32V(s->_segMan, s->_voc->parser_event, claimed, 1);
+			PUT_SEL32V(s->_segMan, s->_voc->parser_event, SELECTOR(claimed), 1);
 
 	} else {
 		return NULL_REG;
@@ -115,7 +115,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 
 		if (syntax_fail) {
 			s->r_acc = make_reg(0, 1);
-			PUT_SEL32V(segMan, event, claimed, 1);
+			PUT_SEL32V(segMan, event, SELECTOR(claimed), 1);
 
 			invoke_selector(INV_SEL(s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
 			/* Issue warning */
@@ -124,7 +124,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 
 		} else {
 			s->_voc->parserIsValid = true;
-			PUT_SEL32V(segMan, event, claimed, 0);
+			PUT_SEL32V(segMan, event, SELECTOR(claimed), 0);
 
 #ifdef DEBUG_PARSER
 			s->_voc->dumpParseTree();
@@ -134,7 +134,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	} else {
 
 		s->r_acc = make_reg(0, 0);
-		PUT_SEL32V(segMan, event, claimed, 1);
+		PUT_SEL32V(segMan, event, SELECTOR(claimed), 1);
 		if (error) {
 			s->_segMan->strcpy(s->_voc->parser_base, error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
@@ -163,14 +163,14 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 
 	s->_voc->clearSynonyms();
 
-	list = s->_segMan->lookupList(GET_SEL32(segMan, object, elements));
+	list = s->_segMan->lookupList(GET_SEL32(segMan, object, SELECTOR(elements)));
 	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
 		reg_t objpos = node->value;
 		int seg;
 
-		script = GET_SEL32V(segMan, objpos, number);
+		script = GET_SEL32V(segMan, objpos, SELECTOR(number));
 		seg = s->_segMan->getScriptSegment(script);
 
 		if (seg > 0)

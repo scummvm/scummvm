@@ -50,8 +50,8 @@
 namespace Sci {
 
 void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
-	uint16 signal = GET_SEL32V(s->_segMan, object, signal);
+	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
+	uint16 signal = GET_SEL32V(s->_segMan, object, SELECTOR(signal));
 	int16 loopNo;
 	int16 maxLoops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
@@ -90,7 +90,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 	if ((loopNo > 1) && (maxLoops < 4))
 		return;
 
-	PUT_SEL32V(s->_segMan, object, loop, loopNo);
+	PUT_SEL32V(s->_segMan, object, SELECTOR(loop), loopNo);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -446,7 +446,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
+	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
 	loopCount = s->_gfxCache->kernelViewGetLoopCount(viewId);
@@ -458,8 +458,8 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, view);
-	int16 loopNo = GET_SEL32V(s->_segMan, object, loop);
+	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
+	int16 loopNo = GET_SEL32V(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
 	celCount = s->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
@@ -535,8 +535,8 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
 	if (s->_gameId == "lsl1sci" && s->currentRoomNumber() == 300) {
-		int top = GET_SEL32V(s->_segMan, object, brTop);
-		PUT_SEL32V(s->_segMan, object, brTop, top + 2);
+		int top = GET_SEL32V(s->_segMan, object, SELECTOR(brTop));
+		PUT_SEL32V(s->_segMan, object, SELECTOR(brTop), top + 2);
 	}
 
 	return s->r_acc;
@@ -738,12 +738,12 @@ Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
-	int16 type = GET_SEL32V(s->_segMan, controlObject, type);
-	int16 style = GET_SEL32V(s->_segMan, controlObject, state);
-	int16 x = GET_SEL32V(s->_segMan, controlObject, nsLeft);
-	int16 y = GET_SEL32V(s->_segMan, controlObject, nsTop);
-	GuiResourceId fontId = GET_SEL32V(s->_segMan, controlObject, font);
-	reg_t textReference = GET_SEL32(s->_segMan, controlObject, text);
+	int16 type = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
+	int16 style = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
+	int16 x = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsLeft));
+	int16 y = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsTop));
+	GuiResourceId fontId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(font));
+	reg_t textReference = GET_SEL32(s->_segMan, controlObject, SELECTOR(text));
 	Common::String text;
 	Common::Rect rect;
 	TextAlignment alignment;
@@ -758,7 +758,9 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	const char **listEntries = NULL;
 	bool isAlias = false;
 
-	rect = kControlCreateRect(x, y, GET_SEL32V(s->_segMan, controlObject, nsRight), GET_SEL32V(s->_segMan, controlObject, nsBottom));
+	rect = kControlCreateRect(x, y,
+				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsRight)),
+				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsBottom)));
 
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
@@ -770,32 +772,32 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
-		alignment = GET_SEL32V(s->_segMan, controlObject, mode);
+		alignment = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		s->_gfxControls->kernelDrawText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
-		mode = GET_SEL32V(s->_segMan, controlObject, mode);
-		maxChars = GET_SEL32V(s->_segMan, controlObject, max);
-		cursorPos = GET_SEL32V(s->_segMan, controlObject, cursor);
+		mode = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
+		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(max));
+		cursorPos = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		s->_gfxControls->kernelDrawTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
-		viewId = GET_SEL32V(s->_segMan, controlObject, view);
+		viewId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(view));
 		{
-			int l = GET_SEL32V(s->_segMan, controlObject, loop);
+			int l = GET_SEL32V(s->_segMan, controlObject, SELECTOR(loop));
 			loopNo = (l & 0x80) ? l - 256 : l;
-			int c = GET_SEL32V(s->_segMan, controlObject, cel);
+			int c = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cel));
 			celNo = (c & 0x80) ? c - 256 : c;
 			// Game-specific: *ONLY* the jones EGA/VGA sierra interpreter contain code using priority selector
 			//  ALL other games use a hardcoded -1 (madness!)
 			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
 			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
 			if (s->_gameId == "jones")
-				priority = GET_SEL32V(s->_segMan, controlObject, priority);
+				priority = GET_SEL32V(s->_segMan, controlObject, SELECTOR(priority));
 			else
 				priority = -1;
 		}
@@ -808,17 +810,17 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		if (type == SCI_CONTROLS_TYPE_LIST_ALIAS)
 			isAlias = true;
 
-		maxChars = GET_SEL32V(s->_segMan, controlObject, x); // max chars per entry
-		cursorOffset = GET_SEL32V(s->_segMan, controlObject, cursor);
+		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
+		cursorOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
 		if (s->_kernel->_selectorCache.topString != -1) {
 			// Games from early SCI1 onwards use topString
-			upperOffset = GET_SEL32V(s->_segMan, controlObject, topString);
+			upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(topString));
 		} else {
 			// Earlier games use lsTop or brTop
 			if (lookup_selector(s->_segMan, controlObject, s->_kernel->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, brTop);
+				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(brTop));
 			else
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, lsTop);
+				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(lsTop));
 		}
 
 		// Count string entries in NULL terminated string list
@@ -869,8 +871,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	if (objName == "changeDirI") {
-		int state = GET_SEL32V(s->_segMan, controlObject, state);
-		PUT_SEL32V(s->_segMan, controlObject, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
+		int state = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
+		PUT_SEL32V(s->_segMan, controlObject, SELECTOR(state), (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
@@ -889,7 +891,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[1];
 
 	if (!controlObject.isNull()) {
-		int16 controlType = GET_SEL32V(s->_segMan, controlObject, type);
+		int16 controlType = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
 
 		switch (controlType) {
 		case SCI_CONTROLS_TYPE_TEXTEDIT:

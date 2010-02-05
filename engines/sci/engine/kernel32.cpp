@@ -499,7 +499,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
 
-		return GET_SEL32(s->_segMan, argv[1], data);
+		return GET_SEL32(s->_segMan, argv[1], SELECTOR(data));
 	default:
 		error("Unknown kArray subop %d", argv[0].toUint16());
 	}
@@ -623,7 +623,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
 
-		return GET_SEL32(s->_segMan, argv[1], data);
+		return GET_SEL32(s->_segMan, argv[1], SELECTOR(data));
 	case 10: // Stringlen
 		return make_reg(0, s->_segMan->strlen(argv[1]));
 	case 11: { // Printf
@@ -688,12 +688,12 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 	/*
 	reg_t viewObj = argv[0];
-	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, view);
-	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, loop);
-	int16 celNo = GET_SEL32V(s->_segMan, viewObj, cel);
+	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, SELECTOR(view));
+	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, SELECTOR(loop));
+	int16 celNo = GET_SEL32V(s->_segMan, viewObj, SELECTOR(cel));
 	//int16 leftPos = 0;
 	//int16 topPos = 0;
-	int16 priority = GET_SEL32V(s->_segMan, viewObj, priority);
+	int16 priority = GET_SEL32V(s->_segMan, viewObj, SELECTOR(priority));
 	//int16 control = 0;
 	*/
 
@@ -760,10 +760,10 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect nsRect;
 
 	// Get the bounding rectangle of the object
-	nsRect.left = GET_SEL32V(s->_segMan, targetObject, nsLeft);
-	nsRect.top = GET_SEL32V(s->_segMan, targetObject, nsTop);
-	nsRect.right = GET_SEL32V(s->_segMan, targetObject, nsRight);
-	nsRect.bottom = GET_SEL32V(s->_segMan, targetObject, nsBottom);
+	nsRect.left = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsBottom));
 
 	//warning("kOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
 
@@ -778,7 +778,7 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
 	reg_t object = argv[3];
-	Common::String text = s->_segMan->getString(GET_SEL32(s->_segMan, object, text));
+	Common::String text = s->_segMan->getString(GET_SEL32(s->_segMan, object, SELECTOR(text)));
 	debug("kCreateTextBitmap: %s", text.c_str());
 
 	return NULL_REG;
