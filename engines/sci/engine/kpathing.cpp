@@ -1457,9 +1457,239 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+static bool PointInRect(const Common::Point &point, int16 rectX1, int16 rectY1, int16 rectX2, int16 rectY2) {
+	int16 top = MIN<int16>(rectY1, rectY2);
+	int16 left = MIN<int16>(rectX1, rectX2);
+	int16 bottom = MAX<int16>(rectY1, rectY2) + 1;
+	int16 right = MAX<int16>(rectX1, rectX2) + 1;
+
+	Common::Rect rect = Common::Rect(left, top, right, bottom);
+	// Add a one pixel margin of error
+	rect.grow(1);
+
+	return rect.contains(point);
+}
+
 reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
-	warning("Intersections() called");
-	return NULL_REG;
+	// This function computes intersection points for the "freeway pathing" in MUMG CD.
+	int32 qSourceX = argv[0].toSint16();
+	int32 qSourceY = argv[1].toSint16();
+	int32 qDestX = argv[2].toSint16();
+	int32 qDestY = argv[3].toSint16();
+	uint16 startIndex = argv[5].toUint16();
+	uint16 endIndex = argv[6].toUint16();
+	uint16 stepSize = argv[7].toUint16();
+	bool backtrack = argv[9].toUint16();
+
+	const int32 kVertical = 0x7fffffff;
+
+	uint16 curIndex = startIndex;
+	reg_t *inpBuf = s->_segMan->derefRegPtr(argv[4], endIndex + 2);
+
+	if (!inpBuf) {
+		warning("Intersections: input buffer invalid");
+		return NULL_REG;
+	}
+
+	reg_t *outBuf = s->_segMan->derefRegPtr(argv[8], (endIndex - startIndex + 2) / stepSize * 3);
+
+	if (!outBuf) {
+		warning("Intersections: output buffer invalid");
+		return NULL_REG;
+	}
+
+	// Slope and y-intercept of the query line in centipixels
+	int32 qIntercept;
+	int32 qSlope;
+
+	if (qSourceX != qDestX) {
+		// Compute slope of the line and round to nearest centipixel
+		qSlope = (1000 * (qSourceY - qDestY)) / (qSourceX - qDestX);
+
+		if (qSlope >= 0)
+			qSlope += 5;
+		else
+			qSlope -= 5;
+
+		qSlope /= 10;
+
+		// Compute y-intercept in centipixels
+		qIntercept = (100 * qDestY) - (qSlope * qDestX);
+
+		if (backtrack) {
+			// If backtrack is set we extend the line from dest to source
+			// until we hit a screen edge and place the source point there
+
+			// First we try to place the source point on the left or right
+			// screen edge
+			if (qSourceX >= qDestX)
+				qSourceX = 319;
+			else
+				qSourceX = 0;
+
+			// Compute the y-coordinate
+			qSourceY = ((qSlope * qSourceX) + qIntercept) / 100;
+
+			// If the y-coordinate is off-screen, the point we want is on the
+			// top or bottom edge of the screen instead
+			if (qSourceY < 0 || qSourceY > 189) {
+				if (qSourceY < 0)
+					qSourceY = 0;
+				else if (qSourceY > 189)
+					qSourceY = 189;
+
+				// Compute the x-coordinate
+				qSourceX = (((((qSourceY * 100) - qIntercept) * 10) / qSlope) + 5) / 10;
+			}
+		}
+	} else {
+		// The query line is vertical
+		qIntercept = qSlope = kVertical;
+
+		if (backtrack) {
+			// If backtrack is set, extend to screen edge
+			if (qSourceY >= qDestY)
+				qSourceY = 189;
+			else
+				qSourceY = 0;
+		}
+	}
+
+	int32 pSourceX = inpBuf[curIndex].toSint16();
+	int32 pSourceY = inpBuf[curIndex + 1].toSint16();
+
+	// If it's a polygon, we include the first point again at the end
+	int16 doneIndex;
+	if (pSourceX & (1 << 13))
+		doneIndex = startIndex;
+	else
+		doneIndex = endIndex;
+
+	pSourceX &= 0x1ff;
+
+	debugCN(kDebugLevelAvoidPath, "%s: (%i, %i)[%i]",
+		(doneIndex == startIndex ? "Polygon" : "Polyline"), pSourceX, pSourceY, curIndex);
+
+	curIndex += stepSize;
+	uint16 outCount = 0;
+
+	while (1) {
+		int32 pDestX = inpBuf[curIndex].toSint16() & 0x1ff;
+		int32 pDestY = inpBuf[curIndex + 1].toSint16();
+
+		if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+			draw_line(s, Common::Point(pSourceX, pSourceY),
+				Common::Point(pDestX, pDestY), 2, 320, 190);
+			debugN(-1, " (%i, %i)[%i]", pDestX, pDestY, curIndex);
+		}
+
+		// Slope and y-intercept of the polygon edge in centipixels
+		int32 pIntercept;
+		int32 pSlope;
+
+		if (pSourceX != pDestX) {
+			// Compute slope and y-intercept (as above)
+			pSlope = ((pDestY - pSourceY) * 1000) / (pDestX - pSourceX);
+
+			if (pSlope >= 0)
+				pSlope += 5;
+			else
+				pSlope -= 5;
+
+			pSlope /= 10;
+
+			pIntercept = (pDestY * 100) - (pSlope * pDestX);
+		} else {
+			// Polygon edge is vertical
+			pSlope = pIntercept = kVertical;
+		}
+
+		bool foundIntersection = true;
+		int32 intersectionX;
+		int32 intersectionY;
+
+		if (qSlope == pSlope) {
+			// If the lines overlap, we test the source and destination points
+			// against the poly segment
+			if ((pIntercept == qIntercept) && (PointInRect(Common::Point(pSourceX, pSourceY), qSourceX, qSourceY, qDestX, qDestY))) {
+				intersectionX = pSourceX * 100;
+				intersectionY = pSourceY * 100;
+			} else if ((pIntercept == qIntercept) && PointInRect(Common::Point(qDestX, qDestY), pSourceX, pSourceY, pDestX, pDestY)) {
+				intersectionX = qDestX * 100;
+				intersectionY = qDestY * 100;
+			} else {
+				// Lines are parallel or segments don't overlap, no intersection
+				foundIntersection = false;
+			}
+		} else {
+			// Lines are not parallel
+			if (qSlope == kVertical) {
+				// Query segment is vertical, polygon segment is not vertical
+				intersectionX = qSourceX * 100;
+				intersectionY = pSlope * qSourceX + pIntercept;
+			} else if (pSlope == kVertical) {
+				// Polygon segment is vertical, query segment is not vertical
+				intersectionX = pDestX * 100;
+				intersectionY = qSlope * pDestX + qIntercept;
+			} else {
+				// Neither line is vertical
+				intersectionX = ((pIntercept - qIntercept) * 100) / (qSlope - pSlope);
+				intersectionY = ((intersectionX * pSlope) + (pIntercept * 100)) / 100;
+			}
+		}
+
+		if (foundIntersection) {
+			// Round back to pixels
+			intersectionX = (intersectionX + 50) / 100;
+			intersectionY = (intersectionY + 50) / 100;
+
+			// If intersection point lies on both the query line segment and the poly
+			// line segment, add it to the output
+			if (((PointInRect(Common::Point(intersectionX, intersectionY), pSourceX, pSourceY, pDestX, pDestY))
+				&& PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY))) {
+				outBuf[outCount * 3] = make_reg(0, intersectionX);
+				outBuf[outCount * 3 + 1] = make_reg(0, intersectionY);
+				outBuf[outCount * 3 + 2] = make_reg(0, curIndex);
+				outCount++;
+			}
+		}
+
+		if (curIndex == doneIndex) {
+			// End of polyline/polygon reached
+			if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+				debug(";");
+				debugN(-1, "Found %i intersections", outCount);
+
+				if (outCount) {
+					debugN(-1, ":");
+					for (int i = 0; i < outCount; i++) {
+						Common::Point p = Common::Point(outBuf[i * 3].toSint16(), outBuf[i * 3 + 1].toSint16());
+						draw_point(s, p, 0, 320, 190);
+						debugN(-1, " (%i, %i)[%i]", p.x, p.y, outBuf[i * 3 + 2].toSint16());
+					}
+				}
+
+				debug(";");
+
+				s->_gfxScreen->copyToScreen();
+				g_system->updateScreen();
+			}
+
+			return make_reg(0, outCount);
+		}
+
+		if (curIndex != endIndex) {
+			// Go to next point in polyline/polygon
+			curIndex += stepSize;
+		} else {
+			// Wrap-around for polygon case
+			curIndex = startIndex;
+		}
+
+		// Current destination point is source for the next line segment
+		pSourceX = pDestX;
+		pSourceY = pDestY;
+	}
 }
 
 } // End of namespace Sci
