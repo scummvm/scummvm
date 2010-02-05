@@ -128,7 +128,6 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	view = _cache->getView(viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
-	// TODO: sometimes loop is negative. Check what it means
 	if (lookup_selector(_segMan, objectReference, _kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
 		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
 		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsRight), celRect.right);
