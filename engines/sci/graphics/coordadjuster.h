@@ -41,7 +41,7 @@ class GfxPorts;
 class GfxCoordAdjuster {
 public:
 	GfxCoordAdjuster();
-	~GfxCoordAdjuster() { };
+	virtual ~GfxCoordAdjuster() { };
 
 	virtual void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
 	virtual void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
