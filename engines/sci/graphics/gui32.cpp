@@ -51,7 +51,8 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 
 	_coordAdjuster = new GfxCoordAdjuster32(_s->_segMan);
 	_s->_gfxCoordAdjuster = _coordAdjuster;
-	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
+	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
+	_s->_gfxCompare = _compare;
 	_paint32 = new GfxPaint32(_s->resMan, _s->_segMan, _s->_kernel, _cache, _screen, _palette);
 	_s->_gfxPaint = _paint32;
 	_frameout = new GfxFrameout(_s->_segMan, _s->resMan, _cache, _screen, _palette, _paint32);
@@ -88,78 +89,6 @@ void SciGui32::shakeScreen(uint16 shakeCount, uint16 directions) {
 			_screen->setVerticalShakePos(0);
 		g_system->updateScreen();
 		g_system->delayMillis(50);
-	}
-}
-
-uint16 SciGui32::onControl(byte screenMask, Common::Rect rect) {
-	Common::Rect adjustedRect = rect;
-	uint16 result;
-
-	adjustedRect.translate(0, 10);
-
-	result = _compare->onControl(screenMask, rect);
-	return result;
-}
-
-void SciGui32::setNowSeen(reg_t objectReference) {
-	_compare->SetNowSeen(objectReference);
-}
-
-bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
-	Common::Rect checkRect;
-	uint16 signal, controlMask;
-	bool result;
-
-	checkRect.left = GET_SEL32V(_s->_segMan, curObject, brLeft);
-	checkRect.top = GET_SEL32V(_s->_segMan, curObject, brTop);
-	checkRect.right = GET_SEL32V(_s->_segMan, curObject, brRight);
-	checkRect.bottom = GET_SEL32V(_s->_segMan, curObject, brBottom);
-	signal = GET_SEL32V(_s->_segMan, curObject, signal);
-	controlMask = GET_SEL32V(_s->_segMan, curObject, illegalBits);
-	result = (_compare->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
-	if ((result)) { // gui16 && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
-		List *list = _s->_segMan->lookupList(listReference);
-		if (!list)
-			error("kCanBeHere called with non-list as parameter");
-
-		result = _compare->CanBeHereCheckRectList(curObject, checkRect, list);
-	}
-	return result;
-}
-
-bool SciGui32::isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
-	GfxView *tmpView = _cache->getView(viewId);
-	CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
-	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
-	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
-	byte *celData = tmpView->getBitmap(loopNo, celNo);
-	bool result = (celData[position.y * celInfo->width + position.x] == celInfo->clearKey);
-	return result;
-}
-
-void SciGui32::baseSetter(reg_t object) {
-	if (lookup_selector(_s->_segMan, object, _s->_kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
-		int16 x = GET_SEL32V(_s->_segMan, object, x);
-		int16 y = GET_SEL32V(_s->_segMan, object, y);
-		int16 z = (_s->_kernel->_selectorCache.z > -1) ? GET_SEL32V(_s->_segMan, object, z) : 0;
-		int16 yStep = GET_SEL32V(_s->_segMan, object, yStep);
-		GuiResourceId viewId = GET_SEL32V(_s->_segMan, object, view);
-		int16 loopNo = GET_SEL32V(_s->_segMan, object, loop);
-		int16 celNo = GET_SEL32V(_s->_segMan, object, cel);
-
-		if (viewId != SIGNAL_OFFSET) {
-			GfxView *tmpView = _cache->getView(viewId);
-			Common::Rect celRect;
-
-			tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
-			celRect.bottom = y + 1;
-			celRect.top = celRect.bottom - yStep;
-
-			PUT_SEL32V(_s->_segMan, object, brLeft, celRect.left);
-			PUT_SEL32V(_s->_segMan, object, brRight, celRect.right);
-			PUT_SEL32V(_s->_segMan, object, brTop, celRect.top);
-			PUT_SEL32V(_s->_segMan, object, brBottom, celRect.bottom);
-		}
 	}
 }
 

@@ -79,12 +79,6 @@ public:
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
-	virtual uint16 onControl(byte screenMask, Common::Rect rect);
-	virtual void setNowSeen(reg_t objectReference);
-	virtual bool canBeHere(reg_t curObject, reg_t listReference);
-	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
-	virtual void baseSetter(reg_t object);
-
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);

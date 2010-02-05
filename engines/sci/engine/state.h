@@ -53,6 +53,7 @@ namespace Sci {
 class SciEvent;
 class GfxAnimate;
 class GfxCache;
+class GfxCompare;
 class GfxControls;
 class GfxCoordAdjuster;
 class GfxCursor;
@@ -147,6 +148,7 @@ public:
 
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxCache *_gfxCache;
+	GfxCompare *_gfxCompare;
 	GfxControls *_gfxControls; // Controls for 16-bit gfx
 	GfxCoordAdjuster *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;

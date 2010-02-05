@@ -38,6 +38,7 @@
 #include "sci/graphics/gui32.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/controls.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
@@ -403,15 +404,8 @@ reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
-	bool canBeHere;
-	
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		canBeHere = s->_gui32->canBeHere(curObject, listReference);
-	else
-#endif
-		canBeHere = s->_gui->canBeHere(curObject, listReference);
-		
+
+	bool canBeHere = s->_gfxCompare->kernelCanBeHere(curObject, listReference);
 	return make_reg(0, canBeHere);
 }
 
@@ -419,15 +413,8 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
-	bool canBeHere;
 	
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		canBeHere = s->_gui32->canBeHere(curObject, listReference);
-	else
-#endif
-		canBeHere = s->_gui->canBeHere(curObject, listReference);
-
+	bool canBeHere = s->_gfxCompare->kernelCanBeHere(curObject, listReference);
 	return make_reg(0, !canBeHere);
 }
 
@@ -437,7 +424,7 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = argv[2].toSint16();
 	Common::Point position(argv[4].toUint16(), argv[3].toUint16());
 
-	bool result = s->_gui->isItSkip(viewId, loopNo, celNo, position);
+	bool result = s->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, position);
 	return make_reg(0, result);
 }
 
@@ -512,7 +499,7 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 		rect.right = rect.left + 1;
 		rect.bottom = rect.top + 1;
 	}
-	uint16 result = s->_gui->onControl(screenMask, rect);
+	uint16 result = s->_gfxCompare->kernelOnControl(screenMask, rect);
 	return make_reg(0, result);
 }
 
@@ -553,12 +540,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		s->_gui32->baseSetter(object);
-	else
-#endif
-		s->_gui->baseSetter(object);
+	s->_gfxCompare->kernelBaseSetter(object);
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
@@ -571,12 +553,7 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		s->_gui32->setNowSeen(argv[0]);
-	else
-#endif
-		s->_gui->setNowSeen(argv[0]);
+	s->_gfxCompare->kernelSetNowSeen(argv[0]);
 
 	return s->r_acc;
 }

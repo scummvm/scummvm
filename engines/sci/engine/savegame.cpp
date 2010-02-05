@@ -945,8 +945,12 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->_gfxAnimate = s->_gfxAnimate;
 	retval->_gfxCache = s->_gfxCache;
+	retval->_gfxCompare = s->_gfxCompare;
 	retval->_gfxControls = s->_gfxControls;
+	retval->_gfxCoordAdjuster = s->_gfxCoordAdjuster;
+	retval->_gfxCursor = s->_gfxCursor;
 	retval->_gfxMenu = s->_gfxMenu;
+	retval->_gfxPaint16 = s->_gfxPaint16;
 	retval->_gfxPalette = s->_gfxPalette;
 	retval->_gfxPorts = s->_gfxPorts;
 	retval->_gfxScreen = s->_gfxScreen;
@@ -954,6 +958,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 #ifdef ENABLE_SCI32
 	// Copy the Gui32 pointer over to the new EngineState, if it exists
 	retval->_gui32 = s->_gui32;
+	retval->_gfxFrameout = s->_gfxFrameout;
 #endif
 
 	// Copy some old data

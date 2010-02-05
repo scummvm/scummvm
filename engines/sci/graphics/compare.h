@@ -39,18 +39,24 @@ class Screen;
  */
 class GfxCompare {
 public:
-	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen);
+	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster *coordAdjuster);
 	~GfxCompare();
 
-	uint16 onControl(uint16 screenMask, Common::Rect rect);
-	bool CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list);
-	void SetNowSeen(reg_t objectReference);
+	uint16 isOnControl(uint16 screenMask, Common::Rect rect);
+	bool canBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list);
+
+	uint16 kernelOnControl(byte screenMask, Common::Rect rect);
+	void kernelSetNowSeen(reg_t objectReference);
+	bool kernelCanBeHere(reg_t curObject, reg_t listReference);
+	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
+	void kernelBaseSetter(reg_t object);
 
 private:
 	SegManager *_segMan;
 	Kernel *_kernel;
 	GfxCache *_cache;
 	GfxScreen *_screen;
+	GfxCoordAdjuster *_coordAdjuster;
 };
 
 } // End of namespace Sci

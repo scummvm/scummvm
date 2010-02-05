@@ -50,7 +50,6 @@ public:
 
 	void shakeScreen(uint16 shakeCount, uint16 directions);
 
-	uint16 onControl(byte screenMask, Common::Rect rect);
 	void setNowSeen(reg_t objectReference);
 	bool canBeHere(reg_t curObject, reg_t listReference);
 	bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);

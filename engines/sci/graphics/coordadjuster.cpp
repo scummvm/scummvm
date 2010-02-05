@@ -55,6 +55,16 @@ void GfxCoordAdjuster16::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObje
 	y += curPort->top;
 }
 
+Common::Rect GfxCoordAdjuster16::onControl(Common::Rect rect) {
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
+	Common::Rect adjustedRect(rect.left, rect.top, rect.right, rect.bottom);
+
+	adjustedRect.clip(_ports->getPort()->rect);
+	_ports->offsetRect(adjustedRect);
+	_ports->setPort(oldPort);
+	return adjustedRect;
+}
+
 #ifdef ENABLE_SCI32
 GfxCoordAdjuster32::GfxCoordAdjuster32(SegManager *segMan)
 	: _segMan(segMan) {
@@ -78,6 +88,12 @@ void GfxCoordAdjuster32::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObje
 	y += GET_SEL32V(_segMan, planeObject, top);
 	//*x = ( *x * resX) / _screen->getWidth();
 	//*y = ( *y * resY) / _screen->getHeight();
+}
+
+Common::Rect GfxCoordAdjuster32::onControl(Common::Rect rect) {
+	Common::Rect adjustedRect = rect;
+	adjustedRect.translate(0, 10);
+	return adjustedRect;
 }
 #endif
 

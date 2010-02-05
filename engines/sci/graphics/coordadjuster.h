@@ -46,6 +46,8 @@ public:
 	virtual void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
 	virtual void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
 
+	virtual Common::Rect onControl(Common::Rect rect) { return rect; };
+
 private:
 };
 
@@ -56,9 +58,13 @@ public:
 
 	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
+
+	Common::Rect onControl(Common::Rect rect);
 	
 private:
 	GfxPorts *_ports;
+
+	Port *backuppedPort;
 };
 
 #ifdef ENABLE_SCI32
@@ -69,6 +75,8 @@ public:
 
 	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
+
+	Common::Rect onControl(Common::Rect rect);
 	
 private:
 	SegManager *_segMan;
