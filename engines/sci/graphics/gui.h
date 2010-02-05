@@ -52,16 +52,12 @@ public:
 	virtual void init(bool usesOldGfxFunctions);
 
 	virtual void wait(int16 ticks);
-	virtual int16 coordinateToPriority(int16 y);
-	virtual int16 priorityToCoordinate(int16 priority);
 
 	virtual void display(const char *text, int argc, reg_t *argv);
 
 	virtual void textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
-
-	virtual void graphAdjustPriority(int top, int bottom);
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
@@ -86,8 +82,6 @@ protected:
 	GfxPaint16 *_paint16;
 
 private:
-	virtual void initPriorityBands();
-
 	AudioPlayer *_audio;
 	GfxAnimate *_animate;
 	GfxControls *_controls;

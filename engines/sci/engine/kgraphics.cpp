@@ -296,7 +296,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	case K_GRAPH_ADJUST_PRIORITY:
 		// Seems to be only implemented for SCI0/SCI01 games
 		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)", argv[1].toUint16(), argv[2].toUint16());
-		s->_gui->graphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
+		s->_gfxPorts->kernelGraphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
@@ -372,17 +372,17 @@ reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
 	int16 y = argv[0].toSint16();
 
 	if ((argc < 2) || (y != 1)) {
-		return make_reg(0, s->_gui->coordinateToPriority(y));
+		return make_reg(0, s->_gfxPorts->kernelCoordinateToPriority(y));
 	} else {
 		int16 priority = argv[1].toSint16();
-		return make_reg(0, s->_gui->priorityToCoordinate(priority));
+		return make_reg(0, s->_gfxPorts->kernelPriorityToCoordinate(priority));
 	}
 }
 
 reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = argv[0].toSint16();
 
-	return make_reg(0, s->_gui->priorityToCoordinate(priority));
+	return make_reg(0, s->_gfxPorts->kernelPriorityToCoordinate(priority));
 }
 
 reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {

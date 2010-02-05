@@ -241,7 +241,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 
 		// Calculate current priority according to y-coordinate
 		if (!(signal & kSignalFixedPriority)) {
-			listEntry->priority = _ports->coordinateToPriority(listEntry->y);
+			listEntry->priority = _ports->kernelCoordinateToPriority(listEntry->y);
 			PUT_SEL32V(_s->_segMan, curObject, priority, listEntry->priority);
 		}
 
@@ -315,7 +315,7 @@ void GfxAnimate::update() {
 			signal &= 0xFFFF ^ (kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
-				rect.top = CLIP<int16>(_ports->priorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
+				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 			listEntry->signal = signal;
@@ -360,7 +360,7 @@ void GfxAnimate::update() {
 
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
-				rect.top = CLIP<int16>(_ports->priorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
+				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
@@ -556,7 +556,7 @@ void GfxAnimate::addToPicDrawCels() {
 		curObject = listEntry->object;
 
 		if (listEntry->priority == -1)
-			listEntry->priority = _ports->coordinateToPriority(listEntry->y);
+			listEntry->priority = _ports->kernelCoordinateToPriority(listEntry->y);
 
 		// Get the corresponding view
 		view = _cache->getView(listEntry->viewId);
@@ -567,7 +567,7 @@ void GfxAnimate::addToPicDrawCels() {
 		// draw corresponding cel
 		_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 		if ((listEntry->signal & kSignalIgnoreActor) == 0) {
-			listEntry->celRect.top = CLIP<int16>(_ports->priorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
+			listEntry->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
 			_paint16->fillRect(listEntry->celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
 

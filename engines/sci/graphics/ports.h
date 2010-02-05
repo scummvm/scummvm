@@ -45,7 +45,7 @@ public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);
 	~GfxPorts();
 
-	void init(SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common::String gameId);
+	void init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common::String gameId);
 
 	void kernelSetActive(uint16 portId);
 	Common::Rect kernelGetPicWindow(int16 &picTop, int16 &picLeft);
@@ -83,8 +83,11 @@ public:
 	void priorityBandsInit(byte *data);
 	void priorityBandsRemember(byte *data);
 	void priorityBandsRecall();
-	byte coordinateToPriority(int16 y);
-	int16 priorityToCoordinate(byte priority);
+
+	void kernelInitPriorityBands();
+	void kernelGraphAdjustPriority(int top, int bottom);
+	byte kernelCoordinateToPriority(int16 y);
+	int16 kernelPriorityToCoordinate(byte priority);
 
 	Port *_wmgrPort;
 	Window *_picWind;
@@ -103,6 +106,8 @@ private:
 	GfxPaint16 *_paint16;
 	GfxScreen *_screen;
 	GfxText16 *_text16;
+
+	bool _usesOldGfxFunctions;
 
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;

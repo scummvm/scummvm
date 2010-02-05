@@ -54,9 +54,10 @@ GfxPorts::~GfxPorts() {
 	delete _menuPort;
 }
 
-void GfxPorts::init(SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common::String gameId) {
+void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common::String gameId) {
 	int16 offTop = 10;
 
+	_usesOldGfxFunctions = usesOldGfxFunctions;
 	_gui = gui;
 	_paint16 = paint16;
 	_text16 = text16;
@@ -103,6 +104,8 @@ void GfxPorts::init(SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16, Common:
 	_picWind = newWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 
 	priorityBandsMemoryActive = false;
+
+	kernelInitPriorityBands();
 }
 
 void GfxPorts::kernelSetActive(uint16 portId) {
@@ -510,7 +513,26 @@ void GfxPorts::priorityBandsRecall() {
 	}
 }
 
-byte GfxPorts::coordinateToPriority(int16 y) {
+void GfxPorts::kernelInitPriorityBands() {
+	if (_usesOldGfxFunctions) {
+		priorityBandsInit(15, 42, 200);
+	} else {
+		if (getSciVersion() >= SCI_VERSION_1_1)
+			priorityBandsInit(14, 0, 190);
+		else
+			priorityBandsInit(14, 42, 190);
+	}
+}
+
+void GfxPorts::kernelGraphAdjustPriority(int top, int bottom) {
+	if (_usesOldGfxFunctions) {
+		priorityBandsInit(15, top, bottom);
+	} else {
+		priorityBandsInit(14, top, bottom);
+	}
+}
+
+byte GfxPorts::kernelCoordinateToPriority(int16 y) {
 	if (y < _priorityTop)
 		return _priorityBands[_priorityTop];
 	if (y > _priorityBottom)
@@ -518,7 +540,7 @@ byte GfxPorts::coordinateToPriority(int16 y) {
 	return _priorityBands[y];
 }
 
-int16 GfxPorts::priorityToCoordinate(byte priority) {
+int16 GfxPorts::kernelPriorityToCoordinate(byte priority) {
 	int16 y;
 	if (priority <= _priorityBandCount) {
 		for (y = 0; y <= _priorityBottom; y++)

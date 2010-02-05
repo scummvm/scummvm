@@ -89,22 +89,8 @@ void SciGui::resetEngineState(EngineState *s) {
 }
 
 void SciGui::init(bool usesOldGfxFunctions) {
-	_usesOldGfxFunctions = usesOldGfxFunctions;
-
-	_ports->init(this, _paint16, _text16, _s->_gameId);
+	_ports->init(usesOldGfxFunctions, this, _paint16, _text16, _s->_gameId);
 	_paint16->init(_animate, _text16);
-	initPriorityBands();
-}
-
-void SciGui::initPriorityBands() {
-	if (_usesOldGfxFunctions) {
-		_ports->priorityBandsInit(15, 42, 200);
-	} else {
-		if (getSciVersion() >= SCI_VERSION_1_1)
-			_ports->priorityBandsInit(14, 0, 190);
-		else
-			_ports->priorityBandsInit(14, 42, 190);
-	}
 }
 
 void SciGui::wait(int16 ticks) {
@@ -116,14 +102,6 @@ void SciGui::wait(int16 ticks) {
 
 	ticks *= g_debug_sleeptime_factor;
 	kernel_sleep(_s->_event, ticks * 1000 / 60);
-}
-
-int16 SciGui::coordinateToPriority(int16 y) {
-	return _ports->coordinateToPriority(y);
-}
-
-int16 SciGui::priorityToCoordinate(int16 priority) {
-	return _ports->priorityToCoordinate(priority);
 }
 
 #define SCI_DISPLAY_MOVEPEN				100
@@ -246,14 +224,6 @@ void SciGui::textFonts(int argc, reg_t *argv) {
 // Used SCI1+ for text codes
 void SciGui::textColors(int argc, reg_t *argv) {
 	_text16->CodeSetColors(argc, argv);
-}
-
-void SciGui::graphAdjustPriority(int top, int bottom) {
-	if (_usesOldGfxFunctions) {
-		_ports->priorityBandsInit(15, top, bottom);
-	} else {
-		_ports->priorityBandsInit(14, top, bottom);
-	}
 }
 
 void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
