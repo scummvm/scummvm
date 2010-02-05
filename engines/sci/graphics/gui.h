@@ -76,10 +76,6 @@ public:
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 
-	virtual void setCursorPos(Common::Point pos);
-	virtual void moveCursor(Common::Point pos);
-	void setCursorZone(Common::Rect zone);
-
 	virtual reg_t portraitLoad(Common::String resourceName);
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);

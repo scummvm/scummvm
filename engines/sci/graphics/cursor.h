@@ -45,6 +45,8 @@ public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~GfxCursor();
 
+	void init(GfxCoordAdjuster *coordAdjuster, SciEvent *event);
+
 	void kernelShow();
 	void kernelHide();
 	bool isVisible();
@@ -59,7 +61,10 @@ public:
 	 *
 	 * @param[in] rect	The rectangle
 	 */
-	void setMoveZone(Common::Rect zone) { _moveZone = zone; }
+	void kernelSetMoveZone(Common::Rect zone);
+
+	void kernelSetPos(Common::Point pos);
+	void kernelMoveCursor(Common::Point pos);
 
 private:
 	void purgeCache();
@@ -67,6 +72,8 @@ private:
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
+	GfxCoordAdjuster *_coordAdjuster;
+	SciEvent *_event;
 
 	bool _upscaledHires;
 

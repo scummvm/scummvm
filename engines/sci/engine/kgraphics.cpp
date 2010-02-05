@@ -101,7 +101,7 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4) {
 		pos.y = argv[3].toSint16();
 		pos.x = argv[2].toSint16();
-		s->_gui->setCursorPos(pos);
+		s->_gfxCursor->kernelSetPos(pos);
 	}
 
 	if ((argc >= 2) && (argv[1].toSint16() == 0)) {
@@ -136,12 +136,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
 		
-#ifdef ENABLE_SCI32
-		if (s->_gui32)
-			s->_gui32->setCursorPos(pos);
-		else
-#endif
-			s->_gui->setCursorPos(pos);
+		s->_gfxCursor->kernelSetPos(pos);
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();
@@ -151,12 +146,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
-#ifdef ENABLE_SCI32
-			if (s->_gui32)
-				s->_gui32->setCursorZone(rect);
-			else
-#endif
-				s->_gui->setCursorZone(rect);
+			s->_gfxCursor->kernelSetMoveZone(rect);
 		} else {
 			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
 		}
@@ -193,7 +183,7 @@ reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 2) {
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
-		s->_gui->setCursorPos(pos);
+		s->_gfxCursor->kernelSetPos(pos);
 	}
 	return s->r_acc;
 }

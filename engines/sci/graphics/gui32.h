@@ -50,15 +50,6 @@ public:
 
 	void shakeScreen(uint16 shakeCount, uint16 directions);
 
-	void setNowSeen(reg_t objectReference);
-	bool canBeHere(reg_t curObject, reg_t listReference);
-	bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
-	void baseSetter(reg_t object);
-
-	void setCursorPos(Common::Point pos);
-	void moveCursor(Common::Point pos);
-	void setCursorZone(Common::Rect zone);
-
 	void drawRobot(GuiResourceId robotId);
 
 	// FIXME: Don't store EngineState

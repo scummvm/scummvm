@@ -51,6 +51,7 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 
 	_coordAdjuster = new GfxCoordAdjuster32(_s->_segMan);
 	_s->_gfxCoordAdjuster = _coordAdjuster;
+	_cursor->init(_coordAdjuster, _s->_event);
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
 	_s->_gfxCompare = _compare;
 	_paint32 = new GfxPaint32(_s->resMan, _s->_segMan, _s->_kernel, _cache, _screen, _palette);
@@ -90,35 +91,6 @@ void SciGui32::shakeScreen(uint16 shakeCount, uint16 directions) {
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
-}
-
-void SciGui32::setCursorPos(Common::Point pos) {
-	//pos.y += _gfx->GetPort()->top;
-	//pos.x += _gfx->GetPort()->left;
-	moveCursor(pos);
-}
-
-void SciGui32::moveCursor(Common::Point pos) {
-	// pos.y += _windowMgr->_picWind->rect.top;
-	// pos.x += _windowMgr->_picWind->rect.left;
-
-	// pos.y = CLIP<int16>(pos.y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
-	// pos.x = CLIP<int16>(pos.x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
-
-	if (pos.x > _screen->getWidth() || pos.y > _screen->getHeight()) {
-		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
-		return;
-	}
-
-	_cursor->setPosition(pos);
-
-	// Trigger event reading to make sure the mouse coordinates will
-	// actually have changed the next time we read them.
-	_s->_event->get(SCI_EVENT_PEEK);
-}
-
-void SciGui32::setCursorZone(Common::Rect zone) {
-	_cursor->setMoveZone(zone);
 }
 
 void SciGui32::drawRobot(GuiResourceId robotId) {

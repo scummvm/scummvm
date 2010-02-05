@@ -28,9 +28,11 @@
 #include "common/events.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/cursor.h"
 
@@ -42,13 +44,18 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_upscaledHires = _screen->getUpscaledHires();
 	// center mouse cursor
 	setPosition(Common::Point(_screen->getDisplayWidth() / 2, _screen->getDisplayHeight() / 2));
-	setMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
+	kernelSetMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
 
 	_isVisible = true;
 }
 
 GfxCursor::~GfxCursor() {
 	purgeCache();
+}
+
+void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, SciEvent *event) {
+	_coordAdjuster = coordAdjuster;
+	_event = event;
 }
 
 void GfxCursor::kernelShow() {
@@ -222,6 +229,29 @@ void GfxCursor::refreshPosition() {
 	// FIXME: Do this only when mouse is grabbed?
 	if (clipped)
 		setPosition(mousePoint);
+}
+
+void GfxCursor::kernelSetMoveZone(Common::Rect zone) {
+	 _moveZone = zone;
+}
+
+void GfxCursor::kernelSetPos(Common::Point pos) {
+	_coordAdjuster->setCursorPos(pos);
+	kernelMoveCursor(pos);
+}
+
+void GfxCursor::kernelMoveCursor(Common::Point pos) {
+	_coordAdjuster->moveCursor(pos);
+	if (pos.x > _screen->getWidth() || pos.y > _screen->getHeight()) {
+		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
+		return;
+	}
+
+	setPosition(pos);
+
+	// Trigger event reading to make sure the mouse coordinates will
+	// actually have changed the next time we read them.
+	_event->get(SCI_EVENT_PEEK);
 }
 
 } // End of namespace Sci

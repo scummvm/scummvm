@@ -56,6 +56,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 
 	_coordAdjuster = new GfxCoordAdjuster16(_ports);
 	_s->_gfxCoordAdjuster = _coordAdjuster;
+	_cursor->init(_coordAdjuster, _s->_event);
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
 	_s->_gfxCompare = _compare;
 	_transitions = new GfxTransitions(this, _screen, _palette, _s->resMan->isVGA());
@@ -267,35 +268,6 @@ void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
 		g_system->updateScreen();
 		wait(3);
 	}
-}
-
-void SciGui::setCursorPos(Common::Point pos) {
-	pos.y += _ports->getPort()->top;
-	pos.x += _ports->getPort()->left;
-	moveCursor(pos);
-}
-
-void SciGui::moveCursor(Common::Point pos) {
-	pos.y += _ports->_picWind->rect.top;
-	pos.x += _ports->_picWind->rect.left;
-
-	pos.y = CLIP<int16>(pos.y, _ports->_picWind->rect.top, _ports->_picWind->rect.bottom - 1);
-	pos.x = CLIP<int16>(pos.x, _ports->_picWind->rect.left, _ports->_picWind->rect.right - 1);
-
-	if (pos.x > _screen->getWidth() || pos.y > _screen->getHeight()) {
-		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
-		return;
-	}
-
-	_cursor->setPosition(pos);
-
-	// Trigger event reading to make sure the mouse coordinates will
-	// actually have changed the next time we read them.
-	_s->_event->get(SCI_EVENT_PEEK);
-}
-
-void SciGui::setCursorZone(Common::Rect zone) {
-	_cursor->setMoveZone(zone);
 }
 
 reg_t SciGui::portraitLoad(Common::String resourceName) {

@@ -47,7 +47,8 @@ public:
 	virtual void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
 
 	virtual Common::Rect onControl(Common::Rect rect) { return rect; };
-
+	virtual void setCursorPos(Common::Point &pos) { };
+	virtual void moveCursor(Common::Point &pos) { };
 private:
 };
 
@@ -60,6 +61,8 @@ public:
 	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 
 	Common::Rect onControl(Common::Rect rect);
+	void setCursorPos(Common::Point &pos);
+	void moveCursor(Common::Point &pos);
 	
 private:
 	GfxPorts *_ports;
