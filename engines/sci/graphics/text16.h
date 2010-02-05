@@ -35,14 +35,14 @@ namespace Sci {
 class GfxPorts;
 class GfxPaint16;
 class GfxScreen;
-class Font;
+class GfxFont;
 class GfxText16 {
 public:
 	GfxText16(ResourceManager *_resMan, GfxCache *fonts, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);
 	~GfxText16();
 
 	GuiResourceId GetFontId();
-	Font *GetFont();
+	GfxFont *GetFont();
 	void SetFont(GuiResourceId fontId);
 
 	void CodeSetFonts(int argc, reg_t *argv);
@@ -62,7 +62,7 @@ public:
 	void Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);
 	void Draw_String(const char *text);
 
-	Font *_font;
+	GfxFont *_font;
 
 private:
 	void init();

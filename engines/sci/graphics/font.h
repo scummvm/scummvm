@@ -30,10 +30,10 @@
 
 namespace Sci {
 
-class Font {
+class GfxFont {
 public:
-	Font(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
-	~Font();
+	GfxFont(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
+	~GfxFont();
 
 	GuiResourceId getResourceId();
 	byte getHeight();

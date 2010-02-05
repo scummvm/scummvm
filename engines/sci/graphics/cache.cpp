@@ -63,12 +63,12 @@ void GfxCache::purgeViewCache() {
 	_cachedViews.clear();
 }
 
-Font *GfxCache::getFont(GuiResourceId fontId) {
+GfxFont *GfxCache::getFont(GuiResourceId fontId) {
 	if (_cachedFonts.size() >= MAX_CACHED_FONTS)
 		purgeFontCache();
 
 	if (!_cachedFonts.contains(fontId))
-		_cachedFonts[fontId] = new Font(_resMan, _screen, fontId);
+		_cachedFonts[fontId] = new GfxFont(_resMan, _screen, fontId);
 
 	return _cachedFonts[fontId];
 }

@@ -32,10 +32,10 @@
 
 namespace Sci {
 
-class Font;
+class GfxFont;
 class GfxView;
 
-typedef Common::HashMap<int, Font *> FontCache;
+typedef Common::HashMap<int, GfxFont *> FontCache;
 typedef Common::HashMap<int, GfxView *> ViewCache;
 
 class GfxCache {
@@ -43,7 +43,7 @@ public:
 	GfxCache(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette);
 	~GfxCache();
 
-	Font *getFont(GuiResourceId fontId);
+	GfxFont *getFont(GuiResourceId fontId);
 
 	GfxView *getView(GuiResourceId viewId);
 	int16 kernelViewGetCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo);

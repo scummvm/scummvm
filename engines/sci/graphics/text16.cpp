@@ -57,7 +57,7 @@ GuiResourceId GfxText16::GetFontId() {
 	return _ports->_curPort->fontId;
 }
 
-Font *GfxText16::GetFont() {
+GfxFont *GfxText16::GetFont() {
 	if ((_font == NULL) || (_font->getResourceId() != _ports->_curPort->fontId))
 		_font = _cache->getFont(_ports->_curPort->fontId);
 
