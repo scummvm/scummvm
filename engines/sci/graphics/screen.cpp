@@ -37,15 +37,22 @@ GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, bool up
 	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
 
 	_pixels = _width * _height;
-
 	_displayWidth = _width;
 	_displayHeight = _height;
+
 	if (_upscaledHires) {
 		_displayWidth *= 2;
 		_displayHeight *= 2;
-	}
-	_displayPixels = _displayWidth * _displayHeight;
 
+#ifdef ENABLE_SCI32
+		// SCI32 also corrects the aspect ratio when upscaling the resolution.
+		// This is especially needed in GK1, as the credits video is 640x480.
+		if (getSciVersion() >= SCI_VERSION_2)
+			_displayHeight = _displayHeight * 6 / 5;
+#endif
+	}
+
+	_displayPixels = _displayWidth * _displayHeight;
 	_visualScreen = (byte *)calloc(_pixels, 1);
 	_priorityScreen = (byte *)calloc(_pixels, 1);
 	_controlScreen = (byte *)calloc(_pixels, 1);
