@@ -57,7 +57,7 @@ void GfxPaint32::fillRect(Common::Rect rect, byte color) {
 }
 
 void GfxPaint32::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	SciGuiPicture *picture = new SciGuiPicture(_resMan, 0, _screen, _palette, pictureId, false);
+	GfxPicture *picture = new GfxPicture(_resMan, 0, _screen, _palette, pictureId, false);
 
 	picture->draw(animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 	delete picture;

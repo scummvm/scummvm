@@ -33,13 +33,13 @@ namespace Sci {
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
 class GfxPorts;
-class Screen;
-class SciPalette;
+class GfxScreen;
+class GfxPalette;
 
-class SciGuiPicture {
+class GfxPicture {
 public:
-	SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
-	~SciGuiPicture();
+	GfxPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize = false);
+	~GfxPicture();
 
 	GuiResourceId getResourceId();
 	void draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);

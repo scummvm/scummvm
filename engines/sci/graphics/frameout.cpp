@@ -102,7 +102,7 @@ void GfxFrameout::kernelFrameout() {
 	int16 itemCount = 0;
 	reg_t planeObject;
 	GuiResourceId planePictureNr;
-	SciGuiPicture *planePicture = 0;
+	GfxPicture *planePicture = 0;
 	int16 planePictureCels = 0;
 	int16 planePictureCel;
 	int16 planePriority;
@@ -146,7 +146,7 @@ void GfxFrameout::kernelFrameout() {
 
 		planePictureNr = GET_SEL32V(_segMan, planeObject, picture);
 		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
-			planePicture = new SciGuiPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
+			planePicture = new GfxPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
 			planePictureCels = planePicture->getSci32celCount();
 		}
 

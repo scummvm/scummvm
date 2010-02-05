@@ -62,7 +62,7 @@ void GfxPaint16::setEGAdrawingVisualize(bool state) {
 }
 
 void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
-	SciGuiPicture *picture = new SciGuiPicture(_resMan, _ports, _screen, _palette, pictureId, _EGAdrawingVisualize);
+	GfxPicture *picture = new GfxPicture(_resMan, _ports, _screen, _palette, pictureId, _EGAdrawingVisualize);
 
 	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag)

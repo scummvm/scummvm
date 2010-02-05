@@ -33,28 +33,28 @@
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
+GfxPicture::GfxPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
 	: _resMan(resMan), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
-SciGuiPicture::~SciGuiPicture() {
+GfxPicture::~GfxPicture() {
 }
 
-void SciGuiPicture::initData(GuiResourceId resourceId) {
+void GfxPicture::initData(GuiResourceId resourceId) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypePic, resourceId), false);
 	if (!_resource) {
 		error("picture resource %d not found", resourceId);
 	}
 }
 
-GuiResourceId SciGuiPicture::getResourceId() {
+GuiResourceId GfxPicture::getResourceId() {
 	return _resourceId;
 }
 
 // TODO: subclass this
-void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
+void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	uint16 headerSize;
 
 	_animationNr = animationNr;
@@ -79,7 +79,7 @@ void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, i
 	}
 }
 
-void SciGuiPicture::reset() {
+void GfxPicture::reset() {
 	int16 x, y;
 	for (y = _ports->getPort()->top; y < _screen->getHeight(); y++) {
 		for (x = 0; x < _screen->getWidth(); x++) {
@@ -88,7 +88,7 @@ void SciGuiPicture::reset() {
 	}
 }
 
-void SciGuiPicture::drawSci11Vga() {
+void GfxPicture::drawSci11Vga() {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int has_cel = READ_LE_UINT16(inbuffer + 4);
@@ -117,12 +117,12 @@ void SciGuiPicture::drawSci11Vga() {
 }
 
 #ifdef ENABLE_SCI32
-int16 SciGuiPicture::getSci32celCount() {
+int16 GfxPicture::getSci32celCount() {
 	byte *inbuffer = _resource->data;
 	return inbuffer[2];
 }
 
-void SciGuiPicture::drawSci32Vga(int16 celNo) {
+void GfxPicture::drawSci32Vga(int16 celNo) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_LE_UINT16(inbuffer);
@@ -159,7 +159,7 @@ void SciGuiPicture::drawSci32Vga(int16 celNo) {
 }
 #endif
 
-void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
+void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -403,7 +403,7 @@ static const byte vector_defaultEGApriority[PIC_EGAPRIORITY_SIZE] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07
 };
 
-void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
+void GfxPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
 	byte pic_color = _screen->getColorDefaultVectorData();
 	byte pic_priority = 255, pic_control = 255;
@@ -647,26 +647,26 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	error("picture vector data without terminator");
 }
 
-bool SciGuiPicture::vectorIsNonOpcode(byte pixel) {
+bool GfxPicture::vectorIsNonOpcode(byte pixel) {
 	if (pixel >= PIC_OP_FIRST)
 		return false;
 	return true;
 }
 
-void SciGuiPicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y) {
+void GfxPicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte pixel = data[curPos++];
 	x = data[curPos++] + ((pixel & 0xF0) << 4);
 	y = data[curPos++] + ((pixel & 0x0F) << 8);
 	if (_mirroredFlag) x = 319 - x;
 }
 
-void SciGuiPicture::vectorGetAbsCoordsNoMirror(byte *data, int &curPos, int16 &x, int16 &y) {
+void GfxPicture::vectorGetAbsCoordsNoMirror(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte pixel = data[curPos++];
 	x = data[curPos++] + ((pixel & 0xF0) << 4);
 	y = data[curPos++] + ((pixel & 0x0F) << 8);
 }
 
-void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y) {
+void GfxPicture::vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte pixel = data[curPos++];
 	if (pixel & 0x80) {
 		x -= ((pixel >> 4) & 7) * (_mirroredFlag ? -1 : 1);
@@ -680,7 +680,7 @@ void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 
 	}
 }
 
-void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int16 &y) {
+void GfxPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte pixel = data[curPos++];
 	if (pixel & 0x80) {
 		y -= (pixel & 0x7F);
@@ -695,14 +695,14 @@ void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int
 	}
 }
 
-void SciGuiPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture) {
+void GfxPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture) {
 	if (pattern_Code & SCI_PATTERN_CODE_USE_TEXTURE) {
 		pattern_Texture = (data[curPos++] >> 1) & 0x7f;
 	}
 }
 
 // Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
-void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
+void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
 	Port *curPort = _ports->getPort();
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
@@ -921,7 +921,7 @@ static const byte vectorPatternTextureOffset[128] = {
 	0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1
 };
 
-void SciGuiPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte control) {
+void GfxPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	int y, x;
 
@@ -932,7 +932,7 @@ void SciGuiPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, by
 	}
 }
 
-void SciGuiPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
+void GfxPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
 	int y, x;
@@ -947,7 +947,7 @@ void SciGuiPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte 
 	}
 }
 
-void SciGuiPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
+void GfxPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
@@ -969,7 +969,7 @@ void SciGuiPicture::vectorPatternCircle(Common::Rect box, byte size, byte color,
 	}
 }
 
-void SciGuiPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
+void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
 	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
@@ -995,7 +995,7 @@ void SciGuiPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byt
 	}
 }
 
-void SciGuiPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
+void GfxPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
 	byte size = code & SCI_PATTERN_CODE_PENSIZE;
 	Common::Rect rect;
 
