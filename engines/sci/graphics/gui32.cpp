@@ -239,9 +239,4 @@ void SciGui32::drawRobot(GuiResourceId robotId) {
 	delete test;
 }
 
-bool SciGui32::debugShowMap(int mapNo) {
-	_screen->debugShowMap(mapNo);
-	return false;
-}
-
 } // End of namespace Sci

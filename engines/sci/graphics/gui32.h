@@ -71,8 +71,6 @@ public:
 
 	void drawRobot(GuiResourceId robotId);
 
-	bool debugShowMap(int mapNo);
-
 	// FIXME: Don't store EngineState
 	void resetEngineState(EngineState *s);
 
