@@ -41,6 +41,11 @@ namespace Sci {
 
 #define SCI_SCREEN_UNDITHERMEMORIAL_SIZE 256
 
+/**
+ * Screen class, actually creates 3 (4) screens internally - which is visual/display (for the user),
+ *  priority (contains priority information) and control (contains control information). Handles all operations to it
+ *  and copies parts of visual/display screen to the actual screen, so the user can really see it.
+ */
 class GfxScreen {
 public:
 	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);

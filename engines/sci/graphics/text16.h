@@ -36,6 +36,9 @@ class GfxPorts;
 class GfxPaint16;
 class GfxScreen;
 class GfxFont;
+/**
+ * Text16 class, handles text calculation and displaying of text for SCI0->SCI1.1 games
+ */
 class GfxText16 {
 public:
 	GfxText16(ResourceManager *_resMan, GfxCache *fonts, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);

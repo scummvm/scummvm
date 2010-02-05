@@ -60,6 +60,9 @@ enum {
 };
 
 class Screen;
+/**
+ * Transitions class, handles doing transitions for SCI0->SCI1.1 games like fade out/fade in, mosaic effect, etc.
+ */
 class GfxTransitions {
 public:
 	GfxTransitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA);

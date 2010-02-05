@@ -51,6 +51,10 @@ struct LoopInfo {
 class GfxScreen;
 class GfxPalette;
 
+/**
+ * View class, handles loading of view resources and drawing contained cels to screen
+ *  every view resource has its own instance of this class
+ */
 class GfxView {
 public:
 	GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId);

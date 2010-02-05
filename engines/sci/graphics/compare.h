@@ -34,6 +34,9 @@ namespace Sci {
 
 class Screen;
 
+/**
+ * Compare class, handles compare operations graphic-wise (like when checking control screen for a pattern etc.)
+ */
 class GfxCompare {
 public:
 	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen);

@@ -76,6 +76,9 @@ struct GuiMenuItemEntry {
 };
 typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
+/**
+ * Menu class, handles game pulldown menu for SCI16 (SCI0-SCI1.1) games
+ */
 class GfxMenu {
 public:
 	GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor);

@@ -38,6 +38,9 @@ class GfxView;
 typedef Common::HashMap<int, GfxFont *> FontCache;
 typedef Common::HashMap<int, GfxView *> ViewCache;
 
+/**
+ * Cache class, handles caching of views/fonts
+ */
 class GfxCache {
 public:
 	GfxCache(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette);

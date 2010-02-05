@@ -45,6 +45,9 @@ typedef Common::List<FrameoutEntry *> FrameoutList;
 
 class GfxCache;
 class GfxPaint32;
+/**
+ * Frameout class, kFrameout and relevant functions for SCI32 games
+ */
 class GfxFrameout {
 public:
 	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32);

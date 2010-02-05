@@ -81,6 +81,9 @@ class GfxPaint16;
 class GfxScreen;
 class GfxPalette;
 class GfxTransitions;
+/**
+ * Animate class, kAnimate and relevant functions for SCI16 (SCI0-SCI1.1) games
+ */
 class GfxAnimate {
 public:
 	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);

@@ -40,6 +40,9 @@ class Font;
 class SciGuiPicture;
 class GfxView;
 
+/**
+ * Paint16 class, handles painting/drawing for SCI16 (SCI0-SCI1.1) games
+ */
 class GfxPaint16 : public GfxPaint {
 public:
 	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions);

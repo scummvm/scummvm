@@ -35,6 +35,9 @@ namespace Sci {
 
 class GfxPorts;
 
+/**
+ * Paint32 class, handles painting/drawing for SCI32 (SCI2+) games
+ */
 class GfxPaint32 : public GfxPaint {
 public:
 	GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxPalette *palette);

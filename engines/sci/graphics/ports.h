@@ -36,6 +36,10 @@ class GfxPaint16;
 class GfxScreen;
 class GfxText16;
 
+/**
+ * Ports class, includes all port managment for SCI0->SCI1.1 games. Ports are some sort of windows in SCI
+ *  this class also handles adjusting coordinates to a specific port
+ */
 class GfxPorts {
 public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);

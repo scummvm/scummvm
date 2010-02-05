@@ -39,6 +39,9 @@ class GfxPaint16;
 class Font;
 class GfxText16;
 class GfxScreen;
+/**
+ * Controls class, handles drawing of controls in SCI16 (SCI0-SCI1.1) games
+ */
 class GfxControls {
 public:
 	GfxControls(SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen);

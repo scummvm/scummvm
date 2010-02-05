@@ -30,6 +30,10 @@
 
 namespace Sci {
 
+/**
+ * Font class, handles loading of font resources and drawing characters to screen
+ *  every font resource has its own instance of this class
+ */
 class GfxFont {
 public:
 	GfxFont(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);

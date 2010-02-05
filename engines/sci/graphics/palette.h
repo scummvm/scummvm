@@ -31,6 +31,9 @@
 namespace Sci {
 
 class Screen;
+/**
+ * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
+ */
 class GfxPalette {
 public:
 	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette = true);
