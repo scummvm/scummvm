@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	video/mpeg_player.o \
 	video/smk_decoder.o \
 	video/video_player.o \
+	video/codecs/msrle.o \
 	video/codecs/msvideo1.o \
 	video/coktelvideo/indeo3.o \
 	video/coktelvideo/coktelvideo.o

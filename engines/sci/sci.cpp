@@ -90,11 +90,14 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "actors");	// KQ6 hi-res portraits
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "aud");	// resource.aud and audio files
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "avi");	// AVI movie files for Windows versions
-	//SearchMan.addSubDirectoryMatching(_gameDataDir, "patches");	// resource patches
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "seq");	// SEQ movie files for DOS versions
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "wav");	// speech files in WAV format
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "sfx");	// music/sound files in WAV format
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "robot");	// robot files
+
+	// Add the patches directory, except in KQ6; KQ6 comes with broken patches.
+	if (getGameID() != "kq6")
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "patches");	// resource patches
 }
 
 SciEngine::~SciEngine() {

@@ -37,6 +37,7 @@
 
 // Codecs
 #include "graphics/video/codecs/msvideo1.h"
+#include "graphics/video/codecs/msrle.h"
 
 namespace Graphics {
 
@@ -332,7 +333,8 @@ Surface *AviDecoder::getNextFrame() {
 
 		_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
 		_fileStream->skip(chunkSize & 1); // Alignment
-	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' || getStreamType(nextTag) == 'AM') {
+	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' ||
+	           getStreamType(nextTag) == 'AM' || getStreamType(nextTag) == '32') {
 		// Compressed Frame
 		_videoInfo.currentFrame++;
 		uint32 chunkSize = _fileStream->readUint32LE();
@@ -427,6 +429,8 @@ Codec *AviDecoder::createCodec() {
 		case ID_MSVC:
 		case ID_WHAM:
 			return new MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
+		case ID_RLE :
+			return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 		default:
 			warning ("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}
