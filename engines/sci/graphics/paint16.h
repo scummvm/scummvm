@@ -45,10 +45,10 @@ class GfxView;
  */
 class GfxPaint16 : public GfxPaint {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions);
 	~GfxPaint16();
 
-	void init(GfxText16 *text16);
+	void init(GfxAnimate *animate, GfxText16 *text16);
 
 	void setEGAdrawingVisualize(bool state);
 
@@ -84,13 +84,16 @@ public:
 	reg_t kernelGraphSaveUpscaledHiresBox(Common::Rect rect);
 	void kernelGraphRestoreBox(reg_t handle);
 	void kernelGraphUpdateBox(Common::Rect rect, bool hiresMode);
+	void kernelGraphRedrawBox(Common::Rect rect);
 
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 	Kernel *_kernel;
+	GfxAnimate *_animate;
 	GfxCache *_cache;
 	GfxPorts *_ports;
+	GfxCoordAdjuster *_coordAdjuster;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxText16 *_text16;

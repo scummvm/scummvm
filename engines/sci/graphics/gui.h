@@ -46,6 +46,7 @@ class GfxPalette;
 class GfxCursor;
 class GfxCache;
 class GfxCompare;
+class GfxCoordAdjuster16;
 class GfxPorts;
 class GfxPaint16;
 class GfxAnimate;
@@ -62,8 +63,6 @@ public:
 	virtual void init(bool usesOldGfxFunctions);
 
 	virtual void wait(int16 ticks);
-	virtual void globalToLocal(int16 *x, int16 *y);
-	virtual void localToGlobal(int16 *x, int16 *y);
 	virtual int16 coordinateToPriority(int16 y);
 	virtual int16 priorityToCoordinate(int16 priority);
 
@@ -76,7 +75,6 @@ public:
 	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawMenuBar(bool clear);
 
-	virtual void graphRedrawBox(Common::Rect rect);
 	virtual void graphAdjustPriority(int top, int bottom);
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
@@ -106,6 +104,7 @@ protected:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxCache *_cache;
+	GfxCoordAdjuster16 *_coordAdjuster;
 	GfxCompare *_compare;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;

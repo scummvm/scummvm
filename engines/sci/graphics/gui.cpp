@@ -39,6 +39,7 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
@@ -53,9 +54,11 @@ namespace Sci {
 SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio)
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _ports(ports), _audio(audio) {
 
+	_coordAdjuster = new GfxCoordAdjuster16(_ports);
+	_s->_gfxCoordAdjuster = _coordAdjuster;
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 	_transitions = new GfxTransitions(this, _screen, _palette, _s->resMan->isVGA());
-	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _screen, _palette, _transitions);
+	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
 	_s->_gfxPaint = _paint16;
 	_s->_gfxPaint16 = _paint16;
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
@@ -75,6 +78,7 @@ SciGui::~SciGui() {
 	delete _paint16;
 	delete _transitions;
 	delete _compare;
+	delete _coordAdjuster;
 }
 
 void SciGui::resetEngineState(EngineState *s) {
@@ -86,7 +90,7 @@ void SciGui::init(bool usesOldGfxFunctions) {
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 
 	_ports->init(this, _paint16, _text16, _s->_gameId);
-	_paint16->init(_text16);
+	_paint16->init(_animate, _text16);
 	initPriorityBands();
 }
 
@@ -110,18 +114,6 @@ void SciGui::wait(int16 ticks) {
 
 	ticks *= g_debug_sleeptime_factor;
 	kernel_sleep(_s->_event, ticks * 1000 / 60);
-}
-
-void SciGui::globalToLocal(int16 *x, int16 *y) {
-	Port *curPort = _ports->getPort();
-	*x = *x - curPort->left;
-	*y = *y - curPort->top;
-}
-
-void SciGui::localToGlobal(int16 *x, int16 *y) {
-	Port *curPort = _ports->getPort();
-	*x = *x + curPort->left;
-	*y = *y + curPort->top;
 }
 
 int16 SciGui::coordinateToPriority(int16 y) {
@@ -198,7 +190,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			_paint16->bitsGetRect(argv[0], &rect);
 			rect.translate(-_ports->getPort()->left, -_ports->getPort()->top);
 			_paint16->bitsRestore(argv[0]);
-			graphRedrawBox(rect);
+			_paint16->kernelGraphRedrawBox(rect);
 			// finishing loop
 			argc = 0;
 			break;
@@ -274,18 +266,6 @@ void SciGui::drawMenuBar(bool clear) {
 	} else {
 		drawStatus("", 0, 0);
 	}
-}
-
-void SciGui::graphRedrawBox(Common::Rect rect) {
-	localToGlobal(&rect.left, &rect.top);
-	localToGlobal(&rect.right, &rect.bottom);
-	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
-	globalToLocal(&rect.left, &rect.top);
-	globalToLocal(&rect.right, &rect.bottom);
-
-	_animate->reAnimate(rect);
-
-	_ports->setPort(oldPort);
 }
 
 void SciGui::graphAdjustPriority(int top, int bottom) {

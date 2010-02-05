@@ -37,6 +37,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/picture.h"
@@ -48,6 +49,8 @@ namespace Sci {
 SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor)
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
+	_coordAdjuster = new GfxCoordAdjuster32(_s->_segMan);
+	_s->_gfxCoordAdjuster = _coordAdjuster;
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
 	_paint32 = new GfxPaint32(_s->resMan, _s->_segMan, _s->_kernel, _cache, _screen, _palette);
 	_s->_gfxPaint = _paint32;
@@ -59,6 +62,7 @@ SciGui32::~SciGui32() {
 	delete _frameout;
 	delete _paint32;
 	delete _compare;
+	delete _coordAdjuster;
 }
 
 void SciGui32::resetEngineState(EngineState *s) {
@@ -66,24 +70,6 @@ void SciGui32::resetEngineState(EngineState *s) {
 }
 
 void SciGui32::init() {
-}
-
-void SciGui32::globalToLocal(int16 *x, int16 *y, reg_t planeObj) {
-	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, resY);
-	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, resX);
-	//*x = ( *x * _screen->getWidth()) / resX;
-	//*y = ( *y * _screen->getHeight()) / resY;
-	*x -= GET_SEL32V(_s->_segMan, planeObj, left);
-	*y -= GET_SEL32V(_s->_segMan, planeObj, top);
-}
-
-void SciGui32::localToGlobal(int16 *x, int16 *y, reg_t planeObj) {
-	//int16 resY = GET_SEL32V(_s->_segMan, planeObj, resY);
-	//int16 resX = GET_SEL32V(_s->_segMan, planeObj, resX);
-	*x += GET_SEL32V(_s->_segMan, planeObj, left);
-	*y += GET_SEL32V(_s->_segMan, planeObj, top);
-	//*x = ( *x * resX) / _screen->getWidth();
-	//*y = ( *y * resY) / _screen->getHeight();
 }
 
 void SciGui32::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {

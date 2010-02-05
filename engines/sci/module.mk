@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	graphics/cache.o \
 	graphics/compare.o \
 	graphics/controls.o \
+	graphics/coordadjuster.o \
 	graphics/cursor.o \
 	graphics/font.o \
 	graphics/gui.o \

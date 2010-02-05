@@ -31,6 +31,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
@@ -44,14 +45,15 @@
 
 namespace Sci {
 
-GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _screen(screen), _palette(palette), _transitions(transitions) {
+GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions)
+	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette), _transitions(transitions) {
 }
 
 GfxPaint16::~GfxPaint16() {
 }
 
-void GfxPaint16::init(GfxText16 *text16) {
+void GfxPaint16::init(GfxAnimate *animate, GfxText16 *text16) {
+	_animate = animate;
 	_text16 = text16;
 
 	_EGAdrawingVisualize = false;
@@ -398,6 +400,18 @@ void GfxPaint16::kernelGraphUpdateBox(Common::Rect rect, bool hiresMode) {
 		bitsShow(rect);
 	else
 		bitsShowHires(rect);
+}
+
+void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
+	_coordAdjuster->kernelLocalToGlobal(rect.left, rect.top);
+	_coordAdjuster->kernelLocalToGlobal(rect.right, rect.bottom);
+	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
+	_coordAdjuster->kernelGlobalToLocal(rect.left, rect.top);
+	_coordAdjuster->kernelGlobalToLocal(rect.right, rect.bottom);
+
+	_animate->reAnimate(rect);
+
+	_ports->setPort(oldPort);
 }
 
 } // End of namespace Sci

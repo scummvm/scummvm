@@ -422,7 +422,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 		Common::Rect menuLine = _menuRect;
 		menuLine.bottom = menuLine.top + 1;
 		_paint16->bitsShow(menuLine);
-		_gui->graphRedrawBox(_menuRect);
+		_paint16->kernelGraphRedrawBox(_menuRect);
 		_menuSaveHandle = NULL_REG;
 	}
 	if (!_barSaveHandle.isNull()) {
@@ -489,7 +489,7 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 		Common::Rect menuLine = _menuRect;
 		menuLine.bottom = menuLine.top + 1;
 		_paint16->bitsShow(menuLine);
-		_gui->graphRedrawBox(_menuRect);
+		_paint16->kernelGraphRedrawBox(_menuRect);
 	}
 
 	// First calculate rect of menu and also invert old and new menu text

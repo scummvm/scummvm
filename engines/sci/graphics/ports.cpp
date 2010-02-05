@@ -339,7 +339,7 @@ void GfxPorts::disposeWindow(Window *pWnd, bool reanimate) {
 	if (!reanimate)
 		_paint16->bitsShow(pWnd->restoreRect);
 	else
-		_gui->graphRedrawBox(pWnd->restoreRect);
+		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
 	_windowsById[pWnd->id] = 0;

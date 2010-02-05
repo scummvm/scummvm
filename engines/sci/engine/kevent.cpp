@@ -32,6 +32,7 @@
 #include "sci/event.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/gui32.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 
 namespace Sci {
@@ -211,20 +212,14 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
+	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
 	if (obj.segment) {
 		int16 x = GET_SEL32V(segMan, obj, x);
 		int16 y = GET_SEL32V(segMan, obj, y);
 
-#ifdef ENABLE_SCI32
-	if (s->_gui)
-#endif
-		s->_gui->globalToLocal(&x, &y);
-#ifdef ENABLE_SCI32
-	else
-		s->_gui32->globalToLocal(&x, &y, argv[1]);
-#endif
+		s->_gfxCoordAdjuster->kernelGlobalToLocal(x, y, planeObject);
 
 		PUT_SEL32V(segMan, obj, x, x);
 		PUT_SEL32V(segMan, obj, y, y);
@@ -236,20 +231,14 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
+	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
 	if (obj.segment) {
 		int16 x = GET_SEL32V(segMan, obj, x);
 		int16 y = GET_SEL32V(segMan, obj, y);
 
-#ifdef ENABLE_SCI32
-	if (s->_gui)
-#endif
-		s->_gui->localToGlobal(&x, &y);
-#ifdef ENABLE_SCI32
-	else
-		s->_gui32->localToGlobal(&x, &y, argv[1]);
-#endif
+		s->_gfxCoordAdjuster->kernelLocalToGlobal(x, y, planeObject);
 
 		PUT_SEL32V(segMan, obj, x, x);
 		PUT_SEL32V(segMan, obj, y, y);

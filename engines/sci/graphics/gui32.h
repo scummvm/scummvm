@@ -34,6 +34,7 @@ class GfxCursor;
 class GfxScreen;
 class GfxPalette;
 class GfxCache;
+class GfxCoordAdjuster32;
 class GfxCompare;
 class GfxFrameout;
 class GfxPaint32;
@@ -59,9 +60,6 @@ public:
 	void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 
-	void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
-	void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
-
 	void drawRobot(GuiResourceId robotId);
 
 	// FIXME: Don't store EngineState
@@ -73,6 +71,7 @@ protected:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxCache *_cache;
+	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxCompare *_compare;
 	GfxFrameout *_frameout;
 	GfxPaint32 *_paint32;

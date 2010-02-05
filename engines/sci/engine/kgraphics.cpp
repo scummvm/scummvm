@@ -299,7 +299,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	case K_GRAPH_REDRAW_BOX:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gui->graphRedrawBox(rect);
+		s->_gfxPaint16->kernelGraphRedrawBox(rect);
 		break;
 
 	case K_GRAPH_ADJUST_PRIORITY:

@@ -54,6 +54,7 @@ class SciEvent;
 class GfxAnimate;
 class GfxCache;
 class GfxControls;
+class GfxCoordAdjuster;
 class GfxCursor;
 class GfxMenu;
 class GfxPaint;
@@ -147,6 +148,7 @@ public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxCache *_gfxCache;
 	GfxControls *_gfxControls; // Controls for 16-bit gfx
+	GfxCoordAdjuster *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette;
