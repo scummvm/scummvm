@@ -1075,8 +1075,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		text = kernel_lookup_text(s, textp, index);
 	}
 
-	s->_gui->display(s->strSplit(text.c_str()).c_str(), argc, argv);
-	return s->r_acc;
+	return s->_gfxPaint16->kernelDisplay(s->strSplit(text.c_str()).c_str(), argc, argv);
 }
 
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {

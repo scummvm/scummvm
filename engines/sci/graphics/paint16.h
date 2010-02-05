@@ -86,6 +86,8 @@ public:
 	void kernelGraphUpdateBox(Common::Rect rect, bool hiresMode);
 	void kernelGraphRedrawBox(Common::Rect rect);
 
+	reg_t kernelDisplay(const char *text, int argc, reg_t *argv);
+
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;

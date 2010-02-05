@@ -414,4 +414,111 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 	_ports->setPort(oldPort);
 }
 
+#define SCI_DISPLAY_MOVEPEN				100
+#define SCI_DISPLAY_SETALIGNMENT		101
+#define SCI_DISPLAY_SETPENCOLOR			102
+#define SCI_DISPLAY_SETBACKGROUNDCOLOR	103
+#define SCI_DISPLAY_SETGREYEDOUTPUT		104
+#define SCI_DISPLAY_SETFONT				105
+#define SCI_DISPLAY_WIDTH				106
+#define SCI_DISPLAY_SAVEUNDER			107
+#define SCI_DISPLAY_RESTOREUNDER		108
+#define SCI_DISPLAY_DONTSHOWBITS		121
+
+reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
+	int displayArg;
+	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
+	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
+	bool doSaveUnder = false;
+	Common::Rect rect;
+	reg_t result = NULL_REG;
+
+	// Make a "backup" of the port settings
+	Port oldPort = *_ports->getPort();
+
+	// setting defaults
+	_ports->penMode(0);
+	_ports->penColor(0);
+	_ports->textGreyedOutput(false);
+	// processing codes in argv
+	while (argc > 0) {
+		displayArg = argv[0].toUint16();
+		argc--; argv++;
+		switch (displayArg) {
+		case SCI_DISPLAY_MOVEPEN:
+			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
+			argc -= 2; argv += 2;
+			break;
+		case SCI_DISPLAY_SETALIGNMENT:
+			alignment = argv[0].toSint16();
+			argc--; argv++;
+			break;
+		case SCI_DISPLAY_SETPENCOLOR:
+			colorPen = argv[0].toUint16();
+			_ports->penColor(colorPen);
+			argc--; argv++;
+			break;
+		case SCI_DISPLAY_SETBACKGROUNDCOLOR:
+			colorBack = argv[0].toUint16();
+			argc--; argv++;
+			break;
+		case SCI_DISPLAY_SETGREYEDOUTPUT:
+			_ports->textGreyedOutput(argv[0].isNull() ? false : true);
+			argc--; argv++;
+			break;
+		case SCI_DISPLAY_SETFONT:
+			_text16->SetFont(argv[0].toUint16());
+			argc--; argv++;
+			break;
+		case SCI_DISPLAY_WIDTH:
+			width = argv[0].toUint16();
+			argc--; argv++;
+			break;
+		case SCI_DISPLAY_SAVEUNDER:
+			doSaveUnder = true;
+			break;
+		case SCI_DISPLAY_RESTOREUNDER:
+			bitsGetRect(argv[0], &rect);
+			rect.translate(-_ports->getPort()->left, -_ports->getPort()->top);
+			bitsRestore(argv[0]);
+			kernelGraphRedrawBox(rect);
+			// finishing loop
+			argc = 0;
+			break;
+		case SCI_DISPLAY_DONTSHOWBITS:
+			bRedraw = 0;
+			break;
+		default:
+			warning("Unknown kDisplay argument %X", displayArg);
+			break;
+		}
+	}
+
+	// now drawing the text
+	_text16->Size(rect, text, -1, width);
+	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
+	if (getSciVersion() >= SCI_VERSION_1_LATE) {
+		int16 leftPos = rect.right <= _screen->getWidth() ? 0 : _screen->getWidth() - rect.right;
+		int16 topPos = rect.bottom <= _screen->getHeight() ? 0 : _screen->getHeight() - rect.bottom;
+		_ports->move(leftPos, topPos);
+		rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
+	}
+
+	if (doSaveUnder)
+		result = bitsSave(rect, SCI_SCREEN_MASK_VISUAL);
+	if (colorBack != -1)
+		fillRect(rect, SCI_SCREEN_MASK_VISUAL, colorBack, 0, 0);
+	_text16->Box(text, 0, rect, alignment, -1);
+	if (_screen->_picNotValid == 0 && bRedraw)
+		bitsShow(rect);
+	// restoring port and cursor pos
+	Port *currport = _ports->getPort();
+	uint16 tTop = currport->curTop;
+	uint16 tLeft = currport->curLeft;
+	*currport = oldPort;
+	currport->curTop = tTop;
+	currport->curLeft = tLeft;
+	return result;
+}
+
 } // End of namespace Sci

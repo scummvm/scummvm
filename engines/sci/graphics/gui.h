@@ -53,8 +53,6 @@ public:
 
 	virtual void wait(int16 ticks);
 
-	virtual void display(const char *text, int argc, reg_t *argv);
-
 	virtual void textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
