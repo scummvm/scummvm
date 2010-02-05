@@ -96,7 +96,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "robot");	// robot files
 
 	// Add the patches directory, except in KQ6; KQ6 comes with broken patches.
-	if (getGameID() != "kq6")
+	if (strcmp(getGameID(), "kq6"))
 		SearchMan.addSubDirectoryMatching(_gameDataDir, "patches");	// resource patches
 }
 
