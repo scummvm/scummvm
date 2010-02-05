@@ -42,10 +42,7 @@ public:
 	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster *coordAdjuster);
 	~GfxCompare();
 
-	uint16 isOnControl(uint16 screenMask, Common::Rect rect);
-	bool canBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list);
-
-	uint16 kernelOnControl(byte screenMask, Common::Rect rect);
+	uint16 kernelOnControl(byte screenMask, const Common::Rect &rect);
 	void kernelSetNowSeen(reg_t objectReference);
 	bool kernelCanBeHere(reg_t curObject, reg_t listReference);
 	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
@@ -57,6 +54,15 @@ private:
 	GfxCache *_cache;
 	GfxScreen *_screen;
 	GfxCoordAdjuster *_coordAdjuster;
+
+	uint16 isOnControl(uint16 screenMask, const Common::Rect &rect);
+	
+	/**
+	 * This function checks whether any of the objects in the given list,
+	 * *different* from checkObject, has a brRect which is contained inside
+	 * checkRect.
+	 */
+	bool canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list);
 };
 
 } // End of namespace Sci

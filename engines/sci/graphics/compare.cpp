@@ -46,7 +46,7 @@ GfxCompare::GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxS
 GfxCompare::~GfxCompare() {
 }
 
-uint16 GfxCompare::isOnControl(uint16 screenMask, Common::Rect rect) {
+uint16 GfxCompare::isOnControl(uint16 screenMask, const Common::Rect &rect) {
 	int16 x, y;
 	uint16 result = 0;
 
@@ -76,7 +76,7 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
-bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
+bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _segMan->lookupNode(curAddress);
 	reg_t curObject;
@@ -112,7 +112,7 @@ bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, Common::Rect checkRec
 	return true;
 }
 
-uint16 GfxCompare::kernelOnControl(byte screenMask, Common::Rect rect) {
+uint16 GfxCompare::kernelOnControl(byte screenMask, const Common::Rect &rect) {
 	Common::Rect adjustedRect = _coordAdjuster->onControl(rect);
 
 	uint16 result = isOnControl(screenMask, adjustedRect);
