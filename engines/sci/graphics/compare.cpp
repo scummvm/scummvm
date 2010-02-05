@@ -93,6 +93,11 @@ bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, Common::Rect checkRec
 				curRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
 				curRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
 				// Check if curRect is within checkRect
+				// TODO: This check is slightly odd, because it means that a rect is not contained
+				// in itself. It may very well be that the original SCI engine did it just
+				// this way, so it should not be changed lightly. However, somebody should
+				// confirm whether the original engine really did it this way. Then, update
+				// this comment accordingly, and, if necessary, fix the code.
 				if (curRect.right > checkRect.left &&
 				    curRect.left < checkRect.right &&
 				    curRect.bottom > checkRect.top &&
