@@ -43,7 +43,7 @@ enum {
 
 class GfxScreen;
 class GfxPalette;
-class Cursor;
+class GfxCursor;
 class GfxCache;
 class GfxCompare;
 class GfxPorts;
@@ -56,7 +56,7 @@ class GfxTransitions;
 
 class SciGui {
 public:
-	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor, GfxPorts *ports, AudioPlayer *audio);
+	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio);
 	virtual ~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);
@@ -109,7 +109,7 @@ public:
 	virtual void resetEngineState(EngineState *s);
 
 protected:
-	Cursor *_cursor;
+	GfxCursor *_cursor;
 	EngineState *_s;
 	GfxScreen *_screen;
 	GfxPalette *_palette;

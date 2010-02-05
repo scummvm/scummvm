@@ -75,6 +75,7 @@ struct AnimateEntry {
 typedef Common::List<AnimateEntry *> AnimateList;
 
 class GfxCache;
+class GfxCursor;
 class GfxPorts;
 class GfxPaint16;
 class GfxScreen;
@@ -82,7 +83,7 @@ class GfxPalette;
 class GfxTransitions;
 class GfxAnimate {
 public:
-	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, Cursor *cursor, GfxTransitions *transitions);
+	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
 
 	// FIXME: Don't store EngineState
@@ -118,7 +119,7 @@ private:
 	GfxPaint16 *_paint16;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
-	Cursor *_cursor;
+	GfxCursor *_cursor;
 	GfxTransitions *_transitions;
 
 	uint16 _listCount;

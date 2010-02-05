@@ -36,7 +36,7 @@
 
 namespace Sci {
 
-Cursor::Cursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen)
+GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen)
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	_upscaledHires = _screen->getUpscaledHires();
@@ -47,25 +47,25 @@ Cursor::Cursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen)
 	_isVisible = true;
 }
 
-Cursor::~Cursor() {
+GfxCursor::~GfxCursor() {
 	purgeCache();
 }
 
-void Cursor::show() {
+void GfxCursor::show() {
 	CursorMan.showMouse(true);
 	_isVisible = true;
 }
 
-void Cursor::hide() {
+void GfxCursor::hide() {
 	CursorMan.showMouse(false);
 	_isVisible = false;
 }
 
-bool Cursor::isVisible() {
+bool GfxCursor::isVisible() {
 	return _isVisible;
 }
 
-void Cursor::purgeCache() {
+void GfxCursor::purgeCache() {
 	for (CursorCache::iterator iter = _cachedCursors.begin(); iter != _cachedCursors.end(); ++iter) {
 		delete iter->_value;
 		iter->_value = 0;
@@ -74,7 +74,7 @@ void Cursor::purgeCache() {
 	_cachedCursors.clear();
 }
 
-void Cursor::setShape(GuiResourceId resourceId) {
+void GfxCursor::setShape(GuiResourceId resourceId) {
 	Resource *resource;
 	byte *resourceData;
 	Common::Point hotspot = Common::Point(0, 0);
@@ -133,7 +133,7 @@ void Cursor::setShape(GuiResourceId resourceId) {
 	delete[] rawBitmap;
 }
 
-void Cursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+void GfxCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
 	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
 		purgeCache();
 
@@ -180,7 +180,7 @@ void Cursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Poi
 	delete cursorHotspot;
 }
 
-void Cursor::setPosition(Common::Point pos) {
+void GfxCursor::setPosition(Common::Point pos) {
 	if (!_upscaledHires) {
 		g_system->warpMouse(pos.x, pos.y);
 	} else {
@@ -188,7 +188,7 @@ void Cursor::setPosition(Common::Point pos) {
 	}
 }
 
-Common::Point Cursor::getPosition() {
+Common::Point GfxCursor::getPosition() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
 	if (_upscaledHires) {
@@ -199,7 +199,7 @@ Common::Point Cursor::getPosition() {
 	return mousePos;
 }
 
-void Cursor::refreshPosition() {
+void GfxCursor::refreshPosition() {
 	bool clipped = false;
 	Common::Point mousePoint = getPosition();
 

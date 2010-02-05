@@ -78,7 +78,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
 
 class GfxMenu {
 public:
-	GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, Cursor *cursor);
+	GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor);
 	~GfxMenu();
 
 	void reset();
@@ -109,7 +109,7 @@ private:
 	GfxPaint16 *_paint16;
 	GfxText16 *_text16;
 	GfxScreen *_screen;
-	Cursor *_cursor;
+	GfxCursor *_cursor;
 
 	uint16 _listCount;
 	GuiMenuList _list;

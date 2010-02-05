@@ -30,7 +30,7 @@
 
 namespace Sci {
 
-class Cursor;
+class GfxCursor;
 class GfxScreen;
 class GfxPalette;
 class GfxCache;
@@ -40,7 +40,7 @@ class GfxPaint32;
 
 class SciGui32 {
 public:
-	SciGui32(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor);
+	SciGui32(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor);
 	~SciGui32();
 
 	void init();
@@ -83,7 +83,7 @@ public:
 	void resetEngineState(EngineState *s);
 
 protected:
-	Cursor *_cursor;
+	GfxCursor *_cursor;
 	EngineState *_s;
 	GfxScreen *_screen;
 	GfxPalette *_palette;

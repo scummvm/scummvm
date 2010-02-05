@@ -156,7 +156,7 @@ Common::Error SciEngine::run() {
 
 	GfxPalette *palette = new GfxPalette(_resMan, screen);
 	GfxCache *cache = new GfxCache(_resMan, screen, palette);
-	Cursor *cursor = new Cursor(_resMan, palette, screen);
+	GfxCursor *cursor = new GfxCursor(_resMan, palette, screen);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

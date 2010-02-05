@@ -40,10 +40,10 @@ class GfxPalette;
 
 typedef Common::HashMap<int, GfxView *> CursorCache;
 
-class Cursor {
+class GfxCursor {
 public:
-	Cursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
-	~Cursor();
+	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
+	~GfxCursor();
 
 	void show();
 	void hide();

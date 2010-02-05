@@ -45,7 +45,7 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, Cursor *cursor)
+SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor)
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen);
