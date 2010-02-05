@@ -92,7 +92,7 @@ public:
 	void scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
 
 	void dither(bool addToFlag);
-	void unditherSetState(bool flag);
+	void debugUnditherSetState(bool flag);
 	int16 *unditherGetMemorial();
 
 	void debugShowMap(int mapNo);

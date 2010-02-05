@@ -95,8 +95,6 @@ public:
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);
 
-	virtual bool debugUndither(bool flag);
-	virtual bool debugShowMap(int mapNo);
 	virtual bool debugEGAdrawingVisualize(bool state);
 
 	// FIXME: Don't store EngineState

@@ -439,16 +439,6 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 void SciGui::portraitUnload(uint16 portraitId) {
 }
 
-bool SciGui::debugUndither(bool flag) {
-	_screen->unditherSetState(flag);
-	return false;
-}
-
-bool SciGui::debugShowMap(int mapNo) {
-	_screen->debugShowMap(mapNo);
-	return false;
-}
-
 bool SciGui::debugEGAdrawingVisualize(bool state) {
 	_paint16->setEGAdrawingVisualize(state);
 	return false;

@@ -221,7 +221,7 @@ Common::Error SciEngine::run() {
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
 
-	screen->unditherSetState(ConfMan.getBool("undither"));
+	screen->debugUnditherSetState(ConfMan.getBool("undither"));
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (game_init_sound(_gamestate, 0, soundVersion)) {

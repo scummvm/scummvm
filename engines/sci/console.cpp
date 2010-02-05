@@ -1121,8 +1121,8 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	}
 
 	bool flag = atoi(argv[1]) ? true : false;
-
-	return _engine->_gamestate->_gui->debugUndither(flag);
+	_engine->_gamestate->_gfxScreen->debugUnditherSetState(flag);
+	return false;
 }
 
 bool Console::cmdPicVisualize(int argc, const char **argv) {
@@ -1421,7 +1421,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3:
-		return _engine->_gamestate->_gui->debugShowMap(map);
+		_engine->_gamestate->_gfxScreen->debugShowMap(map);
 		break;
 
 	default:

@@ -484,7 +484,7 @@ void GfxScreen::dither(bool addToFlag) {
 	}
 }
 
-void GfxScreen::unditherSetState(bool flag) {
+void GfxScreen::debugUnditherSetState(bool flag) {
 	_unditherState = flag;
 }
 
