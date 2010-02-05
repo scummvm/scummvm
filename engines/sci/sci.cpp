@@ -190,6 +190,7 @@ Common::Error SciEngine::run() {
 		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gamestate->_gfxPorts, _audio);
 #ifdef ENABLE_SCI32
 		_gamestate->_gui32 = 0;
+		_gamestate->_gfxFrameout = 0;
 	}
 #endif
 

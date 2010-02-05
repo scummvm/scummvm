@@ -31,6 +31,7 @@
 #include "sci/engine/selector.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/gui32.h"
+#include "sci/graphics/frameout.h"
 
 namespace Sci {
 
@@ -669,7 +670,7 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 
-	s->_gui32->addScreenItem(viewObj);
+	s->_gfxFrameout->kernelAddScreenItem(viewObj);
 	return NULL_REG;
 }
 
@@ -683,7 +684,7 @@ reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 
-	s->_gui32->deleteScreenItem(viewObj);
+	s->_gfxFrameout->kernelDeleteScreenItem(viewObj);
 
 	/*
 	reg_t viewObj = argv[0];
@@ -705,7 +706,7 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	s->_gui32->addPlane(planeObj);
+	s->_gfxFrameout->kernelAddPlane(planeObj);
 	warning("kAddPlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
@@ -713,7 +714,7 @@ reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	s->_gui32->deletePlane(planeObj);
+	s->_gfxFrameout->kernelDeletePlane(planeObj);
 	warning("kDeletePlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
@@ -721,7 +722,7 @@ reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	s->_gui32->updatePlane(planeObj);
+	s->_gfxFrameout->kernelUpdatePlane(planeObj);
 	return s->r_acc;
 }
 
@@ -735,8 +736,8 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
-	warning("kGetHighPlanePri: %d", s->_gui32->getHighPlanePri());
-	return make_reg(0, s->_gui32->getHighPlanePri());
+	warning("kGetHighPlanePri: %d", s->_gfxFrameout->kernelGetHighPlanePri());
+	return make_reg(0, s->_gfxFrameout->kernelGetHighPlanePri());
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
@@ -744,7 +745,7 @@ reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
 	// as its called right after a view is updated
 
 	// TODO
-	s->_gui32->frameOut();
+	s->_gfxFrameout->kernelFrameout();
 
 	return NULL_REG;
 }

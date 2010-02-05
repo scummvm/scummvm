@@ -58,25 +58,18 @@ class GfxCursor;
 class GfxMenu;
 class GfxPaint;
 class GfxPaint16;
-class GfxPaint32;
 class GfxPalette;
 class GfxPorts;
 class GfxScreen;
 class SciGui;
-class Cursor;
 class MessageState;
 class SoundCommandParser;
 
 #ifdef ENABLE_SCI32
 class SciGui32;
+class GfxFrameout;
+class GfxPaint32;
 #endif
-
-struct GfxState;
-struct GfxPort;
-struct GfxVisual;
-struct GfxContainer;
-struct GfxList;
-
 
 class DirSeeker {
 protected:
@@ -165,6 +158,7 @@ public:
 
 #ifdef ENABLE_SCI32
 	SciGui32 *_gui32; // GUI for SCI32 games
+	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 
 	SciEvent *_event; // Event handling

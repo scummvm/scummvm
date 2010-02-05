@@ -52,6 +52,7 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 	_paint32 = new GfxPaint32(_s->resMan, _s->_segMan, _s->_kernel, _cache, _screen, _palette);
 	_s->_gfxPaint = _paint32;
 	_frameout = new GfxFrameout(_s->_segMan, _s->resMan, _cache, _screen, _palette, _paint32);
+	_s->_gfxFrameout = _frameout;
 }
 
 SciGui32::~SciGui32() {
@@ -203,34 +204,6 @@ void SciGui32::moveCursor(Common::Point pos) {
 
 void SciGui32::setCursorZone(Common::Rect zone) {
 	_cursor->setMoveZone(zone);
-}
-void SciGui32::addScreenItem(reg_t object) {
-	_frameout->kernelAddScreenItem(object);
-}
-
-void SciGui32::deleteScreenItem(reg_t object) {
-	_frameout->kernelDeleteScreenItem(object);
-}
-
-void SciGui32::addPlane(reg_t object) {
-	_frameout->kernelAddPlane(object);
-}
-
-void SciGui32::updatePlane(reg_t object) {
-	_frameout->kernelUpdatePlane(object);
-}
-
-void SciGui32::deletePlane(reg_t object) {
-	_frameout->kernelDeletePlane(object);
-}
-
-int16 SciGui32::getHighPlanePri() {
-	return _frameout->kernelGetHighPlanePri();
-}
-
-void SciGui32::frameOut() {
-	_frameout->kernelFrameout();
-	_screen->copyToScreen();
 }
 
 void SciGui32::drawRobot(GuiResourceId robotId) {

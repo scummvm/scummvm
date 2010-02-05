@@ -59,13 +59,6 @@ public:
 	void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 
-	void addScreenItem(reg_t object);
-	void deleteScreenItem(reg_t object);
-	void addPlane(reg_t object);
-	void updatePlane(reg_t object);
-	void deletePlane(reg_t object);
-	int16 getHighPlanePri();
-	void frameOut();
 	void globalToLocal(int16 *x, int16 *y, reg_t planeObj);
 	void localToGlobal(int16 *x, int16 *y, reg_t planeObj);
 

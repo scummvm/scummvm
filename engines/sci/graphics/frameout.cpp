@@ -265,6 +265,7 @@ void GfxFrameout::kernelFrameout() {
 		}
 	}
 	free(itemData);
+	_screen->copyToScreen();
 }
 
 } // End of namespace Sci
