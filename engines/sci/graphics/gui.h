@@ -72,9 +72,6 @@ public:
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
 
-	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
-	virtual void drawMenuBar(bool clear);
-
 	virtual void graphAdjustPriority(int top, int bottom);
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);

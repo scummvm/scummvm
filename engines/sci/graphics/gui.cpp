@@ -247,28 +247,6 @@ void SciGui::textColors(int argc, reg_t *argv) {
 	_text16->CodeSetColors(argc, argv);
 }
 
-void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
-	Port *oldPort = _ports->setPort(_ports->_menuPort);
-
-	_paint16->fillRect(_ports->_menuBarRect, 1, colorBack);
-	_ports->penColor(colorPen);
-	_ports->moveTo(0, 1);
-	_text16->Draw_String(text);
-	_paint16->bitsShow(_ports->_menuBarRect);
-	_ports->setPort(oldPort);
-}
-
-void SciGui::drawMenuBar(bool clear) {
-	if (!clear) {
-		Port *oldPort = _ports->setPort(_ports->_menuPort);
-		_menu->drawBar();
-		_paint16->bitsShow(_ports->_menuBarRect);
-		_ports->setPort(oldPort);
-	} else {
-		drawStatus("", 0, 0);
-	}
-}
-
 void SciGui::graphAdjustPriority(int top, int bottom) {
 	if (_usesOldGfxFunctions) {
 		_ports->priorityBandsInit(15, top, bottom);

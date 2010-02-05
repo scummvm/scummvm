@@ -92,6 +92,9 @@ public:
 	void drawBar();
 	reg_t kernelSelect(reg_t eventObject);
 
+	void kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack);
+	void kernelDrawMenuBar(bool clear);
+
 private:
 	GuiMenuItemEntry *findItem(uint16 menuId, uint16 itemId);
 	void calculateTextWidth();

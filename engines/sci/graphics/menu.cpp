@@ -836,4 +836,26 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	return NULL;
 }
 
+void GfxMenu::kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack) {
+	Port *oldPort = _ports->setPort(_ports->_menuPort);
+
+	_paint16->fillRect(_ports->_menuBarRect, 1, colorBack);
+	_ports->penColor(colorPen);
+	_ports->moveTo(0, 1);
+	_text16->Draw_String(text);
+	_paint16->bitsShow(_ports->_menuBarRect);
+	_ports->setPort(oldPort);
+}
+
+void GfxMenu::kernelDrawMenuBar(bool clear) {
+	if (!clear) {
+		Port *oldPort = _ports->setPort(_ports->_menuPort);
+		drawBar();
+		_paint16->bitsShow(_ports->_menuBarRect);
+		_ports->setPort(oldPort);
+	} else {
+		kernelDrawStatus("", 0, 0);
+	}
+}
+
 } // End of namespace Sci

@@ -77,7 +77,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 		// Sometimes this is called without giving text, if thats the case dont process it
 		text = s->_segMan->getString(textReference);
 
-		s->_gui->drawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
+		s->_gfxMenu->kernelDrawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
 	}
 	return s->r_acc;
 }
@@ -85,7 +85,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 	bool clear = argv[0].isNull() ? true : false;
 
-	s->_gui->drawMenuBar(clear);
+	s->_gfxMenu->kernelDrawMenuBar(clear);
 	return s->r_acc;
 }
 
