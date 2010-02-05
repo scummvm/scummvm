@@ -43,6 +43,8 @@ namespace Sci {
 
 GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
+
+	_highPlanePri = 0;
 }
 
 GfxFrameout::~GfxFrameout() {
