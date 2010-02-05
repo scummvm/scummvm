@@ -116,8 +116,8 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, SELECTOR(view));
-	int8 loopNo = (int8)GET_SEL32V(_segMan, objectReference, SELECTOR(loop));
-	int8 celNo = (int8)GET_SEL32V(_segMan, objectReference, SELECTOR(cel));
+	int16 loopNo = GET_SEL32V(_segMan, objectReference, SELECTOR(loop));
+	int16 celNo = GET_SEL32V(_segMan, objectReference, SELECTOR(cel));
 	int16 x = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(x));
 	int16 y = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(y));
 	int16 z = 0;
