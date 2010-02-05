@@ -55,13 +55,7 @@ public:
 	bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	void baseSetter(reg_t object);
 
-	void hideCursor();
-	void showCursor();
-	bool isCursorVisible();
-	void setCursorShape(GuiResourceId cursorId);
-	void setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot);
 	void setCursorPos(Common::Point pos);
-	Common::Point getCursorPos();
 	void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 

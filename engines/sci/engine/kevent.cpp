@@ -47,12 +47,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
 
-#ifdef ENABLE_SCI32
-	if (s->_gui32)
-		mousePos = s->_gui32->getCursorPos();
-	else
-#endif
-		mousePos = s->_gui->getCursorPos();
+	mousePos = s->_gfxCursor->getPosition();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event

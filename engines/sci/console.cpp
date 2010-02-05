@@ -219,7 +219,7 @@ void Console::postEnter() {
 		_engine->_gamestate->_soundCmd->pauseAll(false);
 
 	if (!_videoFile.empty()) {
-		_engine->_gamestate->_gui->hideCursor();
+		_engine->_gamestate->_gfxCursor->kernelHide();
 
 		if (_videoFile.hasSuffix(".seq")) {
 			SeqDecoder *seqDecoder = new SeqDecoder();
@@ -255,7 +255,7 @@ void Console::postEnter() {
 #endif
 		}
 
-		_engine->_gamestate->_gui->showCursor();
+		_engine->_gamestate->_gfxCursor->kernelShow();
 
 		_videoFile.clear();
 		_videoFrameDelay = 0;

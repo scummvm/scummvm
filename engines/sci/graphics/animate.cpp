@@ -591,12 +591,12 @@ void GfxAnimate::animateShowPic() {
 	bool previousCursorState = _cursor->isVisible();
 
 	if (previousCursorState)
-		_cursor->hide();
+		_cursor->kernelHide();
 	// Adjust picRect to become relative to screen
 	picRect.translate(picPort->left, picPort->top);
 	_transitions->doit(picRect);
 	if (previousCursorState)
-		_cursor->show();
+		_cursor->kernelShow();
 
 	// We set SCI1.1 priority band information here
 	_ports->priorityBandsRecall();

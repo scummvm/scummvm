@@ -391,34 +391,10 @@ void SciGui::baseSetter(reg_t object) {
 	}
 }
 
-void SciGui::hideCursor() {
-	_cursor->hide();
-}
-
-void SciGui::showCursor() {
-	_cursor->show();
-}
-
-bool SciGui::isCursorVisible() {
-	return _cursor->isVisible();
-}
-
-void SciGui::setCursorShape(GuiResourceId cursorId) {
-	_cursor->setShape(cursorId);
-}
-
-void SciGui::setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot) {
-	_cursor->setView(viewNum, loopNum, cellNum, hotspot);
-}
-
 void SciGui::setCursorPos(Common::Point pos) {
 	pos.y += _ports->getPort()->top;
 	pos.x += _ports->getPort()->left;
 	moveCursor(pos);
-}
-
-Common::Point SciGui::getCursorPos() {
-	return _cursor->getPosition();
 }
 
 void SciGui::moveCursor(Common::Point pos) {

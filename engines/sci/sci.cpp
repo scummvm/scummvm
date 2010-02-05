@@ -196,6 +196,7 @@ Common::Error SciEngine::run() {
 	_gamestate->_gfxPalette = palette;
 	_gamestate->_gfxScreen = screen;
 	_gamestate->_gfxCache = cache;
+	_gamestate->_gfxCursor = cursor;
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");

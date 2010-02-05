@@ -591,12 +591,12 @@ void GfxMenu::invertMenuSelection(uint16 itemId) {
 
 void GfxMenu::interactiveShowMouse() {
 	_mouseOldState = _cursor->isVisible();
-	_cursor->show();
+	_cursor->kernelShow();
 }
 
 void GfxMenu::interactiveRestoreMouse() {
 	if (!_mouseOldState)
-		_cursor->hide();
+		_cursor->kernelHide();
 }
 
 uint16 GfxMenu::mouseFindMenuSelection(Common::Point mousePosition) {

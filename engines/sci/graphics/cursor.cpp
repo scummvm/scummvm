@@ -51,12 +51,12 @@ GfxCursor::~GfxCursor() {
 	purgeCache();
 }
 
-void GfxCursor::show() {
+void GfxCursor::kernelShow() {
 	CursorMan.showMouse(true);
 	_isVisible = true;
 }
 
-void GfxCursor::hide() {
+void GfxCursor::kernelHide() {
 	CursorMan.showMouse(false);
 	_isVisible = false;
 }
@@ -74,7 +74,7 @@ void GfxCursor::purgeCache() {
 	_cachedCursors.clear();
 }
 
-void GfxCursor::setShape(GuiResourceId resourceId) {
+void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	Resource *resource;
 	byte *resourceData;
 	Common::Point hotspot = Common::Point(0, 0);
@@ -87,7 +87,7 @@ void GfxCursor::setShape(GuiResourceId resourceId) {
 
 	if (resourceId == -1) {
 		// no resourceId given, so we actually hide the cursor
-		hide();
+		kernelHide();
 		delete[] rawBitmap;
 		return;
 	}
@@ -128,12 +128,12 @@ void GfxCursor::setShape(GuiResourceId resourceId) {
 	}
 
 	CursorMan.replaceCursor(rawBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
-	show();
+	kernelShow();
 
 	delete[] rawBitmap;
 }
 
-void GfxCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
 	if (_cachedCursors.size() >= MAX_CACHED_CURSORS)
 		purgeCache();
 
@@ -153,7 +153,7 @@ void GfxCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::
 
 	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this
 	if (width < 2 || height < 2) {
-		hide();
+		kernelHide();
 		delete cursorHotspot;
 		return;
 	}
@@ -175,7 +175,7 @@ void GfxCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::
 	if (_upscaledHires)
 		delete[] cursorBitmap;
 
-	show();
+	kernelShow();
 
 	delete cursorHotspot;
 }

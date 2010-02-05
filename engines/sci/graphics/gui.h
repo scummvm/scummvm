@@ -87,13 +87,7 @@ public:
 	virtual bool isItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	virtual void baseSetter(reg_t object);
 
-	void hideCursor();
-	void showCursor();
-	bool isCursorVisible();
-	void setCursorShape(GuiResourceId cursorId);
-	void setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot);
 	virtual void setCursorPos(Common::Point pos);
-	Common::Point getCursorPos();
 	virtual void moveCursor(Common::Point pos);
 	void setCursorZone(Common::Rect zone);
 

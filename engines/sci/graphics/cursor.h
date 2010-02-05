@@ -45,11 +45,11 @@ public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~GfxCursor();
 
-	void show();
-	void hide();
+	void kernelShow();
+	void kernelHide();
 	bool isVisible();
-	void setShape(GuiResourceId resourceId);
-	void setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot);
+	void kernelSetShape(GuiResourceId resourceId);
+	void kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot);
 	void setPosition(Common::Point pos);
 	Common::Point getPosition();
 	void refreshPosition();

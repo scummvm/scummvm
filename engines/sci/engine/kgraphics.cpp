@@ -107,7 +107,7 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 		cursorId = -1;
 	}
 
-	s->_gui->setCursorShape(cursorId);
+	s->_gfxCursor->kernelSetShape(cursorId);
 	return s->r_acc;
 }
 
@@ -119,12 +119,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		switch (argv[0].toSint16()) {
 		case 0:
-#ifdef ENABLE_SCI32
-			if (s->_gui32)
-				s->_gui32->hideCursor();
-			else
-#endif
-				s->_gui->hideCursor();
+			s->_gfxCursor->kernelHide();
 			break;
 		case -1:
 			// TODO: Special case at least in kq6, check disassembly
@@ -133,12 +128,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			// TODO: Special case at least in kq6, check disassembly
 			break;
 		default:
-#ifdef ENABLE_SCI32
-			if (s->_gui32)
-				s->_gui32->showCursor();
-			else
-#endif
-				s->_gui->showCursor();
+			s->_gfxCursor->kernelShow();
 			break;
 		}
 	case 2:
@@ -176,12 +166,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-#ifdef ENABLE_SCI32
-		if (s->_gui32)
-			s->_gui32->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
-		else
-#endif
-			s->_gui->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		s->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		break;
 	default :
 		warning("kSetCursor: Unhandled case: %d arguments given", argc);
@@ -1139,19 +1124,9 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// previously visible.
 	bool reshowCursor;
 	
-#ifdef ENABLE_SCI32
-	if (s->_gui32) {
-		reshowCursor = s->_gui32->isCursorVisible();
-		if (reshowCursor)
-			s->_gui32->hideCursor();
-	} else {
-#endif
-		reshowCursor = s->_gui->isCursorVisible();
-		if (reshowCursor)
-			s->_gui->hideCursor();
-#ifdef ENABLE_SCI32
-	}
-#endif
+	reshowCursor = s->_gfxCursor->isVisible();
+	if (reshowCursor)
+		s->_gfxCursor->kernelHide();
 
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
@@ -1218,14 +1193,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		s->_gfxScreen->kernelSyncWithFramebuffer();
 	}
 
-	if (reshowCursor) {
-#ifdef ENABLE_SCI32
-		if (s->_gui32)
-			s->_gui32->showCursor();
-		else
-#endif
-			s->_gui->showCursor();
-	}
+	if (reshowCursor)
+		s->_gfxCursor->kernelShow();
 
 	return s->r_acc;
 }
