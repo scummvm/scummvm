@@ -49,6 +49,8 @@ public:
 	virtual Common::Rect onControl(Common::Rect rect) { return rect; };
 	virtual void setCursorPos(Common::Point &pos) { };
 	virtual void moveCursor(Common::Point &pos) { };
+
+	virtual Common::Rect pictureGetDisplayArea() { return Common::Rect(0, 0); };
 private:
 };
 
@@ -63,6 +65,8 @@ public:
 	Common::Rect onControl(Common::Rect rect);
 	void setCursorPos(Common::Point &pos);
 	void moveCursor(Common::Point &pos);
+
+	Common::Rect pictureGetDisplayArea();
 	
 private:
 	GfxPorts *_ports;
@@ -80,9 +84,14 @@ public:
 	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 
 	Common::Rect onControl(Common::Rect rect);
+
+	void pictureSetDisplayArea(Common::Rect displayArea);
+	Common::Rect pictureGetDisplayArea();
 	
 private:
 	SegManager *_segMan;
+
+	Common::Rect _pictureDisplayArea;
 };
 #endif
 

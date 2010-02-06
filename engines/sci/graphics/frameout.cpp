@@ -32,6 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
@@ -41,9 +42,10 @@
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette, GfxPaint32 *paint32)
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
+	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
 	_highPlanePri = 0;
 }
 
@@ -148,8 +150,10 @@ void GfxFrameout::kernelFrameout() {
 
 		planePictureNr = GET_SEL32V(_segMan, planeObject, SELECTOR(picture));
 		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
-			planePicture = new GfxPicture(_resMan, 0, _screen, _palette, planePictureNr, false);
+			planePicture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, planePictureNr, false);
 			planePictureCels = planePicture->getSci32celCount();
+
+			_coordAdjuster->pictureSetDisplayArea(planeRect);
 		}
 
 		// Fill our itemlist for this plane

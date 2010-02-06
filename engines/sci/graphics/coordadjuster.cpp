@@ -78,6 +78,12 @@ void GfxCoordAdjuster16::moveCursor(Common::Point &pos) {
 	pos.x = CLIP<int16>(pos.x, _ports->_picWind->rect.left, _ports->_picWind->rect.right - 1);
 }
 
+Common::Rect GfxCoordAdjuster16::pictureGetDisplayArea() {
+	Common::Rect displayArea(_ports->getPort()->rect.right, _ports->getPort()->rect.bottom);
+	displayArea.moveTo(_ports->getPort()->left, _ports->getPort()->top);
+	return displayArea;
+};
+
 #ifdef ENABLE_SCI32
 GfxCoordAdjuster32::GfxCoordAdjuster32(SegManager *segMan)
 	: _segMan(segMan) {
@@ -108,6 +114,14 @@ Common::Rect GfxCoordAdjuster32::onControl(Common::Rect rect) {
 	adjustedRect.translate(0, 10);
 	return adjustedRect;
 }
+
+void GfxCoordAdjuster32::pictureSetDisplayArea(Common::Rect displayArea) {
+	_pictureDisplayArea = displayArea;
+}
+
+Common::Rect GfxCoordAdjuster32::pictureGetDisplayArea() {
+	return _pictureDisplayArea;
+};
 #endif
 
 } // End of namespace Sci

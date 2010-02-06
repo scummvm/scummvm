@@ -28,13 +28,14 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/picture.h"
 
 namespace Sci {
 
-GfxPicture::GfxPicture(ResourceManager *resMan, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
-	: _resMan(resMan), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
+GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPorts *ports, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId, bool EGAdrawingVisualize)
+	: _resMan(resMan), _coordAdjuster(coordAdjuster), _ports(ports), _screen(screen), _palette(palette), _resourceId(resourceId), _EGAdrawingVisualize(EGAdrawingVisualize) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -280,20 +281,12 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		memcpy(celBitmap, rlePtr, pixelCount);
 	}
 
-	if (_ports) {
-		// Set initial vertical coordinate by using current port
-		y = callerY + _ports->getPort()->top;
-		lastY = MIN<int16>(height + y, _ports->getPort()->rect.bottom + _ports->getPort()->top);
-		leftX = callerX + _ports->getPort()->left;
-		rightX = MIN<int16>(width + leftX, _ports->getPort()->rect.right + _ports->getPort()->left);
-	} else {
-		y = callerY + 10; // TODO: Implement plane support for SCI32
-		lastY = y + height;
-		if (lastY > _screen->getHeight())
-			lastY = _screen->getHeight();
-		leftX = callerX;
-		rightX = leftX + width;
-	}
+	Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
+
+	y = callerY + displayArea.top;
+	lastY = MIN<int16>(height + y, displayArea.bottom);
+	leftX = callerX + displayArea.left;
+	rightX = MIN<int16>(width + leftX, displayArea.right);
 
 	// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
 	//  but white and that wont matter because the screen is supposed to be already white. It seems that most (if not all)

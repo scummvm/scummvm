@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/font.h"
@@ -40,8 +41,8 @@
 
 namespace Sci {
 
-GfxPaint32::GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _screen(screen), _palette(palette) {
+GfxPaint32::GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette)
+	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _coordAdjuster(coordAdjuster), _cache(cache), _screen(screen), _palette(palette) {
 }
 
 GfxPaint32::~GfxPaint32() {
@@ -57,7 +58,7 @@ void GfxPaint32::fillRect(Common::Rect rect, byte color) {
 }
 
 void GfxPaint32::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	GfxPicture *picture = new GfxPicture(_resMan, 0, _screen, _palette, pictureId, false);
+	GfxPicture *picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, pictureId, false);
 
 	picture->draw(animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 	delete picture;
