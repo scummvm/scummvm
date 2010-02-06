@@ -561,6 +561,8 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			GuiResourceId resourceId = argv[1].toUint16();
 			bool force = argv[2].toUint16() == 2 ? true : false;
 			s->_gfxPalette->kernelSetFromResource(resourceId, force);
+		} else {
+			warning("kPalette(1) called with %d parameters", argc);
 		}
 		break;
 	case 2: { // Set palette-flag(s)
@@ -645,14 +647,20 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 			paletteId = argv[1].toUint16();
 			time = argv[2].toUint16();
 			s->_gfxPalette->startPalVary(paletteId, time);
+			warning("kPalVary(init) called with paletteId = %d, time = %d", paletteId, time);
 		} else {
 			warning("kPalVary(init) called with unsupported argc %d", argc);
 		}
 		break;
 	}
+	case 1: { // Unknown
+		warning("kPalVary(1) called with parameter %d", argv[1].toUint16());
+		break;
+	}
 	case 3: { // DeInit
 		if (argc == 1) {
 			s->_gfxPalette->stopPalVary();
+			warning("kPalVary(deinit)");
 		} else {
 			warning("kPalVary(deinit) called with unsupported argc %d", argc);
 		}
@@ -663,6 +671,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 2) {
 			pauseState = argv[1].isNull() ? false : true;
 			s->_gfxPalette->togglePalVary(pauseState);
+			warning("kPalVary(pause) called with state = %d", pauseState);
 		} else {
 			warning("kPalVary(pause) called with unsupported argc %d", argc);
 		}
