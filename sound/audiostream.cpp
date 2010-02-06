@@ -104,6 +104,9 @@ LoopingAudioStream::~LoopingAudioStream() {
 }
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	if ((_loops && _completeIterations == _loops) || !numSamples)
+		return 0;
+
 	int samplesRead = _parent->readBuffer(buffer, numSamples);
 
 	if (_parent->endOfStream()) {
@@ -111,7 +114,7 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		if (_completeIterations == _loops)
 			return samplesRead;
 
-		int remainingSamples = numSamples - samplesRead;
+		const int remainingSamples = numSamples - samplesRead;
 
 		if (!_parent->rewind()) {
 			// TODO: Properly indicate error
@@ -119,7 +122,7 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			return samplesRead;
 		}
 
-		samplesRead += _parent->readBuffer(buffer + samplesRead, remainingSamples);
+		return samplesRead + readBuffer(buffer + samplesRead, remainingSamples);
 	}
 
 	return samplesRead;
