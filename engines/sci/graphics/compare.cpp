@@ -116,6 +116,8 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
 	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, SELECTOR(view));
+
+	// HACK: Ignore invalid views for now (perhaps unimplemented text views?)
 	if (viewId == 0xFFFF)	// invalid view
 		return;
 
@@ -185,6 +187,7 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		int16 loopNo = GET_SEL32V(_segMan, object, SELECTOR(loop));
 		int16 celNo = GET_SEL32V(_segMan, object, SELECTOR(cel));
 
+		// HACK: Ignore invalid views for now (perhaps unimplemented text views?)
 		if (viewId == 0xFFFF)	// invalid view
 			return;
 
