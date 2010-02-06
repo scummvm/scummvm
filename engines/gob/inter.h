@@ -432,6 +432,9 @@ protected:
 
 	void oFascin_playProtracker(OpGobParams &params);
 
+	bool oFascin_copySprite(OpFuncParams &params);
+	bool oFascin_keyFunc(OpFuncParams &params);
+
 	void oFascin_playTirb(OpGobParams &params);
 	void oFascin_playTira(OpGobParams &params);
 	void oFascin_loadExtasy(OpGobParams &params);
@@ -447,8 +450,8 @@ protected:
 	void oFascin_geUnknown1000(OpGobParams &params);
 	void oFascin_geUnknown1001(OpGobParams &params);
 	void oFascin_geUnknown1002(OpGobParams &params);
-	bool oFascin_feUnknown4(OpFuncParams &params);
-	bool oFascin_feUnknown27(OpFuncParams &params);
+//	bool oFascin_feUnknown4(OpFuncParams &params);
+//	bool oFascin_feUnknown27(OpFuncParams &params);
 	void oFascin_setWinSize();
 	void oFascin_closeWin();
 	void oFascin_activeWin();
