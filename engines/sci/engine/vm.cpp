@@ -569,8 +569,16 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 
 static void gc_countdown(EngineState *s) {
 	if (s->gc_countdown-- <= 0) {
-		s->gc_countdown = script_gc_interval;
-		run_gc(s);
+		// Only run garbage collection when execution stack base
+		// is zero, as it cannot count references inside kernel
+		// functions
+		if (s->execution_stack_base == 0) {
+			s->gc_countdown = script_gc_interval;
+			run_gc(s);
+		} else {
+			// Try again later
+			s->gc_countdown = 1;
+		}
 	}
 }
 
