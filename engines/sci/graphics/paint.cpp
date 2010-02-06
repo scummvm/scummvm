@@ -49,4 +49,8 @@ void GfxPaint::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, ui
 void GfxPaint::kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
 }
 
+void GfxPaint::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
+	warning("Unimplemented kShakeScreen");
+}
+
 } // End of namespace Sci

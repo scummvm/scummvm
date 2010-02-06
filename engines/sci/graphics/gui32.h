@@ -48,8 +48,6 @@ public:
 
 	void textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
 
-	void shakeScreen(uint16 shakeCount, uint16 directions);
-
 	void drawRobot(GuiResourceId robotId);
 
 	// FIXME: Don't store EngineState

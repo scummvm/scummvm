@@ -60,7 +60,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
 	_s->_gfxCompare = _compare;
 	_transitions = new GfxTransitions(this, _screen, _palette, _s->resMan->isVGA());
-	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
+	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
 	_s->_gfxPaint = _paint16;
 	_s->_gfxPaint16 = _paint16;
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
@@ -119,20 +119,6 @@ void SciGui::textFonts(int argc, reg_t *argv) {
 // Used SCI1+ for text codes
 void SciGui::textColors(int argc, reg_t *argv) {
 	_text16->CodeSetColors(argc, argv);
-}
-
-void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
-	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(10);
-		// TODO: horizontal shakes
-		g_system->updateScreen();
-		wait(3);
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(0);
-		g_system->updateScreen();
-		wait(3);
-	}
 }
 
 reg_t SciGui::portraitLoad(Common::String resourceName) {

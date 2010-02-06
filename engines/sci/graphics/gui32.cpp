@@ -79,20 +79,6 @@ void SciGui32::textSize(const char *text, int16 font, int16 maxWidth, int16 *tex
 	*textHeight = 0;
 }
 
-void SciGui32::shakeScreen(uint16 shakeCount, uint16 directions) {
-	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(10);
-		// TODO: horizontal shakes
-		g_system->updateScreen();
-		g_system->delayMillis(50);
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(0);
-		g_system->updateScreen();
-		g_system->delayMillis(50);
-	}
-}
-
 void SciGui32::drawRobot(GuiResourceId robotId) {
 	Robot *test = new Robot(_s->resMan, _screen, robotId);
 	test->draw();
