@@ -233,26 +233,29 @@ void GfxFrameout::kernelFrameout() {
 				// Most likely a text entry
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
-				Kernel *kernel = ((SciEngine *)g_engine)->getKernel();
-				if (lookup_selector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
-					Common::String text = _segMan->getString(GET_SEL32(_segMan, itemEntry->object, SELECTOR(text)));
-					int16 fontRes = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(font));
-					GfxFont *font = new GfxFont(_resMan, _screen, fontRes);
-					bool dimmed = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(dimmed));
-					uint16 foreColor = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(fore));
-					uint16 curX = itemEntry->x;
-					uint16 curY = itemEntry->y;
-					for (uint32 i = 0; i < text.size(); i++) {
-						// TODO: proper text splitting... this is a hack
-						if ((text[i] == ' ' && i > 0 && text[i - i] == ' ') || text[i] == '\n' || 
-							(curX + font->getCharWidth(text[i]) > _screen->getWidth())) {
-							curY += font->getCharHeight('A');
-							curX = itemEntry->x;
+				// This doesn't work for SCI2.1 games...
+				if (getSciVersion() == SCI_VERSION_2) {
+					Kernel *kernel = ((SciEngine *)g_engine)->getKernel();
+					if (lookup_selector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
+						Common::String text = _segMan->getString(GET_SEL32(_segMan, itemEntry->object, SELECTOR(text)));
+						int16 fontRes = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(font));
+						GfxFont *font = new GfxFont(_resMan, _screen, fontRes);
+						bool dimmed = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(dimmed));
+						uint16 foreColor = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(fore));
+						uint16 curX = itemEntry->x;
+						uint16 curY = itemEntry->y;
+						for (uint32 i = 0; i < text.size(); i++) {
+							// TODO: proper text splitting... this is a hack
+							if ((text[i] == ' ' && i > 0 && text[i - i] == ' ') || text[i] == '\n' || 
+								(curX + font->getCharWidth(text[i]) > _screen->getWidth())) {
+								curY += font->getCharHeight('A');
+								curX = itemEntry->x;
+							}
+							font->draw(text[i], curY, curX, foreColor, dimmed);
+							curX += font->getCharWidth(text[i]);
 						}
-						font->draw(text[i], curY, curX, foreColor, dimmed);
-						curX += font->getCharWidth(text[i]);
+						delete font;
 					}
-					delete font;
 				}
 			}
 			listIterator++;

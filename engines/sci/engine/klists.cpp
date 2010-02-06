@@ -473,6 +473,10 @@ reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
 
 	List *list = s->_segMan->lookupList(argv[0]);
 	reg_t curAddress = list->first;
+	if (list->first.isNull()) {
+		warning("kListAt tried to reference empty list (%04x:%04x)", PRINT_REG(argv[0]));
+		return NULL_REG;
+	}
 	Node *curNode = s->_segMan->lookupNode(curAddress);
 	reg_t curObject = curNode->value;
 	int16 listIndex = argv[1].toUint16();
