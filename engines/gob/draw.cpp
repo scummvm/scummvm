@@ -882,7 +882,6 @@ void Draw::winDecomp(int16 x, int16 y, SurfaceDescPtr bmp) {
 	// TODO: Implementation to be confirmed (used cut and paste from another part of the code)
 	Resource *resource;
 
-	warning("winDecomp");
 	resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
 	                                               &_spriteRight, &_spriteBottom);
 
@@ -907,6 +906,7 @@ void Draw::winDraw(int16 fct) {
 	int16 height;
 
 	warning("winDraw %d", fct);
+
 	bool found = false;
 	int len;
 	Resource *resource;
@@ -1045,8 +1045,8 @@ void Draw::winDraw(int16 fct) {
 		for (int i = 9; i >= j; i--) {
 			if (table[i])
 				_vm->_video->drawSprite(*_fascinWin[table[i]].savedSurface, *_spritesArray[_destSurface],
-										 _fascinWin[table[i]].left & 15, 0,
-										(_fascinWin[table[i]].left & 15) + _fascinWin[table[i]].width - 1,
+										 _fascinWin[table[i]].left & 7, 0,
+										(_fascinWin[table[i]].left & 7) + _fascinWin[table[i]].width - 1,
 										 _fascinWin[table[i]].height - 1, _fascinWin[table[i]].left - _spriteLeft + _destSpriteX,
 										 _fascinWin[table[i]].top - _spriteTop + _destSpriteY, 0);
 		}
@@ -1064,15 +1064,15 @@ void Draw::winDraw(int16 fct) {
 		for (int i = 9; i >= max; i--) {
 			if (table[i])
 				_vm->_video->drawSprite(*_fascinWin[table[i]].savedSurface, *tempSrf,
-										 _fascinWin[table[i]].left & 15, 0,
-										(_fascinWin[table[i]].left & 15) + _fascinWin[table[i]].width - 1,
+										 _fascinWin[table[i]].left & 7, 0,
+										(_fascinWin[table[i]].left & 7) + _fascinWin[table[i]].width - 1,
 										 _fascinWin[table[i]].height - 1,
 										 _fascinWin[table[i]].left  - left,
 										 _fascinWin[table[i]].top   - top , 0);
 		}
 
-		// NOTE: Strangerke not sure concerning the use of _destSurface
-		dirtiedRect(_destSurface, left, top, width, height);
+		invalidateRect(left, top, width, height);
+
 		switch (fct) {
 		case DRAW_BLITSURF:    // 0 - move
 			_vm->_video->drawSprite(*_spritesArray[_sourceSurface], *tempSrf,
@@ -1152,7 +1152,7 @@ void Draw::winDraw(int16 fct) {
 				int k = table[i];
 				_vm->_video->drawSprite(*tempSrf, *_fascinWin[k].savedSurface,
 										0, 0, width - left, height - top,
-										left - _fascinWin[k].left + (_fascinWin[k].left & 15),
+										left - _fascinWin[k].left + (_fascinWin[k].left & 7),
 										top  - _fascinWin[k].top, 0);
 				// Shift skipped as always set to zero (?)
 				_vm->_video->drawSprite(*_frontSurface, *tempSrf,
@@ -1171,10 +1171,10 @@ void Draw::winDraw(int16 fct) {
 						int l = table[j];
 						_vm->_video->drawSprite(*_fascinWin[l].savedSurface, *tempSrf,
 												MAX(_fascinWin[l].left, _fascinWin[k].left)
-												  - _fascinWin[l].left + (_fascinWin[l].left & 15),
+												  - _fascinWin[l].left + (_fascinWin[l].left & 7),
 												MAX(_fascinWin[l].top , _fascinWin[k].top ) - _fascinWin[l].top,
 												MIN(_fascinWin[l].left + _fascinWin[l].width  - 1, _fascinWin[k].left + _fascinWin[k].width - 1)
-												  - _fascinWin[l].left + (_fascinWin[l].left & 15),
+												  - _fascinWin[l].left + (_fascinWin[l].left & 7),
 												MIN(_fascinWin[l].top  + _fascinWin[l].height - 1, _fascinWin[k].top  + _fascinWin[k].height - 1)
 												  - _fascinWin[l].top,
 												MAX(_fascinWin[l].left, _fascinWin[k].left) - left,
@@ -1186,9 +1186,7 @@ void Draw::winDraw(int16 fct) {
 		_vm->_video->drawSprite(*tempSrf, *_backSurface, 0, 0, width - left, height - top, left, top, 0);
 		tempSrf.reset();
 	} else {
-		// NOTE: Strangerke not sure concerning the use of _destSurface
-
-		dirtiedRect(_destSurface, left, top, width, height);
+		invalidateRect(left, top, width, height);
 		switch (fct) {
 		case DRAW_BLITSURF:    // 0 - move
 			_vm->_video->drawSprite(*_spritesArray[_sourceSurface], *_backSurface,
