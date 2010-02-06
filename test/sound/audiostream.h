@@ -40,9 +40,9 @@ private:
 
 		int16 *sine = 0;
 		Audio::SeekableAudioStream *s = createSineStream<int16>(sampleRate, 1, &sine, false, isStereo);
-		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(s, 4);
+		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(s, 7);
 
-		int16 *buffer = new int16[secondLength * 2];
+		int16 *buffer = new int16[secondLength * 3];
 
 		// Check parameters
 		TS_ASSERT_EQUALS(loop->isStereo(), isStereo);
@@ -65,16 +65,25 @@ private:
 		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)3);
 		TS_ASSERT_EQUALS(loop->endOfData(), false);
 
+		// Read three seconds
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength * 3), secondLength * 3);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(memcmp(buffer + secondLength, sine, secondLength * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(memcmp(buffer + secondLength * 2, sine, secondLength * sizeof(int16)), 0);
+
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)6);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
 		// Read the last second
 		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), secondLength);
 		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
 
-		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)4);
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)7);
 		TS_ASSERT_EQUALS(loop->endOfData(), true);
 
 		// Try to read beyond the end of the stream
 		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), 0);
-		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)4);
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)7);
 		TS_ASSERT_EQUALS(loop->endOfData(), true);
 
 		delete[] buffer;
