@@ -484,6 +484,7 @@ void Video::drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 
 void Video::drawLetter(int16 item, int16 x, int16 y, const Font &font,
 		int16 color1, int16 color2, int16 transp, SurfaceDesc &dest) {
+	assert(item != 0x00);
 	_videoDriver->drawLetter((unsigned char)item, x, y, font, color1, color2, transp, dest);
 }
 
