@@ -132,6 +132,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			s->_gfxCursor->kernelShow();
 			break;
 		}
+		break;
 	case 2:
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
