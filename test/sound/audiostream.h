@@ -74,9 +74,18 @@ private:
 		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)6);
 		TS_ASSERT_EQUALS(loop->endOfData(), false);
 
-		// Read the last second
-		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), secondLength);
-		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
+		// Read the last second in two parts
+		const int firstStep = secondLength / 2;
+		const int secondStep = secondLength - firstStep;
+
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, firstStep), firstStep);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine, firstStep * sizeof(int16)), 0);
+
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)6);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), secondStep);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + firstStep, secondStep * sizeof(int16)), 0);
 
 		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)7);
 		TS_ASSERT_EQUALS(loop->endOfData(), true);
