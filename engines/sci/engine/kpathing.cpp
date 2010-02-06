@@ -1605,8 +1605,8 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		bool foundIntersection = true;
-		int32 intersectionX;
-		int32 intersectionY;
+		int32 intersectionX = 0;
+		int32 intersectionY = 0;
 
 		if (qSlope == pSlope) {
 			// If the lines overlap, we test the source and destination points
