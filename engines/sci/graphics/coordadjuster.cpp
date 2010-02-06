@@ -82,7 +82,7 @@ Common::Rect GfxCoordAdjuster16::pictureGetDisplayArea() {
 	Common::Rect displayArea(_ports->getPort()->rect.right, _ports->getPort()->rect.bottom);
 	displayArea.moveTo(_ports->getPort()->left, _ports->getPort()->top);
 	return displayArea;
-};
+}
 
 #ifdef ENABLE_SCI32
 GfxCoordAdjuster32::GfxCoordAdjuster32(SegManager *segMan)
@@ -121,7 +121,7 @@ void GfxCoordAdjuster32::pictureSetDisplayArea(Common::Rect displayArea) {
 
 Common::Rect GfxCoordAdjuster32::pictureGetDisplayArea() {
 	return _pictureDisplayArea;
-};
+}
 #endif
 
 } // End of namespace Sci
