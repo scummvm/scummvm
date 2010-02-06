@@ -271,32 +271,27 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 	_stream->read((byte *) _palette, 768);
 
 	if (!loadCoordinates()) {
-		warning("Imd::load(): loadCoordinates failed");
 		unload();
 		return false;
 	}
 
 	uint32 framesPosPos, frameCoordsPos;
 	if (!loadFrameTableOffsets(framesPosPos, frameCoordsPos)) {
-		warning("Imd::load(): loadFrameTableOffsets failed");
 		unload();
 		return false;
 	}
 
 	if (!assessAudioProperties()) {
-		warning("Imd::load(): assessAudioProperties failed");
 		unload();
 		return false;
 	}
 
 	if (!assessVideoProperties()) {
-		warning("Imd::load(): assessVideoProperties failed");
 		unload();
 		return false;
 	}
 
 	if (!loadFrameTables(framesPosPos, frameCoordsPos)) {
-		warning("Imd::load(): loadFrameTables failed");
 		unload();
 		return false;
 	}
