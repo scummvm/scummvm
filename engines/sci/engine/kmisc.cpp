@@ -159,11 +159,7 @@ reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
-	// We used to call run_gc() directly from here. This is no longer safe
-	// as we now always add our fake "kernel" stack frame for debugging
-	// purposes. Instead of calling run_gc(), we set gc_countdown to 1
-	// to make the garbage collector run before the next kernel function.
-	s->gc_countdown = 1;
+	run_gc(s);
 	debugC(2, kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());
 	return s->r_acc;
 }

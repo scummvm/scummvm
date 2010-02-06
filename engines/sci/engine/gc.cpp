@@ -76,14 +76,25 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	WorklistManager wm;
 	uint i;
 
+	assert(!s->_executionStack.empty());
+
 	// Initialise
 	// Init: Registers
 	wm.push(s->r_acc);
 	wm.push(s->r_prev);
 	// Init: Value Stack
 	// We do this one by hand since the stack doesn't know the current execution stack
+	Common::List<ExecStack>::iterator iter;
 	{
-		ExecStack &xs = s->_executionStack.back();
+		iter = s->_executionStack.reverse_begin();
+
+		// Skip fake kernel stack frame if it's on top
+		if (((*iter).type == EXEC_STACK_TYPE_KERNEL))
+			--iter;
+
+		assert((iter != s->_executionStack.end()) && ((*iter).type != EXEC_STACK_TYPE_KERNEL));
+
+		ExecStack &xs = *iter;
 		reg_t *pos;
 
 		for (pos = s->stack_base; pos < xs.sp; pos++)
@@ -93,7 +104,6 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	debugC(2, kDebugLevelGC, "[GC] -- Finished adding value stack");
 
 	// Init: Execution Stack
-	Common::List<ExecStack>::iterator iter;
 	for (iter = s->_executionStack.begin();
 	     iter != s->_executionStack.end(); ++iter) {
 		ExecStack &es = *iter;
