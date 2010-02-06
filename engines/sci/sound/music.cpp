@@ -63,11 +63,15 @@ void SciMusic::init() {
 
 	MidiDriverType midiType;
 
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2)
+	// Default to MIDI in SCI32 games, as many don't have AdLib support.
+	// WORKAROUND: Default to MIDI in Amiga SCI1_EGA+ games as we don't support those patches yet.
+	// We also don't yet support the 7.pat file of SCI1+ Mac games or SCI0 Mac patches, so we
+	// default to MIDI in those games to let them run.
+	Common::Platform platform = ((SciEngine *)g_engine)->getPlatform();
+
+	if (getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA))
 		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
 	else
-#endif
 		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI);
 
 	switch (midiType) {

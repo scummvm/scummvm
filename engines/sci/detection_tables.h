@@ -1009,6 +1009,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::PL_POL, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// King's Quest 5 - English Macintosh
+	// VERSION file reports "1.000.055"
+	{"kq5", "", {
+		{"resource.map", 0, "4d4bd26ac9f3014f5dae6b21cdcde747", 8598},
+		{"resource.000", 0, "e8965601526ce840887b8af3a8593156", 328291},
+		{"resource.001", 0, "aa2fae60f67edf2aacd43b92b59c2b3d", 1071492},
+		{"resource.002", 0, "14311ed6d0f4ae0af7561470953cc466", 1373044},
+		{"resource.003", 0, "aa606e541901b1dd150b49014ace6d11", 1401126},
+		{"resource.004", 0, "bb81f49927cdb0ac4d902e64f2bc40ec", 1377139},
+		{"resource.005", 0, "432e2a58e4d496d730697db072437337", 1366732},
+		{"resource.006", 0, "3d22904a374c192f51e5665b74364133", 1264079},
+		{"resource.007", 0, "ffe17e23d5833a79f3695addfc149a56", 1361965},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 6 - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.001.055", VERSION file reports "1.000.000"
 	// SCI interpreter version 1.001.055
