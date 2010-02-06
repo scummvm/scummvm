@@ -950,6 +950,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_gfxCoordAdjuster = s->_gfxCoordAdjuster;
 	retval->_gfxCursor = s->_gfxCursor;
 	retval->_gfxMenu = s->_gfxMenu;
+	retval->_gfxPaint = s->_gfxPaint;
 	retval->_gfxPaint16 = s->_gfxPaint16;
 	retval->_gfxPalette = s->_gfxPalette;
 	retval->_gfxPorts = s->_gfxPorts;

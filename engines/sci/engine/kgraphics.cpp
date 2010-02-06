@@ -654,7 +654,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case 1: { // Unknown
-		warning("kPalVary(1) called with parameter %d", argv[1].toUint16());
+		warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
 	case 3: { // DeInit
@@ -664,6 +664,10 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		} else {
 			warning("kPalVary(deinit) called with unsupported argc %d", argc);
 		}
+		break;
+	}
+	case 4: { // Unknown
+		warning("kPalVary(4) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
 	case 6: { // Pause
