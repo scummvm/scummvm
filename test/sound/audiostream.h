@@ -2,6 +2,8 @@
 
 #include "sound/audiostream.h"
 
+#include "helper.h"
+
 class AudioStreamTestSuite : public CxxTest::TestSuite
 {
 public:
@@ -30,6 +32,63 @@ public:
 		// Some misc test
 		const Audio::Timestamp e = Audio::convertTimeToStreamPos(Audio::Timestamp(1, 1, 4), 11025, false);
 		TS_ASSERT_EQUALS(e.totalNumberOfFrames(), 5 * 11025 / 4);
+	}
+
+private:
+	void testLoopingAudioStreamFixedIter(const int sampleRate, const bool isStereo) {
+		const int secondLength = sampleRate * (isStereo ? 2 : 1);
+
+		int16 *sine = 0;
+		Audio::SeekableAudioStream *s = createSineStream<int16>(sampleRate, 1, &sine, false, isStereo);
+		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(s, 4);
+
+		int16 *buffer = new int16[secondLength * 2];
+
+		// Check parameters
+		TS_ASSERT_EQUALS(loop->isStereo(), isStereo);
+		TS_ASSERT_EQUALS(loop->getRate(), sampleRate);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)0);
+
+		// Read one second
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), secondLength);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
+
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)1);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
+		// Read two seconds
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength * 2), secondLength * 2);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(memcmp(buffer + secondLength, sine, secondLength * sizeof(int16)), 0);
+
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)3);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
+		// Read the last second
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), secondLength);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
+
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)4);
+		TS_ASSERT_EQUALS(loop->endOfData(), true);
+
+		// Try to read beyond the end of the stream
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), 0);
+		TS_ASSERT_EQUALS(loop->getCompleteIterations(), (uint)4);
+		TS_ASSERT_EQUALS(loop->endOfData(), true);
+
+		delete[] buffer;
+		delete loop;
+		delete[] sine;
+	}
+
+public:
+	void test_looping_audio_stream_mono_fixed_iter() {
+		testLoopingAudioStreamFixedIter(22050, false);
+	}
+
+	void test_looping_audio_stream_stereo_fixed_iter() {
+		testLoopingAudioStreamFixedIter(22050, true);
 	}
 };
 
