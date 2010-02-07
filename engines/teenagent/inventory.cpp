@@ -119,6 +119,20 @@ void Inventory::add(byte item) {
 	error("no room for item %u", item);
 }
 
+bool Inventory::tryObjectCallback(InventoryObject *obj) {
+	byte id = obj->id;
+	uint i = 0;
+	for (byte *table = Resources::instance()->dseg.ptr(0xBB6F + 3); table[0] != 0 && i < 7; table += 3, ++i) {
+		if (table[0] == id) {
+			resetSelectedObject();
+			activate(false);
+			if (_engine->processCallback(READ_LE_UINT16(table + 1)))
+				return true;
+		}
+	}
+	return false;
+}
+
 bool Inventory::processEvent(const Common::Event &event) {
 	Resources *res = Resources::instance();
 
@@ -162,6 +176,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 		debug(0, "lclick on %u:%s", hovered_obj->id, hovered_obj->name.c_str());
 
 		if (selected_obj == NULL) {
+			if (tryObjectCallback(hovered_obj))
+				return true;
 			//activate(false);
 			int w = res->font7.render(NULL, 0, 0, hovered_obj->description, 0xd1);
 			_engine->scene->displayMessage(hovered_obj->description, 0xd1, Common::Point((320 - w) / 2, 162));
@@ -205,18 +221,9 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return false;
 
 		if (hovered_obj != NULL) {
-			byte id = hovered_obj->id;
-			debug(0, "rclick object %u", id);
-			uint i = 0;
-			for (byte *table = res->dseg.ptr(0xBB6F + 3); //original offset + 3 bytes.
-			        table[0] != 0 && i < 7; table += 3, ++i) {
-				if (table[0] == id) {
-					resetSelectedObject();
-					activate(false);
-					if (_engine->processCallback(READ_LE_UINT16(table + 1)))
-						return true;
-				}
-			}
+			debug(0, "rclick object %u:%s", hovered_obj->id, hovered_obj->name.c_str());
+			if (hovered_obj->id != 51 && tryObjectCallback(hovered_obj)) //do not process callback for banknote on r-click
+				return true;
 		}
 
 		selected_obj = hovered_obj;
