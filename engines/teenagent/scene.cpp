@@ -494,7 +494,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			}
 			break;
 		}
-#ifndef NDEBUG
+#if 0
 		case '1':
 		case '2':
 		case '3':
