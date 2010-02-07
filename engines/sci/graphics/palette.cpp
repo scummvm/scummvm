@@ -187,26 +187,32 @@ void GfxPalette::setEGA() {
 
 void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
+	bool paletteChanged;
+
 	if (force || sciPal->timestamp != systime) {
-		merge(sciPal, &_sysPalette, force, forceRealMerge);
+		paletteChanged = merge(sciPal, &_sysPalette, force, forceRealMerge);
 		sciPal->timestamp = _sysPalette.timestamp;
-		if (_screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
+		if (paletteChanged && _screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
 			setOnScreen();
 	}
 }
 
-void GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
+bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
+	bool paletteChanged = false;
 
 	if ((!forceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
 		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
 		for (i = 1; i < 255; i++) {
 			if (pFrom->colors[i].used) {
+				if ((pFrom->colors[i].r != pTo->colors[i].r) || (pFrom->colors[i].g != pTo->colors[i].g) || (pFrom->colors[i].b != pTo->colors[i].b)) {
+					pTo->colors[i].r = pFrom->colors[i].r;
+					pTo->colors[i].g = pFrom->colors[i].g;
+					pTo->colors[i].b = pFrom->colors[i].b;
+					paletteChanged = true;
+				}
 				pTo->colors[i].used = pFrom->colors[i].used;
-				pTo->colors[i].r = pFrom->colors[i].r;
-				pTo->colors[i].g = pFrom->colors[i].g;
-				pTo->colors[i].b = pFrom->colors[i].b;
 				pFrom->mapping[i] = i;
 			}
 		}
@@ -218,9 +224,12 @@ void GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 			// forced palette merging or dest color is not used yet
 			if (force || (!pTo->colors[i].used)) {
 				pTo->colors[i].used = pFrom->colors[i].used;
-				pTo->colors[i].r = pFrom->colors[i].r;
-				pTo->colors[i].g = pFrom->colors[i].g;
-				pTo->colors[i].b = pFrom->colors[i].b;
+				if ((pFrom->colors[i].r != pTo->colors[i].r) || (pFrom->colors[i].g != pTo->colors[i].g) || (pFrom->colors[i].b != pTo->colors[i].b)) {
+					pTo->colors[i].r = pFrom->colors[i].r;
+					pTo->colors[i].g = pFrom->colors[i].g;
+					pTo->colors[i].b = pFrom->colors[i].b;
+					paletteChanged = true;
+				}
 				pFrom->mapping[i] = i;
 				continue;
 			}
@@ -245,6 +254,7 @@ void GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 					pTo->colors[j].g = pFrom->colors[i].g;
 					pTo->colors[j].b = pFrom->colors[i].b;
 					pFrom->mapping[i] = j;
+					paletteChanged = true;
 					break;
 				}
 			// if still no luck - set an approximate color
@@ -255,6 +265,7 @@ void GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 		}
 	}
 	pTo->timestamp = g_system->getMillis() * 60 / 1000;
+	return paletteChanged;
 }
 
 uint16 GfxPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {

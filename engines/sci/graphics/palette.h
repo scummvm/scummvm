@@ -44,7 +44,7 @@ public:
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
-	void merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge);
+	bool merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge);
 	uint16 matchColor(Palette *pPal, byte r, byte g, byte b);
 	void getSys(Palette *pal);
 
