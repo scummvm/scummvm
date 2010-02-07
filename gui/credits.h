@@ -505,6 +505,8 @@ static const char *credits[] = {
 "C2""For the original Gobliiins ADL player",
 "C0""Ivan Dubrov",
 "C2""For contributing the initial version of the Gobliiins engine",
+"C0""DOSBox Team",
+"C2""For their awesome OPL2 and OPL3 emulator",
 "C0""Till Kresslein",
 "C2""For design of modern ScummVM GUI",
 "C0""Jezar",

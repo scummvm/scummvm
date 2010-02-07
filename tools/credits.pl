@@ -940,6 +940,7 @@ begin_credits("Credits");
 	  add_person("Curt Coder", "", "For the original TrollVM (preAGI) code");
 	  add_person("Patrick Combet", "Dorian Gray", "For the original Gobliiins ADL player");
 	  add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
+	  add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
 	  add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 	  add_person("", "Jezar", "For his freeverb filter implementation");
 	  add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
