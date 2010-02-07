@@ -3848,7 +3848,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(237, 186, 0);
 		moveTo(237, 177, 0);
 		moveTo(192, 177, 4);
-		playAnimation(949, 1);
+		playAnimation(949, 0);
 		Dialog::showMono(scene, 0x8af6, 950, 0xe7, 1);
 
 		playSound(32, 5);
