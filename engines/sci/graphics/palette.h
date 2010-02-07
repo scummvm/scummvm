@@ -57,6 +57,7 @@ public:
 	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
+	void kernelAssertPalette(GuiResourceId resourceId);
 
 	void startPalVary(uint16 paletteId, uint16 ticks);
 	void togglePalVary(bool pause);

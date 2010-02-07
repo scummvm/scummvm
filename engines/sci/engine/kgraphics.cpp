@@ -688,10 +688,9 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId viewId = argv[1].toUint16();
-	// TODO: implement this
+	GuiResourceId paletteId = argv[1].toUint16();
 
-	warning("kAssertPalette() called with viewId = %d", viewId);
+	s->_gfxPalette->kernelAssertPalette(paletteId);
 	return s->r_acc;
 }
 

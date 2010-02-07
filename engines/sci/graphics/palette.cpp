@@ -391,6 +391,10 @@ void GfxPalette::kernelAnimateSet() {
 	setOnScreen();
 }
 
+void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
+	warning("kAssertPalette %d", resourceId);
+}
+
 // palVary
 //  init - only does, if palVaryOn == false
 //         target, start, new palette allocation
@@ -418,6 +422,9 @@ void GfxPalette::kernelAnimateSet() {
 //         need to save start and target-palette, when palVaryOn = true
 
 void GfxPalette::startPalVary(uint16 paletteId, uint16 ticks) {
+	kernelSetFromResource(paletteId, true);
+	return;
+
 	if (_palVaryId >= 0)	// another palvary is taking place, return
 		return;
 
