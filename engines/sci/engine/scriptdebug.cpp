@@ -106,9 +106,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
 	uint16 param_value;
-	int opsize;
-	uint opcode;
-	int bytecount = 1;
 	int i = 0;
 	Kernel *kernel = s->_kernel;
 
@@ -126,46 +123,16 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		return pos;
 	}
 
-	opsize = scr[pos.offset];
-	opcode = opsize >> 1;
+	int16 opparams[4];
+	byte opsize;
+	int bytecount = readPMachineInstruction(scr + pos.offset, opsize, opparams);
+	const byte opcode = opsize >> 1;
 
 	opsize &= 1; // byte if true, word if false
 
 	printf("%04x:%04x: ", PRINT_REG(pos));
 
 	if (print_bytecode) {
-		while (g_opcode_formats[opcode][i]) {
-			switch (g_opcode_formats[opcode][i++]) {
-
-			case Script_SByte:
-			case Script_Byte:
-				bytecount++;
-				break;
-
-			case Script_Word:
-			case Script_SWord:
-				bytecount += 2;
-				break;
-
-			case Script_SVariable:
-			case Script_Variable:
-			case Script_Property:
-			case Script_Global:
-			case Script_Local:
-			case Script_Temp:
-			case Script_Param:
-			case Script_SRelative:
-				if (opsize)
-					bytecount ++;
-				else
-					bytecount += 2;
-				break;
-
-			default:
-				break;
-			}
-		}
-
 		if (pos.offset + bytecount > scr_size) {
 			warning("Operation arguments extend beyond end of script");
 			return retval;
