@@ -216,8 +216,6 @@ Common::Error SciEngine::run() {
 	assert(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value != 0);
 	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
 
-	_gamestate->_features->setGameInfo(_gamestate->_gameObj, _gamestate->_gameId);
-
 	SciVersion soundVersion = _gamestate->_features->detectDoSoundType();
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);

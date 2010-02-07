@@ -44,8 +44,6 @@ public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
 	~GameFeatures() {}
 
-	void setGameInfo(reg_t gameObj, Common::String gameId);
-
 	/**
 	 * Autodetects the DoSound type
 	 * @return DoSound type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE /
@@ -111,8 +109,6 @@ private:
 
 	SegManager *_segMan;
 	Kernel *_kernel;
-	reg_t _gameObj;
-	Common::String _gameId;
 };
 
 } // End of namespace Sci

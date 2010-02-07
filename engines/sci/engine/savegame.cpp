@@ -1014,8 +1014,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->successor = NULL;
 	retval->_gameId = s->_gameId;
 
-	retval->_features->setGameInfo(retval->_gameObj, retval->_gameId);
-
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	retval->_sound._it = NULL;
 	retval->_sound._flags = s->_sound._flags;

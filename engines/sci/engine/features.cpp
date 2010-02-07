@@ -43,11 +43,6 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 }
 
-void GameFeatures::setGameInfo(reg_t gameObj, Common::String gameId) {
-	_gameObj = gameObj;
-	_gameId = gameId;
-}
-
 bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
 	Selector slc = 0;
