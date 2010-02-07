@@ -95,6 +95,8 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					w.rect.side(w1, w2, w.side_hint[3], p1);
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					if (mask & 2)
+						p.insert(next, w2);
 					boxes.erase(wi);
 					break;
 				}
@@ -105,6 +107,8 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					w.rect.side(w1, w2, w.side_hint[1], p1);
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					if (mask & 8)
+						p.insert(next, w2);
 					boxes.erase(wi);
 					break;
 				}
@@ -117,6 +121,8 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					w.rect.side(w1, w2, w.side_hint[0], p1);
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					if (mask & 4)
+						p.insert(next, w2);
 					boxes.erase(wi);
 					break;
 				}
@@ -127,6 +133,8 @@ bool Scene::findPath(Scene::Path &p, const Common::Point &src, const Common::Poi
 					w.rect.side(w1, w2, w.side_hint[2], p1);
 					debug(1, "hint: %d,%d-%d,%d", w1.x, w1.y, w2.x, w2.y);
 					p.insert(next, w1);
+					if (mask & 1)
+						p.insert(next, w2);
 					boxes.erase(wi);
 					break;
 				}
@@ -144,29 +152,28 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
 
-	if (validate) {
-		for (byte i = 0; i < scene_walkboxes.size(); ++i) {
-			const Walkbox &w = scene_walkboxes[i];
-			if (w.rect.in(point)) {
-				debug(0, "bumped into walkbox %u", i);
-				w.dump();
-				byte o = w.orientation;
-				switch (o) {
-				case 1:
-					point.y = w.rect.top - 1;
-					break;
-				case 2:
-					point.x = w.rect.right + 1;
-					break;
-				case 3:
-					point.y = w.rect.bottom + 1;
-					break;
-				case 4:
-					point.x = w.rect.left - 1;
-					break;
-				default:
+	for (byte i = 0; i < scene_walkboxes.size(); ++i) {
+		const Walkbox &w = scene_walkboxes[i];
+		if (w.rect.in(point)) {
+			debug(0, "bumped into walkbox %u", i);
+			w.dump();
+			byte o = w.orientation;
+			switch (o) {
+			case 1:
+				point.y = w.rect.top - 1;
+				break;
+			case 2:
+				point.x = w.rect.right + 1;
+				break;
+			case 3:
+				point.y = w.rect.bottom + 1;
+				break;
+			case 4:
+				point.x = w.rect.left - 1;
+				break;
+			default:
+				if (validate)
 					return;
-				}
 			}
 		}
 	}
@@ -251,6 +258,12 @@ void Scene::loadObjectData() {
 		for (byte j = 0; j < walkboxes_n; ++j) {
 			Walkbox w;
 			w.load(walkboxes_base + 14 * j);
+			if ((w.side_hint[0] | w.side_hint[1] | w.side_hint[2] | w.side_hint[3]) == 0) {
+				w.side_hint[0] = 2;
+				w.side_hint[1] = 3;
+				w.side_hint[2] = 4;
+				w.side_hint[3] = 1;
+			}
 			//walkbox[i]->dump();
 			scene_walkboxes.push_back(w);
 		}
@@ -481,7 +494,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			}
 			break;
 		}
-#if 0
+#if 1
 		case '1':
 		case '2':
 		case '3':
@@ -1091,6 +1104,12 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kQuit:
 			debug(0, "quit!");
 			_engine->quitGame();
+			break;
+
+		case SceneEvent::kSetFlag:
+			debug(0, "async set_flag(%04x, %d)", current_event.callback, current_event.color);
+			Resources::instance()->dseg.set_byte(current_event.callback, current_event.color);
+			current_event.clear();
 			break;
 
 		default:

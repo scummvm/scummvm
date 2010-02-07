@@ -62,6 +62,7 @@ struct SceneEvent {
 		kEffect,
 		kFade,
 		kWait,
+		kSetFlag,
 		kQuit
 	} type;
 
@@ -133,7 +134,7 @@ public:
 
 	void warp(const Common::Point &point, byte orientation = 0);
 
-	void moveTo(const Common::Point &point, byte orientation = 0, bool validate = 0);
+	void moveTo(const Common::Point &point, byte orientation = 0, bool validate = false);
 	Common::Point getPosition() const { return position; }
 
 	void displayMessage(const Common::String &str, byte color = 0xd1, const Common::Point &pos = Common::Point());
