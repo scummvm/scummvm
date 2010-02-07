@@ -31,14 +31,6 @@
 
 namespace Sci {
 
-enum FeatureDetection {
-	kDetectGfxFunctions = 0,
-	kDetectMoveCountType = 1,
-	kDetectSoundType = 2,
-	kDetectLofsType = 3,
-	kDetectSci21KernelTable = 4
-};
-
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
@@ -99,7 +91,13 @@ public:
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
-	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
+	bool autoDetectLofsType(int methodNum);
+	bool autoDetectGfxFunctionsType(int methodNum = -1);
+	bool autoDetectSoundType();
+	bool autoDetectMoveCountType();
+#ifdef ENABLE_SCI32
+	bool autoDetectSci21KernelType();
+#endif
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 #ifdef ENABLE_SCI32
