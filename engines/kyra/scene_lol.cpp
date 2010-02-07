@@ -170,7 +170,7 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 				_wllShapeMap[c] = *d;
 		}
 		d += 2;
-		_wllBuffer3[c] = *d;
+		_specialWallTypes[c] = *d;
 		d += 2;
 		_wllWallFlags[c] = *d;
 		d += 2;

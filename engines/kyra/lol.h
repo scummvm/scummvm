@@ -1117,7 +1117,7 @@ private:
 
 	uint8 *_wllVmpMap;
 	int8 *_wllShapeMap;
-	uint8 *_wllBuffer3;
+	uint8 *_specialWallTypes;
 	uint8 *_wllBuffer4;
 	uint8 *_wllWallFlags;
 

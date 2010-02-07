@@ -1474,7 +1474,7 @@ int LoLEngine::clickedInventoryScroll(Button *button) {
 int LoLEngine::clickedWall(Button *button) {
 	int block = calcNewBlockPosition(_currentBlock, _currentDirection);
 	int dir = _currentDirection ^ 2;
-	uint8 type = _wllBuffer3[_levelBlockProperties[block].walls[dir]];
+	uint8 type = _specialWallTypes[_levelBlockProperties[block].walls[dir]];
 
 	int res = 0;
 	switch (type) {

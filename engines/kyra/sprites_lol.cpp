@@ -1433,7 +1433,7 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 		uint8 w = _levelBlockProperties[_monsterCurBlock].walls[(s >> 1) ^ 2];
 
 		if (_wllWallFlags[w] & 0x20) {
-			if (_wllBuffer3[w] == 5) {
+			if (_specialWallTypes[w] == 5) {
 				openCloseDoor(_monsterCurBlock, 1);
 				return -1;
 			}

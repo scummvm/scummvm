@@ -133,7 +133,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_visibleBlockIndex, 0, sizeof(_visibleBlockIndex));
 
 	_smoothScrollModeNormal = 1;
-	_wllVmpMap = _wllBuffer3 = _wllBuffer4 = _wllWallFlags = 0;
+	_wllVmpMap = _specialWallTypes = _wllBuffer4 = _wllWallFlags = 0;
 	_wllShapeMap = 0;
 	_lvlShapeTop = _lvlShapeBottom = _lvlShapeLeftRight = 0;
 	_levelBlockProperties = 0;
@@ -338,7 +338,7 @@ LoLEngine::~LoLEngine() {
 
 	delete[] _wllVmpMap;
 	delete[] _wllShapeMap;
-	delete[] _wllBuffer3;
+	delete[] _specialWallTypes;
 	delete[] _wllBuffer4;
 	delete[] _wllWallFlags;
 	delete[] _lvlShapeTop;
@@ -458,8 +458,8 @@ Common::Error LoLEngine::init() {
 	memset(_wllVmpMap, 0, 80);
 	_wllShapeMap = new int8[80];
 	memset(_wllShapeMap, 0, 80);
-	_wllBuffer3 = new uint8[80];
-	memset(_wllBuffer3, 0, 80);
+	_specialWallTypes = new uint8[80];
+	memset(_specialWallTypes, 0, 80);
 	_wllBuffer4 = new uint8[80];
 	memset(_wllBuffer4, 0, 80);
 	_wllWallFlags = new uint8[80];
