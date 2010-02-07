@@ -255,9 +255,21 @@ void Inventory::Item::free() {
 	surface.free();
 }
 
+void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
+	uint w = rect.right - rect.left, h = rect.bottom - rect.top;
+	byte *line = (byte *)s->getBasePtr(rect.left, rect.top);
+	for(uint y = 0; y < h; ++y, line += s->pitch) {
+		byte *dst = line;
+		for(uint x = 0; x < w; ++x, ++dst) {
+			*dst = (*dst == 232)? 214: 224;
+		}
+	}
+}
+
 void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *dst, int delta) {
 	Resources *res = Resources::instance();
 
+	backgroundEffect(dst);
 	rect.render(dst, hovered ? 233 : 234);
 	if (obj->animated) {
 		if (animation.empty()) {

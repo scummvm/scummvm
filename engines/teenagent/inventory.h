@@ -70,6 +70,7 @@ private:
 
 		Item() : hovered(false) {}
 		void free();
+		void backgroundEffect(Graphics::Surface *s);
 		void render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *surface, int delta);
 	} graphics[24];
 
