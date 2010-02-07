@@ -259,14 +259,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define PUSH32(a) (*(validate_stack_addr(s, (scriptState.xs->sp)++)) = (a))
 #define POP32() (*(validate_stack_addr(s, --(scriptState.xs->sp))))
 
-// Getting instruction parameters
-#define GET_OP_BYTE() ((uint8)code_buf[(scriptState.xs->addr.pc.offset)++])
-#define GET_OP_WORD() (READ_LE_UINT16(code_buf + ((scriptState.xs->addr.pc.offset) += 2) - 2))
-#define GET_OP_FLEX() ((opcode & 1)? GET_OP_BYTE() : GET_OP_WORD())
-#define GET_OP_SIGNED_BYTE() ((int8)(code_buf[(scriptState.xs->addr.pc.offset)++]))
-#define GET_OP_SIGNED_WORD() (((int16)READ_LE_UINT16(code_buf + ((scriptState.xs->addr.pc.offset) += 2) - 2)))
-#define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
-
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
@@ -1449,7 +1441,7 @@ void run_vm(EngineState *s, bool restoring) {
 				PUSH32(scriptState.xs->objp);
 			} else {
 				// Debug opcode op_file, skip null-terminated string (file name)
-				while (GET_OP_BYTE()) ;
+				while (code_buf[scriptState.xs->addr.pc.offset++]) ;
 			}
 			break;
 
