@@ -265,7 +265,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*4a*/	DEFUN("StrLen", kStrLen, "Zr"),
 	/*4b*/	DEFUN("StrCpy", kStrCpy, "rZri*"),
 	/*4c*/	DEFUN("Format", kFormat, "r.*"),
-	/*4d*/	DEFUN("GetFarText", kGetFarText, "iir"),
+	/*4d*/	DEFUN("GetFarText", kGetFarText, "iiZr"),
 	/*4e*/	DEFUN("ReadNumber", kReadNumber, "r"),
 	/*4f*/	DEFUN("BaseSetter", kBaseSetter, "o"),
 	/*50*/	DEFUN("DirLoop", kDirLoop, "oi"),

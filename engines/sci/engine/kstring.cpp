@@ -424,23 +424,26 @@ reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
 	char *seeker;
 	int counter = argv[1].toUint16();
 
-
 	if (!textres) {
 		error("text.%d does not exist", argv[0].toUint16());
 		return NULL_REG;
 	}
 
-	seeker = (char *) textres->data;
-
+	seeker = (char *)textres->data;
+	
+	// The second parameter (counter) determines the number of the string inside the text
+	// resource.
 	while (counter--) {
 		while (*seeker++)
 			;
 	}
-	/* The second parameter (counter) determines the number of the string inside the text
-	** resource.
-	*/
 
-	s->_segMan->strcpy(argv[2], seeker); /* Copy the string and get return value */
+	// If the third argument is NULL, allocate memory for the destination. This occurs in
+	// SCI1 Mac games. The memory will later be freed by the game's scripts.
+	if (argv[2] == NULL_REG)
+		s->_segMan->allocDynmem(strlen(seeker) + 1, "Mac FarText", &argv[2]);
+
+	s->_segMan->strcpy(argv[2], seeker); // Copy the string and get return value
 	return argv[2];
 }
 
