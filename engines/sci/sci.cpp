@@ -255,7 +255,9 @@ Common::Error SciEngine::run() {
 
 	delete _gamestate->_soundCmd;
 	delete _gamestate->_gui;
+#ifdef ENABLE_SCI32
 	delete _gamestate->_gui32;
+#endif
 	delete _gamestate->_gfxPorts;
 	delete _gamestate->_gfxCache;
 	delete _gamestate->_gfxPalette;
