@@ -76,6 +76,8 @@ private:
 	bool _active;
 	Common::Point mouse;
 	int hovered;
+	
+	bool tryObjectCallback(InventoryObject *obj);
 
 	InventoryObject *hovered_obj, *selected_obj;
 };
