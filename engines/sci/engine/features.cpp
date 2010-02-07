@@ -43,36 +43,52 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_usesCdTrack = Common::File::exists("cdaudio.map");
 }
 
+reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {
+	// Get address of target object
+	reg_t objAddr = _segMan->findObjectByName(objName);
+	reg_t addr;
+
+	if (objAddr.isNull()) {
+		warning("autoDetectFeature: %s object couldn't be found", objName.c_str());
+		return NULL_REG;
+	}
+
+	if (methodNum == -1) {
+		if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
+			warning("autoDetectFeature: target selector is not a method of object %s", objName.c_str());
+			return NULL_REG;
+		}
+	} else {
+		addr = _segMan->getObject(objAddr)->getFunction(methodNum);
+	}
+
+	return addr;
+}
+
 bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int methodNum) {
 	Common::String objName;
 	Selector slc = 0;
-	reg_t objAddr;
 
 	// Get address of target script
 	switch (featureDetection) {
 	case kDetectGfxFunctions:
 		objName = "Rm";
-		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.overlay;
 		break;
 	case kDetectMoveCountType:
 		objName = "Motion";
-		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.doit;
 		break;
 	case kDetectSoundType:
 		objName = "Sound";
-		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.play;
 		break;
 	case kDetectLofsType:
 		objName = "Game";
-		objAddr = _segMan->findObjectByName(objName);
 		break;
 #ifdef ENABLE_SCI32
 	case kDetectSci21KernelTable:
 		objName = "Sound";
-		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.play;
 		break;
 #endif
@@ -81,20 +97,8 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 		return false;
 	}
 
-	reg_t addr;
-	if (objAddr.isNull()) {
-		warning("autoDetectFeature: %s object couldn't be found", objName.c_str());
-		return false;
-	}
-
-	if (methodNum == -1) {
-		if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
-			warning("autoDetectFeature: target selector is not a method of object %s", objName.c_str());
-			return false;
-		}
-	} else {
-		addr = _segMan->getObject(objAddr)->getFunction(methodNum);
-	}
+	// Look up the address for the desired selector resp. method.
+	reg_t addr = getDetectionAddr(objName, slc, methodNum);
 
 	int16 opparams[4];
 	byte opsize;
@@ -104,9 +108,15 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 	uint16 intParam = 0xFFFF;	// Only used for kDetectSoundType
 	bool foundTarget = false;
 
-	do {
+	assert(script);
+
+	while (true) {
 		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
 		opcode = opsize >> 1;
+
+		// Check for end of script
+		if (opcode == op_ret || offset >= script->_bufSize)
+			break;
 
 		switch (featureDetection) {
 		case kDetectGfxFunctions:
@@ -147,10 +157,6 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 			if (opcode == op_pushi) {
 				// Load the pushi parameter
 				intParam = opparams[0];
-
-				// Sanity check
-				if (offset >= script->_bufSize)
-					break;
 			}
 
 
@@ -192,10 +198,6 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 				// Load lofs operand
 				uint16 lofs = opparams[0];
 
-				// Sanity check
-				if (offset >= script->_bufSize)
-					break;
-
 				// Check for going out of bounds when interpreting as abs/rel
 				if (lofs >= script->_bufSize)
 					_lofsType = SCI_VERSION_0_EARLY;
@@ -234,7 +236,7 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 		default:
 			break;
 		}
-	} while (opcode != op_ret && offset < script->_bufSize);
+	}
 
 	return false;	// not found
 }

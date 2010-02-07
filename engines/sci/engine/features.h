@@ -97,6 +97,8 @@ public:
 	bool usesCdTrack() { return _usesCdTrack; }
 
 private:
+	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
+
 	bool autoDetectFeature(FeatureDetection featureDetection, int methodNum = -1);
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
