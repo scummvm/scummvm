@@ -3,7 +3,7 @@
   <contentpack id="scummvm">
     <category>Game</category>
     <title language_id="English">ScummVM</title>
-    <startpoint language_id="English">./scummvm.so</startpoint>
+    <startpoint language_id="English">./libscummvm.so</startpoint>
     <thumbnailpath>./scummvm.bmp</thumbnailpath>
     <totalsize>1</totalsize>
   </contentpack>
