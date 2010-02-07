@@ -823,6 +823,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else if (CHECK_FLAG(0xDBA0, 1))
 			displayMessage(0x3E31);
 		else {
+			setFlag(0xdbec, 0); //workaround visible fatso bug(valve as last intrusion attempt)
 			moveTo(173, 138, 2);
 			playSound(28, 5);
 			playActorAnimation(583);
@@ -839,6 +840,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(586);
 			moveTo(138, 163, 3);
 			displayMessage(0x3650);
+			setFlag(0xdbec, 1);
 			SET_FLAG(0xDBA0, 1);
 			processCallback(0x9d45); //another mansion try
 		}
@@ -2295,6 +2297,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xDBA4, 1))
 			return false;
 		return processCallback(0x61fe);
+
+	case 0x79d2:
+		if (CHECK_FLAG(0xDB9D, 1)) //bug in original game?
+			return false;
+		displayMessage(0x3590);
+		return true;
 
 	case 0x7af0:
 		if (!processCallback(0x70e0))
@@ -4028,12 +4036,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x9d45: {
 		wait(50);
-		byte tries = ++ *(res->dseg.ptr(0xDBEA));
-		debug(0, "another mansion try: %u", tries);
-		if (tries >= 7)
+		byte attempts = ++ *(res->dseg.ptr(0xDBEA));
+		debug(0, "mansion intrusion attempt #%u", attempts);
+		if (attempts >= 7)
 			return false;
 
-		uint16 ptr = res->dseg.get_word((tries - 2) * 2 + 0x6035);
+		uint16 ptr = res->dseg.get_word((attempts - 2) * 2 + 0x6035);
 		byte id = scene->getId();
 
 		playMusic(11);
