@@ -325,7 +325,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 			// SCI1.1 games always use cursor views
 			_setCursorType = SCI_VERSION_1_1;
 		} else {	// SCI1 late game, detect cursor semantics
-			// If the Cursor object exists, we're using the SCI0 early kSetCursor semantics.
+			// If the Cursor object doesn't exist, we're using the SCI0 early kSetCursor semantics.
 			if (_segMan->findObjectByName("Cursor") == NULL_REG) {
 				_setCursorType = SCI_VERSION_0_EARLY;
 				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
