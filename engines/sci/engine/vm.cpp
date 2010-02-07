@@ -108,7 +108,7 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 static reg_t &validate_property(Object *obj, int index) {
 	// A static dummy reg_t, which we return if obj or index turn out to be
 	// invalid. Note that we cannot just return NULL_REG, because client code
-	// may modify the value of the return reg_t.
+	// may modify the value of the returned reg_t.
 	static reg_t dummyReg = NULL_REG;
 
 	if (!obj) {
@@ -149,10 +149,7 @@ static int signed_validate_arithmetic(reg_t reg) {
 		return 0;
 	}
 
-	if (reg.offset & 0x8000)
-		return (signed)(reg.offset) - 65536;
-	else
-		return reg.offset;
+	return (int16)reg.offset;
 }
 
 static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
@@ -233,7 +230,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 #  define validate_stack_addr(s, sp) sp
 #  define validate_arithmetic(r) ((r).offset)
-#  define signed_validate_arithmetic(r) ((int) ((r).offset) & 0x8000 ? (signed) ((r).offset) - 65536 : ((r).offset))
+#  define signed_validate_arithmetic(r) ((int16)(r).offset)
 #  define validate_variable(r, sb, t, m, i, l)
 #  define validate_read_var(r, sb, t, m, i, l, dv) ((r)[i])
 #  define validate_write_var(r, sb, t, m, i, l, v, sm, k) ((r)[i] = (v))
