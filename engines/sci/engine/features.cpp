@@ -102,27 +102,22 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 	uint16 intParam = 0xFFFF;
 
 	do {
-		uint16 kFuncNum;
-		int opsize = script->_buf[offset++];
-		uint opcode = opsize >> 1;
-		int i = 0;
-		byte argc;
+		int16 opparams[4];
+		byte opsize;
+		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
+		const byte opcode = opsize >> 1;
+
+		if (opcode == op_ret)
+			break;
 
 		if (featureDetection == kDetectLofsType) {
 			if (opcode == op_lofsa || opcode == op_lofss) {
-				uint16 lofs;
-
 				// Load lofs operand
-				if (opsize & 1) {
-					if (offset >= script->_bufSize)
-						break;
-					lofs = script->_buf[offset++];
-				} else {
-					if ((uint32)offset + 1 >= (uint32)script->_bufSize)
-						break;
-					lofs = READ_LE_UINT16(script->_buf + offset);
-					offset += 2;
-				}
+				uint16 lofs = opparams[0];
+
+				// Sanity check
+				if (offset >= script->_bufSize)
+					break;
 
 				// Check for going out of bounds when interpreting as abs/rel
 				if (lofs >= script->_bufSize)
@@ -137,10 +132,8 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 				if (_lofsType != SCI_VERSION_NONE)
 					return true;
 
-				// If we reach here, we haven't been able to deduce the lofs parameter
-				// type, but we have advanced the offset pointer already. So move on
-				// to the next opcode
-				continue;
+				// If we reach here, we haven't been able to deduce the lofs
+				// parameter type.
 			}
 		}
 
@@ -151,49 +144,17 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 			// of the sound commands has changed at some point during SCI1 middle
 			if (opcode == op_pushi) {
 				// Load the pushi parameter
-				if (opsize & 1) {
-					if (offset >= script->_bufSize)
-						break;
-					intParam = script->_buf[offset++];
-				} else {
-					if ((uint32)offset + 1 >= (uint32)script->_bufSize)
-						break;
-					intParam = READ_LE_UINT16(script->_buf + offset);
-					offset += 2;
-				}
+				intParam = opparams[0];
 
-				continue;
+				// Sanity check
+				if (offset >= script->_bufSize)
+					break;
 			}
 		}
 
-		while (g_opcode_formats[opcode][i]) {
-			switch (g_opcode_formats[opcode][i++]) {
-			case Script_Invalid:
-				break;
-			case Script_SByte:
-			case Script_Byte:
-				offset++;
-				break;
-			case Script_Word:
-			case Script_SWord:
-				offset += 2;
-				break;
-			case Script_SVariable:
-			case Script_Variable:
-			case Script_Property:
-			case Script_Global:
-			case Script_Local:
-			case Script_Temp:
-			case Script_Param:
-				if (opsize & 1)
-					kFuncNum = script->_buf[offset++];
-				else {
-					kFuncNum = 0xffff & (script->_buf[offset] | (script->_buf[offset + 1] << 8));
-					offset += 2;
-				}
-
 				if (opcode == op_callk) {
-					argc = script->_buf[offset++];
+					uint16 kFuncNum = opparams[0];
+					uint16 argc = opparams[1];
 
 					switch (featureDetection) {
 					case kDetectGfxFunctions:
@@ -259,22 +220,7 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 						break;
 					}
 				}
-				break;
 
-			case Script_Offset:
-			case Script_SRelative:
-				offset++;
-				if (!opsize & 1)
-					offset++;
-				break;
-			case Script_End:
-				offset = 0;	// exit loop
-				break;
-			default:
-				warning("opcode %02x: Invalid", opcode);
-
-			}
-		}
 	} while (offset > 0);
 
 	return false;	// not found
