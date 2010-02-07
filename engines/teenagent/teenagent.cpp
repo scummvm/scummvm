@@ -147,7 +147,7 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 		if (object->actor_rect.valid())
 			scene->moveTo(dst, object->actor_orientation);
 		dst_object = object;
-	} else if (!scene_busy || action == kActionNone) {
+	} else if (!scene_busy) {
 		//do not reset anything while scene is busy, but allow interrupts while walking.
 		debug(0, "click %d, %d", point.x, point.y);
 		action = kActionNone;
@@ -608,7 +608,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 		return;
 	}
 
-	{
+	if (color == 0xd1) { //mark's
 		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = 0;
 		e.slot = 0x80;
@@ -795,6 +795,14 @@ void TeenAgentEngine::setLan(byte id, byte value, byte scene_id) {
 	event.scene = scene_id;
 	scene->push(event);
 }
+
+void TeenAgentEngine::setFlag(uint16 addr, byte value) {
+	SceneEvent event(SceneEvent::kSetFlag);
+	event.callback = addr;
+	event.color = value;
+	scene->push(event);
+}
+
 
 void TeenAgentEngine::reloadLan() {
 	SceneEvent event(SceneEvent::kSetLan);
