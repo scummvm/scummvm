@@ -355,7 +355,6 @@ void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, 
 	} else {
 		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
 	}
-	_palette->setOnScreen();
 }
 
 void GfxPaint16::kernelGraphFillBoxForeground(Common::Rect rect) {
