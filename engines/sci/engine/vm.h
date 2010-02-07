@@ -523,6 +523,24 @@ int kfree(SegManager *segMan, reg_t handle);
  */
 void shrink_execution_stack(EngineState *s, uint size);
 
+/**
+ * Read a PMachine instruction from a memory buffer and return its length.
+ *
+ * @param[in] src		address from which to start parsing
+ * @param[out] extOpcode	"extended" opcode of the parsed instruction
+ * @param[out] opparams	parameter for the parsed instruction
+ * @return the length in bytes of the instruction
+ *
+ * @todo How about changing opparams from int16 to int / int32 to preserve
+ *       unsigned 16bit words as read for Script_Word? In the past, this
+ *       was irrelevant as only a debug opcode used Script_Word. But with
+ *       SCI32 we are now using Script_Word for more opcodes. Maybe this is
+ *       just a mistake and those opcodes should used Script_SWord -- but if
+ *       not then we definitely should change this to int, else we might run
+ *       into trouble if we encounter high value words. *If* those exist at all.
+ */
+int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]);
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_VM_H

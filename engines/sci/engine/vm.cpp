@@ -584,6 +584,75 @@ static void gc_countdown(EngineState *s) {
 
 static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 
+
+int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]) {
+	uint offset = 0;
+	extOpcode = src[offset++]; // Get "extended" opcode (lower bit has special meaning)
+	const byte opnumber = extOpcode >> 1;	// get the actual opcode
+
+	memset(opparams, 0, sizeof(opparams));
+
+	for (int i = 0; g_opcode_formats[opnumber][i]; ++i) {
+		//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opnumber, temp);
+		assert(i < 4);
+		switch (g_opcode_formats[opnumber][i]) {
+
+		case Script_Byte:
+			opparams[i] = src[offset++];
+			break;
+		case Script_SByte:
+			opparams[i] = (int8)src[offset++];
+			break;
+
+		case Script_Word:
+			opparams[i] = READ_LE_UINT16(src + offset);
+			offset += 2;
+			break;
+		case Script_SWord:
+			opparams[i] = (int16)READ_LE_UINT16(src + offset);
+			offset += 2;
+			break;
+
+		case Script_Variable:
+		case Script_Property:
+
+		case Script_Local:
+		case Script_Temp:
+		case Script_Global:
+		case Script_Param:
+
+		case Script_Offset:
+			if (extOpcode & 1) {
+				opparams[i] = src[offset++];
+			} else {
+				opparams[i] = READ_LE_UINT16(src + offset);
+				offset += 2;
+			}
+			break;
+
+		case Script_SVariable:
+		case Script_SRelative:
+			if (extOpcode & 1) {
+				opparams[i] = (int8)src[offset++];
+			} else {
+				opparams[i] = (int16)READ_LE_UINT16(src + offset);
+				offset += 2;
+			}
+			break;
+
+		case Script_None:
+		case Script_End:
+			break;
+
+		case Script_Invalid:
+		default:
+			error("opcode %02x: Invalid", extOpcode);
+		}
+	}
+
+	return offset;
+}
+
 void run_vm(EngineState *s, bool restoring) {
 	assert(s);
 
@@ -635,8 +704,6 @@ void run_vm(EngineState *s, bool restoring) {
 	s->_executionStackPosChanged = true; // Force initialization
 
 	while (1) {
-		byte opcode;
-		byte opnumber;
 		int var_type; // See description below
 		int var_number;
 
@@ -720,56 +787,10 @@ void run_vm(EngineState *s, bool restoring) {
 			error("run_vm(): program counter gone astray");
 #endif
 
-		opcode = GET_OP_BYTE(); // Get opcode
-
-		opnumber = opcode >> 1;
-
-		for (temp = 0; g_opcode_formats[opnumber][temp]; temp++) {
-			//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opnumber, temp);
-			switch (g_opcode_formats[opnumber][temp]) {
-
-			case Script_Byte:
-				opparams[temp] = GET_OP_BYTE();
-				break;
-			case Script_SByte:
-				opparams[temp] = GET_OP_SIGNED_BYTE();
-				break;
-
-			case Script_Word:
-				opparams[temp] = GET_OP_WORD();
-				break;
-			case Script_SWord:
-				opparams[temp] = GET_OP_SIGNED_WORD();
-				break;
-
-			case Script_Variable:
-			case Script_Property:
-
-			case Script_Local:
-			case Script_Temp:
-			case Script_Global:
-			case Script_Param:
-				opparams[temp] = GET_OP_FLEX();
-				break;
-
-			case Script_SVariable:
-			case Script_SRelative:
-				opparams[temp] = GET_OP_SIGNED_FLEX();
-				break;
-
-			case Script_Offset:
-				opparams[temp] = GET_OP_FLEX();
-				break;
-
-			case Script_None:
-			case Script_End:
-				break;
-
-			case Script_Invalid:
-			default:
-				error("opcode %02x: Invalid", opcode);
-			}
-		}
+		// Get opcode
+		byte opcode;
+		scriptState.xs->addr.pc.offset += readPMachineInstruction(code_buf + scriptState.xs->addr.pc.offset, opcode, opparams);
+		const byte opnumber = opcode >> 1;
 
 		switch (opnumber) {
 
