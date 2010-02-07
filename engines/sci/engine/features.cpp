@@ -137,19 +137,17 @@ SciVersion GameFeatures::detectDoSoundType() {
 			// No nodePtr selector, so this game is definitely using newer
 			// SCI0 sound code (i.e. SCI_VERSION_0_LATE)
 			_doSoundType = SCI_VERSION_0_LATE;
+		} else if (getSciVersion() >= SCI_VERSION_1_LATE) {
+			// All SCI1 late games use the newer doSound semantics
+			_doSoundType = SCI_VERSION_1_LATE;
 		} else {
-			if (getSciVersion() >= SCI_VERSION_1_LATE) {
-				// All SCI1 late games use the newer doSound semantics
-				_doSoundType = SCI_VERSION_1_LATE;
-			} else {
-				if (!autoDetectSoundType()) {
-					warning("DoSound detection failed, taking an educated guess");
+			if (!autoDetectSoundType()) {
+				warning("DoSound detection failed, taking an educated guess");
 
-					if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
-						_doSoundType = SCI_VERSION_1_LATE;
-					else if (getSciVersion() > SCI_VERSION_01)
-						_doSoundType = SCI_VERSION_1_EARLY;
-				}
+				if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
+					_doSoundType = SCI_VERSION_1_LATE;
+				else if (getSciVersion() > SCI_VERSION_01)
+					_doSoundType = SCI_VERSION_1_EARLY;
 			}
 		}
 
@@ -326,10 +324,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 		// This detection only works (and is only needed) for SCI0 games
 		if (getSciVersion() >= SCI_VERSION_01) {
 			_gfxFunctionsType = SCI_VERSION_0_LATE;
-			return _gfxFunctionsType;
-		}
-
-		if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		} else if (getSciVersion() > SCI_VERSION_0_EARLY) {
 			// Check if the game is using an overlay
 			bool found = false;
 
@@ -343,14 +338,12 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 					if (found)
 						break;
 				}
-			}
 
-			if (_kernel->_selectorCache.overlay == -1 && !found) {
-				// No overlay selector found, therefore the game is definitely
-				// using old graphics functions
-				_gfxFunctionsType = SCI_VERSION_0_EARLY;
-			} else if (_kernel->_selectorCache.overlay == -1 && found) {
-				// Detection already done above
+				if (!found) {
+					// No overlay selector found, therefore the game is definitely
+					// using old graphics functions
+					_gfxFunctionsType = SCI_VERSION_0_EARLY;
+				}
 			} else {	// _kernel->_selectorCache.overlay != -1
 				// An in-between case: The game does not have a shiftParser
 				// selector, but it does have an overlay selector, so it uses an
@@ -417,12 +410,12 @@ bool GameFeatures::autoDetectSci21KernelType() {
 }
 
 SciVersion GameFeatures::detectSci21KernelType() {
-	if (_sci21KernelType == SCI_VERSION_NONE)
+	if (_sci21KernelType == SCI_VERSION_NONE) {
 		if (!autoDetectSci21KernelType())
 			error("Could not detect the SCI2.1 kernel table type");
 
-	debugC(1, kDebugLevelVM, "Detected SCI2.1 kernel type: %s", getSciVersionDesc(_sci21KernelType).c_str());
-
+		debugC(1, kDebugLevelVM, "Detected SCI2.1 kernel type: %s", getSciVersionDesc(_sci21KernelType).c_str());
+	}
 	return _sci21KernelType;
 }
 #endif
