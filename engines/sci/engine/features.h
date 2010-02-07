@@ -35,9 +35,8 @@ enum FeatureDetection {
 	kDetectGfxFunctions = 0,
 	kDetectMoveCountType = 1,
 	kDetectSoundType = 2,
-	kDetectSetCursorType = 3,
-	kDetectLofsType = 4,
-	kDetectSci21KernelTable = 5
+	kDetectLofsType = 3,
+	kDetectSci21KernelTable = 4
 };
 
 class GameFeatures {

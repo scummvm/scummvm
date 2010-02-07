@@ -71,17 +71,6 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 		objAddr = _segMan->findObjectByName(objName);
 		slc = _kernel->_selectorCache.play;
 		break;
-	case kDetectSetCursorType:
-		objName = "Game";
-		objAddr = _segMan->findObjectByName(objName);
-		// KQ5CD overrides the default setCursor selector of the Game object,
-		// so we need to handle this separately
-		// KQ5 PC floppy is early SCI1, Amiga middle SCI1, and CD late SCI1
-		assert(!_gameId.empty());
-		if (_gameId == "kq5" && getSciVersion() == SCI_VERSION_1_LATE)
-			objAddr = _gameObj;
-		slc = _kernel->_selectorCache.setCursor;
-		break;
 	case kDetectLofsType:
 		objName = "Game";
 		objAddr = _segMan->findObjectByName(objName);
@@ -260,15 +249,6 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 								return true;
 						}
 						break;
-					case kDetectSetCursorType:
-						// Games with colored mouse cursors call kIsObject before kSetCursor
-						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
-							foundTarget = true;
-						} else if (kFuncNum == 40) {	// kSetCursor (SCI0-SCI11)
-							_setCursorType = foundTarget ? SCI_VERSION_1_1 : SCI_VERSION_0_EARLY;
-							return true;
-						}
-						break;
 #ifdef ENABLE_SCI32
 					case kDetectSci21KernelTable:
 							if (kFuncNum == 0x40) {
@@ -301,15 +281,6 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 			}
 		}
 	} while (offset > 0);
-
-	// Some games, like KQ5CD, never actually call SetCursor inside Game::setCursor
-	// but call isObject. Cover this case here, if we're actually reading the selector
-	// itself, and not iterating through the Game object (i.e. when the selector
-	// dictionary is missing)
-	if (featureDetection == kDetectSetCursorType && methodNum == -1 && foundTarget) {
-		_setCursorType = SCI_VERSION_1_1;
-		return true;
-	}
 
 	return false;	// not found
 }
@@ -347,40 +318,39 @@ SciVersion GameFeatures::detectDoSoundType() {
 
 SciVersion GameFeatures::detectSetCursorType() {
 	if (_setCursorType == SCI_VERSION_NONE) {
-		if (getSciVersion() <= SCI_VERSION_01) {
-			// SCI0/SCI01 games never use cursor views
-			_setCursorType = SCI_VERSION_0_EARLY;
-		} else if (getSciVersion() >= SCI_VERSION_1_EARLY && getSciVersion() <= SCI_VERSION_1_MIDDLE) {
-			// SCI1 early/SCI1 middle games never use cursor views
+		if (getSciVersion() <= SCI_VERSION_1_MIDDLE) {
+			// SCI1 middle and older games never use cursor views
 			_setCursorType = SCI_VERSION_0_EARLY;
 		} else if (getSciVersion() >= SCI_VERSION_1_1) {
 			// SCI1.1 games always use cursor views
 			_setCursorType = SCI_VERSION_1_1;
 		} else {	// SCI1 late game, detect cursor semantics
-			bool found = false;
-
-			if (_kernel->_selectorCache.setCursor == -1) {
-				// Find which function of the Game object calls setCursor
-
-				Object *obj = _segMan->getObject(_gameObj);
-				for (uint m = 0; m < obj->getMethodCount(); m++) {
-					found = autoDetectFeature(kDetectSetCursorType, m);
-					if (found)
-						break;
-				}
-			} else {
-				found = autoDetectFeature(kDetectSetCursorType);
+			// If the Cursor object exists, we're using the SCI0 early kSetCursor semantics.
+			if (_segMan->findObjectByName("Cursor") == NULL_REG) {
+				_setCursorType = SCI_VERSION_0_EARLY;
+				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
+				return _setCursorType;
 			}
 
-			if (!found) {
-				// Quite normal in several demos which don't have a cursor
-				warning("SetCursor detection failed, taking an educated guess");
+			// Check for the existence of the handCursor object (first found). This is based on KQ5.
+			reg_t objAddr = _segMan->findObjectByName("handCursor", 0);
 
-				if (getSciVersion() >= SCI_VERSION_1_1)
-					_setCursorType = SCI_VERSION_1_1;
-				else
-					_setCursorType = SCI_VERSION_0_EARLY;
+			// If that doesn't exist, we assume it uses SCI1.1 kSetCursor semantics
+			if (objAddr == NULL_REG) {
+				_setCursorType = SCI_VERSION_1_1;
+				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
+				return _setCursorType;
 			}
+
+			// Now we check what the number variable holds in the handCursor object.
+			uint16 number = GET_SEL32V(_segMan, objAddr, SELECTOR(number));
+
+			// If the number is 0, it uses views and therefore the SCI1.1 kSetCursor semantics,
+			// otherwise it uses the SCI0 early kSetCursor semantics.
+			if (number == 0)
+				_setCursorType = SCI_VERSION_1_1;
+			else
+				_setCursorType = SCI_VERSION_0_EARLY;
 		}
 
 		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
