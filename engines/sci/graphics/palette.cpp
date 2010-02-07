@@ -313,7 +313,7 @@ bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
 
 	if (palResource) {
 		createFromData(palResource->data, &palette);
-		set(&palette, true);
+		set(&palette, force);
 		return true;
 	}
 	return false;
