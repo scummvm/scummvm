@@ -36,7 +36,7 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_lofsType = SCI_VERSION_NONE;
 	_gfxFunctionsType = SCI_VERSION_NONE;
 	_moveCountType = kMoveCountUninitialized;
-	
+
 #ifdef ENABLE_SCI32
 	_sci21KernelType = SCI_VERSION_NONE;
 #endif
@@ -47,7 +47,6 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 	Common::String objName;
 	Selector slc = 0;
 	reg_t objAddr;
-	bool foundTarget = false;
 
 	// Get address of target script
 	switch (featureDetection) {
@@ -97,20 +96,98 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 		addr = _segMan->getObject(objAddr)->getFunction(methodNum);
 	}
 
+	int16 opparams[4];
+	byte opsize;
+	byte opcode;
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
-	uint16 intParam = 0xFFFF;
+	uint16 intParam = 0xFFFF;	// Only used for kDetectSoundType
+	bool foundTarget = false;
 
 	do {
-		int16 opparams[4];
-		byte opsize;
 		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
-		const byte opcode = opsize >> 1;
+		opcode = opsize >> 1;
 
-		if (opcode == op_ret)
+		switch (featureDetection) {
+		case kDetectGfxFunctions:
+			if (opcode == op_callk) {
+				uint16 kFuncNum = opparams[0];
+				uint16 argc = opparams[1];
+
+				if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
+					// If kDrawPic is called with 6 parameters from the
+					// overlay selector, the game is using old graphics functions.
+					// Otherwise, if it's called with 8 parameters, it's using new
+					// graphics functions
+					_gfxFunctionsType = (argc == 8) ? SCI_VERSION_0_LATE : SCI_VERSION_0_EARLY;
+					return true;
+				}
+			}
 			break;
 
-		if (featureDetection == kDetectLofsType) {
+		case kDetectMoveCountType:
+			if (opcode == op_callk) {
+				uint16 kFuncNum = opparams[0];
+
+				// Games which ignore move count call kAbs before calling kDoBresen
+				if (_kernel->getKernelName(kFuncNum) == "Abs") {
+					foundTarget = true;
+				} else if (_kernel->getKernelName(kFuncNum) == "DoBresen") {
+					_moveCountType = foundTarget ? kIgnoreMoveCount : kIncrementMoveCount;
+					return true;
+				}
+			}
+			break;
+
+		case kDetectSoundType:
+			// The play method of the Sound object pushes the DoSound command
+			// that it'll use just before it calls DoSound. We intercept that here
+			// in order to check what sound semantics are used, cause the position
+			// of the sound commands has changed at some point during SCI1 middle
+			if (opcode == op_pushi) {
+				// Load the pushi parameter
+				intParam = opparams[0];
+
+				// Sanity check
+				if (offset >= script->_bufSize)
+					break;
+			}
+
+
+			if (opcode == op_callk) {
+				uint16 kFuncNum = opparams[0];
+
+				// Late SCI1 games call kIsObject before kDoSound
+				if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
+					foundTarget = true;
+				} else if (kFuncNum == 45) {	// kDoSound (SCI1)
+					// First, check which DoSound function is called by the play method of
+					// the Sound object
+					switch (intParam) {
+					case 1:
+						_doSoundType = SCI_VERSION_0_EARLY;
+						break;
+					case 7:
+						_doSoundType = SCI_VERSION_1_EARLY;
+						break;
+					case 8:
+						_doSoundType = SCI_VERSION_1_LATE;
+						break;
+					default:
+						// Unknown case... should never happen. We fall back to
+						// alternative detection here, which works in general, apart from
+						// some transitive games like Jones CD
+						_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
+						break;
+					}
+
+					if (_doSoundType != SCI_VERSION_NONE)
+						return true;
+				}
+			}
+			break;
+
+		case kDetectLofsType:
 			if (opcode == op_lofsa || opcode == op_lofss) {
 				// Load lofs operand
 				uint16 lofs = opparams[0];
@@ -133,95 +210,31 @@ bool GameFeatures::autoDetectFeature(FeatureDetection featureDetection, int meth
 					return true;
 
 				// If we reach here, we haven't been able to deduce the lofs
-				// parameter type.
+				// parameter type so far.
 			}
-		}
+			break;
 
-		if (featureDetection == kDetectSoundType) {
-			// The play method of the Sound object pushes the DoSound command
-			// that it'll use just before it calls DoSound. We intercept that here
-			// in order to check what sound semantics are used, cause the position
-			// of the sound commands has changed at some point during SCI1 middle
-			if (opcode == op_pushi) {
-				// Load the pushi parameter
-				intParam = opparams[0];
-
-				// Sanity check
-				if (offset >= script->_bufSize)
-					break;
-			}
-		}
-
-				if (opcode == op_callk) {
-					uint16 kFuncNum = opparams[0];
-					uint16 argc = opparams[1];
-
-					switch (featureDetection) {
-					case kDetectGfxFunctions:
-						if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
-							// If kDrawPic is called with 6 parameters from the
-							// overlay selector, the game is using old graphics functions.
-							// Otherwise, if it's called with 8 parameters, it's using new
-							// graphics functions
-							_gfxFunctionsType = (argc == 8) ? SCI_VERSION_0_LATE : SCI_VERSION_0_EARLY;
-							return true;
-						}
-						break;
-					case kDetectMoveCountType:
-						// Games which ignore move count call kAbs before calling kDoBresen
-						if (_kernel->getKernelName(kFuncNum) == "Abs") {
-							foundTarget = true;
-						} else if (_kernel->getKernelName(kFuncNum) == "DoBresen") {
-							_moveCountType = foundTarget ? kIgnoreMoveCount : kIncrementMoveCount;
-							return true;
-						}
-						break;
-					case kDetectSoundType:
-						// Late SCI1 games call kIsObject before kDoSound
-						if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
-							foundTarget = true;
-						} else if (kFuncNum == 45) {	// kDoSound (SCI1)
-							// First, check which DoSound function is called by the play method of
-							// the Sound object
-							switch (intParam) {
-							case 1:
-								_doSoundType = SCI_VERSION_0_EARLY;
-								break;
-							case 7:
-								_doSoundType = SCI_VERSION_1_EARLY;
-								break;
-							case 8:
-								_doSoundType = SCI_VERSION_1_LATE;
-								break;
-							default:
-								// Unknown case... should never happen. We fall back to
-								// alternative detection here, which works in general, apart from
-								// some transitive games like Jones CD
-								_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
-								break;
-							}
-
-							if (_doSoundType != SCI_VERSION_NONE)
-								return true;
-						}
-						break;
 #ifdef ENABLE_SCI32
-					case kDetectSci21KernelTable:
-							if (kFuncNum == 0x40) {
-								_sci21KernelType = SCI_VERSION_2;
-								return true;
-							} else if (kFuncNum == 0x75) {
-								_sci21KernelType = SCI_VERSION_2_1;
-								return true;
-							}
-						break;
-#endif
-					default:
-						break;
-					}
-				}
+		case kDetectSci21KernelTable:
+			if (opcode == op_callk) {
+				uint16 kFuncNum = opparams[0];
 
-	} while (offset > 0);
+				// TODO: Explain this check; what are those kernel funcs supposed
+				//  to be, why does this check work like it does?
+				if (kFuncNum == 0x40) {
+					_sci21KernelType = SCI_VERSION_2;
+					return true;
+				} else if (kFuncNum == 0x75) {
+					_sci21KernelType = SCI_VERSION_2_1;
+					return true;
+				}
+			}
+#endif
+
+		default:
+			break;
+		}
+	} while (opcode != op_ret && offset < script->_bufSize);
 
 	return false;	// not found
 }
