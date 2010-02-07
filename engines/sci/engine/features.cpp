@@ -394,8 +394,10 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		if (opcode == op_callk) {
 			uint16 kFuncNum = opparams[0];
 
-			// TODO: Explain this check; what are those kernel funcs supposed
-			//  to be, why does this check work like it does?
+			// Here we check for the kDoSound opcode that's used in SCI2.1.
+			// Finding 0x40 as kDoSound in the Sound::play() function means the game is using
+			// the modified SCI2 kernel table found in some older SCI2.1 games (GK2 demo, KQ7 v1.4).
+			// Finding 0x75 as kDoSound means the game is using the regular SCI2.1 kernel table.
 			if (kFuncNum == 0x40) {
 				_sci21KernelType = SCI_VERSION_2;
 				return true;
