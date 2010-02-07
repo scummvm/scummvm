@@ -1392,7 +1392,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			if (argc < 7)
 				error("[avoidpath] Not enough arguments");
 
-			poly_list = GET_SEL32(s->_segMan, argv[4], SELECTOR(elements));
+			poly_list = (!argv[4].isNull() ? GET_SEL32(s->_segMan, argv[4], SELECTOR(elements)) : NULL_REG);
 			width = argv[5].toUint16();
 			height = argv[6].toUint16();
 			if (argc > 7)
