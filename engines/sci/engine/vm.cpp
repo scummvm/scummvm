@@ -549,10 +549,73 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 		break;
 
 	default:
-		// Changed this to warning, because iceman does this during dancing with girl
+		// FIXME: Changed this to warning, because iceman does this during dancing with girl.
+		// Investigate why that is so and either fix the underlying issue or implement a more
+		// specialized workaround!
 		warning("[VM] Error: Attempt to add %d to pointer %04x:%04x, type %d: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base), mobj->getType());
 		return NULL_REG;
 
+	}
+}
+
+static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
+
+	if (kernelFuncNum >= (int)s->_kernel->_kernelFuncs.size())
+		error("Invalid kernel function 0x%x requested", kernelFuncNum);
+
+	const KernelFuncWithSignature &kernelFunc = s->_kernel->_kernelFuncs[kernelFuncNum];
+
+	if (kernelFunc.signature
+			&& !kernel_matches_signature(s->_segMan, kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
+		error("[VM] Invalid arguments to kernel call %x", kernelFuncNum);
+	}
+
+	reg_t *argv = scriptState.xs->sp + 1;
+
+	if (!kernelFunc.isDummy) {
+		// Add stack frame to indicate we're executing a callk.
+		// This is useful in debugger backtraces if this
+		// kernel function calls a script itself.
+		ExecStack *xstack;
+		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
+				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+		xstack->selector = kernelFuncNum;
+		xstack->type = EXEC_STACK_TYPE_KERNEL;
+
+		//warning("callk %s", kernelFunc.orig_name.c_str());
+
+		// TODO: SCI2/SCI2.1+ equivalent, once saving/loading works in SCI2/SCI2.1+
+		if (g_loadFromLauncher >= 0 && kernelFuncNum == 0x8) {
+			// A game is being loaded from the launcher, and kDisplay is called, all initialization has taken
+			// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
+			// here, instead of the requested function.
+			int saveSlot = g_loadFromLauncher;
+			g_loadFromLauncher = -1;	// invalidate slot, so that we don't load again
+
+			if (saveSlot < 0)
+				error("Requested to load invalid save slot");	// should never happen, really
+
+			reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
+			kRestoreGame(s, 2, restoreArgv);
+		} else {
+			// Call kernel function
+			s->r_acc = kernelFunc.fun(s, argc, argv);
+		}
+
+		// Remove callk stack frame again
+		s->_executionStack.pop_back();
+	} else {
+		Common::String warningMsg = "Dummy function " + kernelFunc.orig_name +
+									Common::String::printf("[0x%x]", kernelFuncNum) +
+									" invoked - ignoring. Params: " +
+									Common::String::printf("%d", argc) + " (";
+
+		for (int i = 0; i < argc; i++) {
+			warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+			warningMsg += (i == argc - 1 ? ")" : ", ");
+		}
+
+		warning("%s", warningMsg.c_str());
 	}
 }
 
@@ -1078,77 +1141,21 @@ void run_vm(EngineState *s, bool restoring) {
 				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
 			}
 
-			if (opparams[0] >= (int)s->_kernel->_kernelFuncs.size()) {
-				error("Invalid kernel function 0x%x requested", opparams[0]);
-			} else {
-				const KernelFuncWithSignature &kfun = s->_kernel->_kernelFuncs[opparams[0]];
-				int argc = validate_arithmetic(scriptState.xs->sp[0]);
+			int argc = validate_arithmetic(scriptState.xs->sp[0]);
 
-				if (!oldScriptHeader)
-					argc += scriptState.restAdjust;
+			if (!oldScriptHeader)
+				argc += scriptState.restAdjust;
 
-				if (kfun.signature
-						&& !kernel_matches_signature(s->_segMan, kfun.signature, argc, scriptState.xs->sp + 1)) {
-					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
-				} else {
-					reg_t *argv = scriptState.xs->sp + 1;
+			callKernelFunc(s, opparams[0], argc);
 
-					if (!kfun.isDummy) {
-						// Add stack frame to indicate we're executing a callk.
-						// This is useful in debugger backtraces if this
-						// kernel function calls a script itself.
-						ExecStack *xstack;
-						xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
-	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-						xstack->selector = opparams[0];
-						xstack->type = EXEC_STACK_TYPE_KERNEL;
+			if (!oldScriptHeader)
+				scriptState.restAdjust = s->restAdjust;
 
-						//warning("callk %s", kfun.orig_name.c_str());
+			// Calculate xs again: The kernel function might
+			// have spawned a new VM
 
-						// TODO: SCI2/SCI2.1+ equivalent, once saving/loading works in SCI2/SCI2.1+
-						if (g_loadFromLauncher >= 0 && opparams[0] == 0x8) {
-							// A game is being loaded from the launcher, and kDisplay is called, all initialization has taken
-							// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
-							// here, instead of the requested function.
-							int saveSlot = g_loadFromLauncher;
-							g_loadFromLauncher = -1;	// invalidate slot, so that we don't load again
-
-							if (saveSlot < 0)
-								error("Requested to load invalid save slot");	// should never happen, really
-
-							reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
-							kRestoreGame(s, 2, restoreArgv);
-						} else {
-							// Call kernel function
-							s->r_acc = kfun.fun(s, argc, argv);
-						}
-
-						// Remove callk stack frame again
-						s->_executionStack.pop_back();
-					} else {
-						Common::String warningMsg = "Dummy function " + kfun.orig_name +
-													Common::String::printf("[0x%x]", opparams[0]) +
-													" invoked - ignoring. Params: " +
-													Common::String::printf("%d", argc) + " (";
-
-						for (int i = 0; i < argc; i++) {
-							warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-							warningMsg += (i == argc - 1 ? ")" : ", ");
-						}
-
-						warning("%s", warningMsg.c_str());
-					}
-				}
-
-				// Calculate xs again: The kernel function might
-				// have spawned a new VM
-
-				xs_new = &(s->_executionStack.back());
-				s->_executionStackPosChanged = true;
-
-				if (!oldScriptHeader)
-					scriptState.restAdjust = s->restAdjust;
-			}
+			xs_new = &(s->_executionStack.back());
+			s->_executionStackPosChanged = true;
 			break;
 		}
 
