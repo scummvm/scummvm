@@ -76,10 +76,10 @@ bool GameFeatures::autoDetectSoundType() {
 
 	while (true) {
 		int16 opparams[4];
-		byte opsize;
+		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
-		opcode = opsize >> 1;
+		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		opcode = extOpcode >> 1;
 
 		// Check for end of script
 		if (opcode == op_ret || offset >= script->_bufSize)
@@ -209,10 +209,10 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 
 	while (true) {
 		int16 opparams[4];
-		byte opsize;
+		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
-		opcode = opsize >> 1;
+		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		opcode = extOpcode >> 1;
 
 		// Check for end of script
 		if (opcode == op_ret || offset >= script->_bufSize)
@@ -292,10 +292,10 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 
 	while (true) {
 		int16 opparams[4];
-		byte opsize;
+		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
-		opcode = opsize >> 1;
+		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		opcode = extOpcode >> 1;
 
 		// Check for end of script
 		if (opcode == op_ret || offset >= script->_bufSize)
@@ -382,10 +382,10 @@ bool GameFeatures::autoDetectSci21KernelType() {
 
 	while (true) {
 		int16 opparams[4];
-		byte opsize;
+		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
-		opcode = opsize >> 1;
+		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		opcode = extOpcode >> 1;
 
 		// Check for end of script
 		if (opcode == op_ret || offset >= script->_bufSize)
@@ -432,10 +432,10 @@ bool GameFeatures::autoDetectMoveCountType() {
 
 	while (true) {
 		int16 opparams[4];
-		byte opsize;
+		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, opsize, opparams);
-		opcode = opsize >> 1;
+		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		opcode = extOpcode >> 1;
 
 		// Check for end of script
 		if (opcode == op_ret || offset >= script->_bufSize)

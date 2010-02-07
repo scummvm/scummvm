@@ -577,14 +577,14 @@ static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]) {
 	uint offset = 0;
 	extOpcode = src[offset++]; // Get "extended" opcode (lower bit has special meaning)
-	const byte opnumber = extOpcode >> 1;	// get the actual opcode
+	const byte opcode = extOpcode >> 1;	// get the actual opcode
 
 	memset(opparams, 0, sizeof(opparams));
 
-	for (int i = 0; g_opcode_formats[opnumber][i]; ++i) {
-		//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opnumber, temp);
+	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
+		//printf("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);
 		assert(i < 4);
-		switch (g_opcode_formats[opnumber][i]) {
+		switch (g_opcode_formats[opcode][i]) {
 
 		case Script_Byte:
 			opparams[i] = src[offset++];
@@ -777,11 +777,11 @@ void run_vm(EngineState *s, bool restoring) {
 #endif
 
 		// Get opcode
-		byte opcode;
-		scriptState.xs->addr.pc.offset += readPMachineInstruction(code_buf + scriptState.xs->addr.pc.offset, opcode, opparams);
-		const byte opnumber = opcode >> 1;
+		byte extOpcode;
+		scriptState.xs->addr.pc.offset += readPMachineInstruction(code_buf + scriptState.xs->addr.pc.offset, extOpcode, opparams);
+		const byte opcode = extOpcode >> 1;
 
-		switch (opnumber) {
+		switch (opcode) {
 
 		case op_bnot: // 0x00 (00)
 			s->r_acc = ACC_ARITHMETIC_L(0xffff ^ /*acc*/);
@@ -906,37 +906,44 @@ void run_vm(EngineState *s, bool restoring) {
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
 				// Signed pointer comparison. We do unsigned comparison instead, as that is probably what was intended.
-				// FIXME: Add a warning when pointers in different segments are compared
+				if (r_temp.segment != s->r_acc.segment)
+					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			} else
-				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) > (int16)/*acc*/);
+				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) > (int16)/*acc*/);
 			break;
 
 		case op_ge_: // 0x10 (16)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
+			if (r_temp.segment && s->r_acc.segment) {
+				if (r_temp.segment != s->r_acc.segment)
+					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) >= (int16)/*acc*/);
+			} else
+				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) >= (int16)/*acc*/);
 			break;
 
 		case op_lt_: // 0x11 (17)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
+			if (r_temp.segment && s->r_acc.segment) {
+				if (r_temp.segment != s->r_acc.segment)
+					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) < (int16)/*acc*/);
+			} else
+				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) < (int16)/*acc*/);
 			break;
 
 		case op_le_: // 0x12 (18)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			if (r_temp.segment && s->r_acc.segment)
+			if (r_temp.segment && s->r_acc.segment) {
+				if (r_temp.segment != s->r_acc.segment)
+					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L((int16)validate_arithmetic(r_temp) <= (int16)/*acc*/);
+			} else
+				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) <= (int16)/*acc*/);
 			break;
 
 		case op_ugt_: // 0x13 (19)
@@ -953,7 +960,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 			// It works because in those games, the maximum resource number is 999, 
 			// so any parameter value above that threshold must be a pointer. 
-			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
@@ -966,7 +973,7 @@ void run_vm(EngineState *s, bool restoring) {
 			r_temp = POP32();
 
 			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
@@ -979,7 +986,7 @@ void run_vm(EngineState *s, bool restoring) {
 			r_temp = POP32();
 
 			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
@@ -992,7 +999,7 @@ void run_vm(EngineState *s, bool restoring) {
 			r_temp = POP32();
 
 			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 0x3e8)))
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
@@ -1232,7 +1239,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case 0x26: // (38)
 		case 0x27: // (39)
-			error("Dummy opcode 0x%x called", opnumber);	// should never happen
+			error("Dummy opcode 0x%x called", opcode);	// should never happen
 			break;
 
 		case op_class: // 0x28 (40)
@@ -1241,7 +1248,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case 0x29: // (41)
-			error("Dummy opcode 0x%x called", opnumber);	// should never happen
+			error("Dummy opcode 0x%x called", opcode);	// should never happen
 			break;
 
 		case op_self: // 0x2a (42)
@@ -1313,7 +1320,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case 0x2f: // (47)
-			error("Dummy opcode 0x%x called", opnumber);	// should never happen
+			error("Dummy opcode 0x%x called", opcode);	// should never happen
 			break;
 
 		case op_pprev: // 0x30 (48)
@@ -1434,7 +1441,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_pushSelf: // 0x3e (62)
-			if (!(opcode & 1)) {
+			if (!(extOpcode & 1)) {
 				PUSH32(scriptState.xs->objp);
 			} else {
 				// Debug opcode op_file, skip null-terminated string (file name)
@@ -1450,7 +1457,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lal: // 0x41 (65)
 		case op_lat: // 0x42 (66)
 		case op_lap: // 0x43 (67)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
 			break;
@@ -1459,7 +1466,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lsl: // 0x45 (69)
 		case op_lst: // 0x46 (70)
 		case op_lsp: // 0x47 (71)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
 			break;
@@ -1468,7 +1475,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lali: // 0x49 (73)
 		case op_lati: // 0x4a (74)
 		case op_lapi: // 0x4b (75)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
 			break;
@@ -1477,7 +1484,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lsli: // 0x4d (77)
 		case op_lsti: // 0x4e (78)
 		case op_lspi: // 0x4f (79)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
 			break;
@@ -1486,7 +1493,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_sal: // 0x51 (81)
 		case op_sat: // 0x52 (82)
 		case op_sap: // 0x53 (83)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
@@ -1495,7 +1502,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_ssl: // 0x55 (85)
 		case op_sst: // 0x56 (86)
 		case op_ssp: // 0x57 (87)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, POP32());
 			break;
@@ -1507,16 +1514,17 @@ void run_vm(EngineState *s, bool restoring) {
 			// Special semantics because it wouldn't really make a whole lot
 			// of sense otherwise, with acc being used for two things
 			// simultaneously...
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			WRITE_VAR(var_type, var_number, s->r_acc = POP32());
+			s->r_acc = POP32();
+			WRITE_VAR(var_type, var_number, s->r_acc);
 			break;
 
 		case op_ssgi: // 0x5c (92)
 		case op_ssli: // 0x5d (93)
 		case op_ssti: // 0x5e (94)
 		case op_sspi: // 0x5f (95)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			WRITE_VAR(var_type, var_number, POP32());
 			break;
@@ -1525,7 +1533,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusal: // 0x61 (97)
 		case op_plusat: // 0x62 (98)
 		case op_plusap: // 0x63 (99)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1540,7 +1548,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussl: // 0x65 (101)
 		case op_plusst: // 0x66 (102)
 		case op_plussp: // 0x67 (103)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1556,7 +1564,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusali: // 0x69 (105)
 		case op_plusati: // 0x6a (106)
 		case op_plusapi: // 0x6b (107)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1571,7 +1579,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussli: // 0x6d (109)
 		case op_plussti: // 0x6e (110)
 		case op_plusspi: // 0x6f (111)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1587,7 +1595,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusal: // 0x71 (113)
 		case op_minusat: // 0x72 (114)
 		case op_minusap: // 0x73 (115)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1602,7 +1610,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussl: // 0x75 (117)
 		case op_minusst: // 0x76 (118)
 		case op_minussp: // 0x77 (119)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1618,7 +1626,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusali: // 0x79 (121)
 		case op_minusati: // 0x7a (122)
 		case op_minusapi: // 0x7b (123)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1633,7 +1641,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussli: // 0x7d (125)
 		case op_minussti: // 0x7e (126)
 		case op_minusspi: // 0x7f (127)
-			var_type = (opcode >> 1) & 0x3; // Gets the variable type: g, l, t or p
+			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number, s->r_acc);
 			if (r_temp.segment) {
@@ -1646,9 +1654,9 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		default:
-			error("run_vm(): illegal opcode %x", opnumber);
+			error("run_vm(): illegal opcode %x", opcode);
 
-		} // switch (opcode >> 1)
+		} // switch (opcode)
 
 		if (s->_executionStackPosChanged) // Force initialization
 			scriptState.xs = xs_new;
@@ -1657,7 +1665,7 @@ void run_vm(EngineState *s, bool restoring) {
 		if (scriptState.xs != &(s->_executionStack.back())) {
 			warning("xs is stale (%p vs %p); last command was %02x",
 					(void *)scriptState.xs, (void *)&(s->_executionStack.back()),
-					opnumber);
+					opcode);
 		}
 //#endif
 		++script_step_counter;
