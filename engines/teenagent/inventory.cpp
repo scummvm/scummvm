@@ -186,6 +186,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		int id1 = selected_obj->id;
 		int id2 = hovered_obj->id;
+		if (id1 == id2)
+			return true;
 
 		debug(0, "combine(%u, %u)!", id1, id2);
 		byte *table = res->dseg.ptr(0xC335);
