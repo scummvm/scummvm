@@ -796,7 +796,7 @@ public:
 	SciString() : SciArray<char>() { setType(3); }
 
 	// We overload destroy to ensure the string type is 3 after destroying
-	void destroy() { _type = 3; }
+	void destroy() { SciArray<char>::destroy(); _type = 3; }
 
 	Common::String toString();
 	void fromString(Common::String string);
@@ -805,12 +805,17 @@ public:
 struct ArrayTable : public Table<SciArray<reg_t> > {
 	ArrayTable() : Table<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
 
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	SegmentRef dereference(reg_t pointer);
 };
 
 struct StringTable : public Table<SciString> {
 	StringTable() : Table<SciString>(SEG_TYPE_STRING) {}
+
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	SegmentRef dereference(reg_t pointer);

@@ -439,8 +439,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1]; // We also have to return the handle
 	}
 	case 4: // Free
-		if (!argv[1].isNull())
-			s->_segMan->freeArray(argv[1]);
+		// Freeing of arrays is handled by the garbage collector
 		return s->r_acc;
 	case 5: { // Fill
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
@@ -542,8 +541,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return argv[1]; // We also have to return the handle
 	}
 	case 4: // Free
-		if (!argv[1].isNull())
-			s->_segMan->freeString(argv[1]);
+		// Freeing of strings is handled by the garbage collector
 		return s->r_acc;
 	case 5: { // Fill
 		SciString *string = s->_segMan->lookupString(argv[1]);

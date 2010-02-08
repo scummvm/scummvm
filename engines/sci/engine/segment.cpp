@@ -695,6 +695,26 @@ SegmentRef ArrayTable::dereference(reg_t pointer) {
 	return ret;
 }
 
+void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) { 
+	_table[sub_addr.offset].destroy();
+	freeEntry(sub_addr.offset);
+}
+
+void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+	if (!isValidEntry(addr.offset)) {
+		warning("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
+		return;
+	}
+
+	SciArray<reg_t> *array = &(_table[addr.offset]);
+
+	for (uint32 i = 0; i < array->getSize(); i++) {
+		reg_t value = array->getValue(i);
+		if (value.segment != 0)
+			note(param, value);
+	}
+}
+
 Common::String SciString::toString() {
 	if (_type != 3)
 		error("SciString::toString(): Array is not a string");
@@ -723,6 +743,11 @@ SegmentRef StringTable::dereference(reg_t pointer) {
 	ret.maxSize = _table[pointer.offset].getSize();
 	ret.raw = (byte*)_table[pointer.offset].getRawData();
 	return ret;
+}
+
+void StringTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) { 
+	_table[sub_addr.offset].destroy();
+	freeEntry(sub_addr.offset);
 }
 
 #endif
