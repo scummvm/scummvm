@@ -191,7 +191,7 @@ private:
 	// This is needed because when using a Color as return value, this would crash Chrilith's
 	// compiler for PalmOS.
 	// TODO: Add more information about the compiler.
-	void saturatedAddColor(Color &result, Color baseColor, signed r, signed g, signed b) const;
+	void saturatedAddColor(Color &result, const Color &baseColor, signed r, signed g, signed b) const;
 
 private:
 	Graphics::PixelFormat _format; ///< The used source color format
