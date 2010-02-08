@@ -62,6 +62,7 @@ namespace Common {
 #define ARJ_PTABLESIZE 256
 
 
+// these struct represents a file inside an Arj archive
 struct ArjHeader {
 	int32 pos;
 	uint16 id;
@@ -317,49 +318,12 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 }
 
 
-<<<<<<< HEAD:common/unarj.cpp
-SeekableReadStream *ArjFile::open(const Common::String &filename) {
 
-	if (_fallBack && SearchMan.hasFile(filename)) {
-		return SearchMan.createReadStreamForMember(filename);
-	}
 
-	if (!_fileMap.contains(filename))
-		return 0;
 
-	ArjHeader *hdr = _headers[_fileMap[filename]];
 
-	// TODO: It would be good if ArjFile could decompress files in a streaming
-	// mode, so it would not need to pre-allocate the entire output.
-	byte *uncompressedData = (byte *)malloc(hdr->origSize);
 
-	File archiveFile;
-	archiveFile.open(_archMap[filename]);
-	archiveFile.seek(hdr->pos, SEEK_SET);
 
-	if (hdr->method == 0) { // store
-		int32 len = archiveFile.read(uncompressedData, hdr->origSize);
-		assert(len == hdr->origSize);
-	} else {
-		ArjDecoder *decoder = new ArjDecoder(hdr);
-
-		// TODO: It might not be appropriate to use this wrapper inside ArjFile.
-		// If reading from archiveFile directly is too slow to be usable,
-		// maybe the filesystem code should instead wrap its files
-		// in a BufferedReadStream.
-		decoder->_compressed = new BufferedReadStream(&archiveFile, 4096);
-		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
-
-		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
-			decoder->decode(hdr->origSize);
-		else if (hdr->method == 4)
-			decoder->decode_f(hdr->origSize);
-
-		delete decoder;
-	}
-
-	return new MemoryReadStream(uncompressedData, hdr->origSize, true);
-}
 
 
 //
@@ -841,7 +805,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 		// If reading from archiveFile directly is too slow to be usable,
 		// maybe the filesystem code should instead wrap its files
 		// in a BufferedReadStream.
-		decoder->_compressed = new Common::BufferedReadStream(&archiveFile, 4096, false);
+		decoder->_compressed = new Common::BufferedReadStream(&archiveFile, 4096, DisposeAfterUse::NO);
 		decoder->_outstream = new Common::MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
@@ -852,7 +816,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 		delete decoder;
 	}
 
-	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, true);	
+	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);	
 }
 
 #pragma mark ArjFile implementation
