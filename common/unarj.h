@@ -32,27 +32,11 @@
 
 namespace Common {
 
-struct ArjHeader;
-
-typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
-
-class ArjArchive : public Common::Archive {
-
-	Common::Array<ArjHeader *> _headers;
-	ArjFilesMap _fileMap;
-
-	Common::String _arjFilename;
-
-public:
-	ArjArchive(const String &name);
-	virtual ~ArjArchive();
-
-	// Common::Archive implementation
-	virtual bool hasFile(const String &name);
-	virtual int listMembers(ArchiveMemberList &list);
-	virtual ArchiveMemberPtr getMember(const String &name);
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
-};
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the ARJ compressed file with the given name.
+ */
+Archive *makeArjArchive(const String &name);
 
 } // End of namespace Common
 

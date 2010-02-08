@@ -35,7 +35,7 @@ ArchiveMan::~ArchiveMan() {
 }
 
 void ArchiveMan::registerArchive(const Common::String &filename) {
-	add(filename, new Common::ArjArchive(filename));
+	add(filename, Common::makeArjArchive(filename));
 }
 
 Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {

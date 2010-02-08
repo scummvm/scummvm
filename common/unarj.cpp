@@ -712,6 +712,26 @@ void ArjDecoder::decode_f(int32 origsize) {
 
 #pragma mark ArjArchive implementation
 
+typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
+
+class ArjArchive : public Common::Archive {
+
+	Common::Array<ArjHeader *> _headers;
+	ArjFilesMap _fileMap;
+
+	Common::String _arjFilename;
+
+public:
+	ArjArchive(const String &name);
+	virtual ~ArjArchive();
+
+	// Common::Archive implementation
+	virtual bool hasFile(const String &name);
+	virtual int listMembers(ArchiveMemberList &list);
+	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+};
+
 ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 	Common::File arjFile;
 
@@ -811,6 +831,10 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 	}
 
 	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);	
+}
+
+Archive *makeArjArchive(const String &name) {
+	return new ArjArchive(name);
 }
 
 } // End of namespace Common
