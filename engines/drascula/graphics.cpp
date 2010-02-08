@@ -486,8 +486,8 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 
 	if (_useMemForArj)
 		free(memPtr);
-	else
-		_arj.close();
+
+	_arj.close();
 }
 
 int DrasculaEngine::playFrameSSN() {
@@ -596,7 +596,6 @@ byte *DrasculaEngine::TryInMem() {
 		return NULL;
 	_arj.read(memPtr, length);
 	_useMemForArj = true;
-	_arj.close();
 
 	return memPtr;
 }
