@@ -681,6 +681,10 @@ begin_credits("Credits");
 		  add_person("Frantisek Dufka", "fanoush", "");
 	  end_section();
 
+	  begin_section("Nintendo 64");
+		  add_person("Fabio Battaglia", "Hkz", "");
+	  end_section();
+
 	  begin_section("Nintendo DS");
 		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
@@ -691,7 +695,7 @@ begin_credits("Credits");
 
 	  begin_section("PocketPC / WinCE");
 		add_person("Nicolas Bacca", "arisme", "(retired)");
-		  add_person("Kostas Nakos", "Jubanka", "");
+		add_person("Kostas Nakos", "Jubanka", "");
 	  end_section();
 
 	  begin_section("PlayStation 2");
