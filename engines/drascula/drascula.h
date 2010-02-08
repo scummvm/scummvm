@@ -36,6 +36,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/unarj.h"
+#include "common/archive.h"
 
 #include "sound/mixer.h"
 
@@ -251,6 +252,22 @@ struct CharInfo {
 	byte charType;	// 0 - letters, 1 - signs, 2 - accented
 };
 
+class ArjFile : public Common::SearchSet {
+public:
+	ArjFile();
+	~ArjFile();
+
+	void enableFallback(bool val) { _fallBack = val; }
+
+	void registerArchive(const Common::String &filename);
+
+	Common::SeekableReadStream *open(const Common::String &filename);
+
+private:
+	bool _fallBack;
+
+};
+
 #define NUM_SAVES		10
 #define NUM_FLAGS		50
 #define DIF_MASK		55
@@ -365,7 +382,7 @@ public:
 
 	byte cPal[768];
 
-	Common::ArjFile _arj;
+	ArjFile _arj;
 
 	int actorFrames[8];
 
@@ -753,6 +770,7 @@ private:
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);
 };
+
 
 } // End of namespace Drascula
 

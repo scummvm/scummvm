@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,37 +23,30 @@
  *
  */
 
-#ifndef COMMON_UNARJ_H
-#define COMMON_UNARJ_H
+#include "drascula/drascula.h"
 
-#include "common/file.h"
-#include "common/hash-str.h"
-#include "common/archive.h"
+namespace Drascula {
 
-namespace Common {
+#pragma mark ArjFile implementation
 
-struct ArjHeader;
+ArjFile::ArjFile() {
+	_fallBack = false;
+}
 
-typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
+ArjFile::~ArjFile() {
+}
 
-class ArjArchive : public Common::Archive {
+void ArjFile::registerArchive(const Common::String &filename) {
+	add(filename, new Common::ArjArchive(filename));
+}
 
-	Common::Array<ArjHeader *> _headers;
-	ArjFilesMap _fileMap;
+Common::SeekableReadStream *ArjFile::open(const Common::String &filename) {
+	if (_fallBack && SearchMan.hasFile(filename)) {
+		return SearchMan.createReadStreamForMember(filename);
+	}
 
-	Common::String _arjFilename;
+	return createReadStreamForMember(filename);
+}
 
-public:
-	ArjArchive(const String &name);
-	virtual ~ArjArchive();
+} // End of namespace Drascula
 
-	// Common::Archive implementation
-	virtual bool hasFile(const String &name);
-	virtual int listMembers(ArchiveMemberList &list);
-	virtual ArchiveMemberPtr getMember(const String &name);
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
-};
-
-} // End of namespace Common
-
-#endif

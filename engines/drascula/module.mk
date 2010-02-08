@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	interface.o \
 	objects.o \
 	palette.o \
+	resource.o \
 	rooms.o \
 	saveload.o \
 	sound.o \

@@ -819,26 +819,4 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);	
 }
 
-#pragma mark ArjFile implementation
-
-ArjFile::ArjFile() {
-	_fallBack = false;
-}
-
-ArjFile::~ArjFile() {
-}
-
-void ArjFile::registerArchive(const String &filename) {
-	add(filename, new ArjArchive(filename));
-}
-
-SeekableReadStream *ArjFile::open(const Common::String &filename) {
-	if (_fallBack && SearchMan.hasFile(filename)) {
-		return SearchMan.createReadStreamForMember(filename);
-	}
-
-	return createReadStreamForMember(filename);
-}
-
-
 } // End of namespace Common
