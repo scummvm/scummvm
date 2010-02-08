@@ -145,23 +145,22 @@ void DrasculaEngine::converse(int index) {
 	char sound1[13], sound2[13], sound3[13], sound4[13];
 	int phrase1_bottom, phrase2_bottom, phrase3_bottom, phrase4_bottom;
 	int answer1, answer2, answer3;
-	char buffer[256];
 
 	breakOut = 0;
 
 	selectVerb(kVerbNone);
 
-	getStringFromLine(buffer, size, phrase1);
-	getStringFromLine(buffer, size, phrase2);
-	getStringFromLine(buffer, size, phrase3);
-	getStringFromLine(buffer, size, phrase4);
-	getStringFromLine(buffer, size, sound1);
-	getStringFromLine(buffer, size, sound2);
-	getStringFromLine(buffer, size, sound3);
-	getStringFromLine(buffer, size, sound4);
-	getIntFromLine(buffer, size, &answer1);
-	getIntFromLine(buffer, size, &answer2);
-	getIntFromLine(buffer, size, &answer3);
+	getStringFromLine(size, phrase1);
+	getStringFromLine(size, phrase2);
+	getStringFromLine(size, phrase3);
+	getStringFromLine(size, phrase4);
+	getStringFromLine(size, sound1);
+	getStringFromLine(size, sound2);
+	getStringFromLine(size, sound3);
+	getStringFromLine(size, sound4);
+	getIntFromLine(size, &answer1);
+	getIntFromLine(size, &answer2);
+	getIntFromLine(size, &answer3);
 
 	_arj.close();
 
