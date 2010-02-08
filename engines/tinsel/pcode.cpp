@@ -136,6 +136,16 @@ const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
 const int fragment9_size = 2;
 const byte fragment10[] = {OP_IMM | OPSIZE16, 160 % 256, 160 / 256, OP_JUMP | OPSIZE16, 136 % 256, 136 / 256};
 const int fragment10_size = 6;
+const byte fragment11[] = {OP_JMPTRUE | OPSIZE16, 1572 % 256, 1572 / 256, 
+		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
+		OP_IMM | OPSIZE16, 322 % 256, 322 / 256, OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
+		OP_JUMP | OPSIZE16, 1661 % 256, 1661 / 256};
+const int fragment11_size = 14;
+const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, 1491 % 256, 1491 / 256, 
+		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
+		OP_IMM | OPSIZE16, 322 % 256, 322 / 256, OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
+		OP_JUMP | OPSIZE16, 1568 % 256, 1568 / 256};
+const int fragment12_size = 14;
 
 const WorkaroundEntry workaroundList[] = {
 	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
@@ -174,6 +184,11 @@ const WorkaroundEntry workaroundList[] = {
 
 	// DW1-GRA: Corrects text being drawn partially off-screen during the blackboard description of the Librarian
 	{TINSEL_V1,false, 293831402, 133, fragment10_size, fragment10},
+
+	// DW1-GRA/SCN: Corrects the dead-end of being able to give the whistle back to the pirate before giving him
+	// the parrot
+	{TINSEL_V1, true, 352601285, 1569, fragment11_size, fragment11},
+	{TINSEL_V1, false, 352602304, 1488, fragment12_size, fragment12},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
