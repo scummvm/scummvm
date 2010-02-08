@@ -86,7 +86,6 @@ void Inter_Fascination::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 
 	OPCODEFUNC(0x09, o1_assign);
-	OPCODEFUNC(0x14, oFascin_keyFunc);
 	OPCODEFUNC(0x32, oFascin_copySprite);
 }
 
@@ -106,8 +105,8 @@ void Inter_Fascination::setupOpcodesGob() {
 	OPCODEGOB(  11, oFascin_loadBatt2);
 	OPCODEGOB(  12, oFascin_loadBatt3);
 
-	OPCODEGOB(1000, oFascin_geUnknown1000);
-	OPCODEGOB(1001, oFascin_geUnknown1001); //protrackerPlay doesn't play correctly "mod.extasy"
+	OPCODEGOB(1000, oFascin_loadMod);
+	OPCODEGOB(1001, oFascin_playMod); //protrackerPlay doesn't play correctly "mod.extasy"
 	OPCODEGOB(1002, oFascin_geUnknown1002); //to be replaced by o2_stopProtracker when protrackerPlay is fixed
 }
 
@@ -126,56 +125,6 @@ bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 	_vm->_draw->_transparency = _vm->_game->_script->readInt16();
 
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
-	return false;
-}
-
-bool Inter_Fascination::oFascin_keyFunc(OpFuncParams &params) {
-	static uint32 lastCalled = 0;
-	int16 cmd;
-	int16 key;
-	uint32 now;
-
-	cmd = _vm->_game->_script->readInt16();
-	animPalette();
-	_vm->_draw->blitInvalidated();
-
-	now = _vm->_util->getTimeKey();
-	if (!_noBusyWait)
-		if ((now - lastCalled) <= 20)
-			_vm->_util->longDelay(1);
-	lastCalled = now;
-	_noBusyWait = false;
-
-	switch (cmd) {
-	case 0:
-		key = _vm->_game->_hotspots->check(0, 0);
-		storeKey(key);
-
-		_vm->_util->clearKeyBuf();
-		break;
-
-	case 1:
-		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
-				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
-		storeKey(key);
-		break;
-
-	case 2:
-//		_vm->_util->processInput(true);
-//		key = _vm->_util->checkKey();
-//		WRITE_VAR(0, key);
-//		_vm->_util->clearKeyBuf();
-		_vm->_util->delay(cmd);
-		break;
-
-	default:
-		_vm->_util->processInput(true);
-		key = _vm->_util->checkKey();
-		WRITE_VAR(0, key);
-		_vm->_util->clearKeyBuf();
-		break;
-	}
-
 	return false;
 }
 
@@ -246,29 +195,18 @@ void Inter_Fascination::oFascin_loadBatt3(OpGobParams &params) {
 	_vm->_sound->adlibLoadMDY("batt3.mdy");
 }
 
-void Inter_Fascination::oFascin_geUnknown1000(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 1000 - Load MOD music");
+void Inter_Fascination::oFascin_loadMod(OpGobParams &params) {
+	// Fascination GE Function 1000 - Load MOD music
+	// Useless as it's included in playMod
 }
 
-void Inter_Fascination::oFascin_geUnknown1001(OpGobParams &params) {
+void Inter_Fascination::oFascin_playMod(OpGobParams &params) {
 	warning("Fascination oFascin_playProtracker - MOD not compatible (sample > 32768), To Be Fixed");
 }
 
 void Inter_Fascination::oFascin_geUnknown1002(OpGobParams &params) {
 	warning("Fascination o2_stopProtracker - Commented out");
 }
-
-/*
-bool Inter_Fascination::oFascin_feUnknown4(OpFuncParams &params) {
-	warning("Fascination Unknown FE Function 4");
-	return true;
-}
-
-bool Inter_Fascination::oFascin_feUnknown27(OpFuncParams &params) {
-	warning("Fascination Unknown FE Function 27h");
-	return true;
-}
-*/
 
 void Inter_Fascination::oFascin_setWinSize() {
 	_vm->_draw->_winMaxWidth  = _vm->_game->_script->readUint16();

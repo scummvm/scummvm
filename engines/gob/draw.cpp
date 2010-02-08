@@ -824,7 +824,7 @@ int16 Draw::handleCurWin() {
 	int8 matchNum = 0;
 	int16 bestMatch = -1;
 
-	if ((_vm->_game->_mouseButtons != 1) || ((_vm->_draw->_renderFlags & 128) == 0))
+	if ((_vm->_game->_mouseButtons != 1) || ((_renderFlags & 128) == 0))
 		return 0;
 
 	for (int i = 0; i < 10; i++)
@@ -878,10 +878,10 @@ int16 Draw::handleCurWin() {
 	return 0;
 }
 
-void Draw::winDecomp(int16 x, int16 y, SurfaceDescPtr bmp) {
-	// TODO: Implementation to be confirmed (used cut and paste from another part of the code)
-	Resource *resource;
+void Draw::winDecomp(int16 x, int16 y, SurfaceDescPtr destPtr) {
+	warning("winDecomp %d %d - getResource %d %d %d", x, y, _spriteLeft, _spriteRight, _spriteBottom);
 
+	Resource *resource;
 	resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
 	                                               &_spriteRight, &_spriteBottom);
 
@@ -889,11 +889,7 @@ void Draw::winDecomp(int16 x, int16 y, SurfaceDescPtr bmp) {
 		return;
 
 	_vm->_video->drawPackedSprite(resource->getData(),
-			_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
-			_transparency, *_spritesArray[_destSurface]);
-
-	dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-			_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+			_spriteRight, _spriteBottom, x, y, _transparency, *destPtr);
 
 	delete resource;
 	return;
@@ -1125,9 +1121,11 @@ void Draw::winDraw(int16 fct) {
 			break;
 
 		case DRAW_DRAWLETTER:  // 10 - Display a character
-			if (_fontToSprite[_fontIndex].sprite == -1)
-				_vm->_video->drawLetter(_letterToPrint, 0, 0, *_fonts[_fontIndex], _transparency, _frontColor, _backColor, *tempSrf);
-			else {
+			if (_fontToSprite[_fontIndex].sprite == -1) {
+
+				if (_letterToPrint)
+					_vm->_video->drawLetter(_letterToPrint, 0, 0, *_fonts[_fontIndex], _transparency, _frontColor, _backColor, *tempSrf);
+			} else {
 				int xx, yy, nn;
 				nn = _spritesArray[_fontToSprite[_fontIndex].sprite]->getWidth() / _fontToSprite[_fontIndex].width;
 				yy = ((_letterToPrint - _fontToSprite[_fontIndex].base) / nn) * _fontToSprite[_fontIndex].height;
@@ -1240,10 +1238,11 @@ void Draw::winDraw(int16 fct) {
 			break;
 
 		case DRAW_DRAWLETTER:  // 10 - Display a character
-			if (_fontToSprite[_fontIndex].sprite == -1)
-				_vm->_video->drawLetter(_letterToPrint, _destSpriteX, _destSpriteY, *_fonts[_fontIndex], _transparency,
-										_frontColor, _backColor, *_spritesArray[_destSurface]);
-			else {
+			if (_fontToSprite[_fontIndex].sprite == -1) {
+				if (_letterToPrint)
+					_vm->_video->drawLetter(_letterToPrint, _destSpriteX, _destSpriteY, *_fonts[_fontIndex], _transparency,
+											_frontColor, _backColor, *_spritesArray[_destSurface]);
+			} else {
 				int xx, yy, nn;
 				nn = _spritesArray[_fontToSprite[_fontIndex].sprite]->getWidth() / _fontToSprite[_fontIndex].width;
 				yy = ((_letterToPrint - _fontToSprite[_fontIndex].base) / nn) * _fontToSprite[_fontIndex].height;
@@ -1282,7 +1281,7 @@ void Draw::winDraw(int16 fct) {
 int16 Draw::isOverWin(int16 &dx, int16 &dy) {
 	int16 bestMatch = -1;
 
-	if ((_vm->_draw->_renderFlags & 128) == 0)
+	if ((_renderFlags & 128) == 0)
 		return -1;
 
 	for (int i = 0; i < 10; i++)

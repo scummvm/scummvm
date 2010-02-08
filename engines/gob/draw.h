@@ -190,7 +190,7 @@ public:
 	int16 openWin(int16 id);
 	int16 handleCurWin();
 	bool winOverlap(int16 idWin1, int16 idWin2);
-	void winDecomp(int16 x, int16 y, SurfaceDescPtr bmp);
+	void winDecomp(int16 x, int16 y, SurfaceDescPtr destPtr);
 	void activeWin(int16 id);
 	void closeWin(int16 id);
 	void closeAllWin();

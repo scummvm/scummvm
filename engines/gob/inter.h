@@ -447,11 +447,9 @@ protected:
 	void oFascin_loadBatt1(OpGobParams &params);
 	void oFascin_loadBatt2(OpGobParams &params);
 	void oFascin_loadBatt3(OpGobParams &params);
-	void oFascin_geUnknown1000(OpGobParams &params);
-	void oFascin_geUnknown1001(OpGobParams &params);
+	void oFascin_loadMod(OpGobParams &params);
+	void oFascin_playMod(OpGobParams &params);
 	void oFascin_geUnknown1002(OpGobParams &params);
-//	bool oFascin_feUnknown4(OpFuncParams &params);
-//	bool oFascin_feUnknown27(OpFuncParams &params);
 	void oFascin_setWinSize();
 	void oFascin_closeWin();
 	void oFascin_activeWin();

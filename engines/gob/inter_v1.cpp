@@ -1212,7 +1212,8 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	case 1:
-		_vm->_util->forceMouseUp(true);
+		if (_vm->getGameType() != kGameTypeFascination)
+			_vm->_util->forceMouseUp(true);
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 		storeKey(key);
