@@ -37,7 +37,7 @@ typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
 
 // TODO: Get rid of this class, by implementing an ArjArchive subclass of Common::Archive.
 // Then ArjFile can be substituted by a SearchSet full of ArjArchives plus SearchMan.
-class ArjFile : public SeekableReadStream, public NonCopyable {
+class ArjFile : public NonCopyable {
 public:
 	ArjFile();
 	~ArjFile();
@@ -46,15 +46,7 @@ public:
 
 	void registerArchive(const String &filename);
 
-	bool open(const Common::String &filename);
-	void close();
-
-	uint32 read(void *dataPtr, uint32 dataSize);
-	bool eos() const;
-	int32 pos() const;
-	int32 size() const;
-	bool seek(int32 offset, int whence = SEEK_SET);
-	bool isOpen() { return _uncompressed != 0; }
+	SeekableReadStream *open(const Common::String &filename);
 
 private:
 	bool _fallBack;
@@ -62,8 +54,6 @@ private:
 	Array<ArjHeader *> _headers;
 	ArjFilesMap _fileMap;
 	StringMap _archMap;
-
-	SeekableReadStream *_uncompressed;
 };
 
 } // End of namespace Common

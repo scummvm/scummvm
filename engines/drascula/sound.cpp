@@ -163,23 +163,24 @@ void DrasculaEngine::MusicFadeout() {
 }
 
 void DrasculaEngine::playFile(const char *fname) {
-	if (_arj.open(fname)) {
-		int soundSize = _arj.size();
+	Common::SeekableReadStream *stream = _arj.open(fname);
+	if (stream) {
+		int soundSize = stream->size();
 		byte *soundData = (byte *)malloc(soundSize);
 
 		if (!(!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish)) {
-			_arj.seek(32);
+			stream->seek(32);
 		} else {
 			// WORKAROUND: File 3.als with English speech files has a big silence at
 			// its beginning and end. We seek past the silence at the beginning,
 			// and ignore the silence at the end
 			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
-			_arj.seek(73959, SEEK_SET);
+			stream->seek(73959, SEEK_SET);
 			soundSize = 117158 - 73959;
 		}
 
-		_arj.read(soundData, soundSize);
-		_arj.close();
+		stream->read(soundData, soundSize);
+		delete stream;
 
 		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 		if (ConfMan.getBool("speech_mute"))

@@ -541,8 +541,8 @@ public:
 	void mixVideo(byte *OldScreen, byte *NewScreen);
 	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE);
 	void decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length);
-	byte *TryInMem(Common::SeekableReadStream &stream);
-	int playFrameSSN(Common::SeekableReadStream &stream);
+	byte *TryInMem(Common::SeekableReadStream *stream);
+	int playFrameSSN(Common::SeekableReadStream *stream);
 
 	bool _useMemForArj;
 	byte CHUNK;
@@ -553,7 +553,7 @@ public:
 
 	int flag_tv;
 
-	void showFrame(Common::SeekableReadStream &stream, bool firstFrame = false);
+	void showFrame(Common::SeekableReadStream *stream, bool firstFrame = false);
 	int getTime();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	void quadrant_1();
@@ -577,9 +577,9 @@ public:
 	void MusicFadeout();
 	void playFile(const char *fname);
 
-	char *getLine(Common::SeekableReadStream &stream, char *buf, int len);
-	void getIntFromLine(Common::SeekableReadStream &stream, int len, int* result);
-	void getStringFromLine(Common::SeekableReadStream &stream, int len, char* result);
+	char *getLine(Common::SeekableReadStream *stream, char *buf, int len);
+	void getIntFromLine(Common::SeekableReadStream *stream, int len, int* result);
+	void getStringFromLine(Common::SeekableReadStream *stream, int len, char* result);
 
 	void grr();
 	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3, bool copyRectangle = false);

@@ -93,39 +93,39 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	uint dataSize = 0;
 	byte *pcxData;
 
-	_arj.open(NamePcc);
-	if (!_arj.isOpen())
+	Common::SeekableReadStream *stream = _arj.open(NamePcc);
+	if (!stream)
 		error("missing game data %s %c", NamePcc, 7);
 
-	dataSize = _arj.size() - 128 - (256 * 3);
+	dataSize = stream->size() - 128 - (256 * 3);
 	pcxData = (byte *)malloc(dataSize);
 
-	_arj.seek(128, SEEK_SET);
-	_arj.read(pcxData, dataSize);
+	stream->seek(128, SEEK_SET);
+	stream->read(pcxData, dataSize);
 
 	decodeRLE(pcxData, targetSurface);
 	free(pcxData);
 
 	for (int i = 0; i < 256; i++) {
-		cPal[i * 3 + 0] = _arj.readByte();
-		cPal[i * 3 + 1] = _arj.readByte();
-		cPal[i * 3 + 2] = _arj.readByte();
+		cPal[i * 3 + 0] = stream->readByte();
+		cPal[i * 3 + 1] = stream->readByte();
+		cPal[i * 3 + 2] = stream->readByte();
 	}
 
-	_arj.close();
+	delete stream;
 
 	setRGB((byte *)cPal, colorCount);
 }
 
-void DrasculaEngine::showFrame(Common::SeekableReadStream &stream, bool firstFrame) {
-	int dataSize = stream.readSint32LE();
+void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFrame) {
+	int dataSize = stream->readSint32LE();
 	byte *pcxData = (byte *)malloc(dataSize);
-	stream.read(pcxData, dataSize);
+	stream->read(pcxData, dataSize);
 
 	for (int i = 0; i < 256; i++) {
-		cPal[i * 3 + 0] = stream.readByte();
-		cPal[i * 3 + 1] = stream.readByte();
-		cPal[i * 3 + 2] = stream.readByte();
+		cPal[i * 3 + 0] = stream->readByte();
+		cPal[i * 3 + 1] = stream->readByte();
+		cPal[i * 3 + 2] = stream->readByte();
 	}
 
 	byte *prevFrame = (byte *)malloc(64000);
@@ -388,12 +388,12 @@ void DrasculaEngine::screenSaver() {
 	ghost = (byte *)malloc(65536);
 
 	// carga_ghost();
-	_arj.open("ghost.drv");
-	if (!_arj.isOpen())
+	Common::SeekableReadStream *stream = _arj.open("ghost.drv");
+	if (!stream)
 		error("Cannot open file ghost.drv");
 
-	_arj.read(ghost, 65536);
-	_arj.close();
+	stream->read(ghost, 65536);
+	delete stream;
 
 	updateEvents();
 	xr = mouseX;
@@ -477,14 +477,14 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	globalSpeed = 1000 / vel;
 	FrameSSN = 0;
 	_useMemForArj = false;
-	_arj.open(filefli);
+	Common::SeekableReadStream *stream = _arj.open(filefli);
 	// TODO: mSession is treated like a stream from playFrameSSN, so turn it
 	// into a stream, and pass it to playFrameSSN. Get rid of _useMemForArj
 	// as well.
-	mSession = TryInMem(_arj);
+	mSession = TryInMem(stream);
 	LastFrame = _system->getMillis();
 
-	while (playFrameSSN(_arj) && (!term_int)) {
+	while (playFrameSSN(stream) && (!term_int)) {
 		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
@@ -492,16 +492,16 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	if (_useMemForArj)
 		free(memPtr);
 
-	_arj.close();
+	delete stream;
 }
 
-int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
+int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 	int Exit = 0;
 	uint32 length;
 	byte *BufferSSN;
 
 	if (!_useMemForArj)
-		CHUNK = stream.readByte();
+		CHUNK = stream->readByte();
 	else {
 		memcpy(&CHUNK, mSession, 1);
 		mSession += 1;
@@ -511,9 +511,9 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
 	case kFrameSetPal:
 		if (!_useMemForArj) {
 			for (int i = 0; i < 256; i++) {
-				dacSSN[i * 3 + 0] = stream.readByte();
-				dacSSN[i * 3 + 1] = stream.readByte();
-				dacSSN[i * 3 + 2] = stream.readByte();
+				dacSSN[i * 3 + 0] = stream->readByte();
+				dacSSN[i * 3 + 1] = stream->readByte();
+				dacSSN[i * 3 + 2] = stream->readByte();
 			}
 		} else {
 			memcpy(dacSSN, mSession, 768);
@@ -526,8 +526,8 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
 		break;
 	case kFrameInit:
 		if (!_useMemForArj) {
-			CMP = stream.readByte();
-			length = stream.readUint32LE();
+			CMP = stream->readByte();
+			length = stream->readUint32LE();
 		} else {
 			memcpy(&CMP, mSession, 1);
 			mSession += 1;
@@ -537,7 +537,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
 		if (CMP == kFrameCmpRle) {
 			BufferSSN = (byte *)malloc(length);
 			if (!_useMemForArj) {
-				stream.read(BufferSSN, length);
+				stream->read(BufferSSN, length);
 			} else {
 				memcpy(BufferSSN, mSession, length);
 				mSession += length;
@@ -559,7 +559,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
 			if (CMP == kFrameCmpOff) {
 				BufferSSN = (byte *)malloc(length);
 				if (!_useMemForArj) {
-					stream.read(BufferSSN, length);
+					stream->read(BufferSSN, length);
 				} else {
 					memcpy(BufferSSN, mSession, length);
 					mSession += length;
@@ -590,16 +590,16 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
 	return (!Exit);
 }
 
-byte *DrasculaEngine::TryInMem(Common::SeekableReadStream &stream) {
+byte *DrasculaEngine::TryInMem(Common::SeekableReadStream *stream) {
 	int length;
 
-	stream.seek(0, SEEK_END);
-	length = stream.pos();
-	stream.seek(0, SEEK_SET);
+	stream->seek(0, SEEK_END);
+	length = stream->pos();
+	stream->seek(0, SEEK_SET);
 	memPtr = (byte *)malloc(length);
 	if (memPtr == NULL)
 		return NULL;
-	stream.read(memPtr, length);
+	stream->read(memPtr, length);
 	_useMemForArj = true;
 
 	return memPtr;
@@ -660,17 +660,17 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	int NFrames = 1;
 	int cnt = 2;
 
-	_arj.open(animationFile);
+	Common::SeekableReadStream *stream = _arj.open(animationFile);
 
-	if (!_arj.isOpen()) {
+	if (!stream) {
 		error("Animation file %s not found", animationFile);
 	}
 
-	NFrames = _arj.readSint32LE();
-	showFrame(_arj, true);
+	NFrames = stream->readSint32LE();
+	showFrame(stream, true);
 	_system->delayMillis(1000 / FPS);
 	while (cnt < NFrames) {
-		showFrame(_arj);
+		showFrame(stream);
 		_system->delayMillis(1000 / FPS);
 		cnt++;
 		byte key = getScan();
@@ -679,7 +679,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 		if (key != 0)
 			break;
 	}
-	_arj.close();
+	delete stream;
 
 	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE));
 }

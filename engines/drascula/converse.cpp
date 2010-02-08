@@ -133,11 +133,11 @@ void DrasculaEngine::cleanupString(char *string) {
 void DrasculaEngine::converse(int index) {
 	char fileName[20];
 	sprintf(fileName, "op_%d.cal", index);
-	_arj.open(fileName);
-	if (!_arj.isOpen())
+	Common::SeekableReadStream *stream = _arj.open(fileName);
+	if (!stream)
 		error("missing data file %s", fileName);
 
-	int size = _arj.size();
+	int size = stream->size();
 	int game1 = kDialogOptionUnselected,
 		game2 = kDialogOptionUnselected,
 		game3 = kDialogOptionUnselected;
@@ -150,19 +150,19 @@ void DrasculaEngine::converse(int index) {
 
 	selectVerb(kVerbNone);
 
-	getStringFromLine(_arj, size, phrase1);
-	getStringFromLine(_arj, size, phrase2);
-	getStringFromLine(_arj, size, phrase3);
-	getStringFromLine(_arj, size, phrase4);
-	getStringFromLine(_arj, size, sound1);
-	getStringFromLine(_arj, size, sound2);
-	getStringFromLine(_arj, size, sound3);
-	getStringFromLine(_arj, size, sound4);
-	getIntFromLine(_arj, size, &answer1);
-	getIntFromLine(_arj, size, &answer2);
-	getIntFromLine(_arj, size, &answer3);
+	getStringFromLine(stream, size, phrase1);
+	getStringFromLine(stream, size, phrase2);
+	getStringFromLine(stream, size, phrase3);
+	getStringFromLine(stream, size, phrase4);
+	getStringFromLine(stream, size, sound1);
+	getStringFromLine(stream, size, sound2);
+	getStringFromLine(stream, size, sound3);
+	getStringFromLine(stream, size, sound4);
+	getIntFromLine(stream, size, &answer1);
+	getIntFromLine(stream, size, &answer2);
+	getIntFromLine(stream, size, &answer3);
 
-	_arj.close();
+	delete stream;
 
 	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
 		strcpy(phrase3, _text[405]);

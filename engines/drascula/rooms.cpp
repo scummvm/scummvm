@@ -1649,69 +1649,69 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	strcpy(currentData, fileName);
 
-	_arj.open(fileName);
-	if (!_arj.isOpen()) {
+	Common::SeekableReadStream *stream = _arj.open(fileName);
+	if (!stream) {
 		error("missing data file %s", fileName);
 	}
-	int size = _arj.size();
+	int size = stream->size();
 
-	getIntFromLine(_arj, size, &roomNumber);
-	getIntFromLine(_arj, size, &roomMusic);
-	getStringFromLine(_arj, size, roomDisk);
-	getIntFromLine(_arj, size, &palLevel);
+	getIntFromLine(stream, size, &roomNumber);
+	getIntFromLine(stream, size, &roomMusic);
+	getStringFromLine(stream, size, roomDisk);
+	getIntFromLine(stream, size, &palLevel);
 
 	if (currentChapter == 2)
-		getIntFromLine(_arj, size, &martin);
+		getIntFromLine(stream, size, &martin);
 
 	if (currentChapter == 2 && martin != 0) {
 		curWidth = martin;
-		getIntFromLine(_arj, size, &curHeight);
-		getIntFromLine(_arj, size, &feetHeight);
-		getIntFromLine(_arj, size, &stepX);
-		getIntFromLine(_arj, size, &stepY);
+		getIntFromLine(stream, size, &curHeight);
+		getIntFromLine(stream, size, &feetHeight);
+		getIntFromLine(stream, size, &stepX);
+		getIntFromLine(stream, size, &stepY);
 
-		getStringFromLine(_arj, size, pant1);
-		getStringFromLine(_arj, size, pant2);
-		getStringFromLine(_arj, size, pant3);
-		getStringFromLine(_arj, size, pant4);
+		getStringFromLine(stream, size, pant1);
+		getStringFromLine(stream, size, pant2);
+		getStringFromLine(stream, size, pant3);
+		getStringFromLine(stream, size, pant4);
 
 		strcpy(menuBackground, pant4);
 	}
 
-	getIntFromLine(_arj, size, &numRoomObjs);
+	getIntFromLine(stream, size, &numRoomObjs);
 
 	for (l = 0; l < numRoomObjs; l++) {
-		getIntFromLine(_arj, size, &objectNum[l]);
-		getStringFromLine(_arj, size, objName[l]);
-		getIntFromLine(_arj, size, &x1[l]);
-		getIntFromLine(_arj, size, &y1[l]);
-		getIntFromLine(_arj, size, &x2[l]);
-		getIntFromLine(_arj, size, &y2[l]);
-		getIntFromLine(_arj, size, &roomObjX[l]);
-		getIntFromLine(_arj, size, &roomObjY[l]);
-		getIntFromLine(_arj, size, &trackObj[l]);
-		getIntFromLine(_arj, size, &visible[l]);
-		getIntFromLine(_arj, size, &isDoor[l]);
+		getIntFromLine(stream, size, &objectNum[l]);
+		getStringFromLine(stream, size, objName[l]);
+		getIntFromLine(stream, size, &x1[l]);
+		getIntFromLine(stream, size, &y1[l]);
+		getIntFromLine(stream, size, &x2[l]);
+		getIntFromLine(stream, size, &y2[l]);
+		getIntFromLine(stream, size, &roomObjX[l]);
+		getIntFromLine(stream, size, &roomObjY[l]);
+		getIntFromLine(stream, size, &trackObj[l]);
+		getIntFromLine(stream, size, &visible[l]);
+		getIntFromLine(stream, size, &isDoor[l]);
 		if (isDoor[l] != 0) {
-			getStringFromLine(_arj, size, _targetSurface[l]);
-			getIntFromLine(_arj, size, &_destX[l]);
-			getIntFromLine(_arj, size, &_destY[l]);
-			getIntFromLine(_arj, size, &trackCharacter_alkeva[l]);
-			getIntFromLine(_arj, size, &roomExits[l]);
+			getStringFromLine(stream, size, _targetSurface[l]);
+			getIntFromLine(stream, size, &_destX[l]);
+			getIntFromLine(stream, size, &_destY[l]);
+			getIntFromLine(stream, size, &trackCharacter_alkeva[l]);
+			getIntFromLine(stream, size, &roomExits[l]);
 			updateDoor(l);
 		}
 	}
 
-	getIntFromLine(_arj, size, &floorX1);
-	getIntFromLine(_arj, size, &floorY1);
-	getIntFromLine(_arj, size, &floorX2);
-	getIntFromLine(_arj, size, &floorY2);
+	getIntFromLine(stream, size, &floorX1);
+	getIntFromLine(stream, size, &floorY1);
+	getIntFromLine(stream, size, &floorX2);
+	getIntFromLine(stream, size, &floorY2);
 
 	if (currentChapter != 2) {
-		getIntFromLine(_arj, size, &upperLimit);
-		getIntFromLine(_arj, size, &lowerLimit);
+		getIntFromLine(stream, size, &upperLimit);
+		getIntFromLine(stream, size, &lowerLimit);
 	}
-	_arj.close();
+	delete stream;
 
 	if (currentChapter == 2 && martin != 0) {
 		loadPic(pant2, extraSurface);

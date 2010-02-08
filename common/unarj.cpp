@@ -189,14 +189,12 @@ static uint32 GetCRC(byte *data, int len) {
 	return CRC ^ 0xFFFFFFFF;
 }
 
-ArjFile::ArjFile() : _uncompressed(0) {
+ArjFile::ArjFile() {
 	InitCRC();
 	_fallBack = false;
 }
 
 ArjFile::~ArjFile() {
-	close();
-
 	for (uint i = 0; i < _headers.size(); i++)
 		delete _headers[i];
 }
@@ -346,18 +344,14 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 }
 
 
-bool ArjFile::open(const Common::String &filename) {
-	if (_uncompressed)
-		error("Attempt to open another instance of archive");
+SeekableReadStream *ArjFile::open(const Common::String &filename) {
 
-	if (_fallBack) {
-		_uncompressed = SearchMan.createReadStreamForMember(filename);
-		if (_uncompressed)
-			return true;
+	if (_fallBack && SearchMan.hasFile(filename)) {
+		return SearchMan.createReadStreamForMember(filename);
 	}
 
 	if (!_fileMap.contains(filename))
-		return false;
+		return 0;
 
 	ArjHeader *hdr = _headers[_fileMap[filename]];
 
@@ -390,42 +384,9 @@ bool ArjFile::open(const Common::String &filename) {
 		delete decoder;
 	}
 
-
-	_uncompressed = new MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);
-	assert(_uncompressed);
-
-	return true;
+	return new MemoryReadStream(uncompressedData, hdr->origSize, true);
 }
 
-void ArjFile::close() {
-	delete _uncompressed;
-	_uncompressed = NULL;
-}
-
-uint32 ArjFile::read(void *dataPtr, uint32 dataSize) {
-	assert(_uncompressed);
-	return _uncompressed->read(dataPtr, dataSize);
-}
-
-bool ArjFile::eos() const {
-	assert(_uncompressed);
-	return _uncompressed->eos();
-}
-
-int32 ArjFile::pos() const {
-	assert(_uncompressed);
-	return _uncompressed->pos();
-}
-
-int32 ArjFile::size() const {
-	assert(_uncompressed);
-	return _uncompressed->size();
-}
-
-bool ArjFile::seek(int32 offset, int whence) {
-	assert(_uncompressed);
-	return _uncompressed->seek(offset, whence);
-}
 
 //
 // Source for init_getbits: arj_file.c (decode_start_stub)
