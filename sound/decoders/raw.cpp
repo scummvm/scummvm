@@ -185,6 +185,14 @@ int RawStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, cons
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 bool RawStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
+	_filePos = 0;
+	_diskLeft = 0;
+	_bufferLeft = 0;
+	_curBlock = _blocks.end();
+
+	if (where > _playtime)
+		return false;
+
 	const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
 	uint32 curSample = 0;
 
@@ -198,12 +206,8 @@ bool RawStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) 
 		curSample = nextBlockSample;
 	}
 
-	_filePos = 0;
-	_diskLeft = 0;
-	_bufferLeft = 0;
-
 	if (_curBlock == _blocks.end()) {
-		return ((seekSample - curSample) == (uint32)_curBlock->len);
+		return ((seekSample - curSample) == 0);
 	} else {
 		const uint32 offset = seekSample - curSample;
 
