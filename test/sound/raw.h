@@ -237,7 +237,7 @@ private:
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
 		// Try to seek after the end of the stream
-		TS_ASSERT_EQUALS(s->seek(Audio::Timestamp(time * 1000, 1, 100000)), false);
+		TS_ASSERT_EQUALS(s->seek(Audio::Timestamp(time, 1, 100000)), false);
 		TS_ASSERT_EQUALS(s->endOfData(), true);
 
 		// Try to seek exactly at the end of the stream
