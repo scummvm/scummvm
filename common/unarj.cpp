@@ -32,6 +32,8 @@
 #include "common/debug.h"
 #include "common/util.h"
 #include "common/unarj.h"
+#include "common/file.h"
+#include "common/hash-str.h"
 
 namespace Common {
 

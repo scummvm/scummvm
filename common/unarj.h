@@ -26,11 +26,10 @@
 #ifndef COMMON_UNARJ_H
 #define COMMON_UNARJ_H
 
-#include "common/file.h"
-#include "common/hash-str.h"
-#include "common/archive.h"
-
 namespace Common {
+
+class Archive;
+class String;
 
 /**
  * This factory method creates an Archive instance corresponding to the content

@@ -24,6 +24,7 @@
  */
 
 #include "drascula/drascula.h"
+#include "common/unarj.h"
 
 namespace Drascula {
 

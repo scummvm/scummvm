@@ -35,7 +35,6 @@
 #include "common/hash-str.h"
 #include "common/events.h"
 #include "common/keyboard.h"
-#include "common/unarj.h"
 #include "common/archive.h"
 
 #include "sound/mixer.h"
