@@ -1655,61 +1655,61 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	}
 	int size = _arj.size();
 
-	getIntFromLine(size, &roomNumber);
-	getIntFromLine(size, &roomMusic);
-	getStringFromLine(size, roomDisk);
-	getIntFromLine(size, &palLevel);
+	getIntFromLine(_arj, size, &roomNumber);
+	getIntFromLine(_arj, size, &roomMusic);
+	getStringFromLine(_arj, size, roomDisk);
+	getIntFromLine(_arj, size, &palLevel);
 
 	if (currentChapter == 2)
-		getIntFromLine(size, &martin);
+		getIntFromLine(_arj, size, &martin);
 
 	if (currentChapter == 2 && martin != 0) {
 		curWidth = martin;
-		getIntFromLine(size, &curHeight);
-		getIntFromLine(size, &feetHeight);
-		getIntFromLine(size, &stepX);
-		getIntFromLine(size, &stepY);
+		getIntFromLine(_arj, size, &curHeight);
+		getIntFromLine(_arj, size, &feetHeight);
+		getIntFromLine(_arj, size, &stepX);
+		getIntFromLine(_arj, size, &stepY);
 
-		getStringFromLine(size, pant1);
-		getStringFromLine(size, pant2);
-		getStringFromLine(size, pant3);
-		getStringFromLine(size, pant4);
+		getStringFromLine(_arj, size, pant1);
+		getStringFromLine(_arj, size, pant2);
+		getStringFromLine(_arj, size, pant3);
+		getStringFromLine(_arj, size, pant4);
 
 		strcpy(menuBackground, pant4);
 	}
 
-	getIntFromLine(size, &numRoomObjs);
+	getIntFromLine(_arj, size, &numRoomObjs);
 
 	for (l = 0; l < numRoomObjs; l++) {
-		getIntFromLine(size, &objectNum[l]);
-		getStringFromLine(size, objName[l]);
-		getIntFromLine(size, &x1[l]);
-		getIntFromLine(size, &y1[l]);
-		getIntFromLine(size, &x2[l]);
-		getIntFromLine(size, &y2[l]);
-		getIntFromLine(size, &roomObjX[l]);
-		getIntFromLine(size, &roomObjY[l]);
-		getIntFromLine(size, &trackObj[l]);
-		getIntFromLine(size, &visible[l]);
-		getIntFromLine(size, &isDoor[l]);
+		getIntFromLine(_arj, size, &objectNum[l]);
+		getStringFromLine(_arj, size, objName[l]);
+		getIntFromLine(_arj, size, &x1[l]);
+		getIntFromLine(_arj, size, &y1[l]);
+		getIntFromLine(_arj, size, &x2[l]);
+		getIntFromLine(_arj, size, &y2[l]);
+		getIntFromLine(_arj, size, &roomObjX[l]);
+		getIntFromLine(_arj, size, &roomObjY[l]);
+		getIntFromLine(_arj, size, &trackObj[l]);
+		getIntFromLine(_arj, size, &visible[l]);
+		getIntFromLine(_arj, size, &isDoor[l]);
 		if (isDoor[l] != 0) {
-			getStringFromLine(size, _targetSurface[l]);
-			getIntFromLine(size, &_destX[l]);
-			getIntFromLine(size, &_destY[l]);
-			getIntFromLine(size, &trackCharacter_alkeva[l]);
-			getIntFromLine(size, &roomExits[l]);
+			getStringFromLine(_arj, size, _targetSurface[l]);
+			getIntFromLine(_arj, size, &_destX[l]);
+			getIntFromLine(_arj, size, &_destY[l]);
+			getIntFromLine(_arj, size, &trackCharacter_alkeva[l]);
+			getIntFromLine(_arj, size, &roomExits[l]);
 			updateDoor(l);
 		}
 	}
 
-	getIntFromLine(size, &floorX1);
-	getIntFromLine(size, &floorY1);
-	getIntFromLine(size, &floorX2);
-	getIntFromLine(size, &floorY2);
+	getIntFromLine(_arj, size, &floorX1);
+	getIntFromLine(_arj, size, &floorY1);
+	getIntFromLine(_arj, size, &floorX2);
+	getIntFromLine(_arj, size, &floorY2);
 
 	if (currentChapter != 2) {
-		getIntFromLine(size, &upperLimit);
-		getIntFromLine(size, &lowerLimit);
+		getIntFromLine(_arj, size, &upperLimit);
+		getIntFromLine(_arj, size, &lowerLimit);
 	}
 	_arj.close();
 

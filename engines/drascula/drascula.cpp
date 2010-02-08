@@ -604,15 +604,15 @@ bool DrasculaEngine::runCurrentChapter() {
 	}
 }
 
-char *DrasculaEngine::getLine(char *buf, int len) {
+char *DrasculaEngine::getLine(Common::SeekableReadStream &stream, char *buf, int len) {
 	byte c;
 	char *b;
 
 	for (;;) {
 		b = buf;
 		while (true) {
-			c = ~_arj.readByte();
-			if (_arj.eos()) break;
+			c = ~stream.readByte();
+			if (stream.eos()) break;
 
 			if (c == '\r')
 				continue;
@@ -621,7 +621,7 @@ char *DrasculaEngine::getLine(char *buf, int len) {
 			*b++ = c;
 		}
 		*b = '\0';
-		if (_arj.eos() && b == buf)
+		if (stream.eos() && b == buf)
 			return NULL;
 		if (b != buf)
 			break;
@@ -629,13 +629,15 @@ char *DrasculaEngine::getLine(char *buf, int len) {
 	return buf;
 }
 
-void DrasculaEngine::getIntFromLine(char *buf, int len, int* result) {
-	getLine(buf, len);
+void DrasculaEngine::getIntFromLine(Common::SeekableReadStream &stream, int len, int* result) {
+	char buf[256];
+	getLine(stream, buf, len);
 	sscanf(buf, "%d", result);
 }
 
-void DrasculaEngine::getStringFromLine(char *buf, int len, char* result) {
-	getLine(buf, len);
+void DrasculaEngine::getStringFromLine(Common::SeekableReadStream &stream, int len, char* result) {
+	char buf[256];
+	getLine(stream, buf, len);
 	sscanf(buf, "%s", result);
 }
 

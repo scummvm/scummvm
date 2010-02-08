@@ -577,9 +577,9 @@ public:
 	void MusicFadeout();
 	void playFile(const char *fname);
 
-	char *getLine(char *buf, int len);
-	void getIntFromLine(char *buf, int len, int* result);
-	void getStringFromLine(char *buf, int len, char* result);
+	char *getLine(Common::SeekableReadStream &stream, char *buf, int len);
+	void getIntFromLine(Common::SeekableReadStream &stream, int len, int* result);
+	void getStringFromLine(Common::SeekableReadStream &stream, int len, char* result);
 
 	void grr();
 	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3, bool copyRectangle = false);
