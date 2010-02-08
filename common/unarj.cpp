@@ -752,67 +752,84 @@ void ArjDecoder::decode_f(int32 origsize) {
 		_outstream->write(_ntext, r);
 }
 
+#pragma mark ArjArchive implementation
 
-#pragma mark ArjFile implementation
+ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
+	Common::File arjFile;
 
-ArjFile::ArjFile() {
-	_fallBack = false;
+	if (!arjFile.open(_arjFilename)) {
+		warning("ArjArchive::ArjArchive(): Could not find the archive file");
+		return;
+	}
+	
+	int32 firstHeaderOffset = findHeader(arjFile);
+
+	if (firstHeaderOffset < 0) {
+		warning("ArjArchive::ArjArchive(): Could not find a valid header");
+		return;
+	}
+
+	arjFile.seek(firstHeaderOffset, SEEK_SET);
+	if (readHeader(arjFile) == NULL)
+		return;
+
+	ArjHeader *header;
+	while ((header = readHeader(arjFile)) != NULL) {
+		_headers.push_back(header);
+
+		arjFile.seek(header->compSize, SEEK_CUR);
+
+		_fileMap[header->filename] = _headers.size() - 1;
+	}
+
+	debug(0, "ArjArchive::ArjArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
-ArjFile::~ArjFile() {
+ArjArchive::~ArjArchive() {
 	for (uint i = 0; i < _headers.size(); i++)
 		delete _headers[i];
 }
 
-void ArjFile::registerArchive(const String &filename) {
-	int32 first_hdr_pos;
-	ArjHeader *header;
-	File archiveFile;
 
-	if (!archiveFile.open(filename))
-		return;
-
-	first_hdr_pos = findHeader(archiveFile);
-
-	if (first_hdr_pos < 0) {
-		warning("ArjFile::registerArchive(): Could not find a valid header");
-		return;
-	}
-
-	archiveFile.seek(first_hdr_pos, SEEK_SET);
-	if (readHeader(archiveFile) == NULL)
-		return;
-
-	while ((header = readHeader(archiveFile)) != NULL) {
-		_headers.push_back(header);
-
-		archiveFile.seek(header->compSize, SEEK_CUR);
-
-		_fileMap[header->filename] = _headers.size() - 1;
-		_archMap[header->filename] = filename;
-	}
-
-	debug(0, "ArjFile::registerArchive(%s): Located %d files", filename.c_str(), _headers.size());
+bool ArjArchive::hasFile(const String &name) {
+	return _fileMap.contains(name);
 }
 
-SeekableReadStream *ArjFile::open(const Common::String &filename) {
+int ArjArchive::listMembers(ArchiveMemberList &list) {
+	int matches = 0;
 
-	if (_fallBack && SearchMan.hasFile(filename)) {
-		return SearchMan.createReadStreamForMember(filename);
+	Common::Array<ArjHeader *>::iterator it = _headers.begin();
+	for ( ; it != _headers.end(); ++it) {
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember((*it)->filename, this)));
+		matches++;
 	}
 
-	if (!_fileMap.contains(filename))
-		return 0;
+	return matches;
+}
 
-	ArjHeader *hdr = _headers[_fileMap[filename]];
+ArchiveMemberPtr ArjArchive::getMember(const String &name) {
+	if (!hasFile(name))
+		return ArchiveMemberPtr();
+
+	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
+}
+
+SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) const {
+	if (!_fileMap.contains(name)) {
+		return 0;
+	}
+
+	ArjHeader *hdr = _headers[_fileMap[name]];
+
+	Common::File archiveFile;
+	archiveFile.open(_arjFilename);
+	archiveFile.seek(hdr->pos, SEEK_SET);
+
 
 	// TODO: It would be good if ArjFile could decompress files in a streaming
 	// mode, so it would not need to pre-allocate the entire output.
 	byte *uncompressedData = (byte *)malloc(hdr->origSize);
-
-	File archiveFile;
-	archiveFile.open(_archMap[filename]);
-	archiveFile.seek(hdr->pos, SEEK_SET);
+	assert(uncompressedData);
 
 	if (hdr->method == 0) { // store
 		int32 len = archiveFile.read(uncompressedData, hdr->origSize);
@@ -824,8 +841,8 @@ SeekableReadStream *ArjFile::open(const Common::String &filename) {
 		// If reading from archiveFile directly is too slow to be usable,
 		// maybe the filesystem code should instead wrap its files
 		// in a BufferedReadStream.
-		decoder->_compressed = new BufferedReadStream(&archiveFile, 4096, false);
-		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
+		decoder->_compressed = new Common::BufferedReadStream(&archiveFile, 4096, false);
+		decoder->_outstream = new Common::MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
 			decoder->decode(hdr->origSize);
@@ -835,7 +852,28 @@ SeekableReadStream *ArjFile::open(const Common::String &filename) {
 		delete decoder;
 	}
 
-	return new MemoryReadStream(uncompressedData, hdr->origSize, true);
+	return new Common::MemoryReadStream(uncompressedData, hdr->origSize, true);	
+}
+
+#pragma mark ArjFile implementation
+
+ArjFile::ArjFile() {
+	_fallBack = false;
+}
+
+ArjFile::~ArjFile() {
+}
+
+void ArjFile::registerArchive(const String &filename) {
+	add(filename, new ArjArchive(filename));
+}
+
+SeekableReadStream *ArjFile::open(const Common::String &filename) {
+	if (_fallBack && SearchMan.hasFile(filename)) {
+		return SearchMan.createReadStreamForMember(filename);
+	}
+
+	return createReadStreamForMember(filename);
 }
 
 

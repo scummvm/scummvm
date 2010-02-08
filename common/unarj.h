@@ -28,6 +28,7 @@
 
 #include "common/file.h"
 #include "common/hash-str.h"
+#include "common/archive.h"
 
 namespace Common {
 
@@ -35,9 +36,27 @@ struct ArjHeader;
 
 typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
 
+class ArjArchive : public Common::Archive {
+
+	Common::Array<ArjHeader *> _headers;
+	ArjFilesMap _fileMap;
+
+	Common::String _arjFilename;
+
+public:
+	ArjArchive(const String &name);
+	virtual ~ArjArchive();
+
+	// Common::Archive implementation
+	virtual bool hasFile(const String &name);
+	virtual int listMembers(ArchiveMemberList &list);
+	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+};
+
 // TODO: Get rid of this class, by implementing an ArjArchive subclass of Common::Archive.
 // Then ArjFile can be substituted by a SearchSet full of ArjArchives plus SearchMan.
-class ArjFile : public NonCopyable {
+class ArjFile : public SearchSet {
 public:
 	ArjFile();
 	~ArjFile();
@@ -51,9 +70,6 @@ public:
 private:
 	bool _fallBack;
 
-	Array<ArjHeader *> _headers;
-	ArjFilesMap _fileMap;
-	StringMap _archMap;
 };
 
 } // End of namespace Common
