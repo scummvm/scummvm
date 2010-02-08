@@ -541,8 +541,8 @@ public:
 	void mixVideo(byte *OldScreen, byte *NewScreen);
 	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE);
 	void decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length);
-	byte *TryInMem();
-	int playFrameSSN();
+	byte *TryInMem(Common::SeekableReadStream &stream);
+	int playFrameSSN(Common::SeekableReadStream &stream);
 
 	bool _useMemForArj;
 	byte CHUNK;
@@ -553,7 +553,7 @@ public:
 
 	int flag_tv;
 
-	void showFrame(bool firstFrame = false);
+	void showFrame(Common::SeekableReadStream &stream, bool firstFrame = false);
 	int getTime();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	void quadrant_1();

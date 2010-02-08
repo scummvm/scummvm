@@ -25,6 +25,8 @@
 
 #include "drascula/drascula.h"
 #include "graphics/surface.h"
+#include "common/stream.h"
+
 
 namespace Drascula {
 
@@ -115,15 +117,15 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	setRGB((byte *)cPal, colorCount);
 }
 
-void DrasculaEngine::showFrame(bool firstFrame) {
-	int dataSize = _arj.readSint32LE();
+void DrasculaEngine::showFrame(Common::SeekableReadStream &stream, bool firstFrame) {
+	int dataSize = stream.readSint32LE();
 	byte *pcxData = (byte *)malloc(dataSize);
-	_arj.read(pcxData, dataSize);
+	stream.read(pcxData, dataSize);
 
 	for (int i = 0; i < 256; i++) {
-		cPal[i * 3 + 0] = _arj.readByte();
-		cPal[i * 3 + 1] = _arj.readByte();
-		cPal[i * 3 + 2] = _arj.readByte();
+		cPal[i * 3 + 0] = stream.readByte();
+		cPal[i * 3 + 1] = stream.readByte();
+		cPal[i * 3 + 2] = stream.readByte();
 	}
 
 	byte *prevFrame = (byte *)malloc(64000);
@@ -476,10 +478,13 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	FrameSSN = 0;
 	_useMemForArj = false;
 	_arj.open(filefli);
-	mSession = TryInMem();
+	// TODO: mSession is treated like a stream from playFrameSSN, so turn it
+	// into a stream, and pass it to playFrameSSN. Get rid of _useMemForArj
+	// as well.
+	mSession = TryInMem(_arj);
 	LastFrame = _system->getMillis();
 
-	while (playFrameSSN() && (!term_int)) {
+	while (playFrameSSN(_arj) && (!term_int)) {
 		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
@@ -490,13 +495,13 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	_arj.close();
 }
 
-int DrasculaEngine::playFrameSSN() {
+int DrasculaEngine::playFrameSSN(Common::SeekableReadStream &stream) {
 	int Exit = 0;
 	uint32 length;
 	byte *BufferSSN;
 
 	if (!_useMemForArj)
-		CHUNK = _arj.readByte();
+		CHUNK = stream.readByte();
 	else {
 		memcpy(&CHUNK, mSession, 1);
 		mSession += 1;
@@ -506,9 +511,9 @@ int DrasculaEngine::playFrameSSN() {
 	case kFrameSetPal:
 		if (!_useMemForArj) {
 			for (int i = 0; i < 256; i++) {
-				dacSSN[i * 3 + 0] = _arj.readByte();
-				dacSSN[i * 3 + 1] = _arj.readByte();
-				dacSSN[i * 3 + 2] = _arj.readByte();
+				dacSSN[i * 3 + 0] = stream.readByte();
+				dacSSN[i * 3 + 1] = stream.readByte();
+				dacSSN[i * 3 + 2] = stream.readByte();
 			}
 		} else {
 			memcpy(dacSSN, mSession, 768);
@@ -521,8 +526,8 @@ int DrasculaEngine::playFrameSSN() {
 		break;
 	case kFrameInit:
 		if (!_useMemForArj) {
-			CMP = _arj.readByte();
-			length = _arj.readUint32LE();
+			CMP = stream.readByte();
+			length = stream.readUint32LE();
 		} else {
 			memcpy(&CMP, mSession, 1);
 			mSession += 1;
@@ -532,7 +537,7 @@ int DrasculaEngine::playFrameSSN() {
 		if (CMP == kFrameCmpRle) {
 			BufferSSN = (byte *)malloc(length);
 			if (!_useMemForArj) {
-				_arj.read(BufferSSN, length);
+				stream.read(BufferSSN, length);
 			} else {
 				memcpy(BufferSSN, mSession, length);
 				mSession += length;
@@ -554,7 +559,7 @@ int DrasculaEngine::playFrameSSN() {
 			if (CMP == kFrameCmpOff) {
 				BufferSSN = (byte *)malloc(length);
 				if (!_useMemForArj) {
-					_arj.read(BufferSSN, length);
+					stream.read(BufferSSN, length);
 				} else {
 					memcpy(BufferSSN, mSession, length);
 					mSession += length;
@@ -585,16 +590,16 @@ int DrasculaEngine::playFrameSSN() {
 	return (!Exit);
 }
 
-byte *DrasculaEngine::TryInMem() {
+byte *DrasculaEngine::TryInMem(Common::SeekableReadStream &stream) {
 	int length;
 
-	_arj.seek(0, SEEK_END);
-	length = _arj.pos();
-	_arj.seek(0, SEEK_SET);
+	stream.seek(0, SEEK_END);
+	length = stream.pos();
+	stream.seek(0, SEEK_SET);
 	memPtr = (byte *)malloc(length);
 	if (memPtr == NULL)
 		return NULL;
-	_arj.read(memPtr, length);
+	stream.read(memPtr, length);
 	_useMemForArj = true;
 
 	return memPtr;
@@ -662,10 +667,10 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	}
 
 	NFrames = _arj.readSint32LE();
-	showFrame(true);
+	showFrame(_arj, true);
 	_system->delayMillis(1000 / FPS);
 	while (cnt < NFrames) {
-		showFrame();
+		showFrame(_arj);
 		_system->delayMillis(1000 / FPS);
 		cnt++;
 		byte key = getScan();
