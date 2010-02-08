@@ -160,35 +160,47 @@ private:
 #define TBIT		 5
 
 //
-// Source for InitCRC, GetCRC: crc32.c
+// Source for CRC32::init, CRC32::checksum : crc32.c
 //
+class CRC32 {
+	static uint32 	_table[256];
+	static bool _initialized;
 
-static uint32 CRCtable[256];
+private:
+	static void init() {
+		const uint32 poly = 0xEDB88320;
+		int i, j;
+		uint32 r;
 
-static void	InitCRC(void) {
-	const uint32 poly = 0xEDB88320;
-	int i, j;
-	uint32 r;
+		for (i = 0; i < 256; i++) {
+			r = i;
+			for (j = 0; j < 8; j++)
+				if (r & 1)
+					r = (r >> 1) ^ poly;
+				else
+					r >>= 1;
+			_table[i] = r;
+		}
 
-	for (i = 0; i < 256; i++) {
-		r = i;
-		for (j = 0; j < 8; j++)
-			if (r & 1)
-				r = (r >> 1) ^ poly;
-			else
-				r >>= 1;
-		CRCtable[i] = r;
+		_initialized = true;
 	}
-}
 
-static uint32 GetCRC(byte *data, int len) {
-	uint32 CRC = 0xFFFFFFFF;
-	int i;
-	for (i = 0; i < len; i++)
-		CRC = (CRC >> 8) ^ CRCtable[(CRC ^ data[i]) & 0xFF];
-	return CRC ^ 0xFFFFFFFF;
-}
+public:
+	static uint32 checksum(byte *data, int len) {
+		if (!_initialized) {
+			init();
+		}
 
+		uint32 CRC = 0xFFFFFFFF;
+		int i;
+		for (i = 0; i < len; i++)
+			CRC = (CRC >> 8) ^ _table[(CRC ^ data[i]) & 0xFF];
+		return CRC ^ 0xFFFFFFFF;
+	}
+};
+
+bool CRC32::_initialized = false;
+uint32 CRC32::_table[256];
 
 
 //
@@ -223,7 +235,7 @@ int32 findHeader(SeekableReadStream &stream) {
 			return -1;
 		if ((basic_hdr_size = stream.readUint16LE()) <= HEADERSIZE_MAX) {
 			stream.read(header, basic_hdr_size);
-			crc = GetCRC(header, basic_hdr_size);
+			crc = CRC32::checksum(header, basic_hdr_size);
 			if (crc == stream.readUint32LE()) {
 				stream.seek(tmp_pos, SEEK_SET);
 				return tmp_pos;
@@ -261,7 +273,7 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 	MemoryReadStream readS(headData, rSize);
 
 	header.headerCrc = stream.readUint32LE();
-	if (GetCRC(headData, header.headerSize) != header.headerCrc) {
+	if (CRC32::checksum(headData, header.headerSize) != header.headerCrc) {
 		warning("ArjFile::readHeader(): Bad header CRC");
 		return NULL;
 	}
@@ -744,7 +756,6 @@ void ArjDecoder::decode_f(int32 origsize) {
 #pragma mark ArjFile implementation
 
 ArjFile::ArjFile() {
-	InitCRC();
 	_fallBack = false;
 }
 
