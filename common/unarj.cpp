@@ -320,12 +320,6 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 
 
 
-
-
-
-
-
-
 //
 // Source for init_getbits: arj_file.c (decode_start_stub)
 //

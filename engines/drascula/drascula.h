@@ -252,10 +252,10 @@ struct CharInfo {
 	byte charType;	// 0 - letters, 1 - signs, 2 - accented
 };
 
-class ArjFile : public Common::SearchSet {
+class ArchiveMan : public Common::SearchSet {
 public:
-	ArjFile();
-	~ArjFile();
+	ArchiveMan();
+	~ArchiveMan();
 
 	void enableFallback(bool val) { _fallBack = val; }
 
@@ -382,7 +382,7 @@ public:
 
 	byte cPal[768];
 
-	ArjFile _arj;
+	ArchiveMan _archives;
 
 	int actorFrames[8];
 

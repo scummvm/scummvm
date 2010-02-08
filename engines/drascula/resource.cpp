@@ -27,20 +27,18 @@
 
 namespace Drascula {
 
-#pragma mark ArjFile implementation
-
-ArjFile::ArjFile() {
+ArchiveMan::ArchiveMan() {
 	_fallBack = false;
 }
 
-ArjFile::~ArjFile() {
+ArchiveMan::~ArchiveMan() {
 }
 
-void ArjFile::registerArchive(const Common::String &filename) {
+void ArchiveMan::registerArchive(const Common::String &filename) {
 	add(filename, new Common::ArjArchive(filename));
 }
 
-Common::SeekableReadStream *ArjFile::open(const Common::String &filename) {
+Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
 	if (_fallBack && SearchMan.hasFile(filename)) {
 		return SearchMan.createReadStreamForMember(filename);
 	}

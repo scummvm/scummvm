@@ -50,10 +50,10 @@ void DrasculaEngine::loadArchives() {
 
 	if (getFeatures() & GF_PACKED) {
 		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
-			_arj.registerArchive(ag->fileName);
+			_archives.registerArchive(ag->fileName);
 	}
 
-	_arj.enableFallback(true);
+	_archives.enableFallback(true);
 }
 
 }

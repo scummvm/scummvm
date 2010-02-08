@@ -133,7 +133,7 @@ void DrasculaEngine::cleanupString(char *string) {
 void DrasculaEngine::converse(int index) {
 	char fileName[20];
 	sprintf(fileName, "op_%d.cal", index);
-	Common::SeekableReadStream *stream = _arj.open(fileName);
+	Common::SeekableReadStream *stream = _archives.open(fileName);
 	if (!stream)
 		error("missing data file %s", fileName);
 

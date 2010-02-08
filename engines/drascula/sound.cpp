@@ -163,7 +163,7 @@ void DrasculaEngine::MusicFadeout() {
 }
 
 void DrasculaEngine::playFile(const char *fname) {
-	Common::SeekableReadStream *stream = _arj.open(fname);
+	Common::SeekableReadStream *stream = _archives.open(fname);
 	if (stream) {
 		int soundSize = stream->size();
 		byte *soundData = (byte *)malloc(soundSize);

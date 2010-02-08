@@ -93,7 +93,7 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	uint dataSize = 0;
 	byte *pcxData;
 
-	Common::SeekableReadStream *stream = _arj.open(NamePcc);
+	Common::SeekableReadStream *stream = _archives.open(NamePcc);
 	if (!stream)
 		error("missing game data %s %c", NamePcc, 7);
 
@@ -388,7 +388,7 @@ void DrasculaEngine::screenSaver() {
 	ghost = (byte *)malloc(65536);
 
 	// carga_ghost();
-	Common::SeekableReadStream *stream = _arj.open("ghost.drv");
+	Common::SeekableReadStream *stream = _archives.open("ghost.drv");
 	if (!stream)
 		error("Cannot open file ghost.drv");
 
@@ -477,7 +477,7 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	globalSpeed = 1000 / vel;
 	FrameSSN = 0;
 	_useMemForArj = false;
-	Common::SeekableReadStream *stream = _arj.open(filefli);
+	Common::SeekableReadStream *stream = _archives.open(filefli);
 	// TODO: mSession is treated like a stream from playFrameSSN, so turn it
 	// into a stream, and pass it to playFrameSSN. Get rid of _useMemForArj
 	// as well.
@@ -660,7 +660,7 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	int NFrames = 1;
 	int cnt = 2;
 
-	Common::SeekableReadStream *stream = _arj.open(animationFile);
+	Common::SeekableReadStream *stream = _archives.open(animationFile);
 
 	if (!stream) {
 		error("Animation file %s not found", animationFile);

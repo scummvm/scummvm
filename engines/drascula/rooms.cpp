@@ -1649,7 +1649,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	strcpy(currentData, fileName);
 
-	Common::SeekableReadStream *stream = _arj.open(fileName);
+	Common::SeekableReadStream *stream = _archives.open(fileName);
 	if (!stream) {
 		error("missing data file %s", fileName);
 	}
