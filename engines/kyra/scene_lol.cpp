@@ -1959,10 +1959,12 @@ void LoLEngine::drawSceneShapes() {
 		if (!(w & 8))
 			continue;
 
-		uint16 v = 20 * (s - _dscUnk2[s]);
+		uint16 v = 20 * (s - (s < 23 ? _dscUnk2[s] : 0));
+		if (v > 80)
+			v = 80;
 
 		scaleLevelShapesDim(t, dimY1, dimY2, 13);
-		drawDoor(_doorShapes[_dscDoorShpIndex[s]], 0, t, 10, 0, -v, 2);
+		drawDoor(_doorShapes[(s < 23 ? _dscDoorShpIndex[s] : 0)], 0, t, 10, 0, -v, 2);
 		setLevelShapesDim(t, dimY1, dimY2, 13);
 	}
 }
