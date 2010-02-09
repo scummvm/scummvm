@@ -714,13 +714,11 @@ void ArjDecoder::decode_f(int32 origsize) {
 
 #pragma mark ArjArchive implementation
 
-typedef HashMap<String, int, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjFilesMap;
+typedef HashMap<String, ArjHeader*, IgnoreCase_Hash, IgnoreCase_EqualTo> ArjHeadersMap;
 
 class ArjArchive : public Common::Archive {
 
-	Common::Array<ArjHeader *> _headers;
-	ArjFilesMap _fileMap;
-
+	ArjHeadersMap _headers;
 	Common::String _arjFilename;
 
 public:
@@ -755,32 +753,31 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 
 	ArjHeader *header;
 	while ((header = readHeader(arjFile)) != NULL) {
-		_headers.push_back(header);
-
+		_headers[header->filename] = header;
 		arjFile.seek(header->compSize, SEEK_CUR);
-
-		_fileMap[header->filename] = _headers.size() - 1;
 	}
 
 	debug(0, "ArjArchive::ArjArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
 ArjArchive::~ArjArchive() {
-	for (uint i = 0; i < _headers.size(); i++)
-		delete _headers[i];
+	ArjHeadersMap::iterator it = _headers.begin();
+	for ( ; it != _headers.end(); ++it) {
+		delete it->_value;
+	}
 }
 
 
 bool ArjArchive::hasFile(const String &name) {
-	return _fileMap.contains(name);
+	return _headers.contains(name);
 }
 
 int ArjArchive::listMembers(ArchiveMemberList &list) {
 	int matches = 0;
 
-	Common::Array<ArjHeader *>::iterator it = _headers.begin();
+	ArjHeadersMap::iterator it = _headers.begin();
 	for ( ; it != _headers.end(); ++it) {
-		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember((*it)->filename, this)));
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(it->_value->filename, this)));
 		matches++;
 	}
 
@@ -795,11 +792,11 @@ ArchiveMemberPtr ArjArchive::getMember(const String &name) {
 }
 
 SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) const {
-	if (!_fileMap.contains(name)) {
+	if (!_headers.contains(name)) {
 		return 0;
 	}
 
-	ArjHeader *hdr = _headers[_fileMap[name]];
+	ArjHeader *hdr = _headers[name];
 
 	Common::File archiveFile;
 	archiveFile.open(_arjFilename);
