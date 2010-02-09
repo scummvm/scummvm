@@ -83,9 +83,8 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 
 	delete fileHandle;
 
-	if (stream == NULL) {
+	if (stream == NULL)
 		debug(1, "SeekableAudioStream::openStreamFile: Could not open compressed AudioFile %s", basename.c_str());
-	}
 
 	return stream;
 }
@@ -161,10 +160,10 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 #pragma mark -
 
 SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
-	                                         uint loops,
-	                                         const Timestamp loopStart,
-	                                         const Timestamp loopEnd,
-	                                         DisposeAfterUse::Flag disposeAfterUse)
+                                             uint loops,
+                                             const Timestamp loopStart,
+                                             const Timestamp loopEnd,
+                                             DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops),
       _pos(0, getRate() * (isStereo() ? 2 : 1)),
       _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
@@ -358,7 +357,7 @@ int QueuingAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 		AudioStream *stream = _queue.front()._stream;
 		samplesDecoded += stream->readBuffer(buffer + samplesDecoded, numSamples - samplesDecoded);
 
-		if (stream->endOfData()	) {
+		if (stream->endOfData()) {
 			StreamHolder tmp = _queue.pop();
 			if (tmp._disposeAfterUse == DisposeAfterUse::YES)
 				delete stream;
