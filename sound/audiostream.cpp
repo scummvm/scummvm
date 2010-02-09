@@ -180,11 +180,14 @@ SubLoopingAudioStream::~SubLoopingAudioStream() {
 }
 
 int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
+	if (_done)
+		return 0;
+
 	int framesLeft = MIN(_loopEnd.frameDiff(_pos), numSamples);
 	int framesRead = _parent->readBuffer(buffer, framesLeft);
 	_pos = _pos.addFrames(framesRead);
 
-	if (framesLeft < numSamples || framesRead < framesLeft) {
+	if (_pos == _loopEnd) {
 		if (_loops != 0) {
 			--_loops;
 			if (!_loops) {
@@ -200,13 +203,10 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		_pos = _loopStart;
 		framesLeft = numSamples - framesLeft;
-		framesRead += _parent->readBuffer(buffer + framesRead, framesLeft);
-
-		if (_parent->endOfStream())
-			_done = true;
+		return framesRead + readBuffer(buffer + framesRead, framesLeft);
+	} else {
+		return framesRead;
 	}
-
-	return framesRead;
 }
 
 #pragma mark -
