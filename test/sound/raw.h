@@ -8,9 +8,9 @@ class RawStreamTestSuite : public CxxTest::TestSuite
 {
 private:
 	template<typename T>
-	void readBufferTestTemplate(const int sampleRate, const int time, const bool le, const bool isStereo) {
+	void readBufferTestTemplate(const int sampleRate, const int time, const bool le, const bool isStereo, const bool makePartition = false) {
 		int16 *sine;
-		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine, le, isStereo);
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine, le, isStereo, makePartition);
 
 		const int totalSamples = sampleRate * time * (isStereo ? 2 : 1);
 		int16 *buffer = new int16[totalSamples];
@@ -48,8 +48,16 @@ public:
 		readBufferTestTemplate<uint16>(11025, 2, false, false);
 	}
 
+	void test_read_buffer_16_bit_unsigned_be_stereo() {
+		readBufferTestTemplate<uint16>(11025, 2, false, true);
+	}
+
 	void test_read_buffer_16_bit_signed_le_mono() {
 		readBufferTestTemplate<int16>(11025, 2, true, false);
+	}
+
+	void test_read_buffer_16_bit_signed_le_stereo() {
+		readBufferTestTemplate<int16>(11025, 2, true, true);
 	}
 
 	void test_read_buffer_16_bit_unsigned_le_mono() {
@@ -60,12 +68,57 @@ public:
 		readBufferTestTemplate<uint16>(11025, 2, true, true);
 	}
 
-	void test_partial_read() {
+	void test_read_buffer_8_bit_signed_mono_parted() {
+		readBufferTestTemplate<int8>(11025, 2, false, false, true);
+	}
+
+	void test_read_buffer_8_bit_signed_stereo_parted() {
+		readBufferTestTemplate<int8>(11025, 2, false, true, true);
+	}
+
+	void test_read_buffer_8_bit_unsigned_mono_parted() {
+		readBufferTestTemplate<uint8>(11025, 2, false, false, true);
+	}
+
+	void test_read_buffer_16_bit_signed_be_mono_parted() {
+		readBufferTestTemplate<int16>(11025, 2, false, false, true);
+	}
+
+	void test_read_buffer_16_bit_signed_be_stereo_parted() {
+		readBufferTestTemplate<int16>(11025, 2, false, true, true);
+	}
+
+	void test_read_buffer_16_bit_unsigned_be_mono_parted() {
+		readBufferTestTemplate<uint16>(11025, 2, false, false, true);
+	}
+
+	void test_read_buffer_16_bit_unsigned_be_stereo_parted() {
+		readBufferTestTemplate<uint16>(11025, 2, false, true, true);
+	}
+
+	void test_read_buffer_16_bit_signed_le_mono_parted() {
+		readBufferTestTemplate<int16>(11025, 2, true, false, true);
+	}
+
+	void test_read_buffer_16_bit_signed_le_stereo_parted() {
+		readBufferTestTemplate<int16>(11025, 2, true, true, true);
+	}
+
+	void test_read_buffer_16_bit_unsigned_le_mono_parted() {
+		readBufferTestTemplate<uint16>(11025, 2, true, false, true);
+	}
+
+	void test_read_buffer_16_bit_unsigned_le_stereo_parted() {
+		readBufferTestTemplate<uint16>(11025, 2, true, true, true);
+	}
+
+private:
+	void partialReadTest(const bool makePartition) {
 		const int sampleRate = 11025;
 		const int time = 4;
 
 		int16 *sine;
-		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine, false, false);
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, &sine, false, false, makePartition);
 		int16 *buffer = new int16[sampleRate * time];
 
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate), sampleRate);
@@ -84,8 +137,17 @@ public:
 		delete[] buffer;
 		delete s;
 	}
+public:
+	void test_partial_read() {
+		partialReadTest(false);
+	}
 
-	void test_read_after_end() {
+	void test_partial_read_parted() {
+		partialReadTest(true);
+	}
+
+private:
+	void readAfterEndTest(const bool makePartition) {
 		const int sampleRate = 11025;
 		const int time = 1;
 		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, 0, false, false);
@@ -101,10 +163,20 @@ public:
 		delete s;
 	}
 
-	void test_rewind() {
+public:
+	void test_read_after_end() {
+		readAfterEndTest(false);
+	}
+
+	void test_read_after_end_parted() {
+		readAfterEndTest(true);
+	}
+
+private:
+	void rewindTest(const bool makePartition) {
 		const int sampleRate = 11025;
 		const int time = 2;
-		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, 0, false, false);
+		Audio::SeekableAudioStream *s = createSineStream<int8>(sampleRate, time, 0, false, false, makePartition);
 		int16 *buffer = new int16[sampleRate * time];
 
 		TS_ASSERT_EQUALS(s->readBuffer(buffer, sampleRate * time), sampleRate * time);
@@ -119,8 +191,17 @@ public:
 		delete[] buffer;
 		delete s;
 	}
+public:
+	void test_rewind() {
+		rewindTest(false);
+	}
 
-	void test_length() {
+	void test_rewind_parted() {
+		rewindTest(true);
+	}
+
+private:
+	void lengthTest(const bool makePartition) {
 		int sampleRate = 0;
 		const int time = 4;
 
@@ -128,57 +209,66 @@ public:
 
 		// 11025 Hz tests
 		sampleRate = 11025;
-		s = createSineStream<int8>(sampleRate, time, 0, false, false);
+		s = createSineStream<int8>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
-		s = createSineStream<uint16>(sampleRate, time, 0, false, false);
+		s = createSineStream<uint16>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
 		// 48000 Hz tests
 		sampleRate = 48000;
-		s = createSineStream<int8>(sampleRate, time, 0, false, false);
+		s = createSineStream<int8>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
-		s = createSineStream<uint16>(sampleRate, time, 0, true, false);
+		s = createSineStream<uint16>(sampleRate, time, 0, true, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
 		// 11840 Hz tests
 		sampleRate = 11840;
-		s = createSineStream<int8>(sampleRate, time, 0, false, false);
+		s = createSineStream<int8>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
-		s = createSineStream<uint16>(sampleRate, time, 0, false, false);
+		s = createSineStream<uint16>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
 		// 11111 Hz tests
 		sampleRate = 11111;
-		s = createSineStream<int8>(sampleRate, time, 0, false, false);
+		s = createSineStream<int8>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
-		s = createSineStream<uint16>(sampleRate, time, 0, false, false);
+		s = createSineStream<uint16>(sampleRate, time, 0, false, false, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
 		// 22050 Hz stereo test
 		sampleRate = 22050;
-		s = createSineStream<int8>(sampleRate, time, 0, false, true);
+		s = createSineStream<int8>(sampleRate, time, 0, false, true, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 
-		s = createSineStream<uint16>(sampleRate, time, 0, true, true);
+		s = createSineStream<uint16>(sampleRate, time, 0, true, true, makePartition);
 		TS_ASSERT_EQUALS(s->getLength().totalNumberOfFrames(), sampleRate * time);
 		delete s;
 	}
 
+public:
+	void test_length() {
+		lengthTest(false);
+	}
+
+	void test_length_parted() {
+		lengthTest(true);
+	}
+
 private:
-	void seekTest(const int sampleRate, const int time, const bool isStereo) {
+	void seekTest(const int sampleRate, const int time, const bool isStereo, const bool makePartition) {
 		const int totalFrames = sampleRate * time * (isStereo ? 2 : 1);
 		int readData = 0, offset = 0;
 
@@ -186,7 +276,7 @@ private:
 		Audio::SeekableAudioStream *s = 0;
 		int16 *sine = 0;
 
-		s = createSineStream<int8>(sampleRate, time, &sine, false, isStereo);
+		s = createSineStream<int8>(sampleRate, time, &sine, false, isStereo, makePartition);
 
 		// Seek to 500ms
 		const Audio::Timestamp a(0, 1, 2);
@@ -251,10 +341,18 @@ private:
 
 public:
 	void test_seek_mono() {
-		seekTest(11025, 2, false);
+		seekTest(11025, 2, false, false);
 	}
 
 	void test_seek_stereo() {
-		seekTest(11025, 2, true);
+		seekTest(11025, 2, true, false);
+	}
+
+	void test_seek_mono_parted() {
+		seekTest(11025, 2, false, true);
+	}
+
+	void test_seek_stereo_parted() {
+		seekTest(11025, 2, true, true);
 	}
 };
