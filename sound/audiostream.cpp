@@ -373,9 +373,22 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
 	// When the Stream is a stereo stream, we have to assure
 	// that the sample position is an even number.
 	if (isStereo && (result.totalNumberOfFrames() & 1))
-		return result.addFrames(-1); // We cut off one sample here.
-	else
-		return result;
+		result = result.addFrames(-1); // We cut off one sample here.
+
+	// Since Timestamp allows sub-frame-precision it might lead to odd behaviors
+	// when we would just return result.
+	//
+	// An example is when converting the timestamp 500ms to a 11025 Hz based
+	// stream. It would have an internal frame counter of 5512.5. Now when
+	// doing calculations at frame precision, this might lead to unexpected 
+	// results: The frame difference between a timestamp 1000ms and the above
+	// mentioned timestamp (both with 11025 as framerate) would be 5512,
+	// instead of 5513, which is what a frame-precision based code would expect.
+	//
+	// By creating a new Timestamp with the given parameters, we create a
+	// Timestamp with frame-precision, which just drops a sub-frame-precision
+	// information (i.e. rounds down).
+	return Timestamp(result.secs(), result.numberOfFrames(), result.framerate());
 }
 
 } // End of namespace Audio
