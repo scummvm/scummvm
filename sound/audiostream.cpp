@@ -187,7 +187,11 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	int framesRead = _parent->readBuffer(buffer, framesLeft);
 	_pos = _pos.addFrames(framesRead);
 
-	if (_pos == _loopEnd) {
+	if (framesRead < framesLeft) {
+		// TODO: Proper error indication.
+		_done = true;
+		return framesRead;
+	} else if (_pos == _loopEnd) {
 		if (_loops != 0) {
 			--_loops;
 			if (!_loops) {
@@ -197,6 +201,7 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		if (!_parent->seek(_loopStart)) {
+			// TODO: Proper error indication.
 			_done = true;
 			return framesRead;
 		}
