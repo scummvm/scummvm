@@ -108,5 +108,65 @@ public:
 	void test_looping_audio_stream_stereo_fixed_iter() {
 		testLoopingAudioStreamFixedIter(22050, true);
 	}
+
+private:
+	void testSubLoopingAudioStreamFixedIter(const int sampleRate, const bool isStereo) {
+		const int secondLength = sampleRate * (isStereo ? 2 : 1);
+		const Audio::Timestamp loopStart(500, 1000), loopEnd(1000, 1000);
+		const int32 loopOffset = Audio::convertTimeToStreamPos(loopStart, sampleRate, isStereo).totalNumberOfFrames();
+		const int32 loopIteration = Audio::convertTimeToStreamPos((loopEnd - loopStart), sampleRate, isStereo).totalNumberOfFrames();
+
+		int16 *sine = 0;
+		Audio::SeekableAudioStream *s = createSineStream<int16>(sampleRate, 3, &sine, false, isStereo);
+		Audio::SubLoopingAudioStream *loop = new Audio::SubLoopingAudioStream(s, 5, loopStart, loopEnd);
+
+		int16 *buffer = new int16[secondLength * 2];
+
+		// Check parameters
+		TS_ASSERT_EQUALS(loop->isStereo(), isStereo);
+		TS_ASSERT_EQUALS(loop->getRate(), sampleRate);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
+		// Read one sceond (this is the non-looped part + one iteration)
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), secondLength);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine, secondLength * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
+		// We should have one full iteration now
+
+		// Read another loop iteration
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, loopIteration), loopIteration);
+		TS_ASSERT_EQUALS(memcmp(buffer, sine + loopOffset, loopIteration * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(loop->endOfData(), false);
+
+		// We should have two full iterations now
+
+		// Read three loop iterations at once
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, loopIteration * 3), loopIteration * 3);
+		TS_ASSERT_EQUALS(memcmp(buffer + loopIteration * 0, sine + loopOffset, loopIteration * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(memcmp(buffer + loopIteration * 1, sine + loopOffset, loopIteration * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(memcmp(buffer + loopIteration * 2, sine + loopOffset, loopIteration * sizeof(int16)), 0);
+		TS_ASSERT_EQUALS(loop->endOfData(), true);
+
+		// We should have five full iterations now, thus the stream should be done
+
+		// Try to read beyond the end of the stream (note this only applies, till we define that SubLoopingAudioStream should
+		// stop playing after the looped area).
+		TS_ASSERT_EQUALS(loop->readBuffer(buffer, secondLength), 0);
+		TS_ASSERT_EQUALS(loop->endOfData(), true);
+
+		delete[] buffer;
+		delete loop;
+		delete[] sine;
+	}
+
+public:
+	void test_sub_looping_audio_stream_mono_fixed_iter() {
+		testSubLoopingAudioStreamFixedIter(22050, false);
+	}
+
+	void test_sub_looping_audio_stream_stereo_fixed_iter() {
+		testSubLoopingAudioStreamFixedIter(22050, true);
+	}
 };
 
