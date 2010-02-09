@@ -604,42 +604,6 @@ bool DrasculaEngine::runCurrentChapter() {
 	}
 }
 
-char *DrasculaEngine::getLine(Common::SeekableReadStream *stream, char *buf, int len) {
-	byte c;
-	char *b;
-
-	for (;;) {
-		b = buf;
-		while (true) {
-			c = ~stream->readByte();
-			if (stream->eos()) break;
-
-			if (c == '\r')
-				continue;
-			if (c == '\n' || b - buf >= (len - 1))
-				break;
-			*b++ = c;
-		}
-		*b = '\0';
-		if (stream->eos() && b == buf)
-			return NULL;
-		if (b != buf)
-			break;
-	}
-	return buf;
-}
-
-void DrasculaEngine::getIntFromLine(Common::SeekableReadStream *stream, int len, int* result) {
-	char buf[256];
-	getLine(stream, buf, len);
-	sscanf(buf, "%d", result);
-}
-
-void DrasculaEngine::getStringFromLine(Common::SeekableReadStream *stream, int len, char* result) {
-	char buf[256];
-	getLine(stream, buf, len);
-	sscanf(buf, "%s", result);
-}
 
 bool DrasculaEngine::verify1() {
 	int l;

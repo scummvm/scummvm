@@ -1653,65 +1653,67 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	if (!stream) {
 		error("missing data file %s", fileName);
 	}
-	int size = stream->size();
+	
+	TextResourceParser p(stream, DisposeAfterUse::YES);
 
-	getIntFromLine(stream, size, &roomNumber);
-	getIntFromLine(stream, size, &roomMusic);
-	getStringFromLine(stream, size, roomDisk);
-	getIntFromLine(stream, size, &palLevel);
+	p.parseInt(roomNumber);
+	p.parseInt(roomMusic);
+	p.parseString(roomDisk);
+	p.parseInt(palLevel);
 
 	if (currentChapter == 2)
-		getIntFromLine(stream, size, &martin);
+		p.parseInt(martin);
 
 	if (currentChapter == 2 && martin != 0) {
 		curWidth = martin;
-		getIntFromLine(stream, size, &curHeight);
-		getIntFromLine(stream, size, &feetHeight);
-		getIntFromLine(stream, size, &stepX);
-		getIntFromLine(stream, size, &stepY);
+		p.parseInt(curHeight);
+		p.parseInt(feetHeight);
+		p.parseInt(stepX);
+		p.parseInt(stepY);
 
-		getStringFromLine(stream, size, pant1);
-		getStringFromLine(stream, size, pant2);
-		getStringFromLine(stream, size, pant3);
-		getStringFromLine(stream, size, pant4);
+		p.parseString(pant1);
+		p.parseString(pant2);
+		p.parseString(pant3);
+		p.parseString(pant4);
 
 		strcpy(menuBackground, pant4);
 	}
 
-	getIntFromLine(stream, size, &numRoomObjs);
+	p.parseInt(numRoomObjs);
 
 	for (l = 0; l < numRoomObjs; l++) {
-		getIntFromLine(stream, size, &objectNum[l]);
-		getStringFromLine(stream, size, objName[l]);
-		getIntFromLine(stream, size, &x1[l]);
-		getIntFromLine(stream, size, &y1[l]);
-		getIntFromLine(stream, size, &x2[l]);
-		getIntFromLine(stream, size, &y2[l]);
-		getIntFromLine(stream, size, &roomObjX[l]);
-		getIntFromLine(stream, size, &roomObjY[l]);
-		getIntFromLine(stream, size, &trackObj[l]);
-		getIntFromLine(stream, size, &visible[l]);
-		getIntFromLine(stream, size, &isDoor[l]);
+		p.parseInt(objectNum[l]);
+		p.parseString(objName[l]);
+		p.parseInt(x1[l]);
+		p.parseInt(y1[l]);
+		p.parseInt(x2[l]);
+		p.parseInt(y2[l]);
+		p.parseInt(roomObjX[l]);
+		p.parseInt(roomObjY[l]);
+		p.parseInt(trackObj[l]);
+		p.parseInt(visible[l]);
+		p.parseInt(isDoor[l]);
 		if (isDoor[l] != 0) {
-			getStringFromLine(stream, size, _targetSurface[l]);
-			getIntFromLine(stream, size, &_destX[l]);
-			getIntFromLine(stream, size, &_destY[l]);
-			getIntFromLine(stream, size, &trackCharacter_alkeva[l]);
-			getIntFromLine(stream, size, &roomExits[l]);
+			p.parseString(_targetSurface[l]);
+			p.parseInt(_destX[l]);
+			p.parseInt(_destY[l]);
+			p.parseInt(trackCharacter_alkeva[l]);
+			p.parseInt(roomExits[l]);
 			updateDoor(l);
 		}
 	}
 
-	getIntFromLine(stream, size, &floorX1);
-	getIntFromLine(stream, size, &floorY1);
-	getIntFromLine(stream, size, &floorX2);
-	getIntFromLine(stream, size, &floorY2);
+	p.parseInt(floorX1);
+	p.parseInt(floorY1);
+	p.parseInt(floorX2);
+	p.parseInt(floorY2);
 
 	if (currentChapter != 2) {
-		getIntFromLine(stream, size, &upperLimit);
-		getIntFromLine(stream, size, &lowerLimit);
+		p.parseInt(upperLimit);
+		p.parseInt(lowerLimit);
 	}
-	delete stream;
+	// no need to delete the stream, since TextResourceParser takes ownership
+	// delete stream;
 
 	if (currentChapter == 2 && martin != 0) {
 		loadPic(pant2, extraSurface);

@@ -47,5 +47,61 @@ Common::SeekableReadStream *ArchiveMan::open(const Common::String &filename) {
 	return createReadStreamForMember(filename);
 }
 
+
+
+
+TextResourceParser::TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) :
+	_stream(stream), _dispose(dispose) {
+
+	// NOTE: strangely enough, the code before this refactoring used the size of
+	// the stream as a fixed maximum length for the parser. Using an updated 
+	// (size-pos) would make more sense to me, but let's see what the experts say.
+	_maxLen = _stream->size();
+}
+
+TextResourceParser::~TextResourceParser() {
+	if (_dispose == DisposeAfterUse::YES) {
+		delete _stream;
+	}
+}
+
+void TextResourceParser::getLine(char *buf) {
+	byte c;
+	char *b;
+
+	for (;;) {
+		b = buf;
+		while (true) {
+			c = ~_stream->readByte();
+			if (_stream->eos()) break;
+
+			if (c == '\r')
+				continue;
+			if (c == '\n' || b - buf >= (_maxLen - 1))
+				break;
+			*b++ = c;
+		}
+		*b = '\0';
+		if (_stream->eos() && b == buf)
+			return;
+		if (b != buf)
+			break;
+	}
+}
+
+void TextResourceParser::parseInt(int &result) {
+	char buf[256];
+	getLine(buf);
+	sscanf(buf, "%d", &result);
+}
+
+void TextResourceParser::parseString(char* result) {
+	char buf[256];
+	getLine(buf);
+	sscanf(buf, "%s", result);
+}
+
+
+
 } // End of namespace Drascula
 

@@ -267,6 +267,22 @@ private:
 
 };
 
+class TextResourceParser {
+	Common::SeekableReadStream *_stream;
+	DisposeAfterUse::Flag _dispose;
+	int _maxLen;
+
+	void getLine(char *buf);
+
+public:
+	TextResourceParser(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose);
+	~TextResourceParser();
+
+	void parseInt(int &result);
+	void parseString(char *result);
+};
+
+
 #define NUM_SAVES		10
 #define NUM_FLAGS		50
 #define DIF_MASK		55
@@ -592,10 +608,6 @@ public:
 
 	void MusicFadeout();
 	void playFile(const char *fname);
-
-	char *getLine(Common::SeekableReadStream *stream, char *buf, int len);
-	void getIntFromLine(Common::SeekableReadStream *stream, int len, int* result);
-	void getStringFromLine(Common::SeekableReadStream *stream, int len, char* result);
 
 	void grr();
 	void updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal = 3, bool copyRectangle = false);

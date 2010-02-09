@@ -137,7 +137,6 @@ void DrasculaEngine::converse(int index) {
 	if (!stream)
 		error("missing data file %s", fileName);
 
-	int size = stream->size();
 	int game1 = kDialogOptionUnselected,
 		game2 = kDialogOptionUnselected,
 		game3 = kDialogOptionUnselected;
@@ -150,19 +149,23 @@ void DrasculaEngine::converse(int index) {
 
 	selectVerb(kVerbNone);
 
-	getStringFromLine(stream, size, phrase1);
-	getStringFromLine(stream, size, phrase2);
-	getStringFromLine(stream, size, phrase3);
-	getStringFromLine(stream, size, phrase4);
-	getStringFromLine(stream, size, sound1);
-	getStringFromLine(stream, size, sound2);
-	getStringFromLine(stream, size, sound3);
-	getStringFromLine(stream, size, sound4);
-	getIntFromLine(stream, size, &answer1);
-	getIntFromLine(stream, size, &answer2);
-	getIntFromLine(stream, size, &answer3);
+	TextResourceParser p(stream, DisposeAfterUse::YES);
 
-	delete stream;
+	p.parseString(phrase1);
+	p.parseString(phrase2);
+	p.parseString(phrase3);
+	p.parseString(phrase4);
+	p.parseString(sound1);
+	p.parseString(sound2);
+	p.parseString(sound3);
+	p.parseString(sound4);
+	p.parseInt(answer1);
+	p.parseInt(answer2);
+	p.parseInt(answer3);
+
+	// no need to delete the stream, since TextResourceParser takes ownership
+	// delete stream;
+
 
 	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
 		strcpy(phrase3, _text[405]);
