@@ -46,15 +46,11 @@ namespace Sci {
 GfxMenu::GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor)
 	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
 
-	_listCount = 0;
-	// We actually set active item in here and remember last selection of the user
-	//  sierra sci always defaulted to first item every time menu was called via ESC, we dont follow that logic
-	_curMenuId = 1;
-	_curItemId = 1;
-
 	_menuSaveHandle = NULL_REG;
 	_barSaveHandle = NULL_REG;
 	_oldPort = NULL;
+
+	reset();
 }
 
 GfxMenu::~GfxMenu() {
@@ -65,6 +61,12 @@ GfxMenu::~GfxMenu() {
 void GfxMenu::reset() {
 	_list.clear();
 	_itemList.clear();
+	_listCount = 0;
+
+	// We actually set active item in here and remember last selection of the user
+	//  sierra sci always defaulted to first item every time menu was called via ESC, we dont follow that logic
+	_curMenuId = 1;
+	_curItemId = 1;
 }
 
 void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t contentVmPtr) {
