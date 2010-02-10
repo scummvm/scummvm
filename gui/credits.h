@@ -94,7 +94,7 @@ static const char *credits[] = {
 "",
 "C1""Draci",
 "C0""Denis Kasak",
-"C0""Robert \352palek",
+"C0""Robert Spalek",
 "",
 "C1""Drascula",
 "C0""Filippos Karapetis",
