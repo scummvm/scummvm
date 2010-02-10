@@ -32,7 +32,7 @@ namespace Mohawk {
 // The PICT code is based off of the QuickDraw specs:
 // http://developer.apple.com/documentation/mac/QuickDraw/QuickDraw-461.html
 
-MystPICT::MystPICT(MystJPEG *jpegDecoder) {
+MystPICT::MystPICT(JPEGDecoder *jpegDecoder) {
 	_jpegDecoder = jpegDecoder;
 	_pixelFormat = g_system->getScreenFormat();
 }

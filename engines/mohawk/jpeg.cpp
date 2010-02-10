@@ -26,41 +26,62 @@
 #include "common/system.h"
 #include "graphics/conversion.h" // For YUV2RGB
 
-#include "mohawk/myst_jpeg.h"
+#include "mohawk/jpeg.h"
 
 namespace Mohawk {
 
-MystJPEG::MystJPEG() {
+JPEGDecoder::JPEGDecoder(bool freeSurfaceAfterUse) : Graphics::Codec(), _freeSurfaceAfterUse(freeSurfaceAfterUse) {
 	_jpeg = new Graphics::JPEG();
 	_pixelFormat = g_system->getScreenFormat();
-
-	// We're going to have to dither if we're running in 8bpp.
-	// We'll take RGBA8888 for best color performance in this case.
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_surface = NULL;
 }
 
-Graphics::Surface *MystJPEG::decodeImage(Common::SeekableReadStream* stream) {
+JPEGDecoder::~JPEGDecoder() {
+	delete _jpeg;
+
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+}
+
+Graphics::Surface *JPEGDecoder::decodeImage(Common::SeekableReadStream* stream) {
 	_jpeg->read(stream);
 	Graphics::Surface *ySurface = _jpeg->getComponent(1);
 	Graphics::Surface *uSurface = _jpeg->getComponent(2);
 	Graphics::Surface *vSurface = _jpeg->getComponent(3);
 
-	Graphics::Surface *finalSurface = new Graphics::Surface();
-	finalSurface->create(ySurface->w, ySurface->h, _pixelFormat.bytesPerPixel);
+	Graphics::Surface *destSurface = NULL;
 
-	for (uint16 i = 0; i < finalSurface->h; i++) {
-		for (uint16 j = 0; j < finalSurface->w; j++) {
+	// If we should free the surface after use, use the internal _surface storage
+	// (this should be used when using as a Codec, as the Codecs should free their
+	// surfaces when deleting the Codec object). Otherwise, create a new Surface
+	// as the destination.
+	if (_freeSurfaceAfterUse) {
+		if (!_surface) {
+			_surface = new Graphics::Surface();
+			_surface->create(ySurface->w, ySurface->h, _pixelFormat.bytesPerPixel);
+		}
+		destSurface = _surface;
+	} else {
+		destSurface = new Graphics::Surface();
+		destSurface->create(ySurface->w, ySurface->h, _pixelFormat.bytesPerPixel);
+	}
+
+	assert(destSurface);
+
+	for (uint16 i = 0; i < destSurface->h; i++) {
+		for (uint16 j = 0; j < destSurface->w; j++) {
 			byte r = 0, g = 0, b = 0;
 			Graphics::YUV2RGB(*((byte *)ySurface->getBasePtr(j, i)), *((byte *)uSurface->getBasePtr(j, i)), *((byte *)vSurface->getBasePtr(j, i)), r, g, b);
 			if (_pixelFormat.bytesPerPixel == 2)
-				*((uint16 *)finalSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
+				*((uint16 *)destSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
 			else
-				*((uint32 *)finalSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
+				*((uint32 *)destSurface->getBasePtr(j, i)) = _pixelFormat.RGBToColor(r, g, b);
 		}
 	}
 
-	return finalSurface;
+	return destSurface;
 }
 
 } // End of namespace Mohawk

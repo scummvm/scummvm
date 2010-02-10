@@ -27,8 +27,8 @@
 #define MOHAWK_GRAPHICS_H
 
 #include "mohawk/bitmap.h"
+#include "mohawk/jpeg.h"
 #include "mohawk/livingbooks.h"
-#include "mohawk/myst_jpeg.h"
 #include "mohawk/myst_pict.h"
 
 #include "common/file.h"
@@ -104,7 +104,7 @@ private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
 	MystPICT *_pictDecoder;
-	MystJPEG *_jpegDecoder;
+	JPEGDecoder *_jpegDecoder;
 	Graphics::PixelFormat _pixelFormat;
 
 	struct PictureFile {

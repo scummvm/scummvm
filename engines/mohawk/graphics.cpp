@@ -76,7 +76,8 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
 		error("Myst requires greater than 256 colors to run");
 
 	if (_vm->getFeatures() & GF_ME) {
-		_jpegDecoder = new MystJPEG();
+		// We want to delete our own JPEG surfaces, so don't free after use.
+		_jpegDecoder = new JPEGDecoder(false);
 		_pictDecoder = new MystPICT(_jpegDecoder);
 	} else {
 		_jpegDecoder = NULL;

@@ -44,6 +44,7 @@
 #include "mohawk/video/qdm2.h"
 
 // Video codecs
+#include "mohawk/jpeg.h"
 #include "mohawk/video/cinepak.h"
 #include "mohawk/video/qtrle.h"
 #include "mohawk/video/rpza.h"
@@ -174,8 +175,8 @@ Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
 		// Sorenson Video 3: Used by some Myst ME videos.
 		warning ("Sorenson Video 3 not yet supported");
 	} else if (codecTag == MKID_BE('jpeg')) {
-		// Motion JPEG: Used by some Myst ME videos.
-		warning ("Motion JPEG not yet supported");
+		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
+		return new JPEGDecoder(true);
 	} else if (codecTag == MKID_BE('QkBk')) {
 		// CDToons: Used by most of the Broderbund games. This is an unknown format so far.
 		warning ("CDToons not yet supported");

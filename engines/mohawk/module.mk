@@ -6,10 +6,10 @@ MODULE_OBJS = \
 	detection.o \
 	dialogs.o \
 	graphics.o \
+	jpeg.o \
 	livingbooks.o \
 	mohawk.o \
 	myst.o \
-	myst_jpeg.o \
 	myst_pict.o \
 	myst_vars.o \
 	myst_saveload.o \

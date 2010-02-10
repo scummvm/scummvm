@@ -23,32 +23,36 @@
  *
  */
 
-#ifndef MYST_JPEG_H
-#define MYST_JPEG_H
+#ifndef MOHAWK_JPEG_H
+#define MOHAWK_JPEG_H
 
 #include "common/scummsys.h"
 #include "common/stream.h"
 
+#include "graphics/video/codecs/codec.h"
 #include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
 
 namespace Mohawk {
 
-// Myst JPEG Decoder
-// Basically a wrapper around JPEG which converts to RGB
+// Mohawk's JPEG Decoder
+// Basically a wrapper around JPEG which converts to RGB and also functions
+// as a Codec.
 
-class MystJPEG {
+class JPEGDecoder : public Graphics::Codec {
 public:
-	MystJPEG();
-	~MystJPEG() { delete _jpeg; }
+	JPEGDecoder(bool freeSurfaceAfterUse);
+	~JPEGDecoder();
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 
 private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::JPEG *_jpeg;
+	Graphics::Surface *_surface;
+	bool _freeSurfaceAfterUse;
 };
 
-}
+} // End of namespace Mohawk
 
 #endif
