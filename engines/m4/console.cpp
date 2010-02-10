@@ -36,7 +36,6 @@ Console::Console(MadsM4Engine *vm) : GUI::Debugger() {
 
 	DCmd_Register("scene",			WRAP_METHOD(Console, cmdLoadScene));
 	DCmd_Register("start",			WRAP_METHOD(Console, cmdStartingScene));
-	DCmd_Register("scene_info",		WRAP_METHOD(Console, cmdSceneInfo));
 	DCmd_Register("show_hotspots",	WRAP_METHOD(Console, cmdShowHotSpots));
 	DCmd_Register("list_hotspots",	WRAP_METHOD(Console, cmdListHotSpots));
 	DCmd_Register("play_sound",		WRAP_METHOD(Console, cmdPlaySound));
@@ -97,28 +96,6 @@ bool Console::cmdStartingScene(int argc, const char **argv) {
 bool Console::cmdShowHotSpots(int argc, const char **argv) {
 	_vm->_scene->showHotSpots();
 	return false;
-}
-
-bool Console::cmdSceneInfo(int argc, const char **argv) {
-	DebugPrintf("Current scene is: %i\n", _vm->_scene->getCurrentScene());
-	if (_vm->isM4()) {
-		DebugPrintf("Scene resources:\n");
-		DebugPrintf("artBase: %s\n", _vm->_scene->getSceneResources().artBase);
-		DebugPrintf("pictureBase: %s\n", _vm->_scene->getSceneResources().pictureBase);
-		DebugPrintf("hotspotCount: %i\n", _vm->_scene->getSceneResources().hotspotCount);
-		DebugPrintf("parallaxCount: %i\n", _vm->_scene->getSceneResources().parallaxCount);
-		DebugPrintf("propsCount: %i\n", _vm->_scene->getSceneResources().propsCount);
-		DebugPrintf("frontY: %i\n", _vm->_scene->getSceneResources().frontY);
-		DebugPrintf("backY: %i\n", _vm->_scene->getSceneResources().backY);
-		DebugPrintf("frontScale: %i\n", _vm->_scene->getSceneResources().frontScale);
-		DebugPrintf("backScale: %i\n", _vm->_scene->getSceneResources().backScale);
-		DebugPrintf("depthTable: ");
-		for (uint i = 0; i < 16; i++)
-			DebugPrintf("%i ", _vm->_scene->getSceneResources().depthTable[i]);
-		DebugPrintf("\n");
-		DebugPrintf("railNodeCount: %i\n", _vm->_scene->getSceneResources().railNodeCount);
-	}
-	return true;
 }
 
 bool Console::cmdListHotSpots(int argc, const char **argv) {
@@ -304,6 +281,7 @@ MadsConsole::MadsConsole(MadsEngine *vm): Console(vm) {
 
 	DCmd_Register("object",			WRAP_METHOD(MadsConsole, cmdObject));
 	DCmd_Register("message",		WRAP_METHOD(MadsConsole, cmdMessage));
+	DCmd_Register("scene_info",		WRAP_METHOD(MadsConsole, cmdSceneInfo));
 }
 
 bool MadsConsole::cmdObject(int argc, const char **argv) {
@@ -370,14 +348,14 @@ bool MadsConsole::cmdMessage(int argc, const char **argv) {
 		DebugPrintf("message 'objnum'\n");
 	else {
 		int messageIdx = strToInt(argv[1]);
-		if ((argc == 3) && !strcmp(argv[2], "id"))
+
+		if ((argc != 3) || (strcmp(argv[2], "idx") != NULL))
 			messageIdx = _vm->globals()->messageIndexOf(messageIdx);
 
-		if (messageIdx == -1)
-			DebugPrintf("Unknown message");
-		else
-		{
-			const char *msg = _vm->globals()->loadMessage(messageIdx);
+		const char *msg = _vm->globals()->loadMessage(messageIdx);
+		if (!msg)
+			DebugPrintf("Unknown message\n");
+		else {
 			Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
 
 			_vm->_viewManager->addView(dlg);
@@ -386,6 +364,42 @@ bool MadsConsole::cmdMessage(int argc, const char **argv) {
 			return false;
 		}
 	}
+
+	return true;
+}
+
+bool MadsConsole::cmdSceneInfo(int argc, const char **argv) {
+	DebugPrintf("Current scene is: %i\n", _vm->_scene->getCurrentScene());
+
+	return true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+M4Console::M4Console(M4Engine *vm): Console(vm) {
+	_vm = vm;
+
+	DCmd_Register("scene_info",		WRAP_METHOD(M4Console, cmdSceneInfo));
+}
+
+bool M4Console::cmdSceneInfo(int argc, const char **argv) {
+	DebugPrintf("Current scene is: %i\n", _vm->_scene->getCurrentScene());
+
+	DebugPrintf("Scene resources:\n");
+	DebugPrintf("artBase: %s\n", _vm->_scene->getSceneResources().artBase);
+	DebugPrintf("pictureBase: %s\n", _vm->_scene->getSceneResources().pictureBase);
+	DebugPrintf("hotspotCount: %i\n", _vm->_scene->getSceneResources().hotspotCount);
+	DebugPrintf("parallaxCount: %i\n", _vm->_scene->getSceneResources().parallaxCount);
+	DebugPrintf("propsCount: %i\n", _vm->_scene->getSceneResources().propsCount);
+	DebugPrintf("frontY: %i\n", _vm->_scene->getSceneResources().frontY);
+	DebugPrintf("backY: %i\n", _vm->_scene->getSceneResources().backY);
+	DebugPrintf("frontScale: %i\n", _vm->_scene->getSceneResources().frontScale);
+	DebugPrintf("backScale: %i\n", _vm->_scene->getSceneResources().backScale);
+	DebugPrintf("depthTable: ");
+	for (uint i = 0; i < 16; i++)
+		DebugPrintf("%i ", _vm->_scene->getSceneResources().depthTable[i]);
+	DebugPrintf("\n");
+	DebugPrintf("railNodeCount: %i\n", _vm->_scene->getSceneResources().railNodeCount);
 
 	return true;
 }

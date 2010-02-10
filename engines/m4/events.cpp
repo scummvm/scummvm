@@ -52,7 +52,7 @@ Events::Events(MadsM4Engine *vm) : _vm(vm) {
 	_ctrlFlag = false;
 
 	if (_vm->isM4())
-		_console = new M4Console(_vm);
+		_console = new M4Console(_m4Vm);
 	else
 		_console = new MadsConsole(_madsVm);
 }

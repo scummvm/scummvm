@@ -39,7 +39,6 @@ private:
 
 	bool cmdLoadScene(int argc, const char **argv);
 	bool cmdStartingScene(int argc, const char **argv);
-	bool cmdSceneInfo(int argc, const char **argv);
 	bool cmdShowHotSpots(int argc, const char **argv);
 	bool cmdListHotSpots(int argc, const char **argv);
 	bool cmdPlaySound(int argc, const char **argv);
@@ -64,14 +63,19 @@ private:
 
 	bool cmdObject(int argc, const char **argv);
 	bool cmdMessage(int argc, const char **argv);
+	bool cmdSceneInfo(int argc, const char **argv);
 public:
 	MadsConsole(MadsEngine *vm);
 	virtual ~MadsConsole() {};
 };
 
 class M4Console : public Console {
+private:
+	M4Engine *_vm;
+
+	bool cmdSceneInfo(int argc, const char **argv);
 public:
-	M4Console(MadsM4Engine *vm): Console(vm) {};
+	M4Console(M4Engine *vm);
 	virtual ~M4Console() {};
 };
 
