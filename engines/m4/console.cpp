@@ -349,7 +349,7 @@ bool MadsConsole::cmdMessage(int argc, const char **argv) {
 	else {
 		int messageIdx = strToInt(argv[1]);
 
-		if ((argc != 3) || (strcmp(argv[2], "idx") != NULL))
+		if ((argc != 3) || (strcmp(argv[2], "idx") != 0))
 			messageIdx = _vm->globals()->messageIndexOf(messageIdx);
 
 		const char *msg = _vm->globals()->loadMessage(messageIdx);
