@@ -275,7 +275,7 @@ static int said_next_node() {
 #define SAID_NEXT_NODE said_next_node()
 
 static int said_leaf_node(tree_t pos, int value) {
-	said_tree[pos].type = PARSE_TREE_NODE_LEAF;
+	said_tree[pos].type = kParseTreeLeafNode;
 
 	if (value != VALUE_IGNORE)
 		said_tree[pos].content.value = value;
@@ -284,7 +284,7 @@ static int said_leaf_node(tree_t pos, int value) {
 }
 
 static int said_branch_node(tree_t pos, int left, int right) {
-	said_tree[pos].type = PARSE_TREE_NODE_BRANCH;
+	said_tree[pos].type = kParseTreeBranchNode;
 
 	if (left != VALUE_IGNORE)
 		said_tree[pos].content.branches[0] = left;
@@ -414,12 +414,12 @@ static int said_parse_spec(byte *spec) {
 // primitive functions
 
 #define AUG_READ_BRANCH(a, br, p) \
-	if (tree[p].type != PARSE_TREE_NODE_BRANCH) \
+	if (tree[p].type != kParseTreeBranchNode) \
 		return 0; \
 	a = tree[p].content.branches[br];
 
 #define AUG_READ_VALUE(a, p) \
-	if (tree[p].type != PARSE_TREE_NODE_LEAF) \
+	if (tree[p].type != kParseTreeLeafNode) \
 		return 0; \
 	a = tree[p].content.value;
 
@@ -800,11 +800,11 @@ static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *sai
 int said(EngineState *s, byte *spec, bool verbose) {
 	int retval;
 
-	parse_tree_node_t *parse_tree_ptr = s->_voc->_parser_nodes;
+	parse_tree_node_t *parse_tree_ptr = s->_voc->_parserNodes;
 
 	if (s->_voc->parserIsValid) {
-		if (said_parse_spec(s, spec)) {
-			warning("Offending spec was: ");
+		if (said_parse_spec(spec)) {
+			printf("Offending spec was: ");
 			s->_voc->decipherSaidBlock(spec);
 			return SAID_NO_MATCH;
 		}
@@ -830,7 +830,7 @@ int main (int argc, char *argv) {
 	byte block[] = {0x01, 0x00, 0xf8, 0xf5, 0x02, 0x01, 0xf6, 0xf2, 0x02, 0x01, 0xf2, 0x01, 0x03, 0xff};
 	EngineState s;
 
-	s._voc->parser_valid = 1;
+	s.parser_valid = 1;
 	said(&s, block);
 }
 #endif
