@@ -114,7 +114,10 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 			if (stream->eos())
 				break;
 
-			uint32 chunkSize = (stream->readByte() << 16) + stream->readUint16BE() - 4; // 24bit
+			// Chunk Size is 24-bit, ignore the first 4 bytes
+			uint32 chunkSize = stream->readByte() << 16;
+			chunkSize += stream->readUint16BE() - 4;
+
 			int32 startPos = stream->pos();
 
 			switch (chunkID) {
