@@ -247,6 +247,8 @@ void ViewManager::handleKeyboardEvents(uint32 keycode) {
 		if (view->screenFlags().get & SCREVENT_KEY) {
 			foundFlag = true;
 			handledFlag = (view->onEvent)(KEVENT_KEY, keycode, mousePos.x, mousePos.y, _captureEvents);
+			if (_captureEvents)
+				_captureScreen = view;
 		}
 	}
 
