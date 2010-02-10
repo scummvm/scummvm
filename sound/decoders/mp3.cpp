@@ -146,6 +146,8 @@ void MP3Stream::decodeMP3Data() {
 			readMP3Data();
 
 		while (_state == MP3_STATE_READY) {
+			_stream.error = MAD_ERROR_NONE;
+
 			// Decode the next frame
 			if (mad_frame_decode(&_frame, &_stream) == -1) {
 				if (_stream.error == MAD_ERROR_BUFLEN) {
