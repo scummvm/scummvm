@@ -521,14 +521,15 @@ reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv) {
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
-	reg_t curAddress = list->first;
-	Node *curNode = s->_segMan->lookupNode(curAddress);
+	Node *curNode = s->_segMan->lookupNode(list->first);
 	reg_t curObject;
 	Selector slc = argv[1].toUint16();
 
 	ObjVarRef address;
 
 	while (curNode) {
+		// We get the next node here as the current node might be gone after the invoke
+		reg_t nextNode = curNode->succ;
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
@@ -543,11 +544,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 		}
 
-		// Lookup node again, since the nodetable it was in may have been reallocated
-		curNode = s->_segMan->lookupNode(curAddress);
-
-		curAddress = curNode->succ;
-		curNode = s->_segMan->lookupNode(curAddress);
+		curNode = s->_segMan->lookupNode(nextNode);
 	}
 
 	return s->r_acc;
@@ -556,8 +553,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
-	reg_t curAddress = list->first;
-	Node *curNode = s->_segMan->lookupNode(curAddress);
+	Node *curNode = s->_segMan->lookupNode(list->first);
 	reg_t curObject;
 	Selector slc = argv[1].toUint16();
 
@@ -566,6 +562,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = NULL_REG;	// reset the accumulator
 
 	while (curNode) {
+		reg_t nextNode = curNode->succ;
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
@@ -580,11 +577,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 				return curObject;
 		}
 
-		// Lookup node again, since the nodetable it was in may have been reallocated
-		curNode = s->_segMan->lookupNode(curAddress);
-
-		curAddress = curNode->succ;
-		curNode = s->_segMan->lookupNode(curAddress);
+		curNode = s->_segMan->lookupNode(nextNode);
 	}
 
 	// No selector returned true
@@ -594,8 +587,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 
-	reg_t curAddress = list->first;
-	Node *curNode = s->_segMan->lookupNode(curAddress);
+	Node *curNode = s->_segMan->lookupNode(list->first);
 	reg_t curObject;
 	Selector slc = argv[1].toUint16();
 
@@ -604,6 +596,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, 1);	// reset the accumulator
 
 	while (curNode) {
+		reg_t nextNode = curNode->succ;
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
@@ -618,11 +611,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 				break;
 		}
 
-		// Lookup node again, since the nodetable it was in may have been reallocated
-		curNode = s->_segMan->lookupNode(curAddress);
-
-		curAddress = curNode->succ;
-		curNode = s->_segMan->lookupNode(curAddress);
+		curNode = s->_segMan->lookupNode(nextNode);
 	}
 
 	return s->r_acc;

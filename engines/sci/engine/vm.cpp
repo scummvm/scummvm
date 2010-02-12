@@ -621,16 +621,8 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 
 static void gc_countdown(EngineState *s) {
 	if (s->gc_countdown-- <= 0) {
-		// Only run garbage collection when execution stack base
-		// is zero, as it cannot count references inside kernel
-		// functions
-		if (s->execution_stack_base == 0) {
-			s->gc_countdown = script_gc_interval;
-			run_gc(s);
-		} else {
-			// Try again later
-			s->gc_countdown = 1;
-		}
+		s->gc_countdown = script_gc_interval;
+		run_gc(s);
 	}
 }
 
