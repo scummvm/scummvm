@@ -353,29 +353,21 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
 	// Return to where we were before entering the book
+	*_vm->matchVarToString("atrap") = 0;
 	_vm->changeToStack(*_vm->matchVarToString("returnstackid"));
 	_vm->changeToCard(*_vm->matchVarToString("returncardid"));
 }
 
 void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	// Close the trap book
-	_vm->_hotspots[1].enabled = false;
-	_vm->_hotspots[2].enabled = false;
-	_vm->_hotspots[3].enabled = false;
-	_vm->_hotspots[4].enabled = true;
-	_vm->_gfx->drawPLST(3);
-	_vm->_gfx->updateScreen();
+	*_vm->matchVarToString("atrap") = 0;
+	_vm->changeToCard(); // Refresh
 }
 
 void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	// Open the trap book
-	_vm->_hotspots[1].enabled = true;
-	_vm->_hotspots[2].enabled = true;
-	_vm->_hotspots[3].enabled = true;
-	_vm->_hotspots[4].enabled = false;
-	_vm->_gfx->drawPLST(1);
-	// TODO: Play movie
-	_vm->_gfx->updateScreen();
+	*_vm->matchVarToString("atrap") = 1;
+	_vm->changeToCard(); // Refresh
 }
 
 void RivenExternal::xarestoregame(uint16 argc, uint16 *argv) {
