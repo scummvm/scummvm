@@ -243,7 +243,6 @@ protected:
 	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
 	bool checkAudioCodecSupport(uint32 tag);
 	Common::SeekableReadStream *getNextFramePacket();
-	void resetInternal();
 	uint32 getFrameDuration();
 
 	Audio::QueuingAudioStream *_audStream;

@@ -57,22 +57,14 @@ void VideoManager::resumeVideos() {
 
 void VideoManager::stopVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
-		_videoStreams[i]->stop();
+		delete _videoStreams[i].video;
 	_videoStreams.clear();
 }
 
 void VideoManager::playMovie(Common::String filename, uint16 x, uint16 y, bool clearScreen) {
-	Common::File *file = new Common::File();
-	if (!file->open(filename))
-		return; // Return silently for now...
-
-	VideoEntry entry;
-	entry.video = new QTPlayer();
-
-	if (!entry.video)
+	VideoHandle videoHandle = createVideoHandle(filename, x, y, false);
+	if (videoHandle == NULL_VID_HANDLE)
 		return;
-
-	entry->loadFile(file);
 
 	// Clear screen if requested
 	if (clearScreen) {
@@ -80,24 +72,13 @@ void VideoManager::playMovie(Common::String filename, uint16 x, uint16 y, bool c
 		_vm->_system->updateScreen();
 	}
 
-	entry.x = x;
-	entry.y = y;
-	entry.loop = false;
-	playMovie(entry);
+	waitUntilMovieEnds(videoHandle);
 }
 
 void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) {
-	Common::File *file = new Common::File();
-	if (!file->open(filename))
-		return; // Return silently for now...
-
-	VideoEntry entry;
-	entry.video = new QTPlayer();
-
-	if (!entry.video)
+	VideoHandle videoHandle = createVideoHandle(filename, 0, 0, false);
+	if (videoHandle == NULL_VID_HANDLE)
 		return;
-
-	entry->loadFile(file);
 
 	// Clear screen if requested
 	if (clearScreen) {
@@ -105,20 +86,16 @@ void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) 
 		_vm->_system->updateScreen();
 	}
 
-	entry.x = (_vm->_system->getWidth() - entry->getWidth()) / 2;
-	entry.y = (_vm->_system->getHeight() - entry->getHeight()) / 2;
-	entry.loop = false;
-	playMovie(entry);
+	_videoStreams[videoHandle].x = (_vm->_system->getWidth() - _videoStreams[videoHandle]->getWidth()) / 2;
+	_videoStreams[videoHandle].y = (_vm->_system->getHeight() - _videoStreams[videoHandle]->getHeight()) / 2;
+
+	waitUntilMovieEnds(videoHandle);
 }
 
-void VideoManager::playMovie(VideoEntry videoEntry) {
-	// Add video to the list
-	_videoStreams.push_back(videoEntry);
-
+void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
-	videoEntry->startAudio();
 
-	while (!videoEntry->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (!_videoStreams[videoHandle]->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
 		if (updateBackgroundMovies())
 			_vm->_system->updateScreen();
 
@@ -149,52 +126,40 @@ void VideoManager::playMovie(VideoEntry videoEntry) {
 		_vm->_system->delayMillis(10);
 	}
 
-	videoEntry->stop();
-
+	_videoStreams[videoHandle]->stop();
 	_videoStreams.clear();
 }
 
 void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y, bool loop) {
-	Common::File *file = new Common::File();
-	if (!file->open(filename))
-		return; // Return silently for now...
-
-	VideoEntry entry;
-	entry.video = new QTPlayer();
-
-	if (!entry.video)
+	VideoHandle videoHandle = createVideoHandle(filename, x, y, loop);
+	if (videoHandle == NULL_VID_HANDLE)
 		return;
-
-	entry->loadFile(file);
 
 	// Center x if requested
 	if (x < 0)
-		x = (_vm->_system->getWidth() - entry->getWidth()) / 2;
+		_videoStreams[videoHandle].x = (_vm->_system->getWidth() - _videoStreams[videoHandle]->getWidth()) / 2;
 
 	// Center y if requested
 	if (y < 0)
-		y = (_vm->_system->getHeight() - entry->getHeight()) / 2;
-
-	entry.x = x;
-	entry.y = y;
-	entry.loop = loop;
-
-	entry->startAudio();
-	_videoStreams.push_back(entry);
+		_videoStreams[videoHandle].y = (_vm->_system->getHeight() - _videoStreams[videoHandle]->getHeight()) / 2;
 }
 
 bool VideoManager::updateBackgroundMovies() {
 	bool updateScreen = false;
 
 	for (uint32 i = 0; i < _videoStreams.size() && !_vm->shouldQuit(); i++) {
+		// Skip deleted videos
+		if (!_videoStreams[i].video)
+			continue;
+
 		// Remove any videos that are over
 		if (_videoStreams[i]->endOfVideo()) {
 			if (_videoStreams[i].loop) {
 				_videoStreams[i]->reset();
 			} else {
 				delete _videoStreams[i].video;
-				_videoStreams.remove_at(i);
-				i--;
+				memset(&_videoStreams, 0, sizeof(VideoEntry));
+				_videoStreams[i].video = NULL;
 				continue;
 			}
 		}
@@ -204,7 +169,7 @@ bool VideoManager::updateBackgroundMovies() {
 			Graphics::Surface *frame = _videoStreams[i]->getNextFrame();
 			bool deleteFrame = false;
 
-			if (frame) {
+			if (frame && _videoStreams[i].enabled) {
 				// Convert from 8bpp to the current screen format if necessary
 				if (frame->bytesPerPixel == 1) {
 					Graphics::Surface *newFrame = new Graphics::Surface();
@@ -297,9 +262,6 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 		if (mlstRecord.u1 != 1)
 			warning("mlstRecord.u1 not 1");
 
-		// Enable the record by default
-		mlstRecord.enabled = true;
-
 		if (mlstRecord.index == mlstId) {
 			_mlstRecords.push_back(mlstRecord);
 			break;
@@ -312,19 +274,8 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 void VideoManager::playMovie(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
-			warning("STUB: Play tMOV %d (non-blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
-			return; // TODO: This will do a lot of things wrong if enabled right now ;)
-			QTPlayer *qtPlayer = new QTPlayer();
-			qtPlayer->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, _mlstRecords[i].movieID));
-			qtPlayer->loadFile(_vm->getRawData(ID_TMOV, _mlstRecords[i].movieID));
-
-			VideoEntry entry;
-			entry.video = qtPlayer;
-			entry.x = _mlstRecords[i].left;
-			entry.y = _mlstRecords[i].top;
-			entry.id = _mlstRecords[i].movieID;
-			entry.loop = _mlstRecords[i].loop != 0;
-			_videoStreams.push_back(entry);
+			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping");
+			createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0);
 			return;
 		}
 }
@@ -335,21 +286,9 @@ void VideoManager::playMovieBlocking(uint16 id) {
 
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
-			warning("STUB: Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
-
-			// TODO: See if a non-blocking movie has been activated with the same id,
-			// and if so, block input until that movie is finished.
-			QTPlayer *qtPlayer = new QTPlayer();
-			qtPlayer->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, _mlstRecords[i].movieID));
-			qtPlayer->loadFile(_vm->getRawData(ID_TMOV, _mlstRecords[i].movieID));
-
-			VideoEntry entry;
-			entry.video = qtPlayer;
-			entry.x = _mlstRecords[i].left;
-			entry.y = _mlstRecords[i].top;
-			entry.id = _mlstRecords[i].movieID;
-			entry.loop = false;
-			playMovie(entry);
+			debug(1, "Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
+			VideoHandle videoHandle = createVideoHandle(_mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, false);
+			waitUntilMovieEnds(videoHandle);
 			return;
 		}
 }
@@ -365,25 +304,97 @@ void VideoManager::stopMovie(uint16 id) {
 void VideoManager::enableMovie(uint16 id) {
 	debug(2, "Enabling movie %d", id);
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
-		if (_mlstRecords[i].code == id) {
-			_mlstRecords[i].enabled = true;
-			return;
-		}
+		if (_mlstRecords[i].code == id)
+			for (uint16 j = 0; j < _videoStreams.size(); j++)
+				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
+					_videoStreams[j].enabled = true;
+					return;
+				}
 }
 
 void VideoManager::disableMovie(uint16 id) {
 	debug(2, "Disabling movie %d", id);
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
-		if (_mlstRecords[i].code == id) {
-			_mlstRecords[i].enabled = false;
-			return;
-		}
+		if (_mlstRecords[i].code == id)
+			for (uint16 j = 0; j < _videoStreams.size(); j++)
+				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
+					_videoStreams[j].enabled = false;
+					return;
+				}
 }
 
 void VideoManager::disableAllMovies() {
 	debug(2, "Disabling all movies");
-	for (uint16 i = 0; i < _mlstRecords.size(); i++)
-		_mlstRecords[i].enabled = false;
+	for (uint16 i = 0; i < _videoStreams.size(); i++)
+		_videoStreams[i].enabled = false;
+}
+
+VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop) {
+	// First, check to see if that video is already playing
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (_videoStreams[i].id == id)
+			return i;
+
+	// Otherwise, create a new entry
+	VideoEntry entry;
+	entry.video = new QTPlayer();
+	entry.x = x;
+	entry.y = y;
+	entry.filename = "";
+	entry.id = id;
+	entry.loop = loop;
+	entry.enabled = true;
+	entry->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
+	entry->loadFile(_vm->getRawData(ID_TMOV, id));
+	entry->startAudio();
+
+	// Search for any deleted videos so we can take a formerly used slot
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (!_videoStreams[i].video) {
+			_videoStreams[i] = entry;
+			return i;
+		}
+
+	// Otherwise, just add it to the list
+	_videoStreams.push_back(entry);
+	return _videoStreams.size() - 1;
+}
+
+VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, uint16 y, bool loop) {
+	// First, check to see if that video is already playing
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (_videoStreams[i].filename == filename)
+			return i;
+
+	// Otherwise, create a new entry
+	VideoEntry entry;
+	entry.video = new QTPlayer();
+	entry.x = x;
+	entry.y = y;
+	entry.filename = filename;
+	entry.id = 0;
+	entry.loop = loop;
+	entry.enabled = true;
+	
+	Common::File *file = new Common::File();
+	if (!file->open(filename)) {
+		delete file;
+		return NULL_VID_HANDLE;
+	}
+	
+	entry->loadFile(file);
+	entry->startAudio();
+	
+	// Search for any deleted videos so we can take a formerly used slot
+	for (uint32 i = 0; i < _videoStreams.size(); i++)
+		if (!_videoStreams[i].video) {
+			_videoStreams[i] = entry;
+			return i;
+		}
+			
+	// Otherwise, just add it to the list
+	_videoStreams.push_back(entry);
+	return _videoStreams.size() - 1;
 }
 
 } // End of namespace Mohawk

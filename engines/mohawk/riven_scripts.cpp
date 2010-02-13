@@ -488,20 +488,17 @@ void RivenScript::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
 // Command 32: play foreground movie - blocking (movie_id)
 void RivenScript::playMovie(uint16 op, uint16 argc, uint16 *argv) {
 	CursorMan.showMouse(false); // Hide the cursor before playing the video
-	_vm->_video->enableMovie(argv[0]);
 	_vm->_video->playMovieBlocking(argv[0]);
 	CursorMan.showMouse(true); // Show the cursor again when we're done ;)
 }
 
 // Command 33: play background movie - nonblocking (movie_id)
 void RivenScript::playMovieBg(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->enableMovie(argv[0]);
 	_vm->_video->playMovie(argv[0]);
 }
 
 // Command 34: stop a movie
 void RivenScript::stopMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->disableMovie(argv[0]);
 	_vm->_video->stopMovie(argv[0]);
 }
 

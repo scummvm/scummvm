@@ -42,8 +42,6 @@ struct MLSTRecord {
 	uint16 loop;
 	uint16 volume;
 	uint16 u1;
-
-	bool enabled;
 };
 
 class QTPlayer;
@@ -55,8 +53,15 @@ struct VideoEntry {
 	bool loop;
 	Common::String filename;
 	uint16 id; // Riven only
+	bool enabled;
 
 	QTPlayer *operator->() const { assert(video); return video; }
+};
+
+typedef int32 VideoHandle;
+
+enum {
+	NULL_VID_HANDLE = -1
 };
 
 class VideoManager {
@@ -88,11 +93,14 @@ public:
 private:
 	MohawkEngine *_vm;
 
-	void playMovie(VideoEntry videoEntry);
+	void waitUntilMovieEnds(VideoHandle videoHandle);
 
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
 	uint32 _pauseStart;
+
+	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop);
+	VideoHandle createVideoHandle(Common::String filename, uint16 x, uint16 y, bool loop);
 };
 
 } // End of namespace Mohawk

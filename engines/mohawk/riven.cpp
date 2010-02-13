@@ -105,6 +105,7 @@ Common::Error MohawkEngine_Riven::run() {
 	Common::Event event;
 	while (!_gameOver) {
 		bool needsUpdate = _gfx->runScheduledWaterEffects();
+		needsUpdate |= _video->updateBackgroundMovies();
 
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
@@ -215,6 +216,9 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	_curStack = n;
 
+	// Stop any videos playing
+	_video->stopVideos();
+
 	// Clear the old stack files out
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		delete _mhk[i];
@@ -293,6 +297,7 @@ void MohawkEngine_Riven::changeToCard(uint16 n) {
 	_gfx->_updatesEnabled = true;
 	_gfx->clearWaterEffects();
 	_gfx->_activatedPLSTs.clear();
+	_video->stopVideos();
 	_video->_mlstRecords.clear();
 	_gfx->drawPLST(1);
 	_activatedSLST = false;

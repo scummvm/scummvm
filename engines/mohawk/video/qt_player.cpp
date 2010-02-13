@@ -204,6 +204,7 @@ void QTPlayer::resumeAudio() {
 
 void QTPlayer::stopAudio() {
 	g_system->getMixer()->stopHandle(_audHandle);
+	_audStream = NULL; // the mixer automatically frees the stream
 }
 
 Graphics::Surface *QTPlayer::getNextFrame() {
@@ -1085,10 +1086,6 @@ void QTPlayer::closeFile() {
 
 	// The audio stream is deleted automatically
 	_audStream = NULL;
-}
-
-void QTPlayer::resetInternal() {
-
 }
 
 Common::SeekableReadStream *QTPlayer::getNextFramePacket() {
