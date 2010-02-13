@@ -24,10 +24,11 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
-#include "sci/sound/soundcmd.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
+#include "sci/sound/soundcmd.h"
 
 #include "sound/mixer.h"
 
@@ -90,7 +91,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	// JonesCD uses different functions based on the cdaudio.map file
 	// to use red book tracks.
-	if (s->_features->usesCdTrack())
+	if (g_sci->_features->usesCdTrack())
 		return kDoCdAudio(s, argc, argv);
 
 	Audio::Mixer *mixer = g_system->getMixer();

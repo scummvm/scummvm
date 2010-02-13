@@ -44,14 +44,14 @@ namespace Sci {
 // Uncomment this to use old music functions
 //#define USE_OLD_MUSIC_FUNCTIONS
 
-class Console;
 struct EngineState;
-class Kernel;
 class Vocabulary;
 class ResourceManager;
+class Kernel;
+class GameFeatures;
+class Console;
 class AudioPlayer;
 
-class SciEvent;
 class GfxAnimate;
 class GfxCache;
 class GfxCompare;
@@ -184,6 +184,8 @@ public:
 	SciGui32 *_gui32; // GUI for SCI32 games
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
+
+	GameFeatures *_features;
 
 private:
 	const ADGameDescription *_gameDescription;

@@ -24,6 +24,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -147,7 +148,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	if (s->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
+	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
 		// If we're running a SCI0 game, update the sound cues, to compensate
 		// for the fact that SCI0 does not poll to update the sound cues itself,
 		// like SCI01 and later do with cmdUpdateSoundCues. kGetEvent is called

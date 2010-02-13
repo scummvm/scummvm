@@ -31,6 +31,7 @@
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
 #include "sci/video/seq_decoder.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -168,7 +169,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
-	switch (s->_features->detectSetCursorType()) {
+	switch (g_sci->_features->detectSetCursorType()) {
 	case SCI_VERSION_0_EARLY:
 		return kSetCursorSci0(s, argc, argv);
 	case SCI_VERSION_1_1:
@@ -517,7 +518,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 3) {
 		if (!argv[2].isNull())
 			addToFlag = true;
-		if (!s->_features->usesOldGfxFunctions())
+		if (!g_sci->_features->usesOldGfxFunctions())
 			addToFlag = !addToFlag;
 	}
 	if (argc >= 4)

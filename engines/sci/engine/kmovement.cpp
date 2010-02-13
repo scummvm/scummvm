@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -267,7 +268,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
-	if (s->_features->handleMoveCount()) {
+	if (g_sci->_features->handleMoveCount()) {
 		if (max_movcnt > movcnt) {
 			++movcnt;
 			PUT_SEL32V(segMan, mover, SELECTOR(b_movCnt), movcnt); // Needed for HQ1/Ogre?

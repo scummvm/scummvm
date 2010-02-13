@@ -36,8 +36,6 @@ namespace Common {
 }
 
 #include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/engine/features.h"
 #include "sci/engine/seg_manager.h"
 
 #include "sci/parser/vocabulary.h"
@@ -121,8 +119,6 @@ public:
 	Vocabulary *_voc;
 
 	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */
-
-	GameFeatures *_features;
 
 	/* Non-VM information */
 

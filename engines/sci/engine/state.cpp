@@ -40,8 +40,6 @@ EngineState::EngineState(Kernel *kernel, Vocabulary *voc, SegManager *segMan, Au
 	sfx_init_flags = 0;
 #endif
 
-	_features = new GameFeatures(_segMan, _kernel);
-
 	restarting_flags = 0;
 
 	last_wait_time = 0;
@@ -80,7 +78,6 @@ EngineState::EngineState(Kernel *kernel, Vocabulary *voc, SegManager *segMan, Au
 }
 
 EngineState::~EngineState() {
-	delete _features;
 	delete _msgState;
 }
 

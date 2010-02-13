@@ -33,6 +33,7 @@
 #include "sci/console.h"
 #include "sci/event.h"
 
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
@@ -65,6 +66,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 
 	assert(g_sci = 0);
 	g_sci = this;
+	_features = 0;
 
 	// Set up the engine specific debug levels
 	Common::addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
@@ -117,6 +119,7 @@ SciEngine::~SciEngine() {
 	delete _vocabulary;
 	delete _console;
 	delete _resMan;
+	delete _features;
 
 	g_sci = 0;
 }
@@ -175,6 +178,8 @@ Common::Error SciEngine::run() {
 
 	SegManager *segMan = new SegManager(_resMan);
 
+	_features = new GameFeatures(segMan, _kernel);
+
 	// We'll set the GUI below
 	_gamestate = new EngineState(_kernel, _vocabulary, segMan, _audio);
 	_gamestate->_event = new SciEvent();
@@ -223,7 +228,7 @@ Common::Error SciEngine::run() {
 	assert(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value != 0);
 	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
 
-	SciVersion soundVersion = _gamestate->_features->detectDoSoundType();
+	SciVersion soundVersion = _features->detectDoSoundType();
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
 
@@ -243,7 +248,7 @@ Common::Error SciEngine::run() {
 		_gui32->init();
 	else
 #endif
-		_gui->init(_gamestate->_features->usesOldGfxFunctions());
+		_gui->init(_features->usesOldGfxFunctions());
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 

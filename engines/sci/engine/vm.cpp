@@ -31,6 +31,7 @@
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debugState
 #include "sci/resource.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
@@ -1385,7 +1386,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lofsa: // 0x39 (57)
 			s->r_acc.segment = scriptState.xs->addr.pc.segment;
 
-			switch (s->_features->detectLofsType()) {
+			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_1_1:
 				s->r_acc.offset = opparams[0] + local_script->_scriptSize;
 				break;
@@ -1407,7 +1408,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lofss: // 0x3a (58)
 			r_temp.segment = scriptState.xs->addr.pc.segment;
 
-			switch (s->_features->detectLofsType()) {
+			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_1_1:
 				r_temp.offset = opparams[0] + local_script->_scriptSize;
 				break;

@@ -30,11 +30,12 @@
 #include "sci/debug.h"
 #include "sci/event.h"
 #include "sci/resource.h"
-#include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/engine/gc.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/kernel_types.h"	// for determine_reg_type
+#include "sci/engine/gc.h"
+#include "sci/engine/features.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sound/iterator/songlib.h"	// for SongLibrary
 #include "sci/sound/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
@@ -418,11 +419,11 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Detected features:\n");
 	DebugPrintf("------------------\n");
-	DebugPrintf("Sound type: %s\n", getSciVersionDesc(s->_features->detectDoSoundType()));
-	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(s->_features->detectGfxFunctionsType()));
-	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(s->_features->detectLofsType()));
-	DebugPrintf("Move count type: %s\n", (s->_features->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
-	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(s->_features->detectSetCursorType()));
+	DebugPrintf("Sound type: %s\n", getSciVersionDesc(_engine->_features->detectDoSoundType()));
+	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(_engine->_features->detectGfxFunctionsType()));
+	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(_engine->_features->detectLofsType()));
+	DebugPrintf("Move count type: %s\n", (_engine->_features->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
+	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(_engine->_features->detectSetCursorType()));
 	DebugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
 	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
@@ -1593,7 +1594,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	SoundResource *soundRes = new SoundResource(number, _engine->getResMan(), _engine->_gamestate->_features->detectDoSoundType());
+	SoundResource *soundRes = new SoundResource(number, _engine->getResMan(), _engine->_features->detectDoSoundType());
 
 	if (!soundRes) {
 		DebugPrintf("Not a sound resource!\n");

@@ -32,6 +32,7 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
@@ -966,7 +967,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	temp = retval->_sound._songlib;
-	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags, s->_features->detectDoSoundType());
+	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags, g_sci->_features->detectDoSoundType());
 	retval->sfx_init_flags = s->sfx_init_flags;
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
@@ -1018,7 +1019,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	} else {
 #endif
 		g_sci->_gui->resetEngineState(retval);
-		g_sci->_gui->init(retval->_features->usesOldGfxFunctions());
+		g_sci->_gui->init(g_sci->_features->usesOldGfxFunctions());
 #ifdef ENABLE_SCI32
 	}
 #endif
