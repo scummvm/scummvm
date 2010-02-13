@@ -342,11 +342,23 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 }
 
 bool MadsConsole::cmdMessage(int argc, const char **argv) {
-	VALIDATE_MADS;
-
-	if (argc == 1)
+	if (argc == 1) {
 		DebugPrintf("message 'objnum'\n");
-	else {
+	} else if (!strcmp(argv[1], "list_quotes")) {
+		// Dump the quotes list
+		FILE *destFile = fopen("mads_quotes.txt", "wb");
+		for (uint i = 0; i < _vm->globals()->getQuotesSize(); ++i)
+			fprintf(destFile, "%.3d - %s\n", i, _vm->globals()->getQuote(i));
+		fclose(destFile);
+
+	} else if (!strcmp(argv[1], "list_vocab")) {
+		// Dump the vocab list
+		FILE *destFile = fopen("mads_vocab.txt", "wb");
+		for (uint i = 1; i <= _vm->globals()->getVocabSize(); ++i)
+			fprintf(destFile, "%.3d/%.3x - %s\n", i, i, _vm->globals()->getVocab(i));
+		fclose(destFile);
+
+	} else {
 		int messageIdx = strToInt(argv[1]);
 
 		if ((argc != 3) || (strcmp(argv[2], "idx") != 0))
