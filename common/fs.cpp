@@ -49,17 +49,17 @@ FSNode::FSNode(const Common::String &p) {
 }
 
 bool FSNode::operator<(const FSNode& node) const {
+	// Directories come before files, i.e., are "lower".
 	if (isDirectory() != node.isDirectory())
 		return isDirectory();
 
+	// If both nodes are of the same type (two files or two dirs),
+	// then sort by name, ignoring case.
 	return getDisplayName().compareToIgnoreCase(node.getDisplayName()) < 0;
 }
 
 bool FSNode::exists() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->exists();
+	return _realNode && _realNode->exists();
 }
 
 FSNode FSNode::getChild(const Common::String &n) const {
@@ -116,24 +116,15 @@ Common::String FSNode::getPath() const {
 }
 
 bool FSNode::isDirectory() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->isDirectory();
+	return _realNode && _realNode->isDirectory();
 }
 
 bool FSNode::isReadable() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->isReadable();
+	return _realNode && _realNode->isReadable();
 }
 
 bool FSNode::isWritable() const {
-	if (_realNode == 0)
-		return false;
-
-	return _realNode->isWritable();
+	return _realNode && _realNode->isWritable();
 }
 
 Common::SeekableReadStream *FSNode::createReadStream() const {
