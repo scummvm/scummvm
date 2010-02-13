@@ -104,7 +104,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	if (filename[0] == '/' && filename[1] == '\\')
 		filename += 2;
 
-	Common::String englishName = s->getLanguageString(filename, K_LANG_ENGLISH);
+	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
 	const Common::String wrappedName = g_sci->wrapFilename(englishName);
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;

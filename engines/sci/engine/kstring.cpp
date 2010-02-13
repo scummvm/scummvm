@@ -575,7 +575,7 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 		sep_str = s->_segMan->getString(argv[2]);
 		sep = sep_str.c_str();
 	}
-	Common::String str = s->strSplit(format.c_str(), sep);
+	Common::String str = g_sci->strSplit(format.c_str(), sep);
 
 	// Make sure target buffer is large enough
 	SegmentRef buf_r = s->_segMan->dereference(argv[0]);

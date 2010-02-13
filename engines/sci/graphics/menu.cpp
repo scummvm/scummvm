@@ -190,8 +190,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		if (separatorCount == tempPos - beginPos) {
 			itemEntry->separatorLine = true;
 		} else {
-			EngineState *s = g_sci->getEngineState();	// HACK: needed for strSplit()
-			itemEntry->text = s->strSplit(Common::String(content.c_str() + beginPos, tempPos - beginPos).c_str());
+			itemEntry->text = g_sci->strSplit(Common::String(content.c_str() + beginPos, tempPos - beginPos).c_str());
 
 			// LSL6 uses "Ctrl-" prefix string instead of ^ like all the other games do
 			tempPtr = itemEntry->text.c_str();
@@ -250,7 +249,6 @@ GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 }
 
 void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
-	EngineState *s = g_sci->getEngineState();	// HACK: needed for strSplit()
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
 		error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
@@ -262,7 +260,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 		itemEntry->saidVmPtr = value;
 		break;
 	case SCI_MENU_ATTRIBUTE_TEXT:
-		itemEntry->text = s->strSplit(_segMan->getString(value).c_str());
+		itemEntry->text = g_sci->strSplit(_segMan->getString(value).c_str());
 		itemEntry->textVmPtr = value;
 		// We assume here that no script ever creates a separatorLine dynamically
 		break;

@@ -285,7 +285,9 @@ int game_init(EngineState *s) {
 #endif
 
 	// Load game language into printLang property of game object
-	s->getLanguage();
+	// FIXME: It's evil to achieve this as a side effect of a getter.
+	// Much better to have an explicit init method for this.
+	g_sci->getSciLanguage();
 
 	return 0;
 }

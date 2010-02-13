@@ -338,10 +338,10 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	
 #ifdef ENABLE_SCI32
 	if (g_sci->_gui32)
-		g_sci->_gui32->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gui32->textSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	else
 #endif
-		g_sci->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gui->textSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
 	dest[2] = make_reg(0, textHeight);
@@ -782,13 +782,13 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
-		g_sci->_gfxControls->kernelDrawButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
+		g_sci->_gfxControls->kernelDrawButton(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
-		g_sci->_gfxControls->kernelDrawText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -796,7 +796,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(max));
 		cursorPos = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
-		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
+		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
@@ -1044,7 +1044,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	Common::String title;
 	if (argv[4 + argextra].segment) {
 		title = s->_segMan->getString(argv[4 + argextra]);
-		title = s->strSplit(title.c_str(), NULL);
+		title = g_sci->strSplit(title.c_str(), NULL);
 	}
 
 	return g_sci->_gfxPorts->kernelNewWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
@@ -1085,7 +1085,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		text = kernel_lookup_text(s, textp, index);
 	}
 
-	return g_sci->_gfxPaint16->kernelDisplay(s->strSplit(text.c_str()).c_str(), argc, argv);
+	return g_sci->_gfxPaint16->kernelDisplay(g_sci->strSplit(text.c_str()).c_str(), argc, argv);
 }
 
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {

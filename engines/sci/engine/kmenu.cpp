@@ -34,7 +34,7 @@
 namespace Sci {
 
 reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
-	Common::String title = s->strSplit(s->_segMan->getString(argv[0]).c_str());
+	Common::String title = g_sci->strSplit(s->_segMan->getString(argv[0]).c_str());
 	Common::String content = s->_segMan->getString(argv[1]);
 
 	g_sci->_gfxMenu->kernelAddEntry(title, content, argv[1]);
@@ -77,7 +77,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 		// Sometimes this is called without giving text, if thats the case dont process it
 		text = s->_segMan->getString(textReference);
 
-		g_sci->_gfxMenu->kernelDrawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
+		g_sci->_gfxMenu->kernelDrawStatus(g_sci->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
 	}
 	return s->r_acc;
 }

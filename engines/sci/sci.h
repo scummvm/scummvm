@@ -100,8 +100,6 @@ enum kDebugLevels {
 	kDebugLevelOnStartup  = 1 << 23
 };
 
-extern const char *versionNames[];
-
 /** SCI versions */
 enum SciVersion {
 	SCI_VERSION_NONE,
@@ -123,6 +121,19 @@ enum MoveCountType {
 	kIgnoreMoveCount,
 	kIncrementMoveCount
 };
+
+/** Supported languages */
+enum kLanguage {
+	K_LANG_NONE = 0,
+	K_LANG_ENGLISH = 1,
+	K_LANG_FRENCH = 33,
+	K_LANG_SPANISH = 34,
+	K_LANG_ITALIAN = 39,
+	K_LANG_GERMAN = 49,
+	K_LANG_JAPANESE = 81,
+	K_LANG_PORTUGUESE = 351
+};
+
 
 class SciEngine : public Engine {
 	friend class Console;
@@ -164,6 +175,22 @@ public:
 
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
+
+public:
+
+	/**
+	 * Processes a multilanguage string based on the current language settings and
+	 * returns a string that is ready to be displayed.
+	 * @param str		the multilanguage string
+	 * @param sep		optional seperator between main language and subtitle language,
+	 *					if NULL is passed no subtitle will be added to the returned string
+	 * @return processed string
+	 */
+	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
+
+	kLanguage getSciLanguage();
+
+	Common::String getSciLanguageString(const char *str, kLanguage lang) const;
 
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx

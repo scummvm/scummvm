@@ -80,18 +80,6 @@ enum {
 	SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE = 4
 };
 
-/** Supported languages */
-enum kLanguage {
-	K_LANG_NONE = 0,
-	K_LANG_ENGLISH = 1,
-	K_LANG_FRENCH = 33,
-	K_LANG_SPANISH = 34,
-	K_LANG_ITALIAN = 39,
-	K_LANG_GERMAN = 49,
-	K_LANG_JAPANESE = 81,
-	K_LANG_PORTUGUESE = 351
-};
-
 class FileHandle {
 public:
 	Common::String _name;
@@ -192,26 +180,6 @@ public:
 	byte _memorySegment[kMemorySegmentMax];
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
-
-
-public:
-
-	/**
-	 * Processes a multilanguage string based on the current language settings and
-	 * returns a string that is ready to be displayed.
-	 * @param str		the multilanguage string
-	 * @param sep		optional seperator between main language and subtitle language,
-	 *					if NULL is passed no subtitle will be added to the returned string
-	 * @return processed string
-	 */
-	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
-
-	kLanguage getLanguage();
-
-	Common::String getLanguageString(const char *str, kLanguage lang) const;
-
-private:
-	kLanguage charToLanguage(const char c) const;
 };
 
 } // End of namespace Sci

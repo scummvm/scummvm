@@ -89,7 +89,7 @@ void EngineState::setRoomNumber(uint16 roomNumber) {
 	script_000->_localsBlock->_locals[13] = make_reg(0, roomNumber);
 }
 
-kLanguage EngineState::charToLanguage(const char c) const {
+static kLanguage charToLanguage(const char c) {
 	switch (c) {
 	case 'F':
 		return K_LANG_FRENCH;
@@ -109,7 +109,7 @@ kLanguage EngineState::charToLanguage(const char c) const {
 	}
 }
 
-Common::String EngineState::getLanguageString(const char *str, kLanguage lang) const {
+Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang) const {
 	kLanguage secondLang = K_LANG_NONE;
 
 	const char *seeker = str;
@@ -138,15 +138,15 @@ Common::String EngineState::getLanguageString(const char *str, kLanguage lang) c
 		return Common::String(str);
 }
 
-kLanguage EngineState::getLanguage() {
-	kLanguage lang = (kLanguage)g_sci->getResMan()->getAudioLanguage();
+kLanguage SciEngine::getSciLanguage() {
+	kLanguage lang = (kLanguage)_resMan->getAudioLanguage();
 	if (lang != K_LANG_NONE)
 		return lang;
 
 	lang = K_LANG_ENGLISH;
 
-	if (g_sci->getKernel()->_selectorCache.printLang != -1) {
-		lang = (kLanguage)GET_SEL32V(_segMan, _gameObj, SELECTOR(printLang));
+	if (_kernel->_selectorCache.printLang != -1) {
+		lang = (kLanguage)GET_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(printLang));
 
 		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
@@ -157,7 +157,7 @@ kLanguage EngineState::getLanguage() {
 			// (essentially disabling runtime language switching).
 			// Note: only a limited number of multilanguage games have been tested
 			// so far, so this information may not be 100% accurate.
-			switch (((Sci::SciEngine*)g_engine)->getLanguage()) {
+			switch (getLanguage()) {
 			case Common::FR_FRA:
 				lang = K_LANG_FRENCH;
 				break;
@@ -181,26 +181,26 @@ kLanguage EngineState::getLanguage() {
 			}
 
 			// Store language in printLang selector
-			PUT_SEL32V(_segMan, _gameObj, SELECTOR(printLang), lang);
+			PUT_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(printLang), lang);
 		}
 	}
 
 	return lang;
 }
 
-Common::String EngineState::strSplit(const char *str, const char *sep) {
-	kLanguage lang = getLanguage();
+Common::String SciEngine::strSplit(const char *str, const char *sep) {
+	kLanguage lang = getSciLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (g_sci->getKernel()->_selectorCache.subtitleLang != -1) {
-		subLang = (kLanguage)GET_SEL32V(_segMan, _gameObj, SELECTOR(subtitleLang));
+	if (_kernel->_selectorCache.subtitleLang != -1) {
+		subLang = (kLanguage)GET_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(subtitleLang));
 	}
 
-	Common::String retval = getLanguageString(str, lang);
+	Common::String retval = getSciLanguageString(str, lang);
 
 	if ((subLang != K_LANG_NONE) && (sep != NULL)) {
 		retval += sep;
-		retval += getLanguageString(str, subLang);
+		retval += getSciLanguageString(str, subLang);
 	}
 
 	return retval;
