@@ -176,7 +176,7 @@ Common::Error SciEngine::run() {
 	SegManager *segMan = new SegManager(_resMan);
 
 	// We'll set the GUI below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, segMan, _audio);
+	_gamestate = new EngineState(_kernel, _vocabulary, segMan, _audio);
 	_gamestate->_event = new SciEvent();
 
 	if (script_init_engine(_gamestate))

@@ -182,7 +182,7 @@ int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion) {
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
-	s->_sound.sfx_init(s->resMan, sound_flags, soundVersion);
+	s->_sound.sfx_init(g_sci->getResMan(), sound_flags, soundVersion);
 
 	return 0;
 }
@@ -243,7 +243,7 @@ int game_init(EngineState *s) {
 	s->stack_base = stack->_entries;
 	s->stack_top = stack->_entries + stack->_capacity;
 
-	if (!script_instantiate(s->resMan, s->_segMan, 0)) {
+	if (!script_instantiate(g_sci->getResMan(), s->_segMan, 0)) {
 		warning("game_init(): Could not instantiate script 0");
 		return 1;
 	}
@@ -274,7 +274,7 @@ int game_init(EngineState *s) {
 	// The first entry in the export table of script 0 points to the game object
 	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
-	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags, s->resMan);
+	s->_gameId = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags, g_sci->getResMan());
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameId.c_str(), PRINT_REG(s->_gameObj));
 

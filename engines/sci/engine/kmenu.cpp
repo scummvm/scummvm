@@ -71,7 +71,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	reg_t textReference = argv[0];
 	Common::String text;
 	int16 colorPen = (argc > 1) ? argv[1].toSint16() : 0;
-	int16 colorBack = (argc > 2) ? argv[2].toSint16() : s->resMan->isVGA() ? 255 : 15;
+	int16 colorBack = (argc > 2) ? argv[2].toSint16() : g_sci->getResMan()->isVGA() ? 255 : 15;
 
 	if (!textReference.isNull()) {
 		// Sometimes this is called without giving text, if thats the case dont process it

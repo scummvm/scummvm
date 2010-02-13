@@ -33,8 +33,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, AudioPlayer *audio)
-: resMan(res), _kernel(kernel), _voc(voc), _segMan(segMan), _audio(audio), _dirseeker() {
+EngineState::EngineState(Kernel *kernel, Vocabulary *voc, SegManager *segMan, AudioPlayer *audio)
+: _kernel(kernel), _voc(voc), _segMan(segMan), _audio(audio), _dirseeker() {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sfx_init_flags = 0;
@@ -142,7 +142,7 @@ Common::String EngineState::getLanguageString(const char *str, kLanguage lang) c
 }
 
 kLanguage EngineState::getLanguage() {
-	kLanguage lang = (kLanguage)resMan->getAudioLanguage();
+	kLanguage lang = (kLanguage)g_sci->getResMan()->getAudioLanguage();
 	if (lang != K_LANG_NONE)
 		return lang;
 

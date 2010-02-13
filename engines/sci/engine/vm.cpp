@@ -261,7 +261,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
 
 	if (!scr || scr->isMarkedAsDeleted()) // Script not present yet?
-		seg = script_instantiate(s->resMan, s->_segMan, script);
+		seg = script_instantiate(g_sci->getResMan(), s->_segMan, script);
 
 	const int temp = s->_segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {

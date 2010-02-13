@@ -147,7 +147,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			int16 language = argv[1].toSint16();
 
 			if (language != -1)
-				s->resMan->setAudioLanguage(language);
+				g_sci->getResMan()->setAudioLanguage(language);
 
 			return make_reg(0, s->getLanguage());
 		}

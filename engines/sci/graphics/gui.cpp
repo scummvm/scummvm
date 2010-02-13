@@ -62,13 +62,13 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_cursor->init(_coordAdjuster, _s->_event);
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
 	g_sci->_gfxCompare = _compare;
-	_transitions = new GfxTransitions(this, _screen, _palette, _s->resMan->isVGA());
-	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
+	_transitions = new GfxTransitions(this, _screen, _palette, g_sci->getResMan()->isVGA());
+	_paint16 = new GfxPaint16(g_sci->getResMan(), _s->_segMan, _s->_kernel, this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
 	g_sci->_gfxPaint = _paint16;
 	g_sci->_gfxPaint16 = _paint16;
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
 	g_sci->_gfxAnimate = _animate;
-	_text16 = new GfxText16(_s->resMan, _cache, _ports, _paint16, _screen);
+	_text16 = new GfxText16(g_sci->getResMan(), _cache, _ports, _paint16, _screen);
 	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
 	g_sci->_gfxControls = _controls;
 	_menu = new GfxMenu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
@@ -125,12 +125,12 @@ void SciGui::textColors(int argc, reg_t *argv) {
 }
 
 reg_t SciGui::portraitLoad(Common::String resourceName) {
-	//Portrait *myPortrait = new Portrait(_s->resMan, _screen, _palette, resourceName);
+	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
 	return NULL_REG;
 }
 
 void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	Portrait *myPortrait = new Portrait(_s->resMan, _s->_event, this, _screen, _palette, _audio, resourceName);
+	Portrait *myPortrait = new Portrait(g_sci->getResMan(), _s->_event, this, _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)

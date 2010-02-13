@@ -411,7 +411,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
 
 	EngineState *s = _engine->_gamestate;
-	bool hasVocab997 = s->resMan->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
+	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 
 	DebugPrintf("Game ID: %s\n", s->_gameId.c_str());
 	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
@@ -423,9 +423,9 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(s->_features->detectLofsType()));
 	DebugPrintf("Move count type: %s\n", (s->_features->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
 	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(s->_features->detectSetCursorType()));
-	DebugPrintf("View type: %s\n", viewTypeDesc[s->resMan->getViewType()]);
-	DebugPrintf("Resource volume version: %s\n", s->resMan->getVolVersionDesc());
-	DebugPrintf("Resource map version: %s\n", s->resMan->getMapVersionDesc());
+	DebugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
+	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
+	DebugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	DebugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
 	DebugPrintf("\n");
 
@@ -434,7 +434,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	// Load the opcode table from vocab.998 if it exists, to obtain the opcode names
-	Resource *r = _engine->getResourceManager()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
+	Resource *r = _engine->getResMan()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
 
 	// If the resource couldn't be loaded, leave
 	if (!r) {
@@ -610,7 +610,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _engine->getResourceManager()->findResource(ResourceId(res, resNum), 0);
+		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			char outFileName[50];
 			sprintf(outFileName, "%s.%03d", getResourceTypeName(res), resNum);
@@ -647,7 +647,7 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _engine->getResourceManager()->findResource(ResourceId(res, resNum), 0);
+		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			Common::hexdump(resource->data, resource->size, 16, 0);
 			DebugPrintf("Resource %s.%03d has been dumped to standard output\n", argv[1], resNum);
@@ -714,7 +714,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _engine->getResourceManager()->findResource(ResourceId(res, resNum), 0);
+		Resource *resource = _engine->getResMan()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
 		} else {
@@ -770,7 +770,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	}
 
 	for (; resNumber <= resMax; resNumber++) {
-		script = _engine->getResourceManager()->findResource(ResourceId(restype, resNumber), 0);
+		script = _engine->getResMan()->findResource(ResourceId(restype, resNumber), 0);
 		if (script) {
 			unsigned int seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
@@ -826,7 +826,7 @@ bool Console::cmdList(int argc, const char **argv) {
 			number = atoi(argv[2]);
 		}
 
-		Common::List<ResourceId> *resources = _engine->getResourceManager()->listResources(res, number);
+		Common::List<ResourceId> *resources = _engine->getResMan()->listResources(res, number);
 		sort(resources->begin(), resources->end(), ResourceIdLess());
 		Common::List<ResourceId>::iterator itr = resources->begin();
 
@@ -1483,7 +1483,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 
 	int16 number = atoi(argv[1]);
 
-	if (!_engine->getResourceManager()->testResource(ResourceId(kResourceTypeSound, number))) {
+	if (!_engine->getResMan()->testResource(ResourceId(kResourceTypeSound, number))) {
 		DebugPrintf("Unable to load this sound resource, most probably it has an equivalent audio resource (SCI1.1)\n");
 		return true;
 	}
@@ -1557,7 +1557,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 	}
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	Resource *song = _engine->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _engine->getResMan()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 	SongIterator *songit;
 	Audio::AudioStream *data;
 
@@ -1588,12 +1588,12 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 #else
 	int16 number = atoi(argv[1]);
 
-	if (!_engine->getResourceManager()->testResource(ResourceId(kResourceTypeSound, number))) {
+	if (!_engine->getResMan()->testResource(ResourceId(kResourceTypeSound, number))) {
 		DebugPrintf("Unable to load this sound resource, most probably it has an equivalent audio resource (SCI1.1)\n");
 		return true;
 	}
 
-	SoundResource *soundRes = new SoundResource(number, _engine->getResourceManager(), _engine->_gamestate->_features->detectDoSoundType());
+	SoundResource *soundRes = new SoundResource(number, _engine->getResMan(), _engine->_gamestate->_features->detectDoSoundType());
 
 	if (!soundRes) {
 		DebugPrintf("Not a sound resource!\n");
@@ -2481,7 +2481,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _engine->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _engine->getResMan()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	if (!song) {
 		DebugPrintf("Doesn't exist\n");
@@ -2646,7 +2646,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _engine->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _engine->getResMan()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	int offset = atoi(argv[2]);
 

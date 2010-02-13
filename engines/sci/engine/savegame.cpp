@@ -292,7 +292,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(Nodes_seg_id);
 }
 
-static void sync_SegManagerPtr(Common::Serializer &s, ResourceManager *&resMan, SegManager *&obj) {
+static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
 	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
 
 	if (s.isLoading())
@@ -380,7 +380,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortLeft);
 	}
 
-	sync_SegManagerPtr(s, resMan, _segMan);
+	sync_SegManagerPtr(s, _segMan);
 
 	syncArray<Class>(s, _segMan->_classtable);
 
@@ -776,14 +776,14 @@ static void load_script(EngineState *s, Script *scr) {
 	scr->_buf = (byte *)malloc(scr->_bufSize);
 	assert(scr->_buf);
 
-	Resource *script = s->resMan->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
+	Resource *script = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
 	assert(script != 0);
 
 	assert(scr->_bufSize >= script->size);
 	memcpy(scr->_buf, script->data, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		Resource *heap = s->resMan->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
+		Resource *heap = g_sci->getResMan()->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
 		assert(heap != 0);
 
 		scr->_heapStart = scr->_buf + scr->_scriptSize;
@@ -887,7 +887,7 @@ static void reconstruct_sounds(EngineState *s) {
 		int oldstatus;
 		SongIterator::Message msg;
 
-		base = ff = build_iterator(s->resMan, seeker->_resourceNum, it_type, seeker->_handle);
+		base = ff = build_iterator(g_sci->getResMan(), seeker->_resourceNum, it_type, seeker->_handle);
 		if (seeker->_restoreBehavior == RESTORE_BEHAVIOR_CONTINUE)
 			ff = new_fast_forward_iterator(base, seeker->_restoreTime);
 		ff->init();
@@ -943,7 +943,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// Create a new EngineState object
-	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_audio);
+	retval = new EngineState(s->_kernel, s->_voc, s->_segMan, s->_audio);
 	retval->_event = new SciEvent();
 
 	// Copy some old data

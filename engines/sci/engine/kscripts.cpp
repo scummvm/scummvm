@@ -54,13 +54,13 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 
 	switch (state) {
 	case 1 :
-		s->resMan->findResource(id, 1);
+		g_sci->getResMan()->findResource(id, 1);
 		break;
 	case 0 :
-		which = s->resMan->findResource(id, 0);
+		which = g_sci->getResMan()->findResource(id, 0);
 
 		if (which)
-			s->resMan->unlockResource(which);
+			g_sci->getResMan()->unlockResource(which);
 		else {
 			if (id.type == kResourceTypeInvalid)
 				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.number, type);
@@ -101,10 +101,10 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 			uint cond = argv[4].toUint16() & 0xff;
 			uint seq = argv[5].toUint16() & 0xff;
 
-			res = s->resMan->testResource(ResourceId(restype, argv[1].toUint16(), noun, verb, cond, seq));
+			res = g_sci->getResMan()->testResource(ResourceId(restype, argv[1].toUint16(), noun, verb, cond, seq));
 		}
 	} else {
-		res = s->resMan->testResource(ResourceId(restype, argv[1].toUint16()));
+		res = g_sci->getResMan()->testResource(ResourceId(restype, argv[1].toUint16()));
 	}
 
 	return make_reg(0, res != NULL);

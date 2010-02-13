@@ -43,7 +43,7 @@ Common::String kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	else {
 		int textlen;
 		int _index = index;
-		textres = s->resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
+		textres = g_sci->getResMan()->findResource(ResourceId(kResourceTypeText, address.offset), 0);
 
 		if (!textres) {
 			error("text.%03d not found", address.offset);
@@ -420,7 +420,7 @@ reg_t kStrLen(EngineState *s, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
-	Resource *textres = s->resMan->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
+	Resource *textres = g_sci->getResMan()->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
 	char *seeker;
 	int counter = argv[1].toUint16();
 

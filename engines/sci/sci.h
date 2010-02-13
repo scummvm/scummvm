@@ -147,11 +147,12 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
-	ResourceManager *getResourceManager() const { return _resMan; }
+	bool isDemo() const;
+
+	ResourceManager *getResMan() const { return _resMan; }
 	Kernel *getKernel() const { return _kernel; }
 	EngineState *getEngineState() const { return _gamestate; }
 	Vocabulary *getVocabulary() const { return _vocabulary; }
-	bool isDemo() const;
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
@@ -187,7 +188,7 @@ public:
 private:
 	const ADGameDescription *_gameDescription;
 	AudioPlayer *_audio;
-	ResourceManager *_resMan;
+	ResourceManager *_resMan; /**< The resource manager */
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;

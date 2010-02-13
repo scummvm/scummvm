@@ -234,9 +234,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toSint16()) {
 	case K_GRAPH_GET_COLORS_NR:
-		if (s->resMan->isAmiga32color())
+		if (g_sci->getResMan()->isAmiga32color())
 			return make_reg(0, 32);
-		return make_reg(0, !s->resMan->isVGA() ? 16 : 256);
+		return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
 		break;
 
 	case K_GRAPH_DRAW_LINE:
@@ -245,7 +245,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		color = argv[5].toSint16();
 
 		// TODO: Find out why we get >15 for color in EGA
-		if (!s->resMan->isVGA() && !s->resMan->isAmiga32color())
+		if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
 			color &= 0x0F;
 
 		g_sci->_gfxPaint16->kernelGraphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
@@ -552,7 +552,7 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	// we are called on EGA/amiga games as well, this doesnt make sense.
 	//  doing this would actually break the system EGA/amiga palette
-	if (!s->resMan->isVGA())
+	if (!g_sci->getResMan()->isVGA())
 		return s->r_acc;
 
 	switch (argv[0].toUint16()) {
