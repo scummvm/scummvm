@@ -162,6 +162,19 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		GType_CRUISE,
 		0,
 	},
+	{ // AtariST English KixxXL edition.
+		{
+			"cruise",
+			0,
+			AD_ENTRY1("D1", "be78614d5fa34bdb68bb03a2a6130280"),
+			Common::EN_ANY,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_CRUISE,
+		0,
+	},
 	{
 		{
 			"cruise",
