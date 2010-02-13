@@ -175,7 +175,7 @@ sciEvent SciEvent::getFromScummVM() {
 			// Debug console
 			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {
 				// Open debug console
-				Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+				Console *con = g_sci->getSciDebugger();
 				con->attach();
 
 				// Clear keyboard event

@@ -73,7 +73,7 @@ public:
 	MidiPlayer(SciVersion version) : _reverb(0), _version(version) { }
 
 	int open() {
-		ResourceManager *resMan = ((SciEngine *)g_engine)->getResourceManager();	// HACK
+		ResourceManager *resMan = g_sci->getResourceManager();	// HACK
 		return open(resMan);
 	}
 	virtual int open(ResourceManager *resMan) { return _driver->open(); }

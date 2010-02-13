@@ -133,7 +133,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	// The following hack is needed to ease the change from old to new sound code (because the new sound code does not use SfxState)
-	_state = &((SciEngine *)g_engine)->getEngineState()->_sound;	// HACK
+	_state = &g_sci->getEngineState()->_sound;	// HACK
 #endif
 
 	#ifndef USE_OLD_MUSIC_FUNCTIONS

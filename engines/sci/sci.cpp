@@ -54,11 +54,17 @@ namespace Sci {
 
 extern int g_loadFromLauncher;
 
+SciEngine *g_sci = 0;
+
+
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 		: Engine(syst), _gameDescription(desc), _system(syst) {
 	_console = NULL;
+
+	assert(g_sci = 0);
+	g_sci = this;
 
 	// Set up the engine specific debug levels
 	Common::addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
@@ -111,11 +117,11 @@ SciEngine::~SciEngine() {
 	delete _vocabulary;
 	delete _console;
 	delete _resMan;
+
+	g_sci = 0;
 }
 
 Common::Error SciEngine::run() {
-	// FIXME/TODO: Move some of the stuff below to init()
-
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("undither", "true");
 	ConfMan.registerDefault("enable_fb01", "false");

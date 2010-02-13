@@ -1635,7 +1635,7 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 
 void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
-		((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
+		g_sci->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
 }
 
 bool Console::cmdGCShowReachable(int argc, const char **argv) {

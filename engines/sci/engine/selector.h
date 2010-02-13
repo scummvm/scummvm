@@ -46,7 +46,7 @@ enum SelectorInvocation {
 /**
  * Map a selector name to a selector id. Shortcut for accessing the selector cache.
  */
-#define SELECTOR(_slc_)		(((SciEngine *)g_engine)->getKernel()->_selectorCache._slc_)
+#define SELECTOR(_slc_)		(g_sci->getKernel()->_selectorCache._slc_)
 //#define SELECTOR(_slc_)		_slc_
 
 /**

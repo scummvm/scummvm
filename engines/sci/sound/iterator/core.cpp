@@ -228,7 +228,7 @@ Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 	switch (musicDriver) {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
-		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
+		if (g_sci->getPlatform() == Common::kPlatformAmiga)
 			_mididrv = MidiPlayer_Amiga_create(_soundVersion);
 		else
 			_mididrv = MidiPlayer_AdLib_create(_soundVersion);

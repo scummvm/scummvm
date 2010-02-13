@@ -448,7 +448,7 @@ bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, ch
 
 void Vocabulary::printSuffixes() const {
 	char word_buf[256], alt_buf[256];
-	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+	Console *con = g_sci->getSciDebugger();
 
 	int i = 0;
 	for (SuffixList::const_iterator suf = _parserSuffixes.begin(); suf != _parserSuffixes.end(); ++suf) {
@@ -463,7 +463,7 @@ void Vocabulary::printSuffixes() const {
 }
 
 void Vocabulary::printParserWords() const {
-	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+	Console *con = g_sci->getSciDebugger();
 
 	int j = 0;
 	for (WordMap::iterator i = _parserWords.begin(); i != _parserWords.end(); ++i) {
@@ -570,7 +570,7 @@ void Vocabulary::synonymizeTokens(ResultWordList &words) {
 }
 
 void Vocabulary::printParserNodes(int num) {
-	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+	Console *con = g_sci->getSciDebugger();
 
 	for (int i = 0; i < num; i++) {
 		con->DebugPrintf(" Node %03x: ", i);
@@ -584,7 +584,7 @@ void Vocabulary::printParserNodes(int num) {
 
 int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const char **argv) {
 	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
-	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+	Console *con = g_sci->getSciDebugger();
 
 	if (type == kParseNil)
 		return 0;

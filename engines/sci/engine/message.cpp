@@ -135,7 +135,7 @@ public:
 };
 
 bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &record) {
-	Resource *res = ((SciEngine *)g_engine)->getResourceManager()->findResource(ResourceId(kResourceTypeMessage, stack.getModule()), 0);
+	Resource *res = g_sci->getResourceManager()->findResource(ResourceId(kResourceTypeMessage, stack.getModule()), 0);
 
 	if (!res) {
 		warning("Failed to open message resource %d", stack.getModule());

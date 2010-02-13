@@ -154,6 +154,15 @@ private:
 	OSystem *_system;
 };
 
+
+/**
+ * Global instance of the SciEngine class, similar to g_engine.
+ * This is a hackish way to make all central components available
+ * everywhere. Ideally, we would get rid of this again in the future,
+ * but for now it's a pragmatic and simple way to achieve the goal.
+ */
+extern SciEngine *g_sci;
+
 /**
  * Convenience function to obtain the active SCI version.
  */

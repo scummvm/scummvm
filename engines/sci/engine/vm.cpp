@@ -285,7 +285,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		Common::List<Breakpoint>::const_iterator bp;
 		for (bp = s->_breakpoints.begin(); bp != s->_breakpoints.end(); ++bp) {
 			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+				Console *con = g_sci->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				g_debugState.debugging = true;
 				breakpointWasHit = true;
@@ -368,7 +368,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					cmplen = 256;
 
 				if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
-					Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+					Console *con = g_sci->getSciDebugger();
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					print_send_action = 1;
 					breakpointWasHit = true;
@@ -379,7 +379,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, ((SciEngine *)g_engine)->getKernel()->getSelectorName(selector).c_str());
+		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
@@ -816,7 +816,7 @@ void run_vm(EngineState *s, bool restoring) {
 			script_debug(s, breakpointWasHit);
 			breakpointWasHit = false;
 		}
-		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+		Console *con = g_sci->getSciDebugger();
 		if (con->isAttached()) {
 			con->onFrame();
 		}
@@ -1681,7 +1681,7 @@ static EngineState *_game_run(EngineState *&s) {
 	int game_is_finished = 0;
 
 	if (Common::isDebugChannelEnabled(kDebugLevelOnStartup))
-		((Sci::SciEngine*)g_engine)->getSciDebugger()->attach();
+		g_sci->getSciDebugger()->attach();
 
 	do {
 		s->_executionStackPosChanged = false;
@@ -1738,7 +1738,7 @@ int game_run(EngineState **_s) {
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {
-		Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+		Console *con = g_sci->getSciDebugger();
 		con->printObject(s->_gameObj);
 		warning("Failed to run the game! Aborting...");
 		return 1;

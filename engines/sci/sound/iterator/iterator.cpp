@@ -144,7 +144,7 @@ void SongIteratorChannel::resetSynthChannels() {
 	byte buf[5];
 
 	// FIXME: Evil hack
-	SfxState &sound = ((SciEngine*)g_engine)->getEngineState()->_sound;
+	SfxState &sound = g_sci->getEngineState()->_sound;
 
 	for (int i = 0; i < MIDI_CHANNELS; i++) {
 		if (playmask & (1 << i)) {

@@ -187,7 +187,7 @@ reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id) {
 void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value) {
 	ObjVarRef address;
 
-	if ((selector_id < 0) || (selector_id > (int)((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize())) {
+	if ((selector_id < 0) || (selector_id > (int)g_sci->getKernel()->getSelectorNamesSize())) {
 		warning("Attempt to write to invalid selector %d of"
 		         " object at %04x:%04x.", selector_id, PRINT_REG(object));
 		return;
@@ -195,7 +195,7 @@ void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_
 
 	if (lookup_selector(segMan, object, selector_id, &address, NULL) != kSelectorVariable)
 		warning("Selector '%s' of object at %04x:%04x could not be"
-		         " written to", ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
+		         " written to", g_sci->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 	else
 		*address.getPointer(segMan) = value;
 }

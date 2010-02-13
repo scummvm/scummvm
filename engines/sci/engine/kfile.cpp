@@ -105,7 +105,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		filename += 2;
 
 	Common::String englishName = s->getLanguageString(filename, K_LANG_ENGLISH);
-	const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(englishName);
+	const Common::String wrappedName = g_sci->wrapFilename(englishName);
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
@@ -257,7 +257,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	// Load all saves
-	Common::StringList saveNames = saveFileMan->listSavefiles(((SciEngine *)g_engine)->getSavegamePattern());
+	Common::StringList saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
 
 	for (Common::StringList::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
 		Common::String filename = *iter;
@@ -294,7 +294,7 @@ bool Console::cmdListSaves(int argc, const char **argv) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	for (uint i = 0; i < saves.size(); i++) {
-		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(saves[i].id);
+		Common::String filename = g_sci->getSavegameName(saves[i].id);
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			SavegameMetadata meta;
@@ -405,7 +405,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		Common::Array<SavegameDesc> saves;
 		listSavegames(saves);
 		int savedir_nr = saves[savegame_id].id;
-		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+		Common::String filename = g_sci->getSavegameName(savedir_nr);
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 		saveFileMan->removeSavefile(filename);
 		}
@@ -462,7 +462,7 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+	Common::String filename = g_sci->getSavegameName(savedir_nr);
 	Common::SeekableReadStream *in;
 	if ((in = saveFileMan->openForLoading(filename))) {
 		// found a savegame file
@@ -496,7 +496,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	for (uint i = 0; i < saves.size(); i++) {
-		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(saves[i].id);
+		Common::String filename = g_sci->getSavegameName(saves[i].id);
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			// found a savegame file
@@ -575,7 +575,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_id);
+	Common::String filename = g_sci->getSavegameName(savedir_id);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
 	if (!(out = saveFileMan->openForSaving(filename))) {
@@ -619,7 +619,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 
 	if (savedir_nr > -1) {
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+		Common::String filename = g_sci->getSavegameName(savedir_nr);
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			// found a savegame file
@@ -677,7 +677,7 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 	_outbuffer = buffer;
 
 	// Prefix the mask
-	const Common::String wrappedMask = ((Sci::SciEngine*)g_engine)->wrapFilename(mask);
+	const Common::String wrappedMask = g_sci->wrapFilename(mask);
 
 	// Obtain a list of all savefiles matching the given mask
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
@@ -696,7 +696,7 @@ reg_t DirSeeker::nextFile(SegManager *segMan) {
 	const Common::String wrappedString = *_iter;
 
 	// Strip the prefix
-	Common::String string = ((Sci::SciEngine*)g_engine)->unwrapFilename(wrappedString);
+	Common::String string = g_sci->unwrapFilename(wrappedString);
 	if (string.size() > 12)
 		string = Common::String(string.c_str(), 12);
 	segMan->strcpy(_outbuffer, string.c_str());
@@ -795,10 +795,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			Common::Array<SavegameDesc> saves;
 			listSavegames(saves);
 			int savedir_nr = saves[slotNum].id;
-			name = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
+			name = g_sci->getSavegameName(savedir_nr);
 			saveFileMan->removeSavefile(name);
 		} else {
-			const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
+			const Common::String wrappedName = g_sci->wrapFilename(name);
 			saveFileMan->removeSavefile(wrappedName);
 		}
 
@@ -878,7 +878,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		// Check for regular file
 		bool exists = Common::File::exists(name);
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
+		const Common::String wrappedName = g_sci->wrapFilename(name);
 
 		if (!exists)
 			exists = !saveFileMan->listSavefiles(name).empty();

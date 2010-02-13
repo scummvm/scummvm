@@ -239,7 +239,7 @@ void GfxFrameout::kernelFrameout() {
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
 				// This doesn't work for SCI2.1 games...
 				if (getSciVersion() == SCI_VERSION_2) {
-					Kernel *kernel = ((SciEngine *)g_engine)->getKernel();
+					Kernel *kernel = g_sci->getKernel();
 					if (lookup_selector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
 						Common::String text = _segMan->getString(GET_SEL32(_segMan, itemEntry->object, SELECTOR(text)));
 						int16 fontRes = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(font));

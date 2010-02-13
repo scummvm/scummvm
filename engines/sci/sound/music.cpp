@@ -67,7 +67,7 @@ void SciMusic::init() {
 	// WORKAROUND: Default to MIDI in Amiga SCI1_EGA+ games as we don't support those patches yet.
 	// We also don't yet support the 7.pat file of SCI1+ Mac games or SCI0 Mac patches, so we
 	// default to MIDI in those games to let them run.
-	Common::Platform platform = ((SciEngine *)g_engine)->getPlatform();
+	Common::Platform platform = g_sci->getPlatform();
 
 	if (getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA))
 		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
@@ -77,7 +77,7 @@ void SciMusic::init() {
 	switch (midiType) {
 	case MD_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
-		if (((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
+		if (g_sci->getPlatform() == Common::kPlatformAmiga)
 			_pMidiDrv = MidiPlayer_Amiga_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
@@ -199,7 +199,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			delete pSnd->pStreamAud;
 			byte flags = Audio::FLAG_UNSIGNED;
 			// Amiga SCI1 games had signed sound data
-			if (_soundVersion >= SCI_VERSION_1_EARLY && ((SciEngine *)g_engine)->getPlatform() == Common::kPlatformAmiga)
+			if (_soundVersion >= SCI_VERSION_1_EARLY && g_sci->getPlatform() == Common::kPlatformAmiga)
 				flags = 0;
 			int endPart = track->digitalSampleEnd > 0 ? (track->digitalSampleSize - track->digitalSampleEnd) : 0;
 			pSnd->pStreamAud = Audio::makeRawStream(channelData + track->digitalSampleStart, 

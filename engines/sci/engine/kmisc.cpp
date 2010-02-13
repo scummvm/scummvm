@@ -306,7 +306,7 @@ enum kPlatformOps {
 };
 
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
-	bool isWindows = ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows;
+	bool isWindows = g_sci->getPlatform() == Common::kPlatformWindows;
 
 	if (argc == 0 && getSciVersion() < SCI_VERSION_2) {
 		// This is called in KQ5CD with no parameters, where it seems to do some graphics

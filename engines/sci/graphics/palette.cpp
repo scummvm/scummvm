@@ -442,7 +442,7 @@ void GfxPalette::startPalVary(uint16 paletteId, uint16 ticks) {
 	_palVaryId = paletteId;
 	_palVaryStart = g_system->getMillis();
 	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
-	((SciEngine*)g_engine)->getTimerManager()->installTimerProc(&palVaryCallback, 1000 / 60, this);
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000 / 60, this);
 }
 
 void GfxPalette::togglePalVary(bool pause) {
@@ -453,7 +453,7 @@ void GfxPalette::togglePalVary(bool pause) {
 }
 
 void GfxPalette::stopPalVary() {
-	((SciEngine*)g_engine)->getTimerManager()->removeTimerProc(&palVaryCallback);
+	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
 	_palVaryId = -1;	// invalidate the target palette
 
 	// HACK: just set the target palette
