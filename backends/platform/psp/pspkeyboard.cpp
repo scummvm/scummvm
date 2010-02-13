@@ -518,7 +518,7 @@ bool PSPKeyboard::load() {
 #ifdef PSP_KB_DEBUG
 		fprintf(stderr, "found kbd.zip\n");
 #endif
-		zipArchive  = new Common::ZipArchive(node.getChild("kbd.zip"));
+		zipArchive  = Common::makeZipArchive(node.getChild("kbd.zip"));
 	}
 
 	// Loop through different png images

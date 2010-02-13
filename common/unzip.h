@@ -27,46 +27,41 @@
 
 #ifdef USE_ZLIB
 
-#include "common/scummsys.h"
-#include "common/archive.h"
-
-typedef void *unzFile;
-
 namespace Common {
 
-class ZipArchive : public Archive {
-	void *_zipFile;
+class Archive;
+class FSNode;
+class SeekableReadStream;
+class String;
 
-public:
-	/**
-	 * Open the .zip archive with the given file name.
-	 */
-	ZipArchive(const String &name);
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the ZIP compressed file with the given name.
+ *
+ * May return 0 in case of a failure.
+ */
+Archive *makeZipArchive(const String &name);
 
-	/**
-	 * Open the .zip archive to which the given FSNode refers to.
-	 */
-	ZipArchive(const FSNode &node);
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the ZIP compressed file with the given name.
+ *
+ * May return 0 in case of a failure.
+ */
+Archive *makeZipArchive(const FSNode &node);
 
-	/**
-	 * Open a .zip file from a stream. This takes ownership of the stream,
-	 * in particular, it is closed when the ZipArchive is deleted.
-	 */
-	ZipArchive(SeekableReadStream *stream);
-
-
-	~ZipArchive();
-
-	bool isOpen() const;
-
-	virtual bool hasFile(const String &name);
-	virtual int listMembers(ArchiveMemberList &list);
-	virtual ArchiveMemberPtr getMember(const String &name);
-	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
-};
+/**
+ * This factory method creates an Archive instance corresponding to the content
+ * of the given ZIP compressed datastream.
+ * This takes ownership of the stream,  in particular, it is deleted when the
+ * ZipArchive is deleted.
+ *
+ * May return 0 in case of a failure. In this case stream will still be deleted.
+ */
+Archive *makeZipArchive(SeekableReadStream *stream);
 
 }	// End of namespace Common
 
 #endif // USE_ZLIB
 
-#endif /* _unz_H */
+#endif

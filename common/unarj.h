@@ -34,6 +34,8 @@ class String;
 /**
  * This factory method creates an Archive instance corresponding to the content
  * of the ARJ compressed file with the given name.
+ *
+ * May return 0 in case of a failure.
  */
 Archive *makeArjArchive(const String &name);
 

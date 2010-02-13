@@ -93,8 +93,8 @@ bool VirtualKeyboard::openPack(const String &packName, const FSNode &node) {
 #ifdef USE_ZLIB
 	if (node.getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
-		_fileArchive = new ZipArchive(node.getChild(packName + ".zip"));
-		if (_fileArchive->hasFile(packName + ".xml")) {
+		_fileArchive = makeZipArchive(node.getChild(packName + ".zip"));
+		if (_fileArchive && _fileArchive->hasFile(packName + ".xml")) {
 			if (!_parser->loadStream(_fileArchive->createReadStreamForMember(packName + ".xml"))) {
 				delete _fileArchive;
 				_fileArchive = 0;

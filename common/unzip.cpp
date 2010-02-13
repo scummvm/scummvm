@@ -554,7 +554,7 @@ unzFile unzOpen(Common::SeekableReadStream *stream) {
 	if ((central_pos<us->offset_central_dir+us->size_central_dir) && (err==UNZ_OK))
 		err=UNZ_BADZIPFILE;
 
-	if (err!=UNZ_OK) {
+	if (err != UNZ_OK) {
 		delete us->_stream;
 		delete us;
 		return NULL;
@@ -576,12 +576,12 @@ unzFile unzOpen(Common::SeekableReadStream *stream) {
     these files MUST be closed with unzipCloseCurrentFile before call unzipClose.
   return UNZ_OK if there is no problem. */
 int unzClose(unzFile file) {
-	unz_s* s;
-	if (file==NULL)
+	unz_s *s;
+	if (file == NULL)
 		return UNZ_PARAMERROR;
-	s=(unz_s*)file;
+	s = (unz_s *)file;
 
-	if (s->pfile_in_zip_read!=NULL)
+	if (s->pfile_in_zip_read != NULL)
 		unzCloseCurrentFile(file);
 
 	delete s->_stream;
@@ -594,12 +594,12 @@ int unzClose(unzFile file) {
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
   return UNZ_OK if there is no problem. */
-int unzGetGlobalInfo (unzFile file, unz_global_info *pglobal_info) {
-	unz_s* s;
-	if (file==NULL)
+int unzGetGlobalInfo(unzFile file, unz_global_info *pglobal_info) {
+	unz_s *s;
+	if (file == NULL)
 		return UNZ_PARAMERROR;
-	s=(unz_s*)file;
-	*pglobal_info=s->gi;
+	s = (unz_s *)file;
+	*pglobal_info = s->gi;
 	return UNZ_OK;
 }
 
@@ -607,7 +607,7 @@ int unzGetGlobalInfo (unzFile file, unz_global_info *pglobal_info) {
 /*
    Translate date/time from Dos format to tm_unz (readable more easilty)
 */
-static void unzlocal_DosDateToTmuDate (uLong ulDosDate, tm_unz* ptm) {
+static void unzlocal_DosDateToTmuDate(uLong ulDosDate, tm_unz* ptm) {
 	uLong uDate;
 	uDate = (uLong)(ulDosDate>>16);
 	ptm->tm_mday = (uInt)(uDate&0x1f) ;
@@ -1293,12 +1293,12 @@ int unzCloseCurrentFile(unzFile file) {
 
 	unz_s* s;
 	file_in_zip_read_info_s* pfile_in_zip_read_info;
-	if (file==NULL)
+	if (file == NULL)
 		return UNZ_PARAMERROR;
-	s=(unz_s*)file;
-	pfile_in_zip_read_info=s->pfile_in_zip_read;
+	s = (unz_s*)file;
+	pfile_in_zip_read_info = s->pfile_in_zip_read;
 
-	if (pfile_in_zip_read_info==NULL)
+	if (pfile_in_zip_read_info == NULL)
 		return UNZ_PARAMERROR;
 
 
@@ -1357,6 +1357,21 @@ int unzGetGlobalComment(unzFile file, char *szComment, uLong uSizeBuf) {
 namespace Common {
 
 
+class ZipArchive : public Archive {
+	unzFile _zipFile;
+
+public:
+	ZipArchive(unzFile zipFile);
+
+
+	~ZipArchive();
+
+	virtual bool hasFile(const String &name);
+	virtual int listMembers(ArchiveMemberList &list);
+	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
+};
+
 /*
 class ZipArchiveMember : public ArchiveMember {
 	unzFile _zipFile;
@@ -1375,36 +1390,19 @@ public:
 };
 */
 
-ZipArchive::ZipArchive(const Common::String &name) {
-	SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
-	_zipFile = unzOpen(stream);
-}
-
-ZipArchive::ZipArchive(const Common::FSNode &node) {
-	SeekableReadStream *stream = node.createReadStream();
-	_zipFile = unzOpen(stream);
-}
-
-ZipArchive::ZipArchive(Common::SeekableReadStream *stream) {
-	_zipFile = unzOpen(stream);
+ZipArchive::ZipArchive(unzFile zipFile) : _zipFile(zipFile) {
+	assert(_zipFile);
 }
 
 ZipArchive::~ZipArchive() {
 	unzClose(_zipFile);
 }
 
-bool ZipArchive::isOpen() const {
-	return _zipFile != 0;
-}
-
 bool ZipArchive::hasFile(const Common::String &name) {
-	return (_zipFile && unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
+	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
 int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
-	if (!_zipFile)
-		return 0;
-
 	int matches = 0;
 	int err = unzGoToFirstFile(_zipFile);
 
@@ -1422,16 +1420,13 @@ int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
 }
 
 ArchiveMemberPtr ZipArchive::getMember(const String &name) {
-	if (!_zipFile || !hasFile(name))
+	if (!hasFile(name))
 		return ArchiveMemberPtr();
 
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
 Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::String &name) const {
-	if (!_zipFile)
-		return 0;
-
 	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
 		return 0;
 
@@ -1450,7 +1445,25 @@ Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::
 	// files in the archive and tries to use them indepenendtly.
 }
 
-}	// End of namespace Common
+Archive *makeZipArchive(const String &name) {
+	return makeZipArchive(SearchMan.createReadStreamForMember(name));
+}
 
+Archive *makeZipArchive(const FSNode &node) {
+	return makeZipArchive(node.createReadStream());
+}
+
+Archive *makeZipArchive(SeekableReadStream *stream) {
+	if (!stream)
+		return 0;
+	unzFile zipFile = unzOpen(stream);
+	if (!zipFile) {
+		delete stream;
+		return 0;
+	}
+	return new ZipArchive(zipFile);
+}
+
+}	// End of namespace Common
 
 #endif
