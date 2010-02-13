@@ -40,9 +40,6 @@ class ResourceManager;
 
 /*#define VOCABULARY_DEBUG */
 
-/** Number of bytes allocated on the heap to store bad words if parsing fails */
-#define PARSE_HEAP_SIZE 64
-
 enum {
 	VOCAB_RESOURCE_SELECTORS = 997,
 
