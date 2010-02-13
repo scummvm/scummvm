@@ -603,6 +603,7 @@ MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
 	_vm = vm;
 
 	strcpy(_statusText, "");
+	strcpy(_playerSpriteName, "");
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_currentAction = kVerbNone;
 }
@@ -617,9 +618,9 @@ void MadsScene::loadScene(int sceneNumber) {
 	// Handle common scene setting
 	Scene::loadScene(sceneNumber);
 
-
-	// TODO: Check if we were loading a game
-
+	_sceneLogic.selectScene(sceneNumber);
+	_vm->globals()->addVisitedScene(sceneNumber);
+	_sceneLogic.setupScene();
 
 	// Set system palette entries
 	_vm->_palette->blockRange(0, 7);

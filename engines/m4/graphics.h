@@ -190,6 +190,7 @@ public:
 	void grabPalette(RGB8 *colors, uint start, uint num) {
 		grabPalette((byte *)colors, start, num);
 	}
+	void setEntry(uint index, uint8 r, uint8 g, uint8 b);
 	uint8 palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData = NULL);
 
 	void fadeToGreen(int numSteps, uint delayAmount);

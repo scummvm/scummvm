@@ -99,6 +99,10 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
+void Sound::playSound(int soundNum) { 
+	warning("TODO: playSound(%d)", soundNum); 
+}
+
 void Sound::pauseSound() {
 	for (int i = 0; i < SOUND_HANDLES; i++) {
 		if (_handles[i].type == kEffectHandle)

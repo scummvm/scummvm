@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	m4_menus.o \
 	m4_views.o \
 	mads_anim.o \
+	mads_logic.o \
 	mads_menus.o \
 	mads_views.o \
 	midi.o \

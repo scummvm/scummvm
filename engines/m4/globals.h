@@ -206,6 +206,8 @@ public:
 	bool invSuppressClickSound;
 };
 
+enum RexPlayerSex { SEX_MALE = 0, SEX_FEMALE = 2, SEX_UNKNOWN = 1};
+
 class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
@@ -220,15 +222,18 @@ private:
 	Common::Array<char* > _madsQuotes;
 	Common::Array<MessageItem* > _madsMessages;
 	MadsObjectArray _madsObjects;
+	Common::List<int> _visitedScenes;
 public:
 	MadsGlobals(MadsEngine *vm);
 	~MadsGlobals();
 
 	// MADS variables
+	int _globals[TOTAL_NUM_VARIABLES];
 	bool easyMouse;
 	bool invObjectsStill;
 	bool textWindowStill;
 	int storyMode;
+	bool playerSpriteChanged;
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }
@@ -250,6 +255,10 @@ public:
 	void loadMadsObjects();
 	uint32 getObjectsSize() { return _madsObjects.size(); }
 	MadsObject *getObject(uint32 index) { return _madsObjects[index].get(); }
+
+	void addVisitedScene(int sceneNumber);
+	bool isSceneVisited(int sceneNumber);
+	void removeVisitedScene(int sceneNumber);
 };
 
 #define PLAYER_FIELD_LENGTH 40

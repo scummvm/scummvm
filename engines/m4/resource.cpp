@@ -310,6 +310,71 @@ const char *MADSResourceManager::getResourceFilename(const char *resourceName) {
 	return outputFilename;
 }
 
+/**
+ * Forms a resource name based on the passed specifiers
+ */
+const char *MADSResourceManager::getResourceName(char asciiCh, int prefix, ExtensionType extType, 
+												 const char *suffix, int index) {
+	static char resourceName[100];
+
+	if (prefix <= 0)
+		strcpy(resourceName, "*");
+	else {
+		if (prefix < 100)
+			strcpy(resourceName, "*SC");
+		else
+			strcpy(resourceName, "*RM");
+		sprintf(resourceName + 3, "%.3d", prefix);
+	}
+
+	// Append the specified ascii prefix character
+	char asciiStr[2];
+	asciiStr[0] = asciiCh;
+	asciiStr[1] = '\0';
+	strcat(resourceName, asciiStr);
+
+	// Add in the index specified
+	if (index > 0)
+		sprintf(resourceName + strlen(resourceName), "%d", index);
+
+	// Add in any suffix
+	if (suffix)
+		strcat(resourceName, suffix);
+
+	// Handle extension types
+	switch (extType) {
+	case EXTTYPE_SS:
+		strcat(resourceName, ".SS");
+		break;
+	case EXTTYPE_AA:
+		strcat(resourceName, ".AA");
+		break;
+	case EXTTYPE_DAT:
+		strcat(resourceName, ".DAT");
+		break;
+	case EXTTYPE_HH:
+		strcat(resourceName, ".HH");
+		break;
+	case EXTTYPE_ART:
+		strcat(resourceName, ".ART");
+		break;
+	case EXTTYPE_INT:
+		strcat(resourceName, ".INT");
+		break;
+	default:
+		break;
+	}
+
+	return &resourceName[0];
+}
+
+/**
+ * Forms an AA resource name based on the given passed index
+ */
+const char *MADSResourceManager::getAAName(int index) {
+	return getResourceName('I', 0, EXTTYPE_AA, NULL, index);
+}
+
 Common::SeekableReadStream *MADSResourceManager::loadResource(const char *resourceName, bool loadFlag) {
 	Common::File hagFile;
 	uint32 offset = 0, size = 0;

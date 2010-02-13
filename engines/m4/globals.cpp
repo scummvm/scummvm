@@ -278,6 +278,8 @@ bool Globals::isInterfaceVisible() {
 
 MadsGlobals::MadsGlobals(MadsEngine *vm): Globals(vm) {
 	_vm = vm;
+
+	playerSpriteChanged = false;
 }
 
 MadsGlobals::~MadsGlobals() {
@@ -406,6 +408,29 @@ const char *MadsGlobals::loadMessage(uint index) {
 	delete[] compData;
 
 	return (char*)buffer;
+}
+
+/**
+ * Adds the specified scene number to list of scenes previously visited 
+ */
+void MadsGlobals::addVisitedScene(int sceneNumber) {
+	if (!isSceneVisited(sceneNumber))
+		_visitedScenes.push_back(sceneNumber);
+}
+
+/**
+ * Returns true if the specified scene has been previously visited
+ */
+bool MadsGlobals::isSceneVisited(int sceneNumber) {
+	Common::List<int>::iterator i;
+	for (i = _visitedScenes.begin(); i != _visitedScenes.end(); ++i)
+		if (*i == sceneNumber)
+			return true;
+	return false;
+}
+
+void MadsGlobals::removeVisitedScene(int sceneNumber) {
+	_visitedScenes.remove(sceneNumber);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -77,6 +77,7 @@ public:
 	~Sound();
 
 	void playSound(const char *soundName, int volume, bool loop, int channel = -1);
+	void playSound(int soundNum);
 	void pauseSound();
 	void resumeSound();
 	void stopSound(int channel = -1);

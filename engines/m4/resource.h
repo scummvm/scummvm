@@ -112,6 +112,9 @@ public:
 enum ResourceType {RESTYPE_ROOM, RESTYPE_SC, RESTYPE_TEXT, RESTYPE_QUO, RESTYPE_I,
 	RESTYPE_OB, RESTYPE_FONT, RESTYPE_SOUND, RESTYPE_SPEECH, RESTYPE_HAS_EXT, RESTYPE_NO_EXT};
 
+enum ExtensionType {EXTTYPE_SS = 1, EXTTYPE_AA = 2, EXTTYPE_DAT = 3, EXTTYPE_HH = 4, EXTTYPE_ART = 5, 
+	EXTTYPE_INT = 6, EXTTYPE_NONE = -1};
+
 class MADSResourceManager : public ResourceManager {
 private:
 	ResourceType getResourceType(const char *resourceName);
@@ -121,6 +124,9 @@ protected:
 public:
 	MADSResourceManager(MadsM4Engine *vm): ResourceManager(vm) {};
 	bool resourceExists(const char *resourceName);
+
+	static const char *getResourceName(char asciiCh, int prefix, ExtensionType extType, const char *suffix, int index);
+	static const char *getAAName(int index);
 };
 
 class M4ResourceManager : public ResourceManager {

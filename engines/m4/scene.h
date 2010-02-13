@@ -34,6 +34,7 @@ class View;
 #include "m4/viewmgr.h"
 #include "m4/gui.h"
 #include "m4/m4_views.h"
+#include "m4/mads_logic.h"
 #include "m4/mads_views.h"
 
 namespace M4 {
@@ -163,6 +164,11 @@ private:
 
 	int _currentAction;
 	char _statusText[100];
+	MadsSceneLogic _sceneLogic;
+	SpriteAsset *_playerSprites;
+public:
+	char _playerSpriteName[100];
+	char _aaName[100];
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene() {};

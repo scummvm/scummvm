@@ -767,6 +767,11 @@ void Palette::grabPalette(byte *colors, uint start, uint num) {
 	reset();
 }
 
+void Palette::setEntry(uint index, uint8 r, uint8 g, uint8 b) {
+	uint32 c = (r << 16) | (g << 8) || b;
+	g_system->setPalette((const byte *)&c, index, 1);
+}
+
 uint8 Palette::palIndexFromRgb(byte r, byte g, byte b, RGB8 *paletteData) {
 	byte index = 0;
 	int32 minDist = 0x7fffffff;
