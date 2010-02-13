@@ -974,7 +974,7 @@ void Draw::winDraw(int16 fct) {
 
 	case DRAW_LOADSPRITE:  // 5 - Uncompress and load a sprite
 		// TODO: check the implementation, currently dirty cut and paste of DRAW_SPRITE code
-		resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
+		resource = _vm->_game->_resources->getResource((_spriteLeft & 0x3FFF),
 				&_spriteRight, &_spriteBottom);
 
 		if (!resource) {

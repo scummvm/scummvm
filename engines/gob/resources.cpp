@@ -277,6 +277,7 @@ bool Resources::loadTOTResourceTable() {
 
 	_totResStart = totProps.scriptEnd;
 	_totSize = stream->size() - _totResStart;
+
 	if (_totSize <= 0)
 		return false;
 
@@ -571,8 +572,14 @@ TextItem *Resources::getTextItem(uint16 id) const {
 
 	if ((totItem.offset == 0xFFFF) || (totItem.size == 0))
 		return 0;
-	if ((totItem.offset + totItem.size) > (_totTextTable->size))
-		return 0;
+	if ((totItem.offset + totItem.size) > (_totTextTable->size)) {
+// HACK: Some Fascination versions (Amiga, Atari and first PC floppies) have a different header, which is a problem here.
+// TODO: Handle that in a proper way
+		if ((_vm->getGameType() == kGameTypeFascination) & (_totTextTable->size < 0))
+			warning("totTextTable with negative size id:%d offset:%d in file %s : (size: %d)", id, totItem.offset, totItem.size, _totFile.c_str(), _totTextTable->size);
+		else
+			return 0;
+	}
 
 	return new TextItem(_totTextTable->data + totItem.offset, totItem.size);
 }
@@ -701,8 +708,10 @@ byte *Resources::getTOTData(TOTResourceItem &totItem) const {
 
 	int32 offset = _totResourceTable->dataOffset + totItem.offset - _totResStart;
 
-	if ((offset < 0) || (((uint32) (offset + totItem.size)) > _totSize))
+	if ((offset < 0) || (((uint32) (offset + totItem.size)) > _totSize)) {
+		warning("Skipping data id:%d offset:%d size :%d in file %s : out of _totTextTable", totItem.index, totItem.offset, totItem.size, _totFile.c_str());
 		return 0;
+	}
 
 	return _totData + offset;
 }
