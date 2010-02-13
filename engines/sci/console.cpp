@@ -414,15 +414,15 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	bool hasVocab997 = s->resMan->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 
 	DebugPrintf("Game ID: %s\n", s->_gameId.c_str());
-	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()).c_str());
+	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
 	DebugPrintf("\n");
 	DebugPrintf("Detected features:\n");
 	DebugPrintf("------------------\n");
-	DebugPrintf("Sound type: %s\n", getSciVersionDesc(s->_features->detectDoSoundType()).c_str());
-	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(s->_features->detectGfxFunctionsType()).c_str());
-	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(s->_features->detectLofsType()).c_str());
+	DebugPrintf("Sound type: %s\n", getSciVersionDesc(s->_features->detectDoSoundType()));
+	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(s->_features->detectGfxFunctionsType()));
+	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(s->_features->detectLofsType()));
 	DebugPrintf("Move count type: %s\n", (s->_features->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
-	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(s->_features->detectSetCursorType()).c_str());
+	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(s->_features->detectSetCursorType()));
 	DebugPrintf("View type: %s\n", viewTypeDesc[s->resMan->getViewType()]);
 	DebugPrintf("Resource volume version: %s\n", s->resMan->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", s->resMan->getMapVersionDesc());

@@ -239,7 +239,7 @@ Common::Error SciEngine::run() {
 #endif
 		_gamestate->_gui->init(_gamestate->_features->usesOldGfxFunctions());
 
-	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
+	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
 	// Check whether loading a savestate was requested
 	if (ConfMan.hasKey("save_slot")) {

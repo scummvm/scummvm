@@ -44,6 +44,37 @@ SciVersion getSciVersion() {
 	return s_sciVersion;
 }
 
+const char *getSciVersionDesc(SciVersion version) {
+	switch (version) {
+	case SCI_VERSION_NONE:
+		return "Invalid SCI version";
+	case SCI_VERSION_0_EARLY:
+		return "Early SCI0";
+	case SCI_VERSION_0_LATE:
+		return "Late SCI0";
+	case SCI_VERSION_01:
+		return "SCI01";
+	case SCI_VERSION_1_EGA:
+		return "SCI1 EGA";
+	case SCI_VERSION_1_EARLY:
+		return "Early SCI1";
+	case SCI_VERSION_1_MIDDLE:
+		return "Middle SCI1";
+	case SCI_VERSION_1_LATE:
+		return "Late SCI1";
+	case SCI_VERSION_1_1:
+		return "SCI1.1";
+	case SCI_VERSION_2:
+		return "SCI2";
+	case SCI_VERSION_2_1:
+		return "SCI2.1";
+	case SCI_VERSION_3:
+		return "SCI3";
+	default:
+		return "Unknown";
+	}
+}
+
 #undef SCI_REQUIRE_RESOURCE_FILES
 
 //#define SCI_VERBOSE_resMan 1
@@ -621,7 +652,7 @@ void ResourceManager::init() {
 
 	detectSciVersion();
 
-	debugC(1, kDebugLevelResMan, "resMan: Detected %s", getSciVersionDesc(getSciVersion()).c_str());
+	debugC(1, kDebugLevelResMan, "resMan: Detected %s", getSciVersionDesc(getSciVersion()));
 
 	switch (_viewType) {
 	case kViewEga:

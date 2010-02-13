@@ -159,36 +159,10 @@ private:
  */
 SciVersion getSciVersion();
 
-inline static Common::String getSciVersionDesc(SciVersion version) {
-	switch (version) {
-	case SCI_VERSION_NONE:
-		return "Invalid SCI version";
-	case SCI_VERSION_0_EARLY:
-		return "Early SCI0";
-	case SCI_VERSION_0_LATE:
-		return "Late SCI0";
-	case SCI_VERSION_01:
-		return "SCI01";
-	case SCI_VERSION_1_EGA:
-		return "SCI1 EGA";
-	case SCI_VERSION_1_EARLY:
-		return "Early SCI1";
-	case SCI_VERSION_1_MIDDLE:
-		return "Middle SCI1";
-	case SCI_VERSION_1_LATE:
-		return "Late SCI1";
-	case SCI_VERSION_1_1:
-		return "SCI1.1";
-	case SCI_VERSION_2:
-		return "SCI2";
-	case SCI_VERSION_2_1:
-		return "SCI2.1";
-	case SCI_VERSION_3:
-		return "SCI3";
-	default:
-		return "Unknown";
-	}
-}
+/**
+ * Convenience function converting an SCI version into a human-readable string.
+ */
+const char *getSciVersionDesc(SciVersion version);
 
 } // End of namespace Sci
 

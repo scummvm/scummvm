@@ -151,7 +151,7 @@ SciVersion GameFeatures::detectDoSoundType() {
 			}
 		}
 
-		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType).c_str());
+		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType));
 	}
 
 	return _doSoundType;
@@ -169,7 +169,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 			// If the Cursor object doesn't exist, we're using the SCI0 early kSetCursor semantics.
 			if (_segMan->findObjectByName("Cursor") == NULL_REG) {
 				_setCursorType = SCI_VERSION_0_EARLY;
-				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
+				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType));
 				return _setCursorType;
 			}
 
@@ -179,7 +179,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 			// If that doesn't exist, we assume it uses SCI1.1 kSetCursor semantics
 			if (objAddr == NULL_REG) {
 				_setCursorType = SCI_VERSION_1_1;
-				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
+				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType));
 				return _setCursorType;
 			}
 
@@ -194,7 +194,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 				_setCursorType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
+		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType));
 	}
 
 	return _setCursorType;
@@ -277,7 +277,7 @@ SciVersion GameFeatures::detectLofsType() {
 				_lofsType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", getSciVersionDesc(_lofsType).c_str());
+		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", getSciVersionDesc(_lofsType));
 	}
 
 	return _lofsType;
@@ -366,7 +366,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 			_gfxFunctionsType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(1, kDebugLevelVM, "Detected graphics functions type: %s", getSciVersionDesc(_gfxFunctionsType).c_str());
+		debugC(1, kDebugLevelVM, "Detected graphics functions type: %s", getSciVersionDesc(_gfxFunctionsType));
 	}
 
 	return _gfxFunctionsType;
@@ -416,7 +416,7 @@ SciVersion GameFeatures::detectSci21KernelType() {
 		if (!autoDetectSci21KernelType())
 			error("Could not detect the SCI2.1 kernel table type");
 
-		debugC(1, kDebugLevelVM, "Detected SCI2.1 kernel type: %s", getSciVersionDesc(_sci21KernelType).c_str());
+		debugC(1, kDebugLevelVM, "Detected SCI2.1 kernel type: %s", getSciVersionDesc(_sci21KernelType));
 	}
 	return _sci21KernelType;
 }
