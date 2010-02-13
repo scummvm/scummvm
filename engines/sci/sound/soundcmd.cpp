@@ -266,7 +266,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	SongIteratorType type = (_soundVersion <= SCI_VERSION_0_LATE) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		if (GET_SEL32V(_segMan, obj, SELECTOR(nodePtr));) {
+		if (GET_SEL32V(_segMan, obj, SELECTOR(nodePtr))) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			_state->sfx_remove_song(handle);
 		}
@@ -345,12 +345,12 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)););
+		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)));
 		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundPlaying);
 	} else if (_soundVersion == SCI_VERSION_1_EARLY) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)););
-		_state->sfx_song_renice(handle, GET_SEL32V(_segMan, obj, SELECTOR(pri)););
+		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)));
+		_state->sfx_song_renice(handle, GET_SEL32V(_segMan, obj, SELECTOR(pri)));
 		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) value;		/* Too lazy to look up a default value for this */
 		_state->_songlib.setSongRestoreBehavior(handle, rb);
 		PUT_SEL32V(_segMan, obj, SELECTOR(signal), 0);
@@ -362,13 +362,13 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 		Song *song = _state->_songlib.findSong(handle);
 		int songNumber = GET_SEL32V(_segMan, obj, SELECTOR(number));
 
-		if (GET_SEL32V(_segMan, obj, SELECTOR(nodePtr)); && (song && songNumber != song->_resourceNum)) {
+		if (GET_SEL32V(_segMan, obj, SELECTOR(nodePtr)) && (song && songNumber != song->_resourceNum)) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			_state->sfx_remove_song(handle);
 			PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
 		}
 
-		if (!GET_SEL32V(_segMan, obj, SELECTOR(nodePtr)); && obj.segment) {
+		if (!GET_SEL32V(_segMan, obj, SELECTOR(nodePtr)) && obj.segment) {
 			// In SCI1.1 games, sound effects are started from here. If we can find
 			// a relevant audio resource, play it, otherwise switch to synthesized
 			// effects. If the resource exists, play it using map 65535 (sound
@@ -596,7 +596,7 @@ void SoundCommandParser::cmdMasterVolume(reg_t obj, int16 value) {
 	_acc = make_reg(0, _state->sfx_getVolume());
 
 	if (obj != SIGNAL_REG)
- 		_state->sfx_setVolume(obj.toSint16());
+		_state->sfx_setVolume(obj.toSint16());
 #else
 	debugC(2, kDebugLevelSound, "cmdMasterVolume: %d", value);
 	_acc = make_reg(0, _music->soundGetMasterVolume());
@@ -696,9 +696,9 @@ void SoundCommandParser::cmdUpdateSound(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	if (_soundVersion <= SCI_VERSION_0_LATE && obj.segment) {
- 		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)););
- 		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, SELECTOR(pri)););
- 	}
+		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)));
+		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, SELECTOR(pri)));
+	}
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
@@ -766,7 +766,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	//switch (signal) {
 	//case 0x00:
-	//	if (dataInc!=GET_SEL32V(segMan, obj, SELECTOR(dataInc));) {
+	//	if (dataInc != GET_SEL32V(segMan, obj, SELECTOR(dataInc))) {
 	//		PUT_SEL32V(segMan, obj, SELECTOR(dataInc), dataInc);
 	//		PUT_SEL32V(segMan, obj, SELECTOR(signal), dataInc+0x7f);
 	//	} else {
@@ -777,7 +777,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	//	s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 	//	break;
 	//default :
-	//	if (dataInc!=GET_SEL32V(segMan, obj, SELECTOR(dataInc));) {
+	//	if (dataInc != GET_SEL32V(segMan, obj, SELECTOR(dataInc))) {
 	//		PUT_SEL32V(segMan, obj, SELECTOR(dataInc), dataInc);
 	//		PUT_SEL32V(segMan, obj, SELECTOR(signal), dataInc + 0x7f);
 	//	} else {
@@ -983,7 +983,7 @@ void SoundCommandParser::cmdSetSoundLoop(reg_t obj, int16 value) {
 		return;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (!GET_SEL32(_segMan, obj, SELECTOR(nodePtr));.isNull()) {
+	if (!GET_SEL32(_segMan, obj, SELECTOR(nodePtr)).isNull()) {
 		SongHandle handle = FROBNICATE_HANDLE(obj);
 		_state->sfx_song_set_loops(handle, value);
 	}
