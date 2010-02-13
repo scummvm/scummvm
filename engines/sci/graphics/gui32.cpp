@@ -52,9 +52,9 @@ SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, G
 	_coordAdjuster = new GfxCoordAdjuster32(_s->_segMan);
 	g_sci->_gfxCoordAdjuster = _coordAdjuster;
 	_cursor->init(_coordAdjuster, _s->_event);
-	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
+	_compare = new GfxCompare(_s->_segMan, g_sci->getKernel(), _cache, _screen, _coordAdjuster);
 	g_sci->_gfxCompare = _compare;
-	_paint32 = new GfxPaint32(g_sci->getResMan(), _s->_segMan, _s->_kernel, _coordAdjuster, _cache, _screen, _palette);
+	_paint32 = new GfxPaint32(g_sci->getResMan(), _s->_segMan, g_sci->getKernel(), _coordAdjuster, _cache, _screen, _palette);
 	g_sci->_gfxPaint = _paint32;
 	_frameout = new GfxFrameout(_s->_segMan, g_sci->getResMan(), _coordAdjuster, _cache, _screen, _palette, _paint32);
 	g_sci->_gfxFrameout = _frameout;

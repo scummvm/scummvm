@@ -107,7 +107,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
 	uint16 param_value;
 	int i = 0;
-	Kernel *kernel = s->_kernel;
+	Kernel *kernel = g_sci->getKernel();
 
 	if (!mobj) {
 		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.segment);

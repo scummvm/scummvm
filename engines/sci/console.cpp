@@ -402,8 +402,8 @@ ResourceType parseResourceType(const char *resid) {
 }
 
 const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
-		return s->_kernel->getSelectorName(selector).c_str();
+	if (selector >= 0 && selector < (int)g_sci->getKernel()->getSelectorNamesSize())
+		return g_sci->getKernel()->getSelectorName(selector).c_str();
 	else
 		return "--INVALID--";
 }

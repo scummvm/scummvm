@@ -60,10 +60,10 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_coordAdjuster = new GfxCoordAdjuster16(_ports);
 	g_sci->_gfxCoordAdjuster = _coordAdjuster;
 	_cursor->init(_coordAdjuster, _s->_event);
-	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
+	_compare = new GfxCompare(_s->_segMan, g_sci->getKernel(), _cache, _screen, _coordAdjuster);
 	g_sci->_gfxCompare = _compare;
 	_transitions = new GfxTransitions(this, _screen, _palette, g_sci->getResMan()->isVGA());
-	_paint16 = new GfxPaint16(g_sci->getResMan(), _s->_segMan, _s->_kernel, this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
+	_paint16 = new GfxPaint16(g_sci->getResMan(), _s->_segMan, g_sci->getKernel(), this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
 	g_sci->_gfxPaint = _paint16;
 	g_sci->_gfxPaint16 = _paint16;
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);

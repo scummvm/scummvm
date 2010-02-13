@@ -108,14 +108,13 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(Kernel *kernel, Vocabulary *voc, SegManager *segMan, AudioPlayer *audio);
+	EngineState(Vocabulary *voc, SegManager *segMan, AudioPlayer *audio);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 public:
 	SegManager *_segMan; /**< The segment manager */
-	Kernel *_kernel;
 	Vocabulary *_voc;
 
 	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */

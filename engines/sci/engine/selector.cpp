@@ -215,14 +215,14 @@ int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, Selector
 
 	if (slc_type == kSelectorNone) {
 		warning("Selector '%s' of object at %04x:%04x could not be invoked",
-		         s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object));
+		         g_sci->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 		if (noinvalid == kStopOnInvalidSelector)
 			error("[Kernel] Not recoverable: VM was halted");
 		return 1;
 	}
 	if (slc_type == kSelectorVariable) {
 		warning("Attempting to invoke variable selector %s of object %04x:%04x",
-			s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object));
+			g_sci->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object));
 		return 0;
 	}
 

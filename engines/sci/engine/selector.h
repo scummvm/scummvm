@@ -79,7 +79,7 @@ enum SelectorInvocation {
  * that cannot handle vararg macros.
  */
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  s->_kernel->_selectorCache._selector_, _noinvalid_, argc, argv
+	s, _object_,  g_sci->getKernel()->_selectorCache._selector_, _noinvalid_, argc, argv
 
 
 reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id);

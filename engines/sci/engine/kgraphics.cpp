@@ -826,12 +826,12 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 
 		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
 		cursorOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
-		if (s->_kernel->_selectorCache.topString != -1) {
+		if (g_sci->getKernel()->_selectorCache.topString != -1) {
 			// Games from early SCI1 onwards use topString
 			upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(topString));
 		} else {
 			// Earlier games use lsTop or brTop
-			if (lookup_selector(s->_segMan, controlObject, s->_kernel->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
+			if (lookup_selector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
 				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(brTop));
 			else
 				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(lsTop));

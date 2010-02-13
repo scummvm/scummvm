@@ -315,7 +315,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
-	if (s->_kernel->_selectorCache.cantBeHere != -1) {
+	if (g_sci->getKernel()->_selectorCache.cantBeHere != -1) {
 		invoke_selector(INV_SEL(client, cantBeHere, kStopOnInvalidSelector), 0);
 		s->r_acc = make_reg(0, !s->r_acc.offset);
 	} else {

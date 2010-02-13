@@ -240,7 +240,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #endif
 
 #define READ_VAR(type, index, def) validate_read_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, def)
-#define WRITE_VAR(type, index, value) validate_write_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, value, s->_segMan, s->_kernel)
+#define WRITE_VAR(type, index, value) validate_write_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
 #define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
@@ -360,7 +360,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (s->_activeBreakpointTypes & BREAK_SELECTOR) {
 			char method_name[256];
 
-			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), s->_kernel->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str());
 
 			Common::List<Breakpoint>::const_iterator bp;
 			for (bp = s->_breakpoints.begin(); bp != s->_breakpoints.end(); ++bp) {
@@ -561,10 +561,10 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 
 static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 
-	if (kernelFuncNum >= (int)s->_kernel->_kernelFuncs.size())
+	if (kernelFuncNum >= (int)g_sci->getKernel()->_kernelFuncs.size())
 		error("Invalid kernel function 0x%x requested", kernelFuncNum);
 
-	const KernelFuncWithSignature &kernelFunc = s->_kernel->_kernelFuncs[kernelFuncNum];
+	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNum];
 
 	if (kernelFunc.signature
 			&& !kernel_matches_signature(s->_segMan, kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
@@ -1358,7 +1358,7 @@ void run_vm(EngineState *s, bool restoring) {
 				var_container = s->_segMan->getObject(obj->getSuperClassSelector());
 			uint16 varSelector = var_container->getVarSelector(opparams[0] >> 1);
 //			printf("%X\n", varSelector);
-//			printf("%s\n", s->_kernel->getSelectorName(varSelector).c_str());
+//			printf("%s\n", g_sci->getKernel()->getSelectorName(varSelector).c_str());
 			if ((varSelector == 0x84) || (varSelector == 0x92))) {
 				// selectors cycles, cycleCnt from lsl5 hardcoded
 				uint32 curTime = g_system->getMillis();
@@ -1698,7 +1698,7 @@ static EngineState *_game_run(EngineState *&s) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 			s->_sound.sfx_reset_player();
 #endif
-			_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play);
+			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play);
 
 			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 
@@ -1716,7 +1716,7 @@ static EngineState *_game_run(EngineState *&s) {
 					debugC(2, kDebugLevelVM, "Restarting with replay()");
 					s->_executionStack.clear(); // Restart with replay
 
-					_init_stack_base_with_selector(s, s->_kernel->_selectorCache.replay);
+					_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
 
 					send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 				}
@@ -1735,7 +1735,7 @@ int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
 	debugC(2, kDebugLevelVM, "Calling %s::play()", s->_gameId.c_str());
-	_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play); // Call the play selector
+	_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {

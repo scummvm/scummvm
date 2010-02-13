@@ -33,8 +33,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(Kernel *kernel, Vocabulary *voc, SegManager *segMan, AudioPlayer *audio)
-: _kernel(kernel), _voc(voc), _segMan(segMan), _audio(audio), _dirseeker() {
+EngineState::EngineState(Vocabulary *voc, SegManager *segMan, AudioPlayer *audio)
+: _voc(voc), _segMan(segMan), _audio(audio), _dirseeker() {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sfx_init_flags = 0;
@@ -145,7 +145,7 @@ kLanguage EngineState::getLanguage() {
 
 	lang = K_LANG_ENGLISH;
 
-	if (_kernel->_selectorCache.printLang != -1) {
+	if (g_sci->getKernel()->_selectorCache.printLang != -1) {
 		lang = (kLanguage)GET_SEL32V(_segMan, _gameObj, SELECTOR(printLang));
 
 		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
@@ -192,7 +192,7 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	kLanguage lang = getLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (_kernel->_selectorCache.subtitleLang != -1) {
+	if (g_sci->getKernel()->_selectorCache.subtitleLang != -1) {
 		subLang = (kLanguage)GET_SEL32V(_segMan, _gameObj, SELECTOR(subtitleLang));
 	}
 

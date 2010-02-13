@@ -149,10 +149,10 @@ public:
 	uint32 getFlags() const;
 	bool isDemo() const;
 
-	ResourceManager *getResMan() const { return _resMan; }
-	Kernel *getKernel() const { return _kernel; }
-	EngineState *getEngineState() const { return _gamestate; }
-	Vocabulary *getVocabulary() const { return _vocabulary; }
+	inline ResourceManager *getResMan() const { return _resMan; }
+	inline Kernel *getKernel() const { return _kernel; }
+	inline EngineState *getEngineState() const { return _gamestate; }
+	inline Vocabulary *getVocabulary() const { return _vocabulary; }
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
