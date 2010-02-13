@@ -294,10 +294,10 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Red : Barred access
 	// Yellow: Contained access
 	int poly_colors[4] = {
-		s->_gfxPalette->kernelFindColor(0, 255, 0),	// green
-		s->_gfxPalette->kernelFindColor(0, 0, 255),	// blue
-		s->_gfxPalette->kernelFindColor(255, 0, 0),	// red
-		s->_gfxPalette->kernelFindColor(255, 255, 0)	// yellow
+		g_sci->_gfxPalette->kernelFindColor(0, 255, 0),	// green
+		g_sci->_gfxPalette->kernelFindColor(0, 0, 255),	// blue
+		g_sci->_gfxPalette->kernelFindColor(255, 0, 0),	// red
+		g_sci->_gfxPalette->kernelFindColor(255, 255, 0)	// yellow
 	};
 
 	// Clip
@@ -308,7 +308,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	p2.y = CLIP<int16>(p2.y, 0, height - 1);
 
 	assert(type >= 0 && type <= 3);
-	s->_gfxPaint->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+	g_sci->_gfxPaint->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start, int width, int height) {
@@ -316,8 +316,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	// Green: End point
 	// Blue: Starting point
 	int point_colors[2] = {
-		s->_gfxPalette->kernelFindColor(0, 255, 0),	// green
-		s->_gfxPalette->kernelFindColor(0, 0, 255)		// blue
+		g_sci->_gfxPalette->kernelFindColor(0, 255, 0),	// green
+		g_sci->_gfxPalette->kernelFindColor(0, 0, 255)		// blue
 	};
 
 	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);
@@ -329,8 +329,8 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	rect.right = CLIP<int16>(rect.right, 0, width - 1);
 
 	assert(start >= 0 && start <= 1);
-	if (s->_gfxPaint16)
-		s->_gfxPaint16->kernelGraphFrameBox(rect, point_colors[start]);
+	if (g_sci->_gfxPaint16)
+		g_sci->_gfxPaint16->kernelGraphFrameBox(rect, point_colors[start]);
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
@@ -1417,9 +1417,9 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			// Update the whole screen
-			s->_gfxScreen->copyToScreen();
+			g_sci->_gfxScreen->copyToScreen();
 			g_system->updateScreen();
-			if (!s->_gfxPaint16)
+			if (!g_sci->_gfxPaint16)
 				g_system->delayMillis(2500);
 		}
 
@@ -1671,7 +1671,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 
 				debug(";");
 
-				s->_gfxScreen->copyToScreen();
+				g_sci->_gfxScreen->copyToScreen();
 				g_system->updateScreen();
 			}
 

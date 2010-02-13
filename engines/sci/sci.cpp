@@ -176,7 +176,7 @@ Common::Error SciEngine::run() {
 	SegManager *segMan = new SegManager(_resMan);
 
 	// We'll set the GUI below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, segMan, NULL, _audio);
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, segMan, _audio);
 	_gamestate->_event = new SciEvent();
 
 	if (script_init_engine(_gamestate))
@@ -184,27 +184,27 @@ Common::Error SciEngine::run() {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		_gamestate->_gfxAnimate = 0;
-		_gamestate->_gfxControls = 0;
-		_gamestate->_gfxMenu = 0;
-		_gamestate->_gfxPaint16 = 0;
-		_gamestate->_gfxPorts = 0;
-		_gamestate->_gui = 0;
-		_gamestate->_gui32 = new SciGui32(_gamestate, screen, palette, cache, cursor);
+		_gfxAnimate = 0;
+		_gfxControls = 0;
+		_gfxMenu = 0;
+		_gfxPaint16 = 0;
+		_gfxPorts = 0;
+		_gui = 0;
+		_gui32 = new SciGui32(_gamestate, screen, palette, cache, cursor);
 	} else {
 #endif
-		_gamestate->_gfxPorts = new GfxPorts(segMan, screen);
-		_gamestate->_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gamestate->_gfxPorts, _audio);
+		_gfxPorts = new GfxPorts(segMan, screen);
+		_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gfxPorts, _audio);
 #ifdef ENABLE_SCI32
-		_gamestate->_gui32 = 0;
-		_gamestate->_gfxFrameout = 0;
+		_gui32 = 0;
+		_gfxFrameout = 0;
 	}
 #endif
 
-	_gamestate->_gfxPalette = palette;
-	_gamestate->_gfxScreen = screen;
-	_gamestate->_gfxCache = cache;
-	_gamestate->_gfxCursor = cursor;
+	_gfxPalette = palette;
+	_gfxScreen = screen;
+	_gfxCache = cache;
+	_gfxCursor = cursor;
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
@@ -239,11 +239,11 @@ Common::Error SciEngine::run() {
 	syncSoundSettings();
 
 #ifdef ENABLE_SCI32
-	if (_gamestate->_gui32)
-		_gamestate->_gui32->init();
+	if (_gui32)
+		_gui32->init();
 	else
 #endif
-		_gamestate->_gui->init(_gamestate->_features->usesOldGfxFunctions());
+		_gui->init(_gamestate->_features->usesOldGfxFunctions());
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
@@ -261,15 +261,15 @@ Common::Error SciEngine::run() {
 	ConfMan.flushToDisk();
 
 	delete _gamestate->_soundCmd;
-	delete _gamestate->_gui;
+	delete _gui;
 #ifdef ENABLE_SCI32
-	delete _gamestate->_gui32;
+	delete _gui32;
 #endif
-	delete _gamestate->_gfxPorts;
-	delete _gamestate->_gfxCache;
-	delete _gamestate->_gfxPalette;
+	delete _gfxPorts;
+	delete _gfxCache;
+	delete _gfxPalette;
 	delete cursor;
-	delete _gamestate->_gfxScreen;
+	delete _gfxScreen;
 	delete _gamestate->_event;
 	delete segMan;
 	delete _gamestate;

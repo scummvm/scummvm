@@ -255,8 +255,8 @@ int game_init(EngineState *s) {
 	}
 
 	// Initialize menu TODO: Actually this should be another init()
-	if (s->_gfxMenu)
-		s->_gfxMenu->reset();
+	if (g_sci->_gfxMenu)
+		g_sci->_gfxMenu->reset();
 
 	s->successor = NULL; // No successor
 

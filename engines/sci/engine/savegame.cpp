@@ -361,13 +361,16 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
 
-	if (s.getVersion() >= 13 && _gui) {
+	if (s.getVersion() >= 13 && g_sci->_gui) {
 		// Save/Load picPort as well (cause sierra sci also does this)
 		int16 picPortTop, picPortLeft;
 		Common::Rect picPortRect;
 
-		if (s.isSaving())
-			picPortRect = _gfxPorts->kernelGetPicWindow(picPortTop, picPortLeft);
+		if (s.isSaving()) {
+			// FIXME: _gfxPorts is 0 when using SCI32 code
+			assert(g_sci->_gfxPorts);
+			picPortRect = g_sci->_gfxPorts->kernelGetPicWindow(picPortTop, picPortLeft);
+		}
 
 		s.syncAsSint16LE(picPortRect.top);
 		s.syncAsSint16LE(picPortRect.left);
@@ -940,27 +943,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// Create a new EngineState object
-	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_gui, s->_audio);
+	retval = new EngineState(s->resMan, s->_kernel, s->_voc, s->_segMan, s->_audio);
 	retval->_event = new SciEvent();
-
-	retval->_gfxAnimate = s->_gfxAnimate;
-	retval->_gfxCache = s->_gfxCache;
-	retval->_gfxCompare = s->_gfxCompare;
-	retval->_gfxControls = s->_gfxControls;
-	retval->_gfxCoordAdjuster = s->_gfxCoordAdjuster;
-	retval->_gfxCursor = s->_gfxCursor;
-	retval->_gfxMenu = s->_gfxMenu;
-	retval->_gfxPaint = s->_gfxPaint;
-	retval->_gfxPaint16 = s->_gfxPaint16;
-	retval->_gfxPalette = s->_gfxPalette;
-	retval->_gfxPorts = s->_gfxPorts;
-	retval->_gfxScreen = s->_gfxScreen;
-	
-#ifdef ENABLE_SCI32
-	// Copy the Gui32 pointer over to the new EngineState, if it exists
-	retval->_gui32 = s->_gui32;
-	retval->_gfxFrameout = s->_gfxFrameout;
-#endif
 
 	// Copy some old data
 	retval->_soundCmd = s->_soundCmd;
@@ -1028,13 +1012,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_msgState = new MessageState(retval->_segMan);
 
 #ifdef ENABLE_SCI32
-	if (retval->_gui32) {
-		retval->_gui32->resetEngineState(retval);
-		retval->_gui32->init();
+	if (g_sci->_gui32) {
+		g_sci->_gui32->resetEngineState(retval);
+		g_sci->_gui32->init();
 	} else {
 #endif
-		retval->_gui->resetEngineState(retval);
-		retval->_gui->init(retval->_features->usesOldGfxFunctions());
+		g_sci->_gui->resetEngineState(retval);
+		g_sci->_gui->init(retval->_features->usesOldGfxFunctions());
 #ifdef ENABLE_SCI32
 	}
 #endif

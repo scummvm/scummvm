@@ -51,6 +51,27 @@ class Vocabulary;
 class ResourceManager;
 class AudioPlayer;
 
+class SciEvent;
+class GfxAnimate;
+class GfxCache;
+class GfxCompare;
+class GfxControls;
+class GfxCoordAdjuster;
+class GfxCursor;
+class GfxMenu;
+class GfxPaint;
+class GfxPaint16;
+class GfxPalette;
+class GfxPorts;
+class GfxScreen;
+class SciGui;
+
+
+#ifdef ENABLE_SCI32
+class SciGui32;
+class GfxFrameout;
+#endif
+
 // our engine debug levels
 enum kDebugLevels {
 	kDebugLevelError      = 1 << 0,
@@ -142,6 +163,26 @@ public:
 
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
+
+public:
+	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
+	GfxCache *_gfxCache;
+	GfxCompare *_gfxCompare;
+	GfxControls *_gfxControls; // Controls for 16-bit gfx
+	GfxCoordAdjuster *_gfxCoordAdjuster;
+	GfxCursor *_gfxCursor;
+	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
+	GfxPalette *_gfxPalette;
+	GfxPaint *_gfxPaint;
+	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
+	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
+	GfxScreen *_gfxScreen;
+	SciGui *_gui; /* Currently active Gui */
+
+#ifdef ENABLE_SCI32
+	SciGui32 *_gui32; // GUI for SCI32 games
+	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
+#endif
 
 private:
 	const ADGameDescription *_gameDescription;

@@ -37,7 +37,7 @@ reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	Common::String title = s->strSplit(s->_segMan->getString(argv[0]).c_str());
 	Common::String content = s->_segMan->getString(argv[1]);
 
-	s->_gfxMenu->kernelAddEntry(title, content, argv[1]);
+	g_sci->_gfxMenu->kernelAddEntry(title, content, argv[1]);
 	return s->r_acc;
 }
 
@@ -52,7 +52,7 @@ reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
 		attributeId = argv[argPos].toUint16();
 		if ((argPos + 1) >= argc)
 			error("Too few parameters for kSetMenu");
-		s->_gfxMenu->kernelSetAttribute(menuId, itemId, attributeId, argv[argPos + 1]);
+		g_sci->_gfxMenu->kernelSetAttribute(menuId, itemId, attributeId, argv[argPos + 1]);
 		argPos += 2;
 	}
 	return s->r_acc;
@@ -63,7 +63,7 @@ reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 	uint16 itemId = argv[0].toUint16() & 0xFF;
 	uint16 attributeId = argv[1].toUint16();
 
-	return s->_gfxMenu->kernelGetAttribute(menuId, itemId, attributeId);
+	return g_sci->_gfxMenu->kernelGetAttribute(menuId, itemId, attributeId);
 }
 
 
@@ -77,7 +77,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 		// Sometimes this is called without giving text, if thats the case dont process it
 		text = s->_segMan->getString(textReference);
 
-		s->_gfxMenu->kernelDrawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
+		g_sci->_gfxMenu->kernelDrawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
 	}
 	return s->r_acc;
 }
@@ -85,7 +85,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 	bool clear = argv[0].isNull() ? true : false;
 
-	s->_gfxMenu->kernelDrawMenuBar(clear);
+	g_sci->_gfxMenu->kernelDrawMenuBar(clear);
 	return s->r_acc;
 }
 
@@ -94,7 +94,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	//bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : false;
 
 	// TODO: pauseSound implementation
-	return s->_gfxMenu->kernelSelect(eventObject);
+	return g_sci->_gfxMenu->kernelSelect(eventObject);
 }
 
 } // End of namespace Sci

@@ -54,22 +54,25 @@ namespace Sci {
 SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio)
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _ports(ports), _audio(audio) {
 
+	// FIXME/TODO: If SciGui inits all the stuff below, then it should *own* it,
+	// not SciEngine. Conversely, if we want SciEngine to own this stuff,
+	// then it should init it!
 	_coordAdjuster = new GfxCoordAdjuster16(_ports);
-	_s->_gfxCoordAdjuster = _coordAdjuster;
+	g_sci->_gfxCoordAdjuster = _coordAdjuster;
 	_cursor->init(_coordAdjuster, _s->_event);
 	_compare = new GfxCompare(_s->_segMan, _s->_kernel, _cache, _screen, _coordAdjuster);
-	_s->_gfxCompare = _compare;
+	g_sci->_gfxCompare = _compare;
 	_transitions = new GfxTransitions(this, _screen, _palette, _s->resMan->isVGA());
 	_paint16 = new GfxPaint16(_s->resMan, _s->_segMan, _s->_kernel, this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
-	_s->_gfxPaint = _paint16;
-	_s->_gfxPaint16 = _paint16;
+	g_sci->_gfxPaint = _paint16;
+	g_sci->_gfxPaint16 = _paint16;
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
-	_s->_gfxAnimate = _animate;
+	g_sci->_gfxAnimate = _animate;
 	_text16 = new GfxText16(_s->resMan, _cache, _ports, _paint16, _screen);
 	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
-	_s->_gfxControls = _controls;
+	g_sci->_gfxControls = _controls;
 	_menu = new GfxMenu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
-	_s->_gfxMenu = _menu;
+	g_sci->_gfxMenu = _menu;
 }
 
 SciGui::~SciGui() {

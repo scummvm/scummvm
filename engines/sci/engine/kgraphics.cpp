@@ -84,7 +84,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 		else loopNo = -1;
 	}
 
-	maxLoops = s->_gfxCache->kernelViewGetLoopCount(viewId);
+	maxLoops = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
 		
 
 	if ((loopNo > 1) && (maxLoops < 4))
@@ -101,14 +101,14 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4) {
 		pos.y = argv[3].toSint16();
 		pos.x = argv[2].toSint16();
-		s->_gfxCursor->kernelSetPos(pos);
+		g_sci->_gfxCursor->kernelSetPos(pos);
 	}
 
 	if ((argc >= 2) && (argv[1].toSint16() == 0)) {
 		cursorId = -1;
 	}
 
-	s->_gfxCursor->kernelSetShape(cursorId);
+	g_sci->_gfxCursor->kernelSetShape(cursorId);
 	return s->r_acc;
 }
 
@@ -120,7 +120,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		switch (argv[0].toSint16()) {
 		case 0:
-			s->_gfxCursor->kernelHide();
+			g_sci->_gfxCursor->kernelHide();
 			break;
 		case -1:
 			// TODO: Special case at least in kq6, check disassembly
@@ -129,7 +129,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			// TODO: Special case at least in kq6, check disassembly
 			break;
 		default:
-			s->_gfxCursor->kernelShow();
+			g_sci->_gfxCursor->kernelShow();
 			break;
 		}
 		break;
@@ -137,7 +137,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
 		
-		s->_gfxCursor->kernelSetPos(pos);
+		g_sci->_gfxCursor->kernelSetPos(pos);
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();
@@ -147,7 +147,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
-			s->_gfxCursor->kernelSetMoveZone(rect);
+			g_sci->_gfxCursor->kernelSetMoveZone(rect);
 		} else {
 			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
 		}
@@ -158,7 +158,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		s->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		break;
 	default :
 		warning("kSetCursor: Unhandled case: %d arguments given", argc);
@@ -184,7 +184,7 @@ reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 2) {
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
-		s->_gfxCursor->kernelSetPos(pos);
+		g_sci->_gfxCursor->kernelSetPos(pos);
 	}
 	return s->r_acc;
 }
@@ -192,7 +192,7 @@ reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	int16 newPicNotValid = (argc > 0) ? argv[0].toUint16() : -1;
 
-	return make_reg(0, s->_gfxScreen->kernelPicNotValid(newPicNotValid));
+	return make_reg(0, g_sci->_gfxScreen->kernelPicNotValid(newPicNotValid));
 }
 
 Common::Rect kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
@@ -248,27 +248,27 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		if (!s->resMan->isVGA() && !s->resMan->isAmiga32color())
 			color &= 0x0F;
 
-		s->_gfxPaint16->kernelGraphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
+		g_sci->_gfxPaint16->kernelGraphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
 		break;
 
 	case K_GRAPH_SAVE_BOX:
 		rect = kGraphCreateRect(x, y, x1, y1);
 		screenMask = (argc > 5) ? argv[5].toUint16() : 0;
-		return s->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
+		return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
 
 	case K_GRAPH_RESTORE_BOX:
 		// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
-		s->_gfxPaint16->kernelGraphRestoreBox(argv[1]);
+		g_sci->_gfxPaint16->kernelGraphRestoreBox(argv[1]);
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gfxPaint16->kernelGraphFillBoxBackground(rect);
+		g_sci->_gfxPaint16->kernelGraphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gfxPaint16->kernelGraphFillBoxForeground(rect);
+		g_sci->_gfxPaint16->kernelGraphFillBoxForeground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_ANY:
@@ -278,31 +278,31 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		colorMask = argv[5].toUint16();
 
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
+		g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
 		break;
 
 	case K_GRAPH_UPDATE_BOX: {
 		rect = kGraphCreateRect(x, y, x1, y1);
 		bool hiresMode = (argc > 6) ? true : false;
 		// argc == 7 on upscaled hires
-		s->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
+		g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
 		break;
 	}
 
 	case K_GRAPH_REDRAW_BOX:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		s->_gfxPaint16->kernelGraphRedrawBox(rect);
+		g_sci->_gfxPaint16->kernelGraphRedrawBox(rect);
 		break;
 
 	case K_GRAPH_ADJUST_PRIORITY:
 		// Seems to be only implemented for SCI0/SCI01 games
 		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)", argv[1].toUint16(), argv[2].toUint16());
-		s->_gfxPorts->kernelGraphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
+		g_sci->_gfxPorts->kernelGraphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
 		break;
 
 	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
 		rect = kGraphCreateRect(x, y, x1, y1);
-		return s->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
+		return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
 
 	default:
 		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
@@ -336,11 +336,11 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
 	
 #ifdef ENABLE_SCI32
-	if (s->_gui32)
-		s->_gui32->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+	if (g_sci->_gui32)
+		g_sci->_gui32->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	else
 #endif
-		s->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
 	dest[2] = make_reg(0, textHeight);
@@ -364,7 +364,7 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 
 	// FIXME: we should not be asking from the GUI to wait. The kernel sounds
 	// like a better place
-	s->_gui->wait(sleep_time);
+	g_sci->_gui->wait(sleep_time);
 
 	return s->r_acc;
 }
@@ -373,17 +373,17 @@ reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
 	int16 y = argv[0].toSint16();
 
 	if ((argc < 2) || (y != 1)) {
-		return make_reg(0, s->_gfxPorts->kernelCoordinateToPriority(y));
+		return make_reg(0, g_sci->_gfxPorts->kernelCoordinateToPriority(y));
 	} else {
 		int16 priority = argv[1].toSint16();
-		return make_reg(0, s->_gfxPorts->kernelPriorityToCoordinate(priority));
+		return make_reg(0, g_sci->_gfxPorts->kernelPriorityToCoordinate(priority));
 	}
 }
 
 reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 	int16 priority = argv[0].toSint16();
 
-	return make_reg(0, s->_gfxPorts->kernelPriorityToCoordinate(priority));
+	return make_reg(0, g_sci->_gfxPorts->kernelPriorityToCoordinate(priority));
 }
 
 reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
@@ -396,7 +396,7 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 
-	bool canBeHere = s->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
 	return make_reg(0, canBeHere);
 }
 
@@ -405,7 +405,7 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	
-	bool canBeHere = s->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
 	return make_reg(0, !canBeHere);
 }
 
@@ -415,7 +415,7 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = argv[2].toSint16();
 	Common::Point position(argv[4].toUint16(), argv[3].toUint16());
 
-	bool result = s->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, position);
+	bool result = g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, position);
 	return make_reg(0, result);
 }
 
@@ -427,7 +427,7 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 	int16 celHeight;
 
-	celHeight = s->_gfxCache->kernelViewGetCelHeight(viewId, loopNo, celNo);
+	celHeight = g_sci->_gfxCache->kernelViewGetCelHeight(viewId, loopNo, celNo);
 
 	return make_reg(0, celHeight);
 }
@@ -440,7 +440,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	int16 celNo = (argc >= 3) ? argv[2].toSint16() : 0;
 	int16 celWidth;
 
-	celWidth = s->_gfxCache->kernelViewGetCelWidth(viewId, loopNo, celNo);
+	celWidth = g_sci->_gfxCache->kernelViewGetCelWidth(viewId, loopNo, celNo);
 
 	return make_reg(0, celWidth);
 }
@@ -450,7 +450,7 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
-	loopCount = s->_gfxCache->kernelViewGetLoopCount(viewId);
+	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
 
 	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d", viewId, loopCount);
 
@@ -463,7 +463,7 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = GET_SEL32V(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
-	celCount = s->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
+	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
 
 	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d", viewId, loopNo, celCount);
 
@@ -490,7 +490,7 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 		rect.right = rect.left + 1;
 		rect.bottom = rect.top + 1;
 	}
-	uint16 result = s->_gfxCompare->kernelOnControl(screenMask, rect);
+	uint16 result = g_sci->_gfxCompare->kernelOnControl(screenMask, rect);
 	return make_reg(0, result);
 }
 
@@ -523,7 +523,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
 
-	s->_gfxPaint16->kernelDrawPicture(pictureId, animationNr, animationBlackoutFlag, mirroredFlag, addToFlag, EGApaletteNo);
+	g_sci->_gfxPaint16->kernelDrawPicture(pictureId, animationNr, animationBlackoutFlag, mirroredFlag, addToFlag, EGApaletteNo);
 
 	return s->r_acc;
 }
@@ -531,7 +531,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
-	s->_gfxCompare->kernelBaseSetter(object);
+	g_sci->_gfxCompare->kernelBaseSetter(object);
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
@@ -544,7 +544,7 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
-	s->_gfxCompare->kernelSetNowSeen(argv[0]);
+	g_sci->_gfxCompare->kernelSetNowSeen(argv[0]);
 
 	return s->r_acc;
 }
@@ -560,7 +560,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		if (argc==3) {
 			GuiResourceId resourceId = argv[1].toUint16();
 			bool force = argv[2].toUint16() == 2 ? true : false;
-			s->_gfxPalette->kernelSetFromResource(resourceId, force);
+			g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
 		} else {
 			warning("kPalette(1) called with %d parameters", argc);
 		}
@@ -569,14 +569,14 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
 		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
 		uint16 flags = argv[3].toUint16();
-		s->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
+		g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
 		break;
 	}
 	case 3:	{ // Remove palette-flag(s)
 		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
 		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
 		uint16 flags = argv[3].toUint16();
-		s->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
+		g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
 		break;
 	}
 	case 4:	{ // Set palette intensity
@@ -588,7 +588,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			uint16 intensity = argv[3].toUint16();
 			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
 
-			s->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
+			g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 			break;
 		}
 		default:
@@ -601,7 +601,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		uint16 g = argv[2].toUint16();
 		uint16 b = argv[3].toUint16();
 
-		return make_reg(0, s->_gfxPalette->kernelFindColor(r, g, b));
+		return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
 	}
 	case 6: { // Animate
 		int16 argNr;
@@ -610,11 +610,11 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			uint16 fromColor = argv[argNr].toUint16();
 			uint16 toColor = argv[argNr + 1].toUint16();
 			int16 speed = argv[argNr + 2].toSint16();
-			if (s->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
+			if (g_sci->_gfxPalette->kernelAnimate(fromColor, toColor, speed))
 				paletteChanged = true;
 		}
 		if (paletteChanged)
-			s->_gfxPalette->kernelAnimateSet();
+			g_sci->_gfxPalette->kernelAnimateSet();
 		break;
 	}
 	case 7: { // Save palette to heap
@@ -636,7 +636,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
-	if (!s->_gui)
+	if (!g_sci->_gui)
 		return s->r_acc;
 
 	switch (operation) {
@@ -646,7 +646,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		if (argc == 3) {
 			paletteId = argv[1].toUint16();
 			time = argv[2].toUint16();
-			s->_gfxPalette->startPalVary(paletteId, time);
+			g_sci->_gfxPalette->startPalVary(paletteId, time);
 			warning("kPalVary(init) called with paletteId = %d, time = %d", paletteId, time);
 		} else {
 			warning("kPalVary(init) called with unsupported argc %d", argc);
@@ -659,7 +659,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 3: { // DeInit
 		if (argc == 1) {
-			s->_gfxPalette->stopPalVary();
+			g_sci->_gfxPalette->stopPalVary();
 			warning("kPalVary(deinit)");
 		} else {
 			warning("kPalVary(deinit) called with unsupported argc %d", argc);
@@ -674,7 +674,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		bool pauseState;
 		if (argc == 2) {
 			pauseState = argv[1].isNull() ? false : true;
-			s->_gfxPalette->togglePalVary(pauseState);
+			g_sci->_gfxPalette->togglePalVary(pauseState);
 			warning("kPalVary(pause) called with state = %d", pauseState);
 		} else {
 			warning("kPalVary(pause) called with unsupported argc %d", argc);
@@ -690,7 +690,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId paletteId = argv[1].toUint16();
 
-	s->_gfxPalette->kernelAssertPalette(paletteId);
+	g_sci->_gfxPalette->kernelAssertPalette(paletteId);
 	return s->r_acc;
 }
 
@@ -702,7 +702,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // load
 		if (argc == 2) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
-			s->r_acc = s->_gui->portraitLoad(resourceName);
+			s->r_acc = g_sci->_gui->portraitLoad(resourceName);
 		} else {
 			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}
@@ -719,7 +719,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			uint seq = argv[8].toUint16() & 0xff;
 			// argv[9] is usually 0??!!
 
-			s->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
+			g_sci->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
 			return SIGNAL_REG;
 		} else {
 			warning("kPortrait(show) called with unsupported argc %d", argc);
@@ -729,7 +729,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 2: { // unload
 		if (argc == 2) {
 			uint16 portraitId = argv[1].toUint16();
-			s->_gui->portraitUnload(portraitId);
+			g_sci->_gui->portraitUnload(portraitId);
 		} else {
 			warning("kPortrait(unload) called with unsupported argc %d", argc);
 		}
@@ -781,13 +781,13 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
-		s->_gfxControls->kernelDrawButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
+		g_sci->_gfxControls->kernelDrawButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
-		s->_gfxControls->kernelDrawText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		g_sci->_gfxControls->kernelDrawText(rect, controlObject, s->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -795,7 +795,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(max));
 		cursorPos = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
-		s->_gfxControls->kernelDrawTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
+		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
@@ -815,7 +815,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 				priority = -1;
 		}
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y - 1);
-		s->_gfxControls->kernelDrawIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
+		g_sci->_gfxControls->kernelDrawIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_LIST:
@@ -863,7 +863,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		}
 
 		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
-		s->_gfxControls->kernelDrawList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
+		g_sci->_gfxControls->kernelDrawList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		free(listEntries);
 		delete[] listStrings;
 		return;
@@ -909,7 +909,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 		switch (controlType) {
 		case SCI_CONTROLS_TYPE_TEXTEDIT:
 			// Only process textedit controls in here
-			s->_gfxControls->kernelTexteditChange(controlObject, eventObject);
+			g_sci->_gfxControls->kernelTexteditChange(controlObject, eventObject);
 		}
 	}
 	return s->r_acc;
@@ -928,7 +928,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		if (argv[0].isNull())
 			return s->r_acc;
-		s->_gfxAnimate->kernelAddToPicList(argv[0], argc, argv);
+		g_sci->_gfxAnimate->kernelAddToPicList(argv[0], argc, argv);
 		break;
 	case 7:
 		viewId = argv[0].toUint16();
@@ -938,7 +938,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 		topPos = argv[4].toSint16();
 		priority = argv[5].toSint16();
 		control = argv[6].toSint16();
-		s->_gfxAnimate->kernelAddToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+		g_sci->_gfxAnimate->kernelAddToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 		break;
 	default:
 		error("kAddToPic with unsupported parameter count %d", argc);
@@ -947,7 +947,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetPort(EngineState *s, int argc, reg_t *argv) {
-	return s->_gfxPorts->kernelGetActive();
+	return g_sci->_gfxPorts->kernelGetActive();
 }
 
 reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
@@ -959,7 +959,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1:
 		portId = argv[0].toSint16();
-		s->_gfxPorts->kernelSetActive(portId);
+		g_sci->_gfxPorts->kernelSetActive(portId);
 		break;
 
 	case 7:
@@ -972,7 +972,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 		picRect.right = argv[3].toSint16();
 		picTop = (argc >= 6) ? argv[4].toSint16() : 0;
 		picLeft = (argc >= 6) ? argv[5].toSint16() : 0;
-		s->_gfxPorts->kernelSetPicWindow(picRect, picTop, picLeft, initPriorityBandsFlag);
+		g_sci->_gfxPorts->kernelSetPicWindow(picRect, picTop, picLeft, initPriorityBandsFlag);
 		break;
 
 	default:
@@ -1011,7 +1011,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 			priority = 15;
 	}
 
-	s->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
+	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
 }
@@ -1022,7 +1022,7 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 	if ((argc != 2) || (argv[1].isNull()))
 		reanimate = true;
 
-	s->_gfxPorts->kernelDisposeWindow(windowId, reanimate);
+	g_sci->_gfxPorts->kernelDisposeWindow(windowId, reanimate);
 	return s->r_acc;
 }
 
@@ -1046,7 +1046,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 		title = s->strSplit(title.c_str(), NULL);
 	}
 
-	return s->_gfxPorts->kernelNewWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
+	return g_sci->_gfxPorts->kernelNewWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
 }
 
 reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
@@ -1057,7 +1057,7 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// Take care of incoming events (kAnimate is called semi-regularly)
 	process_sound_events(s);
 #endif
-	s->_gfxAnimate->kernelAnimate(castListReference, cycle, argc, argv);
+	g_sci->_gfxAnimate->kernelAnimate(castListReference, cycle, argc, argv);
 
 	return s->r_acc;
 }
@@ -1066,7 +1066,7 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	int16 shakeCount = (argc > 0) ? argv[0].toUint16() : 1;
 	int16 directions = (argc > 1) ? argv[1].toUint16() : 1;
 
-	s->_gfxPaint->kernelShakeScreen(shakeCount, directions);
+	g_sci->_gfxPaint->kernelShakeScreen(shakeCount, directions);
 	return s->r_acc;
 }
 
@@ -1084,7 +1084,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		text = kernel_lookup_text(s, textp, index);
 	}
 
-	return s->_gfxPaint16->kernelDisplay(s->strSplit(text.c_str()).c_str(), argc, argv);
+	return g_sci->_gfxPaint16->kernelDisplay(s->strSplit(text.c_str()).c_str(), argc, argv);
 }
 
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
@@ -1094,9 +1094,9 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// previously visible.
 	bool reshowCursor;
 	
-	reshowCursor = s->_gfxCursor->isVisible();
+	reshowCursor = g_sci->_gfxCursor->isVisible();
 	if (reshowCursor)
-		s->_gfxCursor->kernelHide();
+		g_sci->_gfxCursor->kernelHide();
 
 	if (argv[0].segment != 0) {
 		// DOS SEQ
@@ -1152,10 +1152,10 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (playedVideo)
-		s->_gfxScreen->kernelSyncWithFramebuffer();
+		g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 
 	if (reshowCursor)
-		s->_gfxCursor->kernelShow();
+		g_sci->_gfxCursor->kernelShow();
 
 	return s->r_acc;
 }
@@ -1208,12 +1208,12 @@ reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 // New calls for SCI11. Using those is only needed when using text-codes so that one is able to change
 //  font and/or color multiple times during kDisplay and kDrawControl
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
-	s->_gui->textFonts(argc, argv);
+	g_sci->_gui->textFonts(argc, argv);
 	return s->r_acc;
 }
 
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
-	s->_gui->textColors(argc, argv);
+	g_sci->_gui->textColors(argc, argv);
 	return s->r_acc;
 }
 

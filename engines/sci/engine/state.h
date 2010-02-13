@@ -51,27 +51,8 @@ namespace Common {
 namespace Sci {
 
 class SciEvent;
-class GfxAnimate;
-class GfxCache;
-class GfxCompare;
-class GfxControls;
-class GfxCoordAdjuster;
-class GfxCursor;
-class GfxMenu;
-class GfxPaint;
-class GfxPaint16;
-class GfxPalette;
-class GfxPorts;
-class GfxScreen;
-class SciGui;
 class MessageState;
 class SoundCommandParser;
-
-#ifdef ENABLE_SCI32
-class SciGui32;
-class GfxFrameout;
-class GfxPaint32;
-#endif
 
 class DirSeeker {
 protected:
@@ -129,7 +110,7 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, SciGui *gui, AudioPlayer *audio);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SegManager *segMan, AudioPlayer *audio);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -145,25 +126,6 @@ public:
 	GameFeatures *_features;
 
 	/* Non-VM information */
-
-	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
-	GfxCache *_gfxCache;
-	GfxCompare *_gfxCompare;
-	GfxControls *_gfxControls; // Controls for 16-bit gfx
-	GfxCoordAdjuster *_gfxCoordAdjuster;
-	GfxCursor *_gfxCursor;
-	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
-	GfxPalette *_gfxPalette;
-	GfxPaint *_gfxPaint;
-	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
-	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
-	GfxScreen *_gfxScreen;
-	SciGui *_gui; /* Currently active Gui */
-
-#ifdef ENABLE_SCI32
-	SciGui32 *_gui32; // GUI for SCI32 games
-	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
-#endif
 
 	SciEvent *_event; // Event handling
 

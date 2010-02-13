@@ -48,7 +48,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
 
-	mousePos = s->_gfxCursor->getPosition();
+	mousePos = g_sci->_gfxCursor->getPosition();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -219,7 +219,7 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 		int16 x = GET_SEL32V(segMan, obj, SELECTOR(x));
 		int16 y = GET_SEL32V(segMan, obj, SELECTOR(y));
 
-		s->_gfxCoordAdjuster->kernelGlobalToLocal(x, y, planeObject);
+		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y, planeObject);
 
 		PUT_SEL32V(segMan, obj, SELECTOR(x), x);
 		PUT_SEL32V(segMan, obj, SELECTOR(y), y);
@@ -238,7 +238,7 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 		int16 x = GET_SEL32V(segMan, obj, SELECTOR(x));
 		int16 y = GET_SEL32V(segMan, obj, SELECTOR(y));
 
-		s->_gfxCoordAdjuster->kernelLocalToGlobal(x, y, planeObject);
+		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y, planeObject);
 
 		PUT_SEL32V(segMan, obj, SELECTOR(x), x);
 		PUT_SEL32V(segMan, obj, SELECTOR(y), y);

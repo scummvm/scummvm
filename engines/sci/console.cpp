@@ -219,7 +219,7 @@ void Console::postEnter() {
 		_engine->_gamestate->_soundCmd->pauseAll(false);
 
 	if (!_videoFile.empty()) {
-		_engine->_gamestate->_gfxCursor->kernelHide();
+		_engine->_gfxCursor->kernelHide();
 
 		if (_videoFile.hasSuffix(".seq")) {
 			SeqDecoder *seqDecoder = new SeqDecoder();
@@ -255,7 +255,7 @@ void Console::postEnter() {
 #endif
 		}
 
-		_engine->_gamestate->_gfxCursor->kernelShow();
+		_engine->_gfxCursor->kernelShow();
 
 		_videoFile.clear();
 		_videoFrameDelay = 0;
@@ -1062,7 +1062,7 @@ bool Console::cmdSetPalette(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_engine->_gamestate->_gfxPalette->kernelSetFromResource(resourceId, true);
+	_engine->_gfxPalette->kernelSetFromResource(resourceId, true);
 	return true;
 }
 
@@ -1076,8 +1076,8 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_engine->_gamestate->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
-	_engine->_gamestate->_gfxScreen->copyToScreen();
+	_engine->_gfxPaint->kernelDrawPicture(resourceId, 100, false, false, false, 0);
+	_engine->_gfxScreen->copyToScreen();
 	return true;
 }
 
@@ -1093,7 +1093,7 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	uint16 loopNo = atoi(argv[2]);
 	uint16 celNo = atoi(argv[3]);
 
-	_engine->_gamestate->_gfxPaint->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, false, NULL_REG);
+	_engine->_gfxPaint->kernelDrawCel(resourceId, loopNo, celNo, 50, 50, 0, 0, false, NULL_REG);
 	return true;
 }
 
@@ -1108,7 +1108,7 @@ bool Console::cmdDrawRobot(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_engine->_gamestate->_gui32->drawRobot(resourceId);
+	_engine->_gui32->drawRobot(resourceId);
 	return true;
 }
 #endif
@@ -1121,7 +1121,7 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	}
 
 	bool flag = atoi(argv[1]) ? true : false;
-	_engine->_gamestate->_gfxScreen->debugUnditherSetState(flag);
+	_engine->_gfxScreen->debugUnditherSetState(flag);
 	return false;
 }
 
@@ -1134,7 +1134,7 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 	bool state = atoi(argv[1]) ? true : false;
 
-	return _engine->_gamestate->_gui->debugEGAdrawingVisualize(state);
+	return _engine->_gui->debugEGAdrawingVisualize(state);
 }
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
@@ -1421,7 +1421,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3:
-		_engine->_gamestate->_gfxScreen->debugShowMap(map);
+		_engine->_gfxScreen->debugShowMap(map);
 		break;
 
 	default:
