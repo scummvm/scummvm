@@ -576,7 +576,7 @@ TextItem *Resources::getTextItem(uint16 id) const {
 // HACK: Some Fascination versions (Amiga, Atari and first PC floppies) have a different header, which is a problem here.
 // TODO: Handle that in a proper way
 		if ((_vm->getGameType() == kGameTypeFascination) & (_totTextTable->size < 0))
-			warning("totTextTable with negative size id:%d offset:%d", id, totItem.offset, totItem.size);
+			warning("totTextTable with negative size id:%d offset:%d in file %s : (size: %d)", id, totItem.offset, _totFile.c_str(), _totTextTable->size);
 		else
 			return 0;
 	}
