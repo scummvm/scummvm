@@ -281,9 +281,6 @@ void VideoManager::playMovie(uint16 id) {
 }
 
 void VideoManager::playMovieBlocking(uint16 id) {
-	// NOTE/TODO: playMovieBlocking can be called after playMovie, essentially
-	// making it just a playMovieBlocking. It basically nullifies the first call.
-
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (blocking) at (%d, %d)", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top);
