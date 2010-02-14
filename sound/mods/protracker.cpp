@@ -63,7 +63,7 @@ private:
 	struct {
 		byte sample;
 		uint16 period;
-		frac_t offset;
+		Offset offset;
 
 		byte vol;
 		byte finetune;
@@ -195,7 +195,7 @@ void ProtrackerStream::updateRow() {
 					_track[track].period = _module.noteToPeriod(note.note, _track[track].finetune);
 				else
 					_track[track].period = note.period;
-				_track[track].offset = 0;
+				_track[track].offset = Offset(0);
 			}
 		}
 
@@ -241,7 +241,7 @@ void ProtrackerStream::updateRow() {
 			break;
 		case 0x9: // Set sample offset
 			if (exy) {
-				_track[track].offset = intToFrac(exy * 256);
+				_track[track].offset = Offset(exy * 256);
 				setChannelOffset(track, _track[track].offset);
 			}
 			break;
@@ -382,12 +382,12 @@ void ProtrackerStream::updateEffects() {
 				break;	// Pattern loop
 			case 0x9:	// Retrigger note
 				if (ey && (_tick % ey) == 0)
-					_track[track].offset = 0;
+					_track[track].offset = Offset(0);
 				break;
 			case 0xD: // Delay sample
 				if (_tick == _track[track].delaySampleTick) {
 					_track[track].sample = _track[track].delaySample;
-					_track[track].offset = 0;
+					_track[track].offset = Offset(0);
 					if (_track[track].sample)
 						_track[track].vol = _module.sample[_track[track].sample - 1].vol;
 				}

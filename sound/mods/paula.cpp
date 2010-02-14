@@ -57,7 +57,7 @@ void Paula::clearVoice(byte voice) {
 	_voice[voice].lengthRepeat = 0;
 	_voice[voice].period = 0;
 	_voice[voice].volume = 0;
-	_voice[voice].offset = 0;
+	_voice[voice].offset = Offset(0);
 	_voice[voice].dmaCount = 0;
 }
 
@@ -77,17 +77,25 @@ int Paula::readBuffer(int16 *buffer, const int numSamples) {
 
 
 template<bool stereo>
-inline void mixBuffer(int16 *&buf, const int8 *data, frac_t &offset, frac_t rate, int end, byte volume, byte panning) {
-	for (int i = 0; i < end; i++) {
-		const int32 tmp = ((int32) data[fracToInt(offset)]) * volume;
+inline int mixBuffer(int16 *&buf, const int8 *data, Paula::Offset &offset, frac_t rate, int neededSamples, uint bufSize, byte volume, byte panning) {
+	int samples;
+	for (samples = 0; samples < neededSamples && offset.int_off < bufSize; ++samples) {
+		const int32 tmp = ((int32) data[offset.int_off]) * volume;
 		if (stereo) {
 			*buf++ += (tmp * (255 - panning)) >> 7;
 			*buf++ += (tmp * (panning)) >> 7;
 		} else
 			*buf++ += tmp;
 
-		offset += rate;
+		// Step to next source sample
+		offset.rem_off += rate;
+		if (offset.rem_off >= FRAC_ONE) {
+			offset.int_off += fracToInt(offset.rem_off);
+			offset.rem_off &= FRAC_LO_MASK;
+		}
 	}
+
+	return samples;
 }
 
 template<bool stereo>
@@ -112,77 +120,54 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			if (!_voice[voice].data || (_voice[voice].period <= 0))
 				continue;
 
-			// The Paula chip apparently run at 7.0937892 MHz. We combine this with
-			// the requested output sampling rate (typicall 44.1 kHz or 22.05 kHz)
-			// as well as the "period" of the channel we are processing right now,
-			// to compute the correct output 'rate'.
+			// The Paula chip apparently run at 7.0937892 MHz in the PAL
+			// version and at 7.1590905 MHz in the NTSC version. We divide this
+			// by the requested the requested output sampling rate _rate
+			// (typically 44.1 kHz or 22.05 kHz) obtaining the value _periodScale.
+			// This is then divided by the "period" of the channel we are
+			// processing, to obtain the correct output 'rate'.
 			frac_t rate = doubleToFrac(_periodScale / _voice[voice].period);
-
 			// Cap the volume
 			_voice[voice].volume = MIN((byte) 0x40, _voice[voice].volume);
 
-			// Cache some data (helps the compiler to optimize the code, by
-			// indirectly telling it that no data aliasing can occur).
-			frac_t offset = _voice[voice].offset;
-			frac_t sLen = intToFrac(_voice[voice].length);
-			const int8 *data = _voice[voice].data;
-			int dmaCount = _voice[voice].dmaCount;
+
+			Channel &ch = _voice[voice];
 			int16 *p = buffer;
-			int end = 0;
 			int neededSamples = nSamples;
-			assert(offset < sLen);
+			assert(ch.offset.int_off < ch.length);
 
-			// Compute the number of samples to generate; that is, either generate
-			// just as many as were requested, or until the buffer is used up.
-			// Note that dividing two frac_t yields an integer (as the denominators
-			// cancel out each other).
-			// Note that 'end' could be 0 here. No harm in that :-).
-			const int leftSamples = (int)((sLen - offset + rate - 1) / rate);
-			end = MIN(neededSamples, leftSamples);
-			mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
-			neededSamples -= end;
+			// Mix the generated samples into the output buffer
+			neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning);
 
-			if (leftSamples > 0 && end == leftSamples) {
-				dmaCount++;
-				data = _voice[voice].data = _voice[voice].dataRepeat;
-				_voice[voice].length = _voice[voice].lengthRepeat;
-				// TODO: offset -= sLen; but make sure there is no way offset >= 2*sLen
-				offset &= FRAC_LO_MASK;
+			// Wrap around if necessary
+			if (ch.offset.int_off >= ch.length) {
+				// Important: Wrap around the offset *before* updating the voice length.
+				// Otherwise, if length != lengthRepeat we would wrap incorrectly.
+				// Note: If offset >= 2*len ever occurs, the following would be wrong;
+				// instead of subtracting, we then should compute the modulus using "%=".
+				// Since that requires a division and is slow, and shouldn't be necessary
+				// in practice anyway, we only use subtraction.
+				ch.offset.int_off -= ch.length;
+				ch.dmaCount++;
+
+				ch.data = ch.dataRepeat;
+				ch.length = ch.lengthRepeat;
 			}
 
 			// If we have not yet generated enough samples, and looping is active: loop!
-			if (neededSamples > 0 && _voice[voice].length > 2) {
-				sLen = intToFrac(_voice[voice].length);
-
-				// If the "rate" exceeds the sample rate, we would have to perform constant
-				// wrap arounds. So, apply the first step of the euclidean algorithm to
-				// achieve the same more efficiently: Take rate modulo sLen
-				// TODO: This messes up dmaCount and shouldnt happen?
-				if (sLen < rate)
-					warning("Paula: length %d is lesser than rate", _voice[voice].length);
-//					rate %= sLen;
-
+			if (neededSamples > 0 && ch.length > 2) {
 				// Repeat as long as necessary.
 				while (neededSamples > 0) {
-					// TODO: offset -= sLen; but make sure there is no way offset >= 2*sLen
-					offset &= FRAC_LO_MASK;
-					dmaCount++;
-					// Compute the number of samples to generate (see above) and mix 'em.
-					end = MIN(neededSamples, (int)((sLen - offset + rate - 1) / rate));
-					mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
-					neededSamples -= end;
+					// Mix the generated samples into the output buffer
+					neededSamples -= mixBuffer<stereo>(p, ch.data, ch.offset, rate, neededSamples, ch.length, ch.volume, ch.panning);
+
+					if (ch.offset.int_off >= ch.length) {
+						// Wrap around. See also the note above.
+						ch.offset.int_off -= ch.length;
+						ch.dmaCount++;
+					}
 				}
-
-				if (offset < sLen)
-					dmaCount--;
-				else
-					offset &= FRAC_LO_MASK;
-
 			}
-
-			// Write back the cached data
-			_voice[voice].offset = offset;
-			_voice[voice].dmaCount = dmaCount;
 
 		}
 		buffer += _stereo ? nSamples * 2 : nSamples;

@@ -49,6 +49,14 @@ public:
 		kNtscPauleClock  = kNtscSystemClock / 2
 	};
 
+	/* TODO: Document this */
+	struct Offset {
+		uint	int_off;	// integral part of the offset
+		frac_t	rem_off;	// fractional part of the offset, at least 0 and less than 1
+
+		explicit Offset(int off = 0) : int_off(off), rem_off(0) {}
+	};
+
 	Paula(bool stereo = false, int rate = 44100, uint interruptFreq = 0);
 	~Paula();
 
@@ -83,7 +91,7 @@ protected:
 		uint32 lengthRepeat;
 		int16 period;
 		byte volume;
-		frac_t offset;
+		Offset offset;
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
 		int dmaCount;
 	};
@@ -119,7 +127,7 @@ protected:
 		ch.data = ch.dataRepeat;
 		ch.length = ch.lengthRepeat;
 		// actually first 2 bytes are dropped?
-		ch.offset = intToFrac(0);
+		ch.offset = Offset(0);
 		// ch.period = ch.periodRepeat;
 	}
 
@@ -147,30 +155,23 @@ protected:
 	void setChannelData(uint8 channel, const int8 *data, const int8 *dataRepeat, uint32 length, uint32 lengthRepeat, int32 offset = 0) {
 		assert(channel < NUM_VOICES);
 
-		// For now, we only support 32k samples, as we use 16bit fixed point arithmetics.
-		// If this ever turns out to be a problem, we can still enhance this code.
-		assert(0 <= offset && offset < 32768);
-		assert(length < 32768);
-		assert(lengthRepeat < 32768);
-
 		Channel &ch = _voice[channel];
 
 		ch.dataRepeat = data;
 		ch.lengthRepeat = length;
 		enableChannel(channel);
-		ch.offset = intToFrac(offset);
+		ch.offset = Offset(offset);
 
 		ch.dataRepeat = dataRepeat;
 		ch.lengthRepeat = lengthRepeat;
 	}
 
-	void setChannelOffset(byte channel, frac_t offset) {
+	void setChannelOffset(byte channel, Offset offset) {
 		assert(channel < NUM_VOICES);
-		assert(0 <= offset);
 		_voice[channel].offset = offset;
 	}
 
-	frac_t getChannelOffset(byte channel) {
+	Offset getChannelOffset(byte channel) {
 		assert(channel < NUM_VOICES);
 		return _voice[channel].offset;
 	}
