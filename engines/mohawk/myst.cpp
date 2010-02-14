@@ -178,36 +178,10 @@ Common::Error MohawkEngine_Myst::run() {
 	else
 		changeToStack(kIntroStack);
 
-	if (getGameType() == GType_MAKINGOF)
+	if (getFeatures() & GF_DEMO)
+		changeToCard(2000);
+	else
 		changeToCard(1);
-	else {
-		if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh) {
-			_video->playMovieCentered(wrapMovieFilename("mattel", kIntroStack));
-			_video->playMovieCentered(wrapMovieFilename("presto", kIntroStack));
-		} else
-			_video->playMovieCentered(wrapMovieFilename("broder", kIntroStack));
-
-		_video->playMovieCentered(wrapMovieFilename("cyanlogo", kIntroStack));
-
-		if (!(getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
-			if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
-				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
-				_video->playMovieCentered(wrapMovieFilename("introc", kIntroStack));
-			else
-				_video->playMovieCentered(wrapMovieFilename("intro", kIntroStack));
-		}
-
-		if (shouldQuit())
-			return Common::kNoError;
-
-		if (getFeatures() & GF_DEMO)
-			changeToCard(2001);
-		else {
-			// It should be card 1 for the full game eventually too, but it's not working
-			// there at the moment. Card 2 is the card with the book on the ground.
-			changeToCard(2);
-		}
-	}
 
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {

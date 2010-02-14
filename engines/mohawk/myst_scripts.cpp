@@ -3113,6 +3113,10 @@ void MystScriptParser::opcode_200_run() {
 
 	if (g_opcode200Parameters.enabled) {
 		switch (_vm->getCurStack()) {
+		case kIntroStack: // Used on Card 1
+		case kDemoStack: // Used on Card 2000
+			// TODO : Implement function here to play though intro movies and change card?
+			break;
 		case kSeleniticStack:
 			// Used on Card 1191 (Maze Runner)
 
@@ -3178,11 +3182,6 @@ void MystScriptParser::opcode_200_run() {
 			// TODO: Fill in Function...
 			// Variable indicates that this is related to Secret Panel State
 			break;
-		case kDemoStack:
-			// Used on Card 2000
-
-			// TODO: Fill in Function...
-			break;
 		case kDemoSlidesStack:
 			// Used on Cards...
 			if (_vm->_system->getMillis() - g_opcode200Parameters.lastCardTime >= 2 * 1000)
@@ -3203,12 +3202,34 @@ void MystScriptParser::opcode_200_disable() {
 
 void MystScriptParser::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	switch (_vm->getCurStack()) {
-	case kIntroStack:
+	case kIntroStack: // Used on Card 1
+	case kDemoStack: // Used on Card 2000
 		varUnusedCheck(op, var);
 
-		// TODO: Play Intro Movies..
-		// and then _vm->changeToCard(2);
-		unknown(op, var, argc, argv);
+		// TODO : Clicking during the intro movies does not stop them and change to Card 5.
+		//        This is due to the movies playing blocking, but making them non-blocking causes
+		//        the card change here to prevent them playing. Need to move the following to the
+		//        opcode_200_run process and wait for all movies to finish playing before the card
+		//        change is performed.
+
+		// Play Intro Movies..
+		if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh) {
+			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("mattel", kIntroStack));
+			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("presto", kIntroStack));
+		} else
+			_vm->_video->playMovieCentered(_vm->wrapMovieFilename("broder", kIntroStack));
+
+		_vm->_video->playMovieCentered(_vm->wrapMovieFilename("cyanlogo", kIntroStack));
+
+		if (!(_vm->getFeatures() & GF_DEMO)) { // The demo doesn't have the intro video
+			if ((_vm->getFeatures() & GF_ME) && _vm->getPlatform() == Common::kPlatformMacintosh)
+				// intro.mov uses Sorenson, introc uses Cinepak. Otherwise, they're the same.
+				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("introc", kIntroStack));
+			else
+				_vm->_video->playMovieCentered(_vm->wrapMovieFilename("intro", kIntroStack));
+		}
+
+		_vm->changeToCard(_vm->getCurCard()+1);
 		break;
 	case kSeleniticStack:
 		varUnusedCheck(op, var);
@@ -3281,13 +3302,6 @@ void MystScriptParser::opcode_200(uint16 op, uint16 var, uint16 argc, uint16 *ar
 			g_opcode200Parameters.enabled = true;
 
 			_vm->_varStore->setVar(var, 1);
-		} else
-			unknown(op, var, argc, argv);
-		break;
-	case kDemoStack:
-		// Used on Card 2000
-		if (argc == 0) {
-			g_opcode200Parameters.enabled = true;
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -4665,8 +4679,8 @@ void MystScriptParser::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kIntroStack:
 		varUnusedCheck(op, var);
-		// TODO: StopSound?
-		unknown(op, var, argc, argv);
+		// In the original engine, this opcode stopped Intro Movies if playing,
+		// upon card change, but this behaviour is now default in this engine.
 		break;
 	case kDemoPreviewStack:
 	case kMystStack:
