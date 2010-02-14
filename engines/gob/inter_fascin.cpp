@@ -106,8 +106,8 @@ void Inter_Fascination::setupOpcodesGob() {
 	OPCODEGOB(  12, oFascin_loadBatt3);
 
 	OPCODEGOB(1000, oFascin_loadMod);
-	OPCODEGOB(1001, oFascin_playMod); //protrackerPlay doesn't play correctly "mod.extasy"
-	OPCODEGOB(1002, oFascin_geUnknown1002); //to be replaced by o2_stopProtracker when protrackerPlay is fixed
+	OPCODEGOB(1001, oFascin_playProtracker);
+	OPCODEGOB(1002, o2_stopProtracker);
 }
 
 
@@ -196,16 +196,9 @@ void Inter_Fascination::oFascin_loadBatt3(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_loadMod(OpGobParams &params) {
-	// Fascination GE Function 1000 - Load MOD music
-	// Useless as it's included in playMod
-}
-
-void Inter_Fascination::oFascin_playMod(OpGobParams &params) {
-	warning("Fascination oFascin_playProtracker - MOD not compatible (sample > 32768), To Be Fixed");
-}
-
-void Inter_Fascination::oFascin_geUnknown1002(OpGobParams &params) {
-	warning("Fascination o2_stopProtracker - Commented out");
+	// Fascination GE Function 1000 - Load MOD music.
+	// Only used by Amiga and Atari versions.
+	// Useless as it's included in Paula's playProTracker
 }
 
 void Inter_Fascination::oFascin_setWinSize() {

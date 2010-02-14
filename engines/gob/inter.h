@@ -448,8 +448,6 @@ protected:
 	void oFascin_loadBatt2(OpGobParams &params);
 	void oFascin_loadBatt3(OpGobParams &params);
 	void oFascin_loadMod(OpGobParams &params);
-	void oFascin_playMod(OpGobParams &params);
-	void oFascin_geUnknown1002(OpGobParams &params);
 	void oFascin_setWinSize();
 	void oFascin_closeWin();
 	void oFascin_activeWin();
