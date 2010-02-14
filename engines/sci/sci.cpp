@@ -64,7 +64,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 		: Engine(syst), _gameDescription(desc), _system(syst) {
 	_console = NULL;
 
-	assert(g_sci = 0);
+	assert(g_sci == 0);
 	g_sci = this;
 	_features = 0;
 
