@@ -301,7 +301,7 @@ int game_exit(EngineState *s) {
 		// Reinit because some other code depends on having a valid state
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND, g_sci->_features->detectDoSoundType());
 #else
-		s->_audio->stopAllAudio();
+		g_sci->_audio->stopAllAudio();
 		s->_soundCmd->clearPlayList();
 #endif
 	}

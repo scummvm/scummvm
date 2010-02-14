@@ -944,7 +944,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// Create a new EngineState object
-	retval = new EngineState(s->_voc, s->_segMan, s->_audio);
+	retval = new EngineState(s->_voc, s->_segMan);
 	retval->_event = new SciEvent();
 
 	// Copy some old data

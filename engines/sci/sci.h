@@ -212,11 +212,11 @@ public:
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 
+	AudioPlayer *_audio;
 	GameFeatures *_features;
 
 private:
 	const ADGameDescription *_gameDescription;
-	AudioPlayer *_audio;
 	ResourceManager *_resMan; /**< The resource manager */
 	EngineState *_gamestate;
 	Kernel *_kernel;

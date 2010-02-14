@@ -33,8 +33,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(Vocabulary *voc, SegManager *segMan, AudioPlayer *audio)
-: _voc(voc), _segMan(segMan), _audio(audio), _dirseeker() {
+EngineState::EngineState(Vocabulary *voc, SegManager *segMan)
+: _voc(voc), _segMan(segMan), _dirseeker() {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sfx_init_flags = 0;

@@ -180,8 +180,7 @@ Common::Error SciEngine::run() {
 
 	_features = new GameFeatures(segMan, _kernel);
 
-	// We'll set the GUI below
-	_gamestate = new EngineState(_vocabulary, segMan, _audio);
+	_gamestate = new EngineState(_vocabulary, segMan);
 	_gamestate->_event = new SciEvent();
 
 	if (script_init_engine(_gamestate))

@@ -52,10 +52,10 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		uint32 startFrame = (argc > 2) ? argv[2].toUint16() * 75 : 0;
 		uint32 totalFrames = (argc > 3) ? argv[3].toUint16() * 75 : 0;
 
-		return make_reg(0, s->_audio->audioCdPlay(track, startFrame, totalFrames));
+		return make_reg(0, g_sci->_audio->audioCdPlay(track, startFrame, totalFrames));
 	}
 	case kSciAudioStop:
-		s->_audio->audioCdStop();
+		g_sci->_audio->audioCdStop();
 
 		if (getSciVersion() == SCI_VERSION_1_1)
 			return make_reg(0, 1);
@@ -67,10 +67,10 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioResume:
 		// This seems to be hacked up to update the CD instead of resuming
 		// audio like kDoAudio does.
-		s->_audio->audioCdUpdate();
+		g_sci->_audio->audioCdUpdate();
 		break;
 	case kSciAudioPosition:
-		return make_reg(0, s->_audio->audioCdPosition());
+		return make_reg(0, g_sci->_audio->audioCdPosition());
 	case kSciAudioRate: // No need to set the audio rate
 	case kSciAudioVolume: // The speech setting isn't used by CD Audio
 	case kSciAudioLanguage: // No need to set the language
@@ -102,7 +102,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		uint16 module;
 		uint32 number;
 
-		s->_audio->stopAudio();
+		g_sci->_audio->stopAudio();
 
 		if (argc == 2) {
 			module = 65535;
@@ -118,21 +118,21 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		return make_reg(0, s->_audio->startAudio(module, number)); // return sample length in ticks
+		return make_reg(0, g_sci->_audio->startAudio(module, number)); // return sample length in ticks
 	}
 	case kSciAudioStop:
-		s->_audio->stopAudio();
+		g_sci->_audio->stopAudio();
 		break;
 	case kSciAudioPause:
-		s->_audio->pauseAudio();
+		g_sci->_audio->pauseAudio();
 		break;
 	case kSciAudioResume:
-		s->_audio->resumeAudio();
+		g_sci->_audio->resumeAudio();
 		break;
 	case kSciAudioPosition:
-		return make_reg(0, s->_audio->getAudioPosition());
+		return make_reg(0, g_sci->_audio->getAudioPosition());
 	case kSciAudioRate:
-		s->_audio->setAudioRate(argv[1].toUint16());
+		g_sci->_audio->setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume: {
 		int16 volume = argv[1].toUint16();
@@ -171,7 +171,7 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
-		s->_audio->stopSoundSync();
+		g_sci->_audio->stopSoundSync();
 
 		// Load sound sync resource and lock it
 		if (argc == 3) {
@@ -184,14 +184,14 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		s->_audio->setSoundSync(id, argv[1], segMan);
+		g_sci->_audio->setSoundSync(id, argv[1], segMan);
 		break;
 	}
 	case kSciAudioSyncNext:
-		s->_audio->doSoundSync(argv[1], segMan);
+		g_sci->_audio->doSoundSync(argv[1], segMan);
 		break;
 	case kSciAudioSyncStop:
-		s->_audio->stopSoundSync();
+		g_sci->_audio->stopSoundSync();
 		break;
 	default:
 		warning("DoSync: Unhandled subfunction %d", argv[0].toUint16());

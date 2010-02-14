@@ -96,7 +96,7 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(Vocabulary *voc, SegManager *segMan, AudioPlayer *audio);
+	EngineState(Vocabulary *voc, SegManager *segMan);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -111,7 +111,6 @@ public:
 
 	SciEvent *_event; // Event handling
 
-	AudioPlayer *_audio;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState _sound; /**< sound subsystem */
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
