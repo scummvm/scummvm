@@ -116,79 +116,97 @@ static uint32 hMasterScript;
 
 //----------------- SCRIPT BUGS WORKAROUNDS --------------
 
-const byte fragment1[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 206, 0};
-const int fragment1_size = 4;
-const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
-const int fragment2_size = 2;
-const byte fragment3[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 490 % 256, 490 / 256};
-const int fragment3_size = 4;
-const byte fragment4[] = {OP_IMM | OPSIZE16, 900 % 256, 900 / 256, OP_JUMP | OPSIZE16, 466 % 256, 466 / 256};
-const int fragment4_size = 6;
-const byte fragment5[] = {OP_IMM | OPSIZE16, 901 % 256, 901 / 256, OP_JUMP | OPSIZE16, 488 % 256, 488 / 256};
-const int fragment5_size = 6;
-const byte fragment6[] = {OP_IMM | OPSIZE16, 903 % 256, 903 / 256, OP_JUMP | OPSIZE16, 516 % 256, 516 / 256};
-const int fragment6_size = 6;
-const byte fragment7[] = {OP_IMM | OPSIZE16, 908 % 256, 908 / 256, OP_JUMP | OPSIZE16, 616 % 256, 616 / 256};
-const int fragment7_size = 6;
-const byte fragment8[] = {OP_IMM | OPSIZE16, 910 % 256, 910 / 256, OP_JUMP | OPSIZE16, 644 % 256, 644 / 256};
-const int fragment8_size = 6;
-const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
-const int fragment9_size = 2;
-const byte fragment10[] = {OP_IMM | OPSIZE16, 160 % 256, 160 / 256, OP_JUMP | OPSIZE16, 136 % 256, 136 / 256};
-const int fragment10_size = 6;
-const byte fragment11[] = {OP_JMPTRUE | OPSIZE16, 1572 % 256, 1572 / 256, 
+/**
+ * This structure is used to introduce bug fixes into the scripts used by the games.
+ */
+struct WorkaroundEntry {
+	TinselEngineVersion version;	///< Engine version this workaround applies to
+	bool scnFlag;					///< Only applicable for Tinsel 1 (DW 1)
+	SCNHANDLE hCode;				///< Script to apply fragment to
+	int ip;							///< Script offset to run this fragment before
+	int numBytes;					///< Number of bytes in the script
+	const byte *script;				///< Instruction(s) to execute
+};
+
+#define FRAGMENT_WORD(x)	(byte)(x & 0xFF), (byte)(x >> 8)
+
+static const byte fragment1[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 206, 0};
+static const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
+static const byte fragment3[] = {OP_ZERO, OP_GSTORE | OPSIZE16, FRAGMENT_WORD(490)};
+static const byte fragment4[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(900), OP_JUMP | OPSIZE16, FRAGMENT_WORD(466)};
+static const byte fragment5[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(901), OP_JUMP | OPSIZE16, FRAGMENT_WORD(488)};
+static const byte fragment6[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(903), OP_JUMP | OPSIZE16, FRAGMENT_WORD(516)};
+static const byte fragment7[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(908), OP_JUMP | OPSIZE16, FRAGMENT_WORD(616)};
+static const byte fragment8[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(910), OP_JUMP | OPSIZE16, FRAGMENT_WORD(644)};
+static const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
+static const byte fragment10[] = {OP_IMM | OPSIZE16, FRAGMENT_WORD(160), OP_JUMP | OPSIZE16, FRAGMENT_WORD(136)};
+static const byte fragment11[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1572), 
 		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
-		OP_IMM | OPSIZE16, 322 % 256, 322 / 256, OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
-		OP_JUMP | OPSIZE16, 1661 % 256, 1661 / 256};
-const int fragment11_size = 14;
-const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, 1491 % 256, 1491 / 256, 
+		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
+		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1661)};
+static const byte fragment12[] = {OP_JMPTRUE | OPSIZE16, FRAGMENT_WORD(1491), 
 		OP_ONE, OP_LIBCALL | OPSIZE8, 14,									// Re-show the cursor
-		OP_IMM | OPSIZE16, 322 % 256, 322 / 256, OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
-		OP_JUMP | OPSIZE16, 1568 % 256, 1568 / 256};
-const int fragment12_size = 14;
+		OP_IMM | OPSIZE16, FRAGMENT_WORD(322), OP_LIBCALL | OPSIZE8, 46,	// Give back the whistle
+		OP_JUMP | OPSIZE16, FRAGMENT_WORD(1568)};
+
+#undef FRAGMENT_WORD
 
 const WorkaroundEntry workaroundList[] = {
-	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
-	// In the GRA version, it was global 373, and was reset when he is returned to the past, but
-	// was forgotten in the SCN version, so this ensures the flag is properly reset
-	{TINSEL_V1, true, 427942095, 1, fragment1_size, fragment1},
+	// DW1-SCN: Global 206 is whether Rincewind is trying to take the
+	// book back to the present. In the GRA version, it was global 373,
+	// and was reset when he is returned to the past, but was forgotten
+	// in the SCN version, so this ensures the flag is properly reset.
+	{TINSEL_V1, true, 427942095, 1, sizeof(fragment1), fragment1},
 
-	// DW1-GRA: Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
-	// into walkable areas, saving and restoring the game, it will error if you try to move.
-	// This fragment turns off NPC blocking for the Outside Inn rooms so that the luggage won't block
-	// Past Outside Inn
-	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
+	// DW1-GRA: Rincewind exiting the Inn is blocked by the luggage.
+	// Whilst you can then move into walkable areas, saving and
+	// restoring the game, it will error if you try to move. This
+	// fragment turns off NPC blocking for the Outside Inn rooms so that
+	// the luggage won't block Past Outside Inn.
+	// See bug report #2525010.
+	{TINSEL_V1, false, 444622076, 0,  sizeof(fragment2), fragment2},
 	// Present Outside Inn
-	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
+	{TINSEL_V1, false, 352600876, 0,  sizeof(fragment2), fragment2},
 
-	// DW1-GRA: Talking to palace guards in Act 2 gives !!!HIGH STRING||| - this happens if you initiate dialog with
-	// one of the guards, but not the other. So these fragments provide the correct talk parameters where needed
-	{TINSEL_V1, false, 310506872, 463, fragment4_size, fragment4},
-	{TINSEL_V1, false, 310506872, 485, fragment5_size, fragment5},
-	{TINSEL_V1, false, 310506872, 513, fragment6_size, fragment6},
-	{TINSEL_V1, false, 310506872, 613, fragment7_size, fragment7},
-	{TINSEL_V1, false, 310506872, 641, fragment8_size, fragment8},
+	// DW1-GRA: Talking to palace guards in Act 2 gives !!!HIGH
+	// STRING||| - this happens if you initiate dialog with one of the
+	// guards, but not the other. So these fragments provide the correct
+	// talk parameters where needed.
+	// See bug report #2831159.
+	{TINSEL_V1, false, 310506872, 463, sizeof(fragment4), fragment4},
+	{TINSEL_V1, false, 310506872, 485, sizeof(fragment5), fragment5},
+	{TINSEL_V1, false, 310506872, 513, sizeof(fragment6), fragment6},
+	{TINSEL_V1, false, 310506872, 613, sizeof(fragment7), fragment7},
+	{TINSEL_V1, false, 310506872, 641, sizeof(fragment8), fragment8},
 
-	// DW1-SCN: The script for the lovable street-Starfish does a 'StopSample' after flicking the coin to ensure it's
-	// sound is stopped, but which also accidentally can stop any active conversation with the Amazon
-	{TINSEL_V1, true, 394640351, 121, fragment9_size, fragment9},
+	// DW1-SCN: The script for the lovable street-Starfish does a
+	// 'StopSample' after flicking the coin to ensure it's sound is
+	// stopped, but which also accidentally can stop any active
+	// conversation with the Amazon.
+	{TINSEL_V1, true, 394640351, 121, sizeof(fragment9), fragment9},
 
-	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
-	// But if the game is saved/restored during it, the animation sequence is reset without the global being cleared.
-	// This causes bugs in several actions which try to disable the bees animation, since they wait indefinitely for
-	// the global to be cleared, incorrectly believing the animation is currently playing. This includes
-	// * Giving the brochure to the beekeeper
-	// * Stealing the mallets from the wizards
-	// This fix ensures that the global is reset when the Garden scene is loaded (both entering and restoring a game)
-	{TINSEL_V2, true, 2888147476U, 0, fragment3_size, fragment3},
+	// DW2: In the garden, global #490 is set when the bees begin their
+	// 'out of hive' animation, and reset when done. But if the game is
+	// saved/restored during it, the animation sequence is reset without
+	// the global being cleared. This causes bugs in several actions
+	// which try to disable the bees animation, since they wait
+	// indefinitely for the global to be cleared, incorrectly believing
+	// the animation is currently playing. This includes:
+	//  * Giving the brochure to the beekeeper (bug #2680397)
+	//  * Stealing the mallets from the wizards (bug #2820788).
+	// This fix ensures that the global is reset when the Garden scene
+	// is loaded (both entering and restoring a game).
+	{TINSEL_V2, true, 2888147476U, 0, sizeof(fragment3), fragment3},
 
-	// DW1-GRA: Corrects text being drawn partially off-screen during the blackboard description of the Librarian
-	{TINSEL_V1,false, 293831402, 133, fragment10_size, fragment10},
+	// DW1-GRA: Corrects text being drawn partially off-screen during
+	// the blackboard description of the Librarian.
+	{TINSEL_V1, false, 293831402, 133, sizeof(fragment10), fragment10},
 
-	// DW1-GRA/SCN: Corrects the dead-end of being able to give the whistle back to the pirate before giving him
-	// the parrot
-	{TINSEL_V1, true, 352601285, 1569, fragment11_size, fragment11},
-	{TINSEL_V1, false, 352602304, 1488, fragment12_size, fragment12},
+	// DW1-GRA/SCN: Corrects the dead-end of being able to give the
+	// whistle back to the pirate before giving him the parrot.
+	// See bug report #2934211.
+	{TINSEL_V1, true, 352601285, 1569, sizeof(fragment11), fragment11},
+	{TINSEL_V1, false, 352602304, 1488, sizeof(fragment12), fragment12},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };

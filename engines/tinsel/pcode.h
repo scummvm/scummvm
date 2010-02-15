@@ -54,16 +54,7 @@ enum GSORT {
 
 enum RESCODE {RES_WAITING, RES_FINISHED, RES_CUTSHORT};
 
-// The following structure is used to introduce bug fixes into the scripts used by the games
-
-struct WorkaroundEntry {
-	TinselEngineVersion version;
-	bool scnFlag;					// Only applicable for Tinsel 1 (DW 1)
-	SCNHANDLE hCode;				// Script to apply fragment to
-	int ip;							// Script offset to run this fragment before
-	int numBytes;					// Number of bytes in the script
-	const byte *script;				// Instruction(s) to execute
-};
+struct WorkaroundEntry;
 
 struct INT_CONTEXT {
 
