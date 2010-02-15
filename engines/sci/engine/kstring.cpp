@@ -475,10 +475,16 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// In complete weirdness, SCI32 bumps up subops 3-8 to 4-9 and stubs off subop 3.
+		// In addition, SCI32 reorders the REF* subops.
 		if (func == 3)
-			warning("SCI32 kMessage(3)");
-		else if (func > 3)
+			error("SCI32 kMessage(3)");
+		else if (func > 3) {
 			func--;
+			if (func == K_MESSAGE_REFCOND)
+				func = K_MESSAGE_REFNOUN;
+			else if (func == K_MESSAGE_REFNOUN || func == K_MESSAGE_REFVERB)
+				func--;
+		}
 	}
 #endif
 
