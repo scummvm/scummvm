@@ -37,6 +37,7 @@
 #include "sci/engine/message.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/menu.h"
+#include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 
 namespace Sci {

@@ -40,7 +40,6 @@ namespace Common {
 
 #include "sci/parser/vocabulary.h"
 
-#include "sci/sound/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 #include "sci/sound/iterator/core.h"
 #endif

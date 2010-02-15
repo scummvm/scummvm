@@ -28,6 +28,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
+#include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 
 #include "sound/mixer.h"

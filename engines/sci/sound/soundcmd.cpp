@@ -30,6 +30,7 @@
 #endif
 
 #include "common/config-manager.h"
+#include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 

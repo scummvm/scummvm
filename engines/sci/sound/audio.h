@@ -27,6 +27,7 @@
 #ifndef SCI_AUDIO_H
 #define SCI_AUDIO_H
 
+#include "sci/engine/vm_types.h"
 #include "sound/mixer.h"
 
 namespace Sci {
