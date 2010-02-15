@@ -216,7 +216,7 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return s->r_acc;
 
-	int id = s->_segMan->getScriptSegment(script);
+	SegmentId id = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)
@@ -224,7 +224,6 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	script_uninstantiate(s->_segMan, script);
-	s->_executionStackPosChanged = true;
 
 	if (argc != 2) {
 		return s->r_acc;
