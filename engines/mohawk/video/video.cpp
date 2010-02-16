@@ -158,7 +158,7 @@ bool VideoManager::updateBackgroundMovies() {
 				_videoStreams[i]->reset();
 			} else {
 				delete _videoStreams[i].video;
-				memset(&_videoStreams, 0, sizeof(VideoEntry));
+				memset(&_videoStreams[i], 0, sizeof(VideoEntry));
 				_videoStreams[i].video = NULL;
 				continue;
 			}
