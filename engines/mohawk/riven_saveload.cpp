@@ -151,6 +151,12 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 			c = (char)names->readByte();
 		}
 
+		// WORKAROUND: Some versions have two extra variables. However, the saves are
+		// still compatible with other saves of the same version. Are these used in the
+		// original interpreter anywhere? (They come from DVD v1.1)
+		if (name == "dropLeftStart" || name == "dropRightStart")
+			continue;
+
 		uint32 *var = _vm->matchVarToString(name);
 
 		*var = rawVariables[i];
