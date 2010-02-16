@@ -42,7 +42,8 @@ class MystBitmap;
 
 enum {
 	kRivenMainCursor = 3000,
-	kRivenPelletCursor = 5000
+	kRivenPelletCursor = 5000,
+	kRivenHideCursor = 9000
 };
 
 // 803-805 are animated, one large bmp which is in chunks

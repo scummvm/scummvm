@@ -1193,18 +1193,49 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	_vm->_gfx->updateScreen();
 }
 
+static uint16 getComboDigit(uint32 correctCombo, uint32 digit) {
+	static const uint32 powers[] = { 100000, 10000, 1000, 100, 10, 1 };
+	return (correctCombo % powers[digit]) / powers[digit + 1];
+}
+
 void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
-	// TODO: Plays the prison combo on the watch
+	// Hide the cursor
+	_vm->_gfx->changeCursor(kRivenHideCursor);
+
+	uint32 *prisonCombo = _vm->matchVarToString("pcorrectorder");
+	uint32 soundTime = _vm->_system->getMillis() - 500; // Start the first sound instantly
+	byte curSound = 0;
+
+	while (!_vm->shouldQuit()) {
+		// Play the next sound every half second
+		if (_vm->_system->getMillis() - soundTime >= 500) {
+			if (curSound == 5) // Break out after the last sound is done
+				break;
+
+			_vm->_sound->playSound(getComboDigit(*prisonCombo, curSound) + 13);
+			curSound++;
+			soundTime = _vm->_system->getMillis();
+		}
+		
+		// Poll events just to check for quitting
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {}
+
+		// Cut down on CPU usage
+		_vm->_system->delayMillis(10);
+	}
+
+	// Now play the video for the watch
+	_vm->_video->activateMLST(1, _vm->getCurCard());
+	_vm->_video->playMovieBlocking(1);
+
+	// And, finally, refresh
+	_vm->changeToCard();
 }
 
 // ------------------------------------------------------------------------------------
 // pspit (Prison Island) external commands
 // ------------------------------------------------------------------------------------
-
-static uint16 getComboDigit(uint32 correctCombo, uint32 digitsCorrect) {
-	static const uint32 powers[] = { 100000, 10000, 1000, 100, 10, 1 };
-	return (correctCombo % powers[digitsCorrect]) / powers[digitsCorrect + 1];
-}
 
 void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 	// Play button sound based on argv[0]
