@@ -268,7 +268,7 @@ struct RivenSpecialChange {
 	{ ospit,  0x470a, jspit, 0x1508e },		// Return from 233rd Age
 	{ ospit,  0x5c52, gspit, 0x10bea },		// Return from 233rd Age
 	{ ospit,  0x5d68, bspit, 0x1adfd },		// Return from 233rd Age
-	{ ospit,  0x5e49, tspit,   0xe78 },		// Return from 233rd Age
+	{ ospit,  0x5e49, tspit,   0xe87 },		// Return from 233rd Age
 	{ pspit,  0x4108, ospit,  0x2e76 },		// Dome Linking Book
 	{ rspit,  0x32d8, jspit, 0x1c474 },		// Return from Tay
 	{ tspit, 0x21b69, ospit,  0x2e76 }		// Dome Linking Book
