@@ -1201,10 +1201,29 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 // pspit (Prison Island) external commands
 // ------------------------------------------------------------------------------------
 
-// Yeah, none of these are done yet :P
+static uint16 getComboDigit(uint32 correctCombo, uint32 digitsCorrect) {
+	static const uint32 powers[] = { 100000, 10000, 1000, 100, 10, 1 };
+	return (correctCombo % powers[digitsCorrect]) / powers[digitsCorrect + 1];
+}
 
 void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
-	// TODO: Elevator combo check
+	// Play button sound based on argv[0]
+	_vm->_sound->playSound(argv[0] + 5, false);
+
+	// It is impossible to get here if Gehn is not trapped. However,
+	// the original also disallows brute forcing the ending if you have
+	// not yet trapped Gehn.
+	if (*_vm->matchVarToString("agehn") != 4)
+		return;
+
+	uint32 *correctDigits = _vm->matchVarToString("pelevcombo");
+
+	// pelevcombo keeps count of how many buttons we have pressed in the correct order.
+	// When pelevcombo is 5, clicking the handle will show the video freeing Catherine.
+	if (argv[0] == getComboDigit(*_vm->matchVarToString("pcorrectorder"), *correctDigits))
+		*correctDigits += 1;
+	else
+		*correctDigits = 0;
 }
 
 void RivenExternal::xpscpbtn(uint16 argc, uint16 *argv) {
