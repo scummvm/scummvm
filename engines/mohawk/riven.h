@@ -107,6 +107,7 @@ public:
 
 	RivenGraphics *_gfx;
 	RivenExternal *_externalScriptHandler;
+	Common::RandomSource *_rnd;
 
 	Card _cardData;
 	bool _gameOver;

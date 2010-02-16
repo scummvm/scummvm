@@ -29,20 +29,16 @@
 #include "mohawk/sound.h"
 #include "mohawk/video/video.h"
 
-#include "common/EventRecorder.h"
 #include "gui/message.h"
+#include "common/events.h"
 
 namespace Mohawk {
 
 RivenExternal::RivenExternal(MohawkEngine_Riven *vm) : _vm(vm) {
 	setupCommands();
-	_rnd = new Common::RandomSource();
-	g_eventRec.registerRandomSource(*_rnd, "riven");
 }
 
 RivenExternal::~RivenExternal() {
-	delete _rnd;
-
 	for (uint32 i = 0; i < _externalCommands.size(); i++)
 		delete _externalCommands[i];
 
@@ -1052,27 +1048,27 @@ void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 
 void RivenExternal::xjplaybeetle_550(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_600(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_950(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_1050(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time
-	*_vm->matchVarToString("jplaybeetle") = (_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
+	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0) ? 1 : 0;
 }
 
 void RivenExternal::xjplaybeetle_1450(uint16 argc, uint16 *argv) {
 	// Play a beetle animation 25% of the time as long as the girl is not present
-	*_vm->matchVarToString("jplaybeetle") = (_rnd->getRandomNumberRng(0, 3) == 0 && *_vm->matchVarToString("jgirl") != 1) ? 1 : 0;
+	*_vm->matchVarToString("jplaybeetle") = (_vm->_rnd->getRandomNumberRng(0, 3) == 0 && *_vm->matchVarToString("jgirl") != 1) ? 1 : 0;
 }
 
 void RivenExternal::xjlagoon700_alert(uint16 argc, uint16 *argv) {
@@ -1375,15 +1371,6 @@ void RivenExternal::xtatrusgivesbooks(uint16 argc, uint16 *argv) {
 	// Give the player Atrus' Journal and the Trap book
 	*_vm->matchVarToString("aatrusbook") = 1;
 	*_vm->matchVarToString("atrapbook") = 1;
-
-	// Randomize the telescope combination
-	uint32 *teleCombo = _vm->matchVarToString("tcorrectorder");
-	for (byte i = 0; i < 5; i++) {
-		*teleCombo *= 10;
-		*teleCombo += _rnd->getRandomNumberRng(1, 5);
-	}
-
-	// TODO: Randomize Dome Combination
 }
 
 // Trap Book is removed from inventory

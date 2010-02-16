@@ -319,6 +319,34 @@ void MohawkEngine_Riven::initVars() {
 	*matchVarToString("bheat") = 1;
 	*matchVarToString("waterenabled") = 1;
 	*matchVarToString("ogehnpage") = 1;
+
+	// Randomize the telescope combination
+	uint32 *teleCombo = matchVarToString("tcorrectorder");
+	for (byte i = 0; i < 5; i++) {
+		*teleCombo *= 10;
+		*teleCombo += _rnd->getRandomNumberRng(1, 5); // 5 buttons
+	}
+
+	// Randomize the prison combination
+	uint32 *prisonCombo = matchVarToString("pcorrectorder");
+	for (byte i = 0; i < 5; i++) {
+		*prisonCombo *= 10;
+		*prisonCombo += _rnd->getRandomNumberRng(1, 3); // 3 buttons/sounds
+	}
+
+	// Randomize the dome combination -- each bit represents a slider position,
+	// the highest bit (1 << 24) represents 1, (1 << 23) represents 2, etc.
+	uint32 *domeCombo = matchVarToString("adomecombo");
+	for (byte bitsSet = 0; bitsSet < 5;) {
+		uint32 randomBit = 1 << (24 - _rnd->getRandomNumber(24));
+
+		// Don't overwrite a bit we already set, and throw out the bottom five bits being set
+		if (*domeCombo & randomBit || (*domeCombo | randomBit) == 31)
+			continue;
+
+		*domeCombo |= randomBit;
+		bitsSet++;
+	}
 }
 
 } // End of namespace Mohawk

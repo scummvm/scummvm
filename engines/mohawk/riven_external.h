@@ -41,7 +41,6 @@ public:
 
 private:
 	MohawkEngine_Riven *_vm;
-	Common::RandomSource *_rnd;
 
 	typedef void (RivenExternal::*ExternalCmd)(uint16 argc, uint16 *argv);
 

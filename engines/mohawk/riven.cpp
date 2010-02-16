@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 
 #include "mohawk/graphics.h"
@@ -60,6 +61,7 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete[] _vars;
 	delete _loadDialog;
 	delete _optionsDialog;
+	delete _rnd;
 	_cardData.scripts.clear();
 }
 
@@ -78,6 +80,9 @@ Common::Error MohawkEngine_Riven::run() {
 	_loadDialog = new GUI::SaveLoadChooser("Load Game:", "Load");
 	_loadDialog->setSaveMode(false);
 	_optionsDialog = new RivenOptionsDialog(this);
+
+	_rnd = new Common::RandomSource();
+	g_eventRec.registerRandomSource(*_rnd, "riven");
 
 	initVars();
 
