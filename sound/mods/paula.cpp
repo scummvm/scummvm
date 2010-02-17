@@ -89,7 +89,7 @@ inline int mixBuffer(int16 *&buf, const int8 *data, Paula::Offset &offset, frac_
 
 		// Step to next source sample
 		offset.rem_off += rate;
-		if (offset.rem_off >= FRAC_ONE) {
+		if (offset.rem_off >= (frac_t)FRAC_ONE) {
 			offset.int_off += fracToInt(offset.rem_off);
 			offset.rem_off &= FRAC_LO_MASK;
 		}
