@@ -238,9 +238,9 @@ public:
 	int32  field_948;
 	int32  field_94C;
 	int32  numberFlag01;
-	int32  field_954;
-	int32  field_958;
-	int32  field_95C;
+	int32  numberStringWidth;
+	int32  numberStringX;
+	int32  numberStringY;
 	char   numberString01[8];
 	int32  field_964;
 	int32  field_968;
