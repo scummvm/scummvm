@@ -261,9 +261,9 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
+			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 &&
 					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
-				int saveLoadSlot = 9 - (event.kbd.keycode - '0') + 990;
+				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
 				if (event.kbd.flags == Common::KBD_CTRL) {
 					loadGameStateCheck(saveLoadSlot);
@@ -271,14 +271,14 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 					breakLoop = true;
 				} else {
 					char savegameName[14];
-					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
+					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - Common::KEYCODE_0);
 					saveGameState(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd') {
+				if (event.kbd.keycode == Common::KEYCODE_d) {
 					if (_debugger)
 						_debugger->attach();
-				} else if (event.kbd.keycode == 'q') {
+				} else if (event.kbd.keycode == Common::KEYCODE_q) {
 					quitGame();
 				}
 			} else {
@@ -379,12 +379,12 @@ void KyraEngine_v1::updateInput() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+			if (event.kbd.keycode == Common::KEYCODE_PERIOD || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
 				event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
 				event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
 				event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
 					_eventList.push_back(Event(event, true));
-			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.flags == Common::KBD_CTRL)
 				quitGame();
 			else
 				_eventList.push_back(event);

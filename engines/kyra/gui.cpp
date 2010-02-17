@@ -421,7 +421,7 @@ void GUI::checkTextfieldInput() {
 	while (_vm->_eventMan->pollEvent(event) && running) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+			if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.flags == Common::KBD_CTRL)
 				_vm->quitGame();
 			else
 				_keyPressed = event.kbd;
