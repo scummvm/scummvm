@@ -291,11 +291,15 @@ void VideoManager::playMovieBlocking(uint16 id) {
 }
 
 void VideoManager::stopMovie(uint16 id) {
+	debug(2, "Stopping movie %d", id);
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
-		if (_mlstRecords[i].code == id) {
-			warning("STUB: Stop tMOV %d", _mlstRecords[i].movieID);
-			return;
-		}
+		if (_mlstRecords[i].code == id)
+			for (uint16 j = 0; j < _videoStreams.size(); j++)
+				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
+					delete _videoStreams[i].video;
+					memset(&_videoStreams[i].video, 0, sizeof(VideoEntry));
+					return;
+				}
 }
 
 void VideoManager::enableMovie(uint16 id) {
