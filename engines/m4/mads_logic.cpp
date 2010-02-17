@@ -36,9 +36,7 @@ const char *MadsSceneLogic::formAnimName(char sepChar, int suffixNum) {
 }
 
 void MadsSceneLogic::getSceneSpriteSet() {
-	char *setName = _madsVm->scene()->_playerSpriteName;
-	char oldName[100];
-	strcpy(oldName, setName);
+	char prefix[100];
 
 	// Room change sound
 	_madsVm->_sound->playSound(5);
@@ -46,20 +44,20 @@ void MadsSceneLogic::getSceneSpriteSet() {
 	// Set up sprite set prefix to use
 	if ((_sceneNumber <= 103) || (_sceneNumber == 111)) {
 		if (_madsVm->globals()->_globals[0] == SEX_FEMALE)
-			strcpy(setName, "ROX");
+			strcpy(prefix, "ROX");
 		else
-			strcpy(setName, "RXM");
+			strcpy(prefix, "RXM");
 	} else if (_sceneNumber <= 110) {
-		strcpy(setName, "RXSW");
+		strcpy(prefix, "RXSW");
 		_madsVm->globals()->_globals[0] = SEX_UNKNOWN;
 	} else if (_sceneNumber == 112)
-		strcpy(setName, "");
+		strcpy(prefix, "");
 
-	if (strcmp(setName, oldName) != 0)
-		_madsVm->globals()->playerSpriteChanged = true;
+	_madsVm->globals()->playerSpriteChanged = true;
+	_madsVm->scene()->loadPlayerSprites(prefix);
 
-	if ((_sceneNumber == 105)/* || ((_sceneNumber == 109) && (word_84800 != 0))*/)
-		_madsVm->globals()->playerSpriteChanged = true;
+//	if ((_sceneNumber == 105) ((_sceneNumber == 109) && (word_84800 != 0)))
+//		_madsVm->globals()->playerSpriteChanged = true;
 
 	_vm->_palette->setEntry(16, 0x38, 0xFF, 0xFF);
 	_vm->_palette->setEntry(17, 0x38, 0xb4, 0xb4);

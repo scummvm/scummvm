@@ -36,6 +36,7 @@ class View;
 #include "m4/m4_views.h"
 #include "m4/mads_logic.h"
 #include "m4/mads_views.h"
+#include "common/array.h"
 
 namespace M4 {
 
@@ -101,6 +102,7 @@ public:
 
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);
+	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0) = 0;
 	virtual void show();
 	virtual void checkHotspotAtMousePos(int x, int y) = 0;
@@ -146,6 +148,7 @@ public:
 
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);
+	virtual void leaveScene() {};
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
 	virtual void show();
 	virtual void checkHotspotAtMousePos(int x, int y);
@@ -158,6 +161,8 @@ public:
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 };
 
+typedef Common::Array<SpriteAsset *> SpriteAssetArray;
+
 class MadsScene : public Scene {
 private:
 	MadsEngine *_vm;
@@ -166,15 +171,15 @@ private:
 	char _statusText[100];
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
+	SpriteAssetArray _sceneSprites;
 public:
-	char _playerSpriteName[100];
 	char _aaName[100];
 public:
 	MadsScene(MadsEngine *vm);
-	virtual ~MadsScene() {};
 
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);
+	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
 	virtual void show();
 	virtual void checkHotspotAtMousePos(int x, int y);
@@ -183,6 +188,8 @@ public:
 	virtual void setAction(int action, int objectId = -1);
 	virtual void setStatusText(const char *text);
 	virtual void update();
+
+	void loadPlayerSprites(const char *prefix);
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
 };

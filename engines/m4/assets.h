@@ -45,6 +45,7 @@ namespace M4 {
 #define CELS___SS MKID_BE('  SS')	//'  SS'
 
 class MadsM4Engine;
+class Palette;
 
 class BaseAsset {
 public:
@@ -118,6 +119,7 @@ public:
 	int getColorCount() { return _colorCount; }
 	RGBList *getRgbList();
 	void translate(RGBList *list, bool isTransparent = false);
+	void translate(Palette *palette);
 	int32 getFrameSize(int index);
 	M4Sprite *operator[](int index) { return getFrame(index); }
 protected:
@@ -133,6 +135,9 @@ protected:
 	Common::SeekableReadStream *_stream;
 	int32 parseSprite(bool isBigEndian = false);
 	void loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndian = false);
+private:
+	RGBList *_paletteData;
+	Palette *_palInterface;
 };
 
 enum AssetType {

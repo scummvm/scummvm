@@ -55,22 +55,7 @@ Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width()
 }
 
 Scene::~Scene() {
-	_sceneResources.hotspots->clear();
-	_sceneResources.parallax->clear();
-	_sceneResources.props->clear();
-
-	delete _sceneResources.hotspots;
-	delete _sceneResources.parallax;
-	delete _sceneResources.props;
-
-	delete _backgroundSurface;
-	delete _codeSurface;
-
-//	_vm->_palette->deleteAllRanges();
-
-	delete _palData;
-	delete _interfacePal;
-	delete[] _inverseColorTable;
+	leaveScene();
 }
 
 void Scene::loadScene(int sceneNumber) {
@@ -86,6 +71,12 @@ void Scene::loadScene(int sceneNumber) {
 		_vm->_palette->deleteRange(_interfacePal);
 		delete _interfacePal;
 	}
+}
+
+void Scene::leaveScene() {
+	delete _palData;
+	delete _interfacePal;
+	delete[] _inverseColorTable;
 }
 
 void Scene::show() {
@@ -603,7 +594,6 @@ MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
 	_vm = vm;
 
 	strcpy(_statusText, "");
-	strcpy(_playerSpriteName, "");
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_currentAction = kVerbNone;
 }
@@ -662,6 +652,25 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Purge resources
 	_vm->res()->purge();
+}
+
+void MadsScene::leaveScene() {
+	_sceneResources.hotspots->clear();
+	_sceneResources.parallax->clear();
+	_sceneResources.props->clear();
+
+	delete _sceneResources.hotspots;
+	delete _sceneResources.parallax;
+	delete _sceneResources.props;
+
+	// Delete the sprites
+	for (uint i = 0; i <_sceneSprites.size(); ++i) delete _sceneSprites[i];
+	_sceneSprites.clear();
+
+	delete _backgroundSurface;
+	delete _codeSurface;
+
+	Scene::leaveScene();
 }
 
 void MadsScene::show() {
@@ -773,6 +782,35 @@ void MadsScene::update() {
 	}
 
 	_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
+
+	//***DEBUG***
+	_sceneSprites[0]->getFrame(1)->copyTo(this, 120, 90, 0);
+}
+
+void MadsScene::loadPlayerSprites(const char *prefix) {
+	const char suffixList[8] = { '8', '9', '6', '3', '2', '7', '4', '1' };
+	char setName[80];
+
+	strcpy(setName, "*");
+	strcat(setName, prefix);
+	strcat(setName, "_0.SS");
+	char *digitP = strchr(setName, '_') + 1;
+
+	for (int idx = 0; idx < 8; ++idx) {
+		*digitP = suffixList[idx];
+
+		if (_vm->res()->resourceExists(setName)) {
+			Common::SeekableReadStream *data = _vm->res()->get(setName);
+			SpriteAsset *playerSprites = new SpriteAsset(_vm, data, data->size(), setName);
+			playerSprites->translate(_vm->_palette);
+			_vm->res()->toss(setName);
+
+			_sceneSprites.push_back(playerSprites);
+			return;
+		}
+	}
+
+	error("Couldn't find player sprites");
 }
 
 } // End of namespace M4

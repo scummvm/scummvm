@@ -26,6 +26,7 @@
 #include "m4/assets.h"
 #include "m4/globals.h"
 #include "m4/compression.h"
+#include "m4/graphics.h"
 
 namespace M4 {
 
@@ -99,11 +100,26 @@ long *DataAsset::getRow(int index) {
 
 SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream) : BaseAsset(vm, stream, size, name) {
 	_stream = stream;
+	_palInterface = NULL;
+	_paletteData = NULL;
 
 	if (_vm->isM4()) {
 		loadM4SpriteAsset(vm, stream, asStream);
 	} else {
 		loadMadsSpriteAsset(vm, stream);
+	}
+}
+
+SpriteAsset::~SpriteAsset() {
+	if (_palInterface) {
+		// Internally stored palette translation data, so release it
+		_palInterface->deleteRange(_paletteData);
+		delete _paletteData;
+	}
+
+	// Delete the individual frames
+	for (Common::Array<SpriteAssetFrame>::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+		delete (*it).frame;
 	}
 }
 
@@ -220,12 +236,6 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	delete spriteDataStream;
 }
 
-SpriteAsset::~SpriteAsset() {
-	for (Common::Array<SpriteAssetFrame>::iterator it = _frames.begin(); it != _frames.end(); ++it) {
-		delete (*it).frame;
-	}
-}
-
 int32 SpriteAsset::parseSprite(bool isBigEndian) {
 
 	uint32 format, chunkType, chunkSize = 0;
@@ -324,6 +334,14 @@ void SpriteAsset::translate(RGBList *list, bool isTransparent) {
 	for (int frameIndex = 0; frameIndex < _frameCount; ++frameIndex)
 		_frames[frameIndex].frame->translate(list, isTransparent);
 }
+
+void SpriteAsset::translate(Palette *palette) {
+	_palInterface = palette;
+	_paletteData = this->getRgbList();
+	palette->addRange(_paletteData);
+	this->translate(_paletteData, true);
+}
+
 
 int32 SpriteAsset::getFrameSize(int index) {
 	/*
