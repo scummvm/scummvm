@@ -34,6 +34,8 @@
 #include "sci/graphics/gui32.h"
 #include "sci/graphics/frameout.h"
 
+#include "common/system.h"
+
 namespace Sci {
 
 // NOTE: 0x72-0x79, 0x85-0x86, 0x88 are from the GK2 demo (which has debug support) and are

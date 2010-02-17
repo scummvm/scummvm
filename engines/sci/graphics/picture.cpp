@@ -24,6 +24,8 @@
  */
 
 #include "common/stack.h"
+#include "common/system.h"
+
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"

@@ -26,6 +26,7 @@
 #include "graphics/cursorman.h"
 #include "common/util.h"
 #include "common/events.h"
+#include "common/system.h"
 
 #include "sci/sci.h"
 #include "sci/event.h"

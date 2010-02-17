@@ -25,6 +25,7 @@
 
 #include "common/timer.h"
 #include "common/util.h"
+#include "common/system.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"

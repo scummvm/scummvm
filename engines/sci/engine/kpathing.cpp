@@ -32,6 +32,7 @@
 #include "sci/graphics/screen.h"
 
 #include "common/list.h"
+#include "common/system.h"
 
 namespace Sci {
 

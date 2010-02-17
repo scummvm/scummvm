@@ -37,7 +37,30 @@
 
 namespace Sci {
 
-static SciVersion s_sciVersion = SCI_VERSION_NONE;
+enum {
+	SCI0_RESMAP_ENTRIES_SIZE = 6,
+	SCI1_RESMAP_ENTRIES_SIZE = 6,
+	SCI11_RESMAP_ENTRIES_SIZE = 5
+};
+
+/** resource type for SCI1 resource.map file */
+struct resource_index_t {
+	uint16 wOffset;
+	uint16 wSize;
+};
+
+struct ResourceSource {
+	ResSourceType source_type;
+	bool scanned;
+	Common::String location_name;	// FIXME: Replace by FSNode ?
+	const Common::FSNode *resourceFile;
+	int volume_number;
+	ResourceSource *associated_map;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+static SciVersion s_sciVersion = SCI_VERSION_NONE;	// FIXME: Move this inside a suitable class, e.g. SciEngine
 
 SciVersion getSciVersion() {
 	assert(s_sciVersion != SCI_VERSION_NONE);
@@ -74,6 +97,9 @@ const char *getSciVersionDesc(SciVersion version) {
 		return "Unknown";
 	}
 }
+
+//////////////////////////////////////////////////////////////////////
+
 
 #undef SCI_REQUIRE_RESOURCE_FILES
 
@@ -539,7 +565,7 @@ int ResourceManager::addInternalSources() {
 	return 1;
 }
 
-void ResourceManager::addNewGMPatch(Common::String gameId) {
+void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 	Common::String gmPatchFile;
 
 	if (gameId == "ecoquest")
@@ -1553,6 +1579,10 @@ void ResourceManager::setAudioLanguage(int language) {
 	}
 
 	scanNewSources();
+}
+
+int ResourceManager::getAudioLanguage() const {
+	return (_audioMapSCI1 ? _audioMapSCI1->volume_number : 0);
 }
 
 int ResourceManager::readResourceInfo(Resource *res, Common::File *file,

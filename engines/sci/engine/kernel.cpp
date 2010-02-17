@@ -30,6 +30,8 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel_types.h"
 
+#include "common/system.h"
+
 namespace Sci {
 
 // Default kernel name table

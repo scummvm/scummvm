@@ -27,26 +27,23 @@
 #define SCI_SCICORE_RESOURCE_H
 
 #include "common/str.h"
-#include "common/file.h"
-#include "common/fs.h"
-#include "common/archive.h"
 
-#include "sound/audiostream.h"
-#include "sound/mixer.h"			// for SoundHandle
-
-#include "graphics/helpers.h"		// for ViewType
-
+#include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
 #include "sci/sci.h"
 
 namespace Common {
 class ReadStream;
+class File;
+class FSNode;
 }
 
 namespace Sci {
 
-/** The maximum allowed size for a compressed or decompressed resource */
-#define SCI_MAX_RESOURCE_SIZE 0x0400000
+enum {
+	/** The maximum allowed size for a compressed or decompressed resource */
+	SCI_MAX_RESOURCE_SIZE = 0x0400000
+};
 
 /** Resource status types */
 enum ResourceStatus {
@@ -70,7 +67,7 @@ enum {
 };
 
 enum {
-	MAX_OPENED_VOLUMES = 5 // Max number of simultaneously opened volumes
+	MAX_OPENED_VOLUMES = 5 ///< Max number of simultaneously opened volumes
 };
 
 enum ResSourceType {
@@ -82,12 +79,6 @@ enum ResSourceType {
 	kSourceAudioVolume,
 	kSourceExtAudioMap,
 	kSourceWave
-};
-
-enum {
-	SCI0_RESMAP_ENTRIES_SIZE = 6,
-	SCI1_RESMAP_ENTRIES_SIZE = 6,
-	SCI11_RESMAP_ENTRIES_SIZE = 5
 };
 
 enum ResourceType {
@@ -119,27 +110,9 @@ enum ResourceType {
 
 const char *getResourceTypeName(ResourceType restype);
 
-#define sci0_last_resource kResourceTypePatch
-#define sci1_last_resource kResourceTypeHeap
-/* Used for autodetection */
-
-
-/** resource type for SCI1 resource.map file */
-struct resource_index_t {
-	uint16 wOffset;
-	uint16 wSize;
-};
-
-struct ResourceSource {
-	ResSourceType source_type;
-	bool scanned;
-	Common::String location_name;	// FIXME: Replace by FSNode ?
-	const Common::FSNode *resourceFile;
-	int volume_number;
-	ResourceSource *associated_map;
-};
 
 class ResourceManager;
+struct ResourceSource;
 
 class ResourceId {
 public:
@@ -270,7 +243,7 @@ public:
 	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
 
 	void setAudioLanguage(int language);
-	int getAudioLanguage() const { return (_audioMapSCI1 ? _audioMapSCI1->volume_number : 0); }
+	int getAudioLanguage() const;
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
 	bool isAmiga32color() const { return _viewType == kViewAmiga; }
 	ViewType getViewType() const { return _viewType; }
@@ -283,7 +256,7 @@ public:
 	 * archive can be extracted in the extras directory, and the GM patches can be
 	 * applied per game, if applicable
 	 */
-	void addNewGMPatch(Common::String gameId);
+	void addNewGMPatch(const Common::String &gameId);
 
 	bool detectHires();
 
