@@ -121,7 +121,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 
 /**
  * The fallback game descriptor used by the SCI engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector.
+ * Contents of this struct are overwritten by the fallbackDetector.
  */
 static ADGameDescription s_fallbackDesc = {
 	"",
@@ -132,6 +132,8 @@ static ADGameDescription s_fallbackDesc = {
 	ADGF_NO_FLAGS,
 	Common::GUIO_NONE
 };
+
+static char s_fallbackGameIdBuf[256];
 
 
 static const ADParams detectionParams = {
@@ -314,9 +316,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 	reg_t game_obj = segMan->lookupScriptExport(0, 0);
-	const char *gameId = segMan->getObjectName(game_obj);
-	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameId, PRINT_REG(game_obj));
-	s_fallbackDesc.gameid = convertSierraGameId(gameId, &s_fallbackDesc.flags, resMan);
+	const char *sierraGameId = segMan->getObjectName(game_obj);
+	debug(2, "Detected ID: \"%s\" at %04x:%04x", sierraGameId, PRINT_REG(game_obj));
+	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
+	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
+	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
+	s_fallbackDesc.gameid = s_fallbackGameIdBuf;
 	delete segMan;
 
 	// Try to determine the game language

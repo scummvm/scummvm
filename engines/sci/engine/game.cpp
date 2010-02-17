@@ -109,7 +109,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "", "", SCI_VERSION_NONE }
 };
 
-const char *convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceManager *resMan) {
+Common::String convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceManager *resMan) {
 	// Convert the id to lower case, so that we match all upper/lower case variants.
 	Common::String sierraId = gameId;
 	sierraId.toLowercase();
@@ -174,8 +174,7 @@ const char *convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceM
 		return "qfg3";
 	}
 
-	// FIXME: Evil use of strdup here (we are leaking that memory, too)
-	return strdup(sierraId.c_str());
+	return sierraId;
 }
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
