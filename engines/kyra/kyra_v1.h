@@ -119,6 +119,10 @@ struct GameFlags {
 	byte gameID;
 };
 
+struct KeyCodeHash : public Common::UnaryFunction<Common::KeyCode, uint> {
+	uint operator()(Common::KeyCode val) const { return (uint)val; }
+};
+
 enum {
 	GI_KYRA1 = 0,
 	GI_KYRA2 = 1,
@@ -277,7 +281,7 @@ protected:
 		operator Common::Event() const { return event; }
 	};
 	Common::List<Event> _eventList;
-	typedef Common::HashMap<int, int16> KeyMap;
+	typedef Common::HashMap<Common::KeyCode, int16, KeyCodeHash> KeyMap;
 	KeyMap _keyMap;
 
 	// config specific

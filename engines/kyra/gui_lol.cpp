@@ -843,9 +843,9 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 	} else {
 		evt.type = Common::EVENT_KEYDOWN;
 
-		for (Common::HashMap<int, int16>::const_iterator c = _keyMap.begin(); c != _keyMap.end(); ++c) {
+		for (KeyMap::const_iterator c = _keyMap.begin(); c != _keyMap.end(); ++c) {
 			if (c->_value == eventType)
-				evt.kbd.keycode = (Common::KeyCode) c->_key;
+				evt.kbd.keycode = (Common::KeyCode)c->_key;
 		}
 	}
 
