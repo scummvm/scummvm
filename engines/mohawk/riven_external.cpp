@@ -1251,7 +1251,7 @@ void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 
 	// pelevcombo keeps count of how many buttons we have pressed in the correct order.
 	// When pelevcombo is 5, clicking the handle will show the video freeing Catherine.
-	if (argv[0] == getComboDigit(*_vm->matchVarToString("pcorrectorder"), *correctDigits))
+	if (*correctDigits < 5 && argv[0] == getComboDigit(*_vm->matchVarToString("pcorrectorder"), *correctDigits))
 		*correctDigits += 1;
 	else
 		*correctDigits = 0;
@@ -1397,23 +1397,20 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {
-	// Called when clicking the telescope cover buttons. button is the button number (1...5).
-	uint32 *pressedButtons = _vm->matchVarToString("tcovercombo");
+	// Called when clicking the telescope cover buttons. argv[0] is the button number (1...5).
+	uint32 *correctDigits = _vm->matchVarToString("tcovercombo");
 
-	// We pressed a button! Yay! Add it to the queue.
-	*pressedButtons *= 10;
-	*pressedButtons += argv[0];
+	if (*correctDigits < 5 && argv[0] == getComboDigit(*_vm->matchVarToString("tcorrectorder"), *correctDigits))
+		*correctDigits += 1;
+	else
+		*correctDigits = 0;
 
-	if (*pressedButtons == *_vm->matchVarToString("tcorrectorder")) {
+	// If we have hit the correct 5 buttons in a row, activate the hotspot to open up the
+	// telescope cover.
+	if (*correctDigits == 5)
 		_vm->_hotspots[9].enabled = true;
-	} else {
+	else
 		_vm->_hotspots[9].enabled = false;
-
-		// Set the buttons to the last one pressed if we've
-		// pressed more than 5 buttons.
-		if (*pressedButtons > 55555)
-			*pressedButtons = argv[0];
-	}
 }
 
 // Atrus' Journal and Trap Book are added to inventory
