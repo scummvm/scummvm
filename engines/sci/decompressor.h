@@ -26,7 +26,9 @@
 #ifndef SCI_DECOMPRESSOR_H
 #define SCI_DECOMPRESSOR_H
 
-#include "common/file.h"
+#include "common/scummsys.h"
+
+namespace Common { class ReadStream; }
 
 namespace Sci {
 

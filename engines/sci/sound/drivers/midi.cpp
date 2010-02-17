@@ -26,6 +26,8 @@
 #include "sci/sci.h"
 
 #include "common/config-manager.h"
+#include "common/file.h"
+
 #include "sound/fmopl.h"
 #include "sound/softsynth/emumidi.h"
 

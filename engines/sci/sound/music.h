@@ -26,14 +26,15 @@
 #ifndef SCI_MUSIC_H
 #define SCI_MUSIC_H
 
-#include "common/savefile.h"
+#ifndef USE_OLD_MUSIC_FUNCTIONS
 #include "common/serializer.h"
+#endif
 #include "common/mutex.h"
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+//#include "sound/mididrv.h"
+//#include "sound/midiparser.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"

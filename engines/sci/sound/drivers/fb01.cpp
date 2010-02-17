@@ -28,6 +28,9 @@
 #include "sci/resource.h"
 #include "sci/sound/drivers/mididriver.h"
 
+#include "common/file.h"
+#include "common/system.h"
+
 namespace Sci {
 
 static byte volumeTable[64] = {

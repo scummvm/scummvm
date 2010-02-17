@@ -28,6 +28,8 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 
+#include "common/file.h"
+
 namespace Sci {
 
 GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan), _kernel(kernel) {

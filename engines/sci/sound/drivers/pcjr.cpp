@@ -25,6 +25,8 @@
 
 #include "sci/sound/drivers/mididriver.h"
 
+#include "sound/softsynth/emumidi.h"
+
 namespace Sci {
 
 #define VOLUME_SHIFT 3

@@ -28,7 +28,6 @@
 
 #include "sci/sci.h"
 #include "sound/mididrv.h"
-#include "sound/softsynth/emumidi.h"
 #include "common/error.h"
 
 namespace Sci {

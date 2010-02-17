@@ -30,6 +30,7 @@
 #include "sci/sound/audio.h"
 
 #include "common/system.h"
+#include "common/file.h"
 
 #include "sound/audiostream.h"
 #include "sound/audiocd.h"

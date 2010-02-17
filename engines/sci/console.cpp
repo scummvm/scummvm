@@ -58,6 +58,7 @@
 #include "sci/video/vmd_decoder.h"
 #endif
 
+#include "common/file.h"
 #include "common/savefile.h"
 
 namespace Sci {

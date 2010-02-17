@@ -25,8 +25,9 @@
 
 // Resource library
 
-#include "common/util.h"
+#include "common/file.h"
 #include "common/debug.h"
+#include "common/util.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
