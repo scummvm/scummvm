@@ -90,7 +90,7 @@ Common::SeekableReadStream *MohawkEngine::getRawData(uint32 tag, uint16 id) {
 			return _mhk[i]->getRawData(tag, id);
 
 	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
-	return 0;
+	return NULL;
 }
 
 bool MohawkEngine::hasResource(uint32 tag, uint16 id) {

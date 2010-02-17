@@ -31,6 +31,7 @@
 #include "mohawk/myst_saveload.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
+#include "mohawk/resource_cache.h"
 #include "mohawk/video/video.h"
 
 namespace Mohawk {
@@ -45,6 +46,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	Common::addDebugChannel(kDebugEXIT, "Exit", "Track Card Exit Script (EXIT) Parsing");
 	Common::addDebugChannel(kDebugScript, "Script", "Track Script Execution");
 	Common::addDebugChannel(kDebugHelp, "Help", "Track Help File (HELP) Parsing");
+	Common::addDebugChannel(kDebugCache, "Cache", "Track Resource Cache Accesses");
 
 	_zipMode = false;
 	_transitionsEnabled = false;
@@ -88,6 +90,40 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete[] _view.scriptResources;
 	delete[] _cursorHints;
 	_resources.clear();
+}
+
+// Uses cached data objects in preference to disk access
+Common::SeekableReadStream *MohawkEngine_Myst::getRawData(uint32 tag, uint16 id) {
+	Common::SeekableReadStream *ret;
+
+	ret = _cache.search(tag, id);
+	if(ret != NULL) return ret;
+
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		if (_mhk[i]->hasResource(tag, id)) {
+			ret = _mhk[i]->getRawData(tag, id);
+			_cache.add(tag, id, ret);
+			return ret;
+		}
+
+	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	return NULL;
+}
+
+void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
+	Common::SeekableReadStream *tempData;
+
+	if (!_cache.enabled) return;
+
+	for (uint32 i = 0; i < _mhk.size(); i++)
+		if (_mhk[i]->hasResource(tag, id)) {
+			tempData = _mhk[i]->getRawData(tag, id);
+			_cache.add(tag, id, tempData);
+			delete tempData;
+			return;
+		}
+
+	warning ("cachePreload : Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
 }
 
 static const char *mystFiles[] = {
@@ -299,6 +335,8 @@ void MohawkEngine_Myst::changeToStack(uint16 stack) {
 		_gfx->loadExternalPictureFile(_curStack);
 
 	_runExitScript = false;
+
+	_cache.clear();
 }
 
 void MohawkEngine_Myst::changeToCard(uint16 card) {
@@ -315,6 +353,8 @@ void MohawkEngine_Myst::changeToCard(uint16 card) {
 	_runExitScript = true;
 
 	unloadCard();
+
+	_cache.clear();
 
 	_curCard = card;
 
@@ -550,6 +590,52 @@ void MohawkEngine_Myst::loadCard() {
 	_view.exit = viewStream->readUint16LE();
 
 	delete viewStream;
+
+	// Precache Card Resources
+	// TODO: Deal with Mac ME External Picture File
+	uint32 cacheImageType;
+	if (getFeatures() & GF_ME)
+		cacheImageType = ID_PICT;
+	else
+		cacheImageType = ID_WDIB;
+
+	// Precache Image Block data
+	if (_view.conditionalImageCount != 0) {
+		for (uint16 i = 0; i < _view.conditionalImageCount; i++)
+			for (uint16 j = 0; j < _view.conditionalImages[i].numStates; j++)
+				cachePreload(cacheImageType, _view.conditionalImages[i].values[j]);
+	} else
+		cachePreload(cacheImageType, _view.mainImage);
+
+	// Precache Sound Block data
+	if (_view.sound > 0)
+		cachePreload(ID_MSND, _view.sound);
+	else if (_view.sound == kMystSoundActionConditional) {
+		for (uint16 i = 0; i < _view.soundCount; i++) {
+			if (_view.soundList[i] > 0)
+				cachePreload(ID_MSND, _view.soundList[i]);
+		}
+	}
+
+	// Precache Script Resources
+	if (_view.scriptResCount != 0) {
+		for (uint16 i = 0; i < _view.scriptResCount; i++) {
+			switch (_view.scriptResources[i].type) {
+			case 1:
+				cachePreload(cacheImageType, _view.scriptResources[i].id);
+				break;
+			case 2:
+				cachePreload(ID_MSND, _view.scriptResources[i].id);
+				break;
+			case 3:
+				warning("TODO: Precaching of Script Resource List not supported");
+				break;
+			default:
+				warning("Unknown Resource in Script Resource List Precaching");
+				break;
+			}
+		}
+	}
 }
 
 void MohawkEngine_Myst::unloadCard() {

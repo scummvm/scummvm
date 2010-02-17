@@ -58,6 +58,7 @@ private:
 	bool Cmd_StopSound(int argc, const char **argv);
 	bool Cmd_PlayMovie(int argc, const char **argv);
 	bool Cmd_DisableInitOpcodes(int argc, const char **argv);
+	bool Cmd_Cache(int argc, const char **argv);
 };
 
 class RivenConsole : public GUI::Debugger {

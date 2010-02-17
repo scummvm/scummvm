@@ -86,7 +86,7 @@ public:
 	Sound *_sound;
 	VideoManager *_video;
 
-	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+	virtual Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
 	bool hasResource(uint32 tag, uint16 id);
 	uint32 getResourceOffset(uint32 tag, uint16 id);
 

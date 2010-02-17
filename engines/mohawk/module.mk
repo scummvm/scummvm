@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	myst_saveload.o \
 	myst_scripts.o \
 	resource.o \
+	resource_cache.o \
 	riven.o \
 	riven_external.o \
 	riven_saveload.o \

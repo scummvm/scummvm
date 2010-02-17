@@ -28,6 +28,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/mohawk.h"
+#include "mohawk/resource_cache.h"
 #include "mohawk/myst_vars.h"
 
 #include "gui/saveload.h"
@@ -52,7 +53,8 @@ enum {
 	kDebugINIT     = (1 << 5),
 	kDebugEXIT     = (1 << 6),
 	kDebugScript   = (1 << 7),
-	kDebugHelp     = (1 << 8)
+	kDebugHelp     = (1 << 8),
+	kDebugCache    = (1 << 9)
 };
 
 // Myst Stacks
@@ -342,6 +344,8 @@ public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Myst();
 
+	Common::SeekableReadStream *getRawData(uint32 tag, uint16 id);
+
 	Common::String wrapMovieFilename(Common::String movieName, uint16 stack);
 
 	void reloadSaveList();
@@ -369,6 +373,9 @@ public:
 	bool _showResourceRects;
 	void setResourceEnabled(uint16 resourceId, bool enable);
 
+	void setCacheState(bool state) { _cache.enabled = state; }
+	bool getCacheState(void) { return _cache.enabled; }
+
 	GUI::Debugger *getDebugger() { return _console; }
 
 	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
@@ -381,6 +388,8 @@ private:
 	MystConsole *_console;
 	GUI::SaveLoadChooser *_loadDialog;
 	MystOptionsDialog *_optionsDialog;
+	ResourceCache _cache;
+	void cachePreload(uint32 tag, uint16 id);
 
 	uint16 _curStack;
 	uint16 _curCard;
@@ -406,7 +415,7 @@ private:
 	void checkCursorHints();
 	Common::Point _mousePos;
 	uint16 _currentCursor;
-	uint16 _mainCursor;	// Also defines the current page being held (white, blue, red, or none)
+	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
 };
 
 } // End of namespace Mohawk

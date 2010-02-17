@@ -47,6 +47,7 @@ MystConsole::MystConsole(MohawkEngine_Myst *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("stopSound",			WRAP_METHOD(MystConsole, Cmd_StopSound));
 	DCmd_Register("playMovie",			WRAP_METHOD(MystConsole, Cmd_PlayMovie));
 	DCmd_Register("disableInitOpcodes",	WRAP_METHOD(MystConsole, Cmd_DisableInitOpcodes));
+	DCmd_Register("cache",				WRAP_METHOD(MystConsole, Cmd_Cache));
 }
 
 MystConsole::~MystConsole() {
@@ -267,6 +268,27 @@ bool MystConsole::Cmd_DisableInitOpcodes(int argc, const char **argv) {
 
 	_vm->_scriptParser->disableInitOpcodes();
 
+	return true;
+}
+
+bool MystConsole::Cmd_Cache(int argc, const char **argv) {
+	if (argc > 2) {
+		DebugPrintf("Usage: cache on/off - Omit parameter to get current state\n");
+		return true;
+	}
+
+	bool state = false;
+
+	if (argc == 1) {
+		state = _vm->getCacheState();
+	} else {
+		if (!scumm_stricmp(argv[1], "on"))
+			state = true;
+
+		_vm->setCacheState(state);
+	}
+
+	DebugPrintf("Cache: %s\n", state ? "Enabled" : "Disabled");
 	return true;
 }
 
