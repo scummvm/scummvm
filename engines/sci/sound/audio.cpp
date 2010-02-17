@@ -205,7 +205,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	uint32 size = 0;
 	byte *data = 0;
 	byte flags = 0;
-	Sci::Resource* audioRes;
+	Sci::Resource *audioRes;
 
 	if (volume == 65535) {
 		audioRes = _resMan->findResource(ResourceId(kResourceTypeAudio, number), false);
@@ -224,11 +224,11 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 	byte audioFlags;
 
-	if (audioRes->headerSize > 0) {
+	if (audioRes->_headerSize > 0) {
 		// SCI1.1
-		Common::MemoryReadStream headerStream(audioRes->header, audioRes->headerSize, DisposeAfterUse::NO);
+		Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
 
-		if (readSOLHeader(&headerStream, audioRes->headerSize, size, _audioRate, audioFlags)) {
+		if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags)) {
 			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 			data = readSOLAudio(&dataStream, size, audioFlags, flags);
 		}

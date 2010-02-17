@@ -617,11 +617,7 @@ bool Console::cmdDiskDump(int argc, const char **argv) {
 			sprintf(outFileName, "%s.%03d", getResourceTypeName(res), resNum);
 			Common::DumpFile *outFile = new Common::DumpFile();
 			outFile->open(outFileName);
-			outFile->writeByte(res);
-			outFile->writeByte(resource->headerSize);
-			if (resource->headerSize > 0)
-				outFile->write(resource->header, resource->headerSize);
-			outFile->write(resource->data, resource->size);
+			resource->writeToStream(outFile);
 			outFile->finalize();
 			outFile->close();
 			delete outFile;

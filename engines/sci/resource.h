@@ -34,6 +34,7 @@
 
 namespace Common {
 class ReadStream;
+class WriteStream;
 class File;
 class FSNode;
 }
@@ -122,12 +123,14 @@ public:
 
 	ResourceId() : type(kResourceTypeInvalid), number(0), tuple(0) { };
 
-	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0) : type(type_), number(number_), tuple(tuple_) {
+	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0)
+			: type(type_), number(number_), tuple(tuple_) {
 		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
 			type = kResourceTypeInvalid;
 	}
 
-	ResourceId(ResourceType type_, uint16 number_, byte noun, byte verb, byte cond, byte seq) : type(type_), number(number_) {
+	ResourceId(ResourceType type_, uint16 number_, byte noun, byte verb, byte cond, byte seq)
+			: type(type_), number(number_) {
 		tuple = (noun << 24) | (verb << 16) | (cond << 8) | seq;
 
 		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
@@ -175,16 +178,19 @@ public:
 // NOTE : Currently all member data has the same name and public visibility
 // to let the rest of the engine compile without changes
 public:
+	ResourceId _id;
 	byte *data;
-	ResourceId id;
 	uint32 size;
-	byte *header;
-	uint32 headerSize;
+	byte *_header;
+	uint32 _headerSize;
+
+	void writeToStream(Common::WriteStream *stream) const;
+
 protected:
-	int32 file_offset; /**< Offset in file */
-	ResourceStatus status;
-	uint16 lockers; /**< Number of places where this resource was locked */
-	ResourceSource *source;
+	int32 _fileOffset; /**< Offset in file */
+	ResourceStatus _status;
+	uint16 _lockers; /**< Number of places where this resource was locked */
+	ResourceSource *_source;
 };
 
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualTo> ResourceMap;
