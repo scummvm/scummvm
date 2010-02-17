@@ -2501,6 +2501,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(33);
 		return true;
 
+	case 0x862c:
+		displayMessage(CHECK_FLAG(0xDBB0, 1)? 0x4882: 0x3457);
+		return true;
+
 	case 0x86a9: //correcting height of the pole with spanner
 		if (CHECK_FLAG(0xDB92, 1)) {
 			displayMessage(0x3d40);
