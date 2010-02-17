@@ -370,9 +370,9 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		actor.field_948  = stream->readSint32LE();
 		actor.field_94C  = stream->readSint32LE();
 		actor.numberFlag01 = stream->readSint32LE();
-		actor.field_954  = stream->readSint32LE();
-		actor.field_958  = stream->readSint32LE();
-		actor.field_95C  = stream->readSint32LE();
+		actor.numberStringWidth  = stream->readSint32LE();
+		actor.numberStringX  = stream->readSint32LE();
+		actor.numberStringY  = stream->readSint32LE();
 		stream->read(actor.numberString01, sizeof(actor.numberString01));
 		actor.field_964  = stream->readSint32LE();
 		actor.field_968  = stream->readSint32LE();
