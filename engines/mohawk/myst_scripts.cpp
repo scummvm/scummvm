@@ -3383,6 +3383,7 @@ void MystScriptParser::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	case kIntroStack:
 		_vm->_system->delayMillis(4 * 1000);
 		_vm->_gfx->copyImageToScreen(4, Common::Rect(0, 0, 544, 333));
+		// TODO : Wait until video ends, then change to card 5
 		break;
 	case kSeleniticStack:
 		// Used for Card 1191 (Maze Runner)
@@ -3696,7 +3697,11 @@ void MystScriptParser::opcode_203_run(void) {
 			break;
 		case kMystStack:
 			// Used for Card 4138 (Dock Forechamber Door)
-			// TODO: Fill in Logic..
+			// TODO: Fill in Logic. Slide for Dock Forechamber Door?
+			// Original has Left to Right Open Slide and Upon leaving card,
+			// Right to left Slide before card change.
+			//debugC(kDebugScript, "Opcode %d: Clear Dock Forechamber Door Variable", op);
+			//_vm->_varStore->setVar(105, 0);
 			break;
 		case kMechanicalStack:
 			// Used for Card 6043 (Weapons Rack with Snake Box)
@@ -3798,7 +3803,7 @@ void MystScriptParser::opcode_204_run(void) {
 			break;
 		case kMystStack:
 			// Used for Card 4134 and 4149 (Dock)
-			// TODO: Fill in..
+			// TODO: Not sure of function. Not Gulls (at least directly). Fill in Logic.
 			break;
 		case kMechanicalStack:
 			// TODO: Fill in Logic.
@@ -3839,17 +3844,6 @@ void MystScriptParser::opcode_204(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		break;
 	case kMystStack:
 		// Used for Card 4134 and 4149 (Dock)
-		// TODO: Fill in logic.. Unsure of exact function to trigger and location on screen..
-		if (false) {
-			// Card 4134
-			_vm->_video->playMovie(_vm->wrapMovieFilename("birds1", kMystStack), 416, 0);
-
-			// Card 4149
-			_vm->_video->playMovie(_vm->wrapMovieFilename("birds2", kMystStack), 433, 0);
-
-			// Unsure...
-			_vm->_video->playMovie(_vm->wrapMovieFilename("birds3", kMystStack), 0, 0);
-		}
 		break;
 	case kMechanicalStack:
 		// Used for Card 6180 (Lower Elevator Puzzle)
@@ -4473,7 +4467,15 @@ void MystScriptParser::opcode_215(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kMystStack:
 		// Used for Card 4134 (Dock Facing Marker Switch)
-		// TODO: Fill in logic. Logic for Gull Videos?
+		// TODO: Fill in logic for Gull Videos.
+		//       may be offset and overlap and need video update to all these
+		//       to run in sequence with opcode215_run() process...
+		if (false) {
+			// All birds(x) videos are 120x48 and played in top right corner of card
+			_vm->_video->playMovie(_vm->wrapMovieFilename("birds1", kMystStack), 544-120-1, 0);
+			_vm->_video->playMovie(_vm->wrapMovieFilename("birds2", kMystStack), 544-120-1, 0);
+			_vm->_video->playMovie(_vm->wrapMovieFilename("birds3", kMystStack), 544-120-1, 0);
+		}
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -4486,9 +4488,18 @@ void MystScriptParser::opcode_216(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	switch (_vm->getCurStack()) {
 	case kMystStack:
-		// Used for Card 4571 (Channelwood Tree)
+		// Used for Cards 4571 (Channelwood Tree), 4586 (Channelwood Tree), 
+		// 4615 (Channelwood Tree) and 4601 (Channelwood Tree)
 		if (argc == 0) {
-			// TODO: Fill in logic for Tree Position From Far...
+			// TODO: Fill in logic for Channelwood Tree Position i.e. Var 72 update // 0 to 12, 4 for Alcove
+			// Based on Timer code and following variables :
+			// 98  "Cabin Boiler Pilot Light Lit"
+			// 99  "Cabin Boiler Gas Valve Position" }, // 0 to 5
+			// 305 "Cabin Boiler Lit" },
+			// 306 "Cabin Boiler Steam Sound Control" }, // 0 to 27
+			// 307 "Cabin Boiler Needle Position i.e. Fully Pressurised" }, // 0 to 1
+
+			// Note : Opcode 218 does boiler update code..
 		} else
 			unknown(op, var, argc, argv);
 		break;
@@ -4686,9 +4697,9 @@ void MystScriptParser::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	case kMystStack:
 		// Used in Card 4371 (Blue Book) Var = 101
 		//     and Card 4363 (Red Book)  Var = 100
-		// TODO: Fill in Logic
 		debugC(kDebugScript, "Opcode %d: Book Exit Function...", op);
 		debugC(kDebugScript, "Var: %d", var);
+		// TODO: Fill in Logic
 		break;
 	case kStoneshipStack:
 		// Used in Card 2218 (Telescope view)
@@ -4727,7 +4738,7 @@ void MystScriptParser::opcode_301(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kDemoPreviewStack:
 	case kMystStack:
-		// Used in Card 4080 (Fireplace Book) and Other Myst Library Books
+		// Used in Cards 4047, 4059, 4060, 4068 and 4080 (Myst Library Books - Open)
 		// TODO: Fill in Logic. Clear Variable on Book exit.. or Copy from duplicate..
 		_vm->_varStore->setVar(0, 1);
 		break;
@@ -4756,12 +4767,10 @@ void MystScriptParser::opcode_303(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	switch (_vm->getCurStack()) {
 	case kMystStack:
+		// Used for Card 4134 (Dock Facing Marker Switch)
 		// Used for Card 4141 (Myst Dock Facing Sea)
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Clear Dock Forechamber Door Variable", op);
-			_vm->_varStore->setVar(105, 0);
-		} else
-			unknown(op, var, argc, argv);
+		// In the original engine, this opcode stopped Gull Movies if playing,
+		// upon card change, but this behaviour is now default in this engine.
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -4811,11 +4820,8 @@ void MystScriptParser::opcode_306(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kMystStack:
 		// Used for Card 4098 (Cabin Boiler Puzzle)
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown...", op);
-			// TODO: Logic for clearing variable?
-		} else
-			unknown(op, var, argc, argv);
+		// In the original engine, this opcode stopped the Boiler Fire and Meter Needle videos
+		// if playing, upon card change, but this behaviour is now default in this engine.
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -4828,7 +4834,7 @@ void MystScriptParser::opcode_307(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	switch (_vm->getCurStack()) {
 	case kMystStack:
-		// Used for Card 4299 (Generator Room Controls)
+		// Used for Card 4297 (Generator Room Controls)
 		if (argc == 0) {
 			debugC(kDebugScript, "Opcode %d: Unknown...", op);
 			// TODO: Logic for clearing variable?
@@ -4847,11 +4853,8 @@ void MystScriptParser::opcode_308(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kMystStack:
 		// Used for Card 4530 (Rocketship Music Sliders)
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown...", op);
-			// TODO: Logic for clearing variable?
-		} else
-			unknown(op, var, argc, argv);
+		// In the original engine, this opcode stopped the Selenitic Book Movie if playing,
+		// upon card change, but this behaviour is now default in this engine.
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -4864,12 +4867,9 @@ void MystScriptParser::opcode_309(uint16 op, uint16 var, uint16 argc, uint16 *ar
 
 	switch (_vm->getCurStack()) {
 	case kMystStack:
-		// Used for Card 4168 (Green D'ni Book Open), Red Book Open and Blue Book Open
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown...", op);
-			// TODO: Logic for clearing variable?
-		} else
-			unknown(op, var, argc, argv);
+		// Used for Card 4168 (Green D'ni Book Open)
+		// In the original engine, this opcode stopped the Green Book Atrus Movies if playing,
+		// upon card change, but this behaviour is now default in this engine.
 		break;
 	default:
 		unknown(op, var, argc, argv);
@@ -4883,11 +4883,9 @@ void MystScriptParser::opcode_312(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	switch (_vm->getCurStack()) {
 	case kMystStack:
 		// Used for Card 4698 (Dock Forechamber Imager)
-		if (argc == 0) {
-			debugC(kDebugScript, "Opcode %d: Unknown...", op);
-			// TODO: Logic for clearing variable?
-		} else
-			unknown(op, var, argc, argv);
+		// In the original engine, this opcode stopped the Imager Movie if playing,
+		// especially the hardcoded Topological Extrusion (Mountain) video,
+		// upon card change, but this behaviour is now default in this engine.
 		break;
 	default:
 		unknown(op, var, argc, argv);

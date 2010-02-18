@@ -199,7 +199,7 @@ MystVarEntry mystVars[] = {
 	{  48, 0, "Marker Switch on Dock - Duplicate of Var #4?" }, // 0 to 2
 	{  49, 0, "Generator Running" }, // Boolean used for Sound..
 // 50 = TODO: ?
-	{  51, 2, "Forechamber Imager Movie Control Variable" }, // 0 to 4 = Blank, No Function? / Mountain?, Water, Atrus, Marker Switch
+	{  51, 2, "Forechamber Imager Movie Control Variable" }, // 0 to 4 = Blank, Mountain, Water, Atrus, Marker Switch
 	{  52, 0, "Generator Switch #1" },
 	{  53, 0, "Generator Switch #2" },
 	{  54, 0, "Generator Switch #3" },
