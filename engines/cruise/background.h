@@ -29,7 +29,7 @@
 namespace Cruise {
 
 struct backgroundTableStruct {
-	char name[9];
+	char name[16];
 	char extention[6];
 };
 
