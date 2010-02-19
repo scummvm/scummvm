@@ -266,7 +266,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
 				if (event.kbd.flags == Common::KBD_CTRL) {
-					loadGameStateCheck(saveLoadSlot);
+					if (saveFileLoadable(saveLoadSlot))
+						loadGameStateCheck(saveLoadSlot);
 					_eventList.clear();
 					breakLoop = true;
 				} else {
