@@ -84,7 +84,7 @@ private:
 	GUI::StaticTextWidget *_text;
 };
 
-PauseDialog::PauseDialog() : GUI::Dialog("PauseDialog") {
+PauseDialog::PauseDialog() : GUI::Dialog(0, 0, 0, 0) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
 	_message = "Game paused. Press Ctrl+p again to continue.";
