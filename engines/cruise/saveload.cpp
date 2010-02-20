@@ -150,6 +150,9 @@ static void syncBasicInfo(Common::Serializer &s) {
 static void syncBackgroundTable(Common::Serializer &s) {
 	// restore backgroundTable
 	for (int i = 0; i < 8; i++) {
+		if (s.isSaving() && (strlen(backgroundTable[i].name) > 8))
+			warning("Saving a background resource that has too long a name");
+
 		s.syncBytes((byte *)backgroundTable[i].name, 9);
 		s.syncBytes((byte *)backgroundTable[i].extention, 6);
 	}
