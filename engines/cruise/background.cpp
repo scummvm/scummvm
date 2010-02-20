@@ -210,7 +210,7 @@ int loadBackground(const char *name, int idx) {
 
 	MemFree(ptrToFree);
 
-	if (name != backgroundTable[idx].name) {
+	if (strcmp(name, backgroundTable[idx].name)) {
 		if (strlen(name) > sizeof(backgroundTable[idx].name)) 
 			warning("background name length exceeded allowable maximum");
 
