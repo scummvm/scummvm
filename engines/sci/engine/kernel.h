@@ -210,36 +210,6 @@ private:
  */
 Common::String kernel_lookup_text(EngineState *s, reg_t address, int index);
 
-/******************** Priority macros/functions ********************/
-/**
- * Finds the position of the priority band specified
- * Parameters: (EngineState *) s: State to search in
- * (int) band: Band to look for
- * Returns   : (int) Offset at which the band starts
- */
-int _find_priority_band(EngineState *s, int band);
-
-/**
- * Does the opposite of _find_priority_band
- * @param s Engine state
- * @param y Coordinate to check
- * @return The priority band y belongs to
- */
-int _find_view_priority(EngineState *s, int y);
-
-
-/******************** Dynamic view list functions ********************/
-
-/**
- * Determines the now-seen rectangle of a view object
- * @param s The state to use
- * @param object The object to check
- * @param clip Flag to determine wheter priority band clipping
- * should be performed
- * @return The absolute rectangle describing the now-seen area.
- */
-extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
-
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 /******************** Misc functions ********************/
