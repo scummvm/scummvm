@@ -210,6 +210,8 @@ int loadBackground(const char *name, int idx) {
 
 	MemFree(ptrToFree);
 
+	// NOTE: the following is really meant to compare pointers and not the actual
+	// strings. See r48092 and r48094.
 	if (name != backgroundTable[idx].name) {
 		if (strlen(name) >= sizeof(backgroundTable[idx].name)) 
 			warning("background name length exceeded allowable maximum");
