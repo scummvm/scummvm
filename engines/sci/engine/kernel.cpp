@@ -76,9 +76,13 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x23*/ "DrawStatus",
 	/*0x24*/ "Parse",
 	/*0x25*/ "Said",
-	/*0x26*/ "SetSynonyms",
+	/*0x26*/ "SetSynonyms",	// Portrait (KQ6 hires)
 	/*0x27*/ "HaveMouse",
 	/*0x28*/ "SetCursor",
+	// FOpen (SCI0)
+	// FPuts (SCI0)
+	// FGets (SCI0)
+	// FClose (SCI0)
 	/*0x29*/ "SaveGame",
 	/*0x2a*/ "RestoreGame",
 	/*0x2b*/ "RestartGame",
@@ -115,11 +119,11 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x4a*/ "ReadNumber",
 	/*0x4b*/ "BaseSetter",
 	/*0x4c*/ "DirLoop",
-	/*0x4d*/ "CanBeHere",
+	/*0x4d*/ "CanBeHere", // CantBeHere in newer SCI versions
 	/*0x4e*/ "OnControl",
 	/*0x4f*/ "InitBresen",
 	/*0x50*/ "DoBresen",
-	/*0x51*/ "Platform",
+	/*0x51*/ "Platform", // DoAvoider (SCI0)
 	/*0x52*/ "SetJump",
 	/*0x53*/ "SetDebug",
 	/*0x54*/ "Dummy",    // InspectObj
@@ -148,21 +152,22 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x6b*/ "CosDiv",
 	/*0x6c*/ "Graph",
 	/*0x6d*/ "Joystick",
+	// End of kernel function table for SCI0
 	/*0x6e*/ "ShiftScreen",
 	/*0x6f*/ "Palette",
 	/*0x70*/ "MemorySegment",
-	/*0x71*/ "Intersections",
+	/*0x71*/ "Intersections",	// MoveCursor (SCI1 late), PalVary (SCI1.1)
 	/*0x72*/ "Memory",
 	/*0x73*/ "ListOps",
 	/*0x74*/ "FileIO",
 	/*0x75*/ "DoAudio",
 	/*0x76*/ "DoSync",
 	/*0x77*/ "AvoidPath",
-	/*0x78*/ "Sort",
+	/*0x78*/ "Sort",	// StrSplit (SCI01)
 	/*0x79*/ "ATan",
 	/*0x7a*/ "Lock",
 	/*0x7b*/ "StrSplit",
-	/*0x7c*/ "GetMessage",
+	/*0x7c*/ "GetMessage",	// Message (SCI1.1)
 	/*0x7d*/ "IsItSkip",
 	/*0x7e*/ "MergePoly",
 	/*0x7f*/ "ResCheck",
