@@ -152,8 +152,10 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
 	checkRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
 
-	if (!checkRect.isValidRect())	// can occur in Iceman
+	if (!checkRect.isValidRect()) {	// can occur in Iceman - HACK? TODO: is this really occuring in sierra sci? check this
+		warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
 		return false;
+	}
 
 	adjustedRect = _coordAdjuster->onControl(checkRect);
 
