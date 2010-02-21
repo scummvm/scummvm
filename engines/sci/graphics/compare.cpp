@@ -152,6 +152,9 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	checkRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
 	checkRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
 
+	if (!checkRect.isValidRect())	// can occur in Iceman
+		return false;
+
 	adjustedRect = _coordAdjuster->onControl(checkRect);
 
 	signal = GET_SEL32V(_segMan, curObject, SELECTOR(signal));
