@@ -151,7 +151,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			Resource *soundResource = _vm->_res->load(resIndex);
 
 			Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-								Audio::makeRawStream(soundResource->data, soundResource->size, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES/*CHECKME*/),
+								Audio::makeRawStream(soundResource->data, soundResource->size, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO),
 								type == kChannelTypeBackground ? 0 : 1);
 
 			channels[freeChannel].type = type;
