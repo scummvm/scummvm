@@ -31,7 +31,7 @@ namespace M4 {
 
 /*--------------------------------------------------------------------------*/
 
-const char *MadsSceneLogic::formAnimName(char sepChar, int suffixNum) {
+const char *MadsSceneLogic::formAnimName(char sepChar, int16 suffixNum) {
 	return MADSResourceManager::getResourceName(sepChar, _sceneNumber, EXTTYPE_NONE, NULL, suffixNum);
 }
 
@@ -71,6 +71,15 @@ void MadsSceneLogic::getAnimName() {
 
 /*--------------------------------------------------------------------------*/
 
+uint16 MadsSceneLogic::loadSpriteSet(uint16 suffixNum, uint16 sepChar) {
+	assert(sepChar < 256);
+	const char *resName = formAnimName((char)sepChar, (int16)suffixNum);
+	return _madsVm->scene()->loadSceneSpriteSet(resName);
+}
+
+
+/*--------------------------------------------------------------------------*/
+
 /**
  * FIXME:
  * Currently I'm only working at providing manual implementation of the first Rex Nebular scene.
@@ -96,7 +105,15 @@ warning("anim - %s\n", animName);
 }
 
 void MadsSceneLogic::enterScene() {
-
+	for (int i = 1; i <= 7; ++i)
+		_spriteIndexes[i - 1] = loadSpriteSet(i, 'x');
+	_spriteIndexes[7] = loadSpriteSet(0xFFFF, 'm');
+	_spriteIndexes[8] = loadSpriteSet(1, 'b');
+	_spriteIndexes[9] = loadSpriteSet(2, 'b');
+	_spriteIndexes[10] = loadSpriteSet(0, 'a');
+	_spriteIndexes[11] = loadSpriteSet(1, 'a');
+	_spriteIndexes[12] = loadSpriteSet(8, 'x');
+	_spriteIndexes[13] = loadSpriteSet(0, 'x');
 }
 
 void MadsSceneLogic::doAction() {

@@ -608,10 +608,18 @@ void MadsScene::loadScene(int sceneNumber) {
 	// Handle common scene setting
 	Scene::loadScene(sceneNumber);
 
+	// Signal the script engine what scene is to be active
 	_sceneLogic.selectScene(sceneNumber);
-	_vm->globals()->addVisitedScene(sceneNumber);
 	_sceneLogic.setupScene();
 
+	// Add the scene if necessary to the list of scenes that have been visited
+	_vm->globals()->addVisitedScene(sceneNumber);
+
+
+	// Do any scene specific setup
+	_sceneLogic.enterScene();
+
+	/* Existing code that eventually needs to be replaced with the proper MADS code */
 	// Set system palette entries
 	_vm->_palette->blockRange(0, 7);
 	RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
@@ -787,6 +795,23 @@ void MadsScene::update() {
 	_sceneSprites[0]->getFrame(1)->copyTo(this, 120, 90, 0);
 }
 
+int MadsScene::loadSceneSpriteSet(const char *setName) {
+	char resName[100];
+	strcpy(resName, setName);
+
+	// Append a '.SS' if it doesn't alreayd have an extension
+	if (!strchr(resName, '.'))
+		strcat(resName, ".SS");
+
+	Common::SeekableReadStream *data = _vm->res()->get(resName);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
+	spriteSet->translate(_vm->_palette);
+	_vm->res()->toss(resName);
+
+	_sceneSprites.push_back(spriteSet);
+	return _sceneSprites.size() - 1;
+}
+
 void MadsScene::loadPlayerSprites(const char *prefix) {
 	const char suffixList[8] = { '8', '9', '6', '3', '2', '7', '4', '1' };
 	char setName[80];
@@ -800,12 +825,7 @@ void MadsScene::loadPlayerSprites(const char *prefix) {
 		*digitP = suffixList[idx];
 
 		if (_vm->res()->resourceExists(setName)) {
-			Common::SeekableReadStream *data = _vm->res()->get(setName);
-			SpriteAsset *playerSprites = new SpriteAsset(_vm, data, data->size(), setName);
-			playerSprites->translate(_vm->_palette);
-			_vm->res()->toss(setName);
-
-			_sceneSprites.push_back(playerSprites);
+			loadSceneSpriteSet(setName);
 			return;
 		}
 	}

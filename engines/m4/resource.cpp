@@ -334,7 +334,7 @@ const char *MADSResourceManager::getResourceName(char asciiCh, int prefix, Exten
 	strcat(resourceName, asciiStr);
 
 	// Add in the index specified
-	if (index > 0)
+	if (index >= 0)
 		sprintf(resourceName + strlen(resourceName), "%d", index);
 
 	// Add in any suffix

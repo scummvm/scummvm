@@ -34,11 +34,13 @@ namespace M4 {
 class MadsSceneLogic {
 private:
 	// Library interface methods
+	uint16 loadSpriteSet(uint16 suffixNum, uint16 sepChar);
 private:
 	int _sceneNumber;
+	uint16 _spriteIndexes[50];
 
 	// Support functions
-	const char *formAnimName(char sepChar, int suffixNum);
+	const char *formAnimName(char sepChar, int16 suffixNum);
 	void getSceneSpriteSet();
 	void getAnimName();
 public:

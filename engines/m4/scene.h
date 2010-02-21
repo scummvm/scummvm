@@ -189,6 +189,7 @@ public:
 	virtual void setStatusText(const char *text);
 	virtual void update();
 
+	int loadSceneSpriteSet(const char *setName);
 	void loadPlayerSprites(const char *prefix);
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
