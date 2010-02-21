@@ -49,6 +49,37 @@
 #define CU_BUTTON(a)    (a & 0x0008)
 #define CD_BUTTON(a)    (a & 0x0004)
 
+// Macro for button press checking
+#define PRESSED_START(now, before)	(START_BUTTON(now) && !START_BUTTON(before))
+#define RELEASED_START(now, before)	(!START_BUTTON(now) && START_BUTTON(before))
+#define PRESSED_A(now, before)		(A_BUTTON(now) && !A_BUTTON(before))
+#define RELEASED_A(now, before)		(!A_BUTTON(now) && A_BUTTON(before))
+#define PRESSED_B(now, before)		(B_BUTTON(now) && !B_BUTTON(before))
+#define RELEASED_B(now, before)		(!B_BUTTON(now) && B_BUTTON(before))
+#define PRESSED_Z(now, before)		(Z_BUTTON(now) && !Z_BUTTON(before))
+#define RELEASED_Z(now, before)		(!Z_BUTTON(now) && Z_BUTTON(before))
+#define PRESSED_TL(now, before)		(TL_BUTTON(now) && !TL_BUTTON(before))
+#define RELEASED_TL(now, before)	(!TL_BUTTON(now) && TL_BUTTON(before))
+#define PRESSED_TR(now, before)		(TR_BUTTON(now) && !TR_BUTTON(before))
+#define RELEASED_TR(now, before)	(!TR_BUTTON(now) && TR_BUTTON(before))
+#define PRESSED_DL(now, before)		(DL_BUTTON(now) && !DL_BUTTON(before))
+#define RELEASED_DL(now, before)	(!DL_BUTTON(now) && DL_BUTTON(before))
+#define PRESSED_DR(now, before)		(DR_BUTTON(now) && !DR_BUTTON(before))
+#define RELEASED_DR(now, before)	(!DR_BUTTON(now) && DR_BUTTON(before))
+#define PRESSED_DU(now, before) 	(DU_BUTTON(now) && !DU_BUTTON(before))
+#define RELEASED_DU(now, before)	(!DU_BUTTON(now) && DU_BUTTON(before))
+#define PRESSED_DD(now, before)		(DD_BUTTON(now) && !DD_BUTTON(before))
+#define RELEASED_DD(now, before)	(!DD_BUTTON(now) && DD_BUTTON(before))
+#define PRESSED_CL(now, before)		(CL_BUTTON(now) && !CL_BUTTON(before))
+#define RELEASED_CL(now, before)	(!CL_BUTTON(now) && CL_BUTTON(before))
+#define PRESSED_CR(now, before)		(CR_BUTTON(now) && !CR_BUTTON(before))
+#define RELEASED_CR(now, before)	(!CR_BUTTON(now) && CR_BUTTON(before))
+#define PRESSED_CU(now, before)		(CU_BUTTON(now) && !CU_BUTTON(before))
+#define RELEASED_CU(now, before)	(!CU_BUTTON(now) && CU_BUTTON(before))
+#define PRESSED_CD(now, before)		(CD_BUTTON(now) && !CD_BUTTON(before))
+#define RELEASED_CD(now, before)	(!CD_BUTTON(now) && CD_BUTTON(before))
+
+
 #define MOUSE_DEADZONE 0
 #define PAD_DEADZONE 1
 #define PAD_ACCELERATION 15
@@ -139,110 +170,216 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	static bool down_digital = false;
 
 	if (newButtons != oldButtons) { // Check PAD button press
-		if (DL_BUTTON(newButtons) && !DL_BUTTON(oldButtons)) // Pressed LEFT
+		if (PRESSED_DL(newButtons, oldButtons)) // Pressed LEFT
 			left_digital = true;
-		else if (!DL_BUTTON(newButtons) && DL_BUTTON(oldButtons)) // Released LEFT
+		else if (RELEASED_DL(newButtons, oldButtons)) // Released LEFT
 			left_digital = false;
 
-		if (DR_BUTTON(newButtons) && !DR_BUTTON(oldButtons)) // Pressed RIGHT
+		if (PRESSED_DR(newButtons, oldButtons)) // Pressed RIGHT
 			right_digital = true;
-		else if (!DR_BUTTON(newButtons) && DR_BUTTON(oldButtons)) // Released RIGHT
+		else if (RELEASED_DR(newButtons, oldButtons)) // Released RIGHT
 			right_digital = false;
 
-		if (DU_BUTTON(newButtons) && !DU_BUTTON(oldButtons)) // Pressed UP
+		if (PRESSED_DU(newButtons, oldButtons)) // Pressed UP
 			up_digital = true;
-		else if (!DU_BUTTON(newButtons) && DU_BUTTON(oldButtons)) // Released UP
+		else if (RELEASED_DU(newButtons, oldButtons)) // Released UP
 			up_digital = false;
 
-		if (DD_BUTTON(newButtons) && !DD_BUTTON(oldButtons)) // Pressed DOWN
+		if (PRESSED_DD(newButtons, oldButtons)) // Pressed DOWN
 			down_digital = true;
-		else if (!DD_BUTTON(newButtons) && DD_BUTTON(oldButtons)) // Released DOWN
+		else if (RELEASED_DD(newButtons, oldButtons)) // Released DOWN
 			down_digital = false;
 
-		if (B_BUTTON(newButtons) && !B_BUTTON(oldButtons)) { // Pressed B - Right Mouse Button
+		if (PRESSED_B(newButtons, oldButtons)) { // Pressed B - Right Mouse Button
 			buttonPressed = true;
 			event.type = Common::EVENT_RBUTTONDOWN;
-		} else if (!B_BUTTON(newButtons) && B_BUTTON(oldButtons)) { // Released B
+		} else if (RELEASED_B(newButtons, oldButtons)) { // Released B
 			buttonPressed = true;
 			event.type = Common::EVENT_RBUTTONUP;
-		} else if (A_BUTTON(newButtons) && !A_BUTTON(oldButtons)) { // Pressed A - Period
+		} else if (PRESSED_A(newButtons, oldButtons)) { // Pressed A - Period
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
 			event.kbd.ascii = '.';
 			event.type = Common::EVENT_KEYDOWN;
-		} else if (!A_BUTTON(newButtons) && A_BUTTON(oldButtons)) { // Released A
+		} else if (RELEASED_A(newButtons, oldButtons)) { // Released A
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
 			event.kbd.ascii = '.';
 			event.type = Common::EVENT_KEYUP;
-		} else if (START_BUTTON(newButtons) && !START_BUTTON(oldButtons)) { // Pressed START - F5
+		} else if (PRESSED_START(newButtons, oldButtons)) { // Pressed START
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = Common::ASCII_F5;
 			event.type = Common::EVENT_KEYDOWN;
-		} else if (!START_BUTTON(newButtons) && START_BUTTON(oldButtons)) { // Released START
+		} else if (RELEASED_START(newButtons, oldButtons)) { // Released START
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = Common::ASCII_F5;
 			event.type = Common::EVENT_KEYUP;
-		} else if (CU_BUTTON(newButtons) && !CU_BUTTON(oldButtons)) { // Pressed Yellow Up - UP
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_UP;
-			event.type = Common::EVENT_KEYDOWN;
-		} else if (!CU_BUTTON(newButtons) && CU_BUTTON(oldButtons)) { // Released Yellow Up
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_UP;
-			event.type = Common::EVENT_KEYUP;
-		} else if (CD_BUTTON(newButtons) && !CD_BUTTON(oldButtons)) { // Pressed Yellow Down - DOWN
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_DOWN;
-			event.type = Common::EVENT_KEYDOWN;
-		} else if (!CD_BUTTON(newButtons) && CD_BUTTON(oldButtons)) { // Released Yellow Down
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_DOWN;
-			event.type = Common::EVENT_KEYUP;
-		} else if (CL_BUTTON(newButtons) && !CL_BUTTON(oldButtons)) { // Pressed Yellow Left - LEFT
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_LEFT;
-			event.type = Common::EVENT_KEYDOWN;
-		} else if (!CL_BUTTON(newButtons) && CL_BUTTON(oldButtons)) { // Released Yellow Left
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_LEFT;
-			event.type = Common::EVENT_KEYUP;
-		} else if (CR_BUTTON(newButtons) && !CR_BUTTON(oldButtons)) { // Pressed Yellow Right - RIGHT
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_RIGHT;
-			event.type = Common::EVENT_KEYDOWN;
-		} else if (!CR_BUTTON(newButtons) && CR_BUTTON(oldButtons)) { // Released Yellow Right
-			buttonPressed = true;
-			event.kbd.keycode = Common::KEYCODE_RIGHT;
-			event.type = Common::EVENT_KEYUP;
-		} else if (TL_BUTTON(newButtons) && !TL_BUTTON(oldButtons)) { // Pressed Trigger Left - ESC
+		}  else if (PRESSED_TL(newButtons, oldButtons)) { // Pressed Trigger Left - ESC
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
 			event.kbd.ascii = 27;
 			event.type = Common::EVENT_KEYDOWN;
-		} else if (!TL_BUTTON(newButtons) && TL_BUTTON(oldButtons)) { // Released Trigger Left
+		} else if (RELEASED_TL(newButtons, oldButtons)) { // Released Trigger Left
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
 			event.kbd.ascii = 27;
 			event.type = Common::EVENT_KEYUP;
-		} else if (TR_BUTTON(newButtons) && !TR_BUTTON(oldButtons)) { // Pressed Trigger Right - F7
+		} else if (PRESSED_TR(newButtons, oldButtons)) { // Pressed Trigger Right - F7
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_F7;
 			event.kbd.ascii = Common::ASCII_F7;
 			event.type = Common::EVENT_KEYDOWN;
-		} else if (!TR_BUTTON(newButtons) && TR_BUTTON(oldButtons)) { // Released Trigger Right
+		} else if (RELEASED_TL(newButtons, oldButtons)) { // Released Trigger Right
 			buttonPressed = true;
 			event.kbd.keycode = Common::KEYCODE_F7;
 			event.kbd.ascii = Common::ASCII_F7;
 			event.type = Common::EVENT_KEYUP;
-		} else if (Z_BUTTON(newButtons) && !Z_BUTTON(oldButtons)) { // Pressed Z - Left Mouse Button
+		} else if (PRESSED_Z(newButtons, oldButtons)) { // Pressed Z - Left Mouse Button
 			buttonPressed = true;
 			event.type = Common::EVENT_LBUTTONDOWN;
-		} else if (!Z_BUTTON(newButtons) && Z_BUTTON(oldButtons)) { // Released Z
+		} else if (RELEASED_Z(newButtons, oldButtons)) { // Released Z
 			buttonPressed = true;
 			event.type = Common::EVENT_LBUTTONUP;
+		}
+
+		// Simulate numpad using yellow C-Buttons on the pad
+		bool cur_CU, cur_CD, cur_CL, cur_CR;
+
+		static int8 lastKPad = 0; // Latest simulated keypad button press
+
+		// Check which directions are pressed
+		if (CU_BUTTON(newButtons)) // Pressed Yellow Up
+			cur_CU = true;
+		else if (!CU_BUTTON(newButtons)) // Released Yellow Up
+			cur_CU = false;
+
+		if (CD_BUTTON(newButtons)) // Pressed Yellow Down
+			cur_CD = true;
+		else if (!CD_BUTTON(newButtons)) // Released Yellow Down
+			cur_CD = false;
+
+		if (CL_BUTTON(newButtons)) // Pressed Yellow Left
+			cur_CL = true;
+		else if (!CL_BUTTON(newButtons)) // Released Yellow Left
+			cur_CL = false;
+
+		if (CR_BUTTON(newButtons)) // Pressed Yellow Right
+			cur_CR = true;
+		else if (!CR_BUTTON(newButtons)) // Released Yellow Right
+			cur_CR = false;
+
+		switch (lastKPad) {
+		case 7: // UP - LEFT
+			if (!(cur_CU && cur_CL)) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP7;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 9: // UP - RIGHT
+			if (!(cur_CU && cur_CR)) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP9;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 1: // DOWN - LEFT
+			if (!(cur_CD && cur_CL)) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP1;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 3: // DOWN - RIGHT
+			if (!(cur_CD && cur_CR)) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP3;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 4: // LEFT
+			if (!cur_CL) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP4;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 6: // RIGHT
+			if (!cur_CR) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP6;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 8: // UP
+			if (!cur_CU) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP8;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 2: // DOWN
+			if (!cur_CD) {
+				buttonPressed = true;
+				event.kbd.keycode = Common::KEYCODE_KP2;
+				event.type = Common::EVENT_KEYUP;
+				lastKPad = 0;
+			}
+			break;
+		case 0: // No previous press
+			if (cur_CU && cur_CL) { // UP - LEFT
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP7;
+				lastKPad = 7;
+			} else if (cur_CU && cur_CR) { // UP - RIGHT
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP9;
+				lastKPad = 9;
+			} else if (cur_CD && cur_CL) { // DOWN - LEFT
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP1;
+				lastKPad = 1;
+			} else if (cur_CD && cur_CR) { // DOWN - RIGHT
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP3;
+				lastKPad = 3;
+			} else if (cur_CL) { // LEFT
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP4;
+				lastKPad = 4;
+			} else if (cur_CR) { // RIGHT
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP6;
+				lastKPad = 6;
+			} else if (cur_CU) { // UP
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP8;
+				lastKPad = 8;
+			} else if (cur_CD) { // DOWN
+				buttonPressed = true;
+				event.type = Common::EVENT_KEYDOWN;
+				event.kbd.keycode = Common::KEYCODE_KP2;
+				lastKPad = 2;
+			}
+			break;
+		default:
+			break; // Do nothing.
 		}
 
 		oldButtons = newButtons; // Save current button status
@@ -255,16 +392,16 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 	}
 
 	if (newMouseButtons != oldMouseButtons) { // Check mouse button press
-		if (B_BUTTON(newMouseButtons) && !B_BUTTON(oldMouseButtons)) { // Pressed Right Mouse Button
+		if (PRESSED_B(newMouseButtons, oldMouseButtons)) { // Pressed Right Mouse Button
 			buttonPressed = true;
 			event.type = Common::EVENT_RBUTTONDOWN;
-		} else if (!B_BUTTON(newMouseButtons) && B_BUTTON(oldMouseButtons)) { // Released RMB
+		} else if (RELEASED_B(newMouseButtons, oldMouseButtons)) { // Released RMB
 			buttonPressed = true;
 			event.type = Common::EVENT_RBUTTONUP;
-		} else if (A_BUTTON(newMouseButtons) && !A_BUTTON(oldMouseButtons)) { // Pressed Left Mouse Button
+		} else if (PRESSED_A(newMouseButtons, oldMouseButtons)) { // Pressed Left Mouse Button
 			buttonPressed = true;
 			event.type = Common::EVENT_LBUTTONDOWN;
-		} else if (!A_BUTTON(newMouseButtons) && A_BUTTON(oldMouseButtons)) { // Released LMB
+		} else if (RELEASED_A(newMouseButtons, oldMouseButtons)) { // Released LMB
 			buttonPressed = true;
 			event.type = Common::EVENT_LBUTTONUP;
 		}
@@ -311,7 +448,6 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			my = _mouseMaxY - 1;
 
 		if ((mx != _mouseX) || (my != _mouseY)) {
-
 			event.type = Common::EVENT_MOUSEMOVE;
 			event.mouse.x = _mouseX = _tempMouseX = mx;
 			event.mouse.y = _mouseY = _tempMouseY = my;
