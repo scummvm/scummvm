@@ -491,9 +491,9 @@ Common::Error Sword2Engine::run() {
 		KeyboardEvent *ke = keyboardEvent();
 
 		if (ke) {
-			if ((ke->kbd.flags == Common::KBD_CTRL && ke->kbd.keycode == Common::KEYCODE_d) || ke->kbd.ascii == '#' || ke->kbd.ascii == '~') {
+			if ((ke->kbd.hasFlags(Common::KBD_CTRL) && ke->kbd.keycode == Common::KEYCODE_d) || ke->kbd.ascii == '#' || ke->kbd.ascii == '~') {
 				_debugger->attach();
-			} else if (ke->kbd.flags == 0 || ke->kbd.flags == Common::KBD_SHIFT) {
+			} else if (ke->kbd.hasFlags(0) || ke->kbd.hasFlags(Common::KBD_SHIFT)) {
 				switch (ke->kbd.keycode) {
 				case Common::KEYCODE_p:
 					if (_gamePaused)
@@ -654,8 +654,8 @@ void Sword2Engine::parseInputEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'f') {
+			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+				if (event.kbd.keycode == Common::KEYCODE_f) {
 					if (_gameSpeed == 1)
 						_gameSpeed = 2;
 					else

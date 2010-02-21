@@ -230,11 +230,11 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 		case Common::KEYCODE_m:
 			// Debug facility - scene hopper
-			if (TinselV2 && (evt.kbd.flags == Common::KBD_ALT))
+			if (TinselV2 && (evt.kbd.hasFlags(Common::KBD_ALT)))
 				ProcessKeyEvent(PLR_JUMP);
 			break;
 		case Common::KEYCODE_q:
-			if ((evt.kbd.flags == Common::KBD_CTRL) || (evt.kbd.flags == Common::KBD_ALT))
+			if ((evt.kbd.hasFlags(Common::KBD_CTRL)) || (evt.kbd.hasFlags(Common::KBD_ALT)))
 				ProcessKeyEvent(PLR_QUIT);
 			continue;
 		case Common::KEYCODE_PAGEUP:
@@ -1201,7 +1201,8 @@ void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 	// Handle any special keys immediately
 	switch (event.kbd.keycode) {
 	case Common::KEYCODE_d:
-		if ((event.kbd.flags == Common::KBD_CTRL) && (event.type == Common::EVENT_KEYDOWN)) {
+		// Checks for CTRL flag, ignoring all the sticky flags
+		if ((Common::KBD_CTRL == (event.kbd.flags & ~(Common::KBD_NUM|Common::KBD_CAPS|Common::KBD_SCRL))) && (event.type == Common::EVENT_KEYDOWN)) {
 			// Activate the debugger
 			assert(_console);
 			_console->attach();

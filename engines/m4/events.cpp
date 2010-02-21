@@ -73,7 +73,7 @@ M4EventType Events::handleEvents() {
 			if ((_event.kbd.keycode == Common::KEYCODE_LCTRL) || (_event.kbd.keycode == Common::KEYCODE_RCTRL))
 				_ctrlFlag = true;
 
-			else if (_event.kbd.flags == Common::KBD_CTRL) {
+			else if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if ((_event.kbd.keycode == Common::KEYCODE_d) && _ctrlFlag) {
 					_console->attach();
 					_console->onFrame();

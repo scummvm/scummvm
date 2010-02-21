@@ -222,23 +222,45 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 		return;
 
 	switch (state.keycode) {
+
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
 		setResult(_selection);
 		close();
 		break;
-	case Common::KEYCODE_UP:
-		moveUp();
-		break;
-	case Common::KEYCODE_DOWN:
-		moveDown();
-		break;
-	case Common::KEYCODE_HOME:
-		setSelection(0);
-		break;
+
+	// Keypad & special keys
+	//   - if num lock is set, we ignore the keypress
+	//   - if num lock is not set, we fall down to the special key case
+
+	case Common::KEYCODE_KP1:
+		if (state.flags & Common::KBD_NUM)
+			break;
 	case Common::KEYCODE_END:
 		setSelection(_popUpBoss->_entries.size()-1);
 		break;
+
+	case Common::KEYCODE_KP2:
+		if (state.flags & Common::KBD_NUM)
+			break;
+	case Common::KEYCODE_DOWN:
+		moveDown();
+		break;
+
+	case Common::KEYCODE_KP7:
+		if (state.flags & Common::KBD_NUM)
+			break;
+	case Common::KEYCODE_HOME:
+		setSelection(0);
+		break;
+
+	case Common::KEYCODE_KP8:
+		if (state.flags & Common::KBD_NUM)
+			break;
+	case Common::KEYCODE_UP:
+		moveUp();
+		break;
+
 	default:
 		break;
 	}

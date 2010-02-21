@@ -262,10 +262,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 &&
-					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
+					(event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
 				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
-				if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 					if (saveFileLoadable(saveLoadSlot))
 						loadGameStateCheck(saveLoadSlot);
 					_eventList.clear();
@@ -275,7 +275,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 					sprintf(savegameName, "Quicksave %d", event.kbd.keycode - Common::KEYCODE_0);
 					saveGameState(saveLoadSlot, savegameName, 0);
 				}
-			} else if (event.kbd.flags == Common::KBD_CTRL) {
+			} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					if (_debugger)
 						_debugger->attach();
@@ -385,7 +385,7 @@ void KyraEngine_v1::updateInput() {
 				event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
 				event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
 					_eventList.push_back(Event(event, true));
-			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.flags == Common::KBD_CTRL)
+			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
 			else
 				_eventList.push_back(event);

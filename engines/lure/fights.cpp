@@ -205,7 +205,7 @@ void FightsManager::checkEvents() {
 				return;
 
 			case Common::KEYCODE_d:
-				if (events.event().kbd.flags == Common::KBD_CTRL) {
+				if (events.event().kbd.hasFlags(Common::KBD_CTRL)) {
 					// Activate the debugger
 					game.debugger().attach();
 					return;

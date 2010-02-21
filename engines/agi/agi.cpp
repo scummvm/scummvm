@@ -121,7 +121,7 @@ void AgiEngine::processEvents() {
 			_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d) {
+			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
 				_console->attach();
 				break;
 			}

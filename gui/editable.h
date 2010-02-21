@@ -81,6 +81,8 @@ protected:
 	bool adjustOffset();
 	void makeCaretVisible();
 
+	void defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled);
+
 	void setFontStyle(ThemeEngine::FontStyle font) { _font = font; }
 
 	virtual bool tryInsertChar(byte c, int pos);

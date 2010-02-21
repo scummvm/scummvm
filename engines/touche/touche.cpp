@@ -313,7 +313,7 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 			} else if (event.kbd.keycode == Common::KEYCODE_F10) {
 				_fastWalkMode = false;
 			}
-			if (event.kbd.flags == Common::KBD_CTRL) {
+			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_f) {
 					_fastMode = !_fastMode;
 				}

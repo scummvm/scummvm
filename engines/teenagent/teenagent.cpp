@@ -474,12 +474,12 @@ Common::Error TeenAgentEngine::run() {
 			//debug(0, "event");
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
+				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
 					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 					console->attach();
-				} else if (event.kbd.flags == 0 && event.kbd.keycode == Common::KEYCODE_F5) {
+				} else if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
-				} if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
 					_mark_delay = _mark_delay == 80? 40: 80;
 					debug(0, "mark_delay = %u", _mark_delay);
 				}

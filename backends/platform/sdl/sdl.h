@@ -412,6 +412,9 @@ protected:
 		kMouseColorKey = 1
 	};
 
+	// Scroll lock state - since SDL doesn't track it
+	bool _scrollLock;
+	
 	// joystick
 	SDL_Joystick *_joystick;
 

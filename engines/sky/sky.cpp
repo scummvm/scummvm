@@ -113,12 +113,12 @@ void SkyEngine::handleKey() {
 		_skySound->fnUnPauseFx();
 		_systemVars.paused = false;
 		_skyScreen->setPaletteEndian((uint8 *)_skyCompact->fetchCpt(SkyEngine::_systemVars.currentPalette));
-	} else if (_keyPressed.flags == Common::KBD_CTRL) {
-		if (_keyPressed.keycode == 'f')
+	} else if (_keyPressed.hasFlags(Common::KBD_CTRL)) {
+		if (_keyPressed.keycode == Common::KEYCODE_f)
 			_fastMode ^= 1;
-		else if (_keyPressed.keycode == 'g')
+		else if (_keyPressed.keycode == Common::KEYCODE_g)
 			_fastMode ^= 2;
-		else if (_keyPressed.keycode == 'd')
+		else if (_keyPressed.keycode == Common::KEYCODE_d)
 			_debugger->attach();
 	} else if (_keyPressed.keycode) {
 		switch (_keyPressed.keycode) {

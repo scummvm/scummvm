@@ -111,7 +111,7 @@ void Input::readInput() {
 			_hasKeyPressEvent = true;
 			_keyPressed = e.kbd;
 
-			if (e.kbd.flags == Common::KBD_CTRL && e.kbd.keycode == 'd')
+			if (e.kbd.hasFlags(Common::KBD_CTRL) && e.kbd.keycode == Common::KEYCODE_d)
 				_vm->_debugger->attach();
 
 			updateMousePos = false;

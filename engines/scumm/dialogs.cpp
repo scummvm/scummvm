@@ -725,7 +725,7 @@ void SubtitleSettingsDialog::handleTickle() {
 }
 
 void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
-	if (state.keycode == 't' && state.flags == Common::KBD_CTRL) {
+	if (state.keycode == Common::KEYCODE_t && state.hasFlags(Common::KBD_CTRL)) {
 		cycleValue();
 
 		reflowLayout();

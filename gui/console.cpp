@@ -302,9 +302,11 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			slideUpAndClose();
 		break;
 		}
+
 	case Common::KEYCODE_ESCAPE:
 		slideUpAndClose();
 		break;
+
 	case Common::KEYCODE_BACKSPACE:
 		if (_caretVisible)
 			drawCaret(true);
@@ -316,8 +318,8 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		scrollToCurrent();
 		drawLine(pos2line(_currentPos));
 		break;
-	case Common::KEYCODE_TAB:
-	{
+
+	case Common::KEYCODE_TAB: {
 		if (_completionCallbackProc) {
 			int len = _currentPos - _promptStartPos;
 			assert(len >= 0);
@@ -339,24 +341,64 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			delete[] str;
 		}
 		break;
-	}
+		}
+
+	// Keypad & special keys
+	//   - if num lock is set, we always go to the default case
+	//   - if num lock is not set, we either fall down to the special key case
+	//     or ignore the key press in case of 0 (INSERT) or 5
+
+	case Common::KEYCODE_KP0:
+	case Common::KEYCODE_KP5:
+		if (state.flags & Common::KBD_NUM)
+			defaultKeyDownHandler(state);
+		break;
+
+	case Common::KEYCODE_KP_PERIOD:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
+		}
 	case Common::KEYCODE_DELETE:
 		if (_currentPos < _promptEndPos) {
 			killChar();
 			drawLine(pos2line(_currentPos));
 		}
 		break;
-	case Common::KEYCODE_PAGEUP:
-		if (state.flags == Common::KBD_SHIFT) {
-			_scrollLine -= _linesPerPage - 1;
-			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
-				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
-			updateScrollBuffer();
-			draw();
+
+	case Common::KEYCODE_KP1:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
 		}
+	case Common::KEYCODE_END:
+		if (state.hasFlags(Common::KBD_SHIFT)) {
+			_scrollLine = _promptEndPos / kCharsPerLine;
+			if (_scrollLine < _linesPerPage - 1)
+				_scrollLine = _linesPerPage - 1;
+			updateScrollBuffer();
+		} else {
+			_currentPos = _promptEndPos;
+		}
+		draw();
 		break;
+
+	case Common::KEYCODE_KP2:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
+		}
+	case Common::KEYCODE_DOWN:
+		historyScroll(-1);
+		break;
+
+	case Common::KEYCODE_KP3:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
+		}
 	case Common::KEYCODE_PAGEDOWN:
-		if (state.flags == Common::KBD_SHIFT) {
+		if (state.hasFlags(Common::KBD_SHIFT)) {
 			_scrollLine += _linesPerPage - 1;
 			if (_scrollLine > _promptEndPos / kCharsPerLine) {
 				_scrollLine = _promptEndPos / kCharsPerLine;
@@ -367,8 +409,36 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			draw();
 		}
 		break;
+
+	case Common::KEYCODE_KP4:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
+		}
+	case Common::KEYCODE_LEFT:
+		if (_currentPos > _promptStartPos)
+			_currentPos--;
+		drawLine(pos2line(_currentPos));
+		break;
+
+	case Common::KEYCODE_KP6:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
+		}
+	case Common::KEYCODE_RIGHT:
+		if (_currentPos < _promptEndPos)
+			_currentPos++;
+		drawLine(pos2line(_currentPos));
+		break;
+
+	case Common::KEYCODE_KP7:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
+		}
 	case Common::KEYCODE_HOME:
-		if (state.flags == Common::KBD_SHIFT) {
+		if (state.hasFlags(Common::KBD_SHIFT)) {
 			_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			updateScrollBuffer();
 		} else {
@@ -376,45 +446,47 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		}
 		draw();
 		break;
-	case Common::KEYCODE_END:
-		if (state.flags == Common::KBD_SHIFT) {
-			_scrollLine = _promptEndPos / kCharsPerLine;
-			if (_scrollLine < _linesPerPage - 1)
-				_scrollLine = _linesPerPage - 1;
-			updateScrollBuffer();
-		} else {
-			_currentPos = _promptEndPos;
+
+	case Common::KEYCODE_KP8:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
 		}
-		draw();
-		break;
 	case Common::KEYCODE_UP:
 		historyScroll(+1);
 		break;
-	case Common::KEYCODE_DOWN:
-		historyScroll(-1);
-		break;
-	case Common::KEYCODE_RIGHT:
-		if (_currentPos < _promptEndPos)
-			_currentPos++;
-		drawLine(pos2line(_currentPos));
-		break;
-	case Common::KEYCODE_LEFT:
-		if (_currentPos > _promptStartPos)
-			_currentPos--;
-		drawLine(pos2line(_currentPos));
-		break;
-	default:
-		if (state.ascii == '~' || state.ascii == '#') {
-			slideUpAndClose();
-		} else if (state.flags == Common::KBD_CTRL) {
-			specialKeys(state.keycode);
-		} else if ((state.ascii >= 32 && state.ascii <= 127) || (state.ascii >= 160 && state.ascii <= 255)) {
-			for (i = _promptEndPos - 1; i >= _currentPos; i--)
-				buffer(i + 1) = buffer(i);
-			_promptEndPos++;
-			putchar((byte)state.ascii);
-			scrollToCurrent();
+
+	case Common::KEYCODE_KP9:
+		if (state.flags & Common::KBD_NUM) {
+			defaultKeyDownHandler(state);
+			break;
 		}
+	case Common::KEYCODE_PAGEUP:
+		if (state.hasFlags(Common::KBD_SHIFT)) {
+			_scrollLine -= _linesPerPage - 1;
+			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
+				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
+			updateScrollBuffer();
+			draw();
+		}
+		break;
+
+	default:
+		defaultKeyDownHandler(state);
+	}
+}
+
+void ConsoleDialog::defaultKeyDownHandler(Common::KeyState &state) {
+	if (state.ascii == '~' || state.ascii == '#') {
+		slideUpAndClose();
+	} else if (state.hasFlags(Common::KBD_CTRL)) {
+		specialKeys(state.keycode);
+	} else if ((state.ascii >= 32 && state.ascii <= 127) || (state.ascii >= 160 && state.ascii <= 255)) {
+		for (int i = _promptEndPos - 1; i >= _currentPos; i--)
+			buffer(i + 1) = buffer(i);
+		_promptEndPos++;
+		putchar((byte)state.ascii);
+		scrollToCurrent();
 	}
 }
 

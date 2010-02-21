@@ -114,7 +114,7 @@ void Util::processInput(bool scroll) {
 			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.flags == Common::KBD_CTRL) {
+			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_f)
 					_fastMode ^= 1;
 				else if (event.kbd.keycode == Common::KEYCODE_g)

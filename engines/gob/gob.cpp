@@ -109,7 +109,7 @@ void PauseDialog::reflowLayout() {
 
 void PauseDialog::handleKeyDown(Common::KeyState state) {
 	// Close on CTRL+p
-	if ((state.flags == Common::KBD_CTRL) && (state.keycode == Common::KEYCODE_p))
+	if ((state.hasFlags(Common::KBD_CTRL)) && (state.keycode == Common::KEYCODE_p))
 		close();
 }
 

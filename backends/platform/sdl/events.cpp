@@ -152,23 +152,29 @@ void OSystem_SDL::handleKbdMouse() {
 	}
 }
 
-static byte SDLModToOSystemKeyFlags(SDLMod mod) {
-	byte b = 0;
+static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+
+	event.kbd.flags = 0;
+
 #ifdef LINUPY
 	// Yopy has no ALT key, steal the SHIFT key
 	// (which isn't used much anyway)
 	if (mod & KMOD_SHIFT)
-		b |= Common::KBD_ALT;
+		event.kbd.flags |= Common::KBD_ALT;
 #else
 	if (mod & KMOD_SHIFT)
-		b |= Common::KBD_SHIFT;
+		event.kbd.flags |= Common::KBD_SHIFT;
 	if (mod & KMOD_ALT)
-		b |= Common::KBD_ALT;
+		event.kbd.flags |= Common::KBD_ALT;
 #endif
 	if (mod & KMOD_CTRL)
-		b |= Common::KBD_CTRL;
+		event.kbd.flags |= Common::KBD_CTRL;
 
-	return b;
+	// Sticky flags
+	if (mod & KMOD_NUM)
+		event.kbd.flags |= Common::KBD_NUM;
+	if (mod & KMOD_CAPS)
+		event.kbd.flags |= Common::KBD_CAPS;
 }
 
 bool OSystem_SDL::pollEvent(Common::Event &event) {
@@ -225,12 +231,18 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 
 
 bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
-	byte b = 0;
-	b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
+
+	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
+
+	// Handle scroll lock as a key modifier
+	if (ev.key.keysym.sym == SDLK_SCROLLOCK)
+		_scrollLock = !_scrollLock;
+
+	if (_scrollLock)
+		event.kbd.flags |= Common::KBD_SCRL;
 
 	// Alt-Return and Alt-Enter toggle full screen mode
-	if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
-					  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
+	if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
 		beginGFXTransaction();
 			setFullscreenMode(!_videoMode.fullscreen);
 		endGFXTransaction();
@@ -245,7 +257,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	}
 
 	// Alt-S: Create a screenshot
-	if (b == Common::KBD_ALT && ev.key.keysym.sym == 's') {
+	if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
 		char filename[20];
 
 		for (int n = 0;; n++) {
@@ -265,7 +277,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	}
 
 	// Ctrl-m toggles mouse capture
-	if (b == Common::KBD_CTRL && ev.key.keysym.sym == 'm') {
+	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
 		toggleMouseGrab();
 		return false;
 	}
@@ -284,7 +296,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	}
 #else
 	// Ctrl-z and Alt-X quit
-	if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
+	if ((event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'z') || (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 'x')) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
@@ -296,7 +308,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	}
 
 	// Ctrl-Alt-<key> will change the GFX mode
-	if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 		if (handleScalerHotkeys(ev.key))
 			return false;
 	}
@@ -320,8 +332,13 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
 
 	// Ctrl-Alt-<key> will change the GFX mode
-	byte b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
-	if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
+
+	// Set the scroll lock sticky flag
+	if (_scrollLock)
+		event.kbd.flags |= Common::KBD_SCRL;
+
+	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 		// Swallow these key up events
 		return false;
 	}

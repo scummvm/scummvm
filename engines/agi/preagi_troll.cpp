@@ -104,7 +104,7 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 				case Common::KEYCODE_KP_ENTER:
 					return true;
 				case Common::KEYCODE_s:
-					if (event.kbd.flags == Common::KBD_CTRL) {
+					if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 						if (_soundOn) {
 							playTune(2, 1);
 							_soundOn = !_soundOn;

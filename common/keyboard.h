@@ -40,15 +40,15 @@ enum KeyCode {
 	KEYCODE_PAUSE       = 19,
 	KEYCODE_ESCAPE      = 27,
 	KEYCODE_SPACE       = 32,
-	KEYCODE_EXCLAIM     = 33,
-	KEYCODE_QUOTEDBL    = 34,
-	KEYCODE_HASH        = 35,
-	KEYCODE_DOLLAR      = 36,
-	KEYCODE_AMPERSAND   = 38,
-	KEYCODE_QUOTE       = 39,
+	KEYCODE_EXCLAIM     = 33,      // !
+	KEYCODE_QUOTEDBL    = 34,      // "
+	KEYCODE_HASH        = 35,      // #
+	KEYCODE_DOLLAR      = 36,      // $
+	KEYCODE_AMPERSAND   = 38,      // &
+	KEYCODE_QUOTE       = 39,      // '
 	KEYCODE_LEFTPAREN   = 40,
 	KEYCODE_RIGHTPAREN  = 41,
-	KEYCODE_ASTERISK    = 42,
+	KEYCODE_ASTERISK    = 42,      // *
 	KEYCODE_PLUS        = 43,
 	KEYCODE_COMMA       = 44,
 	KEYCODE_MINUS       = 45,
@@ -105,6 +105,7 @@ enum KeyCode {
 	KEYCODE_y           = 121,
 	KEYCODE_z           = 122,
 	KEYCODE_DELETE      = 127,
+	KEYCODE_TILDE       = 176,      // ~
 
 	// Numeric keypad
 	KEYCODE_KP0         = 256,
@@ -215,7 +216,10 @@ enum {
 enum {
 	KBD_CTRL  = 1 << 0,
 	KBD_ALT   = 1 << 1,
-	KBD_SHIFT = 1 << 2
+	KBD_SHIFT = 1 << 2,
+	KBD_NUM   = 1 << 3,
+	KBD_CAPS  = 1 << 4,
+	KBD_SCRL  = 1 << 5
 };
 
 /**
@@ -245,7 +249,7 @@ struct KeyState {
 	/**
 	 * Status of the modifier keys. Bits are set in this for each
 	 * pressed modifier
-	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
+	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT, KBD_NUM, KBD_CAPS, KBD_SCRL
 	 */
 	byte flags;
 
@@ -264,6 +268,13 @@ struct KeyState {
 	void reset() {
 		keycode = KEYCODE_INVALID;
 		ascii = flags = 0;
+	}
+
+	/**
+	 * Check for flags, ignoring the sticky flags (KBD_NUM, KBD_CAPS, KBD_SCRL)
+	 */
+	bool hasFlags(byte f) {
+		return f == (flags & ~(KBD_NUM|KBD_CAPS|KBD_SCRL));
 	}
 
 	bool operator ==(const KeyState &x) const {

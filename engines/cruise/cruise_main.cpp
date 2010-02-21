@@ -1759,7 +1759,7 @@ bool manageEvents() {
 				break;
 			}
 
-			if (event.kbd.flags == Common::KBD_CTRL) {
+			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					// Start the debugger
 					_vm->getDebugger()->attach();

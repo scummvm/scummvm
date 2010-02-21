@@ -362,7 +362,7 @@ bool MadsInterfaceView::handleKeypress(int32 keycode) {
 
 	// Capitalise the letter if necessary
 	if (_cheatKeyCtr < CHEAT_SEQUENCE_MAX) {
-		if ((flags == Common::KBD_CTRL) && (kc == CHEAT_SEQUENCE[_cheatKeyCtr])) {
+		if ((flags & Common::KBD_CTRL) && (kc == CHEAT_SEQUENCE[_cheatKeyCtr])) {
 			++_cheatKeyCtr;
 			if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
 				Dialog::display(_vm, 22, cheatingEnabledDesc);

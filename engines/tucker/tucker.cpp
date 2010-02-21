@@ -607,7 +607,7 @@ void TuckerEngine::parseEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_f:
-				if (ev.kbd.flags == Common::KBD_CTRL) {
+				if (ev.kbd.hasFlags(Common::KBD_CTRL)) {
 					_fastMode = !_fastMode;
 				}
 				break;

@@ -293,7 +293,7 @@ void DraciEngine::handleEvents() {
 				}
 				break;
 			case Common::KEYCODE_F5:
-				if (event.kbd.flags == 0) {
+				if (event.kbd.hasFlags(0)) {
 					openMainMenuDialog();
 				}
 				break;

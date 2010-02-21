@@ -286,7 +286,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (!_editMode && isprint((unsigned char)state.ascii)) {
+	if (!_editMode && state.keycode <= Common::KEYCODE_z && isprint((unsigned char)state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
@@ -339,8 +339,18 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					sendCommand(kListItemActivatedCmd, _selectedItem);
 			}
 			break;
-		case Common::KEYCODE_BACKSPACE:
+
+		// Keypad & special keys
+		//   - if num lock is set, we do not handle the keypress
+		//   - if num lock is not set, we either fall down to the special key case
+		//     or ignore the key press for 0, 4, 5 and 6
+
 		case Common::KEYCODE_KP_PERIOD:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_BACKSPACE:
 		case Common::KEYCODE_DELETE:
 			if (_selectedItem >= 0) {
 				if (_editable) {
@@ -350,30 +360,68 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				}
 			}
 			break;
-		case Common::KEYCODE_UP:
-			if (_selectedItem > 0)
-				_selectedItem--;
+
+		case Common::KEYCODE_KP1:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_END:
+			_selectedItem = _list.size() - 1;
 			break;
+
+
+		case Common::KEYCODE_KP2:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
 		case Common::KEYCODE_DOWN:
 			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
 			break;
-		case Common::KEYCODE_PAGEUP:
-			_selectedItem -= _entriesPerPage - 1;
-			if (_selectedItem < 0)
-				_selectedItem = 0;
-			break;
+
+		case Common::KEYCODE_KP3:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
 		case Common::KEYCODE_PAGEDOWN:
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
 				_selectedItem = _list.size() - 1;
 			break;
+
+		case Common::KEYCODE_KP7:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
 		case Common::KEYCODE_HOME:
 			_selectedItem = 0;
 			break;
-		case Common::KEYCODE_END:
-			_selectedItem = _list.size() - 1;
+
+		case Common::KEYCODE_KP8:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_UP:
+			if (_selectedItem > 0)
+				_selectedItem--;
 			break;
+
+		case Common::KEYCODE_KP9:
+			if (state.flags & Common::KBD_NUM) {
+				handled = false;
+				break;
+			}
+		case Common::KEYCODE_PAGEUP:
+			_selectedItem -= _entriesPerPage - 1;
+			if (_selectedItem < 0)
+				_selectedItem = 0;
+			break;
+
 		default:
 			handled = false;
 		}

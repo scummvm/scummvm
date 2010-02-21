@@ -100,10 +100,10 @@ void Input::delay(uint amount) {
 			_idleTime = 0;
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.flags == Common::KBD_CTRL) {
-					if (event.kbd.keycode == 'd') {
+				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
+					if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger = true;
-					} else if (event.kbd.keycode == 'f') {
+					} else if (event.kbd.keycode == Common::KEYCODE_f) {
 						_fastMode = !_fastMode;
 					}
 				} else {

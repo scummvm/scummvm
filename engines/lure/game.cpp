@@ -195,7 +195,7 @@ void Game::execute() {
 				if (events.type() == Common::EVENT_KEYDOWN) {
 					uint16 roomNum = room.roomNumber();
 
-					if ((events.event().kbd.flags == Common::KBD_CTRL) &&
+					if ((events.event().kbd.hasFlags(Common::KBD_CTRL)) &&
 						(events.event().kbd.keycode == Common::KEYCODE_d)) {
 						// Activate the debugger
 						_debugger->attach();

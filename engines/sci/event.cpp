@@ -120,50 +120,15 @@ sciEvent SciEvent::getFromScummVM() {
 		int modifiers = em->getModifierState();
 
 		// We add the modifier key status to buckybits
-		// SDL sends a keydown event if a modifier key is turned on and a keyup event if it's off
-		//
-		// FIXME: This code is semi-bogus. It only records the modifier key being *pressed*.
-		// It does not track correctly whether capslock etc. is active. To do that, we
-		// would have to record the fact that the modifier was pressed in global var,
-		// and also watch for Common::EVENT_KEYUP events.
-		// But this is still not quite good enough, because not all events might
-		// pass through here (e.g. the GUI might be running with its own event loop).
-		//
-		// The best solution likely would be to add code to the EventManager class
-		// for tracking which keys are pressed and which are not...
-		if (ev.type == Common::EVENT_KEYDOWN || ev.type == Common::EVENT_KEYUP) {
-			switch (ev.kbd.keycode) {
-			case Common::KEYCODE_CAPSLOCK:
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					_modifierStates |= SCI_KEYMOD_CAPSLOCK;
-				} else {
-					_modifierStates &= ~SCI_KEYMOD_CAPSLOCK;
-				}
-				break;
-			case Common::KEYCODE_NUMLOCK:
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					_modifierStates |= SCI_KEYMOD_NUMLOCK;
-				} else {
-					_modifierStates &= ~SCI_KEYMOD_NUMLOCK;
-				}
-				break;
-			case Common::KEYCODE_SCROLLOCK:
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					_modifierStates |= SCI_KEYMOD_SCRLOCK;
-				} else {
-					_modifierStates &= ~SCI_KEYMOD_SCRLOCK;
-				}
-				break;
-			default:
-				break;
-			}
-		}
 		//TODO: SCI_EVM_INSERT
 
 		input.modifiers =
 		    ((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
 		    ((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
 		    ((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0) |
+		    ((ev.kbd.flags & Common::KBD_NUM) ? SCI_KEYMOD_NUMLOCK : 0) |
+		    ((ev.kbd.flags & Common::KBD_CAPS) ? SCI_KEYMOD_CAPSLOCK : 0) |
+			((ev.kbd.flags & Common::KBD_SCRL) ? SCI_KEYMOD_SCRLOCK : 0) |
 			_modifierStates;
 
 		switch (ev.type) {
@@ -173,7 +138,7 @@ sciEvent SciEvent::getFromScummVM() {
 			input.character = ev.kbd.ascii;
 
 			// Debug console
-			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {
+			if (ev.kbd.hasFlags(Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d) {
 				// Open debug console
 				Console *con = g_sci->getSciDebugger();
 				con->attach();

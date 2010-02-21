@@ -110,26 +110,26 @@ void ScummEngine_v80he::parseEvent(Common::Event event) {
 void ScummEngine::parseEvent(Common::Event event) {
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
-		if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9' &&
-			((event.kbd.flags == Common::KBD_ALT && canSaveGameStateCurrently()) ||
-			(event.kbd.flags == Common::KBD_CTRL && canLoadGameStateCurrently()))) {
-			_saveLoadSlot = event.kbd.keycode - '0';
+		if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9 &&
+			((event.kbd.hasFlags(Common::KBD_ALT) && canSaveGameStateCurrently()) ||
+			(event.kbd.hasFlags(Common::KBD_CTRL) && canLoadGameStateCurrently()))) {
+			_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 			//  don't overwrite autosave (slot 0)
 			if (_saveLoadSlot == 0)
 				_saveLoadSlot = 10;
 
 			sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-			_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
+			_saveLoadFlag = (event.kbd.hasFlags(Common::KBD_ALT)) ? 1 : 2;
 			_saveTemporaryState = false;
-		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
 			_fastMode ^= 1;
-		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
+		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_g) {
 			_fastMode ^= 2;
-		} else if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
-				event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+		} else if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d)
+		        || event.kbd.ascii == '~' || event.kbd.ascii == '#') {
 			_debugger->attach();
-		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
+		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_s) {
 			_res->resourceStats();
 		} else {
 			// Normal key press, pass on to the game.
@@ -355,12 +355,12 @@ void ScummEngine::processInput() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 	// F1 (the trigger for the original save/load dialog) is mapped to F5
-	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.flags == 0) {
+	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 	}
 
 	// Alt-F5 should bring up the original save/load dialog, so map it to F1.
-	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
 	}
 
@@ -383,7 +383,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 	// version string is hard coded in the engine, hence we don't invoke
 	// versionDialog for it. Dig/FT version strings are partly hard coded, too.
 	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
-	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.flags == Common::KBD_CTRL) {
+	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		versionDialog();
 
 	} else if (cutsceneExitKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_ESCAPE) {
@@ -408,7 +408,7 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 #endif
 
 void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
-	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.flags == Common::KBD_CTRL) {
+	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		SubtitleSettingsDialog dialog(this, _voiceMode);
 		_voiceMode = runDialog(dialog);
 
@@ -442,7 +442,7 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	ScummEngine::processKeyboard(lastKeyHit);
 
 	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		prepareSavegame();
 		if (_game.id == GID_MANIAC && _game.version == 0) {
 			runScript(2, 0, 0, 0);
@@ -467,7 +467,7 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 	ScummEngine::processKeyboard(lastKeyHit);
 
 	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
+	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
 		prepareSavegame();
 	}
 
@@ -504,7 +504,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	if (_game.id == GID_CMI)
 		mainmenuKeyEnabled = true;
 
-	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == 0)) {
+	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0))) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, 0);
 
@@ -513,25 +513,25 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
 
-	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0)) {
+	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 		confirmRestartDialog();
 
-	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.flags == 0)) {
+	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.hasFlags(0))) {
 		pauseGame();
 
-	} else if (talkstopKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_PERIOD && lastKeyHit.flags == 0)) {
+	} else if (talkstopKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_PERIOD && lastKeyHit.hasFlags(0))) {
 		_talkDelay = 0;
 		if (_sound->_sfxMode & 2)
 			stopTalk();
 
-	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.flags == 0)) {
+	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.hasFlags(0))) {
 		abortCutscene();
 
 		// VAR_CUTSCENEEXIT_KEY doesn't exist in SCUMM0
 		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
 			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
 	} else if (snapScrollKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_r &&
-		lastKeyHit.flags == Common::KBD_CTRL) {
+		lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		_snapScroll ^= 1;
 		if (_snapScroll) {
 			messageDialog("Snap scroll on");

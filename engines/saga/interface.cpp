@@ -651,7 +651,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 				return true;
 			}
 		}
-		if (keystate.keycode == Common::KEYCODE_o && keystate.flags == Common::KBD_CTRL) { // ctrl-o
+		if (keystate.keycode == Common::KEYCODE_o && keystate.hasFlags(Common::KBD_CTRL)) { // ctrl-o
 			if (_saveReminderState > 0) {
 				setMode(kPanelOption);
 				return true;
