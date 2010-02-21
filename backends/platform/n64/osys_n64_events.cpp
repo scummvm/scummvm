@@ -275,6 +275,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!(cur_CU && cur_CL)) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP7;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -283,6 +284,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!(cur_CU && cur_CR)) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP9;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -291,6 +293,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!(cur_CD && cur_CL)) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP1;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -299,6 +302,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!(cur_CD && cur_CR)) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP3;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -307,6 +311,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!cur_CL) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP4;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -315,6 +320,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!cur_CR) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP6;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -323,6 +329,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!cur_CU) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP8;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -331,6 +338,7 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			if (!cur_CD) {
 				buttonPressed = true;
 				event.kbd.keycode = Common::KEYCODE_KP2;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
@@ -340,41 +348,49 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP7;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 7;
 			} else if (cur_CU && cur_CR) { // UP - RIGHT
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP9;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 9;
 			} else if (cur_CD && cur_CL) { // DOWN - LEFT
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP1;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 1;
 			} else if (cur_CD && cur_CR) { // DOWN - RIGHT
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP3;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 3;
 			} else if (cur_CL) { // LEFT
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP4;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 4;
 			} else if (cur_CR) { // RIGHT
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP6;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 6;
 			} else if (cur_CU) { // UP
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP8;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 8;
 			} else if (cur_CD) { // DOWN
 				buttonPressed = true;
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP2;
+				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				lastKPad = 2;
 			}
 			break;
