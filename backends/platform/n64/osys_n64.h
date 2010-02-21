@@ -113,6 +113,8 @@ protected:
 	uint16	_overlayHeight, _overlayWidth;
 	bool	_overlayVisible;
 
+	bool	_disableFpsLimit; // When this is enabled, the system doesn't limit screen updates
+
 	bool _mouseVisible;
 	volatile int _mouseX, _mouseY;
 	volatile float _tempMouseX, _tempMouseY;

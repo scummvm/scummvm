@@ -83,6 +83,8 @@ OSystem_N64::OSystem_N64() {
 	// Max FPS
 	_maxFps = N64_NTSC_FPS;
 
+	_disableFpsLimit = false;
+
 	_overlayVisible = false;
 
 	_shakeOffset = 0;
@@ -486,11 +488,13 @@ void OSystem_N64::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 void OSystem_N64::updateScreen() {
 #ifdef LIMIT_FPS
 	static uint32 _lastScreenUpdate = 0;
-	uint32 now = getMillis();
-	if (now - _lastScreenUpdate < 1000 / _maxFps)
-		return;
+	if (!_disableFpsLimit) {
+		uint32 now = getMillis();
+		if (now - _lastScreenUpdate < 1000 / _maxFps)
+			return;
 
-	_lastScreenUpdate = now;
+		_lastScreenUpdate = now;
+	}
 #endif
 
 	// Check if audio buffer needs refill
@@ -647,6 +651,14 @@ void OSystem_N64::hideOverlay() {
 	clearAllVideoBuffers();
 
 	_dirtyOffscreen = true;
+
+	// Force TWO screen updates (because of double buffered display).
+	// This way games which won't automatically update the screen
+	// when overlay is disabled, won't show a black screen. (eg. Lure)
+	_disableFpsLimit = true;
+	updateScreen();
+	updateScreen();
+	_disableFpsLimit = false;
 }
 
 void OSystem_N64::clearOverlay() {
