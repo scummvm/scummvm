@@ -92,6 +92,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "readtime", "Blue's Reading Time Activities" },
 	{ "Soccer2004", "Backyard Soccer 2004" },
 	{ "SoccerMLS", "Backyard Soccer MLS Edition" },
+	{ "spyozon", "SPY Fox 3: Operation Ozone" },
 #endif
 	{ "airport", "Let's Explore the Airport with Buzzy" },
 	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
@@ -127,7 +128,6 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "socks", "Pajama Sam's Sock Works" },
 	{ "spyfox", "SPY Fox 1: Dry Cereal" },
 	{ "spyfox2", "SPY Fox 2: Some Assembly Required" },
-	{ "spyozon", "SPY Fox 3: Operation Ozone" },
 	{ "thinker1", "Big Thinkers First Grade" },
 	{ "thinkerk", "Big Thinkers Kindergarten" },
 	{ "water", "Freddi Fish and Luther's Water Worries" },
