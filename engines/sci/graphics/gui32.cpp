@@ -46,17 +46,17 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor)
-	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
+SciGui32::SciGui32(SegManager *segMan, SciEvent *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor)
+	: _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
-	_coordAdjuster = new GfxCoordAdjuster32(_s->_segMan);
+	_coordAdjuster = new GfxCoordAdjuster32(segMan);
 	g_sci->_gfxCoordAdjuster = _coordAdjuster;
-	_cursor->init(_coordAdjuster, _s->_event);
-	_compare = new GfxCompare(_s->_segMan, g_sci->getKernel(), _cache, _screen, _coordAdjuster);
+	_cursor->init(_coordAdjuster, event);
+	_compare = new GfxCompare(segMan, g_sci->getKernel(), _cache, _screen, _coordAdjuster);
 	g_sci->_gfxCompare = _compare;
-	_paint32 = new GfxPaint32(g_sci->getResMan(), _s->_segMan, g_sci->getKernel(), _coordAdjuster, _cache, _screen, _palette);
+	_paint32 = new GfxPaint32(g_sci->getResMan(), segMan, g_sci->getKernel(), _coordAdjuster, _cache, _screen, _palette);
 	g_sci->_gfxPaint = _paint32;
-	_frameout = new GfxFrameout(_s->_segMan, g_sci->getResMan(), _coordAdjuster, _cache, _screen, _palette, _paint32);
+	_frameout = new GfxFrameout(segMan, g_sci->getResMan(), _coordAdjuster, _cache, _screen, _palette, _paint32);
 	g_sci->_gfxFrameout = _frameout;
 }
 
@@ -65,10 +65,6 @@ SciGui32::~SciGui32() {
 	delete _paint32;
 	delete _compare;
 	delete _coordAdjuster;
-}
-
-void SciGui32::resetEngineState(EngineState *s) {
-	_s = s;
 }
 
 void SciGui32::init() {

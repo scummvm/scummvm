@@ -1014,7 +1014,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 #ifdef ENABLE_SCI32
 	if (g_sci->_gui32) {
-		g_sci->_gui32->resetEngineState(retval);
 		g_sci->_gui32->init();
 	} else {
 #endif

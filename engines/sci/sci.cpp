@@ -194,7 +194,7 @@ Common::Error SciEngine::run() {
 		_gfxPaint16 = 0;
 		_gfxPorts = 0;
 		_gui = 0;
-		_gui32 = new SciGui32(_gamestate, screen, palette, cache, cursor);
+		_gui32 = new SciGui32(_gamestate->_segMan, _gamestate->_event, screen, palette, cache, cursor);
 	} else {
 #endif
 		_gfxPorts = new GfxPorts(segMan, screen);

@@ -41,7 +41,7 @@ class GfxPaint32;
 
 class SciGui32 {
 public:
-	SciGui32(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor);
+	SciGui32(SegManager *segMan, SciEvent *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor);
 	~SciGui32();
 
 	void init();
@@ -50,12 +50,8 @@ public:
 
 	void drawRobot(GuiResourceId robotId);
 
-	// FIXME: Don't store EngineState
-	void resetEngineState(EngineState *s);
-
 protected:
 	GfxCursor *_cursor;
-	EngineState *_s;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxCache *_cache;
