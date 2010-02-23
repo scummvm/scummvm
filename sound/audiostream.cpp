@@ -342,6 +342,7 @@ QueuingAudioStreamImpl::~QueuingAudioStreamImpl() {
 }
 
 void QueuingAudioStreamImpl::queueAudioStream(AudioStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	assert(!_finished);
 	if ((stream->getRate() != getRate()) || (stream->isStereo() != isStereo()))
 		error("QueuingAudioStreamImpl::queueAudioStream: stream has mismatched parameters");
 
