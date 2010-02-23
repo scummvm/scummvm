@@ -1350,7 +1350,7 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	case "$_host" in
-		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
+		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			DEFINES="$DEFINES -DUNIX"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
