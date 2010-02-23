@@ -586,6 +586,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// Gabriel Knight - French DOS CD (from Hkz)
+	// VERSION file reports "1.000.000, May 3, 1994"
+	{"gk1", "CD", {
+		{"resource.map", 0, "55f909ba93a2515042a08d8a2da8414e", 11392},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13325145},
+		{NULL, 0, NULL, 0}},
+		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NONE	},
+
 	// Gabriel Knight - English Windows CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
 	{"gk1", "CD", {
