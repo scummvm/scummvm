@@ -77,7 +77,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		uint32 neededSleep = 30;
 
 		if (duration < neededSleep) {
-			kernel_sleep(s->_event, neededSleep - duration);
+			s->_event->sleep(neededSleep - duration);
 			s->_throttleLastTime = g_system->getMillis();
 		} else {
 			s->_throttleLastTime = curTime;

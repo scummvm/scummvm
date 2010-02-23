@@ -118,6 +118,8 @@ public:
 
 	sciEvent get(unsigned int mask);
 
+	void sleep(uint32 msecs);
+
 private:
 	int altify (int ch);
 	int shiftify (int c);
@@ -126,8 +128,6 @@ private:
 
 	Common::List<sciEvent> _events;
 };
-
-void kernel_sleep(SciEvent *event, uint32 msecs); // is in kernel.cpp
 
 } // End of namespace Sci
 

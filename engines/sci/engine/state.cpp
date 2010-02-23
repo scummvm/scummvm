@@ -27,7 +27,7 @@
 
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
-#include "sci/event.h"	// for kernel_sleep
+#include "sci/event.h"
 
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -93,7 +93,7 @@ void EngineState::wait(int16 ticks) {
 	last_wait_time = time;
 
 	ticks *= g_debug_sleeptime_factor;
-	kernel_sleep(_event, ticks * 1000 / 60);
+	_event->sleep(ticks * 1000 / 60);
 }
 
 uint16 EngineState::currentRoomNumber() const {

@@ -351,4 +351,25 @@ sciEvent SciEvent::get(unsigned int mask) {
 	return event;
 }
 
+void SciEvent::sleep(uint32 msecs) {
+	uint32 time;
+	const uint32 wakeup_time = g_system->getMillis() + msecs;
+
+	while (true) {
+		// let backend process events and update the screen
+		get(SCI_EVENT_PEEK);
+		// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
+		time = g_system->getMillis();
+		if (time + 10 < wakeup_time) {
+			g_system->delayMillis(10);
+		} else {
+			if (time < wakeup_time)
+				g_system->delayMillis(wakeup_time - time);
+			break;
+		}
+
+	}
+}
+
+
 } // End of namespace Sci

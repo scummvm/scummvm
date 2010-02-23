@@ -721,26 +721,6 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 	return false;
 }
 
-void kernel_sleep(SciEvent *event, uint32 msecs) {
-	uint32 time;
-	const uint32 wakeup_time = g_system->getMillis() + msecs;
-
-	while (true) {
-		// let backend process events and update the screen
-		event->get(SCI_EVENT_PEEK);
-		// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
-		time = g_system->getMillis();
-		if (time + 10 < wakeup_time) {
-			g_system->delayMillis(10);
-		} else {
-			if (time < wakeup_time)
-				g_system->delayMillis(wakeup_time - time);
-			break;
-		}
-
-	}
-}
-
 void Kernel::setDefaultKernelNames(Common::String gameId) {
 	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 

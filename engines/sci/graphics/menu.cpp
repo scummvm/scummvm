@@ -760,7 +760,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			}
 			break;
 		case SCI_EVENT_NONE:
-			kernel_sleep(_event, 2500 / 1000);
+			_event->sleep(2500 / 1000);
 			break;
 		}
 	}
@@ -799,7 +799,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 			return curItemEntry;
 
 		case SCI_EVENT_NONE:
-			kernel_sleep(_event, 2500 / 1000);
+			_event->sleep(2500 / 1000);
 			break;
 		}
 
