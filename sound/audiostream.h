@@ -301,26 +301,32 @@ class QueuingAudioStream : public Audio::AudioStream {
 public:
 
 	/**
-	 * Queue an audio stream for playback. This stream will
-	 * play all queued streams, in the order they were queued.
-	 * If the disposeAfterUse is true, then the stream is
-	 * deleted after all data contained in it has been played.
+	 * Queue an audio stream for playback. This stream plays all queued
+	 * streams, in the order they were queued. If disposeAfterUse is set to
+	 * DisposeAfterUse::YES, then the queued stream is deleted after all data
+	 * contained in it has been played.
 	 */
 	virtual void queueAudioStream(Audio::AudioStream *audStream,
 						DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) = 0;
 
 	/**
-	 * Queue a block of raw audio data for playback. This stream
-	 * will play all queued buffers, in the order they were
-	 * queued. After all data contained in them has been played,
-	 * the buffer will be released using free(). So make sure to
-	 * allocate them with malloc(), not with new[]).
+	 * Queue a block of raw audio data for playback. This stream plays all
+	 * queued block, in the order they were queued. If disposeAfterUse is set
+	 * to DisposeAfterUse::YES, then the queued block is released using free()
+	 * after all data contained in it has been played.
+	 *
+	 * @note Make sure to allocate the data block with malloc(), not with new[].
+	 *
+	 * @param data	pointer to the audio data block
+	 * @param size	length of the audio data block
+	 * @param disposeAfterUse	if equal to DisposeAfterUse::YES, the block is released using free() after use.
+	 * @param flags	a bit-ORed combination of RawFlags describing the audio data format
 	 */
 	void queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags);
 
 	/**
-	 * Mark the stream as finished, that is, signal that no further data
-	 * will be appended to it. Only after this has been done can this
+	 * Mark this stream as finished. That is, signal that no further data
+	 * will be queued to it. Only after this has been done can this
 	 * stream ever 'end'.
 	 */
 	virtual void finish() = 0;
