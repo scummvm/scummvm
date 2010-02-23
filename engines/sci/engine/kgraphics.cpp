@@ -351,21 +351,8 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	int sleep_time = argv[0].toUint16();
-#if 0
-	uint32 time;
 
-	time = g_system->getMillis();
-	s->r_acc = make_reg(0, ((long)time - (long)s->last_wait_time) * 60 / 1000);
-	s->last_wait_time = time;
-
-	sleep_time *= g_debug_sleeptime_factor;
-	gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60);
-
-#endif
-
-	// FIXME: we should not be asking from the GUI to wait. The kernel sounds
-	// like a better place
-	g_sci->_gui->wait(sleep_time);
+	s->wait(sleep_time);
 
 	return s->r_acc;
 }

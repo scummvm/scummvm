@@ -27,7 +27,6 @@
 #include "common/util.h"
 
 #include "sci/sci.h"
-#include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"

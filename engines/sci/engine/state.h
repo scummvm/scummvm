@@ -121,6 +121,8 @@ public:
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
 
+	void wait(int16 ticks);
+
 	uint32 _throttleCounter; /**< total times kAnimate was invoked */
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;

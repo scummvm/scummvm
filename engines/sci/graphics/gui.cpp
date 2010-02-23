@@ -97,14 +97,7 @@ void SciGui::init(bool usesOldGfxFunctions) {
 }
 
 void SciGui::wait(int16 ticks) {
-	uint32 time;
-
-	time = g_system->getMillis();
-	_s->r_acc = make_reg(0, ((long)time - (long)_s->last_wait_time) * 60 / 1000);
-	_s->last_wait_time = time;
-
-	ticks *= g_debug_sleeptime_factor;
-	kernel_sleep(_s->_event, ticks * 1000 / 60);
+	_s->wait(ticks);
 }
 
 void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {

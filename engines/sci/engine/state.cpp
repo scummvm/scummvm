@@ -23,7 +23,11 @@
  *
  */
 
+#include "common/system.h"
+
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
+#include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/event.h"	// for kernel_sleep
 
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -79,6 +83,17 @@ EngineState::EngineState(Vocabulary *voc, SegManager *segMan)
 
 EngineState::~EngineState() {
 	delete _msgState;
+}
+
+void EngineState::wait(int16 ticks) {
+	uint32 time;
+
+	time = g_system->getMillis();
+	r_acc = make_reg(0, ((long)time - (long)last_wait_time) * 60 / 1000);
+	last_wait_time = time;
+
+	ticks *= g_debug_sleeptime_factor;
+	kernel_sleep(_event, ticks * 1000 / 60);
 }
 
 uint16 EngineState::currentRoomNumber() const {

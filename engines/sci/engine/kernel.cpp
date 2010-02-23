@@ -721,7 +721,7 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 	return false;
 }
 
-void kernel_sleep(SciEvent *event, uint32 msecs ) {
+void kernel_sleep(SciEvent *event, uint32 msecs) {
 	uint32 time;
 	const uint32 wakeup_time = g_system->getMillis() + msecs;
 
