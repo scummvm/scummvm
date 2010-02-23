@@ -214,9 +214,12 @@ enum {
  * Keyboard modifier flags, used for Event::kbd::flags.
  */
 enum {
+	// Non-sticky modifier flags
 	KBD_CTRL  = 1 << 0,
 	KBD_ALT   = 1 << 1,
 	KBD_SHIFT = 1 << 2,
+
+	// Sticky modifier flags
 	KBD_NUM   = 1 << 3,
 	KBD_CAPS  = 1 << 4,
 	KBD_SCRL  = 1 << 5
@@ -229,12 +232,6 @@ struct KeyState {
 	/**
 	 * Abstract key code (will be the same for any given key regardless
 	 * of modifiers being held at the same time.
-	 * For example, this is the same for both 'A' and Shift-'A'.
-	 * @todo Document which values are to be used for non-ASCII keys
-	 * like F1-F10. For now, let's just say that our primary backend
-	 * is the SDL one, and it uses the values SDL uses... so until
-	 * we fix this, your best bet is to get a copy of SDL_keysym.h
-	 * and look at that, if you want to find out a key code.
 	 */
 	KeyCode keycode;
 
@@ -248,7 +245,13 @@ struct KeyState {
 
 	/**
 	 * Status of the modifier keys. Bits are set in this for each
-	 * pressed modifier
+	 * pressed modifier.
+	 * We distinguish 'non-sticky' and 'sticky' modifiers flags. The former
+	 * are only set while certain keys (ctrl, alt, shift) are pressed by the
+	 * user; the latter (num lock, caps lock, scroll lock) are activated when
+	 * certain keys are pressed and released; and deactivated when that key
+	 * is pressed and released a second time.
+	 *
 	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT, KBD_NUM, KBD_CAPS, KBD_SCRL
 	 */
 	byte flags;
@@ -271,7 +274,12 @@ struct KeyState {
 	}
 
 	/**
-	 * Check for flags, ignoring the sticky flags (KBD_NUM, KBD_CAPS, KBD_SCRL)
+	 * Check whether the non-sticky flags are *exactly* as specified by f.
+	 * This ignors the sticky flags (KBD_NUM, KBD_CAPS, KBD_SCRL).
+	 * If you just want to check whether a modifier flag is set, just bit-and
+	 * the flag. E.g. to check whether the control key modifier is set,
+	 * you can write
+	 *    if (keystate.flags & KBD_CTRL) { ... }
 	 */
 	bool hasFlags(byte f) {
 		return f == (flags & ~(KBD_NUM|KBD_CAPS|KBD_SCRL));
