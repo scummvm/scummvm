@@ -722,6 +722,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "pyjam2", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "pajama2", "Pajama Sam 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PajamaTAL", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pajama2", "PYJAMADB", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PyjamaHM", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
