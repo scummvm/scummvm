@@ -512,7 +512,6 @@ Common::Error TeenAgentEngine::run() {
 			}
 		}
 
-		_system->showMouse(scene->getMessage().empty());
 		//game delays: slow 16, normal 11, fast 5, crazy 1
 		//mark delays: 4 * (3 - hero_speed), normal == 1
 		//game delays in 1/100th of seconds
@@ -541,6 +540,7 @@ Common::Error TeenAgentEngine::run() {
 			}
 			scene_busy = b;
 		}
+		_system->showMouse(scene->getMessage().empty() && !scene_busy);
 
 		bool busy = inventory->active() || scene_busy;
 
