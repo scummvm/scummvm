@@ -221,6 +221,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	scene->loadObjectData();
 	scene->init(id, Common::Point(x, y));
 	scene->setPalette(4);
+	scene->intro = false;
 	return Common::kNoError;
 }
 
