@@ -455,6 +455,19 @@ Animation * Scene::getAnimation(byte slot) {
 void Scene::push(const SceneEvent &event) {
 	//debug(0, "push");
 	//event.dump();
+	if (event.type == SceneEvent::kWalk && !events.empty()) {
+		SceneEvent &prev = events.back();
+		if (prev.type == SceneEvent::kWalk) {
+			debug(0, "fixing double-move [skipping event!]");
+			if ((event.color & 2) != 0) { //relative move
+				prev.dst.x += event.dst.x;
+				prev.dst.y += event.dst.y;
+			} else {
+				prev.dst = event.dst;
+			}
+			return;
+		}
+	}
 	events.push_back(event);
 }
 
