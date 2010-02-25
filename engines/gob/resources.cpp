@@ -350,16 +350,13 @@ bool Resources::loadTOTTextTable(const Common::String &fileBase) {
 
 	_totTextTable = new TOTTextTable;
 
-	bool fromTOT;
 	if (totProps.textsOffset == 0) {
-		fromTOT                 = false;
 		_totTextTable->data     = loadTOTLocTexts(fileBase, _totTextTable->size);
 		_totTextTable->needFree = true;
 	} else {
-		fromTOT                 = true;
 		_totTextTable->data     = _totData + totProps.textsOffset - _totResStart;
 		_totTextTable->needFree = false;
-		_totTextTable->size     = _totSize - totProps.textsOffset;
+		_totTextTable->size     = totProps.textsSize;
 	}
 
 	if (_totTextTable->data) {
@@ -372,9 +369,6 @@ bool Resources::loadTOTTextTable(const Common::String &fileBase) {
 
 			item.offset = totTextTable.readSint16LE();
 			item.size   = totTextTable.readSint16LE();
-
-			if (fromTOT)
-				item.offset -= (totProps.textsOffset - _totResStart);
 		}
 	}
 
@@ -572,14 +566,11 @@ TextItem *Resources::getTextItem(uint16 id) const {
 
 	if ((totItem.offset == 0xFFFF) || (totItem.size == 0))
 		return 0;
+
 	if ((totItem.offset + totItem.size) > (_totTextTable->size)) {
-// HACK: Some Fascination versions (Amiga, Atari and first PC floppies) have a different header, which is a problem here.
-//       Playtoons also have the same problem (and workaround).
-// TODO: Handle that in a proper way
-		if (((_vm->getGameType() == kGameTypeFascination) || (_vm->getGameType() == kGameTypePlaytoons)) && (_totTextTable->size < 0))
-			warning("totTextTable with negative size id:%d offset:%d in file %s : (size: %d)", id, totItem.offset, _totFile.c_str(), _totTextTable->size);
-		else
-			return 0;
+		warning("TOT text %d offset %d out of range (%s, %d, %d)",
+			id, totItem.offset, _totFile.c_str(), _totSize, totItem.size);
+		return 0;
 	}
 
 	return new TextItem(_totTextTable->data + totItem.offset, totItem.size);
@@ -710,7 +701,8 @@ byte *Resources::getTOTData(TOTResourceItem &totItem) const {
 	int32 offset = _totResourceTable->dataOffset + totItem.offset - _totResStart;
 
 	if ((offset < 0) || (((uint32) (offset + totItem.size)) > _totSize)) {
-		warning("Skipping data id:%d offset:%d size :%d in file %s : out of _totTextTable", totItem.index, totItem.offset, totItem.size, _totFile.c_str());
+		warning("TOT data %d offset %d out of range (%s, %d, %d)",
+				totItem.index, totItem.offset, _totFile.c_str(), _totSize, totItem.size);
 		return 0;
 	}
 

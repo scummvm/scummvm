@@ -97,11 +97,50 @@ bool TOTFile::getProperties(Properties &props) const {
 	for (int i = 0; i < 14; i++)
 		props.functions[i] = READ_LE_UINT16(_header + 100 + i * 2);
 
-	props.scriptEnd = _stream->size();
-	if (props.textsOffset > 0)
-		props.scriptEnd = MIN(props.scriptEnd, props.textsOffset);
-	if (props.resourcesOffset > 0)
-		props.scriptEnd = MIN(props.scriptEnd, props.resourcesOffset);
+	uint32 fileSize        = _stream->size();
+	uint32 textsOffset     = props.textsOffset;
+	uint32 resourcesOffset = props.resourcesOffset;
+
+	if (textsOffset == 0xFFFFFFFF)
+		textsOffset = 0;
+	if (resourcesOffset == 0xFFFFFFFF)
+		resourcesOffset = 0;
+
+	props.scriptEnd = fileSize;
+	if (textsOffset > 0)
+		props.scriptEnd = MIN(props.scriptEnd, textsOffset);
+	if (resourcesOffset > 0)
+		props.scriptEnd = MIN(props.scriptEnd, resourcesOffset);
+
+	// Calculate the sizes of the texts and resources tables for every possible order
+	if ((textsOffset > 0) && (resourcesOffset > 0)) {
+		// Both exists
+
+		if (props.textsOffset > resourcesOffset) {
+			// First resources, then texts
+			props.textsSize     = fileSize - textsOffset;
+			props.resourcesSize = textsOffset - resourcesOffset;
+		} else {
+			// First texts, then resources
+			props.textsSize     = resourcesOffset - textsOffset;
+			props.resourcesSize = fileSize - resourcesOffset;
+		}
+	} else if (textsOffset     > 0) {
+		// Only the texts table exists
+
+		props.textsSize     = fileSize - textsOffset;
+		props.resourcesSize = 0;
+	} else if (resourcesOffset > 0) {
+		// Only the resources table exists
+
+		props.textsSize     = 0;
+		props.resourcesSize = fileSize - resourcesOffset;
+	} else {
+		// Both don't exists
+
+		props.textsSize     = 0;
+		props.resourcesSize = 0;
+	}
 
 	return true;
 }

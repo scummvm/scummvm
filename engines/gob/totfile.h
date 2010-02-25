@@ -53,6 +53,8 @@ public:
 		uint8  communHandling;
 		uint16 functions[14];
 		uint32 scriptEnd;
+		uint32 textsSize;
+		uint32 resourcesSize;
 	};
 
 	TOTFile(GobEngine *vm);
