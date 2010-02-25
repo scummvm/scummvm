@@ -677,7 +677,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 50);
 		Dialog::show(scene, 0x36c7, 0, 666, 0xd1, 0xd0, 0, 2);
 		setOns(3, 0);
-		SET_FLAG(0xDBEC, 0);
+		setFlag(0xDBEC, 0);
 		reloadLan();
 		playSound(82, 19);
 		playAnimation(669, 1);
@@ -823,7 +823,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else if (CHECK_FLAG(0xDBA0, 1))
 			displayMessage(0x3E31);
 		else {
-			setFlag(0xdbec, 0); //workaround visible fatso bug(valve as last intrusion attempt)
 			moveTo(173, 138, 2);
 			playSound(28, 5);
 			playActorAnimation(583);
@@ -840,7 +839,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(586);
 			moveTo(138, 163, 3);
 			displayMessage(0x3650);
-			setFlag(0xdbec, 1);
 			SET_FLAG(0xDBA0, 1);
 			processCallback(0x9d45); //another mansion try
 		}
@@ -1867,11 +1865,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x655b://Get needle from haystack
-		if (CHECK_FLAG(0xdabb, 1)) { //already have needle
+		if (CHECK_FLAG(0xdb9d, 1)) { //already have needle
 			displayMessage(0x356a);
 			return true;
 		} else {
-			SET_FLAG(0xdabb, 1);
+			SET_FLAG(0xdb9d, 1);
 			playSound(49, 3);
 			playActorAnimation(548);
 			inventory->add(0x11);
@@ -2299,7 +2297,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return processCallback(0x61fe);
 
 	case 0x79d2:
-		if (CHECK_FLAG(0xDB9D, 1)) //bug in original game?
+		if (!CHECK_FLAG(0xDB9D, 1))
 			return false;
 		displayMessage(0x3590);
 		return true;
@@ -3876,7 +3874,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		return true;
 
-	case 0x9921: {
+	case 0x9921: { //using diving eq
 		int id = scene->getId();
 		if (id != 15) {
 			displayMessage(id == 16 ? 0x38ce : 0x38a7);
@@ -3895,9 +3893,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(64, 21);
 			playSound(64, 42);
 			playSound(64, 63);
-			setTimerCallback(0x9a1d, 40);
+			setTimerCallback(0x9a1d, 30);
 			playActorAnimation(617, false, true);
-			//another time challenge!
 		}
 	}
 	return true;
@@ -4046,18 +4043,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			return false;
 
 		uint16 ptr = res->dseg.get_word((attempts - 2) * 2 + 0x6035);
+		debug(0, "mansion callback = %04x", ptr);
 		byte id = scene->getId();
 
 		playMusic(11);
 		displayCutsceneMessage(0x580a, 30484);
 		processCallback(ptr);
 		playMusic(6);
-		if (CHECK_FLAG(0xDBEC, 1) && ptr == 0x9f3e)
-			return true;
-		//some effect
-		loadScene(id, scene->getPosition());
+		if (res->dseg.get_byte(0xdbec) != 1)
+			loadScene(id, scene->getPosition());
+		return true;
 	}
-	return true;
 
 	case 0x9d90:
 		hideActor();
@@ -4130,10 +4126,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(3, 51);
 		playAnimation(911, 1);
 		playAnimation(899, 1);
+		setFlag(0xDBEC, 1);
+		reloadLan();
 		wait(200);
 		enableObject(8);
 		setLan(2, 8);
-		SET_FLAG(0xDBEC, 1);
 		return true;
 	}
 
