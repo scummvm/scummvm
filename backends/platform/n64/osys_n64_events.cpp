@@ -79,7 +79,6 @@
 #define PRESSED_CD(now, before)		(CD_BUTTON(now) && !CD_BUTTON(before))
 #define RELEASED_CD(now, before)	(!CD_BUTTON(now) && CD_BUTTON(before))
 
-
 #define MOUSE_DEADZONE 0
 #define PAD_DEADZONE 1
 #define PAD_ACCELERATION 15
@@ -236,143 +235,126 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP;
 		}
 
-		// Simulate numpad using yellow C-Buttons on the pad
-		bool cur_CU, cur_CD, cur_CL, cur_CR;
-
-		static uint8 lastKPad = 0; // Latest simulated keypad button press
+		uint8 curKPad = 0; // Current simulated keypad button press
+		static uint8 lastKPad = 0; // Previously simulated keypad button press
 
 		// Check which directions are pressed
-		if (CU_BUTTON(newButtons)) // Pressed Yellow Up
-			cur_CU = true;
-		else if (!CU_BUTTON(newButtons)) // Released Yellow Up
-			cur_CU = false;
-
-		if (CD_BUTTON(newButtons)) // Pressed Yellow Down
-			cur_CD = true;
-		else if (!CD_BUTTON(newButtons)) // Released Yellow Down
-			cur_CD = false;
-
-		if (CL_BUTTON(newButtons)) // Pressed Yellow Left
-			cur_CL = true;
-		else if (!CL_BUTTON(newButtons)) // Released Yellow Left
-			cur_CL = false;
-
-		if (CR_BUTTON(newButtons)) // Pressed Yellow Right
-			cur_CR = true;
-		else if (!CR_BUTTON(newButtons)) // Released Yellow Right
-			cur_CR = false;
+		if (CU_BUTTON(newButtons)) {
+			if (CL_BUTTON(newButtons)) {
+				curKPad = 7;
+			} else if (CR_BUTTON(newButtons)) {
+				curKPad = 9;
+			} else {
+				curKPad = 8;
+			}
+		} else if (CD_BUTTON(newButtons)) {
+			if (CL_BUTTON(newButtons)) {
+				curKPad = 1;
+			} else if (CR_BUTTON(newButtons)) {
+				curKPad = 3;
+			} else {
+				curKPad = 2;
+			}
+		} else if (CL_BUTTON(newButtons)) {
+			curKPad = 4;
+		} else if (CR_BUTTON(newButtons)) {
+			curKPad = 6;
+		}
 
 		switch (lastKPad) {
 		case 7: // UP - LEFT
-			if (!(cur_CU && cur_CL)) {
+			if (curKPad != 7) {
 				event.kbd.keycode = Common::KEYCODE_KP7;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 9: // UP - RIGHT
-			if (!(cur_CU && cur_CR)) {
+			if (curKPad != 9) {
 				event.kbd.keycode = Common::KEYCODE_KP9;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 1: // DOWN - LEFT
-			if (!(cur_CD && cur_CL)) {
+			if (curKPad != 1) {
 				event.kbd.keycode = Common::KEYCODE_KP1;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 3: // DOWN - RIGHT
-			if (!(cur_CD && cur_CR)) {
+			if (curKPad != 3) {
 				event.kbd.keycode = Common::KEYCODE_KP3;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 4: // LEFT
-			if (!cur_CL) {
+			if (curKPad != 4) {
 				event.kbd.keycode = Common::KEYCODE_KP4;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 6: // RIGHT
-			if (!cur_CR) {
+			if (curKPad != 6) {
 				event.kbd.keycode = Common::KEYCODE_KP6;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 8: // UP
-			if (!cur_CU) {
+			if (curKPad != 8) {
 				event.kbd.keycode = Common::KEYCODE_KP8;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 2: // DOWN
-			if (!cur_CD) {
+			if (curKPad != 2) {
 				event.kbd.keycode = Common::KEYCODE_KP2;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 				event.type = Common::EVENT_KEYUP;
 				lastKPad = 0;
 			}
 			break;
 		case 0: // No previous press
-			if (cur_CU && cur_CL) { // UP - LEFT
+			if (curKPad == 7) { // UP - LEFT
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP7;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 7;
-			} else if (cur_CU && cur_CR) { // UP - RIGHT
+			} else if (curKPad == 9) { // UP - RIGHT
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP9;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 9;
-			} else if (cur_CD && cur_CL) { // DOWN - LEFT
+			} else if (curKPad == 1) { // DOWN - LEFT
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP1;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 1;
-			} else if (cur_CD && cur_CR) { // DOWN - RIGHT
+			} else if (curKPad == 3) { // DOWN - RIGHT
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP3;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 3;
-			} else if (cur_CL) { // LEFT
+			} else if (curKPad == 4) { // LEFT
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP4;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 4;
-			} else if (cur_CR) { // RIGHT
+			} else if (curKPad == 6) { // RIGHT
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP6;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 6;
-			} else if (cur_CU) { // UP
+			} else if (curKPad == 8) { // UP
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP8;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 8;
-			} else if (cur_CD) { // DOWN
+			} else if (curKPad == 2) { // DOWN
 				event.type = Common::EVENT_KEYDOWN;
 				event.kbd.keycode = Common::KEYCODE_KP2;
-				event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
-				lastKPad = 2;
 			}
+			lastKPad = curKPad;
+
 			break;
 		default:
 			lastKPad = 0;
 			break; // Do nothing.
+		}
+
+		// A simulated keypad has been "pressed", input the ascii code
+		if (curKPad != 0) {
+			event.kbd.ascii = event.kbd.keycode - Common::KEYCODE_KP0 + '0';
 		}
 
 		oldButtons = newButtons; // Save current button status
