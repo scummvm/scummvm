@@ -815,12 +815,13 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			}
 		}
 
-		if (!busy && !restart && callback_timer) {
+		if (!busy && !restart && tick_game && callback_timer) {
 			if (--callback_timer == 0) {
 				if (_engine->inventory->active())
 					_engine->inventory->activate(false);
 				_engine->processCallback(callback);
 			}
+			//debug(0, "callback timer = %u", callback_timer);
 		}
 
 		//if (!current_event.empty())
