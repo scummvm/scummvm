@@ -28,6 +28,8 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
+#ifndef DISABLE_SID
+
 #include "sid.h"
 
 namespace Resid
@@ -2098,3 +2100,4 @@ reg8 WaveformGenerator::wave6581_PST[] =
 };
 
 }
+#endif

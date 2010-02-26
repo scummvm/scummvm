@@ -23,6 +23,8 @@
  *
  */
 
+#ifndef DISABLE_SID
+
 #include "engines/engine.h"
 #include "scumm/player_sid.h"
 #include "scumm/scumm.h"
@@ -1389,3 +1391,5 @@ int Player_SID::getMusicTimer() {
 }
 
 } // End of namespace Scumm
+
+#endif

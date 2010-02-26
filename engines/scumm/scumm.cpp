@@ -1710,7 +1710,9 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformApple2GS && _game.version == 0){
 		// TODO: Add support for music format
 	} else if (_game.platform == Common::kPlatformC64 && _game.version <= 1) {
+#ifndef DISABLE_SID
 		_musicEngine = new Player_SID(this, _mixer);
+#endif
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
 		_musicEngine = new Player_NES(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 2) {

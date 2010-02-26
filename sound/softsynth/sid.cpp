@@ -28,6 +28,8 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
+#ifndef DISABLE_SID
+
 #include "sid.h"
 #include <math.h>
 
@@ -1424,3 +1426,5 @@ int SID::clock(cycle_count& delta_t, short* buf, int n, int interleave) {
 }
 
 }
+
+#endif
