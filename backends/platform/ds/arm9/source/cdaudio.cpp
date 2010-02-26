@@ -137,18 +137,21 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 
 	char str[100];
 
-	if (path[strlen(path.c_str()) - 1] == '/') {
-		sprintf(str, "track%d.wav", track);
-		path = path + str;
-	} else {
-		sprintf(str, "/track%d.wav", track);
-		path = path + str;
+	if (path[strlen(path.c_str()) - 1] != '/') {
+		path = path + "/";
 	}
 
+	Common::String fname;
 
-	//1820160
+	sprintf(str, "track%d.wav", track);
+	fname = path + str;
+	file = DS::std_fopen(fname.c_str(), "rb");
 
-	file = DS::std_fopen(path.c_str(), "rb");
+	if (!file) {
+		sprintf(str, "track%02d.wav", track);
+		fname = path + str;
+		file = DS::std_fopen(fname.c_str(), "rb");
+	}
 
 	if (!file) {
 		consolePrintf("Failed to open %s!\n", path.c_str());
@@ -157,6 +160,8 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 
 
 	DS::std_fread((const void *) &waveHeader, sizeof(waveHeader), 1, file);
+
+	consolePrintf("File: %s\n", fname.c_str());
 
 	consolePrintf("Playing track %d\n", track);
 	consolePrintf("Format: %d\n", waveHeader.fmtFormatTag);
@@ -491,6 +496,26 @@ bool trackExists(int num) {
 	consolePrintf("Looking for %s...", path.c_str());
 
 	FILE* file;
+	if ((file = DS::std_fopen(path.c_str(), "r"))) {
+		consolePrintf("Success!\n");
+		setActive(true);
+		DS::std_fclose(file);
+		return true;
+	}
+
+	sprintf(fname, "track%02d.wav", num);
+
+	 path = ConfMan.get("path");
+
+	if (path[strlen(path.c_str()) - 1] == '/') {
+		path = path + fname;
+	} else {
+		path = path + "/" + fname;
+	}
+
+	consolePrintf("Looking for %s...", path.c_str());
+
+
 	if ((file = DS::std_fopen(path.c_str(), "r"))) {
 		consolePrintf("Success!\n");
 		setActive(true);

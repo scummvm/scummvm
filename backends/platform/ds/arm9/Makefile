@@ -8,31 +8,38 @@ libndsdir = $(DEVKITPRO)/libnds
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
 
-ifeq ($(SCUMM_BUILD),i)
-        DS_BUILD_I = 1
+ifeq ($(SCUMM_BUILD),k)
+	DS_BUILD_K = 1
 else
- ifeq ($(SCUMM_BUILD),h)
-         DS_BUILD_H = 1
+ ifeq ($(SCUMM_BUILD),j)
+ 	DS_BUILD_J = 1
+ else
+  ifeq ($(SCUMM_BUILD),i)
+        DS_BUILD_I = 1
   else
-   ifeq ($(SCUMM_BUILD),g)
-         DS_BUILD_G = 1
+   ifeq ($(SCUMM_BUILD),h)
+          DS_BUILD_H = 1
    else
-    ifeq ($(SCUMM_BUILD),f)
-         DS_BUILD_F = 1
+    ifeq ($(SCUMM_BUILD),g)
+         DS_BUILD_G = 1
     else
-     ifeq ($(SCUMM_BUILD),e)
-         DS_BUILD_E = 1
+     ifeq ($(SCUMM_BUILD),f)
+         DS_BUILD_F = 1
      else
-      ifeq ($(SCUMM_BUILD),d)
-         DS_BUILD_D = 1
+      ifeq ($(SCUMM_BUILD),e)
+         DS_BUILD_E = 1
       else
-       ifeq ($(SCUMM_BUILD),c)
-         DS_BUILD_C = 1
+       ifeq ($(SCUMM_BUILD),d)
+         DS_BUILD_D = 1
        else
-        ifeq ($(SCUMM_BUILD),b)
-         DS_BUILD_B = 1
+        ifeq ($(SCUMM_BUILD),c)
+         DS_BUILD_C = 1
         else
-         DS_BUILD_A = 1
+         ifeq ($(SCUMM_BUILD),b)
+         DS_BUILD_B = 1
+         else
+          DS_BUILD_A = 1
+         endif
         endif
        endif
       endif
@@ -41,6 +48,7 @@ else
    endif
   endif
  endif
+endif
 # To do:
 # - FAT cache?
 
@@ -58,9 +66,18 @@ else
 	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
 	# claw some back.
 
+	
 
 	else
-		USE_MAD = 1
+		ifdef DS_BUILD_I
+
+		else
+			ifdef DS_BUILD_K
+
+			else
+				USE_MAD = 1
+			endif
+		endif
 	endif
 endif
 
@@ -150,28 +167,51 @@ endif
 
 ifdef DS_BUILD_H
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
-	LOGO = logog.bmp
+	LOGO = logoh.bmp
 	ENABLE_PARALLACTION = STATIC_PLUGIN
 	BUILD=scummvm-H
 endif
 
 ifdef DS_BUILD_I
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
-	LOGO = logog.bmp
-	ENABLE_TUCKER = STATIC_PLUGIN
-	BUILD=scummvm-H
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_I
+	LOGO = logoi.bmp
+	ENABLE_MADE = STATIC_PLUGIN
+	BUILD=scummvm-I
 endif
+
+ifdef DS_BUILD_K
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_K
+	LOGO = logok.bmp
+	ENABLE_CRUISE = STATIC_PLUGIN
+	BUILD=scummvm-K
+endif
+
+
+#ifdef DS_BUILD_L
+#	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_L
+#	LOGO = logog.bmp
+#	ENABLE_DRASCULA = STATIC_PLUGIN
+#	BUILD=scummvm-K
+#endif
+
+#ifdef DS_BUILD_M
+#	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_M
+#	LOGO = logog.bmp
+#	ENABLE_TUCKER = STATIC_PLUGIN
+#	BUILD=scummvm-K
+#endif
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
 ICON		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
 
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++
+LD	= arm-eabi-g++
 
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
+		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -DDISABLE_SID
 
 
 # -ffast-math
@@ -187,7 +227,7 @@ ifdef USE_PROFILER
 endif
 
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
-		-fno-exceptions -fno-rtti -mthumb-interwork -ffunction-sections -fdata-sections
+		-fno-exceptions -fno-rtti -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing
 
 #		-mthumb
 
@@ -293,12 +333,19 @@ LIBCARTRESET_OBJS :=
 #$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp script.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O3
-#OPT_SPEED := -Os -mthumb
+ifdef DS_BUILD_E
+# Another attempt to save some RAM in ITE
+OPT_SPEED := -O3 -mthumb
+else
+#OPT_SPEED := -O3
+
+OPT_SPEED := -Os -mthumb
+
+endif
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
@@ -315,7 +362,7 @@ MODULE_DIRS += .
 
 ndsall:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	$(MAKE) -C ./$(BUILD) -f ../Makefile scummvm.nds
+	make -C ./$(BUILD) -f ../makefile scummvm.nds
 
 include $(srcdir)/Makefile.common
 

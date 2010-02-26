@@ -29,6 +29,7 @@ namespace DS {
 
 static const int NUM_WORDS = 12;
 static const int KEYBOARD_DATA_SIZE = 4736 * 2;
+static const int KEYBOARD_BOTTOM_Y = 105;
 
 void createKeyEvent(int keyNum, Common::Event& event);
 
@@ -36,6 +37,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace);
 void restoreVRAM(int tileBase, int mapBase, u16* saveSpace);
 void addKeyboardEvents();
 bool getKeyboardClosed();
+bool isInsideKeyboard(int x, int y);
 
 void addAutoComplete(const char* word);
 void clearAutoComplete();

@@ -38,6 +38,10 @@ allbuilds:
 	$(MAKE) all       SCUMM_BUILD=g
 	$(MAKE) semiclean
 	$(MAKE) all       SCUMM_BUILD=h
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=i
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=k
 
 allbuildssafe:
 	$(MAKE) clean     SCUMM_BUILD=a
@@ -56,3 +60,7 @@ allbuildssafe:
 	$(MAKE) all       SCUMM_BUILD=g
 	$(MAKE) clean     SCUMM_BUILD=h
 	$(MAKE) all       SCUMM_BUILD=h
+	$(MAKE) clean     SCUMM_BUILD=i
+	$(MAKE) all       SCUMM_BUILD=i
+	$(MAKE) clean     SCUMM_BUILD=k
+	$(MAKE) all       SCUMM_BUILD=k

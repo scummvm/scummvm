@@ -156,6 +156,29 @@ char autoCompleteBuffer[128];
 
 int selectedCompletion = -1;
 int charactersEntered = 0;
+int typingTimeout = 0;
+
+// Render text onto the tiled screen
+
+void drawText(int tx, int ty, char* string, bool highlight) {
+
+	u16 baseValue = 0;
+
+	if (highlight) {
+		baseValue |= 0x1000;
+	}
+
+	for (int p = 0; *string; string++, p++) {
+		char c = *string;
+
+		if (c != ' ') {
+			int tile = c - 33 + (KEYBOARD_DATA_SIZE / 32);
+			baseAddress[ty * 32 + tx + p] = baseValue | tile;
+		}
+	}
+	
+}
+
 
 
 void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
@@ -246,12 +269,16 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 		keys[r].pressed = false;
 	}
 
+
 	closed = false;
 	clearAutoComplete();
+
 }
+
 
 void drawAutoComplete() {
 
+	// Clear the auto complete area at the bottom of the screen.
 	for (int y = 12; y < 24; y++) {
 		for (int x = 0; x < 32; x++) {
 			baseAddress[y * 32 + x] = 0;
@@ -259,23 +286,26 @@ void drawAutoComplete() {
 	}
 
 
-	for (int r = 0; r < autoCompleteCount; r++) {
-		int y = 12 + (r % 6) * 2;
-		int x = 0 + ((r / 6) * 16);
+	if ((autoCompleteCount == 0) || (typingTimeout > 0)) {
 
-		for (int p = 0; autoCompleteWord[r][p] != 0; p++) {
-			char c = autoCompleteWord[r][p];
+		// When there's no completions on the bottom of the screen, it acts like a mouse pad
+		// so this text indicates that
+		drawText(11, 18, "MOUSE AREA", true);
+		
 
-			int tile = c - 33 + (KEYBOARD_DATA_SIZE / 32);
+	} else {
 
-			if (selectedCompletion == r) {
-				tile |= 0x1000;
-			}
+		consolePrintf("time: %d\n", typingTimeout);
 
-			baseAddress[y * 32 + x + p] = tile;
-
-
+		// Otherwise, draw autocompletions if one isn't being entered and there are
+		// some available.
+		for (int r = 0; r < autoCompleteCount; r++) {
+			int y = 12 + (r % 6) * 2;
+			int x = 0 + ((r / 6) * 16);
+	
+			drawText(x, y, autoCompleteWord[r], selectedCompletion == r);
 		}
+	
 	}
 }
 
@@ -307,6 +337,12 @@ void addAutoComplete(const char* word) {
 
 void setCharactersEntered(int count) {
 	charactersEntered = count;
+}
+
+bool isInsideKeyboard(int x, int y) {
+	// When completions are available, keyboard covers the whole screen.
+	// otherwise, it only covers the area above KEYBOARD_BOTTOM_Y
+	return (autoCompleteCount > 0) || (y < KEYBOARD_BOTTOM_Y);
 }
 
 void clearAutoComplete() {
@@ -345,10 +381,8 @@ void typeCompletion(int current) {
 	system->addEvent(event);*/
 }
 
-void updateTypeEvents()
-{
-	if (autoCompleteBuffer[0] != '\0')
-	{
+void updateTypeEvents() {
+	if (autoCompleteBuffer[0] != '\0') {
 		Common::Event event;
    		OSystem_DS* system = OSystem_DS::instance();
 
@@ -365,6 +399,8 @@ void updateTypeEvents()
 		{
 			autoCompleteBuffer[r] = autoCompleteBuffer[r + 1];
 		}
+
+		typingTimeout = 100;
 	}
 }
 
@@ -424,6 +460,13 @@ void addKeyboardEvents() {
 
 	updateTypeEvents();
 
+	if (typingTimeout > 0) {
+		typingTimeout--;
+		if (typingTimeout == 0) {
+			drawAutoComplete();
+		}
+	}
+
 	if (DS::getPenDown()) {
 		int x = IPC->touchXpx;
 		int y = IPC->touchYpx;
@@ -443,7 +486,9 @@ void addKeyboardEvents() {
 			if (selectedCompletion == current) {
 				typeCompletion(current);
 			} else {
-				selectedCompletion = current;
+				if (current < autoCompleteCount) {
+					selectedCompletion = current;
+				}
 			}
 
 			drawAutoComplete();
