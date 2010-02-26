@@ -338,27 +338,23 @@ Audio::AudioStream *Sound::getCSAmtrakMusic(uint16 id) {
 }
 
 Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stream) {
-	bool foundData = false;
 	uint32 tag = 0;
 	ADPC_Chunk adpc;
 	Cue_Chunk cue;
 	Data_Chunk data_chunk;
+	uint32 dataSize = 0;
 
 	memset(&data_chunk, 0, sizeof(Data_Chunk));
 
-	if (stream->readUint32BE() == ID_MHWK) // MHWK tag again
-		debug(2, "Found Tag MHWK");
-	else
+	if (stream->readUint32BE() != ID_MHWK) // MHWK tag again
 		error ("Could not find tag \'MHWK\'");
 
 	stream->readUint32BE(); // Skip size
 
-	if (stream->readUint32BE() == ID_WAVE)
-		debug(2, "Found Tag WAVE");
-	else
+	if (stream->readUint32BE() != ID_WAVE)
 		error ("Could not find tag \'WAVE\'");
 
-	while (!foundData) {
+	while (!data_chunk.audio_data) {
 		tag = stream->readUint32BE();
 
 		switch (tag) {
@@ -424,7 +420,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			debug(2, "Found Tag DATA");
 			// We subtract 20 from the actual chunk size, which is the total size
 			// of the chunk's header
-			data_chunk.size = stream->readUint32BE() - 20;
+			dataSize = stream->readUint32BE() - 20;
 			data_chunk.sample_rate = stream->readUint16BE();
 			data_chunk.sample_count = stream->readUint32BE();
 			data_chunk.bitsPerSample = stream->readByte();
@@ -440,9 +436,7 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 			// therefore does not contain any of this metadata and we have to specify whether
 			// or not to loop elsewhere.
 
-			data_chunk.audio_data = (byte *)malloc(data_chunk.size);
-			stream->read(data_chunk.audio_data, data_chunk.size);
-			foundData = true;
+			data_chunk.audio_data = stream->readStream(dataSize);
 			break;
 		default:
 			error ("Unknown tag found in 'tWAV' chunk -- \'%s\'", tag2str(tag));
@@ -461,15 +455,13 @@ Audio::AudioStream *Sound::makeMohawkWaveStream(Common::SeekableReadStream *stre
 		if (data_chunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
 
-		return Audio::makeRawStream(data_chunk.audio_data, data_chunk.size, data_chunk.sample_rate, flags);
+		return Audio::makeRawStream(data_chunk.audio_data, data_chunk.sample_rate, flags);
 	} else if (data_chunk.encoding == kCodecADPCM) {
-		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
 		uint32 blockAlign = data_chunk.channels * data_chunk.bitsPerSample / 8;
-		return Audio::makeADPCMStream(dataStream, DisposeAfterUse::YES, data_chunk.size, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign);
+		return Audio::makeADPCMStream(data_chunk.audio_data, DisposeAfterUse::YES, dataSize, Audio::kADPCMIma, data_chunk.sample_rate, data_chunk.channels, blockAlign);
 	} else if (data_chunk.encoding == kCodecMPEG2) {
 #ifdef USE_MAD
-		Common::MemoryReadStream *dataStream = new Common::MemoryReadStream(data_chunk.audio_data, data_chunk.size, DisposeAfterUse::YES);
-		return Audio::makeMP3Stream(dataStream, DisposeAfterUse::YES);
+		return Audio::makeMP3Stream(data_chunk.audio_data, DisposeAfterUse::YES);
 #else
 		warning ("MAD library not included - unable to play MP2 audio");
 #endif
@@ -496,12 +488,10 @@ Audio::AudioStream *Sound::makeOldMohawkWaveStream(Common::SeekableReadStream *s
 	} else
 		error("Could not find Old Mohawk Sound header");
 
-	assert(size);
-	byte *data = (byte *)malloc(size);
-	stream->read(data, size);
+	Common::SeekableReadStream *dataStream = stream->readStream(size);
 	delete stream;
 
-	return Audio::makeRawStream(data, size, rate, Audio::FLAG_UNSIGNED);
+	return Audio::makeRawStream(dataStream, rate, Audio::FLAG_UNSIGNED);
 }
 
 SndHandle *Sound::getHandle() {

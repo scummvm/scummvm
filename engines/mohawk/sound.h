@@ -46,15 +46,15 @@ namespace Mohawk {
 struct SLSTRecord {
 	uint16 index;
 	uint16 sound_count;
-	uint16* sound_ids;
+	uint16 *sound_ids;
 	uint16 fade_flags;
 	uint16 loop;
 	uint16 global_volume;
 	uint16 u0;
 	uint16 u1;
-	uint16* volumes;
-	int16* balances;
-	uint16* u2;
+	uint16 *volumes;
+	int16 *balances;
+	uint16 *u2;
 };
 
 enum SndHandleType {
@@ -100,7 +100,6 @@ enum {
 };
 
 struct Data_Chunk {
-	uint32 size;
 	uint16 sample_rate;
 	uint32 sample_count;
 	byte bitsPerSample;
@@ -109,7 +108,7 @@ struct Data_Chunk {
 	uint16 loop;
 	uint32 loopStart;
 	uint32 loopEnd;
-	byte* audio_data;
+	Common::SeekableReadStream *audio_data;
 };
 
 class MohawkEngine;
