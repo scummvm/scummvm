@@ -96,6 +96,7 @@ public:
 	void setOns(byte id, byte value, byte scene_id = 0);
 	void setLan(byte id, byte value, byte scene_id = 0);
 	void setFlag(uint16 addr, byte value);
+	byte getFlag(uint16 addr);
 	void reloadLan();
 	void rejectMessage();
 

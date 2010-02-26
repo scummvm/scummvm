@@ -804,6 +804,9 @@ void TeenAgentEngine::setFlag(uint16 addr, byte value) {
 	scene->push(event);
 }
 
+byte TeenAgentEngine::getFlag(uint16 addr) {
+	return scene->peekFlagEvent(addr);
+}
 
 void TeenAgentEngine::reloadLan() {
 	SceneEvent event(SceneEvent::kSetLan);

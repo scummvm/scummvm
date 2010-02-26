@@ -140,6 +140,7 @@ public:
 	void displayMessage(const Common::String &str, byte color = 0xd1, const Common::Point &pos = Common::Point());
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
+	byte peekFlagEvent(uint16 addr) const;
 	SceneEvent::Type last_event_type() const { return !events.empty()? events.back().type: SceneEvent::kNone; }
 
 	bool processEvent(const Common::Event &event);

@@ -452,6 +452,16 @@ Animation * Scene::getAnimation(byte slot) {
 	return custom_animation + slot;
 }
 
+byte Scene::peekFlagEvent(uint16 addr) const {
+	for(EventList::const_iterator i = events.reverse_begin(); i != events.end(); --i) {
+		const SceneEvent &e = *i;
+		if (e.type == SceneEvent::kSetFlag && e.callback == addr)
+			return e.color;
+	}
+	return Resources::instance()->dseg.get_byte(addr);
+}
+
+
 void Scene::push(const SceneEvent &event) {
 	//debug(0, "push");
 	//event.dump();
