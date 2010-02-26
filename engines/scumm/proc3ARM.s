@@ -246,7 +246,7 @@ innerloop:
 	BNE	masked
 
 	@ stall
-	LDRB	r14,[r14,r1]		@ r14 = pcolor = _palette[color]
+	LDRB	r14,[r14,r1,lsl#1]		@ r14 = pcolor = _palette[color]
 	@ stall
 	@ stall
 	CMP	r14,#13			@ if (pcolor == 13)

@@ -420,7 +420,7 @@ extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
                                         int _scaleX,
                                         int _scaleIndexX,
                                         byte *_shadow_table,
-                                        byte _palette[32],
+                                        uint16 _palette[32],
                                         int32 _numStrips,
                                         int _scaleIndexY);
 #endif
