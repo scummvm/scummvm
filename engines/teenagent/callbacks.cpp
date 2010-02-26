@@ -4050,7 +4050,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayCutsceneMessage(0x580a, 30484);
 		processCallback(ptr);
 		playMusic(6);
-		if (res->dseg.get_byte(0xdbec) != 1)
+		if (getFlag(0xdbec) != 1 || ptr != 0x9f3e) //ptr check eq. scene_id == 11
 			loadScene(id, scene->getPosition());
 		return true;
 	}
