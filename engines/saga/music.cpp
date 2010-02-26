@@ -306,6 +306,13 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 				if (!_digitalMusicContext->isCompressed()) {
 					byte musicFlags = Audio::FLAG_STEREO |
 										Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+
+					if (_vm->isBigEndian())
+						musicFlags &= ~Audio::FLAG_LITTLE_ENDIAN;
+
+					if (_vm->getFeatures() & GF_MONO_MUSIC)
+						musicFlags &= ~Audio::FLAG_STEREO;
+
 					audioStream = Audio::makeRawStream(musicStream, 11025, musicFlags, DisposeAfterUse::YES);
 				} else {
 					// Read compressed header to determine compression type

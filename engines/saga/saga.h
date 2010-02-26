@@ -145,7 +145,9 @@ enum GameFeatures {
 	GF_ITE_FLOPPY        = 1 << 1,
 	GF_SCENE_SUBSTITUTES = 1 << 2,
 	GF_NON_INTERACTIVE   = 1 << 3,
-	GF_OLD_ITE_DOS       = 1 << 4,
+#if 0
+	GF_OLD_ITE_DOS       = 1 << 4, 	// Currently unused
+#endif
 	GF_MONO_MUSIC        = 1 << 5,
 	GF_EXTRA_ITE_CREDITS = 1 << 6,
 	GF_IHNM_DEMO         = 1 << 7,
