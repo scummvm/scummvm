@@ -149,8 +149,9 @@ public:
 	bool _activatedSLST;
 	void runLoadDialog();
 
-	void changeToCard(uint16 = 0);
+	void changeToCard(uint16 dest);
 	void changeToStack(uint16);
+	void refreshCard();
 	Common::String getName(uint16 nameResource, uint16 nameID);
 	Common::String getStackName(uint16 stack);
 	void runCardScript(uint16 scriptType);

@@ -357,13 +357,13 @@ void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
 void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	// Close the trap book
 	*_vm->matchVarToString("atrap") = 0;
-	_vm->changeToCard(); // Refresh
+	_vm->refreshCard();
 }
 
 void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	// Open the trap book
 	*_vm->matchVarToString("atrap") = 1;
-	_vm->changeToCard(); // Refresh
+	_vm->refreshCard();
 }
 
 void RivenExternal::xarestoregame(uint16 argc, uint16 *argv) {
@@ -523,7 +523,7 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 		// TODO: Stop MLST's 7 and 8
 	}
 
-	_vm->changeToCard();
+	_vm->refreshCard();
 }
 
 void RivenExternal::xbsettrap(uint16 argc, uint16 *argv) {
@@ -659,21 +659,21 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 				if (*valve == 0 && changeY <= -10) {
 					*valve = 1;
 					// TODO: Play movie
-					_vm->changeToCard(); // Refresh
+					_vm->refreshCard();
 				} else if (*valve == 1) {
 					if (changeX >= 0 && changeY >= 10) {
 						*valve = 0;
 						// TODO: Play movie
-						_vm->changeToCard(); // Refresh
+						_vm->refreshCard();
 					} else if (changeX <= -10 && changeY <= 10) {
 						*valve = 2;
 						// TODO: Play movie
-						_vm->changeToCard(); // Refresh
+						_vm->refreshCard();
 					}
 				} else if (*valve == 2 && changeX >= 10) {
 					*valve = 1;
 					// TODO: Play movie
-					_vm->changeToCard(); // Refresh
+					_vm->refreshCard();
 				}
 				return;
 			default:
@@ -1150,7 +1150,7 @@ void RivenExternal::xooffice30_closebook(uint16 argc, uint16 *argv) {
 
 	// We now need to draw PLST 1 and refresh, but PLST 1 is
 	// drawn when refreshing anyway, so don't worry about that.
-	_vm->changeToCard();
+	_vm->refreshCard();
 }
 
 void RivenExternal::xobedroom5_closedrawer(uint16 argc, uint16 *argv) {
@@ -1230,7 +1230,7 @@ void RivenExternal::xgwatch(uint16 argc, uint16 *argv) {
 	_vm->_video->playMovieBlocking(1);
 
 	// And, finally, refresh
-	_vm->changeToCard();
+	_vm->refreshCard();
 }
 
 // ------------------------------------------------------------------------------------
@@ -1369,7 +1369,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 
 		// Now move the telescope down a position and refresh
 		*telescopePos -= 1;
-		_vm->changeToCard();
+		_vm->refreshCard();
 	}
 }
 
@@ -1393,7 +1393,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 
 	// Now move the telescope up a position and refresh
 	*telescopePos += 1;
-	_vm->changeToCard();
+	_vm->refreshCard();
 }
 
 void RivenExternal::xtisland390_covercombo(uint16 argc, uint16 *argv) {

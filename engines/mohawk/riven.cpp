@@ -127,16 +127,13 @@ Common::Error MohawkEngine_Riven::run() {
 				needsUpdate = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				if (_curHotspot >= 0) {
+				if (_curHotspot >= 0)
 					runHotspotScript(_curHotspot, kMouseDownScript);
-					//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
-				}
 				break;
 			case Common::EVENT_LBUTTONUP:
-				if (_curHotspot >= 0) {
+				if (_curHotspot >= 0)
 					runHotspotScript(_curHotspot, kMouseUpScript);
-					//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
-				} else
+				else
 					checkInventoryClick();
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -156,9 +153,8 @@ Common::Error MohawkEngine_Riven::run() {
 						for (uint16 i = 0; i < _hotspotCount; i++)
 							_gfx->drawRect(_hotspots[i].rect, _hotspots[i].enabled);
 						needsUpdate = true;
-					} else {
-						changeToCard();
-					}
+					} else
+						refreshCard();
 					break;
 				case Common::KEYCODE_F5:
 					runDialog(*_optionsDialog);
@@ -180,10 +176,8 @@ Common::Error MohawkEngine_Riven::run() {
 			}
 		}
 
-		if (_curHotspot >= 0) {
+		if (_curHotspot >= 0)
 			runHotspotScript(_curHotspot, kMouseInsideScript);
-			//scheduleScript(_hotspots[_curHotspot].script, kMouseMovedPressedReleasedScript);
-		}
 
 		if (shouldQuit()) {
 			if (_eventMan->shouldRTL() && (getFeatures() & GF_DEMO) && !(_curStack == aspit && _curCard == 12)) {
@@ -274,29 +268,26 @@ struct RivenSpecialChange {
 	{ tspit, 0x21b69, ospit,  0x2e76 }		// Dome Linking Book
 };
 
-void MohawkEngine_Riven::changeToCard(uint16 n) {
-	bool refreshMode = (n == 0);
+void MohawkEngine_Riven::changeToCard(uint16 dest) {
+	_curCard = dest;
+	debug (1, "Changing to card %d", _curCard);
 
-	// While this could be run without harm, it doesn't need to be. This should add a speed boost.
-	if (!refreshMode) {
-		debug (1, "Changing to card %d", n);
-		_curCard = n;
-
-		if (!(getFeatures() & GF_DEMO)) {
-			for (byte i = 0; i < 13; i++)
-				if (_curStack == rivenSpecialChange[i].startStack && _curCard == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
-					changeToStack(rivenSpecialChange[i].targetStack);
-					_curCard = matchRMAPToCard(rivenSpecialChange[i].targetCardRMAP);
-				}
-		}
-
-		if (_cardData.hasData)
-			runCardScript(kCardLeaveScript);
-
-		loadCard(_curCard);
+	if (!(getFeatures() & GF_DEMO)) {
+		for (byte i = 0; i < 13; i++)
+			if (_curStack == rivenSpecialChange[i].startStack && _curCard == matchRMAPToCard(rivenSpecialChange[i].startCardRMAP)) {
+				changeToStack(rivenSpecialChange[i].targetStack);
+				_curCard = matchRMAPToCard(rivenSpecialChange[i].targetCardRMAP);
+			}
 	}
 
-	// We need to reload hotspots when refreshing, however
+	if (_cardData.hasData)
+		runCardScript(kCardLeaveScript);
+
+	loadCard(_curCard);
+	refreshCard(); // Handles hotspots and scripts
+}
+
+void MohawkEngine_Riven::refreshCard() {
 	loadHotspots(_curCard);
 
 	_gfx->_updatesEnabled = true;

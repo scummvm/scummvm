@@ -417,17 +417,16 @@ void RivenScript::runExternalCommand(uint16 op, uint16 argc, uint16 *argv) {
 // Parameter 0: transition type
 // Parameters 1-4: transition rectangle
 void RivenScript::transition(uint16 op, uint16 argc, uint16 *argv) {
-	if (argc == 1) {
+	if (argc == 1)
 		_vm->_gfx->scheduleTransition(argv[0]);
-	} else {
+	else
 		_vm->_gfx->scheduleTransition(argv[0], Common::Rect(argv[1], argv[2], argv[3], argv[4]));
-	}
 }
 
 // Command 19: reload card
 void RivenScript::refreshCard(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Reloading card");
-	_vm->changeToCard();
+	debug(2, "Refreshing card");
+	_vm->refreshCard();
 }
 
 // Command 20: disable screen update
