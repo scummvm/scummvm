@@ -1,8 +1,8 @@
 # This file contains port specific Makefile rules. It is automatically
 # included by the default (main) Makefile.
 #
-# $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/tools/trunk/Makefile $
-# $Id: Makefile 30664 2008-01-27 19:47:41Z jvprat $
+# $URL$
+# $Id$
 
 
 #

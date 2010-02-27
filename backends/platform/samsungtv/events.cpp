@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/sdl/events.cpp $
- * $Id: events.cpp 43636 2009-08-22 12:35:49Z sev $
+ * $URL$
+ * $Id$
  *
  */
 

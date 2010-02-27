@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/gp2x/gp2x-mem.cpp $
- * $Id: gp2x-mem.cpp 39708 2009-03-27 14:12:42Z dhewg $
+ * $URL$
+ * $Id$
  *
  */
 

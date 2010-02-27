@@ -1,5 +1,5 @@
-# $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/tools/trunk/Makefile $
-# $Id: Makefile 30664 2008-01-27 19:47:41Z jvprat $
+# $URL$
+# $Id$
 
 MODULE := tools/create_lure
 

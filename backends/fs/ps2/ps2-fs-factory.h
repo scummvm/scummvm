@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/tags/release-0-13-0/backends/fs/ps2/ps2-fs-factory.h $
- * $Id: ps2-fs-factory.h 35648 2009-01-01 15:06:43Z sev $
+ * $URL$
+ * $Id$
  */
 
 #ifndef PS2_FILESYSTEM_FACTORY_H
