@@ -145,7 +145,7 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 	_codeBase = _vm->_dat->getObject(_runningScriptObjectIndex)->getData();
 	_codeIp = _codeBase;
 
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		byte opcode = readByte();
 
 		if (opcode >= 1 && opcode <= _commandsMax) {
@@ -160,9 +160,6 @@ void ScriptInterpreter::runScript(int16 scriptObjectIndex) {
 		if (++opcodeSleepCounter > 500) {
 			_vm->_screen->updateScreenAndWait(5);
 			opcodeSleepCounter = 0;
-			if (_vm->shouldQuit()) {
-				break;
-			}
 		}
 
 	}
