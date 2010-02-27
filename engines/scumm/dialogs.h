@@ -75,6 +75,7 @@ protected:
 	GUI::SaveLoadChooser	*_saveDialog;
 	GUI::SaveLoadChooser	*_loadDialog;
 
+	GUI::ButtonWidget *_loadButton;
 	GUI::ButtonWidget *_saveButton;
 
 	void save();

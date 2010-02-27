@@ -233,7 +233,7 @@ ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 
 	new GUI::ButtonWidget(this, "ScummMain.Resume", "Resume", kPlayCmd, 'P');
 
-	new GUI::ButtonWidget(this, "ScummMain.Load", "Load", kLoadCmd, 'L');
+	_loadButton = new GUI::ButtonWidget(this, "ScummMain.Load", "Load", kLoadCmd, 'L');
 	_saveButton = new GUI::ButtonWidget(this, "ScummMain.Save", "Save", kSaveCmd, 'S');
 
 	new GUI::ButtonWidget(this, "ScummMain.Options", "Options", kOptionsCmd, 'O');
@@ -269,11 +269,13 @@ ScummMenuDialog::~ScummMenuDialog() {
 }
 
 int ScummMenuDialog::runModal() {
+	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
 	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 	return ScummDialog::runModal();
 }
 
 void ScummMenuDialog::reflowLayout() {
+	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
 	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 	Dialog::reflowLayout();
 }
