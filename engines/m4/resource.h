@@ -115,6 +115,8 @@ enum ResourceType {RESTYPE_ROOM, RESTYPE_SC, RESTYPE_TEXT, RESTYPE_QUO, RESTYPE_
 enum ExtensionType {EXTTYPE_SS = 1, EXTTYPE_AA = 2, EXTTYPE_DAT = 3, EXTTYPE_HH = 4, EXTTYPE_ART = 5, 
 	EXTTYPE_INT = 6, EXTTYPE_NONE = -1};
 
+enum ResourcePrefixType {RESPREFIX_GL = 1, RESPREFIX_SC = 2, RESPREFIX_RM = 3};
+
 class MADSResourceManager : public ResourceManager {
 private:
 	ResourceType getResourceType(const char *resourceName);
@@ -126,6 +128,7 @@ public:
 	bool resourceExists(const char *resourceName);
 
 	static const char *getResourceName(char asciiCh, int prefix, ExtensionType extType, const char *suffix, int index);
+	static const char *getResourceName(ResourcePrefixType prefixType, int idx, const char *extension);
 	static const char *getAAName(int index);
 };
 

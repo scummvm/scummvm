@@ -511,6 +511,10 @@ bool Player::saidAny(const char *word1, const char *word2, const char *word3,
 /*--------------------------------------------------------------------------*/
 
 MadsObject::MadsObject(Common::SeekableReadStream *stream) {
+	load(stream);
+}
+
+void MadsObject::load(Common::SeekableReadStream *stream) {
 	// Get the next data block
 	uint8 obj[0x30];
 	stream->read(obj, 0x30);
@@ -519,7 +523,7 @@ MadsObject::MadsObject(Common::SeekableReadStream *stream) {
 	descId = READ_LE_UINT16(&obj[0]);
 	roomNumber = READ_LE_UINT16(&obj[2]);
 	article = (MADSArticles)obj[4];
-	vocabCount = obj[5];
+	vocabCount = obj[5] & 0x7f;
 	assert(vocabCount <= 3);
 
 	for (int i = 0; i < vocabCount; ++i) {

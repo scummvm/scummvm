@@ -29,6 +29,7 @@
 class View;
 
 #include "m4/assets.h"
+#include "m4/font.h"
 #include "m4/hotspot.h"
 #include "m4/graphics.h"
 #include "m4/viewmgr.h"
@@ -90,6 +91,7 @@ private:
 	HotSpotList _sceneHotspots;
 protected:
 	int _currentScene;
+	int _previousScene;
 	GameInterfaceView *_interfaceSurface;
 	M4Surface *_backgroundSurface;
 	M4Surface *_codeSurface;
@@ -161,7 +163,47 @@ public:
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 };
 
+struct SpriteSlot {
+	int16 spriteId;
+	int16 scale;
+	uint16 spriteListIndex;
+};
+
+struct TextDisplay {
+	bool active;
+	int spacing;
+	Common::Rect bounds;
+	int16 field_A;
+	uint8 colour1, colour2;
+	Font *font;
+	char message[100];
+};
+
+struct DirtyArea {
+	bool active;
+	bool active2;
+	Common::Rect bounds;
+};
+
+class MadsSceneInfo {
+public:
+	int sceneId;
+	int artFileNum;
+	int field_4;
+	int width;
+	int height;
+
+	int objectCount;
+	MadsObject objects[32];
+
+	void load(int sceneId);	
+};
+
 typedef Common::Array<SpriteAsset *> SpriteAssetArray;
+
+#define SPRITE_SLOTS_SIZE 50
+#define TEXT_DISPLAY_SIZE 40
+#define DIRTY_AREA_SIZE 90
 
 class MadsScene : public Scene {
 private:
@@ -170,8 +212,17 @@ private:
 	int _currentAction;
 	char _statusText[100];
 	MadsSceneLogic _sceneLogic;
+	MadsSceneInfo _sceneInfo;
 	SpriteAsset *_playerSprites;
 	SpriteAssetArray _sceneSprites;
+	SpriteSlot _spriteSlots[50];
+	TextDisplay _textDisplay[TEXT_DISPLAY_SIZE];
+	DirtyArea _dirtyAreas[DIRTY_AREA_SIZE];
+	int _spriteSlotsStart;
+
+	void drawElements();
+	void loadScene2(int sceneNumber, const char *aaName);
+	void loadSceneTemporary();
 public:
 	char _aaName[100];
 public:

@@ -174,6 +174,7 @@ class MadsObject {
 public:
 	MadsObject() {};
 	MadsObject(Common::SeekableReadStream *stream);
+	void load(Common::SeekableReadStream *stream);
 	bool isInInventory() const { return roomNumber == PLAYER_INVENTORY; };
 
 	uint16 descId;

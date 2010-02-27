@@ -59,6 +59,7 @@ Scene::~Scene() {
 }
 
 void Scene::loadScene(int sceneNumber) {
+	_previousScene = _currentScene;
 	_currentScene = sceneNumber;
 
 	// Load scene background and set palette
@@ -596,6 +597,59 @@ MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
 	strcpy(_statusText, "");
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_currentAction = kVerbNone;
+	_spriteSlotsStart = 0;
+}
+
+/**
+ * Secondary scene loading code
+ */
+void MadsScene::loadScene2(int sceneNumber, const char *aaName) {
+
+	_sceneInfo.load(sceneNumber);
+}
+
+/**
+ * Existing ScummVM code that needs to be eventually replaced with MADS code
+ */
+void MadsScene::loadSceneTemporary() {
+	/* Existing code that eventually needs to be replaced with the proper MADS code */
+	// Set system palette entries
+	_vm->_palette->blockRange(0, 7);
+	RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
+		{0x00<<2, 0x10<<2, 0x16<<2, 0}};
+	_vm->_palette->setPalette(&sysColors[0], 4, 3);
+
+	_backgroundSurface->loadBackground(_currentScene, &_palData);
+	_vm->_palette->addRange(_palData);
+	_backgroundSurface->translate(_palData);
+
+	if (_currentScene < 900) {
+		/*_backgroundSurface->fillRect(Common::Rect(0, MADS_SURFACE_HEIGHT,
+			_backgroundSurface->width(), _backgroundSurface->height()),
+			_vm->_palette->BLACK);*/
+		// TODO: interface palette
+		_interfaceSurface->madsloadInterface(0, &_interfacePal);
+		_vm->_palette->addRange(_interfacePal);
+		_interfaceSurface->translate(_interfacePal);
+		_backgroundSurface->copyFrom(_interfaceSurface, Common::Rect(0, 0, 320, 44), 0, 200 - 44);
+
+		_interfaceSurface->initialise();
+	}
+
+	// Don't load other screen resources for system screens
+	if (_currentScene >= 900)
+		return;
+
+	loadSceneHotSpotsMads(_currentScene);
+
+	// TODO: set walker scaling
+	// TODO: destroy woodscript buffer
+
+	// Load scene walk path file (*.COD/*.WW?)
+	loadSceneCodes(_currentScene);
+
+	// Load inverse color table file (*.IPL)
+	loadSceneInverseColorTable(_currentScene);
 }
 
 void MadsScene::loadScene(int sceneNumber) {
@@ -615,48 +669,14 @@ void MadsScene::loadScene(int sceneNumber) {
 	// Add the scene if necessary to the list of scenes that have been visited
 	_vm->globals()->addVisitedScene(sceneNumber);
 
+	// Secondary scene load routine
+	loadScene2(sceneNumber, "*I0.AA");
 
 	// Do any scene specific setup
 	_sceneLogic.enterScene();
 
-	/* Existing code that eventually needs to be replaced with the proper MADS code */
-	// Set system palette entries
-	_vm->_palette->blockRange(0, 7);
-	RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
-		{0x00<<2, 0x10<<2, 0x16<<2, 0}};
-	_vm->_palette->setPalette(&sysColors[0], 4, 3);
-
-	_backgroundSurface->loadBackground(sceneNumber, &_palData);
-	_vm->_palette->addRange(_palData);
-	_backgroundSurface->translate(_palData);
-
-	if (sceneNumber < 900) {
-		/*_backgroundSurface->fillRect(Common::Rect(0, MADS_SURFACE_HEIGHT,
-			_backgroundSurface->width(), _backgroundSurface->height()),
-			_vm->_palette->BLACK);*/
-		// TODO: interface palette
-		_interfaceSurface->madsloadInterface(0, &_interfacePal);
-		_vm->_palette->addRange(_interfacePal);
-		_interfaceSurface->translate(_interfacePal);
-		_backgroundSurface->copyFrom(_interfaceSurface, Common::Rect(0, 0, 320, 44), 0, 200 - 44);
-
-		_interfaceSurface->initialise();
-	}
-
-	// Don't load other screen resources for system screens
-	if (sceneNumber >= 900)
-		return;
-
-	loadSceneHotSpotsMads(sceneNumber);
-
-	// TODO: set walker scaling
-	// TODO: destroy woodscript buffer
-
-	// Load scene walk path file (*.COD/*.WW?)
-	loadSceneCodes(sceneNumber);
-
-	// Load inverse color table file (*.IPL)
-	loadSceneInverseColorTable(sceneNumber);
+	// Existing ScummVM code that needs to be eventually replaced with MADS code
+	loadSceneTemporary();
 
 	// Purge resources
 	_vm->res()->purge();
@@ -774,8 +794,70 @@ void MadsScene::setStatusText(const char *text) {
 	strcpy(_statusText, text);
 }
 
+/**
+ * Draws all the elements of the scene
+ */
+void MadsScene::drawElements() {
+	
+	// Display animations
+	for (int idx = 0; idx < _spriteSlotsStart; ++idx) {
+		
+	}
+
+
+	// Text display loop
+	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
+		if (_textDisplay[idx].active && (_textDisplay[idx].field_A >= 0)) {
+			_textDisplay[idx].font->setColours(0xFF, (_textDisplay[idx].colour2 == 0) ? 
+				_textDisplay[idx].colour1 : _textDisplay[idx].colour2, _textDisplay[idx].colour1);
+			_textDisplay[idx].font->writeString(this, _textDisplay[idx].message, 
+				_textDisplay[idx].bounds.left, _textDisplay[idx].bounds.top, 
+				width() - _textDisplay[idx].bounds.left, _textDisplay[idx].spacing);
+		}
+	}
+
+	// Copy the user interface surface onto the surface
+	_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
+
+/*
+	// At this point, in the original engine, the dirty/changed areas were copied to the screen. At the moment,
+	// the current M4 engine framework doesn't support dirty areas, but this is being kept in case that ever changes
+	for (int idx = 0; idx < DIRTY_AREA_SIZE; ++idx) {
+		if (_dirtyAreas[idx].active && _dirtyAreas[idx].active2 && 
+			(_dirtyAreas[idx].bounds.width() > 0) && (_dirtyAreas[idx].bounds.height() > 0)) {
+			// Copy changed area to screen
+
+		}
+	}
+*/
+
+	// Some kind of copying over of slot entries
+	for (int idx = 0, idx2 = 0; idx < _spriteSlotsStart; ++idx) {
+		if (_spriteSlots[idx].spriteId >= 0) {
+			if (idx != idx2) {
+				// Copy over the slot entry
+				_spriteSlots[idx2] = _spriteSlots[idx];
+			}
+			++idx2;
+		}
+	}
+
+	// Clear up any now inactive text display entries
+	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
+		if (_textDisplay[idx].field_A < 0) {
+			_textDisplay[idx].active = false;
+			_textDisplay[idx].field_A = 0;
+		}
+	}
+}
+
+
 void MadsScene::update() {
+	// Copy the bare scene in
 	_backgroundSurface->copyTo(this);
+
+	// Draw all the various elements
+	drawElements();
 
 	// Handle display of any status text
 	if (_statusText[0]) {
@@ -788,8 +870,6 @@ void MadsScene::update() {
 		_vm->_font->setFont(FONT_MAIN_MADS);
 		_vm->_font->writeString(this, _statusText, (width() - _vm->_font->getWidth(_statusText)) / 2, 142, 0);
 	}
-
-	_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
 
 	//***DEBUG***
 	_sceneSprites[0]->getFrame(1)->copyTo(this, 120, 90, 0);
@@ -831,6 +911,36 @@ void MadsScene::loadPlayerSprites(const char *prefix) {
 	}
 
 	error("Couldn't find player sprites");
+}
+
+/*--------------------------------------------------------------------------*/
+
+void MadsSceneInfo::load(int sceneId) {
+	const char *sceneInfoStr = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneId, ".DAT");
+	Common::SeekableReadStream *rawStream = _vm->_resourceManager->get(sceneInfoStr);
+	MadsPack sceneInfo(rawStream);
+	Common::SeekableReadStream *stream = sceneInfo.getItemStream(0);
+
+	int resSceneId = stream->readUint16LE();
+	assert(resSceneId == sceneId);
+
+	artFileNum = stream->readUint16LE();
+	field_4 = stream->readUint16LE();
+	width = stream->readUint16LE();
+	height = stream->readUint16LE();
+	assert((width == 320) && (height == 156));
+	
+	stream->skip(24);
+
+	objectCount = stream->readUint16LE();
+
+	stream->skip(40);
+
+	for (int i = 0; i < objectCount; ++i) {
+		objects[i].load(stream);
+	}
+
+	_vm->_resourceManager->toss(sceneInfoStr);
 }
 
 } // End of namespace M4

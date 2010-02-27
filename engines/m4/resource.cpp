@@ -369,6 +369,34 @@ const char *MADSResourceManager::getResourceName(char asciiCh, int prefix, Exten
 }
 
 /**
+ * Another variation for forming resource names
+ */
+const char *MADSResourceManager::getResourceName(ResourcePrefixType prefixType, int idx, const char *extension) {
+	static char resourceName[100];
+
+	strcpy(resourceName, "*");
+
+	if (extension) {
+		switch (prefixType) {
+		case RESPREFIX_GL:
+			strcat(resourceName, "GL000");
+			break;
+		case RESPREFIX_SC:
+		case RESPREFIX_RM:
+			strcat(resourceName, (prefixType == RESPREFIX_SC) ? "SC" : "RM");
+			sprintf(resourceName + 3, "%.3d", idx);
+			break;
+		default:
+			break;
+		}
+
+		strcat(resourceName, extension);
+	}
+
+	return &resourceName[0];
+}
+
+/**
  * Forms an AA resource name based on the given passed index
  */
 const char *MADSResourceManager::getAAName(int index) {
