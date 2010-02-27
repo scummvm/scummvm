@@ -1,10 +1,19 @@
 ScummVM-N64 README
 ==============================================================================
 
+Requirements
+============
+
+- Nintendo64 (haha...)
+- N64 Gamepad
+- N64 Mouse (optional, gives better game experience)
+- Controller PAK / FlashRAM cart (for saves)
+- Flash Cart or copier (like Myth N64 or DoctorV64)
+- N64 4mb Memory expansion (this is _almost_ a requirement)
+
 Build cart images from sources
 ==============================
 * TODO *
-
 
 Build cart images from binaries
 ===============================
