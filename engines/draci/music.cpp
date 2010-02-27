@@ -127,7 +127,8 @@ void MusicPlayer::send(uint32 b) {
 		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 		// If a new channel is allocated during the playback, make sure
 		// its volume is correctly initialized.
-		setChannelVolume(channel);
+		if (_channel[channel])
+			setChannelVolume(channel);
 	}
 
 	if (_channel[channel])
