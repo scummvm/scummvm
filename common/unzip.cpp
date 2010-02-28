@@ -1458,7 +1458,6 @@ Archive *makeZipArchive(SeekableReadStream *stream) {
 		return 0;
 	unzFile zipFile = unzOpen(stream);
 	if (!zipFile) {
-		delete stream;
 		return 0;
 	}
 	return new ZipArchive(zipFile);
