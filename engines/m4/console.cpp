@@ -137,10 +137,7 @@ bool Console::cmdShowResources(int argc, const char **argv) {
 }
 
 bool Console::cmdShowCodes(int argc, const char **argv) {
-	if (_vm->getGameType() != GType_RexNebular)
-		_vm->_scene->showCodes();
-	else
-		DebugPrintf("Pathfinding codes not done yet for Rex Nebular");
+	_vm->_scene->showCodes();
 	return false;
 }
 

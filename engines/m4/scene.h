@@ -94,7 +94,7 @@ protected:
 	int _previousScene;
 	GameInterfaceView *_interfaceSurface;
 	M4Surface *_backgroundSurface;
-	M4Surface *_codeSurface;
+	M4Surface *_walkSurface;
 	RGBList *_palData;
 	RGBList *_interfacePal;
 	SceneResources _sceneResources;
@@ -195,7 +195,12 @@ public:
 
 	int objectCount;
 	MadsObject objects[32];
+	
+	int walkSize;
+	byte *walkData;
 
+	MadsSceneInfo() { walkSize = 0; walkData = NULL; }
+	~MadsSceneInfo() { delete walkData; }
 	void load(int sceneId);	
 };
 
@@ -221,7 +226,7 @@ private:
 	int _spriteSlotsStart;
 
 	void drawElements();
-	void loadScene2(int sceneNumber, const char *aaName);
+	void loadScene2(const char *aaName);
 	void loadSceneTemporary();
 public:
 	char _aaName[100];

@@ -46,12 +46,12 @@ Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width()
 	_sceneResources.parallax = new HotSpotList();
 	_sceneResources.props = new HotSpotList();
 	_backgroundSurface = new M4Surface();
-	_codeSurface = new M4Surface();
+	_walkSurface = new M4Surface();
 	_palData = NULL;
 	_interfacePal = NULL;
 	_interfaceSurface = NULL;
 	_inverseColorTable = NULL;
-	_vm->_rails->setCodeSurface(_codeSurface);
+	_vm->_rails->setCodeSurface(_walkSurface);
 }
 
 Scene::~Scene() {
@@ -250,24 +250,28 @@ void Scene::showHotSpots() {
 	}
 }
 
-// Test function, shows all scene codes
+/**
+ * Debug function that shows the walkable areas by copying them over the current background surface
+ */
 void Scene::showCodes() {
-	uint8 *pixelData = _codeSurface->getBasePtr(0, 0);
-	for (int i = 0; i < _codeSurface->width() * _codeSurface->height(); i++)
-		if (pixelData[i] & 0x10)
-			pixelData[i] = 0xFF;
-		else
-			pixelData[i] = 0;
+	if (_vm->isM4()) {
+		// Show the walk areas for the M4 engine in black and white
+		const byte *srcP = (const byte *)_walkSurface->getBasePtr(0, 0);
+		byte *destP = _backgroundSurface->getBasePtr(0, 0);
+		
+		for (int i = 0; i < _walkSurface->width() * _walkSurface->height(); i++)
+			destP[i] = (srcP[i] & 0x10) ? 0xFF : 0;
 
-	byte colors[256 * 4];
-	memset(colors, 0, sizeof(colors));
-	colors[255 * 4 + 0] = 255;
-	colors[255 * 4 + 1] = 255;
-	colors[255 * 4 + 2] = 255;
-	_vm->_palette->setPalette(colors, 0, 256);
-
-	_backgroundSurface->copyFrom(_codeSurface, Common::Rect(0, 0, 640, 480), 0, 0);
-	//_system->copyRectToScreen(codes->getBasePtr(0, 0), codes->w, 0, 0, codes->w, codes->h);
+		byte colors[256 * 4];
+		memset(colors, 0, sizeof(colors));
+		colors[255 * 4 + 0] = 255;
+		colors[255 * 4 + 1] = 255;
+		colors[255 * 4 + 2] = 255;
+		_vm->_palette->setPalette(colors, 0, 256);
+	} else {
+		// For MADS, simply copy the walk data to the background, in whatever current palette is active
+		_walkSurface->copyTo(_backgroundSurface);
+	}
 }
 
 void Scene::playIntro() {
@@ -472,7 +476,7 @@ void M4Scene::loadSceneCodes(int sceneNumber, int index) {
 
 	sprintf(filename, "%i.cod", sceneNumber);
 	sceneS = _vm->res()->openFile(filename);
-	_codeSurface->loadCodesM4(sceneS);
+	_walkSurface->loadCodesM4(sceneS);
 	_vm->res()->toss(filename);
 }
 
@@ -603,9 +607,12 @@ MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
 /**
  * Secondary scene loading code
  */
-void MadsScene::loadScene2(int sceneNumber, const char *aaName) {
+void MadsScene::loadScene2(const char *aaName) {
+	// Load up the properties for the scene
+	_sceneInfo.load(_currentScene);
 
-	_sceneInfo.load(sceneNumber);
+	// Load scene walk paths
+	loadSceneCodes(_currentScene);
 }
 
 /**
@@ -645,9 +652,6 @@ void MadsScene::loadSceneTemporary() {
 	// TODO: set walker scaling
 	// TODO: destroy woodscript buffer
 
-	// Load scene walk path file (*.COD/*.WW?)
-	loadSceneCodes(_currentScene);
-
 	// Load inverse color table file (*.IPL)
 	loadSceneInverseColorTable(_currentScene);
 }
@@ -670,7 +674,7 @@ void MadsScene::loadScene(int sceneNumber) {
 	_vm->globals()->addVisitedScene(sceneNumber);
 
 	// Secondary scene load routine
-	loadScene2(sceneNumber, "*I0.AA");
+	loadScene2("*I0.AA");
 
 	// Do any scene specific setup
 	_sceneLogic.enterScene();
@@ -696,7 +700,7 @@ void MadsScene::leaveScene() {
 	_sceneSprites.clear();
 
 	delete _backgroundSurface;
-	delete _codeSurface;
+	delete _walkSurface;
 
 	Scene::leaveScene();
 }
@@ -714,10 +718,17 @@ void MadsScene::loadSceneCodes(int sceneNumber, int index) {
 		sprintf(filename, "rm%i.ww%i", sceneNumber, index);
 		MadsPack walkData(filename, _vm);
 		sceneS = walkData.getItemStream(0);
-		_codeSurface->loadCodesMads(sceneS);
+		_walkSurface->loadCodesMads(sceneS);
 		_vm->res()->toss(filename);
 	} else if (_vm->getGameType() == GType_RexNebular) {
-		// TODO
+		// For Rex Nebular, the walk areas are part of the scene info
+		byte *destP = _walkSurface->getBasePtr(0, 0);
+		const byte *srcP = _sceneInfo.walkData;
+		byte runLength;
+		while ((runLength = *srcP++) != 0) {
+			Common::set_to(destP, destP + runLength, *srcP++);
+			destP += runLength;
+		}
 	}
 }
 
@@ -919,6 +930,8 @@ void MadsSceneInfo::load(int sceneId) {
 	const char *sceneInfoStr = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneId, ".DAT");
 	Common::SeekableReadStream *rawStream = _vm->_resourceManager->get(sceneInfoStr);
 	MadsPack sceneInfo(rawStream);
+
+	// Basic scene info
 	Common::SeekableReadStream *stream = sceneInfo.getItemStream(0);
 
 	int resSceneId = stream->readUint16LE();
@@ -938,6 +951,15 @@ void MadsSceneInfo::load(int sceneId) {
 
 	for (int i = 0; i < objectCount; ++i) {
 		objects[i].load(stream);
+	}
+
+	// For Rex Nebular, read in the scene's compressed walk surface information
+	if (_vm->getGameType() == GType_RexNebular) {
+		delete walkData;
+
+		stream = sceneInfo.getItemStream(1);
+		walkData = (byte *)malloc(stream->size());
+		stream->read(walkData, stream->size());
 	}
 
 	_vm->_resourceManager->toss(sceneInfoStr);
