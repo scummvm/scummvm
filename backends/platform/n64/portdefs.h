@@ -36,7 +36,7 @@
 #include <math.h>
 
 #undef assert
-#define assert(x)  ((x) ? 0 : (print_error("ASSERT TRIGGERED:\n["#x"]\n(%s:%d)", __FILE__, __LINE__)))
+#define assert(x)  ((x) ? 0 : (print_error("ASSERT TRIGGERED:\n\n("#x")\n%s\nline: %d", __FILE__, __LINE__)))
 
 #endif
 
