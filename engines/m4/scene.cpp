@@ -926,8 +926,8 @@ void MadsScene::loadPlayerSprites(const char *prefix) {
 
 /*--------------------------------------------------------------------------*/
 
-void MadsSceneInfo::load(int sceneId) {
-	const char *sceneInfoStr = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneId, ".DAT");
+void MadsSceneInfo::load(int sId) {
+	const char *sceneInfoStr = MADSResourceManager::getResourceName(RESPREFIX_RM, sId, ".DAT");
 	Common::SeekableReadStream *rawStream = _vm->_resourceManager->get(sceneInfoStr);
 	MadsPack sceneInfo(rawStream);
 
@@ -935,7 +935,7 @@ void MadsSceneInfo::load(int sceneId) {
 	Common::SeekableReadStream *stream = sceneInfo.getItemStream(0);
 
 	int resSceneId = stream->readUint16LE();
-	assert(resSceneId == sceneId);
+	assert(resSceneId == sId);
 
 	artFileNum = stream->readUint16LE();
 	field_4 = stream->readUint16LE();
