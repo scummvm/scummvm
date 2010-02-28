@@ -2849,6 +2849,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
 
+	// Space Quest 4 - English Macintosh
+	// Executable scanning reports "x.yyy.zzz"
+	// VERSION file reports "1.148" 
+	{"sq4", "", {
+		{"resource.map", 0, "6ffc6f76c4127d140759a512ab9a07be", 6042},
+		{"resource.000", 0, "6a538b389705232cf9b2d7de2cf9c0a7", 224833},
+		{"resource.001", 0, "77dc3fb6f93d3fee4e87b9ab96c89a95", 1410083},
+		{"resource.002", 0, "fb8d07afb33d1cfd2a358cd69d8cf608", 1335960},
+		{"resource.003", 0, "6873f6e117b4dc5dd398dbd2e19035f1", 1349062},
+		{"resource.004", 0, "20fc54556ebfc737506288a1a32f7705", 364217},
+		{"resource.005", 0, "869d16cab6641c80b06f4dcee18f86bc", 1426228},
+		{"resource.006", 0, "91d23407bc0447a3722fbeb952d7edee", 1402451},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH
+	},
+
 	// Space Quest 5 - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "1.001.068", VERSION file reports "1.04"
 	{"sq5", "", {
