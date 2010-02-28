@@ -755,12 +755,12 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
-		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED);
+		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, Audio::makeLoopingAudioStream(stream, 0), SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);
-		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED);
+		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
 		return true;
 	case STOPBG:
