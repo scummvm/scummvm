@@ -349,8 +349,12 @@ void Sound::playSound(int soundID) {
 				}
 				size -= waveSize;
 
-				Audio::SeekableAudioStream *s = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
-				stream = new Audio::SubLoopingAudioStream(s, 0, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate));
+				if (loopEnd > 0) {
+					Audio::SeekableAudioStream *s = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
+					stream = new Audio::SubLoopingAudioStream(s, 0, Audio::Timestamp(0, loopStart, rate), Audio::Timestamp(0, loopEnd, rate));
+				} else {
+					stream = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
+				}
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
