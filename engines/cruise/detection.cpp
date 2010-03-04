@@ -162,6 +162,19 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		GType_CRUISE,
 		0,
 	},
+	{ // Amiga English US GOLD edition.
+		{
+			"cruise",
+			0,
+			AD_ENTRY1("D1", "de084e9d2c6e4b2cc14803bf849eda3e"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_CRUISE,
+		0,
+	},
 	{ // AtariST English KixxXL edition.
 		{
 			"cruise",
