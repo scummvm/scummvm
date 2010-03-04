@@ -281,7 +281,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		lastBlock = _numCompItems - 1;
 
 	int32 blocksFinalSize = 0x2000 * (1 + lastBlock - firstBlock);
-	*compFinal = new byte[blocksFinalSize];
+	*compFinal = (byte *)malloc(blocksFinalSize);
 	assert(*compFinal);
 	finalSize = 0;
 
