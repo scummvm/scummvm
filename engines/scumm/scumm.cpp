@@ -565,7 +565,7 @@ ScummEngine::~ScummEngine() {
 	delete[] _actors;
 	delete[] _sortedActors;
 
-	delete _2byteFontPtr;
+	delete[] _2byteFontPtr;
 	delete _charset;
 	delete _messageDialog;
 	delete _pauseDialog;
