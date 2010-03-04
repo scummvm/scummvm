@@ -434,7 +434,10 @@ void KyraEngine_LoK::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
 
 	setMouseItem(_itemInHand);
 	assert(_itemList && _takenList);
-	updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _takenList[1], 179);
+	if (_flags.platform == Common::kPlatformAmiga)
+		updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _takenList[0], 179);
+	else
+		updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _takenList[1], 179);
 	_screen->showMouse();
 	clickEventHandler2();
 }
