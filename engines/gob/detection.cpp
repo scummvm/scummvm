@@ -1864,20 +1864,6 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"ajworld",
-			"",
-			AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
-			EN_ANY,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
-		},
-		kGameTypeGob2,
-		kFeaturesAdLib,
-		0, 0, 0
-	},
-	{
-		{
 			"lit",
 			"",
 			AD_ENTRY1s("intro.stk", "7b7f48490dedc8a7cb999388e2fadbe3", 3930674),
@@ -4012,6 +3998,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
+	{ // Supplied by Hkz
+		{
+			"playtoons3",
+			"",
+			{
+				{"playtoon.stk", 0, "4772c96be88a57f0561519e4a1526c62", 24406262},
+				{"chato.stk", 0, "bdef407387112bfcee90e664865ac3af", 6033867},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoons,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
 	{
 		{
 			"playtoons4",
@@ -4469,16 +4473,30 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"ajworld",
+			"",
+			AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdLib,
+		0, 0, 0
+	},
+	{
+		{
 			"adibou1",
 			"ADIBOU 1 Environnement 4-7 ans",
 			AD_ENTRY1s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeAdibou1,
-		kFeaturesNone,
+		kFeaturesAdLib,
 		0, 0, 0
 	},
 	{
