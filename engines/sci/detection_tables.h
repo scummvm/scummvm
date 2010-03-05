@@ -2894,6 +2894,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
 
+	// Space Quest 5 v1.04 - French DOS (from Hkz, Included in Space Quest Collector's Edition, with chapters I-V)
+	{"sq5", "", {
+		{"resource.map", 0, "66317c12ac6e818d1f7c17e83c1d9819", 6143},
+		{"resource.000", 0, "4147edc5045e6d62998018b5614c58ec", 5496486},
+		{"resource.msg", 0, "877c42380320eb1db7dad83ccd261214", 140374},
+		{NULL, 0, NULL, 0}},
+		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NOSPEECH
+	},
+
 	// Space Quest 5 - Italian DOS Floppy (from glorifindel)
 	// SCI interpreter version 1.001.068 (just a guess)
 	{"sq5", "", {
