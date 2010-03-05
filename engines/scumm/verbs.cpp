@@ -703,7 +703,7 @@ bool ScummEngine_v0::verbMoveToActor(int actor) {
 
 	if (!a->_moving) {
 		int dist =  getDist(a->getRealPos().x, a->getRealPos().y, a2->getRealPos().x, a2->getRealPos().y);
-		if (dist > 5)
+		if (dist > 8)
 			a->startWalkActor(a2->getRealPos().x, a2->getRealPos().y, 1);
 		else
 			return false;
@@ -730,8 +730,7 @@ bool ScummEngine_v0::verbMove(int object, int objectIndex, bool invObject) {
 	// Detect distance from target object
 	int dist =  getDist(a->getRealPos().x, a->getRealPos().y, x, y);
 
-	// FIXME: This should be changed once the walkbox problem is fixed
-	if (dist > 0x5) {
+	if (dist > 8) {
 		a->startWalkActor(x, y, dir);
 		VAR(6) = x;
 		VAR(7) = y;
