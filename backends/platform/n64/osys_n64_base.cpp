@@ -860,14 +860,18 @@ Common::TimerManager *OSystem_N64::getTimerManager() {
 }
 
 void OSystem_N64::getTimeAndDate(TimeDate &t) const {
-	// No clock inside the N64
-	// TODO: use getMillis to provide some kind of time-counting feature?
-	t.tm_sec  = 0;
-	t.tm_min  = 0;
-	t.tm_hour = 0;
-	t.tm_mday = 0;
+	// No RTC inside the N64, read mips timer to simulate
+	// passing of time, not a perfect solution, but can't think
+	// of anything better.
+	
+	uint32 now = getMilliTick();
+
+	t.tm_sec  = (now / 1000) % 60;
+	t.tm_min  = ((now / 1000) / 60) % 60;
+	t.tm_hour = (((now / 1000) / 60) / 60) % 24;
+	t.tm_mday = 1;
 	t.tm_mon  = 0;
-	t.tm_year = 0;
+	t.tm_year = 1900;
 
 	return;
 }
