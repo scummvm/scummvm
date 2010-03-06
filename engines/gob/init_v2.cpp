@@ -68,6 +68,8 @@ void Init_v2::initVideo() {
 	if (_vm->_global->_videoMode != 0)
 		_vm->_video->initSurfDesc(_vm->_global->_videoMode, _vm->_video->_surfWidth,
 				_vm->_video->_surfHeight, PRIMARY_SURFACE);
+	if ((_vm->getGameType() == kGameTypeGob3) && _vm->isCD())
+		_vm->_global->_doSubtitles = true;
 }
 
 } // End of namespace Gob
