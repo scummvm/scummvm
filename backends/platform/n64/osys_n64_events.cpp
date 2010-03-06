@@ -80,6 +80,7 @@
 #define RELEASED_CD(now, before)	(!CD_BUTTON(now) && CD_BUTTON(before))
 
 #define MOUSE_DEADZONE 0
+#define MOUSE_SENSIBILITY 1.5f
 #define PAD_DEADZONE 1
 #define PAD_ACCELERATION 15
 #define PAD_CHECK_TIME 40
@@ -123,9 +124,9 @@ void OSystem_N64::readControllerAnalogInput(void) {
 
 	// Mouse
 	if (abs(pad_mouseX) > MOUSE_DEADZONE)
-		mx += pad_mouseX;
+		mx += (pad_mouseX / MOUSE_SENSIBILITY);
 	if (abs(pad_mouseY) > MOUSE_DEADZONE)
-		my -= pad_mouseY;
+		my -= (pad_mouseY / MOUSE_SENSIBILITY);
 
 	if (mx < 0)
 		mx = 0;
