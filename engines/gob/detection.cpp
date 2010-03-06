@@ -3788,6 +3788,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
+	{ // Supplied by scoriae in the forums
+		{
+			"playtoons1",
+			"",
+			{
+				{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
+				{"archi.stk", 0, "00d8274519dfcf8a0d8ae3099daea0f8", 5532135},
+ 				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoons,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
 	{
 		{
 			"playtoons1",
@@ -3926,6 +3944,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
+	{ // Supplied by scoriae in the forums
+		{
+			"playtoons2",
+			"",
+			{
+				{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
+				{"spirou.stk", 0, "993737f112ca6a9b33c814273280d832", 9825760},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoons,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
 	{
 		{
 			"playtoons3",
@@ -3998,7 +4034,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
-	{ // Supplied by Hkz
+	{ // Supplied by Hkz on #scummvm
 		{
 			"playtoons3",
 			"",
