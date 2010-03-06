@@ -72,6 +72,7 @@ public:
 	~Init_v3();
 
 	void initVideo();
+	void updateConfig();
 };
 
 class Init_v4 : public Init_v3 {

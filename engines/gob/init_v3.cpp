@@ -28,6 +28,7 @@
 #include "gob/gob.h"
 #include "gob/init.h"
 #include "gob/game.h"
+#include "gob/global.h"
 
 namespace Gob {
 
@@ -35,6 +36,14 @@ Init_v3::Init_v3(GobEngine *vm) : Init_v2(vm) {
 }
 
 Init_v3::~Init_v3() {
+}
+
+void Init_v3::updateConfig() {
+// In the CD version of Goblins3, some texts are flagged 'subtitles' 
+// incorrectly and therefore should be displayed in all cases.
+// The first obvious example is just after Death level.
+	if ((_vm->getGameType() == kGameTypeGob3) && _vm->isCD())
+		_vm->_global->_doSubtitles = true;
 }
 
 void Init_v3::initVideo() {
