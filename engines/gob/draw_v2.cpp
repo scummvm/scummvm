@@ -221,7 +221,7 @@ void Draw_v2::printTotText(int16 id) {
 
 	bool isSubtitle = (ptr[1] & 0x80) != 0;
 
-	if (isSubtitle && !_vm->_global->_doSubtitles) {
+	if (isSubtitle && !_vm->_global->_doSubtitles && ((_vm->getGameType() != kGameTypeGob3) || !_vm->isCD())) {
 		delete textItem;
 		return;
 	}
