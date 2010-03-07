@@ -89,6 +89,7 @@ uint AGOSEngine::getFeebleFontSize(byte chr) {
 	}
 }
 
+#ifdef ENABLE_AGOS2
 static const byte polish4CD_feeble_windowFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00,
@@ -682,6 +683,51 @@ static const byte feeble_windowFont[] = {
 	0x3c, 0x42, 0x82, 0x82, 0x82, 0x84, 0x84, 0x82, 0x82, 0x82, 0x9c, 0x80, 0x80,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
+
+void AGOSEngine_Feeble::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	const byte *src;
+	byte color, *dst;
+	uint dstPitch, h, w, i;
+
+	if (_noOracleScroll)
+		return;
+
+	_videoLockOut |= 0x8000;
+
+	dst = getBackGround();
+	dstPitch = _backGroundBuf->pitch;
+	h = 13;
+	w = getFeebleFontSize(chr);
+
+	if (_language == Common::PL_POL) {
+		if (!strcmp(getExtra(), "4CD"))
+			src = polish4CD_feeble_windowFont + (chr - 32) * 13;
+		else
+			src = polish2CD_feeble_windowFont + (chr - 32) * 13;
+	} else {
+		src = feeble_windowFont + (chr - 32) * 13;
+	}
+	dst += y * dstPitch + x + window->textColumnOffset;
+
+	color = window->textColor;
+
+	do {
+		int8 b = *src++;
+		i = 0;
+		do {
+			if (b < 0) {
+				if (dst[i] == 0)
+					dst[i] = color;
+			}
+
+			b <<= 1;
+		} while (++i != w);
+		dst += dstPitch;
+	} while (--h);
+
+	_videoLockOut &= ~0x8000;
+}
+#endif
 
 static const byte czech_simonFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -2304,28 +2350,11 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	byte color, *dst;
 	uint dstPitch, h, w, i;
 
-	if (_noOracleScroll)
-		return;
-
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		dst = getBackGround();
-		dstPitch = _backGroundBuf->pitch;
-		h = 13;
-		w = getFeebleFontSize(chr);
-
-		if (_language == Common::PL_POL) {
-			if (!strcmp(getExtra(), "4CD"))
-				src = polish4CD_feeble_windowFont + (chr - 32) * 13;
-			else
-				src = polish2CD_feeble_windowFont + (chr - 32) * 13;
-		} else {
-			src = feeble_windowFont + (chr - 32) * 13;
-		}
-	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
+	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		dst = (byte *)screen->pixels;
 		dstPitch = screen->pitch;
 		h = 8;
@@ -2413,12 +2442,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		i = 0;
 		do {
 			if (b < 0) {
-				if (getGameType() == GType_FF || getGameType() == GType_PP) {
-					if (dst[i] == 0)
-						dst[i] = color;
-				} else {
-					dst[i] = color;
-				}
+				dst[i] = color;
 			}
 
 			b <<= 1;

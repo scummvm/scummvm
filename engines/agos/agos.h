@@ -1236,7 +1236,7 @@ protected:
 
 	virtual void windowNewLine(WindowBlock *window);
 	void windowScroll(WindowBlock *window);
-	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
+	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
 	void loadMusic(uint16 track);
 	void playModule(uint16 music);
@@ -1975,6 +1975,7 @@ protected:
 	void invertBox(HitArea *ha, bool state);
 
 	virtual void windowNewLine(WindowBlock *window);
+	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
 	virtual void clearName();
 
