@@ -23,36 +23,46 @@
  *
  */
 
-#include "m4/staticres.h"
+#ifndef M4_M4_SCENE_H
+#define M4_M4_SCENE_H
+
+class View;
+
+#include "m4/scene.h"
 
 namespace M4 {
 
-const char *englishMADSArticleList[9] = {
-	NULL, "with", "to", "at", "from", "on", "in", "under", "behind"
-};
+#define TITLE_SCENE_BURGER 951		// 951 = intro, 901 = demo menu, 971 = first scene
+#define MAINMENU_SCENE_BURGER 903
+#define FIRST_SCENE 101
 
-const char *cheatingEnabledDesc[3] = {
-	"CHEATING ENABLED",
-	"(For your convenience).",
-	NULL
-};
+class M4Scene : public Scene {
+private:
+	M4Engine *_vm;
+	SpriteAsset *_sceneSprites;
+	SpriteAsset *_walkerSprite;
 
-const char *atStr = "at";
-const char *lookAroundStr = "Look around";
-const char *toStr = "to ";
-const char *useStr = "Use ";
+	void loadSceneSprites(int sceneNumber);
+	void nextCommonCursor();
+public:
+	M4Scene(M4Engine *vm);
+	virtual ~M4Scene();
 
-VerbInit verbList[10] = {
-	{kVerbLook, 2, 0},
-	{kVerbTake, 2, 0},
-	{kVerbPush, 2, 0},
-	{kVerbOpen, 2, 0},
-	{kVerbPut, 1, -1},
-	{kVerbTalkTo, 2, 0},
-	{kVerbGive, 1, 2},
-	{kVerbPull, 2, 0},
-	{kVerbClose, 2, 0},
-	{kVerbThrow, 1, 3}
+	// Methods that differ between engines
+	virtual void loadScene(int sceneNumber);
+	virtual void leaveScene() {};
+	virtual void loadSceneCodes(int sceneNumber, int index = 0);
+	virtual void show();
+	virtual void checkHotspotAtMousePos(int x, int y);
+	virtual void leftClick(int x, int y);
+	virtual void rightClick(int x, int y);
+	virtual void setAction(int action, int objectId = -1);
+	virtual void setStatusText(const char *text);
+	virtual void update();
+
+	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 };
 
 } // End of namespace M4
+
+#endif

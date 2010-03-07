@@ -137,7 +137,6 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _inventory;
 	delete _viewManager;
 	delete _rails;
-	delete _converse;
 	delete _script;
 	delete _ws;
 	delete _random;
@@ -178,7 +177,6 @@ Common::Error MadsM4Engine::run() {
 	_viewManager = new ViewManager(this);
 	_inventory = new Inventory(this);
 	_sound = new Sound(this, _mixer, 255);
-	_converse = new Converse(this);
 	_script = new ScriptInterpreter(this);
 	_ws = new WoodScript(this);
 	_animation = new Animation(this);
@@ -304,6 +302,7 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4Engi
 M4Engine::~M4Engine() {
 	delete _resourceManager;
 	delete _globals;
+	delete _converse;
 }
 
 Common::Error M4Engine::run() {
@@ -315,6 +314,9 @@ Common::Error M4Engine::run() {
 
 	// Set up needed common functionality
 	MadsM4Engine::run();
+
+	// M4 specific initialisation
+	_converse = new Converse(this);
 
 	_scene = new M4Scene(this);
 	_script->open("m4.dat");

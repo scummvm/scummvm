@@ -214,8 +214,11 @@ bool Console::cmdStartConversation(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Usage: %s <conversation file name>\n", argv[0]);
 		return true;
+	} else if (_vm->isM4()) {
+		((M4Engine *)_vm)->_converse->startConversation(argv[1]);
+		return false;
 	} else {
-		_vm->_converse->startConversation(argv[1]);
+		error("MADS engine does not support conversations yet");
 		return false;
 	}
 }

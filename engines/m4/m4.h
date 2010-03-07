@@ -40,6 +40,8 @@
 #include "m4/events.h"
 #include "m4/font.h"
 #include "m4/scene.h"
+#include "m4/mads_scene.h"
+#include "m4/m4_scene.h"
 #include "m4/actor.h"
 #include "m4/sound.h"
 #include "m4/rails.h"
@@ -84,6 +86,7 @@ class M4InterfaceView;
 class ConversationView;
 class Actor;
 class Converse;
+class MadsConversation;
 class ScriptInterpreter;
 class WoodScript;
 class Animation;
@@ -193,7 +196,6 @@ public:
 	ConversationView *_conversationView;
 	Sound *_sound;
 	Rails *_rails;
-	Converse *_converse;
 	ScriptInterpreter *_script;
 	WoodScript *_ws;
 	Animation *_animation;
@@ -203,6 +205,8 @@ public:
 };
 
 class MadsEngine : public MadsM4Engine {
+public:
+	MadsConversation _converse;
 public:
 	MadsEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~MadsEngine();
@@ -214,6 +218,8 @@ public:
 };
 
 class M4Engine : public MadsM4Engine {
+public:
+	Converse *_converse;
 public:
 	M4Engine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~M4Engine();

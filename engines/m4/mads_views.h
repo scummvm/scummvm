@@ -34,6 +34,8 @@
 
 namespace M4 {
 
+#define CHEAT_SEQUENCE_MAX 8
+
 class IntegerList : public Common::Array<int> {
 public:
 	int indexOf(int v) {
@@ -74,6 +76,7 @@ public:
 	virtual void initialise();
 	virtual void setSelectedObject(int objectNumber);
 	virtual void addObjectToInventory(int objectNumber);
+	int getSelectedObject() { return _selectedObject; }
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);

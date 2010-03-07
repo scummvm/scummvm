@@ -1103,7 +1103,7 @@ int ScriptInterpreter::o1_loadConversation() {
 	//int flag = INTEGER(2);
 
 	// TODO; just to show something
-	_vm->_converse->startConversation(name);
+	_m4Vm->_converse->startConversation(name);
 
 	return 3;
 }

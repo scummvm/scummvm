@@ -41,15 +41,7 @@ class View;
 
 namespace M4 {
 
-#define TITLE_SCENE_BURGER 951		// 951 = intro, 901 = demo menu, 971 = first scene
-#define MAINMENU_SCENE_BURGER 903
-#define FIRST_SCENE 101
 #define MAX_CHK_FILENAME_SIZE 144
-
-#define INTERFACE_HEIGHT 106
-#define MADS_SURFACE_HEIGHT 156
-
-#define CHEAT_SEQUENCE_MAX 8
 
 enum MADSVerbs {
 	kVerbNone   = 0,
@@ -134,121 +126,6 @@ public:
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
-};
-
-class M4Scene : public Scene {
-private:
-	M4Engine *_vm;
-	SpriteAsset *_sceneSprites;
-	SpriteAsset *_walkerSprite;
-
-	void loadSceneSprites(int sceneNumber);
-	void nextCommonCursor();
-public:
-	M4Scene(M4Engine *vm);
-	virtual ~M4Scene();
-
-	// Methods that differ between engines
-	virtual void loadScene(int sceneNumber);
-	virtual void leaveScene() {};
-	virtual void loadSceneCodes(int sceneNumber, int index = 0);
-	virtual void show();
-	virtual void checkHotspotAtMousePos(int x, int y);
-	virtual void leftClick(int x, int y);
-	virtual void rightClick(int x, int y);
-	virtual void setAction(int action, int objectId = -1);
-	virtual void setStatusText(const char *text);
-	virtual void update();
-
-	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
-};
-
-struct SpriteSlot {
-	int16 spriteId;
-	int16 scale;
-	uint16 spriteListIndex;
-};
-
-struct TextDisplay {
-	bool active;
-	int spacing;
-	Common::Rect bounds;
-	int16 field_A;
-	uint8 colour1, colour2;
-	Font *font;
-	char message[100];
-};
-
-struct DirtyArea {
-	bool active;
-	bool active2;
-	Common::Rect bounds;
-};
-
-class MadsSceneInfo {
-public:
-	int sceneId;
-	int artFileNum;
-	int field_4;
-	int width;
-	int height;
-
-	int objectCount;
-	MadsObject objects[32];
-	
-	int walkSize;
-	byte *walkData;
-
-	MadsSceneInfo() { walkSize = 0; walkData = NULL; }
-	~MadsSceneInfo() { delete walkData; }
-	void load(int sceneId);	
-};
-
-typedef Common::Array<SpriteAsset *> SpriteAssetArray;
-
-#define SPRITE_SLOTS_SIZE 50
-#define TEXT_DISPLAY_SIZE 40
-#define DIRTY_AREA_SIZE 90
-
-class MadsScene : public Scene {
-private:
-	MadsEngine *_vm;
-
-	int _currentAction;
-	char _statusText[100];
-	MadsSceneLogic _sceneLogic;
-	MadsSceneInfo _sceneInfo;
-	SpriteAsset *_playerSprites;
-	SpriteAssetArray _sceneSprites;
-	SpriteSlot _spriteSlots[50];
-	TextDisplay _textDisplay[TEXT_DISPLAY_SIZE];
-	DirtyArea _dirtyAreas[DIRTY_AREA_SIZE];
-	int _spriteSlotsStart;
-
-	void drawElements();
-	void loadScene2(const char *aaName);
-	void loadSceneTemporary();
-public:
-	char _aaName[100];
-public:
-	MadsScene(MadsEngine *vm);
-
-	// Methods that differ between engines
-	virtual void loadScene(int sceneNumber);
-	virtual void leaveScene();
-	virtual void loadSceneCodes(int sceneNumber, int index = 0);
-	virtual void show();
-	virtual void checkHotspotAtMousePos(int x, int y);
-	virtual void leftClick(int x, int y);
-	virtual void rightClick(int x, int y);
-	virtual void setAction(int action, int objectId = -1);
-	virtual void setStatusText(const char *text);
-	virtual void update();
-
-	int loadSceneSpriteSet(const char *setName);
-	void loadPlayerSprites(const char *prefix);
-
-	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
 };
 
 } // End of namespace M4

@@ -30,8 +30,8 @@
 #include "common/hashmap.h"
 
 #include "m4/globals.h"
-#include "m4/m4.h"
 #include "m4/viewmgr.h"
+#include "m4/sound.h"
 
 namespace M4 {
 
@@ -193,6 +193,23 @@ private:
 	void loadConversationMads(const char *convName);
 	void readConvEntryActions(Common::SubReadStream *convS, ConvEntry *curEntry);
 	void setEntryInfo(int32 offset, EntryType type, int32 nodeIndex, int32 entryIndex);
+};
+
+
+struct MadsTalkEntry {
+	uint16 id;
+	const char *desc;
+};
+
+#define MADS_TALK_SIZE 5
+
+class MadsConversation {
+private:
+	MadsTalkEntry _talkList[MADS_TALK_SIZE];
+public:
+	MadsConversation();
+
+	MadsTalkEntry &operator[](int index) { return _talkList[index]; }
 };
 
 } // End of namespace M4

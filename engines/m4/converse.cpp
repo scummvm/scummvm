@@ -103,7 +103,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 	_activeItems.clear();
 
 	if (nodeIndex != -1) {
-		ConvEntry *node = _vm->_converse->getNode(nodeIndex);
+		ConvEntry *node = _m4Vm->_converse->getNode(nodeIndex);
 
 		for (uint i = 0; i < node->entries.size(); ++i) {
 			if (!node->entries[i]->visible)
@@ -137,7 +137,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 			//printf("Current node falls through node at offset %i when entries are less or equal than %i\n",
 			//		node->fallthroughOffset, node->fallthroughMinEntries);
 			if (_activeItems.size() <= (uint32)node->fallthroughMinEntries) {
-				const EntryInfo *entryInfo = _vm->_converse->getEntryInfo(node->fallthroughOffset);
+				const EntryInfo *entryInfo = _m4Vm->_converse->getEntryInfo(node->fallthroughOffset);
 				//printf("Entries are less than or equal to %i, falling through to node at offset %i, index %i\n",
 				//		node->fallthroughMinEntries, node->fallthroughOffset, entryInfo->nodeIndex);
 				setNode(entryInfo->nodeIndex);
@@ -228,7 +228,7 @@ void ConversationView::selectEntry(int entryIndex) {
 	// Hide selected entry, unless it has a persistent flag set
 	if (!(_activeItems[entryIndex]->flags & kEntryPersists)) {
 		//printf("Hiding selected entry\n");
-		_vm->_converse->getNode(_currentNodeIndex)->entries[entryIndex]->visible = false;
+		_m4Vm->_converse->getNode(_currentNodeIndex)->entries[entryIndex]->visible = false;
 	} else {
 		//printf("Selected entry is persistent, not hiding it\n");
 	}
@@ -266,8 +266,8 @@ void ConversationView::playNextReply() {
 		ConvEntry *currentEntry = _activeItems[_highlightedIndex]->entries[i];
 
 		if (currentEntry->isConditional) {
-			if (!_vm->_converse->evaluateCondition(
-				_vm->_converse->getValue(currentEntry->condition.offset),
+			if (!_m4Vm->_converse->evaluateCondition(
+				_m4Vm->_converse->getValue(currentEntry->condition.offset),
 				currentEntry->condition.op, currentEntry->condition.val))
 				continue;	// don't play this reply
 		}
@@ -315,7 +315,7 @@ void ConversationView::playNextReply() {
 
 	//printf("Current selection does %i actions\n", _activeItems[entryIndex]->actions.size());
 	for (uint32 i = 0; i < _activeItems[_highlightedIndex]->actions.size(); i++) {
-		if (!_vm->_converse->performAction(_activeItems[_highlightedIndex]->actions[i]))
+		if (!_m4Vm->_converse->performAction(_activeItems[_highlightedIndex]->actions[i]))
 			break;
 	}	// end for
 
@@ -1219,5 +1219,15 @@ bool Converse::performAction(EntryAction *action) {
 		return false;
 	}	// end switch
 }
+
+/*--------------------------------------------------------------------------*/
+
+MadsConversation::MadsConversation() {
+	for (int i = 0; i < MADS_TALK_SIZE; ++i) {
+		_talkList[i].desc = NULL;
+		_talkList[i].id = 0;
+	}
+}
+
 
 } // End of namespace M4

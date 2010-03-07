@@ -35,6 +35,19 @@ extern const char *englishMADSArticleList[9];
 
 extern const char *cheatingEnabledDesc[3];
 
+extern const char *atStr;
+extern const char *lookAroundStr;
+extern const char *toStr;
+extern const char *useStr;
+
+struct VerbInit {
+	int verb;
+	int8 flag1;
+	int8 flag2;
+};
+
+extern VerbInit verbList[10];
+
 } // End of namespace M4
 
 #endif
