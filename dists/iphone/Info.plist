@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleShortVersionString</key>
-	<string>svn-snapshot</string>
+	<string>1.2.0svn</string>
 	<key>CFBundleVersion</key>
 	<string>svn</string>
 	<key>CFBundleIconFile</key>
