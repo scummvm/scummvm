@@ -32,8 +32,7 @@
 	//DUNNO Keyon in 4op, switch to 2op without keyoff.
 */
 
-/* $Id: dbopl.cpp,v 1.10 2009-06-10 19:54:51 harekiet Exp $ */
-
+// Last synch with DOSBox SVN trunk r3556
 
 #include "dbopl.h"
 

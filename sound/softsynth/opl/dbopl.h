@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+// Last synch with DOSBox SVN trunk r3556
+
 #ifndef SOUND_SOFTSYNTH_OPL_DBOPL_H
 #define SOUND_SOFTSYNTH_OPL_DBOPL_H
 
