@@ -155,7 +155,7 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
+static reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	reg_t nodebase;
 	Node *n = s->_segMan->allocateNode(&nodebase);
 
@@ -221,7 +221,7 @@ reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ((l) ? l->first.isNull() : 0));
 }
 
-void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
+static void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = s->_segMan->lookupList(listbase);
 	Node *new_n = s->_segMan->lookupNode(nodebase);
 
@@ -244,7 +244,7 @@ void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	l->first = nodebase;
 }
 
-void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
+static void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = s->_segMan->lookupList(listbase);
 	Node *new_n = s->_segMan->lookupNode(nodebase);
 
