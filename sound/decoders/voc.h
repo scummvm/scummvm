@@ -95,12 +95,12 @@ extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate)
  *
  * This function uses loadVOCFromStream() internally.
  */
-AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
+AudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
 /**
  * This does not use any of the looping features of VOC files!
  */
-SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag disposeAfterUse);
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

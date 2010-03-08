@@ -245,9 +245,9 @@ namespace {
 Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 
 #ifdef STREAM_AUDIO_FROM_DISK
-	Audio::SeekableAudioStream *as = Audio::makeVOCStream(*stream, Audio::FLAG_UNSIGNED, disposeAfterUse);
+	Audio::SeekableAudioStream *as = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, disposeAfterUse);
 #else
-	Audio::SeekableAudioStream *as = Audio::makeVOCStream(*stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *as = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 
 	if (disposeAfterUse)
 		delete stream;

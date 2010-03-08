@@ -662,7 +662,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #endif
 			break;
 		default:
-			input = Audio::makeVOCStream(*_sfxFile, Audio::FLAG_UNSIGNED);
+			input = Audio::makeVOCStream(_sfxFile, Audio::FLAG_UNSIGNED);
 			break;
 		}
 

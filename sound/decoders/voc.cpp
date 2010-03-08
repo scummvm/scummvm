@@ -299,40 +299,40 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, in
 	return currentBlock;
 }
 
-AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
+AudioStream *makeVOCDiskStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
 	int rate, loops, begin_loop, end_loop;
 
-	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
+	int numBlocks = parseVOCFormat(*stream, block, rate, loops, begin_loop, end_loop);
 
 	AudioStream *audioStream = 0;
 
 	// Create an audiostream from the data. Note the numBlocks may be 0,
 	// e.g. when invalid data is encountered. See bug #2890038.
 	if (numBlocks)
-		audioStream = makeRawDiskStream_OLD(&stream, block, numBlocks, rate, flags, takeOwnership/*, begin_loop, end_loop*/);
+		audioStream = makeRawDiskStream_OLD(stream, block, numBlocks, rate, flags, disposeAfterUse/*, begin_loop, end_loop*/);
 
 	delete[] block;
 
 	return audioStream;
 }
 
-SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnership) {
+SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
 	int rate, loops, begin_loop, end_loop;
 
-	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
+	int numBlocks = parseVOCFormat(*stream, block, rate, loops, begin_loop, end_loop);
 
 	SeekableAudioStream *audioStream = 0;
 
 	// Create an audiostream from the data. Note the numBlocks may be 0,
 	// e.g. when invalid data is encountered. See bug #2890038.
 	if (numBlocks)
-		audioStream = makeRawDiskStream_OLD(&stream, block, numBlocks, rate, flags, takeOwnership);
+		audioStream = makeRawDiskStream_OLD(stream, block, numBlocks, rate, flags, disposeAfterUse);
 
 	delete[] block;
 
@@ -342,16 +342,19 @@ SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream &stream,
 #endif
 
 
-AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, DisposeAfterUse::Flag takeOwnershipOfStream) {
+AudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, uint loopStart, uint loopEnd, DisposeAfterUse::Flag disposeAfterUse) {
 #ifdef STREAM_AUDIO_FROM_DISK
-	return makeVOCDiskStream(stream, flags, takeOwnershipOfStream);
+	return makeVOCDiskStream(stream, flags, disposeAfterUse);
 #else
 	int size, rate;
 
-	byte *data = loadVOCFromStream(stream, size, rate);
+	byte *data = loadVOCFromStream(*stream, size, rate);
 
-	if (!data)
+	if (!data) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
 		return 0;
+	}
 
 	SeekableAudioStream *s = Audio::makeRawStream(data, size, rate, flags);
 
@@ -379,16 +382,19 @@ AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint 
 #endif
 }
 
-SeekableAudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, DisposeAfterUse::Flag takeOwnershipOfStream) {
+SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 #ifdef STREAM_AUDIO_FROM_DISK
-	return makeVOCDiskStreamNoLoop(stream, flags, takeOwnershipOfStream);
+	return makeVOCDiskStreamNoLoop(*stream, flags, disposeAfterUse);
 #else
 	int size, rate;
 
-	byte *data = loadVOCFromStream(stream, size, rate);
+	byte *data = loadVOCFromStream(*stream, size, rate);
 
-	if (!data)
+	if (!data) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
 		return 0;
+	}
 
 	return makeRawStream(data, size, rate, flags);
 #endif
