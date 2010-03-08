@@ -49,8 +49,6 @@ extern "C" {
 #define hqx_green_redBlue_Mask _hqx_green_redBlue_Mask
 #endif
 
-#endif
-
 uint32 hqx_highbits = 0xF7DEF7DE;
 uint32 hqx_lowbits = 0x0821;
 uint32 hqx_low2bits = 0x0C63;
@@ -58,6 +56,8 @@ uint32 hqx_low3bits = 0x1CE7;
 uint32 hqx_greenMask = 0;
 uint32 hqx_redBlueMask = 0;
 uint32 hqx_green_redBlue_Mask = 0;
+
+#endif
 
 /**
  * 16bit RGB to YUV conversion table. This table is setup by InitLUT().
