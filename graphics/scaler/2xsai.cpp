@@ -41,12 +41,12 @@ static inline int GetResult(uint32 A, uint32 B, uint32 C, uint32 D) {
 	return (y>>1) - (x>>1);
 }
 
-#define interpolate_1_1		interpolate16_1_1<Graphics::ColorMasks<bitFormat> >
-#define interpolate_3_1		interpolate16_3_1<Graphics::ColorMasks<bitFormat> >
-#define interpolate_6_1_1	interpolate16_6_1_1<Graphics::ColorMasks<bitFormat> >
-#define interpolate_1_1_1_1	interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >
+#define interpolate_1_1		interpolate16_1_1<ColorMask>
+#define interpolate_3_1		interpolate16_3_1<ColorMask>
+#define interpolate_6_1_1	interpolate16_6_1_1<ColorMask>
+#define interpolate_1_1_1_1	interpolate16_1_1_1_1<ColorMask>
 
-template<int bitFormat>
+template<typename ColorMask>
 void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
@@ -155,7 +155,7 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 
 MAKE_WRAPPER(Super2xSaI)
 
-template<int bitFormat>
+template<typename ColorMask>
 void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;
@@ -260,7 +260,7 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 
 MAKE_WRAPPER(SuperEagle)
 
-template<int bitFormat>
+template<typename ColorMask>
 void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	const uint16 *bP;
 	uint16 *dP;

@@ -36,28 +36,28 @@
 
 #if ASPECT_MODE == kSlowAndPerfectAspectMode
 
-template<int bitFormat, int scale>
+template<typename ColorMask, int scale>
 static inline uint16 interpolate5(uint16 A, uint16 B) {
-	uint16 r = (uint16)(((A & redblueMask & 0xFF00) * scale + (B & redblueMask & 0xFF00) * (5 - scale)) / 5);
-	uint16 g = (uint16)(((A & greenMask) * scale + (B & greenMask) * (5 - scale)) / 5);
-	uint16 b = (uint16)(((A & redblueMask & 0x00FF) * scale + (B & redblueMask & 0x00FF) * (5 - scale)) / 5);
+	uint16 r = (uint16)(((A & ColorMask::kRedBlueMask & 0xFF00) * scale + (B & ColorMask::kRedBlueMask & 0xFF00) * (5 - scale)) / 5);
+	uint16 g = (uint16)(((A & ColorMask::kGreenMask) * scale + (B & ColorMask::kGreenMask) * (5 - scale)) / 5);
+	uint16 b = (uint16)(((A & ColorMask::kRedBlueMask & 0x00FF) * scale + (B & ColorMask::kRedBlueMask & 0x00FF) * (5 - scale)) / 5);
 
-	return (uint16)((r & redblueMask & 0xFF00) | (g & greenMask) | (b & redblueMask & 0x00FF));
+	return (uint16)((r & ColorMask::kRedBlueMask & 0xFF00) | (g & ColorMask::kGreenMask) | (b & ColorMask::kRedBlueMask & 0x00FF));
 }
 
 
-template<int bitFormat, int scale>
+template<typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// Accurate but slightly slower code
 	while (width--) {
-		*dst++ = interpolate5<bitFormat, scale>(*srcA++, *srcB++);
+		*dst++ = interpolate5<ColorMask, scale>(*srcA++, *srcB++);
 	}
 }
 #endif
 
 #if ASPECT_MODE == kFastAndNiceAspectMode
 
-template<int bitFormat, int scale>
+template<typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 	// For efficiency reasons we blit two pixels at a time, so it is important
 	// that makeRectStretchable() guarantees that the width is even and that
@@ -78,11 +78,11 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 	uint32 *d = (uint32 *)dst;
 	if (scale == 1) {
 		while (width--) {
-			*d++ = interpolate32_3_1<bitFormat>(*sB++, *sA++);
+			*d++ = interpolate32_3_1<ColorMask>(*sB++, *sA++);
 		}
 	} else {
 		while (width--) {
-			*d++ = interpolate32_1_1<bitFormat>(*sB++, *sA++);
+			*d++ = interpolate32_1_1<ColorMask>(*sB++, *sA++);
 		}
 	}
 }
@@ -133,7 +133,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h) {
  * srcY + height - 1, and it should be stretched to Y coordinates srcY
  * through real2Aspect(srcY + height - 1).
  */
-template<int bitFormat>
+template<typename ColorMask>
 int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
@@ -156,16 +156,16 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 				memcpy(dstPtr, srcPtr, width * 2);
 			break;
 		case 1:
-			interpolate5Line<bitFormat, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
+			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		case 2:
-			interpolate5Line<bitFormat, 2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
+			interpolate5Line<ColorMask, 2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
 			break;
 		case 3:
-			interpolate5Line<bitFormat, 2>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
+			interpolate5Line<ColorMask, 2>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
 		case 4:
-			interpolate5Line<bitFormat, 1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
+			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - pitch), width);
 			break;
 		}
 #endif
@@ -177,8 +177,8 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 
 int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	if (gBitFormat == 565)
-		return stretch200To240<565>(buf, pitch, width, height, srcX, srcY, origSrcY);
+		return stretch200To240<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
 	else // gBitFormat == 555
-		return stretch200To240<555>(buf, pitch, width, height, srcX, srcY, origSrcY);
+		return stretch200To240<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
 }
 

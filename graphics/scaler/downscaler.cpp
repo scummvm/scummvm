@@ -41,7 +41,7 @@ void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 
 #else
 
-template<int bitFormat>
+template<typename ColorMask>
 void DownscaleAllByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
@@ -55,7 +55,7 @@ void DownscaleAllByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + srcPitch16));
 			uint16 color4 = *(((const uint16 *)srcPtr) + (i + srcPitch16 + 1));
-			*(((uint16 *)work) + 0) = interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >(color1, color2, color3, color4);
+			*(((uint16 *)work) + 0) = interpolate16_1_1_1_1<ColorMask>(color1, color2, color3, color4);
 
 			work += sizeof(uint16);
 		}
@@ -72,7 +72,7 @@ MAKE_WRAPPER(DownscaleAllByHalf)
  * This filter (down)scales the source image horizontally by a factor of 1/2.
  * For example, a 320x200 image is scaled to 160x200.
  */
-template<int bitFormat>
+template<typename ColorMask>
 void DownscaleHorizByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *work;
 
@@ -87,7 +87,7 @@ void DownscaleHorizByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *d
 		for (int i = 0; i < width; i += 2) {
 			uint16 color1 = *(((const uint16 *)(const void *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)(const void *)srcPtr) + (i + 1));
-			*work++ = interpolate32_1_1<bitFormat>(color1, color2);
+			*work++ = interpolate32_1_1<ColorMask>(color1, color2);
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;

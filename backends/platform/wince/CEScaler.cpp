@@ -25,7 +25,7 @@
 #include "graphics/scaler/intern.h"
 #include "CEScaler.h"
 
-template<int bitFormat>
+template<typename ColorMask>
 void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *work;
 
@@ -41,9 +41,9 @@ void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPt
 			uint16 color3 = *(((const uint16 *)(const void *)srcPtr) + (i + 2));
 			uint16 color4 = *(((const uint16 *)(const void *)srcPtr) + (i + 3));
 
-			work[0] = interpolate32_3_1<bitFormat>(color1, color2);
-			work[1] = interpolate32_1_1<bitFormat>(color2, color3);
-			work[2] = interpolate32_3_1<bitFormat>(color4, color3);
+			work[0] = interpolate32_3_1<ColorMask>(color1, color2);
+			work[1] = interpolate32_1_1<ColorMask>(color2, color3);
+			work[2] = interpolate32_3_1<ColorMask>(color4, color3);
 
 			work += 3;
 		}
@@ -128,7 +128,7 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 
 #else
 
-template<int bitFormat>
+template<typename ColorMask>
 void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
 	int line = 0;
@@ -142,8 +142,8 @@ void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *ds
 			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
 
-			*(((uint16 *)work) + 0) = interpolate32_3_1<bitFormat>(color1, color2);
-			*(((uint16 *)work) + 1) = interpolate32_3_1<bitFormat>(color3, color2);
+			*(((uint16 *)work) + 0) = interpolate32_3_1<ColorMask>(color1, color2);
+			*(((uint16 *)work) + 1) = interpolate32_3_1<ColorMask>(color3, color2);
 
 			work += 2 * sizeof(uint16);
 		}

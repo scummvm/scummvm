@@ -30,22 +30,16 @@
 #include "graphics/colormasks.h"
 
 
-#define kHighBitsMask	Graphics::ColorMasks<bitFormat>::kHighBitsMask
-#define kLowBitsMask	Graphics::ColorMasks<bitFormat>::kLowBitsMask
-#define qhighBits	Graphics::ColorMasks<bitFormat>::qhighBits
-#define qlowBits	Graphics::ColorMasks<bitFormat>::qlowBits
-#define redblueMask	Graphics::ColorMasks<bitFormat>::kRedBlueMask
-#define greenMask	Graphics::ColorMasks<bitFormat>::kGreenMask
-
-
 /**
  * Interpolate two 16 bit pixel *pairs* at once with equal weights 1.
  * In particular, p1 and p2 can contain two pixels each in the upper
  * and lower halves.
  */
-template<int bitFormat>
+template<typename ColorMask>
 static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
-	return (((p1 & kHighBitsMask) >> 1) + ((p2 & kHighBitsMask) >> 1) + (p1 & p2 & kLowBitsMask));
+	return (((p1 & ColorMask::kHighBitsMask) >> 1) +
+	        ((p2 & ColorMask::kHighBitsMask) >> 1) +
+	         (p1 & p2 & ColorMask::kLowBitsMask));
 }
 
 /**
@@ -53,12 +47,12 @@ static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
  * In particular, p1 and p2 can contain two pixels/each in the upper
  * and lower halves.
  */
-template<int bitFormat>
+template<typename ColorMask>
 static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
-	register uint32 x = ((p1 & qhighBits) >> 2) * 3 + ((p2 & qhighBits) >> 2);
-	register uint32 y = ((p1 & qlowBits) * 3 + (p2 & qlowBits)) >> 2;
+	register uint32 x = ((p1 & ColorMask::qhighBits) >> 2) * 3 + ((p2 & ColorMask::qhighBits) >> 2);
+	register uint32 y = ((p1 & ColorMask::qlowBits) * 3 + (p2 & ColorMask::qlowBits)) >> 2;
 
-	y &= qlowBits;
+	y &= ColorMask::qlowBits;
 	return x + y;
 }
 
@@ -227,9 +221,9 @@ extern "C" uint32   *RGBtoYUV;
 #define MAKE_WRAPPER(FUNC) \
 	void FUNC(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) { \
 		if (gBitFormat == 565) \
-			FUNC ## Template<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
+			FUNC ## Template<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
 		else \
-			FUNC ## Template<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
+			FUNC ## Template<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
 	}
 
 /** Specifies the currently active 16bit pixel format, 555 or 565. */
