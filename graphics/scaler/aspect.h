@@ -26,6 +26,7 @@
 #define GRAPHICS_SCALER_ASPECT_H
 
 #include "common/scummsys.h"
+#include "graphics/scaler.h"
 
 /**
  * TODO: explain
@@ -57,7 +58,19 @@ int stretch200To240(uint8 *buf,
                     int srcY,
                     int origSrcY);
 
-// TODO: Move Normal2xAspect & PocketPCLandscapeAspect here;
-// also rename the latter to Normal1xAspect
+
+/**
+ * This filter (up)scales the source image vertically by a factor of 6/5.
+ * For example, a 320x200 image is scaled to 320x240.
+ *
+ * The main difference to the code in graphics/scaler/aspect.cpp is the
+ * out-of-place operation, omitting a straight blit step the sdl backend
+ * does. Also, tests show unaligned access errors with the stock aspect scaler.
+ */
+DECLARE_SCALER(Normal1xAspect);
+
+#ifdef USE_ARM_SCALER_ASM
+DECLARE_SCALER(Normal2xAspect);
+#endif
 
 #endif

@@ -32,16 +32,6 @@
 #include "graphics/scaler/intern.h"
 
 /**
- * This filter (up)scales the source image vertically by a factor of 6/5.
- * For example, a 320x200 image is scaled to 320x240.
- *
- * The main difference to the code in graphics/scaler/aspect.cpp is the
- * out-of-place operation, omitting a straight blit step the sdl backend
- * does. Also, tests show unaligned access errors with the stock aspect scaler.
- */
-DECLARE_SCALER(PocketPCLandscapeAspect);
-
-/**
  * This filter (down)scales the source image horizontally by a factor of 2/3
  * and vertically by 7/8. For example, a 320x200 image is scaled to 213x175.
  *

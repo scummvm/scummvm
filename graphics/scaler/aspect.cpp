@@ -183,3 +183,109 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 		return stretch200To240<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
 }
 
+
+void Normal1xAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+
+	extern int gBitFormat;
+
+	const int redblueMasks[] = { 0x7C1F, 0xF81F };
+	const int greenMasks[] = { 0x03E0, 0x07E0 };
+	const int RBM = redblueMasks[gBitFormat == 565];
+	const int GM = greenMasks[gBitFormat == 565];
+
+	int i,j;
+	unsigned int p1, p2;
+	const uint8 *inbuf, *instart;
+	uint8 *outbuf, *outstart;
+
+#define RB(x) ((x & RBM)<<8)
+#define G(x)  ((x & GM)<<3)
+
+#define P20(x) (((x)>>2)-((x)>>4))
+#define P40(x) (((x)>>1)-((x)>>3))
+#define P60(x) (((x)>>1)+((x)>>3))
+#define P80(x) (((x)>>1)+((x)>>2)+((x)>>4))
+
+#define MAKEPIXEL(rb,g) ((((rb)>>8) & RBM | ((g)>>3) & GM))
+
+	inbuf = (const uint8 *)srcPtr;
+	outbuf = (uint8 *)dstPtr;
+	height /= 5;
+
+	// Various casts below go via (void *) to avoid warning. This is
+	// safe as these are all even addresses.
+	for (i = 0; i < height; i++) {
+		instart = inbuf;
+		outstart = outbuf;
+		for (j=0; j < width; j++) {
+
+			p1 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = p1; outbuf += dstPitch;
+
+			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch;
+
+			p1 = p2;
+			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch;
+
+			p1 = p2;
+			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  outbuf += dstPitch;
+
+			p1 = p2;
+			p2 = *(const uint16*)(const void *)inbuf;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch;
+
+			*(uint16*)(void *)outbuf = p2;
+
+			inbuf = inbuf - srcPitch*4 + sizeof(uint16);
+			outbuf = outbuf - dstPitch*5 + sizeof(uint16);
+		}
+		inbuf = instart + srcPitch*5;
+		outbuf = outstart + dstPitch*6;
+	}
+}
+
+
+#ifdef USE_ARM_SCALER_ASM
+extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
+                                         uint32  srcPitch,
+                                         uint8  *dstPtr,
+                                         uint32  dstPitch,
+                                         int     width,
+                                         int     height,
+                                         uint32  mask);
+
+/**
+ * A 2x scaler which also does aspect ratio correction.
+ * This is Normal2x combined with vertical stretching,
+ * so it will scale a 320x200 surface to a 640x480 surface.
+ */
+void Normal2xAspect(const uint8  *srcPtr,
+                          uint32  srcPitch,
+                          uint8  *dstPtr,
+                          uint32  dstPitch,
+                          int     width,
+                          int     height) {
+	if (gBitFormat == 565) {
+		Normal2xAspectMask(srcPtr,
+		                   srcPitch,
+		                   dstPtr,
+		                   dstPitch,
+		                   width,
+		                   height,
+		                   0x07e0F81F);
+	} else {
+		Normal2xAspectMask(srcPtr,
+		                   srcPitch,
+		                   dstPtr,
+		                   dstPitch,
+		                   width,
+		                   height,
+		                   0x03e07C1F);
+	}
+}
+
+#endif	// USE_ARM_SCALER_ASM
+

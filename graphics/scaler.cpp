@@ -178,45 +178,9 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 }
 
 #ifndef DISABLE_SCALERS
+
+
 #ifdef USE_ARM_SCALER_ASM
-extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
-                                         uint32  srcPitch,
-                                         uint8  *dstPtr,
-                                         uint32  dstPitch,
-                                         int     width,
-                                         int     height,
-                                         uint32  mask);
-
-/**
- * A 2x scaler which also does aspect ratio correction.
- * This is Normal2x combined with vertical stretching,
- * so it will scale a 320x200 surface to a 640x480 surface.
- */
-void Normal2xAspect(const uint8  *srcPtr,
-                          uint32  srcPitch,
-                          uint8  *dstPtr,
-                          uint32  dstPitch,
-                          int     width,
-                          int     height) {
-	if (gBitFormat == 565) {
-		Normal2xAspectMask(srcPtr,
-		                   srcPitch,
-		                   dstPtr,
-		                   dstPitch,
-		                   width,
-		                   height,
-		                   0x07e0F81F);
-	} else {
-		Normal2xAspectMask(srcPtr,
-		                   srcPitch,
-		                   dstPtr,
-		                   dstPitch,
-		                   width,
-		                   height,
-		                   0x03e07C1F);
-	}
-}
-
 extern "C" void Normal2xARM(const uint8  *srcPtr,
                                   uint32  srcPitch,
                                   uint8  *dstPtr,
@@ -422,4 +386,4 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 	}
 }
 
-#endif
+#endif // #ifndef DISABLE_SCALERS

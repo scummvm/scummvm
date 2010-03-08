@@ -1166,7 +1166,7 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 6;
 				_scaleFactorYd = 5;
-				_scalerProc = PocketPCLandscapeAspect;
+				_scalerProc = Normal1xAspect;
 				_modeFlags = 0;
 				_videoMode.aspectRatioCorrection = true;
 			} else {
