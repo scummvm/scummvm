@@ -99,6 +99,7 @@ void HQ3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #define PIXEL22_5   *(q+2+nextlineDst2) = interpolate16_1_1<ColorMask >(w6, w8);
 #define PIXEL22_C   *(q+2+nextlineDst2) = w5;
 
+extern "C" uint32   *RGBtoYUV;
 #define YUV(x)	RGBtoYUV[w ## x]
 
 

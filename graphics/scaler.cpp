@@ -59,22 +59,27 @@ uint32 hqx_greenMask = 0;
 uint32 hqx_redBlueMask = 0;
 uint32 hqx_green_redBlue_Mask = 0;
 
-// FIXME/TODO: The RGBtoYUV table sucks up 256 KB. This is bad.
-// In addition we never free it...
-//
-// Note: a memory lookup table is *not* necessarily faster than computing
-// these things on the fly, because of its size. The table together with
-// the code, plus the input/output GFX data, may not fit in the cache on some
-// systems, so main memory has to be accessed, which is about the worst thing
-// that can happen to code which tries to be fast...
-//
-// So we should think about ways to get this smaller / removed. Maybe we can
-// use the same technique employed by our MPEG code to reduce the size of the
-// lookup table at the cost of some additional computations?
-//
-// Of course, the above is largely a conjecture, and the actual speed
-// differences are likely to vary a lot between different architectures and
-// CPUs.
+/**
+ * 16bit RGB to YUV conversion table. This table is setup by InitLUT().
+ * Used by the hq scaler family.
+ *
+ * FIXME/TODO: The RGBtoYUV table sucks up 256 KB. This is bad.
+ * In addition we never free it...
+ *
+ * Note: a memory lookup table is *not* necessarily faster than computing
+ * these things on the fly, because of its size. The table together with
+ * the code, plus the input/output GFX data, may not fit in the cache on some
+ * systems, so main memory has to be accessed, which is about the worst thing
+ * that can happen to code which tries to be fast...
+ *
+ * So we should think about ways to get this smaller / removed. Maybe we can
+ * use the same technique employed by our MPEG code to reduce the size of the
+ * lookup table at the cost of some additional computations?
+ *
+ * Of course, the above is largely a conjecture, and the actual speed
+ * differences are likely to vary a lot between different architectures and
+ * CPUs.
+ */
 uint32 *RGBtoYUV = 0;
 }
 
@@ -322,7 +327,13 @@ void Normal1o5xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 		height -= 2;
 	}
 }
-MAKE_WRAPPER(Normal1o5x)
+
+void Normal1o5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (gBitFormat == 565)
+		Normal1o5xTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		Normal1o5xTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
 
 /**
  * The Scale2x filter, also known as AdvMame2x.
@@ -368,7 +379,13 @@ void TV2xTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 		q += nextlineDst << 1;
 	}
 }
-MAKE_WRAPPER(TV2x)
+
+void TV2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	if (gBitFormat == 565)
+		TV2xTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		TV2xTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
 
 static inline uint16 DOT_16(const uint16 *dotmatrix, uint16 c, int j, int i) {
 	return c - ((c >> 2) & dotmatrix[((j & 3) << 2) + (i & 3)]);

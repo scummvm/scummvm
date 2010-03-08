@@ -96,6 +96,7 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #define PIXEL11_90	*(q+1+nextlineDst) = interpolate16_2_3_3<ColorMask >(w5, w6, w8);
 #define PIXEL11_100	*(q+1+nextlineDst) = interpolate16_14_1_1<ColorMask >(w5, w6, w8);
 
+extern "C" uint32   *RGBtoYUV;
 #define YUV(x)	RGBtoYUV[w ## x]
 
 

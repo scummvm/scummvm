@@ -51,7 +51,14 @@ void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPt
 		dstPtr += dstPitch;
 	}
 }
-MAKE_WRAPPER(PocketPCPortrait)
+
+void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	extern int gBitFormat;
+	if (gBitFormat == 565)
+		PocketPCPortraitTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		PocketPCPortraitTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
 
 void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
@@ -157,7 +164,14 @@ void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *ds
 		}
 	}
 }
-MAKE_WRAPPER(SmartphoneLandscape)
+
+void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	extern int gBitFormat;
+	if (gBitFormat == 565)
+		SmartphoneLandscapeTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		SmartphoneLandscapeTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
 
 #endif
 

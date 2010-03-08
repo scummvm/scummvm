@@ -63,7 +63,14 @@ void DownscaleAllByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 		dstPtr += dstPitch;
 	}
 }
-MAKE_WRAPPER(DownscaleAllByHalf)
+
+void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	extern int gBitFormat;
+	if (gBitFormat == 565)
+		DownscaleAllByHalfTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		DownscaleAllByHalfTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
 
 #endif
 
@@ -93,4 +100,11 @@ void DownscaleHorizByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *d
 		dstPtr += dstPitch;
 	}
 }
-MAKE_WRAPPER(DownscaleHorizByHalf)
+
+void DownscaleHorizByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	extern int gBitFormat;
+	if (gBitFormat == 565)
+		DownscaleHorizByHalfTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		DownscaleHorizByHalfTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}

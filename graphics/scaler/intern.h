@@ -211,22 +211,4 @@ static inline bool diffYUV(int yuv1, int yuv2) {
 */
 }
 
-/**
- * 16bit RGB to YUV conversion table. This table is setup by InitLUT().
- * Used by the hq scaler family.
- */
-extern "C" uint32   *RGBtoYUV;
-
-/** Auxiliary macro to simplify creating those template function wrappers. */
-#define MAKE_WRAPPER(FUNC) \
-	void FUNC(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) { \
-		if (gBitFormat == 565) \
-			FUNC ## Template<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
-		else \
-			FUNC ## Template<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height); \
-	}
-
-/** Specifies the currently active 16bit pixel format, 555 or 565. */
-extern int gBitFormat;
-
 #endif

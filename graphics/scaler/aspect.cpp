@@ -176,6 +176,7 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 }
 
 int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
+	extern int gBitFormat;
 	if (gBitFormat == 565)
 		return stretch200To240<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
 	else // gBitFormat == 555
