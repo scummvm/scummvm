@@ -27,7 +27,6 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "graphics/scaler/intern.h"
 
 namespace Graphics {
 
