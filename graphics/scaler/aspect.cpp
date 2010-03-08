@@ -27,11 +27,12 @@
 #include "graphics/scaler/aspect.h"
 
 
-#define	kVeryFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
-#define	kFastAndNiceAspectMode		1	// Quite good quality with good speed
-#define	kSlowAndPerfectAspectMode	2	// Accurate but slow code
+#define	kSuperFastAndUglyAspectMode	0	// No interpolation at all, but super-fast
+#define	kVeryFastAndGoodAspectMode	1	// Good quality with very good speed
+#define	kFastAndVeryGoodAspectMode	2	// Very good quality with good speed
+#define	kSlowAndPerfectAspectMode	3	// Accurate but slow code
 
-#define ASPECT_MODE	kFastAndNiceAspectMode
+#define ASPECT_MODE	kVeryFastAndGoodAspectMode
 
 
 #if ASPECT_MODE == kSlowAndPerfectAspectMode
@@ -55,7 +56,7 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 }
 #endif
 
-#if ASPECT_MODE == kFastAndNiceAspectMode
+#if ASPECT_MODE == kVeryFastAndGoodAspectMode
 
 template<typename ColorMask, int scale>
 static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
@@ -71,6 +72,26 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 	//assert(((int)srcA & 3) == 0);
 	//assert(((int)srcB & 3) == 0);
 	//assert((width & 1) == 0);
+
+	if (scale == 1) {
+		while (width--) {
+			*dst++ = interpolate16_7_1<ColorMask>(*srcB++, *srcA++);
+		}
+	} else {
+		while (width--) {
+			// TODO: We really would like to use interpolate16_5_3, but that
+			// does not exist (yet), so we use this trick instead.
+			uint16 tmp = *srcA++;
+			*dst++ = interpolate16_5_2_1<ColorMask>(*srcB++, tmp, tmp);
+		}
+	}
+}
+#endif
+
+#if ASPECT_MODE == kFastAndVeryGoodAspectMode
+
+template<typename ColorMask, int scale>
+static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint16 *srcB, int width) {
 
 	width /= 2;
 	const uint32 *sA = (const uint32 *)srcA;
@@ -89,7 +110,7 @@ static inline void interpolate5Line(uint16 *dst, const uint16 *srcA, const uint1
 #endif
 
 void makeRectStretchable(int &x, int &y, int &w, int &h) {
-#if ASPECT_MODE != kVeryFastAndUglyAspectMode
+#if ASPECT_MODE != kSuperFastAndUglyAspectMode
 	int m = real2Aspect(y) % 6;
 
 	// Ensure that the rect will start on a line that won't have its
@@ -99,7 +120,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h) {
 		h += m;
 	}
 
-  #if ASPECT_MODE == kFastAndNiceAspectMode
+  #if ASPECT_MODE == kVeryFastAndGoodAspectMode
 	// Force x to be even, to ensure aligned memory access (this assumes
 	// that each line starts at an even memory location, but that should
 	// be the case on every target anyway).
@@ -143,7 +164,7 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 	for (y = maxDstY; y >= srcY; y--) {
 		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
 
-#if ASPECT_MODE == kVeryFastAndUglyAspectMode
+#if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if (srcPtr == dstPtr)
 			break;
 		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
@@ -189,7 +210,7 @@ void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
 
 	for (int y = 0; y < height; ++y) {
 
-#if ASPECT_MODE == kVeryFastAndUglyAspectMode
+#if ASPECT_MODE == kSuperFastAndUglyAspectMode
 		if ((y % 6) == 5)
 			srcPtr -= srcPitch;
 		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
