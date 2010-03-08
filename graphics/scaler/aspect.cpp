@@ -146,14 +146,14 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 #if ASPECT_MODE == kVeryFastAndUglyAspectMode
 		if (srcPtr == dstPtr)
 			break;
-		memcpy(dstPtr, srcPtr, width * 2);
+		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
 #else
 		// Bilinear filter
 		switch (y % 6) {
 		case 0:
 		case 5:
 			if (srcPtr != dstPtr)
-				memcpy(dstPtr, srcPtr, width * 2);
+				memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
 			break;
 		case 1:
 			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - pitch), (const uint16 *)srcPtr, width);
@@ -184,69 +184,58 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 }
 
 
-void Normal1xAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+template<typename ColorMask>
+void Normal1xAspectTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
-	extern int gBitFormat;
+	for (int y = 0; y < height; ++y) {
 
-	const int redblueMasks[] = { 0x7C1F, 0xF81F };
-	const int greenMasks[] = { 0x03E0, 0x07E0 };
-	const int RBM = redblueMasks[gBitFormat == 565];
-	const int GM = greenMasks[gBitFormat == 565];
-
-	int i,j;
-	unsigned int p1, p2;
-	const uint8 *inbuf, *instart;
-	uint8 *outbuf, *outstart;
-
-#define RB(x) ((x & RBM)<<8)
-#define G(x)  ((x & GM)<<3)
-
-#define P20(x) (((x)>>2)-((x)>>4))
-#define P40(x) (((x)>>1)-((x)>>3))
-#define P60(x) (((x)>>1)+((x)>>3))
-#define P80(x) (((x)>>1)+((x)>>2)+((x)>>4))
-
-#define MAKEPIXEL(rb,g) ((((rb)>>8) & RBM | ((g)>>3) & GM))
-
-	inbuf = (const uint8 *)srcPtr;
-	outbuf = (uint8 *)dstPtr;
-	height /= 5;
-
-	// Various casts below go via (void *) to avoid warning. This is
-	// safe as these are all even addresses.
-	for (i = 0; i < height; i++) {
-		instart = inbuf;
-		outstart = outbuf;
-		for (j=0; j < width; j++) {
-
-			p1 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
-			*(uint16*)(void *)outbuf = p1; outbuf += dstPitch;
-
-			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
-			*(uint16*)(void *)outbuf = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch;
-
-			p1 = p2;
-			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
-			*(uint16*)(void *)outbuf = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch;
-
-			p1 = p2;
-			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
-			*(uint16*)(void *)outbuf = MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  outbuf += dstPitch;
-
-			p1 = p2;
-			p2 = *(const uint16*)(const void *)inbuf;
-			*(uint16*)(void *)outbuf = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch;
-
-			*(uint16*)(void *)outbuf = p2;
-
-			inbuf = inbuf - srcPitch*4 + sizeof(uint16);
-			outbuf = outbuf - dstPitch*5 + sizeof(uint16);
+#if ASPECT_MODE == kVeryFastAndUglyAspectMode
+		if ((y % 6) == 5)
+			srcPtr -= srcPitch;
+		memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+#else
+		// Bilinear filter five input lines onto six output lines
+		switch (y % 6) {
+		case 0:
+			// First output line is copied from first input line
+			memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+			break;
+		case 1:
+			// Second output line is mixed from first and second input line
+			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)(srcPtr - srcPitch), (const uint16 *)srcPtr, width);
+			break;
+		case 2:
+			// Third output line is mixed from second and third input line
+			interpolate5Line<ColorMask, 2>((uint16 *)dstPtr, (const uint16 *)(srcPtr - srcPitch), (const uint16 *)srcPtr, width);
+			break;
+		case 3:
+			// Fourth output line is mixed from third and fourth input line
+			interpolate5Line<ColorMask, 2>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - srcPitch), width);
+			break;
+		case 4:
+			// Fifth output line is mixed from fourth and fifth input line
+			interpolate5Line<ColorMask, 1>((uint16 *)dstPtr, (const uint16 *)srcPtr, (const uint16 *)(srcPtr - srcPitch), width);
+			break;
+		case 5:
+			// Sixth (and last) output line is copied from fifth (and last) input line
+			srcPtr -= srcPitch;
+			memcpy(dstPtr, srcPtr, sizeof(OverlayColor) * width);
+			break;
 		}
-		inbuf = instart + srcPitch*5;
-		outbuf = outstart + dstPitch*6;
+#endif
+
+		srcPtr += srcPitch;
+		dstPtr += dstPitch;
 	}
 }
 
+void Normal1xAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	extern int gBitFormat;
+	if (gBitFormat == 565)
+		Normal1xAspectTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		Normal1xAspectTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+}
 
 #ifdef USE_ARM_SCALER_ASM
 extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
