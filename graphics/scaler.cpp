@@ -184,9 +184,8 @@ extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
 
 /**
  * A 2x scaler which also does aspect ratio correction.
- * Presumably this is Normal2x combined with vertical
- * stretching, so it will scale a 320x200 surface to
- * a 640x480 surface.
+ * This is Normal2x combined with vertical stretching,
+ * so it will scale a 320x200 surface to a 640x480 surface.
  */
 void Normal2xAspect(const uint8  *srcPtr,
                           uint32  srcPitch,

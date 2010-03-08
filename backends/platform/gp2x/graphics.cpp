@@ -34,6 +34,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
+#include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

@@ -485,10 +485,7 @@ protected:
 
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
-	int effectiveScreenHeight() const {
-		return (_videoMode.aspectRatioCorrection ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
-			* _videoMode.scaleFactor;
-	}
+	int effectiveScreenHeight() const;
 
 	void setupIcon();
 	void handleKbdMouse();

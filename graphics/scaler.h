@@ -58,18 +58,6 @@ DECLARE_SCALER(HQ2x);
 DECLARE_SCALER(HQ3x);
 #endif
 
-FORCEINLINE int real2Aspect(int y) {
-	return y + (y + 1) / 5;
-}
-
-FORCEINLINE int aspect2Real(int y) {
-	return (y * 5 + 4) / 6;
-}
-
-extern void makeRectStretchable(int &x, int &y, int &w, int &h);
-
-extern int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
-
 // creates a 160x100 thumbnail for 320x200 games
 // and 160x120 thumbnail for 320x240 and 640x480 games
 // only 565 mode

@@ -33,6 +33,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "common/util.h"
 #include "common/events.h"
+#include "graphics/scaler/aspect.h"	// for aspect2Real
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button using the keymapper.

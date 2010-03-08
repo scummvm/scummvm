@@ -24,7 +24,7 @@
  */
 
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
-#include "backends/platform/sdl/sdl.h"
+#include "graphics/scaler/aspect.h"	// for aspect2Real
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {

@@ -29,6 +29,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
+#include "graphics/scaler/aspect.h"
 #include "graphics/scaler/downscaler.h"
 #include "graphics/surface.h"
 

@@ -24,7 +24,7 @@
  */
 
 #include "graphics/scaler/intern.h"
-#include "graphics/scaler.h"
+#include "graphics/scaler/aspect.h"
 
 
 #define	kVeryFastAndUglyAspectMode	0	// No interpolation at all, but super-fast

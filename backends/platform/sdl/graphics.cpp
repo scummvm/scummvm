@@ -32,6 +32,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
+#include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -476,6 +477,12 @@ void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) 
 	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 }
 
+int OSystem_SDL::effectiveScreenHeight() const {
+	return _videoMode.scaleFactor *
+				(_videoMode.aspectRatioCorrection
+					? real2Aspect(_videoMode.screenHeight)
+					: _videoMode.screenHeight);
+}
 
 static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) {
 	assert(&width != &height);
