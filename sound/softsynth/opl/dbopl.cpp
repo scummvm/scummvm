@@ -1196,9 +1196,7 @@ Bit32u Chip::WriteAddr( Bit32u port, Bit8u val ) {
 void Chip::GenerateBlock2( Bitu total, Bit32s* output ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
-		for ( Bitu i = 0; i < samples; i++ ) {
-			output[i] = 0;
-		}
+		memset(output, 0, sizeof(Bit32s) * samples);
 		int count = 0;
 		for( Channel* ch = chan; ch < chan + 9; ) {
 			count++;
@@ -1212,10 +1210,7 @@ void Chip::GenerateBlock2( Bitu total, Bit32s* output ) {
 void Chip::GenerateBlock3( Bitu total, Bit32s* output  ) {
 	while ( total > 0 ) {
 		Bit32u samples = ForwardLFO( total );
-		for ( Bitu i = 0; i < samples; i++ ) {
-			output[i * 2 + 0 ] = 0;
-			output[i * 2 + 1 ] = 0;
-		}
+		memset(output, 0, sizeof(Bit32s) * 2 * samples);
 		int count = 0;
 		for( Channel* ch = chan; ch < chan + 18; ) {
 			count++;
