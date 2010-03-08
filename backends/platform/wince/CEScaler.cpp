@@ -41,26 +41,36 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 
 template<typename ColorMask>
 void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint8 *work;
 	int line = 0;
 
+	assert((width % 16) == 0);
+
 	while (height--) {
-		work = dstPtr;
+		uint16 *d = (uint16 *)dstPtr;
 
-		for (int i = 0; i < width; i += 3) {
-			// Filter 2/3
-			uint16 color1 = *(((const uint16 *)srcPtr) + i);
-			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
-			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
+		const uint16 *s = (const uint16 *)srcPtr;
+		for (int i = 0; i < width; i += 16) {
+			// Downscale horizontally to 11/16.
+			// See smartLandScale.s for an explanation of the scale pattern.
+			*d++ = interpolate32_3_1<ColorMask>(s[0], s[1]);
+			*d++ = interpolate32_1_1<ColorMask>(s[1], s[2]);
+			*d++ = interpolate32_3_1<ColorMask>(s[3], s[2]);
+			*d++ = interpolate32_1_1<ColorMask>(s[4], s[5]);
+			*d++ = interpolate32_3_1<ColorMask>(s[6], s[7]);
+			*d++ = interpolate32_1_1<ColorMask>(s[7], s[8]);
+			*d++ = interpolate32_3_1<ColorMask>(s[9], s[8]);
+			*d++ = interpolate32_1_1<ColorMask>(s[10], s[11]);
+			*d++ = interpolate32_3_1<ColorMask>(s[12], s[13]);
+			*d++ = interpolate32_1_1<ColorMask>(s[13], s[14]);
+			*d++ = interpolate32_3_1<ColorMask>(s[15], s[14]);
 
-			*(((uint16 *)work) + 0) = interpolate32_3_1<ColorMask>(color1, color2);
-			*(((uint16 *)work) + 1) = interpolate32_3_1<ColorMask>(color3, color2);
-
-			work += 2 * sizeof(uint16);
+			s += 16;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
 		line++;
+
+		// Skip every 8th row
 		if (line == 7) {
 			line = 0;
 			srcPtr += srcPitch;

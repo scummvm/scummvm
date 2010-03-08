@@ -32,11 +32,8 @@
 #include "graphics/scaler/intern.h"
 
 /**
- * This filter (down)scales the source image horizontally by a factor of 2/3
- * and vertically by 7/8. For example, a 320x200 image is scaled to 213x175.
- *
- * @note The ARM asm version seems to work differently ?!? It apparently scales
- * horizontally by 11/16. Thus a 320x200 image is scaled to 220x175.
+ * This filter (down)scales the source image horizontally by a factor of 11/16
+ * and vertically by 7/8. For example, a 320x200 image is scaled to 220x175.
  */
 DECLARE_SCALER(SmartphoneLandscape);
 
