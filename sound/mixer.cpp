@@ -179,6 +179,9 @@ MixerImpl::~MixerImpl() {
 
 void MixerImpl::setReady(bool ready) {
 	_mixerReady = ready;
+
+	// If the mixer is set to ready, then we better have a positive sample rate!
+	assert(!_mixerReady || _sampleRate > 0);
 }
 
 uint MixerImpl::getOutputRate() const {
@@ -241,6 +244,44 @@ void MixerImpl::playInputStream(
 			}
 	}
 
+	// Check if the mixer is not ready. This most probably means that
+	// no Audio output is possible according to the backend (we should
+	// clarify this in the Mixer creation API, though).
+	//
+	// For now we deal with this by simply ignore the sound here, never
+	// scheduling it for playback, never giving it a valid sound
+	// handle. For a game engine, this is indistinguishable from a
+	// sound which finishes playback before playInputStream returns.
+	//
+	// This is certainly not ideal for many engine; e.g. if a game has
+	// scripts which sync by waiting for certain sounds to play, then
+	// this syncing is broken if we just remove the sound.
+	//
+	// We could try to be more graceful, by using TimerManager and
+	// emulating (or rather: faking) actual audio playback; essentially
+	// we run the mixer callback from a timer instead of an audio
+	// callback.
+	// However, this may very well lead to new problems of its own,
+	// plus it would complicate the Mixer code. It seems that a better
+	// solution would be to adapt backends to setup a fake mixer thread
+	// which calls the mixer callback. We'd then still need a way to
+	// signal the mixer / the client code that no actual audio playback
+	// takes places... Anyway, either way, we first would have to
+	// investigate ramifications of any such approach.
+	//
+	// And also, by far the best solution is to adapt engines to be
+	// properly aware of the possibility of missing audio, and how to
+	// deal with it; be it by refusing to launch (e.g. when audio is an
+	// integral part of a game), by switching to alternate script
+	// syncing means, etc. It also seems important to test every game
+	// individually in a system without audio, if we really want
+	// to support such systems.
+	if (!_mixerReady) {
+		if (autofreeStream == DisposeAfterUse::YES)
+			delete input;
+		return;
+	}
+
 	// Create the channel
 	Channel *chan = new Channel(this, type, input, autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);
@@ -258,6 +299,7 @@ void MixerImpl::mixCallback(byte *samples, uint len) {
 
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
+	assert(_sampleRate > 0);
 
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));
@@ -334,7 +376,7 @@ Timestamp MixerImpl::getElapsedTime(SoundHandle handle) {
 
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
-		return Timestamp(0, _sampleRate);
+		return Timestamp(0, _sampleRate ? _sampleRate : 1);
 
 	return _channels[index]->getElapsedTime();
 }
