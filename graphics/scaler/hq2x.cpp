@@ -114,6 +114,7 @@ void HQ2x_555(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 
 void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	extern int gBitFormat;
 	if (gBitFormat == 565)
 		HQ2x_565(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
