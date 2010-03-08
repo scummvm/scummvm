@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	mods/soundfx.o \
 	mods/tfmx.o \
 	softsynth/adlib.o \
+	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
 	softsynth/ym2612.o \

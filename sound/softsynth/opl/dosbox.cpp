@@ -144,53 +144,7 @@ uint8 Chip::read() {
 	return ret;
 }
 
-namespace OPL2 {
-#include "opl_impl.h"
-
-struct Handler : public DOSBox::Handler {
-	void writeReg(uint32 reg, uint8 val) {
-		adlib_write(reg, val);
-	}
-
-	uint32 writeAddr(uint32 port, uint8 val) {
-		return val;
-	}
-
-	void generate(int16 *chan, uint samples) {
-		adlib_getsample(chan, samples);
-	}
-
-	void init(uint rate) {
-		adlib_init(rate);
-	}
-};
-} // End of namespace OPL2
-
-namespace OPL3 {
-#define OPLTYPE_IS_OPL3
-#include "opl_impl.h"
-
-struct Handler : public DOSBox::Handler {
-	void writeReg(uint32 reg, uint8 val) {
-		adlib_write(reg, val);
-	}
-
-	uint32 writeAddr(uint32 port, uint8 val) {
-		adlib_write_index(port, val);
-		return opl_index;
-	}
-
-	void generate(int16 *chan, uint samples) {
-		adlib_getsample(chan, samples);
-	}
-
-	void init(uint rate) {
-		adlib_init(rate);
-	}
-};
-} // End of namespace OPL3
-
-OPL::OPL(Config::OplType type) : _type(type), _rate(0), _handler(0) {
+OPL::OPL(Config::OplType type) : _type(type), _rate(0), _emulator(0) {
 }
 
 OPL::~OPL() {
@@ -198,8 +152,8 @@ OPL::~OPL() {
 }
 
 void OPL::free() {
-	delete _handler;
-	_handler = 0;
+	delete _emulator;
+	_emulator = 0;
 }
 
 bool OPL::init(int rate) {
@@ -208,25 +162,16 @@ bool OPL::init(int rate) {
 	memset(&_reg, 0, sizeof(_reg));
 	memset(_chip, 0, sizeof(_chip));
 
-	switch (_type) {
-	case Config::kOpl2:
-		_handler = new OPL2::Handler();
-		break;
-
-	case Config::kDualOpl2:
-	case Config::kOpl3:
-		_handler = new OPL3::Handler();
-		break;
-
-	default:
+	_emulator = new DBOPL::Chip();
+	if (!_emulator)
 		return false;
-	}
 
-	_handler->init(rate);
+	DBOPL::InitTables();
+	_emulator->Setup(rate);
 
 	if (_type == Config::kDualOpl2) {
 		// Setup opl3 mode in the hander
-		_handler->writeReg(0x105, 1);
+		_emulator->WriteReg(0x105, 1);
 	}
 
 	_rate = rate;
@@ -243,7 +188,7 @@ void OPL::write(int port, int val) {
 		case Config::kOpl2:
 		case Config::kOpl3:
 			if (!_chip[0].write(_reg.normal, val))
-				_handler->writeReg(_reg.normal, val);
+				_emulator->WriteReg(_reg.normal, val);
 			break;
 		case Config::kDualOpl2:
 			// Not a 0x??8 port, then write to a specific port
@@ -262,10 +207,10 @@ void OPL::write(int port, int val) {
 		// Make sure to clip them in the right range
 		switch (_type) {
 		case Config::kOpl2:
-			_reg.normal = _handler->writeAddr(port, val) & 0xff;
+			_reg.normal = _emulator->WriteAddr(port, val) & 0xff;
 			break;
 		case Config::kOpl3:
-			_reg.normal = _handler->writeAddr(port, val) & 0x1ff;
+			_reg.normal = _emulator->WriteAddr(port, val) & 0x1ff;
 			break;
 		case Config::kDualOpl2:
 			// Not a 0x?88 port, when write to a specific side
@@ -344,7 +289,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	}
 
 	uint32 fullReg = reg + (index ? 0x100 : 0);
-	_handler->writeReg(fullReg, val);
+	_emulator->WriteReg(fullReg, val);
 }
 
 void OPL::readBuffer(int16 *buffer, int length) {
@@ -353,7 +298,34 @@ void OPL::readBuffer(int16 *buffer, int length) {
 	if (_type != Config::kOpl2)
 		length >>= 1;
 
-	_handler->generate(buffer, length);
+	const uint bufferLength = 512;
+	int32 tempBuffer[bufferLength * 2];
+
+	if (_emulator->opl3Active) {
+		while (length > 0) {
+			const uint readSamples = MIN<uint>(length, bufferLength);
+
+			_emulator->GenerateBlock3(readSamples, tempBuffer);
+
+			for (uint i = 0; i < (readSamples << 1); ++i)
+				buffer[i] = tempBuffer[i];
+
+			buffer += (readSamples << 1);
+			length -= readSamples;
+		}
+	} else {
+		while (length > 0) {
+			const uint readSamples = MIN<uint>(length, bufferLength << 1);
+
+			_emulator->GenerateBlock2(readSamples, tempBuffer);
+
+			for (uint i = 0; i < readSamples; ++i)
+				buffer[i] = tempBuffer[i];
+
+			buffer += readSamples;
+			length -= readSamples;
+		}
+	}
 }
 
 } // End of namespace DOSBox
