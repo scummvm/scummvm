@@ -25,41 +25,6 @@
 #include "graphics/scaler/intern.h"
 #include "CEScaler.h"
 
-template<typename ColorMask>
-void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint16 *work;
-
-	// Various casts below go via (void *) to avoid warning. This is
-	// safe as these are all even addresses.
-	while (height--) {
-		work = (uint16 *)(void *)dstPtr;
-
-		for (int i=0; i<width; i+=4) {
-			// Work with 4 pixels
-			uint16 color1 = *(((const uint16 *)(const void *)srcPtr) + i);
-			uint16 color2 = *(((const uint16 *)(const void *)srcPtr) + (i + 1));
-			uint16 color3 = *(((const uint16 *)(const void *)srcPtr) + (i + 2));
-			uint16 color4 = *(((const uint16 *)(const void *)srcPtr) + (i + 3));
-
-			work[0] = interpolate32_3_1<ColorMask>(color1, color2);
-			work[1] = interpolate32_1_1<ColorMask>(color2, color3);
-			work[2] = interpolate32_3_1<ColorMask>(color4, color3);
-
-			work += 3;
-		}
-		srcPtr += srcPitch;
-		dstPtr += dstPitch;
-	}
-}
-
-void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	extern int gBitFormat;
-	if (gBitFormat == 565)
-		PocketPCPortraitTemplate<Graphics::ColorMasks<565> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-	else
-		PocketPCPortraitTemplate<Graphics::ColorMasks<555> >(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
-}
-
 void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
 	const int redblueMasks[] = { 0x7C1F, 0xF81F };

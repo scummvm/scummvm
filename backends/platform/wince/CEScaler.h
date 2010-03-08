@@ -32,12 +32,6 @@
 #include "graphics/scaler/intern.h"
 
 /**
- * This filter (down)scales the source image horizontally by a factor of 3/4.
- * For example, a 320x200 image is scaled to 240x200.
- */
-DECLARE_SCALER(PocketPCPortrait);
-
-/**
  * This filter (up)scales the source image vertically by a factor of 6/5.
  * For example, a 320x200 image is scaled to 320x240.
  *

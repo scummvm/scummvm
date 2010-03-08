@@ -41,4 +41,10 @@ DECLARE_SCALER(DownscaleAllByHalf);
  */
 DECLARE_SCALER(DownscaleHorizByHalf);
 
+/**
+ * This filter (down)scales the source image horizontally by a factor of 3/4.
+ * For example, a 320x200 image is scaled to 240x200.
+ */
+DECLARE_SCALER(DownscaleHorizByThreeQuarters);
+
 #endif

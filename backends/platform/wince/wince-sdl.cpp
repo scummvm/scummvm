@@ -1150,7 +1150,7 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorXd = 4;
 				_scaleFactorYm = 1;
 				_scaleFactorYd = 1;
-				_scalerProc = PocketPCPortrait;
+				_scalerProc = DownscaleHorizByThreeQuarters;
 				_modeFlags = 0;
 			} else {
 				_scaleFactorXm = 1;
