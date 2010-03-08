@@ -32,6 +32,7 @@
 #ifndef DISABLE_DOSBOX_OPL
 
 #include "dosbox.h"
+#include "dbopl.h"
 
 #include "common/system.h"
 #include "common/scummsys.h"

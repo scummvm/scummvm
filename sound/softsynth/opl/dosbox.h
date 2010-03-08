@@ -36,12 +36,8 @@
 
 #include "sound/fmopl.h"
 
-#include "dbopl.h"
-
 namespace OPL {
 namespace DOSBox {
-
-class Handler;
 
 struct Timer {
 	double startTime;
@@ -70,6 +66,10 @@ struct Chip {
 	//Read the current timer state, will use current double
 	uint8 read();
 };
+
+namespace DBOPL {
+struct Chip;
+} // end of namespace DBOPL
 
 class OPL : public ::OPL::OPL {
 private:
