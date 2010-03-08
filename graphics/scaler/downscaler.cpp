@@ -85,9 +85,6 @@ template<typename ColorMask>
 void DownscaleHorizByHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *work;
 
-	if (!height)
-		return;
-
 	// Various casts below go via (void *) to avoid warning. This is
 	// safe as these are all even addresses.
 	while (height--) {
