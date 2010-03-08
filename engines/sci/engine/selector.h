@@ -78,7 +78,7 @@ enum SelectorInvocation {
  * Kludge for use with invoke_selector(). Used for compatibility with compilers
  * that cannot handle vararg macros.
  */
-#define INV_SEL(_object_, _selector_, _noinvalid_) \
+#define INV_SEL(s, _object_, _selector_, _noinvalid_) \
 	s, _object_,  g_sci->getKernel()->_selectorCache._selector_, _noinvalid_, argc, argv
 
 

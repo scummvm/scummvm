@@ -442,7 +442,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	i = 0;
 	while (node) {
-		invoke_selector(INV_SEL(order_func, doit, kStopOnInvalidSelector), 1, node->value);
+		invoke_selector(INV_SEL(s, order_func, doit, kStopOnInvalidSelector), 1, node->value);
 		temp_array[i].key = node->key;
 		temp_array[i].value = node->value;
 		temp_array[i].order = s->r_acc;
