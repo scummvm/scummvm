@@ -32,18 +32,18 @@
 #include "graphics/scaler/intern.h"
 
 template<int bitFormat>
-uint16 quadBlockInterpolate(const uint8* src, uint32 srcPitch) {
-	uint16 colorx1y1 = *(((const uint16*)src));
-	uint16 colorx2y1 = *(((const uint16*)src) + 1);
+uint16 quadBlockInterpolate(const uint8 *src, uint32 srcPitch) {
+	uint16 colorx1y1 = *(((const uint16 *)src));
+	uint16 colorx2y1 = *(((const uint16 *)src) + 1);
 
-	uint16 colorx1y2 = *(((const uint16*)(src + srcPitch)));
-	uint16 colorx2y2 = *(((const uint16*)(src + srcPitch)) + 1);
+	uint16 colorx1y2 = *(((const uint16 *)(src + srcPitch)));
+	uint16 colorx2y2 = *(((const uint16 *)(src + srcPitch)) + 1);
 
 	return interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >(colorx1y1, colorx2y1, colorx1y2, colorx2y2);
 }
 
 template<int bitFormat>
-void createThumbnail_2(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height) {
+void createThumbnail_2(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	assert(width % 2 == 0);
 	assert(height % 2 == 0);
 	for (int y = 0; y < height; y += 2) {
@@ -56,7 +56,7 @@ void createThumbnail_2(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 
 }
 
 template<int bitFormat>
-void createThumbnail_4(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height) {
+void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	assert(width % 4 == 0);
 	assert(height % 4 == 0);
 	for (int y = 0; y < height; y += 4) {
@@ -73,7 +73,7 @@ void createThumbnail_4(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 
 	}
 }
 
-static void createThumbnail(const uint8* src, uint32 srcPitch, uint8* dstPtr, uint32 dstPitch, int width, int height) {
+static void createThumbnail(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	// only 1/2 and 1/4 downscale supported
 	if (width != 320 && width != 640)
 		return;
