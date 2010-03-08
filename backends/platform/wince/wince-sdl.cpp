@@ -51,6 +51,7 @@
 #include "backends/platform/wince/CEgui/ItemAction.h"
 
 #include "graphics/scaler/downscaler.h"
+#include "graphics/scaler/aspect.h"
 
 #include "backends/platform/wince/CEException.h"
 #include "backends/platform/wince/CEScaler.h"
