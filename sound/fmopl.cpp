@@ -39,6 +39,12 @@ enum OplEmulator {
 	kDOSBox = 2
 };
 
+OPL::OPL() {
+	if (_hasInstance)
+		error("There are multiple OPL output instances running.");
+	_hasInstance = true;
+}
+
 const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 	{ "mame", "MAME OPL emulator", kMame, kFlagOpl2 },
