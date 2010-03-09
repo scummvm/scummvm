@@ -394,8 +394,6 @@ public:
 	byte *extraSurface;	// not sure about this one, was "dir_hare_dch"
 	byte *screenSurface;
 	byte *frontSurface;
-	byte *memPtr;
-	byte *mSession;
 
 	byte cPal[768];
 
@@ -575,12 +573,8 @@ public:
 	void mixVideo(byte *OldScreen, byte *NewScreen);
 	void decodeRLE(byte *BufferRLE, byte *MiVideoRLE);
 	void decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length);
-	byte *TryInMem(Common::SeekableReadStream *stream);
 	int playFrameSSN(Common::SeekableReadStream *stream);
 
-	bool _useMemForArj;
-	byte CHUNK;
-	byte CMP, dacSSN[768];
 	int FrameSSN;
 	int globalSpeed;
 	uint32 LastFrame;

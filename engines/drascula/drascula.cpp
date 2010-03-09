@@ -221,7 +221,6 @@ Common::Error DrasculaEngine::run() {
 		term_int = 0;
 		musicStopped = 0;
 		selectionMade = 0;
-		_useMemForArj = false;
 		globalSpeed = 0;
 		curExcuseLook = 0;
 		curExcuseAction = 0;

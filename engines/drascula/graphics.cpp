@@ -476,21 +476,13 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	// Open file
 	globalSpeed = 1000 / vel;
 	FrameSSN = 0;
-	_useMemForArj = false;
 	Common::SeekableReadStream *stream = _archives.open(filefli);
-	// TODO: mSession is treated like a stream from playFrameSSN, so turn it
-	// into a stream, and pass it to playFrameSSN. Get rid of _useMemForArj
-	// as well.
-	mSession = TryInMem(stream);
 	LastFrame = _system->getMillis();
 
 	while (playFrameSSN(stream) && (!term_int)) {
 		if (getScan() == Common::KEYCODE_ESCAPE)
 			term_int = 1;
 	}
-
-	if (_useMemForArj)
-		free(memPtr);
 
 	delete stream;
 }
@@ -500,48 +492,24 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 	uint32 length;
 	byte *BufferSSN;
 
-	if (!_useMemForArj)
-		CHUNK = stream->readByte();
-	else {
-		memcpy(&CHUNK, mSession, 1);
-		mSession += 1;
-	}
+	byte CHUNK = stream->readByte();
 
 	switch (CHUNK) {
-	case kFrameSetPal:
-		if (!_useMemForArj) {
-			for (int i = 0; i < 256; i++) {
-				dacSSN[i * 3 + 0] = stream->readByte();
-				dacSSN[i * 3 + 1] = stream->readByte();
-				dacSSN[i * 3 + 2] = stream->readByte();
-			}
-		} else {
-			memcpy(dacSSN, mSession, 768);
-			mSession += 768;
-		}
+	case kFrameSetPal: {
+		byte dacSSN[768];
+		stream->read(dacSSN, 768);
 		setPalette(dacSSN);
 		break;
+		}
 	case kFrameEmptyFrame:
 		waitFrameSSN();
 		break;
-	case kFrameInit:
-		if (!_useMemForArj) {
-			CMP = stream->readByte();
-			length = stream->readUint32LE();
-		} else {
-			memcpy(&CMP, mSession, 1);
-			mSession += 1;
-			length = READ_LE_UINT32(mSession);
-			mSession += 4;
-		}
+	case kFrameInit: {
+		byte CMP = stream->readByte();
+		length = stream->readUint32LE();
 		if (CMP == kFrameCmpRle) {
 			BufferSSN = (byte *)malloc(length);
-			if (!_useMemForArj) {
-				stream->read(BufferSSN, length);
-			} else {
-				memcpy(BufferSSN, mSession, length);
-				mSession += length;
-			}
+			stream->read(BufferSSN, length);
 			decodeRLE(BufferSSN, screenSurface);
 			free(BufferSSN);
 			waitFrameSSN();
@@ -558,12 +526,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 		} else {
 			if (CMP == kFrameCmpOff) {
 				BufferSSN = (byte *)malloc(length);
-				if (!_useMemForArj) {
-					stream->read(BufferSSN, length);
-				} else {
-					memcpy(BufferSSN, mSession, length);
-					mSession += length;
-				}
+				stream->read(BufferSSN, length);
 				decodeOffset(BufferSSN, screenSurface, length);
 				free(BufferSSN);
 				waitFrameSSN();
@@ -579,6 +542,7 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 			}
 		}
 		break;
+		}
 	case kFrameEndAnim:
 		Exit = 1;
 		break;
@@ -588,21 +552,6 @@ int DrasculaEngine::playFrameSSN(Common::SeekableReadStream *stream) {
 	}
 
 	return (!Exit);
-}
-
-byte *DrasculaEngine::TryInMem(Common::SeekableReadStream *stream) {
-	int length;
-
-	stream->seek(0, SEEK_END);
-	length = stream->pos();
-	stream->seek(0, SEEK_SET);
-	memPtr = (byte *)malloc(length);
-	if (memPtr == NULL)
-		return NULL;
-	stream->read(memPtr, length);
-	_useMemForArj = true;
-
-	return memPtr;
 }
 
 void DrasculaEngine::decodeOffset(byte *BufferOFF, byte *MiVideoOFF, int length) {
