@@ -278,6 +278,7 @@ void Normal2xAspect(const uint8  *srcPtr,
                           uint32  dstPitch,
                           int     width,
                           int     height) {
+	extern int gBitFormat;
 	if (gBitFormat == 565) {
 		Normal2xAspectMask(srcPtr,
 		                   srcPitch,
