@@ -53,7 +53,7 @@ MODULE_OBJS += \
 	scaler/hq2x.o \
 	scaler/hq3x.o
 
-ifdef HAVE_NASM
+ifdef USE_NASM
 MODULE_OBJS += \
 	scaler/hq2x_i386.o \
 	scaler/hq3x_i386.o

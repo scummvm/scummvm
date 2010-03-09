@@ -2188,7 +2188,7 @@ if test "$_have_x86" = yes ; then
 fi
 
 add_to_config_h_if_yes $_nasm '#define USE_NASM'
-add_to_config_mk_if_yes $_nasm 'HAVE_NASM = 1'
+add_to_config_mk_if_yes $_nasm 'USE_NASM = 1'
 
 #
 # Enable vkeybd / keymapper

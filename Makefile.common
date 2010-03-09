@@ -137,7 +137,7 @@ endif
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $*.o
 
-ifdef HAVE_NASM
+ifdef USE_NASM
 # Build rule for NASM assembler files
 %.o: %.asm
 	$(QUIET)$(MKDIR) $(*D)
