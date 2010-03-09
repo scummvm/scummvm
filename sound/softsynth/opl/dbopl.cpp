@@ -618,6 +618,7 @@ Operator::Operator() {
 	currentLevel = ENV_MAX;
 	totalLevel = ENV_MAX;
 	volume = ENV_MAX;
+	releaseAdd = 0;
 }
 
 /*
