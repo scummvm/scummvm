@@ -27,8 +27,8 @@
 
 namespace Drascula {
 
-int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
-int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
+static const int x_talk_dch[6] = {1, 25, 49, 73, 97, 121};
+static const int x_talk_izq[6] = {145, 169, 193, 217, 241, 265};
 
 void DrasculaEngine::talkInit(const char *filename) {
 	_rnd->setSeed((unsigned int)_system->getMillis() / 2);
@@ -55,10 +55,10 @@ void DrasculaEngine::talk_igor(int index, int talkerType) {
 	char filename[20];
 	sprintf(filename, "I%i.als", index);
 	const char *said = _texti[index];
-	int x_talk0[8] = {  56,  82, 108, 134, 160, 186, 212, 238 };
-	int x_talk1[8] = {  56,  86, 116, 146, 176, 206, 236, 266 };
-	int x_talk3[4] = {  80, 102, 124, 146 };
-	int x_talk4[4] = { 119, 158, 197, 236 };
+	static const int x_talk0[8] = {  56,  82, 108, 134, 160, 186, 212, 238 };
+	static const int x_talk1[8] = {  56,  86, 116, 146, 176, 206, 236, 266 };
+	static const int x_talk3[4] = {  80, 102, 124, 146 };
+	static const int x_talk4[4] = { 119, 158, 197, 236 };
 	int face = 0;
 
 	color_abc(kColorWhite);

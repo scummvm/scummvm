@@ -27,7 +27,7 @@
 
 namespace Drascula {
 
-const char colorTable[][3] = {
+static const char colorTable[][3] = {
 	{    0,    0,    0 }, { 0x10, 0x3E, 0x28 },
 	{    0,    0,    0 },	// unused
 	{ 0x16, 0x3F, 0x16 }, { 0x09, 0x3F, 0x12 },

@@ -35,7 +35,7 @@ struct doorInfo {
 	int flag;
 };
 
-doorInfo doors[] = {
+static const doorInfo doors[] = {
 	{	2,	138,	 0 },	{	2,	136,	 8 },
 	{	2,	156,	16 },	{	2,	163,	17 },
 	{	2,	177,	15 },	{	2,	175,	40 },
@@ -63,15 +63,19 @@ struct DrasculaUpdater {
 	Updater proc;
 };
 
-Common::Array<DrasculaRoomParser*> _roomParsers;
-Common::Array<DrasculaUpdater*> _roomPreupdaters;
-Common::Array<DrasculaUpdater*> _roomUpdaters;
+struct RoomHandlers {
+	Common::Array<DrasculaRoomParser *> roomParsers;
+	Common::Array<DrasculaUpdater *> roomPreupdaters;
+	Common::Array<DrasculaUpdater *> roomUpdaters;
+};
 
-#define ROOM(x) _roomParsers.push_back(new DrasculaRoomParser(#x, &DrasculaEngine::x))
-#define PREUPDATEROOM(x) _roomPreupdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
-#define UPDATEROOM(x) _roomUpdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
+#define ROOM(x) _roomHandlers->roomParsers.push_back(new DrasculaRoomParser(#x, &DrasculaEngine::x))
+#define PREUPDATEROOM(x) _roomHandlers->roomPreupdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
+#define UPDATEROOM(x) _roomHandlers->roomUpdaters.push_back(new DrasculaUpdater(#x, &DrasculaEngine::x))
 
 void DrasculaEngine::setupRoomsTable() {
+	_roomHandlers = new RoomHandlers();
+
 	ROOM(room_0);	// default
 	ROOM(room_1);
 	ROOM(room_3);
@@ -133,6 +137,11 @@ void DrasculaEngine::setupRoomsTable() {
 	UPDATEROOM(update_60);
 	UPDATEROOM(update_62);
 	UPDATEROOM(update_102);
+}
+
+void DrasculaEngine::freeRoomsTable() {
+	delete _roomHandlers;
+	_roomHandlers = 0;
 }
 
 bool DrasculaEngine::roomParse(int rN, int fl) {
@@ -1080,10 +1089,10 @@ void DrasculaEngine::updateRefresh() {
 	// Call room-specific updater
 	char rm[20];
 	sprintf(rm, "update_%d", roomNumber);
-	for (uint i = 0; i < _roomUpdaters.size(); i++) {
-		if (!strcmp(rm, _roomUpdaters[i]->desc)) {
+	for (uint i = 0; i < _roomHandlers->roomUpdaters.size(); i++) {
+		if (!strcmp(rm, _roomHandlers->roomUpdaters[i]->desc)) {
 			debug(4, "Calling room updater %d", roomNumber);
-			(this->*(_roomUpdaters[i]->proc))();
+			(this->*(_roomHandlers->roomUpdaters[i]->proc))();
 			break;
 		}
 	}
@@ -1118,10 +1127,10 @@ void DrasculaEngine::updateRefresh_pre() {
 	// Call room-specific preupdater
 	char rm[20];
 	sprintf(rm, "update_%d_pre", roomNumber);
-	for (uint i = 0; i < _roomPreupdaters.size(); i++) {
-		if (!strcmp(rm, _roomPreupdaters[i]->desc)) {
+	for (uint i = 0; i < _roomHandlers->roomPreupdaters.size(); i++) {
+		if (!strcmp(rm, _roomHandlers->roomPreupdaters[i]->desc)) {
 			debug(4, "Calling room preupdater %d", roomNumber);
-			(this->*(_roomPreupdaters[i]->proc))();
+			(this->*(_roomHandlers->roomPreupdaters[i]->proc))();
 			break;
 		}
 	}
@@ -1619,11 +1628,11 @@ bool DrasculaEngine::room(int rN, int fl) {
 		// Call room-specific parser
 		char rm[20];
 		sprintf(rm, "room_%d", rN);
-		for (uint i = 0; i < _roomParsers.size(); i++) {
-			if (!strcmp(rm, _roomParsers[i]->desc)) {
+		for (uint i = 0; i < _roomHandlers->roomParsers.size(); i++) {
+			if (!strcmp(rm, _roomHandlers->roomParsers[i]->desc)) {
 				debug(4, "Calling room parser %d", rN);
 
-				return (this->*(_roomParsers[i]->proc))(fl);
+				return (this->*(_roomHandlers->roomParsers[i]->proc))(fl);
 			}
 		}
 

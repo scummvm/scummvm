@@ -311,8 +311,10 @@ public:
 
 #define KEYBUFSIZE		16
 
-static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
-static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
+static const int interf_x[] = { 1, 65, 129, 193, 1, 65, 129 };
+static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
+
+struct RoomHandlers;
 
 class DrasculaEngine : public ::Engine {
 protected:
@@ -597,6 +599,7 @@ public:
 	int whichObject();
 	bool checkMenuFlags();
 	void setupRoomsTable();
+	void freeRoomsTable();
 	bool roomParse(int, int);
 	void cleanupString(char *string);
 	void playTalkSequence(int sequence);
@@ -780,6 +783,9 @@ private:
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);
+
+protected:
+	RoomHandlers	*_roomHandlers;
 };
 
 

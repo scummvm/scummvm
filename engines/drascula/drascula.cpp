@@ -102,11 +102,15 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_lang = kEnglish;
 
 	_keyBufferHead = _keyBufferTail = 0;
+
+	_roomHandlers = 0;
 }
 
 DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
 	stopSound();
+
+	freeRoomsTable();
 
 	free(_charMap);
 	free(_itemLocations);
@@ -748,15 +752,15 @@ void DrasculaEngine::updateEvents() {
 }
 
 void DrasculaEngine::delay(int ms) {
-	_system->delayMillis(ms * 2); // originaly was 1
+	_system->delayMillis(ms * 2); // originally was 1
 }
 
 void DrasculaEngine::pause(int duration) {
-	_system->delayMillis(duration * 30); // was originaly 2
+	_system->delayMillis(duration * 30); // was originally 2
 }
 
 int DrasculaEngine::getTime() {
-	return _system->getMillis() / 20; // originaly was 1
+	return _system->getMillis() / 20; // originally was 1
 }
 
 void DrasculaEngine::reduce_hare_chico(int xx1, int yy1, int xx2, int yy2, int width, int height, int factor, byte *dir_inicio, byte *dir_fin) {
@@ -1029,7 +1033,7 @@ void DrasculaEngine::freeTexts(char **ptr) {
 	if (!ptr)
 		return;
 
-	free(ptr[0]);
+	free(*ptr);
 	free(ptr);
 }
 
