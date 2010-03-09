@@ -252,8 +252,12 @@ Common::Error DrasculaEngine::run() {
 			clearRoom();
 		} else if (currentChapter == 5) {
 		} else if (currentChapter == 6) {
-			igorX = 105, igorY = 85, trackIgor = 1;
-			drasculaX = 62, drasculaY = 99, trackDrascula = 1;
+			igorX = 105;
+			igorY = 85;
+			trackIgor = 1;
+			drasculaX = 62;
+			drasculaY = 99;
+			trackDrascula = 1;
 			actorFrames[kFramePendulum] = 0;
 			flag_tv = 0;
 		}
@@ -314,7 +318,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		}
 	}
 
-	for (n = 1; n < 43; n++)
+	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++)
 		inventoryObjects[n] = 0;
 
 	for (n = 0; n < NUM_FLAGS; n++)
