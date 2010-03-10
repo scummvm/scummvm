@@ -644,17 +644,17 @@ void AGOSEngine_Elvira2::oe2_printMonsterDamage() {
 void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	// 179: item unk1 unk2 is
 	Item *item = getNextItemPtr();
-	int16 a = getNextWord(), n = getNextWord();
+	int16 a = getNextWord();
+	int16 n = getNextWord();
 
-	if (getGameType() == GType_ELVIRA2) {
+	if (getGameType() == GType_ELVIRA2 && item == NULL) {
 		// WORKAROUND bug #1745996: A NULL item can occur when
 		// interacting with items in the dinning room
-		if (item == NULL) {
-			setScriptCondition(false);
-			return;
-		}
+		setScriptCondition(false);
+		return;
 	}
 
+	assert(item);
 	setScriptCondition(item->adjective == a && item->noun == n);
 }
 
