@@ -902,7 +902,7 @@ psp)
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
 	if test -z "$PSPDEV"; then
-		PSPDEV=$(psp-config --pspdev-path)
+		PSPDEV=`psp-config --pspdev-path`
 	fi
 	if test -d "$PSPDEV/psp/lib"; then
 		LDFLAGS="$LDFLAGS -L$PSPDEV/psp/lib"
@@ -996,7 +996,7 @@ ps2)
 	fi
 	;;
 psp)
-	PSPSDK=$(psp-config --pspsdk-path)
+	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
 		exit 1
@@ -2300,7 +2300,7 @@ case $_backend in
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
 		LIBS="$LIBS -lpng -lSDL -Wl,-Map,mapfile.txt"
-		SDLLIBS=$($PSPDEV/psp/bin/sdl-config --libs)
+		SDLLIBS=`$PSPDEV/psp/bin/sdl-config --libs`
 
 		if `echo "$SDLLIBS" | grep ".*-lGL.*" 1>/dev/null 2>&1`
 		then
