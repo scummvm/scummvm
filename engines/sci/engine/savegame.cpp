@@ -485,7 +485,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciString>::Entry &obj) {
 	}
 
 	for (uint32 i = 0; i < size; i++) {
-		char value;
+		char value = 0;
 		
 		if (s.isSaving())
 			value = obj.getValue(i);
