@@ -41,6 +41,7 @@ const char *atStr = "at";
 const char *lookAroundStr = "Look around";
 const char *toStr = "to ";
 const char *useStr = "Use ";
+const char *walkToStr = "Walk to ";
 
 VerbInit verbList[10] = {
 	{kVerbLook, 2, 0},

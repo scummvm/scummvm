@@ -45,7 +45,8 @@ struct DirtyArea {
 	Common::Rect bounds;
 };
 
-class MadsSceneInfo {
+
+class MadsSceneResources: public SceneResources {
 public:
 	int sceneId;
 	int artFileNum;
@@ -59,8 +60,8 @@ public:
 	int walkSize;
 	byte *walkData;
 
-	MadsSceneInfo() { walkSize = 0; walkData = NULL; }
-	~MadsSceneInfo() { delete walkData; }
+	MadsSceneResources() { walkSize = 0; walkData = NULL; }
+	~MadsSceneResources() { delete walkData; }
 	void load(int sceneId);	
 };
 
@@ -153,10 +154,10 @@ typedef Common::Array<SpriteAsset *> SpriteAssetArray;
 class MadsScene : public Scene {
 private:
 	MadsEngine *_vm;
+	MadsSceneResources _sceneResources;
 	char _statusText[100];
 
 	MadsSceneLogic _sceneLogic;
-	MadsSceneInfo _sceneInfo;
 	SpriteAsset *_playerSprites;
 	SpriteAssetArray _sceneSprites;
 	SpriteSlot _spriteSlots[50];
@@ -192,6 +193,7 @@ public:
 	void loadPlayerSprites(const char *prefix);
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
+	MadsSceneResources &getSceneResources() { return _sceneResources; };
 };
 
 } // End of namespace M4

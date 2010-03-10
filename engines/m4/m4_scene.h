@@ -36,9 +36,18 @@ namespace M4 {
 #define MAINMENU_SCENE_BURGER 903
 #define FIRST_SCENE 101
 
+class M4SceneResources : public SceneResources {
+public:
+	int32 frontY, backY;
+	int32 frontScale, backScale;
+	int16 depthTable[16];
+	int32 railNodeCount;	// # of rails
+};
+
 class M4Scene : public Scene {
 private:
 	M4Engine *_vm;
+	M4SceneResources _sceneResources;
 	SpriteAsset *_sceneSprites;
 	SpriteAsset *_walkerSprite;
 
@@ -61,6 +70,7 @@ public:
 	virtual void update();
 
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
+	M4SceneResources &getSceneResources() { return _sceneResources; };
 };
 
 } // End of namespace M4

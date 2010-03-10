@@ -58,7 +58,8 @@ enum MADSVerbs {
 	kVerbWalkTo	= 13
 };
 
-struct SceneResources {
+class SceneResources {
+public:
 	char artBase[MAX_CHK_FILENAME_SIZE];
 	char pictureBase[MAX_CHK_FILENAME_SIZE];
 	int32 hotspotCount;
@@ -89,9 +90,9 @@ protected:
 	M4Surface *_walkSurface;
 	RGBList *_palData;
 	RGBList *_interfacePal;
-	SceneResources _sceneResources;
+	SceneResources *_sceneResources;
 public:
-	Scene(MadsM4Engine *vm);
+	Scene(MadsM4Engine *vm, SceneResources *res);
 	virtual ~Scene();
 
 	// Methods that differ between engines
@@ -122,7 +123,7 @@ public:
 	void hideInterface();
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
 	GameInterfaceView *getInterface() { return _interfaceSurface; };
-	SceneResources getSceneResources() { return _sceneResources; };
+	SceneResources &getSceneResources() { return *_sceneResources; };
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);

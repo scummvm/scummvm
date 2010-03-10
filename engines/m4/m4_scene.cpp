@@ -25,9 +25,9 @@
 
 #include "common/system.h"
 
+#include "m4/m4_scene.h"
 #include "m4/dialogs.h"
 #include "m4/globals.h"
-#include "m4/scene.h"
 #include "m4/events.h"
 #include "m4/graphics.h"
 #include "m4/rails.h"
@@ -38,7 +38,7 @@
 
 namespace M4 {
 
-M4Scene::M4Scene(M4Engine *vm): Scene(vm) {
+M4Scene::M4Scene(M4Engine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_vm = vm;
 	_sceneSprites = NULL;
 	_interfaceSurface = new M4InterfaceView(vm);

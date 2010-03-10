@@ -39,6 +39,7 @@ extern const char *atStr;
 extern const char *lookAroundStr;
 extern const char *toStr;
 extern const char *useStr;
+extern const char *walkToStr;
 
 struct VerbInit {
 	int verb;

@@ -40,7 +40,7 @@
 
 namespace M4 {
 
-MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
+MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_vm = vm;
 
 	strcpy(_statusText, "");
@@ -55,7 +55,7 @@ MadsScene::MadsScene(MadsEngine *vm): Scene(vm) {
  */
 void MadsScene::loadScene2(const char *aaName) {
 	// Load up the properties for the scene
-	_sceneInfo.load(_currentScene);
+	_sceneResources.load(_currentScene);
 
 	// Load scene walk paths
 	loadSceneCodes(_currentScene);
@@ -169,7 +169,7 @@ void MadsScene::loadSceneCodes(int sceneNumber, int index) {
 	} else if (_vm->getGameType() == GType_RexNebular) {
 		// For Rex Nebular, the walk areas are part of the scene info
 		byte *destP = _walkSurface->getBasePtr(0, 0);
-		const byte *srcP = _sceneInfo.walkData;
+		const byte *srcP = _sceneResources.walkData;
 		byte runLength;
 		while ((runLength = *srcP++) != 0) {
 			Common::set_to(destP, destP + runLength, *srcP++);
@@ -448,7 +448,26 @@ void MadsAction::set() {
 
 			if (_currentHotspot >= 0) {
 				if (_selectedRow < 0) {
-					
+					int verbId;
+					int hotspotCount = _madsVm->scene()->getSceneResources().hotspotCount;
+
+					if (_currentHotspot < hotspotCount) {
+						// Get the verb Id from the hotspot
+						verbId = 0;//selected hotspot
+					} else {
+						// Get the verb Id from the scene object
+						verbId = 0;//Scene_object[_currentHotspot - _hotspotCount].verbId;
+					}
+
+					if (verbId > 0) {
+						// Set the specified action
+						_currentAction = verbId;
+						appendVocab(_currentAction, true);
+					} else {
+						// Default to a standard 'walk to'
+						_currentAction = kVerbWalkTo;
+						strcat(_statusText, walkToStr);
+					}
 				}
 
 				//loc_21CE2
@@ -461,7 +480,7 @@ void MadsAction::set() {
 
 /*--------------------------------------------------------------------------*/
 
-void MadsSceneInfo::load(int sId) {
+void MadsSceneResources::load(int sId) {
 	const char *sceneInfoStr = MADSResourceManager::getResourceName(RESPREFIX_RM, sId, ".DAT");
 	Common::SeekableReadStream *rawStream = _vm->_resourceManager->get(sceneInfoStr);
 	MadsPack sceneInfo(rawStream);

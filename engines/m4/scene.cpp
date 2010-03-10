@@ -39,12 +39,13 @@
 
 namespace M4 {
 
-Scene::Scene(MadsM4Engine *vm): View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())) {
+Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0, vm->_screen->width(), 
+			vm->_screen->height())), _sceneResources(res) {
 	_screenType = VIEWID_SCENE;
 
-	_sceneResources.hotspots = new HotSpotList();
-	_sceneResources.parallax = new HotSpotList();
-	_sceneResources.props = new HotSpotList();
+	_sceneResources->hotspots = new HotSpotList();
+	_sceneResources->parallax = new HotSpotList();
+	_sceneResources->props = new HotSpotList();
 	_backgroundSurface = new M4Surface();
 	_walkSurface = new M4Surface();
 	_palData = NULL;
@@ -100,23 +101,23 @@ void Scene::loadSceneResources(int sceneNumber) {
 	Common::SeekableReadStream *sceneS = _vm->res()->get(filename);
 
 	if (sceneS != NULL) {
-		sceneS->read(_sceneResources.artBase, MAX_CHK_FILENAME_SIZE);
-		sceneS->read(_sceneResources.pictureBase, MAX_CHK_FILENAME_SIZE);
-		_sceneResources.hotspotCount = sceneS->readUint32LE();
-		_sceneResources.parallaxCount = sceneS->readUint32LE();
-		_sceneResources.propsCount = sceneS->readUint32LE();
-		_sceneResources.frontY = sceneS->readUint32LE();
-		_sceneResources.backY = sceneS->readUint32LE();
-		_sceneResources.frontScale = sceneS->readUint32LE();
-		_sceneResources.backScale = sceneS->readUint32LE();
+		sceneS->read(_sceneResources->artBase, MAX_CHK_FILENAME_SIZE);
+		sceneS->read(_sceneResources->pictureBase, MAX_CHK_FILENAME_SIZE);
+		_sceneResources->hotspotCount = sceneS->readUint32LE();
+		_sceneResources->parallaxCount = sceneS->readUint32LE();
+		_sceneResources->propsCount = sceneS->readUint32LE();
+		_sceneResources->frontY = sceneS->readUint32LE();
+		_sceneResources->backY = sceneS->readUint32LE();
+		_sceneResources->frontScale = sceneS->readUint32LE();
+		_sceneResources->backScale = sceneS->readUint32LE();
 		for (i = 0; i < 16; i++)
-			_sceneResources.depthTable[i] = sceneS->readUint16LE();
-		_sceneResources.railNodeCount = sceneS->readUint32LE();
+			_sceneResources->depthTable[i] = sceneS->readUint16LE();
+		_sceneResources->railNodeCount = sceneS->readUint32LE();
 
 		// Clear rails from previous scene
 		_vm->_rails->clearRails();
 
-		for (i = 0; i < _sceneResources.railNodeCount; i++) {
+		for (i = 0; i < _sceneResources->railNodeCount; i++) {
 			x = sceneS->readUint32LE();
 			y = sceneS->readUint32LE();
 			if (_vm->_rails->addRailNode(x, y, true) < 0) {
@@ -125,13 +126,13 @@ void Scene::loadSceneResources(int sceneNumber) {
 		}
 
 		// Clear current hotspot lists
-		_sceneResources.hotspots->clear();
-		_sceneResources.parallax->clear();
-		_sceneResources.props->clear();
+		_sceneResources->hotspots->clear();
+		_sceneResources->parallax->clear();
+		_sceneResources->props->clear();
 
-		_sceneResources.hotspots->loadHotSpots(sceneS, _sceneResources.hotspotCount);
-		_sceneResources.parallax->loadHotSpots(sceneS, _sceneResources.parallaxCount);
-		_sceneResources.props->loadHotSpots(sceneS, _sceneResources.propsCount);
+		_sceneResources->hotspots->loadHotSpots(sceneS, _sceneResources->hotspotCount);
+		_sceneResources->parallax->loadHotSpots(sceneS, _sceneResources->parallaxCount);
+		_sceneResources->props->loadHotSpots(sceneS, _sceneResources->propsCount);
 
 		// Note that toss() deletes the MemoryReadStream
 		_vm->res()->toss(filename);
@@ -147,14 +148,14 @@ void Scene::loadSceneHotSpotsMads(int sceneNumber) {
 	int hotspotCount = hotspotStream->readUint16LE();
 	delete hotspotStream;
 
-	_sceneResources.hotspotCount = hotspotCount;
+	_sceneResources->hotspotCount = hotspotCount;
 
 	hotspotStream = hotSpotData.getItemStream(1);
 
 	// Clear current hotspot lists
-	_sceneResources.hotspots->clear();
+	_sceneResources->hotspots->clear();
 
-	_sceneResources.hotspots->loadHotSpots(hotspotStream, _sceneResources.hotspotCount);
+	_sceneResources->hotspots->loadHotSpots(hotspotStream, _sceneResources->hotspotCount);
 
 	delete hotspotStream;
 }
@@ -204,19 +205,19 @@ void Scene::showSprites() {
 
 	// taken from set_walker_scaling() in adv_walk.cpp. A proper implementation will need
 	// to store these in global variables
-	int minScaling = FixedDiv(_sceneResources.backScale << 16, 100 << 16);
-	int maxScaling = FixedDiv(_sceneResources.frontScale << 16, 100 << 16);
+	int minScaling = FixedDiv(_sceneResources->backScale << 16, 100 << 16);
+	int maxScaling = FixedDiv(_sceneResources->frontScale << 16, 100 << 16);
 	int scaler;
 
 	_vm->_actor->setWalkerDirection(kFacingSouthEast);
 	//_vm->_actor->setWalkerPalette();
 
 	// taken from set_walker_scaling() in adv_walk.cpp
-	if (_sceneResources.frontY == _sceneResources.backY)
+	if (_sceneResources->frontY == _sceneResources->backY)
 		scaler = 0;
 	else
 		scaler = FixedDiv(maxScaling - minScaling,
-				 (_sceneResources.frontY << 16) - (_sceneResources.backY << 16));
+				 (_sceneResources->frontY << 16) - (_sceneResources->backY << 16));
 
 	// FIXME: For now, we (incorrectly) scale the walker to 50% of the scene's max scaling
 	_vm->_actor->setWalkerScaling(scaler / 2);
@@ -232,19 +233,19 @@ void Scene::showHotSpots() {
 	int i = 0;
 	HotSpot *currentHotSpot;
 	// hotspots (green)
-	for (i = 0; i < _sceneResources.hotspotCount; i++) {
-		currentHotSpot = _sceneResources.hotspots->get(i);
+	for (i = 0; i < _sceneResources->hotspotCount; i++) {
+		currentHotSpot = _sceneResources->hotspots->get(i);
 		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->GREEN);
 	}
 	if (_vm->isM4()) {
 		// parallax (yellow)
-		for (i = 0; i < _sceneResources.parallaxCount; i++) {
-			currentHotSpot = _sceneResources.parallax->get(i);
+		for (i = 0; i < _sceneResources->parallaxCount; i++) {
+			currentHotSpot = _sceneResources->parallax->get(i);
 			_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->YELLOW);
 		}
 		// props (red)
-		for (i = 0; i < _sceneResources.propsCount; i++) {
-			currentHotSpot = _sceneResources.props->get(i);
+		for (i = 0; i < _sceneResources->propsCount; i++) {
+			currentHotSpot = _sceneResources->props->get(i);
 			_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->RED);
 		}
 	}
