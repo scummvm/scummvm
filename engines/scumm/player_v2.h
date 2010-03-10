@@ -119,6 +119,8 @@ protected:
 	byte *_next_data;
 	byte *_retaddr;
 
+	Common::Mutex _mutex;
+
 private:
 	union ChannelInfo {
 		channel_data d;
@@ -131,13 +133,9 @@ private:
 
 	const uint16 *_freqs_table;
 
-	Common::Mutex _mutex;
 	ChannelInfo _channels[5];
 
 protected:
-	void mutex_up();
-	void mutex_down();
-
 	virtual void nextTick();
 	virtual void clear_channel(int i);
 	virtual void chainSound(int nr, byte *data);
@@ -302,6 +300,8 @@ protected:
 	byte *_next_data;
 	byte *_retaddr;
 
+	Common::Mutex _mutex;
+
 private:
 	union ChannelInfo {
 		channel_data d;
@@ -312,13 +312,9 @@ private:
 	int _music_timer_ctr;
 	int _ticks_per_music_timer;
 
-	Common::Mutex _mutex;
 	ChannelInfo _channels[5];
 
 protected:
-	void mutex_up();
-	void mutex_down();
-
 	virtual void nextTick();
 	virtual void clear_channel(int i);
 	virtual void chainSound(int nr, byte *data);

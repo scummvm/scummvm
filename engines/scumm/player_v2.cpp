@@ -370,13 +370,13 @@ Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr) {
 }
 
 Player_V2::~Player_V2() {
-	mutex_up();
+	Common::StackLock lock(_mutex);
 	_mixer->stopHandle(_soundHandle);
-	mutex_down();
 }
 
 void Player_V2::set_pcjr(bool pcjr) {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	_pcjr = pcjr;
 
 	if (_pcjr) {
@@ -396,12 +396,9 @@ void Player_V2::set_pcjr(bool pcjr) {
 	for (i = 0; (_sampleRate << i) < 30000; i++)
 		_decay = _decay * _decay / 65536;
 
-
 	_timer_output = 0;
 	for (i = 0; i < 4; i++)
 		_timer_count[i] = 0;
-
-	mutex_down();
 }
 
 void Player_V2::setMusicVolume (int vol) {
@@ -452,17 +449,18 @@ void Player_V2::chainNextSound() {
 }
 
 void Player_V2::stopAllSounds() {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	for (int i = 0; i < 4; i++) {
 		clear_channel(i);
 	}
 	_next_nr = _current_nr = 0;
 	_next_data = _current_data = 0;
-	mutex_down();
 }
 
 void Player_V2::stopSound(int nr) {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	if (_next_nr == nr) {
 		_next_nr = 0;
 		_next_data = 0;
@@ -475,14 +473,13 @@ void Player_V2::stopSound(int nr) {
 		_current_data = 0;
 		chainNextSound();
 	}
-	mutex_down();
 }
 
 void Player_V2::startSound(int nr) {
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
-	mutex_up();
+	Common::StackLock lock(_mutex);
 
 	int cprio = _current_data ? *(_current_data + _header_len) : 0;
 	int prio  = *(data + _header_len);
@@ -516,8 +513,6 @@ void Player_V2::startSound(int nr) {
 		_next_nr = nr;
 		_next_data = data;
 	}
-
-	mutex_down();
 }
 
 int Player_V2::getSoundStatus(int nr) const {
@@ -787,7 +782,8 @@ void Player_V2::next_freqs(ChannelInfo *channel) {
 }
 
 void Player_V2::do_mix(int16 *data, uint len) {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	uint step;
 
 	do {
@@ -806,8 +802,6 @@ void Player_V2::do_mix(int16 *data, uint len) {
 		data += 2 * step;
 		_next_tick -= step << FIXP_SHIFT;
 	} while (len -= step);
-
-	mutex_down();
 }
 
 void Player_V2::nextTick() {
@@ -955,14 +949,6 @@ void Player_V2::generatePCjrSamples(int16 *data, uint len) {
 
 	if (_level || hasdata)
 		lowPassFilter(data, len);
-}
-
-void Player_V2::mutex_up() {
-	_mutex.lock();
-}
-
-void Player_V2::mutex_down() {
-	_mutex.unlock();
 }
 
 } // End of namespace Scumm

@@ -68,10 +68,10 @@ void Player_V1::chainSound(int nr, byte *data) {
 }
 
 void Player_V1::startSound(int nr) {
+	Common::StackLock lock(_mutex);
+
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
-
-	mutex_up();
 
 	int offset = _pcjr ? READ_LE_UINT16(data+4) : 6;
 	int cprio = _current_data ? *(_current_data) & 0x7f : 0;
@@ -89,21 +89,21 @@ void Player_V1::startSound(int nr) {
 
 		chainSound(nr, data + offset);
 	}
-	mutex_down();
 }
 
 void Player_V1::stopAllSounds() {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	for (int i = 0; i < 4; i++)
 		clear_channel(i);
 	_repeat_chunk = _next_chunk = 0;
 	_next_nr = _current_nr = 0;
 	_next_data = _current_data = 0;
-	mutex_down();
 }
 
 void Player_V1::stopSound(int nr) {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	if (_next_nr == nr) {
 		_next_nr = 0;
 		_next_data = 0;
@@ -117,7 +117,6 @@ void Player_V1::stopSound(int nr) {
 		_current_data = 0;
 		chainNextSound();
 	}
-	mutex_down();
 }
 
 void Player_V1::clear_channel(int i) {

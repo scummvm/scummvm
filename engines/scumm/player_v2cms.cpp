@@ -895,10 +895,10 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 }
 
 Player_V2CMS::~Player_V2CMS() {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	_mixer->stopHandle(_soundHandle);
 	delete g_cmsEmu;
-	mutex_down();
 }
 
 void Player_V2CMS::setMusicVolume(int vol) {
@@ -933,7 +933,8 @@ void Player_V2CMS::chainNextSound() {
 }
 
 void Player_V2CMS::stopAllSounds() {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	for (int i = 0; i < 4; i++) {
 		clear_channel(i);
 	}
@@ -943,11 +944,11 @@ void Player_V2CMS::stopAllSounds() {
 	_midiSongBegin = 0;
 	_midiDelay = 0;
 	offAllChannels();
-	mutex_down();
 }
 
 void Player_V2CMS::stopSound(int nr) {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	if (_next_nr == nr) {
 		_next_nr = 0;
 		_next_data = 0;
@@ -966,20 +967,17 @@ void Player_V2CMS::stopSound(int nr) {
 		_midiDelay = 0;
 		offAllChannels();
 	}
-	mutex_down();
 }
 
 void Player_V2CMS::startSound(int nr) {
+	Common::StackLock lock(_mutex);
+
 	byte *data = _vm->getResourceAddress(rtSound, nr);
 	assert(data);
 
 	if (data[6] == 0x80) {
-		mutex_up();
 		loadMidiData(data, nr);
-		mutex_down();
 	} else {
-		mutex_up();
-
 		int cprio = _current_data ? *(_current_data + _header_len) : 0;
 		int prio  = *(data + _header_len);
 		int nprio = _next_data ? *(_next_data + _header_len) : 0;
@@ -1012,8 +1010,6 @@ void Player_V2CMS::startSound(int nr) {
 			_next_nr = nr;
 			_next_data = data;
 		}
-
-		mutex_down();
 	}
 }
 
@@ -1413,7 +1409,8 @@ void Player_V2CMS::processMidiData(uint ticks) {
 }
 
 int Player_V2CMS::readBuffer(int16 *buffer, const int numSamples) {
-	mutex_up();
+	Common::StackLock lock(_mutex);
+
 	uint step = 1;
 	int len = numSamples/2;
 
@@ -1450,7 +1447,6 @@ int Player_V2CMS::readBuffer(int16 *buffer, const int numSamples) {
 		_next_tick -= step << FIXP_SHIFT;
 	} while (len -= step);
 
-	mutex_down();
 	return numSamples;
 }
 
@@ -1843,11 +1839,4 @@ void Player_V2CMS::playMusicChips(const MusicChip *table) {
 	} while ((cmsPort & 2) == 0);
 }
 
-void Player_V2CMS::mutex_up() {
-	_mutex.lock();
-}
-
-void Player_V2CMS::mutex_down() {
-	_mutex.unlock();
-}
 } // End of namespace Scumm
