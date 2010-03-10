@@ -87,13 +87,8 @@ static const IsoMap::TilePoint hardDirTable[8] = {
 
 IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_tileData = NULL;
-	_tilesCount = 0;
-	_tilePlatformList = NULL;
-	_tilePlatformsCount = 0;
-	_metaTileList = NULL;
-	_metaTilesCount = 0;
-	_multiTable = NULL;
-	_multiCount = 0;
+	_tileDataLength = 0;
+
 	_multiTableData = NULL;
 	_multiDataCount = 0;
 	_viewScroll.x = (128 - 8) * 16;
@@ -105,28 +100,23 @@ IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 	IsoTileData *tileData;
 	uint16 i;
+	size_t offsetDiff;
 
 	if (resourceLength == 0) {
 		error("IsoMap::loadImages wrong resourceLength");
 	}
 
-	_tileData = (byte*)malloc(resourceLength);
-	_tileDataLength = resourceLength;
-	memcpy(_tileData, resourcePointer, resourceLength);
 
-	MemoryReadStreamEndian readS(_tileData, _tileDataLength, _vm->isBigEndian());
+	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 	readS.readUint16(); // skip
-	_tilesCount = readS.readUint16();
-	_tilesCount = _tilesCount / SAGA_ISOTILEDATA_LEN;
+	i = readS.readUint16();
+	i = i / SAGA_ISOTILEDATA_LEN;
+	_tilesTable.resize(i);
 
 	readS.seek(0);
 
-	_tilesTable = (IsoTileData *)malloc(_tilesCount * sizeof(*_tilesTable));
-	if (_tilesTable == NULL) {
-		memoryError("IsoMap::loadImages");
-	}
 
-	for (i = 0; i < _tilesCount; i++) {
+	for (i = 0; i < _tilesTable.size(); i++) {
 		tileData = &_tilesTable[i];
 		tileData->height = readS.readByte();
 		tileData->attributes = readS.readSByte();
@@ -136,6 +126,15 @@ void IsoMap::loadImages(const byte *resourcePointer, size_t resourceLength) {
 		readS.readByte(); //skip
 	}
 
+	offsetDiff = readS.pos();
+
+	_tileDataLength = resourceLength - offsetDiff;
+	_tileData = (byte*)malloc(_tileDataLength);
+	memcpy(_tileData, resourcePointer + offsetDiff, _tileDataLength);
+
+	for (i = 0; i < _tilesTable.size(); i++) {
+		_tilesTable[i].offset -= offsetDiff;
+	}
 }
 
 void IsoMap::loadPlatforms(const byte * resourcePointer, size_t resourceLength) {
@@ -148,13 +147,10 @@ void IsoMap::loadPlatforms(const byte * resourcePointer, size_t resourceLength) 
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
 
-	_tilePlatformsCount = resourceLength / SAGA_TILEPLATFORMDATA_LEN;
-	_tilePlatformList = (TilePlatformData *)malloc(_tilePlatformsCount * sizeof(*_tilePlatformList));
-	if (_tilePlatformList == NULL) {
-		memoryError("IsoMap::loadPlatforms");
-	}
+	i = resourceLength / SAGA_TILEPLATFORMDATA_LEN;
+	_tilePlatformList.resize(i);
 
-	for (i = 0; i < _tilePlatformsCount; i++) {
+	for (i = 0; i < _tilePlatformList.size(); i++) {
 		tilePlatformData = &_tilePlatformList[i];
 		tilePlatformData->metaTile = readS.readSint16();
 		tilePlatformData->height = readS.readSint16();
@@ -198,14 +194,10 @@ void IsoMap::loadMetaTiles(const byte * resourcePointer, size_t resourceLength) 
 	}
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
-	_metaTilesCount = resourceLength / SAGA_METATILEDATA_LEN;
+	i = resourceLength / SAGA_METATILEDATA_LEN;
+	_metaTileList.resize(i);
 
-	_metaTileList = (MetaTileData *)malloc(_metaTilesCount * sizeof(*_metaTileList));
-	if (_metaTileList == NULL) {
-		memoryError("IsoMap::loadMetaTiles");
-	}
-
-	for (i = 0; i < _metaTilesCount; i++) {
+	for (i = 0; i < _metaTileList.size(); i++) {
 		metaTileData = &_metaTileList[i];
 		metaTileData->highestPlatform = readS.readUint16();
 		metaTileData->highestPixel = readS.readUint16();
@@ -225,13 +217,10 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 	}
 
 	MemoryReadStreamEndian readS(resourcePointer, resourceLength, _vm->isBigEndian());
-	_multiCount = readS.readUint16();
-	_multiTable = (MultiTileEntryData *)malloc(_multiCount * sizeof(*_multiTable));
-	if (_multiTable == NULL) {
-		memoryError("IsoMap::loadMulti");
-	}
+	i = readS.readUint16();
+	_multiTable.resize(i);
 
-	for (i = 0; i < _multiCount; i++) {
+	for (i = 0; i < _multiTable.size(); i++) {
 		multiTileEntryData = &_multiTable[i];
 		readS.readUint32();//skip
 		multiTileEntryData->offset = readS.readSint16();
@@ -247,7 +236,7 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 
 	offsetDiff = (readS.pos() - 2);
 
-	for (i = 0; i < _multiCount; i++) {
+	for (i = 0; i < _multiTable.size(); i++) {
 		_multiTable[i].offset -= offsetDiff;
 	}
 
@@ -260,18 +249,14 @@ void IsoMap::loadMulti(const byte * resourcePointer, size_t resourceLength) {
 }
 
 void IsoMap::freeMem() {
+	_tilesTable.clear();
+	_tilePlatformList.clear();
+	_metaTileList.clear();
+	_multiTable.clear();
+
 	free(_tileData);
 	_tileData = NULL;
-	_tilesCount = 0;
-	free(_tilePlatformList);
-	_tilePlatformList = NULL;
-	_tilePlatformsCount = 0;
-	free(_metaTileList);
-	_metaTileList = NULL;
-	_metaTilesCount = 0;
-	free(_multiTable);
-	_multiTable = NULL;
-	_multiCount = 0;
+
 	free(_multiTableData);
 	_multiTableData = NULL;
 	_multiDataCount = 0;
@@ -350,7 +335,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 	mv = absV - rv;
 
 	tileIndex = 0;
-	for (i = 0; i < _multiCount; i++) {
+	for (i = 0; i < _multiTable.size(); i++) {
 		multiTileEntryData = &_multiTable[i];
 
 		if ((multiTileEntryData->u == mu) &&
@@ -540,7 +525,7 @@ void IsoMap::drawSpriteMetaTile(uint16 metaTileIndex, const Point &point, Locati
 	Point platformPoint;
 	platformPoint = point;
 
-	if (_metaTilesCount <= metaTileIndex) {
+	if (_metaTileList.size() <= metaTileIndex) {
 		error("IsoMap::drawMetaTile wrong metaTileIndex");
 	}
 
@@ -567,7 +552,7 @@ void IsoMap::drawMetaTile(uint16 metaTileIndex, const Point &point, int16 absU, 
 	Point platformPoint;
 	platformPoint = point;
 
-	if (_metaTilesCount <= metaTileIndex) {
+	if (_metaTileList.size() <= metaTileIndex) {
 		error("IsoMap::drawMetaTile wrong metaTileIndex");
 	}
 
@@ -595,7 +580,7 @@ void IsoMap::drawSpritePlatform(uint16 platformIndex, const Point &point, const 
 	uint16 tileIndex;
 	Location copyLocation(location);
 
-	if (_tilePlatformsCount <= platformIndex) {
+	if (_tilePlatformList.size() <= platformIndex) {
 		error("IsoMap::drawPlatform wrong platformIndex");
 	}
 
@@ -649,7 +634,7 @@ void IsoMap::drawPlatform(uint16 platformIndex, const Point &point, int16 absU, 
 	Point s0;
 	uint16 tileIndex;
 
-	if (_tilePlatformsCount <= platformIndex) {
+	if (_tilePlatformList.size() <= platformIndex) {
 		error("IsoMap::drawPlatform wrong platformIndex");
 	}
 
@@ -709,7 +694,7 @@ void IsoMap::drawTile(uint16 tileIndex, const Point &point, const Location *loca
 	int bgRunCount;
 	int fgRunCount;
 
-	if (tileIndex >= _tilesCount) {
+	if (tileIndex >= _tilesTable.size()) {
 		error("IsoMap::drawTile wrong tileIndex");
 	}
 
@@ -1025,7 +1010,7 @@ int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 		metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 	}
 
-	if (_metaTilesCount <= metaTileIndex) {
+	if (_metaTileList.size() <= (uint)metaTileIndex) {
 		error("IsoMap::getTile wrong metaTileIndex");
 	}
 
@@ -1034,7 +1019,7 @@ int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 		return 0;
 	}
 
-	if (_tilePlatformsCount <= platformIndex) {
+	if (_tilePlatformList.size() <= (uint)platformIndex) {
 		error("IsoMap::getTile wrong platformIndex");
 	}
 
@@ -1608,8 +1593,8 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 void IsoMap::setTileDoorState(int doorNumber, int doorState) {
 	MultiTileEntryData *multiTileEntryData;
 
-	if ((doorNumber < 0) || (doorNumber >= _multiCount)) {
-		error("setTileDoorState: doorNumber >= _multiCount");
+	if ((doorNumber < 0) || ((uint)doorNumber >= _multiTable.size())) {
+		error("setTileDoorState: doorNumber >= _multiTable.size()");
 	}
 
 	multiTileEntryData = &_multiTable[doorNumber];
