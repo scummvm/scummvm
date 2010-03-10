@@ -26,7 +26,7 @@
 #include "osys_n64.h"
 
 void checkTimers(void) {
-	OSystem_N64 *osys = (OSystem_N64*)g_system;
+	OSystem_N64 *osys = (OSystem_N64 *)g_system;
 
 	uint32 curTime = osys->getMillis();
 
@@ -42,8 +42,8 @@ void disableAudioPlayback(void) {
 
 	_audioEnabled = false;
 
-	OSystem_N64 *osys = (OSystem_N64*)g_system;
-	Audio::MixerImpl *_localmixer = (Audio::MixerImpl*)osys->getMixer();
+	OSystem_N64 *osys = (OSystem_N64 *)g_system;
+	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
 
 	while (AI_busy()); // Wait for audio to stop
 }
@@ -51,8 +51,8 @@ void disableAudioPlayback(void) {
 void enableAudioPlayback(void) {
 	static bool _firstRun = true;
 
-	OSystem_N64 *osys = (OSystem_N64*)g_system;
-	Audio::MixerImpl *_localmixer = (Audio::MixerImpl*)osys->getMixer();
+	OSystem_N64 *osys = (OSystem_N64 *)g_system;
+	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
 
 	uint32 sampleBufferSize = 3072;
 
@@ -60,8 +60,8 @@ void enableAudioPlayback(void) {
 	osys->_audioBufferSize = getAIBufferSize();
 
 	if (_firstRun) {
-		_localmixer->setOutputRate(DEFAULT_SOUND_SAMPLE_RATE);
-		_localmixer->setReady(true);
+		localmixer->setOutputRate(DEFAULT_SOUND_SAMPLE_RATE);
+		localmixer->setReady(true);
 		_firstRun = false;
 	}
 
@@ -89,7 +89,7 @@ void vblCallback(void) {
 		sndCallback();
 	}
 
-	((OSystem_N64*)g_system)->readControllerAnalogInput();
+	((OSystem_N64 *)g_system)->readControllerAnalogInput();
 }
 
 void sndCallback() {
@@ -101,14 +101,14 @@ void sndCallback() {
 void refillAudioBuffers(void) {
 	if (!_audioEnabled) return;
 
-	OSystem_N64 *osys = (OSystem_N64*)g_system;
+	OSystem_N64 *osys = (OSystem_N64 *)g_system;
 	byte *sndBuf;
-	Audio::MixerImpl *_localmixer = (Audio::MixerImpl*)osys->getMixer();
+	Audio::MixerImpl *localmixer = (Audio::MixerImpl *)osys->getMixer();
 
 	while (_requiredSoundSlots) {
 		sndBuf = (byte*)getAIBuffer();
 
-		_localmixer->mixCallback((byte*)sndBuf, osys->_audioBufferSize);
+		localmixer->mixCallback((byte*)sndBuf, osys->_audioBufferSize);
 
 		putAIBuffer();
 
