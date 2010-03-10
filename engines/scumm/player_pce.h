@@ -89,13 +89,13 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
-	int getRate() const { return _sample_rate; }
+	int getRate() const { return _sampleRate; }
 
 private:
 	ScummEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	int _sample_rate;
+	int _sampleRate;
 	int _maxvol;
 
 private:

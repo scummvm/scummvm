@@ -591,10 +591,10 @@ Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 	int i;
 	_vm = scumm;
 	_mixer = mixer;
-	_sample_rate = _mixer->getOutputRate();
-	_apu = new APUe::APU(_sample_rate);
+	_sampleRate = _mixer->getOutputRate();
+	_apu = new APUe::APU(_sampleRate);
 
-	_samples_per_frame = _sample_rate / 60;
+	_samples_per_frame = _sampleRate / 60;
 	_current_sample = 0;
 
 	for (i = 0; i < NUMSLOTS; i++) {

@@ -60,7 +60,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return false; }
 	bool endOfData() const { return false; }
-	int getRate() const { return _sample_rate; }
+	int getRate() const { return _sampleRate; }
 
 private:
 
@@ -81,7 +81,7 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	APUe::APU *_apu;
-	int _sample_rate;
+	int _sampleRate;
 	int _samples_per_frame;
 	int _current_sample;
 	int _maxvol;

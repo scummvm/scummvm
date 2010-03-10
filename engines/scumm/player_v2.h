@@ -90,7 +90,7 @@ public:
 	}
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
-	int getRate() const { return _sample_rate; }
+	int getRate() const { return _sampleRate; }
 
 protected:
 	bool _isV3Game;
@@ -101,7 +101,7 @@ protected:
 	bool _pcjr;
 	int _header_len;
 
-	uint32 _sample_rate;
+	uint32 _sampleRate;
 	uint32 _next_tick;
 	uint32 _tick_len;
 	unsigned int _update_step;
@@ -177,7 +177,7 @@ public:
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
-	int getRate() const { return _sample_rate; }
+	int getRate() const { return _sampleRate; }
 
 protected:
 
@@ -289,7 +289,7 @@ protected:
 
 	int _header_len;
 
-	uint32 _sample_rate;
+	uint32 _sampleRate;
 	uint32 _next_tick;
 	uint32 _tick_len;
 

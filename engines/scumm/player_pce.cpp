@@ -717,14 +717,14 @@ Player_PCE::Player_PCE(ScummEngine *scumm, Audio::Mixer *mixer) {
 	}
 
 	_mixer = mixer;
-	_sample_rate = _mixer->getOutputRate();
+	_sampleRate = _mixer->getOutputRate();
 	_vm = scumm;
 
-	_samplesPerPeriod = 2 * (int)(_sample_rate / UPDATE_FREQ);
+	_samplesPerPeriod = 2 * (int)(_sampleRate / UPDATE_FREQ);
 	_sampleBuffer = new int16[_samplesPerPeriod];
 	_sampleBufferCnt = 0;
 
-	_psg = new PSG_HuC6280(PSG_CLOCK, _sample_rate);
+	_psg = new PSG_HuC6280(PSG_CLOCK, _sampleRate);
 
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }

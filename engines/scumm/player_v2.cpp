@@ -339,7 +339,7 @@ Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr) {
 	_isV3Game = (scumm->_game.version >= 3);
 	_vm = scumm;
 	_mixer = mixer;
-	_sample_rate = _mixer->getOutputRate();
+	_sampleRate = _mixer->getOutputRate();
 
 	_header_len = (scumm->_game.features & GF_OLD_BUNDLE) ? 4 : 6;
 
@@ -352,7 +352,7 @@ Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr) {
 		clear_channel(i);
 
 	_next_tick = 0;
-	_tick_len = (_sample_rate << FIXP_SHIFT) / FREQ_HZ;
+	_tick_len = (_sampleRate << FIXP_SHIFT) / FREQ_HZ;
 
 	// Initialize V3 music timer
 	_music_timer_ctr = _music_timer = 0;
@@ -381,11 +381,11 @@ void Player_V2::set_pcjr(bool pcjr) {
 
 	if (_pcjr) {
 		_decay = PCJR_DECAY;
-		_update_step = (_sample_rate << FIXP_SHIFT) / (111860 * 2);
+		_update_step = (_sampleRate << FIXP_SHIFT) / (111860 * 2);
 		_freqs_table = pcjr_freq_table;
 	} else {
 		_decay = SPK_DECAY;
-		_update_step = (_sample_rate << FIXP_SHIFT) / (1193000 * 2);
+		_update_step = (_sampleRate << FIXP_SHIFT) / (1193000 * 2);
 		_freqs_table = spk_freq_table;
 	}
 
@@ -393,7 +393,7 @@ void Player_V2::set_pcjr(bool pcjr) {
 	 * sample rate doubles.
 	 */
 	int i;
-	for (i = 0; (_sample_rate << i) < 30000; i++)
+	for (i = 0; (_sampleRate << i) < 30000; i++)
 		_decay = _decay * _decay / 65536;
 
 

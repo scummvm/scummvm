@@ -1249,7 +1249,7 @@ Player_SID::Player_SID(ScummEngine *scumm, Audio::Mixer *mixer) {
 	_music_timer = 0;
 
 	_mixer = mixer;
-	_sample_rate = _mixer->getOutputRate();
+	_sampleRate = _mixer->getOutputRate();
 	_vm = scumm;
 
 	// sound speed is slightly different on NTSC and PAL machines
@@ -1314,7 +1314,7 @@ void Player_SID::initSID() {
 	_sid = new Resid::SID();
 	_sid->set_sampling_parameters(
 		timingProps[_videoSystem].clockFreq,
-		_sample_rate);
+		_sampleRate);
 	_sid->enable_filter(true);
 
 	_sid->reset();

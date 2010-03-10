@@ -42,7 +42,7 @@ Player_V1::Player_V1(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr)
 	for (int i = 0; i < 4; ++i)
 		clear_channel(i);
 
-	_mplex_step = (_sample_rate << FIXP_SHIFT) / 1193000;
+	_mplex_step = (_sampleRate << FIXP_SHIFT) / 1193000;
 	_next_chunk = _repeat_chunk = 0;
 	_forced_level = 0;
 	_random_lsr = 0;

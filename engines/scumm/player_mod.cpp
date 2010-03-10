@@ -31,10 +31,9 @@
 
 namespace Scumm {
 
-Player_MOD::Player_MOD(Audio::Mixer *mixer) {
+Player_MOD::Player_MOD(Audio::Mixer *mixer)
+	: _mixer(mixer), _sampleRate(mixer->getOutputRate()) {
 	int i;
-	_mixer = mixer;
-	_samplerate = _mixer->getOutputRate();
 	_mixamt = 0;
 	_mixpos = 0;
 
@@ -69,7 +68,7 @@ void Player_MOD::setMusicVolume(int vol) {
 void Player_MOD::setUpdateProc(ModUpdateProc *proc, void *param, int freq) {
 	_playproc = proc;
 	_playparam = param;
-	_mixamt = _samplerate / freq;
+	_mixamt = _sampleRate / freq;
 }
 void Player_MOD::clearUpdateProc() {
 	_playproc = NULL;
@@ -185,7 +184,7 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 				Audio::st_volume_t vol_r = (127 + _channels[i].pan) * _channels[i].vol / 127;
 				for (uint j = 0; j < dlen; j++) {
 					// simple linear resample, unbuffered
-					int delta = (uint32)(_channels[i].freq * 0x10000) / _samplerate;
+					int delta = (uint32)(_channels[i].freq * 0x10000) / _sampleRate;
 					uint16 cfrac = ~_channels[i].ctr & 0xFFFF;
 					if (_channels[i].ctr + delta < 0x10000)
 						cfrac = delta;

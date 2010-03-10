@@ -30,6 +30,7 @@
 #include "sound/mixer.h"
 
 namespace Scumm {
+
 #define FREQ_HZ 236 // Don't change!
 
 #define FIXP_SHIFT  16
@@ -55,8 +56,7 @@ namespace Scumm {
 #define PROCESS_VIBRATO 5
 
 /* this structure defines a channel */
-struct saa1099_channel
-{
+struct saa1099_channel {
 	int frequency;				/* frequency (0x00..0xff) */
 	int freq_enable;			/* frequency enable */
 	int noise_enable;			/* noise enable */
@@ -71,8 +71,7 @@ struct saa1099_channel
 };
 
 /* this structure defines a noise channel */
-struct saa1099_noise
-{
+struct saa1099_noise {
 	/* vars to simulate the noise generator output */
 	double counter;
 	double freq;
@@ -80,8 +79,7 @@ struct saa1099_noise
 };
 
 /* this structure defines a SAA1099 chip */
-struct SAA1099
-{
+struct SAA1099 {
 	int stream;				/* our stream */
 	int noise_params[2];			/* noise generators parameters */
 	int env_enable[2];			/* envelope generators enable */
@@ -818,7 +816,7 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 	_vm = scumm;
 	_mixer = mixer;
 //	debug("mixer rate: %d", _mixer->getOutputRate());
-	_sample_rate = CMS_RATE;
+	_sampleRate = CMS_RATE;
 
 	_header_len = (scumm->_game.features & GF_OLD_BUNDLE) ? 4 : 6;
 
@@ -831,7 +829,7 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 		clear_channel(i);
 
 	_next_tick = 0;
-	_tick_len = (_sample_rate << FIXP_SHIFT) / FREQ_HZ;
+	_tick_len = (_sampleRate << FIXP_SHIFT) / FREQ_HZ;
 
 	// Initialize V3 music timer
 	_music_timer_ctr = _music_timer = 0;
@@ -878,7 +876,7 @@ Player_V2CMS::Player_V2CMS(ScummEngine *scumm, Audio::Mixer *mixer) {
 	_cmsVoices[7].octaveOutput = &(_cmsChips[1].octave[1]);
 
 	// inits the CMS Emulator like in the original
-	g_cmsEmu = new CMSEmulator(_sample_rate);
+	g_cmsEmu = new CMSEmulator(_sampleRate);
 	static const byte cmsInitData[13*2] = {
 		0x1C, 0x02,
 		0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00,

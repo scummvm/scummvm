@@ -63,7 +63,7 @@ public:
 	}
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
-	int getRate() const { return _samplerate; }
+	int getRate() const { return _sampleRate; }
 
 private:
 	enum {
@@ -86,7 +86,7 @@ private:
 
 	uint32 _mixamt;
 	uint32 _mixpos;
-	int _samplerate;
+	const int _sampleRate;
 
 	soundChan _channels[MOD_MAXCHANS];
 
