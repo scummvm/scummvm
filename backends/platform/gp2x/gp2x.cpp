@@ -246,7 +246,6 @@ OSystem_GP2X::OSystem_GP2X()
 	_hwscreen(0), _screen(0), _tmpscreen(0),
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
-	_samplesPerSec(0),
 	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
@@ -582,25 +581,25 @@ void OSystem_GP2X::setupMixer() {
 	SDL_AudioSpec obtained;
 
 	// Determine the desired output sampling frequency.
-	_samplesPerSec = 0;
+	uint32 samplesPerSec = 0;
 	if (ConfMan.hasKey("output_rate"))
-		_samplesPerSec = ConfMan.getInt("output_rate");
-	if (_samplesPerSec <= 0)
-		_samplesPerSec = SAMPLES_PER_SEC;
+		samplesPerSec = ConfMan.getInt("output_rate");
+	if (samplesPerSec <= 0)
+		samplesPerSec = SAMPLES_PER_SEC;
 
 	//Quick EVIL Hack - DJWillis
-//	_samplesPerSec = 11025;
+//	samplesPerSec = 11025;
 
 	// Determine the sample buffer size. We want it to store enough data for
 	// about 1/16th of a second. Note that it must be a power of two.
 	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
-	int samples = 8192;
-	while (16 * samples >= _samplesPerSec) {
+	uint32 samples = 8192;
+	while (16 * samples >= samplesPerSec) {
 		samples >>= 1;
 	}
 
 	memset(&desired, 0, sizeof(desired));
-	desired.freq = _samplesPerSec;
+	desired.freq = samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	//desired.samples = (uint16)samples;
@@ -615,17 +614,17 @@ void OSystem_GP2X::setupMixer() {
 
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		_samplesPerSec = 0;
+		samplesPerSec = 0;
 		_mixer->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
 		// least on some platforms SDL will lie and claim it did get the rate
 		// even if it didn't. Probably only happens for "weird" rates, though.
-		_samplesPerSec = obtained.freq;
-		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
+		samplesPerSec = obtained.freq;
+		debug(1, "Output sample rate: %d Hz", samplesPerSec);
 
 		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setOutputRate(samplesPerSec);
 		_mixer->setReady(true);
 
 #ifdef MIXER_DOUBLE_BUFFERING

@@ -283,9 +283,6 @@ protected:
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
 
-	// Audio
-	int _samplesPerSec;
-
 	// CD Audio
 	SDL_CD *_cdrom;
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;

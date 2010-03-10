@@ -184,8 +184,6 @@ protected:
 	Boolean _useNumPad, _showBatLow;
 	UInt32 _batCheckTicks, _batCheckLast;
 
-	int _samplesPerSec;
-
 public:
 	void initBackend();
 
@@ -251,7 +249,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex) {}
 	virtual void deleteMutex(MutexRef mutex) {}
 
-	int getOutputSampleRate() const { return _samplesPerSec; }
 	virtual Audio::Mixer *getMixer();
 
 	void quit();

@@ -135,10 +135,6 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   // Returns true if an event was retrieved.
   bool pollEvent(Common::Event &event);
 
-  // Determine the output sample rate. Audio data provided by the sound
-  // callback will be played using this rate.
-  int getOutputSampleRate() const;
-
   // Initialise the specified CD drive for audio playback.
   bool openCD(int drive);
 

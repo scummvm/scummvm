@@ -222,13 +222,13 @@ void OSystem_SDL_Symbian::setupMixer() {
 
 	memset(&desired, 0, sizeof(desired));
 
-	_samplesPerSec = 0;
+	uint32 samplesPerSec = 0;
 
 	if (ConfMan.hasKey("output_rate"))
-		_samplesPerSec = ConfMan.getInt("output_rate");
+		samplesPerSec = ConfMan.getInt("output_rate");
 
-	if (_samplesPerSec <= 0)
-		_samplesPerSec = SAMPLES_PER_SEC;
+	if (samplesPerSec <= 0)
+		samplesPerSec = SAMPLES_PER_SEC;
 
 	// Originally, we always used 2048 samples. This loop will produce the
 	// same result at 22050 Hz, and should hopefully produce something
@@ -237,12 +237,12 @@ void OSystem_SDL_Symbian::setupMixer() {
 	uint32 samples = 0x8000;
 
 	for (;;) {
-		if ((1000 * samples) / _samplesPerSec < 100)
+		if ((1000 * samples) / samplesPerSec < 100)
 			break;
 		samples >>= 1;
 	}
 
-	desired.freq = _samplesPerSec;
+	desired.freq = samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = (uint16)samples;
@@ -256,13 +256,13 @@ void OSystem_SDL_Symbian::setupMixer() {
 
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		_samplesPerSec = 0;
+		samplesPerSec = 0;
 		_mixer->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
 		// least on some platforms SDL will lie and claim it did get the rate
 		// even if it didn't. Probably only happens for "weird" rates, though.
-		_samplesPerSec = obtained.freq;
+		samplesPerSec = obtained.freq;
 		_channels = obtained.channels;
 
 		// Need to create mixbuffer for stereo mix to downmix
@@ -271,7 +271,7 @@ void OSystem_SDL_Symbian::setupMixer() {
 		}
 
 		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setOutputRate(samplesPerSec);
 		_mixer->setReady(true);
 		SDL_PauseAudio(0);
 	}

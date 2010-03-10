@@ -783,16 +783,16 @@ void OSystem_WINCE3::setupMixer() {
 	SDL_AudioSpec desired;
 	int thread_priority;
 
-	compute_sample_rate();
-	if (_sampleRate == 0)
-		warning("setSoundCallback called with 0 _sampleRate - audio will not work");
-	else if (_mixer && _mixer->getOutputRate() == _sampleRate) {
+	uint32 sampleRate = compute_sample_rate();
+	if (sampleRate == 0)
+		warning("setSoundCallback called with sample rate 0 - audio will not work");
+	else if (_mixer && _mixer->getOutputRate() == sampleRate) {
 		debug(1, "Skipping sound mixer re-init: samplerate is good");
 		return;
 	}
 
 	memset(&desired, 0, sizeof(desired));
-	desired.freq = _sampleRate;
+	desired.freq = sampleRate;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = 128;
@@ -817,7 +817,7 @@ void OSystem_WINCE3::setupMixer() {
 		_mixer->setReady(false);
 
 	} else {
-		debug(1, "Sound opened OK, mixing at %d Hz", _sampleRate);
+		debug(1, "Sound opened OK, mixing at %d Hz", sampleRate);
 
 		// Re-create mixer to match the output rate
 		int vol1 = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
@@ -830,7 +830,7 @@ void OSystem_WINCE3::setupMixer() {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol2);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol3);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol4);
-		_mixer->setOutputRate(_sampleRate);
+		_mixer->setOutputRate(sampleRate);
 		_mixer->setReady(true);
 		SDL_PauseAudio(0);
 	}
@@ -875,7 +875,9 @@ bool OSystem_WINCE3::checkOggHighSampleRate() {
 }
 #endif
 
-void OSystem_WINCE3::compute_sample_rate() {
+uint32 OSystem_WINCE3::compute_sample_rate() {
+	uint32 sampleRate;
+
 	// Force at least medium quality FM synthesis for FOTAQ
 	Common::String gameid(ConfMan.get("gameid"));
 	if (gameid == "queen") {
@@ -887,24 +889,22 @@ void OSystem_WINCE3::compute_sample_rate() {
 	}
 	// See if the output frequency is forced by the game
 	if (gameid == "ft" || gameid == "dig" || gameid == "comi" || gameid == "queen" || gameid == "sword" || gameid == "agi")
-			_sampleRate = SAMPLES_PER_SEC_NEW;
+			sampleRate = SAMPLES_PER_SEC_NEW;
 	else {
 		if (ConfMan.hasKey("high_sample_rate") && ConfMan.getBool("high_sample_rate"))
-			_sampleRate = SAMPLES_PER_SEC_NEW;
+			sampleRate = SAMPLES_PER_SEC_NEW;
 		else
-			_sampleRate = SAMPLES_PER_SEC_OLD;
+			sampleRate = SAMPLES_PER_SEC_OLD;
 	}
 
 #ifdef USE_VORBIS
 	// Modify the sample rate on the fly if OGG is involved
-	if (_sampleRate == SAMPLES_PER_SEC_OLD)
+	if (sampleRate == SAMPLES_PER_SEC_OLD)
 		if (checkOggHighSampleRate())
-			 _sampleRate = SAMPLES_PER_SEC_NEW;
+			 sampleRate = SAMPLES_PER_SEC_NEW;
 #endif
-}
 
-int OSystem_WINCE3::getOutputSampleRate() const {
-	return _sampleRate;
+	return sampleRate;
 }
 
 void OSystem_WINCE3::engineInit() {

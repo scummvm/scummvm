@@ -125,8 +125,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	virtual int getOutputSampleRate() const;
-
 	virtual bool openCD(int drive);
 	virtual bool pollCD();
 

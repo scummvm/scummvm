@@ -90,8 +90,6 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 
 	_cursorPaletteDisabled = true;
 
-	_samplesPerSec = 0;
-
 	//init SDL
 	uint32	sdlFlags = SDL_INIT_AUDIO | SDL_INIT_TIMER;
 	SDL_Init(sdlFlags);
@@ -951,27 +949,28 @@ void OSystem_PSP::mixCallback(void *sys, byte *samples, int len) {
 void OSystem_PSP::setupMixer(void) {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
+	uint32 samplesPerSec;
 
 	memset(&desired, 0, sizeof(desired));
 
 	if (ConfMan.hasKey("output_rate"))
-		_samplesPerSec = ConfMan.getInt("output_rate");
+		samplesPerSec = ConfMan.getInt("output_rate");
 	else
-		_samplesPerSec = SAMPLES_PER_SEC;
+		samplesPerSec = SAMPLES_PER_SEC;
 
 	// Originally, we always used 2048 samples. This loop will produce the
 	// same result at 22050 Hz, and should hopefully produce something
 	// sensible for other frequencies. Note that it must be a power of two.
 
-	uint16 samples = 0x8000;
+	uint32 samples = 0x8000;
 
 	for (;;) {
-		if (samples / (_samplesPerSec / 1000) < 100)
+		if (samples / (samplesPerSec / 1000) < 100)
 			break;
 		samples >>= 1;
 	}
 
-	desired.freq = _samplesPerSec;
+	desired.freq = samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
 	desired.samples = samples;
@@ -984,16 +983,16 @@ void OSystem_PSP::setupMixer(void) {
 
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio: %s", SDL_GetError());
-		_samplesPerSec = 0;
+		samplesPerSec = 0;
 		_mixer->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
 		// least on some platforms SDL will lie and claim it did get the rate
 		// even if it didn't. Probably only happens for "weird" rates, though.
-		_samplesPerSec = obtained.freq;
+		samplesPerSec = obtained.freq;
 
 		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(_samplesPerSec);
+		_mixer->setOutputRate(samplesPerSec);
 		_mixer->setReady(true);
 
 		SDL_PauseAudio(0);

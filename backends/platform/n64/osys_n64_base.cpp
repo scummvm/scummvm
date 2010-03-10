@@ -183,9 +183,6 @@ void OSystem_N64::initBackend() {
 		_savefile = new PAKSaveManager();
 	}
 
-	_mixer = new Audio::MixerImpl(this);
-	_mixer->setReady(false);
-
 	_timer = new DefaultTimerManager();
 
 	setTimerCallback(&timer_handler, 10);
@@ -890,6 +887,9 @@ void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
 }
 
 void OSystem_N64::setupMixer(void) {
+	_mixer = new Audio::MixerImpl(this);
+	_mixer->setReady(false);
+
 	enableAudioPlayback();
 }
 

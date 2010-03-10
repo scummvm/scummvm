@@ -697,10 +697,6 @@ void OSystem_DS::unlockMutex(MutexRef mutex) {
 void OSystem_DS::deleteMutex(MutexRef mutex) {
 }
 
-int OSystem_DS::getOutputSampleRate() const {
-	return DS::getSoundFrequency();
-}
-
 bool OSystem_DS::openCD(int drive) {
 	return DS::CD::checkCD();
 }

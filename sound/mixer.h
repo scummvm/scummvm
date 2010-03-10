@@ -253,8 +253,7 @@ public:
 	virtual int getVolumeForSoundType(SoundType type) const = 0;
 
 	/**
-	 * Query the system's audio output sample rate. This returns
-	 * the same value as OSystem::getOutputSampleRate().
+	 * Query the system's audio output sample rate.
 	 *
 	 * @return the output sample rate in Hz
 	 */

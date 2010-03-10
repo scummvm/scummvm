@@ -98,10 +98,11 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 		_soundEx.set = false;
 		_soundEx.dataP = NULL;	// set by the handler
 
+		uint32 samplesPerSec;
 		if (ConfMan.hasKey("output_rate"))
-			_samplesPerSec = ConfMan.getInt("output_rate");
+			samplesPerSec = ConfMan.getInt("output_rate");
 		else
-			_samplesPerSec = SAMPLES_PER_SEC;
+			samplesPerSec = SAMPLES_PER_SEC;
 
 		// try to create sound stream
 		if (OPTIONS_TST(kOptPalmSoundAPI)) {
@@ -109,7 +110,7 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 						&_soundEx.handle,
 						sndOutput,
 						sndFormatPCM,
-						_samplesPerSec,
+						samplesPerSec,
 						sndInt16Little,
 						sndStereo,
 						sound_callback(),
@@ -132,7 +133,7 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 	}
 	// if not true some scenes (indy3 256,...) may freeze (ESC to skip)
 
-	_mixerMgr->setOutputRate(_samplesPerSec);
+	_mixerMgr->setOutputRate(samplesPerSec);
 	_mixerMgr->setReady(true);
 
 	return true;

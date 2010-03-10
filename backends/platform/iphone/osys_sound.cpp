@@ -105,7 +105,3 @@ void OSystem_IPHONE::stopSoundsystem() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 	_mixer->setReady(false);
 }
-
-int OSystem_IPHONE::getOutputSampleRate() const {
-	return AUDIO_SAMPLE_RATE;
-}

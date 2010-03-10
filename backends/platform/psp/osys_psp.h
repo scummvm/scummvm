@@ -86,7 +86,6 @@ protected:
 	uint32	_lastPadCheck;
 	uint32	_padAccel;
 
-	uint32		_samplesPerSec;
 	SceCtrlData pad;
 
 	Common::SaveFileManager *_savefile;

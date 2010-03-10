@@ -162,7 +162,6 @@ public:
 
 	static void mixCallback(void *sys, byte *samples, int len);
 	virtual void setupMixer(void);
-	virtual int getOutputSampleRate() const;
 	virtual void setTimerCallback(TimerProc callback, int interval);
  	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	virtual void quit();

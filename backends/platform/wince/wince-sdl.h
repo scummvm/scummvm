@@ -132,7 +132,6 @@ protected:
 	int getDefaultGraphicsMode() const;
 
 	bool openCD(int drive);
-	int getOutputSampleRate() const;
 
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
@@ -153,7 +152,7 @@ private:
 	void create_toolbar();
 	void update_game_settings();
 	void check_mappings();
-	void compute_sample_rate();
+	uint32 compute_sample_rate();
 
 	void retrieve_mouse_location(int &x, int &y);
 
@@ -162,8 +161,6 @@ private:
 	SDL_Surface *_toolbarLow;	// toolbar 320x40
 	SDL_Surface *_toolbarHigh;	// toolbar 640x80
 	bool _toolbarHighDrawn;		// cache toolbar 640x80
-
-	uint16 _sampleRate;		// current audio sample rate
 
 	bool _freeLook;			// freeLook mode (do not send mouse button events)
 
