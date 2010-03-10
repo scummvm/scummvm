@@ -769,7 +769,6 @@ int AGOSEngine_PN::varval() {
 		case 249:
 			b = readfromline();
 			return (int)(b + 256 * readfromline());
-			break;
 		case 250:
 			return readfromline();
 		case 251:

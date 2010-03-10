@@ -573,7 +573,7 @@ void DragonMainMenuView::handleAction(MadsGameAction action) {
 	case EXIT:
 		vm->_events->quitFlag = true;
 		return;
-		break;
+
 	default:
 		break;
 	}

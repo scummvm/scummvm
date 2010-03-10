@@ -604,11 +604,9 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 	switch (vol) {
 	case kVolumeMusic:
 		return convertVolumeFromMixer(ConfMan.getInt("music_volume"));
-		break;
 
 	case kVolumeSfx:
 		return convertVolumeFromMixer(ConfMan.getInt("sfx_volume"));
-		break;
 
 	case kVolumeSpeech:
 		if (speechEnabled())

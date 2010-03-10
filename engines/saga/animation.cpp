@@ -771,7 +771,6 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 			break;
 		case SAGA_FRAME_END: // End of frame marker
 			return;
-			break;
 		default:
 			break;
 		}

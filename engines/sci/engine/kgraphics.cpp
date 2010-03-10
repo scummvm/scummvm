@@ -238,7 +238,6 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->getResMan()->isAmiga32color())
 			return make_reg(0, 32);
 		return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
-		break;
 
 	case K_GRAPH_DRAW_LINE:
 		priority = (argc > 6) ? argv[6].toSint16() : -1;

@@ -508,7 +508,6 @@ bool GobEngine::initGameParts() {
 	default:
 		deinitGameParts();
 		return false;
-		break;
 	}
 
 	_inter->setupOpcodes();

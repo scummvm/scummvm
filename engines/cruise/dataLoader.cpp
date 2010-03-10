@@ -253,12 +253,9 @@ int loadFile(const char* name, int idx, int destIdx) {
 			return 0;	// exit if limit is reached
 		}
 		return loadSetEntry(name, ptr, destIdx, idx);
-
-		break;
 	}
 	case type_FNT: {
 		return loadFNTSub(ptr, idx);
-		break;
 	}
 	case type_SPL: {
 		// Sound file

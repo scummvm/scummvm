@@ -368,7 +368,6 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 			}
 
 			return _2byteFontPtr + base;
-			break;
 		}
 	case Common::ZH_CNA:
 		idx = ((idx % 256) - 0xa1)* 94  + ((idx / 256) - 0xa1);

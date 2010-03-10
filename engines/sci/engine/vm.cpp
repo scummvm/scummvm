@@ -547,7 +547,6 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	case SEG_TYPE_DYNMEM:
 		base.offset += offset;
 		return base;
-		break;
 
 	default:
 		// FIXME: Changed this to warning, because iceman does this during dancing with girl.
