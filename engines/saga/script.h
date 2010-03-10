@@ -308,7 +308,7 @@ public:
 	StringsTable _mainStrings;
 
 	Script(SagaEngine *vm);
-	~Script();
+	virtual ~Script();
 
 	void loadModule(int scriptModuleNumber);
 	void freeModules();

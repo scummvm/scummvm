@@ -62,34 +62,55 @@ namespace Saga {
 SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	: Engine(syst), _gameDescription(gameDesc) {
 
-	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
+	_framesEsc = 0;
 
-	_console = NULL;
+	_globalFlags = 0;
+	memset(_ethicsPoints, 0, sizeof(_ethicsPoints));
+	_spiritualBarometer = 0;
 
-	_resource = NULL;
+	_soundVolume = 0;
+	_musicVolume = 0;
+	_speechVolume = 0;
+	_subtitlesEnabled = false;
+	_voicesEnabled = false;
+	_voiceFilesExist = false;
+	_readingSpeed = 0;
+
+	_copyProtection = false;
+	_gf_wyrmkeep = false;
+	_musicWasPlaying = false;
+
+
 	_sndRes = NULL;
-	_events = NULL;
-	_font = NULL;
-	_sprite = NULL;
+	_sound = NULL;
+	_music = NULL;
+	_driver = NULL;
 	_anim = NULL;
-	_script = NULL;
-	_interface = NULL;
-	_actor = NULL;
-	_palanim = NULL;
-	_scene = NULL;
+	_render = NULL;
 	_isoMap = NULL;
 	_gfx = NULL;
-	_driver = NULL;
+	_script = NULL;
+	_actor = NULL;
+	_font = NULL;
+	_sprite = NULL;
+	_scene = NULL;
+	_interface = NULL;
 	_console = NULL;
-	_render = NULL;
-	_music = NULL;
-	_sound = NULL;
+	_events = NULL;
+	_palanim = NULL;
 	_puzzle = NULL;
+	_resource = NULL;
+
+	_previousTicks = 0;
+
+	_saveFilesCount = 0;
+
+	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
+	_mouseClickCount = 0;
+
+	_gameNumber = 0;
 
 	_frameCount = 0;
-	_globalFlags = 0;
-	_mouseClickCount = 0;
-	memset(_ethicsPoints, 0, sizeof(_ethicsPoints));
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
@@ -127,31 +148,66 @@ SagaEngine::~SagaEngine() {
 
 	if (getGameId() == GID_ITE) {
 		delete _isoMap;
+		_isoMap = NULL;
+
 		delete _puzzle;
+		_puzzle = NULL;
 	}
 
 	delete _sndRes;
+	_sndRes = NULL;
+
 	delete _events;
+	_events = NULL;
 
 	if (!isSaga2()) {
 		delete _font;
+		_font = NULL;
+
 		delete _sprite;
+		_sprite = NULL;
 	}
 
 	delete _anim;
+	_anim = NULL;
+
 	delete _script;
-	if (!isSaga2())
+	_script = NULL;
+
+	if (!isSaga2()) {
 		delete _interface;
+		_interface = NULL;
+	}
+
 	delete _actor;
+	_actor = NULL;
+
 	delete _palanim;
+	_palanim = NULL;
+
 	delete _scene;
+	_scene = NULL;
+
 	delete _render;
+	_render = NULL;
+
 	delete _music;
+	_music = NULL;
+
 	delete _sound;
+	_sound = NULL;
+
 	delete _driver;
+	_driver = NULL;
+
 	delete _gfx;
+	_gfx = NULL;
+
 	delete _console;
+	_console = NULL;
+
 	delete _resource;
+	_resource = NULL;
 }
 
 Common::Error SagaEngine::run() {
