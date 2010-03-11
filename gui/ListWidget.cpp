@@ -290,7 +290,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
-		uint32 time = getMillis();
+		uint32 time = g_system->getMillis();
 		if (_quickSelectTime < time) {
 			_quickSelectStr = (char)state.ascii;
 		} else {

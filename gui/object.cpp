@@ -40,10 +40,6 @@ GuiObject::~GuiObject() {
 	_firstWidget = 0;
 }
 
-uint32 GuiObject::getMillis() {
-	return g_system->getMillis();
-}
-
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, _w, _h)) {

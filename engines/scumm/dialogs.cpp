@@ -674,7 +674,7 @@ void ValueDisplayDialog::drawDialog() {
 }
 
 void ValueDisplayDialog::handleTickle() {
-	if (getMillis() > _timer) {
+	if (g_system->getMillis() > _timer) {
 		close();
 	}
 }
@@ -702,7 +702,7 @@ void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
 			_value--;
 
 		setResult(_value);
-		_timer = getMillis() + kDisplayDelay;
+		_timer = g_system->getMillis() + kDisplayDelay;
 		draw();
 	} else {
 		close();
@@ -712,7 +712,7 @@ void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
 void ValueDisplayDialog::open() {
 	GUI_Dialog::open();
 	setResult(_value);
-	_timer = getMillis() + kDisplayDelay;
+	_timer = g_system->getMillis() + kDisplayDelay;
 }
 
 SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
@@ -722,7 +722,7 @@ SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
 
 void SubtitleSettingsDialog::handleTickle() {
 	InfoDialog::handleTickle();
-	if (getMillis() > _timer)
+	if (g_system->getMillis() > _timer)
 		close();
 }
 
@@ -759,7 +759,7 @@ void SubtitleSettingsDialog::cycleValue() {
 	else
 		setInfoText(subtitleDesc[_value]);
 
-	_timer = getMillis() + 1500;
+	_timer = g_system->getMillis() + 1500;
 }
 
 Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)

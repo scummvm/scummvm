@@ -86,10 +86,6 @@ public:
 
 protected:
 	virtual void	releaseFocus() = 0;
-
-	// Convenience alias for OSystem::getMillis().
-	// This is a bit hackish, of course :-).
-	uint32 getMillis();
 };
 
 } // End of namespace GUI

@@ -110,12 +110,12 @@ void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 TimedMessageDialog::TimedMessageDialog(const Common::String &message, uint32 duration)
 	: MessageDialog(message, 0, 0) {
-	_timer = getMillis() + duration;
+	_timer = g_system->getMillis() + duration;
 }
 
 void TimedMessageDialog::handleTickle() {
 	MessageDialog::handleTickle();
-	if (getMillis() > _timer)
+	if (g_system->getMillis() > _timer)
 		close();
 }
 

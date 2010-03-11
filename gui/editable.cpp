@@ -77,7 +77,7 @@ bool EditableWidget::tryInsertChar(byte c, int pos) {
 }
 
 void EditableWidget::handleTickle() {
-	uint32 time = getMillis();
+	uint32 time = g_system->getMillis();
 	if (_caretTime < time) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
@@ -287,7 +287,7 @@ bool EditableWidget::adjustOffset() {
 }
 
 void EditableWidget::makeCaretVisible() {
-	_caretTime = getMillis() + kCaretBlinkTime;
+	_caretTime = g_system->getMillis() + kCaretBlinkTime;
 	_caretVisible = true;
 	drawCaret(false);
 }
