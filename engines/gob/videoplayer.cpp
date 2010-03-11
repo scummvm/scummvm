@@ -38,7 +38,7 @@
 
 namespace Gob {
 
-const char *VideoPlayer::_extensions[] = { "IMD", "VMD", "RMD", "SMD" };
+const char *VideoPlayer::_extensions[] = { "IMD", "IMD", "VMD", "RMD", "SMD" };
 
 VideoPlayer::Video::Video(GobEngine *vm) : _vm(vm), _stream(0), _video(0) {
 }
@@ -47,7 +47,7 @@ VideoPlayer::Video::~Video() {
 	close();
 }
 
-bool VideoPlayer::Video::open(const char *fileName, Type which) {
+bool VideoPlayer::Video::open(const char *fileName, Type which, int16 width, int16 height) {
 	close();
 
 	int16 handle = _vm->_dataIO->openData(fileName);
@@ -61,6 +61,8 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 
 	if (which == kVideoTypeIMD) {
 		_video = new Graphics::Imd();
+	} else if (which == kVideoTypePreIMD) {
+		_video = new Graphics::PreImd(width, height);
 	} else if (which == kVideoTypeVMD) {
 		_video = new Graphics::Vmd(_vm->_video->_palLUT);
 	} else if (which == kVideoTypeRMD) {
@@ -223,7 +225,7 @@ bool VideoPlayer::findFile(char *fileName, Type &which) {
 }
 
 bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
-		int32 flags, Type which) {
+		int32 flags, Type which, int16 width, int16 height) {
 
 	char fileName[256];
 
@@ -233,7 +235,7 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 		return false;
 
 	if (scumm_strnicmp(_primaryVideo->getFileName(), fileName, strlen(fileName))) {
-		if (!_primaryVideo->open(fileName, which))
+		if (!_primaryVideo->open(fileName, which, width, height))
 			return false;
 
 		// WORKAROUND: In some rare cases, the cursor should still be
@@ -389,7 +391,7 @@ void VideoPlayer::primaryClose() {
 	_primaryVideo->close();
 }
 
-int VideoPlayer::slotOpen(const char *videoFile, Type which) {
+int VideoPlayer::slotOpen(const char *videoFile, Type which, int16 width, int16 height) {
 	Video *video = new Video(_vm);
 	char fileName[256];
 
@@ -400,7 +402,7 @@ int VideoPlayer::slotOpen(const char *videoFile, Type which) {
 		return -1;
 	}
 
-	if (!video->open(fileName, which)) {
+	if (!video->open(fileName, which, width, height)) {
 		delete video;
 		return -1;
 	}

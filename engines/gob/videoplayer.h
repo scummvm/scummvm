@@ -52,15 +52,17 @@ public:
 	enum Type {
 		kVideoTypeTry = -1,
 		kVideoTypeIMD = 0,
-		kVideoTypeVMD = 1,
-		kVideoTypeRMD = 2
+		kVideoTypePreIMD = 1,
+		kVideoTypeVMD = 2,
+		kVideoTypeRMD = 3
 	};
 
 	VideoPlayer(GobEngine *vm);
 	~VideoPlayer();
 
 	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
-			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
+			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry,
+			int16 width = -1, int16 height = -1);
 	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1,
 			int16 breakKey = kShortKeyEscape,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
@@ -72,7 +74,8 @@ public:
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1 , int16 endFrame = -1, bool noRetrace = false);
 
-	int slotOpen(const char *videoFile, Type which = kVideoTypeTry);
+	int slotOpen(const char *videoFile, Type which = kVideoTypeTry,
+			int16 width = -1, int16 height = -1);
 	void slotPlay(int slot, int16 frame = -1);
 	void slotClose(int slot);
 	void slotCopyFrame(int slot, byte *dest,
@@ -109,7 +112,7 @@ private:
 			Video(GobEngine *vm);
 			~Video();
 
-			bool open(const char *fileName, Type which);
+			bool open(const char *fileName, Type which, int16 width, int16 height);
 			void close();
 
 			bool isOpen() const;
