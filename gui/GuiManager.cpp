@@ -440,7 +440,7 @@ void GuiManager::animateCursor() {
 bool GuiManager::checkScreenChange() {
 	int tmpScreenChangeID = _system->getScreenChangeID();
 	if (_lastScreenChangeID != tmpScreenChangeID) {
-		GuiManager::screenChange();
+		screenChange();
 		return true;
 	}
 	return false;
