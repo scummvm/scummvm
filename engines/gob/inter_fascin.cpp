@@ -131,7 +131,8 @@ bool Inter_Fascination::oFascin_copySprite(OpFuncParams &params) {
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 	warning("funcPlayImd with parameter : 'tirb.imd'");
 
-	if (_vm->_vidPlayer->primaryOpen("tirb", 128, 80)) {
+	if (_vm->_vidPlayer->primaryOpen("tirb", 150, 88, VideoPlayer::kFlagFrontSurface,
+				VideoPlayer::kVideoTypePreIMD, 128, 80)) {
 		_vm->_vidPlayer->primaryPlay();
 		_vm->_vidPlayer->primaryClose();
 	}
@@ -140,7 +141,8 @@ void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
 	warning("funcPlayImd with parameter : 'tira.imd'");
 
-	if (_vm->_vidPlayer->primaryOpen("tira", 128, 80)) {
+	if (_vm->_vidPlayer->primaryOpen("tira", 88, 66, VideoPlayer::kFlagFrontSurface,
+				VideoPlayer::kVideoTypePreIMD, 128, 80)) {
 		_vm->_vidPlayer->primaryPlay();
 		_vm->_vidPlayer->primaryClose();
 	}
