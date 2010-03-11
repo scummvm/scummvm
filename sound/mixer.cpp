@@ -227,52 +227,23 @@ void MixerImpl::playInputStream(
 		return;
 	}
 
+
+	assert(_mixerReady);
+
 	// Prevent duplicate sounds
 	if (id != -1) {
 		for (int i = 0; i != NUM_CHANNELS; i++)
 			if (_channels[i] != 0 && _channels[i]->getId() == id) {
+				// Delete the stream if were asked to auto-dispose it.
+				// Note: This could cause trouble if the client code does not
+				// yet expect the stream to be gone. The primary example to
+				// keep in mind here is QueuingAudioStream.
+				// Thus, as a quick rule of thumb, you should never, ever,
+				// try to play QueuingAudioStreams with a sound id.
 				if (autofreeStream == DisposeAfterUse::YES)
 					delete input;
 				return;
 			}
-	}
-
-	// Check if the mixer is not ready. This most probably means that
-	// no Audio output is possible according to the backend (we should
-	// clarify this in the Mixer creation API, though).
-	//
-	// For now we deal with this by simply ignore the sound here, never
-	// scheduling it for playback, never giving it a valid sound
-	// handle. For a game engine, this is indistinguishable from a
-	// sound which finishes playback before playInputStream returns.
-	//
-	// This is certainly not ideal for many engine; e.g. if a game has
-	// scripts which sync by waiting for certain sounds to play, then
-	// this syncing is broken if we just remove the sound.
-	//
-	// We could try to be more graceful, by using TimerManager and
-	// emulating (or rather: faking) actual audio playback; essentially
-	// we run the mixer callback from a timer instead of an audio
-	// callback.
-	// However, this may very well lead to new problems of its own,
-	// plus it would complicate the Mixer code. It seems that a better
-	// solution would be to adapt backends to setup a fake mixer thread
-	// which calls the mixer callback. We'd then still need a way to
-	// signal the mixer / the client code that no actual audio playback
-	// takes places... Anyway, either way, we first would have to
-	// investigate ramifications of any such approach.
-	//
-	// And also, by far the best solution is to adapt engines to be
-	// properly aware of the possibility of missing audio, and how to
-	// deal with it; be it by refusing to launch (e.g. when audio is an
-	// integral part of a game), by switching to alternate script
-	// syncing means, etc. It also seems important to test every game
-	// individually in a system without audio, if we really want
-	// to support such systems.
-	if (!_mixerReady) {
-		if (autofreeStream == DisposeAfterUse::YES)
-			delete input;
-		return;
 	}
 
 	// Create the channel
