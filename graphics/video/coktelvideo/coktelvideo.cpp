@@ -128,8 +128,8 @@ Common::MemoryReadStream *PreImd::getExtraData(const char *fileName) {
 }
 
 bool PreImd::load(Common::SeekableReadStream &stream) {
-	warning("loading preIMD");
-
+	// Since PreIMDs don't have any width and height values stored,
+	// we need them to be specified in the constructor
 	assert((_forcedWidth > 0) && (_forcedHeight > 0));
 
 	unload();
@@ -387,6 +387,7 @@ CoktelVideo::State PreImd::processFrame(uint16 frame) {
 	return state;
 }
 
+// Simple blit
 void PreImd::renderFrame() {
 	assert(_vidMem);
 
