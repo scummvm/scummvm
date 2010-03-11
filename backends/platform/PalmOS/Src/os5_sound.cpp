@@ -66,7 +66,6 @@ void OSystem_PalmOS5::sound_handler() {
 				_soundEx.dataP = MemPtrNew(_soundEx.size);
 
 			_mixerMgr->mixCallback((byte *)_soundEx.dataP, _soundEx.size);
-//			((SoundProc)_sound.proc)(_sound.param, (byte *)_soundEx.dataP, _soundEx.size);
 			_soundEx.set = true;
 		}
 	}// TODO : no Sound API case
@@ -76,9 +75,17 @@ SndStreamVariableBufferCallback OSystem_PalmOS5::sound_callback() {
 	return sndCallback;
 }
 
-bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
+bool OSystem_PalmOS5::setupMixer() {
 	Err e;
 	Boolean success = false;
+
+	uint32 samplesPerSec;
+	if (ConfMan.hasKey("output_rate"))
+		samplesPerSec = ConfMan.getInt("output_rate");
+	else
+		samplesPerSec = SAMPLES_PER_SEC;
+
+	_mixerMgr = new Audio::MixerImpl(this, samplesPerSec);
 
 	if (!_sound.active) {
 		if (gVars->fmQuality != FM_QUALITY_INI) {
@@ -89,20 +96,14 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 #if defined (COMPILE_OS5)
 		CALLBACK_INIT(_soundEx);
 #endif
-		_sound.proc = proc;
-		_sound.param = param;
+		_sound.proc = 0;
+		_sound.param = _mixerMgr;
 		_sound.active = true;	// always true when we call this function, false when sound is off
 
 		_soundEx.handle = 0;
 		_soundEx.size = 0;		// set by the callback
 		_soundEx.set = false;
 		_soundEx.dataP = NULL;	// set by the handler
-
-		uint32 samplesPerSec;
-		if (ConfMan.hasKey("output_rate"))
-			samplesPerSec = ConfMan.getInt("output_rate");
-		else
-			samplesPerSec = SAMPLES_PER_SEC;
 
 		// try to create sound stream
 		if (OPTIONS_TST(kOptPalmSoundAPI)) {
@@ -133,7 +134,6 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 	}
 	// if not true some scenes (indy3 256,...) may freeze (ESC to skip)
 
-	_mixerMgr->setOutputRate(samplesPerSec);
 	_mixerMgr->setReady(true);
 
 	return true;

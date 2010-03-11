@@ -60,7 +60,7 @@ private:
 	OSystem *_syst;
 	Common::Mutex _mutex;
 
-	uint _sampleRate;
+	const uint _sampleRate;
 	bool _mixerReady;
 	uint32 _handleSeed;
 
@@ -69,7 +69,8 @@ private:
 
 
 public:
-	MixerImpl(OSystem *system);
+
+	MixerImpl(OSystem *system, uint sampleRate);
 	~MixerImpl();
 
 	virtual bool isReady() const { return _mixerReady; }
@@ -123,21 +124,9 @@ public:
 	/**
 	 * Set the internal 'is ready' flag of the mixer.
 	 * Backends should invoke Mixer::setReady(true) once initialisation of
-	 * their audio system has been completed (and in particular, *after*
-	 * setOutputRate() has been called).
+	 * their audio system has been completed.
 	 */
 	void setReady(bool ready);
-
-	/**
-	 * Set the output sample rate.
-	 *
-	 * @param sampleRate	the new output sample rate
-	 *
-	 * @note Right now, this can be done exactly ONCE. That is, the mixer
-	 * currently does not support changing the output sample rate after it
-	 * has been set for the first time.  This may change in the future.
-	 */
-	void setOutputRate(uint sampleRate);
 };
 
 

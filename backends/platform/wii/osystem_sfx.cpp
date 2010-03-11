@@ -65,6 +65,8 @@ static void * sfx_thread_func(void *arg) {
 }
 
 void OSystem_Wii::initSfx() {
+	_mixer = new Audio::MixerImpl(this, 48000);
+
 	sfx_thread_running = false;
 	sfx_thread_quit = false;
 
@@ -96,7 +98,6 @@ void OSystem_Wii::initSfx() {
 	DCFlushRange(sound_buffer[0], SFX_THREAD_FRAG_SIZE);
 	DCFlushRange(sound_buffer[1], SFX_THREAD_FRAG_SIZE);
 
-	_mixer->setOutputRate(48000);
 	_mixer->setReady(true);
 
 	AUDIO_SetDSPSampleRate(AI_SAMPLERATE_48KHZ);

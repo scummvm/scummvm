@@ -136,7 +136,6 @@ void OSystem_Wii::initBackend() {
 		strcpy(buf, "/");
 
 	_savefile = new DefaultSaveFileManager(buf);
-	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
 
 	initGfx();

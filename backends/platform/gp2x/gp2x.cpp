@@ -587,16 +587,13 @@ void OSystem_GP2X::setupMixer() {
 	if (samplesPerSec <= 0)
 		samplesPerSec = SAMPLES_PER_SEC;
 
-	//Quick EVIL Hack - DJWillis
-//	samplesPerSec = 11025;
-
 	// Determine the sample buffer size. We want it to store enough data for
-	// about 1/16th of a second. Note that it must be a power of two.
-	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
+	// at least 1/16th of a second (though at most 8192 samples). Note
+	// that it must be a power of two. So e.g. at 22050 Hz, we request a
+	// sample buffer size of 2048.
 	uint32 samples = 8192;
-	while (16 * samples >= samplesPerSec) {
+	while (samples * 16 > samplesPerSec * 2)
 		samples >>= 1;
-	}
 
 	memset(&desired, 0, sizeof(desired));
 	desired.freq = samplesPerSec;
@@ -607,14 +604,11 @@ void OSystem_GP2X::setupMixer() {
 	desired.callback = mixCallback;
 	desired.userdata = this;
 
-	// Create the mixer instance
 	assert(!_mixer);
-	_mixer = new Audio::MixerImpl(this);
-	assert(_mixer);
-
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		samplesPerSec = 0;
+		_mixer = new Audio::MixerImpl(this, samplesPerSec);
+		assert(_mixer);
 		_mixer->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
@@ -623,8 +617,9 @@ void OSystem_GP2X::setupMixer() {
 		samplesPerSec = obtained.freq;
 		debug(1, "Output sample rate: %d Hz", samplesPerSec);
 
-		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(samplesPerSec);
+		// Create the mixer instance and start the sound processing
+		_mixer = new Audio::MixerImpl(this, samplesPerSec);
+		assert(_mixer);
 		_mixer->setReady(true);
 
 #ifdef MIXER_DOUBLE_BUFFERING

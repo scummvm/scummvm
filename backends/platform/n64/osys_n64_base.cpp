@@ -887,7 +887,7 @@ void OSystem_N64::setTimerCallback(TimerProc callback, int interval) {
 }
 
 void OSystem_N64::setupMixer(void) {
-	_mixer = new Audio::MixerImpl(this);
+	_mixer = new Audio::MixerImpl(this, DEFAULT_SOUND_SAMPLE_RATE);
 	_mixer->setReady(false);
 
 	enableAudioPlayback();

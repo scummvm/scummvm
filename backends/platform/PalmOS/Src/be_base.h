@@ -117,7 +117,7 @@ private:
 	void simulate_mouse(Common::Event &event, Int8 iHoriz, Int8 iVert, Coord *xr, Coord *yr);
 
 	virtual void sound_handler() = 0;
-	virtual bool setSoundCallback(SoundProc proc, void *param) = 0;
+	virtual bool setupMixer() = 0;
 	virtual void clearSoundCallback() = 0;
 
 protected:

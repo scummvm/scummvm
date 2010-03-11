@@ -98,7 +98,6 @@ void OSystem_DS::initBackend() {
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
     DS::setTimerCallback(&OSystem_DS::timerHandler, 10);
 
@@ -108,7 +107,7 @@ void OSystem_DS::initBackend() {
 		DS::startSound(11025, 4096);
 	}
 
-	_mixer->setOutputRate(DS::getSoundFrequency());
+	_mixer = new Audio::MixerImpl(this, DS::getSoundFrequency());
 	_mixer->setReady(true);
 
 	OSystem::initBackend();

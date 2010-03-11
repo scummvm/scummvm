@@ -140,7 +140,7 @@ private:
 
 	virtual SndStreamVariableBufferCallback sound_callback();
 	virtual void sound_handler();
-	virtual bool setSoundCallback(SoundProc proc, void *param);
+	virtual bool setupMixer();
 	void clearSoundCallback();
 
 protected:

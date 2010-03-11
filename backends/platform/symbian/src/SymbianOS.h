@@ -63,9 +63,7 @@ public:
 	RFs& FsSession();
 protected:
 	//
-	// The mixer callback function, passed on to OSystem::setSoundCallback().
-	// This simply calls the mix() method.
-	// and then does downmixing for symbian if needed
+	// The mixer callback function.
 	//
 	static void symbianMixCallback(void *s, byte *samples, int len);
 

@@ -949,27 +949,23 @@ void OSystem_PSP::mixCallback(void *sys, byte *samples, int len) {
 void OSystem_PSP::setupMixer(void) {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
-	uint32 samplesPerSec;
 
-	memset(&desired, 0, sizeof(desired));
-
+	// Determine the desired output sampling frequency.
+	uint32 samplesPerSec = 0;
 	if (ConfMan.hasKey("output_rate"))
 		samplesPerSec = ConfMan.getInt("output_rate");
-	else
+	if (samplesPerSec <= 0)
 		samplesPerSec = SAMPLES_PER_SEC;
 
-	// Originally, we always used 2048 samples. This loop will produce the
-	// same result at 22050 Hz, and should hopefully produce something
-	// sensible for other frequencies. Note that it must be a power of two.
-
-	uint32 samples = 0x8000;
-
-	for (;;) {
-		if (samples / (samplesPerSec / 1000) < 100)
-			break;
+	// Determine the sample buffer size. We want it to store enough data for
+	// at least 1/16th of a second (though at most 8192 samples). Note
+	// that it must be a power of two. So e.g. at 22050 Hz, we request a
+	// sample buffer size of 2048.
+	uint32 samples = 8192;
+	while (samples * 16 > samplesPerSec * 2)
 		samples >>= 1;
-	}
 
+	memset(&desired, 0, sizeof(desired));
 	desired.freq = samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
@@ -978,12 +974,10 @@ void OSystem_PSP::setupMixer(void) {
 	desired.userdata = this;
 
 	assert(!_mixer);
-	_mixer = new Audio::MixerImpl(this);
-	assert(_mixer);
-
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio: %s", SDL_GetError());
-		samplesPerSec = 0;
+		_mixer = new Audio::MixerImpl(this, samplesPerSec);
+		assert(_mixer);
 		_mixer->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
@@ -991,8 +985,9 @@ void OSystem_PSP::setupMixer(void) {
 		// even if it didn't. Probably only happens for "weird" rates, though.
 		samplesPerSec = obtained.freq;
 
-		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(samplesPerSec);
+		// Create the mixer instance and start the sound processing
+		_mixer = new Audio::MixerImpl(this, samplesPerSec);
+		assert(_mixer);
 		_mixer->setReady(true);
 
 		SDL_PauseAudio(0);

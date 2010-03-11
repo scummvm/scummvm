@@ -46,8 +46,7 @@ void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
 }
 
 void OSystem_IPHONE::setupMixer() {
-	//printf("setSoundCallback()\n");
-	_mixer = new Audio::MixerImpl(this);
+	_mixer = new Audio::MixerImpl(this, AUDIO_SAMPLE_RATE);
 
 	s_soundCallback = mixCallback;
 	s_soundParam = this;
@@ -91,7 +90,6 @@ void OSystem_IPHONE::startSoundsystem() {
 		return;
 	}
 
-	_mixer->setOutputRate(AUDIO_SAMPLE_RATE);
 	_mixer->setReady(true);
 }
 

@@ -108,9 +108,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
-	virtual bool setSoundCallback(SoundProc proc, void *param);
-
 	virtual void quit();
 
 	virtual Common::SaveFileManager *getSavefileManager();
@@ -150,10 +147,9 @@ OSystem_NULL::~OSystem_NULL() {
 
 void OSystem_NULL::initBackend() {
 	_savefile = new DefaultSaveFileManager();
-	_mixer = new Audio::MixerImpl(this);
+	_mixer = new Audio::MixerImpl(this, 22050);
 	_timer = new DefaultTimerManager();
 
-	_mixer->setOutputRate(22050);
 	_mixer->setReady(false);
 
 	gettimeofday(&_startTime, NULL);
@@ -297,10 +293,6 @@ void OSystem_NULL::unlockMutex(MutexRef mutex) {
 }
 
 void OSystem_NULL::deleteMutex(MutexRef mutex) {
-}
-
-bool OSystem_NULL::setSoundCallback(SoundProc proc, void *param) {
-	return true;
 }
 
 void OSystem_NULL::quit() {

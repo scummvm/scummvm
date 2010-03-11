@@ -60,7 +60,6 @@ void enableAudioPlayback(void) {
 	osys->_audioBufferSize = getAIBufferSize();
 
 	if (_firstRun) {
-		localmixer->setOutputRate(DEFAULT_SOUND_SAMPLE_RATE);
 		localmixer->setReady(true);
 		_firstRun = false;
 	}

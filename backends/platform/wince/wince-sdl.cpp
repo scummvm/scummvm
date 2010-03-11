@@ -785,7 +785,7 @@ void OSystem_WINCE3::setupMixer() {
 
 	uint32 sampleRate = compute_sample_rate();
 	if (sampleRate == 0)
-		warning("setSoundCallback called with sample rate 0 - audio will not work");
+		warning("OSystem_WINCE3::setupMixer called with sample rate 0 - audio will not work");
 	else if (_mixer && _mixer->getOutputRate() == sampleRate) {
 		debug(1, "Skipping sound mixer re-init: samplerate is good");
 		return;
@@ -801,7 +801,7 @@ void OSystem_WINCE3::setupMixer() {
 
 	// Create the mixer instance
 	if (_mixer == 0)
-		_mixer = new Audio::MixerImpl(this);
+		_mixer = new Audio::MixerImpl(this, sampleRate);
 
 	// Add sound thread priority
 	if (!ConfMan.hasKey("sound_thread_priority"))
@@ -825,12 +825,11 @@ void OSystem_WINCE3::setupMixer() {
 		int vol3 = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 		int vol4 = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 		delete _mixer;
-		_mixer = new Audio::MixerImpl(this);
+		_mixer = new Audio::MixerImpl(this, sampleRate);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, vol1);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol2);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol3);
 		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol4);
-		_mixer->setOutputRate(sampleRate);
 		_mixer->setReady(true);
 		SDL_PauseAudio(0);
 	}

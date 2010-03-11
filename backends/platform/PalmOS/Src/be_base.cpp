@@ -110,9 +110,7 @@ void OSystem_PalmBase::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixerMgr == 0) {
-		_mixerMgr = new Audio::MixerImpl(this);
-		setSoundCallback(0, _mixerMgr);
-//		setSoundCallback(Audio::Mixer::mixCallback, _mixerMgr);
+		setupMixer();
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for

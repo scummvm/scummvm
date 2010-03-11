@@ -715,7 +715,7 @@ void OSystem_SDL::setupMixer() {
 		samplesPerSec = SAMPLES_PER_SEC;
 
 	// Determine the sample buffer size. We want it to store enough data for
-	// at least 1/16th of a second (though at maximum 8192 samples). Note
+	// at least 1/16th of a second (though at most 8192 samples). Note
 	// that it must be a power of two. So e.g. at 22050 Hz, we request a
 	// sample buffer size of 2048.
 	uint32 samples = 8192;
@@ -730,14 +730,11 @@ void OSystem_SDL::setupMixer() {
 	desired.callback = mixCallback;
 	desired.userdata = this;
 
-	// Create the mixer instance
 	assert(!_mixer);
-	_mixer = new Audio::MixerImpl(this);
-	assert(_mixer);
-
 	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-		samplesPerSec = 0;
+		_mixer = new Audio::MixerImpl(this, samplesPerSec);
+		assert(_mixer);
 		_mixer->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
@@ -746,8 +743,9 @@ void OSystem_SDL::setupMixer() {
 		samplesPerSec = _obtainedRate.freq;
 		debug(1, "Output sample rate: %d Hz", samplesPerSec);
 
-		// Tell the mixer that we are ready and start the sound processing
-		_mixer->setOutputRate(samplesPerSec);
+		// Create the mixer instance and start the sound processing
+		_mixer = new Audio::MixerImpl(this, samplesPerSec);
+		assert(_mixer);
 		_mixer->setReady(true);
 
 #if MIXER_DOUBLE_BUFFERING

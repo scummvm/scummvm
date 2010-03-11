@@ -160,8 +160,10 @@ private:
 #pragma mark -
 
 
-MixerImpl::MixerImpl(OSystem *system)
-	: _syst(system), _sampleRate(0), _mixerReady(false), _handleSeed(0) {
+MixerImpl::MixerImpl(OSystem *system, uint sampleRate)
+	: _syst(system), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0) {
+
+	assert(sampleRate > 0);
 
 	int i;
 
@@ -179,19 +181,10 @@ MixerImpl::~MixerImpl() {
 
 void MixerImpl::setReady(bool ready) {
 	_mixerReady = ready;
-
-	// If the mixer is set to ready, then we better have a positive sample rate!
-	assert(!_mixerReady || _sampleRate > 0);
 }
 
 uint MixerImpl::getOutputRate() const {
 	return _sampleRate;
-}
-
-void MixerImpl::setOutputRate(uint sampleRate) {
-	if (_sampleRate != 0 && _sampleRate != sampleRate)
-		error("Changing the Audio::Mixer output sample rate is not supported");
-	_sampleRate = sampleRate;
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
@@ -299,7 +292,6 @@ void MixerImpl::mixCallback(byte *samples, uint len) {
 
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
-	assert(_sampleRate > 0);
 
 	//  zero the buf
 	memset(buf, 0, 2 * len * sizeof(int16));
@@ -376,7 +368,7 @@ Timestamp MixerImpl::getElapsedTime(SoundHandle handle) {
 
 	const int index = handle._val % NUM_CHANNELS;
 	if (!_channels[index] || _channels[index]->getHandle()._val != handle._val)
-		return Timestamp(0, _sampleRate ? _sampleRate : 1);
+		return Timestamp(0, _sampleRate);
 
 	return _channels[index]->getElapsedTime();
 }
