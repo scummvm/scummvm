@@ -215,16 +215,12 @@ private:
 
 	byte *_tileData;
 	size_t _tileDataLength;
-	uint16 _tilesCount;
-	IsoTileData *_tilesTable;
+	Common::Array<IsoTileData> _tilesTable;
 
-	uint16 _tilePlatformsCount;
-	TilePlatformData *_tilePlatformList;
-	uint16 _metaTilesCount;
-	MetaTileData *_metaTileList;
+	Common::Array<TilePlatformData> _tilePlatformList;
+	Common::Array<MetaTileData> _metaTileList;
 
-	uint16 _multiCount;
-	MultiTileEntryData *_multiTable;
+	Common::Array<MultiTileEntryData> _multiTable;
 	uint16 _multiDataCount;
 	int16 *_multiTableData;
 

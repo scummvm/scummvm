@@ -301,6 +301,7 @@ void SagaEngine::load(const char *fileName) {
 		Graphics::Surface *thumbnail = new Graphics::Surface();
 		assert(thumbnail);
 		Graphics::loadThumbnail(*in, *thumbnail);
+		thumbnail->free();
 		delete thumbnail;
 		thumbnail = 0;
 
