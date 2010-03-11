@@ -125,6 +125,7 @@ public:
 	virtual int16 getWidth() const = 0;
 	/** Returns the height of the video. */
 	virtual int16 getHeight() const = 0;
+
 	/** Returns the number of frames the loaded video has. */
 	virtual uint16 getFramesCount() const = 0;
 	/** Returns the current frame number.
@@ -209,25 +210,29 @@ public:
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1) = 0;
 };
 
-/** Coktel Vision's IMD files.
+/** Coktel Vision's first simple IMD format, used by Fascination.
  */
-class Imd : public CoktelVideo {
+class PreImd : public CoktelVideo {
 public:
-	Imd();
-	~Imd();
+	PreImd();
+	PreImd(int16 width, int16 height);
+	~PreImd();
 
 	uint32 getFeatures() const;
 	uint16 getFlags()    const;
 
-	int16  getX()      const;
-	int16  getY()      const;
-	int16  getWidth()  const;
-	int16  getHeight() const;
+	int16 getX()      const;
+	int16 getY()      const;
+	int16 getWidth()  const;
+	int16 getHeight() const;
 
 	uint16 getFramesCount()  const;
 	uint16 getCurrentFrame() const;
-	int16  getFrameRate()    const;
-	uint32 getSyncLag()      const;
+
+	void setFrameRate(int16 frameRate);
+	int16 getFrameRate() const;
+
+	uint32 getSyncLag() const;
 
 	const byte *getPalette() const;
 
@@ -237,8 +242,6 @@ public:
 	bool hasExtraData() const;
 	bool hasExtraData(const char *fileName) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName);
-
-	void setFrameRate(int16 frameRate);
 
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
@@ -259,6 +262,80 @@ public:
 	State nextFrame();
 	uint32 getFrameWaitTime();
 	void waitEndFrame();
+
+	void copyCurrentFrame(byte *dest,
+			uint16 left, uint16 top, uint16 width, uint16 height,
+			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
+
+protected:
+	Common::SeekableReadStream *_stream;
+
+	// Properties
+	uint32 _features;
+	uint16 _flags;
+
+	int16 _forcedWidth;
+	int16 _forcedHeight;
+
+	// Current coordinates
+	int16 _x;
+	int16 _y;
+	int16 _width;
+	int16 _height;
+
+	uint16 _framesCount;
+	uint16 _curFrame;
+	int16  _frameRate;
+	uint32 _frameLength;
+
+	byte _palette[768];
+
+	// Video memory
+	bool  _hasOwnVidMem;
+	byte  *_vidMem;
+	uint16 _vidMemWidth;
+	uint16 _vidMemHeight;
+
+	byte  *_vidBuffer;
+	uint32 _vidBufferSize;
+
+	void clear();
+	void zeroData();
+	void deleteData();
+
+	void zeroVidMem();
+	void deleteVidMem();
+
+	State processFrame(uint16 frame);
+	void renderFrame();
+};
+
+/** Coktel Vision's IMD files.
+ */
+class Imd : public PreImd {
+public:
+	Imd();
+	~Imd();
+
+	void setFrameRate(int16 frameRate);
+	int16 getFrameRate() const;
+
+	uint32 getSyncLag()      const;
+
+	bool load(Common::SeekableReadStream &stream);
+	void unload();
+
+	void setXY(int16 x, int16 y);
+
+	void enableSound(Audio::Mixer &mixer);
+	void disableSound();
+
+	bool isSoundPlaying() const;
+
+	void seekFrame(int32 frame, int16 whence = SEEK_SET, bool restart = false);
+
+	State nextFrame();
+	uint32 getFrameWaitTime();
 
 	void copyCurrentFrame(byte *dest,
 			uint16 left, uint16 top, uint16 width, uint16 height,
@@ -288,27 +365,14 @@ protected:
 		int16 bottom;
 	} PACKED_STRUCT;
 
-	Common::SeekableReadStream *_stream;
-
 	// Properties
 	uint16 _version;
-	uint32 _features;
-	uint16 _flags;
-
-	// Current coordinates
-	int16 _x;
-	int16 _y;
-	int16 _width;
-	int16 _height;
 
 	// Standard coordinates gives by the header
 	int16 _stdX;
 	int16 _stdY;
 	int16 _stdWidth;
 	int16 _stdHeight;
-
-	uint16 _framesCount;
-	uint16 _curFrame;
 
 	uint32 *_framesPos;
 	uint32  _firstFramePos;
@@ -318,18 +382,6 @@ protected:
 	byte  *_frameData;
 	uint32 _frameDataSize;
 	uint32 _frameDataLen;
-
-	// Buffer for uncompressed raw frame data
-	byte  *_vidBuffer;
-	uint32 _vidBufferSize;
-
-	byte _palette[768];
-
-	// Video memory
-	bool  _hasOwnVidMem;
-	byte  *_vidMem;
-	uint16 _vidMemWidth;
-	uint16 _vidMemHeight;
 
 	// Sound properties
 	uint16 _soundFlags;
@@ -347,17 +399,15 @@ protected:
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
-	// Current video state
-	int16  _frameRate;
-	uint32 _frameLength;
 	uint32 _lastFrameTime;
 
 	Audio::Mixer *_mixer;
 
-	void unsignedToSigned(byte *buffer, int length);
+	void clear();
+	void zeroData();
+	void deleteData();
 
-	void deleteVidMem(bool del = true);
-	void clear(bool del = true);
+	void unsignedToSigned(byte *buffer, int length);
 
 	bool loadCoordinates();
 	bool loadFrameTableOffsets(uint32 &framesPosPos, uint32 &framesCoordsPos);
@@ -500,7 +550,9 @@ protected:
 	Indeo3 *_codecIndeo3;
 #endif
 
-	void clear(bool del = true);
+	void clear();
+	void zeroData();
+	void deleteData();
 
 	bool getPartCoords(int16 frame, PartType type,
 			int16 &x, int16 &y, int16 &width, int16 &height);

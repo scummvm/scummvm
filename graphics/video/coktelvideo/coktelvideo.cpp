@@ -38,44 +38,394 @@
 
 namespace Graphics {
 
-Imd::Imd() {
-	clear(false);
+PreImd::PreImd() {
+	zeroData();
+
+	_forcedWidth  = 0;
+	_forcedHeight = 0;
 }
 
-Imd::~Imd() {
-	clear();
+PreImd::PreImd(int16 width, int16 height) {
+	zeroData();
+
+	_forcedWidth  = width;
+	_forcedHeight = height;
 }
 
-uint32 Imd::getFeatures() const {
+PreImd::~PreImd() {
+	deleteData();
+	zeroData();
+}
+
+uint32 PreImd::getFeatures() const {
 	return _features;
 }
 
-uint16 Imd::getFlags() const {
+uint16 PreImd::getFlags() const {
 	return _flags;
 }
 
-int16 Imd::getX() const {
+int16 PreImd::getX() const {
 	return _x;
 }
 
-int16 Imd::getY() const {
+int16 PreImd::getY() const {
 	return _y;
 }
 
-int16 Imd::getWidth() const {
+int16 PreImd::getWidth() const {
 	return _width;
 }
 
-int16 Imd::getHeight() const {
+int16 PreImd::getHeight() const {
 	return _height;
 }
 
-uint16 Imd::getFramesCount() const {
+uint16 PreImd::getFramesCount() const {
 	return _framesCount;
 }
 
-uint16 Imd::getCurrentFrame() const {
+uint16 PreImd::getCurrentFrame() const {
 	return _curFrame;
+}
+
+void PreImd::setFrameRate(int16 frameRate) {
+	if (frameRate == 0)
+		frameRate = 1;
+
+	_frameRate   = frameRate;
+	_frameLength = 1000 / _frameRate;
+}
+
+int16 PreImd::getFrameRate() const {
+	return 0;
+}
+
+uint32 PreImd::getSyncLag() const {
+	return 0;
+}
+
+const byte *PreImd::getPalette() const {
+	return _palette;
+}
+
+bool PreImd::getFrameCoords(int16 frame,
+		int16 &x, int16 &y, int16 &width, int16 &height) {
+
+	return false;
+}
+
+bool PreImd::hasExtraData() const {
+	return false;
+}
+
+bool PreImd::hasExtraData(const char *fileName) const {
+	return false;
+}
+
+Common::MemoryReadStream *PreImd::getExtraData(const char *fileName) {
+	return 0;
+}
+
+bool PreImd::load(Common::SeekableReadStream &stream) {
+	warning("loading preIMD");
+
+	assert((_forcedWidth > 0) && (_forcedHeight > 0));
+
+	unload();
+
+	_stream = &stream;
+
+	_stream->seek(0);
+
+	_framesCount = _stream->readUint16LE();
+
+	_width  = _forcedWidth;
+	_height = _forcedHeight;
+
+	_vidBufferSize = _width * _height;
+	_vidBuffer = new byte[_vidBufferSize];
+	memset(_vidBuffer, 0, _vidBufferSize);
+
+	return true;
+}
+
+void PreImd::unload() {
+	clear();
+}
+
+void PreImd::setXY(int16 x, int16 y) {
+	_x = x;
+	_y = y;
+}
+
+void PreImd::setVideoMemory(byte *vidMem, uint16 width, uint16 height) {
+	deleteVidMem();
+
+	_hasOwnVidMem = false;
+	_vidMem       = vidMem;
+	_vidMemWidth  = width;
+	_vidMemHeight = height;
+}
+
+void PreImd::setVideoMemory() {
+	deleteVidMem();
+
+	if ((_width > 0) && (_height > 0)) {
+		setXY(0, 0);
+		_hasOwnVidMem = true;
+		_vidMem       = new byte[_width * _height];
+		_vidMemWidth  = _width;
+		_vidMemHeight = _height;
+
+		memset(_vidMem, 0, _width * _height);
+	}
+}
+
+void PreImd::setDoubleMode(bool doubleMode) {
+}
+
+void PreImd::enableSound(Audio::Mixer &mixer) {
+}
+
+void PreImd::disableSound() {
+}
+
+bool PreImd::isSoundPlaying() const {
+	return false;
+}
+
+void PreImd::seekFrame(int32 frame, int16 whence, bool restart) {
+	if (!_stream)
+		// Nothing to do
+		return;
+
+	// Find the frame to which to seek
+	if (whence == SEEK_CUR)
+		frame += _curFrame;
+	else if (whence == SEEK_END)
+		frame = _framesCount - frame - 1;
+	else if (whence != SEEK_SET)
+		return;
+
+	if ((frame < 0) || (frame >= _framesCount) || (frame == _curFrame))
+		// Nothing to do
+		return;
+
+	// Run through the frames
+	_curFrame = 0;
+	_stream->seek(2);
+	while (_curFrame != frame) {
+		uint16 frameSize = _stream->readUint16LE();
+
+		_stream->skip(frameSize + 2);
+
+		_curFrame++;
+	}
+}
+
+CoktelVideo::State PreImd::nextFrame() {
+	return processFrame(_curFrame);
+}
+
+uint32 PreImd::getFrameWaitTime() {
+	return _frameLength;
+}
+
+void PreImd::waitEndFrame() {
+	uint32 waitTime = getFrameWaitTime();
+	if (waitTime > 0)
+		g_system->delayMillis(waitTime);
+}
+
+void PreImd::copyCurrentFrame(byte *dest,
+		uint16 left, uint16 top, uint16 width, uint16 height,
+		uint16 x, uint16 y, uint16 pitch, int16 transp) {
+}
+
+void PreImd::zeroVidMem() {
+	_hasOwnVidMem = false;
+	_vidMem       = 0;
+	_vidMemWidth  = 0;
+	_vidMemHeight = 0;
+}
+
+void PreImd::deleteVidMem() {
+	if (_hasOwnVidMem)
+		delete[] _vidMem;
+
+	zeroVidMem();
+}
+
+void PreImd::zeroData() {
+	_stream = 0;
+
+	_features = 0;
+	_flags    = 0;
+
+	_x      = 0;
+	_y      = 0;
+	_width  = 0;
+	_height = 0;
+
+	_framesCount = 0;
+	_curFrame    = 0;
+	_frameRate   = 12;
+	_frameLength = 1000 / _frameRate;
+
+	memset(_palette, 0, 768);
+
+	zeroVidMem();
+
+	_vidBufferSize = 0;
+	_vidBuffer     = 0;
+}
+
+void PreImd::deleteData() {
+	deleteVidMem();
+
+	delete[] _vidBuffer;
+}
+
+void PreImd::clear() {
+	deleteData();
+	zeroData();
+}
+
+CoktelVideo::State PreImd::processFrame(uint16 frame) {
+	assert((_width > 0) && (_height > 0));
+
+	State state;
+
+	if (!_stream || (frame >= _framesCount)) {
+		state.flags = kStateBreak;
+		return state;
+	}
+
+	if (frame != _curFrame) {
+		state.flags |= kStateSeeked;
+		seekFrame(frame);
+	}
+
+	if (!_vidMem)
+		setVideoMemory();
+
+	uint16 frameSize = _stream->readUint16LE();
+
+	uint32 nextFramePos = _stream->pos() + frameSize + 2;
+
+	byte cmd;
+
+	cmd = _stream->readByte();
+	frameSize--;
+
+	bool hasPalette = false;
+	if (cmd == 0) {
+		// Palette. Ignored by Fascination, though
+
+		hasPalette = true;
+
+		_stream->read(_palette, 768);
+
+		frameSize -= 769;
+
+		cmd = _stream->readByte();
+	}
+
+	if (cmd != 2) {
+		// Partial frame data
+
+		uint32 fSize = frameSize;
+		uint32 vidSize = _vidBufferSize;
+		byte *vidBuffer = _vidBuffer;
+
+		while ((fSize > 0) && (vidSize > 0)) {
+			uint32 n = _stream->readByte();
+			fSize--;
+
+			if ((n & 0x80) != 0) {
+				// Data
+
+				n = MIN<uint32>((n & 0x7F) + 1, MIN(fSize, vidSize));
+
+				_stream->read(vidBuffer, n);
+
+				vidBuffer += n;
+				vidSize -= n;
+				fSize -= n;
+
+			} else {
+				// Skip
+
+				n = MIN<uint32>(n + 1, vidSize);
+
+				vidBuffer += n;
+				vidSize -= n;
+			}
+		}
+
+	} else {
+		// Full direct frame
+
+		uint32 vidSize = MIN<uint32>(_vidBufferSize, frameSize);
+
+		_stream->read(_vidBuffer, vidSize);
+	}
+
+	renderFrame();
+
+	_stream->seek(nextFramePos);
+
+	_curFrame++;
+
+	// Complete frame needs to be updated
+	state.left   = _x;
+	state.top    = _y;
+	state.right  = _x + _width  - 1;
+	state.bottom = _y + _height - 1;
+
+	return state;
+}
+
+void PreImd::renderFrame() {
+	assert(_vidMem);
+
+	uint16 w = MIN<uint16>(_vidMemWidth , _width);
+	uint16 h = MIN<uint16>(_vidMemHeight, _height);
+
+	const byte *src = _vidBuffer;
+	byte *dst = _vidMem + (_y * _vidMemWidth) + _x;
+
+	uint32 frameDataSize = _vidBufferSize;
+
+	while (h-- > 0) {
+		uint32 n = MIN<uint32>(w, frameDataSize);
+
+		memcpy(dst, src, n);
+
+		src += _width;
+		dst += _vidMemWidth;
+
+		frameDataSize -= n;
+	}
+}
+
+
+Imd::Imd() {
+	zeroData();
+}
+
+Imd::~Imd() {
+	deleteData();
+	zeroData();
+}
+
+void Imd::setFrameRate(int16 frameRate) {
+	if (frameRate == 0)
+		frameRate = 1;
+
+	_frameRate   = frameRate;
+	_frameLength = 1000 / _frameRate;
 }
 
 int16 Imd::getFrameRate() const {
@@ -87,28 +437,6 @@ int16 Imd::getFrameRate() const {
 
 uint32 Imd::getSyncLag() const {
 	return _skipFrames;
-}
-
-const byte *Imd::getPalette() const {
-	return _palette;
-}
-
-bool Imd::getFrameCoords(int16 frame,
-		int16 &x, int16 &y, int16 &width, int16 &height) {
-
-	return false;
-}
-
-bool Imd::hasExtraData() const {
-	return false;
-}
-
-bool Imd::hasExtraData(const char *fileName) const {
-	return false;
-}
-
-Common::MemoryReadStream *Imd::getExtraData(const char *fileName) {
-	return 0;
 }
 
 bool Imd::loadCoordinates() {
@@ -306,14 +634,6 @@ void Imd::unload() {
 	clear();
 }
 
-void Imd::setFrameRate(int16 frameRate) {
-	if (frameRate == 0)
-		frameRate = 1;
-
-	_frameRate   = frameRate;
-	_frameLength = 1000 / _frameRate;
-}
-
 void Imd::setXY(int16 x, int16 y) {
 	// Adjusting the standard coordinates
 	if (_stdX != -1) {
@@ -343,32 +663,6 @@ void Imd::setXY(int16 x, int16 y) {
 		_x = x;
 	if (y >= 0)
 		_y = y;
-}
-
-void Imd::setVideoMemory(byte *vidMem, uint16 width, uint16 height) {
-	deleteVidMem();
-
-	_hasOwnVidMem = false;
-	_vidMem       = vidMem;
-	_vidMemWidth  = width;
-	_vidMemHeight = height;
-}
-
-void Imd::setVideoMemory() {
-	deleteVidMem();
-
-	if ((_width > 0) && (_height > 0)) {
-		setXY(0, 0);
-		_hasOwnVidMem = true;
-		_vidMem       = new byte[_width * _height];
-		_vidMemWidth  = _width;
-		_vidMemHeight = _height;
-
-		memset(_vidMem, 0, _width * _height);
-	}
-}
-
-void Imd::setDoubleMode(bool doubleMode) {
 }
 
 void Imd::enableSound(Audio::Mixer &mixer) {
@@ -478,12 +772,6 @@ uint32 Imd::getFrameWaitTime() {
 	return 0;
 }
 
-void Imd::waitEndFrame() {
-	uint32 waitTime = getFrameWaitTime();
-	if (waitTime > 0)
-		g_system->delayMillis(waitTime);
-}
-
 void Imd::copyCurrentFrame(byte *dest,
 		uint16 left, uint16 top, uint16 width, uint16 height,
 		uint16 x, uint16 y, uint16 pitch, int16 transp) {
@@ -535,50 +823,23 @@ void Imd::copyCurrentFrame(byte *dest,
 
 }
 
-void Imd::deleteVidMem(bool del) {
-	if (del) {
-		if (_hasOwnVidMem)
-			delete[] _vidMem;
-	}
-
-	_hasOwnVidMem = false;
-	_vidMem       = 0;
-	_vidMemWidth  = 0;
-	_vidMemHeight = 0;
-}
-
-void Imd::clear(bool del) {
-	if (del) {
-		delete[] _framesPos;
-		delete[] _frameCoords;
-		delete[] _frameData;
-		delete[] _vidBuffer;
-
-		disableSound();
-	}
-
-	_stream = 0;
+void Imd::zeroData() {
+	PreImd::zeroData();
 
 	_version  = 0;
-	_features = 0;
-	_flags    = 0;
 
-	_x    = _y    = _width    = _height    = 0;
-	_stdX = _stdY = _stdWidth = _stdHeight = 0;
-
-	_framesCount = _curFrame = 0;
+	_stdX      = 0;
+	_stdY      = 0;
+	_stdWidth  = 0;
+	_stdHeight = 0;
 
 	_framesPos     = 0;
 	_firstFramePos = 0;
 	_frameCoords   = 0;
 
-	_frameDataSize = _vidBufferSize = 0;
-	_frameData     = _vidBuffer     = 0;
+	_frameDataSize = 0;
+	_frameData     = 0;
 	_frameDataLen  = 0;
-
-	memset(_palette, 0, 768);
-
-	deleteVidMem(del);
 
 	_hasSound     = false;
 	_soundEnabled = false;
@@ -592,9 +853,22 @@ void Imd::clear(bool del) {
 	_soundSliceLength = 0;
 	_audioStream      = 0;
 
-	_frameRate     = 12;
-	_frameLength   = 0;
 	_lastFrameTime = 0;
+}
+
+void Imd::deleteData() {
+	PreImd::deleteData();
+
+	delete[] _framesPos;
+	delete[] _frameCoords;
+	delete[] _frameData;
+
+	disableSound();
+}
+
+void Imd::clear() {
+	deleteData();
+	zeroData();
 }
 
 void Imd::nextSoundSlice(bool hasNextCmd) {
@@ -1133,11 +1407,12 @@ const int32 Vmd::_tableADPCMStep[] = {
 };
 
 Vmd::Vmd(Graphics::PaletteLUT *palLUT) : _palLUT(palLUT) {
-	clear(false);
+	zeroData();
 }
 
 Vmd::~Vmd() {
-	clear();
+	deleteData();
+	zeroData();
 }
 
 bool Vmd::assessVideoProperties() {
@@ -1578,16 +1853,8 @@ CoktelVideo::State Vmd::nextFrame() {
 	return state;
 }
 
-void Vmd::clear(bool del) {
-	Imd::clear(del);
-
-	if (del) {
-#ifdef USE_INDEO3
-		delete _codecIndeo3;
-#endif
-		delete[] _frames;
-		delete[] _vidMemBuffer;
-	}
+void Vmd::zeroData() {
+	Imd::zeroData();
 
 	_hasVideo   = true;
 	_videoCodec = 0;
@@ -1615,6 +1882,21 @@ void Vmd::clear(bool del) {
 	_postScaleX     = 1;
 	_scaleExternalX = 1;
 	_vidMemBuffer   = 0;
+}
+
+void Vmd::deleteData() {
+	Imd::deleteData();
+
+#ifdef USE_INDEO3
+		delete _codecIndeo3;
+#endif
+		delete[] _frames;
+		delete[] _vidMemBuffer;
+}
+
+void Vmd::clear() {
+	deleteData();
+	zeroData();
 }
 
 CoktelVideo::State Vmd::processFrame(uint16 frame) {
