@@ -1354,8 +1354,9 @@ void Scene::updateAmbientSounds() {
 }
 
 int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
-	int32 x, y;
+	//int32 x, y;
 	if (snd->field_10) {
+		/* FIXME properly handle global x/y
 		if (g_object_x == -1) {
 			x = snd->x - act->x1 - act->x2;
 			y = snd->y - act->y1 - act->y2;
@@ -1363,6 +1364,7 @@ int32 Scene::calculateVolumeAdjustment(AmbientSoundItem *snd, Actor *act) {
 			x = snd->x - g_object_x;
 			y = snd->y - g_object_y;
 		}
+		*/
 
 		// FIXME vol = sub_432CA0(x ^ 2 + y ^ 2);
 		// Just assigning an arbitrary value for the
@@ -1388,127 +1390,57 @@ void Scene::updateMusic() {
 }
 
 void Scene::updateAdjustScreen() {
-	int v5, v7, v15, v16; //, v6
-	int v1 = -1;
-	int v0 = -1;
+	Actor *act = getActor();
+	int32 newXLeft = -1;
+	int32 newYTop  = -1;
+	Common::Rect b = _ws->boundingRect;
 
 	if (_ws->motionStatus == 1) {
-		v5 = getActor()->x1 - _ws->xLeft;
-		v7 = getActor()->y1 - _ws->yTop;
-		if (v5 < _ws->boundingRect.left || v5 > _ws->boundingRect.right) {
-			v15 = _ws->boundingRect.left - _ws->boundingRect.right;
-			v1 = v15 + _ws->xLeft;
-			_ws->xLeft += v15;
-		}
-		if (v7 < _ws->boundingRect.top || v7 > _ws->boundingRect.bottom) {
-			v16 = v7 - _ws->boundingRect.bottom;
-			v0 = v16 + _ws->yTop;
-			_ws->yTop += v16;
-		}
-		if (v1 < 0)
-			v1 = _ws->xLeft = 0;
-		if (v1 > _ws->width - 640) {
-			v1 = _ws->width - 640;
-			_ws->xLeft = v1;
-		}
-		if (v0 < 0)
-			v0 = _ws->yTop = 0;
-		if (v0 > _ws->height - 480) {
-			v0 = _ws->height - 480;
-			_ws->yTop = v0;
-		}
-	} else {
-		if (_ws->motionStatus == 2 || _ws->motionStatus == 5) {
-			if (_ws->motionStatus != 3) {
-				// TODO
-				/*
-				 __asm
-				{
-				  fld     flt_543514
-				  fadd    flt_543518
-				  fstp    flt_543514
-				  fild    scene.field_98
-				  fsubr   flt_54350C
-				  fild    scene.field_9C
-				  fsubr   flt_543510
-				}
-				v12 = abs(_ftol());
-				if ( v12 <= abs(_ftol()) )
-				{
-				  v2 = scene.field_9C;
-				  if ( scene.field_9C != scene.yTop )
-				  {
-					__asm
-					{
-					  fld     flt_543514
-					  fadd    flt_54350C
-					}
-					v14 = _ftol();
-					v1 = v14;
-					scene.xLeft = v14;
-				  }
-				  v4 = scene.field_A0;
-				  v0 += scene.field_A0;
-				  scene.yTop = v0;
-				  v3 = v0;
-				}
-				else
-				{
-				  v2 = scene.field_98;
-				  if ( scene.field_98 != scene.xLeft )
-				  {
-					__asm
-					{
-					  fld     flt_543514
-					  fadd    flt_543510
-					}
-					v13 = _ftol();
-					v0 = v13;
-					scene.yTop = v13;
-				  }
-				  v4 = scene.field_A0;
-				  v1 += scene.field_A0;
-				  scene.xLeft = v1;
-				  v3 = v1;
-				}
-				if ( abs(v3 - v2) <= abs(v4) )
-				{
-				  scene.field_88 = 3;
-				  scene.field_98 = -1;
-				}
-				}
-				*/
-			}
-		}
-	}
-	/*
-	v9 = 16 * scene.sceneRectIndex;
-	if ( v1 < *(LONG *)((char *)&scene.sceneRects[0].left + v9) )
-	{
-	v1 = *(LONG *)((char *)&scene.sceneRects[0].left + v9);
-	scene.xLeft = *(LONG *)((char *)&scene.sceneRects[0].left + v9);
-	}
-	if ( v0 < *(LONG *)((char *)&scene.sceneRects[0].top + v9) )
-	{
-	v0 = *(LONG *)((char *)&scene.sceneRects[0].top + v9);
-	scene.yTop = *(LONG *)((char *)&scene.sceneRects[0].top + v9);
-	}
-	v10 = *(LONG *)((char *)&scene.sceneRects[0].right + v9);
-	if ( v1 + 639 > v10 )
-	{
-	v1 = v10 - 639;
-	scene.xLeft = v10 - 639;
-	}
-	result = *(LONG *)((char *)&scene.sceneRects[0].bottom + v9);
-	if ( v0 + 479 > result )
-	{
-	v0 = result - 479;
-	scene.yTop = result - 479;
-	}
-	if ( v17 != v1 || v18 != v0 )
-	dword_44E1EC = 2
+		int32 posX = act->x1 - _ws->xLeft;
+		int32 posY = act->y1 - _ws->yTop;
 
-	 */
+		if (posX < b.left || posX > b.right) {
+			int32 newRBounds = posX - b.right;
+			newXLeft = newRBounds + _ws->xLeft;
+			_ws->xLeft += newRBounds;
+		}
+
+		if (posY < b.top || posY > b.bottom) {
+			int32 newBBounds = posY - b.bottom;
+			newYTop = newBBounds + _ws->yTop;
+			_ws->yTop += newBBounds;
+		}
+
+		if (newXLeft < 0)
+			newXLeft = _ws->xLeft = 0;
+
+		if (newXLeft > _ws->width - 640)
+			newXLeft = _ws->xLeft = _ws->width - 640;
+
+		if (newYTop < 0)
+			newYTop = _ws->yTop = 0;
+
+		if (newYTop > _ws->height - 480)
+			newYTop = _ws->yTop = _ws->height - 480;
+	} else {
+		// TODO
+	}
+
+	uint8 rectIndex = _ws->sceneRectIdx;
+	b = _ws->sceneRects[rectIndex];
+
+	if (newXLeft < b.left)
+		newXLeft = _ws->xLeft = b.left;
+
+	if (newYTop < b.top)
+		newYTop = _ws->yTop = b.top;
+
+	if (newXLeft + 639 > b.right)
+		newXLeft = _ws->xLeft = b.right - 639;
+
+	if (newYTop + 479 > b.bottom)
+		newYTop = _ws->yTop = b.bottom - 479;
+
 }
 
 // ----------------------------------
@@ -1526,7 +1458,8 @@ int Scene::drawScene() {
 		GraphicFrame *bg = _bgResource->getFrame(0);
 
 		_vm->screen()->copyToBackBuffer(
-			((byte *)bg->surface.pixels) + _ws->yTop * bg->surface.w + _ws->xLeft, bg->surface.w,
+			((byte *)bg->surface.pixels) + _ws->yTop * bg->surface.w + _ws->xLeft,
+			bg->surface.w,
 			0,
 			0,
 			640,
