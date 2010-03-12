@@ -405,6 +405,7 @@ public:
 		: ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 		if (blockAlign == 0)
 			error("MS_ADPCMStream(): blockAlign isn't specified for MS ADPCM");
+		memset(&_status, 0, sizeof(_status));
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
@@ -505,6 +506,7 @@ public:
 		if (channels != 1)
 			error("Tinsel_ADPCMStream(): Tinsel ADPCM only supports mono");
 
+		memset(&_status, 0, sizeof(_status));
 	}
 
 };
@@ -595,11 +597,15 @@ protected:
 	void reset() {
 		ADPCMStream::reset();
 		_chunkPos = 0;
+		_chunkData = 0;
 	}
 
 public:
 	Tinsel6_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
+		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
+		_chunkPos = 0;
+		_chunkData = 0;
+	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 };
