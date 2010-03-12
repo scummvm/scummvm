@@ -399,10 +399,7 @@ protected:
 
 	bool saveScreenshot(const char *filename);
 
-	int effectiveScreenHeight() const {
-		return (_videoMode.aspectRatioCorrection ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
-			* _videoMode.scaleFactor;
-	}
+	int effectiveScreenHeight() const;
 
 	void setupIcon();
 	void handleKbdMouse();
