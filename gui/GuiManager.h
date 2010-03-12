@@ -76,6 +76,9 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
+	int getWidth() const { return _width; }
+	int getHeight() const { return _height; }
+
 	const Graphics::Font &getFont(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return *(_theme->getFont(style)); }
 	int getFontHeight(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getFontHeight(style); }
 	int getStringWidth(const Common::String &str, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
@@ -104,6 +107,7 @@ protected:
 //	bool		_needRedraw;
 	RedrawStatus _redrawStatus;
 	int			_lastScreenChangeID;
+	int			_width, _height;
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;

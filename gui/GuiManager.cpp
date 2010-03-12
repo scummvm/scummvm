@@ -54,6 +54,8 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 
 	_system = g_system;
 	_lastScreenChangeID = _system->getScreenChangeID();
+	_width = _system->getOverlayWidth();
+	_height = _system->getOverlayHeight();
 
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
@@ -448,6 +450,8 @@ bool GuiManager::checkScreenChange() {
 
 void GuiManager::screenChange() {
 	_lastScreenChangeID = _system->getScreenChangeID();
+	_width = _system->getOverlayWidth();
+	_height = _system->getOverlayHeight();
 
 	// reinit the whole theme
 	_theme->refresh();
