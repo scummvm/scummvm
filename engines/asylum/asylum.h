@@ -41,9 +41,6 @@
 
 namespace Asylum {
 
-static int32 g_object_x;
-static int32 g_object_y;
-
 // XXX
 // If defined, this will play the scene title loading up
 // progress before the scene is entered. This is

@@ -94,8 +94,9 @@ Common::Error AsylumEngine::init() {
 
 	_introPlaying = false;
 
-	g_object_x = -1;
-	g_object_y = -1;
+	// TODO
+	//g_object_x = -1;
+	//g_object_y = -1;
 
 	memset(_gameFlags, 0, 1512);
 
