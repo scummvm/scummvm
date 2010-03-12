@@ -277,6 +277,12 @@ void OSystem_GP2X::initSize(uint w, uint h, const Graphics::PixelFormat *format)
 	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 }
 
+int OSystem_GP2X::effectiveScreenHeight() const {
+	return (_videoMode.aspectRatioCorrection ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
+		* _videoMode.scaleFactor;
+}
+
+
 bool OSystem_GP2X::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
