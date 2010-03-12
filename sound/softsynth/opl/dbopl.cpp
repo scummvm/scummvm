@@ -1452,7 +1452,7 @@ void InitTables( void ) {
 		//Add back the bits for highest ones
 		if ( i >= 16 )
 			index += 9;
-		Bitu blah = reinterpret_cast<long>( &(chip->chan[ index ]) );
+		Bitu blah = reinterpret_cast<size_t>( &(chip->chan[ index ]) );
 		ChanOffsetTable[i] = blah;
 	}
 	//Same for operators
@@ -1467,7 +1467,7 @@ void InitTables( void ) {
 			chNum += 16 - 12;
 		Bitu opNum = ( i % 8 ) / 3;
 		DBOPL::Channel* chan = 0;
-		Bitu blah = reinterpret_cast<long>( &(chan->op[opNum]) );
+		Bitu blah = reinterpret_cast<size_t>( &(chan->op[opNum]) );
 		OpOffsetTable[i] = ChanOffsetTable[ chNum ] + blah;
 	}
 #if 0
