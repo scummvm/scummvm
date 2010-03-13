@@ -912,7 +912,7 @@ psp)
 samsungtv)
 	_host_os=linux
 	_host_cpu=arm
-	_host_alias=arm-SamyGO-linux-gnueabi
+	_host_alias=arm-cl-linux-gnueabi
 	;;
 wii)
 	_host_os=wii
@@ -2308,7 +2308,7 @@ case $_backend in
 		fi
 		;;
 	samsungtv)
-		_sdlconfig="arm-SamyGO-linux-gnueabi-sdl-config"
+		_sdlconfig="sdl-config"
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --cflags`"
 		LIBS="$LIBS `$_sdlconfig --libs`"
