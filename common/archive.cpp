@@ -270,8 +270,6 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) con
 }
 
 
-DECLARE_SINGLETON(SearchManager);
-
 SearchManager::SearchManager() {
 	clear();	// Force a reset
 }
@@ -291,3 +289,6 @@ void SearchManager::clear() {
 }
 
 } // namespace Common
+
+DECLARE_SINGLETON(Common::SearchManager)
+

@@ -34,7 +34,7 @@
 #include "common/endian.h"
 #include "sound/midiparser.h"
 
-DECLARE_SINGLETON(Lure::SoundManager);
+DECLARE_SINGLETON(Lure::SoundManager)
 
 namespace Lure {
 

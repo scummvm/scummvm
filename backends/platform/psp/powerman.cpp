@@ -30,7 +30,7 @@
 #include "./trace.h"
 #include "engine.h"
 
-DECLARE_SINGLETON(PowerManager);
+DECLARE_SINGLETON(PowerManager)
 
 #ifdef __PSP_DEBUG_SUSPEND__
 void PowerManager::debugPM() {

@@ -26,7 +26,7 @@
 #include "backends/fs/ps2/ps2-fs-factory.h"
 #include "backends/fs/ps2/ps2-fs.cpp"
 
-DECLARE_SINGLETON(Ps2FilesystemFactory);
+DECLARE_SINGLETON(Ps2FilesystemFactory)
 
 AbstractFSNode *Ps2FilesystemFactory::makeRootFileNode() const {
 	return new Ps2FilesystemNode();

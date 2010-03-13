@@ -26,7 +26,7 @@
 #include "backends/fs/psp/psp-fs-factory.h"
 #include "backends/fs/psp/psp-fs.cpp"
 
-DECLARE_SINGLETON(PSPFilesystemFactory);
+DECLARE_SINGLETON(PSPFilesystemFactory)
 
 AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {
 	return new PSPFilesystemNode();

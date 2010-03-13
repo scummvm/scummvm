@@ -26,7 +26,7 @@
 #include "backends/fs/palmos/palmos-fs-factory.h"
 #include "backends/fs/palmos/palmos-fs.cpp"
 
-DECLARE_SINGLETON(PalmOSFilesystemFactory);
+DECLARE_SINGLETON(PalmOSFilesystemFactory)
 
 AbstractFSNode *PalmOSFilesystemFactory::makeRootFileNode() const {
 	return new PalmOSFilesystemNode();

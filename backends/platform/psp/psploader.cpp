@@ -51,7 +51,7 @@ extern char __plugin_hole_start;	// Indicates start of hole in program file for 
 extern char __plugin_hole_end;		// Indicates end of hole in program file
 extern char _gp[];			// Value of gp register
 
-DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
+DECLARE_SINGLETON(ShortSegmentManager)	// For singleton
 
 // Get rid of symbol table in memory
 void DLObject::discard_symtab() {

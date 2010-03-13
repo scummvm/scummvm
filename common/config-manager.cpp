@@ -29,7 +29,7 @@
 #include "common/util.h"
 #include "common/system.h"
 
-DECLARE_SINGLETON(Common::ConfigManager);
+DECLARE_SINGLETON(Common::ConfigManager)
 
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
