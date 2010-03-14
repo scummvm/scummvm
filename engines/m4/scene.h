@@ -108,7 +108,6 @@ public:
 
 	// TODO: perhaps move playIntro() someplace else?
 	void playIntro();
-	void loadSceneSpriteCodes(int sceneNumber);
 	void showSprites();
 	void showHotSpots();
 	void showCodes();
@@ -116,7 +115,6 @@ public:
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
 	void showInterface();
 	void hideInterface();
-	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
 	GameInterfaceView *getInterface() { return _interfaceSurface; };
 	SceneResources &getSceneResources() { return *_sceneResources; };
 

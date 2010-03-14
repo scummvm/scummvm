@@ -370,6 +370,104 @@ void MadsScene::loadPlayerSprites(const char *prefix) {
 	error("Couldn't find player sprites");
 }
 
+enum boxSprites {
+	topLeft = 0,
+	topRight = 1,
+	bottomLeft = 2,
+	bottomRight = 3,
+	left = 4,
+	right = 5,
+	top = 6,
+	bottom = 7,
+	topMiddle = 8,
+	filler1 = 9,
+	filler2 = 10
+	// TODO: finish this
+};
+
+// TODO: calculate width and height, show text, show face if it exists
+// TODO: this has been tested with Dragonsphere only, there are some differences
+// in the sprites used in Phantom
+void MadsScene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
+	int repeatX = 40;	// FIXME: this is hardcoded
+	int repeatY = 30;	// FIXME: this is hardcoded
+	int curX = x, curY = y;
+	int topRightX = x;	// TODO: this is probably not needed
+	Common::SeekableReadStream *data = _vm->res()->get("box.ss");
+	SpriteAsset *boxSprites = new SpriteAsset(_vm, data, data->size(), "box.ss");
+	_vm->res()->toss("box.ss");
+
+	RGBList *palData = new RGBList(boxSprites->getColorCount(), boxSprites->getPalette(), true);
+	_vm->_palette->addRange(palData);
+
+	for (int i = 0; i < boxSprites->getCount(); i++)
+		boxSprites->getFrame(i)->translate(palData);		// sprite pixel translation
+
+	// Top left corner
+	boxSprites->getFrame(topLeft)->copyTo(_backgroundSurface, x, curY);
+	curX += boxSprites->getFrame(topLeft)->width();
+
+	// Top line
+	for (int i = 0; i < repeatX; i++) {
+		boxSprites->getFrame(top)->copyTo(_backgroundSurface, curX, curY + 3);
+		curX += boxSprites->getFrame(top)->width();
+	}
+
+	// Top right corner
+	boxSprites->getFrame(topRight)->copyTo(_backgroundSurface, curX, curY);
+	topRightX = curX;
+
+	// Top middle
+	// FIXME: the transparent color for this is also the black border color
+	boxSprites->getFrame(topMiddle)->copyTo(_backgroundSurface,
+											x + (curX - x) / 2 - boxSprites->getFrame(topMiddle)->width() / 2,
+											curY - 5, 167);
+	curX = x;
+	curY += boxSprites->getFrame(topLeft)->height();
+
+	// -----------------------------------------------------------------------------------------------
+
+	// Draw contents
+	for (int i = 0; i < repeatY; i++) {
+		for (int j = 0; j < repeatX; j++) {
+			if (j == 0) {
+				boxSprites->getFrame(left)->copyTo(_backgroundSurface, curX + 3, curY);
+				curX += boxSprites->getFrame(left)->width();
+			} else if (j == repeatX - 1) {
+				curX = topRightX - 2;
+				boxSprites->getFrame(right)->copyTo(_backgroundSurface, curX + 3, curY + 1);
+			} else {
+				// TODO: the background of the contents follows a pattern which is not understood yet
+				if (j % 2 == 0) {
+					boxSprites->getFrame(filler1)->copyTo(_backgroundSurface, curX + 3, curY);
+					curX += boxSprites->getFrame(filler1)->width();
+				} else {
+					boxSprites->getFrame(filler2)->copyTo(_backgroundSurface, curX + 3, curY);
+					curX += boxSprites->getFrame(filler2)->width();
+				}
+			}
+		}	// for j
+		curX = x;
+		curY += boxSprites->getFrame(left)->height();
+	}	// for i
+
+	// -----------------------------------------------------------------------------------------------
+	curX = x;
+
+	// Bottom left corner
+	boxSprites->getFrame(bottomLeft)->copyTo(_backgroundSurface, curX, curY);
+	curX += boxSprites->getFrame(bottomLeft)->width();
+
+	// Bottom line
+	for (int i = 0; i < repeatX; i++) {
+		boxSprites->getFrame(bottom)->copyTo(_backgroundSurface, curX, curY + 1);
+		curX += boxSprites->getFrame(bottom)->width();
+	}
+
+	// Bottom right corner
+	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
+}
+
 /*--------------------------------------------------------------------------*/
 
 MadsAction::MadsAction() {

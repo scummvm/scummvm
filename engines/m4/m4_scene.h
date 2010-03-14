@@ -55,6 +55,7 @@ private:
 	void loadSceneSprites(int sceneNumber);
 	void loadSceneResources(int sceneNumber);
 	void loadSceneInverseColourTable(int sceneNumber);
+	void loadSceneSpriteCodes(int sceneNumber);
 	void nextCommonCursor();
 public:
 	M4Scene(M4Engine *vm);

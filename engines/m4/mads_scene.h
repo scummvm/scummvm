@@ -192,6 +192,7 @@ public:
 
 	int loadSceneSpriteSet(const char *setName);
 	void loadPlayerSprites(const char *prefix);
+	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
 	MadsSceneResources &getSceneResources() { return _sceneResources; };

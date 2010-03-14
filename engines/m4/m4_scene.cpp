@@ -117,6 +117,28 @@ void M4Scene::loadSceneInverseColourTable(int sceneNumber) {
 	iplS->read(_inverseColourTable, iplS->size());
 	_vm->res()->toss(filename);
 }
+
+void M4Scene::loadSceneSpriteCodes(int sceneNumber) {
+	char filename[kM4MaxFilenameSize];
+	sprintf(filename, "%i.ssc", sceneNumber);
+
+	Common::SeekableReadStream *sceneS = _vm->res()->get(filename);
+
+	// TODO
+
+	if (sceneS != NULL) {
+		SpriteAsset* _sceneSpriteCodes = new SpriteAsset(_vm, sceneS, sceneS->size(), filename);
+		int colorCount = _sceneSpriteCodes->getColorCount();
+//			RGB8* spritePalette = _sceneSpriteCodes->getPalette();
+		//_vm->_palette->setPalette(spritePalette, 0, colorCount);
+
+		printf("Scene has %d sprite codes, each one having %d colors\n", _sceneSpriteCodes->getCount(), colorCount);
+
+		// Note that toss() deletes the MemoryReadStream
+		_vm->res()->toss(filename);
+	}
+}
+
 void M4Scene::loadScene(int sceneNumber) {
 	Scene::loadScene(sceneNumber);
 
