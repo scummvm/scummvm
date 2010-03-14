@@ -4,96 +4,69 @@ Upstream Authors: see `/usr/share/doc/residual/AUTHORS'.
 
 Copyright:
 
-Most of the files are released under the GNU General Public License v2:
+Most of the files are released under the GNU General Public License v2.
+Some other source files are released under GNU Lesser General Public
+License v2.
+The Debian packaging is licensed under the GPL.
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
-
-On Debian GNU/Linux systems, the complete text of the GNU Lesser General
-Public License can be found in `/usr/share/common-licenses/LGPL-2'.
-
-Files released as GPL v2 or later:
-
-    common/algorithm.h
-    common/array.h
-    common/config-file.cpp
-    common/config-file.h
-    common/config-manager.cpp
-    common/config-manager.h
-    common/endian.h
-    common/error.h
-    common/events.h
-    common/file.cpp
-    common/file.h
-    common/frac.h
-    common/fs.cpp
-    common/fs.h
-    common/func.h
-    common/hashmap.cpp
-    common/hashmap.h
-    common/hash-str.h
-    common/keyboard.h
-    common/list.h
-    common/memorypool.cpp
-    common/memorypool.h
-    common/mutex.cpp
-    common/mutex.h
-    common/noncopyable.h
-    common/ptr.h
-    common/rect.h
-    common/savefile.h
-    common/singleton.h
-    common/str.cpp
-    common/stream.cpp
-    common/stream.h
-    common/str.h
-    common/timer.h
-    common/util.cpp
-    common/util.h
-    config.guess
-    config.sub
-    configure
-    backends/events/default/default-events.cpp
-    backends/events/default/default-events.h
-    backends/fs/abstract-fs.h
-    backends/fs/amigaos4/amigaos4-fs.cpp
-    backends/fs/amigaos4/amigaos4-fs-factory.cpp
-    backends/fs/amigaos4/amigaos4-fs-factory.h
-    backends/fs/fs-factory.h
-    backends/fs/posix/posix-fs.cpp
-    backends/fs/posix/posix-fs-factory.cpp
-    backends/fs/posix/posix-fs-factory.h
-    backends/fs/windows/windows-fs.cpp
-    backends/fs/windows/windows-fs-factory.cpp
-    backends/fs/windows/windows-fs-factory.h
-    backends/saves/compressed/compressed-saves.cpp
-    backends/saves/compressed/compressed-saves.h
-    backends/saves/default/default-saves.cpp
-    backends/saves/default/default-saves.h
-    backends/saves/savefile.cpp
-    backends/timer/default/default-timer.cpp
-    backends/timer/default/default-timer.h
-    engine/cmd_line.cpp
-    engine/cmd_line.h
-    mixer/audiostream.cpp
-    mixer/audiostream.h
-    mixer/mixer.cpp
-    mixer/mixer.h
-    mixer/mixer_intern.h
-    mixer/rate.cpp
-    mixer/rate.h
+Residual includes Lua licensed code:
+/******************************************************************************
+* Copyright (c) 1994-1998 TeCGraf, PUC-Rio.  All rights reserved.
+* 
+* Permission is hereby granted, without written agreement and without license
+* or royalty fees, to use, copy, modify, and distribute this software and its
+* documentation for any purpose, including commercial applications, subject to
+* the following conditions:
+* 
+*  - The above copyright notice and this permission notice shall appear in all
+*    copies or substantial portions of this software.
+* 
+*  - The origin of this software must not be misrepresented; you must not
+*    claim that you wrote the original software. If you use this software in a
+*    product, an acknowledgment in the product documentation would be greatly
+*    appreciated (but it is not required).
+* 
+*  - Altered source versions must be plainly marked as such, and must not be
+*    misrepresented as being the original software.
+*    
+* The authors specifically disclaim any warranties, including, but not limited
+* to, the implied warranties of merchantability and fitness for a particular
+* purpose.  The software provided hereunder is on an "as is" basis, and the
+* authors have no obligation to provide maintenance, support, updates,
+* enhancements, or modifications.  In no event shall TeCGraf, PUC-Rio, or the
+* authors be held liable to any party for direct, indirect, special,
+* incidental, or consequential damages arising out of the use of this software
+* and its documentation.
+* 
+* The Lua language and this implementation have been entirely designed and
+* written by Waldemar Celes Filho, Roberto Ierusalimschy and
+* Luiz Henrique de Figueiredo at TeCGraf, PUC-Rio.
+* This implementation contains no third-party code.
+******************************************************************************/
 
 
-The Debian packaging is licensed under the GPL,
-see `/usr/share/common-licenses/GPL'.
+Residual include also TinyGL code:
+/******************************************************************************/
+Copyright notice:
+
+ (C) 1997-1998 Fabrice Bellard
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product and its documentation 
+     *is* required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+If you redistribute modified sources, I would appreciate that you
+include in the files history information documenting your changes.
+/******************************************************************************/
