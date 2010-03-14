@@ -126,7 +126,7 @@ osxsnap: bundle
 	mkdir Residual-snapshot
 	$(srcdir)/tools/credits.pl --text > $(srcdir)/AUTHORS
 	cp $(srcdir)/AUTHORS ./Residual-snapshot/Authors
-	cp $(srcdir)/COPYING.GPL ./Residual-snapshot/License\ \(GPL\)
+	cp $(srcdir)/COPYING ./Residual-snapshot/License\ \(GPL\)
 	cp $(srcdir)/COPYING.LGPL ./Residual-snapshot/License\ \(LGPL\)
 	cp $(srcdir)/NEWS ./Residual-snapshot/News
 	cp $(srcdir)/README ./Residual-snapshot/Residual\ ReadMe
@@ -156,8 +156,8 @@ win32dist: $(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	#cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
+	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING_LGPL.txt
-	cp $(srcdir)/COPYING.GPL $(WIN32PATH)/COPYING_GPL.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
@@ -171,8 +171,8 @@ crosswin32dist: $(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) ResidualWin32
 	#cp $(DIST_FILES_ENGINEDATA) ResidualWin32
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
+	cp $(srcdir)/COPYING ResidualWin32/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
-	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
 	cp $(srcdir)/NEWS ResidualWin32/NEWS.txt
 	cp $(srcdir)/README ResidualWin32/README.txt
 	cp $(srcdir)/dists/residual.iss ResidualWin32
@@ -193,8 +193,8 @@ aos4dist: $(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	#cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
+	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt
-	cp $(srcdir)/COPYING.GPL $(AOS4PATH)/COPYING.GPL.txt
 	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
 	cp $(srcdir)/README $(AOS4PATH)/README.txt
 
