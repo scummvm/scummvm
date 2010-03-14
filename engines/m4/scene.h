@@ -80,7 +80,6 @@ class InterfaceView;
 
 class Scene : public View {
 private:
-	byte *_inverseColorTable;
 	HotSpotList _sceneHotspots;
 protected:
 	int _currentScene;
@@ -109,16 +108,12 @@ public:
 
 	// TODO: perhaps move playIntro() someplace else?
 	void playIntro();
-	void loadSceneResources(int sceneNumber);
-	void loadSceneHotSpotsMads(int sceneNumber);
-	void loadSceneInverseColorTable(int sceneNumber);
 	void loadSceneSpriteCodes(int sceneNumber);
 	void showSprites();
 	void showHotSpots();
 	void showCodes();
 	int getCurrentScene() { return _currentScene; }
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
-	byte *getInverseColorTable() const { return _inverseColorTable; }
 	void showInterface();
 	void hideInterface();
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);

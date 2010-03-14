@@ -319,8 +319,8 @@ public:
 
 	RGB8 *getMainPalette() const;
 
-	void setInverseColorTable(byte *inverseColorTable) { _inverseColorTable = inverseColorTable; }
-	byte *getInverseColorTable() const { return _inverseColorTable; }
+	void setInverseColourTable(byte *inverseColourTable) { _inverseColourTable = inverseColourTable; }
+	byte *getInverseColourTable() const { return _inverseColourTable; }
 
 protected:
 	MadsM4Engine *_vm;
@@ -338,7 +338,7 @@ protected:
 
 	/* Misc */
 	int16 *_depthTable;
-	byte *_inverseColorTable;
+	byte *_inverseColourTable;
 	M4Surface *_backgroundSurface;
 	View *_surfaceView;
 

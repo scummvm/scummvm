@@ -50,8 +50,11 @@ private:
 	M4SceneResources _sceneResources;
 	SpriteAsset *_sceneSprites;
 	SpriteAsset *_walkerSprite;
+	byte *_inverseColourTable;
 
 	void loadSceneSprites(int sceneNumber);
+	void loadSceneResources(int sceneNumber);
+	void loadSceneInverseColourTable(int sceneNumber);
 	void nextCommonCursor();
 public:
 	M4Scene(M4Engine *vm);
@@ -59,7 +62,7 @@ public:
 
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);
-	virtual void leaveScene() {};
+	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
 	virtual void show();
 	virtual void checkHotspotAtMousePos(int x, int y);
@@ -69,6 +72,7 @@ public:
 	virtual void setStatusText(const char *text);
 	virtual void update();
 
+	byte *getInverseColourTable() const { return _inverseColourTable; }
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 	M4SceneResources &getSceneResources() { return _sceneResources; };
 };

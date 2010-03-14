@@ -282,7 +282,7 @@ void M4Surface::drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &c
 							r = CLIP((info.palette[destPixel].r * pixel) >> 10, 0, 31);
 							g = CLIP((info.palette[destPixel].g * pixel) >> 10, 0, 31);
 							b = CLIP((info.palette[destPixel].b * pixel) >> 10, 0, 31);
-							pixel = info.inverseColorTable[(b << 10) | (g << 5) | r];
+							pixel = info.inverseColourTable[(b << 10) | (g << 5) | r];
 						}
 					}
 

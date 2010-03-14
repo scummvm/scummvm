@@ -168,6 +168,7 @@ private:
 	void drawElements();
 	void loadScene2(const char *aaName);
 	void loadSceneTemporary();
+	void loadSceneHotspots(int sceneNumber);
 	void clearAction();
 	void appendActionVocab(int vocabId, bool capitalise);
 	void setAction();

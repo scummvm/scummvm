@@ -51,7 +51,6 @@ Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0,
 	_palData = NULL;
 	_interfacePal = NULL;
 	_interfaceSurface = NULL;
-	_inverseColorTable = NULL;
 	_vm->_rails->setCodeSurface(_walkSurface);
 }
 
@@ -78,7 +77,6 @@ void Scene::loadScene(int sceneNumber) {
 void Scene::leaveScene() {
 	delete _palData;
 	delete _interfacePal;
-	delete[] _inverseColorTable;
 }
 
 void Scene::show() {
@@ -91,91 +89,6 @@ void Scene::showInterface() {
 
 void Scene::hideInterface() {
 	_vm->_viewManager->deleteView(_interfaceSurface);
-}
-
-void Scene::loadSceneResources(int sceneNumber) {
-	char filename[kM4MaxFilenameSize];
-	int i = 0, x = 0, y = 0;
-	sprintf(filename, "%i.chk", sceneNumber);
-
-	Common::SeekableReadStream *sceneS = _vm->res()->get(filename);
-
-	if (sceneS != NULL) {
-		sceneS->read(_sceneResources->artBase, MAX_CHK_FILENAME_SIZE);
-		sceneS->read(_sceneResources->pictureBase, MAX_CHK_FILENAME_SIZE);
-		_sceneResources->hotspotCount = sceneS->readUint32LE();
-		_sceneResources->parallaxCount = sceneS->readUint32LE();
-		_sceneResources->propsCount = sceneS->readUint32LE();
-		_sceneResources->frontY = sceneS->readUint32LE();
-		_sceneResources->backY = sceneS->readUint32LE();
-		_sceneResources->frontScale = sceneS->readUint32LE();
-		_sceneResources->backScale = sceneS->readUint32LE();
-		for (i = 0; i < 16; i++)
-			_sceneResources->depthTable[i] = sceneS->readUint16LE();
-		_sceneResources->railNodeCount = sceneS->readUint32LE();
-
-		// Clear rails from previous scene
-		_vm->_rails->clearRails();
-
-		for (i = 0; i < _sceneResources->railNodeCount; i++) {
-			x = sceneS->readUint32LE();
-			y = sceneS->readUint32LE();
-			if (_vm->_rails->addRailNode(x, y, true) < 0) {
-				warning("Too many rail nodes defined for scene");
-			}
-		}
-
-		// Clear current hotspot lists
-		_sceneResources->hotspots->clear();
-		_sceneResources->parallax->clear();
-		_sceneResources->props->clear();
-
-		_sceneResources->hotspots->loadHotSpots(sceneS, _sceneResources->hotspotCount);
-		_sceneResources->parallax->loadHotSpots(sceneS, _sceneResources->parallaxCount);
-		_sceneResources->props->loadHotSpots(sceneS, _sceneResources->propsCount);
-
-		// Note that toss() deletes the MemoryReadStream
-		_vm->res()->toss(filename);
-	}
-}
-
-void Scene::loadSceneHotSpotsMads(int sceneNumber) {
-	char filename[kM4MaxFilenameSize];
-	sprintf(filename, "rm%i.hh", sceneNumber);
-	MadsPack hotSpotData(filename, _vm);
-	Common::SeekableReadStream *hotspotStream = hotSpotData.getItemStream(0);
-
-	int hotspotCount = hotspotStream->readUint16LE();
-	delete hotspotStream;
-
-	_sceneResources->hotspotCount = hotspotCount;
-
-	hotspotStream = hotSpotData.getItemStream(1);
-
-	// Clear current hotspot lists
-	_sceneResources->hotspots->clear();
-
-	_sceneResources->hotspots->loadHotSpots(hotspotStream, _sceneResources->hotspotCount);
-
-	delete hotspotStream;
-}
-
-void Scene::loadSceneInverseColorTable(int sceneNumber) {
-	char filename[kM4MaxFilenameSize];
-	Common::SeekableReadStream *iplS;
-
-	if (_vm->isM4()) {
-		sprintf(filename, "%i.ipl", sceneNumber);
-		iplS = _vm->res()->openFile(filename);
-		delete[] _inverseColorTable;
-		_inverseColorTable = new byte[iplS->size()];
-		iplS->read(_inverseColorTable, iplS->size());
-		_vm->res()->toss(filename);
-	} else {
-		// TODO?
-		return;
-	}
-
 }
 
 void Scene::loadSceneSpriteCodes(int sceneNumber) {

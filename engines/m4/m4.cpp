@@ -412,7 +412,7 @@ Common::Error M4Engine::run() {
 			_scene->loadScene(_kernel->currentRoom);
 
 			_ws->setBackgroundSurface(_scene->getBackgroundSurface());
-			_ws->setInverseColorTable(_scene->getInverseColorTable());
+			_ws->setInverseColourTable(scene()->getInverseColourTable());
 
 			_kernel->loadSectionScriptFunctions();
 			_kernel->loadRoomScriptFunctions();

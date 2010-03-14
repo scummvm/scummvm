@@ -42,6 +42,7 @@ M4Scene::M4Scene(M4Engine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_vm = vm;
 	_sceneSprites = NULL;
 	_interfaceSurface = new M4InterfaceView(vm);
+	_inverseColourTable = NULL;
 }
 
 M4Scene::~M4Scene() {
@@ -59,6 +60,63 @@ void M4Scene::loadSceneSprites(int sceneNumber) {
 	printf("Scene has %d sprites, each one having %d colors\n", _sceneSprites->getCount(), _sceneSprites->getColorCount());
 }
 
+void M4Scene::loadSceneResources(int sceneNumber) {
+	char filename[kM4MaxFilenameSize];
+	int i = 0, x = 0, y = 0;
+	sprintf(filename, "%i.chk", sceneNumber);
+
+	Common::SeekableReadStream *sceneS = _vm->res()->get(filename);
+
+	if (sceneS != NULL) {
+		sceneS->read(_sceneResources.artBase, MAX_CHK_FILENAME_SIZE);
+		sceneS->read(_sceneResources.pictureBase, MAX_CHK_FILENAME_SIZE);
+		_sceneResources.hotspotCount = sceneS->readUint32LE();
+		_sceneResources.parallaxCount = sceneS->readUint32LE();
+		_sceneResources.propsCount = sceneS->readUint32LE();
+		_sceneResources.frontY = sceneS->readUint32LE();
+		_sceneResources.backY = sceneS->readUint32LE();
+		_sceneResources.frontScale = sceneS->readUint32LE();
+		_sceneResources.backScale = sceneS->readUint32LE();
+		for (i = 0; i < 16; i++)
+			_sceneResources.depthTable[i] = sceneS->readUint16LE();
+		_sceneResources.railNodeCount = sceneS->readUint32LE();
+
+		// Clear rails from previous scene
+		_vm->_rails->clearRails();
+
+		for (i = 0; i < _sceneResources.railNodeCount; i++) {
+			x = sceneS->readUint32LE();
+			y = sceneS->readUint32LE();
+			if (_vm->_rails->addRailNode(x, y, true) < 0) {
+				warning("Too many rail nodes defined for scene");
+			}
+		}
+
+		// Clear current hotspot lists
+		_sceneResources.hotspots->clear();
+		_sceneResources.parallax->clear();
+		_sceneResources.props->clear();
+
+		_sceneResources.hotspots->loadHotSpots(sceneS, _sceneResources.hotspotCount);
+		_sceneResources.parallax->loadHotSpots(sceneS, _sceneResources.parallaxCount);
+		_sceneResources.props->loadHotSpots(sceneS, _sceneResources.propsCount);
+
+		// Note that toss() deletes the MemoryReadStream
+		_vm->res()->toss(filename);
+	}
+}
+
+void M4Scene::loadSceneInverseColourTable(int sceneNumber) {
+	char filename[kM4MaxFilenameSize];
+	Common::SeekableReadStream *iplS;
+
+	sprintf(filename, "%i.ipl", sceneNumber);
+	iplS = _vm->res()->openFile(filename);
+	delete[] _inverseColourTable;
+	_inverseColourTable = new byte[iplS->size()];
+	iplS->read(_inverseColourTable, iplS->size());
+	_vm->res()->toss(filename);
+}
 void M4Scene::loadScene(int sceneNumber) {
 	Scene::loadScene(sceneNumber);
 
@@ -71,7 +129,6 @@ void M4Scene::loadScene(int sceneNumber) {
 
 	// Load scene def file (*.CHK)
 	loadSceneResources(sceneNumber);
-	loadSceneInverseColorTable(sceneNumber);
 
 	// TODO: set walker scaling
 	// TODO: destroy woodscript buffer
@@ -80,7 +137,7 @@ void M4Scene::loadScene(int sceneNumber) {
 	loadSceneCodes(sceneNumber);
 
 	// Load inverse color table file (*.IPL)
-	loadSceneInverseColorTable(sceneNumber);
+	loadSceneInverseColourTable(sceneNumber);
 
 	if (_vm->getGameType() != GType_Burger) {
 		// Load scene sprites file (*.SSB)
@@ -113,6 +170,12 @@ void M4Scene::loadSceneCodes(int sceneNumber, int index) {
 void M4Scene::show() {
 	Scene::show();
 	_vm->_viewManager->addView(_interfaceSurface);
+}
+
+void M4Scene::leaveScene() {
+	delete[] _inverseColourTable;
+
+	Scene::leaveScene();
 }
 
 void M4Scene::checkHotspotAtMousePos(int x, int y) {

@@ -93,13 +93,7 @@ void MadsScene::loadSceneTemporary() {
 	if (_currentScene >= 900)
 		return;
 
-	loadSceneHotSpotsMads(_currentScene);
-
-	// TODO: set walker scaling
-	// TODO: destroy woodscript buffer
-
-	// Load inverse color table file (*.IPL)
-	loadSceneInverseColorTable(_currentScene);
+	loadSceneHotspots(_currentScene);
 }
 
 void MadsScene::loadScene(int sceneNumber) {
@@ -130,6 +124,27 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Purge resources
 	_vm->res()->purge();
+}
+
+void MadsScene::loadSceneHotspots(int sceneNumber) {
+	char filename[kM4MaxFilenameSize];
+	sprintf(filename, "rm%i.hh", sceneNumber);
+	MadsPack hotSpotData(filename, _vm);
+	Common::SeekableReadStream *hotspotStream = hotSpotData.getItemStream(0);
+
+	int hotspotCount = hotspotStream->readUint16LE();
+	delete hotspotStream;
+
+	_sceneResources.hotspotCount = hotspotCount;
+
+	hotspotStream = hotSpotData.getItemStream(1);
+
+	// Clear current hotspot lists
+	_sceneResources.hotspots->clear();
+
+	_sceneResources.hotspots->loadHotSpots(hotspotStream, _sceneResources.hotspotCount);
+
+	delete hotspotStream;
 }
 
 void MadsScene::leaveScene() {
@@ -453,7 +468,7 @@ void MadsAction::set() {
 
 					if (_currentHotspot < hotspotCount) {
 						// Get the verb Id from the hotspot
-						verbId = 0;//selected hotspot
+						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVerbID();
 					} else {
 						// Get the verb Id from the scene object
 						verbId = 0;//Scene_object[_currentHotspot - _hotspotCount].verbId;
