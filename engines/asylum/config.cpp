@@ -25,7 +25,7 @@
 
 #include "asylum/config.h"
 
-DECLARE_SINGLETON(Asylum::ConfigurationManager);
+DECLARE_SINGLETON(Asylum::ConfigurationManager)
 
 namespace Asylum {
 
