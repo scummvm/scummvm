@@ -370,15 +370,15 @@ protected:
 	void deLZ77(byte *dest, byte *src);
 
 	void renderBlockWhole   (byte *dest, const byte *src, int16 width, int16 height,
-			int16 destWidth, int16 destHeight);
+			int16 destPitch, int16 srcPitch);
 	void renderBlockWhole4X (byte *dest, const byte *src, int16 width, int16 height,
-			int16 destWidth, int16 destHeight);
+			int16 destPitch, int16 srcPitch);
 	void renderBlockWhole2Y (byte *dest, const byte *src, int16 width, int16 height,
-			int16 destWidth, int16 destHeight);
+			int16 destPitch, int16 srcPitch);
 	void renderBlockSparse  (byte *dest, const byte *src, int16 width, int16 height,
-			int16 destWidth, int16 destHeight);
+			int16 destPitch, int16 srcPitch);
 	void renderBlockSparse2Y(byte *dest, const byte *src, int16 width, int16 height,
-			int16 destWidth, int16 destHeight);
+			int16 destPitch, int16 srcPitch);
 
 	void calcFrameCoords(uint16 frame, State &state);
 
@@ -514,9 +514,9 @@ protected:
 	uint32 renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
 
 	void renderBlockRLE(byte *dest, const byte *src, int16 width, int16 height,
-			int16 destWidth, int16 destHeight);
+			int16 destPitch, int16 srcPitch);
 
-	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 len);
+	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 destLen, int16 srcLen);
 
 	inline int32 preScaleX(int32 x) const;
 	inline int32 postScaleX(int32 x) const;
