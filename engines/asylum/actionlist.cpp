@@ -165,11 +165,6 @@ static const AsylumFunction function_map[] = {
 #undef MAPFUNC
 
 void ActionList::resetQueue() {
-	/*
-	memset(&_scripts, 0, sizeof(ScriptQueue));
-	for (int i = 0; i < 10; i++)
-		_scripts.entries[i].actionListIndex = -1;
-	*/
 	_scripts.clear();
 }
 
@@ -178,33 +173,6 @@ void ActionList::queueScript(int actionIndex, int actorIndex) {
 	// It appears to remain false 99% of the time, so I'm guessing
 	// it's a "skip processing" flag.
 	if (!_actionFlag) {
-
-		/*
-		int i;
-		// iterate through the availble entry slots to determine
-		// the next available slot
-		for (i = 1; i < 10; i++) {
-			if (_scripts.entries[i].actionListIndex == -1)
-				break;
-		}
-
-		_scene->actions()->entries[actionIndex].counter = 0;
-
-		_scripts.entries[i].field_10 = 0;
-		_scripts.entries[i].field_C = 0;
-
-		if (_scripts.count) {
-			_scripts.entries[_scripts.field_CC].field_C = i ;
-			_scripts.entries[0].field_10 = _scripts.field_CC;
-		} else {
-			_scripts.count = i;
-		}
-		_scripts.field_CC = i;
-		_scripts.entries[0].actionListIndex = actionIndex;
-		_scripts.entries[0].actionListItemIndex = 0;
-		_scripts.entries[0].actorIndex = actorIndex;
-		*/
-
 		ScriptQueueEntry entry;
 		entry.actionListIndex = actionIndex;
 		entry.actorIndex      = actorIndex;
@@ -219,108 +187,6 @@ void ActionList::queueScript(int actionIndex, int actorIndex) {
 			_currentScript = &entries[entry.actionListIndex];
 		}
 	}
-}
-
-/*
-void ActionList::updateQueue(int queueIndex) {
-	if (_scripts.count == _scripts.field_CC) {
-		_scripts.field_CC = 0;
-		_scripts.count = 0;
-		_scripts.entries[queueIndex].actionListIndex = -1;
-	} else {
-		if (_scripts.count == queueIndex) {
-			_scripts.count = _scripts.entries[queueIndex].field_C;
-			_scripts.entries[queueIndex].field_10 = 0;
-			_scripts.entries[queueIndex].actionListIndex = -1;
-		} else {
-			if (_scripts.field_CC == queueIndex) {
-				_scripts.field_CC = _scripts.entries[queueIndex].field_10;
-				_scripts.entries[queueIndex].field_C = 0;
-				_scripts.entries[queueIndex].actionListIndex = -1;
-			} else {
-				int tmp10 = _scripts.entries[queueIndex].field_10;
-				int tmpC  = _scripts.entries[queueIndex].field_C;
-				_scripts.entries[tmp10].field_C = _scripts.entries[queueIndex].field_C;
-				_scripts.entries[tmpC].field_10 = _scripts.entries[queueIndex].field_10;
-				_scripts.entries[queueIndex].actionListIndex = -1;
-			}
-		}
-	}
-}
-*/
-
-void ActionList::processActionListSub02(Script* script, ScriptEntry *command, int a4) {
-	//int v4 = 0;
-	int result;
-	int barrierIdx = 0;
-	if (a4) {
-		if (a4 == 1) {
-			;
-		} else {
-			result = a4 - 2;
-			int v8 = command->param4;
-
-			for (int i = 7; i > 0; i--) {
-				barrierIdx = _scene->worldstats()->getBarrierIndexById(v8);
-				if (barrierIdx >= 0)
-					_scene->worldstats()->barriers[barrierIdx].field_67C = 0;
-				v8 += 4;
-			}
-		}
-		// TODO
-		switch (_scene->getSceneIndex()) {
-		case 7:
-			warning("Scene 7 / v4 != 0 Not Implemented");
-			break;
-		case 6:
-			warning("Scene 6 / v4 != 0 Not Implemented");
-			break;
-		case 8:
-			warning("Scene 8 / v4 != 0 Not Implemented");
-			break;
-		case 3:
-			warning("Scene 3 / v4 != 0 Not Implemented");
-			break;
-		case 4:
-			warning("Scene 4 / v4 != 0 Not Implemented");
-			break;
-		default:
-			return;
-		}
-	} else {
-		int v13 = command->param4;
-		int v4 = script->counter / command->param2 + 4;
-		for (int i = 7; i > 0; i--) {
-			barrierIdx = _scene->worldstats()->getBarrierIndexById(v13);
-			if (barrierIdx >= 0)
-				_scene->worldstats()->barriers[barrierIdx].field_67C = v4;
-			v13 += 4;
-		}
-		// TODO
-		switch (_scene->getSceneIndex()) {
-		case 7:
-			warning("Scene 7 / v4 = 0 Not Implemented");
-			break;
-		case 6:
-			warning("Scene 6 / v4 = 0 Not Implemented");
-			break;
-		case 8:
-			warning("Scene 8 / v4 = 0 Not Implemented");
-			break;
-		case 3:
-			warning("Scene 3 / v4 = 0 Not Implemented");
-			break;
-		case 4:
-			warning("Scene 4 / v4 = 0 Not Implemented");
-			break;
-		default:
-			return;
-		}
-	}
-}
-
-void ActionList::enableActorSub(int actorIndex, int condition) {
-
 }
 
 int ActionList::process() {
@@ -339,7 +205,7 @@ int ActionList::process() {
 			int32 opcode = currentCommand->opcode;
 
 			debugC(kDebugLevelScripts,
-			   "[0x%02d] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			   "[0x%02X] %s(%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 			   opcode,function_map[opcode].name,
 			   currentCommand->param1,
 			   currentCommand->param2,
@@ -356,20 +222,22 @@ int ActionList::process() {
 
 			// Check function return
 			if (cmdRet == -1)
-				warning("Incomplete opcode %s (0x%02X) in Scene %d Line %d",
-				        function_map[opcode].name,
-				        currentCommand->opcode,
-				        _scene->getSceneIndex(),
-				        currentLine);
+				debugC(kDebugLevelScripts,
+					"Incomplete opcode %s (0x%02X) in Scene %d Line %d",
+					function_map[opcode].name,
+					currentCommand->opcode,
+					_scene->getSceneIndex(),
+					currentLine);
 			if (cmdRet == -2)
-				warning("Unhandled opcode %s (0x%02X) in Scene %d Line %d",
-				        function_map[opcode].name,
-				        currentCommand->opcode,
-				        _scene->getSceneIndex(),
-				        currentLine);
-
+				debugC(kDebugLevelScripts,
+					"Unhandled opcode %s (0x%02X) in Scene %d Line %d",
+					function_map[opcode].name,
+					currentCommand->opcode,
+					_scene->getSceneIndex(),
+					currentLine);
 			if (cmdRet == -3)
-				warning("Flagged (see implemenation comments) opcode %s (0x%02X) in Scene %d Line %d",
+				debugC(kDebugLevelScripts,
+					"Flagged (see implementation comments) opcode %s (0x%02X) in Scene %d Line %d",
 					function_map[opcode].name,
 					currentCommand->opcode,
 					_scene->getSceneIndex(),
@@ -676,10 +544,12 @@ int kEnableActor(Script *script, ScriptEntry *cmd, Scene *scn) {
 	else
 		actorIndex = cmd->param1;
 
+	/* TODO implement enableActorSub()
 	if (scn->worldstats()->actors[actorIndex].updateType == 5)
 		scn->actions()->enableActorSub(actorIndex, 4);
+	*/
 
-	return 0;
+	return -1;
 }
 
 int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
@@ -698,7 +568,7 @@ int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (script->counter >= (3 * cmd->param2 - 1)) {
 		script->counter = 0;
 		bar->field_67C  = 0;
-		scn->actions()->processActionListSub02(script, cmd, 2);
+		// TODO scn->actions()->processActionListSub02(script, cmd, 2);
 	} else {
 		int v64; // XXX rename when processActionListSub02 is better implemented
 		script->counter += 1;
@@ -710,7 +580,7 @@ int kEnableBarriers(Script *script, ScriptEntry *cmd, Scene *scn) {
 			bar->field_67C = script->counter / cmd->param2 + 1;
 		}
 
-		scn->actions()->processActionListSub02(script, cmd, v64);
+		// TODO scn->actions()->processActionListSub02(script, cmd, v64);
 	}
 
 	return -1;
