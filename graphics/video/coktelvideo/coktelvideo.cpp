@@ -919,6 +919,7 @@ void Imd::videoData(uint32 size, State &state) {
 	_stream->read(_frameData, size);
 	_frameDataLen = size;
 
+/*
 	if (_vidMemWidth <= state.right) {
 		state.left   = 0;
 		state.right -= state.left;
@@ -931,6 +932,7 @@ void Imd::videoData(uint32 size, State &state) {
 	}
 	if (_vidMemHeight <= state.bottom)
 		state.bottom = _vidMemHeight -1;
+*/
 
 	state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
 	state.flags |= _frameData[0];
