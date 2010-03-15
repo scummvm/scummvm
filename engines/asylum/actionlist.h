@@ -55,28 +55,15 @@ typedef struct ScriptEntry {
 
 typedef struct Script {
 	ScriptEntry commands[MAX_ACTION_COMMANDS];
-	int32        field_1BAC;
-	int32        field_1BB0;
-	int32        counter;
+	int32       field_1BAC;
+	int32       field_1BB0;
+	int32       counter;
 } Script;
 
 typedef struct ScriptQueueEntry {
 	int32 actionListIndex;
-	//int32 actionListItemIndex;
 	int32 actorIndex;
-	//int32 field_C;
-	//int32 field_10;
-
 } ScriptQueueEntry;
-
-/*
-typedef struct ScriptQueue {
-	ScriptQueueEntry entries[10];
-	int32 count;
-	int32 field_CC;
-
-} ScriptQueue;
-*/
 
 class ActionList {
 public:
@@ -96,10 +83,10 @@ public:
 	int32  currentLoops;
 	int32  delayedSceneIndex;
 	int32  delayedVideoIndex;
-	bool allowInput;
+	bool   allowInput;
 	int32  lineIncrement;
-	bool done;
-	bool waitCycle;
+	bool   done;
+	bool   waitCycle;
 
 	/** .text:00402120
 	 * Process the current script
@@ -114,28 +101,20 @@ public:
 	 * the actor at actorIndex
 	 */
 	void queueScript(int32 actionIndex, int32 actorIndex);
-	/** .text:00401100
-	 * Update the queued scripts
-	 */
-	//void updateQueue(int32 queueIndex);
 	/**
 	 * Toggle the action queue processing flag
 	 */
 	void setActionFlag(bool value) { _actionFlag = value; }
 
-
-	void processActionListSub02(Script* script, ScriptEntry* command,  int32 a4);
-	void enableActorSub(int32 actorIndex, int32 condition);
-
 private:
 	Scene *_scene;
 	bool  _actionFlag;
-	//ScriptQueue _scripts;
 	Common::Stack<ScriptQueueEntry> _scripts;
 	Script *_currentScript;
 	ScriptQueueEntry _currentQueueEntry;
 	void load(Common::SeekableReadStream *stream);
-};
+
+}; // end of class ActionList
 
 // opcode functions
 int32 kReturn0(Script *script, ScriptEntry *cmd, Scene *scn);
