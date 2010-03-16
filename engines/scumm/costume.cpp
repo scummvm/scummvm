@@ -75,7 +75,7 @@ static const int v1MMNESLookup[25] = {
 	0x17, 0x00, 0x01, 0x05, 0x16
 };
 
-const byte v0ActorTalkArray[0x19] = {
+static const byte v0ActorTalkArray[0x19] = {
 	0x00, 0x06, 0x06, 0x06, 0x06, 
 	0x06, 0x06, 0x00, 0x46, 0x06, 
 	0x06, 0x06, 0x06, 0xFF, 0xFF, 
@@ -1348,8 +1348,7 @@ int C64CostumeLoader::dirToDirStop(int oldDir) {
 }
 
 void C64CostumeLoader::actorSpeak(ActorC64 *a, int &cmd) {
-
-	if ((v0ActorTalkArray[ a->_number ] & 0x80))
+	if (v0ActorTalkArray[a->_number] & 0x80)
 		return;
 
 	if ((a->_speaking & 0x80))
@@ -1367,7 +1366,7 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	// Enable/Disable speaking flag
 	if (frame == a->_talkStartFrame) {
-		if ((v0ActorTalkArray[ a->_number ] & 0x40))
+		if (v0ActorTalkArray[a->_number] & 0x40)
 			return;
 
 		A->_speaking = 1;
@@ -1419,7 +1418,7 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 		
 		// Is this the correct location?
 		// 0x073C
-		if ((v0ActorTalkArray[ a->_number ] & 0x3F))
+		if (v0ActorTalkArray[a->_number] & 0x3F)
 			a->_cost.soundPos = (a->_cost.soundPos + 1) % 3;
 	}
 

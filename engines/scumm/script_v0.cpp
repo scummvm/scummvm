@@ -636,8 +636,7 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 	a = derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
 
 	//0x634F
-	if ((((ActorC64*) a)->_miscflags & 0x40)) {
-
+	if (((ActorC64 *)a)->_miscflags & 0x40) {
 		// TODO: Check if this is the correct function
 		// to be calling here
 		stopObjectCode();

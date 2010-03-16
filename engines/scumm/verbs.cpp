@@ -690,7 +690,6 @@ void ScummEngine_v0::runObject(int obj, int entry) {
 		// (which is not really the what-is script, as this verb never actually executes
 		//  it merely seems to be some type of fallback)
 		if (getVerbEntrypoint(obj, 0x0F) != 0) {
-
 			entry = 0x0F;
 		}
 	}
@@ -728,7 +727,7 @@ void ScummEngine_v2::runObject(int obj, int entry) {
 
 bool ScummEngine_v0::verbMoveToActor(int actor) {
 	Actor *a = derefActor(VAR(VAR_EGO), "verbMoveToActor");
-	Actor *a2 =derefActor(actor, "verbMoveToActor");
+	Actor *a2 = derefActor(actor, "verbMoveToActor");
 	int dist = getDist(a->getRealPos().x, a->getRealPos().y, a2->getRealPos().x, a2->getRealPos().y);
 
 	if (!a->_moving && dist > 4) {
@@ -812,7 +811,7 @@ bool ScummEngine_v0::verbObtain(int obj, int objIndex) {
 		
 		// Ignore verbs?
 		Actor *a = derefActor(VAR(VAR_EGO), "verbObtain");
-		if ((((ActorC64*) a)->_miscflags & 0x40)) {
+		if (((ActorC64 *)a)->_miscflags & 0x40) {
 			resetSentence(false);
 			return false;
 		}
@@ -825,7 +824,7 @@ bool ScummEngine_v0::verbObtain(int obj, int objIndex) {
 			if (_activeVerb != 13 && _activeVerb != 14) {
 				_v0ObjectInInventory = true;
 
-				if (whereIsObject( obj ) == WIO_INVENTORY)
+				if (whereIsObject(obj) == WIO_INVENTORY)
 					_activeInventory = obj;
 				else
 					resetSentence();
@@ -904,7 +903,7 @@ bool ScummEngine_v0::verbExec() {
 		if (verbMoveToActor(_activeActor)) {
 			// Ignore verbs?
 			Actor *a = derefActor(VAR(VAR_EGO), "verbExec");
-			if ((((ActorC64*) a)->_miscflags & 0x40)) {
+			if (((ActorC64 *)a)->_miscflags & 0x40) {
 				resetSentence(false);
 				return false;
 			}
@@ -1075,9 +1074,9 @@ void ScummEngine_v0::checkExecVerbs() {
 			// Did we just change the selected inventory item?
 			if (prevInventory && prevInventory != _activeInventory && _activeInventory != _activeObject2) {
 				_v0ObjectInInventory = true;
-				int prep = verbPrep( _activeInventory );
+				int prep = verbPrep(_activeInventory);
 				_v0ObjectInInventory = true;
-				int prep2 = verbPrep( prevInventory );
+				int prep2 = verbPrep(prevInventory);
 
 				// Should the new inventory object remain as the secondary selected object
 				// Or should the new inventory object become primary?
@@ -1128,7 +1127,7 @@ void ScummEngine_v0::checkExecVerbs() {
 				if (_currentMode == 2 || _currentMode == 0)
 					return;
 				
-				if (!(((ActorC64*) a)->_miscflags & 0x80)) {
+				if (!(((ActorC64 *)a)->_miscflags & 0x80)) {
 					if (_activeVerb != 7) {
 						_activeVerb = over;
 						over = 0;
@@ -1157,7 +1156,7 @@ void ScummEngine_v0::checkExecVerbs() {
 
 				if (zone->number == kMainVirtScreen) {
 					// Ignore verbs?
-					if ((((ActorC64*) a)->_miscflags & 0x40)) {
+					if (((ActorC64 *)a)->_miscflags & 0x40) {
 						resetSentence(false);
 						return;
 					}
