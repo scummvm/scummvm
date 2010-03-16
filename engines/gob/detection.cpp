@@ -4324,21 +4324,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 1
 	},
-
-	{
-		{
-			"adi4",
-			"",
-			AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdi4,
-		kFeatures640,
-		0, 0, 0
-	},
 	{
 		{
 			"adi4",
@@ -4359,6 +4344,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"Addy 4 Sekundarstufe Basis CD",
 			AD_ENTRY1s("intro.stk", "367340e59c461b4fa36651cd74e32c4e", 5847378),
 			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi4,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"adi4",
+			"Adi 4.0",
+			AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
+			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
@@ -4652,6 +4651,20 @@ static const GOBGameDescription gameDescriptions[] = {
 			"adibou2",
 			"ADIBOU 2.13s Environnement",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou2,
+		kFeaturesNone,
+		0, 0, 0
+	},
+	{
+		{
+			"adibou2",
+			"ADIBOO 2.14 Environnement",
+			AD_ENTRY1s("intro.stk", "ff63637e3cb7f0a457edf79457b1c6b3", 9333874),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
