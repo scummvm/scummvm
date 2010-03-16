@@ -635,7 +635,19 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 
 	a = derefActor(VAR(VAR_EGO), "o_loadRoomWithEgo");
 
-	a->putActor(0, 0, room);
+	//0x634F
+	if ((((ActorC64*) a)->_miscflags & 0x40)) {
+
+		// TODO: Check if this is the correct function
+		// to be calling here
+		stopObjectCode();
+		return;
+	}
+
+	// The original interpreter seems to set the actors new room X/Y to the last rooms X/Y
+	// This fixes a problem with MM: script 158 in room 12, the 'Oompf!' script
+	// This scripts runs before the actor position is set to the correct location
+	a->putActor(a->getPos().x, a->getPos().y, room);
 	_egoPositioned = false;
 
 	startScene(a->_room, a, obj);
@@ -814,6 +826,10 @@ void ScummEngine_v0::o_setActorBitVar() {
 		a->_miscflags |= mask;
 	else
 		a->_miscflags &= ~mask;
+
+	// This flag causes the actor to stop moving (used by script #158, Green Tentacle 'Oomph!')
+	if (a->_miscflags & 0x40)
+		a->stopActorMoving();
 
 	debug(0, "o_setActorBitVar(%d, %d, %d)", act, mask, mod);
 }

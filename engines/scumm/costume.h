@@ -28,7 +28,6 @@
 #include "scumm/base-costume.h"
 
 namespace Scumm {
-
 class ClassicCostumeLoader : public BaseCostumeLoader {
 public:
 	int _id;

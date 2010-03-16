@@ -75,6 +75,13 @@ static const int v1MMNESLookup[25] = {
 	0x17, 0x00, 0x01, 0x05, 0x16
 };
 
+const byte v0ActorTalkArray[0x19] = {
+	0x00, 0x06, 0x06, 0x06, 0x06, 
+	0x06, 0x06, 0x00, 0x46, 0x06, 
+	0x06, 0x06, 0x06, 0xFF, 0xFF, 
+	0x06, 0xC0, 0x06, 0x06, 0x00, 
+	0xC0, 0xC0, 0x00, 0x06, 0x06
+};
 
 byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 	int i, skip = 0;
@@ -1341,6 +1348,10 @@ int C64CostumeLoader::dirToDirStop(int oldDir) {
 }
 
 void C64CostumeLoader::actorSpeak(ActorC64 *a, int &cmd) {
+
+	if ((v0ActorTalkArray[ a->_number ] & 0x80))
+		return;
+
 	if ((a->_speaking & 0x80))
 		cmd += 0x0C;
 	else
@@ -1356,6 +1367,9 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	// Enable/Disable speaking flag
 	if (frame == a->_talkStartFrame) {
+		if ((v0ActorTalkArray[ a->_number ] & 0x40))
+			return;
+
 		A->_speaking = 1;
 		return;
 	}
@@ -1393,15 +1407,7 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 		int cmd = A->_costCommand;
 		A->_speakingPrev = A->_speaking;
 
-		// Update to use speak frame
-		if (A->_speaking & 0x80) {
-			actorSpeak(A, cmd);
-
-		} else {
-			// Update to use stand frame
-			if (A->_costFrame == A->_standFrame)
-				cmd = dirToDirStop(cmd);
-		}
+		actorSpeak(A, cmd);
 
 		// Update the limb frames
 		frameUpdate(A, cmd);
@@ -1410,7 +1416,11 @@ byte C64CostumeLoader::increaseAnims(Actor *a) {
 	if (A->_moving  && _vm->_currentRoom != 1 && _vm->_currentRoom != 44) {
 		if (a->_cost.soundPos == 0)
 			a->_cost.soundCounter++;
-		a->_cost.soundPos = (a->_cost.soundPos + 1) % 3;
+		
+		// Is this the correct location?
+		// 0x073C
+		if ((v0ActorTalkArray[ a->_number ] & 0x3F))
+			a->_cost.soundPos = (a->_cost.soundPos + 1) % 3;
 	}
 
 	// increase each frame pos

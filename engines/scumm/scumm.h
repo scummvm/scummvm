@@ -878,8 +878,9 @@ protected:
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
 public:
 	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
+	int getDist(int x, int y, int x2, int y2);	// Also used in actor.cpp
 protected:
-	int getDist(int x, int y, int x2, int y2);
+
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
 	const byte *getObjOrActorName(int obj);		 // these three..
 	void setObjectName(int obj);

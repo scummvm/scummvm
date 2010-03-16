@@ -215,6 +215,12 @@ void ScummEngine::walkActors() {
 void Actor::stopActorMoving() {
 	if (_walkScript)
 		_vm->stopScript(_walkScript);
+
+	// V0 Games will walk on the spot if the actor is stopped mid-walk
+	// So we must set the stand still frame
+	if (_vm->_game.version == 0)
+		startWalkAnim(3, -1);
+
 	_moving = 0;
 }
 
