@@ -2463,6 +2463,9 @@ void ScummEngine_v5::o5_walkActorToActor() {
 		y = abr.y;
 	}
 	a->startWalkActor(x, y, -1);
+
+	if (_game.version == 0)
+		o5_breakHere();
 }
 
 void ScummEngine_v5::o5_walkActorToObject() {
