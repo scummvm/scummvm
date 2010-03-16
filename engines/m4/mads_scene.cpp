@@ -43,7 +43,6 @@ namespace M4 {
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_vm = vm;
 
-	strcpy(_statusText, "");
 	_interfaceSurface = new MadsInterfaceView(vm);
 	_spriteSlotsStart = 0;
 	for (int i = 0; i < 3; ++i)
@@ -94,6 +93,8 @@ void MadsScene::loadSceneTemporary() {
 		return;
 
 	loadSceneHotspots(_currentScene);
+
+	_action.clear();
 }
 
 void MadsScene::loadScene(int sceneNumber) {
@@ -149,11 +150,9 @@ void MadsScene::loadSceneHotspots(int sceneNumber) {
 
 void MadsScene::leaveScene() {
 	_sceneResources.hotspots->clear();
-	_sceneResources.parallax->clear();
 	_sceneResources.props->clear();
 
 	delete _sceneResources.hotspots;
-	delete _sceneResources.parallax;
 	delete _sceneResources.props;
 
 	// Delete the sprites
@@ -263,10 +262,6 @@ void MadsScene::setAction(int action, int objectId) {
 	setStatusText(statusText);
 }
 
-void MadsScene::setStatusText(const char *text) {
-	strcpy(_statusText, text);
-}
-
 /**
  * Draws all the elements of the scene
  */
@@ -316,8 +311,11 @@ void MadsScene::update() {
 	// Draw all the various elements
 	drawElements();
 
+	_action.set();
+	const char *sStatusText = _action.statusText();
+
 	// Handle display of any status text
-	if (_statusText[0]) {
+	if (sStatusText[0]) {
 		// Text colors are inverted in Dragonsphere
 		if (_vm->getGameType() == GType_DragonSphere)
 			_vm->_font->setColors(_vm->_palette->BLACK, _vm->_palette->WHITE, _vm->_palette->BLACK);
@@ -325,7 +323,7 @@ void MadsScene::update() {
 			_vm->_font->setColors(_vm->_palette->WHITE, _vm->_palette->BLACK, _vm->_palette->BLACK);
 
 		_vm->_font->setFont(FONT_MAIN_MADS);
-		_vm->_font->writeString(this, _statusText, (width() - _vm->_font->getWidth(_statusText)) / 2, 142, 0);
+		_vm->_font->writeString(this, sStatusText, (width() - _vm->_font->getWidth(sStatusText)) / 2, 142, 0);
 	}
 
 	//***DEBUG***
@@ -476,16 +474,22 @@ MadsAction::MadsAction() {
 
 void MadsAction::clear() {
 	_actionMode = ACTMODE_NONE;
+	_actionMode2 = ACTMODE2_0;
+	_word_86F42 = 0;
+	_word_86F4E = 0;
 	_articleNumber = 0;
 	_lookFlag = false;
+	_word_86F4A = 0;
 	_statusText[0] = '\0';
 	_selectedRow = -1;
 	_currentHotspot = -1;
+	_word_86F3A = -1;
+	_word_86F4C = -1;
 	//word_86F3A/word_86F4C
 	_currentAction = kVerbNone;
 	_objectNameId = -1;
 	_objectDescId = -1;
-	//word_83334
+	_word_83334 = -1;
 }
 
 void MadsAction::appendVocab(int vocabId, bool capitalise) {
@@ -499,6 +503,7 @@ void MadsAction::appendVocab(int vocabId, bool capitalise) {
 }
 
 void MadsAction::set() {
+	int hotspotCount = _madsVm->scene()->getSceneResources().hotspotCount;
 	bool flag = false;
 	_currentAction = -1;
 	_objectNameId = -1;
@@ -562,14 +567,13 @@ void MadsAction::set() {
 			if (_currentHotspot >= 0) {
 				if (_selectedRow < 0) {
 					int verbId;
-					int hotspotCount = _madsVm->scene()->getSceneResources().hotspotCount;
 
 					if (_currentHotspot < hotspotCount) {
 						// Get the verb Id from the hotspot
 						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVerbID();
 					} else {
 						// Get the verb Id from the scene object
-						verbId = 0;//Scene_object[_currentHotspot - _hotspotCount].verbId;
+						verbId = (*_madsVm->scene()->getSceneResources().props)[_currentHotspot - hotspotCount].getVerbID();
 					}
 
 					if (verbId > 0) {
@@ -583,12 +587,58 @@ void MadsAction::set() {
 					}
 				}
 
-				//loc_21CE2
+				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
+					// Get name from given inventory object
+					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_currentHotspot);
+					_objectNameId = _madsVm->globals()->getObject(objectId)->descId;
+				} else if (_currentHotspot < hotspotCount) {
+					// Get name from scene hotspot
+					_objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVocabID();
+				} else {
+					// Get name from temporary scene hotspot
+					_objectNameId = (*_madsVm->scene()->getSceneResources().props)[_currentHotspot].getVocabID();
+				}
 			}
 		}
+
+		if ((_currentHotspot >= 0) && (_articleNumber > 0) && !flag) {
+			if (_articleNumber == -1) {
+				if (_word_86F3A >= 0) {
+					int articleNum = 0;
+
+					if ((_word_86F42 == 2) || (_word_86F42 == 5)) {
+						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_currentHotspot);
+						articleNum = _madsVm->globals()->getObject(objectId)->article;
+					} else if (_word_86F3A < hotspotCount) {
+						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getArticle();
+					} else {
+
+					}
+				}
+
+			} else if ((_articleNumber == kVerbLook) || (_vm->getGameType() != GType_RexNebular) ||
+				(strcmp(_madsVm->globals()->getVocab(_objectDescId), fenceStr) != 0)) {
+				// Write out the article
+				strcat(_statusText, englishMADSArticleList[_articleNumber]);
+			} else {
+				// Special case for a 'fence' entry in Rex Nebular
+				strcat(_statusText, overStr);
+			}
+
+			strcat(_statusText, " ");
+		}
+
+		// Append object description if necessary
+		if (_word_86F3A >= 0)
+			appendVocab(_objectDescId);
+
+		// Remove any trailing space character
+		int statusLen = strlen(_statusText);
+		if ((statusLen > 0) && (_statusText[statusLen - 1] == ' '))
+			_statusText[statusLen - 1] = '\0';
 	}
 
-	//word_83334 = -1;
+	_word_83334 = -1;
 }
 
 /*--------------------------------------------------------------------------*/

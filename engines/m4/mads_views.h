@@ -77,6 +77,7 @@ public:
 	virtual void setSelectedObject(int objectNumber);
 	virtual void addObjectToInventory(int objectNumber);
 	int getSelectedObject() { return _selectedObject; }
+	int getInventoryObject(int objectIndex) { return _inventoryList[objectIndex]; }
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);

@@ -42,6 +42,9 @@ public:
 	int32 frontScale, backScale;
 	int16 depthTable[16];
 	int32 railNodeCount;	// # of rails
+
+	int32 parallaxCount;
+	HotSpotList *parallax;
 };
 
 class M4Scene : public Scene {
@@ -70,12 +73,13 @@ public:
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void setAction(int action, int objectId = -1);
-	virtual void setStatusText(const char *text);
 	virtual void update();
+	virtual void showHotSpots();
 
 	byte *getInverseColourTable() const { return _inverseColourTable; }
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 	M4SceneResources &getSceneResources() { return _sceneResources; };
+	void setStatusText(const char *text);
 };
 
 } // End of namespace M4

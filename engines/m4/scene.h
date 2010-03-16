@@ -64,8 +64,6 @@ public:
 	char pictureBase[MAX_CHK_FILENAME_SIZE];
 	int32 hotspotCount;
 	HotSpotList *hotspots;
-	int32 parallaxCount;
-	HotSpotList *parallax;
 	int32 propsCount;
 	HotSpotList *props;
 	int32 frontY, backY;
@@ -103,13 +101,12 @@ public:
 	virtual void leftClick(int x, int y) = 0;
 	virtual void rightClick(int x, int y) = 0;
 	virtual void setAction(int action, int objectId = -1) = 0;
-	virtual void setStatusText(const char *text) = 0;
 	virtual void update() = 0;
+	virtual void showHotSpots();
 
 	// TODO: perhaps move playIntro() someplace else?
 	void playIntro();
 	void showSprites();
-	void showHotSpots();
 	void showCodes();
 	int getCurrentScene() { return _currentScene; }
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }

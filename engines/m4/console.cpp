@@ -103,7 +103,7 @@ bool Console::cmdListHotSpots(int argc, const char **argv) {
 	_vm->_scene->getSceneResources().hotspots->dump();
 	if (_vm->isM4()) {
 		DebugPrintf("Scene parallax\n");
-		_vm->_scene->getSceneResources().parallax->dump();
+		_m4Vm->scene()->getSceneResources().parallax->dump();
 		DebugPrintf("Scene props\n");
 		_vm->_scene->getSceneResources().props->dump();
 	}
@@ -395,23 +395,23 @@ M4Console::M4Console(M4Engine *vm): Console(vm) {
 }
 
 bool M4Console::cmdSceneInfo(int argc, const char **argv) {
-	DebugPrintf("Current scene is: %i\n", _vm->_scene->getCurrentScene());
+	DebugPrintf("Current scene is: %i\n", _m4Vm->scene()->getCurrentScene());
 
 	DebugPrintf("Scene resources:\n");
-	DebugPrintf("artBase: %s\n", _vm->_scene->getSceneResources().artBase);
-	DebugPrintf("pictureBase: %s\n", _vm->_scene->getSceneResources().pictureBase);
-	DebugPrintf("hotspotCount: %i\n", _vm->_scene->getSceneResources().hotspotCount);
-	DebugPrintf("parallaxCount: %i\n", _vm->_scene->getSceneResources().parallaxCount);
-	DebugPrintf("propsCount: %i\n", _vm->_scene->getSceneResources().propsCount);
-	DebugPrintf("frontY: %i\n", _vm->_scene->getSceneResources().frontY);
-	DebugPrintf("backY: %i\n", _vm->_scene->getSceneResources().backY);
-	DebugPrintf("frontScale: %i\n", _vm->_scene->getSceneResources().frontScale);
-	DebugPrintf("backScale: %i\n", _vm->_scene->getSceneResources().backScale);
+	DebugPrintf("artBase: %s\n", _m4Vm->scene()->getSceneResources().artBase);
+	DebugPrintf("pictureBase: %s\n", _m4Vm->scene()->getSceneResources().pictureBase);
+	DebugPrintf("hotspotCount: %i\n", _m4Vm->scene()->getSceneResources().hotspotCount);
+	DebugPrintf("parallaxCount: %i\n", _m4Vm->scene()->getSceneResources().parallaxCount);
+	DebugPrintf("propsCount: %i\n", _m4Vm->scene()->getSceneResources().propsCount);
+	DebugPrintf("frontY: %i\n", _m4Vm->scene()->getSceneResources().frontY);
+	DebugPrintf("backY: %i\n", _m4Vm->scene()->getSceneResources().backY);
+	DebugPrintf("frontScale: %i\n", _m4Vm->scene()->getSceneResources().frontScale);
+	DebugPrintf("backScale: %i\n", _m4Vm->scene()->getSceneResources().backScale);
 	DebugPrintf("depthTable: ");
 	for (uint i = 0; i < 16; i++)
-		DebugPrintf("%i ", _vm->_scene->getSceneResources().depthTable[i]);
+		DebugPrintf("%i ", _m4Vm->scene()->getSceneResources().depthTable[i]);
 	DebugPrintf("\n");
-	DebugPrintf("railNodeCount: %i\n", _vm->_scene->getSceneResources().railNodeCount);
+	DebugPrintf("railNodeCount: %i\n", _m4Vm->scene()->getSceneResources().railNodeCount);
 
 	return true;
 }

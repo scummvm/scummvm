@@ -44,7 +44,6 @@ Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0,
 	_screenType = VIEWID_SCENE;
 
 	_sceneResources->hotspots = new HotSpotList();
-	_sceneResources->parallax = new HotSpotList();
 	_sceneResources->props = new HotSpotList();
 	_backgroundSurface = new M4Surface();
 	_walkSurface = new M4Surface();
@@ -124,22 +123,17 @@ void Scene::showSprites() {
 void Scene::showHotSpots() {
 	int i = 0;
 	HotSpot *currentHotSpot;
+
 	// hotspots (green)
 	for (i = 0; i < _sceneResources->hotspotCount; i++) {
 		currentHotSpot = _sceneResources->hotspots->get(i);
 		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->GREEN);
 	}
-	if (_vm->isM4()) {
-		// parallax (yellow)
-		for (i = 0; i < _sceneResources->parallaxCount; i++) {
-			currentHotSpot = _sceneResources->parallax->get(i);
-			_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->YELLOW);
-		}
-		// props (red)
-		for (i = 0; i < _sceneResources->propsCount; i++) {
-			currentHotSpot = _sceneResources->props->get(i);
-			_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->RED);
-		}
+
+	// props (red)
+	for (i = 0; i < _sceneResources->propsCount; i++) {
+		currentHotSpot = _sceneResources->props->get(i);
+		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->RED);
 	}
 }
 

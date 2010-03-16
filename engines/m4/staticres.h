@@ -40,6 +40,8 @@ extern const char *lookAroundStr;
 extern const char *toStr;
 extern const char *useStr;
 extern const char *walkToStr;
+extern const char *fenceStr;
+extern const char *overStr;
 
 struct VerbInit {
 	int verb;

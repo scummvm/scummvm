@@ -59,6 +59,7 @@ public:
 	void setRect(int x1, int y1, int x2, int y2);
 	void setFeet(int x, int y);
 	void setFacing(uint8 facing) { _facing = facing; }
+	void setArticle(int8 v) { _articleNumber = v; }
 	char *getVocab() const { return _vocab; }
 	int32 getVocabID() { return _vocabID; }
 	char *getVerb() const { return _verb; }
@@ -70,6 +71,7 @@ public:
 	uint8 getFacing() const { return _facing; }
 	int getFeetX() { return _feetX; }
 	int getFeetY() { return _feetY; }
+	int8 getArticle() const { return _articleNumber; }
 	Common::Rect getRect() const;
 
 	int32 area() const { return (_rect.width() - 1) * (_rect.height() - 1); }
@@ -85,6 +87,8 @@ private:
 	// Unused in Orion Burger, used in MADS games
 	uint8 _syntax;
 	int32 _vocabID, _verbID;
+	int8 _articleNumber;
+
 	//TODO: check if this is actually needed by the game
 	int16 _hash;
 };

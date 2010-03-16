@@ -124,26 +124,38 @@ public:
 };
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
+enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
 
 class MadsAction {
 private:
 	char _statusText[100];
+
+	void appendVocab(int vocabId, bool capitalise = false);
+public:
 	int _currentHotspot;
 	int _objectNameId;
 	int _objectDescId;
 	int _currentAction;
 	int8 _flags1, _flags2;
 	MadsActionMode _actionMode;
+	MAdsActionMode2 _actionMode2;
 	int _articleNumber;
 	bool _lookFlag;
 	int _selectedRow;
+	// Unknown fields
+	int16 _word_86F3A;
+	int16 _word_86F42;
+	int16 _word_86F4E;
+	int16 _word_86F4A;
+	int16 _word_83334;
+	int16 _word_86F4C;
 
-	void appendVocab(int vocabId, bool capitalise = false);
 public:
 	MadsAction();
 
 	void clear();
 	void set();
+	const char *statusText() const { return _statusText; }
 };
 
 typedef Common::Array<SpriteAsset *> SpriteAssetArray;
@@ -155,7 +167,7 @@ class MadsScene : public Scene {
 private:
 	MadsEngine *_vm;
 	MadsSceneResources _sceneResources;
-	char _statusText[100];
+	MadsAction _action;
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
@@ -187,7 +199,6 @@ public:
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void setAction(int action, int objectId = -1);
-	virtual void setStatusText(const char *text);
 	virtual void update();
 
 	int loadSceneSpriteSet(const char *setName);
@@ -196,6 +207,7 @@ public:
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
 	MadsSceneResources &getSceneResources() { return _sceneResources; };
+	void setStatusText(const char *text) {};//***DEPRECATED***
 };
 
 } // End of namespace M4

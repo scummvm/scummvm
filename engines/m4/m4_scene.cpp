@@ -41,8 +41,10 @@ namespace M4 {
 M4Scene::M4Scene(M4Engine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_vm = vm;
 	_sceneSprites = NULL;
-	_interfaceSurface = new M4InterfaceView(vm);
 	_inverseColourTable = NULL;
+
+	_sceneResources.parallax = new HotSpotList();
+	_interfaceSurface = new M4InterfaceView(vm);
 }
 
 M4Scene::~M4Scene() {
@@ -195,6 +197,9 @@ void M4Scene::show() {
 }
 
 void M4Scene::leaveScene() {
+	_sceneResources.parallax->clear();
+
+	delete _sceneResources.parallax;
 	delete[] _inverseColourTable;
 
 	Scene::leaveScene();
@@ -306,6 +311,16 @@ void M4Scene::nextCommonCursor() {
 	}
 
 	_vm->_mouse->setCursorNum(cursorIndex);
+}
+
+void M4Scene::showHotSpots() {
+	Scene::showHotSpots();
+
+	// parallax (yellow)
+	for (int i = 0; i < _sceneResources.parallaxCount; i++) {
+		HotSpot *currentHotSpot = _sceneResources.parallax->get(i);
+		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->YELLOW);
+	}
 }
 
 } // End of namespace M4
