@@ -76,7 +76,7 @@ public:
 	uint16 signal;
 	byte prio;
 	uint16 loop;
-	byte volume;
+	int16 volume;
 	byte hold;
 
 	int16 pauseCounter;
