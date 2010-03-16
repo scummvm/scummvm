@@ -1212,37 +1212,19 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 	if (!width || !height)
 		return 0;
 
-	int xpos = 0;
-	int ypos = _loaded._maxHeight - offsetY;
-
-	if (flipped) {
-		if (offsetX)
-			xpos += (offsetX - 1) * 8;
-	} else {
-		xpos += offsetX * 8;
-	}
-
-	xpos += _actorX - (a->_width / 2);
-	ypos += (_actorY - _loaded._maxHeight) + 1;		// +1 as we appear to be 1 pixel away from the original interpreter
+	int xpos = _actorX + (flipped ? -1 : +1) * (offsetX * 8 - a->_width / 2);
+	// +1 as we appear to be 1 pixel away from the original interpreter
+	int ypos = _actorY - offsetY + 1;
 
 	// This code is very similar to procC64()
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
 			byte color = data[y * width + x];
 			byte pcolor;
-			int realX = 0;
-			if (flipped) {
-				if (offsetX == 0||offsetX == 1) {
-					realX = width-(x + 1);
-				} else if (offsetX == 2) {
-					realX = width-(x + 2);
-				}
-			} else {
-				realX = x;
-			}
 
-			int destY = y + ypos;
-			int destX = realX * 8 + xpos;
+			int destX = xpos + (flipped ? -(x + 1) : x) * 8;
+			int destY = ypos + y;
+
 			if (destY >= 0 && destY < _out.h && destX >= 0 && destX < _out.w) {
 				byte *dst = (byte *)_out.pixels + destY * _out.pitch + destX;
 				byte *mask = _vm->getMaskBuffer(0, destY, _zbuf);
@@ -1257,8 +1239,10 @@ byte C64CostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 	_draw_top = MIN(_draw_top, ypos);
 	_draw_bottom = MAX(_draw_bottom, ypos + height);
-	_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos + (width * 8), ypos, ypos + height, _actorID);
-
+	if (flipped)
+		_vm->markRectAsDirty(kMainVirtScreen, xpos - (width * 8), xpos, ypos, ypos + height, _actorID);
+	else
+		_vm->markRectAsDirty(kMainVirtScreen, xpos, xpos + (width * 8), ypos, ypos + height, _actorID);
 	return 0;
 }
 
