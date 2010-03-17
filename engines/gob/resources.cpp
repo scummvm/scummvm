@@ -246,12 +246,11 @@ bool Resources::loadTOTResourceTable() {
 	stream->seek(totProps.resourcesOffset);
 	_totResourceTable->itemsCount = stream->readSint16LE();
 
-	_totResourceTable->dataOffset = totProps.resourcesOffset + kTOTResTableSize +
-	                                _totResourceTable->itemsCount * kTOTResItemSize;
-
-
 	uint32 resSize = _totResourceTable->itemsCount * kTOTResItemSize +
 	                 kTOTResTableSize;
+
+	_totResourceTable->dataOffset = totProps.resourcesOffset + resSize;
+
 
 	// Would the table actually fit into the TOT?
 	if ((totProps.resourcesOffset + resSize) > ((uint32) stream->size()))
