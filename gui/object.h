@@ -62,7 +62,7 @@ class GuiObject : public CommandReceiver {
 protected:
 	int16		_x, _y;
 	uint16		_w, _h;
-	Common::String _name;
+	const Common::String _name;
 
 	Widget		*_firstWidget;
 
