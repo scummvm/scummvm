@@ -1026,7 +1026,7 @@ void SmushPlayer::parseNextFrame() {
 		return;
 	}
 
-	debug(3, "Chunk: %s at %x", Common::tag2string(subType).c_str(), subOffset);
+	debug(3, "Chunk: %s at %x", tag2str(subType), subOffset);
 
 	switch (subType) {
 	case MKID_BE('AHDR'): // FT INSANE may seek file to the beginning
@@ -1036,7 +1036,7 @@ void SmushPlayer::parseNextFrame() {
 		handleFrame(subSize, *_base);
 		break;
 	default:
-		error("Unknown Chunk found at %x: %s, %d", subOffset, Common::tag2string(subType).c_str(), subSize);
+		error("Unknown Chunk found at %x: %s, %d", subOffset, tag2str(subType), subSize);
 	}
 
 	_base->seek(subOffset + subSize, SEEK_SET);
