@@ -270,7 +270,7 @@ int TeenAgentEngine::skipEvents() const {
 }
 
 bool TeenAgentEngine::showLogo() {
-	Pack logo;
+	FilePack logo;
 	if (!logo.open("unlogic.res"))
 		return true;
 

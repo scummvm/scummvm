@@ -27,21 +27,61 @@
 #define TEENAGENT_PACK_H
 
 #include "common/file.h"
+#include "common/array.h"
 
 namespace TeenAgent {
+
 class Pack {
+protected:
+	uint32 _files_count;
+public:
+	Pack(): _files_count(0) {}
+	virtual ~Pack() {};
+	virtual bool open(const Common::String &filename) = 0;
+	virtual void close() = 0;
+
+	virtual uint32 files_count() const { return _files_count; }
+	virtual uint32 get_size(uint32 id) const = 0;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const = 0;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const = 0;
+};
+
+class FilePack : public Pack {
 	mutable Common::File file;
-	uint32 count;
 	uint32 *offsets;
 
 public:
-	Pack();
-	~Pack();
+	FilePack();
+	~FilePack();
 
 	bool open(const Common::String &filename);
 	void close();
 
-	inline uint32 files_count() const { return count; }
+	uint32 get_size(uint32 id) const;
+	uint32 read(uint32 id, byte *dst, uint32 size) const;
+	Common::SeekableReadStream *getStream(uint32 id) const;
+};
+
+class MemoryPack : public Pack {
+	struct Chunk {
+		byte *data;
+		uint32 size;
+		inline Chunk(): data(0), size(0) {}
+		inline Chunk(const Chunk &c): data(c.data), size(c.size) { c.reset(); }
+		inline Chunk& operator=(const Chunk &c) { data = c.data; size = c.size; c.reset(); return *this; }
+		inline ~Chunk() { delete[] data; }
+		inline void reset() const {
+			Chunk *c = const_cast<Chunk *>(this);
+			c->data = 0;
+			c->size = 0;
+		}
+	};
+	Common::Array<Chunk> chunks;
+
+public:
+	bool open(const Common::String &filename);
+	void close();
+
 	uint32 get_size(uint32 id) const;
 	uint32 read(uint32 id, byte *dst, uint32 size) const;
 	Common::SeekableReadStream *getStream(uint32 id) const;

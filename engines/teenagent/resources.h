@@ -47,7 +47,8 @@ public:
 	//void loadOn(Graphics::Surface &surface, int id, uint16 &dst, uint16 *flags);
 	//void loadOns(Graphics::Surface &surface, int id, uint16 &dst);
 
-	Pack varia, off, on, ons, lan000, lan500, mmm, sam_mmm, sam_sam;
+	FilePack varia, off, on, ons, lan000, lan500, sam_mmm, sam_sam;
+	MemoryPack mmm;
 	Segment cseg, dseg, eseg;
 	Font font7, font8;
 };
