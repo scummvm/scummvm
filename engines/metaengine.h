@@ -29,6 +29,8 @@
 #include "common/error.h"
 
 #include "engines/game.h"
+#include "engines/savestate.h"
+
 #include "base/plugins.h"
 
 class Engine;
