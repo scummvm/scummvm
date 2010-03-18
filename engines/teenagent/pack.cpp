@@ -98,14 +98,14 @@ bool MemoryPack::open(const Common::String &filename) {
 		int32 pos = file.pos();
 		uint32 next_offset = file.readUint32LE();
 		uint32 size = next_offset - offset;
-		file.seek(offset);
 		Chunk chunk;
 		if (size != 0) {
+			file.seek(offset);
 			chunk.data = new byte[size];
 			chunk.size = size;
 			file.read(chunk.data, size);
+			file.seek(pos);
 		}
-		file.seek(pos);
 		chunks.push_back(chunk);
 	}
 	file.close();
