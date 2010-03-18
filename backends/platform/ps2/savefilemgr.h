@@ -39,7 +39,7 @@ public:
 
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename);
-	virtual Common::StringList listSavefiles(const Common::String &pattern);
+	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 	virtual bool removeSavefile(const Common::String &filename);
 
 	// void writeSaveNonblocking(char *name, void *buf, uint32 size);

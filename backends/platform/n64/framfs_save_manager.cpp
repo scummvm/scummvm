@@ -53,10 +53,10 @@ uint32 OutFRAMSave::write(const void *buf, uint32 cnt) {
 	return framfs_write(buf, 1, cnt, fd);
 }
 
-Common::StringList FRAMSaveManager::listSavefiles(const Common::String &pattern) {
+Common::StringArray FRAMSaveManager::listSavefiles(const Common::String &pattern) {
 	FRAMDIR *dirp = framfs_opendir();
 	framfs_dirent *dp;
-	Common::StringList list;
+	Common::StringArray list;
 	Common::String *fname;
 
 	while ((dp = framfs_readdir(dirp)) != NULL) {

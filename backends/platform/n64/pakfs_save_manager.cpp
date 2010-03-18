@@ -54,10 +54,10 @@ uint32 OutPAKSave::write(const void *buf, uint32 cnt) {
 	return pakfs_write(buf, 1, cnt, fd);
 }
 
-Common::StringList PAKSaveManager::listSavefiles(const Common::String &pattern) {
+Common::StringArray PAKSaveManager::listSavefiles(const Common::String &pattern) {
 	PAKDIR *dirp = pakfs_opendir();
 	pakfs_dirent *dp;
-	Common::StringList list;
+	Common::StringArray list;
 	Common::String *fname;
 
 	while ((dp = pakfs_readdir(dirp)) != NULL) {

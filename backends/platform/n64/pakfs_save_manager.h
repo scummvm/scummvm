@@ -128,7 +128,7 @@ public:
 		return ::pakfs_deleteSaveGame(filename.c_str());
 	}
 
-	virtual Common::StringList listSavefiles(const Common::String &pattern);
+	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 };
 
 

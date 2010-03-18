@@ -228,7 +228,7 @@ bool Ps2SaveFileManager::removeSavefile(const Common::String &filename) {
 	return true;
 }
 
-Common::StringList Ps2SaveFileManager::listSavefiles(const Common::String &pattern) {
+Common::StringArray Ps2SaveFileManager::listSavefiles(const Common::String &pattern) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::String _dir;
 	Common::String search;
@@ -237,7 +237,7 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const Common::String &patte
 	char *game=0, path[32], temp[32];
 
 	if (!savePath.exists() || !savePath.isDirectory())
-		return Common::StringList();
+		return Common::StringArray();
 
 	printf("listSavefiles = %s\n", pattern.c_str());
 
@@ -260,7 +260,7 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const Common::String &patte
 
 	Common::FSDirectory dir(_dir);
 	Common::ArchiveMemberList savefiles;
-	Common::StringList results;
+	Common::StringArray results;
 
 	printf("dir = %s --- reg = %s\n", _dir.c_str(), search.c_str());
 

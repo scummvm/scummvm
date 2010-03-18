@@ -31,6 +31,7 @@
 #include "backends/platform/gp2x/gp2x-common.h"
 #include "common/util.h"
 #include "common/mutex.h"
+#include "common/str-array.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
@@ -1642,7 +1643,7 @@ void OSystem_GP2X::displayMessageOnOSD(const char *msg) {
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
 
 	// Split the message into separate lines.
-	Common::StringList lines;
+	Common::StringArray lines;
 	const char *ptr;
 	for (ptr = msg; *ptr; ++ptr) {
 		if (*ptr == '\n') {

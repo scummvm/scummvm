@@ -126,7 +126,7 @@ public:
 	virtual Common::InSaveFile* openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
 
 	virtual bool removeSavefile(const Common::String &filename);
-	virtual Common::StringList listSavefiles(const Common::String &pattern);
+	virtual Common::StringArray listSavefiles(const Common::String &pattern);
 
 	void flushToSaveRAM();
 

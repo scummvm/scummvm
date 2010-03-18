@@ -180,7 +180,7 @@ const char *GBAMPSaveFileManager::getSavePath() const {
 	return dir;
 }
 
-Common::StringList GBAMPSaveFileManager::listSavefiles(const Common::String &pattern) {
+Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pattern) {
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
@@ -212,7 +212,7 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const Common::String &pat
 
 	int fileType = FAT_FindFirstFileLFN(name);
 
-	Common::StringList list;
+	Common::StringArray list;
 
 	do {
 

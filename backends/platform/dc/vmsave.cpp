@@ -189,7 +189,7 @@ static bool matches(const char *glob, const char *name)
   return !*name;
 }
 
-static void tryList(const char *glob, int vm, Common::StringList &list)
+static void tryList(const char *glob, int vm, Common::StringArray &list)
 {
   struct vmsinfo info;
   struct superblock super;
@@ -335,7 +335,7 @@ public:
 	return ::deleteSaveGame(filename.c_str());
   }
 
-  virtual Common::StringList listSavefiles(const Common::String &pattern);
+  virtual Common::StringArray listSavefiles(const Common::String &pattern);
 };
 
 void OutVMSave::finalize()
@@ -420,9 +420,9 @@ uint32 OutVMSave::write(const void *buf, uint32 cnt)
 }
 
 
-Common::StringList VMSaveManager::listSavefiles(const Common::String &pattern)
+Common::StringArray VMSaveManager::listSavefiles(const Common::String &pattern)
 {
-  Common::StringList list;
+  Common::StringArray list;
 
   for (int i=0; i<24; i++)
     tryList(pattern.c_str(), i, list);

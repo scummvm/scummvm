@@ -402,10 +402,10 @@ bool DSSaveFileManager::removeSavefile(const Common::String &filename) {
 }
 
 
-Common::StringList DSSaveFileManager::listSavefiles(const Common::String &pattern) {
+Common::StringArray DSSaveFileManager::listSavefiles(const Common::String &pattern) {
 	consolePrintf("DSSaveFileManager::listSavefiles : Not implemented yet.\n");
 	assert(false);
-	return Common::StringList();
+	return Common::StringArray();
 	/*
 	TODO: Implement this. If you don't understand what it should do, just ask
 	(e.g. on scummvm-devel or Fingolfin). It should be pretty simple if you
