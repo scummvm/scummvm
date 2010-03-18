@@ -145,14 +145,14 @@ inline frac_t fp_sqroot(uint32 x) {
 
 /** HELPER MACROS for WU's circle drawing algorithm **/
 #define __WU_DRAWCIRCLE(ptr1,ptr2,ptr3,ptr4,x,y,px,py,a) { \
-	blendPixelPtr(ptr1 + (y) - (px), color, a); \
-	blendPixelPtr(ptr1 + (x) - (py), color, a); \
-	blendPixelPtr(ptr2 - (x) - (py), color, a); \
-	blendPixelPtr(ptr2 - (y) - (px), color, a); \
-	blendPixelPtr(ptr3 - (y) + (px), color, a); \
-	blendPixelPtr(ptr3 - (x) + (py), color, a); \
-	blendPixelPtr(ptr4 + (x) + (py), color, a); \
-	blendPixelPtr(ptr4 + (y) + (px), color, a); \
+	this->blendPixelPtr(ptr1 + (y) - (px), color, a); \
+	this->blendPixelPtr(ptr1 + (x) - (py), color, a); \
+	this->blendPixelPtr(ptr2 - (x) - (py), color, a); \
+	this->blendPixelPtr(ptr2 - (y) - (px), color, a); \
+	this->blendPixelPtr(ptr3 - (y) + (px), color, a); \
+	this->blendPixelPtr(ptr3 - (x) + (py), color, a); \
+	this->blendPixelPtr(ptr4 + (x) + (py), color, a); \
+	this->blendPixelPtr(ptr4 + (y) + (px), color, a); \
 }
 
 // optimized Wu's algorithm
@@ -398,7 +398,7 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 
 template<typename PixelType>
 inline void VectorRendererSpec<PixelType>::
-blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
+blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha) {
 	register int idst = *ptr;
 	register int isrc = color;
 
@@ -1459,8 +1459,8 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 			ptr += xdir;
 			alpha = (error_acc >> 8);
 
-			blendPixelPtr(ptr, color, ~alpha);
-			blendPixelPtr(ptr + pitch, color, alpha);
+			this->blendPixelPtr(ptr, color, ~alpha);
+			this->blendPixelPtr(ptr + pitch, color, alpha);
 		}
 	} else {
 		gradient = (uint32)(dx << 16) / (uint32)dy;
@@ -1476,8 +1476,8 @@ drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color) {
 			ptr += pitch;
 			alpha = (error_acc >> 8);
 
-			blendPixelPtr(ptr, color, ~alpha);
-			blendPixelPtr(ptr + xdir, color, alpha);
+			this->blendPixelPtr(ptr, color, ~alpha);
+			this->blendPixelPtr(ptr + xdir, color, alpha);
 		}
 	}
 
