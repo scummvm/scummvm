@@ -57,7 +57,7 @@ public:
 private:
 	TeenAgentEngine *_engine;
 	Surface background;
-	Common::SeekableReadStream *items;
+	byte *items;
 	uint16 offset[93];
 
 	Common::Array<InventoryObject> objects;

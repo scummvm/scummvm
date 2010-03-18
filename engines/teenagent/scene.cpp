@@ -207,8 +207,10 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 
 	memset(palette, 0, sizeof(palette));
 
-	Resources *res = Resources::instance();
-	Common::SeekableReadStream *s = res->varia.getStream(1);
+	FilePack varia;
+	varia.open("varia.res");
+
+	Common::SeekableReadStream *s = varia.getStream(1);
 	if (s == NULL)
 		error("invalid resource data");
 
@@ -216,7 +218,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	if (teenagent.empty())
 		error("invalid mark animation");
 
-	s = res->varia.getStream(2);
+	s = varia.getStream(2);
 	if (s == NULL)
 		error("invalid resource data");
 
@@ -224,6 +226,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
 
+	varia.close();
 	loadObjectData();
 }
 

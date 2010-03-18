@@ -325,12 +325,13 @@ bool TeenAgentEngine::showMetropolis() {
 	_system->fillScreen(0);
 	_system->updateScreen();
 
-	Resources *res = Resources::instance();
+	FilePack varia;
+	varia.open("varia.res");
 
 	byte palette[0x400];
 	memset(palette, 0, sizeof(palette));
 	{
-		Common::SeekableReadStream *s = res->varia.getStream(5);
+		Common::SeekableReadStream *s = varia.getStream(5);
 		for(uint c = 0; c < 0x100; ++c) {
 			uint idx = c * 4;
 			s->read(palette + idx, 3);
@@ -343,8 +344,8 @@ bool TeenAgentEngine::showMetropolis() {
 	_system->setPalette(palette, 0, 0x100);
 
 	byte varia_6[21760], varia_9[18302];
-	res->varia.read(6, varia_6, sizeof(varia_6));
-	res->varia.read(9, varia_9, sizeof(varia_9));
+	varia.read(6, varia_6, sizeof(varia_6));
+	varia.read(9, varia_9, sizeof(varia_9));
 
 	byte colors[56 * 160 * 2];
 	memset(colors, 0, sizeof(colors));

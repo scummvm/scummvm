@@ -35,22 +35,28 @@ namespace TeenAgent {
 void Inventory::init(TeenAgentEngine *engine) {
 	_engine = engine;
 	_active = false;
-	Resources *res = Resources::instance();
 
-	Common::SeekableReadStream *s = res->varia.getStream(3);
+	FilePack varia;
+	varia.open("varia.res");
+
+	Common::SeekableReadStream *s = varia.getStream(3);
 	assert(s != NULL);
 	debug(0, "loading inventory background...");
 	background.load(s, Surface::kTypeOns);
 
-	items = res->varia.getStream(4);
-	assert(items != NULL);
+	uint32 items_size = varia.get_size(4);
+	if (items_size == 0)
+		error("invalid inventory items size");
+	items = new byte[items_size];
+	varia.read(4, items, items_size);
 
-	byte offsets = items->readByte();
+	byte offsets = items[0];
 	assert(offsets == 92);
 	for (byte i = 0; i <= offsets; ++i) {
-		offset[i] = items->readUint16LE();
+		offset[i] = READ_UINT16(items + i * 2 + 1);
 	}
 
+	Resources *res = Resources::instance();
 	for (byte i = 0; i <= 92; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
@@ -70,6 +76,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 			graphics[i].rect.bottom = graphics[i].rect.top + 26;
 		}
 
+	varia.close();
 	hovered_obj = selected_obj = NULL;
 }
 
@@ -274,8 +281,8 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 	if (obj->animated) {
 		if (animation.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			inventory->items->seek(inventory->offset[obj->id - 1]);
-			animation.load(inventory->items, Animation::kTypeInventory);
+			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
+			animation.load(&s, Animation::kTypeInventory);
 		}
 		if (hovered) {
 			Surface *s = animation.currentFrame(delta);
@@ -291,8 +298,8 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 	} else {
 		if (surface.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			inventory->items->seek(inventory->offset[obj->id - 1]);
-			surface.load(inventory->items, Surface::kTypeOns);
+			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
+			surface.load(&s, Surface::kTypeOns);
 		}
 		surface.render(dst, rect.left + 1, rect.top + 1);
 	}
