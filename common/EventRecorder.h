@@ -37,6 +37,8 @@
 
 namespace Common {
 
+class RandomSource;
+
 /**
  * Our generic event recorder.
  *

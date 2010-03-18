@@ -32,6 +32,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/util.h"
+#include "common/random.h"
 
 #include "lure/disk.h"
 #include "lure/res.h"

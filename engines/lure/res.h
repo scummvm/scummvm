@@ -28,11 +28,13 @@
 
 #include "lure/luredefs.h"
 #include "lure/memory.h"
-#include "common/list.h"
 #include "lure/res_struct.h"
 #include "lure/hotspots.h"
 #include "lure/palette.h"
+
 #include "common/file.h"
+#include "common/list.h"
+#include "common/random.h"
 
 namespace Lure {
 

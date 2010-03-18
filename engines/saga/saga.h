@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "common/random.h"
 #include "common/stream.h"
 #include "sound/mididrv.h"
 

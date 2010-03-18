@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/random.h"
 
 #include "sound/mididrv.h"
 
@@ -181,6 +182,10 @@ Common::Error PreAgiEngine::go() {
 		break;
 	}
 	return Common::kNoError;
+}
+
+int PreAgiEngine::rnd(int hi) {
+	return (_rnd->getRandomNumber(hi - 1) + 1);
 }
 
 } // End of namespace Agi

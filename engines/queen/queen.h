@@ -27,6 +27,7 @@
 #define QUEEN_H
 
 #include "engines/engine.h"
+#include "common/random.h"
 
 namespace Common {
 	class SeekableReadStream;

@@ -26,8 +26,8 @@
 #ifndef SKY_LOGIC_H
 #define SKY_LOGIC_H
 
-
 #include "common/util.h"
+#include "common/random.h"
 
 namespace Sky {
 

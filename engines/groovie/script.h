@@ -27,6 +27,7 @@
 #define GROOVIE_SCRIPT_H
 
 #include "common/file.h"
+#include "common/random.h"
 #include "common/rect.h"
 
 #include "groovie/font.h"

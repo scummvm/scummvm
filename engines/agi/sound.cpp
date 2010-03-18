@@ -25,6 +25,7 @@
 
 #include "common/md5.h"
 #include "common/config-manager.h"
+#include "common/random.h"
 
 #include "agi/agi.h"
 

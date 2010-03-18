@@ -31,6 +31,8 @@
 
 #include "gui/saveload.h"
 
+#include "common/random.h"
+
 namespace Mohawk {
 
 struct MohawkGameDescription;

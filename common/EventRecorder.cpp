@@ -26,6 +26,7 @@
 #include "common/EventRecorder.h"
 
 #include "common/config-manager.h"
+#include "common/random.h"
 
 DECLARE_SINGLETON(Common::EventRecorder)
 

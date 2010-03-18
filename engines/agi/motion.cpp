@@ -24,6 +24,7 @@
  */
 
 #include "agi/agi.h"
+#include "common/random.h"
 
 namespace Agi {
 

@@ -29,8 +29,9 @@
 #include "sword1/object.h"
 #include "sword1/sworddefs.h"
 #include "common/file.h"
-#include "sound/mixer.h"
 #include "common/util.h"
+#include "common/random.h"
+#include "sound/mixer.h"
 
 namespace Audio {
 	class Mixer;

@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/random.h"
 #include "common/stream.h"
 
 #include "graphics/video/flic_decoder.h"

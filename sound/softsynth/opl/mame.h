@@ -31,6 +31,7 @@
 
 #include "common/scummsys.h"
 #include "common/util.h"
+#include "common/random.h"
 
 #include "sound/fmopl.h"
 

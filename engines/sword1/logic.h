@@ -30,6 +30,7 @@
 #include "sword1/sworddefs.h"
 #include "sword1/objectman.h"
 #include "common/util.h"
+#include "common/random.h"
 #include "sound/mixer.h"
 
 namespace Sword1 {

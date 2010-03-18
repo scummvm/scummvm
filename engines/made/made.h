@@ -28,13 +28,14 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
-#include "common/util.h"
+#include "common/events.h"
 #include "common/file.h"
+#include "common/hash-str.h"
+#include "common/keyboard.h"
+#include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "common/hash-str.h"
-#include "common/events.h"
-#include "common/keyboard.h"
+#include "common/util.h"
 
 #include "graphics/surface.h"
 

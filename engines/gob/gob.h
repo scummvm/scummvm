@@ -26,6 +26,7 @@
 #ifndef GOB_GOB_H
 #define GOB_GOB_H
 
+#include "common/random.h"
 #include "common/system.h"
 #include "common/savefile.h"
 

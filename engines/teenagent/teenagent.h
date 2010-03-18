@@ -31,6 +31,7 @@
 #include "teenagent/inventory.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "common/random.h"
 
 struct ADGameDescription;
 

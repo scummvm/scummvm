@@ -41,6 +41,7 @@
 
 #include "common/events.h"
 #include "common/util.h"
+#include "common/random.h"
 
 #define	MAX_starts	100
 #define	MAX_description	100

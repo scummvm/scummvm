@@ -148,38 +148,6 @@ String tag2string(uint32 tag) {
 #pragma mark -
 
 
-RandomSource::RandomSource() {
-	// Use system time as RNG seed. Normally not a good idea, if you are using
-	// a RNG for security purposes, but good enough for our purposes.
-	assert(g_system);
-	uint32 seed = g_system->getMillis();
-	setSeed(seed);
-}
-
-void RandomSource::setSeed(uint32 seed) {
-	_randSeed = seed;
-}
-
-uint RandomSource::getRandomNumber(uint max) {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
-	return _randSeed % (max + 1);
-}
-
-uint RandomSource::getRandomBit() {
-	_randSeed = 0xDEADBF03 * (_randSeed + 1);
-	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
-	return _randSeed & 1;
-}
-
-uint RandomSource::getRandomNumberRng(uint min, uint max) {
-	return getRandomNumber(max - min) + min;
-}
-
-
-#pragma mark -
-
-
 const LanguageDescription g_languages[] = {
 	{"zh-cn", "Chinese (China)", ZH_CNA},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},

@@ -32,6 +32,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/keyboard.h"
+#include "common/random.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "graphics/surface.h"

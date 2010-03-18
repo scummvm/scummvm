@@ -31,6 +31,7 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/random.h"
 #include "common/util.h"
 
 #include "sound/mididrv.h"

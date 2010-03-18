@@ -31,6 +31,8 @@
 #include "agi/opcodes.h"
 #include "agi/menu.h"
 
+#include "common/random.h"
+
 namespace Agi {
 
 #define p0	(p[0])

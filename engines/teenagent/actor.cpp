@@ -26,6 +26,8 @@
 #include "teenagent/objects.h"
 #include "teenagent/resources.h"
 
+#include "common/random.h"
+
 namespace TeenAgent {
 
 Actor::Actor() : head_index(0), idle_type(0) {}

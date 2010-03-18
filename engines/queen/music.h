@@ -28,6 +28,7 @@
 
 #include "common/util.h"
 #include "common/mutex.h"
+#include "common/random.h"
 #include "sound/mididrv.h"
 
 class MidiParser;

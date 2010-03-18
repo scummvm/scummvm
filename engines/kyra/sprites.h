@@ -27,6 +27,7 @@
 #define KYRA_SPRITES_H
 
 #include "kyra/kyra_lok.h"
+#include "common/random.h"
 
 namespace Kyra {
 

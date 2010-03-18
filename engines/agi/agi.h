@@ -37,6 +37,8 @@
 
 #include "gui/debugger.h"
 
+namespace Common { class RandomSource; }
+
 /**
  * This is the namespace of the AGI engine.
  *

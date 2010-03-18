@@ -28,6 +28,7 @@
 
 #include "common/str.h"
 #include "common/util.h"
+#include "common/random.h"
 #include "queen/defs.h"
 
 class OSystem;

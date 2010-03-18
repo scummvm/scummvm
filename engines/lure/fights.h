@@ -29,8 +29,10 @@
 #include "lure/luredefs.h"
 #include "lure/hotspots.h"
 #include "lure/palette.h"
+
 #include "common/singleton.h"
 #include "common/endian.h"
+#include "common/random.h"
 
 namespace Lure {
 

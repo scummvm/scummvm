@@ -26,9 +26,8 @@
 #ifndef DRACI_H
 #define DRACI_H
 
-#include <math.h>
-
 #include "engines/engine.h"
+#include "common/random.h"
 
 struct ADGameDescription;
 

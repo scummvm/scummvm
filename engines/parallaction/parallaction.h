@@ -30,6 +30,7 @@
 #include "common/stack.h"
 #include "common/array.h"
 #include "common/func.h"
+#include "common/random.h"
 #include "common/savefile.h"
 
 #include "engines/engine.h"

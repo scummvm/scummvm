@@ -8,72 +8,52 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
- *
  */
 
-#ifndef GOB_SOUND_BGATMOSPHERE_H
-#define GOB_SOUND_BGATMOSPHERE_H
-
-#include "sound/mixer.h"
-#include "common/mutex.h"
 #include "common/random.h"
+#include "common/system.h"
 
-#include "gob/sound/soundmixer.h"
 
-namespace Gob {
+namespace Common {
 
-class SoundDesc;
+RandomSource::RandomSource() {
+	// Use system time as RNG seed. Normally not a good idea, if you are using
+	// a RNG for security purposes, but good enough for our purposes.
+	assert(g_system);
+	uint32 seed = g_system->getMillis();
+	setSeed(seed);
+}
 
-class BackgroundAtmosphere : private SoundMixer {
-public:
-	enum PlayMode {
-		kPlayModeLinear,
-		kPlayModeRandom
-	};
+void RandomSource::setSeed(uint32 seed) {
+	_randSeed = seed;
+}
 
-	BackgroundAtmosphere(Audio::Mixer &mixer);
-	~BackgroundAtmosphere();
+uint RandomSource::getRandomNumber(uint max) {
+	_randSeed = 0xDEADBF03 * (_randSeed + 1);
+	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
+	return _randSeed % (max + 1);
+}
 
-	void play();
-	void stop();
+uint RandomSource::getRandomBit() {
+	_randSeed = 0xDEADBF03 * (_randSeed + 1);
+	_randSeed = (_randSeed >> 13) | (_randSeed << 19);
+	return _randSeed & 1;
+}
 
-	void setPlayMode(PlayMode mode);
+uint RandomSource::getRandomNumberRng(uint min, uint max) {
+	return getRandomNumber(max - min) + min;
+}
 
-	void queueSample(SoundDesc &sndDesc);
-	void queueClear();
-
-	void setShadable(bool shadable);
-	void shade();
-	void unshade();
-
-private:
-	PlayMode _playMode;
-
-	Common::Array<SoundDesc *> _queue;
-	int _queuePos;
-	bool _shaded;
-	bool _shadable;
-
-	Common::Mutex _mutex;
-
-	Common::RandomSource _rnd;
-
-	void checkEndSample();
-	void getNextQueuePos();
-};
-
-} // End of namespace Gob
-
-#endif // GOB_SOUND_BGATMOSPHERE_H
+}	// End of namespace Common
