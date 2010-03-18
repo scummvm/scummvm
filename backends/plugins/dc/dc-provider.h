@@ -36,8 +36,8 @@ protected:
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 
-	virtual void addCustomDirectories(Common::StringArray &dirs) const {
-		dirs.push_back("/");
+	virtual void addCustomDirectories(Common::FSList &dirs) const {
+		dirs.push_back(Common::FSNode("/"));
 	}
 };
 
