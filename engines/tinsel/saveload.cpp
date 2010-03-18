@@ -118,7 +118,7 @@ static int RestoreGameNumber = 0;
 static char *SaveSceneName = 0;
 static const char *SaveSceneDesc = 0;
 static int *SaveSceneSsCount = 0;
-static char *SaveSceneSsData = 0;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
+static SAVED_DATA *SaveSceneSsData = 0;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
 
 //------------- SAVE/LOAD SUPPORT METHODS ----------------
 
@@ -435,7 +435,7 @@ static void DoSync(Common::Serializer &s) {
 	s.syncAsSint32LE(*SaveSceneSsCount);
 
 	if (*SaveSceneSsCount != 0) {
-		SAVED_DATA *sdPtr = (SAVED_DATA *)SaveSceneSsData;
+		SAVED_DATA *sdPtr = SaveSceneSsData;
 		for (int i = 0; i < *SaveSceneSsCount; ++i, ++sdPtr)
 			syncSavedData(s, *sdPtr);
 	}
@@ -566,7 +566,7 @@ void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *pSsCount, SAVE
 	SaveSceneName = name;
 	SaveSceneDesc = desc;
 	SaveSceneSsCount = pSsCount;
-	SaveSceneSsData = (char *)pSsData;
+	SaveSceneSsData = pSsData;
 	srsd = sd;
 	SRstate = SR_DOSAVE;
 }
@@ -585,7 +585,7 @@ void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsD
 
 	RestoreGameNumber = num;
 	SaveSceneSsCount = pSsCount;
-	SaveSceneSsData = (char *)pSsData;
+	SaveSceneSsData = pSsData;
 	srsd = sd;
 	SRstate = SR_DORESTORE;
 }
