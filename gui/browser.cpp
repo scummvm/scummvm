@@ -150,7 +150,7 @@ void BrowserDialog::updateListing() {
 		Common::sort(_nodeContent.begin(), _nodeContent.end());
 
 	// Populate the ListWidget
-	Common::StringList list;
+	ListWidget::StringArray list;
 	ListWidget::ColorList colors;
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (i->isDirectory())

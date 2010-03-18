@@ -23,44 +23,27 @@
  *
  */
 
-#ifndef MADE_SOUND_H
-#define MADE_SOUND_H
+#ifndef COMMON_STRING_ARRAY_H
+#define COMMON_STRING_ARRAY_H
 
 #include "common/array.h"
-#include "common/util.h"
-#include "common/file.h"
-#include "common/stream.h"
+#include "common/str.h"
 
-namespace Made {
+namespace Common {
 
-class ManholeEgaSoundDecompressor {
-public:
-	void decompress(byte *source, byte *dest, uint32 size);
-protected:
-	byte *_source, *_dest;
-	uint32 _size;
-	uint16 _bitBuffer;
-	int _bitsLeft;
-	int32 _sample1, _sample2, _sample3, _sample4;
-	bool _writeFlag;
-	bool _eof;
-	int _mode;
-	int getBit();
-	void update0();
-	void update1();
-	void update2();
-	void update3();
-};
+/**
+ * An array of of strings.
+ */
+typedef Array<String> StringArray;
 
-struct SoundEnergyItem {
-	uint32 position;
-	byte energy;
-};
 
-typedef Common::Array<SoundEnergyItem> SoundEnergyArray;
+/**
+ * Alias for type StringArray. For backwards compatibility only.
+ * @deprecated		Use StringArray instead!
+ */
+typedef StringArray StringList;
 
-void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray = NULL);
 
-} // End of namespace Made
+} // End of namespace Common
 
-#endif /* MADE_H */
+#endif

@@ -26,7 +26,6 @@
 #define COMMON_STRING_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
 
 namespace Common {
 
@@ -317,13 +316,6 @@ Common::String normalizePath(const Common::String &path, const char sep);
  * @return true if str matches the pattern, false otherwise.
  */
 bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
-
-
-/**
- * A 'list' of strings. Actually, this is nowadays an array, and hence misnamed.
- */
-typedef Array<String> StringList;
-
 
 
 /**

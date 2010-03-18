@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/str-array.h"
 #include "sword1/sworddefs.h"
 
 class OSystem;
@@ -111,7 +112,7 @@ private:
 	uint8 _numSaves;
 	uint8 _saveScrollPos;
 	uint8 _selectedSavegame;
-	Common::StringList _saveNames;
+	Common::StringArray _saveNames;
 	Common::String _oldName;
 	uint8 _cursorTick;
 	bool _cursorVisible;

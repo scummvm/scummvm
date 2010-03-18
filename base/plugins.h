@@ -26,6 +26,7 @@
 #ifndef BASE_PLUGINS_H
 #define BASE_PLUGINS_H
 
+#include "common/array.h"
 #include "common/error.h"
 #include "common/singleton.h"
 #include "common/util.h"

@@ -152,7 +152,7 @@ ThemeEngine::FontColor ListWidget::getSelectionColor() const {
 		return _listColors[_listIndex[_selectedItem]];
 }
 
-void ListWidget::setList(const StringList &list, const ColorList *colors) {
+void ListWidget::setList(const StringArray &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -306,7 +306,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int newSelectedItem = 0;
 			int bestMatch = 0;
 			bool stop;
-			for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+			for (StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
 				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
@@ -692,7 +692,7 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		_list.clear();
 		_listIndex.clear();
 
-		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+		for (StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
 			tmp = *i;
 			tmp.toLowercase();
 			bool matches = true;

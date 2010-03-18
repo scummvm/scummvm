@@ -27,6 +27,7 @@
 #define MOHAWK_VIDEO_QDM2_H
 
 #include "sound/audiostream.h"
+#include "common/array.h"
 #include "common/stream.h"
 
 namespace Mohawk {

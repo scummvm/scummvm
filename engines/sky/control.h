@@ -29,6 +29,7 @@
 
 #include "common/events.h"
 #include "common/scummsys.h"
+#include "common/str-array.h"
 
 class OSystem;
 namespace Common {
@@ -194,8 +195,8 @@ public:
 	uint16 _selectedGame;
 	uint16 saveGameToFile();
 
-	void loadDescriptions(Common::StringList &list);
-	void saveDescriptions(const Common::StringList &list);
+	void loadDescriptions(Common::StringArray &list);
+	void saveDescriptions(const Common::StringArray &list);
 
 private:
 	int displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
@@ -222,7 +223,7 @@ private:
 	void drawCross(uint16 x, uint16 y);
 
 	uint16 saveRestorePanel(bool allowSave);
-	void setUpGameSprites(const Common::StringList &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
+	void setUpGameSprites(const Common::StringArray &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
 	void showSprites(DataFileHeader **nameSprites, bool allowSave);
 	void handleKeyPress(Common::KeyState kbd, Common::String &textBuf);
 

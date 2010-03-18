@@ -26,6 +26,8 @@
 #ifndef RIVEN_SCRIPTS_H
 #define RIVEN_SCRIPTS_H
 
+#include "common/str-array.h"
+
 class MohawkEngine_Riven;
 
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 argc, uint16 *argv)
@@ -55,7 +57,7 @@ public:
 	~RivenScript();
 
 	void runScript();
-	void dumpScript(Common::StringList varNames, Common::StringList xNames, byte tabs);
+	void dumpScript(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
 	uint16 getScriptType() { return _scriptType; }
 
 	// Read in an array of script objects from a stream
@@ -74,7 +76,7 @@ private:
 	Common::SeekableReadStream *_stream;
 	uint16 _scriptType;
 
-	void dumpCommands(Common::StringList varNames, Common::StringList xNames, byte tabs);
+	void dumpCommands(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
 	void processCommands(bool runCommands);
 
 	static uint32 calculateCommandSize(Common::SeekableReadStream* script);

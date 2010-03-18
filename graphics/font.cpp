@@ -864,10 +864,10 @@ void Font::drawString(Surface *dst, const Common::String &sOld, int x, int y, in
 
 
 struct WordWrapper {
-	Common::StringList &lines;
+	Common::Array<Common::String> &lines;
 	int actualMaxLineWidth;
 
-	WordWrapper(Common::StringList &l) : lines(l), actualMaxLineWidth(0) {
+	WordWrapper(Common::Array<Common::String> &l) : lines(l), actualMaxLineWidth(0) {
 	}
 
 	void add(Common::String &line, int &w) {
@@ -881,7 +881,7 @@ struct WordWrapper {
 	}
 };
 
-int Font::wordWrapText(const Common::String &str, int maxWidth, Common::StringList &lines) const {
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const {
 	WordWrapper wrapper(lines);
 	Common::String line;
 	Common::String tmpStr;

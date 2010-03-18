@@ -1857,7 +1857,7 @@ void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
 
 	// Split the message into separate lines.
-	Common::StringList lines;
+	Common::Array<Common::String> lines;
 	const char *ptr;
 	for (ptr = msg; *ptr; ++ptr) {
 		if (*ptr == '\n') {

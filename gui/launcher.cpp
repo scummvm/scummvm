@@ -119,7 +119,7 @@ protected:
 
 class EditGameDialog : public OptionsDialog {
 	typedef Common::String String;
-	typedef Common::StringList StringList;
+	typedef Common::Array<Common::String> StringArray;
 public:
 	EditGameDialog(const String &domain, const String &desc);
 
@@ -553,7 +553,7 @@ LauncherDialog::LauncherDialog()
 void LauncherDialog::selectTarget(const String &target) {
 	if (!target.empty()) {
 		int itemToSelect = 0;
-		StringList::const_iterator iter;
+		StringArray::const_iterator iter;
 		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
 			if (target == *iter) {
 				_list->setSelected(itemToSelect);
@@ -593,7 +593,7 @@ void LauncherDialog::close() {
 }
 
 void LauncherDialog::updateListing() {
-	Common::StringList l;
+	StringArray l;
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
@@ -722,7 +722,7 @@ void LauncherDialog::addGame() {
 				idx = 0;
 			} else {
 				// Display the candidates to the user and let her/him pick one
-				StringList list;
+				StringArray list;
 				for (idx = 0; idx < (int)candidates.size(); idx++)
 					list.push_back(candidates[idx].description());
 

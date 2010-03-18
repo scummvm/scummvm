@@ -196,7 +196,7 @@ class ArrayTestSuite : public CxxTest::TestSuite
 	void test_array_constructor_str() {
 		const char *array1[] = { "a", "b", "c" };
 
-		Common::StringList array2(array1, 3);
+		Common::Array<Common::String> array2(array1, 3);
 
 		TS_ASSERT_EQUALS(array2[0], "a");
 		TS_ASSERT_EQUALS(array2[1], "b");

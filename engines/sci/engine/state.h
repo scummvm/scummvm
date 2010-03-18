@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/serializer.h"
+#include "common/str-array.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -54,8 +55,8 @@ class SoundCommandParser;
 class DirSeeker {
 protected:
 	reg_t _outbuffer;
-	Common::StringList _savefiles;
-	Common::StringList::const_iterator _iter;
+	Common::StringArray _savefiles;
+	Common::StringArray::const_iterator _iter;
 
 public:
 	DirSeeker() {

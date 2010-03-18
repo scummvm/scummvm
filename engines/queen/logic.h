@@ -26,7 +26,7 @@
 #ifndef QUEEN_LOGIC_H
 #define QUEEN_LOGIC_H
 
-#include "common/str.h"
+#include "common/str-array.h"
 #include "common/util.h"
 #include "queen/structs.h"
 
@@ -337,7 +337,7 @@ protected:
 	//! actor initial position in room is _walkOffData[_entryObj]
 	int16 _entryObj;
 
-	Common::StringList _jasStringList;
+	Common::StringArray _jasStringList;
 	int _jasStringOffset[JSO_COUNT];
 
 	uint16 _numDescriptions;

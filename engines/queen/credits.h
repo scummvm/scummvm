@@ -26,7 +26,7 @@
 #ifndef QUEEN_CREDITS_H
 #define QUEEN_CREDITS_H
 
-#include "common/util.h"
+#include "common/str-array.h"
 #include "queen/defs.h"
 
 namespace Queen {
@@ -82,7 +82,7 @@ private:
 	uint _lineNum;
 
 	//! contains the credits description
-	Common::StringList _credits;
+	Common::StringArray _credits;
 
 	QueenEngine *_vm;
 };

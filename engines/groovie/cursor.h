@@ -27,6 +27,7 @@
 #define GROOVIE_CURSOR_H
 
 #include "common/system.h"
+#include "common/array.h"
 #include "common/file.h"
 
 namespace Groovie {

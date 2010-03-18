@@ -55,7 +55,7 @@ KeysDialog::KeysDialog(const Common::String &title)
 	_keyMapping->setFlags(WIDGET_CLEARBG);
 
 	// Get actions names
-	Common::StringList l;
+	ListWidget::StringArray l;
 
 	for (int i = 0; i < Actions::Instance()->size(); i++)
 		l.push_back(Actions::Instance()->actionName((ActionType)i));

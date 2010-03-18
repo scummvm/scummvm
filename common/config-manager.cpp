@@ -217,7 +217,7 @@ void ConfigManager::flushToDisk() {
 	// First write the domains in _domainSaveOrder, in that order.
 	// Note: It's possible for _domainSaveOrder to list domains which
 	// are not present anymore.
-	StringList::const_iterator i;
+	Array<String>::const_iterator i;
 	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
 		if (kApplicationDomain == *i) {
 			writeDomain(*stream, *i, _appDomain);

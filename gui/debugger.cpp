@@ -427,7 +427,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 	DebugPrintf("Commands are:\n");
 
 	// Obtain a list of sorted command names
-	Common::StringList cmds;
+	Common::Array<Common::String> cmds;
 	CommandsMap::const_iterator iter, e = _cmds.end();
 	for (iter = _cmds.begin(); iter != e; ++iter) {
 		cmds.push_back(iter->_key);

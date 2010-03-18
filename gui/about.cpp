@@ -164,10 +164,10 @@ void AboutDialog::addLine(const char *str) {
 		Common::String format(str, 2);
 		str += 2;
 
-		Common::StringList wrappedLines;
+		StringArray wrappedLines;
 		g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
 
-		for (Common::StringList::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
+		for (StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
 		}
 	}

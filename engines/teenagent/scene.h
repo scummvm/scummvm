@@ -27,11 +27,13 @@
 
 #include "teenagent/surface.h"
 #include "teenagent/actor.h"
-#include "common/system.h"
-#include "common/list.h"
 #include "teenagent/objects.h"
 #include "teenagent/surface.h"
 #include "teenagent/surface_list.h"
+
+#include "common/system.h"
+#include "common/array.h"
+#include "common/list.h"
 
 namespace TeenAgent {
 

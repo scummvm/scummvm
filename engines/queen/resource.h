@@ -27,6 +27,7 @@
 #define QUEEN_RESOURCE_H
 
 #include "common/file.h"
+#include "common/str-array.h"
 #include "common/util.h"
 #include "queen/defs.h"
 
@@ -74,7 +75,7 @@ public:
 	uint8 *loadFile(const char *filename, uint32 skipBytes = 0, uint32 *size = NULL);
 
 	//! loads a text file
-	void loadTextFile(const char *filename, Common::StringList &stringList);
+	void loadTextFile(const char *filename, Common::StringArray &stringList);
 
 	//! returns true if the file is present in the resource
 	bool fileExists(const char *filename) const { return resourceEntry(filename) != NULL; }

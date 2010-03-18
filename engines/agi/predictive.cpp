@@ -67,7 +67,7 @@ void bringWordtoTop(char *str, int wordnum) {
 	// This function reorders the words on the given pred.dic line
 	// by moving the word at position 'wordnum' to the front (that is, right behind
 	// right behind the numerical code word at the start of the line).
-	Common::StringList words;
+	Common::Array<Common::String> words;
 	char buf[MAXLINELEN];
 
 	if (!str)

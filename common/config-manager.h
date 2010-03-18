@@ -159,7 +159,7 @@ private:
 	Domain			_keymapperDomain;
 #endif
 
-	StringList		_domainSaveOrder;
+	Array<String>	_domainSaveOrder;
 
 	String			_activeDomainName;
 	Domain *		_activeDomain;

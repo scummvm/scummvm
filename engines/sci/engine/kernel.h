@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/debug.h"
 #include "common/rect.h"
+#include "common/str-array.h"
 
 #include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
 #include "sci/engine/vm_types.h"	// for reg_t
@@ -175,7 +176,7 @@ private:
 	 * Check for any hardcoded selector table we might have that can be used
 	 * if a game is missing the selector names.
 	 */
-	Common::StringList checkStaticSelectorNames();
+	Common::StringArray checkStaticSelectorNames();
 
 	/**
 	 * Maps special selectors
@@ -191,8 +192,8 @@ private:
 	uint32 features;
 
 	// Kernel-related lists
-	Common::StringList _selectorNames;
-	Common::StringList _kernelNames;
+	Common::StringArray _selectorNames;
+	Common::StringArray _kernelNames;
 };
 
 /******************** Text functionality ********************/

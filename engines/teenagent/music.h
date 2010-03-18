@@ -27,6 +27,7 @@
 #define TEEN_MUSIC_H
 
 #include "sound/mods/paula.h"
+#include "common/array.h"
 
 namespace TeenAgent {
 

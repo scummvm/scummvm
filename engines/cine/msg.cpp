@@ -31,6 +31,8 @@
 
 namespace Cine {
 
+// FIXME: Global C++ objects affect portability negatively.
+// Turn this into a class member instead.
 Common::StringList messageTable;
 
 void loadMsg(char *pMsgName) {

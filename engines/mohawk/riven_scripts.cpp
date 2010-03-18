@@ -172,7 +172,7 @@ static void printTabs(byte tabs) {
 		printf ("\t");
 }
 
-void RivenScript::dumpScript(Common::StringList varNames, Common::StringList xNames, byte tabs) {
+void RivenScript::dumpScript(Common::StringArray varNames, Common::StringArray xNames, byte tabs) {
 	if (_stream->pos() != 0)
 		_stream->seek(0);
 
@@ -180,7 +180,7 @@ void RivenScript::dumpScript(Common::StringList varNames, Common::StringList xNa
 	dumpCommands(varNames, xNames, tabs + 1);
 }
 
-void RivenScript::dumpCommands(Common::StringList varNames, Common::StringList xNames, byte tabs) {
+void RivenScript::dumpCommands(Common::StringArray varNames, Common::StringArray xNames, byte tabs) {
 	uint16 commandCount = _stream->readUint16BE();
 
 	for (uint16 i = 0; i < commandCount; i++) {

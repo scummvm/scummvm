@@ -53,7 +53,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	Common::StringList lines;
+	Common::Array<Common::String> lines;
 	int lineCount, okButtonPos, cancelButtonPos;
 	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
 

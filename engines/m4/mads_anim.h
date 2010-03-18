@@ -29,6 +29,8 @@
 #include "m4/viewmgr.h"
 #include "m4/compression.h"
 
+#include "common/str-array.h"
+
 namespace M4 {
 
 enum SceneTransition {
@@ -97,7 +99,7 @@ public:
 	uint8 flags;
 	uint16 roomNumber;
 	uint16 frameTicks;
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	Common::String lbmFilename;
 	Common::String spritesFilename;
 	Common::String soundName;
