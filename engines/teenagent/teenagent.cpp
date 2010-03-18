@@ -293,7 +293,7 @@ bool TeenAgentEngine::showLogo() {
 	}
 	_system->setPalette(palette, 0, 0x100);
 
-	uint n = logo.files_count();
+	uint n = logo.fileCount();
 	for(uint f = 0; f < 4; ++f)
 		for(uint i = 2; i <= n; ++i) {
 			{

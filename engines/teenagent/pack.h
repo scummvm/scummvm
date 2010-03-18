@@ -33,15 +33,15 @@ namespace TeenAgent {
 
 class Pack {
 protected:
-	uint32 _files_count;
+	uint32 _fileCount;
 public:
-	Pack(): _files_count(0) {}
+	Pack(): _fileCount(0) {}
 	virtual ~Pack() {};
 	virtual bool open(const Common::String &filename) = 0;
 	virtual void close() = 0;
 
-	virtual uint32 files_count() const { return _files_count; }
-	virtual uint32 get_size(uint32 id) const = 0;
+	virtual uint32 fileCount() const { return _fileCount; }
+	virtual uint32 getSize(uint32 id) const = 0;
 	virtual uint32 read(uint32 id, byte *dst, uint32 size) const = 0;
 	virtual Common::SeekableReadStream *getStream(uint32 id) const = 0;
 };
@@ -57,7 +57,7 @@ public:
 	bool open(const Common::String &filename);
 	void close();
 
-	uint32 get_size(uint32 id) const;
+	uint32 getSize(uint32 id) const;
 	uint32 read(uint32 id, byte *dst, uint32 size) const;
 	Common::SeekableReadStream *getStream(uint32 id) const;
 };
@@ -82,7 +82,7 @@ public:
 	bool open(const Common::String &filename);
 	void close();
 
-	uint32 get_size(uint32 id) const;
+	uint32 getSize(uint32 id) const;
 	uint32 read(uint32 id, byte *dst, uint32 size) const;
 	Common::SeekableReadStream *getStream(uint32 id) const;
 };

@@ -44,10 +44,10 @@ bool FilePack::open(const Common::String &filename) {
 	if (!file.open(filename))
 		return false;
 
-	_files_count = file.readUint32LE();
-	debug(0, "opened %s, found %u entries", filename.c_str(), _files_count);
-	offsets = new uint32[_files_count + 1];
-	for (uint32 i = 0; i <= _files_count; ++i) {
+	_fileCount = file.readUint32LE();
+	debug(0, "opened %s, found %u entries", filename.c_str(), _fileCount);
+	offsets = new uint32[_fileCount + 1];
+	for (uint32 i = 0; i <= _fileCount; ++i) {
 		offsets[i] = file.readUint32LE();
 		//debug(0, "%d: %06x", i, offsets[i]);
 	}
@@ -58,14 +58,14 @@ bool FilePack::open(const Common::String &filename) {
 	return true;
 }
 
-uint32 FilePack::get_size(uint32 id) const {
-	if (id < 1 || id > _files_count)
+uint32 FilePack::getSize(uint32 id) const {
+	if (id < 1 || id > _fileCount)
 		return 0;
 	return offsets[id] - offsets[id - 1];
 }
 
 uint32 FilePack::read(uint32 id, byte *dst, uint32 size) const {
-	if (id < 1 || id > _files_count)
+	if (id < 1 || id > _fileCount)
 		return 0;
 
 	file.seek(offsets[id - 1]);
@@ -76,7 +76,7 @@ uint32 FilePack::read(uint32 id, byte *dst, uint32 size) const {
 }
 
 Common::SeekableReadStream *FilePack::getStream(uint32 id) const {
-	if (id < 1 || id > _files_count)
+	if (id < 1 || id > _fileCount)
 		return 0;
 	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
 	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id], DisposeAfterUse::NO);
@@ -112,7 +112,7 @@ bool MemoryPack::open(const Common::String &filename) {
 	return true;
 }
 
-uint32 MemoryPack::get_size(uint32 id) const {
+uint32 MemoryPack::getSize(uint32 id) const {
 	--id;
 	return id < chunks.size()? chunks[id].size: 0;
 }

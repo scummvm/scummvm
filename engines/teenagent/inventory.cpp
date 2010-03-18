@@ -44,7 +44,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 	debug(0, "loading inventory background...");
 	background.load(s, Surface::kTypeOns);
 
-	uint32 items_size = varia.get_size(4);
+	uint32 items_size = varia.getSize(4);
 	if (items_size == 0)
 		error("invalid inventory items size");
 	items = new byte[items_size];

@@ -101,7 +101,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 }
 
 void Resources::loadOff(Graphics::Surface &surface, byte *palette, int id) {
-	uint32 size = off.get_size(id);
+	uint32 size = off.getSize(id);
 	if (size == 0) {
 		error("invalid background %d", id);
 		return;

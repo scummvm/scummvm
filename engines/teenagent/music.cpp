@@ -62,7 +62,7 @@ bool MusicPlayer::load(int id) {
 		// Load the sample data
 		byte sampleResource = ((sample >> 4) & 0x0F) * 10 + (sample & 0x0F);
 		debug(0, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
-		uint32 sampleSize = res->sam_mmm.get_size(sampleResource);
+		uint32 sampleSize = res->sam_mmm.getSize(sampleResource);
 		Common::SeekableReadStream *in = res->sam_mmm.getStream(sampleResource);
 
 		if (in == 0) {
