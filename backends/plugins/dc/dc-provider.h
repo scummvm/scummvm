@@ -36,9 +36,7 @@ protected:
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 
-	virtual void addCustomDirectories(Common::FSList &dirs) const {
-		dirs.push_back(Common::FSNode("/"));
-	}
+	void addCustomDirectories(Common::FSList &dirs) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(__DC__)

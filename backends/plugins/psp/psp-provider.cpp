@@ -105,5 +105,8 @@ bool PSPPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
+void PSPPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
+	dirs.push_back(Common::FSNode("/"));
+}
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
