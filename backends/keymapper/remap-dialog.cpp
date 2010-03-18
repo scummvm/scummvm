@@ -211,7 +211,7 @@ void RemapDialog::startRemapping(uint i) {
 	if (_topAction + i >= _currentActions.size())
 		return;
 
-	_remapTimeout = getMillis() + kRemapTimeoutDelay;
+	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	_activeRemapAction = _currentActions[_topAction + i].action;
 	_keymapWidgets[i].keyButton->setLabel("...");
 	_keymapWidgets[i].keyButton->draw();
@@ -261,7 +261,7 @@ void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void RemapDialog::handleTickle() {
-	if (_activeRemapAction && getMillis() > _remapTimeout)
+	if (_activeRemapAction && g_system->getMillis() > _remapTimeout)
 		stopRemapping();
 	Dialog::handleTickle();
 }
