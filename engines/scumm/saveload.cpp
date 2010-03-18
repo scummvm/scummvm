@@ -582,7 +582,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 
 	char slot[3];
 	int slotNum;
-	Common::StringList files;
+	Common::StringArray files;
 
 	Common::String prefix = makeSavegameName(99, false);
 	prefix.setChar('*', prefix.size()-2);
@@ -590,7 +590,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
 	files = _saveFileMan->listSavefiles(prefix);
 
-	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
+	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
 		slot[0] = file->c_str()[file->size()-2];
 		slot[1] = file->c_str()[file->size()-1];

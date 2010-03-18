@@ -228,11 +228,11 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	char saveName[40];
 
-	Common::StringList filenames = saveFileMan->listSavefiles("sword1.???");
+	Common::StringArray filenames = saveFileMan->listSavefiles("sword1.???");
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	int slotNum = 0;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
 

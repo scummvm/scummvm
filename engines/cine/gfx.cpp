@@ -833,7 +833,7 @@ void FWRenderer::clearMenuStack() {
 		delete menu;
 }
 
-SelectionMenu::SelectionMenu(Common::Point p, int width, Common::StringList elements)
+SelectionMenu::SelectionMenu(Common::Point p, int width, Common::StringArray elements)
 	: Menu(kSelectionMenu), _pos(p), _width(width), _elements(elements), _selection(-1) {
 }
 

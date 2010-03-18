@@ -370,10 +370,10 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 
 void GUI::updateSaveList(bool excludeQuickSaves) {
 	Common::String pattern = _vm->_targetName + ".???";
-	Common::StringList saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
+	Common::StringArray saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
 	_saveSlots.clear();
 
-	for (Common::StringList::const_iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
+	for (Common::StringArray::const_iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
 		char s1 = 0, s2 = 0, s3 = 0;
 		s1 = (*i)[i->size()-3];
 		s2 = (*i)[i->size()-2];

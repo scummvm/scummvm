@@ -81,7 +81,6 @@ class Puzzle;
 class Resource;
 
 class ResourceContext;
-struct StringList;
 
 using Common::MemoryReadStream;
 using Common::MemoryReadStreamEndian;
@@ -390,7 +389,7 @@ struct StringsTable {
 	const char *getString(int index) const {
 		if ((stringsCount <= index) || (index < 0)) {
 			// This occurs at the end of Ted's chapter, right after the ending cutscene
-			warning("StringList::getString wrong index 0x%X (%d)", index, stringsCount);
+			warning("StringsTable::getString wrong index 0x%X (%d)", index, stringsCount);
 			return "";
 		}
 		return strings[index];

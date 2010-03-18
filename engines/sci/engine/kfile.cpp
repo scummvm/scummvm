@@ -257,9 +257,9 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	// Load all saves
-	Common::StringList saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
+	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
 
-	for (Common::StringList::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
+	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
 		Common::String filename = *iter;
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {

@@ -98,7 +98,7 @@ Common::Error MohawkEngine_Riven::run() {
 	// Load game from launcher/command line if requested
 	if (ConfMan.hasKey("save_slot") && !(getFeatures() & GF_DEMO)) {
 		uint32 gameToLoad = ConfMan.getInt("save_slot");
-		Common::StringList savedGamesList = _saveLoad->generateSaveGameList();
+		Common::StringArray savedGamesList = _saveLoad->generateSaveGameList();
 		if (gameToLoad > savedGamesList.size())
 			error ("Could not find saved game");
 		_saveLoad->loadGame(savedGamesList[gameToLoad]);
@@ -569,7 +569,7 @@ Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const char *desc) {
-	Common::StringList saveList = _saveLoad->generateSaveGameList();
+	Common::StringArray saveList = _saveLoad->generateSaveGameList();
 
 	if ((uint)slot < saveList.size())
 		_saveLoad->deleteSave(saveList[slot]);

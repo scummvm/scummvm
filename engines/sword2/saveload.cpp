@@ -389,7 +389,7 @@ uint32 Sword2Engine::getSaveDescription(uint16 slotNo, byte *description) {
 
 bool Sword2Engine::saveExists() {
 	Common::String pattern = _targetName + ".???";
-	Common::StringList filenames = _saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
 
 	return !filenames.empty();
 }

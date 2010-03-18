@@ -1194,16 +1194,16 @@ bool IIgsSoundMgr::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInf
  */
 struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Common::FSNode&, bool> {
 // FIXME: This should be replaced; use SearchMan instead
-	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
+	fsnodeNameEqualsIgnoreCase(const Common::StringArray &str) : _str(str) {}
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
 	bool operator()(const Common::FSNode &param) const {
-		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); ++iter)
+		for (Common::StringArray::const_iterator iter = _str.begin(); iter != _str.end(); ++iter)
 			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
 		return false;
 	}
 private:
-	Common::StringList _str;
+	Common::StringArray _str;
 };
 
 bool SoundMgr::loadInstruments() {
@@ -1229,12 +1229,12 @@ bool SoundMgr::loadInstruments() {
 	}
 
 	// Populate executable filenames list (Long filename and short filename) for searching
-	Common::StringList exeNames;
+	Common::StringArray exeNames;
 	exeNames.push_back(Common::String(exeInfo->exePrefix) + ".SYS16");
 	exeNames.push_back(Common::String(exeInfo->exePrefix) + ".SYS");
 
 	// Populate wave filenames list (Long filename and short filename) for searching
-	Common::StringList waveNames;
+	Common::StringArray waveNames;
 	waveNames.push_back("SIERRASTANDARD");
 	waveNames.push_back("SIERRAST");
 

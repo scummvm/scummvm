@@ -1005,7 +1005,7 @@ bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	SaveStateList saveList;
 
 	// Loading games is only supported in Myst/Riven currently.
@@ -1027,10 +1027,10 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
 	// Removing saved games is only supported in Myst/Riven currently.
 	if (strstr(target, "myst")) {
-		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles("*.mys");
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.mys");
 		g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
 	} else if (strstr(target, "riven")) {
-		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.rvn");
 		g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
 	}
 }

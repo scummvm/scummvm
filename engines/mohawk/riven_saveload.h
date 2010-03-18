@@ -45,7 +45,7 @@ public:
 	RivenSaveLoad(MohawkEngine_Riven*, Common::SaveFileManager*);
 	~RivenSaveLoad();
 
-	Common::StringList generateSaveGameList();
+	Common::StringArray generateSaveGameList();
 	bool loadGame(Common::String);
 	bool saveGame(Common::String);
 	void deleteSave(Common::String);

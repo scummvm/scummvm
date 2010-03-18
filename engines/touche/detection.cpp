@@ -180,11 +180,11 @@ bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 
 SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = Touche::generateGameStateFileName(target, 0, true);
-	Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 	bool slotsTable[Touche::kMaxSaveStates];
 	memset(slotsTable, 0, sizeof(slotsTable));
 	SaveStateList saveList;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		int slot = Touche::getGameStateFileSlot(file->c_str());
 		if (slot >= 0 && slot < Touche::kMaxSaveStates) {
 			slotsTable[slot] = true;

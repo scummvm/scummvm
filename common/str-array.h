@@ -37,13 +37,6 @@ namespace Common {
 typedef Array<String> StringArray;
 
 
-/**
- * Alias for type StringArray. For backwards compatibility only.
- * @deprecated		Use StringArray instead!
- */
-typedef StringArray StringList;
-
-
 } // End of namespace Common
 
 #endif

@@ -684,12 +684,12 @@ extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &t
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern = pattern + ".???";
-	Common::StringList files = g_system->getSavefileManager()->listSavefiles(pattern);
+	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
 	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	int slotNum = 0;
-	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
+	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
 

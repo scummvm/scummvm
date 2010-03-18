@@ -116,7 +116,7 @@ void LocationName::bind(const char *s) {
 	_hasSlide = false;
 	_hasCharacter = false;
 
-	Common::StringList list;
+	Common::StringArray list;
 	char *tok = strtok(_buf, ".");
 	while (tok) {
 		list.push_back(tok);

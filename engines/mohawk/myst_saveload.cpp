@@ -39,7 +39,7 @@ MystSaveLoad::~MystSaveLoad() {
 	delete _v;
 }
 
-Common::StringList MystSaveLoad::generateSaveGameList() {
+Common::StringArray MystSaveLoad::generateSaveGameList() {
 	return _saveFileMan->listSavefiles("*.mys");
 }
 

@@ -121,11 +121,11 @@ public:
 		Common::String pattern = target;
 		pattern += ".*";
 
-		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		Common::sort(filenames.begin(), filenames.end());
 
 		SaveStateList saveList;
-		for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {

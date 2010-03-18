@@ -130,7 +130,7 @@ public:
 
 	Common::RandomSource _rnd;
 
-	Common::StringList _volumeResourceFiles;
+	Common::StringArray _volumeResourceFiles;
 	StringPtrHashMap _volumeEntriesMap;
 	TextHandler _textHandler;
 

@@ -38,7 +38,7 @@ RivenSaveLoad::~RivenSaveLoad() {
 	delete _loadFile;
 }
 
-Common::StringList RivenSaveLoad::generateSaveGameList() {
+Common::StringArray RivenSaveLoad::generateSaveGameList() {
 	return _saveFileMan->listSavefiles("*.rvn");
 }
 

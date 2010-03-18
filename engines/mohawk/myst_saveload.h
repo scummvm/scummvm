@@ -194,7 +194,7 @@ public:
 	MystSaveLoad(MohawkEngine_Myst*, Common::SaveFileManager*);
 	~MystSaveLoad();
 
-	Common::StringList generateSaveGameList();
+	Common::StringArray generateSaveGameList();
 	bool loadGame(Common::String);
 	bool saveGame(Common::String);
 	void deleteSave(Common::String);

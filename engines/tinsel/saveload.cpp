@@ -330,11 +330,11 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 	int i;
 
 	const Common::String pattern = target +  ".???";
-	Common::StringList files = saveFileMan->listSavefiles(pattern);
+	Common::StringArray files = saveFileMan->listSavefiles(pattern);
 
 	numSfiles = 0;
 
-	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
+	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
 		if (numSfiles >= MAX_SAVED_FILES)
 			break;
 

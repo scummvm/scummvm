@@ -110,8 +110,8 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
-Common::StringList Kernel::checkStaticSelectorNames() {
-	Common::StringList names;
+Common::StringArray Kernel::checkStaticSelectorNames() {
+	Common::StringArray names;
 	const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
 
 #ifdef ENABLE_SCI32

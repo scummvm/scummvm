@@ -178,7 +178,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 
 	// Load the descriptions
-	Common::StringList savenames;
+	Common::StringArray savenames;
 	savenames.resize(MAX_SAVE_GAMES+1);
 
 	Common::InSaveFile *inf;
@@ -196,7 +196,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	}
 
 	// Find all saves
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles("SKY-VM.???");
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
@@ -206,7 +206,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*"));
 
 	// Prepare the list of savestates by looping over all matching savefiles
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();
@@ -235,7 +235,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	saveFileMan->removeSavefile(fName);
 
 	// Load current save game descriptions
-	Common::StringList savenames;
+	Common::StringArray savenames;
 	savenames.resize(MAX_SAVE_GAMES+1);
 	Common::InSaveFile *inf;
 	inf = saveFileMan->openForLoading("SKY-VM.SAV");
@@ -294,7 +294,7 @@ Common::Error SkyEngine::saveGameState(int slot, const char *desc) {
 		return Common::kWritePermissionDenied;
 
 	// Load current save game descriptions
-	Common::StringList saveGameTexts;
+	Common::StringArray saveGameTexts;
 	saveGameTexts.resize(MAX_SAVE_GAMES+1);
 	_skyControl->loadDescriptions(saveGameTexts);
 

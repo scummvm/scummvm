@@ -791,14 +791,14 @@ bool Control::restoreFromFile() {
 void Control::readSavegameDescriptions() {
 	char saveName[40];
 	Common::String pattern = "sword1.???";
-	Common::StringList filenames = _saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	_saveNames.clear();
 
 	int num = 0;
 	int slotNum = 0;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
@@ -847,7 +847,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 
 bool Control::savegamesExist() {
 	Common::String pattern = "sword1.???";
-	Common::StringList saveNames = _saveFileMan->listSavefiles(pattern);
+	Common::StringArray saveNames = _saveFileMan->listSavefiles(pattern);
 	return saveNames.size() > 0;
 }
 

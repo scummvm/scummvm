@@ -502,7 +502,7 @@ void processInventory(int16 x, int16 y) {
 	if (!listSize)
 		return;
 
-	Common::StringList list;
+	Common::StringArray list;
 	for (int i = 0; i < listSize; ++i)
 		list.push_back(objectListCommand[i]);
 	SelectionMenu *menu = new SelectionMenu(Common::Point(x, y), menuWidth, list);
@@ -706,7 +706,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 		Y = 199 - paramY;
 	}
 
-	Common::StringList list;
+	Common::StringArray list;
 	for (uint16 i = 0; i < height; ++i)
 		list.push_back(commandList[i]);
 	menu = new SelectionMenu(Common::Point(X, Y), width, list);

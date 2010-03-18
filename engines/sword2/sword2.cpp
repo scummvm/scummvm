@@ -184,7 +184,7 @@ GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 
 SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	char saveDesc[SAVE_DESCRIPTION_LEN];
 	Common::String pattern = target;
 	pattern += ".???";
@@ -193,7 +193,7 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 

@@ -445,7 +445,7 @@ void Kernel::loadSelectorNames() {
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
 		// Some demos do not have a selector table
-		Common::StringList staticSelectorTable = checkStaticSelectorNames();
+		Common::StringArray staticSelectorTable = checkStaticSelectorNames();
 
 		if (staticSelectorTable.empty())
 			error("Kernel: Could not retrieve selector names");
@@ -722,7 +722,7 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 }
 
 void Kernel::setDefaultKernelNames(Common::String gameId) {
-	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
+	_kernelNames = Common::StringArray(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
 	if (_selectorCache.cantBeHere != -1)

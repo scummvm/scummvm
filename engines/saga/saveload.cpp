@@ -118,7 +118,7 @@ void SagaEngine::fillSaveList() {
 
 	int i;
 	Common::InSaveFile *in;
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	char slot[3];
 	int slotNumber;
 	char *name;
@@ -136,7 +136,7 @@ void SagaEngine::fillSaveList() {
 
 	_saveFilesCount = 0;
 
-	for (Common::StringList::iterator file = filenames.begin(); file != filenames.end(); ++file){
+	for (Common::StringArray::iterator file = filenames.begin(); file != filenames.end(); ++file){
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
 		slot[0] = file->c_str()[file->size()-2];
 		slot[1] = file->c_str()[file->size()-1];

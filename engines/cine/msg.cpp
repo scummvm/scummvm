@@ -33,7 +33,7 @@ namespace Cine {
 
 // FIXME: Global C++ objects affect portability negatively.
 // Turn this into a class member instead.
-Common::StringList messageTable;
+Common::StringArray messageTable;
 
 void loadMsg(char *pMsgName) {
 	uint32 sourceSize;

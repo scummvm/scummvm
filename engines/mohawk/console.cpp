@@ -510,7 +510,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 	// Load in Variable Names
 	Common::SeekableReadStream *nameStream = _vm->getRawData(ID_NAME, VariableNames);
-	Common::StringList varNames;
+	Common::StringArray varNames;
 
 	uint16 namesCount = nameStream->readUint16BE();
 	uint16 *stringOffsets = new uint16[namesCount];
@@ -531,7 +531,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 	// Load in External Command Names
 	nameStream = _vm->getRawData(ID_NAME, ExternalCommandNames);
-	Common::StringList xNames;
+	Common::StringArray xNames;
 
 	namesCount = nameStream->readUint16BE();
 	stringOffsets = new uint16[namesCount];

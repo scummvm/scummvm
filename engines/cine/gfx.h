@@ -84,7 +84,7 @@ private:
 
 class SelectionMenu : public Menu {
 public:
-	SelectionMenu(Common::Point p, int width, Common::StringList elements);
+	SelectionMenu(Common::Point p, int width, Common::StringArray elements);
 
 	int getElementCount() const { return _elements.size(); }
 
@@ -94,7 +94,7 @@ public:
 private:
 	const Common::Point _pos;
 	const int _width;
-	const Common::StringList _elements;
+	const Common::StringArray _elements;
 
 	int _selection;
 };

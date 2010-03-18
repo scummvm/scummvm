@@ -66,7 +66,7 @@ private:
 	bool _preLoad;
 	Debugger *_debugger;
 	PCSound *_sound;
-	Common::StringList _langStrings;
+	Common::StringArray _langStrings;
 	CursorType _savedCursor;
 	uint32 lastTick, lastTickDebug;
 	int _gameSpeed;

@@ -173,11 +173,11 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
-		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		bool slotsTable[Tucker::kLastSaveSlot + 1];
 		memset(slotsTable, 0, sizeof(slotsTable));
 		SaveStateList saveList;
-		for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot <= Tucker::kLastSaveSlot) {

@@ -838,7 +838,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	}
 	bool withAutoSave = (lookListLen == 7);
 
-	Common::StringList saveGameTexts;
+	Common::StringArray saveGameTexts;
 	DataFileHeader *textSprites[MAX_ON_SCREEN + 1];
 	for (cnt = 0; cnt < MAX_ON_SCREEN + 1; cnt++)
 		textSprites[cnt] = NULL;
@@ -982,7 +982,7 @@ void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 	}
 }
 
-void Control::setUpGameSprites(const Common::StringList &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
+void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
 	char cursorChar[2] = "-";
 	DisplayedText textSpr;
 	if (!nameSprites[MAX_ON_SCREEN]) {
@@ -1027,7 +1027,7 @@ void Control::showSprites(DataFileHeader **nameSprites, bool allowSave) {
 	delete drawResource;
 }
 
-void Control::loadDescriptions(Common::StringList &savenames) {
+void Control::loadDescriptions(Common::StringArray &savenames) {
 	savenames.resize(MAX_SAVE_GAMES);
 
 	Common::InSaveFile *inf;
@@ -1072,7 +1072,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	return result;
 }
 
-void Control::saveDescriptions(const Common::StringList &list) {
+void Control::saveDescriptions(const Common::StringArray &list) {
 	Common::OutSaveFile *outf;
 
 	outf = _saveFileMan->openForSaving("SKY-VM.SAV");

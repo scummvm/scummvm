@@ -125,7 +125,7 @@ uint8 *Resource::loadFile(const char *filename, uint32 skipBytes, uint32 *size) 
 	return dstBuf;
 }
 
-void Resource::loadTextFile(const char *filename, Common::StringList &stringList) {
+void Resource::loadTextFile(const char *filename, Common::StringArray &stringList) {
 	debug(7, "Resource::loadTextFile('%s')", filename);
 	ResourceEntry *re = resourceEntry(filename);
 	assert(re != NULL);

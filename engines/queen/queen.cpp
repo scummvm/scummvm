@@ -141,7 +141,7 @@ GameList QueenMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	char saveDesc[32];
 	Common::String pattern("queen.s??");
 
@@ -149,7 +149,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
@@ -432,8 +432,8 @@ int QueenEngine::getGameStateSlot(const char *filename) const {
 void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	char prefix[20];
 	makeGameStateName(SLOT_LISTPREFIX, prefix);
-	Common::StringList filenames = _saveFileMan->listSavefiles(prefix);
-	for (Common::StringList::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
+	Common::StringArray filenames = _saveFileMan->listSavefiles(prefix);
+	for (Common::StringArray::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
 		int i = getGameStateSlot(it->c_str());
 		if (i >= 0 && i < SAVESTATE_MAX_NUM) {
 			GameStateHeader header;

@@ -50,13 +50,13 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 
 	// Get the list of savefiles
 	Common::String pattern = target + ".00?";
-	Common::StringList savefiles = g_system->getSavefileManager()->listSavefiles(pattern);
+	Common::StringArray savefiles = g_system->getSavefileManager()->listSavefiles(pattern);
 
 	// Sort the list of filenames
 	sort(savefiles.begin(), savefiles.end());
 
 	// Fill the information for the existing savegames
-	Common::StringList::iterator it = savefiles.begin();
+	Common::StringArray::iterator it = savefiles.begin();
 	while (it != savefiles.end()) {
 		int slot = it->lastChar() - '0';
 		SaveStateDescriptor descriptor;

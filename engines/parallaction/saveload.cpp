@@ -193,9 +193,9 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 
 
 
-int SaveLoad::buildSaveFileList(Common::StringList& l) {
+int SaveLoad::buildSaveFileList(Common::StringArray& l) {
 	Common::String pattern = _saveFilePrefix + ".???";
-	Common::StringList filenames = _saveFileMan->listSavefiles(pattern);
+	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
 
 	Common::String s;
 
@@ -219,7 +219,7 @@ int SaveLoad::buildSaveFileList(Common::StringList& l) {
 
 
 int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
-	Common::StringList list;
+	Common::StringArray list;
 	buildSaveFileList(list);
 
 	GUI::SaveLoadChooser slc(caption, button);
@@ -332,7 +332,7 @@ static bool askRenameOldSavefiles() {
 }
 
 void SaveLoad_ns::renameOldSavefiles() {
-	Common::StringList oldFilenames = _saveFileMan->listSavefiles("game.*");
+	Common::StringArray oldFilenames = _saveFileMan->listSavefiles("game.*");
 	uint numOldSaves = oldFilenames.size();
 
 	bool rename = false;
