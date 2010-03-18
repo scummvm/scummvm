@@ -103,15 +103,6 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
 
 
 /**
- * Take a 32 bit value and turn it into a four character string, where each of
- * the four bytes is turned into one character. Most significant byte is printed
- * first.
- */
-String tag2string(uint32 tag);
-#define tag2str(x)	Common::tag2string(x).c_str()
-
-
-/**
  * List of game language.
  */
 enum Language {

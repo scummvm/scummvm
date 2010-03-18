@@ -319,7 +319,27 @@ Common::String normalizePath(const Common::String &path, const char sep);
 bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
 
 
+/**
+ * A 'list' of strings. Actually, this is nowadays an array, and hence misnamed.
+ */
 typedef Array<String> StringList;
+
+
+
+/**
+ * Take a 32 bit value and turn it into a four character string, where each of
+ * the four bytes is turned into one character. Most significant byte is printed
+ * first.
+ */
+String tag2string(uint32 tag);
+
+/**
+ * Convenience wrapper for tag2string which "returns" a C string.
+ * Note: It is *NOT* safe to do anything with the return value other than directly
+ * copying or printing it.
+ */
+#define tag2str(x)	Common::tag2string(x).c_str()
+
 
 } // End of namespace Common
 
