@@ -35,10 +35,6 @@ protected:
 	Plugin* createPlugin(const Common::FSNode &node) const;
 
 	bool isPluginFilename(const Common::FSNode &node) const;
-
-	virtual void addCustomDirectories(Common::StringList &dirs) const {
-		dirs.push_back("/");
-	}
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
