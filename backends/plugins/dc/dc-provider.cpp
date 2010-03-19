@@ -97,8 +97,4 @@ bool DCPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-void DCPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
-	dirs.push_back(Common::FSNode("/"));
-}
-
 #endif // defined(DYNAMIC_MODULES) && defined(__DC__)
