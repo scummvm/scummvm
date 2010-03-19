@@ -36,7 +36,6 @@ protected:
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 
-	void addCustomDirectories(Common::FSList &dirs) const;
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
