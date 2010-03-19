@@ -249,6 +249,8 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 }
 
 bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
+	MadsAction &act = _madsVm->scene()->getAction();
+
 	// If the mouse isn't being held down, then reset the repeated scroll timer
 	if (eventType != MEVENT_LEFT_HOLD)
 		_nextScrollerTicks = 0;
@@ -270,25 +272,35 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 
 	case MEVENT_LEFT_CLICK:
 		// Left mouse click
-		// Check if an inventory object was selected
-		if ((_highlightedElement >= INVLIST_START) && (_highlightedElement < (INVLIST_START + 5))) {
-			// Ensure there is an inventory item listed in that cell
-			uint idx = _highlightedElement - INVLIST_START;
-			if ((_topIndex + idx) < _inventoryList.size()) {
-				// Set the selected object
-				setSelectedObject(_inventoryList[_topIndex + idx]);
-			}
-		} else if ((_highlightedElement >= ACTIONS_START) && (_highlightedElement < (ACTIONS_START + 10))) {
-			// A standard action was selected
-			_vm->_scene->setAction(kVerbLook + (_highlightedElement - ACTIONS_START));
-		} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
-			// A vocab action was selected
-			MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-			int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
-			if (vocabIndex >= 0)
-				_vm->_scene->setAction(obj->vocabList[vocabIndex].vocabId, _selectedObject);
-		}
+		{
+			// Check if an inventory object was selected
+			if ((_highlightedElement >= INVLIST_START) && (_highlightedElement < (INVLIST_START + 5))) {
+				// Ensure there is an inventory item listed in that cell
+				uint idx = _highlightedElement - INVLIST_START;
+				if ((_topIndex + idx) < _inventoryList.size()) {
+					// Set the selected object
+					setSelectedObject(_inventoryList[_topIndex + idx]);
+				}
+			} else if ((_highlightedElement >= ACTIONS_START) && (_highlightedElement < (ACTIONS_START + 10))) {
+				// A standard action was selected
+				int verbId = kVerbLook + (_highlightedElement - ACTIONS_START);
+				warning("Selected action #%d", verbId);
+				
+			} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
+				// A vocab action was selected
+				MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
+				int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
+				if (vocabIndex >= 0) {
+					act._actionMode = ACTMODE_OBJECT;
+					act._actionMode2 = ACTMODE2_2;
+					act._flags1 = obj->vocabList[1].flags1;
+					act._flags2 = obj->vocabList[1].flags2;
 
+					act._currentHotspot = _selectedObject;
+					act._articleNumber = act._flags2;
+				}
+			}
+		}
 		return true;
 
 	case MEVENT_LEFT_HOLD:

@@ -72,7 +72,6 @@ public:
 	virtual void checkHotspotAtMousePos(int x, int y);
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
-	virtual void setAction(int action, int objectId = -1);
 	virtual void update();
 	virtual void showHotSpots();
 
@@ -80,6 +79,7 @@ public:
 	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
 	M4SceneResources &getSceneResources() { return _sceneResources; };
 	void setStatusText(const char *text);
+	void setAction(int action, int objectId = -1);
 };
 
 } // End of namespace M4

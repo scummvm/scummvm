@@ -100,7 +100,6 @@ public:
 	virtual void checkHotspotAtMousePos(int x, int y) = 0;
 	virtual void leftClick(int x, int y) = 0;
 	virtual void rightClick(int x, int y) = 0;
-	virtual void setAction(int action, int objectId = -1) = 0;
 	virtual void update() = 0;
 	virtual void showHotSpots();
 

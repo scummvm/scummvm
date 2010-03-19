@@ -527,7 +527,8 @@ void MadsObject::load(Common::SeekableReadStream *stream) {
 	assert(vocabCount <= 3);
 
 	for (int i = 0; i < vocabCount; ++i) {
-		vocabList[i].unk = READ_LE_UINT16(&obj[6 + i * 4]);
+		vocabList[i].flags1 = obj[6 + i * 4];
+		vocabList[i].flags2 = obj[7 + i * 4];
 		vocabList[i].vocabId = READ_LE_UINT16(&obj[8 + i * 4]);
 	}
 }

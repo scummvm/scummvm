@@ -166,7 +166,8 @@ enum MADSArticles {
 };
 
 struct VocabEntry {
-	uint16 unk;
+	uint8 flags1;
+	uint8 flags2;
 	uint16 vocabId;
 };
 

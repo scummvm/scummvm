@@ -330,8 +330,8 @@ bool MadsConsole::cmdObject(int argc, const char **argv) {
 				DebugPrintf(" - ");
 				for (int i = 0; i < obj->vocabCount; ++i) {
 					if (i != 0) DebugPrintf(", ");
-					DebugPrintf("%s (%d)/%d", _vm->globals()->getVocab(obj->vocabList[i].vocabId),
-						obj->vocabList[i].vocabId, obj->vocabList[i].unk);
+					DebugPrintf("%s (%d)/%d,%d", _vm->globals()->getVocab(obj->vocabList[i].vocabId),
+						obj->vocabList[i].vocabId, obj->vocabList[i].flags1, obj->vocabList[i].flags2);
 				}
 			}
 			DebugPrintf("\n");
