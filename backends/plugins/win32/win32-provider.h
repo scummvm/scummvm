@@ -35,8 +35,6 @@ protected:
 	Plugin* createPlugin(const Common::FSNode &node) const;
 
 	bool isPluginFilename(const Common::FSNode &node) const;
-
-	virtual void addCustomDirectories(Common::FSList &dirs) const {}
 };
 
 #endif // defined(DYNAMIC_MODULES) && defined(_WIN32)
