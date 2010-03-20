@@ -114,6 +114,7 @@ bool TransientFilePack::open(const Common::String &filename) {
 	for (uint32 i = 0; i <= _fileCount; ++i) {
 		offsets[i] = file.readUint32LE();
 	}
+	file.close();
 	return true;
 }
 
