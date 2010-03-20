@@ -111,7 +111,8 @@ class SharedPtr {
 public:
 	typedef int RefValue;
 	typedef T ValueType;
-	typedef T *Pointer;
+	typedef T *PointerType;
+	typedef T &ReferenceType;
 
 	SharedPtr() : _refCount(0), _deletion(0), _pointer(0) {}
 
@@ -152,8 +153,8 @@ public:
 		return *this;
 	}
 
-	ValueType &operator*() const { assert(_pointer); return *_pointer; }
-	Pointer operator->() const { assert(_pointer); return _pointer; }
+	ReferenceType operator*() const { assert(_pointer); return *_pointer; }
+	PointerType operator->() const { assert(_pointer); return _pointer; }
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -161,7 +162,7 @@ public:
 	 *
 	 * @return the pointer the SharedPtr object manages
 	 */
-	Pointer get() const { return _pointer; }
+	PointerType get() const { return _pointer; }
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
@@ -219,7 +220,7 @@ private:
 
 	RefValue *_refCount;
 	SharedPtrDeletionInternal *_deletion;
-	T *_pointer;
+	PointerType _pointer;
 };
 
 template<typename T>
@@ -227,10 +228,11 @@ class ScopedPtr : NonCopyable {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
+	typedef T &ReferenceType;
 
 	explicit ScopedPtr(PointerType o = 0) : _pointer(o) {}
 
-	ValueType &operator*() const { return *_pointer; }
+	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
 	operator PointerType() const { return _pointer; }
 
