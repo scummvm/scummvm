@@ -934,6 +934,7 @@ void TeenAgentEngine::setMusic(byte id) {
 bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsRTL:
+	case kSupportsSubtitleOptions:
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
 		return true;
