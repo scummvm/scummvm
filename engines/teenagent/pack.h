@@ -54,12 +54,12 @@ public:
 	FilePack();
 	~FilePack();
 
-	bool open(const Common::String &filename);
-	void close();
+	virtual bool open(const Common::String &filename);
+	virtual void close();
 
-	uint32 getSize(uint32 id) const;
-	uint32 read(uint32 id, byte *dst, uint32 size) const;
-	Common::SeekableReadStream *getStream(uint32 id) const;
+	virtual uint32 getSize(uint32 id) const;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
 class MemoryPack : public Pack {
@@ -79,12 +79,12 @@ class MemoryPack : public Pack {
 	Common::Array<Chunk> chunks;
 
 public:
-	bool open(const Common::String &filename);
-	void close();
+	virtual bool open(const Common::String &filename);
+	virtual void close();
 
-	uint32 getSize(uint32 id) const;
-	uint32 read(uint32 id, byte *dst, uint32 size) const;
-	Common::SeekableReadStream *getStream(uint32 id) const;
+	virtual uint32 getSize(uint32 id) const;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
 } // End of namespace TeenAgent
