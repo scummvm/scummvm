@@ -1649,20 +1649,21 @@ void addEventsToQueue() {
 				selectTimeDown = getMillis();
 			}
 
-			if (getKeysHeld() & KEY_SELECT) {
-				if (getMillis() - selectTimeDown >= SELECT_HOLD_TIME) {
-					// Hold select down for one second - show GMM
-					g_engine->openMainMenuDialog();
+			if (selectTimeDown != -1) {
+				if (getKeysHeld() & KEY_SELECT) {
+					if (getMillis() - selectTimeDown >= SELECT_HOLD_TIME) {
+						// Hold select down for one second - show GMM
+						g_engine->openMainMenuDialog();
+					}
+				}
+	
+				if (getKeysReleased() & KEY_SELECT) {
+					if (getMillis() - selectTimeDown < SELECT_HOLD_TIME) {
+						// Just pressed select - show DS options screen
+						showOptionsDialog();
+					}
 				}
 			}
-
-			if (getKeysReleased() & KEY_SELECT) {
-				if (getMillis() - selectTimeDown < SELECT_HOLD_TIME) {
-					// Just pressed select - show DS options screen
-					showOptionsDialog();
-				}
-			}
-
 		}
 
 		if (!getIndyFightState() && !((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_X)) {
