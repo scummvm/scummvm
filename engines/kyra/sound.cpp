@@ -112,8 +112,9 @@ Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) {
 
 bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
 	int h = 0;
-	while (_mixer->isSoundHandleActive(_soundChannels[h]) && h < kNumChannelHandles)
-		h++;
+	while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h]))
+		++h;
+
 	if (h >= kNumChannelHandles)
 		return false;
 
@@ -126,7 +127,7 @@ bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *hand
 
 void Sound::voiceStop(const Audio::SoundHandle *handle) {
 	if (!handle) {
-		for (int h = 0; h < kNumChannelHandles; h++) {
+		for (int h = 0; h < kNumChannelHandles; ++h) {
 			if (_mixer->isSoundHandleActive(_soundChannels[h]))
 				_mixer->stopHandle(_soundChannels[h]);
 		}
@@ -137,7 +138,7 @@ void Sound::voiceStop(const Audio::SoundHandle *handle) {
 
 bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) {
 	if (!handle) {
-		for (int h = 0; h < kNumChannelHandles; h++) {
+		for (int h = 0; h < kNumChannelHandles; ++h) {
 			if (_mixer->isSoundHandleActive(_soundChannels[h]))
 				return true;
 		}
