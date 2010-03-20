@@ -908,15 +908,14 @@ void TeenAgentEngine::wait(uint16 frames) {
 
 void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();
-	Common::SeekableReadStream *in = res->sam_sam.getStream(id);
-	if (in == NULL) {
+	uint size = res->sam_sam.getSize(id);
+	if (size == 0) {
 		warning("skipping invalid sound %u", id);
 		return;
 	}
 
-	uint size = in->size();
 	byte *data = (byte *)malloc(size);
-	in->read(data, size);
+	res->sam_sam.read(id, data, size);
 	//debug(0, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
