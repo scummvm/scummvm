@@ -115,6 +115,10 @@ void Inventory::clear() {
 	}
 }
 
+void Inventory::flush() {
+	for (int i = 0; i < 24; ++i) 
+		graphics[i].free();
+}
 
 void Inventory::add(byte item) {
 	if (has(item))

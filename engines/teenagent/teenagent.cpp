@@ -213,6 +213,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	scene->clear();
 	inventory->activate(false);
+	inventory->flush();
 
 	setMusic(Resources::instance()->dseg.get_byte(0xDB90));
 

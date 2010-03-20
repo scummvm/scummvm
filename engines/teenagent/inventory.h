@@ -42,6 +42,7 @@ public:
 	void render(Graphics::Surface *surface, int delta);
 
 	void clear();
+	void flush();
 	void add(byte item);
 	bool has(byte item) const;
 	void remove(byte item);
