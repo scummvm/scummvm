@@ -66,32 +66,6 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 namespace Common {
 
 /**
- * A simple non-optimized string tokenizer.
- *
- * Example of use:
- * StringTokenizer("Now, this is a test!", " ,!") gives tokens "Now", "this", "is", "a" and "test" using nextToken().
- */
-class StringTokenizer {
-public:
-	/**
-	 * Creates a StringTokenizer.
-	 * @param str The string to be tokenized.
-	 * @param delimiters String containing all the delimiter characters (i.e. the characters to be ignored).
-	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
-	 */
-	StringTokenizer(const String &str, const String &delimiters = " \t\r\n\f\v");
-	void reset();       ///< Resets the tokenizer to its initial state
-	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
-	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
-
-private:
-	const String _str;        ///< The string to be tokenized
-	const String _delimiters; ///< String containing all the delimiter characters
-	uint         _tokenBegin; ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
-	uint         _tokenEnd;   ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
-};
-
-/**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  * @param data	the data to be dumped

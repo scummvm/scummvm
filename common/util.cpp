@@ -30,39 +30,6 @@
 
 namespace Common {
 
-StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
-	reset();
-}
-
-void StringTokenizer::reset() {
-	_tokenBegin = _tokenEnd = 0;
-}
-
-bool StringTokenizer::empty() const {
-	// Search for the next token's start (i.e. the next non-delimiter character)
-	for (uint i = _tokenEnd; i < _str.size(); i++) {
-		if (!_delimiters.contains(_str[i]))
-			return false; // Found a token so the tokenizer is not empty
-	}
-	// Didn't find any more tokens so the tokenizer is empty
-	return true;
-}
-
-String StringTokenizer::nextToken() {
-	// Seek to next token's start (i.e. jump over the delimiters before next token)
-	for (_tokenBegin = _tokenEnd; _tokenBegin < _str.size() && _delimiters.contains(_str[_tokenBegin]); _tokenBegin++)
-		;
-	// Seek to the token's end (i.e. jump over the non-delimiters)
-	for (_tokenEnd = _tokenBegin; _tokenEnd < _str.size() && !_delimiters.contains(_str[_tokenEnd]); _tokenEnd++)
-		;
-	// Return the found token
-	return String(_str.c_str() + _tokenBegin, _tokenEnd - _tokenBegin);
-}
-
-
-#pragma mark -
-
-
 //
 // Print hexdump of the data passed in
 //

@@ -45,6 +45,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "gui/GuiManager.h"
 #include "gui/message.h"

@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	stream.o \
 	util.o \
 	system.o \
+	tokenizer.o \
 	unarj.o \
 	unzip.o \
 	xmlparser.o \

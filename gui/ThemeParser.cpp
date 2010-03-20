@@ -30,6 +30,8 @@
 
 #include "graphics/VectorRenderer.h"
 
+#include "common/tokenizer.h"
+
 namespace GUI {
 
 struct TextDataInfo {

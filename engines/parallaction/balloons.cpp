@@ -23,10 +23,10 @@
  *
  */
 
-#include "common/util.h"
-
 #include "parallaction/graphics.h"
 #include "parallaction/parallaction.h"
+
+#include "common/tokenizer.h"
 
 namespace Parallaction {
 

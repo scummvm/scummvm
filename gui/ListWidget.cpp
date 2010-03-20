@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/frac.h"
+#include "common/tokenizer.h"
 
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"

@@ -23,13 +23,13 @@
  *
  */
 
-#include "common/util.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/unzip.h"
+#include "common/tokenizer.h"
 
 #include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
