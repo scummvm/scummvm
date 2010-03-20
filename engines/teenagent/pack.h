@@ -46,6 +46,7 @@ public:
 	virtual Common::SeekableReadStream *getStream(uint32 id) const = 0;
 };
 
+///FilePack keeps opened file and returns substream for each request.
 class FilePack : public Pack {
 	mutable Common::File file;
 	uint32 *offsets;
@@ -62,6 +63,9 @@ public:
 	virtual Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
+/** Pack file which reopens file each request. Do not keep file descriptor open.
+ ** Useful for minimizing file descriptors opened at the same time. Critical for PSP backend.
+ **/
 class TransientFilePack : public Pack {
 	uint32 *offsets;
 	Common::String _filename;
@@ -78,6 +82,7 @@ public:
 	virtual Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
+///MemoryPack loads whole pack in memory, currently unused.
 class MemoryPack : public Pack {
 	struct Chunk {
 		byte *data;

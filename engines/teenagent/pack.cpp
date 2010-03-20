@@ -49,12 +49,7 @@ bool FilePack::open(const Common::String &filename) {
 	offsets = new uint32[_fileCount + 1];
 	for (uint32 i = 0; i <= _fileCount; ++i) {
 		offsets[i] = file.readUint32LE();
-		//debug(0, "%d: %06x", i, offsets[i]);
 	}
-	/*	for (uint32 i = 0; i < count; ++i) {
-			debug(0, "%d: len = %d", i, offsets[i + 1] - offsets[i]);
-		}
-	*/
 	return true;
 }
 
@@ -79,13 +74,7 @@ Common::SeekableReadStream *FilePack::getStream(uint32 id) const {
 	if (id < 1 || id > _fileCount)
 		return NULL;
 	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
-	file.seek(offsets[id - 1]);
-	uint32 size = offsets[id] - offsets[id - 1];
-	byte *ptr = (byte *)malloc(size);
-	if (ptr == NULL)
-		return NULL;
-	uint32 r = file.read(ptr, size);
-	return new Common::MemoryReadStream(ptr, r, DisposeAfterUse::YES);
+	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id]);
 }
 
 
