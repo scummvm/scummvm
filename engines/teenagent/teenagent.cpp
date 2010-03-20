@@ -229,7 +229,7 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	debug(0, "saving to slot %d", slot);
 	Common::OutSaveFile *out = _saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot));
 	if (out == NULL)
-		return Common::kWritePermissionDenied;
+		return Common::kWritingFailed;
 
 	Resources *res = Resources::instance();
 	res->dseg.set_byte(0xB4F3, scene->getId());
@@ -242,6 +242,7 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	out->write(res->dseg.ptr(0x6478), 0x777a);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
+	out->finalize();
 	delete out;
 
 	return Common::kNoError;
@@ -935,7 +936,6 @@ bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 	case kSupportsRTL:
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
-	case kSupportsSubtitleOptions:
 		return true;
 	default:
 		return false;
