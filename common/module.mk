@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	archive.o \
 	config-file.o \
 	config-manager.o \
-	textconsole.o \
 	debug.o \
 	EventDispatcher.o \
 	EventRecorder.o \
@@ -18,11 +17,12 @@ MODULE_OBJS := \
 	random.o \
 	str.o \
 	stream.o \
-	util.o \
 	system.o \
+	textconsole.o \
 	tokenizer.o \
 	unarj.o \
 	unzip.o \
+	util.o \
 	xmlparser.o \
 	zlib.o
 
