@@ -34,10 +34,10 @@ enum {
 
 static size_t adjustChunkSize(size_t chunkSize) {
 	// You must at least fit the pointer in the node (technically unneeded considering the next rounding statement)
-	chunkSize = MAX(chunkSize, sizeof(void*));
+	chunkSize = MAX(chunkSize, sizeof(void *));
 	// There might be an alignment problem on some platforms when trying to load a void* on a non natural boundary
 	// so we round to the next sizeof(void*)
-	chunkSize = (chunkSize + sizeof(void*) - 1) & (~(sizeof(void*) - 1));
+	chunkSize = (chunkSize + sizeof(void *) - 1) & (~(sizeof(void *) - 1));
 
 	return chunkSize;
 }
@@ -82,42 +82,42 @@ void MemoryPool::allocPage() {
 }
 
 void MemoryPool::addPageToPool(const Page &page) {
-
 	// Add all chunks of the new page to the linked list (pool) of free chunks
 	void *current = page.start;
 	for (size_t i = 1; i < page.numChunks; ++i) {
-		void *next    = ((char*)current + _chunkSize);
+		void *next = (byte *)current + _chunkSize;
 		*(void **)current = next;
 
 		current = next;
 	}
 
 	// Last chunk points to the old _next
-	*(void**)current = _next;
+	*(void **)current = _next;
 
 	// From now on, the first free chunk is the first chunk of the new page
 	_next = page.start;
 }
 
 void *MemoryPool::allocChunk() {
-	if (!_next)	// No free chunks left? Allocate a new page
+	// No free chunks left? Allocate a new page
+	if (!_next)
 		allocPage();
 
 	assert(_next);
 	void *result = _next;
-	_next = *(void**)result;
+	_next = *(void **)result;
 	return result;
 }
 
 void MemoryPool::freeChunk(void *ptr) {
 	// Add the chunk back to (the start of) the list of free chunks
-	*(void**)ptr = _next;
+	*(void **)ptr = _next;
 	_next = ptr;
 }
 
 // Technically not compliant C++ to compare unrelated pointers. In practice...
 bool MemoryPool::isPointerInPage(void *ptr, const Page &page) {
-	return (ptr >= page.start) && (ptr < (char*)page.start + page.numChunks * _chunkSize);
+	return (ptr >= page.start) && (ptr < (char *)page.start + page.numChunks * _chunkSize);
 }
 
 void MemoryPool::freeUnusedPages() {
@@ -138,7 +138,8 @@ void MemoryPool::freeUnusedPages() {
 				break;
 			}
 		}
-		iterator = *(void**)iterator;
+
+		iterator = *(void **)iterator;
 	}
 
 	// Free all pages which are not in use.
@@ -149,10 +150,11 @@ void MemoryPool::freeUnusedPages() {
 			void **iter2 = &_next;
 			while (*iter2) {
 				if (isPointerInPage(*iter2, _pages[i]))
-					*iter2 = **(void***)iter2;
+					*iter2 = **(void ***)iter2;
 				else
-					iter2 = *(void***)iter2;
+					iter2 = *(void ***)iter2;
 			}
+
 			::free(_pages[i].start);
 			++freedPagesCount;
 			_pages[i].start = NULL;
@@ -180,4 +182,5 @@ void MemoryPool::freeUnusedPages() {
 	}
 }
 
-}	// End of namespace Common
+} // End of namespace Common
+
