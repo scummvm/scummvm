@@ -26,8 +26,6 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-#include <stdarg.h>	// For va_list etc.
-
 namespace Common {
 
 //
