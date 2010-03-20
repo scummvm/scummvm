@@ -87,8 +87,9 @@ public:
 	typedef T ValueType;
 	typedef T *PointerType;
 
-	inline explicit ScopedPtr(T *o = NULL): object(o) {}
+	inline explicit ScopedPtr(T *o = 0): object(o) {}
 
+	inline T& operator*() const { return *object; }
 	inline T *operator->() const { return object; }
 	inline operator T*() const { return object; }
 	inline operator bool() const { return object != NULL; }
@@ -97,12 +98,12 @@ public:
 		delete object; 
 	}
 
-	inline void reset(T * o) {
+	inline void reset(T *o = 0) {
 		delete object;
 		object = o;
 	}
 
-	inline T *get() { return object; }
+	inline T *get() const { return object; }
 
 	inline T *release() {
 		T *r = object;
