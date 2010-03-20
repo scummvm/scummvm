@@ -93,7 +93,7 @@ bool MemoryPack::open(const Common::String &filename) {
 
 	uint32 count = file.readUint32LE();
 	debug(0, "opened %s, found %u entries [memory]", filename.c_str(), count);
-	for (uint32 i = 0; i <= count; ++i) {
+	for (uint32 i = 0; i < count; ++i) {
 		uint32 offset = file.readUint32LE();
 		int32 pos = file.pos();
 		uint32 next_offset = file.readUint32LE();
