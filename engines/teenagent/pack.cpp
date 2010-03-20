@@ -77,10 +77,86 @@ uint32 FilePack::read(uint32 id, byte *dst, uint32 size) const {
 
 Common::SeekableReadStream *FilePack::getStream(uint32 id) const {
 	if (id < 1 || id > _fileCount)
-		return 0;
+		return NULL;
 	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
-	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id], DisposeAfterUse::NO);
+	file.seek(offsets[id - 1]);
+	uint32 size = offsets[id] - offsets[id - 1];
+	byte *ptr = (byte *)malloc(size);
+	if (ptr == NULL)
+		return NULL;
+	uint32 r = file.read(ptr, size);
+	return new Common::MemoryReadStream(ptr, r, DisposeAfterUse::YES);
 }
+
+
+TransientFilePack::TransientFilePack() : offsets(0) {}
+
+TransientFilePack::~TransientFilePack() {
+	close();
+}
+
+void TransientFilePack::close() {
+	delete[] offsets;
+	offsets = NULL;
+	_filename.clear();
+}
+
+bool TransientFilePack::open(const Common::String &filename) {
+	_filename = filename;
+
+	Common::File file;
+	if (!file.open(filename))
+		return false;
+
+	_fileCount = file.readUint32LE();
+	debug(0, "opened %s, found %u entries", filename.c_str(), _fileCount);
+	offsets = new uint32[_fileCount + 1];
+	for (uint32 i = 0; i <= _fileCount; ++i) {
+		offsets[i] = file.readUint32LE();
+	}
+	return true;
+}
+
+uint32 TransientFilePack::getSize(uint32 id) const {
+	if (id < 1 || id > _fileCount)
+		return 0;
+	return offsets[id] - offsets[id - 1];
+}
+
+uint32 TransientFilePack::read(uint32 id, byte *dst, uint32 size) const {
+	if (id < 1 || id > _fileCount)
+		return 0;
+
+	Common::File file;
+	if (!file.open(_filename))
+		return 0;
+
+	file.seek(offsets[id - 1]);
+	uint32 rsize = offsets[id] - offsets[id - 1];
+	uint32 r = file.read(dst, MIN(rsize, size));
+	file.close();
+	//debug(0, "read(%u, %u) = %u", id, size, r);
+	return r;
+}
+
+Common::SeekableReadStream *TransientFilePack::getStream(uint32 id) const {
+	if (id < 1 || id > _fileCount)
+		return NULL;
+	//debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
+	Common::File file;
+	if (!file.open(_filename))
+		return NULL;
+
+	file.seek(offsets[id - 1]);
+	uint32 size = offsets[id] - offsets[id - 1];
+	byte *ptr = (byte *)malloc(size);
+	if (ptr == NULL)
+		return NULL;
+	uint32 r = file.read(ptr, size);
+	file.close();
+	return new Common::MemoryReadStream(ptr, r, DisposeAfterUse::YES);
+}
+
 
 void MemoryPack::close() {
 	chunks.clear();

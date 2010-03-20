@@ -62,6 +62,22 @@ public:
 	virtual Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
+class TransientFilePack : public Pack {
+	uint32 *offsets;
+	Common::String _filename;
+
+public:
+	TransientFilePack();
+	~TransientFilePack();
+
+	virtual bool open(const Common::String &filename);
+	virtual void close();
+
+	virtual uint32 getSize(uint32 id) const;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const;
+};
+
 class MemoryPack : public Pack {
 	struct Chunk {
 		byte *data;
