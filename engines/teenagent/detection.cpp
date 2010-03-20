@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/algorithm.h"
+#include "common/noncopyable.h"
 
 #include "base/plugins.h"
 
@@ -75,6 +76,45 @@ static const ADParams detectionParams = {
 };
 
 #define MAX_SAVES 20
+
+//add it to ptr.h?
+template<typename T>
+class AutoPtr {
+protected:
+	mutable T *object;
+
+public:
+	typedef T ValueType;
+	typedef T *PointerType;
+
+	inline AutoPtr(T *o = NULL): object(o) {}
+	inline AutoPtr(const AutoPtr& other): object(other.release()) {}
+	inline AutoPtr& operator=(const AutoPtr& other) {
+		delete object;
+		object = other.release();
+		return *this;
+	}
+
+	inline T *operator->() const { return object; }
+	inline operator T*() const { return object; }
+	inline operator bool() const { return object != NULL; }
+
+	inline ~AutoPtr() { 
+		delete object; 
+	}
+
+	inline void reset(T * o) {
+		delete object;
+		object = o;
+	}
+
+	inline T *release() const {
+		T *r = object;
+		object = NULL;
+		return r;
+	}
+};
+
 
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
@@ -129,17 +169,15 @@ public:
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
-				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-				if (in) {
-					char buf[25];
-					in->seek(0);
-					in->read(buf, 24);
-					buf[24] = 0;
-					Common::String description = buf;
-					saveList.push_back(SaveStateDescriptor(slot, description));
+				AutoPtr<Common::InSaveFile> in = g_system->getSavefileManager()->openForLoading(*file);
+				if (!in)
+					continue;
 
-					delete in;
-				}
+				char buf[25];
+				in->seek(0);
+				in->read(buf, 24);
+				buf[24] = 0;
+				saveList.push_back(SaveStateDescriptor(slot, buf));
 			}
 		}
 		return saveList;
@@ -156,8 +194,8 @@ public:
 
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::String filename = generateGameStateFileName(target, slot);
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-		if (in == NULL)
+		AutoPtr<Common::InSaveFile> in = g_system->getSavefileManager()->openForLoading(filename);
+		if (!in)
 			return SaveStateDescriptor();
 
 		char buf[25];
@@ -171,14 +209,13 @@ public:
 		if (!Graphics::checkThumbnailHeader(*in))
 			return SaveStateDescriptor(slot, desc);
 
-		Graphics::Surface *thumb = new Graphics::Surface;
-		if (!Graphics::loadThumbnail(*in, *thumb)) {
-			delete thumb;
-			return SaveStateDescriptor(slot, desc);
-		}
-
 		SaveStateDescriptor ssd(slot, desc);
-		ssd.setThumbnail(thumb);
+		ssd.setDeletableFlag(true);
+
+		//checking for the thumbnail
+		AutoPtr<Graphics::Surface> thumb = new Graphics::Surface;
+		if (Graphics::loadThumbnail(*in, *thumb))
+			ssd.setThumbnail(thumb.release());
 
 		return ssd;
 	}
