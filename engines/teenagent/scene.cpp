@@ -731,6 +731,10 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 			s->render(surface);
 		}
 
+		if (mark != NULL && debug_features.feature[DebugFeatures::kShowOn]) {
+			on.render(surface, actor_animation_position);
+		}
+
 		if (mark != NULL) {
 			actor_animation_position = mark->render(surface);
 			if (!actor_animation.ignore)
@@ -809,7 +813,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 		//removed mark == null. In final scene of chapter 2 mark rendered above table. 
 		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL) 
-		if (debug_features.feature[DebugFeatures::kShowOn]) {
+		if (mark == NULL && debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
 		}
 

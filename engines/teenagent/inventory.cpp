@@ -62,7 +62,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 	offset[92] = items_size; 
 
 	Resources *res = Resources::instance();
-	for (byte i = 0; i < 92; ++i) {
+	for (byte i = 0; i <= 92; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
 		if (obj_addr != 0)
