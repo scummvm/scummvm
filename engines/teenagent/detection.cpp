@@ -25,7 +25,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/algorithm.h"
-#include "common/noncopyable.h"
 
 #include "base/plugins.h"
 
@@ -76,41 +75,6 @@ static const ADParams detectionParams = {
 };
 
 #define MAX_SAVES 20
-
-//add it to ptr.h?
-template<typename T>
-class ScopedPtr : Common::NonCopyable {
-protected:
-	T *object;
-
-public:
-	typedef T ValueType;
-	typedef T *PointerType;
-
-	inline explicit ScopedPtr(T *o = 0): object(o) {}
-
-	inline T& operator*() const { return *object; }
-	inline T *operator->() const { return object; }
-	inline operator T*() const { return object; }
-	inline operator bool() const { return object != NULL; }
-
-	inline ~ScopedPtr() { 
-		delete object; 
-	}
-
-	inline void reset(T *o = 0) {
-		delete object;
-		object = o;
-	}
-
-	inline T *get() const { return object; }
-
-	inline T *release() {
-		T *r = object;
-		object = NULL;
-		return r;
-	}
-};
 
 
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
@@ -166,7 +130,7 @@ public:
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
-				ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(*file));
+				Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(*file));
 				if (!in)
 					continue;
 
@@ -191,7 +155,7 @@ public:
 
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::String filename = generateGameStateFileName(target, slot);
-		ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
+		Common::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
 		if (!in)
 			return SaveStateDescriptor();
 
@@ -210,7 +174,7 @@ public:
 		ssd.setDeletableFlag(true);
 
 		//checking for the thumbnail
-		ScopedPtr<Graphics::Surface> thumb(new Graphics::Surface);
+		Common::ScopedPtr<Graphics::Surface> thumb(new Graphics::Surface);
 		if (Graphics::loadThumbnail(*in, *thumb))
 			ssd.setThumbnail(thumb.release());
 
