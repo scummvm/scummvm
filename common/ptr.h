@@ -26,6 +26,7 @@
 #define COMMON_PTR_H
 
 #include "common/scummsys.h"
+#include "common/noncopyable.h"
 
 namespace Common {
 
@@ -215,6 +216,60 @@ private:
 	SharedPtrDeletionInternal *_deletion;
 	T *_pointer;
 };
+
+template<typename T>
+class ScopedPtr : Common::NonCopyable {
+protected:
+	T *object;
+
+public:
+	typedef T ValueType;
+	typedef T *PointerType;
+
+	explicit ScopedPtr(T *o = 0): object(o) {}
+
+	T& operator*() const { return *object; }
+	T *operator->() const { return object; }
+	operator T*() const { return object; }
+
+	/**
+	 * Implicit conversion operator to bool for convenience, to make
+	 * checks like "if (scopedPtr) ..." possible.
+	 */
+	operator bool() const { return object != 0; }
+
+	~ScopedPtr() { 
+		delete object; 
+	}
+
+	/**
+	 * Resets the pointer with the new value. Old object will be destroyed
+	 */
+	void reset(T *o = 0) {
+		delete object;
+		object = o;
+	}
+
+	/**
+	 * Returns the plain pointer value. 
+	 *
+	 * @return the pointer the ScopedPtr manages
+	 */
+	T *get() const { return object; }
+
+	/**
+	 * Returns the plain pointer value and releases ScopedPtr. 
+	 * After release() call you need to delete object yourself
+	 *
+	 * @return the pointer the ScopedPtr manages
+	 */
+	T *release() {
+		T *r = object;
+		object = 0;
+		return r;
+	}
+};
+
 
 } // End of namespace Common
 
