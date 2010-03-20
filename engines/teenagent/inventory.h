@@ -59,7 +59,7 @@ private:
 	TeenAgentEngine *_engine;
 	Surface background;
 	byte *items;
-	uint16 offset[93];
+	uint offset[93];
 
 	Common::Array<InventoryObject> objects;
 	byte *inventory;
