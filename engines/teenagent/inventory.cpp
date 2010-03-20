@@ -50,6 +50,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 	uint32 items_size = varia.getSize(4);
 	if (items_size == 0)
 		error("invalid inventory items size");
+	debug(0, "loading items, size: %u", items_size);
 	items = new byte[items_size];
 	varia.read(4, items, items_size);
 
@@ -153,18 +154,17 @@ bool Inventory::processEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
 		mouse = event.mouse;
-		if (!active() && event.mouse.y < 5) {
-			activate(true);
-			return _active;
+
+		if (!_active) {
+			if (event.mouse.y < 5)
+				activate(true);
+			return false;
 		}
 
 		if (event.mouse.x < 17 || event.mouse.x >= 303 || event.mouse.y >= 153) {
 			activate(false);
-			return _active;
-		}
-
-		if (!_active)
 			return false;
+		}
 
 		hovered_obj = NULL;
 
@@ -250,6 +250,10 @@ bool Inventory::processEvent(const Common::Event &event) {
 	case Common::EVENT_KEYDOWN:
 		if (_active && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			activate(false);
+			return true;
+		}
+		if (event.kbd.keycode == Common::KEYCODE_RETURN) { //triangle button on psp
+			activate(!_active);
 			return true;
 		}
 		return false;
