@@ -210,24 +210,22 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	FilePack varia;
 	varia.open("varia.res");
 
-	Common::SeekableReadStream *s = varia.getStream(1);
-	if (s == NULL)
+	Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(1));
+	if (!s)
 		error("invalid resource data");
 
 	teenagent.load(s, Animation::kTypeVaria);
 	if (teenagent.empty())
 		error("invalid mark animation");
 
-	delete s;
-	s = varia.getStream(2);
-	if (s == NULL)
+	s.reset(varia.getStream(2));
+	if (!s)
 		error("invalid resource data");
 
 	teenagent_idle.load(s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
 
-	delete s;
 	varia.close();
 	loadObjectData();
 }
@@ -336,10 +334,9 @@ void Scene::loadOns() {
 	if (ons_count > 0) {
 		ons = new Surface[ons_count];
 		for (uint32 i = 0; i < ons_count; ++i) {
-			Common::SeekableReadStream *s = res->ons.getStream(on_id[i]);
-			if (s != NULL) {
+			Common::ScopedPtr<Common::SeekableReadStream> s(res->ons.getStream(on_id[i]));
+			if (s) {
 				ons[i].load(s, Surface::kTypeOns);
-				delete s;
 			}
 		}
 	}
@@ -360,17 +357,13 @@ void Scene::loadLans() {
 		if (bxv == 0)
 			continue;
 
-		Common::SeekableReadStream *s = res->loadLan000(res_id);
-		if (s != NULL) {
+		Common::ScopedPtr<Common::SeekableReadStream> s(res->loadLan000(res_id));
+		if (s) {
 			animation[i].load(s, Animation::kTypeLan);
 			if (bxv != 0 && bxv != 0xff)
 				animation[i].id = bxv;
-			delete s;
 		}
-
-		//uint16 bp = res->dseg.get_word();
 	}
-
 }
 
 void Scene::init(int id, const Common::Point &pos) {
@@ -401,7 +394,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		}
 	}
 
-	Common::SeekableReadStream *stream = res->on.getStream(id);
+	Common::ScopedPtr<Common::SeekableReadStream> stream(res->on.getStream(id));
 	int sub_hack = 0;
 	if (id == 7) { //something patched in the captains room
 		switch(res->dseg.get_byte(0xdbe6)) {
@@ -415,7 +408,6 @@ void Scene::init(int id, const Common::Point &pos) {
 		}
 	}
 	on.load(stream, SurfaceList::kTypeOn, sub_hack);
-	delete stream;
 
 	loadOns();
 	loadLans();
@@ -433,27 +425,25 @@ void Scene::init(int id, const Common::Point &pos) {
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
 	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop?"true":"false", paused?"true":"false", ignore?"true":"false");
 	assert(idx < 4);
-	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
-	if (s == NULL)
+	Common::ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
+	if (!s)
 		error("playing animation %u failed", id);
 
 	custom_animation[idx].load(s);
 	custom_animation[idx].loop = loop;
 	custom_animation[idx].paused = paused;
 	custom_animation[idx].ignore = ignore;
-	delete s;
 }
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop?"true":"false", ignore?"true":"false");
-	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
-	if (s == NULL)
+	Common::ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
+	if (!s)
 		error("playing animation %u failed", id);
 
 	actor_animation.load(s);
 	actor_animation.loop = loop;
 	actor_animation.ignore = ignore;
-	delete s;
 }
 
 Animation * Scene::getAnimation(byte slot) {

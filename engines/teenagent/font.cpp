@@ -25,6 +25,7 @@
 #include "teenagent/font.h"
 #include "teenagent/pack.h"
 #include "common/stream.h"
+#include "common/ptr.h"
 
 namespace TeenAgent {
 
@@ -35,14 +36,13 @@ void Font::load(const Pack &pack, int id) {
 	delete[] data;
 	data = NULL;
 
-	Common::SeekableReadStream *s = pack.getStream(id);
-	if (s == NULL)
+	Common::ScopedPtr<Common::SeekableReadStream> s(pack.getStream(id));
+	if (!s)
 		error("loading font %d failed", id);
 
 	data = new byte[s->size()];
 	s->read(data, s->size());
 	debug(0, "font size: %d", s->size());
-	delete s;
 }
 
 uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) {

@@ -190,11 +190,12 @@ void TeenAgentEngine::deinit() {
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
-	Common::InSaveFile *in = _saveFileMan->openForLoading(Common::String::printf("teenagent.%02d", slot));
-	if (in == NULL)
-		in = _saveFileMan->openForLoading(Common::String::printf("teenagent.%d", slot));
+	Common::ScopedPtr<Common::InSaveFile> 
+		in(_saveFileMan->openForLoading(Common::String::printf("teenagent.%02d", slot)));
+	if (!in)
+		in.reset(_saveFileMan->openForLoading(Common::String::printf("teenagent.%d", slot)));
 
-	if (in == NULL)
+	if (!in)
 		return Common::kReadPermissionDenied;
 
 	Resources *res = Resources::instance();
@@ -203,11 +204,8 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	char data[0x777a];
 	in->seek(0);
 	if (in->read(data, 0x777a) != 0x777a) {
-		delete in;
 		return Common::kReadingFailed;
 	}
-
-	delete in;
 
 	memcpy(res->dseg.ptr(0x6478), data, sizeof(data));
 
@@ -228,8 +226,8 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	debug(0, "saving to slot %d", slot);
-	Common::OutSaveFile *out = _saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot));
-	if (out == NULL)
+	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot)));
+	if (!out)
 		return Common::kWritingFailed;
 
 	Resources *res = Resources::instance();
@@ -243,9 +241,8 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	out->write(res->dseg.ptr(0x6478), 0x777a);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
-	out->finalize();
-	delete out;
 
+	out->finalize();
 	return Common::kNoError;
 }
 
@@ -279,8 +276,8 @@ bool TeenAgentEngine::showLogo() {
 	byte bg[0xfa00];
 	byte palette[0x400];
 
-	Common::SeekableReadStream *frame = logo.getStream(1);
-	if (frame == NULL)
+	Common::ScopedPtr<Common::SeekableReadStream> frame(logo.getStream(1));
+	if (!frame)
 		return true;
 
 	frame->read(bg, sizeof(bg));
@@ -305,13 +302,12 @@ bool TeenAgentEngine::showLogo() {
 			}
 			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 
-			frame = logo.getStream(i);
-			if (frame == NULL)
+			frame.reset(logo.getStream(i));
+			if (!frame)
 				return true;
 
 			Surface s;
 			s.load(frame, Surface::kTypeOns);
-			delete frame;
 			if (s.empty())
 				return true;
 
@@ -333,14 +329,13 @@ bool TeenAgentEngine::showMetropolis() {
 	byte palette[0x400];
 	memset(palette, 0, sizeof(palette));
 	{
-		Common::SeekableReadStream *s = varia.getStream(5);
+		Common::ScopedPtr<Common::SeekableReadStream> s(varia.getStream(5));
 		for(uint c = 0; c < 0x400; c += 4) {
 			s->read(palette + c, 3);
 			palette[c] *= 4;
 			palette[c + 1] *= 4;
 			palette[c + 2] *= 4;
 		}
-		delete s;
 	}
 
 	_system->setPalette(palette, 0, 0x100);

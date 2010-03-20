@@ -25,6 +25,7 @@
 
 #include "teenagent/music.h"
 #include "teenagent/resources.h"
+#include "common/ptr.h"
 
 namespace TeenAgent {
 
@@ -43,8 +44,8 @@ MusicPlayer::~MusicPlayer() {
 bool MusicPlayer::load(int id) {
 	Resources *res = Resources::instance();
 
-	Common::SeekableReadStream *stream = res->mmm.getStream(id);
-	if (stream == NULL)
+	Common::ScopedPtr<Common::SeekableReadStream> stream(res->mmm.getStream(id));
+	if (!stream)
 		return false;
 
 	char header[4];
@@ -99,7 +100,6 @@ bool MusicPlayer::load(int id) {
 			debug(0, "unhandled music command %02x", cmd);
 		}
 	}
-	delete stream;
 	_currRow = 0;
 	_id = id;
 	return true;
