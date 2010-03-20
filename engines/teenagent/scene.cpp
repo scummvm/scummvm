@@ -218,6 +218,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	if (teenagent.empty())
 		error("invalid mark animation");
 
+	delete s;
 	s = varia.getStream(2);
 	if (s == NULL)
 		error("invalid resource data");
@@ -226,6 +227,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
 
+	delete s;
 	varia.close();
 	loadObjectData();
 }
@@ -335,8 +337,10 @@ void Scene::loadOns() {
 		ons = new Surface[ons_count];
 		for (uint32 i = 0; i < ons_count; ++i) {
 			Common::SeekableReadStream *s = res->ons.getStream(on_id[i]);
-			if (s != NULL)
+			if (s != NULL) {
 				ons[i].load(s, Surface::kTypeOns);
+				delete s;
+			}
 		}
 	}
 }
@@ -437,6 +441,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 	custom_animation[idx].loop = loop;
 	custom_animation[idx].paused = paused;
 	custom_animation[idx].ignore = ignore;
+	delete s;
 }
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
@@ -448,6 +453,7 @@ void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	actor_animation.load(s);
 	actor_animation.loop = loop;
 	actor_animation.ignore = ignore;
+	delete s;
 }
 
 Animation * Scene::getAnimation(byte slot) {

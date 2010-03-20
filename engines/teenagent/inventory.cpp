@@ -39,10 +39,13 @@ void Inventory::init(TeenAgentEngine *engine) {
 	FilePack varia;
 	varia.open("varia.res");
 
-	Common::SeekableReadStream *s = varia.getStream(3);
-	assert(s != NULL);
-	debug(0, "loading inventory background...");
-	background.load(s, Surface::kTypeOns);
+	{
+		Common::SeekableReadStream *s = varia.getStream(3);
+		assert(s != NULL);
+		debug(0, "loading inventory background...");
+		background.load(s, Surface::kTypeOns);
+		delete s;
+	}
 
 	uint32 items_size = varia.getSize(4);
 	if (items_size == 0)

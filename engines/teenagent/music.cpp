@@ -63,16 +63,14 @@ bool MusicPlayer::load(int id) {
 		byte sampleResource = ((sample >> 4) & 0x0F) * 10 + (sample & 0x0F);
 		debug(0, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
 		uint32 sampleSize = res->sam_mmm.getSize(sampleResource);
-		Common::SeekableReadStream *in = res->sam_mmm.getStream(sampleResource);
-
-		if (in == 0) {
+		if (sampleSize == 0) {
 			warning("load: invalid sample %d (0x%02x)", sample, sample);
 			_samples[sample].clear();
 			continue;
 		}
 
 		_samples[sample].resize(sampleSize);
-		in->read(_samples[sample].data, sampleSize);
+		res->sam_mmm.read(sampleResource, _samples[sample].data, sampleSize);
 	}
 
 	// Load the music data
@@ -101,6 +99,7 @@ bool MusicPlayer::load(int id) {
 			debug(0, "unhandled music command %02x", cmd);
 		}
 	}
+	delete stream;
 	_currRow = 0;
 	_id = id;
 	return true;

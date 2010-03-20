@@ -333,13 +333,13 @@ bool TeenAgentEngine::showMetropolis() {
 	memset(palette, 0, sizeof(palette));
 	{
 		Common::SeekableReadStream *s = varia.getStream(5);
-		for(uint c = 0; c < 0x100; ++c) {
-			uint idx = c * 4;
-			s->read(palette + idx, 3);
-			palette[idx] *= 4;
-			palette[idx + 1] *= 4;
-			palette[idx + 2] *= 4;
+		for(uint c = 0; c < 0x400; c += 4) {
+			s->read(palette + c, 3);
+			palette[c] *= 4;
+			palette[c + 1] *= 4;
+			palette[c + 2] *= 4;
 		}
+		delete s;
 	}
 
 	_system->setPalette(palette, 0, 0x100);
@@ -919,7 +919,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	//debug(0, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
 }
 
 

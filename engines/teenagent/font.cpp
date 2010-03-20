@@ -42,6 +42,7 @@ void Font::load(const Pack &pack, int id) {
 	data = new byte[s->size()];
 	s->read(data, s->size());
 	debug(0, "font size: %d", s->size());
+	delete s;
 }
 
 uint Font::render(Graphics::Surface *surface, int x, int y, char c, byte color) {

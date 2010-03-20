@@ -48,12 +48,11 @@ public:
 	//void loadOns(Graphics::Surface &surface, int id, uint16 &dst);
 
 #ifdef __PSP__
-	TransientFilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam;
+	TransientFilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm;
 #else
-	FilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam;
+	FilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm;
 #endif
 
-	MemoryPack mmm;
 	Segment cseg, dseg, eseg;
 	Font font7, font8;
 };
