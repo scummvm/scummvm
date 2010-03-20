@@ -56,7 +56,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 	byte offsets = items[0];
 	assert(offsets == 92);
 	for (byte i = 0; i <= offsets; ++i) {
-		offset[i] = READ_UINT16(items + i * 2 + 1);
+		offset[i] = READ_LE_UINT16(items + i * 2 + 1);
 	}
 
 	Resources *res = Resources::instance();
