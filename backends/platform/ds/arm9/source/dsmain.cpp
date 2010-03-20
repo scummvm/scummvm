@@ -1642,28 +1642,27 @@ void addEventsToQueue() {
 			}
 
 
-			static int selectHoldCount = 0;
-			static const int SELECT_HOLD_TIME = 60;
+			static int selectTimeDown = -1;
+			static const int SELECT_HOLD_TIME = 1000;
 
-			if ((getKeysHeld() & KEY_SELECT)) {
-				selectHoldCount++;
+			if (getKeysDown() & KEY_SELECT) {
+				selectTimeDown = getMillis();
+			}
 
-				if (selectHoldCount == SELECT_HOLD_TIME) {
+			if (getKeysHeld() & KEY_SELECT) {
+				if (getMillis() - selectTimeDown >= SELECT_HOLD_TIME) {
 					// Hold select down for one second - show GMM
 					g_engine->openMainMenuDialog();
 				}
-			} else {
-				selectHoldCount = 0;
 			}
 
-
-
 			if (getKeysReleased() & KEY_SELECT) {
-				if (selectHoldCount < SELECT_HOLD_TIME) {
+				if (getMillis() - selectTimeDown < SELECT_HOLD_TIME) {
 					// Just pressed select - show DS options screen
 					showOptionsDialog();
 				}
 			}
+
 		}
 
 		if (!getIndyFightState() && !((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_X)) {
