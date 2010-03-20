@@ -114,11 +114,16 @@ public:
 	typedef T *Pointer;
 
 	SharedPtr() : _refCount(0), _deletion(0), _pointer(0) {}
-	template<class T2> explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
-	template<class T2, class D> SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
+
+	template<class T2>
+	explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
+
+	template<class T2, class D>
+	SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
 
 	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
-	template<class T2> SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+	template<class T2>
+	SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
 
 	~SharedPtr() { decRef(); }
 
@@ -218,36 +223,33 @@ private:
 };
 
 template<typename T>
-class ScopedPtr : Common::NonCopyable {
-protected:
-	T *object;
-
+class ScopedPtr : NonCopyable {
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
 
-	explicit ScopedPtr(T *o = 0): object(o) {}
+	explicit ScopedPtr(PointerType o = 0) : _pointer(o) {}
 
-	T& operator*() const { return *object; }
-	T *operator->() const { return object; }
-	operator T*() const { return object; }
+	ValueType &operator*() const { return *_pointer; }
+	PointerType operator->() const { return _pointer; }
+	operator PointerType() const { return _pointer; }
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
 	 * checks like "if (scopedPtr) ..." possible.
 	 */
-	operator bool() const { return object != 0; }
+	operator bool() const { return _pointer != 0; }
 
 	~ScopedPtr() { 
-		delete object; 
+		delete _pointer;
 	}
 
 	/**
 	 * Resets the pointer with the new value. Old object will be destroyed
 	 */
-	void reset(T *o = 0) {
-		delete object;
-		object = o;
+	void reset(PointerType o = 0) {
+		delete _pointer;
+		_pointer = o;
 	}
 
 	/**
@@ -255,7 +257,7 @@ public:
 	 *
 	 * @return the pointer the ScopedPtr manages
 	 */
-	T *get() const { return object; }
+	PointerType get() const { return _pointer; }
 
 	/**
 	 * Returns the plain pointer value and releases ScopedPtr. 
@@ -263,11 +265,14 @@ public:
 	 *
 	 * @return the pointer the ScopedPtr manages
 	 */
-	T *release() {
-		T *r = object;
-		object = 0;
+	PointerType release() {
+		PointerType r = _pointer;
+		_pointer = 0;
 		return r;
 	}
+
+private:
+	PointerType _pointer;
 };
 
 
