@@ -79,27 +79,21 @@ static const ADParams detectionParams = {
 
 //add it to ptr.h?
 template<typename T>
-class AutoPtr {
+class ScopedPtr : Common::NonCopyable {
 protected:
-	mutable T *object;
+	T *object;
 
 public:
 	typedef T ValueType;
 	typedef T *PointerType;
 
-	inline AutoPtr(T *o = NULL): object(o) {}
-	inline AutoPtr(const AutoPtr& other): object(other.release()) {}
-	inline AutoPtr& operator=(const AutoPtr& other) {
-		delete object;
-		object = other.release();
-		return *this;
-	}
+	inline explicit ScopedPtr(T *o = NULL): object(o) {}
 
 	inline T *operator->() const { return object; }
 	inline operator T*() const { return object; }
 	inline operator bool() const { return object != NULL; }
 
-	inline ~AutoPtr() { 
+	inline ~ScopedPtr() { 
 		delete object; 
 	}
 
@@ -108,7 +102,9 @@ public:
 		object = o;
 	}
 
-	inline T *release() const {
+	inline T *get() { return object; }
+
+	inline T *release() {
 		T *r = object;
 		object = NULL;
 		return r;
@@ -169,7 +165,7 @@ public:
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
-				AutoPtr<Common::InSaveFile> in = g_system->getSavefileManager()->openForLoading(*file);
+				ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(*file));
 				if (!in)
 					continue;
 
@@ -194,7 +190,7 @@ public:
 
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::String filename = generateGameStateFileName(target, slot);
-		AutoPtr<Common::InSaveFile> in = g_system->getSavefileManager()->openForLoading(filename);
+		ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
 		if (!in)
 			return SaveStateDescriptor();
 
@@ -213,7 +209,7 @@ public:
 		ssd.setDeletableFlag(true);
 
 		//checking for the thumbnail
-		AutoPtr<Graphics::Surface> thumb = new Graphics::Surface;
+		ScopedPtr<Graphics::Surface> thumb(new Graphics::Surface);
 		if (Graphics::loadThumbnail(*in, *thumb))
 			ssd.setThumbnail(thumb.release());
 
