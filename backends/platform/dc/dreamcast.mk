@@ -29,7 +29,6 @@ IP.BIN : ip.txt
 ip.txt : $(srcdir)/backends/platform/dc/ip.txt.in
 	if [ x"$(VER_EXTRA)" = xsvn ]; then \
 	  if [ -z "$(VER_SVNREV)" ]; then ver="SVN"; else ver="r$(VER_SVNREV)"; fi; \
-	else ver="V$(VERSION)"; fi; \
-	ver="`echo \"$$ver\"|sed -e 's/^V\(.*\)pre$/p\1/'`"; \
+	else ver="V$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)"; fi; \
 	sed -e 's/[@]VERSION[@]/'"$$ver"/ -e 's/[@]DATE[@]/$(shell date '+%Y%m%d')/' < $< > $@
 
