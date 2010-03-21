@@ -192,6 +192,7 @@ private:
 	int _id;
 	Graphics::Surface background;
 	SurfaceList on;
+	bool on_enabled;
 	Surface *ons;
 	uint32 ons_count;
 	Animation actor_animation, animation[4], custom_animation[4];

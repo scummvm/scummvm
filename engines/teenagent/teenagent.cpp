@@ -777,6 +777,13 @@ void TeenAgentEngine::loadScene(byte id, uint16 x, uint16 y, byte o) {
 	fadeIn();
 }
 
+void TeenAgentEngine::enableOn(bool enable) {
+	SceneEvent event(SceneEvent::kSetOn);
+	event.ons = 0;
+	event.color = enable? 1: 0;
+	scene->push(event);
+}
+
 void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
 	SceneEvent event(SceneEvent::kSetOn);
 	event.ons = id + 1;

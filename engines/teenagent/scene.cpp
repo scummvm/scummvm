@@ -204,6 +204,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_system = system;
 
 	_fade_timer = 0;
+	on_enabled = true;
 
 	memset(palette, 0, sizeof(palette));
 
@@ -369,6 +370,7 @@ void Scene::loadLans() {
 void Scene::init(int id, const Common::Point &pos) {
 	debug(0, "init(%d)", id);
 	_id = id;
+	on_enabled = true; //reset on-rendering flag on loading.
 	sounds.clear();
 	for (byte i = 0; i < 4; ++i)
 		custom_animation[i].free();
@@ -444,6 +446,7 @@ void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	actor_animation.load(s);
 	actor_animation.loop = loop;
 	actor_animation.ignore = ignore;
+	actor_animation.id = id;
 }
 
 Animation * Scene::getAnimation(byte slot) {
@@ -809,7 +812,8 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 		//removed mark == null. In final scene of chapter 2 mark rendered above table. 
 		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL) 
-		if (debug_features.feature[DebugFeatures::kShowOn]) {
+		if (on_enabled && 
+			debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
 		}
 
@@ -915,9 +919,16 @@ bool Scene::processEventQueue() {
 		switch (current_event.type) {
 
 		case SceneEvent::kSetOn: {
-			byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
-			debug(0, "on[%u] = %02x", current_event.ons - 1, current_event.color);
-			ptr[current_event.ons - 1] = current_event.color;
+			byte on_id = current_event.ons;
+			if (on_id != 0) {
+				--on_id;
+				byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
+				debug(0, "on[%u] = %02x", on_id, current_event.color);
+				ptr[on_id] = current_event.color;
+			} else {
+				on_enabled = current_event.color != 0;
+				debug(0, "%s on rendering", on_enabled? "enabling": "disabling");
+			}
 			loadOns();
 			current_event.clear();
 		}

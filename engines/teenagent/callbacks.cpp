@@ -289,6 +289,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			Dialog::show(scene, 0x6117, 0, 813, 0xd1, 0xec, 0, 1);
 			loadScene(6, 230, 184);
+			playMusic(5);
 			Dialog::show(scene, 0x626a, 0, 814, 0xd1, 0xec, 0, 1);
 			playSound(4, 14);
 			playAnimation(815, 0);
@@ -297,7 +298,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			Dialog::showMono(scene, 0x62dc, 0, 0xd1, 0);
 
 			SET_FLAG(0xDBDF, 1);
-			playMusic(5);
 		}
 		return true;
 
@@ -1389,8 +1389,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x5502:
 		setOns(0, 0);
 		loadScene(15, 115, 180, 1);
-		playActorAnimation(568);
 		playMusic(6);
+		playActorAnimation(568);
 		return true;
 
 	case 0x5561://Enter lakeside house
@@ -2199,6 +2199,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7f23://Use grenade on captains drawer
 		if (CHECK_FLAG(0xDBDF, 3)) {
+			enableOn(false);
 			playSound(5, 3);
 			playSound(58, 11);
 			playSound(46, 56);
@@ -2212,6 +2213,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(224, 194, 0, true);
 			displayCutsceneMessage(0x57df, 30423);
 			inventory->remove(0x59);
+			enableOn(true);
 		} else {
 			displayMessage(0x5de2);
 		}
@@ -2439,17 +2441,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0xDB9F, 1);
 		return true;
 
-	case 0x84c7:
+	case 0x84c7: //using paddle on boat
 		playSound(20, 9);
 		playActorAnimation(530);
 		loadScene(16, 236, 95, 1);
+		playMusic(9);
 		playActorAnimation(531);
 		playSound(36, 4);
 		playActorAnimation(532);
 		playActorAnimation(533);
 		setOns(0, 9);
 		moveTo(236, 95, 1, true);
-		playMusic(9);
 		return true;
 
 	case 0x8538://Sharpen sickle on well
@@ -2707,11 +2709,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(675, 0, true);
 			waitAnimation();
 			loadScene(28, 0, 167, 2);
+			playMusic(10);
 			moveTo(66, 167, 2);
 			displayMessage(0x4a6f);
 			inventory->clear();
 			inventory->add(29);
-			playMusic(10);
 		} else
 			displayMessage(0x4a29);
 		return true;
