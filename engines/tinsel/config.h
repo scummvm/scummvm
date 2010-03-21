@@ -32,7 +32,7 @@ namespace Tinsel {
 
 // double click timer initial value
 enum {
-	DOUBLE_CLICK_TIME	= 6,	// 6 @ 18Hz = .33 sec
+	DOUBLE_CLICK_TIME	= 10,	// 10 @ 18Hz = .55 sec
 	DEFTEXTSPEED		= 0
 };
 
