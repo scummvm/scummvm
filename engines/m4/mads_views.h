@@ -69,6 +69,7 @@ private:
 	void setFontMode(InterfaceFontMode newMode);
 	bool handleCheatKey(int32 keycode);
 	bool handleKeypress(int32 keycode);
+	void leaveScene();
 public:
 	MadsInterfaceView(MadsM4Engine *vm);
 	~MadsInterfaceView();

@@ -189,6 +189,7 @@ public:
 	uint16 actionNouns[3];
 public:
 	MadsScene(MadsEngine *vm);
+	virtual ~MadsScene();
 
 	// Methods that differ between engines
 	virtual void loadScene(int sceneNumber);

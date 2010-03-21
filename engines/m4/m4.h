@@ -206,6 +206,8 @@ public:
 };
 
 class MadsEngine : public MadsM4Engine {
+private:
+	void showDialog();
 public:
 	MadsConversation _converse;
 public:

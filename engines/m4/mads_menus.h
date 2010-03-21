@@ -26,7 +26,9 @@
 #ifndef M4_MADS_MENUS_H
 #define M4_MADS_MENUS_H
 
+#include "common/str-array.h"
 #include "m4/viewmgr.h"
+#include "m4/font.h"
 
 namespace M4 {
 
@@ -84,6 +86,55 @@ public:
 
 	bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents);
 	void updateState();
+};
+
+class DialogTextEntry {
+public:
+	bool in_use;
+	int16 field_2;
+	Common::Point pos;
+	char text[80];
+	Font *font;
+	int widthAdjust;
+
+	int textDisplay_index;
+
+	DialogTextEntry() { in_use = false; };
+};
+
+#define DIALOG_LINES_SIZE 20
+
+class RexDialogView: public View {
+private:
+	int _priorSceneId;
+	bool _initialised;
+
+	void initialiseGraphics();
+	void loadBackground();
+	void loadMenuSprites();
+protected:
+	M4Surface *_backgroundSurface;
+	RGBList *_bgPalData;
+	SpriteAsset *_menuSprites;
+	RGBList *_spritesPalData;
+
+	Common::Array<DialogTextEntry> _dialogText;
+	int _totalTextEntries;
+	int _dialogSelectedLine;
+	Common::StringArray _saveList;
+public:
+	RexDialogView();
+	~RexDialogView();
+
+	virtual void updateState();
+	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
+};
+
+class RexGameMenuDialog: public RexDialogView {
+public:
+	RexGameMenuDialog(): RexDialogView() {};
+
+	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
 };
 
 }

@@ -210,6 +210,9 @@ public:
 
 enum RexPlayerSex { SEX_MALE = 0, SEX_FEMALE = 2, SEX_UNKNOWN = 1};
 
+enum MadsDialogType { DIALOG_NONE = 0, DIALOG_GAME_MENU = 1, DIALOG_SAVE = 2, DIALOG_RESTORE = 3, DIALOG_OPTIONS = 4,
+		DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6};
+
 class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
@@ -236,6 +239,9 @@ public:
 	bool textWindowStill;
 	int storyMode;
 	bool playerSpriteChanged;
+	MadsDialogType dialogType;
+	int sceneNumber;
+	int previousScene;
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }
@@ -245,9 +251,13 @@ public:
 		return _madsVocab[index - 1];
 	}
 
-	void loadMadsQuotes();
+	void loadQuotes();
 	uint32 getQuotesSize() { return _madsQuotes.size(); }
 	const char *getQuote(uint32 index) { return _madsQuotes[index]; }
+	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
+	void clearQuotes() {};
+	void loadQuoteRange(int startNum, int endNum) {};
+	void loadQuote(int quoteNum) {};
 
 	void loadMadsMessagesInfo();
 	uint32 getMessagesSize() { return _madsMessages.size(); }

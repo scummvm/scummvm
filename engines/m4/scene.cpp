@@ -60,22 +60,19 @@ Scene::~Scene() {
 void Scene::loadScene(int sceneNumber) {
 	_previousScene = _currentScene;
 	_currentScene = sceneNumber;
-
-	// Load scene background and set palette
-	if (_palData) {
-		_vm->_palette->deleteRange(_palData);
-		delete _palData;
-	}
-
-	if (_interfacePal) {
-		_vm->_palette->deleteRange(_interfacePal);
-		delete _interfacePal;
-	}
 }
 
 void Scene::leaveScene() {
-	delete _palData;
-	delete _interfacePal;
+	if (_palData) {
+		_vm->_palette->deleteRange(_palData);
+		delete _palData;
+		_palData = NULL;
+	}
+	if (_interfacePal) {
+		_vm->_palette->deleteRange(_interfacePal);
+		delete _interfacePal;
+		_interfacePal = NULL;
+	}
 }
 
 void Scene::show() {

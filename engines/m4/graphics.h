@@ -128,6 +128,7 @@ public:
 	void drawSprite(int x, int y, SpriteInfo &info, const Common::Rect &clipRect);
 
 	// Surface methods
+	inline Common::Rect bounds() const { return Common::Rect(0, 0, width(), height()); }
 	inline int width() const { return w; }
 	inline int height() const { return h; }
 	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }

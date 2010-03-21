@@ -43,6 +43,9 @@ extern const char *walkToStr;
 extern const char *fenceStr;
 extern const char *overStr;
 
+extern const char *GameReleaseInfoStr;
+extern const char *GameReleaseTitleStr;
+
 struct VerbInit {
 	int verb;
 	int8 flag1;

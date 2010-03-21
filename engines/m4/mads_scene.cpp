@@ -49,6 +49,11 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 		actionNouns[i] = 0;
 }
 
+MadsScene::~MadsScene() {
+	leaveScene();
+	_vm->_viewManager->deleteView(_interfaceSurface);
+}
+
 /**
  * Secondary scene loading code
  */
@@ -76,10 +81,6 @@ void MadsScene::loadSceneTemporary() {
 	_backgroundSurface->translate(_palData);
 
 	if (_currentScene < 900) {
-		/*_backgroundSurface->fillRect(Common::Rect(0, MADS_SURFACE_HEIGHT,
-			_backgroundSurface->width(), _backgroundSurface->height()),
-			_vm->_palette->BLACK);*/
-		// TODO: interface palette
 		_interfaceSurface->madsloadInterface(0, &_interfacePal);
 		_vm->_palette->addRange(_interfacePal);
 		_interfaceSurface->translate(_interfacePal);
@@ -107,6 +108,12 @@ void MadsScene::loadScene(int sceneNumber) {
 	// Handle common scene setting
 	Scene::loadScene(sceneNumber);
 
+	_madsVm->globals()->previousScene = _madsVm->globals()->sceneNumber;
+	_madsVm->globals()->sceneNumber = sceneNumber;
+
+	// Existing ScummVM code that needs to be eventually replaced with MADS code
+	loadSceneTemporary();
+
 	// Signal the script engine what scene is to be active
 	_sceneLogic.selectScene(sceneNumber);
 	_sceneLogic.setupScene();
@@ -119,9 +126,6 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Do any scene specific setup
 	_sceneLogic.enterScene();
-
-	// Existing ScummVM code that needs to be eventually replaced with MADS code
-	loadSceneTemporary();
 
 	// Purge resources
 	_vm->res()->purge();
@@ -159,7 +163,6 @@ void MadsScene::leaveScene() {
 	for (uint i = 0; i <_sceneSprites.size(); ++i) delete _sceneSprites[i];
 	_sceneSprites.clear();
 
-	delete _backgroundSurface;
 	delete _walkSurface;
 
 	Scene::leaveScene();

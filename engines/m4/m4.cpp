@@ -519,7 +519,7 @@ Common::Error MadsEngine::run() {
 	// Load MADS data files
 	MadsGlobals *globs = (MadsGlobals *)_globals;
 	globs->loadMadsVocab();			// vocab.dat
-	globs->loadMadsQuotes();			// quotes.dat
+	globs->loadQuotes();			// quotes.dat
 	globs->loadMadsMessagesInfo();	// messages.dat
 	globs->loadMadsObjects();
 
@@ -580,16 +580,32 @@ Common::Error MadsEngine::run() {
 		_viewManager->updateState();
 
 		if (g_system->getMillis() >= nextFrame) {
-
 			_viewManager->refreshAll();
 			nextFrame = g_system->getMillis();// + GAME_FRAME_DELAY;
 		}
 
 		g_system->delayMillis(10);
+
+		if (globals()->dialogType != DIALOG_NONE)
+			showDialog();
 	}
 
 	return Common::kNoError;
 }
 
+void MadsEngine::showDialog() {
+	// Switch to showing the given dialog
+	RexDialogView *dlg = NULL;
+	switch (globals()->dialogType) {
+	case DIALOG_GAME_MENU:
+		dlg = new RexGameMenuDialog();
+		break;
+	default:
+		error("Unknown dialog type");
+	};
+
+	globals()->dialogType = DIALOG_NONE;
+	_viewManager->addView(dlg);
+}
 
 } // End of namespace M4

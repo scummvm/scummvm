@@ -28,6 +28,7 @@
 #include "m4/events.h"
 #include "m4/font.h"
 #include "m4/globals.h"
+#include "m4/mads_menus.h"
 #include "m4/m4.h"
 #include "m4/staticres.h"
 
@@ -384,7 +385,81 @@ bool MadsInterfaceView::handleKeypress(int32 keycode) {
 		}
 	}
 
+	// Handle the various keys
+	if ((keycode == Common::KEYCODE_ESCAPE) || (keycode == Common::KEYCODE_F1)) {
+		// Game menu
+		_madsVm->globals()->dialogType = DIALOG_GAME_MENU;
+		leaveScene();
+		return false;
+	} else if (flags & Common::KBD_CTRL) {
+		// Handling of the different control key combinations
+		switch (kc) {
+		case Common::KEYCODE_i:
+			// Mouse to inventory
+			warning("TODO: Mouse to inventory");
+			break;
+
+		case Common::KEYCODE_k:
+			// Toggle hotspots
+			warning("TODO: Toggle hotspots");
+			break;
+
+		case Common::KEYCODE_p:
+			// Player stats
+			warning("TODO: Player stats");
+			break;
+
+		case Common::KEYCODE_q:
+			// Quit game
+			break;
+
+		case Common::KEYCODE_s:
+			// Activate sound
+			warning("TODO: Activate sound");
+			break;
+
+		case Common::KEYCODE_u:
+			// Rotate player
+			warning("TODO: Rotate player");
+			break;
+
+		case Common::KEYCODE_v: {
+			// Release version
+			Dialog *dlg = new Dialog(_vm, GameReleaseInfoStr, GameReleaseTitleStr);
+			_vm->_viewManager->addView(dlg);
+			_vm->_viewManager->moveToFront(dlg);
+			return false;
+		}
+
+		default:
+			break;
+		}
+	} else if ((flags & Common::KBD_ALT) && (kc == Common::KEYCODE_q)) {
+		// Quit Game
+
+	} else {
+		// Standard keypresses
+		switch (kc) {
+			case Common::KEYCODE_F2:
+				// Save game
+				_madsVm->globals()->dialogType = DIALOG_SAVE;
+				leaveScene();
+				break;
+			case Common::KEYCODE_F3:
+				// Restore game
+				_madsVm->globals()->dialogType = DIALOG_RESTORE;
+				leaveScene();
+				break;
+		}
+	}
+//DIALOG_OPTIONS
 	return false;
+}
+
+void MadsInterfaceView::leaveScene() {
+	// Close the scene
+	View *view = _madsVm->_viewManager->getView(VIEWID_SCENE);
+	_madsVm->_viewManager->deleteView(view);
 }
 
 } // End of namespace M4

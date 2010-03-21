@@ -579,4 +579,135 @@ void DragonMainMenuView::handleAction(MadsGameAction action) {
 	}
 }
 
+
+/*--------------------------------------------------------------------------
+ * RexDialogView is the base class for the different full-screen dialogs
+ * in at least Rex Nebular
+ *--------------------------------------------------------------------------
+ */
+
+RexDialogView::RexDialogView(): View(_madsVm, Common::Rect(0, 0, _madsVm->_screen->width(), _madsVm->_screen->height())) {
+	_screenType = VIEWID_MENU;
+	_initialised = false;
+
+	// Set up a list of blank entries for use in the various dialogs
+	for (int i = 0; i < DIALOG_LINES_SIZE; ++i) {
+		DialogTextEntry rec;
+		_dialogText.push_back(rec);
+	}
+	_totalTextEntries = 0;
+
+	// Store the previously active scene
+	_priorSceneId = _madsVm->_scene->getCurrentScene();
+
+	// Load necessary quotes
+	_madsVm->globals()->loadQuoteRange(1, 48);
+}
+
+void RexDialogView::initialiseGraphics() {
+	// Set needed palette entries
+	_madsVm->_palette->blockRange(0, 16);
+	_madsVm->_palette->setEntry(10, 0, 255, 0);
+	_madsVm->_palette->setEntry(11, 0, 180, 0);
+	_madsVm->_palette->setEntry(12, 255, 255, 0);
+	_madsVm->_palette->setEntry(13, 180, 180, 0);
+	_madsVm->_palette->setEntry(14, 255, 255, 180);
+	_madsVm->_palette->setEntry(15, 180, 180,  180);
+
+	// Load an appropriate background and menu sprites
+	loadBackground();
+	loadMenuSprites();
+
+	// Set the current cursor
+	_madsVm->_mouse->setCursorNum(CURSOR_ARROW);
+
+	_initialised = true;
+}
+
+
+RexDialogView::~RexDialogView() {
+	if (_initialised) {
+		_madsVm->_palette->deleteRange(_bgPalData);
+		delete _bgPalData;
+		delete _backgroundSurface;
+		_madsVm->_palette->deleteRange(_spritesPalData);
+		delete _spritesPalData;
+		delete _menuSprites;
+	}
+}
+
+void RexDialogView::loadBackground() {
+	int bgIndex = _madsVm->globals()->sceneNumber / 100;
+	int screenId = 0;
+
+	switch (bgIndex) {
+	case 1:
+	case 2:
+		screenId = 921;
+		break;
+	case 3:
+	case 4:
+		screenId = 922;
+		break;
+	case 5:
+	case 6:
+	case 7:
+		screenId = 923;
+		break;
+	case 8:
+		screenId = 924;
+	case 9:
+		screenId = 920;
+	default:
+		error("Unknown scene number");
+	}
+
+	_backgroundSurface = new M4Surface(width(), MADS_SURFACE_HEIGHT);
+	_backgroundSurface->loadBackground(screenId, &_bgPalData);
+	_vm->_palette->addRange(_bgPalData);
+	_backgroundSurface->translate(_bgPalData);
+}
+
+void RexDialogView::loadMenuSprites() {
+	const char *SPRITES_NAME = "*MENU.SS";
+
+	Common::SeekableReadStream *data = _vm->res()->get(SPRITES_NAME);
+	_menuSprites = new SpriteAsset(_vm, data, data->size(), SPRITES_NAME);
+	_vm->res()->toss(SPRITES_NAME);
+
+	// Slot it into available palette space
+	_spritesPalData = _menuSprites->getRgbList();
+	_vm->_palette->addRange(_spritesPalData);
+	_menuSprites->translate(_spritesPalData, true);
+}
+
+
+void RexDialogView::updateState() {
+	if (!_initialised) {
+		initialiseGraphics();
+	}
+}
+
+void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
+	// Draw the framed base area
+	fillRect(this->bounds(), _madsVm->_palette->BLACK);
+	setColour(2);
+	hLine(0, width(), 0);
+	hLine(0, width(), height() - 1);
+
+	// Add in the loaded background vertically centred
+	_backgroundSurface->copyTo(this, 0, (height() - MADS_SURFACE_HEIGHT) / 2);
+
+	View::onRefresh(rects, destSurface);
+}
+
+/*--------------------------------------------------------------------------
+ * RexDialogView is the Rex Nebular Game Menu dialog
+ *--------------------------------------------------------------------------
+ */
+
+void RexGameMenuDialog::onRefresh(RectList *rects, M4Surface *destSurface) {
+	RexDialogView::onRefresh(rects, destSurface);
+}
+
 }

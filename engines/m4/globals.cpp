@@ -280,6 +280,8 @@ MadsGlobals::MadsGlobals(MadsEngine *vm): Globals(vm) {
 	_vm = vm;
 
 	playerSpriteChanged = false;
+	dialogType = DIALOG_NONE;
+	sceneNumber = -1;
 }
 
 MadsGlobals::~MadsGlobals() {
@@ -319,7 +321,7 @@ void MadsGlobals::loadMadsVocab() {
 	_vm->res()->toss("vocab.dat");
 }
 
-void MadsGlobals::loadMadsQuotes() {
+void MadsGlobals::loadQuotes() {
 	Common::SeekableReadStream *quoteS = _vm->res()->get("quotes.dat");
 	int curPos = 0;
 

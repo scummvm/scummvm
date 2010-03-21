@@ -45,6 +45,9 @@ const char *walkToStr = "Walk to ";
 const char *fenceStr = "fence";
 const char *overStr = "over";
 
+const char *GameReleaseInfoStr = "ScummVM rev: 8.43 14-Sept-92";
+const char *GameReleaseTitleStr = "GAME RELASE VERSION INFO";
+
 VerbInit verbList[10] = {
 	{kVerbLook, 2, 0},
 	{kVerbTake, 2, 0},
