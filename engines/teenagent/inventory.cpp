@@ -117,9 +117,13 @@ void Inventory::clear() {
 	}
 }
 
-void Inventory::flush() {
-	for (int i = 0; i < 24; ++i) 
+void Inventory::reload() {
+	for (int i = 0; i < 24; ++i) {
 		graphics[i].free();
+		uint item = inventory[i];
+		if (item != 0)
+			graphics[i].load(this, item);
+	}
 }
 
 void Inventory::add(byte item) {
@@ -285,17 +289,31 @@ void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
 	}
 }
 
-void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *dst, int delta) {
-	Resources *res = Resources::instance();
-
-	backgroundEffect(dst);
-	rect.render(dst, hovered ? 233 : 234);
+void Inventory::Item::load(Inventory *inventory, uint item_id) {
+	InventoryObject *obj = &inventory->objects[item_id];
 	if (obj->animated) {
 		if (animation.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
 			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
 			animation.load(&s, Animation::kTypeInventory);
 		}
+	} else {
+		if (surface.empty()) {
+			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
+			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
+			surface.load(&s, Surface::kTypeOns);
+		}
+	}
+}
+
+void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surface *dst, int delta) {
+	InventoryObject *obj = &inventory->objects[item_id];
+	Resources *res = Resources::instance();
+
+	backgroundEffect(dst);
+	rect.render(dst, hovered ? 233 : 234);
+	load(inventory, item_id);
+	if (obj->animated) {
 		if (hovered) {
 			Surface *s = animation.currentFrame(delta);
 			if (animation.currentIndex() == 0)
@@ -308,11 +326,6 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 				s->render(dst, rect.left + 1, rect.top + 1);
 		}
 	} else {
-		if (surface.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
-			surface.load(&s, Surface::kTypeOns);
-		}
 		surface.render(dst, rect.left + 1, rect.top + 1);
 	}
 
@@ -344,9 +357,7 @@ void Inventory::render(Graphics::Surface *surface, int delta) {
 				continue;
 
 			//debug(0, "%d,%d -> %u", x0, y0, item);
-
-			InventoryObject *obj = &objects[item];
-			graphics[idx].render(this, obj, surface, delta);
+			graphics[idx].render(this, item, surface, delta);
 		}
 	}
 }
