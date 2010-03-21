@@ -30,7 +30,7 @@ ip.txt : $(srcdir)/backends/platform/dc/ip.txt.in
 	if [ x"$(VER_EXTRA)" = xsvn ]; then \
 	  if [ -z "$(VER_SVNREV)" ]; then ver="SVN"; else ver="r$(VER_SVNREV)"; fi; \
 	else ver="V$(VERSION)"; fi; \
-	if expr "$ver" : V...... >/dev/null; then \
+	if expr "$$ver" : V...... >/dev/null; then \
 	  ver="V$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)"; fi; \
 	sed -e 's/[@]VERSION[@]/'"$$ver"/ -e 's/[@]DATE[@]/$(shell date '+%Y%m%d')/' < $< > $@
 
