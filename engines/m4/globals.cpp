@@ -415,24 +415,24 @@ const char *MadsGlobals::loadMessage(uint index) {
 /**
  * Adds the specified scene number to list of scenes previously visited 
  */
-void MadsGlobals::addVisitedScene(int sceneNumber) {
-	if (!isSceneVisited(sceneNumber))
-		_visitedScenes.push_back(sceneNumber);
+void MadsGlobals::addVisitedScene(int newSceneNumber) {
+	if (!isSceneVisited(newSceneNumber))
+		_visitedScenes.push_back(newSceneNumber);
 }
 
 /**
  * Returns true if the specified scene has been previously visited
  */
-bool MadsGlobals::isSceneVisited(int sceneNumber) {
+bool MadsGlobals::isSceneVisited(int checkSceneNumber) {
 	Common::List<int>::iterator i;
 	for (i = _visitedScenes.begin(); i != _visitedScenes.end(); ++i)
-		if (*i == sceneNumber)
+		if (*i == checkSceneNumber)
 			return true;
 	return false;
 }
 
-void MadsGlobals::removeVisitedScene(int sceneNumber) {
-	_visitedScenes.remove(sceneNumber);
+void MadsGlobals::removeVisitedScene(int oldSceneNumber) {
+	_visitedScenes.remove(oldSceneNumber);
 }
 
 /*--------------------------------------------------------------------------*/
