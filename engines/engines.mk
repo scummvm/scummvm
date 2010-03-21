@@ -46,11 +46,6 @@ DEFINES += -DENABLE_DRASCULA=$(ENABLE_DRASCULA)
 MODULES += engines/drascula
 endif
 
-ifdef ENABLE_GARGOYLE
-DEFINES += -DENABLE_GARGOYLE=$(ENABLE_GARGOYLE)
-MODULES += engines/gargoyle
-endif
-
 ifdef ENABLE_GOB
 DEFINES += -DENABLE_GOB=$(ENABLE_GOB)
 MODULES += engines/gob
@@ -154,11 +149,6 @@ endif
 ifdef ENABLE_TOUCHE
 DEFINES += -DENABLE_TOUCHE=$(ENABLE_TOUCHE)
 MODULES += engines/touche
-endif
-
-ifdef ENABLE_TSAGE
-DEFINES += -DENABLE_TSAGE=$(ENABLE_TSAGE)
-MODULES += engines/tsage
 endif
 
 ifdef ENABLE_TUCKER
