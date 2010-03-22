@@ -441,11 +441,11 @@ void MenuSystem::initSavegames() {
 	Common::String pattern = _vm->getTargetName();
 	pattern += ".???";
 
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
 		Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 		if (in) {
 			if (_vm->readSaveHeader(in, false, header) == Picture::PictureEngine::kRSHENoError) {

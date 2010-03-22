@@ -30,6 +30,7 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/file.h"
+#include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/hash-str.h"
