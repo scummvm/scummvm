@@ -1,11 +1,14 @@
 #!/bin/sh
-GAMES=/mmc/mmca1/.Games
-DIR=`busybox dirname "$0"`
-LIBDIR=/mmc/mmca1/.system/lib
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBDIR
-export SDL_QT_MODIFICATOR=1
-export HOME=$GAMES
-cd $DIR
+mypath=${0%/*}
+LIBDIR1=/ezxlocal/download/mystuff/games/lib
+LIBDIR2=/mmc/mmca1/games/lib
+#LIBDIR3=/mmc/mmca1/.Games/.lib
+LIBDIR3=/mmc/mmca1/.system/lib
+LIBDIR4=$mypath/lib
+#export SDL_QT_INVERT_ROTATION=1
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBDIR1:$LIBDIR2:$LIBDIR3:$LIBDIR4
+export HOME=$mypath
 rm /mmc/mmca1/.system/mySDL.cfg
-cp $DIR/mySDL.cfg /mmc/mmca1/.system/mySDL.cfg
-exec $DIR/scummvm --gfx-mode=1x > $DIR/scummvm.log
+cp $mypath/mySDL.cfg /mmc/mmca1/.system/mySDL.cfg
+cd $mypath
+exec $mypath/scummvm --gfx-mode=1x > $mypath/scummvm.log
