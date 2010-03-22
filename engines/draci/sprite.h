@@ -51,7 +51,7 @@ public:
 	virtual void draw(Surface *surface, bool markDirty, int relX, int relY) const = 0;
 	virtual void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const = 0;
 
-	virtual ~Drawable() {};
+	virtual ~Drawable() {}
 
 	uint getWidth() const { return _width; }
 	uint getHeight() const { return _height; }
@@ -141,7 +141,7 @@ class Text : public Drawable {
 public:
 	Text(const Common::String &str, const Font *font, byte fontColour,
 	    int x, int y, uint spacing);
-	~Text() {};
+	~Text() {}
 
 	void setText(const Common::String &str);
 	void setColour(byte fontColour) { _colour = fontColour; }

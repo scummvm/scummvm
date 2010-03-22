@@ -61,8 +61,8 @@ public:
 	~Font();
 
 	bool loadFont(const Common::String &filename);
-	uint8 getFontHeight() const { return _fontHeight; };
-	uint8 getMaxCharWidth() const { return _maxCharWidth; };
+	uint8 getFontHeight() const { return _fontHeight; }
+	uint8 getMaxCharWidth() const { return _maxCharWidth; }
 	uint8 getCharWidth(byte chr) const;
 	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const;
 

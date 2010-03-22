@@ -274,7 +274,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef ENABLE_SCI32
 				// If the string is a string object, get to the actual string in the data selector
-				if (s->_segMan->isObject(reg)) 
+				if (s->_segMan->isObject(reg))
 					reg = GET_SEL32(s->_segMan, reg, SELECTOR(data));
 #endif
 
@@ -400,7 +400,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	free(arguments);
 
 	*target = 0; /* Terminate string */
-	
+
 #ifdef ENABLE_SCI32
 	// Resize SCI32 strings if necessary
 	if (getSciVersion() >= SCI_VERSION_2) {

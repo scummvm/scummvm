@@ -71,7 +71,7 @@ public:
 private:
 	virtual void handleNextFrame();
 	virtual bool processFrame() = 0;
-	virtual void startSound() {};
+	virtual void startSound() {}
 };
 
 class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXADecoder {

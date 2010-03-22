@@ -53,7 +53,7 @@ public:
 
 	virtual bool findRecord(const MessageTuple &tuple, MessageRecord &record) = 0;
 
-	virtual ~MessageReader() { };
+	virtual ~MessageReader() { }
 
 protected:
 	MessageReader(const byte *data, uint size, uint headerSize, uint recordSize)

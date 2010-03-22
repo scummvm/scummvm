@@ -121,7 +121,7 @@ public:
 	uint16 number;
 	uint32 tuple; // Only used for audio36 and sync36
 
-	ResourceId() : type(kResourceTypeInvalid), number(0), tuple(0) { };
+	ResourceId() : type(kResourceTypeInvalid), number(0), tuple(0) { }
 
 	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0)
 			: type(type_), number(number_), tuple(tuple_) {

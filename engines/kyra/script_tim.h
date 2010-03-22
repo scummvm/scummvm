@@ -260,8 +260,8 @@ protected:
 	int cmd_stopAllFuncs(const uint16 *param);
 #define cmd_return(n, v) \
 	int cmd_return_##n(const uint16 *){ return v; }
-	cmd_return( 1,  1);
-	cmd_return(n1, -1);
+	cmd_return( 1,  1)
+	cmd_return(n1, -1)
 #undef cmd_return
 };
 

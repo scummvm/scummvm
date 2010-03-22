@@ -111,8 +111,8 @@ public:
 	M4Surface *getBackgroundSurface() const { return _backgroundSurface; }
 	void showInterface();
 	void hideInterface();
-	GameInterfaceView *getInterface() { return _interfaceSurface; };
-	SceneResources &getSceneResources() { return *_sceneResources; };
+	GameInterfaceView *getInterface() { return _interfaceSurface; }
+	SceneResources &getSceneResources() { return *_sceneResources; }
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);

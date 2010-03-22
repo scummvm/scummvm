@@ -49,7 +49,7 @@ class GameItem;
 class Mouse {
 public:
 	Mouse(DraciEngine *vm);
-	~Mouse() {};
+	~Mouse() {}
 
 	void handleEvent(Common::Event event);
 	void cursorOn();

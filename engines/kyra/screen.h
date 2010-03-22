@@ -532,7 +532,7 @@ protected:
 	int _mouseLockCount;
 	const uint8 _cursorColorKey;
 
-	virtual void postProcessCursor(uint8 *data, int w, int h, int pitch) {};
+	virtual void postProcessCursor(uint8 *data, int w, int h, int pitch) {}
 
 	enum {
 		kMaxDirtyRects = 50

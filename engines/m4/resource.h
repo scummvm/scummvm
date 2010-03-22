@@ -94,7 +94,7 @@ protected:
 
 	virtual Common::SeekableReadStream *loadResource(const char *resourceName, bool loadFlag) = 0;
 public:
-	ResourceManager(MadsM4Engine *vm): _vm(vm) {};
+	ResourceManager(MadsM4Engine *vm): _vm(vm) {}
 	virtual ~ResourceManager();
 
 	Common::SeekableReadStream *get(const char *resourceName, bool loadFlag = true);
@@ -124,7 +124,7 @@ private:
 protected:
 	Common::SeekableReadStream *loadResource(const char *resourceName, bool loadFlag);
 public:
-	MADSResourceManager(MadsM4Engine *vm): ResourceManager(vm) {};
+	MADSResourceManager(MadsM4Engine *vm): ResourceManager(vm) {}
 	bool resourceExists(const char *resourceName);
 
 	static const char *getResourceName(char asciiCh, int prefix, ExtensionType extType, const char *suffix, int index);

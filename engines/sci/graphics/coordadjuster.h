@@ -41,16 +41,16 @@ class GfxPorts;
 class GfxCoordAdjuster {
 public:
 	GfxCoordAdjuster();
-	virtual ~GfxCoordAdjuster() { };
+	virtual ~GfxCoordAdjuster() { }
 
-	virtual void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
-	virtual void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { };
+	virtual void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { }
+	virtual void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG) { }
 
-	virtual Common::Rect onControl(Common::Rect rect) { return rect; };
-	virtual void setCursorPos(Common::Point &pos) { };
-	virtual void moveCursor(Common::Point &pos) { };
+	virtual Common::Rect onControl(Common::Rect rect) { return rect; }
+	virtual void setCursorPos(Common::Point &pos) { }
+	virtual void moveCursor(Common::Point &pos) { }
 
-	virtual Common::Rect pictureGetDisplayArea() { return Common::Rect(0, 0); };
+	virtual Common::Rect pictureGetDisplayArea() { return Common::Rect(0, 0); }
 private:
 };
 

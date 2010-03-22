@@ -88,10 +88,10 @@ struct ScriptValue {
 		int value;
 	};
 
-	ScriptValue() : type(kInteger), value(0) {};
-	ScriptValue(ScriptValueType itype, int ivalue) : type(itype), value(ivalue) {};
+	ScriptValue() : type(kInteger), value(0) {}
+	ScriptValue(ScriptValueType itype, int ivalue) : type(itype), value(ivalue) {}
 
-	ScriptValue(const int intValue) : type(kInteger), value(intValue) {};
+	ScriptValue(const int intValue) : type(kInteger), value(intValue) {}
 
 	ScriptValue& operator=(const int intValue) {
 		type = kInteger;

@@ -93,7 +93,7 @@ public:
 		vol = _volume;
 		pan = _pan;
 		return true;
-	};
+	}
 };
 
 class ImuseChannel : public SmushChannel {
@@ -123,7 +123,7 @@ public:
 		vol = _volume;
 		pan = _pan;
 		return true;
-	};
+	}
 };
 
 } // End of namespace Scumm

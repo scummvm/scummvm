@@ -36,7 +36,7 @@ struct ResInfo {
 
 class ResMan {
 public:
-	virtual ~ResMan() {};
+	virtual ~ResMan() {}
 
 	Common::SeekableReadStream *open(uint32 fileRef);
 	virtual uint16 getRef(Common::String name, Common::String scriptname = "") = 0;
@@ -51,7 +51,7 @@ protected:
 class ResMan_t7g : public ResMan {
 public:
 	ResMan_t7g();
-	~ResMan_t7g() {};
+	~ResMan_t7g() {}
 
 	uint16 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
@@ -60,7 +60,7 @@ public:
 class ResMan_v2 : public ResMan {
 public:
 	ResMan_v2();
-	~ResMan_v2() {};
+	~ResMan_v2() {}
 
 	uint16 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);

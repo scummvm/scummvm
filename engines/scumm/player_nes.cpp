@@ -101,7 +101,7 @@ public:
 	int32 Pos;
 	uint32 Cycles;	// short
 
-	inline byte GetTimer() const { return Timer; };
+	inline byte GetTimer() const { return Timer; }
 };
 
 class Square : public SoundGen {

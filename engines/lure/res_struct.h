@@ -699,7 +699,7 @@ public:
 
 class SequenceDelayData {
 private:
-	SequenceDelayData() {};
+	SequenceDelayData() {}
 public:
 	SequenceDelayData(uint16 delay, uint16 seqOffset, bool canClearFlag);
 	static SequenceDelayData *load(uint32 delay, uint16 seqOffset, bool canClearFlag);

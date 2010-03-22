@@ -173,10 +173,10 @@ struct VocabEntry {
 
 class MadsObject {
 public:
-	MadsObject() {};
+	MadsObject() {}
 	MadsObject(Common::SeekableReadStream *stream);
 	void load(Common::SeekableReadStream *stream);
-	bool isInInventory() const { return roomNumber == PLAYER_INVENTORY; };
+	bool isInInventory() const { return roomNumber == PLAYER_INVENTORY; }
 
 	uint16 descId;
 	uint16 roomNumber;
@@ -192,7 +192,7 @@ private:
 	MadsM4Engine *_vm;
 public:
 	Globals(MadsM4Engine *vm);
-	virtual ~Globals() {};
+	virtual ~Globals() {}
 
 	bool isInterfaceVisible();
 
@@ -203,7 +203,7 @@ private:
 	M4Engine *_vm;
 public:
 	M4Globals(M4Engine *vm);
-	virtual ~M4Globals() {};
+	virtual ~M4Globals() {}
 
 	bool invSuppressClickSound;
 };

@@ -382,7 +382,7 @@ void Kernel::setKernelNamesSci21(EngineState *s) {
 	// Some SCI games use a modified SCI2 kernel table instead of the SCI2.1/SCI3 kernel table.
 	// The GK2 demo does this as well as at least one version of KQ7. We detect which version
 	// to use based on where kDoSound is called from Sound::play().
-	
+
 	// This is interesting because they all have the same interpreter version (2.100.002), yet
 	// they would not be compatible with other games of the same interpreter.
 
@@ -634,7 +634,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		reg_t *adjustedArgs = new reg_t[argc];
 		adjustedArgs[0] = stringHandle;
 		memcpy(&adjustedArgs[1], argv + 1, (argc - 1) * sizeof(reg_t));
-		
+
 		kFormat(s, argc, adjustedArgs);
 		delete[] adjustedArgs;
 		return stringHandle;

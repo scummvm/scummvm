@@ -213,9 +213,9 @@ enum MenuObjectState {OS_GREYED = 0, OS_NORMAL = 1, OS_MOUSEOVER = 2, OS_PRESSED
 class DialogView : public View {
 public:
 	DialogView(MadsM4Engine *Vm, const Common::Rect &viewBounds, bool transparent = false):
-		View(Vm, viewBounds, transparent) {};
+		View(Vm, viewBounds, transparent) {}
 	DialogView(MadsM4Engine *Vm, int x = 0, int y = 0, bool transparent = false):
-		View(Vm, x, y, transparent) {};
+		View(Vm, x, y, transparent) {}
 
 	MadsM4Engine *vm() { return _vm; }
 	virtual SpriteAsset *sprites() = 0;
@@ -399,7 +399,7 @@ class GUIRect : public GUIObject {
 private:
 	int _tag;
 public:
-	GUIRect(View *owner, const Common::Rect &bounds, int tag): GUIObject(owner, bounds) { _tag = tag; };
+	GUIRect(View *owner, const Common::Rect &bounds, int tag): GUIObject(owner, bounds) { _tag = tag; }
 
 	virtual bool onEvent(M4EventType eventType, int32 param, int x, int y, GUIObject *&currentItem) { return false; }
 	int getTag() const { return _tag; }
@@ -443,12 +443,12 @@ public:
 
 class GameInterfaceView : public View {
 public:
-	GameInterfaceView(MadsM4Engine *vm, const Common::Rect &rect): View(vm, rect) {};
-	~GameInterfaceView() {};
+	GameInterfaceView(MadsM4Engine *vm, const Common::Rect &rect): View(vm, rect) {}
+	~GameInterfaceView() {}
 
-	virtual void initialise() {};
-	virtual void setSelectedObject(int objectNumber) {};
-	virtual void addObjectToInventory(int objectNumber) {};
+	virtual void initialise() {}
+	virtual void setSelectedObject(int objectNumber) {}
+	virtual void addObjectToInventory(int objectNumber) {}
 };
 
 }

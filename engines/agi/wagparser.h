@@ -150,25 +150,25 @@ public:
 	/**
 	 * Was the property read ok from the source stream?
 	 */
-	bool readOk() const { return _readOk; };
+	bool readOk() const { return _readOk; }
 
 	/**
 	 * Return the property's code.
 	 * @return The property's code if readOk(), PC_UNDEFINED otherwise.
 	 */
-	enum WagPropertyCode getCode() const { return _propCode; };
+	enum WagPropertyCode getCode() const { return _propCode; }
 
 	/**
 	 * Return the property's type.
 	 * @return The property's type if readOk(), PT_UNDEFINED otherwise.
 	 */
-	enum WagPropertyType getType() const { return _propType; };
+	enum WagPropertyType getType() const { return _propType; }
 
 	/**
 	 * Return the property's number.
 	 * @return The property's number if readOk(), 0 otherwise.
 	 */
-	byte getNumber() const { return _propNum; };
+	byte getNumber() const { return _propNum; }
 
 	/**
 	 * Return the property's data's length.
@@ -181,7 +181,7 @@ public:
 	 * Can be used as a C-style string (i.e. this is guaranteed to have a trailing zero).
 	 * @return The property's data if readOk(), NULL otherwise.
 	 */
-	const char *getData() const { return _propData; };
+	const char *getData() const { return _propData; }
 
 // Member variables
 protected:
@@ -230,7 +230,7 @@ public:
 	 * @note Use only after a call to parse() first.
 	 * @return The list of loaded properties.
 	 */
-	const PropertyList &getProperties() const { return _propList; };
+	const PropertyList &getProperties() const { return _propList; }
 
 	/**
 	 * Get property with the given property code.
@@ -264,7 +264,7 @@ public:
 	 * Was the file parsed successfully?
 	 * @return True if file was parsed successfully, false otherwise.
 	 */
-	bool parsedOk() const { return _parsedOk; };
+	bool parsedOk() const { return _parsedOk; }
 
 protected:
 	/**

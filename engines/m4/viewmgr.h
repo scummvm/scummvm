@@ -90,7 +90,7 @@ public:
 struct Hotkey {
 public:
 	typedef void (*Callback)(MadsM4Engine *vm, View *view, uint32 key);
-	Hotkey(uint32 keyVal, Hotkey::Callback callbackFn) : key(keyVal), callback(callbackFn) {};
+	Hotkey(uint32 keyVal, Hotkey::Callback callbackFn) : key(keyVal), callback(callbackFn) {}
 	uint32 key;
 	Hotkey::Callback callback;
 };
@@ -136,7 +136,7 @@ public:
 
 	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
 	virtual bool onEvent(M4EventType eventType, int32 param, int x, int y, bool &captureEvents) { return false; }
-	virtual void updateState() {};
+	virtual void updateState() {}
 
 protected:
 	MadsM4Engine *_vm;

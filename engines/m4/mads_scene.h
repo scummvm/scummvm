@@ -206,8 +206,8 @@ public:
 	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
 
-	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; };
-	MadsSceneResources &getSceneResources() { return _sceneResources; };
+	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
+	MadsSceneResources &getSceneResources() { return _sceneResources; }
 	MadsAction &getAction() { return _action; }
 	void setStatusText(const char *text) {};//***DEPRECATED***
 };

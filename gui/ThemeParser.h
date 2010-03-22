@@ -210,7 +210,7 @@ protected:
 			KEY_END()
 		KEY_END()
 
-	} PARSER_END();
+	} PARSER_END()
 
 	/** Render info callbacks */
 	bool parserCallback_render_info(ParserNode *node);

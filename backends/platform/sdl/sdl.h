@@ -235,7 +235,7 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
-	virtual void preprocessEvents(SDL_Event *event) {};
+	virtual void preprocessEvents(SDL_Event *event) {}
 
 #ifdef USE_OSD
 	void displayMessageOnOSD(const char *msg);

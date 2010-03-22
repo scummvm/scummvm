@@ -76,8 +76,8 @@ public:
 	virtual void showHotSpots();
 
 	byte *getInverseColourTable() const { return _inverseColourTable; }
-	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; };
-	M4SceneResources &getSceneResources() { return _sceneResources; };
+	M4InterfaceView *getInterface() { return (M4InterfaceView *)_interfaceSurface; }
+	M4SceneResources &getSceneResources() { return _sceneResources; }
 	void setStatusText(const char *text);
 	void setAction(int action, int objectId = -1);
 };

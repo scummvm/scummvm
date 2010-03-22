@@ -104,7 +104,7 @@ public:
 	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 
-	uint16 getLastCastCount() { return _lastCastCount; };
+	uint16 getLastCastCount() { return _lastCastCount; }
 
 	virtual void kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void kernelAddToPicList(reg_t listReference, int argc, reg_t *argv);

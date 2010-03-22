@@ -51,12 +51,12 @@ public:
 	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
 	~GfxScreen();
 
-	uint16 getWidth() { return _width; };
-	uint16 getHeight() { return _height; };
-	uint16 getDisplayWidth() { return _displayWidth; };
-	uint16 getDisplayHeight() { return _displayHeight; };
-	byte getColorWhite() { return _colorWhite; };
-	byte getColorDefaultVectorData() { return _colorDefaultVectorData; };
+	uint16 getWidth() { return _width; }
+	uint16 getHeight() { return _height; }
+	uint16 getDisplayWidth() { return _displayWidth; }
+	uint16 getDisplayHeight() { return _displayHeight; }
+	byte getColorWhite() { return _colorWhite; }
+	byte getColorDefaultVectorData() { return _colorDefaultVectorData; }
 
 	void copyToScreen();
 	void copyFromScreen(byte *buffer);

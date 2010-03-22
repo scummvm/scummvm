@@ -66,7 +66,7 @@ private:
 	bool cmdSceneInfo(int argc, const char **argv);
 public:
 	MadsConsole(MadsEngine *vm);
-	virtual ~MadsConsole() {};
+	virtual ~MadsConsole() {}
 };
 
 class M4Console : public Console {
@@ -76,7 +76,7 @@ private:
 	bool cmdSceneInfo(int argc, const char **argv);
 public:
 	M4Console(M4Engine *vm);
-	virtual ~M4Console() {};
+	virtual ~M4Console() {}
 };
 
 } // End of namespace M4
