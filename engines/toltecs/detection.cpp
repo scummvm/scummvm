@@ -183,12 +183,12 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".???";
 
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
@@ -220,13 +220,13 @@ void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	saveFileMan->removeSavefile(filename.c_str());
 
-	Common::StringList filenames;
+	Common::StringArray filenames;
 	Common::String pattern = target;
 	pattern += ".???";
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
-	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
