@@ -116,11 +116,19 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 #endif
 
 #ifdef MOTOMAGX
-	// Quit on cancel
-	if (ev.key.keysym.sym == SDLK_F12) {
+	// Quit on Clr
+	if (ev.key.keysym.sym == SDLK_BACKSPACE) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
+	// Game Menu - Left Soft key
+	else if (ev.key.keysym.sym == SDLK_F9) {
+		ev.key.keysym.sym = SDLK_F5;
+	}
+	// VirtualKeyboard - Right Soft key
+	else if (ev.key.keysym.sym == SDLK_F11) {
+		ev.key.keysym.sym = SDLK_F7;
+	}      
 #endif
 
 // Joystick to Mouse
