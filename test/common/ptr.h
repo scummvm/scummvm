@@ -2,9 +2,30 @@
 
 #include "common/ptr.h"
 
-class PtrTestSuite : public CxxTest::TestSuite
-{
+class PtrTestSuite : public CxxTest::TestSuite {
 	public:
+
+	// A simple class which keeps track of all its instances
+	class InstanceCountingClass {
+	public:
+		static int count;
+		InstanceCountingClass() { count++; }
+		InstanceCountingClass(const InstanceCountingClass&) { count++; }
+		~InstanceCountingClass() { count--; }
+	};
+
+	void test_deletion() {
+		TS_ASSERT_EQUALS(InstanceCountingClass::count, 0);
+		{
+			Common::SharedPtr<InstanceCountingClass> p1(new InstanceCountingClass());
+			TS_ASSERT_EQUALS(InstanceCountingClass::count, 1);
+
+			Common::ScopedPtr<InstanceCountingClass> p2(new InstanceCountingClass());
+			TS_ASSERT_EQUALS(InstanceCountingClass::count, 2);
+		}
+		TS_ASSERT_EQUALS(InstanceCountingClass::count, 0);
+	}
+
 	void test_assign() {
 		Common::SharedPtr<int> p1(new int(1));
 		TS_ASSERT(p1.unique());
@@ -81,3 +102,5 @@ class PtrTestSuite : public CxxTest::TestSuite
 		a = b;
 	}
 };
+
+int PtrTestSuite::InstanceCountingClass::count = 0;
