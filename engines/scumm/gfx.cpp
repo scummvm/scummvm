@@ -2782,11 +2782,11 @@ void GdiPCEngine::decodePCEngineGfx(const byte *room) {
 	decodePCEngineMaskData(_vm->findResourceData(MKID_BE('ZP00'), room));
 
 	const byte* smap_ptr = _vm->findResourceData(MKID_BE('IM00'), room);
-	*smap_ptr++; // roomID
+	smap_ptr++; // roomID
 	int numStrips = *smap_ptr++;
 	int numRows = *smap_ptr++;
 	_PCE.maskIDSize = *smap_ptr++;
-	*smap_ptr++; // unknown
+	smap_ptr++; // unknown
 
 	memset(_PCE.nametable, 0, sizeof(_PCE.nametable));
 	memset(_PCE.colortable, 0, sizeof(_PCE.colortable));
