@@ -117,9 +117,11 @@ AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
 		loopStart = loader._header.oneShotHiSamples;
 		loopEnd = loader._header.oneShotHiSamples + loader._header.repeatHiSamples;
 
-		return new SubLoopingAudioStream(stream, 0,
+		if (loopStart != loopEnd) {
+			return new SubLoopingAudioStream(stream, 0,
 					Timestamp(0, loopStart, loader._header.samplesPerSec),
 					Timestamp(0, loopEnd, loader._header.samplesPerSec));
+		}
 	}
 
 	return stream;

@@ -169,6 +169,8 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
       _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
       _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
       _done(false) {
+	assert(loopStart < loopEnd);
+
 	if (!_parent->rewind())
 		_done = true;
 }

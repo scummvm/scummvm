@@ -229,6 +229,16 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
  */
 class SubLoopingAudioStream : public AudioStream {
 public:
+	/**
+	 * Constructor for a SubLoopingAudioStream.
+	 *
+	 * @param stream Stream to loop
+	 * @param loops How often the stream should be looped (0 means infinite)
+	 * @param loopStart Start of the loop (this must be smaller than loopEnd)
+	 * @param loopEnd End of the loop (thus must be greater than loopStart)
+	 * @param disposeAfterUse Whether the stream should be disposed, when the
+	 *                        SubLoopingAudioStream is destroyed.
+	 */
 	SubLoopingAudioStream(SeekableAudioStream *stream, uint loops,
 	                      const Timestamp loopStart,
 	                      const Timestamp loopEnd,
