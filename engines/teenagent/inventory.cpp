@@ -158,19 +158,21 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		mouse = event.mouse;
 
 		if (!_active) {
 			if (event.mouse.y < 5)
 				activate(true);
+			mouse = event.mouse;
 			return false;
 		}
 
-		if (event.mouse.x < 17 || event.mouse.x >= 303 || event.mouse.y >= 153) {
+		if (event.mouse.x < 17 || event.mouse.x >= 303 || (event.mouse.y - mouse.y > 0 && event.mouse.y >= 153)) {
 			activate(false);
+			mouse = event.mouse;
 			return false;
 		}
 
+		mouse = event.mouse;
 		hovered_obj = NULL;
 
 		for (int i = 0; i < 24; ++i) {
