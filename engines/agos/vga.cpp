@@ -1299,7 +1299,7 @@ void AGOSEngine::vc35_clearWindow() {
 }
 
 void AGOSEngine::vc36_setWindowImage() {
-	_displayScreen = false;
+	_displayFlag = 0;
 	uint16 vga_res = vcReadNextWord();
 	uint16 windowNum = vcReadNextWord();
 	setWindowImage(windowNum, vga_res);
@@ -1321,7 +1321,7 @@ void AGOSEngine::vc37_pokePalette() {
 
 	if (!(_videoLockOut & 0x20)) {
 		_paletteFlag = 1;
-		_displayScreen++;
+		_displayFlag++;
 	}
 }
 

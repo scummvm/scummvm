@@ -111,7 +111,7 @@ void AGOSEngine_Feeble::animateSpritesByY() {
 		drawImage_init(vsp->image, vsp->palette, vsp->x, vsp->y, vsp->flags);
 	}
 
-	_displayScreen = true;
+	_displayFlag++;
 }
 
 void AGOSEngine_Feeble::animateSprites() {
@@ -146,7 +146,7 @@ void AGOSEngine_Feeble::animateSprites() {
 		vsp++;
 	}
 
-	_displayScreen = true;
+	_displayFlag++;
 }
 #endif
 
@@ -298,7 +298,7 @@ void AGOSEngine::animateSprites() {
 	if (_window4Flag == 1)
 		_window4Flag++;
 
-	_displayScreen = true;
+	_displayFlag++;
 }
 
 void AGOSEngine::dirtyClips() {
