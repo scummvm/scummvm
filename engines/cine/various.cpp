@@ -863,7 +863,9 @@ uint16 executePlayerInput() {
 
 	while (mouseButton && (!limitMouseCheckCount || currentEntry < 200) && !g_cine->shouldQuit()) {
 		di |= (mouseButton & (kLeftMouseButton | kRightMouseButton));
-		manageEvents();
+		if (!limitMouseCheckCount) {
+			manageEvents();
+		}
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 		currentEntry++;
 	}
