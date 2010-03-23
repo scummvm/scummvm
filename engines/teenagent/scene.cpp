@@ -469,7 +469,7 @@ void Scene::push(const SceneEvent &event) {
 	//event.dump();
 	if (event.type == SceneEvent::kWalk && !events.empty()) {
 		SceneEvent &prev = events.back();
-		if (prev.type == SceneEvent::kWalk) {
+		if (prev.type == SceneEvent::kWalk && prev.color == event.color) {
 			debug(0, "fixing double-move [skipping event!]");
 			if ((event.color & 2) != 0) { //relative move
 				prev.dst.x += event.dst.x;
