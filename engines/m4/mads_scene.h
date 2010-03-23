@@ -66,7 +66,7 @@ public:
 };
 
 #define TIMED_TEXT_SIZE 10
-#define TEXT_DISPLAY_SIZE 40
+#define OLD_TEXT_DISPLAY_SIZE 40
 #define TEXT_4A_SIZE 30
 
 enum TalkTextFlags {TEXTFLAG_2 = 2, TEXTFLAG_4 = 4, TEXTFLAG_8 = 8, TEXTFLAG_40 = 0x40,
@@ -104,7 +104,7 @@ struct Text4A {
 
 class MadsScreenText {
 private:
-	TextDisplay _textDisplay[TEXT_DISPLAY_SIZE];
+	TextDisplay _textDisplay[OLD_TEXT_DISPLAY_SIZE];
 	TimedText _timedText[TIMED_TEXT_SIZE];
 	Text4A _text4A[TEXT_4A_SIZE];
 	bool _abortTimedText;

@@ -32,6 +32,7 @@
 #include "common/events.h"
 #include "common/rect.h"
 
+#include "m4/font.h"
 #include "m4/globals.h"
 #include "m4/events.h"
 #include "m4/graphics.h"
@@ -145,6 +146,71 @@ protected:
 	int _screenType;
 	ScreenFlags _screenFlags;
 	bool _transparent;
+};
+
+class MadsSpriteSlot {
+public:
+	int spriteId;
+	int timerIndex;
+	int spriteListIndex;
+	int frameNumber;
+	int width;
+	int height;
+	int depth;
+	int scale;
+
+	MadsSpriteSlot() { };
+};
+
+#define SPRITE_SLOTS_SIZE 50
+
+class MadsTextDisplayEntry {
+public:
+	bool active;
+	int spacing;
+	Common::Rect bounds;
+	int active2;
+	uint8 colour1;
+	uint8 colour2;
+	Font *font;
+	const char *msg;
+
+	MadsTextDisplayEntry() { active = false; }
+};
+
+#define TEXT_DISPLAY_SIZE 40
+
+class MadsTextDisplay {
+private:
+	MadsTextDisplayEntry _entries[TEXT_DISPLAY_SIZE];
+public:
+	MadsTextDisplay();
+
+	MadsTextDisplayEntry &operator[](int idx) {
+		assert(idx < TEXT_DISPLAY_SIZE);
+		return _entries[idx];
+	}
+
+	int setActive2(int idx) {
+		assert(idx < TEXT_DISPLAY_SIZE);
+		_entries[idx].active2 = -1;
+	}
+
+	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
+	void draw(View *view);
+};
+
+class MadsView: public View {
+protected:
+	MadsSpriteSlot _spriteSlots[SPRITE_SLOTS_SIZE];
+	MadsTextDisplay _textDisplay;
+	int _spriteSlotsStart;
+
+	int getSpriteSlotsIndex();
+public:
+	MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
+	MadsView(MadsM4Engine *vm, int x = 0, int y = 0, bool transparent = false);
+
 };
 
 class ViewManager {

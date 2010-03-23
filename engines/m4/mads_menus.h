@@ -104,14 +104,28 @@ public:
 
 #define DIALOG_LINES_SIZE 20
 
-class RexDialogView: public View {
+enum MadsTextAlignment { ALIGN_CENTER = -1, ALIGN_CHAR_CENTER = -2, RIGHT_ALIGN = -3 };
+
+
+class RexDialogView: public MadsView {
 private:
 	int _priorSceneId;
-	bool _initialised;
 
+	void initialiseLines();
 	void initialiseGraphics();
 	void loadBackground();
 	void loadMenuSprites();
+protected:
+	int _word_8502C;
+	int _selectedLine;
+	int _lineIndex;
+	bool _enterFlag;
+	Common::StringArray _textLines;
+
+	void setFrame(int frameNumber, int depth);
+	void initVars();
+	void addLine(const char *msg_p, Font *font, MadsTextAlignment alignment, int left, int top);
+	void addQuote(Font *font, MadsTextAlignment alignment, int left, int top, int id1, int id2 = 0);
 protected:
 	M4Surface *_backgroundSurface;
 	RGBList *_bgPalData;
@@ -131,8 +145,10 @@ public:
 };
 
 class RexGameMenuDialog: public RexDialogView {
+private:
+	void addLines();
 public:
-	RexGameMenuDialog(): RexDialogView() {};
+	RexGameMenuDialog();
 
 	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
 };

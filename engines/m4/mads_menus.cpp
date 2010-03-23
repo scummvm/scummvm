@@ -586,22 +586,32 @@ void DragonMainMenuView::handleAction(MadsGameAction action) {
  *--------------------------------------------------------------------------
  */
 
-RexDialogView::RexDialogView(): View(_madsVm, Common::Rect(0, 0, _madsVm->_screen->width(), _madsVm->_screen->height())) {
+RexDialogView::RexDialogView(): MadsView(_madsVm, Common::Rect(0, 0, _madsVm->_screen->width(), _madsVm->_screen->height())) {
 	_screenType = VIEWID_MENU;
-	_initialised = false;
-
-	// Set up a list of blank entries for use in the various dialogs
-	for (int i = 0; i < DIALOG_LINES_SIZE; ++i) {
-		DialogTextEntry rec;
-		_dialogText.push_back(rec);
-	}
-	_totalTextEntries = 0;
 
 	// Store the previously active scene
 	_priorSceneId = _madsVm->_scene->getCurrentScene();
 
 	// Load necessary quotes
 	_madsVm->globals()->loadQuoteRange(1, 48);
+
+	initialiseLines();
+	initialiseGraphics();
+}
+
+void RexDialogView::initialiseLines() {
+	// Set up a list of blank entries for use in the various dialogs
+	for (int i = 0; i < DIALOG_LINES_SIZE; ++i) {
+		DialogTextEntry rec;
+		rec.in_use = false;
+		_dialogText.push_back(rec);
+	}
+	_totalTextEntries = 0;
+
+	// Set up a default sprite slot entry
+	_spriteSlotsStart = 1;
+	_spriteSlots[0].spriteId = -2;
+	_spriteSlots[0].timerIndex = -1;
 }
 
 void RexDialogView::initialiseGraphics() {
@@ -620,20 +630,16 @@ void RexDialogView::initialiseGraphics() {
 
 	// Set the current cursor
 	_madsVm->_mouse->setCursorNum(CURSOR_ARROW);
-
-	_initialised = true;
 }
 
 
 RexDialogView::~RexDialogView() {
-	if (_initialised) {
-		_madsVm->_palette->deleteRange(_bgPalData);
-		delete _bgPalData;
-		delete _backgroundSurface;
-		_madsVm->_palette->deleteRange(_spritesPalData);
-		delete _spritesPalData;
-		delete _menuSprites;
-	}
+	_madsVm->_palette->deleteRange(_bgPalData);
+	delete _bgPalData;
+	delete _backgroundSurface;
+	_madsVm->_palette->deleteRange(_spritesPalData);
+	delete _spritesPalData;
+	delete _menuSprites;
 }
 
 void RexDialogView::loadBackground() {
@@ -683,9 +689,6 @@ void RexDialogView::loadMenuSprites() {
 
 
 void RexDialogView::updateState() {
-	if (!_initialised) {
-		initialiseGraphics();
-	}
 }
 
 void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
@@ -701,10 +704,146 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	View::onRefresh(rects, destSurface);
 }
 
+void RexDialogView::setFrame(int frameNumber, int depth) {
+	int slotIndex = getSpriteSlotsIndex();
+	_spriteSlots[slotIndex].spriteId = 1;
+	_spriteSlots[slotIndex].timerIndex = 1;
+	_spriteSlots[slotIndex].spriteListIndex = 0; //_menuSpritesIndex;
+	_spriteSlots[slotIndex].frameNumber = frameNumber;
+	M4Sprite *spr = _menuSprites->getFrame(0);
+	_spriteSlots[slotIndex].width = spr->width();
+	_spriteSlots[slotIndex].height = spr->height();
+	_spriteSlots[slotIndex].depth = depth;
+	_spriteSlots[slotIndex].scale = 100;
+}
+
+void RexDialogView::initVars() {
+	_word_8502C = -1;
+	_selectedLine = -1;
+	_lineIndex = 0;
+	_enterFlag = false;
+	_textLines.clear();
+}
+
+void RexDialogView::addLine(const char *msg_p, Font *font, MadsTextAlignment alignment, int left, int top) {
+	DialogTextEntry *rec = NULL;
+
+	if (_lineIndex < _totalTextEntries) {
+		if (strcmp(msg_p, _dialogText[_lineIndex].text) == 0)  {
+			rec = &_dialogText[_lineIndex];
+			if (rec->textDisplay_index != 0) {
+				MadsTextDisplayEntry &tdEntry = _textDisplay[rec->textDisplay_index];
+				if (tdEntry.active) {
+					if (_textLines.size() < 20) {
+						// Add entry to line list
+						_textLines.push_back(tdEntry.msg);
+						tdEntry.msg = _textLines[_textLines.size() - 1].c_str();
+					}
+				}
+			}
+		}
+	} else {
+		if (_lineIndex < DIALOG_LINES_SIZE) {
+			rec = &_dialogText[_lineIndex];
+			_totalTextEntries = _lineIndex + 1;
+		}
+	}
+
+	// Handling for if a line needs to be added
+	if (rec) {
+		strcpy(rec->text, msg_p);
+		rec->font = font;
+		rec->field_2 = 0;
+		rec->pos.y = top;
+		rec->widthAdjust = -1;
+		rec->in_use = true;
+		rec->textDisplay_index = -1;
+
+		switch (alignment) {
+		case ALIGN_CENTER:
+			// Center text
+			rec->pos.x = (width() - font->getWidth(rec->text)) / 2;
+			break;
+
+		case ALIGN_CHAR_CENTER: {
+			// Text is center aligned on the '@' character within the string
+			char *p = strchr(rec->text, '@');
+
+			if (p) {
+				// '@' string handling
+				// Get length of string up to the '@' character
+				*p = '\0';
+				int strWidth = font->getWidth(rec->text, rec->widthAdjust);
+				// Remove the character from the string. strcpy isn't used here because it's unsafe for
+				// copying within the same string
+				while ((*p == *(p + 1)) != '\0') ++p;
+
+				rec->pos.x = (width() / 2) - strWidth;
+			} else {
+				rec->pos.x = left;
+			}
+			break;
+		}
+	
+		case RIGHT_ALIGN:
+			// Right align (moving left from given passed left)
+			rec->pos.x = left - font->getWidth(rec->text);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	++_lineIndex;
+}
+
+/**
+ * Adds a line consisting of either a single quote, or the combination of two quote Ids
+ */
+void RexDialogView::addQuote(Font *font, MadsTextAlignment alignment, int left, int top, int id1, int id2) {
+	char buffer[80];
+
+	// Copy the first quote string into the buffer
+	const char *quoteStr = _madsVm->globals()->getQuote(id1);
+	strcpy(buffer, quoteStr);
+
+	// Handle the optional second quote Id
+	if (id2 != 0) {
+		quoteStr = _madsVm->globals()->getQuote(id2);
+		strcat(buffer, " ");
+		strcat(buffer, quoteStr);
+	}
+
+	// Add in the generated line
+	addLine(buffer, font, alignment, left, top);
+}
+
 /*--------------------------------------------------------------------------
  * RexDialogView is the Rex Nebular Game Menu dialog
  *--------------------------------------------------------------------------
  */
+
+RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
+	setFrame(1, 2);
+	initVars();
+
+	_vm->_font->setFont(FONT_CONVERSATION_MADS);
+	addLines();
+}
+
+void RexGameMenuDialog::addLines() {
+	// Add the title
+	int top = -((_vm->_font->getHeight() + 1) * 12 - 78);
+	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 10);
+
+	// Loop for adding the option lines of the dialog
+	top += 6;
+	for (int idx = 0; idx < 5; ++idx) {
+		top += _vm->_font->getHeight() + 1;
+		addQuote(_vm->_font, ALIGN_CENTER, 0, top, 11 + idx);
+	}
+}
 
 void RexGameMenuDialog::onRefresh(RectList *rects, M4Surface *destSurface) {
 	RexDialogView::onRefresh(rects, destSurface);

@@ -688,7 +688,7 @@ void MadsSceneResources::load(int sId) {
 /*--------------------------------------------------------------------------*/
 
 MadsScreenText::MadsScreenText() {
-	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i)
+	for (int i = 0; i < OLD_TEXT_DISPLAY_SIZE; ++i)
 		_textDisplay[i].active = false;
 	for (int i = 0; i < TIMED_TEXT_SIZE; ++i)
 		_timedText[i].flags = 0;
@@ -701,9 +701,9 @@ MadsScreenText::MadsScreenText() {
 int MadsScreenText::add(const Common::Point &destPos, uint fontColours, int widthAdjust, const char *msg, Font *font) {
 	// Find a free slot
 	int idx = 0;
-	while ((idx < TEXT_DISPLAY_SIZE) && _textDisplay[idx].active)
+	while ((idx < OLD_TEXT_DISPLAY_SIZE) && _textDisplay[idx].active)
 		++idx;
-	if (idx == TEXT_DISPLAY_SIZE)
+	if (idx == OLD_TEXT_DISPLAY_SIZE)
 		error("Ran out of text display slots");
 
 	// Set up the entry values
@@ -766,27 +766,10 @@ int MadsScreenText::addTimed(const Common::Point &destPos, uint fontColours, uin
  * Draws any text display entries to the screen
  */
 void MadsScreenText::draw(M4Surface *surface) {
-	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
-		if (_textDisplay[idx].active && (_textDisplay[idx].active2 >= 0)) {
-			_textDisplay[idx].font->setColours(_textDisplay[idx].colour1, 0xFF,
-				(_textDisplay[idx].colour2 == 0) ? _textDisplay[idx].colour1 : _textDisplay[idx].colour2);
-			_textDisplay[idx].font->writeString(surface, _textDisplay[idx].message, 
-				_textDisplay[idx].bounds.left, _textDisplay[idx].bounds.top, _textDisplay[idx].bounds.width(),
-				_textDisplay[idx].spacing);
-		}
-	}
-
-	// Clear up any now inactive text display entries
-	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
-		if (_textDisplay[idx].active2 < 0) {
-			_textDisplay[idx].active = false;
-			_textDisplay[idx].active2 = 0;
-		}
-	}
 }
 
 void MadsScreenText::timedDisplay() {
-	for (int idx = 0; !_abortTimedText && (idx < TEXT_DISPLAY_SIZE); ++idx) {
+	for (int idx = 0; !_abortTimedText && (idx < OLD_TEXT_DISPLAY_SIZE); ++idx) {
 		if (((_timedText[idx].flags & TEXTFLAG_ACTIVE) != 0) && 
 			(_timedText[idx].frameTimer <= g_system->getMillis()))
 			// Add the specified entry
