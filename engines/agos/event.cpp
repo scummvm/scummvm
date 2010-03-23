@@ -175,9 +175,9 @@ void AGOSEngine::haltAnimation() {
 
 	_videoLockOut |= 0x10;
 
-	if (_displayScreen) {
+	if (_displayFlag) {
 		displayScreen();
-		_displayScreen = false;
+		_displayFlag = 0;
 	}
 }
 
@@ -593,7 +593,7 @@ void AGOSEngine_Feeble::timerProc() {
 		animateSprites();
 	}
 
-	if (_displayScreen) {
+	if (_displayFlag) {
 		if (getGameType() == GType_FF && !(getFeatures() & GF_DEMO)) {
 			if (!getBitFlag(78)) {
 				oracleLogo();
@@ -604,7 +604,7 @@ void AGOSEngine_Feeble::timerProc() {
 		}
 		handleMouseMoved();
 		displayScreen();
-		_displayScreen = false;
+		_displayFlag = 0;
 	}
 
 	_videoLockOut &= ~2;
@@ -642,9 +642,9 @@ void AGOSEngine_PN::timerProc() {
 			processVgaEvents();
 	}
 
-	if (_displayScreen) {
+	if (_displayFlag) {
 		displayScreen();
-		_displayScreen = false;
+		_displayFlag = 0;
 	}
 
 	_videoLockOut &= ~2;
@@ -668,9 +668,9 @@ void AGOSEngine::timerProc() {
 			processVgaEvents();
 	}
 
-	if (_displayScreen) {
+	if (_displayFlag) {
 		displayScreen();
-		_displayScreen = false;
+		_displayFlag = 0;
 	}
 
 	_videoLockOut &= ~2;

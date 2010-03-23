@@ -205,7 +205,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_beardLoaded = 0;
 	_litBoxFlag = 0;
 	_mortalFlag = 0;
-	_displayScreen = false;
+	_displayFlag = 0;
 	_syncFlag2 = 0;
 	_inCallBack = 0;
 	_cepeFlag = 0;

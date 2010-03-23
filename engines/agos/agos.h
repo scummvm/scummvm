@@ -299,7 +299,7 @@ protected:
 	bool _beardLoaded;
 	bool _litBoxFlag;
 	bool _mortalFlag;
-	bool _displayScreen;
+	uint16 _displayFlag;
 	bool _syncFlag2;
 	bool _inCallBack;
 	bool _cepeFlag;

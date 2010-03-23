@@ -71,7 +71,7 @@ int AGOSEngine::getScale(int16 y, int16 x) {
 }
 
 void AGOSEngine_Feeble::vc36_setWindowImage() {
-	_displayScreen = false;
+	_displayFlag = 0;
 	vcReadNextWord();
 	vcReadNextWord();
 	fillBackGroundFromFront();
