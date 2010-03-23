@@ -42,6 +42,7 @@ public:
 	void render(Graphics::Surface *surface, int delta);
 
 	void clear();
+	void reload();
 	void add(byte item);
 	bool has(byte item) const;
 	void remove(byte item);
@@ -57,8 +58,8 @@ public:
 private:
 	TeenAgentEngine *_engine;
 	Surface background;
-	Common::SeekableReadStream *items;
-	uint16 offset[93];
+	byte *items;
+	uint offset[93];
 
 	Common::Array<InventoryObject> objects;
 	byte *inventory;
@@ -70,8 +71,9 @@ private:
 
 		Item() : hovered(false) {}
 		void free();
+		void load(Inventory *inventory, uint item_id);
 		void backgroundEffect(Graphics::Surface *s);
-		void render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *surface, int delta);
+		void render(Inventory *inventory, uint item_id, Graphics::Surface *surface, int delta);
 	} graphics[24];
 
 	bool _active;

@@ -36,7 +36,6 @@ Resources *Resources::instance() {
 }
 
 void Resources::deinit() {
-	varia.close();
 	off.close();
 	on.close();
 	ons.close();
@@ -77,8 +76,18 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	dat_file.close();
 
+	{
+		FilePack varia;
+		varia.open("varia.res");
+		font7.load(varia, 7);
+		font7.width_pack = 1;
+		font7.height = 11;
+		font8.load(varia, 8);
+		font8.height = 31;
+		varia.close();
+	}
+
 	off.open("off.res");
-	varia.open("varia.res");
 	on.open("on.res");
 	ons.open("ons.res");
 	lan000.open("lan_000.res");
@@ -87,17 +96,12 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	sam_mmm.open("sam_mmm.res");
 	sam_sam.open("sam_sam.res");
 
-	font7.load(7);
-	font7.width_pack = 1;
-	font7.height = 11;
-	font8.load(8);
-	font8.height = 31;
 
 	return true;
 }
 
 void Resources::loadOff(Graphics::Surface &surface, byte *palette, int id) {
-	uint32 size = off.get_size(id);
+	uint32 size = off.getSize(id);
 	if (size == 0) {
 		error("invalid background %d", id);
 		return;

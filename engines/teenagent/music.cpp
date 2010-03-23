@@ -24,7 +24,9 @@
  */
 
 #include "teenagent/music.h"
+#include "teenagent/objects.h"
 #include "teenagent/resources.h"
+#include "common/ptr.h"
 
 namespace TeenAgent {
 
@@ -43,8 +45,8 @@ MusicPlayer::~MusicPlayer() {
 bool MusicPlayer::load(int id) {
 	Resources *res = Resources::instance();
 
-	Common::SeekableReadStream *stream = res->mmm.getStream(id);
-	if (stream == NULL)
+	ScopedPtr<Common::SeekableReadStream> stream(res->mmm.getStream(id));
+	if (!stream)
 		return false;
 
 	char header[4];
@@ -62,17 +64,15 @@ bool MusicPlayer::load(int id) {
 		// Load the sample data
 		byte sampleResource = ((sample >> 4) & 0x0F) * 10 + (sample & 0x0F);
 		debug(0, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
-		uint32 sampleSize = res->sam_mmm.get_size(sampleResource);
-		Common::SeekableReadStream *in = res->sam_mmm.getStream(sampleResource);
-
-		if (in == 0) {
+		uint32 sampleSize = res->sam_mmm.getSize(sampleResource);
+		if (sampleSize == 0) {
 			warning("load: invalid sample %d (0x%02x)", sample, sample);
 			_samples[sample].clear();
 			continue;
 		}
 
 		_samples[sample].resize(sampleSize);
-		in->read(_samples[sample].data, sampleSize);
+		res->sam_mmm.read(sampleResource, _samples[sample].data, sampleSize);
 	}
 
 	// Load the music data

@@ -76,6 +76,7 @@ static const ADParams detectionParams = {
 
 #define MAX_SAVES 20
 
+
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
 	TeenAgentMetaEngine() : AdvancedMetaEngine(detectionParams) {
@@ -129,17 +130,15 @@ public:
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
-				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-				if (in) {
-					char buf[25];
-					in->seek(0);
-					in->read(buf, 24);
-					buf[24] = 0;
-					Common::String description = buf;
-					saveList.push_back(SaveStateDescriptor(slot, description));
+				TeenAgent::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(*file));
+				if (!in)
+					continue;
 
-					delete in;
-				}
+				char buf[25];
+				in->seek(0);
+				in->read(buf, 24);
+				buf[24] = 0;
+				saveList.push_back(SaveStateDescriptor(slot, buf));
 			}
 		}
 		return saveList;
@@ -156,8 +155,8 @@ public:
 
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
 		Common::String filename = generateGameStateFileName(target, slot);
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
-		if (in == NULL)
+		TeenAgent::ScopedPtr<Common::InSaveFile> in(g_system->getSavefileManager()->openForLoading(filename));
+		if (!in)
 			return SaveStateDescriptor();
 
 		char buf[25];
@@ -171,14 +170,13 @@ public:
 		if (!Graphics::checkThumbnailHeader(*in))
 			return SaveStateDescriptor(slot, desc);
 
-		Graphics::Surface *thumb = new Graphics::Surface;
-		if (!Graphics::loadThumbnail(*in, *thumb)) {
-			delete thumb;
-			return SaveStateDescriptor(slot, desc);
-		}
-
 		SaveStateDescriptor ssd(slot, desc);
-		ssd.setThumbnail(thumb);
+		ssd.setDeletableFlag(true);
+
+		//checking for the thumbnail
+		TeenAgent::ScopedPtr<Graphics::Surface> thumb(new Graphics::Surface);
+		if (Graphics::loadThumbnail(*in, *thumb))
+			ssd.setThumbnail(thumb.release());
 
 		return ssd;
 	}

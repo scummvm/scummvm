@@ -27,11 +27,13 @@
 
 #include "teenagent/surface.h"
 #include "teenagent/actor.h"
-#include "common/system.h"
-#include "common/list.h"
 #include "teenagent/objects.h"
 #include "teenagent/surface.h"
 #include "teenagent/surface_list.h"
+
+#include "common/system.h"
+#include "common/array.h"
+#include "common/list.h"
 
 namespace TeenAgent {
 
@@ -190,6 +192,7 @@ private:
 	int _id;
 	Graphics::Surface background;
 	SurfaceList on;
+	bool on_enabled;
 	Surface *ons;
 	uint32 ons_count;
 	Animation actor_animation, animation[4], custom_animation[4];

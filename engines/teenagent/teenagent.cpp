@@ -190,11 +190,12 @@ void TeenAgentEngine::deinit() {
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
-	Common::InSaveFile *in = _saveFileMan->openForLoading(Common::String::printf("teenagent.%02d", slot));
-	if (in == NULL)
-		in = _saveFileMan->openForLoading(Common::String::printf("teenagent.%d", slot));
+	ScopedPtr<Common::InSaveFile> 
+		in(_saveFileMan->openForLoading(Common::String::printf("teenagent.%02d", slot)));
+	if (!in)
+		in.reset(_saveFileMan->openForLoading(Common::String::printf("teenagent.%d", slot)));
 
-	if (in == NULL)
+	if (!in)
 		return Common::kReadPermissionDenied;
 
 	Resources *res = Resources::instance();
@@ -203,16 +204,14 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	char data[0x777a];
 	in->seek(0);
 	if (in->read(data, 0x777a) != 0x777a) {
-		delete in;
 		return Common::kReadingFailed;
 	}
-
-	delete in;
 
 	memcpy(res->dseg.ptr(0x6478), data, sizeof(data));
 
 	scene->clear();
 	inventory->activate(false);
+	inventory->reload();
 
 	setMusic(Resources::instance()->dseg.get_byte(0xDB90));
 
@@ -227,9 +226,9 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	debug(0, "saving to slot %d", slot);
-	Common::OutSaveFile *out = _saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot));
-	if (out == NULL)
-		return Common::kWritePermissionDenied;
+	ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot)));
+	if (!out)
+		return Common::kWritingFailed;
 
 	Resources *res = Resources::instance();
 	res->dseg.set_byte(0xB4F3, scene->getId());
@@ -242,8 +241,8 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	out->write(res->dseg.ptr(0x6478), 0x777a);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
-	delete out;
 
+	out->finalize();
 	return Common::kNoError;
 }
 
@@ -270,15 +269,15 @@ int TeenAgentEngine::skipEvents() const {
 }
 
 bool TeenAgentEngine::showLogo() {
-	Pack logo;
+	FilePack logo;
 	if (!logo.open("unlogic.res"))
 		return true;
 
 	byte bg[0xfa00];
 	byte palette[0x400];
 
-	Common::SeekableReadStream *frame = logo.getStream(1);
-	if (frame == NULL)
+	ScopedPtr<Common::SeekableReadStream> frame(logo.getStream(1));
+	if (!frame)
 		return true;
 
 	frame->read(bg, sizeof(bg));
@@ -293,7 +292,7 @@ bool TeenAgentEngine::showLogo() {
 	}
 	_system->setPalette(palette, 0, 0x100);
 
-	uint n = logo.files_count();
+	uint n = logo.fileCount();
 	for(uint f = 0; f < 4; ++f)
 		for(uint i = 2; i <= n; ++i) {
 			{
@@ -303,13 +302,12 @@ bool TeenAgentEngine::showLogo() {
 			}
 			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
 
-			frame = logo.getStream(i);
-			if (frame == NULL)
+			frame.reset(logo.getStream(i));
+			if (!frame)
 				return true;
 
 			Surface s;
 			s.load(frame, Surface::kTypeOns);
-			delete frame;
 			if (s.empty())
 				return true;
 
@@ -325,26 +323,26 @@ bool TeenAgentEngine::showMetropolis() {
 	_system->fillScreen(0);
 	_system->updateScreen();
 
-	Resources *res = Resources::instance();
+	FilePack varia;
+	varia.open("varia.res");
 
 	byte palette[0x400];
 	memset(palette, 0, sizeof(palette));
 	{
-		Common::SeekableReadStream *s = res->varia.getStream(5);
-		for(uint c = 0; c < 0x100; ++c) {
-			uint idx = c * 4;
-			s->read(palette + idx, 3);
-			palette[idx] *= 4;
-			palette[idx + 1] *= 4;
-			palette[idx + 2] *= 4;
+		ScopedPtr<Common::SeekableReadStream> s(varia.getStream(5));
+		for(uint c = 0; c < 0x400; c += 4) {
+			s->read(palette + c, 3);
+			palette[c] *= 4;
+			palette[c + 1] *= 4;
+			palette[c + 2] *= 4;
 		}
 	}
 
 	_system->setPalette(palette, 0, 0x100);
 
 	byte varia_6[21760], varia_9[18302];
-	res->varia.read(6, varia_6, sizeof(varia_6));
-	res->varia.read(9, varia_9, sizeof(varia_9));
+	varia.read(6, varia_6, sizeof(varia_6));
+	varia.read(9, varia_9, sizeof(varia_9));
 
 	byte colors[56 * 160 * 2];
 	memset(colors, 0, sizeof(colors));
@@ -779,6 +777,13 @@ void TeenAgentEngine::loadScene(byte id, uint16 x, uint16 y, byte o) {
 	fadeIn();
 }
 
+void TeenAgentEngine::enableOn(bool enable) {
+	SceneEvent event(SceneEvent::kSetOn);
+	event.ons = 0;
+	event.color = enable? 1: 0;
+	scene->push(event);
+}
+
 void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
 	SceneEvent event(SceneEvent::kSetOn);
 	event.ons = id + 1;
@@ -905,19 +910,18 @@ void TeenAgentEngine::wait(uint16 frames) {
 
 void TeenAgentEngine::playSoundNow(byte id) {
 	Resources *res = Resources::instance();
-	Common::SeekableReadStream *in = res->sam_sam.getStream(id);
-	if (in == NULL) {
+	uint size = res->sam_sam.getSize(id);
+	if (size == 0) {
 		warning("skipping invalid sound %u", id);
 		return;
 	}
 
-	uint size = in->size();
 	byte *data = (byte *)malloc(size);
-	in->read(data, size);
+	res->sam_sam.read(id, data, size);
 	//debug(0, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
 }
 
 
@@ -932,9 +936,9 @@ void TeenAgentEngine::setMusic(byte id) {
 bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsRTL:
+	case kSupportsSubtitleOptions:
 	case kSupportsLoadingDuringRuntime:
 	case kSupportsSavingDuringRuntime:
-	case kSupportsSubtitleOptions:
 		return true;
 	default:
 		return false;

@@ -27,24 +27,85 @@
 #define TEENAGENT_PACK_H
 
 #include "common/file.h"
+#include "common/array.h"
 
 namespace TeenAgent {
+
 class Pack {
+protected:
+	uint32 _fileCount;
+public:
+	Pack(): _fileCount(0) {}
+	virtual ~Pack() {};
+	virtual bool open(const Common::String &filename) = 0;
+	virtual void close() = 0;
+
+	virtual uint32 fileCount() const { return _fileCount; }
+	virtual uint32 getSize(uint32 id) const = 0;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const = 0;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const = 0;
+};
+
+///FilePack keeps opened file and returns substream for each request.
+class FilePack : public Pack {
 	mutable Common::File file;
-	uint32 count;
 	uint32 *offsets;
 
 public:
-	Pack();
-	~Pack();
+	FilePack();
+	~FilePack();
 
-	bool open(const Common::String &filename);
-	void close();
+	virtual bool open(const Common::String &filename);
+	virtual void close();
 
-	inline uint32 files_count() const { return count; }
-	uint32 get_size(uint32 id) const;
-	uint32 read(uint32 id, byte *dst, uint32 size) const;
-	Common::SeekableReadStream *getStream(uint32 id) const;
+	virtual uint32 getSize(uint32 id) const;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const;
+};
+
+/** Pack file which reopens file each request. Do not keep file descriptor open.
+ ** Useful for minimizing file descriptors opened at the same time. Critical for PSP backend.
+ **/
+class TransientFilePack : public Pack {
+	uint32 *offsets;
+	Common::String _filename;
+
+public:
+	TransientFilePack();
+	~TransientFilePack();
+
+	virtual bool open(const Common::String &filename);
+	virtual void close();
+
+	virtual uint32 getSize(uint32 id) const;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const;
+};
+
+///MemoryPack loads whole pack in memory, currently unused.
+class MemoryPack : public Pack {
+	struct Chunk {
+		byte *data;
+		uint32 size;
+		inline Chunk(): data(0), size(0) {}
+		inline Chunk(const Chunk &c): data(c.data), size(c.size) { c.reset(); }
+		inline Chunk& operator=(const Chunk &c) { data = c.data; size = c.size; c.reset(); return *this; }
+		inline ~Chunk() { delete[] data; }
+		inline void reset() const {
+			Chunk *c = const_cast<Chunk *>(this);
+			c->data = 0;
+			c->size = 0;
+		}
+	};
+	Common::Array<Chunk> chunks;
+
+public:
+	virtual bool open(const Common::String &filename);
+	virtual void close();
+
+	virtual uint32 getSize(uint32 id) const;
+	virtual uint32 read(uint32 id, byte *dst, uint32 size) const;
+	virtual Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
 } // End of namespace TeenAgent

@@ -26,6 +26,7 @@
 #ifndef TEENAGENT_OBJECTS_H
 #define TEENAGENT_OBJECTS_H
 
+#include "common/noncopyable.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 
@@ -220,6 +221,60 @@ struct FadeType {
 	byte value;
 
 	void load(byte *src);
+};
+
+template<typename T>
+class ScopedPtr : Common::NonCopyable {
+public:
+	typedef T ValueType;
+	typedef T *PointerType;
+	typedef T &ReferenceType;
+
+	explicit ScopedPtr(PointerType o = 0) : _pointer(o) {}
+
+	ReferenceType operator*() const { return *_pointer; }
+	PointerType operator->() const { return _pointer; }
+	operator PointerType() const { return _pointer; }
+
+	/**
+	 * Implicit conversion operator to bool for convenience, to make
+	 * checks like "if (scopedPtr) ..." possible.
+	 */
+	operator bool() const { return _pointer != 0; }
+
+	~ScopedPtr() { 
+		delete _pointer;
+	}
+
+	/**
+	 * Resets the pointer with the new value. Old object will be destroyed
+	 */
+	void reset(PointerType o = 0) {
+		delete _pointer;
+		_pointer = o;
+	}
+
+	/**
+	 * Returns the plain pointer value. 
+	 *
+	 * @return the pointer the ScopedPtr manages
+	 */
+	PointerType get() const { return _pointer; }
+
+	/**
+	 * Returns the plain pointer value and releases ScopedPtr. 
+	 * After release() call you need to delete object yourself
+	 *
+	 * @return the pointer the ScopedPtr manages
+	 */
+	PointerType release() {
+		PointerType r = _pointer;
+		_pointer = 0;
+		return r;
+	}
+
+private:
+	PointerType _pointer;
 };
 
 //\todo move it to util.h?

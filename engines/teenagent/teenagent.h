@@ -93,6 +93,7 @@ public:
 	void playAnimation(uint16 id, byte slot, bool async = false, bool ignore = false, bool loop = false);
 	void loadScene(byte id, const Common::Point &pos, byte o = 0);
 	void loadScene(byte id, uint16 x, uint16 y, byte o = 0);
+	void enableOn(bool enable = true);
 	void setOns(byte id, byte value, byte scene_id = 0);
 	void setLan(byte id, byte value, byte scene_id = 0);
 	void setFlag(uint16 addr, byte value);

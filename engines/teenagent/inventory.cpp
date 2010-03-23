@@ -35,22 +35,33 @@ namespace TeenAgent {
 void Inventory::init(TeenAgentEngine *engine) {
 	_engine = engine;
 	_active = false;
-	Resources *res = Resources::instance();
 
-	Common::SeekableReadStream *s = res->varia.getStream(3);
-	assert(s != NULL);
-	debug(0, "loading inventory background...");
-	background.load(s, Surface::kTypeOns);
+	FilePack varia;
+	varia.open("varia.res");
 
-	items = res->varia.getStream(4);
-	assert(items != NULL);
-
-	byte offsets = items->readByte();
-	assert(offsets == 92);
-	for (byte i = 0; i <= offsets; ++i) {
-		offset[i] = items->readUint16LE();
+	{
+		ScopedPtr<Common::SeekableReadStream> s(varia.getStream(3));
+		if (!s)
+			error("no inventory background");
+		debug(0, "loading inventory background...");
+		background.load(s, Surface::kTypeOns);
 	}
 
+	uint32 items_size = varia.getSize(4);
+	if (items_size == 0)
+		error("invalid inventory items size");
+	debug(0, "loading items, size: %u", items_size);
+	items = new byte[items_size];
+	varia.read(4, items, items_size);
+
+	byte offsets = items[0];
+	assert(offsets == 92);
+	for (byte i = 0; i < offsets; ++i) {
+		offset[i] = READ_LE_UINT16(items + i * 2 + 1);
+	}
+	offset[92] = items_size; 
+
+	Resources *res = Resources::instance();
 	for (byte i = 0; i <= 92; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
@@ -70,6 +81,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 			graphics[i].rect.bottom = graphics[i].rect.top + 26;
 		}
 
+	varia.close();
 	hovered_obj = selected_obj = NULL;
 }
 
@@ -105,6 +117,14 @@ void Inventory::clear() {
 	}
 }
 
+void Inventory::reload() {
+	for (int i = 0; i < 24; ++i) {
+		graphics[i].free();
+		uint item = inventory[i];
+		if (item != 0)
+			graphics[i].load(this, item);
+	}
+}
 
 void Inventory::add(byte item) {
 	if (has(item))
@@ -138,20 +158,21 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		mouse = event.mouse;
-		if (!active() && event.mouse.y < 5) {
-			activate(true);
-			return _active;
-		}
 
-		if (event.mouse.x < 17 || event.mouse.x >= 303 || event.mouse.y >= 153) {
-			activate(false);
-			return _active;
-		}
-
-		if (!_active)
+		if (!_active) {
+			if (event.mouse.y < 5)
+				activate(true);
+			mouse = event.mouse;
 			return false;
+		}
 
+		if (event.mouse.x < 17 || event.mouse.x >= 303 || (event.mouse.y - mouse.y > 0 && event.mouse.y >= 153)) {
+			activate(false);
+			mouse = event.mouse;
+			return false;
+		}
+
+		mouse = event.mouse;
 		hovered_obj = NULL;
 
 		for (int i = 0; i < 24; ++i) {
@@ -238,6 +259,10 @@ bool Inventory::processEvent(const Common::Event &event) {
 			activate(false);
 			return true;
 		}
+		if (event.kbd.keycode == Common::KEYCODE_RETURN) { //triangle button on psp
+			activate(!_active);
+			return true;
+		}
 		return false;
 
 	case Common::EVENT_LBUTTONUP:
@@ -266,17 +291,31 @@ void Inventory::Item::backgroundEffect(Graphics::Surface *s) {
 	}
 }
 
-void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *dst, int delta) {
+void Inventory::Item::load(Inventory *inventory, uint item_id) {
+	InventoryObject *obj = &inventory->objects[item_id];
+	if (obj->animated) {
+		if (animation.empty()) {
+			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
+			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
+			animation.load(&s, Animation::kTypeInventory);
+		}
+	} else {
+		if (surface.empty()) {
+			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
+			Common::MemoryReadStream s(inventory->items + inventory->offset[obj->id - 1], inventory->offset[obj->id] - inventory->offset[obj->id - 1]);
+			surface.load(&s, Surface::kTypeOns);
+		}
+	}
+}
+
+void Inventory::Item::render(Inventory *inventory, uint item_id, Graphics::Surface *dst, int delta) {
+	InventoryObject *obj = &inventory->objects[item_id];
 	Resources *res = Resources::instance();
 
 	backgroundEffect(dst);
 	rect.render(dst, hovered ? 233 : 234);
+	load(inventory, item_id);
 	if (obj->animated) {
-		if (animation.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			inventory->items->seek(inventory->offset[obj->id - 1]);
-			animation.load(inventory->items, Animation::kTypeInventory);
-		}
 		if (hovered) {
 			Surface *s = animation.currentFrame(delta);
 			if (animation.currentIndex() == 0)
@@ -289,11 +328,6 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 				s->render(dst, rect.left + 1, rect.top + 1);
 		}
 	} else {
-		if (surface.empty()) {
-			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
-			inventory->items->seek(inventory->offset[obj->id - 1]);
-			surface.load(inventory->items, Surface::kTypeOns);
-		}
 		surface.render(dst, rect.left + 1, rect.top + 1);
 	}
 
@@ -325,9 +359,7 @@ void Inventory::render(Graphics::Surface *surface, int delta) {
 				continue;
 
 			//debug(0, "%d,%d -> %u", x0, y0, item);
-
-			InventoryObject *obj = &objects[item];
-			graphics[idx].render(this, obj, surface, delta);
+			graphics[idx].render(this, item, surface, delta);
 		}
 	}
 }

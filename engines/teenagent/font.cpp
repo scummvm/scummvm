@@ -23,19 +23,22 @@
  */
 
 #include "teenagent/font.h"
-#include "teenagent/resources.h"
+#include "teenagent/pack.h"
+#include "teenagent/objects.h"
+#include "common/stream.h"
+#include "common/ptr.h"
 
 namespace TeenAgent {
 
 Font::Font() : grid_color(0xd0), shadow_color(0), height(0), width_pack(0), data(0) {
 }
 
-void Font::load(int id) {
+void Font::load(const Pack &pack, int id) {
 	delete[] data;
 	data = NULL;
 
-	Common::SeekableReadStream *s = Resources::instance()->varia.getStream(id);
-	if (s == NULL)
+	ScopedPtr<Common::SeekableReadStream> s(pack.getStream(id));
+	if (!s)
 		error("loading font %d failed", id);
 
 	data = new byte[s->size()];

@@ -29,13 +29,14 @@
 
 namespace TeenAgent {
 
+class Pack;
 class Font {
 public:
 	byte grid_color, shadow_color;
 	byte height, width_pack;
 
 	Font();
-	void load(int id);
+	void load(const Pack &pack, int id);
 	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool grid = false);
 	uint render(Graphics::Surface *surface, int x, int y, char c, byte color);
 	static void grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color);

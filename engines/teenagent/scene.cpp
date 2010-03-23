@@ -204,26 +204,30 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_system = system;
 
 	_fade_timer = 0;
+	on_enabled = true;
 
 	memset(palette, 0, sizeof(palette));
 
-	Resources *res = Resources::instance();
-	Common::SeekableReadStream *s = res->varia.getStream(1);
-	if (s == NULL)
+	FilePack varia;
+	varia.open("varia.res");
+
+	ScopedPtr<Common::SeekableReadStream> s(varia.getStream(1));
+	if (!s)
 		error("invalid resource data");
 
 	teenagent.load(s, Animation::kTypeVaria);
 	if (teenagent.empty())
 		error("invalid mark animation");
 
-	s = res->varia.getStream(2);
-	if (s == NULL)
+	s.reset(varia.getStream(2));
+	if (!s)
 		error("invalid resource data");
 
 	teenagent_idle.load(s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
 
+	varia.close();
 	loadObjectData();
 }
 
@@ -331,9 +335,10 @@ void Scene::loadOns() {
 	if (ons_count > 0) {
 		ons = new Surface[ons_count];
 		for (uint32 i = 0; i < ons_count; ++i) {
-			Common::SeekableReadStream *s = res->ons.getStream(on_id[i]);
-			if (s != NULL)
+			ScopedPtr<Common::SeekableReadStream> s(res->ons.getStream(on_id[i]));
+			if (s) {
 				ons[i].load(s, Surface::kTypeOns);
+			}
 		}
 	}
 }
@@ -353,22 +358,19 @@ void Scene::loadLans() {
 		if (bxv == 0)
 			continue;
 
-		Common::SeekableReadStream *s = res->loadLan000(res_id);
-		if (s != NULL) {
+		ScopedPtr<Common::SeekableReadStream> s(res->loadLan000(res_id));
+		if (s) {
 			animation[i].load(s, Animation::kTypeLan);
 			if (bxv != 0 && bxv != 0xff)
 				animation[i].id = bxv;
-			delete s;
 		}
-
-		//uint16 bp = res->dseg.get_word();
 	}
-
 }
 
 void Scene::init(int id, const Common::Point &pos) {
 	debug(0, "init(%d)", id);
 	_id = id;
+	on_enabled = true; //reset on-rendering flag on loading.
 	sounds.clear();
 	for (byte i = 0; i < 4; ++i)
 		custom_animation[i].free();
@@ -394,7 +396,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		}
 	}
 
-	Common::SeekableReadStream *stream = res->on.getStream(id);
+	ScopedPtr<Common::SeekableReadStream> stream(res->on.getStream(id));
 	int sub_hack = 0;
 	if (id == 7) { //something patched in the captains room
 		switch(res->dseg.get_byte(0xdbe6)) {
@@ -408,7 +410,6 @@ void Scene::init(int id, const Common::Point &pos) {
 		}
 	}
 	on.load(stream, SurfaceList::kTypeOn, sub_hack);
-	delete stream;
 
 	loadOns();
 	loadLans();
@@ -426,8 +427,8 @@ void Scene::init(int id, const Common::Point &pos) {
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore) {
 	debug(0, "playAnimation(%u, %u, loop:%s, paused:%s, ignore:%s)", idx, id, loop?"true":"false", paused?"true":"false", ignore?"true":"false");
 	assert(idx < 4);
-	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
-	if (s == NULL)
+	ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
+	if (!s)
 		error("playing animation %u failed", id);
 
 	custom_animation[idx].load(s);
@@ -438,13 +439,14 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused, bool ignore
 
 void Scene::playActorAnimation(uint id, bool loop, bool ignore) {
 	debug(0, "playActorAnimation(%u, loop:%s, ignore:%s)", id, loop?"true":"false", ignore?"true":"false");
-	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
-	if (s == NULL)
+	ScopedPtr<Common::SeekableReadStream> s(Resources::instance()->loadLan(id + 1));
+	if (!s)
 		error("playing animation %u failed", id);
 
 	actor_animation.load(s);
 	actor_animation.loop = loop;
 	actor_animation.ignore = ignore;
+	actor_animation.id = id;
 }
 
 Animation * Scene::getAnimation(byte slot) {
@@ -467,7 +469,7 @@ void Scene::push(const SceneEvent &event) {
 	//event.dump();
 	if (event.type == SceneEvent::kWalk && !events.empty()) {
 		SceneEvent &prev = events.back();
-		if (prev.type == SceneEvent::kWalk) {
+		if (prev.type == SceneEvent::kWalk && prev.color == event.color) {
 			debug(0, "fixing double-move [skipping event!]");
 			if ((event.color & 2) != 0) { //relative move
 				prev.dst.x += event.dst.x;
@@ -810,7 +812,8 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 		//removed mark == null. In final scene of chapter 2 mark rendered above table. 
 		//if it'd cause any bugs, add hack here. (_id != 23 && mark == NULL) 
-		if (debug_features.feature[DebugFeatures::kShowOn]) {
+		if (on_enabled && 
+			debug_features.feature[DebugFeatures::kShowOn]) {
 			on.render(surface, actor_animation_position);
 		}
 
@@ -916,9 +919,16 @@ bool Scene::processEventQueue() {
 		switch (current_event.type) {
 
 		case SceneEvent::kSetOn: {
-			byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
-			debug(0, "on[%u] = %02x", current_event.ons - 1, current_event.color);
-			ptr[current_event.ons - 1] = current_event.color;
+			byte on_id = current_event.ons;
+			if (on_id != 0) {
+				--on_id;
+				byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
+				debug(0, "on[%u] = %02x", on_id, current_event.color);
+				ptr[on_id] = current_event.color;
+			} else {
+				on_enabled = current_event.color != 0;
+				debug(0, "%s on rendering", on_enabled? "enabling": "disabling");
+			}
 			loadOns();
 			current_event.clear();
 		}
