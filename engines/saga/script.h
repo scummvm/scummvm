@@ -268,13 +268,13 @@ public:
 
 	// copy constructor
 	ScriptThread(const ScriptThread& s) {
-		memcpy(this, &s, sizeof(*this));
-
 		// Verify that s doesn't have a non-zero _stackBuf, for else
 		// we would have to clone  that buffer, too, which we currently
 		// don't do. This case should never occur anyway, though (at
 		// least as long as the thread handling code does not change).
-		assert(!_stackBuf);
+		assert(!s._stackBuf);
+
+		memcpy(this, &s, sizeof(*this));
 	}
 
 	// assignment operator
@@ -282,14 +282,16 @@ public:
 		if (this == &s)
 			return *this;
 
+		// Verify that s doesn't have a non-zero _stackBuf, for else
+		// we would have to clone that buffer, too, which we currently
+		// don't do. This case should never occur anyway, though (at
+		// least as long as the thread handling code does not change).
+		assert(!s._stackBuf);
+
 		free(_stackBuf);
 		memcpy(this, &s, sizeof(*this));
 
-		// Verify that s doesn't have a non-zero _stackBuf, for else
-		// we would have to clone  that buffer, too, which we currently
-		// don't do. This case should never occur anyway, though (at
-		// least as long as the thread handling code does not change).
-		assert(!_stackBuf);
+		return *this;
 	}
 
 	~ScriptThread() {
