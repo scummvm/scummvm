@@ -1119,7 +1119,22 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kEffect:
-			debug(0, "*stub* shaking the screen");
+			_system->setShakePos(8);
+			_system->updateScreen();
+			_system->delayMillis(80); //2 vsyncs
+			_system->updateScreen();
+
+			_system->setShakePos(0);
+			_system->updateScreen();
+			_system->delayMillis(80); //2 vsyncs
+
+			_system->setShakePos(4);
+			_system->updateScreen();
+			_system->delayMillis(80); //2 vsyncs
+
+			_system->setShakePos(0);
+			_system->updateScreen();
+
 			current_event.clear();
 			break;
 
