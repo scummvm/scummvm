@@ -1120,7 +1120,6 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kEffect:
 			_system->setShakePos(8);
-			_system->updateScreen();
 			_system->delayMillis(80); //2 vsyncs
 			_system->updateScreen();
 
