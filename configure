@@ -912,7 +912,7 @@ psp)
 samsungtv)
 	_host_os=linux
 	_host_cpu=arm
-	_host_alias=arm-cl-linux-gnueabi
+	_host_alias=arm-linux-gnueabi
 	;;
 wii)
 	_host_os=wii
