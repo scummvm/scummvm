@@ -481,7 +481,7 @@ void SeqPlayer::s1_miscUnk3() {
 }
 
 void SeqPlayer::s1_prefetchVocFile() {
-	*_seqData++;
+	_seqData++;
 	// we do not have to prefetch the vocfiles on modern systems
 }
 
