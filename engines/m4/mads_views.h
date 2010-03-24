@@ -34,6 +34,106 @@
 
 namespace M4 {
 
+class MadsSpriteSlot {
+public:
+	int spriteId;
+	int timerIndex;
+	int spriteListIndex;
+	int frameNumber;
+	int width;
+	int height;
+	int depth;
+	int scale;
+
+	MadsSpriteSlot() { };
+};
+
+#define SPRITE_SLOTS_SIZE 50
+
+class MadsTextDisplayEntry {
+public:
+	bool active;
+	int expire;
+	int spacing;
+	Common::Rect bounds;
+	uint8 colour1;
+	uint8 colour2;
+	Font *font;
+	const char *msg;
+
+	MadsTextDisplayEntry() { active = false; }
+};
+
+#define TEXT_DISPLAY_SIZE 40
+
+class MadsTextDisplay {
+private:
+	Common::Array<MadsTextDisplayEntry> _entries;
+public:
+	MadsTextDisplay();
+
+	MadsTextDisplayEntry &operator[](int idx) {
+		assert(idx < TEXT_DISPLAY_SIZE);
+		return _entries[idx];
+	}
+
+	void expire(int idx) {
+		assert(idx < TEXT_DISPLAY_SIZE);
+		_entries[idx].expire = -1;
+	}
+
+	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
+	void draw(View *view);
+};
+
+class ScreenObjectEntry {
+public:
+	Common::Rect bounds;
+	int category;
+	int index;
+	int layer;
+	bool active;
+
+	ScreenObjectEntry() { active = false; }
+};
+
+#define SCREEN_OBJECTS_SIZE 
+
+class ScreenObjects {
+private:
+	Common::Array<ScreenObjectEntry> _entries;
+public:
+	ScreenObjects() {}
+
+	ScreenObjectEntry &operator[](uint idx) {
+		assert(idx < _entries.size());
+		return _entries[idx];
+	}
+
+	void clear();
+	void add(const Common::Rect &bounds, int layer, int idx, int category);
+	void draw(View *view);
+	int scan(int xp, int yp, int layer);
+	int scanBackwards(int xp, int yp, int layer);
+	void setActive(int category, int idx, bool active);
+};
+
+
+class MadsView: public View {
+protected:
+	MadsSpriteSlot _spriteSlots[SPRITE_SLOTS_SIZE];
+	MadsTextDisplay _textDisplay;
+	int _spriteSlotsStart;
+	ScreenObjects _screenObjects;
+
+	int getSpriteSlotsIndex();
+public:
+	MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
+	MadsView(MadsM4Engine *vm, int x = 0, int y = 0, bool transparent = false);
+
+	void onRefresh(RectList *rects, M4Surface *destSurface);
+};
+
 #define CHEAT_SEQUENCE_MAX 8
 
 class IntegerList : public Common::Array<int> {

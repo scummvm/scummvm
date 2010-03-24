@@ -701,7 +701,10 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	// Add in the loaded background vertically centred
 	_backgroundSurface->copyTo(this, 0, (height() - MADS_SURFACE_HEIGHT) / 2);
 
-	View::onRefresh(rects, destSurface);
+	// Check whether any of the dialog text entries need to be refreshed
+	refreshText();
+
+	MadsView::onRefresh(rects, destSurface);
 }
 
 void RexDialogView::setFrame(int frameNumber, int depth) {
@@ -753,7 +756,7 @@ void RexDialogView::addLine(const char *msg_p, Font *font, MadsTextAlignment ali
 	if (rec) {
 		strcpy(rec->text, msg_p);
 		rec->font = font;
-		rec->field_2 = 0;
+		rec->state = 0;
 		rec->pos.y = top;
 		rec->widthAdjust = -1;
 		rec->in_use = true;
@@ -819,6 +822,65 @@ void RexDialogView::addQuote(Font *font, MadsTextAlignment alignment, int left, 
 	addLine(buffer, font, alignment, left, top);
 }
 
+/**
+ * Sets any previously created dialog text entries as clickable items
+ */
+void RexDialogView::setClickableLines() {
+	_screenObjects.clear();
+
+	for (int i = 0; i < DIALOG_LINES_SIZE; ++i) {
+		if (_dialogText[i].in_use) {
+			// Add an entry for the line
+			_screenObjects.add(Common::Rect(_dialogText[i].pos.x, _dialogText[i].pos.y, 
+				_dialogText[i].pos.x + _dialogText[i].font->getWidth(_dialogText[i].text, _dialogText[i].widthAdjust),
+				_dialogText[i].pos.y + _dialogText[i].font->getHeight()), 19, i, 1);
+		}
+	}
+
+	if ((_madsVm->globals()->dialogType == DIALOG_SAVE) || (_madsVm->globals()->dialogType == DIALOG_RESTORE)) {
+		// Extra entries for the scroller areas of the  Save and Restor dialogs
+		_screenObjects.add(Common::Rect(293, 26, 312, 75), LAYER_GUI, 50, 2);
+		_screenObjects.add(Common::Rect(293, 78, 312, 127), LAYER_GUI, 51, 2);
+	}
+}
+
+/**
+ * Handles creating text display objects for each dialog line initially, and when the selected state
+ * of any entry changes
+ */
+void RexDialogView::refreshText() {
+	for (uint i = 0; i < _dialogText.size(); ++i) {
+		if (!_dialogText[i].in_use)
+			continue;
+
+		// Get the item's colours
+		uint colour;
+		if (_dialogText[i].state == STATE_DESELECTED)
+			colour = 0xB0A;
+		else if (_dialogText[i].state == STATE_HIGHLIGHTED)
+			colour = 0xD0C;
+		else
+			colour = 0xF0E;
+
+		// If there's an associated text display entry, check to see if it's colour needs to change
+		if (_dialogText[i].textDisplay_index >= 0) {
+			MadsTextDisplayEntry &tdEntry = _textDisplay[_dialogText[i].textDisplay_index];
+
+			if ((tdEntry.colour1 == (colour & 0xff)) && (tdEntry.colour2 == (colour >> 8)))
+				// It's still the same, so no further action needed
+				continue;
+
+			// Flag the currently assigned text display to be expired, so it can be re-created
+			_textDisplay.expire(_dialogText[i].textDisplay_index);
+			_dialogText[i].textDisplay_index = -1;
+		}
+
+		// Create a new text display entry for the dialog text line
+		_dialogText[i].textDisplay_index = _textDisplay.add(_dialogText[i].pos.x, _dialogText[i].pos.y,
+			colour, _dialogText[i].widthAdjust, _dialogText[i].text, _dialogText[i].font);
+	}
+}
+
 /*--------------------------------------------------------------------------
  * RexDialogView is the Rex Nebular Game Menu dialog
  *--------------------------------------------------------------------------
@@ -830,11 +892,13 @@ RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
 
 	_vm->_font->setFont(FONT_CONVERSATION_MADS);
 	addLines();
+	setClickableLines();
 }
 
 void RexGameMenuDialog::addLines() {
 	// Add the title
-	int top = -((_vm->_font->getHeight() + 1) * 12 - 78);
+	int top = (height() - MADS_SURFACE_HEIGHT) / 2 +  -((((_vm->_font->getHeight() + 2) * 6) >> 1) - 78);
+		
 	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 10);
 
 	// Loop for adding the option lines of the dialog
@@ -848,5 +912,48 @@ void RexGameMenuDialog::addLines() {
 void RexGameMenuDialog::onRefresh(RectList *rects, M4Surface *destSurface) {
 	RexDialogView::onRefresh(rects, destSurface);
 }
+
+bool RexGameMenuDialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
+	bool handled = false;
+
+	// Handle various event types
+	switch (eventType) {
+	case MEVENT_LEFT_CLICK:
+		// Left mouse click
+		// TODO: Check and figure out _selectedLine
+		handled = true;
+		break;
+
+	case KEVENT_KEY:
+		// Handle standard dialog keypresses
+
+		handled = true;
+		break;
+
+	default:
+		break;
+	}
+
+	if (_selectedLine > 0) {
+		switch (_selectedLine) {
+		case 1:
+			_madsVm->globals()->dialogType = DIALOG_SAVE;
+		case 2:
+			_madsVm->globals()->dialogType = DIALOG_RESTORE;
+		case 3:
+			_madsVm->globals()->dialogType = DIALOG_OPTIONS;
+		default:
+			// TODO: Extra logic for such as resuming scene if necessary
+			_madsVm->globals()->dialogType = DIALOG_NONE;
+			break;
+		}
+
+		// Close this dialog
+		_madsVm->_viewManager->deleteView(this);
+	}
+
+	return handled;
+}
+
 
 }

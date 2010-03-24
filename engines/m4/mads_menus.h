@@ -28,6 +28,7 @@
 
 #include "common/str-array.h"
 #include "m4/viewmgr.h"
+#include "m4/mads_views.h"
 #include "m4/font.h"
 
 namespace M4 {
@@ -35,6 +36,8 @@ namespace M4 {
 #define MADS_MENU_ANIM_DELAY 70
 
 enum MadsGameAction {START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT};
+
+enum MadsLayers {LAYER_GUI = 19};
 
 class RexMainMenuView : public View {
 private:
@@ -88,10 +91,12 @@ public:
 	void updateState();
 };
 
+enum DialogTextState {STATE_DESELECTED = 0, STATE_HIGHLIGHTED = 1, STATE_SELECTED = 2};
+
 class DialogTextEntry {
 public:
 	bool in_use;
-	int16 field_2;
+	int state;
 	Common::Point pos;
 	char text[80];
 	Font *font;
@@ -116,26 +121,28 @@ private:
 	void loadBackground();
 	void loadMenuSprites();
 protected:
-	int _word_8502C;
-	int _selectedLine;
-	int _lineIndex;
-	bool _enterFlag;
-	Common::StringArray _textLines;
-
-	void setFrame(int frameNumber, int depth);
-	void initVars();
-	void addLine(const char *msg_p, Font *font, MadsTextAlignment alignment, int left, int top);
-	void addQuote(Font *font, MadsTextAlignment alignment, int left, int top, int id1, int id2 = 0);
-protected:
 	M4Surface *_backgroundSurface;
 	RGBList *_bgPalData;
 	SpriteAsset *_menuSprites;
 	RGBList *_spritesPalData;
 
 	Common::Array<DialogTextEntry> _dialogText;
+	Common::StringArray _textLines;
 	int _totalTextEntries;
 	int _dialogSelectedLine;
 	Common::StringArray _saveList;
+
+	int _word_8502C;
+	int _selectedLine;
+	int _lineIndex;
+	bool _enterFlag;
+
+	void setFrame(int frameNumber, int depth);
+	void initVars();
+	void addLine(const char *msg_p, Font *font, MadsTextAlignment alignment, int left, int top);
+	void addQuote(Font *font, MadsTextAlignment alignment, int left, int top, int id1, int id2 = 0);
+	void setClickableLines();
+	void refreshText();
 public:
 	RexDialogView();
 	~RexDialogView();
@@ -151,6 +158,7 @@ public:
 	RexGameMenuDialog();
 
 	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
+	virtual bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 }

@@ -39,6 +39,136 @@ static const int INVENTORY_X = 160;
 static const int INVENTORY_Y = 159;
 static const int SCROLLER_DELAY = 200;
 
+//--------------------------------------------------------------------------
+
+MadsTextDisplay::MadsTextDisplay() {
+	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i) {
+		MadsTextDisplayEntry rec;
+		rec.active = false;
+		_entries.push_back(rec);
+	}
+}
+
+int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font) {
+	int usedSlot = -1;
+
+	for (int idx = 0; idx < TEXT_DISPLAY_SIZE; ++idx) {
+		if (!_entries[idx].active) {
+			usedSlot = idx;
+
+			_entries[idx].bounds.left = xp;
+			_entries[idx].bounds.top = yp;
+			_entries[idx].font = font;
+			_entries[idx].msg = msg;
+			_entries[idx].bounds.setWidth(font->getWidth(msg, charSpacing));
+			_entries[idx].bounds.setHeight(font->getHeight());
+			_entries[idx].colour1 = fontColour & 0xff;
+			_entries[idx].colour2 = fontColour >> 8;
+			_entries[idx].spacing = charSpacing;
+			_entries[idx].expire = 1;
+			_entries[idx].active = true;
+			break;
+		}
+	}
+
+	return usedSlot;
+}
+
+void MadsTextDisplay::draw(View *view) {
+	for (uint idx = 0; idx < _entries.size(); ++idx) {
+		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
+			_entries[idx].font->setColours(_entries[idx].colour1, 0xFF,
+				(_entries[idx].colour2 == 0) ? _entries[idx].colour1 : _entries[idx].colour2);
+			_entries[idx].font->writeString(view, _entries[idx].msg, 
+				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
+				_entries[idx].spacing);
+		}
+	}
+
+	// Clear up any now text display entries that are to be expired
+	for (uint idx = 0; idx < _entries.size(); ++idx) {
+		if (_entries[idx].expire < 0) {
+			_entries[idx].active = false;
+			_entries[idx].expire = 0;
+		}
+	}
+}
+
+//--------------------------------------------------------------------------
+
+/**
+ * Clears the entries list
+ */
+void ScreenObjects::clear() {
+	_entries.clear();
+}
+
+/**
+ * Adds a new entry to the list of screen objects
+ */
+void ScreenObjects::add(const Common::Rect &bounds, int layer, int idx, int category) {
+	ScreenObjectEntry rec;
+	rec.bounds = bounds;
+	rec.layer = layer;
+	rec.index = idx;
+	rec.category = category;
+	rec.active = true;
+
+	_entries.push_back(rec);
+}
+
+/**
+ * Scans the list for an element that contains the given mode. The result will be 1 based for a match,
+ * with 0 indicating no entry was found
+ */
+int ScreenObjects::scan(int xp, int yp, int layer) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (_entries[i].active && _entries[i].bounds.contains(xp, yp) && (_entries[i].layer == layer))
+			return i + 1;
+	}
+
+	// Entry not found
+	return 0;
+}
+
+int ScreenObjects::scanBackwards(int xp, int yp, int layer) {
+	for (uint i = _entries.size() - 1; i >= 0; --i) {
+		if (_entries[i].active && _entries[i].bounds.contains(xp, yp) && (_entries[i].layer == layer))
+			return i + 1;
+	}
+
+	// Entry not found
+	return 0;
+}
+
+void ScreenObjects::setActive(int category, int idx, bool active) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (_entries[i].active && (_entries[i].category == category) && (_entries[i].index == idx))
+			_entries[i].active = active;
+	}
+}
+
+//--------------------------------------------------------------------------
+
+MadsView::MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent): View(vm, viewBounds, transparent) {
+	_spriteSlotsStart = 0;
+}
+
+MadsView::MadsView(MadsM4Engine *vm, int x, int y, bool transparent): View(vm, x, y, transparent) {
+	_spriteSlotsStart = 0;
+}
+
+int MadsView::getSpriteSlotsIndex() {
+	return _spriteSlotsStart++;
+}
+
+void MadsView::onRefresh(RectList *rects, M4Surface *destSurface) {
+	// Draw text elements onto the view
+	_textDisplay.draw(this);
+
+	View::onRefresh(rects, destSurface);
+}
+
 /*--------------------------------------------------------------------------
  * MadsInterfaceView handles the user interface section at the bottom of
  * game screens in MADS games
