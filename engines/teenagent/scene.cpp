@@ -1119,18 +1119,19 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::kEffect:
-			_system->setShakePos(8);
 			_system->delayMillis(80); //2 vsyncs
+			_system->setShakePos(8);
 			_system->updateScreen();
 
+			_system->delayMillis(80); //2 vsyncs
 			_system->setShakePos(0);
 			_system->updateScreen();
-			_system->delayMillis(80); //2 vsyncs
 
+			_system->delayMillis(80); //2 vsyncs
 			_system->setShakePos(4);
 			_system->updateScreen();
-			_system->delayMillis(80); //2 vsyncs
 
+			_system->delayMillis(80); //2 vsyncs
 			_system->setShakePos(0);
 			_system->updateScreen();
 
