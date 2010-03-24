@@ -159,10 +159,11 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 	}
 	*/
 
+	int right;
 	if (width > 0)
-		width = MIN(surface->width(), x + width);
+		right = MIN(surface->width(), x + width + 1);
 	else
-		width = surface->width();
+		right = surface->width();
 
 	x++;
 	y++;
@@ -197,7 +198,7 @@ int32 Font::write(M4Surface *surface, const char *text, int x, int y, int width,
 
 		if (charWidth > 0) {
 
-			if (xPos + charWidth >= width)
+			if (xPos + charWidth > right)
 				return xPos;
 
 			uint8 *charData = &_charData[_charOffs[theChar]];
@@ -258,7 +259,7 @@ int32 Font::getWidth(const char *text, int spaceWidth) {
 		custom_ascii_converter(out_string);	 // call it with the string
 	}
 	*/
-	int width = 0;
+	int width = -spaceWidth;	// Accomodate final character not needing spacing
 	while (*text)
 		width += _charWidths[*text++ & 0x7F] + spaceWidth;
 	return width;
