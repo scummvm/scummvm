@@ -1188,7 +1188,7 @@ Object *Scene::getObject(int id, int scene_id) {
 	return &scene_objects[id];
 }
 
-Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {
+Common::Point Scene::messagePosition(const Common::String &str, Common::Point message_position) {
 	Resources *res = Resources::instance();
 	int lines = 1;
 	for(uint i = 0; i < str.size(); ++i)
@@ -1198,19 +1198,19 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point po
 	uint w = res->font7.render(NULL, 0, 0, str, 0);
 	uint h = res->font7.height * lines + 3;
 
-	position.x -= w / 2;
-	position.y -= h;
+	message_position.x -= w / 2;
+	message_position.y -= h;
 
-	if (position.x + w > 320)
-		position.x = 320 - w;
-	if (position.x < 0)
-		position.x = 0;
-	if (position.y + h > 320)
-		position.y = 200 - h;
-	if (position.y < 0)
-		position.y = 0;
+	if (message_position.x + w > 320)
+		message_position.x = 320 - w;
+	if (message_position.x < 0)
+		message_position.x = 0;
+	if (message_position.y + h > 320)
+		message_position.y = 200 - h;
+	if (message_position.y < 0)
+		message_position.y = 0;
 
-	return position;
+	return message_position;
 }
 
 uint Scene::messageDuration(const Common::String &str) {
