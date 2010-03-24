@@ -41,6 +41,15 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
+ScummVM DS 1.1.1
+
+ * New games are supported in this stable build: Return to Zork, Rodney's 
+   Funscreen, Manhole, Leather Goddess of Phobos 2, Cruise for a Corpse.
+
+ScummVM DS 1.0.0
+
+ * No changes!
+
 ScummVM DS 1.0.0 RC1
 
  * Gamma correction feature to improve brightness level of game on the
@@ -310,7 +319,7 @@ CANNOT DO THIS.
       ------------------------------------------------------------------------
 
 I'm glad you asked. Here is a list of the compatible games in version
-1.0.0 RC1. Demo versions of the games listed should work too.
+1.1.0. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
 Temptress have generously been released as freeware by the original
@@ -399,6 +408,16 @@ The Legend of Kyrandia                    F     Zoomed view does not follow the
 Lure of the Temptress                     G
 
 Nippon Safes                              G
+
+Return to Zork				  I
+
+Leather Goddess of Phobos 2		  I
+
+Manhole					  I
+
+Rodney's Funscreen			  I
+
+Cruise for a Corpse			  K
 
 
 Full Throttle and The Dig can run on the DS using an external RAM pack
