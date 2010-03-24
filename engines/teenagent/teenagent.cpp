@@ -145,7 +145,7 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 		debug(0, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
 		action = kActionExamine;
 		if (object->actor_rect.valid())
-			scene->moveTo(dst, object->actor_orientation);
+			scene->moveTo(dst, object->actor_orientation, true); //validate examine message. Original engine does not let you into walkboxes
 		dst_object = object;
 	} else if (!scene_busy) {
 		//do not reset anything while scene is busy, but allow interrupts while walking.
