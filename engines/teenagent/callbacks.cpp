@@ -4010,13 +4010,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(794);
 			wait(100);
 			setLan(1, 0);
-			//scene->getWalkbox(0)->rect.left = 0;
-			//scene->getWalkbox(0)->rect.top = 0;
 			moveTo(151, 197, 2);
 			playActorAnimation(795);
 			moveTo(186, 198, 2, true);
 			moveTo(220, 198, 4);
-			//scene->getWalkbox(0)->rect.top = 200;
+			{
+				Walkbox * w = scene->getWalkbox(0);
+				w->rect.left = 0;
+				w->rect.bottom = 199;
+				w->save();
+			}
 			setLan(1, 0xff);
 
 			Dialog::showMark(scene, 0x58a9);
