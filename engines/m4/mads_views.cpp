@@ -132,9 +132,12 @@ int ScreenObjects::scan(int xp, int yp, int layer) {
 }
 
 int ScreenObjects::scanBackwards(int xp, int yp, int layer) {
-	for (uint i = _entries.size() - 1; i >= 0; --i) {
+	for (uint i = _entries.size() - 1; ; --i) {
 		if (_entries[i].active && _entries[i].bounds.contains(xp, yp) && (_entries[i].layer == layer))
 			return i + 1;
+
+		if (i == 0)
+			break;
 	}
 
 	// Entry not found
