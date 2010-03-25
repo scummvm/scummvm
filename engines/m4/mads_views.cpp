@@ -32,12 +32,94 @@
 #include "m4/m4.h"
 #include "m4/staticres.h"
 
+#include "common/algorithm.h"
+
 namespace M4 {
 
 static const int INV_ANIM_FRAME_SPEED = 8;
 static const int INVENTORY_X = 160;
 static const int INVENTORY_Y = 159;
 static const int SCROLLER_DELAY = 200;
+
+//--------------------------------------------------------------------------
+
+int MadsSpriteSlots::getIndex() {
+	return startIndex++;
+}
+
+void MadsSpriteSlots::addSprites(const char *resName) {
+	// Get the sprite set
+	Common::SeekableReadStream *data = _vm->res()->get(resName);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
+	spriteSet->translate(_madsVm->_palette);
+
+	_sprites.push_back(SpriteList::value_type(spriteSet));
+	_vm->res()->toss(resName);
+
+	// Translate the sprite set to the current palette
+}
+
+class DepthEntry {
+public:
+	int depth;
+	int index;
+
+	DepthEntry(int depthAmt, int indexVal) { depth = depthAmt; index = indexVal; }
+};
+
+bool sortHelper(const DepthEntry &entry1, const DepthEntry &entry2) {
+	return entry1.depth < entry2.depth;
+}
+
+typedef Common::List<DepthEntry> DepthList;
+
+void MadsSpriteSlots::draw(View *view) {
+	DepthList depthList;
+
+	// Get a list of sprite object depths for active objects
+	for (int i = 0; i < startIndex; ++i) {
+		if (_entries[i].spriteId >= 0) {
+			DepthEntry rec(_entries[i].depth, i);
+			depthList.push_back(rec);
+		}
+	}
+
+	// Sort the list in order of the depth
+	Common::sort(depthList.begin(), depthList.end(), sortHelper);
+
+	// Loop through each of the objectes
+	DepthList::iterator i;
+	for (i = depthList.begin(); i != depthList.end(); ++i) {
+		DepthEntry &de = *i;
+		MadsSpriteSlot &slot = _entries[de.index];
+		assert(slot.spriteListIndex < (int)_sprites.size());
+		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex].get();
+
+		if (slot.scale < 100) {
+			// Minimalised drawing
+			assert(slot.spriteListIndex < (int)_sprites.size());
+			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
+			spr->draw(view, slot.scale, slot.depth, slot.xp, MADS_Y_OFFSET + slot.yp);
+		} else {
+			int xp, yp;
+			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
+
+			if (slot.scale == -1) {
+				xp = slot.xp; // - widthAdjust;
+				yp = slot.yp; // - heightAdjust;
+			} else {
+				xp = slot.xp - (spr->width() / 2); // - widthAdjust;
+				yp = slot.yp - spr->height() + 1; // - heightAdjust;
+			}
+
+			if (slot.depth > 1) {
+				spr->draw2(view, slot.depth, xp, MADS_Y_OFFSET + yp);
+			} else {
+				spr->draw3(view, xp, MADS_Y_OFFSET + yp);
+			}
+		}
+	}
+}
 
 //--------------------------------------------------------------------------
 
@@ -132,12 +214,9 @@ int ScreenObjects::scan(int xp, int yp, int layer) {
 }
 
 int ScreenObjects::scanBackwards(int xp, int yp, int layer) {
-	for (uint i = _entries.size() - 1; ; --i) {
+	for (int i = (int)_entries.size() - 1; i >= 0; --i) {
 		if (_entries[i].active && _entries[i].bounds.contains(xp, yp) && (_entries[i].layer == layer))
 			return i + 1;
-
-		if (i == 0)
-			break;
 	}
 
 	// Entry not found
@@ -154,18 +233,15 @@ void ScreenObjects::setActive(int category, int idx, bool active) {
 //--------------------------------------------------------------------------
 
 MadsView::MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent): View(vm, viewBounds, transparent) {
-	_spriteSlotsStart = 0;
 }
 
 MadsView::MadsView(MadsM4Engine *vm, int x, int y, bool transparent): View(vm, x, y, transparent) {
-	_spriteSlotsStart = 0;
-}
-
-int MadsView::getSpriteSlotsIndex() {
-	return _spriteSlotsStart++;
 }
 
 void MadsView::onRefresh(RectList *rects, M4Surface *destSurface) {
+	// Draw any sprites
+	_spriteSlots.draw(this);
+
 	// Draw text elements onto the view
 	_textDisplay.draw(this);
 

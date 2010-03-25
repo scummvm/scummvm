@@ -609,7 +609,7 @@ void RexDialogView::initialiseLines() {
 	_totalTextEntries = 0;
 
 	// Set up a default sprite slot entry
-	_spriteSlotsStart = 1;
+	_spriteSlots.startIndex = 1;
 	_spriteSlots[0].spriteId = -2;
 	_spriteSlots[0].timerIndex = -1;
 }
@@ -637,9 +637,6 @@ RexDialogView::~RexDialogView() {
 	_madsVm->_palette->deleteRange(_bgPalData);
 	delete _bgPalData;
 	delete _backgroundSurface;
-	_madsVm->_palette->deleteRange(_spritesPalData);
-	delete _spritesPalData;
-	delete _menuSprites;
 }
 
 void RexDialogView::loadBackground() {
@@ -677,14 +674,7 @@ void RexDialogView::loadBackground() {
 void RexDialogView::loadMenuSprites() {
 	const char *SPRITES_NAME = "*MENU.SS";
 
-	Common::SeekableReadStream *data = _vm->res()->get(SPRITES_NAME);
-	_menuSprites = new SpriteAsset(_vm, data, data->size(), SPRITES_NAME);
-	_vm->res()->toss(SPRITES_NAME);
-
-	// Slot it into available palette space
-	_spritesPalData = _menuSprites->getRgbList();
-	_vm->_palette->addRange(_spritesPalData);
-	_menuSprites->translate(_spritesPalData, true);
+	_spriteSlots.addSprites(SPRITES_NAME);
 }
 
 
@@ -708,14 +698,15 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 }
 
 void RexDialogView::setFrame(int frameNumber, int depth) {
-	int slotIndex = getSpriteSlotsIndex();
+	int slotIndex = _spriteSlots.getIndex();
 	_spriteSlots[slotIndex].spriteId = 1;
 	_spriteSlots[slotIndex].timerIndex = 1;
 	_spriteSlots[slotIndex].spriteListIndex = 0; //_menuSpritesIndex;
 	_spriteSlots[slotIndex].frameNumber = frameNumber;
-	M4Sprite *spr = _menuSprites->getFrame(0);
-	_spriteSlots[slotIndex].width = spr->width();
-	_spriteSlots[slotIndex].height = spr->height();
+
+	M4Sprite *spr = _spriteSlots.getSprite(0).getFrame(0);
+	_spriteSlots[slotIndex].xp = spr->x;
+	_spriteSlots[slotIndex].yp = spr->y;
 	_spriteSlots[slotIndex].depth = depth;
 	_spriteSlots[slotIndex].scale = 100;
 }
@@ -890,6 +881,11 @@ RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
 	setFrame(1, 2);
 	initVars();
 
+	// TODO: Replace with proper palette setting
+	uint32 c = 0xffffff;
+	for (int i = 9; i <= 15; ++i)
+		_vm->_palette->setPalette((const byte *)&c, i, 1);
+
 	_vm->_font->setFont(FONT_CONVERSATION_MADS);
 	addLines();
 	setClickableLines();
@@ -897,7 +893,7 @@ RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
 
 void RexGameMenuDialog::addLines() {
 	// Add the title
-	int top = (height() - MADS_SURFACE_HEIGHT) / 2 +  -((((_vm->_font->getHeight() + 2) * 6) >> 1) - 78);
+	int top = MADS_Y_OFFSET - ((((_vm->_font->getHeight() + 2) * 6) >> 1) - 78);
 		
 	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 10);
 

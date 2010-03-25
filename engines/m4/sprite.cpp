@@ -54,8 +54,8 @@ M4Sprite::M4Sprite(Common::SeekableReadStream* source, int xOfs, int yOfs, int w
 		loadMadsSprite(source);
 	}
 
-	xOffset = xOfs;
-	yOffset = yOfs;
+	x = xOffset = xOfs;
+	y = yOffset = yOfs;
 
 }
 

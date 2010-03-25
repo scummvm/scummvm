@@ -124,7 +124,6 @@ protected:
 	M4Surface *_backgroundSurface;
 	RGBList *_bgPalData;
 	SpriteAsset *_menuSprites;
-	RGBList *_spritesPalData;
 
 	Common::Array<DialogTextEntry> _dialogText;
 	Common::StringArray _textLines;

@@ -31,7 +31,6 @@
 namespace M4 {
 
 #define INTERFACE_HEIGHT 106
-#define MADS_SURFACE_HEIGHT 156
 
 struct SpriteSlot {
 	int16 spriteId;

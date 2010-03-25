@@ -34,14 +34,19 @@
 
 namespace M4 {
 
+#define MADS_SURFACE_HEIGHT 156
+#define MADS_SCREEN_HEIGHT 200
+#define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
+
+
 class MadsSpriteSlot {
 public:
 	int spriteId;
 	int timerIndex;
 	int spriteListIndex;
 	int frameNumber;
-	int width;
-	int height;
+	int xp;
+	int yp;
 	int depth;
 	int scale;
 
@@ -49,6 +54,32 @@ public:
 };
 
 #define SPRITE_SLOTS_SIZE 50
+
+typedef public Common::Array<Common::SharedPtr<SpriteAsset>> SpriteList;
+
+class MadsSpriteSlots {
+private:
+	MadsSpriteSlot _entries[SPRITE_SLOTS_SIZE];
+	SpriteList _sprites;
+public:
+	int startIndex;
+
+	MadsSpriteSlots() { startIndex = 0; }
+
+	MadsSpriteSlot &operator[](int idx) {
+		assert(idx < SPRITE_SLOTS_SIZE);
+		return _entries[idx];
+	}
+	SpriteAsset &getSprite(int idx) {
+		assert(idx < (int)_sprites.size());
+		return *_sprites[idx].get();
+	}
+
+	int getIndex();
+	void addSprites(const char *resName);
+
+	void draw(View *view);
+};
 
 class MadsTextDisplayEntry {
 public:
@@ -97,8 +128,6 @@ public:
 	ScreenObjectEntry() { active = false; }
 };
 
-#define SCREEN_OBJECTS_SIZE 
-
 class ScreenObjects {
 private:
 	Common::Array<ScreenObjectEntry> _entries;
@@ -119,14 +148,12 @@ public:
 };
 
 
+
 class MadsView: public View {
 protected:
-	MadsSpriteSlot _spriteSlots[SPRITE_SLOTS_SIZE];
+	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
-	int _spriteSlotsStart;
 	ScreenObjects _screenObjects;
-
-	int getSpriteSlotsIndex();
 public:
 	MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
 	MadsView(MadsM4Engine *vm, int x = 0, int y = 0, bool transparent = false);
