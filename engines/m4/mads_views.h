@@ -55,7 +55,7 @@ public:
 
 #define SPRITE_SLOTS_SIZE 50
 
-typedef public Common::Array<Common::SharedPtr<SpriteAsset>> SpriteList;
+typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
 
 class MadsSpriteSlots {
 private:
