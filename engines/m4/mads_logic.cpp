@@ -59,8 +59,8 @@ void MadsSceneLogic::getSceneSpriteSet() {
 //	if ((_sceneNumber == 105) ((_sceneNumber == 109) && (word_84800 != 0)))
 //		_madsVm->globals()->playerSpriteChanged = true;
 
-	_vm->_palette->setEntry(16, 0x38, 0xFF, 0xFF);
-	_vm->_palette->setEntry(17, 0x38, 0xb4, 0xb4);
+//	_vm->_palette->setEntry(16, 0x38, 0xFF, 0xFF);
+//	_vm->_palette->setEntry(17, 0x38, 0xb4, 0xb4);
 }
 
 void MadsSceneLogic::getAnimName() {

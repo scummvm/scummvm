@@ -768,7 +768,7 @@ void Palette::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void Palette::setEntry(uint index, uint8 r, uint8 g, uint8 b) {
-	uint32 c = (r << 16) | (g << 8) || b;
+	uint32 c = (r << 16) | (g << 8) | b;
 	g_system->setPalette((const byte *)&c, index, 1);
 }
 
