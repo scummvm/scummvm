@@ -50,6 +50,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_frames = NULL;
 	_numFrames = 0;
 	_persistant = false;
+	_direction = NO_DIRECTION;
 
 	_hotspotId = res->hotspotId;
 	_originalId = res->hotspotId;
@@ -109,6 +110,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_voiceCtr = 0;
 	_walkFlag = false;
 	_skipFlag = false;
+	_direction = NO_DIRECTION;
 
 	switch (objType) {
 	case VOICE_ANIM_IDX:
@@ -196,6 +198,7 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 	_frameWidth = _width;
 	_frameStartsUsed = false;
 	_tempDest.counter = 0;
+	_direction = NO_DIRECTION;
 }
 
 Hotspot::~Hotspot() {
