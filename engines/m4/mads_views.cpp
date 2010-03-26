@@ -99,7 +99,7 @@ void MadsSpriteSlots::draw(View *view) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
-			spr->draw(view, slot.scale, slot.depth, slot.xp, MADS_Y_OFFSET + slot.yp);
+			spr->draw1(view, slot.scale, slot.depth, slot.xp, MADS_Y_OFFSET + slot.yp);
 		} else {
 			int xp, yp;
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
@@ -159,8 +159,8 @@ int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const
 void MadsTextDisplay::draw(View *view) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
-			_entries[idx].font->setColours(_entries[idx].colour1, 0xFF,
-				(_entries[idx].colour2 == 0) ? _entries[idx].colour1 : _entries[idx].colour2);
+			_entries[idx].font->setColours(_entries[idx].colour1, 
+				(_entries[idx].colour2 == 0) ? _entries[idx].colour1 : _entries[idx].colour2, 0xff);
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
 				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
 				_entries[idx].spacing);

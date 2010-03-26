@@ -772,7 +772,7 @@ void Palette::setEntry(uint index, uint8 r, uint8 g, uint8 b) {
 	c.r = r;
 	c.g = g;
 	c.b = b;
-	c.u = 0;
+	c.u = 255;
 	g_system->setPalette((const byte *)&c, index, 1);
 }
 

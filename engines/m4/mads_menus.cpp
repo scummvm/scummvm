@@ -685,8 +685,8 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	// Draw the framed base area
 	fillRect(this->bounds(), _madsVm->_palette->BLACK);
 	setColour(2);
-	hLine(0, width(), 0);
-	hLine(0, width(), height() - 1);
+	hLine(0, width(), MADS_Y_OFFSET - 2);
+	hLine(0, width(), MADS_Y_OFFSET + MADS_SURFACE_HEIGHT + 2);
 
 	// Add in the loaded background vertically centred
 	_backgroundSurface->copyTo(this, 0, (height() - MADS_SURFACE_HEIGHT) / 2);
@@ -881,11 +881,6 @@ RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
 	setFrame(1, 2);
 	initVars();
 
-	// TODO: Replace with proper palette setting
-	uint32 c = 0xffffff;
-	for (int i = 9; i <= 15; ++i)
-		_vm->_palette->setPalette((const byte *)&c, i, 1);
-
 	_vm->_font->setFont(FONT_CONVERSATION_MADS);
 	addLines();
 	setClickableLines();
@@ -893,7 +888,7 @@ RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
 
 void RexGameMenuDialog::addLines() {
 	// Add the title
-	int top = MADS_Y_OFFSET - ((((_vm->_font->getHeight() + 2) * 6) >> 1) - 78);
+	int top = MADS_Y_OFFSET - 2 - ((((_vm->_font->getHeight() + 2) * 6) >> 1) - 78);
 		
 	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 10);
 
