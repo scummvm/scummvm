@@ -589,8 +589,9 @@ void DragonMainMenuView::handleAction(MadsGameAction action) {
 RexDialogView::RexDialogView(): MadsView(_madsVm, Common::Rect(0, 0, _madsVm->_screen->width(), _madsVm->_screen->height())) {
 	_screenType = VIEWID_MENU;
 
-	// Store the previously active scene
+	// Initialise class variables
 	_priorSceneId = _madsVm->_scene->getCurrentScene();
+	_dialogType = DIALOG_NONE;
 
 	// Load necessary quotes
 	_madsVm->globals()->loadQuoteRange(1, 48);
@@ -697,6 +698,90 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	MadsView::onRefresh(rects, destSurface);
 }
 
+/**
+ * Handles item selection within dialogs
+ */
+bool RexDialogView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
+	static bool word_7F28C = false;
+	int word_7FED2 = 0;
+	int word_8502A = 0;
+
+	// If it's a keypress, handle it immediately
+	if (eventType == KEVENT_KEY) {
+		switch (param1) {
+		case Common::KEYCODE_q | (Common::KBD_CTRL << 24):
+		case Common::KEYCODE_q | (Common::KBD_ALT << 24):
+			_madsVm->quitGame();
+			return true;
+		case Common::KEYCODE_RETURN:
+			_enterFlag = true;
+			_selectedLine = 0;
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_selectedLine = 0;
+			break;
+		default:
+			return false;
+		}
+	}
+
+	// Mark all the dialog text entries as not being seelcted
+	for (uint i = 0; i < _dialogText.size(); ++i)
+		_dialogText[i].state = STATE_DESELECTED;
+
+	// Check if the mouse is over a registered screen object
+	int idx = _screenObjects.scan(x, y, LAYER_GUI);
+
+	if (word_7F28C) {
+		if (y < _screenObjects[2].bounds.top) {
+			if (eventType != MEVENT_LEFT_RELEASE)
+				_dialogText[1].state = STATE_SELECTED;
+			idx = 19;
+		}
+
+		if (y > _screenObjects[8].bounds.bottom) {
+			if (eventType != MEVENT_LEFT_RELEASE)
+				_dialogText[7].state = STATE_SELECTED;
+			idx = 20;
+		}
+	}
+
+	if ((idx > 0) && ((eventType == MEVENT_LEFT_HOLD) || (eventType == MEVENT_LEFT_DRAG) ||
+					(eventType == MEVENT_LEFT_RELEASE))) {
+		int objIndex = _screenObjects[idx].index;
+
+		if ((_dialogType == DIALOG_SAVE) || (_dialogType == DIALOG_RESTORE)) {
+			if ((objIndex > 7) && (objIndex <= 14))
+				_dialogText[objIndex].state = STATE_SELECTED;
+		}
+
+		if (word_7FED2)
+			word_7F28C = (objIndex > 0) && (objIndex <= 7);
+
+		if (_screenObjects[idx].category == 1)
+			_dialogText[objIndex].state = STATE_SELECTED;
+	} else {
+		idx = -1;
+	}
+
+	if (idx == 0)
+		idx = -1;
+
+	if (_dialogType == DIALOG_ERROR) {
+		if (idx == 1)
+			idx = -1;
+	}
+
+	if (eventType == MEVENT_LEFT_RELEASE) {
+		if (!word_7F28C || (idx <= 18))
+			_selectedLine = idx;
+
+		word_8502A = -1;
+	}
+
+	return true;
+}
+
 void RexDialogView::setFrame(int frameNumber, int depth) {
 	int slotIndex = _spriteSlots.getIndex();
 	_spriteSlots[slotIndex].spriteId = 1;
@@ -747,7 +832,7 @@ void RexDialogView::addLine(const char *msg_p, Font *font, MadsTextAlignment ali
 	if (rec) {
 		strcpy(rec->text, msg_p);
 		rec->font = font;
-		rec->state = 0;
+		rec->state = STATE_DESELECTED;
 		rec->pos.y = top;
 		rec->widthAdjust = -1;
 		rec->in_use = true;
@@ -848,7 +933,7 @@ void RexDialogView::refreshText() {
 		uint colour;
 		if (_dialogText[i].state == STATE_DESELECTED)
 			colour = 0xB0A;
-		else if (_dialogText[i].state == STATE_HIGHLIGHTED)
+		else if (_dialogText[i].state == STATE_SELECTED)
 			colour = 0xD0C;
 		else
 			colour = 0xF0E;
@@ -878,6 +963,7 @@ void RexDialogView::refreshText() {
  */
 
 RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
+	_dialogType = DIALOG_GAME_MENU;
 	setFrame(1, 2);
 	initVars();
 
@@ -905,25 +991,8 @@ void RexGameMenuDialog::onRefresh(RectList *rects, M4Surface *destSurface) {
 }
 
 bool RexGameMenuDialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
-	bool handled = false;
-
-	// Handle various event types
-	switch (eventType) {
-	case MEVENT_LEFT_CLICK:
-		// Left mouse click
-		// TODO: Check and figure out _selectedLine
-		handled = true;
-		break;
-
-	case KEVENT_KEY:
-		// Handle standard dialog keypresses
-
-		handled = true;
-		break;
-
-	default:
-		break;
-	}
+	// Call the parent event handler to handle line selection
+	bool handled = RexDialogView::onEvent(eventType, param1, x, y, captureEvents);
 
 	if (_selectedLine > 0) {
 		switch (_selectedLine) {

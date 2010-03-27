@@ -91,12 +91,12 @@ public:
 	void updateState();
 };
 
-enum DialogTextState {STATE_DESELECTED = 0, STATE_HIGHLIGHTED = 1, STATE_SELECTED = 2};
+enum DialogTextState {STATE_DESELECTED = 0, STATE_SELECTED = 1, STATE_UNKNOWN = 2};
 
 class DialogTextEntry {
 public:
 	bool in_use;
-	int state;
+	DialogTextState state;
 	Common::Point pos;
 	char text[80];
 	Font *font;
@@ -112,7 +112,7 @@ public:
 enum MadsTextAlignment { ALIGN_CENTER = -1, ALIGN_CHAR_CENTER = -2, RIGHT_ALIGN = -3 };
 
 
-class RexDialogView: public MadsView {
+class RexDialogView : public MadsView {
 private:
 	int _priorSceneId;
 
@@ -121,6 +121,7 @@ private:
 	void loadBackground();
 	void loadMenuSprites();
 protected:
+	MadsDialogType _dialogType;
 	M4Surface *_backgroundSurface;
 	RGBList *_bgPalData;
 	SpriteAsset *_menuSprites;
@@ -148,9 +149,10 @@ public:
 
 	virtual void updateState();
 	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
+	virtual bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
-class RexGameMenuDialog: public RexDialogView {
+class RexGameMenuDialog : public RexDialogView {
 private:
 	void addLines();
 public:

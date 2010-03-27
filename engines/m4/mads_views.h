@@ -135,8 +135,8 @@ public:
 	ScreenObjects() {}
 
 	ScreenObjectEntry &operator[](uint idx) {
-		assert(idx < _entries.size());
-		return _entries[idx];
+		assert(idx <= _entries.size());
+		return _entries[idx - 1];
 	}
 
 	void clear();
