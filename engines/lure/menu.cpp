@@ -293,8 +293,8 @@ uint16 PopupMenu::ShowInventory() {
 	for (itemCtr = 0; itemCtr < numItems; ++itemCtr)
 		free(itemNames[itemCtr]);
 
-	delete itemNames;
-	delete idList;
+	Memory::dealloc(itemNames);
+	Memory::dealloc(idList);
 	return result;
 }
 
