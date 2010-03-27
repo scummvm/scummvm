@@ -524,10 +524,11 @@ Common::Error MadsEngine::run() {
 	globs->loadMadsObjects();
 
 	// Setup globals
-	globs->easyMouse = true;
-	globs->invObjectsStill = false;
-	globs->textWindowStill = false;
-	globs->storyMode = 0;
+	globs->_config.easyMouse = true;
+	globs->_config.invObjectsStill = false;
+	globs->_config.textWindowStill = false;
+	globs->_config.storyMode = 1;	// Naughty
+	globs->_config.screenFades = 0;
 
 	// Test code to dump all messages to the console
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)
@@ -599,6 +600,9 @@ void MadsEngine::showDialog() {
 	switch (globals()->dialogType) {
 	case DIALOG_GAME_MENU:
 		dlg = new RexGameMenuDialog();
+		break;
+	case DIALOG_OPTIONS:
+		dlg = new RexOptionsDialog();
 		break;
 	default:
 		error("Unknown dialog type");

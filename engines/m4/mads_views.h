@@ -77,6 +77,10 @@ public:
 
 	int getIndex();
 	void addSprites(const char *resName);
+	void clear() {
+		startIndex = 0;
+		_sprites.clear();
+	}
 
 	void draw(View *view);
 };
@@ -114,6 +118,7 @@ public:
 	}
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
+	void clear();
 	void draw(View *view);
 };
 

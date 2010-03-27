@@ -158,7 +158,18 @@ private:
 public:
 	RexGameMenuDialog();
 
-	virtual void onRefresh(RectList *rects, M4Surface *destSurface);
+	virtual bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
+};
+
+class RexOptionsDialog : public RexDialogView {
+private:
+	MadsConfigData _tempConfig;
+
+	void reload();
+	void addLines();
+public:
+	RexOptionsDialog();
+
 	virtual bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 

@@ -746,9 +746,10 @@ bool RexDialogView::onEvent(M4EventType eventType, int32 param1, int x, int y, b
 		}
 	}
 
+	int objIndex = -1;
 	if ((idx > 0) && ((eventType == MEVENT_LEFT_HOLD) || (eventType == MEVENT_LEFT_DRAG) ||
 					(eventType == MEVENT_LEFT_RELEASE))) {
-		int objIndex = _screenObjects[idx].index;
+		objIndex = _screenObjects[idx].index;
 
 		if ((_dialogType == DIALOG_SAVE) || (_dialogType == DIALOG_RESTORE)) {
 			if ((objIndex > 7) && (objIndex <= 14))
@@ -773,8 +774,8 @@ bool RexDialogView::onEvent(M4EventType eventType, int32 param1, int x, int y, b
 	}
 
 	if (eventType == MEVENT_LEFT_RELEASE) {
-		if (!word_7F28C || (idx <= 18))
-			_selectedLine = idx;
+		if (!word_7F28C || (objIndex <= 18))
+			_selectedLine = objIndex;
 
 		word_8502A = -1;
 	}
@@ -789,7 +790,7 @@ void RexDialogView::setFrame(int frameNumber, int depth) {
 	_spriteSlots[slotIndex].spriteListIndex = 0; //_menuSpritesIndex;
 	_spriteSlots[slotIndex].frameNumber = frameNumber;
 
-	M4Sprite *spr = _spriteSlots.getSprite(0).getFrame(0);
+	M4Sprite *spr = _spriteSlots.getSprite(0).getFrame(frameNumber - 1);
 	_spriteSlots[slotIndex].xp = spr->x;
 	_spriteSlots[slotIndex].yp = spr->y;
 	_spriteSlots[slotIndex].depth = depth;
@@ -841,7 +842,7 @@ void RexDialogView::addLine(const char *msg_p, Font *font, MadsTextAlignment ali
 		switch (alignment) {
 		case ALIGN_CENTER:
 			// Center text
-			rec->pos.x = (width() - font->getWidth(rec->text)) / 2;
+			rec->pos.x = (width() - font->getWidth(rec->text)) / 2 + left;
 			break;
 
 		case ALIGN_CHAR_CENTER: {
@@ -855,7 +856,7 @@ void RexDialogView::addLine(const char *msg_p, Font *font, MadsTextAlignment ali
 				int strWidth = font->getWidth(rec->text, rec->widthAdjust);
 				// Remove the character from the string. strcpy isn't used here because it's unsafe for
 				// copying within the same string
-				while ((*p == *(p + 1)) != '\0') ++p;
+				while ((*p = *(p + 1)) != '\0') ++p;
 
 				rec->pos.x = (width() / 2) - strWidth;
 			} else {
@@ -958,7 +959,7 @@ void RexDialogView::refreshText() {
 }
 
 /*--------------------------------------------------------------------------
- * RexDialogView is the Rex Nebular Game Menu dialog
+ * RexGameMenuDialog is the main game dialog for the game
  *--------------------------------------------------------------------------
  */
 
@@ -986,10 +987,6 @@ void RexGameMenuDialog::addLines() {
 	}
 }
 
-void RexGameMenuDialog::onRefresh(RectList *rects, M4Surface *destSurface) {
-	RexDialogView::onRefresh(rects, destSurface);
-}
-
 bool RexGameMenuDialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
 	// Call the parent event handler to handle line selection
 	bool handled = RexDialogView::onEvent(eventType, param1, x, y, captureEvents);
@@ -997,11 +994,25 @@ bool RexGameMenuDialog::onEvent(M4EventType eventType, int32 param1, int x, int 
 	if (_selectedLine > 0) {
 		switch (_selectedLine) {
 		case 1:
+			// Save Game
 			_madsVm->globals()->dialogType = DIALOG_SAVE;
+			break;
 		case 2:
+			// Restore Game
 			_madsVm->globals()->dialogType = DIALOG_RESTORE;
+			break;
 		case 3:
+			// Game Play Options
 			_madsVm->globals()->dialogType = DIALOG_OPTIONS;
+			break;
+		case 4:
+			// Resume Current Game
+			_madsVm->globals()->dialogType = DIALOG_NONE;
+			break;
+		case 5:
+			// Exit From Game
+			_madsVm->quitGame();
+			break;
 		default:
 			// TODO: Extra logic for such as resuming scene if necessary
 			_madsVm->globals()->dialogType = DIALOG_NONE;
@@ -1015,5 +1026,136 @@ bool RexGameMenuDialog::onEvent(M4EventType eventType, int32 param1, int x, int 
 	return handled;
 }
 
+/*--------------------------------------------------------------------------
+ * RexOptionsDialog is the game options dialog for Rex Nebular
+ *--------------------------------------------------------------------------
+ */
+
+RexOptionsDialog::RexOptionsDialog(): RexDialogView() {
+	_dialogType = DIALOG_OPTIONS;
+	_tempConfig = _madsVm->globals()->_config;
+
+	setFrame(2, 2);
+	initVars();
+
+	_vm->_font->setFont(FONT_CONVERSATION_MADS);
+	addLines();
+	setClickableLines();
+}
+
+void RexOptionsDialog::reload() {
+	for (int i = 0; i < DIALOG_LINES_SIZE; ++i)
+		_dialogText[i].in_use = false;
+	_totalTextEntries = 0;
+	_textDisplay.clear();
+	_screenObjects.clear();
+
+	initVars();
+
+	_vm->_font->setFont(FONT_CONVERSATION_MADS);
+	addLines();
+	setClickableLines();
+}
+
+void RexOptionsDialog::addLines() {
+	// Add the title
+	int top = MADS_Y_OFFSET - 2 - ((((_vm->_font->getHeight() + 1) * 9 + 12) >> 1) - 78);
+
+	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 16);
+
+	// Music state line
+	top += _vm->_font->getHeight() + 1 + 6;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 17, _tempConfig.musicFlag ? 24 : 25);
+
+	// Sound state line
+	top += _vm->_font->getHeight() + 1;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 18, _tempConfig.soundFlag ? 26 : 27);
+
+	// Interface easy state line
+	top += _vm->_font->getHeight() + 1;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 19, _tempConfig.easyMouse ? 29 : 28);
+
+	// Inventory sppinng state line
+	top += _vm->_font->getHeight() + 1;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 20, _tempConfig.invObjectsStill ? 31 : 30);
+
+	// Text window state line
+	top += _vm->_font->getHeight() + 1;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 21, _tempConfig.textWindowStill ? 33 : 32);
+
+	// Screen fade state line
+	top += _vm->_font->getHeight() + 1;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 22, _tempConfig.screenFades + 34);
+
+	// Storyline mode line
+	top += _vm->_font->getHeight() + 1;
+	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 23, (_tempConfig.storyMode == 1) ? 37 : 38);
+
+	// Add Done and Cancel button texts
+	top += _vm->_font->getHeight() + 1 + 6;
+	addQuote(_vm->_font, ALIGN_CENTER, -54, top, 1, 0);
+	addQuote(_vm->_font, ALIGN_CENTER, 54, top, 2, 0);
+}
+
+bool RexOptionsDialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
+	// Call the parent event handler to handle line selection
+	bool handled = RexDialogView::onEvent(eventType, param1, x, y, captureEvents);
+
+	if (_selectedLine > 0) {
+		switch (_selectedLine) {
+		case 0:
+			// Enter or Escape
+			_selectedLine = _enterFlag ? 8 : 9;
+			return true;
+		case 1:
+			// Music line
+			_tempConfig.musicFlag = !_tempConfig.musicFlag;
+			break;
+		case 2:
+			// Sound line
+			_tempConfig.soundFlag = !_tempConfig.soundFlag;
+			break;
+		case 3:
+			// Interface line
+			_tempConfig.easyMouse = !_tempConfig.easyMouse;
+			break;
+		case 4:
+			// Inventory line
+			_tempConfig.invObjectsStill = !_tempConfig.invObjectsStill;
+			break;
+		case 5:
+			// Text window line
+			_tempConfig.textWindowStill = !_tempConfig.textWindowStill;
+			break;
+		case 6:
+			// Screen fades line
+			if (++_tempConfig.screenFades > 2)
+				_tempConfig.screenFades = 0;
+			break;
+		case 7:
+			// Story mode line
+			if (_tempConfig.storyMode == 2)
+				_tempConfig.storyMode = 1;
+			else if (_tempConfig.storyMode == 1)
+				_tempConfig.storyMode = 2;
+			break;
+		case 8:
+		case 9:
+			// Done and Cancel buttons
+			// TODO: Proper re-loading of settings if Cancel button clicked
+			_madsVm->globals()->_config = _tempConfig;
+
+			// Closing the dialog, so return to the game menu
+			_madsVm->globals()->dialogType = DIALOG_GAME_MENU;
+			_madsVm->_viewManager->deleteView(this);
+			return true;
+		}
+
+		// Update the option selections 
+		reload();
+	}
+
+	return handled;
+}
 
 }

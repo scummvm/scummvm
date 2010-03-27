@@ -131,6 +131,11 @@ MadsTextDisplay::MadsTextDisplay() {
 	}
 }
 
+void MadsTextDisplay::clear() {
+	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i)
+		_entries[i].active = false;
+}
+
 int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font) {
 	int usedSlot = -1;
 
@@ -433,8 +438,8 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
 		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
 
-		if (!_madsVm->globals()->invObjectsStill && !dialogVisible) {
-			// If objetcs are to animated, move to the next frame
+		if (!_madsVm->globals()->_config.invObjectsStill && !dialogVisible) {
+			// If objects need to be animated, move to the next frame
 			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
 				_objectFrameNumber = 0;
 		}

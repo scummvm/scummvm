@@ -213,6 +213,16 @@ enum RexPlayerSex { SEX_MALE = 0, SEX_FEMALE = 2, SEX_UNKNOWN = 1};
 enum MadsDialogType { DIALOG_NONE = 0, DIALOG_GAME_MENU = 1, DIALOG_SAVE = 2, DIALOG_RESTORE = 3, DIALOG_OPTIONS = 4,
 		DIALOG_DIFFICULTY = 5, DIALOG_ERROR = 6};
 
+struct MadsConfigData {
+	bool musicFlag;
+	bool soundFlag;
+	bool easyMouse;
+	bool invObjectsStill;
+	bool textWindowStill;
+	int storyMode;
+	int screenFades;
+};
+
 class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
@@ -234,10 +244,7 @@ public:
 
 	// MADS variables
 	int _globals[TOTAL_NUM_VARIABLES];
-	bool easyMouse;
-	bool invObjectsStill;
-	bool textWindowStill;
-	int storyMode;
+	MadsConfigData _config;
 	bool playerSpriteChanged;
 	MadsDialogType dialogType;
 	int sceneNumber;
