@@ -80,7 +80,7 @@ M4EventType Events::handleEvents() {
 				}
 				_ctrlFlag = false;
 			}
-			_keyCode = (int32)_event.kbd.keycode | (_event.kbd.flags << 24);
+			_keyCode = (int32)_event.kbd.keycode | ((_event.kbd.flags & 7) << 24);
 
 
 			break;
