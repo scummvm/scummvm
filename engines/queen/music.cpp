@@ -309,6 +309,8 @@ void MidiMusic::playMusic() {
 		size = packedSize * 2;
 	}
 
+	stopMusic();
+
 	_mutex.lock();
 	_parser->loadMusic(musicPtr, size);
 	_parser->setTrack(0);
