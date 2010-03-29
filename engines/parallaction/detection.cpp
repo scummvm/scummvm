@@ -295,11 +295,18 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringList filenames;
-	Common::String pattern = target;
-	pattern += ".0??";
 
-	filenames = saveFileMan->listSavefiles(pattern);
+	// HACK: Parallaction game saves are compatible across platforms and use the
+	// gameId as pattern. Butchering the target to get the gameId is probably not
+	// robust...
+	Common::String pattern(target);
+	if (pattern.hasPrefix("nippon")) {
+		pattern = "nippon.0??";
+	} else {
+		pattern = "bra.0??";
+	}
+
+	Common::StringList filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
