@@ -584,7 +584,7 @@ static void listTargets() {
 	ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
-		Common::String description(iter->_value.get("description"));
+		Common::String description(iter->_value.getVal("description"));
 
 		if (description.empty()) {
 			// FIXME: At this point, we should check for a "gameid" override
@@ -617,7 +617,7 @@ static void listSaves(const char *target) {
 	// Grab the gameid from the domain resp. use the target as gameid
 	Common::String gameid;
 	if (domain)
-		gameid = domain->get("gameid");
+		gameid = domain->getVal("gameid");
 	if (gameid.empty())
 		gameid = target;
 	gameid.toLowercase();	// Normalize it to lower case
@@ -674,8 +674,8 @@ static void runDetectorTest() {
 	int success = 0, failure = 0;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
-		Common::String gameid(iter->_value.get("gameid"));
-		Common::String path(iter->_value.get("path"));
+		Common::String gameid(iter->_value.getVal("gameid"));
+		Common::String path(iter->_value.getVal("path"));
 		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
 				name.c_str(), gameid.c_str(), path.c_str());
 		if (path.empty()) {
@@ -748,8 +748,8 @@ void upgradeTargets() {
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::ConfigManager::Domain &dom = iter->_value;
 		Common::String name(iter->_key);
-		Common::String gameid(dom.get("gameid"));
-		Common::String path(dom.get("path"));
+		Common::String gameid(dom.getVal("gameid"));
+		Common::String path(dom.getVal("path"));
 		printf("Looking at target '%s', gameid '%s' ...\n",
 				name.c_str(), gameid.c_str());
 		if (path.empty()) {
@@ -768,9 +768,9 @@ void upgradeTargets() {
 			continue;
 		}
 
-		Common::Language lang = Common::parseLanguage(dom.get("language"));
-		Common::Platform plat = Common::parsePlatform(dom.get("platform"));
-		Common::String desc(dom.get("description"));
+		Common::Language lang = Common::parseLanguage(dom.getVal("language"));
+		Common::Platform plat = Common::parsePlatform(dom.getVal("platform"));
+		Common::String desc(dom.getVal("description"));
 
 		GameList candidates(EngineMan.detectGames(files));
 		GameDescriptor *g = 0;

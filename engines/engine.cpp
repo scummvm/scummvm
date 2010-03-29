@@ -123,8 +123,8 @@ void initCommonGFX(bool defaultTo1XScaler) {
 		(
 		!gameDomain ||
 		!gameDomain->contains("gfx_mode") ||
-		!scumm_stricmp(gameDomain->get("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(gameDomain->get("gfx_mode").c_str(), "default")
+		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "normal") ||
+		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "default")
 		);
 
 	// See if the game should default to 1x scaler

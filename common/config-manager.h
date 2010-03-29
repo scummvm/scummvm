@@ -56,8 +56,6 @@ public:
 		String _domainComment;
 
 	public:
-		const String &get(const String &key) const;
-
 		void setDomainComment(const String &comment);
 		const String &getDomainComment() const;
 
@@ -165,8 +163,6 @@ private:
 	Domain *		_activeDomain;
 
 	String			_filename;
-
-	const String	_emptyString;
 };
 
 }	// End of namespace Common

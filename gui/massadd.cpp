@@ -106,7 +106,7 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 		}
 #endif
 
-		Common::String path(iter->_value.get("path"));
+		Common::String path(iter->_value.getVal("path"));
 		// Remove trailing slash, so that "/foo" and "/foo/" match.
 		// This works around a bug in the POSIX FS code (and others?)
 		// where paths are not normalized (so FSNodes refering to identical

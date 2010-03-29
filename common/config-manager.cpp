@@ -390,10 +390,8 @@ const String & ConfigManager::get(const String &key) const {
 		return (*_activeDomain)[key];
 	else if (_appDomain.contains(key))
 		return _appDomain[key];
-	else if (_defaultsDomain.contains(key))
-		return _defaultsDomain[key];
 
-	return _emptyString;
+	return _defaultsDomain.getVal(key);
 }
 
 const String & ConfigManager::get(const String &key, const String &domName) const {
@@ -412,18 +410,7 @@ const String & ConfigManager::get(const String &key, const String &domName) cons
 	if (domain->contains(key))
 		return (*domain)[key];
 
-	return _defaultsDomain.get(key);
-
-	if (!domain->contains(key)) {
-#if 1
-		return _emptyString;
-#else
-		error("ConfigManager::get(%s,%s) called on non-existent key",
-					key.c_str(), domName.c_str());
-#endif
-	}
-
-	return (*domain)[key];
+	return _defaultsDomain.getVal(key);
 }
 
 int ConfigManager::getInt(const String &key, const String &domName) const {
@@ -613,14 +600,6 @@ bool ConfigManager::hasGameDomain(const String &domName) const {
 
 #pragma mark -
 
-
-const String &ConfigManager::Domain::get(const String &key) const {
-	const_iterator iter(find(key));
-	if (iter != end())
-		return iter->_value;
-
-	return ConfMan._emptyString;
-}
 
 void ConfigManager::Domain::setDomainComment(const String &comment) {
 	_domainComment = comment;

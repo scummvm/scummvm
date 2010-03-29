@@ -608,8 +608,8 @@ void LauncherDialog::updateListing() {
 		}
 #endif
 
-		String gameid(iter->_value.get("gameid"));
-		String description(iter->_value.get("description"));
+		String gameid(iter->_value.getVal("gameid"));
+		String description(iter->_value.getVal("description"));
 
 		if (gameid.empty())
 			gameid = iter->_key;

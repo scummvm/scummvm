@@ -489,7 +489,7 @@ void KyraEngine_v1::registerDefaultSettings() {
 		// the global subtitles settings, we're using this hack to enable subtitles
 		// for fan translations
 		const Common::ConfigManager::Domain *cur = ConfMan.getActiveDomain();
-		if (!cur || (cur && cur->get("subtitles").empty()))
+		if (!cur || (cur && cur->getVal("subtitles").empty()))
 			ConfMan.setBool("subtitles", true);
 	}
 }
