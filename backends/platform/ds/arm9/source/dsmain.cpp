@@ -1403,18 +1403,21 @@ void doButtonSelectMode(OSystem_DS* system)
 	if (getPenReleased() && (leftButtonDown || rightButtonDown)) {
 		if (leftButtonDown) {
 			event.type = Common::EVENT_LBUTTONUP;
-		} else {
+			leftButtonDown = false;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		} else if (rightButtonDown) {
 			event.type = Common::EVENT_RBUTTONUP;
+			rightButtonDown = false;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
 		}
-
-		event.mouse = Common::Point(getPenX(), getPenY());
-		system->addEvent(event);
 	}
 
 
 	if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
 		if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
-			if ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit)) {
+			if (mouseMode == MOUSE_LEFT) {
 				event.type = Common::EVENT_LBUTTONDOWN;
 				leftButtonDown = true;
 			} else {
@@ -1462,8 +1465,7 @@ void doButtonSelectMode(OSystem_DS* system)
 				mouseMode = MOUSE_LEFT;
 			}
 
-			if (rightButtonDown)
-			{
+			if (rightButtonDown) {
 				Common::Event event;
 				event.mouse = Common::Point(getPenX(), getPenY());
 				event.type = Common::EVENT_RBUTTONUP;
