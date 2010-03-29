@@ -193,34 +193,7 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 
 
 
-int SaveLoad::buildSaveFileList(Common::StringArray& l) {
-	Common::String pattern = _saveFilePrefix + ".???";
-	Common::StringArray filenames = _saveFileMan->listSavefiles(pattern);
-
-	Common::String s;
-
-	int count = 0;
-
-	for (int i = 0; i < NUM_SAVESLOTS; i++) {
-		s.clear();
-
-		Common::InSaveFile *f = getInSaveFile(i);
-		if (f) {
-			s = f->readLine();
-			count++;
-		}
-
-		delete f;
-		l.push_back(s);
-	}
-
-	return count;
-}
-
-
 int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
-	Common::StringArray list;
-	buildSaveFileList(list);
 
 	GUI::SaveLoadChooser slc(caption, button);
 	slc.setSaveMode(saveMode);
