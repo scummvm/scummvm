@@ -234,7 +234,7 @@ static const ADParams detectionParams = {
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
-	"parallaction",
+	0,
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
