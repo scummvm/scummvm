@@ -296,16 +296,7 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
-	// HACK: Parallaction game saves are compatible across platforms and use the
-	// gameId as pattern. Butchering the target to get the gameId is probably not
-	// robust...
-	Common::String pattern(target);
-	if (pattern.hasPrefix("nippon")) {
-		pattern = "nippon.0??";
-	} else {
-		pattern = "bra.0??";
-	}
-
+	Common::String pattern(ConfMan.getDomain(target)->getVal("gameid") + ".0??");
 	Common::StringList filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
@@ -330,11 +321,8 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 int ParallactionMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".0%02d", slot);
-
-	Common::String filename = target;
-	filename += extension;
+	Common::String filename = ConfMan.getDomain(target)->getVal("gameid");
+	filename += Common::String::printf(".0%02d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
