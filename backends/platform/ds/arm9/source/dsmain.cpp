@@ -349,19 +349,19 @@ gameListType* currentGame = NULL;
 // Stylus
 #define ABS(x) ((x)>0?(x):-(x))
 
-bool penDown;
-bool penHeld;
-bool penReleased;
-bool penDownLastFrame;
-s32 penX, penY;
-s32 penDownX, penDownY;
-int keysDownSaved;
-int keysReleasedSaved;
-int keysChangedSaved;
+bool penDown = FALSE;
+bool penHeld = FALSE;
+bool penReleased = FALSE;
+bool penDownLastFrame = FALSE;
+s32 penX = 0, penY = 0;
+s32 penDownX = 0, penDownY = 0;
+int keysDownSaved = 0;
+int keysReleasedSaved = 0;
+int keysChangedSaved = 0;
 
-bool penDownSaved;
-bool penReleasedSaved;
-int penDownFrames;
+bool penDownSaved = FALSE;
+bool penReleasedSaved = FALSE;
+int penDownFrames = 0;
 int touchXOffset = 0;
 int touchYOffset = 0;
 
