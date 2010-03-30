@@ -1137,7 +1137,7 @@ bool RestartRestoreDialog::show() {
 	int highlightedButton = -1;
 
 	if (!restartFlag) {
-		Memory::dealloc(firstSave);
+		delete firstSave;
 
 		// Get the correct button bounds record to use
 		const RestartRecord *btnRecord = &buttonBounds[0];
