@@ -23,6 +23,10 @@
  *
  */
 
+#ifdef __DS__
+#include "dsmain.h"
+#endif
+
 #include "common/md5.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
@@ -43,6 +47,7 @@
 #include "agi/sprite.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+
 
 namespace Agi {
 
