@@ -405,6 +405,7 @@ int AgiEngine::agiInit() {
 	// Normally, the engine loads the predictive text dictionary when the predictive dialog
 	// is shown.  On the DS version, the word completion feature needs the dictionary too.
 	loadDict();
+	DS::setControls("agi");
 #endif
 
 	_egoHoldKey = false;
