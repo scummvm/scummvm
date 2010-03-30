@@ -754,7 +754,7 @@ static int OPLOpenTable(void) {
 }
 
 static void OPLCloseTable(void) {
-#ifndef __NDS__
+#ifndef __DS__
 	free(TL_TABLE);
 	free(SIN_TABLE);
 #endif
