@@ -2083,7 +2083,7 @@ void VBlankHandler(void) {
 		storedMouseX = penX;
 		storedMouseY = penY;
 
-		if (gameScreenSwap) {
+		if (gameScreenSwap && touchPadStyle) {
 			setIcon(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
 			setIconMain(3, 0, 0, 0, 0, false);
 		} else {
