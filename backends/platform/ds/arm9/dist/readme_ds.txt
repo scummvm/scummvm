@@ -41,7 +41,7 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
-ScummVM DS 1.1.1
+ScummVM DS 1.1.0
 
  * New games are supported in this stable build: Return to Zork, Rodney's 
    Funscreen, Manhole, Leather Goddess of Phobos 2, Cruise for a Corpse.
