@@ -47,12 +47,14 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
 	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 	Common::addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
+	Common::addDebugChannel(kDebugLevelBarriers, "Barriers", "Debug Barrier Objects");
 
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "vids");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
 
 	Common::enableDebugChannel("Scripts");
+	Common::enableDebugChannel("Barriers");
 
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 }
