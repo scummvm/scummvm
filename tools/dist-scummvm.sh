@@ -1,6 +1,6 @@
 #!/bin/sh -e
 #
-# dist-module.sh - make release tarballs for one CVS module
+# dist-module.sh - make release tarballs for one SVN module
 #
 # Largely based on dist-fink.sh, Copyright (c) 2001 Christoph Pfisterer.
 # Modified to use Subversion instead of CVS by Max Horn in 2007.
@@ -63,7 +63,7 @@ fi
 ### check code out from SVN
 # TODO: Add support for making tarballs from trunk / branches?
 
-echo "Exporting module $module, tag $tag from CVS:"
+echo "Exporting module $module, tag $tag from SVN:"
 svn export "$svnroot/$module/tags/$tag" $fullname
 if [ ! -d $fullname ]; then
   echo "SVN export failed, directory $fullname doesn't exist!"
