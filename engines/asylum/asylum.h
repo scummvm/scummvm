@@ -81,7 +81,8 @@ enum kDebugLevels {
 	kDebugLevelScripts   = 1 << 5,
 	kDebugLevelSound     = 1 << 6,
 	kDebugLevelSavegame  = 1 << 7,
-	kDebugLevelScene     = 1 << 8
+	kDebugLevelScene     = 1 << 8,
+	kDebugLevelBarriers  = 1 << 9
 };
 
 class AsylumEngine: public Engine {
