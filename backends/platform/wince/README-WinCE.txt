@@ -1,10 +1,13 @@
 ScummVM Windows CE FAQ
 Last updated: $Date$
-Release version: 1.0.0
+Release version: 1.1.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
+
+1.1.0
+No port specific changes since 1.0.0.
 
 1.0.0:
 (Note: No changes since 1.0.0rc1)
