@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="demos">
+			<UniqueIdentifier>6C181260-9990-49AD-9544-9E963ECC08EE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="save">
+			<UniqueIdentifier>FDFC4A0D-6A52-4C66-A2D3-5A8FD430B342</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>49C5A2E3-579C-42ED-A131-8421FE8D10FD</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\gob\dataio.cpp" />
+		<ClCompile Include="..\..\engines\gob\demos\batplayer.cpp">
+			<Filter>demos</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\demos\demoplayer.cpp">
+			<Filter>demos</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\demos\scnplayer.cpp">
+			<Filter>demos</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\detection.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_bargon.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\driver_vga.cpp" />
+		<ClCompile Include="..\..\engines\gob\expression.cpp" />
+		<ClCompile Include="..\..\engines\gob\game.cpp" />
+		<ClCompile Include="..\..\engines\gob\global.cpp" />
+		<ClCompile Include="..\..\engines\gob\gob.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\hotspots.cpp" />
+		<ClCompile Include="..\..\engines\gob\init.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_bargon.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v5.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\map.cpp" />
+		<ClCompile Include="..\..\engines\gob\map_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\map_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\palanim.cpp" />
+		<ClCompile Include="..\..\engines\gob\resources.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v2.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v3.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v4.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v6.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\savefile.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\savehandler.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload_fascin.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload_playtoons.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload_v2.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload_v3.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload_v4.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\save\saveload_v6.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\scenery.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\script.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\adlib.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\bgatmosphere.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\cdrom.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\infogrames.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\pcspeaker.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\protracker.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\sound.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\soundblaster.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\sounddesc.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\sound\soundmixer.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\gob\totfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\util.cpp" />
+		<ClCompile Include="..\..\engines\gob\variables.cpp" />
+		<ClCompile Include="..\..\engines\gob\video.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\videoplayer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\gob\dataio.h" />
+		<ClInclude Include="..\..\engines\gob\demos\batplayer.h">
+			<Filter>demos</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\demos\demoplayer.h">
+			<Filter>demos</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\demos\scnplayer.h">
+			<Filter>demos</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\draw.h" />
+		<ClInclude Include="..\..\engines\gob\driver_vga.h" />
+		<ClInclude Include="..\..\engines\gob\expression.h" />
+		<ClInclude Include="..\..\engines\gob\game.h" />
+		<ClInclude Include="..\..\engines\gob\global.h" />
+		<ClInclude Include="..\..\engines\gob\gob.h" />
+		<ClInclude Include="..\..\engines\gob\goblin.h" />
+		<ClInclude Include="..\..\engines\gob\helper.h" />
+		<ClInclude Include="..\..\engines\gob\hotspots.h" />
+		<ClInclude Include="..\..\engines\gob\init.h" />
+		<ClInclude Include="..\..\engines\gob\inter.h" />
+		<ClInclude Include="..\..\engines\gob\map.h" />
+		<ClInclude Include="..\..\engines\gob\mult.h" />
+		<ClInclude Include="..\..\engines\gob\palanim.h" />
+		<ClInclude Include="..\..\engines\gob\resources.h" />
+		<ClInclude Include="..\..\engines\gob\save\saveconverter.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\save\savefile.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\save\savehandler.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\save\saveload.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\scenery.h" />
+		<ClInclude Include="..\..\engines\gob\script.h" />
+		<ClInclude Include="..\..\engines\gob\sound\adlib.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\bgatmosphere.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\cdrom.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\infogrames.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\pcspeaker.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\protracker.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\sound.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\soundblaster.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\sounddesc.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\sound\soundmixer.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\gob\totfile.h" />
+		<ClInclude Include="..\..\engines\gob\util.h" />
+		<ClInclude Include="..\..\engines\gob\variables.h" />
+		<ClInclude Include="..\..\engines\gob\video.h" />
+		<ClInclude Include="..\..\engines\gob\videoplayer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\gob\module.mk" />
+	</ItemGroup>
+</Project>
