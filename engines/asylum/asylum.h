@@ -26,6 +26,8 @@
 #ifndef ASYLUM_ENGINE_H
 #define ASYLUM_ENGINE_H
 
+#include "common/random.h"
+
 #include "engines/engine.h"
 
 #include "asylum/staticres.h"
