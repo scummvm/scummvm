@@ -295,6 +295,11 @@ void Animation::del() {
 }
 
 void AnimationManager::pauseAnimations() {
+	if (_animationPauseCounter++) {
+		// Already paused
+		return;
+	}
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -308,6 +313,11 @@ void AnimationManager::pauseAnimations() {
 }
 
 void AnimationManager::unpauseAnimations() {
+	if (--_animationPauseCounter) {
+		// Still paused
+		return;
+	}
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
