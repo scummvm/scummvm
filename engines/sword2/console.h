@@ -124,6 +124,7 @@ protected:
 	bool Cmd_English(int argc, const char **argv);
 	bool Cmd_Finnish(int argc, const char **argv);
 	bool Cmd_Polish(int argc, const char **argv);
+	bool Cmd_FxQueue(int argc, const char **argv);
 };
 
 } // End of namespace Sword2

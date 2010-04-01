@@ -42,12 +42,15 @@
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
+#include "sword2/console.h"
 #include "sword2/logic.h"
 #include "sword2/resman.h"
 #include "sword2/sound.h"
 
 #include "sound/decoders/wave.h"
 #include "sound/decoders/vag.h"
+
+#define Debug_Printf _vm->_debugger->DebugPrintf
 
 namespace Sword2 {
 
@@ -375,6 +378,46 @@ void Sound::unpauseAllSound() {
 	unpauseMusic();
 	unpauseSpeech();
 	unpauseFx();
+}
+
+void Sound::printFxQueue() {
+	int freeSlots = 0;
+
+	for (int i = 0; i < FXQ_LENGTH; i++) {
+		if (_fxQueue[i].resource) {
+			const char *type;
+
+			switch (_fxQueue[i].type) {
+			case FX_SPOT:
+				type = "SPOT";
+				break;
+			case FX_LOOP:
+				type = "LOOP";
+				break;
+			case FX_RANDOM:
+				type = "RANDOM";
+				break;
+			case FX_SPOT2:
+				type = "SPOT2";
+				break;
+			case FX_LOOPING:
+				type = "LOOPING";
+				break;
+			default:
+				type = "UNKNOWN";
+				break;
+			}
+
+			Debug_Printf("%d: res: %d ('%s') %s (%d) delay: %d vol: %d pan: %d\n",
+				i, _fxQueue[i].resource,
+				_vm->_resman->fetchName(_fxQueue[i].resource),
+				type, _fxQueue[i].type, _fxQueue[i].delay,
+				_fxQueue[i].volume, _fxQueue[i].pan);
+		} else {
+			freeSlots++;
+		}
+	}
+	Debug_Printf("Free slots: %d\n", freeSlots);
 }
 
 } // End of namespace Sword2

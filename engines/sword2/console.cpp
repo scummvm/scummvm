@@ -122,6 +122,7 @@ Debugger::Debugger(Sword2Engine *vm)
 	DCmd_Register("english",  WRAP_METHOD(Debugger, Cmd_English));
 	DCmd_Register("finnish",  WRAP_METHOD(Debugger, Cmd_Finnish));
 	DCmd_Register("polish",   WRAP_METHOD(Debugger, Cmd_Polish));
+	DCmd_Register("fxq",      WRAP_METHOD(Debugger, Cmd_FxQueue));
 }
 
 void Debugger::varGet(int var) {
@@ -792,6 +793,11 @@ bool Debugger::Cmd_Finnish(int argc, const char **argv) {
 bool Debugger::Cmd_Polish(int argc, const char **argv) {
 	_vm->initialiseFontResourceFlags(POLISH_TEXT);
 	DebugPrintf("Polish fonts selected\n");
+	return true;
+}
+
+bool Debugger::Cmd_FxQueue(int argc, const char **argv) {
+	_vm->_sound->printFxQueue();
 	return true;
 }
 

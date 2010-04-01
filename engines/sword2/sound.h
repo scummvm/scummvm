@@ -282,6 +282,8 @@ public:
 	int32 streamCompMusic(uint32 musicId, bool loop);
 	void stopMusic(bool immediately);
 	int32 musicTimeRemaining();
+
+	void printFxQueue();
 };
 
 } // End of namespace Sword2
