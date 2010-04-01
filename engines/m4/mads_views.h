@@ -50,7 +50,7 @@ public:
 	int depth;
 	int scale;
 
-	MadsSpriteSlot() { };
+	MadsSpriteSlot() { }
 };
 
 #define SPRITE_SLOTS_SIZE 50

@@ -276,7 +276,7 @@ struct FireballState {
 		step = 10;
 		finalize = false;
 		finProgress = 0;
-	};
+	}
 
 	bool active;
 	int16 destX;

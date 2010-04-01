@@ -104,7 +104,7 @@ public:
 
 	int textDisplay_index;
 
-	DialogTextEntry() { in_use = false; };
+	DialogTextEntry() { in_use = false; }
 };
 
 #define DIALOG_LINES_SIZE 20

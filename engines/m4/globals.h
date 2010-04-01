@@ -262,9 +262,9 @@ public:
 	uint32 getQuotesSize() { return _madsQuotes.size(); }
 	const char *getQuote(uint32 index) { return _madsQuotes[index - 1]; }
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
-	void clearQuotes() {};
-	void loadQuoteRange(int startNum, int endNum) {};
-	void loadQuote(int quoteNum) {};
+	void clearQuotes() {}
+	void loadQuoteRange(int startNum, int endNum) {}
+	void loadQuote(int quoteNum) {}
 
 	void loadMadsMessagesInfo();
 	uint32 getMessagesSize() { return _madsMessages.size(); }

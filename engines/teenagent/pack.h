@@ -36,7 +36,7 @@ protected:
 	uint32 _fileCount;
 public:
 	Pack(): _fileCount(0) {}
-	virtual ~Pack() {};
+	virtual ~Pack() {}
 	virtual bool open(const Common::String &filename) = 0;
 	virtual void close() = 0;
 

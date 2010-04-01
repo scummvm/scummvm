@@ -208,7 +208,7 @@ public:
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }
 	MadsAction &getAction() { return _action; }
-	void setStatusText(const char *text) {};//***DEPRECATED***
+	void setStatusText(const char *text) {}//***DEPRECATED***
 };
 
 } // End of namespace M4

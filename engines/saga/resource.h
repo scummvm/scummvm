@@ -277,7 +277,7 @@ public:
 	Resource_RES(SagaEngine *vm) : Resource(vm) {}
 	virtual uint32 convertResourceId(uint32 resourceId) { return resourceId; }
 	virtual void loadGlobalResources(int chapter, int actorsEntrance);
-	virtual MetaResource* getMetaResource() { return &_metaResource; };
+	virtual MetaResource* getMetaResource() { return &_metaResource; }
 protected:
 	virtual ResourceContext *createContext() {
 		return new ResourceContext_RES();
