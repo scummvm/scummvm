@@ -24,6 +24,24 @@ About ScummVM
 	The original ports (uptil 0.7.1) were made by Andreas Karlsson and Lars Persson.
 	The main transition to 0.8.0CVS and all relevant changes were done by Jurgen Braam.
 	Jurgen and Lars have successfully transfered all needed changes into CVS/SVN, with additional helpful tools for Symbian OS
+	
+Release History:
+	Release version: 1.1.0
+	* Nothing significant in the Symbian port, except SDL improvements.
+	* See main readme for general ScummVM improvements, minor update
+
+	Release version: 1.0.0
+	* Nothing significant in the Symbian port, except SDL improvements.
+	* See main readme for general ScummVM improvements, minor update
+	
+	Release version: 0.13.1
+	* Nothing significant in the Symbian port, except SDL improvements.
+	* See main readme for general ScummVM improvements, minor update
+
+	Release version: 0.13.1
+	* Nothing significant in the Symbian port, except SDL improvements
+	Release version: 0.13.0
+	* Nothing significant in the Symbian port, except SDL improvements
 
 	Release version: 0.12.0
 	* This version is only supported on Symbian OS 9 devices due to compiler constraints for older devices. (That means UIQ3 and S60V3 devices)
@@ -36,7 +54,7 @@ About ScummVM
 
 Games supported
 ---------------
-	The Symbian port of ScummVM supports all but Sword1 & 2 games. Some games might not run properly due to screenresolution or memory constraints.
+	The Symbian port of ScummVM supports all games. Some games might not run properly due to screenresolution or memory constraints.
 	Minimum free memory requirement is about 12MB to be able to start and run ScummVM, this is enough for most older games, but newer more resource hungry games, might require more.
 
 Building ScummVM
