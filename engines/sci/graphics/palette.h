@@ -75,6 +75,8 @@ private:
 	uint32 _palVaryStart;
 	uint32 _palVaryEnd;
 
+	bool _sysPaletteChanged;
+
 	Common::Array<PalSchedule> _schedules;
 };
 

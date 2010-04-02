@@ -192,10 +192,14 @@ void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	bool paletteChanged;
 
 	if (force || sciPal->timestamp != systime) {
-		paletteChanged = merge(sciPal, &_sysPalette, force, forceRealMerge);
+		_sysPaletteChanged |= merge(sciPal, &_sysPalette, force, forceRealMerge);
 		sciPal->timestamp = _sysPalette.timestamp;
-		if (paletteChanged && _screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
+		if (_sysPaletteChanged && _screen->_picNotValid == 0) { // && systime != _sysPalette.timestamp) {
+			// Removed timestamp checking, because this shouldnt be needed anymore. I'm leaving it commented just in
+			//  case this causes regressions
 			setOnScreen();
+			_sysPaletteChanged = false;
+		}
 	}
 }
 
