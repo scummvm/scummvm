@@ -161,7 +161,7 @@ Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) {
 }
 
 
-#define HIGHEST_PRIORITY			9
+#define HIGHEST_PRIORITY		9
 #define NORMAL_ARCHIVE_PRIORITY		5
 #define LOW_ARCHIVE_PRIORITY		2
 #define LOWEST_ARCHIVE_PRIORITY		1
@@ -209,7 +209,7 @@ Common::String Disk_ns::selectArchive(const Common::String& name) {
 		_sset.remove(_resArchiveName);
 	}
 	_resArchiveName = name;
-	addArchive(name, LOW_ARCHIVE_PRIORITY);
+	addArchive(name, NORMAL_ARCHIVE_PRIORITY);
 
 	return oldName;
 }
@@ -244,7 +244,7 @@ DosDisk_ns::~DosDisk_ns() {
 
 void DosDisk_ns::init() {
 	// setup permament archives
-	addArchive("disk1", NORMAL_ARCHIVE_PRIORITY);
+	addArchive("disk1", LOW_ARCHIVE_PRIORITY);
 }
 
 Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
@@ -713,10 +713,10 @@ AmigaDisk_ns::~AmigaDisk_ns() {
 void AmigaDisk_ns::init() {
 	// setup permament archives
 	if (_vm->getFeatures() & GF_DEMO) {
-		addArchive("disk0", NORMAL_ARCHIVE_PRIORITY);
+		addArchive("disk0", LOW_ARCHIVE_PRIORITY);
 	} else {
-		addArchive("disk0", NORMAL_ARCHIVE_PRIORITY);
-		addArchive("disk1", NORMAL_ARCHIVE_PRIORITY);
+		addArchive("disk0", LOW_ARCHIVE_PRIORITY);
+		addArchive("disk1", LOW_ARCHIVE_PRIORITY);
 	}
 }
 
