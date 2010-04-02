@@ -264,12 +264,12 @@ void Parallaction_br::cleanupGame() {
 
 
 void Parallaction_br::changeLocation() {
-    if (_newLocationName.empty()) {
-        return;
-    }
+	if (_newLocationName.empty()) {
+		return;
+	}
 
-    char location[200];
-    strcpy(location, _newLocationName.c_str());
+	char location[200];
+	strcpy(location, _newLocationName.c_str());
 
 	char *partStr = strrchr(location, '.');
 	if (partStr) {

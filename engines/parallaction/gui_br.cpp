@@ -164,11 +164,11 @@ class MainMenuInputState_BR : public MenuInputState {
 	int _selection;
 
 	void cleanup() {
-        _vm->_gfx->freeDialogueObjects();
+		_vm->_gfx->freeDialogueObjects();
 
 		for (int i = 0; i < _availItems; i++) {
 			delete _lines[i];
-            _lines[i] = 0;
+			_lines[i] = 0;
 		}
 	}
 
@@ -194,9 +194,9 @@ public:
 	    memset(_lines, 0, sizeof(_lines));
 	}
 
-    ~MainMenuInputState_BR() {
-        cleanup();
-    }
+	~MainMenuInputState_BR() {
+		cleanup();
+	}
 
 	virtual MenuInputState* run() {
 		int event = _vm->_input->getLastButtonEvent();

@@ -440,7 +440,7 @@ public:
 	void freeCharacterObjects();
 	void freeLocationObjects();
 	void showGfxObj(GfxObj* obj, bool visible);
-    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
+	void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 
 	// labels

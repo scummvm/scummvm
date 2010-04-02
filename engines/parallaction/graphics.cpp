@@ -799,7 +799,7 @@ GfxObj* Gfx::registerBalloon(Frames *frames, const char *text) {
 void Gfx::freeDialogueObjects() {
 	_items.clear();
 
-    _vm->_balloonMan->reset();
+	_vm->_balloonMan->reset();
 
 	for (uint i = 0; i < _balloons.size(); i++) {
 		delete _balloons[i];

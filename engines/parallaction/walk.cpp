@@ -164,7 +164,7 @@ uint32 PathWalker_NS::buildSubPath(const Common::Point& pos, const Common::Point
 void PathWalker_NS::buildPath(AnimationPtr a, uint16 x, uint16 y) {
 	debugC(1, kDebugWalk, "PathBuilder::buildPath to (%i, %i)", x, y);
 
-    _a = a;
+	_a = a;
 
 	_walkPath.clear();
 

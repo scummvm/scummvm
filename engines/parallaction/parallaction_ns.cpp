@@ -94,19 +94,19 @@ public:
 /*
 	bind accept the following input formats:
 
-    1 - [S].slide.[L]{.[C]}
+	1 - [S].slide.[L]{.[C]}
 	2 - [L]{.[C]}
 
-    where:
+	where:
 
 	[S] is the slide to be shown
-    [L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
-    [C] is the character to be selected, and is optional
+	[L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
+	[C] is the character to be selected, and is optional
 
-    The routine tells one form from the other by searching for the '.slide.'
+	The routine tells one form from the other by searching for the '.slide.'
 
-    NOTE: there exists one script in which [L] is not used in the case 1, but its use
-		  is commented out, and would definitely crash the current implementation.
+	NOTE: there exists one script in which [L] is not used in the case 1, but its use
+	is commented out, and would definitely crash the current implementation.
 */
 void LocationName::bind(const char *s) {
 
@@ -324,13 +324,13 @@ void Parallaction_ns::runPendingZones() {
 //	between one and the other.
 //
 void Parallaction_ns::changeLocation() {
-    if (_newLocationName.empty()) {
-        return;
-    }
+	if (_newLocationName.empty()) {
+		return;
+	}
 
-    char location[200];
-    strcpy(location, _newLocationName.c_str());
-    strcpy(_location._name, _newLocationName.c_str());
+	char location[200];
+	strcpy(location, _newLocationName.c_str());
+	strcpy(_location._name, _newLocationName.c_str());
 
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 

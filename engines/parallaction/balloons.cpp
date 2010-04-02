@@ -751,7 +751,7 @@ void Parallaction_ns::setupBalloonManager() {
 }
 
 void Parallaction_br::setupBalloonManager() {
-    _balloonMan = new BalloonManager_br(this, _dialogueFont);
+	_balloonMan = new BalloonManager_br(this, _dialogueFont);
 }
 
 
