@@ -79,6 +79,7 @@ enum EngineFlags {
 	kEnginePauseJobs	= (1 << 1),
 	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
+	kEngineBlockInput	= (1 << 5),
 	kEngineDragging		= (1 << 6),
 	kEngineTransformedDonna	= (1 << 7),
 

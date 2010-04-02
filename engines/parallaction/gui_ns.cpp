@@ -704,6 +704,7 @@ public:
 		}
 
 		_vm->_gfx->freeLabels();
+		_engineFlags &= ~kEngineBlockInput;
 		return _helper->getState("selectcharacter");
 	}
 
