@@ -189,7 +189,6 @@ void GfxPalette::setEGA() {
 
 void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
-	bool paletteChanged;
 
 	if (force || sciPal->timestamp != systime) {
 		_sysPaletteChanged |= merge(sciPal, &_sysPalette, force, forceRealMerge);
