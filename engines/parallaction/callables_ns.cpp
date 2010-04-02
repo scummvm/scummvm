@@ -298,9 +298,11 @@ void Parallaction_ns::_c_trasformata(void *parm) {
 
 void Parallaction_ns::_c_offMouse(void *parm) {
 	_input->setMouseState(MOUSE_DISABLED);
+	_engineFlags |= kEngineBlockInput;
 }
 
 void Parallaction_ns::_c_onMouse(void *parm) {
+	_engineFlags &= ~kEngineBlockInput;
 	_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
 
@@ -444,6 +446,7 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 		_soundManI->playMusic();
 	}
 
+	_engineFlags |= kEngineBlockInput;
 	_input->setMouseState(MOUSE_DISABLED);
 	_intro = true;
 }

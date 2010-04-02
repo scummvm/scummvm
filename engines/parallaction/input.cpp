@@ -190,11 +190,13 @@ int Input::updateGameInput() {
 	int event = kEvNone;
 
 	if (!isMouseEnabled() ||
+		(_engineFlags & kEngineBlockInput) ||
 		(_engineFlags & kEngineWalking) ||
 		(_engineFlags & kEngineChangeLocation)) {
 
-		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, walking: %i, changeloc: %i)",
+		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, block: %i, walking: %i, changeloc: %i)",
 			isMouseEnabled(),
+			(_engineFlags & kEngineBlockInput) == 0,
 			(_engineFlags & kEngineWalking) == 0,
 			(_engineFlags & kEngineChangeLocation) == 0
 		);
