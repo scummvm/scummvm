@@ -52,13 +52,19 @@ typedef enum
 	kUIViewSwipeRight = 8
 } UIViewSwipeDirection;
 
+#ifdef IPHONE_OFFICIAL
+void iphone_main(int argc, char **argv);
+#endif
+
 // We need this to be able to call functions from/in Objective-C.
 #ifdef  __cplusplus
 extern "C" {
 #endif
 
 // On the C++ side
+#ifndef IPHONE_OFFICIAL
 void iphone_main(int argc, char *argv[]);
+#endif
 
 // On the ObjC side
 void iPhone_updateScreen();

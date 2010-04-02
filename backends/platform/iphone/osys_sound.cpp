@@ -46,7 +46,7 @@ void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
 }
 
 void OSystem_IPHONE::setupMixer() {
-	//printf("setSoundCallback()\n");
+	//printf("setupMixer()\n");
 	_mixer = new Audio::MixerImpl(this);
 
 	s_soundCallback = mixCallback;
@@ -65,6 +65,8 @@ void OSystem_IPHONE::startSoundsystem() {
 	s_AudioQueue.dataFormat.mChannelsPerFrame = 2;
 	s_AudioQueue.dataFormat.mBitsPerChannel = 16;
 	s_AudioQueue.frameCount = WAVE_BUFFER_SIZE;
+
+	_mixer->setOutputRate(AUDIO_SAMPLE_RATE);
 
 	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, 0, kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
 		printf("Couldn't set the AudioQueue callback!\n");
@@ -91,7 +93,6 @@ void OSystem_IPHONE::startSoundsystem() {
 		return;
 	}
 
-	_mixer->setOutputRate(AUDIO_SAMPLE_RATE);
 	_mixer->setReady(true);
 }
 
