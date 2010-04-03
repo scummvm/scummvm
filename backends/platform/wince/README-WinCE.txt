@@ -7,7 +7,22 @@ New in this version
 -------------------
 
 1.1.0
-No port specific changes since 1.0.0.
+The TeenAgent engine is now included, but there are no other port specific
+changes since 1.0.0.
+
+This are 3 binaries in this distribution. Combining all the engines into a
+single executable produces something that is too large to run on most
+devices. We have therefore split the engines roughly into two and built 2
+separate exes as follows:
+
+scummvm1.exe:
+ - scumm, sword1, sword2, queen, sky, lure, agi, touche, tinsel, cruise
+scummvm2.exe:
+ - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker, made,
+   teenagent
+
+For those lucky enough to have devices with enough memory we also have a
+combined executable scummvm.exe which contains all of those engines.
 
 1.0.0:
 (Note: No changes since 1.0.0rc1)
@@ -27,13 +42,6 @@ category).
 From this version on, we're dropping support for FLAC and MPEG-2. The first
 is a pain to maintain, while the second has been gradually phased out in
 scummvm. Be sure to update your add-on packs and/or recompress your sound.
-
-This is still a 2-binary distribution. Here's what engines are compiled in
-the two executables:
-scummvm1.exe:
- - scumm, sword1, sword2, queen, sky, lure, agi, touche, tinsel, cruise
-scummvm2.exe:
- - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker, made
 
 
 ------------------------------------------------------------------------
