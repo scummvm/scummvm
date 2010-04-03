@@ -66,6 +66,7 @@ install -m644 -D dists/engine-data/lure.dat %{buildroot}%{_datadir}/scummvm/lure
 install -m644 -D dists/engine-data/queen.tbl %{buildroot}%{_datadir}/scummvm/queen.tbl
 install -m644 -D dists/engine-data/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.cpt
 install -m644 -D dists/engine-data/drascula.dat %{buildroot}%{_datadir}/scummvm/drascula.dat
+install -m644 -D dists/engine-data/teenagent.dat %{buildroot}%{_datadir}/scummvm/teenagent.dat
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -87,6 +88,7 @@ rm -Rf ${RPM_BUILD_ROOT}
 %{_datadir}/scummvm/sky.cpt
 %{_datadir}/scummvm/lure.dat
 %{_datadir}/scummvm/drascula.dat
+%{_datadir}/scummvm/teenagent.dat
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------
