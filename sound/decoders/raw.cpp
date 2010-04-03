@@ -159,7 +159,7 @@ int RawStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, cons
 			// If that is not the case, we should probably stop the
 			// stream playback.
 			_stream->seek(_filePos, SEEK_SET);
-			_stream->read(_buffer, readAmount * (is16Bit? 2: 1));
+			_stream->read(_buffer, readAmount * (is16Bit ? 2 : 1));
 
 			// Amount of data in buffer is now the amount read in, and
 			// the amount left to read on disk is decreased by the same amount
@@ -231,7 +231,7 @@ bool RawStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) 
  * particular case it should actually help it :-)
  */
 
-#define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
+#define MAKE_RAW_STREAM(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
 				return new RawStream<STEREO, true, UNSIGNED, true>(rate, disposeAfterUse, stream, blockList); \
@@ -259,15 +259,15 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 
 	if (isStereo) {
 		if (isUnsigned) {
-			MAKE_LINEAR_DISK(true, true);
+			MAKE_RAW_STREAM(true, true);
 		} else {
-			MAKE_LINEAR_DISK(true, false);
+			MAKE_RAW_STREAM(true, false);
 		}
 	} else {
 		if (isUnsigned) {
-			MAKE_LINEAR_DISK(false, true);
+			MAKE_RAW_STREAM(false, true);
 		} else {
-			MAKE_LINEAR_DISK(false, false);
+			MAKE_RAW_STREAM(false, false);
 		}
 	}
 }
