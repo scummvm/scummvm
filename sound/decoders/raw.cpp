@@ -49,7 +49,7 @@ namespace Audio {
  * This is a stream, which allows for playing raw PCM data from a stream.
  * It also features playback of multiple blocks from a given stream.
  */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+template<bool is16Bit, bool isUnsigned, bool isLE>
 class RawStream : public SeekableAudioStream {
 
 // Allow backends to override buffer size
@@ -63,6 +63,7 @@ protected:
 	byte *_buffer;                                 ///< Streaming buffer
 	const byte *_ptr;                              ///< Pointer to current position in stream buffer
 	const int _rate;                               ///< Sample rate of stream
+	const bool _isStereo;                          ///< Whether this is an stereo stream
 
 	Timestamp _playtime;                           ///< Calculated total play time
 	Common::SeekableReadStream *_stream;           ///< Stream to read data from
@@ -74,8 +75,8 @@ protected:
 	const RawStreamBlockList _blocks;              ///< Audio block list
 	RawStreamBlockList::const_iterator _curBlock;  ///< Current audio block number
 public:
-	RawStream(int rate, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
-		: _rate(rate), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(_blocks.begin()) {
+	RawStream(int rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
+		: _rate(rate), _isStereo(stereo), _playtime(0, rate), _stream(stream), _disposeAfterUse(disposeStream), _blocks(blocks), _curBlock(_blocks.begin()) {
 
 		assert(_blocks.size() > 0);
 
@@ -95,11 +96,11 @@ public:
 		// Add up length of all blocks in order to caluclate total play time
 		int32 len = 0;
 		for (RawStreamBlockList::const_iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-			assert(i->len % (stereo ? 2 : 1) == 0);
+			assert(i->len % (_isStereo ? 2 : 1) == 0);
 			len += i->len;
 		}
 
-		_playtime = Timestamp(0, len / (stereo ? 2 : 1), rate);
+		_playtime = Timestamp(0, len / (_isStereo ? 2 : 1), rate);
 	}
 
 
@@ -112,7 +113,7 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const           { return stereo; }
+	bool isStereo() const           { return _isStereo; }
 	bool endOfData() const          { return (_curBlock == _blocks.end()) && (_diskLeft == 0) && (_bufferLeft == 0); }
 
 	int getRate() const         { return _rate; }
@@ -121,8 +122,8 @@ public:
 	bool seek(const Timestamp &where);
 };
 
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int RawStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
+template<bool is16Bit, bool isUnsigned, bool isLE>
+int RawStream<is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
 	int oldPos = _stream->pos();
 	bool restoreFilePosition = false;
 
@@ -183,8 +184,8 @@ int RawStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, cons
 	return numSamples - samples;
 }
 
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-bool RawStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
+template<bool is16Bit, bool isUnsigned, bool isLE>
+bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 	_filePos = 0;
 	_diskLeft = 0;
 	_bufferLeft = 0;
@@ -231,14 +232,14 @@ bool RawStream<stereo, is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) 
  * particular case it should actually help it :-)
  */
 
-#define MAKE_RAW_STREAM(STEREO, UNSIGNED) \
+#define MAKE_RAW_STREAM(UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new RawStream<STEREO, true, UNSIGNED, true>(rate, disposeAfterUse, stream, blockList); \
+				return new RawStream<true, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream, blockList); \
 			else  \
-				return new RawStream<STEREO, true, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList); \
+				return new RawStream<true, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList); \
 		} else \
-			return new RawStream<STEREO, false, UNSIGNED, false>(rate, disposeAfterUse, stream, blockList)
+			return new RawStream<false, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList)
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    const RawStreamBlockList &blockList,
@@ -257,18 +258,10 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 		return 0;
 	}
 
-	if (isStereo) {
-		if (isUnsigned) {
-			MAKE_RAW_STREAM(true, true);
-		} else {
-			MAKE_RAW_STREAM(true, false);
-		}
+	if (isUnsigned) {
+		MAKE_RAW_STREAM(true);
 	} else {
-		if (isUnsigned) {
-			MAKE_RAW_STREAM(false, true);
-		} else {
-			MAKE_RAW_STREAM(false, false);
-		}
+		MAKE_RAW_STREAM(false);
 	}
 }
 
