@@ -173,7 +173,6 @@ struct Location {
 
 protected:
 	int			_gameType;
-	void freeZones(bool removeAll);
 
 	bool keepZone_br(ZonePtr z);
 	bool keepZone_ns(ZonePtr z);
@@ -191,6 +190,7 @@ public:
 	ZonePtr findZone(const char *name);
 
 	void cleanup(bool removeAll);
+	void freeZones(bool removeAll);
 
 	int getScale(int z) const;
 };

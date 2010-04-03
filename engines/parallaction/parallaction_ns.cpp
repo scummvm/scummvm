@@ -515,7 +515,7 @@ void Parallaction_ns::cleanupGame() {
 	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, sizeof(_locationNames));
 
-	freeLocation(true);
+	_location.freeZones(true);
 
 	_score = 0;
 	_freeSarcophagusSlotX = INITIAL_FREE_SARCOPHAGUS_SLOT_X;
