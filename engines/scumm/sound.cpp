@@ -965,7 +965,7 @@ BaseScummFile *Sound::openSfxFile() {
 	basename[1] = "monster.";
 
 	if (_vm->_game.heversion >= 60) {
-		if ((_vm->_game.heversion <= 61 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
+		if ((_vm->_game.heversion <= 62 && _vm->_game.platform == Common::kPlatformMacintosh) || (_vm->_game.heversion >= 70)) {
 			tmp = _vm->generateFilename(-2);
 		} else {
 			tmp = basename[0] + "tlk";

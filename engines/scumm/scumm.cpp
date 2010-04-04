@@ -1733,9 +1733,9 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
-	} else if (_game.platform == Common::kPlatform3DO && _game.heversion == 61) {
+	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
-	} else if (_game.version >= 3 && _game.heversion <= 61) {
+	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
@@ -2234,7 +2234,7 @@ void ScummEngine_v5::scummLoop_handleActors() {
 }
 
 void ScummEngine::scummLoop_handleEffects() {
-	if (_game.version >= 4 && _game.heversion <= 61)
+	if (_game.version >= 4 && _game.heversion <= 62)
 		cyclePalette();
 	palManipulate();
 	if (_doEffect) {

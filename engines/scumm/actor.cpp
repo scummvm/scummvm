@@ -2178,7 +2178,7 @@ void ActorHE::setActorCostume(int c) {
 
 	// Based on disassembly. It seems that high byte is not used at all, though
 	// it is attached to all horizontally flipped object, like left eye.
-	if (_vm->_game.heversion == 61)
+	if (_vm->_game.heversion >= 61 && _vm->_game.heversion <= 62)
 		c &= 0xff;
 
 	if (_vm->_game.features & GF_NEW_COSTUMES) {
