@@ -339,10 +339,9 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+	if (isScalerHotkey(event))
 		// Swallow these key up events
 		return false;
-	}
 
 	return true;
 }

@@ -2002,3 +2002,20 @@ bool OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 		return false;
 	}
 }
+
+bool OSystem_SDL::isScalerHotkey(const Common::Event &event) {
+	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+		const bool isNormalNumber = (Common::KEYCODE_1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_9);
+		const bool isKeypadNumber = (Common::KEYCODE_KP1 <= event.kbd.keycode && event.kbd.keycode <= Common::KEYCODE_KP9);
+		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
+			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
+
+		if (isNormalNumber || isKeypadNumber) {
+			int keyValue = event.kbd.keycode - (isNormalNumber ? Common::KEYCODE_1 : Common::KEYCODE_KP1);
+			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
+				return false;
+		}
+		return (isScaleKey || event.kbd.keycode == 'a');
+	}
+	return false;
+}
