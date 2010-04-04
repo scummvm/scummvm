@@ -648,6 +648,8 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 			if (!src[i])
 				break;
 		}
+		// Put an ending NUL to terminate the string
+		setChar(dest_r, n, 0);
 	}
 }
 
