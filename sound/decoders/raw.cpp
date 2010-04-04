@@ -40,6 +40,82 @@ namespace Audio {
 #define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
 	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
+#pragma mark -
+#pragma mark --- RawMemoryStream ---
+#pragma mark -
+
+/**
+ * A simple raw audio stream, purely memory based. It operates on a single
+ * block of data, which is passed to it upon creation.
+ * Optionally supports looping the sound.
+ *
+ * Design note: This code tries to be as efficient as possible (without
+ * resorting to assembly, that is). To this end, it is written as a template
+ * class. This way the compiler can create optimized code for each special
+ * case. This results in a total of 12 versions of the code being generated.
+ */
+template<bool is16Bit, bool isUnsigned, bool isLE>
+class RawMemoryStream : public SeekableAudioStream {
+protected:
+	const byte *_ptr;
+	const byte *_end;
+	const int _rate;
+	const byte *_origPtr;
+	const DisposeAfterUse::Flag _disposeAfterUse;
+	const Timestamp _playtime;
+	const bool _isStereo;
+
+public:
+	RawMemoryStream(int rate, bool stereo, const byte *ptr, uint len, DisposeAfterUse::Flag autoFreeMemory)
+	    : _ptr(ptr), _end(ptr+len), _rate(rate), _origPtr(ptr),
+	      _disposeAfterUse(autoFreeMemory),
+	      _playtime(0, len / (is16Bit ? 2 : 1) / (stereo ? 2 : 1), rate),
+	      _isStereo(stereo) {
+	}
+
+	virtual ~RawMemoryStream() {
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			free(const_cast<byte *>(_origPtr));
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool isStereo() const			{ return _isStereo; }
+	bool endOfData() const			{ return _ptr >= _end; }
+
+	int getRate() const				{ return _rate; }
+	bool seek(const Timestamp &where);
+	Timestamp getLength() const { return _playtime; }
+};
+
+template<bool is16Bit, bool isUnsigned, bool isLE>
+int RawMemoryStream<is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
+	int samples = numSamples;
+	while (samples > 0 && _ptr < _end) {
+		int len = MIN(samples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
+		samples -= len;
+		do {
+			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
+			_ptr += (is16Bit ? 2 : 1);
+		} while (--len);
+	}
+	return numSamples-samples;
+}
+
+template<bool is16Bit, bool isUnsigned, bool isLE>
+bool RawMemoryStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
+	const uint8 *ptr = _origPtr + convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames() * (is16Bit ? 2 : 1);
+	if (ptr > _end) {
+		_ptr = _end;
+		return false;
+	} else if (ptr == _end) {
+		_ptr = _end;
+		return true;
+	} else {
+		_ptr = ptr;
+		return true;
+	}
+}
 
 #pragma mark -
 #pragma mark --- RawStream ---
@@ -283,10 +359,34 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	return makeRawStream(stream, blocks, rate, flags, disposeAfterUse);
 }
 
+#define MAKE_LINEAR(UNSIGNED) \
+		if (is16Bit) { \
+			if (isLE) \
+				return new RawMemoryStream<true, UNSIGNED, true>(rate, isStereo, buffer, size, disposeAfterUse); \
+			else  \
+				return new RawMemoryStream<true, UNSIGNED, false>(rate, isStereo, buffer, size, disposeAfterUse); \
+		} else \
+			return new RawMemoryStream<false, UNSIGNED, false>(rate, isStereo, buffer, size, disposeAfterUse)
+
 SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
                                    int rate, byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse) {
-	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
+	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
+	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
+
+	// Verify the buffer sizes are sane
+	if (is16Bit && isStereo) {
+		assert((size & 3) == 0);
+	} else if (is16Bit || isStereo) {
+		assert((size & 1) == 0);
+	}
+
+	if (isUnsigned)
+		MAKE_LINEAR(true);
+	else
+		MAKE_LINEAR(false);
 }
 
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawStreamBlock *block, int numBlocks,
