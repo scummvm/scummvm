@@ -981,6 +981,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		case 70:
 			*engine = new ScummEngine_v70he(syst, res);
 			break;
+		case 62:
 		case 61:
 			*engine = new ScummEngine_v60he(syst, res);
 			break;

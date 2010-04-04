@@ -87,7 +87,10 @@ bool ScummEngine::canLoadGameStateCurrently() {
 
 	// HE games are limited to original load and save interface only,
 	// due to numerous glitches (see bug #1726909) that can occur.
-	if (_game.heversion >= 60)
+	//
+	// Except the earliest HE Games (3DO and initial DOS version of
+	// puttputt), which didn't offer scripted load/save screens.
+	if (_game.heversion >= 62)
 		return false;
 
 	// COMI always disables saving/loading (to tell the truth:
@@ -113,7 +116,10 @@ bool ScummEngine::canSaveGameStateCurrently() {
 
 	// HE games are limited to original load and save interface only,
 	// due to numerous glitches (see bug #1726909) that can occur.
-	if (_game.heversion >= 60)
+	//
+	// Except the earliest HE Games (3DO and initial DOS version of
+	// puttputt), which didn't offer scripted load/save screens.
+	if (_game.heversion >= 62)
 		return false;
 
 	// COMI always disables saving/loading (to tell the truth:

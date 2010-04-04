@@ -454,17 +454,17 @@ BluesTreasureHunt	Blue's Treasure Hunt
 	82e5e24720cb85a2b662bea6b625cad9	-1	en	Windows	-	Disc 2	-	Kirben
 
 fbear	Fatty Bear's Birthday Surprise
-	13d2a86a7290813a1c386490447d72db	-1	en	3DO	HE 61	-	-	George Kormendi
-	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 61	-	-	sev
-	6bca7a1a96d16e52b8f3c42b50dbdca3	-1	jp	3DO	HE 61	-	-	George Kormendi
-	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 61	-	-	khalek
-	4f1d6f8b38343dba405472538b5037ed	7717	en	DOS	HE 61	-	-	George Kormendi
-	ef74d9071d4e564b037cb44bd6774de7	-1	hb	DOS	HE 61	-	-	sev
-	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 61	-	-	khalek
+	13d2a86a7290813a1c386490447d72db	-1	en	3DO	HE 62	-	-	George Kormendi
+	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 62	-	-	sev
+	6bca7a1a96d16e52b8f3c42b50dbdca3	-1	jp	3DO	HE 62	-	-	George Kormendi
+	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 62	-	-	khalek
+	4f1d6f8b38343dba405472538b5037ed	7717	en	DOS	HE 62	-	-	George Kormendi
+	ef74d9071d4e564b037cb44bd6774de7	-1	hb	DOS	HE 62	-	-	sev
+	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 62	-	-	khalek
 	179879b6e35c1ead0d93aab26db0951b	13381	en	Windows	HE 70	-	-	khalek
 
-	47e75b1bdcb44c78cb94883d1731ccf8	6203	en	DOS	HE 61	Demo	-	khalek
-	6df20c50c1ab19799de9be7ae7716881	-1	en	Mac	HE 61	Demo	-	khalek
+	47e75b1bdcb44c78cb94883d1731ccf8	6203	en	DOS	HE 62	Demo	-	khalek
+	6df20c50c1ab19799de9be7ae7716881	-1	en	Mac	HE 62	Demo	-	khalek
 	22c9eb04455440131ffc157aeb8d40a8	-1	en	Windows	HE 70	Demo	-	khalek
 
 fbpack	Fatty Bear's Fun Pack
@@ -734,9 +734,9 @@ puttputt	Putt-Putt Joins the Parade
 	7e151c17adf624f1966c8fc5827c95e9	-1	en	3DO	HE 61	-	-	khalek
 	be2abe172f58db170de3a037daa1dd27	-1	jp	3DO	HE 61	-	-	clone2727
 	ee41f6afbc5b26fa475754b56fe92048	8032	jp	3DO	HE 61	-	-	George Kormendi
-	9708cf716ed8bcc9ff3fcfc69413b746	-1	en	DOS	HE 61	-	-	khalek
-	e361a7058ed8e8ebb462663c0a3ae8d6	-1	hb	DOS	HE 61	-	-	sev
-	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 61	-	-	khalek
+	9708cf716ed8bcc9ff3fcfc69413b746	-1	en	DOS	HE 62	-	-	khalek
+	e361a7058ed8e8ebb462663c0a3ae8d6	-1	hb	DOS	HE 62	-	-	sev
+	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 62	-	-	khalek
 	6a30a07f353a75cdc602db27d73e1b42	-1	en	Windows	HE 70	-	-	khalek
 
 	31aa57f460a3d12429f0552a46a90b39	6150	en	DOS	Demo	Demo	-	

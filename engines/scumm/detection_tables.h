@@ -253,19 +253,20 @@ static const GameSettings gameVariantsTable[] = {
 #endif
 
 	// Humongous Entertainment Scumm Version 6
-	{"activity", "", 0, GID_HEGAME, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
-	{"funpack",  0, 0, GID_FUNPACK, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
-	{"fbpack",   0, 0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"activity", "", 0, GID_HEGAME, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"funpack",  0, 0, GID_FUNPACK, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"fbpack",   0, 0, GID_HEGAME,  6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
 
-	{"brstorm", 0, 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
-	{"fbear", "HE 61", 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"brstorm", 0, 0, GID_FBEAR, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"fbear", "HE 62", 0, GID_FBEAR, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
 	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 
-	{"puttmoon", "", 0, GID_PUTTMOON, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"puttmoon", "", 0, GID_PUTTMOON, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
 	{"puttmoon", "HE 70", 0, GID_PUTTMOON, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows, GUIO_NOLAUNCHLOAD | GUIO_NOMIDI},
 
 	{"puttputt", "HE 60", 0, GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
 	{"puttputt", "HE 61", 0, GID_HEGAME,   6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
+	{"puttputt", "HE 62", 0, GID_HEGAME,   6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
 	{"puttputt", "Demo",  0, GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOLAUNCHLOAD},
 
 	// The following are meant to be generic HE game variants and as such do

@@ -2954,7 +2954,7 @@ void ScummEngine_v6::o6_getDateTime() {
 void ScummEngine_v6::o6_getPixel() {
 	int x, y;
 
-	if (_game.heversion == 61) {
+	if (_game.heversion >= 61 && _game.heversion <= 62) {
 		x = pop();
 		y = pop();
 	} else {

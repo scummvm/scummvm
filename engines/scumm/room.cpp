@@ -76,7 +76,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	runExitScript();
 
 	killScriptsAndResources();
-	if (_game.version >= 4 && _game.heversion <= 61)
+	if (_game.version >= 4 && _game.heversion <= 62)
 		stopCycle(0);
 
 	if (_game.id == GID_SAMNMAX) {
@@ -552,7 +552,7 @@ void ScummEngine::resetRoomSubBlocks() {
 
 	// Color cycling
 	// HE 7.0 games load resources but don't use them.
-	if (_game.version >= 4 && _game.heversion <= 61) {
+	if (_game.version >= 4 && _game.heversion <= 62) {
 		ptr = findResourceData(MKID_BE('CYCL'), roomptr);
 		if (ptr) {
 			initCycl(ptr);
