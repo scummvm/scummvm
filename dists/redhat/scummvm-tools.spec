@@ -31,7 +31,7 @@ Tools for compressing ScummVM datafiles and other related tools.
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -a 1 -n tools-%{version}
+%setup -q -a 1 -n scummvm-tools-%{version}
 
 %build
 (cd libmad-0.15.1b; grep -v 'force-\(mem\|addr\)' configure > configure.new; mv -f configure.new configure; chmod 700 configure; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
