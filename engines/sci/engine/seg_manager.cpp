@@ -635,6 +635,7 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 		return;
 	}
 
+
 	if (dest_r.isRaw) {
 		// raw -> raw
 		if (n == 0xFFFFFFFFU)
@@ -649,7 +650,8 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 				break;
 		}
 		// Put an ending NUL to terminate the string
-		setChar(dest_r, n, 0);
+		if ((size_t)dest_r.maxSize > n)
+			setChar(dest_r, n, 0);
 	}
 }
 
