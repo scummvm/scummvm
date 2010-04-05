@@ -249,6 +249,14 @@ void EditableWidget::drawCaret(bool erase) {
 
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height() - 2), erase);
 
+	if (erase) {
+		if ((uint)_caretPos < _editString.size()) {
+			GUI::EditableWidget::String chr(_editString[_caretPos]);
+			int chrWidth = g_gui.getCharWidth(_editString[_caretPos], _font);
+			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, 0, false, _font);
+		}
+	}
+
 	_caretVisible = !erase;
 }
 
