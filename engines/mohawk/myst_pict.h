@@ -48,10 +48,10 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 
 	void decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics::Surface *image);
-	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data);
+	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bytesPerPixel);
 	void decodeCompressedQuickTime(Common::SeekableReadStream *stream, Graphics::Surface *image);
 };
 
-}
+} // End of namespace Mohawk
 
 #endif

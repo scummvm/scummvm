@@ -66,7 +66,9 @@ Graphics::Surface *MystPICT::decodeImage(Common::SeekableReadStream *stream) {
 		else if (opNum == 1 && opcode != 0x0C00)
 			error ("Cannot find PICT header opcode");
 
-		if (opcode == 0x0001) {		   // Clip
+		if (opcode == 0x0000) {        // Nop
+			stream->readUint16BE(); // Unknown
+		} else if (opcode == 0x0001) { // Clip
 			// Ignore
 			uint16 clipSize = stream->readUint16BE();
 			stream->seek(clipSize - 2, SEEK_CUR);
@@ -136,15 +138,11 @@ struct DirectBitsRectData {
 };
 
 void MystPICT::decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics::Surface *image) {
-	static const Graphics::PixelFormat directBitsFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-
-	Graphics::Surface buffer;
-	buffer.create(image->w, image->h, 2);
+	static const Graphics::PixelFormat directBitsFormat16 = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
 	DirectBitsRectData directBitsData;
-
 	directBitsData.pixMap.baseAddr = stream->readUint32BE();
-	directBitsData.pixMap.rowBytes = stream->readUint16BE();
+	directBitsData.pixMap.rowBytes = stream->readUint16BE() & 0x3fff;
 	directBitsData.pixMap.bounds.top = stream->readUint16BE();
 	directBitsData.pixMap.bounds.left = stream->readUint16BE();
 	directBitsData.pixMap.bounds.bottom = stream->readUint16BE();
@@ -171,8 +169,11 @@ void MystPICT::decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics
 	directBitsData.dstRect.right = stream->readUint16BE();
 	directBitsData.mode = stream->readUint16BE();
 
-	if (directBitsData.pixMap.pixelSize != 16)
+	if (directBitsData.pixMap.pixelSize != 16 && directBitsData.pixMap.pixelSize != 32)
 		error("Unhandled directBitsRect bitsPerPixel %d", directBitsData.pixMap.pixelSize);
+
+	byte bytesPerPixel = (directBitsData.pixMap.pixelSize == 16) ? 2 : 3;
+	byte *buffer = new byte[image->w * image->h * bytesPerPixel];
 
 	// Read in amount of data per row
 	for (uint16 i = 0; i < directBitsData.pixMap.bounds.height(); i++) {
@@ -184,45 +185,69 @@ void MystPICT::decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics
 			// TODO
 		} else if (directBitsData.pixMap.packType > 2) { // Packed
 			uint16 byteCount = (directBitsData.pixMap.rowBytes > 250) ? stream->readUint16BE() : stream->readByte();
-			decodeDirectBitsLine((byte *)buffer.getBasePtr(0, i), directBitsData.pixMap.rowBytes, stream->readStream(byteCount));
+			decodeDirectBitsLine(buffer + i * image->w * bytesPerPixel, directBitsData.pixMap.rowBytes, stream->readStream(byteCount), bytesPerPixel);
+		}
+	}
+	
+	if (bytesPerPixel == 2) {
+		// Convert from 16-bit to whatever surface we need
+		for (uint16 y = 0; y < image->h; y++) {
+			for (uint16 x = 0; x < image->w; x++) {
+				byte r = 0, g = 0, b = 0;
+				uint32 color = READ_BE_UINT16(buffer + (y * image->w + x) * bytesPerPixel);
+				directBitsFormat16.colorToRGB(color, r, g, b);
+				*((uint16 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
+			}
+		}
+	} else {
+		// Convert from 24-bit (planar!) to whatever surface we need
+		for (uint16 y = 0; y < image->h; y++) {
+			for (uint16 x = 0; x < image->w; x++) {
+				byte r = *(buffer + y * image->w * 3 + x);
+				byte g = *(buffer + y * image->w * 3 + image->w + x);
+				byte b = *(buffer + y * image->w * 3 + image->w * 2 + x);
+				*((uint16 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
+			}
 		}
 	}
 
-	// Convert from 16-bit to whatever surface we need
-	for (uint16 y = 0; y < buffer.h; y++) {
-		for (uint16 x = 0; x < buffer.w; x++) {
-			byte r = 0, g = 0, b = 0;
-			uint16 color = READ_BE_UINT16(buffer.getBasePtr(x, y));
-			directBitsFormat.colorToRGB(color, r, g, b);
-			*((uint16 *)image->getBasePtr(x, y)) = _pixelFormat.RGBToColor(r, g, b);
-		}
-	}
+	delete[] buffer;
 }
 
-void MystPICT::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data) {
+void MystPICT::decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bytesPerPixel) {
 	uint32 dataDecoded = 0;
+	byte bytesPerDecode = (bytesPerPixel == 2) ? 2 : 1;
+
 	while (data->pos() < data->size() && dataDecoded < length) {
 		byte op = data->readByte();
 
 		if (op & 0x80) {
 			uint32 runSize = (op ^ 255) + 2;
-			byte value1 = data->readByte();
-			byte value2 = data->readByte();
+			uint16 value = (bytesPerDecode == 2) ? data->readUint16BE() : data->readByte();
+
 			for (uint32 i = 0; i < runSize; i++) {
-				*out++ = value1;
-				*out++ = value2;
+				if (bytesPerDecode == 2) {
+					WRITE_BE_UINT16(out, value);
+					out += 2;
+				} else
+					*out++ = value;
 			}
-			dataDecoded += runSize * 2;
+			dataDecoded += runSize * bytesPerDecode;
 		} else {
-			uint32 runSize = (op + 1) * 2;
+			uint32 runSize = (op + 1) * bytesPerDecode;
 			for (uint32 i = 0; i < runSize; i++)
 				*out++ = data->readByte();
 			dataDecoded += runSize;
 		}
 	}
 
+	// HACK: rowBytes is in 32-bit, but the data is 24-bit...
+	if (bytesPerPixel == 3)
+		dataDecoded += length / 4;
+
 	if (length != dataDecoded)
-		warning("Mismatched DirectBits read");
+		warning("Mismatched DirectBits read (%d/%d)", dataDecoded, length);
+
 	delete data;
 }
 
