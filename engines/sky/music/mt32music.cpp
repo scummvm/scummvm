@@ -113,7 +113,10 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 		crc -= sysExBuf[cnt];
 	sysExBuf[14] = crc & 0x7F;					// crc
 	_midiDrv->sysEx(sysExBuf, 15);
-	g_system->delayMillis(40);
+	// We delay the time it takes to send the sysEx plus an
+	// additional 40ms, which is required for MT-32 rev00,
+	// to assure no buffer overflow or missing bytes
+	g_system->delayMillis(17 * 1000 / 3125 + 40);
 	return true;
 }
 
@@ -162,7 +165,10 @@ void MT32Music::startDriver() {
 		sendBuf[len] = crc & 0x7F;
 		len++;
 		_midiDrv->sysEx(sendBuf, len);
-		g_system->delayMillis(40);
+		// We delay the time it takes to send the sysEx plus an
+		// additional 40ms, which is required for MT-32 rev00,
+		// to assure no buffer overflow or missing bytes
+		g_system->delayMillis((len + 2) * 1000 / 3125 + 40);
 	}
 
 	while (processPatchSysEx(sysExData))
