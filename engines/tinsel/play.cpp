@@ -376,10 +376,9 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 	CORO_END_CODE;
 }
 
-static void ResSoundReel(CORO_PARAM, const void *) {
+static void ResSoundReel(CORO_PARAM, const void *param) {
 	// get the stuff copied to process when it was created
-	PPROCESS pProc = g_scheduler->getCurrentProcess();
-	int	i = *(int *)pProc->param;
+	int i = *(const int *)param;
 
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);

@@ -508,21 +508,18 @@ void Scheduler::setResourceCallback(VFPTRPP pFunc) {
 /**
  * The code for for restored scene processes.
  */
-static void RestoredProcessProcess(CORO_PARAM, const void *) {
+static void RestoredProcessProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 		INT_CONTEXT *pic;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
 
-	PROCESS *pProc;		// this process pointer
-
 	// get the stuff copied to process when it was created
-	pProc = g_scheduler->getCurrentProcess();
-	_ctx->pic = *((INT_CONTEXT **) pProc->param);
+	_ctx->pic = *(const PINT_CONTEXT *)param;
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
-	AttachInterpret(_ctx->pic, pProc);
+	AttachInterpret(_ctx->pic, g_scheduler->getCurrentProcess());
 
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
@@ -532,9 +529,8 @@ static void RestoredProcessProcess(CORO_PARAM, const void *) {
 /**
  * Process Tinsel Process
  */
-static void ProcessTinselProcess(CORO_PARAM, const void *) {
-	PPROCESS pProc = g_scheduler->getCurrentProcess();
-	PINT_CONTEXT *pPic = (PINT_CONTEXT *) pProc->param;
+static void ProcessTinselProcess(CORO_PARAM, const void *param) {
+	const PINT_CONTEXT *pPic = (const PINT_CONTEXT *)param;
 
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
