@@ -4022,8 +4022,10 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 		if (h.currentActions().size() > 1) {
 			// Pending items on stack
 			if (h.startRoomNumber() != 0) {
-				if (h.currentActions().top().supportData().id() != RETURN_SUPPORT_ID) {
-					h.currentActions().top().supportData().setDetails(RETURN, 0);
+				if (!h.currentActions().bottom().hasSupportData() || (h.currentActions().bottom().action() != RETURN)) {
+					// Signal character to return
+					h.currentActions().clear();
+					h.currentActions().addFront(RETURN, h.startRoomNumber(), 0, 0);
 				}
 			}
 			h.currentActions().top().setRoomNumber(h.roomNumber());
