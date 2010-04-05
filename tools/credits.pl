@@ -842,7 +842,8 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Win64");
-		  add_person("Chris Gray", "Psychoid", "");
+		  add_person("Chris Gray", "Psychoid", "(retired)");
+		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 	end_section();
 
