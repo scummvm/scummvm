@@ -72,19 +72,6 @@ static const LureGameDescription gameDescriptions[] = {
 	{
 		{
 			"lure",
-			"EGA",
-			AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		GF_FLOPPY | GF_EGA,
-	},
-
-	{
-		{
-			"lure",
 			"VGA",
 			AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
 			Common::EN_ANY,
@@ -99,8 +86,8 @@ static const LureGameDescription gameDescriptions[] = {
 		{
 			"lure",
 			"EGA",
-			AD_ENTRY1("disk1.ega", "b80aced0321f64c58df2c7d3d74dfe79"),
-			Common::IT_ITA,
+			AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
+			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
@@ -119,6 +106,19 @@ static const LureGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GF_FLOPPY,
+	},
+
+	{
+		{
+			"lure",
+			"EGA",
+			AD_ENTRY1("disk1.ega", "b80aced0321f64c58df2c7d3d74dfe79"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GF_FLOPPY | GF_EGA,
 	},
 
 	{
