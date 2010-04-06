@@ -178,7 +178,7 @@ private:
 class AnimationManager {
 
 public:
-	AnimationManager(DraciEngine *vm) : _vm(vm), _lastIndex(-1) {}
+	AnimationManager(DraciEngine *vm) : _vm(vm), _lastIndex(-1), _animationPauseCounter(0) {}
 	~AnimationManager() { deleteAll(); }
 
 	void insert(Animation *anim, bool allocateIndex);
@@ -214,6 +214,12 @@ private:
 	  * See Animation::_index for details.
 	  */
 	int _lastIndex;
+
+	/** How many times the animations are paused.
+	 * Needed because the animations can be paused once by entering the
+	 * inventory and then again by entering the game menu.  When they are
+	 * unpaused the first time, they should be kept paused. */
+	int _animationPauseCounter;
 };
 
 } // End of namespace Draci

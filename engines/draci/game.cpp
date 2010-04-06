@@ -332,6 +332,7 @@ void Game::handleInventoryLoop() {
 	// animation ID. In this way, we obtain its itemID.
 	if (_animUnderCursor != NULL && _animUnderCursor != _inventoryAnim && _animUnderCursor->getID() != kOverlayImage) {
 		_itemUnderCursor = getItem(kInventoryItemsID - _animUnderCursor->getID());
+		assert(_itemUnderCursor != NULL);
 		assert(_itemUnderCursor->_anim == _animUnderCursor);
 	} else {
 		_itemUnderCursor = NULL;

@@ -252,7 +252,7 @@ public:
 
 	int getItemStatus(int itemID) const { return _itemStatus[itemID]; }
 	void setItemStatus(int itemID, int status) { _itemStatus[itemID] = status; }
-	GameItem *getItem(int id) { return id >= 0 ? &_items[id] : NULL; }
+	GameItem *getItem(int id) { return id >= 0 && id < (int) _info._numItems ? &_items[id] : NULL; }
 	GameItem *getCurrentItem() const { return _currentItem; }
 	void setCurrentItem(GameItem *item) { _currentItem = item; }
 	void removeItem(GameItem *item);
