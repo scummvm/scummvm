@@ -125,49 +125,10 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kLoadCmd:
-		{
-		Common::String gameId = ConfMan.get("gameid");
-
-		const EnginePlugin *plugin = 0;
-		EngineMan.findGame(gameId, &plugin);
-
-		int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
-
-		if (slot >= 0) {
-			// FIXME: For now we just ignore the return
-			// value, which is quite bad since it could
-			// be a fatal loading error, which renders
-			// the engine unusable.
-			_engine->loadGameState(slot);
-			close();
-		}
-
-		}
+		load();
 		break;
 	case kSaveCmd:
-		{
-		Common::String gameId = ConfMan.get("gameid");
-
-		const EnginePlugin *plugin = 0;
-		EngineMan.findGame(gameId, &plugin);
-
-		int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
-
-		if (slot >= 0) {
-			Common::String result(_saveDialog->getResultString());
-			if (result.empty()) {
-				// If the user was lazy and entered no save name, come up with a default name.
-				char buf[20];
-				snprintf(buf, 20, "Save %d", slot + 1);
-				_engine->saveGameState(slot, buf);
-			} else {
-				_engine->saveGameState(slot, result.c_str());
-			}
-
-			close();
-		}
-
-		}
+		save();
 		break;
 	case kOptionsCmd:
 		_optionsDialog->runModal();
@@ -230,6 +191,47 @@ void MainMenuDialog::reflowLayout() {
 #endif
 
 	Dialog::reflowLayout();
+}
+
+void MainMenuDialog::save() {
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
+
+	if (slot >= 0) {
+		Common::String result(_saveDialog->getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			char buf[20];
+			snprintf(buf, 20, "Save %d", slot + 1);
+			_engine->saveGameState(slot, buf);
+		} else {
+			_engine->saveGameState(slot, result.c_str());
+		}
+
+		close();
+	}
+}
+
+void MainMenuDialog::load() {
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
+
+	if (slot >= 0) {
+		// FIXME: For now we just ignore the return
+		// value, which is quite bad since it could
+		// be a fatal loading error, which renders
+		// the engine unusable.
+		_engine->loadGameState(slot);
+		close();
+	}
 }
 
 enum {
