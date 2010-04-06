@@ -74,12 +74,12 @@ static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 
 
 
 
-OptionsDialog::OptionsDialog(const String &domain, int x, int y, int w, int h)
+OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
 	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
 
-OptionsDialog::OptionsDialog(const String &domain, const String &name)
+OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
 	: Dialog(name), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
@@ -150,7 +150,7 @@ void OptionsDialog::open() {
 
 		if (ConfMan.hasKey("gfx_mode", _domain)) {
 			const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
-			String gfxMode(ConfMan.get("gfx_mode", _domain));
+			Common::String gfxMode(ConfMan.get("gfx_mode", _domain));
 			int gfxCount = 1;
 			while (gm->name) {
 				gfxCount++;
@@ -220,7 +220,7 @@ void OptionsDialog::open() {
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 
-		String soundFont(ConfMan.get("soundfont", _domain));
+		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
 			_soundFont->setLabel("None");
 			_soundFontClearButton->setEnabled(false);
@@ -377,7 +377,7 @@ void OptionsDialog::close() {
 				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
 				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
-				String soundFont(_soundFont->getLabel());
+				Common::String soundFont(_soundFont->getLabel());
 				if (!soundFont.empty() && (soundFont != "None"))
 					ConfMan.set("soundfont", soundFont, _domain);
 				else
@@ -587,7 +587,7 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_subSpeedLabel->setEnabled(ena);
 }
 
-void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 	// The GFX mode popup
@@ -620,7 +620,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	_enableGraphicSettings = true;
 }
 
-void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
 	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", "Music driver:");
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
@@ -654,7 +654,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	_enableAudioSettings = true;
 }
 
-void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
@@ -681,7 +681,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
 
 // The function has an extra slider range parameter, since both the launcher and SCUMM engine
 // make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
-void OptionsDialog::addSubtitleControls(GuiObject *boss, const String &prefix, int maxSliderVal) {
+void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
 	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", "Text and Speech:");
 	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle, 0);
@@ -696,7 +696,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const String &prefix, i
 	_enableSubtitleSettings = true;
 }
 
-void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
+void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
 
 	// Volume controllers
 	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", "Music volume:");
@@ -906,24 +906,24 @@ void GlobalOptionsDialog::open() {
 
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
-		String savePath(_savePath->getLabel());
+		Common::String savePath(_savePath->getLabel());
 		if (!savePath.empty() && (savePath != "None"))
 			ConfMan.set("savepath", savePath, _domain);
 
-		String themePath(_themePath->getLabel());
+		Common::String themePath(_themePath->getLabel());
 		if (!themePath.empty() && (themePath != "None"))
 			ConfMan.set("themepath", themePath, _domain);
 		else
 			ConfMan.removeKey("themepath", _domain);
 
-		String extraPath(_extraPath->getLabel());
+		Common::String extraPath(_extraPath->getLabel());
 		if (!extraPath.empty() && (extraPath != "None"))
 			ConfMan.set("extrapath", extraPath, _domain);
 		else
 			ConfMan.removeKey("extrapath", _domain);
 
 #ifdef DYNAMIC_MODULES
-		String pluginsPath(_pluginsPath->getLabel());
+		Common::String pluginsPath(_pluginsPath->getLabel());
 		if (!pluginsPath.empty() && (pluginsPath != "None"))
 			ConfMan.set("pluginspath", pluginsPath, _domain);
 		else
