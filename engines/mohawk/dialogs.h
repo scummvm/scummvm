@@ -81,7 +81,7 @@ public:
 private:
 	MohawkEngine_Myst *_vm;
 	GUI::CheckboxWidget *_zipModeCheckbox;
-	GUI::CheckboxWidget *_transistionsCheckbox;
+	GUI::CheckboxWidget *_transitionsCheckbox;
 };
 
 class RivenOptionsDialog : public GUI::OptionsDialog {
