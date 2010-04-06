@@ -32,9 +32,6 @@
 #include "gui/saveload.h"
 
 #include "scumm/detection.h"
-#ifndef DISABLE_HELP
-#include "scumm/help.h"
-#endif
 
 namespace GUI {
 	class ListWidget;
@@ -80,49 +77,6 @@ protected:
 
 	void save();
 	void load();
-};
-
-#ifndef DISABLE_HELP
-
-class HelpDialog : public ScummDialog {
-public:
-	HelpDialog(const GameSettings &game);
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-
-	virtual void reflowLayout();
-
-protected:
-	typedef Common::String String;
-
-	GUI::ButtonWidget *_nextButton;
-	GUI::ButtonWidget *_prevButton;
-
-	GUI::StaticTextWidget *_title;
-	GUI::StaticTextWidget *_key[HELP_NUM_LINES];
-	GUI::StaticTextWidget *_dsc[HELP_NUM_LINES];
-
-	int _page;
-	int _numPages;
-	int _numLines;
-
-	const GameSettings _game;
-
-	void displayKeyBindings();
-};
-
-#endif
-
-class ConfigDialog : public GUI::OptionsDialog {
-protected:
-#ifdef SMALL_SCREEN_DEVICE
-	GUI::Dialog		*_keysDialog;
-#endif
-
-public:
-	ConfigDialog();
-	~ConfigDialog();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 };
 
 /**
