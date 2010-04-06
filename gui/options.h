@@ -57,10 +57,6 @@ public:
 
 	virtual void reflowLayout();
 
-	enum {
-		kOKCmd					= 'ok  '
-	};
-
 protected:
 	/** Config domain this dialog is used to edit. */
 	String _domain;

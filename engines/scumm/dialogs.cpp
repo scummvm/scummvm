@@ -59,7 +59,6 @@
 
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
-using GUI::kCloseCmd;
 using Graphics::kTextAlignCenter;
 using Graphics::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
@@ -391,10 +390,6 @@ void ScummMenuDialog::load() {
 #pragma mark -
 
 enum {
-	kOKCmd = 'ok  '
-};
-
-enum {
 	kKeysCmd = 'KEYS'
 };
 
@@ -443,8 +438,8 @@ ConfigDialog::ConfigDialog()
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", GUI::kCloseCmd, 'C');
 #ifdef SMALL_SCREEN_DEVICE
 	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
 	_keysDialog = NULL;
@@ -495,7 +490,7 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", "Previous", kPrevCmd, 'P');
 	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", "Next", kNextCmd, 'N');
-	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", GUI::kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	_numLines = HELP_NUM_LINES;

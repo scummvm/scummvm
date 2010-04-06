@@ -48,7 +48,6 @@
 
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
-using GUI::kCloseCmd;
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -235,10 +234,6 @@ void MainMenuDialog::load() {
 }
 
 enum {
-	kOKCmd = 'ok  '
-};
-
-enum {
 	kKeysCmd = 'KEYS'
 };
 
@@ -291,8 +286,8 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", GUI::kCloseCmd, 'C');
 
 #ifdef SMALL_SCREEN_DEVICE
 	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');

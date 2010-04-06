@@ -34,8 +34,7 @@
 namespace GUI {
 
 enum {
-	kMapCmd	= 'map ',
-	kOKCmd	= 'ok  '
+	kMapCmd	= 'map '
 };
 
 KeysDialog::KeysDialog(const Common::String &title)

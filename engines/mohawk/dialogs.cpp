@@ -71,7 +71,6 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 }
 
 enum {
-	kCloseCmd = 'CLOS',
 	kZipCmd = 'ZIPM',
 	kTransCmd = 'TRAN',
 	kWaterCmd = 'WATR'
@@ -81,8 +80,8 @@ MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
 	_transistionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Transistions Enabled", kTransCmd, 'T');
 
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", GUI::kCloseCmd, 'C');
 }
 
 MystOptionsDialog::~MystOptionsDialog() {
@@ -103,7 +102,7 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 	case kTransCmd:
 		_vm->_transitionsEnabled = _transistionsCheckbox->getState();
 		break;
-	case kCloseCmd:
+	case GUI::kCloseCmd:
 		close();
 		break;
 	default:
@@ -115,8 +114,8 @@ RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDia
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Water Effect Enabled", kWaterCmd, 'W');
 
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::OptionsDialog::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", GUI::kCloseCmd, 'C');
 }
 
 RivenOptionsDialog::~RivenOptionsDialog() {
@@ -137,7 +136,7 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 	case kWaterCmd:
 		*_vm->matchVarToString("waterenabled") = _waterEffectCheckbox->getState() ? 1 : 0;
 		break;
-	case kCloseCmd:
+	case GUI::kCloseCmd:
 		close();
 		break;
 	default:
