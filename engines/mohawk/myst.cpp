@@ -94,10 +94,10 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 
 // Uses cached data objects in preference to disk access
 Common::SeekableReadStream *MohawkEngine_Myst::getRawData(uint32 tag, uint16 id) {
-	Common::SeekableReadStream *ret;
+	Common::SeekableReadStream *ret = _cache.search(tag, id);
 
-	ret = _cache.search(tag, id);
-	if(ret != NULL) return ret;
+	if (ret)
+		return ret;
 
 	for (uint32 i = 0; i < _mhk.size(); i++)
 		if (_mhk[i]->hasResource(tag, id)) {
@@ -106,24 +106,37 @@ Common::SeekableReadStream *MohawkEngine_Myst::getRawData(uint32 tag, uint16 id)
 			return ret;
 		}
 
-	error ("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
 	return NULL;
 }
 
 void MohawkEngine_Myst::cachePreload(uint32 tag, uint16 id) {
-	Common::SeekableReadStream *tempData;
+	if (!_cache.enabled)
+		return;
 
-	if (!_cache.enabled) return;
+	for (uint32 i = 0; i < _mhk.size(); i++) {
+		// Check for MJMP in Myst ME
+		if ((getFeatures() & GF_ME) && tag == ID_MSND && _mhk[i]->hasResource(ID_MJMP, id)) {
+			Common::SeekableReadStream *tempData = _mhk[i]->getRawData(ID_MJMP, id);
+			uint16 msndId = tempData->readUint16LE();
+			delete tempData;
 
-	for (uint32 i = 0; i < _mhk.size(); i++)
-		if (_mhk[i]->hasResource(tag, id)) {
-			tempData = _mhk[i]->getRawData(tag, id);
+			// We've found where the real MSND data is, so go get that
+			tempData = _mhk[i]->getRawData(tag, msndId);
 			_cache.add(tag, id, tempData);
 			delete tempData;
 			return;
 		}
 
-	warning ("cachePreload : Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
+		if (_mhk[i]->hasResource(tag, id)) {
+			Common::SeekableReadStream *tempData = _mhk[i]->getRawData(tag, id);
+			_cache.add(tag, id, tempData);
+			delete tempData;
+			return;
+		}
+	}
+
+	warning("cachePreload: Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
 }
 
 static const char *mystFiles[] = {

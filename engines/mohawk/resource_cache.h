@@ -45,13 +45,13 @@ public:
 	Common::SeekableReadStream *search(uint32 tag, uint16 id);
 
 private:
-	typedef struct {
+	struct DataObject {
 		uint32 tag;
 		uint16 id;
 		Common::SeekableReadStream *data;
-	} dataObject;
+	};
 
-	Common::Array<dataObject> store;
+	Common::Array<DataObject> store;
 };
 
 } // End of namespace Mohawk
