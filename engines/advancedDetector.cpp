@@ -264,7 +264,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		// config file.
 		//
 		// Fixes bug #1544799
-		ConfMan.set("autoadded", "true");
+		ConfMan.setBool("autoadded", true);
 
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
