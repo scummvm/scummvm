@@ -49,10 +49,6 @@
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 using GUI::kCloseCmd;
-using GUI::WIDGET_ENABLED;
-
-typedef GUI::OptionsDialog GUI_OptionsDialog;
-typedef GUI::Dialog GUI_Dialog;
 
 enum {
 	kSaveCmd = 'SAVE',
@@ -323,7 +319,7 @@ void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 #endif
 		break;
 	default:
-		GUI_OptionsDialog::handleCommand (sender, cmd, data);
+		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
 

@@ -64,9 +64,6 @@ using Graphics::kTextAlignCenter;
 using Graphics::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
 
-typedef GUI::OptionsDialog GUI_OptionsDialog;
-typedef GUI::Dialog GUI_Dialog;
-
 namespace Scumm {
 
 struct ResString {
@@ -429,7 +426,7 @@ void ConfigDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 #endif
 		break;
 	default:
-		GUI_OptionsDialog::handleCommand (sender, cmd, data);
+		GUI::OptionsDialog::handleCommand (sender, cmd, data);
 	}
 }
 
@@ -710,7 +707,7 @@ void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
 }
 
 void ValueDisplayDialog::open() {
-	GUI_Dialog::open();
+	GUI::Dialog::open();
 	setResult(_value);
 	_timer = g_system->getMillis() + kDisplayDelay;
 }
