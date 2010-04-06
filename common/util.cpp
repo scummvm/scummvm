@@ -84,6 +84,27 @@ void hexdump(const byte * data, int len, int bytesPerLine, int startOffset) {
 #pragma mark -
 
 
+bool parseBool(const Common::String &val, bool &valAsBool) {
+	if (val.equalsIgnoreCase("true") ||
+		val.equalsIgnoreCase("yes") ||
+		val.equals("1")) {
+		valAsBool = true;
+		return true;
+	}
+	if (val.equalsIgnoreCase("false") ||
+		val.equalsIgnoreCase("no") ||
+		val.equals("0")) {
+		valAsBool = false;
+		return true;
+	}
+
+	return false;
+}
+
+
+#pragma mark -
+
+
 const LanguageDescription g_languages[] = {
 	{"zh-cn", "Chinese (China)", ZH_CNA},
 	{"zh", "Chinese (Taiwan)", ZH_TWN},

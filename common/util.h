@@ -77,6 +77,18 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
 
 
 /**
+ * Parse a string for a boolean value.
+ * The strings "true", "yes", and "1" are interpreted as true.
+ * The strings "false", "no", and "0" are interpreted as false.
+ * This function ignores case.
+ *
+ * @param[in] val			the string to parse
+ * @param[out] valAsBool	the parsing result
+ * @return 	true if the string parsed correctly, false if an error occurred.
+ */
+bool parseBool(const Common::String &val, bool &valAsBool);
+
+/**
  * List of game language.
  */
 enum Language {
