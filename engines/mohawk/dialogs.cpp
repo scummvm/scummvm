@@ -78,7 +78,7 @@ enum {
 
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
-	_transistionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Transistions Enabled", kTransCmd, 'T');
+	_transistionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Transitions Enabled", kTransCmd, 'T');
 
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::kOKCmd, 'O');
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", GUI::kCloseCmd, 'C');

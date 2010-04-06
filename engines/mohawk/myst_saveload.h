@@ -45,7 +45,7 @@ struct MystVariables {
 	   1 = Current Age / Stack
 	   2 = Page Being Held
 	   3 = Unknown - Fixed at 1
-	   4 = Slide Transistions
+	   4 = Slide Transitions
 	   5 = Zip Mode
 	   6 = Red Pages in Book
 	   7 = Blue Pages in Book

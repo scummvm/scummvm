@@ -495,7 +495,7 @@ static const char *game_globals_names[] = {
 	"Current Age / Stack",
 	"Page Being Held",
 	"Unknown - Fixed at 1",
-	"Slide Transistions",
+	"Slide Transitions",
 	"Zip Mode",
 	"Red Pages in Book",
 	"Blue Pages in Book"
