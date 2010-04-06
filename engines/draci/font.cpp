@@ -108,7 +108,12 @@ void Font::freeFont() {
 }
 
 uint8 Font::getCharWidth(uint8 chr) const {
-	return _charWidths[chr - kCharIndexOffset];
+	// Safe-guard against incorrect strings containing localized characters
+	// with inaccessible codes.  These strings do not exist in the original
+	// Czech version, but they do in the (never properly reviewed) English
+	// version.
+	return chr >= kCharIndexOffset && chr < kCharIndexOffset + kCharNum
+		? _charWidths[chr - kCharIndexOffset] : 0;
 }
 
 /**
@@ -126,9 +131,13 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
 	assert(ty >= 0);
 
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
-	uint8 charIndex = chr - kCharIndexOffset;
-	int charOffset = charIndex * _fontHeight * _maxCharWidth;
-	uint8 currentWidth = _charWidths[charIndex];
+	const uint8 currentWidth = getCharWidth(chr);
+	if (currentWidth == 0) {
+		return;
+	}
+
+	const uint8 charIndex = chr - kCharIndexOffset;
+	const int charOffset = charIndex * _fontHeight * _maxCharWidth;
 
 	// Determine how many pixels to draw horizontally (to prevent overflow)
 	int xSpaceLeft = dst->w - tx - 1;
@@ -256,9 +265,7 @@ uint Font::getStringWidth(const Common::String &str, int spacing) const {
 	for (uint i = 0, tmp = 0; i < len; ++i) {
 
 		if (str[i] != '|') {
-			uint8 charIndex = str[i] - kCharIndexOffset;
-			tmp += _charWidths[charIndex];
-			tmp += spacing;
+			tmp += getCharWidth(str[i]) + spacing;
 		}
 
 		// Newline char encountered, skip it and store the new length if it is greater.
@@ -291,9 +298,7 @@ uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing)
 			break;
 
 		// Add width of the current char
-		uint8 charIndex = str[i] - kCharIndexOffset;
-		width += _charWidths[charIndex];
-		width += spacing;
+		width += getCharWidth(str[i]) + spacing;
 	}
 
 	return width;
