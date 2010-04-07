@@ -493,6 +493,10 @@ Common::Error TeenAgentEngine::run() {
 				//	debug(0, "%d, %s", current_object->id, current_object->name.c_str());
 				if (scene->getId() < 0)
 					break;
+
+				if (current_object == NULL)
+					break;
+
 				if (res->dseg.get_byte(0) == 3 && current_object->id == 1) {
 					processCallback(0x5189); //boo!
 					break;
