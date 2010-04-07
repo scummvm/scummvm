@@ -4224,6 +4224,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		{
 			"adi2",
 			"Adi 2",
+			AD_ENTRY1s("adi2.stk", "29694c5a649298a42f87ae731d6d6f6d", 311132),
+			EN_ANY,
+			kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeaturesNone,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
+			"Adi 2",
 			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
 			ES_ESP,
 			kPlatformPC,
