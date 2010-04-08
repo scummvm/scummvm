@@ -1063,7 +1063,7 @@ void decompressRle(byte *rleData, int rleSize, byte *celData, int w, int h) {
 		} else {
 			while (len--)
 				*dst++ = *src;
-			*src++;
+			src++;
 		}
 	}
 }
