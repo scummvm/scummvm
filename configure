@@ -199,7 +199,7 @@ int main(void) {
 	return 0;
 }
 EOF
-	cc_check
+	cc_check $LDFLAGS $CXXFLAGS
 	return $?
 }
 
@@ -1640,7 +1640,7 @@ int main(int argc, char **argv) {
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO$HOSTEXEEXT && _need_memalign=no
+			cc_check $LDFLAGS $CXXFLAGS && $TMPO$HOSTEXEEXT && _need_memalign=no
 			;;
 	esac
 	echo "$_need_memalign"
