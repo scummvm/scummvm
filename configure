@@ -193,13 +193,14 @@ cc_check() {
 cc_check_define() {
 cat > $TMPC << EOF
 int main(void) {
-	#ifdef $1
-	return 1;
+	#ifndef $1
+	syntax error
 	#endif
 	return 0;
 }
 EOF
-	cc_check && $TMPO$HOSTEXEEXT
+	cc_check
+	test $? -ne 0
 	return $?
 }
 
