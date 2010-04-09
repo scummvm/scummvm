@@ -204,7 +204,7 @@ EOF
 }
 
 gcc_get_define() {
-	$CXX -dM -E - < /dev/null | fgrep -m 1 "$1" | cut -d ' ' -f 3-
+	$CXX -dM -E - < /dev/null | fgrep "$1" | head -1 | cut -d ' ' -f 3-
 }
 
 #
