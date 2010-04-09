@@ -190,6 +190,23 @@ cc_check() {
 	return "$TMP"
 }
 
+cc_check_define() {
+cat > $TMPC << EOF
+int main(void) {
+	#ifdef $1
+	return 1;
+	#endif
+	return 0;
+}
+EOF
+	cc_check && $TMPO$HOSTEXEEXT
+	return $?
+}
+
+gcc_get_define() {
+	$CXX -dM -E - < /dev/null | fgrep -m 1 "$1" | cut -d ' ' -f 3-
+}
+
 #
 # Function to provide echo -n for bourne shells that don't have it
 #
@@ -1066,9 +1083,31 @@ LD=$CXX
 echocheck "compiler version"
 
 have_gcc=no
-cxx_version=`( $CXX -dumpversion ) 2>&1`
-if test "$?" -gt 0; then
-	# TODO: Big scary warning about unsupported Compilers
+cc_check_define __GNUC__
+if test "$?" -eq 1; then
+	have_gcc=yes
+fi
+
+if test "$have_gcc" = yes; then
+	add_line_to_config_mk 'HAVE_GCC = 1'
+	_cxx_major=`gcc_get_define __GNUC__`
+	_cxx_minor=`gcc_get_define __GNUC_MINOR__`
+	cxx_version="`( $CXX -dumpversion ) 2>&1`"
+
+	if test -n "`gcc_get_define __clang__`"; then
+		add_line_to_config_mk 'HAVE_CLANG = 1'
+	fi
+
+	if test "$_cxx_major" -eq 2 && test "$_cxx_minor" -ge 95 || \
+	   test "$_cxx_major" -gt 2 ; then
+		cxx_version="$cxx_version, ok"
+		cxx_verc_fail=no
+	else
+		cxx_version="$cxx_version, bad"
+		cxx_verc_fail=yes
+	fi
+else
+	# TODO: Big scary warning about unsupported compilers
 	cxx_version=`( $CXX -version ) 2>&1`
 	if test "$?" -eq 0; then
 		cxx_version="`echo "${cxx_version}" | sed -ne 's/^.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/gp'`"
@@ -1082,39 +1121,7 @@ if test "$?" -gt 0; then
 		cxx_verc_fail=yes
 		echo found non-gcc compiler version ${cxx_version}
 	fi
-else
-	add_line_to_config_mk 'HAVE_GCC = 1'
-	have_gcc=yes
-fi
 
-if test "$have_gcc" = yes; then
-	case $cxx_version in
-		2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
-			_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
-			_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
-			cxx_version="$cxx_version, ok"
-			cxx_verc_fail=no
-			;;
-		# whacky beos version strings
-		2.9-beos-991026*|2.9-beos-000224*)
-			_cxx_major=2
-			_cxx_minor=95
-			cxx_version="$cxx_version, ok"
-			cxx_verc_fail=no
-			;;
-		3_4)
-			_cxx_major=3
-			_cxx_minor=4
-			;;
-		'not found')
-			cxx_verc_fail=yes
-			;;
-		*)
-			cxx_version="$cxx_version, bad"
-			cxx_verc_fail=yes
-			;;
-	esac
-else
 	case $_host_os in
 		irix*)
 			case $cxx_version in
@@ -1136,7 +1143,6 @@ else
 			cxx_verc_fail=yes
 			;;
 	esac
-
 fi
 
 echo "$cxx_version"
@@ -2361,7 +2367,7 @@ if test "$have_gcc" = yes ; then
 			;;
 		esac
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
-		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP'
+		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 	fi;
 
 	if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then

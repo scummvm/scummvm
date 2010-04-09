@@ -44,6 +44,10 @@ ifeq "$(HAVE_GCC)" "1"
 	#CXXFLAGS+= -O -Wuninitialized
 endif
 
+ifeq "$(HAVE_CLANG)" "1"
+	CXXFLAGS+= -Wno-conversion -Wno-shorten-64-to-32 -Wno-sign-compare -Wno-four-char-constants
+endif
+
 #######################################################################
 # Default commands - put the necessary replacements in config.mk      #
 #######################################################################
