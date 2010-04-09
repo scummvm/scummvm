@@ -813,7 +813,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Mandriva");
-		  add_person("Dominik Scherer", "", "");
+		  add_person("Dominik Scherer", "", "(retired)");
 	  end_section();
 
 	  begin_section("MorphOS");
