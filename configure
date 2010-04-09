@@ -1353,7 +1353,7 @@ esac
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
-	echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+	echo "Cross-compiling to $_host"
 	case "$_host" in
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			DEFINES="$DEFINES -DUNIX"
