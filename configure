@@ -2370,7 +2370,8 @@ if test "$have_gcc" = yes ; then
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 	fi;
 
-	if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+	if test "$_cxx_major" -eq 4 && test "$_cxx_minor" -ge 3 || \
+	   test "$_cxx_major" -gt 4 ; then
 		CXXFLAGS="$CXXFLAGS -Wno-empty-body"
 	else
 		CXXFLAGS="$CXXFLAGS -Wconversion"
