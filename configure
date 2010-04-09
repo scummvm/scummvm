@@ -200,7 +200,6 @@ int main(void) {
 }
 EOF
 	cc_check
-	test $? -ne 0
 	return $?
 }
 
@@ -1084,10 +1083,7 @@ LD=$CXX
 echocheck "compiler version"
 
 have_gcc=no
-cc_check_define __GNUC__
-if test "$?" -eq 1; then
-	have_gcc=yes
-fi
+cc_check_define __GNUC__ && have_gcc=yes
 
 if test "$have_gcc" = yes; then
 	add_line_to_config_mk 'HAVE_GCC = 1'
