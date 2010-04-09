@@ -184,7 +184,7 @@ cc_check() {
 	echo >> "$TMPLOG"
 	echo "$CXX $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
-	( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
 	echo >> "$TMPLOG"
 	return "$TMP"
@@ -199,7 +199,7 @@ int main(void) {
 	return 0;
 }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS
+	cc_check
 	return $?
 }
 
@@ -1640,7 +1640,7 @@ int main(int argc, char **argv) {
 }
 EOF
 			_need_memalign=yes
-			cc_check $LDFLAGS $CXXFLAGS && $TMPO$HOSTEXEEXT && _need_memalign=no
+			cc_check && $TMPO$HOSTEXEEXT && _need_memalign=no
 			;;
 	esac
 	echo "$_need_memalign"
@@ -1881,7 +1881,7 @@ add_to_config_mk_if_yes "$_indeo3" 'USE_INDEO3 = 1'
 cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
-cc_check $LDFLAGS $CXXFLAGS -lm && LDFLAGS="$LDFLAGS -lm"
+cc_check -lm && LDFLAGS="$LDFLAGS -lm"
 
 #
 # Check for Ogg Vorbis
@@ -1893,7 +1893,7 @@ if test "$_vorbis" = auto ; then
 #include <vorbis/codec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
+	cc_check $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
 		-lvorbisfile -lvorbis -logg && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
@@ -1916,7 +1916,7 @@ if test "$_tremor" = auto ; then
 #include <tremor/ivorbiscodec.h>
 int main(void) { vorbis_info_init(0); return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+	cc_check $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
 	_tremor=yes
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
@@ -1944,10 +1944,10 @@ if test "$_flac" = auto ; then
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
 	if test "$_vorbis" = yes ; then
-		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
+		cc_check $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
 			-lFLAC -logg && _flac=yes
 	else
-		cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS \
+		cc_check $FLAC_CFLAGS $FLAC_LIBS \
 			-lFLAC && _flac=yes
 	fi
 fi
@@ -1975,7 +1975,7 @@ if test "$_mad" = auto ; then
 #include <mad.h>
 int main(void) { return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
+	cc_check $MAD_CFLAGS $MAD_LIBS -lmad && _mad=yes
 fi
 if test "$_mad" = yes ; then
 	_def_mad='#define USE_MAD'
@@ -1997,7 +1997,7 @@ if test "$_alsa" = auto ; then
 #include <alsa/asoundlib.h>
 int main(void) { return (!(SND_LIB_MAJOR==0 && SND_LIB_MINOR==9)); }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
+	cc_check $ALSA_CFLAGS $ALSA_LIBS -lasound && _alsa=yes
 fi
 if test "$_alsa" = yes ; then
 	_def_alsa='#define USE_ALSA'
@@ -2019,7 +2019,7 @@ if test "$_zlib" = auto ; then
 #include <zlib.h>
 int main(void) { return strcmp(ZLIB_VERSION, zlibVersion()); }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
+	cc_check $ZLIB_CFLAGS $ZLIB_LIBS -lz && _zlib=yes
 fi
 if test "$_zlib" = yes ; then
 	_def_zlib='#define USE_ZLIB'
@@ -2061,9 +2061,9 @@ EOF
 
 	if test -n "$_host"; then
 		# don't execute while cross compiling
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
+		cc_check $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
 	else
-		cc_check $LDFLAGS $CXXFLAGS $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$HOSTEXEEXT && _mpeg2=yes
+		cc_check $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$HOSTEXEEXT && _mpeg2=yes
 	fi
 fi
 if test "$_mpeg2" = yes ; then
@@ -2086,7 +2086,7 @@ if test "$_fluidsynth" = auto ; then
 #include <fluidsynth.h>
 int main(void) { return 0; }
 EOF
-	cc_check $LDFLAGS $CXXFLAGS $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
+	cc_check $FLUIDSYNTH_CFLAGS $FLUIDSYNTH_LIBS -lfluidsynth && _fluidsynth=yes
 fi
 if test "$_fluidsynth" = yes ; then
 	_def_fluidsynth='#define USE_FLUIDSYNTH'
@@ -2122,10 +2122,10 @@ int main(void) {
 	char *x = readline("");
 }
 EOF
-		cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		if test "$_readline" = no ; then
 			_READLINE_LIBS="-lreadline -ltermcap"
-			cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+			cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		fi
 	fi
 	echo "$_readline"
