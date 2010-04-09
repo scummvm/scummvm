@@ -32,7 +32,7 @@
 
 namespace Lure {
 
-extern const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0,
+const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0,
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
@@ -68,7 +68,7 @@ static const BarEntry default_barList[3] = {
 		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
 };
 
-extern const RoomTranslationRecord roomTranslations[] = {
+const RoomTranslationRecord roomTranslations[] = {
 	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F},
 	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A},
 	{0x23, 0x13}, {0x24, 0x14}, {0x31, 0x2C}, {0x2F, 0x2C},
