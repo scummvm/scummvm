@@ -184,6 +184,8 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	Common::String filename;
 	Common::OutSaveFile *out;
 
+	pauseEngine(true);
+
 	if (_saveLoadSlot == 255) {
 		// Allow custom filenames for save game system in HE Games
 		filename = _saveLoadFileName;
@@ -207,6 +209,9 @@ bool ScummEngine::saveState(int slot, bool compat) {
 		return false;
 	}
 	debug(1, "State saved as '%s'", filename.c_str());
+
+	pauseEngine(false);
+
 	return true;
 }
 
