@@ -99,22 +99,28 @@ Engine::Engine(OSystem *syst)
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
 	Common::setErrorHandler(defaultErrorHandler);
 
-	// FIXME: Get rid of the following again. It is only here temporarily.
-	// We really should never run with a non-working Mixer, so ought to handle
-	// this at a much earlier stage. If we *really* want to support systems
-	// without a working mixer, then we need more work. E.g. we could modify the
-	// Mixer to immediately drop any streams passed to it. This way, at least
-	// we don't crash because heaps of (sound) memory get allocated but never
-	// freed. Of course, there still would be problems with many games...
+	// FIXME: Get rid of the following again. It is only here
+	// temporarily. We really should never run with a non-working Mixer,
+	// so ought to handle this at a much earlier stage. If we *really*
+	// want to support systems without a working mixer, then we need
+	// more work. E.g. we could modify the Mixer to immediately drop any
+	// streams passed to it. This way, at least we don't crash because
+	// heaps of (sound) memory get allocated but never freed. Of course,
+	// there still would be problems with many games...
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. This may cause severe problems in some games.");
 
-	// Setup a dummy cursor and palette, so that all engines can use CursorMan.replace
-	// without having any headaches about memory leaks. Check commit log of r48620 for
-	// some information about this.
+	// Setup a dummy cursor and palette, so that all engines can use
+	// CursorMan.replace without having any headaches about memory leaks.
+	//
+	// If an engine only used CursorMan.replaceCursor and no cursor has
+	// been setup before, then replaceCursor just uses pushCursor. This
+	// means that that the engine's cursor is never again removed from
+	// CursorMan. Hence we setup a fake cursor here and remove it again
+	// in the destructor.
 	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
-	// Note: Using this dummy palette will actually disable cursor palettes till the
-	// user enables it again.
+	// Note: Using this dummy palette will actually disable cursor
+	// palettes till the user enables it again.
 	CursorMan.pushCursorPalette(NULL, 0, 0);
 }
 
