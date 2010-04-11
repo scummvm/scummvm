@@ -222,6 +222,7 @@ void ScummEngine_v70he::setDefaultCursor() {
 	if (_bytesPerPixel == 1) {
 		// Since white color position is not guaranteed
 		// we setup our own palette if supported by backend
+		CursorMan.disableCursorPalette(false);
 		CursorMan.replaceCursorPalette(palette, 0xfd, 3);
 	}
 
