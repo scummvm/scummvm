@@ -69,8 +69,6 @@ Screen::~Screen() {
 
 	for (uint i = 0; i < _palettes.size(); ++i)
 		delete _palettes[i];
-
-	CursorMan.popCursor();
 }
 
 bool Screen::init() {
@@ -158,7 +156,6 @@ bool Screen::init() {
 	_animBlockPtr = NULL;
 	_animBlockSize = 0;
 	_mouseLockCount = 1;
-	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
 	CursorMan.showMouse(false);
 
 	_forceFullUpdate = false;

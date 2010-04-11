@@ -550,12 +550,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		Common::addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 
 	g_eventRec.registerRandomSource(_rnd, "scumm");
-
-	// Setup a dummy cursor and palette. The latter is only
-	// required by HE, thus we might consider to do that only
-	// for HE games.
-	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
-	CursorMan.pushCursorPalette(NULL, 0, 0);
 }
 
 
@@ -612,10 +606,6 @@ ScummEngine::~ScummEngine() {
 
 	delete _res;
 	delete _gdi;
-
-	// Remove our cursors again to prevent memory leaks
-	CursorMan.popCursor();
-	CursorMan.popCursorPalette();
 }
 
 

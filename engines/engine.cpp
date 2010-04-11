@@ -30,6 +30,9 @@
 #endif
 
 #include "engines/engine.h"
+#include "engines/dialogs.h"
+#include "engines/metaengine.h"
+
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
@@ -37,12 +40,14 @@
 #include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
+
 #include "gui/debugger.h"
 #include "gui/message.h"
 #include "gui/GuiManager.h"
+
 #include "sound/mixer.h"
-#include "engines/dialogs.h"
-#include "engines/metaengine.h"
+
+#include "graphics/cursorman.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
@@ -103,6 +108,14 @@ Engine::Engine(OSystem *syst)
 	// freed. Of course, there still would be problems with many games...
 	if (!_mixer->isReady())
 		warning("Sound initialization failed. This may cause severe problems in some games.");
+
+	// Setup a dummy cursor and palette, so that all engines can use CursorMan.replace
+	// without having any headaches about memory leaks. Check commit log of r48620 for
+	// some information about this.
+	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
+	// Note: Using this dummy palette will actually disable cursor palettes till the
+	// user enables it again.
+	CursorMan.pushCursorPalette(NULL, 0, 0);
 }
 
 Engine::~Engine() {
@@ -110,6 +123,10 @@ Engine::~Engine() {
 
 	delete _mainMenuDialog;
 	g_engine = NULL;
+
+	// Remove our cursors again to prevent memory leaks
+	CursorMan.popCursor();
+	CursorMan.popCursorPalette();
 }
 
 void initCommonGFX(bool defaultTo1XScaler) {
