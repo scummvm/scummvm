@@ -49,6 +49,7 @@
 
 #include "gui/GuiManager.h"
 #include "gui/message.h"
+#include "gui/error.h"
 
 #include "sound/audiocd.h"
 
@@ -134,21 +135,12 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Check for errors
 	if (!engine || err != Common::kNoError) {
-		// TODO: Show an error dialog or so?
-		// TODO: Also take 'err' into consideration...
-		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
-		//alert.runModal();
-		const char *errMsg = 0;
-		switch (err) {
-		case Common::kInvalidPathError:
-			errMsg = "Invalid game path";
-			break;
-		case Common::kNoGameDataFoundError:
-			errMsg = "Unable to locate game data";
-			break;
-		default:
-			errMsg = "Unknown error";
-		}
+
+		// TODO: An errorDialog for this and engine related errors is displayed already in the scummvm_main function
+		// Is a separate dialog here still required?
+
+		//GUI::displayErrorDialog("ScummVM could not find any game in the specified directory!");
+		const char *errMsg = Common::errorToString(err);
 
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
@@ -391,7 +383,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 			// Did an error occur ?
 			if (result != Common::kNoError) {
-				// TODO: Show an informative error dialog if starting the selected game failed.
+				// Shows an informative error dialog if starting the selected game failed.
+				GUI::displayErrorDialog(result, "Error running game:");
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
@@ -418,6 +411,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// A dialog would be nicer, but we don't have any
 			// screen to draw on yet.
 			warning("Could not find any engine capable of running the selected game");
+			GUI::displayErrorDialog("Could not find any engine capable of running the selected game");
 		}
 
 		// We will destroy the AudioCDManager singleton here to save some memory.
