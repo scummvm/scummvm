@@ -953,7 +953,8 @@ void AdLibDriver::setupDuration(uint8 duration, Channel &channel) {
 void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 	debugC(9, kDebugLevelSound, "setupNote(%d, %lu)", rawNote, (long)(&channel - _channels));
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	channel.rawNote = rawNote;
 
@@ -1009,7 +1010,8 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 void AdLibDriver::setupInstrument(uint8 regOffset, uint8 *dataptr, Channel &channel) {
 	debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
 	// Keyboard Scaling Rate / Modulator Frequency Multiple
@@ -1061,7 +1063,8 @@ void AdLibDriver::noteOn(Channel &channel) {
 
 	// The "note on" bit is set, and the current note is played.
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	channel.regBx |= 0x20;
 	writeOPL(0xB0 + _curChannel, channel.regBx);
@@ -1075,7 +1078,8 @@ void AdLibDriver::noteOn(Channel &channel) {
 void AdLibDriver::adjustVolume(Channel &channel) {
 	debugC(9, kDebugLevelSound, "adjustVolume(%lu)", (long)(&channel - _channels));
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	// Level Key Scaling / Total Level
 
@@ -1103,7 +1107,8 @@ void AdLibDriver::adjustVolume(Channel &channel) {
 void AdLibDriver::primaryEffect1(Channel &channel) {
 	debugC(9, kDebugLevelSound, "Calling primaryEffect1 (channel: %d)", _curChannel);
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	uint8 temp = channel.unk31;
 	channel.unk31 += channel.unk29;
@@ -1189,7 +1194,8 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 void AdLibDriver::primaryEffect2(Channel &channel) {
 	debugC(9, kDebugLevelSound, "Calling primaryEffect2 (channel: %d)", _curChannel);
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	if (channel.unk38) {
 		--channel.unk38;
@@ -1247,7 +1253,8 @@ void AdLibDriver::primaryEffect2(Channel &channel) {
 void AdLibDriver::secondaryEffect1(Channel &channel) {
 	debugC(9, kDebugLevelSound, "Calling secondaryEffect1 (channel: %d)", _curChannel);
 
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return;
 
 	uint8 temp = channel.unk18;
 	channel.unk18 += channel.unk19;
@@ -1612,7 +1619,8 @@ int AdLibDriver::updateCallback38(uint8 *&dataptr, Channel &channel, uint8 value
 }
 
 int AdLibDriver::updateCallback39(uint8 *&dataptr, Channel &channel, uint8 value) {
-	assert(_curChannel < 9);
+	if (_curChannel >= 9)
+		return 0;
 
 	uint16 unk = *dataptr++;
 	unk |= value << 8;

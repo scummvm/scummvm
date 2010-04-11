@@ -7,6 +7,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Ports:
    - Added Nintendo 64 Port (Actually added in 1.1.0, but forgot to mention it. oops)
 
+ KYRA:
+   - Fixed a bug which caused the DOS versions to crash before the credits when AdLib
+     music is selected.
+
 1.1.0 (2010-04-04)
  New Games:
    - Added support for Blue's Art Time Activities.
