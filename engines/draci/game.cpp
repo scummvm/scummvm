@@ -1289,6 +1289,9 @@ void Game::enterNewRoom() {
 	// cleaned up.  Some rooms (e.g., the map) don't support walking.
 	_walkingState.stopWalking();
 
+	// Stop a possible palette fading.
+	_fadePhases = _fadePhase = 0;
+
 	_currentRoom.load(_newRoom, _vm->_roomsArchive);
 	loadWalkingMap(getMapID());
 	loadRoomObjects();
