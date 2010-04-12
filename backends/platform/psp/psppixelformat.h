@@ -220,10 +220,10 @@ struct PSPPixelFormat {
 		switch (bitsPerPixel) {
 		case 4:	// We can't distinguish a 4 bit color with a pointer
 		case 8:
-			result = (uint32) * pointer;
+			result = *pointer;
 			break;
 		case 16:
-			result = (uint32) * (uint16 *)pointer;
+			result = *(uint16 *)pointer;
 			break;
 		case 32:
 			result = *(uint32 *)pointer;
