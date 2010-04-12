@@ -770,11 +770,11 @@
 	<dialog name = 'MassAdd' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '4, 4, 16, 4' center = 'true'>
 			<widget name = 'DirProgressText'
-					width = '240'
+					width = '280'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'GameProgressText'
-					width = '240'
+					width = '280'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'GameList'
@@ -791,6 +791,7 @@
 			</layout>
 		</layout>
 	</dialog>
+
 	<dialog name = 'KeyMapper' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '10' center = 'true'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>

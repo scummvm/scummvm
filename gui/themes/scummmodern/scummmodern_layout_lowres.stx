@@ -759,11 +759,11 @@
 	<dialog name = 'MassAdd' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '4, 4, 16, 4' center = 'true'>
 			<widget name = 'DirProgressText'
-					width = '240'
+					width = '280'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'GameProgressText'
-					width = '240'
+					width = '280'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'GameList'
